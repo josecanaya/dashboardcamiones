@@ -101,6 +101,8 @@ export interface IfcSelectedTruckInfo {
   assignedPTC: string
   locationExpressId: number
   cameraImageUrl: string
+  cameraSequence: string[]
+  cameraCaptures: Array<{ cameraId: string; imageUrl: string; captureLabel: string }>
 }
 
 interface FleetStats {
@@ -133,6 +135,28 @@ const TRUCK_LOCATION_EXPRESS_IDS = [126491, 126511, 130191, 129138, 127321]
 const FLEET_TRUCK_COUNT = 50
 const TRUCK_CARGO_TYPES = ["Maiz", "Soja", "Harina", "Aceite", "Girasol", "Trigo"] as const
 const TRUCK_CHECKPOINTS = ["Porteria Norte", "Balanza 1", "Playa descarga", "Balanza 2", "Salida"] as const
+const RICARDONE_CAMERA_SEQUENCE_BY_PREFIX: Record<string, string[]> = {
+  A1: ["S0", "S2", "S4", "S5", "S4", "S1", "S10"],
+  A2: ["S0", "S2", "S4", "S6", "S4", "S1", "S10"],
+  A3: ["S0", "S2", "S4", "S4", "S1", "S10"],
+  A4: ["S0", "S2", "S4", "S9", "S4", "S1", "S10"],
+  A5: ["S0", "S2", "S4", "S6", "S9", "S4", "S1", "S10"],
+  A7: ["S0", "S2", "S1", "S3"],
+  B1: ["S0", "S4", "S5", "S6", "S4", "S2", "S1", "S3"],
+  B2: ["S0", "S4", "S6", "S4", "S1", "S2", "S7", "S2", "S3", "S1"],
+  B4: ["S0", "S4", "S6", "S7", "S4", "S1", "S2", "S3", "S1"],
+  B5: ["S0", "S4", "S6", "S7", "S4", "S1", "S2", "S2", "S3", "S1"],
+  C1: ["S0", "S2", "S4", "S4", "S1", "S3"],
+  D1: ["S0", "S2", "S4", "S4", "S1", "S2", "S3", "S1"],
+  E01: ["S0", "S2", "S4", "S5", "S6", "S4", "S1", "S10", "S7"],
+  E02: ["S0", "S2", "S4", "S6", "S7", "S4", "S1", "S10", "S9"],
+  F1: ["S0", "S4", "S6", "S4", "S1", "S2", "S7", "S8", "S2", "S3", "S1"],
+  F2: ["S0", "S4", "S6", "S7", "S4", "S1", "S2", "S3", "S1"],
+  F3: ["S0", "S2", "S4", "S5", "S6", "S4", "S1", "S10", "S7"],
+  F4: ["S0", "S2", "S4", "S5", "S6", "S4", "S1", "S10", "S7"],
+  F5: ["S0", "S4", "S6", "S4", "S1", "S2", "S7", "S8", "S2", "S3", "S1"],
+  F6: ["S0", "S2", "S4", "S5", "S6", "S4", "S1", "S10", "S7"],
+}
 
 function tagMatchesCode(tag: string, code: string): boolean {
   const t = tag.toUpperCase().trim()
@@ -148,7 +172,13 @@ function buildMockPlate(index: number): string {
   return `SIM-${String(index + 1).padStart(3, "0")}`
 }
 
-function buildCameraSnapshotDataUrl(plate: string, cargoType: string, lastCheckpoint: string): string {
+function buildCameraSnapshotDataUrl(
+  plate: string,
+  cargoType: string,
+  lastCheckpoint: string,
+  cameraId = "S0",
+  captureLabel = "Captura"
+): string {
   const svg = `
   <svg xmlns="http://www.w3.org/2000/svg" width="640" height="360">
     <defs>
@@ -159,10 +189,11 @@ function buildCameraSnapshotDataUrl(plate: string, cargoType: string, lastCheckp
     </defs>
     <rect width="640" height="360" fill="url(#g)"/>
     <rect x="18" y="18" width="604" height="324" rx="10" fill="#0b1220" stroke="#64748b" stroke-width="2"/>
-    <text x="32" y="48" fill="#93c5fd" font-size="18" font-family="Arial, sans-serif">CAM-PLANTA-01</text>
+    <text x="32" y="48" fill="#93c5fd" font-size="18" font-family="Arial, sans-serif">${cameraId}</text>
     <text x="32" y="86" fill="#e2e8f0" font-size="24" font-family="Arial, sans-serif">${plate}</text>
     <text x="32" y="120" fill="#cbd5e1" font-size="16" font-family="Arial, sans-serif">Carga: ${cargoType}</text>
     <text x="32" y="148" fill="#cbd5e1" font-size="16" font-family="Arial, sans-serif">Ultimo check: ${lastCheckpoint}</text>
+    <text x="32" y="174" fill="#93c5fd" font-size="14" font-family="Arial, sans-serif">${captureLabel}</text>
     <circle cx="566" cy="54" r="8" fill="#ef4444"/>
     <text x="584" y="60" fill="#fecaca" font-size="12" font-family="Arial, sans-serif">REC</text>
     <rect x="210" y="190" width="220" height="95" rx="8" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
@@ -185,6 +216,18 @@ function buildSimTruckInfo(index: number, locationExpressId: number): IfcSelecte
       : assignedCircuit.group === "CARGA"
         ? "DESPACHANDO"
         : "TRANSILE"
+  const cameraSequence = RICARDONE_CAMERA_SEQUENCE_BY_PREFIX[assignedCircuit.prefix] ?? ["S0", "S2", "S4", "S1"]
+  const cameraCaptures = cameraSequence.map((cameraId, sequenceIndex) => ({
+    cameraId,
+    captureLabel: `Paso ${sequenceIndex + 1}`,
+    imageUrl: buildCameraSnapshotDataUrl(
+      plate,
+      cargoType,
+      lastCheckpoint,
+      cameraId,
+      `Paso ${sequenceIndex + 1} · ${assignedCircuit.prefix}`
+    ),
+  }))
   return {
     plate,
     cargoType,
@@ -198,7 +241,9 @@ function buildSimTruckInfo(index: number, locationExpressId: number): IfcSelecte
     assignedPTD: assignedCircuit.PTD,
     assignedPTC: assignedCircuit.PTC,
     locationExpressId,
-    cameraImageUrl: buildCameraSnapshotDataUrl(plate, cargoType, lastCheckpoint),
+    cameraImageUrl: cameraCaptures[0]?.imageUrl ?? buildCameraSnapshotDataUrl(plate, cargoType, lastCheckpoint),
+    cameraSequence,
+    cameraCaptures,
   }
 }
 
@@ -546,6 +591,7 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
   const [simOrderedIds, setSimOrderedIds] = useState<number[]>([])
   const [simIndex, setSimIndex] = useState(0)
   const [selectedSimTruck, setSelectedSimTruck] = useState<IfcSelectedTruckInfo | null>(null)
+  const [selectedCaptureIndex, setSelectedCaptureIndex] = useState(0)
   const [mappingNotice, setMappingNotice] = useState<string | null>(null)
   const [circuitDebugInfo, setCircuitDebugInfo] = useState<CircuitDebugInfo | null>(null)
   const [modelLoadVersion, setModelLoadVersion] = useState(0)
@@ -1230,6 +1276,20 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
     }
   }, [operationFilter, selectedSimTruck])
 
+  useEffect(() => {
+    setSelectedCaptureIndex(0)
+  }, [selectedSimTruck?.plate])
+
+  useEffect(() => {
+    if (!selectedSimTruck) return
+    const totalSteps = selectedSimTruck.cameraCaptures.length
+    if (totalSteps <= 1) return
+    const timer = window.setInterval(() => {
+      setSelectedCaptureIndex((prev) => (prev >= totalSteps - 1 ? prev : prev + 1))
+    }, 1400)
+    return () => window.clearInterval(timer)
+  }, [selectedSimTruck?.plate, selectedSimTruck?.cameraCaptures.length])
+
   return (
     <div className="h-full w-full relative bg-white">
       <div ref={containerRef} className="h-full w-full" />
@@ -1261,6 +1321,14 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
       )}
       {selectedSimTruck && (
         <div className="absolute left-1/2 top-12 z-20 w-[1120px] max-w-[calc(100%-24px)] -translate-x-1/2 rounded-2xl border border-slate-200 bg-white/95 px-5 py-4 shadow-2xl backdrop-blur-sm">
+          <button
+            type="button"
+            onClick={() => setSelectedSimTruck(null)}
+            className="absolute right-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-300 bg-white text-sm font-bold text-slate-600 transition hover:bg-slate-50"
+            aria-label="Cerrar panel de camion"
+          >
+            ×
+          </button>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_430px]">
             <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-xs text-slate-700">
               <div className="col-span-2">
@@ -1298,33 +1366,61 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
                   {selectedSimTruck.assignedCircuitPrefix}
                 </div>
               </div>
-              <div className="text-[11px] text-slate-600">
-                <span className="font-semibold text-slate-800">Camiones simulados:</span> {renderedTruckCount}/{FLEET_TRUCK_COUNT}
-              </div>
-              <div className="text-right">
-                <button
-                  type="button"
-                  onClick={() => setSelectedSimTruck(null)}
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-700 transition hover:bg-slate-50"
-                >
-                  Cerrar
-                </button>
+              <div className="col-span-2 rounded-lg border border-slate-200 bg-slate-50 p-2">
+                <div className="mb-1 flex items-center justify-between">
+                  <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                    Secuencia de camaras ({selectedSimTruck.assignedCircuitPrefix})
+                  </div>
+                  <div className="text-[10px] text-slate-500">Fuente: circuitos_ricardone.pdf</div>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedSimTruck.cameraCaptures.map((capture, idx) => {
+                    const isDone = idx <= selectedCaptureIndex
+                    const isCurrent = idx === selectedCaptureIndex
+                    return (
+                      <button
+                        key={`${capture.cameraId}-${idx}`}
+                        type="button"
+                        onClick={() => setSelectedCaptureIndex(idx)}
+                        className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[10px] transition ${
+                          isDone ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-slate-200 bg-white text-slate-500"
+                        } ${isCurrent ? "ring-2 ring-blue-300" : ""}`}
+                      >
+                        <span
+                          className={`inline-flex h-3.5 w-3.5 items-center justify-center rounded-sm border text-[9px] font-bold ${
+                            isDone ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 bg-white text-transparent"
+                          }`}
+                        >
+                          ✓
+                        </span>
+                        <span className="font-semibold">{capture.cameraId}</span>
+                        <span className="opacity-70">#{idx + 1}</span>
+                        {isCurrent && <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />}
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
             </div>
             <div className="md:justify-self-end">
               <div className="overflow-hidden rounded-xl border border-slate-300 bg-slate-900/95 shadow-lg ring-1 ring-slate-200/70">
                 <div className="flex items-center justify-between border-b border-slate-700 px-3 py-1.5">
-                  <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-300">Camara operativa</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-300">
+                    Camara operativa · {selectedSimTruck.cameraCaptures[selectedCaptureIndex]?.cameraId ?? "S0"}
+                  </span>
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-red-300">
                     <span className="h-1.5 w-1.5 rounded-full bg-red-400" />
                     REC
                   </span>
                 </div>
                 <img
-                  src={selectedSimTruck.cameraImageUrl}
+                  src={selectedSimTruck.cameraCaptures[selectedCaptureIndex]?.imageUrl ?? selectedSimTruck.cameraImageUrl}
                   alt={`Camara ${selectedSimTruck.plate}`}
                   className="h-[176px] w-full object-cover md:w-[410px]"
                 />
+                <div className="border-t border-slate-700 bg-slate-950/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-200">
+                  ULTIMA FOTO TOMADA
+                </div>
               </div>
             </div>
           </div>
