@@ -105,13 +105,6 @@ export interface IfcSelectedTruckInfo {
   cameraCaptures: Array<{ cameraId: string; imageUrl: string; captureLabel: string }>
 }
 
-interface FleetStats {
-  enPlanta: number
-  despachando: number
-  recepcion: number
-  transile: number
-}
-
 interface CircuitDebugInfo {
   activePrefix: string
   searchCir: string
@@ -576,8 +569,9 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
   const elementTagsRef = useRef<Record<number, string[]>>({})
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [loadingProgress, setLoadingProgress] = useState<number | null>(null)
+  const [loadingStage, setLoadingStage] = useState("Inicializando visor IFC...")
   const [loadedFileName, setLoadedFileName] = useState<string | null>(null)
-  const [stats, setStats] = useState<{ meshes: number; triangles: number } | null>(null)
   const [autoOrbit, setAutoOrbit] = useState(false)
   const [selectedElementIds, setSelectedElementIds] = useState<number[]>([])
   const [lastPickedId, setLastPickedId] = useState<number | null>(null)
@@ -592,12 +586,14 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
   const [simIndex, setSimIndex] = useState(0)
   const [selectedSimTruck, setSelectedSimTruck] = useState<IfcSelectedTruckInfo | null>(null)
   const [selectedCaptureIndex, setSelectedCaptureIndex] = useState(0)
+  const [truckPopupLoading, setTruckPopupLoading] = useState(false)
   const [mappingNotice, setMappingNotice] = useState<string | null>(null)
   const [circuitDebugInfo, setCircuitDebugInfo] = useState<CircuitDebugInfo | null>(null)
   const [modelLoadVersion, setModelLoadVersion] = useState(0)
   const [renderedTruckCount, setRenderedTruckCount] = useState(0)
-  const [fleetStats, setFleetStats] = useState<FleetStats>({ enPlanta: 0, despachando: 0, recepcion: 0, transile: 0 })
+  const [metadataStatus, setMetadataStatus] = useState<"idle" | "loading" | "ready" | "error">("idle")
   const loadEpochRef = useRef(0)
+  const metadataLoadPromiseRef = useRef<Promise<Record<number, string[]>> | null>(null)
   useEffect(() => {
     elementTagsRef.current = elementTagsById
   }, [elementTagsById])
@@ -669,7 +665,42 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
     return ordered
   }, [])
 
-  const applyCircuitByPrefix = useCallback((prefix: string) => {
+  const ensureMetadataLoaded = useCallback(async (): Promise<Record<number, string[]>> => {
+    const currentTags = elementTagsRef.current
+    if (Object.keys(currentTags).length > 0) {
+      setMetadataStatus("ready")
+      return currentTags
+    }
+    if (metadataLoadPromiseRef.current) return metadataLoadPromiseRef.current
+    const loader = ifcLoaderRef.current
+    const model = ifcModelRef.current as (THREE.Object3D & { modelID?: number }) | null
+    if (!loader || !model) return {}
+
+    const startEpoch = loadEpochRef.current
+    setMetadataStatus("loading")
+    const promise = (async () => {
+      try {
+        // Cede un frame para que React pinte popup/loader antes del trabajo pesado.
+        await new Promise<void>((resolve) => {
+          window.requestAnimationFrame(() => resolve())
+        })
+        const discovered = await buildIfcTagsMap(loader, model)
+        if (startEpoch !== loadEpochRef.current) return {}
+        setElementTagsById(discovered)
+        setMetadataStatus("ready")
+        return discovered
+      } catch {
+        if (startEpoch === loadEpochRef.current) setMetadataStatus("error")
+        return {}
+      } finally {
+        metadataLoadPromiseRef.current = null
+      }
+    })()
+    metadataLoadPromiseRef.current = promise
+    return promise
+  }, [])
+
+  const applyCircuitByPrefix = useCallback((prefix: string, tagsOverride?: Record<number, string[]>) => {
     const circuit = circuitMap.get(prefix)
     if (!circuit) return
     const prefixUpper = circuit.prefix.toUpperCase()
@@ -696,7 +727,8 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
     let foundVue = 0
     let foundPtd = 0
     let foundPtc = 0
-    for (const [idStr, tags] of Object.entries(elementTagsById)) {
+    const tagsSource = tagsOverride ?? elementTagsById
+    for (const [idStr, tags] of Object.entries(tagsSource)) {
       const id = Number(idStr)
       const hasCamino = circuit.CIR ? tags.some((t) => tagMatchesCode(t, circuit.CIR)) : false
       const hasVacio = circuit.VUE ? tags.some((t) => tagMatchesCode(t, circuit.VUE)) : false
@@ -785,6 +817,8 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
     setSelectedSimTruck(null)
     setMappingNotice(null)
     setCircuitDebugInfo(null)
+    setMetadataStatus("idle")
+    metadataLoadPromiseRef.current = null
     expressPointMapRef.current = {}
 
     const width = container.clientWidth || 800
@@ -857,9 +891,28 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
         const truckObj = truckHits[0].object
         const truckInfo = truckMarkerDataRef.current.get(truckObj)
         if (truckInfo) {
-          setActiveCircuitPrefix(truckInfo.assignedCircuitPrefix)
-          applyCircuitByPrefix(truckInfo.assignedCircuitPrefix)
           setSelectedSimTruck(truckInfo)
+          setSelectedCaptureIndex(0)
+          setTruckPopupLoading(true)
+          window.setTimeout(() => {
+            void (async () => {
+            try {
+              let discoveredTags: Record<number, string[]> | undefined
+              if (Object.keys(elementTagsRef.current).length === 0) {
+                setMappingNotice("Analizando metadata IFC para validar circuito...")
+                discoveredTags = await ensureMetadataLoaded()
+                if (currentEpoch !== loadEpochRef.current) return
+                if (Object.keys(discoveredTags).length === 0) {
+                  setMappingNotice("No se detecto metadata IFC util para mapeo de circuitos.")
+                }
+              }
+              setActiveCircuitPrefix(truckInfo.assignedCircuitPrefix)
+              applyCircuitByPrefix(truckInfo.assignedCircuitPrefix, discoveredTags)
+            } finally {
+              if (currentEpoch === loadEpochRef.current) setTruckPopupLoading(false)
+            }
+            })()
+          }, 0)
           return
         }
       }
@@ -918,10 +971,13 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
 
     if (fileUrl) {
       setLoading(true)
+      setLoadingProgress(null)
+      setLoadingStage("Abriendo archivo IFC...")
       loader.load(
         fileUrl,
         async (ifcModel) => {
           if (currentEpoch !== loadEpochRef.current) return
+          setLoadingStage("Procesando geometria del modelo...")
           scene.add(ifcModel)
           ifcModelRef.current = ifcModel as unknown as THREE.Object3D
           const box = new THREE.Box3().setFromObject(ifcModel)
@@ -934,56 +990,40 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
           controls.update()
           initialTargetRef.current = center.clone()
           initialPositionRef.current = camera.position.clone()
-
-          let meshes = 0
-          let triangles = 0
-          ;(ifcModel as unknown as THREE.Object3D).traverse((obj) => {
-            const mesh = obj as THREE.Mesh
-            if (!mesh.isMesh || !mesh.geometry) return
-            mesh.material = hiddenBaseMaterialRef.current
-            if (!mesh.userData.__hiddenLineEdges) {
-              const edges = new THREE.LineSegments(
-                new THREE.EdgesGeometry(mesh.geometry as THREE.BufferGeometry, 25),
-                hiddenEdgeMaterialRef.current
-              )
-              edges.name = "__hiddenLineEdges"
-              edges.renderOrder = 2
-              mesh.add(edges)
-              mesh.userData.__hiddenLineEdges = true
-            }
-            meshes += 1
-            const geom = mesh.geometry
-            const positionCount = geom.attributes?.position?.count ?? 0
-            triangles += geom.index ? geom.index.count / 3 : positionCount / 3
-          })
-          expressPointMapRef.current = buildExpressPointMap(ifcModel as unknown as THREE.Object3D)
-          setStats({ meshes, triangles: Math.round(triangles) })
-          try {
-            const discovered = await buildIfcTagsMap(loader, ifcModel as unknown as THREE.Object3D & { modelID?: number })
-            if (currentEpoch !== loadEpochRef.current) return
-            setElementTagsById(discovered)
-          } catch {
-            // Si falla lectura de tags IFC, el panel igual permite taggear manualmente.
-          }
+          // Modo rapido: evitamos procesar todos los meshes y bordes en carga inicial.
+          // Esto reduce mucho el tiempo de primera visualizacion.
+          expressPointMapRef.current = {}
           if (currentEpoch !== loadEpochRef.current) return
           setLoadedFileName(fileName)
           setModelLoadVersion((v) => v + 1)
           setLoading(false)
+          setLoadingProgress(100)
+          setMetadataStatus("idle")
         },
-        undefined,
+        (progressEvent) => {
+          if (currentEpoch !== loadEpochRef.current) return
+          if (!progressEvent.total || progressEvent.total <= 0) {
+            setLoadingProgress(null)
+            setLoadingStage("Descargando y decodificando IFC...")
+            return
+          }
+          const pct = Math.max(0, Math.min(100, Math.round((progressEvent.loaded / progressEvent.total) * 100)))
+          setLoadingProgress(pct)
+          setLoadingStage(`Cargando IFC... ${pct}%`)
+        },
         (loadError) => {
           if (currentEpoch !== loadEpochRef.current) return
           setError(loadError?.message || "No se pudo abrir el IFC.")
           setLoadedFileName(null)
-          setStats(null)
           setRenderedTruckCount(0)
           setLoading(false)
+          setLoadingProgress(null)
         }
       )
     } else {
       setLoadedFileName(null)
-      setStats(null)
       setRenderedTruckCount(0)
+      setLoadingProgress(null)
       ifcModelRef.current = null
     }
 
@@ -1153,13 +1193,12 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
     truckMarkersRef.current = []
     truckMarkerDataRef.current.clear()
     setRenderedTruckCount(0)
-    setFleetStats({ enPlanta: 0, despachando: 0, recepcion: 0, transile: 0 })
     onFleetChange?.([])
 
     const box = new THREE.Box3().setFromObject(model)
     const size = box.getSize(new THREE.Vector3())
     const yOffset = Math.max(size.y * 0.08, 1.2)
-    const markerScale = Math.max(size.length() * 0.032, 2.8)
+    const markerScale = Math.max(size.length() * 0.0224, 1.96)
     const spreadRadius = Math.max(size.length() * 0.01, 0.4)
     const fallbackNormalizedSlots = [
       { x: 0.16, z: 0.28 },
@@ -1190,9 +1229,6 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
         }))
 
     const sprites: THREE.Sprite[] = []
-    let recepcion = 0
-    let despachando = 0
-    let transile = 0
     const generatedFleet: IfcSelectedTruckInfo[] = []
     for (let i = 0; i < FLEET_TRUCK_COUNT; i++) {
       const slotIndex = i % slotDefinitions.length
@@ -1207,10 +1243,6 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
       const py = basePoint.y + yOffset
 
       const info = buildSimTruckInfo(i, locationExpressId)
-      const def = CIRCUITS.find((c) => c.plant === "RICARDONE" && c.prefix === info.assignedCircuitPrefix)
-      if (def?.group === "DESCARGA") recepcion += 1
-      else if (def?.group === "CARGA") despachando += 1
-      else transile += 1
       const texture = createTruckCircleTexture(info.plate, info.operationType)
       const material = new THREE.SpriteMaterial({
         map: texture,
@@ -1230,7 +1262,6 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
     }
     truckMarkersRef.current = sprites
     setRenderedTruckCount(sprites.length)
-    setFleetStats({ enPlanta: sprites.length, despachando, recepcion, transile })
     onFleetChange?.(generatedFleet)
 
     return () => {
@@ -1243,7 +1274,6 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
       truckMarkersRef.current = []
       truckMarkerDataRef.current.clear()
       setRenderedTruckCount(0)
-      setFleetStats({ enPlanta: 0, despachando: 0, recepcion: 0, transile: 0 })
       onFleetChange?.([])
     }
   }, [elementTagsById, modelLoadVersion, onFleetChange])
@@ -1294,8 +1324,27 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
     <div className="h-full w-full relative bg-white">
       <div ref={containerRef} className="h-full w-full" />
       {loading && (
-        <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center text-sm text-slate-700">
-          Cargando IFC...
+        <div className="absolute inset-0 z-20 bg-white/70 backdrop-blur-[1px]">
+          <div className="flex h-full w-full items-center justify-center">
+            <div className="w-[320px] rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-lg">
+              <div className="flex items-center gap-3">
+                <div className="h-7 w-7 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600" />
+                <div>
+                  <div className="text-sm font-semibold text-slate-800">Cargando modelo IFC</div>
+                  <div className="text-xs text-slate-500">{loadingStage}</div>
+                </div>
+              </div>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className="h-full rounded-full bg-blue-600 transition-all duration-200"
+                  style={{ width: `${loadingProgress ?? 35}%` }}
+                />
+              </div>
+              <div className="mt-1 text-[11px] text-slate-500">
+                {loadingProgress != null ? `${loadingProgress}%` : "Preparando visualizacion..."}
+              </div>
+            </div>
+          </div>
         </div>
       )}
       {!file && (
@@ -1303,20 +1352,20 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
           Seleccioná un archivo `.ifc` para visualizarlo.
         </div>
       )}
-      {loadedFileName && !loading && (
-        <div className="absolute left-1/2 top-2 z-10 -translate-x-1/2 rounded-xl border border-slate-200/80 bg-white/92 px-3 py-1.5 text-[11px] text-slate-700 shadow-lg backdrop-blur-sm">
-          <span className="font-semibold text-slate-900">En planta:</span> {fleetStats.enPlanta}
-          <span className="mx-2 text-slate-300">|</span>
-          <span className="font-semibold text-emerald-700">Despachando:</span> {fleetStats.despachando}
-          <span className="mx-2 text-slate-300">|</span>
-          <span className="font-semibold text-sky-700">Recepcion:</span> {fleetStats.recepcion}
-          <span className="mx-2 text-slate-300">|</span>
-          <span className="font-semibold text-violet-700">Transile:</span> {fleetStats.transile}
-        </div>
-      )}
       {error && (
         <div className="absolute right-3 top-3 max-w-[340px] rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700 shadow-sm">
           {error}
+        </div>
+      )}
+      {(metadataStatus === "loading" || metadataStatus === "error") && (
+        <div
+          className={`absolute right-3 top-3 z-10 rounded-md border px-3 py-1.5 text-[11px] shadow-sm ${
+            metadataStatus === "loading"
+              ? "border-blue-200 bg-blue-50 text-blue-700"
+              : "border-amber-200 bg-amber-50 text-amber-700"
+          }`}
+        >
+          {metadataStatus === "loading" ? "Analizando metadata IFC..." : "Metadata IFC no disponible"}
         </div>
       )}
       {selectedSimTruck && (
@@ -1329,6 +1378,12 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
           >
             ×
           </button>
+          {truckPopupLoading && (
+            <div className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[11px] font-semibold text-blue-700">
+              <span className="h-3 w-3 animate-spin rounded-full border-2 border-blue-300 border-t-blue-700" />
+              Cargando trazabilidad...
+            </div>
+          )}
           <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_430px]">
             <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-xs text-slate-700">
               <div className="col-span-2">
