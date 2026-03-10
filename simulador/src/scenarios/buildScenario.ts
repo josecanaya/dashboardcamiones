@@ -1,0 +1,417 @@
+import { CAMERA_BY_PLANT_AND_SECTOR } from "../data/cameras.js";
+import { CIRCUIT_BY_PLANT_AND_CODE } from "../data/circuits.js";
+import { TRUCKS } from "../data/trucks.js";
+import type { TruckCatalogItem } from "../types/contracts.js";
+import { ScenarioName } from "../types/contracts.js";
+
+export interface ScenarioStep {
+  truckId: string;
+  cameraId: string;
+  snapshotTime: string;
+}
+
+export interface BuildScenarioResult {
+  scenario: ScenarioName;
+  steps: ScenarioStep[];
+  trucks?: TruckCatalogItem[];
+}
+
+/** Promedio estadía ~9h. Intervalos variables 50-100 min entre sectores. */
+const AVG_STAY_MINUTES = 9 * 60;
+const MIN_INTERVAL = 50;
+const MAX_INTERVAL = 100;
+
+/** Semilla para variación determinística por truck */
+function seededRandom(seed: number): number {
+  const x = Math.sin(seed * 9999) * 10000;
+  return x - Math.floor(x);
+}
+
+function plusMinutes(base: Date, minutes: number): Date {
+  return new Date(base.getTime() + minutes * 60_000);
+}
+
+function toStep(truckId: string, plant: string, sector: string, time: Date): ScenarioStep {
+  const camera = CAMERA_BY_PLANT_AND_SECTOR.get(`${plant}:${sector}`);
+  if (!camera) throw new Error(`No existe camara para ${plant}:${sector}`);
+  return { truckId, cameraId: camera.id, snapshotTime: time.toISOString() };
+}
+
+/**
+ * Genera pasos con tiempos realistas: estadía ~9h, entrada repartida en la semana.
+ */
+function makeRouteSteps(
+  truckId: string,
+  plant: string,
+  sequence: string[],
+  entryDate: Date,
+  intervalMinutes: number
+): ScenarioStep[] {
+  const steps: ScenarioStep[] = [];
+  let t = new Date(entryDate);
+  for (const sector of sequence) {
+    steps.push(toStep(truckId, plant, sector, t));
+    t = plusMinutes(t, intervalMinutes);
+  }
+  return steps;
+}
+
+/** Fecha base: hace 7 días para que "Última semana" muestre datos */
+function getBaseDate(): Date {
+  const d = new Date();
+  d.setDate(d.getDate() - 7);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function buildNormalScenario(): ScenarioStep[] {
+  const allSteps: ScenarioStep[] = [];
+  const base = getBaseDate();
+
+  TRUCKS.forEach((truck, idx) => {
+    const circuit = CIRCUIT_BY_PLANT_AND_CODE.get(`${truck.plant}:${truck.circuitCode}`);
+    if (!circuit) return;
+
+    const r = seededRandom(idx);
+    const dayOffset = Math.floor(r * 7);
+    const hourEntry = Math.floor(r * 1000) % 24;
+    const entryDate = plusMinutes(plusMinutes(base, dayOffset * 24 * 60), hourEntry * 60);
+
+    const interval = MIN_INTERVAL + Math.floor(seededRandom(idx + 1) * (MAX_INTERVAL - MIN_INTERVAL));
+
+    const tipo = idx % 10;
+    let sequence: string[];
+
+    if (tipo < 6) {
+      sequence = circuit.sectorSequence;
+    } else if (tipo < 8) {
+      sequence = circuit.sectorSequence.slice(0, circuit.sectorSequence.length - 1);
+    } else if (tipo < 9) {
+      sequence = circuit.sectorSequence.filter((s) => s !== "S4");
+    } else {
+      const dup = [...circuit.sectorSequence];
+      dup.splice(5, 0, "S6");
+      sequence = dup;
+    }
+
+    allSteps.push(...makeRouteSteps(truck.truckId, truck.plant, sequence, entryDate, interval));
+  });
+
+  return allSteps;
+}
+
+function buildAnomaliesScenario(): ScenarioStep[] {
+  const steps: ScenarioStep[] = [];
+  const base = getBaseDate();
+
+  const anomalyTrucks = TRUCKS.slice(0, 30);
+  anomalyTrucks.forEach((truck, idx) => {
+    const circuit = CIRCUIT_BY_PLANT_AND_CODE.get(`${truck.plant}:${truck.circuitCode}`);
+    if (!circuit) return;
+
+    const dayOffset = idx % 7;
+    const hourEntry = (idx * 3) % 24;
+    const entryDate = plusMinutes(plusMinutes(base, dayOffset * 24 * 60), hourEntry * 60);
+    const interval = 60 + (idx % 40);
+
+    const tipo = idx % 5;
+    let sequence: string[];
+    if (tipo === 0) {
+      sequence = circuit.sectorSequence.slice(0, 3);
+    } else if (tipo === 1) {
+      sequence = circuit.sectorSequence.filter((s) => s !== "S4");
+    } else if (tipo === 2) {
+      const dup = [...circuit.sectorSequence];
+      dup.splice(4, 0, "S6", "S6");
+      sequence = dup;
+    } else if (tipo === 3) {
+      sequence = circuit.sectorSequence.slice(0, circuit.sectorSequence.length - 2);
+    } else {
+      sequence = circuit.sectorSequence;
+    }
+
+    steps.push(...makeRouteSteps(truck.truckId, truck.plant, sequence, entryDate, interval));
+  });
+
+  return steps;
+}
+
+function buildHighLoadScenario(): ScenarioStep[] {
+  const steps: ScenarioStep[] = [];
+  const base = getBaseDate();
+
+  TRUCKS.forEach((truck, idx) => {
+    const circuit = CIRCUIT_BY_PLANT_AND_CODE.get(`${truck.plant}:${truck.circuitCode}`);
+    if (!circuit) return;
+
+    const r = seededRandom(idx);
+    const dayOffset = Math.floor(r * 7);
+    const hourEntry = Math.floor(r * 500) % 24;
+    const entryDate = plusMinutes(plusMinutes(base, dayOffset * 24 * 60), hourEntry * 60);
+    const interval = 55 + Math.floor(seededRandom(idx + 2) * 45);
+
+    const partial = idx % 6 === 0;
+    const sequence = partial
+      ? circuit.sectorSequence.slice(0, circuit.sectorSequence.length - 2)
+      : circuit.sectorSequence;
+
+    steps.push(...makeRouteSteps(truck.truckId, truck.plant, sequence, entryDate, interval));
+  });
+
+  return steps;
+}
+
+/** Día 7, 12:00. Totales semanales: Ricardone 4000, San Lorenzo 3000, Avellaneda 600. Hoy = 1/7. */
+function buildWeekSnapshotScenario(): { steps: ScenarioStep[]; trucks: TruckCatalogItem[] } {
+  const CARGO_TYPES = ["Maiz", "Soja", "Trigo", "Pellet", "Fertilizante", "Harina"];
+  const DRIVERS = ["Perez", "Gomez", "Rios", "Aguirre", "Lopez", "Martinez", "Fernandez", "Garcia"];
+
+  const totalWeek = { Ricardone: 4000, "San Lorenzo": 3000, Avellaneda: 600 };
+  const todayCount = {
+    Ricardone: Math.round(totalWeek.Ricardone / 7),
+    "San Lorenzo": Math.round(totalWeek["San Lorenzo"] / 7),
+    Avellaneda: Math.round(totalWeek.Avellaneda / 7)
+  };
+
+  const ricardoneCircuits: { code: string; pct: number }[] = [
+    { code: "A7", pct: 0.3 },
+    { code: "A1", pct: 0.14 },
+    { code: "A3", pct: 0.14 },
+    { code: "A4", pct: 0.14 },
+    { code: "B1", pct: 0.14 },
+    { code: "B2", pct: 0.14 }
+  ];
+  const slCircuits: { code: string; pct: number }[] = [
+    { code: "A1", pct: 0.6 },
+    { code: "A3", pct: 0.1 },
+    { code: "A4", pct: 0.1 },
+    { code: "B1", pct: 0.1 },
+    { code: "B2", pct: 0.1 }
+  ];
+  const avCircuits: { code: string; pct: number }[] = [
+    { code: "A1", pct: 0.6 },
+    { code: "A3", pct: 0.1 },
+    { code: "A4", pct: 0.1 },
+    { code: "B1", pct: 0.1 },
+    { code: "B2", pct: 0.1 }
+  ];
+
+  function plateFor(plantIdx: number, idx: number): string {
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const n = plantIdx * 10000 + idx;
+    const num = String((n % 1000) + 1).padStart(3, "0");
+    const p = Math.floor(n / 1000);
+    const l1 = letters[p % 26];
+    const l2 = letters[Math.floor(p / 26) % 26];
+    const l3 = letters[Math.floor(p / 676) % 26];
+    const suf = letters[n % 26] + letters[Math.floor(n / 26) % 26];
+    return `${l1}${l2}${l3}${num}${suf}`;
+  }
+
+  function buildTrucksForPlant(
+    plant: string,
+    plantIdx: number,
+    count: number,
+    dist: { code: string; pct: number }[]
+  ): TruckCatalogItem[] {
+    const trucks: TruckCatalogItem[] = [];
+    let offset = 0;
+    for (const { code, pct } of dist) {
+      const n = Math.round(count * pct);
+      for (let i = 0; i < n; i++) {
+        trucks.push({
+          truckId: `WS-${plantIdx}-${String(offset + i + 1).padStart(5, "0")}`,
+          plate: plateFor(plantIdx, offset + i),
+          cargoType: CARGO_TYPES[(offset + i) % CARGO_TYPES.length],
+          driver: (offset + i) % 3 === 0 ? DRIVERS[(offset + i) % DRIVERS.length] : undefined,
+          circuitCode: code,
+          plant
+        });
+      }
+      offset += n;
+    }
+    return trucks;
+  }
+
+  const trucks: TruckCatalogItem[] = [
+    ...buildTrucksForPlant("Ricardone", 0, todayCount.Ricardone, ricardoneCircuits),
+    ...buildTrucksForPlant("San Lorenzo", 1, todayCount["San Lorenzo"], slCircuits),
+    ...buildTrucksForPlant("Avellaneda", 2, todayCount.Avellaneda, avCircuits)
+  ];
+
+  const day7Start = new Date();
+  day7Start.setHours(0, 0, 0, 0);
+
+  const steps: ScenarioStep[] = [];
+  const MIN_INTERVAL = 50;
+  const MAX_INTERVAL = 100;
+
+  trucks.forEach((truck, idx) => {
+    const circuit = CIRCUIT_BY_PLANT_AND_CODE.get(`${truck.plant}:${truck.circuitCode}`);
+    if (!circuit) return;
+
+    const r = seededRandom(idx);
+    const hourEntry = Math.floor(r * 1000) % 12;
+    const entryDate = plusMinutes(day7Start, hourEntry * 60);
+    const interval = MIN_INTERVAL + Math.floor(seededRandom(idx + 1) * (MAX_INTERVAL - MIN_INTERVAL));
+
+    const completed = idx % 5 !== 4;
+    const sequence = completed
+      ? circuit.sectorSequence
+      : circuit.sectorSequence.slice(0, Math.max(5, circuit.sectorSequence.length - 2));
+
+    steps.push(...makeRouteSteps(truck.truckId, truck.plant, sequence, entryDate, interval));
+  });
+
+  steps.sort((a, b) => new Date(a.snapshotTime).getTime() - new Date(b.snapshotTime).getTime());
+  return { steps, trucks };
+}
+
+/** Simulación realista del mes de marzo completo. Promedio/día: Ricardone 700, San Lorenzo 500, Avellaneda 250. */
+function buildMarchFullScenario(): { steps: ScenarioStep[]; trucks: TruckCatalogItem[] } {
+  const CARGO_TYPES = ["Maiz", "Soja", "Trigo", "Pellet", "Fertilizante", "Harina"];
+  const DRIVERS = ["Perez", "Gomez", "Rios", "Aguirre", "Lopez", "Martinez", "Fernandez", "Garcia", "Rodriguez", "Diaz"];
+
+  const perDay = { Ricardone: 700, "San Lorenzo": 500, Avellaneda: 250 };
+  const daysInMarch = 31;
+  const totalMonth = {
+    Ricardone: perDay.Ricardone * daysInMarch,
+    "San Lorenzo": perDay["San Lorenzo"] * daysInMarch,
+    Avellaneda: perDay.Avellaneda * daysInMarch
+  };
+
+  const ricardoneCircuits: { code: string; pct: number }[] = [
+    { code: "A7", pct: 0.3 },
+    { code: "A1", pct: 0.14 },
+    { code: "A3", pct: 0.14 },
+    { code: "A4", pct: 0.14 },
+    { code: "B1", pct: 0.14 },
+    { code: "B2", pct: 0.14 }
+  ];
+  const slCircuits: { code: string; pct: number }[] = [
+    { code: "A1", pct: 0.6 },
+    { code: "A3", pct: 0.1 },
+    { code: "A4", pct: 0.1 },
+    { code: "B1", pct: 0.1 },
+    { code: "B2", pct: 0.1 }
+  ];
+  const avCircuits: { code: string; pct: number }[] = [
+    { code: "A1", pct: 0.6 },
+    { code: "A3", pct: 0.1 },
+    { code: "A4", pct: 0.1 },
+    { code: "B1", pct: 0.1 },
+    { code: "B2", pct: 0.1 }
+  ];
+
+  function plateFor(plantIdx: number, globalIdx: number): string {
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const n = plantIdx * 100000 + globalIdx;
+    const num = String((n % 1000) + 1).padStart(3, "0");
+    const p = Math.floor(n / 1000);
+    const l1 = letters[p % 26];
+    const l2 = letters[Math.floor(p / 26) % 26];
+    const l3 = letters[Math.floor(p / 676) % 26];
+    const suf = letters[n % 26] + letters[Math.floor(n / 26) % 26];
+    return `${l1}${l2}${l3}${num}${suf}`;
+  }
+
+  function buildTrucksForPlant(
+    plant: string,
+    plantIdx: number,
+    count: number,
+    dist: { code: string; pct: number }[]
+  ): TruckCatalogItem[] {
+    const trucks: TruckCatalogItem[] = [];
+    let offset = 0;
+    for (const { code, pct } of dist) {
+      const n = Math.round(count * pct);
+      for (let i = 0; i < n; i++) {
+        trucks.push({
+          truckId: `MF-${plantIdx}-${String(offset + i + 1).padStart(6, "0")}`,
+          plate: plateFor(plantIdx, offset + i),
+          cargoType: CARGO_TYPES[(offset + i) % CARGO_TYPES.length],
+          driver: (offset + i) % 3 === 0 ? DRIVERS[(offset + i) % DRIVERS.length] : undefined,
+          circuitCode: code,
+          plant
+        });
+      }
+      offset += n;
+    }
+    return trucks;
+  }
+
+  const trucks: TruckCatalogItem[] = [
+    ...buildTrucksForPlant("Ricardone", 0, totalMonth.Ricardone, ricardoneCircuits),
+    ...buildTrucksForPlant("San Lorenzo", 1, totalMonth["San Lorenzo"], slCircuits),
+    ...buildTrucksForPlant("Avellaneda", 2, totalMonth.Avellaneda, avCircuits)
+  ];
+
+  const marchStart = new Date(2026, 2, 1, 0, 0, 0, 0);
+
+  const steps: ScenarioStep[] = [];
+  const MIN_INTERVAL = 50;
+  const MAX_INTERVAL = 100;
+
+  let tripIdx = 0;
+  for (const plant of ["Ricardone", "San Lorenzo", "Avellaneda"] as const) {
+    const dailyCount = perDay[plant];
+    const plantTrucks = trucks.filter((t) => t.plant === plant);
+
+    for (let day = 0; day < daysInMarch; day++) {
+      const dayStart = new Date(marchStart);
+      dayStart.setDate(dayStart.getDate() + day);
+
+      for (let i = 0; i < dailyCount; i++) {
+        const truck = plantTrucks[day * dailyCount + i];
+        if (!truck) break;
+        const circuit = CIRCUIT_BY_PLANT_AND_CODE.get(`${truck.plant}:${truck.circuitCode}`);
+        if (!circuit) continue;
+
+        const r = seededRandom(tripIdx);
+        const hourEntry = Math.floor(r * 1000) % 24;
+        const minuteEntry = Math.floor(seededRandom(tripIdx + 1) * 60);
+        const entryDate = plusMinutes(plusMinutes(dayStart, hourEntry * 60), minuteEntry);
+        const interval = MIN_INTERVAL + Math.floor(seededRandom(tripIdx + 2) * (MAX_INTERVAL - MIN_INTERVAL));
+
+        const tipo = tripIdx % 10;
+        let sequence: string[];
+        if (tipo < 7) {
+          sequence = circuit.sectorSequence;
+        } else if (tipo < 9) {
+          sequence = circuit.sectorSequence.slice(0, circuit.sectorSequence.length - 1);
+        } else {
+          sequence = circuit.sectorSequence.filter((s) => s !== "S4");
+        }
+
+        steps.push(...makeRouteSteps(truck.truckId, truck.plant, sequence, entryDate, interval));
+        tripIdx++;
+      }
+    }
+  }
+
+  steps.sort((a, b) => new Date(a.snapshotTime).getTime() - new Date(b.snapshotTime).getTime());
+  return { steps, trucks };
+}
+
+export function buildScenario(scenario: ScenarioName): BuildScenarioResult {
+  if (scenario === "week_snapshot") {
+    const { steps, trucks } = buildWeekSnapshotScenario();
+    return { scenario, steps, trucks };
+  }
+  if (scenario === "march_full") {
+    const { steps, trucks } = buildMarchFullScenario();
+    return { scenario, steps, trucks };
+  }
+
+  let steps: ScenarioStep[];
+  if (scenario === "anomalies") {
+    steps = buildAnomaliesScenario();
+  } else if (scenario === "high-load") {
+    steps = buildHighLoadScenario();
+  } else {
+    steps = buildNormalScenario();
+  }
+
+  steps.sort((a, b) => new Date(a.snapshotTime).getTime() - new Date(b.snapshotTime).getTime());
+  return { scenario, steps };
+}

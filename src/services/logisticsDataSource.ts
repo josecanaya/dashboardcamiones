@@ -1,0 +1,322 @@
+import type { SiteId } from '../domain/sites'
+import type { AlertSeverity, AlertStatus, CameraEventRaw, HistoricalTrip, OperationalAlert, TruckInPlant } from '../domain/logistics'
+
+export type RawCameraEventDebug = {
+  eventType?: string
+  snapshotTime?: string
+  plateNo?: string
+  region?: string
+  targetPlateSize?: string
+  logo?: string
+  vehicleType?: string
+  imageUrl?: string
+}
+
+type ExternalEnrichedEvent = {
+  eventId?: string
+  snapshotTime?: string
+  plateNo?: string
+  plant?: string
+  cameraId?: string
+  sector?: string
+  inferredTruckId?: string
+  inferredCircuitCode?: string
+  imageUrl?: string
+  region?: string
+  logo?: string
+  vehicleType?: string
+}
+
+type ExternalTruckInPlant = {
+  truckId?: string
+  plate?: string
+  plant?: string
+  circuitCode?: string
+  currentSector?: string
+  currentCameraId?: string
+  lastSeenAt?: string
+  visitedSectors?: string[]
+}
+
+type ExternalHistoricalTrip = {
+  tripId?: string
+  truckId?: string
+  plate?: string
+  plant?: string
+  inferredCircuitCode?: string
+  startedAt?: string
+  endedAt?: string
+  /** Fecha de egreso YYYY-MM-DD para filtrado por día/semana/mes */
+  fecha?: string
+  fechaDia?: number
+  fechaMes?: number
+  fechaAnio?: number
+  visitedSectors?: string[]
+  expectedSequence?: string[]
+  completed?: boolean
+  durationMinutes?: number
+  classification?: 'VALIDADO' | 'CON_OBSERVACIONES' | 'ANOMALO'
+}
+
+type ExternalAlert = {
+  alertId?: string
+  type?: string
+  severity?: string
+  detectedAt?: string
+  plant?: string
+  truckId?: string
+  plate?: string
+  message?: string
+  context?: {
+    expectedEnd?: string
+    currentSector?: string
+    visitedSectors?: string[]
+  }
+}
+
+interface DataSourceConfig {
+  basePath: string
+  scenario: string
+}
+
+let runtimeConfig: Partial<DataSourceConfig> = {}
+
+export interface LogisticsSnapshot {
+  rawCameraEvents: RawCameraEventDebug[]
+  enrichedCameraEvents: CameraEventRaw[]
+  trucksInPlant: TruckInPlant[]
+  historicalTrips: HistoricalTrip[]
+  operationalAlerts: OperationalAlert[]
+  meta: { basePath: string; scenario: string; loadedAt: string }
+}
+
+function getConfig(): DataSourceConfig {
+  const fromStorageBase = typeof window !== 'undefined' ? localStorage.getItem('logistics.mock.basePath') : null
+  const fromStorageScenario = typeof window !== 'undefined' ? localStorage.getItem('logistics.mock.scenario') : null
+  return {
+    basePath: runtimeConfig.basePath || fromStorageBase || '/mock-data',
+    scenario: runtimeConfig.scenario || fromStorageScenario || 'march_full',
+  }
+}
+
+export function configureLogisticsDataSource(config: Partial<DataSourceConfig>) {
+  runtimeConfig = { ...runtimeConfig, ...config }
+}
+
+function toSiteId(value: string | undefined): SiteId {
+  const normalized = (value ?? '').trim().toLowerCase().replace(/\s+/g, '_')
+  if (normalized.includes('san_lorenzo') || normalized.includes('san-lorenzo')) return 'san_lorenzo'
+  if (normalized.includes('avellaneda')) return 'avellaneda'
+  return 'ricardone'
+}
+
+function mapSeverity(value: string | undefined): AlertSeverity {
+  const v = (value ?? '').toLowerCase()
+  if (v === 'critical') return 'CRITICAL'
+  if (v === 'high') return 'HIGH'
+  if (v === 'medium') return 'MEDIUM'
+  return 'LOW'
+}
+
+function mapAlertType(value: string | undefined): OperationalAlert['type'] {
+  const v = (value ?? '').toLowerCase()
+  if (v.includes('missing_critical_camera')) return 'FALTA_CAMARA_CRITICA'
+  if (v.includes('out_of_sequence')) return 'FUERA_CIRCUITO'
+  if (v.includes('incomplete')) return 'CONFLICTO_CIRCUITO_CAMARA'
+  if (v.includes('disappearance')) return 'PERDIDA_TRAZABILIDAD'
+  if (v.includes('double')) return 'DOBLE_PASO_NO_ESPERADO'
+  return 'SIN_ACTUALIZACION'
+}
+
+function mapAlertStatus(): AlertStatus {
+  return 'OPEN'
+}
+
+async function fetchJson<T>(url: string): Promise<T> {
+  const response = await fetch(url, { cache: 'no-store' })
+  if (!response.ok) throw new Error(`No se pudo leer ${url}`)
+  return (await response.json()) as T
+}
+
+export async function getRawCameraEvents(): Promise<RawCameraEventDebug[]> {
+  const { basePath, scenario } = getConfig()
+  const payload = await fetchJson<{ events?: RawCameraEventDebug[] }>(`${basePath}/${scenario}/raw_camera_events.json`)
+  return payload.events ?? []
+}
+
+export async function getEnrichedCameraEvents(siteId?: SiteId): Promise<CameraEventRaw[]> {
+  const { basePath, scenario } = getConfig()
+  const payload = await fetchJson<{ events?: ExternalEnrichedEvent[] }>(`${basePath}/${scenario}/camera_events_enriched.json`)
+  const now = new Date().toISOString()
+  return (payload.events ?? [])
+    .map((event, idx) => ({
+      eventId: event.eventId ?? `enr-${idx}`,
+      timestamp: event.snapshotTime ?? now,
+      cameraCode: event.cameraId ?? 'CAM_UNKNOWN',
+      sectorId: event.sector ?? 'S?',
+      camionId: event.inferredTruckId ?? `truck-${idx}`,
+      plate: event.plateNo ?? 'N/A',
+      confidence: 0.9,
+      imageUrl: event.imageUrl,
+      siteId: toSiteId(event.plant),
+    }))
+    .filter((event) => !siteId || event.siteId === siteId)
+}
+
+/** Sectores de egreso por planta: circuito cerrado cuando el camión pasa por aquí */
+const EGRESO_SECTORS_BY_SITE: Record<SiteId, Set<string>> = {
+  ricardone: new Set(['S3', 'S10']),
+  san_lorenzo: new Set(['S7']),
+  avellaneda: new Set(['S3', 'S10']),
+}
+
+/** Sectores para distribuir camiones en el visor (evita S3/S10 egreso Ricardone, S7 egreso San Lorenzo) */
+const SECTORES_PARA_DISTRIBUIR = ['S1', 'S2', 'S4', 'S5', 'S6', 'S8', 'S9'] as const
+
+/** Ventana en ms para considerar "activo en planta": solo camiones vistos recientemente */
+const ACTIVE_WINDOW_MS = 4 * 60 * 60 * 1000 // 4 horas
+
+export async function getTrucksInPlant(siteId?: SiteId): Promise<TruckInPlant[]> {
+  const { basePath, scenario } = getConfig()
+  const [payload, enriched] = await Promise.all([
+    fetchJson<{ data?: ExternalTruckInPlant[]; generatedAt?: string }>(`${basePath}/${scenario}/camiones_en_planta.json`),
+    fetchJson<{ events?: ExternalEnrichedEvent[] }>(`${basePath}/${scenario}/camera_events_enriched.json`),
+  ])
+
+  const generatedAt = payload.generatedAt ? new Date(payload.generatedAt).getTime() : Date.now()
+  const cutoffMs = generatedAt - ACTIVE_WINDOW_MS
+
+  const enrichedByTruck = new Map<string, ExternalEnrichedEvent[]>()
+  for (const event of enriched.events ?? []) {
+    const truckId = event.inferredTruckId ?? ''
+    if (!truckId) continue
+    if (!enrichedByTruck.has(truckId)) enrichedByTruck.set(truckId, [])
+    enrichedByTruck.get(truckId)!.push(event)
+  }
+
+  const rawData = (payload.data ?? []).filter((truck) => {
+    const lastSeen = truck.lastSeenAt ? new Date(truck.lastSeenAt).getTime() : 0
+    if (lastSeen < cutoffMs) return false
+    const lastSector = truck.visitedSectors?.slice(-1)[0] ?? truck.currentSector
+    const truckSite = toSiteId(truck.plant)
+    const egresoSectors = EGRESO_SECTORS_BY_SITE[truckSite]
+    if (lastSector && egresoSectors?.has(lastSector)) return false
+    return true
+  })
+
+  const mapped = rawData.map((truck, idx) => {
+    const truckSite = toSiteId(truck.plant)
+    const relatedEvents = [...(enrichedByTruck.get(truck.truckId ?? '') ?? [])].sort((a, b) =>
+      new Date(a.snapshotTime ?? 0).getTime() - new Date(b.snapshotTime ?? 0).getTime()
+    )
+    const firstSeen = relatedEvents[0]?.snapshotTime ?? truck.lastSeenAt ?? new Date().toISOString()
+    const lastSeen = relatedEvents[relatedEvents.length - 1]?.snapshotTime ?? truck.lastSeenAt ?? new Date().toISOString()
+    const sectorIdx = idx % SECTORES_PARA_DISTRIBUIR.length
+    const sectorAsignado = SECTORES_PARA_DISTRIBUIR[sectorIdx]
+    const camaraAsignada = truckSite === 'san_lorenzo' ? `CAM_SL_${sectorAsignado}_01` : `CAM_RIC_${sectorAsignado}_01`
+    const ultimoEvento = relatedEvents[relatedEvents.length - 1]
+    const ultimoEventoCamara = ultimoEvento
+      ? {
+          hora: ultimoEvento.snapshotTime ?? lastSeen,
+          patente: ultimoEvento.plateNo ?? truck.plate ?? 'N/A',
+          region: ultimoEvento.region ?? 'N/A',
+          logo: ultimoEvento.logo ?? 'N/A',
+          vehicleType: ultimoEvento.vehicleType ?? 'N/A',
+        }
+      : undefined
+    return {
+      camionId: truck.truckId ?? `truck-${idx}`,
+      plate: truck.plate ?? `SIM-${idx + 1}`,
+      circuitoEstimado: truck.circuitCode ?? 'N/A',
+      circuitoValidado: truck.circuitCode ?? undefined,
+      sectorActual: sectorAsignado,
+      camaraActual: camaraAsignada,
+      ingresoAt: firstSeen,
+      ultimoEventoAt: lastSeen,
+      secuenciaParcialCamaras: [camaraAsignada],
+      secuenciaParcialSectores: [sectorAsignado],
+      estadoOperativo: 'EN_CIRCULACION' as const,
+      activeAlerts: [],
+      siteId: truckSite,
+      ultimaFotoUrl: '/ejemplo.png',
+      ultimoEventoCamara,
+    }
+  })
+
+  return mapped.filter((truck) => !siteId || truck.siteId === siteId)
+}
+
+export async function getHistoricalTrips(siteId?: SiteId): Promise<HistoricalTrip[]> {
+  const { basePath, scenario } = getConfig()
+  const payload = await fetchJson<{ data?: ExternalHistoricalTrip[] }>(`${basePath}/${scenario}/historico_recorridos.json`)
+  const mapped = (payload.data ?? []).map((trip, idx) => {
+    const egresoAt = trip.endedAt ?? new Date().toISOString()
+    const egresoDate = new Date(egresoAt)
+    const fecha = trip.fecha ?? `${egresoDate.getUTCFullYear()}-${String(egresoDate.getUTCMonth() + 1).padStart(2, '0')}-${String(egresoDate.getUTCDate()).padStart(2, '0')}`
+    const fechaDia = trip.fechaDia ?? egresoDate.getUTCDate()
+    const fechaMes = trip.fechaMes ?? egresoDate.getUTCMonth() + 1
+    const fechaAnio = trip.fechaAnio ?? egresoDate.getUTCFullYear()
+    return {
+      tripId: trip.tripId ?? `trip-${idx}`,
+      camionId: trip.truckId ?? `truck-${idx}`,
+      plate: trip.plate ?? 'N/A',
+      circuitoFinal: trip.inferredCircuitCode ?? 'N/A',
+      ingresoAt: trip.startedAt ?? new Date().toISOString(),
+      egresoAt,
+      fecha,
+      fechaDia,
+      fechaMes,
+      fechaAnio,
+      durationMinutes: trip.durationMinutes ?? 0,
+      secuenciaCamaras: (trip.expectedSequence ?? []).map((sector) => `CAM_${sector}`),
+      secuenciaSectores: trip.visitedSectors ?? [],
+      alerts: [],
+      estadoFinal: (trip.classification ?? (trip.completed ? 'VALIDADO' : 'CON_OBSERVACIONES')) as 'VALIDADO' | 'CON_OBSERVACIONES' | 'ANOMALO',
+      siteId: toSiteId(trip.plant),
+    }
+  })
+  return mapped.filter((trip) => !siteId || trip.siteId === siteId)
+}
+
+export async function getOperationalAlerts(siteId?: SiteId): Promise<OperationalAlert[]> {
+  const { basePath, scenario } = getConfig()
+  const payload = await fetchJson<{ data?: ExternalAlert[] }>(`${basePath}/${scenario}/alertas_operativas.json`)
+  const now = new Date().toISOString()
+  const mapped = (payload.data ?? []).map((alert, idx) => ({
+    alertId: alert.alertId ?? `alert-${idx}`,
+    type: mapAlertType(alert.type),
+    severity: mapSeverity(alert.severity),
+    status: mapAlertStatus(),
+    createdAt: alert.detectedAt ?? now,
+    updatedAt: alert.detectedAt ?? now,
+    camionId: alert.truckId ?? `truck-${idx}`,
+    plate: alert.plate ?? 'N/A',
+    circuitoEsperado: alert.context?.expectedEnd,
+    circuitoObservado: alert.context?.currentSector,
+    sectorId: alert.context?.currentSector,
+    cameraCode: undefined,
+    elapsedMinutes: Math.max(0, Math.floor((Date.now() - new Date(alert.detectedAt ?? now).getTime()) / 60000)),
+    resolutionNote: alert.message,
+    siteId: toSiteId(alert.plant),
+  }))
+  return mapped.filter((alert) => !siteId || alert.siteId === siteId)
+}
+
+export async function loadLogisticsSnapshot(siteId?: SiteId): Promise<LogisticsSnapshot> {
+  const { basePath, scenario } = getConfig()
+  const [rawCameraEvents, enrichedCameraEvents, trucksInPlant, historicalTrips, operationalAlerts] = await Promise.all([
+    getRawCameraEvents(),
+    getEnrichedCameraEvents(siteId),
+    getTrucksInPlant(siteId),
+    getHistoricalTrips(siteId),
+    getOperationalAlerts(siteId),
+  ])
+  return {
+    rawCameraEvents,
+    enrichedCameraEvents,
+    trucksInPlant,
+    historicalTrips,
+    operationalAlerts,
+    meta: { basePath, scenario, loadedAt: new Date().toISOString() },
+  }
+}

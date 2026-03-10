@@ -1,0 +1,4996 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-03-10T15:00:00.000Z",
+  "scenario": "week_snapshot",
+  "data": [
+    {
+      "alertId": "alt-0001",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00325",
+      "plate": "AAA325MM",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0002",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00325",
+      "plate": "AAA325MM",
+      "message": "Sin detecciones de camara por 380 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T08:40:00.000Z",
+        "minutesWithoutSignal": 380
+      }
+    },
+    {
+      "alertId": "alt-0003",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00440",
+      "plate": "AAA440XQ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0004",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00440",
+      "plate": "AAA440XQ",
+      "message": "Sin detecciones de camara por 216 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T11:24:00.000Z",
+        "minutesWithoutSignal": 216
+      }
+    },
+    {
+      "alertId": "alt-0005",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00480",
+      "plate": "AAA480LS",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0006",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00480",
+      "plate": "AAA480LS",
+      "message": "Sin detecciones de camara por 336 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T09:24:00.000Z",
+        "minutesWithoutSignal": 336
+      }
+    },
+    {
+      "alertId": "alt-0007",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00510",
+      "plate": "AAA510PT",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0008",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00510",
+      "plate": "AAA510PT",
+      "message": "Sin detecciones de camara por 312 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T09:48:00.000Z",
+        "minutesWithoutSignal": 312
+      }
+    },
+    {
+      "alertId": "alt-0009",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00525",
+      "plate": "AAA525EU",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0010",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00525",
+      "plate": "AAA525EU",
+      "message": "Sin detecciones de camara por 324 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T09:36:00.000Z",
+        "minutesWithoutSignal": 324
+      }
+    },
+    {
+      "alertId": "alt-0011",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00009",
+      "plate": "KAA009YU",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0012",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00009",
+      "plate": "KAA009YU",
+      "message": "Sin detecciones de camara por 350 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T09:10:00.000Z",
+        "minutesWithoutSignal": 350
+      }
+    },
+    {
+      "alertId": "alt-0013",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00044",
+      "plate": "KAA044HW",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0014",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00044",
+      "plate": "KAA044HW",
+      "message": "Sin detecciones de camara por 425 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T07:55:00.000Z",
+        "minutesWithoutSignal": 425
+      }
+    },
+    {
+      "alertId": "alt-0015",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00079",
+      "plate": "KAA079QX",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0016",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00079",
+      "plate": "KAA079QX",
+      "message": "Sin detecciones de camara por 405 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T08:15:00.000Z",
+        "minutesWithoutSignal": 405
+      }
+    },
+    {
+      "alertId": "alt-0017",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00149",
+      "plate": "KAA149IA",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0018",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00149",
+      "plate": "KAA149IA",
+      "message": "Sin detecciones de camara por 350 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T09:10:00.000Z",
+        "minutesWithoutSignal": 350
+      }
+    },
+    {
+      "alertId": "alt-0019",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00269",
+      "plate": "KAA269YE",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0020",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00269",
+      "plate": "KAA269YE",
+      "message": "Sin detecciones de camara por 325 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T09:35:00.000Z",
+        "minutesWithoutSignal": 325
+      }
+    },
+    {
+      "alertId": "alt-0021",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00279",
+      "plate": "KAA279IF",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0022",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00279",
+      "plate": "KAA279IF",
+      "message": "Sin detecciones de camara por 245 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T10:55:00.000Z",
+        "minutesWithoutSignal": 245
+      }
+    },
+    {
+      "alertId": "alt-0023",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00035",
+      "plate": "UAA035OQ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0024",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00035",
+      "plate": "UAA035OQ",
+      "message": "Sin detecciones de camara por 430 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T07:50:00.000Z",
+        "minutesWithoutSignal": 430
+      }
+    },
+    {
+      "alertId": "alt-0025",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00055",
+      "plate": "UAA055IR",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0026",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00055",
+      "plate": "UAA055IR",
+      "message": "Sin detecciones de camara por 360 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T09:00:00.000Z",
+        "minutesWithoutSignal": 360
+      }
+    },
+    {
+      "alertId": "alt-0027",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00235",
+      "plate": "AAA235AJ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0028",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00235",
+      "plate": "AAA235AJ",
+      "message": "Sin detecciones de camara por 205 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T11:35:00.000Z",
+        "minutesWithoutSignal": 205
+      }
+    },
+    {
+      "alertId": "alt-0029",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00330",
+      "plate": "AAA330RM",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0030",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00330",
+      "plate": "AAA330RM",
+      "message": "Sin detecciones de camara por 380 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T08:40:00.000Z",
+        "minutesWithoutSignal": 380
+      }
+    },
+    {
+      "alertId": "alt-0031",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00340",
+      "plate": "AAA340BN",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0032",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00340",
+      "plate": "AAA340BN",
+      "message": "Sin detecciones de camara por 335 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T09:25:00.000Z",
+        "minutesWithoutSignal": 335
+      }
+    },
+    {
+      "alertId": "alt-0033",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00450",
+      "plate": "AAA450HR",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0034",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00450",
+      "plate": "AAA450HR",
+      "message": "Sin detecciones de camara por 348 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T09:12:00.000Z",
+        "minutesWithoutSignal": 348
+      }
+    },
+    {
+      "alertId": "alt-0035",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00530",
+      "plate": "AAA530JU",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0036",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00530",
+      "plate": "AAA530JU",
+      "message": "Sin detecciones de camara por 300 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T10:00:00.000Z",
+        "minutesWithoutSignal": 300
+      }
+    },
+    {
+      "alertId": "alt-0037",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00560",
+      "plate": "AAA560NV",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0038",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00560",
+      "plate": "AAA560NV",
+      "message": "Sin detecciones de camara por 228 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T11:12:00.000Z",
+        "minutesWithoutSignal": 228
+      }
+    },
+    {
+      "alertId": "alt-0039",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00094",
+      "plate": "KAA094FY",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0040",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00094",
+      "plate": "KAA094FY",
+      "message": "Sin detecciones de camara por 370 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T08:50:00.000Z",
+        "minutesWithoutSignal": 370
+      }
+    },
+    {
+      "alertId": "alt-0041",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00139",
+      "plate": "KAA139YZ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0042",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00139",
+      "plate": "KAA139YZ",
+      "message": "Sin detecciones de camara por 230 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T11:10:00.000Z",
+        "minutesWithoutSignal": 230
+      }
+    },
+    {
+      "alertId": "alt-0043",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00369",
+      "plate": "KAA369UI",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0044",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00369",
+      "plate": "KAA369UI",
+      "message": "Sin detecciones de camara por 186 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T11:54:00.000Z",
+        "minutesWithoutSignal": 186
+      }
+    },
+    {
+      "alertId": "alt-0045",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00394",
+      "plate": "KAA394TJ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0046",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00394",
+      "plate": "KAA394TJ",
+      "message": "Sin detecciones de camara por 348 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T09:12:00.000Z",
+        "minutesWithoutSignal": 348
+      }
+    },
+    {
+      "alertId": "alt-0047",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00010",
+      "plate": "UAA010PP",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0048",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00010",
+      "plate": "UAA010PP",
+      "message": "Sin detecciones de camara por 370 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T08:50:00.000Z",
+        "minutesWithoutSignal": 370
+      }
+    },
+    {
+      "alertId": "alt-0049",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00175",
+      "plate": "AAA175SG",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0050",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00175",
+      "plate": "AAA175SG",
+      "message": "Sin detecciones de camara por 325 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T09:35:00.000Z",
+        "minutesWithoutSignal": 325
+      }
+    },
+    {
+      "alertId": "alt-0051",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00190",
+      "plate": "AAA190HH",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0052",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00190",
+      "plate": "AAA190HH",
+      "message": "Sin detecciones de camara por 310 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T09:50:00.000Z",
+        "minutesWithoutSignal": 310
+      }
+    },
+    {
+      "alertId": "alt-0053",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00490",
+      "plate": "AAA490VS",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0054",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00545",
+      "plate": "AAA545YU",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0055",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00545",
+      "plate": "AAA545YU",
+      "message": "Sin detecciones de camara por 132 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:48:00.000Z",
+        "minutesWithoutSignal": 132
+      }
+    },
+    {
+      "alertId": "alt-0056",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00019",
+      "plate": "KAA019IV",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0057",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00019",
+      "plate": "KAA019IV",
+      "message": "Sin detecciones de camara por 215 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T11:25:00.000Z",
+        "minutesWithoutSignal": 215
+      }
+    },
+    {
+      "alertId": "alt-0058",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00054",
+      "plate": "KAA054RW",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0059",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00054",
+      "plate": "KAA054RW",
+      "message": "Sin detecciones de camara por 135 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:45:00.000Z",
+        "minutesWithoutSignal": 135
+      }
+    },
+    {
+      "alertId": "alt-0060",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00084",
+      "plate": "KAA084VX",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0061",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00084",
+      "plate": "KAA084VX",
+      "message": "Sin detecciones de camara por 220 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T11:20:00.000Z",
+        "minutesWithoutSignal": 220
+      }
+    },
+    {
+      "alertId": "alt-0062",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00109",
+      "plate": "KAA109UY",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0063",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00109",
+      "plate": "KAA109UY",
+      "message": "Sin detecciones de camara por 185 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T11:55:00.000Z",
+        "minutesWithoutSignal": 185
+      }
+    },
+    {
+      "alertId": "alt-0064",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00229",
+      "plate": "KAA229KD",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0065",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00229",
+      "plate": "KAA229KD",
+      "message": "Sin detecciones de camara por 115 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T13:05:00.000Z",
+        "minutesWithoutSignal": 115
+      }
+    },
+    {
+      "alertId": "alt-0066",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00304",
+      "plate": "KAA304HG",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0067",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00304",
+      "plate": "KAA304HG",
+      "message": "Sin detecciones de camara por 315 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T09:45:00.000Z",
+        "minutesWithoutSignal": 315
+      }
+    },
+    {
+      "alertId": "alt-0068",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00324",
+      "plate": "KAA324BH",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0069",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00324",
+      "plate": "KAA324BH",
+      "message": "Sin detecciones de camara por 315 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T09:45:00.000Z",
+        "minutesWithoutSignal": 315
+      }
+    },
+    {
+      "alertId": "alt-0070",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00344",
+      "plate": "KAA344VH",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0071",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00344",
+      "plate": "KAA344VH",
+      "message": "Sin detecciones de camara por 270 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T10:30:00.000Z",
+        "minutesWithoutSignal": 270
+      }
+    },
+    {
+      "alertId": "alt-0072",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00389",
+      "plate": "KAA389OJ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0073",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00389",
+      "plate": "KAA389OJ",
+      "message": "Sin detecciones de camara por 120 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T13:00:00.000Z",
+        "minutesWithoutSignal": 120
+      }
+    },
+    {
+      "alertId": "alt-0074",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00180",
+      "plate": "AAA180XG",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0075",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00270",
+      "plate": "AAA270JK",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0076",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00270",
+      "plate": "AAA270JK",
+      "message": "Sin detecciones de camara por 130 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:50:00.000Z",
+        "minutesWithoutSignal": 130
+      }
+    },
+    {
+      "alertId": "alt-0077",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00385",
+      "plate": "AAA385UO",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0078",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00385",
+      "plate": "AAA385UO",
+      "message": "Sin detecciones de camara por 220 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T11:20:00.000Z",
+        "minutesWithoutSignal": 220
+      }
+    },
+    {
+      "alertId": "alt-0079",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00400",
+      "plate": "AAA400JP",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0080",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00400",
+      "plate": "AAA400JP",
+      "message": "Sin detecciones de camara por 265 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T10:35:00.000Z",
+        "minutesWithoutSignal": 265
+      }
+    },
+    {
+      "alertId": "alt-0081",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00455",
+      "plate": "AAA455MR",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0082",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00455",
+      "plate": "AAA455MR",
+      "message": "Sin detecciones de camara por 162 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:18:00.000Z",
+        "minutesWithoutSignal": 162
+      }
+    },
+    {
+      "alertId": "alt-0083",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00460",
+      "plate": "AAA460RR",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0084",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00555",
+      "plate": "AAA555IV",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0085",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00555",
+      "plate": "AAA555IV",
+      "message": "Sin detecciones de camara por 138 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:42:00.000Z",
+        "minutesWithoutSignal": 138
+      }
+    },
+    {
+      "alertId": "alt-0086",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00134",
+      "plate": "KAA134TZ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0087",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00134",
+      "plate": "KAA134TZ",
+      "message": "Sin detecciones de camara por 120 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T13:00:00.000Z",
+        "minutesWithoutSignal": 120
+      }
+    },
+    {
+      "alertId": "alt-0088",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00219",
+      "plate": "KAA219AD",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0089",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00219",
+      "plate": "KAA219AD",
+      "message": "Sin detecciones de camara por 165 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:15:00.000Z",
+        "minutesWithoutSignal": 165
+      }
+    },
+    {
+      "alertId": "alt-0090",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00234",
+      "plate": "KAA234PD",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0091",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00234",
+      "plate": "KAA234PD",
+      "message": "Sin detecciones de camara por 130 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:50:00.000Z",
+        "minutesWithoutSignal": 130
+      }
+    },
+    {
+      "alertId": "alt-0092",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00244",
+      "plate": "KAA244ZD",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0093",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00244",
+      "plate": "KAA244ZD",
+      "message": "Sin detecciones de camara por 180 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:00:00.000Z",
+        "minutesWithoutSignal": 180
+      }
+    },
+    {
+      "alertId": "alt-0094",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00379",
+      "plate": "KAA379EJ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0095",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00379",
+      "plate": "KAA379EJ",
+      "message": "Sin detecciones de camara por 168 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:12:00.000Z",
+        "minutesWithoutSignal": 168
+      }
+    },
+    {
+      "alertId": "alt-0096",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00384",
+      "plate": "KAA384JJ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0097",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00384",
+      "plate": "KAA384JJ",
+      "message": "Sin detecciones de camara por 240 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T11:00:00.000Z",
+        "minutesWithoutSignal": 240
+      }
+    },
+    {
+      "alertId": "alt-0098",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00005",
+      "plate": "UAA005KP",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0099",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00020",
+      "plate": "UAA020ZP",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0100",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00020",
+      "plate": "UAA020ZP",
+      "message": "Sin detecciones de camara por 130 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:50:00.000Z",
+        "minutesWithoutSignal": 130
+      }
+    },
+    {
+      "alertId": "alt-0101",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00060",
+      "plate": "UAA060NR",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0102",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00060",
+      "plate": "UAA060NR",
+      "message": "Sin detecciones de camara por 95 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T13:25:00.000Z",
+        "minutesWithoutSignal": 95
+      }
+    },
+    {
+      "alertId": "alt-0103",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00065",
+      "plate": "UAA065SR",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0104",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00065",
+      "plate": "UAA065SR",
+      "message": "Sin detecciones de camara por 180 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:00:00.000Z",
+        "minutesWithoutSignal": 180
+      }
+    },
+    {
+      "alertId": "alt-0105",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00070",
+      "plate": "UAA070XR",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0106",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00070",
+      "plate": "UAA070XR",
+      "message": "Sin detecciones de camara por 70 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T13:50:00.000Z",
+        "minutesWithoutSignal": 70
+      }
+    },
+    {
+      "alertId": "alt-0107",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00230",
+      "plate": "AAA230VI",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0108",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00280",
+      "plate": "AAA280TK",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0109",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00280",
+      "plate": "AAA280TK",
+      "message": "Sin detecciones de camara por 100 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T13:20:00.000Z",
+        "minutesWithoutSignal": 100
+      }
+    },
+    {
+      "alertId": "alt-0110",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00049",
+      "plate": "KAA049MW",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0111",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00049",
+      "plate": "KAA049MW",
+      "message": "Sin detecciones de camara por 125 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:55:00.000Z",
+        "minutesWithoutSignal": 125
+      }
+    },
+    {
+      "alertId": "alt-0112",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00074",
+      "plate": "KAA074LX",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0113",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00074",
+      "plate": "KAA074LX",
+      "message": "Sin detecciones de camara por 145 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:35:00.000Z",
+        "minutesWithoutSignal": 145
+      }
+    },
+    {
+      "alertId": "alt-0114",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00204",
+      "plate": "KAA204LC",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0115",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00284",
+      "plate": "KAA284NF",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0116",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00284",
+      "plate": "KAA284NF",
+      "message": "Sin detecciones de camara por 60 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T14:00:00.000Z",
+        "minutesWithoutSignal": 60
+      }
+    },
+    {
+      "alertId": "alt-0117",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00299",
+      "plate": "KAA299CG",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0118",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00299",
+      "plate": "KAA299CG",
+      "message": "Sin detecciones de camara por 215 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T11:25:00.000Z",
+        "minutesWithoutSignal": 215
+      }
+    },
+    {
+      "alertId": "alt-0119",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00339",
+      "plate": "KAA339QH",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0120",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00359",
+      "plate": "KAA359KI",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0121",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00359",
+      "plate": "KAA359KI",
+      "message": "Sin detecciones de camara por 108 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T13:12:00.000Z",
+        "minutesWithoutSignal": 108
+      }
+    },
+    {
+      "alertId": "alt-0122",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00419",
+      "plate": "KAA419SK",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0123",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00185",
+      "plate": "AAA185CH",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0124",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00355",
+      "plate": "AAA355QN",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0125",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00355",
+      "plate": "AAA355QN",
+      "message": "Sin detecciones de camara por 100 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T13:20:00.000Z",
+        "minutesWithoutSignal": 100
+      }
+    },
+    {
+      "alertId": "alt-0126",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00405",
+      "plate": "AAA405OP",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0127",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00405",
+      "plate": "AAA405OP",
+      "message": "Sin detecciones de camara por 65 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T13:55:00.000Z",
+        "minutesWithoutSignal": 65
+      }
+    },
+    {
+      "alertId": "alt-0128",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00420",
+      "plate": "AAA420DQ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0129",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00465",
+      "plate": "AAA465WR",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0130",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00495",
+      "plate": "AAA495AT",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0131",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00495",
+      "plate": "AAA495AT",
+      "message": "Sin detecciones de camara por 60 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T14:00:00.000Z",
+        "minutesWithoutSignal": 60
+      }
+    },
+    {
+      "alertId": "alt-0132",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00550",
+      "plate": "AAA550DV",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0133",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00024",
+      "plate": "KAA024NV",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0134",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00024",
+      "plate": "KAA024NV",
+      "message": "Sin detecciones de camara por 135 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:45:00.000Z",
+        "minutesWithoutSignal": 135
+      }
+    },
+    {
+      "alertId": "alt-0135",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00119",
+      "plate": "KAA119EZ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0136",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00119",
+      "plate": "KAA119EZ",
+      "message": "Sin detecciones de camara por 125 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:55:00.000Z",
+        "minutesWithoutSignal": 125
+      }
+    },
+    {
+      "alertId": "alt-0137",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00124",
+      "plate": "KAA124JZ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0138",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00209",
+      "plate": "KAA209QC",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0139",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00209",
+      "plate": "KAA209QC",
+      "message": "Sin detecciones de camara por 100 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T13:20:00.000Z",
+        "minutesWithoutSignal": 100
+      }
+    },
+    {
+      "alertId": "alt-0140",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00264",
+      "plate": "KAA264TE",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0141",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00329",
+      "plate": "KAA329GH",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0142",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00364",
+      "plate": "KAA364PI",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0143",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00364",
+      "plate": "KAA364PI",
+      "message": "Sin detecciones de camara por 114 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T13:06:00.000Z",
+        "minutesWithoutSignal": 114
+      }
+    },
+    {
+      "alertId": "alt-0144",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00025",
+      "plate": "UAA025EQ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0145",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00045",
+      "plate": "UAA045YQ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0146",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00045",
+      "plate": "UAA045YQ",
+      "message": "Sin detecciones de camara por 145 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T12:35:00.000Z",
+        "minutesWithoutSignal": 145
+      }
+    },
+    {
+      "alertId": "alt-0147",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00245",
+      "plate": "AAA245KJ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0148",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00255",
+      "plate": "AAA255UJ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0149",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00360",
+      "plate": "AAA360VN",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0150",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00505",
+      "plate": "AAA505KT",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0151",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00520",
+      "plate": "AAA520ZT",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0152",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00540",
+      "plate": "AAA540TU",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0153",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00059",
+      "plate": "KAA059WW",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0154",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00214",
+      "plate": "KAA214VC",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0155",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00239",
+      "plate": "KAA239UD",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0156",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00249",
+      "plate": "KAA249EE",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0157",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00294",
+      "plate": "KAA294XF",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0158",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00414",
+      "plate": "KAA414NK",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0159",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00050",
+      "plate": "UAA050DR",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0160",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00265",
+      "plate": "AAA265EK",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0161",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00275",
+      "plate": "AAA275OK",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0162",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00285",
+      "plate": "AAA285YK",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0163",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00300",
+      "plate": "AAA300NL",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0164",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00320",
+      "plate": "AAA320HM",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0165",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00335",
+      "plate": "AAA335WM",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0166",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00365",
+      "plate": "AAA365AO",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0167",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00380",
+      "plate": "AAA380PO",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0168",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00390",
+      "plate": "AAA390ZO",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0169",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00515",
+      "plate": "AAA515UT",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0170",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00014",
+      "plate": "KAA014DV",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0171",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00034",
+      "plate": "KAA034XV",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0172",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00064",
+      "plate": "KAA064BX",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0173",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00129",
+      "plate": "KAA129OZ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0174",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00144",
+      "plate": "KAA144DA",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0175",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00164",
+      "plate": "KAA164XA",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0176",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00169",
+      "plate": "KAA169CB",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0177",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00174",
+      "plate": "KAA174HB",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0178",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00179",
+      "plate": "KAA179MB",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0179",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00224",
+      "plate": "KAA224FD",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0180",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00274",
+      "plate": "KAA274DF",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0181",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00314",
+      "plate": "KAA314RG",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0182",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00319",
+      "plate": "KAA319WG",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0183",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00334",
+      "plate": "KAA334LH",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0184",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00429",
+      "plate": "KAA429CL",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0185",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00030",
+      "plate": "UAA030JQ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0186",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00225",
+      "plate": "AAA225QI",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0187",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00250",
+      "plate": "AAA250PJ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0188",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00260",
+      "plate": "AAA260ZJ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0189",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00395",
+      "plate": "AAA395EP",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0190",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00415",
+      "plate": "AAA415YP",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0191",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00475",
+      "plate": "AAA475GS",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0192",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00485",
+      "plate": "AAA485QS",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0193",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00565",
+      "plate": "AAA565SV",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0194",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00089",
+      "plate": "KAA089AY",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0195",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00114",
+      "plate": "KAA114ZY",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0196",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00159",
+      "plate": "KAA159SA",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0197",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00254",
+      "plate": "KAA254JE",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0198",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00259",
+      "plate": "KAA259OE",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0199",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00374",
+      "plate": "KAA374ZI",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0200",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00399",
+      "plate": "KAA399YJ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0201",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00409",
+      "plate": "KAA409IK",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0202",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00200",
+      "plate": "AAA200RH",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0203",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00220",
+      "plate": "AAA220LI",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0204",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00240",
+      "plate": "AAA240FJ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0205",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00305",
+      "plate": "AAA305SL",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0206",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00350",
+      "plate": "AAA350LN",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0207",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00435",
+      "plate": "AAA435SQ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0208",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00470",
+      "plate": "AAA470BS",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0209",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00500",
+      "plate": "AAA500FT",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0210",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00004",
+      "plate": "KAA004TU",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0211",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00029",
+      "plate": "KAA029SV",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0212",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00039",
+      "plate": "KAA039CW",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0213",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00194",
+      "plate": "KAA194BC",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0214",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00199",
+      "plate": "KAA199GC",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0215",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00289",
+      "plate": "KAA289SF",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0216",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00349",
+      "plate": "KAA349AI",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0217",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00354",
+      "plate": "KAA354FI",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0218",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00040",
+      "plate": "UAA040TQ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0219",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00075",
+      "plate": "UAA075CS",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0220",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00215",
+      "plate": "AAA215GI",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0221",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00295",
+      "plate": "AAA295IL",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0222",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00315",
+      "plate": "AAA315CM",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0223",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00410",
+      "plate": "AAA410TP",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0224",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00430",
+      "plate": "AAA430NQ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0225",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00570",
+      "plate": "AAA570XV",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0226",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00069",
+      "plate": "KAA069GX",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0227",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00099",
+      "plate": "KAA099KY",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0228",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00104",
+      "plate": "KAA104PY",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0229",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00189",
+      "plate": "KAA189WB",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0230",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00309",
+      "plate": "KAA309MG",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0231",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00424",
+      "plate": "KAA424XK",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0232",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00015",
+      "plate": "UAA015UP",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0233",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00080",
+      "plate": "UAA080HS",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0234",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00195",
+      "plate": "AAA195MH",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0235",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00205",
+      "plate": "AAA205WH",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0236",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00210",
+      "plate": "AAA210BI",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0237",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00290",
+      "plate": "AAA290DL",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0238",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00310",
+      "plate": "AAA310XL",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0239",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00345",
+      "plate": "AAA345GN",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0240",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00370",
+      "plate": "AAA370FO",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0241",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00375",
+      "plate": "AAA375KO",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0242",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00425",
+      "plate": "AAA425IQ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0243",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00445",
+      "plate": "AAA445CR",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0244",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "WS-0-00535",
+      "plate": "AAA535OU",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0245",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00154",
+      "plate": "KAA154NA",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0246",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00184",
+      "plate": "KAA184RB",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0247",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "San Lorenzo",
+      "truckId": "WS-1-00404",
+      "plate": "KAA404DK",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0248",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T15:00:00.000Z",
+      "plant": "Avellaneda",
+      "truckId": "WS-2-00085",
+      "plate": "UAA085MS",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-03-10T12:18:00.000Z",
+  "scenario": "high-load",
+  "data": [
+    {
+      "alertId": "alt-0001",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T12:18:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-001",
+      "plate": "OGA047",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0002",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T12:18:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-001",
+      "plate": "OGA047",
+      "message": "Sin detecciones de camara por 68 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T11:10:00.000Z",
+        "minutesWithoutSignal": 68
+      }
+    },
+    {
+      "alertId": "alt-0003",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T12:18:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-005",
+      "plate": "AC789EF",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0004",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T12:18:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-009",
+      "plate": "AG456MN",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0005",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T12:18:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-013",
+      "plate": "AK890UV",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S9",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0006",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T12:18:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-017",
+      "plate": "AO234CD",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S7",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7"
+        ]
+      }
+    }
+  ]
+}

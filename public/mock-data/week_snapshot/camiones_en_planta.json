@@ -1,0 +1,3354 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-03-10T15:00:00.000Z",
+  "scenario": "week_snapshot",
+  "data": [
+    {
+      "truckId": "WS-0-00175",
+      "plate": "AAA175SG",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T09:35:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00180",
+      "plate": "AAA180XG",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T14:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00185",
+      "plate": "AAA185CH",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T15:40:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00190",
+      "plate": "AAA190HH",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T09:50:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00195",
+      "plate": "AAA195MH",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T18:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00200",
+      "plate": "AAA200RH",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T19:55:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00205",
+      "plate": "AAA205WH",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T18:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00210",
+      "plate": "AAA210BI",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T21:40:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00215",
+      "plate": "AAA215GI",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T19:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00220",
+      "plate": "AAA220LI",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T18:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00225",
+      "plate": "AAA225QI",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T17:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00230",
+      "plate": "AAA230VI",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T14:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00235",
+      "plate": "AAA235AJ",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T11:35:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00240",
+      "plate": "AAA240FJ",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T17:40:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00245",
+      "plate": "AAA245KJ",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T15:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00250",
+      "plate": "AAA250PJ",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_RIC_S6_01",
+      "lastSeenAt": "2026-03-10T17:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00255",
+      "plate": "AAA255UJ",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T14:40:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00260",
+      "plate": "AAA260ZJ",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T17:05:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00265",
+      "plate": "AAA265EK",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T14:25:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00270",
+      "plate": "AAA270JK",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T12:50:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00275",
+      "plate": "AAA275OK",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T16:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00280",
+      "plate": "AAA280TK",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T13:20:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00285",
+      "plate": "AAA285YK",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T14:55:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00290",
+      "plate": "AAA290DL",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T18:45:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00295",
+      "plate": "AAA295IL",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T17:50:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00300",
+      "plate": "AAA300NL",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T16:25:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00305",
+      "plate": "AAA305SL",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T18:55:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00310",
+      "plate": "AAA310XL",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T20:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00315",
+      "plate": "AAA315CM",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T18:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00320",
+      "plate": "AAA320HM",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T15:50:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00325",
+      "plate": "AAA325MM",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T08:40:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00330",
+      "plate": "AAA330RM",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_RIC_S7_01",
+      "lastSeenAt": "2026-03-10T08:40:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00335",
+      "plate": "AAA335WM",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T15:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00340",
+      "plate": "AAA340BN",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T09:25:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00345",
+      "plate": "AAA345GN",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T19:25:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00350",
+      "plate": "AAA350LN",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T19:15:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00355",
+      "plate": "AAA355QN",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T13:20:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00360",
+      "plate": "AAA360VN",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T16:15:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00365",
+      "plate": "AAA365AO",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T16:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00370",
+      "plate": "AAA370FO",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T18:15:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00375",
+      "plate": "AAA375KO",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T19:25:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00380",
+      "plate": "AAA380PO",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T16:25:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00385",
+      "plate": "AAA385UO",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T11:20:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00390",
+      "plate": "AAA390ZO",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T17:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00395",
+      "plate": "AAA395EP",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T18:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00400",
+      "plate": "AAA400JP",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T10:35:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00405",
+      "plate": "AAA405OP",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T13:55:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00410",
+      "plate": "AAA410TP",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_RIC_S9_01",
+      "lastSeenAt": "2026-03-10T18:25:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-0-00415",
+      "plate": "AAA415YP",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T19:42:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00420",
+      "plate": "AAA420DQ",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T17:18:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00425",
+      "plate": "AAA425IQ",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T23:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00430",
+      "plate": "AAA430NQ",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T20:12:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00435",
+      "plate": "AAA435SQ",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T18:12:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00440",
+      "plate": "AAA440XQ",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T11:24:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00445",
+      "plate": "AAA445CR",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T20:18:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00450",
+      "plate": "AAA450HR",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T09:12:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00455",
+      "plate": "AAA455MR",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T12:18:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00460",
+      "plate": "AAA460RR",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T15:06:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00465",
+      "plate": "AAA465WR",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T15:06:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00470",
+      "plate": "AAA470BS",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T18:42:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00475",
+      "plate": "AAA475GS",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T18:12:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00480",
+      "plate": "AAA480LS",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T09:24:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00485",
+      "plate": "AAA485QS",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T19:24:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00490",
+      "plate": "AAA490VS",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T14:42:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00495",
+      "plate": "AAA495AT",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T14:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00500",
+      "plate": "AAA500FT",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T21:36:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00505",
+      "plate": "AAA505KT",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T17:24:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00510",
+      "plate": "AAA510PT",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T09:48:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00515",
+      "plate": "AAA515UT",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T17:48:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00520",
+      "plate": "AAA520ZT",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T16:36:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00525",
+      "plate": "AAA525EU",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T09:36:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00530",
+      "plate": "AAA530JU",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T10:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00535",
+      "plate": "AAA535OU",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T22:54:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00540",
+      "plate": "AAA540TU",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T14:54:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00545",
+      "plate": "AAA545YU",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T12:48:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00550",
+      "plate": "AAA550DV",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T14:42:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00555",
+      "plate": "AAA555IV",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T12:42:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00560",
+      "plate": "AAA560NV",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T11:12:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00565",
+      "plate": "AAA565SV",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T19:36:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-0-00570",
+      "plate": "AAA570XV",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_RIC_S4_01",
+      "lastSeenAt": "2026-03-10T20:18:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00004",
+      "plate": "KAA004TU",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T19:25:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00009",
+      "plate": "KAA009YU",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T09:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00014",
+      "plate": "KAA014DV",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T18:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00019",
+      "plate": "KAA019IV",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T11:25:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00024",
+      "plate": "KAA024NV",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T12:45:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00029",
+      "plate": "KAA029SV",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T16:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00034",
+      "plate": "KAA034XV",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T15:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00039",
+      "plate": "KAA039CW",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T18:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00044",
+      "plate": "KAA044HW",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T07:55:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00049",
+      "plate": "KAA049MW",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T12:55:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00054",
+      "plate": "KAA054RW",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T12:45:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00059",
+      "plate": "KAA059WW",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T15:55:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00064",
+      "plate": "KAA064BX",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T18:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00069",
+      "plate": "KAA069GX",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T19:35:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00074",
+      "plate": "KAA074LX",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T12:35:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00079",
+      "plate": "KAA079QX",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T08:15:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00084",
+      "plate": "KAA084VX",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T11:20:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00089",
+      "plate": "KAA089AY",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T18:40:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00094",
+      "plate": "KAA094FY",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T08:50:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00099",
+      "plate": "KAA099KY",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T17:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00104",
+      "plate": "KAA104PY",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T18:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00109",
+      "plate": "KAA109UY",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T11:55:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00114",
+      "plate": "KAA114ZY",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T16:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00119",
+      "plate": "KAA119EZ",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T12:55:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00124",
+      "plate": "KAA124JZ",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T15:15:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00129",
+      "plate": "KAA129OZ",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T16:20:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00134",
+      "plate": "KAA134TZ",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T13:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00139",
+      "plate": "KAA139YZ",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T11:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00144",
+      "plate": "KAA144DA",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T17:15:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00149",
+      "plate": "KAA149IA",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T09:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00154",
+      "plate": "KAA154NA",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T21:20:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00159",
+      "plate": "KAA159SA",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T18:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00164",
+      "plate": "KAA164XA",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T14:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00169",
+      "plate": "KAA169CB",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T17:15:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00174",
+      "plate": "KAA174HB",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T14:55:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00179",
+      "plate": "KAA179MB",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T14:25:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00184",
+      "plate": "KAA184RB",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T19:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00189",
+      "plate": "KAA189WB",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T18:15:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00194",
+      "plate": "KAA194BC",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T17:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00199",
+      "plate": "KAA199GC",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T17:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00204",
+      "plate": "KAA204LC",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T15:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00209",
+      "plate": "KAA209QC",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T13:20:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00214",
+      "plate": "KAA214VC",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T15:20:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00219",
+      "plate": "KAA219AD",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T12:15:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00224",
+      "plate": "KAA224FD",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T17:25:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00229",
+      "plate": "KAA229KD",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T13:05:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00234",
+      "plate": "KAA234PD",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T12:50:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00239",
+      "plate": "KAA239UD",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T17:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00244",
+      "plate": "KAA244ZD",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T12:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00249",
+      "plate": "KAA249EE",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T17:15:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00254",
+      "plate": "KAA254JE",
+      "plant": "San Lorenzo",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_SL_S6_01",
+      "lastSeenAt": "2026-03-10T15:55:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00259",
+      "plate": "KAA259OE",
+      "plant": "San Lorenzo",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_SL_S7_01",
+      "lastSeenAt": "2026-03-10T18:35:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00264",
+      "plate": "KAA264TE",
+      "plant": "San Lorenzo",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_SL_S7_01",
+      "lastSeenAt": "2026-03-10T15:05:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00269",
+      "plate": "KAA269YE",
+      "plant": "San Lorenzo",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_SL_S7_01",
+      "lastSeenAt": "2026-03-10T09:35:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00274",
+      "plate": "KAA274DF",
+      "plant": "San Lorenzo",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_SL_S7_01",
+      "lastSeenAt": "2026-03-10T17:25:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00279",
+      "plate": "KAA279IF",
+      "plant": "San Lorenzo",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_SL_S7_01",
+      "lastSeenAt": "2026-03-10T10:55:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00284",
+      "plate": "KAA284NF",
+      "plant": "San Lorenzo",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_SL_S7_01",
+      "lastSeenAt": "2026-03-10T14:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00289",
+      "plate": "KAA289SF",
+      "plant": "San Lorenzo",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_SL_S7_01",
+      "lastSeenAt": "2026-03-10T18:15:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00294",
+      "plate": "KAA294XF",
+      "plant": "San Lorenzo",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_SL_S7_01",
+      "lastSeenAt": "2026-03-10T16:40:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00299",
+      "plate": "KAA299CG",
+      "plant": "San Lorenzo",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_SL_S7_01",
+      "lastSeenAt": "2026-03-10T11:25:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00304",
+      "plate": "KAA304HG",
+      "plant": "San Lorenzo",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_SL_S9_01",
+      "lastSeenAt": "2026-03-10T09:45:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00309",
+      "plate": "KAA309MG",
+      "plant": "San Lorenzo",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_SL_S9_01",
+      "lastSeenAt": "2026-03-10T19:50:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00314",
+      "plate": "KAA314RG",
+      "plant": "San Lorenzo",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_SL_S9_01",
+      "lastSeenAt": "2026-03-10T17:25:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00319",
+      "plate": "KAA319WG",
+      "plant": "San Lorenzo",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_SL_S9_01",
+      "lastSeenAt": "2026-03-10T17:50:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00324",
+      "plate": "KAA324BH",
+      "plant": "San Lorenzo",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_SL_S9_01",
+      "lastSeenAt": "2026-03-10T09:45:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00329",
+      "plate": "KAA329GH",
+      "plant": "San Lorenzo",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_SL_S9_01",
+      "lastSeenAt": "2026-03-10T14:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00334",
+      "plate": "KAA334LH",
+      "plant": "San Lorenzo",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_SL_S9_01",
+      "lastSeenAt": "2026-03-10T17:40:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00339",
+      "plate": "KAA339QH",
+      "plant": "San Lorenzo",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_SL_S9_01",
+      "lastSeenAt": "2026-03-10T15:15:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-1-00344",
+      "plate": "KAA344VH",
+      "plant": "San Lorenzo",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T10:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00349",
+      "plate": "KAA349AI",
+      "plant": "San Lorenzo",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T17:36:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00354",
+      "plate": "KAA354FI",
+      "plant": "San Lorenzo",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T19:42:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00359",
+      "plate": "KAA359KI",
+      "plant": "San Lorenzo",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T13:12:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00364",
+      "plate": "KAA364PI",
+      "plant": "San Lorenzo",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T13:06:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00369",
+      "plate": "KAA369UI",
+      "plant": "San Lorenzo",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T11:54:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00374",
+      "plate": "KAA374ZI",
+      "plant": "San Lorenzo",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T19:54:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00379",
+      "plate": "KAA379EJ",
+      "plant": "San Lorenzo",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T12:12:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00384",
+      "plate": "KAA384JJ",
+      "plant": "San Lorenzo",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T11:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00389",
+      "plate": "KAA389OJ",
+      "plant": "San Lorenzo",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T13:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00394",
+      "plate": "KAA394TJ",
+      "plant": "San Lorenzo",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T09:12:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00399",
+      "plate": "KAA399YJ",
+      "plant": "San Lorenzo",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T19:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00404",
+      "plate": "KAA404DK",
+      "plant": "San Lorenzo",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T20:12:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00409",
+      "plate": "KAA409IK",
+      "plant": "San Lorenzo",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T19:12:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00414",
+      "plate": "KAA414NK",
+      "plant": "San Lorenzo",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T14:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00419",
+      "plate": "KAA419SK",
+      "plant": "San Lorenzo",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T16:18:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00424",
+      "plate": "KAA424XK",
+      "plant": "San Lorenzo",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T20:48:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-1-00429",
+      "plate": "KAA429CL",
+      "plant": "San Lorenzo",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_SL_S4_01",
+      "lastSeenAt": "2026-03-10T15:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-2-00005",
+      "plate": "UAA005KP",
+      "plant": "Avellaneda",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_AV_S6_01",
+      "lastSeenAt": "2026-03-10T14:05:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-2-00010",
+      "plate": "UAA010PP",
+      "plant": "Avellaneda",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_AV_S6_01",
+      "lastSeenAt": "2026-03-10T08:50:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-2-00015",
+      "plate": "UAA015UP",
+      "plant": "Avellaneda",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_AV_S6_01",
+      "lastSeenAt": "2026-03-10T19:50:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-2-00020",
+      "plate": "UAA020ZP",
+      "plant": "Avellaneda",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_AV_S6_01",
+      "lastSeenAt": "2026-03-10T12:50:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-2-00025",
+      "plate": "UAA025EQ",
+      "plant": "Avellaneda",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_AV_S6_01",
+      "lastSeenAt": "2026-03-10T16:05:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-2-00030",
+      "plate": "UAA030JQ",
+      "plant": "Avellaneda",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_AV_S6_01",
+      "lastSeenAt": "2026-03-10T15:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-2-00035",
+      "plate": "UAA035OQ",
+      "plant": "Avellaneda",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_AV_S6_01",
+      "lastSeenAt": "2026-03-10T07:50:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-2-00040",
+      "plate": "UAA040TQ",
+      "plant": "Avellaneda",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_AV_S6_01",
+      "lastSeenAt": "2026-03-10T17:40:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-2-00045",
+      "plate": "UAA045YQ",
+      "plant": "Avellaneda",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_AV_S6_01",
+      "lastSeenAt": "2026-03-10T12:35:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-2-00050",
+      "plate": "UAA050DR",
+      "plant": "Avellaneda",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_AV_S6_01",
+      "lastSeenAt": "2026-03-10T15:50:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-2-00055",
+      "plate": "UAA055IR",
+      "plant": "Avellaneda",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_AV_S7_01",
+      "lastSeenAt": "2026-03-10T09:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-2-00060",
+      "plate": "UAA060NR",
+      "plant": "Avellaneda",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_AV_S7_01",
+      "lastSeenAt": "2026-03-10T13:25:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-2-00065",
+      "plate": "UAA065SR",
+      "plant": "Avellaneda",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_AV_S9_01",
+      "lastSeenAt": "2026-03-10T12:00:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-2-00070",
+      "plate": "UAA070XR",
+      "plant": "Avellaneda",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_AV_S9_01",
+      "lastSeenAt": "2026-03-10T13:50:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "WS-2-00075",
+      "plate": "UAA075CS",
+      "plant": "Avellaneda",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_AV_S4_01",
+      "lastSeenAt": "2026-03-10T18:06:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-2-00080",
+      "plate": "UAA080HS",
+      "plant": "Avellaneda",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_AV_S4_01",
+      "lastSeenAt": "2026-03-10T19:18:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "WS-2-00085",
+      "plate": "UAA085MS",
+      "plant": "Avellaneda",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_AV_S4_01",
+      "lastSeenAt": "2026-03-10T23:54:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    }
+  ]
+}

@@ -1,0 +1,1268 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-03-10T12:18:00.000Z",
+  "source": "mock-camera-service",
+  "scenario": "high-load",
+  "events": [
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:00:00.000Z",
+      "plateNo": "OGA047",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:02:00.000Z",
+      "plateNo": "OGA047",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:02:00.000Z",
+      "plateNo": "AF123BC",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:04:00.000Z",
+      "plateNo": "OGA047",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:04:00.000Z",
+      "plateNo": "AF123BC",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:04:00.000Z",
+      "plateNo": "AE908TR",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:06:00.000Z",
+      "plateNo": "OGA047",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:06:00.000Z",
+      "plateNo": "AF123BC",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:06:00.000Z",
+      "plateNo": "AE908TR",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:06:00.000Z",
+      "plateNo": "AB456CD",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:08:00.000Z",
+      "plateNo": "OGA047",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:08:00.000Z",
+      "plateNo": "AF123BC",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:08:00.000Z",
+      "plateNo": "AE908TR",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:08:00.000Z",
+      "plateNo": "AB456CD",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:08:00.000Z",
+      "plateNo": "AC789EF",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:10:00.000Z",
+      "plateNo": "OGA047",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:10:00.000Z",
+      "plateNo": "AF123BC",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:10:00.000Z",
+      "plateNo": "AE908TR",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:10:00.000Z",
+      "plateNo": "AB456CD",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:10:00.000Z",
+      "plateNo": "AC789EF",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:10:00.000Z",
+      "plateNo": "AD123GH",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:12:00.000Z",
+      "plateNo": "AF123BC",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:12:00.000Z",
+      "plateNo": "AE908TR",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:12:00.000Z",
+      "plateNo": "AB456CD",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:12:00.000Z",
+      "plateNo": "AC789EF",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:12:00.000Z",
+      "plateNo": "AD123GH",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:12:00.000Z",
+      "plateNo": "AE234IJ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:14:00.000Z",
+      "plateNo": "AF123BC",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:14:00.000Z",
+      "plateNo": "AE908TR",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:14:00.000Z",
+      "plateNo": "AB456CD",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:14:00.000Z",
+      "plateNo": "AC789EF",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:14:00.000Z",
+      "plateNo": "AD123GH",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:14:00.000Z",
+      "plateNo": "AE234IJ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:14:00.000Z",
+      "plateNo": "AF345KL",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:16:00.000Z",
+      "plateNo": "AF123BC",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:16:00.000Z",
+      "plateNo": "AE908TR",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:16:00.000Z",
+      "plateNo": "AB456CD",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:16:00.000Z",
+      "plateNo": "AC789EF",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:16:00.000Z",
+      "plateNo": "AD123GH",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:16:00.000Z",
+      "plateNo": "AE234IJ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:16:00.000Z",
+      "plateNo": "AF345KL",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:16:00.000Z",
+      "plateNo": "AG456MN",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:18:00.000Z",
+      "plateNo": "AE908TR",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:18:00.000Z",
+      "plateNo": "AB456CD",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:18:00.000Z",
+      "plateNo": "AC789EF",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:18:00.000Z",
+      "plateNo": "AD123GH",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:18:00.000Z",
+      "plateNo": "AE234IJ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:18:00.000Z",
+      "plateNo": "AF345KL",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:18:00.000Z",
+      "plateNo": "AG456MN",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:18:00.000Z",
+      "plateNo": "AH567OP",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:20:00.000Z",
+      "plateNo": "AB456CD",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:20:00.000Z",
+      "plateNo": "AC789EF",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:20:00.000Z",
+      "plateNo": "AD123GH",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:20:00.000Z",
+      "plateNo": "AE234IJ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:20:00.000Z",
+      "plateNo": "AF345KL",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:20:00.000Z",
+      "plateNo": "AG456MN",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:20:00.000Z",
+      "plateNo": "AH567OP",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:20:00.000Z",
+      "plateNo": "AI678QR",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:22:00.000Z",
+      "plateNo": "AB456CD",
+      "region": "ARG",
+      "targetPlateSize": "185x85",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:22:00.000Z",
+      "plateNo": "AD123GH",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:22:00.000Z",
+      "plateNo": "AE234IJ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:22:00.000Z",
+      "plateNo": "AF345KL",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:22:00.000Z",
+      "plateNo": "AG456MN",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:22:00.000Z",
+      "plateNo": "AH567OP",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:22:00.000Z",
+      "plateNo": "AI678QR",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:22:00.000Z",
+      "plateNo": "AJ789ST",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:24:00.000Z",
+      "plateNo": "AD123GH",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:24:00.000Z",
+      "plateNo": "AE234IJ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:24:00.000Z",
+      "plateNo": "AF345KL",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:24:00.000Z",
+      "plateNo": "AG456MN",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:24:00.000Z",
+      "plateNo": "AH567OP",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:24:00.000Z",
+      "plateNo": "AI678QR",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:24:00.000Z",
+      "plateNo": "AJ789ST",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:24:00.000Z",
+      "plateNo": "AK890UV",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:26:00.000Z",
+      "plateNo": "AE234IJ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:26:00.000Z",
+      "plateNo": "AF345KL",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:26:00.000Z",
+      "plateNo": "AG456MN",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:26:00.000Z",
+      "plateNo": "AH567OP",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:26:00.000Z",
+      "plateNo": "AI678QR",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:26:00.000Z",
+      "plateNo": "AJ789ST",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:26:00.000Z",
+      "plateNo": "AK890UV",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:26:00.000Z",
+      "plateNo": "AL901WX",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:28:00.000Z",
+      "plateNo": "AF345KL",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:28:00.000Z",
+      "plateNo": "AG456MN",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:28:00.000Z",
+      "plateNo": "AH567OP",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:28:00.000Z",
+      "plateNo": "AI678QR",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:28:00.000Z",
+      "plateNo": "AJ789ST",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:28:00.000Z",
+      "plateNo": "AK890UV",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:28:00.000Z",
+      "plateNo": "AL901WX",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:28:00.000Z",
+      "plateNo": "AM012YZ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:30:00.000Z",
+      "plateNo": "AH567OP",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:30:00.000Z",
+      "plateNo": "AI678QR",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:30:00.000Z",
+      "plateNo": "AJ789ST",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:30:00.000Z",
+      "plateNo": "AK890UV",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:30:00.000Z",
+      "plateNo": "AL901WX",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:30:00.000Z",
+      "plateNo": "AM012YZ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:30:00.000Z",
+      "plateNo": "AN123AB",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:32:00.000Z",
+      "plateNo": "AH567OP",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:32:00.000Z",
+      "plateNo": "AI678QR",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:32:00.000Z",
+      "plateNo": "AJ789ST",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:32:00.000Z",
+      "plateNo": "AK890UV",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:32:00.000Z",
+      "plateNo": "AL901WX",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:32:00.000Z",
+      "plateNo": "AM012YZ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:32:00.000Z",
+      "plateNo": "AN123AB",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:32:00.000Z",
+      "plateNo": "AO234CD",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:34:00.000Z",
+      "plateNo": "AH567OP",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:34:00.000Z",
+      "plateNo": "AI678QR",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:34:00.000Z",
+      "plateNo": "AJ789ST",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:34:00.000Z",
+      "plateNo": "AK890UV",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:34:00.000Z",
+      "plateNo": "AL901WX",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:34:00.000Z",
+      "plateNo": "AM012YZ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:34:00.000Z",
+      "plateNo": "AN123AB",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:34:00.000Z",
+      "plateNo": "AO234CD",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:34:00.000Z",
+      "plateNo": "AP345EF",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:36:00.000Z",
+      "plateNo": "AJ789ST",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:36:00.000Z",
+      "plateNo": "AL901WX",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:36:00.000Z",
+      "plateNo": "AM012YZ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:36:00.000Z",
+      "plateNo": "AN123AB",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:36:00.000Z",
+      "plateNo": "AO234CD",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:36:00.000Z",
+      "plateNo": "AP345EF",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:38:00.000Z",
+      "plateNo": "AL901WX",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:38:00.000Z",
+      "plateNo": "AM012YZ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:38:00.000Z",
+      "plateNo": "AN123AB",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:38:00.000Z",
+      "plateNo": "AO234CD",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:38:00.000Z",
+      "plateNo": "AP345EF",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:40:00.000Z",
+      "plateNo": "AL901WX",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:40:00.000Z",
+      "plateNo": "AM012YZ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:40:00.000Z",
+      "plateNo": "AN123AB",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:40:00.000Z",
+      "plateNo": "AO234CD",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:40:00.000Z",
+      "plateNo": "AP345EF",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:42:00.000Z",
+      "plateNo": "AL901WX",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Volvo",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:42:00.000Z",
+      "plateNo": "AM012YZ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:42:00.000Z",
+      "plateNo": "AN123AB",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:42:00.000Z",
+      "plateNo": "AO234CD",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Benz",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:42:00.000Z",
+      "plateNo": "AP345EF",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:44:00.000Z",
+      "plateNo": "AM012YZ",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Iveco",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:44:00.000Z",
+      "plateNo": "AN123AB",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Ford",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:44:00.000Z",
+      "plateNo": "AP345EF",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:46:00.000Z",
+      "plateNo": "AP345EF",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    },
+    {
+      "eventType": "ANPR",
+      "snapshotTime": "2026-03-10T11:48:00.000Z",
+      "plateNo": "AP345EF",
+      "region": "ARG",
+      "targetPlateSize": "189x86",
+      "logo": "Scania",
+      "vehicleType": "Heavy Truck"
+    }
+  ]
+}

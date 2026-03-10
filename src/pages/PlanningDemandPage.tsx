@@ -12,7 +12,7 @@ export function PlanningDemandPage() {
         <article className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-600">Demanda proyectada</h3>
           <p className="mt-2 text-2xl font-bold text-slate-900">+18%</p>
-          <p className="text-xs text-slate-500">Mock inicial vs promedio semanal.</p>
+          <p className="text-xs text-slate-500">Pendiente integración con datos reales.</p>
         </article>
         <article className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-600">Riesgo de saturación</h3>
@@ -22,7 +22,7 @@ export function PlanningDemandPage() {
         <article className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-600">Cupos confirmados</h3>
           <p className="mt-2 text-2xl font-bold text-slate-900">124</p>
-          <p className="text-xs text-slate-500">Dato mockeado hasta integrar agenda real.</p>
+          <p className="text-xs text-slate-500">Pendiente integración con agenda real.</p>
         </article>
         <article className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-600">Alertas preventivas</h3>

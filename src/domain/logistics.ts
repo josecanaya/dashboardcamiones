@@ -39,6 +39,16 @@ export interface TruckInPlant {
   estadoOperativo: OperationalTruckState
   activeAlerts: string[]
   siteId: SiteId
+  /** URL de la foto de la última cámara que registró al camión */
+  ultimaFotoUrl?: string
+  /** Datos del último evento de cámara (ANPR) */
+  ultimoEventoCamara?: {
+    hora: string
+    patente: string
+    region: string
+    logo: string
+    vehicleType: string
+  }
 }
 
 export interface HistoricalTrip {
@@ -48,6 +58,11 @@ export interface HistoricalTrip {
   circuitoFinal: string
   ingresoAt: string
   egresoAt: string
+  /** Fecha de egreso YYYY-MM-DD para filtrado por día/semana/mes */
+  fecha?: string
+  fechaDia?: number
+  fechaMes?: number
+  fechaAnio?: number
   durationMinutes: number
   secuenciaCamaras: string[]
   secuenciaSectores: string[]

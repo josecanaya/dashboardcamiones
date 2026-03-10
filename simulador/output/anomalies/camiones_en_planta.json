@@ -1,0 +1,41 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-03-10T13:39:00.000Z",
+  "scenario": "anomalies",
+  "data": [
+    {
+      "truckId": "SIM-002",
+      "plate": "AF123BC",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S2",
+      "currentCameraId": "CAM_S2_01",
+      "lastSeenAt": "2026-03-10T11:15:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2"
+      ],
+      "eventCount": 3
+    },
+    {
+      "truckId": "SIM-001",
+      "plate": "OGA047",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_S4_01",
+      "lastSeenAt": "2026-03-10T11:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    }
+  ]
+}

@@ -11,6 +11,7 @@ import { buildPathForSequence, WAYPOINTS, ZONES, getPathAngleAt } from "../data/
 import { TruckIcon } from "./TruckIcon"
 import { useSite } from "../context/SiteContext"
 import { useData } from "../context/DataContext"
+import { useLogisticsOps } from "../context/LogisticsOpsContext"
 import { useSimulatorVisit } from "../context/SimulatorVisitContext"
 import { buildTripSummaryFromEvents } from "../engine"
 import { visitToSimNodesWithEventIndex } from "../simulator/visitToSimNodes"
@@ -102,6 +103,8 @@ interface TruckRouteSimulatorProps {
   onLiveFleetChange?: (fleet: IfcSelectedTruckInfo[], plant: PlantId) => void
   fleetOperationFilter?: "ALL" | IfcSelectedTruckInfo["operationType"]
   onFleetOperationFilterChange?: (filter: "ALL" | IfcSelectedTruckInfo["operationType"]) => void
+  focusPlate?: string | null
+  onFocusPlateHandled?: () => void
 }
 
 export default function TruckRouteSimulator({
@@ -109,9 +112,12 @@ export default function TruckRouteSimulator({
   onLiveFleetChange,
   fleetOperationFilter: fleetOperationFilterProp,
   onFleetOperationFilterChange,
+  focusPlate,
+  onFocusPlateHandled,
 }: TruckRouteSimulatorProps) {
   const { siteId } = useSite()
   const { getVisitsBySite } = useData()
+  const { trucksInPlant } = useLogisticsOps()
   const { visitToSimulate, setVisitToSimulate } = useSimulatorVisit()
   const siteVisits = getVisitsBySite(siteId)
 
@@ -137,6 +143,23 @@ export default function TruckRouteSimulator({
   }, [fleetTrucks, ifcPlant, onLiveFleetChange])
 
   const fleetOperationFilter = fleetOperationFilterProp ?? internalFleetOperationFilter
+  const siteTrucksInPlant = useMemo(
+    () =>
+      trucksInPlant
+        .filter((t) => t.siteId === siteId)
+        .map((t) => ({
+          plate: t.plate,
+          circuitoEstimado: t.circuitoEstimado,
+          sectorActual: t.sectorActual,
+          camaraActual: t.camaraActual,
+          secuenciaParcialCamaras: t.secuenciaParcialCamaras,
+          secuenciaParcialSectores: t.secuenciaParcialSectores,
+          estadoOperativo: t.estadoOperativo,
+          ultimaFotoUrl: t.ultimaFotoUrl,
+          ultimoEventoCamara: t.ultimoEventoCamara,
+        })),
+    [trucksInPlant, siteId]
+  )
   useEffect(() => {
     if (fleetOperationFilterProp === undefined) return
     setInternalFleetOperationFilter(fleetOperationFilterProp)
@@ -289,19 +312,19 @@ export default function TruckRouteSimulator({
 
   if (viewerMode === "ifc") {
     return (
-      <div className="h-[calc(100vh-80px)] bg-slate-100/40 p-3">
+      <div className="flex h-full min-h-0 flex-col bg-slate-100/40 p-2">
         <section className="flex h-full min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="border-b border-slate-200 bg-white px-3 py-2">
-            <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="shrink-0 border-b border-slate-200 bg-white px-2 py-1.5">
+            <div className="flex flex-wrap items-center justify-between gap-1">
               <div>
-                <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-700">Visor IFC operacional</h2>
-                <p className="text-[10px] text-slate-500">Trazabilidad en tiempo real por circuito y estado.</p>
+                <h2 className="text-[11px] font-semibold uppercase tracking-wide text-slate-700">Visor IFC operacional</h2>
+                <p className="text-[9px] text-slate-500">Trazabilidad en tiempo real por circuito y estado.</p>
               </div>
-              <div className="text-[10px] text-slate-500">
+              <div className="text-[9px] text-slate-500">
                 {filteredFleetTrucks.length} unidades visibles{fleetOperationFilter !== "ALL" ? ` (${fleetOperationFilter.toLowerCase()})` : ""}
               </div>
             </div>
-            <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-3">
+            <div className="mt-1 flex gap-1.5">
               {groupedFleetPanels.map((mainGroup) => {
                 const tone =
                   mainGroup.tone === "sky"
@@ -322,32 +345,28 @@ export default function TruckRouteSimulator({
                           bar: "bg-violet-500",
                         }
                 return (
-                  <div key={mainGroup.id} className={`overflow-hidden rounded-xl border ${tone.card}`}>
-                    <div className="px-3 py-2">
-                      <div>
-                        <div className="text-xs font-semibold text-slate-900">{mainGroup.label}</div>
-                        <div className="text-[11px] text-slate-500">{mainGroup.count} camiones</div>
-                      </div>
-                      <div className="mt-1.5 flex items-center justify-between gap-2">
-                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${tone.badge}`}>
-                          {mainGroup.percentage}% del total
-                        </span>
-                      </div>
-                      <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-white/80">
-                        <div className={`h-full ${tone.bar}`} style={{ width: `${mainGroup.percentage}%` }} />
-                      </div>
+                  <div key={mainGroup.id} className={`flex flex-1 items-center justify-between gap-2 overflow-hidden rounded-lg border px-2 py-1 ${tone.card}`}>
+                    <div className="min-w-0">
+                      <div className="text-[10px] font-semibold text-slate-900 truncate">{mainGroup.label}</div>
+                      <div className="text-[9px] text-slate-500">{mainGroup.count} cam · {mainGroup.percentage}%</div>
+                    </div>
+                    <div className="h-1 w-8 shrink-0 overflow-hidden rounded-full bg-white/80">
+                      <div className={`h-full ${tone.bar}`} style={{ width: `${mainGroup.percentage}%` }} />
                     </div>
                   </div>
                 )
               })}
             </div>
           </div>
-          <div className="relative flex-1 min-h-0">
+          <div className="relative min-h-0 flex-1">
             <IfcViewer
               file={ifcFile}
               plant={ifcPlant}
+              trucksInPlant={siteTrucksInPlant}
               onFleetChange={setFleetTrucks}
               operationFilter={fleetOperationFilter}
+              focusPlate={focusPlate}
+              onFocusPlateHandled={onFocusPlateHandled}
             />
           </div>
         </section>

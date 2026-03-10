@@ -1,0 +1,52 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-03-10T12:20:00.000Z",
+  "scenario": "normal",
+  "data": [
+    {
+      "alertId": "alt-0001",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T12:20:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-005",
+      "plate": "AC789EF",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S3",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0002",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T12:20:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-006",
+      "plate": "AD123GH",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S6",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6"
+        ]
+      }
+    }
+  ]
+}

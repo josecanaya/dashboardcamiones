@@ -1,0 +1,130 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-03-10T13:39:00.000Z",
+  "scenario": "anomalies",
+  "data": [
+    {
+      "alertId": "alt-0001",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T13:39:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-001",
+      "plate": "OGA047",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S5",
+          "S6",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0002",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T13:39:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-001",
+      "plate": "OGA047",
+      "message": "Sin detecciones de camara por 129 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T11:30:00.000Z",
+        "minutesWithoutSignal": 129
+      }
+    },
+    {
+      "alertId": "alt-0003",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T13:39:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-002",
+      "plate": "AF123BC",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "A3",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0004",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T13:39:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-002",
+      "plate": "AF123BC",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S2",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0005",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T13:39:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-002",
+      "plate": "AF123BC",
+      "message": "Sin detecciones de camara por 144 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T11:15:00.000Z",
+        "minutesWithoutSignal": 144
+      }
+    },
+    {
+      "alertId": "alt-0006",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T13:39:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-003",
+      "plate": "AE908TR",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "A4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S6",
+          "S9",
+          "S10"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0007",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T13:39:00.000Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-004",
+      "plate": "AB456CD",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-0023"
+      }
+    }
+  ]
+}

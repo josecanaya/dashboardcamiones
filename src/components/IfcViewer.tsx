@@ -2,12 +2,27 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
 import { IFCLoader } from "web-ifc-three/IFCLoader"
+import { IFCSLAB } from "web-ifc"
+import { IfcLoadingOverlay } from "./IfcLoadingOverlay"
 
 interface IfcViewerProps {
   file: File | null
   plant?: PlantId
+  trucksInPlant?: Array<{
+    plate: string
+    circuitoEstimado: string
+    sectorActual: string
+    camaraActual: string
+    secuenciaParcialCamaras: string[]
+    secuenciaParcialSectores?: string[]
+    estadoOperativo: string
+    ultimaFotoUrl?: string
+    ultimoEventoCamara?: { hora: string; patente: string; region: string; logo: string; vehicleType: string }
+  }>
   onFleetChange?: (fleet: IfcSelectedTruckInfo[]) => void
   operationFilter?: "ALL" | IfcSelectedTruckInfo["operationType"]
+  focusPlate?: string | null
+  onFocusPlateHandled?: () => void
 }
 
 export type PlantId = "RICARDONE" | "SAN_LORENZO" | "AVELLANEDA"
@@ -103,6 +118,8 @@ export interface IfcSelectedTruckInfo {
   cameraImageUrl: string
   cameraSequence: string[]
   cameraCaptures: Array<{ cameraId: string; imageUrl: string; captureLabel: string }>
+  /** Datos del último evento de cámara (ANPR) */
+  ultimoEventoCamara?: { hora: string; patente: string; region: string; logo: string; vehicleType: string }
 }
 
 interface CircuitDebugInfo {
@@ -125,31 +142,6 @@ const EMPTY_BUCKETS: CircuitColorBuckets = {
 }
 
 const TRUCK_LOCATION_EXPRESS_IDS = [126491, 126511, 130191, 129138, 127321]
-const FLEET_TRUCK_COUNT = 50
-const TRUCK_CARGO_TYPES = ["Maiz", "Soja", "Harina", "Aceite", "Girasol", "Trigo"] as const
-const TRUCK_CHECKPOINTS = ["Porteria Norte", "Balanza 1", "Playa descarga", "Balanza 2", "Salida"] as const
-const RICARDONE_CAMERA_SEQUENCE_BY_PREFIX: Record<string, string[]> = {
-  A1: ["S0", "S2", "S4", "S5", "S4", "S1", "S10"],
-  A2: ["S0", "S2", "S4", "S6", "S4", "S1", "S10"],
-  A3: ["S0", "S2", "S4", "S4", "S1", "S10"],
-  A4: ["S0", "S2", "S4", "S9", "S4", "S1", "S10"],
-  A5: ["S0", "S2", "S4", "S6", "S9", "S4", "S1", "S10"],
-  A7: ["S0", "S2", "S1", "S3"],
-  B1: ["S0", "S4", "S5", "S6", "S4", "S2", "S1", "S3"],
-  B2: ["S0", "S4", "S6", "S4", "S1", "S2", "S7", "S2", "S3", "S1"],
-  B4: ["S0", "S4", "S6", "S7", "S4", "S1", "S2", "S3", "S1"],
-  B5: ["S0", "S4", "S6", "S7", "S4", "S1", "S2", "S2", "S3", "S1"],
-  C1: ["S0", "S2", "S4", "S4", "S1", "S3"],
-  D1: ["S0", "S2", "S4", "S4", "S1", "S2", "S3", "S1"],
-  E01: ["S0", "S2", "S4", "S5", "S6", "S4", "S1", "S10", "S7"],
-  E02: ["S0", "S2", "S4", "S6", "S7", "S4", "S1", "S10", "S9"],
-  F1: ["S0", "S4", "S6", "S4", "S1", "S2", "S7", "S8", "S2", "S3", "S1"],
-  F2: ["S0", "S4", "S6", "S7", "S4", "S1", "S2", "S3", "S1"],
-  F3: ["S0", "S2", "S4", "S5", "S6", "S4", "S1", "S10", "S7"],
-  F4: ["S0", "S2", "S4", "S5", "S6", "S4", "S1", "S10", "S7"],
-  F5: ["S0", "S4", "S6", "S4", "S1", "S2", "S7", "S8", "S2", "S3", "S1"],
-  F6: ["S0", "S2", "S4", "S5", "S6", "S4", "S1", "S10", "S7"],
-}
 
 function tagMatchesCode(tag: string, code: string): boolean {
   const t = tag.toUpperCase().trim()
@@ -159,10 +151,6 @@ function tagMatchesCode(tag: string, code: string): boolean {
   // Soporta casos tipo PTD_A1_V01 cuando el mapeo base viene como PTD_A1
   if ((c.startsWith("PTD_") || c.startsWith("PTC_")) && t.startsWith(`${c}_`)) return true
   return false
-}
-
-function buildMockPlate(index: number): string {
-  return `SIM-${String(index + 1).padStart(3, "0")}`
 }
 
 function buildCameraSnapshotDataUrl(
@@ -195,48 +183,52 @@ function buildCameraSnapshotDataUrl(
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
 }
 
-function buildSimTruckInfo(index: number, locationExpressId: number): IfcSelectedTruckInfo {
-  const plate = buildMockPlate(index)
-  const cargoType = TRUCK_CARGO_TYPES[index % TRUCK_CARGO_TYPES.length]
-  const lastCheckpoint = TRUCK_CHECKPOINTS[index % TRUCK_CHECKPOINTS.length]
-  const availableCircuits = RICARDONE_ORDER
-    .map((prefix) => CIRCUITS.find((c) => c.plant === "RICARDONE" && c.prefix === prefix))
-    .filter((c): c is CircuitDefinition => Boolean(c))
-  const assignedCircuit = availableCircuits[index % availableCircuits.length] ?? CIRCUITS[0]
+function truckInPlantToIfcInfo(
+  truck: {
+    plate: string
+    circuitoEstimado: string
+    sectorActual: string
+    camaraActual: string
+    secuenciaParcialCamaras: string[]
+    estadoOperativo: string
+    ultimaFotoUrl?: string
+    ultimoEventoCamara?: { hora: string; patente: string; region: string; logo: string; vehicleType: string }
+  },
+  _index: number,
+  locationExpressId: number
+): IfcSelectedTruckInfo {
+  const circuit = CIRCUITS.find((c) => c.prefix === truck.circuitoEstimado) ?? CIRCUITS[0]
   const operationType =
-    assignedCircuit.group === "DESCARGA"
-      ? "RECEPCION"
-      : assignedCircuit.group === "CARGA"
-        ? "DESPACHANDO"
-        : "TRANSILE"
-  const cameraSequence = RICARDONE_CAMERA_SEQUENCE_BY_PREFIX[assignedCircuit.prefix] ?? ["S0", "S2", "S4", "S1"]
-  const cameraCaptures = cameraSequence.map((cameraId, sequenceIndex) => ({
-    cameraId,
-    captureLabel: `Paso ${sequenceIndex + 1}`,
-    imageUrl: buildCameraSnapshotDataUrl(
-      plate,
-      cargoType,
-      lastCheckpoint,
+    circuit.group === "DESCARGA" ? "RECEPCION" : circuit.group === "CARGA" ? "DESPACHANDO" : "TRANSILE"
+  const cameraSequence = truck.secuenciaParcialCamaras.length > 0 ? truck.secuenciaParcialCamaras : [truck.camaraActual]
+  const lastCameraId = cameraSequence[cameraSequence.length - 1] ?? truck.camaraActual
+  const cameraCaptures = cameraSequence.map((cameraId, sequenceIndex) => {
+    const isLast = sequenceIndex === cameraSequence.length - 1
+    const imageUrl = isLast ? (truck.ultimaFotoUrl ?? '/ejemplo.png') : buildCameraSnapshotDataUrl(truck.plate, circuit.label, truck.sectorActual, cameraId, `Paso ${sequenceIndex + 1}`)
+    return {
       cameraId,
-      `Paso ${sequenceIndex + 1} · ${assignedCircuit.prefix}`
-    ),
-  }))
+      captureLabel: isLast ? "Última cámara" : `Paso ${sequenceIndex + 1}`,
+      imageUrl,
+    }
+  })
+  const lastCaptureUrl = cameraCaptures[cameraCaptures.length - 1]?.imageUrl ?? buildCameraSnapshotDataUrl(truck.plate, circuit.label, truck.sectorActual, lastCameraId, "Última cámara")
   return {
-    plate,
-    cargoType,
-    driverName: `Chofer ${String(index + 1).padStart(2, "0")}`,
-    lastCheckpoint,
+    plate: truck.plate,
+    cargoType: circuit.label,
+    driverName: truck.plate,
+    lastCheckpoint: truck.sectorActual,
     operationType,
-    assignedCircuitPrefix: assignedCircuit.prefix,
-    assignedCircuitLabel: assignedCircuit.label,
-    assignedCIR: assignedCircuit.CIR,
-    assignedVUE: assignedCircuit.VUE,
-    assignedPTD: assignedCircuit.PTD,
-    assignedPTC: assignedCircuit.PTC,
+    assignedCircuitPrefix: truck.circuitoEstimado,
+    assignedCircuitLabel: circuit.label,
+    assignedCIR: circuit.CIR,
+    assignedVUE: circuit.VUE,
+    assignedPTD: circuit.PTD,
+    assignedPTC: circuit.PTC,
     locationExpressId,
-    cameraImageUrl: cameraCaptures[0]?.imageUrl ?? buildCameraSnapshotDataUrl(plate, cargoType, lastCheckpoint),
+    cameraImageUrl: lastCaptureUrl,
     cameraSequence,
     cameraCaptures,
+    ultimoEventoCamara: truck.ultimoEventoCamara,
   }
 }
 
@@ -290,6 +282,44 @@ function extractCodesFromText(text: string): string[] {
   const regex = /\b(?:CIR|VUE|PTD|PTC|MIX)_[A-Z0-9]+(?:_V\d+)?\b/gi
   const out = text.match(regex) ?? []
   return out.map((x) => x.toUpperCase())
+}
+
+/** Extrae códigos de sector S0..S10 de texto (Comments IFC, camaraActual como CAM_RIC_S4_01, etc.) */
+function extractSectorCodesFromText(text: string): string[] {
+  const out: string[] = []
+  // S4, S10, etc. en "CAM_RIC_S4_01" o "S1" o "Sector S1"
+  const reS = /S(?:10|[0-9])(?=[_\s,]|$)/gi
+  for (const m of text.matchAll(reS)) out.push(m[0].toUpperCase())
+  // "Sector 1" -> S1, "Sector 10" -> S10
+  const reSector = /Sector\s*(\d{1,2})\b/gi
+  for (const m of text.matchAll(reSector)) {
+    const n = parseInt(m[1], 10)
+    if (n >= 0 && n <= 10) out.push(`S${n}`)
+  }
+  return [...new Set(out)]
+}
+
+/** Obtiene el código de sector del camión (S0..S10) - prioriza la ÚLTIMA cámara que lo registró */
+function getTruckSectorCode(truck: { sectorActual: string; camaraActual: string; secuenciaParcialCamaras: string[]; secuenciaParcialSectores?: string[] }): string | null {
+  // 1. Última cámara que registró al camión (fuente más reciente)
+  const lastCam = truck.secuenciaParcialCamaras?.length ? truck.secuenciaParcialCamaras[truck.secuenciaParcialCamaras.length - 1] : null
+  if (lastCam) {
+    const fromLastCam = extractSectorCodesFromText(lastCam)[0]
+    if (fromLastCam) return fromLastCam
+  }
+  // 2. Último sector de la secuencia
+  const lastSec = truck.secuenciaParcialSectores?.length ? truck.secuenciaParcialSectores[truck.secuenciaParcialSectores.length - 1] : null
+  if (lastSec) {
+    const fromLastSec = extractSectorCodesFromText(lastSec)[0]
+    if (fromLastSec) return fromLastSec
+  }
+  // 3. sectorActual (currentSector del JSON)
+  const fromSector = extractSectorCodesFromText(truck.sectorActual)[0]
+  if (fromSector) return fromSector
+  // 4. camaraActual (currentCameraId)
+  const fromCamara = extractSectorCodesFromText(truck.camaraActual)[0]
+  if (fromCamara) return fromCamara
+  return null
 }
 
 function unwrapIfcText(value: unknown): string | null {
@@ -535,7 +565,198 @@ async function buildIfcTagsMap(
   return result
 }
 
-export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationFilter = "ALL" }: IfcViewerProps) {
+function extractSectorCodesDeep(value: unknown, seen = new Set<unknown>()): string[] {
+  if (value == null) return []
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return extractSectorCodesFromText(String(value))
+  }
+  if (typeof value !== "object") return []
+  if (seen.has(value)) return []
+  seen.add(value)
+  const out: string[] = []
+  for (const v of Object.values(value as Record<string, unknown>)) {
+    out.push(...extractSectorCodesDeep(v, seen))
+  }
+  return out
+}
+
+/** Nombres de propiedades IFC donde pueden estar S1, S2, etc. (Comment, etc.) */
+const SECTOR_PROP_NAMES = ["Comment", "Comments", "Comentario", "Sector", "Description", "Name", "ObjectType", "Tag", "LongName"]
+
+function getSectorCodesFromProps(props: Record<string, unknown>): string[] {
+  const bag = new Set<string>()
+  for (const c of extractSectorCodesDeep(props)) bag.add(c)
+  const keysLower = Object.fromEntries(Object.keys(props).map((k) => [k.toLowerCase(), k]))
+  for (const name of SECTOR_PROP_NAMES) {
+    const key = keysLower[name.toLowerCase()]
+    if (key) {
+      for (const c of extractSectorCodesFromUnknown(props[key])) bag.add(c)
+    }
+  }
+  return [...bag]
+}
+
+/** Extrae cualquier texto de props (Comment, Description, Name, etc.) para diagnóstico */
+function extractAnyCommentText(props: Record<string, unknown>): string[] {
+  const out: string[] = []
+  const keys = ["Comment", "Comments", "Comentario", "Description", "Name", "ObjectType", "Tag", "LongName"]
+  const keysLower = Object.fromEntries(Object.keys(props).map((k) => [k.toLowerCase(), k]))
+  for (const name of keys) {
+    const key = keysLower[name.toLowerCase()]
+    if (key) {
+      const txt = unwrapIfcText(props[key])
+      if (txt && txt.trim().length > 0) out.push(txt.trim())
+    }
+  }
+  return out
+}
+
+/** Construye mapa sector S0..S10 -> { expressId, position } desde suelos con Comments */
+async function buildFloorMapBySector(
+  loader: IFCLoader,
+  model: THREE.Object3D & { modelID?: number },
+  expressPointMap: Record<number, THREE.Vector3>
+): Promise<{ floorMap: Record<string, { expressId: number; position: THREE.Vector3 }>; anyCommentsFound: boolean; sampleComments: string[] }> {
+  const sectorCodes = ["S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10"]
+  const candidates: Record<string, Array<{ expressId: number; position: THREE.Vector3 }>> = {}
+  for (const c of sectorCodes) candidates[c] = []
+  const sampleComments: string[] = []
+  const maxSamples = 8
+  if (model.modelID == null) return { floorMap: {}, anyCommentsFound: false, sampleComments: [] }
+  const ifc = loader.ifcManager as unknown as {
+    getItemProperties: (modelID: number, id: number, recursive?: boolean) => Promise<unknown> | unknown
+    getPropertySets?: (modelID: number, id: number, recursive?: boolean) => Promise<unknown> | unknown
+  }
+  let ids: number[]
+  const modelWithSlabs = model as THREE.Object3D & { getAllItemsOfType?: (type: number, verbose?: boolean) => unknown }
+  if (typeof modelWithSlabs.getAllItemsOfType === "function") {
+    try {
+      const slabResult = await Promise.resolve(modelWithSlabs.getAllItemsOfType(IFCSLAB, false))
+      const slabIds: number[] = []
+      if (slabResult && typeof (slabResult as { size?: () => number }).size === "function") {
+        const vec = slabResult as { size: () => number; get: (i: number) => number }
+        for (let i = 0; i < vec.size(); i++) slabIds.push(vec.get(i))
+      } else if (Array.isArray(slabResult)) {
+        slabIds.push(...(slabResult as number[]))
+      }
+      ids = slabIds.length > 0 ? slabIds : extractExpressIdsFromModel(model)
+    } catch {
+      ids = extractExpressIdsFromModel(model)
+    }
+  } else {
+    ids = extractExpressIdsFromModel(model)
+  }
+  const chunk = 20
+  for (let i = 0; i < ids.length; i += chunk) {
+    const slice = ids.slice(i, i + chunk)
+    await Promise.all(slice.map(async (expressId) => {
+      const bag = new Set<string>()
+      try {
+        const props = await ifc.getItemProperties(model.modelID as number, expressId, true)
+        const propsObj = (props ?? {}) as Record<string, unknown>
+        for (const c of getSectorCodesFromProps(propsObj)) bag.add(c)
+        if (sampleComments.length < maxSamples) {
+          for (const txt of extractAnyCommentText(propsObj)) {
+            if (sampleComments.length < maxSamples) {
+              const short = txt.length > 40 ? `${txt.slice(0, 40)}…` : txt
+              if (!sampleComments.includes(short)) sampleComments.push(short)
+            }
+          }
+        }
+      } catch {
+        // ignore
+      }
+      if (ifc.getPropertySets) {
+        try {
+          const psets = await ifc.getPropertySets(model.modelID as number, expressId, true)
+          const psetsArr = Array.isArray(psets) ? psets : []
+          for (const psetRaw of psetsArr) {
+            const psetObj = psetRaw as Record<string, unknown>
+            const propsList = Array.isArray(psetObj.HasProperties) ? psetObj.HasProperties : []
+            for (const propRaw of propsList) {
+              let propObj: Record<string, unknown> | null = null
+              if (typeof propRaw === "object" && propRaw != null) {
+                propObj = propRaw as Record<string, unknown>
+              } else {
+                const propId = refToExpressId(propRaw)
+                if (propId != null) {
+                  try {
+                    const resolved = await ifc.getItemProperties(model.modelID as number, propId, true)
+                    if (resolved && typeof resolved === "object") propObj = resolved as Record<string, unknown>
+                  } catch {
+                    // ignore
+                  }
+                }
+              }
+              if (!propObj) continue
+              for (const c of extractSectorCodesFromUnknown(propObj.NominalValue)) bag.add(c)
+              for (const c of extractSectorCodesFromUnknown(propObj.Description)) bag.add(c)
+              for (const c of extractSectorCodesFromUnknown(propObj.value)) bag.add(c)
+              if (sampleComments.length < maxSamples) {
+                const txt = unwrapIfcText(propObj.NominalValue) ?? unwrapIfcText(propObj.Description) ?? unwrapIfcText(propObj.value)
+                if (txt && txt.trim().length > 0) {
+                  const short = txt.trim().length > 40 ? `${txt.trim().slice(0, 40)}…` : txt.trim()
+                  if (!sampleComments.includes(short)) sampleComments.push(short)
+                }
+              }
+            }
+          }
+        } catch {
+          // ignore
+        }
+      }
+      const pos = expressPointMap[expressId]
+      if (!pos) return
+      for (const code of bag) {
+        if (sectorCodes.includes(code)) {
+          candidates[code].push({ expressId, position: pos.clone() })
+        }
+      }
+    }))
+  }
+  const floorMap: Record<string, { expressId: number; position: THREE.Vector3 }> = {}
+  for (const code of sectorCodes) {
+    const list = candidates[code]
+    if (list.length === 0) continue
+    const best = list.reduce((a, b) => (a.position.y < b.position.y ? a : b))
+    floorMap[code] = { expressId: best.expressId, position: best.position }
+  }
+  return { floorMap, anyCommentsFound: sampleComments.length > 0, sampleComments }
+}
+
+function extractSectorCodesFromUnknown(value: unknown): string[] {
+  const text = unwrapIfcText(value)
+  if (!text) return []
+  return extractSectorCodesFromText(text)
+}
+
+/** Posiciones por sector cuando el IFC no tiene Comments S0-S10: grilla sobre el bbox */
+function buildFallbackFloorMapBySector(box: THREE.Box3): Record<string, { expressId: number; position: THREE.Vector3 }> {
+  const size = box.getSize(new THREE.Vector3())
+  const minY = box.min.y + Math.max(size.y * 0.02, 0.2)
+  const sectors = ["S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10"]
+  const out: Record<string, { expressId: number; position: THREE.Vector3 }> = {}
+  const cols = 4
+  const rows = 3
+  for (let i = 0; i < sectors.length; i++) {
+    const col = i % cols
+    const row = Math.floor(i / cols)
+    const x = box.min.x + ((col + 0.5) / cols) * size.x
+    const z = box.min.z + ((row + 0.5) / rows) * size.z
+    out[sectors[i]] = { expressId: -1, position: new THREE.Vector3(x, minY, z) }
+  }
+  return out
+}
+
+export function IfcViewer({
+  file,
+  plant = "RICARDONE",
+  trucksInPlant = [],
+  onFleetChange,
+  operationFilter = "ALL",
+  focusPlate,
+  onFocusPlateHandled,
+}: IfcViewerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const controlsRef = useRef<OrbitControls | null>(null)
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null)
@@ -544,6 +765,8 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
   const ifcLoaderRef = useRef<IFCLoader | null>(null)
   const ifcModelRef = useRef<THREE.Object3D | null>(null)
   const expressPointMapRef = useRef<Record<number, THREE.Vector3>>({})
+  const floorMapBySectorRef = useRef<Record<string, { expressId: number; position: THREE.Vector3 }>>({})
+  const [floorMapVersion, setFloorMapVersion] = useState(0)
   const simTimerRef = useRef<number | null>(null)
   const truckMarkersRef = useRef<THREE.Sprite[]>([])
   const truckMarkerDataRef = useRef<Map<THREE.Object3D, IfcSelectedTruckInfo>>(new Map())
@@ -592,6 +815,8 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
   const [modelLoadVersion, setModelLoadVersion] = useState(0)
   const [renderedTruckCount, setRenderedTruckCount] = useState(0)
   const [metadataStatus, setMetadataStatus] = useState<"idle" | "loading" | "ready" | "error">("idle")
+  const [sectorsFromIfc, setSectorsFromIfc] = useState<string[] | null>(null)
+  const [ifcCommentDiagnostic, setIfcCommentDiagnostic] = useState<{ anyFound: boolean; samples: string[] } | null>(null)
   const loadEpochRef = useRef(0)
   const metadataLoadPromiseRef = useRef<Promise<Record<number, string[]>> | null>(null)
   useEffect(() => {
@@ -727,7 +952,7 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
     let foundVue = 0
     let foundPtd = 0
     let foundPtc = 0
-    const tagsSource = tagsOverride ?? elementTagsById
+    const tagsSource = tagsOverride ?? elementTagsRef.current
     for (const [idStr, tags] of Object.entries(tagsSource)) {
       const id = Number(idStr)
       const hasCamino = circuit.CIR ? tags.some((t) => tagMatchesCode(t, circuit.CIR)) : false
@@ -795,7 +1020,33 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
     setSimOrderedIds(orderedForSim)
     setSimIndex(0)
     setSimulatingTruck(false)
-  }, [buildSimulationOrder, circuitMap, elementTagsById])
+  }, [buildSimulationOrder, circuitMap])
+
+  const openTruckPopup = useCallback((truckInfo: IfcSelectedTruckInfo) => {
+    const epochAtOpen = loadEpochRef.current
+    setSelectedSimTruck(truckInfo)
+    setSelectedCaptureIndex(0)
+    setTruckPopupLoading(true)
+    window.setTimeout(() => {
+      void (async () => {
+        try {
+          let discoveredTags: Record<number, string[]> | undefined
+          if (Object.keys(elementTagsRef.current).length === 0) {
+            setMappingNotice("Analizando metadata IFC para validar circuito...")
+            discoveredTags = await ensureMetadataLoaded()
+            if (epochAtOpen !== loadEpochRef.current) return
+            if (Object.keys(discoveredTags).length === 0) {
+              setMappingNotice("No se detecto metadata IFC util para mapeo de circuitos.")
+            }
+          }
+          setActiveCircuitPrefix(truckInfo.assignedCircuitPrefix)
+          applyCircuitByPrefix(truckInfo.assignedCircuitPrefix, discoveredTags)
+        } finally {
+          if (epochAtOpen === loadEpochRef.current) setTruckPopupLoading(false)
+        }
+      })()
+    }, 0)
+  }, [applyCircuitByPrefix, ensureMetadataLoaded])
 
   useEffect(() => {
     return () => {
@@ -818,8 +1069,11 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
     setMappingNotice(null)
     setCircuitDebugInfo(null)
     setMetadataStatus("idle")
+    setSectorsFromIfc(null)
+    setIfcCommentDiagnostic(null)
     metadataLoadPromiseRef.current = null
     expressPointMapRef.current = {}
+    floorMapBySectorRef.current = {}
 
     const width = container.clientWidth || 800
     const height = container.clientHeight || 500
@@ -891,28 +1145,7 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
         const truckObj = truckHits[0].object
         const truckInfo = truckMarkerDataRef.current.get(truckObj)
         if (truckInfo) {
-          setSelectedSimTruck(truckInfo)
-          setSelectedCaptureIndex(0)
-          setTruckPopupLoading(true)
-          window.setTimeout(() => {
-            void (async () => {
-            try {
-              let discoveredTags: Record<number, string[]> | undefined
-              if (Object.keys(elementTagsRef.current).length === 0) {
-                setMappingNotice("Analizando metadata IFC para validar circuito...")
-                discoveredTags = await ensureMetadataLoaded()
-                if (currentEpoch !== loadEpochRef.current) return
-                if (Object.keys(discoveredTags).length === 0) {
-                  setMappingNotice("No se detecto metadata IFC util para mapeo de circuitos.")
-                }
-              }
-              setActiveCircuitPrefix(truckInfo.assignedCircuitPrefix)
-              applyCircuitByPrefix(truckInfo.assignedCircuitPrefix, discoveredTags)
-            } finally {
-              if (currentEpoch === loadEpochRef.current) setTruckPopupLoading(false)
-            }
-            })()
-          }, 0)
+          openTruckPopup(truckInfo)
           return
         }
       }
@@ -949,7 +1182,7 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
         const info = await readElementDebugInfo(loaderObj, model as THREE.Object3D & { modelID?: number }, expressId)
         setClickedDebugInfo(info)
       } catch {
-        setClickedDebugInfo({ expressId, commentsCandidates: [], codesFound: [] })
+        setClickedDebugInfo({ expressId, commentsCandidates: [], ifcComments: [], codesFound: [] })
       }
     }
     renderer.domElement.addEventListener("click", onClickModel)
@@ -990,9 +1223,19 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
           controls.update()
           initialTargetRef.current = center.clone()
           initialPositionRef.current = camera.position.clone()
-          // Modo rapido: evitamos procesar todos los meshes y bordes en carga inicial.
-          // Esto reduce mucho el tiempo de primera visualizacion.
-          expressPointMapRef.current = {}
+          // Construir mapa de puntos y suelos por sector (S0..S10) para posicionar camiones
+          expressPointMapRef.current = buildExpressPointMap(ifcModel)
+          buildFloorMapBySector(loader, ifcModel, expressPointMapRef.current).then((result) => {
+            if (currentEpoch !== loadEpochRef.current) return
+            floorMapBySectorRef.current = result.floorMap
+            setSectorsFromIfc(Object.keys(result.floorMap).sort())
+            setIfcCommentDiagnostic({ anyFound: result.anyCommentsFound, samples: result.sampleComments })
+            setFloorMapVersion((v) => v + 1)
+          }).catch(() => {
+            floorMapBySectorRef.current = {}
+            setSectorsFromIfc([])
+            setIfcCommentDiagnostic({ anyFound: false, samples: [] })
+          })
           if (currentEpoch !== loadEpochRef.current) return
           setLoadedFileName(fileName)
           setModelLoadVersion((v) => v + 1)
@@ -1228,21 +1471,48 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
           ),
         }))
 
+    const floorMap = floorMapBySectorRef.current
+    const fallbackBySector = buildFallbackFloorMapBySector(box)
+    const getSectorSlot = (code: string) => floorMap[code] ?? fallbackBySector[code]
+    const sectorCount: Record<string, number> = {}
     const sprites: THREE.Sprite[] = []
     const generatedFleet: IfcSelectedTruckInfo[] = []
-    for (let i = 0; i < FLEET_TRUCK_COUNT; i++) {
-      const slotIndex = i % slotDefinitions.length
-      const groupIndex = Math.floor(i / slotDefinitions.length)
-      const basePoint = slotDefinitions[slotIndex].point
-      const locationExpressId = slotDefinitions[slotIndex].expressId
-      const angle = (groupIndex * 2.399963229728653 + slotIndex * 0.65) % (Math.PI * 2)
-      const ring = Math.floor(groupIndex / 2) + 1
-      const radius = spreadRadius * ring
-      const px = basePoint.x + Math.cos(angle) * radius
-      const pz = basePoint.z + Math.sin(angle) * radius
+    for (let i = 0; i < trucksInPlant.length; i++) {
+      const truck = trucksInPlant[i]
+      const sectorCode = getTruckSectorCode(truck)
+      let basePoint: THREE.Vector3
+      let locationExpressId: number
+      const sectorSlot = sectorCode ? getSectorSlot(sectorCode) : null
+      if (sectorSlot) {
+        basePoint = sectorSlot.position.clone()
+        locationExpressId = sectorSlot.expressId
+        const idxInSector = sectorCount[sectorCode] ?? 0
+        sectorCount[sectorCode] = idxInSector + 1
+        if (idxInSector > 0) {
+          const angle = (idxInSector * 2.4) % (Math.PI * 2)
+          const radius = spreadRadius * (Math.floor(idxInSector / 6) + 1)
+          basePoint.x += Math.cos(angle) * radius
+          basePoint.z += Math.sin(angle) * radius
+        }
+      } else {
+        if (sectorCode) {
+          console.warn(`No se encontró suelo IFC para sector ${sectorCode}`)
+        }
+        const slotIndex = i % slotDefinitions.length
+        const groupIndex = Math.floor(i / slotDefinitions.length)
+        basePoint = slotDefinitions[slotIndex].point.clone()
+        locationExpressId = slotDefinitions[slotIndex].expressId
+        const angle = (groupIndex * 2.399963229728653 + slotIndex * 0.65) % (Math.PI * 2)
+        const ring = Math.floor(groupIndex / 2) + 1
+        const radius = spreadRadius * ring
+        basePoint.x += Math.cos(angle) * radius
+        basePoint.z += Math.sin(angle) * radius
+      }
+      const px = basePoint.x
+      const pz = basePoint.z
       const py = basePoint.y + yOffset
 
-      const info = buildSimTruckInfo(i, locationExpressId)
+      const info = truckInPlantToIfcInfo(truck, i, locationExpressId)
       const texture = createTruckCircleTexture(info.plate, info.operationType)
       const material = new THREE.SpriteMaterial({
         map: texture,
@@ -1276,7 +1546,7 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
       setRenderedTruckCount(0)
       onFleetChange?.([])
     }
-  }, [elementTagsById, modelLoadVersion, onFleetChange])
+  }, [elementTagsById, modelLoadVersion, floorMapVersion, onFleetChange, trucksInPlant])
 
   useEffect(() => {
     const selectedPlate = selectedSimTruck?.plate ?? null
@@ -1307,45 +1577,36 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
   }, [operationFilter, selectedSimTruck])
 
   useEffect(() => {
-    setSelectedCaptureIndex(0)
-  }, [selectedSimTruck?.plate])
+    if (!selectedSimTruck) return
+    const lastIdx = Math.max(0, selectedSimTruck.cameraCaptures.length - 1)
+    setSelectedCaptureIndex(lastIdx)
+  }, [selectedSimTruck?.plate, selectedSimTruck?.cameraCaptures.length])
 
   useEffect(() => {
     if (!selectedSimTruck) return
     const totalSteps = selectedSimTruck.cameraCaptures.length
     if (totalSteps <= 1) return
     const timer = window.setInterval(() => {
-      setSelectedCaptureIndex((prev) => (prev >= totalSteps - 1 ? prev : prev + 1))
-    }, 1400)
+      setSelectedCaptureIndex((prev) => (prev >= totalSteps - 1 ? 0 : prev + 1))
+    }, 3000)
     return () => window.clearInterval(timer)
   }, [selectedSimTruck?.plate, selectedSimTruck?.cameraCaptures.length])
+
+  useEffect(() => {
+    const targetPlate = (focusPlate ?? "").trim().toUpperCase()
+    if (!targetPlate) return
+    if (renderedTruckCount === 0) return
+    const match = [...truckMarkerDataRef.current.values()].find((truck) => truck.plate.toUpperCase() === targetPlate)
+    if (match) openTruckPopup(match)
+    else setMappingNotice(`No se encontró ${targetPlate} en camiones visibles de la planta.`)
+    onFocusPlateHandled?.()
+  }, [focusPlate, renderedTruckCount, openTruckPopup, onFocusPlateHandled])
 
   return (
     <div className="h-full w-full relative bg-white">
       <div ref={containerRef} className="h-full w-full" />
       {loading && (
-        <div className="absolute inset-0 z-20 bg-white/70 backdrop-blur-[1px]">
-          <div className="flex h-full w-full items-center justify-center">
-            <div className="w-[320px] rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-lg">
-              <div className="flex items-center gap-3">
-                <div className="h-7 w-7 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600" />
-                <div>
-                  <div className="text-sm font-semibold text-slate-800">Cargando modelo IFC</div>
-                  <div className="text-xs text-slate-500">{loadingStage}</div>
-                </div>
-              </div>
-              <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
-                <div
-                  className="h-full rounded-full bg-blue-600 transition-all duration-200"
-                  style={{ width: `${loadingProgress ?? 35}%` }}
-                />
-              </div>
-              <div className="mt-1 text-[11px] text-slate-500">
-                {loadingProgress != null ? `${loadingProgress}%` : "Preparando visualizacion..."}
-              </div>
-            </div>
-          </div>
-        </div>
+        <IfcLoadingOverlay loadingStage={loadingStage} loadingProgress={loadingProgress} />
       )}
       {!file && (
         <div className="absolute inset-0 flex items-center justify-center text-sm text-slate-500">
@@ -1378,101 +1639,69 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
           >
             ×
           </button>
-          {truckPopupLoading && (
-            <div className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[11px] font-semibold text-blue-700">
-              <span className="h-3 w-3 animate-spin rounded-full border-2 border-blue-300 border-t-blue-700" />
-              Cargando trazabilidad...
-            </div>
-          )}
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_430px]">
+          <div className="relative grid grid-cols-1 gap-3 md:grid-cols-[1fr_430px]">
+            {truckPopupLoading && (
+              <IfcLoadingOverlay
+                variant="inline"
+                loadingStage="Cargando trazabilidad..."
+              />
+            )}
             <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-xs text-slate-700">
               <div className="col-span-2">
                 <div className="text-[11px] uppercase tracking-wide text-slate-500">Patente</div>
-                <div className="flex items-center gap-3">
-                  <div className="text-3xl font-bold leading-none text-blue-700">{selectedSimTruck.plate}</div>
-                  <div
-                    className={`inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold ${
-                      selectedSimTruck.operationType === "RECEPCION"
-                        ? "bg-sky-100 text-sky-700"
-                        : selectedSimTruck.operationType === "DESPACHANDO"
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-violet-100 text-violet-700"
-                    }`}
-                  >
-                    {selectedSimTruck.operationType}
+                <div className="text-3xl font-bold leading-none text-blue-700">
+                  {selectedSimTruck.ultimoEventoCamara?.patente ?? selectedSimTruck.plate}
+                </div>
+              </div>
+              {selectedSimTruck.ultimoEventoCamara ? (
+                <>
+                  <div>
+                    <div className="text-[11px] uppercase tracking-wide text-slate-500">Hora</div>
+                    <div className="text-sm font-semibold text-slate-900">
+                      {new Date(selectedSimTruck.ultimoEventoCamara.hora).toLocaleString("es-AR", {
+                        dateStyle: "short",
+                        timeStyle: "medium",
+                      })}
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div>
-                <div className="text-[11px] uppercase tracking-wide text-slate-500">Tipo de carga</div>
-                <div className="text-sm font-semibold text-slate-900">{selectedSimTruck.cargoType}</div>
-              </div>
-              <div>
-                <div className="text-[11px] uppercase tracking-wide text-slate-500">Ultima check</div>
-                <div className="text-sm font-semibold text-slate-900">{selectedSimTruck.lastCheckpoint}</div>
-              </div>
-              <div>
-                <div className="text-[11px] uppercase tracking-wide text-slate-500">Chofer</div>
-                <div className="text-xs font-medium text-slate-900">{selectedSimTruck.driverName}</div>
-              </div>
-              <div>
-                <div className="text-[11px] uppercase tracking-wide text-slate-500">Circuito activo</div>
-                <div className="inline-flex rounded-md border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700">
-                  {selectedSimTruck.assignedCircuitPrefix}
-                </div>
-              </div>
-              <div className="col-span-2 rounded-lg border border-slate-200 bg-slate-50 p-2">
-                <div className="mb-1 flex items-center justify-between">
-                  <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                    Secuencia de camaras ({selectedSimTruck.assignedCircuitPrefix})
+                  <div>
+                    <div className="text-[11px] uppercase tracking-wide text-slate-500">Región</div>
+                    <div className="text-sm font-semibold text-slate-900">{selectedSimTruck.ultimoEventoCamara.region}</div>
                   </div>
-                  <div className="text-[10px] text-slate-500">Fuente: circuitos_ricardone.pdf</div>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {selectedSimTruck.cameraCaptures.map((capture, idx) => {
-                    const isDone = idx <= selectedCaptureIndex
-                    const isCurrent = idx === selectedCaptureIndex
-                    return (
-                      <button
-                        key={`${capture.cameraId}-${idx}`}
-                        type="button"
-                        onClick={() => setSelectedCaptureIndex(idx)}
-                        className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[10px] transition ${
-                          isDone ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-slate-200 bg-white text-slate-500"
-                        } ${isCurrent ? "ring-2 ring-blue-300" : ""}`}
-                      >
-                        <span
-                          className={`inline-flex h-3.5 w-3.5 items-center justify-center rounded-sm border text-[9px] font-bold ${
-                            isDone ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 bg-white text-transparent"
-                          }`}
-                        >
-                          ✓
-                        </span>
-                        <span className="font-semibold">{capture.cameraId}</span>
-                        <span className="opacity-70">#{idx + 1}</span>
-                        {isCurrent && <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
+                  <div>
+                    <div className="text-[11px] uppercase tracking-wide text-slate-500">Logo</div>
+                    <div className="text-sm font-semibold text-slate-900">{selectedSimTruck.ultimoEventoCamara.logo}</div>
+                  </div>
+                  <div>
+                    <div className="text-[11px] uppercase tracking-wide text-slate-500">Tipo vehículo</div>
+                    <div className="text-sm font-semibold text-slate-900">{selectedSimTruck.ultimoEventoCamara.vehicleType}</div>
+                  </div>
+                </>
+              ) : (
+                <div className="col-span-2 text-slate-500">Sin datos de cámara</div>
+              )}
             </div>
             <div className="md:justify-self-end">
               <div className="overflow-hidden rounded-xl border border-slate-300 bg-slate-900/95 shadow-lg ring-1 ring-slate-200/70">
                 <div className="flex items-center justify-between border-b border-slate-700 px-3 py-1.5">
                   <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-300">
-                    Camara operativa · {selectedSimTruck.cameraCaptures[selectedCaptureIndex]?.cameraId ?? "S0"}
+                    {selectedCaptureIndex === selectedSimTruck.cameraCaptures.length - 1
+                      ? "Última cámara que lo registró"
+                      : "Cámara operativa"
+                    } · {selectedSimTruck.cameraCaptures[selectedCaptureIndex]?.cameraId ?? "S0"}
                   </span>
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-red-300">
                     <span className="h-1.5 w-1.5 rounded-full bg-red-400" />
                     REC
                   </span>
                 </div>
-                <img
-                  src={selectedSimTruck.cameraCaptures[selectedCaptureIndex]?.imageUrl ?? selectedSimTruck.cameraImageUrl}
-                  alt={`Camara ${selectedSimTruck.plate}`}
-                  className="h-[176px] w-full object-cover md:w-[410px]"
-                />
+                <div className="flex aspect-video min-h-[176px] items-center justify-center bg-slate-950">
+                  <img
+                    src={selectedSimTruck.cameraCaptures[selectedCaptureIndex]?.imageUrl ?? selectedSimTruck.cameraImageUrl}
+                    alt={`Camara ${selectedSimTruck.plate}`}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
                 <div className="border-t border-slate-700 bg-slate-950/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-200">
                   ULTIMA FOTO TOMADA
                 </div>
@@ -1481,7 +1710,7 @@ export function IfcViewer({ file, plant = "RICARDONE", onFleetChange, operationF
           </div>
         </div>
       )}
-      <div className="absolute bottom-3 left-3 z-10 flex max-w-[60%] flex-wrap gap-2">
+      <div className="absolute bottom-3 left-3 z-10 flex max-w-[60%] flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={() => setAutoOrbit((prev) => !prev)}

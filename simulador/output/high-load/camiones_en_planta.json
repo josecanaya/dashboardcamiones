@@ -1,0 +1,99 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-03-10T12:18:00.000Z",
+  "scenario": "high-load",
+  "data": [
+    {
+      "truckId": "SIM-005",
+      "plate": "AC789EF",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_S4_01",
+      "lastSeenAt": "2026-03-10T11:20:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "SIM-009",
+      "plate": "AG456MN",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_S4_01",
+      "lastSeenAt": "2026-03-10T11:28:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "SIM-013",
+      "plate": "AK890UV",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "currentSector": "S9",
+      "currentCameraId": "CAM_S9_01",
+      "lastSeenAt": "2026-03-10T11:34:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "SIM-017",
+      "plate": "AO234CD",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "currentSector": "S7",
+      "currentCameraId": "CAM_S7_01",
+      "lastSeenAt": "2026-03-10T11:42:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7"
+      ],
+      "eventCount": 6
+    },
+    {
+      "truckId": "SIM-001",
+      "plate": "OGA047",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_S6_01",
+      "lastSeenAt": "2026-03-10T11:10:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    }
+  ]
+}

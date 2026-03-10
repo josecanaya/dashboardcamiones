@@ -1,0 +1,70 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-03-10T13:39:00.000Z",
+  "scenario": "anomalies",
+  "data": [
+    {
+      "tripId": "trip-0001",
+      "truckId": "SIM-003",
+      "plate": "AE908TR",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "startedAt": "2026-03-10T11:10:00.000Z",
+      "endedAt": "2026-03-10T11:30:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S6",
+        "S9",
+        "S10"
+      ],
+      "completed": true,
+      "expectedSequence": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9",
+        "S4",
+        "S10"
+      ],
+      "durationMinutes": 20
+    },
+    {
+      "tripId": "trip-0002",
+      "truckId": "SIM-004",
+      "plate": "AB456CD",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "startedAt": "2026-03-10T11:12:00.000Z",
+      "endedAt": "2026-03-10T11:39:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S6",
+        "S4",
+        "S2",
+        "S3"
+      ],
+      "completed": true,
+      "expectedSequence": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4",
+        "S2",
+        "S3"
+      ],
+      "durationMinutes": 27
+    }
+  ]
+}

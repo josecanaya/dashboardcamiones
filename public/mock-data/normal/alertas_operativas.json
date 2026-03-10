@@ -1,0 +1,1657 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-03-10T14:27:11.973Z",
+  "scenario": "normal",
+  "data": [
+    {
+      "alertId": "alt-0001",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-007",
+      "plate": "AAA007GA",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0002",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-007",
+      "plate": "AAA007GA",
+      "message": "Sin detecciones de camara por 10179 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-03T12:48:00.000Z",
+        "minutesWithoutSignal": 10179
+      }
+    },
+    {
+      "alertId": "alt-0003",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-068",
+      "plate": "AAA118NE",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0004",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-068",
+      "plate": "AAA118NE",
+      "message": "Sin detecciones de camara por 10035 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-03T15:12:00.000Z",
+        "minutesWithoutSignal": 10035
+      }
+    },
+    {
+      "alertId": "alt-0005",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-090",
+      "plate": "AAA140JF",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-0092"
+      }
+    },
+    {
+      "alertId": "alt-0006",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-077",
+      "plate": "AAA127WE",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0007",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-077",
+      "plate": "AAA127WE",
+      "message": "Sin detecciones de camara por 9699 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-03T20:48:00.000Z",
+        "minutesWithoutSignal": 9699
+      }
+    },
+    {
+      "alertId": "alt-0008",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-050",
+      "plate": "AAA050XB",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-0117"
+      }
+    },
+    {
+      "alertId": "alt-0009",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-098",
+      "plate": "AAA148RF",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0010",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-098",
+      "plate": "AAA148RF",
+      "message": "Sin detecciones de camara por 9549 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-03T23:18:00.000Z",
+        "minutesWithoutSignal": 9549
+      }
+    },
+    {
+      "alertId": "alt-0011",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-080",
+      "plate": "AAA130ZE",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-0160"
+      }
+    },
+    {
+      "alertId": "alt-0012",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-137",
+      "plate": "AAA237CJ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0013",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-137",
+      "plate": "AAA237CJ",
+      "message": "Sin detecciones de camara por 9129 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-04T06:18:00.000Z",
+        "minutesWithoutSignal": 9129
+      }
+    },
+    {
+      "alertId": "alt-0014",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-119",
+      "plate": "AAA219KI",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "B1",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S5",
+          "S6",
+          "S2",
+          "S3"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0015",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-110",
+      "plate": "AAA210BI",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-0235"
+      }
+    },
+    {
+      "alertId": "alt-0016",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-100",
+      "plate": "AAA150TF",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-0250"
+      }
+    },
+    {
+      "alertId": "alt-0017",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-069",
+      "plate": "AAA119OE",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "B1",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S5",
+          "S6",
+          "S2",
+          "S3"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0018",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-149",
+      "plate": "AAA249OJ",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "B1",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S5",
+          "S6",
+          "S2",
+          "S3"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0019",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-099",
+      "plate": "AAA149SF",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "B1",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S5",
+          "S6",
+          "S2",
+          "S3"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0020",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-020",
+      "plate": "AAA020TA",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-0343"
+      }
+    },
+    {
+      "alertId": "alt-0021",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-059",
+      "plate": "AAA109EE",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "B1",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S5",
+          "S6",
+          "S2",
+          "S3"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0022",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-148",
+      "plate": "AAA248NJ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0023",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-148",
+      "plate": "AAA248NJ",
+      "message": "Sin detecciones de camara por 7707 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-05T06:00:00.000Z",
+        "minutesWithoutSignal": 7707
+      }
+    },
+    {
+      "alertId": "alt-0024",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-067",
+      "plate": "AAA117ME",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0025",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-067",
+      "plate": "AAA117ME",
+      "message": "Sin detecciones de camara por 7335 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-05T12:12:00.000Z",
+        "minutesWithoutSignal": 7335
+      }
+    },
+    {
+      "alertId": "alt-0026",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-037",
+      "plate": "AAA037KB",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0027",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-037",
+      "plate": "AAA037KB",
+      "message": "Sin detecciones de camara por 7017 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-05T17:30:00.000Z",
+        "minutesWithoutSignal": 7017
+      }
+    },
+    {
+      "alertId": "alt-0028",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-008",
+      "plate": "AAA008HA",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0029",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-008",
+      "plate": "AAA008HA",
+      "message": "Sin detecciones de camara por 6651 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-05T23:36:00.000Z",
+        "minutesWithoutSignal": 6651
+      }
+    },
+    {
+      "alertId": "alt-0030",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-150",
+      "plate": "AAA250PJ",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-0410"
+      }
+    },
+    {
+      "alertId": "alt-0031",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-047",
+      "plate": "AAA047UB",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0032",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-047",
+      "plate": "AAA047UB",
+      "message": "Sin detecciones de camara por 6513 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-06T01:54:00.000Z",
+        "minutesWithoutSignal": 6513
+      }
+    },
+    {
+      "alertId": "alt-0033",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-049",
+      "plate": "AAA049WB",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "B1",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S5",
+          "S6",
+          "S2",
+          "S3"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0034",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-010",
+      "plate": "AAA010JA",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-0468"
+      }
+    },
+    {
+      "alertId": "alt-0035",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-058",
+      "plate": "AAA108DE",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0036",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-058",
+      "plate": "AAA108DE",
+      "message": "Sin detecciones de camara por 6447 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-06T03:00:00.000Z",
+        "minutesWithoutSignal": 6447
+      }
+    },
+    {
+      "alertId": "alt-0037",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-019",
+      "plate": "AAA019SA",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "B1",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S5",
+          "S6",
+          "S2",
+          "S3"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0038",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-088",
+      "plate": "AAA138HF",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0039",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-088",
+      "plate": "AAA138HF",
+      "message": "Sin detecciones de camara por 6165 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-06T07:42:00.000Z",
+        "minutesWithoutSignal": 6165
+      }
+    },
+    {
+      "alertId": "alt-0040",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-029",
+      "plate": "AAA029CB",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "B1",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S5",
+          "S6",
+          "S2",
+          "S3"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0041",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-140",
+      "plate": "AAA240FJ",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-0622"
+      }
+    },
+    {
+      "alertId": "alt-0042",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-028",
+      "plate": "AAA028BB",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0043",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-028",
+      "plate": "AAA028BB",
+      "message": "Sin detecciones de camara por 5181 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-07T00:06:00.000Z",
+        "minutesWithoutSignal": 5181
+      }
+    },
+    {
+      "alertId": "alt-0044",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-117",
+      "plate": "AAA217II",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0045",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-117",
+      "plate": "AAA217II",
+      "message": "Sin detecciones de camara por 4851 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-07T05:36:00.000Z",
+        "minutesWithoutSignal": 4851
+      }
+    },
+    {
+      "alertId": "alt-0046",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-130",
+      "plate": "AAA230VI",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-0669"
+      }
+    },
+    {
+      "alertId": "alt-0047",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-118",
+      "plate": "AAA218JI",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0048",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-118",
+      "plate": "AAA218JI",
+      "message": "Sin detecciones de camara por 4755 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-07T07:12:00.000Z",
+        "minutesWithoutSignal": 4755
+      }
+    },
+    {
+      "alertId": "alt-0049",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-129",
+      "plate": "AAA229UI",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "B1",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S5",
+          "S6",
+          "S2",
+          "S3"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0050",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-127",
+      "plate": "AAA227SI",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0051",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-127",
+      "plate": "AAA227SI",
+      "message": "Sin detecciones de camara por 4323 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-07T14:24:00.000Z",
+        "minutesWithoutSignal": 4323
+      }
+    },
+    {
+      "alertId": "alt-0052",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-128",
+      "plate": "AAA228TI",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0053",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-128",
+      "plate": "AAA228TI",
+      "message": "Sin detecciones de camara por 4323 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-07T14:24:00.000Z",
+        "minutesWithoutSignal": 4323
+      }
+    },
+    {
+      "alertId": "alt-0054",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-087",
+      "plate": "AAA137GF",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0055",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-087",
+      "plate": "AAA137GF",
+      "message": "Sin detecciones de camara por 4287 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-07T15:00:00.000Z",
+        "minutesWithoutSignal": 4287
+      }
+    },
+    {
+      "alertId": "alt-0056",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-027",
+      "plate": "AAA027AB",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0057",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-027",
+      "plate": "AAA027AB",
+      "message": "Sin detecciones de camara por 4137 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-07T17:30:00.000Z",
+        "minutesWithoutSignal": 4137
+      }
+    },
+    {
+      "alertId": "alt-0058",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-120",
+      "plate": "AAA220LI",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-0814"
+      }
+    },
+    {
+      "alertId": "alt-0059",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-048",
+      "plate": "AAA048VB",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0060",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-048",
+      "plate": "AAA048VB",
+      "message": "Sin detecciones de camara por 3045 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-08T11:42:00.000Z",
+        "minutesWithoutSignal": 3045
+      }
+    },
+    {
+      "alertId": "alt-0061",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-097",
+      "plate": "AAA147QF",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0062",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-097",
+      "plate": "AAA147QF",
+      "message": "Sin detecciones de camara por 3063 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-08T11:24:00.000Z",
+        "minutesWithoutSignal": 3063
+      }
+    },
+    {
+      "alertId": "alt-0063",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-017",
+      "plate": "AAA017QA",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0064",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-017",
+      "plate": "AAA017QA",
+      "message": "Sin detecciones de camara por 2817 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-08T15:30:00.000Z",
+        "minutesWithoutSignal": 2817
+      }
+    },
+    {
+      "alertId": "alt-0065",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-078",
+      "plate": "AAA128XE",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0066",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-078",
+      "plate": "AAA128XE",
+      "message": "Sin detecciones de camara por 2391 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-08T22:36:00.000Z",
+        "minutesWithoutSignal": 2391
+      }
+    },
+    {
+      "alertId": "alt-0067",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-107",
+      "plate": "AAA207YH",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0068",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-107",
+      "plate": "AAA207YH",
+      "message": "Sin detecciones de camara por 1797 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-09T08:30:00.000Z",
+        "minutesWithoutSignal": 1797
+      }
+    },
+    {
+      "alertId": "alt-0069",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-039",
+      "plate": "AAA039MB",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "B1",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S5",
+          "S6",
+          "S2",
+          "S3"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0070",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-139",
+      "plate": "AAA239EJ",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "B1",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S5",
+          "S6",
+          "S2",
+          "S3"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0071",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-018",
+      "plate": "AAA018RA",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0072",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-018",
+      "plate": "AAA018RA",
+      "message": "Sin detecciones de camara por 1851 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-09T07:36:00.000Z",
+        "minutesWithoutSignal": 1851
+      }
+    },
+    {
+      "alertId": "alt-0073",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-040",
+      "plate": "AAA040NB",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-1014"
+      }
+    },
+    {
+      "alertId": "alt-0074",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-070",
+      "plate": "AAA120PE",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-1007"
+      }
+    },
+    {
+      "alertId": "alt-0075",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-057",
+      "plate": "AAA107CE",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0076",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-057",
+      "plate": "AAA107CE",
+      "message": "Sin detecciones de camara por 1347 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-09T16:00:00.000Z",
+        "minutesWithoutSignal": 1347
+      }
+    },
+    {
+      "alertId": "alt-0077",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-089",
+      "plate": "AAA139IF",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "B1",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S5",
+          "S6",
+          "S2",
+          "S3"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0078",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-108",
+      "plate": "AAA208ZH",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0079",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-108",
+      "plate": "AAA208ZH",
+      "message": "Sin detecciones de camara por 1119 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-09T19:48:00.000Z",
+        "minutesWithoutSignal": 1119
+      }
+    },
+    {
+      "alertId": "alt-0080",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-079",
+      "plate": "AAA129YE",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "B1",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S5",
+          "S6",
+          "S2",
+          "S3"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0081",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-138",
+      "plate": "AAA238DJ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0082",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-138",
+      "plate": "AAA238DJ",
+      "message": "Sin detecciones de camara por 897 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-09T23:30:00.000Z",
+        "minutesWithoutSignal": 897
+      }
+    },
+    {
+      "alertId": "alt-0083",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-030",
+      "plate": "AAA030DB",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-1146"
+      }
+    },
+    {
+      "alertId": "alt-0084",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-147",
+      "plate": "AAA247MJ",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S7",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0085",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-147",
+      "plate": "AAA247MJ",
+      "message": "Sin detecciones de camara por 993 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-09T21:54:00.000Z",
+        "minutesWithoutSignal": 993
+      }
+    },
+    {
+      "alertId": "alt-0086",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Avellaneda",
+      "truckId": "SIM-109",
+      "plate": "AAA209AI",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "B1",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S5",
+          "S6",
+          "S2",
+          "S3"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0087",
+      "type": "critical_camera_missing",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-009",
+      "plate": "AAA009IA",
+      "message": "No se detecto paso por el nodo critico S4.",
+      "context": {
+        "expectedCircuit": "B1",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S5",
+          "S6",
+          "S2",
+          "S3"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0088",
+      "type": "incomplete_route",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-038",
+      "plate": "AAA038LB",
+      "message": "Recorrido aun no completo segun secuencia esperada.",
+      "context": {
+        "expectedEnd": "S10",
+        "currentSector": "S4",
+        "visitedSectors": [
+          "S0",
+          "S1",
+          "S2",
+          "S4",
+          "S6",
+          "S9",
+          "S4"
+        ]
+      }
+    },
+    {
+      "alertId": "alt-0089",
+      "type": "truck_disappeared",
+      "severity": "high",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "Ricardone",
+      "truckId": "SIM-038",
+      "plate": "AAA038LB",
+      "message": "Sin detecciones de camara por 357 minutos.",
+      "context": {
+        "lastSeenAt": "2026-03-10T08:30:00.000Z",
+        "minutesWithoutSignal": 357
+      }
+    },
+    {
+      "alertId": "alt-0090",
+      "type": "unexpected_double_pass",
+      "severity": "medium",
+      "detectedAt": "2026-03-10T14:27:11.973Z",
+      "plant": "San Lorenzo",
+      "truckId": "SIM-060",
+      "plate": "AAA110FE",
+      "message": "Doble paso consecutivo por S6.",
+      "context": {
+        "sector": "S6",
+        "eventId": "evt-1210"
+      }
+    }
+  ]
+}

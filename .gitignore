@@ -27,3 +27,6 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+
+# Mock data grandes (exceden límite GitHub 100MB)
+public/mock-data/march_full/

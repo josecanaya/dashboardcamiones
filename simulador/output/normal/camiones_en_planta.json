@@ -1,0 +1,44 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-03-10T12:20:00.000Z",
+  "scenario": "normal",
+  "data": [
+    {
+      "truckId": "SIM-005",
+      "plate": "AC789EF",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "currentSector": "S4",
+      "currentCameraId": "CAM_S4_01",
+      "lastSeenAt": "2026-03-10T11:48:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4"
+      ],
+      "eventCount": 7
+    },
+    {
+      "truckId": "SIM-006",
+      "plate": "AD123GH",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "currentSector": "S6",
+      "currentCameraId": "CAM_S6_01",
+      "lastSeenAt": "2026-03-10T11:50:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "eventCount": 6
+    }
+  ]
+}

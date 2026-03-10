@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import {
   ResponsiveContainer,
   BarChart,
@@ -13,8 +13,10 @@ import {
 } from 'recharts'
 import { useLogisticsOps } from '../context/LogisticsOpsContext'
 import type { SiteId } from '../domain/sites'
+import { IfcLoadingOverlay } from '../components/IfcLoadingOverlay'
 
 type DashboardTab = 'live' | 'history' | 'alerts' | 'planning'
+type PeriodPreset = 'last_day' | 'last_week' | 'last_month'
 
 interface HomePageProps {
   siteId: SiteId
@@ -23,69 +25,175 @@ interface HomePageProps {
 }
 
 export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
-  const { trucksInPlant, operationalAlerts, historicalTrips, cameraEvents } = useLogisticsOps()
+  const { trucksInPlant, operationalAlerts, historicalTrips, isLoading } = useLogisticsOps()
+  const [periodPreset, setPeriodPreset] = useState<PeriodPreset>('last_week')
+  const [enterLoading, setEnterLoading] = useState(true)
+
+  useEffect(() => {
+    setEnterLoading(true)
+    const t = setTimeout(() => setEnterLoading(false), 1200)
+    return () => clearTimeout(t)
+  }, [])
+
+  const handlePeriodChange = (preset: PeriodPreset) => {
+    setPeriodPreset(preset)
+  }
+
+  const maxEgresoRef = useMemo(() => {
+    if (historicalTrips.length === 0) return Date.now()
+    return Math.max(...historicalTrips.map((t) => new Date(t.egresoAt).getTime()))
+  }, [historicalTrips])
 
   const summaryBySite = useMemo(() => {
     const ids: SiteId[] = ['ricardone', 'san_lorenzo', 'avellaneda']
+    const hoy = new Date()
+    const fechaHoy = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`
     return ids.map((id) => {
-      const trucks = trucksInPlant.filter((t) => t.siteId === id).length
-      const activeAlerts = operationalAlerts.filter((a) => a.siteId === id && a.status !== 'RESOLVED').length
-      const today = new Date().toDateString()
-      const closedToday = historicalTrips.filter((h) => h.siteId === id && new Date(h.egresoAt).toDateString() === today).length
-      return { id, trucks, activeAlerts, closedToday }
+      const activosEnPlanta = trucksInPlant.filter((t) => t.siteId === id)
+      const activos = activosEnPlanta.length
+      const camionIdsEnPlanta = new Set(activosEnPlanta.map((t) => t.camionId))
+      const alertas = operationalAlerts.filter(
+        (a) => a.siteId === id && a.status !== 'RESOLVED' && camionIdsEnPlanta.has(a.camionId)
+      ).length
+      const cerradosHoy = historicalTrips.filter((h) => {
+        if (h.siteId !== id) return false
+        const fecha = h.fecha ?? `${new Date(h.egresoAt).getFullYear()}-${String(new Date(h.egresoAt).getMonth() + 1).padStart(2, '0')}-${String(new Date(h.egresoAt).getDate()).padStart(2, '0')}`
+        return fecha === fechaHoy
+      }).length
+      return { id, trucks: activos, activeAlerts: alertas, closedToday: cerradosHoy }
     })
   }, [trucksInPlant, operationalAlerts, historicalTrips])
 
-  const lastUpdate = cameraEvents[0]?.timestamp ?? new Date().toISOString()
-  const sites: SiteId[] = ['ricardone', 'san_lorenzo', 'avellaneda']
-  const siteLabel: Record<SiteId, string> = {
-    ricardone: 'Ricardone',
-    san_lorenzo: 'San Lorenzo',
-    avellaneda: 'Avellaneda',
-  }
+  const precomputedCharts = useMemo(() => {
+    const refDate = new Date(maxEgresoRef)
+    const refFecha = `${refDate.getUTCFullYear()}-${String(refDate.getUTCMonth() + 1).padStart(2, '0')}-${String(refDate.getUTCDate()).padStart(2, '0')}`
+    const refDateMs = new Date(refFecha + 'T12:00:00Z').getTime()
+    const dayMs = 24 * 60 * 60 * 1000
+    const siteNames: Record<SiteId, string> = { ricardone: 'Ricardone', san_lorenzo: 'San Lorenzo', avellaneda: 'Avellaneda' }
 
-  const hourlyActivityComparative = useMemo(() => {
-    // Mock significativo: perfil por hora para visualizar comportamiento operativo.
-    const ricardone = [2, 1, 1, 1, 2, 4, 8, 14, 19, 23, 27, 31, 34, 39, 46, 52, 48, 37, 29, 22, 16, 10, 6, 3]
-    const sanLorenzo = [1, 1, 1, 1, 1, 3, 6, 10, 14, 18, 22, 26, 28, 31, 36, 40, 38, 30, 24, 18, 13, 9, 5, 2]
-    const avellaneda = [1, 1, 1, 1, 2, 4, 7, 12, 17, 20, 24, 29, 33, 37, 42, 47, 44, 35, 27, 20, 15, 11, 7, 3]
-    return Array.from({ length: 24 }).map((_, h) => ({
-      hour: String(h).padStart(2, '0'),
-      Ricardone: ricardone[h],
-      'San Lorenzo': sanLorenzo[h],
-      Avellaneda: avellaneda[h],
+    const activityDay: Array<{ hour: string; Ricardone: number; 'San Lorenzo': number; Avellaneda: number }> = []
+    const byHourSite: Record<number, Record<string, number>> = {}
+    for (let h = 0; h < 24; h++) byHourSite[h] = { Ricardone: 0, 'San Lorenzo': 0, Avellaneda: 0 }
+    for (const trip of historicalTrips) {
+      const tripFecha = trip.fecha ?? `${new Date(trip.egresoAt).getUTCFullYear()}-${String(new Date(trip.egresoAt).getUTCMonth() + 1).padStart(2, '0')}-${String(new Date(trip.egresoAt).getUTCDate()).padStart(2, '0')}`
+      if (tripFecha !== refFecha) continue
+      const h = new Date(trip.egresoAt).getHours()
+      const name = siteNames[trip.siteId]
+      if (byHourSite[h] && name) byHourSite[h][name] = (byHourSite[h][name] ?? 0) + 1
+    }
+    for (let h = 0; h < 24; h++) {
+      activityDay.push({
+        hour: String(h).padStart(2, '0'),
+        Ricardone: byHourSite[h]?.Ricardone ?? 0,
+        'San Lorenzo': byHourSite[h]?.['San Lorenzo'] ?? 0,
+        Avellaneda: byHourSite[h]?.Avellaneda ?? 0,
+      })
+    }
+
+    const byDaySite: Record<number, Record<string, number>> = {}
+    for (let d = 0; d < 7; d++) byDaySite[d] = { Ricardone: 0, 'San Lorenzo': 0, Avellaneda: 0 }
+    for (const trip of historicalTrips) {
+      const fecha = trip.fecha ?? `${new Date(trip.egresoAt).getUTCFullYear()}-${String(new Date(trip.egresoAt).getUTCMonth() + 1).padStart(2, '0')}-${String(new Date(trip.egresoAt).getUTCDate()).padStart(2, '0')}`
+      const tripDateMs = new Date(fecha + 'T12:00:00Z').getTime()
+      const daysDiff = (refDateMs - tripDateMs) / dayMs
+      if (daysDiff < 0 || daysDiff > 7) continue
+      const d = Math.floor(7 - daysDiff)
+      const name = siteNames[trip.siteId]
+      if (byDaySite[d] && name) byDaySite[d][name] = (byDaySite[d][name] ?? 0) + 1
+    }
+    const activityWeek = Array.from({ length: 7 }).map((_, d) => ({
+      hour: `D${d + 1}`,
+      Ricardone: byDaySite[d]?.Ricardone ?? 0,
+      'San Lorenzo': byDaySite[d]?.['San Lorenzo'] ?? 0,
+      Avellaneda: byDaySite[d]?.Avellaneda ?? 0,
     }))
-  }, [])
 
-  const truckStateComparative = useMemo(
-    () => [
-      { planta: 'Ricardone', 'En espera': 18, 'En circulación': 34, Detenido: 9 },
-      { planta: 'San Lorenzo', 'En espera': 12, 'En circulación': 21, Detenido: 6 },
-      { planta: 'Avellaneda', 'En espera': 15, 'En circulación': 27, Detenido: 8 },
-    ],
-    []
-  )
+    const byWeekSite: Record<number, Record<string, number>> = {}
+    for (let w = 0; w < 4; w++) byWeekSite[w] = { Ricardone: 0, 'San Lorenzo': 0, Avellaneda: 0 }
+    for (const trip of historicalTrips) {
+      const fecha = trip.fecha ?? `${new Date(trip.egresoAt).getUTCFullYear()}-${String(new Date(trip.egresoAt).getUTCMonth() + 1).padStart(2, '0')}-${String(new Date(trip.egresoAt).getUTCDate()).padStart(2, '0')}`
+      const tripDateMs = new Date(fecha + 'T12:00:00Z').getTime()
+      const daysDiff = (refDateMs - tripDateMs) / dayMs
+      if (daysDiff < 0 || daysDiff > 30) continue
+      const w = Math.min(3, Math.floor(daysDiff / 7))
+      const weekIdx = 3 - w
+      const name = siteNames[trip.siteId]
+      if (byWeekSite[weekIdx] && name) byWeekSite[weekIdx][name] = (byWeekSite[weekIdx][name] ?? 0) + 1
+    }
+    const activityMonth = Array.from({ length: 4 }).map((_, w) => ({
+      hour: `S${w + 1}`,
+      Ricardone: byWeekSite[w]?.Ricardone ?? 0,
+      'San Lorenzo': byWeekSite[w]?.['San Lorenzo'] ?? 0,
+      Avellaneda: byWeekSite[w]?.Avellaneda ?? 0,
+    }))
 
-  const alertSeverityComparative = useMemo(
-    () => [
-      { planta: 'Ricardone', Críticas: 4, Altas: 7, Medias: 11 },
-      { planta: 'San Lorenzo', Críticas: 2, Altas: 4, Medias: 6 },
-      { planta: 'Avellaneda', Críticas: 3, Altas: 5, Medias: 8 },
-    ],
-    []
-  )
+    const buildClassification = (maxDays: number) =>
+      (['ricardone', 'san_lorenzo', 'avellaneda'] as SiteId[]).map((id) => {
+        const trips = historicalTrips.filter((t) => {
+          if (t.siteId !== id) return false
+          const fecha = t.fecha ?? `${new Date(t.egresoAt).getUTCFullYear()}-${String(new Date(t.egresoAt).getUTCMonth() + 1).padStart(2, '0')}-${String(new Date(t.egresoAt).getUTCDate()).padStart(2, '0')}`
+          if (maxDays === 0) return fecha === refFecha
+          const tripDateMs = new Date(fecha + 'T12:00:00Z').getTime()
+          const daysDiff = (refDateMs - tripDateMs) / dayMs
+          return daysDiff >= 0 && daysDiff <= maxDays
+        })
+        return {
+          planta: siteNames[id],
+          'Circuitos completos': trips.filter((t) => t.estadoFinal === 'VALIDADO').length,
+          'Variaciones operativas': trips.filter((t) => t.estadoFinal === 'CON_OBSERVACIONES').length,
+          Anómalos: trips.filter((t) => t.estadoFinal === 'ANOMALO').length,
+        }
+      })
+
+    const classificationDay = buildClassification(0)
+    const classificationWeek = buildClassification(7)
+    const classificationMonth = buildClassification(30)
+
+    const buildAlerts = (cutoffMs: number) =>
+      (['ricardone', 'san_lorenzo', 'avellaneda'] as SiteId[]).map((id) => {
+        const alerts = operationalAlerts.filter((a) => {
+          if (a.siteId !== id || a.status === 'RESOLVED') return false
+          const alertMs = new Date(a.createdAt ?? a.updatedAt ?? 0).getTime()
+          return alertMs >= cutoffMs
+        })
+        return {
+          planta: siteNames[id],
+          Críticas: alerts.filter((a) => a.severity === 'CRITICAL').length,
+          Altas: alerts.filter((a) => a.severity === 'HIGH').length,
+          Medias: alerts.filter((a) => a.severity === 'MEDIUM').length,
+        }
+      })
+
+    const refDateMsFull = new Date(maxEgresoRef).getTime()
+    const alertDay = buildAlerts(refDateMsFull - dayMs)
+    const alertWeek = buildAlerts(refDateMsFull - 7 * dayMs)
+    const alertMonth = buildAlerts(refDateMsFull - 30 * dayMs)
+
+    return {
+      last_day: { activity: activityDay, classification: classificationDay, alerts: alertDay },
+      last_week: { activity: activityWeek, classification: classificationWeek, alerts: alertWeek },
+      last_month: { activity: activityMonth, classification: classificationMonth, alerts: alertMonth },
+    }
+  }, [historicalTrips, operationalAlerts, maxEgresoRef])
+
+  const hourlyActivityComparative = precomputedCharts[periodPreset].activity
+  const classificationComparative = precomputedCharts[periodPreset].classification
+  const alertSeverityComparative = precomputedCharts[periodPreset].alerts
+
+  const periodLabel = periodPreset === 'last_day' ? 'Último día' : periodPreset === 'last_week' ? 'Última semana' : 'Último mes'
 
   return (
-    <div className="space-y-4">
-      <section className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-900">Dashboard operativo</h2>
-        <p className="text-sm text-slate-500">Elegí una planta para entrar al tablero de operación.</p>
-        <div className="mt-2 text-xs text-slate-500">
-          Última actualización: {new Date(lastUpdate).toLocaleTimeString('es-AR')}
+    <div className="relative min-h-[400px]">
+      {enterLoading && (
+        <div className="absolute inset-0 z-10 rounded-2xl border border-slate-200 bg-white">
+          <IfcLoadingOverlay
+            variant="inline"
+            loadingStage="Cargando dashboard..."
+          />
         </div>
-      </section>
-
-      <section className="grid grid-cols-1 gap-3 md:grid-cols-3">
+      )}
+      <div className="space-y-4">
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {summaryBySite.map((plant) => {
           const title =
             plant.id === 'ricardone'
@@ -93,6 +201,12 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
               : plant.id === 'san_lorenzo'
                 ? 'San Lorenzo'
                 : 'Avellaneda'
+          const iconSrc =
+            plant.id === 'ricardone'
+              ? '/Ricardone_icono.png'
+              : plant.id === 'san_lorenzo'
+                ? '/san_lorenzo_icono.png'
+                : '/Avellaneda_icono.png'
           const isSelected = siteId === plant.id
           return (
             <button
@@ -102,29 +216,43 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
                 onChangeSite(plant.id)
                 onNavigate('live')
               }}
-              className={`group overflow-hidden rounded-2xl border text-left shadow-sm transition ${
+              className={`group overflow-hidden rounded-2xl border text-left shadow-md transition ${
                 isSelected ? 'border-blue-300 ring-2 ring-blue-200' : 'border-slate-200 hover:border-blue-200'
               }`}
             >
-              <div className="h-36 bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100 p-4">
-                <div className="text-lg font-bold text-slate-900">{title}</div>
-                <div className="mt-1 text-xs text-slate-600">Entrar a tablero de operación</div>
-                <div className="mt-6 inline-flex rounded-full bg-white/80 px-2 py-1 text-[10px] font-semibold text-slate-700">
-                  {isSelected ? 'Planta activa' : 'Seleccionar planta'}
+              <div className="relative h-44 overflow-hidden bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100">
+                <img
+                  src={iconSrc}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover opacity-90"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                <div className="relative z-10 flex h-full flex-col justify-between p-5">
+                  <div className="text-xl font-bold text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.8),0_2px_6px_rgba(0,0,0,0.5)]">
+                    {title}
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.9)]">
+                      Entrar a tablero de operación
+                    </div>
+                    <div className="mt-2 inline-flex rounded-full bg-white/95 px-3 py-1.5 text-xs font-semibold text-slate-800 shadow-md">
+                      {isSelected ? 'Planta activa' : 'Seleccionar planta'}
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="grid grid-cols-3 border-t border-slate-200 bg-white px-3 py-2 text-center text-[11px]">
+              <div className="grid grid-cols-3 border-t border-slate-200 bg-white px-4 py-3 text-center">
                 <div>
-                  <div className="font-semibold text-slate-900">{plant.trucks}</div>
-                  <div className="text-slate-500">Camiones</div>
+                  <div className="text-lg font-bold text-slate-900">{plant.trucks}</div>
+                  <div className="text-sm font-medium text-slate-600">Activos</div>
                 </div>
                 <div>
-                  <div className="font-semibold text-slate-900">{plant.activeAlerts}</div>
-                  <div className="text-slate-500">Alertas</div>
+                  <div className="text-lg font-bold text-slate-900">{plant.activeAlerts}</div>
+                  <div className="text-sm font-medium text-slate-600">Alertas</div>
                 </div>
                 <div>
-                  <div className="font-semibold text-slate-900">{plant.closedToday}</div>
-                  <div className="text-slate-500">Cerrados hoy</div>
+                  <div className="text-lg font-bold text-slate-900">{plant.closedToday}</div>
+                  <div className="text-sm font-medium text-slate-600">Cerrados hoy</div>
                 </div>
               </div>
             </button>
@@ -132,13 +260,45 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
         })}
       </section>
 
-      <div className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-700">
-        Visualización con datos mock operativos para validar comparativa entre plantas.
-      </div>
-
-      <section className="grid grid-cols-1 gap-3 md:grid-cols-3">
-        <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-600">Actividad horaria (3 plantas)</h3>
+      <section className="relative space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex gap-1 rounded-lg border border-slate-200 bg-slate-50 p-1">
+            <button
+              type="button"
+              onClick={() => handlePeriodChange('last_day')}
+              className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${periodPreset === 'last_day' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+            >
+              Día
+            </button>
+            <button
+              type="button"
+              onClick={() => handlePeriodChange('last_week')}
+              className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${periodPreset === 'last_week' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+            >
+              Semana
+            </button>
+            <button
+              type="button"
+              onClick={() => handlePeriodChange('last_month')}
+              className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${periodPreset === 'last_month' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+            >
+              Mes
+            </button>
+          </div>
+          <span className="text-[11px] text-slate-500">{periodLabel}</span>
+        </div>
+        <div className="relative min-h-[240px] rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          {(isLoading || enterLoading) && (
+            <IfcLoadingOverlay
+              variant="inline"
+              loadingStage={isLoading ? "Cargando datos..." : "Preparando dashboard..."}
+            />
+          )}
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        <article className="rounded-xl border border-slate-100 bg-slate-50/30 p-4">
+          <h3 className="mb-3 text-sm font-semibold text-slate-800">
+            Actividad por tiempo · {periodPreset === 'last_day' ? 'Horas (0–24h)' : periodPreset === 'last_week' ? 'Días (D1–D7)' : 'Semanas (S1–S4)'}
+          </h3>
           <div className="h-[210px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={hourlyActivityComparative}>
@@ -155,26 +315,30 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
           </div>
         </article>
 
-        <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-600">Estado camiones (comparativa)</h3>
+        <article className="rounded-xl border border-slate-100 bg-slate-50/30 p-4">
+          <h3 className="mb-3 text-sm font-semibold text-slate-800">
+            Circuitos por planta · {periodLabel}
+          </h3>
           <div className="h-[210px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={truckStateComparative}>
+              <BarChart data={classificationComparative}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="planta" tick={{ fontSize: 10 }} />
                 <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
                 <Tooltip />
                 <Legend wrapperStyle={{ fontSize: 10 }} />
-                <Bar dataKey="En espera" fill="#3b82f6" />
-                <Bar dataKey="En circulación" fill="#22c55e" />
-                <Bar dataKey="Detenido" fill="#f59e0b" />
+                <Bar dataKey="Circuitos completos" fill="#2563eb" />
+                <Bar dataKey="Variaciones operativas" fill="#7c3aed" />
+                <Bar dataKey="Anómalos" fill="#0ea5e9" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </article>
 
-        <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-600">Alertas por severidad (comparativa)</h3>
+        <article className="rounded-xl border border-slate-100 bg-slate-50/30 p-4">
+          <h3 className="mb-3 text-sm font-semibold text-slate-800">
+            Alertas por severidad · {periodLabel}
+          </h3>
           <div className="h-[210px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={alertSeverityComparative}>
@@ -190,7 +354,10 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
             </ResponsiveContainer>
           </div>
         </article>
+          </div>
+        </div>
       </section>
+      </div>
     </div>
   )
 }

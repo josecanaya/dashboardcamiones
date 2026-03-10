@@ -1,0 +1,418 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-03-10T12:18:00.000Z",
+  "scenario": "high-load",
+  "data": [
+    {
+      "tripId": "trip-0001",
+      "truckId": "SIM-002",
+      "plate": "AF123BC",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "startedAt": "2026-03-10T11:02:00.000Z",
+      "endedAt": "2026-03-10T11:16:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4",
+        "S10"
+      ],
+      "completed": true,
+      "expectedSequence": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4",
+        "S10"
+      ],
+      "durationMinutes": 14
+    },
+    {
+      "tripId": "trip-0002",
+      "truckId": "SIM-003",
+      "plate": "AE908TR",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "startedAt": "2026-03-10T11:04:00.000Z",
+      "endedAt": "2026-03-10T11:18:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9",
+        "S4",
+        "S10"
+      ],
+      "completed": true,
+      "expectedSequence": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9",
+        "S4",
+        "S10"
+      ],
+      "durationMinutes": 14
+    },
+    {
+      "tripId": "trip-0003",
+      "truckId": "SIM-004",
+      "plate": "AB456CD",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "startedAt": "2026-03-10T11:06:00.000Z",
+      "endedAt": "2026-03-10T11:22:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4",
+        "S2",
+        "S3"
+      ],
+      "completed": true,
+      "expectedSequence": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4",
+        "S2",
+        "S3"
+      ],
+      "durationMinutes": 16
+    },
+    {
+      "tripId": "trip-0004",
+      "truckId": "SIM-006",
+      "plate": "AD123GH",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "startedAt": "2026-03-10T11:10:00.000Z",
+      "endedAt": "2026-03-10T11:24:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4",
+        "S10"
+      ],
+      "completed": true,
+      "expectedSequence": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4",
+        "S10"
+      ],
+      "durationMinutes": 14
+    },
+    {
+      "tripId": "trip-0005",
+      "truckId": "SIM-007",
+      "plate": "AE234IJ",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "startedAt": "2026-03-10T11:12:00.000Z",
+      "endedAt": "2026-03-10T11:26:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4",
+        "S10"
+      ],
+      "completed": true,
+      "expectedSequence": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4",
+        "S10"
+      ],
+      "durationMinutes": 14
+    },
+    {
+      "tripId": "trip-0006",
+      "truckId": "SIM-008",
+      "plate": "AF345KL",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "startedAt": "2026-03-10T11:14:00.000Z",
+      "endedAt": "2026-03-10T11:28:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9",
+        "S4",
+        "S10"
+      ],
+      "completed": true,
+      "expectedSequence": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9",
+        "S4",
+        "S10"
+      ],
+      "durationMinutes": 14
+    },
+    {
+      "tripId": "trip-0007",
+      "truckId": "SIM-010",
+      "plate": "AH567OP",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "startedAt": "2026-03-10T11:18:00.000Z",
+      "endedAt": "2026-03-10T11:34:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4",
+        "S2",
+        "S3"
+      ],
+      "completed": true,
+      "expectedSequence": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4",
+        "S2",
+        "S3"
+      ],
+      "durationMinutes": 16
+    },
+    {
+      "tripId": "trip-0008",
+      "truckId": "SIM-011",
+      "plate": "AI678QR",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "startedAt": "2026-03-10T11:20:00.000Z",
+      "endedAt": "2026-03-10T11:34:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4",
+        "S10"
+      ],
+      "completed": true,
+      "expectedSequence": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4",
+        "S10"
+      ],
+      "durationMinutes": 14
+    },
+    {
+      "tripId": "trip-0009",
+      "truckId": "SIM-012",
+      "plate": "AJ789ST",
+      "plant": "Ricardone",
+      "circuitCode": "A3",
+      "startedAt": "2026-03-10T11:22:00.000Z",
+      "endedAt": "2026-03-10T11:36:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4",
+        "S10"
+      ],
+      "completed": true,
+      "expectedSequence": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4",
+        "S10"
+      ],
+      "durationMinutes": 14
+    },
+    {
+      "tripId": "trip-0010",
+      "truckId": "SIM-014",
+      "plate": "AL901WX",
+      "plant": "Ricardone",
+      "circuitCode": "B1",
+      "startedAt": "2026-03-10T11:26:00.000Z",
+      "endedAt": "2026-03-10T11:42:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4",
+        "S2",
+        "S3"
+      ],
+      "completed": true,
+      "expectedSequence": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4",
+        "S2",
+        "S3"
+      ],
+      "durationMinutes": 16
+    },
+    {
+      "tripId": "trip-0011",
+      "truckId": "SIM-015",
+      "plate": "AM012YZ",
+      "plant": "Ricardone",
+      "circuitCode": "B2",
+      "startedAt": "2026-03-10T11:28:00.000Z",
+      "endedAt": "2026-03-10T11:44:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4",
+        "S2",
+        "S3"
+      ],
+      "completed": true,
+      "expectedSequence": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S7",
+        "S4",
+        "S2",
+        "S3"
+      ],
+      "durationMinutes": 16
+    },
+    {
+      "tripId": "trip-0012",
+      "truckId": "SIM-016",
+      "plate": "AN123AB",
+      "plant": "Ricardone",
+      "circuitCode": "A1",
+      "startedAt": "2026-03-10T11:30:00.000Z",
+      "endedAt": "2026-03-10T11:44:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4",
+        "S10"
+      ],
+      "completed": true,
+      "expectedSequence": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S5",
+        "S6",
+        "S4",
+        "S10"
+      ],
+      "durationMinutes": 14
+    },
+    {
+      "tripId": "trip-0013",
+      "truckId": "SIM-018",
+      "plate": "AP345EF",
+      "plant": "Ricardone",
+      "circuitCode": "A4",
+      "startedAt": "2026-03-10T11:34:00.000Z",
+      "endedAt": "2026-03-10T11:48:00.000Z",
+      "visitedSectors": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9",
+        "S4",
+        "S10"
+      ],
+      "completed": true,
+      "expectedSequence": [
+        "S0",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "S9",
+        "S4",
+        "S10"
+      ],
+      "durationMinutes": 14
+    }
+  ]
+}
