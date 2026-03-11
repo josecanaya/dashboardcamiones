@@ -70,20 +70,30 @@ export interface HistoricalTrip {
   estadoFinal: 'VALIDADO' | 'CON_OBSERVACIONES' | 'ANOMALO'
   sectorTimesMinutes?: Record<string, number>
   siteId: SiteId
+  /** Enriquecimiento desde microservicio (opcional) */
+  catalogCode?: string
+  catalogName?: string
+  cir?: string
+  vue?: string
+  descripcion?: string
 }
+
+/** Tipos conocidos de alerta; el microservicio puede enviar otros. */
+export type OperationalAlertType =
+  | 'FUERA_CIRCUITO'
+  | 'PERDIDA_TRAZABILIDAD'
+  | 'EXCESO_TIEMPO_SECTOR'
+  | 'DOBLE_PASO_NO_ESPERADO'
+  | 'FALTA_CAMARA_CRITICA'
+  | 'CONFLICTO_CIRCUITO_CAMARA'
+  | 'EGRESO_NO_VALIDADO'
+  | 'SIN_ACTUALIZACION'
+  | 'POSIBLE_CONGESTION'
 
 export interface OperationalAlert {
   alertId: string
-  type:
-    | 'FUERA_CIRCUITO'
-    | 'PERDIDA_TRAZABILIDAD'
-    | 'EXCESO_TIEMPO_SECTOR'
-    | 'DOBLE_PASO_NO_ESPERADO'
-    | 'FALTA_CAMARA_CRITICA'
-    | 'CONFLICTO_CIRCUITO_CAMARA'
-    | 'EGRESO_NO_VALIDADO'
-    | 'SIN_ACTUALIZACION'
-    | 'POSIBLE_CONGESTION'
+  /** Tipo enviado por el microservicio (puede ser código interno o string legible). */
+  type: OperationalAlertType | string
   severity: AlertSeverity
   status: AlertStatus
   createdAt: string

@@ -182,16 +182,19 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
 
   const periodLabel = periodPreset === 'last_day' ? 'Último día' : periodPreset === 'last_week' ? 'Última semana' : 'Último mes'
 
+  if (enterLoading) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center rounded-2xl border border-slate-200 bg-white">
+        <IfcLoadingOverlay
+          variant="inline"
+          loadingStage="Preparando dashboard..."
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="relative min-h-[400px]">
-      {enterLoading && (
-        <div className="absolute inset-0 z-10 rounded-2xl border border-slate-200 bg-white">
-          <IfcLoadingOverlay
-            variant="inline"
-            loadingStage="Cargando dashboard..."
-          />
-        </div>
-      )}
       <div className="space-y-4">
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {summaryBySite.map((plant) => {

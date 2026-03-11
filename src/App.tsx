@@ -228,6 +228,7 @@ function AppContent() {
               siteId={siteId as SiteId}
               onChangeSite={(id) => setSiteId(id)}
               mode={historyMode}
+              onModeChange={setHistoryMode}
               onViewInModel={(plate) => {
                 setPendingPlateToOpen(plate)
                 setTab('live')

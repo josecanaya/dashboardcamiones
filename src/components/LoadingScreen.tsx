@@ -23,7 +23,7 @@ export function LoadingScreen({ isLoading, onComplete }: LoadingScreenProps) {
     if (phase === 'slogan') {
       const t = setTimeout(() => {
         setExiting(true)
-      }, 1800)
+      }, 2800)
       return () => clearTimeout(t)
     }
   }, [phase])
@@ -98,9 +98,9 @@ export function LoadingScreen({ isLoading, onComplete }: LoadingScreenProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <p className="text-center text-xl font-light tracking-wide text-violet-100 md:text-2xl">
-              Every Step in the right direction
-            </p>
+            <span className="bg-gradient-to-r from-violet-300 via-white to-violet-300 bg-clip-text text-4xl font-black tracking-[0.35em] text-transparent drop-shadow-[0_0_24px_rgba(196,181,253,0.6)] md:text-5xl">
+              TRUCKFLOW
+            </span>
           </motion.div>
         )}
         </motion.div>

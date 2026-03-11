@@ -32,6 +32,13 @@ export interface VisitMetrics {
 
 export type ReconstructedVisitStatus = 'OPEN' | 'CLOSED' | 'REJECTED' | 'CANCELLED'
 
+/** Alertas asociadas a una visita (vienen del microservicio, no se detectan en cliente). */
+export interface VisitAlert {
+  code: string
+  message: string
+  severity: 'warning' | 'error'
+}
+
 export interface ReconstructedVisit {
   visitId: string
   siteId: SiteId
@@ -44,4 +51,6 @@ export interface ReconstructedVisit {
   endAt?: string
   status: ReconstructedVisitStatus
   metrics: VisitMetrics
+  /** Alertas que vienen del microservicio (no se procesan en cliente). */
+  alerts?: VisitAlert[]
 }

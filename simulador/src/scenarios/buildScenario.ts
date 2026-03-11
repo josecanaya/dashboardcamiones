@@ -280,27 +280,40 @@ function buildMarchFullScenario(): { steps: ScenarioStep[]; trucks: TruckCatalog
     Avellaneda: perDay.Avellaneda * daysInMarch
   };
 
+  /* Variedad: recepción (A*) dominante, despacho (B*) minoritario. Sin agregar camiones. */
   const ricardoneCircuits: { code: string; pct: number }[] = [
-    { code: "A7", pct: 0.3 },
-    { code: "A1", pct: 0.14 },
-    { code: "A3", pct: 0.14 },
-    { code: "A4", pct: 0.14 },
-    { code: "B1", pct: 0.14 },
-    { code: "B2", pct: 0.14 }
+    { code: "A7", pct: 0.32 },
+    { code: "A1", pct: 0.22 },
+    { code: "A3", pct: 0.15 },
+    { code: "A4", pct: 0.15 },
+    { code: "B1", pct: 0.08 },
+    { code: "B2", pct: 0.08 }
   ];
   const slCircuits: { code: string; pct: number }[] = [
-    { code: "A1", pct: 0.6 },
-    { code: "A3", pct: 0.1 },
-    { code: "A4", pct: 0.1 },
-    { code: "B1", pct: 0.1 },
-    { code: "B2", pct: 0.1 }
+    { code: "A1", pct: 0.35 },
+    { code: "A3", pct: 0.15 },
+    { code: "A4", pct: 0.12 },
+    { code: "B1", pct: 0.10 },
+    { code: "B2", pct: 0.08 },
+    { code: "C1", pct: 0.08 },
+    { code: "C2", pct: 0.04 },
+    { code: "D1", pct: 0.05 },
+    { code: "D2", pct: 0.02 },
+    { code: "E1", pct: 0.01 },
+    { code: "E2", pct: 0.00 }
   ];
   const avCircuits: { code: string; pct: number }[] = [
-    { code: "A1", pct: 0.6 },
-    { code: "A3", pct: 0.1 },
-    { code: "A4", pct: 0.1 },
-    { code: "B1", pct: 0.1 },
-    { code: "B2", pct: 0.1 }
+    { code: "A1", pct: 0.37 },
+    { code: "A3", pct: 0.18 },
+    { code: "A4", pct: 0.14 },
+    { code: "B1", pct: 0.10 },
+    { code: "B2", pct: 0.08 },
+    { code: "C1", pct: 0.06 },
+    { code: "C2", pct: 0.03 },
+    { code: "D1", pct: 0.02 },
+    { code: "D2", pct: 0.01 },
+    { code: "E1", pct: 0.01 },
+    { code: "E2", pct: 0.00 }
   ];
 
   function plateFor(plantIdx: number, globalIdx: number): string {

@@ -19,13 +19,14 @@ import {
 import type { SiteId } from '../domain/sites'
 import { SITES } from '../domain/sites'
 import { useLogisticsOps } from '../context/LogisticsOpsContext'
-import { getCircuitsForSite, type MasterCircuitItem } from '../data/masterCircuitCatalog'
+import { getCircuitsForSite, getCodigoBase, findCircuitByCode, type MasterCircuitItem } from '../data/masterCircuitCatalog'
 
 interface HistoricalOperationalPageProps {
   siteId: SiteId
   onChangeSite: (siteId: SiteId) => void
   mode?: 'stats' | 'records'
   onViewInModel: (plate: string) => void
+  onModeChange?: (mode: 'stats' | 'records') => void
 }
 
 type PeriodPreset = 'last_day' | 'last_week' | 'last_month'
@@ -41,43 +42,12 @@ interface StatsTruckPopupInfo {
   cameraCaptures: Array<{ cameraId: string; imageUrl: string; captureLabel: string }>
 }
 
-function buildCameraSnapshotDataUrl(
-  plate: string,
-  cargoType: string,
-  lastCheckpoint: string,
-  cameraId = 'S0',
-  captureLabel = 'Captura'
-): string {
-  const svg = `
-  <svg xmlns="http://www.w3.org/2000/svg" width="640" height="360">
-    <defs>
-      <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#0f172a"/>
-        <stop offset="100%" stop-color="#334155"/>
-      </linearGradient>
-    </defs>
-    <rect width="640" height="360" fill="url(#g)"/>
-    <rect x="18" y="18" width="604" height="324" rx="10" fill="#0b1220" stroke="#64748b" stroke-width="2"/>
-    <text x="32" y="48" fill="#93c5fd" font-size="18" font-family="Arial, sans-serif">${cameraId}</text>
-    <text x="32" y="86" fill="#e2e8f0" font-size="24" font-family="Arial, sans-serif">${plate}</text>
-    <text x="32" y="120" fill="#cbd5e1" font-size="16" font-family="Arial, sans-serif">Carga: ${cargoType}</text>
-    <text x="32" y="148" fill="#cbd5e1" font-size="16" font-family="Arial, sans-serif">Ultimo check: ${lastCheckpoint}</text>
-    <text x="32" y="174" fill="#93c5fd" font-size="14" font-family="Arial, sans-serif">${captureLabel}</text>
-    <circle cx="566" cy="54" r="8" fill="#ef4444"/>
-    <text x="584" y="60" fill="#fecaca" font-size="12" font-family="Arial, sans-serif">REC</text>
-    <rect x="210" y="190" width="220" height="95" rx="8" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
-    <text x="320" y="247" text-anchor="middle" fill="#bfdbfe" font-size="30" font-family="Arial, sans-serif">${plate}</text>
-  </svg>`
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
-}
-
-export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats', onViewInModel }: HistoricalOperationalPageProps) {
+export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats', onViewInModel, onModeChange }: HistoricalOperationalPageProps) {
   const { historicalTrips } = useLogisticsOps()
   const [query, setQuery] = useState('')
-  const [circuitFilter, setCircuitFilter] = useState('')
   const [periodPreset, setPeriodPreset] = useState<PeriodPreset>('last_week')
+  const [selectedDate, setSelectedDate] = useState('')
   const [selectedStatsTruck, setSelectedStatsTruck] = useState<StatsTruckPopupInfo | null>(null)
-  const [selectedStatsCaptureIndex, setSelectedStatsCaptureIndex] = useState(0)
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<string | null>(null)
   const [selectedCircuitCode, setSelectedCircuitCode] = useState<string | null>(null)
   const [enterLoading, setEnterLoading] = useState(true)
@@ -102,18 +72,6 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
     return 'week' as const
   }, [periodPreset, drilledWeek, drilledDay])
 
-  useEffect(() => {
-    setEnterLoading(true)
-    const t = setTimeout(() => setEnterLoading(false), 1200)
-    return () => clearTimeout(t)
-  }, [mode])
-
-  const circuits = useMemo(() => {
-    const siteCircuits = getCircuitsForSite(siteId)
-    if (siteCircuits.length === 0) return getCircuitsForSite('ricardone')
-    return siteCircuits
-  }, [siteId])
-
   const refData = useMemo(() => {
     const siteTrips = historicalTrips.filter((trip) => trip.siteId === siteId)
     const maxEgreso = siteTrips.length > 0
@@ -124,77 +82,87 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
     return { maxEgreso, refDate, refFecha }
   }, [historicalTrips, siteId])
 
+  const circuits = useMemo(() => {
+    const siteCircuits = getCircuitsForSite(siteId)
+    if (siteCircuits.length === 0) return getCircuitsForSite('ricardone')
+    return siteCircuits
+  }, [siteId])
+
+  useEffect(() => {
+    setEnterLoading(true)
+    const t = setTimeout(() => setEnterLoading(false), 1200)
+    return () => clearTimeout(t)
+  }, [mode])
+
+  useEffect(() => {
+    setSelectedDate(refData.refFecha)
+  }, [refData.refFecha, siteId])
+
+  const effectiveDate = selectedDate || refData.refFecha
+
   const rows = useMemo(() => {
     const siteTrips = historicalTrips.filter((trip) => trip.siteId === siteId)
-    const { refFecha } = refData
     const dayMs = 24 * 60 * 60 * 1000
-    const refDateMs = new Date(refFecha + 'T12:00:00Z').getTime()
+    const [selY, selM] = effectiveDate.split('-').map(Number)
+    const selDateMs = new Date(effectiveDate + 'T12:00:00Z').getTime()
+    const monthEndMs = new Date(selY, selM, 0).getTime()
 
     const passesFilter = (trip: (typeof siteTrips)[0]) => {
       const fecha = trip.fecha ?? `${new Date(trip.egresoAt).getUTCFullYear()}-${String(new Date(trip.egresoAt).getUTCMonth() + 1).padStart(2, '0')}-${String(new Date(trip.egresoAt).getUTCDate()).padStart(2, '0')}`
       const tripDateMs = new Date(fecha + 'T12:00:00Z').getTime()
-      const daysDiff = (refDateMs - tripDateMs) / dayMs
+      const daysDiff = (selDateMs - tripDateMs) / dayMs
+      const daysDiffFromMonthEnd = (monthEndMs - tripDateMs) / dayMs
 
       if (effectiveView === 'day') {
-        if (periodPreset === 'last_day') return fecha === refFecha
+        if (periodPreset === 'last_day') return fecha === effectiveDate
         if (periodPreset === 'last_week' && drilledDay) {
           return daysDiff >= drilledDay - 1 && daysDiff < drilledDay
         }
         if (periodPreset === 'last_month' && drilledWeek && drilledDay) {
           const weekStart = (4 - drilledWeek) * 7
-          return daysDiff >= weekStart + drilledDay - 1 && daysDiff < weekStart + drilledDay
+          return daysDiffFromMonthEnd >= weekStart + drilledDay - 1 && daysDiffFromMonthEnd < weekStart + drilledDay
         }
-        return fecha === refFecha
+        return fecha === effectiveDate
       }
       if (effectiveView === 'week') {
         if (periodPreset === 'last_month' && drilledWeek) {
           const weekStart = (4 - drilledWeek) * 7
-          return daysDiff >= weekStart && daysDiff < weekStart + 7
+          return daysDiffFromMonthEnd >= weekStart && daysDiffFromMonthEnd < weekStart + 7
         }
-        return daysDiff >= 0 && daysDiff <= 7
+        return daysDiff >= 0 && daysDiff <= 6
       }
-      return daysDiff >= 0 && daysDiff <= 30
+      const [tripY, tripM] = fecha.split('-').map(Number)
+      return tripY === selY && tripM === selM
     }
 
     return siteTrips
       .filter(passesFilter)
       .filter((trip) => !query || trip.plate.toLowerCase().includes(query.toLowerCase()))
-      .filter((trip) => !circuitFilter || trip.circuitoFinal.toLowerCase().includes(circuitFilter.toLowerCase()))
       .sort((a, b) => new Date(b.egresoAt).getTime() - new Date(a.egresoAt).getTime())
-  }, [historicalTrips, siteId, effectiveView, periodPreset, drilledWeek, drilledDay, query, circuitFilter, refData])
+  }, [historicalTrips, siteId, effectiveView, periodPreset, drilledWeek, drilledDay, query, effectiveDate, refData])
 
   const enrichedRows = useMemo(() => {
-    const byCode = new Map(circuits.map((c) => [c.codigo.toUpperCase(), c]))
-    return rows.map((row) => {
-      const normalized = row.circuitoFinal.toUpperCase().replace(/^E0/, 'E').replace(/^B0/, 'B')
-      const circuit = byCode.get(normalized)
-      return {
-        ...row,
-        catalogCode: circuit?.codigo ?? row.circuitoFinal,
-        catalogName: circuit?.nombre ?? 'Sin catálogo',
-        cir: circuit?.codigoCircuito ?? 'N/A',
-        vue: circuit?.codigoVuelta ?? 'N/A',
-        descripcion: circuit?.descripcion ?? 'Sin descripción disponible',
-      }
-    })
-  }, [rows, circuits])
-
-  const periodSummary = useMemo(() => {
-    const totalTrips = enrichedRows.length
-    const avgDuration = totalTrips > 0 ? Math.round(enrichedRows.reduce((acc, row) => acc + row.durationMinutes, 0) / totalTrips) : 0
-    const totalAlerts = enrichedRows.reduce((acc, row) => acc + row.alerts.length, 0)
-    return { totalTrips, avgDuration, totalAlerts }
-  }, [enrichedRows])
+    return rows.map((row) => ({
+      ...row,
+      catalogCode: row.catalogCode ?? row.circuitoFinal,
+      catalogName: row.catalogName ?? 'Sin catálogo',
+      cir: row.cir ?? 'N/A',
+      vue: row.vue ?? 'N/A',
+      descripcion: row.descripcion ?? 'Sin descripción disponible',
+    }))
+  }, [rows])
 
   const statsFromTrips = useMemo(() => {
-    const source = circuits.length > 0 ? circuits : [{ codigo: 'PEND', nombre: 'Pendiente catálogo', codigoCircuito: 'N/A', codigoVuelta: 'N/A', tipo: 'recepcion' as const, subtipo: 'solidos', destino: 'N/A', descripcion: 'Sin catálogo cargado.' } as MasterCircuitItem]
+    const allCircuits = circuits.length > 0 ? circuits : [{ codigo: 'PEND', nombre: 'Pendiente catálogo', codigoCircuito: 'N/A', codigoVuelta: 'N/A', tipo: 'recepcion' as const, subtipo: 'solidos', destino: 'N/A', descripcion: 'Sin catálogo cargado.' } as MasterCircuitItem]
+    const source = allCircuits.filter((c) => c.codigo.endsWith('V0') || c.codigo === 'PEND')
     const statusMap: Record<string, string> = {
       VALIDADO: 'Circuitos completos',
       CON_OBSERVACIONES: 'Variaciones operativas',
       ANOMALO: 'Anómalos',
     }
     const dayMs = 24 * 60 * 60 * 1000
-    const refDateMs = new Date(refData.refFecha + 'T12:00:00Z').getTime()
+    const [sy, sm] = effectiveDate.split('-').map(Number)
+    const refDateMs = effectiveView === 'month' ? new Date(sy, sm, 0).getTime() : new Date(effectiveDate + 'T12:00:00Z').getTime()
 
     const scatter = enrichedRows.map((row, idx) => {
       const status = statusMap[row.estadoFinal] ?? 'Circuitos completos'
@@ -202,11 +170,15 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
       const operationType = circuit.tipo === 'recepcion' ? 'RECEPCION' : circuit.tipo === 'despacho' ? 'DESPACHANDO' : 'TRANSILE'
       const cargoType = circuit.tipo === 'recepcion' ? 'Descarga granel' : circuit.tipo === 'despacho' ? 'Carga despacho' : 'Movimiento interno'
       const lastCheckpoint = circuit.tipo === 'recepcion' ? 'Playa descarga' : circuit.tipo === 'despacho' ? 'Cargadero' : 'Transferencia'
-      const cameraCaptures = (row.secuenciaCamaras ?? []).slice(0, 6).map((cameraId, cameraIdx) => ({
-        cameraId,
-        captureLabel: `Paso ${cameraIdx + 1}`,
-        imageUrl: buildCameraSnapshotDataUrl(row.plate, cargoType, lastCheckpoint, cameraId, `Paso ${cameraIdx + 1}`),
-      }))
+      const secuencia = (row.secuenciaCamaras ?? []).slice(0, 6)
+      const cameraCaptures = secuencia.map((cameraId, cameraIdx) => {
+        const isLast = cameraIdx === secuencia.length - 1
+        return {
+          cameraId,
+          captureLabel: isLast ? 'Última cámara' : `Paso ${cameraIdx + 1}`,
+          imageUrl: '/ejemplo.png',
+        }
+      })
       const d = new Date(row.ingresoAt)
       const entryHours = d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600
       const entryTime = Math.round(entryHours * 100) / 100
@@ -251,7 +223,7 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
           operationType,
           assignedCircuitPrefix: row.catalogCode ?? row.circuitoFinal,
           assignedCircuitLabel: row.catalogName ?? circuit.nombre,
-          cameraCaptures: cameraCaptures.length > 0 ? cameraCaptures : [{ cameraId: 'S0', captureLabel: 'Paso 1', imageUrl: buildCameraSnapshotDataUrl(row.plate, cargoType, lastCheckpoint) }],
+          cameraCaptures: cameraCaptures.length > 0 ? cameraCaptures : [{ cameraId: 'S0', captureLabel: 'Última cámara', imageUrl: '/ejemplo.png' }],
         } as StatsTruckPopupInfo,
       }
     })
@@ -270,37 +242,82 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
       { name: 'Variaciones operativas', value: scatter.filter((s) => s.status === 'Variaciones operativas').length, color: '#7c3aed' },
       { name: 'Anómalos', value: scatter.filter((s) => s.status === 'Anómalos').length, color: '#0ea5e9' },
     ]
-    const validBars = source.map((circuit) => ({
-      key: circuit.codigo,
-      label: circuit.nombre,
-      cir: circuit.codigoCircuito,
-      vue: circuit.codigoVuelta,
-      descripcion: circuit.descripcion,
-      tipo: circuit.tipo,
-      count: scatter.filter((s) => s.circuitCode === circuit.codigo && s.status !== 'Anómalos').length,
-      barColor: circuit.tipo === 'recepcion' ? '#2563eb' : circuit.tipo === 'despacho' ? '#16a34a' : '#f97316',
-    })).sort((a, b) => b.count - a.count)
+    const FIXED_GROUPS: Array<{ key: string; label: string; barColor: string; tipo: string; match: (c: MasterCircuitItem) => boolean }> = [
+      { key: 'recepcion-solidos', label: 'Recepción / Descargas', barColor: '#2563eb', tipo: 'recepcion', match: (c) => c.tipo === 'recepcion' && c.subtipo === 'solidos' },
+      { key: 'recepcion-liquidos', label: 'Recepción líquido', barColor: '#7c3aed', tipo: 'recepcion', match: (c) => c.tipo === 'recepcion' && c.subtipo === 'liquidos' },
+      { key: 'despacho-solidos', label: 'Despacho', barColor: '#16a34a', tipo: 'despacho', match: (c) => c.tipo === 'despacho' && c.subtipo === 'solidos' },
+      { key: 'despacho-liquidos', label: 'Despacho líquido', barColor: '#7c3aed', tipo: 'despacho', match: (c) => c.tipo === 'despacho' && c.subtipo === 'liquidos' },
+      { key: 'movimiento_interno-transile', label: 'Transile', barColor: '#f97316', tipo: 'movimiento_interno', match: (c) => c.tipo === 'movimiento_interno' },
+    ]
+
+    const validBars = FIXED_GROUPS.map((group) => {
+      const circuitsInGroup = source.filter(group.match)
+      const destinoCounts = new Map<string, number>()
+      let totalCount = 0
+      for (const point of scatter) {
+        if (point.status === 'Anómalos') continue
+        const circuit = findCircuitByCode(allCircuits, point.circuitCode)
+        if (!circuit || !group.match(circuit)) continue
+        const destino = circuit.tipo === 'movimiento_interno' ? circuit.nombre : circuit.destino
+        destinoCounts.set(destino, (destinoCounts.get(destino) ?? 0) + 1)
+        totalCount += 1
+      }
+      const breakdown = Array.from(destinoCounts.entries())
+        .filter(([, n]) => n > 0)
+        .map(([destino, count]) => ({ destino, count }))
+        .sort((a, b) => b.count - a.count)
+      const circuitCodes = circuitsInGroup.flatMap((c) => [
+        c.codigo,
+        ...(c.codigosEquivalentes ?? []),
+      ])
+      return {
+        key: group.key,
+        label: group.label,
+        count: totalCount,
+        barColor: group.barColor,
+        circuitCodes: [...new Set(circuitCodes)],
+        breakdown,
+      }
+    })
     return { scatter, classification, validBars }
-  }, [enrichedRows, circuits, effectiveView, refData])
+  }, [enrichedRows, circuits, effectiveView, effectiveDate, refData])
+
+  const selectedCircuitCodes = useMemo(() => {
+    if (!selectedCircuitCode) return null
+    const bar = statsFromTrips.validBars.find((b) => b.key === selectedCircuitCode)
+    return bar && 'circuitCodes' in bar ? (bar as { circuitCodes: string[] }).circuitCodes : [selectedCircuitCode]
+  }, [selectedCircuitCode, statsFromTrips.validBars])
 
   const scatterFiltered = useMemo(() => {
     return statsFromTrips.scatter.filter((point) => {
       if (selectedStatusFilter && point.status !== selectedStatusFilter) return false
-      if (selectedCircuitCode && point.circuitCode !== selectedCircuitCode) return false
+      if (selectedCircuitCodes) {
+        const pointBase = getCodigoBase(point.circuitCode)
+        const matches = selectedCircuitCodes.some(
+          (cc) => point.circuitCode === cc || getCodigoBase(cc) === pointBase
+        )
+        if (!matches) return false
+      }
       return true
     })
-  }, [statsFromTrips.scatter, selectedStatusFilter, selectedCircuitCode])
+  }, [statsFromTrips.scatter, selectedStatusFilter, selectedCircuitCodes])
 
   const centralBand = useMemo(() => {
     if (scatterFiltered.length === 0) return { y1: 7 * 60, y2: 11 * 60, center: 9 * 60 }
     const sorted = [...scatterFiltered].map((p) => p.cycleMinutes).sort((a, b) => a - b)
     const center = sorted[Math.floor(sorted.length / 2)] ?? 9 * 60
-    const halfWindow = 2 * 60 // franja de 4 horas
+    const halfWindow = 1 * 60 // franja central de 2 horas (1 h a cada lado)
     return {
       y1: Math.max(0, center - halfWindow),
       y2: Math.min(36 * 60, center + halfWindow),
       center,
     }
+  }, [scatterFiltered])
+
+  const yAxisDomain = useMemo(() => {
+    const baseMax = 20 * 60 // 20 horas en minutos (arranca con 20 h)
+    const dataMax = scatterFiltered.length > 0 ? Math.max(...scatterFiltered.map((p) => p.cycleMinutes)) : 0
+    return [0, Math.max(baseMax, dataMax)] as [number, number]
   }, [scatterFiltered])
 
   const scatterWithDynamicColor = useMemo(() => {
@@ -318,25 +335,11 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
   }, [scatterFiltered, centralBand])
 
   useEffect(() => {
-    setSelectedStatsCaptureIndex(0)
-  }, [selectedStatsTruck?.plate])
-
-  useEffect(() => {
     if (effectiveView !== 'day' && selectedStatsTruck) setSelectedStatsTruck(null)
   }, [effectiveView, selectedStatsTruck])
 
-  useEffect(() => {
-    if (!selectedStatsTruck) return
-    const totalSteps = selectedStatsTruck.cameraCaptures.length
-    if (totalSteps <= 1) return
-    const timer = window.setInterval(() => {
-      setSelectedStatsCaptureIndex((prev) => (prev >= totalSteps - 1 ? prev : prev + 1))
-    }, 1400)
-    return () => window.clearInterval(timer)
-  }, [selectedStatsTruck?.plate, selectedStatsTruck?.cameraCaptures.length])
-
   return (
-    <div className="relative min-h-[400px]">
+    <div className="relative min-h-[400px] flex-1 overflow-auto">
       {(enterLoading || chartsLoading) && (
         <div className="absolute inset-0 z-10 rounded-2xl border border-slate-200 bg-white">
           <IfcLoadingOverlay
@@ -346,6 +349,24 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
         </div>
       )}
       <div className="space-y-3">
+      {onModeChange && (
+        <div className="flex gap-1 rounded-lg border border-slate-200 bg-slate-50 p-1">
+          <button
+            type="button"
+            onClick={() => onModeChange('stats')}
+            className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${mode === 'stats' ? 'bg-white text-violet-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+          >
+            Estadísticas
+          </button>
+          <button
+            type="button"
+            onClick={() => onModeChange('records')}
+            className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${mode === 'records' ? 'bg-white text-violet-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+          >
+            Registros
+          </button>
+        </div>
+      )}
       <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex gap-1 rounded-lg bg-slate-100/80 p-1">
@@ -367,156 +388,111 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
               )
             })}
           </div>
-          <div className="flex rounded-lg border border-slate-200 bg-white p-0.5 text-sm">
-            <button
-              type="button"
-              onClick={() => withChartsLoading(() => { setPeriodPreset('last_day'); setDrilledWeek(null); setDrilledDay(null) })}
-              className={`rounded-md px-2.5 py-1 ${periodPreset === 'last_day' ? 'bg-blue-100 font-semibold text-blue-700' : 'text-slate-600 hover:bg-slate-50'}`}
-            >
-              Día
-            </button>
-            <button
-              type="button"
-              onClick={() => withChartsLoading(() => { setPeriodPreset('last_week'); setDrilledWeek(null); setDrilledDay(null) })}
-              className={`rounded-md px-2.5 py-1 ${periodPreset === 'last_week' ? 'bg-blue-100 font-semibold text-blue-700' : 'text-slate-600 hover:bg-slate-50'}`}
-            >
-              Semana
-            </button>
-            <button
-              type="button"
-              onClick={() => withChartsLoading(() => { setPeriodPreset('last_month'); setDrilledWeek(null); setDrilledDay(null) })}
-              className={`rounded-md px-2.5 py-1 ${periodPreset === 'last_month' ? 'bg-blue-100 font-semibold text-blue-700' : 'text-slate-600 hover:bg-slate-50'}`}
-            >
-              Mes
-            </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex rounded-lg border border-slate-200 bg-white p-0.5 text-sm">
+              <button
+                type="button"
+                onClick={() => withChartsLoading(() => { setPeriodPreset('last_day'); setDrilledWeek(null); setDrilledDay(null) })}
+                className={`rounded-md px-2.5 py-1 ${periodPreset === 'last_day' ? 'bg-blue-100 font-semibold text-blue-700' : 'text-slate-600 hover:bg-slate-50'}`}
+              >
+                Día
+              </button>
+              <button
+                type="button"
+                onClick={() => withChartsLoading(() => { setPeriodPreset('last_week'); setDrilledWeek(null); setDrilledDay(null) })}
+                className={`rounded-md px-2.5 py-1 ${periodPreset === 'last_week' ? 'bg-blue-100 font-semibold text-blue-700' : 'text-slate-600 hover:bg-slate-50'}`}
+              >
+                Semana
+              </button>
+              <button
+                type="button"
+                onClick={() => withChartsLoading(() => { setPeriodPreset('last_month'); setDrilledWeek(null); setDrilledDay(null) })}
+                className={`rounded-md px-2.5 py-1 ${periodPreset === 'last_month' ? 'bg-blue-100 font-semibold text-blue-700' : 'text-slate-600 hover:bg-slate-50'}`}
+              >
+                Mes
+              </button>
+            </div>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600">
+              <span>Fecha:</span>
+              <input
+                type="date"
+                value={effectiveDate}
+                onChange={(e) => withChartsLoading(() => setSelectedDate(e.target.value))}
+                className="rounded-md border border-slate-300 px-2 py-1 text-xs"
+              />
+            </label>
           </div>
           {mode === 'records' && (
-            <>
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Buscar por patente"
-                className="rounded-md border border-slate-300 px-2 py-1.5 text-xs"
-              />
-              <input
-                value={circuitFilter}
-                onChange={(e) => setCircuitFilter(e.target.value)}
-                placeholder="Filtrar por circuito"
-                className="rounded-md border border-slate-300 px-2 py-1.5 text-xs"
-              />
-            </>
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar por patente"
+              className="rounded-md border border-slate-300 px-2 py-1.5 text-xs"
+            />
           )}
         </div>
 
-        {mode === 'records' && (
-          <div className="mt-3 grid grid-cols-1 gap-2 md:grid-cols-3">
-            <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
-              <div className="text-slate-500">Recorridos</div>
-              <div className="text-base font-semibold text-slate-900">{periodSummary.totalTrips}</div>
-            </div>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
-              <div className="text-slate-500">Duración promedio</div>
-              <div className="text-base font-semibold text-slate-900">{periodSummary.avgDuration} min</div>
-            </div>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
-              <div className="text-slate-500">Alertas</div>
-              <div className="text-base font-semibold text-slate-900">{periodSummary.totalAlerts}</div>
-            </div>
-          </div>
-        )}
       </section>
 
       {mode === 'stats' && (
         <section className="space-y-3">
           <article className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-            <h3 className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-600">
-              Puntos por camión
-              <span className="rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-[10px] font-normal normal-case text-slate-700">
-                {scatterWithDynamicColor.length} puntos
+            <div className="mb-2 flex flex-wrap items-center gap-2 text-[10px]">
+              <span className="font-semibold text-slate-700">
+                Camiones x {effectiveView === 'day' ? 'día' : effectiveView === 'week' ? 'semana' : 'mes'}: {scatterWithDynamicColor.length}
               </span>
-            </h3>
-            <div className="mb-2 flex flex-wrap gap-2 text-[10px] text-slate-600">
-              <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-green-500" /> Tiempo bajo</span>
-              <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" /> Tiempo medio</span>
-              <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-red-500" /> Tiempo alto</span>
-              {effectiveView === 'day' && (
-                <span className="ml-2 text-blue-600">Click en un punto para ver el detalle del camión</span>
+              {effectiveView === 'month' && (
+                <>
+                  <span className="text-slate-400">|</span>
+                  {[1, 2, 3, 4].map((w) => (
+                    <button
+                      key={w}
+                      type="button"
+                      onClick={() => withChartsLoading(() => setDrilledWeek(w))}
+                      className="rounded-full border border-slate-300 bg-white px-2 py-0.5 font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+                    >
+                      S{w}
+                    </button>
+                  ))}
+                </>
               )}
-            </div>
-            <div className="mb-2 flex flex-wrap gap-2 text-[10px] text-slate-600">
-              <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5">
-                Eje X: {effectiveView === 'day' ? 'hora de ingreso (0h-24h)' : effectiveView === 'week' ? 'día (1-7)' : 'semana (1-5)'}
-              </span>
-              <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5">Eje Y: tiempo en planta (0h-36h)</span>
-              <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-amber-700">
-                Franja central 4h: {(centralBand.y1 / 60).toFixed(1)}h a {(centralBand.y2 / 60).toFixed(1)}h
-              </span>
-              {(selectedStatusFilter || selectedCircuitCode) && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedStatusFilter(null)
-                    setSelectedCircuitCode(null)
-                  }}
-                  className="rounded-full border border-slate-300 bg-white px-2 py-0.5 text-slate-700"
-                >
-                  Limpiar filtros
-                </button>
+              {effectiveView === 'week' && (
+                <>
+                  <span className="text-slate-400">|</span>
+                  {drilledWeek && (
+                    <button
+                      type="button"
+                      onClick={() => withChartsLoading(() => { setDrilledWeek(null); setDrilledDay(null) })}
+                      className="rounded-full border border-slate-300 bg-slate-100 px-2 py-0.5 text-slate-600 hover:bg-slate-200"
+                    >
+                      ← Volver
+                    </button>
+                  )}
+                  {[1, 2, 3, 4, 5, 6, 7].map((d) => (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => withChartsLoading(() => setDrilledDay(d))}
+                      className="rounded-full border border-slate-300 bg-white px-2 py-0.5 font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+                    >
+                      D{d}
+                    </button>
+                  ))}
+                </>
               )}
-            </div>
-            {effectiveView === 'month' && (
-              <div className="mb-2 flex flex-wrap items-center gap-2 text-[10px]">
-                <span className="font-medium text-slate-600">Seleccionar semana:</span>
-                {[1, 2, 3, 4].map((w) => (
-                  <button
-                    key={w}
-                    type="button"
-                    onClick={() => withChartsLoading(() => setDrilledWeek(w))}
-                    className="rounded-full border border-slate-300 bg-white px-2.5 py-1 font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-700"
-                  >
-                    S{w}
-                  </button>
-                ))}
-              </div>
-            )}
-            {effectiveView === 'week' && (
-              <div className="mb-2 flex flex-wrap items-center gap-2 text-[10px]">
-                {drilledWeek && (
-                  <button
-                    type="button"
-                    onClick={() => withChartsLoading(() => { setDrilledWeek(null); setDrilledDay(null) })}
-                    className="rounded-full border border-slate-300 bg-slate-100 px-2 py-0.5 text-slate-600 hover:bg-slate-200"
-                  >
-                    ← Volver
-                  </button>
-                )}
-                <span className="font-medium text-slate-600">Seleccionar día:</span>
-                {[1, 2, 3, 4, 5, 6, 7].map((d) => (
-                  <button
-                    key={d}
-                    type="button"
-                    onClick={() => withChartsLoading(() => setDrilledDay(d))}
-                    className="rounded-full border border-slate-300 bg-white px-2.5 py-1 font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-700"
-                  >
-                    D{d}
-                  </button>
-                ))}
-              </div>
-            )}
-            {effectiveView === 'day' && (drilledDay || drilledWeek) && (
-              <div className="mb-2">
+              {effectiveView === 'day' && (drilledDay || drilledWeek) && (
                 <button
                   type="button"
                   onClick={() => withChartsLoading(() => {
                     if (drilledDay) setDrilledDay(null)
                     else if (drilledWeek) { setDrilledWeek(null); setDrilledDay(null) }
                   })}
-                  className="rounded-full border border-slate-300 bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600 hover:bg-slate-200"
+                  className="rounded-full border border-slate-300 bg-slate-100 px-2 py-0.5 text-slate-600 hover:bg-slate-200"
                 >
                   ← Volver
                 </button>
-              </div>
-            )}
+              )}
+            </div>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart margin={{ top: 10, right: 20, bottom: 10, left: 10 }}>
@@ -534,7 +510,7 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                     dataKey="cycleMinutes"
                     name="Tiempo en planta"
                     unit="h"
-                    domain={[0, 36 * 60]}
+                    domain={yAxisDomain}
                     tick={{ fontSize: 10 }}
                     tickFormatter={(value) => `${Math.round(Number(value) / 60)}h`}
                   />
@@ -645,13 +621,15 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
             <article className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-600">Recorridos válidos (barras horizontales)</h3>
               <div className="mb-2 flex flex-wrap gap-2 text-[10px] text-slate-600">
-                <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-blue-600" /> Recepción / Descarga</span>
-                <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-green-600" /> Despacho / Carga</span>
-                <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-orange-500" /> Transile / Mov. interno</span>
+                <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-blue-600" /> Recepción</span>
+                <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-green-600" /> Despacho</span>
+                <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-orange-500" /> Transile</span>
+                <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-purple-600" /> Líquidos</span>
               </div>
-              <div className="h-[220px]">
+              <div className="max-h-[500px] min-h-[220px] overflow-y-auto">
+                <div style={{ height: Math.round(5 * 36 * 1.25), minWidth: '100%' }}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={statsFromTrips.validBars.slice(0, 10)} layout="vertical" margin={{ top: 4, right: 16, bottom: 4, left: 16 }}>
+                  <BarChart data={statsFromTrips.validBars} layout="vertical" margin={{ top: 4, right: 16, bottom: 4, left: 16 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis type="number" tick={{ fontSize: 10 }} allowDecimals={false} />
                     <YAxis type="category" dataKey="label" width={180} tick={{ fontSize: 10 }} />
@@ -660,17 +638,26 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                         const p = payload?.[0]?.payload as (typeof statsFromTrips.validBars)[number] | undefined
                         if (!p) return null
                         return (
-                          <div className="rounded-lg border border-slate-200 bg-white p-2 text-xs shadow-md">
-                            <div className="font-semibold">{p.key} · {p.label}</div>
-                            <div>{p.cir} / {p.vue}</div>
-                            <div>{p.descripcion}</div>
-                            <div>Count: {p.count}</div>
+                          <div className="rounded-lg border border-slate-200 bg-white p-2 text-xs shadow-md min-w-[180px]">
+                            <div className="font-semibold text-slate-800">{p.label}</div>
+                            <div className="mt-1 text-slate-600">Total: {p.count}</div>
+                            {p.breakdown && p.breakdown.length > 0 && (
+                              <div className="mt-2 border-t border-slate-100 pt-2">
+                                <div className="text-[10px] font-medium text-slate-500 uppercase">Por destino</div>
+                                {p.breakdown.map(({ destino, count }) => (
+                                  <div key={destino} className="flex justify-between gap-4 text-slate-700">
+                                    <span>{destino}</span>
+                                    <span>{count}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         )
                       }}
                     />
-                    <Bar dataKey="count" radius={[0, 4, 4, 0]}>
-                      {statsFromTrips.validBars.slice(0, 10).map((entry) => (
+                    <Bar dataKey="count" radius={[0, 4, 4, 0]} minPointSize={6}>
+                      {statsFromTrips.validBars.map((entry) => (
                         <Cell
                           key={entry.key}
                           fill={entry.barColor}
@@ -682,6 +669,7 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
+                </div>
               </div>
             </article>
           </section>
@@ -699,21 +687,18 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
               <tr>
                 <th className="px-2 py-2 text-left">Patente</th>
                 <th className="px-2 py-2 text-left">Código</th>
-                <th className="px-2 py-2 text-left">Nombre</th>
-                <th className="px-2 py-2 text-left">CIR / VUE</th>
                 <th className="px-2 py-2 text-left">Descripción</th>
                 <th className="px-2 py-2 text-left">Ingreso</th>
                 <th className="px-2 py-2 text-left">Egreso</th>
                 <th className="px-2 py-2 text-left">Duración</th>
                 <th className="px-2 py-2 text-left">Secuencia cámaras</th>
                 <th className="px-2 py-2 text-left">Alertas</th>
-                <th className="px-2 py-2 text-left">Acción</th>
               </tr>
             </thead>
             <tbody>
               {enrichedRows.length === 0 && (
                 <tr>
-                  <td colSpan={11} className="px-3 py-8 text-center text-sm text-slate-500">
+                  <td colSpan={8} className="px-3 py-8 text-center text-sm text-slate-500">
                     No hay recorridos para el período y filtros seleccionados.
                   </td>
                 </tr>
@@ -722,8 +707,6 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                 <tr key={trip.tripId} className="border-t border-slate-100">
                   <td className="px-2 py-2 font-semibold text-slate-800">{trip.plate}</td>
                   <td className="px-2 py-2 font-semibold">{trip.catalogCode}</td>
-                  <td className="px-2 py-2">{trip.catalogName}</td>
-                  <td className="px-2 py-2">{trip.cir} / {trip.vue}</td>
                   <td className="max-w-[360px] px-2 py-2 text-[11px] text-slate-600">{trip.descripcion}</td>
                   <td className="px-2 py-2">{new Date(trip.ingresoAt).toLocaleString('es-AR')}</td>
                   <td className="px-2 py-2">{new Date(trip.egresoAt).toLocaleString('es-AR')}</td>
@@ -737,15 +720,6 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                     >
                       {trip.alerts.length}
                     </span>
-                  </td>
-                  <td className="px-2 py-2">
-                    <button
-                      type="button"
-                      onClick={() => onViewInModel(trip.plate)}
-                      className="rounded-md border border-blue-200 bg-blue-50 px-2 py-1 text-[11px] font-semibold text-blue-700"
-                    >
-                      Ver recorrido en modelo
-                    </button>
                   </td>
                 </tr>
               ))}
@@ -804,29 +778,20 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                   </div>
                 </div>
                 <div className="col-span-2 rounded-lg border border-slate-200 bg-slate-50 p-2">
-                  <div className="mb-1 flex items-center justify-between">
-                    <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                      Secuencia de cámaras ({selectedStatsTruck.assignedCircuitLabel})
-                    </div>
+                  <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                    Secuencia de cámaras ({selectedStatsTruck.assignedCircuitLabel})
                   </div>
                   <div className="flex flex-wrap gap-1.5">
-                    {selectedStatsTruck.cameraCaptures.map((capture, idx) => {
-                      const isDone = idx <= selectedStatsCaptureIndex
-                      const isCurrent = idx === selectedStatsCaptureIndex
-                      return (
-                        <button
-                          key={`${capture.cameraId}-${idx}`}
-                          type="button"
-                          onClick={() => setSelectedStatsCaptureIndex(idx)}
-                          className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[10px] transition ${
-                            isDone ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-slate-200 bg-white text-slate-500'
-                          } ${isCurrent ? 'ring-2 ring-blue-300' : ''}`}
-                        >
-                          <span className="font-semibold">{capture.cameraId}</span>
-                          <span className="opacity-70">#{idx + 1}</span>
-                        </button>
-                      )
-                    })}
+                    {selectedStatsTruck.cameraCaptures.map((capture, idx) => (
+                      <div
+                        key={`${capture.cameraId}-${idx}`}
+                        className="inline-flex items-center gap-1.5 rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-[10px] text-emerald-800"
+                      >
+                        <span className="inline-flex h-3.5 w-3.5 items-center justify-center rounded-sm border border-emerald-500 bg-emerald-500 text-[9px] font-bold text-white">✓</span>
+                        <span className="font-semibold">{capture.cameraId}</span>
+                        <span className="opacity-70">#{idx + 1}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -834,7 +799,7 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                 <div className="overflow-hidden rounded-xl border border-slate-300 bg-slate-900/95 shadow-lg ring-1 ring-slate-200/70">
                   <div className="flex items-center justify-between border-b border-slate-700 px-3 py-1.5">
                     <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-300">
-                      Cámara operativa · {selectedStatsTruck.cameraCaptures[selectedStatsCaptureIndex]?.cameraId ?? 'S0'}
+                      Última cámara que lo registró · {selectedStatsTruck.cameraCaptures[selectedStatsTruck.cameraCaptures.length - 1]?.cameraId ?? 'S0'}
                     </span>
                     <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-red-300">
                       <span className="h-1.5 w-1.5 rounded-full bg-red-400" />
@@ -843,7 +808,7 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                   </div>
                   <div className="flex aspect-video min-h-[176px] items-center justify-center bg-slate-950">
                     <img
-                      src={selectedStatsTruck.cameraCaptures[selectedStatsCaptureIndex]?.imageUrl}
+                      src={selectedStatsTruck.cameraCaptures[selectedStatsTruck.cameraCaptures.length - 1]?.imageUrl}
                       alt={`Camara ${selectedStatsTruck.plate}`}
                       className="h-full w-full object-contain"
                     />

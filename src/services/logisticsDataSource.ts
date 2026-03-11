@@ -56,17 +56,29 @@ type ExternalHistoricalTrip = {
   completed?: boolean
   durationMinutes?: number
   classification?: 'VALIDADO' | 'CON_OBSERVACIONES' | 'ANOMALO'
+  /** Enriquecimiento desde microservicio (opcional) */
+  catalogCode?: string
+  catalogName?: string
+  cir?: string
+  vue?: string
+  descripcion?: string
 }
 
+/** Formato esperado del microservicio: las alertas ya vienen procesadas. */
 type ExternalAlert = {
   alertId?: string
   type?: string
   severity?: string
+  status?: string
   detectedAt?: string
   plant?: string
   truckId?: string
   plate?: string
   message?: string
+  cameraCode?: string
+  circuitoEsperado?: string
+  circuitoObservado?: string
+  sectorId?: string
   context?: {
     expectedEnd?: string
     currentSector?: string
@@ -110,25 +122,16 @@ function toSiteId(value: string | undefined): SiteId {
   return 'ricardone'
 }
 
-function mapSeverity(value: string | undefined): AlertSeverity {
-  const v = (value ?? '').toLowerCase()
-  if (v === 'critical') return 'CRITICAL'
-  if (v === 'high') return 'HIGH'
-  if (v === 'medium') return 'MEDIUM'
+/** Normaliza severidad a mayúsculas (el microservicio puede enviar "medium" o "MEDIUM"). */
+function normalizeSeverity(value: string | undefined): AlertSeverity {
+  const v = (value ?? '').toUpperCase()
+  if (v === 'CRITICAL' || v === 'HIGH' || v === 'MEDIUM' || v === 'LOW') return v as AlertSeverity
   return 'LOW'
 }
 
-function mapAlertType(value: string | undefined): OperationalAlert['type'] {
-  const v = (value ?? '').toLowerCase()
-  if (v.includes('missing_critical_camera')) return 'FALTA_CAMARA_CRITICA'
-  if (v.includes('out_of_sequence')) return 'FUERA_CIRCUITO'
-  if (v.includes('incomplete')) return 'CONFLICTO_CIRCUITO_CAMARA'
-  if (v.includes('disappearance')) return 'PERDIDA_TRAZABILIDAD'
-  if (v.includes('double')) return 'DOBLE_PASO_NO_ESPERADO'
-  return 'SIN_ACTUALIZACION'
-}
-
-function mapAlertStatus(): AlertStatus {
+function normalizeStatus(value: string | undefined): AlertStatus {
+  const v = (value ?? '').toUpperCase()
+  if (v === 'OPEN' || v === 'ACKNOWLEDGED' || v === 'RESOLVED') return v as AlertStatus
   return 'OPEN'
 }
 
@@ -273,32 +276,44 @@ export async function getHistoricalTrips(siteId?: SiteId): Promise<HistoricalTri
       alerts: [],
       estadoFinal: (trip.classification ?? (trip.completed ? 'VALIDADO' : 'CON_OBSERVACIONES')) as 'VALIDADO' | 'CON_OBSERVACIONES' | 'ANOMALO',
       siteId: toSiteId(trip.plant),
+      catalogCode: trip.catalogCode,
+      catalogName: trip.catalogName,
+      cir: trip.cir,
+      vue: trip.vue,
+      descripcion: trip.descripcion,
     }
   })
   return mapped.filter((trip) => !siteId || trip.siteId === siteId)
 }
 
+/**
+ * Carga alertas operativas. El microservicio envía el JSON ya procesado;
+ * solo normalizamos campos (severidad a mayúsculas, siteId, etc.).
+ */
 export async function getOperationalAlerts(siteId?: SiteId): Promise<OperationalAlert[]> {
   const { basePath, scenario } = getConfig()
   const payload = await fetchJson<{ data?: ExternalAlert[] }>(`${basePath}/${scenario}/alertas_operativas.json`)
   const now = new Date().toISOString()
-  const mapped = (payload.data ?? []).map((alert, idx) => ({
-    alertId: alert.alertId ?? `alert-${idx}`,
-    type: mapAlertType(alert.type),
-    severity: mapSeverity(alert.severity),
-    status: mapAlertStatus(),
-    createdAt: alert.detectedAt ?? now,
-    updatedAt: alert.detectedAt ?? now,
-    camionId: alert.truckId ?? `truck-${idx}`,
-    plate: alert.plate ?? 'N/A',
-    circuitoEsperado: alert.context?.expectedEnd,
-    circuitoObservado: alert.context?.currentSector,
-    sectorId: alert.context?.currentSector,
-    cameraCode: undefined,
-    elapsedMinutes: Math.max(0, Math.floor((Date.now() - new Date(alert.detectedAt ?? now).getTime()) / 60000)),
-    resolutionNote: alert.message,
-    siteId: toSiteId(alert.plant),
-  }))
+  const mapped = (payload.data ?? []).map((alert, idx) => {
+    const detectedAt = alert.detectedAt ?? now
+    return {
+      alertId: alert.alertId ?? `alert-${idx}`,
+      type: alert.type ?? 'SIN_ACTUALIZACION',
+      severity: normalizeSeverity(alert.severity),
+      status: normalizeStatus(alert.status),
+      createdAt: detectedAt,
+      updatedAt: detectedAt,
+      camionId: alert.truckId ?? `truck-${idx}`,
+      plate: alert.plate ?? 'N/A',
+      circuitoEsperado: alert.circuitoEsperado ?? alert.context?.expectedEnd,
+      circuitoObservado: alert.circuitoObservado ?? alert.context?.currentSector,
+      sectorId: alert.sectorId ?? alert.context?.currentSector,
+      cameraCode: alert.cameraCode,
+      elapsedMinutes: Math.max(0, Math.floor((Date.now() - new Date(detectedAt).getTime()) / 60000)),
+      resolutionNote: alert.message,
+      siteId: toSiteId(alert.plant),
+    }
+  })
   return mapped.filter((alert) => !siteId || alert.siteId === siteId)
 }
 

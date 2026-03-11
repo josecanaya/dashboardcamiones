@@ -46,10 +46,3 @@ El mapeo se guarda en `localStorage` por planta y por “tipo” de archivo (has
 - **san_lorenzo.csv**: visitas SOLID, LIQUID y una OPEN (sin EXIT).
 - **avellaneda.csv**: una visita SOLID cerrada y una LIQUID en curso (OPEN).
 
-## Diccionarios de normalización
-
-Si los exports reales usan otros textos (ej: "CALADO", "MUESTRA", "Portería"), se pueden agregar sinónimos en:
-
-- `src/normalize/dictionaries.ts` → `EVENT_SYNONYMS` y `LOCATION_SYNONYMS`
-
-Así el mismo pipeline sirve para distintos formatos de exportación.

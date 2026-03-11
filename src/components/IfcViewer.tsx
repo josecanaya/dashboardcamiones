@@ -4,6 +4,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
 import { IFCLoader } from "web-ifc-three/IFCLoader"
 import { IFCSLAB } from "web-ifc"
 import { IfcLoadingOverlay } from "./IfcLoadingOverlay"
+import { MASTER_CIRCUIT_CATALOG, getCodigoBase, type MasterCircuitItem } from "../data/masterCircuitCatalog"
+import type { SiteId } from "../domain/sites"
 
 interface IfcViewerProps {
   file: File | null
@@ -36,45 +38,79 @@ interface CircuitDefinition {
   VUE: string
   PTD: string
   PTC: string
+  codigosEquivalentes?: string[]
 }
 
+const SITE_TO_PLANT: Record<Exclude<SiteId, "avellaneda">, PlantId> = {
+  ricardone: "RICARDONE",
+  san_lorenzo: "SAN_LORENZO",
+}
 
-const RICARDONE_ORDER = ["A1", "A2", "A3", "A4", "A5", "A7", "B1", "B2", "B4", "B5", "C1", "D1", "E01", "E02", "F1", "F2", "F3", "F4", "F5", "F6"]
-const SAN_LORENZO_ORDER = ["A1", "B1", "C1", "C2", "C3", "D1", "D2", "D3", "E01", "E02", "E03"]
+function masterToCircuitDef(item: MasterCircuitItem, plant: PlantId): CircuitDefinition {
+  const group =
+    item.tipo === "recepcion"
+      ? "DESCARGA"
+      : item.tipo === "despacho"
+        ? "CARGA"
+        : "MOVIMIENTO_INTERNO"
+  const slGroup = plant === "SAN_LORENZO" ? ("SAN_LORENZO" as const) : group
+  const base = getCodigoBase(item.codigo)
+  const variant = item.codigo.match(/V\d+$/)?.[0] ?? "V0"
+  const ptd = `PTD_${base}_${variant}`
+  const ptc = `PTC_${base}_${variant}`
+  return {
+    prefix: item.codigo,
+    label: `${item.codigo} ${item.nombre}`,
+    plant,
+    group: plant === "SAN_LORENZO" ? slGroup : group,
+    CIR: item.codigoCircuito,
+    VUE: item.codigoVuelta,
+    PTD: ptd,
+    PTC: ptc,
+    codigosEquivalentes: item.codigosEquivalentes ?? [base],
+  }
+}
 
-const CIRCUITS: CircuitDefinition[] = [
-  { prefix: "A1", label: "A1 Descarga Celda 16", plant: "RICARDONE", group: "DESCARGA", CIR: "CIR_01_V01", VUE: "VUE_01_V01", PTD: "PTD_A1_V01", PTC: "PTC_A1_V01" },
-  { prefix: "A2", label: "A2 Descarga Silo Australiano", plant: "RICARDONE", group: "DESCARGA", CIR: "CIR_01_V02", VUE: "VUE_01_V02", PTD: "PTD_A2_V02", PTC: "PTC_A2_V02" },
-  { prefix: "A3", label: "A3 Descarga Silos", plant: "RICARDONE", group: "DESCARGA", CIR: "CIR_01_V03", VUE: "VUE_01_V03", PTD: "PTD_A3_V03", PTC: "PTC_A3_V03" },
-  { prefix: "A4", label: "A4 Descarga Volcable 1", plant: "RICARDONE", group: "DESCARGA", CIR: "CIR_01_V04", VUE: "VUE_01_V04", PTD: "PTD_A4_V04", PTC: "PTC_A4_V04" },
-  { prefix: "A5", label: "A5 Descarga Volcable 2", plant: "RICARDONE", group: "DESCARGA", CIR: "CIR_01_V05", VUE: "VUE_01_V05", PTD: "PTD_A5_V05", PTC: "PTC_A5_V05" },
-  { prefix: "A7", label: "A7 Descarga San Lorenzo", plant: "RICARDONE", group: "DESCARGA", CIR: "CIR_06_V01", VUE: "VUE_06_V01", PTD: "PTD_A7_V01", PTC: "PTC_A7_V01" },
-  { prefix: "B1", label: "B1 Carga Celda 16", plant: "RICARDONE", group: "CARGA", CIR: "CIR_02_V01", VUE: "VUE_02_V01", PTD: "PTD_B1_V01", PTC: "PTC_B1_V01" },
-  { prefix: "B2", label: "B2 Carga Silos", plant: "RICARDONE", group: "CARGA", CIR: "CIR_02_V03", VUE: "VUE_02_V03", PTD: "PTD_B2_V03", PTC: "PTC_B2_V03" },
-  { prefix: "B4", label: "B4 Carga Cargadero 1", plant: "RICARDONE", group: "CARGA", CIR: "CIR_02_V04", VUE: "VUE_02_V04", PTD: "PTD_B4_V04", PTC: "PTC_B4_V04" },
-  { prefix: "B5", label: "B5 Carga Celda 9", plant: "RICARDONE", group: "CARGA", CIR: "CIR_02_V05", VUE: "VUE_02_V05", PTD: "PTD_B5_V05", PTC: "PTC_B5_V05" },
-  { prefix: "C1", label: "C1 Descarga liquido", plant: "RICARDONE", group: "DESCARGA", CIR: "CIR_03_V01", VUE: "VUE_03_V01", PTD: "PTD_C1_V01", PTC: "PTC_C1_V01" },
-  { prefix: "D1", label: "D1 Carga liquido", plant: "RICARDONE", group: "CARGA", CIR: "CIR_04_V01", VUE: "VUE_04_V01", PTD: "PTD_D1_V01", PTC: "PTC_D1_V01" },
-  { prefix: "E01", label: "E01 Celda 16 -> Volcable 1", plant: "RICARDONE", group: "MOVIMIENTO_INTERNO", CIR: "CIR_05_V01", VUE: "VUE_05_V01", PTD: "PTD_E01_V01", PTC: "PTC_E01_V01" },
-  { prefix: "E02", label: "E02 Silos -> Volcable 1", plant: "RICARDONE", group: "MOVIMIENTO_INTERNO", CIR: "CIR_05_V02", VUE: "VUE_05_V02", PTD: "PTD_E02_V02", PTC: "PTC_E02_V02" },
-  { prefix: "F1", label: "F1 Carga Silos CHIEF", plant: "RICARDONE", group: "CARGA", CIR: "CIR_07_V01", VUE: "VUE_07_V01", PTD: "PTD_F1_V01", PTC: "PTC_F1_V01" },
-  { prefix: "F2", label: "F2 Carga Celda 11", plant: "RICARDONE", group: "CARGA", CIR: "CIR_07_V02", VUE: "VUE_07_V02", PTD: "PTD_F2_V02", PTC: "PTC_F2_V02" },
-  { prefix: "F3", label: "F3 Transile Silos CHIEF -> Celda 16", plant: "RICARDONE", group: "MOVIMIENTO_INTERNO", CIR: "CIR_08_V01", VUE: "VUE_08_V01", PTD: "PTD_F3_V01", PTC: "PTC_F3_V01" },
-  { prefix: "F4", label: "F4 Mov interno Celda 16 -> Silos Kepler", plant: "RICARDONE", group: "MOVIMIENTO_INTERNO", CIR: "CIR_08_V02", VUE: "VUE_08_V02", PTD: "PTD_F4_V01", PTC: "PTC_F4_V01" },
-  { prefix: "F5", label: "F5 Carga Silo Australiano", plant: "RICARDONE", group: "CARGA", CIR: "CIR_07_V03", VUE: "VUE_07_V03", PTD: "PTD_F5_V03", PTC: "PTC_F5_V03" },
-  { prefix: "F6", label: "F6 Transile Silos Kepler -> Celda 16", plant: "RICARDONE", group: "MOVIMIENTO_INTERNO", CIR: "CIR_08_V03", VUE: "VUE_08_V03", PTD: "PTD_F6_V01", PTC: "PTC_F6_V01" },
-  { prefix: "A1", label: "SL A1 Descarga solido", plant: "SAN_LORENZO", group: "SAN_LORENZO", CIR: "CIR_01_V01", VUE: "VUE_01_V01", PTD: "PTD_A1_V01", PTC: "PTC_A1_V01" },
-  { prefix: "B1", label: "SL B1 Carga Celda 16", plant: "SAN_LORENZO", group: "SAN_LORENZO", CIR: "CIR_02_V01", VUE: "VUE_02_V01", PTD: "PTD_B1_V01", PTC: "PTC_B1_V01" },
-  { prefix: "C1", label: "SL C1 Descarga liquido 1", plant: "SAN_LORENZO", group: "SAN_LORENZO", CIR: "CIR_03_V01", VUE: "VUE_03_V01", PTD: "PTD_C1_V01", PTC: "PTC_C1_V01" },
-  { prefix: "C2", label: "SL C2 Descarga liquido 2", plant: "SAN_LORENZO", group: "SAN_LORENZO", CIR: "CIR_03_V02", VUE: "VUE_03_V02", PTD: "PTD_C2_V02", PTC: "PTC_C2_V02" },
-  { prefix: "C3", label: "SL C3 Descarga liquido 3", plant: "SAN_LORENZO", group: "SAN_LORENZO", CIR: "CIR_03_V03", VUE: "VUE_03_V03", PTD: "PTD_C3_V03", PTC: "PTC_C3_V03" },
-  { prefix: "D1", label: "SL D1 Carga liquido 1", plant: "SAN_LORENZO", group: "SAN_LORENZO", CIR: "CIR_04_V01", VUE: "VUE_04_V01", PTD: "PTD_D1_V01", PTC: "PTC_D1_V01" },
-  { prefix: "D2", label: "SL D2 Carga liquido 2", plant: "SAN_LORENZO", group: "SAN_LORENZO", CIR: "CIR_04_V02", VUE: "VUE_04_V02", PTD: "PTD_D2_V02", PTC: "PTC_D2_V02" },
-  { prefix: "D3", label: "SL D3 Carga liquido 3", plant: "SAN_LORENZO", group: "SAN_LORENZO", CIR: "CIR_04_V03", VUE: "VUE_04_V03", PTD: "PTD_D3_V03", PTC: "PTC_D3_V03" },
-  { prefix: "E01", label: "SL E01 Celda 16 -> Volcable 1", plant: "SAN_LORENZO", group: "SAN_LORENZO", CIR: "CIR_05_V01", VUE: "VUE_05_V01", PTD: "PTD_E01_V01", PTC: "PTC_E01_V01" },
-  { prefix: "E02", label: "SL E02 Silos -> Volcable 1", plant: "SAN_LORENZO", group: "SAN_LORENZO", CIR: "CIR_05_V02", VUE: "VUE_05_V02", PTD: "PTD_E02_V02", PTC: "PTC_E02_V02" },
-  { prefix: "E03", label: "SL E03 Cargadero 1 -> Volcable 1", plant: "SAN_LORENZO", group: "SAN_LORENZO", CIR: "CIR_05_V03", VUE: "VUE_05_V03", PTD: "PTD_E03_V03", PTC: "PTC_E03_V03" },
+function buildCircuitsFromCatalog(): CircuitDefinition[] {
+  const out: CircuitDefinition[] = []
+  for (const siteId of ["ricardone", "san_lorenzo"] as const) {
+    const plant = SITE_TO_PLANT[siteId]
+    const catalog = MASTER_CIRCUIT_CATALOG[siteId]
+    for (const g of catalog.grupos) {
+      for (const c of g.circuitos) {
+        out.push(masterToCircuitDef(c, plant))
+      }
+    }
+  }
+  return out
+}
+
+const CIRCUITS = buildCircuitsFromCatalog()
+
+const RICARDONE_ORDER = [
+  "A1V0", "A2V0", "A3V0", "A4V0", "A5V0", "A6V0", "A7V0",
+  "B1V0", "B2V0", "B3V0", "B4V0", "B5V0", "B6V0", "B7V0", "B8V0",
+  "C1V0",
+  "E1V0", "E2V0", "E3V0", "E4V0", "E5V0",
 ]
+const SAN_LORENZO_ORDER = [
+  "A1V0", "A1V1", "A1V2", "A1V3", "A1V4",
+  "B1V0", "B1V1", "B1V2",
+  "C1V0", "C2V0", "C3V0",
+  "D1V0", "D2V0", "D3V0",
+]
+
+function findCircuitDefByCode(circuits: CircuitDefinition[], code: string): CircuitDefinition | undefined {
+  const normalized = (code ?? "").toUpperCase().trim().replace(/^E0/, "E").replace(/^B0/, "B")
+  const base = getCodigoBase(normalized)
+  return circuits.find(
+    (c) =>
+      c.prefix.toUpperCase() === normalized ||
+      (c.codigosEquivalentes ?? [getCodigoBase(c.prefix)]).some(
+        (eq) => eq.toUpperCase() === normalized || eq.toUpperCase() === base
+      )
+  )
+}
 
 function mixTagFromCirVue(token: string): string | null {
   const match = token.match(/^(?:CIR|VUE)_(\d+_V\d+)$/i)
@@ -195,9 +231,10 @@ function truckInPlantToIfcInfo(
     ultimoEventoCamara?: { hora: string; patente: string; region: string; logo: string; vehicleType: string }
   },
   _index: number,
-  locationExpressId: number
+  locationExpressId: number,
+  circuitsForPlant: CircuitDefinition[]
 ): IfcSelectedTruckInfo {
-  const circuit = CIRCUITS.find((c) => c.prefix === truck.circuitoEstimado) ?? CIRCUITS[0]
+  const circuit = findCircuitDefByCode(circuitsForPlant, truck.circuitoEstimado) ?? circuitsForPlant[0]
   const operationType =
     circuit.group === "DESCARGA" ? "RECEPCION" : circuit.group === "CARGA" ? "DESPACHANDO" : "TRANSILE"
   const cameraSequence = truck.secuenciaParcialCamaras.length > 0 ? truck.secuenciaParcialCamaras : [truck.camaraActual]
@@ -218,7 +255,7 @@ function truckInPlantToIfcInfo(
     driverName: truck.plate,
     lastCheckpoint: truck.sectorActual,
     operationType,
-    assignedCircuitPrefix: truck.circuitoEstimado,
+    assignedCircuitPrefix: circuit.prefix,
     assignedCircuitLabel: circuit.label,
     assignedCIR: circuit.CIR,
     assignedVUE: circuit.VUE,
@@ -928,8 +965,7 @@ export function IfcViewer({
   const applyCircuitByPrefix = useCallback((prefix: string, tagsOverride?: Record<number, string[]>) => {
     const circuit = circuitMap.get(prefix)
     if (!circuit) return
-    const prefixUpper = circuit.prefix.toUpperCase()
-    const isTransfer = ["E01", "E02", "E03", "F3", "F4", "F6"].includes(prefixUpper)
+    const isTransfer = circuit.group === "MOVIMIENTO_INTERNO"
     const isCargaCircuit = circuit.group === "CARGA"
     const ptdBase = circuit.PTD ? circuit.PTD.replace(/_V\d+$/i, "") : ""
     const ptcBase = circuit.PTC ? circuit.PTC.replace(/_V\d+$/i, "") : ""
@@ -1512,7 +1548,7 @@ export function IfcViewer({
       const pz = basePoint.z
       const py = basePoint.y + yOffset
 
-      const info = truckInPlantToIfcInfo(truck, i, locationExpressId)
+      const info = truckInPlantToIfcInfo(truck, i, locationExpressId, circuitsForPlant)
       const texture = createTruckCircleTexture(info.plate, info.operationType)
       const material = new THREE.SpriteMaterial({
         map: texture,
@@ -1546,7 +1582,7 @@ export function IfcViewer({
       setRenderedTruckCount(0)
       onFleetChange?.([])
     }
-  }, [elementTagsById, modelLoadVersion, floorMapVersion, onFleetChange, trucksInPlant])
+  }, [elementTagsById, modelLoadVersion, floorMapVersion, onFleetChange, trucksInPlant, circuitsForPlant])
 
   useEffect(() => {
     const selectedPlate = selectedSimTruck?.plate ?? null
