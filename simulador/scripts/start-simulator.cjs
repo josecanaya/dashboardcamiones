@@ -23,8 +23,11 @@ if (fs.existsSync(pidFile)) {
   const existingPid = Number(fs.readFileSync(pidFile, "utf8").trim());
   if (Number.isFinite(existingPid) && isProcessAlive(existingPid)) {
     console.log(`El simulador ya esta corriendo (PID ${existingPid}).`);
+    console.log("Para detenerlo: pnpm run simulator:stop (desde la raiz) o cd simulador && npm run simulate:stop");
     process.exit(0);
   }
+  // Proceso muerto: eliminar pid file obsoleto
+  fs.unlinkSync(pidFile);
 }
 
 const tsxCli = require.resolve("tsx/cli");

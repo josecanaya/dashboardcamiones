@@ -14,7 +14,7 @@ interface LogisticsOpsContextValue {
   historicalTrips: HistoricalTrip[]
   operationalAlerts: OperationalAlert[]
   cameraCatalog: IfcCameraCatalogItem[]
-  sourceMeta: { basePath: string; scenario: string; loadedAt: string } | null
+  sourceMeta: { basePath: string; scenario: string; loadedAt: string; simulatedGeneratedAt?: string } | null
   isLoading: boolean
   refreshFromSource: () => Promise<void>
   ingestFleetSnapshot: (fleet: IfcSelectedTruckInfo[], siteId: SiteId) => void
@@ -32,7 +32,7 @@ function LogisticsOpsProviderInner({ children }: { children: ReactNode }) {
   const [historicalTrips, setHistoricalTrips] = useState<HistoricalTrip[]>([])
   const [operationalAlerts, setOperationalAlerts] = useState<OperationalAlert[]>([])
   const [cameraCatalog, setCameraCatalog] = useState<IfcCameraCatalogItem[]>(CAMERA_CATALOG_BY_SITE.ricardone)
-  const [sourceMeta, setSourceMeta] = useState<{ basePath: string; scenario: string; loadedAt: string } | null>(null)
+  const [sourceMeta, setSourceMeta] = useState<{ basePath: string; scenario: string; loadedAt: string; simulatedGeneratedAt?: string } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   const refreshFromSource = useCallback(async (showLoader = false) => {
@@ -63,13 +63,24 @@ function LogisticsOpsProviderInner({ children }: { children: ReactNode }) {
     }
   }, [siteId])
 
+  const scenarioFromStorage = typeof window !== 'undefined' ? localStorage.getItem('logistics.mock.scenario') : null
+  const [pollInterval, setPollInterval] = useState(scenarioFromStorage === 'live' ? 3000 : 15000)
+
   useEffect(() => {
     void refreshFromSource(true)
+  }, [refreshFromSource])
+
+  useEffect(() => {
+    const interval = sourceMeta?.scenario === 'live' ? 3000 : 15000
+    setPollInterval(interval)
+  }, [sourceMeta?.scenario])
+
+  useEffect(() => {
     const timer = window.setInterval(() => {
       void refreshFromSource(false)
-    }, 15000)
+    }, pollInterval)
     return () => window.clearInterval(timer)
-  }, [refreshFromSource])
+  }, [refreshFromSource, pollInterval])
 
   const ingestFleetSnapshot = useCallback(
     (_fleet: IfcSelectedTruckInfo[], _siteId: SiteId) => {

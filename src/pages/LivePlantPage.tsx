@@ -13,7 +13,7 @@ interface LivePlantPageProps {
 
 export function LivePlantPage({ onOpenVisitDetail, focusPlate, onFocusPlateHandled }: LivePlantPageProps) {
   const { siteId } = useSite()
-  const { cameraEvents, operationalAlerts, trucksInPlant } = useLogisticsOps()
+  const { cameraEvents, operationalAlerts, trucksInPlant, sourceMeta } = useLogisticsOps()
   const [alertKindFilter, setAlertKindFilter] = useState<'ALL' | 'DESVIO' | 'DEMORA'>('ALL')
   const [selectedAlertId, setSelectedAlertId] = useState<string | null>(null)
   const [selectedTruckId, setSelectedTruckId] = useState<string | null>(null)
@@ -92,9 +92,12 @@ export function LivePlantPage({ onOpenVisitDetail, focusPlate, onFocusPlateHandl
   )
 
   const lastStreamEvent = cameraStreamSource.length > 0 ? cameraStreamSource[cameraStreamSource.length - 1] : undefined
-  const lastUpdate = lastStreamEvent?.timestamp
-    ? new Date(lastStreamEvent.timestamp).toLocaleTimeString('es-AR')
-    : '—'
+  const lastUpdate =
+    lastStreamEvent?.timestamp
+      ? new Date(lastStreamEvent.timestamp).toLocaleTimeString('es-AR')
+      : sourceMeta?.loadedAt
+        ? new Date(sourceMeta.loadedAt).toLocaleTimeString('es-AR')
+        : '—'
 
   const selectedAlertTypeLabel = (type: string) => {
     if (type === 'FUERA_CIRCUITO' || type === 'CONFLICTO_CIRCUITO_CAMARA') return 'Desvio'

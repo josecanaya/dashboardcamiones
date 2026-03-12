@@ -19,7 +19,13 @@ import {
 import type { SiteId } from '../domain/sites'
 import { SITES } from '../domain/sites'
 import { useLogisticsOps } from '../context/LogisticsOpsContext'
+import { useHistoricalPageData } from '../hooks/useHistoricalPageData'
 import { getCircuitsForSite, getCodigoBase, findCircuitByCode, type MasterCircuitItem } from '../data/masterCircuitCatalog'
+
+/**
+ * Datos: historico_recorridos.json en /mock-data/live/{ricardone|san_lorenzo|avellaneda}/
+ * Cargados por LogisticsOpsContext -> loadLogisticsSnapshot
+ */
 
 interface HistoricalOperationalPageProps {
   siteId: SiteId
@@ -72,15 +78,16 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
     return 'week' as const
   }, [periodPreset, drilledWeek, drilledDay])
 
-  const refData = useMemo(() => {
-    const siteTrips = historicalTrips.filter((trip) => trip.siteId === siteId)
-    const maxEgreso = siteTrips.length > 0
-      ? Math.max(...siteTrips.map((t) => new Date(t.egresoAt).getTime()))
-      : Date.now()
-    const refDate = new Date(maxEgreso)
-    const refFecha = `${refDate.getUTCFullYear()}-${String(refDate.getUTCMonth() + 1).padStart(2, '0')}-${String(refDate.getUTCDate()).padStart(2, '0')}`
-    return { maxEgreso, refDate, refFecha }
-  }, [historicalTrips, siteId])
+  const { enrichedRows, refData, effectiveDate } = useHistoricalPageData({
+    historicalTrips,
+    siteId,
+    effectiveView,
+    periodPreset,
+    drilledWeek,
+    drilledDay,
+    selectedDate,
+    query,
+  })
 
   const circuits = useMemo(() => {
     const siteCircuits = getCircuitsForSite(siteId)
@@ -97,60 +104,6 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
   useEffect(() => {
     setSelectedDate(refData.refFecha)
   }, [refData.refFecha, siteId])
-
-  const effectiveDate = selectedDate || refData.refFecha
-
-  const rows = useMemo(() => {
-    const siteTrips = historicalTrips.filter((trip) => trip.siteId === siteId)
-    const dayMs = 24 * 60 * 60 * 1000
-    const [selY, selM] = effectiveDate.split('-').map(Number)
-    const selDateMs = new Date(effectiveDate + 'T12:00:00Z').getTime()
-    const monthEndMs = new Date(selY, selM, 0).getTime()
-
-    const passesFilter = (trip: (typeof siteTrips)[0]) => {
-      const fecha = trip.fecha ?? `${new Date(trip.egresoAt).getUTCFullYear()}-${String(new Date(trip.egresoAt).getUTCMonth() + 1).padStart(2, '0')}-${String(new Date(trip.egresoAt).getUTCDate()).padStart(2, '0')}`
-      const tripDateMs = new Date(fecha + 'T12:00:00Z').getTime()
-      const daysDiff = (selDateMs - tripDateMs) / dayMs
-      const daysDiffFromMonthEnd = (monthEndMs - tripDateMs) / dayMs
-
-      if (effectiveView === 'day') {
-        if (periodPreset === 'last_day') return fecha === effectiveDate
-        if (periodPreset === 'last_week' && drilledDay) {
-          return daysDiff >= drilledDay - 1 && daysDiff < drilledDay
-        }
-        if (periodPreset === 'last_month' && drilledWeek && drilledDay) {
-          const weekStart = (4 - drilledWeek) * 7
-          return daysDiffFromMonthEnd >= weekStart + drilledDay - 1 && daysDiffFromMonthEnd < weekStart + drilledDay
-        }
-        return fecha === effectiveDate
-      }
-      if (effectiveView === 'week') {
-        if (periodPreset === 'last_month' && drilledWeek) {
-          const weekStart = (4 - drilledWeek) * 7
-          return daysDiffFromMonthEnd >= weekStart && daysDiffFromMonthEnd < weekStart + 7
-        }
-        return daysDiff >= 0 && daysDiff <= 6
-      }
-      const [tripY, tripM] = fecha.split('-').map(Number)
-      return tripY === selY && tripM === selM
-    }
-
-    return siteTrips
-      .filter(passesFilter)
-      .filter((trip) => !query || trip.plate.toLowerCase().includes(query.toLowerCase()))
-      .sort((a, b) => new Date(b.egresoAt).getTime() - new Date(a.egresoAt).getTime())
-  }, [historicalTrips, siteId, effectiveView, periodPreset, drilledWeek, drilledDay, query, effectiveDate, refData])
-
-  const enrichedRows = useMemo(() => {
-    return rows.map((row) => ({
-      ...row,
-      catalogCode: row.catalogCode ?? row.circuitoFinal,
-      catalogName: row.catalogName ?? 'Sin catálogo',
-      cir: row.cir ?? 'N/A',
-      vue: row.vue ?? 'N/A',
-      descripcion: row.descripcion ?? 'Sin descripción disponible',
-    }))
-  }, [rows])
 
   const statsFromTrips = useMemo(() => {
     const allCircuits = circuits.length > 0 ? circuits : [{ codigo: 'PEND', nombre: 'Pendiente catálogo', codigoCircuito: 'N/A', codigoVuelta: 'N/A', tipo: 'recepcion' as const, subtipo: 'solidos', destino: 'N/A', descripcion: 'Sin catálogo cargado.' } as MasterCircuitItem]
@@ -306,7 +259,7 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
     if (scatterFiltered.length === 0) return { y1: 7 * 60, y2: 11 * 60, center: 9 * 60 }
     const sorted = [...scatterFiltered].map((p) => p.cycleMinutes).sort((a, b) => a - b)
     const center = sorted[Math.floor(sorted.length / 2)] ?? 9 * 60
-    const halfWindow = 1 * 60 // franja central de 2 horas (1 h a cada lado)
+    const halfWindow = 10 // franja central de 20 minutos (10 min a cada lado del centro)
     return {
       y1: Math.max(0, center - halfWindow),
       y2: Math.min(36 * 60, center + halfWindow),
@@ -315,9 +268,10 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
   }, [scatterFiltered])
 
   const yAxisDomain = useMemo(() => {
-    const baseMax = 20 * 60 // 20 horas en minutos (arranca con 20 h)
     const dataMax = scatterFiltered.length > 0 ? Math.max(...scatterFiltered.map((p) => p.cycleMinutes)) : 0
-    return [0, Math.max(baseMax, dataMax)] as [number, number]
+    const minMax = 2 * 60 // mínimo 2 h para que se vea algo
+    const max = Math.max(minMax, dataMax * 1.15) // 15% margen sobre el máximo real
+    return [0, max] as [number, number]
   }, [scatterFiltered])
 
   const scatterWithDynamicColor = useMemo(() => {
@@ -528,13 +482,9 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                         const p = payload?.[0]?.payload as (typeof statsFromTrips.scatter)[number] | undefined
                         if (!p) return null
                         return (
-                          <div className="rounded-lg border border-slate-200 bg-white p-2 text-xs shadow-md">
+                          <div className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs shadow-md">
                             <div className="font-semibold">{p.plate}</div>
-                            <div>{p.circuitCode} · {p.circuitName}</div>
-                            <div>{p.cir} / {p.vue}</div>
-                            <div>Ingreso: {p.entryTime} h</div>
-                            <div>Tiempo en planta: {(p.cycleMinutes / 60).toFixed(1)} h</div>
-                            <div>{p.status}</div>
+                            <div className="text-slate-500 text-[10px]">Ver más</div>
                           </div>
                         )
                       }}
@@ -552,25 +502,30 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                           setSelectedStatsTruck(popupInfo)
                         }
                       : undefined}
-                    shape={(props) => {
-                    const p = props.payload as ((typeof statsFromTrips.scatter)[number] & { popupInfo?: StatsTruckPopupInfo }) | undefined
-                    const n = scatterWithDynamicColor.length
-                    const r = n <= 100 ? 5 : n <= 500 ? 3 : n <= 2000 ? 2 : n <= 7000 ? 1.5 : 1
-                    const canSelect = effectiveView === 'day' && p?.plate
-                    return (
-                      <circle
-                        cx={props.cx}
-                        cy={props.cy}
-                        r={r}
-                        fill={p?.color ?? '#64748b'}
-                        fillOpacity={n > 2000 ? 0.7 : 0.9}
-                        stroke={n > 2000 ? 'none' : '#ffffff'}
-                        strokeWidth={n > 2000 ? 0 : 1}
-                        style={{ cursor: canSelect ? 'pointer' : 'default' }}
-                      />
-                    )
-                  }}
-                  />
+                    shape={(props: { cx?: number; cy?: number; payload?: { color?: string; plate?: string }; fill?: string }) => {
+                      const p = props.payload
+                      const fill = props.fill ?? p?.color ?? '#64748b'
+                      const n = scatterWithDynamicColor.length
+                      const r = n <= 100 ? 5 : n <= 500 ? 3 : n <= 2000 ? 2 : n <= 7000 ? 1.5 : 1
+                      const canSelect = effectiveView === 'day' && p?.plate
+                      return (
+                        <circle
+                          cx={props.cx}
+                          cy={props.cy}
+                          r={r}
+                          fill={fill}
+                          fillOpacity={n > 2000 ? 0.7 : 0.9}
+                          stroke={n > 2000 ? 'none' : '#ffffff'}
+                          strokeWidth={n > 2000 ? 0 : 1}
+                          style={{ cursor: canSelect ? 'pointer' : 'default' }}
+                        />
+                      )
+                    }}
+                  >
+                    {scatterWithDynamicColor.map((entry, i) => (
+                      <Cell key={i} fill={entry.color ?? '#64748b'} />
+                    ))}
+                  </Scatter>
                 </ScatterChart>
               </ResponsiveContainer>
             </div>

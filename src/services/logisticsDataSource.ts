@@ -93,13 +93,21 @@ interface DataSourceConfig {
 
 let runtimeConfig: Partial<DataSourceConfig> = {}
 
+/** Escenario por defecto: live. Se guarda en localStorage para que el dashboard cargue desde el simulador en vivo. */
+if (typeof window !== 'undefined') {
+  const current = localStorage.getItem('logistics.mock.scenario')
+  if (!current || current === 'march_full') {
+    localStorage.setItem('logistics.mock.scenario', 'live')
+  }
+}
+
 export interface LogisticsSnapshot {
   rawCameraEvents: RawCameraEventDebug[]
   enrichedCameraEvents: CameraEventRaw[]
   trucksInPlant: TruckInPlant[]
   historicalTrips: HistoricalTrip[]
   operationalAlerts: OperationalAlert[]
-  meta: { basePath: string; scenario: string; loadedAt: string }
+  meta: { basePath: string; scenario: string; loadedAt: string; simulatedGeneratedAt?: string }
 }
 
 function getConfig(): DataSourceConfig {
@@ -107,7 +115,7 @@ function getConfig(): DataSourceConfig {
   const fromStorageScenario = typeof window !== 'undefined' ? localStorage.getItem('logistics.mock.scenario') : null
   return {
     basePath: runtimeConfig.basePath || fromStorageBase || '/mock-data',
-    scenario: runtimeConfig.scenario || fromStorageScenario || 'march_full',
+    scenario: runtimeConfig.scenario || fromStorageScenario || 'live',
   }
 }
 
@@ -135,23 +143,70 @@ function normalizeStatus(value: string | undefined): AlertStatus {
   return 'OPEN'
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url, { cache: 'no-store' })
+async function fetchJson<T>(url: string, bustCache = false): Promise<T> {
+  const finalUrl = bustCache ? `${url}?t=${Date.now()}` : url
+  const response = await fetch(finalUrl, { cache: 'no-store' })
   if (!response.ok) throw new Error(`No se pudo leer ${url}`)
   return (await response.json()) as T
 }
 
+const PLANT_SUFFIXES = ['ricardone', 'san_lorenzo', 'avellaneda'] as const
+
+async function fetchByPlant<T>(
+  basePath: string,
+  scenario: string,
+  baseName: string,
+  extract: (p: unknown) => T[] | undefined
+): Promise<{ items: T[]; generatedAt?: string }> {
+  if (scenario !== 'live') {
+    const payload = await fetchJson<{ events?: T[]; data?: T[]; generatedAt?: string }>(
+      `${basePath}/${scenario}/${baseName}.json`,
+      false
+    )
+    const items = extract(payload) ?? (payload as { events?: T[] }).events ?? (payload as { data?: T[] }).data ?? []
+    return { items, generatedAt: (payload as { generatedAt?: string }).generatedAt }
+  }
+  // En live: datos en carpetas por planta (live/ricardone/camiones_en_planta.json, etc.)
+  const results = await Promise.allSettled(
+    PLANT_SUFFIXES.map((s) =>
+      fetchJson<{ events?: T[]; data?: T[]; generatedAt?: string }>(
+        `${basePath}/${scenario}/${s}/${baseName}.json`,
+        true
+      )
+    )
+  )
+  const items: T[] = []
+  let generatedAt: string | undefined
+  for (const r of results) {
+    if (r.status === 'fulfilled') {
+      items.push(...(extract(r.value) ?? r.value.events ?? r.value.data ?? []))
+      if (r.value.generatedAt) generatedAt = r.value.generatedAt
+    }
+  }
+  return { items, generatedAt }
+}
+
 export async function getRawCameraEvents(): Promise<RawCameraEventDebug[]> {
   const { basePath, scenario } = getConfig()
-  const payload = await fetchJson<{ events?: RawCameraEventDebug[] }>(`${basePath}/${scenario}/raw_camera_events.json`)
-  return payload.events ?? []
+  const { items } = await fetchByPlant<RawCameraEventDebug>(
+    basePath,
+    scenario,
+    'raw_camera_events',
+    (p) => (p as { events?: RawCameraEventDebug[] }).events
+  )
+  return items
 }
 
 export async function getEnrichedCameraEvents(siteId?: SiteId): Promise<CameraEventRaw[]> {
   const { basePath, scenario } = getConfig()
-  const payload = await fetchJson<{ events?: ExternalEnrichedEvent[] }>(`${basePath}/${scenario}/camera_events_enriched.json`)
+  const { items } = await fetchByPlant<ExternalEnrichedEvent>(
+    basePath,
+    scenario,
+    'camera_events_enriched',
+    (p) => (p as { events?: ExternalEnrichedEvent[] }).events
+  )
   const now = new Date().toISOString()
-  return (payload.events ?? [])
+  return items
     .map((event, idx) => ({
       eventId: event.eventId ?? `enr-${idx}`,
       timestamp: event.snapshotTime ?? now,
@@ -169,7 +224,7 @@ export async function getEnrichedCameraEvents(siteId?: SiteId): Promise<CameraEv
 /** Sectores de egreso por planta: circuito cerrado cuando el camión pasa por aquí */
 const EGRESO_SECTORS_BY_SITE: Record<SiteId, Set<string>> = {
   ricardone: new Set(['S3', 'S10']),
-  san_lorenzo: new Set(['S7']),
+  san_lorenzo: new Set(['S3', 'S10']),
   avellaneda: new Set(['S3', 'S10']),
 }
 
@@ -181,13 +236,12 @@ const ACTIVE_WINDOW_MS = 4 * 60 * 60 * 1000 // 4 horas
 
 export async function getTrucksInPlant(siteId?: SiteId): Promise<TruckInPlant[]> {
   const { basePath, scenario } = getConfig()
-  const [payload, enriched] = await Promise.all([
-    fetchJson<{ data?: ExternalTruckInPlant[]; generatedAt?: string }>(`${basePath}/${scenario}/camiones_en_planta.json`),
-    fetchJson<{ events?: ExternalEnrichedEvent[] }>(`${basePath}/${scenario}/camera_events_enriched.json`),
+  const [camionesResult, enrichedResult] = await Promise.all([
+    fetchByPlant<ExternalTruckInPlant>(basePath, scenario, 'camiones_en_planta', (p) => (p as { data?: ExternalTruckInPlant[] }).data),
+    fetchByPlant<ExternalEnrichedEvent>(basePath, scenario, 'camera_events_enriched', (p) => (p as { events?: ExternalEnrichedEvent[] }).events),
   ])
-
-  const generatedAt = payload.generatedAt ? new Date(payload.generatedAt).getTime() : Date.now()
-  const cutoffMs = generatedAt - ACTIVE_WINDOW_MS
+  const payload = { data: camionesResult.items, generatedAt: camionesResult.generatedAt }
+  const enriched = { events: enrichedResult.items }
 
   const enrichedByTruck = new Map<string, ExternalEnrichedEvent[]>()
   for (const event of enriched.events ?? []) {
@@ -197,9 +251,18 @@ export async function getTrucksInPlant(siteId?: SiteId): Promise<TruckInPlant[]>
     enrichedByTruck.get(truckId)!.push(event)
   }
 
+  // En modo live: camiones_en_planta es la fuente de verdad (simulador actualiza cada tick).
+  // No filtrar por tiempo para evitar excluir camiones por desfase reloj simulado vs real.
+  const cutoffMs =
+    scenario === 'live'
+      ? 0
+      : (payload.generatedAt ? new Date(payload.generatedAt).getTime() : Date.now()) - ACTIVE_WINDOW_MS
+
   const rawData = (payload.data ?? []).filter((truck) => {
-    const lastSeen = truck.lastSeenAt ? new Date(truck.lastSeenAt).getTime() : 0
-    if (lastSeen < cutoffMs) return false
+    if (cutoffMs > 0) {
+      const lastSeen = truck.lastSeenAt ? new Date(truck.lastSeenAt).getTime() : 0
+      if (lastSeen < cutoffMs) return false
+    }
     const lastSector = truck.visitedSectors?.slice(-1)[0] ?? truck.currentSector
     const truckSite = toSiteId(truck.plant)
     const egresoSectors = EGRESO_SECTORS_BY_SITE[truckSite]
@@ -251,7 +314,24 @@ export async function getTrucksInPlant(siteId?: SiteId): Promise<TruckInPlant[]>
 
 export async function getHistoricalTrips(siteId?: SiteId): Promise<HistoricalTrip[]> {
   const { basePath, scenario } = getConfig()
-  const payload = await fetchJson<{ data?: ExternalHistoricalTrip[] }>(`${basePath}/${scenario}/historico_recorridos.json`)
+  let { items, generatedAt } = await fetchByPlant<ExternalHistoricalTrip>(
+    basePath,
+    scenario,
+    'historico_recorridos',
+    (p) => (p as { data?: ExternalHistoricalTrip[] }).data
+  )
+  // Fallback: si live está vacío, cargar desde normal (datos pre-generados)
+  if (scenario === 'live' && items.length === 0) {
+    const fallback = await fetchByPlant<ExternalHistoricalTrip>(
+      basePath,
+      'normal',
+      'historico_recorridos',
+      (p) => (p as { data?: ExternalHistoricalTrip[] }).data
+    )
+    items = fallback.items
+    if (fallback.generatedAt) generatedAt = fallback.generatedAt
+  }
+  const payload = { data: items }
   const mapped = (payload.data ?? []).map((trip, idx) => {
     const egresoAt = trip.endedAt ?? new Date().toISOString()
     const egresoDate = new Date(egresoAt)
@@ -292,7 +372,13 @@ export async function getHistoricalTrips(siteId?: SiteId): Promise<HistoricalTri
  */
 export async function getOperationalAlerts(siteId?: SiteId): Promise<OperationalAlert[]> {
   const { basePath, scenario } = getConfig()
-  const payload = await fetchJson<{ data?: ExternalAlert[] }>(`${basePath}/${scenario}/alertas_operativas.json`)
+  const { items } = await fetchByPlant<ExternalAlert>(
+    basePath,
+    scenario,
+    'alertas_operativas',
+    (p) => (p as { data?: ExternalAlert[] }).data
+  )
+  const payload = { data: items }
   const now = new Date().toISOString()
   const mapped = (payload.data ?? []).map((alert, idx) => {
     const detectedAt = alert.detectedAt ?? now
@@ -319,19 +405,82 @@ export async function getOperationalAlerts(siteId?: SiteId): Promise<Operational
 
 export async function loadLogisticsSnapshot(siteId?: SiteId): Promise<LogisticsSnapshot> {
   const { basePath, scenario } = getConfig()
-  const [rawCameraEvents, enrichedCameraEvents, trucksInPlant, historicalTrips, operationalAlerts] = await Promise.all([
+  const historicoFetch = (async () => {
+    const live = await fetchByPlant<ExternalHistoricalTrip>(
+      basePath,
+      scenario,
+      'historico_recorridos',
+      (p) => (p as { data?: ExternalHistoricalTrip[] }).data
+    )
+    if (scenario === 'live' && live.items.length === 0) {
+      const fallback = await fetchByPlant<ExternalHistoricalTrip>(
+        basePath,
+        'normal',
+        'historico_recorridos',
+        (p) => (p as { data?: ExternalHistoricalTrip[] }).data
+      )
+      return { items: fallback.items, generatedAt: fallback.generatedAt }
+    }
+    return live
+  })()
+
+  const mapTrip = (trip: ExternalHistoricalTrip, idx: number) => {
+    const egresoAt = trip.endedAt ?? new Date().toISOString()
+    const egresoDate = new Date(egresoAt)
+    const fecha = trip.fecha ?? `${egresoDate.getUTCFullYear()}-${String(egresoDate.getUTCMonth() + 1).padStart(2, '0')}-${String(egresoDate.getUTCDate()).padStart(2, '0')}`
+    return {
+      tripId: trip.tripId ?? `trip-${idx}`,
+      camionId: trip.truckId ?? `truck-${idx}`,
+      plate: trip.plate ?? 'N/A',
+      circuitoFinal: trip.inferredCircuitCode ?? 'N/A',
+      ingresoAt: trip.startedAt ?? new Date().toISOString(),
+      egresoAt,
+      fecha,
+      fechaDia: trip.fechaDia ?? egresoDate.getUTCDate(),
+      fechaMes: trip.fechaMes ?? egresoDate.getUTCMonth() + 1,
+      fechaAnio: trip.fechaAnio ?? egresoDate.getUTCFullYear(),
+      durationMinutes: trip.durationMinutes ?? 0,
+      secuenciaCamaras: (trip.expectedSequence ?? []).map((s) => `CAM_${s}`),
+      secuenciaSectores: trip.visitedSectors ?? [],
+      alerts: [],
+      estadoFinal: (trip.classification ?? (trip.completed ? 'VALIDADO' : 'CON_OBSERVACIONES')) as
+        | 'VALIDADO'
+        | 'CON_OBSERVACIONES'
+        | 'ANOMALO',
+      siteId: toSiteId(trip.plant),
+      catalogCode: trip.catalogCode,
+      catalogName: trip.catalogName,
+      cir: trip.cir,
+      vue: trip.vue,
+      descripcion: trip.descripcion,
+    }
+  }
+
+  const [rawCameraEvents, enrichedCameraEvents, trucksInPlant, historicoResult, operationalAlerts] = await Promise.all([
     getRawCameraEvents(),
     getEnrichedCameraEvents(siteId),
     getTrucksInPlant(siteId),
-    getHistoricalTrips(siteId),
+    historicoFetch.then((p) => {
+      const trips = (p.items ?? []).map((t, i) => mapTrip(t, i))
+      return { trips, generatedAt: p.generatedAt }
+    }),
     getOperationalAlerts(siteId),
   ])
+
+  const historicalTrips = historicoResult.trips.filter((t) => !siteId || t.siteId === siteId)
+  const simulatedGeneratedAt = historicoResult.generatedAt
+
   return {
     rawCameraEvents,
     enrichedCameraEvents,
     trucksInPlant,
     historicalTrips,
     operationalAlerts,
-    meta: { basePath, scenario, loadedAt: new Date().toISOString() },
+    meta: {
+      basePath,
+      scenario,
+      loadedAt: new Date().toISOString(),
+      simulatedGeneratedAt,
+    },
   }
 }

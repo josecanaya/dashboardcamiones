@@ -4,6 +4,7 @@ import { buildStateAndAlerts } from "./stateEngine.js";
 import { writeOutputJson } from "./outputWriter.js";
 import { buildScenario } from "../scenarios/buildScenario.js";
 import { ScenarioName } from "../types/contracts.js";
+import { runLiveTick } from "./liveSimulation.js";
 import { copyFile, mkdir, readdir } from "node:fs/promises";
 import path from "node:path";
 
@@ -35,6 +36,11 @@ async function getSharedTruckImageUrl(): Promise<string | undefined> {
 }
 
 export async function runSimulation(scenario: ScenarioName): Promise<void> {
+  if (scenario === "live") {
+    await runLiveTick();
+    return;
+  }
+
   const built = buildScenario(scenario);
   const truckMap = built.trucks
     ? new Map(built.trucks.map((t) => [t.truckId, t]))

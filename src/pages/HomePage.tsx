@@ -25,7 +25,7 @@ interface HomePageProps {
 }
 
 export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
-  const { trucksInPlant, operationalAlerts, historicalTrips, isLoading } = useLogisticsOps()
+  const { trucksInPlant, operationalAlerts, historicalTrips, isLoading, sourceMeta } = useLogisticsOps()
   const [periodPreset, setPeriodPreset] = useState<PeriodPreset>('last_week')
   const [enterLoading, setEnterLoading] = useState(true)
 
@@ -40,14 +40,15 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
   }
 
   const maxEgresoRef = useMemo(() => {
+    if (sourceMeta?.simulatedGeneratedAt) return new Date(sourceMeta.simulatedGeneratedAt).getTime()
     if (historicalTrips.length === 0) return Date.now()
     return Math.max(...historicalTrips.map((t) => new Date(t.egresoAt).getTime()))
-  }, [historicalTrips])
+  }, [historicalTrips, sourceMeta?.simulatedGeneratedAt])
 
   const summaryBySite = useMemo(() => {
     const ids: SiteId[] = ['ricardone', 'san_lorenzo', 'avellaneda']
-    const hoy = new Date()
-    const fechaHoy = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`
+    const refDate = new Date(maxEgresoRef)
+    const fechaRef = `${refDate.getUTCFullYear()}-${String(refDate.getUTCMonth() + 1).padStart(2, '0')}-${String(refDate.getUTCDate()).padStart(2, '0')}`
     return ids.map((id) => {
       const activosEnPlanta = trucksInPlant.filter((t) => t.siteId === id)
       const activos = activosEnPlanta.length
@@ -57,12 +58,12 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
       ).length
       const cerradosHoy = historicalTrips.filter((h) => {
         if (h.siteId !== id) return false
-        const fecha = h.fecha ?? `${new Date(h.egresoAt).getFullYear()}-${String(new Date(h.egresoAt).getMonth() + 1).padStart(2, '0')}-${String(new Date(h.egresoAt).getDate()).padStart(2, '0')}`
-        return fecha === fechaHoy
+        const fecha = h.fecha ?? `${new Date(h.egresoAt).getUTCFullYear()}-${String(new Date(h.egresoAt).getUTCMonth() + 1).padStart(2, '0')}-${String(new Date(h.egresoAt).getUTCDate()).padStart(2, '0')}`
+        return fecha === fechaRef
       }).length
       return { id, trucks: activos, activeAlerts: alertas, closedToday: cerradosHoy }
     })
-  }, [trucksInPlant, operationalAlerts, historicalTrips])
+  }, [trucksInPlant, operationalAlerts, historicalTrips, maxEgresoRef])
 
   const precomputedCharts = useMemo(() => {
     const refDate = new Date(maxEgresoRef)
@@ -77,7 +78,7 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
     for (const trip of historicalTrips) {
       const tripFecha = trip.fecha ?? `${new Date(trip.egresoAt).getUTCFullYear()}-${String(new Date(trip.egresoAt).getUTCMonth() + 1).padStart(2, '0')}-${String(new Date(trip.egresoAt).getUTCDate()).padStart(2, '0')}`
       if (tripFecha !== refFecha) continue
-      const h = new Date(trip.egresoAt).getHours()
+      const h = new Date(trip.egresoAt).getUTCHours()
       const name = siteNames[trip.siteId]
       if (byHourSite[h] && name) byHourSite[h][name] = (byHourSite[h][name] ?? 0) + 1
     }
@@ -96,8 +97,8 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
       const fecha = trip.fecha ?? `${new Date(trip.egresoAt).getUTCFullYear()}-${String(new Date(trip.egresoAt).getUTCMonth() + 1).padStart(2, '0')}-${String(new Date(trip.egresoAt).getUTCDate()).padStart(2, '0')}`
       const tripDateMs = new Date(fecha + 'T12:00:00Z').getTime()
       const daysDiff = (refDateMs - tripDateMs) / dayMs
-      if (daysDiff < 0 || daysDiff > 7) continue
-      const d = Math.floor(7 - daysDiff)
+      if (daysDiff < 0 || daysDiff > 6) continue
+      const d = Math.floor(6 - daysDiff) // D7=today (d=6), D1=6 días atrás (d=0)
       const name = siteNames[trip.siteId]
       if (byDaySite[d] && name) byDaySite[d][name] = (byDaySite[d][name] ?? 0) + 1
     }
@@ -181,6 +182,25 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
   const alertSeverityComparative = precomputedCharts[periodPreset].alerts
 
   const periodLabel = periodPreset === 'last_day' ? 'Último día' : periodPreset === 'last_week' ? 'Última semana' : 'Último mes'
+
+  const dateContext = useMemo(() => {
+    const ref = new Date(maxEgresoRef)
+    const d = ref.getUTCDate()
+    const m = ref.getUTCMonth()
+    const y = ref.getUTCFullYear()
+    const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+    const monthNamesFull = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    const monthShort = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+    if (periodPreset === 'last_day') {
+      return `${dayNames[ref.getUTCDay()]} ${d} de ${monthNamesFull[m]} ${y}`
+    }
+    if (periodPreset === 'last_week') {
+      const start = new Date(ref)
+      start.setUTCDate(start.getUTCDate() - 6)
+      return `${start.getUTCDate()}–${d} ${monthShort[m]} ${y}`
+    }
+    return `${monthNamesFull[m]} ${y}`
+  }, [maxEgresoRef, periodPreset])
 
   if (enterLoading) {
     return (
@@ -288,7 +308,9 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
               Mes
             </button>
           </div>
-          <span className="text-[11px] text-slate-500">{periodLabel}</span>
+          <span className="text-[11px] text-slate-500">
+            {periodLabel} · <strong className="text-slate-700">{dateContext}</strong>
+          </span>
         </div>
         <div className="relative min-h-[240px] rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           {(isLoading || enterLoading) && (
@@ -300,7 +322,10 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         <article className="rounded-xl border border-slate-100 bg-slate-50/30 p-4">
           <h3 className="mb-3 text-sm font-semibold text-slate-800">
-            Actividad por tiempo · {periodPreset === 'last_day' ? 'Horas (0–24h)' : periodPreset === 'last_week' ? 'Días (D1–D7)' : 'Semanas (S1–S4)'}
+            {dateContext}
+            <span className="ml-1 block text-xs font-normal text-slate-500">
+              Actividad · {periodPreset === 'last_day' ? 'Horas (0–24h)' : periodPreset === 'last_week' ? 'Días (D1–D7)' : 'Semanas (S1–S4)'}
+            </span>
           </h3>
           <div className="h-[210px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -320,7 +345,8 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
 
         <article className="rounded-xl border border-slate-100 bg-slate-50/30 p-4">
           <h3 className="mb-3 text-sm font-semibold text-slate-800">
-            Circuitos por planta · {periodLabel}
+            {dateContext}
+            <span className="ml-1 block text-xs font-normal text-slate-500">Circuitos por planta</span>
           </h3>
           <div className="h-[210px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -340,7 +366,8 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
 
         <article className="rounded-xl border border-slate-100 bg-slate-50/30 p-4">
           <h3 className="mb-3 text-sm font-semibold text-slate-800">
-            Alertas por severidad · {periodLabel}
+            {dateContext}
+            <span className="ml-1 block text-xs font-normal text-slate-500">Alertas por severidad</span>
           </h3>
           <div className="h-[210px]">
             <ResponsiveContainer width="100%" height="100%">

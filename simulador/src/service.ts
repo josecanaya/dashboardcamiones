@@ -1,4 +1,5 @@
 import { runSimulation } from "./engine/simulation.js";
+import { resetLive } from "./engine/liveSimulation.js";
 import { ScenarioName } from "./types/contracts.js";
 
 function parseScenarioFromArgv(argv: string[]): string | undefined {
@@ -26,19 +27,23 @@ function getScenarioArg(): ScenarioName {
     parseScenarioFromArgv(process.argv) ?? process.env.npm_config_scenario
   ) as ScenarioName | undefined;
   if (!value) return "normal";
-  if (["normal", "anomalies", "high-load", "week_snapshot"].includes(value)) return value;
-  throw new Error(`Scenario invalido: ${value}. Usar normal | anomalies | high-load | week_snapshot`);
+  if (["normal", "anomalies", "high-load", "week_snapshot", "march_full", "live"].includes(value)) return value;
+  throw new Error(`Scenario invalido: ${value}. Usar normal | anomalies | high-load | week_snapshot | march_full | live`);
 }
 
-function getIntervalMs(): number {
+function getIntervalMs(scenario: ScenarioName): number {
   const raw = parseIntervalFromArgv(process.argv) ?? Number(process.env.npm_config_intervalsec);
-  const seconds = Number.isFinite(raw) && raw > 0 ? raw : 20;
-  return seconds * 1000;
+  if (Number.isFinite(raw) && raw > 0) return Math.max(50, Math.round(raw * 1000));
+  return scenario === "live" ? 3 * 1000 : 20 * 1000;
+}
+
+function hasResetArg(): boolean {
+  return process.argv.includes("--reset") || process.argv.includes("-reset");
 }
 
 async function main(): Promise<void> {
   const scenario = getScenarioArg();
-  const intervalMs = getIntervalMs();
+  const intervalMs = getIntervalMs(scenario);
 
   let running = true;
   let tickInProgress = false;
@@ -51,8 +56,19 @@ async function main(): Promise<void> {
   process.on("SIGINT", () => shutdown("SIGINT"));
   process.on("SIGTERM", () => shutdown("SIGTERM"));
 
+  if (scenario === "live" && hasResetArg()) {
+    await resetLive();
+    console.log("[simulator] Reset completado. Estado y historico en 0.");
+  }
+
+  const turbo = intervalMs < 500;
   console.log(
-    `[simulator] Servicio iniciado. Escenario=${scenario}. Intervalo=${intervalMs / 1000}s.`
+    `[simulator] Servicio iniciado. Escenario=${scenario}. Intervalo=${intervalMs}ms real.` +
+      (scenario === "live"
+        ? turbo
+          ? ` (TURBO: ~1 semana cada 20s, 40/35/15 por hora Ric/SL/Av)`
+          : " (3s real = 1h sim, ~50 dias/hora real, 40/35/15 por hora Ric/SL/Av)"
+        : "")
   );
 
   while (running) {

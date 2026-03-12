@@ -1,4 +1,5 @@
 import { runSimulation } from "./engine/simulation.js";
+import { resetLive } from "./engine/liveSimulation.js";
 import { ScenarioName } from "./types/contracts.js";
 
 function parseScenarioFromArgv(argv: string[]): string | undefined {
@@ -20,12 +21,20 @@ function getScenarioArg(): ScenarioName {
     parseScenarioFromArgv(process.argv) ?? process.env.npm_config_scenario
   ) as ScenarioName | undefined;
   if (!value) return "normal";
-  if (["normal", "anomalies", "high-load", "week_snapshot", "march_full"].includes(value)) return value;
-  throw new Error(`Scenario invalido: ${value}. Usar normal | anomalies | high-load | week_snapshot | march_full`);
+  if (["normal", "anomalies", "high-load", "week_snapshot", "march_full", "live"].includes(value)) return value;
+  throw new Error(`Scenario invalido: ${value}. Usar normal | anomalies | high-load | week_snapshot | march_full | live`);
+}
+
+function hasResetArg(): boolean {
+  return process.argv.includes("--reset") || process.argv.includes("-reset");
 }
 
 async function main(): Promise<void> {
   const scenario = getScenarioArg();
+  if (scenario === "live" && hasResetArg()) {
+    await resetLive();
+    console.log("Reset completado. Estado y historico en 0.");
+  }
   await runSimulation(scenario);
   console.log(`Simulacion completada (${scenario}). Archivos en public/mock-data/${scenario}/`);
 }

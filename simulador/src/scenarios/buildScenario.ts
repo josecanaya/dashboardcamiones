@@ -406,6 +406,81 @@ function buildMarchFullScenario(): { steps: ScenarioStep[]; trucks: TruckCatalog
   return { steps, trucks };
 }
 
+/** Configuración live: 10s real = 1h simulado, ~90 camiones/tick (40+35+15) */
+export const LIVE_TICKS_PER_BATCH = 90;
+export const LIVE_SIMULATED_MINUTES_PER_TICK = 60;
+
+/** Genera un batch de 5 camiones para modo live. simulatedClock = fin de la ventana de 10 min. */
+export function buildLiveBatch(
+  simulatedClock: string,
+  tripCounterStart: number
+): { steps: ScenarioStep[]; trucks: TruckCatalogItem[]; tripCounterEnd: number } {
+  const CARGO_TYPES = ["Maiz", "Soja", "Trigo", "Pellet", "Fertilizante", "Harina"];
+  const DRIVERS = ["Perez", "Gomez", "Rios", "Aguirre", "Lopez", "Martinez", "Fernandez", "Garcia"];
+
+  const plantCircuits: { plant: string; code: string }[] = [
+    { plant: "Ricardone", code: "A7" },
+    { plant: "Ricardone", code: "A1" },
+    { plant: "San Lorenzo", code: "A1" },
+    { plant: "San Lorenzo", code: "C1" },
+    { plant: "Avellaneda", code: "A1" }
+  ];
+
+  const egresoDate = new Date(simulatedClock);
+  const steps: ScenarioStep[] = [];
+  const trucks: TruckCatalogItem[] = [];
+  let tripCounter = tripCounterStart;
+
+  function plateFor(idx: number): string {
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const n = Date.now() % 100000 + idx;
+    const num = String((n % 1000) + 1).padStart(3, "0");
+    const p = Math.floor(n / 1000);
+    const l1 = letters[p % 26];
+    const l2 = letters[Math.floor(p / 26) % 26];
+    const suf = letters[idx % 26] + letters[Math.floor(idx / 26) % 26];
+    return `${l1}${l2}${num}${suf}`;
+  }
+
+  for (let i = 0; i < LIVE_TICKS_PER_BATCH; i++) {
+    const { plant, code } = plantCircuits[i];
+    const circuit = CIRCUIT_BY_PLANT_AND_CODE.get(`${plant}:${code}`);
+    if (!circuit) continue;
+
+    tripCounter++;
+    const truckId = `LIVE-${plant.slice(0, 2).toUpperCase()}-${String(tripCounter).padStart(5, "0")}`;
+    const plate = plateFor(tripCounter);
+
+    trucks.push({
+      truckId,
+      plate,
+      cargoType: CARGO_TYPES[tripCounter % CARGO_TYPES.length],
+      driver: tripCounter % 3 === 0 ? DRIVERS[tripCounter % DRIVERS.length] : undefined,
+      circuitCode: code,
+      plant
+    });
+
+    const fullSequence = circuit.sectorSequence;
+    const inProgress = i >= 2;
+
+    const sequence = inProgress
+      ? fullSequence.slice(0, Math.max(3, fullSequence.length - 2))
+      : fullSequence;
+
+    const seqLen = sequence.length;
+    const interval = MIN_INTERVAL + Math.floor(seededRandom(tripCounter) * (MAX_INTERVAL - MIN_INTERVAL));
+    const durationMin = inProgress ? (seqLen - 1) * interval : 7 * 60 + (tripCounter % 181) * 60;
+    const ingresoDate = new Date(egresoDate.getTime() - durationMin * 60_000);
+
+    const actualInterval = seqLen > 1 ? Math.round(durationMin / (seqLen - 1)) : MIN_INTERVAL;
+
+    steps.push(...makeRouteSteps(truckId, plant, sequence, ingresoDate, Math.max(MIN_INTERVAL, actualInterval)));
+  }
+
+  steps.sort((a, b) => new Date(a.snapshotTime).getTime() - new Date(b.snapshotTime).getTime());
+  return { steps, trucks, tripCounterEnd: tripCounter };
+}
+
 export function buildScenario(scenario: ScenarioName): BuildScenarioResult {
   if (scenario === "week_snapshot") {
     const { steps, trucks } = buildWeekSnapshotScenario();
@@ -414,6 +489,9 @@ export function buildScenario(scenario: ScenarioName): BuildScenarioResult {
   if (scenario === "march_full") {
     const { steps, trucks } = buildMarchFullScenario();
     return { scenario, steps, trucks };
+  }
+  if (scenario === "live") {
+    throw new Error("Escenario live usa runLiveSimulation, no buildScenario");
   }
 
   let steps: ScenarioStep[];

@@ -6,6 +6,7 @@
   "scripts": {
     "simulate": "tsx src/index.ts",
     "simulate:start": "node scripts/start-simulator.cjs",
+    "simulate:foreground": "tsx src/service.ts",
     "simulate:stop": "node scripts/stop-simulator.cjs"
   },
   "devDependencies": {

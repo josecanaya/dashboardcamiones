@@ -33,6 +33,7 @@ En RAW no se incluye `plant`, `sector`, `cameraId`, `truckId`, `circuitCode`, al
 - `high-load`
 - `week_snapshot`: Día 7 a las 12:00. Totales semanales: Ricardone 4000, San Lorenzo 3000, Avellaneda 600. Hoy = 1/7. Ricardone: 30% circuito A7 (San Lorenzo), 70% otros. San Lorenzo: 60% A1 (Descarga sólidos), 40% otros.
 - `march_full`: Simulación realista del mes de marzo completo. Promedio/día: Ricardone 700, San Lorenzo 500, Avellaneda 250. ~45.000 viajes en total (31 días).
+- `live`: Modo servicio. Cada 20s reales = 10 min simulados en planta. Genera 5 camiones por tick. El histórico se acumula.
 
 ## Comandos
 
@@ -51,7 +52,10 @@ npm run simulate -- --scenario=anomalies
 npm run simulate -- --scenario=high-load
 npm run simulate -- --scenario=week_snapshot
 npm run simulate -- --scenario=march_full
+npm run simulate -- --scenario=live
 ```
+
+Modo live (servicio): `npm run simulate:start -- --scenario=live --intervalSec=20`. Cada tick: 20s real = 10 min simulado, 5 camiones al histórico.
 
 Para que el dashboard consuma un escenario: `localStorage.setItem('logistics.mock.scenario', 'march_full')` (o `week_snapshot`, etc.) y recargar.
 
