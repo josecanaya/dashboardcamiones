@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { IfcLoadingOverlay } from '../components/IfcLoadingOverlay'
 import {
   ResponsiveContainer,
-  ScatterChart,
-  Scatter,
   XAxis,
   YAxis,
   Tooltip,
@@ -13,14 +11,19 @@ import {
   BarChart,
   Bar,
   CartesianGrid,
-  ReferenceArea,
   Legend,
+  ComposedChart,
+  Line,
+  ReferenceLine,
 } from 'recharts'
 import type { SiteId } from '../domain/sites'
 import { SITES } from '../domain/sites'
 import { useLogisticsOps } from '../context/LogisticsOpsContext'
 import { useHistoricalPageData } from '../hooks/useHistoricalPageData'
 import { getCircuitsForSite, getCodigoBase, findCircuitByCode, type MasterCircuitItem } from '../data/masterCircuitCatalog'
+import { ChartExportButtons } from '../components/charts/ChartExportButtons'
+import { kdeCurvePoints } from '../utils/stats'
+import { clampDurationMinutes } from '../config/durationBounds'
 
 /**
  * Datos: historico_recorridos.json en /mock-data/live/{ricardone|san_lorenzo|avellaneda}/
@@ -49,7 +52,7 @@ interface StatsTruckPopupInfo {
 }
 
 export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats', onViewInModel, onModeChange }: HistoricalOperationalPageProps) {
-  const { historicalTrips } = useLogisticsOps()
+  const { historicalTrips, scenario, refreshFromSource, sourceMeta } = useLogisticsOps()
   const [query, setQuery] = useState('')
   const [periodPreset, setPeriodPreset] = useState<PeriodPreset>('last_week')
   const [selectedDate, setSelectedDate] = useState('')
@@ -255,38 +258,43 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
     })
   }, [statsFromTrips.scatter, selectedStatusFilter, selectedCircuitCodes])
 
-  const centralBand = useMemo(() => {
-    if (scatterFiltered.length === 0) return { y1: 7 * 60, y2: 11 * 60, center: 9 * 60 }
-    const sorted = [...scatterFiltered].map((p) => p.cycleMinutes).sort((a, b) => a - b)
-    const center = sorted[Math.floor(sorted.length / 2)] ?? 9 * 60
-    const halfWindow = 10 // franja central de 20 minutos (10 min a cada lado del centro)
+  const { densityCurveData, dotPlotStats } = useMemo(() => {
+    if (scatterFiltered.length === 0) {
+      return {
+        densityCurveData: [] as Array<{ x: number; density: number; freqSmoothed: number }>,
+        dotPlotStats: { mean: 0, std: 0, count: 0, median: 0, mode: 0 },
+      }
+    }
+    const durations = scatterFiltered.map((p) => clampDurationMinutes(p.cycleMinutes) / 60)
+    const count = durations.length
+    const mean = count > 0 ? durations.reduce((a, b) => a + b, 0) / count : 0
+    const variance = count > 1 ? durations.reduce((sum, d) => sum + (d - mean) ** 2, 0) / (count - 1) : 0
+    const std = Math.sqrt(variance)
+    const sorted = [...durations].sort((a, b) => a - b)
+    const median = count > 0 ? (sorted[Math.floor((count - 1) / 2)]! + sorted[Math.ceil((count - 1) / 2)]!) / 2 : 0
+    const byBin = new Map<number, number>()
+    const roundBin = (v: number) => Math.round(v * 10) / 10
+    for (const h of durations) {
+      const binStart = roundBin(Math.floor(h / 0.1) * 0.1)
+      byBin.set(binStart, (byBin.get(binStart) ?? 0) + 1)
+    }
+    let modeBin = Math.min(...durations)
+    let maxBinCount = 0
+    for (const [bin, n] of byBin) {
+      if (n > maxBinCount) {
+        maxBinCount = n
+        modeBin = bin
+      }
+    }
+    const mode = modeBin + 0.05
+
+    const densityCurveData = kdeCurvePoints(durations, 100, 0.15)
+
     return {
-      y1: Math.max(0, center - halfWindow),
-      y2: Math.min(36 * 60, center + halfWindow),
-      center,
+      densityCurveData,
+      dotPlotStats: { mean, std, count, median, mode },
     }
   }, [scatterFiltered])
-
-  const yAxisDomain = useMemo(() => {
-    const dataMax = scatterFiltered.length > 0 ? Math.max(...scatterFiltered.map((p) => p.cycleMinutes)) : 0
-    const minMax = 2 * 60 // mínimo 2 h para que se vea algo
-    const max = Math.max(minMax, dataMax * 1.15) // 15% margen sobre el máximo real
-    return [0, max] as [number, number]
-  }, [scatterFiltered])
-
-  const scatterWithDynamicColor = useMemo(() => {
-    if (scatterFiltered.length === 0) return []
-    const { y1, y2 } = centralBand
-    return scatterFiltered.map((point) => ({
-      ...point,
-      color:
-        point.cycleMinutes < y1
-          ? '#22c55e'
-          : point.cycleMinutes <= y2
-            ? '#eab308'
-            : '#ef4444',
-    }))
-  }, [scatterFiltered, centralBand])
 
   useEffect(() => {
     if (effectiveView !== 'day' && selectedStatsTruck) setSelectedStatsTruck(null)
@@ -322,6 +330,22 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
         </div>
       )}
       <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+          <span>Datos: <strong className="text-slate-700">{sourceMeta?.historicoSource ?? scenario}</strong></span>
+          <button
+            type="button"
+            onClick={() => void refreshFromSource(true)}
+            className="rounded-md border border-slate-300 bg-white px-2 py-1 font-medium text-slate-600 hover:bg-slate-50"
+          >
+            Recargar datos
+          </button>
+        </div>
+        <div className="mb-2 text-xs text-slate-500">
+          Origen histórico: <code className="rounded bg-slate-100 px-1">/mock-data/{sourceMeta?.historicoSource ?? scenario}/</code>
+          {sourceMeta?.historicoSource !== scenario && (
+            <span className="ml-1 text-amber-600">(fallback desde {scenario})</span>
+          )}
+        </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex gap-1 rounded-lg bg-slate-100/80 p-1">
             {SITES.map((site) => {
@@ -391,10 +415,32 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
       {mode === 'stats' && (
         <section className="space-y-3">
           <article className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+            <ChartExportButtons
+              filenamePrefix="distribucion_estadia"
+              csvData={densityCurveData.map((p) => ({ horas: p.x.toFixed(2), densidad: p.density.toFixed(4), freq_suavizada: p.freqSmoothed.toFixed(2) }))}
+              meta={{ plant: SITES.find((s) => s.id === siteId)?.name, period: `${effectiveView} ${effectiveDate}` }}
+              title="Distribución tiempo de estadía"
+            >
             <div className="mb-2 flex flex-wrap items-center gap-2 text-[10px]">
               <span className="font-semibold text-slate-700">
-                Camiones x {effectiveView === 'day' ? 'día' : effectiveView === 'week' ? 'semana' : 'mes'}: {scatterWithDynamicColor.length}
+                Distribución tiempo de estadía · {effectiveView === 'day' ? 'día' : effectiveView === 'week' ? 'semana' : 'mes'}: {dotPlotStats.count} camiones
               </span>
+              {(selectedCircuitCode || selectedStatusFilter) && (
+                <>
+                  <span className="text-amber-600">(filtros activos)</span>
+                  <button
+                    type="button"
+                    onClick={() => { setSelectedCircuitCode(null); setSelectedStatusFilter(null) }}
+                    className="rounded border border-amber-400 bg-amber-50 px-1.5 py-0.5 font-medium text-amber-800 hover:bg-amber-100"
+                  >
+                    Quitar filtros
+                  </button>
+                </>
+              )}
+              <span className="text-slate-500">|</span>
+              <span>Tiempo promedio: <strong>{dotPlotStats.mean.toFixed(1)} h</strong></span>
+              <span className="text-slate-500">|</span>
+              <span>Desvío estándar: <strong>{dotPlotStats.std.toFixed(1)} h</strong></span>
               {effectiveView === 'month' && (
                 <>
                   <span className="text-slate-400">|</span>
@@ -447,91 +493,98 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                 </button>
               )}
             </div>
-            <div className="h-[300px]">
+            <div className="relative h-[300px] min-h-[200px]">
+              {densityCurveData.length === 0 ? (
+                <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-sm text-slate-500">
+                  No hay datos para el período seleccionado. Pruebe con otro rango de fechas o planta.
+                </div>
+              ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <ScatterChart margin={{ top: 10, right: 20, bottom: 10, left: 10 }}>
+                <ComposedChart
+                  data={densityCurveData}
+                  margin={{ top: 30, right: 20, bottom: 10, left: 10 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
                     type="number"
-                    dataKey="xAxisValue"
-                    name={effectiveView === 'day' ? 'Hora de ingreso' : effectiveView === 'week' ? 'Día' : 'Semana'}
-                    unit={effectiveView === 'day' ? 'h' : undefined}
-                    domain={effectiveView === 'day' ? [0, 24] : effectiveView === 'week' ? [1, 8] : [1, 6]}
+                    dataKey="x"
+                    name="Tiempo de estadía (h)"
+                    domain={['dataMin', 'dataMax']}
                     tick={{ fontSize: 10 }}
-                    tickFormatter={effectiveView === 'day' ? (v) => `${Math.round(Number(v))}h` : effectiveView === 'week' ? (v) => `D${Math.round(Number(v))}` : (v) => `S${Math.round(Number(v))}`}
+                    tickFormatter={(v) => v.toFixed(1)}
                   />
                   <YAxis
                     type="number"
-                    dataKey="cycleMinutes"
-                    name="Tiempo en planta"
-                    unit="h"
-                    domain={yAxisDomain}
+                    dataKey="freqSmoothed"
+                    name="Frecuencia suavizada"
+                    domain={[0, 'auto']}
+                    allowDataOverflow
                     tick={{ fontSize: 10 }}
-                    tickFormatter={(value) => `${Math.round(Number(value) / 60)}h`}
+                    tickFormatter={(v) => (v >= 1 ? Math.round(v).toString() : v.toFixed(1))}
                   />
-                  <ReferenceArea
-                    y1={centralBand.y1}
-                    y2={centralBand.y2}
-                    fill="#eab308"
-                    fillOpacity={0.15}
-                    ifOverflow="extendDomain"
-                  />
-                  {effectiveView === 'day' && (
-                    <Tooltip
-                      cursor={{ strokeDasharray: '3 3' }}
-                      content={({ payload }) => {
-                        const p = payload?.[0]?.payload as (typeof statsFromTrips.scatter)[number] | undefined
-                        if (!p) return null
-                        return (
-                          <div className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs shadow-md">
-                            <div className="font-semibold">{p.plate}</div>
-                            <div className="text-slate-500 text-[10px]">Ver más</div>
-                          </div>
-                        )
-                      }}
-                    />
-                  )}
-                  <Scatter
-                    data={scatterWithDynamicColor}
-                    isAnimationActive={false}
-                    cursor={effectiveView === 'day' ? 'pointer' : 'default'}
-                    onClick={effectiveView === 'day'
-                      ? (event) => {
-                          const point = (event as { payload?: StatsTruckPopupInfo & { popupInfo?: StatsTruckPopupInfo } } | undefined)?.payload
-                          const popupInfo = point?.popupInfo
-                          if (!popupInfo) return
-                          setSelectedStatsTruck(popupInfo)
-                        }
-                      : undefined}
-                    shape={(props: { cx?: number; cy?: number; payload?: { color?: string; plate?: string }; fill?: string }) => {
-                      const p = props.payload
-                      const fill = props.fill ?? p?.color ?? '#64748b'
-                      const n = scatterWithDynamicColor.length
-                      const r = n <= 100 ? 5 : n <= 500 ? 3 : n <= 2000 ? 2 : n <= 7000 ? 1.5 : 1
-                      const canSelect = effectiveView === 'day' && p?.plate
+                  <Tooltip
+                    cursor={{ strokeDasharray: '3 3' }}
+                    content={({ payload }) => {
+                      const p = payload?.[0]?.payload as { x?: number; density?: number; freqSmoothed?: number } | undefined
+                      if (!p) return null
+                      const x = p.x ?? 0
                       return (
-                        <circle
-                          cx={props.cx}
-                          cy={props.cy}
-                          r={r}
-                          fill={fill}
-                          fillOpacity={n > 2000 ? 0.7 : 0.9}
-                          stroke={n > 2000 ? 'none' : '#ffffff'}
-                          strokeWidth={n > 2000 ? 0 : 1}
-                          style={{ cursor: canSelect ? 'pointer' : 'default' }}
-                        />
+                        <div className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs shadow-md">
+                          <div className="font-semibold">{x.toFixed(2)} h</div>
+                          <div className="text-slate-500">Densidad: {(p.density ?? 0).toFixed(3)}</div>
+                          <div className="text-slate-500">Frec. suavizada: {(p.freqSmoothed ?? 0).toFixed(1)}</div>
+                        </div>
                       )
                     }}
-                  >
-                    {scatterWithDynamicColor.map((entry, i) => (
-                      <Cell key={i} fill={entry.color ?? '#64748b'} />
-                    ))}
-                  </Scatter>
-                </ScatterChart>
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="freqSmoothed"
+                    stroke="#0ea5e9"
+                    strokeWidth={2.5}
+                    dot={false}
+                    isAnimationActive={false}
+                    name="Densidad (KDE)"
+                    connectNulls
+                  />
+                  <ReferenceLine
+                    x={dotPlotStats.mean}
+                    stroke="#8b5cf6"
+                    strokeDasharray="4 2"
+                    strokeWidth={1.5}
+                    label={{ value: 'Promedio', position: 'top', fontSize: 9 }}
+                  />
+                  <ReferenceLine
+                    x={dotPlotStats.median}
+                    stroke="#16a34a"
+                    strokeDasharray="2 2"
+                    strokeWidth={1.5}
+                    label={{ value: 'Mediana', position: 'top', fontSize: 9 }}
+                  />
+                </ComposedChart>
               </ResponsiveContainer>
+              )}
             </div>
+            <div className="mt-2 grid grid-cols-2 gap-2 rounded-lg bg-slate-50 px-3 py-2 text-xs sm:grid-cols-5">
+              <span><strong>n (eventos):</strong> {dotPlotStats.count}</span>
+              <span><strong>Promedio (m):</strong> {dotPlotStats.mean.toFixed(1)} h</span>
+              <span><strong>Mediana:</strong> {dotPlotStats.median.toFixed(1)} h</span>
+              <span><strong>Moda:</strong> {dotPlotStats.mode.toFixed(1)} h</span>
+              <span><strong>Desv. estándar (s):</strong> {dotPlotStats.std.toFixed(1)} h</span>
+            </div>
+            <p className="mt-1 text-[10px] text-slate-500">
+              Curva de densidad (KDE) a partir de datos reales. Línea violeta: promedio. Línea verde: mediana.
+            </p>
+            </ChartExportButtons>
           </article>
 
           <section className="grid grid-cols-1 gap-3 xl:grid-cols-[0.9fr_1.6fr]">
+            <ChartExportButtons
+              filenamePrefix="clasificacion_viajes"
+              csvData={statsFromTrips.classification.map((c) => ({ categoria: c.name, cantidad: c.value }))}
+              meta={{ plant: SITES.find((s) => s.id === siteId)?.name, period: `${effectiveView} ${effectiveDate}` }}
+              title="Clasificación por estado"
+            >
             <article className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-600">Clasificación</h3>
               <div className="h-[220px]">
@@ -572,7 +625,14 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                 </ResponsiveContainer>
               </div>
             </article>
+            </ChartExportButtons>
 
+            <ChartExportButtons
+              filenamePrefix="recorridos_por_tipo"
+              csvData={statsFromTrips.validBars.map((b) => ({ tipo: b.label, cantidad: b.count }))}
+              meta={{ plant: SITES.find((s) => s.id === siteId)?.name, period: `${effectiveView} ${effectiveDate}` }}
+              title="Recorridos por tipo"
+            >
             <article className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-600">Recorridos válidos (barras horizontales)</h3>
               <div className="mb-2 flex flex-wrap gap-2 text-[10px] text-slate-600">
@@ -627,6 +687,7 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                 </div>
               </div>
             </article>
+            </ChartExportButtons>
           </section>
         </section>
       )}
@@ -645,7 +706,7 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                 <th className="px-2 py-2 text-left">Descripción</th>
                 <th className="px-2 py-2 text-left">Ingreso</th>
                 <th className="px-2 py-2 text-left">Egreso</th>
-                <th className="px-2 py-2 text-left">Duración</th>
+                <th className="px-2 py-2 text-left">Duración (h)</th>
                 <th className="px-2 py-2 text-left">Secuencia cámaras</th>
                 <th className="px-2 py-2 text-left">Alertas</th>
               </tr>
@@ -665,7 +726,7 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                   <td className="max-w-[360px] px-2 py-2 text-[11px] text-slate-600">{trip.descripcion}</td>
                   <td className="px-2 py-2">{new Date(trip.ingresoAt).toLocaleString('es-AR')}</td>
                   <td className="px-2 py-2">{new Date(trip.egresoAt).toLocaleString('es-AR')}</td>
-                  <td className="px-2 py-2">{trip.durationMinutes} min</td>
+                  <td className="px-2 py-2">{(trip.durationMinutes / 60).toFixed(1)} h</td>
                   <td className="px-2 py-2">{trip.secuenciaCamaras.join(' -> ')}</td>
                   <td className="px-2 py-2">
                     <span

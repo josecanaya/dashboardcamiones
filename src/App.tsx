@@ -11,14 +11,17 @@ import { HomePage } from './pages/HomePage'
 import { HistoricalOperationalPage } from './pages/HistoricalOperationalPage'
 import { OperationalAlertsPage } from './pages/OperationalAlertsPage'
 import { PlanningDemandPage } from './pages/PlanningDemandPage'
+import { AnalyticsPage } from './pages/AnalyticsPage'
+import { ComitePage } from './pages/ComitePage'
+import { ComparativoPage } from './pages/ComparativoPage'
 import type { SiteId } from './domain/sites'
 
-type MainTab = 'home' | 'live' | 'history' | 'alerts' | 'planning'
+type MainTab = 'home' | 'live' | 'history' | 'alerts' | 'planning' | 'analytics' | 'comite' | 'comparativo'
 
 function AppContent() {
   const { siteId, setSiteId } = useSite()
   const { setVisitToSimulate } = useSimulatorVisit()
-  const { isLoading } = useLogisticsOps()
+  const { isLoading, scenario, setScenario } = useLogisticsOps()
   const prevSiteIdRef = useRef<string | null>(null)
   const [tab, setTab] = useState<MainTab>('home')
   const [historyMode, setHistoryMode] = useState<'stats' | 'records'>('stats')
@@ -28,6 +31,7 @@ function AppContent() {
   const [openMonitoring, setOpenMonitoring] = useState(true)
   const [openHistory, setOpenHistory] = useState(false)
   const [openAlerts, setOpenAlerts] = useState(false)
+  const [openAnalytics, setOpenAnalytics] = useState(false)
 
   useEffect(() => {
     if (prevSiteIdRef.current !== null && prevSiteIdRef.current !== siteId) {
@@ -51,6 +55,23 @@ function AppContent() {
           <div className="mb-4 flex flex-col items-center gap-2">
             <img src="/logo_sinfondo.png" alt="Truckflow" className="h-12 w-auto max-w-[200px] object-contain" />
             <span className="text-lg font-bold tracking-tight text-violet-100">Truckflow</span>
+          </div>
+
+          <div className="mb-4">
+            <label className="mb-1 block text-xs font-medium text-violet-300">Escenario de datos</label>
+            <select
+              value={scenario}
+              onChange={(e) => setScenario(e.target.value)}
+              className="w-full rounded-lg border border-violet-700/50 bg-violet-900/50 px-3 py-2 text-sm text-violet-100 focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500"
+            >
+              <option value="live">Live (simulador)</option>
+              <optgroup label="Marzo 2026 completo">
+                <option value="march_full">March full (baseline)</option>
+                <option value="march_full_ordered">March full ordenado (tiempos uniformes)</option>
+                <option value="march_full_chaos">March full desordenado (alta variación)</option>
+              </optgroup>
+              <option value="normal">Normal</option>
+            </select>
           </div>
 
           <nav className="space-y-2">
@@ -183,6 +204,49 @@ function AppContent() {
               )}
             </div>
 
+            <div className="rounded-lg bg-violet-900/30">
+              <button
+                type="button"
+                onClick={() => setOpenAnalytics((prev) => !prev)}
+                className="flex w-full items-center justify-between px-3 py-2.5 text-sm font-medium text-violet-100 hover:bg-violet-800/40"
+              >
+                <span className="flex items-center gap-3">
+                  <svg className="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  Análisis
+                </span>
+                <svg className={`h-4 w-4 shrink-0 transition-transform ${openAnalytics ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {openAnalytics && (
+                <div className="space-y-0.5 border-t border-violet-400/20 px-3 py-2">
+                  <button
+                    type="button"
+                    onClick={() => setTab('analytics')}
+                    className={`flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm ${tab === 'analytics' ? 'bg-violet-200/90 text-violet-950' : 'text-violet-100 hover:bg-violet-800/50'}`}
+                  >
+                    <span className="text-violet-400">●</span> KPIs
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTab('comite')}
+                    className={`flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm ${tab === 'comite' ? 'bg-violet-200/90 text-violet-950' : 'text-violet-100 hover:bg-violet-800/50'}`}
+                  >
+                    <span className="text-violet-400">●</span> Comité
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTab('comparativo')}
+                    className={`flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm ${tab === 'comparativo' ? 'bg-violet-200/90 text-violet-950' : 'text-violet-100 hover:bg-violet-800/50'}`}
+                  >
+                    <span className="text-violet-400">●</span> Comparativo
+                  </button>
+                </div>
+              )}
+            </div>
+
             <button
               type="button"
               onClick={() => setTab('planning')}
@@ -246,6 +310,16 @@ function AppContent() {
             />
           )}
           {tab === 'planning' && <PlanningDemandPage />}
+          {tab === 'analytics' && (
+            <AnalyticsPage
+              siteId={siteId as SiteId}
+              onChangeSite={(id) => setSiteId(id)}
+            />
+          )}
+          {tab === 'comite' && (
+            <ComitePage siteId={siteId as SiteId} onChangeSite={(id) => setSiteId(id)} />
+          )}
+          {tab === 'comparativo' && <ComparativoPage />}
         </div>
       </main>
 

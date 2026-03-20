@@ -12,9 +12,11 @@ const DASHBOARD_MOCK_DATA = getMockDataRoot();
 export async function writeOutputJson<T>(
   fileName: string,
   payload: T,
-  scenario: string
+  scenario: string,
+  plantKey?: string
 ): Promise<void> {
-  const outputDir = path.join(DASHBOARD_MOCK_DATA, scenario);
+  const baseDir = path.join(DASHBOARD_MOCK_DATA, scenario);
+  const outputDir = plantKey ? path.join(baseDir, plantKey) : baseDir;
   const fullPath = path.join(outputDir, fileName);
   await mkdir(path.dirname(fullPath), { recursive: true });
   await writeFile(fullPath, JSON.stringify(payload, null, 2), "utf-8");

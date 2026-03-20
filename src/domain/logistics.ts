@@ -76,6 +76,10 @@ export interface HistoricalTrip {
   cir?: string
   vue?: string
   descripcion?: string
+  /** Tipo de producto (opcional, para filtros futuros) */
+  productType?: string
+  /** Sector final o dominante (opcional, inferible de secuencia) */
+  dominantSector?: string
 }
 
 /** Tipos conocidos de alerta; el microservicio puede enviar otros. */

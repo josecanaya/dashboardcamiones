@@ -93,11 +93,18 @@ interface DataSourceConfig {
 
 let runtimeConfig: Partial<DataSourceConfig> = {}
 
-/** Escenario por defecto: live. Se guarda en localStorage para que el dashboard cargue desde el simulador en vivo. */
-if (typeof window !== 'undefined') {
-  const current = localStorage.getItem('logistics.mock.scenario')
-  if (!current || current === 'march_full') {
-    localStorage.setItem('logistics.mock.scenario', 'live')
+function safeGetStorage(key: string): string | null {
+  try {
+    return typeof window !== 'undefined' ? localStorage.getItem(key) : null
+  } catch {
+    return null
+  }
+}
+function safeSetStorage(key: string, value: string): void {
+  try {
+    if (typeof window !== 'undefined') localStorage.setItem(key, value)
+  } catch {
+    // localStorage bloqueado (file://, privado, etc.)
   }
 }
 
@@ -107,20 +114,31 @@ export interface LogisticsSnapshot {
   trucksInPlant: TruckInPlant[]
   historicalTrips: HistoricalTrip[]
   operationalAlerts: OperationalAlert[]
-  meta: { basePath: string; scenario: string; loadedAt: string; simulatedGeneratedAt?: string }
+  meta: { basePath: string; scenario: string; loadedAt: string; simulatedGeneratedAt?: string; historicoSource?: string }
 }
 
 function getConfig(): DataSourceConfig {
-  const fromStorageBase = typeof window !== 'undefined' ? localStorage.getItem('logistics.mock.basePath') : null
-  const fromStorageScenario = typeof window !== 'undefined' ? localStorage.getItem('logistics.mock.scenario') : null
+  const fromStorageBase = safeGetStorage('logistics.mock.basePath')
+  const fromStorageScenario = safeGetStorage('logistics.mock.scenario')
   return {
     basePath: runtimeConfig.basePath || fromStorageBase || '/mock-data',
-    scenario: runtimeConfig.scenario || fromStorageScenario || 'live',
+    scenario: runtimeConfig.scenario || fromStorageScenario || 'march_full',
   }
 }
 
 export function configureLogisticsDataSource(config: Partial<DataSourceConfig>) {
   runtimeConfig = { ...runtimeConfig, ...config }
+}
+
+/** Devuelve el escenario actualmente seleccionado (persistido). */
+export function getLogisticsScenario(): string {
+  return getConfig().scenario
+}
+
+/** Cambia el escenario y persiste en localStorage si está disponible. */
+export function setLogisticsScenario(scenario: string) {
+  configureLogisticsDataSource({ scenario })
+  safeSetStorage('logistics.mock.scenario', scenario)
 }
 
 function toSiteId(value: string | undefined): SiteId {
@@ -152,21 +170,30 @@ async function fetchJson<T>(url: string, bustCache = false): Promise<T> {
 
 const PLANT_SUFFIXES = ['ricardone', 'san_lorenzo', 'avellaneda'] as const
 
+const SCENARIOS_WITH_PLANT_FOLDERS = [
+  'live',
+  'march_full',
+  'march_full_ordered',
+  'march_full_chaos',
+] as const
+
 async function fetchByPlant<T>(
   basePath: string,
   scenario: string,
   baseName: string,
   extract: (p: unknown) => T[] | undefined
 ): Promise<{ items: T[]; generatedAt?: string }> {
-  if (scenario !== 'live') {
+  const usePlantFolders = SCENARIOS_WITH_PLANT_FOLDERS.includes(scenario as (typeof SCENARIOS_WITH_PLANT_FOLDERS)[number])
+  if (!usePlantFolders) {
+    const bustCache = baseName === 'historico_recorridos'
     const payload = await fetchJson<{ events?: T[]; data?: T[]; generatedAt?: string }>(
       `${basePath}/${scenario}/${baseName}.json`,
-      false
+      bustCache
     )
     const items = extract(payload) ?? (payload as { events?: T[] }).events ?? (payload as { data?: T[] }).data ?? []
     return { items, generatedAt: (payload as { generatedAt?: string }).generatedAt }
   }
-  // En live: datos en carpetas por planta (live/ricardone/camiones_en_planta.json, etc.)
+  // live y march_full: datos en carpetas por planta (live/ricardone/, march_full/ricardone/, etc.)
   const results = await Promise.allSettled(
     PLANT_SUFFIXES.map((s) =>
       fetchJson<{ events?: T[]; data?: T[]; generatedAt?: string }>(
@@ -320,11 +347,11 @@ export async function getHistoricalTrips(siteId?: SiteId): Promise<HistoricalTri
     'historico_recorridos',
     (p) => (p as { data?: ExternalHistoricalTrip[] }).data
   )
-  // Fallback: si live está vacío, cargar desde normal (datos pre-generados)
+  // Fallback: si live está vacío, cargar desde march_full (datos con distribución realista)
   if (scenario === 'live' && items.length === 0) {
     const fallback = await fetchByPlant<ExternalHistoricalTrip>(
       basePath,
-      'normal',
+      'march_full',
       'historico_recorridos',
       (p) => (p as { data?: ExternalHistoricalTrip[] }).data
     )
@@ -406,22 +433,33 @@ export async function getOperationalAlerts(siteId?: SiteId): Promise<Operational
 export async function loadLogisticsSnapshot(siteId?: SiteId): Promise<LogisticsSnapshot> {
   const { basePath, scenario } = getConfig()
   const historicoFetch = (async () => {
-    const live = await fetchByPlant<ExternalHistoricalTrip>(
+    const primary = await fetchByPlant<ExternalHistoricalTrip>(
       basePath,
       scenario,
       'historico_recorridos',
       (p) => (p as { data?: ExternalHistoricalTrip[] }).data
     )
-    if (scenario === 'live' && live.items.length === 0) {
+    if (scenario === 'live' && primary.items.length === 0) {
       const fallback = await fetchByPlant<ExternalHistoricalTrip>(
         basePath,
-        'normal',
+        'march_full',
         'historico_recorridos',
         (p) => (p as { data?: ExternalHistoricalTrip[] }).data
       )
-      return { items: fallback.items, generatedAt: fallback.generatedAt }
+      return { items: fallback.items, generatedAt: fallback.generatedAt, actualSource: 'march_full' as const }
     }
-    return live
+    if (scenario === 'normal' && primary.items.length < 500) {
+      const fallback = await fetchByPlant<ExternalHistoricalTrip>(
+        basePath,
+        'march_full',
+        'historico_recorridos',
+        (p) => (p as { data?: ExternalHistoricalTrip[] }).data
+      )
+      if (fallback.items.length > primary.items.length) {
+        return { items: fallback.items, generatedAt: fallback.generatedAt, actualSource: 'march_full' as const }
+      }
+    }
+    return { ...primary, actualSource: scenario as string }
   })()
 
   const mapTrip = (trip: ExternalHistoricalTrip, idx: number) => {
@@ -456,19 +494,26 @@ export async function loadLogisticsSnapshot(siteId?: SiteId): Promise<LogisticsS
     }
   }
 
-  const [rawCameraEvents, enrichedCameraEvents, trucksInPlant, historicoResult, operationalAlerts] = await Promise.all([
+  const results = await Promise.allSettled([
     getRawCameraEvents(),
     getEnrichedCameraEvents(siteId),
     getTrucksInPlant(siteId),
     historicoFetch.then((p) => {
       const trips = (p.items ?? []).map((t, i) => mapTrip(t, i))
-      return { trips, generatedAt: p.generatedAt }
+      return { trips, generatedAt: p.generatedAt, actualSource: (p as { actualSource?: string }).actualSource }
     }),
     getOperationalAlerts(siteId),
   ])
 
+  const rawCameraEvents = results[0].status === 'fulfilled' ? results[0].value : []
+  const enrichedCameraEvents = results[1].status === 'fulfilled' ? results[1].value : []
+  const trucksInPlant = results[2].status === 'fulfilled' ? results[2].value : []
+  const historicoResult = results[3].status === 'fulfilled' ? results[3].value : { trips: [], generatedAt: undefined, actualSource: scenario }
+  const operationalAlerts = results[4].status === 'fulfilled' ? results[4].value : []
+
   const historicalTrips = historicoResult.trips.filter((t) => !siteId || t.siteId === siteId)
   const simulatedGeneratedAt = historicoResult.generatedAt
+  const historicoSource = historicoResult.actualSource ?? scenario
 
   return {
     rawCameraEvents,
@@ -481,6 +526,7 @@ export async function loadLogisticsSnapshot(siteId?: SiteId): Promise<LogisticsS
       scenario,
       loadedAt: new Date().toISOString(),
       simulatedGeneratedAt,
+      historicoSource,
     },
   }
 }

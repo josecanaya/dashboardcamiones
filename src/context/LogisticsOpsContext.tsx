@@ -4,7 +4,7 @@ import type { SiteId } from '../domain/sites'
 import type { CameraEventRaw, HistoricalTrip, IfcCameraCatalogItem, OperationalAlert, TruckInPlant } from '../domain/logistics'
 import { useSite } from './SiteContext'
 import { CAMERA_CATALOG_BY_SITE } from '../data/cameraCatalog'
-import { loadLogisticsSnapshot, type RawCameraEventDebug } from '../services/logisticsDataSource'
+import { loadLogisticsSnapshot, setLogisticsScenario, getLogisticsScenario, type RawCameraEventDebug } from '../services/logisticsDataSource'
 
 interface LogisticsOpsContextValue {
   rawCameraEvents: RawCameraEventDebug[]
@@ -14,9 +14,11 @@ interface LogisticsOpsContextValue {
   historicalTrips: HistoricalTrip[]
   operationalAlerts: OperationalAlert[]
   cameraCatalog: IfcCameraCatalogItem[]
-  sourceMeta: { basePath: string; scenario: string; loadedAt: string; simulatedGeneratedAt?: string } | null
+  sourceMeta: { basePath: string; scenario: string; loadedAt: string; simulatedGeneratedAt?: string; historicoSource?: string } | null
   isLoading: boolean
-  refreshFromSource: () => Promise<void>
+  scenario: string
+  setScenario: (scenario: string) => void
+  refreshFromSource: (showLoader?: boolean) => Promise<void>
   ingestFleetSnapshot: (fleet: IfcSelectedTruckInfo[], siteId: SiteId) => void
   setAlertStatus: (alertId: string, status: OperationalAlert['status']) => void
 }
@@ -63,7 +65,12 @@ function LogisticsOpsProviderInner({ children }: { children: ReactNode }) {
     }
   }, [siteId])
 
-  const scenarioFromStorage = typeof window !== 'undefined' ? localStorage.getItem('logistics.mock.scenario') : null
+  let scenarioFromStorage: string | null = null
+  try {
+    scenarioFromStorage = typeof window !== 'undefined' ? localStorage.getItem('logistics.mock.scenario') : null
+  } catch {
+    scenarioFromStorage = null
+  }
   const [pollInterval, setPollInterval] = useState(scenarioFromStorage === 'live' ? 3000 : 15000)
 
   useEffect(() => {
@@ -89,6 +96,14 @@ function LogisticsOpsProviderInner({ children }: { children: ReactNode }) {
     []
   )
 
+  const [selectedScenario, setSelectedScenario] = useState(() => getLogisticsScenario())
+
+  const setScenario = useCallback((scenario: string) => {
+    setLogisticsScenario(scenario)
+    setSelectedScenario(scenario)
+    void refreshFromSource(true)
+  }, [refreshFromSource])
+
   const setAlertStatus = useCallback((alertId: string, status: OperationalAlert['status']) => {
     setOperationalAlerts((prev) =>
       prev.map((alert) =>
@@ -98,6 +113,8 @@ function LogisticsOpsProviderInner({ children }: { children: ReactNode }) {
       )
     )
   }, [])
+
+  const scenario = selectedScenario
 
   const value = useMemo(
     () => ({
@@ -110,6 +127,8 @@ function LogisticsOpsProviderInner({ children }: { children: ReactNode }) {
       cameraCatalog,
       sourceMeta,
       isLoading,
+      scenario,
+      setScenario,
       refreshFromSource,
       ingestFleetSnapshot,
       setAlertStatus,
@@ -124,6 +143,8 @@ function LogisticsOpsProviderInner({ children }: { children: ReactNode }) {
       cameraCatalog,
       sourceMeta,
       isLoading,
+      scenario,
+      setScenario,
       refreshFromSource,
       ingestFleetSnapshot,
       setAlertStatus,

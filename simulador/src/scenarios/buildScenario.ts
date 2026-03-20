@@ -56,6 +56,29 @@ function makeRouteSteps(
   return steps;
 }
 
+export type MarchFullVariant = "baseline" | "ordered" | "chaos";
+
+/** Variante con variación por sector. varianceRange: ±minutos por sector (ej: 20 = ±20 min). */
+function makeRouteStepsWithVariance(
+  truckId: string,
+  plant: string,
+  sequence: string[],
+  entryDate: Date,
+  baseInterval: number,
+  tripSeed: number,
+  varianceRange: number = 20
+): ScenarioStep[] {
+  const steps: ScenarioStep[] = [];
+  let t = new Date(entryDate);
+  for (let i = 0; i < sequence.length; i++) {
+    steps.push(toStep(truckId, plant, sequence[i], t));
+    const variance = Math.floor(seededRandom(tripSeed + i * 7) * (varianceRange * 2 + 1)) - varianceRange;
+    const interval = Math.max(10, baseInterval + variance);
+    t = plusMinutes(t, interval);
+  }
+  return steps;
+}
+
 /** Fecha base: hace 7 días para que "Última semana" muestre datos */
 function getBaseDate(): Date {
   const d = new Date();
@@ -267,8 +290,21 @@ function buildWeekSnapshotScenario(): { steps: ScenarioStep[]; trucks: TruckCata
   return { steps, trucks };
 }
 
+/** Parámetros de variación por variante de marzo. Chaos: cap para que ningún viaje supere 24h (circuitos hasta 9 sectores = 8 intervalos). */
+const MARCH_VARIANT_PARAMS: Record<
+  MarchFullVariant,
+  { minInterval: number; maxInterval: number; varianceRange: number }
+> = {
+  baseline: { minInterval: 45, maxInterval: 115, varianceRange: 20 },
+  ordered: { minInterval: 58, maxInterval: 62, varianceRange: 2 },
+  chaos: { minInterval: 20, maxInterval: 100, varianceRange: 40 }
+};
+
 /** Simulación realista del mes de marzo completo. Promedio/día: Ricardone 700, San Lorenzo 500, Avellaneda 250. */
-function buildMarchFullScenario(): { steps: ScenarioStep[]; trucks: TruckCatalogItem[] } {
+function buildMarchFullScenario(variant: MarchFullVariant = "baseline"): {
+  steps: ScenarioStep[];
+  trucks: TruckCatalogItem[];
+} {
   const CARGO_TYPES = ["Maiz", "Soja", "Trigo", "Pellet", "Fertilizante", "Harina"];
   const DRIVERS = ["Perez", "Gomez", "Rios", "Aguirre", "Lopez", "Martinez", "Fernandez", "Garcia", "Rodriguez", "Diaz"];
 
@@ -362,8 +398,7 @@ function buildMarchFullScenario(): { steps: ScenarioStep[]; trucks: TruckCatalog
   const marchStart = new Date(2026, 2, 1, 0, 0, 0, 0);
 
   const steps: ScenarioStep[] = [];
-  const MIN_INTERVAL = 50;
-  const MAX_INTERVAL = 100;
+  const { minInterval, maxInterval, varianceRange } = MARCH_VARIANT_PARAMS[variant];
 
   let tripIdx = 0;
   for (const plant of ["Ricardone", "San Lorenzo", "Avellaneda"] as const) {
@@ -384,7 +419,8 @@ function buildMarchFullScenario(): { steps: ScenarioStep[]; trucks: TruckCatalog
         const hourEntry = Math.floor(r * 1000) % 24;
         const minuteEntry = Math.floor(seededRandom(tripIdx + 1) * 60);
         const entryDate = plusMinutes(plusMinutes(dayStart, hourEntry * 60), minuteEntry);
-        const interval = MIN_INTERVAL + Math.floor(seededRandom(tripIdx + 2) * (MAX_INTERVAL - MIN_INTERVAL));
+        const baseInterval =
+          minInterval + Math.floor(seededRandom(tripIdx + 2) * (maxInterval - minInterval));
 
         const tipo = tripIdx % 10;
         let sequence: string[];
@@ -396,7 +432,17 @@ function buildMarchFullScenario(): { steps: ScenarioStep[]; trucks: TruckCatalog
           sequence = circuit.sectorSequence.filter((s) => s !== "S4");
         }
 
-        steps.push(...makeRouteSteps(truck.truckId, truck.plant, sequence, entryDate, interval));
+        steps.push(
+          ...makeRouteStepsWithVariance(
+            truck.truckId,
+            truck.plant,
+            sequence,
+            entryDate,
+            baseInterval,
+            tripIdx,
+            varianceRange
+          )
+        );
         tripIdx++;
       }
     }
@@ -487,7 +533,15 @@ export function buildScenario(scenario: ScenarioName): BuildScenarioResult {
     return { scenario, steps, trucks };
   }
   if (scenario === "march_full") {
-    const { steps, trucks } = buildMarchFullScenario();
+    const { steps, trucks } = buildMarchFullScenario("baseline");
+    return { scenario, steps, trucks };
+  }
+  if (scenario === "march_full_ordered") {
+    const { steps, trucks } = buildMarchFullScenario("ordered");
+    return { scenario, steps, trucks };
+  }
+  if (scenario === "march_full_chaos") {
+    const { steps, trucks } = buildMarchFullScenario("chaos");
     return { scenario, steps, trucks };
   }
   if (scenario === "live") {

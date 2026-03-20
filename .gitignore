@@ -28,9 +28,6 @@ Thumbs.db
 # TypeScript
 *.tsbuildinfo
 
-# Mock data grandes (exceden límite GitHub 100MB)
-public/mock-data/march_full/
-
 # Datos generados por simulador (se regeneran con simulator:reset)
 public/mock-data/live/
 simulador/.runtime/

@@ -14,6 +14,7 @@ import {
 import { useLogisticsOps } from '../context/LogisticsOpsContext'
 import type { SiteId } from '../domain/sites'
 import { IfcLoadingOverlay } from '../components/IfcLoadingOverlay'
+import { ChartExportButtons } from '../components/charts/ChartExportButtons'
 
 type DashboardTab = 'live' | 'history' | 'alerts' | 'planning'
 type PeriodPreset = 'last_day' | 'last_week' | 'last_month'
@@ -321,68 +322,89 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
           )}
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         <article className="rounded-xl border border-slate-100 bg-slate-50/30 p-4">
-          <h3 className="mb-3 text-sm font-semibold text-slate-800">
-            {dateContext}
-            <span className="ml-1 block text-xs font-normal text-slate-500">
-              Actividad · {periodPreset === 'last_day' ? 'Horas (0–24h)' : periodPreset === 'last_week' ? 'Días (D1–D7)' : 'Semanas (S1–S4)'}
-            </span>
-          </h3>
-          <div className="h-[210px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={hourlyActivityComparative}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="hour" tick={{ fontSize: 10 }} />
-                <YAxis tick={{ fontSize: 10 }} />
-                <Tooltip />
-                <Legend wrapperStyle={{ fontSize: 10 }} />
-                <Line type="monotone" dataKey="Ricardone" stroke="#0ea5e9" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="San Lorenzo" stroke="#16a34a" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="Avellaneda" stroke="#8b5cf6" strokeWidth={2} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+          <ChartExportButtons
+            filenamePrefix="home_actividad"
+            csvData={hourlyActivityComparative}
+            meta={{ period: `${periodLabel} · ${dateContext}` }}
+            title="Actividad por tiempo"
+          >
+            <h3 className="mb-3 text-sm font-semibold text-slate-800">
+              {dateContext}
+              <span className="ml-1 block text-xs font-normal text-slate-500">
+                Actividad · {periodPreset === 'last_day' ? 'Horas (0–24h)' : periodPreset === 'last_week' ? 'Días (D1–D7)' : 'Semanas (S1–S4)'}
+              </span>
+            </h3>
+            <div className="h-[210px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={hourlyActivityComparative}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="hour" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} />
+                  <Tooltip />
+                  <Legend wrapperStyle={{ fontSize: 10 }} />
+                  <Line type="monotone" dataKey="Ricardone" stroke="#0ea5e9" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="San Lorenzo" stroke="#16a34a" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="Avellaneda" stroke="#8b5cf6" strokeWidth={2} dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </ChartExportButtons>
         </article>
 
         <article className="rounded-xl border border-slate-100 bg-slate-50/30 p-4">
-          <h3 className="mb-3 text-sm font-semibold text-slate-800">
-            {dateContext}
-            <span className="ml-1 block text-xs font-normal text-slate-500">Circuitos por planta</span>
-          </h3>
-          <div className="h-[210px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={classificationComparative}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="planta" tick={{ fontSize: 10 }} />
-                <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
-                <Tooltip />
-                <Legend wrapperStyle={{ fontSize: 10 }} />
-                <Bar dataKey="Circuitos completos" fill="#2563eb" />
-                <Bar dataKey="Variaciones operativas" fill="#7c3aed" />
-                <Bar dataKey="Anómalos" fill="#0ea5e9" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <ChartExportButtons
+            filenamePrefix="home_clasificacion"
+            csvData={classificationComparative}
+            meta={{ period: `${periodLabel} · ${dateContext}` }}
+            title="Circuitos por planta"
+          >
+            <h3 className="mb-3 text-sm font-semibold text-slate-800">
+              {dateContext}
+              <span className="ml-1 block text-xs font-normal text-slate-500">Circuitos por planta</span>
+            </h3>
+            <div className="h-[210px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={classificationComparative}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="planta" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
+                  <Tooltip />
+                  <Legend wrapperStyle={{ fontSize: 10 }} />
+                  <Bar dataKey="Circuitos completos" fill="#2563eb" />
+                  <Bar dataKey="Variaciones operativas" fill="#7c3aed" />
+                  <Bar dataKey="Anómalos" fill="#0ea5e9" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </ChartExportButtons>
         </article>
 
         <article className="rounded-xl border border-slate-100 bg-slate-50/30 p-4">
-          <h3 className="mb-3 text-sm font-semibold text-slate-800">
-            {dateContext}
-            <span className="ml-1 block text-xs font-normal text-slate-500">Alertas por severidad</span>
-          </h3>
-          <div className="h-[210px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={alertSeverityComparative}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="planta" tick={{ fontSize: 10 }} />
-                <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
-                <Tooltip />
-                <Legend wrapperStyle={{ fontSize: 10 }} />
-                <Bar dataKey="Críticas" stackId="a" fill="#ef4444" />
-                <Bar dataKey="Altas" stackId="a" fill="#f59e0b" />
-                <Bar dataKey="Medias" stackId="a" fill="#94a3b8" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <ChartExportButtons
+            filenamePrefix="home_alertas"
+            csvData={alertSeverityComparative}
+            meta={{ period: `${periodLabel} · ${dateContext}` }}
+            title="Alertas por severidad"
+          >
+            <h3 className="mb-3 text-sm font-semibold text-slate-800">
+              {dateContext}
+              <span className="ml-1 block text-xs font-normal text-slate-500">Alertas por severidad</span>
+            </h3>
+            <div className="h-[210px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={alertSeverityComparative}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="planta" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
+                  <Tooltip />
+                  <Legend wrapperStyle={{ fontSize: 10 }} />
+                  <Bar dataKey="Críticas" stackId="a" fill="#ef4444" />
+                  <Bar dataKey="Altas" stackId="a" fill="#f59e0b" />
+                  <Bar dataKey="Medias" stackId="a" fill="#94a3b8" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </ChartExportButtons>
         </article>
           </div>
         </div>

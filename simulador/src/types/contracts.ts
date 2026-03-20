@@ -1,4 +1,12 @@
-export type ScenarioName = "normal" | "anomalies" | "high-load" | "week_snapshot" | "march_full" | "live";
+export type ScenarioName =
+  | "normal"
+  | "anomalies"
+  | "high-load"
+  | "week_snapshot"
+  | "march_full"
+  | "march_full_ordered"
+  | "march_full_chaos"
+  | "live";
 
 export interface RawCameraEvent {
   eventType: "ANPR";

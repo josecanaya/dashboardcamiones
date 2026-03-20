@@ -27,8 +27,9 @@ function getScenarioArg(): ScenarioName {
     parseScenarioFromArgv(process.argv) ?? process.env.npm_config_scenario
   ) as ScenarioName | undefined;
   if (!value) return "normal";
-  if (["normal", "anomalies", "high-load", "week_snapshot", "march_full", "live"].includes(value)) return value;
-  throw new Error(`Scenario invalido: ${value}. Usar normal | anomalies | high-load | week_snapshot | march_full | live`);
+  const valid = ["normal", "anomalies", "high-load", "week_snapshot", "march_full", "march_full_ordered", "march_full_chaos", "live"];
+  if (valid.includes(value)) return value;
+  throw new Error(`Scenario invalido: ${value}. Usar ${valid.join(" | ")}`);
 }
 
 function getIntervalMs(scenario: ScenarioName): number {

@@ -7,6 +7,8 @@
     "dev": "vite",
     "dev:live": "pnpm run seed:live && pnpm run dev",
     "seed:live": "cd simulador && npm run simulate -- --scenario=live --reset && npm run simulate -- --scenario=live",
+    "seed:march_full": "node simulador/scripts/seed-march-full.cjs",
+    "diversify:march_full": "node simulador/scripts/diversify-march-durations.cjs",
     "simulator:live": "cd simulador && npm run simulate:start -- --scenario=live --intervalSec=3",
     "simulator:live:fg": "cd simulador && npm run simulate:foreground -- --scenario=live --intervalSec=3",
     "simulator:live:turbo": "cd simulador && npm run simulate:foreground -- --scenario=live --intervalSec=0.12",
@@ -20,6 +22,8 @@
   },
   "dependencies": {
     "framer-motion": "^11.11.17",
+    "html-to-image": "^1.11.13",
+    "jspdf": "^4.2.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "recharts": "^3.7.0",

@@ -43,7 +43,7 @@ export function useHistoricalPageData({
     const siteTrips = historicalTrips.filter((trip) => trip.siteId === siteId)
     const maxEgreso = siteTrips.length > 0
       ? Math.max(...siteTrips.map((t) => new Date(t.egresoAt).getTime()))
-      : Date.now()
+      : new Date('2026-03-31T12:00:00Z').getTime()
     const refDate = new Date(maxEgreso)
     const refFecha = `${refDate.getUTCFullYear()}-${String(refDate.getUTCMonth() + 1).padStart(2, '0')}-${String(refDate.getUTCDate()).padStart(2, '0')}`
     return { maxEgreso, refDate, refFecha }
