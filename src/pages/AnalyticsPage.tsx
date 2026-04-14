@@ -33,6 +33,7 @@ import { buildRadarDataset } from '../lib/estadiaRadarScore'
 import { buildFormaRadarDataset } from '../lib/estadiaRadarFormaScore'
 import { FlowSaturationKpi } from '../components/flow/FlowSaturationKpi'
 import { SaturationPage } from './SaturationPage'
+import Kpi5 from '../components/kpi5/Kpi5'
 
 interface AnalyticsPageProps {
   siteId: SiteId
@@ -314,6 +315,27 @@ export function AnalyticsPage({ siteId, onChangeSite }: AnalyticsPageProps) {
         {expandedSection === 'saturacion' && (
           <div className="border-t border-slate-200 p-6">
             <SaturationPage siteId={siteId} onChangeSite={onChangeSite} />
+          </div>
+        )}
+      </section>
+
+      {/* KPI 5 — Recorridos válidos vs anomalías y desglose por operación */}
+      <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <button
+          type="button"
+          onClick={() => setExpandedSection((s) => (s === 'kpi5' ? null : 'kpi5'))}
+          className="flex w-full items-center justify-between p-3 text-left font-semibold text-slate-700"
+        >
+          KPI 5 — Anomalías y caminos (por producto)
+          <span className="text-slate-400">{expandedSection === 'kpi5' ? '▼' : '▶'}</span>
+        </button>
+        {expandedSection === 'kpi5' && (
+          <div className="border-t border-slate-200 p-6">
+            <Kpi5
+              siteId={siteId}
+              trips={enrichedRows}
+              periodLabel={`${effectiveView} · ref. ${effectiveDate}`}
+            />
           </div>
         )}
       </section>

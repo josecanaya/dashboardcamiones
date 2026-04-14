@@ -9,7 +9,9 @@ import { useLogisticsOps } from '../context/LogisticsOpsContext'
 import { useHistoricalPageData } from '../hooks/useHistoricalPageData'
 import { useSaturationAnalysis, type SaturationPeriodPreset } from '../hooks/useSaturationAnalysis'
 import type { SaturationGranularity } from '../services/saturationAnalytics'
-import { hasSectorCapacityData } from '../config/sectorCapacityByPlant'
+import { getSectorCapacityByPlant, hasSectorCapacityData } from '../config/sectorCapacityByPlant'
+import { getSectorDisplayName } from '../config/sectorDisplayNames'
+import type { SectorSaturationSummary } from '../services/saturationAnalytics'
 import { ChartExportButtons } from '../components/charts/ChartExportButtons'
 import { SaturationExecutiveHeader } from '../components/saturation/SaturationExecutiveHeader'
 import { SaturationSummaryCards } from '../components/saturation/SaturationSummaryCards'
@@ -20,6 +22,18 @@ import { SectorSaturationSummaryTable } from '../components/saturation/SectorSat
 export interface SaturationPageProps {
   siteId: SiteId
   onChangeSite: (id: SiteId) => void
+}
+
+function sectorSummaryCsvRow(siteId: SiteId, s: SectorSaturationSummary): Record<string, unknown> {
+  const cap = getSectorCapacityByPlant(siteId)?.[s.sectorId]
+  return {
+    sector: s.sectorId,
+    nombre_funcion: getSectorDisplayName(siteId, s.sectorId),
+    capacidad_maxima: cap ?? '',
+    franja_critica: s.criticalBandLabel,
+    max_exceso: s.maxExcess,
+    estado: s.status,
+  }
 }
 
 export function SaturationPage({ siteId, onChangeSite }: SaturationPageProps) {
@@ -66,15 +80,7 @@ export function SaturationPage({ siteId, onChangeSite }: SaturationPageProps) {
     if (!analysis) return []
     const rows: Record<string, unknown>[] = []
     for (const s of analysis.summaries) {
-      rows.push({
-        sector: s.sectorId,
-        episodios: s.episodeCount,
-        minutos_saturado_total: Math.round(s.totalSaturatedMinutes),
-        episodio_mas_largo_min: Math.round(s.longestEpisodeMinutes),
-        franja_critica: s.criticalBandLabel,
-        max_exceso: s.maxExcess,
-        estado: s.status,
-      })
+      rows.push(sectorSummaryCsvRow(siteId, s))
     }
     for (const c of analysis.heatmapCells) {
       rows.push({
@@ -88,7 +94,7 @@ export function SaturationPage({ siteId, onChangeSite }: SaturationPageProps) {
       })
     }
     return rows
-  }, [analysis])
+  }, [analysis, siteId])
 
   if (!hasSectorCapacityData(siteId)) {
     return (
@@ -161,15 +167,7 @@ export function SaturationPage({ siteId, onChangeSite }: SaturationPageProps) {
             fullPanelRef={sectoresSaturadosRef}
             fullExportFilename="saturacion_sectores_saturados"
             filenamePrefix="saturacion_sectores_saturados"
-            csvData={analysis.summaries.filter((s) => s.episodeCount > 0).map((s) => ({
-              sector: s.sectorId,
-              episodios: s.episodeCount,
-              minutos_saturado: Math.round(s.totalSaturatedMinutes),
-              episodio_mas_largo_min: Math.round(s.longestEpisodeMinutes),
-              franja_critica: s.criticalBandLabel,
-              max_exceso: s.maxExcess,
-              estado: s.status,
-            }))}
+            csvData={analysis.summaries.filter((s) => s.episodeCount > 0).map((s) => sectorSummaryCsvRow(siteId, s))}
             meta={{ plant: plantName, period: `${effectiveView} ${effectiveDate}` }}
             title="Sectores saturados"
           >
@@ -195,21 +193,14 @@ export function SaturationPage({ siteId, onChangeSite }: SaturationPageProps) {
         {/* Tabla resumen — exportable por separado */}
         <ChartExportButtons
           filenamePrefix="saturacion_tabla_resumen"
-          csvData={analysis.summaries.map((s) => ({
-            sector: s.sectorId,
-            episodios: s.episodeCount,
-            minutos_saturado_total: Math.round(s.totalSaturatedMinutes),
-            episodio_mas_largo_min: Math.round(s.longestEpisodeMinutes),
-            franja_critica: s.criticalBandLabel,
-            max_exceso: s.maxExcess,
-            estado: s.status,
-          }))}
+          csvData={analysis.summaries.map((s) => sectorSummaryCsvRow(siteId, s))}
           meta={{ plant: plantName, period: `${effectiveView} ${effectiveDate}` }}
           title="Resumen por sector"
         >
           <div className="rounded-md border border-slate-200 bg-white p-4">
             <h3 className="mb-3 text-sm font-semibold text-slate-800">Resumen por sector</h3>
             <SectorSaturationSummaryTable
+              siteId={siteId}
               summaries={analysis.summaries}
               selectedSectorId={null}
               onSelectSector={() => {}}

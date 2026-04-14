@@ -62,6 +62,8 @@ type ExternalHistoricalTrip = {
   cir?: string
   vue?: string
   descripcion?: string
+  /** Tipo de producto (soja, maíz, girasol, etc.) — opcional en JSON */
+  productType?: string
 }
 
 /** Formato esperado del microservicio: las alertas ya vienen procesadas. */
@@ -388,6 +390,7 @@ export async function getHistoricalTrips(siteId?: SiteId): Promise<HistoricalTri
       cir: trip.cir,
       vue: trip.vue,
       descripcion: trip.descripcion,
+      productType: trip.productType,
     }
   })
   return mapped.filter((trip) => !siteId || trip.siteId === siteId)
@@ -491,6 +494,7 @@ export async function loadLogisticsSnapshot(siteId?: SiteId): Promise<LogisticsS
       cir: trip.cir,
       vue: trip.vue,
       descripcion: trip.descripcion,
+      productType: trip.productType,
     }
   }
 
