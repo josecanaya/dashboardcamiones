@@ -3,6 +3,7 @@
  */
 
 import { useMemo, useRef, useState } from 'react'
+import type { HistoricalTrip } from '../domain/logistics'
 import type { SiteId } from '../domain/sites'
 import { SITES } from '../domain/sites'
 import { useLogisticsOps } from '../context/LogisticsOpsContext'
@@ -22,6 +23,10 @@ import { SectorSaturationSummaryTable } from '../components/saturation/SectorSat
 export interface SaturationPageProps {
   siteId: SiteId
   onChangeSite: (id: SiteId) => void
+  /** Oculta selector de planta en cabecera (embebido en Analytics) */
+  hideSitePicker?: boolean
+  /** Reemplaza histórico global (p. ej. filtro KPI en Analytics) */
+  historicalTripsSubset?: HistoricalTrip[]
 }
 
 function sectorSummaryCsvRow(siteId: SiteId, s: SectorSaturationSummary): Record<string, unknown> {
@@ -36,8 +41,9 @@ function sectorSummaryCsvRow(siteId: SiteId, s: SectorSaturationSummary): Record
   }
 }
 
-export function SaturationPage({ siteId, onChangeSite }: SaturationPageProps) {
+export function SaturationPage({ siteId, onChangeSite, hideSitePicker = false, historicalTripsSubset }: SaturationPageProps) {
   const { historicalTrips } = useLogisticsOps()
+  const tripsSource = historicalTripsSubset ?? historicalTrips
   const [periodPreset, setPeriodPreset] = useState<SaturationPeriodPreset>('last_week')
   const [granularity, setGranularity] = useState<SaturationGranularity>('hour')
   const panelRef = useRef<HTMLDivElement>(null)
@@ -45,7 +51,7 @@ export function SaturationPage({ siteId, onChangeSite }: SaturationPageProps) {
 
   const effectiveView = periodPreset === 'last_day' ? 'day' : periodPreset === 'last_week' ? 'week' : 'month'
   const { effectiveDate, refData } = useHistoricalPageData({
-    historicalTrips,
+    historicalTrips: tripsSource,
     siteId,
     effectiveView,
     periodPreset,
@@ -56,20 +62,20 @@ export function SaturationPage({ siteId, onChangeSite }: SaturationPageProps) {
   })
 
   const refFecha = refData?.refFecha ?? effectiveDate
-  const analysis = useSaturationAnalysis(historicalTrips, siteId, refFecha, periodPreset, granularity)
+  const analysis = useSaturationAnalysis(tripsSource, siteId, refFecha, periodPreset, granularity)
 
   const plantName = SITES.find((s) => s.id === siteId)?.name ?? siteId
 
   const filteredTripsForPanel = useMemo(() => {
     if (!analysis) return []
     const { rangeStartMs, rangeEndMs } = analysis
-    return historicalTrips.filter((t) => {
+    return tripsSource.filter((t) => {
       if (t.siteId !== siteId) return false
       const t1 = new Date(t.egresoAt).getTime()
       const t0 = new Date(t.ingresoAt).getTime()
       return t1 > rangeStartMs && t0 < rangeEndMs
     })
-  }, [historicalTrips, siteId, analysis])
+  }, [tripsSource, siteId, analysis])
 
   const collapsedSectors = useMemo(() => {
     if (!analysis) return []
@@ -147,6 +153,7 @@ export function SaturationPage({ siteId, onChangeSite }: SaturationPageProps) {
           onPeriodChange={setPeriodPreset}
           granularity={granularity}
           onGranularityChange={setGranularity}
+          hideSitePicker={hideSitePicker}
         />
 
         <SaturationSummaryCards result={analysis} />

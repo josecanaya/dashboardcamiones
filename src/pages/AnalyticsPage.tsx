@@ -3,7 +3,7 @@
  * NO reemplaza Histórico. Añade métricas de estadía, flujo, ingresos y saturación.
  */
 
-import { useState, useMemo, useRef } from 'react'
+import { useEffect, useState, useMemo, useRef, useCallback } from 'react'
 import {
   ResponsiveContainer,
   BarChart,
@@ -33,7 +33,12 @@ import { buildRadarDataset } from '../lib/estadiaRadarScore'
 import { buildFormaRadarDataset } from '../lib/estadiaRadarFormaScore'
 import { FlowSaturationKpi } from '../components/flow/FlowSaturationKpi'
 import { SaturationPage } from './SaturationPage'
+import { ComitePage } from './ComitePage'
 import Kpi5 from '../components/kpi5/Kpi5'
+import { PlantOperationalSummary } from '../components/analytics/PlantOperationalSummary'
+import { KpiCircuitFilterBar } from '../components/analytics/KpiCircuitFilterBar'
+import type { KpiOperationKind } from '../config/kpiCircuitMatrix'
+import { filterTripsForKpiContext, operationsAvailableForPlant } from '../config/kpiCircuitMatrix'
 
 interface AnalyticsPageProps {
   siteId: SiteId
@@ -43,14 +48,36 @@ interface AnalyticsPageProps {
 type PeriodPreset = 'last_day' | 'last_week' | 'last_month'
 
 export function AnalyticsPage({ siteId, onChangeSite }: AnalyticsPageProps) {
-  const { historicalTrips } = useLogisticsOps()
+  const { historicalTrips, trucksInPlant, operationalAlerts } = useLogisticsOps()
   const [periodPreset, setPeriodPreset] = useState<PeriodPreset>('last_week')
   const [selectedDate] = useState('')
-  const [expandedSection, setExpandedSection] = useState<string | null>('estadia')
+  const [openSections, setOpenSections] = useState(() => new Set(['estadia', 'turnos', 'flujo', 'saturacion', 'anomalias', 'cruces']))
+  const [kpiOperation, setKpiOperation] = useState<KpiOperationKind>('recepcion')
+  const [kpiMatrixCircuit, setKpiMatrixCircuit] = useState<string | null>(null)
+
+  useEffect(() => {
+    const ops = operationsAvailableForPlant(siteId)
+    setKpiOperation(ops[0] ?? 'recepcion')
+    setKpiMatrixCircuit(null)
+  }, [siteId])
+
+  const historicalTripsFiltered = useMemo(
+    () => filterTripsForKpiContext(historicalTrips, siteId, kpiOperation, kpiMatrixCircuit),
+    [historicalTrips, siteId, kpiOperation, kpiMatrixCircuit]
+  )
+
+  const toggleSection = useCallback((key: string) => {
+    setOpenSections((prev) => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
+  }, [])
 
   const effectiveView = periodPreset === 'last_day' ? 'day' : periodPreset === 'last_week' ? 'week' : 'month'
   const { enrichedRows, effectiveDate, refData } = useHistoricalPageData({
-    historicalTrips,
+    historicalTrips: historicalTripsFiltered,
     siteId,
     effectiveView,
     periodPreset,
@@ -69,12 +96,15 @@ export function AnalyticsPage({ siteId, onChangeSite }: AnalyticsPageProps) {
     [enrichedRows]
   )
   const stayStats = useMemo(() => computeStayTimeStats(durations), [durations])
-  const shiftStats = useMemo(() => statsByShift(historicalTrips, siteId), [historicalTrips, siteId])
+  const shiftStats = useMemo(() => statsByShift(historicalTripsFiltered, siteId), [historicalTripsFiltered, siteId])
   const chartData = useMemo(() => histogramWithKde(durations, 10, 5), [durations])
   const kpi1PanelRef = useRef<HTMLDivElement>(null)
   const radarChartRef = useRef<HTMLDivElement>(null)
   const radarFormaChartRef = useRef<HTMLDivElement>(null)
-  const crossCircuit = useMemo(() => crossDurationByPlantCircuit(historicalTrips).filter((c) => c.dimension1 === siteId), [historicalTrips, siteId])
+  const crossCircuit = useMemo(
+    () => crossDurationByPlantCircuit(historicalTripsFiltered).filter((c) => c.dimension1 === siteId),
+    [historicalTripsFiltered, siteId]
+  )
 
   const plantName = SITES.find((s) => s.id === siteId)?.name ?? siteId
 
@@ -141,51 +171,75 @@ export function AnalyticsPage({ siteId, onChangeSite }: AnalyticsPageProps) {
     return data.reduce((sum, d) => sum + d.score, 0) / data.length
   }, [indicadoresForma])
 
+  const hasCircuitRanking = crossCircuit.length > 0
+
   return (
     <div className="space-y-4">
       <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-        <div className="mb-3 flex flex-wrap items-center gap-3">
-          <div className="flex gap-1 rounded-lg bg-slate-100/80 p-1">
-            {SITES.map((site) => (
-              <button
-                key={site.id}
-                type="button"
-                onClick={() => onChangeSite(site.id)}
-                className={`rounded-md px-4 py-2 text-base font-bold transition ${
-                  site.id === siteId ? 'bg-violet-600 text-white shadow-md' : 'bg-transparent text-slate-500 hover:bg-slate-200/80'
-                }`}
-              >
-                {site.name}
-              </button>
-            ))}
+        <div className="mb-1 flex flex-wrap items-center gap-3">
+          <h1 className="text-sm font-semibold text-slate-800">Análisis operativo por planta</h1>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex gap-1 rounded-lg bg-slate-100/80 p-1">
+              {SITES.map((site) => (
+                <button
+                  key={site.id}
+                  type="button"
+                  onClick={() => onChangeSite(site.id)}
+                  className={`rounded-md px-4 py-2 text-base font-bold transition ${
+                    site.id === siteId ? 'bg-violet-600 text-white shadow-md' : 'bg-transparent text-slate-500 hover:bg-slate-200/80'
+                  }`}
+                >
+                  {site.name}
+                </button>
+              ))}
+            </div>
+            <div className="flex rounded-lg border border-slate-200 bg-white p-0.5 text-sm">
+              {(['last_day', 'last_week', 'last_month'] as const).map((p) => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => setPeriodPreset(p)}
+                  className={`rounded-md px-2.5 py-1 ${periodPreset === p ? 'bg-blue-100 font-semibold text-blue-700' : 'text-slate-600 hover:bg-slate-50'}`}
+                >
+                  {p === 'last_day' ? 'Día' : p === 'last_week' ? 'Semana' : 'Mes'}
+                </button>
+              ))}
+            </div>
+            <span className="text-xs text-slate-500">Fecha ref: {effectiveDate}</span>
           </div>
-          <div className="flex rounded-lg border border-slate-200 bg-white p-0.5 text-sm">
-            {(['last_day', 'last_week', 'last_month'] as const).map((p) => (
-              <button
-                key={p}
-                type="button"
-                onClick={() => setPeriodPreset(p)}
-                className={`rounded-md px-2.5 py-1 ${periodPreset === p ? 'bg-blue-100 font-semibold text-blue-700' : 'text-slate-600 hover:bg-slate-50'}`}
-              >
-                {p === 'last_day' ? 'Día' : p === 'last_week' ? 'Semana' : 'Mes'}
-              </button>
-            ))}
-          </div>
-          <span className="text-xs text-slate-500">Fecha ref: {effectiveDate}</span>
         </div>
       </section>
 
-      {/* KPI 1 - Tiempo de estadía ampliado */}
+      <KpiCircuitFilterBar
+        siteId={siteId}
+        operation={kpiOperation}
+        onOperationChange={setKpiOperation}
+        matrixCircuit={kpiMatrixCircuit}
+        onMatrixCircuitChange={setKpiMatrixCircuit}
+      />
+
+      <PlantOperationalSummary
+        siteId={siteId}
+        plantLabel={plantName}
+        trucksInPlant={trucksInPlant}
+        operationalAlerts={operationalAlerts}
+        historicalTrips={historicalTrips}
+        tripsInPeriod={enrichedRows.length}
+        refDateLabel={`${effectiveView} · ${effectiveDate}`}
+      />
+
+      {/* 1 Tiempo de estadía — KPI 1 */}
       <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <button
           type="button"
-          onClick={() => setExpandedSection((s) => (s === 'estadia' ? null : 'estadia'))}
+          onClick={() => toggleSection('estadia')}
           className="flex w-full items-center justify-between p-3 text-left font-semibold text-slate-700"
         >
-          KPI 1 — Tiempo de estadía en planta
-          <span className="text-slate-400">{expandedSection === 'estadia' ? '▼' : '▶'}</span>
+          <span>1 · Tiempo de estadía en planta</span>
+          <span className="text-xs font-normal text-slate-500">KPI 1</span>
+          <span className="text-slate-400">{openSections.has('estadia') ? '▼' : '▶'}</span>
         </button>
-        {expandedSection === 'estadia' && (
+        {openSections.has('estadia') && (
           <div className="border-t border-slate-200 bg-white p-6" ref={kpi1PanelRef} style={{ minWidth: 600 }}>
             <Kpi1EstadiaReport
               stayStats={stayStats}
@@ -199,17 +253,52 @@ export function AnalyticsPage({ siteId, onChangeSite }: AnalyticsPageProps) {
         )}
       </section>
 
-      {/* KPI 2 - Perfil de desempeño operativo (radar) */}
+      {/* Turnos (mismo eje que estadía) */}
       <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <button
           type="button"
-          onClick={() => setExpandedSection((s) => (s === 'radar' ? null : 'radar'))}
+          onClick={() => toggleSection('turnos')}
           className="flex w-full items-center justify-between p-3 text-left font-semibold text-slate-700"
         >
-          KPI 2 — Perfil general de desempeño operativo
-          <span className="text-slate-400">{expandedSection === 'radar' ? '▼' : '▶'}</span>
+          <span>Estadía por turno operativo</span>
+          <span className="text-slate-400">{openSections.has('turnos') ? '▼' : '▶'}</span>
         </button>
-        {expandedSection === 'radar' && (
+        {openSections.has('turnos') && (
+          <div className="border-t border-slate-200 p-3">
+            <ChartExportButtons
+              filenamePrefix="estadia_por_turno"
+              csvData={shiftStats.map((s) => ({ turno: s.shiftLabel, n: s.stats.count, promedio_h: s.stats.mean.toFixed(2), sigma: s.stats.std.toFixed(2) }))}
+              meta={{ plant: plantName, period: `${effectiveView} ${effectiveDate}` }}
+              title="Estadía por turno"
+            >
+              <div className="h-[200px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={shiftStats.map((s) => ({ name: s.shiftLabel, promedio: s.stats.mean / 60, n: s.stats.count }))} margin={{ top: 10, right: 20, bottom: 10, left: 10 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                    <YAxis tick={{ fontSize: 10 }} />
+                    <Tooltip />
+                    <Bar dataKey="promedio" fill="#8b5cf6" radius={[4, 4, 0, 0]} name="Promedio (h)" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </ChartExportButtons>
+          </div>
+        )}
+      </section>
+
+      {/* Perfil radar — KPI 2 */}
+      <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <button
+          type="button"
+          onClick={() => toggleSection('radar')}
+          className="flex w-full items-center justify-between p-3 text-left font-semibold text-slate-700"
+        >
+          <span>Perfil de desempeño y forma (radar)</span>
+          <span className="text-xs font-normal text-slate-500">KPI 2</span>
+          <span className="text-slate-400">{openSections.has('radar') ? '▼' : '▶'}</span>
+        </button>
+        {openSections.has('radar') && (
           <div className="border-t border-slate-200 p-6">
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <ChartExportButtons
@@ -239,7 +328,6 @@ export function AnalyticsPage({ siteId, onChangeSite }: AnalyticsPageProps) {
               )}
             </div>
 
-            {/* Score final comparativo */}
             <div className="mt-6 flex flex-wrap items-center gap-4 rounded-xl border border-violet-200 bg-violet-50/50 px-4 py-3">
               <div className="text-xs font-semibold uppercase tracking-wide text-slate-600">
                 Score final comparativo
@@ -262,14 +350,18 @@ export function AnalyticsPage({ siteId, onChangeSite }: AnalyticsPageProps) {
                 {scoreFinalForma != null && (
                   <div className="border-l border-slate-300 pl-4 text-sm text-slate-700">
                     {scoreFinalDesempeno > scoreFinalForma && (
-                      <>El perfil de desempeño supera al de forma en <strong>{Math.abs(scoreFinalDesempeno - scoreFinalForma).toFixed(0)} puntos</strong>.</>
+                      <>
+                        El perfil de desempeño supera al de forma en{' '}
+                        <strong>{Math.abs(scoreFinalDesempeno - scoreFinalForma).toFixed(0)} puntos</strong>.
+                      </>
                     )}
                     {scoreFinalDesempeno < scoreFinalForma && (
-                      <>El perfil de forma supera al de desempeño en <strong>{Math.abs(scoreFinalForma - scoreFinalDesempeno).toFixed(0)} puntos</strong>.</>
+                      <>
+                        El perfil de forma supera al de desempeño en{' '}
+                        <strong>{Math.abs(scoreFinalForma - scoreFinalDesempeno).toFixed(0)} puntos</strong>.
+                      </>
                     )}
-                    {scoreFinalDesempeno === scoreFinalForma && (
-                      <>Ambos perfiles tienen el mismo score.</>
-                    )}
+                    {scoreFinalDesempeno === scoreFinalForma && <>Ambos perfiles tienen el mismo score.</>}
                   </div>
                 )}
               </div>
@@ -278,20 +370,21 @@ export function AnalyticsPage({ siteId, onChangeSite }: AnalyticsPageProps) {
         )}
       </section>
 
-      {/* KPI 3 - Flujo e ingreso de camiones */}
+      {/* 2 Flujo de camiones — KPI 3 */}
       <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <button
           type="button"
-          onClick={() => setExpandedSection((s) => (s === 'flujo' ? null : 'flujo'))}
+          onClick={() => toggleSection('flujo')}
           className="flex w-full items-center justify-between p-3 text-left font-semibold text-slate-700"
         >
-          KPI 3 — Flujo e ingreso de camiones
-          <span className="text-slate-400">{expandedSection === 'flujo' ? '▼' : '▶'}</span>
+          <span>2 · Flujo e ingreso de camiones</span>
+          <span className="text-xs font-normal text-slate-500">KPI 3</span>
+          <span className="text-slate-400">{openSections.has('flujo') ? '▼' : '▶'}</span>
         </button>
-        {expandedSection === 'flujo' && (
+        {openSections.has('flujo') && (
           <div className="border-t border-slate-200 p-6">
             <FlowSaturationKpi
-              trips={historicalTrips}
+              trips={historicalTripsFiltered}
               siteId={siteId}
               periodPreset={periodPreset}
               refFecha={refData.refFecha}
@@ -302,34 +395,36 @@ export function AnalyticsPage({ siteId, onChangeSite }: AnalyticsPageProps) {
         )}
       </section>
 
-      {/* KPI 4 - Saturación por sector */}
+      {/* Saturación — KPI 4 (vista SaturationPage) */}
       <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <button
           type="button"
-          onClick={() => setExpandedSection((s) => (s === 'saturacion' ? null : 'saturacion'))}
+          onClick={() => toggleSection('saturacion')}
           className="flex w-full items-center justify-between p-3 text-left font-semibold text-slate-700"
         >
-          KPI 4 — Saturación por sector
-          <span className="text-slate-400">{expandedSection === 'saturacion' ? '▼' : '▶'}</span>
+          <span>Saturación por sector</span>
+          <span className="text-xs font-normal text-slate-500">KPI 4</span>
+          <span className="text-slate-400">{openSections.has('saturacion') ? '▼' : '▶'}</span>
         </button>
-        {expandedSection === 'saturacion' && (
+        {openSections.has('saturacion') && (
           <div className="border-t border-slate-200 p-6">
-            <SaturationPage siteId={siteId} onChangeSite={onChangeSite} />
+            <SaturationPage siteId={siteId} onChangeSite={onChangeSite} hideSitePicker historicalTripsSubset={historicalTripsFiltered} />
           </div>
         )}
       </section>
 
-      {/* KPI 5 — Recorridos válidos vs anomalías y desglose por operación */}
+      {/* 3 Anomalías y variaciones — KPI 5 */}
       <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <button
           type="button"
-          onClick={() => setExpandedSection((s) => (s === 'kpi5' ? null : 'kpi5'))}
+          onClick={() => toggleSection('anomalias')}
           className="flex w-full items-center justify-between p-3 text-left font-semibold text-slate-700"
         >
-          KPI 5 — Anomalías y caminos (por producto)
-          <span className="text-slate-400">{expandedSection === 'kpi5' ? '▼' : '▶'}</span>
+          <span>3 · Anomalías y variaciones operativas</span>
+          <span className="text-xs font-normal text-slate-500">KPI 5</span>
+          <span className="text-slate-400">{openSections.has('anomalias') ? '▼' : '▶'}</span>
         </button>
-        {expandedSection === 'kpi5' && (
+        {openSections.has('anomalias') && (
           <div className="border-t border-slate-200 p-6">
             <Kpi5
               siteId={siteId}
@@ -340,70 +435,63 @@ export function AnalyticsPage({ siteId, onChangeSite }: AnalyticsPageProps) {
         )}
       </section>
 
-      {/* Estadísticas por turno */}
+      {/* 4 Lectura / ranking por circuito */}
       <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <button
           type="button"
-          onClick={() => setExpandedSection((s) => (s === 'turnos' ? null : 'turnos'))}
+          onClick={() => toggleSection('cruces')}
           className="flex w-full items-center justify-between p-3 text-left font-semibold text-slate-700"
         >
-          Estadísticas por turno operativo
-          <span className="text-slate-400">{expandedSection === 'turnos' ? '▼' : '▶'}</span>
+          <span>4 · Lectura por circuito (duración promedio)</span>
+          <span className="text-slate-400">{openSections.has('cruces') ? '▼' : '▶'}</span>
         </button>
-        {expandedSection === 'turnos' && (
+        {openSections.has('cruces') && (
           <div className="border-t border-slate-200 p-3">
-            <ChartExportButtons
-              filenamePrefix="estadia_por_turno"
-              csvData={shiftStats.map((s) => ({ turno: s.shiftLabel, n: s.stats.count, promedio_h: s.stats.mean.toFixed(2), sigma: s.stats.std.toFixed(2) }))}
-              meta={{ plant: plantName, period: `${effectiveView} ${effectiveDate}` }}
-              title="Estadía por turno"
-            >
-            <div className="h-[200px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={shiftStats.map((s) => ({ name: s.shiftLabel, promedio: s.stats.mean / 60, n: s.stats.count }))} margin={{ top: 10, right: 20, bottom: 10, left: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-                  <YAxis tick={{ fontSize: 10 }} />
-                  <Tooltip />
-                  <Bar dataKey="promedio" fill="#8b5cf6" radius={[4, 4, 0, 0]} name="Promedio (h)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            </ChartExportButtons>
+            {!hasCircuitRanking ? (
+              <p className="px-2 py-6 text-center text-sm text-slate-500">
+                No hay cruces con duración por circuito en este período para la planta seleccionada (mock).
+              </p>
+            ) : (
+              <ChartExportButtons
+                filenamePrefix="duracion_por_circuito"
+                csvData={crossCircuit.map((c) => ({ circuito: c.dimension2, promedio_min: c.value.toFixed(1), n: c.count }))}
+                meta={{ plant: plantName, period: `${effectiveView} ${effectiveDate}` }}
+                title="Duración promedio por circuito"
+              >
+                <div className="h-[240px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={crossCircuit.slice(0, 12).map((c) => ({ name: c.dimension2, promedio: c.value / 60, n: c.count }))}
+                      margin={{ top: 10, right: 20, bottom: 30, left: 10 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} tick={{ fontSize: 9 }} />
+                      <YAxis tick={{ fontSize: 10 }} />
+                      <Tooltip formatter={(v: number | undefined) => [v != null ? v.toFixed(2) : '-', 'Promedio (h)']} />
+                      <Bar dataKey="promedio" fill="#6366f1" radius={[4, 4, 0, 0]} name="Promedio (h)" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </ChartExportButtons>
+            )}
           </div>
         )}
       </section>
 
-      {/* Cruces analíticos */}
+      {/* Contenido vista Comité (embebido — misma lógica que ComitePage) */}
       <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <button
           type="button"
-          onClick={() => setExpandedSection((s) => (s === 'cruces' ? null : 'cruces'))}
+          onClick={() => toggleSection('comite')}
           className="flex w-full items-center justify-between p-3 text-left font-semibold text-slate-700"
         >
-          Cruces analíticos — Duración por circuito
-          <span className="text-slate-400">{expandedSection === 'cruces' ? '▼' : '▶'}</span>
+          <span>Lectura ejecutiva (flujo horario, densidad y conclusiones)</span>
+          <span className="text-xs font-normal text-slate-500">Vista comité</span>
+          <span className="text-slate-400">{openSections.has('comite') ? '▼' : '▶'}</span>
         </button>
-        {expandedSection === 'cruces' && (
-          <div className="border-t border-slate-200 p-3">
-            <ChartExportButtons
-              filenamePrefix="duracion_por_circuito"
-              csvData={crossCircuit.map((c) => ({ circuito: c.dimension2, promedio_min: c.value.toFixed(1), n: c.count }))}
-              meta={{ plant: plantName, period: `${effectiveView} ${effectiveDate}` }}
-              title="Duración promedio por circuito"
-            >
-              <div className="h-[240px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={crossCircuit.slice(0, 12).map((c) => ({ name: c.dimension2, promedio: c.value / 60, n: c.count }))} margin={{ top: 10, right: 20, bottom: 30, left: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} tick={{ fontSize: 9 }} />
-                    <YAxis tick={{ fontSize: 10 }} />
-                    <Tooltip formatter={(v: number | undefined) => [v != null ? v.toFixed(2) : '-', 'Promedio (h)']} />
-                    <Bar dataKey="promedio" fill="#6366f1" radius={[4, 4, 0, 0]} name="Promedio (h)" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </ChartExportButtons>
+        {openSections.has('comite') && (
+          <div className="border-t border-slate-200 p-4">
+            <ComitePage siteId={siteId} onChangeSite={onChangeSite} embedded historicalTripsSubset={historicalTripsFiltered} />
           </div>
         )}
       </section>

@@ -9,6 +9,7 @@ import type { SiteId } from '../domain/sites'
 import { SITES } from '../domain/sites'
 import { useLogisticsOps } from '../context/LogisticsOpsContext'
 import { useHistoricalPageData } from '../hooks/useHistoricalPageData'
+import type { HistoricalTrip } from '../domain/logistics'
 import {
   computeStayTimeStats,
   computeVariabilityStats,
@@ -21,12 +22,17 @@ import { ChartExportButtons } from '../components/charts/ChartExportButtons'
 interface ComitePageProps {
   siteId: SiteId
   onChangeSite: (siteId: SiteId) => void
+  /** Sin barra de plantas (p. ej. embebido en Analytics) */
+  embedded?: boolean
+  /** Si se pasa (p. ej. filtro KPI), reemplaza el histórico del contexto */
+  historicalTripsSubset?: HistoricalTrip[]
 }
 
-export function ComitePage({ siteId, onChangeSite }: ComitePageProps) {
+export function ComitePage({ siteId, onChangeSite, embedded = false, historicalTripsSubset }: ComitePageProps) {
   const { historicalTrips, operationalAlerts } = useLogisticsOps()
+  const tripsForHook = historicalTripsSubset ?? historicalTrips
   const { enrichedRows, effectiveDate } = useHistoricalPageData({
-    historicalTrips,
+    historicalTrips: tripsForHook,
     siteId,
     effectiveView: 'week',
     periodPreset: 'last_week',
@@ -46,12 +52,12 @@ export function ComitePage({ siteId, onChangeSite }: ComitePageProps) {
   )
   const stayStats = useMemo(() => computeStayTimeStats(durations), [durations])
   const varStats = useMemo(() => computeVariabilityStats(durations), [durations])
-  const hourlyFlow = useMemo(() => computeHourlyFlow(historicalTrips, siteId), [historicalTrips, siteId])
+  const hourlyFlow = useMemo(() => computeHourlyFlow(tripsForHook, siteId), [tripsForHook, siteId])
   const sectorDensity = useMemo(
-    () => computeSectorDensity(historicalTrips, operationalAlerts, siteId),
-    [historicalTrips, operationalAlerts, siteId]
+    () => computeSectorDensity(tripsForHook, operationalAlerts, siteId),
+    [tripsForHook, operationalAlerts, siteId]
   )
-  const crossPlantCircuit = useMemo(() => crossDurationByPlantCircuit(historicalTrips), [historicalTrips])
+  const crossPlantCircuit = useMemo(() => crossDurationByPlantCircuit(tripsForHook), [tripsForHook])
 
   const plantName = SITES.find((s) => s.id === siteId)?.name ?? siteId
   const criticalOpen = operationalAlerts.filter((a) => a.severity === 'CRITICAL' && a.status === 'OPEN').length
@@ -87,25 +93,27 @@ export function ComitePage({ siteId, onChangeSite }: ComitePageProps) {
 
   return (
     <div className="space-y-4">
-      <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-        <div className="mb-3 flex flex-wrap items-center gap-3">
-          <div className="flex gap-1 rounded-lg bg-slate-100/80 p-1">
-            {SITES.map((site) => (
-              <button
-                key={site.id}
-                type="button"
-                onClick={() => onChangeSite(site.id)}
-                className={`rounded-md px-4 py-2 text-base font-bold transition ${
-                  site.id === siteId ? 'bg-violet-600 text-white shadow-md' : 'bg-transparent text-slate-500 hover:bg-slate-200/80'
-                }`}
-              >
-                {site.name}
-              </button>
-            ))}
+      {!embedded && (
+        <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+          <div className="mb-3 flex flex-wrap items-center gap-3">
+            <div className="flex gap-1 rounded-lg bg-slate-100/80 p-1">
+              {SITES.map((site) => (
+                <button
+                  key={site.id}
+                  type="button"
+                  onClick={() => onChangeSite(site.id)}
+                  className={`rounded-md px-4 py-2 text-base font-bold transition ${
+                    site.id === siteId ? 'bg-violet-600 text-white shadow-md' : 'bg-transparent text-slate-500 hover:bg-slate-200/80'
+                  }`}
+                >
+                  {site.name}
+                </button>
+              ))}
+            </div>
+            <span className="text-xs text-slate-500">Período: semana ref. {effectiveDate}</span>
           </div>
-          <span className="text-xs text-slate-500">Período: semana ref. {effectiveDate}</span>
-        </div>
-      </section>
+        </section>
+      )}
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">

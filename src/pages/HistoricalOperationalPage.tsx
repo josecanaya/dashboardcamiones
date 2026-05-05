@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { IfcLoadingOverlay } from '../components/IfcLoadingOverlay'
 import {
   ResponsiveContainer,
@@ -34,6 +34,8 @@ interface HistoricalOperationalPageProps {
   siteId: SiteId
   onChangeSite: (siteId: SiteId) => void
   mode?: 'stats' | 'records'
+  /** Solo vista registros / JSON — oculta estadísticas */
+  recordsOnly?: boolean
   onViewInModel: (plate: string) => void
   onModeChange?: (mode: 'stats' | 'records') => void
 }
@@ -51,7 +53,15 @@ interface StatsTruckPopupInfo {
   cameraCaptures: Array<{ cameraId: string; imageUrl: string; captureLabel: string }>
 }
 
-export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats', onViewInModel, onModeChange }: HistoricalOperationalPageProps) {
+export function HistoricalOperationalPage({
+  siteId,
+  onChangeSite,
+  mode = 'stats',
+  recordsOnly = false,
+  onViewInModel,
+  onModeChange,
+}: HistoricalOperationalPageProps) {
+  const viewMode = recordsOnly ? 'records' : mode
   const { historicalTrips, scenario, refreshFromSource, sourceMeta } = useLogisticsOps()
   const [query, setQuery] = useState('')
   const [periodPreset, setPeriodPreset] = useState<PeriodPreset>('last_week')
@@ -102,7 +112,7 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
     setEnterLoading(true)
     const t = setTimeout(() => setEnterLoading(false), 1200)
     return () => clearTimeout(t)
-  }, [mode])
+  }, [mode, recordsOnly])
 
   useEffect(() => {
     setSelectedDate(refData.refFecha)
@@ -306,24 +316,24 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
         <div className="absolute inset-0 z-10 rounded-2xl border border-slate-200 bg-white">
           <IfcLoadingOverlay
             variant="inline"
-            loadingStage={chartsLoading ? 'Cargando datos...' : mode === 'stats' ? 'Cargando estadísticas...' : 'Cargando registros...'}
+            loadingStage={chartsLoading ? 'Cargando datos...' : viewMode === 'stats' ? 'Cargando estadísticas...' : 'Cargando registros...'}
           />
         </div>
       )}
       <div className="space-y-3">
-      {onModeChange && (
+      {onModeChange && !recordsOnly && (
         <div className="flex gap-1 rounded-lg border border-slate-200 bg-slate-50 p-1">
           <button
             type="button"
             onClick={() => onModeChange('stats')}
-            className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${mode === 'stats' ? 'bg-white text-violet-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+            className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${viewMode === 'stats' ? 'bg-white text-violet-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
           >
             Estadísticas
           </button>
           <button
             type="button"
             onClick={() => onModeChange('records')}
-            className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${mode === 'records' ? 'bg-white text-violet-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+            className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${viewMode === 'records' ? 'bg-white text-violet-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
           >
             Registros
           </button>
@@ -400,7 +410,7 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
               />
             </label>
           </div>
-          {mode === 'records' && (
+          {viewMode === 'records' && (
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -412,7 +422,7 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
 
       </section>
 
-      {mode === 'stats' && (
+      {viewMode === 'stats' && (
         <section className="space-y-3">
           <article className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
             <ChartExportButtons
@@ -692,7 +702,7 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
         </section>
       )}
 
-      {mode === 'records' && (
+      {viewMode === 'records' && (
       <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-200 p-3">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-600">Tabla histórica de recorridos finalizados</h3>
@@ -709,12 +719,14 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                 <th className="px-2 py-2 text-left">Duración (h)</th>
                 <th className="px-2 py-2 text-left">Secuencia cámaras</th>
                 <th className="px-2 py-2 text-left">Alertas</th>
+                <th className="px-2 py-2 text-left">JSON</th>
+                <th className="px-2 py-2 text-left">Simulador</th>
               </tr>
             </thead>
             <tbody>
               {enrichedRows.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-3 py-8 text-center text-sm text-slate-500">
+                  <td colSpan={10} className="px-3 py-8 text-center text-sm text-slate-500">
                     No hay recorridos para el período y filtros seleccionados.
                   </td>
                 </tr>
@@ -736,6 +748,23 @@ export function HistoricalOperationalPage({ siteId, onChangeSite, mode = 'stats'
                     >
                       {trip.alerts.length}
                     </span>
+                  </td>
+                  <td className="px-2 py-2 align-top">
+                    <details className="max-w-[200px]">
+                      <summary className="cursor-pointer text-violet-600 hover:underline">Ver</summary>
+                      <pre className="mt-1 max-h-40 overflow-auto whitespace-pre-wrap break-all rounded bg-slate-50 p-1 text-[9px] text-slate-700">
+                        {JSON.stringify(trip, null, 2)}
+                      </pre>
+                    </details>
+                  </td>
+                  <td className="px-2 py-2 align-top">
+                    <button
+                      type="button"
+                      onClick={() => onViewInModel(trip.plate)}
+                      className="rounded-md border border-violet-300 bg-violet-50 px-2 py-1 text-[10px] font-semibold text-violet-800 hover:bg-violet-100"
+                    >
+                      IFC
+                    </button>
                   </td>
                 </tr>
               ))}

@@ -10,6 +10,8 @@ export interface SaturationExecutiveHeaderProps {
   onPeriodChange: (p: SaturationPeriodPreset) => void
   granularity: SaturationGranularity
   onGranularityChange: (g: SaturationGranularity) => void
+  /** Oculta el selector de planta cuando la página padre ya fija siteId */
+  hideSitePicker?: boolean
 }
 
 export function SaturationExecutiveHeader({
@@ -19,6 +21,7 @@ export function SaturationExecutiveHeader({
   onPeriodChange,
   granularity,
   onGranularityChange,
+  hideSitePicker = false,
 }: SaturationExecutiveHeaderProps) {
   return (
     <header className="flex flex-col gap-2 border-b border-slate-200 pb-3 sm:flex-row sm:items-end sm:justify-between">
@@ -27,17 +30,19 @@ export function SaturationExecutiveHeader({
         <p className="mt-0.5 text-xs text-slate-500">Detección de episodios críticos y contexto operativo</p>
       </div>
       <div className="flex flex-wrap items-center justify-end gap-2">
-        <select
-          value={siteId}
-          onChange={(e) => onSiteChange(e.target.value as SiteId)}
-          className="rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-800"
-        >
-          {SITES.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
+        {!hideSitePicker && (
+          <select
+            value={siteId}
+            onChange={(e) => onSiteChange(e.target.value as SiteId)}
+            className="rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-800"
+          >
+            {SITES.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+        )}
         <select
           value={periodPreset}
           onChange={(e) => onPeriodChange(e.target.value as SaturationPeriodPreset)}

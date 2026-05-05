@@ -16,7 +16,7 @@ import type { SiteId } from '../domain/sites'
 import { IfcLoadingOverlay } from '../components/IfcLoadingOverlay'
 import { ChartExportButtons } from '../components/charts/ChartExportButtons'
 
-type DashboardTab = 'live' | 'history' | 'alerts' | 'planning'
+type DashboardTab = 'live' | 'history' | 'alerts' | 'planning' | 'analytics'
 type PeriodPreset = 'last_day' | 'last_week' | 'last_month'
 
 interface HomePageProps {
@@ -238,7 +238,7 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
               type="button"
               onClick={() => {
                 onChangeSite(plant.id)
-                onNavigate('live')
+                onNavigate('analytics')
               }}
               className={`group overflow-hidden rounded-2xl border text-left shadow-md transition ${
                 isSelected ? 'border-blue-300 ring-2 ring-blue-200' : 'border-slate-200 hover:border-blue-200'
@@ -257,7 +257,7 @@ export function HomePage({ siteId, onChangeSite, onNavigate }: HomePageProps) {
                   </div>
                   <div>
                     <div className="text-sm font-medium text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.9)]">
-                      Entrar a tablero de operación
+                      Abrir análisis operativo (KPIs)
                     </div>
                     <div className="mt-2 inline-flex rounded-full bg-white/95 px-3 py-1.5 text-xs font-semibold text-slate-800 shadow-md">
                       {isSelected ? 'Planta activa' : 'Seleccionar planta'}
