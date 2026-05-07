@@ -3,6 +3,8 @@
  */
 export type RealJourneyEventDto = {
   id: number
+  createdAt?: string
+  modifiedAt?: string
   journeyUid: string
   sequenceNumber: number
   eventCategory: string
@@ -31,6 +33,8 @@ export type PreliminaryCircuitClassification = {
   preliminaryCircuitName: string
   preliminaryCircuitConfidence: string
   preliminaryCircuitReason: string
+  preliminaryCircuitGroup?: string
+  preliminaryCircuitVariant?: string
 }
 
 /** Viaje reconstruido antes de análisis de calidad (incluye día local del primer evento). */

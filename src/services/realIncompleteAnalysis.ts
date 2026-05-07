@@ -227,7 +227,7 @@ function classifyCandidate(
   present: Set<string>
 ): { candidatePattern: boolean; candidateReason: string } {
   const ratio = totalIncomplete > 0 ? count / totalIncomplete : 0
-  const freq = count > 20 && ratio > 0.05
+  const freq = count > 10 || ratio > 0.05
 
   let candidatePattern = false
   const reasons: string[] = []
@@ -247,6 +247,14 @@ function classifyCandidate(
   ) {
     candidatePattern = true
     reasons.push('Posible patrón por corte de journey o falta de cámara de ingreso asociada.')
+  }
+  if (present.has('BALANZA_INGRESO') || present.has('BALANZA_EGRESO') || present.has('VOLCABLE')) {
+    candidatePattern = true
+    reasons.push('Tiene punto operativo fuerte (BALANZA/VOLCABLE).')
+  }
+  if (present.has('EGRESO') || present.has('BALANZA_EGRESO')) {
+    candidatePattern = true
+    reasons.push('Presenta cierre operativo parcial.')
   }
   const onlySlTracked =
     TRACKED_LOGICAL.filter((k) => present.has(k)).length === 1 && present.has('SL_INGRESO')

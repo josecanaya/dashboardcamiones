@@ -91,6 +91,8 @@ function parseRow(raw: unknown, fallbackIndex: number): ApiRealJourneyEventRow |
 
   return {
     id,
+    createdAt: coerceString(o.createdAt, ''),
+    modifiedAt: coerceString(o.modifiedAt, ''),
     journeyUid,
     sequenceNumber,
     eventCategory: coerceString(o.eventCategory, ''),

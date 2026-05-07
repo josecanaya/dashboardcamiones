@@ -12,26 +12,24 @@ const RIC_LOGICAL = new Set([
 
 /** Recorridos válidos preliminares (no incompleto ni descartados). */
 const VALID_PRELIM_CODES = new Set([
-  'PRELIM_RIC_LOOP_BALANZA',
-  'PRELIM_RIC_DESCARGA_VOLCABLE',
-  'PRELIM_RIC_LIQUIDO_PROBABLE',
-  'PRELIM_RIC_DESCARGA_NO_VOLCABLE',
-  'PRELIM_RIC_CALADA_A_SAN_LORENZO',
-  'PRELIM_RIC_INGRESO_EGRESO_VALIDO',
-  'PRELIM_RIC_PREINGRESO_EGRESO_VALIDO',
-  'PRELIM_RIC_INGRESO_BALANZA_VALIDO',
-  'PRELIM_RIC_PREINGRESO_BALANZA_VALIDO',
+  'PRELIM_RIC_A_SAN_LORENZO',
+  'PRELIM_RIC_LIQUIDO',
+  'PRELIM_RIC_SALIDA_S10_SOLIDO',
+  'PRELIM_RIC_VOLCABLE',
+  'PRELIM_RIC_CELDA_16',
+  'PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA',
   'PRELIM_SOLO_VOLCABLE',
 ])
 
 const VALID_MINIMAL_CODES = new Set([
-  'PRELIM_RIC_INGRESO_EGRESO_VALIDO',
-  'PRELIM_RIC_PREINGRESO_EGRESO_VALIDO',
+  'PRELIM_RIC_A_SAN_LORENZO',
 ])
 
 const VALID_PARTIAL_CODES = new Set([
-  'PRELIM_RIC_INGRESO_BALANZA_VALIDO',
-  'PRELIM_RIC_PREINGRESO_BALANZA_VALIDO',
+  'PRELIM_RIC_SALIDA_S10_SOLIDO',
+  'PRELIM_RIC_LIQUIDO',
+  'PRELIM_RIC_VOLCABLE',
+  'PRELIM_RIC_CELDA_16',
 ])
 
 export function collapseLogicalSignature(seq: string[]): string {
@@ -146,6 +144,18 @@ function preliminaryLabel(code: string): string {
       return 'Ruido — egreso sin par cámaras'
     case 'PRELIM_RIC_LOOP_BALANZA':
       return 'Loop balanza'
+    case 'PRELIM_RIC_A_SAN_LORENZO':
+      return 'Circuito a San Lorenzo'
+    case 'PRELIM_RIC_LIQUIDO':
+      return 'Circuito líquido'
+    case 'PRELIM_RIC_SALIDA_S10_SOLIDO':
+      return 'Salida S10 sólido / despacho'
+    case 'PRELIM_RIC_VOLCABLE':
+      return 'Circuito a Volcable 1/2'
+    case 'PRELIM_RIC_CELDA_16':
+      return 'Circuito a Celda 16'
+    case 'PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA':
+      return 'Transile Volcable → Balanza'
     case 'PRELIM_RIC_DESCARGA_VOLCABLE':
       return 'Descarga volcable'
     case 'PRELIM_RIC_LIQUIDO_PROBABLE':
@@ -203,15 +213,12 @@ export function buildOperationalDepurationSnapshot(
   const pctDiscardedVsRaw = rawJourneyCount > 0 ? totalDiscardedJourneyCount / rawJourneyCount : 0
 
   const OPS_KPI_PRELIMS = new Set<string>([
-    'PRELIM_RIC_LOOP_BALANZA',
-    'PRELIM_RIC_DESCARGA_VOLCABLE',
-    'PRELIM_RIC_LIQUIDO_PROBABLE',
-    'PRELIM_RIC_DESCARGA_NO_VOLCABLE',
-    'PRELIM_RIC_CALADA_A_SAN_LORENZO',
-    'PRELIM_RIC_INGRESO_EGRESO_VALIDO',
-    'PRELIM_RIC_PREINGRESO_EGRESO_VALIDO',
-    'PRELIM_RIC_INGRESO_BALANZA_VALIDO',
-    'PRELIM_RIC_PREINGRESO_BALANZA_VALIDO',
+    'PRELIM_RIC_A_SAN_LORENZO',
+    'PRELIM_RIC_LIQUIDO',
+    'PRELIM_RIC_SALIDA_S10_SOLIDO',
+    'PRELIM_RIC_VOLCABLE',
+    'PRELIM_RIC_CELDA_16',
+    'PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA',
   ])
 
   const preliminaryValidPatternCount = journeys.filter(

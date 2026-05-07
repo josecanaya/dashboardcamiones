@@ -48,6 +48,18 @@ export const PRELIM_CIRCUIT_CODES = [
 
   'PRELIM_RIC_PREINGRESO_BALANZA_VALIDO',
 
+  'PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA',
+
+  'PRELIM_RIC_A_SAN_LORENZO',
+
+  'PRELIM_RIC_LIQUIDO',
+
+  'PRELIM_RIC_SALIDA_S10_SOLIDO',
+
+  'PRELIM_RIC_VOLCABLE',
+
+  'PRELIM_RIC_CELDA_16',
+
   'PRELIM_SOLO_VOLCABLE',
 
   'PRELIM_INCOMPLETO',
@@ -486,6 +498,30 @@ export function preliminaryCircuitTypicalSectorPath(preliminaryCircuitCode: stri
 
       return 'PREINGRESO → Balanza (± otros puntos no cubiertos por patrones previos)'
 
+    case 'PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA':
+
+      return 'VOLCABLE → BALANZA_EGRESO (movimiento interno / transile probable)'
+
+    case 'PRELIM_RIC_A_SAN_LORENZO':
+
+      return 'INGRESO/PREINGRESO → EGRESO (± SL_INGRESO)'
+
+    case 'PRELIM_RIC_LIQUIDO':
+
+      return 'BALANZA_INGRESO → BALANZA_EGRESO → EGRESO (sin volcable/celda)'
+
+    case 'PRELIM_RIC_SALIDA_S10_SOLIDO':
+
+      return 'Combinaciones de ingreso/preingreso/balanza para despacho sólido'
+
+    case 'PRELIM_RIC_VOLCABLE':
+
+      return 'VOLCABLE con evidencia operativa asociada (ingreso/preingreso/balanza/egreso)'
+
+    case 'PRELIM_RIC_CELDA_16':
+
+      return 'CELDA_16 con evidencia operativa asociada'
+
     case 'PRELIM_SOLO_VOLCABLE':
 
       return 'RICARDONE_VOLCABLE_1|2'
@@ -578,6 +614,128 @@ export function classifyOperationalPreliminaryCircuit(
   const be = countCode(full, 'BALANZA_EGRESO')
 
   const hasBalanzaAny = hasAnyBalanza(has)
+
+  const hasCelda16 = has('CELDA_16')
+  const hasSlAfter = hasSlIngresoAfterEgreso(full)
+  const hasOnlyIngreso = dr.size === 1 && hasIngreso && !hasEgreso
+  const hasOnlyEgreso = dr.size === 1 && hasEgreso && !hasIngreso
+  const hasBalanzaPair = has('BALANZA_INGRESO') && has('BALANZA_EGRESO')
+  const s10Points = ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'BALANZA_EGRESO'].filter((x) => has(x)).length
+
+  // Nueva clasificación operativa por evidencia (no secuencia rígida completa).
+  if (hasOnlyIngreso) {
+    return {
+      preliminaryCircuitCode: 'DESCARTADO_SOLO_INGRESO_RUTA_PROBABLE',
+      preliminaryCircuitName: 'Descartado — solo ingreso (ruta probable)',
+      preliminaryCircuitConfidence: deviceRouteHintIngreso(devices) ? 'alta' : 'media',
+      preliminaryCircuitReason: 'Solo punto INGRESO observado.',
+      preliminaryCircuitGroup: 'Descartados',
+      preliminaryCircuitVariant: 'SOLO_INGRESO',
+      isDiscardedOperational: true,
+    }
+  }
+  if (hasOnlyEgreso) {
+    return {
+      preliminaryCircuitCode: 'DESCARTADO_SOLO_EGRESO_RUTA_PROBABLE',
+      preliminaryCircuitName: 'Descartado — solo egreso (ruta probable)',
+      preliminaryCircuitConfidence: deviceRouteHintEgreso(devices) ? 'alta' : 'media',
+      preliminaryCircuitReason: 'Solo punto EGRESO observado.',
+      preliminaryCircuitGroup: 'Descartados',
+      preliminaryCircuitVariant: 'SOLO_EGRESO',
+      isDiscardedOperational: true,
+    }
+  }
+
+  // 2) Circuito a Celda 16
+  if (hasCelda16 && ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'BALANZA_EGRESO', 'EGRESO'].some((x) => has(x))) {
+    const complete = isOrderedSubsequence(col, ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'CELDA_16', 'BALANZA_EGRESO'])
+    return {
+      preliminaryCircuitCode: 'PRELIM_RIC_CELDA_16',
+      preliminaryCircuitName: 'Circuito a Celda 16',
+      preliminaryCircuitConfidence: complete ? 'alta' : 'media',
+      preliminaryCircuitReason: complete ? 'Secuencia operativa completa a Celda 16.' : 'CELDA_16 detectada con evidencia operativa parcial.',
+      preliminaryCircuitGroup: 'Circuito a Celda 16',
+      preliminaryCircuitVariant: complete ? 'CELDA_16_COMPLETO' : 'CELDA_16_PARCIAL',
+      isDiscardedOperational: false,
+    }
+  }
+
+  // 3) Circuito a Volcable 1/2
+  if (hasVolcable && ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'BALANZA_EGRESO', 'EGRESO'].some((x) => has(x))) {
+    const volcableCount = countCode(full, 'VOLCABLE')
+    const transile = volcableCount >= 2 && has('BALANZA_EGRESO') && !hasIngreso && !hasPreingreso
+    const complete = isOrderedSubsequence(col, ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'VOLCABLE', 'BALANZA_EGRESO'])
+    return {
+      preliminaryCircuitCode: transile ? 'PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA' : 'PRELIM_RIC_VOLCABLE',
+      preliminaryCircuitName: transile ? 'Transile / movimiento interno Volcable -> Balanza' : 'Circuito a Volcable 1/2',
+      preliminaryCircuitConfidence: complete ? 'alta' : 'media',
+      preliminaryCircuitReason: transile ? 'VOLCABLE repetido seguido de BALANZA_EGRESO sin ingreso/preingreso.' : 'VOLCABLE detectado con puntos operativos asociados.',
+      preliminaryCircuitGroup: 'Circuito a Volcable 1/2',
+      preliminaryCircuitVariant: transile ? 'TRANSILE_VOLCABLE_BALANZA' : complete ? 'VOLCABLE_COMPLETO' : 'VOLCABLE_PARCIAL',
+      isDiscardedOperational: false,
+    }
+  }
+
+  // 4) Circuito líquido
+  if (!hasVolcable && !hasCelda16 && hasBalanzaPair && hasEgreso) {
+    const complete = hasIngreso && hasPreingreso && isOrderedSubsequence(col, ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'BALANZA_EGRESO', 'EGRESO'])
+    const variant = complete ? 'COMPLETO' : !hasIngreso ? 'SIN_INGRESO' : !hasPreingreso ? 'SIN_PREINGRESO' : 'BALANZA_EGRESO_COMPLETO'
+    return {
+      preliminaryCircuitCode: 'PRELIM_RIC_LIQUIDO',
+      preliminaryCircuitName: 'Circuito líquido',
+      preliminaryCircuitConfidence: complete ? 'alta' : 'media',
+      preliminaryCircuitReason: 'BALANZA_INGRESO + BALANZA_EGRESO + EGRESO sin VOLCABLE/CELDA_16.',
+      preliminaryCircuitGroup: 'Circuito líquido',
+      preliminaryCircuitVariant: variant,
+      isDiscardedOperational: false,
+    }
+  }
+
+  // 5) Circuito a San Lorenzo
+  if (hasEgreso && !hasBalanzaAny && !hasVolcable && !hasCelda16) {
+    let variant = 'INGRESO_PREINGRESO_EGRESO_FALTA_SL'
+    if (hasIngreso && !hasPreingreso) variant = 'INGRESO_EGRESO_FALLA_PREINGRESO'
+    else if (!hasIngreso && hasPreingreso) variant = 'PREINGRESO_EGRESO_FALLA_INGRESO'
+    else if (hasIngreso && hasPreingreso && hasSlAfter) variant = 'INGRESO_PREINGRESO_EGRESO_SL_COMPLETO'
+    return {
+      preliminaryCircuitCode: 'PRELIM_RIC_A_SAN_LORENZO',
+      preliminaryCircuitName: 'Circuito a San Lorenzo',
+      preliminaryCircuitConfidence: hasSlAfter ? 'alta' : 'media',
+      preliminaryCircuitReason: hasSlAfter ? 'SL_INGRESO posterior al EGRESO Ricardone.' : 'EGRESO sin balanza/volcable/celda; patrón compatible con San Lorenzo.',
+      preliminaryCircuitGroup: 'Circuito a San Lorenzo',
+      preliminaryCircuitVariant: variant,
+      isDiscardedOperational: false,
+    }
+  }
+
+  // 6) Salida S10 sólido / despacho
+  if (!hasVolcable && !hasCelda16 && !hasEgreso && s10Points >= 2) {
+    let variant = 'PARCIAL_2_PUNTOS'
+    if (s10Points >= 4) variant = 'INGRESO_PREINGRESO_BALANZA_COMPLETO'
+    else if (hasIngreso && has('BALANZA_INGRESO') && has('BALANZA_EGRESO')) variant = 'INGRESO_BALANZA'
+    else if (hasPreingreso && has('BALANZA_INGRESO') && has('BALANZA_EGRESO')) variant = 'PREINGRESO_BALANZA'
+    else if (has('BALANZA_INGRESO') && has('BALANZA_EGRESO')) variant = 'BALANZA_INGRESO_EGRESO'
+    return {
+      preliminaryCircuitCode: 'PRELIM_RIC_SALIDA_S10_SOLIDO',
+      preliminaryCircuitName: 'Circuito salida S10 sólido / despacho',
+      preliminaryCircuitConfidence: s10Points >= 4 ? 'alta' : s10Points === 3 ? 'media' : 'baja',
+      preliminaryCircuitReason: 'Combinación de ingreso/preingreso/balanza suficiente para circuito de despacho.',
+      preliminaryCircuitGroup: 'Circuito salida S10 sólido / despacho',
+      preliminaryCircuitVariant: variant,
+      isDiscardedOperational: false,
+    }
+  }
+
+  // 7) Incompleto real (solo cuando no hay evidencia suficiente)
+  return {
+    preliminaryCircuitCode: 'PRELIM_INCOMPLETO',
+    preliminaryCircuitName: 'Incompleto real',
+    preliminaryCircuitConfidence: 'baja',
+    preliminaryCircuitReason: 'No cumple reglas de clasificación por evidencia operativa.',
+    preliminaryCircuitGroup: 'Incompleto real',
+    preliminaryCircuitVariant: 'SIN_PATRON_SUFICIENTE',
+    isDiscardedOperational: false,
+  }
 
 
 
@@ -917,6 +1075,36 @@ export function classifyOperationalPreliminaryCircuit(
 
 
 
+  /** 11b TRANSILE / movimiento interno: VOLCABLE -> BALANZA_EGRESO. */
+
+  if (hasVolcable && has('BALANZA_EGRESO')) {
+
+    const volcableIndex = full.findIndex((code) => code === 'VOLCABLE')
+
+    const balanzaEgresoIndex = full.findIndex((code) => code === 'BALANZA_EGRESO')
+
+    if (volcableIndex >= 0 && balanzaEgresoIndex > volcableIndex) {
+
+      return {
+
+        preliminaryCircuitCode: 'PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA',
+
+        preliminaryCircuitName: 'Transile / movimiento interno Volcable -> Balanza',
+
+        preliminaryCircuitConfidence: 'media',
+
+        preliminaryCircuitReason:
+
+          'Detecta VOLCABLE seguido de BALANZA_EGRESO en el mismo journey, compatible con transile o movimiento interno.',
+
+        isDiscardedOperational: false,
+
+      }
+
+    }
+
+  }
+
   /** 12 PREINGRESO → BALANZA (sin ingreso; egreso opcional) */
 
   if (hasPreingreso && hasBalanzaAny && !hasIngreso) {
@@ -1053,7 +1241,7 @@ export function enrichCaladaSanLorenzoConfidence(
 
   return journeys.map((j) => {
 
-    if (j.preliminaryCircuitCode !== 'PRELIM_RIC_CALADA_A_SAN_LORENZO') return j
+    if (j.preliminaryCircuitCode !== 'PRELIM_RIC_A_SAN_LORENZO') return j
 
 
 

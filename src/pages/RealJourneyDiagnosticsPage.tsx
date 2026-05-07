@@ -39,6 +39,21 @@ import {
 import { buildPlateQualitySummary } from '../services/realPlateQuality'
 import { buildCameraCoverageSummary } from '../services/realCameraCoverage'
 import { normalizeRealEventPoint } from '../services/realEventNormalization'
+import {
+  fetchAlerts,
+  fetchJourneyEvents,
+  REAL_TRUCKFLOW_BASE_URL,
+  type RealAlertDto,
+  type RealTruckflowQueryParams,
+} from '../services/realTruckflowApi'
+import { buildCleanRealDataset, mapCleanJourneysToHistoricalTrips } from '../services/realTruckflowCleanDataset'
+import {
+  applyAlertsQuickFilter,
+  normalizeRealAlertForView,
+  type AlertsQuickFilter,
+  type NormalizedRealAlertView,
+} from '../services/realAlertsInspector'
+import { investigateNearbyAlerts } from '../services/nearbyAlertResearch'
 import type { IncompleteSequenceGroup } from '../services/realIncompleteAnalysis'
 import { RealJourneyDiagnosticsView, type JourneyQuickFilter, type RealDataMainTab } from './RealJourneyDiagnosticsView'
 import type { RealJourneyEventDto, ReconstructedRealJourney } from '../services/realJourneyEvents.types'
@@ -64,17 +79,105 @@ type RealDataSource = 'api' | 'file'
 
 const CALADA_INTERPLANT_MS = 12 * 3600 * 1000
 
+function toDateInputValue(date: Date): string {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+function getRecentDefaultRange(): { startDate: string; endDate: string } {
+  const end = new Date()
+  const start = new Date(end.getTime() - 24 * 60 * 60 * 1000)
+  return { startDate: toDateInputValue(start), endDate: toDateInputValue(end) }
+}
+
+function toIsoLocalDateTime(value: Date): string {
+  const y = value.getFullYear()
+  const m = String(value.getMonth() + 1).padStart(2, '0')
+  const d = String(value.getDate()).padStart(2, '0')
+  const hh = String(value.getHours()).padStart(2, '0')
+  const mm = String(value.getMinutes()).padStart(2, '0')
+  const ss = String(value.getSeconds()).padStart(2, '0')
+  return `${y}-${m}-${d}T${hh}:${mm}:${ss}`
+}
+
+function downloadCsv(filename: string, header: string[], rows: Array<Array<string | number>>) {
+  const csv =
+    '\uFEFF' +
+    [header, ...rows]
+      .map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','))
+      .join('\n')
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+
+function exportSimpleBarPng(
+  filename: string,
+  title: string,
+  items: Array<{ label: string; value: number; color: string }>
+) {
+  const width = 1200
+  const height = 680
+  const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, 0, width, height)
+  ctx.fillStyle = '#0f172a'
+  ctx.font = 'bold 28px Arial'
+  ctx.fillText(title, 40, 48)
+  const max = Math.max(1, ...items.map((x) => x.value))
+  const chartTop = 90
+  const chartBottom = 560
+  const chartHeight = chartBottom - chartTop
+  const barW = Math.max(60, Math.floor((width - 120) / Math.max(1, items.length) - 30))
+  items.forEach((it, i) => {
+    const x = 60 + i * (barW + 30)
+    const h = Math.round((it.value / max) * chartHeight)
+    const y = chartBottom - h
+    ctx.fillStyle = it.color
+    ctx.fillRect(x, y, barW, h)
+    ctx.fillStyle = '#1f2937'
+    ctx.font = '12px Arial'
+    ctx.fillText(it.label.slice(0, 20), x, chartBottom + 18)
+    ctx.font = 'bold 12px Arial'
+    ctx.fillText(String(it.value), x, y - 6)
+  })
+  canvas.toBlob((blob) => {
+    if (!blob) return
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }, 'image/png')
+}
+
+function buildAlertsChannelQueryNoTimeFilter(): RealTruckflowQueryParams {
+  return {}
+}
+
 /** Misma lista que OPS_KPI_PRELIMS en `realJourneyDepurationMap`; solo para vista ejecutiva sin tocar KPIs. */
 const OPS_KPI_PRELIMS = new Set<string>([
-  'PRELIM_RIC_LOOP_BALANZA',
-  'PRELIM_RIC_DESCARGA_VOLCABLE',
-  'PRELIM_RIC_LIQUIDO_PROBABLE',
-  'PRELIM_RIC_DESCARGA_NO_VOLCABLE',
-  'PRELIM_RIC_CALADA_A_SAN_LORENZO',
-  'PRELIM_RIC_INGRESO_EGRESO_VALIDO',
-  'PRELIM_RIC_PREINGRESO_EGRESO_VALIDO',
-  'PRELIM_RIC_INGRESO_BALANZA_VALIDO',
-  'PRELIM_RIC_PREINGRESO_BALANZA_VALIDO',
+  'PRELIM_RIC_A_SAN_LORENZO',
+  'PRELIM_RIC_LIQUIDO',
+  'PRELIM_RIC_SALIDA_S10_SOLIDO',
+  'PRELIM_RIC_VOLCABLE',
+  'PRELIM_RIC_CELDA_16',
+  'PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA',
 ])
 
 const INC_PRELIM_FILTERS = new Set<JourneyQuickFilter>([
@@ -139,9 +242,10 @@ function journeyMatchesQuickFilter(j: ReconstructedRealJourney, f: JourneyQuickF
 
 /** Vista de diagnóstico: datos reales desde API o archivo local. */
 export function RealJourneyDiagnosticsPage() {
+  const recentRange = getRecentDefaultRange()
   const [dataSource, setDataSource] = useState<RealDataSource>('api')
-  const [apiStartDate, setApiStartDate] = useState(RECOMMENDED_JOURNEY_EXPORT_START_DATE)
-  const [apiEndDate, setApiEndDate] = useState(RECOMMENDED_JOURNEY_EXPORT_END_DATE)
+  const [apiStartDate, setApiStartDate] = useState(recentRange.startDate || RECOMMENDED_JOURNEY_EXPORT_START_DATE)
+  const [apiEndDate, setApiEndDate] = useState(recentRange.endDate || RECOMMENDED_JOURNEY_EXPORT_END_DATE)
 
   const [filePath, setFilePath] = useState(DEFAULT_REAL_JOURNEY_EVENTS_FILE)
   const [eventsUnfiltered, setEventsUnfiltered] = useState<RealJourneyEventDto[]>([])
@@ -158,9 +262,61 @@ export function RealJourneyDiagnosticsPage() {
   const [includeInvalidPlateDiagnostics, setIncludeInvalidPlateDiagnostics] = useState(false)
   const [depurationScopeFilter, setDepurationScopeFilter] =
     useState<OperationalJourneyScopeFilter>('all')
-  const [mainTab, setMainTab] = useState<RealDataMainTab>('resumen')
+  const [mainTab, setMainTab] = useState<RealDataMainTab>('eventos')
   const [drawerCircuitCode, setDrawerCircuitCode] = useState<string | null>(null)
   const [drawerIncompleteGroup, setDrawerIncompleteGroup] = useState<IncompleteSequenceGroup | null>(null)
+  const [apiQuery, setApiQuery] = useState<RealTruckflowQueryParams>({
+    startDate: recentRange.startDate || RECOMMENDED_JOURNEY_EXPORT_START_DATE,
+    endDate: recentRange.endDate || RECOMMENDED_JOURNEY_EXPORT_END_DATE,
+    plate: '',
+    device: '',
+    sector: '',
+    site: '',
+    journeyUuid: '',
+  })
+  const [rawAlerts, setRawAlerts] = useState<RealAlertDto[]>([])
+  const [alertsQuery, setAlertsQuery] = useState<RealTruckflowQueryParams>({
+    startDate: recentRange.startDate || RECOMMENDED_JOURNEY_EXPORT_START_DATE,
+    endDate: recentRange.endDate || RECOMMENDED_JOURNEY_EXPORT_END_DATE,
+    plate: '',
+    device: '',
+    sector: '',
+    site: '',
+    journeyUuid: '',
+  })
+  const [alertsRawStandalone, setAlertsRawStandalone] = useState<RealAlertDto[]>([])
+  const [alertsLoading, setAlertsLoading] = useState(false)
+  const [alertsError, setAlertsError] = useState<string | null>(null)
+  const [alertsLastQueryUrl, setAlertsLastQueryUrl] = useState('')
+  const [alertsLastQueriedAt, setAlertsLastQueriedAt] = useState('')
+  const [alertsQuickFilter, setAlertsQuickFilter] = useState<AlertsQuickFilter>('all')
+  const [selectedAlert, setSelectedAlert] = useState<NormalizedRealAlertView | null>(null)
+  const [selectedAlertJourneyEvents, setSelectedAlertJourneyEvents] = useState<RealJourneyEventDto[]>([])
+  const [selectedAlertJourneyLoading, setSelectedAlertJourneyLoading] = useState(false)
+  const [selectedAlertJourneyError, setSelectedAlertJourneyError] = useState<string | null>(null)
+  const [etlLoadingEvents, setEtlLoadingEvents] = useState(false)
+  const [etlLoadingAlerts, setEtlLoadingAlerts] = useState(false)
+  const [etlError, setEtlError] = useState<string | null>(null)
+  const [lastQueryUrl, setLastQueryUrl] = useState('')
+  const [cleanDataset, setCleanDataset] = useState<ReturnType<typeof buildCleanRealDataset> | null>(null)
+  const [datasetProcessedAt, setDatasetProcessedAt] = useState('')
+  const [lastLoadedAt, setLastLoadedAt] = useState('')
+  const [selectedCircuitJourneyUid, setSelectedCircuitJourneyUid] = useState<string | null>(null)
+  const [useUsefulWindow, setUseUsefulWindow] = useState(true)
+  const [summaryFilter, setSummaryFilter] = useState<
+    'all' | 'included' | 'review_required' | 'excluded' | 'with_alert' | 'without_alert' | 'lpr_malfunction' | 'invalid_route' | 'invalid_start' | 'outside_window'
+  >('all')
+  const [nearbyDrawerJourneyUid, setNearbyDrawerJourneyUid] = useState<string | null>(null)
+  const [nearbyBackwardHours, setNearbyBackwardHours] = useState(3)
+  const [nearbyForwardHours, setNearbyForwardHours] = useState(1)
+  const [nearbyIncludeExpectedSectors, setNearbyIncludeExpectedSectors] = useState(true)
+  const [nearbyIncludeSimilarPlates, setNearbyIncludeSimilarPlates] = useState(true)
+  const [nearbyIncludeLpr, setNearbyIncludeLpr] = useState(true)
+  const [nearbyAlertsRaw, setNearbyAlertsRaw] = useState<RealAlertDto[]>([])
+  const [nearbyAlertsLoading, setNearbyAlertsLoading] = useState(false)
+  const [nearbyAlertsError, setNearbyAlertsError] = useState<string | null>(null)
+  const [manualNearbyAssociations, setManualNearbyAssociations] = useState<Record<string, string[]>>({})
+  const [lprCameraAudit, setLprCameraAudit] = useState<{ deviceCode: string; sectorCode: string } | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -173,6 +329,7 @@ export function RealJourneyDiagnosticsPage() {
       const ricardoneOnly = excludePuertoSanLorenzoSectorEvents(list)
       setEventsUnfiltered(list)
       setEvents(ricardoneOnly)
+      setLastLoadedAt(new Date().toISOString())
     } catch (e) {
       setEventsUnfiltered([])
       setEvents([])
@@ -181,6 +338,203 @@ export function RealJourneyDiagnosticsPage() {
       setLoading(false)
     }
   }, [dataSource, apiStartDate, apiEndDate, filePath])
+
+  const loadEtlEvents = useCallback(async () => {
+    setEtlLoadingEvents(true)
+    setEtlError(null)
+    try {
+      const list = await fetchJourneyEvents(apiQuery)
+      setEventsUnfiltered(list)
+      setEvents(excludePuertoSanLorenzoSectorEvents(list))
+      setCleanDataset(null)
+      setLastQueryUrl(`${REAL_TRUCKFLOW_BASE_URL}/journey-event/list`)
+      setLastLoadedAt(new Date().toISOString())
+    } catch (e) {
+      setEtlError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setEtlLoadingEvents(false)
+    }
+  }, [apiQuery])
+
+  const loadEtlAlerts = useCallback(async () => {
+    setEtlLoadingAlerts(true)
+    setEtlError(null)
+    try {
+      const alertsChannelQuery = buildAlertsChannelQueryNoTimeFilter()
+      const list = await fetchAlerts(alertsChannelQuery)
+      setRawAlerts(list)
+      setCleanDataset(null)
+      setLastQueryUrl(`${REAL_TRUCKFLOW_BASE_URL}/alert/list (canal alertas independiente)`)
+      setLastLoadedAt(new Date().toISOString())
+    } catch (e) {
+      setEtlError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setEtlLoadingAlerts(false)
+    }
+  }, [])
+
+  const loadEtlAll = useCallback(async () => {
+    setEtlLoadingEvents(true)
+    setEtlLoadingAlerts(true)
+    setEtlError(null)
+    try {
+      const alertsChannelQuery = buildAlertsChannelQueryNoTimeFilter()
+      const [eventList, alertList] = await Promise.all([
+        fetchJourneyEvents(apiQuery),
+        fetchAlerts(alertsChannelQuery),
+      ])
+      setEventsUnfiltered(eventList)
+      setEvents(excludePuertoSanLorenzoSectorEvents(eventList))
+      setRawAlerts(alertList)
+      const processed = buildCleanRealDataset(eventList, alertList)
+      setCleanDataset(processed)
+      setDatasetProcessedAt(new Date().toISOString())
+      setLastQueryUrl(`${REAL_TRUCKFLOW_BASE_URL}/journey-event/list (X) + /alert/list (Y independiente)`)
+      setLastLoadedAt(new Date().toISOString())
+    } catch (e) {
+      setEtlError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setEtlLoadingEvents(false)
+      setEtlLoadingAlerts(false)
+    }
+  }, [apiQuery])
+
+  const loadSummaryAll = useCallback(async () => {
+    await loadEtlAll()
+  }, [loadEtlAll])
+
+  const loadAlertsStandalone = useCallback(async () => {
+    setAlertsLoading(true)
+    setAlertsError(null)
+    try {
+      const list = await fetchAlerts(alertsQuery)
+      setAlertsRawStandalone(list)
+      setAlertsLastQueryUrl(`${REAL_TRUCKFLOW_BASE_URL}/alert/list`)
+      setAlertsLastQueriedAt(new Date().toISOString())
+      setLastLoadedAt(new Date().toISOString())
+    } catch (e) {
+      setAlertsError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setAlertsLoading(false)
+    }
+  }, [alertsQuery])
+
+  const clearAlertsFilters = useCallback(() => {
+    setAlertsQuery({
+      startDate: recentRange.startDate || RECOMMENDED_JOURNEY_EXPORT_START_DATE,
+      endDate: recentRange.endDate || RECOMMENDED_JOURNEY_EXPORT_END_DATE,
+      plate: '',
+      device: '',
+      sector: '',
+      site: '',
+      journeyUuid: '',
+    })
+    setAlertsQuickFilter('all')
+  }, [recentRange.endDate, recentRange.startDate])
+
+  const processCleanDataset = useCallback(() => {
+    const result = buildCleanRealDataset(eventsUnfiltered, rawAlerts)
+    setCleanDataset(result)
+    setDatasetProcessedAt(new Date().toISOString())
+  }, [eventsUnfiltered, rawAlerts])
+
+  const exportCleanDatasetJson = useCallback(() => {
+    if (!cleanDataset) return
+    const mapped = mapCleanJourneysToHistoricalTrips(cleanDataset.reconstructedJourneysClean)
+    const fileName = `journey-events-clean_${apiQuery.startDate || 'start'}_${apiQuery.endDate || 'end'}.json`
+    const payload = {
+      metadata: {
+        generatedAt: new Date().toISOString(),
+        startDate: apiQuery.startDate ?? '',
+        endDate: apiQuery.endDate ?? '',
+        source: 'truckflow-api',
+        baseUrl: REAL_TRUCKFLOW_BASE_URL,
+        rawEventCount: cleanDataset.summary.rawEventCount,
+        rawAlertCount: cleanDataset.summary.rawAlertCount,
+        cleanEventCount: cleanDataset.summary.cleanEventCount,
+        cleanJourneyCount: cleanDataset.summary.cleanJourneyCount,
+        discardedEventCount: cleanDataset.summary.discardedEventCount,
+        discardedJourneyCount: cleanDataset.summary.discardedJourneyCount,
+        cleaningRules: {
+          excludeInvalidPlates: true,
+          excludeAlertedJourneys: true,
+          excludeAlertedEvents: false,
+          excludeOnlyIngreso: true,
+          excludeOnlyEgreso: true,
+          excludeSoloRutaProbable: true,
+          keepPreliminaryValid: true,
+        },
+      },
+      cleanEvents: cleanDataset.cleanEvents,
+      cleanJourneys: mapped,
+      discarded: {
+        invalidPlate: cleanDataset.discardedEvents.filter((d) => d.reason === 'INVALID_PLATE'),
+        alerted: cleanDataset.discardedJourneys.filter((d) => d.reason === 'ALERTED_JOURNEY'),
+        onlyIngreso: cleanDataset.discardedJourneys.filter((d) => d.reason === 'ONLY_INGRESO'),
+        onlyEgreso: cleanDataset.discardedJourneys.filter((d) => d.reason === 'ONLY_EGRESO'),
+        rutaProbable: cleanDataset.discardedJourneys.filter((d) => d.reason === 'RUTA_PROBABLE'),
+        incompleteExcluded: cleanDataset.discardedJourneys.filter((d) => d.reason === 'INCOMPLETE_EXCLUDED'),
+      },
+    }
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = fileName
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }, [cleanDataset, apiQuery.endDate, apiQuery.startDate])
+
+  const exportCleanSummaryCsv = useCallback(() => {
+    if (!cleanDataset) return
+    const header = [
+      'journeyUid',
+      'patente',
+      'inicio',
+      'fin',
+      'duracion',
+      'circuito_preliminar',
+      'incluido',
+      'motivo_exclusion',
+      'secuencia_logica',
+      'secuencia_raw',
+      'alertas_asociadas',
+    ]
+    const discardedByUid = new Map(cleanDataset.discardedJourneys.map((d) => [d.journey.journeyUid, d.reason]))
+    const rows = cleanDataset.reconstructedJourneysRaw.map((journey) => {
+      const included = cleanDataset.reconstructedJourneysClean.some((j) => j.journeyUid === journey.journeyUid)
+      const relatedAlerts = cleanDataset.eventsWithAlertInfo.filter((e) => e.journeyUid === journey.journeyUid && e.hasAlert).length
+      return [
+        journey.journeyUid,
+        journey.plate,
+        journey.startedAt,
+        journey.endedAt,
+        String(journey.durationMinutes),
+        journey.preliminaryCircuitCode,
+        included ? 'si' : 'no',
+        discardedByUid.get(journey.journeyUid) ?? '',
+        journey.logicalCodeSequence.join(' > '),
+        journey.rawSectorSequence.join(' > '),
+        String(relatedAlerts),
+      ]
+    })
+    const csv =
+      '\uFEFF' +
+      [header, ...rows]
+        .map((row) => row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','))
+        .join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `journey-events-clean-summary_${apiQuery.startDate || 'start'}_${apiQuery.endDate || 'end'}.csv`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }, [cleanDataset, apiQuery.endDate, apiQuery.startDate])
 
   useEffect(() => {
     void load()
@@ -305,17 +659,18 @@ export function RealJourneyDiagnosticsPage() {
     const n = (code: string) => list.filter((j) => j.preliminaryCircuitCode === code).length
     return {
       totalOperational: list.length,
-      volcable: n('PRELIM_RIC_DESCARGA_VOLCABLE'),
-      sinVolcable: n('PRELIM_RIC_DESCARGA_NO_VOLCABLE'),
-      caladaSl: n('PRELIM_RIC_CALADA_A_SAN_LORENZO'),
-      liquido: n('PRELIM_RIC_LIQUIDO_PROBABLE'),
-      loopBalanza: n('PRELIM_RIC_LOOP_BALANZA'),
+      volcable: n('PRELIM_RIC_VOLCABLE'),
+      sinVolcable: n('PRELIM_RIC_SALIDA_S10_SOLIDO'),
+      caladaSl: n('PRELIM_RIC_A_SAN_LORENZO'),
+      liquido: n('PRELIM_RIC_LIQUIDO'),
+      loopBalanza: n('PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA'),
+      celda16: n('PRELIM_RIC_CELDA_16'),
       soloVolcable: n('PRELIM_SOLO_VOLCABLE'),
       incompletos: n('PRELIM_INCOMPLETO'),
-      minIngEgr: n('PRELIM_RIC_INGRESO_EGRESO_VALIDO'),
-      minPreEg: n('PRELIM_RIC_PREINGRESO_EGRESO_VALIDO'),
-      partialIngBal: n('PRELIM_RIC_INGRESO_BALANZA_VALIDO'),
-      partialPreBal: n('PRELIM_RIC_PREINGRESO_BALANZA_VALIDO'),
+      minIngEgr: 0,
+      minPreEg: 0,
+      partialIngBal: 0,
+      partialPreBal: 0,
     }
   }, [journeysScopedOperational])
 
@@ -469,14 +824,12 @@ export function RealJourneyDiagnosticsPage() {
 
   const circuitBarItems = useMemo(() => {
     const defs: { id: string; label: string; code: string }[] = [
-      { id: 'min-ie', label: 'Ingreso → Egreso válido mínimo', code: 'PRELIM_RIC_INGRESO_EGRESO_VALIDO' },
-      { id: 'min-pe', label: 'Preingreso → Egreso válido mínimo', code: 'PRELIM_RIC_PREINGRESO_EGRESO_VALIDO' },
-      { id: 'pinb', label: 'Ingreso → Balanza válido parcial', code: 'PRELIM_RIC_INGRESO_BALANZA_VALIDO' },
-      { id: 'ppb', label: 'Preingreso → Balanza válido parcial', code: 'PRELIM_RIC_PREINGRESO_BALANZA_VALIDO' },
-      { id: 'nv', label: 'Descarga sin Volcable', code: 'PRELIM_RIC_DESCARGA_NO_VOLCABLE' },
-      { id: 'v', label: 'Descarga Volcable', code: 'PRELIM_RIC_DESCARGA_VOLCABLE' },
-      { id: 'sl', label: 'Calada probable San Lorenzo', code: 'PRELIM_RIC_CALADA_A_SAN_LORENZO' },
-      { id: 'loop', label: 'Loop balanza', code: 'PRELIM_RIC_LOOP_BALANZA' },
+      { id: 'sl', label: 'Circuito a San Lorenzo', code: 'PRELIM_RIC_A_SAN_LORENZO' },
+      { id: 'liq', label: 'Circuito líquido', code: 'PRELIM_RIC_LIQUIDO' },
+      { id: 's10', label: 'Salida S10 sólido / despacho', code: 'PRELIM_RIC_SALIDA_S10_SOLIDO' },
+      { id: 'volc', label: 'Circuito a Volcable 1/2', code: 'PRELIM_RIC_VOLCABLE' },
+      { id: 'celda', label: 'Circuito a Celda 16', code: 'PRELIM_RIC_CELDA_16' },
+      { id: 'trans', label: 'Transile Volcable → Balanza', code: 'PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA' },
       { id: 'inc', label: 'Incompletos reales', code: 'PRELIM_INCOMPLETO' },
     ]
     return defs.map((d) => ({
@@ -489,6 +842,7 @@ export function RealJourneyDiagnosticsPage() {
 
   const circuitSummaryRows = useMemo(() => {
     const list = journeysScopedOperational
+    const total = Math.max(1, list.length)
     const by = new Map<string, ReconstructedRealJourney[]>()
     for (const j of list) {
       const c = j.preliminaryCircuitCode
@@ -502,18 +856,25 @@ export function RealJourneyDiagnosticsPage() {
       const p90 = durations.length ? durations[p90Idx] : 0
       const plates = new Set(grp.map((g) => (g.plate ?? '').trim()).filter(Boolean))
       const confCounts = new Map<string, number>()
+      const variantCounts = new Map<string, number>()
       for (const g of grp) {
         const k = g.preliminaryCircuitConfidence ?? '—'
         confCounts.set(k, (confCounts.get(k) ?? 0) + 1)
+        const v = g.preliminaryCircuitVariant ?? '—'
+        variantCounts.set(v, (variantCounts.get(v) ?? 0) + 1)
       }
       const confidence = [...confCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? '—'
+      const variant = [...variantCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? '—'
       return {
         code,
+        variant,
         count: grp.length,
         uniquePlates: plates.size,
         meanDur: Math.round(mean * 10) / 10,
         p90,
         confidence,
+        pctOfUseful: grp.length / total,
+        alertsAssociated: 0,
       }
     })
     rows.sort((a, b) => b.count - a.count)
@@ -626,6 +987,906 @@ export function RealJourneyDiagnosticsPage() {
 
   const topInvalidPlateReading = plateQualitySummary.topInvalidPlateReadings[0]?.truckPlateOriginal ?? '—'
 
+  const normalizedAlertsStandalone = useMemo(
+    () => alertsRawStandalone.map((a) => normalizeRealAlertForView(a)),
+    [alertsRawStandalone]
+  )
+
+  const filteredAlertsStandalone = useMemo(
+    () => applyAlertsQuickFilter(normalizedAlertsStandalone, alertsQuickFilter),
+    [normalizedAlertsStandalone, alertsQuickFilter]
+  )
+
+  const alertsSummary = useMemo(() => {
+    const list = normalizedAlertsStandalone
+    const by = (key: (a: NormalizedRealAlertView) => string) => {
+      const map = new Map<string, NormalizedRealAlertView[]>()
+      for (const alert of list) {
+        const k = key(alert) || 'sin dato'
+        map.set(k, [...(map.get(k) ?? []), alert])
+      }
+      return [...map.entries()].map(([group, alerts]) => {
+        const times = alerts.map((x) => new Date(x.occurredAt).getTime()).filter((x) => Number.isFinite(x))
+        return {
+          group,
+          count: alerts.length,
+          pct: list.length > 0 ? alerts.length / list.length : 0,
+          firstAt: times.length ? new Date(Math.min(...times)).toISOString() : '',
+          lastAt: times.length ? new Date(Math.max(...times)).toISOString() : '',
+          alerts,
+        }
+      })
+    }
+    const byType = by((a) => a.alertType || a.alertCode || a.reason || 'sin tipo')
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 25)
+    const bySector = by((a) => a.sectorCode || 'sin sector')
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 25)
+    const byDevice = by((a) => a.deviceCode || 'sin device')
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 25)
+    const byPlate = by((a) => a.normalizedPlate || a.rawPlate || 'sin patente')
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 25)
+    const byJourney = by((a) => a.journeyUid || 'sin journey')
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 25)
+    const mostFrequentLevel =
+      by((a) => String(a.alertLevel))
+        .sort((a, b) => b.count - a.count)[0]?.group ?? 'sin dato'
+    const mostFrequentType = byType[0]?.group ?? 'sin dato'
+    return {
+      total: list.length,
+      validPlate: list.filter((a) => a.isValidPlate).length,
+      invalidPlate: list.filter((a) => a.normalizedPlate && !a.isValidPlate).length,
+      withJourney: list.filter((a) => Boolean(a.journeyUid)).length,
+      withoutJourney: list.filter((a) => !a.journeyUid).length,
+      invalidRoute: list.filter((a) => a.inferenceCategory === 'invalid_route').length,
+      sectorDevice: list.filter((a) => a.inferenceCategory === 'sector_device').length,
+      mostFrequentLevel,
+      mostFrequentType,
+      byType,
+      bySector,
+      byDevice,
+      byPlate,
+      byJourney,
+    }
+  }, [normalizedAlertsStandalone])
+
+  const usefulWindow = useMemo(() => {
+    const sorted = [...eventsUnfiltered].sort((a, b) => new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime())
+    const ingresos = sorted.filter((e) => {
+      const logical = normalizeRealEventPoint(e).logicalCode
+      return logical === 'INGRESO' || (e.sectorCode ?? '').trim().toUpperCase() === 'RICARDONE_INGRESO_CAMIONES'
+    })
+    const firstIngresoAt = ingresos[0]?.occurredAt ?? ''
+    const lastIngresoAt = ingresos.length ? ingresos[ingresos.length - 1].occurredAt : ''
+    const startMs = firstIngresoAt ? new Date(firstIngresoAt).getTime() + 6 * 3600 * 1000 : Number.NaN
+    const endMs = lastIngresoAt ? new Date(lastIngresoAt).getTime() - 6 * 3600 * 1000 : Number.NaN
+    const windowValid = Number.isFinite(startMs) && Number.isFinite(endMs) && startMs < endMs
+    const usefulWindowStart = windowValid ? new Date(startMs).toISOString() : ''
+    const usefulWindowEnd = windowValid ? new Date(endMs).toISOString() : ''
+    let insideCount = 0
+    let outsideCount = 0
+    for (const e of eventsUnfiltered) {
+      const t = new Date(e.occurredAt).getTime()
+      const inside = !useUsefulWindow || !windowValid || (Number.isFinite(t) && t >= startMs && t <= endMs)
+      if (inside) insideCount++
+      else outsideCount++
+    }
+    return { firstIngresoAt, lastIngresoAt, usefulWindowStart, usefulWindowEnd, windowValid, insideCount, outsideCount }
+  }, [eventsUnfiltered, useUsefulWindow])
+
+  const summaryDataset = useMemo(() => {
+    const data = buildCleanRealDataset(
+      eventsUnfiltered.filter((e) => {
+        if (!useUsefulWindow || !usefulWindow.windowValid) return true
+        const t = new Date(e.occurredAt).getTime()
+        const s = new Date(usefulWindow.usefulWindowStart).getTime()
+        const f = new Date(usefulWindow.usefulWindowEnd).getTime()
+        return Number.isFinite(t) && t >= s && t <= f
+      }),
+      rawAlerts,
+      { excludeAlertedJourneys: false, excludeAlertedEvents: false }
+    )
+    return data
+  }, [eventsUnfiltered, rawAlerts, useUsefulWindow, usefulWindow.usefulWindowEnd, usefulWindow.usefulWindowStart, usefulWindow.windowValid])
+
+  const summaryJourneyRowsAll = useMemo(() => {
+    const byUidAlerts = new Map<string, Set<string>>()
+    for (const event of summaryDataset.eventsWithAlertInfo) {
+      if (!byUidAlerts.has(event.journeyUid)) byUidAlerts.set(event.journeyUid, new Set())
+      for (const a of event.relatedAlerts) {
+        const code = String((a.raw as Record<string, unknown>).alertCode ?? a.alertType ?? '').trim()
+        if (code) byUidAlerts.get(event.journeyUid)!.add(code)
+      }
+    }
+    const rows = summaryDataset.reconstructedJourneysRaw.map((j) => {
+      const alertCodes = [...(byUidAlerts.get(j.journeyUid) ?? new Set<string>())]
+      const hasLprMalfunction = alertCodes.includes('LPR_MALFUNCTION')
+      const hasInvalidRoute = alertCodes.includes('INVALID_ROUTE')
+      const hasInvalidStart = alertCodes.includes('INVALID_START_JOURNEY')
+      const isRouteDiscard =
+        j.preliminaryCircuitCode === 'DESCARTADO_SOLO_INGRESO_RUTA_PROBABLE' ||
+        j.preliminaryCircuitCode === 'DESCARTADO_SOLO_EGRESO_RUTA_PROBABLE'
+      let etlStatus: 'included' | 'review_required' | 'excluded' = 'included'
+      let reason = 'Recorrido preliminar válido'
+      if (hasLprMalfunction || isRouteDiscard) {
+        etlStatus = 'excluded'
+        reason = hasLprMalfunction ? 'LPR_MALFUNCTION' : 'Ruta probable solo ingreso/egreso'
+      } else if (hasInvalidRoute || hasInvalidStart || j.preliminaryCircuitCode === 'PRELIM_INCOMPLETO') {
+        etlStatus = 'review_required'
+        reason = hasInvalidRoute ? 'INVALID_ROUTE' : hasInvalidStart ? 'INVALID_START_JOURNEY' : 'Secuencia operativa dudosa'
+      }
+      const inUsefulWindow =
+        !useUsefulWindow ||
+        !usefulWindow.windowValid ||
+        (() => {
+          const s = new Date(usefulWindow.usefulWindowStart).getTime()
+          const e = new Date(usefulWindow.usefulWindowEnd).getTime()
+          const t = new Date(j.startedAt).getTime()
+          return Number.isFinite(t) && t >= s && t <= e
+        })()
+      return {
+        etlStatus,
+        reason,
+        journeyUid: j.journeyUid,
+        plate: j.plate,
+        startedAt: j.startedAt,
+        endedAt: j.endedAt,
+        durationMinutes: j.durationMinutes,
+        preliminaryCircuitCode: j.preliminaryCircuitCode,
+        alertCodes,
+        logicalSequence: j.logicalCodeSequence,
+        rawSequence: j.rawSectorSequence,
+        inUsefulWindow,
+        hasNearbyRelevantAlerts: false,
+        nearbyAlertCodes: [] as string[],
+        possibleMissingPointsExplained: [] as string[],
+        reconstructionSuggestion: '',
+      }
+    })
+    return rows
+  }, [summaryDataset, useUsefulWindow, usefulWindow.windowValid, usefulWindow.usefulWindowEnd, usefulWindow.usefulWindowStart])
+
+  const rawAlertsForDiagnostics = useMemo(() => (rawAlerts.length ? rawAlerts : alertsRawStandalone), [rawAlerts, alertsRawStandalone])
+  const normalizedAlertsForDiagnostics = useMemo(() => rawAlertsForDiagnostics.map((a) => normalizeRealAlertForView(a)), [rawAlertsForDiagnostics])
+  const nearbyByJourneyUid = useMemo(() => {
+    const out = new Map<
+      string,
+      ReturnType<typeof investigateNearbyAlerts>
+    >()
+    for (const j of journeys) {
+      out.set(
+        j.journeyUid,
+        investigateNearbyAlerts(j, normalizedAlertsForDiagnostics, {
+          backwardHours: nearbyBackwardHours,
+          forwardHours: nearbyForwardHours,
+          includeExpectedMissingSectors: nearbyIncludeExpectedSectors,
+          includeSimilarPlates: nearbyIncludeSimilarPlates,
+          includeLprMalfunction: nearbyIncludeLpr,
+        })
+      )
+    }
+    return out
+  }, [
+    journeys,
+    normalizedAlertsForDiagnostics,
+    nearbyBackwardHours,
+    nearbyForwardHours,
+    nearbyIncludeExpectedSectors,
+    nearbyIncludeSimilarPlates,
+    nearbyIncludeLpr,
+  ])
+  const nearbyDrawerJourney = useMemo(
+    () => journeys.find((j) => j.journeyUid === nearbyDrawerJourneyUid) ?? null,
+    [journeys, nearbyDrawerJourneyUid]
+  )
+  useEffect(() => {
+    if (!nearbyDrawerJourney) {
+      setNearbyAlertsRaw([])
+      setNearbyAlertsError(null)
+      return
+    }
+    const start = new Date(new Date(nearbyDrawerJourney.startedAt).getTime() - nearbyBackwardHours * 3600000)
+    const end = new Date(new Date(nearbyDrawerJourney.endedAt).getTime() + nearbyForwardHours * 3600000)
+    const startDate = toIsoLocalDateTime(start)
+    const endDate = toIsoLocalDateTime(end)
+    let cancelled = false
+    setNearbyAlertsLoading(true)
+    setNearbyAlertsError(null)
+    fetchAlerts({ startDate, endDate })
+      .then((rows) => {
+        if (cancelled) return
+        setNearbyAlertsRaw(rows)
+      })
+      .catch((e) => {
+        if (cancelled) return
+        setNearbyAlertsError(e instanceof Error ? e.message : String(e))
+        setNearbyAlertsRaw([])
+      })
+      .finally(() => {
+        if (!cancelled) setNearbyAlertsLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [nearbyBackwardHours, nearbyDrawerJourney, nearbyForwardHours])
+  const normalizedNearbyAlerts = useMemo(() => nearbyAlertsRaw.map((a) => normalizeRealAlertForView(a)), [nearbyAlertsRaw])
+  const nearbyDrawerResult = useMemo(
+    () =>
+      nearbyDrawerJourney
+        ? investigateNearbyAlerts(nearbyDrawerJourney, normalizedNearbyAlerts, {
+            backwardHours: nearbyBackwardHours,
+            forwardHours: nearbyForwardHours,
+            includeExpectedMissingSectors: nearbyIncludeExpectedSectors,
+            includeSimilarPlates: nearbyIncludeSimilarPlates,
+            includeLprMalfunction: nearbyIncludeLpr,
+          })
+        : null,
+    [
+      nearbyBackwardHours,
+      nearbyDrawerJourney,
+      nearbyForwardHours,
+      nearbyIncludeExpectedSectors,
+      nearbyIncludeLpr,
+      nearbyIncludeSimilarPlates,
+      normalizedNearbyAlerts,
+    ]
+  )
+  const associateNearbyAlert = useCallback((journeyUid: string, alertCode: string) => {
+    if (!journeyUid || !alertCode) return
+    setManualNearbyAssociations((prev) => {
+      const existing = new Set(prev[journeyUid] ?? [])
+      existing.add(alertCode)
+      return { ...prev, [journeyUid]: [...existing] }
+    })
+  }, [])
+  const applyAlertsHourPreset = useCallback((hours: 1 | 2 | 3, aroundJourney = false) => {
+    const now = new Date()
+    if (!aroundJourney || !nearbyDrawerJourney) {
+      setAlertsQuery((prev) => ({
+        ...prev,
+        startDate: toIsoLocalDateTime(new Date(now.getTime() - hours * 3600000)),
+        endDate: toIsoLocalDateTime(now),
+      }))
+      return
+    }
+    const center = new Date(nearbyDrawerJourney.startedAt)
+    if (!Number.isFinite(center.getTime())) return
+    setAlertsQuery((prev) => ({
+      ...prev,
+      startDate: toIsoLocalDateTime(new Date(center.getTime() - hours * 3600000)),
+      endDate: toIsoLocalDateTime(new Date(center.getTime() + hours * 3600000)),
+    }))
+  }, [nearbyDrawerJourney])
+  const summaryJourneyRowsWithNearby = useMemo(
+    () =>
+      summaryJourneyRowsAll.map((row) => {
+        const n = nearbyByJourneyUid.get(row.journeyUid)
+        const manual = manualNearbyAssociations[row.journeyUid] ?? []
+        if (manual.length > 0) {
+          return {
+            ...row,
+            etlStatus: 'review_required' as const,
+            reason: 'RECLASIFICADO_MANUAL_POR_ALERTA_CERCANA',
+            hasNearbyRelevantAlerts: true,
+            nearbyAlertCodes: [...new Set([...(n?.nearbyAlertCodes ?? []), ...manual])],
+            possibleMissingPointsExplained: [...new Set([...(n?.possibleMissingPointsExplained ?? []), 'ASOCIACION_MANUAL'])],
+            reconstructionSuggestion: 'Reclasificado automáticamente por asociación manual de alerta cercana.',
+          }
+        }
+        return n
+          ? {
+              ...row,
+              hasNearbyRelevantAlerts: n.hasNearbyRelevantAlerts,
+              nearbyAlertCodes: n.nearbyAlertCodes,
+              possibleMissingPointsExplained: n.possibleMissingPointsExplained,
+              reconstructionSuggestion: n.reconstructionSuggestion,
+            }
+          : row
+      }),
+    [manualNearbyAssociations, nearbyByJourneyUid, summaryJourneyRowsAll]
+  )
+  const summaryJourneys = useMemo(() => {
+    return summaryJourneyRowsWithNearby.filter((row) => {
+      if (summaryFilter === 'all') return true
+      if (summaryFilter === 'included') return row.etlStatus === 'included'
+      if (summaryFilter === 'review_required') return row.etlStatus === 'review_required'
+      if (summaryFilter === 'excluded') return row.etlStatus === 'excluded'
+      if (summaryFilter === 'with_alert') return row.alertCodes.length > 0
+      if (summaryFilter === 'without_alert') return row.alertCodes.length === 0
+      if (summaryFilter === 'lpr_malfunction') return row.alertCodes.includes('LPR_MALFUNCTION')
+      if (summaryFilter === 'invalid_route') return row.alertCodes.includes('INVALID_ROUTE')
+      if (summaryFilter === 'invalid_start') return row.alertCodes.includes('INVALID_START_JOURNEY')
+      if (summaryFilter === 'outside_window') return !row.inUsefulWindow
+      return true
+    })
+  }, [summaryFilter, summaryJourneyRowsWithNearby])
+  const summaryByJourneyUid = useMemo(() => new Map(summaryJourneyRowsWithNearby.map((r) => [r.journeyUid, r])), [summaryJourneyRowsWithNearby])
+
+  const circuitSourceRows = useMemo(() => {
+    if (!drawerCircuitCode) return []
+    const list = journeys.filter((j) => j.preliminaryCircuitCode === drawerCircuitCode)
+    return list.map((j) => {
+      const sum = summaryByJourneyUid.get(j.journeyUid)
+      const alerts = normalizedAlertsForDiagnostics.filter((a) => {
+        if (a.journeyUid && a.journeyUid === j.journeyUid) return true
+        if (a.normalizedPlate && a.normalizedPlate === j.normalizedPlate) return true
+        return false
+      })
+      const alertCodes = [...new Set(alerts.map((a) => a.alertCode).filter(Boolean))]
+      const evidencePoints = [...new Set(j.logicalCodeSequence.filter((c) => c !== 'UNKNOWN'))]
+      const expectedByGroup: Record<string, string[]> = {
+        'Circuito a San Lorenzo': ['INGRESO', 'PREINGRESO', 'EGRESO', 'SL_INGRESO'],
+        'Circuito líquido': ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'BALANZA_EGRESO', 'EGRESO'],
+        'Circuito salida S10 sólido / despacho': ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'BALANZA_EGRESO'],
+        'Circuito a Volcable 1/2': ['VOLCABLE', 'BALANZA_EGRESO'],
+        'Circuito a Celda 16': ['CELDA_16', 'BALANZA_EGRESO'],
+      }
+      const expected = expectedByGroup[j.preliminaryCircuitGroup ?? ''] ?? []
+      const missingExpectedPoints = expected.filter((x) => !evidencePoints.includes(x))
+      const classificationRuleId = `${j.preliminaryCircuitGroup ?? j.preliminaryCircuitCode}_${j.preliminaryCircuitVariant ?? 'BASE'}`
+      const nearby = nearbyByJourneyUid.get(j.journeyUid)
+      return {
+        etlStatus: (sum?.etlStatus ?? 'included') as 'included' | 'review_required' | 'excluded',
+        journeyUid: j.journeyUid,
+        plate: j.plate,
+        startedAt: j.startedAt,
+        endedAt: j.endedAt,
+        durationMinutes: j.durationMinutes,
+        eventCount: j.eventCount,
+        preliminaryCircuitCode: j.preliminaryCircuitCode,
+        preliminaryCircuitVariant: j.preliminaryCircuitVariant ?? '—',
+        preliminaryCircuitConfidence: j.preliminaryCircuitConfidence,
+        classificationRuleId,
+        classificationReason: j.preliminaryCircuitReason,
+        missingExpectedPoints,
+        evidencePoints,
+        alertCodes,
+        reviewReason: sum?.etlStatus === 'review_required' ? sum.reason : '',
+        exclusionReason: sum?.etlStatus === 'excluded' ? sum.reason : '',
+        logicalSequence: j.logicalCodeSequence,
+        rawSequence: j.rawSectorSequence,
+        deviceSequence: j.deviceCodeSequence,
+        alerts,
+        inUsefulWindow: sum?.inUsefulWindow ?? true,
+        events: j.events,
+        hasNearbyRelevantAlerts: nearby?.hasNearbyRelevantAlerts ?? false,
+        nearbyAlertCodes: nearby?.nearbyAlertCodes ?? [],
+        possibleMissingPointsExplained: nearby?.possibleMissingPointsExplained ?? [],
+        reconstructionSuggestion: nearby?.reconstructionSuggestion ?? '',
+      }
+    })
+  }, [drawerCircuitCode, journeys, nearbyByJourneyUid, normalizedAlertsForDiagnostics, summaryByJourneyUid])
+
+  const circuitSourceSummary = useMemo(() => {
+    const rows = circuitSourceRows
+    const eventsCount = rows.reduce((s, r) => s + r.eventCount, 0)
+    const plates = new Set(rows.map((r) => r.plate).filter(Boolean)).size
+    const alertsCount = rows.reduce((s, r) => s + r.alertCodes.length, 0)
+    const inside = rows.filter((r) => r.inUsefulWindow).length
+    const outside = rows.length - inside
+    const included = rows.filter((r) => r.etlStatus === 'included').length
+    const review = rows.filter((r) => r.etlStatus === 'review_required').length
+    const excluded = rows.filter((r) => r.etlStatus === 'excluded').length
+    return { eventsCount, plates, alertsCount, inside, outside, included, review, excluded }
+  }, [circuitSourceRows])
+
+  const loadJourneyEventsForAlert = useCallback(async (journeyUid: string) => {
+    if (!journeyUid.trim()) return
+    setSelectedAlertJourneyLoading(true)
+    setSelectedAlertJourneyError(null)
+    try {
+      const eventsForJourney = await fetchJourneyEvents({
+        journeyUuid: journeyUid,
+        startDate: alertsQuery.startDate,
+        endDate: alertsQuery.endDate,
+      })
+      setSelectedAlertJourneyEvents(eventsForJourney)
+    } catch (e) {
+      setSelectedAlertJourneyError(e instanceof Error ? e.message : String(e))
+      setSelectedAlertJourneyEvents([])
+    } finally {
+      setSelectedAlertJourneyLoading(false)
+    }
+  }, [alertsQuery.endDate, alertsQuery.startDate])
+
+  const exportAlertsCsv = useCallback(() => {
+    const rows = normalizedAlertsStandalone
+    if (!rows.length) return
+    const header = [
+      'alertId',
+      'occurredAt',
+      'normalizedPlate',
+      'isValidPlate',
+      'journeyUid',
+      'sectorCode',
+      'deviceCode',
+      'site',
+      'alertCode',
+      'alertType',
+      'reason',
+      'description',
+      'alertLevel',
+    ]
+    const lines = rows.map((r) => [
+      r.alertId,
+      r.occurredAt,
+      r.normalizedPlate,
+      String(r.isValidPlate),
+      r.journeyUid,
+      r.sectorCode,
+      r.deviceCode,
+      r.site,
+      r.alertCode,
+      r.alertType,
+      r.reason,
+      r.description,
+      String(r.alertLevel),
+    ])
+    const csv =
+      '\uFEFF' +
+      [header, ...lines]
+        .map((row) => row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','))
+        .join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `alertas-truckflow_${alertsQuery.startDate || 'start'}_${alertsQuery.endDate || 'end'}.csv`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }, [alertsQuery.endDate, alertsQuery.startDate, normalizedAlertsStandalone])
+
+  const exportAlertsJson = useCallback(() => {
+    const payload = {
+      metadata: {
+        generatedAt: new Date().toISOString(),
+        source: 'truckflow-api',
+        baseUrl: REAL_TRUCKFLOW_BASE_URL,
+        query: alertsQuery,
+        totalAlerts: normalizedAlertsStandalone.length,
+      },
+      rawAlerts: alertsRawStandalone,
+      normalizedAlerts: normalizedAlertsStandalone,
+      summaries: {
+        total: alertsSummary.total,
+        validPlate: alertsSummary.validPlate,
+        invalidPlate: alertsSummary.invalidPlate,
+        withJourney: alertsSummary.withJourney,
+        withoutJourney: alertsSummary.withoutJourney,
+        invalidRoute: alertsSummary.invalidRoute,
+        sectorDevice: alertsSummary.sectorDevice,
+        mostFrequentLevel: alertsSummary.mostFrequentLevel,
+        mostFrequentType: alertsSummary.mostFrequentType,
+      },
+    }
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `alertas-truckflow_${alertsQuery.startDate || 'start'}_${alertsQuery.endDate || 'end'}.json`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }, [alertsQuery, alertsRawStandalone, normalizedAlertsStandalone, alertsSummary])
+
+  const exportRawEventsJson = useCallback(() => {
+    const payload = {
+      metadata: { generatedAt: new Date().toISOString(), source: 'truckflow-api', query: apiQuery, count: eventsUnfiltered.length },
+      events: eventsUnfiltered,
+    }
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `events-raw_${apiQuery.startDate || 'start'}_${apiQuery.endDate || 'end'}.json`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }, [apiQuery, eventsUnfiltered])
+
+  const exportRawEventsCsv = useCallback(() => {
+    const header = ['id', 'occurredAt', 'createdAt', 'journeyUid', 'sequenceNumber', 'truckPlate', 'sectorCode', 'deviceCode', 'eventType', 'alertLevel']
+    const rows = eventsUnfiltered.map((e) => [e.id, e.occurredAt, e.createdAt ?? e.recordedAt, e.journeyUid, e.sequenceNumber, e.truckPlate, e.sectorCode, e.deviceCode, e.eventType, e.alertLevel])
+    const csv = '\uFEFF' + [header, ...rows].map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `events-raw_${apiQuery.startDate || 'start'}_${apiQuery.endDate || 'end'}.csv`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }, [apiQuery.endDate, apiQuery.startDate, eventsUnfiltered])
+
+  const exportKpiJson = useCallback(() => {
+    const included = summaryJourneys.filter((x) => x.etlStatus === 'included')
+    const review = summaryJourneys.filter((x) => x.etlStatus === 'review_required')
+    const excluded = summaryJourneys.filter((x) => x.etlStatus === 'excluded')
+    const payload = {
+      metadata: {
+        generatedAt: new Date().toISOString(),
+        source: 'truckflow-api',
+        startDate: apiQuery.startDate ?? '',
+        endDate: apiQuery.endDate ?? '',
+        useUsefulWindow,
+        firstIngresoAt: usefulWindow.firstIngresoAt,
+        lastIngresoAt: usefulWindow.lastIngresoAt,
+        usefulWindowStart: usefulWindow.usefulWindowStart,
+        usefulWindowEnd: usefulWindow.usefulWindowEnd,
+        rawEventCount: eventsUnfiltered.length,
+        rawAlertCount: rawAlerts.length,
+        eventsInsideUsefulWindow: usefulWindow.insideCount,
+        eventsOutsideUsefulWindow: usefulWindow.outsideCount,
+        includedJourneyCount: included.length,
+        reviewJourneyCount: review.length,
+        excludedJourneyCount: excluded.length,
+        cleaningRules: {
+          excludeInvalidPlate: true,
+          excludeLprMalfunction: true,
+          excludeOnlyIngresoRutaProbable: true,
+          excludeOnlyEgresoRutaProbable: true,
+          invalidRouteAsReview: true,
+          invalidStartJourneyAsReview: true,
+        },
+      },
+      events: {
+        raw: eventsUnfiltered,
+        insideUsefulWindow: summaryDataset.rawEvents,
+        outsideUsefulWindow: eventsUnfiltered.filter((e) => !summaryDataset.rawEvents.some((x) => x.id === e.id && x.journeyUid === e.journeyUid)),
+      },
+      alerts: {
+        raw: rawAlerts,
+        normalized: normalizedAlertsStandalone,
+      },
+      journeys: {
+        included,
+        review,
+        excluded,
+      },
+      kpiInput: {
+        cleanJourneys: included,
+        reviewJourneys: review,
+        cleanEvents: summaryDataset.cleanEvents,
+      },
+    }
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `truckflow-clean-kpi_${apiQuery.startDate || 'start'}_${apiQuery.endDate || 'end'}.json`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }, [apiQuery.endDate, apiQuery.startDate, eventsUnfiltered, normalizedAlertsStandalone, rawAlerts, summaryDataset, summaryJourneys, useUsefulWindow, usefulWindow.firstIngresoAt, usefulWindow.insideCount, usefulWindow.lastIngresoAt, usefulWindow.outsideCount, usefulWindow.usefulWindowEnd, usefulWindow.usefulWindowStart])
+
+  const exportSummaryKpiCsv = useCallback(() => {
+    const header = ['etlStatus', 'motivo', 'journeyUid', 'patente', 'inicio', 'fin', 'duracion', 'circuito', 'alertCodes', 'secuenciaLogica', 'secuenciaRaw', 'enVentana']
+    const rows = summaryJourneys.map((r) => [r.etlStatus, r.reason, r.journeyUid, r.plate, r.startedAt, r.endedAt, r.durationMinutes, r.preliminaryCircuitCode, r.alertCodes.join('|'), r.logicalSequence.join(' > '), r.rawSequence.join(' > '), r.inUsefulWindow ? 'si' : 'no'])
+    const csv = '\uFEFF' + [header, ...rows].map((x) => x.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `truckflow-clean-kpi-summary_${apiQuery.startDate || 'start'}_${apiQuery.endDate || 'end'}.csv`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }, [apiQuery.endDate, apiQuery.startDate, summaryJourneys])
+
+  const exportClassificationAuditCsv = useCallback(() => {
+    const header = [
+      'journeyUid','patente','etlStatus','preliminaryCircuitGroup','preliminaryCircuitVariant','classificationRuleId','classificationReason',
+      'missingExpectedPoints','evidencePoints','alertCodes','reviewReason','exclusionReason','logicalCodeSequence','sectorCodeSequence',
+      'deviceCodeSequence','startAt','endAt','durationMin','insideUsefulWindow','hasNearbyRelevantAlerts','nearbyAlertCodes','possibleMissingPointsExplained','reconstructionSuggestion',
+    ]
+    const rows = summaryJourneyRowsWithNearby.map((r) => {
+      const j = journeys.find((x) => x.journeyUid === r.journeyUid)
+      const group = j?.preliminaryCircuitGroup ?? j?.preliminaryCircuitCode ?? ''
+      const variant = j?.preliminaryCircuitVariant ?? ''
+      const evidence = [...new Set(j?.logicalCodeSequence.filter((c) => c !== 'UNKNOWN') ?? [])]
+      return [
+        r.journeyUid, r.plate, r.etlStatus, group, variant, `${group}_${variant || 'BASE'}`, j?.preliminaryCircuitReason ?? '',
+        '', evidence.join('|'), r.alertCodes.join('|'),
+        r.etlStatus === 'review_required' ? r.reason : '',
+        r.etlStatus === 'excluded' ? r.reason : '',
+        r.logicalSequence.join(' > '),
+        j?.rawSectorSequence.join(' > ') ?? '',
+        j?.deviceCodeSequence.join(' > ') ?? '',
+        r.startedAt, r.endedAt, String(r.durationMinutes), r.inUsefulWindow ? 'true' : 'false',
+        String(r.hasNearbyRelevantAlerts), r.nearbyAlertCodes.join('|'), r.possibleMissingPointsExplained.join('|'), r.reconstructionSuggestion,
+      ]
+    })
+    const csv = '\uFEFF' + [header, ...rows].map((x) => x.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `classification-audit_${apiQuery.startDate || 'start'}_${apiQuery.endDate || 'end'}.csv`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }, [apiQuery.endDate, apiQuery.startDate, journeys, summaryJourneyRowsWithNearby])
+
+  const lprQualitySummary = useMemo(() => {
+    const alertsNorm = rawAlertsForDiagnostics.map((a) => normalizeRealAlertForView(a))
+    const eventsTotal = eventsUnfiltered.length
+    const alertsTotal = alertsNorm.length
+    const lprAlerts = alertsNorm.filter((a) => (a.alertCode || a.alertType).toUpperCase() === 'LPR_MALFUNCTION')
+    const invalidRoute = alertsNorm.filter((a) => (a.alertCode || a.alertType).toUpperCase() === 'INVALID_ROUTE').length
+    const invalidStart = alertsNorm.filter((a) => (a.alertCode || a.alertType).toUpperCase() === 'INVALID_START_JOURNEY').length
+    const lprIndexPer100Events = eventsTotal > 0 ? (lprAlerts.length / eventsTotal) * 100 : null
+    return {
+      eventsTotal,
+      alertsTotal,
+      lprCount: lprAlerts.length,
+      lprIndexPer100Events,
+      lprPctAlerts: alertsTotal > 0 ? (lprAlerts.length / alertsTotal) * 100 : 0,
+      invalidRoute,
+      invalidStart,
+      hasOver100Index: Boolean(lprIndexPer100Events !== null && lprIndexPer100Events > 100),
+    }
+  }, [eventsUnfiltered, rawAlertsForDiagnostics])
+
+  const lprByCameraRows = useMemo(() => {
+    const alertsNorm = rawAlertsForDiagnostics.map((a) => normalizeRealAlertForView(a))
+    const byCameraEvents = new Map<string, number>()
+    for (const e of eventsUnfiltered) {
+      const d = (e.deviceCode || '').trim() || 'SIN_DEVICE'
+      const s = (e.sectorCode || '').trim() || 'SIN_SECTOR'
+      const key = `${d}__${s}`
+      byCameraEvents.set(key, (byCameraEvents.get(key) ?? 0) + 1)
+    }
+    const lprByCamera = new Map<string, typeof alertsNorm>()
+    const alertsByCameraAll = new Map<string, number>()
+    for (const a of alertsNorm) {
+      const d = (a.deviceCode || '').trim() || 'SIN_DEVICE'
+      const s = (a.sectorCode || '').trim() || 'SIN_SECTOR'
+      const key = `${d}__${s}`
+      alertsByCameraAll.set(key, (alertsByCameraAll.get(key) ?? 0) + 1)
+    }
+    for (const a of alertsNorm) {
+      const code = (a.alertCode || a.alertType).toUpperCase()
+      if (code !== 'LPR_MALFUNCTION') continue
+      const d = (a.deviceCode || '').trim() || 'SIN_DEVICE'
+      const s = (a.sectorCode || '').trim() || 'SIN_SECTOR'
+      const key = `${d}__${s}`
+      if (!lprByCamera.has(key)) lprByCamera.set(key, [])
+      lprByCamera.get(key)!.push(a)
+    }
+    const keys = new Set([...byCameraEvents.keys(), ...lprByCamera.keys()])
+    return [...keys].map((k) => {
+      const [deviceCode, sectorCode] = k.split('__')
+      const evCount = byCameraEvents.get(k) ?? 0
+      const lprList = lprByCamera.get(k) ?? []
+      const descFreq = new Map<string, number>()
+      for (const a of lprList) {
+        const key = a.description || a.reason || a.message || 'sin descripción'
+        descFreq.set(key, (descFreq.get(key) ?? 0) + 1)
+      }
+      const topInvalid = [...descFreq.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? '—'
+      const sortedDates = lprList
+        .map((a) => String((a.raw as Record<string, unknown>).createdAt ?? a.occurredAt))
+        .filter(Boolean)
+        .sort()
+      const lprIndexPer100VisibleEvents = evCount > 0 ? (lprList.length / evCount) * 100 : null
+      const cameraAlertsTotal = alertsByCameraAll.get(k) ?? 0
+      const lprShareOnCameraAlerts = cameraAlertsTotal > 0 ? (lprList.length / cameraAlertsTotal) * 100 : 0
+      const status =
+        lprIndexPer100VisibleEvents === null
+          ? (lprList.length > 0 ? 'sin base de eventos visibles' : 'sin actividad')
+          : lprIndexPer100VisibleEvents <= 10
+            ? 'Bajo'
+            : lprIndexPer100VisibleEvents <= 30
+              ? 'Medio'
+              : lprIndexPer100VisibleEvents <= 100
+                ? 'Alto'
+                : 'Crítico'
+      return {
+        deviceCode,
+        sectorCode,
+        eventsAssociated: evCount,
+        lprAlerts: lprList.length,
+        lprIndexPer100VisibleEvents,
+        lprShareOnCameraAlerts,
+        status,
+        mostFrequentInvalidRead: topInvalid,
+        firstAlert: sortedDates[0] ?? '',
+        lastAlert: sortedDates[sortedDates.length - 1] ?? '',
+        noVisibleEventBaseHint: evCount === 0 && lprList.length > 0,
+      }
+    }).sort((a, b) => b.lprAlerts - a.lprAlerts)
+  }, [eventsUnfiltered, rawAlertsForDiagnostics])
+
+  const lprFailedReadRows = useMemo(() => {
+    const alertsNorm = rawAlertsForDiagnostics.map((a) => normalizeRealAlertForView(a))
+    return alertsNorm
+      .filter((a) => (a.alertCode || a.alertType).toUpperCase() === 'LPR_MALFUNCTION')
+      .map((a) => {
+        const raw = a.raw as Record<string, unknown>
+        return {
+          createdAt: String(raw.createdAt ?? a.occurredAt ?? ''),
+          deviceCode: a.deviceCode || '—',
+          sectorCode: a.sectorCode || '—',
+          description: a.description || a.reason || a.message || 'sin descripción',
+          payloadPlate: String(a.payload.plate ?? '—'),
+          payloadNormalizedPlate: String(a.payload.normalizedPlate ?? '—'),
+          alertCode: a.alertCode || a.alertType || '—',
+          severity: String(raw.severity ?? a.alertLevel ?? '—'),
+        }
+      })
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  }, [rawAlertsForDiagnostics])
+
+  const lprSourceMeta = useMemo(
+    () => ({
+      sourceMode: dataSource === 'api' ? 'API real' : 'archivo local',
+      startDate: apiQuery.startDate ?? '',
+      endDate: apiQuery.endDate ?? '',
+      rawEventCount: eventsUnfiltered.length,
+      rawAlertCount: rawAlertsForDiagnostics.length,
+      usingRawEvents: true,
+      lastLoadedAt,
+    }),
+    [apiQuery.endDate, apiQuery.startDate, dataSource, eventsUnfiltered.length, lastLoadedAt, rawAlertsForDiagnostics.length]
+  )
+
+  const lprCameraAuditData = useMemo(() => {
+    if (!lprCameraAudit) return null
+    const { deviceCode, sectorCode } = lprCameraAudit
+    const eventsForCamera = eventsUnfiltered.filter(
+      (e) => (e.deviceCode || 'SIN_DEVICE') === deviceCode && (e.sectorCode || 'SIN_SECTOR') === sectorCode
+    )
+    const alertsForCamera = lprFailedReadRows.filter(
+      (a) => (a.deviceCode || 'SIN_DEVICE') === deviceCode && (a.sectorCode || 'SIN_SECTOR') === sectorCode
+    )
+    const byHourEvents = new Map<string, number>()
+    for (const e of eventsForCamera) {
+      const d = new Date(e.occurredAt)
+      if (!Number.isFinite(d.getTime())) continue
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:00`
+      byHourEvents.set(key, (byHourEvents.get(key) ?? 0) + 1)
+    }
+    const byHourLpr = new Map<string, number>()
+    for (const a of alertsForCamera) {
+      const d = new Date(a.createdAt)
+      if (!Number.isFinite(d.getTime())) continue
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:00`
+      byHourLpr.set(key, (byHourLpr.get(key) ?? 0) + 1)
+    }
+    const hourlyKeys = [...new Set([...byHourEvents.keys(), ...byHourLpr.keys()])].sort()
+    const hourlySeries = hourlyKeys.map((h) => ({
+      hour: h,
+      events: byHourEvents.get(h) ?? 0,
+      lprAlerts: byHourLpr.get(h) ?? 0,
+    }))
+    return {
+      deviceCode,
+      sectorCode,
+      eventsForCamera,
+      alertsForCamera,
+      eventCount: eventsForCamera.length,
+      alertCount: alertsForCamera.length,
+      rangeStart: apiQuery.startDate ?? '',
+      rangeEnd: apiQuery.endDate ?? '',
+      hourlySeries,
+    }
+  }, [apiQuery.endDate, apiQuery.startDate, eventsUnfiltered, lprCameraAudit, lprFailedReadRows])
+
+  const lprGeneralBars = useMemo(
+    () => [
+      { label: 'Eventos visibles', value: lprQualitySummary.eventsTotal, color: '#334155' },
+      { label: 'Alertas LPR', value: lprQualitySummary.lprCount, color: '#dc2626' },
+      { label: 'Invalid route', value: lprQualitySummary.invalidRoute, color: '#d97706' },
+      { label: 'Invalid start', value: lprQualitySummary.invalidStart, color: '#9333ea' },
+    ],
+    [lprQualitySummary]
+  )
+
+  const exportLprSummaryCsv = useCallback(() => {
+    const header = [
+      'deviceCode',
+      'sectorCode',
+      'eventosFisicosVisibles',
+      'alertasLpr',
+      'alertasLprCada100EventosVisibles',
+      'estado',
+      'participacionLprSobreAlertasCamara',
+      'lecturaInvalidaMasFrecuente',
+      'primerAlerta',
+      'ultimaAlerta',
+    ]
+    const rows = lprByCameraRows.map((r) => [
+      r.deviceCode,
+      r.sectorCode,
+      r.eventsAssociated,
+      r.lprAlerts,
+      r.lprIndexPer100VisibleEvents === null ? 'sin base de eventos visibles' : r.lprIndexPer100VisibleEvents.toFixed(2),
+      r.status,
+      r.lprShareOnCameraAlerts.toFixed(2),
+      r.mostFrequentInvalidRead,
+      r.firstAlert,
+      r.lastAlert,
+    ])
+    downloadCsv(`lpr-summary_${apiQuery.startDate || 'start'}_${apiQuery.endDate || 'end'}.csv`, header, rows)
+  }, [apiQuery.endDate, apiQuery.startDate, lprByCameraRows])
+
+  const exportLprGeneralPng = useCallback(() => {
+    exportSimpleBarPng(
+      `lpr-general_${apiQuery.startDate || 'start'}_${apiQuery.endDate || 'end'}.png`,
+      'Calidad general de lectura LPR',
+      lprGeneralBars
+    )
+  }, [apiQuery.endDate, apiQuery.startDate, lprGeneralBars])
+
+  const exportLprCameraChartPng = useCallback(() => {
+    const top = lprByCameraRows
+      .filter((r) => r.lprIndexPer100VisibleEvents !== null)
+      .slice(0, 20)
+      .map((r) => ({
+        label: r.deviceCode,
+        value: r.lprIndexPer100VisibleEvents ?? 0,
+        color:
+          r.status === 'Bajo'
+            ? '#16a34a'
+            : r.status === 'Medio'
+              ? '#f59e0b'
+              : r.status === 'Alto'
+                ? '#ea580c'
+                : '#dc2626',
+      }))
+    exportSimpleBarPng(
+      `lpr-camaras_${apiQuery.startDate || 'start'}_${apiQuery.endDate || 'end'}.png`,
+      'Indicador LPR por cámara',
+      top
+    )
+  }, [apiQuery.endDate, apiQuery.startDate, lprByCameraRows])
+
+  const exportLprCameraCsv = useCallback(() => {
+    if (!lprCameraAuditData) return
+    const header = ['tipo', 'fecha', 'deviceCode', 'sectorCode', 'journeyUid', 'truckPlate', 'description', 'payloadPlate', 'payloadNormalizedPlate', 'severity']
+    const eventRows = lprCameraAuditData.eventsForCamera.map((e) => [
+      'evento',
+      e.occurredAt,
+      e.deviceCode,
+      e.sectorCode,
+      e.journeyUid,
+      e.truckPlate,
+      '',
+      '',
+      '',
+      String(e.alertLevel),
+    ])
+    const alertRows = lprCameraAuditData.alertsForCamera.map((a) => [
+      'alerta_lpr',
+      a.createdAt,
+      a.deviceCode,
+      a.sectorCode,
+      '',
+      '',
+      a.description,
+      a.payloadPlate,
+      a.payloadNormalizedPlate,
+      a.severity,
+    ])
+    downloadCsv(
+      `lpr-camera_${lprCameraAuditData.deviceCode}_${lprCameraAuditData.sectorCode}_${apiQuery.startDate || 'start'}_${apiQuery.endDate || 'end'}.csv`,
+      header,
+      [...eventRows, ...alertRows]
+    )
+  }, [apiQuery.endDate, apiQuery.startDate, lprCameraAuditData])
+
   /** Nodos ejecutivos para búsqueda de patente (primer hit por hito). */
   const plateMilestoneTimeline = useMemo(() => {
     if (!plateEventsAll.length) return []
@@ -722,6 +1983,90 @@ export function RealJourneyDiagnosticsPage() {
       drawerCircuitJourneys={drawerCircuitJourneys}
       drawerIncompleteGroup={drawerIncompleteGroup}
       setDrawerIncompleteGroup={setDrawerIncompleteGroup}
+      apiQuery={apiQuery}
+      setApiQuery={setApiQuery}
+      rawAlerts={rawAlerts}
+      etlLoadingEvents={etlLoadingEvents}
+      etlLoadingAlerts={etlLoadingAlerts}
+      etlError={etlError}
+      lastQueryUrl={lastQueryUrl}
+      cleanDataset={cleanDataset}
+      datasetProcessedAt={datasetProcessedAt}
+      loadEtlEvents={loadEtlEvents}
+      loadEtlAlerts={loadEtlAlerts}
+      loadEtlAll={loadEtlAll}
+      processCleanDataset={processCleanDataset}
+      exportCleanDatasetJson={exportCleanDatasetJson}
+      exportCleanSummaryCsv={exportCleanSummaryCsv}
+      alertsQuery={alertsQuery}
+      setAlertsQuery={setAlertsQuery}
+      alertsLoading={alertsLoading}
+      alertsError={alertsError}
+      alertsLastQueryUrl={alertsLastQueryUrl}
+      alertsLastQueriedAt={alertsLastQueriedAt}
+      alertsQuickFilter={alertsQuickFilter}
+      setAlertsQuickFilter={setAlertsQuickFilter}
+      normalizedAlertsStandalone={normalizedAlertsStandalone}
+      filteredAlertsStandalone={filteredAlertsStandalone}
+      alertsSummary={alertsSummary}
+      selectedAlert={selectedAlert}
+      setSelectedAlert={setSelectedAlert}
+      selectedAlertJourneyEvents={selectedAlertJourneyEvents}
+      selectedAlertJourneyLoading={selectedAlertJourneyLoading}
+      selectedAlertJourneyError={selectedAlertJourneyError}
+      loadAlertsStandalone={loadAlertsStandalone}
+      clearAlertsFilters={clearAlertsFilters}
+      exportAlertsCsv={exportAlertsCsv}
+      exportAlertsJson={exportAlertsJson}
+      loadJourneyEventsForAlert={loadJourneyEventsForAlert}
+      setSelectedAlertJourneyEvents={setSelectedAlertJourneyEvents}
+      setRawAlerts={setRawAlerts}
+      loadSummaryAll={loadSummaryAll}
+      useUsefulWindow={useUsefulWindow}
+      setUseUsefulWindow={setUseUsefulWindow}
+      usefulWindow={usefulWindow}
+      summaryJourneys={summaryJourneys}
+      summaryFilter={summaryFilter}
+      setSummaryFilter={setSummaryFilter}
+      exportKpiJson={exportKpiJson}
+      exportSummaryKpiCsv={exportSummaryKpiCsv}
+      exportRawEventsJson={exportRawEventsJson}
+      exportRawEventsCsv={exportRawEventsCsv}
+      lastLoadedAt={lastLoadedAt}
+      circuitSourceRows={circuitSourceRows}
+      circuitSourceSummary={circuitSourceSummary}
+      selectedCircuitJourneyUid={selectedCircuitJourneyUid}
+      setSelectedCircuitJourneyUid={setSelectedCircuitJourneyUid}
+      exportClassificationAuditCsv={exportClassificationAuditCsv}
+      nearbyDrawerJourneyUid={nearbyDrawerJourneyUid}
+      setNearbyDrawerJourneyUid={setNearbyDrawerJourneyUid}
+      nearbyBackwardHours={nearbyBackwardHours}
+      setNearbyBackwardHours={setNearbyBackwardHours}
+      nearbyForwardHours={nearbyForwardHours}
+      setNearbyForwardHours={setNearbyForwardHours}
+      nearbyIncludeExpectedSectors={nearbyIncludeExpectedSectors}
+      setNearbyIncludeExpectedSectors={setNearbyIncludeExpectedSectors}
+      nearbyIncludeSimilarPlates={nearbyIncludeSimilarPlates}
+      setNearbyIncludeSimilarPlates={setNearbyIncludeSimilarPlates}
+      nearbyIncludeLpr={nearbyIncludeLpr}
+      setNearbyIncludeLpr={setNearbyIncludeLpr}
+      nearbyDrawerResult={nearbyDrawerResult}
+      applyAlertsHourPreset={applyAlertsHourPreset}
+      nearbyAlertsLoading={nearbyAlertsLoading}
+      nearbyAlertsError={nearbyAlertsError}
+      associateNearbyAlert={associateNearbyAlert}
+      lprQualitySummary={lprQualitySummary}
+      lprByCameraRows={lprByCameraRows}
+      lprFailedReadRows={lprFailedReadRows}
+      lprSourceMeta={lprSourceMeta}
+      lprCameraAudit={lprCameraAudit}
+      setLprCameraAudit={setLprCameraAudit}
+      lprCameraAuditData={lprCameraAuditData}
+      lprGeneralBars={lprGeneralBars}
+      exportLprSummaryCsv={exportLprSummaryCsv}
+      exportLprGeneralPng={exportLprGeneralPng}
+      exportLprCameraChartPng={exportLprCameraChartPng}
+      exportLprCameraCsv={exportLprCameraCsv}
     />
   )
 }
