@@ -16,8 +16,20 @@ import { DiagDrawer } from '../components/realDiagnostics/DiagDrawer'
 import { DataDistributionDonut } from '../components/realDiagnostics/DataDistributionDonut'
 import { DataQualityFunnel } from '../components/realDiagnostics/DataQualityFunnel'
 import { HorizontalBarChart } from '../components/realDiagnostics/HorizontalBarChart'
+import { EventosTruckflowPresentation } from '../components/realDiagnostics/EventosTruckflowPresentation'
+import { LiveCameraMonitor } from '../components/realDiagnostics/LiveCameraMonitor'
 
-export type RealDataMainTab = 'eventos' | 'alertas' | 'resumen' | 'circuitos' | 'buscar' | 'depuracion' | 'incompletos' | 'camaras' | 'etl'
+export type RealDataMainTab =
+  | 'eventos'
+  | 'alertas'
+  | 'resumen'
+  | 'circuitos'
+  | 'buscar'
+  | 'envivo'
+  | 'depuracion'
+  | 'incompletos'
+  | 'camaras'
+  | 'etl'
 
 export const MAIN_TABS: { id: RealDataMainTab; label: string }[] = [
   { id: 'eventos', label: 'Eventos' },
@@ -25,6 +37,7 @@ export const MAIN_TABS: { id: RealDataMainTab; label: string }[] = [
   { id: 'resumen', label: 'Resumen' },
   { id: 'circuitos', label: 'Circuitos preliminares' },
   { id: 'buscar', label: 'Buscar patente' },
+  { id: 'envivo', label: 'En vivo' },
 ]
 
 type RealDataSource = 'api' | 'file'
@@ -159,6 +172,8 @@ export type RealJourneyDiagnosticsViewProps = {
 
   journeys: ReconstructedRealJourney[]
   events: RealJourneyEventDto[]
+  /** Lista de la última carga tras filtrar sólo Ricardone (`sectorCode` → `RICARDONE_*`; sin San Lorenzo/Puerto). */
+  eventsUnfiltered: RealJourneyEventDto[]
   plateQualitySummary: PlateQualitySummaryResult
   depurationSnapshot: OperationalDepurationSnapshot
   donutJourneys: {
@@ -482,6 +497,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
   const [drawerDeviceFilter, setDrawerDeviceFilter] = useState('')
   const [drawerOnlySinglePoint, setDrawerOnlySinglePoint] = useState(false)
   const [drawerOnlyWithNearby, setDrawerOnlyWithNearby] = useState(false)
+  const [eventosViewMode, setEventosViewMode] = useState<'consulta' | 'presentacion'>('consulta')
   const filteredNearbyRows = useMemo(() => {
     const rows = p.nearbyDrawerResult?.rows ?? []
     const plateQ = nearbyPlateFilter.trim().toUpperCase()
@@ -523,6 +539,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
       return true
     })
   }, [drawerDeviceFilter, drawerJourneySearch, drawerOnlySinglePoint, drawerOnlyWithNearby, drawerSectorFilter, p.circuitSourceRows])
+
   const filteredCircuitSinglePointSummary = useMemo(() => {
     const map = new Map<string, number>()
     for (const r of filteredCircuitRows) {
@@ -706,6 +723,8 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
           </button>
         ))}
       </nav>
+
+      {p.mainTab === 'envivo' && <LiveCameraMonitor />}
 
       {p.mainTab === 'resumen' && (
         <section className="space-y-6">
@@ -1046,8 +1065,33 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
       {p.mainTab === 'eventos' && (
         <section className="space-y-6">
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-bold text-slate-900">Eventos crudos</h2>
-            <p className="mt-1 text-sm text-slate-600">Consulta directa de <code>/journey-event/list</code>.</p>
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="min-w-0 max-w-xl">
+                <h2 className="text-lg font-bold text-slate-900">Eventos crudos · Truckflow</h2>
+                <p className="mt-1 text-sm text-slate-600">
+                  Consulta directa de <code>/journey-event/list</code>. Alcance actual: sólo Ricardone (sectores{' '}
+                  <span className="font-mono text-[11px]">RICARDONE_*</span>
+                  ); Puerto San Lorenzo y cámaras fuera de esos sectores no se cargan para esta etapa. En la vista comité se excluye además{' '}
+                  <span className="font-mono text-[11px]">LPR_MALFUNCTION</span>.
+                </p>
+              </div>
+              <div className="flex shrink-0 flex-wrap gap-1 rounded-xl border border-slate-100 bg-slate-50/90 p-1">
+                <button
+                  type="button"
+                  onClick={() => setEventosViewMode('presentacion')}
+                  className={`rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${eventosViewMode === 'presentacion' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+                >
+                  Presentación comité
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEventosViewMode('consulta')}
+                  className={`rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${eventosViewMode === 'consulta' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+                >
+                  Consulta técnica
+                </button>
+              </div>
+            </div>
             <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
               <label className="text-xs text-slate-600">Desde
                 <input type="date" value={p.apiQuery.startDate ?? ''} onChange={(e) => p.setApiQuery({ ...p.apiQuery, startDate: e.target.value })} className="mt-1 w-full rounded-xl border px-3 py-2 text-sm" />
@@ -1072,59 +1116,72 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
               </label>
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
-              <button type="button" onClick={() => void p.loadEtlEvents()} className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white">Cargar eventos</button>
+              <button type="button" onClick={() => void p.loadEtlEvents()} disabled={p.etlLoadingEvents} className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">Cargar eventos</button>
               <button type="button" onClick={p.exportRawEventsJson} className="rounded-xl border border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-900">Exportar eventos crudos JSON</button>
               <button type="button" onClick={p.exportRawEventsCsv} className="rounded-xl border border-violet-300 bg-violet-50 px-4 py-2 text-sm font-semibold text-violet-900">Exportar eventos crudos CSV</button>
             </div>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-              <ExecutiveMetricCard label="Total eventos" value={p.events.length} />
-              <ExecutiveMetricCard label="Primer evento" value={p.events.length ? formatDateTimeShort([...p.events].sort((a, b) => new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime())[0].occurredAt) : '—'} />
-              <ExecutiveMetricCard label="Último evento" value={p.events.length ? formatDateTimeShort([...p.events].sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime())[0].occurredAt) : '—'} />
-            </div>
-            <div className="mt-4 grid gap-4 xl:grid-cols-2">
-              <div className="rounded-xl border border-slate-100 p-3">
-                <div className="text-xs font-semibold text-slate-700">Eventos por sector</div>
-                <div className="mt-2 max-h-36 overflow-auto text-xs">
-                  {[...new Map(p.events.map((e) => [e.sectorCode, 0])).keys()].slice(0, 20).map((sector) => (
-                    <div key={sector} className="flex justify-between border-b border-slate-100 py-1"><span className="font-mono">{sector}</span><span>{p.events.filter((e) => e.sectorCode === sector).length}</span></div>
-                  ))}
-                </div>
-              </div>
-              <div className="rounded-xl border border-slate-100 p-3">
-                <div className="text-xs font-semibold text-slate-700">Eventos por device</div>
-                <div className="mt-2 max-h-36 overflow-auto text-xs">
-                  {[...new Map(p.events.map((e) => [e.deviceCode, 0])).keys()].slice(0, 20).map((device) => (
-                    <div key={device} className="flex justify-between border-b border-slate-100 py-1"><span className="font-mono">{device}</span><span>{p.events.filter((e) => e.deviceCode === device).length}</span></div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="mt-4 max-h-[45vh] overflow-auto rounded-xl border border-slate-100">
-              <table className="min-w-[1450px] w-full text-xs">
-                <thead className="sticky top-0 bg-slate-50">
-                  <tr>
-                    <th className="px-2 py-2 text-left">id</th><th className="px-2 py-2 text-left">occurredAt</th><th className="px-2 py-2 text-left">createdAt</th><th className="px-2 py-2 text-left">journeyUid</th><th className="px-2 py-2 text-right">sequenceNumber</th><th className="px-2 py-2 text-left">truckPlate</th><th className="px-2 py-2 text-left">sectorCode</th><th className="px-2 py-2 text-left">deviceCode</th><th className="px-2 py-2 text-left">eventType</th><th className="px-2 py-2 text-right">alertLevel</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {p.events.slice(0, 1200).map((e) => (
-                    <tr key={`${e.id}-${e.sequenceNumber}`} className="border-t border-slate-100">
-                      <td className="px-2 py-2">{e.id}</td>
-                      <td className="px-2 py-2">{formatDateTimeShort(e.occurredAt)}</td>
-                      <td className="px-2 py-2">{formatDateTimeShort(e.createdAt ?? e.recordedAt)}</td>
-                      <td className="px-2 py-2 font-mono">{e.journeyUid}</td>
-                      <td className="px-2 py-2 text-right">{e.sequenceNumber}</td>
-                      <td className="px-2 py-2 font-mono">{e.truckPlate}</td>
-                      <td className="px-2 py-2 font-mono">{e.sectorCode}</td>
-                      <td className="px-2 py-2 font-mono">{e.deviceCode}</td>
-                      <td className="px-2 py-2">{e.eventType}</td>
-                      <td className="px-2 py-2 text-right">{e.alertLevel}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            {p.etlError ? <div className="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-900">{p.etlError}</div> : null}
           </div>
+
+          {eventosViewMode === 'presentacion' ? (
+            <EventosTruckflowPresentation eventsFromApi={p.eventsUnfiltered} apiQuery={p.apiQuery} loading={p.etlLoadingEvents} />
+          ) : (
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 className="text-base font-bold text-slate-900">Tabla y desglose · Ricardone</h3>
+              <p className="mt-1 text-xs text-slate-500">
+                Misma base que la presentación comité: sólo lecturas asociadas a sectores Ricardone (`sectorCode` con prefijo RICARDONE_).
+                Puerto San Lorenzo y otros sitios fuera del prefijo Ricardone quedan excluidos al cargar.
+              </p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+                <ExecutiveMetricCard label="Total eventos (vista técnica)" value={p.events.length} />
+                <ExecutiveMetricCard label="Primer evento" value={p.events.length ? formatDateTimeShort([...p.events].sort((a, b) => new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime())[0].occurredAt) : '—'} />
+                <ExecutiveMetricCard label="Último evento" value={p.events.length ? formatDateTimeShort([...p.events].sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime())[0].occurredAt) : '—'} />
+              </div>
+              <div className="mt-4 grid gap-4 xl:grid-cols-2">
+                <div className="rounded-xl border border-slate-100 p-3">
+                  <div className="text-xs font-semibold text-slate-700">Eventos por sector</div>
+                  <div className="mt-2 max-h-36 overflow-auto text-xs">
+                    {[...new Map(p.events.map((e) => [e.sectorCode, 0])).keys()].slice(0, 20).map((sector) => (
+                      <div key={sector} className="flex justify-between border-b border-slate-100 py-1"><span className="font-mono">{sector}</span><span>{p.events.filter((e) => e.sectorCode === sector).length}</span></div>
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-slate-100 p-3">
+                  <div className="text-xs font-semibold text-slate-700">Eventos por device</div>
+                  <div className="mt-2 max-h-36 overflow-auto text-xs">
+                    {[...new Map(p.events.map((e) => [e.deviceCode, 0])).keys()].slice(0, 20).map((device) => (
+                      <div key={device} className="flex justify-between border-b border-slate-100 py-1"><span className="font-mono">{device}</span><span>{p.events.filter((e) => e.deviceCode === device).length}</span></div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 max-h-[45vh] overflow-auto rounded-xl border border-slate-100">
+                <table className="min-w-[1450px] w-full text-xs">
+                  <thead className="sticky top-0 bg-slate-50">
+                    <tr>
+                      <th className="px-2 py-2 text-left">id</th><th className="px-2 py-2 text-left">occurredAt</th><th className="px-2 py-2 text-left">createdAt</th><th className="px-2 py-2 text-left">journeyUid</th><th className="px-2 py-2 text-right">sequenceNumber</th><th className="px-2 py-2 text-left">truckPlate</th><th className="px-2 py-2 text-left">sectorCode</th><th className="px-2 py-2 text-left">deviceCode</th><th className="px-2 py-2 text-left">eventType</th><th className="px-2 py-2 text-right">alertLevel</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {p.events.slice(0, 1200).map((e) => (
+                      <tr key={`${e.id}-${e.sequenceNumber}`} className="border-t border-slate-100">
+                        <td className="px-2 py-2">{e.id}</td>
+                        <td className="px-2 py-2">{formatDateTimeShort(e.occurredAt)}</td>
+                        <td className="px-2 py-2">{formatDateTimeShort(e.createdAt ?? e.recordedAt)}</td>
+                        <td className="px-2 py-2 font-mono">{e.journeyUid}</td>
+                        <td className="px-2 py-2 text-right">{e.sequenceNumber}</td>
+                        <td className="px-2 py-2 font-mono">{e.truckPlate}</td>
+                        <td className="px-2 py-2 font-mono">{e.sectorCode}</td>
+                        <td className="px-2 py-2 font-mono">{e.deviceCode}</td>
+                        <td className="px-2 py-2">{e.eventType}</td>
+                        <td className="px-2 py-2 text-right">{e.alertLevel}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </section>
       )}
 

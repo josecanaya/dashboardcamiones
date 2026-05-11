@@ -9,7 +9,7 @@ import {
 import {
   reconstructRealJourneys,
   compareRealEvents,
-  excludePuertoSanLorenzoSectorEvents,
+  filterRicardoneSiteEventsOnly,
   filterValidPlateRealEvents,
 } from '../services/realJourneyEventsMapper'
 import { buildIncompleteSequenceGroups } from '../services/realIncompleteAnalysis'
@@ -326,8 +326,8 @@ export function RealJourneyDiagnosticsPage() {
         dataSource === 'api'
           ? await loadRealJourneyEventsFromApi(apiStartDate.trim(), apiEndDate.trim())
           : await loadRealJourneyEventsFromFile(filePath.trim() || undefined)
-      const ricardoneOnly = excludePuertoSanLorenzoSectorEvents(list)
-      setEventsUnfiltered(list)
+      const ricardoneOnly = filterRicardoneSiteEventsOnly(list)
+      setEventsUnfiltered(ricardoneOnly)
       setEvents(ricardoneOnly)
       setLastLoadedAt(new Date().toISOString())
     } catch (e) {
@@ -344,8 +344,9 @@ export function RealJourneyDiagnosticsPage() {
     setEtlError(null)
     try {
       const list = await fetchJourneyEvents(apiQuery)
-      setEventsUnfiltered(list)
-      setEvents(excludePuertoSanLorenzoSectorEvents(list))
+      const ricardoneOnly = filterRicardoneSiteEventsOnly(list)
+      setEventsUnfiltered(ricardoneOnly)
+      setEvents(ricardoneOnly)
       setCleanDataset(null)
       setLastQueryUrl(`${REAL_TRUCKFLOW_BASE_URL}/journey-event/list`)
       setLastLoadedAt(new Date().toISOString())
@@ -383,10 +384,11 @@ export function RealJourneyDiagnosticsPage() {
         fetchJourneyEvents(apiQuery),
         fetchAlerts(alertsChannelQuery),
       ])
-      setEventsUnfiltered(eventList)
-      setEvents(excludePuertoSanLorenzoSectorEvents(eventList))
+      const ricardoneOnly = filterRicardoneSiteEventsOnly(eventList)
+      setEventsUnfiltered(ricardoneOnly)
+      setEvents(ricardoneOnly)
       setRawAlerts(alertList)
-      const processed = buildCleanRealDataset(eventList, alertList)
+      const processed = buildCleanRealDataset(ricardoneOnly, alertList)
       setCleanDataset(processed)
       setDatasetProcessedAt(new Date().toISOString())
       setLastQueryUrl(`${REAL_TRUCKFLOW_BASE_URL}/journey-event/list (X) + /alert/list (Y independiente)`)
@@ -1951,6 +1953,7 @@ export function RealJourneyDiagnosticsPage() {
       setMainTab={setMainTab}
       journeys={journeys}
       events={events}
+      eventsUnfiltered={eventsUnfiltered}
       plateQualitySummary={plateQualitySummary}
       depurationSnapshot={depurationSnapshot}
       donutJourneys={donutJourneys}

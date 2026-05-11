@@ -10,7 +10,7 @@ import { analyzeRealJourneyQuality, occurredAtLocalDayKey } from './realJourneyQ
 import { normalizeRealEventPoint } from './realEventNormalization'
 import { classifyOperationalPreliminaryCircuit } from './realPreliminaryCircuit'
 
-/** Quita lecturas de cámaras del puerto San Lorenzo; el diagnóstico queda solo con Ricardone. */
+/** Quita lecturas del puerto San Lorenzo por prefijo. Preferir {@link filterRicardoneSiteEventsOnly}. */
 export function excludePuertoSanLorenzoSectorEvents(events: RealJourneyEventDto[]): RealJourneyEventDto[] {
   return events.filter((e) => {
     const code = (e.sectorCode ?? '').trim().toUpperCase()
@@ -58,6 +58,11 @@ export function inferSiteIdFromSectorCode(sectorCode: string): ReconstructedReal
   if (upper.startsWith('PUERTO_SAN_LORENZO_')) return 'san_lorenzo'
   if (upper.includes('AVELLANEDA')) return 'avellaneda'
   return 'unknown'
+}
+
+/** Solo eventos Ricardone por `sectorCode` (`RICARDONE_*`): excluye San Lorenzo y el resto de sitios/no clasificados. */
+export function filterRicardoneSiteEventsOnly(events: RealJourneyEventDto[]): RealJourneyEventDto[] {
+  return events.filter((e) => inferSiteIdFromSectorCode(e.sectorCode) === 'ricardone')
 }
 
 function inferJourneySiteId(sortedEvents: RealJourneyEventDto[]): ReconstructedRealSiteId {
