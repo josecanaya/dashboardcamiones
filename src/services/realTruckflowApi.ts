@@ -35,7 +35,8 @@ export type RealAlertDto = {
   [key: string]: unknown
 }
 
-function resolveApiOrigin(): string {
+/** Base URL efectiva (proxy `/journey-api` en dev, env o host público en prod). */
+export function resolveRealTruckflowApiOrigin(): string {
   const env = typeof import.meta !== 'undefined' ? import.meta.env?.VITE_REAL_JOURNEY_API_ORIGIN : undefined
   if (typeof env === 'string' && env.trim()) return env.trim().replace(/\/$/, '')
   if (typeof import.meta !== 'undefined' && import.meta.env?.DEV) return '/journey-api'
@@ -79,8 +80,11 @@ function extractArray(payload: unknown): unknown[] {
   return []
 }
 
-export async function fetchJourneyEvents(params: RealTruckflowQueryParams = {}): Promise<RealJourneyEventDto[]> {
-  const origin = resolveApiOrigin()
+export async function fetchJourneyEvents(
+  params: RealTruckflowQueryParams = {},
+  opts?: { baseOrigin?: string }
+): Promise<RealJourneyEventDto[]> {
+  const origin = (opts?.baseOrigin?.trim() || resolveRealTruckflowApiOrigin()).replace(/\/$/, '')
   const url = `${origin}/journey-event/list${buildQuery(params)}`
   const response = await fetch(url, { cache: 'no-store', headers: { Accept: 'application/json' } })
   if (!response.ok) throw new Error(`Error consultando eventos (${response.status}) en ${url}`)
@@ -90,8 +94,14 @@ export async function fetchJourneyEvents(params: RealTruckflowQueryParams = {}):
     .map((raw, index) => {
       if (!raw || typeof raw !== 'object') return null
       const obj = raw as Record<string, unknown>
-      const journeyUid = toString(obj.journeyUid).trim()
+      const journeyUid = toString(obj.journeyUid ?? obj.journeyUuid).trim()
       if (!journeyUid) return null
+      const occurredAt =
+        toString(obj.occurredAt) ||
+        toString(obj.recordedAt) ||
+        toString(obj.createdAt) ||
+        toString(obj.modifiedAt)
+      const recordedAt = toString(obj.recordedAt) || occurredAt
       return {
         id: toNumber(obj.id, 1_000_000 + index),
         createdAt: toString(obj.createdAt),
@@ -100,8 +110,8 @@ export async function fetchJourneyEvents(params: RealTruckflowQueryParams = {}):
         sequenceNumber: toNumber(obj.sequenceNumber, 0),
         eventCategory: toString(obj.eventCategory),
         eventType: toString(obj.eventType),
-        occurredAt: toString(obj.occurredAt),
-        recordedAt: toString(obj.recordedAt),
+        occurredAt,
+        recordedAt,
         truckPlate: toString(obj.truckPlate),
         sectorCode: toString(obj.sectorCode),
         deviceCode: toString(obj.deviceCode),
@@ -112,8 +122,11 @@ export async function fetchJourneyEvents(params: RealTruckflowQueryParams = {}):
   return annotateRealJourneyEventsWithPlateFields(parsed)
 }
 
-export async function fetchAlerts(params: RealTruckflowQueryParams = {}): Promise<RealAlertDto[]> {
-  const origin = resolveApiOrigin()
+export async function fetchAlerts(
+  params: RealTruckflowQueryParams = {},
+  opts?: { baseOrigin?: string }
+): Promise<RealAlertDto[]> {
+  const origin = (opts?.baseOrigin?.trim() || resolveRealTruckflowApiOrigin()).replace(/\/$/, '')
   const url = `${origin}/alert/list${buildQuery(params)}`
   const response = await fetch(url, { cache: 'no-store', headers: { Accept: 'application/json' } })
   if (!response.ok) throw new Error(`Error consultando alertas (${response.status}) en ${url}`)

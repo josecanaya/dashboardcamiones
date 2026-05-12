@@ -86,8 +86,15 @@ function parseRow(raw: unknown, fallbackIndex: number): ApiRealJourneyEventRow |
   const o = raw as Record<string, unknown>
   const id = coerceNumber(o.id, fallbackIndex)
   const sequenceNumber = coerceNumber(o.sequenceNumber, 0)
-  const journeyUid = coerceString(o.journeyUid).trim()
+  const journeyUid = coerceString(o.journeyUid ?? o.journeyUuid).trim()
   if (!journeyUid) return null
+
+  const occurredAt =
+    coerceString(o.occurredAt, '') ||
+    coerceString(o.recordedAt, '') ||
+    coerceString(o.createdAt, '') ||
+    coerceString(o.modifiedAt, '')
+  const recordedAt = coerceString(o.recordedAt, '') || occurredAt
 
   return {
     id,
@@ -97,8 +104,8 @@ function parseRow(raw: unknown, fallbackIndex: number): ApiRealJourneyEventRow |
     sequenceNumber,
     eventCategory: coerceString(o.eventCategory, ''),
     eventType: coerceString(o.eventType, ''),
-    occurredAt: coerceString(o.occurredAt, ''),
-    recordedAt: coerceString(o.recordedAt, ''),
+    occurredAt,
+    recordedAt,
     truckPlate: coerceString(o.truckPlate, ''),
     sectorCode: coerceString(o.sectorCode, ''),
     deviceCode: coerceString(o.deviceCode, ''),

@@ -11,11 +11,36 @@ import { normalizePlate } from '../../services/argentinaPlate'
 import { normalizeRealAlertForView, type NormalizedRealAlertView } from '../../services/realAlertsInspector'
 import type { RealJourneyEventDto } from '../../services/realJourneyEvents.types'
 import { inferSiteIdFromSectorCode } from '../../services/realJourneyEventsMapper'
-import { fetchAlerts, fetchJourneyEvents, type RealTruckflowQueryParams } from '../../services/realTruckflowApi'
+import {
+  fetchAlerts,
+  fetchJourneyEvents,
+  REAL_TRUCKFLOW_BASE_URL,
+  resolveRealTruckflowApiOrigin,
+  type RealTruckflowQueryParams,
+} from '../../services/realTruckflowApi'
+import {
+  buildCameraDiagnostics,
+  buildOperationalTimeline,
+  buildSectorStatus,
+  compareFrontRearCameras,
+  evaluateManualObservation,
+  exportCameraDiagnosticCsv,
+  exportCameraDiagnosticJson,
+  getEventOperationalInstantIso,
+  isValidObservedPlate,
+  VEHICLE_TYPE_LABELS,
+  WORK_MODE_LABELS,
+  type CameraDiagnostics,
+  type FrontRearComparisonRow,
+  type LiveSectorStatus,
+  type LiveWorkMode,
+  type ManualObservation,
+  type OperationalTimelineKind,
+  type VehicleType,
+} from '../../services/liveCameraDiagnostics'
 
 const MATCH_WINDOW_MS = 20_000
-const AUTO_REFRESH_MS = 5000
-const FIELD_WATCH_MS = 20_000
+const AUTO_REFRESH_MS = 30_000
 
 type TimePresetId = 5 | 10 | 30 | 60
 
@@ -48,6 +73,83 @@ function parseMillis(iso: string): number {
   return Number.isNaN(t) ? NaN : t
 }
 
+/**
+ * En producción real, `/journey-event/list` a veces devuelve `occurredAt`/`recordedAt` erróneos (p. ej. año 2036)
+ * mientras `createdAt` refleja cuándo se persistió. El monitor en vivo filtra por ventana local y descartaba todo.
+ * Si la marca de “ocurrencia” difiere mucho de la persistencia, usamos createdAt como instante operativo.
+ */
+const MAX_OCCURRED_VS_PERSISTED_DRIFT_MS = 30 * 24 * 60 * 60 * 1000
+
+function alignJourneyEventTimeForLiveView(e: RealJourneyEventDto): RealJourneyEventDto {
+  const occMs = parseMillis(e.occurredAt)
+  const anchorStr = (e.createdAt || e.modifiedAt || '').trim()
+  if (!anchorStr) return e
+  const anchMs = parseMillis(anchorStr)
+  if (Number.isNaN(occMs) || Number.isNaN(anchMs)) return e
+  if (Math.abs(occMs - anchMs) <= MAX_OCCURRED_VS_PERSISTED_DRIFT_MS) return e
+  return { ...e, occurredAt: anchorStr, recordedAt: anchorStr }
+}
+
+/**
+ * Instante “de pared” para en vivo: a veces occurredAt va horas atrasado respecto a createdAt y a las alertas
+ * (mismo registro). Tomamos el más reciente entre occurred/created/modified tras alinear.
+ */
+function eventOperationalInstantMs(e: RealJourneyEventDto): number {
+  const a = alignJourneyEventTimeForLiveView(e)
+  const times = [
+    parseMillis(a.occurredAt),
+    parseMillis((a.createdAt || '').trim()),
+    parseMillis((a.modifiedAt || '').trim()),
+  ].filter((t) => !Number.isNaN(t))
+  return times.length ? Math.max(...times) : NaN
+}
+
+function eventOperationalInstantIso(e: RealJourneyEventDto): string {
+  const ms = eventOperationalInstantMs(e)
+  if (Number.isNaN(ms)) return (alignJourneyEventTimeForLiveView(e).occurredAt || '').trim() || '—'
+  return new Date(ms).toISOString()
+}
+
+/**
+ * Rango pedido al GET journey-event/list (y alert/list): más ancho que la ventana mostrada.
+ * La pestaña de diagnóstico pide días y recibe filas; con 5–60 min el backend a menudo devuelve [] si filtra por occurredAt desfasado.
+ */
+function liveListQueryBounds(end: Date, uiPresetMinutes: number): { start: Date; end: Date } {
+  const apiEnd = new Date(end.getTime() + 15 * 60 * 1000)
+  const dayStart = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 0, 0, 0, 0)
+  const ms72h = 72 * 60 * 60 * 1000
+  const msUiPlus = (uiPresetMinutes + 180) * 60 * 1000
+  const rolling = new Date(end.getTime() - Math.max(ms72h, msUiPlus))
+  return {
+    start: new Date(Math.min(dayStart.getTime(), rolling.getTime())),
+    end: apiEnd,
+  }
+}
+
+/** Holgencia hacia atrás: createdAt puede preceder unos minutos a la alerta en la misma lectura. */
+const LIVE_EVENT_TIME_SLACK_START_MS = 45 * 60 * 1000
+
+function journeyEventInUiWindow(e: RealJourneyEventDto, uiStartMs: number, uiEndMs: number): boolean {
+  const lo = uiStartMs - LIVE_EVENT_TIME_SLACK_START_MS
+  const hi = uiEndMs
+  const op = eventOperationalInstantMs(e)
+  if (!Number.isNaN(op) && op >= lo && op <= hi) return true
+  const a = alignJourneyEventTimeForLiveView(e)
+  const candidates = [
+    parseMillis(a.occurredAt),
+    parseMillis((a.createdAt || '').trim()),
+    parseMillis((a.modifiedAt || '').trim()),
+    parseMillis((a.recordedAt || '').trim()),
+  ].filter((t) => !Number.isNaN(t))
+  return candidates.some((t) => t >= lo && t <= hi)
+}
+
+function alertInUiWindow(a: NormalizedRealAlertView, uiStartMs: number, uiEndMs: number): boolean {
+  const t = parseMillis(a.occurredAt)
+  if (Number.isNaN(t)) return false
+  return t >= uiStartMs && t <= uiEndMs
+}
+
 function sectorMatchesPlant(sectorCode: string, plant: SiteId): boolean {
   const sid = inferSiteIdFromSectorCode(sectorCode)
   if (plant === 'ricardone') return sid === 'ricardone'
@@ -63,19 +165,22 @@ function sectorDisplayName(code: string): string {
   return label || raw || '—'
 }
 
-type SectorAggStatus = 'sin_datos' | 'normal' | 'con_alertas' | 'critico'
-
-function computeSectorStatus(eventCount: number, alertCount: number, alerts: NormalizedRealAlertView[]): SectorAggStatus {
-  if (eventCount === 0 && alertCount === 0) return 'sin_datos'
-  const critical = alerts.some((a) => {
-    const raw = a.raw as Record<string, unknown>
-    const sev = String(raw.severity ?? raw.alertSeverity ?? '').toUpperCase()
-    if (/CRITICAL|CRÍTICO|HIGH|ALTA/i.test(sev)) return true
-    return a.alertLevel >= 8
-  })
-  if (critical) return 'critico'
-  if (alertCount > 0) return 'con_alertas'
-  return 'normal'
+function frontRearPairsForSector(sectorCode: string): { front: string; rear: string }[] {
+  const code = sectorCode.trim().toUpperCase()
+  if (code === 'RICARDONE_EGRESO_CAMIONES') {
+    return [
+      { front: 'RicEgrCamFrente', rear: 'RicEgrCamTraser' },
+      { front: 'RicEgrCamFrente', rear: 'RicEgrCamTrasera' },
+    ]
+  }
+  if (code === 'RICARDONE_INGRESO_CAMIONES') {
+    return [
+      { front: 'RicIngCamFrente', rear: 'RicIngCamTrasera' },
+      { front: 'RicIngCamFrente', rear: 'RicIngCamTraser' },
+    ]
+  }
+  if (code === 'RICARDONE_PREINGRESO') return [{ front: 'RicPreIngInFr', rear: 'RicPreIngInTr' }]
+  return []
 }
 
 type CameraAggStatus = 'sin_datos' | 'activa' | 'con_alertas' | 'critica'
@@ -128,7 +233,7 @@ function buildCombinedDetections(
 ): CombinedDetectionRow[] {
   const evs = events
     .filter((e) => e.deviceCode === deviceCode && e.sectorCode === sectorCode)
-    .sort((a, b) => parseMillis(b.occurredAt) - parseMillis(a.occurredAt))
+    .sort((a, b) => eventOperationalInstantMs(b) - eventOperationalInstantMs(a))
   const als = alerts
     .filter((a) => a.deviceCode === deviceCode && a.sectorCode === sectorCode)
     .sort((a, b) => parseMillis(b.occurredAt) - parseMillis(a.occurredAt))
@@ -139,7 +244,7 @@ function buildCombinedDetections(
   const rows: CombinedDetectionRow[] = []
 
   for (const ev of evs) {
-    const t0 = parseMillis(ev.occurredAt)
+    const t0 = eventOperationalInstantMs(ev)
     let best: NormalizedRealAlertView | null = null
     let bestD = Infinity
     for (const al of als) {
@@ -158,7 +263,7 @@ function buildCombinedDetections(
       const strong = platesStrongMatch(ev, best)
       rows.push({
         key: `ev-${ev.id}-${best.alertId}`,
-        at: ev.occurredAt,
+        at: eventOperationalInstantIso(ev),
         plate,
         tipo: strong ? 'Fuerte + temporal' : 'Temporal',
         eventSummary: ev.eventType || ev.eventCategory || 'evento',
@@ -169,7 +274,7 @@ function buildCombinedDetections(
     } else {
       rows.push({
         key: `ev-${ev.id}`,
-        at: ev.occurredAt,
+        at: eventOperationalInstantIso(ev),
         plate,
         tipo: 'Evento',
         eventSummary: ev.eventType || ev.eventCategory || 'evento',
@@ -198,24 +303,6 @@ function buildCombinedDetections(
   return rows
 }
 
-export type FieldObservationStatus =
-  | 'esperando datos'
-  | 'detectado con evento'
-  | 'detectado con alerta'
-  | 'detectado con evento + alerta'
-  | 'sin detección'
-
-export type FieldObservationRow = {
-  id: string
-  observedAt: string
-  sectorCode: string
-  sectorLabel: string
-  deviceCode: string
-  status: FieldObservationStatus
-  linkedEventSummary: string
-  linkedAlertSummary: string
-}
-
 export function LiveCameraMonitor() {
   const { siteId, setSiteId } = useSite()
   const [plantSiteId, setPlantSiteId] = useState<SiteId>(siteId)
@@ -231,6 +318,7 @@ export function LiveCameraMonitor() {
 
   const [timePreset, setTimePreset] = useState<TimePresetId>(10)
   const [autoRefresh, setAutoRefresh] = useState(true)
+  const [workMode, setWorkMode] = useState<LiveWorkMode>('live')
   const [filterSectorCode, setFilterSectorCode] = useState('')
   const [filterDeviceCode, setFilterDeviceCode] = useState('')
   const [filterPlate, setFilterPlate] = useState('')
@@ -246,7 +334,11 @@ export function LiveCameraMonitor() {
   const [selectedDeviceCode, setSelectedDeviceCode] = useState<string | null>(null)
   const [cameraFocusFull, setCameraFocusFull] = useState(false)
 
-  const [observations, setObservations] = useState<FieldObservationRow[]>([])
+  const [observations, setObservations] = useState<ManualObservation[]>([])
+  const [vehicleType, setVehicleType] = useState<VehicleType>('desconocido')
+  const [observedPlate, setObservedPlate] = useState('')
+  const [manualObservation, setManualObservation] = useState('')
+  const [operatorNote, setOperatorNote] = useState('')
 
   const camerasPanelRef = useRef<HTMLDivElement | null>(null)
   const monitorPanelRef = useRef<HTMLDivElement | null>(null)
@@ -259,15 +351,23 @@ export function LiveCameraMonitor() {
     return { start, end, presetMin }
   }, [timePreset])
 
+  const apiOriginLabel = useMemo(() => resolveRealTruckflowApiOrigin(), [])
+  /** Mismo host que documenta Truckflow; en dev Vite suele ir por proxy `/journey-api` por CORS. */
+  const liveFetchOrigin = useMemo(
+    () => (typeof import.meta !== 'undefined' && import.meta.env?.DEV ? undefined : REAL_TRUCKFLOW_BASE_URL),
+    []
+  )
+
   const refresh = useCallback(async () => {
     if (inFlightRef.current) return
     inFlightRef.current = true
     setLoading(true)
     setError(null)
-    const { start, end } = windowBounds
+    const { start, end, presetMin } = windowBounds
+    const listBounds = liveListQueryBounds(end, presetMin)
     const params: RealTruckflowQueryParams = {
-      startDate: toIsoLocal(start),
-      endDate: toIsoLocal(end),
+      startDate: toIsoLocal(listBounds.start),
+      endDate: toIsoLocal(listBounds.end),
     }
     const fp = filterPlate.trim()
     const fj = filterJourneyUuid.trim()
@@ -279,15 +379,16 @@ export function LiveCameraMonitor() {
     if (fd) params.device = fd
 
     try {
-      const [evts, rawAlerts] = await Promise.all([fetchJourneyEvents(params), fetchAlerts(params)])
-      const startMs = start.getTime()
-      const endMs = end.getTime()
-      const inRange = (iso: string) => {
-        const t = new Date(iso).getTime()
-        return !Number.isNaN(t) && t >= startMs && t <= endMs
-      }
-      const evFiltered = evts.filter((e) => inRange(e.occurredAt))
-      const norm = rawAlerts.map(normalizeRealAlertForView).filter((a) => inRange(a.occurredAt))
+      const fetchOpts = liveFetchOrigin ? { baseOrigin: liveFetchOrigin } : undefined
+      const [evts, rawAlerts] = await Promise.all([
+        fetchJourneyEvents(params, fetchOpts),
+        fetchAlerts(params, fetchOpts),
+      ])
+      const uiStartMs = start.getTime()
+      const uiEndMs = end.getTime()
+      const evAligned = evts.map(alignJourneyEventTimeForLiveView)
+      const evFiltered = evAligned.filter((e) => journeyEventInUiWindow(e, uiStartMs, uiEndMs))
+      const norm = rawAlerts.map(normalizeRealAlertForView).filter((a) => alertInUiWindow(a, uiStartMs, uiEndMs))
       setEvents(evFiltered)
       setNormalizedAlerts(norm)
       setRangeLabel(`${fmtShort(toIsoLocal(start))} → ${fmtShort(toIsoLocal(end))}`)
@@ -299,7 +400,7 @@ export function LiveCameraMonitor() {
       setLoading(false)
       inFlightRef.current = false
     }
-  }, [windowBounds, filterPlate, filterJourneyUuid, filterSectorCode, filterDeviceCode])
+  }, [windowBounds, filterPlate, filterJourneyUuid, filterSectorCode, filterDeviceCode, liveFetchOrigin])
 
   useEffect(() => {
     void refresh()
@@ -369,7 +470,8 @@ export function LiveCameraMonitor() {
         const bucket = map.get(code)!
         const ec = bucket.events.length
         const ac = bucket.alerts.length
-        const status = computeSectorStatus(ec, ac, bucket.alerts)
+        const pendingValidation = observations.some((o) => o.sectorCode === code && o.result === 'pendiente')
+        const status = buildSectorStatus(ec, ac, pendingValidation, bucket.alerts)
         return {
           sectorCode: code,
           label: sectorDisplayName(code),
@@ -383,7 +485,7 @@ export function LiveCameraMonitor() {
       .sort((a, b) => a.label.localeCompare(b.label))
 
     return list
-  }, [plantFilteredEvents, plantFilteredAlerts, plantSiteId, filterSectorCode])
+  }, [plantFilteredEvents, plantFilteredAlerts, plantSiteId, filterSectorCode, observations])
 
   const selectedSectorBuckets = useMemo(() => {
     if (!selectedSectorCode) return null
@@ -408,7 +510,8 @@ export function LiveCameraMonitor() {
     return deviceList.map((dev) => {
       const evC = ev.filter((e) => e.deviceCode === dev)
       const alC = al.filter((a) => a.deviceCode === dev)
-      const lastEv = [...evC].sort((a, b) => parseMillis(b.occurredAt) - parseMillis(a.occurredAt))[0]
+      const diagnostic = buildCameraDiagnostics(plantFilteredEvents, plantFilteredAlerts, dev, selectedSectorCode)
+      const lastEv = [...evC].sort((a, b) => eventOperationalInstantMs(b) - eventOperationalInstantMs(a))[0]
       const lastAl = [...alC].sort((a, b) => parseMillis(b.occurredAt) - parseMillis(a.occurredAt))[0]
       const pct =
         evC.length > 0 ? Math.min(100, Math.round((alC.length / evC.length) * 100)) : alC.length > 0 ? 100 : 0
@@ -425,7 +528,7 @@ export function LiveCameraMonitor() {
       } else if (lastEv) {
         liveResultado = 'EVENTO OK'
         displayPlate = lastEv.truckPlate || lastEv.normalizedPlate || '—'
-        lastDetectionAt = lastEv.occurredAt
+        lastDetectionAt = eventOperationalInstantIso(lastEv)
       } else if (lastAl) {
         liveResultado = 'SOLO ALERTA'
         displayPlate = lastAl.rawPlate || lastAl.normalizedPlate || '—'
@@ -434,29 +537,25 @@ export function LiveCameraMonitor() {
       return {
         deviceCode: dev,
         sectorCode: selectedSectorCode,
-        lastEventAt: lastEv?.occurredAt ?? '',
+        lastEventAt: lastEv ? eventOperationalInstantIso(lastEv) : '',
         lastAlertAt: lastAl?.occurredAt ?? '',
         eventCount: evC.length,
         alertCount: alC.length,
         alertPct: pct,
         status,
+        diagnostic,
         liveResultado,
         displayPlate,
         lastDetectionAt,
       }
     })
-  }, [selectedSectorBuckets, selectedSectorCode])
-
-  const monitorCombined = useMemo(() => {
-    if (!selectedSectorCode || !selectedDeviceCode) return []
-    return buildCombinedDetections(plantFilteredEvents, plantFilteredAlerts, selectedDeviceCode, selectedSectorCode)
-  }, [plantFilteredEvents, plantFilteredAlerts, selectedSectorCode, selectedDeviceCode])
+  }, [plantFilteredEvents, plantFilteredAlerts, selectedSectorBuckets, selectedSectorCode])
 
   const monitorEvents = useMemo(() => {
     if (!selectedSectorCode || !selectedDeviceCode) return []
     return plantFilteredEvents
       .filter((e) => e.sectorCode === selectedSectorCode && e.deviceCode === selectedDeviceCode)
-      .sort((a, b) => parseMillis(b.occurredAt) - parseMillis(a.occurredAt))
+      .sort((a, b) => eventOperationalInstantMs(b) - eventOperationalInstantMs(a))
   }, [plantFilteredEvents, selectedSectorCode, selectedDeviceCode])
 
   const monitorAlerts = useMemo(() => {
@@ -466,72 +565,28 @@ export function LiveCameraMonitor() {
       .sort((a, b) => parseMillis(b.occurredAt) - parseMillis(a.occurredAt))
   }, [plantFilteredAlerts, selectedSectorCode, selectedDeviceCode])
 
-  const monitorHeadline = useMemo(() => {
-    if (!selectedSectorCode || !selectedDeviceCode) {
-      return { estado: 'SIN DATOS' as CombinedResultKind, ultEv: '', ultAl: '' }
-    }
-    const lastEv = monitorEvents[0]
-    const lastAl = monitorAlerts[0]
-    const rows = buildCombinedDetections(plantFilteredEvents, plantFilteredAlerts, selectedDeviceCode, selectedSectorCode)
-    let estado: CombinedResultKind = 'SIN DATOS'
-    if (!lastEv && !lastAl) estado = 'SIN DATOS'
-    else if (rows.length && rows[0]) estado = rows[0].resultado
-    else if (lastEv && !lastAl) estado = 'EVENTO OK'
-    else if (lastAl && !lastEv) estado = 'SOLO ALERTA'
-    return { estado, ultEv: lastEv?.occurredAt ?? '', ultAl: lastAl?.occurredAt ?? '' }
-  }, [plantFilteredEvents, plantFilteredAlerts, selectedSectorCode, selectedDeviceCode, monitorEvents, monitorAlerts])
+  const selectedCameraDiagnostic: CameraDiagnostics | null = useMemo(() => {
+    if (!selectedSectorCode || !selectedDeviceCode) return null
+    return buildCameraDiagnostics(plantFilteredEvents, plantFilteredAlerts, selectedDeviceCode, selectedSectorCode)
+  }, [plantFilteredEvents, plantFilteredAlerts, selectedSectorCode, selectedDeviceCode])
 
-  /** Actualiza observaciones de campo según datos vigentes */
+  const operationalTimeline = useMemo(() => {
+    if (!selectedSectorCode || !selectedDeviceCode) return []
+    return buildOperationalTimeline(plantFilteredEvents, plantFilteredAlerts, selectedDeviceCode, selectedSectorCode)
+  }, [plantFilteredEvents, plantFilteredAlerts, selectedSectorCode, selectedDeviceCode])
+
+  const frontRearRows: FrontRearComparisonRow[] = useMemo(() => {
+    if (!selectedSectorCode) return []
+    const pairs = frontRearPairsForSector(selectedSectorCode)
+    return pairs.flatMap((pair) =>
+      compareFrontRearCameras(plantFilteredEvents, selectedSectorCode, pair.front, pair.rear).slice(0, 10)
+    )
+  }, [plantFilteredEvents, selectedSectorCode])
+
+  /** Actualiza observaciones de campo según datos vigentes en ventana ±30s. */
   useEffect(() => {
     setObservations((prev) =>
-      prev.map((row) => {
-        if (row.status !== 'esperando datos') return row
-        const t0 = parseMillis(row.observedAt)
-        if (Number.isNaN(t0)) return row
-        const deadline = t0 + FIELD_WATCH_MS
-        const now = Date.now()
-        if (now > deadline) {
-          return { ...row, status: 'sin detección', linkedEventSummary: '—', linkedAlertSummary: '—' }
-        }
-        const evHit = plantFilteredEvents.find((e) => {
-          const te = parseMillis(e.occurredAt)
-          return (
-            e.deviceCode === row.deviceCode &&
-            e.sectorCode === row.sectorCode &&
-            !Number.isNaN(te) &&
-            te >= t0 &&
-            te <= deadline
-          )
-        })
-        const alHit = plantFilteredAlerts.find((a) => {
-          const ta = parseMillis(a.occurredAt)
-          return (
-            a.deviceCode === row.deviceCode &&
-            a.sectorCode === row.sectorCode &&
-            !Number.isNaN(ta) &&
-            ta >= t0 &&
-            ta <= deadline
-          )
-        })
-        let status: FieldObservationStatus = 'esperando datos'
-        let linkedEventSummary = '—'
-        let linkedAlertSummary = '—'
-        if (evHit && alHit) {
-          status = 'detectado con evento + alerta'
-          linkedEventSummary = `${fmtShort(evHit.occurredAt)} · ${evHit.eventType || ''} · ${evHit.truckPlate || ''}`
-          linkedAlertSummary = `${fmtShort(alHit.occurredAt)} · ${alHit.alertCode || alHit.alertType}`
-        } else if (evHit) {
-          status = 'detectado con evento'
-          linkedEventSummary = `${fmtShort(evHit.occurredAt)} · ${evHit.eventType || ''} · ${evHit.truckPlate || ''}`
-        } else if (alHit) {
-          status = 'detectado con alerta'
-          linkedAlertSummary = `${fmtShort(alHit.occurredAt)} · ${alHit.alertCode || alHit.alertType}`
-        }
-        if (status !== 'esperando datos') {
-          return { ...row, status, linkedEventSummary, linkedAlertSummary }
-        }
-        return row
-      })
+      prev.map((row) => evaluateManualObservation(row, plantFilteredEvents, plantFilteredAlerts))
     )
   }, [plantFilteredEvents, plantFilteredAlerts])
 
@@ -542,20 +597,63 @@ export function LiveCameraMonitor() {
         ? crypto.randomUUID()
         : `obs-${Date.now()}-${Math.random()}`
     const observedAt = toIsoLocal(new Date())
+    const base: ManualObservation = {
+      id,
+      observedAt,
+      sectorCode: selectedSectorCode,
+      sectorLabel: sectorDisplayName(selectedSectorCode),
+      deviceCode: selectedDeviceCode,
+      vehicleType,
+      observedPlate: observedPlate.trim(),
+      operatorNote: operatorNote.trim(),
+      manualObservation: manualObservation.trim(),
+      result: 'pendiente',
+      linkedEventSummary: '—',
+      linkedAlertSummary: '—',
+    }
     setObservations((prev) => [
-      {
-        id,
-        observedAt,
-        sectorCode: selectedSectorCode,
-        sectorLabel: sectorDisplayName(selectedSectorCode),
-        deviceCode: selectedDeviceCode,
-        status: 'esperando datos',
-        linkedEventSummary: '—',
-        linkedAlertSummary: '—',
-      },
+      evaluateManualObservation(base, plantFilteredEvents, plantFilteredAlerts),
       ...prev,
     ])
   }
+
+  const downloadTextFile = useCallback((fileName: string, content: string, type: string) => {
+    const blob = new Blob([content], { type })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = fileName
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }, [])
+
+  const exportSelectedDiagnostic = useCallback(
+    (format: 'json' | 'csv') => {
+      if (!selectedCameraDiagnostic) return
+      const obs = observations.filter(
+        (o) => o.deviceCode === selectedCameraDiagnostic.deviceCode && o.sectorCode === selectedCameraDiagnostic.sectorCode
+      )
+      const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')
+      const base = `diagnostico-camara_${selectedCameraDiagnostic.deviceCode}_${stamp}`
+      if (format === 'json') {
+        downloadTextFile(
+          `${base}.json`,
+          exportCameraDiagnosticJson({ diagnostic: selectedCameraDiagnostic, periodLabel: rangeLabel, observations: obs }),
+          'application/json;charset=utf-8'
+        )
+      } else {
+        downloadTextFile(
+          `${base}.csv`,
+          '\uFEFF' +
+            exportCameraDiagnosticCsv({ diagnostic: selectedCameraDiagnostic, periodLabel: rangeLabel, observations: obs }),
+          'text/csv;charset=utf-8'
+        )
+      }
+    },
+    [downloadTextFile, observations, rangeLabel, selectedCameraDiagnostic]
+  )
 
   const sectorOptions = useMemo(() => {
     const set = new Set<string>(getCatalogSectorCodesForLiveMonitor(plantSiteId))
@@ -607,11 +705,36 @@ export function LiveCameraMonitor() {
     }
   }
 
-  function timelineDotClass(resultado: CombinedResultKind): string {
-    if (resultado === 'EVENTO OK') return 'bg-emerald-400'
-    if (resultado === 'SOLO ALERTA') return 'bg-amber-400'
-    if (resultado === 'EVENTO + ALERTA') return 'bg-cyan-400'
-    return 'bg-slate-600'
+  function sectorStatusLabel(status: LiveSectorStatus): string {
+    if (status === 'sin_datos') return 'Sin datos'
+    if (status === 'operativa') return 'Operativa'
+    if (status === 'con_alertas') return 'Con alertas'
+    if (status === 'critica') return 'Crítica'
+    return 'Pendiente'
+  }
+
+  function sectorStatusClass(status: LiveSectorStatus): string {
+    if (status === 'operativa') return 'text-emerald-300 ring-emerald-500/40'
+    if (status === 'con_alertas') return 'text-amber-200 ring-amber-500/40'
+    if (status === 'critica') return 'text-rose-300 ring-rose-500/40'
+    if (status === 'pendiente_validacion') return 'text-cyan-200 ring-cyan-500/40'
+    return 'text-slate-400 ring-slate-600/50'
+  }
+
+  function timelineKindClass(kind: OperationalTimelineKind): string {
+    if (kind === 'EVENTO OK') return 'border-emerald-500/35 bg-emerald-500/10 text-emerald-100'
+    if (kind === 'EVENTO + ALERTA') return 'border-cyan-500/35 bg-cyan-500/10 text-cyan-100'
+    if (kind === 'LPR inválida') return 'border-rose-500/35 bg-rose-500/10 text-rose-100'
+    if (kind === 'Posible falso positivo') return 'border-fuchsia-500/35 bg-fuchsia-500/10 text-fuchsia-100'
+    return 'border-amber-500/35 bg-amber-500/10 text-amber-100'
+  }
+
+  function manualResultLabel(result: ManualObservation['result']): string {
+    if (result === 'detecto_evento_alerta') return 'Detectó evento + alerta'
+    if (result === 'detecto_evento') return 'Detectó evento'
+    if (result === 'detecto_alerta') return 'Detectó alerta'
+    if (result === 'no_detecto_nada') return 'No detectó nada'
+    return 'Pendiente'
   }
 
   const activeNodes = selectedSectorCode ? cameraRows.length : 0
@@ -625,8 +748,13 @@ export function LiveCameraMonitor() {
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-400/90">Truckflow</p>
           <h2 className="mt-0.5 text-lg font-bold tracking-tight text-white sm:text-xl">Consola operativa · En vivo</h2>
           <p className="mt-1 max-w-2xl text-xs text-slate-400">
-            Feed desde <span className="font-mono text-cyan-200/80">/journey-event/list</span> +{' '}
-            <span className="font-mono text-cyan-200/80">/alert/list</span>
+            Feed desde{' '}
+            <span className="font-mono text-cyan-200/80">{REAL_TRUCKFLOW_BASE_URL}/journey-event/list</span> +{' '}
+            <span className="font-mono text-cyan-200/80">{REAL_TRUCKFLOW_BASE_URL}/alert/list</span>
+            {' · '}
+            <span className="font-mono text-slate-500" title="Origen HTTP que usa el navegador (proxy en dev)">
+              {apiOriginLabel}
+            </span>
             {rangeLabel ? (
               <>
                 {' '}
@@ -657,6 +785,20 @@ export function LiveCameraMonitor() {
       {/* Filtros compactos */}
       <div className="border-b border-slate-800/80 bg-[#0c1222] px-4 py-3 sm:px-6">
         <div className="flex flex-wrap items-end gap-2 sm:gap-3">
+          <div className="min-w-[190px]">
+            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Modo de trabajo</label>
+            <select
+              value={workMode}
+              onChange={(e) => setWorkMode(e.target.value as LiveWorkMode)}
+              className="w-full rounded-lg border border-cyan-700/50 bg-slate-950 px-2.5 py-1.5 text-xs font-semibold text-cyan-100"
+            >
+              {(Object.keys(WORK_MODE_LABELS) as LiveWorkMode[]).map((mode) => (
+                <option key={mode} value={mode} className="bg-slate-900">
+                  {WORK_MODE_LABELS[mode]}
+                </option>
+              ))}
+            </select>
+          </div>
           <div>
             <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Planta</label>
             <select
@@ -750,7 +892,7 @@ export function LiveCameraMonitor() {
               onChange={(e) => setAutoRefresh(e.target.checked)}
               className="rounded border-slate-600"
             />
-            Auto 5s
+            Auto 30s
           </label>
         </div>
         {error ? (
@@ -773,7 +915,6 @@ export function LiveCameraMonitor() {
             ) : (
               sectorsAgg.map((s) => {
                 const active = selectedSectorCode === s.sectorCode
-                const critical = s.status === 'critico'
                 return (
                   <button
                     key={s.sectorCode}
@@ -795,11 +936,9 @@ export function LiveCameraMonitor() {
                   >
                     <div className="flex items-start justify-between gap-1">
                       <span className="text-[11px] font-bold uppercase leading-tight text-slate-200">{s.label}</span>
-                      {critical ? (
-                        <span className="shrink-0 rounded px-1 py-0.5 text-[8px] font-bold uppercase text-rose-300 ring-1 ring-rose-500/40">
-                          Crítico
-                        </span>
-                      ) : null}
+                      <span className={`shrink-0 rounded px-1 py-0.5 text-[8px] font-bold uppercase ring-1 ${sectorStatusClass(s.status)}`}>
+                        {sectorStatusLabel(s.status)}
+                      </span>
                     </div>
                     <div className="mt-1 font-mono text-[9px] text-slate-500">{s.sectorCode}</div>
                     <div className="mt-1.5 grid grid-cols-3 gap-1 text-center font-mono text-[9px] text-slate-400">
@@ -894,8 +1033,23 @@ export function LiveCameraMonitor() {
                       </div>
                       <div className="border-t border-slate-800 p-3">
                         <div className="font-mono text-[11px] font-bold text-cyan-300/90">{cam.deviceCode}</div>
+                        <div className="mt-1 text-[10px] uppercase tracking-wide text-slate-500">{sectorDisplayName(cam.sectorCode)}</div>
                         <div className="mt-2 text-center font-mono text-2xl font-bold tracking-wider text-white sm:text-3xl">
                           {cam.displayPlate}
+                        </div>
+                        <div className="mt-2 grid grid-cols-2 gap-1 font-mono text-[9px] text-slate-400">
+                          <span className="rounded bg-slate-950/80 px-1.5 py-1">
+                            Últ. evento {cam.lastEventAt ? fmtShort(cam.lastEventAt) : '—'}
+                          </span>
+                          <span className="rounded bg-slate-950/80 px-1.5 py-1">
+                            Últ. alerta {cam.lastAlertAt ? fmtShort(cam.lastAlertAt) : '—'}
+                          </span>
+                          <span className="rounded bg-slate-950/80 px-1.5 py-1 text-emerald-300">
+                            EVT 10m {cam.diagnostic.eventsLast10Min}
+                          </span>
+                          <span className="rounded bg-slate-950/80 px-1.5 py-1 text-amber-300">
+                            ALT 10m {cam.diagnostic.alertsLast10Min}
+                          </span>
                         </div>
                         <div className="mt-2 flex items-center justify-between font-mono text-[10px] text-slate-500">
                           <span>{cam.lastDetectionAt ? fmtShort(cam.lastDetectionAt) : '—'}</span>
@@ -905,9 +1059,14 @@ export function LiveCameraMonitor() {
                             <span className="text-amber-400/90">ALT {cam.alertCount}</span>
                           </span>
                         </div>
-                        <p className="mt-1 text-[9px] text-slate-600 group-hover:text-slate-500">
-                          Clic · foco · doble clic · panel derecho
-                        </p>
+                        <div className="mt-2 flex items-center justify-between gap-2">
+                          <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[9px] font-semibold text-slate-300">
+                            {cam.diagnostic.suggestedStatus}
+                          </span>
+                          <span className="rounded bg-cyan-500/10 px-2 py-1 text-[9px] font-bold uppercase text-cyan-200">
+                            Validar cámara
+                          </span>
+                        </div>
                       </div>
                     </button>
                   )
@@ -939,85 +1098,142 @@ export function LiveCameraMonitor() {
           <div className="flex flex-1 flex-col gap-4 overflow-auto p-4">
             {selectedSectorCode && selectedDeviceCode ? (
               <>
-                <div className="rounded-xl border border-emerald-500/25 bg-emerald-950/25 p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-400/80">Última detección</p>
-                  <p className="mt-2 font-mono text-3xl font-bold tracking-wider text-white">
-                    {monitorCombined[0]?.plate ||
-                      monitorEvents[0]?.truckPlate ||
-                      monitorAlerts[0]?.rawPlate ||
-                      '—'}
-                  </p>
-                  <p className="mt-2 text-xs text-slate-400">
-                    Estado: <span className="font-semibold text-slate-200">{monitorHeadline.estado}</span>
-                  </p>
-                  <div className="mt-3 grid gap-1 text-[11px] text-slate-500">
-                    <div>Evento: {monitorHeadline.ultEv ? fmtShort(monitorHeadline.ultEv) : '—'}</div>
-                    <div>Alerta: {monitorHeadline.ultAl ? fmtShort(monitorHeadline.ultAl) : '—'}</div>
+                {selectedCameraDiagnostic ? (
+                  <div className="rounded-2xl border border-cyan-500/25 bg-cyan-950/15 p-4 shadow-[0_0_30px_rgba(8,145,178,0.08)]">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-cyan-300/80">
+                      Monitor de cámara seleccionada
+                    </p>
+                    <p className="mt-2 text-2xl font-black tracking-tight text-white">
+                      {selectedCameraDiagnostic.latestKind === 'event'
+                        ? 'EVENTO DETECTADO'
+                        : selectedCameraDiagnostic.latestKind === 'alert'
+                          ? 'ALERTA DETECTADA'
+                          : 'SIN DATOS RECIENTES'}
+                    </p>
+                    <p className="mt-2 font-mono text-4xl font-bold tracking-wider text-white">
+                      {selectedCameraDiagnostic.timeline[0]?.plate || selectedCameraDiagnostic.lastValidPlate}
+                    </p>
+                    <div className="mt-4 grid grid-cols-2 gap-2 text-[11px]">
+                      <div className="rounded-lg bg-slate-950/70 p-2">
+                        <div className="text-slate-500">Último evento</div>
+                        <div className="font-mono text-slate-200">
+                          {selectedCameraDiagnostic.lastEvent ? fmtShort(getEventOperationalInstantIso(selectedCameraDiagnostic.lastEvent)) : '—'}
+                        </div>
+                      </div>
+                      <div className="rounded-lg bg-slate-950/70 p-2">
+                        <div className="text-slate-500">Última alerta</div>
+                        <div className="font-mono text-slate-200">
+                          {selectedCameraDiagnostic.lastAlert ? fmtShort(selectedCameraDiagnostic.lastAlert.occurredAt) : '—'}
+                        </div>
+                      </div>
+                      <div className="rounded-lg bg-slate-950/70 p-2">
+                        <div className="text-slate-500">Patente válida</div>
+                        <div className="font-mono text-emerald-200">{selectedCameraDiagnostic.lastValidPlate}</div>
+                      </div>
+                      <div className="rounded-lg bg-slate-950/70 p-2">
+                        <div className="text-slate-500">Lectura inválida</div>
+                        <div className="font-mono text-rose-200">{selectedCameraDiagnostic.lastInvalidReading}</div>
+                      </div>
+                      <div className="rounded-lg bg-slate-950/70 p-2">
+                        <div className="text-slate-500">Alertas LPR</div>
+                        <div className="font-mono text-amber-200">{selectedCameraDiagnostic.lprAlertCount}</div>
+                      </div>
+                      <div className="rounded-lg bg-slate-950/70 p-2">
+                        <div className="text-slate-500">LPR cada 100 eventos</div>
+                        <div className="font-mono text-cyan-200">{selectedCameraDiagnostic.lprPer100Events}</div>
+                      </div>
+                    </div>
+                    <div className="mt-3 rounded-lg border border-slate-800 bg-slate-950/60 p-2 text-[11px] text-slate-300">
+                      <span className="font-semibold text-white">{selectedCameraDiagnostic.suggestedStatus}</span>
+                      {' · '}
+                      {selectedCameraDiagnostic.recommendedAction}
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => exportSelectedDiagnostic('json')}
+                        className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-3 py-2 text-[11px] font-bold text-cyan-100"
+                      >
+                        Exportar JSON
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => exportSelectedDiagnostic('csv')}
+                        className="rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-[11px] font-bold text-slate-100"
+                      >
+                        Exportar CSV
+                      </button>
+                    </div>
                   </div>
-                </div>
+                ) : null}
 
-                <button
-                  type="button"
-                  onClick={pasoCamion}
-                  className="w-full rounded-lg border border-slate-600 bg-slate-800/80 py-2.5 text-xs font-semibold text-slate-100 hover:border-cyan-500/40 hover:bg-slate-800"
-                >
-                  Pasó camión — control manual
-                </button>
+                <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-3">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Validación manual de campo</p>
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                    <select
+                      value={vehicleType}
+                      onChange={(e) => setVehicleType(e.target.value as VehicleType)}
+                      className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-2 text-xs text-slate-100"
+                    >
+                      {(Object.keys(VEHICLE_TYPE_LABELS) as VehicleType[]).map((v) => (
+                        <option key={v} value={v}>
+                          {VEHICLE_TYPE_LABELS[v]}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      value={observedPlate}
+                      onChange={(e) => setObservedPlate(e.target.value)}
+                      placeholder="Patente observada"
+                      className={`rounded-lg border bg-slate-900 px-2 py-2 font-mono text-xs text-slate-100 ${
+                        observedPlate && !isValidObservedPlate(observedPlate) ? 'border-amber-500/50' : 'border-slate-700'
+                      }`}
+                    />
+                    <input
+                      value={manualObservation}
+                      onChange={(e) => setManualObservation(e.target.value)}
+                      placeholder="Observación manual"
+                      className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-2 text-xs text-slate-100 sm:col-span-2"
+                    />
+                    <input
+                      value={operatorNote}
+                      onChange={(e) => setOperatorNote(e.target.value)}
+                      placeholder="Nota del operador"
+                      className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-2 text-xs text-slate-100 sm:col-span-2"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={pasoCamion}
+                    className="mt-3 w-full rounded-lg border border-cyan-500/50 bg-cyan-500/15 py-2.5 text-xs font-bold text-cyan-100 hover:bg-cyan-500/25"
+                  >
+                    Pasó camión · buscar ±30s
+                  </button>
+                </div>
 
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Timeline operativo</p>
-                  <ul className="mt-3 max-h-[280px] space-y-3 overflow-auto pr-1">
-                    {monitorCombined.slice(0, 12).map((row) => (
-                      <li key={row.key} className="flex gap-3 text-[11px]">
-                        <span
-                          className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${timelineDotClass(row.resultado)}`}
-                        />
-                        <div>
-                          <div className="font-mono text-slate-300">{fmtShort(row.at)}</div>
-                          <div className="font-mono text-sm font-semibold text-white">{row.plate}</div>
-                          <div className="text-slate-500">
-                            <span className="text-emerald-400/80">{row.eventSummary}</span>
-                            {row.alertSummary !== '—' ? (
-                              <>
-                                {' · '}
-                                <span className="text-amber-400/80">{row.alertSummary}</span>
-                              </>
-                            ) : null}
+                  <ul className="mt-3 max-h-[360px] space-y-2 overflow-auto pr-1">
+                    {operationalTimeline.slice(0, 16).map((row) => (
+                      <li key={row.key} className={`rounded-xl border p-3 text-[11px] ${timelineKindClass(row.kind)}`}>
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <div className="text-[10px] font-black uppercase tracking-wide">{row.kind}</div>
+                            <div className="mt-1 font-mono text-sm font-bold text-white">{row.plate || row.rawPlate || '—'}</div>
                           </div>
-                          <div className="text-[10px] uppercase tracking-wide text-cyan-400/70">{row.resultado}</div>
+                          <div className="font-mono text-[10px] text-slate-300">{fmtShort(row.at)}</div>
+                        </div>
+                        <div className="mt-2 grid gap-1 font-mono text-[10px] text-slate-300">
+                          <span>{row.deviceCode} · {row.sectorCode}</span>
+                          <span>Journey {row.journeyUid || '—'}</span>
+                          <span className="font-sans text-slate-400">{row.description}</span>
                         </div>
                       </li>
                     ))}
                   </ul>
-                  {!monitorCombined.length ? (
+                  {!operationalTimeline.length ? (
                     <p className="mt-2 text-[11px] text-slate-600">Sin línea de tiempo en esta ventana.</p>
                   ) : null}
-                </div>
-
-                <div className="rounded-xl border border-slate-800 bg-slate-950/50">
-                  <div className="border-b border-slate-800 px-3 py-2 text-[10px] font-bold uppercase text-slate-500">
-                    Detalle tabular
-                  </div>
-                  <div className="max-h-[200px] overflow-auto p-2">
-                    <table className={smallTableClass}>
-                      <thead>
-                        <tr>
-                          <th className={thClass}>Hora</th>
-                          <th className={thClass}>Pat.</th>
-                          <th className={thClass}>Res.</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {monitorCombined.slice(0, 15).map((r) => (
-                          <tr key={r.key}>
-                            <td className={`${tdClass} whitespace-nowrap text-[10px]`}>{fmtShort(r.at)}</td>
-                            <td className={`${tdClass} font-mono text-[10px]`}>{r.plate}</td>
-                            <td className={`${tdClass} text-[10px]`}>{r.resultado}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
                 </div>
               </>
             ) : (
@@ -1046,8 +1262,10 @@ export function LiveCameraMonitor() {
                   </thead>
                   <tbody>
                     {monitorEvents.slice(0, 40).map((e) => (
-                      <tr key={`${e.id}-${e.sequenceNumber}-${e.occurredAt}`}>
-                        <td className={`${tdClass} whitespace-nowrap text-[10px]`}>{fmtShort(e.occurredAt)}</td>
+                      <tr key={`${e.id}-${e.sequenceNumber}-${getEventOperationalInstantIso(e)}`}>
+                        <td className={`${tdClass} whitespace-nowrap text-[10px]`}>
+                          {fmtShort(getEventOperationalInstantIso(e))}
+                        </td>
                         <td className={`${tdClass} font-mono text-[10px]`}>{e.truckPlate}</td>
                         <td className={`${tdClass} text-[10px]`}>{e.eventType}</td>
                       </tr>
@@ -1084,6 +1302,68 @@ export function LiveCameraMonitor() {
           </div>
         ) : null}
 
+        {workMode === 'front_rear' ? (
+          <div className="mt-3 rounded-xl border border-cyan-500/25 bg-cyan-950/10 p-3">
+            <div className="text-[11px] font-bold uppercase tracking-wide text-cyan-200">Comparación frente / trasera</div>
+            {!frontRearRows.length ? (
+              <p className="mt-2 text-[11px] text-slate-500">
+                Este sector no tiene pares frente/trasera configurados o no hay eventos cercanos.
+              </p>
+            ) : (
+              <div className="mt-3 grid gap-2 lg:grid-cols-2">
+                {frontRearRows.slice(0, 12).map((row) => (
+                  <div key={row.key} className="rounded-lg border border-slate-800 bg-slate-950/60 p-3 text-[11px]">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="font-mono text-cyan-200">{fmtShort(row.at)}</div>
+                      <div className="rounded bg-slate-800 px-2 py-0.5 text-[10px] uppercase text-slate-200">{row.result}</div>
+                    </div>
+                    <div className="mt-2 grid grid-cols-2 gap-2 font-mono text-[10px] text-slate-300">
+                      <div>
+                        <div className="text-slate-500">Frontal · {row.frontDeviceCode}</div>
+                        <div className="text-white">{row.frontPlate}</div>
+                        <div className="truncate text-slate-500">{row.frontJourneyUid}</div>
+                      </div>
+                      <div>
+                        <div className="text-slate-500">Trasera · {row.rearDeviceCode}</div>
+                        <div className="text-white">{row.rearPlate}</div>
+                        <div className="truncate text-slate-500">{row.rearJourneyUid}</div>
+                      </div>
+                    </div>
+                    <div className="mt-2 text-slate-500">Diferencia: {row.deltaSeconds ?? '—'}s</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : null}
+
+        {workMode === 'lpr' && selectedCameraDiagnostic ? (
+          <div className="mt-3 rounded-xl border border-amber-500/25 bg-amber-950/10 p-3">
+            <div className="text-[11px] font-bold uppercase tracking-wide text-amber-200">Diagnóstico LPR automático</div>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-lg bg-slate-950/70 p-3">
+                <div className="text-[10px] uppercase text-slate-500">Estado</div>
+                <div className="mt-1 font-bold text-white">{selectedCameraDiagnostic.suggestedStatus}</div>
+              </div>
+              <div className="rounded-lg bg-slate-950/70 p-3">
+                <div className="text-[10px] uppercase text-slate-500">Alertas LPR</div>
+                <div className="mt-1 font-mono text-xl text-amber-200">{selectedCameraDiagnostic.lprAlertCount}</div>
+              </div>
+              <div className="rounded-lg bg-slate-950/70 p-3">
+                <div className="text-[10px] uppercase text-slate-500">LPR/100 eventos</div>
+                <div className="mt-1 font-mono text-xl text-cyan-200">{selectedCameraDiagnostic.lprPer100Events}</div>
+              </div>
+              <div className="rounded-lg bg-slate-950/70 p-3">
+                <div className="text-[10px] uppercase text-slate-500">Inválidas frecuentes</div>
+                <div className="mt-1 font-mono text-xs text-rose-200">
+                  {selectedCameraDiagnostic.invalidReadings.slice(0, 3).map((r) => `${r.value} (${r.count})`).join(' · ') || '—'}
+                </div>
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-amber-100/80">{selectedCameraDiagnostic.recommendedAction}</p>
+          </div>
+        ) : null}
+
         <div className={`mt-3 rounded-xl border border-slate-800 bg-slate-950/40 p-3 ${selectedSectorCode && selectedDeviceCode ? '' : 'mt-0'}`}>
           <div className="text-[11px] font-bold text-slate-400">Controles manuales de campo</div>
           {!observations.length ? (
@@ -1099,6 +1379,8 @@ export function LiveCameraMonitor() {
                     <th className={thClass}>Cámara</th>
                     <th className={thClass}>Sector</th>
                     <th className={thClass}>Resultado</th>
+                    <th className={thClass}>Vehículo</th>
+                    <th className={thClass}>Patente obs.</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1107,7 +1389,9 @@ export function LiveCameraMonitor() {
                       <td className={`${tdClass} whitespace-nowrap text-[10px]`}>{fmtShort(o.observedAt)}</td>
                       <td className={`${tdClass} font-mono text-[10px]`}>{o.deviceCode}</td>
                       <td className={`${tdClass} text-[10px]`}>{o.sectorLabel}</td>
-                      <td className={`${tdClass} text-[10px]`}>{o.status}</td>
+                      <td className={`${tdClass} text-[10px]`}>{manualResultLabel(o.result)}</td>
+                      <td className={`${tdClass} text-[10px]`}>{VEHICLE_TYPE_LABELS[o.vehicleType]}</td>
+                      <td className={`${tdClass} font-mono text-[10px]`}>{o.observedPlate || '—'}</td>
                     </tr>
                   ))}
                 </tbody>

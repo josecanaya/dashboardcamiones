@@ -57,6 +57,7 @@ import { investigateNearbyAlerts } from '../services/nearbyAlertResearch'
 import type { IncompleteSequenceGroup } from '../services/realIncompleteAnalysis'
 import { RealJourneyDiagnosticsView, type JourneyQuickFilter, type RealDataMainTab } from './RealJourneyDiagnosticsView'
 import type { RealJourneyEventDto, ReconstructedRealJourney } from '../services/realJourneyEvents.types'
+import { buildRearCameraFilterTrace } from '../services/rearCameraFilter'
 
 function formatCalendarDayOptionLabel(
   dayKey: string,
@@ -263,6 +264,8 @@ export function RealJourneyDiagnosticsPage() {
   const [depurationScopeFilter, setDepurationScopeFilter] =
     useState<OperationalJourneyScopeFilter>('all')
   const [mainTab, setMainTab] = useState<RealDataMainTab>('eventos')
+  const [showExcludedRearEvents, setShowExcludedRearEvents] = useState(false)
+  const [showExcludedRearAlerts, setShowExcludedRearAlerts] = useState(false)
   const [drawerCircuitCode, setDrawerCircuitCode] = useState<string | null>(null)
   const [drawerIncompleteGroup, setDrawerIncompleteGroup] = useState<IncompleteSequenceGroup | null>(null)
   const [apiQuery, setApiQuery] = useState<RealTruckflowQueryParams>({
@@ -327,8 +330,9 @@ export function RealJourneyDiagnosticsPage() {
           ? await loadRealJourneyEventsFromApi(apiStartDate.trim(), apiEndDate.trim())
           : await loadRealJourneyEventsFromFile(filePath.trim() || undefined)
       const ricardoneOnly = filterRicardoneSiteEventsOnly(list)
+      const filtered = buildRearCameraFilterTrace(ricardoneOnly, [])
       setEventsUnfiltered(ricardoneOnly)
-      setEvents(ricardoneOnly)
+      setEvents(filtered.operationalEvents)
       setLastLoadedAt(new Date().toISOString())
     } catch (e) {
       setEventsUnfiltered([])
@@ -345,8 +349,9 @@ export function RealJourneyDiagnosticsPage() {
     try {
       const list = await fetchJourneyEvents(apiQuery)
       const ricardoneOnly = filterRicardoneSiteEventsOnly(list)
+      const filtered = buildRearCameraFilterTrace(ricardoneOnly, [])
       setEventsUnfiltered(ricardoneOnly)
-      setEvents(ricardoneOnly)
+      setEvents(filtered.operationalEvents)
       setCleanDataset(null)
       setLastQueryUrl(`${REAL_TRUCKFLOW_BASE_URL}/journey-event/list`)
       setLastLoadedAt(new Date().toISOString())
@@ -385,10 +390,11 @@ export function RealJourneyDiagnosticsPage() {
         fetchAlerts(alertsChannelQuery),
       ])
       const ricardoneOnly = filterRicardoneSiteEventsOnly(eventList)
+      const filtered = buildRearCameraFilterTrace(ricardoneOnly, alertList)
       setEventsUnfiltered(ricardoneOnly)
-      setEvents(ricardoneOnly)
+      setEvents(filtered.operationalEvents)
       setRawAlerts(alertList)
-      const processed = buildCleanRealDataset(ricardoneOnly, alertList)
+      const processed = buildCleanRealDataset(filtered.operationalEvents, filtered.operationalAlerts)
       setCleanDataset(processed)
       setDatasetProcessedAt(new Date().toISOString())
       setLastQueryUrl(`${REAL_TRUCKFLOW_BASE_URL}/journey-event/list (X) + /alert/list (Y independiente)`)
@@ -435,10 +441,22 @@ export function RealJourneyDiagnosticsPage() {
   }, [recentRange.endDate, recentRange.startDate])
 
   const processCleanDataset = useCallback(() => {
-    const result = buildCleanRealDataset(eventsUnfiltered, rawAlerts)
+    const filtered = buildRearCameraFilterTrace(eventsUnfiltered, rawAlerts)
+    const result = buildCleanRealDataset(filtered.operationalEvents, filtered.operationalAlerts)
     setCleanDataset(result)
     setDatasetProcessedAt(new Date().toISOString())
   }, [eventsUnfiltered, rawAlerts])
+
+  const rearCameraFilterTrace = useMemo(
+    () => buildRearCameraFilterTrace(eventsUnfiltered, rawAlerts),
+    [eventsUnfiltered, rawAlerts]
+  )
+  const standaloneRearAlertFilterTrace = useMemo(
+    () => buildRearCameraFilterTrace([], alertsRawStandalone),
+    [alertsRawStandalone]
+  )
+  const rawAlertsOperational = rearCameraFilterTrace.operationalAlerts
+  const alertsRawStandaloneOperational = standaloneRearAlertFilterTrace.operationalAlerts
 
   const exportCleanDatasetJson = useCallback(() => {
     if (!cleanDataset) return
@@ -453,6 +471,9 @@ export function RealJourneyDiagnosticsPage() {
         baseUrl: REAL_TRUCKFLOW_BASE_URL,
         rawEventCount: cleanDataset.summary.rawEventCount,
         rawAlertCount: cleanDataset.summary.rawAlertCount,
+        sourceRawEventCount: eventsUnfiltered.length,
+        sourceRawAlertCount: rawAlerts.length,
+        rearCameraFilter: rearCameraFilterTrace.metadata,
         cleanEventCount: cleanDataset.summary.cleanEventCount,
         cleanJourneyCount: cleanDataset.summary.cleanJourneyCount,
         discardedEventCount: cleanDataset.summary.discardedEventCount,
@@ -487,7 +508,7 @@ export function RealJourneyDiagnosticsPage() {
     a.click()
     a.remove()
     URL.revokeObjectURL(url)
-  }, [cleanDataset, apiQuery.endDate, apiQuery.startDate])
+  }, [cleanDataset, apiQuery.endDate, apiQuery.startDate, eventsUnfiltered.length, rawAlerts.length, rearCameraFilterTrace.metadata])
 
   const exportCleanSummaryCsv = useCallback(() => {
     if (!cleanDataset) return
@@ -553,7 +574,7 @@ export function RealJourneyDiagnosticsPage() {
     [journeysBatch, eventsUnfiltered]
   )
 
-  const journeysFullPipelineBatch = useMemo(() => reconstructRealJourneys(eventsUnfiltered), [eventsUnfiltered])
+  const journeysFullPipelineBatch = useMemo(() => reconstructRealJourneys(events), [events])
   const journeysFullPipeline = useMemo(
     () =>
       enrichCaladaSanLorenzoConfidence(journeysFullPipelineBatch, eventsUnfiltered, CALADA_INTERPLANT_MS),
@@ -990,13 +1011,25 @@ export function RealJourneyDiagnosticsPage() {
   const topInvalidPlateReading = plateQualitySummary.topInvalidPlateReadings[0]?.truckPlateOriginal ?? '—'
 
   const normalizedAlertsStandalone = useMemo(
-    () => alertsRawStandalone.map((a) => normalizeRealAlertForView(a)),
-    [alertsRawStandalone]
+    () => alertsRawStandaloneOperational.map((a) => normalizeRealAlertForView(a)),
+    [alertsRawStandaloneOperational]
+  )
+  const normalizedExcludedRearAlertsStandalone = useMemo(
+    () =>
+      [
+        ...standaloneRearAlertFilterTrace.excludedRearAlerts,
+        ...standaloneRearAlertFilterTrace.excludedIngressRouteAlerts,
+      ].map((a) => normalizeRealAlertForView(a)),
+    [standaloneRearAlertFilterTrace.excludedIngressRouteAlerts, standaloneRearAlertFilterTrace.excludedRearAlerts]
   )
 
   const filteredAlertsStandalone = useMemo(
-    () => applyAlertsQuickFilter(normalizedAlertsStandalone, alertsQuickFilter),
-    [normalizedAlertsStandalone, alertsQuickFilter]
+    () =>
+      applyAlertsQuickFilter(
+        showExcludedRearAlerts ? normalizedExcludedRearAlertsStandalone : normalizedAlertsStandalone,
+        alertsQuickFilter
+      ),
+    [alertsQuickFilter, normalizedAlertsStandalone, normalizedExcludedRearAlertsStandalone, showExcludedRearAlerts]
   )
 
   const alertsSummary = useMemo(() => {
@@ -1057,7 +1090,7 @@ export function RealJourneyDiagnosticsPage() {
   }, [normalizedAlertsStandalone])
 
   const usefulWindow = useMemo(() => {
-    const sorted = [...eventsUnfiltered].sort((a, b) => new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime())
+    const sorted = [...events].sort((a, b) => new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime())
     const ingresos = sorted.filter((e) => {
       const logical = normalizeRealEventPoint(e).logicalCode
       return logical === 'INGRESO' || (e.sectorCode ?? '').trim().toUpperCase() === 'RICARDONE_INGRESO_CAMIONES'
@@ -1071,29 +1104,29 @@ export function RealJourneyDiagnosticsPage() {
     const usefulWindowEnd = windowValid ? new Date(endMs).toISOString() : ''
     let insideCount = 0
     let outsideCount = 0
-    for (const e of eventsUnfiltered) {
+    for (const e of events) {
       const t = new Date(e.occurredAt).getTime()
       const inside = !useUsefulWindow || !windowValid || (Number.isFinite(t) && t >= startMs && t <= endMs)
       if (inside) insideCount++
       else outsideCount++
     }
     return { firstIngresoAt, lastIngresoAt, usefulWindowStart, usefulWindowEnd, windowValid, insideCount, outsideCount }
-  }, [eventsUnfiltered, useUsefulWindow])
+  }, [events, useUsefulWindow])
 
   const summaryDataset = useMemo(() => {
     const data = buildCleanRealDataset(
-      eventsUnfiltered.filter((e) => {
+      events.filter((e) => {
         if (!useUsefulWindow || !usefulWindow.windowValid) return true
         const t = new Date(e.occurredAt).getTime()
         const s = new Date(usefulWindow.usefulWindowStart).getTime()
         const f = new Date(usefulWindow.usefulWindowEnd).getTime()
         return Number.isFinite(t) && t >= s && t <= f
       }),
-      rawAlerts,
+      rawAlertsOperational,
       { excludeAlertedJourneys: false, excludeAlertedEvents: false }
     )
     return data
-  }, [eventsUnfiltered, rawAlerts, useUsefulWindow, usefulWindow.usefulWindowEnd, usefulWindow.usefulWindowStart, usefulWindow.windowValid])
+  }, [events, rawAlertsOperational, useUsefulWindow, usefulWindow.usefulWindowEnd, usefulWindow.usefulWindowStart, usefulWindow.windowValid])
 
   const summaryJourneyRowsAll = useMemo(() => {
     const byUidAlerts = new Map<string, Set<string>>()
@@ -1152,7 +1185,10 @@ export function RealJourneyDiagnosticsPage() {
     return rows
   }, [summaryDataset, useUsefulWindow, usefulWindow.windowValid, usefulWindow.usefulWindowEnd, usefulWindow.usefulWindowStart])
 
-  const rawAlertsForDiagnostics = useMemo(() => (rawAlerts.length ? rawAlerts : alertsRawStandalone), [rawAlerts, alertsRawStandalone])
+  const rawAlertsForDiagnostics = useMemo(
+    () => (rawAlertsOperational.length ? rawAlertsOperational : alertsRawStandaloneOperational),
+    [rawAlertsOperational, alertsRawStandaloneOperational]
+  )
   const normalizedAlertsForDiagnostics = useMemo(() => rawAlertsForDiagnostics.map((a) => normalizeRealAlertForView(a)), [rawAlertsForDiagnostics])
   const nearbyByJourneyUid = useMemo(() => {
     const out = new Map<
@@ -1396,7 +1432,7 @@ export function RealJourneyDiagnosticsPage() {
   }, [alertsQuery.endDate, alertsQuery.startDate])
 
   const exportAlertsCsv = useCallback(() => {
-    const rows = normalizedAlertsStandalone
+    const rows = showExcludedRearAlerts ? normalizedExcludedRearAlertsStandalone : normalizedAlertsStandalone
     if (!rows.length) return
     const header = [
       'alertId',
@@ -1442,7 +1478,7 @@ export function RealJourneyDiagnosticsPage() {
     a.click()
     a.remove()
     URL.revokeObjectURL(url)
-  }, [alertsQuery.endDate, alertsQuery.startDate, normalizedAlertsStandalone])
+  }, [alertsQuery.endDate, alertsQuery.startDate, normalizedAlertsStandalone, normalizedExcludedRearAlertsStandalone, showExcludedRearAlerts])
 
   const exportAlertsJson = useCallback(() => {
     const payload = {
@@ -1452,8 +1488,13 @@ export function RealJourneyDiagnosticsPage() {
         baseUrl: REAL_TRUCKFLOW_BASE_URL,
         query: alertsQuery,
         totalAlerts: normalizedAlertsStandalone.length,
+        rawAlertsCount: alertsRawStandalone.length,
+        rearCameraFilter: standaloneRearAlertFilterTrace.metadata,
       },
       rawAlerts: alertsRawStandalone,
+      operationalAlerts: alertsRawStandaloneOperational,
+      excludedRearAlerts: standaloneRearAlertFilterTrace.excludedRearAlerts,
+      excludedIngressRouteAlerts: standaloneRearAlertFilterTrace.excludedIngressRouteAlerts,
       normalizedAlerts: normalizedAlertsStandalone,
       summaries: {
         total: alertsSummary.total,
@@ -1476,7 +1517,7 @@ export function RealJourneyDiagnosticsPage() {
     a.click()
     a.remove()
     URL.revokeObjectURL(url)
-  }, [alertsQuery, alertsRawStandalone, normalizedAlertsStandalone, alertsSummary])
+  }, [alertsQuery, alertsRawStandalone, alertsRawStandaloneOperational, normalizedAlertsStandalone, alertsSummary, standaloneRearAlertFilterTrace.excludedIngressRouteAlerts, standaloneRearAlertFilterTrace.excludedRearAlerts, standaloneRearAlertFilterTrace.metadata])
 
   const exportRawEventsJson = useCallback(() => {
     const payload = {
@@ -1526,6 +1567,9 @@ export function RealJourneyDiagnosticsPage() {
         usefulWindowEnd: usefulWindow.usefulWindowEnd,
         rawEventCount: eventsUnfiltered.length,
         rawAlertCount: rawAlerts.length,
+        operationalEventCount: events.length,
+        operationalAlertCount: rawAlertsOperational.length,
+        rearCameraFilter: rearCameraFilterTrace.metadata,
         eventsInsideUsefulWindow: usefulWindow.insideCount,
         eventsOutsideUsefulWindow: usefulWindow.outsideCount,
         includedJourneyCount: included.length,
@@ -1542,11 +1586,16 @@ export function RealJourneyDiagnosticsPage() {
       },
       events: {
         raw: eventsUnfiltered,
+        operational: events,
+        excludedRear: rearCameraFilterTrace.excludedRearEvents,
         insideUsefulWindow: summaryDataset.rawEvents,
         outsideUsefulWindow: eventsUnfiltered.filter((e) => !summaryDataset.rawEvents.some((x) => x.id === e.id && x.journeyUid === e.journeyUid)),
       },
       alerts: {
         raw: rawAlerts,
+        operational: rawAlertsOperational,
+        excludedRear: rearCameraFilterTrace.excludedRearAlerts,
+        excludedIngressRoute: rearCameraFilterTrace.excludedIngressRouteAlerts,
         normalized: normalizedAlertsStandalone,
       },
       journeys: {
@@ -1569,7 +1618,7 @@ export function RealJourneyDiagnosticsPage() {
     a.click()
     a.remove()
     URL.revokeObjectURL(url)
-  }, [apiQuery.endDate, apiQuery.startDate, eventsUnfiltered, normalizedAlertsStandalone, rawAlerts, summaryDataset, summaryJourneys, useUsefulWindow, usefulWindow.firstIngresoAt, usefulWindow.insideCount, usefulWindow.lastIngresoAt, usefulWindow.outsideCount, usefulWindow.usefulWindowEnd, usefulWindow.usefulWindowStart])
+  }, [apiQuery.endDate, apiQuery.startDate, events, eventsUnfiltered, normalizedAlertsStandalone, rawAlerts, rawAlertsOperational, rearCameraFilterTrace.excludedIngressRouteAlerts, rearCameraFilterTrace.excludedRearAlerts, rearCameraFilterTrace.excludedRearEvents, rearCameraFilterTrace.metadata, summaryDataset, summaryJourneys, useUsefulWindow, usefulWindow.firstIngresoAt, usefulWindow.insideCount, usefulWindow.lastIngresoAt, usefulWindow.outsideCount, usefulWindow.usefulWindowEnd, usefulWindow.usefulWindowStart])
 
   const exportSummaryKpiCsv = useCallback(() => {
     const header = ['etlStatus', 'motivo', 'journeyUid', 'patente', 'inicio', 'fin', 'duracion', 'circuito', 'alertCodes', 'secuenciaLogica', 'secuenciaRaw', 'enVentana']
@@ -1623,7 +1672,7 @@ export function RealJourneyDiagnosticsPage() {
 
   const lprQualitySummary = useMemo(() => {
     const alertsNorm = rawAlertsForDiagnostics.map((a) => normalizeRealAlertForView(a))
-    const eventsTotal = eventsUnfiltered.length
+    const eventsTotal = events.length
     const alertsTotal = alertsNorm.length
     const lprAlerts = alertsNorm.filter((a) => (a.alertCode || a.alertType).toUpperCase() === 'LPR_MALFUNCTION')
     const invalidRoute = alertsNorm.filter((a) => (a.alertCode || a.alertType).toUpperCase() === 'INVALID_ROUTE').length
@@ -1639,12 +1688,12 @@ export function RealJourneyDiagnosticsPage() {
       invalidStart,
       hasOver100Index: Boolean(lprIndexPer100Events !== null && lprIndexPer100Events > 100),
     }
-  }, [eventsUnfiltered, rawAlertsForDiagnostics])
+  }, [events, rawAlertsForDiagnostics])
 
   const lprByCameraRows = useMemo(() => {
     const alertsNorm = rawAlertsForDiagnostics.map((a) => normalizeRealAlertForView(a))
     const byCameraEvents = new Map<string, number>()
-    for (const e of eventsUnfiltered) {
+    for (const e of events) {
       const d = (e.deviceCode || '').trim() || 'SIN_DEVICE'
       const s = (e.sectorCode || '').trim() || 'SIN_SECTOR'
       const key = `${d}__${s}`
@@ -1709,7 +1758,7 @@ export function RealJourneyDiagnosticsPage() {
         noVisibleEventBaseHint: evCount === 0 && lprList.length > 0,
       }
     }).sort((a, b) => b.lprAlerts - a.lprAlerts)
-  }, [eventsUnfiltered, rawAlertsForDiagnostics])
+  }, [events, rawAlertsForDiagnostics])
 
   const lprFailedReadRows = useMemo(() => {
     const alertsNorm = rawAlertsForDiagnostics.map((a) => normalizeRealAlertForView(a))
@@ -1736,12 +1785,12 @@ export function RealJourneyDiagnosticsPage() {
       sourceMode: dataSource === 'api' ? 'API real' : 'archivo local',
       startDate: apiQuery.startDate ?? '',
       endDate: apiQuery.endDate ?? '',
-      rawEventCount: eventsUnfiltered.length,
+      rawEventCount: events.length,
       rawAlertCount: rawAlertsForDiagnostics.length,
-      usingRawEvents: true,
+      usingRawEvents: false,
       lastLoadedAt,
     }),
-    [apiQuery.endDate, apiQuery.startDate, dataSource, eventsUnfiltered.length, lastLoadedAt, rawAlertsForDiagnostics.length]
+    [apiQuery.endDate, apiQuery.startDate, dataSource, events.length, lastLoadedAt, rawAlertsForDiagnostics.length]
   )
 
   const lprCameraAuditData = useMemo(() => {
@@ -1951,6 +2000,12 @@ export function RealJourneyDiagnosticsPage() {
       setInterplantWindowHours={setInterplantWindowHours}
       mainTab={mainTab}
       setMainTab={setMainTab}
+      showExcludedRearEvents={showExcludedRearEvents}
+      setShowExcludedRearEvents={setShowExcludedRearEvents}
+      showExcludedRearAlerts={showExcludedRearAlerts}
+      setShowExcludedRearAlerts={setShowExcludedRearAlerts}
+      rearCameraFilterTrace={rearCameraFilterTrace}
+      standaloneRearAlertFilterTrace={standaloneRearAlertFilterTrace}
       journeys={journeys}
       events={events}
       eventsUnfiltered={eventsUnfiltered}

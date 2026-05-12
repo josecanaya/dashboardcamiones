@@ -11,6 +11,8 @@ import type { RealJourneyEventDto, ReconstructedRealJourney } from '../services/
 import type { RealAlertDto, RealTruckflowQueryParams } from '../services/realTruckflowApi'
 import type { buildCleanRealDataset } from '../services/realTruckflowCleanDataset'
 import type { AlertsQuickFilter, NormalizedRealAlertView } from '../services/realAlertsInspector'
+import type { RearCameraFilterTrace } from '../services/rearCameraFilter'
+import { EXCLUDED_REAR_DEVICE_CODES } from '../services/rearCameraFilter'
 import { ExecutiveMetricCard } from '../components/realDiagnostics/ExecutiveMetricCard'
 import { DiagDrawer } from '../components/realDiagnostics/DiagDrawer'
 import { DataDistributionDonut } from '../components/realDiagnostics/DataDistributionDonut'
@@ -169,6 +171,12 @@ export type RealJourneyDiagnosticsViewProps = {
   setInterplantWindowHours: (v: number) => void
   mainTab: RealDataMainTab
   setMainTab: (v: RealDataMainTab) => void
+  showExcludedRearEvents: boolean
+  setShowExcludedRearEvents: (v: boolean) => void
+  showExcludedRearAlerts: boolean
+  setShowExcludedRearAlerts: (v: boolean) => void
+  rearCameraFilterTrace: RearCameraFilterTrace
+  standaloneRearAlertFilterTrace: RearCameraFilterTrace
 
   journeys: ReconstructedRealJourney[]
   events: RealJourneyEventDto[]
@@ -607,6 +615,20 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
           </span>
         </div>
 
+        <div className="mt-4 rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm text-cyan-950">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-cyan-900 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white">
+              Filtro provisorio activo
+            </span>
+            <span>
+              Se excluyen cámaras traseras/sensibles del análisis principal: <span className="font-mono text-xs">{EXCLUDED_REAR_DEVICE_CODES.join(', ')}</span>.
+            </span>
+          </div>
+          <p className="mt-1 text-xs text-cyan-800">
+            La información cruda se conserva para auditoría. Este filtro evita que lecturas de acoplados, semirremolques o vehículos no operativos ensucien la reconstrucción preliminar. Además se excluyen provisoriamente alertas INVALID_ROUTE / INVALID_START_JOURNEY provenientes de Ingreso o Preingreso.
+          </p>
+        </div>
+
         <div className="mt-6 flex flex-wrap gap-3 border-t border-slate-100 pt-6">
           <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-700">
             <span>Origen</span>
@@ -747,22 +769,33 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
               <button type="button" onClick={p.exportClassificationAuditCsv} className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900">Exportar auditoría de clasificación CSV</button>
             </div>
             <div className="mt-4 text-xs text-slate-600">
-              <div>Eventos recibidos: {p.events.length.toLocaleString()} · Alertas recibidas: {p.rawAlerts.length.toLocaleString()}</div>
+              <div>Eventos operativos: {p.events.length.toLocaleString()} · Alertas operativas: {p.rearCameraFilterTrace.operationalAlerts.length.toLocaleString()}</div>
               <div>Ventana útil: {p.usefulWindow.windowValid ? `${formatDateTimeShort(p.usefulWindow.usefulWindowStart)} -> ${formatDateTimeShort(p.usefulWindow.usefulWindowEnd)}` : 'inválida (usa rango completo)'}</div>
             </div>
             <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700">
               <div className="font-semibold">Fuente de datos</div>
               <div>sourceMode: {p.dataSource === 'api' ? 'API real' : 'archivo local'} · startDate: {p.apiQuery.startDate || '—'} · endDate: {p.apiQuery.endDate || '—'}</div>
               <div>useUsefulWindow: {p.useUsefulWindow ? 'sí' : 'no'} · usefulWindowStart: {p.usefulWindow.usefulWindowStart || '—'} · usefulWindowEnd: {p.usefulWindow.usefulWindowEnd || '—'}</div>
-              <div>rawEventCount: {p.events.length} · rawAlertCount: {p.rawAlerts.length} · lastLoadedAt: {p.lastLoadedAt ? formatDateTimeShort(p.lastLoadedAt) : '—'} · lastProcessedAt: {p.datasetProcessedAt ? formatDateTimeShort(p.datasetProcessedAt) : '—'}</div>
+              <div>rawEventCount: {p.eventsUnfiltered.length} · rawAlertCount: {p.rawAlerts.length} · lastLoadedAt: {p.lastLoadedAt ? formatDateTimeShort(p.lastLoadedAt) : '—'} · lastProcessedAt: {p.datasetProcessedAt ? formatDateTimeShort(p.datasetProcessedAt) : '—'}</div>
               <div>eventsInsideUsefulWindow: {p.usefulWindow.insideCount} · eventsOutsideUsefulWindow: {p.usefulWindow.outsideCount}</div>
               <button type="button" onClick={() => p.setMainTab('eventos')} className="mt-2 rounded border border-slate-300 bg-white px-2 py-1 text-[11px]">Ver fuente cruda</button>
+            </div>
+            <div className="mt-4 rounded-xl border border-cyan-200 bg-cyan-50 p-3 text-xs text-cyan-950">
+              <div className="font-semibold">Filtro de cámaras traseras provisorio</div>
+              <div>Eventos excluidos: {p.rearCameraFilterTrace.excludedRearEvents.length} · Alertas traseras excluidas: {p.rearCameraFilterTrace.excludedRearAlerts.length} · Alertas route/start ingreso-preingreso excluidas: {p.rearCameraFilterTrace.excludedIngressRouteAlerts.length} · Journeys sólo traseras: {p.rearCameraFilterTrace.excludedRearOnlyJourneyUids.length}</div>
+              <div>Dataset operativo final: {p.events.length} eventos · {p.rearCameraFilterTrace.operationalAlerts.length} alertas</div>
+              <p className="mt-1">El filtro de cámaras traseras es provisorio y se aplica para evitar que lecturas de acoplados, semirremolques o vehículos no operativos ensucien la reconstrucción preliminar.</p>
             </div>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-            <ExecutiveMetricCard label="Eventos crudos" value={p.events.length} />
+            <ExecutiveMetricCard label="Eventos crudos" value={p.eventsUnfiltered.length} />
             <ExecutiveMetricCard label="Alertas crudas" value={p.rawAlerts.length} />
+            <ExecutiveMetricCard accent="amber" label="Eventos excluidos traseras" value={p.rearCameraFilterTrace.excludedRearEvents.length} />
+            <ExecutiveMetricCard accent="amber" label="Alertas excluidas traseras" value={p.rearCameraFilterTrace.excludedRearAlerts.length} />
+            <ExecutiveMetricCard accent="amber" label="Alertas route/start ingreso-preingreso excluidas" value={p.rearCameraFilterTrace.excludedIngressRouteAlerts.length} />
+            <ExecutiveMetricCard accent="rose" label="Journeys sólo traseras" value={p.rearCameraFilterTrace.excludedRearOnlyJourneyUids.length} />
+            <ExecutiveMetricCard accent="green" label="Dataset operativo final" value={`${p.events.length} evt / ${p.rearCameraFilterTrace.operationalAlerts.length} alert`} />
             <ExecutiveMetricCard label="Eventos dentro ventana" value={p.usefulWindow.insideCount} />
             <ExecutiveMetricCard label="Eventos fuera ventana" value={p.usefulWindow.outsideCount} />
             <ExecutiveMetricCard accent="green" label="Journeys incluidos" value={p.summaryJourneys.filter((x) => x.etlStatus === 'included').length} />
@@ -1123,8 +1156,25 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
             {p.etlError ? <div className="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-900">{p.etlError}</div> : null}
           </div>
 
+          <div className="grid gap-3 sm:grid-cols-3">
+            <ExecutiveMetricCard label="Eventos crudos recibidos" value={p.eventsUnfiltered.length} />
+            <ExecutiveMetricCard accent="amber" label="Excluidos por cámara trasera" value={p.rearCameraFilterTrace.excludedRearEvents.length} />
+            <ExecutiveMetricCard accent="green" label="Eventos operativos usados" value={p.events.length} />
+          </div>
+          <div className="rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm text-cyan-950">
+            Filtro provisorio activo: se excluyen cámaras traseras/sensibles del análisis principal.
+            <label className="ml-3 inline-flex cursor-pointer items-center gap-2 text-xs font-semibold">
+              <input
+                type="checkbox"
+                checked={p.showExcludedRearEvents}
+                onChange={(e) => p.setShowExcludedRearEvents(e.target.checked)}
+              />
+              Ver excluidos por cámara trasera
+            </label>
+          </div>
+
           {eventosViewMode === 'presentacion' ? (
-            <EventosTruckflowPresentation eventsFromApi={p.eventsUnfiltered} apiQuery={p.apiQuery} loading={p.etlLoadingEvents} />
+            <EventosTruckflowPresentation eventsFromApi={p.showExcludedRearEvents ? p.rearCameraFilterTrace.excludedRearEvents : p.events} apiQuery={p.apiQuery} loading={p.etlLoadingEvents} />
           ) : (
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
               <h3 className="text-base font-bold text-slate-900">Tabla y desglose · Ricardone</h3>
@@ -1133,24 +1183,24 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
                 Puerto San Lorenzo y otros sitios fuera del prefijo Ricardone quedan excluidos al cargar.
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-                <ExecutiveMetricCard label="Total eventos (vista técnica)" value={p.events.length} />
-                <ExecutiveMetricCard label="Primer evento" value={p.events.length ? formatDateTimeShort([...p.events].sort((a, b) => new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime())[0].occurredAt) : '—'} />
-                <ExecutiveMetricCard label="Último evento" value={p.events.length ? formatDateTimeShort([...p.events].sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime())[0].occurredAt) : '—'} />
+                <ExecutiveMetricCard label={p.showExcludedRearEvents ? 'Eventos excluidos (vista técnica)' : 'Total eventos operativos'} value={(p.showExcludedRearEvents ? p.rearCameraFilterTrace.excludedRearEvents : p.events).length} />
+                <ExecutiveMetricCard label="Primer evento" value={(p.showExcludedRearEvents ? p.rearCameraFilterTrace.excludedRearEvents : p.events).length ? formatDateTimeShort([...(p.showExcludedRearEvents ? p.rearCameraFilterTrace.excludedRearEvents : p.events)].sort((a, b) => new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime())[0].occurredAt) : '—'} />
+                <ExecutiveMetricCard label="Último evento" value={(p.showExcludedRearEvents ? p.rearCameraFilterTrace.excludedRearEvents : p.events).length ? formatDateTimeShort([...(p.showExcludedRearEvents ? p.rearCameraFilterTrace.excludedRearEvents : p.events)].sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime())[0].occurredAt) : '—'} />
               </div>
               <div className="mt-4 grid gap-4 xl:grid-cols-2">
                 <div className="rounded-xl border border-slate-100 p-3">
                   <div className="text-xs font-semibold text-slate-700">Eventos por sector</div>
                   <div className="mt-2 max-h-36 overflow-auto text-xs">
-                    {[...new Map(p.events.map((e) => [e.sectorCode, 0])).keys()].slice(0, 20).map((sector) => (
-                      <div key={sector} className="flex justify-between border-b border-slate-100 py-1"><span className="font-mono">{sector}</span><span>{p.events.filter((e) => e.sectorCode === sector).length}</span></div>
+                    {[...new Map((p.showExcludedRearEvents ? p.rearCameraFilterTrace.excludedRearEvents : p.events).map((e) => [e.sectorCode, 0])).keys()].slice(0, 20).map((sector) => (
+                      <div key={sector} className="flex justify-between border-b border-slate-100 py-1"><span className="font-mono">{sector}</span><span>{(p.showExcludedRearEvents ? p.rearCameraFilterTrace.excludedRearEvents : p.events).filter((e) => e.sectorCode === sector).length}</span></div>
                     ))}
                   </div>
                 </div>
                 <div className="rounded-xl border border-slate-100 p-3">
                   <div className="text-xs font-semibold text-slate-700">Eventos por device</div>
                   <div className="mt-2 max-h-36 overflow-auto text-xs">
-                    {[...new Map(p.events.map((e) => [e.deviceCode, 0])).keys()].slice(0, 20).map((device) => (
-                      <div key={device} className="flex justify-between border-b border-slate-100 py-1"><span className="font-mono">{device}</span><span>{p.events.filter((e) => e.deviceCode === device).length}</span></div>
+                    {[...new Map((p.showExcludedRearEvents ? p.rearCameraFilterTrace.excludedRearEvents : p.events).map((e) => [e.deviceCode, 0])).keys()].slice(0, 20).map((device) => (
+                      <div key={device} className="flex justify-between border-b border-slate-100 py-1"><span className="font-mono">{device}</span><span>{(p.showExcludedRearEvents ? p.rearCameraFilterTrace.excludedRearEvents : p.events).filter((e) => e.deviceCode === device).length}</span></div>
                     ))}
                   </div>
                 </div>
@@ -1163,7 +1213,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
                     </tr>
                   </thead>
                   <tbody>
-                    {p.events.slice(0, 1200).map((e) => (
+                    {(p.showExcludedRearEvents ? p.rearCameraFilterTrace.excludedRearEvents : p.events).slice(0, 1200).map((e) => (
                       <tr key={`${e.id}-${e.sequenceNumber}`} className="border-t border-slate-100">
                         <td className="px-2 py-2">{e.id}</td>
                         <td className="px-2 py-2">{formatDateTimeShort(e.occurredAt)}</td>
@@ -1232,9 +1282,27 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
               <div>Estado: {p.alertsLoading ? 'Cargando alertas...' : 'En espera'}</div>
               <div>URL consultada: {p.alertsLastQueryUrl || '—'}</div>
               <div>Última consulta: {p.alertsLastQueriedAt ? formatDateTimeShort(p.alertsLastQueriedAt) : '—'}</div>
-              <div>Total alertas recibidas: {p.normalizedAlertsStandalone.length.toLocaleString()}</div>
+              <div>Total alertas operativas: {p.normalizedAlertsStandalone.length.toLocaleString()}</div>
               {p.alertsError ? <div className="mt-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-rose-900">{p.alertsError}</div> : null}
             </div>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-3">
+            <ExecutiveMetricCard label="Alertas crudas recibidas" value={p.standaloneRearAlertFilterTrace.rawAlerts.length} />
+            <ExecutiveMetricCard accent="amber" label="Alertas excluidas por cámara trasera" value={p.standaloneRearAlertFilterTrace.excludedRearAlerts.length} />
+            <ExecutiveMetricCard accent="amber" label="Alertas route/start ingreso-preingreso excluidas" value={p.standaloneRearAlertFilterTrace.excludedIngressRouteAlerts.length} />
+            <ExecutiveMetricCard accent="green" label="Alertas operativas usadas" value={p.normalizedAlertsStandalone.length} />
+          </div>
+          <div className="rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm text-cyan-950">
+            Filtro provisorio activo: la tabla principal muestra alertas operativas filtradas. También se excluyen INVALID_ROUTE / INVALID_START_JOURNEY de cámaras o sectores Ingreso/Preingreso.
+            <label className="ml-3 inline-flex cursor-pointer items-center gap-2 text-xs font-semibold">
+              <input
+                type="checkbox"
+                checked={p.showExcludedRearAlerts}
+                onChange={(e) => p.setShowExcludedRearAlerts(e.target.checked)}
+              />
+              Ver alertas excluidas
+            </label>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
@@ -1625,7 +1693,8 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
             <div className="font-semibold">Fuente de datos</div>
             <div>sourceMode: {p.dataSource === 'api' ? 'API real' : 'archivo local'} · startDate: {p.apiQuery.startDate || '—'} · endDate: {p.apiQuery.endDate || '—'}</div>
             <div>useUsefulWindow: {p.useUsefulWindow ? 'sí' : 'no'} · usefulWindowStart: {p.usefulWindow.usefulWindowStart || '—'} · usefulWindowEnd: {p.usefulWindow.usefulWindowEnd || '—'}</div>
-            <div>rawEventCount: {p.events.length} · rawAlertCount: {p.rawAlerts.length} · lastLoadedAt: {p.lastLoadedAt ? formatDateTimeShort(p.lastLoadedAt) : '—'} · lastProcessedAt: {p.datasetProcessedAt ? formatDateTimeShort(p.datasetProcessedAt) : '—'}</div>
+            <div>operationalEventCount: {p.events.length} · rawEventCount: {p.eventsUnfiltered.length} · rawAlertCount: {p.rawAlerts.length} · lastLoadedAt: {p.lastLoadedAt ? formatDateTimeShort(p.lastLoadedAt) : '—'} · lastProcessedAt: {p.datasetProcessedAt ? formatDateTimeShort(p.datasetProcessedAt) : '—'}</div>
+            <div>Filtro traseras: excluidos {p.rearCameraFilterTrace.excludedRearEvents.length} eventos · {p.rearCameraFilterTrace.excludedRearOnlyJourneyUids.length} journeys sólo cámaras traseras</div>
             <button type="button" onClick={() => p.setMainTab('eventos')} className="mt-2 rounded border border-slate-300 bg-white px-2 py-1 text-[11px]">Ver fuente cruda</button>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
