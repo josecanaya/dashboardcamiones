@@ -54,6 +54,7 @@ import {
   type NormalizedRealAlertView,
 } from '../services/realAlertsInspector'
 import { investigateNearbyAlerts } from '../services/nearbyAlertResearch'
+import { getEventOperationalInstantIso } from '../services/liveCameraDiagnostics'
 import type { IncompleteSequenceGroup } from '../services/realIncompleteAnalysis'
 import { RealJourneyDiagnosticsView, type JourneyQuickFilter, type RealDataMainTab } from './RealJourneyDiagnosticsView'
 import type { RealJourneyEventDto, ReconstructedRealJourney } from '../services/realJourneyEvents.types'
@@ -777,10 +778,11 @@ export function RealJourneyDiagnosticsPage() {
 
   const plateSummary = useMemo(() => {
     if (!plateEventsAll.length) return null
-    const times = plateEventsAll
-      .map((e) => new Date(e.occurredAt).getTime())
+    const operationalInstants = plateEventsAll.map((e) => getEventOperationalInstantIso(e) || e.occurredAt)
+    const times = operationalInstants
+      .map((instant) => new Date(instant).getTime())
       .filter((t) => Number.isFinite(t))
-    const days = new Set(plateEventsAll.map((e) => occurredAtLocalDayKey(e.occurredAt)).filter(Boolean))
+    const days = new Set(operationalInstants.map((instant) => occurredAtLocalDayKey(instant)).filter(Boolean))
     const sectors = new Set<string>()
     const devices = new Set<string>()
     for (const e of plateEventsAll) {

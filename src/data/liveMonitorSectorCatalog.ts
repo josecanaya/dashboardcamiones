@@ -35,8 +35,7 @@ const RICARDONE_DEVICES_BY_SECTOR: Record<string, readonly string[]> = {
   /** Descarga volcable — sector operativo Ricardone */
   RICARDONE_VOLCABLE_1: ['RicVolcable1'],
   RICARDONE_VOLCABLE_2: ['RicVolcable2'],
-  /** Celda 16: los deviceCode reales varían; lista vacía pero el sector figura en catálogo de sectores */
-  RICARDONE_CELDA_16: [],
+  RICARDONE_CELDA_16: ['RicC16Descarga2', 'RicC16Carga1', 'RicC16Carga2'],
 }
 
 const SAN_LORENZO_DEVICES_BY_SECTOR: Record<string, readonly string[]> = {

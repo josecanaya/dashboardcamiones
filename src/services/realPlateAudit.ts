@@ -1,4 +1,5 @@
 import { isValidArgentinaPlate, normalizePlate } from './argentinaPlate'
+import { getEventOperationalInstantIso } from './liveCameraDiagnostics'
 import type { RealJourneyEventDto, ReconstructedRealJourney } from './realJourneyEvents.types'
 import { normalizeRealEventPoint } from './realEventNormalization'
 import { occurredAtLocalDayKey } from './realJourneyQuality'
@@ -103,15 +104,15 @@ export function detectRicardoneEgressToSanLorenzoWindow(
 }
 
 export function buildPlateEventRows(events: RealJourneyEventDto[], journeyByUid: Map<string, ReconstructedRealJourney>) {
-  const sorted = [...events].sort(
-    (a, b) => new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime()
-  )
+  const eventInstant = (e: RealJourneyEventDto) => getEventOperationalInstantIso(e) || e.occurredAt
+  const sorted = [...events].sort((a, b) => new Date(eventInstant(a)).getTime() - new Date(eventInstant(b)).getTime())
   return sorted.map((e) => {
     const pt = normalizeRealEventPoint(e)
     const j = journeyByUid.get(e.journeyUid)
+    const occurredAt = eventInstant(e)
     return {
-      occurredAt: e.occurredAt,
-      day: occurredAtLocalDayKey(e.occurredAt),
+      occurredAt,
+      day: occurredAtLocalDayKey(occurredAt),
       journeyUid: e.journeyUid,
       sequenceNumber: e.sequenceNumber,
       truckPlateOcr: (e.rawTruckPlate ?? e.truckPlate ?? '').trim(),

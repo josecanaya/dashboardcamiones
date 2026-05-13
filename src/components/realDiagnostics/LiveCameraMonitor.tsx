@@ -42,14 +42,12 @@ import {
 const MATCH_WINDOW_MS = 20_000
 const AUTO_REFRESH_MS = 30_000
 
-type TimePresetId = 5 | 10 | 30 | 60
-
-const TIME_PRESETS: { id: TimePresetId; label: string; minutes: number }[] = [
-  { id: 5, label: 'Últimos 5 minutos', minutes: 5 },
-  { id: 10, label: 'Últimos 10 minutos', minutes: 10 },
-  { id: 30, label: 'Últimos 30 minutos', minutes: 30 },
-  { id: 60, label: 'Última hora', minutes: 60 },
-]
+type DateTimeRangeFilter = {
+  startDate: string
+  startTime: string
+  endDate: string
+  endTime: string
+}
 
 function fmtShort(iso: string): string {
   if (!iso) return '—'
@@ -66,6 +64,39 @@ function toIsoLocal(dt: Date): string {
   const mm = String(dt.getMinutes()).padStart(2, '0')
   const ss = String(dt.getSeconds()).padStart(2, '0')
   return `${y}-${m}-${d}T${hh}:${mm}:${ss}`
+}
+
+function toDateInputValue(dt: Date): string {
+  const y = dt.getFullYear()
+  const m = String(dt.getMonth() + 1).padStart(2, '0')
+  const d = String(dt.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+function toTimeInputValue(dt: Date): string {
+  const hh = String(dt.getHours()).padStart(2, '0')
+  const mm = String(dt.getMinutes()).padStart(2, '0')
+  return `${hh}:${mm}`
+}
+
+function getInitialDateTimeRange(): DateTimeRangeFilter {
+  const end = new Date()
+  const start = new Date(end.getTime() - 60 * 60 * 1000)
+  return {
+    startDate: toDateInputValue(start),
+    startTime: toTimeInputValue(start),
+    endDate: toDateInputValue(end),
+    endTime: toTimeInputValue(end),
+  }
+}
+
+function parseDateTimeRange(filter: DateTimeRangeFilter): { start: Date; end: Date } | null {
+  if (!filter.startDate || !filter.startTime || !filter.endDate || !filter.endTime) return null
+  const start = new Date(`${filter.startDate}T${filter.startTime}:00`)
+  const end = new Date(`${filter.endDate}T${filter.endTime}:00`)
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return null
+  if (start >= end) return null
+  return { start, end }
 }
 
 function parseMillis(iso: string): number {
@@ -112,16 +143,13 @@ function eventOperationalInstantIso(e: RealJourneyEventDto): string {
 
 /**
  * Rango pedido al GET journey-event/list (y alert/list): más ancho que la ventana mostrada.
- * La pestaña de diagnóstico pide días y recibe filas; con 5–60 min el backend a menudo devuelve [] si filtra por occurredAt desfasado.
+ * La pestaña de diagnóstico pide el día completo hasta la hora final porque el backend puede filtrar por occurredAt desfasado.
  */
-function liveListQueryBounds(end: Date, uiPresetMinutes: number): { start: Date; end: Date } {
+function liveListQueryBounds(start: Date, end: Date): { start: Date; end: Date } {
   const apiEnd = new Date(end.getTime() + 15 * 60 * 1000)
-  const dayStart = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 0, 0, 0, 0)
-  const ms72h = 72 * 60 * 60 * 1000
-  const msUiPlus = (uiPresetMinutes + 180) * 60 * 1000
-  const rolling = new Date(end.getTime() - Math.max(ms72h, msUiPlus))
+  const dayStart = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0, 0)
   return {
-    start: new Date(Math.min(dayStart.getTime(), rolling.getTime())),
+    start: dayStart,
     end: apiEnd,
   }
 }
@@ -316,7 +344,7 @@ export function LiveCameraMonitor() {
     setSiteId(id)
   }
 
-  const [timePreset, setTimePreset] = useState<TimePresetId>(10)
+  const [dateTimeRange, setDateTimeRange] = useState<DateTimeRangeFilter>(() => getInitialDateTimeRange())
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [workMode, setWorkMode] = useState<LiveWorkMode>('live')
   const [filterSectorCode, setFilterSectorCode] = useState('')
@@ -344,12 +372,8 @@ export function LiveCameraMonitor() {
   const monitorPanelRef = useRef<HTMLDivElement | null>(null)
   const inFlightRef = useRef(false)
 
-  const windowBounds = useMemo(() => {
-    const end = new Date()
-    const presetMin = TIME_PRESETS.find((p) => p.id === timePreset)?.minutes ?? 10
-    const start = new Date(end.getTime() - presetMin * 60 * 1000)
-    return { start, end, presetMin }
-  }, [timePreset])
+  const windowBounds = useMemo(() => parseDateTimeRange(dateTimeRange), [dateTimeRange])
+  const rangeValidationMessage = windowBounds ? '' : 'Seleccioná un rango válido: el inicio debe ser anterior al fin.'
 
   const apiOriginLabel = useMemo(() => resolveRealTruckflowApiOrigin(), [])
   /** Mismo host que documenta Truckflow; en dev Vite suele ir por proxy `/journey-api` por CORS. */
@@ -360,11 +384,18 @@ export function LiveCameraMonitor() {
 
   const refresh = useCallback(async () => {
     if (inFlightRef.current) return
+    if (!windowBounds) {
+      setEvents([])
+      setNormalizedAlerts([])
+      setRangeLabel('')
+      setError(rangeValidationMessage)
+      return
+    }
     inFlightRef.current = true
     setLoading(true)
     setError(null)
-    const { start, end, presetMin } = windowBounds
-    const listBounds = liveListQueryBounds(end, presetMin)
+    const { start, end } = windowBounds
+    const listBounds = liveListQueryBounds(start, end)
     const params: RealTruckflowQueryParams = {
       startDate: toIsoLocal(listBounds.start),
       endDate: toIsoLocal(listBounds.end),
@@ -400,11 +431,11 @@ export function LiveCameraMonitor() {
       setLoading(false)
       inFlightRef.current = false
     }
-  }, [windowBounds, filterPlate, filterJourneyUuid, filterSectorCode, filterDeviceCode, liveFetchOrigin])
+  }, [windowBounds, rangeValidationMessage, filterPlate, filterJourneyUuid, filterSectorCode, filterDeviceCode, liveFetchOrigin])
 
   useEffect(() => {
     void refresh()
-  }, [refresh, plantSiteId, timePreset])
+  }, [refresh, plantSiteId])
 
   useEffect(() => {
     if (!autoRefresh) return
@@ -845,19 +876,41 @@ export function LiveCameraMonitor() {
               ))}
             </select>
           </div>
-          <div>
-            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Ventana</label>
-            <select
-              value={timePreset}
-              onChange={(e) => setTimePreset(Number(e.target.value) as TimePresetId)}
-              className="rounded-lg border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs text-slate-100"
-            >
-              {TIME_PRESETS.map((p) => (
-                <option key={p.id} value={p.id} className="bg-slate-900">
-                  {p.label}
-                </option>
-              ))}
-            </select>
+          <div className="min-w-[130px]">
+            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Día desde</label>
+            <input
+              type="date"
+              value={dateTimeRange.startDate}
+              onChange={(e) => setDateTimeRange((prev) => ({ ...prev, startDate: e.target.value }))}
+              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs text-slate-100"
+            />
+          </div>
+          <div className="min-w-[92px]">
+            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Desde</label>
+            <input
+              type="time"
+              value={dateTimeRange.startTime}
+              onChange={(e) => setDateTimeRange((prev) => ({ ...prev, startTime: e.target.value }))}
+              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs text-slate-100"
+            />
+          </div>
+          <div className="min-w-[130px]">
+            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Día hasta</label>
+            <input
+              type="date"
+              value={dateTimeRange.endDate}
+              onChange={(e) => setDateTimeRange((prev) => ({ ...prev, endDate: e.target.value }))}
+              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs text-slate-100"
+            />
+          </div>
+          <div className="min-w-[92px]">
+            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Hasta</label>
+            <input
+              type="time"
+              value={dateTimeRange.endTime}
+              onChange={(e) => setDateTimeRange((prev) => ({ ...prev, endTime: e.target.value }))}
+              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs text-slate-100"
+            />
           </div>
           <div className="min-w-[90px]">
             <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Patente</label>
@@ -880,7 +933,7 @@ export function LiveCameraMonitor() {
           <button
             type="button"
             onClick={() => void refresh()}
-            disabled={loading}
+            disabled={loading || !windowBounds}
             className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-200 hover:bg-cyan-500/20 disabled:opacity-40"
           >
             {loading ? '…' : 'Actualizar'}
@@ -895,9 +948,9 @@ export function LiveCameraMonitor() {
             Auto 30s
           </label>
         </div>
-        {error ? (
+        {error || rangeValidationMessage ? (
           <div className="mt-3 rounded-lg border border-rose-500/35 bg-rose-950/40 px-3 py-2 text-xs text-rose-200">
-            {error}
+            {error || rangeValidationMessage}
           </div>
         ) : null}
       </div>
@@ -1250,7 +1303,7 @@ export function LiveCameraMonitor() {
         {selectedSectorCode && selectedDeviceCode ? (
           <div className="mt-3 grid gap-3 lg:grid-cols-2">
             <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
-              <div className="text-[11px] font-bold text-slate-400">Eventos recientes</div>
+              <div className="text-[11px] font-bold text-slate-400">Eventos del rango ({monitorEvents.length})</div>
               <div className="mt-2 max-h-[220px] overflow-auto">
                 <table className={smallTableClass}>
                   <thead>
@@ -1261,7 +1314,7 @@ export function LiveCameraMonitor() {
                     </tr>
                   </thead>
                   <tbody>
-                    {monitorEvents.slice(0, 40).map((e) => (
+                    {monitorEvents.map((e) => (
                       <tr key={`${e.id}-${e.sequenceNumber}-${getEventOperationalInstantIso(e)}`}>
                         <td className={`${tdClass} whitespace-nowrap text-[10px]`}>
                           {fmtShort(getEventOperationalInstantIso(e))}
@@ -1275,7 +1328,7 @@ export function LiveCameraMonitor() {
               </div>
             </div>
             <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
-              <div className="text-[11px] font-bold text-slate-400">Alertas recientes</div>
+              <div className="text-[11px] font-bold text-slate-400">Alertas del rango ({monitorAlerts.length})</div>
               <div className="mt-2 max-h-[220px] overflow-auto">
                 <table className={smallTableClass}>
                   <thead>
@@ -1286,7 +1339,7 @@ export function LiveCameraMonitor() {
                     </tr>
                   </thead>
                   <tbody>
-                    {monitorAlerts.slice(0, 40).map((a) => (
+                    {monitorAlerts.map((a) => (
                       <tr key={a.alertId}>
                         <td className={`${tdClass} whitespace-nowrap text-[10px]`}>{fmtShort(a.occurredAt)}</td>
                         <td className={`${tdClass} text-[10px]`}>{a.alertCode || a.alertType}</td>
