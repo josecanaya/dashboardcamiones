@@ -174,12 +174,13 @@ function buildAlertsChannelQueryNoTimeFilter(): RealTruckflowQueryParams {
 
 /** Misma lista que OPS_KPI_PRELIMS en `realJourneyDepurationMap`; solo para vista ejecutiva sin tocar KPIs. */
 const OPS_KPI_PRELIMS = new Set<string>([
-  'PRELIM_RIC_A_SAN_LORENZO',
-  'PRELIM_RIC_LIQUIDO',
-  'PRELIM_RIC_SALIDA_S10_SOLIDO',
-  'PRELIM_RIC_VOLCABLE',
-  'PRELIM_RIC_CELDA_16',
-  'PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA',
+  'CIRCUITO_CELDA16_DESCARGA',
+  'CIRCUITO_CELDA16_CARGA',
+  'CIRCUITO_VOLCABLE_1_2',
+  'CIRCUITO_LIQUIDO',
+  'CIRCUITO_SAN_LORENZO',
+  'DESPACHO_SIN_PUNTO_INSTRUMENTADO',
+  'TRANSILE_VOLCABLE_BALANZA',
 ])
 
 const INC_PRELIM_FILTERS = new Set<JourneyQuickFilter>([
@@ -194,7 +195,7 @@ const INC_PRELIM_FILTERS = new Set<JourneyQuickFilter>([
 ])
 
 function isPreliminaryIncomplete(j: ReconstructedRealJourney): boolean {
-  return j.preliminaryCircuitCode === 'PRELIM_INCOMPLETO'
+  return j.preliminaryCircuitCode === 'REGISTRO_INCOMPLETO'
 }
 
 function journeyMatchesIncompleteVariant(j: ReconstructedRealJourney, f: JourneyQuickFilter): boolean {
@@ -255,9 +256,12 @@ export function RealJourneyDiagnosticsPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [selectedDay, setSelectedDay] = useState('')
+  const [circuitRangeStartDate, setCircuitRangeStartDate] = useState('')
+  const [circuitRangeEndDate, setCircuitRangeEndDate] = useState('')
   const [journeyQuickFilter, setJourneyQuickFilter] = useState<JourneyQuickFilter>('all')
   const [prelimCircuitFilter, setPrelimCircuitFilter] = useState('')
   const [plateQuery, setPlateQuery] = useState('')
+  const [journeyQuery, setJourneyQuery] = useState('')
   const [onlyThisPlateScope, setOnlyThisPlateScope] = useState(false)
   const [interplantWindowHours, setInterplantWindowHours] = useState(12)
   /** Default: NO — análisis operativo sólo patentes válidas; opción diagnostic amplía conteos en selector de día. */
@@ -458,6 +462,15 @@ export function RealJourneyDiagnosticsPage() {
   )
   const rawAlertsOperational = rearCameraFilterTrace.operationalAlerts
   const alertsRawStandaloneOperational = standaloneRearAlertFilterTrace.operationalAlerts
+  const excludedRearCountByJourney = useMemo(() => {
+    const m = new Map<string, number>()
+    for (const event of rearCameraFilterTrace.excludedRearEvents) {
+      const uid = (event.journeyUid ?? '').trim()
+      if (!uid) continue
+      m.set(uid, (m.get(uid) ?? 0) + 1)
+    }
+    return m
+  }, [rearCameraFilterTrace.excludedRearEvents])
 
   const exportCleanDatasetJson = useCallback(() => {
     if (!cleanDataset) return
@@ -571,15 +584,22 @@ export function RealJourneyDiagnosticsPage() {
 
   const journeysBatch = useMemo(() => reconstructRealJourneys(events), [events])
   const journeys = useMemo(
-    () => enrichCaladaSanLorenzoConfidence(journeysBatch, eventsUnfiltered, CALADA_INTERPLANT_MS),
-    [journeysBatch, eventsUnfiltered]
+    () =>
+      enrichCaladaSanLorenzoConfidence(journeysBatch, eventsUnfiltered, CALADA_INTERPLANT_MS).map((j) => ({
+        ...j,
+        excludedRearCameraEventsCount: excludedRearCountByJourney.get(j.journeyUid) ?? j.excludedRearCameraEventsCount ?? 0,
+      })),
+    [excludedRearCountByJourney, journeysBatch, eventsUnfiltered]
   )
 
   const journeysFullPipelineBatch = useMemo(() => reconstructRealJourneys(events), [events])
   const journeysFullPipeline = useMemo(
     () =>
-      enrichCaladaSanLorenzoConfidence(journeysFullPipelineBatch, eventsUnfiltered, CALADA_INTERPLANT_MS),
-    [journeysFullPipelineBatch, eventsUnfiltered]
+      enrichCaladaSanLorenzoConfidence(journeysFullPipelineBatch, eventsUnfiltered, CALADA_INTERPLANT_MS).map((j) => ({
+        ...j,
+        excludedRearCameraEventsCount: excludedRearCountByJourney.get(j.journeyUid) ?? j.excludedRearCameraEventsCount ?? 0,
+      })),
+    [excludedRearCountByJourney, journeysFullPipelineBatch, eventsUnfiltered]
   )
 
   const journeysOperational = useMemo(
@@ -593,13 +613,16 @@ export function RealJourneyDiagnosticsPage() {
   const plateQualitySummary = useMemo(() => buildPlateQualitySummary(events), [events])
 
   const plateNorm = useMemo(() => normalizePlateQuery(plateQuery), [plateQuery])
+  const journeyQueryNorm = useMemo(() => journeyQuery.trim().toUpperCase(), [journeyQuery])
 
   const plateQueryFormatWarning = Boolean(plateNorm && !plateSearchQueryIsValidArgentinaFormat(plateQuery))
 
-  const plateEventsAll = useMemo(
-    () => (plateNorm ? filterEventsByPlate(eventsUnfiltered, plateQuery) : []),
-    [eventsUnfiltered, plateQuery, plateNorm]
-  )
+  const plateEventsAll = useMemo(() => {
+    if (!plateNorm && !journeyQueryNorm) return []
+    const plateFiltered = plateNorm ? filterEventsByPlate(eventsUnfiltered, plateQuery) : eventsUnfiltered
+    if (!journeyQueryNorm) return plateFiltered
+    return plateFiltered.filter((e) => (e.journeyUid ?? '').trim().toUpperCase().includes(journeyQueryNorm))
+  }, [eventsUnfiltered, journeyQueryNorm, plateQuery, plateNorm])
 
   const plateJourneysBatch = useMemo(
     () => (plateEventsAll.length ? reconstructRealJourneys(plateEventsAll) : []),
@@ -678,29 +701,41 @@ export function RealJourneyDiagnosticsPage() {
     [journeysOperational, selectedDay]
   )
 
+  const circuitFilteredJourneys = useMemo(() => {
+    const start = circuitRangeStartDate.trim()
+    const end = circuitRangeEndDate.trim()
+    return journeysScopedOperational.filter((j) => {
+      const day = (j.day || occurredAtLocalDayKey(j.startedAt)).trim()
+      if (!day) return false
+      if (start && day < start) return false
+      if (end && day > end) return false
+      return true
+    })
+  }, [circuitRangeEndDate, circuitRangeStartDate, journeysScopedOperational])
+
   const prelimCircuitCardMetrics = useMemo(() => {
-    const list = journeysScopedOperational
+    const list = circuitFilteredJourneys
     const n = (code: string) => list.filter((j) => j.preliminaryCircuitCode === code).length
     return {
       totalOperational: list.length,
-      volcable: n('PRELIM_RIC_VOLCABLE'),
-      sinVolcable: n('PRELIM_RIC_SALIDA_S10_SOLIDO'),
-      caladaSl: n('PRELIM_RIC_A_SAN_LORENZO'),
-      liquido: n('PRELIM_RIC_LIQUIDO'),
-      loopBalanza: n('PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA'),
-      celda16: n('PRELIM_RIC_CELDA_16'),
-      soloVolcable: n('PRELIM_SOLO_VOLCABLE'),
-      incompletos: n('PRELIM_INCOMPLETO'),
+      volcable: n('CIRCUITO_VOLCABLE_1_2'),
+      sinVolcable: n('DESPACHO_SIN_PUNTO_INSTRUMENTADO'),
+      caladaSl: n('CIRCUITO_SAN_LORENZO'),
+      liquido: n('CIRCUITO_LIQUIDO'),
+      loopBalanza: n('TRANSILE_VOLCABLE_BALANZA'),
+      celda16: n('CIRCUITO_CELDA16_DESCARGA') + n('CIRCUITO_CELDA16_CARGA'),
+      soloVolcable: n('CIRCUITO_VOLCABLE_1_2'),
+      incompletos: n('REGISTRO_INCOMPLETO'),
       minIngEgr: 0,
       minPreEg: 0,
       partialIngBal: 0,
       partialPreBal: 0,
     }
-  }, [journeysScopedOperational])
+  }, [circuitFilteredJourneys])
 
   const prelimCircuitDailyRows = useMemo(
-    () => buildPreliminaryCircuitDailySummary(journeys),
-    [journeys]
+    () => buildPreliminaryCircuitDailySummary(circuitFilteredJourneys),
+    [circuitFilteredJourneys]
   )
   const prelimCircuitDailyFiltered = useMemo(
     () => (selectedDay ? prelimCircuitDailyRows.filter((r) => r.day === selectedDay) : prelimCircuitDailyRows),
@@ -743,12 +778,12 @@ export function RealJourneyDiagnosticsPage() {
   )
 
   const incompleteTotal = useMemo(
-    () => journeysForIncompleteAnalysis.filter((j) => j.preliminaryCircuitCode === 'PRELIM_INCOMPLETO').length,
+    () => journeysForIncompleteAnalysis.filter((j) => j.preliminaryCircuitCode === 'REGISTRO_INCOMPLETO').length,
     [journeysForIncompleteAnalysis]
   )
 
   const incompleteRankings = useMemo(() => {
-    const inc = journeysForIncompleteAnalysis.filter((j) => j.preliminaryCircuitCode === 'PRELIM_INCOMPLETO')
+    const inc = journeysForIncompleteAnalysis.filter((j) => j.preliminaryCircuitCode === 'REGISTRO_INCOMPLETO')
     const top5 = incompleteGroups.slice(0, 5).reduce((s, g) => s + g.count, 0)
     const pctTop5 = incompleteTotal > 0 ? (top5 / incompleteTotal) * 100 : 0
     const codes = (j: ReconstructedRealJourney) => new Set(j.logicalCodeSequence)
@@ -761,7 +796,7 @@ export function RealJourneyDiagnosticsPage() {
       withVolcable: inc.filter((j) => j.hasVolcable || codes(j).has('VOLCABLE')).length,
       withEgreso: inc.filter((j) => codes(j).has('EGRESO')).length,
       onlySlFull: inc.filter((j) => {
-        const tracked = ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'BALANZA_EGRESO', 'VOLCABLE', 'EGRESO', 'SL_INGRESO']
+    const tracked = ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO', 'BALANZA_EGRESO', 'VOLCABLE', 'CELDA16_CARGA', 'CELDA16_DESCARGA', 'LIQUIDO', 'EGRESO', 'SL_INGRESO']
         const present = tracked.filter((t) => codes(j).has(t))
         return present.length === 1 && present[0] === 'SL_INGRESO'
       }).length,
@@ -815,12 +850,12 @@ export function RealJourneyDiagnosticsPage() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `auditoria_patente_${plateNorm || 'export'}.csv`
+    a.download = `auditoria_patente_${plateNorm || journeyQueryNorm || 'export'}.csv`
     document.body.appendChild(a)
     a.click()
     a.remove()
     URL.revokeObjectURL(url)
-  }, [plateTimelineRows, plateNorm])
+  }, [journeyQueryNorm, plateTimelineRows, plateNorm])
 
   const cameraCoverageSummary = useMemo(() => buildCameraCoverageSummary(events), [events])
 
@@ -836,7 +871,7 @@ export function RealJourneyDiagnosticsPage() {
         continue
       }
       if (!j.feedsOperationalAnalytics) continue
-      if (j.preliminaryCircuitCode === 'PRELIM_INCOMPLETO') {
+      if (j.preliminaryCircuitCode === 'REGISTRO_INCOMPLETO') {
         incompleteReal++
       } else if (OPS_KPI_PRELIMS.has(j.preliminaryCircuitCode)) {
         usefulKpi++
@@ -849,24 +884,25 @@ export function RealJourneyDiagnosticsPage() {
 
   const circuitBarItems = useMemo(() => {
     const defs: { id: string; label: string; code: string }[] = [
-      { id: 'sl', label: 'Circuito a San Lorenzo', code: 'PRELIM_RIC_A_SAN_LORENZO' },
-      { id: 'liq', label: 'Circuito líquido', code: 'PRELIM_RIC_LIQUIDO' },
-      { id: 's10', label: 'Salida S10 sólido / despacho', code: 'PRELIM_RIC_SALIDA_S10_SOLIDO' },
-      { id: 'volc', label: 'Circuito a Volcable 1/2', code: 'PRELIM_RIC_VOLCABLE' },
-      { id: 'celda', label: 'Circuito a Celda 16', code: 'PRELIM_RIC_CELDA_16' },
-      { id: 'trans', label: 'Transile Volcable → Balanza', code: 'PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA' },
-      { id: 'inc', label: 'Incompletos reales', code: 'PRELIM_INCOMPLETO' },
+      { id: 'sl', label: 'Ricardone → San Lorenzo', code: 'CIRCUITO_SAN_LORENZO' },
+      { id: 'celda-desc', label: 'Descarga Celda 16', code: 'CIRCUITO_CELDA16_DESCARGA' },
+      { id: 'celda-carga', label: 'Carga Celda 16', code: 'CIRCUITO_CELDA16_CARGA' },
+      { id: 'volc', label: 'Volcable 1/2', code: 'CIRCUITO_VOLCABLE_1_2' },
+      { id: 'liq', label: 'Circuito líquido', code: 'CIRCUITO_LIQUIDO' },
+      { id: 'despacho', label: 'Despacho / descarga sin punto instrumentado', code: 'DESPACHO_SIN_PUNTO_INSTRUMENTADO' },
+      { id: 'trans', label: 'Transile Volcable → Balanza', code: 'TRANSILE_VOLCABLE_BALANZA' },
+      { id: 'inc', label: 'Registro incompleto', code: 'REGISTRO_INCOMPLETO' },
     ]
     return defs.map((d) => ({
       id: d.code,
       label: d.label,
-      count: journeysScopedOperational.filter((j) => j.preliminaryCircuitCode === d.code).length,
-      colorClass: d.code === 'PRELIM_INCOMPLETO' ? 'bg-amber-500' : 'bg-sky-500',
+      count: circuitFilteredJourneys.filter((j) => j.preliminaryCircuitCode === d.code).length,
+      colorClass: d.code === 'REGISTRO_INCOMPLETO' ? 'bg-amber-500' : 'bg-sky-500',
     }))
-  }, [journeysScopedOperational])
+  }, [circuitFilteredJourneys])
 
   const circuitSummaryRows = useMemo(() => {
-    const list = journeysScopedOperational
+    const list = circuitFilteredJourneys
     const total = Math.max(1, list.length)
     const by = new Map<string, ReconstructedRealJourney[]>()
     for (const j of list) {
@@ -904,15 +940,15 @@ export function RealJourneyDiagnosticsPage() {
     })
     rows.sort((a, b) => b.count - a.count)
     return rows
-  }, [journeysScopedOperational])
+  }, [circuitFilteredJourneys])
 
   const drawerCircuitJourneys = useMemo(() => {
     if (!drawerCircuitCode) return []
-    return journeysScopedOperational
+    return circuitFilteredJourneys
       .filter((j) => j.preliminaryCircuitCode === drawerCircuitCode)
       .sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime())
       .slice(0, 40)
-  }, [drawerCircuitCode, journeysScopedOperational])
+  }, [circuitFilteredJourneys, drawerCircuitCode])
 
   const depurationExecutiveRows = useMemo(() => {
     const g = depurationSnapshot.general
@@ -921,7 +957,7 @@ export function RealJourneyDiagnosticsPage() {
     const soloIng = g.discardedSoloIngresoCount
     const soloEgr = g.discardedSoloEgresoCount
     const incompleteReal = journeys.filter(
-      (j) => j.feedsOperationalAnalytics && j.preliminaryCircuitCode === 'PRELIM_INCOMPLETO'
+      (j) => j.feedsOperationalAnalytics && j.preliminaryCircuitCode === 'REGISTRO_INCOMPLETO'
     ).length
     const useful = g.operationalUsefulJourneyCount
     return [
@@ -1152,7 +1188,7 @@ export function RealJourneyDiagnosticsPage() {
       if (hasLprMalfunction || isRouteDiscard) {
         etlStatus = 'excluded'
         reason = hasLprMalfunction ? 'LPR_MALFUNCTION' : 'Ruta probable solo ingreso/egreso'
-      } else if (hasInvalidRoute || hasInvalidStart || j.preliminaryCircuitCode === 'PRELIM_INCOMPLETO') {
+      } else if (hasInvalidRoute || hasInvalidStart || j.preliminaryCircuitCode === 'REGISTRO_INCOMPLETO') {
         etlStatus = 'review_required'
         reason = hasInvalidRoute ? 'INVALID_ROUTE' : hasInvalidStart ? 'INVALID_START_JOURNEY' : 'Secuencia operativa dudosa'
       }
@@ -1348,7 +1384,7 @@ export function RealJourneyDiagnosticsPage() {
 
   const circuitSourceRows = useMemo(() => {
     if (!drawerCircuitCode) return []
-    const list = journeys.filter((j) => j.preliminaryCircuitCode === drawerCircuitCode)
+    const list = circuitFilteredJourneys.filter((j) => j.preliminaryCircuitCode === drawerCircuitCode)
     return list.map((j) => {
       const sum = summaryByJourneyUid.get(j.journeyUid)
       const alerts = normalizedAlertsForDiagnostics.filter((a) => {
@@ -1358,15 +1394,7 @@ export function RealJourneyDiagnosticsPage() {
       })
       const alertCodes = [...new Set(alerts.map((a) => a.alertCode).filter(Boolean))]
       const evidencePoints = [...new Set(j.logicalCodeSequence.filter((c) => c !== 'UNKNOWN'))]
-      const expectedByGroup: Record<string, string[]> = {
-        'Circuito a San Lorenzo': ['INGRESO', 'PREINGRESO', 'EGRESO', 'SL_INGRESO'],
-        'Circuito líquido': ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'BALANZA_EGRESO', 'EGRESO'],
-        'Circuito salida S10 sólido / despacho': ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'BALANZA_EGRESO'],
-        'Circuito a Volcable 1/2': ['VOLCABLE', 'BALANZA_EGRESO'],
-        'Circuito a Celda 16': ['CELDA_16', 'BALANZA_EGRESO'],
-      }
-      const expected = expectedByGroup[j.preliminaryCircuitGroup ?? ''] ?? []
-      const missingExpectedPoints = expected.filter((x) => !evidencePoints.includes(x))
+      const missingExpectedPoints = j.missingExpectedPoints ?? []
       const classificationRuleId = `${j.preliminaryCircuitGroup ?? j.preliminaryCircuitCode}_${j.preliminaryCircuitVariant ?? 'BASE'}`
       const nearby = nearbyByJourneyUid.get(j.journeyUid)
       return {
@@ -1381,7 +1409,7 @@ export function RealJourneyDiagnosticsPage() {
         preliminaryCircuitVariant: j.preliminaryCircuitVariant ?? '—',
         preliminaryCircuitConfidence: j.preliminaryCircuitConfidence,
         classificationRuleId,
-        classificationReason: j.preliminaryCircuitReason,
+        classificationReason: j.classificationReason ?? j.preliminaryCircuitReason,
         missingExpectedPoints,
         evidencePoints,
         alertCodes,
@@ -1399,7 +1427,7 @@ export function RealJourneyDiagnosticsPage() {
         reconstructionSuggestion: nearby?.reconstructionSuggestion ?? '',
       }
     })
-  }, [drawerCircuitCode, journeys, nearbyByJourneyUid, normalizedAlertsForDiagnostics, summaryByJourneyUid])
+  }, [circuitFilteredJourneys, drawerCircuitCode, nearbyByJourneyUid, normalizedAlertsForDiagnostics, summaryByJourneyUid])
 
   const circuitSourceSummary = useMemo(() => {
     const rows = circuitSourceRows
@@ -1413,6 +1441,44 @@ export function RealJourneyDiagnosticsPage() {
     const excluded = rows.filter((r) => r.etlStatus === 'excluded').length
     return { eventsCount, plates, alertsCount, inside, outside, included, review, excluded }
   }, [circuitSourceRows])
+
+  const exportCircuitosCsv = useCallback(() => {
+    const header = [
+      'journeyUid',
+      'patente',
+      'firstEventAt',
+      'lastEventAt',
+      'durationMinutes',
+      'circuitCode',
+      'circuitName',
+      'confidence',
+      'missingExpectedPoints',
+      'excludedRearCameraEventsCount',
+      'classificationReason',
+      'rawDeviceSequence',
+      'logicalPointSequence',
+      'rawSectorSequence',
+    ]
+    const rows = circuitFilteredJourneys.map((j) => [
+      j.journeyUid,
+      j.plate,
+      j.startedAt,
+      j.endedAt,
+      String(j.durationMinutes),
+      j.preliminaryCircuitCode,
+      j.preliminaryCircuitName,
+      j.preliminaryCircuitConfidence,
+      (j.missingExpectedPoints ?? []).join('|'),
+      String(j.excludedRearCameraEventsCount ?? 0),
+      j.classificationReason ?? j.preliminaryCircuitReason,
+      j.rawDeviceSequence.join(' > '),
+      j.logicalCodeSequence.join(' > '),
+      j.rawSectorSequence.join(' > '),
+    ])
+    const start = circuitRangeStartDate || selectedDay || 'inicio'
+    const end = circuitRangeEndDate || selectedDay || 'fin'
+    downloadCsv(`circuitos-preliminares_ricardone_${start}_${end}.csv`, header, rows)
+  }, [circuitFilteredJourneys, circuitRangeEndDate, circuitRangeStartDate, selectedDay])
 
   const loadJourneyEventsForAlert = useCallback(async (journeyUid: string) => {
     if (!journeyUid.trim()) return
@@ -1641,7 +1707,7 @@ export function RealJourneyDiagnosticsPage() {
     const header = [
       'journeyUid','patente','etlStatus','preliminaryCircuitGroup','preliminaryCircuitVariant','classificationRuleId','classificationReason',
       'missingExpectedPoints','evidencePoints','alertCodes','reviewReason','exclusionReason','logicalCodeSequence','sectorCodeSequence',
-      'deviceCodeSequence','startAt','endAt','durationMin','insideUsefulWindow','hasNearbyRelevantAlerts','nearbyAlertCodes','possibleMissingPointsExplained','reconstructionSuggestion',
+      'deviceCodeSequence','excludedRearCameraEventsCount','startAt','endAt','durationMin','insideUsefulWindow','hasNearbyRelevantAlerts','nearbyAlertCodes','possibleMissingPointsExplained','reconstructionSuggestion',
     ]
     const rows = summaryJourneyRowsWithNearby.map((r) => {
       const j = journeys.find((x) => x.journeyUid === r.journeyUid)
@@ -1649,13 +1715,14 @@ export function RealJourneyDiagnosticsPage() {
       const variant = j?.preliminaryCircuitVariant ?? ''
       const evidence = [...new Set(j?.logicalCodeSequence.filter((c) => c !== 'UNKNOWN') ?? [])]
       return [
-        r.journeyUid, r.plate, r.etlStatus, group, variant, `${group}_${variant || 'BASE'}`, j?.preliminaryCircuitReason ?? '',
-        '', evidence.join('|'), r.alertCodes.join('|'),
+        r.journeyUid, r.plate, r.etlStatus, group, variant, `${group}_${variant || 'BASE'}`, j?.classificationReason ?? j?.preliminaryCircuitReason ?? '',
+        (j?.missingExpectedPoints ?? []).join('|'), evidence.join('|'), r.alertCodes.join('|'),
         r.etlStatus === 'review_required' ? r.reason : '',
         r.etlStatus === 'excluded' ? r.reason : '',
         r.logicalSequence.join(' > '),
         j?.rawSectorSequence.join(' > ') ?? '',
         j?.deviceCodeSequence.join(' > ') ?? '',
+        String(j?.excludedRearCameraEventsCount ?? 0),
         r.startedAt, r.endedAt, String(r.durationMinutes), r.inUsefulWindow ? 'true' : 'false',
         String(r.hasNearbyRelevantAlerts), r.nearbyAlertCodes.join('|'), r.possibleMissingPointsExplained.join('|'), r.reconstructionSuggestion,
       ]
@@ -1989,6 +2056,10 @@ export function RealJourneyDiagnosticsPage() {
       eventMaxDay={eventMaxDay}
       prelimCircuitFilter={prelimCircuitFilter}
       setPrelimCircuitFilter={setPrelimCircuitFilter}
+      circuitRangeStartDate={circuitRangeStartDate}
+      setCircuitRangeStartDate={setCircuitRangeStartDate}
+      circuitRangeEndDate={circuitRangeEndDate}
+      setCircuitRangeEndDate={setCircuitRangeEndDate}
       journeyQuickFilter={journeyQuickFilter}
       setJourneyQuickFilter={setJourneyQuickFilter}
       depurationScopeFilter={depurationScopeFilter}
@@ -1998,6 +2069,9 @@ export function RealJourneyDiagnosticsPage() {
       plateQuery={plateQuery}
       setPlateQuery={setPlateQuery}
       plateNorm={plateNorm}
+      journeyQuery={journeyQuery}
+      setJourneyQuery={setJourneyQuery}
+      journeyQueryNorm={journeyQueryNorm}
       interplantWindowHours={interplantWindowHours}
       setInterplantWindowHours={setInterplantWindowHours}
       mainTab={mainTab}
@@ -2098,6 +2172,7 @@ export function RealJourneyDiagnosticsPage() {
       selectedCircuitJourneyUid={selectedCircuitJourneyUid}
       setSelectedCircuitJourneyUid={setSelectedCircuitJourneyUid}
       exportClassificationAuditCsv={exportClassificationAuditCsv}
+      exportCircuitosCsv={exportCircuitosCsv}
       nearbyDrawerJourneyUid={nearbyDrawerJourneyUid}
       setNearbyDrawerJourneyUid={setNearbyDrawerJourneyUid}
       nearbyBackwardHours={nearbyBackwardHours}

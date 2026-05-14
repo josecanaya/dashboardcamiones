@@ -44,11 +44,14 @@ function buildLogicalSequences(rawSectorSequence: string[]): {
   return { logicalSectorSequence, unmappedSectorCodes }
 }
 
-/** Orden dentro de un mismo journey: sequenceNumber asc, fallback occurredAt asc */
+/** Orden dentro de un mismo journey: occurredAt asc, fallback sequenceNumber asc. */
 export function compareRealEvents(a: RealJourneyEventDto, b: RealJourneyEventDto): number {
+  const ta = new Date(a.occurredAt).getTime()
+  const tb = new Date(b.occurredAt).getTime()
+  if (Number.isFinite(ta) && Number.isFinite(tb) && ta !== tb) return ta - tb
   const sq = a.sequenceNumber - b.sequenceNumber
   if (sq !== 0) return sq
-  return new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime()
+  return a.id - b.id
 }
 
 export function inferSiteIdFromSectorCode(sectorCode: string): ReconstructedRealSiteId {
@@ -142,6 +145,11 @@ export function reconstructRealJourneys(events: RealJourneyEventDto[]): Reconstr
       preliminaryCircuitName: cls.preliminaryCircuitName,
       preliminaryCircuitConfidence: cls.preliminaryCircuitConfidence,
       preliminaryCircuitReason: cls.preliminaryCircuitReason,
+      preliminaryCircuitGroup: cls.preliminaryCircuitGroup,
+      preliminaryCircuitVariant: cls.preliminaryCircuitVariant,
+      missingExpectedPoints: cls.missingExpectedPoints,
+      excludedRearCameraEventsCount: cls.excludedRearCameraEventsCount,
+      classificationReason: cls.classificationReason,
       isDiscardedOperational: cls.isDiscardedOperational,
       feedsOperationalAnalytics: !cls.isDiscardedOperational,
     })

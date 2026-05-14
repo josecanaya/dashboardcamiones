@@ -31,6 +31,11 @@ export const REAL_SECTOR_CODE_MAP: Record<string, RealSectorMappingEntry> = {
     logicalSector: 'S1',
     label: 'Pre ingreso Ricardone',
   },
+  RICARDONE_CALADA: {
+    siteId: 'ricardone',
+    logicalSector: 'S2',
+    label: 'Calada Ricardone',
+  },
   RICARDONE_BALANZA: {
     siteId: 'ricardone',
     logicalSector: 'S4',

@@ -199,7 +199,7 @@ export function buildCleanRealDataset(events: RealJourneyEventDto[], alerts: Rea
     else if (opts.excludeOnlyEgreso && isOnlyEgreso(journey)) reason = 'ONLY_EGRESO'
     else if (opts.excludeSoloRutaProbable && isRutaProbable(journey)) reason = 'RUTA_PROBABLE'
     else if (!opts.keepPreliminaryValid && journey.feedsOperationalAnalytics) reason = 'PRELIMINARY_DISABLED'
-    else if (!journey.feedsOperationalAnalytics && journey.preliminaryCircuitCode === 'PRELIM_INCOMPLETO') reason = 'INCOMPLETE_EXCLUDED'
+    else if (!journey.feedsOperationalAnalytics && journey.preliminaryCircuitCode === 'REGISTRO_INCOMPLETO') reason = 'INCOMPLETE_EXCLUDED'
     if (reason) discardedJourneys.push({ journey, reason })
     else reconstructedJourneysClean.push(journey)
   }

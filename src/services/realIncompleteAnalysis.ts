@@ -151,9 +151,9 @@ const MAX_SAMPLE_IDS = 20
 const MAX_SAMPLE_PLATES = 12
 const MAX_EXAMPLES = 3
 
-/** Agrupa viajes clasificados como PRELIM_INCOMPLETO por firma de secuencia. */
+/** Agrupa registros clasificados como REGISTRO_INCOMPLETO por firma de secuencia. */
 export function buildIncompleteSequenceGroups(journeys: ReconstructedRealJourney[]): IncompleteSequenceGroup[] {
-  const incompletos = journeys.filter((j) => j.preliminaryCircuitCode === 'PRELIM_INCOMPLETO')
+  const incompletos = journeys.filter((j) => j.preliminaryCircuitCode === 'REGISTRO_INCOMPLETO')
   const totalIncompletos = incompletos.length
   if (totalIncompletos === 0) return []
 

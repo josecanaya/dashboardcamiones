@@ -73,7 +73,7 @@ const DEPURATION_SCOPE_OPTIONS: { id: OperationalJourneyScopeFilter; label: stri
   { id: 'solo_egreso_discarded', label: 'Solo egreso descartado' },
   { id: 'minimal_valid', label: 'Válidos mínimos' },
   { id: 'partial_valid', label: 'Válidos parciales' },
-  { id: 'real_incomplete', label: 'Incompletos reales' },
+  { id: 'real_incomplete', label: 'Registro incompleto' },
   { id: 'solo_volcable', label: 'Solo Volcable' },
 ]
 
@@ -158,6 +158,10 @@ export type RealJourneyDiagnosticsViewProps = {
   eventMaxDay: string
   prelimCircuitFilter: string
   setPrelimCircuitFilter: (v: string) => void
+  circuitRangeStartDate: string
+  setCircuitRangeStartDate: (v: string) => void
+  circuitRangeEndDate: string
+  setCircuitRangeEndDate: (v: string) => void
   journeyQuickFilter: JourneyQuickFilter
   setJourneyQuickFilter: (v: JourneyQuickFilter) => void
   depurationScopeFilter: OperationalJourneyScopeFilter
@@ -167,6 +171,9 @@ export type RealJourneyDiagnosticsViewProps = {
   plateQuery: string
   setPlateQuery: (v: string) => void
   plateNorm: string
+  journeyQuery: string
+  setJourneyQuery: (v: string) => void
+  journeyQueryNorm: string
   interplantWindowHours: number
   setInterplantWindowHours: (v: number) => void
   mainTab: RealDataMainTab
@@ -394,6 +401,7 @@ export type RealJourneyDiagnosticsViewProps = {
   selectedCircuitJourneyUid: string | null
   setSelectedCircuitJourneyUid: (v: string | null) => void
   exportClassificationAuditCsv: () => void
+  exportCircuitosCsv: () => void
   nearbyDrawerJourneyUid: string | null
   setNearbyDrawerJourneyUid: (v: string | null) => void
   nearbyBackwardHours: number
@@ -557,6 +565,16 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
     }
     return [...map.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10)
   }, [filteredCircuitRows])
+  const searchAlertsForCurrentQuery = useMemo(() => {
+    if (!p.plateNorm && !p.journeyQueryNorm) return []
+    return p.normalizedAlertsStandalone.filter((a) => {
+      const matchesPlate = Boolean(p.plateNorm && (a.normalizedPlate || '').includes(p.plateNorm))
+      const matchesJourney = Boolean(
+        p.journeyQueryNorm && (a.journeyUid || '').trim().toUpperCase().includes(p.journeyQueryNorm)
+      )
+      return p.plateNorm && p.journeyQueryNorm ? matchesPlate && matchesJourney : matchesPlate || matchesJourney
+    })
+  }, [p.journeyQueryNorm, p.normalizedAlertsStandalone, p.plateNorm])
   const g = p.depurationSnapshot.general
   const raw = Math.max(1, g.rawJourneyCount)
   const afterSoloIe = Math.max(0, g.journeysReconstructedValidPlate - g.discardedSoloIngresoCount - g.discardedSoloEgresoCount)
@@ -570,7 +588,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
       pctOfRaw: 1,
     },
     {
-      title: 'Patentes válidas — journeys reconstruidos',
+      title: 'Patentes válidas — recorridos reconstruidos',
       value: g.journeysReconstructedValidPlate,
       badge: `${((g.journeysReconstructedValidPlate / raw) * 100).toFixed(1)}% retención`,
       pctOfRaw: g.rawJourneyCount > 0 ? g.journeysReconstructedValidPlate / raw : 0,
@@ -782,7 +800,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
             </div>
             <div className="mt-4 rounded-xl border border-cyan-200 bg-cyan-50 p-3 text-xs text-cyan-950">
               <div className="font-semibold">Filtro de cámaras traseras provisorio</div>
-              <div>Eventos excluidos: {p.rearCameraFilterTrace.excludedRearEvents.length} · Alertas traseras excluidas: {p.rearCameraFilterTrace.excludedRearAlerts.length} · Alertas route/start ingreso-preingreso excluidas: {p.rearCameraFilterTrace.excludedIngressRouteAlerts.length} · Journeys sólo traseras: {p.rearCameraFilterTrace.excludedRearOnlyJourneyUids.length}</div>
+              <div>Eventos excluidos: {p.rearCameraFilterTrace.excludedRearEvents.length} · Alertas traseras excluidas: {p.rearCameraFilterTrace.excludedRearAlerts.length} · Alertas route/start ingreso-preingreso excluidas: {p.rearCameraFilterTrace.excludedIngressRouteAlerts.length} · Recorridos sólo traseras: {p.rearCameraFilterTrace.excludedRearOnlyJourneyUids.length}</div>
               <div>Dataset operativo final: {p.events.length} eventos · {p.rearCameraFilterTrace.operationalAlerts.length} alertas</div>
               <p className="mt-1">El filtro de cámaras traseras es provisorio y se aplica para evitar que lecturas de acoplados, semirremolques o vehículos no operativos ensucien la reconstrucción preliminar.</p>
             </div>
@@ -794,13 +812,13 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
             <ExecutiveMetricCard accent="amber" label="Eventos excluidos traseras" value={p.rearCameraFilterTrace.excludedRearEvents.length} />
             <ExecutiveMetricCard accent="amber" label="Alertas excluidas traseras" value={p.rearCameraFilterTrace.excludedRearAlerts.length} />
             <ExecutiveMetricCard accent="amber" label="Alertas route/start ingreso-preingreso excluidas" value={p.rearCameraFilterTrace.excludedIngressRouteAlerts.length} />
-            <ExecutiveMetricCard accent="rose" label="Journeys sólo traseras" value={p.rearCameraFilterTrace.excludedRearOnlyJourneyUids.length} />
+            <ExecutiveMetricCard accent="rose" label="Recorridos sólo traseras" value={p.rearCameraFilterTrace.excludedRearOnlyJourneyUids.length} />
             <ExecutiveMetricCard accent="green" label="Dataset operativo final" value={`${p.events.length} evt / ${p.rearCameraFilterTrace.operationalAlerts.length} alert`} />
             <ExecutiveMetricCard label="Eventos dentro ventana" value={p.usefulWindow.insideCount} />
             <ExecutiveMetricCard label="Eventos fuera ventana" value={p.usefulWindow.outsideCount} />
-            <ExecutiveMetricCard accent="green" label="Journeys incluidos" value={p.summaryJourneys.filter((x) => x.etlStatus === 'included').length} />
-            <ExecutiveMetricCard accent="amber" label="Journeys revisión" value={p.summaryJourneys.filter((x) => x.etlStatus === 'review_required').length} />
-            <ExecutiveMetricCard accent="rose" label="Journeys descartados" value={p.summaryJourneys.filter((x) => x.etlStatus === 'excluded').length} />
+            <ExecutiveMetricCard accent="green" label="Recorridos incluidos" value={p.summaryJourneys.filter((x) => x.etlStatus === 'included').length} />
+            <ExecutiveMetricCard accent="amber" label="Recorridos revisión" value={p.summaryJourneys.filter((x) => x.etlStatus === 'review_required').length} />
+            <ExecutiveMetricCard accent="rose" label="Recorridos descartados" value={p.summaryJourneys.filter((x) => x.etlStatus === 'excluded').length} />
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -1462,15 +1480,15 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
               value={p.plateQualitySummary.invalidPlateEvents.toLocaleString()}
               sub={`${(p.plateQualitySummary.invalidPlateEventRatio * 100).toFixed(1)}%`}
             />
-            <ExecutiveMetricCard label="Journeys reconstruidos" value={p.journeys.length.toLocaleString()} />
+            <ExecutiveMetricCard label="Recorridos reconstruidos" value={p.journeys.length.toLocaleString()} />
             <ExecutiveMetricCard
               accent="green"
-              label="Journeys operativos útiles"
+              label="Recorridos operativos útiles"
               value={p.depurationSnapshot.general.operationalUsefulJourneyCount.toLocaleString()}
             />
             <ExecutiveMetricCard
               accent="rose"
-              label="Journeys descartados (ruido/clasificación)"
+              label="Recorridos descartados (ruido/clasificación)"
               value={(p.depurationSnapshot.general.totalDiscardedJourneyCount - p.depurationSnapshot.general.invalidPlateOnlyJourneyCount).toLocaleString()}
               sub="Excluye journeyUid sólo OCR inválido (ver depuración)"
             />
@@ -1492,11 +1510,11 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
               <p className="mt-1 text-sm text-slate-600">Journey reconstruido = unidad fuente tras patente válida (vista período/día).</p>
               <div className="mt-8 flex justify-center">
                 <DataDistributionDonut
-                  centerLabel="Journeys"
+                  centerLabel="Recorridos"
                   slices={[
                     { label: 'Datos útiles (KPI prelim)', count: p.donutJourneys.usefulKpi, colorVar: '--c0' },
                     { label: 'Descartados operativamente', count: p.donutJourneys.discarded, colorVar: '--c1' },
-                    { label: 'Incompletos reales', count: p.donutJourneys.incompleteReal, colorVar: '--c2' },
+                    { label: 'Registro incompleto', count: p.donutJourneys.incompleteReal, colorVar: '--c2' },
                     { label: 'Solo diagnóstico (otros)', count: p.donutJourneys.diagOnly, colorVar: '--c3' },
                   ]}
                 />
@@ -1694,23 +1712,67 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
             <div>sourceMode: {p.dataSource === 'api' ? 'API real' : 'archivo local'} · startDate: {p.apiQuery.startDate || '—'} · endDate: {p.apiQuery.endDate || '—'}</div>
             <div>useUsefulWindow: {p.useUsefulWindow ? 'sí' : 'no'} · usefulWindowStart: {p.usefulWindow.usefulWindowStart || '—'} · usefulWindowEnd: {p.usefulWindow.usefulWindowEnd || '—'}</div>
             <div>operationalEventCount: {p.events.length} · rawEventCount: {p.eventsUnfiltered.length} · rawAlertCount: {p.rawAlerts.length} · lastLoadedAt: {p.lastLoadedAt ? formatDateTimeShort(p.lastLoadedAt) : '—'} · lastProcessedAt: {p.datasetProcessedAt ? formatDateTimeShort(p.datasetProcessedAt) : '—'}</div>
-            <div>Filtro traseras: excluidos {p.rearCameraFilterTrace.excludedRearEvents.length} eventos · {p.rearCameraFilterTrace.excludedRearOnlyJourneyUids.length} journeys sólo cámaras traseras</div>
+            <div>Filtro traseras: excluidos {p.rearCameraFilterTrace.excludedRearEvents.length} eventos · {p.rearCameraFilterTrace.excludedRearOnlyJourneyUids.length} recorridos sólo cámaras traseras</div>
             <button type="button" onClick={() => p.setMainTab('eventos')} className="mt-2 rounded border border-slate-300 bg-white px-2 py-1 text-[11px]">Ver fuente cruda</button>
+          </div>
+          <div className="flex flex-wrap items-end gap-3 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+            <label className="text-xs font-medium text-slate-600">
+              Desde
+              <input
+                type="date"
+                value={p.circuitRangeStartDate}
+                onChange={(e) => p.setCircuitRangeStartDate(e.target.value)}
+                className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+              />
+            </label>
+            <label className="text-xs font-medium text-slate-600">
+              Hasta
+              <input
+                type="date"
+                value={p.circuitRangeEndDate}
+                onChange={(e) => p.setCircuitRangeEndDate(e.target.value)}
+                className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+              />
+            </label>
+            <button
+              type="button"
+              onClick={() => {
+                p.setCircuitRangeStartDate('')
+                p.setCircuitRangeEndDate('')
+              }}
+              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50"
+            >
+              Limpiar rango
+            </button>
+            <button
+              type="button"
+              onClick={p.exportCircuitosCsv}
+              disabled={p.prelimCircuitCardMetrics.totalOperational === 0}
+              className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+            >
+              Exportar CSV
+            </button>
+            <div className="text-xs text-slate-500">
+              Rango visible:{' '}
+              <span className="font-mono text-slate-800">
+                {p.circuitRangeStartDate || 'inicio'} → {p.circuitRangeEndDate || 'fin'}
+              </span>
+            </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {(
               [
-                ['Circuito a San Lorenzo', p.prelimCircuitCardMetrics.caladaSl],
+                ['Ricardone → San Lorenzo', p.prelimCircuitCardMetrics.caladaSl],
+                ['Descarga Celda 16 / Carga Celda 16', p.prelimCircuitCardMetrics.celda16],
+                ['Volcable 1/2', p.prelimCircuitCardMetrics.volcable],
                 ['Circuito líquido', p.prelimCircuitCardMetrics.liquido],
-                ['Salida S10 sólido / despacho', p.prelimCircuitCardMetrics.sinVolcable],
-                ['Circuito a Volcable 1/2', p.prelimCircuitCardMetrics.volcable],
-                ['Circuito a Celda 16', p.prelimCircuitCardMetrics.celda16],
+                ['Despacho / descarga sin punto instrumentado', p.prelimCircuitCardMetrics.sinVolcable],
                 ['Transile Volcable→Balanza', p.prelimCircuitCardMetrics.loopBalanza],
               ] as const
             ).map(([label, value]) => (
               <ExecutiveMetricCard key={label} label={`${label} (útiles)`} value={value} />
             ))}
-            <ExecutiveMetricCard accent="amber" label="Incompletos reales (útiles)" value={p.prelimCircuitCardMetrics.incompletos} />
+            <ExecutiveMetricCard accent="amber" label="Registro incompleto (útiles)" value={p.prelimCircuitCardMetrics.incompletos} />
           </div>
           <div className="grid gap-8 lg:grid-cols-2">
             <HorizontalBarChart
@@ -1719,9 +1781,15 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
               onPick={(id) => p.setDrawerCircuitCode(id)}
             />
             <ExecutiveMetricCard
-              label="Journeys operativamente útiles (alcance día)"
+              label="Recorridos operativamente útiles (alcance día)"
               value={p.prelimCircuitCardMetrics.totalOperational}
-              sub={p.selectedDay ? `Filtrados al día ${p.selectedDay}` : 'Todos los días Ricardone en carga'}
+              sub={
+                p.circuitRangeStartDate || p.circuitRangeEndDate
+                  ? `Rango ${p.circuitRangeStartDate || 'inicio'} → ${p.circuitRangeEndDate || 'fin'}`
+                  : p.selectedDay
+                    ? `Filtrados al día ${p.selectedDay}`
+                    : 'Todos los días Ricardone en carga'
+              }
             />
           </div>
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -1797,7 +1865,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
           </details>
 
           <div className="rounded-3xl border border-amber-200 bg-amber-50 p-6 shadow-sm">
-            <h3 className="text-base font-bold text-amber-950">Incompletos reales (integrado en Circuitos)</h3>
+            <h3 className="text-base font-bold text-amber-950">Registro incompleto (integrado en Circuitos)</h3>
             <p className="mt-1 text-sm text-amber-900">Sección consolidada: ya no requiere pestaña separada para lectura operativa.</p>
             <div className="mt-3 grid gap-3 sm:grid-cols-3">
               <ExecutiveMetricCard accent="amber" label="Total incompletos" value={p.incompleteTotal} />
@@ -1811,7 +1879,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
       {p.mainTab === 'incompletos' && (
         <section className="space-y-8">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
-            <ExecutiveMetricCard accent="amber" label="Total incompletos reales" value={p.incompleteTotal} />
+            <ExecutiveMetricCard accent="amber" label="Total registros incompletos" value={p.incompleteTotal} />
             <ExecutiveMetricCard
               accent="amber"
               label="Secuencia más frecuente"
@@ -1829,7 +1897,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h3 className="text-base font-bold text-slate-900">Análisis de incompletos reales</h3>
+            <h3 className="text-base font-bold text-slate-900">Análisis de registros incompletos</h3>
             <div className="mt-4 max-h-[42vh] overflow-auto rounded-xl border border-slate-100">
               <table className="min-w-[1500px] w-full text-xs">
                 <thead className="sticky top-0 bg-slate-50">
@@ -1877,7 +1945,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
           <div className="space-y-4">
             {p.incompleteGroups.length === 0 ? (
               <p className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-600 shadow-sm">
-                Sin viajes PRELIM_INCOMPLETO con filtros vigentes.
+                Sin registros incompletos con filtros vigentes.
               </p>
             ) : (
               p.incompleteGroups.slice(0, 16).map((g) => (
@@ -2044,13 +2112,26 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
       {p.mainTab === 'buscar' && (
         <section className="space-y-8">
           <div className="rounded-3xl border border-slate-200 bg-white p-10 shadow-md">
-            <label className="text-sm font-semibold uppercase tracking-wide text-slate-500">Buscar patente</label>
-            <input
-              value={p.plateQuery}
-              onChange={(e) => p.setPlateQuery(e.target.value)}
-              placeholder="Ej. ABC123 o AB123CD"
-              className="mt-3 w-full rounded-2xl border-2 border-slate-900/70 px-5 py-4 text-xl font-mono outline-none shadow-inner focus:border-sky-600"
-            />
+            <div className="grid gap-4 lg:grid-cols-2">
+              <label className="block">
+                <span className="text-sm font-semibold uppercase tracking-wide text-slate-500">Buscar patente</span>
+                <input
+                  value={p.plateQuery}
+                  onChange={(e) => p.setPlateQuery(e.target.value)}
+                  placeholder="Ej. ABC123 o AB123CD"
+                  className="mt-3 w-full rounded-2xl border-2 border-slate-900/70 px-5 py-4 text-xl font-mono outline-none shadow-inner focus:border-sky-600"
+                />
+              </label>
+              <label className="block">
+                <span className="text-sm font-semibold uppercase tracking-wide text-slate-500">Buscar journey ID</span>
+                <input
+                  value={p.journeyQuery}
+                  onChange={(e) => p.setJourneyQuery(e.target.value)}
+                  placeholder="Ej. 5e4a... o journeyUuid"
+                  className="mt-3 w-full rounded-2xl border-2 border-slate-900/70 px-5 py-4 text-xl font-mono outline-none shadow-inner focus:border-sky-600"
+                />
+              </label>
+            </div>
             <div className="mt-4 flex flex-wrap gap-4 text-sm">
               <label className="inline-flex items-center gap-2 text-slate-700">
                 <input type="checkbox" checked={p.onlyThisPlateScope} onChange={(e) => p.setOnlyThisPlateScope(e.target.checked)} disabled={!p.plateNorm} />
@@ -2067,7 +2148,14 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
                   className="w-20 rounded-lg border px-2 py-2"
                 />
               </div>
-              <button type="button" onClick={() => p.setPlateQuery('')} className="rounded-xl border px-4 py-2 font-medium hover:bg-slate-50">
+              <button
+                type="button"
+                onClick={() => {
+                  p.setPlateQuery('')
+                  p.setJourneyQuery('')
+                }}
+                className="rounded-xl border px-4 py-2 font-medium hover:bg-slate-50"
+              >
                 Limpiar
               </button>
               <button
@@ -2086,13 +2174,13 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
             ) : null}
           </div>
 
-          {p.plateNorm && p.plateSummary && (
+          {(p.plateNorm || p.journeyQueryNorm) && p.plateSummary && (
             <>
               <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <h3 className="text-lg font-bold text-slate-900">Resumen de patente</h3>
+                <h3 className="text-lg font-bold text-slate-900">Resumen de búsqueda</h3>
                 <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
                   <ExecutiveMetricCard label="Eventos" value={p.plateSummary.totalEvents} />
-                  <ExecutiveMetricCard label="Journeys válidos reconstr." value={p.plateSummary.totalJourneys} />
+                  <ExecutiveMetricCard label="Recorridos reconstr." value={p.plateSummary.totalJourneys} />
                   <ExecutiveMetricCard label="Primer evento" value={p.plateSummary.firstAt ? formatDateTimeShort(p.plateSummary.firstAt) : '—'} />
                   <ExecutiveMetricCard label="Último evento" value={p.plateSummary.lastAt ? formatDateTimeShort(p.plateSummary.lastAt) : '—'} />
                   <ExecutiveMetricCard label="Días activos" value={p.plateSummary.dayCount} />
@@ -2124,17 +2212,16 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
 
               <div className="space-y-4">
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <h4 className="text-base font-bold text-slate-900">Alertas asociadas a la patente</h4>
+                  <h4 className="text-base font-bold text-slate-900">Alertas asociadas a la búsqueda</h4>
                   <div className="mt-3 max-h-48 overflow-auto">
-                    {p.normalizedAlertsStandalone
-                      .filter((a) => p.plateNorm && (a.normalizedPlate || '').includes(p.plateNorm))
+                    {searchAlertsForCurrentQuery
                       .slice(0, 80)
                       .map((a) => (
                         <div key={a.alertId} className="border-b border-slate-100 py-2 text-xs">
                           <span className="font-mono">{formatDateTimeShort(a.occurredAt)}</span> · <span className="font-mono">{a.alertCode || a.alertType || '—'}</span> · {a.reason || a.description || a.message || 'sin detalle'}
                         </div>
                       ))}
-                    {p.normalizedAlertsStandalone.filter((a) => p.plateNorm && (a.normalizedPlate || '').includes(p.plateNorm)).length === 0 ? (
+                    {searchAlertsForCurrentQuery.length === 0 ? (
                       <div className="text-xs text-slate-500">Sin alertas asociadas en la consulta actual.</div>
                     ) : null}
                   </div>
@@ -2215,14 +2302,14 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
             </>
           )}
 
-          {p.plateNorm && p.plateEventsAll.length === 0 ? (
+          {(p.plateNorm || p.journeyQueryNorm) && p.plateEventsAll.length === 0 ? (
             <p className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-950">Sin lecturas encontradas para la consulta actual.</p>
           ) : null}
         </section>
       )}
 
       <details className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <summary className="cursor-pointer select-none font-semibold text-slate-800">Ver tabla técnica completa — journeys filtrados</summary>
+        <summary className="cursor-pointer select-none font-semibold text-slate-800">Ver tabla técnica completa — recorridos filtrados</summary>
         <div className="mt-4 space-y-4">
           <div className="flex flex-wrap gap-2">
             {QUICK_FILTER_OPTIONS.map((opt) => (
@@ -2247,7 +2334,11 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
                   <th className="px-2 py-2 font-mono text-[10px]">journeyUid</th>
                   <th className="px-2 py-2 text-left">Inicio</th>
                   <th className="px-2 py-2 font-mono">prelimCircuit</th>
+                  <th className="px-2 py-2 font-mono">rawDeviceSequence</th>
                   <th className="px-2 py-2 font-mono">logicalCodeSeq</th>
+                  <th className="px-2 py-2 text-left">faltantes esperados</th>
+                  <th className="px-2 py-2 text-right">traseras excl.</th>
+                  <th className="px-2 py-2 text-left">motivo clasificación</th>
                   <th className="px-2 py-2 font-mono">flags</th>
                   <th className="px-2 py-2 text-center">desc.</th>
                   <th className="px-2 py-2 text-center">útil</th>
@@ -2263,8 +2354,18 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
                     </td>
                     <td className="whitespace-nowrap px-2 py-2">{formatDateTimeShort(j.startedAt)}</td>
                     <td className="max-w-[160px] truncate px-2 py-2 font-mono text-[9px]" title={j.preliminaryCircuitCode}>{j.preliminaryCircuitCode}</td>
+                    <td className="max-w-[260px] truncate px-2 py-2 font-mono text-[9px]" title={j.rawDeviceSequence.join(' → ')}>
+                      {normalizeSequenceForPattern(j.rawDeviceSequence).join(' → ')}
+                    </td>
                     <td className="max-w-[260px] truncate px-2 py-2 font-mono text-[9px]" title={j.logicalCodeSequence.join(' → ')}>
                       {normalizeSequenceForPattern(j.logicalCodeSequence).join(' → ')}
+                    </td>
+                    <td className="max-w-[180px] truncate px-2 py-2 text-[10px]" title={(j.missingExpectedPoints ?? []).join(', ')}>
+                      {(j.missingExpectedPoints ?? []).join(', ') || '—'}
+                    </td>
+                    <td className="px-2 py-2 text-right">{j.excludedRearCameraEventsCount ?? 0}</td>
+                    <td className="max-w-[260px] truncate px-2 py-2 text-[10px]" title={j.classificationReason ?? j.preliminaryCircuitReason}>
+                      {j.classificationReason ?? j.preliminaryCircuitReason}
                     </td>
                     <td className="max-w-[200px] px-2 py-2 text-[10px]">{j.qualityFlags.slice(0, 4).join('|')}</td>
                     <td className="px-2 py-2 text-center">{j.isDiscardedOperational ? 'Sí' : 'No'}</td>
@@ -2313,7 +2414,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
       <DiagDrawer open={Boolean(p.drawerCircuitCode)} title="Fuente del circuito" subtitle={p.drawerCircuitCode ?? ''} onClose={() => p.setDrawerCircuitCode(null)}>
         <div className="space-y-3 text-[11px]">
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-            <div>cantidad journeys: {p.circuitSourceRows.length} · cantidad eventos: {p.circuitSourceSummary.eventsCount} · patentes únicas: {p.circuitSourceSummary.plates}</div>
+            <div>cantidad recorridos: {p.circuitSourceRows.length} · cantidad eventos: {p.circuitSourceSummary.eventsCount} · patentes únicas: {p.circuitSourceSummary.plates}</div>
             <div>alertas asociadas: {p.circuitSourceSummary.alertsCount} · dentro/fuera ventana útil: {p.circuitSourceSummary.inside}/{p.circuitSourceSummary.outside}</div>
             <div>incluidos/revisión/descartados: {p.circuitSourceSummary.included}/{p.circuitSourceSummary.review}/{p.circuitSourceSummary.excluded}</div>
           </div>
@@ -2325,7 +2426,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
               <input value={drawerDeviceFilter} onChange={(e) => setDrawerDeviceFilter(e.target.value)} placeholder="Filtrar device/cámara" className="rounded border px-2 py-1" />
             </div>
             <div className="mt-2 flex flex-wrap gap-3">
-              <label className="inline-flex items-center gap-1"><input type="checkbox" checked={drawerOnlySinglePoint} onChange={(e) => setDrawerOnlySinglePoint(e.target.checked)} /> solo journeys de 1 punto</label>
+              <label className="inline-flex items-center gap-1"><input type="checkbox" checked={drawerOnlySinglePoint} onChange={(e) => setDrawerOnlySinglePoint(e.target.checked)} /> solo recorridos de 1 punto</label>
               <label className="inline-flex items-center gap-1"><input type="checkbox" checked={drawerOnlyWithNearby} onChange={(e) => setDrawerOnlyWithNearby(e.target.checked)} /> solo con alertas cercanas</label>
             </div>
             <div className="mt-2 text-slate-600">Visibles: {filteredCircuitRows.length} / {p.circuitSourceRows.length}</div>

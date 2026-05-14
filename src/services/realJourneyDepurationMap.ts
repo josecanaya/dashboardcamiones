@@ -3,33 +3,39 @@ import type { RealJourneyEventDto, ReconstructedRealJourney } from './realJourne
 const RIC_LOGICAL = new Set([
   'INGRESO',
   'PREINGRESO',
+  'PREINGRESO_EGRESO',
   'EGRESO',
   'BALANZA_INGRESO',
   'BALANZA_EGRESO',
   'BALANZA',
   'VOLCABLE',
+  'CELDA16_CARGA',
+  'CELDA16_DESCARGA',
+  'CALADA',
+  'LIQUIDO',
 ])
 
 /** Recorridos válidos preliminares (no incompleto ni descartados). */
 const VALID_PRELIM_CODES = new Set([
-  'PRELIM_RIC_A_SAN_LORENZO',
-  'PRELIM_RIC_LIQUIDO',
-  'PRELIM_RIC_SALIDA_S10_SOLIDO',
-  'PRELIM_RIC_VOLCABLE',
-  'PRELIM_RIC_CELDA_16',
-  'PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA',
-  'PRELIM_SOLO_VOLCABLE',
+  'CIRCUITO_CELDA16_DESCARGA',
+  'CIRCUITO_CELDA16_CARGA',
+  'CIRCUITO_VOLCABLE_1_2',
+  'CIRCUITO_LIQUIDO',
+  'CIRCUITO_SAN_LORENZO',
+  'DESPACHO_SIN_PUNTO_INSTRUMENTADO',
+  'TRANSILE_VOLCABLE_BALANZA',
 ])
 
 const VALID_MINIMAL_CODES = new Set([
-  'PRELIM_RIC_A_SAN_LORENZO',
+  'CIRCUITO_SAN_LORENZO',
 ])
 
 const VALID_PARTIAL_CODES = new Set([
-  'PRELIM_RIC_SALIDA_S10_SOLIDO',
-  'PRELIM_RIC_LIQUIDO',
-  'PRELIM_RIC_VOLCABLE',
-  'PRELIM_RIC_CELDA_16',
+  'CIRCUITO_CELDA16_DESCARGA',
+  'CIRCUITO_CELDA16_CARGA',
+  'CIRCUITO_VOLCABLE_1_2',
+  'CIRCUITO_LIQUIDO',
+  'DESPACHO_SIN_PUNTO_INSTRUMENTADO',
 ])
 
 export function collapseLogicalSignature(seq: string[]): string {
@@ -144,17 +150,19 @@ function preliminaryLabel(code: string): string {
       return 'Ruido — egreso sin par cámaras'
     case 'PRELIM_RIC_LOOP_BALANZA':
       return 'Loop balanza'
-    case 'PRELIM_RIC_A_SAN_LORENZO':
-      return 'Circuito a San Lorenzo'
-    case 'PRELIM_RIC_LIQUIDO':
+    case 'CIRCUITO_SAN_LORENZO':
+      return 'Ricardone → San Lorenzo'
+    case 'CIRCUITO_LIQUIDO':
       return 'Circuito líquido'
-    case 'PRELIM_RIC_SALIDA_S10_SOLIDO':
-      return 'Salida S10 sólido / despacho'
-    case 'PRELIM_RIC_VOLCABLE':
+    case 'DESPACHO_SIN_PUNTO_INSTRUMENTADO':
+      return 'Despacho / descarga sin punto instrumentado'
+    case 'CIRCUITO_VOLCABLE_1_2':
       return 'Circuito a Volcable 1/2'
-    case 'PRELIM_RIC_CELDA_16':
-      return 'Circuito a Celda 16'
-    case 'PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA':
+    case 'CIRCUITO_CELDA16_DESCARGA':
+      return 'Descarga Celda 16'
+    case 'CIRCUITO_CELDA16_CARGA':
+      return 'Carga Celda 16'
+    case 'TRANSILE_VOLCABLE_BALANZA':
       return 'Transile Volcable → Balanza'
     case 'PRELIM_RIC_DESCARGA_VOLCABLE':
       return 'Descarga volcable'
@@ -174,8 +182,8 @@ function preliminaryLabel(code: string): string {
       return 'Parcial preingreso‑balanza'
     case 'PRELIM_SOLO_VOLCABLE':
       return 'Solo volcable (sector)'
-    case 'PRELIM_INCOMPLETO':
-      return 'Incompleto real'
+    case 'REGISTRO_INCOMPLETO':
+      return 'Registro incompleto'
     default:
       return code
   }
@@ -213,12 +221,13 @@ export function buildOperationalDepurationSnapshot(
   const pctDiscardedVsRaw = rawJourneyCount > 0 ? totalDiscardedJourneyCount / rawJourneyCount : 0
 
   const OPS_KPI_PRELIMS = new Set<string>([
-    'PRELIM_RIC_A_SAN_LORENZO',
-    'PRELIM_RIC_LIQUIDO',
-    'PRELIM_RIC_SALIDA_S10_SOLIDO',
-    'PRELIM_RIC_VOLCABLE',
-    'PRELIM_RIC_CELDA_16',
-    'PRELIM_RIC_TRANSILE_VOLCABLE_BALANZA',
+    'CIRCUITO_CELDA16_DESCARGA',
+    'CIRCUITO_CELDA16_CARGA',
+    'CIRCUITO_VOLCABLE_1_2',
+    'CIRCUITO_LIQUIDO',
+    'CIRCUITO_SAN_LORENZO',
+    'DESPACHO_SIN_PUNTO_INSTRUMENTADO',
+    'TRANSILE_VOLCABLE_BALANZA',
   ])
 
   const preliminaryValidPatternCount = journeys.filter(
@@ -274,14 +283,9 @@ export function buildOperationalDepurationSnapshot(
           text: 'Egreso planta sin par frente/trasera en el mismo journey; detección parcial o ruta.',
           feedsKpi: 'No',
         }
-      case 'PRELIM_SOLO_VOLCABLE':
+      case 'REGISTRO_INCOMPLETO':
         return {
-          text: 'Actividad de sector sin recorrido planta completo; diagnóstico.',
-          feedsKpi: 'No',
-        }
-      case 'PRELIM_INCOMPLETO':
-        return {
-          text: 'No coincide con patrones preliminar actuales con las cámaras cargadas.',
+          text: 'No coincide con circuitos Ricardone actuales con las cámaras cargadas.',
           feedsKpi: 'No',
         }
         default:
@@ -365,11 +369,11 @@ export function buildOperationalDepurationSnapshot(
   }
 
   const preliminaryNonIncomplete = journeys.filter(
-    (j) => !j.isDiscardedOperational && j.preliminaryCircuitCode !== 'PRELIM_INCOMPLETO'
+    (j) => !j.isDiscardedOperational && j.preliminaryCircuitCode !== 'REGISTRO_INCOMPLETO'
   ).length
   const preliminaryIncomplete = journeys.filter(
     (j) =>
-      !j.isDiscardedOperational && j.preliminaryCircuitCode === 'PRELIM_INCOMPLETO'
+      !j.isDiscardedOperational && j.preliminaryCircuitCode === 'REGISTRO_INCOMPLETO'
   ).length
 
   const usefulList = journeys.filter((j) => j.feedsOperationalAnalytics)
@@ -388,24 +392,24 @@ export function buildOperationalDepurationSnapshot(
       ).length,
       validPartial: usefulList.filter((j) => VALID_PARTIAL_CODES.has(j.preliminaryCircuitCode)).length,
       descargaVolcable: usefulList.filter(
-        (j) => j.preliminaryCircuitCode === 'PRELIM_RIC_DESCARGA_VOLCABLE'
+        (j) => j.preliminaryCircuitCode === 'CIRCUITO_VOLCABLE_1_2'
       ).length,
       descargaNoVolcable: usefulList.filter(
-        (j) => j.preliminaryCircuitCode === 'PRELIM_RIC_DESCARGA_NO_VOLCABLE'
+        (j) => j.preliminaryCircuitCode === 'DESPACHO_SIN_PUNTO_INSTRUMENTADO'
       ).length,
       liquidoProbable: usefulList.filter(
-        (j) => j.preliminaryCircuitCode === 'PRELIM_RIC_LIQUIDO_PROBABLE'
+        (j) => j.preliminaryCircuitCode === 'CIRCUITO_LIQUIDO'
       ).length,
       loopBalanza: usefulList.filter(
-        (j) => j.preliminaryCircuitCode === 'PRELIM_RIC_LOOP_BALANZA'
+        (j) => j.preliminaryCircuitCode === 'TRANSILE_VOLCABLE_BALANZA'
       ).length,
-      soloVolcable: usefulList.filter((j) => j.preliminaryCircuitCode === 'PRELIM_SOLO_VOLCABLE')
+      soloVolcable: usefulList.filter((j) => j.preliminaryCircuitCode === 'CIRCUITO_VOLCABLE_1_2')
         .length,
       caladaSl: usefulList.filter(
-        (j) => j.preliminaryCircuitCode === 'PRELIM_RIC_CALADA_A_SAN_LORENZO'
+        (j) => j.preliminaryCircuitCode === 'CIRCUITO_SAN_LORENZO'
       ).length,
       incompleteReal: usefulList.filter(
-        (j) => j.preliminaryCircuitCode === 'PRELIM_INCOMPLETO'
+        (j) => j.preliminaryCircuitCode === 'REGISTRO_INCOMPLETO'
       ).length,
     },
   }
@@ -452,9 +456,9 @@ export function journeyMatchesOperationalScope(
     )
   if (f === 'real_incomplete')
     return (
-      j.feedsOperationalAnalytics && j.preliminaryCircuitCode === 'PRELIM_INCOMPLETO'
+      j.feedsOperationalAnalytics && j.preliminaryCircuitCode === 'REGISTRO_INCOMPLETO'
     )
   if (f === 'solo_volcable')
-    return j.feedsOperationalAnalytics && j.preliminaryCircuitCode === 'PRELIM_SOLO_VOLCABLE'
+    return j.feedsOperationalAnalytics && j.preliminaryCircuitCode === 'CIRCUITO_VOLCABLE_1_2'
   return true
 }

@@ -104,6 +104,11 @@ function parseMillis(iso: string): number {
   return Number.isNaN(t) ? NaN : t
 }
 
+function csvCell(value: unknown): string {
+  const text = String(value ?? '').replace(/"/g, '""')
+  return `"${text}"`
+}
+
 /**
  * En producción real, `/journey-event/list` a veces devuelve `occurredAt`/`recordedAt` erróneos (p. ej. año 2036)
  * mientras `createdAt` refleja cuándo se persistió. El monitor en vivo filtra por ventana local y descartaba todo.
@@ -596,6 +601,24 @@ export function LiveCameraMonitor() {
       .sort((a, b) => parseMillis(b.occurredAt) - parseMillis(a.occurredAt))
   }, [plantFilteredAlerts, selectedSectorCode, selectedDeviceCode])
 
+  const exportEvents = useMemo(() => {
+    const selectedSector = selectedSectorCode?.trim()
+    const selectedDevice = selectedDeviceCode?.trim()
+    return plantFilteredEvents
+      .filter((e) => !selectedSector || e.sectorCode === selectedSector)
+      .filter((e) => !selectedDevice || e.deviceCode === selectedDevice)
+      .sort((a, b) => eventOperationalInstantMs(b) - eventOperationalInstantMs(a))
+  }, [plantFilteredEvents, selectedSectorCode, selectedDeviceCode])
+
+  const exportAlerts = useMemo(() => {
+    const selectedSector = selectedSectorCode?.trim()
+    const selectedDevice = selectedDeviceCode?.trim()
+    return plantFilteredAlerts
+      .filter((a) => !selectedSector || a.sectorCode === selectedSector)
+      .filter((a) => !selectedDevice || a.deviceCode === selectedDevice)
+      .sort((a, b) => parseMillis(b.occurredAt) - parseMillis(a.occurredAt))
+  }, [plantFilteredAlerts, selectedSectorCode, selectedDeviceCode])
+
   const selectedCameraDiagnostic: CameraDiagnostics | null = useMemo(() => {
     if (!selectedSectorCode || !selectedDeviceCode) return null
     return buildCameraDiagnostics(plantFilteredEvents, plantFilteredAlerts, selectedDeviceCode, selectedSectorCode)
@@ -684,6 +707,92 @@ export function LiveCameraMonitor() {
       }
     },
     [downloadTextFile, observations, rangeLabel, selectedCameraDiagnostic]
+  )
+
+  const exportCurrentSearch = useCallback(
+    (format: 'json' | 'csv') => {
+      const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')
+      const base = `busqueda-camaras_${plantSiteId}_${selectedSectorCode ?? 'todos'}_${selectedDeviceCode ?? 'todas'}_${stamp}`
+      const metadata = {
+        exportedAt: new Date().toISOString(),
+        rangeLabel,
+        plantSiteId,
+        selectedSectorCode,
+        selectedDeviceCode,
+        filters: {
+          sector: filterSectorCode.trim(),
+          device: filterDeviceCode.trim(),
+          plate: filterPlate.trim(),
+          journeyUuid: filterJourneyUuid.trim(),
+        },
+        counts: {
+          events: exportEvents.length,
+          alerts: exportAlerts.length,
+        },
+      }
+
+      if (format === 'json') {
+        downloadTextFile(
+          `${base}.json`,
+          JSON.stringify({ metadata, events: exportEvents, alerts: exportAlerts }, null, 2),
+          'application/json;charset=utf-8'
+        )
+        return
+      }
+
+      const eventHeader = ['kind', 'at', 'occurredAt', 'createdAt', 'journeyUid', 'sequenceNumber', 'plate', 'sectorCode', 'deviceCode', 'eventType', 'alertLevel']
+      const alertHeader = ['kind', 'at', 'alertId', 'plate', 'sectorCode', 'deviceCode', 'alertCode', 'alertType', 'alertLevel', 'description']
+      const eventRows = exportEvents.map((e) => [
+        'event',
+        eventOperationalInstantIso(e),
+        e.occurredAt,
+        e.createdAt ?? '',
+        e.journeyUid,
+        e.sequenceNumber,
+        e.truckPlate || e.normalizedPlate || '',
+        e.sectorCode,
+        e.deviceCode,
+        e.eventType || e.eventCategory || '',
+        e.alertLevel,
+      ])
+      const alertRows = exportAlerts.map((a) => [
+        'alert',
+        a.occurredAt,
+        a.alertId,
+        a.rawPlate || a.normalizedPlate || '',
+        a.sectorCode,
+        a.deviceCode,
+        a.alertCode,
+        a.alertType,
+        a.alertLevel,
+        a.description || a.reason || a.message || '',
+      ])
+      const csv = [
+        ['metadata', JSON.stringify(metadata)],
+        [],
+        eventHeader,
+        ...eventRows,
+        [],
+        alertHeader,
+        ...alertRows,
+      ]
+        .map((row) => row.map(csvCell).join(','))
+        .join('\r\n')
+      downloadTextFile(`${base}.csv`, '\uFEFF' + csv, 'text/csv;charset=utf-8')
+    },
+    [
+      downloadTextFile,
+      exportAlerts,
+      exportEvents,
+      filterDeviceCode,
+      filterJourneyUuid,
+      filterPlate,
+      filterSectorCode,
+      plantSiteId,
+      rangeLabel,
+      selectedDeviceCode,
+      selectedSectorCode,
+    ]
   )
 
   const sectorOptions = useMemo(() => {
@@ -937,6 +1046,22 @@ export function LiveCameraMonitor() {
             className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-200 hover:bg-cyan-500/20 disabled:opacity-40"
           >
             {loading ? '…' : 'Actualizar'}
+          </button>
+          <button
+            type="button"
+            onClick={() => exportCurrentSearch('csv')}
+            disabled={exportEvents.length + exportAlerts.length === 0}
+            className="rounded-lg border border-emerald-500/35 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-200 hover:bg-emerald-500/20 disabled:opacity-40"
+          >
+            CSV
+          </button>
+          <button
+            type="button"
+            onClick={() => exportCurrentSearch('json')}
+            disabled={exportEvents.length + exportAlerts.length === 0}
+            className="rounded-lg border border-violet-500/35 bg-violet-500/10 px-3 py-1.5 text-xs font-semibold text-violet-200 hover:bg-violet-500/20 disabled:opacity-40"
+          >
+            JSON
           </button>
           <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-900/80 px-2 py-1.5 text-[10px] text-slate-400">
             <input

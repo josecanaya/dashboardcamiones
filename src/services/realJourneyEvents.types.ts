@@ -35,6 +35,9 @@ export type PreliminaryCircuitClassification = {
   preliminaryCircuitReason: string
   preliminaryCircuitGroup?: string
   preliminaryCircuitVariant?: string
+  missingExpectedPoints?: string[]
+  excludedRearCameraEventsCount?: number
+  classificationReason?: string
 }
 
 /** Viaje reconstruido antes de análisis de calidad (incluye día local del primer evento). */

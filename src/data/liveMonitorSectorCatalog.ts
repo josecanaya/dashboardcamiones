@@ -22,7 +22,8 @@ export function getCatalogSectorCodesForLiveMonitor(plant: SiteId): string[] {
  */
 const RICARDONE_DEVICES_BY_SECTOR: Record<string, readonly string[]> = {
   RICARDONE_INGRESO_CAMIONES: ['RicIngCamFrente', 'RicIngCamTrasera', 'RicIngCamTraser'],
-  RICARDONE_PREINGRESO: ['RicPreIngInFr', 'RicPreIngInTr'],
+  RICARDONE_PREINGRESO: ['RicPreIngInFr', 'RicPreIngInTr', 'RicPreIngEgFr', 'RicPreIngEgTr'],
+  RICARDONE_CALADA: ['RicCalLiq', 'RicCal01', 'RicCal02', 'RicCal03', 'RicCal04', 'RicCal05'],
   RICARDONE_EGRESO_CAMIONES: ['RicEgrCamFrente', 'RicEgrCamTraser', 'RicEgrCamTrasera'],
   RICARDONE_BALANZA: [
     'RicB1Ingreso',
@@ -35,7 +36,7 @@ const RICARDONE_DEVICES_BY_SECTOR: Record<string, readonly string[]> = {
   /** Descarga volcable — sector operativo Ricardone */
   RICARDONE_VOLCABLE_1: ['RicVolcable1'],
   RICARDONE_VOLCABLE_2: ['RicVolcable2'],
-  RICARDONE_CELDA_16: ['RicC16Descarga2', 'RicC16Carga1', 'RicC16Carga2'],
+  RICARDONE_CELDA_16: ['RicC16Descarga1', 'RicC16Descarga2', 'RicC16Carga1', 'RicC16Carga2'],
 }
 
 const SAN_LORENZO_DEVICES_BY_SECTOR: Record<string, readonly string[]> = {
