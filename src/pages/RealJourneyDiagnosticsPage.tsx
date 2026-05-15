@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   loadRealJourneyEventsFromFile,
   loadRealJourneyEventsFromApi,
@@ -56,7 +56,7 @@ import {
 import { investigateNearbyAlerts } from '../services/nearbyAlertResearch'
 import { getEventOperationalInstantIso } from '../services/liveCameraDiagnostics'
 import type { IncompleteSequenceGroup } from '../services/realIncompleteAnalysis'
-import { RealJourneyDiagnosticsView, type JourneyQuickFilter, type RealDataMainTab } from './RealJourneyDiagnosticsView'
+import { RealJourneyDiagnosticsView, type JourneyQuickFilter, type RealDataMainTab, type RealDataTimeFilterMode } from './RealJourneyDiagnosticsView'
 import type { RealJourneyEventDto, ReconstructedRealJourney } from '../services/realJourneyEvents.types'
 import { buildRearCameraFilterTrace } from '../services/rearCameraFilter'
 
@@ -89,9 +89,8 @@ function toDateInputValue(date: Date): string {
 }
 
 function getRecentDefaultRange(): { startDate: string; endDate: string } {
-  const end = new Date()
-  const start = new Date(end.getTime() - 24 * 60 * 60 * 1000)
-  return { startDate: toDateInputValue(start), endDate: toDateInputValue(end) }
+  const today = toDateInputValue(new Date())
+  return { startDate: today, endDate: today }
 }
 
 function toIsoLocalDateTime(value: Date): string {
@@ -102,6 +101,28 @@ function toIsoLocalDateTime(value: Date): string {
   const mm = String(value.getMinutes()).padStart(2, '0')
   const ss = String(value.getSeconds()).padStart(2, '0')
   return `${y}-${m}-${d}T${hh}:${mm}:${ss}`
+}
+
+function toWeekInputValue(date: Date): string {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+  const day = d.getUTCDay() || 7
+  d.setUTCDate(d.getUTCDate() + 4 - day)
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
+  const week = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7)
+  return `${d.getUTCFullYear()}-W${String(week).padStart(2, '0')}`
+}
+
+function weekInputToDateRange(value: string): { start: Date; end: Date } | null {
+  const match = value.match(/^(\d{4})-W(\d{2})$/)
+  if (!match) return null
+  const year = Number(match[1])
+  const week = Number(match[2])
+  const jan4 = new Date(year, 0, 4)
+  const jan4Day = jan4.getDay() || 7
+  const start = new Date(year, 0, 4 - jan4Day + 1 + (week - 1) * 7)
+  const end = new Date(start)
+  end.setDate(start.getDate() + 6)
+  return { start, end }
 }
 
 function downloadCsv(filename: string, header: string[], rows: Array<Array<string | number>>) {
@@ -249,6 +270,14 @@ export function RealJourneyDiagnosticsPage() {
   const [dataSource, setDataSource] = useState<RealDataSource>('api')
   const [apiStartDate, setApiStartDate] = useState(recentRange.startDate || RECOMMENDED_JOURNEY_EXPORT_START_DATE)
   const [apiEndDate, setApiEndDate] = useState(recentRange.endDate || RECOMMENDED_JOURNEY_EXPORT_END_DATE)
+  const [timeFilterMode, setTimeFilterMode] = useState<RealDataTimeFilterMode>('day')
+  const [timeFilterMonth, setTimeFilterMonth] = useState((recentRange.endDate || toDateInputValue(new Date())).slice(0, 7))
+  const [timeFilterWeek, setTimeFilterWeek] = useState(toWeekInputValue(new Date()))
+  const [timeFilterDay, setTimeFilterDay] = useState(recentRange.endDate || toDateInputValue(new Date()))
+  const [timeFilterAllDay, setTimeFilterAllDay] = useState(true)
+  const [timeFilterStartTime, setTimeFilterStartTime] = useState('00:00')
+  const [timeFilterEndTime, setTimeFilterEndTime] = useState('23:59')
+  const [appliedTimeRangeLabel, setAppliedTimeRangeLabel] = useState('')
 
   const [filePath, setFilePath] = useState(DEFAULT_REAL_JOURNEY_EVENTS_FILE)
   const [eventsUnfiltered, setEventsUnfiltered] = useState<RealJourneyEventDto[]>([])
@@ -325,19 +354,51 @@ export function RealJourneyDiagnosticsPage() {
   const [nearbyAlertsError, setNearbyAlertsError] = useState<string | null>(null)
   const [manualNearbyAssociations, setManualNearbyAssociations] = useState<Record<string, string[]>>({})
   const [lprCameraAudit, setLprCameraAudit] = useState<{ deviceCode: string; sectorCode: string } | null>(null)
+  const initialApiLoadStarted = useRef(false)
+
+  const selectedTimeRange = useMemo(() => {
+    let start: Date
+    let end: Date
+    if (timeFilterMode === 'month') {
+      const [year, month] = (timeFilterMonth || toDateInputValue(new Date()).slice(0, 7)).split('-').map(Number)
+      start = new Date(year, month - 1, 1)
+      end = new Date(year, month, 0)
+    } else if (timeFilterMode === 'week') {
+      const range = weekInputToDateRange(timeFilterWeek)
+      start = range?.start ?? new Date()
+      end = range?.end ?? new Date()
+    } else {
+      const [year, month, day] = (timeFilterDay || toDateInputValue(new Date())).split('-').map(Number)
+      start = new Date(year, month - 1, day)
+      end = new Date(year, month - 1, day)
+    }
+
+    const [startHour, startMinute] = (timeFilterAllDay ? '00:00' : timeFilterStartTime || '00:00').split(':').map(Number)
+    const [endHour, endMinute] = (timeFilterAllDay ? '23:59' : timeFilterEndTime || '23:59').split(':').map(Number)
+    start.setHours(startHour || 0, startMinute || 0, 0, 0)
+    end.setHours(endHour || 0, endMinute || 0, 59, 999)
+    if (start > end) return null
+    return { start, end }
+  }, [timeFilterAllDay, timeFilterDay, timeFilterEndTime, timeFilterMode, timeFilterMonth, timeFilterStartTime, timeFilterWeek])
 
   const load = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const list =
+      const [list, alertList] =
         dataSource === 'api'
-          ? await loadRealJourneyEventsFromApi(apiStartDate.trim(), apiEndDate.trim())
-          : await loadRealJourneyEventsFromFile(filePath.trim() || undefined)
+          ? await Promise.all([
+              loadRealJourneyEventsFromApi(apiStartDate.trim(), apiEndDate.trim()),
+              fetchAlerts({ startDate: apiStartDate.trim(), endDate: apiEndDate.trim() }),
+            ])
+          : [await loadRealJourneyEventsFromFile(filePath.trim() || undefined), [] as RealAlertDto[]]
       const ricardoneOnly = filterRicardoneSiteEventsOnly(list)
-      const filtered = buildRearCameraFilterTrace(ricardoneOnly, [])
+      const filtered = buildRearCameraFilterTrace(ricardoneOnly, alertList)
       setEventsUnfiltered(ricardoneOnly)
       setEvents(filtered.operationalEvents)
+      setRawAlerts(alertList)
+      setAlertsRawStandalone(alertList)
+      setAlertsLastQueriedAt(new Date().toISOString())
       setLastLoadedAt(new Date().toISOString())
     } catch (e) {
       setEventsUnfiltered([])
@@ -347,6 +408,53 @@ export function RealJourneyDiagnosticsPage() {
       setLoading(false)
     }
   }, [dataSource, apiStartDate, apiEndDate, filePath])
+
+  const applyTimeFilter = useCallback(async () => {
+    if (!selectedTimeRange) {
+      setError('Seleccioná un rango temporal válido.')
+      return
+    }
+    setDataSource('api')
+    setLoading(true)
+    setAlertsLoading(true)
+    setError(null)
+    setAlertsError(null)
+    const params: RealTruckflowQueryParams = {
+      startDate: toIsoLocalDateTime(selectedTimeRange.start),
+      endDate: toIsoLocalDateTime(selectedTimeRange.end),
+    }
+    try {
+      const [eventList, alertList] = await Promise.all([
+        fetchJourneyEvents(params),
+        fetchAlerts(params),
+      ])
+      const ricardoneOnly = filterRicardoneSiteEventsOnly(eventList)
+      const filtered = buildRearCameraFilterTrace(ricardoneOnly, alertList)
+      setApiQuery({ ...params, plate: '', device: '', sector: '', site: '', journeyUuid: '' })
+      setAlertsQuery({ ...params, plate: '', device: '', sector: '', site: '', journeyUuid: '' })
+      setApiStartDate(toDateInputValue(selectedTimeRange.start))
+      setApiEndDate(toDateInputValue(selectedTimeRange.end))
+      setEventsUnfiltered(ricardoneOnly)
+      setEvents(filtered.operationalEvents)
+      setRawAlerts(alertList)
+      setAlertsRawStandalone(alertList)
+      setAlertsLastQueryUrl(`${REAL_TRUCKFLOW_BASE_URL}/alert/list`)
+      setAlertsLastQueriedAt(new Date().toISOString())
+      setCleanDataset(null)
+      setDatasetProcessedAt('')
+      setLastQueryUrl(`${REAL_TRUCKFLOW_BASE_URL}/journey-event/list + /alert/list`)
+      setLastLoadedAt(new Date().toISOString())
+      setAppliedTimeRangeLabel(`${params.startDate} → ${params.endDate}`)
+      setSelectedDay('')
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e)
+      setError(msg)
+      setAlertsError(msg)
+    } finally {
+      setLoading(false)
+      setAlertsLoading(false)
+    }
+  }, [selectedTimeRange])
 
   const loadEtlEvents = useCallback(async () => {
     setEtlLoadingEvents(true)
@@ -574,6 +682,8 @@ export function RealJourneyDiagnosticsPage() {
   }, [cleanDataset, apiQuery.endDate, apiQuery.startDate])
 
   useEffect(() => {
+    if (initialApiLoadStarted.current) return
+    initialApiLoadStarted.current = true
     void load()
   }, [load])
 
@@ -2054,6 +2164,22 @@ export function RealJourneyDiagnosticsPage() {
       formatCalendarDayOptionLabel={formatCalendarDayOptionLabel}
       eventMinDay={eventMinDay}
       eventMaxDay={eventMaxDay}
+      timeFilterMode={timeFilterMode}
+      setTimeFilterMode={setTimeFilterMode}
+      timeFilterMonth={timeFilterMonth}
+      setTimeFilterMonth={setTimeFilterMonth}
+      timeFilterWeek={timeFilterWeek}
+      setTimeFilterWeek={setTimeFilterWeek}
+      timeFilterDay={timeFilterDay}
+      setTimeFilterDay={setTimeFilterDay}
+      timeFilterAllDay={timeFilterAllDay}
+      setTimeFilterAllDay={setTimeFilterAllDay}
+      timeFilterStartTime={timeFilterStartTime}
+      setTimeFilterStartTime={setTimeFilterStartTime}
+      timeFilterEndTime={timeFilterEndTime}
+      setTimeFilterEndTime={setTimeFilterEndTime}
+      appliedTimeRangeLabel={appliedTimeRangeLabel}
+      applyTimeFilter={applyTimeFilter}
       prelimCircuitFilter={prelimCircuitFilter}
       setPrelimCircuitFilter={setPrelimCircuitFilter}
       circuitRangeStartDate={circuitRangeStartDate}

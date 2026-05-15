@@ -5,8 +5,6 @@ import {
   getExpectedDevicesForLiveSector,
 } from '../../data/liveMonitorSectorCatalog'
 import { lookupRealSectorCode } from '../../data/realSectorCodeMap'
-import type { SiteId } from '../../domain/sites'
-import { SITES } from '../../domain/sites'
 import { normalizePlate } from '../../services/argentinaPlate'
 import { normalizeRealAlertForView, type NormalizedRealAlertView } from '../../services/realAlertsInspector'
 import type { RealJourneyEventDto } from '../../services/realJourneyEvents.types'
@@ -22,18 +20,13 @@ import {
   buildCameraDiagnostics,
   buildOperationalTimeline,
   buildSectorStatus,
-  compareFrontRearCameras,
   evaluateManualObservation,
   exportCameraDiagnosticCsv,
   exportCameraDiagnosticJson,
   getEventOperationalInstantIso,
   isValidObservedPlate,
   VEHICLE_TYPE_LABELS,
-  WORK_MODE_LABELS,
   type CameraDiagnostics,
-  type FrontRearComparisonRow,
-  type LiveSectorStatus,
-  type LiveWorkMode,
   type ManualObservation,
   type OperationalTimelineKind,
   type VehicleType,
@@ -42,11 +35,13 @@ import {
 const MATCH_WINDOW_MS = 20_000
 const AUTO_REFRESH_MS = 30_000
 
-type DateTimeRangeFilter = {
-  startDate: string
-  startTime: string
-  endDate: string
-  endTime: string
+/** Ventana deslizante para “en vivo” sin selectores de fecha/hora en la barra. */
+const LIVE_ROLLING_WINDOW_MS = 60 * 60 * 1000
+
+function getRollingLiveWindow(): { start: Date; end: Date } {
+  const end = new Date()
+  const start = new Date(end.getTime() - LIVE_ROLLING_WINDOW_MS)
+  return { start, end }
 }
 
 function fmtShort(iso: string): string {
@@ -64,39 +59,6 @@ function toIsoLocal(dt: Date): string {
   const mm = String(dt.getMinutes()).padStart(2, '0')
   const ss = String(dt.getSeconds()).padStart(2, '0')
   return `${y}-${m}-${d}T${hh}:${mm}:${ss}`
-}
-
-function toDateInputValue(dt: Date): string {
-  const y = dt.getFullYear()
-  const m = String(dt.getMonth() + 1).padStart(2, '0')
-  const d = String(dt.getDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
-}
-
-function toTimeInputValue(dt: Date): string {
-  const hh = String(dt.getHours()).padStart(2, '0')
-  const mm = String(dt.getMinutes()).padStart(2, '0')
-  return `${hh}:${mm}`
-}
-
-function getInitialDateTimeRange(): DateTimeRangeFilter {
-  const end = new Date()
-  const start = new Date(end.getTime() - 60 * 60 * 1000)
-  return {
-    startDate: toDateInputValue(start),
-    startTime: toTimeInputValue(start),
-    endDate: toDateInputValue(end),
-    endTime: toTimeInputValue(end),
-  }
-}
-
-function parseDateTimeRange(filter: DateTimeRangeFilter): { start: Date; end: Date } | null {
-  if (!filter.startDate || !filter.startTime || !filter.endDate || !filter.endTime) return null
-  const start = new Date(`${filter.startDate}T${filter.startTime}:00`)
-  const end = new Date(`${filter.endDate}T${filter.endTime}:00`)
-  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return null
-  if (start >= end) return null
-  return { start, end }
 }
 
 function parseMillis(iso: string): number {
@@ -196,24 +158,6 @@ function sectorDisplayName(code: string): string {
   const label = entry?.label?.trim()
   const raw = code.trim()
   return label || raw || '—'
-}
-
-function frontRearPairsForSector(sectorCode: string): { front: string; rear: string }[] {
-  const code = sectorCode.trim().toUpperCase()
-  if (code === 'RICARDONE_EGRESO_CAMIONES') {
-    return [
-      { front: 'RicEgrCamFrente', rear: 'RicEgrCamTraser' },
-      { front: 'RicEgrCamFrente', rear: 'RicEgrCamTrasera' },
-    ]
-  }
-  if (code === 'RICARDONE_INGRESO_CAMIONES') {
-    return [
-      { front: 'RicIngCamFrente', rear: 'RicIngCamTrasera' },
-      { front: 'RicIngCamFrente', rear: 'RicIngCamTraser' },
-    ]
-  }
-  if (code === 'RICARDONE_PREINGRESO') return [{ front: 'RicPreIngInFr', rear: 'RicPreIngInTr' }]
-  return []
 }
 
 type CameraAggStatus = 'sin_datos' | 'activa' | 'con_alertas' | 'critica'
@@ -337,25 +281,19 @@ function buildCombinedDetections(
 }
 
 export function LiveCameraMonitor() {
-  const { siteId, setSiteId } = useSite()
-  const [plantSiteId, setPlantSiteId] = useState<SiteId>(siteId)
-
-  useEffect(() => {
-    setPlantSiteId(siteId)
-  }, [siteId])
-
-  const onPlantChange = (id: SiteId) => {
-    setPlantSiteId(id)
-    setSiteId(id)
-  }
-
-  const [dateTimeRange, setDateTimeRange] = useState<DateTimeRangeFilter>(() => getInitialDateTimeRange())
+  const { siteId } = useSite()
   const [autoRefresh, setAutoRefresh] = useState(true)
-  const [workMode, setWorkMode] = useState<LiveWorkMode>('live')
-  const [filterSectorCode, setFilterSectorCode] = useState('')
-  const [filterDeviceCode, setFilterDeviceCode] = useState('')
   const [filterPlate, setFilterPlate] = useState('')
   const [filterJourneyUuid, setFilterJourneyUuid] = useState('')
+
+  const filterPlateRef = useRef(filterPlate)
+  const filterJourneyUuidRef = useRef(filterJourneyUuid)
+  useEffect(() => {
+    filterPlateRef.current = filterPlate
+  }, [filterPlate])
+  useEffect(() => {
+    filterJourneyUuidRef.current = filterJourneyUuid
+  }, [filterJourneyUuid])
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -377,9 +315,6 @@ export function LiveCameraMonitor() {
   const monitorPanelRef = useRef<HTMLDivElement | null>(null)
   const inFlightRef = useRef(false)
 
-  const windowBounds = useMemo(() => parseDateTimeRange(dateTimeRange), [dateTimeRange])
-  const rangeValidationMessage = windowBounds ? '' : 'Seleccioná un rango válido: el inicio debe ser anterior al fin.'
-
   const apiOriginLabel = useMemo(() => resolveRealTruckflowApiOrigin(), [])
   /** Mismo host que documenta Truckflow; en dev Vite suele ir por proxy `/journey-api` por CORS. */
   const liveFetchOrigin = useMemo(
@@ -389,30 +324,19 @@ export function LiveCameraMonitor() {
 
   const refresh = useCallback(async () => {
     if (inFlightRef.current) return
-    if (!windowBounds) {
-      setEvents([])
-      setNormalizedAlerts([])
-      setRangeLabel('')
-      setError(rangeValidationMessage)
-      return
-    }
     inFlightRef.current = true
     setLoading(true)
     setError(null)
-    const { start, end } = windowBounds
+    const { start, end } = getRollingLiveWindow()
     const listBounds = liveListQueryBounds(start, end)
     const params: RealTruckflowQueryParams = {
       startDate: toIsoLocal(listBounds.start),
       endDate: toIsoLocal(listBounds.end),
     }
-    const fp = filterPlate.trim()
-    const fj = filterJourneyUuid.trim()
-    const fs = filterSectorCode.trim()
-    const fd = filterDeviceCode.trim()
+    const fp = filterPlateRef.current.trim()
+    const fj = filterJourneyUuidRef.current.trim()
     if (fp) params.plate = fp
     if (fj) params.journeyUuid = fj
-    if (fs) params.sector = fs
-    if (fd) params.device = fd
 
     try {
       const fetchOpts = liveFetchOrigin ? { baseOrigin: liveFetchOrigin } : undefined
@@ -436,11 +360,11 @@ export function LiveCameraMonitor() {
       setLoading(false)
       inFlightRef.current = false
     }
-  }, [windowBounds, rangeValidationMessage, filterPlate, filterJourneyUuid, filterSectorCode, filterDeviceCode, liveFetchOrigin])
+  }, [liveFetchOrigin])
 
   useEffect(() => {
     void refresh()
-  }, [refresh, plantSiteId])
+  }, [refresh])
 
   useEffect(() => {
     if (!autoRefresh) return
@@ -449,12 +373,12 @@ export function LiveCameraMonitor() {
   }, [autoRefresh, refresh])
 
   const plantFilteredEvents = useMemo(
-    () => events.filter((e) => sectorMatchesPlant(e.sectorCode, plantSiteId)),
-    [events, plantSiteId]
+    () => events.filter((e) => sectorMatchesPlant(e.sectorCode, siteId)),
+    [events, siteId]
   )
   const plantFilteredAlerts = useMemo(
-    () => normalizedAlerts.filter((a) => sectorMatchesPlant(a.sectorCode, plantSiteId)),
-    [normalizedAlerts, plantSiteId]
+    () => normalizedAlerts.filter((a) => sectorMatchesPlant(a.sectorCode, siteId)),
+    [normalizedAlerts, siteId]
   )
 
   const sectorsAgg = useMemo(() => {
@@ -489,17 +413,14 @@ export function LiveCameraMonitor() {
       addDevice(code, a.deviceCode)
     }
 
-    for (const code of getCatalogSectorCodesForLiveMonitor(plantSiteId)) {
+    for (const code of getCatalogSectorCodesForLiveMonitor(siteId)) {
       if (!map.has(code)) map.set(code, { sectorCode: code, events: [], alerts: [], devices: new Set() })
       for (const d of getExpectedDevicesForLiveSector(code)) {
         addDevice(code, d)
       }
     }
 
-    const fc = filterSectorCode.trim()
-    const sectorKeys = fc
-      ? [...map.keys()].filter((c) => c === fc || c.toUpperCase().includes(fc.toUpperCase()))
-      : [...map.keys()]
+    const sectorKeys = [...map.keys()]
 
     const list = sectorKeys
       .map((code) => {
@@ -521,7 +442,7 @@ export function LiveCameraMonitor() {
       .sort((a, b) => a.label.localeCompare(b.label))
 
     return list
-  }, [plantFilteredEvents, plantFilteredAlerts, plantSiteId, filterSectorCode, observations])
+  }, [plantFilteredEvents, plantFilteredAlerts, siteId, observations])
 
   const selectedSectorBuckets = useMemo(() => {
     if (!selectedSectorCode) return null
@@ -535,10 +456,9 @@ export function LiveCameraMonitor() {
     al.forEach((a) => {
       if (a.deviceCode.trim()) devices.add(a.deviceCode.trim())
     })
-    const fd = filterDeviceCode.trim()
-    const deviceList = [...devices].filter((d) => !fd || d === fd || d.includes(fd)).sort()
+    const deviceList = [...devices].sort()
     return { ev, al, deviceList }
-  }, [plantFilteredEvents, plantFilteredAlerts, selectedSectorCode, filterDeviceCode])
+  }, [plantFilteredEvents, plantFilteredAlerts, selectedSectorCode])
 
   const cameraRows = useMemo(() => {
     if (!selectedSectorBuckets || !selectedSectorCode) return []
@@ -629,14 +549,6 @@ export function LiveCameraMonitor() {
     return buildOperationalTimeline(plantFilteredEvents, plantFilteredAlerts, selectedDeviceCode, selectedSectorCode)
   }, [plantFilteredEvents, plantFilteredAlerts, selectedSectorCode, selectedDeviceCode])
 
-  const frontRearRows: FrontRearComparisonRow[] = useMemo(() => {
-    if (!selectedSectorCode) return []
-    const pairs = frontRearPairsForSector(selectedSectorCode)
-    return pairs.flatMap((pair) =>
-      compareFrontRearCameras(plantFilteredEvents, selectedSectorCode, pair.front, pair.rear).slice(0, 10)
-    )
-  }, [plantFilteredEvents, selectedSectorCode])
-
   /** Actualiza observaciones de campo según datos vigentes en ventana ±30s. */
   useEffect(() => {
     setObservations((prev) =>
@@ -712,16 +624,15 @@ export function LiveCameraMonitor() {
   const exportCurrentSearch = useCallback(
     (format: 'json' | 'csv') => {
       const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')
-      const base = `busqueda-camaras_${plantSiteId}_${selectedSectorCode ?? 'todos'}_${selectedDeviceCode ?? 'todas'}_${stamp}`
+      const base = `busqueda-camaras_${siteId}_${selectedSectorCode ?? 'todos'}_${selectedDeviceCode ?? 'todas'}_${stamp}`
       const metadata = {
         exportedAt: new Date().toISOString(),
         rangeLabel,
-        plantSiteId,
+        siteId,
+        plant: siteId,
         selectedSectorCode,
         selectedDeviceCode,
         filters: {
-          sector: filterSectorCode.trim(),
-          device: filterDeviceCode.trim(),
           plate: filterPlate.trim(),
           journeyUuid: filterJourneyUuid.trim(),
         },
@@ -784,41 +695,14 @@ export function LiveCameraMonitor() {
       downloadTextFile,
       exportAlerts,
       exportEvents,
-      filterDeviceCode,
-      filterJourneyUuid,
       filterPlate,
-      filterSectorCode,
-      plantSiteId,
+      filterJourneyUuid,
+      siteId,
       rangeLabel,
       selectedDeviceCode,
       selectedSectorCode,
     ]
   )
-
-  const sectorOptions = useMemo(() => {
-    const set = new Set<string>(getCatalogSectorCodesForLiveMonitor(plantSiteId))
-    plantFilteredEvents.forEach((e) => {
-      if (e.sectorCode.trim()) set.add(e.sectorCode.trim())
-    })
-    plantFilteredAlerts.forEach((a) => {
-      if (a.sectorCode.trim()) set.add(a.sectorCode.trim())
-    })
-    return [...set].sort((a, b) => sectorDisplayName(a).localeCompare(sectorDisplayName(b)))
-  }, [plantFilteredEvents, plantFilteredAlerts, plantSiteId])
-
-  const deviceOptions = useMemo(() => {
-    const set = new Set<string>()
-    getCatalogSectorCodesForLiveMonitor(plantSiteId).forEach((sec) => {
-      getExpectedDevicesForLiveSector(sec).forEach((d) => set.add(d))
-    })
-    plantFilteredEvents.forEach((e) => {
-      if (e.deviceCode.trim()) set.add(e.deviceCode.trim())
-    })
-    plantFilteredAlerts.forEach((a) => {
-      if (a.deviceCode.trim()) set.add(a.deviceCode.trim())
-    })
-    return [...set].sort()
-  }, [plantFilteredEvents, plantFilteredAlerts, plantSiteId])
 
   /** Primera vez: sector activo para ver rejilla de cámaras al cargar */
   useEffect(() => {
@@ -922,116 +806,20 @@ export function LiveCameraMonitor() {
         </div>
       </header>
 
-      {/* Filtros compactos */}
+      {/* Barra en vivo: búsqueda + export + actualización */}
       <div className="border-b border-slate-800/80 bg-[#0c1222] px-4 py-3 sm:px-6">
         <div className="flex flex-wrap items-end gap-2 sm:gap-3">
-          <div className="min-w-[190px]">
-            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Modo de trabajo</label>
-            <select
-              value={workMode}
-              onChange={(e) => setWorkMode(e.target.value as LiveWorkMode)}
-              className="w-full rounded-lg border border-cyan-700/50 bg-slate-950 px-2.5 py-1.5 text-xs font-semibold text-cyan-100"
-            >
-              {(Object.keys(WORK_MODE_LABELS) as LiveWorkMode[]).map((mode) => (
-                <option key={mode} value={mode} className="bg-slate-900">
-                  {WORK_MODE_LABELS[mode]}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Planta</label>
-            <select
-              value={plantSiteId}
-              onChange={(e) => onPlantChange(e.target.value as SiteId)}
-              className="rounded-lg border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs text-slate-100 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/30"
-            >
-              {SITES.filter((s) => s.enabled).map((s) => (
-                <option key={s.id} value={s.id} className="bg-slate-900">
-                  {s.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="min-w-[140px] flex-1">
-            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">
-              Sector API
-            </label>
-            <select
-              value={filterSectorCode}
-              onChange={(e) => setFilterSectorCode(e.target.value)}
-              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs text-slate-100"
-            >
-              <option value="">Todos</option>
-              {sectorOptions.map((c) => (
-                <option key={c} value={c} className="bg-slate-900">
-                  {sectorDisplayName(c)}
-                </option>
-              ))}
-            </select>
-          </div>
           <div className="min-w-[120px] flex-1">
-            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Cámara</label>
-            <select
-              value={filterDeviceCode}
-              onChange={(e) => setFilterDeviceCode(e.target.value)}
-              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2.5 py-1.5 font-mono text-[11px] text-slate-100"
-            >
-              <option value="">Todas</option>
-              {deviceOptions.map((d) => (
-                <option key={d} value={d} className="bg-slate-900">
-                  {d}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="min-w-[130px]">
-            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Día desde</label>
-            <input
-              type="date"
-              value={dateTimeRange.startDate}
-              onChange={(e) => setDateTimeRange((prev) => ({ ...prev, startDate: e.target.value }))}
-              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs text-slate-100"
-            />
-          </div>
-          <div className="min-w-[92px]">
-            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Desde</label>
-            <input
-              type="time"
-              value={dateTimeRange.startTime}
-              onChange={(e) => setDateTimeRange((prev) => ({ ...prev, startTime: e.target.value }))}
-              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs text-slate-100"
-            />
-          </div>
-          <div className="min-w-[130px]">
-            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Día hasta</label>
-            <input
-              type="date"
-              value={dateTimeRange.endDate}
-              onChange={(e) => setDateTimeRange((prev) => ({ ...prev, endDate: e.target.value }))}
-              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs text-slate-100"
-            />
-          </div>
-          <div className="min-w-[92px]">
-            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Hasta</label>
-            <input
-              type="time"
-              value={dateTimeRange.endTime}
-              onChange={(e) => setDateTimeRange((prev) => ({ ...prev, endTime: e.target.value }))}
-              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs text-slate-100"
-            />
-          </div>
-          <div className="min-w-[90px]">
             <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Patente</label>
             <input
               value={filterPlate}
               onChange={(e) => setFilterPlate(e.target.value)}
               className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-100 placeholder:text-slate-600"
-              placeholder="—"
+              placeholder="Ej. AB123CD"
             />
           </div>
-          <div className="min-w-[100px] flex-1">
-            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Journey</label>
+          <div className="min-w-[160px] flex-[1.25]">
+            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Journey ID</label>
             <input
               value={filterJourneyUuid}
               onChange={(e) => setFilterJourneyUuid(e.target.value)}
@@ -1042,7 +830,7 @@ export function LiveCameraMonitor() {
           <button
             type="button"
             onClick={() => void refresh()}
-            disabled={loading || !windowBounds}
+            disabled={loading}
             className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-200 hover:bg-cyan-500/20 disabled:opacity-40"
           >
             {loading ? '…' : 'Actualizar'}
@@ -1073,10 +861,11 @@ export function LiveCameraMonitor() {
             Auto 30s
           </label>
         </div>
-        {error || rangeValidationMessage ? (
-          <div className="mt-3 rounded-lg border border-rose-500/35 bg-rose-950/40 px-3 py-2 text-xs text-rose-200">
-            {error || rangeValidationMessage}
-          </div>
+        <p className="mt-2 text-[10px] text-slate-500">
+          Cada consulta usa una ventana móvil de la última hora. La planta activa sigue la selección global del lateral.
+        </p>
+        {error ? (
+          <div className="mt-3 rounded-lg border border-rose-500/35 bg-rose-950/40 px-3 py-2 text-xs text-rose-200">{error}</div>
         ) : null}
       </div>
 
@@ -1477,68 +1266,6 @@ export function LiveCameraMonitor() {
                 </table>
               </div>
             </div>
-          </div>
-        ) : null}
-
-        {workMode === 'front_rear' ? (
-          <div className="mt-3 rounded-xl border border-cyan-500/25 bg-cyan-950/10 p-3">
-            <div className="text-[11px] font-bold uppercase tracking-wide text-cyan-200">Comparación frente / trasera</div>
-            {!frontRearRows.length ? (
-              <p className="mt-2 text-[11px] text-slate-500">
-                Este sector no tiene pares frente/trasera configurados o no hay eventos cercanos.
-              </p>
-            ) : (
-              <div className="mt-3 grid gap-2 lg:grid-cols-2">
-                {frontRearRows.slice(0, 12).map((row) => (
-                  <div key={row.key} className="rounded-lg border border-slate-800 bg-slate-950/60 p-3 text-[11px]">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="font-mono text-cyan-200">{fmtShort(row.at)}</div>
-                      <div className="rounded bg-slate-800 px-2 py-0.5 text-[10px] uppercase text-slate-200">{row.result}</div>
-                    </div>
-                    <div className="mt-2 grid grid-cols-2 gap-2 font-mono text-[10px] text-slate-300">
-                      <div>
-                        <div className="text-slate-500">Frontal · {row.frontDeviceCode}</div>
-                        <div className="text-white">{row.frontPlate}</div>
-                        <div className="truncate text-slate-500">{row.frontJourneyUid}</div>
-                      </div>
-                      <div>
-                        <div className="text-slate-500">Trasera · {row.rearDeviceCode}</div>
-                        <div className="text-white">{row.rearPlate}</div>
-                        <div className="truncate text-slate-500">{row.rearJourneyUid}</div>
-                      </div>
-                    </div>
-                    <div className="mt-2 text-slate-500">Diferencia: {row.deltaSeconds ?? '—'}s</div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ) : null}
-
-        {workMode === 'lpr' && selectedCameraDiagnostic ? (
-          <div className="mt-3 rounded-xl border border-amber-500/25 bg-amber-950/10 p-3">
-            <div className="text-[11px] font-bold uppercase tracking-wide text-amber-200">Diagnóstico LPR automático</div>
-            <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="rounded-lg bg-slate-950/70 p-3">
-                <div className="text-[10px] uppercase text-slate-500">Estado</div>
-                <div className="mt-1 font-bold text-white">{selectedCameraDiagnostic.suggestedStatus}</div>
-              </div>
-              <div className="rounded-lg bg-slate-950/70 p-3">
-                <div className="text-[10px] uppercase text-slate-500">Alertas LPR</div>
-                <div className="mt-1 font-mono text-xl text-amber-200">{selectedCameraDiagnostic.lprAlertCount}</div>
-              </div>
-              <div className="rounded-lg bg-slate-950/70 p-3">
-                <div className="text-[10px] uppercase text-slate-500">LPR/100 eventos</div>
-                <div className="mt-1 font-mono text-xl text-cyan-200">{selectedCameraDiagnostic.lprPer100Events}</div>
-              </div>
-              <div className="rounded-lg bg-slate-950/70 p-3">
-                <div className="text-[10px] uppercase text-slate-500">Inválidas frecuentes</div>
-                <div className="mt-1 font-mono text-xs text-rose-200">
-                  {selectedCameraDiagnostic.invalidReadings.slice(0, 3).map((r) => `${r.value} (${r.count})`).join(' · ') || '—'}
-                </div>
-              </div>
-            </div>
-            <p className="mt-3 text-xs text-amber-100/80">{selectedCameraDiagnostic.recommendedAction}</p>
           </div>
         ) : null}
 

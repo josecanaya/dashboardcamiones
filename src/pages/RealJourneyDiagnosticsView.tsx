@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
-import { buildJourneyEventListPublicDisplayUrl, resolveJourneyEventApiOrigin } from '../services/realJourneyEventsDataSource'
+import { buildJourneyEventListPublicDisplayUrl } from '../services/realJourneyEventsDataSource'
 import { normalizeSequenceForPattern, pctOfIncomplete } from '../services/realIncompleteAnalysis'
-import { preliminaryCircuitTypicalSectorPath, OBSERVABLE_JOURNEY_CODES } from '../services/realPreliminaryCircuit'
+import { preliminaryCircuitTypicalSectorPath } from '../services/realPreliminaryCircuit'
 import type { OperationalDepurationSnapshot, OperationalJourneyScopeFilter } from '../services/realJourneyDepurationMap'
 import type { PlateQualitySummaryResult } from '../services/realPlateQuality'
 import type { CameraCoverageBuildResult } from '../services/realCameraCoverage'
@@ -12,7 +12,6 @@ import type { RealAlertDto, RealTruckflowQueryParams } from '../services/realTru
 import type { buildCleanRealDataset } from '../services/realTruckflowCleanDataset'
 import type { AlertsQuickFilter, NormalizedRealAlertView } from '../services/realAlertsInspector'
 import type { RearCameraFilterTrace } from '../services/rearCameraFilter'
-import { EXCLUDED_REAR_DEVICE_CODES } from '../services/rearCameraFilter'
 import { ExecutiveMetricCard } from '../components/realDiagnostics/ExecutiveMetricCard'
 import { DiagDrawer } from '../components/realDiagnostics/DiagDrawer'
 import { DataDistributionDonut } from '../components/realDiagnostics/DataDistributionDonut'
@@ -36,11 +35,12 @@ export type RealDataMainTab =
 export const MAIN_TABS: { id: RealDataMainTab; label: string }[] = [
   { id: 'eventos', label: 'Eventos' },
   { id: 'alertas', label: 'Alertas' },
-  { id: 'resumen', label: 'Resumen' },
   { id: 'circuitos', label: 'Circuitos preliminares' },
   { id: 'buscar', label: 'Buscar patente' },
   { id: 'envivo', label: 'En vivo' },
 ]
+
+export type RealDataTimeFilterMode = 'month' | 'week' | 'day'
 
 type RealDataSource = 'api' | 'file'
 
@@ -156,6 +156,22 @@ export type RealJourneyDiagnosticsViewProps = {
   formatCalendarDayOptionLabel: (dayKey: string, eventCount: number | undefined, countLabel: 'valid' | 'all_reads') => string
   eventMinDay: string
   eventMaxDay: string
+  timeFilterMode: RealDataTimeFilterMode
+  setTimeFilterMode: (v: RealDataTimeFilterMode) => void
+  timeFilterMonth: string
+  setTimeFilterMonth: (v: string) => void
+  timeFilterWeek: string
+  setTimeFilterWeek: (v: string) => void
+  timeFilterDay: string
+  setTimeFilterDay: (v: string) => void
+  timeFilterAllDay: boolean
+  setTimeFilterAllDay: (v: boolean) => void
+  timeFilterStartTime: string
+  setTimeFilterStartTime: (v: string) => void
+  timeFilterEndTime: string
+  setTimeFilterEndTime: (v: string) => void
+  appliedTimeRangeLabel: string
+  applyTimeFilter: () => Promise<void>
   prelimCircuitFilter: string
   setPrelimCircuitFilter: (v: string) => void
   circuitRangeStartDate: string
@@ -633,116 +649,6 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
           </span>
         </div>
 
-        <div className="mt-4 rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm text-cyan-950">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-cyan-900 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white">
-              Filtro provisorio activo
-            </span>
-            <span>
-              Se excluyen cámaras traseras/sensibles del análisis principal: <span className="font-mono text-xs">{EXCLUDED_REAR_DEVICE_CODES.join(', ')}</span>.
-            </span>
-          </div>
-          <p className="mt-1 text-xs text-cyan-800">
-            La información cruda se conserva para auditoría. Este filtro evita que lecturas de acoplados, semirremolques o vehículos no operativos ensucien la reconstrucción preliminar. Además se excluyen provisoriamente alertas INVALID_ROUTE / INVALID_START_JOURNEY provenientes de Ingreso o Preingreso.
-          </p>
-        </div>
-
-        <div className="mt-6 flex flex-wrap gap-3 border-t border-slate-100 pt-6">
-          <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-700">
-            <span>Origen</span>
-            <label className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1">
-              <input type="radio" checked={p.dataSource === 'api'} onChange={() => p.setDataSource('api')} className="rounded" /> API{' '}
-              <span className="font-normal text-slate-500">{resolveJourneyEventApiOrigin()}</span>
-            </label>
-            <label className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-slate-200 bg-white px-2 py-1">
-              <input type="radio" checked={p.dataSource === 'file'} onChange={() => p.setDataSource('file')} className="rounded" />{' '}
-              Archivo
-            </label>
-          </div>
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-950">
-            <input
-              type="checkbox"
-              checked={p.includeInvalidPlateDiagnostics}
-              onChange={(e) => p.setIncludeInvalidPlateDiagnostics(e.target.checked)}
-            />
-            Conteos día incluyen OCR inválido (solo diagnóstico visual)
-          </label>
-          {p.dataSource === 'api' ? (
-            <div className="flex flex-wrap items-end gap-3">
-              <div>
-                <label className="block text-[10px] font-medium text-slate-500">Desde</label>
-                <input type="date" value={p.apiStartDate} onChange={(e) => p.setApiStartDate(e.target.value)} className="rounded-xl border px-3 py-2 text-sm" />
-              </div>
-              <div>
-                <label className="block text-[10px] font-medium text-slate-500">Hasta</label>
-                <input type="date" value={p.apiEndDate} onChange={(e) => p.setApiEndDate(e.target.value)} className="rounded-xl border px-3 py-2 text-sm" />
-              </div>
-            </div>
-          ) : (
-            <div className="min-w-[260px] flex-1">
-              <label className="block text-[10px] font-medium text-slate-500">Ruta (public)</label>
-              <input value={p.filePath} onChange={(e) => p.setFilePath(e.target.value)} className="w-full rounded-xl border px-3 py-2 text-sm" />
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={() => void p.load()}
-            disabled={p.loading || (p.dataSource === 'api' && (!p.apiStartDate || !p.apiEndDate))}
-            className="rounded-xl bg-slate-900 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 disabled:opacity-50"
-          >
-            {p.loading ? 'Cargando…' : p.dataSource === 'api' ? 'Cargar desde API' : 'Recargar archivo'}
-          </button>
-          <div className="flex min-w-[200px] flex-1 flex-wrap items-end gap-2">
-            <label className="block w-full text-[10px] font-medium text-slate-500">Día</label>
-            <button
-              type="button"
-              disabled={p.calendarDayPickerIndex <= 0}
-              onClick={() => {
-                const opts = p.calendarDayOptions
-                const i = p.calendarDayPickerIndex
-                if (i > 0) p.setSelectedDay(opts[i - 1])
-              }}
-              className="rounded-xl border px-3 py-2 text-xs disabled:opacity-40"
-            >
-              ◀
-            </button>
-            <select
-              value={p.selectedDay}
-              onChange={(e) => p.setSelectedDay(e.target.value)}
-              className="min-w-[200px] flex-1 rounded-xl border px-3 py-2 text-sm"
-            >
-              <option value="">Todos los días</option>
-              {p.calendarDayOptions.map((d) => (
-                <option key={d} value={d}>
-                  {p.formatCalendarDayOptionLabel(d, p.eventCountByCalendarDay.get(d), p.includeInvalidPlateDiagnostics ? 'all_reads' : 'valid')}
-                </option>
-              ))}
-            </select>
-            <button
-              type="button"
-              disabled={p.calendarDayPickerIndex < 0 || p.calendarDayPickerIndex >= p.calendarDayOptions.length - 1}
-              onClick={() => {
-                const opts = p.calendarDayOptions
-                const i = p.calendarDayPickerIndex
-                if (i >= 0 && i < opts.length - 1) p.setSelectedDay(opts[i + 1])
-              }}
-              className="rounded-xl border px-3 py-2 text-xs disabled:opacity-40"
-            >
-              ▶
-            </button>
-          </div>
-          <div className="min-w-[180px]">
-            <label className="block text-[10px] font-medium text-slate-500">Circuito preliminar (filtros técnicos)</label>
-            <select value={p.prelimCircuitFilter} onChange={(e) => p.setPrelimCircuitFilter(e.target.value)} className="w-full rounded-xl border px-3 py-2 font-mono text-xs">
-              <option value="">Todos</option>
-              {OBSERVABLE_JOURNEY_CODES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
         {p.eventMinDay && p.eventMaxDay ? (
           <p className="mt-4 text-[11px] text-slate-500">
             Rango cargado Ricardone: <span className="font-mono">{p.eventMinDay}</span> → <span className="font-mono">{p.eventMaxDay}</span>
@@ -763,6 +669,93 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
           </button>
         ))}
       </nav>
+
+      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="flex flex-wrap items-end gap-3">
+          <label className="text-xs font-semibold text-slate-600">
+            Ver por
+            <select
+              value={p.timeFilterMode}
+              onChange={(e) => p.setTimeFilterMode(e.target.value as RealDataTimeFilterMode)}
+              className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+            >
+              <option value="month">Mes</option>
+              <option value="week">Semana</option>
+              <option value="day">Día</option>
+            </select>
+          </label>
+          {p.timeFilterMode === 'month' ? (
+            <label className="text-xs font-semibold text-slate-600">
+              Mes
+              <input
+                type="month"
+                value={p.timeFilterMonth}
+                onChange={(e) => p.setTimeFilterMonth(e.target.value)}
+                className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+              />
+            </label>
+          ) : p.timeFilterMode === 'week' ? (
+            <label className="text-xs font-semibold text-slate-600">
+              Semana
+              <input
+                type="week"
+                value={p.timeFilterWeek}
+                onChange={(e) => p.setTimeFilterWeek(e.target.value)}
+                className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+              />
+            </label>
+          ) : (
+            <label className="text-xs font-semibold text-slate-600">
+              Día
+              <input
+                type="date"
+                value={p.timeFilterDay}
+                onChange={(e) => p.setTimeFilterDay(e.target.value)}
+                className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+              />
+            </label>
+          )}
+          <label className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700">
+            <input
+              type="checkbox"
+              checked={p.timeFilterAllDay}
+              onChange={(e) => p.setTimeFilterAllDay(e.target.checked)}
+            />
+            Todo el día
+          </label>
+          <label className="text-xs font-semibold text-slate-600">
+            Desde hora
+            <input
+              type="time"
+              value={p.timeFilterStartTime}
+              onChange={(e) => p.setTimeFilterStartTime(e.target.value)}
+              disabled={p.timeFilterAllDay}
+              className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 disabled:bg-slate-100 disabled:text-slate-400"
+            />
+          </label>
+          <label className="text-xs font-semibold text-slate-600">
+            Hasta hora
+            <input
+              type="time"
+              value={p.timeFilterEndTime}
+              onChange={(e) => p.setTimeFilterEndTime(e.target.value)}
+              disabled={p.timeFilterAllDay}
+              className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 disabled:bg-slate-100 disabled:text-slate-400"
+            />
+          </label>
+          <button
+            type="button"
+            onClick={() => void p.applyTimeFilter()}
+            disabled={p.loading || p.alertsLoading}
+            className="rounded-xl bg-slate-950 px-6 py-2.5 text-sm font-black uppercase tracking-wide text-white shadow-sm hover:bg-slate-800 disabled:opacity-50"
+          >
+            {p.loading || p.alertsLoading ? 'Filtrando…' : 'Filtrar'}
+          </button>
+          <div className="min-w-[220px] text-xs text-slate-500">
+            Los listados de Eventos, Alertas y Circuitos preliminares se actualizan con este rango.
+          </div>
+        </div>
+      </section>
 
       {p.mainTab === 'envivo' && <LiveCameraMonitor />}
 
@@ -1713,50 +1706,9 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
             <div>useUsefulWindow: {p.useUsefulWindow ? 'sí' : 'no'} · usefulWindowStart: {p.usefulWindow.usefulWindowStart || '—'} · usefulWindowEnd: {p.usefulWindow.usefulWindowEnd || '—'}</div>
             <div>operationalEventCount: {p.events.length} · rawEventCount: {p.eventsUnfiltered.length} · rawAlertCount: {p.rawAlerts.length} · lastLoadedAt: {p.lastLoadedAt ? formatDateTimeShort(p.lastLoadedAt) : '—'} · lastProcessedAt: {p.datasetProcessedAt ? formatDateTimeShort(p.datasetProcessedAt) : '—'}</div>
             <div>Filtro traseras: excluidos {p.rearCameraFilterTrace.excludedRearEvents.length} eventos · {p.rearCameraFilterTrace.excludedRearOnlyJourneyUids.length} recorridos sólo cámaras traseras</div>
-            <button type="button" onClick={() => p.setMainTab('eventos')} className="mt-2 rounded border border-slate-300 bg-white px-2 py-1 text-[11px]">Ver fuente cruda</button>
-          </div>
-          <div className="flex flex-wrap items-end gap-3 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
-            <label className="text-xs font-medium text-slate-600">
-              Desde
-              <input
-                type="date"
-                value={p.circuitRangeStartDate}
-                onChange={(e) => p.setCircuitRangeStartDate(e.target.value)}
-                className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
-              />
-            </label>
-            <label className="text-xs font-medium text-slate-600">
-              Hasta
-              <input
-                type="date"
-                value={p.circuitRangeEndDate}
-                onChange={(e) => p.setCircuitRangeEndDate(e.target.value)}
-                className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
-              />
-            </label>
-            <button
-              type="button"
-              onClick={() => {
-                p.setCircuitRangeStartDate('')
-                p.setCircuitRangeEndDate('')
-              }}
-              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50"
-            >
-              Limpiar rango
-            </button>
-            <button
-              type="button"
-              onClick={p.exportCircuitosCsv}
-              disabled={p.prelimCircuitCardMetrics.totalOperational === 0}
-              className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
-            >
-              Exportar CSV
-            </button>
-            <div className="text-xs text-slate-500">
-              Rango visible:{' '}
-              <span className="font-mono text-slate-800">
-                {p.circuitRangeStartDate || 'inicio'} → {p.circuitRangeEndDate || 'fin'}
-              </span>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <button type="button" onClick={() => p.setMainTab('eventos')} className="rounded border border-slate-300 bg-white px-2 py-1 text-[11px]">Ver fuente cruda</button>
+              <button type="button" onClick={p.exportCircuitosCsv} disabled={p.prelimCircuitCardMetrics.totalOperational === 0} className="rounded bg-slate-900 px-3 py-1 text-[11px] font-semibold text-white disabled:opacity-40">Exportar CSV</button>
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -1783,13 +1735,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
             <ExecutiveMetricCard
               label="Recorridos operativamente útiles (alcance día)"
               value={p.prelimCircuitCardMetrics.totalOperational}
-              sub={
-                p.circuitRangeStartDate || p.circuitRangeEndDate
-                  ? `Rango ${p.circuitRangeStartDate || 'inicio'} → ${p.circuitRangeEndDate || 'fin'}`
-                  : p.selectedDay
-                    ? `Filtrados al día ${p.selectedDay}`
-                    : 'Todos los días Ricardone en carga'
-              }
+              sub={p.appliedTimeRangeLabel || (p.selectedDay ? `Filtrados al día ${p.selectedDay}` : 'Todos los días Ricardone en carga')}
             />
           </div>
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
