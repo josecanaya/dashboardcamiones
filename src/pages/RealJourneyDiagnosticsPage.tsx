@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState, startTransition } from 'react'
 import {
   loadRealJourneyEventsFromFile,
   loadRealJourneyEventsFromApi,
@@ -43,6 +43,7 @@ import {
   fetchAlerts,
   fetchJourneyEvents,
   REAL_TRUCKFLOW_BASE_URL,
+  resolveRealTruckflowApiOrigin,
   type RealAlertDto,
   type RealTruckflowQueryParams,
 } from '../services/realTruckflowApi'
@@ -59,6 +60,22 @@ import type { IncompleteSequenceGroup } from '../services/realIncompleteAnalysis
 import { RealJourneyDiagnosticsView, type JourneyQuickFilter, type RealDataMainTab, type RealDataTimeFilterMode } from './RealJourneyDiagnosticsView'
 import type { RealJourneyEventDto, ReconstructedRealJourney } from '../services/realJourneyEvents.types'
 import { buildRearCameraFilterTrace } from '../services/rearCameraFilter'
+import {
+  buildCommitteeOperationalPipeline,
+  buildCommitteeLprAlertsByCamera,
+  committeeEtlHintFromMeta,
+  type CommitteePipelineResult,
+} from '../services/realCommitteePipeline'
+import {
+  buildCommitteePowerBiEtlExport,
+  buildCommitteePowerBiMinimalFromSegmented,
+  POWER_BI_COMMITTEE_FILENAMES,
+  downloadPowerBiNamedCsvZipSync,
+  triggerSinglePowerBiCsvDownload,
+  type PowerBiCommitteeCsvKey,
+  type PowerBiNamedCsv,
+} from '../services/powerBiEtlExport'
+import { COMMITTEE_ETL_LITE_MODE, COMMITTEE_ETL_LITE_MAIN_TAB_IDS } from '../config/committeeEtlLite'
 
 function formatCalendarDayOptionLabel(
   dayKey: string,
@@ -81,6 +98,17 @@ type RealDataSource = 'api' | 'file'
 
 const CALADA_INTERPLANT_MS = 12 * 3600 * 1000
 
+/** Deja que el navegador pinte y procese entrada antes del trabajo síncrono pesado (pipeline comité, etc.). */
+function yieldToMain(): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof requestAnimationFrame !== 'undefined') {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+    } else {
+      setTimeout(resolve, 0)
+    }
+  })
+}
+
 function toDateInputValue(date: Date): string {
   const y = date.getFullYear()
   const m = String(date.getMonth() + 1).padStart(2, '0')
@@ -101,6 +129,41 @@ function toIsoLocalDateTime(value: Date): string {
   const mm = String(value.getMinutes()).padStart(2, '0')
   const ss = String(value.getSeconds()).padStart(2, '0')
   return `${y}-${m}-${d}T${hh}:${mm}:${ss}`
+}
+
+function parsePowerBiLocalStart(dateStr: string, timeStr: string): Date {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  const parts = (timeStr || '00:00').split(':')
+  const hh = Number(parts[0]) || 0
+  const mm = Number(parts[1]) || 0
+  return new Date(y, (m || 1) - 1, d || 1, hh, mm, 0, 0)
+}
+
+function parsePowerBiLocalEnd(dateStr: string, timeStr: string): Date {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  const parts = (timeStr || '23:59').split(':')
+  const hh = Number(parts[0]) || 0
+  const mm = Number(parts[1]) || 0
+  return new Date(y, (m || 1) - 1, d || 1, hh, mm, 59, 999)
+}
+
+type PowerBiExportLoadedState = {
+  queryStart: string
+  queryEnd: string
+  loadedAtIso: string
+  eventsReceived: number
+  alertsReceived: number
+  operationalEvents: number
+  operationalAlerts: number
+  circuitsGenerated: number
+  zeroEventsNotice: boolean
+  zeroAlertsNotice: boolean
+  eventsRicardone: RealJourneyEventDto[]
+  alertsRaw: RealAlertDto[]
+  /** Para no recalcular el comité completo al exportar CSV (mismo dataset que este load). */
+  committee: CommitteePipelineResult
+  /** CSV comité ya generados al cargar: el click de export solo dispará descarga y no pierde el «user gesture» de Chromium. */
+  committeeMinimalArtifacts: PowerBiNamedCsv[]
 }
 
 function toWeekInputValue(date: Date): string {
@@ -281,7 +344,6 @@ export function RealJourneyDiagnosticsPage() {
 
   const [filePath, setFilePath] = useState(DEFAULT_REAL_JOURNEY_EVENTS_FILE)
   const [eventsUnfiltered, setEventsUnfiltered] = useState<RealJourneyEventDto[]>([])
-  const [events, setEvents] = useState<RealJourneyEventDto[]>([])
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [selectedDay, setSelectedDay] = useState('')
@@ -338,6 +400,15 @@ export function RealJourneyDiagnosticsPage() {
   const [cleanDataset, setCleanDataset] = useState<ReturnType<typeof buildCleanRealDataset> | null>(null)
   const [datasetProcessedAt, setDatasetProcessedAt] = useState('')
   const [lastLoadedAt, setLastLoadedAt] = useState('')
+  const [powerBiExportStartDate, setPowerBiExportStartDate] = useState(() => toDateInputValue(new Date()))
+  const [powerBiExportStartTime, setPowerBiExportStartTime] = useState('00:00')
+  const [powerBiExportEndDate, setPowerBiExportEndDate] = useState(() => toDateInputValue(new Date()))
+  const [powerBiExportEndTime, setPowerBiExportEndTime] = useState('23:59')
+  const [powerBiExportLoaded, setPowerBiExportLoaded] = useState<PowerBiExportLoadedState | null>(null)
+  const [powerBiExportLoading, setPowerBiExportLoading] = useState(false)
+  const [powerBiPeriodValidationError, setPowerBiPeriodValidationError] = useState<string | null>(null)
+  const [powerBiExportLoadError, setPowerBiExportLoadError] = useState<string | null>(null)
+  const [powerBiExportBundleError, setPowerBiExportBundleError] = useState<string | null>(null)
   const [selectedCircuitJourneyUid, setSelectedCircuitJourneyUid] = useState<string | null>(null)
   const [useUsefulWindow, setUseUsefulWindow] = useState(true)
   const [summaryFilter, setSummaryFilter] = useState<
@@ -355,6 +426,24 @@ export function RealJourneyDiagnosticsPage() {
   const [manualNearbyAssociations, setManualNearbyAssociations] = useState<Record<string, string[]>>({})
   const [lprCameraAudit, setLprCameraAudit] = useState<{ deviceCode: string; sectorCode: string } | null>(null)
   const initialApiLoadStarted = useRef(false)
+
+  const deferredEventsUnfiltered = useDeferredValue(eventsUnfiltered)
+  const deferredRawAlerts = useDeferredValue(rawAlerts)
+
+  const committeePipeline = useMemo(
+    () => buildCommitteeOperationalPipeline(deferredEventsUnfiltered, deferredRawAlerts),
+    [deferredEventsUnfiltered, deferredRawAlerts]
+  )
+  const rearCameraFilterTrace = committeePipeline.rearCameraTrace
+  const events = committeePipeline.segmentedOperationalEvents
+  const rawAlertsOperational = committeePipeline.alertsAlignedToSegments
+
+  useEffect(() => {
+    setPowerBiExportLoaded(null)
+    setPowerBiPeriodValidationError(null)
+    setPowerBiExportLoadError(null)
+    setPowerBiExportBundleError(null)
+  }, [powerBiExportStartDate, powerBiExportStartTime, powerBiExportEndDate, powerBiExportEndTime])
 
   const selectedTimeRange = useMemo(() => {
     let start: Date
@@ -393,16 +482,16 @@ export function RealJourneyDiagnosticsPage() {
             ])
           : [await loadRealJourneyEventsFromFile(filePath.trim() || undefined), [] as RealAlertDto[]]
       const ricardoneOnly = filterRicardoneSiteEventsOnly(list)
-      const filtered = buildRearCameraFilterTrace(ricardoneOnly, alertList)
-      setEventsUnfiltered(ricardoneOnly)
-      setEvents(filtered.operationalEvents)
-      setRawAlerts(alertList)
-      setAlertsRawStandalone(alertList)
+      await yieldToMain()
+      startTransition(() => {
+        setEventsUnfiltered(ricardoneOnly)
+        setRawAlerts(alertList)
+        setAlertsRawStandalone(alertList)
+      })
       setAlertsLastQueriedAt(new Date().toISOString())
       setLastLoadedAt(new Date().toISOString())
     } catch (e) {
-      setEventsUnfiltered([])
-      setEvents([])
+      startTransition(() => setEventsUnfiltered([]))
       setError(e instanceof Error ? e.message : String(e))
     } finally {
       setLoading(false)
@@ -429,15 +518,16 @@ export function RealJourneyDiagnosticsPage() {
         fetchAlerts(params),
       ])
       const ricardoneOnly = filterRicardoneSiteEventsOnly(eventList)
-      const filtered = buildRearCameraFilterTrace(ricardoneOnly, alertList)
+      await yieldToMain()
       setApiQuery({ ...params, plate: '', device: '', sector: '', site: '', journeyUuid: '' })
       setAlertsQuery({ ...params, plate: '', device: '', sector: '', site: '', journeyUuid: '' })
       setApiStartDate(toDateInputValue(selectedTimeRange.start))
       setApiEndDate(toDateInputValue(selectedTimeRange.end))
-      setEventsUnfiltered(ricardoneOnly)
-      setEvents(filtered.operationalEvents)
-      setRawAlerts(alertList)
-      setAlertsRawStandalone(alertList)
+      startTransition(() => {
+        setEventsUnfiltered(ricardoneOnly)
+        setRawAlerts(alertList)
+        setAlertsRawStandalone(alertList)
+      })
       setAlertsLastQueryUrl(`${REAL_TRUCKFLOW_BASE_URL}/alert/list`)
       setAlertsLastQueriedAt(new Date().toISOString())
       setCleanDataset(null)
@@ -462,10 +552,10 @@ export function RealJourneyDiagnosticsPage() {
     try {
       const list = await fetchJourneyEvents(apiQuery)
       const ricardoneOnly = filterRicardoneSiteEventsOnly(list)
-      const filtered = buildRearCameraFilterTrace(ricardoneOnly, [])
-      setEventsUnfiltered(ricardoneOnly)
-      setEvents(filtered.operationalEvents)
-      setCleanDataset(null)
+      startTransition(() => {
+        setEventsUnfiltered(ricardoneOnly)
+        setCleanDataset(null)
+      })
       setLastQueryUrl(`${REAL_TRUCKFLOW_BASE_URL}/journey-event/list`)
       setLastLoadedAt(new Date().toISOString())
     } catch (e) {
@@ -481,8 +571,10 @@ export function RealJourneyDiagnosticsPage() {
     try {
       const alertsChannelQuery = buildAlertsChannelQueryNoTimeFilter()
       const list = await fetchAlerts(alertsChannelQuery)
-      setRawAlerts(list)
-      setCleanDataset(null)
+      startTransition(() => {
+        setRawAlerts(list)
+        setCleanDataset(null)
+      })
       setLastQueryUrl(`${REAL_TRUCKFLOW_BASE_URL}/alert/list (canal alertas independiente)`)
       setLastLoadedAt(new Date().toISOString())
     } catch (e) {
@@ -503,12 +595,15 @@ export function RealJourneyDiagnosticsPage() {
         fetchAlerts(alertsChannelQuery),
       ])
       const ricardoneOnly = filterRicardoneSiteEventsOnly(eventList)
-      const filtered = buildRearCameraFilterTrace(ricardoneOnly, alertList)
-      setEventsUnfiltered(ricardoneOnly)
-      setEvents(filtered.operationalEvents)
-      setRawAlerts(alertList)
-      const processed = buildCleanRealDataset(filtered.operationalEvents, filtered.operationalAlerts)
-      setCleanDataset(processed)
+      await yieldToMain()
+      const pipe = buildCommitteeOperationalPipeline(ricardoneOnly, alertList)
+      await yieldToMain()
+      const processed = buildCleanRealDataset(pipe.segmentedOperationalEvents, pipe.alertsAlignedToSegments)
+      startTransition(() => {
+        setEventsUnfiltered(ricardoneOnly)
+        setRawAlerts(alertList)
+        setCleanDataset(processed)
+      })
       setDatasetProcessedAt(new Date().toISOString())
       setLastQueryUrl(`${REAL_TRUCKFLOW_BASE_URL}/journey-event/list (X) + /alert/list (Y independiente)`)
       setLastLoadedAt(new Date().toISOString())
@@ -554,22 +649,12 @@ export function RealJourneyDiagnosticsPage() {
   }, [recentRange.endDate, recentRange.startDate])
 
   const processCleanDataset = useCallback(() => {
-    const filtered = buildRearCameraFilterTrace(eventsUnfiltered, rawAlerts)
-    const result = buildCleanRealDataset(filtered.operationalEvents, filtered.operationalAlerts)
+    const pipe = buildCommitteeOperationalPipeline(eventsUnfiltered, rawAlerts)
+    const result = buildCleanRealDataset(pipe.segmentedOperationalEvents, pipe.alertsAlignedToSegments)
     setCleanDataset(result)
     setDatasetProcessedAt(new Date().toISOString())
   }, [eventsUnfiltered, rawAlerts])
 
-  const rearCameraFilterTrace = useMemo(
-    () => buildRearCameraFilterTrace(eventsUnfiltered, rawAlerts),
-    [eventsUnfiltered, rawAlerts]
-  )
-  const standaloneRearAlertFilterTrace = useMemo(
-    () => buildRearCameraFilterTrace([], alertsRawStandalone),
-    [alertsRawStandalone]
-  )
-  const rawAlertsOperational = rearCameraFilterTrace.operationalAlerts
-  const alertsRawStandaloneOperational = standaloneRearAlertFilterTrace.operationalAlerts
   const excludedRearCountByJourney = useMemo(() => {
     const m = new Map<string, number>()
     for (const event of rearCameraFilterTrace.excludedRearEvents) {
@@ -579,6 +664,20 @@ export function RealJourneyDiagnosticsPage() {
     }
     return m
   }, [rearCameraFilterTrace.excludedRearEvents])
+
+  const standaloneRearAlertFilterTrace = useMemo(
+    () => buildRearCameraFilterTrace([], alertsRawStandalone),
+    [alertsRawStandalone]
+  )
+  const alertsRawStandaloneOperational = standaloneRearAlertFilterTrace.operationalAlerts
+
+  const excludedRearCountForOperationalJourney = useMemo(() => {
+    const m = new Map<string, number>()
+    for (const meta of committeePipeline.journeyMetaByUid.values()) {
+      m.set(meta.syntheticJourneyUid, excludedRearCountByJourney.get(meta.sourceJourneyUid) ?? 0)
+    }
+    return m
+  }, [committeePipeline.journeyMetaByUid, excludedRearCountByJourney])
 
   const exportCleanDatasetJson = useCallback(() => {
     if (!cleanDataset) return
@@ -689,17 +788,27 @@ export function RealJourneyDiagnosticsPage() {
 
   useEffect(() => {
     if (journeyQuickFilter !== 'inc_prelim_grouped') return
-    setMainTab('incompletos')
+    setMainTab(COMMITTEE_ETL_LITE_MODE ? 'circuitos' : 'incompletos')
   }, [journeyQuickFilter])
+
+  useEffect(() => {
+    if (!COMMITTEE_ETL_LITE_MODE) return
+    const allowed = new Set<string>(COMMITTEE_ETL_LITE_MAIN_TAB_IDS)
+    if (!allowed.has(mainTab)) setMainTab('eventos')
+  }, [mainTab])
 
   const journeysBatch = useMemo(() => reconstructRealJourneys(events), [events])
   const journeys = useMemo(
     () =>
       enrichCaladaSanLorenzoConfidence(journeysBatch, eventsUnfiltered, CALADA_INTERPLANT_MS).map((j) => ({
         ...j,
-        excludedRearCameraEventsCount: excludedRearCountByJourney.get(j.journeyUid) ?? j.excludedRearCameraEventsCount ?? 0,
+        excludedRearCameraEventsCount:
+          excludedRearCountForOperationalJourney.get(j.journeyUid) ??
+          excludedRearCountByJourney.get(j.journeyUid) ??
+          j.excludedRearCameraEventsCount ??
+          0,
       })),
-    [excludedRearCountByJourney, journeysBatch, eventsUnfiltered]
+    [excludedRearCountByJourney, excludedRearCountForOperationalJourney, journeysBatch, eventsUnfiltered]
   )
 
   const journeysFullPipelineBatch = useMemo(() => reconstructRealJourneys(events), [events])
@@ -707,9 +816,13 @@ export function RealJourneyDiagnosticsPage() {
     () =>
       enrichCaladaSanLorenzoConfidence(journeysFullPipelineBatch, eventsUnfiltered, CALADA_INTERPLANT_MS).map((j) => ({
         ...j,
-        excludedRearCameraEventsCount: excludedRearCountByJourney.get(j.journeyUid) ?? j.excludedRearCameraEventsCount ?? 0,
+        excludedRearCameraEventsCount:
+          excludedRearCountForOperationalJourney.get(j.journeyUid) ??
+          excludedRearCountByJourney.get(j.journeyUid) ??
+          j.excludedRearCameraEventsCount ??
+          0,
       })),
-    [excludedRearCountByJourney, journeysFullPipelineBatch, eventsUnfiltered]
+    [excludedRearCountByJourney, excludedRearCountForOperationalJourney, journeysFullPipelineBatch, eventsUnfiltered]
   )
 
   const journeysOperational = useMemo(
@@ -1302,6 +1415,17 @@ export function RealJourneyDiagnosticsPage() {
         etlStatus = 'review_required'
         reason = hasInvalidRoute ? 'INVALID_ROUTE' : hasInvalidStart ? 'INVALID_START_JOURNEY' : 'Secuencia operativa dudosa'
       }
+      const committeeMeta = committeePipeline.journeyMetaByUid.get(j.journeyUid)
+      const committeeOperationalCircuit = committeeMeta?.committeeOperationalCircuit ?? ''
+      const committeeFlags = committeeMeta ? [...committeeMeta.committeeFlags] : []
+      const committeeTemporalBucket = committeeMeta?.temporalBucket ?? ''
+      if (committeeMeta && etlStatus !== 'excluded') {
+        const ch = committeeEtlHintFromMeta(committeeMeta)
+        if (ch.etl === 'review_required') {
+          etlStatus = 'review_required'
+          reason = [reason, ch.reason].filter(Boolean).join(' · ')
+        }
+      }
       const inUsefulWindow =
         !useUsefulWindow ||
         !usefulWindow.windowValid ||
@@ -1328,10 +1452,20 @@ export function RealJourneyDiagnosticsPage() {
         nearbyAlertCodes: [] as string[],
         possibleMissingPointsExplained: [] as string[],
         reconstructionSuggestion: '',
+        committeeOperationalCircuit,
+        committeeFlags,
+        committeeTemporalBucket,
       }
     })
     return rows
-  }, [summaryDataset, useUsefulWindow, usefulWindow.windowValid, usefulWindow.usefulWindowEnd, usefulWindow.usefulWindowStart])
+  }, [
+    committeePipeline.journeyMetaByUid,
+    summaryDataset,
+    useUsefulWindow,
+    usefulWindow.windowValid,
+    usefulWindow.usefulWindowEnd,
+    usefulWindow.usefulWindowStart,
+  ])
 
   const rawAlertsForDiagnostics = useMemo(
     () => (rawAlertsOperational.length ? rawAlertsOperational : alertsRawStandaloneOperational),
@@ -1491,6 +1625,167 @@ export function RealJourneyDiagnosticsPage() {
     })
   }, [summaryFilter, summaryJourneyRowsWithNearby])
   const summaryByJourneyUid = useMemo(() => new Map(summaryJourneyRowsWithNearby.map((r) => [r.journeyUid, r])), [summaryJourneyRowsWithNearby])
+
+  const committeeIncludedBarItems = useMemo(() => {
+    const entries = Object.entries(committeePipeline.executiveSummary.includedCircuitCounts).sort((a, b) => b[1] - a[1])
+    const palette = ['bg-emerald-500', 'bg-sky-500', 'bg-indigo-500', 'bg-violet-500', 'bg-amber-500']
+    return entries.map(([label, count], i) => ({
+      id: label,
+      label,
+      count,
+      colorClass: palette[i % palette.length],
+    }))
+  }, [committeePipeline.executiveSummary.includedCircuitCounts])
+
+  const committeeReviewBarItems = useMemo(() => {
+    const entries = Object.entries(committeePipeline.executiveSummary.reviewReasonCounts).sort((a, b) => b[1] - a[1])
+    return entries.map(([label, count]) => ({
+      id: label,
+      label,
+      count,
+      colorClass: 'bg-amber-500',
+    }))
+  }, [committeePipeline.executiveSummary.reviewReasonCounts])
+
+  const committeeLprBarItems = useMemo(() => {
+    return buildCommitteeLprAlertsByCamera(committeePipeline.rearCameraTrace.operationalAlerts).map((row) => ({
+      id: row.deviceCode,
+      label: row.deviceCode,
+      count: row.count,
+      colorClass: 'bg-violet-500',
+    }))
+  }, [committeePipeline.rearCameraTrace.operationalAlerts])
+
+  const exportCommitteeDataset = useCallback(() => {
+    const pipe = committeePipeline
+    const metaList = [...pipe.journeyMetaByUid.values()]
+    const summaryByUid = new Map(summaryJourneyRowsWithNearby.map((r) => [r.journeyUid, r]))
+    const executive = pipe.executiveSummary
+
+    const payload = {
+      metadata: {
+        generatedAt: new Date().toISOString(),
+        pipeline: 'committee-operational-v1',
+        apiQuery,
+        appliedTimeRangeLabel,
+        timeFilterMode,
+        useUsefulWindow,
+        usefulWindow: {
+          windowValid: usefulWindow.windowValid,
+          usefulWindowStart: usefulWindow.usefulWindowStart,
+          usefulWindowEnd: usefulWindow.usefulWindowEnd,
+        },
+      },
+      filtersApplied: {
+        siteScope: 'Solo sectores RICARDONE_* (misma regla que la vista)',
+        rearCameraExclusion: pipe.rearCameraTrace.metadata,
+        temporalSegmentationHours: { normalMax: 12, longReviewMax: 24, gapSplit: 6 },
+      },
+      camerasExcludedProvisional: [...pipe.rearCameraTrace.metadata.excludedDeviceCodes],
+      executiveSummary: executive,
+      traceability: {
+        rawEvents: eventsUnfiltered,
+        rawAlerts,
+        excludedRearEvents: pipe.rearCameraTrace.excludedRearEvents,
+        excludedRearAlerts: pipe.rearCameraTrace.excludedRearAlerts,
+        operationalEventsSegmented: pipe.segmentedOperationalEvents,
+        operationalAlertsAlignedToSegments: pipe.alertsAlignedToSegments,
+      },
+      committeeJourneyMeta: metaList.map((m) => ({
+        ...m,
+        committeeEtlHint: committeeEtlHintFromMeta(m),
+      })),
+      includedOperationalCircuits: metaList
+        .filter((m) => committeeEtlHintFromMeta(m).etl === 'included')
+        .map((m) => m.syntheticJourneyUid),
+      reviewRequiredRecords: metaList
+        .filter((m) => committeeEtlHintFromMeta(m).etl === 'review_required')
+        .map((m) => ({ ...m, ...committeeEtlHintFromMeta(m) })),
+      discardedRearOnlyJourneyUids: pipe.rearCameraTrace.excludedRearOnlyJourneyUids,
+      summaryJourneysMergedEtl: summaryJourneyRowsWithNearby,
+      summaryExecutive: {
+        rawEventCount: eventsUnfiltered.length,
+        operationalEventCount: events.length,
+        operationalAlertCount: rawAlertsOperational.length,
+        journeysIncluded: summaryJourneyRowsWithNearby.filter((r) => r.etlStatus === 'included').length,
+        journeysReview: summaryJourneyRowsWithNearby.filter((r) => r.etlStatus === 'review_required').length,
+        journeysExcluded: summaryJourneyRowsWithNearby.filter((r) => r.etlStatus === 'excluded').length,
+        topCircuitByVolume: `${executive.topCircuitCode} (${executive.topCircuitCount})`,
+      },
+    }
+
+    const stamp = `${apiQuery.startDate || 'start'}_${apiQuery.endDate || 'end'}`
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `committee-dataset_${stamp}.json`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+
+    const csvHeader = [
+      'journeyUid',
+      'sourceJourneyUid',
+      'committeeCircuit',
+      'temporalBucket',
+      'committeeFlags',
+      'durationHours',
+      'committeeEtl',
+      'committeeReason',
+      'mergedEtlStatus',
+      'mergedReason',
+      'preliminaryCircuit',
+      'plate',
+      'startedAt',
+      'endedAt',
+    ]
+    const csvRows = metaList.map((m) => {
+      const summ = summaryByUid.get(m.syntheticJourneyUid)
+      const hint = committeeEtlHintFromMeta(m)
+      return [
+        m.syntheticJourneyUid,
+        m.sourceJourneyUid,
+        m.committeeOperationalCircuit,
+        m.temporalBucket,
+        m.committeeFlags.join('|'),
+        (m.durationMs / 3600000).toFixed(3),
+        hint.etl,
+        hint.reason,
+        summ?.etlStatus ?? '',
+        summ?.reason ?? '',
+        summ?.preliminaryCircuitCode ?? '',
+        summ?.plate ?? '',
+        summ?.startedAt ?? m.startedAt,
+        summ?.endedAt ?? m.endedAt,
+      ]
+    })
+    downloadCsv(`committee-dataset_${stamp}.csv`, csvHeader, csvRows)
+  }, [
+    apiQuery,
+    appliedTimeRangeLabel,
+    committeePipeline,
+    events,
+    eventsUnfiltered,
+    rawAlerts,
+    rawAlertsOperational,
+    summaryJourneyRowsWithNearby,
+    timeFilterMode,
+    useUsefulWindow,
+    usefulWindow.usefulWindowEnd,
+    usefulWindow.usefulWindowStart,
+    usefulWindow.windowValid,
+  ])
+
+  const committeeEtlTotals = useMemo(
+    () => ({
+      included: summaryJourneyRowsWithNearby.filter((r) => r.etlStatus === 'included').length,
+      review: summaryJourneyRowsWithNearby.filter((r) => r.etlStatus === 'review_required').length,
+      excluded: summaryJourneyRowsWithNearby.filter((r) => r.etlStatus === 'excluded').length,
+    }),
+    [summaryJourneyRowsWithNearby]
+  )
 
   const circuitSourceRows = useMemo(() => {
     if (!drawerCircuitCode) return []
@@ -1727,6 +2022,120 @@ export function RealJourneyDiagnosticsPage() {
     a.remove()
     URL.revokeObjectURL(url)
   }, [apiQuery.endDate, apiQuery.startDate, eventsUnfiltered])
+
+  const loadPowerBiExportPeriod = useCallback(async () => {
+    setPowerBiPeriodValidationError(null)
+    setPowerBiExportLoadError(null)
+    setPowerBiExportBundleError(null)
+    const start = parsePowerBiLocalStart(powerBiExportStartDate, powerBiExportStartTime)
+    const end = parsePowerBiLocalEnd(powerBiExportEndDate, powerBiExportEndTime)
+    if (start > end) {
+      setPowerBiPeriodValidationError('La fecha y hora final debe ser posterior o igual al inicio.')
+      return
+    }
+    const params: RealTruckflowQueryParams = {
+      startDate: toIsoLocalDateTime(start),
+      endDate: toIsoLocalDateTime(end),
+    }
+    setPowerBiExportLoading(true)
+    try {
+      const [eventList, alertList] = await Promise.all([fetchJourneyEvents(params), fetchAlerts(params)])
+      await yieldToMain()
+      const ricardoneOnly = filterRicardoneSiteEventsOnly(eventList)
+      await yieldToMain()
+      const committee = buildCommitteeOperationalPipeline(ricardoneOnly, alertList)
+      await yieldToMain()
+      const cds = buildCleanRealDataset(committee.segmentedOperationalEvents, committee.alertsAlignedToSegments)
+      await yieldToMain()
+      const committeeMinimalArtifacts = buildCommitteePowerBiMinimalFromSegmented(
+        committee.segmentedOperationalEvents,
+        committee.alertsAlignedToSegments
+      )
+      await yieldToMain()
+      setPowerBiExportLoaded({
+        queryStart: params.startDate ?? '',
+        queryEnd: params.endDate ?? '',
+        loadedAtIso: new Date().toISOString(),
+        eventsReceived: ricardoneOnly.length,
+        alertsReceived: alertList.length,
+        operationalEvents: committee.executiveSummary.operationalEventCount,
+        operationalAlerts: committee.executiveSummary.operationalAlertCount,
+        circuitsGenerated: cds.reconstructedJourneysRaw.length,
+        zeroEventsNotice: ricardoneOnly.length === 0,
+        zeroAlertsNotice: alertList.length === 0,
+        eventsRicardone: ricardoneOnly,
+        alertsRaw: alertList,
+        committee,
+        committeeMinimalArtifacts,
+      })
+    } catch (e) {
+      setPowerBiExportLoadError(e instanceof Error ? e.message : String(e))
+      setPowerBiExportLoaded(null)
+    } finally {
+      setPowerBiExportLoading(false)
+    }
+  }, [powerBiExportStartDate, powerBiExportStartTime, powerBiExportEndDate, powerBiExportEndTime])
+
+  const exportPowerBiCommitteeSingleCsv = useCallback(
+    (key: PowerBiCommitteeCsvKey) => {
+      if (!powerBiExportLoaded) return
+      setPowerBiExportBundleError(null)
+      try {
+        const want = POWER_BI_COMMITTEE_FILENAMES[key]
+        const file = powerBiExportLoaded.committeeMinimalArtifacts.find((a) => a.filename === want)
+        if (!file) {
+          setPowerBiExportBundleError(`No se generó el archivo ${want}. Volvé a cargar el período.`)
+          return
+        }
+        triggerSinglePowerBiCsvDownload(file)
+      } catch (e) {
+        setPowerBiExportBundleError(e instanceof Error ? e.message : String(e))
+      }
+    },
+    [powerBiExportLoaded]
+  )
+
+  const exportPowerBiDebugZip = useCallback(() => {
+    if (!powerBiExportLoaded) return
+    setPowerBiExportBundleError(null)
+    try {
+      const exportedAtIso = new Date().toISOString()
+      const artifacts = buildCommitteePowerBiEtlExport({
+        apiBaseUrl: resolveRealTruckflowApiOrigin(),
+        selectedStartDatetime: powerBiExportLoaded.queryStart,
+        selectedEndDatetime: powerBiExportLoaded.queryEnd,
+        queryStart: powerBiExportLoaded.queryStart,
+        queryEnd: powerBiExportLoaded.queryEnd,
+        exportedAtIso,
+        lastLoadedAt: powerBiExportLoaded.loadedAtIso,
+        eventsRawRicardone: powerBiExportLoaded.eventsRicardone,
+        alertsRaw: powerBiExportLoaded.alertsRaw,
+        committee: powerBiExportLoaded.committee,
+      })
+      downloadPowerBiNamedCsvZipSync(artifacts, { variant: 'debug' })
+    } catch (e) {
+      setPowerBiExportBundleError(e instanceof Error ? e.message : String(e))
+    }
+  }, [powerBiExportLoaded])
+
+  const powerBiExportLoadedSummary = useMemo(
+    () =>
+      powerBiExportLoaded
+        ? {
+            queryStart: powerBiExportLoaded.queryStart,
+            queryEnd: powerBiExportLoaded.queryEnd,
+            loadedAtIso: powerBiExportLoaded.loadedAtIso,
+            eventsReceived: powerBiExportLoaded.eventsReceived,
+            alertsReceived: powerBiExportLoaded.alertsReceived,
+            operationalEvents: powerBiExportLoaded.operationalEvents,
+            operationalAlerts: powerBiExportLoaded.operationalAlerts,
+            circuitsGenerated: powerBiExportLoaded.circuitsGenerated,
+            zeroEventsNotice: powerBiExportLoaded.zeroEventsNotice,
+            zeroAlertsNotice: powerBiExportLoaded.zeroAlertsNotice,
+          }
+        : null,
+    [powerBiExportLoaded]
+  )
 
   const exportKpiJson = useCallback(() => {
     const included = summaryJourneys.filter((x) => x.etlStatus === 'included')
@@ -2292,6 +2701,22 @@ export function RealJourneyDiagnosticsPage() {
       exportSummaryKpiCsv={exportSummaryKpiCsv}
       exportRawEventsJson={exportRawEventsJson}
       exportRawEventsCsv={exportRawEventsCsv}
+      exportPowerBiCommitteeSingleCsv={exportPowerBiCommitteeSingleCsv}
+      exportPowerBiDebugZip={exportPowerBiDebugZip}
+      powerBiExportStartDate={powerBiExportStartDate}
+      setPowerBiExportStartDate={setPowerBiExportStartDate}
+      powerBiExportStartTime={powerBiExportStartTime}
+      setPowerBiExportStartTime={setPowerBiExportStartTime}
+      powerBiExportEndDate={powerBiExportEndDate}
+      setPowerBiExportEndDate={setPowerBiExportEndDate}
+      powerBiExportEndTime={powerBiExportEndTime}
+      setPowerBiExportEndTime={setPowerBiExportEndTime}
+      loadPowerBiExportPeriod={loadPowerBiExportPeriod}
+      powerBiExportLoading={powerBiExportLoading}
+      powerBiPeriodValidationError={powerBiPeriodValidationError}
+      powerBiExportLoadError={powerBiExportLoadError}
+      powerBiExportBundleError={powerBiExportBundleError}
+      powerBiExportLoadedSummary={powerBiExportLoadedSummary}
       lastLoadedAt={lastLoadedAt}
       circuitSourceRows={circuitSourceRows}
       circuitSourceSummary={circuitSourceSummary}
@@ -2328,6 +2753,13 @@ export function RealJourneyDiagnosticsPage() {
       exportLprGeneralPng={exportLprGeneralPng}
       exportLprCameraChartPng={exportLprCameraChartPng}
       exportLprCameraCsv={exportLprCameraCsv}
+      committeeExecutiveSummary={committeePipeline.executiveSummary}
+      committeeAlertsAlignedCount={rawAlertsOperational.length}
+      committeeEtlTotals={committeeEtlTotals}
+      committeeIncludedBarItems={committeeIncludedBarItems}
+      committeeReviewBarItems={committeeReviewBarItems}
+      committeeLprBarItems={committeeLprBarItems}
+      exportCommitteeDataset={exportCommitteeDataset}
     />
   )
 }

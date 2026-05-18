@@ -1,16 +1,36 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense, lazy } from 'react'
 import { SiteProvider, useSite } from './context/SiteContext'
 import { DataProvider } from './context/DataContext'
 import { SimulatorVisitProvider, useSimulatorVisit } from './context/SimulatorVisitContext'
-import { LogisticsOpsProvider, useLogisticsOps } from './context/LogisticsOpsContext'
+import {
+  LogisticsOpsProvider,
+  LogisticsOpsDeferredProvider,
+  useLogisticsOps,
+} from './context/LogisticsOpsContext'
 import { VisitDetailModal } from './components/VisitDetailModal'
 import { LoadingScreen } from './components/LoadingScreen'
 import type { ReconstructedVisit } from './domain/events'
-import { LivePlantPage } from './pages/LivePlantPage'
-import { HistoricalOperationalPage } from './pages/HistoricalOperationalPage'
-import { AnalyticsPage } from './pages/AnalyticsPage'
 import { RealJourneyDiagnosticsPage } from './pages/RealJourneyDiagnosticsPage'
 import type { SiteId } from './domain/sites'
+import { COMMITTEE_ETL_LITE_MODE } from './config/committeeEtlLite'
+
+const LivePlantPageLazy = lazy(() =>
+  import('./pages/LivePlantPage').then((m) => ({ default: m.LivePlantPage }))
+)
+const HistoricalOperationalPageLazy = lazy(() =>
+  import('./pages/HistoricalOperationalPage').then((m) => ({ default: m.HistoricalOperationalPage }))
+)
+const AnalyticsPageLazy = lazy(() =>
+  import('./pages/AnalyticsPage').then((m) => ({ default: m.AnalyticsPage }))
+)
+
+function RoutedTabSuspenseFallback() {
+  return (
+    <div className="flex min-h-[200px] flex-1 items-center justify-center rounded-2xl border border-slate-200 bg-white p-8 text-slate-500">
+      Cargando vista…
+    </div>
+  )
+}
 
 type MainTab = 'analytics' | 'history' | 'live' | 'realdata'
 
@@ -19,10 +39,10 @@ function AppContent() {
   const { setVisitToSimulate } = useSimulatorVisit()
   const { isLoading, scenario, setScenario } = useLogisticsOps()
   const prevSiteIdRef = useRef<string | null>(null)
-  const [tab, setTab] = useState<MainTab>('analytics')
+  const [tab, setTab] = useState<MainTab>(COMMITTEE_ETL_LITE_MODE ? 'realdata' : 'analytics')
   const [detailVisit, setDetailVisit] = useState<ReconstructedVisit | null>(null)
   const [pendingPlateToOpen, setPendingPlateToOpen] = useState<string | null>(null)
-  const [openPlantas, setOpenPlantas] = useState(true)
+  const [openPlantas, setOpenPlantas] = useState(!COMMITTEE_ETL_LITE_MODE)
 
   useEffect(() => {
     if (prevSiteIdRef.current !== null && prevSiteIdRef.current !== siteId) {
@@ -33,9 +53,39 @@ function AppContent() {
 
   const openDetail = (v: ReconstructedVisit) => setDetailVisit(v)
   const goToSimulator = (v: ReconstructedVisit) => {
+    if (COMMITTEE_ETL_LITE_MODE) return
     setVisitToSimulate(v)
     setDetailVisit(null)
     setTab('live')
+  }
+
+  if (COMMITTEE_ETL_LITE_MODE) {
+    return (
+      <div className="min-h-screen bg-surface-50">
+        <main className="flex min-h-[calc(100vh-24px)] items-stretch gap-3 pt-3 pr-3 pb-3 pl-0">
+          <aside className="h-[calc(100vh-24px)] w-[248px] shrink-0 border-r border-violet-900 bg-[#1a1136] p-3 text-violet-100">
+            <div className="mb-4 flex flex-col items-center gap-2">
+              <img src="/logo_sinfondo.png" alt="Truckflow" className="h-12 w-auto max-w-[200px] object-contain" />
+              <span className="text-lg font-bold tracking-tight text-violet-100">Truckflow</span>
+            </div>
+            <div className="rounded-lg border border-violet-700/40 bg-violet-900/35 p-3 text-[11px] leading-relaxed text-violet-200/95">
+              <p className="font-semibold text-violet-100">Modo comité · ETL</p>
+              <p className="mt-2 text-violet-300/90">Solo datos Truckflow desde la API. IFC, simulador y KPIs demo no se cargan.</p>
+              <p className="mt-2 text-[10px] text-violet-400/95">
+                Restaurar UI completa: <span className="font-mono">VITE_COMMITTEE_ETL_LITE=false</span>
+              </p>
+            </div>
+          </aside>
+
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 self-stretch overflow-hidden">
+            <section className="flex shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+              <img src="/logo.png" alt="Logo empresa" className="h-14 max-w-[260px] object-contain" />
+            </section>
+            <RealJourneyDiagnosticsPage />
+          </div>
+        </main>
+      </div>
+    )
   }
 
   return (
@@ -180,29 +230,32 @@ function AppContent() {
             </button>
           </section>
           {tab === 'live' && (
-            <LivePlantPage
-              onOpenVisitDetail={openDetail}
-              focusPlate={pendingPlateToOpen}
-              onFocusPlateHandled={() => setPendingPlateToOpen(null)}
-            />
+            <Suspense fallback={<RoutedTabSuspenseFallback />}>
+              <LivePlantPageLazy
+                onOpenVisitDetail={openDetail}
+                focusPlate={pendingPlateToOpen}
+                onFocusPlateHandled={() => setPendingPlateToOpen(null)}
+              />
+            </Suspense>
           )}
           {tab === 'history' && (
-            <HistoricalOperationalPage
-              siteId={siteId as SiteId}
-              onChangeSite={(id) => setSiteId(id)}
-              mode="records"
-              recordsOnly
-              onViewInModel={(plate) => {
-                setPendingPlateToOpen(plate)
-                setTab('live')
-              }}
-            />
+            <Suspense fallback={<RoutedTabSuspenseFallback />}>
+              <HistoricalOperationalPageLazy
+                siteId={siteId as SiteId}
+                onChangeSite={(id: SiteId) => setSiteId(id)}
+                mode="records"
+                recordsOnly
+                onViewInModel={(plate: string) => {
+                  setPendingPlateToOpen(plate)
+                  setTab('live')
+                }}
+              />
+            </Suspense>
           )}
           {tab === 'analytics' && (
-            <AnalyticsPage
-              siteId={siteId as SiteId}
-              onChangeSite={(id) => setSiteId(id)}
-            />
+            <Suspense fallback={<RoutedTabSuspenseFallback />}>
+              <AnalyticsPageLazy siteId={siteId as SiteId} onChangeSite={(id: SiteId) => setSiteId(id)} />
+            </Suspense>
           )}
           {tab === 'realdata' && <RealJourneyDiagnosticsPage />}
         </div>
@@ -219,18 +272,24 @@ function AppContent() {
   )
 }
 
-function App() {
+function AppProviders() {
+  const logistics = COMMITTEE_ETL_LITE_MODE ? LogisticsOpsDeferredProvider : LogisticsOpsProvider
+  const LogisticsCmp = logistics
   return (
     <SiteProvider>
       <DataProvider>
-        <LogisticsOpsProvider>
+        <LogisticsCmp>
           <SimulatorVisitProvider>
             <AppContent />
           </SimulatorVisitProvider>
-        </LogisticsOpsProvider>
+        </LogisticsCmp>
       </DataProvider>
     </SiteProvider>
   )
+}
+
+function App() {
+  return <AppProviders />
 }
 
 export default App

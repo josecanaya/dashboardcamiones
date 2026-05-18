@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSite } from '../../context/SiteContext'
+import type { SiteId } from '../../domain/sites'
 import {
   getCatalogSectorCodesForLiveMonitor,
   getExpectedDevicesForLiveSector,
@@ -27,6 +28,7 @@ import {
   isValidObservedPlate,
   VEHICLE_TYPE_LABELS,
   type CameraDiagnostics,
+  type LiveSectorStatus,
   type ManualObservation,
   type OperationalTimelineKind,
   type VehicleType,
@@ -37,6 +39,14 @@ const AUTO_REFRESH_MS = 30_000
 
 /** Ventana deslizante para “en vivo” sin selectores de fecha/hora en la barra. */
 const LIVE_ROLLING_WINDOW_MS = 60 * 60 * 1000
+
+/**
+ * Cuánto pedir hacia atrás en la API respecto del fin de la ventana UI.
+ * Antes se pedía desde 00:00 del día → mismo día con mucho tráfico = JSON enorme + parse lento.
+ * Pedimos el máximo entre “inicio del día calendario” y este lookback para seguir cubriendo
+ * timestamps desfasados sin traer toda la madrugada si ya es tarde en el día.
+ */
+const LIVE_API_LOOKBACK_MS = 6 * 60 * 60 * 1000
 
 function getRollingLiveWindow(): { start: Date; end: Date } {
   const end = new Date()
@@ -109,14 +119,16 @@ function eventOperationalInstantIso(e: RealJourneyEventDto): string {
 }
 
 /**
- * Rango pedido al GET journey-event/list (y alert/list): más ancho que la ventana mostrada.
- * La pestaña de diagnóstico pide el día completo hasta la hora final porque el backend puede filtrar por occurredAt desfasado.
+ * Rango pedido al GET journey-event/list (y alert/list): más ancho que la ventana mostrada,
+ * pero sin pedir “todo el día entero” salvo que el lookback no alcance (ej. madrugada).
  */
 function liveListQueryBounds(start: Date, end: Date): { start: Date; end: Date } {
   const apiEnd = new Date(end.getTime() + 15 * 60 * 1000)
   const dayStart = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0, 0)
+  const rollingApiStart = new Date(end.getTime() - LIVE_API_LOOKBACK_MS)
+  const apiStart = new Date(Math.max(dayStart.getTime(), rollingApiStart.getTime()))
   return {
-    start: dayStart,
+    start: apiStart,
     end: apiEnd,
   }
 }
@@ -460,13 +472,26 @@ export function LiveCameraMonitor() {
     return { ev, al, deviceList }
   }, [plantFilteredEvents, plantFilteredAlerts, selectedSectorCode])
 
+  /** Solo filas del sector seleccionado: evita O(cámaras × eventos_planta) en diagnósticos */
+  const sectorScopedEventsAlerts = useMemo(() => {
+    if (!selectedSectorCode) {
+      return { sectorEv: [] as RealJourneyEventDto[], sectorAl: [] as NormalizedRealAlertView[] }
+    }
+    const code = selectedSectorCode
+    return {
+      sectorEv: plantFilteredEvents.filter((e) => e.sectorCode === code),
+      sectorAl: plantFilteredAlerts.filter((a) => a.sectorCode === code),
+    }
+  }, [plantFilteredEvents, plantFilteredAlerts, selectedSectorCode])
+
   const cameraRows = useMemo(() => {
     if (!selectedSectorBuckets || !selectedSectorCode) return []
     const { ev, al, deviceList } = selectedSectorBuckets
+    const { sectorEv, sectorAl } = sectorScopedEventsAlerts
     return deviceList.map((dev) => {
       const evC = ev.filter((e) => e.deviceCode === dev)
       const alC = al.filter((a) => a.deviceCode === dev)
-      const diagnostic = buildCameraDiagnostics(plantFilteredEvents, plantFilteredAlerts, dev, selectedSectorCode)
+      const diagnostic = buildCameraDiagnostics(sectorEv, sectorAl, dev, selectedSectorCode)
       const lastEv = [...evC].sort((a, b) => eventOperationalInstantMs(b) - eventOperationalInstantMs(a))[0]
       const lastAl = [...alC].sort((a, b) => parseMillis(b.occurredAt) - parseMillis(a.occurredAt))[0]
       const pct =
@@ -505,7 +530,13 @@ export function LiveCameraMonitor() {
         lastDetectionAt,
       }
     })
-  }, [plantFilteredEvents, plantFilteredAlerts, selectedSectorBuckets, selectedSectorCode])
+  }, [
+    plantFilteredEvents,
+    plantFilteredAlerts,
+    sectorScopedEventsAlerts,
+    selectedSectorBuckets,
+    selectedSectorCode,
+  ])
 
   const monitorEvents = useMemo(() => {
     if (!selectedSectorCode || !selectedDeviceCode) return []

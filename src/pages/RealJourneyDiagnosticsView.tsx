@@ -1,4 +1,21 @@
 import { useMemo, useState } from 'react'
+import { COMMITTEE_ETL_LITE_MODE } from '../config/committeeEtlLite'
+import {
+  POWER_BI_COMMITTEE_FILENAMES,
+  POWER_BI_COMMITTEE_FILE_COUNT,
+  POWER_BI_ETL_DEBUG_FILE_COUNT,
+  POWER_BI_ETL_FILENAMES,
+  POWER_BI_ETL_SCHEMA_VERSION,
+  type PowerBiCommitteeCsvKey,
+} from '../services/powerBiEtlExport'
+
+const COMMITTEE_SINGLE_CSV_ROWS: readonly { key: PowerBiCommitteeCsvKey; label: string }[] = [
+  { key: 'clean_circuits_v2', label: 'Circuitos v2' },
+  { key: 'clean_events_v2', label: 'Eventos v2' },
+  { key: 'etl_quality_summary_v2', label: 'Calidad ETL v2' },
+  { key: 'incompletos_por_motivo', label: 'Incompletos' },
+  { key: 'camera_diagnostics', label: 'Diagnóstico cámaras' },
+]
 import { buildJourneyEventListPublicDisplayUrl } from '../services/realJourneyEventsDataSource'
 import { normalizeSequenceForPattern, pctOfIncomplete } from '../services/realIncompleteAnalysis'
 import { preliminaryCircuitTypicalSectorPath } from '../services/realPreliminaryCircuit'
@@ -12,6 +29,7 @@ import type { RealAlertDto, RealTruckflowQueryParams } from '../services/realTru
 import type { buildCleanRealDataset } from '../services/realTruckflowCleanDataset'
 import type { AlertsQuickFilter, NormalizedRealAlertView } from '../services/realAlertsInspector'
 import type { RearCameraFilterTrace } from '../services/rearCameraFilter'
+import type { CommitteePipelineExecutiveSummary } from '../services/realCommitteePipeline'
 import { ExecutiveMetricCard } from '../components/realDiagnostics/ExecutiveMetricCard'
 import { DiagDrawer } from '../components/realDiagnostics/DiagDrawer'
 import { DataDistributionDonut } from '../components/realDiagnostics/DataDistributionDonut'
@@ -31,7 +49,9 @@ export type RealDataMainTab =
   | 'incompletos'
   | 'camaras'
   | 'etl'
+  | 'dss_truckflow'
 
+/** Navegación completa Datos reales (modo histórico; muchas vistas no están en la barra y se enlazan desde otras pantallas). */
 export const MAIN_TABS: { id: RealDataMainTab; label: string }[] = [
   { id: 'eventos', label: 'Eventos' },
   { id: 'alertas', label: 'Alertas' },
@@ -39,6 +59,19 @@ export const MAIN_TABS: { id: RealDataMainTab; label: string }[] = [
   { id: 'buscar', label: 'Buscar patente' },
   { id: 'envivo', label: 'En vivo' },
 ]
+
+/** Solo pestañas operativas comité / ETL (sin resumen ejecutivo demo ni depuraciones extra). */
+const COMMITTEE_ETL_NAV_TABS: { id: RealDataMainTab; label: string }[] = [
+  { id: 'eventos', label: 'Eventos' },
+  { id: 'alertas', label: 'Alertas' },
+  { id: 'envivo', label: 'En vivo' },
+  { id: 'circuitos', label: 'Circuitos preliminares' },
+  { id: 'dss_truckflow', label: 'DSS vs Truckflow' },
+  { id: 'camaras', label: 'Cámara por cámara' },
+  { id: 'etl', label: 'Export ETL' },
+]
+
+const DIAGNOSTICS_NAV_TABS = COMMITTEE_ETL_LITE_MODE ? COMMITTEE_ETL_NAV_TABS : MAIN_TABS
 
 export type RealDataTimeFilterMode = 'month' | 'week' | 'day'
 
@@ -132,6 +165,19 @@ export function formatDateTimeShort(iso: string): string {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return iso
   return d.toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'medium' })
+}
+
+export type PowerBiExportLoadedSummary = {
+  queryStart: string
+  queryEnd: string
+  loadedAtIso: string
+  eventsReceived: number
+  alertsReceived: number
+  operationalEvents: number
+  operationalAlerts: number
+  circuitsGenerated: number
+  zeroEventsNotice: boolean
+  zeroAlertsNotice: boolean
 }
 
 export type RealJourneyDiagnosticsViewProps = {
@@ -376,6 +422,9 @@ export type RealJourneyDiagnosticsViewProps = {
     nearbyAlertCodes: string[]
     possibleMissingPointsExplained: string[]
     reconstructionSuggestion: string
+    committeeOperationalCircuit?: string
+    committeeFlags?: string[]
+    committeeTemporalBucket?: string
   }>
   summaryFilter: 'all' | 'included' | 'review_required' | 'excluded' | 'with_alert' | 'without_alert' | 'lpr_malfunction' | 'invalid_route' | 'invalid_start' | 'outside_window'
   setSummaryFilter: (v: 'all' | 'included' | 'review_required' | 'excluded' | 'with_alert' | 'without_alert' | 'lpr_malfunction' | 'invalid_route' | 'invalid_start' | 'outside_window') => void
@@ -383,6 +432,25 @@ export type RealJourneyDiagnosticsViewProps = {
   exportSummaryKpiCsv: () => void
   exportRawEventsJson: () => void
   exportRawEventsCsv: () => void
+  /** Un clic = un solo CSV (recomendado si el navegador bloquea varias descargas). */
+  exportPowerBiCommitteeSingleCsv: (key: PowerBiCommitteeCsvKey) => void
+  /** ZIP modo debug con todos los CSV de auditoría (raw, legacy clean, fusión OCR, score debug, etc.). */
+  exportPowerBiDebugZip: () => void
+  powerBiExportStartDate: string
+  setPowerBiExportStartDate: (v: string) => void
+  powerBiExportStartTime: string
+  setPowerBiExportStartTime: (v: string) => void
+  powerBiExportEndDate: string
+  setPowerBiExportEndDate: (v: string) => void
+  powerBiExportEndTime: string
+  setPowerBiExportEndTime: (v: string) => void
+  loadPowerBiExportPeriod: () => Promise<void>
+  powerBiExportLoading: boolean
+  powerBiPeriodValidationError: string | null
+  powerBiExportLoadError: string | null
+  /** Error al construir/descargar el bundle después de cargar período (p. ej. excepción en ETL v2). */
+  powerBiExportBundleError: string | null
+  powerBiExportLoadedSummary: PowerBiExportLoadedSummary | null
   lastLoadedAt: string
   circuitSourceRows: Array<{
     etlStatus: 'included' | 'review_required' | 'excluded'
@@ -518,6 +586,13 @@ export type RealJourneyDiagnosticsViewProps = {
   exportLprGeneralPng: () => void
   exportLprCameraChartPng: () => void
   exportLprCameraCsv: () => void
+  committeeExecutiveSummary: CommitteePipelineExecutiveSummary
+  committeeAlertsAlignedCount: number
+  committeeEtlTotals: { included: number; review: number; excluded: number }
+  committeeIncludedBarItems: { id: string; label: string; count: number; colorClass?: string }[]
+  committeeReviewBarItems: { id: string; label: string; count: number; colorClass?: string }[]
+  committeeLprBarItems: { id: string; label: string; count: number; colorClass?: string }[]
+  exportCommitteeDataset: () => void
 }
 
 export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
@@ -641,12 +716,20 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
               Diagnóstico operativo y calidad de ingesta. Circuitos observables aquí siguen siendo{' '}
               <span className="font-medium text-slate-800">preliminares</span>; no equivalen todavía a la matriz oficial R/SL.
             </p>
+            <p className="mt-3 max-w-2xl border-l-2 border-teal-500 pl-3 text-xs leading-relaxed text-slate-600">
+              Los datos crudos se conservan, pero el análisis operativo excluye provisoriamente cámaras traseras/sensibles y reglas de duración de journey no operativa (segmentación temporal para comité).
+            </p>
           </div>
-          <span
-            className={`inline-flex w-fit shrink-0 items-center gap-2 self-start rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-slate-200/80 ${p.datasetQualityBadge.cls}`}
-          >
-            {p.datasetQualityBadge.text}
-          </span>
+          <div className="flex shrink-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
+            <span
+              className={`inline-flex w-fit items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-slate-200/80 ${p.datasetQualityBadge.cls}`}
+            >
+              {p.datasetQualityBadge.text}
+            </span>
+            <span className="inline-flex w-fit items-center gap-2 rounded-full bg-teal-50 px-3 py-1.5 text-xs font-semibold text-teal-900 ring-1 ring-teal-200/90">
+              Dataset filtrado para comité
+            </span>
+          </div>
         </div>
 
         {p.eventMinDay && p.eventMaxDay ? (
@@ -658,7 +741,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
       </header>
 
       <nav className="flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
-        {MAIN_TABS.map((t) => (
+        {DIAGNOSTICS_NAV_TABS.map((t) => (
           <button
             key={t.id}
             type="button"
@@ -759,7 +842,20 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
 
       {p.mainTab === 'envivo' && <LiveCameraMonitor />}
 
-      {p.mainTab === 'resumen' && (
+      {p.mainTab === 'dss_truckflow' && (
+        <section className="rounded-3xl border border-dashed border-amber-200/90 bg-gradient-to-br from-amber-50/80 to-white p-8 shadow-sm">
+          <h2 className="text-xl font-bold text-slate-900">DSS vs Truckflow</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">
+            Placeholder para el comparador DSS (CSV manual) contra eventos y alertas de la API Truckflow. Aquí vivirán la
+            normalización DSS, métricas de brecha y export <span className="font-mono text-xs">api_vs_dss</span>.
+          </p>
+          <p className="mt-4 rounded-xl bg-white/80 px-4 py-3 text-xs font-medium text-amber-900 ring-1 ring-amber-200/80">
+            Aún no implementado — no afecta el resto del ETL. Usá pestañas Eventos / Export ETL mientras tanto.
+          </p>
+        </section>
+      )}
+
+      {p.mainTab === 'resumen' && !COMMITTEE_ETL_LITE_MODE && (
         <section className="space-y-6">
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-lg font-bold text-slate-900">Resumen operativo (cruce + depuración)</h2>
@@ -780,7 +876,11 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
               <button type="button" onClick={p.exportClassificationAuditCsv} className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900">Exportar auditoría de clasificación CSV</button>
             </div>
             <div className="mt-4 text-xs text-slate-600">
-              <div>Eventos operativos: {p.events.length.toLocaleString()} · Alertas operativas: {p.rearCameraFilterTrace.operationalAlerts.length.toLocaleString()}</div>
+              <div>
+                Eventos operativos: {p.events.length.toLocaleString()} · Alertas alineadas (comité):{' '}
+                {p.committeeAlertsAlignedCount.toLocaleString()} · Alertas operativas base (post-traseras):{' '}
+                {p.rearCameraFilterTrace.operationalAlerts.length.toLocaleString()}
+              </div>
               <div>Ventana útil: {p.usefulWindow.windowValid ? `${formatDateTimeShort(p.usefulWindow.usefulWindowStart)} -> ${formatDateTimeShort(p.usefulWindow.usefulWindowEnd)}` : 'inválida (usa rango completo)'}</div>
             </div>
             <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700">
@@ -794,8 +894,43 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
             <div className="mt-4 rounded-xl border border-cyan-200 bg-cyan-50 p-3 text-xs text-cyan-950">
               <div className="font-semibold">Filtro de cámaras traseras provisorio</div>
               <div>Eventos excluidos: {p.rearCameraFilterTrace.excludedRearEvents.length} · Alertas traseras excluidas: {p.rearCameraFilterTrace.excludedRearAlerts.length} · Alertas route/start ingreso-preingreso excluidas: {p.rearCameraFilterTrace.excludedIngressRouteAlerts.length} · Recorridos sólo traseras: {p.rearCameraFilterTrace.excludedRearOnlyJourneyUids.length}</div>
-              <div>Dataset operativo final: {p.events.length} eventos · {p.rearCameraFilterTrace.operationalAlerts.length} alertas</div>
+              <div>Dataset operativo final: {p.events.length} eventos (tras segmentación comité) · {p.committeeAlertsAlignedCount} alertas alineadas a recorridos · base traseras: {p.rearCameraFilterTrace.operationalAlerts.length}</div>
               <p className="mt-1">El filtro de cámaras traseras es provisorio y se aplica para evitar que lecturas de acoplados, semirremolques o vehículos no operativos ensucien la reconstrucción preliminar.</p>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-teal-200 bg-gradient-to-br from-teal-50/90 to-white p-6 shadow-sm">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Datos útiles para comité</h3>
+                <p className="mt-1 text-sm text-slate-600">
+                  Conteos del pipeline operativo (traseras + segmentación temporal + clasificación Ricardone). Las filas de revisión incluyen alertas y flags de journey largo.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={p.exportCommitteeDataset}
+                className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-800"
+              >
+                Exportar dataset comité
+              </button>
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+              <ExecutiveMetricCard label="Eventos crudos recibidos" value={p.committeeExecutiveSummary.rawEventCount} />
+              <ExecutiveMetricCard accent="green" label="Eventos operativos usados" value={p.events.length} />
+              <ExecutiveMetricCard accent="amber" label="Eventos excluidos por cámaras traseras" value={p.committeeExecutiveSummary.excludedRearEventCount} />
+              <ExecutiveMetricCard label="Alertas crudas recibidas" value={p.committeeExecutiveSummary.rawAlertCount} />
+              <ExecutiveMetricCard accent="green" label="Alertas operativas usadas (alineadas)" value={p.committeeAlertsAlignedCount} />
+              <ExecutiveMetricCard label="Recorridos procesados" value={p.committeeExecutiveSummary.journeysProcessedCount} />
+              <ExecutiveMetricCard accent="green" label="Circuitos incluidos (heurística comité)" value={p.committeeExecutiveSummary.includedCircuitCount} />
+              <ExecutiveMetricCard accent="amber" label="Registros en revisión (ETL fusionado)" value={p.committeeEtlTotals.review} />
+              <ExecutiveMetricCard accent="rose" label="Registros descartados (ETL fusionado)" value={p.committeeEtlTotals.excluded} />
+              <ExecutiveMetricCard label="Circuito de mayor volumen (incl.)" value={`${p.committeeExecutiveSummary.topCircuitCode}`} sub={`${p.committeeExecutiveSummary.topCircuitCount} recorridos`} />
+            </div>
+            <div className="mt-6 grid gap-4 lg:grid-cols-3">
+              <HorizontalBarChart title="Circuitos incluidos por tipo" items={p.committeeIncludedBarItems} />
+              <HorizontalBarChart title="Registros en revisión por motivo (comité)" items={p.committeeReviewBarItems} />
+              <HorizontalBarChart title="Alertas LPR por cámara" items={p.committeeLprBarItems} />
             </div>
           </div>
 
@@ -806,7 +941,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
             <ExecutiveMetricCard accent="amber" label="Alertas excluidas traseras" value={p.rearCameraFilterTrace.excludedRearAlerts.length} />
             <ExecutiveMetricCard accent="amber" label="Alertas route/start ingreso-preingreso excluidas" value={p.rearCameraFilterTrace.excludedIngressRouteAlerts.length} />
             <ExecutiveMetricCard accent="rose" label="Recorridos sólo traseras" value={p.rearCameraFilterTrace.excludedRearOnlyJourneyUids.length} />
-            <ExecutiveMetricCard accent="green" label="Dataset operativo final" value={`${p.events.length} evt / ${p.rearCameraFilterTrace.operationalAlerts.length} alert`} />
+            <ExecutiveMetricCard accent="green" label="Dataset operativo final" value={`${p.events.length} evt / ${p.committeeAlertsAlignedCount} alert alin.`} />
             <ExecutiveMetricCard label="Eventos dentro ventana" value={p.usefulWindow.insideCount} />
             <ExecutiveMetricCard label="Eventos fuera ventana" value={p.usefulWindow.outsideCount} />
             <ExecutiveMetricCard accent="green" label="Recorridos incluidos" value={p.summaryJourneys.filter((x) => x.etlStatus === 'included').length} />
@@ -1076,7 +1211,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
               <table className="min-w-[1500px] w-full text-xs">
                 <thead className="sticky top-0 bg-slate-50">
                   <tr>
-                    <th className="px-2 py-2 text-left">etlStatus</th><th className="px-2 py-2 text-left">motivo</th><th className="px-2 py-2 text-left">journeyUid</th><th className="px-2 py-2 text-left">patente</th><th className="px-2 py-2 text-left">inicio</th><th className="px-2 py-2 text-left">fin</th><th className="px-2 py-2 text-right">duración</th><th className="px-2 py-2 text-left">circuito</th><th className="px-2 py-2 text-left">alertCodes</th><th className="px-2 py-2 text-left">alertas cercanas</th><th className="px-2 py-2 text-left">sugerencia</th><th className="px-2 py-2 text-left">secuencia lógica</th><th className="px-2 py-2 text-left">secuencia real</th><th className="px-2 py-2 text-center">ventana útil</th><th className="px-2 py-2 text-left">acción</th>
+                    <th className="px-2 py-2 text-left">etlStatus</th><th className="px-2 py-2 text-left">motivo</th><th className="px-2 py-2 text-left">journeyUid</th><th className="px-2 py-2 text-left">patente</th><th className="px-2 py-2 text-left">inicio</th><th className="px-2 py-2 text-left">fin</th><th className="px-2 py-2 text-right">duración</th><th className="px-2 py-2 text-left">circuito prelim.</th><th className="px-2 py-2 text-left">circuito comité</th><th className="px-2 py-2 text-left">alertCodes</th><th className="px-2 py-2 text-left">alertas cercanas</th><th className="px-2 py-2 text-left">sugerencia</th><th className="px-2 py-2 text-left">secuencia lógica</th><th className="px-2 py-2 text-left">secuencia real</th><th className="px-2 py-2 text-center">ventana útil</th><th className="px-2 py-2 text-left">acción</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1090,6 +1225,9 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
                       <td className="px-2 py-2">{formatDateTimeShort(row.endedAt)}</td>
                       <td className="px-2 py-2 text-right">{row.durationMinutes} min</td>
                       <td className="px-2 py-2 font-mono">{row.preliminaryCircuitCode}</td>
+                      <td className="max-w-[160px] truncate px-2 py-2 font-mono text-[10px]" title={row.committeeOperationalCircuit ?? ''}>
+                        {row.committeeOperationalCircuit || '—'}
+                      </td>
                       <td className="px-2 py-2 font-mono">{row.alertCodes.join('|') || '—'}</td>
                       <td className="px-2 py-2">{row.hasNearbyRelevantAlerts ? row.nearbyAlertCodes.join('|') || 'sí' : 'no'}</td>
                       <td className="px-2 py-2">{row.reconstructionSuggestion || '—'}</td>
@@ -1554,10 +1692,216 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
               </div>
             </div>
           </div>
+
+          <div className="space-y-6 rounded-3xl border border-indigo-200 bg-gradient-to-br from-indigo-50/90 via-white to-white p-8 shadow-sm">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">Export ETL para Power BI</h2>
+              <p className="mt-1 max-w-3xl text-sm text-slate-600">
+                Export mínimo para comité:{' '}
+                <span className="font-semibold text-slate-800">{POWER_BI_COMMITTEE_FILE_COUNT} archivos CSV</span> sin ZIP (schema v
+                {POWER_BI_ETL_SCHEMA_VERSION}). Usá{' '}
+                <span className="font-semibold text-slate-800">un botón por archivo</span>: así cada descarga va con su propio clic y el navegador no suele bloquear.
+                Por cada pulsación se vuelve a armar todo el bundle en memoria y se guarda solo ese CSV — con rangos grandes puede tardar unos segundos en cada clic.{' '}
+                El modo debug sigue disponible como <span className="font-medium">un ZIP aparte</span>.
+                Primero pulsá <span className="font-semibold text-slate-800">Cargar datos del período</span>.
+              </p>
+              <p className="mt-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                Archivos en export comité (CSV sueltos, sin ZIP)
+              </p>
+              <p className="mt-1 font-mono text-[10px] leading-relaxed text-slate-500">
+                {Object.values(POWER_BI_COMMITTEE_FILENAMES).join(' · ')}
+              </p>
+              <p className="mt-3 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                Incluye debug completo ({POWER_BI_ETL_DEBUG_FILE_COUNT} CSV; raw, legacy, OCR, debug…)
+              </p>
+              <p className="mt-1 font-mono text-[10px] leading-relaxed text-slate-400">
+                {Object.values(POWER_BI_ETL_FILENAMES).join(' · ')}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Seleccionar período</div>
+              <p className="mt-1 text-xs text-slate-500">
+                Consultas paralelas a <code className="rounded bg-slate-50 px-1">/journey-event/list</code> y{' '}
+                <code className="rounded bg-slate-50 px-1">/alert/list</code> con parámetros{' '}
+                <span className="font-mono">startDate</span> y <span className="font-mono">endDate</span> en formato{' '}
+                <span className="font-mono">YYYY-MM-DDTHH:mm:ss</span> (hora local).
+              </p>
+              <div className="mt-4 flex flex-wrap items-end gap-3">
+                <label className="text-xs font-semibold text-slate-600">
+                  Fecha inicial
+                  <input
+                    type="date"
+                    value={p.powerBiExportStartDate}
+                    onChange={(e) => p.setPowerBiExportStartDate(e.target.value)}
+                    className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+                  />
+                </label>
+                <label className="text-xs font-semibold text-slate-600">
+                  Hora inicial
+                  <input
+                    type="time"
+                    value={p.powerBiExportStartTime}
+                    onChange={(e) => p.setPowerBiExportStartTime(e.target.value)}
+                    className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+                  />
+                </label>
+                <label className="text-xs font-semibold text-slate-600">
+                  Fecha final
+                  <input
+                    type="date"
+                    value={p.powerBiExportEndDate}
+                    onChange={(e) => p.setPowerBiExportEndDate(e.target.value)}
+                    className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+                  />
+                </label>
+                <label className="text-xs font-semibold text-slate-600">
+                  Hora final
+                  <input
+                    type="time"
+                    value={p.powerBiExportEndTime}
+                    onChange={(e) => p.setPowerBiExportEndTime(e.target.value)}
+                    className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => void p.loadPowerBiExportPeriod()}
+                  disabled={p.powerBiExportLoading}
+                  className="rounded-xl bg-slate-950 px-6 py-2.5 text-sm font-black uppercase tracking-wide text-white shadow-sm hover:bg-slate-800 disabled:opacity-50"
+                >
+                  {p.powerBiExportLoading ? 'Cargando…' : 'Cargar datos del período'}
+                </button>
+              </div>
+              <div className="mt-5 border-t border-slate-100 pt-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
+                  Descargá cada CSV aparte (<span className="font-bold text-amber-800">recomendado</span>)
+                </p>
+                <p className="mt-1 text-[11px] text-slate-500">
+                  Cada clic baja solo un archivo con nombre fijo (<span className="font-mono">clean_circuits_v2.csv</span>, etc.). Si la pestaña tarda,
+                  esperá a que termine antes del siguiente clic.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {COMMITTEE_SINGLE_CSV_ROWS.map(({ key, label }) => (
+                    <button
+                      key={key}
+                      type="button"
+                      title={
+                        !p.powerBiExportLoadedSummary
+                          ? 'Primero cargá el período.'
+                          : `Generar y guardar ${POWER_BI_COMMITTEE_FILENAMES[key]}`
+                      }
+                      disabled={!p.powerBiExportLoadedSummary || p.powerBiExportLoading}
+                      onClick={() => p.exportPowerBiCommitteeSingleCsv(key)}
+                      className="inline-flex flex-col rounded-xl border border-amber-300 bg-white px-3 py-2 text-left shadow-sm transition hover:border-amber-500 hover:bg-amber-50 disabled:opacity-40"
+                    >
+                      <span className="text-xs font-black uppercase tracking-wide text-amber-950">{label}</span>
+                      <span className="mt-0.5 font-mono text-[10px] text-slate-600">{POWER_BI_COMMITTEE_FILENAMES[key]}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
+                <button
+                  type="button"
+                  title={
+                    !p.powerBiExportLoadedSummary
+                      ? 'Primero cargá el período. Incluye raw, legacy clean, OCR, score debug y el resto de CSV de auditoría.'
+                      : undefined
+                  }
+                  onClick={() => p.exportPowerBiDebugZip()}
+                  disabled={!p.powerBiExportLoadedSummary || p.powerBiExportLoading}
+                  className="rounded-xl border border-indigo-300 bg-white px-4 py-2 text-xs font-bold uppercase tracking-wide text-indigo-900 shadow-sm hover:bg-indigo-50 disabled:opacity-50"
+                >
+                  Debug completo ({POWER_BI_ETL_DEBUG_FILE_COUNT})
+                </button>
+              </div>
+              <p className="mt-3 text-[11px] text-slate-500">
+                Si modificás fecha u hora, tenés que volver a cargar antes de exportar.
+              </p>
+            </div>
+
+            {p.powerBiPeriodValidationError ? (
+              <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">{p.powerBiPeriodValidationError}</div>
+            ) : null}
+            {p.powerBiExportLoadError ? (
+              <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">{p.powerBiExportLoadError}</div>
+            ) : null}
+            {p.powerBiExportBundleError ? (
+              <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+                Fallo al generar o descargar el export Power BI / ETL: {p.powerBiExportBundleError}
+              </div>
+            ) : null}
+
+            {p.powerBiExportLoadedSummary?.zeroEventsNotice ? (
+              <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+                Aviso: la API devolvió <strong>0 eventos</strong> Ricardone en este rango (tras el filtro de sitio). Los CSV pueden salir vacíos en capas de eventos.
+              </div>
+            ) : null}
+            {p.powerBiExportLoadedSummary?.zeroAlertsNotice ? (
+              <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+                Aviso: la API devolvió <strong>0 alertas</strong> en este rango. Revisá la ventana o el servidor de alertas.
+              </div>
+            ) : null}
+
+            {p.powerBiExportLoadedSummary ? (
+              <div className="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-6 shadow-sm">
+                <h3 className="text-sm font-bold uppercase tracking-wide text-emerald-950">Período cargado</h3>
+                <p className="mt-1 text-xs text-emerald-900/80">
+                  Listo: usá los cinco botones de descarga ({POWER_BI_COMMITTEE_FILE_COUNT} CSV). El modo debug sigue compactando todo en un ZIP (
+                  <span className="font-mono">raw_*</span>, legacy, <span className="font-mono">etl_summary</span>, OCR, score…).
+                </p>
+                <dl className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <div>
+                    <dt className="text-[11px] font-semibold uppercase tracking-wide text-emerald-800/90">Desde</dt>
+                    <dd className="mt-1 font-mono text-sm text-emerald-950">{p.powerBiExportLoadedSummary.queryStart}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[11px] font-semibold uppercase tracking-wide text-emerald-800/90">Hasta</dt>
+                    <dd className="mt-1 font-mono text-sm text-emerald-950">{p.powerBiExportLoadedSummary.queryEnd}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[11px] font-semibold uppercase tracking-wide text-emerald-800/90">Carga local</dt>
+                    <dd className="mt-1 text-sm text-emerald-950">{formatDateTimeShort(p.powerBiExportLoadedSummary.loadedAtIso)}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[11px] font-semibold uppercase tracking-wide text-emerald-800/90">Eventos recibidos</dt>
+                    <dd className="mt-1 text-lg font-bold text-emerald-950">{p.powerBiExportLoadedSummary.eventsReceived.toLocaleString()}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[11px] font-semibold uppercase tracking-wide text-emerald-800/90">Alertas recibidas</dt>
+                    <dd className="mt-1 text-lg font-bold text-emerald-950">{p.powerBiExportLoadedSummary.alertsReceived.toLocaleString()}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[11px] font-semibold uppercase tracking-wide text-emerald-800/90">Eventos operativos</dt>
+                    <dd className="mt-1 text-lg font-bold text-emerald-950">{p.powerBiExportLoadedSummary.operationalEvents.toLocaleString()}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[11px] font-semibold uppercase tracking-wide text-emerald-800/90">Alertas operativas</dt>
+                    <dd className="mt-1 text-lg font-bold text-emerald-950">{p.powerBiExportLoadedSummary.operationalAlerts.toLocaleString()}</dd>
+                  </div>
+                  <div className="sm:col-span-2 lg:col-span-3">
+                    <dt className="text-[11px] font-semibold uppercase tracking-wide text-emerald-800/90">Circuitos generados (preliminares)</dt>
+                    <dd className="mt-1 text-lg font-bold text-emerald-950">{p.powerBiExportLoadedSummary.circuitsGenerated.toLocaleString()}</dd>
+                  </div>
+                </dl>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-dashed border-slate-300 bg-white/80 px-4 py-3 text-sm text-slate-600">
+                Todavía no hay período cargado para esta pestaña. Usá <strong>Cargar datos del período</strong> para habilitar la exportación.
+              </div>
+            )}
+
+            <p className="text-[11px] text-slate-500">
+              Una descarga por botón suele funcionar mejor que tirar todas juntas. Revisá la carpeta de descargas y permisos del sitio. Debug:{' '}
+              <span className="font-medium text-slate-700">ZIP</span> (<span className="font-mono">powerbi-etl-debug_…</span>).{' '}
+              <code className="rounded bg-white/90 px-1">powerbi-export/README.md</code>.
+            </p>
+          </div>
         </section>
       )}
 
-      {p.mainTab === 'depuracion' && (
+      {p.mainTab === 'depuracion' && !COMMITTEE_ETL_LITE_MODE && (
         <section className="space-y-8">
           <div className="grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
             <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
@@ -1822,7 +2166,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
         </section>
       )}
 
-      {p.mainTab === 'incompletos' && (
+      {p.mainTab === 'incompletos' && !COMMITTEE_ETL_LITE_MODE && (
         <section className="space-y-8">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
             <ExecutiveMetricCard accent="amber" label="Total registros incompletos" value={p.incompleteTotal} />
@@ -2055,7 +2399,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
         </section>
       )}
 
-      {p.mainTab === 'buscar' && (
+      {p.mainTab === 'buscar' && !COMMITTEE_ETL_LITE_MODE && (
         <section className="space-y-8">
           <div className="rounded-3xl border border-slate-200 bg-white p-10 shadow-md">
             <div className="grid gap-4 lg:grid-cols-2">

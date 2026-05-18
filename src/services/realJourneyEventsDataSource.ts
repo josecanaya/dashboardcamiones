@@ -1,5 +1,7 @@
 import type { ApiRealJourneyEventRow, RealJourneyEventDto } from './realJourneyEvents.types'
-import { annotateRealJourneyEventsWithPlateFields } from './realJourneyEventPlate'
+import { annotateRealJourneyEventsWithPlateFields, annotateRealJourneyEventsWithPlateFieldsChunked } from './realJourneyEventPlate'
+import { fetchJourneyEvents } from './realTruckflowApi'
+import { yieldToBrowser } from '../utils/yieldToBrowser'
 
 /** Origen público del servicio journey-event */
 export const JOURNEY_EVENT_API_PUBLIC_ORIGIN = 'http://138.36.237.33:8090'
@@ -113,30 +115,33 @@ function parseRow(raw: unknown, fallbackIndex: number): ApiRealJourneyEventRow |
   }
 }
 
-export function parsePayloadToJourneyEvents(payload: unknown): RealJourneyEventDto[] {
+const FILE_PARSE_YIELD_EVERY = 5_000
+
+export async function parsePayloadToJourneyEvents(payload: unknown): Promise<RealJourneyEventDto[]> {
   const arr = extractEventsArray(payload)
   const out: ApiRealJourneyEventRow[] = []
   for (let idx = 0; idx < arr.length; idx++) {
     const ev = parseRow(arr[idx], 1_000_000 + idx)
     if (ev) out.push(ev)
+    if (idx > 0 && (idx + 1) % FILE_PARSE_YIELD_EVERY === 0) await yieldToBrowser()
   }
-  return annotateRealJourneyEventsWithPlateFields(out)
+  if (out.length <= FILE_PARSE_YIELD_EVERY) return annotateRealJourneyEventsWithPlateFields(out)
+  return annotateRealJourneyEventsWithPlateFieldsChunked(out)
 }
 /**
  * GET journey-event/list con rango [startDate, endDate] (YYYY-MM-DD).
+ * Misma implementación que export Power BI: timeout, mismos parámetros y parseo por cortes.
  */
 export async function loadRealJourneyEventsFromApi(
   startDate: string,
   endDate: string,
   options?: { plate?: string }
 ): Promise<RealJourneyEventDto[]> {
-  const url = buildJourneyEventListUrl(startDate, endDate, options?.plate)
-  const res = await fetch(url, { cache: 'no-store', headers: { Accept: 'application/json' } })
-  if (!res.ok) {
-    throw new Error(`API journey-event (${res.status}): ${url}`)
-  }
-  const payload: unknown = await res.json()
-  return parsePayloadToJourneyEvents(payload)
+  return fetchJourneyEvents({
+    startDate: startDate.trim(),
+    endDate: endDate.trim(),
+    plate: options?.plate?.trim(),
+  })
 }
 
 /**
@@ -150,5 +155,5 @@ export async function loadRealJourneyEventsFromFile(
     throw new Error(`No se pudo cargar datos reales: ${filePath} (${res.status})`)
   }
   const payload: unknown = await res.json()
-  return parsePayloadToJourneyEvents(payload)
+  return await parsePayloadToJourneyEvents(payload)
 }

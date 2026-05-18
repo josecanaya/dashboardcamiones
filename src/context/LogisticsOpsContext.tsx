@@ -23,6 +23,28 @@ interface LogisticsOpsContextValue {
   setAlertStatus: (alertId: string, status: OperationalAlert['status']) => void
 }
 
+function makeIdleLogisticsValue(): LogisticsOpsContextValue {
+  return {
+    rawCameraEvents: [],
+    enrichedCameraEvents: [],
+    cameraEvents: [],
+    trucksInPlant: [],
+    historicalTrips: [],
+    operationalAlerts: [],
+    cameraCatalog: CAMERA_CATALOG_BY_SITE.ricardone,
+    sourceMeta: null,
+    isLoading: false,
+    scenario: 'committee_etl_idle',
+    setScenario: () => {},
+    refreshFromSource: async () => {},
+    ingestFleetSnapshot: (_fleet: IfcSelectedTruckInfo[], _siteId: SiteId) => {
+      void _fleet
+      void _siteId
+    },
+    setAlertStatus: () => {},
+  }
+}
+
 const LogisticsOpsContext = createContext<LogisticsOpsContextValue | null>(null)
 
 function LogisticsOpsProviderInner({ children }: { children: ReactNode }) {
@@ -158,8 +180,16 @@ export function LogisticsOpsProvider({ children }: { children: ReactNode }) {
   return <LogisticsOpsProviderInner>{children}</LogisticsOpsProviderInner>
 }
 
+/**
+ * Sin `loadLogisticsSnapshot` ni polling: evita peso en memoria y red cuando solo se usa la pestaña Datos reales.
+ */
+export function LogisticsOpsDeferredProvider({ children }: { children: ReactNode }) {
+  const value = useMemo(() => makeIdleLogisticsValue(), [])
+  return <LogisticsOpsContext.Provider value={value}>{children}</LogisticsOpsContext.Provider>
+}
+
 export function useLogisticsOps() {
   const ctx = useContext(LogisticsOpsContext)
-  if (!ctx) throw new Error('useLogisticsOps must be used within LogisticsOpsProvider')
+  if (!ctx) throw new Error('useLogisticsOps must be used within LogisticsOpsProvider / LogisticsOpsDeferredProvider')
   return ctx
 }
