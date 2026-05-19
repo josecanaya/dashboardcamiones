@@ -162,7 +162,9 @@ export function buildRearCameraFilterTrace(
   for (const event of rawEvents) {
     const uid = event.journeyUid?.trim()
     if (!uid) continue
-    eventsByJourney.set(uid, [...(eventsByJourney.get(uid) ?? []), event])
+    const bucket = eventsByJourney.get(uid)
+    if (bucket) bucket.push(event)
+    else eventsByJourney.set(uid, [event])
   }
 
   const excludedRearOnlyJourneyUids = [...eventsByJourney.entries()]

@@ -114,6 +114,12 @@ export function normalizeRealAlert(alert: RealAlertDto): NormalizedRealAlert {
   }
 }
 
+function pushAlertMap(map: Map<string, NormalizedRealAlert[]>, key: string, val: NormalizedRealAlert): void {
+  const arr = map.get(key)
+  if (arr) arr.push(val)
+  else map.set(key, [val])
+}
+
 export function buildAlertIndex(alerts: RealAlertDto[]): AlertIndex {
   const byJourneyUid = new Map<string, NormalizedRealAlert[]>()
   const byPlate = new Map<string, NormalizedRealAlert[]>()
@@ -121,18 +127,16 @@ export function buildAlertIndex(alerts: RealAlertDto[]): AlertIndex {
   const byPlateSector = new Map<string, NormalizedRealAlert[]>()
   for (const raw of alerts) {
     const normalized = normalizeRealAlert(raw)
-    if (normalized.journeyUid) byJourneyUid.set(normalized.journeyUid, [...(byJourneyUid.get(normalized.journeyUid) ?? []), normalized])
-    if (normalized.normalizedPlate) byPlate.set(normalized.normalizedPlate, [...(byPlate.get(normalized.normalizedPlate) ?? []), normalized])
+    if (normalized.journeyUid) pushAlertMap(byJourneyUid, normalized.journeyUid, normalized)
+    if (normalized.normalizedPlate) pushAlertMap(byPlate, normalized.normalizedPlate, normalized)
     if (normalized.normalizedPlate && normalized.sectorCode) {
-      byPlateSector.set(
-        `${normalized.normalizedPlate}__${normalized.sectorCode}`,
-        [...(byPlateSector.get(`${normalized.normalizedPlate}__${normalized.sectorCode}`) ?? []), normalized]
-      )
+      pushAlertMap(byPlateSector, `${normalized.normalizedPlate}__${normalized.sectorCode}`, normalized)
     }
     if (normalized.normalizedPlate && normalized.sectorCode && normalized.deviceCode) {
-      bySectorDevice.set(
+      pushAlertMap(
+        bySectorDevice,
         `${normalized.normalizedPlate}__${normalized.sectorCode}__${normalized.deviceCode}`,
-        [...(bySectorDevice.get(`${normalized.normalizedPlate}__${normalized.sectorCode}__${normalized.deviceCode}`) ?? []), normalized]
+        normalized
       )
     }
   }

@@ -22,6 +22,26 @@ export default defineConfig({
   plugins: [react(), serveSimulatorOutput()],
   server: {
     proxy: {
+      /** Servidor local extracción / lectura JSON (ej. npm run server:truckflow) */
+      '/api/truckflow': {
+        target: 'http://127.0.0.1:8787',
+        changeOrigin: true,
+        configure(proxy) {
+          proxy.on('error', (err, _req, res: any) => {
+            console.error('[vite proxy /api/truckflow]', err.message)
+            if (res && typeof res.writeHead === 'function' && !res.headersSent) {
+              res.writeHead(503, { 'Content-Type': 'application/json' })
+              res.end(
+                JSON.stringify({
+                  error:
+                    'Servidor local Truckflow no disponible en 8787. En otra terminal: npm run server:truckflow',
+                  detail: err.message,
+                })
+              )
+            }
+          })
+        },
+      },
       /** Evita CORS en desarrollo hacia journey-event/list */
       '/journey-api': {
         target: 'http://138.36.237.33:8090',

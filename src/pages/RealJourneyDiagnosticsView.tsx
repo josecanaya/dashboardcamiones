@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, lazy, Suspense, type ReactNode } from 'react'
 import { COMMITTEE_ETL_LITE_MODE } from '../config/committeeEtlLite'
 import {
   POWER_BI_COMMITTEE_FILENAMES,
@@ -36,9 +36,20 @@ import { DataDistributionDonut } from '../components/realDiagnostics/DataDistrib
 import { DataQualityFunnel } from '../components/realDiagnostics/DataQualityFunnel'
 import { HorizontalBarChart } from '../components/realDiagnostics/HorizontalBarChart'
 import { EventosTruckflowPresentation } from '../components/realDiagnostics/EventosTruckflowPresentation'
-import { LiveCameraMonitor } from '../components/realDiagnostics/LiveCameraMonitor'
+import { ExtraccionDatosTab } from '../features/real-truckflow/tabs/ExtraccionDatosTab'
+import { AnalisisLocalTab } from '../features/real-truckflow/tabs/AnalisisLocalTab'
+import { TransformEtlTab } from '../features/real-truckflow/tabs/TransformEtlTab'
+import { LoadExportTab } from '../features/real-truckflow/tabs/LoadExportTab'
+const LiveCameraMonitorLazy = lazy(async () => {
+  const m = await import('../components/realDiagnostics/LiveCameraMonitor')
+  return { default: m.LiveCameraMonitor }
+})
 
 export type RealDataMainTab =
+  | 'extraccion_datos'
+  | 'transform_etl'
+  | 'load_export'
+  | 'analisis_local'
   | 'eventos'
   | 'alertas'
   | 'resumen'
@@ -47,8 +58,8 @@ export type RealDataMainTab =
   | 'envivo'
   | 'depuracion'
   | 'incompletos'
-  | 'camaras'
-  | 'etl'
+  | 'camara_por_camara'
+  | 'etl_export'
   | 'dss_truckflow'
 
 /** Navegación completa Datos reales (modo histórico; muchas vistas no están en la barra y se enlazan desde otras pantallas). */
@@ -62,13 +73,11 @@ export const MAIN_TABS: { id: RealDataMainTab; label: string }[] = [
 
 /** Solo pestañas operativas comité / ETL (sin resumen ejecutivo demo ni depuraciones extra). */
 const COMMITTEE_ETL_NAV_TABS: { id: RealDataMainTab; label: string }[] = [
-  { id: 'eventos', label: 'Eventos' },
-  { id: 'alertas', label: 'Alertas' },
+  { id: 'extraccion_datos', label: 'Extracción de datos' },
+  { id: 'analisis_local', label: 'Análisis local' },
+  { id: 'transform_etl', label: 'Transform' },
   { id: 'envivo', label: 'En vivo' },
-  { id: 'circuitos', label: 'Circuitos preliminares' },
-  { id: 'dss_truckflow', label: 'DSS vs Truckflow' },
-  { id: 'camaras', label: 'Cámara por cámara' },
-  { id: 'etl', label: 'Export ETL' },
+  { id: 'load_export', label: 'Load / Export' },
 ]
 
 const DIAGNOSTICS_NAV_TABS = COMMITTEE_ETL_LITE_MODE ? COMMITTEE_ETL_NAV_TABS : MAIN_TABS
@@ -593,6 +602,10 @@ export type RealJourneyDiagnosticsViewProps = {
   committeeReviewBarItems: { id: string; label: string; count: number; colorClass?: string }[]
   committeeLprBarItems: { id: string; label: string; count: number; colorClass?: string }[]
   exportCommitteeDataset: () => void
+  /** Modo período único (comité): oculta filtro mes/semana/día inferior. */
+  hideLegacyPeriodFilters?: boolean
+  /** Reemplaza la pestaña ETL legacy por export acoplado al workspace. */
+  renderEtlExportTab?: () => ReactNode
 }
 
 export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
@@ -753,94 +766,119 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
         ))}
       </nav>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex flex-wrap items-end gap-3">
-          <label className="text-xs font-semibold text-slate-600">
-            Ver por
-            <select
-              value={p.timeFilterMode}
-              onChange={(e) => p.setTimeFilterMode(e.target.value as RealDataTimeFilterMode)}
-              className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
-            >
-              <option value="month">Mes</option>
-              <option value="week">Semana</option>
-              <option value="day">Día</option>
-            </select>
-          </label>
-          {p.timeFilterMode === 'month' ? (
-            <label className="text-xs font-semibold text-slate-600">
-              Mes
-              <input
-                type="month"
-                value={p.timeFilterMonth}
-                onChange={(e) => p.setTimeFilterMonth(e.target.value)}
-                className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
-              />
-            </label>
-          ) : p.timeFilterMode === 'week' ? (
-            <label className="text-xs font-semibold text-slate-600">
-              Semana
-              <input
-                type="week"
-                value={p.timeFilterWeek}
-                onChange={(e) => p.setTimeFilterWeek(e.target.value)}
-                className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
-              />
-            </label>
-          ) : (
-            <label className="text-xs font-semibold text-slate-600">
-              Día
-              <input
-                type="date"
-                value={p.timeFilterDay}
-                onChange={(e) => p.setTimeFilterDay(e.target.value)}
-                className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
-              />
-            </label>
-          )}
-          <label className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700">
-            <input
-              type="checkbox"
-              checked={p.timeFilterAllDay}
-              onChange={(e) => p.setTimeFilterAllDay(e.target.checked)}
-            />
-            Todo el día
-          </label>
-          <label className="text-xs font-semibold text-slate-600">
-            Desde hora
-            <input
-              type="time"
-              value={p.timeFilterStartTime}
-              onChange={(e) => p.setTimeFilterStartTime(e.target.value)}
-              disabled={p.timeFilterAllDay}
-              className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 disabled:bg-slate-100 disabled:text-slate-400"
-            />
-          </label>
-          <label className="text-xs font-semibold text-slate-600">
-            Hasta hora
-            <input
-              type="time"
-              value={p.timeFilterEndTime}
-              onChange={(e) => p.setTimeFilterEndTime(e.target.value)}
-              disabled={p.timeFilterAllDay}
-              className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 disabled:bg-slate-100 disabled:text-slate-400"
-            />
-          </label>
-          <button
-            type="button"
-            onClick={() => void p.applyTimeFilter()}
-            disabled={p.loading || p.alertsLoading}
-            className="rounded-xl bg-slate-950 px-6 py-2.5 text-sm font-black uppercase tracking-wide text-white shadow-sm hover:bg-slate-800 disabled:opacity-50"
-          >
-            {p.loading || p.alertsLoading ? 'Filtrando…' : 'Filtrar'}
-          </button>
-          <div className="min-w-[220px] text-xs text-slate-500">
-            Los listados de Eventos, Alertas y Circuitos preliminares se actualizan con este rango.
-          </div>
-        </div>
-      </section>
+      {p.mainTab === 'extraccion_datos' ?
+        <ExtraccionDatosTab onGoToAnalysis={() => p.setMainTab('analisis_local')} />
+      : null}
+      {p.mainTab === 'analisis_local' ? (
+        <AnalisisLocalTab
+          onTransformSucceeded={
+            COMMITTEE_ETL_LITE_MODE ? () => p.setMainTab('transform_etl') : undefined
+          }
+        />
+      ) : null}
+      {p.mainTab === 'transform_etl' ? <TransformEtlTab /> : null}
+      {p.mainTab === 'load_export' ? <LoadExportTab /> : null}
 
-      {p.mainTab === 'envivo' && <LiveCameraMonitor />}
+      {!p.hideLegacyPeriodFilters ? (
+        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex flex-wrap items-end gap-3">
+            <label className="text-xs font-semibold text-slate-600">
+              Ver por
+              <select
+                value={p.timeFilterMode}
+                onChange={(e) => p.setTimeFilterMode(e.target.value as RealDataTimeFilterMode)}
+                className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+              >
+                <option value="month">Mes</option>
+                <option value="week">Semana</option>
+                <option value="day">Día</option>
+              </select>
+            </label>
+            {p.timeFilterMode === 'month' ? (
+              <label className="text-xs font-semibold text-slate-600">
+                Mes
+                <input
+                  type="month"
+                  value={p.timeFilterMonth}
+                  onChange={(e) => p.setTimeFilterMonth(e.target.value)}
+                  className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+                />
+              </label>
+            ) : p.timeFilterMode === 'week' ? (
+              <label className="text-xs font-semibold text-slate-600">
+                Semana
+                <input
+                  type="week"
+                  value={p.timeFilterWeek}
+                  onChange={(e) => p.setTimeFilterWeek(e.target.value)}
+                  className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+                />
+              </label>
+            ) : (
+              <label className="text-xs font-semibold text-slate-600">
+                Día
+                <input
+                  type="date"
+                  value={p.timeFilterDay}
+                  onChange={(e) => p.setTimeFilterDay(e.target.value)}
+                  className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+                />
+              </label>
+            )}
+            <label className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700">
+              <input
+                type="checkbox"
+                checked={p.timeFilterAllDay}
+                onChange={(e) => p.setTimeFilterAllDay(e.target.checked)}
+              />
+              Todo el día
+            </label>
+            <label className="text-xs font-semibold text-slate-600">
+              Desde hora
+              <input
+                type="time"
+                value={p.timeFilterStartTime}
+                onChange={(e) => p.setTimeFilterStartTime(e.target.value)}
+                disabled={p.timeFilterAllDay}
+                className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 disabled:bg-slate-100 disabled:text-slate-400"
+              />
+            </label>
+            <label className="text-xs font-semibold text-slate-600">
+              Hasta hora
+              <input
+                type="time"
+                value={p.timeFilterEndTime}
+                onChange={(e) => p.setTimeFilterEndTime(e.target.value)}
+                disabled={p.timeFilterAllDay}
+                className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 disabled:bg-slate-100 disabled:text-slate-400"
+              />
+            </label>
+            <button
+              type="button"
+              onClick={() => void p.applyTimeFilter()}
+              disabled={p.loading || p.alertsLoading}
+              className="rounded-xl bg-slate-950 px-6 py-2.5 text-sm font-black uppercase tracking-wide text-white shadow-sm hover:bg-slate-800 disabled:opacity-50"
+            >
+              {p.loading || p.alertsLoading ? 'Filtrando…' : 'Filtrar'}
+            </button>
+            <div className="min-w-[220px] text-xs text-slate-500">
+              Los listados de Eventos, Alertas y Circuitos preliminares se actualizan con este rango.
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {p.mainTab === 'envivo' && (
+        <Suspense
+          fallback={
+            <div className="rounded-3xl border border-slate-800 bg-[#0b1020] px-6 py-14 text-center text-sm text-slate-400">
+              Cargando monitor en vivo…
+            </div>
+          }
+        >
+          <LiveCameraMonitorLazy />
+        </Suspense>
+      )}
 
       {p.mainTab === 'dss_truckflow' && (
         <section className="rounded-3xl border border-dashed border-amber-200/90 bg-gradient-to-br from-amber-50/80 to-white p-8 shadow-sm">
@@ -1595,7 +1633,10 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
         </section>
       )}
 
-      {p.mainTab === 'etl' && (
+      {p.mainTab === 'etl_export' &&
+        (p.renderEtlExportTab ? (
+          p.renderEtlExportTab()
+        ) : (
         <section className="space-y-8">
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <ExecutiveMetricCard label="Eventos recibidos (Ricardone)" value={p.events.length.toLocaleString()} />
@@ -1899,7 +1940,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
             </p>
           </div>
         </section>
-      )}
+        ))}
 
       {p.mainTab === 'depuracion' && !COMMITTEE_ETL_LITE_MODE && (
         <section className="space-y-8">
@@ -2289,7 +2330,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
         </section>
       )}
 
-      {p.mainTab === 'camaras' && (
+      {p.mainTab === 'camara_por_camara' && (
         <section className="space-y-10">
           <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
             <h2 className="text-lg font-bold text-slate-900">Calidad de lectura de patentes</h2>

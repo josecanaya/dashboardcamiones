@@ -1,0 +1,43 @@
+import { describe, expect, it } from 'vitest'
+import { consolidatePowerBiLoad, daysInclusive } from './powerBiLoad'
+
+describe('powerBiLoad', () => {
+  it('daysInclusive incluye extremos', () => {
+    expect(daysInclusive('2026-05-12', '2026-05-14')).toEqual([
+      '2026-05-12',
+      '2026-05-13',
+      '2026-05-14',
+    ])
+  })
+
+  it('consolida summary con fila day y total', () => {
+    const summary =
+      'ingreso_frontal_event_count,final_circuits_count,journeys_after_rear_filter,date_min\n' +
+      '10,8,12,2026-05-12\n'
+    const out = consolidatePowerBiLoad({
+      periodStart: '2026-05-12',
+      periodEnd: '2026-05-12',
+      loadGroupType: 'day',
+      days: [
+        {
+          sourceDay: '2026-05-12',
+          files: {
+            transform_summary: summary,
+            final_circuits:
+              'journey_uid,final_status,truck_plate\n' + 'a1,circuito_completo,ABC123\n' + 'a2,incompleto_revision,',
+          },
+        },
+      ],
+    })
+    expect(out.files.transform_summary).toContain('summary_level')
+    expect(out.files.transform_summary).toContain('total')
+    expect(out.stats.ingresoFrontal).toBe(10)
+    expect(out.stats.finalCircuits).toBe(2)
+    expect(out.rowCounts.final_circuits).toBe(2)
+    expect(out.files.committee_summary).toContain('executive_week')
+    expect(out.files.camera_committee_status).toContain('estado_camara')
+    expect(out.files.circuit_coverage).toContain('coverage_type')
+    expect(out.files.dss_vs_truckflow).toContain('truckflow_count')
+    expect(out.files.final_circuits).toContain('final_status_label')
+  })
+})

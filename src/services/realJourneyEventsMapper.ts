@@ -81,8 +81,7 @@ export function filterValidPlateRealEvents(events: RealJourneyEventDto[]): RealJ
   return events.filter((e) => e.isValidPlate === true)
 }
 
-export function reconstructRealJourneys(events: RealJourneyEventDto[]): ReconstructedRealJourney[] {
-  const operational = filterValidPlateRealEvents(events)
+function reconstructRealJourneysInner(operational: RealJourneyEventDto[]): ReconstructedRealJourney[] {
   const byJourney = new Map<string, RealJourneyEventDto[]>()
   for (const ev of operational) {
     const key = ev.journeyUid
@@ -157,6 +156,15 @@ export function reconstructRealJourneys(events: RealJourneyEventDto[]): Reconstr
 
   result.sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime())
   return result
+}
+
+export function reconstructRealJourneys(events: RealJourneyEventDto[]): ReconstructedRealJourney[] {
+  return reconstructRealJourneysInner(filterValidPlateRealEvents(events))
+}
+
+/** Reconstrucción ETL: incluye patentes inválidas si el journey tiene `journeyUid`. */
+export function reconstructRealJourneysIncludingInvalidPlates(events: RealJourneyEventDto[]): ReconstructedRealJourney[] {
+  return reconstructRealJourneysInner(events.filter((e) => String(e.journeyUid ?? '').trim()))
 }
 
 export function getUniqueRealSectorCodes(events: RealJourneyEventDto[]): string[] {

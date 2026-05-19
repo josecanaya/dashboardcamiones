@@ -6,13 +6,11 @@ export const COMMITTEE_ETL_LITE_MODE =
   typeof import.meta !== 'undefined' &&
   String(import.meta.env?.VITE_COMMITTEE_ETL_LITE ?? 'true').toLowerCase() !== 'false'
 
-/** Pestañas visibles dentro de Datos reales en modo lite. */
+/** Pestañas visibles en Datos reales (flujo Extract → Analyze → Transform → En vivo → Load). */
 export const COMMITTEE_ETL_LITE_MAIN_TAB_IDS = [
-  'eventos',
-  'alertas',
+  'extraccion_datos',
+  'analisis_local',
+  'transform_etl',
   'envivo',
-  'circuitos',
-  'dss_truckflow',
-  'camaras',
-  'etl',
+  'load_export',
 ] as const

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, memo } from 'react'
 import { useSite } from '../../context/SiteContext'
 import type { SiteId } from '../../domain/sites'
 import {
@@ -133,11 +133,29 @@ function liveListQueryBounds(start: Date, end: Date): { start: Date; end: Date }
   }
 }
 
+/** Modo «día completo»: límites locales 00:00:00–23:59:59 para UI y mismo rango en la API. */
+function getCalendarDayBounds(dateStr: string): { start: Date; end: Date } | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr.trim())
+  if (!m) return null
+  const y = Number(m[1])
+  const mo = Number(m[2])
+  const da = Number(m[3])
+  const start = new Date(y, mo - 1, da, 0, 0, 0, 0)
+  const end = new Date(y, mo - 1, da, 23, 59, 59, 999)
+  if (start.getFullYear() !== y || start.getMonth() !== mo - 1 || start.getDate() !== da) return null
+  return { start, end }
+}
+
 /** Holgencia hacia atrás: createdAt puede preceder unos minutos a la alerta en la misma lectura. */
 const LIVE_EVENT_TIME_SLACK_START_MS = 45 * 60 * 1000
 
-function journeyEventInUiWindow(e: RealJourneyEventDto, uiStartMs: number, uiEndMs: number): boolean {
-  const lo = uiStartMs - LIVE_EVENT_TIME_SLACK_START_MS
+function journeyEventInUiWindow(
+  e: RealJourneyEventDto,
+  uiStartMs: number,
+  uiEndMs: number,
+  slackStartMs: number = LIVE_EVENT_TIME_SLACK_START_MS
+): boolean {
+  const lo = uiStartMs - slackStartMs
   const hi = uiEndMs
   const op = eventOperationalInstantMs(e)
   if (!Number.isNaN(op) && op >= lo && op <= hi) return true
@@ -292,8 +310,29 @@ function buildCombinedDetections(
   return rows
 }
 
-export function LiveCameraMonitor() {
+/** Permite pintar antes del primer fetch y reduce bloqueos junto al resto del dashboard. */
+function yieldToMainLive(): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof requestAnimationFrame !== 'undefined') {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+    } else {
+      setTimeout(resolve, 0)
+    }
+  })
+}
+
+type LiveMonitorTimeMode = 'rolling_hour' | 'calendar_day'
+
+export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
   const { siteId } = useSite()
+  const [timeMode, setTimeMode] = useState<LiveMonitorTimeMode>('rolling_hour')
+  const [calendarDay, setCalendarDay] = useState(() => {
+    const d = new Date()
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
+  })
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [filterPlate, setFilterPlate] = useState('')
   const [filterJourneyUuid, setFilterJourneyUuid] = useState('')
@@ -339,8 +378,36 @@ export function LiveCameraMonitor() {
     inFlightRef.current = true
     setLoading(true)
     setError(null)
-    const { start, end } = getRollingLiveWindow()
-    const listBounds = liveListQueryBounds(start, end)
+
+    let uiStart: Date
+    let uiEnd: Date
+    let listBounds: { start: Date; end: Date }
+    let eventSlackMs: number
+
+    if (timeMode === 'rolling_hour') {
+      const w = getRollingLiveWindow()
+      uiStart = w.start
+      uiEnd = w.end
+      listBounds = liveListQueryBounds(uiStart, uiEnd)
+      eventSlackMs = LIVE_EVENT_TIME_SLACK_START_MS
+    } else {
+      const dayBounds = getCalendarDayBounds(calendarDay)
+      if (!dayBounds) {
+        setLoading(false)
+        inFlightRef.current = false
+        setEvents([])
+        setNormalizedAlerts([])
+        setError('Fecha inválida: usá una fecha YYYY-MM-DD.')
+        setRangeLabel('')
+        return
+      }
+      uiStart = dayBounds.start
+      uiEnd = dayBounds.end
+      listBounds = { start: dayBounds.start, end: dayBounds.end }
+      /** En día completo no extendemos la ventana hacia atrás (evita mezclar lecturas del día anterior). */
+      eventSlackMs = 0
+    }
+
     const params: RealTruckflowQueryParams = {
       startDate: toIsoLocal(listBounds.start),
       endDate: toIsoLocal(listBounds.end),
@@ -356,14 +423,14 @@ export function LiveCameraMonitor() {
         fetchJourneyEvents(params, fetchOpts),
         fetchAlerts(params, fetchOpts),
       ])
-      const uiStartMs = start.getTime()
-      const uiEndMs = end.getTime()
+      const uiStartMs = uiStart.getTime()
+      const uiEndMs = uiEnd.getTime()
       const evAligned = evts.map(alignJourneyEventTimeForLiveView)
-      const evFiltered = evAligned.filter((e) => journeyEventInUiWindow(e, uiStartMs, uiEndMs))
+      const evFiltered = evAligned.filter((e) => journeyEventInUiWindow(e, uiStartMs, uiEndMs, eventSlackMs))
       const norm = rawAlerts.map(normalizeRealAlertForView).filter((a) => alertInUiWindow(a, uiStartMs, uiEndMs))
       setEvents(evFiltered)
       setNormalizedAlerts(norm)
-      setRangeLabel(`${fmtShort(toIsoLocal(start))} → ${fmtShort(toIsoLocal(end))}`)
+      setRangeLabel(`${fmtShort(toIsoLocal(uiStart))} → ${fmtShort(toIsoLocal(uiEnd))}`)
     } catch (e) {
       setEvents([])
       setNormalizedAlerts([])
@@ -372,17 +439,24 @@ export function LiveCameraMonitor() {
       setLoading(false)
       inFlightRef.current = false
     }
-  }, [liveFetchOrigin])
+  }, [liveFetchOrigin, timeMode, calendarDay])
 
   useEffect(() => {
-    void refresh()
+    let cancelled = false
+    void (async () => {
+      await yieldToMainLive()
+      if (!cancelled) void refresh()
+    })()
+    return () => {
+      cancelled = true
+    }
   }, [refresh])
 
   useEffect(() => {
-    if (!autoRefresh) return
+    if (!autoRefresh || timeMode !== 'rolling_hour') return
     const id = window.setInterval(() => void refresh(), AUTO_REFRESH_MS)
     return () => window.clearInterval(id)
-  }, [autoRefresh, refresh])
+  }, [autoRefresh, refresh, timeMode])
 
   const plantFilteredEvents = useMemo(
     () => events.filter((e) => sectorMatchesPlant(e.sectorCode, siteId)),
@@ -840,6 +914,47 @@ export function LiveCameraMonitor() {
       {/* Barra en vivo: búsqueda + export + actualización */}
       <div className="border-b border-slate-800/80 bg-[#0c1222] px-4 py-3 sm:px-6">
         <div className="flex flex-wrap items-end gap-2 sm:gap-3">
+          <div className="min-w-[200px]">
+            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Vista temporal</label>
+            <div className="flex rounded-lg border border-slate-700 bg-slate-950 p-0.5">
+              <button
+                type="button"
+                onClick={() => setTimeMode('rolling_hour')}
+                className={`rounded-md px-2.5 py-1.5 text-[10px] font-semibold transition ${
+                  timeMode === 'rolling_hour'
+                    ? 'bg-cyan-500/25 text-cyan-100 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                Última hora (vivo)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setAutoRefresh(false)
+                  setTimeMode('calendar_day')
+                }}
+                className={`rounded-md px-2.5 py-1.5 text-[10px] font-semibold transition ${
+                  timeMode === 'calendar_day'
+                    ? 'bg-violet-500/25 text-violet-100 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                Día completo
+              </button>
+            </div>
+          </div>
+          {timeMode === 'calendar_day' ? (
+            <div className="min-w-[140px]">
+              <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Día</label>
+              <input
+                type="date"
+                value={calendarDay}
+                onChange={(e) => setCalendarDay(e.target.value)}
+                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-100"
+              />
+            </div>
+          ) : null}
           <div className="min-w-[120px] flex-1">
             <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Patente</label>
             <input
@@ -882,18 +997,32 @@ export function LiveCameraMonitor() {
           >
             JSON
           </button>
-          <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-900/80 px-2 py-1.5 text-[10px] text-slate-400">
+          <label
+            className={`flex cursor-pointer items-center gap-1.5 rounded-lg border px-2 py-1.5 text-[10px] ${
+              timeMode === 'calendar_day'
+                ? 'cursor-not-allowed border-slate-800 bg-slate-950/50 text-slate-600'
+                : 'border-slate-700 bg-slate-900/80 text-slate-400'
+            }`}
+            title={
+              timeMode === 'calendar_day'
+                ? 'Auto actualización solo en modo «Última hora» (evita recargar todo el día cada 30 s).'
+                : undefined
+            }
+          >
             <input
               type="checkbox"
-              checked={autoRefresh}
+              checked={autoRefresh && timeMode === 'rolling_hour'}
+              disabled={timeMode === 'calendar_day'}
               onChange={(e) => setAutoRefresh(e.target.checked)}
-              className="rounded border-slate-600"
+              className="rounded border-slate-600 disabled:opacity-40"
             />
             Auto 30s
           </label>
         </div>
         <p className="mt-2 text-[10px] text-slate-500">
-          Cada consulta usa una ventana móvil de la última hora. La planta activa sigue la selección global del lateral.
+          {timeMode === 'rolling_hour'
+            ? 'Ventana móvil de la última hora (se renueva al actualizar o con Auto 30s). La planta activa sigue el lateral.'
+            : `Consulta fija del día calendario seleccionado (${calendarDay}), horario local 00:00–23:59. Podés ser pesado para la API; usá «Actualizar» cuando cambies filtros.`}
         </p>
         {error ? (
           <div className="mt-3 rounded-lg border border-rose-500/35 bg-rose-950/40 px-3 py-2 text-xs text-rose-200">{error}</div>
@@ -1338,4 +1467,4 @@ export function LiveCameraMonitor() {
       </div>
     </section>
   )
-}
+})

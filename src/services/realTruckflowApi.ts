@@ -21,23 +21,32 @@ export type RealTruckflowQueryParams = {
 
 export type RealAlertDto = {
   id?: number | string
+  version?: number | string
   journeyUid?: string
   journeyUuid?: string
   plate?: string
   truckPlate?: string
+  trailerPlate?: string
   sectorCode?: string
   sector?: string
   deviceCode?: string
   device?: string
   site?: string
+  /** Código canónico en API `/alert/list` (p. ej. LPR_MALFUNCTION). */
+  alertCode?: string
   alertType?: string
   type?: string
+  severity?: string | number
+  status?: string
+  description?: string
   reason?: string
   message?: string
   occurredAt?: string
   createdAt?: string
+  modifiedAt?: string
   recordedAt?: string
   alertLevel?: number
+  payload?: unknown
   [key: string]: unknown
 }
 
@@ -73,7 +82,8 @@ function toString(value: unknown): string {
   return typeof value === 'string' ? value : ''
 }
 
-function extractArray(payload: unknown): unknown[] {
+/** Respuesta Truckflow (`value`, `data`, array raíz, etc.) — útil para JSON guardado en disco. */
+export function extractTruckflowPayloadArray(payload: unknown): unknown[] {
   if (Array.isArray(payload)) return payload
   if (payload && typeof payload === 'object') {
     const obj = payload as Record<string, unknown>
@@ -82,27 +92,52 @@ function extractArray(payload: unknown): unknown[] {
     if (Array.isArray(obj.events)) return obj.events
     if (Array.isArray(obj.alerts)) return obj.alerts
     if (Array.isArray(obj.items)) return obj.items
+    if (Array.isArray(obj.records)) return obj.records
   }
   return []
 }
 
-async function fetchTruckflowJson(url: string, label: string, timeoutMs: number): Promise<unknown> {
-  const ctl = new AbortController()
+async function fetchTruckflowJson(
+  url: string,
+  label: string,
+  timeoutMs: number,
+  externalSignal?: AbortSignal
+): Promise<unknown> {
+  const timeoutCtl = new AbortController()
   let timerId: ReturnType<typeof setTimeout> | undefined
   if (typeof globalThis.setTimeout === 'function') {
-    timerId = globalThis.setTimeout(() => ctl.abort(), timeoutMs)
+    timerId = globalThis.setTimeout(() => timeoutCtl.abort(), timeoutMs)
   }
+
+  const merged = new AbortController()
+  const abortMerged = () => {
+    try {
+      merged.abort()
+    } catch {
+      /* noop */
+    }
+  }
+  timeoutCtl.signal.addEventListener('abort', abortMerged)
+  const onExternalAbort = () => abortMerged()
+  if (externalSignal) {
+    if (externalSignal.aborted) abortMerged()
+    else externalSignal.addEventListener('abort', onExternalAbort)
+  }
+
   try {
     const response = await fetch(url, {
       cache: 'no-store',
       headers: { Accept: 'application/json' },
-      signal: ctl.signal,
+      signal: merged.signal,
     })
     if (!response.ok) throw new Error(`Error consultando ${label} (${response.status}) — ${url}`)
     return await response.json()
   } catch (err) {
     const name = (err as { name?: string }).name
     if (name === 'AbortError') {
+      if (externalSignal?.aborted) {
+        throw new Error(`Carga cancelada o tiempo total agotado mientras se consultaba ${label}. URL: ${url}`)
+      }
       throw new Error(
         `Tiempo máximo (${Math.round(timeoutMs / 1000)} s) esperando ${label}. Acotá fechas u horarios, revisá red/VPN, ` +
           `servidor activo y proxy «/journey-api» en desarrollo. URL: ${url}`
@@ -111,10 +146,12 @@ async function fetchTruckflowJson(url: string, label: string, timeoutMs: number)
     throw err
   } finally {
     if (timerId !== undefined && typeof globalThis.clearTimeout === 'function') globalThis.clearTimeout(timerId)
+    timeoutCtl.signal.removeEventListener('abort', abortMerged)
+    externalSignal?.removeEventListener('abort', onExternalAbort)
   }
 }
 
-function mapRawToApiJourneyRow(raw: unknown, index: number): ApiRealJourneyEventRow | null {
+export function mapRawToApiJourneyRow(raw: unknown, index: number): ApiRealJourneyEventRow | null {
   if (!raw || typeof raw !== 'object') return null
   const obj = raw as Record<string, unknown>
   const journeyUid = toString(obj.journeyUid ?? obj.journeyUuid).trim()
@@ -144,13 +181,13 @@ function mapRawToApiJourneyRow(raw: unknown, index: number): ApiRealJourneyEvent
 
 export async function fetchJourneyEvents(
   params: RealTruckflowQueryParams = {},
-  opts?: { baseOrigin?: string; timeoutMs?: number }
+  opts?: { baseOrigin?: string; timeoutMs?: number; signal?: AbortSignal }
 ): Promise<RealJourneyEventDto[]> {
   const timeoutMs = opts?.timeoutMs ?? DEFAULT_TRUCKFLOW_FETCH_TIMEOUT_MS
   const origin = (opts?.baseOrigin?.trim() || resolveRealTruckflowApiOrigin()).replace(/\/$/, '')
   const url = `${origin}/journey-event/list${buildQuery(params)}`
-  const payload: unknown = await fetchTruckflowJson(url, 'eventos', timeoutMs)
-  const rows = extractArray(payload)
+  const payload: unknown = await fetchTruckflowJson(url, 'eventos', timeoutMs, opts?.signal)
+  const rows = extractTruckflowPayloadArray(payload)
   const parsed: ApiRealJourneyEventRow[] = []
   for (let chunkStart = 0; chunkStart < rows.length; chunkStart += EVENT_PARSE_ROWS_PER_SLICE) {
     const chunkEnd = Math.min(chunkStart + EVENT_PARSE_ROWS_PER_SLICE, rows.length)
@@ -163,16 +200,30 @@ export async function fetchJourneyEvents(
   return annotateRealJourneyEventsWithPlateFieldsChunked(parsed)
 }
 
+/** Normaliza filas crudas (p. ej. desde JSON local) al mismo DTO que devuelve la API. */
+export async function journeyDtoListFromRawExtractedRowsChunked(rows: unknown[]): Promise<RealJourneyEventDto[]> {
+  const parsed: ApiRealJourneyEventRow[] = []
+  for (let idx = 0; idx < rows.length; idx++) {
+    const row = mapRawToApiJourneyRow(rows[idx], idx)
+    if (row) parsed.push(row)
+  }
+  return annotateRealJourneyEventsWithPlateFieldsChunked(parsed)
+}
+
+export function alertDtoListFromRawExtractedRows(rows: unknown[]): RealAlertDto[] {
+  return rows.filter((row): row is RealAlertDto => Boolean(row) && typeof row === 'object')
+}
+
 export async function fetchAlerts(
   params: RealTruckflowQueryParams = {},
-  opts?: { baseOrigin?: string; timeoutMs?: number }
+  opts?: { baseOrigin?: string; timeoutMs?: number; signal?: AbortSignal }
 ): Promise<RealAlertDto[]> {
   const timeoutMs = opts?.timeoutMs ?? DEFAULT_TRUCKFLOW_FETCH_TIMEOUT_MS
   const origin = (opts?.baseOrigin?.trim() || resolveRealTruckflowApiOrigin()).replace(/\/$/, '')
   const url = `${origin}/alert/list${buildQuery(params)}`
-  const payload: unknown = await fetchTruckflowJson(url, 'alertas', timeoutMs)
-  const rows = extractArray(payload)
-  const out = rows.filter((row): row is RealAlertDto => Boolean(row) && typeof row === 'object')
+  const payload: unknown = await fetchTruckflowJson(url, 'alertas', timeoutMs, opts?.signal)
+  const rows = extractTruckflowPayloadArray(payload)
+  const out = alertDtoListFromRawExtractedRows(rows)
   if (out.length > EVENT_PARSE_ROWS_PER_SLICE * 5) await yieldToBrowser()
   return out
 }

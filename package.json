@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server:truckflow": "node server/truckflow-local-server.mjs",
+    "dev:committee": "concurrently -k \"npm run server:truckflow\" \"npm run dev\"",
     "dev:live": "pnpm run seed:live && pnpm run dev",
     "seed:live": "cd simulador && npm run simulate -- --scenario=live --reset && npm run simulate -- --scenario=live",
     "seed:march_full": "node simulador/scripts/seed-march-full.cjs",
@@ -40,6 +42,9 @@
     "@types/three": "^0.183.1",
     "@vitejs/plugin-react": "^4.3.3",
     "autoprefixer": "^10.4.20",
+    "concurrently": "^9.2.1",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
     "typescript": "~5.6.2",

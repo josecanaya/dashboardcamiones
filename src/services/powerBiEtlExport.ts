@@ -96,7 +96,7 @@ function describeCleanAlert(nav: NormalizedRealAlertView): string {
   return [...new Set(parts)].join(' | ')
 }
 
-export const POWER_BI_ETL_SCHEMA_VERSION = '2'
+export const POWER_BI_ETL_SCHEMA_VERSION = '3'
 
 export const POWER_BI_ETL_FILENAMES = {
   raw_events_api: 'raw_events_api.csv',
@@ -305,6 +305,11 @@ export const POWER_BI_CSV_HEADERS = {
     'clean_layer_events_with_related_alert_tagged_count',
     'clean_layer_journeys_with_related_alert_tagged_count',
     'dataset_reconstructed_journey_count',
+    'source_mode',
+    'local_folder',
+    'local_start_date',
+    'local_end_date',
+    'local_days_loaded',
   ],
 } as const
 
@@ -406,6 +411,15 @@ const CLEAN_RULES_META = JSON.stringify({
   keep_preliminary_valid: true,
 })
 
+/** Meta opcional cuando el dataset proviene de JSON locales (`data/truckflow`). */
+export type CommitteeLocalFilesMeta = {
+  source_mode: 'local_files'
+  local_folder: string
+  start_date: string
+  end_date: string
+  days_loaded: number
+}
+
 /** Entrada compartida entre export completo y export mínimo comité (mismo dataset cargado en UI). */
 export type CommitteePowerBiExportInput = {
   apiBaseUrl: string
@@ -419,6 +433,8 @@ export type CommitteePowerBiExportInput = {
   eventsRawRicardone: RealJourneyEventDto[]
   alertsRaw: RealAlertDto[]
   committee: CommitteePipelineResult
+  /** Si está definido, `etl_summary` agrega columnas de modo archivos locales (schema v3+). */
+  localFilesMeta?: CommitteeLocalFilesMeta | null
 }
 
 /** Export liviano para comité (mismos datos que segmented + aligned). No usa journeyMeta/raw del input completo. */
@@ -724,6 +740,15 @@ export function buildCommitteePowerBiEtlExport(input: CommitteePowerBiExportInpu
     String(cleanDs.summary.journeysWithAlertCount),
     String(cleanDs.summary.rawJourneyCount),
   ]
+
+  const lm = input.localFilesMeta
+  summaryRow.push(
+    lm?.source_mode ?? 'api_direct',
+    lm?.local_folder ?? '',
+    lm?.start_date ?? '',
+    lm?.end_date ?? '',
+    lm ? String(lm.days_loaded) : ''
+  )
 
   return [
     { filename: POWER_BI_ETL_FILENAMES.raw_events_api, csv: toCsv([...H.raw_events_api], rawEventRows) },

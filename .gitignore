@@ -31,3 +31,6 @@ Thumbs.db
 # Datos generados por simulador (se regeneran con simulator:reset)
 public/mock-data/live/
 simulador/.runtime/
+
+# Extracción local Truckflow (JSON por día)
+/data/truckflow/

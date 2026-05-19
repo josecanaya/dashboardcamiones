@@ -189,7 +189,9 @@ function applyTemporalSegmentation(
       orphansNoJourneyUid.push(ev)
       continue
     }
-    byUid.set(uid, [...(byUid.get(uid) ?? []), ev])
+    const bucket = byUid.get(uid)
+    if (bucket) bucket.push(ev)
+    else byUid.set(uid, [ev])
   }
 
   const outEvents: RealJourneyEventDto[] = []
@@ -279,7 +281,13 @@ function applyTemporalSegmentation(
 }
 
 function alignAlertsToSegments(operationalAlerts: RealAlertDto[], metaList: CommitteeJourneyMeta[]): RealAlertDto[] {
-  const segments = [...metaList].sort((a, b) => a.startedAt.localeCompare(b.startedAt))
+  /** Evita O(alertas × segmentos totales): solo candidatos del mismo journey fuente. */
+  const segmentsBySourceJourney = new Map<string, CommitteeJourneyMeta[]>()
+  for (const m of metaList) {
+    const arr = segmentsBySourceJourney.get(m.sourceJourneyUid)
+    if (arr) arr.push(m)
+    else segmentsBySourceJourney.set(m.sourceJourneyUid, [m])
+  }
   const out: RealAlertDto[] = []
   const seen = new Set<string>()
   let invalidTsSeq = 0
@@ -288,14 +296,16 @@ function alignAlertsToSegments(operationalAlerts: RealAlertDto[], metaList: Comm
     const ta = alertTimeMs(alert)
     let matched: CommitteeJourneyMeta | null = null
     if (ju) {
-      for (const m of segments) {
-        if (m.sourceJourneyUid !== ju) continue
-        const s = eventTimeMs(m.startedAt)
-        const e = eventTimeMs(m.endedAt)
-        if (!Number.isFinite(ta) || !Number.isFinite(s) || !Number.isFinite(e)) continue
-        if (ta >= s && ta <= e) {
-          matched = m
-          break
+      const candidates = segmentsBySourceJourney.get(ju)
+      if (candidates) {
+        for (const m of candidates) {
+          const s = eventTimeMs(m.startedAt)
+          const e = eventTimeMs(m.endedAt)
+          if (!Number.isFinite(ta) || !Number.isFinite(s) || !Number.isFinite(e)) continue
+          if (ta >= s && ta <= e) {
+            matched = m
+            break
+          }
         }
       }
     }
