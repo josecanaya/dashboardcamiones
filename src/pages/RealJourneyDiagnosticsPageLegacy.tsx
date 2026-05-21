@@ -75,7 +75,7 @@ import {
   type PowerBiCommitteeCsvKey,
   type PowerBiNamedCsv,
 } from '../services/powerBiEtlExport'
-import { COMMITTEE_ETL_LITE_MODE, COMMITTEE_ETL_LITE_MAIN_TAB_IDS } from '../config/committeeEtlLite'
+import { ETL_DEV_MODE, ETL_MAIN_TAB_IDS, ETL_PRODUCT_TAB_IDS } from '../config/committeeEtlLite'
 import { useRealTruckflowWorkspaceOptional } from '../features/real-truckflow/RealTruckflowWorkspaceContext'
 import { EtlExportTab } from '../features/real-truckflow/tabs/EtlExportTab'
 
@@ -361,7 +361,7 @@ export function RealJourneyDiagnosticsPageLegacy() {
   const [includeInvalidPlateDiagnostics, setIncludeInvalidPlateDiagnostics] = useState(false)
   const [depurationScopeFilter, setDepurationScopeFilter] =
     useState<OperationalJourneyScopeFilter>('all')
-  const [mainTab, setMainTab] = useState<RealDataMainTab>(COMMITTEE_ETL_LITE_MODE ? 'extraccion_datos' : 'eventos')
+  const [mainTab, setMainTab] = useState<RealDataMainTab>('extraccion_datos')
   const [showExcludedRearEvents, setShowExcludedRearEvents] = useState(false)
   const [showExcludedRearAlerts, setShowExcludedRearAlerts] = useState(false)
   const [drawerCircuitCode, setDrawerCircuitCode] = useState<string | null>(null)
@@ -898,17 +898,13 @@ export function RealJourneyDiagnosticsPageLegacy() {
 
   useEffect(() => {
     if (journeyQuickFilter !== 'inc_prelim_grouped') return
-    if (COMMITTEE_ETL_LITE_MODE) {
-      setMainTab('transform_etl')
-      return
-    }
-    setMainTab('incompletos')
+    setMainTab('transform_etl')
+    return
   }, [journeyQuickFilter])
 
   useEffect(() => {
-    if (!COMMITTEE_ETL_LITE_MODE) return
-    const allowed = new Set<string>(COMMITTEE_ETL_LITE_MAIN_TAB_IDS)
-    if (!allowed.has(mainTab)) setMainTab(COMMITTEE_ETL_LITE_MAIN_TAB_IDS[0])
+    const allowed = new Set<string>(ETL_DEV_MODE ? ETL_MAIN_TAB_IDS : ETL_PRODUCT_TAB_IDS)
+    if (!allowed.has(mainTab)) setMainTab(ETL_PRODUCT_TAB_IDS[0])
   }, [mainTab])
 
   const journeysBatch = useMemo(() => reconstructRealJourneys(events), [events])
@@ -2860,7 +2856,7 @@ export function RealJourneyDiagnosticsPageLegacy() {
       committeeReviewBarItems={committeeReviewBarItems}
       committeeLprBarItems={committeeLprBarItems}
       exportCommitteeDataset={exportCommitteeDataset}
-      hideLegacyPeriodFilters={unifiedPeriod || COMMITTEE_ETL_LITE_MODE}
+      hideLegacyPeriodFilters={unifiedPeriod || true}
       renderEtlExportTab={unifiedPeriod ? () => <EtlExportTab /> : undefined}
     />
   )

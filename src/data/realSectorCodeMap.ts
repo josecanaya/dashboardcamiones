@@ -56,6 +56,11 @@ export const REAL_SECTOR_CODE_MAP: Record<string, RealSectorMappingEntry> = {
     logicalSector: 'S9',
     label: 'Volcable 2 Ricardone',
   },
+  RICARDONE_VOLCABLE: {
+    siteId: 'ricardone',
+    logicalSector: 'S9',
+    label: 'Volcable Ricardone',
+  },
   RICARDONE_CELDA_16: {
     siteId: 'ricardone',
     logicalSector: 'S9',

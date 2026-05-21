@@ -1,7 +1,12 @@
+import {
+  isEtlRearCameraDevice,
+  listEtlRearDeviceCodes,
+} from '../features/real-truckflow/etlWorkbench/etlRearDevices'
 import type { RealJourneyEventDto } from './realJourneyEvents.types'
 import type { RealAlertDto } from './realTruckflowApi'
 
-export const EXCLUDED_REAR_DEVICE_CODES = ['RicEgrCamTraser', 'RicIngCamTrasera', 'RicPreIngInTr'] as const
+/** Fuente única: misma lista que el pipeline ETL (`etlRearDevices.ts`). */
+export const EXCLUDED_REAR_DEVICE_CODES = listEtlRearDeviceCodes()
 export const EXCLUDED_INGRESS_ROUTE_ALERT_SECTORS = ['RICARDONE_INGRESO_CAMIONES', 'RICARDONE_PREINGRESO'] as const
 export const EXCLUDED_INGRESS_ROUTE_ALERT_CODES = ['INVALID_ROUTE', 'INVALID_START_JOURNEY'] as const
 export const EXCLUDED_INGRESS_ROUTE_ALERT_DEVICE_CODES = [
@@ -12,7 +17,6 @@ export const EXCLUDED_INGRESS_ROUTE_ALERT_DEVICE_CODES = [
   'RicPreIngInTr',
 ] as const
 
-const EXCLUDED_REAR_DEVICE_CODE_SET = new Set(EXCLUDED_REAR_DEVICE_CODES.map((d) => d.toUpperCase()))
 const EXCLUDED_INGRESS_ROUTE_ALERT_SECTOR_SET = new Set<string>(EXCLUDED_INGRESS_ROUTE_ALERT_SECTORS)
 const EXCLUDED_INGRESS_ROUTE_ALERT_CODE_SET = new Set<string>(EXCLUDED_INGRESS_ROUTE_ALERT_CODES)
 const EXCLUDED_INGRESS_ROUTE_ALERT_DEVICE_CODE_SET = new Set(
@@ -61,7 +65,7 @@ function parsePayload(payload: unknown): Record<string, unknown> {
 }
 
 export function isExcludedRearDeviceCode(deviceCode: unknown): boolean {
-  return EXCLUDED_REAR_DEVICE_CODE_SET.has(normalizeDeviceCode(deviceCode))
+  return isEtlRearCameraDevice(deviceCode)
 }
 
 export function getAlertDeviceCodeForRearFilter(alert: RealAlertDto): string {

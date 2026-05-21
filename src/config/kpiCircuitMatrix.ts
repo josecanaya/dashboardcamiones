@@ -95,6 +95,22 @@ function collectLegacyBases(
   return bases
 }
 
+/** Código matriz del viaje (R7, R5_R6, …) o legacy A7/B3. */
+export function tripMatrixOrCatalogCode(trip: HistoricalTrip): string {
+  return (trip.catalogCode ?? trip.circuitoFinal ?? '').trim().toUpperCase()
+}
+
+function tripMatchesMatrixCodeList(tripCode: string, codes: string[]): boolean {
+  if (!tripCode) return false
+  const normalizedCodes = codes.map((c) => c.toUpperCase())
+  if (normalizedCodes.includes(tripCode)) return true
+  if (tripCode.includes('_')) {
+    const parts = tripCode.split('_').filter((p) => /^R\d+$/.test(p) || /^SL\d+$/.test(p))
+    if (parts.some((p) => normalizedCodes.includes(p))) return true
+  }
+  return false
+}
+
 export function tripMatchesKpiMatrixFilter(
   trip: HistoricalTrip,
   siteId: SiteId,
@@ -106,11 +122,29 @@ export function tripMatchesKpiMatrixFilter(
   const plant = siteId
   const codes =
     matrixCode != null ? [matrixCode] : MATRIX_CODES_BY_PLANT_OP[plant][operation]
+  const tripCode = tripMatrixOrCatalogCode(trip)
+  if (tripMatchesMatrixCodeList(tripCode, codes)) return true
   const allowed = collectLegacyBases(plant, codes)
-  if (allowed.size === 0) return true
-  const raw = trip.catalogCode ?? trip.circuitoFinal ?? ''
-  const base = getCodigoBase(raw).toUpperCase()
+  if (allowed.size === 0) return matrixCode == null
+  const base = getCodigoBase(trip.circuitoFinal ?? '').toUpperCase()
   return allowed.has(base)
+}
+
+/** Circuitos presentes en datos Truckflow (p. ej. R5_R6) no listados en la matriz fija. */
+export function extraMatrixCodesFromTrips(trips: HistoricalTrip[], siteId: SiteId): string[] {
+  if (!supportsKpiCircuitMatrix(siteId)) return []
+  const standard = new Set<string>()
+  for (const op of Object.keys(MATRIX_CODES_BY_PLANT_OP[siteId]) as KpiOperationKind[]) {
+    for (const c of MATRIX_CODES_BY_PLANT_OP[siteId][op]) standard.add(c)
+  }
+  const seen = new Set<string>()
+  for (const t of trips) {
+    if (t.siteId !== siteId) continue
+    const code = tripMatrixOrCatalogCode(t)
+    if (!code || standard.has(code)) continue
+    seen.add(code)
+  }
+  return [...seen].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
 }
 
 /** Mantiene todos los viajes de otras plantas; en `focusedSiteId` aplica matriz operación/circuito. */

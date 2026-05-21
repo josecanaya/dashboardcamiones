@@ -9,11 +9,15 @@ import {
 } from './powerBiCommitteeExecutive'
 import { ETL_TRANSFORM_RULES_VERSION } from './etlTransformPipeline'
 import type { EtlTransformOutput } from './etlTransformPipeline'
+import { OPERATIONAL_ALERTS_CSV_COLUMNS } from './etlOperationalAlertMatch'
+import { POWER_BI_PRODUCT_FILES } from '../../../config/committeeEtlLite'
 
 export const POWER_BI_STABLE_FILES = {
   committee_summary: 'pb_committee_summary.csv',
   final_circuits: 'pb_final_circuits.csv',
   camera_committee_status: 'pb_camera_committee_status.csv',
+  camera_lpr_analysis: 'pb_camera_lpr_analysis.csv',
+  alerts_operational: 'pb_alerts_operational.csv',
   circuit_coverage: 'pb_circuit_coverage.csv',
   dss_vs_truckflow: 'pb_dss_vs_truckflow.csv',
   transform_summary: 'pb_transform_summary.csv',
@@ -28,6 +32,9 @@ export const POWER_BI_STABLE_FILES = {
   manifest: 'pb_load_manifest.json',
 } as const
 
+/** Archivos que el comité / Power BI debe consumir (ver ETL_POWER_BI_CONTRACT.md). */
+export { POWER_BI_PRODUCT_FILES }
+
 export type { DssReferenceMetrics } from './powerBiCommitteeExecutive'
 
 export type PowerBiStableFileKey = keyof typeof POWER_BI_STABLE_FILES
@@ -41,6 +48,7 @@ export type TransformDayFileKind =
   | 'front_alerts'
   | 'rear_events'
   | 'rear_alerts'
+  | 'alerts_operational'
   | 'transform_summary'
 
 const SOURCE_FILE_PATTERNS: Record<TransformDayFileKind, string[]> = {
@@ -50,6 +58,7 @@ const SOURCE_FILE_PATTERNS: Record<TransformDayFileKind, string[]> = {
   front_alerts: ['front_alerts.csv'],
   rear_events: ['rear_events.csv'],
   rear_alerts: ['rear_alerts.csv'],
+  alerts_operational: ['alerts_operational.csv'],
   transform_summary: ['transform_summary.csv'],
 }
 
@@ -60,6 +69,7 @@ const TRANSFORM_CSV_KEY_MAP: Record<TransformDayFileKind, keyof EtlTransformOutp
   front_alerts: 'front_alerts',
   rear_events: 'rear_events',
   rear_alerts: 'rear_alerts',
+  alerts_operational: 'alerts_operational',
   transform_summary: 'transform_summary',
 }
 
@@ -232,8 +242,64 @@ export function mergeLoadedDays(
 }
 
 function filterDaysInPeriod(days: LoadedTransformDay[], start: string, end: string): LoadedTransformDay[] {
-  const allowed = new Set(daysInclusive(start, end))
-  return days.filter((d) => d.sourceDay === 'unknown' || allowed.has(d.sourceDay))
+  return days.filter((d) => sourceDayMatchesPeriod(d.sourceDay, start, end))
+}
+
+/** Acepta día simple, rango `YYYY-MM-DD_YYYY-MM-DD` (transform en memoria) o `unknown`. */
+export function sourceDayMatchesPeriod(
+  sourceDay: string,
+  periodStart: string,
+  periodEnd: string
+): boolean {
+  if (sourceDay === 'unknown') return true
+  let allowed: Set<string>
+  try {
+    allowed = new Set(daysInclusive(periodStart, periodEnd))
+  } catch {
+    return false
+  }
+  if (allowed.has(sourceDay)) return true
+
+  const rangeMatch = /^(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})$/.exec(sourceDay)
+  if (rangeMatch) {
+    const [, packStart, packEnd] = rangeMatch
+    try {
+      const packDays = daysInclusive(packStart, packEnd)
+      return packDays.some((d) => allowed.has(d))
+    } catch {
+      return false
+    }
+  }
+  return false
+}
+
+/** Clave de paquete para transform en memoria según transform_summary. */
+export function resolveTransformPackSourceDay(tr: EtlTransformOutput): string {
+  const summary = tr.csv.transform_summary
+  if (summary?.trim()) {
+    const { rows } = parseCsvToRecords(summary)
+    const r = rows[0]
+    const dm = String(r?.date_min ?? '').trim()
+    const dx = String(r?.date_max ?? '').trim()
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dm)) {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dx) && dx !== dm) return `${dm}_${dx}`
+      return dm
+    }
+  }
+  return 'unknown'
+}
+
+export function transformPeriodFromSummary(tr: EtlTransformOutput): { from: string; to: string } | null {
+  const summary = tr.csv.transform_summary
+  if (!summary?.trim()) return null
+  const { rows } = parseCsvToRecords(summary)
+  const r = rows[0]
+  if (!r) return null
+  const from = String(r.date_min ?? '').trim()
+  const toRaw = String(r.date_max ?? '').trim()
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(from)) return null
+  const to = /^\d{4}-\d{2}-\d{2}$/.test(toRaw) ? toRaw : from
+  return { from, to }
 }
 
 function dedupeByKey(rows: Record<string, string>[], keyFn: (r: Record<string, string>) => string): Record<string, string>[] {
@@ -290,6 +356,11 @@ function numVal(v: string | undefined): number {
 function ratioOrNull(num: number, den: number): number | null {
   if (den <= 0) return null
   return Math.round((num / den) * 10000) / 10000
+}
+
+function isLprMalfunctionAlertRow(r: Record<string, string>): boolean {
+  const code = (rowGet(r, 'alertCode', 'alert_code') ?? '').trim().toUpperCase()
+  return code === 'LPR_MALFUNCTION'
 }
 
 function buildFolderName(group: LoadGroupType, start: string, end: string): string {
@@ -585,6 +656,41 @@ export function consolidatePowerBiLoad(input: {
   const pb_rear_events = recordsToCsvFromRows(reHeaders.length ? reHeaders : ['id'], reDeduped)
   const pb_front_alerts = recordsToCsvFromRows(faHeaders.length ? faHeaders : ['id'], faDeduped)
   const pb_rear_alerts = recordsToCsvFromRows(raHeaders.length ? raHeaders : ['id'], raDeduped)
+  const faOperational = faDeduped.filter((r) => !isLprMalfunctionAlertRow(r))
+  const aoFromTransform: Record<string, string>[] = []
+  let aoHeaders: string[] = [...OPERATIONAL_ALERTS_CSV_COLUMNS]
+  for (const dayPack of filtered) {
+    const ao = dayPack.files.alerts_operational
+    if (!ao) continue
+    const parsed = parseCsvToRecords(ao)
+    aoHeaders = unionHeaders(aoHeaders, [
+      ...parsed.headers,
+      'source_day',
+      'load_period_start',
+      'load_period_end',
+    ])
+    aoFromTransform.push(
+      ...appendLoadMeta(parsed.rows, {
+        source_day: dayPack.sourceDay,
+        load_period_start: periodStart,
+        load_period_end: periodEnd,
+        load_generated_at: loadGeneratedAt,
+        load_group_type: input.loadGroupType,
+        source_file: dayPack.sourcePaths?.alerts_operational ?? 'alerts_operational.csv',
+      })
+    )
+  }
+  const aoDeduped =
+    aoFromTransform.length ?
+      dedupeByKey(aoFromTransform, (r) =>
+        [rowGet(r, 'alertId', 'id'), rowGet(r, 'matchedJourneyUid'), rowGet(r, 'createdAt')].join('|')
+      )
+    : faOperational
+  const pb_alerts_operational =
+    aoFromTransform.length ?
+      recordsToCsvFromRows(aoHeaders.length ? aoHeaders : [...OPERATIONAL_ALERTS_CSV_COLUMNS], aoDeduped)
+    : recordsToCsvFromRows(faHeaders.length ? faHeaders : ['id'], faOperational)
+  const pb_camera_lpr_analysis = pb_camera
 
   const outputFolder = `data/powerbi/${buildFolderName(input.loadGroupType, periodStart, periodEnd)}/`
 
@@ -600,6 +706,8 @@ export function consolidatePowerBiLoad(input: {
     committee_summary: executivePack.rowCounts.committee_summary,
     final_circuits: finalProjected.rows.length,
     camera_committee_status: executivePack.rowCounts.camera_committee_status,
+    camera_lpr_analysis: camDeduped.length,
+    alerts_operational: aoDeduped.length,
     circuit_coverage: executivePack.rowCounts.circuit_coverage,
     dss_vs_truckflow: executivePack.rowCounts.dss_vs_truckflow,
     transform_summary: summaryAll.length,
@@ -624,19 +732,11 @@ export function consolidatePowerBiLoad(input: {
     source_days: sourceDays,
     output_folder: outputFolder,
     output_files: Object.values(POWER_BI_STABLE_FILES),
-    executive_files: [
-      POWER_BI_STABLE_FILES.committee_summary,
-      POWER_BI_STABLE_FILES.final_circuits,
-      POWER_BI_STABLE_FILES.camera_committee_status,
-      POWER_BI_STABLE_FILES.circuit_coverage,
-      POWER_BI_STABLE_FILES.dss_vs_truckflow,
-    ],
-    technical_detail_files: [
-      POWER_BI_STABLE_FILES.transform_summary,
-      POWER_BI_STABLE_FILES.camera_status,
-      POWER_BI_STABLE_FILES.front_events,
-      POWER_BI_STABLE_FILES.rear_events,
-    ],
+    product_files: [...POWER_BI_PRODUCT_FILES],
+    executive_files: [...POWER_BI_PRODUCT_FILES],
+    technical_detail_files: (Object.values(POWER_BI_STABLE_FILES) as string[]).filter(
+      (f) => !(POWER_BI_PRODUCT_FILES as readonly string[]).includes(f)
+    ),
     total_rows_by_file: Object.fromEntries(
       (Object.keys(POWER_BI_STABLE_FILES) as PowerBiStableFileKey[])
         .filter((k) => k !== 'manifest')
@@ -649,6 +749,8 @@ export function consolidatePowerBiLoad(input: {
     committee_summary: executivePack.csv.committee_summary,
     final_circuits: pb_final_circuits,
     camera_committee_status: executivePack.csv.camera_committee_status,
+    camera_lpr_analysis: pb_camera_lpr_analysis,
+    alerts_operational: pb_alerts_operational,
     circuit_coverage: executivePack.csv.circuit_coverage,
     dss_vs_truckflow: executivePack.csv.dss_vs_truckflow,
     transform_summary: summaryCsv,
@@ -696,16 +798,18 @@ export function buildPowerBiZipName(periodStart: string, periodEnd: string): str
   return `powerbi_semana_${periodStart}_${periodEnd}.zip`
 }
 
-export function zipPowerBiConsolidated(out: PowerBiConsolidatedOutput): Uint8Array {
+export function zipPowerBiConsolidated(out: PowerBiConsolidatedOutput, productOnly = true): Uint8Array {
   const map: Record<string, Uint8Array> = {}
   for (const key of Object.keys(POWER_BI_STABLE_FILES) as PowerBiStableFileKey[]) {
-    map[POWER_BI_STABLE_FILES[key]] = strToU8(out.files[key])
+    const filename = POWER_BI_STABLE_FILES[key]
+    if (productOnly && !(POWER_BI_PRODUCT_FILES as readonly string[]).includes(filename)) continue
+    map[filename] = strToU8(out.files[key])
   }
   return zipSync(map, { level: 0 })
 }
 
-export function triggerPowerBiZipDownload(out: PowerBiConsolidatedOutput): void {
-  const zipped = zipPowerBiConsolidated(out)
+export function triggerPowerBiZipDownload(out: PowerBiConsolidatedOutput, productOnly = true): void {
+  const zipped = zipPowerBiConsolidated(out, productOnly)
   const blob = new Blob([zipped], { type: 'application/zip' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')

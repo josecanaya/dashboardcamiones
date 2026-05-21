@@ -21,6 +21,11 @@ export type FinalCircuitStatus =
   | 'incompleto_revision'
   | 'descartado'
 
+/** Taxonomía ejecutiva para comité (UI productiva). */
+export type ExecutiveBucket = 'COMPLETO' | 'INCOMPLETO' | 'ANOMALO' | 'DEDUCIDO'
+
+export type ExecutiveAnomalyReason = 'ANOMALIA_NO_RESPETA_SECUENCIA' | 'SCORE_BAJO' | null
+
 const RIC_B2_EGRESO_NORM = 'ricb2egreso'
 
 const LOGICAL_LABEL_ES: Record<string, string> = {
@@ -269,6 +274,14 @@ export function resolveFinalStatus(input: {
 
   if (duplicateSeverity === 'severe' || j.eventCount < 1) return 'descartado'
 
+  /** ≤2 lecturas frontales → incompleto (no anomalía por secuencia). */
+  if (eventCountFront <= 2) return 'incompleto_revision'
+
+  /** Eventos suficientes pero secuencia ilógica → revisión (bucket ANOMALO en capa ejecutiva). */
+  if (eventCountFront > 2 && !sequenceCoherent && (hasOperationalEntry || hasOperationalExit)) {
+    return 'incompleto_revision'
+  }
+
   if (
     hasOperationalEntry &&
     hasOperationalExit &&
@@ -291,10 +304,85 @@ export function resolveFinalStatus(input: {
     return 'circuito_probable'
   }
 
-  if (eventCountFront >= 2 && rel < 50) return 'incompleto_revision'
-  if (eventCountFront >= 2) return 'incompleto_revision'
+  if (eventCountFront > 2 && rel < 50) return 'incompleto_revision'
 
   return 'incompleto_revision'
+}
+
+/** Bucket ejecutivo para comité — capa sobre `final_status` sin romper CSV legacy. */
+export function resolveExecutiveBucket(input: {
+  finalStatus: FinalCircuitStatus
+  frontEventCount: number
+  reliabilityScore: number
+  sequenceCoherent: boolean
+  hasOperationalEntry: boolean
+  hasOperationalExit: boolean
+  strong: boolean
+}): { bucket: ExecutiveBucket; anomalyReason: ExecutiveAnomalyReason } {
+  const {
+    finalStatus,
+    frontEventCount,
+    reliabilityScore,
+    sequenceCoherent,
+    hasOperationalEntry,
+    hasOperationalExit,
+    strong,
+  } = input
+
+  if (finalStatus === 'descartado') {
+    return { bucket: 'INCOMPLETO', anomalyReason: null }
+  }
+
+  if (frontEventCount <= 2) {
+    return { bucket: 'INCOMPLETO', anomalyReason: null }
+  }
+
+  if (
+    frontEventCount > 2 &&
+    !sequenceCoherent &&
+    (hasOperationalEntry || hasOperationalExit || reliabilityScore >= 30)
+  ) {
+    return { bucket: 'ANOMALO', anomalyReason: 'ANOMALIA_NO_RESPETA_SECUENCIA' }
+  }
+
+  if (frontEventCount > 2 && reliabilityScore < 50) {
+    return { bucket: 'ANOMALO', anomalyReason: 'SCORE_BAJO' }
+  }
+
+  if (finalStatus === 'circuito_completo') {
+    return { bucket: 'COMPLETO', anomalyReason: null }
+  }
+
+  if (
+    finalStatus === 'circuito_probable' ||
+    finalStatus === 'circuito_probable_sin_ingreso' ||
+    finalStatus === 'circuito_probable_sin_egreso'
+  ) {
+    if (reliabilityScore >= 50 || strong) {
+      return { bucket: 'DEDUCIDO', anomalyReason: null }
+    }
+  }
+
+  if (finalStatus === 'incompleto_revision') {
+    return frontEventCount > 2 ?
+        { bucket: 'ANOMALO', anomalyReason: 'SCORE_BAJO' }
+      : { bucket: 'INCOMPLETO', anomalyReason: null }
+  }
+
+  return { bucket: 'INCOMPLETO', anomalyReason: null }
+}
+
+export function executiveBucketLabel(bucket: ExecutiveBucket): string {
+  switch (bucket) {
+    case 'COMPLETO':
+      return 'Completo'
+    case 'INCOMPLETO':
+      return 'Incompleto'
+    case 'ANOMALO':
+      return 'Anómalo'
+    case 'DEDUCIDO':
+      return 'Deducido'
+  }
 }
 
 export function finalStatusLabel(status: FinalCircuitStatus): string {

@@ -1,342 +1,183 @@
-import { useCallback, useEffect, useMemo, useRef, useState, memo } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useSite } from '../../context/SiteContext'
-import type { SiteId } from '../../domain/sites'
+import { REAL_TRUCKFLOW_BASE_URL } from '../../services/realTruckflowApi'
 import {
-  getCatalogSectorCodesForLiveMonitor,
-  getExpectedDevicesForLiveSector,
-} from '../../data/liveMonitorSectorCatalog'
-import { lookupRealSectorCode } from '../../data/realSectorCodeMap'
-import { normalizePlate } from '../../services/argentinaPlate'
-import { normalizeRealAlertForView, type NormalizedRealAlertView } from '../../services/realAlertsInspector'
+  fmtShort,
+  getEventLiveInstantIso,
+  parseLiveMillis,
+  resolveLiveUiWindow,
+  type LiveTimeMode,
+  type LiveUiWindow,
+} from '../../services/live/liveEventTime'
+import {
+  buildLiveCameraRow,
+  buildLiveDetections,
+  buildLiveSectorSummary,
+  filterLiveAlertsForView,
+  isLprMalfunctionAlert,
+  type LiveDetectionKind,
+  type LiveDetectionRow,
+} from '../../services/live/liveEventAlertMatch'
+import {
+  buildLiveCameraExportPayload,
+  downloadTextFile,
+  liveCameraExportCsv,
+  liveCameraExportJson,
+} from '../../services/live/liveExport'
+import {
+  entryDevices,
+  entryKey,
+  entryLabel,
+  entrySectorCodes,
+  findLiveSectorEntry,
+  getLiveSectorEntries,
+  sectorDisplayName,
+} from '../../services/live/liveOperationalCatalog'
+import {
+  fetchLiveTruckflowFeed,
+  filterAlertsByPlant,
+  filterEventsByPlant,
+  resolveLiveFetchOrigin,
+} from '../../services/live/liveTruckflowFeed'
 import type { RealJourneyEventDto } from '../../services/realJourneyEvents.types'
-import { inferSiteIdFromSectorCode } from '../../services/realJourneyEventsMapper'
-import {
-  fetchAlerts,
-  fetchJourneyEvents,
-  REAL_TRUCKFLOW_BASE_URL,
-  resolveRealTruckflowApiOrigin,
-  type RealTruckflowQueryParams,
-} from '../../services/realTruckflowApi'
-import {
-  buildCameraDiagnostics,
-  buildOperationalTimeline,
-  buildSectorStatus,
-  evaluateManualObservation,
-  exportCameraDiagnosticCsv,
-  exportCameraDiagnosticJson,
-  getEventOperationalInstantIso,
-  isValidObservedPlate,
-  VEHICLE_TYPE_LABELS,
-  type CameraDiagnostics,
-  type LiveSectorStatus,
-  type ManualObservation,
-  type OperationalTimelineKind,
-  type VehicleType,
-} from '../../services/liveCameraDiagnostics'
+import type { NormalizedRealAlertView } from '../../services/realAlertsInspector'
 
-const MATCH_WINDOW_MS = 20_000
 const AUTO_REFRESH_MS = 30_000
 
-/** Ventana deslizante para “en vivo” sin selectores de fecha/hora en la barra. */
-const LIVE_ROLLING_WINDOW_MS = 60 * 60 * 1000
+type LiveDetailTab = 'actividad' | 'eventos' | 'alertas' | 'lprm'
 
-/**
- * Cuánto pedir hacia atrás en la API respecto del fin de la ventana UI.
- * Antes se pedía desde 00:00 del día → mismo día con mucho tráfico = JSON enorme + parse lento.
- * Pedimos el máximo entre “inicio del día calendario” y este lookback para seguir cubriendo
- * timestamps desfasados sin traer toda la madrugada si ya es tarde en el día.
- */
-const LIVE_API_LOOKBACK_MS = 6 * 60 * 60 * 1000
-
-function getRollingLiveWindow(): { start: Date; end: Date } {
-  const end = new Date()
-  const start = new Date(end.getTime() - LIVE_ROLLING_WINDOW_MS)
-  return { start, end }
+type LiveTableColumn<T> = {
+  id: string
+  header: string
+  className?: string
+  cell: (row: T) => ReactNode
 }
 
-function fmtShort(iso: string): string {
-  if (!iso) return '—'
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return iso
-  return d.toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'medium' })
+function truncateMiddle(text: string, max = 14): string {
+  const t = text.trim()
+  if (t.length <= max) return t
+  const head = Math.ceil((max - 1) / 2)
+  const tail = Math.floor((max - 1) / 2)
+  return `${t.slice(0, head)}…${t.slice(-tail)}`
 }
 
-function toIsoLocal(dt: Date): string {
-  const y = dt.getFullYear()
-  const m = String(dt.getMonth() + 1).padStart(2, '0')
-  const d = String(dt.getDate()).padStart(2, '0')
-  const hh = String(dt.getHours()).padStart(2, '0')
-  const mm = String(dt.getMinutes()).padStart(2, '0')
-  const ss = String(dt.getSeconds()).padStart(2, '0')
-  return `${y}-${m}-${d}T${hh}:${mm}:${ss}`
+function LiveScrollTable<T>({
+  rows,
+  columns,
+  rowKey,
+  emptyMessage,
+  maxHeightClass = 'max-h-[min(52vh,480px)]',
+}: {
+  rows: T[]
+  columns: LiveTableColumn<T>[]
+  rowKey: (row: T, index: number) => string
+  emptyMessage: string
+  maxHeightClass?: string
+}) {
+  if (rows.length === 0) {
+    return (
+      <div className="rounded-xl border border-dashed border-slate-700/80 bg-slate-950/30 px-4 py-10 text-center text-sm text-slate-500">
+        {emptyMessage}
+      </div>
+    )
+  }
+
+  return (
+    <div className={`overflow-auto rounded-xl border border-slate-800/90 ${maxHeightClass}`}>
+      <table className="min-w-full border-collapse text-left text-[11px]">
+        <thead className="sticky top-0 z-10 bg-[#0a0f1c] shadow-[0_1px_0_0_rgba(51,65,85,0.6)]">
+          <tr>
+            {columns.map((col) => (
+              <th
+                key={col.id}
+                className={`whitespace-nowrap px-3 py-2.5 text-[9px] font-bold uppercase tracking-wider text-slate-500 ${col.className ?? ''}`}
+              >
+                {col.header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, index) => (
+            <tr
+              key={rowKey(row, index)}
+              className="border-t border-slate-800/70 transition hover:bg-slate-900/60 odd:bg-slate-950/20"
+            >
+              {columns.map((col) => (
+                <td key={col.id} className={`px-3 py-2 align-middle text-slate-200 ${col.className ?? ''}`}>
+                  {col.cell(row)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
 }
 
-function parseMillis(iso: string): number {
-  const t = new Date(iso).getTime()
-  return Number.isNaN(t) ? NaN : t
+function alertLevelClass(level: number): string {
+  if (level >= 8) return 'text-rose-300'
+  if (level >= 5) return 'text-amber-200'
+  return 'text-slate-400'
 }
 
-function csvCell(value: unknown): string {
-  const text = String(value ?? '').replace(/"/g, '""')
-  return `"${text}"`
-}
-
-/**
- * En producción real, `/journey-event/list` a veces devuelve `occurredAt`/`recordedAt` erróneos (p. ej. año 2036)
- * mientras `createdAt` refleja cuándo se persistió. El monitor en vivo filtra por ventana local y descartaba todo.
- * Si la marca de “ocurrencia” difiere mucho de la persistencia, usamos createdAt como instante operativo.
- */
-const MAX_OCCURRED_VS_PERSISTED_DRIFT_MS = 30 * 24 * 60 * 60 * 1000
-
-function alignJourneyEventTimeForLiveView(e: RealJourneyEventDto): RealJourneyEventDto {
-  const occMs = parseMillis(e.occurredAt)
-  const anchorStr = (e.createdAt || e.modifiedAt || '').trim()
-  if (!anchorStr) return e
-  const anchMs = parseMillis(anchorStr)
-  if (Number.isNaN(occMs) || Number.isNaN(anchMs)) return e
-  if (Math.abs(occMs - anchMs) <= MAX_OCCURRED_VS_PERSISTED_DRIFT_MS) return e
-  return { ...e, occurredAt: anchorStr, recordedAt: anchorStr }
-}
-
-/**
- * Instante “de pared” para en vivo: a veces occurredAt va horas atrasado respecto a createdAt y a las alertas
- * (mismo registro). Tomamos el más reciente entre occurred/created/modified tras alinear.
- */
-function eventOperationalInstantMs(e: RealJourneyEventDto): number {
-  const a = alignJourneyEventTimeForLiveView(e)
-  const times = [
-    parseMillis(a.occurredAt),
-    parseMillis((a.createdAt || '').trim()),
-    parseMillis((a.modifiedAt || '').trim()),
-  ].filter((t) => !Number.isNaN(t))
-  return times.length ? Math.max(...times) : NaN
-}
-
-function eventOperationalInstantIso(e: RealJourneyEventDto): string {
-  const ms = eventOperationalInstantMs(e)
-  if (Number.isNaN(ms)) return (alignJourneyEventTimeForLiveView(e).occurredAt || '').trim() || '—'
-  return new Date(ms).toISOString()
-}
-
-/**
- * Rango pedido al GET journey-event/list (y alert/list): más ancho que la ventana mostrada,
- * pero sin pedir “todo el día entero” salvo que el lookback no alcance (ej. madrugada).
- */
-function liveListQueryBounds(start: Date, end: Date): { start: Date; end: Date } {
-  const apiEnd = new Date(end.getTime() + 15 * 60 * 1000)
-  const dayStart = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0, 0)
-  const rollingApiStart = new Date(end.getTime() - LIVE_API_LOOKBACK_MS)
-  const apiStart = new Date(Math.max(dayStart.getTime(), rollingApiStart.getTime()))
-  return {
-    start: apiStart,
-    end: apiEnd,
+function badgeForKind(kind: LiveDetectionKind): { label: string; className: string } {
+  switch (kind) {
+    case 'EVENTO OK':
+      return { label: 'EVENTO VÁLIDO', className: 'bg-emerald-500/20 text-emerald-300 ring-emerald-400/40' }
+    case 'SOLO ALERTA':
+      return { label: 'SOLO ALERTAS', className: 'bg-amber-500/20 text-amber-200 ring-amber-400/35' }
+    case 'EVENTO + ALERTA':
+      return { label: 'EVENTO + ALERTA', className: 'bg-cyan-500/15 text-cyan-200 ring-cyan-400/40' }
+    default:
+      return { label: 'SIN SEÑAL', className: 'bg-slate-700/40 text-slate-400 ring-slate-600/50' }
   }
 }
 
-/** Modo «día completo»: límites locales 00:00:00–23:59:59 para UI y mismo rango en la API. */
-function getCalendarDayBounds(dateStr: string): { start: Date; end: Date } | null {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr.trim())
-  if (!m) return null
-  const y = Number(m[1])
-  const mo = Number(m[2])
-  const da = Number(m[3])
-  const start = new Date(y, mo - 1, da, 0, 0, 0, 0)
-  const end = new Date(y, mo - 1, da, 23, 59, 59, 999)
-  if (start.getFullYear() !== y || start.getMonth() !== mo - 1 || start.getDate() !== da) return null
-  return { start, end }
+function sectorStatusLabel(status: string): string {
+  if (status === 'sin_datos') return 'Sin datos'
+  if (status === 'operativa') return 'Operativa'
+  if (status === 'con_alertas') return 'Con alertas'
+  if (status === 'critica') return 'Crítica'
+  return status
 }
 
-/** Holgencia hacia atrás: createdAt puede preceder unos minutos a la alerta en la misma lectura. */
-const LIVE_EVENT_TIME_SLACK_START_MS = 45 * 60 * 1000
-
-function journeyEventInUiWindow(
-  e: RealJourneyEventDto,
-  uiStartMs: number,
-  uiEndMs: number,
-  slackStartMs: number = LIVE_EVENT_TIME_SLACK_START_MS
-): boolean {
-  const lo = uiStartMs - slackStartMs
-  const hi = uiEndMs
-  const op = eventOperationalInstantMs(e)
-  if (!Number.isNaN(op) && op >= lo && op <= hi) return true
-  const a = alignJourneyEventTimeForLiveView(e)
-  const candidates = [
-    parseMillis(a.occurredAt),
-    parseMillis((a.createdAt || '').trim()),
-    parseMillis((a.modifiedAt || '').trim()),
-    parseMillis((a.recordedAt || '').trim()),
-  ].filter((t) => !Number.isNaN(t))
-  return candidates.some((t) => t >= lo && t <= hi)
+function sectorStatusClass(status: string): string {
+  if (status === 'operativa') return 'text-emerald-300 ring-emerald-500/40'
+  if (status === 'con_alertas') return 'text-amber-200 ring-amber-500/40'
+  if (status === 'critica') return 'text-rose-300 ring-rose-500/40'
+  return 'text-slate-400 ring-slate-600/50'
 }
-
-function alertInUiWindow(a: NormalizedRealAlertView, uiStartMs: number, uiEndMs: number): boolean {
-  const t = parseMillis(a.occurredAt)
-  if (Number.isNaN(t)) return false
-  return t >= uiStartMs && t <= uiEndMs
-}
-
-function sectorMatchesPlant(sectorCode: string, plant: SiteId): boolean {
-  const sid = inferSiteIdFromSectorCode(sectorCode)
-  if (plant === 'ricardone') return sid === 'ricardone'
-  if (plant === 'san_lorenzo') return sid === 'san_lorenzo'
-  if (plant === 'avellaneda') return sid === 'avellaneda'
-  return false
-}
-
-function sectorDisplayName(code: string): string {
-  const entry = lookupRealSectorCode(code)
-  const label = entry?.label?.trim()
-  const raw = code.trim()
-  return label || raw || '—'
-}
-
-type CameraAggStatus = 'sin_datos' | 'activa' | 'con_alertas' | 'critica'
-
-function computeCameraStatus(
-  eventCount: number,
-  alertCount: number,
-  alerts: NormalizedRealAlertView[]
-): CameraAggStatus {
-  if (eventCount === 0 && alertCount === 0) return 'sin_datos'
-  const critical = alerts.some((a) => {
-    const raw = a.raw as Record<string, unknown>
-    const sev = String(raw.severity ?? '').toUpperCase()
-    if (/CRITICAL|CRÍTICO|HIGH|ALTA/i.test(sev)) return true
-    return a.alertLevel >= 8
-  })
-  if (critical) return 'critica'
-  if (alertCount > 0) return 'con_alertas'
-  return 'activa'
-}
-
-export type CombinedResultKind = 'EVENTO OK' | 'SOLO ALERTA' | 'EVENTO + ALERTA' | 'SIN DATOS'
-
-export type CombinedDetectionRow = {
-  key: string
-  at: string
-  plate: string
-  tipo: string
-  eventSummary: string
-  alertSummary: string
-  resultado: CombinedResultKind
-  descripcion: string
-}
-
-function platesStrongMatch(ev: RealJourneyEventDto, al: NormalizedRealAlertView): boolean {
-  const ep = (ev.normalizedPlate || normalizePlate(ev.truckPlate || '')).trim()
-  const ap = (al.normalizedPlate || '').trim()
-  if (ep && ap && ep === ap) return true
-  const rawP = (al.rawPlate || '').trim().toUpperCase()
-  const truck = (ev.truckPlate || '').trim().toUpperCase()
-  if (rawP && truck && rawP === truck) return true
-  return false
-}
-
-function buildCombinedDetections(
-  events: RealJourneyEventDto[],
-  alerts: NormalizedRealAlertView[],
-  deviceCode: string,
-  sectorCode: string
-): CombinedDetectionRow[] {
-  const evs = events
-    .filter((e) => e.deviceCode === deviceCode && e.sectorCode === sectorCode)
-    .sort((a, b) => eventOperationalInstantMs(b) - eventOperationalInstantMs(a))
-  const als = alerts
-    .filter((a) => a.deviceCode === deviceCode && a.sectorCode === sectorCode)
-    .sort((a, b) => parseMillis(b.occurredAt) - parseMillis(a.occurredAt))
-
-  if (!evs.length && !als.length) return []
-
-  const usedAlertIds = new Set<string>()
-  const rows: CombinedDetectionRow[] = []
-
-  for (const ev of evs) {
-    const t0 = eventOperationalInstantMs(ev)
-    let best: NormalizedRealAlertView | null = null
-    let bestD = Infinity
-    for (const al of als) {
-      if (usedAlertIds.has(al.alertId)) continue
-      const t1 = parseMillis(al.occurredAt)
-      if (Number.isNaN(t0) || Number.isNaN(t1)) continue
-      const d = Math.abs(t0 - t1)
-      if (d <= MATCH_WINDOW_MS && d < bestD) {
-        bestD = d
-        best = al
-      }
-    }
-    const plate = ev.truckPlate || ev.normalizedPlate || best?.rawPlate || best?.normalizedPlate || '—'
-    if (best) {
-      usedAlertIds.add(best.alertId)
-      const strong = platesStrongMatch(ev, best)
-      rows.push({
-        key: `ev-${ev.id}-${best.alertId}`,
-        at: eventOperationalInstantIso(ev),
-        plate,
-        tipo: strong ? 'Fuerte + temporal' : 'Temporal',
-        eventSummary: ev.eventType || ev.eventCategory || 'evento',
-        alertSummary: best.alertCode || best.alertType || 'alerta',
-        resultado: 'EVENTO + ALERTA',
-        descripcion: strong ? 'Coincidencia fuerte (patente)' : 'Coincidencia temporal (cámara ±20s)',
-      })
-    } else {
-      rows.push({
-        key: `ev-${ev.id}`,
-        at: eventOperationalInstantIso(ev),
-        plate,
-        tipo: 'Evento',
-        eventSummary: ev.eventType || ev.eventCategory || 'evento',
-        alertSummary: '—',
-        resultado: 'EVENTO OK',
-        descripcion: 'Evento sin alerta cercana en esta ventana',
-      })
-    }
-  }
-
-  for (const al of als) {
-    if (usedAlertIds.has(al.alertId)) continue
-    rows.push({
-      key: `al-${al.alertId}`,
-      at: al.occurredAt,
-      plate: al.rawPlate || al.normalizedPlate || '—',
-      tipo: 'Alerta',
-      eventSummary: '—',
-      alertSummary: al.alertCode || al.alertType || 'alerta',
-      resultado: 'SOLO ALERTA',
-      descripcion: 'Alerta sin evento cercano en esta ventana',
-    })
-  }
-
-  rows.sort((a, b) => parseMillis(b.at) - parseMillis(a.at))
-  return rows
-}
-
-/** Permite pintar antes del primer fetch y reduce bloqueos junto al resto del dashboard. */
-function yieldToMainLive(): Promise<void> {
-  return new Promise((resolve) => {
-    if (typeof requestAnimationFrame !== 'undefined') {
-      requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-    } else {
-      setTimeout(resolve, 0)
-    }
-  })
-}
-
-type LiveMonitorTimeMode = 'rolling_hour' | 'calendar_day'
 
 export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
   const { siteId } = useSite()
-  const [timeMode, setTimeMode] = useState<LiveMonitorTimeMode>('rolling_hour')
+  const [timeMode, setTimeMode] = useState<LiveTimeMode>('rolling_hour')
   const [calendarDay, setCalendarDay] = useState(() => {
     const d = new Date()
-    const y = d.getFullYear()
-    const m = String(d.getMonth() + 1).padStart(2, '0')
-    const day = String(d.getDate()).padStart(2, '0')
-    return `${y}-${m}-${day}`
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
   })
+  const [dayTimeStart, setDayTimeStart] = useState('00:00')
+  const [dayTimeEnd, setDayTimeEnd] = useState('23:59')
+  const timeModeRef = useRef(timeMode)
+  const calendarDayRef = useRef(calendarDay)
+  const dayTimeStartRef = useRef(dayTimeStart)
+  const dayTimeEndRef = useRef(dayTimeEnd)
+  useEffect(() => {
+    timeModeRef.current = timeMode
+  }, [timeMode])
+  useEffect(() => {
+    calendarDayRef.current = calendarDay
+  }, [calendarDay])
+  useEffect(() => {
+    dayTimeStartRef.current = dayTimeStart
+  }, [dayTimeStart])
+  useEffect(() => {
+    dayTimeEndRef.current = dayTimeEnd
+  }, [dayTimeEnd])
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [filterPlate, setFilterPlate] = useState('')
   const [filterJourneyUuid, setFilterJourneyUuid] = useState('')
-
   const filterPlateRef = useRef(filterPlate)
   const filterJourneyUuidRef = useRef(filterJourneyUuid)
   useEffect(() => {
@@ -349,108 +190,65 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [events, setEvents] = useState<RealJourneyEventDto[]>([])
-  const [normalizedAlerts, setNormalizedAlerts] = useState<NormalizedRealAlertView[]>([])
-  const [rangeLabel, setRangeLabel] = useState('')
+  const [alerts, setAlerts] = useState<NormalizedRealAlertView[]>([])
+  const [uiWindow, setUiWindow] = useState<LiveUiWindow | null>(null)
 
-  const [selectedSectorCode, setSelectedSectorCode] = useState<string | null>(null)
+  const [selectedSectorKey, setSelectedSectorKey] = useState<string | null>(null)
   const [selectedDeviceCode, setSelectedDeviceCode] = useState<string | null>(null)
-  const [cameraFocusFull, setCameraFocusFull] = useState(false)
+  const [detailTab, setDetailTab] = useState<LiveDetailTab>('actividad')
+  /** LPR_MALFUNCTION es ruido OCR frecuente de madrugada; oculto por defecto en vista operativa. */
+  const [hideLprMalfunction, setHideLprMalfunction] = useState(true)
 
-  const [observations, setObservations] = useState<ManualObservation[]>([])
-  const [vehicleType, setVehicleType] = useState<VehicleType>('desconocido')
-  const [observedPlate, setObservedPlate] = useState('')
-  const [manualObservation, setManualObservation] = useState('')
-  const [operatorNote, setOperatorNote] = useState('')
-
-  const camerasPanelRef = useRef<HTMLDivElement | null>(null)
-  const monitorPanelRef = useRef<HTMLDivElement | null>(null)
-  const inFlightRef = useRef(false)
-
-  const apiOriginLabel = useMemo(() => resolveRealTruckflowApiOrigin(), [])
-  /** Mismo host que documenta Truckflow; en dev Vite suele ir por proxy `/journey-api` por CORS. */
+  const apiOriginLabel = useMemo(() => resolveLiveFetchOrigin(), [])
   const liveFetchOrigin = useMemo(
     () => (typeof import.meta !== 'undefined' && import.meta.env?.DEV ? undefined : REAL_TRUCKFLOW_BASE_URL),
     []
   )
 
   const refresh = useCallback(async () => {
-    if (inFlightRef.current) return
-    inFlightRef.current = true
     setLoading(true)
     setError(null)
-
-    let uiStart: Date
-    let uiEnd: Date
-    let listBounds: { start: Date; end: Date }
-    let eventSlackMs: number
-
-    if (timeMode === 'rolling_hour') {
-      const w = getRollingLiveWindow()
-      uiStart = w.start
-      uiEnd = w.end
-      listBounds = liveListQueryBounds(uiStart, uiEnd)
-      eventSlackMs = LIVE_EVENT_TIME_SLACK_START_MS
-    } else {
-      const dayBounds = getCalendarDayBounds(calendarDay)
-      if (!dayBounds) {
-        setLoading(false)
-        inFlightRef.current = false
-        setEvents([])
-        setNormalizedAlerts([])
-        setError('Fecha inválida: usá una fecha YYYY-MM-DD.')
-        setRangeLabel('')
-        return
-      }
-      uiStart = dayBounds.start
-      uiEnd = dayBounds.end
-      listBounds = { start: dayBounds.start, end: dayBounds.end }
-      /** En día completo no extendemos la ventana hacia atrás (evita mezclar lecturas del día anterior). */
-      eventSlackMs = 0
+    const mode = timeModeRef.current
+    const resolved = resolveLiveUiWindow(
+      mode,
+      calendarDayRef.current,
+      mode === 'calendar_day' ? dayTimeStartRef.current : '',
+      mode === 'calendar_day' ? dayTimeEndRef.current : ''
+    )
+    if ('error' in resolved) {
+      setEvents([])
+      setAlerts([])
+      setUiWindow(null)
+      setError(resolved.error)
+      setLoading(false)
+      return
     }
-
-    const params: RealTruckflowQueryParams = {
-      startDate: toIsoLocal(listBounds.start),
-      endDate: toIsoLocal(listBounds.end),
-    }
-    const fp = filterPlateRef.current.trim()
-    const fj = filterJourneyUuidRef.current.trim()
-    if (fp) params.plate = fp
-    if (fj) params.journeyUuid = fj
-
     try {
-      const fetchOpts = liveFetchOrigin ? { baseOrigin: liveFetchOrigin } : undefined
-      const [evts, rawAlerts] = await Promise.all([
-        fetchJourneyEvents(params, fetchOpts),
-        fetchAlerts(params, fetchOpts),
-      ])
-      const uiStartMs = uiStart.getTime()
-      const uiEndMs = uiEnd.getTime()
-      const evAligned = evts.map(alignJourneyEventTimeForLiveView)
-      const evFiltered = evAligned.filter((e) => journeyEventInUiWindow(e, uiStartMs, uiEndMs, eventSlackMs))
-      const norm = rawAlerts.map(normalizeRealAlertForView).filter((a) => alertInUiWindow(a, uiStartMs, uiEndMs))
-      setEvents(evFiltered)
-      setNormalizedAlerts(norm)
-      setRangeLabel(`${fmtShort(toIsoLocal(uiStart))} → ${fmtShort(toIsoLocal(uiEnd))}`)
+      const feed = await fetchLiveTruckflowFeed(
+        resolved,
+        {
+          plate: filterPlateRef.current.trim(),
+          journeyUuid: filterJourneyUuidRef.current.trim(),
+        },
+        liveFetchOrigin ? { baseOrigin: liveFetchOrigin } : undefined
+      )
+      setEvents(feed.events)
+      setAlerts(feed.alerts)
+      setUiWindow(feed.window)
     } catch (e) {
       setEvents([])
-      setNormalizedAlerts([])
+      setAlerts([])
+      setUiWindow(null)
       setError(e instanceof Error ? e.message : 'Error consultando datos reales')
     } finally {
       setLoading(false)
-      inFlightRef.current = false
     }
-  }, [liveFetchOrigin, timeMode, calendarDay])
+  }, [liveFetchOrigin])
 
   useEffect(() => {
-    let cancelled = false
-    void (async () => {
-      await yieldToMainLive()
-      if (!cancelled) void refresh()
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [refresh])
+    void refresh()
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- carga inicial; filtros solo con Actualizar
+  }, [])
 
   useEffect(() => {
     if (!autoRefresh || timeMode !== 'rolling_hour') return
@@ -458,460 +256,327 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
     return () => window.clearInterval(id)
   }, [autoRefresh, refresh, timeMode])
 
-  const plantFilteredEvents = useMemo(
-    () => events.filter((e) => sectorMatchesPlant(e.sectorCode, siteId)),
-    [events, siteId]
+  const plantEvents = useMemo(() => filterEventsByPlant(events, siteId), [events, siteId])
+  const plantAlerts = useMemo(() => filterAlertsByPlant(alerts, siteId), [alerts, siteId])
+  const plantAlertsForView = useMemo(
+    () => filterLiveAlertsForView(plantAlerts, hideLprMalfunction),
+    [plantAlerts, hideLprMalfunction]
   )
-  const plantFilteredAlerts = useMemo(
-    () => normalizedAlerts.filter((a) => sectorMatchesPlant(a.sectorCode, siteId)),
-    [normalizedAlerts, siteId]
+  const lprMalfunctionCount = useMemo(
+    () => plantAlerts.filter(isLprMalfunctionAlert).length,
+    [plantAlerts]
   )
 
-  const sectorsAgg = useMemo(() => {
-    const map = new Map<
-      string,
-      {
-        sectorCode: string
-        events: RealJourneyEventDto[]
-        alerts: NormalizedRealAlertView[]
-        devices: Set<string>
+  const sectorEntries = useMemo(() => getLiveSectorEntries(siteId), [siteId])
+
+  const sectorsAgg = useMemo(
+    () =>
+      sectorEntries.map((entry) =>
+        buildLiveSectorSummary(
+          entryKey(entry),
+          entryLabel(entry),
+          entrySectorCodes(entry),
+          entryDevices(entry),
+          plantEvents,
+          plantAlertsForView
+        )
+      ),
+    [sectorEntries, plantEvents, plantAlertsForView]
+  )
+
+  useEffect(() => {
+    if (selectedSectorKey !== null) return
+    if (sectorsAgg.length === 0) return
+    setSelectedSectorKey(sectorsAgg[0]!.key)
+  }, [sectorsAgg, selectedSectorKey])
+
+  const selectedEntry = useMemo(
+    () => (selectedSectorKey ? findLiveSectorEntry(siteId, selectedSectorKey) : undefined),
+    [selectedSectorKey, siteId]
+  )
+
+  const selectedSectorCodes = useMemo(
+    () => (selectedEntry ? entrySectorCodes(selectedEntry) : []),
+    [selectedEntry]
+  )
+
+  const selectedDevices = useMemo(() => {
+    if (!selectedEntry) return []
+    const fromCatalog = entryDevices(selectedEntry)
+    const seen = new Set(fromCatalog)
+    for (const e of plantEvents) {
+      if (selectedSectorCodes.includes(e.sectorCode.trim()) && e.deviceCode.trim()) {
+        seen.add(e.deviceCode.trim())
       }
-    >()
-    const addDevice = (sectorCode: string, device: string) => {
-      const d = device.trim()
-      if (!sectorCode.trim() || !d) return
-      if (!map.has(sectorCode)) map.set(sectorCode, { sectorCode, events: [], alerts: [], devices: new Set() })
-      map.get(sectorCode)!.devices.add(d)
     }
-
-    for (const e of plantFilteredEvents) {
-      const code = e.sectorCode.trim()
-      if (!code) continue
-      if (!map.has(code)) map.set(code, { sectorCode: code, events: [], alerts: [], devices: new Set() })
-      map.get(code)!.events.push(e)
-      addDevice(code, e.deviceCode)
-    }
-    for (const a of plantFilteredAlerts) {
-      const code = a.sectorCode.trim()
-      if (!code) continue
-      if (!map.has(code)) map.set(code, { sectorCode: code, events: [], alerts: [], devices: new Set() })
-      map.get(code)!.alerts.push(a)
-      addDevice(code, a.deviceCode)
-    }
-
-    for (const code of getCatalogSectorCodesForLiveMonitor(siteId)) {
-      if (!map.has(code)) map.set(code, { sectorCode: code, events: [], alerts: [], devices: new Set() })
-      for (const d of getExpectedDevicesForLiveSector(code)) {
-        addDevice(code, d)
+    for (const a of plantAlertsForView) {
+      if (selectedSectorCodes.includes((a.sectorCode || '').trim()) && a.deviceCode?.trim()) {
+        seen.add(a.deviceCode.trim())
       }
     }
-
-    const sectorKeys = [...map.keys()]
-
-    const list = sectorKeys
-      .map((code) => {
-        const bucket = map.get(code)!
-        const ec = bucket.events.length
-        const ac = bucket.alerts.length
-        const pendingValidation = observations.some((o) => o.sectorCode === code && o.result === 'pendiente')
-        const status = buildSectorStatus(ec, ac, pendingValidation, bucket.alerts)
-        return {
-          sectorCode: code,
-          label: sectorDisplayName(code),
-          eventCount: ec,
-          alertCount: ac,
-          cameraCount: bucket.devices.size,
-          status,
-          devices: bucket.devices,
-        }
-      })
-      .sort((a, b) => a.label.localeCompare(b.label))
-
-    return list
-  }, [plantFilteredEvents, plantFilteredAlerts, siteId, observations])
-
-  const selectedSectorBuckets = useMemo(() => {
-    if (!selectedSectorCode) return null
-    const ev = plantFilteredEvents.filter((e) => e.sectorCode === selectedSectorCode)
-    const al = plantFilteredAlerts.filter((a) => a.sectorCode === selectedSectorCode)
-    const devices = new Set<string>()
-    getExpectedDevicesForLiveSector(selectedSectorCode).forEach((d) => devices.add(d))
-    ev.forEach((e) => {
-      if (e.deviceCode.trim()) devices.add(e.deviceCode.trim())
-    })
-    al.forEach((a) => {
-      if (a.deviceCode.trim()) devices.add(a.deviceCode.trim())
-    })
-    const deviceList = [...devices].sort()
-    return { ev, al, deviceList }
-  }, [plantFilteredEvents, plantFilteredAlerts, selectedSectorCode])
-
-  /** Solo filas del sector seleccionado: evita O(cámaras × eventos_planta) en diagnósticos */
-  const sectorScopedEventsAlerts = useMemo(() => {
-    if (!selectedSectorCode) {
-      return { sectorEv: [] as RealJourneyEventDto[], sectorAl: [] as NormalizedRealAlertView[] }
-    }
-    const code = selectedSectorCode
-    return {
-      sectorEv: plantFilteredEvents.filter((e) => e.sectorCode === code),
-      sectorAl: plantFilteredAlerts.filter((a) => a.sectorCode === code),
-    }
-  }, [plantFilteredEvents, plantFilteredAlerts, selectedSectorCode])
+    return [...seen].sort()
+  }, [selectedEntry, selectedSectorCodes, plantEvents, plantAlertsForView])
 
   const cameraRows = useMemo(() => {
-    if (!selectedSectorBuckets || !selectedSectorCode) return []
-    const { ev, al, deviceList } = selectedSectorBuckets
-    const { sectorEv, sectorAl } = sectorScopedEventsAlerts
-    return deviceList.map((dev) => {
-      const evC = ev.filter((e) => e.deviceCode === dev)
-      const alC = al.filter((a) => a.deviceCode === dev)
-      const diagnostic = buildCameraDiagnostics(sectorEv, sectorAl, dev, selectedSectorCode)
-      const lastEv = [...evC].sort((a, b) => eventOperationalInstantMs(b) - eventOperationalInstantMs(a))[0]
-      const lastAl = [...alC].sort((a, b) => parseMillis(b.occurredAt) - parseMillis(a.occurredAt))[0]
-      const pct =
-        evC.length > 0 ? Math.min(100, Math.round((alC.length / evC.length) * 100)) : alC.length > 0 ? 100 : 0
-      const status = computeCameraStatus(evC.length, alC.length, alC)
-      const combined = buildCombinedDetections(ev, al, dev, selectedSectorCode)
-      const latest = combined[0]
-      let liveResultado: CombinedResultKind = 'SIN DATOS'
-      let displayPlate = '—'
-      let lastDetectionAt = ''
-      if (latest) {
-        liveResultado = latest.resultado
-        displayPlate = latest.plate || '—'
-        lastDetectionAt = latest.at
-      } else if (lastEv) {
-        liveResultado = 'EVENTO OK'
-        displayPlate = lastEv.truckPlate || lastEv.normalizedPlate || '—'
-        lastDetectionAt = eventOperationalInstantIso(lastEv)
-      } else if (lastAl) {
-        liveResultado = 'SOLO ALERTA'
-        displayPlate = lastAl.rawPlate || lastAl.normalizedPlate || '—'
-        lastDetectionAt = lastAl.occurredAt
-      }
-      return {
-        deviceCode: dev,
-        sectorCode: selectedSectorCode,
-        lastEventAt: lastEv ? eventOperationalInstantIso(lastEv) : '',
-        lastAlertAt: lastAl?.occurredAt ?? '',
-        eventCount: evC.length,
-        alertCount: alC.length,
-        alertPct: pct,
-        status,
-        diagnostic,
-        liveResultado,
-        displayPlate,
-        lastDetectionAt,
-      }
-    })
-  }, [
-    plantFilteredEvents,
-    plantFilteredAlerts,
-    sectorScopedEventsAlerts,
-    selectedSectorBuckets,
-    selectedSectorCode,
-  ])
-
-  const monitorEvents = useMemo(() => {
-    if (!selectedSectorCode || !selectedDeviceCode) return []
-    return plantFilteredEvents
-      .filter((e) => e.sectorCode === selectedSectorCode && e.deviceCode === selectedDeviceCode)
-      .sort((a, b) => eventOperationalInstantMs(b) - eventOperationalInstantMs(a))
-  }, [plantFilteredEvents, selectedSectorCode, selectedDeviceCode])
-
-  const monitorAlerts = useMemo(() => {
-    if (!selectedSectorCode || !selectedDeviceCode) return []
-    return plantFilteredAlerts
-      .filter((a) => a.sectorCode === selectedSectorCode && a.deviceCode === selectedDeviceCode)
-      .sort((a, b) => parseMillis(b.occurredAt) - parseMillis(a.occurredAt))
-  }, [plantFilteredAlerts, selectedSectorCode, selectedDeviceCode])
-
-  const exportEvents = useMemo(() => {
-    const selectedSector = selectedSectorCode?.trim()
-    const selectedDevice = selectedDeviceCode?.trim()
-    return plantFilteredEvents
-      .filter((e) => !selectedSector || e.sectorCode === selectedSector)
-      .filter((e) => !selectedDevice || e.deviceCode === selectedDevice)
-      .sort((a, b) => eventOperationalInstantMs(b) - eventOperationalInstantMs(a))
-  }, [plantFilteredEvents, selectedSectorCode, selectedDeviceCode])
-
-  const exportAlerts = useMemo(() => {
-    const selectedSector = selectedSectorCode?.trim()
-    const selectedDevice = selectedDeviceCode?.trim()
-    return plantFilteredAlerts
-      .filter((a) => !selectedSector || a.sectorCode === selectedSector)
-      .filter((a) => !selectedDevice || a.deviceCode === selectedDevice)
-      .sort((a, b) => parseMillis(b.occurredAt) - parseMillis(a.occurredAt))
-  }, [plantFilteredAlerts, selectedSectorCode, selectedDeviceCode])
-
-  const selectedCameraDiagnostic: CameraDiagnostics | null = useMemo(() => {
-    if (!selectedSectorCode || !selectedDeviceCode) return null
-    return buildCameraDiagnostics(plantFilteredEvents, plantFilteredAlerts, selectedDeviceCode, selectedSectorCode)
-  }, [plantFilteredEvents, plantFilteredAlerts, selectedSectorCode, selectedDeviceCode])
-
-  const operationalTimeline = useMemo(() => {
-    if (!selectedSectorCode || !selectedDeviceCode) return []
-    return buildOperationalTimeline(plantFilteredEvents, plantFilteredAlerts, selectedDeviceCode, selectedSectorCode)
-  }, [plantFilteredEvents, plantFilteredAlerts, selectedSectorCode, selectedDeviceCode])
-
-  /** Actualiza observaciones de campo según datos vigentes en ventana ±30s. */
-  useEffect(() => {
-    setObservations((prev) =>
-      prev.map((row) => evaluateManualObservation(row, plantFilteredEvents, plantFilteredAlerts))
+    if (!selectedEntry) return []
+    return selectedDevices.map((dev) =>
+      buildLiveCameraRow(plantEvents, plantAlertsForView, dev, selectedSectorCodes)
     )
-  }, [plantFilteredEvents, plantFilteredAlerts])
+  }, [selectedDevices, selectedEntry, selectedSectorCodes, plantEvents, plantAlertsForView])
 
-  const pasoCamion = () => {
-    if (!selectedSectorCode || !selectedDeviceCode) return
-    const id =
-      typeof crypto !== 'undefined' && crypto.randomUUID
-        ? crypto.randomUUID()
-        : `obs-${Date.now()}-${Math.random()}`
-    const observedAt = toIsoLocal(new Date())
-    const base: ManualObservation = {
-      id,
-      observedAt,
-      sectorCode: selectedSectorCode,
-      sectorLabel: sectorDisplayName(selectedSectorCode),
-      deviceCode: selectedDeviceCode,
-      vehicleType,
-      observedPlate: observedPlate.trim(),
-      operatorNote: operatorNote.trim(),
-      manualObservation: manualObservation.trim(),
-      result: 'pendiente',
-      linkedEventSummary: '—',
-      linkedAlertSummary: '—',
+  useEffect(() => {
+    if (cameraRows.length === 0) {
+      setSelectedDeviceCode(null)
+      return
     }
-    setObservations((prev) => [
-      evaluateManualObservation(base, plantFilteredEvents, plantFilteredAlerts),
-      ...prev,
-    ])
-  }
+    if (!selectedDeviceCode || !cameraRows.some((c) => c.deviceCode === selectedDeviceCode)) {
+      const best = [...cameraRows].sort(
+        (a, b) => b.eventCount - a.eventCount || a.deviceCode.localeCompare(b.deviceCode)
+      )[0]
+      setSelectedDeviceCode(best!.deviceCode)
+    }
+  }, [cameraRows, selectedDeviceCode])
 
-  const downloadTextFile = useCallback((fileName: string, content: string, type: string) => {
-    const blob = new Blob([content], { type })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = fileName
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }, [])
+  const selectedCameraEvents = useMemo(() => {
+    if (!selectedDeviceCode) return []
+    const codes = new Set(selectedSectorCodes)
+    return plantEvents
+      .filter((e) => e.deviceCode === selectedDeviceCode && codes.has(e.sectorCode.trim()))
+      .sort((a, b) => parseLiveMillis(getEventLiveInstantIso(b)) - parseLiveMillis(getEventLiveInstantIso(a)))
+  }, [plantEvents, selectedDeviceCode, selectedSectorCodes])
 
-  const exportSelectedDiagnostic = useCallback(
+  const selectedCameraAlerts = useMemo(() => {
+    if (!selectedDeviceCode) return []
+    const codes = new Set(selectedSectorCodes)
+    return plantAlerts
+      .filter(
+        (a) =>
+          a.deviceCode === selectedDeviceCode &&
+          codes.has((a.sectorCode || '').trim()) &&
+          !isLprMalfunctionAlert(a)
+      )
+      .sort((a, b) => parseLiveMillis(b.occurredAt) - parseLiveMillis(a.occurredAt))
+  }, [plantAlerts, selectedDeviceCode, selectedSectorCodes])
+
+  const selectedCameraLprmAlerts = useMemo(() => {
+    if (!selectedDeviceCode) return []
+    const codes = new Set(selectedSectorCodes)
+    return plantAlerts
+      .filter(
+        (a) =>
+          a.deviceCode === selectedDeviceCode &&
+          codes.has((a.sectorCode || '').trim()) &&
+          isLprMalfunctionAlert(a)
+      )
+      .sort((a, b) => parseLiveMillis(b.occurredAt) - parseLiveMillis(a.occurredAt))
+  }, [plantAlerts, selectedDeviceCode, selectedSectorCodes])
+
+  const selectedDetections = useMemo(() => {
+    if (!selectedDeviceCode) return []
+    return buildLiveDetections(plantEvents, plantAlertsForView, selectedDeviceCode, selectedSectorCodes)
+  }, [plantEvents, plantAlertsForView, selectedDeviceCode, selectedSectorCodes])
+
+  const exportScope = useMemo(() => {
+    if (!uiWindow || !selectedEntry || !selectedDeviceCode) return null
+    return {
+      siteId,
+      sectorKey: entryKey(selectedEntry),
+      sectorLabel: entryLabel(selectedEntry),
+      sectorCodes: selectedSectorCodes,
+      deviceCode: selectedDeviceCode,
+      window: uiWindow,
+      filters: {
+        plate: filterPlate.trim(),
+        journeyUuid: filterJourneyUuid.trim(),
+        hideLprMalfunction,
+      },
+    }
+  }, [uiWindow, selectedEntry, selectedDeviceCode, siteId, selectedSectorCodes, filterPlate, filterJourneyUuid, hideLprMalfunction])
+
+  const exportSelectedCamera = useCallback(
     (format: 'json' | 'csv') => {
-      if (!selectedCameraDiagnostic) return
-      const obs = observations.filter(
-        (o) => o.deviceCode === selectedCameraDiagnostic.deviceCode && o.sectorCode === selectedCameraDiagnostic.sectorCode
+      if (!exportScope) return
+      const payload = buildLiveCameraExportPayload(
+        exportScope,
+        selectedCameraEvents,
+        selectedCameraAlerts,
+        selectedDetections
       )
       const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')
-      const base = `diagnostico-camara_${selectedCameraDiagnostic.deviceCode}_${stamp}`
+      const base = `camara_${exportScope.deviceCode}_${exportScope.window.timeMode}_${stamp}`
       if (format === 'json') {
-        downloadTextFile(
-          `${base}.json`,
-          exportCameraDiagnosticJson({ diagnostic: selectedCameraDiagnostic, periodLabel: rangeLabel, observations: obs }),
-          'application/json;charset=utf-8'
-        )
+        downloadTextFile(`${base}.json`, liveCameraExportJson(payload), 'application/json;charset=utf-8')
       } else {
-        downloadTextFile(
-          `${base}.csv`,
-          '\uFEFF' +
-            exportCameraDiagnosticCsv({ diagnostic: selectedCameraDiagnostic, periodLabel: rangeLabel, observations: obs }),
-          'text/csv;charset=utf-8'
-        )
+        downloadTextFile(`${base}.csv`, liveCameraExportCsv(payload), 'text/csv;charset=utf-8')
       }
     },
-    [downloadTextFile, observations, rangeLabel, selectedCameraDiagnostic]
+    [exportScope, selectedCameraAlerts, selectedCameraEvents, selectedDetections]
   )
 
-  const exportCurrentSearch = useCallback(
-    (format: 'json' | 'csv') => {
-      const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')
-      const base = `busqueda-camaras_${siteId}_${selectedSectorCode ?? 'todos'}_${selectedDeviceCode ?? 'todas'}_${stamp}`
-      const metadata = {
-        exportedAt: new Date().toISOString(),
-        rangeLabel,
-        siteId,
-        plant: siteId,
-        selectedSectorCode,
-        selectedDeviceCode,
-        filters: {
-          plate: filterPlate.trim(),
-          journeyUuid: filterJourneyUuid.trim(),
-        },
-        counts: {
-          events: exportEvents.length,
-          alerts: exportAlerts.length,
-        },
-      }
+  const rangeLabel = uiWindow?.rangeLabel ?? ''
+  const sectorShortTitle = selectedEntry ? entryLabel(selectedEntry) : '—'
+  const selectedCameraRow = cameraRows.find((c) => c.deviceCode === selectedDeviceCode)
 
-      if (format === 'json') {
-        downloadTextFile(
-          `${base}.json`,
-          JSON.stringify({ metadata, events: exportEvents, alerts: exportAlerts }, null, 2),
-          'application/json;charset=utf-8'
-        )
-        return
-      }
-
-      const eventHeader = ['kind', 'at', 'occurredAt', 'createdAt', 'journeyUid', 'sequenceNumber', 'plate', 'sectorCode', 'deviceCode', 'eventType', 'alertLevel']
-      const alertHeader = ['kind', 'at', 'alertId', 'plate', 'sectorCode', 'deviceCode', 'alertCode', 'alertType', 'alertLevel', 'description']
-      const eventRows = exportEvents.map((e) => [
-        'event',
-        eventOperationalInstantIso(e),
-        e.occurredAt,
-        e.createdAt ?? '',
-        e.journeyUid,
-        e.sequenceNumber,
-        e.truckPlate || e.normalizedPlate || '',
-        e.sectorCode,
-        e.deviceCode,
-        e.eventType || e.eventCategory || '',
-        e.alertLevel,
-      ])
-      const alertRows = exportAlerts.map((a) => [
-        'alert',
-        a.occurredAt,
-        a.alertId,
-        a.rawPlate || a.normalizedPlate || '',
-        a.sectorCode,
-        a.deviceCode,
-        a.alertCode,
-        a.alertType,
-        a.alertLevel,
-        a.description || a.reason || a.message || '',
-      ])
-      const csv = [
-        ['metadata', JSON.stringify(metadata)],
-        [],
-        eventHeader,
-        ...eventRows,
-        [],
-        alertHeader,
-        ...alertRows,
-      ]
-        .map((row) => row.map(csvCell).join(','))
-        .join('\r\n')
-      downloadTextFile(`${base}.csv`, '\uFEFF' + csv, 'text/csv;charset=utf-8')
-    },
-    [
-      downloadTextFile,
-      exportAlerts,
-      exportEvents,
-      filterPlate,
-      filterJourneyUuid,
-      siteId,
-      rangeLabel,
-      selectedDeviceCode,
-      selectedSectorCode,
-    ]
+  const detectionColumns: LiveTableColumn<LiveDetectionRow>[] = useMemo(
+    () => [
+      {
+        id: 'at',
+        header: 'Hora',
+        className: 'whitespace-nowrap font-mono text-[10px] text-slate-400',
+        cell: (d) => fmtShort(d.at),
+      },
+      {
+        id: 'kind',
+        header: 'Resultado',
+        cell: (d) => {
+          const badge = badgeForKind(d.kind)
+          return (
+            <span className={`inline-flex rounded px-2 py-0.5 text-[9px] font-bold uppercase ring-1 ${badge.className}`}>
+              {badge.label}
+            </span>
+          )
+        },
+      },
+      {
+        id: 'plate',
+        header: 'Patente',
+        className: 'font-mono text-xs font-semibold text-white',
+        cell: (d) => d.plate || '—',
+      },
+      {
+        id: 'eventType',
+        header: 'Evento',
+        cell: (d) => d.eventType || '—',
+      },
+      {
+        id: 'alertCode',
+        header: 'Alerta',
+        cell: (d) => d.alertCode || '—',
+      },
+      {
+        id: 'journey',
+        header: 'Journey',
+        className: 'font-mono text-[10px] text-slate-500',
+        cell: (d) => (d.journeyUid ? truncateMiddle(d.journeyUid, 18) : '—'),
+      },
+    ],
+    []
   )
 
-  /** Primera vez: sector activo para ver rejilla de cámaras al cargar */
-  useEffect(() => {
-    if (selectedSectorCode !== null) return
-    if (sectorsAgg.length === 0) return
-    setSelectedSectorCode(sectorsAgg[0].sectorCode)
-  }, [sectorsAgg, selectedSectorCode])
+  const eventColumns: LiveTableColumn<RealJourneyEventDto>[] = useMemo(
+    () => [
+      {
+        id: 'at',
+        header: 'Hora',
+        className: 'whitespace-nowrap font-mono text-[10px] text-slate-400',
+        cell: (e) => fmtShort(getEventLiveInstantIso(e)),
+      },
+      {
+        id: 'plate',
+        header: 'Patente',
+        className: 'font-mono text-xs font-semibold text-white',
+        cell: (e) => e.truckPlate || e.normalizedPlate || '—',
+      },
+      {
+        id: 'type',
+        header: 'Tipo',
+        cell: (e) => e.eventType || e.eventCategory || '—',
+      },
+      {
+        id: 'level',
+        header: 'Nivel',
+        className: 'text-right font-mono',
+        cell: (e) => <span className={alertLevelClass(e.alertLevel)}>{e.alertLevel}</span>,
+      },
+      {
+        id: 'journey',
+        header: 'Journey',
+        className: 'font-mono text-[10px] text-slate-500',
+        cell: (e) => (e.journeyUid ? truncateMiddle(e.journeyUid, 18) : '—'),
+      },
+      {
+        id: 'seq',
+        header: 'Seq',
+        className: 'text-right font-mono text-slate-500',
+        cell: (e) => e.sequenceNumber,
+      },
+    ],
+    []
+  )
 
-  const smallTableClass = 'min-w-full border-collapse text-left text-xs'
-  const thClass =
-    'border border-slate-700/80 bg-slate-950/80 px-2 py-1.5 font-semibold uppercase tracking-wide text-slate-400'
-  const tdClass = 'border border-slate-800 px-2 py-1.5 text-slate-200'
+  const alertColumns: LiveTableColumn<NormalizedRealAlertView>[] = useMemo(
+    () => [
+      {
+        id: 'at',
+        header: 'Hora',
+        className: 'whitespace-nowrap font-mono text-[10px] text-slate-400',
+        cell: (a) => fmtShort(a.occurredAt),
+      },
+      {
+        id: 'plate',
+        header: 'Patente',
+        className: 'font-mono text-xs font-semibold text-white',
+        cell: (a) => a.rawPlate || a.normalizedPlate || '—',
+      },
+      {
+        id: 'code',
+        header: 'Código',
+        cell: (a) => a.alertCode || a.alertType || '—',
+      },
+      {
+        id: 'level',
+        header: 'Nivel',
+        className: 'text-right font-mono',
+        cell: (a) => <span className={alertLevelClass(a.alertLevel)}>{a.alertLevel}</span>,
+      },
+      {
+        id: 'detail',
+        header: 'Detalle',
+        className: 'max-w-[280px] truncate text-slate-400',
+        cell: (a) => a.description || a.message || a.reason || '—',
+      },
+      {
+        id: 'journey',
+        header: 'Journey',
+        className: 'font-mono text-[10px] text-slate-500',
+        cell: (a) => (a.journeyUid ? truncateMiddle(a.journeyUid, 18) : '—'),
+      },
+    ],
+    []
+  )
 
-  function badgeForLiveResult(r: CombinedResultKind): { label: string; className: string } {
-    switch (r) {
-      case 'EVENTO OK':
-        return { label: 'EVENTO VÁLIDO', className: 'bg-emerald-500/20 text-emerald-300 ring-emerald-400/40' }
-      case 'SOLO ALERTA':
-        return { label: 'SOLO ALERTAS', className: 'bg-amber-500/20 text-amber-200 ring-amber-400/35' }
-      case 'EVENTO + ALERTA':
-        return { label: 'EVENTO + ALERTA', className: 'bg-cyan-500/15 text-cyan-200 ring-cyan-400/40' }
-      default:
-        return { label: 'SIN SEÑAL', className: 'bg-slate-700/40 text-slate-400 ring-slate-600/50' }
-    }
+  const detailTabCounts = {
+    actividad: selectedDetections.length,
+    eventos: selectedCameraEvents.length,
+    alertas: selectedCameraAlerts.length,
+    lprm: selectedCameraLprmAlerts.length,
   }
 
-  function sectorStatusLabel(status: LiveSectorStatus): string {
-    if (status === 'sin_datos') return 'Sin datos'
-    if (status === 'operativa') return 'Operativa'
-    if (status === 'con_alertas') return 'Con alertas'
-    if (status === 'critica') return 'Crítica'
-    return 'Pendiente'
-  }
-
-  function sectorStatusClass(status: LiveSectorStatus): string {
-    if (status === 'operativa') return 'text-emerald-300 ring-emerald-500/40'
-    if (status === 'con_alertas') return 'text-amber-200 ring-amber-500/40'
-    if (status === 'critica') return 'text-rose-300 ring-rose-500/40'
-    if (status === 'pendiente_validacion') return 'text-cyan-200 ring-cyan-500/40'
-    return 'text-slate-400 ring-slate-600/50'
-  }
-
-  function timelineKindClass(kind: OperationalTimelineKind): string {
-    if (kind === 'EVENTO OK') return 'border-emerald-500/35 bg-emerald-500/10 text-emerald-100'
-    if (kind === 'EVENTO + ALERTA') return 'border-cyan-500/35 bg-cyan-500/10 text-cyan-100'
-    if (kind === 'LPR inválida') return 'border-rose-500/35 bg-rose-500/10 text-rose-100'
-    if (kind === 'Posible falso positivo') return 'border-fuchsia-500/35 bg-fuchsia-500/10 text-fuchsia-100'
-    return 'border-amber-500/35 bg-amber-500/10 text-amber-100'
-  }
-
-  function manualResultLabel(result: ManualObservation['result']): string {
-    if (result === 'detecto_evento_alerta') return 'Detectó evento + alerta'
-    if (result === 'detecto_evento') return 'Detectó evento'
-    if (result === 'detecto_alerta') return 'Detectó alerta'
-    if (result === 'no_detecto_nada') return 'No detectó nada'
-    return 'Pendiente'
-  }
-
-  const activeNodes = selectedSectorCode ? cameraRows.length : 0
-  const sectorShortTitle = selectedSectorCode ? sectorDisplayName(selectedSectorCode) : '—'
+  const tableScrollClass =
+    timeMode === 'calendar_day' ? 'max-h-[min(78vh,960px)]' : 'max-h-[min(52vh,480px)]'
 
   return (
     <section className="overflow-hidden rounded-3xl border border-slate-800 bg-[#0b1020] text-slate-100 shadow-xl ring-1 ring-white/5">
-      {/* Barra superior tipo consola */}
       <header className="flex flex-col gap-4 border-b border-slate-800/90 bg-[#080d18] px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-400/90">Truckflow</p>
           <h2 className="mt-0.5 text-lg font-bold tracking-tight text-white sm:text-xl">Consola operativa · En vivo</h2>
           <p className="mt-1 max-w-2xl text-xs text-slate-400">
-            Feed desde{' '}
-            <span className="font-mono text-cyan-200/80">{REAL_TRUCKFLOW_BASE_URL}/journey-event/list</span> +{' '}
-            <span className="font-mono text-cyan-200/80">{REAL_TRUCKFLOW_BASE_URL}/alert/list</span>
-            {' · '}
-            <span className="font-mono text-slate-500" title="Origen HTTP que usa el navegador (proxy en dev)">
-              {apiOriginLabel}
-            </span>
-            {rangeLabel ? (
-              <>
-                {' '}
-                · Ventana local <span className="text-slate-300">{rangeLabel}</span>
-              </>
-            ) : null}
+            API · <span className="font-mono text-cyan-200/80">{apiOriginLabel}</span>
+            {rangeLabel ? <> · Ventana <span className="text-slate-300">{rangeLabel}</span></> : null}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span
             className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold ring-1 ${
-              error
-                ? 'bg-rose-500/15 text-rose-300 ring-rose-500/40'
-                : loading
-                  ? 'bg-amber-500/15 text-amber-200 ring-amber-400/35'
-                  : 'bg-emerald-500/15 text-emerald-200 ring-emerald-400/35'
+              error ? 'bg-rose-500/15 text-rose-300 ring-rose-500/40' : loading ? 'bg-amber-500/15 text-amber-200 ring-amber-400/35' : 'bg-emerald-500/15 text-emerald-200 ring-emerald-400/35'
             }`}
           >
-            <span className={`h-1.5 w-1.5 rounded-full ${error ? 'bg-rose-400' : loading ? 'bg-amber-400' : 'bg-emerald-400'}`} />
-            {error ? 'Error de lectura' : loading ? 'Sincronizando…' : 'Nominal'}
-          </span>
-          <span className="rounded-md bg-slate-800/80 px-2 py-1 font-mono text-[10px] text-slate-400">
-            Nodos {activeNodes.toString().padStart(2, '0')}
+            {error ? 'Error' : loading ? 'Sincronizando…' : 'Nominal'}
           </span>
         </div>
       </header>
 
-      {/* Barra en vivo: búsqueda + export + actualización */}
       <div className="border-b border-slate-800/80 bg-[#0c1222] px-4 py-3 sm:px-6">
         <div className="flex flex-wrap items-end gap-2 sm:gap-3">
           <div className="min-w-[200px]">
@@ -920,13 +585,9 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
               <button
                 type="button"
                 onClick={() => setTimeMode('rolling_hour')}
-                className={`rounded-md px-2.5 py-1.5 text-[10px] font-semibold transition ${
-                  timeMode === 'rolling_hour'
-                    ? 'bg-cyan-500/25 text-cyan-100 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-300'
-                }`}
+                className={`rounded-md px-2.5 py-1.5 text-[10px] font-semibold ${timeMode === 'rolling_hour' ? 'bg-cyan-500/25 text-cyan-100' : 'text-slate-500'}`}
               >
-                Última hora (vivo)
+                Última hora
               </button>
               <button
                 type="button"
@@ -934,42 +595,64 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
                   setAutoRefresh(false)
                   setTimeMode('calendar_day')
                 }}
-                className={`rounded-md px-2.5 py-1.5 text-[10px] font-semibold transition ${
-                  timeMode === 'calendar_day'
-                    ? 'bg-violet-500/25 text-violet-100 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-300'
-                }`}
+                className={`rounded-md px-2.5 py-1.5 text-[10px] font-semibold ${timeMode === 'calendar_day' ? 'bg-violet-500/25 text-violet-100' : 'text-slate-500'}`}
               >
                 Día completo
               </button>
             </div>
           </div>
           {timeMode === 'calendar_day' ? (
-            <div className="min-w-[140px]">
-              <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Día</label>
-              <input
-                type="date"
-                value={calendarDay}
-                onChange={(e) => setCalendarDay(e.target.value)}
-                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-100"
-              />
-            </div>
+            <>
+              <div className="min-w-[140px]">
+                <label className="mb-1 block text-[9px] font-medium uppercase text-slate-500">Día</label>
+                <input
+                  type="date"
+                  value={calendarDay}
+                  onChange={(e) => setCalendarDay(e.target.value)}
+                  className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-100"
+                />
+              </div>
+              <div className="min-w-[110px]">
+                <label className="mb-1 block text-[9px] font-medium uppercase text-slate-500">Desde hora</label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="00:00"
+                  maxLength={5}
+                  value={dayTimeStart}
+                  onChange={(e) => setDayTimeStart(e.target.value)}
+                  className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-100"
+                />
+              </div>
+              <div className="min-w-[110px]">
+                <label className="mb-1 block text-[9px] font-medium uppercase text-slate-500">Hasta hora</label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="23:59"
+                  maxLength={5}
+                  value={dayTimeEnd}
+                  onChange={(e) => setDayTimeEnd(e.target.value)}
+                  className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-100"
+                />
+              </div>
+            </>
           ) : null}
           <div className="min-w-[120px] flex-1">
-            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Patente</label>
+            <label className="mb-1 block text-[9px] font-medium uppercase text-slate-500">Patente</label>
             <input
               value={filterPlate}
               onChange={(e) => setFilterPlate(e.target.value)}
-              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-100 placeholder:text-slate-600"
+              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-100"
               placeholder="Ej. AB123CD"
             />
           </div>
           <div className="min-w-[160px] flex-[1.25]">
-            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Journey ID</label>
+            <label className="mb-1 block text-[9px] font-medium uppercase text-slate-500">Journey ID</label>
             <input
               value={filterJourneyUuid}
               onChange={(e) => setFilterJourneyUuid(e.target.value)}
-              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 font-mono text-[10px] text-slate-100 placeholder:text-slate-600"
+              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 font-mono text-[10px] text-slate-100"
               placeholder="UUID"
             />
           </div>
@@ -977,493 +660,278 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
             type="button"
             onClick={() => void refresh()}
             disabled={loading}
-            className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-200 hover:bg-cyan-500/20 disabled:opacity-40"
+            className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-200 disabled:opacity-40"
           >
-            {loading ? '…' : 'Actualizar'}
+            Actualizar
           </button>
-          <button
-            type="button"
-            onClick={() => exportCurrentSearch('csv')}
-            disabled={exportEvents.length + exportAlerts.length === 0}
-            className="rounded-lg border border-emerald-500/35 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-200 hover:bg-emerald-500/20 disabled:opacity-40"
-          >
-            CSV
-          </button>
-          <button
-            type="button"
-            onClick={() => exportCurrentSearch('json')}
-            disabled={exportEvents.length + exportAlerts.length === 0}
-            className="rounded-lg border border-violet-500/35 bg-violet-500/10 px-3 py-1.5 text-xs font-semibold text-violet-200 hover:bg-violet-500/20 disabled:opacity-40"
-          >
-            JSON
-          </button>
-          <label
-            className={`flex cursor-pointer items-center gap-1.5 rounded-lg border px-2 py-1.5 text-[10px] ${
-              timeMode === 'calendar_day'
-                ? 'cursor-not-allowed border-slate-800 bg-slate-950/50 text-slate-600'
-                : 'border-slate-700 bg-slate-900/80 text-slate-400'
-            }`}
-            title={
-              timeMode === 'calendar_day'
-                ? 'Auto actualización solo en modo «Última hora» (evita recargar todo el día cada 30 s).'
-                : undefined
-            }
-          >
+          <label className={`flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-[10px] ${timeMode === 'calendar_day' ? 'border-slate-800 text-slate-600' : 'border-slate-700 text-slate-400'}`}>
             <input
               type="checkbox"
               checked={autoRefresh && timeMode === 'rolling_hour'}
               disabled={timeMode === 'calendar_day'}
               onChange={(e) => setAutoRefresh(e.target.checked)}
-              className="rounded border-slate-600 disabled:opacity-40"
             />
             Auto 30s
           </label>
+          <label className="flex items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/5 px-2 py-1.5 text-[10px] text-amber-100/90">
+            <input
+              type="checkbox"
+              checked={hideLprMalfunction}
+              onChange={(e) => setHideLprMalfunction(e.target.checked)}
+            />
+            Ocultar LPR_MALFUNCTION
+          </label>
         </div>
-        <p className="mt-2 text-[10px] text-slate-500">
-          {timeMode === 'rolling_hour'
-            ? 'Ventana móvil de la última hora (se renueva al actualizar o con Auto 30s). La planta activa sigue el lateral.'
-            : `Consulta fija del día calendario seleccionado (${calendarDay}), horario local 00:00–23:59. Podés ser pesado para la API; usá «Actualizar» cuando cambies filtros.`}
-        </p>
-        {error ? (
-          <div className="mt-3 rounded-lg border border-rose-500/35 bg-rose-950/40 px-3 py-2 text-xs text-rose-200">{error}</div>
+        {hideLprMalfunction && lprMalfunctionCount > 0 ? (
+          <p className="mt-2 text-[10px] text-amber-200/80">
+            {lprMalfunctionCount} alertas LPR_MALFUNCTION separadas en pestaña LPRM (ruido OCR frecuente 00–04 h, sin patente válida). La API no envía{' '}
+            <span className="font-mono">occurredAt</span> en alertas — usamos <span className="font-mono">createdAt</span>.
+          </p>
         ) : null}
+        {error ? <div className="mt-3 rounded-lg border border-rose-500/35 bg-rose-950/40 px-3 py-2 text-xs text-rose-200">{error}</div> : null}
       </div>
 
-      {/* Cuerpo: sectores | rejilla cámaras | panel activo */}
       <div className="grid gap-0 xl:grid-cols-12">
-        {/* Sectores */}
         <aside className="border-slate-800 xl:col-span-2 xl:border-r">
-          <div className="sticky top-0 z-10 border-b border-slate-800 bg-[#0b1020]/95 px-3 py-2 backdrop-blur-sm">
+          <div className="border-b border-slate-800 px-3 py-2">
             <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Sectores</p>
           </div>
           <div className="flex max-h-[min(70vh,560px)] flex-col gap-1.5 overflow-auto p-2">
-            {sectorsAgg.length === 0 ? (
-              <p className="p-3 text-[11px] text-slate-500">Sin sectores en esta ventana.</p>
-            ) : (
-              sectorsAgg.map((s) => {
-                const active = selectedSectorCode === s.sectorCode
-                return (
-                  <button
-                    key={s.sectorCode}
-                    type="button"
-                    onClick={() => {
-                      setSelectedSectorCode(s.sectorCode)
-                      setSelectedDeviceCode(null)
-                      setCameraFocusFull(false)
-                    }}
-                    onDoubleClick={() => {
-                      setSelectedSectorCode(s.sectorCode)
-                      camerasPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-                    }}
-                    className={`rounded-lg border px-2.5 py-2 text-left transition ${
-                      active
-                        ? 'border-cyan-500/50 bg-cyan-500/10 shadow-[0_0_20px_rgba(34,211,238,0.08)]'
-                        : 'border-slate-800 bg-slate-900/40 hover:border-slate-600'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-1">
-                      <span className="text-[11px] font-bold uppercase leading-tight text-slate-200">{s.label}</span>
-                      <span className={`shrink-0 rounded px-1 py-0.5 text-[8px] font-bold uppercase ring-1 ${sectorStatusClass(s.status)}`}>
-                        {sectorStatusLabel(s.status)}
-                      </span>
-                    </div>
-                    <div className="mt-1 font-mono text-[9px] text-slate-500">{s.sectorCode}</div>
-                    <div className="mt-1.5 grid grid-cols-3 gap-1 text-center font-mono text-[9px] text-slate-400">
-                      <span className="rounded bg-slate-950/80 py-0.5" title="Cámaras">
-                        CAM {String(s.cameraCount).padStart(2, '0')}
-                      </span>
-                      <span className="rounded bg-slate-950/80 py-0.5 text-emerald-300/90" title="Eventos">
-                        E {String(s.eventCount).padStart(2, '0')}
-                      </span>
-                      <span className="rounded bg-slate-950/80 py-0.5 text-amber-300/90" title="Alertas">
-                        A {String(s.alertCount).padStart(2, '0')}
-                      </span>
-                    </div>
-                  </button>
-                )
-              })
-            )}
+            {sectorsAgg.map((s) => {
+              const active = selectedSectorKey === s.key
+              return (
+                <button
+                  key={s.key}
+                  type="button"
+                  onClick={() => {
+                    setSelectedSectorKey(s.key)
+                    setSelectedDeviceCode(null)
+                    setDetailTab('actividad')
+                  }}
+                  className={`rounded-lg border px-2.5 py-2 text-left transition ${
+                    active ? 'border-cyan-500/50 bg-cyan-500/10' : 'border-slate-800 bg-slate-900/40 hover:border-slate-600'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-1">
+                    <span className="text-[11px] font-bold uppercase leading-tight text-slate-200">{s.label}</span>
+                    <span className={`shrink-0 rounded px-1 py-0.5 text-[8px] font-bold uppercase ring-1 ${sectorStatusClass(s.status)}`}>
+                      {sectorStatusLabel(s.status)}
+                    </span>
+                  </div>
+                  <div className="mt-1.5 grid grid-cols-3 gap-1 text-center font-mono text-[9px]">
+                    <span className="rounded bg-slate-950/80 py-0.5">CAM {String(s.cameraCount).padStart(2, '0')}</span>
+                    <span className="rounded bg-slate-950/80 py-0.5 text-emerald-300/90">E {String(s.eventCount).padStart(2, '0')}</span>
+                    <span className="rounded bg-slate-950/80 py-0.5 text-amber-300/90">A {String(s.alertCount).padStart(2, '0')}</span>
+                  </div>
+                </button>
+              )
+            })}
           </div>
         </aside>
 
-        {/* Rejilla de cámaras */}
-        <main ref={camerasPanelRef} className="border-slate-800 xl:col-span-6 xl:border-r">
-          <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 bg-[#0b1020]/95 px-3 py-2 backdrop-blur-sm sm:px-4">
+        <main className="xl:col-span-10">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 px-4 py-2">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Monitor en vivo</p>
-              <p className="text-sm font-semibold text-white">{sectorShortTitle}</p>
-              <p className="font-mono text-[10px] text-cyan-400/70">
-                LIVE FEED · {activeNodes} nodos activos
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Cámaras</p>
+              <p className="text-xs text-slate-300">
+                {sectorShortTitle}
+                {selectedDeviceCode ? (
+                  <>
+                    <span className="mx-1.5 text-slate-600">›</span>
+                    <span className="font-mono text-cyan-300">{selectedDeviceCode}</span>
+                  </>
+                ) : null}
               </p>
             </div>
+            {selectedEntry ? (
+              <p className="text-[10px] text-slate-500">
+                {cameraRows.length} cámara{cameraRows.length === 1 ? '' : 's'} · ventana {rangeLabel || '—'}
+              </p>
+            ) : null}
           </div>
 
-          <div className="p-3 sm:p-4">
-            {!selectedSectorCode ? (
-              <div className="rounded-xl border border-dashed border-slate-700 bg-slate-900/30 p-8 text-center text-sm text-slate-500">
-                Elegí un sector en la columna izquierda.
+          <div className="grid gap-0 lg:grid-cols-[minmax(240px,280px)_1fr]">
+            <div className="border-b border-slate-800 lg:border-b-0 lg:border-r">
+              <div className="border-b border-slate-800/80 px-3 py-2">
+                <p className="text-[9px] font-bold uppercase tracking-wider text-slate-500">Streams del sector</p>
               </div>
-            ) : cameraRows.length === 0 ? (
-              <div className="rounded-xl border border-amber-500/25 bg-amber-950/20 p-4 text-sm text-amber-100/90">
-                <p className="font-medium">Sin cámaras catalogadas en este sector.</p>
-                <p className="mt-1 text-xs text-amber-200/70">
-                  Ampliá la ventana temporal o esperá lecturas con <span className="font-mono">deviceCode</span> desde la API.
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2">
-                {cameraRows.map((cam) => {
-                  const selected = selectedDeviceCode === cam.deviceCode
-                  const badge = badgeForLiveResult(cam.liveResultado)
-                  return (
-                    <button
-                      key={cam.deviceCode}
-                      type="button"
-                      onClick={() => {
-                        setSelectedDeviceCode(cam.deviceCode)
-                        setCameraFocusFull(false)
-                      }}
-                      onDoubleClick={() => {
-                        setSelectedDeviceCode(cam.deviceCode)
-                        setCameraFocusFull(true)
-                        monitorPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-                      }}
-                      className={`group overflow-hidden rounded-xl border text-left transition ${
-                        selected
-                          ? 'border-cyan-400/60 bg-slate-900/80 shadow-[0_0_24px_rgba(34,211,238,0.12)]'
-                          : 'border-slate-800 bg-slate-950/50 hover:border-slate-600'
-                      }`}
-                    >
-                      {/* Área “video” placeholder */}
-                      <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-slate-900 via-[#0f172a] to-slate-950">
-                        <div
-                          className="absolute inset-0 opacity-[0.07]"
-                          style={{
-                            backgroundImage:
-                              'linear-gradient(rgba(148,163,184,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.4) 1px, transparent 1px)',
-                            backgroundSize: '14px 14px',
-                          }}
-                        />
-                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 p-3">
-                          <span className="font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                            Stream no disponible
-                          </span>
-                          <span className="text-center text-[9px] text-slate-600">Datos API · patente detectada</span>
-                        </div>
-                        <div className="absolute left-2 top-2">
-                          <span
-                            className={`inline-flex rounded px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide ring-1 ${badge.className}`}
-                          >
+              <div className="flex max-h-[min(70vh,560px)] flex-col gap-1 overflow-auto p-2">
+                {!selectedEntry ? (
+                  <p className="px-2 py-4 text-sm text-slate-500">Elegí un sector.</p>
+                ) : cameraRows.length === 0 ? (
+                  <p className="px-2 py-4 text-sm text-amber-100/90">Sin cámaras en este sector.</p>
+                ) : (
+                  cameraRows.map((cam) => {
+                    const selected = selectedDeviceCode === cam.deviceCode
+                    const badge = badgeForKind(cam.liveResultado)
+                    return (
+                      <button
+                        key={cam.deviceCode}
+                        type="button"
+                        onClick={() => {
+                          setSelectedDeviceCode(cam.deviceCode)
+                          setDetailTab('actividad')
+                        }}
+                        className={`w-full rounded-xl border px-3 py-2.5 text-left transition ${
+                          selected
+                            ? 'border-cyan-400/55 bg-cyan-500/10 shadow-[inset_2px_0_0_0_rgba(34,211,238,0.7)]'
+                            : 'border-slate-800 bg-slate-950/40 hover:border-slate-600'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <span className="font-mono text-[11px] font-bold text-cyan-300">{cam.deviceCode}</span>
+                          <span className={`shrink-0 rounded px-1.5 py-0.5 text-[8px] font-bold uppercase ring-1 ${badge.className}`}>
                             {badge.label}
                           </span>
                         </div>
-                      </div>
-                      <div className="border-t border-slate-800 p-3">
-                        <div className="font-mono text-[11px] font-bold text-cyan-300/90">{cam.deviceCode}</div>
-                        <div className="mt-1 text-[10px] uppercase tracking-wide text-slate-500">{sectorDisplayName(cam.sectorCode)}</div>
-                        <div className="mt-2 text-center font-mono text-2xl font-bold tracking-wider text-white sm:text-3xl">
-                          {cam.displayPlate}
-                        </div>
-                        <div className="mt-2 grid grid-cols-2 gap-1 font-mono text-[9px] text-slate-400">
-                          <span className="rounded bg-slate-950/80 px-1.5 py-1">
-                            Últ. evento {cam.lastEventAt ? fmtShort(cam.lastEventAt) : '—'}
-                          </span>
-                          <span className="rounded bg-slate-950/80 px-1.5 py-1">
-                            Últ. alerta {cam.lastAlertAt ? fmtShort(cam.lastAlertAt) : '—'}
-                          </span>
-                          <span className="rounded bg-slate-950/80 px-1.5 py-1 text-emerald-300">
-                            EVT 10m {cam.diagnostic.eventsLast10Min}
-                          </span>
-                          <span className="rounded bg-slate-950/80 px-1.5 py-1 text-amber-300">
-                            ALT 10m {cam.diagnostic.alertsLast10Min}
+                        <div className="mt-1.5 flex items-baseline justify-between gap-2">
+                          <span className="truncate font-mono text-sm font-bold text-white">{cam.displayPlate}</span>
+                          <span className="shrink-0 font-mono text-[9px] text-slate-500">
+                            {cam.lastDetectionAt ? fmtShort(cam.lastDetectionAt) : '—'}
                           </span>
                         </div>
-                        <div className="mt-2 flex items-center justify-between font-mono text-[10px] text-slate-500">
-                          <span>{cam.lastDetectionAt ? fmtShort(cam.lastDetectionAt) : '—'}</span>
-                          <span>
-                            <span className="text-emerald-400/90">EVT {cam.eventCount}</span>
-                            {' · '}
-                            <span className="text-amber-400/90">ALT {cam.alertCount}</span>
+                        <div className="mt-1.5 flex gap-2 font-mono text-[9px]">
+                          <span className="rounded bg-slate-900/80 px-1.5 py-0.5 text-emerald-300/90">
+                            EVT {cam.eventCount}
+                          </span>
+                          <span className="rounded bg-slate-900/80 px-1.5 py-0.5 text-amber-300/90">
+                            ALT {cam.alertCount}
                           </span>
                         </div>
-                        <div className="mt-2 flex items-center justify-between gap-2">
-                          <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[9px] font-semibold text-slate-300">
-                            {cam.diagnostic.suggestedStatus}
-                          </span>
-                          <span className="rounded bg-cyan-500/10 px-2 py-1 text-[9px] font-bold uppercase text-cyan-200">
-                            Validar cámara
-                          </span>
-                        </div>
-                      </div>
-                    </button>
-                  )
-                })}
+                      </button>
+                    )
+                  })
+                )}
               </div>
-            )}
-          </div>
-        </main>
+            </div>
 
-        {/* Panel detalle / timeline */}
-        <aside
-          ref={monitorPanelRef}
-          className={`flex flex-col border-slate-800 bg-[#070b14] xl:col-span-4 xl:border-l ${
-            cameraFocusFull ? 'ring-2 ring-cyan-500/30 ring-inset' : ''
-          }`}
-        >
-          <div className="border-b border-slate-800 px-4 py-3">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Stream activo</p>
-            {!selectedDeviceCode ? (
-              <p className="mt-1 font-mono text-sm text-slate-500">Seleccioná una cámara en la rejilla</p>
-            ) : (
-              <>
-                <p className="mt-1 font-mono text-base font-bold text-cyan-300">{selectedDeviceCode}</p>
-                <p className="text-xs text-slate-400">{sectorDisplayName(selectedSectorCode!)}</p>
-              </>
-            )}
-          </div>
-
-          <div className="flex flex-1 flex-col gap-4 overflow-auto p-4">
-            {selectedSectorCode && selectedDeviceCode ? (
-              <>
-                {selectedCameraDiagnostic ? (
-                  <div className="rounded-2xl border border-cyan-500/25 bg-cyan-950/15 p-4 shadow-[0_0_30px_rgba(8,145,178,0.08)]">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-cyan-300/80">
-                      Monitor de cámara seleccionada
-                    </p>
-                    <p className="mt-2 text-2xl font-black tracking-tight text-white">
-                      {selectedCameraDiagnostic.latestKind === 'event'
-                        ? 'EVENTO DETECTADO'
-                        : selectedCameraDiagnostic.latestKind === 'alert'
-                          ? 'ALERTA DETECTADA'
-                          : 'SIN DATOS RECIENTES'}
-                    </p>
-                    <p className="mt-2 font-mono text-4xl font-bold tracking-wider text-white">
-                      {selectedCameraDiagnostic.timeline[0]?.plate || selectedCameraDiagnostic.lastValidPlate}
-                    </p>
-                    <div className="mt-4 grid grid-cols-2 gap-2 text-[11px]">
-                      <div className="rounded-lg bg-slate-950/70 p-2">
-                        <div className="text-slate-500">Último evento</div>
-                        <div className="font-mono text-slate-200">
-                          {selectedCameraDiagnostic.lastEvent ? fmtShort(getEventOperationalInstantIso(selectedCameraDiagnostic.lastEvent)) : '—'}
-                        </div>
-                      </div>
-                      <div className="rounded-lg bg-slate-950/70 p-2">
-                        <div className="text-slate-500">Última alerta</div>
-                        <div className="font-mono text-slate-200">
-                          {selectedCameraDiagnostic.lastAlert ? fmtShort(selectedCameraDiagnostic.lastAlert.occurredAt) : '—'}
-                        </div>
-                      </div>
-                      <div className="rounded-lg bg-slate-950/70 p-2">
-                        <div className="text-slate-500">Patente válida</div>
-                        <div className="font-mono text-emerald-200">{selectedCameraDiagnostic.lastValidPlate}</div>
-                      </div>
-                      <div className="rounded-lg bg-slate-950/70 p-2">
-                        <div className="text-slate-500">Lectura inválida</div>
-                        <div className="font-mono text-rose-200">{selectedCameraDiagnostic.lastInvalidReading}</div>
-                      </div>
-                      <div className="rounded-lg bg-slate-950/70 p-2">
-                        <div className="text-slate-500">Alertas LPR</div>
-                        <div className="font-mono text-amber-200">{selectedCameraDiagnostic.lprAlertCount}</div>
-                      </div>
-                      <div className="rounded-lg bg-slate-950/70 p-2">
-                        <div className="text-slate-500">LPR cada 100 eventos</div>
-                        <div className="font-mono text-cyan-200">{selectedCameraDiagnostic.lprPer100Events}</div>
-                      </div>
+            <div className="min-w-0 p-3 sm:p-4">
+              {!selectedDeviceCode ? (
+                <div className="flex min-h-[280px] items-center justify-center rounded-xl border border-dashed border-slate-700/80 bg-slate-950/20 px-6 text-center text-sm text-slate-500">
+                  Seleccioná una cámara para ver actividad, eventos y alertas del período filtrado.
+                </div>
+              ) : (
+                <div className="rounded-xl border border-slate-800 bg-slate-950/40">
+                  <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-800 px-4 py-3">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase text-slate-500">Detalle operativo</p>
+                      <p className="mt-0.5 font-mono text-sm font-bold text-cyan-200">{selectedDeviceCode}</p>
+                      <p className="mt-0.5 text-xs text-slate-400">
+                        {sectorDisplayName(selectedCameraRow?.sectorCode || selectedSectorCodes[0] || '')}
+                      </p>
                     </div>
-                    <div className="mt-3 rounded-lg border border-slate-800 bg-slate-950/60 p-2 text-[11px] text-slate-300">
-                      <span className="font-semibold text-white">{selectedCameraDiagnostic.suggestedStatus}</span>
-                      {' · '}
-                      {selectedCameraDiagnostic.recommendedAction}
-                    </div>
-                    <div className="mt-3 flex flex-wrap gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => exportSelectedDiagnostic('json')}
-                        className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-3 py-2 text-[11px] font-bold text-cyan-100"
+                        onClick={() => exportSelectedCamera('json')}
+                        disabled={!exportScope}
+                        className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-3 py-1.5 text-[11px] font-bold text-cyan-100 disabled:opacity-40"
                       >
                         Exportar JSON
                       </button>
                       <button
                         type="button"
-                        onClick={() => exportSelectedDiagnostic('csv')}
-                        className="rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-[11px] font-bold text-slate-100"
+                        onClick={() => exportSelectedCamera('csv')}
+                        disabled={!exportScope}
+                        className="rounded-lg border border-slate-600 bg-slate-800 px-3 py-1.5 text-[11px] font-bold text-slate-100 disabled:opacity-40"
                       >
                         Exportar CSV
                       </button>
                     </div>
                   </div>
-                ) : null}
 
-                <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-3">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Validación manual de campo</p>
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                    <select
-                      value={vehicleType}
-                      onChange={(e) => setVehicleType(e.target.value as VehicleType)}
-                      className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-2 text-xs text-slate-100"
-                    >
-                      {(Object.keys(VEHICLE_TYPE_LABELS) as VehicleType[]).map((v) => (
-                        <option key={v} value={v}>
-                          {VEHICLE_TYPE_LABELS[v]}
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      value={observedPlate}
-                      onChange={(e) => setObservedPlate(e.target.value)}
-                      placeholder="Patente observada"
-                      className={`rounded-lg border bg-slate-900 px-2 py-2 font-mono text-xs text-slate-100 ${
-                        observedPlate && !isValidObservedPlate(observedPlate) ? 'border-amber-500/50' : 'border-slate-700'
-                      }`}
-                    />
-                    <input
-                      value={manualObservation}
-                      onChange={(e) => setManualObservation(e.target.value)}
-                      placeholder="Observación manual"
-                      className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-2 text-xs text-slate-100 sm:col-span-2"
-                    />
-                    <input
-                      value={operatorNote}
-                      onChange={(e) => setOperatorNote(e.target.value)}
-                      placeholder="Nota del operador"
-                      className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-2 text-xs text-slate-100 sm:col-span-2"
-                    />
+                  <div className="flex flex-wrap gap-1 border-b border-slate-800 px-3 py-2">
+                    {(
+                      [
+                        ['actividad', 'Actividad'],
+                        ['eventos', 'Eventos'],
+                        ['alertas', 'Alertas'],
+                        ['lprm', 'LPRM'],
+                      ] as const
+                    ).map(([id, label]) => {
+                      const active = detailTab === id
+                      const count = detailTabCounts[id]
+                      return (
+                        <button
+                          key={id}
+                          type="button"
+                          onClick={() => setDetailTab(id)}
+                          className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition ${
+                            active
+                              ? 'bg-slate-800 text-white ring-1 ring-slate-600'
+                              : 'text-slate-500 hover:bg-slate-900/70 hover:text-slate-300'
+                          }`}
+                        >
+                          {label}
+                          <span className={`ml-1.5 font-mono text-[10px] ${active ? 'text-cyan-300' : 'text-slate-600'}`}>
+                            {count}
+                          </span>
+                        </button>
+                      )
+                    })}
                   </div>
-                  <button
-                    type="button"
-                    onClick={pasoCamion}
-                    className="mt-3 w-full rounded-lg border border-cyan-500/50 bg-cyan-500/15 py-2.5 text-xs font-bold text-cyan-100 hover:bg-cyan-500/25"
-                  >
-                    Pasó camión · buscar ±30s
-                  </button>
+
+                  <div className="p-3 sm:p-4">
+                    <p className="mb-3 text-[10px] text-slate-500">
+                      Mostrando <span className="text-slate-300">{selectedDeviceCode}</span> en{' '}
+                      <span className="text-slate-300">{rangeLabel || 'la ventana activa'}</span>.
+                      {detailTab === 'actividad' && hideLprMalfunction ? ' LPR_MALFUNCTION en pestaña LPRM.' : ''}
+                      {detailTab === 'actividad' ? (
+                        <> · <span className="font-mono text-slate-400">{detailTabCounts.actividad} filas</span></>
+                      ) : detailTab === 'eventos' ? (
+                        <> · <span className="font-mono text-slate-400">{detailTabCounts.eventos} eventos</span></>
+                      ) : detailTab === 'alertas' ? (
+                        <> · <span className="font-mono text-slate-400">{detailTabCounts.alertas} alertas</span></>
+                      ) : (
+                        <> · <span className="font-mono text-slate-400">{detailTabCounts.lprm} LPR_MALFUNCTION</span></>
+                      )}
+                    </p>
+
+                    {detailTab === 'actividad' ? (
+                      <LiveScrollTable
+                        rows={selectedDetections}
+                        columns={detectionColumns}
+                        rowKey={(d) => d.key}
+                        emptyMessage="Sin actividad en esta franja para esta cámara."
+                        maxHeightClass={tableScrollClass}
+                      />
+                    ) : null}
+
+                    {detailTab === 'eventos' ? (
+                      <LiveScrollTable
+                        rows={selectedCameraEvents}
+                        columns={eventColumns}
+                        rowKey={(e) => `${e.id}-${e.sequenceNumber}`}
+                        emptyMessage="Sin eventos en esta franja para esta cámara."
+                        maxHeightClass={tableScrollClass}
+                      />
+                    ) : null}
+
+                    {detailTab === 'alertas' ? (
+                      <LiveScrollTable
+                        rows={selectedCameraAlerts}
+                        columns={alertColumns}
+                        rowKey={(a) => a.alertId}
+                        emptyMessage="Sin alertas en esta franja para esta cámara."
+                        maxHeightClass={tableScrollClass}
+                      />
+                    ) : null}
+
+                    {detailTab === 'lprm' ? (
+                      <LiveScrollTable
+                        rows={selectedCameraLprmAlerts}
+                        columns={alertColumns}
+                        rowKey={(a) => a.alertId}
+                        emptyMessage="Sin LPR_MALFUNCTION en esta franja para esta cámara."
+                        maxHeightClass={tableScrollClass}
+                      />
+                    ) : null}
+                  </div>
                 </div>
-
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Timeline operativo</p>
-                  <ul className="mt-3 max-h-[360px] space-y-2 overflow-auto pr-1">
-                    {operationalTimeline.slice(0, 16).map((row) => (
-                      <li key={row.key} className={`rounded-xl border p-3 text-[11px] ${timelineKindClass(row.kind)}`}>
-                        <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <div className="text-[10px] font-black uppercase tracking-wide">{row.kind}</div>
-                            <div className="mt-1 font-mono text-sm font-bold text-white">{row.plate || row.rawPlate || '—'}</div>
-                          </div>
-                          <div className="font-mono text-[10px] text-slate-300">{fmtShort(row.at)}</div>
-                        </div>
-                        <div className="mt-2 grid gap-1 font-mono text-[10px] text-slate-300">
-                          <span>{row.deviceCode} · {row.sectorCode}</span>
-                          <span>Journey {row.journeyUid || '—'}</span>
-                          <span className="font-sans text-slate-400">{row.description}</span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                  {!operationalTimeline.length ? (
-                    <p className="mt-2 text-[11px] text-slate-600">Sin línea de tiempo en esta ventana.</p>
-                  ) : null}
-                </div>
-              </>
-            ) : (
-              <p className="text-sm text-slate-600">Elegí una cámara para ver timeline y detalle.</p>
-            )}
-          </div>
-        </aside>
-      </div>
-
-      {/* Tablas técnicas colapsables visualmente al fondo */}
-      <div className="border-t border-slate-800 bg-[#060914] px-4 py-4 sm:px-6">
-        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600">Registro técnico</p>
-
-        {selectedSectorCode && selectedDeviceCode ? (
-          <div className="mt-3 grid gap-3 lg:grid-cols-2">
-            <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
-              <div className="text-[11px] font-bold text-slate-400">Eventos del rango ({monitorEvents.length})</div>
-              <div className="mt-2 max-h-[220px] overflow-auto">
-                <table className={smallTableClass}>
-                  <thead>
-                    <tr>
-                      <th className={thClass}>Hora</th>
-                      <th className={thClass}>Patente</th>
-                      <th className={thClass}>Tipo</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {monitorEvents.map((e) => (
-                      <tr key={`${e.id}-${e.sequenceNumber}-${getEventOperationalInstantIso(e)}`}>
-                        <td className={`${tdClass} whitespace-nowrap text-[10px]`}>
-                          {fmtShort(getEventOperationalInstantIso(e))}
-                        </td>
-                        <td className={`${tdClass} font-mono text-[10px]`}>{e.truckPlate}</td>
-                        <td className={`${tdClass} text-[10px]`}>{e.eventType}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
-              <div className="text-[11px] font-bold text-slate-400">Alertas del rango ({monitorAlerts.length})</div>
-              <div className="mt-2 max-h-[220px] overflow-auto">
-                <table className={smallTableClass}>
-                  <thead>
-                    <tr>
-                      <th className={thClass}>Hora</th>
-                      <th className={thClass}>Código</th>
-                      <th className={thClass}>Detalle</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {monitorAlerts.map((a) => (
-                      <tr key={a.alertId}>
-                        <td className={`${tdClass} whitespace-nowrap text-[10px]`}>{fmtShort(a.occurredAt)}</td>
-                        <td className={`${tdClass} text-[10px]`}>{a.alertCode || a.alertType}</td>
-                        <td className={`${tdClass} max-w-[180px] truncate text-[10px]`}>
-                          {a.description || a.message || '—'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              )}
             </div>
           </div>
-        ) : null}
-
-        <div className={`mt-3 rounded-xl border border-slate-800 bg-slate-950/40 p-3 ${selectedSectorCode && selectedDeviceCode ? '' : 'mt-0'}`}>
-          <div className="text-[11px] font-bold text-slate-400">Controles manuales de campo</div>
-          {!observations.length ? (
-            <p className="mt-2 text-[11px] text-slate-600">
-              Usá «Pasó camión» con una cámara seleccionada para registrar la observación.
-            </p>
-          ) : (
-            <div className="mt-2 max-h-[200px] overflow-auto">
-              <table className={smallTableClass}>
-                <thead>
-                  <tr>
-                    <th className={thClass}>Hora</th>
-                    <th className={thClass}>Cámara</th>
-                    <th className={thClass}>Sector</th>
-                    <th className={thClass}>Resultado</th>
-                    <th className={thClass}>Vehículo</th>
-                    <th className={thClass}>Patente obs.</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {observations.map((o) => (
-                    <tr key={o.id}>
-                      <td className={`${tdClass} whitespace-nowrap text-[10px]`}>{fmtShort(o.observedAt)}</td>
-                      <td className={`${tdClass} font-mono text-[10px]`}>{o.deviceCode}</td>
-                      <td className={`${tdClass} text-[10px]`}>{o.sectorLabel}</td>
-                      <td className={`${tdClass} text-[10px]`}>{manualResultLabel(o.result)}</td>
-                      <td className={`${tdClass} text-[10px]`}>{VEHICLE_TYPE_LABELS[o.vehicleType]}</td>
-                      <td className={`${tdClass} font-mono text-[10px]`}>{o.observedPlate || '—'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+        </main>
       </div>
     </section>
   )

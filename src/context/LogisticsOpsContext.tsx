@@ -120,6 +120,15 @@ function LogisticsOpsProviderInner({ children }: { children: ReactNode }) {
 
   const [selectedScenario, setSelectedScenario] = useState(() => getLogisticsScenario())
 
+  useEffect(() => {
+    const envScenario =
+      typeof import.meta !== 'undefined' ? String(import.meta.env?.VITE_LOGISTICS_SCENARIO ?? '').trim() : ''
+    if (!envScenario || getLogisticsScenario() === envScenario) return
+    setLogisticsScenario(envScenario)
+    setSelectedScenario(envScenario)
+    void refreshFromSource(true)
+  }, [refreshFromSource])
+
   const setScenario = useCallback((scenario: string) => {
     setLogisticsScenario(scenario)
     setSelectedScenario(scenario)

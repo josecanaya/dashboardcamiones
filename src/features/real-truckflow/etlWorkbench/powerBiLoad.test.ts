@@ -10,6 +10,30 @@ describe('powerBiLoad', () => {
     ])
   })
 
+  it('consolida paquete en memoria con sourceDay rango compuesto', () => {
+    const summary =
+      'ingreso_frontal_event_count,final_circuits_count,journeys_after_rear_filter,date_min,date_max\n' +
+      '10,8,12,2026-05-18,2026-05-19\n'
+    const out = consolidatePowerBiLoad({
+      periodStart: '2026-05-18',
+      periodEnd: '2026-05-19',
+      loadGroupType: 'week',
+      days: [
+        {
+          sourceDay: '2026-05-18_2026-05-19',
+          files: {
+            transform_summary: summary,
+            final_circuits:
+              'journey_uid,final_status,truck_plate\n' + 'a1,circuito_completo,ABC123\n',
+          },
+        },
+      ],
+    })
+    expect(out.sourceDays).toEqual(['2026-05-18_2026-05-19'])
+    expect(out.stats.finalCircuits).toBe(1)
+    expect(out.stats.daysConsolidated).toBe(1)
+  })
+
   it('consolida summary con fila day y total', () => {
     const summary =
       'ingreso_frontal_event_count,final_circuits_count,journeys_after_rear_filter,date_min\n' +

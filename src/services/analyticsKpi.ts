@@ -185,6 +185,9 @@ export function computeHourlyFlow(trips: HistoricalTrip[], siteId?: SiteId): Hou
 export interface HourlyFlowWeekSlot {
   slot: number
   label: string
+  /** Etiqueta del eje X al inicio de cada día (dd/MM). */
+  axisLabel: string
+  fecha: string
   day: number
   hour: number
   camionesEnPlanta: number
@@ -193,38 +196,84 @@ export interface HourlyFlowWeekSlot {
   saldoHorario: number
 }
 
-/** Flujo hora por hora para toda la semana (168 slots). refDateMs = inicio del día más reciente. */
-export function computeHourlyFlowWeek(
+/** Ventana semanal derivada de fechas reales en los viajes (no siempre 7 días). */
+export type WeekPeriodSpan = {
+  dayCount: number
+  maxDaysDiff: number
+  fechas: string[]
+}
+
+const WEEK_LOOKBACK_CAP = 6
+
+export function tripEgresoFecha(trip: HistoricalTrip): string {
+  return (
+    trip.fecha ??
+    `${new Date(trip.egresoAt).getUTCFullYear()}-${String(new Date(trip.egresoAt).getUTCMonth() + 1).padStart(2, '0')}-${String(new Date(trip.egresoAt).getUTCDate()).padStart(2, '0')}`
+  )
+}
+
+/** Cuenta días calendario distintos con viajes en la ventana hacia atrás desde refDateMs. */
+export function resolveWeekPeriodFromTrips(
   trips: HistoricalTrip[],
   refDateMs: number,
   siteId?: SiteId
-): HourlyFlowWeekSlot[] {
-  const filtered = siteId ? trips.filter((t) => t.siteId === siteId) : trips
+): WeekPeriodSpan {
   const dayMs = 24 * 60 * 60 * 1000
-  const bySlot = new Map<number, { ingresos: number; egresos: number }>()
-  for (let s = 0; s < 168; s++) bySlot.set(s, { ingresos: 0, egresos: 0 })
-
-  const toSlot = (iso: string, isEgreso: boolean) => {
-    const d = new Date(iso)
-    const fecha = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`
+  const fechasSet = new Set<string>()
+  for (const t of trips) {
+    if (siteId && t.siteId !== siteId) continue
+    const fecha = tripEgresoFecha(t)
     const tripDateMs = new Date(fecha + 'T12:00:00Z').getTime()
     const daysDiff = (refDateMs - tripDateMs) / dayMs
-    if (daysDiff < 0 || daysDiff > 6) return -1
-    const dayIdx = Math.floor(6 - daysDiff)
-    const h = d.getUTCHours()
-    return dayIdx * 24 + h
+    if (daysDiff >= 0 && daysDiff <= WEEK_LOOKBACK_CAP) fechasSet.add(fecha)
+  }
+  const fechas = [...fechasSet].sort()
+  const dayCount = Math.max(1, fechas.length)
+  return { dayCount, maxDaysDiff: dayCount - 1, fechas }
+}
+
+export function tripInWeekPeriod(trip: HistoricalTrip, refDateMs: number, maxDaysDiff: number): boolean {
+  const dayMs = 24 * 60 * 60 * 1000
+  const fecha = tripEgresoFecha(trip)
+  const tripDateMs = new Date(fecha + 'T12:00:00Z').getTime()
+  const daysDiff = (refDateMs - tripDateMs) / dayMs
+  return daysDiff >= 0 && daysDiff <= maxDaysDiff
+}
+
+/** Flujo hora por hora según días con datos (p. ej. 6×24 = 144 slots). */
+export function computeHourlyFlowWeek(
+  trips: HistoricalTrip[],
+  refDateMs: number,
+  siteId?: SiteId,
+  period?: WeekPeriodSpan
+): HourlyFlowWeekSlot[] {
+  const filtered = siteId ? trips.filter((t) => t.siteId === siteId) : trips
+  const span = period ?? resolveWeekPeriodFromTrips(filtered, refDateMs, siteId)
+  const { dayCount, fechas } = span
+  const totalSlots = dayCount * 24
+  const fechaToDayIdx = new Map(fechas.map((f, i) => [f, i]))
+
+  const bySlot = new Map<number, { ingresos: number; egresos: number }>()
+  for (let s = 0; s < totalSlots; s++) bySlot.set(s, { ingresos: 0, egresos: 0 })
+
+  const toSlot = (iso: string) => {
+    const d = new Date(iso)
+    const fecha = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`
+    const dayIdx = fechaToDayIdx.get(fecha)
+    if (dayIdx === undefined) return -1
+    return dayIdx * 24 + d.getUTCHours()
   }
 
   for (const t of filtered) {
-    const sIn = toSlot(t.ingresoAt, false)
-    const sOut = toSlot(t.egresoAt, true)
+    const sIn = toSlot(t.ingresoAt)
+    const sOut = toSlot(t.egresoAt)
     if (sIn >= 0) bySlot.get(sIn)!.ingresos++
     if (sOut >= 0) bySlot.get(sOut)!.egresos++
   }
 
   const rawAcum: number[] = []
   let acum = 0
-  for (let s = 0; s < 168; s++) {
+  for (let s = 0; s < totalSlots; s++) {
     const data = bySlot.get(s) ?? { ingresos: 0, egresos: 0 }
     acum += data.ingresos - data.egresos
     rawAcum.push(acum)
@@ -232,15 +281,20 @@ export function computeHourlyFlowWeek(
   const minAcum = Math.min(...rawAcum)
   const offset = minAcum < 0 ? -minAcum : 0
 
-  return Array.from({ length: 168 }, (_, s) => {
-    const day = Math.floor(s / 24) + 1
+  return Array.from({ length: totalSlots }, (_, s) => {
+    const dayIdx = Math.floor(s / 24)
     const hour = s % 24
+    const fecha = fechas[dayIdx] ?? ''
+    const dd = fecha.length >= 10 ? fecha.slice(8, 10) : String(dayIdx + 1).padStart(2, '0')
+    const mm = fecha.length >= 10 ? fecha.slice(5, 7) : ''
     const data = bySlot.get(s) ?? { ingresos: 0, egresos: 0 }
     const saldo = data.ingresos - data.egresos
     return {
       slot: s,
-      label: `D${day} ${String(hour).padStart(2, '0')}`,
-      day,
+      label: `${dd} ${String(hour).padStart(2, '0')}`,
+      axisLabel: hour === 0 && mm ? `${dd}/${mm}` : '',
+      fecha,
+      day: dayIdx + 1,
       hour,
       camionesEnPlanta: Math.max(0, rawAcum[s]! + offset),
       ingresos: data.ingresos,

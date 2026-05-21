@@ -1,11 +1,15 @@
 import { isValidArgentinaPlate, normalizePlate } from './argentinaPlate'
 import type { NormalizedRealAlertView } from './realAlertsInspector'
 import type { RealJourneyEventDto } from './realJourneyEvents.types'
+import {
+  alignJourneyEventTimeForLiveView as alignJourneyEventTimeForLiveViewFromModule,
+  getEventOperationalInstantIso as getEventOperationalInstantIsoFromModule,
+  getEventOperationalInstantMs as getEventOperationalInstantMsFromModule,
+  parseLiveMillis as parseLiveMillisFromModule,
+} from './live/liveEventTime'
 
 export const LIVE_MATCH_WINDOW_MS = 20_000
 export const MANUAL_VALIDATION_WINDOW_MS = 30_000
-
-const MAX_OCCURRED_VS_PERSISTED_DRIFT_MS = 30 * 24 * 60 * 60 * 1000
 
 export type LiveWorkMode = 'live' | 'validation' | 'lpr' | 'front_rear'
 
@@ -137,34 +141,19 @@ export const WORK_MODE_LABELS: Record<LiveWorkMode, string> = {
 }
 
 export function parseLiveMillis(iso: string): number {
-  const t = new Date(iso).getTime()
-  return Number.isNaN(t) ? NaN : t
+  return parseLiveMillisFromModule(iso)
 }
 
 export function alignJourneyEventTimeForLiveView(e: RealJourneyEventDto): RealJourneyEventDto {
-  const occMs = parseLiveMillis(e.occurredAt)
-  const anchorStr = (e.createdAt || e.modifiedAt || '').trim()
-  if (!anchorStr) return e
-  const anchMs = parseLiveMillis(anchorStr)
-  if (Number.isNaN(occMs) || Number.isNaN(anchMs)) return e
-  if (Math.abs(occMs - anchMs) <= MAX_OCCURRED_VS_PERSISTED_DRIFT_MS) return e
-  return { ...e, occurredAt: anchorStr, recordedAt: anchorStr }
+  return alignJourneyEventTimeForLiveViewFromModule(e)
 }
 
 export function getEventOperationalInstantMs(e: RealJourneyEventDto): number {
-  const a = alignJourneyEventTimeForLiveView(e)
-  const times = [
-    parseLiveMillis(a.occurredAt),
-    parseLiveMillis((a.createdAt || '').trim()),
-    parseLiveMillis((a.modifiedAt || '').trim()),
-  ].filter((t) => !Number.isNaN(t))
-  return times.length ? Math.max(...times) : NaN
+  return getEventOperationalInstantMsFromModule(e)
 }
 
 export function getEventOperationalInstantIso(e: RealJourneyEventDto): string {
-  const ms = getEventOperationalInstantMs(e)
-  if (Number.isNaN(ms)) return (alignJourneyEventTimeForLiveView(e).occurredAt || '').trim() || ''
-  return new Date(ms).toISOString()
+  return getEventOperationalInstantIsoFromModule(e)
 }
 
 function alertInstantMs(a: NormalizedRealAlertView): number {

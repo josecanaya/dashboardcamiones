@@ -14,6 +14,8 @@ export interface KpiCircuitFilterBarProps {
   /** null = todos los circuitos del tipo seleccionado */
   matrixCircuit: string | null
   onMatrixCircuitChange: (code: string | null) => void
+  /** Códigos extra detectados en el histórico cargado (ej. R5_R6 Truckflow). */
+  extraMatrixCodes?: string[]
 }
 
 export function KpiCircuitFilterBar({
@@ -22,6 +24,7 @@ export function KpiCircuitFilterBar({
   onOperationChange,
   matrixCircuit,
   onMatrixCircuitChange,
+  extraMatrixCodes = [],
 }: KpiCircuitFilterBarProps) {
   if (!supportsKpiCircuitMatrix(siteId)) {
     return (
@@ -32,7 +35,7 @@ export function KpiCircuitFilterBar({
   }
 
   const ops = operationsAvailableForPlant(siteId)
-  const circuits = circuitsForPlantOperation(siteId, operation)
+  const circuits = [...circuitsForPlantOperation(siteId, operation), ...extraMatrixCodes]
 
   return (
     <div className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-3 sm:flex-row sm:flex-wrap sm:items-end">
@@ -72,6 +75,7 @@ export function KpiCircuitFilterBar({
           {circuits.map((code) => (
             <option key={code} value={code}>
               {code}
+              {extraMatrixCodes.includes(code) ? ' (datos Truckflow)' : ''}
             </option>
           ))}
         </select>

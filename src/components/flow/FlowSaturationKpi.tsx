@@ -3,7 +3,7 @@
  * Análisis de ingresos, ocupación en planta y momentos de saturación operativa.
  */
 
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -23,6 +23,8 @@ import {
   computeHourlyFlowWeek,
   computeFlowSaturationMetrics,
   computeIngresoKpiMetrics,
+  resolveWeekPeriodFromTrips,
+  tripInWeekPeriod,
   type HourlyFlow,
   type HourlyFlowWeekSlot,
 } from '../../services/analyticsKpi'
@@ -41,6 +43,8 @@ export interface FlowSaturationKpiProps {
 
 type FlowPoint = {
   label: string
+  axisLabel: string
+  fecha?: string
   camionesEnPlanta: number
   ingresos: number
   egresos: number
@@ -57,6 +61,8 @@ function buildFlowPoints(
   if (weekData && weekData.length > 0) {
     return weekData.map((s, i) => ({
       label: s.label,
+      axisLabel: s.axisLabel,
+      fecha: s.fecha,
       camionesEnPlanta: s.camionesEnPlanta,
       ingresos: s.ingresos,
       egresos: s.egresos,
@@ -69,6 +75,7 @@ function buildFlowPoints(
   if (dayData && dayData.length > 0) {
     return dayData.map((h, i) => ({
       label: `${String(h.hour).padStart(2, '0')}`,
+      axisLabel: `${String(h.hour).padStart(2, '0')}:00`,
       camionesEnPlanta: h.simultaneos,
       ingresos: h.ingresos,
       egresos: h.egresos,
@@ -138,6 +145,11 @@ export function FlowSaturationKpi({
   const refDateMs = new Date(refFecha + 'T12:00:00Z').getTime()
   const dayMs = 24 * 60 * 60 * 1000
 
+  const weekSpan = useMemo(() => {
+    if (periodPreset !== 'last_week') return null
+    return resolveWeekPeriodFromTrips(trips, refDateMs, siteId)
+  }, [trips, siteId, periodPreset, refDateMs])
+
   const filteredTrips = useMemo(() => {
     return trips.filter((t) => {
       if (t.siteId !== siteId) return false
@@ -145,15 +157,15 @@ export function FlowSaturationKpi({
       const tripDateMs = new Date(fecha + 'T12:00:00Z').getTime()
       const daysDiff = (refDateMs - tripDateMs) / dayMs
       if (periodPreset === 'last_day') return fecha === refFecha
-      if (periodPreset === 'last_week') return daysDiff >= 0 && daysDiff <= 6
+      if (periodPreset === 'last_week' && weekSpan) return tripInWeekPeriod(t, refDateMs, weekSpan.maxDaysDiff)
       return daysDiff >= 0 && daysDiff <= 30
     })
-  }, [trips, siteId, periodPreset, refFecha, refDateMs, dayMs])
+  }, [trips, siteId, periodPreset, refFecha, refDateMs, dayMs, weekSpan])
 
   const weekData = useMemo(() => {
-    if (periodPreset !== 'last_week') return null
-    return computeHourlyFlowWeek(filteredTrips, refDateMs, undefined)
-  }, [filteredTrips, periodPreset, refDateMs])
+    if (periodPreset !== 'last_week' || !weekSpan) return null
+    return computeHourlyFlowWeek(filteredTrips, refDateMs, undefined, weekSpan)
+  }, [filteredTrips, periodPreset, refDateMs, weekSpan])
 
   const dayData = useMemo(() => {
     if (periodPreset !== 'last_day') return null
@@ -205,7 +217,26 @@ export function FlowSaturationKpi({
 
   const insights = useMemo(() => generateFlowInsights(metrics, points, ingresoMetrics), [metrics, points, ingresoMetrics])
 
+  /** Un tick cada 24 h = inicio de cada día calendario. */
   const chartInterval = periodPreset === 'last_week' ? 23 : 0
+
+  const weekAxisTickFormatter = useCallback(
+    (value: string, index: number) => {
+      const p = points[index]
+      if (p?.axisLabel) return p.axisLabel
+      if (periodPreset === 'last_week' && p?.hour === 0 && p.fecha) {
+        const [, mm, dd] = p.fecha.split('-')
+        return dd && mm ? `${dd}/${mm}` : value
+      }
+      return periodPreset === 'last_week' ? '' : value
+    },
+    [points, periodPreset]
+  )
+
+  const dayBoundaryLabels = useMemo(() => {
+    if (periodPreset !== 'last_week' || !weekSpan) return []
+    return weekSpan.fechas.slice(1).map((_, dayIdx) => points[(dayIdx + 1) * 24]?.label).filter((x): x is string => Boolean(x))
+  }, [periodPreset, weekSpan, points])
 
   const picoIngresosSlots = useMemo(() => {
     if (ingresoMetrics.picoDeLlegadas <= 0) return []
@@ -224,6 +255,12 @@ export function FlowSaturationKpi({
         </h4>
         <p className="mt-0.5 text-xs text-slate-500">
           Análisis de ingresos, ocupación en planta y momentos de saturación operativa.
+          {periodPreset === 'last_week' && weekSpan && weekSpan.dayCount > 0 && (
+            <span className="ml-1 text-slate-600">
+              · Período: {weekSpan.dayCount} día{weekSpan.dayCount === 1 ? '' : 's'} (
+              {weekSpan.fechas[0]} → {weekSpan.fechas[weekSpan.fechas.length - 1]})
+            </span>
+          )}
         </p>
       </div>
 
@@ -278,23 +315,32 @@ export function FlowSaturationKpi({
         <h5 className="mb-2 text-xs font-semibold text-slate-700">Camiones en planta por hora</h5>
         <div className="h-[320px]">
           <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={points} margin={{ top: 10, right: 20, bottom: 24, left: 10 }}>
+            <ComposedChart
+              data={points}
+              margin={{ top: 10, right: 20, bottom: periodPreset === 'last_week' ? 36 : 24, left: 10 }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
+              {dayBoundaryLabels.map((x) => (
+                <ReferenceLine key={x} x={x} stroke="#94a3b8" strokeDasharray="4 3" strokeWidth={1} />
+              ))}
               <XAxis
                 dataKey="label"
                 tick={{ fontSize: 9 }}
                 interval={chartInterval}
-                angle={periodPreset === 'last_week' ? -45 : 0}
+                tickFormatter={weekAxisTickFormatter}
+                angle={periodPreset === 'last_week' ? -35 : 0}
                 textAnchor={periodPreset === 'last_week' ? 'end' : 'middle'}
+                height={periodPreset === 'last_week' ? 48 : 30}
               />
               <YAxis tick={{ fontSize: 10 }} allowDecimals={false} domain={[0, 'auto']} />
               <Tooltip
                 content={({ payload }) => {
                   const p = payload?.[0]?.payload as FlowPoint | undefined
                   if (!p) return null
+                  const when = p.fecha ? `${p.fecha} ${String(p.hour).padStart(2, '0')}:00` : p.label
                   return (
                     <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 shadow-md">
-                      <div className="font-semibold text-slate-800">{p.label}</div>
+                      <div className="font-semibold text-slate-800">{when}</div>
                       <div className="text-xs text-slate-600">En planta: {p.camionesEnPlanta} camiones</div>
                       <div className="text-xs text-slate-600">Ingresos: {p.ingresos} · Egresos: {p.egresos}</div>
                     </div>
@@ -387,23 +433,32 @@ export function FlowSaturationKpi({
           <h5 className="mb-2 text-xs font-semibold text-slate-700">Ingresos por hora</h5>
           <div className="h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={points} margin={{ top: 10, right: 20, bottom: 24, left: 10 }}>
+              <ComposedChart
+                data={points}
+                margin={{ top: 10, right: 20, bottom: periodPreset === 'last_week' ? 36 : 24, left: 10 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
+                {dayBoundaryLabels.map((x) => (
+                  <ReferenceLine key={`ing-${x}`} x={x} stroke="#94a3b8" strokeDasharray="4 3" strokeWidth={1} />
+                ))}
                 <XAxis
                   dataKey="label"
                   tick={{ fontSize: 9 }}
                   interval={chartInterval}
-                  angle={periodPreset === 'last_week' ? -45 : 0}
+                  tickFormatter={weekAxisTickFormatter}
+                  angle={periodPreset === 'last_week' ? -35 : 0}
                   textAnchor={periodPreset === 'last_week' ? 'end' : 'middle'}
+                  height={periodPreset === 'last_week' ? 48 : 30}
                 />
                 <YAxis tick={{ fontSize: 10 }} allowDecimals={false} domain={[0, 'auto']} />
                 <Tooltip
                   content={({ payload }) => {
                     const p = payload?.[0]?.payload as FlowPoint | undefined
                     if (!p) return null
+                    const when = p.fecha ? `${p.fecha} ${String(p.hour).padStart(2, '0')}:00` : p.label
                     return (
                       <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 shadow-md">
-                        <div className="font-semibold text-slate-800">{p.label}</div>
+                        <div className="font-semibold text-slate-800">{when}</div>
                         <div className="text-xs text-green-600">Ingresos: {p.ingresos} camiones/h</div>
                       </div>
                     )

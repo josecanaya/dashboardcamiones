@@ -2,6 +2,7 @@ import { StatusBadge } from './StatusBadge'
 import { useRealTruckflowWorkspaceOptional } from '../RealTruckflowWorkspaceContext'
 import type { WorkspaceLoadStage } from '../workspaceTypes'
 import { RANGE_WARNING_HOURS } from '../workspaceConstants'
+import { TimeInput24 } from './TimeInput24'
 import { parseLocalPeriodEnd, parseLocalPeriodStart } from '../dateTime'
 
 const STAGE_LABEL: Record<WorkspaceLoadStage, string> = {
@@ -9,7 +10,7 @@ const STAGE_LABEL: Record<WorkspaceLoadStage, string> = {
   fetching_events: 'Cargando eventos (API)…',
   fetching_alerts: 'Cargando alertas (API)…',
   filtering_ricardone: 'Filtrando Ricardone…',
-  committee_pipeline: 'Procesando pipeline comité…',
+  committee_pipeline: 'Procesando pipeline ETL…',
   clean_dataset: 'Generando dataset limpio…',
   committing_state: 'Actualizando interfaz…',
   ready: 'Listo',
@@ -154,12 +155,11 @@ export function GlobalRangeSelector() {
         </label>
         <label className="text-xs font-semibold text-slate-600">
           Hora inicial
-          <input
-            type="time"
+          <TimeInput24
             value={ws.rangeStartTime}
-            onChange={(e) => ws.setRangeStartTime(e.target.value)}
+            onChange={ws.setRangeStartTime}
             disabled={ws.status === 'loading'}
-            className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 disabled:bg-slate-100"
+            placeholder="00:00"
           />
         </label>
         <label className="text-xs font-semibold text-slate-600">
@@ -174,12 +174,11 @@ export function GlobalRangeSelector() {
         </label>
         <label className="text-xs font-semibold text-slate-600">
           Hora final
-          <input
-            type="time"
+          <TimeInput24
             value={ws.rangeEndTime}
-            onChange={(e) => ws.setRangeEndTime(e.target.value)}
+            onChange={ws.setRangeEndTime}
             disabled={ws.status === 'loading'}
-            className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 disabled:bg-slate-100"
+            placeholder="23:59"
           />
         </label>
         <button

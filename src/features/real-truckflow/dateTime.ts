@@ -32,3 +32,20 @@ export function parseLocalPeriodEnd(dateStr: string, timeStr: string): Date {
   const mm = Number(parts[1]) || 0
   return new Date(y, (m || 1) - 1, d || 1, hh, mm, 59, 999)
 }
+
+export function isValidTimeHHMM(hhmm: string): boolean {
+  const m = /^(\d{1,2}):(\d{2})$/.exec(hhmm.trim())
+  if (!m) return false
+  const hh = Number(m[1])
+  const mm = Number(m[2])
+  return hh >= 0 && hh <= 23 && mm >= 0 && mm <= 59
+}
+
+export function normalizeTimeHHMM(hhmm: string, fallback = '00:00'): string {
+  const m = /^(\d{1,2}):(\d{2})$/.exec(hhmm.trim())
+  if (!m) return fallback
+  const hh = Number(m[1])
+  const mm = Number(m[2])
+  if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return fallback
+  return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`
+}

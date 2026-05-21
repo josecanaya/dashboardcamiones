@@ -1,3 +1,7 @@
+/**
+ * Capa de ingesta Truckflow: fetch HTTP, extracción de arrays y normalización inicial a DTO.
+ * La reconstrucción/validación de circuitos vive en otra capa (p. ej. circuitAnalyzer.ts).
+ */
 import type { ApiRealJourneyEventRow, RealJourneyEventDto } from './realJourneyEvents.types'
 import { annotateRealJourneyEventsWithPlateFieldsChunked } from './realJourneyEventPlate'
 import { yieldToBrowser } from '../utils/yieldToBrowser'
@@ -151,17 +155,21 @@ async function fetchTruckflowJson(
   }
 }
 
+/** Mapea una fila cruda de `/journey-event/list` (o JSON local) al DTO interno previo a patentes. */
 export function mapRawToApiJourneyRow(raw: unknown, index: number): ApiRealJourneyEventRow | null {
   if (!raw || typeof raw !== 'object') return null
   const obj = raw as Record<string, unknown>
-  const journeyUid = toString(obj.journeyUid ?? obj.journeyUuid).trim()
-  if (!journeyUid) return null
   const occurredAt =
     toString(obj.occurredAt) ||
     toString(obj.recordedAt) ||
     toString(obj.createdAt) ||
     toString(obj.modifiedAt)
   const recordedAt = toString(obj.recordedAt) || occurredAt
+  const truckPlate = toString(obj.truckPlate)
+  // Sin journeyUid en origen: conservar el evento con ID técnico (reconstrucción por patente + ventana en otra capa).
+  const journeyUid =
+    toString(obj.journeyUid ?? obj.journeyUuid).trim() ||
+    `NO_JOURNEY_${truckPlate || 'SIN_PATENTE'}_${occurredAt || index}`
   return {
     id: toNumber(obj.id, 1_000_000 + index),
     createdAt: toString(obj.createdAt),
@@ -172,13 +180,14 @@ export function mapRawToApiJourneyRow(raw: unknown, index: number): ApiRealJourn
     eventType: toString(obj.eventType),
     occurredAt,
     recordedAt,
-    truckPlate: toString(obj.truckPlate),
+    truckPlate,
     sectorCode: toString(obj.sectorCode),
     deviceCode: toString(obj.deviceCode),
     alertLevel: toNumber(obj.alertLevel, 0),
   }
 }
 
+/** GET `/journey-event/list` → extracción de array → mapeo por bloques → enriquecimiento de patentes. */
 export async function fetchJourneyEvents(
   params: RealTruckflowQueryParams = {},
   opts?: { baseOrigin?: string; timeoutMs?: number; signal?: AbortSignal }
@@ -200,13 +209,21 @@ export async function fetchJourneyEvents(
   return annotateRealJourneyEventsWithPlateFieldsChunked(parsed)
 }
 
-/** Normaliza filas crudas (p. ej. desde JSON local) al mismo DTO que devuelve la API. */
+/** Normaliza filas crudas (p. ej. JSON local) al mismo DTO que devuelve la API, sin bloquear la UI. */
 export async function journeyDtoListFromRawExtractedRowsChunked(rows: unknown[]): Promise<RealJourneyEventDto[]> {
   const parsed: ApiRealJourneyEventRow[] = []
-  for (let idx = 0; idx < rows.length; idx++) {
-    const row = mapRawToApiJourneyRow(rows[idx], idx)
-    if (row) parsed.push(row)
+
+  for (let chunkStart = 0; chunkStart < rows.length; chunkStart += EVENT_PARSE_ROWS_PER_SLICE) {
+    const chunkEnd = Math.min(chunkStart + EVENT_PARSE_ROWS_PER_SLICE, rows.length)
+
+    for (let idx = chunkStart; idx < chunkEnd; idx++) {
+      const row = mapRawToApiJourneyRow(rows[idx], idx)
+      if (row) parsed.push(row)
+    }
+
+    if (chunkEnd < rows.length) await yieldToBrowser()
   }
+
   return annotateRealJourneyEventsWithPlateFieldsChunked(parsed)
 }
 
@@ -214,6 +231,7 @@ export function alertDtoListFromRawExtractedRows(rows: unknown[]): RealAlertDto[
   return rows.filter((row): row is RealAlertDto => Boolean(row) && typeof row === 'object')
 }
 
+/** GET `/alert/list` → extracción de array → DTO de alertas (sin mezclar con eventos ni circuitos). */
 export async function fetchAlerts(
   params: RealTruckflowQueryParams = {},
   opts?: { baseOrigin?: string; timeoutMs?: number; signal?: AbortSignal }

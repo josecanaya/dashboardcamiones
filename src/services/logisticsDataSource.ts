@@ -44,6 +44,9 @@ type ExternalHistoricalTrip = {
   plate?: string
   plant?: string
   inferredCircuitCode?: string
+  /** Código legacy A/B/E (mock); en Truckflow suele venir aparte del código matriz R* */
+  legacyCircuitCode?: string
+  committeeCircuitName?: string
   startedAt?: string
   endedAt?: string
   /** Fecha de egreso YYYY-MM-DD para filtrado por día/semana/mes */
@@ -119,12 +122,59 @@ export interface LogisticsSnapshot {
   meta: { basePath: string; scenario: string; loadedAt: string; simulatedGeneratedAt?: string; historicoSource?: string }
 }
 
+function getDefaultScenario(): string {
+  const fromEnv =
+    typeof import.meta !== 'undefined' ? String(import.meta.env?.VITE_LOGISTICS_SCENARIO ?? '').trim() : ''
+  return fromEnv || 'march_full'
+}
+
 function getConfig(): DataSourceConfig {
   const fromStorageBase = safeGetStorage('logistics.mock.basePath')
   const fromStorageScenario = safeGetStorage('logistics.mock.scenario')
   return {
     basePath: runtimeConfig.basePath || fromStorageBase || '/mock-data',
-    scenario: runtimeConfig.scenario || fromStorageScenario || 'march_full',
+    scenario: runtimeConfig.scenario || fromStorageScenario || getDefaultScenario(),
+  }
+}
+
+/** Mapea fila JSON histórico → HistoricalTrip (mock y Truckflow KPI). */
+export function mapExternalHistoricalTrip(trip: ExternalHistoricalTrip, idx: number): HistoricalTrip {
+  const egresoAt = trip.endedAt ?? new Date().toISOString()
+  const egresoDate = new Date(egresoAt)
+  const fecha =
+    trip.fecha ??
+    `${egresoDate.getUTCFullYear()}-${String(egresoDate.getUTCMonth() + 1).padStart(2, '0')}-${String(egresoDate.getUTCDate()).padStart(2, '0')}`
+  const matrixCode = (trip.inferredCircuitCode ?? trip.catalogCode ?? '').trim()
+  const legacyRaw = (trip.legacyCircuitCode ?? '').trim()
+  const legacyBase = legacyRaw.match(/^([ABE]\d+)/i)?.[1]?.toUpperCase()
+  const circuitoFinal = legacyBase ?? (matrixCode || trip.inferredCircuitCode || 'N/A')
+
+  return {
+    tripId: trip.tripId ?? `trip-${idx}`,
+    camionId: trip.truckId ?? `truck-${idx}`,
+    plate: trip.plate ?? 'N/A',
+    circuitoFinal,
+    ingresoAt: trip.startedAt ?? new Date().toISOString(),
+    egresoAt,
+    fecha,
+    fechaDia: trip.fechaDia ?? egresoDate.getUTCDate(),
+    fechaMes: trip.fechaMes ?? egresoDate.getUTCMonth() + 1,
+    fechaAnio: trip.fechaAnio ?? egresoDate.getUTCFullYear(),
+    durationMinutes: trip.durationMinutes ?? 0,
+    secuenciaCamaras: (trip.expectedSequence ?? []).map((sector) => `CAM_${sector}`),
+    secuenciaSectores: trip.visitedSectors ?? [],
+    alerts: [],
+    estadoFinal: (trip.classification ?? (trip.completed ? 'VALIDADO' : 'CON_OBSERVACIONES')) as
+      | 'VALIDADO'
+      | 'CON_OBSERVACIONES'
+      | 'ANOMALO',
+    siteId: toSiteId(trip.plant),
+    catalogCode: matrixCode || undefined,
+    catalogName: trip.committeeCircuitName ?? trip.catalogName,
+    cir: trip.cir,
+    vue: trip.vue,
+    descripcion: trip.descripcion ?? trip.committeeCircuitName,
+    productType: trip.productType,
   }
 }
 
@@ -361,38 +411,7 @@ export async function getHistoricalTrips(siteId?: SiteId): Promise<HistoricalTri
     if (fallback.generatedAt) generatedAt = fallback.generatedAt
   }
   const payload = { data: items }
-  const mapped = (payload.data ?? []).map((trip, idx) => {
-    const egresoAt = trip.endedAt ?? new Date().toISOString()
-    const egresoDate = new Date(egresoAt)
-    const fecha = trip.fecha ?? `${egresoDate.getUTCFullYear()}-${String(egresoDate.getUTCMonth() + 1).padStart(2, '0')}-${String(egresoDate.getUTCDate()).padStart(2, '0')}`
-    const fechaDia = trip.fechaDia ?? egresoDate.getUTCDate()
-    const fechaMes = trip.fechaMes ?? egresoDate.getUTCMonth() + 1
-    const fechaAnio = trip.fechaAnio ?? egresoDate.getUTCFullYear()
-    return {
-      tripId: trip.tripId ?? `trip-${idx}`,
-      camionId: trip.truckId ?? `truck-${idx}`,
-      plate: trip.plate ?? 'N/A',
-      circuitoFinal: trip.inferredCircuitCode ?? 'N/A',
-      ingresoAt: trip.startedAt ?? new Date().toISOString(),
-      egresoAt,
-      fecha,
-      fechaDia,
-      fechaMes,
-      fechaAnio,
-      durationMinutes: trip.durationMinutes ?? 0,
-      secuenciaCamaras: (trip.expectedSequence ?? []).map((sector) => `CAM_${sector}`),
-      secuenciaSectores: trip.visitedSectors ?? [],
-      alerts: [],
-      estadoFinal: (trip.classification ?? (trip.completed ? 'VALIDADO' : 'CON_OBSERVACIONES')) as 'VALIDADO' | 'CON_OBSERVACIONES' | 'ANOMALO',
-      siteId: toSiteId(trip.plant),
-      catalogCode: trip.catalogCode,
-      catalogName: trip.catalogName,
-      cir: trip.cir,
-      vue: trip.vue,
-      descripcion: trip.descripcion,
-      productType: trip.productType,
-    }
-  })
+  const mapped = (payload.data ?? []).map((trip, idx) => mapExternalHistoricalTrip(trip, idx))
   return mapped.filter((trip) => !siteId || trip.siteId === siteId)
 }
 
@@ -465,45 +484,12 @@ export async function loadLogisticsSnapshot(siteId?: SiteId): Promise<LogisticsS
     return { ...primary, actualSource: scenario as string }
   })()
 
-  const mapTrip = (trip: ExternalHistoricalTrip, idx: number) => {
-    const egresoAt = trip.endedAt ?? new Date().toISOString()
-    const egresoDate = new Date(egresoAt)
-    const fecha = trip.fecha ?? `${egresoDate.getUTCFullYear()}-${String(egresoDate.getUTCMonth() + 1).padStart(2, '0')}-${String(egresoDate.getUTCDate()).padStart(2, '0')}`
-    return {
-      tripId: trip.tripId ?? `trip-${idx}`,
-      camionId: trip.truckId ?? `truck-${idx}`,
-      plate: trip.plate ?? 'N/A',
-      circuitoFinal: trip.inferredCircuitCode ?? 'N/A',
-      ingresoAt: trip.startedAt ?? new Date().toISOString(),
-      egresoAt,
-      fecha,
-      fechaDia: trip.fechaDia ?? egresoDate.getUTCDate(),
-      fechaMes: trip.fechaMes ?? egresoDate.getUTCMonth() + 1,
-      fechaAnio: trip.fechaAnio ?? egresoDate.getUTCFullYear(),
-      durationMinutes: trip.durationMinutes ?? 0,
-      secuenciaCamaras: (trip.expectedSequence ?? []).map((s) => `CAM_${s}`),
-      secuenciaSectores: trip.visitedSectors ?? [],
-      alerts: [],
-      estadoFinal: (trip.classification ?? (trip.completed ? 'VALIDADO' : 'CON_OBSERVACIONES')) as
-        | 'VALIDADO'
-        | 'CON_OBSERVACIONES'
-        | 'ANOMALO',
-      siteId: toSiteId(trip.plant),
-      catalogCode: trip.catalogCode,
-      catalogName: trip.catalogName,
-      cir: trip.cir,
-      vue: trip.vue,
-      descripcion: trip.descripcion,
-      productType: trip.productType,
-    }
-  }
-
   const results = await Promise.allSettled([
     getRawCameraEvents(),
     getEnrichedCameraEvents(siteId),
     getTrucksInPlant(siteId),
     historicoFetch.then((p) => {
-      const trips = (p.items ?? []).map((t, i) => mapTrip(t, i))
+      const trips = (p.items ?? []).map((t, i) => mapExternalHistoricalTrip(t, i))
       return { trips, generatedAt: p.generatedAt, actualSource: (p as { actualSource?: string }).actualSource }
     }),
     getOperationalAlerts(siteId),

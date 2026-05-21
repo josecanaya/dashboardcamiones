@@ -38,7 +38,11 @@ import Kpi5 from '../components/kpi5/Kpi5'
 import { PlantOperationalSummary } from '../components/analytics/PlantOperationalSummary'
 import { KpiCircuitFilterBar } from '../components/analytics/KpiCircuitFilterBar'
 import type { KpiOperationKind } from '../config/kpiCircuitMatrix'
-import { filterTripsForKpiContext, operationsAvailableForPlant } from '../config/kpiCircuitMatrix'
+import {
+  extraMatrixCodesFromTrips,
+  filterTripsForKpiContext,
+  operationsAvailableForPlant,
+} from '../config/kpiCircuitMatrix'
 
 interface AnalyticsPageProps {
   siteId: SiteId
@@ -60,6 +64,11 @@ export function AnalyticsPage({ siteId, onChangeSite }: AnalyticsPageProps) {
     setKpiOperation(ops[0] ?? 'recepcion')
     setKpiMatrixCircuit(null)
   }, [siteId])
+
+  const extraMatrixCodes = useMemo(
+    () => extraMatrixCodesFromTrips(historicalTrips, siteId),
+    [historicalTrips, siteId]
+  )
 
   const historicalTripsFiltered = useMemo(
     () => filterTripsForKpiContext(historicalTrips, siteId, kpiOperation, kpiMatrixCircuit),
@@ -216,6 +225,7 @@ export function AnalyticsPage({ siteId, onChangeSite }: AnalyticsPageProps) {
         onOperationChange={setKpiOperation}
         matrixCircuit={kpiMatrixCircuit}
         onMatrixCircuitChange={setKpiMatrixCircuit}
+        extraMatrixCodes={extraMatrixCodes}
       />
 
       <PlantOperationalSummary

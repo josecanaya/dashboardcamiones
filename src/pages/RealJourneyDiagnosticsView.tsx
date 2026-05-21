@@ -1,5 +1,4 @@
 import { useMemo, useState, lazy, Suspense, type ReactNode } from 'react'
-import { COMMITTEE_ETL_LITE_MODE } from '../config/committeeEtlLite'
 import {
   POWER_BI_COMMITTEE_FILENAMES,
   POWER_BI_COMMITTEE_FILE_COUNT,
@@ -16,7 +15,6 @@ const COMMITTEE_SINGLE_CSV_ROWS: readonly { key: PowerBiCommitteeCsvKey; label: 
   { key: 'incompletos_por_motivo', label: 'Incompletos' },
   { key: 'camera_diagnostics', label: 'Diagnóstico cámaras' },
 ]
-import { buildJourneyEventListPublicDisplayUrl } from '../services/realJourneyEventsDataSource'
 import { normalizeSequenceForPattern, pctOfIncomplete } from '../services/realIncompleteAnalysis'
 import { preliminaryCircuitTypicalSectorPath } from '../services/realPreliminaryCircuit'
 import type { OperationalDepurationSnapshot, OperationalJourneyScopeFilter } from '../services/realJourneyDepurationMap'
@@ -39,7 +37,13 @@ import { EventosTruckflowPresentation } from '../components/realDiagnostics/Even
 import { ExtraccionDatosTab } from '../features/real-truckflow/tabs/ExtraccionDatosTab'
 import { AnalisisLocalTab } from '../features/real-truckflow/tabs/AnalisisLocalTab'
 import { TransformEtlTab } from '../features/real-truckflow/tabs/TransformEtlTab'
+import { KpiComiteTab } from '../features/real-truckflow/tabs/KpiComiteTab'
 import { LoadExportTab } from '../features/real-truckflow/tabs/LoadExportTab'
+import {
+  ETL_DEV_MODE,
+  ETL_DEV_TAB_IDS,
+  ETL_PRODUCT_TAB_IDS,
+} from '../config/committeeEtlLite'
 const LiveCameraMonitorLazy = lazy(async () => {
   const m = await import('../components/realDiagnostics/LiveCameraMonitor')
   return { default: m.LiveCameraMonitor }
@@ -61,6 +65,7 @@ export type RealDataMainTab =
   | 'camara_por_camara'
   | 'etl_export'
   | 'dss_truckflow'
+  | 'kpi_comite'
 
 /** Navegación completa Datos reales (modo histórico; muchas vistas no están en la barra y se enlazan desde otras pantallas). */
 export const MAIN_TABS: { id: RealDataMainTab; label: string }[] = [
@@ -71,16 +76,38 @@ export const MAIN_TABS: { id: RealDataMainTab; label: string }[] = [
   { id: 'envivo', label: 'En vivo' },
 ]
 
-/** Solo pestañas operativas comité / ETL (sin resumen ejecutivo demo ni depuraciones extra). */
-const COMMITTEE_ETL_NAV_TABS: { id: RealDataMainTab; label: string }[] = [
-  { id: 'extraccion_datos', label: 'Extracción de datos' },
-  { id: 'analisis_local', label: 'Análisis local' },
-  { id: 'transform_etl', label: 'Transform' },
-  { id: 'envivo', label: 'En vivo' },
-  { id: 'load_export', label: 'Load / Export' },
-]
+/** Etiquetas del proceso ETL (productivo + diagnóstico DEV). */
+const ETL_TAB_LABELS: Record<RealDataMainTab, string> = {
+  extraccion_datos: 'Extracción',
+  analisis_local: 'Análisis local',
+  transform_etl: 'Transform',
+  load_export: 'Load / Export',
+  kpi_comite: 'KPIs ETL',
+  resumen: 'Resumen',
+  depuracion: 'Depuración',
+  incompletos: 'Incompletos',
+  eventos: 'Eventos',
+  alertas: 'Alertas',
+  circuitos: 'Circuitos preliminares',
+  camara_por_camara: 'Cámara por cámara',
+  buscar: 'Buscar patente',
+  etl_export: 'Export ETL',
+  envivo: 'En vivo',
+  dss_truckflow: 'DSS vs Truckflow',
+}
 
-const DIAGNOSTICS_NAV_TABS = COMMITTEE_ETL_LITE_MODE ? COMMITTEE_ETL_NAV_TABS : MAIN_TABS
+const ETL_PRODUCT_NAV_TABS = ETL_PRODUCT_TAB_IDS.map((id) => ({
+  id,
+  label: ETL_TAB_LABELS[id],
+}))
+
+const ETL_DEV_NAV_TABS = ETL_DEV_TAB_IDS.map((id) => ({
+  id,
+  label: ETL_TAB_LABELS[id],
+}))
+
+/** @deprecated Usar ETL_PRODUCT_NAV_TABS + ETL_DEV_NAV_TABS */
+const ETL_PROCESS_NAV_TABS = [...ETL_PRODUCT_NAV_TABS, ...ETL_DEV_NAV_TABS]
 
 export type RealDataTimeFilterMode = 'month' | 'week' | 'day'
 
@@ -117,28 +144,6 @@ const DEPURATION_SCOPE_OPTIONS: { id: OperationalJourneyScopeFilter; label: stri
   { id: 'partial_valid', label: 'Válidos parciales' },
   { id: 'real_incomplete', label: 'Registro incompleto' },
   { id: 'solo_volcable', label: 'Solo Volcable' },
-]
-
-const QUICK_FILTER_OPTIONS: { id: JourneyQuickFilter; label: string }[] = [
-  { id: 'all', label: 'Todos' },
-  { id: 'complete_minimal', label: 'Completos mínimos' },
-  { id: 'incomplete', label: 'Incompletos (calidad)' },
-  { id: 'solo_ingreso', label: 'Solo ingreso' },
-  { id: 'solo_egreso', label: 'Solo egreso' },
-  { id: 'solo_volcable', label: 'Solo volcable' },
-  { id: 'volcable_ingreso', label: 'Volcable con ingreso' },
-  { id: 'volcable_complete', label: 'Volcable completo mínimo' },
-  { id: 'mixed', label: 'Mixtos R/SL' },
-  { id: 'long', label: 'Sospechosos largos' },
-  { id: 'repeat', label: 'Repetición mismo sector' },
-  { id: 'inc_prelim', label: 'Solo incompletos (prelim)' },
-  { id: 'inc_prelim_grouped', label: 'Incompletos agrupados' },
-  { id: 'inc_prelim_with_ing', label: 'Incompl. + ingreso' },
-  { id: 'inc_prelim_without_ing', label: 'Incompl. sin ingreso' },
-  { id: 'inc_prelim_with_bal', label: 'Incompl. + balanza' },
-  { id: 'inc_prelim_with_volc', label: 'Incompl. + volcable' },
-  { id: 'inc_prelim_with_egr', label: 'Incompl. + egreso' },
-  { id: 'inc_prelim_sl', label: 'Incompl. San Lorenzo' },
 ]
 
 const ALERTS_QUICK_FILTER_OPTIONS: { id: AlertsQuickFilter; label: string }[] = [
@@ -610,6 +615,8 @@ export type RealJourneyDiagnosticsViewProps = {
 
 export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
   const [nearbyPlateFilter, setNearbyPlateFilter] = useState('')
+  const [etlDevOpen, setEtlDevOpen] = useState(ETL_DEV_MODE)
+  const isDevEtlTab = (ETL_DEV_TAB_IDS as readonly string[]).includes(p.mainTab)
   const [nearbyDeviceFilter, setNearbyDeviceFilter] = useState('')
   const [nearbySectorFilter, setNearbySectorFilter] = useState('')
   const [drawerJourneySearch, setDrawerJourneySearch] = useState('')
@@ -730,7 +737,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
               <span className="font-medium text-slate-800">preliminares</span>; no equivalen todavía a la matriz oficial R/SL.
             </p>
             <p className="mt-3 max-w-2xl border-l-2 border-teal-500 pl-3 text-xs leading-relaxed text-slate-600">
-              Los datos crudos se conservan, pero el análisis operativo excluye provisoriamente cámaras traseras/sensibles y reglas de duración de journey no operativa (segmentación temporal para comité).
+              Los datos crudos se conservan; el pipeline ETL excluye provisoriamente cámaras traseras/sensibles y aplica segmentación temporal sobre journeys no operativos.
             </p>
           </div>
           <div className="flex shrink-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
@@ -740,7 +747,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
               {p.datasetQualityBadge.text}
             </span>
             <span className="inline-flex w-fit items-center gap-2 rounded-full bg-teal-50 px-3 py-1.5 text-xs font-semibold text-teal-900 ring-1 ring-teal-200/90">
-              Dataset filtrado para comité
+              Dataset filtrado ETL
             </span>
           </div>
         </div>
@@ -753,8 +760,35 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
         {p.error ? <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">{p.error}</div> : null}
       </header>
 
-      <nav className="flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
-        {DIAGNOSTICS_NAV_TABS.map((t) => (
+      <section className="space-y-3">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-cyan-700/90">Datos reales</p>
+          <h2 className="text-lg font-bold text-slate-900">Consola en vivo</h2>
+          <p className="mt-1 text-sm text-slate-600">Consulta operativa por cámara, día y franja horaria (API Truckflow).</p>
+        </div>
+        <Suspense
+          fallback={
+            <div className="rounded-3xl border border-slate-800 bg-[#0b1020] px-6 py-14 text-center text-sm text-slate-400">
+              Cargando monitor en vivo…
+            </div>
+          }
+        >
+          <LiveCameraMonitorLazy />
+        </Suspense>
+      </section>
+
+      <section className="space-y-4 border-t border-slate-200 pt-8">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-violet-700/90">Proceso</p>
+          <h2 className="text-xl font-bold text-slate-900">ETL</h2>
+          <p className="mt-1 max-w-3xl text-sm text-slate-600">
+            Extract → análisis local → transform → export Power BI. Evidencia ejecutiva para comité; la depuración técnica
+            queda en modo DEV.
+          </p>
+        </div>
+
+      <nav className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
+        {ETL_PRODUCT_NAV_TABS.map((t) => (
           <button
             key={t.id}
             type="button"
@@ -764,22 +798,59 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
             {t.label}
           </button>
         ))}
+        {ETL_DEV_MODE ?
+          <>
+            <button
+              type="button"
+              onClick={() => setEtlDevOpen((v) => !v)}
+              className={`rounded-xl border px-3 py-2 text-xs font-bold uppercase tracking-wide ${
+                etlDevOpen ?
+                  'border-amber-400 bg-amber-50 text-amber-950'
+                : 'border-dashed border-slate-300 text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              {etlDevOpen ? 'Ocultar DEV' : 'Diagnóstico DEV'}
+            </button>
+            {etlDevOpen ?
+              ETL_DEV_NAV_TABS.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => {
+                    setEtlDevOpen(true)
+                    p.setMainTab(t.id)
+                  }}
+                  className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                    p.mainTab === t.id ?
+                      'bg-amber-900 text-white shadow'
+                    : 'border border-amber-200 bg-amber-50/60 text-amber-950 hover:bg-amber-100'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))
+            : null}
+          </>
+        : null}
       </nav>
+
+      {isDevEtlTab && ETL_DEV_MODE ?
+        <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-2 text-xs text-amber-950">
+          Vista de diagnóstico DEV — no forma parte del flujo productivo para comité.
+        </p>
+      : null}
 
       {p.mainTab === 'extraccion_datos' ?
         <ExtraccionDatosTab onGoToAnalysis={() => p.setMainTab('analisis_local')} />
       : null}
       {p.mainTab === 'analisis_local' ? (
-        <AnalisisLocalTab
-          onTransformSucceeded={
-            COMMITTEE_ETL_LITE_MODE ? () => p.setMainTab('transform_etl') : undefined
-          }
-        />
+        <AnalisisLocalTab onTransformSucceeded={() => p.setMainTab('transform_etl')} />
       ) : null}
       {p.mainTab === 'transform_etl' ? <TransformEtlTab /> : null}
+      {ETL_DEV_MODE && p.mainTab === 'kpi_comite' ? <KpiComiteTab /> : null}
       {p.mainTab === 'load_export' ? <LoadExportTab /> : null}
 
-      {!p.hideLegacyPeriodFilters ? (
+      {isDevEtlTab && !p.hideLegacyPeriodFilters ? (
         <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex flex-wrap items-end gap-3">
             <label className="text-xs font-semibold text-slate-600">
@@ -868,18 +939,6 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
         </section>
       ) : null}
 
-      {p.mainTab === 'envivo' && (
-        <Suspense
-          fallback={
-            <div className="rounded-3xl border border-slate-800 bg-[#0b1020] px-6 py-14 text-center text-sm text-slate-400">
-              Cargando monitor en vivo…
-            </div>
-          }
-        >
-          <LiveCameraMonitorLazy />
-        </Suspense>
-      )}
-
       {p.mainTab === 'dss_truckflow' && (
         <section className="rounded-3xl border border-dashed border-amber-200/90 bg-gradient-to-br from-amber-50/80 to-white p-8 shadow-sm">
           <h2 className="text-xl font-bold text-slate-900">DSS vs Truckflow</h2>
@@ -893,7 +952,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
         </section>
       )}
 
-      {p.mainTab === 'resumen' && !COMMITTEE_ETL_LITE_MODE && (
+      {p.mainTab === 'resumen' && (
         <section className="space-y-6">
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-lg font-bold text-slate-900">Resumen operativo (cruce + depuración)</h2>
@@ -915,7 +974,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
             </div>
             <div className="mt-4 text-xs text-slate-600">
               <div>
-                Eventos operativos: {p.events.length.toLocaleString()} · Alertas alineadas (comité):{' '}
+                Eventos operativos: {p.events.length.toLocaleString()} · Alertas alineadas (ETL):{' '}
                 {p.committeeAlertsAlignedCount.toLocaleString()} · Alertas operativas base (post-traseras):{' '}
                 {p.rearCameraFilterTrace.operationalAlerts.length.toLocaleString()}
               </div>
@@ -932,7 +991,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
             <div className="mt-4 rounded-xl border border-cyan-200 bg-cyan-50 p-3 text-xs text-cyan-950">
               <div className="font-semibold">Filtro de cámaras traseras provisorio</div>
               <div>Eventos excluidos: {p.rearCameraFilterTrace.excludedRearEvents.length} · Alertas traseras excluidas: {p.rearCameraFilterTrace.excludedRearAlerts.length} · Alertas route/start ingreso-preingreso excluidas: {p.rearCameraFilterTrace.excludedIngressRouteAlerts.length} · Recorridos sólo traseras: {p.rearCameraFilterTrace.excludedRearOnlyJourneyUids.length}</div>
-              <div>Dataset operativo final: {p.events.length} eventos (tras segmentación comité) · {p.committeeAlertsAlignedCount} alertas alineadas a recorridos · base traseras: {p.rearCameraFilterTrace.operationalAlerts.length}</div>
+              <div>Dataset operativo final: {p.events.length} eventos (tras segmentación ETL) · {p.committeeAlertsAlignedCount} alertas alineadas a recorridos · base traseras: {p.rearCameraFilterTrace.operationalAlerts.length}</div>
               <p className="mt-1">El filtro de cámaras traseras es provisorio y se aplica para evitar que lecturas de acoplados, semirremolques o vehículos no operativos ensucien la reconstrucción preliminar.</p>
             </div>
           </div>
@@ -940,7 +999,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
           <div className="rounded-3xl border border-teal-200 bg-gradient-to-br from-teal-50/90 to-white p-6 shadow-sm">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Datos útiles para comité</h3>
+                <h3 className="text-lg font-bold text-slate-900">Datos útiles ETL</h3>
                 <p className="mt-1 text-sm text-slate-600">
                   Conteos del pipeline operativo (traseras + segmentación temporal + clasificación Ricardone). Las filas de revisión incluyen alertas y flags de journey largo.
                 </p>
@@ -950,7 +1009,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
                 onClick={p.exportCommitteeDataset}
                 className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-800"
               >
-                Exportar dataset comité
+                Exportar dataset ETL
               </button>
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
@@ -960,14 +1019,14 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
               <ExecutiveMetricCard label="Alertas crudas recibidas" value={p.committeeExecutiveSummary.rawAlertCount} />
               <ExecutiveMetricCard accent="green" label="Alertas operativas usadas (alineadas)" value={p.committeeAlertsAlignedCount} />
               <ExecutiveMetricCard label="Recorridos procesados" value={p.committeeExecutiveSummary.journeysProcessedCount} />
-              <ExecutiveMetricCard accent="green" label="Circuitos incluidos (heurística comité)" value={p.committeeExecutiveSummary.includedCircuitCount} />
+              <ExecutiveMetricCard accent="green" label="Circuitos incluidos (heurística ETL)" value={p.committeeExecutiveSummary.includedCircuitCount} />
               <ExecutiveMetricCard accent="amber" label="Registros en revisión (ETL fusionado)" value={p.committeeEtlTotals.review} />
               <ExecutiveMetricCard accent="rose" label="Registros descartados (ETL fusionado)" value={p.committeeEtlTotals.excluded} />
               <ExecutiveMetricCard label="Circuito de mayor volumen (incl.)" value={`${p.committeeExecutiveSummary.topCircuitCode}`} sub={`${p.committeeExecutiveSummary.topCircuitCount} recorridos`} />
             </div>
             <div className="mt-6 grid gap-4 lg:grid-cols-3">
               <HorizontalBarChart title="Circuitos incluidos por tipo" items={p.committeeIncludedBarItems} />
-              <HorizontalBarChart title="Registros en revisión por motivo (comité)" items={p.committeeReviewBarItems} />
+              <HorizontalBarChart title="Registros en revisión por motivo (ETL)" items={p.committeeReviewBarItems} />
               <HorizontalBarChart title="Alertas LPR por cámara" items={p.committeeLprBarItems} />
             </div>
           </div>
@@ -1942,7 +2001,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
         </section>
         ))}
 
-      {p.mainTab === 'depuracion' && !COMMITTEE_ETL_LITE_MODE && (
+      {p.mainTab === 'depuracion' && (
         <section className="space-y-8">
           <div className="grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
             <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
@@ -2207,7 +2266,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
         </section>
       )}
 
-      {p.mainTab === 'incompletos' && !COMMITTEE_ETL_LITE_MODE && (
+      {p.mainTab === 'incompletos' && (
         <section className="space-y-8">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
             <ExecutiveMetricCard accent="amber" label="Total registros incompletos" value={p.incompleteTotal} />
@@ -2440,7 +2499,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
         </section>
       )}
 
-      {p.mainTab === 'buscar' && !COMMITTEE_ETL_LITE_MODE && (
+      {p.mainTab === 'buscar' && (
         <section className="space-y-8">
           <div className="rounded-3xl border border-slate-200 bg-white p-10 shadow-md">
             <div className="grid gap-4 lg:grid-cols-2">
@@ -2639,107 +2698,6 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
         </section>
       )}
 
-      <details className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <summary className="cursor-pointer select-none font-semibold text-slate-800">Ver tabla técnica completa — recorridos filtrados</summary>
-        <div className="mt-4 space-y-4">
-          <div className="flex flex-wrap gap-2">
-            {QUICK_FILTER_OPTIONS.map((opt) => (
-              <button
-                key={opt.id}
-                type="button"
-                onClick={() => p.setJourneyQuickFilter(opt.id)}
-                className={`rounded-full px-3 py-1 text-[11px] font-semibold ${
-                  p.journeyQuickFilter === opt.id ? 'bg-indigo-600 text-white' : 'bg-slate-100 hover:bg-slate-200'
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-          <div className="max-h-[50vh] overflow-auto rounded-xl border border-slate-100">
-            <table className="min-w-max text-[11px]">
-              <thead className="sticky top-0 bg-slate-50">
-                <tr>
-                  <th className="px-2 py-2 text-left">Día</th>
-                  <th className="px-2 py-2 text-left">Patente</th>
-                  <th className="px-2 py-2 font-mono text-[10px]">journeyUid</th>
-                  <th className="px-2 py-2 text-left">Inicio</th>
-                  <th className="px-2 py-2 font-mono">prelimCircuit</th>
-                  <th className="px-2 py-2 font-mono">rawDeviceSequence</th>
-                  <th className="px-2 py-2 font-mono">logicalCodeSeq</th>
-                  <th className="px-2 py-2 text-left">faltantes esperados</th>
-                  <th className="px-2 py-2 text-right">traseras excl.</th>
-                  <th className="px-2 py-2 text-left">motivo clasificación</th>
-                  <th className="px-2 py-2 font-mono">flags</th>
-                  <th className="px-2 py-2 text-center">desc.</th>
-                  <th className="px-2 py-2 text-center">útil</th>
-                </tr>
-              </thead>
-              <tbody>
-                {p.filteredJourneys.map((j) => (
-                  <tr key={j.journeyUid} className="border-t border-slate-100">
-                    <td className="whitespace-nowrap px-2 py-2 font-mono">{j.day || '—'}</td>
-                    <td className="px-2 py-2 font-semibold">{j.plate}</td>
-                    <td className="max-w-[120px] truncate px-2 py-2 font-mono text-[10px]" title={j.journeyUid}>
-                      {j.journeyUid}
-                    </td>
-                    <td className="whitespace-nowrap px-2 py-2">{formatDateTimeShort(j.startedAt)}</td>
-                    <td className="max-w-[160px] truncate px-2 py-2 font-mono text-[9px]" title={j.preliminaryCircuitCode}>{j.preliminaryCircuitCode}</td>
-                    <td className="max-w-[260px] truncate px-2 py-2 font-mono text-[9px]" title={j.rawDeviceSequence.join(' → ')}>
-                      {normalizeSequenceForPattern(j.rawDeviceSequence).join(' → ')}
-                    </td>
-                    <td className="max-w-[260px] truncate px-2 py-2 font-mono text-[9px]" title={j.logicalCodeSequence.join(' → ')}>
-                      {normalizeSequenceForPattern(j.logicalCodeSequence).join(' → ')}
-                    </td>
-                    <td className="max-w-[180px] truncate px-2 py-2 text-[10px]" title={(j.missingExpectedPoints ?? []).join(', ')}>
-                      {(j.missingExpectedPoints ?? []).join(', ') || '—'}
-                    </td>
-                    <td className="px-2 py-2 text-right">{j.excludedRearCameraEventsCount ?? 0}</td>
-                    <td className="max-w-[260px] truncate px-2 py-2 text-[10px]" title={j.classificationReason ?? j.preliminaryCircuitReason}>
-                      {j.classificationReason ?? j.preliminaryCircuitReason}
-                    </td>
-                    <td className="max-w-[200px] px-2 py-2 text-[10px]">{j.qualityFlags.slice(0, 4).join('|')}</td>
-                    <td className="px-2 py-2 text-center">{j.isDiscardedOperational ? 'Sí' : 'No'}</td>
-                    <td className="px-2 py-2 text-center">{j.feedsOperationalAnalytics ? 'Sí' : 'No'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </details>
-
-      <details className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <summary className="cursor-pointer font-semibold text-slate-800">Patentes repetidas por día — vista técnica</summary>
-        <div className="mt-4 max-h-[40vh] overflow-auto rounded-xl border border-slate-100">
-          <table className="min-w-[720px] w-full text-xs">
-            <thead className="sticky top-0 bg-slate-50 text-slate-600">
-              <tr>
-                <th className="px-3 py-2 text-left">Día</th>
-                <th className="px-3 py-2 text-left">Patente</th>
-                <th className="px-3 py-2 text-right">Ev.</th>
-                <th className="px-3 py-2 text-right">J.</th>
-                <th className="min-w-[200px] px-3 py-2 text-left font-mono">Sequence device</th>
-              </tr>
-            </thead>
-            <tbody>
-              {p.filteredPlateRows.slice(0, 80).map((r) => (
-                <tr key={`${r.day}-${r.plate}`} className="border-t border-slate-100">
-                  <td className="px-3 py-2 font-mono">{r.day}</td>
-                  <td className="px-3 py-2 font-semibold">{r.plate}</td>
-                  <td className="px-3 py-2 text-right">{r.eventCount}</td>
-                  <td className="px-3 py-2 text-right">{r.journeyCount}</td>
-                  <td className="truncate px-3 py-2 font-mono text-[10px]">{r.camerasSequenceDetected || '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </details>
-
-      <section className="rounded-3xl border border-slate-200 bg-slate-50 px-5 py-4 text-[11px] text-slate-600">
-        GET público ejemplo:{' '}
-        <code className="break-all rounded-lg bg-white px-2">{buildJourneyEventListPublicDisplayUrl(p.apiStartDate, p.apiEndDate)}</code>
       </section>
 
       <DiagDrawer open={Boolean(p.drawerCircuitCode)} title="Fuente del circuito" subtitle={p.drawerCircuitCode ?? ''} onClose={() => p.setDrawerCircuitCode(null)}>

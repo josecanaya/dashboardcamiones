@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
+import { ETL_DEV_MODE } from '../../../config/committeeEtlLite'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
 import type { EtlTransformOutput } from '../etlWorkbench/etlTransformPipeline'
 import { triggerBrowserCsvDownload } from '../etlWorkbench/etlCsv'
 
-const EXPORT_DEF: {
+const DEV_EXPORT_DEF: {
   csvKey: keyof EtlTransformOutput['csv']
   filename: string
   label: string
@@ -12,14 +13,15 @@ const EXPORT_DEF: {
   { csvKey: 'rear_events', filename: 'rear_events.csv', label: 'Eventos traseros' },
   { csvKey: 'front_alerts', filename: 'front_alerts.csv', label: 'Alertas frontales' },
   { csvKey: 'rear_alerts', filename: 'rear_alerts.csv', label: 'Alertas traseras' },
+  { csvKey: 'alerts_operational', filename: 'alerts_operational.csv', label: 'Alertas operativas' },
   { csvKey: 'camera_lpr_status', filename: 'camera_lpr_status.csv', label: 'Estado LPR cámaras' },
   { csvKey: 'clean_journeys', filename: 'clean_journeys.csv', label: 'Journeys limpios' },
   { csvKey: 'classified_circuits', filename: 'classified_circuits.csv', label: 'Circuitos (intermedio)' },
-  { csvKey: 'final_circuits', filename: 'final_circuits.csv', label: 'Circuitos finales (comité)' },
+  { csvKey: 'final_circuits', filename: 'final_circuits.csv', label: 'Circuitos finales' },
   { csvKey: 'unclassified_journeys', filename: 'unclassified_journeys.csv', label: 'Sin clasificar' },
   { csvKey: 'rear_only_journeys_debug', filename: 'rear_only_journeys_debug.csv', label: 'Debug sólo traseros' },
   { csvKey: 'journey_merge_candidates', filename: 'journey_merge_candidates.csv', label: 'Candidatos merge' },
-  { csvKey: 'merged_journeys', filename: 'merged_journeys.csv', label: 'Journeys merge (pendiente)' },
+  { csvKey: 'merge_candidates_debug', filename: 'merge_candidates_debug.csv', label: 'Merge (solo sugerencias)' },
   { csvKey: 'transform_summary', filename: 'transform_summary.csv', label: 'Resumen transform' },
 ]
 
@@ -35,11 +37,12 @@ function Metric({ label, value }: { label: string; value: string | number }) {
 export function TransformEtlTab() {
   const wb = useEtlWorkbenchOptional()
   const tr = wb?.transformResult ?? null
+  const exec = useMemo(() => tr?.stats.executive ?? null, [tr])
   const stats = useMemo(() => tr?.stats ?? null, [tr])
 
-  const downloadAllCsvs = () => {
+  const downloadDevCsvs = () => {
     if (!tr?.csv) return
-    for (const d of EXPORT_DEF) {
+    for (const d of DEV_EXPORT_DEF) {
       const text = tr.csv[d.csvKey]
       if (text) triggerBrowserCsvDownload(d.filename, text)
     }
@@ -58,52 +61,15 @@ export function TransformEtlTab() {
       <div className="rounded-3xl border border-violet-200 bg-gradient-to-br from-violet-50/90 via-white to-white p-6 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900">Transform</h2>
         <p className="mt-2 max-w-3xl text-sm text-slate-600">
-          Resultados del último procesamiento manual (pasos de separación frente/trasera, estado LPR, journeys y merge
-          sugerido). No se recalcula al navegar entre pestañas.
+          Clasificación única de journeys y alertas para evidencia de comité. Los CSV intermedios solo están disponibles
+          en modo diagnóstico DEV.
         </p>
-
-        <div className="mt-4 flex flex-wrap items-end gap-3">
-          <p className="max-w-xl text-xs text-slate-600">
-            Candidatos merge: gap fijo de <strong>120 min</strong> (reglas {tr?.rulesVersion ?? 'ETL'}). El control de
-            horas heredado no modifica ese paso.
-          </p>
-        </div>
 
         {!tr ?
           <p className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
             Aún no hay transform ejecutado. Cargá JSON en «Análisis local» y pulsá{' '}
             <strong>Procesar Transform</strong>.
           </p>
-        : null}
-
-        {tr ?
-          <>
-            <p className="mt-3 font-mono text-[11px] text-slate-500">Versión reglas: {tr.rulesVersion}</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {EXPORT_DEF.map((d) => (
-                <button
-                  key={d.filename}
-                  type="button"
-                  disabled={!tr.csv[d.csvKey]}
-                  onClick={() =>
-                    tr.csv[d.csvKey] ? triggerBrowserCsvDownload(d.filename, tr.csv[d.csvKey]) : undefined
-                  }
-                  className="rounded-xl border border-violet-200 bg-white px-3 py-2 text-left text-xs shadow-sm hover:bg-violet-50 disabled:opacity-40"
-                >
-                  <div className="font-bold text-violet-950">{d.label}</div>
-                  <div className="mt-0.5 font-mono text-[10px] text-slate-600">{d.filename}</div>
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={downloadAllCsvs}
-                disabled={!tr}
-                className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold uppercase tracking-wide text-white shadow-sm hover:bg-slate-800 disabled:opacity-50"
-              >
-                Descargar todos los CSV
-              </button>
-            </div>
-          </>
         : null}
 
         {wb.transformError ?
@@ -117,197 +83,142 @@ export function TransformEtlTab() {
         : null}
       </div>
 
-      {stats ?
+      {exec ?
         <div className="space-y-4">
-          <h3 className="text-base font-bold text-slate-900">Paso 1 — clasificación frontal / trasera</h3>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            <Metric label="Eventos frontales" value={stats.step1.frontEvents.toLocaleString()} />
-            <Metric label="Eventos traseros excl." value={stats.step1.rearEvents.toLocaleString()} />
-            <Metric label="% eventos traseros (excl.)" value={`${stats.step1.pctExcludedEvents}%`} />
-            <Metric label="Alertas frontales" value={stats.step1.frontAlerts.toLocaleString()} />
-            <Metric label="Alertas traseras excl." value={stats.step1.rearAlerts.toLocaleString()} />
-          </div>
-          {stats.step1.deviceRearCounts.length ?
-            <div className="overflow-auto rounded-xl border border-slate-200 bg-white p-3">
-              <div className="text-xs font-bold text-slate-700">Lecturas por device trasero</div>
-              <ul className="mt-2 grid gap-1 font-mono text-[11px] text-slate-800 sm:grid-cols-2 lg:grid-cols-3">
-                {stats.step1.deviceRearCounts.slice(0, 30).map((r) => (
-                  <li key={r.device}>
-                    {r.device}: {r.count}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          : null}
-
-          <h3 className="text-base font-bold text-slate-900">Control de coherencia</h3>
+          <h3 className="text-base font-bold text-slate-900">Resumen ejecutivo</h3>
           <p className="text-sm text-slate-600">
-            RicIngCamFrente cuenta ingresos frontales reales; INGRESO/PREINGRESO en secuencia cuentan como ingreso
-            operativo para circuitos. Journeys Truckflow:{' '}
-            <strong>{stats.coherence.journeys_after_rear_filter.toLocaleString()}</strong> · ingresos operativos en
-            journeys: <strong>{stats.coherence.ingresos_operativos_count.toLocaleString()}</strong> · ingresos
-            frontales RicIngCamFrente:{' '}
-            <strong>{stats.coherence.ingreso_frontal_event_count.toLocaleString()}</strong>.
+            Período:{' '}
+            <span className="font-mono font-semibold">
+              {exec.periodStart || '—'}
+              {exec.periodEnd && exec.periodEnd !== exec.periodStart ? ` → ${exec.periodEnd}` : ''}
+            </span>
+            {' · '}
+            Reglas: <span className="font-mono text-xs">{tr?.rulesVersion ?? '—'}</span>
           </p>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <Metric label="Eventos" value={exec.eventCount.toLocaleString()} />
+            <Metric label="Alertas" value={exec.alertCount.toLocaleString()} />
+            <Metric label="Circuitos completos" value={exec.completos.toLocaleString()} />
+            <Metric label="Incompletos" value={exec.incompletos.toLocaleString()} />
+            <Metric label="Anómalos" value={exec.anomalos.toLocaleString()} />
+            <Metric label="Deducidos" value={exec.deducidos.toLocaleString()} />
+            <Metric label="Alertas LPR (LPR_MALFUNCTION)" value={exec.lprAlerts.toLocaleString()} />
+            <Metric label="Alertas operativas" value={exec.operationalAlerts.toLocaleString()} />
             <Metric
-              label="Ingresos frontales (RicIngCamFrente)"
-              value={stats.coherence.ingreso_frontal_event_count.toLocaleString()}
+              label="Alertas operativas cruzadas"
+              value={exec.operationalAlertsCrossed.toLocaleString()}
             />
             <Metric
-              label="Ingresos operativos (journeys)"
-              value={stats.coherence.ingresos_operativos_count.toLocaleString()}
-            />
-            <Metric label="Circuitos finales" value={stats.coherence.final_circuits_count.toLocaleString()} />
-            <Metric
-              label="Con ingreso y egreso operativo"
-              value={stats.coherence.circuitos_con_ingreso_y_egreso_operativo.toLocaleString()}
-            />
-            <Metric label="Circuitos completos" value={stats.coherence.final_circuitos_completos.toLocaleString()} />
-            <Metric label="Circuitos probables" value={stats.coherence.final_circuitos_probables.toLocaleString()} />
-            <Metric
-              label="Circuitos sin ingreso frontal"
-              value={stats.coherence.final_circuitos_sin_ingreso.toLocaleString()}
+              label="Journeys con INVALID_ROUTE"
+              value={exec.journeysWithInvalidRoute.toLocaleString()}
             />
             <Metric
-              label="Probables sin egreso"
-              value={stats.coherence.final_circuitos_sin_egreso.toLocaleString()}
+              label="Journeys con INVALID_START_JOURNEY"
+              value={exec.journeysWithInvalidJourneyStart.toLocaleString()}
             />
             <Metric
-              label="Incompletos revisión"
-              value={stats.coherence.final_incompletos_revision.toLocaleString()}
+              label="Incompletos con alerta operativa"
+              value={exec.incompletosWithOperationalAlert.toLocaleString()}
             />
             <Metric
-              label="Ratio journeys / ingresos"
-              value={
-                stats.coherence.journey_vs_ingreso_ratio != null ?
-                  stats.coherence.journey_vs_ingreso_ratio.toFixed(4)
-                : '—'
-              }
+              label="Anómalos con alerta operativa"
+              value={exec.anomalosWithOperationalAlert.toLocaleString()}
             />
             <Metric
-              label="Ratio circuitos / ingresos"
-              value={
-                stats.coherence.final_circuits_vs_ingreso_ratio != null ?
-                  stats.coherence.final_circuits_vs_ingreso_ratio.toFixed(4)
-                : '—'
-              }
+              label="Estado exportación"
+              value={exec.exportReady ? 'Listo para Load / Export' : 'Pendiente'}
             />
-            <Metric
-              label="Journeys tras filtro (fragmentación)"
-              value={stats.coherence.journeys_after_rear_filter.toLocaleString()}
-            />
-          </div>
-          <div
-            className={`rounded-xl border px-4 py-3 text-sm ${
-              stats.coherence.coherenceLabel === 'Coherente' ?
-                'border-emerald-200 bg-emerald-50 text-emerald-950'
-              : stats.coherence.coherenceLabel === 'Fragmentación alta' ?
-                'border-rose-200 bg-rose-50 text-rose-950'
-              : 'border-amber-200 bg-amber-50 text-amber-950'
-            }`}
-          >
-            <div className="font-bold">{stats.coherence.coherenceLabel}</div>
-            {stats.coherence.coherenceDetail ?
-              <p className="mt-2 text-[13px] leading-relaxed opacity-95">{stats.coherence.coherenceDetail}</p>
-            : null}
           </div>
 
-          <div className="overflow-auto rounded-xl border border-slate-200 bg-white p-3">
-            <div className="text-xs font-bold text-slate-700">Motivo de exclusión (resumen cantidades)</div>
-            <table className="mt-2 w-full min-w-[420px] text-left text-[12px] text-slate-800">
-              <thead>
-                <tr className="border-b border-slate-200 text-slate-500">
-                  <th className="py-1 font-semibold">Motivo</th>
-                  <th className="py-1 font-semibold">Cantidad</th>
-                </tr>
-              </thead>
-              <tbody>
-                {stats.coherence.exclusionMotives.map((row) => (
-                  <tr key={row.motive} className="border-b border-slate-100">
-                    <td className="py-2 font-mono text-[11px]">{row.motive}</td>
-                    <td className="py-2">{row.count.toLocaleString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <h3 className="text-base font-bold text-slate-900">Paso 2 — estado cámaras (LPR)</h3>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            <Metric label="Filas estado cámara" value={stats.step2.rows} />
-            <Metric label="Cámaras con eventos" value={stats.step2.camerasWithEvents} />
-            <Metric label="Cámaras con alerta LPR" value={stats.step2.camerasWithLpr} />
-            <Metric label="Cámaras estado crítico (tasa)" value={stats.step2.criticalCameras} />
-            <Metric label="Sin base de eventos" value={stats.step2.sinBaseCameras} />
-          </div>
-
-          <h3 className="text-base font-bold text-slate-900">Validación resultado (antes de Power BI)</h3>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Metric
-              label="Alertas LPR totales (LPR_MALFUNCTION)"
-              value={stats.validation.totalLprMalfunctionAlerts.toLocaleString()}
-            />
-            <Metric
-              label="Cámara con más alertas LPR"
-              value={stats.validation.cameraWithMostLpr ?? '—'}
-            />
-            <Metric
-              label="Circuitos clasificados (detectados)"
-              value={stats.validation.circuitosClasificados.toLocaleString()}
-            />
-            <Metric
-              label="Registros incompletos (operativo)"
-              value={stats.validation.registrosIncompletosOperativos.toLocaleString()}
-            />
-            <Metric label="Sin clasificar" value={stats.validation.sinClasificar.toLocaleString()} />
-            <Metric label="Journeys limpios (filas CSV)" value={stats.step3.cleanJourneysCount.toLocaleString()} />
-            <Metric
-              label="Candidatos merge (top filtrados)"
-              value={stats.validation.mergeCandidatesFiltered.toLocaleString()}
-            />
-            <Metric label="Circuitos finales (comité)" value={stats.validation.final_circuits_count.toLocaleString()} />
-            <Metric
-              label="Candidatos antes del tope"
-              value={stats.step4.candidatesBeforeCap.toLocaleString()}
-            />
-          </div>
-          {stats.validation.lprMalfunctionByCamera.length ?
-            <div className="overflow-auto rounded-xl border border-slate-200 bg-white p-3">
-              <div className="text-xs font-bold text-slate-700">Alertas LPR por cámara (deviceCode)</div>
+          {ETL_DEV_MODE && stats?.validation.lprMalfunctionByCamera.length ?
+            <details className="rounded-xl border border-slate-200 bg-white p-3">
+              <summary className="cursor-pointer text-xs font-bold text-slate-700">
+                Alertas LPR por cámara (DEV)
+              </summary>
               <ul className="mt-2 grid gap-1 font-mono text-[11px] text-slate-800 sm:grid-cols-2 lg:grid-cols-3">
-                {stats.validation.lprMalfunctionByCamera.slice(0, 40).map((r) => (
+                {stats.validation.lprMalfunctionByCamera.slice(0, 20).map((r) => (
                   <li key={r.deviceCode}>
                     {r.deviceCode}: {r.count.toLocaleString()}
                   </li>
                 ))}
               </ul>
-            </div>
+            </details>
           : null}
-
-          <h3 className="text-base font-bold text-slate-900">Paso 3 — journeys y circuitos</h3>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Metric label="Journeys totales (uid)" value={stats.step3.journeysTotal.toLocaleString()} />
-            <Metric label="Journeys después filtro trasero" value={stats.step3.journeysValidFront.toLocaleString()} />
-            <Metric label="Sólo cámaras excluidas (journeys)" value={stats.step3.rearOnlyExcluded.toLocaleString()} />
-            <Metric label="Mixtos: lecturas traseras removidas" value={stats.step3.journeysWithRearEventsRemoved.toLocaleString()} />
-            <Metric label="Single-event descartados (operativo)" value={stats.step3.single_event_discarded.toLocaleString()} />
-            <Metric label="Duplicados sospechosos (flag)" value={stats.step3.duplicate_suspected.toLocaleString()} />
-            <Metric label="Incompletos fuera del final CSV" value={stats.step3.incomplete_sequence_count.toLocaleString()} />
-            <Metric label="Circuitos detectados (tier)" value={stats.step3.classifiedCircuitsOperational.toLocaleString()} />
-            <Metric label="Circuitos incompletos (tier)" value={stats.step3.incompleteOperational.toLocaleString()} />
-            <Metric label="Sin clasificar" value={stats.step3.unclassifiedCount.toLocaleString()} />
-            <Metric label="Journeys limpios CSV" value={stats.step3.cleanJourneysCount.toLocaleString()} />
-          </div>
-
-          <h3 className="text-base font-bold text-slate-900">Paso 4 — candidatos merge (gap ≤120 min, máx. 500)</h3>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Metric label="Emitidos (top ordenado)" value={stats.step4.candidates.toLocaleString()} />
-            <Metric label="Tipo: patente exacta" value={stats.step4.byExactPlate.toLocaleString()} />
-            <Metric label="Tipo: patente similar" value={stats.step4.bySimilarPlate.toLocaleString()} />
-            <Metric label="Tipo: secuencia + patente" value={stats.step4.bySequenceAndPlate.toLocaleString()} />
-          </div>
+          <p className="rounded-xl border border-indigo-200 bg-indigo-50/80 px-4 py-3 text-sm text-indigo-950">
+            Continuá en <strong>Load / Export</strong> para generar los archivos <span className="font-mono text-xs">pb_*</span>{' '}
+            del comité.
+          </p>
         </div>
+      : null}
+
+      {ETL_DEV_MODE && stats ?
+        <details className="rounded-3xl border border-dashed border-slate-300 bg-slate-50/50 p-5">
+          <summary className="cursor-pointer text-sm font-bold text-slate-800">
+            Diagnóstico DEV — CSVs intermedios y métricas técnicas
+          </summary>
+          <div className="mt-4 space-y-6">
+            <div className="flex flex-wrap gap-2">
+              {DEV_EXPORT_DEF.map((d) => (
+                <button
+                  key={d.filename}
+                  type="button"
+                  disabled={!tr?.csv[d.csvKey]}
+                  onClick={() =>
+                    tr?.csv[d.csvKey] ? triggerBrowserCsvDownload(d.filename, tr.csv[d.csvKey]) : undefined
+                  }
+                  className="rounded-xl border border-violet-200 bg-white px-3 py-2 text-left text-xs shadow-sm hover:bg-violet-50 disabled:opacity-40"
+                >
+                  <div className="font-bold text-violet-950">{d.label}</div>
+                  <div className="mt-0.5 font-mono text-[10px] text-slate-600">{d.filename}</div>
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={downloadDevCsvs}
+                disabled={!tr}
+                className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold uppercase tracking-wide text-white shadow-sm hover:bg-slate-800 disabled:opacity-50"
+              >
+                Descargar todos (DEV)
+              </button>
+            </div>
+
+            <h4 className="text-sm font-bold text-slate-800">Paso 1 — clasificación frontal / trasera</h4>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+              <Metric label="Eventos frontales" value={stats.step1.frontEvents.toLocaleString()} />
+              <Metric label="Eventos traseros excl." value={stats.step1.rearEvents.toLocaleString()} />
+              <Metric label="% eventos traseros (excl.)" value={`${stats.step1.pctExcludedEvents}%`} />
+              <Metric label="Alertas frontales" value={stats.step1.frontAlerts.toLocaleString()} />
+              <Metric label="Alertas traseras excl." value={stats.step1.rearAlerts.toLocaleString()} />
+            </div>
+
+            <h4 className="text-sm font-bold text-slate-800">Control de coherencia</h4>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <Metric label="Circuitos finales" value={stats.coherence.final_circuits_count.toLocaleString()} />
+              <Metric label="Circuitos completos" value={stats.coherence.final_circuitos_completos.toLocaleString()} />
+              <Metric label="Incompletos revisión" value={stats.coherence.final_incompletos_revision.toLocaleString()} />
+              <Metric label="Journeys tras filtro" value={stats.coherence.journeys_after_rear_filter.toLocaleString()} />
+            </div>
+            <div
+              className={`rounded-xl border px-4 py-3 text-sm ${
+                stats.coherence.coherenceLabel === 'Coherente' ?
+                  'border-emerald-200 bg-emerald-50 text-emerald-950'
+                : stats.coherence.coherenceLabel === 'Fragmentación alta' ?
+                  'border-rose-200 bg-rose-50 text-rose-950'
+                : 'border-amber-200 bg-amber-50 text-amber-950'
+              }`}
+            >
+              <div className="font-bold">{stats.coherence.coherenceLabel}</div>
+              {stats.coherence.coherenceDetail ?
+                <p className="mt-2 text-[13px] leading-relaxed opacity-95">{stats.coherence.coherenceDetail}</p>
+              : null}
+            </div>
+
+            <p className="text-xs text-slate-500">
+              Candidatos merge: gap fijo 120 min — merge automático no aplicado; ver{' '}
+              <span className="font-mono">merge_candidates_debug.csv</span>.
+            </p>
+          </div>
+        </details>
       : null}
     </section>
   )

@@ -13,6 +13,7 @@
 import { useMemo } from 'react'
 import type { SiteId } from '../domain/sites'
 import type { HistoricalTrip } from '../domain/logistics'
+import { resolveWeekPeriodFromTrips, tripInWeekPeriod } from '../services/analyticsKpi'
 
 export type PeriodPreset = 'last_day' | 'last_week' | 'last_month'
 
@@ -51,6 +52,17 @@ export function useHistoricalPageData({
 
   const effectiveDate = selectedDate || refData.refFecha
 
+  const refDateMs = useMemo(
+    () => new Date(refData.refFecha + 'T12:00:00Z').getTime(),
+    [refData.refFecha]
+  )
+
+  const weekSpan = useMemo(() => {
+    if (effectiveView !== 'week' && periodPreset !== 'last_week') return null
+    const siteTrips = historicalTrips.filter((trip) => trip.siteId === siteId)
+    return resolveWeekPeriodFromTrips(siteTrips, refDateMs, siteId)
+  }, [historicalTrips, siteId, effectiveView, periodPreset, refDateMs])
+
   const rows = useMemo(() => {
     const siteTrips = historicalTrips.filter((trip) => trip.siteId === siteId)
     const dayMs = 24 * 60 * 60 * 1000
@@ -80,6 +92,7 @@ export function useHistoricalPageData({
           const weekStart = (4 - drilledWeek) * 7
           return daysDiffFromMonthEnd >= weekStart && daysDiffFromMonthEnd < weekStart + 7
         }
+        if (weekSpan) return tripInWeekPeriod(trip, refDateMs, weekSpan.maxDaysDiff)
         return daysDiff >= 0 && daysDiff <= 6
       }
       const [tripY, tripM] = fecha.split('-').map(Number)
@@ -90,7 +103,7 @@ export function useHistoricalPageData({
       .filter(passesFilter)
       .filter((trip) => !query || trip.plate.toLowerCase().includes(query.toLowerCase()))
       .sort((a, b) => new Date(b.egresoAt).getTime() - new Date(a.egresoAt).getTime())
-  }, [historicalTrips, siteId, effectiveView, periodPreset, drilledWeek, drilledDay, query, effectiveDate])
+  }, [historicalTrips, siteId, effectiveView, periodPreset, drilledWeek, drilledDay, query, effectiveDate, weekSpan, refDateMs])
 
   const enrichedRows = useMemo(() => {
     return rows.map((row) => ({

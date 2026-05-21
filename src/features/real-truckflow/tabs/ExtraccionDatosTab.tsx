@@ -6,7 +6,9 @@ import {
   postTruckflowExportWindow,
   type TruckflowSiteParam,
 } from '../api/truckflowLocalServerApi'
+import { TimeInput24 } from '../components/TimeInput24'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
+import { isValidTimeHHMM, normalizeTimeHHMM } from '../dateTime'
 import { previousCalendarWeekRange, thisCalendarWeekRange } from '../utils/weekDateRange'
 import { yieldToMain } from '../yieldToMain'
 
@@ -136,6 +138,16 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
     setDataRoot(null)
     setStatusNote(null)
 
+    const normStart = normalizeTimeHHMM(startTime, '00:00')
+    const normEnd = normalizeTimeHHMM(endTime, '23:59')
+    if (!isValidTimeHHMM(startTime) || !isValidTimeHHMM(endTime)) {
+      setBusy(false)
+      setStatusNote('Hora inválida: usá formato 24 h HH:MM (ej. 00:00 – 23:59).')
+      return
+    }
+    if (normStart !== startTime) setStartTime(normStart)
+    if (normEnd !== endTime) setEndTime(normEnd)
+
     try {
       await getTruckflowHealth()
     } catch (e) {
@@ -147,7 +159,7 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
       return
     }
 
-    const useBatch = isFullDayRange(startTime, endTime)
+    const useBatch = isFullDayRange(normStart, normEnd)
 
     if (useBatch) {
       setRows([])
@@ -183,7 +195,7 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
       return
     }
 
-    const chunks = buildExportWindowChunks(startDate, startTime, endDate, endTime)
+    const chunks = buildExportWindowChunks(startDate, normStart, endDate, normEnd)
     if (!chunks?.length) {
       setRows([])
       setStatusNote('Rango inválido: revisá fechas/horas (inicio ≤ fin).')
@@ -304,13 +316,7 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
           </label>
           <label className="text-xs font-semibold text-slate-600">
             Hora
-            <input
-              type="time"
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-              disabled={busy}
-              className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm disabled:bg-slate-100"
-            />
+            <TimeInput24 value={startTime} onChange={setStartTime} disabled={busy} placeholder="00:00" />
           </label>
           <label className="text-xs font-semibold text-slate-600">
             Hasta
@@ -324,13 +330,7 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
           </label>
           <label className="text-xs font-semibold text-slate-600">
             Hora
-            <input
-              type="time"
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
-              disabled={busy}
-              className="mt-1 block rounded-xl border border-slate-300 px-3 py-2 text-sm disabled:bg-slate-100"
-            />
+            <TimeInput24 value={endTime} onChange={setEndTime} disabled={busy} placeholder="23:59" />
           </label>
           <label className="text-xs font-semibold text-slate-600">
             Site

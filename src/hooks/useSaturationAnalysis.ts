@@ -7,6 +7,7 @@ import {
   type SaturationGranularity,
   type SaturationAnalysisResult,
 } from '../services/saturationAnalytics'
+import { resolveWeekPeriodFromTrips, tripInWeekPeriod } from '../services/analyticsKpi'
 
 export type SaturationPeriodPreset = 'last_day' | 'last_week' | 'last_month'
 
@@ -20,6 +21,11 @@ export function useSaturationAnalysis(
   const refDateMs = new Date(refFecha + 'T12:00:00Z').getTime()
   const dayMs = 24 * 60 * 60 * 1000
 
+  const weekSpan = useMemo(() => {
+    if (periodPreset !== 'last_week') return null
+    return resolveWeekPeriodFromTrips(trips, refDateMs, siteId)
+  }, [trips, siteId, periodPreset, refDateMs])
+
   const filteredTrips = useMemo(() => {
     return trips.filter((t) => {
       if (t.siteId !== siteId) return false
@@ -29,10 +35,10 @@ export function useSaturationAnalysis(
       const tripDateMs = new Date(fecha + 'T12:00:00Z').getTime()
       const daysDiff = (refDateMs - tripDateMs) / dayMs
       if (periodPreset === 'last_day') return fecha === refFecha
-      if (periodPreset === 'last_week') return daysDiff >= 0 && daysDiff <= 6
+      if (periodPreset === 'last_week' && weekSpan) return tripInWeekPeriod(t, refDateMs, weekSpan.maxDaysDiff)
       return daysDiff >= 0 && daysDiff <= 30
     })
-  }, [trips, siteId, refFecha, refDateMs, dayMs, periodPreset])
+  }, [trips, siteId, refFecha, refDateMs, dayMs, periodPreset, weekSpan])
 
   return useMemo(() => {
     const { rangeStartMs, rangeEndMs } = getSaturationRangeMs(refFecha, periodPreset)

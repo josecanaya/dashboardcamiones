@@ -47,6 +47,8 @@ const FINAL_CIRCUITS_EXECUTIVE_COLUMNS = [
   'normalized_plate',
   'final_status',
   'final_status_label',
+  'executive_bucket',
+  'executive_bucket_label',
   'confidence_level',
   'reliability_score',
   'reliability_explanation',
@@ -62,6 +64,13 @@ const FINAL_CIRCUITS_EXECUTIVE_COLUMNS = [
   'preliminary_code',
   'event_count_front',
   'logical_sequence_front',
+  'operationalAlertCount',
+  'hasInvalidRoute',
+  'hasInvalidJourneyStart',
+  'operationalAlertCodes',
+  'firstOperationalAlertAt',
+  'operationalAlertSectors',
+  'possibleSystemCutReason',
 ] as const
 
 function numVal(v: string | undefined): number {
@@ -172,6 +181,40 @@ export function buildCommitteeSummaryRow(input: {
   const lprRate = ratePer100Events(lprTotal, eventCam)
   const baseIngreso = ingresoOperativo > 0 ? ingresoOperativo : ingresoFrontal
 
+  let journeysWithOperationalAlerts = 0
+  let journeysWithInvalidRoute = 0
+  let journeysWithInvalidJourneyStart = 0
+  let incompletosWithInvalidJourneyStart = 0
+  let anomalosWithInvalidRoute = 0
+
+  for (const fc of input.finalCircuits) {
+    const alertN = numVal(rowGet(fc, 'operationalAlertCount'))
+    if (alertN <= 0) continue
+    journeysWithOperationalAlerts++
+    if (rowGet(fc, 'hasInvalidRoute') === 'true' || rowGet(fc, 'hasInvalidRoute') === '1') {
+      journeysWithInvalidRoute++
+    }
+    if (rowGet(fc, 'hasInvalidJourneyStart') === 'true' || rowGet(fc, 'hasInvalidJourneyStart') === '1') {
+      journeysWithInvalidJourneyStart++
+    }
+    const bucket = rowGet(fc, 'executive_bucket')
+    if (bucket === 'INCOMPLETO' && (rowGet(fc, 'hasInvalidJourneyStart') === 'true' || rowGet(fc, 'hasInvalidJourneyStart') === '1')) {
+      incompletosWithInvalidJourneyStart++
+    }
+    if (bucket === 'ANOMALO' && (rowGet(fc, 'hasInvalidRoute') === 'true' || rowGet(fc, 'hasInvalidRoute') === '1')) {
+      anomalosWithInvalidRoute++
+    }
+  }
+
+  const summaryFromTransform = input.totalSummary
+  if (numVal(summaryFromTransform.journeys_with_operational_alerts) > 0) {
+    journeysWithOperationalAlerts = numVal(summaryFromTransform.journeys_with_operational_alerts)
+    journeysWithInvalidRoute = numVal(summaryFromTransform.journeys_with_invalid_route)
+    journeysWithInvalidJourneyStart = numVal(summaryFromTransform.journeys_with_invalid_journey_start)
+    incompletosWithInvalidJourneyStart = numVal(summaryFromTransform.incompletos_with_invalid_journey_start)
+    anomalosWithInvalidRoute = numVal(summaryFromTransform.anomalos_with_invalid_route)
+  }
+
   return {
     summary_level: 'executive_week',
     load_period_start: input.periodStart,
@@ -205,6 +248,11 @@ export function buildCommitteeSummaryRow(input: {
       baseIngreso > 0 ? String(pct(conIngresoEgreso, baseIngreso)) : '',
     cobertura_circuitos_sobre_ingreso_frontal_pct:
       ingresoFrontal > 0 ? String(pct(circuits, ingresoFrontal)) : '',
+    journeys_with_operational_alerts: String(journeysWithOperationalAlerts),
+    journeys_with_invalid_route: String(journeysWithInvalidRoute),
+    journeys_with_invalid_journey_start: String(journeysWithInvalidJourneyStart),
+    incompletos_with_invalid_journey_start: String(incompletosWithInvalidJourneyStart),
+    anomalos_with_invalid_route: String(anomalosWithInvalidRoute),
     coherence_diagnosis: t.coherence_diagnosis ?? '',
     mensaje_comite:
       `Ingresos frontales ${ingresoFrontal}; operativos ${ingresoOperativo}; journeys ${journeys}; circuitos finales ${circuits} (completos ${t.final_circuitos_completos ?? 0}).`,

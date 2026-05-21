@@ -12,6 +12,7 @@ import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 import {
   computeJourneyReliability,
   confidenceLevelFromScore,
+  executiveBucketLabel,
   finalStatusLabel,
   journeyDeviceSectorLogical,
   journeyHasBalansaCompleta,
@@ -20,13 +21,19 @@ import {
   journeyHasRicB2EgresoDevice,
   journeyHasStrongDefiningPoint,
   journeySequenceCoherent,
+  resolveExecutiveBucket,
   resolveFinalStatus,
   resolveOperationalEntry,
   resolveOperationalExit,
   type FinalCircuitStatus,
 } from './finalCircuitScoring'
+import {
+  crossOperationalAlerts,
+  OPERATIONAL_ALERTS_CSV_COLUMNS,
+  type JourneyOperationalAlertSummary,
+} from './etlOperationalAlertMatch'
 
-export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v4'
+export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v5'
 export type { FinalCircuitStatus } from './finalCircuitScoring'
 export { finalStatusLabel } from './finalCircuitScoring'
 
@@ -36,6 +43,46 @@ const INGRESO_FRONT_REFERENCE_SECTOR_NORM = 'ricardone_ingreso_camiones'
 
 function normDeviceOrSector(v: unknown): string {
   return typeof v === 'string' ? v.trim().toLowerCase().replace(/\s+/g, '_') : ''
+}
+
+function indexEventsByJourney(events: RealJourneyEventDto[]): Map<string, RealJourneyEventDto[]> {
+  const m = new Map<string, RealJourneyEventDto[]>()
+  for (const e of events) {
+    const uid = String(e.journeyUid ?? '').trim()
+    if (!uid) continue
+    const arr = m.get(uid) ?? []
+    arr.push(e)
+    m.set(uid, arr)
+  }
+  for (const arr of m.values()) {
+    arr.sort(compareRealEvents)
+  }
+  return m
+}
+
+function journeyAlertSummaryToRow(sum: JourneyOperationalAlertSummary): Record<string, unknown> {
+  return {
+    operationalAlertCount: sum.operationalAlertCount,
+    hasInvalidRoute: sum.hasInvalidRoute,
+    hasInvalidJourneyStart: sum.hasInvalidJourneyStart,
+    operationalAlertCodes: sum.operationalAlertCodes,
+    firstOperationalAlertAt: sum.firstOperationalAlertAt,
+    operationalAlertSectors: sum.operationalAlertSectors,
+    possibleSystemCutReason: sum.possibleSystemCutReason,
+  }
+}
+
+function emptyJourneyAlertSummaryRow(): Record<string, unknown> {
+  return journeyAlertSummaryToRow({
+    operationalAlertCount: 0,
+    hasInvalidRoute: false,
+    hasInvalidJourneyStart: false,
+    operationalAlertCodes: '',
+    firstOperationalAlertAt: '',
+    operationalAlertSectors: '',
+    possibleSystemCutReason: 'NONE',
+    alertsWithoutEventMatch: 0,
+  })
 }
 
 function isIngresoFrontalReferenceEvent(e: RealJourneyEventDto): boolean {
@@ -387,6 +434,24 @@ export type EtlTransformOutput = {
       sinClasificar: number
       mergeCandidatesFiltered: number
       final_circuits_count: number
+    }
+    executive: {
+      periodStart: string
+      periodEnd: string
+      eventCount: number
+      alertCount: number
+      completos: number
+      incompletos: number
+      anomalos: number
+      deducidos: number
+      lprAlerts: number
+      operationalAlerts: number
+      operationalAlertsCrossed: number
+      journeysWithInvalidRoute: number
+      journeysWithInvalidJourneyStart: number
+      incompletosWithOperationalAlert: number
+      anomalosWithOperationalAlert: number
+      exportReady: boolean
     }
   }
   rulesVersion: string
@@ -1071,15 +1136,30 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   let circuitos_con_egreso_operativo = 0
   let circuitos_con_ingreso_y_egreso_operativo = 0
 
+  let executiveCompletos = 0
+  let executiveIncompletos = 0
+  let executiveAnomalos = 0
+  let executiveDeducidos = 0
+
   let ingresos_operativos_count = 0
   for (const mj of journeys) {
     const logicals = new Set(mj.logicalCodeSequence.map((x) => String(x)))
     if (resolveOperationalEntry(logicals).has_operational_entry) ingresos_operativos_count++
   }
 
-  for (const mj of journeys) {
-    if (!journeyPassesFinalFilter(mj)) continue
+  const journeyMetaByUid = new Map<
+    string,
+    {
+      journeyUid: string
+      normalizedPlate: string
+      startedAt: string
+      endedAt: string
+      preliminaryCircuitCode: string
+      executiveBucket: ReturnType<typeof resolveExecutiveBucket>['bucket'] | ''
+    }
+  >()
 
+  for (const mj of journeys) {
     const tier = userCircuitTier(mj)
     const audit = journeyAuditByUid.get(mj.journeyUid)
     const seqPack = journeyDeviceSectorLogical(mj)
@@ -1114,8 +1194,44 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       suspiciousDuplicate: dupSus,
       duplicateSeverity: dupSev,
       sequenceCoherent,
-      eventCountFront: mj.eventCount,
+      eventCountFront: seqPack.frontEventCount,
     })
+
+    const executive = resolveExecutiveBucket({
+      finalStatus: final_status,
+      frontEventCount: seqPack.frontEventCount,
+      reliabilityScore: rel,
+      sequenceCoherent,
+      hasOperationalEntry: entry.has_operational_entry,
+      hasOperationalExit: exit.has_operational_exit,
+      strong,
+    })
+
+    journeyMetaByUid.set(mj.journeyUid, {
+      journeyUid: mj.journeyUid,
+      normalizedPlate: mj.normalizedPlate,
+      startedAt: mj.startedAt,
+      endedAt: mj.endedAt,
+      preliminaryCircuitCode: mj.preliminaryCircuitCode,
+      executiveBucket: executive.bucket,
+    })
+
+    if (!journeyPassesFinalFilter(mj)) continue
+
+    switch (executive.bucket) {
+      case 'COMPLETO':
+        executiveCompletos++
+        break
+      case 'INCOMPLETO':
+        executiveIncompletos++
+        break
+      case 'ANOMALO':
+        executiveAnomalos++
+        break
+      case 'DEDUCIDO':
+        executiveDeducidos++
+        break
+    }
 
     if (entry.has_operational_entry) circuitos_con_ingreso_operativo++
     if (exit.has_operational_exit) circuitos_con_egreso_operativo++
@@ -1153,7 +1269,10 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       normalized_plate: mj.normalizedPlate,
       final_status,
       final_status_label: finalStatusLabel(final_status),
-      event_count_front: mj.eventCount,
+      executive_bucket: executive.bucket,
+      executive_bucket_label: executiveBucketLabel(executive.bucket),
+      executive_anomaly_reason: executive.anomalyReason ?? '',
+      event_count_front: seqPack.frontEventCount,
       device_sequence_front: seqPack.deviceSequence,
       sector_sequence_front: seqPack.sectorSequence,
       logical_sequence_front: seqPack.logicalSequence,
@@ -1180,10 +1299,56 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     })
   }
 
+  await yieldToBrowser()
+
+  const operationalAlerts = frontAl.filter((a) => !isLprMalfunctionAlert(a))
+  const operationalAlertsCount = operationalAlerts.length
+  const eventsByJourney = indexEventsByJourney(operationalFrontEvents)
+
+  const crossResult = crossOperationalAlerts({
+    operationalAlerts,
+    journeys,
+    eventsByJourney,
+    journeyMetaByUid,
+    read: {
+      alertCode: getAlertApiCode,
+      alertId: (a) => pickStr(a.id) || pickStr((a as { alertId?: unknown }).alertId),
+      journeyUid: (a) =>
+        pickStr(a.journeyUid) ||
+        pickStr(a.journeyUuid) ||
+        pickStr(getAlertPayload(a).journeyUid) ||
+        pickStr(getAlertPayload(a).journeyUuid),
+      truckPlate: (a) =>
+        pickStr(a.truckPlate) || pickStr(a.plate) || pickStr(getAlertPayload(a).truckPlate) || pickStr(getAlertPayload(a).plate),
+      deviceCode: getEffectiveAlertDeviceCode,
+      sectorCode: getEffectiveAlertSectorCode,
+      severity: (a) => pickStr(a.severity) ?? String(a.alertLevel ?? ''),
+      status: (a) => pickStr(a.status),
+      occurredAt: alertOccurredAtIso,
+      createdAt: (a) => pickStr(a.createdAt),
+    },
+  })
+
+  for (const row of finalCsvRows) {
+    const uid = String(row.journey_uid ?? '')
+    const sum = crossResult.journeySummaries.get(uid)
+    Object.assign(row, sum ? journeyAlertSummaryToRow(sum) : emptyJourneyAlertSummaryRow())
+  }
+
   const final_circuits_csv =
     finalCsvRows.length ?
       recordsToCsv(Object.keys(finalCsvRows[0]), finalCsvRows)
     : 'journey_uid,final_status,final_status_label,data_quality_flag\n'
+
+  const operational_alerts_csv =
+    crossResult.alertRows.length ?
+      recordsToCsv(
+        [...OPERATIONAL_ALERTS_CSV_COLUMNS],
+        crossResult.alertRows as unknown as Record<string, unknown>[]
+      )
+    : `${OPERATIONAL_ALERTS_CSV_COLUMNS.join(',')}\n`
+
+  const alertCrossMetrics = crossResult.metrics
 
   const final_circuits_count = finalCsvRows.length
   const final_descartados =
@@ -1234,7 +1399,10 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       recordsToCsv(Object.keys(mergeCsvRows[0]), mergeCsvRows)
     : 'candidate_id,match_type,should_review,priority\n'
 
-  const merged_journeys_csv = 'journey_uid,note\n'
+  const merge_candidates_debug_csv =
+    mergeCsvRows.length ?
+      journey_merge_candidates_csv
+    : 'candidate_id,match_type,note\n1,suggested,merge_automatico_no_aplicado_solo_sugerencias\n'
 
   const step4Stat = {
     candidates: mergeCsvRows.length,
@@ -1398,6 +1566,12 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     date_min: dateMin ?? '',
     date_max: dateMax ?? '',
     rules_version: ETL_TRANSFORM_RULES_VERSION,
+    journeys_with_operational_alerts: alertCrossMetrics.journeysWithOperationalAlerts,
+    journeys_with_invalid_route: alertCrossMetrics.journeysWithInvalidRoute,
+    journeys_with_invalid_journey_start: alertCrossMetrics.journeysWithInvalidJourneyStart,
+    incompletos_with_invalid_journey_start: alertCrossMetrics.incompletosWithInvalidJourneyStart,
+    anomalos_with_invalid_route: alertCrossMetrics.anomalosWithInvalidRoute,
+    operational_alerts_crossed: alertCrossMetrics.operationalAlertsCrossed,
   } as Record<string, unknown>
 
   const transform_summary_csv = recordsToCsv(Object.keys(summaryRow), [summaryRow])
@@ -1413,6 +1587,25 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     final_circuits_count,
   }
 
+  const executiveStat = {
+    periodStart: dateMin ?? '',
+    periodEnd: dateMax ?? '',
+    eventCount: inp.events.length,
+    alertCount: inp.alerts.length,
+    completos: executiveCompletos,
+    incompletos: executiveIncompletos,
+    anomalos: executiveAnomalos,
+    deducidos: executiveDeducidos,
+    lprAlerts: totalLprMalfunctionAlerts,
+    operationalAlerts: operationalAlertsCount,
+    operationalAlertsCrossed: alertCrossMetrics.operationalAlertsCrossed,
+    journeysWithInvalidRoute: alertCrossMetrics.journeysWithInvalidRoute,
+    journeysWithInvalidJourneyStart: alertCrossMetrics.journeysWithInvalidJourneyStart,
+    incompletosWithOperationalAlert: alertCrossMetrics.incompletosWithOperationalAlert,
+    anomalosWithOperationalAlert: alertCrossMetrics.anomalosWithOperationalAlert,
+    exportReady: final_circuits_count > 0,
+  }
+
   return {
     csv: {
       front_events: front_events_csv,
@@ -1426,7 +1619,8 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       unclassified_journeys: unclassified_journeys_csv,
       rear_only_journeys_debug: rear_only_journeys_debug_csv,
       journey_merge_candidates: journey_merge_candidates_csv,
-      merged_journeys: merged_journeys_csv,
+      merge_candidates_debug: merge_candidates_debug_csv,
+      alerts_operational: operational_alerts_csv,
       transform_summary: transform_summary_csv,
     },
     stats: {
@@ -1436,6 +1630,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       step4: step4Stat,
       coherence: coherenceStat,
       validation: validationStats,
+      executive: executiveStat,
     },
     rulesVersion: ETL_TRANSFORM_RULES_VERSION,
   }
