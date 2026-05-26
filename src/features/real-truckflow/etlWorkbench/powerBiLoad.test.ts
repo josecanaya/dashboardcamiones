@@ -64,4 +64,33 @@ describe('powerBiLoad', () => {
     expect(out.files.dss_vs_truckflow).toContain('truckflow_count')
     expect(out.files.final_circuits).toContain('final_status_label')
   })
+
+  it('pb_circuit_summary suma COMPLETO + DEDUCIDO dentro de valid_journeys', () => {
+    const out = consolidatePowerBiLoad({
+      periodStart: '2026-05-12',
+      periodEnd: '2026-05-12',
+      loadGroupType: 'day',
+      days: [
+        {
+          sourceDay: '2026-05-12',
+          files: {
+            transform_summary:
+              'ingreso_frontal_event_count,final_circuits_count,journeys_after_rear_filter,date_min\n' +
+              '10,4,12,2026-05-12\n',
+            final_circuits:
+              [
+                'journey_uid,final_status,truck_plate,matrix_final_status,executive_status,valid_detail,executive_reason',
+                'a1,circuito_completo,ABC123,COMPLETO,VALIDO,COMPLETO,CIRCUITO_COMPLETO',
+                'a2,circuito_probable,DEF456,DEDUCIDO,VALIDO,DEDUCIDO,CIRCUITO_DEDUCIDO_VALIDO',
+                'a3,incompleto_revision,GHI789,ANOMALO,ANOMALO,,NO_RESPETA_SECUENCIA',
+                'a4,incompleto_revision,JKL111,ANOMALO,NO_EVALUABLE,,CONFIG_ERROR_MISSING_SEQUENCE',
+              ].join('\n'),
+          },
+        },
+      ],
+    })
+    expect(out.files.circuit_summary).toContain('valid_journeys')
+    expect(out.files.circuit_summary).toContain('probable_journeys')
+    expect(out.files.circuit_summary).toContain('4,2,0,0,1,1,1,1,0,0,1,1')
+  })
 })

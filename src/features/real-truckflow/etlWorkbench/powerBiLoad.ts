@@ -140,6 +140,17 @@ const SUMMARY_NUMERIC_FIELDS = [
   'unclassified_journeys_count',
   'single_event_discarded',
   'merge_candidates_count',
+  'total_journeys',
+  'valid_journeys',
+  'probable_journeys',
+  'incomplete_journeys',
+  'anomalous_journeys',
+  'non_evaluable_journeys',
+  'valid_complete',
+  'valid_deduced',
+  'non_evaluable_by_coverage',
+  'non_evaluable_missing_sequence',
+  'anomalous_no_respeta_secuencia',
 ] as const
 
 const USEFUL_FINAL_STATUSES = new Set([
@@ -372,13 +383,31 @@ function buildFolderName(group: LoadGroupType, start: string, end: string): stri
   return `rango_${start}_${end}`
 }
 
-function normalizeOperationalStatusFromCircuitRow(r: Record<string, string>): 'COMPLETO' | 'INCOMPLETO' | 'DEDUCIDO' | 'ANOMALO' {
+function normalizeOperationalStatusFromCircuitRow(
+  r: Record<string, string>
+): 'VALIDO' | 'PROBABLE' | 'INCOMPLETO' | 'ANOMALO' | 'NO_EVALUABLE' {
+  const executive = String(rowGet(r, 'executive_status') ?? '').trim().toUpperCase()
+  if (
+    executive === 'VALIDO' ||
+    executive === 'PROBABLE' ||
+    executive === 'INCOMPLETO' ||
+    executive === 'ANOMALO' ||
+    executive === 'NO_EVALUABLE'
+  ) {
+    return executive
+  }
   const matrix = String(rowGet(r, 'matrix_final_status') ?? '').trim().toUpperCase()
-  if (matrix === 'COMPLETO' || matrix === 'INCOMPLETO' || matrix === 'DEDUCIDO' || matrix === 'ANOMALO') {
+  if (matrix === 'COMPLETO' || matrix === 'DEDUCIDO') {
+    return 'VALIDO'
+  }
+  if (matrix === 'INCOMPLETO' || matrix === 'ANOMALO') {
     return matrix
   }
   const bucket = String(rowGet(r, 'executive_bucket') ?? '').trim().toUpperCase()
-  if (bucket === 'COMPLETO' || bucket === 'INCOMPLETO' || bucket === 'DEDUCIDO' || bucket === 'ANOMALO') {
+  if (bucket === 'COMPLETO' || bucket === 'DEDUCIDO') {
+    return 'VALIDO'
+  }
+  if (bucket === 'INCOMPLETO' || bucket === 'ANOMALO') {
     return bucket
   }
   return 'INCOMPLETO'
@@ -656,32 +685,62 @@ export function consolidatePowerBiLoad(input: {
     finalHeadersExec.length ? finalHeadersExec : ['journey_uid', 'final_status', 'final_status_label'],
     anomaliesRows
   )
-  const statusOrder: Array<'COMPLETO' | 'DEDUCIDO' | 'INCOMPLETO' | 'ANOMALO'> = [
-    'COMPLETO',
-    'DEDUCIDO',
-    'INCOMPLETO',
-    'ANOMALO',
-  ]
-  const summaryCounts = new Map<string, number>()
+  const summaryCounts = new Map<'VALIDO' | 'PROBABLE' | 'INCOMPLETO' | 'ANOMALO' | 'NO_EVALUABLE', number>()
+  let validComplete = 0
+  let validDeduced = 0
+  let probableInferred = 0
+  let nonEvaluableByCoverage = 0
+  let nonEvaluableMissingSequence = 0
+  let anomalousNoRespetaSecuencia = 0
   for (const r of finalProjected.rows) {
     const k = normalizeOperationalStatusFromCircuitRow(r)
     summaryCounts.set(k, (summaryCounts.get(k) ?? 0) + 1)
+    const validDetail = String(rowGet(r, 'valid_detail') ?? '').trim().toUpperCase()
+    const executiveReason = String(rowGet(r, 'executive_reason') ?? '').trim().toUpperCase()
+    if (k === 'VALIDO' && validDetail === 'COMPLETO') validComplete++
+    if (k === 'VALIDO' && validDetail === 'DEDUCIDO') validDeduced++
+    if (k === 'PROBABLE' && executiveReason === 'CIRCUITO_PROBABLE_INFERIDO') probableInferred++
+    if (k === 'NO_EVALUABLE' && executiveReason === 'CIRCUITO_NO_EVALUABLE_POR_COBERTURA') {
+      nonEvaluableByCoverage++
+    }
+    if (k === 'NO_EVALUABLE' && executiveReason === 'CONFIG_ERROR_MISSING_SEQUENCE') {
+      nonEvaluableMissingSequence++
+    }
+    if (k === 'ANOMALO' && (executiveReason === 'NO_RESPETA_SECUENCIA' || executiveReason === 'ANOMALIA_NO_RESPETA_SECUENCIA')) {
+      anomalousNoRespetaSecuencia++
+    }
   }
   const totalForSummary = Math.max(0, finalProjected.rows.length)
-  const summaryRows = statusOrder
-    .filter((s) => (summaryCounts.get(s) ?? 0) > 0 || totalForSummary === 0)
-    .map((s) => {
-      const count = summaryCounts.get(s) ?? 0
-      const pct = totalForSummary > 0 ? Math.round((count / totalForSummary) * 10000) / 100 : 0
-      return {
-        status: s,
-        count,
-        pct_of_total: pct,
-      } as Record<string, string | number>
-    })
+  const summaryRow = {
+    total_journeys: totalForSummary,
+    valid_journeys: summaryCounts.get('VALIDO') ?? 0,
+    probable_journeys: summaryCounts.get('PROBABLE') ?? 0,
+    incomplete_journeys: summaryCounts.get('INCOMPLETO') ?? 0,
+    anomalous_journeys: summaryCounts.get('ANOMALO') ?? 0,
+    non_evaluable_journeys: summaryCounts.get('NO_EVALUABLE') ?? 0,
+    valid_complete: validComplete,
+    valid_deduced: validDeduced,
+    probable_inferred: probableInferred,
+    non_evaluable_by_coverage: nonEvaluableByCoverage,
+    non_evaluable_missing_sequence: nonEvaluableMissingSequence,
+    anomalous_no_respeta_secuencia: anomalousNoRespetaSecuencia,
+  } as Record<string, string | number>
   const pb_circuit_summary = recordsToCsv(
-    ['status', 'count', 'pct_of_total'],
-    summaryRows.length ? summaryRows : [{ status: 'INCOMPLETO', count: 0, pct_of_total: 0 }]
+    [
+      'total_journeys',
+      'valid_journeys',
+      'probable_journeys',
+      'incomplete_journeys',
+      'anomalous_journeys',
+      'non_evaluable_journeys',
+      'valid_complete',
+      'valid_deduced',
+      'probable_inferred',
+      'non_evaluable_by_coverage',
+      'non_evaluable_missing_sequence',
+      'anomalous_no_respeta_secuencia',
+    ],
+    [summaryRow]
   )
 
   const pb_camera = recordsToCsvFromRows(
@@ -755,7 +814,7 @@ export function consolidatePowerBiLoad(input: {
   const rowCounts: Record<PowerBiStableFileKey, number> = {
     committee_summary: executivePack.rowCounts.committee_summary,
     final_circuits: finalProjected.rows.length,
-    circuit_summary: summaryRows.length,
+    circuit_summary: 1,
     anomalies: anomaliesRows.length,
     camera_committee_status: executivePack.rowCounts.camera_committee_status,
     camera_lpr_analysis: camDeduped.length,

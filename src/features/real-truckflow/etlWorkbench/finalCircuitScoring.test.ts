@@ -6,7 +6,17 @@ import {
   buildReliabilityExplanation,
   confidenceLevelFromScore,
   computeJourneyReliability,
+  isExecutiveSequenceConfigured,
+  isLiquidDispatchJourney,
+  isLiquidReceptionJourney,
+  journeyHasLiquidStrongPoint,
   resolveExecutiveBucket,
+  resolveExecutiveCircuitConfig,
+  resolveExecutiveCircuitConfigForJourney,
+  resolveExecutiveCircuitDecision,
+  resolveProbableSolidExecutiveDecision,
+  isSolidReceptionPattern,
+  isSolidDispatchPattern,
   resolveFinalStatus,
   resolveOperationalEntry,
   resolveOperationalExit,
@@ -140,6 +150,143 @@ describe('finalCircuitScoring', () => {
   it('explicación legible con puntos faltantes', () => {
     const txt = buildReliabilityExplanation(5, 4, ['BALANZA_EGRESO'], 'CIRCUITO_VOLCABLE_1_2')
     expect(txt).toContain('Falta balanza egreso')
+  })
+
+  describe('resolveExecutiveCircuitDecision', () => {
+    it('COMPLETO con cobertura y punto fuerte => VALIDO / COMPLETO', () => {
+      const r = resolveExecutiveCircuitDecision({
+        matrixFinalStatus: 'COMPLETO',
+        matrixReason: 'SECUENCIA_COMPLETA',
+        coverageInfo: { coveragePercent: 67, hasStrongPoint: true },
+        sequenceConfig: { enabledForClassification: true, sequenceConfigured: true },
+      })
+      expect(r.executiveStatus).toBe('VALIDO')
+      expect(r.executiveReason).toBe('CIRCUITO_COMPLETO')
+      expect(r.validDetail).toBe('COMPLETO')
+    })
+
+    it('DEDUCIDO con cobertura y punto fuerte => VALIDO / DEDUCIDO', () => {
+      const r = resolveExecutiveCircuitDecision({
+        matrixFinalStatus: 'DEDUCIDO',
+        matrixReason: 'SECUENCIA_RESPETADA_CON_HUECOS',
+        coverageInfo: { coveragePercent: 67, hasStrongPoint: true },
+        sequenceConfig: { enabledForClassification: true, sequenceConfigured: true },
+      })
+      expect(r.executiveStatus).toBe('VALIDO')
+      expect(r.executiveReason).toBe('CIRCUITO_DEDUCIDO_VALIDO')
+      expect(r.validDetail).toBe('DEDUCIDO')
+    })
+
+    it('ANOMALO con cobertura y punto fuerte => ANOMALO', () => {
+      const r = resolveExecutiveCircuitDecision({
+        matrixFinalStatus: 'ANOMALO',
+        matrixReason: 'NO_RESPETA_SECUENCIA',
+        coverageInfo: { coveragePercent: 67, hasStrongPoint: true },
+        sequenceConfig: { enabledForClassification: true, sequenceConfigured: true },
+      })
+      expect(r.executiveStatus).toBe('ANOMALO')
+      expect(r.executiveReason).toBe('NO_RESPETA_SECUENCIA')
+    })
+
+    it('ANOMALO sin punto fuerte => NO_EVALUABLE, no ANOMALO productivo', () => {
+      const r = resolveExecutiveCircuitDecision({
+        matrixFinalStatus: 'ANOMALO',
+        matrixReason: 'NO_RESPETA_SECUENCIA',
+        coverageInfo: { coveragePercent: 67, hasStrongPoint: false },
+        sequenceConfig: { enabledForClassification: true, sequenceConfigured: true },
+      })
+      expect(r.executiveStatus).toBe('NO_EVALUABLE')
+      expect(r.executiveReason).toBe('CIRCUITO_NO_EVALUABLE_POR_COBERTURA')
+    })
+
+    it('R26/R34 sin secuencia configurada => NO_EVALUABLE / CONFIG_ERROR_MISSING_SEQUENCE', () => {
+      for (const code of ['R26', 'R34']) {
+        const cfg = resolveExecutiveCircuitConfig(code)
+        expect(cfg).toBeTruthy()
+        const r = resolveExecutiveCircuitDecision({
+          matrixFinalStatus: 'ANOMALO',
+          matrixReason: 'NO_RESPETA_SECUENCIA',
+          coverageInfo: {
+            coveragePercent: cfg!.coveragePercent,
+            hasStrongPoint: cfg!.hasStrongPoint,
+          },
+          sequenceConfig: {
+            enabledForClassification: cfg!.enabledForClassification,
+            sequenceConfigured: isExecutiveSequenceConfigured(cfg),
+          },
+        })
+        expect(r.executiveStatus).toBe('NO_EVALUABLE')
+        expect(r.executiveReason).toBe('CONFIG_ERROR_MISSING_SEQUENCE')
+      }
+    })
+
+    it('códigos técnicos se ubican en matriz ejecutiva R*', () => {
+      const jDespacho = journey({
+        preliminaryCircuitCode: 'DESPACHO_SIN_PUNTO_INSTRUMENTADO',
+        logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO', 'BALANZA_EGRESO', 'EGRESO'],
+      })
+      expect(resolveExecutiveCircuitConfigForJourney(jDespacho)?.code).toBe('RS_REC')
+      expect(isSolidReceptionPattern(jDespacho)).toBe(true)
+
+      const jSl = journey({ preliminaryCircuitCode: 'CIRCUITO_SAN_LORENZO' })
+      expect(resolveExecutiveCircuitConfigForJourney(jSl)?.code).toBe('R7')
+
+      const jLiqRecep = journey({
+        preliminaryCircuitCode: 'CIRCUITO_LIQUIDO',
+        logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'CALADA', 'LIQUIDO', 'BALANZA_INGRESO', 'BALANZA_EGRESO'],
+        events: [{ deviceCode: 'RicCalLiq', sectorCode: 'X', occurredAt: '2026-05-12T09:00:00' } as never],
+      })
+      expect(resolveExecutiveCircuitConfigForJourney(jLiqRecep)?.code).toBe('R8')
+      expect(isLiquidReceptionJourney(jLiqRecep)).toBe(true)
+      expect(isLiquidDispatchJourney(jLiqRecep)).toBe(false)
+
+      const jLiqDesp = journey({
+        preliminaryCircuitCode: 'CIRCUITO_LIQUIDO',
+        logicalCodeSequence: [
+          'INGRESO',
+          'PREINGRESO',
+          'BALANZA_INGRESO',
+          'BALANZA_EGRESO',
+          'CALADA',
+          'LIQUIDO',
+          'EGRESO',
+        ],
+        events: [{ deviceCode: 'RicCalLiq', sectorCode: 'X', occurredAt: '2026-05-12T09:00:00' } as never],
+      })
+      expect(resolveExecutiveCircuitConfigForJourney(jLiqDesp)?.code).toBe('R16')
+      expect(isLiquidDispatchJourney(jLiqDesp)).toBe(true)
+      expect(isLiquidReceptionJourney(jLiqDesp)).toBe(false)
+
+      const jSolidoSinCamara = journey({
+        preliminaryCircuitCode: 'DESPACHO_SIN_PUNTO_INSTRUMENTADO',
+        logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO', 'BALANZA_EGRESO', 'EGRESO'],
+      })
+      expect(journeyHasLiquidStrongPoint(jSolidoSinCamara)).toBe(false)
+      expect(resolveExecutiveCircuitConfigForJourney(jSolidoSinCamara)?.code).toBe('RS_REC')
+
+      const jSolidoDespacho = journey({
+        preliminaryCircuitCode: 'DESPACHO_SIN_PUNTO_INSTRUMENTADO',
+        logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'BALANZA_EGRESO', 'CALADA', 'EGRESO'],
+      })
+      expect(resolveExecutiveCircuitConfigForJourney(jSolidoDespacho)?.code).toBe('RS_DESP')
+      expect(isSolidDispatchPattern(jSolidoDespacho)).toBe(true)
+
+      const jSolidoProbable = resolveProbableSolidExecutiveDecision({
+        matrixFinalStatus: 'INCOMPLETO',
+        matrixReason: 'EVENTOS_INSUFICIENTES',
+        frontEventCount: 6,
+        hasOperationalEntry: true,
+        hasOperationalExit: true,
+      })
+      expect(jSolidoProbable.executiveStatus).toBe('PROBABLE')
+      expect(jSolidoProbable.executiveReason).toBe('CIRCUITO_PROBABLE_INFERIDO')
+
+      const jVolc2 = journey({
+        preliminaryCircuitCode: 'CIRCUITO_VOLCABLE_1_2',
+        events: [{ deviceCode: 'RicVolcable2', sectorCode: 'X', occurredAt: '2026-05-12T09:00:00' } as never],
+      })
+      expect(resolveExecutiveCircuitConfigForJourney(jVolc2)?.code).toBe('R6')
+    })
   })
 
   describe('resolveExecutiveBucket (tolerancia operativa ejecutiva)', () => {

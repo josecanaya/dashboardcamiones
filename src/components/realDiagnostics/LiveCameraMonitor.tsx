@@ -39,6 +39,12 @@ import {
   filterEventsByPlant,
   resolveLiveFetchOrigin,
 } from '../../services/live/liveTruckflowFeed'
+import { useEtlWorkbenchOptional } from '../../features/real-truckflow/etlWorkbench/EtlWorkbenchContext'
+import {
+  buildCircuitClassificationIndex,
+  resolveClassificationForLiveRow,
+  type CircuitClassificationEntry,
+} from '../../features/real-truckflow/etlWorkbench/etlCircuitClassificationIndex'
 import type { RealJourneyEventDto } from '../../services/realJourneyEvents.types'
 import type { NormalizedRealAlertView } from '../../services/realAlertsInspector'
 
@@ -150,6 +156,18 @@ function sectorStatusClass(status: string): string {
   return 'text-slate-400 ring-slate-600/50'
 }
 
+function CircuitClassBadge({ entry }: { entry: CircuitClassificationEntry }) {
+  return (
+    <span
+      className="inline-flex max-w-[148px] flex-col rounded px-1.5 py-0.5 text-[9px] font-bold uppercase leading-tight ring-1 ring-white/10"
+      style={{ backgroundColor: `${entry.color}33`, color: entry.color }}
+      title={`${entry.pieSliceLabel}${entry.executiveCircuitDisplay ? ` · ${entry.executiveCircuitDisplay}` : ''}`}
+    >
+      {entry.pieSliceLabel}
+    </span>
+  )
+}
+
 export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
   const { siteId } = useSite()
   const [timeMode, setTimeMode] = useState<LiveTimeMode>('rolling_hour')
@@ -198,6 +216,13 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
   const [detailTab, setDetailTab] = useState<LiveDetailTab>('actividad')
   /** LPR_MALFUNCTION es ruido OCR frecuente de madrugada; oculto por defecto en vista operativa. */
   const [hideLprMalfunction, setHideLprMalfunction] = useState(true)
+
+  const wb = useEtlWorkbenchOptional()
+  const circuitClassIndex = useMemo(
+    () => buildCircuitClassificationIndex(wb?.transformResult?.csv.debug_matrix_classification),
+    [wb?.transformResult?.csv.debug_matrix_classification]
+  )
+  const showCircuitClassColumn = timeMode === 'calendar_day' && circuitClassIndex.total > 0
 
   const apiOriginLabel = useMemo(() => resolveLiveFetchOrigin(), [])
   const liveFetchOrigin = useMemo(
@@ -417,8 +442,8 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
   const sectorShortTitle = selectedEntry ? entryLabel(selectedEntry) : '—'
   const selectedCameraRow = cameraRows.find((c) => c.deviceCode === selectedDeviceCode)
 
-  const detectionColumns: LiveTableColumn<LiveDetectionRow>[] = useMemo(
-    () => [
+  const detectionColumns: LiveTableColumn<LiveDetectionRow>[] = useMemo(() => {
+    const cols: LiveTableColumn<LiveDetectionRow>[] = [
       {
         id: 'at',
         header: 'Hora',
@@ -443,6 +468,22 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
         className: 'font-mono text-xs font-semibold text-white',
         cell: (d) => d.plate || '—',
       },
+    ]
+
+    if (showCircuitClassColumn) {
+      cols.push({
+        id: 'circuitClass',
+        header: 'Porción torta',
+        className: 'max-w-[160px]',
+        cell: (d) => {
+          const entry = resolveClassificationForLiveRow(circuitClassIndex, d.journeyUid, d.plate)
+          if (!entry) return <span className="text-slate-500">—</span>
+          return <CircuitClassBadge entry={entry} />
+        },
+      })
+    }
+
+    cols.push(
       {
         id: 'eventType',
         header: 'Evento',
@@ -458,10 +499,11 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
         header: 'Journey',
         className: 'font-mono text-[10px] text-slate-500',
         cell: (d) => (d.journeyUid ? truncateMiddle(d.journeyUid, 18) : '—'),
-      },
-    ],
-    []
-  )
+      }
+    )
+
+    return cols
+  }, [circuitClassIndex, showCircuitClassColumn])
 
   const eventColumns: LiveTableColumn<RealJourneyEventDto>[] = useMemo(
     () => [
@@ -886,6 +928,16 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
                         <> · <span className="font-mono text-slate-400">{detailTabCounts.lprm} LPR_MALFUNCTION</span></>
                       )}
                     </p>
+
+                    {timeMode === 'calendar_day' && detailTab === 'actividad' ?
+                      showCircuitClassColumn ?
+                        <p className="mb-3 rounded-lg border border-violet-500/30 bg-violet-500/10 px-3 py-2 text-[10px] text-violet-100">
+                          Columna <strong>Porción torta</strong>: clasificación del journey según el último Transform ETL en memoria.
+                        </p>
+                      : <p className="mb-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[10px] text-amber-100">
+                          Ejecutá <strong>Transform</strong> en el ETL (mismo período) para ver la porción de torta por patente.
+                        </p>
+                    : null}
 
                     {detailTab === 'actividad' ? (
                       <LiveScrollTable

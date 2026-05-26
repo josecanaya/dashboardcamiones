@@ -37,8 +37,42 @@ export type ExecutiveAnomalyReason =
 export type SequenceFit = 'EXACT' | 'VARIANT' | 'DEDUCED' | 'PARTIAL' | 'BROKEN'
 
 export type JourneyMatrixFinalStatus = 'COMPLETO' | 'INCOMPLETO' | 'DEDUCIDO' | 'ANOMALO'
+export type ExecutiveCircuitStatus = 'VALIDO' | 'PROBABLE' | 'INCOMPLETO' | 'ANOMALO' | 'NO_EVALUABLE'
+export type ExecutiveCircuitReason =
+  | 'CIRCUITO_COMPLETO'
+  | 'CIRCUITO_DEDUCIDO_VALIDO'
+  | 'CONFIG_ERROR_MISSING_SEQUENCE'
+  | 'CIRCUITO_NO_EVALUABLE_POR_COBERTURA'
+  | string
+
+export type ExecutiveCircuitCoverageInfo = {
+  coveragePercent: number
+  hasStrongPoint: boolean
+}
+
+export type ExecutiveCircuitSequenceConfig = {
+  enabledForClassification: boolean
+  sequenceConfigured: boolean
+}
+
+export type ExecutiveCircuitDecision = {
+  executiveStatus: ExecutiveCircuitStatus
+  executiveReason: ExecutiveCircuitReason
+  validDetail: '' | 'COMPLETO' | 'DEDUCIDO'
+}
 
 export type JourneyCircuitMatrix = Record<string, readonly string[]>
+
+export type ExecutiveCircuitConfig = {
+  code: string
+  label: string
+  coveragePercent: number
+  hasStrongPoint: boolean
+  enabledForClassification: boolean
+  baseSequence?: readonly string[]
+  allowedSequences?: readonly (readonly string[])[]
+  aliases?: readonly string[]
+}
 
 export type JourneyAgainstMatrixResult = {
   finalStatus: JourneyMatrixFinalStatus
@@ -107,6 +141,187 @@ export const DEFAULT_CIRCUIT_MATRIX: JourneyCircuitMatrix = {
   ],
   TRANSILE_VOLCABLE_BALANZA: ['VOLCABLE', 'BALANZA_EGRESO'],
 }
+
+const R5_ALLOWED_SEQUENCES = [
+  ['S0', 'S1', 'ESPERA', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
+  ['S0', 'S1', 'S2', 'ESPERA', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
+  ['S0', 'S1', 'S2', 'ESPERA', 'S1', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
+  ['S0', 'S1', 'S2', 'S4', 'ESPERA', 'S6', 'S7', 'S9', 'S4', 'S10'],
+  ['S0', 'S1', 'S2', 'S4', 'S6', 'S7', 'S9', 'ESPERA', 'S4', 'S10'],
+] as const
+
+const R19_ALLOWED_SEQUENCES = [
+  ['S0', 'S1', 'ESPERA', 'S2', 'S4', 'S5', 'S6', 'S7', 'S9', 'S4', 'S10'],
+  ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S9', 'S5', 'S6', 'S7', 'S9', 'S4', 'S10'],
+] as const
+
+/**
+ * Matriz ejecutiva habilitada para lectura de comité.
+ * Las secuencias S* se conservan como contrato de negocio; la clasificación técnica actual sigue usando
+ * `DEFAULT_CIRCUIT_MATRIX` con puntos lógicos Truckflow.
+ */
+export const EXECUTIVE_CIRCUIT_MATRIX: Record<string, ExecutiveCircuitConfig> = {
+  R1: {
+    code: 'R1',
+    label: 'Recepción Celda 16',
+    coveragePercent: 67,
+    hasStrongPoint: true,
+    enabledForClassification: true,
+    aliases: ['CIRCUITO_CELDA16_DESCARGA'],
+    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S10'],
+    allowedSequences: [
+      ['S0', 'S1', 'ESPERA', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S10'],
+      ['S0', 'S1', 'S2', 'ESPERA', 'S4', 'S5', 'S6', 'S7', 'S4', 'S10'],
+      ['S0', 'S1', 'S2', 'ESPERA', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S10'],
+      ['S0', 'S1', 'S2', 'S4', 'ESPERA', 'S5', 'S6', 'S7', 'S4', 'S10'],
+      ['S0', 'S1', 'S2', 'S4', 'S5', 'ESPERA', 'S6', 'S7', 'S4', 'S10'],
+    ],
+  },
+  R5: {
+    code: 'R5',
+    label: 'Recepción Volcable 1',
+    coveragePercent: 67,
+    hasStrongPoint: true,
+    enabledForClassification: true,
+    aliases: ['CIRCUITO_VOLCABLE_1_2'],
+    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
+    allowedSequences: R5_ALLOWED_SEQUENCES,
+  },
+  R6: {
+    code: 'R6',
+    label: 'Recepción Volcable 2',
+    coveragePercent: 67,
+    hasStrongPoint: true,
+    enabledForClassification: true,
+    aliases: ['CIRCUITO_VOLCABLE_1_2'],
+    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
+    allowedSequences: R5_ALLOWED_SEQUENCES,
+  },
+  R7: {
+    code: 'R7',
+    label: 'Recepción / derivación a San Lorenzo',
+    coveragePercent: 80,
+    hasStrongPoint: true,
+    enabledForClassification: true,
+    aliases: ['CIRCUITO_SAN_LORENZO'],
+    baseSequence: ['S0', 'S1', 'S2', 'S3'],
+    allowedSequences: [
+      ['S0', 'S1', 'ESPERA', 'S2', 'S3'],
+      ['S0', 'S1', 'S2', 'ESPERA', 'S1', 'S2', 'S3'],
+      ['S0', 'S1', 'S3'],
+    ],
+  },
+  R8: {
+    code: 'R8',
+    label: 'Recepción Mercadería Líquida',
+    coveragePercent: 63,
+    hasStrongPoint: true,
+    enabledForClassification: true,
+    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S4', 'S3'],
+    allowedSequences: [['S0', 'S1', 'ESPERA', 'S1', 'S2', 'S4', 'S4', 'S3']],
+  },
+  R9: {
+    code: 'R9',
+    label: 'Despacho Celda 16',
+    coveragePercent: 78,
+    hasStrongPoint: true,
+    enabledForClassification: true,
+    aliases: ['CIRCUITO_CELDA16_CARGA'],
+    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S1', 'S2', 'S3'],
+    allowedSequences: [
+      ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S5', 'S6', 'S7', 'S1', 'S2', 'S3'],
+      ['S0', 'S1', 'ESPERA', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S1', 'ESPERA', 'S2', 'S3'],
+      ['S0', 'S1', 'S2', 'ESPERA', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S1', 'S2', 'S3'],
+    ],
+  },
+  R16: {
+    code: 'R16',
+    label: 'Despacho Mercadería Líquida',
+    coveragePercent: 75,
+    hasStrongPoint: true,
+    enabledForClassification: true,
+    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S4', 'S1', 'S2', 'S3'],
+    allowedSequences: [['S0', 'S1', 'ESPERA', 'S2', 'S4', 'S4', 'S1', 'ESPERA', 'S2', 'S3']],
+  },
+  R19: {
+    code: 'R19',
+    label: 'Transile C16 Volcable 1',
+    coveragePercent: 67,
+    hasStrongPoint: true,
+    enabledForClassification: true,
+    aliases: ['TRANSILE_VOLCABLE_BALANZA'],
+    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S9', 'S4', 'S10'],
+    allowedSequences: R19_ALLOWED_SEQUENCES,
+  },
+  R20: {
+    code: 'R20',
+    label: 'Transile C16 Volcable 2',
+    coveragePercent: 67,
+    hasStrongPoint: true,
+    enabledForClassification: true,
+    aliases: ['TRANSILE_VOLCABLE_BALANZA'],
+    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S9', 'S4', 'S10'],
+    allowedSequences: R19_ALLOWED_SEQUENCES,
+  },
+  R26: {
+    code: 'R26',
+    label: 'Transile externo C16 SLZ',
+    coveragePercent: 60,
+    hasStrongPoint: true,
+    enabledForClassification: true,
+  },
+  R34: {
+    code: 'R34',
+    label: 'Transile externo Líquidos SLZ 2',
+    coveragePercent: 64,
+    hasStrongPoint: true,
+    enabledForClassification: true,
+  },
+  /** Silos / celdas sin cámara destino — recepción sólida inferida por secuencia calada→balanza ingreso. */
+  RS_REC: {
+    code: 'RS_REC',
+    label: 'Recepción sólida inferida (sin cámara destino)',
+    coveragePercent: 50,
+    hasStrongPoint: false,
+    enabledForClassification: true,
+    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S6'],
+  },
+  /** Silos / celdas 09-11 — despacho sólido inferido por secuencia balanzas→calada. */
+  RS_DESP: {
+    code: 'RS_DESP',
+    label: 'Despacho sólido inferido (sin cámara destino)',
+    coveragePercent: 50,
+    hasStrongPoint: false,
+    enabledForClassification: true,
+    baseSequence: ['S0', 'S1', 'S4', 'S6', 'S2'],
+  },
+  /** Patrón insuficiente para inferir recepción/despacho sólido. */
+  SIN_PUNTO: {
+    code: 'SIN_PUNTO',
+    label: 'Sin punto instrumentado (sólidos)',
+    coveragePercent: 0,
+    hasStrongPoint: false,
+    enabledForClassification: false,
+  },
+}
+
+/** Orden de lectura ejecutiva en gráficos y tablas. */
+export const EXECUTIVE_CIRCUIT_ORDER = [
+  'R1',
+  'R5',
+  'R6',
+  'R7',
+  'R8',
+  'R9',
+  'R16',
+  'R19',
+  'R20',
+  'R26',
+  'R34',
+  'RS_REC',
+  'RS_DESP',
+  'SIN_PUNTO',
+] as const
 
 const LOGICAL_LABEL_ES: Record<string, string> = {
   INGRESO: 'ingreso',
@@ -351,6 +566,241 @@ export function classifyJourneyAgainstCircuitMatrix(
     missingPoints,
     matchedCircuitCode,
     confidence,
+  }
+}
+
+function journeyHasDevicePattern(j: ReconstructedRealJourney, pattern: RegExp): boolean {
+  return j.events.some((e) => pattern.test(String(e.deviceCode ?? '').trim()))
+}
+
+function firstLogicalIndex(seq: readonly string[], code: string): number {
+  const i = seq.indexOf(code)
+  return i >= 0 ? i : Number.POSITIVE_INFINITY
+}
+
+/** Líquido solo si pasó por cámara Calado Líquido (RicCalLiq). Sin esa cámara → sólido. */
+export function journeyHasLiquidStrongPoint(j: ReconstructedRealJourney): boolean {
+  return journeyHasDevicePattern(j, /RicCalLiq/i)
+}
+
+function caladaBeforeBalIngreso(j: ReconstructedRealJourney): boolean {
+  const seq = collapseConsecutiveEqual(j.logicalCodeSequence.map((x) => String(x)))
+  const caladaIdx = firstLogicalIndex(seq, 'CALADA')
+  const balIngIdx = firstLogicalIndex(seq, 'BALANZA_INGRESO')
+  if (!Number.isFinite(caladaIdx) || !Number.isFinite(balIngIdx)) return false
+  return caladaIdx < balIngIdx
+}
+
+function balanzasBeforeCalada(j: ReconstructedRealJourney): boolean {
+  const seq = collapseConsecutiveEqual(j.logicalCodeSequence.map((x) => String(x)))
+  const caladaIdx = firstLogicalIndex(seq, 'CALADA')
+  const balIngIdx = firstLogicalIndex(seq, 'BALANZA_INGRESO')
+  const balEgrIdx = firstLogicalIndex(seq, 'BALANZA_EGRESO')
+  if (!Number.isFinite(caladaIdx) || !Number.isFinite(balIngIdx) || !Number.isFinite(balEgrIdx)) {
+    return false
+  }
+  return balIngIdx < caladaIdx && balEgrIdx < caladaIdx
+}
+
+/** Recepción líquida (R8): calada antes de balanza ingreso — viene a traer mercadería. */
+export function isLiquidReceptionJourney(j: ReconstructedRealJourney): boolean {
+  if (!journeyHasLiquidStrongPoint(j)) return false
+  return caladaBeforeBalIngreso(j)
+}
+
+/** Despacho líquido (R16): balanza ingreso y egreso antes de calada — sale a llevar mercadería. */
+export function isLiquidDispatchJourney(j: ReconstructedRealJourney): boolean {
+  if (!journeyHasLiquidStrongPoint(j)) return false
+  return balanzasBeforeCalada(j)
+}
+
+function resolveLiquidExecutiveCircuit(journey: ReconstructedRealJourney): ExecutiveCircuitConfig | null {
+  if (!journeyHasLiquidStrongPoint(journey)) return null
+  if (isLiquidDispatchJourney(journey)) return EXECUTIVE_CIRCUIT_MATRIX.R16!
+  if (isLiquidReceptionJourney(journey)) return EXECUTIVE_CIRCUIT_MATRIX.R8!
+  return null
+}
+
+/** Inferencia sólida sin cámara en silos/celdas (misma lógica operativa que líquidos, sin RicCalLiq). */
+export function inferSolidExecutiveCircuit(journey: ReconstructedRealJourney): ExecutiveCircuitConfig {
+  if (isSolidReceptionPattern(journey)) return EXECUTIVE_CIRCUIT_MATRIX.RS_REC!
+  if (isSolidDispatchPattern(journey)) return EXECUTIVE_CIRCUIT_MATRIX.RS_DESP!
+  return EXECUTIVE_CIRCUIT_MATRIX.SIN_PUNTO!
+}
+
+export function isSolidReceptionPattern(j: ReconstructedRealJourney): boolean {
+  if (journeyHasLiquidStrongPoint(j)) return false
+  return caladaBeforeBalIngreso(j)
+}
+
+export function isSolidDispatchPattern(j: ReconstructedRealJourney): boolean {
+  if (journeyHasLiquidStrongPoint(j)) return false
+  return balanzasBeforeCalada(j)
+}
+
+export function resolveProbableSolidExecutiveDecision(input: {
+  matrixFinalStatus: JourneyMatrixFinalStatus
+  matrixReason: string
+  frontEventCount: number
+  hasOperationalEntry: boolean
+  hasOperationalExit: boolean
+}): ExecutiveCircuitDecision {
+  const evaluable =
+    input.frontEventCount >= 4 && input.hasOperationalEntry && input.hasOperationalExit
+  if (evaluable) {
+    return {
+      executiveStatus: 'PROBABLE',
+      executiveReason: 'CIRCUITO_PROBABLE_INFERIDO',
+      validDetail: '',
+    }
+  }
+  return {
+    executiveStatus: 'INCOMPLETO',
+    executiveReason: input.matrixReason || 'EVENTOS_INSUFICIENTES',
+    validDetail: '',
+  }
+}
+
+/** Resuelve circuito ejecutivo R* a partir del código técnico Truckflow y eventos del journey. */
+export function resolveExecutiveCircuitConfigForJourney(
+  journey: ReconstructedRealJourney,
+  technicalCode?: string | null
+): ExecutiveCircuitConfig | null {
+  const code = String(technicalCode ?? journey.preliminaryCircuitCode ?? '').trim()
+  if (!code) return null
+
+  const liquidCircuit = resolveLiquidExecutiveCircuit(journey)
+  if (liquidCircuit) return liquidCircuit
+
+  if (code === 'DESPACHO_SIN_PUNTO_INSTRUMENTADO') {
+    return inferSolidExecutiveCircuit(journey)
+  }
+
+  if (code === 'CIRCUITO_LIQUIDO') {
+    return EXECUTIVE_CIRCUIT_MATRIX.SIN_PUNTO!
+  }
+
+  const direct = EXECUTIVE_CIRCUIT_MATRIX[code]
+  if (direct) return direct
+
+  if (code === 'CIRCUITO_VOLCABLE_1_2') {
+    return journeyHasDevicePattern(journey, /RicVolcable2/i) ?
+        EXECUTIVE_CIRCUIT_MATRIX.R6!
+      : EXECUTIVE_CIRCUIT_MATRIX.R5!
+  }
+
+  if (code === 'TRANSILE_VOLCABLE_BALANZA') {
+    return journeyHasDevicePattern(journey, /RicVolcable2/i) ?
+        EXECUTIVE_CIRCUIT_MATRIX.R20!
+      : EXECUTIVE_CIRCUIT_MATRIX.R19!
+  }
+
+  const matches = Object.values(EXECUTIVE_CIRCUIT_MATRIX).filter((cfg) =>
+    (cfg.aliases ?? []).some((alias) => alias === code)
+  )
+  if (matches.length === 1) return matches[0]!
+  return matches[0] ?? null
+}
+
+export function resolveExecutiveCircuitConfig(circuitCode: string | null | undefined): ExecutiveCircuitConfig | null {
+  const code = String(circuitCode ?? '').trim()
+  if (!code) return null
+  const direct = EXECUTIVE_CIRCUIT_MATRIX[code]
+  if (direct) return direct
+  return (
+    Object.values(EXECUTIVE_CIRCUIT_MATRIX).find((cfg) =>
+      (cfg.aliases ?? []).some((alias) => alias === code)
+    ) ?? null
+  )
+}
+
+export function formatExecutiveCircuitLabel(code: string, label?: string): string {
+  const c = String(code ?? '').trim()
+  const l = String(label ?? '').trim()
+  if (c && l) return `${c} · ${l}`
+  return c || l || 'Sin asignar'
+}
+
+export function isExecutiveSequenceConfigured(config: ExecutiveCircuitConfig | null): boolean {
+  if (!config) return false
+  return Boolean(config.baseSequence?.length || config.allowedSequences?.some((seq) => seq.length > 0))
+}
+
+export function resolveExecutiveCircuitStatus(
+  matrixFinalStatus: JourneyMatrixFinalStatus,
+  coverageInfo: ExecutiveCircuitCoverageInfo,
+  sequenceConfig: ExecutiveCircuitSequenceConfig
+): ExecutiveCircuitStatus {
+  if (!sequenceConfig.sequenceConfigured) return 'NO_EVALUABLE'
+  if (coverageInfo.coveragePercent < 60 || coverageInfo.hasStrongPoint !== true) return 'NO_EVALUABLE'
+
+  switch (matrixFinalStatus) {
+    case 'COMPLETO':
+    case 'DEDUCIDO':
+      return 'VALIDO'
+    case 'INCOMPLETO':
+      return 'INCOMPLETO'
+    case 'ANOMALO':
+      return sequenceConfig.enabledForClassification ? 'ANOMALO' : 'NO_EVALUABLE'
+  }
+}
+
+export function resolveExecutiveCircuitDecision(input: {
+  matrixFinalStatus: JourneyMatrixFinalStatus
+  matrixReason: string
+  coverageInfo: ExecutiveCircuitCoverageInfo
+  sequenceConfig: ExecutiveCircuitSequenceConfig
+}): ExecutiveCircuitDecision {
+  const status = resolveExecutiveCircuitStatus(
+    input.matrixFinalStatus,
+    input.coverageInfo,
+    input.sequenceConfig
+  )
+
+  if (!input.sequenceConfig.sequenceConfigured) {
+    return {
+      executiveStatus: 'NO_EVALUABLE',
+      executiveReason: 'CONFIG_ERROR_MISSING_SEQUENCE',
+      validDetail: '',
+    }
+  }
+
+  if (input.coverageInfo.coveragePercent < 60 || input.coverageInfo.hasStrongPoint !== true) {
+    return {
+      executiveStatus: 'NO_EVALUABLE',
+      executiveReason: 'CIRCUITO_NO_EVALUABLE_POR_COBERTURA',
+      validDetail: '',
+    }
+  }
+
+  if (input.matrixFinalStatus === 'COMPLETO') {
+    return {
+      executiveStatus: status,
+      executiveReason: 'CIRCUITO_COMPLETO',
+      validDetail: status === 'VALIDO' ? 'COMPLETO' : '',
+    }
+  }
+
+  if (input.matrixFinalStatus === 'DEDUCIDO') {
+    return {
+      executiveStatus: status,
+      executiveReason: 'CIRCUITO_DEDUCIDO_VALIDO',
+      validDetail: status === 'VALIDO' ? 'DEDUCIDO' : '',
+    }
+  }
+
+  if (input.matrixFinalStatus === 'ANOMALO' && status === 'NO_EVALUABLE') {
+    return {
+      executiveStatus: 'NO_EVALUABLE',
+      executiveReason: 'CIRCUITO_NO_EVALUABLE_POR_COBERTURA',
+      validDetail: '',
+    }
+  }
+
+  return {
+    executiveStatus: status,
+    executiveReason: input.matrixReason || status,
+    validDetail: '',
   }
 }
 

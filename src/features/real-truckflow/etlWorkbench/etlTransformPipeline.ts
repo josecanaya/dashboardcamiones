@@ -23,11 +23,17 @@ import {
   journeyHasRicB2EgresoDevice,
   journeyHasStrongDefiningPoint,
   journeySequenceCoherent,
+  isExecutiveSequenceConfigured,
+  journeyHasLiquidStrongPoint,
   resolveExecutiveBucket,
+  resolveExecutiveCircuitConfigForJourney,
+  resolveExecutiveCircuitDecision,
+  resolveProbableSolidExecutiveDecision,
   resolveFinalStatus,
   resolveOperationalEntry,
   resolveOperationalExit,
 } from './finalCircuitScoring'
+import { applyExecutiveJourneyMerges } from './etlJourneyMerge'
 import { normalizePlateStrict, plateSimilarityScore } from '../../../services/circuitPlateOcr'
 import {
   accumulateOperationalAlertsMatch,
@@ -39,7 +45,7 @@ import {
   type JourneyOperationalAlertSummary,
 } from './etlOperationalAlertMatch'
 
-export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v6'
+export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v7'
 export type { FinalCircuitStatus } from './finalCircuitScoring'
 export { finalStatusLabel } from './finalCircuitScoring'
 
@@ -451,6 +457,12 @@ export type EtlTransformOutput = {
       incompletos: number
       anomalos: number
       deducidos: number
+      validos: number
+      probables: number
+      journeysMergedApplied: number
+      noEvaluables: number
+      validComplete: number
+      validDeduced: number
       lprAlerts: number
       operationalAlerts: number
       operationalAlertsCrossed: number
@@ -1006,7 +1018,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       else match_type = 'similar_plate'
 
       let priority: 'alta' | 'media' | 'baja'
-      if (exact && gapMin <= 25) priority = 'alta'
+      if (exact && gapMin <= 30) priority = 'alta'
       else if (exact) priority = 'media'
       else if (similarEnough && sim >= 0.92) priority = 'alta'
       else if (similarEnough || match_type === 'sequence_and_plate') priority = 'media'
@@ -1044,6 +1056,10 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
 
   const candidatesBeforeCap = rawMerge.length
   const mergeTop = rawMerge.slice(0, MERGE_TOP_LIMIT)
+
+  const mergePack = applyExecutiveJourneyMerges(journeys, mergeTop)
+  const journeysForExecutive = mergePack.journeys
+  const journeys_merged_applied = mergePack.mergeAppliedCount
 
   /** UIDs tocados por pareja merge de alta confianza (exacta, hueco corto, sin revisión). */
   const mergeHighConfidenceUids = new Set<string>()
@@ -1141,6 +1157,13 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       sequenceRespected: boolean
       legacyFinalStatus: string
       executiveBucket: 'COMPLETO' | 'INCOMPLETO' | 'ANOMALO' | 'DEDUCIDO'
+      executiveStatus: 'VALIDO' | 'PROBABLE' | 'INCOMPLETO' | 'ANOMALO' | 'NO_EVALUABLE'
+      executiveReason: string
+      validDetail: string
+      coveragePercent: number
+      hasStrongPoint: boolean
+      enabledForClassification: boolean
+      sequenceConfigured: boolean
       usefulEventsCount: number
     }
   >()
@@ -1160,15 +1183,25 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   let executiveIncompletos = 0
   let executiveAnomalos = 0
   let executiveDeducidos = 0
+  let executiveValidos = 0
+  let executiveProbables = 0
+  let executiveStatusIncompletos = 0
+  let executiveStatusAnomalos = 0
+  let executiveNoEvaluables = 0
+  let executiveValidComplete = 0
+  let executiveValidDeduced = 0
+  let executiveNonEvaluableByCoverage = 0
+  let executiveNonEvaluableMissingSequence = 0
+  let executiveAnomalousNoRespetaSecuencia = 0
 
   let ingresos_operativos_count = 0
-  for (const mj of journeys) {
+  for (const mj of journeysForExecutive) {
     const logicals = new Set(mj.logicalCodeSequence.map((x) => String(x)))
     if (resolveOperationalEntry(logicals).has_operational_entry) ingresos_operativos_count++
   }
 
   const journeyMetaByUid = new Map<string, JourneyMetaForAlertMatch>()
-  for (const mjInit of journeys) {
+  for (const mjInit of journeysForExecutive) {
     journeyMetaByUid.set(mjInit.journeyUid, {
       journeyUid: mjInit.journeyUid,
       normalizedPlate: mjInit.normalizedPlate,
@@ -1184,7 +1217,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
 
   const operationalAlertsMatchAccumulator = accumulateOperationalAlertsMatch({
     operationalAlerts: operationalAlertsSansLpr,
-    journeys,
+    journeys: journeysForExecutive,
     eventsByJourney: eventsByJourneyOperational,
     journeyMetaByUid,
     read: {
@@ -1206,7 +1239,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     },
   })
 
-  for (const mj of journeys) {
+  for (const mj of journeysForExecutive) {
     const tier = userCircuitTier(mj)
     const audit = journeyAuditByUid.get(mj.journeyUid)
     const seqPack = journeyDeviceSectorLogical(mj)
@@ -1230,6 +1263,46 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     )
 
     const matrixClassification = classifyJourneyAgainstCircuitMatrix(mj, DEFAULT_CIRCUIT_MATRIX)
+    const technicalCircuitCode = matrixClassification.matchedCircuitCode ?? mj.preliminaryCircuitCode
+    const executiveCircuitConfig = resolveExecutiveCircuitConfigForJourney(mj, technicalCircuitCode)
+    const sequenceConfigured = isExecutiveSequenceConfigured(executiveCircuitConfig)
+    const coveragePercent = executiveCircuitConfig?.coveragePercent ?? 0
+    const hasStrongPoint =
+      executiveCircuitConfig?.code === 'R8' || executiveCircuitConfig?.code === 'R16' ?
+        journeyHasLiquidStrongPoint(mj)
+      : executiveCircuitConfig?.hasStrongPoint === true
+    const enabledForClassification = executiveCircuitConfig?.enabledForClassification === true
+    const executiveCircuitCode = executiveCircuitConfig?.code ?? ''
+    const executiveCircuitLabel = executiveCircuitConfig?.label ?? ''
+    const executiveCircuitBase = resolveExecutiveCircuitDecision({
+      matrixFinalStatus: matrixClassification.finalStatus,
+      matrixReason: matrixClassification.reason,
+      coverageInfo: {
+        coveragePercent,
+        hasStrongPoint,
+      },
+      sequenceConfig: {
+        enabledForClassification,
+        sequenceConfigured,
+      },
+    })
+    let executiveCircuit = executiveCircuitBase
+    if (executiveCircuitCode === 'RS_REC' || executiveCircuitCode === 'RS_DESP') {
+      executiveCircuit = resolveProbableSolidExecutiveDecision({
+        matrixFinalStatus: matrixClassification.finalStatus,
+        matrixReason: matrixClassification.reason,
+        frontEventCount: seqPack.frontEventCount,
+        hasOperationalEntry: entry.has_operational_entry,
+        hasOperationalExit: exit.has_operational_exit,
+      })
+    } else if (executiveCircuitCode === 'SIN_PUNTO') {
+      executiveCircuit = {
+        ...executiveCircuitBase,
+        executiveStatus: 'NO_EVALUABLE',
+        executiveReason: 'CIRCUITO_SIN_PUNTO_INSTRUMENTADO',
+        validDetail: '',
+      }
+    }
     const legacyFinalStatus = resolveFinalStatus({
       j: mj,
       reliabilityScore: rel,
@@ -1283,10 +1356,45 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       sequenceRespected: matrixClassification.sequenceRespected,
       legacyFinalStatus: legacyFinalStatus,
       executiveBucket: executive.bucket,
+      executiveStatus: executiveCircuit.executiveStatus,
+      executiveReason: executiveCircuit.executiveReason,
+      validDetail: executiveCircuit.validDetail,
+      coveragePercent,
+      hasStrongPoint,
+      enabledForClassification,
+      sequenceConfigured,
       usefulEventsCount: seqPack.frontEventCount,
     })
 
     if (!journeyPassesFinalFilter(mj)) continue
+
+    switch (executiveCircuit.executiveStatus) {
+      case 'VALIDO':
+        executiveValidos++
+        if (executiveCircuit.validDetail === 'COMPLETO') executiveValidComplete++
+        if (executiveCircuit.validDetail === 'DEDUCIDO') executiveValidDeduced++
+        break
+      case 'PROBABLE':
+        executiveProbables++
+        break
+      case 'INCOMPLETO':
+        executiveStatusIncompletos++
+        break
+      case 'ANOMALO':
+        executiveStatusAnomalos++
+        if (executiveCircuit.executiveReason === 'NO_RESPETA_SECUENCIA') {
+          executiveAnomalousNoRespetaSecuencia++
+        }
+        break
+      case 'NO_EVALUABLE':
+        executiveNoEvaluables++
+        if (executiveCircuit.executiveReason === 'CONFIG_ERROR_MISSING_SEQUENCE') {
+          executiveNonEvaluableMissingSequence++
+        } else if (executiveCircuit.executiveReason === 'CIRCUITO_NO_EVALUABLE_POR_COBERTURA') {
+          executiveNonEvaluableByCoverage++
+        }
+        break
+    }
 
     switch (executive.bucket) {
       case 'COMPLETO':
@@ -1367,10 +1475,20 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       refinement_note: refinementLabel(mj),
       data_quality_flag: pickDataQualityFlag(mj, tier, dupSus, mergedFrag),
       matrix_final_status: matrixClassification.finalStatus,
+      executive_status: executiveCircuit.executiveStatus,
+      executive_reason: executiveCircuit.executiveReason,
+      valid_detail: executiveCircuit.validDetail,
       matrix_reason: matrixClassification.reason,
       sequence_respected: matrixClassification.sequenceRespected,
+      coverage_percent: coveragePercent,
+      has_strong_point: hasStrongPoint,
+      enabled_for_classification: enabledForClassification,
+      sequence_configured: sequenceConfigured,
       matrix_missing_points: matrixClassification.missingPoints.join('|'),
-      matched_circuit_code: matrixClassification.matchedCircuitCode ?? '',
+      matched_circuit_code: executiveCircuitCode,
+      executive_circuit_code: executiveCircuitCode,
+      executive_circuit_label: executiveCircuitLabel,
+      technical_matched_circuit_code: matrixClassification.matchedCircuitCode ?? '',
       matrix_confidence: matrixClassification.confidence,
       final_status_legacy: legacyFinalStatus,
     })
@@ -1384,11 +1502,21 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       plate: mj.normalizedPlate || mj.plate,
       site: mj.siteId,
       detected_sequence: seqPack.logicalSequence,
-      matched_circuit_code: matrixClassification.matchedCircuitCode ?? '',
+      matched_circuit_code: executiveCircuitCode,
+      executive_circuit_code: executiveCircuitCode,
+      executive_circuit_label: executiveCircuitLabel,
+      technical_matched_circuit_code: matrixClassification.matchedCircuitCode ?? '',
       expected_sequence: expectedSequence,
       matrix_final_status: matrixClassification.finalStatus,
+      executive_status: executiveCircuit.executiveStatus,
+      executive_reason: executiveCircuit.executiveReason,
+      valid_detail: executiveCircuit.validDetail,
       matrix_reason: matrixClassification.reason,
       sequence_respected: matrixClassification.sequenceRespected,
+      coverage_percent: coveragePercent,
+      has_strong_point: hasStrongPoint,
+      enabled_for_classification: enabledForClassification,
+      sequence_configured: sequenceConfigured,
       matrix_missing_points: matrixClassification.missingPoints.join('|'),
       matrix_confidence: matrixClassification.confidence,
       useful_events_count: seqPack.frontEventCount,
@@ -1425,13 +1553,20 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     useful_events_count: number
     final_status_legacy: string
     executive_bucket: string
+    executive_status: string
+    executive_reason: string
+    valid_detail: string
+    coverage_percent: number
+    has_strong_point: boolean
+    enabled_for_classification: boolean
+    sequence_configured: boolean
     merge_decision: 'APPLIED' | 'REVIEW' | 'REJECTED'
     review_reason: string
   }
 
   const lprMergeCandidatesAll: LprMergeCandidateRow[] = []
   const lprAlerts = frontAl.filter(isLprMalfunctionAlert)
-  const journeyByUid = new Map(journeys.map((j) => [j.journeyUid, j]))
+  const journeyByUid = new Map(journeysForExecutive.map((j) => [j.journeyUid, j]))
 
   for (const alert of lprAlerts) {
     const alertId = pickStr(alert.id) || pickStr((alert as { alertId?: unknown }).alertId)
@@ -1525,6 +1660,13 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
         useful_events_count: matrix.usefulEventsCount,
         final_status_legacy: matrix.legacyFinalStatus,
         executive_bucket: matrix.executiveBucket,
+        executive_status: matrix.executiveStatus,
+        executive_reason: matrix.executiveReason,
+        valid_detail: matrix.validDetail,
+        coverage_percent: matrix.coveragePercent,
+        has_strong_point: matrix.hasStrongPoint,
+        enabled_for_classification: matrix.enabledForClassification,
+        sequence_configured: matrix.sequenceConfigured,
         merge_decision: 'REJECTED',
         review_reason: '',
       })
@@ -1630,10 +1772,20 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
           'site',
           'detected_sequence',
           'matched_circuit_code',
+          'executive_circuit_code',
+          'executive_circuit_label',
+          'technical_matched_circuit_code',
           'expected_sequence',
           'matrix_final_status',
+          'executive_status',
+          'executive_reason',
+          'valid_detail',
           'matrix_reason',
           'sequence_respected',
+          'coverage_percent',
+          'has_strong_point',
+          'enabled_for_classification',
+          'sequence_configured',
           'matrix_missing_points',
           'matrix_confidence',
           'useful_events_count',
@@ -1642,7 +1794,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
         ],
         debugMatrixRows
       )
-    : 'journey_id,plate,site,detected_sequence,matched_circuit_code,expected_sequence,matrix_final_status,matrix_reason,sequence_respected,matrix_missing_points,matrix_confidence,useful_events_count,final_status_legacy,executive_bucket\n'
+    : 'journey_id,plate,site,detected_sequence,matched_circuit_code,executive_circuit_code,executive_circuit_label,technical_matched_circuit_code,expected_sequence,matrix_final_status,executive_status,executive_reason,valid_detail,matrix_reason,sequence_respected,coverage_percent,has_strong_point,enabled_for_classification,sequence_configured,matrix_missing_points,matrix_confidence,useful_events_count,final_status_legacy,executive_bucket\n'
   const lprMergeHeaders = [
     'alert_id',
     'journey_uid',
@@ -1671,6 +1823,13 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     'useful_events_count',
     'final_status_legacy',
     'executive_bucket',
+    'executive_status',
+    'executive_reason',
+    'valid_detail',
+    'coverage_percent',
+    'has_strong_point',
+    'enabled_for_classification',
+    'sequence_configured',
     'merge_decision',
     'review_reason',
   ]
@@ -1908,6 +2067,18 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     duplicate_suspected_flagged_journeys: duplicate_suspected,
     merge_candidates_count: mergeCsvRows.length,
     journeys_with_rear_events_removed: journeysWithRearRemoved,
+    total_journeys: final_circuits_count,
+    journeys_merged_applied,
+    valid_journeys: executiveValidos,
+    probable_journeys: executiveProbables,
+    incomplete_journeys: executiveStatusIncompletos,
+    anomalous_journeys: executiveStatusAnomalos,
+    non_evaluable_journeys: executiveNoEvaluables,
+    valid_complete: executiveValidComplete,
+    valid_deduced: executiveValidDeduced,
+    non_evaluable_by_coverage: executiveNonEvaluableByCoverage,
+    non_evaluable_missing_sequence: executiveNonEvaluableMissingSequence,
+    anomalous_no_respeta_secuencia: executiveAnomalousNoRespetaSecuencia,
     date_min: dateMin ?? '',
     date_max: dateMax ?? '',
     rules_version: ETL_TRANSFORM_RULES_VERSION,
@@ -1941,6 +2112,12 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     incompletos: executiveIncompletos,
     anomalos: executiveAnomalos,
     deducidos: executiveDeducidos,
+    validos: executiveValidos,
+    probables: executiveProbables,
+    journeysMergedApplied: journeys_merged_applied,
+    noEvaluables: executiveNoEvaluables,
+    validComplete: executiveValidComplete,
+    validDeduced: executiveValidDeduced,
     lprAlerts: totalLprMalfunctionAlerts,
     operationalAlerts: operationalAlertsCount,
     operationalAlertsCrossed: alertCrossMetrics.operationalAlertsCrossed,
