@@ -305,6 +305,10 @@ function emptyJourneySummary(): JourneyOperationalAlertSummary {
   }
 }
 
+export function emptyJourneyOperationalAlertSummary(): JourneyOperationalAlertSummary {
+  return emptyJourneySummary()
+}
+
 function resolveSystemCutReason(summary: JourneyOperationalAlertSummary): SystemCutReason {
   if (summary.hasInvalidJourneyStart) return 'INVALID_JOURNEY_START_AT_NON_ENTRY_SECTOR'
   if (summary.hasInvalidRoute) return 'INVALID_ROUTE_DURING_JOURNEY'
@@ -314,7 +318,7 @@ function resolveSystemCutReason(summary: JourneyOperationalAlertSummary): System
   return 'NONE'
 }
 
-export function crossOperationalAlerts(input: {
+export type OperationalAlertsCrossInput = {
   operationalAlerts: RealAlertDto[]
   journeys: ReconstructedRealJourney[]
   eventsByJourney: Map<string, RealJourneyEventDto[]>
@@ -331,7 +335,18 @@ export function crossOperationalAlerts(input: {
     occurredAt: (a: RealAlertDto) => string
     createdAt: (a: RealAlertDto) => string
   }
-}): CrossOperationalAlertsResult {
+}
+
+export type OperationalAlertsMatchAccumulator = {
+  alertRows: EnrichedOperationalAlertRow[]
+  journeySummaries: Map<string, JourneyOperationalAlertSummary>
+  operationalAlertsCrossed: number
+}
+
+/** Cruce alerta ↔ journey una sola vez; `matchedBucket` puede completarse después con el bucket ejecutivo. */
+export function accumulateOperationalAlertsMatch(
+  input: OperationalAlertsCrossInput
+): OperationalAlertsMatchAccumulator {
   const journeySummaries = new Map<string, JourneyOperationalAlertSummary>()
   for (const uid of input.journeyMetaByUid.keys()) {
     journeySummaries.set(uid, emptyJourneySummary())
@@ -404,6 +419,27 @@ export function crossOperationalAlerts(input: {
     journeySummaries.set(match.journeyUid, sum)
   }
 
+  return { alertRows, journeySummaries, operationalAlertsCrossed }
+}
+
+/** Actualiza matchedBucket después de clasificar ejecutivamente cada journey (sin re-cruzar alertas). */
+export function attachExecutiveBucketsToOperationalAlertRows(
+  rows: EnrichedOperationalAlertRow[],
+  journeyMetaByUid: Map<string, JourneyMetaForAlertMatch>
+): void {
+  for (const row of rows) {
+    const uid = row.matchedJourneyUid.trim()
+    if (!uid) continue
+    const meta = journeyMetaByUid.get(uid)
+    row.matchedBucket = meta?.executiveBucket ?? ''
+  }
+}
+
+export function computeOperationalAlertCrossMetrics(
+  journeySummaries: Map<string, JourneyOperationalAlertSummary>,
+  journeyMetaByUid: Map<string, JourneyMetaForAlertMatch>,
+  operationalAlertsCrossed: number
+): OperationalAlertCrossMetrics {
   let journeysWithOperationalAlerts = 0
   let journeysWithInvalidRoute = 0
   let journeysWithInvalidJourneyStart = 0
@@ -414,7 +450,7 @@ export function crossOperationalAlerts(input: {
 
   for (const [uid, sum] of journeySummaries) {
     if (sum.operationalAlertCount <= 0) continue
-    const meta = input.journeyMetaByUid.get(uid)
+    const meta = journeyMetaByUid.get(uid)
     journeysWithOperationalAlerts++
     if (sum.hasInvalidRoute) journeysWithInvalidRoute++
     if (sum.hasInvalidJourneyStart) journeysWithInvalidJourneyStart++
@@ -430,18 +466,29 @@ export function crossOperationalAlerts(input: {
   }
 
   return {
-    alertRows,
-    journeySummaries,
-    metrics: {
-      operationalAlertsCrossed,
-      journeysWithOperationalAlerts,
-      journeysWithInvalidRoute,
-      journeysWithInvalidJourneyStart,
-      incompletosWithOperationalAlert,
-      anomalosWithOperationalAlert,
-      incompletosWithInvalidJourneyStart,
-      anomalosWithInvalidRoute,
-    },
+    operationalAlertsCrossed,
+    journeysWithOperationalAlerts,
+    journeysWithInvalidRoute,
+    journeysWithInvalidJourneyStart,
+    incompletosWithOperationalAlert,
+    anomalosWithOperationalAlert,
+    incompletosWithInvalidJourneyStart,
+    anomalosWithInvalidRoute,
+  }
+}
+
+export function crossOperationalAlerts(input: OperationalAlertsCrossInput): CrossOperationalAlertsResult {
+  const acc = accumulateOperationalAlertsMatch(input)
+  attachExecutiveBucketsToOperationalAlertRows(acc.alertRows, input.journeyMetaByUid)
+  const metrics = computeOperationalAlertCrossMetrics(
+    acc.journeySummaries,
+    input.journeyMetaByUid,
+    acc.operationalAlertsCrossed
+  )
+  return {
+    alertRows: acc.alertRows,
+    journeySummaries: acc.journeySummaries,
+    metrics,
   }
 }
 

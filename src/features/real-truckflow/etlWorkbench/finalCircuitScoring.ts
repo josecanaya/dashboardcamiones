@@ -24,9 +24,89 @@ export type FinalCircuitStatus =
 /** Taxonomía ejecutiva para comité (UI productiva). */
 export type ExecutiveBucket = 'COMPLETO' | 'INCOMPLETO' | 'ANOMALO' | 'DEDUCIDO'
 
-export type ExecutiveAnomalyReason = 'ANOMALIA_NO_RESPETA_SECUENCIA' | 'SCORE_BAJO' | null
+export type ExecutiveAnomalyReason =
+  | 'ANOMALIA_NO_RESPETA_SECUENCIA'
+  | 'NO_RESPETA_SECUENCIA'
+  /** Legacy; ya no usado como regla única ejecutiva pero se conserva en el tipo CSV. */
+  | 'SCORE_BAJO'
+  | 'INVALID_ROUTE_ALERT'
+  | 'INVALID_JOURNEY_START_ALERT'
+  | null
+
+/** Ajuste de secuencia frente al circuito esperado antes del bucket ejecutivo. */
+export type SequenceFit = 'EXACT' | 'VARIANT' | 'DEDUCED' | 'PARTIAL' | 'BROKEN'
+
+export type JourneyMatrixFinalStatus = 'COMPLETO' | 'INCOMPLETO' | 'DEDUCIDO' | 'ANOMALO'
+
+export type JourneyCircuitMatrix = Record<string, readonly string[]>
+
+export type JourneyAgainstMatrixResult = {
+  finalStatus: JourneyMatrixFinalStatus
+  reason: string
+  sequenceRespected: boolean
+  missingPoints: string[]
+  matchedCircuitCode: string | null
+  confidence: number
+}
+
+export type ResolveExecutiveBucketInput = {
+  finalStatus: FinalCircuitStatus
+  frontEventCount: number
+  reliabilityScore: number
+  sequenceCoherent: boolean
+  hasOperationalEntry: boolean
+  hasOperationalExit: boolean
+  strong: boolean
+  missingTemplatePointsCount: number
+  expectedTemplatePoints: number
+  j: ReconstructedRealJourney
+  seqPack: { startsAtValidEntry: boolean; endsAtValidExit: boolean }
+  hasInvalidRouteOperationalAlert: boolean
+  hasInvalidJourneyStartOperationalAlert: boolean
+}
 
 const RIC_B2_EGRESO_NORM = 'ricb2egreso'
+
+export const DEFAULT_CIRCUIT_MATRIX: JourneyCircuitMatrix = {
+  CIRCUITO_CELDA16_DESCARGA: [
+    'INGRESO',
+    'PREINGRESO',
+    'CALADA',
+    'BALANZA_INGRESO',
+    'CELDA16_DESCARGA',
+    'BALANZA_EGRESO',
+    'EGRESO',
+  ],
+  CIRCUITO_CELDA16_CARGA: [
+    'INGRESO',
+    'PREINGRESO',
+    'CALADA',
+    'BALANZA_INGRESO',
+    'CELDA16_CARGA',
+    'BALANZA_EGRESO',
+    'EGRESO',
+  ],
+  CIRCUITO_VOLCABLE_1_2: [
+    'INGRESO',
+    'PREINGRESO',
+    'CALADA',
+    'BALANZA_INGRESO',
+    'VOLCABLE',
+    'BALANZA_EGRESO',
+    'EGRESO',
+  ],
+  CIRCUITO_LIQUIDO: ['INGRESO', 'PREINGRESO', 'CALADA', 'LIQUIDO', 'BALANZA_INGRESO', 'BALANZA_EGRESO'],
+  CIRCUITO_SAN_LORENZO: ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO'],
+  DESPACHO_SIN_PUNTO_INSTRUMENTADO: [
+    'INGRESO',
+    'PREINGRESO',
+    'CALADA',
+    'BALANZA_INGRESO',
+    'BALANZA_EGRESO',
+    'EGRESO',
+  ],
+  TRANSILE_VOLCABLE_BALANZA: ['VOLCABLE', 'BALANZA_EGRESO'],
+}
 
 const LOGICAL_LABEL_ES: Record<string, string> = {
   INGRESO: 'ingreso',
@@ -50,6 +130,52 @@ function collapseConsecutiveEqual(seq: string[]): string[] {
     if (out[out.length - 1] !== t) out.push(t)
   }
   return out
+}
+
+function isOrderedSubsequence(seq: string[], pattern: readonly string[]): boolean {
+  if (!pattern.length) return false
+  let j = 0
+  for (let i = 0; i < seq.length && j < pattern.length; i++) {
+    if (seq[i] === pattern[j]) j++
+  }
+  return j === pattern.length
+}
+
+function clampRoundPct(v: number): number {
+  const c = Math.max(0, Math.min(100, v))
+  return Math.round(c * 10) / 10
+}
+
+function sequenceOrderEvidence(
+  observedSeq: readonly string[],
+  expectedSeq: readonly string[]
+): { comparablePoints: number; regressions: number; orderedPrefixMatches: number } {
+  const pos = new Map<string, number>()
+  for (let i = 0; i < expectedSeq.length; i++) {
+    const code = String(expectedSeq[i] ?? '')
+    if (!code || pos.has(code)) continue
+    pos.set(code, i)
+  }
+
+  let comparablePoints = 0
+  let regressions = 0
+  let prevPos = -1
+  for (const raw of observedSeq) {
+    const code = String(raw ?? '')
+    const p = pos.get(code)
+    if (p == null) continue
+    comparablePoints++
+    if (prevPos >= 0 && p < prevPos) regressions++
+    else prevPos = p
+  }
+
+  let j = 0
+  for (const raw of observedSeq) {
+    const code = String(raw ?? '')
+    if (j < expectedSeq.length && code === expectedSeq[j]) j++
+  }
+
+  return { comparablePoints, regressions, orderedPrefixMatches: j }
 }
 
 function logicalSet(j: ReconstructedRealJourney): Set<string> {
@@ -101,6 +227,131 @@ export function resolveOperationalExit(
   else if (has_balanza_egreso) exit_source = 'balanza_egreso'
 
   return { has_operational_exit, exit_source, has_egreso, has_balanza_egreso }
+}
+
+export function classifyJourneyAgainstCircuitMatrix(
+  journey: ReconstructedRealJourney,
+  circuitMatrix: JourneyCircuitMatrix
+): JourneyAgainstMatrixResult {
+  const usefulEvents = journey.events.filter((e) => !isEtlRearCameraDevice(e.deviceCode))
+  const usefulEventsCount = usefulEvents.length > 0 ? usefulEvents.length : Math.max(0, journey.eventCount)
+  const observedSeq =
+    usefulEvents.length > 0 ?
+      collapseConsecutiveEqual(
+        [...usefulEvents].sort(compareRealEvents).map((e) => normalizeRealEventPoint(e).logicalCode)
+      )
+    : collapseConsecutiveEqual(journey.logicalCodeSequence.map((x) => String(x)))
+  const preliminaryCode = String(journey.preliminaryCircuitCode ?? '').trim()
+  const expectedSeq = preliminaryCode ? (circuitMatrix[preliminaryCode] ?? []) : []
+  const matchedCircuitCode = expectedSeq.length > 0 ? preliminaryCode : null
+  const hasSequenceEvidence = expectedSeq.length > 0 && observedSeq.length > 0
+  const sequenceRespected = hasSequenceEvidence ? isOrderedSubsequence(observedSeq, expectedSeq) : true
+  const missingPoints =
+    matchedCircuitCode && hasSequenceEvidence ?
+      expectedSeq.filter((p) => !new Set(observedSeq).has(String(p)))
+    : matchedCircuitCode ?
+      [...(journey.missingExpectedPoints ?? [])]
+    : []
+
+  const matchedPoints = matchedCircuitCode ? expectedSeq.length - missingPoints.length : 0
+  const confidence =
+    matchedCircuitCode && expectedSeq.length > 0 ?
+      clampRoundPct((matchedPoints / expectedSeq.length) * 100)
+    : 0
+  const evidence = sequenceOrderEvidence(observedSeq, expectedSeq)
+
+  if (usefulEventsCount <= 2) {
+    return {
+      finalStatus: 'INCOMPLETO',
+      reason: 'EVENTOS_INSUFICIENTES',
+      sequenceRespected,
+      missingPoints,
+      matchedCircuitCode,
+      confidence,
+    }
+  }
+
+  if (!matchedCircuitCode) {
+    return {
+      finalStatus: 'INCOMPLETO',
+      reason: 'SIN_MATRIZ_COINCIDENTE',
+      sequenceRespected: false,
+      missingPoints: [],
+      matchedCircuitCode: null,
+      confidence: 0,
+    }
+  }
+
+  if (!sequenceRespected) {
+    const strongContradiction =
+      usefulEventsCount >= 6 &&
+      evidence.comparablePoints >= 5 &&
+      evidence.regressions >= 2 &&
+      missingPoints.length >= 2 &&
+      confidence <= 60
+
+    if (strongContradiction) {
+      return {
+        finalStatus: 'ANOMALO',
+        reason: 'NO_RESPETA_SECUENCIA',
+        sequenceRespected: false,
+        missingPoints,
+        matchedCircuitCode,
+        confidence,
+      }
+    }
+
+    if (missingPoints.length <= 2) {
+      return {
+        finalStatus: 'DEDUCIDO',
+        reason: 'SECUENCIA_PARCIAL_CON_HUECOS',
+        sequenceRespected: false,
+        missingPoints,
+        matchedCircuitCode,
+        confidence,
+      }
+    }
+
+    return {
+      finalStatus: 'INCOMPLETO',
+      reason: 'SECUENCIA_NO_CONCLUYENTE',
+      sequenceRespected: false,
+      missingPoints,
+      matchedCircuitCode,
+      confidence,
+    }
+  }
+
+  if (!hasSequenceEvidence && missingPoints.length > 2) {
+    return {
+      finalStatus: 'INCOMPLETO',
+      reason: 'FALTAN_PUNTOS_CLAVE',
+      sequenceRespected,
+      missingPoints,
+      matchedCircuitCode,
+      confidence,
+    }
+  }
+
+  if (missingPoints.length === 0) {
+    return {
+      finalStatus: 'COMPLETO',
+      reason: 'SECUENCIA_COMPLETA',
+      sequenceRespected: true,
+      missingPoints: [],
+      matchedCircuitCode,
+      confidence,
+    }
+  }
+
+  return {
+    finalStatus: 'DEDUCIDO',
+    reason: 'SECUENCIA_RESPETADA_CON_HUECOS',
+    sequenceRespected: true,
+    missingPoints,
+    matchedCircuitCode,
+    confidence,
+  }
 }
 
 /** Egreso lógico en secuencia (EGRESO o RicB2Egreso); se mantiene por compatibilidad. */
@@ -233,6 +484,7 @@ export function confidenceLevelFromScore(
   return bump[level]
 }
 
+/** Coherencia estricta: sin huecos vs plantilla, ingreso/salida lógicos y circuito clasificable. */
 export function journeySequenceCoherent(
   j: ReconstructedRealJourney,
   seqPack: { startsAtValidEntry: boolean; endsAtValidExit: boolean }
@@ -277,7 +529,7 @@ export function resolveFinalStatus(input: {
   /** ≤2 lecturas frontales → incompleto (no anomalía por secuencia). */
   if (eventCountFront <= 2) return 'incompleto_revision'
 
-  /** Eventos suficientes pero secuencia ilógica → revisión (bucket ANOMALO en capa ejecutiva). */
+  /** Eventos suficientes pero secuencia no estrictamente coherente → revisión técnica (`final_status`; el bucket ejecutivo aplica tolerancias aparte). */
   if (eventCountFront > 2 && !sequenceCoherent && (hasOperationalEntry || hasOperationalExit)) {
     return 'incompleto_revision'
   }
@@ -309,64 +561,147 @@ export function resolveFinalStatus(input: {
   return 'incompleto_revision'
 }
 
-/** Bucket ejecutivo para comité — capa sobre `final_status` sin romper CSV legacy. */
-export function resolveExecutiveBucket(input: {
-  finalStatus: FinalCircuitStatus
-  frontEventCount: number
-  reliabilityScore: number
+/**
+ * Punto medio entre matriz esperada vs recorrido observado antes del bucket ejecutivo.
+ * Tolerancia operativa típica: huecos (puntos intermedios/cámara) con cierre operativo fuerte + score alto → VARIANT;
+ * patrón apoyado con puntos fuertes pero sin plantilla cabal → DEDUCED.
+ * Solo se marca BROKEN sin alertas Truckflow cuando la plantilla aparece cerrada pero no hay soporte ingreso/salida
+ * compatible con una secuencia lógica mínima.
+ */
+export function classifyOperationalSequenceFit(opts: {
+  j: ReconstructedRealJourney
   sequenceCoherent: boolean
+  missingTemplatePointsCount: number
+  expectedTemplatePoints: number
+  reliabilityScore: number
   hasOperationalEntry: boolean
   hasOperationalExit: boolean
   strong: boolean
-}): { bucket: ExecutiveBucket; anomalyReason: ExecutiveAnomalyReason } {
+  seqPack: { startsAtValidEntry: boolean; endsAtValidExit: boolean }
+}): SequenceFit {
+  const missN = Math.max(0, opts.missingTemplatePointsCount)
+  const expectedPts = opts.expectedTemplatePoints
+  const rel = opts.reliabilityScore
+
+  const code = opts.j.preliminaryCircuitCode
+  if (code === 'REGISTRO_INCOMPLETO' || expectedPts <= 0) {
+    return 'PARTIAL'
+  }
+
+  if (opts.sequenceCoherent) return 'EXACT'
+
+  const entryExitClosed = opts.hasOperationalEntry && opts.hasOperationalExit
+
+  const structuralPathBreak =
+    missN === 0 &&
+    expectedPts >= 4 &&
+    rel >= 78 &&
+    !entryExitClosed &&
+    (!opts.seqPack.startsAtValidEntry || !opts.seqPack.endsAtValidExit)
+
+  if (structuralPathBreak) return 'BROKEN'
+
+  const maxMissVariant = Math.max(2, Math.ceil(expectedPts * 0.38))
+  const maxMissDeduced = Math.max(2, Math.ceil(expectedPts * 0.62))
+
+  const variantCandidate =
+    rel >= 64 &&
+    missN >= 1 &&
+    missN <= maxMissVariant &&
+    (entryExitClosed || opts.strong || rel >= 88)
+
+  if (variantCandidate) return 'VARIANT'
+
+  const deducedCandidate = rel >= 50 && opts.strong && missN <= maxMissDeduced
+
+  if (deducedCandidate) return 'DEDUCED'
+
+  return 'PARTIAL'
+}
+
+/** Bucket ejecutivo para comité — capa sobre `final_status` sin romper CSV legacy. */
+export function resolveExecutiveBucket(
+  input: ResolveExecutiveBucketInput
+): { bucket: ExecutiveBucket; anomalyReason: ExecutiveAnomalyReason } {
   const {
     finalStatus,
     frontEventCount,
-    reliabilityScore,
+    reliabilityScore: rel,
     sequenceCoherent,
     hasOperationalEntry,
     hasOperationalExit,
     strong,
+    missingTemplatePointsCount,
+    expectedTemplatePoints,
+    j,
+    seqPack,
+    hasInvalidRouteOperationalAlert,
+    hasInvalidJourneyStartOperationalAlert,
   } = input
+  const matrixResult = classifyJourneyAgainstCircuitMatrix(j, DEFAULT_CIRCUIT_MATRIX)
 
   if (finalStatus === 'descartado') {
     return { bucket: 'INCOMPLETO', anomalyReason: null }
+  }
+
+  if (matrixResult.finalStatus === 'INCOMPLETO') {
+    return { bucket: 'INCOMPLETO', anomalyReason: null }
+  }
+
+  if (hasInvalidRouteOperationalAlert) {
+    return { bucket: 'ANOMALO', anomalyReason: 'INVALID_ROUTE_ALERT' }
+  }
+
+  if (hasInvalidJourneyStartOperationalAlert) {
+    return { bucket: 'ANOMALO', anomalyReason: 'INVALID_JOURNEY_START_ALERT' }
+  }
+
+  if (matrixResult.finalStatus === 'ANOMALO') {
+    return { bucket: 'ANOMALO', anomalyReason: 'NO_RESPETA_SECUENCIA' }
+  }
+
+  if (matrixResult.finalStatus === 'COMPLETO') {
+    return { bucket: 'COMPLETO', anomalyReason: null }
+  }
+
+  if (matrixResult.finalStatus === 'DEDUCIDO') {
+    return { bucket: 'DEDUCIDO', anomalyReason: null }
   }
 
   if (frontEventCount <= 2) {
     return { bucket: 'INCOMPLETO', anomalyReason: null }
   }
 
-  if (
-    frontEventCount > 2 &&
-    !sequenceCoherent &&
-    (hasOperationalEntry || hasOperationalExit || reliabilityScore >= 30)
-  ) {
-    return { bucket: 'ANOMALO', anomalyReason: 'ANOMALIA_NO_RESPETA_SECUENCIA' }
-  }
-
-  if (frontEventCount > 2 && reliabilityScore < 50) {
-    return { bucket: 'ANOMALO', anomalyReason: 'SCORE_BAJO' }
-  }
-
   if (finalStatus === 'circuito_completo') {
     return { bucket: 'COMPLETO', anomalyReason: null }
   }
 
-  if (
-    finalStatus === 'circuito_probable' ||
-    finalStatus === 'circuito_probable_sin_ingreso' ||
-    finalStatus === 'circuito_probable_sin_egreso'
-  ) {
-    if (reliabilityScore >= 50 || strong) {
-      return { bucket: 'DEDUCIDO', anomalyReason: null }
-    }
+  const fit = classifyOperationalSequenceFit({
+    j,
+    sequenceCoherent,
+    missingTemplatePointsCount,
+    expectedTemplatePoints,
+    reliabilityScore: rel,
+    hasOperationalEntry,
+    hasOperationalExit,
+    strong,
+    seqPack,
+  })
+
+  if (fit === 'EXACT' || fit === 'VARIANT') {
+    return { bucket: 'COMPLETO', anomalyReason: null }
   }
 
-  if (finalStatus === 'incompleto_revision') {
-    return frontEventCount > 2 ?
-        { bucket: 'ANOMALO', anomalyReason: 'SCORE_BAJO' }
-      : { bucket: 'INCOMPLETO', anomalyReason: null }
+  if (fit === 'DEDUCED' && rel >= 50) {
+    return { bucket: 'DEDUCIDO', anomalyReason: null }
+  }
+
+  if (fit === 'PARTIAL') {
+    return { bucket: 'INCOMPLETO', anomalyReason: null }
+  }
+
+  if (fit === 'BROKEN') {
+    return { bucket: 'ANOMALO', anomalyReason: 'ANOMALIA_NO_RESPETA_SECUENCIA' }
   }
 
   return { bucket: 'INCOMPLETO', anomalyReason: null }

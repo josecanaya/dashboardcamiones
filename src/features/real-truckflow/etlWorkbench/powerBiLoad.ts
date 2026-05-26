@@ -15,6 +15,8 @@ import { POWER_BI_PRODUCT_FILES } from '../../../config/committeeEtlLite'
 export const POWER_BI_STABLE_FILES = {
   committee_summary: 'pb_committee_summary.csv',
   final_circuits: 'pb_final_circuits.csv',
+  circuit_summary: 'pb_circuit_summary.csv',
+  anomalies: 'pb_anomalies.csv',
   camera_committee_status: 'pb_camera_committee_status.csv',
   camera_lpr_analysis: 'pb_camera_lpr_analysis.csv',
   alerts_operational: 'pb_alerts_operational.csv',
@@ -370,6 +372,18 @@ function buildFolderName(group: LoadGroupType, start: string, end: string): stri
   return `rango_${start}_${end}`
 }
 
+function normalizeOperationalStatusFromCircuitRow(r: Record<string, string>): 'COMPLETO' | 'INCOMPLETO' | 'DEDUCIDO' | 'ANOMALO' {
+  const matrix = String(rowGet(r, 'matrix_final_status') ?? '').trim().toUpperCase()
+  if (matrix === 'COMPLETO' || matrix === 'INCOMPLETO' || matrix === 'DEDUCIDO' || matrix === 'ANOMALO') {
+    return matrix
+  }
+  const bucket = String(rowGet(r, 'executive_bucket') ?? '').trim().toUpperCase()
+  if (bucket === 'COMPLETO' || bucket === 'INCOMPLETO' || bucket === 'DEDUCIDO' || bucket === 'ANOMALO') {
+    return bucket
+  }
+  return 'INCOMPLETO'
+}
+
 export function consolidatePowerBiLoad(input: {
   days: LoadedTransformDay[]
   periodStart: string
@@ -633,6 +647,42 @@ export function consolidatePowerBiLoad(input: {
     finalHeadersExec.length ? finalHeadersExec : ['journey_uid', 'final_status', 'final_status_label'],
     finalProjected.rows
   )
+  const anomaliesRows = finalProjected.rows.filter(
+    (r) =>
+      normalizeOperationalStatusFromCircuitRow(r) === 'ANOMALO' ||
+      String(rowGet(r, 'executive_bucket') ?? '').trim().toUpperCase() === 'ANOMALO'
+  )
+  const pb_anomalies = recordsToCsvFromRows(
+    finalHeadersExec.length ? finalHeadersExec : ['journey_uid', 'final_status', 'final_status_label'],
+    anomaliesRows
+  )
+  const statusOrder: Array<'COMPLETO' | 'DEDUCIDO' | 'INCOMPLETO' | 'ANOMALO'> = [
+    'COMPLETO',
+    'DEDUCIDO',
+    'INCOMPLETO',
+    'ANOMALO',
+  ]
+  const summaryCounts = new Map<string, number>()
+  for (const r of finalProjected.rows) {
+    const k = normalizeOperationalStatusFromCircuitRow(r)
+    summaryCounts.set(k, (summaryCounts.get(k) ?? 0) + 1)
+  }
+  const totalForSummary = Math.max(0, finalProjected.rows.length)
+  const summaryRows = statusOrder
+    .filter((s) => (summaryCounts.get(s) ?? 0) > 0 || totalForSummary === 0)
+    .map((s) => {
+      const count = summaryCounts.get(s) ?? 0
+      const pct = totalForSummary > 0 ? Math.round((count / totalForSummary) * 10000) / 100 : 0
+      return {
+        status: s,
+        count,
+        pct_of_total: pct,
+      } as Record<string, string | number>
+    })
+  const pb_circuit_summary = recordsToCsv(
+    ['status', 'count', 'pct_of_total'],
+    summaryRows.length ? summaryRows : [{ status: 'INCOMPLETO', count: 0, pct_of_total: 0 }]
+  )
 
   const pb_camera = recordsToCsvFromRows(
     camHeaders.length ? camHeaders : ['date', 'deviceCode'],
@@ -705,6 +755,8 @@ export function consolidatePowerBiLoad(input: {
   const rowCounts: Record<PowerBiStableFileKey, number> = {
     committee_summary: executivePack.rowCounts.committee_summary,
     final_circuits: finalProjected.rows.length,
+    circuit_summary: summaryRows.length,
+    anomalies: anomaliesRows.length,
     camera_committee_status: executivePack.rowCounts.camera_committee_status,
     camera_lpr_analysis: camDeduped.length,
     alerts_operational: aoDeduped.length,
@@ -748,6 +800,8 @@ export function consolidatePowerBiLoad(input: {
   const files: Record<PowerBiStableFileKey, string> = {
     committee_summary: executivePack.csv.committee_summary,
     final_circuits: pb_final_circuits,
+    circuit_summary: pb_circuit_summary,
+    anomalies: pb_anomalies,
     camera_committee_status: executivePack.csv.camera_committee_status,
     camera_lpr_analysis: pb_camera_lpr_analysis,
     alerts_operational: pb_alerts_operational,

@@ -10,6 +10,8 @@ import { isEtlRearCameraDevice } from './etlRearDevices'
 import { recordsToCsv } from './etlCsv'
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 import {
+  classifyJourneyAgainstCircuitMatrix,
+  DEFAULT_CIRCUIT_MATRIX,
   computeJourneyReliability,
   confidenceLevelFromScore,
   executiveBucketLabel,
@@ -25,15 +27,19 @@ import {
   resolveFinalStatus,
   resolveOperationalEntry,
   resolveOperationalExit,
-  type FinalCircuitStatus,
 } from './finalCircuitScoring'
+import { normalizePlateStrict, plateSimilarityScore } from '../../../services/circuitPlateOcr'
 import {
-  crossOperationalAlerts,
+  accumulateOperationalAlertsMatch,
+  attachExecutiveBucketsToOperationalAlertRows,
+  computeOperationalAlertCrossMetrics,
+  emptyJourneyOperationalAlertSummary,
   OPERATIONAL_ALERTS_CSV_COLUMNS,
+  type JourneyMetaForAlertMatch,
   type JourneyOperationalAlertSummary,
 } from './etlOperationalAlertMatch'
 
-export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v5'
+export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v6'
 export type { FinalCircuitStatus } from './finalCircuitScoring'
 export { finalStatusLabel } from './finalCircuitScoring'
 
@@ -94,6 +100,68 @@ function isIngresoFrontalReferenceEvent(e: RealJourneyEventDto): boolean {
 const MERGE_CANDIDATE_MAX_GAP_MINUTES = 120
 const MERGE_SIMILAR_THRESHOLD = 0.8
 const MERGE_TOP_LIMIT = 500
+const LPR_MERGE_MODE = 'medium' as const
+const LPR_MERGE_HIGH_THRESHOLD = 0.85
+const LPR_MERGE_MEDIUM_THRESHOLD = 0.7
+const LPR_MERGE_LOW_THRESHOLD = 0.55
+
+type LprMergeConfidence = 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE'
+type LprMergeRule =
+  | 'EXACT_DEVICE_TIME_PLATE'
+  | 'DEVICE_OR_SECTOR_TIME_OCR'
+  | 'SITE_TIME_OCR_WEAK'
+  | 'NONE'
+
+function inferSiteFromSectorCode(sectorCode: string): string {
+  const sec = String(sectorCode ?? '').trim().toUpperCase()
+  if (!sec) return 'unknown'
+  if (sec.startsWith('RICARDONE_')) return 'ricardone'
+  if (sec.startsWith('PUERTO_SAN_LORENZO_')) return 'san_lorenzo'
+  if (sec.includes('AVELLANEDA')) return 'avellaneda'
+  return 'unknown'
+}
+
+function extractPlateLikeFromText(text: string): string {
+  const s = String(text ?? '').toUpperCase()
+  const m =
+    s.match(/\b[A-Z]{2}\s?\d{3}\s?[A-Z]{2}\b/) ||
+    s.match(/\b[A-Z]{3}\s?\d{3}\b/) ||
+    s.match(/\b\d{2}\s?[A-Z]{3}\s?\d{2}\b/)
+  return m ? m[0].replace(/\s+/g, '') : ''
+}
+
+function getLprObservedPlateRaw(a: RealAlertDto): string {
+  const p = getAlertPayload(a)
+  const base =
+    pickStr(p.normalizedPlate) ||
+    pickStr(p.normalized_plate) ||
+    pickStr(p.plate) ||
+    pickStr(p.truckPlate) ||
+    pickStr(a.truckPlate) ||
+    pickStr(a.plate)
+  if (base) return base
+  const fromText =
+    extractPlateLikeFromText(pickStr(a.description)) ||
+    extractPlateLikeFromText(pickStr(a.message)) ||
+    extractPlateLikeFromText(pickStr(p.description)) ||
+    extractPlateLikeFromText(pickStr(p.message))
+  return fromText
+}
+
+function timeScoreByDiffMinutes(diffMinutes: number): number {
+  if (diffMinutes <= 5) return 1
+  if (diffMinutes <= 15) return 0.7
+  if (diffMinutes <= 30) return 0.4
+  if (diffMinutes <= 60) return 0.2
+  return 0
+}
+
+function inferLprMergeConfidence(score: number): LprMergeConfidence {
+  if (score >= LPR_MERGE_HIGH_THRESHOLD) return 'HIGH'
+  if (score >= LPR_MERGE_MEDIUM_THRESHOLD) return 'MEDIUM'
+  if (score >= LPR_MERGE_LOW_THRESHOLD) return 'LOW'
+  return 'NONE'
+}
 
 function collapseConsecutiveEqual(seq: string[]): string[] {
   const out: string[] = []
@@ -255,67 +323,6 @@ function statusFromLprRate(events: number, lprAlerts: number): string {
   if (r > 10 && r < 30) return 'Medio'
   /** 0 a 10 inclusivo */
   return 'Bajo'
-}
-
-function normalizePlateForSim(s: string): string {
-  return String(s ?? '')
-    .toUpperCase()
-    .replace(/[^A-Z0-9]/g, '')
-}
-
-/**
- * Score 0–1 aprox.: Levenshtein normalizado tras mapeos OCR comunes sueltos en la matriz.
- */
-function digitizePlateVariants(s: string): string[] {
-  const n = normalizePlateForSim(s)
-  if (!n) return []
-  let x = n
-  const subst: [RegExp, string][] = [
-    [/O|Q/g, '0'],
-    [/I|L/g, '1'],
-    [/S/g, '5'],
-    [/B/g, '8'],
-    [/G/g, '6'],
-    [/Z/g, '2'],
-    [/A/g, '4'],
-  ]
-  for (const [re, rep] of subst) {
-    x = x.replace(re, rep)
-  }
-  return [n, x]
-}
-
-function levenshtein(a: string, b: string): number {
-  const m = a.length
-  const n = b.length
-  if (!m) return n
-  if (!n) return m
-  const dp = Array.from({ length: m + 1 }, () => new Array<number>(n + 1).fill(0))
-  for (let i = 0; i <= m; i++) dp[i][0] = i
-  for (let j = 0; j <= n; j++) dp[0][j] = j
-  for (let i = 1; i <= m; i++) {
-    for (let j = 1; j <= n; j++) {
-      const cost = a[i - 1] === b[j - 1] ? 0 : 1
-      dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost)
-    }
-  }
-  return dp[m][n]
-}
-
-/** 1 = igual, >0 menor similitud. */
-function plateSimilarityScore(plateA: string, plateB: string): number {
-  const va = digitizePlateVariants(plateA)
-  const vb = digitizePlateVariants(plateB)
-  let best = 0
-  for (const a of va) {
-    for (const b of vb) {
-      if (!a || !b) continue
-      const d = levenshtein(a, b)
-      const denom = Math.max(a.length, b.length, 1)
-      best = Math.max(best, Math.max(0, 1 - d / denom))
-    }
-  }
-  return Math.round(best * 1000) / 1000
 }
 
 function distinctHas(seq: readonly string[], code: string): boolean {
@@ -715,7 +722,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   const ingreso_frontal_event_count = ingreso_frontal_events.length
   const ingresoPlateSet = new Set(
     ingreso_frontal_events
-      .map((e) => normalizePlateForSim(String(e.normalizedPlate ?? e.truckPlate ?? '')))
+      .map((e) => normalizePlateStrict(String(e.normalizedPlate ?? e.truckPlate ?? '')))
       .filter((p) => p.length > 0)
   )
   const ingresoJourneyUidSet = new Set(
@@ -951,8 +958,8 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   }
 
   function plateExactNormalized(a: string, b: string): boolean {
-    const na = normalizePlateForSim(a)
-    const nb = normalizePlateForSim(b)
+    const na = normalizePlateStrict(a)
+    const nb = normalizePlateStrict(b)
     return na.length > 0 && na === nb
   }
 
@@ -980,7 +987,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
 
       const pa = ja.normalizedPlate || ''
       const pb = jb.normalizedPlate || ''
-      if (!normalizePlateForSim(pa) && !normalizePlateForSim(pb)) continue
+      if (!normalizePlateStrict(pa) && !normalizePlateStrict(pb)) continue
 
       const sa = seqFor(ja).logicalSequence
       const sb = seqFor(jb).logicalSequence
@@ -1056,7 +1063,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
 
   const dayPlateToUids = new Map<string, Set<string>>()
   for (const mj of journeys) {
-    const p = normalizePlateForSim(mj.normalizedPlate)
+    const p = normalizePlateStrict(mj.normalizedPlate)
     const day = occurredAtLocalDayKey(mj.startedAt)
     if (!p || !day) continue
     const k = `${p}|${day}`
@@ -1066,7 +1073,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   let duplicate_suspected = 0
   let duplicate_severe_excluded = 0
   for (const mj of journeys) {
-    const p = normalizePlateForSim(mj.normalizedPlate)
+    const p = normalizePlateStrict(mj.normalizedPlate)
     const day = occurredAtLocalDayKey(mj.startedAt)
     if (!p || !day) continue
     const nUid = dayPlateToUids.get(`${p}|${day}`)?.size ?? 0
@@ -1075,7 +1082,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   }
 
   function duplicateSeverityFor(j: ReconstructedRealJourney): 'none' | 'moderate' | 'severe' {
-    const p = normalizePlateForSim(j.normalizedPlate)
+    const p = normalizePlateStrict(j.normalizedPlate)
     const day = occurredAtLocalDayKey(j.startedAt)
     if (!p || !day) return 'none'
     const nUid = dayPlateToUids.get(`${p}|${day}`)?.size ?? 0
@@ -1124,6 +1131,19 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   }
 
   const finalCsvRows: Record<string, unknown>[] = []
+  const debugMatrixRows: Record<string, unknown>[] = []
+  const journeyMatrixByUid = new Map<
+    string,
+    {
+      matrixFinalStatus: 'COMPLETO' | 'INCOMPLETO' | 'DEDUCIDO' | 'ANOMALO'
+      matrixReason: string
+      matrixConfidence: number
+      sequenceRespected: boolean
+      legacyFinalStatus: string
+      executiveBucket: 'COMPLETO' | 'INCOMPLETO' | 'ANOMALO' | 'DEDUCIDO'
+      usefulEventsCount: number
+    }
+  >()
   let final_classified_count = 0
   let final_incomplete_count = 0
   let final_circuitos_completos = 0
@@ -1147,24 +1167,49 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     if (resolveOperationalEntry(logicals).has_operational_entry) ingresos_operativos_count++
   }
 
-  const journeyMetaByUid = new Map<
-    string,
-    {
-      journeyUid: string
-      normalizedPlate: string
-      startedAt: string
-      endedAt: string
-      preliminaryCircuitCode: string
-      executiveBucket: ReturnType<typeof resolveExecutiveBucket>['bucket'] | ''
-    }
-  >()
+  const journeyMetaByUid = new Map<string, JourneyMetaForAlertMatch>()
+  for (const mjInit of journeys) {
+    journeyMetaByUid.set(mjInit.journeyUid, {
+      journeyUid: mjInit.journeyUid,
+      normalizedPlate: mjInit.normalizedPlate,
+      startedAt: mjInit.startedAt,
+      endedAt: mjInit.endedAt,
+      preliminaryCircuitCode: mjInit.preliminaryCircuitCode,
+      executiveBucket: '',
+    })
+  }
+
+  const operationalAlertsSansLpr = frontAl.filter((a) => !isLprMalfunctionAlert(a))
+  const eventsByJourneyOperational = indexEventsByJourney(operationalFrontEvents)
+
+  const operationalAlertsMatchAccumulator = accumulateOperationalAlertsMatch({
+    operationalAlerts: operationalAlertsSansLpr,
+    journeys,
+    eventsByJourney: eventsByJourneyOperational,
+    journeyMetaByUid,
+    read: {
+      alertCode: getAlertApiCode,
+      alertId: (a) => pickStr(a.id) || pickStr((a as { alertId?: unknown }).alertId),
+      journeyUid: (a) =>
+        pickStr(a.journeyUid) ||
+        pickStr(a.journeyUuid) ||
+        pickStr(getAlertPayload(a).journeyUid) ||
+        pickStr(getAlertPayload(a).journeyUuid),
+      truckPlate: (a) =>
+        pickStr(a.truckPlate) || pickStr(a.plate) || pickStr(getAlertPayload(a).truckPlate) || pickStr(getAlertPayload(a).plate),
+      deviceCode: getEffectiveAlertDeviceCode,
+      sectorCode: getEffectiveAlertSectorCode,
+      severity: (a) => pickStr(a.severity) ?? String(a.alertLevel ?? ''),
+      status: (a) => pickStr(a.status),
+      occurredAt: alertOccurredAtIso,
+      createdAt: (a) => pickStr(a.createdAt),
+    },
+  })
 
   for (const mj of journeys) {
     const tier = userCircuitTier(mj)
     const audit = journeyAuditByUid.get(mj.journeyUid)
     const seqPack = journeyDeviceSectorLogical(mj)
-    const p = normalizePlateForSim(mj.normalizedPlate)
-    const day = occurredAtLocalDayKey(mj.startedAt)
     const dupSev = duplicateSeverityFor(mj)
     const dupSus = dupSev !== 'none'
     const mergedFrag = mj.eventCount === 1 && mergeHighConfidenceUids.has(mj.journeyUid)
@@ -1184,7 +1229,8 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       journeyHasStrongConfidenceBonus(mj)
     )
 
-    const final_status = resolveFinalStatus({
+    const matrixClassification = classifyJourneyAgainstCircuitMatrix(mj, DEFAULT_CIRCUIT_MATRIX)
+    const legacyFinalStatus = resolveFinalStatus({
       j: mj,
       reliabilityScore: rel,
       hasOperationalEntry: entry.has_operational_entry,
@@ -1196,6 +1242,15 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       sequenceCoherent,
       eventCountFront: seqPack.frontEventCount,
     })
+    const final_status =
+      matrixClassification.finalStatus === 'COMPLETO' ? 'circuito_completo'
+      : matrixClassification.finalStatus === 'DEDUCIDO' ? 'circuito_probable'
+      : matrixClassification.finalStatus === 'ANOMALO' ? 'incompleto_revision'
+      : 'incompleto_revision'
+
+    const operationalAlertAgg =
+      operationalAlertsMatchAccumulator.journeySummaries.get(mj.journeyUid) ??
+      emptyJourneyOperationalAlertSummary()
 
     const executive = resolveExecutiveBucket({
       finalStatus: final_status,
@@ -1205,6 +1260,12 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       hasOperationalEntry: entry.has_operational_entry,
       hasOperationalExit: exit.has_operational_exit,
       strong,
+      missingTemplatePointsCount: mj.missingExpectedPoints?.length ?? 0,
+      expectedTemplatePoints: relPack.expected_points_count,
+      j: mj,
+      seqPack,
+      hasInvalidRouteOperationalAlert: operationalAlertAgg.hasInvalidRoute,
+      hasInvalidJourneyStartOperationalAlert: operationalAlertAgg.hasInvalidJourneyStart,
     })
 
     journeyMetaByUid.set(mj.journeyUid, {
@@ -1214,6 +1275,15 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       endedAt: mj.endedAt,
       preliminaryCircuitCode: mj.preliminaryCircuitCode,
       executiveBucket: executive.bucket,
+    })
+    journeyMatrixByUid.set(mj.journeyUid, {
+      matrixFinalStatus: matrixClassification.finalStatus,
+      matrixReason: matrixClassification.reason,
+      matrixConfidence: matrixClassification.confidence,
+      sequenceRespected: matrixClassification.sequenceRespected,
+      legacyFinalStatus: legacyFinalStatus,
+      executiveBucket: executive.bucket,
+      usefulEventsCount: seqPack.frontEventCount,
     })
 
     if (!journeyPassesFinalFilter(mj)) continue
@@ -1296,38 +1366,250 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       confidence_level,
       refinement_note: refinementLabel(mj),
       data_quality_flag: pickDataQualityFlag(mj, tier, dupSus, mergedFrag),
+      matrix_final_status: matrixClassification.finalStatus,
+      matrix_reason: matrixClassification.reason,
+      sequence_respected: matrixClassification.sequenceRespected,
+      matrix_missing_points: matrixClassification.missingPoints.join('|'),
+      matched_circuit_code: matrixClassification.matchedCircuitCode ?? '',
+      matrix_confidence: matrixClassification.confidence,
+      final_status_legacy: legacyFinalStatus,
     })
+
+    const expectedSequence =
+      matrixClassification.matchedCircuitCode ?
+        (DEFAULT_CIRCUIT_MATRIX[matrixClassification.matchedCircuitCode] ?? []).join('>')
+      : ''
+    debugMatrixRows.push({
+      journey_id: mj.journeyUid,
+      plate: mj.normalizedPlate || mj.plate,
+      site: mj.siteId,
+      detected_sequence: seqPack.logicalSequence,
+      matched_circuit_code: matrixClassification.matchedCircuitCode ?? '',
+      expected_sequence: expectedSequence,
+      matrix_final_status: matrixClassification.finalStatus,
+      matrix_reason: matrixClassification.reason,
+      sequence_respected: matrixClassification.sequenceRespected,
+      matrix_missing_points: matrixClassification.missingPoints.join('|'),
+      matrix_confidence: matrixClassification.confidence,
+      useful_events_count: seqPack.frontEventCount,
+      final_status_legacy: legacyFinalStatus,
+      executive_bucket: executive.bucket,
+    })
+  }
+
+  type LprMergeCandidateRow = {
+    alert_id: string
+    journey_uid: string
+    device_code: string
+    sector_code: string
+    site: string
+    occurred_at_alert: string
+    started_at_journey: string
+    ended_at_journey: string
+    ocr_raw: string
+    ocr_normalized: string
+    journey_plate: string
+    ocr_score: number
+    time_diff_min: number
+    time_score: number
+    device_sector_score: number
+    sequence_fit_score: number
+    merge_score: number
+    merge_rule: LprMergeRule
+    merge_confidence: LprMergeConfidence
+    merge_mode: typeof LPR_MERGE_MODE
+    matrix_final_status: string
+    matrix_reason: string
+    matrix_confidence: number
+    sequence_respected: boolean
+    useful_events_count: number
+    final_status_legacy: string
+    executive_bucket: string
+    merge_decision: 'APPLIED' | 'REVIEW' | 'REJECTED'
+    review_reason: string
+  }
+
+  const lprMergeCandidatesAll: LprMergeCandidateRow[] = []
+  const lprAlerts = frontAl.filter(isLprMalfunctionAlert)
+  const journeyByUid = new Map(journeys.map((j) => [j.journeyUid, j]))
+
+  for (const alert of lprAlerts) {
+    const alertId = pickStr(alert.id) || pickStr((alert as { alertId?: unknown }).alertId)
+    const alertAt = alertOccurredAtIso(alert)
+    const alertMs = Date.parse(alertAt)
+    if (!Number.isFinite(alertMs)) continue
+    const alertDevice = getEffectiveAlertDeviceCode(alert)
+    const alertSector = getEffectiveAlertSectorCode(alert)
+    const alertSite = inferSiteFromSectorCode(alertSector)
+    const ocrRaw = getLprObservedPlateRaw(alert)
+    const ocrNorm = normalizePlateStrict(ocrRaw)
+
+    for (const [uid, meta] of journeyMetaByUid.entries()) {
+      const j = journeyByUid.get(uid)
+      if (!j) continue
+      if (meta.executiveBucket === '') continue
+      const matrix = journeyMatrixByUid.get(uid)
+      if (!matrix) continue
+      if (matrix.usefulEventsCount <= 0) continue
+
+      const startMs = Date.parse(meta.startedAt)
+      const endMs = Date.parse(meta.endedAt)
+      if (!Number.isFinite(startMs) || !Number.isFinite(endMs)) continue
+      const minW = Math.min(startMs, endMs)
+      const maxW = Math.max(startMs, endMs)
+      const diffMin =
+        alertMs < minW ? (minW - alertMs) / 60000
+        : alertMs > maxW ? (alertMs - maxW) / 60000
+        : 0
+      const tScore = timeScoreByDiffMinutes(diffMin)
+      if (tScore <= 0) continue
+
+      const jPlate = normalizePlateStrict(meta.normalizedPlate || j.normalizedPlate || j.plate)
+      const ocrScore = ocrNorm && jPlate ? plateSimilarityScore(ocrNorm, jPlate) : 0
+
+      const devSet = new Set(j.events.map((e) => String(e.deviceCode ?? '').trim()))
+      const secSet = new Set(j.events.map((e) => String(e.sectorCode ?? '').trim()))
+      const sameDevice = !!alertDevice && devSet.has(alertDevice)
+      const sameSector = !!alertSector && secSet.has(alertSector)
+      const jSite = inferSiteFromSectorCode(String(j.events[0]?.sectorCode ?? ''))
+      const sameSite = jSite !== 'unknown' && alertSite !== 'unknown' && jSite === alertSite
+
+      const deviceSectorScore = sameDevice ? 1 : sameSector ? 0.7 : sameSite ? 0.3 : 0
+      if (deviceSectorScore <= 0) continue
+
+      const sequenceFitScore =
+        matrix.matrixFinalStatus === 'COMPLETO' ? 1
+        : matrix.matrixFinalStatus === 'DEDUCIDO' ? 0.85
+        : matrix.matrixFinalStatus === 'INCOMPLETO' ? 0.6
+        : 0
+
+      const mergeScore =
+        Math.round((0.4 * ocrScore + 0.25 * tScore + 0.2 * deviceSectorScore + 0.15 * sequenceFitScore) * 1000) /
+        1000
+      const mergeConfidence = inferLprMergeConfidence(mergeScore)
+
+      let mergeRule: LprMergeRule = 'NONE'
+      if (sameDevice && diffMin <= 5 && ocrScore >= 0.95) mergeRule = 'EXACT_DEVICE_TIME_PLATE'
+      else if ((sameDevice || sameSector) && diffMin <= 15 && ocrScore >= 0.8) {
+        mergeRule = 'DEVICE_OR_SECTOR_TIME_OCR'
+      } else if (sameSite && diffMin <= 30 && ocrScore >= 0.65) {
+        mergeRule = 'SITE_TIME_OCR_WEAK'
+      }
+      if (mergeRule === 'NONE') continue
+
+      lprMergeCandidatesAll.push({
+        alert_id: alertId,
+        journey_uid: uid,
+        device_code: alertDevice,
+        sector_code: alertSector,
+        site: alertSite,
+        occurred_at_alert: alertAt,
+        started_at_journey: meta.startedAt,
+        ended_at_journey: meta.endedAt,
+        ocr_raw: ocrRaw,
+        ocr_normalized: ocrNorm,
+        journey_plate: jPlate,
+        ocr_score: Math.round(ocrScore * 1000) / 1000,
+        time_diff_min: Math.round(diffMin * 100) / 100,
+        time_score: Math.round(tScore * 1000) / 1000,
+        device_sector_score: Math.round(deviceSectorScore * 1000) / 1000,
+        sequence_fit_score: Math.round(sequenceFitScore * 1000) / 1000,
+        merge_score: mergeScore,
+        merge_rule: mergeRule,
+        merge_confidence: mergeConfidence,
+        merge_mode: LPR_MERGE_MODE,
+        matrix_final_status: matrix.matrixFinalStatus,
+        matrix_reason: matrix.matrixReason,
+        matrix_confidence: matrix.matrixConfidence,
+        sequence_respected: matrix.sequenceRespected,
+        useful_events_count: matrix.usefulEventsCount,
+        final_status_legacy: matrix.legacyFinalStatus,
+        executive_bucket: matrix.executiveBucket,
+        merge_decision: 'REJECTED',
+        review_reason: '',
+      })
+    }
+  }
+
+  const candidatesByAlert = new Map<string, LprMergeCandidateRow[]>()
+  for (const c of lprMergeCandidatesAll) {
+    const arr = candidatesByAlert.get(c.alert_id) ?? []
+    arr.push(c)
+    candidatesByAlert.set(c.alert_id, arr)
+  }
+  const lprMergeAppliedRows: LprMergeCandidateRow[] = []
+  const lprMergeReviewRows: LprMergeCandidateRow[] = []
+  const lprMergeCandidatesRows: LprMergeCandidateRow[] = []
+  const journeyLockedByAlert = new Set<string>()
+
+  for (const [alertId, listCand] of candidatesByAlert.entries()) {
+    const sorted = [...listCand].sort((a, b) =>
+      b.merge_score !== a.merge_score ? b.merge_score - a.merge_score : a.time_diff_min - b.time_diff_min
+    )
+    const top = sorted[0]
+    const second = sorted[1]
+    const ambiguous = !!second && top && top.merge_score - second.merge_score < 0.05
+    for (const c of sorted) {
+      const row = { ...c }
+      if (!top || row.journey_uid !== top.journey_uid) {
+        row.merge_decision = 'REVIEW'
+        row.review_reason = row.merge_confidence === 'LOW' ? 'LOW_CONFIDENCE' : 'SECONDARY_CANDIDATE'
+        lprMergeReviewRows.push(row)
+        lprMergeCandidatesRows.push(row)
+        continue
+      }
+
+      const allowByMode =
+        row.merge_confidence === 'HIGH' ||
+        (LPR_MERGE_MODE === 'medium' && row.merge_confidence === 'MEDIUM')
+      const blockedByAnomalous =
+        row.matrix_final_status === 'ANOMALO' && row.merge_rule !== 'EXACT_DEVICE_TIME_PLATE'
+      const locked = journeyLockedByAlert.has(`${alertId}|${row.journey_uid}`)
+
+      if (ambiguous) {
+        row.merge_decision = 'REVIEW'
+        row.review_reason = 'AMBIGUOUS_TOP_CANDIDATE'
+        lprMergeReviewRows.push(row)
+      } else if (!allowByMode) {
+        row.merge_decision = 'REVIEW'
+        row.review_reason = 'MODE_THRESHOLD_NOT_MET'
+        lprMergeReviewRows.push(row)
+      } else if (blockedByAnomalous) {
+        row.merge_decision = 'REVIEW'
+        row.review_reason = 'ANOMALOUS_JOURNEY_REQUIRES_REVIEW'
+        lprMergeReviewRows.push(row)
+      } else if (locked) {
+        row.merge_decision = 'REVIEW'
+        row.review_reason = 'ONE_TO_ONE_LOCKED'
+        lprMergeReviewRows.push(row)
+      } else {
+        row.merge_decision = 'APPLIED'
+        row.review_reason = ''
+        lprMergeAppliedRows.push(row)
+        journeyLockedByAlert.add(`${alertId}|${row.journey_uid}`)
+      }
+      lprMergeCandidatesRows.push(row)
+    }
   }
 
   await yieldToBrowser()
 
-  const operationalAlerts = frontAl.filter((a) => !isLprMalfunctionAlert(a))
-  const operationalAlertsCount = operationalAlerts.length
-  const eventsByJourney = indexEventsByJourney(operationalFrontEvents)
+  const operationalAlertsCount = operationalAlertsSansLpr.length
 
-  const crossResult = crossOperationalAlerts({
-    operationalAlerts,
-    journeys,
-    eventsByJourney,
+  attachExecutiveBucketsToOperationalAlertRows(
+    operationalAlertsMatchAccumulator.alertRows,
+    journeyMetaByUid
+  )
+  const alertCrossMetrics = computeOperationalAlertCrossMetrics(
+    operationalAlertsMatchAccumulator.journeySummaries,
     journeyMetaByUid,
-    read: {
-      alertCode: getAlertApiCode,
-      alertId: (a) => pickStr(a.id) || pickStr((a as { alertId?: unknown }).alertId),
-      journeyUid: (a) =>
-        pickStr(a.journeyUid) ||
-        pickStr(a.journeyUuid) ||
-        pickStr(getAlertPayload(a).journeyUid) ||
-        pickStr(getAlertPayload(a).journeyUuid),
-      truckPlate: (a) =>
-        pickStr(a.truckPlate) || pickStr(a.plate) || pickStr(getAlertPayload(a).truckPlate) || pickStr(getAlertPayload(a).plate),
-      deviceCode: getEffectiveAlertDeviceCode,
-      sectorCode: getEffectiveAlertSectorCode,
-      severity: (a) => pickStr(a.severity) ?? String(a.alertLevel ?? ''),
-      status: (a) => pickStr(a.status),
-      occurredAt: alertOccurredAtIso,
-      createdAt: (a) => pickStr(a.createdAt),
-    },
-  })
+    operationalAlertsMatchAccumulator.operationalAlertsCrossed
+  )
+  const crossResult = {
+    alertRows: operationalAlertsMatchAccumulator.alertRows,
+    journeySummaries: operationalAlertsMatchAccumulator.journeySummaries,
+    metrics: alertCrossMetrics,
+  }
 
   for (const row of finalCsvRows) {
     const uid = String(row.journey_uid ?? '')
@@ -1339,6 +1621,71 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     finalCsvRows.length ?
       recordsToCsv(Object.keys(finalCsvRows[0]), finalCsvRows)
     : 'journey_uid,final_status,final_status_label,data_quality_flag\n'
+  const debug_matrix_classification_csv =
+    debugMatrixRows.length ?
+      recordsToCsv(
+        [
+          'journey_id',
+          'plate',
+          'site',
+          'detected_sequence',
+          'matched_circuit_code',
+          'expected_sequence',
+          'matrix_final_status',
+          'matrix_reason',
+          'sequence_respected',
+          'matrix_missing_points',
+          'matrix_confidence',
+          'useful_events_count',
+          'final_status_legacy',
+          'executive_bucket',
+        ],
+        debugMatrixRows
+      )
+    : 'journey_id,plate,site,detected_sequence,matched_circuit_code,expected_sequence,matrix_final_status,matrix_reason,sequence_respected,matrix_missing_points,matrix_confidence,useful_events_count,final_status_legacy,executive_bucket\n'
+  const lprMergeHeaders = [
+    'alert_id',
+    'journey_uid',
+    'device_code',
+    'sector_code',
+    'site',
+    'occurred_at_alert',
+    'started_at_journey',
+    'ended_at_journey',
+    'ocr_raw',
+    'ocr_normalized',
+    'journey_plate',
+    'ocr_score',
+    'time_diff_min',
+    'time_score',
+    'device_sector_score',
+    'sequence_fit_score',
+    'merge_score',
+    'merge_rule',
+    'merge_confidence',
+    'merge_mode',
+    'matrix_final_status',
+    'matrix_reason',
+    'matrix_confidence',
+    'sequence_respected',
+    'useful_events_count',
+    'final_status_legacy',
+    'executive_bucket',
+    'merge_decision',
+    'review_reason',
+  ]
+  const lpr_merge_candidates_csv =
+    lprMergeCandidatesRows.length ?
+      recordsToCsv(lprMergeHeaders, lprMergeCandidatesRows as unknown as Record<string, unknown>[])
+    : `${lprMergeHeaders.join(',')}\n`
+  const lpr_merge_applied_csv =
+    lprMergeAppliedRows.length ?
+      recordsToCsv(lprMergeHeaders, lprMergeAppliedRows as unknown as Record<string, unknown>[])
+    : `${lprMergeHeaders.join(',')}\n`
+  const lpr_merge_review_csv =
+    lprMergeReviewRows.length ?
+      recordsToCsv(lprMergeHeaders, lprMergeReviewRows as unknown as Record<string, unknown>[])
+    : `${lprMergeHeaders.join(',')}\n`
 
   const operational_alerts_csv =
     crossResult.alertRows.length ?
@@ -1347,8 +1694,6 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
         crossResult.alertRows as unknown as Record<string, unknown>[]
       )
     : `${OPERATIONAL_ALERTS_CSV_COLUMNS.join(',')}\n`
-
-  const alertCrossMetrics = crossResult.metrics
 
   const final_circuits_count = finalCsvRows.length
   const final_descartados =
@@ -1616,6 +1961,10 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       clean_journeys: clean_journeys_csv,
       classified_circuits: classified_circuits_csv,
       final_circuits: final_circuits_csv,
+      debug_matrix_classification: debug_matrix_classification_csv,
+      lpr_merge_candidates: lpr_merge_candidates_csv,
+      lpr_merge_applied: lpr_merge_applied_csv,
+      lpr_merge_review: lpr_merge_review_csv,
       unclassified_journeys: unclassified_journeys_csv,
       rear_only_journeys_debug: rear_only_journeys_debug_csv,
       journey_merge_candidates: journey_merge_candidates_csv,

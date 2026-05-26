@@ -44,12 +44,10 @@ export const ETL_DEV_MODE =
 
 /** Archivos finales para comité / Power BI — única salida productiva esperada. */
 export const POWER_BI_PRODUCT_FILES = [
-  'pb_committee_summary.csv',
   'pb_final_circuits.csv',
-  'pb_camera_committee_status.csv',
+  'pb_circuit_summary.csv',
+  'pb_anomalies.csv',
   'pb_camera_lpr_analysis.csv',
-  'pb_alerts_operational.csv',
-  'pb_load_manifest.json',
 ] as const
 
 /** Manifiesto técnico consolidado (opcional, no para comité). */

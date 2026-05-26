@@ -4,12 +4,10 @@ El usuario final (comité, Power BI) **solo debe consumir** estos archivos:
 
 | Archivo | Uso |
 |---------|-----|
-| `pb_committee_summary.csv` | Resumen ejecutivo del período |
 | `pb_final_circuits.csv` | Circuitos finales clasificados |
-| `pb_camera_committee_status.csv` | Estado operativo por cámara |
+| `pb_circuit_summary.csv` | Resumen operativo por estado de circuito |
+| `pb_anomalies.csv` | Subset de circuitos anómalos |
 | `pb_camera_lpr_analysis.csv` | Diagnóstico LPR por cámara (`LPR_MALFUNCTION`) |
-| `pb_alerts_operational.csv` | Alertas operativas cruzadas con eventos/journeys |
-| `pb_load_manifest.json` | Manifiesto de carga y metadatos |
 
 Opcional técnico: `etl_result.json` (manifiesto consolidado del transform).
 
@@ -33,7 +31,7 @@ Filtros típicos en Power BI:
 - Incompletos con mal inicio: `executive_bucket = INCOMPLETO` AND `hasInvalidJourneyStart = true`
 - Anómalos con ruta inválida: `executive_bucket = ANOMALO` AND `hasInvalidRoute = true`
 
-## Columnas clave — `pb_alerts_operational.csv`
+## Columnas clave (debug) — `pb_alerts_operational.csv`
 
 | Columna | Descripción |
 |---------|-------------|
@@ -46,7 +44,7 @@ Filtros típicos en Power BI:
 | `matchStrategy` | `journey_uid_exact`, `plate_sector_device_time`, `plate_sector_time`, `plate_within_journey_window`, `none` |
 | `matchConfidence` | `high` / `medium` / `low` / `none` |
 
-## Columnas clave — `pb_committee_summary.csv`
+## Columnas clave (debug) — `pb_committee_summary.csv`
 
 Métricas agregadas de cruce operativo:
 
@@ -82,4 +80,4 @@ API → servidor local → data/truckflow/YYYY-MM-DD/
   → Análisis local → runEtlTransform → Load/Export → pb_*
 ```
 
-Versión reglas transform: `etl_transform_v5` (cruce operativo alerta ↔ journey).
+Versión reglas transform: `etl_transform_v6` (cruce operativo alerta ↔ journey; bucket ejecutivo con tolerancia de secuencia).
