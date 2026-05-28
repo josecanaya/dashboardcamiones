@@ -71,6 +71,36 @@ export const REAL_SECTOR_CODE_MAP: Record<string, RealSectorMappingEntry> = {
     logicalSector: 'S0',
     label: 'Ingreso camiones San Lorenzo',
   },
+  PUERTO_SAN_LORENZO_BALANZA_INGRESO: {
+    siteId: 'san_lorenzo',
+    logicalSector: 'S1',
+    label: 'Balanza ingreso San Lorenzo',
+  },
+  PUERTO_SAN_LORENZO_CALADA: {
+    siteId: 'san_lorenzo',
+    logicalSector: 'S2',
+    label: 'Calada San Lorenzo (no instalada)',
+  },
+  PUERTO_SAN_LORENZO_ENLACE_S3: {
+    siteId: 'san_lorenzo',
+    logicalSector: 'S3',
+    label: 'Enlace S1–S3 (no instalada)',
+  },
+  PUERTO_SAN_LORENZO_DESCARGA: {
+    siteId: 'san_lorenzo',
+    logicalSector: 'S4',
+    label: 'Descarga San Lorenzo (no instalada)',
+  },
+  PUERTO_SAN_LORENZO_BALANZA_SALIDA: {
+    siteId: 'san_lorenzo',
+    logicalSector: 'S5',
+    label: 'Balanza salida San Lorenzo',
+  },
+  PUERTO_SAN_LORENZO_EGRESO_CAMIONES: {
+    siteId: 'san_lorenzo',
+    logicalSector: 'S7',
+    label: 'Egreso camiones San Lorenzo',
+  },
 }
 
 /** Placeholder alineado con raw cuando aún no hay fila en REAL_SECTOR_CODE_MAP */

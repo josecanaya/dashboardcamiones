@@ -1,5 +1,11 @@
 import type { SiteId } from '../../domain/sites'
 import { lookupRealSectorCode } from '../../data/realSectorCodeMap'
+import { inferSiteIdFromSectorCode } from '../realJourneyEventsMapper'
+import type { RealJourneyEventDto } from '../realJourneyEvents.types'
+import type { NormalizedRealAlertView } from '../realAlertsInspector'
+
+/** Ricardone, San Lorenzo o ambas plantas en la consola en vivo. */
+export type LiveMonitorScope = SiteId | 'all'
 
 /** Agrupa volcable 1 y 2 en una sola entrada del monitor. */
 export const RICARDONE_VOLCABLE_GROUP_ID = 'RICARDONE_VOLCABLE'
@@ -60,14 +66,86 @@ const RICARDONE_VOLCABLE_GROUP: LiveSectorGroup = {
   devices: ['RicVolcable1', 'RicVolcable2'],
 }
 
-const SAN_LORENZO_SECTORS: LiveSectorEntry[] = [
-  {
-    kind: 'sector',
-    sectorCode: 'PUERTO_SAN_LORENZO_INGRESO_CAMIONES',
-    label: 'Ingreso San Lorenzo',
-    devices: ['SLZIngCamFrente'],
-  },
-]
+import { lookupSanLorenzoCameraByDevice, SAN_LORENZO_CAMERAS } from '../../data/sanLorenzoCameraCatalog'
+
+/** sectorCode ya en formato catálogo (RICARDONE_* / PUERTO_SAN_LORENZO_*). */
+export function isCanonicalLiveSectorCode(sectorCode: string): boolean {
+  const raw = String(sectorCode ?? '').trim()
+  if (!raw) return false
+  if (lookupRealSectorCode(raw)) return true
+  const upper = raw.toUpperCase()
+  return upper.startsWith('RICARDONE_') || upper.startsWith('PUERTO_SAN_LORENZO_')
+}
+
+let deviceToCanonicalSector: Map<string, string> | null = null
+
+function liveDeviceToCanonicalSectorMap(): Map<string, string> {
+  if (deviceToCanonicalSector) return deviceToCanonicalSector
+  const map = new Map<string, string>()
+  for (const plant of ['ricardone', 'san_lorenzo'] as SiteId[]) {
+    for (const entry of getLiveSectorEntries(plant)) {
+      const codes = entrySectorCodes(entry)
+      const primary = codes[0]
+      if (!primary) continue
+      for (const dev of entryDevices(entry)) {
+        map.set(dev.trim(), primary)
+      }
+    }
+  }
+  for (const cam of SAN_LORENZO_CAMERAS) {
+    map.set(cam.deviceCode.trim(), cam.sectorCode)
+  }
+  deviceToCanonicalSector = map
+  return map
+}
+
+/** Truckflow a veces envía sectorCode corto (`1-S1`, `2-S4`); el catálogo en vivo usa nombres canónicos. */
+export function lookupCanonicalSectorByDevice(deviceCode: string): string | undefined {
+  const dev = String(deviceCode ?? '').trim()
+  if (!dev) return undefined
+  const fromCatalog = liveDeviceToCanonicalSectorMap().get(dev)
+  if (fromCatalog) return fromCatalog
+  return lookupSanLorenzoCameraByDevice(dev)?.sectorCode
+}
+
+export function resolveCanonicalSectorForLiveFeed(sectorCode: string, deviceCode: string): string {
+  const raw = String(sectorCode ?? '').trim()
+  if (isCanonicalLiveSectorCode(raw)) return raw
+  return lookupCanonicalSectorByDevice(deviceCode) ?? raw
+}
+
+export function inferLiveMonitorSiteId(sectorCode: string, deviceCode: string): SiteId | 'unknown' {
+  const fromSector = inferSiteIdFromSectorCode(sectorCode)
+  if (fromSector !== 'unknown') return fromSector
+  const dev = String(deviceCode ?? '').trim()
+  if (dev.startsWith('Ric')) return 'ricardone'
+  if (/^SLZ/i.test(dev)) return 'san_lorenzo'
+  const canonical = lookupCanonicalSectorByDevice(dev)
+  if (canonical) return inferSiteIdFromSectorCode(canonical)
+  return 'unknown'
+}
+
+function buildSanLorenzoSectorEntries(): LiveSectorEntry[] {
+  const bySector = new Map<string, { label: string; devices: string[] }>()
+  for (const cam of SAN_LORENZO_CAMERAS) {
+    if (cam.installed === false || cam.rearExcluded) continue
+    const mapped = lookupRealSectorCode(cam.sectorCode)
+    const bucket = bySector.get(cam.sectorCode) ?? {
+      label: mapped?.label?.trim() || cam.label.replace(/ San Lorenzo.*/i, '').trim() || cam.label,
+      devices: [],
+    }
+    bucket.devices.push(cam.deviceCode)
+    bySector.set(cam.sectorCode, bucket)
+  }
+  return [...bySector.entries()].map(([sectorCode, meta]) => ({
+    kind: 'sector' as const,
+    sectorCode,
+    label: meta.label,
+    devices: meta.devices,
+  }))
+}
+
+const SAN_LORENZO_SECTORS: LiveSectorEntry[] = buildSanLorenzoSectorEntries()
 
 export function getLiveSectorEntries(plant: SiteId): LiveSectorEntry[] {
   if (plant === 'avellaneda') return []
@@ -81,6 +159,46 @@ export function getLiveSectorEntries(plant: SiteId): LiveSectorEntry[] {
   }))
   out.push({ kind: 'group', group: RICARDONE_VOLCABLE_GROUP })
   return out
+}
+
+/** Clave única cuando scope=all (evita colisión Ric/SL). */
+export function scopedEntryKey(scope: LiveMonitorScope, entry: LiveSectorEntry, plant: SiteId): string {
+  if (scope !== 'all') return entryKey(entry)
+  return `${plant}:${entryKey(entry)}`
+}
+
+export function getLiveSectorEntriesForScope(scope: LiveMonitorScope): { plant: SiteId; entry: LiveSectorEntry }[] {
+  if (scope === 'all') {
+    return [
+      ...getLiveSectorEntries('ricardone').map((entry) => ({ plant: 'ricardone' as const, entry })),
+      ...getLiveSectorEntries('san_lorenzo').map((entry) => ({ plant: 'san_lorenzo' as const, entry })),
+    ]
+  }
+  if (scope === 'avellaneda') return []
+  return getLiveSectorEntries(scope).map((entry) => ({ plant: scope, entry }))
+}
+
+export function findLiveSectorEntryForScope(
+  scope: LiveMonitorScope,
+  key: string
+): { plant: SiteId; entry: LiveSectorEntry } | undefined {
+  return getLiveSectorEntriesForScope(scope).find((row) => scopedEntryKey(scope, row.entry, row.plant) === key)
+}
+
+export function filterEventsByMonitorScope(
+  events: RealJourneyEventDto[],
+  scope: LiveMonitorScope
+): RealJourneyEventDto[] {
+  if (scope === 'all') return events
+  return events.filter((e) => inferLiveMonitorSiteId(e.sectorCode, e.deviceCode) === scope)
+}
+
+export function filterAlertsByMonitorScope(
+  alerts: NormalizedRealAlertView[],
+  scope: LiveMonitorScope
+): NormalizedRealAlertView[] {
+  if (scope === 'all') return alerts
+  return alerts.filter((a) => inferLiveMonitorSiteId(a.sectorCode || '', a.deviceCode || '') === scope)
 }
 
 export function sectorDisplayName(code: string): string {

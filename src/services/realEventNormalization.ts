@@ -1,5 +1,10 @@
 import type { RealJourneyEventDto, ReconstructedRealSiteId } from './realJourneyEvents.types'
 
+import {
+  lookupSanLorenzoCameraByDevice,
+  lookupSanLorenzoSectorFallback,
+} from '../data/sanLorenzoCameraCatalog'
+
 const RIC_INGRESO_SECTOR = 'RICARDONE_INGRESO_CAMIONES'
 const RIC_PREINGRESO_SECTOR = 'RICARDONE_PREINGRESO'
 const RIC_CALADA_SECTOR = 'RICARDONE_CALADA'
@@ -192,6 +197,17 @@ export function normalizeRealEventPoint(event: RealJourneyEventDto): NormalizedR
   const deviceRaw = event.deviceCode ?? ''
   const device = deviceRaw.toLowerCase()
 
+  const slDevice = lookupSanLorenzoCameraByDevice(deviceRaw.trim())
+  if (slDevice) {
+    return {
+      siteId: 'san_lorenzo',
+      pointType: `SL_${slDevice.logicalSector}`,
+      pointLabel: slDevice.label,
+      logicalCode: slDevice.logicalCode,
+      operationalPoint: slDevice.logicalCode,
+    }
+  }
+
   const devicePoint = RIC_DEVICE_POINT_MAP[deviceRaw.trim()]
   const siteId = devicePoint ? 'ricardone' : inferSiteLocal(sector)
 
@@ -283,15 +299,27 @@ export function normalizeRealEventPoint(event: RealJourneyEventDto): NormalizedR
         logicalCode: 'CELDA16_DESCARGA',
         operationalPoint: 'CELDA16_DESCARGA',
       }
-    case SL_INGRESO_SECTOR:
+    case SL_INGRESO_SECTOR: {
+      const fb = lookupSanLorenzoSectorFallback(sectorU)
       return {
-        siteId,
+        siteId: 'san_lorenzo',
         pointType: 'SL_INGRESO',
-        pointLabel: 'Ingreso San Lorenzo',
-        logicalCode: 'SL_INGRESO',
-        operationalPoint: 'SL_INGRESO',
+        pointLabel: fb?.label ?? 'Ingreso San Lorenzo',
+        logicalCode: fb?.logicalCode ?? 'SL_INGRESO',
+        operationalPoint: fb?.logicalCode ?? 'SL_INGRESO',
       }
-    default:
+    }
+    default: {
+      const fb = lookupSanLorenzoSectorFallback(sectorU)
+      if (fb) {
+        return {
+          siteId: 'san_lorenzo',
+          pointType: `SL_${fb.logicalSector}`,
+          pointLabel: fb.label,
+          logicalCode: fb.logicalCode,
+          operationalPoint: fb.logicalCode,
+        }
+      }
       // Heurística operativa: algunas cámaras de recepción en Volcable pueden llegar
       // con sector/device no mapeado y caer como UNKNOWN. Si hay evidencia textual
       // de volcable, se normaliza como punto VOLCABLE válido.
@@ -329,5 +357,6 @@ export function normalizeRealEventPoint(event: RealJourneyEventDto): NormalizedR
         logicalCode: 'UNKNOWN',
         operationalPoint: 'UNKNOWN',
       }
+    }
   }
 }

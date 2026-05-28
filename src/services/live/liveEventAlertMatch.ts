@@ -193,6 +193,38 @@ export type LiveSectorSummary = {
   status: 'sin_datos' | 'operativa' | 'con_alertas' | 'critica'
 }
 
+export type LiveFeedBreakdownRow = {
+  sectorCode: string
+  deviceCode: string
+  eventCount: number
+  alertCount: number
+}
+
+/** Conteo crudo por par sectorCode·deviceCode tal como llega de Truckflow (sin catálogo). */
+export function buildLiveFeedSectorDeviceBreakdown(
+  events: RealJourneyEventDto[],
+  alerts: NormalizedRealAlertView[]
+): LiveFeedBreakdownRow[] {
+  const map = new Map<string, LiveFeedBreakdownRow>()
+  const upsert = (sectorCode: string, deviceCode: string, kind: 'event' | 'alert') => {
+    const sec = sectorCode.trim() || '—'
+    const dev = deviceCode.trim() || '—'
+    const k = `${sec}\0${dev}`
+    const row = map.get(k) ?? { sectorCode: sec, deviceCode: dev, eventCount: 0, alertCount: 0 }
+    if (kind === 'event') row.eventCount++
+    else row.alertCount++
+    map.set(k, row)
+  }
+  for (const e of events) upsert(String(e.sectorCode ?? ''), String(e.deviceCode ?? ''), 'event')
+  for (const a of alerts) upsert(String(a.sectorCode ?? ''), String(a.deviceCode ?? ''), 'alert')
+  return [...map.values()].sort(
+    (a, b) =>
+      b.eventCount + b.alertCount - (a.eventCount + a.alertCount) ||
+      a.sectorCode.localeCompare(b.sectorCode) ||
+      a.deviceCode.localeCompare(b.deviceCode)
+  )
+}
+
 export function buildLiveSectorSummary(
   key: string,
   label: string,

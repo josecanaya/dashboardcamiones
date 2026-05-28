@@ -142,8 +142,13 @@ export function classifyCommitteeOperationalCircuit(sortedOperationalEvents: Rea
     return 'DESPACHO_SIN_PUNTO_INSTRUMENTADO'
   }
 
-  // Transile volcable → balanza (volcable + balanza sin cadena ingreso→pre→balanza ingreso completa)
-  if (hasVol && hasBal && !(hasIng && hasPre && logicals.has('BALANZA_INGRESO'))) {
+  // Transile C16→Volcable: carga C16 + volcable + balanza, sin recepción Ricardone completa
+  if (
+    hasVol &&
+    hasBal &&
+    logicals.has('CELDA16_CARGA') &&
+    !(hasIng && hasPre && logicals.has('BALANZA_INGRESO'))
+  ) {
     return 'TRANSILE_VOLCABLE_BALANZA'
   }
 

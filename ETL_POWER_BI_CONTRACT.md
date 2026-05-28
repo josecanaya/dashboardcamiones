@@ -6,7 +6,7 @@ El usuario final (comité, Power BI) **solo debe consumir** estos archivos:
 |---------|-----|
 | `pb_committee_summary.csv` | Resumen ejecutivo del período |
 | `pb_final_circuits.csv` | Circuitos finales clasificados |
-| `pb_circuit_summary.csv` | Resumen ejecutivo de circuitos (`VALIDO`, `INCOMPLETO`, `ANOMALO`, `NO_EVALUABLE`) |
+| `pb_circuit_summary.csv` | Resumen ejecutivo de circuitos (3 categorías comité + desglose técnico legacy) |
 | `pb_anomalies.csv` | Subset de circuitos anómalos |
 | `pb_camera_committee_status.csv` | Estado operativo por cámara |
 | `pb_camera_lpr_analysis.csv` | Diagnóstico LPR por cámara (`LPR_MALFUNCTION`) |
@@ -22,7 +22,16 @@ Además de estado/score del circuito, incluye cruce operativo:
 | Columna | Descripción |
 |---------|-------------|
 | `matrix_final_status` | Estado técnico de matriz: COMPLETO / DEDUCIDO / INCOMPLETO / ANOMALO |
-| `executive_status` | Capa ejecutiva: VALIDO / INCOMPLETO / ANOMALO / NO_EVALUABLE |
+| `committee_group` | **Categoría comité (v10):** `COMPLETOS` · `VARIACIONES_OPERATIVAS` · `ANOMALIAS` |
+| `committee_reason` | Motivo legible para comité (`CIRCUITO_COMPLETO`, `RECALADO_CONTEMPLADO`, `CAMARAS_SLZ_S1_S5_S7_PENDIENTES`, …) |
+| `operational_variation_type` | Tipo de variación operativa (`RECALADO`, `DOBLE_PASO_BALANZA`, …) o vacío |
+| `analysis_scope` | `RICARDONE` · `SAN_LORENZO_INTERNO` · `TRANSILE_EXTERNO` · `MIXTO` · `UNKNOWN` |
+| `strong_point_source` | `RICARDONE` · `SAN_LORENZO` · `LIQUIDO` · vacío |
+| `show_in_committee` | Si el journey debe mostrarse en la presentación |
+| `show_as_exact_circuit` | Si se puede mostrar un circuito exacto (false si ambiguo o SL pendiente) |
+| `candidate_circuits` | Circuitos candidatos unidos por `\|` cuando no hay asignación exacta |
+| `missing_key_cameras` | Cámaras clave faltantes (p. ej. SLZ S1/S5/S7 pendientes) |
+| `executive_status` | Capa técnica interna: VALIDO / INCOMPLETO / ANOMALO / NO_EVALUABLE / NO_DIFERENCIABLE |
 | `executive_reason` | Motivo ejecutivo (`CIRCUITO_COMPLETO`, `CIRCUITO_DEDUCIDO_VALIDO`, `CONFIG_ERROR_MISSING_SEQUENCE`, etc.) |
 | `valid_detail` | Si `executive_status = VALIDO`: COMPLETO o DEDUCIDO |
 | `executive_bucket` | Columna técnica legacy, preservada por compatibilidad |
@@ -42,7 +51,11 @@ Además de estado/score del circuito, incluye cruce operativo:
 
 Filtros típicos en Power BI:
 
-- Válidos productivos: `executive_status = VALIDO`
+- **Comité (v10):** `committee_group = COMPLETOS` | `VARIACIONES_OPERATIVAS` | `ANOMALIAS`
+- Completos deducidos: `committee_group = COMPLETOS` AND `committee_reason` contiene `DEDUCIDO`
+- Variaciones operativas: `committee_group = VARIACIONES_OPERATIVAS`
+- Anomalías no evaluables: `committee_group = ANOMALIAS` AND `executive_status = NO_EVALUABLE`
+- Válidos productivos (legacy): `executive_status = VALIDO`
 - Deducidos válidos: `executive_status = VALIDO` AND `valid_detail = DEDUCIDO`
 - Incompletos con mal inicio: `executive_status = INCOMPLETO` AND `hasInvalidJourneyStart = true`
 - Anómalos con ruta inválida: `executive_status = ANOMALO` AND `hasInvalidRoute = true`
@@ -53,7 +66,10 @@ Filtros típicos en Power BI:
 | Columna | Descripción |
 |---------|-------------|
 | `total_journeys` | Total de circuitos finales |
-| `valid_journeys` | COMPLETO + DEDUCIDO como circuitos válidos |
+| `committee_completos` | Journeys con `committee_group = COMPLETOS` |
+| `committee_variaciones_operativas` | Journeys con `committee_group = VARIACIONES_OPERATIVAS` |
+| `committee_anomalias` | Journeys con `committee_group = ANOMALIAS` |
+| `valid_journeys` | COMPLETO + DEDUCIDO como circuitos válidos (desglose técnico legacy) |
 | `incomplete_journeys` | Eventos insuficientes o falta de información |
 | `anomalous_journeys` | Evaluable con eventos suficientes que no respeta secuencia |
 | `non_evaluable_journeys` | Sin cobertura/punto fuerte/secuencia configurada |
@@ -103,8 +119,9 @@ No usar en comité por defecto:
 - **Alertas LPR:** `alertCode === 'LPR_MALFUNCTION'`.
 - **Alertas operativas:** todo lo demás (frontales, post-filtro trasera).
 - **Códigos especiales:** `INVALID_ROUTE`, `INVALID_START_JOURNEY` (alias documental `INVALID_JOURNEY_START`).
+- **Capa comité (v10):** `committee_group` — COMPLETOS · VARIACIONES_OPERATIVAS · ANOMALIAS. PROBABLE / NO_EVALUABLE / NO_DIFERENCIABLE se mapean a ANOMALIAS salvo variación operativa contemplada.
 - **Capa técnica:** `matrix_final_status` conserva COMPLETO · DEDUCIDO · INCOMPLETO · ANOMALO.
-- **Capa ejecutiva:** `executive_status` usa VALIDO · INCOMPLETO · ANOMALO · NO_EVALUABLE. DEDUCIDO se suma dentro de VALIDO.
+- **Capa ejecutiva:** `executive_status` usa VALIDO · INCOMPLETO · ANOMALO · NO_EVALUABLE · NO_DIFERENCIABLE. DEDUCIDO se suma dentro de VALIDO y comité COMPLETOS.
 
 ## Flujo batch
 
@@ -113,4 +130,4 @@ API → servidor local → data/truckflow/YYYY-MM-DD/
   → Análisis local → runEtlTransform → Load/Export → pb_*
 ```
 
-Versión reglas transform: `etl_transform_v6` (cruce operativo alerta ↔ journey; capa ejecutiva VALIDO/INCOMPLETO/ANOMALO/NO_EVALUABLE).
+Versión reglas transform: `etl_transform_v10` — detalle completo en [`ETL_TRANSFORM_V9_RULES.md`](./ETL_TRANSFORM_V9_RULES.md) (sección v10).

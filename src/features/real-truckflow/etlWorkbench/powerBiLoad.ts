@@ -383,6 +383,35 @@ function buildFolderName(group: LoadGroupType, start: string, end: string): stri
   return `rango_${start}_${end}`
 }
 
+function normalizeCommitteeGroupFromRow(r: Record<string, string>): CommitteeGroup | '' {
+  const g = String(rowGet(r, 'committee_group') ?? '').trim().toUpperCase()
+  if (g === 'COMPLETOS' || g === 'VARIACIONES_OPERATIVAS' || g === 'ANOMALIAS') return g
+
+  const variation = String(rowGet(r, 'operational_variation_type') ?? '').trim()
+  if (variation) return 'VARIACIONES_OPERATIVAS'
+
+  const matrix = String(rowGet(r, 'matrix_final_status') ?? '').trim().toUpperCase()
+  if (matrix === 'VARIACION_OPERATIVA') return 'VARIACIONES_OPERATIVAS'
+  if (matrix === 'COMPLETO' || matrix === 'DEDUCIDO') return 'COMPLETOS'
+
+  const executive = String(rowGet(r, 'executive_status') ?? '').trim().toUpperCase()
+  if (executive === 'VALIDO') return 'COMPLETOS'
+  if (
+    executive === 'ANOMALO' ||
+    executive === 'INCOMPLETO' ||
+    executive === 'NO_EVALUABLE' ||
+    executive === 'NO_DIFERENCIABLE' ||
+    executive === 'PROBABLE'
+  ) {
+    return 'ANOMALIAS'
+  }
+  if (matrix === 'ANOMALO' || matrix === 'INCOMPLETO') return 'ANOMALIAS'
+
+  return ''
+}
+
+type CommitteeGroup = 'COMPLETOS' | 'VARIACIONES_OPERATIVAS' | 'ANOMALIAS'
+
 function normalizeOperationalStatusFromCircuitRow(
   r: Record<string, string>
 ): 'VALIDO' | 'PROBABLE' | 'INCOMPLETO' | 'ANOMALO' | 'NO_EVALUABLE' {
@@ -676,11 +705,14 @@ export function consolidatePowerBiLoad(input: {
     finalHeadersExec.length ? finalHeadersExec : ['journey_uid', 'final_status', 'final_status_label'],
     finalProjected.rows
   )
-  const anomaliesRows = finalProjected.rows.filter(
-    (r) =>
+  const anomaliesRows = finalProjected.rows.filter((r) => {
+    const cg = normalizeCommitteeGroupFromRow(r)
+    if (cg) return cg === 'ANOMALIAS'
+    return (
       normalizeOperationalStatusFromCircuitRow(r) === 'ANOMALO' ||
       String(rowGet(r, 'executive_bucket') ?? '').trim().toUpperCase() === 'ANOMALO'
-  )
+    )
+  })
   const pb_anomalies = recordsToCsvFromRows(
     finalHeadersExec.length ? finalHeadersExec : ['journey_uid', 'final_status', 'final_status_label'],
     anomaliesRows
@@ -711,8 +743,16 @@ export function consolidatePowerBiLoad(input: {
     }
   }
   const totalForSummary = Math.max(0, finalProjected.rows.length)
+  const committeeCounts = new Map<CommitteeGroup, number>()
+  for (const r of finalProjected.rows) {
+    const cg = normalizeCommitteeGroupFromRow(r)
+    if (cg) committeeCounts.set(cg, (committeeCounts.get(cg) ?? 0) + 1)
+  }
   const summaryRow = {
     total_journeys: totalForSummary,
+    committee_completos: committeeCounts.get('COMPLETOS') ?? 0,
+    committee_variaciones_operativas: committeeCounts.get('VARIACIONES_OPERATIVAS') ?? 0,
+    committee_anomalias: committeeCounts.get('ANOMALIAS') ?? 0,
     valid_journeys: summaryCounts.get('VALIDO') ?? 0,
     probable_journeys: summaryCounts.get('PROBABLE') ?? 0,
     incomplete_journeys: summaryCounts.get('INCOMPLETO') ?? 0,
@@ -728,6 +768,9 @@ export function consolidatePowerBiLoad(input: {
   const pb_circuit_summary = recordsToCsv(
     [
       'total_journeys',
+      'committee_completos',
+      'committee_variaciones_operativas',
+      'committee_anomalias',
       'valid_journeys',
       'probable_journeys',
       'incomplete_journeys',

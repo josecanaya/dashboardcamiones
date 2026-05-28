@@ -1,13 +1,26 @@
-import { useMemo, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { ETL_DEV_MODE } from '../../../config/committeeEtlLite'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
 import type { EtlTransformOutput } from '../etlWorkbench/etlTransformPipeline'
 import { triggerBrowserCsvDownload } from '../etlWorkbench/etlCsv'
 import {
+  anomalySequenceSummaryCsv,
+  buildAnomalyReviewSummary,
   buildCircuitClassificationIndex,
+  buildCommitteeCircuitCrossTab,
+  ANOMALY_LIST_MIN_EVENTS,
   CIRCUIT_PIE_COLORS,
+  committeeDrilldownCsv,
+  committeeChartExportCsv,
+  trucksForCommitteeCrossTabCell,
+  type AnomalyReviewSummary,
+  type AnomalySequenceBreakdownRow,
+  type CircuitClassificationEntry,
+  type CommitteeCrossTabCategory,
+  type CommitteeCircuitCrossTabRow,
 } from '../etlWorkbench/etlCircuitClassificationIndex'
+import { committeePieFromGroup } from '../etlWorkbench/committeeClassification'
 
 const DEV_EXPORT_DEF: {
   csvKey: keyof EtlTransformOutput['csv']
@@ -55,12 +68,332 @@ function Metric({ label, value }: { label: string; value: string | number }) {
   )
 }
 
+type CrossTabDrilldownKey = { code: string; category: CommitteeCrossTabCategory | 'total' }
+
+const CROSS_TAB_CATEGORY_LABEL: Record<CommitteeCrossTabCategory | 'total', string> = {
+  completos: 'Completos',
+  variaciones: 'Variaciones',
+  anomalias: 'Anomalías',
+  total: 'Total circuito',
+}
+
+function CrossTabCountButton({
+  count,
+  pct,
+  colorClass,
+  active,
+  disabled,
+  onClick,
+}: {
+  count: number
+  pct?: number
+  colorClass: string
+  active?: boolean
+  disabled?: boolean
+  onClick: () => void
+}) {
+  if (count <= 0) {
+    return (
+      <span className={`font-mono tabular-nums ${colorClass} opacity-40`}>
+        0{pct != null ? ' (0%)' : ''}
+      </span>
+    )
+  }
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      title="Ver listado de camiones"
+      className={`rounded px-1.5 py-0.5 font-mono tabular-nums underline-offset-2 transition hover:underline disabled:opacity-40 ${colorClass} ${
+        active ? 'bg-indigo-100 ring-1 ring-indigo-300' : 'hover:bg-white/80'
+      }`}
+    >
+      {count.toLocaleString()}
+      {pct != null ? ` (${pct}%)` : ''}
+    </button>
+  )
+}
+
+function variationTypeBreakdown(entries: CircuitClassificationEntry[]): { type: string; count: number }[] {
+  const counts = new Map<string, number>()
+  for (const e of entries) {
+    const t = e.operationalVariationType.trim() || '(sin tipo)'
+    counts.set(t, (counts.get(t) ?? 0) + 1)
+  }
+  return [...counts.entries()]
+    .map(([type, count]) => ({ type, count }))
+    .sort((a, b) => b.count - a.count)
+}
+
+function AnomalySequenceDrilldown({
+  row,
+  onClose,
+}: {
+  row: AnomalySequenceBreakdownRow
+  onClose: () => void
+}) {
+  const filename = `anomalias_recorrido_${row.sequenceKey.replace(/[^a-zA-Z0-9]+/g, '_').slice(0, 48)}.csv`
+
+  return (
+    <div className="rounded-lg border border-rose-200 bg-white p-3 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <p className="font-mono text-xs font-bold text-rose-950">{row.displaySequence}</p>
+          <p className="mt-0.5 text-[11px] text-slate-500">
+            {row.count.toLocaleString()} camiones · {row.pctOfAnomalies}% del total anómalo · motivo principal:{' '}
+            <span className="text-slate-700">{row.topCommitteeReason || '—'}</span>
+          </p>
+        </div>
+        <div className="flex shrink-0 gap-2">
+          <button
+            type="button"
+            onClick={() => triggerBrowserCsvDownload(filename, committeeDrilldownCsv(row.trucks))}
+            className="rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1 text-[11px] font-semibold text-rose-900 hover:bg-rose-100"
+          >
+            CSV
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-slate-200 px-2.5 py-1 text-[11px] font-semibold text-slate-600 hover:bg-slate-50"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+      {row.reasonCounts.length > 1 ?
+        <ul className="mt-2 flex flex-wrap gap-2 text-[10px]">
+          {row.reasonCounts.map((r) => (
+            <li
+              key={r.reason}
+              className="rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 font-mono text-rose-900"
+            >
+              {r.reason}: {r.count.toLocaleString()}
+            </li>
+          ))}
+        </ul>
+      : null}
+      <ul className="mt-2 max-h-64 overflow-auto rounded border border-slate-100 text-[11px]">
+        {row.trucks.map((t) => (
+          <li
+            key={`an-${t.journeyId}-${t.plate}`}
+            className="border-b border-slate-100 px-2 py-1.5 last:border-0 odd:bg-slate-50/50"
+          >
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="font-mono font-bold text-slate-900">{t.plate || '—'}</span>
+              <span className="text-slate-600">{t.committeeReason || '—'}</span>
+              {t.executiveCircuitDisplay ?
+                <span className="text-[10px] text-slate-400" title="Circuito inferido (referencia, no agrupa la anomalía)">
+                  ref. {t.executiveCircuitDisplay}
+                </span>
+              : null}
+              <span className="font-mono text-[10px] text-slate-400" title={t.journeyId}>
+                {truncateMiddle(t.journeyId, 18)}
+              </span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function AnomalySequenceBreakdownPanel({
+  summary,
+  expandedSequenceKey,
+  onToggleSequence,
+}: {
+  summary: AnomalyReviewSummary
+  expandedSequenceKey: string | null
+  onToggleSequence: (key: string | null) => void
+}) {
+  const { incompleteCount, sequenceRows, listedAnomalyCount } = summary
+  const totalCommitteeAnomalies = incompleteCount + listedAnomalyCount
+
+  if (totalCommitteeAnomalies <= 0) {
+    return (
+      <p className="mt-3 text-xs text-slate-500">No hay anomalías en este período.</p>
+    )
+  }
+
+  return (
+    <div className="mt-3 space-y-3">
+      {incompleteCount > 0 ?
+        <div className="flex flex-wrap items-center gap-2 rounded-lg border border-amber-200 bg-amber-50/80 px-3 py-2 text-xs text-amber-950">
+          <span className="font-semibold uppercase tracking-wide text-[10px]">Incompletos</span>
+          <span className="font-mono text-lg font-bold tabular-nums">{incompleteCount.toLocaleString()}</span>
+          <span className="text-amber-900/80">
+            journeys con menos de {ANOMALY_LIST_MIN_EVENTS} eventos — no se listan por recorrido.
+          </span>
+        </div>
+      : null}
+
+      {listedAnomalyCount <= 0 ?
+        <p className="text-xs text-slate-500">No hay anomalías con ≥{ANOMALY_LIST_MIN_EVENTS} eventos para desglosar.</p>
+      : <>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-[11px] text-slate-600">
+              <strong>{sequenceRows.length.toLocaleString()}</strong> recorridos distintos ·{' '}
+              <strong>{listedAnomalyCount.toLocaleString()}</strong> anomalías (≥{ANOMALY_LIST_MIN_EVENTS} eventos)
+              {incompleteCount > 0 ?
+                <> · + {incompleteCount.toLocaleString()} incompletos</>
+              : null}
+            </p>
+            <button
+              type="button"
+              onClick={() =>
+                triggerBrowserCsvDownload('anomalias_por_recorrido.csv', anomalySequenceSummaryCsv(sequenceRows))
+              }
+              className="rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1 text-[11px] font-semibold text-rose-900 hover:bg-rose-100"
+            >
+              CSV resumen
+            </button>
+          </div>
+          <div className="overflow-x-auto rounded-lg border border-rose-100">
+            <table className="min-w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-rose-100 bg-rose-50/50 text-[10px] uppercase tracking-wide text-slate-500">
+                  <th className="py-2 pl-3 pr-2 font-semibold">Recorrido · cantidad</th>
+                  <th className="py-2 px-2 font-semibold text-right">%</th>
+                  <th className="py-2 px-2 font-semibold">Motivo principal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sequenceRows.map((row) => {
+                  const open = expandedSequenceKey === row.sequenceKey
+                  return (
+                    <Fragment key={row.sequenceKey}>
+                      <tr className="border-b border-slate-100 hover:bg-rose-50/30">
+                        <td className="py-2 pl-3 pr-2">
+                          <button
+                            type="button"
+                            onClick={() => onToggleSequence(open ? null : row.sequenceKey)}
+                            className={`flex w-full flex-wrap items-center gap-2 text-left ${
+                              open ? 'rounded bg-rose-50 ring-1 ring-rose-200 px-1 py-0.5' : ''
+                            }`}
+                          >
+                            <span className="font-mono text-[11px] text-slate-800">{row.displaySequence}</span>
+                            <span className="shrink-0 rounded-full bg-rose-100 px-2 py-0.5 font-mono text-xs font-bold tabular-nums text-rose-900">
+                              {row.count.toLocaleString()}
+                            </span>
+                          </button>
+                        </td>
+                        <td className="py-2 px-2 text-right font-mono text-slate-600">{row.pctOfAnomalies}%</td>
+                        <td className="py-2 px-2 text-slate-600">{row.topCommitteeReason || '—'}</td>
+                      </tr>
+                      {open ?
+                        <tr className="border-b border-slate-100 bg-rose-50/20">
+                          <td colSpan={3} className="px-2 py-2">
+                            <AnomalySequenceDrilldown row={row} onClose={() => onToggleSequence(null)} />
+                          </td>
+                        </tr>
+                      : null}
+                    </Fragment>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
+      }
+    </div>
+  )
+}
+
+function CommitteeCrossTabDrilldown({
+  row,
+  category,
+  onClose,
+}: {
+  row: CommitteeCircuitCrossTabRow
+  category: CommitteeCrossTabCategory | 'total'
+  onClose: () => void
+}) {
+  const trucks = trucksForCommitteeCrossTabCell(row, category)
+  const variationBreakdown = category === 'variaciones' ? variationTypeBreakdown(trucks) : []
+  const filename = `conciliacion_${row.code}_${category}.csv`
+
+  return (
+    <div className="rounded-lg border border-indigo-200 bg-white p-3 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <p className="text-xs font-bold text-indigo-950">
+            {row.displayLabel} · {CROSS_TAB_CATEGORY_LABEL[category]} ({trucks.length.toLocaleString()})
+          </p>
+          <p className="mt-0.5 text-[11px] text-slate-500">
+            Patente, motivo comité y secuencia detectada — para revisar reglas de clasificación.
+          </p>
+        </div>
+        <div className="flex shrink-0 gap-2">
+          <button
+            type="button"
+            onClick={() => triggerBrowserCsvDownload(filename, committeeDrilldownCsv(trucks))}
+            className="rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 py-1 text-[11px] font-semibold text-indigo-900 hover:bg-indigo-100"
+          >
+            CSV
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-slate-200 px-2.5 py-1 text-[11px] font-semibold text-slate-600 hover:bg-slate-50"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+      {variationBreakdown.length ?
+        <ul className="mt-2 flex flex-wrap gap-2 text-[10px]">
+          {variationBreakdown.map((v) => (
+            <li
+              key={v.type}
+              className="rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 font-mono text-sky-900"
+            >
+              {v.type}: {v.count.toLocaleString()}
+            </li>
+          ))}
+        </ul>
+      : null}
+      <ul className="mt-2 max-h-64 overflow-auto rounded border border-slate-100 text-[11px]">
+        {trucks.map((t) => (
+          <li
+            key={`${category}-${t.journeyId}-${t.plate}`}
+            className="border-b border-slate-100 px-2 py-1.5 last:border-0 odd:bg-slate-50/50"
+          >
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="font-mono font-bold text-slate-900">{t.plate || '—'}</span>
+              {t.operationalVariationType ?
+                <span className="rounded bg-sky-100 px-1 font-mono text-[10px] text-sky-800">
+                  {t.operationalVariationType}
+                </span>
+              : null}
+              <span className="text-slate-600" title={t.committeeReason}>
+                {t.committeeReason || '—'}
+              </span>
+              <span className="font-mono text-[10px] text-slate-400" title={t.journeyId}>
+                {truncateMiddle(t.journeyId, 18)}
+              </span>
+            </div>
+            {t.detectedSequence ?
+              <p className="mt-0.5 font-mono text-[10px] leading-snug text-slate-500" title={t.detectedSequence}>
+                {truncateMiddle(t.detectedSequence, 72)}
+              </p>
+            : null}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 export function TransformEtlTab() {
   const wb = useEtlWorkbenchOptional()
   const tr = wb?.transformResult ?? null
   const exec = useMemo(() => tr?.stats.executive ?? null, [tr])
   const stats = useMemo(() => tr?.stats ?? null, [tr])
   const [expandedSlice, setExpandedSlice] = useState<string | null>(null)
+  const [expandedCrossTab, setExpandedCrossTab] = useState<CrossTabDrilldownKey | null>(null)
+  const [expandedAnomalySequence, setExpandedAnomalySequence] = useState<string | null>(null)
 
   const circuitClassIndex = useMemo(
     () => buildCircuitClassificationIndex(tr?.csv.debug_matrix_classification),
@@ -68,20 +401,50 @@ export function TransformEtlTab() {
   )
 
   const circuitClassificationPie = useMemo(() => {
-    if (circuitClassIndex.pieSlices.length) return circuitClassIndex.pieSlices
+    if (circuitClassIndex.pieSlices.length) {
+      return circuitClassIndex.pieSlices.map((s) => {
+        if (s.name === 'COMPLETOS') return { ...s, color: committeePieFromGroup('COMPLETOS').color }
+        if (s.name === 'VARIACIONES OPERATIVAS') return { ...s, color: committeePieFromGroup('VARIACIONES_OPERATIVAS').color }
+        if (s.name === 'ANOMALÍAS' || s.name === 'ANOMALIAS') return { ...s, color: committeePieFromGroup('ANOMALIAS').color }
+        return s
+      })
+    }
     if (!exec) return []
+    const completos = exec.committeeCompletos ?? exec.validos ?? 0
+    const variaciones = exec.committeeVariaciones ?? 0
+    const anomalias = exec.committeeAnomalias ?? exec.noEvaluables ?? 0
     return [
-      { name: 'VALIDO', value: exec.validos || exec.completos + exec.deducidos, color: CIRCUIT_PIE_COLORS[0]! },
-      { name: 'PROBABLE', value: exec.probables || 0, color: CIRCUIT_PIE_COLORS[1]! },
-      { name: 'INCOMPLETO', value: exec.incompletos, color: CIRCUIT_PIE_COLORS[2]! },
-      { name: 'ANOMALO', value: exec.anomalos, color: CIRCUIT_PIE_COLORS[3]! },
-      { name: 'NO_EVALUABLE', value: exec.noEvaluables || 0, color: CIRCUIT_PIE_COLORS[4]! },
+      { name: 'COMPLETOS', value: completos, color: committeePieFromGroup('COMPLETOS').color },
+      { name: 'VARIACIONES OPERATIVAS', value: variaciones, color: committeePieFromGroup('VARIACIONES_OPERATIVAS').color },
+      { name: 'ANOMALÍAS', value: anomalias, color: committeePieFromGroup('ANOMALIAS').color },
     ].filter((d) => d.value > 0)
   }, [circuitClassIndex.pieSlices, exec])
 
   const circuitPieTotal = circuitClassificationPie.reduce((acc, d) => acc + Math.max(0, d.value), 0)
   const circuitBarData = useMemo(() => circuitClassIndex.circuitBarSlices, [circuitClassIndex.circuitBarSlices])
   const circuitBarTotal = circuitBarData.reduce((acc, d) => acc + d.count, 0)
+  const committeeCrossTab = useMemo(
+    () => buildCommitteeCircuitCrossTab(circuitClassIndex.entries),
+    [circuitClassIndex.entries]
+  )
+  const anomalyReview = useMemo(
+    () => buildAnomalyReviewSummary(circuitClassIndex.entries),
+    [circuitClassIndex.entries]
+  )
+  const totalAnomalies = useMemo(
+    () => anomalyReview.incompleteCount + anomalyReview.listedAnomalyCount,
+    [anomalyReview]
+  )
+  const crossTabTotals = useMemo(() => {
+    return committeeCrossTab.reduce(
+      (acc, row) => ({
+        total: acc.total + row.total,
+        completos: acc.completos + row.completos,
+        variaciones: acc.variaciones + row.variaciones,
+      }),
+      { total: 0, completos: 0, variaciones: 0 }
+    )
+  }, [committeeCrossTab])
   const circuitClassificationRows = useMemo(
     () =>
       circuitClassificationPie.map((d) => ({
@@ -98,6 +461,24 @@ export function TransformEtlTab() {
       const text = tr.csv[d.csvKey]
       if (text) triggerBrowserCsvDownload(d.filename, text)
     }
+  }
+
+  const downloadCommitteeChartCsv = (includeJourneyRows: boolean) => {
+    if (!circuitClassIndex.entries.length) return
+    const csv = committeeChartExportCsv(
+      {
+        entries: circuitClassIndex.entries,
+        crossTab: committeeCrossTab,
+        crossTabTotals,
+        anomalyReview,
+        circuitBarSlices: circuitClassIndex.circuitBarSlices,
+      },
+      { includeJourneyRows }
+    )
+    triggerBrowserCsvDownload(
+      includeJourneyRows ? 'conciliacion_comite_completa.csv' : 'conciliacion_comite_graficos.csv',
+      csv
+    )
   }
 
   if (!wb) {
@@ -153,13 +534,15 @@ export function TransformEtlTab() {
             className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
           >
             <h4 className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">
-              Clasificación operativa de circuitos
+              Clasificación ejecutiva comité (3 categorías)
             </h4>
             <p className="mt-1 text-xs text-slate-500">
               Total de journeys clasificados:{' '}
               <span className="font-semibold tabular-nums text-slate-700">
                 {circuitPieTotal.toLocaleString()}
               </span>
+              . La torta responde: <strong>¿comité COMPLETOS o ANOMALÍAS?</strong> No coincide 1:1 con el
+              circuito asignado (barras). Ver conciliación abajo.
             </p>
             {circuitPieTotal === 0 ?
               <p className="mt-8 text-center text-sm text-slate-400">Sin datos para esta comparación.</p>
@@ -238,7 +621,15 @@ export function TransformEtlTab() {
                           {row.value.toLocaleString()} · {row.pct.toFixed(2)}% {open ? '▾' : '▸'}
                         </span>
                       </button>
-                      {open && row.trucks.length ?
+                      {open && row.name.includes('ANOMAL') ?
+                        <div className="border-t border-slate-200 bg-white px-2 py-2">
+                          <AnomalySequenceBreakdownPanel
+                            summary={anomalyReview}
+                            expandedSequenceKey={expandedAnomalySequence}
+                            onToggleSequence={setExpandedAnomalySequence}
+                          />
+                        </div>
+                      : open && row.trucks.length ?
                         <ul className="max-h-52 overflow-auto border-t border-slate-200 bg-white px-3 py-2 text-[11px]">
                           {row.trucks.map((t) => (
                             <li
@@ -277,13 +668,8 @@ export function TransformEtlTab() {
               <span className="font-semibold tabular-nums text-slate-700">
                 {circuitBarTotal.toLocaleString()}
               </span>
-              . Sólidos sin cámara destino: recepción inferida{' '}
-              <span className="font-semibold">RS_REC</span> o despacho{' '}
-              <span className="font-semibold">RS_DESP</span> (estado{' '}
-              <span className="font-semibold">PROBABLE</span>). Sin patrón claro →{' '}
-              <span className="font-semibold">SIN_PUNTO</span>. Líquido solo con cámara{' '}
-              <span className="font-mono">RicCalLiq</span> (calada antes de balanza ingreso = recepción R8;
-              balanzas antes de calada = despacho R16).
+              . Las barras indican <strong>qué plantilla R* / RS_* se asignó</strong>, no el veredicto del comité.
+              Ej.: R7 (ruta Ric→SL) con ingreso/preingreso/calada/egreso → COMPLETOS; RS_REC con evidencia → COMPLETOS.
             </p>
             {circuitBarData.length === 0 ?
               <p className="mt-8 text-center text-sm text-slate-400">Sin datos de circuitos para este período.</p>
@@ -318,6 +704,202 @@ export function TransformEtlTab() {
                 </ResponsiveContainer>
               </div>
             }
+          </article>
+
+          {committeeCrossTab.length > 0 ?
+            <article
+              aria-label="Conciliación circuito por categoría comité"
+              className="rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50/60 via-white to-white p-4 shadow-sm"
+            >
+              <h4 className="text-[11px] font-semibold uppercase tracking-wide text-indigo-900">
+                Conciliación circuito × comité (válidos)
+              </h4>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  disabled={!circuitClassIndex.entries.length}
+                  onClick={() => downloadCommitteeChartCsv(false)}
+                  className="rounded-lg border border-indigo-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-indigo-900 shadow-sm hover:bg-indigo-50 disabled:opacity-40"
+                  title="Resúmenes para barras apiladas, torta y anomalías por recorrido"
+                >
+                  CSV gráficos
+                </button>
+                <button
+                  type="button"
+                  disabled={!circuitClassIndex.entries.length}
+                  onClick={() => downloadCommitteeChartCsv(true)}
+                  className="rounded-lg border border-indigo-300 bg-indigo-600 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-40"
+                  title="Incluye una fila JOURNEY por camión con secuencia y clasificación"
+                >
+                  CSV completo
+                </button>
+              </div>
+              <p className="mt-1 text-xs text-slate-600">
+                Solo <strong>completos</strong> y <strong>variaciones</strong> por circuito R*. Las{' '}
+                <strong>{totalAnomalies.toLocaleString()} anomalías</strong> se analizan abajo por recorrido
+                observado, sin forzarlas a un circuito preseteado.
+              </p>
+              <div className="mt-3 overflow-x-auto">
+                <table className="min-w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-indigo-100 text-[10px] uppercase tracking-wide text-slate-500">
+                      <th className="py-2 pr-3 font-semibold">Circuito</th>
+                      <th className="py-2 px-2 font-semibold text-right">Total</th>
+                      <th className="py-2 px-2 font-semibold text-right text-emerald-700">Completos</th>
+                      <th className="py-2 px-2 font-semibold text-right text-sky-700">Variaciones</th>
+                      <th className="py-2 pl-2 font-semibold">Lectura</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {committeeCrossTab.map((row) => {
+                      const toggle = (category: CommitteeCrossTabCategory | 'total') => {
+                        setExpandedCrossTab((prev) =>
+                          prev?.code === row.code && prev.category === category ? null : { code: row.code, category }
+                        )
+                      }
+                      const isOpen = (category: CommitteeCrossTabCategory | 'total') =>
+                        expandedCrossTab?.code === row.code && expandedCrossTab.category === category
+
+                      return (
+                        <Fragment key={row.code}>
+                          <tr className="border-b border-slate-100">
+                            <td className="py-2 pr-3 font-medium text-slate-800">{row.displayLabel}</td>
+                            <td className="py-2 px-2 text-right">
+                              <CrossTabCountButton
+                                count={row.total}
+                                colorClass="text-slate-800"
+                                active={isOpen('total')}
+                                onClick={() => toggle('total')}
+                              />
+                            </td>
+                            <td className="py-2 px-2 text-right">
+                              <CrossTabCountButton
+                                count={row.completos}
+                                pct={row.pctCompletos}
+                                colorClass="text-emerald-700"
+                                active={isOpen('completos')}
+                                onClick={() => toggle('completos')}
+                              />
+                            </td>
+                            <td className="py-2 px-2 text-right">
+                              <CrossTabCountButton
+                                count={row.variaciones}
+                                pct={row.pctVariaciones}
+                                colorClass="text-sky-700"
+                                active={isOpen('variaciones')}
+                                onClick={() => toggle('variaciones')}
+                              />
+                            </td>
+                            <td className="py-2 pl-2 text-slate-600">
+                              {row.code === 'R7' ?
+                                row.variaciones > 0 ?
+                                  'Ruta Ric→SL: variaciones operativas contempladas'
+                                : row.pctCompletos >= 80 ?
+                                  'Ruta Ric→SL con matriz lógica OK'
+                                : 'Revisar casos incompletos en panel anomalías'
+                              : row.code === 'RS_REC' || row.code === 'RS_DESP' ?
+                                row.pctCompletos >= 80 ?
+                                  'Inferido sólido con evidencia → completos'
+                                : 'Revisar incompletos en panel anomalías'
+                              : row.code === 'SIN_PUNTO' ?
+                                row.pctCompletos > 0 ?
+                                  'Parte con ingreso+egreso+4 evt → completos'
+                                : 'Sin patrón claro — ver anomalías por recorrido'
+                              : row.variaciones > 0 ?
+                                `Incluye ${row.variaciones.toLocaleString()} variación${row.variaciones === 1 ? '' : 'es'} operativa${row.variaciones === 1 ? '' : 's'}`
+                              : row.pctCompletos >= 90 ?
+                                'Circuito instrumentado OK'
+                              : 'Mixto — revisar casos sueltos'}
+                            </td>
+                          </tr>
+                          {expandedCrossTab?.code === row.code ?
+                            <tr className="border-b border-slate-100 bg-indigo-50/30">
+                              <td colSpan={5} className="px-2 py-2">
+                                <CommitteeCrossTabDrilldown
+                                  row={row}
+                                  category={expandedCrossTab.category}
+                                  onClose={() => setExpandedCrossTab(null)}
+                                />
+                              </td>
+                            </tr>
+                          : null}
+                        </Fragment>
+                      )
+                    })}
+                    <tr className="border-t border-indigo-200 bg-indigo-50/40 font-semibold text-slate-800">
+                      <td className="py-2 pr-3">Total válidos</td>
+                      <td className="py-2 px-2 text-right font-mono tabular-nums">{crossTabTotals.total.toLocaleString()}</td>
+                      <td className="py-2 px-2 text-right font-mono tabular-nums text-emerald-700">
+                        {crossTabTotals.completos.toLocaleString()}
+                      </td>
+                      <td className="py-2 px-2 text-right font-mono tabular-nums text-sky-700">
+                        {crossTabTotals.variaciones.toLocaleString()}
+                      </td>
+                      <td className="py-2 pl-2 text-slate-600">
+                        + {totalAnomalies.toLocaleString()} anomalías (panel abajo)
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          : null}
+
+          {totalAnomalies > 0 ?
+            <article
+              aria-label="Anomalías por recorrido observado"
+              className="rounded-2xl border border-rose-200 bg-gradient-to-br from-rose-50/60 via-white to-white p-4 shadow-sm"
+            >
+              <h4 className="text-[11px] font-semibold uppercase tracking-wide text-rose-900">
+                Anomalías por recorrido observado
+              </h4>
+              <p className="mt-1 text-xs text-slate-600">
+                Incompletos (&lt;3 eventos): solo cantidad. Anomalías (≥3 eventos): listado por recorrido con cantidad al
+                lado de cada secuencia.
+              </p>
+              <AnomalySequenceBreakdownPanel
+                summary={anomalyReview}
+                expandedSequenceKey={expandedAnomalySequence}
+                onToggleSequence={setExpandedAnomalySequence}
+              />
+            </article>
+          : null}
+
+          <article
+            aria-label="Apoyo San Lorenzo en transform"
+            className="rounded-2xl border border-teal-200 bg-gradient-to-br from-teal-50/80 via-white to-white p-4 shadow-sm"
+          >
+            <h4 className="text-[11px] font-semibold uppercase tracking-wide text-teal-800">
+              Apoyo San Lorenzo (etl_transform_v10)
+            </h4>
+            <p className="mt-1 text-xs text-slate-600">
+              Esta semana: apoyo ejecutivo SL <strong>desactivado</strong> y el circuito interno SL (S1/S5/S7 / SL1–SL7){' '}
+              <strong>no se evalúa</strong>. La ruta operativa <strong>R7</strong> (ingreso → preingreso → calada →
+              egreso → ingreso SLZ) sí se asigna y clasifica por matriz Ricardone + corroboración SL.
+            </p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+              <Metric label="Completos (comité)" value={(exec.committeeCompletos ?? 0).toLocaleString()} />
+              <Metric label="Variaciones operativas" value={(exec.committeeVariaciones ?? 0).toLocaleString()} />
+              <Metric label="Anomalías (comité)" value={(exec.committeeAnomalias ?? 0).toLocaleString()} />
+              <Metric label="Eventos frontales SL" value={(exec.slFrontEvents ?? 0).toLocaleString()} />
+              <Metric
+                label="Journeys con corroboración SL"
+                value={(exec.slJourneysWithCorroboration ?? 0).toLocaleString()}
+              />
+              <Metric
+                label="Journeys reforzados (motivo SL_*)"
+                value={(exec.slJourneysExecutiveReinforced ?? 0).toLocaleString()}
+              />
+            </div>
+            {(exec.slFrontEvents ?? 0) === 0 ?
+              <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-950">
+                No hay eventos de cámaras SL en este período. Verificá la extracción con Site ={' '}
+                <strong>Todos</strong> y que la API devuelva dispositivos{' '}
+                <span className="font-mono">SLZIngCamFrente</span>,{' '}
+                <span className="font-mono">SLZBalIngFte</span>, etc. En la consola en vivo usá{' '}
+                <strong>Ricardone + San Lorenzo</strong>.
+              </p>
+            : null}
           </article>
 
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

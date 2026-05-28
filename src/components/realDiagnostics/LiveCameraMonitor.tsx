@@ -12,6 +12,7 @@ import {
 import {
   buildLiveCameraRow,
   buildLiveDetections,
+  buildLiveFeedSectorDeviceBreakdown,
   buildLiveSectorSummary,
   filterLiveAlertsForView,
   isLprMalfunctionAlert,
@@ -29,14 +30,16 @@ import {
   entryKey,
   entryLabel,
   entrySectorCodes,
-  findLiveSectorEntry,
-  getLiveSectorEntries,
+  filterAlertsByMonitorScope,
+  filterEventsByMonitorScope,
+  findLiveSectorEntryForScope,
+  getLiveSectorEntriesForScope,
+  scopedEntryKey,
   sectorDisplayName,
+  type LiveMonitorScope,
 } from '../../services/live/liveOperationalCatalog'
 import {
   fetchLiveTruckflowFeed,
-  filterAlertsByPlant,
-  filterEventsByPlant,
   resolveLiveFetchOrigin,
 } from '../../services/live/liveTruckflowFeed'
 import { useEtlWorkbenchOptional } from '../../features/real-truckflow/etlWorkbench/EtlWorkbenchContext'
@@ -170,6 +173,7 @@ function CircuitClassBadge({ entry }: { entry: CircuitClassificationEntry }) {
 
 export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
   const { siteId } = useSite()
+  const [monitorScope, setMonitorScope] = useState<LiveMonitorScope>('all')
   const [timeMode, setTimeMode] = useState<LiveTimeMode>('rolling_hour')
   const [calendarDay, setCalendarDay] = useState(() => {
     const d = new Date()
@@ -281,8 +285,8 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
     return () => window.clearInterval(id)
   }, [autoRefresh, refresh, timeMode])
 
-  const plantEvents = useMemo(() => filterEventsByPlant(events, siteId), [events, siteId])
-  const plantAlerts = useMemo(() => filterAlertsByPlant(alerts, siteId), [alerts, siteId])
+  const plantEvents = useMemo(() => filterEventsByMonitorScope(events, monitorScope), [events, monitorScope])
+  const plantAlerts = useMemo(() => filterAlertsByMonitorScope(alerts, monitorScope), [alerts, monitorScope])
   const plantAlertsForView = useMemo(
     () => filterLiveAlertsForView(plantAlerts, hideLprMalfunction),
     [plantAlerts, hideLprMalfunction]
@@ -292,21 +296,41 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
     [plantAlerts]
   )
 
-  const sectorEntries = useMemo(() => getLiveSectorEntries(siteId), [siteId])
+  const apiFeedBreakdown = useMemo(
+    () => buildLiveFeedSectorDeviceBreakdown(plantEvents, plantAlerts),
+    [plantEvents, plantAlerts]
+  )
+  const slApiFeedBreakdown = useMemo(
+    () =>
+      apiFeedBreakdown.filter(
+        (r) =>
+          r.sectorCode.startsWith('PUERTO_SAN_LORENZO_') ||
+          r.deviceCode.startsWith('SLZ') ||
+          r.deviceCode.toLowerCase().startsWith('slz')
+      ),
+    [apiFeedBreakdown]
+  )
+
+  const sectorRows = useMemo(() => getLiveSectorEntriesForScope(monitorScope), [monitorScope])
 
   const sectorsAgg = useMemo(
     () =>
-      sectorEntries.map((entry) =>
-        buildLiveSectorSummary(
-          entryKey(entry),
-          entryLabel(entry),
+      sectorRows.map(({ plant, entry }) => {
+        const key = scopedEntryKey(monitorScope, entry, plant)
+        const label =
+          monitorScope === 'all' ?
+            `${plant === 'san_lorenzo' ? 'SL' : 'Ric'} · ${entryLabel(entry)}`
+          : entryLabel(entry)
+        return buildLiveSectorSummary(
+          key,
+          label,
           entrySectorCodes(entry),
           entryDevices(entry),
           plantEvents,
           plantAlertsForView
         )
-      ),
-    [sectorEntries, plantEvents, plantAlertsForView]
+      }),
+    [sectorRows, monitorScope, plantEvents, plantAlertsForView]
   )
 
   useEffect(() => {
@@ -315,10 +339,12 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
     setSelectedSectorKey(sectorsAgg[0]!.key)
   }, [sectorsAgg, selectedSectorKey])
 
-  const selectedEntry = useMemo(
-    () => (selectedSectorKey ? findLiveSectorEntry(siteId, selectedSectorKey) : undefined),
-    [selectedSectorKey, siteId]
+  const selectedRow = useMemo(
+    () => (selectedSectorKey ? findLiveSectorEntryForScope(monitorScope, selectedSectorKey) : undefined),
+    [selectedSectorKey, monitorScope]
   )
+
+  const selectedEntry = selectedRow?.entry
 
   const selectedSectorCodes = useMemo(
     () => (selectedEntry ? entrySectorCodes(selectedEntry) : []),
@@ -606,6 +632,8 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
           <p className="mt-1 max-w-2xl text-xs text-slate-400">
             API · <span className="font-mono text-cyan-200/80">{apiOriginLabel}</span>
             {rangeLabel ? <> · Ventana <span className="text-slate-300">{rangeLabel}</span></> : null}
+            {' · '}
+            Planta global: <span className="text-slate-300">{siteId === 'san_lorenzo' ? 'San Lorenzo' : siteId === 'avellaneda' ? 'Avellaneda' : 'Ricardone'}</span>
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -621,6 +649,22 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
 
       <div className="border-b border-slate-800/80 bg-[#0c1222] px-4 py-3 sm:px-6">
         <div className="flex flex-wrap items-end gap-2 sm:gap-3">
+          <div className="min-w-[160px]">
+            <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Planta en consola</label>
+            <select
+              value={monitorScope}
+              onChange={(e) => {
+                setMonitorScope(e.target.value as LiveMonitorScope)
+                setSelectedSectorKey(null)
+                setSelectedDeviceCode(null)
+              }}
+              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 text-[11px] font-semibold text-slate-100"
+            >
+              <option value="all">Ricardone + San Lorenzo</option>
+              <option value="ricardone">Solo Ricardone</option>
+              <option value="san_lorenzo">Solo San Lorenzo</option>
+            </select>
+          </div>
           <div className="min-w-[200px]">
             <label className="mb-1 block text-[9px] font-medium uppercase tracking-wide text-slate-500">Vista temporal</label>
             <div className="flex rounded-lg border border-slate-700 bg-slate-950 p-0.5">
@@ -985,6 +1029,82 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
           </div>
         </main>
       </div>
+
+      <details className="border-t border-slate-800 bg-[#0a1020] px-4 py-3 sm:px-6">
+        <summary className="cursor-pointer text-[11px] font-bold uppercase tracking-wide text-teal-300/90">
+          Diagnóstico API · sectorCode · deviceCode (Truckflow crudo)
+        </summary>
+        <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
+          Conteo de la ventana actual según lo que devolvió{' '}
+          <span className="font-mono text-slate-300">/journey-event/list</span> y{' '}
+          <span className="font-mono text-slate-300">/alert/list</span>, antes de agrupar por catálogo.
+          Si acá solo aparece ingreso SL, el origen es Truckflow — no un filtro del dashboard.
+        </p>
+        <div className="mt-3 grid gap-3 lg:grid-cols-2">
+          <div>
+            <p className="mb-2 text-[10px] font-semibold uppercase text-slate-500">
+              San Lorenzo ({slApiFeedBreakdown.length} pares)
+            </p>
+            {slApiFeedBreakdown.length === 0 ?
+              <p className="rounded-lg border border-dashed border-slate-700 px-3 py-4 text-xs text-slate-500">
+                Sin filas SL en esta ventana.
+              </p>
+            : <div className="max-h-48 overflow-auto rounded-lg border border-slate-800">
+                <table className="min-w-full text-left text-[10px]">
+                  <thead className="sticky top-0 bg-[#0a1020] text-[9px] uppercase text-slate-500">
+                    <tr>
+                      <th className="px-2 py-1.5">sectorCode</th>
+                      <th className="px-2 py-1.5">deviceCode</th>
+                      <th className="px-2 py-1.5 text-right">E</th>
+                      <th className="px-2 py-1.5 text-right">A</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {slApiFeedBreakdown.map((r) => (
+                      <tr key={`${r.sectorCode}-${r.deviceCode}`} className="border-t border-slate-800/80">
+                        <td className="px-2 py-1 font-mono text-cyan-100/90">{r.sectorCode}</td>
+                        <td className="px-2 py-1 font-mono text-slate-300">{r.deviceCode}</td>
+                        <td className="px-2 py-1 text-right tabular-nums text-emerald-300">{r.eventCount}</td>
+                        <td className="px-2 py-1 text-right tabular-nums text-amber-200">{r.alertCount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+          <div>
+            <p className="mb-2 text-[10px] font-semibold uppercase text-slate-500">
+              Toda la planta en consola ({apiFeedBreakdown.length} pares · E {plantEvents.length} · A {plantAlerts.length})
+            </p>
+            <div className="max-h-48 overflow-auto rounded-lg border border-slate-800">
+              <table className="min-w-full text-left text-[10px]">
+                <thead className="sticky top-0 bg-[#0a1020] text-[9px] uppercase text-slate-500">
+                  <tr>
+                    <th className="px-2 py-1.5">sectorCode</th>
+                    <th className="px-2 py-1.5">deviceCode</th>
+                    <th className="px-2 py-1.5 text-right">E</th>
+                    <th className="px-2 py-1.5 text-right">A</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {apiFeedBreakdown.slice(0, 40).map((r) => (
+                    <tr key={`all-${r.sectorCode}-${r.deviceCode}`} className="border-t border-slate-800/80">
+                      <td className="px-2 py-1 font-mono text-slate-400">{r.sectorCode}</td>
+                      <td className="px-2 py-1 font-mono text-slate-500">{r.deviceCode}</td>
+                      <td className="px-2 py-1 text-right tabular-nums text-slate-300">{r.eventCount}</td>
+                      <td className="px-2 py-1 text-right tabular-nums text-slate-400">{r.alertCount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {apiFeedBreakdown.length > 40 ?
+              <p className="mt-1 text-[10px] text-slate-600">Mostrando top 40 de {apiFeedBreakdown.length} pares.</p>
+            : null}
+          </div>
+        </div>
+      </details>
     </section>
   )
 })

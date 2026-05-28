@@ -91,6 +91,7 @@ describe('powerBiLoad', () => {
     })
     expect(out.files.circuit_summary).toContain('valid_journeys')
     expect(out.files.circuit_summary).toContain('probable_journeys')
-    expect(out.files.circuit_summary).toContain('4,2,0,0,1,1,1,1,0,0,1,1')
+    expect(out.files.circuit_summary).toContain('committee_completos')
+    expect(out.files.circuit_summary).toContain('4,2,0,2,2,0,0,1,1,1,1,0,0,1,1')
   })
 })

@@ -1,3 +1,4 @@
+import { recordsToCsv } from './etlCsv'
 import { parseCsvToRecords } from './etlCsvParse'
 import {
   EXECUTIVE_CIRCUIT_MATRIX,
@@ -28,6 +29,11 @@ export type CircuitClassificationEntry = {
   matrixFinalStatus: string
   executiveStatus: string
   validDetail: string
+  committeeGroup: string
+  committeeReason: string
+  operationalVariationType: string
+  detectedSequence: string
+  executiveReason: string
   pieSliceLabel: string
   usefulEventsCount: number
   executiveBucket: string
@@ -48,6 +54,110 @@ export type ExecutiveCircuitBarSlice = {
   count: number
 }
 
+export type CommitteeCrossTabCategory = 'completos' | 'variaciones' | 'anomalias'
+
+export type CommitteeCircuitCrossTabRow = {
+  code: string
+  label: string
+  displayLabel: string
+  /** Solo completos + variaciones (anomalías van al panel por recorrido). */
+  total: number
+  completos: number
+  variaciones: number
+  anomalias: number
+  pctCompletos: number
+  pctVariaciones: number
+  pctAnomalias: number
+  trucksCompletos: CircuitClassificationEntry[]
+  trucksVariaciones: CircuitClassificationEntry[]
+  trucksAnomalias: CircuitClassificationEntry[]
+}
+
+export type AnomalyReasonCount = { reason: string; count: number }
+
+/** Mínimo de eventos útiles para listar un journey en el panel de anomalías por recorrido. */
+export const ANOMALY_LIST_MIN_EVENTS = 3
+
+export type AnomalyReviewSummary = {
+  /** Journeys comité ANOMALÍAS con menos de 3 eventos — solo contador, sin listado. */
+  incompleteCount: number
+  /** Journeys anómalos listables (≥3 eventos) agrupados por secuencia. */
+  sequenceRows: AnomalySequenceBreakdownRow[]
+  /** Total de journeys en sequenceRows. */
+  listedAnomalyCount: number
+}
+
+/** Anomalías agrupadas por secuencia lógica observada (independiente del circuito R* asignado). */
+export type AnomalySequenceBreakdownRow = {
+  sequenceKey: string
+  displaySequence: string
+  count: number
+  pctOfAnomalies: number
+  eventCount: number
+  topCommitteeReason: string
+  reasonCounts: AnomalyReasonCount[]
+  trucks: CircuitClassificationEntry[]
+}
+
+export const ANOMALY_SEQUENCE_CSV_HEADERS = [
+  'sequence_key',
+  'detected_sequence',
+  'count',
+  'pct_of_anomalies',
+  'event_count',
+  'top_committee_reason',
+  'committee_reasons_breakdown',
+] as const
+
+/** Export unificado comité + circuitos + anomalías (filtrar por record_type en Excel / Power BI). */
+export const COMMITTEE_CHART_EXPORT_HEADERS = [
+  'record_type',
+  'executive_circuit_code',
+  'executive_circuit_label',
+  'display_label',
+  'committee_group',
+  'committee_category',
+  'journey_id',
+  'plate',
+  'detected_sequence',
+  'count',
+  'pct',
+  'pct_completos',
+  'pct_variaciones',
+  'pct_of_anomalies',
+  'useful_events_count',
+  'committee_reason',
+  'operational_variation_type',
+  'matrix_final_status',
+  'executive_status',
+  'executive_reason',
+  'matrix_reason',
+  'top_committee_reason',
+  'committee_reasons_breakdown',
+  'event_count',
+] as const
+
+export type CommitteeChartExportOptions = {
+  /** Incluir una fila JOURNEY por camión (archivo más grande). Default true. */
+  includeJourneyRows?: boolean
+}
+
+export const COMMITTEE_DRILLDOWN_CSV_HEADERS = [
+  'journey_id',
+  'plate',
+  'executive_circuit_code',
+  'executive_circuit_label',
+  'committee_group',
+  'committee_reason',
+  'operational_variation_type',
+  'detected_sequence',
+  'matrix_final_status',
+  'executive_status',
+  'executive_reason',
+  'matrix_reason',
+  'useful_events_count',
+] as const
+
 export type CircuitClassificationIndex = {
   entries: CircuitClassificationEntry[]
   byJourneyId: Map<string, CircuitClassificationEntry>
@@ -60,6 +170,9 @@ export type CircuitClassificationIndex = {
 
 export function classificationOrder(label: string): number {
   const u = String(label ?? '').toUpperCase().trim()
+  if (u === 'COMPLETOS') return 10
+  if (u === 'VARIACIONES OPERATIVAS') return 20
+  if (u === 'ANOMALÍAS' || u === 'ANOMALIAS') return 30
   if (u === 'VALIDO') return 10
   if (u === 'PROBABLE') return 20
   if (u.startsWith('INCOMPLETO')) {
@@ -73,11 +186,27 @@ export function classificationOrder(label: string): number {
 }
 
 export function pieSliceLabelFromMatrixRow(row: Record<string, string>): string {
+  const committeeGroup = String(row.committee_group ?? '').trim().toUpperCase()
+  if (committeeGroup === 'COMPLETOS') return 'COMPLETOS'
+  if (committeeGroup === 'VARIACIONES_OPERATIVAS') return 'VARIACIONES OPERATIVAS'
+  if (committeeGroup === 'ANOMALIAS') return 'ANOMALÍAS'
+
   const executiveStatus = String(row.executive_status ?? '').trim().toUpperCase()
-  if (executiveStatus === 'VALIDO' || executiveStatus === 'PROBABLE' || executiveStatus === 'INCOMPLETO' || executiveStatus === 'ANOMALO' || executiveStatus === 'NO_EVALUABLE') {
+  const matrixStatus = String(row.matrix_final_status ?? '').trim().toUpperCase()
+  const validDetail = String(row.valid_detail ?? '').trim().toUpperCase()
+  if (
+    matrixStatus === 'COMPLETO' ||
+    matrixStatus === 'DEDUCIDO' ||
+    executiveStatus === 'VALIDO' ||
+    validDetail === 'COMPLETO' ||
+    validDetail === 'DEDUCIDO'
+  ) {
+    return 'COMPLETOS'
+  }
+
+  if (executiveStatus === 'PROBABLE' || executiveStatus === 'INCOMPLETO' || executiveStatus === 'ANOMALO' || executiveStatus === 'NO_EVALUABLE') {
     return executiveStatus
   }
-  const matrixStatus = String(row.matrix_final_status ?? '').trim().toUpperCase()
   const usefulN = Number(String(row.useful_events_count ?? '').trim())
   if (matrixStatus === 'INCOMPLETO') {
     return Number.isFinite(usefulN) ? `INCOMPLETO (${usefulN} eventos)` : 'INCOMPLETO'
@@ -129,6 +258,11 @@ function rowToEntry(row: Record<string, string>, color: string): CircuitClassifi
     matrixFinalStatus: String(row.matrix_final_status ?? '').trim().toUpperCase(),
     executiveStatus: String(row.executive_status ?? '').trim().toUpperCase(),
     validDetail: String(row.valid_detail ?? '').trim().toUpperCase(),
+    committeeGroup: String(row.committee_group ?? '').trim().toUpperCase(),
+    committeeReason: String(row.committee_reason ?? '').trim(),
+    operationalVariationType: String(row.operational_variation_type ?? '').trim(),
+    detectedSequence: String(row.detected_sequence ?? '').trim(),
+    executiveReason: String(row.executive_reason ?? '').trim(),
     pieSliceLabel,
     usefulEventsCount: Number(String(row.useful_events_count ?? '').trim()) || 0,
     executiveBucket: String(row.executive_bucket ?? '').trim().toUpperCase(),
@@ -170,6 +304,410 @@ export function buildExecutiveCircuitBarSlices(
   }
 
   return slices
+}
+
+export function committeeCategoryFromEntry(entry: CircuitClassificationEntry): CommitteeCrossTabCategory {
+  const g = entry.committeeGroup || entry.pieSliceLabel.toUpperCase()
+  if (g === 'COMPLETOS') return 'completos'
+  if (g === 'VARIACIONES_OPERATIVAS' || g === 'VARIACIONES OPERATIVAS') return 'variaciones'
+  return 'anomalias'
+}
+
+export function trucksForCommitteeCrossTabCell(
+  row: CommitteeCircuitCrossTabRow,
+  category: CommitteeCrossTabCategory | 'total'
+): CircuitClassificationEntry[] {
+  if (category === 'completos') return row.trucksCompletos
+  if (category === 'variaciones') return row.trucksVariaciones
+  if (category === 'anomalias') return row.trucksAnomalias
+  return [...row.trucksCompletos, ...row.trucksVariaciones, ...row.trucksAnomalias]
+}
+
+export function committeeDrilldownCsv(entries: CircuitClassificationEntry[]): string {
+  if (!entries.length) {
+    return `${COMMITTEE_DRILLDOWN_CSV_HEADERS.join(',')}\n`
+  }
+  const rows = entries.map((e) => ({
+    journey_id: e.journeyId,
+    plate: e.plate,
+    executive_circuit_code: e.executiveCircuitCode,
+    executive_circuit_label: e.executiveCircuitLabel,
+    committee_group: e.committeeGroup,
+    committee_reason: e.committeeReason,
+    operational_variation_type: e.operationalVariationType,
+    detected_sequence: e.detectedSequence,
+    matrix_final_status: e.matrixFinalStatus,
+    executive_status: e.executiveStatus,
+    executive_reason: e.executiveReason,
+    matrix_reason: e.matrixReason,
+    useful_events_count: e.usefulEventsCount,
+  }))
+  return recordsToCsv([...COMMITTEE_DRILLDOWN_CSV_HEADERS], rows)
+}
+
+function sortDrilldownEntries(list: CircuitClassificationEntry[]): CircuitClassificationEntry[] {
+  return [...list].sort(
+    (a, b) =>
+      a.plate.localeCompare(b.plate) ||
+      a.committeeReason.localeCompare(b.committeeReason) ||
+      a.journeyId.localeCompare(b.journeyId)
+  )
+}
+
+const ANOMALY_SEQUENCE_EMPTY = '(SIN_SECUENCIA_DETECTADA)'
+
+/** Clave estable para agrupar recorridos anómalos. */
+export function normalizeAnomalySequenceKey(detectedSequence: string): string {
+  const raw = String(detectedSequence ?? '').trim()
+  if (!raw) return ANOMALY_SEQUENCE_EMPTY
+  return raw
+    .split(/>|→|,|\|/g)
+    .map((t) => t.trim().toUpperCase())
+    .filter(Boolean)
+    .join('>')
+}
+
+function displaySequenceFromKey(sequenceKey: string): string {
+  return sequenceKey === ANOMALY_SEQUENCE_EMPTY ? '— sin secuencia —' : sequenceKey
+}
+
+function countReasons(trucks: CircuitClassificationEntry[]): AnomalyReasonCount[] {
+  const m = new Map<string, number>()
+  for (const t of trucks) {
+    const r = t.committeeReason.trim() || '(sin motivo)'
+    m.set(r, (m.get(r) ?? 0) + 1)
+  }
+  return [...m.entries()]
+    .map(([reason, count]) => ({ reason, count }))
+    .sort((a, b) => b.count - a.count || a.reason.localeCompare(b.reason))
+}
+
+/** Agrupa journeys anómalos listables (≥ minEvents) por recorrido observado. */
+export function buildAnomalySequenceBreakdown(
+  entries: CircuitClassificationEntry[],
+  minEvents = ANOMALY_LIST_MIN_EVENTS
+): AnomalySequenceBreakdownRow[] {
+  const anomalies = entries.filter(
+    (e) => committeeCategoryFromEntry(e) === 'anomalias' && e.usefulEventsCount >= minEvents
+  )
+  const total = anomalies.length
+  if (total <= 0) return []
+
+  const bySeq = new Map<string, CircuitClassificationEntry[]>()
+  for (const entry of anomalies) {
+    const key = normalizeAnomalySequenceKey(entry.detectedSequence)
+    const list = bySeq.get(key) ?? []
+    list.push(entry)
+    bySeq.set(key, list)
+  }
+
+  const rows: AnomalySequenceBreakdownRow[] = []
+  for (const [sequenceKey, trucks] of bySeq) {
+    const sorted = sortDrilldownEntries(trucks)
+    const reasonCounts = countReasons(sorted)
+    rows.push({
+      sequenceKey,
+      displaySequence: displaySequenceFromKey(sequenceKey),
+      count: sorted.length,
+      pctOfAnomalies: Math.round((sorted.length / total) * 1000) / 10,
+      eventCount: sequenceKey === ANOMALY_SEQUENCE_EMPTY ? 0 : sequenceKey.split('>').length,
+      topCommitteeReason: reasonCounts[0]?.reason ?? '',
+      reasonCounts,
+      trucks: sorted,
+    })
+  }
+
+  return rows.sort(
+    (a, b) => b.count - a.count || a.displaySequence.localeCompare(b.displaySequence)
+  )
+}
+
+/** Separa anomalías en incompletos (&lt;3 evt, solo contador) y listado por recorrido (≥3 evt). */
+export function buildAnomalyReviewSummary(entries: CircuitClassificationEntry[]): AnomalyReviewSummary {
+  const anomalies = entries.filter((e) => committeeCategoryFromEntry(e) === 'anomalias')
+  const incompleteCount = anomalies.filter((e) => e.usefulEventsCount < ANOMALY_LIST_MIN_EVENTS).length
+  const sequenceRows = buildAnomalySequenceBreakdown(entries, ANOMALY_LIST_MIN_EVENTS)
+  const listedAnomalyCount = sequenceRows.reduce((acc, r) => acc + r.count, 0)
+  return { incompleteCount, sequenceRows, listedAnomalyCount }
+}
+
+export function anomalySequenceSummaryCsv(rows: AnomalySequenceBreakdownRow[]): string {
+  if (!rows.length) return `${ANOMALY_SEQUENCE_CSV_HEADERS.join(',')}\n`
+  const csvRows = rows.map((r) => ({
+    sequence_key: r.sequenceKey,
+    detected_sequence: r.displaySequence,
+    count: r.count,
+    pct_of_anomalies: r.pctOfAnomalies,
+    event_count: r.eventCount,
+    top_committee_reason: r.topCommitteeReason,
+    committee_reasons_breakdown: r.reasonCounts.map((x) => `${x.reason}:${x.count}`).join(' | '),
+  }))
+  return recordsToCsv([...ANOMALY_SEQUENCE_CSV_HEADERS], csvRows)
+}
+
+function emptyChartRow(recordType: string): Record<string, string | number> {
+  return {
+    record_type: recordType,
+    executive_circuit_code: '',
+    executive_circuit_label: '',
+    display_label: '',
+    committee_group: '',
+    committee_category: '',
+    journey_id: '',
+    plate: '',
+    detected_sequence: '',
+    count: '',
+    pct: '',
+    pct_completos: '',
+    pct_variaciones: '',
+    pct_of_anomalies: '',
+    useful_events_count: '',
+    committee_reason: '',
+    operational_variation_type: '',
+    matrix_final_status: '',
+    executive_status: '',
+    executive_reason: '',
+    matrix_reason: '',
+    top_committee_reason: '',
+    committee_reasons_breakdown: '',
+    event_count: '',
+  }
+}
+
+/**
+ * CSV único para gráficos de barras / torta / anomalías — mismo contenido que la UI de conciliación.
+ * record_type: CIRCUITO_COMITE | CIRCUITO_COMITE_CELDA | TOTAL_VALIDOS | COMITE_RESUMEN |
+ * CIRCUITO_BARRA | ANOMALIA_INCOMPLETOS | ANOMALIA_RECORRIDO | JOURNEY
+ */
+export function committeeChartExportCsv(
+  input: {
+    entries: CircuitClassificationEntry[]
+    crossTab: CommitteeCircuitCrossTabRow[]
+    crossTabTotals: { total: number; completos: number; variaciones: number }
+    anomalyReview: AnomalyReviewSummary
+    circuitBarSlices: ExecutiveCircuitBarSlice[]
+  },
+  options: CommitteeChartExportOptions = {}
+): string {
+  const includeJourneyRows = options.includeJourneyRows !== false
+  const rows: Record<string, string | number>[] = []
+  const grandTotal =
+    input.crossTabTotals.total +
+    input.anomalyReview.incompleteCount +
+    input.anomalyReview.listedAnomalyCount
+
+  for (const r of input.crossTab) {
+    rows.push({
+      ...emptyChartRow('CIRCUITO_COMITE'),
+      executive_circuit_code: r.code,
+      executive_circuit_label: r.label,
+      display_label: r.displayLabel,
+      count: r.total,
+      pct_completos: r.pctCompletos,
+      pct_variaciones: r.pctVariaciones,
+    })
+    if (r.completos > 0) {
+      rows.push({
+        ...emptyChartRow('CIRCUITO_COMITE_CELDA'),
+        executive_circuit_code: r.code,
+        executive_circuit_label: r.label,
+        display_label: r.displayLabel,
+        committee_category: 'completos',
+        count: r.completos,
+        pct: r.pctCompletos,
+      })
+    }
+    if (r.variaciones > 0) {
+      rows.push({
+        ...emptyChartRow('CIRCUITO_COMITE_CELDA'),
+        executive_circuit_code: r.code,
+        executive_circuit_label: r.label,
+        display_label: r.displayLabel,
+        committee_category: 'variaciones',
+        count: r.variaciones,
+        pct: r.pctVariaciones,
+      })
+    }
+  }
+
+  rows.push({
+    ...emptyChartRow('TOTAL_VALIDOS'),
+    display_label: 'Total válidos (completos + variaciones)',
+    count: input.crossTabTotals.total,
+    pct_completos:
+      input.crossTabTotals.total > 0 ?
+        Math.round((input.crossTabTotals.completos / input.crossTabTotals.total) * 1000) / 10
+      : 0,
+    pct_variaciones:
+      input.crossTabTotals.total > 0 ?
+        Math.round((input.crossTabTotals.variaciones / input.crossTabTotals.total) * 1000) / 10
+      : 0,
+  })
+
+  const pushResumen = (category: string, count: number) => {
+    if (count <= 0) return
+    rows.push({
+      ...emptyChartRow('COMITE_RESUMEN'),
+      committee_category: category,
+      count,
+      pct: grandTotal > 0 ? Math.round((count / grandTotal) * 1000) / 10 : 0,
+    })
+  }
+  pushResumen('completos', input.crossTabTotals.completos)
+  pushResumen('variaciones', input.crossTabTotals.variaciones)
+  pushResumen('anomalias_listadas', input.anomalyReview.listedAnomalyCount)
+  pushResumen('anomalias_incompletos', input.anomalyReview.incompleteCount)
+
+  for (const slice of input.circuitBarSlices) {
+    rows.push({
+      ...emptyChartRow('CIRCUITO_BARRA'),
+      executive_circuit_code: slice.code,
+      executive_circuit_label: slice.label,
+      display_label: slice.displayLabel,
+      count: slice.count,
+      pct: input.entries.length > 0 ? Math.round((slice.count / input.entries.length) * 1000) / 10 : 0,
+    })
+  }
+
+  if (input.anomalyReview.incompleteCount > 0) {
+    rows.push({
+      ...emptyChartRow('ANOMALIA_INCOMPLETOS'),
+      display_label: `Incompletos (<${ANOMALY_LIST_MIN_EVENTS} eventos)`,
+      count: input.anomalyReview.incompleteCount,
+      pct:
+        grandTotal > 0 ?
+          Math.round((input.anomalyReview.incompleteCount / grandTotal) * 1000) / 10
+        : 0,
+    })
+  }
+
+  for (const ar of input.anomalyReview.sequenceRows) {
+    rows.push({
+      ...emptyChartRow('ANOMALIA_RECORRIDO'),
+      detected_sequence: ar.displaySequence,
+      count: ar.count,
+      pct_of_anomalies: ar.pctOfAnomalies,
+      event_count: ar.eventCount,
+      top_committee_reason: ar.topCommitteeReason,
+      committee_reasons_breakdown: ar.reasonCounts.map((x) => `${x.reason}:${x.count}`).join(' | '),
+    })
+  }
+
+  if (includeJourneyRows) {
+    for (const e of input.entries) {
+      rows.push({
+        ...emptyChartRow('JOURNEY'),
+        executive_circuit_code: e.executiveCircuitCode,
+        executive_circuit_label: e.executiveCircuitLabel,
+        display_label: e.executiveCircuitDisplay,
+        committee_group: e.committeeGroup,
+        committee_category: committeeCategoryFromEntry(e),
+        journey_id: e.journeyId,
+        plate: e.plate,
+        detected_sequence: e.detectedSequence,
+        count: 1,
+        useful_events_count: e.usefulEventsCount,
+        committee_reason: e.committeeReason,
+        operational_variation_type: e.operationalVariationType,
+        matrix_final_status: e.matrixFinalStatus,
+        executive_status: e.executiveStatus,
+        executive_reason: e.executiveReason,
+        matrix_reason: e.matrixReason,
+        event_count: e.detectedSequence ? e.detectedSequence.split('>').length : 0,
+      })
+    }
+  }
+
+  return recordsToCsv([...COMMITTEE_CHART_EXPORT_HEADERS], rows)
+}
+
+/** Cruce circuito ejecutivo × categoría comité — reconcilia torta vs barras. */
+export function buildCommitteeCircuitCrossTab(
+  entries: CircuitClassificationEntry[]
+): CommitteeCircuitCrossTabRow[] {
+  const byCode = new Map<
+    string,
+    {
+      completos: number
+      variaciones: number
+      anomalias: number
+      label: string
+      trucksCompletos: CircuitClassificationEntry[]
+      trucksVariaciones: CircuitClassificationEntry[]
+      trucksAnomalias: CircuitClassificationEntry[]
+    }
+  >()
+
+  for (const entry of entries) {
+    const code = entry.executiveCircuitCode || 'SIN_ASIGNAR'
+    const bucket = byCode.get(code) ?? {
+      completos: 0,
+      variaciones: 0,
+      anomalias: 0,
+      label: entry.executiveCircuitLabel || code,
+      trucksCompletos: [],
+      trucksVariaciones: [],
+      trucksAnomalias: [],
+    }
+    const category = committeeCategoryFromEntry(entry)
+    if (category === 'completos') {
+      bucket.completos++
+      bucket.trucksCompletos.push(entry)
+    } else if (category === 'variaciones') {
+      bucket.variaciones++
+      bucket.trucksVariaciones.push(entry)
+    }
+    // Anomalías: no se asignan a filas de circuito (ver buildAnomalySequenceBreakdown).
+    byCode.set(code, bucket)
+  }
+
+  const rows: CommitteeCircuitCrossTabRow[] = []
+  const emit = (
+    code: string,
+    data: {
+      completos: number
+      variaciones: number
+      anomalias: number
+      label: string
+      trucksCompletos: CircuitClassificationEntry[]
+      trucksVariaciones: CircuitClassificationEntry[]
+      trucksAnomalias: CircuitClassificationEntry[]
+    }
+  ) => {
+    const total = data.completos + data.variaciones
+    if (total <= 0) return
+    const cfg = EXECUTIVE_CIRCUIT_MATRIX[code]
+    const label = cfg?.label ?? data.label ?? code
+    rows.push({
+      code,
+      label,
+      displayLabel: formatExecutiveCircuitLabel(code, label),
+      total,
+      completos: data.completos,
+      variaciones: data.variaciones,
+      anomalias: 0,
+      pctCompletos: Math.round((data.completos / total) * 1000) / 10,
+      pctVariaciones: Math.round((data.variaciones / total) * 1000) / 10,
+      pctAnomalias: 0,
+      trucksCompletos: sortDrilldownEntries(data.trucksCompletos),
+      trucksVariaciones: sortDrilldownEntries(data.trucksVariaciones),
+      trucksAnomalias: [],
+    })
+  }
+
+  for (const code of EXECUTIVE_CIRCUIT_ORDER) {
+    const data = byCode.get(code)
+    if (data) emit(code, data)
+  }
+  const unassigned = byCode.get('SIN_ASIGNAR')
+  if (unassigned) emit('SIN_ASIGNAR', unassigned)
+
+  for (const [code, data] of byCode) {
+    if (code === 'SIN_ASIGNAR' || (EXECUTIVE_CIRCUIT_ORDER as readonly string[]).includes(code)) continue
+    emit(code, data)
+  }
+
+  return rows.sort((a, b) => b.total - a.total)
 }
 
 export function buildCircuitClassificationIndex(

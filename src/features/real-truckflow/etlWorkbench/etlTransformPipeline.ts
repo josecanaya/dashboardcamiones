@@ -24,16 +24,28 @@ import {
   journeyHasStrongDefiningPoint,
   journeySequenceCoherent,
   isExecutiveSequenceConfigured,
+  isRicSanLorenzoRouteCircuit,
   journeyHasLiquidStrongPoint,
   resolveExecutiveBucket,
   resolveExecutiveCircuitConfigForJourney,
   resolveExecutiveCircuitDecision,
   resolveProbableSolidExecutiveDecision,
+  journeyMeetsDeducedEvidenceThreshold,
+  journeyHasDeducedStrongEvidence,
   resolveFinalStatus,
   resolveOperationalEntry,
   resolveOperationalExit,
 } from './finalCircuitScoring'
-import { applyExecutiveJourneyMerges } from './etlJourneyMerge'
+import { applySanLorenzoExecutiveSupport, ETL_SL_EXECUTIVE_SUPPORT_ENABLED, ETL_SL_INTERNAL_CLASSIFICATION_ENABLED, snapshotSanLorenzoSupport } from './etlSanLorenzoSupport'
+import { journeyHasSlIngresoEvidence, journeyIsRicSanLorenzoRouteEvidence } from './etlRicSanLorenzoRoute'
+import { resolveCommitteeClassification } from './committeeClassification'
+import { lookupSanLorenzoCameraByDevice } from '../../../data/sanLorenzoCameraCatalog'
+import {
+  applyExecutiveJourneyMerges,
+  EXECUTIVE_MERGE_AUTO_GAP_MINUTES,
+  EXECUTIVE_MERGE_CANDIDATE_MAX_GAP_MINUTES,
+  EXECUTIVE_MERGE_OCR_AUTO_SIM,
+} from './etlJourneyMerge'
 import { normalizePlateStrict, plateSimilarityScore } from '../../../services/circuitPlateOcr'
 import {
   accumulateOperationalAlertsMatch,
@@ -45,7 +57,7 @@ import {
   type JourneyOperationalAlertSummary,
 } from './etlOperationalAlertMatch'
 
-export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v7'
+export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v10'
 export type { FinalCircuitStatus } from './finalCircuitScoring'
 export { finalStatusLabel } from './finalCircuitScoring'
 
@@ -102,8 +114,6 @@ function isIngresoFrontalReferenceEvent(e: RealJourneyEventDto): boolean {
     normDeviceOrSector(e.sectorCode) === INGRESO_FRONT_REFERENCE_SECTOR_NORM
 }
 
-/** Ventana máxima entre journeys para candidatos merge (minutos). */
-const MERGE_CANDIDATE_MAX_GAP_MINUTES = 120
 const MERGE_SIMILAR_THRESHOLD = 0.8
 const MERGE_TOP_LIMIT = 500
 const LPR_MERGE_MODE = 'medium' as const
@@ -471,6 +481,12 @@ export type EtlTransformOutput = {
       incompletosWithOperationalAlert: number
       anomalosWithOperationalAlert: number
       exportReady: boolean
+      slFrontEvents: number
+      slJourneysWithCorroboration: number
+      slJourneysExecutiveReinforced: number
+      committeeCompletos: number
+      committeeVariaciones: number
+      committeeAnomalias: number
     }
   }
   rulesVersion: string
@@ -508,6 +524,12 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
 
   const allEv = inp.events.length
   const pctExcluded = allEv <= 0 ? 0 : Math.round((rearEv.length / allEv) * 1000) / 10
+
+  let slFrontEventsCount = 0
+  for (const e of frontEv) {
+    const dev = lookupSanLorenzoCameraByDevice(String(e.deviceCode ?? '').trim())
+    if (dev?.installed !== false && !dev?.rearExcluded) slFrontEventsCount++
+  }
 
   const eventCols = [
     'id',
@@ -956,6 +978,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     match_type: MatchTypeMerge
     should_review: boolean
     priority: 'alta' | 'media' | 'baja'
+    plateSimilarity: number
   }
 
   function journeyGapMinutes(a: ReconstructedRealJourney, b: ReconstructedRealJourney): number {
@@ -995,7 +1018,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       const ja = list[i]
       const jb = list[j]
       const gapMin = journeyGapMinutes(ja, jb)
-      if (gapMin > MERGE_CANDIDATE_MAX_GAP_MINUTES) continue
+      if (gapMin > EXECUTIVE_MERGE_CANDIDATE_MAX_GAP_MINUTES) continue
 
       const pa = ja.normalizedPlate || ''
       const pb = jb.normalizedPlate || ''
@@ -1018,14 +1041,27 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       else match_type = 'similar_plate'
 
       let priority: 'alta' | 'media' | 'baja'
-      if (exact && gapMin <= 30) priority = 'alta'
+      if (exact && gapMin <= EXECUTIVE_MERGE_AUTO_GAP_MINUTES) priority = 'alta'
       else if (exact) priority = 'media'
-      else if (similarEnough && sim >= 0.92) priority = 'alta'
+      else if (
+        seqOk &&
+        similarEnough &&
+        sim >= EXECUTIVE_MERGE_OCR_AUTO_SIM &&
+        gapMin <= EXECUTIVE_MERGE_AUTO_GAP_MINUTES
+      ) {
+        priority = 'alta'
+      } else if (similarEnough && sim >= EXECUTIVE_MERGE_OCR_AUTO_SIM) priority = 'media'
       else if (similarEnough || match_type === 'sequence_and_plate') priority = 'media'
       else priority = 'baja'
 
-      /** Revisión humana innecesaria sólo si patente coincide exacto y hueco muy corto */
-      const should_review = !(exact && gapMin <= 30)
+      const exactAuto = exact && gapMin <= EXECUTIVE_MERGE_AUTO_GAP_MINUTES
+      const ocrSeqAuto =
+        !exact &&
+        seqOk &&
+        similarEnough &&
+        sim >= EXECUTIVE_MERGE_OCR_AUTO_SIM &&
+        gapMin <= EXECUTIVE_MERGE_AUTO_GAP_MINUTES
+      const should_review = !(exactAuto || ocrSeqAuto)
 
       rawMerge.push({
         a: ja,
@@ -1035,6 +1071,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
         match_type,
         should_review,
         priority,
+        plateSimilarity: exact ? 1 : Math.round(sim * 1000) / 1000,
       })
     }
   }
@@ -1061,14 +1098,8 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   const journeysForExecutive = mergePack.journeys
   const journeys_merged_applied = mergePack.mergeAppliedCount
 
-  /** UIDs tocados por pareja merge de alta confianza (exacta, hueco corto, sin revisión). */
-  const mergeHighConfidenceUids = new Set<string>()
-  for (const mc of mergeTop) {
-    if (mc.match_type === 'exact_plate' && mc.gapMinutes <= 30 && mc.priority === 'alta' && !mc.should_review) {
-      mergeHighConfidenceUids.add(mc.a.journeyUid)
-      mergeHighConfidenceUids.add(mc.b.journeyUid)
-    }
-  }
+  /** UIDs absorbidos por merge automático (exacto u OCR+secuencia). */
+  const mergeHighConfidenceUids = new Set(mergePack.suppressedSourceUids)
 
   let single_event_discarded = 0
   for (const mj of journeys) {
@@ -1194,6 +1225,13 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   let executiveNonEvaluableMissingSequence = 0
   let executiveAnomalousNoRespetaSecuencia = 0
 
+  let slJourneysWithCorroboration = 0
+  let slJourneysExecutiveReinforced = 0
+
+  let committeeCompletos = 0
+  let committeeVariaciones = 0
+  let committeeAnomalias = 0
+
   let ingresos_operativos_count = 0
   for (const mj of journeysForExecutive) {
     const logicals = new Set(mj.logicalCodeSequence.map((x) => String(x)))
@@ -1245,7 +1283,10 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     const seqPack = journeyDeviceSectorLogical(mj)
     const dupSev = duplicateSeverityFor(mj)
     const dupSus = dupSev !== 'none'
-    const mergedFrag = mj.eventCount === 1 && mergeHighConfidenceUids.has(mj.journeyUid)
+    const mergedFrag =
+      mj.journeyUid.startsWith('merged_') ||
+      mergePack.mergedUidBySource.has(mj.journeyUid) ||
+      (mj.eventCount === 1 && mergeHighConfidenceUids.has(mj.journeyUid))
 
     const ingresoN = journeyIngresoFrontCount(mj)
     const hasIngresoFrontal = ingresoN > 0
@@ -1264,16 +1305,50 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
 
     const matrixClassification = classifyJourneyAgainstCircuitMatrix(mj, DEFAULT_CIRCUIT_MATRIX)
     const technicalCircuitCode = matrixClassification.matchedCircuitCode ?? mj.preliminaryCircuitCode
+    const matrixExpectedPoints =
+      matrixClassification.matchedCircuitCode ?
+        (DEFAULT_CIRCUIT_MATRIX[matrixClassification.matchedCircuitCode]?.length ?? 0)
+      : 0
+    const matrixMatchedPoints = Math.max(0, matrixExpectedPoints - matrixClassification.missingPoints.length)
     const executiveCircuitConfig = resolveExecutiveCircuitConfigForJourney(mj, technicalCircuitCode)
-    const sequenceConfigured = isExecutiveSequenceConfigured(executiveCircuitConfig)
+    const executiveCircuitCode = executiveCircuitConfig?.code ?? ''
+    const slSupport = snapshotSanLorenzoSupport(mj)
+    const isRicSlzRoute =
+      isRicSanLorenzoRouteCircuit(executiveCircuitCode) ||
+      isRicSanLorenzoRouteCircuit(technicalCircuitCode) ||
+      mj.preliminaryCircuitCode === 'CIRCUITO_SAN_LORENZO' ||
+      journeyIsRicSanLorenzoRouteEvidence(mj)
+    const sequenceConfigured =
+      isRicSlzRoute && !ETL_SL_INTERNAL_CLASSIFICATION_ENABLED ?
+        true
+      : isExecutiveSequenceConfigured(executiveCircuitConfig)
     const coveragePercent = executiveCircuitConfig?.coveragePercent ?? 0
-    const hasStrongPoint =
+    let hasStrongPoint =
       executiveCircuitConfig?.code === 'R8' || executiveCircuitConfig?.code === 'R16' ?
         journeyHasLiquidStrongPoint(mj)
-      : executiveCircuitConfig?.hasStrongPoint === true
+      : executiveCircuitConfig?.hasStrongPoint === true || strong
+    if (isRicSlzRoute && journeyHasSlIngresoEvidence(mj)) {
+      hasStrongPoint = true
+    }
     const enabledForClassification = executiveCircuitConfig?.enabledForClassification === true
-    const executiveCircuitCode = executiveCircuitConfig?.code ?? ''
     const executiveCircuitLabel = executiveCircuitConfig?.label ?? ''
+    const deducedStrongEvidence = journeyHasDeducedStrongEvidence({
+      journey: mj,
+      hasOperationalEntry: entry.has_operational_entry,
+      hasOperationalExit: exit.has_operational_exit,
+      frontEventCount: seqPack.frontEventCount,
+      hasInstrumentedStrongPoint: hasStrongPoint,
+    })
+    const journeyEvidence = {
+      matchedPoints: Math.max(relPack.matched_points_count, matrixMatchedPoints),
+      expectedPoints: Math.max(relPack.expected_points_count, matrixExpectedPoints),
+      hasJourneyStrongPoint: deducedStrongEvidence,
+    }
+    const deducedEvidenceOk = journeyMeetsDeducedEvidenceThreshold({
+      matrixFinalStatus: matrixClassification.finalStatus,
+      ...journeyEvidence,
+      matrixConfidence: matrixClassification.confidence,
+    })
     const executiveCircuitBase = resolveExecutiveCircuitDecision({
       matrixFinalStatus: matrixClassification.finalStatus,
       matrixReason: matrixClassification.reason,
@@ -1285,23 +1360,70 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
         enabledForClassification,
         sequenceConfigured,
       },
+      journeyEvidence,
     })
     let executiveCircuit = executiveCircuitBase
     if (executiveCircuitCode === 'RS_REC' || executiveCircuitCode === 'RS_DESP') {
-      executiveCircuit = resolveProbableSolidExecutiveDecision({
-        matrixFinalStatus: matrixClassification.finalStatus,
-        matrixReason: matrixClassification.reason,
-        frontEventCount: seqPack.frontEventCount,
-        hasOperationalEntry: entry.has_operational_entry,
-        hasOperationalExit: exit.has_operational_exit,
-      })
-    } else if (executiveCircuitCode === 'SIN_PUNTO') {
-      executiveCircuit = {
-        ...executiveCircuitBase,
-        executiveStatus: 'NO_EVALUABLE',
-        executiveReason: 'CIRCUITO_SIN_PUNTO_INSTRUMENTADO',
-        validDetail: '',
+      if (!deducedEvidenceOk && executiveCircuitBase.executiveStatus !== 'VALIDO') {
+        executiveCircuit = resolveProbableSolidExecutiveDecision({
+          matrixFinalStatus: matrixClassification.finalStatus,
+          matrixReason: matrixClassification.reason,
+          frontEventCount: seqPack.frontEventCount,
+          hasOperationalEntry: entry.has_operational_entry,
+          hasOperationalExit: exit.has_operational_exit,
+        })
       }
+    }
+    executiveCircuit = applySanLorenzoExecutiveSupport({
+      journey: mj,
+      executiveCircuitCode,
+      technicalCircuitCode: technicalCircuitCode,
+      executive: executiveCircuit,
+      frontEventCount: seqPack.frontEventCount,
+      hasOperationalEntry: entry.has_operational_entry,
+      hasOperationalExit: exit.has_operational_exit,
+    })
+    if (slSupport.hasSlCorroboration) slJourneysWithCorroboration++
+    if (String(executiveCircuit.executiveReason ?? '').startsWith('SL_')) slJourneysExecutiveReinforced++
+
+    const committee = resolveCommitteeClassification({
+      journey: mj,
+      executiveCircuitConfig,
+      executiveCircuitCode,
+      technicalCircuitCode: technicalCircuitCode,
+      matrixFinalStatus: matrixClassification.finalStatus,
+      matrixReason: matrixClassification.reason,
+      executive: executiveCircuit,
+      sequenceConfigured,
+      hasStrongPoint,
+      frontEventCount: seqPack.frontEventCount,
+      hasOperationalEntry: entry.has_operational_entry,
+      hasOperationalExit: exit.has_operational_exit,
+      matchedPoints: journeyEvidence.matchedPoints,
+      expectedPoints: journeyEvidence.expectedPoints,
+      matrixConfidence: matrixClassification.confidence,
+    })
+    executiveCircuit = {
+      executiveStatus: committee.executive_status,
+      executiveReason: committee.executive_reason,
+      validDetail:
+        committee.committee_group === 'COMPLETOS' && committee.committee_reason.includes('DEDUCIDO') ?
+          'DEDUCIDO'
+        : committee.committee_group === 'COMPLETOS' && committee.committee_reason === 'CIRCUITO_COMPLETO' ?
+          'COMPLETO'
+        : executiveCircuit.validDetail,
+    }
+
+    switch (committee.committee_group) {
+      case 'COMPLETOS':
+        committeeCompletos++
+        break
+      case 'VARIACIONES_OPERATIVAS':
+        committeeVariaciones++
+        break
+      case 'ANOMALIAS':
+        committeeAnomalias++
+        break
     }
     const legacyFinalStatus = resolveFinalStatus({
       j: mj,
@@ -1491,6 +1613,15 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       technical_matched_circuit_code: matrixClassification.matchedCircuitCode ?? '',
       matrix_confidence: matrixClassification.confidence,
       final_status_legacy: legacyFinalStatus,
+      committee_group: committee.committee_group,
+      committee_reason: committee.committee_reason,
+      operational_variation_type: committee.operational_variation_type,
+      analysis_scope: committee.analysis_scope,
+      strong_point_source: committee.strong_point_source,
+      show_in_committee: committee.show_in_committee,
+      show_as_exact_circuit: committee.show_as_exact_circuit,
+      candidate_circuits: committee.candidate_circuits,
+      missing_key_cameras: committee.missing_key_cameras,
     })
 
     const expectedSequence =
@@ -1520,6 +1651,18 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       matrix_missing_points: matrixClassification.missingPoints.join('|'),
       matrix_confidence: matrixClassification.confidence,
       useful_events_count: seqPack.frontEventCount,
+      sl_support_points: slSupport.slPointCount,
+      sl_support_strong_points: slSupport.slStrongPointCount,
+      sl_support_corroboration: slSupport.hasSlCorroboration ? 'yes' : 'no',
+      committee_group: committee.committee_group,
+      committee_reason: committee.committee_reason,
+      operational_variation_type: committee.operational_variation_type,
+      analysis_scope: committee.analysis_scope,
+      strong_point_source: committee.strong_point_source,
+      show_in_committee: committee.show_in_committee ? 'yes' : 'no',
+      show_as_exact_circuit: committee.show_as_exact_circuit ? 'yes' : 'no',
+      candidate_circuits: committee.candidate_circuits,
+      missing_key_cameras: committee.missing_key_cameras,
       final_status_legacy: legacyFinalStatus,
       executive_bucket: executive.bucket,
     })
@@ -1789,6 +1932,18 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
           'matrix_missing_points',
           'matrix_confidence',
           'useful_events_count',
+          'sl_support_points',
+          'sl_support_strong_points',
+          'sl_support_corroboration',
+          'committee_group',
+          'committee_reason',
+          'operational_variation_type',
+          'analysis_scope',
+          'strong_point_source',
+          'show_in_committee',
+          'show_as_exact_circuit',
+          'candidate_circuits',
+          'missing_key_cameras',
           'final_status_legacy',
           'executive_bucket',
         ],
@@ -2088,6 +2243,12 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     incompletos_with_invalid_journey_start: alertCrossMetrics.incompletosWithInvalidJourneyStart,
     anomalos_with_invalid_route: alertCrossMetrics.anomalosWithInvalidRoute,
     operational_alerts_crossed: alertCrossMetrics.operationalAlertsCrossed,
+    sl_front_events: slFrontEventsCount,
+    sl_journeys_corroboration: slJourneysWithCorroboration,
+    sl_journeys_executive_reinforced: slJourneysExecutiveReinforced,
+    committee_completos: committeeCompletos,
+    committee_variaciones_operativas: committeeVariaciones,
+    committee_anomalias: committeeAnomalias,
   } as Record<string, unknown>
 
   const transform_summary_csv = recordsToCsv(Object.keys(summaryRow), [summaryRow])
@@ -2126,6 +2287,12 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     incompletosWithOperationalAlert: alertCrossMetrics.incompletosWithOperationalAlert,
     anomalosWithOperationalAlert: alertCrossMetrics.anomalosWithOperationalAlert,
     exportReady: final_circuits_count > 0,
+    slFrontEvents: slFrontEventsCount,
+    slJourneysWithCorroboration,
+    slJourneysExecutiveReinforced,
+    committeeCompletos,
+    committeeVariaciones,
+    committeeAnomalias,
   }
 
   return {

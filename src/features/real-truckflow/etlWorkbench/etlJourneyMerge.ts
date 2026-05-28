@@ -1,6 +1,13 @@
 import type { RealJourneyEventDto, ReconstructedRealJourney } from '../../../services/realJourneyEvents.types'
 import { compareRealEvents, reconstructRealJourneysIncludingInvalidPlates } from '../../../services/realJourneyEventsMapper'
 
+/** Ventana máxima entre fragmentos (espera en calada/playa puede superar 30 min). */
+export const EXECUTIVE_MERGE_AUTO_GAP_MINUTES = 240
+/** Misma ventana para detectar candidatos en debug CSV. */
+export const EXECUTIVE_MERGE_CANDIDATE_MAX_GAP_MINUTES = EXECUTIVE_MERGE_AUTO_GAP_MINUTES
+/** Similitud OCR mínima para auto-merge con secuencias complementarias. */
+export const EXECUTIVE_MERGE_OCR_AUTO_SIM = 0.92
+
 export type JourneyMergeCandidate = {
   a: ReconstructedRealJourney
   b: ReconstructedRealJourney
@@ -8,6 +15,7 @@ export type JourneyMergeCandidate = {
   gapMinutes: number
   should_review: boolean
   priority: 'alta' | 'media' | 'baja'
+  plateSimilarity: number
 }
 
 export type ExecutiveJourneyMergeResult = {
@@ -30,7 +38,22 @@ function mergeTwoJourneys(a: ReconstructedRealJourney, b: ReconstructedRealJourn
   return rebuilt[0] ?? a
 }
 
-/** Aplica merges de alta confianza (fragmentos) antes de clasificación ejecutiva. */
+/** Candidato apto para merge automático antes de clasificación ejecutiva. */
+export function isExecutiveMergeAutoCandidate(c: JourneyMergeCandidate): boolean {
+  if (c.gapMinutes > EXECUTIVE_MERGE_AUTO_GAP_MINUTES) return false
+  if (c.should_review) return false
+  if (c.priority !== 'alta') return false
+
+  if (c.match_type === 'exact_plate') return true
+
+  if (c.match_type === 'sequence_and_plate') {
+    return c.plateSimilarity >= EXECUTIVE_MERGE_OCR_AUTO_SIM
+  }
+
+  return false
+}
+
+/** Aplica merges de alta confianza (exacto u OCR+secuencia) antes de clasificación ejecutiva. */
 export function applyExecutiveJourneyMerges(
   journeys: ReconstructedRealJourney[],
   candidates: JourneyMergeCandidate[]
@@ -40,10 +63,7 @@ export function applyExecutiveJourneyMerges(
   const mergedUidBySource = new Map<string, string>()
 
   for (const c of candidates) {
-    if (c.match_type !== 'exact_plate') continue
-    if (c.gapMinutes > 30) continue
-    if (c.should_review) continue
-    if (c.priority !== 'alta') continue
+    if (!isExecutiveMergeAutoCandidate(c)) continue
     if (used.has(c.a.journeyUid) || used.has(c.b.journeyUid)) continue
 
     const combined = mergeTwoJourneys(c.a, c.b)

@@ -12,15 +12,20 @@ import {
   journeyHasLiquidStrongPoint,
   resolveExecutiveBucket,
   resolveExecutiveCircuitConfig,
+  journeyIsTransileC16Volcable,
+  resolveVolcableReceptionExecutiveCircuit,
   resolveExecutiveCircuitConfigForJourney,
   resolveExecutiveCircuitDecision,
   resolveProbableSolidExecutiveDecision,
+  journeyMeetsDeducedEvidenceThreshold,
+  journeyHasDeducedStrongEvidence,
   isSolidReceptionPattern,
   isSolidDispatchPattern,
   resolveFinalStatus,
   resolveOperationalEntry,
   resolveOperationalExit,
 } from './finalCircuitScoring'
+import { classifyOperationalPreliminaryCircuit } from '../../../services/realPreliminaryCircuit'
 
 function journey(partial: Partial<ReconstructedRealJourney>): ReconstructedRealJourney {
   return {
@@ -240,6 +245,21 @@ describe('finalCircuitScoring', () => {
       expect(isLiquidReceptionJourney(jLiqRecep)).toBe(true)
       expect(isLiquidDispatchJourney(jLiqRecep)).toBe(false)
 
+      const jLiqRecepSoloCalLiq = journey({
+        preliminaryCircuitCode: 'CIRCUITO_LIQUIDO',
+        logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'LIQUIDO', 'BALANZA_INGRESO', 'BALANZA_EGRESO', 'EGRESO'],
+        events: [{ deviceCode: 'RicCalLiq', sectorCode: 'RICARDONE_CALADA', occurredAt: '2026-05-12T09:00:00' } as never],
+      })
+      expect(isLiquidReceptionJourney(jLiqRecepSoloCalLiq)).toBe(true)
+      expect(resolveExecutiveCircuitConfigForJourney(jLiqRecepSoloCalLiq)?.code).toBe('R8')
+
+      const jLiqAmbiguo = journey({
+        preliminaryCircuitCode: 'CIRCUITO_LIQUIDO',
+        logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'LIQUIDO', 'EGRESO'],
+        events: [{ deviceCode: 'RicCalLiq', sectorCode: 'RICARDONE_CALADA', occurredAt: '2026-05-12T09:00:00' } as never],
+      })
+      expect(resolveExecutiveCircuitConfigForJourney(jLiqAmbiguo)?.code).toBe('R8')
+
       const jLiqDesp = journey({
         preliminaryCircuitCode: 'CIRCUITO_LIQUIDO',
         logicalCodeSequence: [
@@ -266,10 +286,74 @@ describe('finalCircuitScoring', () => {
 
       const jSolidoDespacho = journey({
         preliminaryCircuitCode: 'DESPACHO_SIN_PUNTO_INSTRUMENTADO',
-        logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'BALANZA_EGRESO', 'CALADA', 'EGRESO'],
+        logicalCodeSequence: [
+          'INGRESO',
+          'PREINGRESO',
+          'CALADA',
+          'BALANZA_INGRESO',
+          'BALANZA_EGRESO',
+          'CALADA',
+          'EGRESO',
+        ],
       })
       expect(resolveExecutiveCircuitConfigForJourney(jSolidoDespacho)?.code).toBe('RS_DESP')
       expect(isSolidDispatchPattern(jSolidoDespacho)).toBe(true)
+      expect(isSolidReceptionPattern(jSolidoDespacho)).toBe(false)
+
+      const jSolidoDespachoLegacy = journey({
+        preliminaryCircuitCode: 'DESPACHO_SIN_PUNTO_INSTRUMENTADO',
+        logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'BALANZA_EGRESO', 'CALADA', 'EGRESO'],
+      })
+      expect(resolveExecutiveCircuitConfigForJourney(jSolidoDespachoLegacy)?.code).toBe('SIN_PUNTO')
+      expect(isSolidDispatchPattern(jSolidoDespachoLegacy)).toBe(false)
+
+      const jDobleIngresoTrasBalEgreso = journey({
+        preliminaryCircuitCode: 'DESPACHO_SIN_PUNTO_INSTRUMENTADO',
+        logicalCodeSequence: [
+          'INGRESO',
+          'PREINGRESO',
+          'CALADA',
+          'BALANZA_INGRESO',
+          'BALANZA_EGRESO',
+          'INGRESO',
+          'CALADA',
+          'EGRESO',
+        ],
+      })
+      expect(isSolidDispatchPattern(jDobleIngresoTrasBalEgreso)).toBe(false)
+      expect(resolveExecutiveCircuitConfigForJourney(jDobleIngresoTrasBalEgreso)?.code).toBe('RS_REC')
+
+      const jDobleIngresoTrasEgreso = journey({
+        preliminaryCircuitCode: 'DESPACHO_SIN_PUNTO_INSTRUMENTADO',
+        logicalCodeSequence: [
+          'INGRESO',
+          'PREINGRESO',
+          'CALADA',
+          'EGRESO',
+          'INGRESO',
+          'PREINGRESO',
+          'CALADA',
+          'EGRESO',
+        ],
+      })
+      expect(isSolidDispatchPattern(jDobleIngresoTrasEgreso)).toBe(false)
+      expect(resolveExecutiveCircuitConfigForJourney(jDobleIngresoTrasEgreso)?.code).toBe('SIN_PUNTO')
+
+      const jReingresoTrasBalEgreso = journey({
+        preliminaryCircuitCode: 'DESPACHO_SIN_PUNTO_INSTRUMENTADO',
+        logicalCodeSequence: [
+          'INGRESO',
+          'PREINGRESO',
+          'CALADA',
+          'BALANZA_INGRESO',
+          'EGRESO',
+          'PREINGRESO',
+          'CALADA',
+          'EGRESO',
+        ],
+      })
+      expect(isSolidDispatchPattern(jReingresoTrasBalEgreso)).toBe(false)
+      expect(resolveExecutiveCircuitConfigForJourney(jReingresoTrasBalEgreso)?.code).toBe('RS_REC')
 
       const jSolidoProbable = resolveProbableSolidExecutiveDecision({
         matrixFinalStatus: 'INCOMPLETO',
@@ -286,6 +370,59 @@ describe('finalCircuitScoring', () => {
         events: [{ deviceCode: 'RicVolcable2', sectorCode: 'X', occurredAt: '2026-05-12T09:00:00' } as never],
       })
       expect(resolveExecutiveCircuitConfigForJourney(jVolc2)?.code).toBe('R6')
+    })
+
+    it('volcable sin C16 no es Transile: recepción R5/R6 aunque el código preliminar diga TRANSILE', () => {
+      const jRecepcionVolcable = journey({
+        preliminaryCircuitCode: 'TRANSILE_VOLCABLE_BALANZA',
+        logicalCodeSequence: ['CALADA', 'BALANZA_INGRESO', 'VOLCABLE', 'BALANZA_EGRESO'],
+      })
+      expect(journeyIsTransileC16Volcable(jRecepcionVolcable)).toBe(false)
+      expect(resolveExecutiveCircuitConfigForJourney(jRecepcionVolcable)?.code).toBe('R5')
+
+      const jSinCalada = journey({
+        preliminaryCircuitCode: 'TRANSILE_VOLCABLE_BALANZA',
+        logicalCodeSequence: ['BALANZA_INGRESO', 'VOLCABLE', 'BALANZA_EGRESO'],
+      })
+      expect(resolveExecutiveCircuitConfigForJourney(jSinCalada)?.code).toBe('R5')
+    })
+
+    it('Transile C16→Volcable exige CELDA16_CARGA + VOLCABLE sin ingreso Ricardone → R19/R20', () => {
+      const jTransile = journey({
+        preliminaryCircuitCode: 'TRANSILE_VOLCABLE_BALANZA',
+        logicalCodeSequence: ['CELDA16_CARGA', 'VOLCABLE', 'BALANZA_EGRESO'],
+      })
+      expect(journeyIsTransileC16Volcable(jTransile)).toBe(true)
+      expect(resolveExecutiveCircuitConfigForJourney(jTransile)?.code).toBe('R19')
+
+      const jTransileV2 = journey({
+        preliminaryCircuitCode: 'TRANSILE_VOLCABLE_BALANZA',
+        logicalCodeSequence: ['CELDA16_CARGA', 'VOLCABLE', 'BALANZA_EGRESO'],
+        events: [{ deviceCode: 'RicVolcable2', sectorCode: 'X', occurredAt: '2026-05-12T09:00:00' } as never],
+      })
+      expect(resolveExecutiveCircuitConfigForJourney(jTransileV2)?.code).toBe('R20')
+    })
+  })
+
+  describe('Transile vs recepción Volcable (preliminar)', () => {
+    it('CALADA + balanza + volcable sin C16 clasifica recepción Volcable, no Transile', () => {
+      const r = classifyOperationalPreliminaryCircuit({
+        logicalCodeSequence: ['CALADA', 'BALANZA_INGRESO', 'VOLCABLE', 'BALANZA_EGRESO'],
+        deviceCodeSequence: [],
+        normalizedPlate: 'JNN338',
+      })
+      expect(r.preliminaryCircuitCode).toBe('CIRCUITO_VOLCABLE_1_2')
+      expect(r.preliminaryCircuitVariant).toBe('VOLCABLE_1_2')
+    })
+
+    it('C16 carga + volcable sin ingreso clasifica Transile C16→Volcable', () => {
+      const r = classifyOperationalPreliminaryCircuit({
+        logicalCodeSequence: ['CELDA16_CARGA', 'VOLCABLE', 'BALANZA_EGRESO'],
+        deviceCodeSequence: [],
+        normalizedPlate: 'TEST01',
+      })
+      expect(r.preliminaryCircuitCode).toBe('TRANSILE_VOLCABLE_BALANZA')
+      expect(r.preliminaryCircuitVariant).toBe('TRANSILE_VOLCABLE_BALANZA')
     })
   })
 
@@ -364,6 +501,72 @@ describe('finalCircuitScoring', () => {
       })
       expect(r.bucket).not.toBe('ANOMALO')
       expect(r.bucket).toBe('INCOMPLETO')
+    })
+  })
+
+  describe('deducción con evidencia 4/5 o 4/6 + punto fuerte', () => {
+    it('4 de 5 con punto fuerte cumple umbral deducido', () => {
+      expect(
+        journeyMeetsDeducedEvidenceThreshold({
+          matrixFinalStatus: 'DEDUCIDO',
+          matchedPoints: 4,
+          expectedPoints: 5,
+          hasJourneyStrongPoint: true,
+        })
+      ).toBe(true)
+    })
+
+    it('4 de 6 con punto fuerte cumple umbral deducido', () => {
+      expect(
+        journeyMeetsDeducedEvidenceThreshold({
+          matrixFinalStatus: 'DEDUCIDO',
+          matchedPoints: 4,
+          expectedPoints: 6,
+          hasJourneyStrongPoint: true,
+        })
+      ).toBe(true)
+    })
+
+    it('3 de 5 sin evidencia operativa no cumple', () => {
+      expect(
+        journeyMeetsDeducedEvidenceThreshold({
+          matrixFinalStatus: 'DEDUCIDO',
+          matchedPoints: 3,
+          expectedPoints: 5,
+          hasJourneyStrongPoint: false,
+        })
+      ).toBe(false)
+    })
+
+    it('ingreso+egreso+4 eventos cuenta como evidencia deducida', () => {
+      const j = journey({
+        logicalCodeSequence: ['INGRESO', 'BALANZA_INGRESO', 'CALADA', 'BALANZA_EGRESO', 'EGRESO'],
+      })
+      expect(
+        journeyHasDeducedStrongEvidence({
+          journey: j,
+          hasOperationalEntry: true,
+          hasOperationalExit: true,
+          frontEventCount: 5,
+          hasInstrumentedStrongPoint: false,
+        })
+      ).toBe(true)
+    })
+
+    it('circuito deducido con 4/6 y volcable → VALIDO/DEDUCIDO aunque cobertura config < 60', () => {
+      const decision = resolveExecutiveCircuitDecision({
+        matrixFinalStatus: 'DEDUCIDO',
+        matrixReason: 'SECUENCIA_RESPETADA_CON_HUECOS',
+        coverageInfo: { coveragePercent: 50, hasStrongPoint: true },
+        sequenceConfig: { enabledForClassification: true, sequenceConfigured: true },
+        journeyEvidence: {
+          matchedPoints: 4,
+          expectedPoints: 6,
+          hasJourneyStrongPoint: true,
+        },
+      })
+      expect(decision.executiveStatus).toBe('VALIDO')
+      expect(decision.validDetail).toBe('DEDUCIDO')
     })
   })
 })

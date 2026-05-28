@@ -651,7 +651,9 @@ export function classifyOperationalPreliminaryCircuit(
 
   const hasCelda16Descarga = has('CELDA16_DESCARGA')
   const hasCelda16Carga = has('CELDA16_CARGA')
-  const hasLiquid = has('LIQUIDO')
+  const hasLiquid =
+    has('LIQUIDO') ||
+    (j.events ?? []).some((e) => /^RicCalLiq/i.test(String(e.deviceCode ?? '').trim()))
   const hasSlAfter = hasSlIngresoAfterEgreso(full)
   const noInstrumentedAction = !hasVolcable && !hasCelda16Carga && !hasCelda16Descarga && !hasLiquid
   const evidencePoints = countEvidencePoints(has)
@@ -673,6 +675,24 @@ export function classifyOperationalPreliminaryCircuit(
     }
   }
 
+  /** Transile C16→Volcable antes que recepción C16: carga en C16 + descarga Volcable sin ingreso Ricardone. */
+  if (hasVolcable && hasCelda16Carga && !hasIngreso && !hasPreingreso) {
+    const expected = ['CELDA16_CARGA', 'VOLCABLE', 'BALANZA_EGRESO']
+    return {
+      preliminaryCircuitCode: 'TRANSILE_VOLCABLE_BALANZA',
+      preliminaryCircuitName: 'Transile C16 → Volcable',
+      preliminaryCircuitConfidence: isOrderedSubsequence(col, expected) ? 'alta' : 'media',
+      preliminaryCircuitReason:
+        'Carga Celda 16 y descarga Volcable sin ingreso/preingreso Ricardone (transile interno).',
+      preliminaryCircuitGroup: 'Transile Volcable → Balanza',
+      preliminaryCircuitVariant: 'TRANSILE_VOLCABLE_BALANZA',
+      missingExpectedPoints: missingExpectedPoints(full, expected),
+      excludedRearCameraEventsCount,
+      classificationReason: 'CELDA16_CARGA + VOLCABLE sin INGRESO/PREINGRESO.',
+      isDiscardedOperational: false,
+    }
+  }
+
   if (hasCelda16Carga) {
     const expected = ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO', 'CELDA16_CARGA', 'BALANZA_EGRESO', 'EGRESO']
     return {
@@ -690,32 +710,23 @@ export function classifyOperationalPreliminaryCircuit(
   }
 
   if (hasVolcable) {
-    const volcableIndex = full.findIndex((code) => code === 'VOLCABLE')
-    const nextBalanzaIndex = full.findIndex(
-      (code, idx) => idx > volcableIndex && (code === 'BALANZA_EGRESO' || code === 'BALANZA_INGRESO')
-    )
-    const transile = !hasIngreso && !hasPreingreso && volcableIndex >= 0 && nextBalanzaIndex > volcableIndex
-    const expected = transile
-      ? ['VOLCABLE', 'BALANZA_EGRESO']
-      : ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO', 'VOLCABLE', 'BALANZA_EGRESO', 'EGRESO']
+    const expected = ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO', 'VOLCABLE', 'BALANZA_EGRESO', 'EGRESO']
     return {
-      preliminaryCircuitCode: transile ? 'TRANSILE_VOLCABLE_BALANZA' : 'CIRCUITO_VOLCABLE_1_2',
-      preliminaryCircuitName: transile ? 'Transile Volcable → Balanza' : 'Circuito a Volcable 1/2',
+      preliminaryCircuitCode: 'CIRCUITO_VOLCABLE_1_2',
+      preliminaryCircuitName: 'Circuito a Volcable 1/2',
       preliminaryCircuitConfidence: isOrderedSubsequence(col, expected) ? 'alta' : 'media',
-      preliminaryCircuitReason: transile
-        ? 'VOLCABLE seguido de balanza sin secuencia clara de ingreso inicial.'
-        : 'Presencia de cámara VOLCABLE; define acción operativa a Volcable 1/2.',
-      preliminaryCircuitGroup: transile ? 'Transile Volcable → Balanza' : 'Volcable 1/2',
-      preliminaryCircuitVariant: transile ? 'TRANSILE_VOLCABLE_BALANZA' : 'VOLCABLE_1_2',
+      preliminaryCircuitReason: 'Recepción Volcable: presencia de VOLCABLE con calada/balanza (sin carga C16 en el recorrido).',
+      preliminaryCircuitGroup: 'Volcable 1/2',
+      preliminaryCircuitVariant: 'VOLCABLE_1_2',
       missingExpectedPoints: missingExpectedPoints(full, expected),
       excludedRearCameraEventsCount,
-      classificationReason: transile ? 'VOLCABLE antes de BALANZA sin INGRESO/PREINGRESO.' : 'VOLCABLE detectado en el recorrido.',
+      classificationReason: 'VOLCABLE detectado en el recorrido.',
       isDiscardedOperational: false,
     }
   }
 
   if (hasLiquid && evidencePoints >= 1) {
-    const expected = ['INGRESO', 'PREINGRESO', 'CALADA', 'LIQUIDO', 'BALANZA_INGRESO', 'BALANZA_EGRESO']
+    const expected = ['INGRESO', 'PREINGRESO', 'LIQUIDO', 'BALANZA_INGRESO', 'BALANZA_EGRESO']
     return {
       preliminaryCircuitCode: 'CIRCUITO_LIQUIDO',
       preliminaryCircuitName: 'Circuito líquido',
@@ -730,19 +741,28 @@ export function classifyOperationalPreliminaryCircuit(
     }
   }
 
-  if ((hasIngreso || hasPreingreso) && hasEgreso && noInstrumentedAction && !hasBalanzaAny) {
-    const expected = ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO']
-    return {
-      preliminaryCircuitCode: 'CIRCUITO_SAN_LORENZO',
-      preliminaryCircuitName: 'Circuito Ricardone → San Lorenzo',
-      preliminaryCircuitConfidence: hasSlAfter ? 'alta' : 'media',
-      preliminaryCircuitReason: hasSlAfter ? 'SL_INGRESO posterior al EGRESO Ricardone.' : 'Ingreso/preingreso + egreso sin balanza ni punto instrumentado.',
-      preliminaryCircuitGroup: 'Ricardone → San Lorenzo',
-      preliminaryCircuitVariant: hasSlAfter ? 'CON_SL_CONFIRMADO' : 'RICARDONE_ONLY',
-      missingExpectedPoints: missingExpectedPoints(full, expected),
-      excludedRearCameraEventsCount,
-      classificationReason: 'Recorrido compatible con Ricardone → San Lorenzo sin puntos de descarga Ricardone.',
-      isDiscardedOperational: false,
+  if ((hasIngreso || hasPreingreso) && noInstrumentedAction && !hasBalanzaAny) {
+    const hasSlIngresoInJourney = full.includes('SL_INGRESO')
+    if (hasEgreso || (has('CALADA') && hasSlIngresoInJourney)) {
+      const expected = ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO']
+      const slConfirmed = hasSlAfter || (has('CALADA') && hasSlIngresoInJourney)
+      return {
+        preliminaryCircuitCode: 'CIRCUITO_SAN_LORENZO',
+        preliminaryCircuitName: 'Circuito Ricardone → San Lorenzo',
+        preliminaryCircuitConfidence: slConfirmed ? 'alta' : 'media',
+        preliminaryCircuitReason:
+          hasSlAfter ?
+            'SL_INGRESO posterior al EGRESO Ricardone.'
+          : hasSlIngresoInJourney ?
+            'Ingreso/preingreso + calada con SL_INGRESO; ruta Ricardone → San Lorenzo.'
+          : 'Ingreso/preingreso + egreso sin balanza ni punto instrumentado.',
+        preliminaryCircuitGroup: 'Ricardone → San Lorenzo',
+        preliminaryCircuitVariant: slConfirmed ? 'CON_SL_CONFIRMADO' : 'RICARDONE_ONLY',
+        missingExpectedPoints: missingExpectedPoints(full, expected),
+        excludedRearCameraEventsCount,
+        classificationReason: 'Recorrido compatible con Ricardone → San Lorenzo sin puntos de descarga Ricardone.',
+        isDiscardedOperational: false,
+      }
     }
   }
 

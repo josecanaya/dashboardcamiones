@@ -11,6 +11,7 @@ import {
 } from './liveEventTime'
 import { normalizeRealAlertForView } from '../realAlertsInspector'
 import { inferSiteIdFromSectorCode } from '../realJourneyEventsMapper'
+import { resolveCanonicalSectorForLiveFeed } from './liveOperationalCatalog'
 
 export type LiveFeedFilters = {
   plate?: string
@@ -42,10 +43,18 @@ export async function fetchLiveTruckflowFeed(
   )
 
   const evFiltered = evts
-    .map(alignJourneyEventTimeForLiveView)
+    .map((e) => {
+      const sectorCode = resolveCanonicalSectorForLiveFeed(e.sectorCode, e.deviceCode)
+      const aligned = alignJourneyEventTimeForLiveView(e)
+      return sectorCode === aligned.sectorCode ? aligned : { ...aligned, sectorCode }
+    })
     .filter((e) => journeyEventInUiWindow(e, window.uiStartMs, window.uiEndMs, window.eventSlackMs))
   const alerts = rawAlerts
     .map(normalizeRealAlertForView)
+    .map((a) => {
+      const sectorCode = resolveCanonicalSectorForLiveFeed(a.sectorCode || '', a.deviceCode || '')
+      return sectorCode === (a.sectorCode || '') ? a : { ...a, sectorCode }
+    })
     .filter((a) => alertInUiWindow(a, window.uiStartMs, window.uiEndMs))
 
   return { events: evFiltered, alerts, window, fetchStats: stats }
