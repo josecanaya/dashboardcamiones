@@ -3,8 +3,10 @@ import {
   buildAnomalyReviewSummary,
   buildAnomalySequenceBreakdown,
   buildCommitteeCircuitCrossTab,
+  buildSuspiciousDischargeWithoutBalanza,
   committeeChartExportCsv,
   normalizeAnomalySequenceKey,
+  resolveDischargePointLabel,
   type CircuitClassificationEntry,
 } from './etlCircuitClassificationIndex'
 
@@ -25,6 +27,9 @@ function entry(partial: Partial<CircuitClassificationEntry>): CircuitClassificat
     committeeReason: 'JOURNEY_INCOMPLETO',
     operationalVariationType: '',
     detectedSequence: 'INGRESO>PREINGRESO>CALADA',
+    deviceSequence: '',
+    firstEventAt: '2026-05-12T08:00:00.000Z',
+    lastEventAt: '2026-05-12T09:30:00.000Z',
     executiveReason: 'JOURNEY_INCOMPLETO',
     pieSliceLabel: 'ANOMALÍAS',
     usefulEventsCount: 3,
@@ -126,5 +131,37 @@ describe('etlCircuitClassificationIndex anomalías', () => {
     expect(csv).toContain('ANOMALIA_RECORRIDO')
     expect(csv).toContain('JOURNEY')
     expect(csv).toContain('ANOMALIA_INCOMPLETOS')
+  })
+
+  it('detecta descarga C16/Volcable sin balanza como sospechoso', () => {
+    const rows = buildSuspiciousDischargeWithoutBalanza([
+      entry({
+        journeyId: 'ok-balanza',
+        plate: 'AAA111',
+        detectedSequence: 'INGRESO>PREINGRESO>CALADA>BALANZA_INGRESO>VOLCABLE>BALANZA_EGRESO>EGRESO',
+        deviceSequence: 'RicIng>F>RicVolcable1',
+      }),
+      entry({
+        journeyId: 'susp-volc',
+        plate: 'BBB222',
+        detectedSequence: 'INGRESO>PREINGRESO>CALADA>VOLCABLE>EGRESO',
+        deviceSequence: 'RicIng>F>RicVolcable2',
+      }),
+      entry({
+        journeyId: 'susp-c16',
+        plate: 'CCC333',
+        detectedSequence: 'INGRESO>PREINGRESO>CALADA>CELDA16_DESCARGA>EGRESO',
+        deviceSequence: 'RicIng>F>RicC16Descarga1',
+      }),
+      entry({
+        journeyId: 'no-descarga',
+        plate: 'DDD444',
+        detectedSequence: 'INGRESO>PREINGRESO>CALADA>EGRESO',
+      }),
+    ])
+    expect(rows).toHaveLength(2)
+    expect(rows.map((r) => r.plate).sort()).toEqual(['BBB222', 'CCC333'])
+    expect(resolveDischargePointLabel('INGRESO>VOLCABLE', 'RicVolcable2')).toBe('Volcable 2')
+    expect(resolveDischargePointLabel('CELDA16_DESCARGA', 'RicC16Descarga1')).toBe('C16 descarga 1')
   })
 })

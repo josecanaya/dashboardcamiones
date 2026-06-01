@@ -1,16 +1,14 @@
 /**
- * Barra horizontal tipo timeline para resumen de estadía.
- * Escala 0–24 h. Marcadores: Media, Mediana, Moda, IQR (Q1–Q3), P90.
- * Sin cantidad de camiones.
- * Evita solapamiento de etiquetas con asignación a filas.
+ * Barra horizontal tipo timeline para resumen de estadía / tramo.
+ * Escala fija 0–24 h (estadía total) o dinámica en minutos (tramos).
  */
 
-const SCALE_MIN = 0
-const SCALE_MAX = 24
 const LABEL_MIN_GAP = 8 // % mínimo entre etiquetas para no solaparse
 
-function toPct(value: number) {
-  const pct = ((value - SCALE_MIN) / (SCALE_MAX - SCALE_MIN)) * 100
+function toPct(value: number, scaleMin: number, scaleMax: number) {
+  const span = scaleMax - scaleMin
+  if (span <= 0) return 0
+  const pct = ((value - scaleMin) / span) * 100
   return Math.max(0, Math.min(100, pct))
 }
 
@@ -43,13 +41,36 @@ export interface BoxplotStats {
   count?: number
 }
 
-export function EstadiaBoxplot({ stats }: { stats: BoxplotStats }) {
-  const q1Pct = toPct(stats.q1)
-  const q3Pct = toPct(stats.q3)
-  const meanPct = stats.mean != null ? toPct(stats.mean) : null
-  const medianPct = toPct(stats.median)
-  const p90Pct = stats.p90 != null ? toPct(stats.p90) : null
-  const modePct = stats.mode != null ? toPct(stats.mode) : null
+function resolveTimelineScale(stats: BoxplotStats, unit: 'h' | 'min'): { min: number; max: number } {
+  if (unit === 'h') return { min: 0, max: 24 }
+  const peak = Math.max(
+    stats.max,
+    stats.p90 ?? 0,
+    stats.q3 ?? 0,
+    stats.median,
+    stats.mean ?? 0,
+    stats.mode ?? 0
+  )
+  const max = Math.max(30, Math.ceil((peak * 1.12) / 5) * 5)
+  return { min: 0, max }
+}
+
+export function EstadiaBoxplot({
+  stats,
+  unit = 'h',
+}: {
+  stats: BoxplotStats
+  unit?: 'h' | 'min'
+}) {
+  const { min: scaleMin, max: scaleMax } = resolveTimelineScale(stats, unit)
+  const unitLabel = unit === 'min' ? 'min' : 'h'
+
+  const q1Pct = toPct(stats.q1, scaleMin, scaleMax)
+  const q3Pct = toPct(stats.q3, scaleMin, scaleMax)
+  const meanPct = stats.mean != null ? toPct(stats.mean, scaleMin, scaleMax) : null
+  const medianPct = toPct(stats.median, scaleMin, scaleMax)
+  const p90Pct = stats.p90 != null ? toPct(stats.p90, scaleMin, scaleMax) : null
+  const modePct = stats.mode != null ? toPct(stats.mode, scaleMin, scaleMax) : null
 
   const aboveItems = [
     { pct: q1Pct, val: stats.q1.toFixed(1), color: 'text-slate-600' },
@@ -70,15 +91,13 @@ export function EstadiaBoxplot({ stats }: { stats: BoxplotStats }) {
   return (
     <div className="rounded-lg border border-slate-200 bg-slate-50/50 px-5 py-4">
       <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-600">
-        Línea de tiempo (0–24 h)
+        Línea de tiempo (0–{scaleMax} {unitLabel})
       </div>
       <div className="relative h-32 w-full overflow-visible">
-        {/* Inicio y Fin */}
         <div className="absolute top-0 left-0 right-0 h-5 overflow-visible text-xs font-medium text-slate-600">
-          <span className="absolute left-0">0 h</span>
-          <span className="absolute right-0">24 h</span>
+          <span className="absolute left-0">0 {unitLabel}</span>
+          <span className="absolute right-0">{scaleMax} {unitLabel}</span>
         </div>
-        {/* Etiquetas ARRIBA (con filas para evitar solapamiento) */}
         <div className="absolute left-0 right-0 top-0 h-12 overflow-visible">
           {aboveItems.map((it, i) => (
             <span
@@ -90,47 +109,42 @@ export function EstadiaBoxplot({ stats }: { stats: BoxplotStats }) {
             </span>
           ))}
         </div>
-        {/* Barra central — timeline */}
         <div className="absolute inset-x-0 top-1/2 flex -translate-y-1/2 items-center">
           <div className="relative h-12 w-full rounded-lg overflow-hidden shadow-sm">
-            {/* Barra base gris */}
             <div className="absolute inset-0 rounded-lg bg-slate-300/50" />
-            {/* Zona IQR (Q1–Q3) */}
             <div
               className="absolute left-0 top-0 h-full bg-sky-500/75"
               style={{ left: `${q1Pct}%`, width: `${Math.max(0, q3Pct - q1Pct)}%` }}
-              title={`IQR: ${stats.q1.toFixed(1)}–${stats.q3.toFixed(1)}h`}
+              title={`IQR: ${stats.q1.toFixed(1)}–${stats.q3.toFixed(1)} ${unitLabel}`}
             />
-            {/* Marcadores gruesos */}
             {meanPct != null && (
               <div
                 className={`${markerClass} bg-violet-600`}
                 style={{ left: `${meanPct}%` }}
-                title={`Media: ${stats.mean!.toFixed(1)}h`}
+                title={`Media: ${stats.mean!.toFixed(1)} ${unitLabel}`}
               />
             )}
             <div
               className={`${markerClass} bg-emerald-600`}
               style={{ left: `${medianPct}%` }}
-              title={`Mediana: ${stats.median.toFixed(1)}h`}
+              title={`Mediana: ${stats.median.toFixed(1)} ${unitLabel}`}
             />
             {modePct != null && (
               <div
                 className={`${markerClass} bg-red-600`}
                 style={{ left: `${modePct}%` }}
-                title={`Moda: ${stats.mode!.toFixed(1)}h`}
+                title={`Moda: ${stats.mode!.toFixed(1)} ${unitLabel}`}
               />
             )}
             {p90Pct != null && (
               <div
                 className={`${markerClass} bg-sky-600`}
                 style={{ left: `${p90Pct}%` }}
-                title={`P90: ${stats.p90!.toFixed(1)}h`}
+                title={`P90: ${stats.p90!.toFixed(1)} ${unitLabel}`}
               />
             )}
           </div>
         </div>
-        {/* Etiquetas ABAJO (con filas para evitar solapamiento) */}
         <div className="absolute left-0 right-0 bottom-0 h-12 overflow-visible">
           {belowItems.map((it, i) => (
             <span
@@ -143,7 +157,6 @@ export function EstadiaBoxplot({ stats }: { stats: BoxplotStats }) {
           ))}
         </div>
       </div>
-      {/* Leyenda */}
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-slate-200 pt-3 text-[11px]">
         <span className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-sm bg-violet-600" />

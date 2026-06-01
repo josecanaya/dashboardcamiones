@@ -32,12 +32,29 @@ export interface EstadiaHistogramWithRefsProps {
   median: number
   std: number
   mode: number
+  unit?: 'h' | 'min'
+  domainMin?: number
+  domainMax?: number
+  /** Ancho de bin en la unidad del eje X. */
+  binSize?: number
   /** Indicadores de forma para overlays y coloreo de barras (rango central, cola derecha) */
   indicadoresForma?: IndicadoresForma | null
 }
 
-const DOMAIN_MIN = 0.5
-const DOMAIN_MAX = 24
+function resolveHistogramDomain(
+  chartData: ChartPoint[],
+  unit: 'h' | 'min',
+  domainMin?: number,
+  domainMax?: number,
+  binSize = 5
+): { min: number; max: number } {
+  if (domainMin != null && domainMax != null) return { min: domainMin, max: domainMax }
+  if (unit === 'h') return { min: 0.5, max: 24 }
+  const dataMax = Math.max(0, ...chartData.map((d) => d.x))
+  const step = Math.max(1, binSize)
+  const max = Math.max(step * 6, Math.ceil((dataMax * 1.12) / step) * step)
+  return { min: 0, max }
+}
 
 export function EstadiaHistogramWithRefs({
   chartData,
@@ -45,8 +62,15 @@ export function EstadiaHistogramWithRefs({
   median,
   std,
   mode,
+  unit = 'h',
+  domainMin,
+  domainMax,
+  binSize,
   indicadoresForma,
 }: EstadiaHistogramWithRefsProps) {
+  const binWidth = binSize ?? (unit === 'min' ? 5 : 1 / 6)
+  const domain = resolveHistogramDomain(chartData, unit, domainMin, domainMax, binWidth)
+  const unitLabel = unit === 'min' ? 'min' : 'h'
   const maxCount = Math.max(0, ...chartData.map((d) => d.count))
   const gaussian = (x: number) => {
     if (std <= 0) return 0
@@ -74,13 +98,13 @@ export function EstadiaHistogramWithRefs({
           <XAxis
             type="number"
             dataKey="x"
-            domain={[DOMAIN_MIN, DOMAIN_MAX]}
+            domain={[domain.min, domain.max]}
             padding={{ left: 0, right: 0 }}
             tick={{ fontSize: 12, fill: '#64748b' }}
-            tickFormatter={(v) => `${v}h`}
+            tickFormatter={(v) => `${v}${unitLabel}`}
             axisLine={{ stroke: '#cbd5e1' }}
             tickLine={{ stroke: '#e2e8f0' }}
-            name="Duración (h)"
+            name={`Duración (${unitLabel})`}
           />
           <YAxis
             type="number"
@@ -115,11 +139,11 @@ export function EstadiaHistogramWithRefs({
               />
             </>
           )}
-          {indicadoresForma && indicadoresForma.colaDerechaUmbral < DOMAIN_MAX && (
+          {indicadoresForma && indicadoresForma.colaDerechaUmbral < domain.max && (
             <>
               <ReferenceArea
                 x1={indicadoresForma.colaDerechaUmbral}
-                x2={DOMAIN_MAX}
+                x2={domain.max}
                 fill="#f59e0b"
                 fillOpacity={0.15}
               />
@@ -137,16 +161,17 @@ export function EstadiaHistogramWithRefs({
             content={({ payload }) => {
               const p = payload?.[0]?.payload as ChartPoint | undefined
               if (!p) return null
-              const binStart = Math.floor((p.x ?? 0) * 6) / 6
-              const binEnd = binStart + 1 / 6
+              const binStart = Math.floor((p.x ?? 0) / binWidth) * binWidth
+              const binEnd = binStart + binWidth
               return (
                 <div className="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-lg">
                   <div className="font-semibold text-slate-800">
-                    Rango: {binStart.toFixed(2)}–{binEnd.toFixed(2)} h
+                    Rango: {binStart.toFixed(1)}–{binEnd.toFixed(1)} {unitLabel}
                   </div>
-                  <div className="text-slate-600">Cantidad: {(p.count ?? 0)} camiones</div>
+                  <div className="text-slate-600">Cantidad: {p.count ?? 0} camiones</div>
                   <div className="mt-1 border-t border-slate-100 pt-1 text-[10px] text-slate-500">
-                    Media {mean.toFixed(1)}h · Moda {mode.toFixed(1)}h · Mediana {median.toFixed(1)}h
+                    Media {mean.toFixed(1)}{unitLabel} · Moda {mode.toFixed(1)}{unitLabel} · Mediana{' '}
+                    {median.toFixed(1)}{unitLabel}
                   </div>
                 </div>
               )

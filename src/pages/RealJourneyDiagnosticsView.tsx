@@ -38,6 +38,7 @@ import { ExtraccionDatosTab } from '../features/real-truckflow/tabs/ExtraccionDa
 import { AnalisisLocalTab } from '../features/real-truckflow/tabs/AnalisisLocalTab'
 import { TransformEtlTab } from '../features/real-truckflow/tabs/TransformEtlTab'
 import { KpiComiteTab } from '../features/real-truckflow/tabs/KpiComiteTab'
+import { KpiTiemposTab } from '../features/real-truckflow/tabs/KpiTiemposTab'
 import { LoadExportTab } from '../features/real-truckflow/tabs/LoadExportTab'
 import {
   ETL_DEV_MODE,
@@ -66,6 +67,7 @@ export type RealDataMainTab =
   | 'etl_export'
   | 'dss_truckflow'
   | 'kpi_comite'
+  | 'kpi_tiempos'
 
 /** Navegación completa Datos reales (modo histórico; muchas vistas no están en la barra y se enlazan desde otras pantallas). */
 export const MAIN_TABS: { id: RealDataMainTab; label: string }[] = [
@@ -81,6 +83,7 @@ const ETL_TAB_LABELS: Record<RealDataMainTab, string> = {
   extraccion_datos: 'Extracción',
   analisis_local: 'Análisis local',
   transform_etl: 'Transform',
+  kpi_tiempos: 'KPI tiempos',
   load_export: 'Load / Export',
   kpi_comite: 'KPIs ETL',
   resumen: 'Resumen',
@@ -847,6 +850,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
         <AnalisisLocalTab onTransformSucceeded={() => p.setMainTab('transform_etl')} />
       ) : null}
       {p.mainTab === 'transform_etl' ? <TransformEtlTab /> : null}
+      {p.mainTab === 'kpi_tiempos' ? <KpiTiemposTab /> : null}
       {ETL_DEV_MODE && p.mainTab === 'kpi_comite' ? <KpiComiteTab /> : null}
       {p.mainTab === 'load_export' ? <LoadExportTab /> : null}
 

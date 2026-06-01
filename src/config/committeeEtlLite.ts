@@ -12,6 +12,7 @@ export const ETL_PRODUCT_TAB_IDS = [
   'extraccion_datos',
   'analisis_local',
   'transform_etl',
+  'kpi_tiempos',
   'load_export',
 ] as const
 

@@ -52,7 +52,13 @@ function KpiItem({ label, value, unit, hint, primary }: KpiItemProps) {
   )
 }
 
-export function EstadiaKpiRow({ stats }: { stats: StayStatsForKpi }) {
+export function EstadiaKpiRow({
+  stats,
+  unit = 'h',
+}: {
+  stats: StayStatsForKpi
+  unit?: 'h' | 'min'
+}) {
   const fmt = (v: number) => v.toFixed(2)
 
   return (
@@ -64,28 +70,28 @@ export function EstadiaKpiRow({ stats }: { stats: StayStatsForKpi }) {
         <KpiItem
           label="Media"
           value={fmt(stats.mean)}
-          unit="h"
+          unit={unit}
           hint="centro de la distribución"
           primary
         />
         <KpiItem
           label="Moda"
           value={fmt(stats.mode)}
-          unit="h"
+          unit={unit}
           hint="tiempo más frecuente"
           primary
         />
         <KpiItem
           label="P90"
           value={fmt(stats.p90)}
-          unit="h"
+          unit={unit}
           hint="90% egresa antes de"
           primary
         />
         <KpiItem
           label="IQR"
           value={fmt(stats.iqr)}
-          unit="h"
+          unit={unit}
           hint="dispersión 50% central"
           primary
         />
@@ -97,19 +103,19 @@ export function EstadiaKpiRow({ stats }: { stats: StayStatsForKpi }) {
         <KpiItem
           label="Mediana"
           value={fmt(stats.median)}
-          unit="h"
+          unit={unit}
           hint="valor típico"
         />
         <KpiItem
           label="Desvío estándar"
           value={fmt(stats.std)}
-          unit="h"
+          unit={unit}
           hint="variabilidad"
         />
         <KpiItem
           label="Distancia moda-mediana"
           value={fmt(stats.distanciaModaMediana)}
-          unit="h"
+          unit={unit}
           hint="coherencia de la distribución"
         />
       </div>

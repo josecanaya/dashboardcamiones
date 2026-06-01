@@ -245,21 +245,43 @@ function smoothBarHeights(counts: number[], windowSize = 5): number[] {
   })
 }
 
-/** Histograma con barras cada 10 min + curva suavizada. Rango: 0.5h a 15h. */
+/** Histograma con barras + curva suavizada. Por defecto asume muestra en horas (0.5–24 h). */
 export function histogramWithKde(
   sample: number[],
   binSizeMinutes = 10,
-  smoothWindow = 5
+  smoothWindow = 5,
+  options?: { unit?: 'h' | 'min' }
 ): Array<{ x: number; count: number; freqSmoothed: number }> {
   if (sample.length === 0) return []
+  const unit = options?.unit ?? 'h'
+
+  if (unit === 'min') {
+    const maxSample = Math.max(...sample)
+    const binSize = Math.max(1, binSizeMinutes)
+    const domainMax = Math.max(30, Math.ceil((maxSample * 1.12) / binSize) * binSize)
+    const numBins = Math.ceil(domainMax / binSize)
+    const binCenters = Array.from({ length: numBins }, (_, i) => (i + 0.5) * binSize)
+    const counts = new Array<number>(numBins).fill(0)
+    for (const v of sample) {
+      const idx = Math.min(numBins - 1, Math.max(0, Math.floor(v / binSize)))
+      counts[idx]!++
+    }
+    const smoothed = smoothBarHeights(counts, smoothWindow)
+    return binCenters.map((x, i) => ({
+      x: Math.round(x * 10) / 10,
+      count: counts[i]!,
+      freqSmoothed: smoothed[i]!,
+    }))
+  }
+
   const binSizeHours = binSizeMinutes / 60
   const rangeHours = 23.5 // 0.5 a 24 h
-  const numBins = Math.ceil(rangeHours * 60 / binSizeMinutes)
+  const numBins = Math.ceil((rangeHours * 60) / binSizeMinutes)
   const binCenters = Array.from({ length: numBins }, (_, i) => 0.5 + (i + 0.5) * binSizeHours)
   const counts = new Array<number>(numBins).fill(0)
   for (const v of sample) {
     const idx = Math.min(numBins - 1, Math.max(0, Math.floor((v - 0.5) / binSizeHours)))
-    counts[idx]++
+    counts[idx]!++
   }
   const smoothed = smoothBarHeights(counts, smoothWindow)
   return binCenters.map((x, i) => ({

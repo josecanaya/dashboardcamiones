@@ -9,16 +9,19 @@ import {
   buildAnomalyReviewSummary,
   buildCircuitClassificationIndex,
   buildCommitteeCircuitCrossTab,
+  buildSuspiciousDischargeWithoutBalanza,
   ANOMALY_LIST_MIN_EVENTS,
   CIRCUIT_PIE_COLORS,
   committeeDrilldownCsv,
   committeeChartExportCsv,
+  suspiciousDischargeCsv,
   trucksForCommitteeCrossTabCell,
   type AnomalyReviewSummary,
   type AnomalySequenceBreakdownRow,
   type CircuitClassificationEntry,
   type CommitteeCrossTabCategory,
   type CommitteeCircuitCrossTabRow,
+  type SuspiciousDischargeWithoutBalanzaRow,
 } from '../etlWorkbench/etlCircuitClassificationIndex'
 import { committeePieFromGroup } from '../etlWorkbench/committeeClassification'
 
@@ -49,6 +52,9 @@ const DEV_EXPORT_DEF: {
   { csvKey: 'journey_merge_candidates', filename: 'journey_merge_candidates.csv', label: 'Candidatos merge' },
   { csvKey: 'merge_candidates_debug', filename: 'merge_candidates_debug.csv', label: 'Merge (solo sugerencias)' },
   { csvKey: 'transform_summary', filename: 'transform_summary.csv', label: 'Resumen transform' },
+  { csvKey: 'segment_timing_kpi', filename: 'segment_timing_kpi.csv', label: 'KPI tiempos por tramo' },
+  { csvKey: 'circuit_timing_summary', filename: 'circuit_timing_summary.csv', label: 'KPI tiempos por circuito' },
+  { csvKey: 'circuit_timing_journeys', filename: 'circuit_timing_journeys.csv', label: 'Auditoría tiempos circuito' },
 ]
 
 function truncateMiddle(text: string, max = 12): string {
@@ -57,6 +63,13 @@ function truncateMiddle(text: string, max = 12): string {
   const head = Math.ceil((max - 1) / 2)
   const tail = Math.floor((max - 1) / 2)
   return `${t.slice(0, head)}…${t.slice(-tail)}`
+}
+
+function formatDateTimeShort(iso: string): string {
+  if (!iso) return '—'
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return iso
+  return d.toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'medium' })
 }
 
 function Metric({ label, value }: { label: string; value: string | number }) {
@@ -195,6 +208,131 @@ function AnomalySequenceDrilldown({
           </li>
         ))}
       </ul>
+    </div>
+  )
+}
+
+type AnomalyPanelTab = 'recorrido' | 'sospechosos'
+
+function SuspiciousDischargePanel({ rows }: { rows: SuspiciousDischargeWithoutBalanzaRow[] }) {
+  if (!rows.length) {
+    return (
+      <p className="mt-3 text-xs text-slate-500">
+        No hay camiones con descarga en C16 o Volcable sin paso por balanza en este período.
+      </p>
+    )
+  }
+
+  return (
+    <div className="mt-3 space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-[11px] text-slate-600">
+          <strong>{rows.length.toLocaleString()}</strong> camiones con descarga instrumentada (C16, Volcable 1 o 2){' '}
+          y <strong>sin</strong> balanza ingreso/egreso en el recorrido.
+        </p>
+        <button
+          type="button"
+          onClick={() => triggerBrowserCsvDownload('anomalias_sospechosos_descarga_sin_balanza.csv', suspiciousDischargeCsv(rows))}
+          className="rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-950 hover:bg-amber-100"
+        >
+          CSV listado
+        </button>
+      </div>
+      <div className="overflow-x-auto rounded-lg border border-amber-200">
+        <table className="min-w-[1100px] w-full text-left text-xs">
+          <thead>
+            <tr className="border-b border-amber-100 bg-amber-50/70 text-[10px] uppercase tracking-wide text-slate-500">
+              <th className="py-2 pl-3 pr-2 font-semibold">Inicio</th>
+              <th className="py-2 px-2 font-semibold">Fin</th>
+              <th className="py-2 px-2 font-semibold">Patente</th>
+              <th className="py-2 px-2 font-semibold">Punto descarga</th>
+              <th className="py-2 px-2 font-semibold">Recorrido</th>
+              <th className="py-2 px-2 font-semibold">Circuito ref.</th>
+              <th className="py-2 px-2 font-semibold">Comité</th>
+              <th className="py-2 pr-3 font-semibold">Journey</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={`susp-${row.journeyId}-${row.plate}`} className="border-b border-slate-100 odd:bg-white even:bg-amber-50/20">
+                <td className="whitespace-nowrap py-2 pl-3 pr-2 font-mono text-[11px] text-slate-700">
+                  {formatDateTimeShort(row.firstEventAt)}
+                </td>
+                <td className="whitespace-nowrap py-2 px-2 font-mono text-[11px] text-slate-700">
+                  {formatDateTimeShort(row.lastEventAt)}
+                </td>
+                <td className="py-2 px-2 font-mono font-bold text-slate-900">{row.plate || '—'}</td>
+                <td className="py-2 px-2 font-semibold text-amber-950">{row.dischargePoint}</td>
+                <td className="max-w-[240px] py-2 px-2 font-mono text-[10px] leading-snug text-slate-600" title={row.detectedSequence}>
+                  {truncateMiddle(row.detectedSequence, 56)}
+                </td>
+                <td className="py-2 px-2 text-slate-600">{row.executiveCircuitDisplay || '—'}</td>
+                <td className="py-2 px-2">
+                  <span className="block text-[10px] font-semibold uppercase text-slate-500">{row.committeeGroup || '—'}</span>
+                  <span className="text-[11px] text-slate-600">{row.committeeReason || '—'}</span>
+                </td>
+                <td className="py-2 pr-3 font-mono text-[10px] text-slate-400" title={row.journeyId}>
+                  {truncateMiddle(row.journeyId, 16)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+function AnomalyPanel({
+  summary,
+  suspiciousRows,
+  expandedSequenceKey,
+  onToggleSequence,
+}: {
+  summary: AnomalyReviewSummary
+  suspiciousRows: SuspiciousDischargeWithoutBalanzaRow[]
+  expandedSequenceKey: string | null
+  onToggleSequence: (key: string | null) => void
+}) {
+  const [panelTab, setPanelTab] = useState<AnomalyPanelTab>('recorrido')
+  const totalCommitteeAnomalies = summary.incompleteCount + summary.listedAnomalyCount
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setPanelTab('recorrido')}
+          className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition ${
+            panelTab === 'recorrido' ?
+              'bg-rose-600 text-white shadow'
+            : 'border border-rose-200 bg-white text-rose-900 hover:bg-rose-50'
+          }`}
+        >
+          Por recorrido
+          {totalCommitteeAnomalies > 0 ? ` (${totalCommitteeAnomalies.toLocaleString()})` : ''}
+        </button>
+        <button
+          type="button"
+          onClick={() => setPanelTab('sospechosos')}
+          className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition ${
+            panelTab === 'sospechosos' ?
+              'bg-amber-600 text-white shadow'
+            : 'border border-amber-300 bg-white text-amber-950 hover:bg-amber-50'
+          }`}
+        >
+          Sospechosos
+          {suspiciousRows.length > 0 ? ` (${suspiciousRows.length.toLocaleString()})` : ''}
+        </button>
+      </div>
+
+      {panelTab === 'recorrido' ?
+        <AnomalySequenceBreakdownPanel
+          summary={summary}
+          expandedSequenceKey={expandedSequenceKey}
+          onToggleSequence={onToggleSequence}
+        />
+      : <SuspiciousDischargePanel rows={suspiciousRows} />}
     </div>
   )
 }
@@ -431,6 +569,10 @@ export function TransformEtlTab() {
     () => buildAnomalyReviewSummary(circuitClassIndex.entries),
     [circuitClassIndex.entries]
   )
+  const suspiciousDischargeRows = useMemo(
+    () => buildSuspiciousDischargeWithoutBalanza(circuitClassIndex.entries),
+    [circuitClassIndex.entries]
+  )
   const totalAnomalies = useMemo(
     () => anomalyReview.incompleteCount + anomalyReview.listedAnomalyCount,
     [anomalyReview]
@@ -623,8 +765,9 @@ export function TransformEtlTab() {
                       </button>
                       {open && row.name.includes('ANOMAL') ?
                         <div className="border-t border-slate-200 bg-white px-2 py-2">
-                          <AnomalySequenceBreakdownPanel
+                          <AnomalyPanel
                             summary={anomalyReview}
+                            suspiciousRows={suspiciousDischargeRows}
                             expandedSequenceKey={expandedAnomalySequence}
                             onToggleSequence={setExpandedAnomalySequence}
                           />
@@ -845,20 +988,21 @@ export function TransformEtlTab() {
             </article>
           : null}
 
-          {totalAnomalies > 0 ?
+          {(totalAnomalies > 0 || suspiciousDischargeRows.length > 0) ?
             <article
               aria-label="Anomalías por recorrido observado"
               className="rounded-2xl border border-rose-200 bg-gradient-to-br from-rose-50/60 via-white to-white p-4 shadow-sm"
             >
               <h4 className="text-[11px] font-semibold uppercase tracking-wide text-rose-900">
-                Anomalías por recorrido observado
+                Anomalías y sospechosos
               </h4>
               <p className="mt-1 text-xs text-slate-600">
-                Incompletos (&lt;3 eventos): solo cantidad. Anomalías (≥3 eventos): listado por recorrido con cantidad al
-                lado de cada secuencia.
+                <strong>Por recorrido:</strong> incompletos (&lt;3 eventos) y anomalías agrupadas por secuencia.{' '}
+                <strong>Sospechosos:</strong> descarga en C16, Volcable 1 o Volcable 2 sin paso por balanza.
               </p>
-              <AnomalySequenceBreakdownPanel
+              <AnomalyPanel
                 summary={anomalyReview}
+                suspiciousRows={suspiciousDischargeRows}
                 expandedSequenceKey={expandedAnomalySequence}
                 onToggleSequence={setExpandedAnomalySequence}
               />

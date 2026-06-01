@@ -12,6 +12,7 @@ export interface ExportMeta {
   plant?: string
   period?: string
   generatedAt?: string
+  source?: string
 }
 
 /** Genera subtítulo con metadatos para el gráfico exportado. */

@@ -13,6 +13,50 @@ El usuario final (comité, Power BI) **solo debe consumir** estos archivos:
 | `pb_alerts_operational.csv` | Alertas operativas cruzadas con eventos/journeys |
 | `pb_load_manifest.json` | Manifiesto de carga y metadatos |
 
+## Análisis de tiempos por circuito (técnico / KPI)
+
+Exportados en Transform y consolidados en Load/Export (no son archivos de comité por defecto):
+
+| Archivo | Uso |
+|---------|-----|
+| `circuit_timing_summary.csv` | Una fila por circuito ejecutivo: estadísticas del tiempo total del recorrido |
+| `circuit_timing_journeys.csv` | Una fila por journey analizable: auditoría del cálculo |
+| `segment_timing_kpi.csv` | Agregado por tramo/transición dentro de cada circuito |
+
+### Columnas — `circuit_timing_summary.csv`
+
+| Columna | Descripción |
+|---------|-------------|
+| `executive_circuit_code` | Código ejecutivo (R1, R5, R7, …) |
+| `circuit_name` | Nombre legible del circuito |
+| `executive_status` | Estado ejecutivo dominante en la muestra (`VALIDO`, …) |
+| `n_journeys` | Cantidad de journeys analizables del circuito |
+| `mean_total_min` | Promedio del tiempo total (min) |
+| `std_total_min` | Desviación estándar del tiempo total |
+| `median_total_min` | Mediana |
+| `p90_total_min` | Percentil 90 |
+| `min_total_min` / `max_total_min` | Extremos observados |
+| `q1_total_min` / `q3_total_min` / `iqr_total_min` | Cuartiles e IQR |
+| `min_plate` / `max_plate` | Patentes del menor y mayor tiempo total |
+
+Población: journeys con `committee_group = COMPLETOS`, circuito ejecutivo identificado, ≥2 eventos frontales útiles y duración total **mayor a 3 min** y hasta 24 h.
+
+Uso típico en Power BI (dispersión): eje X `mean_total_min`, eje Y `std_total_min`, tamaño `n_journeys`, detalle `executive_circuit_code`.
+
+### Columnas — `circuit_timing_journeys.csv`
+
+| Columna | Descripción |
+|---------|-------------|
+| `journey_id` | UID del journey |
+| `plate` | Patente |
+| `executive_circuit_code` | Circuito ejecutivo |
+| `circuit_name` | Nombre del circuito |
+| `executive_status` | Estado ejecutivo del journey |
+| `valid_detail` | `COMPLETO` o `DEDUCIDO` si aplica |
+| `start_time` / `end_time` | Primer y último evento frontal útil |
+| `total_duration_min` | Diferencia en minutos |
+| `event_count` | Cantidad de eventos frontales útiles |
+
 Opcional técnico: `etl_result.json` (manifiesto consolidado del transform).
 
 ## Columnas clave — `pb_final_circuits.csv`

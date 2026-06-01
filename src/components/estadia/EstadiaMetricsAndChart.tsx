@@ -48,20 +48,35 @@ export interface StayStats {
 export interface EstadiaMetricsAndChartProps {
   stayStats: StayStats
   chartData: ChartPoint[]
-  /** Array de tiempos de estadía en horas para calcular concentración central */
+  /** Array de tiempos en la misma unidad que stayStats (horas o minutos). */
   durations?: number[]
+  /** Unidad de tiempo para KPIs y ejes. */
+  unit?: 'h' | 'min'
   /** Contexto opcional para subtítulo (ej. planta, período) */
   context?: string
   /** Metadatos para exportación */
   exportMeta?: ExportMeta
+  /** Título del panel (default: estadía total en planta). */
+  title?: string
+  /** Subtítulo bajo el título. */
+  subtitle?: string
+  /** Ref al panel completo para exportación masiva externa. */
+  panelExportRef?: (el: HTMLDivElement | null) => void
+  /** Ancho de bin del histograma (minutos si unit=min; horas fraccionadas si unit=h). */
+  histogramBinSize?: number
 }
 
 export function EstadiaMetricsAndChart({
   stayStats,
   chartData,
   durations = [],
+  unit = 'h',
   context,
   exportMeta,
+  title = 'Métricas y distribución de estadía',
+  subtitle = 'Resumen estadístico de permanencia de camiones en planta',
+  panelExportRef,
+  histogramBinSize,
 }: EstadiaMetricsAndChartProps) {
   const panelRef = useRef<HTMLDivElement>(null)
   const chartsExportRef = useRef<HTMLDivElement>(null)
@@ -89,13 +104,13 @@ export function EstadiaMetricsAndChart({
 
   const handleExportCsv = () => {
     const csvData = chartData.map((p) => ({
-      horas: p.x.toFixed(2),
+      [unit === 'min' ? 'minutos' : 'horas']: p.x.toFixed(2),
       cantidad: p.count,
       freq_suavizada: p.freqSmoothed.toFixed(2),
     }))
     const metaWithStats = {
       ...meta,
-      subtitle: `n=${stayStats.count} | Media=${stayStats.mean.toFixed(1)}h | Moda=${mode.toFixed(1)}h | P90=${stayStats.p90.toFixed(1)}h | IQR=${stayStats.iqr.toFixed(1)}h`,
+      subtitle: `n=${stayStats.count} | Media=${stayStats.mean.toFixed(1)}${unit} | Moda=${mode.toFixed(1)}${unit} | P90=${stayStats.p90.toFixed(1)}${unit} | IQR=${stayStats.iqr.toFixed(1)}${unit}`,
     }
     exportChartDataAsCsv(csvData, safeExportFilename('estadia_metricas_histograma', 'csv'), metaWithStats)
   }
@@ -177,7 +192,10 @@ export function EstadiaMetricsAndChart({
 
   return (
     <div
-      ref={panelRef}
+      ref={(node) => {
+        panelRef.current = node
+        panelExportRef?.(node)
+      }}
       className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm"
       style={{ minWidth: 720 }}
     >
@@ -186,10 +204,10 @@ export function EstadiaMetricsAndChart({
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h3 className="text-lg font-bold text-slate-800">
-              Métricas y distribución de estadía
+              {title}
             </h3>
             <p className="mt-0.5 text-sm text-slate-500">
-              Resumen estadístico de permanencia de camiones en planta
+              {subtitle}
               <span className="ml-2 font-semibold text-slate-700">
                 · {stayStats.count.toLocaleString('es-AR')} camiones
               </span>
@@ -263,6 +281,7 @@ export function EstadiaMetricsAndChart({
           </div>
         )}
         <EstadiaKpiRow
+          unit={unit}
           stats={{
             count: stayStats.count,
             mean: stayStats.mean,
@@ -291,14 +310,14 @@ export function EstadiaMetricsAndChart({
             </button>
           </div>
           <div ref={boxplotRef}>
-            <EstadiaBoxplot stats={boxplotStats} />
+            <EstadiaBoxplot stats={boxplotStats} unit={unit} />
           </div>
         </div>
         {/* 2. Histograma + curva gaussiana — después */}
         <div>
           <div className="mb-2">
             <h4 className="text-sm font-semibold text-slate-700">
-              Histograma de tiempo de estadía
+              Histograma de tiempo ({unit})
               <span className="ml-2 font-normal text-slate-500">(n = {stayStats.count.toLocaleString('es-AR')})</span>
             </h4>
             <div className="mt-1.5 flex flex-wrap gap-x-6 gap-y-1.5 text-xs">
@@ -327,6 +346,8 @@ export function EstadiaMetricsAndChart({
               median={stayStats.median}
               std={stayStats.std}
               mode={mode}
+              unit={unit}
+              binSize={histogramBinSize ?? (unit === 'min' ? 5 : 1 / 6)}
               indicadoresForma={indicadoresForma}
             />
           </div>

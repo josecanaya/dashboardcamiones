@@ -39,6 +39,19 @@ import {
 import { applySanLorenzoExecutiveSupport, ETL_SL_EXECUTIVE_SUPPORT_ENABLED, ETL_SL_INTERNAL_CLASSIFICATION_ENABLED, snapshotSanLorenzoSupport } from './etlSanLorenzoSupport'
 import { journeyHasSlIngresoEvidence, journeyIsRicSanLorenzoRouteEvidence } from './etlRicSanLorenzoRoute'
 import { resolveCommitteeClassification } from './committeeClassification'
+import {
+  buildSegmentTimingIndex,
+  segmentTimingKpiCsv,
+  segmentTimingLegsCsv,
+  type ClassifiedJourneyForTiming,
+  type SegmentTimingIndex,
+} from './etlSegmentTiming'
+import {
+  buildCircuitTimingIndex,
+  circuitTimingJourneysCsv,
+  circuitTimingSummaryCsv,
+  type CircuitTimingIndex,
+} from './etlCircuitTiming'
 import { lookupSanLorenzoCameraByDevice } from '../../../data/sanLorenzoCameraCatalog'
 import {
   applyExecutiveJourneyMerges,
@@ -488,6 +501,8 @@ export type EtlTransformOutput = {
       committeeVariaciones: number
       committeeAnomalias: number
     }
+    segmentTiming: SegmentTimingIndex
+    circuitTiming: CircuitTimingIndex
   }
   rulesVersion: string
 }
@@ -1232,6 +1247,8 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   let committeeVariaciones = 0
   let committeeAnomalias = 0
 
+  const classifiedForSegmentTiming: ClassifiedJourneyForTiming[] = []
+
   let ingresos_operativos_count = 0
   for (const mj of journeysForExecutive) {
     const logicals = new Set(mj.logicalCodeSequence.map((x) => String(x)))
@@ -1425,6 +1442,14 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
         committeeAnomalias++
         break
     }
+    classifiedForSegmentTiming.push({
+      journey: mj,
+      executiveCircuitCode,
+      committeeGroup: committee.committee_group,
+      executiveStatus: executiveCircuit.executiveStatus,
+      validDetail: executiveCircuit.validDetail,
+      circuitName: executiveCircuitLabel,
+    })
     const legacyFinalStatus = resolveFinalStatus({
       j: mj,
       reliabilityScore: rel,
@@ -1633,6 +1658,9 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       plate: mj.normalizedPlate || mj.plate,
       site: mj.siteId,
       detected_sequence: seqPack.logicalSequence,
+      device_sequence: seqPack.deviceSequence,
+      first_event_at: mj.startedAt,
+      last_event_at: mj.endedAt,
       matched_circuit_code: executiveCircuitCode,
       executive_circuit_code: executiveCircuitCode,
       executive_circuit_label: executiveCircuitLabel,
@@ -1667,6 +1695,18 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       executive_bucket: executive.bucket,
     })
   }
+
+  const segmentTiming = buildSegmentTimingIndex(classifiedForSegmentTiming, {
+    committeeGroups: ['COMPLETOS'],
+  })
+  const segment_timing_kpi = segmentTimingKpiCsv(segmentTiming)
+  const segment_timing_legs = segmentTimingLegsCsv(segmentTiming)
+
+  const circuitTiming = buildCircuitTimingIndex(classifiedForSegmentTiming, {
+    committeeGroups: ['COMPLETOS'],
+  })
+  const circuit_timing_summary = circuitTimingSummaryCsv(circuitTiming)
+  const circuit_timing_journeys = circuitTimingJourneysCsv(circuitTiming)
 
   type LprMergeCandidateRow = {
     alert_id: string
@@ -1914,6 +1954,9 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
           'plate',
           'site',
           'detected_sequence',
+          'device_sequence',
+          'first_event_at',
+          'last_event_at',
           'matched_circuit_code',
           'executive_circuit_code',
           'executive_circuit_label',
@@ -2315,6 +2358,10 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       merge_candidates_debug: merge_candidates_debug_csv,
       alerts_operational: operational_alerts_csv,
       transform_summary: transform_summary_csv,
+      segment_timing_kpi,
+      segment_timing_legs,
+      circuit_timing_summary,
+      circuit_timing_journeys,
     },
     stats: {
       step1: step1Stat,
@@ -2324,6 +2371,8 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       coherence: coherenceStat,
       validation: validationStats,
       executive: executiveStat,
+      segmentTiming,
+      circuitTiming,
     },
     rulesVersion: ETL_TRANSFORM_RULES_VERSION,
   }

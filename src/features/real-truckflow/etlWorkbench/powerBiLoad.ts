@@ -10,6 +10,12 @@ import {
 import { ETL_TRANSFORM_RULES_VERSION } from './etlTransformPipeline'
 import type { EtlTransformOutput } from './etlTransformPipeline'
 import { OPERATIONAL_ALERTS_CSV_COLUMNS } from './etlOperationalAlertMatch'
+import {
+  aggregateCircuitTimingSummaries,
+  circuitTimingJourneysCsv,
+  circuitTimingJourneysFromCsvRows,
+  circuitTimingSummaryCsv,
+} from './etlCircuitTiming'
 import { POWER_BI_PRODUCT_FILES } from '../../../config/committeeEtlLite'
 
 export const POWER_BI_STABLE_FILES = {
@@ -31,6 +37,8 @@ export const POWER_BI_STABLE_FILES = {
   front_alerts: 'pb_front_alerts.csv',
   rear_events: 'pb_rear_events.csv',
   rear_alerts: 'pb_rear_alerts.csv',
+  circuit_timing_summary: 'circuit_timing_summary.csv',
+  circuit_timing_journeys: 'circuit_timing_journeys.csv',
   manifest: 'pb_load_manifest.json',
 } as const
 
@@ -52,6 +60,8 @@ export type TransformDayFileKind =
   | 'rear_alerts'
   | 'alerts_operational'
   | 'transform_summary'
+  | 'circuit_timing_summary'
+  | 'circuit_timing_journeys'
 
 const SOURCE_FILE_PATTERNS: Record<TransformDayFileKind, string[]> = {
   final_circuits: ['final_circuits.csv'],
@@ -62,6 +72,8 @@ const SOURCE_FILE_PATTERNS: Record<TransformDayFileKind, string[]> = {
   rear_alerts: ['rear_alerts.csv'],
   alerts_operational: ['alerts_operational.csv'],
   transform_summary: ['transform_summary.csv'],
+  circuit_timing_summary: ['circuit_timing_summary.csv'],
+  circuit_timing_journeys: ['circuit_timing_journeys.csv'],
 }
 
 const TRANSFORM_CSV_KEY_MAP: Record<TransformDayFileKind, keyof EtlTransformOutput['csv']> = {
@@ -73,6 +85,8 @@ const TRANSFORM_CSV_KEY_MAP: Record<TransformDayFileKind, keyof EtlTransformOutp
   rear_alerts: 'rear_alerts',
   alerts_operational: 'alerts_operational',
   transform_summary: 'transform_summary',
+  circuit_timing_summary: 'circuit_timing_summary',
+  circuit_timing_journeys: 'circuit_timing_journeys',
 }
 
 export type LoadedTransformDay = {
@@ -844,6 +858,27 @@ export function consolidatePowerBiLoad(input: {
     : recordsToCsvFromRows(faHeaders.length ? faHeaders : ['id'], faOperational)
   const pb_camera_lpr_analysis = pb_camera
 
+  let ctjRows: Record<string, string>[] = []
+  for (const dayPack of filtered) {
+    const ctj = dayPack.files.circuit_timing_journeys
+    if (!ctj) continue
+    const parsed = parseCsvToRecords(ctj)
+    ctjRows.push(...parsed.rows)
+  }
+  const ctjDeduped = dedupeByKey(ctjRows, (r) => String(rowGet(r, 'journey_id') ?? '').trim())
+  const circuitTimingJourneyRows = circuitTimingJourneysFromCsvRows(ctjDeduped)
+  const circuitTimingSummaries = aggregateCircuitTimingSummaries(circuitTimingJourneyRows)
+  const circuit_timing_summary = circuitTimingSummaryCsv({
+    journeys: circuitTimingJourneyRows,
+    summaries: circuitTimingSummaries,
+    circuitCodes: circuitTimingSummaries.map((s) => s.executiveCircuitCode),
+  })
+  const circuit_timing_journeys = circuitTimingJourneysCsv({
+    journeys: circuitTimingJourneyRows,
+    summaries: circuitTimingSummaries,
+    circuitCodes: circuitTimingSummaries.map((s) => s.executiveCircuitCode),
+  })
+
   const outputFolder = `data/powerbi/${buildFolderName(input.loadGroupType, periodStart, periodEnd)}/`
 
   let circuitosUtiles = 0
@@ -873,6 +908,8 @@ export function consolidatePowerBiLoad(input: {
     front_alerts: faDeduped.length,
     rear_events: reDeduped.length,
     rear_alerts: raDeduped.length,
+    circuit_timing_summary: circuitTimingSummaries.filter((s) => s.nJourneys > 0).length,
+    circuit_timing_journeys: circuitTimingJourneyRows.length,
     manifest: 1,
   }
 
@@ -918,6 +955,8 @@ export function consolidatePowerBiLoad(input: {
     front_alerts: pb_front_alerts,
     rear_events: pb_rear_events,
     rear_alerts: pb_rear_alerts,
+    circuit_timing_summary,
+    circuit_timing_journeys,
     manifest: JSON.stringify(manifest, null, 2),
   }
 

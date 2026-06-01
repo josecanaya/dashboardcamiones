@@ -33,6 +33,9 @@ export type CircuitClassificationEntry = {
   committeeReason: string
   operationalVariationType: string
   detectedSequence: string
+  deviceSequence: string
+  firstEventAt: string
+  lastEventAt: string
   executiveReason: string
   pieSliceLabel: string
   usefulEventsCount: number
@@ -98,6 +101,33 @@ export type AnomalySequenceBreakdownRow = {
   reasonCounts: AnomalyReasonCount[]
   trucks: CircuitClassificationEntry[]
 }
+
+/** Camión con descarga instrumentada (C16 / Volcable) sin paso por balanza. */
+export type SuspiciousDischargeWithoutBalanzaRow = {
+  journeyId: string
+  plate: string
+  firstEventAt: string
+  lastEventAt: string
+  dischargePoint: string
+  detectedSequence: string
+  executiveCircuitDisplay: string
+  committeeGroup: string
+  committeeReason: string
+  usefulEventsCount: number
+}
+
+export const SUSPICIOUS_DISCHARGE_CSV_HEADERS = [
+  'journey_id',
+  'plate',
+  'first_event_at',
+  'last_event_at',
+  'discharge_point',
+  'detected_sequence',
+  'executive_circuit',
+  'committee_group',
+  'committee_reason',
+  'useful_events_count',
+] as const
 
 export const ANOMALY_SEQUENCE_CSV_HEADERS = [
   'sequence_key',
@@ -262,6 +292,9 @@ function rowToEntry(row: Record<string, string>, color: string): CircuitClassifi
     committeeReason: String(row.committee_reason ?? '').trim(),
     operationalVariationType: String(row.operational_variation_type ?? '').trim(),
     detectedSequence: String(row.detected_sequence ?? '').trim(),
+    deviceSequence: String(row.device_sequence ?? '').trim(),
+    firstEventAt: String(row.first_event_at ?? '').trim(),
+    lastEventAt: String(row.last_event_at ?? '').trim(),
     executiveReason: String(row.executive_reason ?? '').trim(),
     pieSliceLabel,
     usefulEventsCount: Number(String(row.useful_events_count ?? '').trim()) || 0,
@@ -355,6 +388,101 @@ function sortDrilldownEntries(list: CircuitClassificationEntry[]): CircuitClassi
 }
 
 const ANOMALY_SEQUENCE_EMPTY = '(SIN_SECUENCIA_DETECTADA)'
+
+const BALANZA_LOGICAL_CODES = new Set(['BALANZA', 'BALANZA_INGRESO', 'BALANZA_EGRESO'])
+const DISCHARGE_LOGICAL_CODES = new Set(['CELDA16_DESCARGA', 'VOLCABLE'])
+
+export function parseLogicalSequence(detectedSequence: string): string[] {
+  return String(detectedSequence ?? '')
+    .split(/>|→|,|\|/g)
+    .map((t) => t.trim().toUpperCase())
+    .filter(Boolean)
+}
+
+export function journeyHasBalanzaInSequence(detectedSequence: string): boolean {
+  return parseLogicalSequence(detectedSequence).some((code) => BALANZA_LOGICAL_CODES.has(code))
+}
+
+export function journeyHasInstrumentedDischarge(detectedSequence: string): boolean {
+  return parseLogicalSequence(detectedSequence).some((code) => DISCHARGE_LOGICAL_CODES.has(code))
+}
+
+export function resolveDischargePointLabel(detectedSequence: string, deviceSequence = ''): string {
+  const codes = parseLogicalSequence(detectedSequence)
+  const parts: string[] = []
+  const devs = String(deviceSequence ?? '')
+    .split(/>|→|,|\|/g)
+    .map((t) => t.trim())
+
+  if (codes.includes('CELDA16_DESCARGA')) {
+    const hasC16_1 = devs.some((d) => /RicC16Descarga1/i.test(d))
+    const hasC16_2 = devs.some((d) => /RicC16Descarga2/i.test(d))
+    if (hasC16_1 && hasC16_2) parts.push('C16 descarga 1 y 2')
+    else if (hasC16_2) parts.push('C16 descarga 2')
+    else if (hasC16_1) parts.push('C16 descarga 1')
+    else parts.push('C16 descarga')
+  }
+
+  if (codes.includes('VOLCABLE')) {
+    const hasV1 = devs.some((d) => /RicVolcable1/i.test(d))
+    const hasV2 = devs.some((d) => /RicVolcable2/i.test(d))
+    if (hasV1 && hasV2) parts.push('Volcable 1 y 2')
+    else if (hasV2) parts.push('Volcable 2')
+    else if (hasV1) parts.push('Volcable 1')
+    else parts.push('Volcable')
+  }
+
+  return parts.join(' · ') || '—'
+}
+
+/** Descarga en C16 o Volcable sin ningún paso por balanza. */
+export function buildSuspiciousDischargeWithoutBalanza(
+  entries: CircuitClassificationEntry[]
+): SuspiciousDischargeWithoutBalanzaRow[] {
+  const rows: SuspiciousDischargeWithoutBalanzaRow[] = []
+
+  for (const entry of entries) {
+    if (!journeyHasInstrumentedDischarge(entry.detectedSequence)) continue
+    if (journeyHasBalanzaInSequence(entry.detectedSequence)) continue
+
+    rows.push({
+      journeyId: entry.journeyId,
+      plate: entry.plate,
+      firstEventAt: entry.firstEventAt,
+      lastEventAt: entry.lastEventAt,
+      dischargePoint: resolveDischargePointLabel(entry.detectedSequence, entry.deviceSequence),
+      detectedSequence: entry.detectedSequence,
+      executiveCircuitDisplay: entry.executiveCircuitDisplay,
+      committeeGroup: entry.committeeGroup,
+      committeeReason: entry.committeeReason,
+      usefulEventsCount: entry.usefulEventsCount,
+    })
+  }
+
+  return rows.sort((a, b) => {
+    const ta = a.firstEventAt ? new Date(a.firstEventAt).getTime() : 0
+    const tb = b.firstEventAt ? new Date(b.firstEventAt).getTime() : 0
+    if (ta !== tb) return ta - tb
+    return a.plate.localeCompare(b.plate) || a.journeyId.localeCompare(b.journeyId)
+  })
+}
+
+export function suspiciousDischargeCsv(rows: SuspiciousDischargeWithoutBalanzaRow[]): string {
+  if (!rows.length) return `${SUSPICIOUS_DISCHARGE_CSV_HEADERS.join(',')}\n`
+  const csvRows = rows.map((r) => ({
+    journey_id: r.journeyId,
+    plate: r.plate,
+    first_event_at: r.firstEventAt,
+    last_event_at: r.lastEventAt,
+    discharge_point: r.dischargePoint,
+    detected_sequence: r.detectedSequence,
+    executive_circuit: r.executiveCircuitDisplay,
+    committee_group: r.committeeGroup,
+    committee_reason: r.committeeReason,
+    useful_events_count: r.usefulEventsCount,
+  }))
+  return recordsToCsv([...SUSPICIOUS_DISCHARGE_CSV_HEADERS], csvRows)
+}
 
 /** Clave estable para agrupar recorridos anómalos. */
 export function normalizeAnomalySequenceKey(detectedSequence: string): string {
