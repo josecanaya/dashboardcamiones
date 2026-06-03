@@ -41,7 +41,7 @@ describe('etlSanLorenzoSupport', () => {
     expect(journeyHasSanLorenzoStrongPoint(j)).toBe(true)
   })
 
-  it('ignora cámaras no instaladas (calada)', () => {
+  it('cuenta calada SL cuando está instalada', () => {
     const j = journey({
       events: [
         { deviceCode: 'SLZIngCamFrente', sectorCode: 'PUERTO_SAN_LORENZO_INGRESO_CAMIONES', occurredAt: '2026-05-12T09:00:00' } as never,
@@ -49,8 +49,8 @@ describe('etlSanLorenzoSupport', () => {
       ],
     })
     const snap = snapshotSanLorenzoSupport(j)
-    expect(snap.slPointCount).toBe(1)
-    expect(snap.slLogicalCodes).toEqual(['SL_INGRESO'])
+    expect(snap.slPointCount).toBe(2)
+    expect(snap.slLogicalCodes).toEqual(expect.arrayContaining(['SL_INGRESO', 'SL_CALADA']))
     expect(snap.hasSlCorroboration).toBe(true)
   })
 

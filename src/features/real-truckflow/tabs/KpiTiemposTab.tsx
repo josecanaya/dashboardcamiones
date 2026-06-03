@@ -169,6 +169,12 @@ export function KpiTiemposTab() {
             </label>
             <div className="max-w-2xl text-sm text-slate-600">
               <span className="font-semibold text-slate-700">Recorrido:</span> {circuitPathLabel}
+              {(circuitFilter === 'R7' || circuitFilter === 'SL1') && (
+                <span className="mt-1 block text-xs text-violet-700">
+                  Pata San Lorenzo: tramo <strong>balanza ingreso SL → balanza salida SL</strong> consolida la
+                  estadía interna mientras calada/enlace/descarga no tengan datos productivos.
+                </span>
+              )}
             </div>
             <button
               type="button"

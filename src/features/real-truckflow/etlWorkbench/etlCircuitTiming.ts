@@ -8,6 +8,7 @@ export const MIN_CIRCUIT_TOTAL_DURATION_MINUTES = 3
 import { computeStayTimeStats } from '../../../services/analyticsKpi'
 import { recordsToCsv } from './etlCsv'
 import { isEtlRearCameraDevice } from './etlRearDevices'
+import { computeR7LegDurations } from './etlRicSanLorenzoRoute'
 import { EXECUTIVE_CIRCUIT_ORDER } from './finalCircuitScoring'
 import type { CommitteeGroup } from './committeeClassification'
 import type { ClassifiedJourneyForTiming } from './etlSegmentTiming'
@@ -29,6 +30,11 @@ export type CircuitTimingJourneyRow = {
   endTime: string
   totalDurationMin: number
   eventCount: number
+  ricDurationMin?: number
+  bridgeDurationMin?: number
+  slDurationMin?: number
+  legPlant?: string
+  legType?: string
 }
 
 export type CircuitTimingSummaryRow = {
@@ -180,12 +186,19 @@ export function buildCircuitTimingIndex(
     if (!executiveCircuitCode) continue
     const extracted = extractJourneyCircuitTotal(row.journey)
     if (!extracted) continue
+    const r7Legs =
+      executiveCircuitCode === 'R7' ? computeR7LegDurations(row.journey) : null
     journeyRows.push({
       ...extracted,
       executiveCircuitCode,
       circuitName: String(row.circuitName ?? '').trim(),
       executiveStatus: String(row.executiveStatus ?? '').trim(),
       validDetail: String(row.validDetail ?? '').trim(),
+      ricDurationMin: r7Legs?.ricDurationMin,
+      bridgeDurationMin: r7Legs?.bridgeDurationMin,
+      slDurationMin: r7Legs?.slDurationMin,
+      legPlant: r7Legs ? 'MIXTO' : '',
+      legType: r7Legs ? 'R7_MIXTO' : '',
     })
   }
 
@@ -245,6 +258,11 @@ export function circuitTimingJourneysFromCsvRows(
       endTime: String(r.end_time ?? ''),
       totalDurationMin,
       eventCount: Number(r.event_count) || 0,
+      ricDurationMin: Number(r.ric_duration_min) || undefined,
+      bridgeDurationMin: Number(r.bridge_duration_min) || undefined,
+      slDurationMin: Number(r.sl_duration_min) || undefined,
+      legPlant: String(r.leg_plant ?? '').trim() || undefined,
+      legType: String(r.leg_type ?? '').trim() || undefined,
     })
   }
   return out
@@ -305,6 +323,11 @@ export function circuitTimingJourneysCsv(index: CircuitTimingIndex): string {
     'start_time',
     'end_time',
     'total_duration_min',
+    'ric_duration_min',
+    'bridge_duration_min',
+    'sl_duration_min',
+    'leg_plant',
+    'leg_type',
     'event_count',
   ]
   const rows = index.journeys.map((j) => ({
@@ -317,6 +340,11 @@ export function circuitTimingJourneysCsv(index: CircuitTimingIndex): string {
     start_time: j.startTime,
     end_time: j.endTime,
     total_duration_min: fmtMin(j.totalDurationMin),
+    ric_duration_min: j.ricDurationMin != null ? fmtMin(j.ricDurationMin) : '',
+    bridge_duration_min: j.bridgeDurationMin != null ? fmtMin(j.bridgeDurationMin) : '',
+    sl_duration_min: j.slDurationMin != null ? fmtMin(j.slDurationMin) : '',
+    leg_plant: j.legPlant ?? '',
+    leg_type: j.legType ?? '',
     event_count: j.eventCount,
   }))
   return recordsToCsv(headers, rows)

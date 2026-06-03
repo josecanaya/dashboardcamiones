@@ -19,6 +19,7 @@ import {
   resolveProbableSolidExecutiveDecision,
   journeyMeetsDeducedEvidenceThreshold,
   journeyHasDeducedStrongEvidence,
+  journeyMeetsFlexibleInstrumentedDischargeRule,
   isSolidReceptionPattern,
   isSolidDispatchPattern,
   resolveFinalStatus,
@@ -75,6 +76,28 @@ describe('finalCircuitScoring', () => {
     expect(r.finalStatus).toBe('ANOMALO')
     expect(r.reason).toBe('NO_RESPETA_SECUENCIA')
     expect(r.sequenceRespected).toBe(false)
+  })
+
+  it('Volcable 1 + calada + balanza sin egreso Ric → DEDUCIDO flex (caso AD800BY)', () => {
+    const seq = ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO', 'VOLCABLE', 'BALANZA_EGRESO']
+    const j = journey({
+      eventCount: 6,
+      logicalCodeSequence: seq,
+      preliminaryCircuitCode: 'CIRCUITO_VOLCABLE_1_2',
+      events: seq.map((_, i) => ({
+        deviceCode:
+          i === 4 ? 'RicVolcable1'
+          : i === 5 ? 'RicB2Egreso'
+          : 'RicIngCamFrente',
+        sectorCode: 'RICARDONE_INGRESO_CAMIONES',
+        occurredAt: `2026-05-30T22:${String(28 + i).padStart(2, '0')}:00`,
+      })) as never[],
+    })
+    expect(journeyMeetsFlexibleInstrumentedDischargeRule(j)).toBe(true)
+    const r = classifyJourneyAgainstCircuitMatrix(j, DEFAULT_CIRCUIT_MATRIX)
+    expect(r.finalStatus).not.toBe('ANOMALO')
+    expect(r.finalStatus).toBe('DEDUCIDO')
+    expect(r.reason).toBe('DESCARGA_INSTRUMENTADA_FLEX')
   })
 
   it('classifyJourneyAgainstCircuitMatrix no marca ANOMALO por desorden leve', () => {
@@ -204,25 +227,46 @@ describe('finalCircuitScoring', () => {
       expect(r.executiveReason).toBe('CIRCUITO_NO_EVALUABLE_POR_COBERTURA')
     })
 
-    it('R26/R34 sin secuencia configurada => NO_EVALUABLE / CONFIG_ERROR_MISSING_SEQUENCE', () => {
-      for (const code of ['R26', 'R34']) {
-        const cfg = resolveExecutiveCircuitConfig(code)
-        expect(cfg).toBeTruthy()
-        const r = resolveExecutiveCircuitDecision({
-          matrixFinalStatus: 'ANOMALO',
-          matrixReason: 'NO_RESPETA_SECUENCIA',
-          coverageInfo: {
-            coveragePercent: cfg!.coveragePercent,
-            hasStrongPoint: cfg!.hasStrongPoint,
-          },
-          sequenceConfig: {
-            enabledForClassification: cfg!.enabledForClassification,
-            sequenceConfigured: isExecutiveSequenceConfigured(cfg),
-          },
-        })
-        expect(r.executiveStatus).toBe('NO_EVALUABLE')
-        expect(r.executiveReason).toBe('CONFIG_ERROR_MISSING_SEQUENCE')
-      }
+    it('R34 sin secuencia configurada => NO_EVALUABLE / CONFIG_ERROR_MISSING_SEQUENCE', () => {
+      const cfg = resolveExecutiveCircuitConfig('R34')
+      expect(cfg).toBeTruthy()
+      const r = resolveExecutiveCircuitDecision({
+        matrixFinalStatus: 'ANOMALO',
+        matrixReason: 'NO_RESPETA_SECUENCIA',
+        coverageInfo: {
+          coveragePercent: cfg!.coveragePercent,
+          hasStrongPoint: cfg!.hasStrongPoint,
+        },
+        sequenceConfig: {
+          enabledForClassification: cfg!.enabledForClassification,
+          sequenceConfigured: isExecutiveSequenceConfigured(cfg),
+        },
+      })
+      expect(r.executiveStatus).toBe('NO_EVALUABLE')
+      expect(r.executiveReason).toBe('CONFIG_ERROR_MISSING_SEQUENCE')
+    })
+
+    it('R26 con secuencia configurada y matriz ANOMALO => ANOMALO productivo', () => {
+      const cfg = resolveExecutiveCircuitConfig('R26')
+      const r = resolveExecutiveCircuitDecision({
+        matrixFinalStatus: 'ANOMALO',
+        matrixReason: 'NO_RESPETA_SECUENCIA',
+        coverageInfo: {
+          coveragePercent: cfg!.coveragePercent,
+          hasStrongPoint: cfg!.hasStrongPoint,
+        },
+        sequenceConfig: {
+          enabledForClassification: cfg!.enabledForClassification,
+          sequenceConfigured: isExecutiveSequenceConfigured(cfg),
+        },
+        journeyEvidence: {
+          matchedPoints: 4,
+          expectedPoints: 8,
+          hasJourneyStrongPoint: true,
+        },
+      })
+      expect(isExecutiveSequenceConfigured(cfg)).toBe(true)
+      expect(r.executiveStatus).toBe('ANOMALO')
     })
 
     it('códigos técnicos se ubican en matriz ejecutiva R*', () => {
@@ -568,5 +612,20 @@ describe('finalCircuitScoring', () => {
       expect(decision.executiveStatus).toBe('VALIDO')
       expect(decision.validDetail).toBe('DEDUCIDO')
     })
+  })
+
+  it('R26 y R27 tienen secuencia ejecutiva configurada', () => {
+    const j26 = journey({
+      logicalCodeSequence: ['INGRESO', 'CELDA16_CARGA', 'EGRESO', 'SL_INGRESO'],
+      preliminaryCircuitCode: 'TRANSILE_C16_A_SL',
+    })
+    const j27 = journey({
+      logicalCodeSequence: ['SL_INGRESO', 'INGRESO', 'CELDA16_DESCARGA'],
+      preliminaryCircuitCode: 'TRANSILE_SL_A_C16',
+    })
+    expect(isExecutiveSequenceConfigured(resolveExecutiveCircuitConfigForJourney(j26))).toBe(true)
+    expect(isExecutiveSequenceConfigured(resolveExecutiveCircuitConfigForJourney(j27))).toBe(true)
+    expect(resolveExecutiveCircuitConfigForJourney(j26)?.code).toBe('R26')
+    expect(resolveExecutiveCircuitConfigForJourney(j27)?.code).toBe('R27')
   })
 })

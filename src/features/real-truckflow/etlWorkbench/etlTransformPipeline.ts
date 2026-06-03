@@ -5,6 +5,7 @@ import {
   compareRealEvents,
   reconstructRealJourneysIncludingInvalidPlates,
 } from '../../../services/realJourneyEventsMapper'
+import { applyJourneyCycleSplitsToEvents } from '../../../services/realJourneyCycleSplit'
 import { normalizeRealEventPoint } from '../../../services/realEventNormalization'
 import { isEtlRearCameraDevice } from './etlRearDevices'
 import { recordsToCsv } from './etlCsv'
@@ -36,8 +37,8 @@ import {
   resolveOperationalEntry,
   resolveOperationalExit,
 } from './finalCircuitScoring'
-import { applySanLorenzoExecutiveSupport, ETL_SL_EXECUTIVE_SUPPORT_ENABLED, ETL_SL_INTERNAL_CLASSIFICATION_ENABLED, snapshotSanLorenzoSupport } from './etlSanLorenzoSupport'
-import { journeyHasSlIngresoEvidence, journeyIsRicSanLorenzoRouteEvidence } from './etlRicSanLorenzoRoute'
+import { applySanLorenzoExecutiveSupport, snapshotSanLorenzoSupport } from './etlSanLorenzoSupport'
+import { journeyHasSlIngresoEvidence, journeyIsRicSanLorenzoRouteEvidence, resolveTechnicalCircuitCodeForExecutive } from './etlRicSanLorenzoRoute'
 import { resolveCommitteeClassification } from './committeeClassification'
 import {
   buildSegmentTimingIndex,
@@ -69,8 +70,15 @@ import {
   type JourneyMetaForAlertMatch,
   type JourneyOperationalAlertSummary,
 } from './etlOperationalAlertMatch'
+import type { TruckPlateRegistryDocument } from '../../../domain/truckPlateRegistry'
+import { TRUCK_PLATE_REGISTRY_CATEGORY_LABELS } from '../../../domain/truckPlateRegistry'
+import { buildRegistryLookup } from '../../../domain/truckPlateRegistry'
+import {
+  filterAlertsByPlateRegistry,
+  filterEventsByPlateRegistry,
+} from '../../../services/truckPlateRegistryFilter'
 
-export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v10'
+export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v11'
 export type { FinalCircuitStatus } from './finalCircuitScoring'
 export { finalStatusLabel } from './finalCircuitScoring'
 
@@ -390,6 +398,8 @@ export type EtlTransformInput = {
   mergeWindowHours?: number
   loadedEventFilesCount: number
   loadedAlertFilesCount: number
+  /** Catálogo manual (servicios, asociados, particulares). Si hay entradas activas, se excluyen de métricas. */
+  plateRegistry?: TruckPlateRegistryDocument | null
 }
 
 export type EtlTransformOutput = {
@@ -402,6 +412,12 @@ export type EtlTransformOutput = {
       rearAlerts: number
       pctExcludedEvents: number
       deviceRearCounts: { device: string; count: number }[]
+    }
+    plateRegistry: {
+      activeExclusionEntries: number
+      eventsExcluded: number
+      alertsExcluded: number
+      uniquePlatesExcluded: number
     }
     step2: {
       rows: number
@@ -420,6 +436,7 @@ export type EtlTransformOutput = {
       ingresos_operativos_count: number
       total_journeys_raw: number
       rear_only_journeys_excluded: number
+      journeys_cycle_splits_applied: number
       journeys_after_rear_filter: number
       final_circuits_count: number
       final_classified_count: number
@@ -521,23 +538,54 @@ function summarizeDeviceRear(events: RealJourneyEventDto[]) {
 
 export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransformOutput> {
   await yieldToBrowser()
+
+  const evFiltered = filterEventsByPlateRegistry(inp.events, inp.plateRegistry)
+  const alFiltered = filterAlertsByPlateRegistry(inp.alerts, inp.plateRegistry)
+  const eventsForEtl = evFiltered.kept
+  const alertsForEtl = alFiltered.kept
+  const plateRegistryStat = {
+    activeExclusionEntries:
+      inp.plateRegistry?.entries.filter((e) => e.active && e.excludeFromAnalytics).length ?? 0,
+    eventsExcluded: evFiltered.excluded.length,
+    alertsExcluded: alFiltered.excluded.length,
+    uniquePlatesExcluded: evFiltered.byPlate.size,
+  }
+
+  const registryLookup = buildRegistryLookup(inp.plateRegistry)
+  const plateRegistryExcludedCsv =
+    evFiltered.byPlate.size > 0 ?
+      recordsToCsv(
+        ['plate', 'category', 'category_label', 'events_excluded'],
+        [...evFiltered.byPlate.entries()].map(([plate, count]) => {
+          const entry = registryLookup.get(plate)
+          const cat = entry?.category ?? 'prestador_servicio'
+          return {
+            plate,
+            category: cat,
+            category_label: TRUCK_PLATE_REGISTRY_CATEGORY_LABELS[cat],
+            events_excluded: count,
+          }
+        })
+      )
+    : ''
+
   /** —— Paso 1 —— */
   const frontEv: RealJourneyEventDto[] = []
   const rearEv: RealJourneyEventDto[] = []
-  for (const e of inp.events) {
+  for (const e of eventsForEtl) {
     if (isEtlRearCameraDevice(e.deviceCode)) rearEv.push(e)
     else frontEv.push(e)
   }
   const frontAl: RealAlertDto[] = []
   const rearAl: RealAlertDto[] = []
-  for (const a of inp.alerts) {
+  for (const a of alertsForEtl) {
     const dev = getEffectiveAlertDeviceCode(a)
     const devTrim = dev === '?' ? '' : dev
     if (isEtlRearCameraDevice(devTrim)) rearAl.push(a)
     else frontAl.push(a)
   }
 
-  const allEv = inp.events.length
+  const allEv = eventsForEtl.length
   const pctExcluded = allEv <= 0 ? 0 : Math.round((rearEv.length / allEv) * 1000) / 10
 
   let slFrontEventsCount = 0
@@ -601,9 +649,9 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   const front_alerts_csv = recordsToCsv([...alertCols], frontAl.map(flattenAlertForEtlCsv))
   const rear_alerts_csv = recordsToCsv([...alertCols], rearAl.map(flattenAlertForEtlCsv))
 
-  const totalLprMalfunctionAlerts = inp.alerts.filter(isLprMalfunctionAlert).length
+  const totalLprMalfunctionAlerts = alertsForEtl.filter(isLprMalfunctionAlert).length
   const lprMalDeviceMap = new Map<string, number>()
-  for (const a of inp.alerts) {
+  for (const a of alertsForEtl) {
     if (!isLprMalfunctionAlert(a)) continue
     const d = getEffectiveAlertDeviceCode(a)
     lprMalDeviceMap.set(d, (lprMalDeviceMap.get(d) ?? 0) + 1)
@@ -619,7 +667,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     frontAlerts: frontAl.length,
     rearAlerts: rearAl.length,
     pctExcludedEvents: pctExcluded,
-    deviceRearCounts: summarizeDeviceRear(inp.events),
+    deviceRearCounts: summarizeDeviceRear(eventsForEtl),
   }
 
   await yieldToBrowser()
@@ -688,7 +736,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     }
     return k
   }
-  for (const e of inp.events) {
+  for (const e of eventsForEtl) {
     const iso = String(e.occurredAt ?? '').trim()
     if (!iso) continue
     const dev = String(e.deviceCode ?? '').trim() || '?'
@@ -701,7 +749,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     if (!row.last_event_at || iso > row.last_event_at) row.last_event_at = iso
   }
 
-  for (const a of inp.alerts) {
+  for (const a of alertsForEtl) {
     const iso = alertOccurredAtIso(a)
     if (!iso) continue
     const dev = getEffectiveAlertDeviceCode(a)
@@ -753,9 +801,9 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   }
   const step2Stat = {
     rows: camRowsArr.length,
-    camerasWithEvents: new Set(inp.events.map((e) => (e.deviceCode ?? '').trim()).filter(Boolean)).size,
+    camerasWithEvents: new Set(eventsForEtl.map((e) => (e.deviceCode ?? '').trim()).filter(Boolean)).size,
     camerasWithLpr: new Set(
-      inp.alerts.filter(isLprMalfunctionAlert).map((a) => getEffectiveAlertDeviceCode(a))
+      alertsForEtl.filter(isLprMalfunctionAlert).map((a) => getEffectiveAlertDeviceCode(a))
     ).size,
     criticalCameras,
     sinBaseCameras: sinBase,
@@ -767,7 +815,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   await yieldToBrowser()
 
   /** —— Paso 3 — filtros traseros + reconstrucción sólo con lecturas frontales permitidas —— */
-  const ingreso_frontal_events = inp.events.filter(isIngresoFrontalReferenceEvent)
+  const ingreso_frontal_events = eventsForEtl.filter(isIngresoFrontalReferenceEvent)
   const ingreso_frontal_event_count = ingreso_frontal_events.length
   const ingresoPlateSet = new Set(
     ingreso_frontal_events
@@ -781,7 +829,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   const ingreso_frontal_unique_journeys = ingresoJourneyUidSet.size
 
   const byJ = new Map<string, RealJourneyEventDto[]>()
-  for (const e of inp.events) {
+  for (const e of eventsForEtl) {
     const uid = String(e.journeyUid ?? '').trim()
     if (!uid) continue
     if (!byJ.has(uid)) byJ.set(uid, [])
@@ -871,8 +919,10 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     }
   }
 
-  const journeys = reconstructRealJourneysIncludingInvalidPlates(operationalFrontEvents)
+  const cycleSplit = applyJourneyCycleSplitsToEvents(operationalFrontEvents)
+  const journeys = reconstructRealJourneysIncludingInvalidPlates(cycleSplit.events)
   const journeys_after_rear_filter = journeys.length
+  const journeys_cycle_splits_applied = cycleSplit.splitsApplied
 
   const rear_only_journeys_debug_csv =
     rearOnlyDebugRows.length ?
@@ -1239,6 +1289,12 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   let executiveNonEvaluableByCoverage = 0
   let executiveNonEvaluableMissingSequence = 0
   let executiveAnomalousNoRespetaSecuencia = 0
+  let validR7Journeys = 0
+  let validSlInternalJourneys = 0
+  let transileExternalJourneys = 0
+  let anomaliesRicardone = 0
+  let anomaliesSanLorenzo = 0
+  let anomaliesMixto = 0
 
   let slJourneysWithCorroboration = 0
   let slJourneysExecutiveReinforced = 0
@@ -1320,25 +1376,32 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       journeyHasStrongConfidenceBonus(mj)
     )
 
-    const matrixClassification = classifyJourneyAgainstCircuitMatrix(mj, DEFAULT_CIRCUIT_MATRIX)
-    const technicalCircuitCode = matrixClassification.matchedCircuitCode ?? mj.preliminaryCircuitCode
+    let matrixClassification = classifyJourneyAgainstCircuitMatrix(mj, DEFAULT_CIRCUIT_MATRIX)
+    let technicalCircuitCode = matrixClassification.matchedCircuitCode ?? mj.preliminaryCircuitCode
+    const executiveCircuitConfig = resolveExecutiveCircuitConfigForJourney(mj, technicalCircuitCode)
+    const technicalOverride =
+      executiveCircuitConfig ?
+        resolveTechnicalCircuitCodeForExecutive(mj, executiveCircuitConfig.code)
+      : null
+    if (technicalOverride && technicalOverride !== technicalCircuitCode) {
+      matrixClassification = classifyJourneyAgainstCircuitMatrix(mj, DEFAULT_CIRCUIT_MATRIX, {
+        preliminaryCodeOverride: technicalOverride,
+      })
+      technicalCircuitCode = technicalOverride
+    }
+    const executiveCircuitCode = executiveCircuitConfig?.code ?? ''
     const matrixExpectedPoints =
       matrixClassification.matchedCircuitCode ?
         (DEFAULT_CIRCUIT_MATRIX[matrixClassification.matchedCircuitCode]?.length ?? 0)
       : 0
     const matrixMatchedPoints = Math.max(0, matrixExpectedPoints - matrixClassification.missingPoints.length)
-    const executiveCircuitConfig = resolveExecutiveCircuitConfigForJourney(mj, technicalCircuitCode)
-    const executiveCircuitCode = executiveCircuitConfig?.code ?? ''
     const slSupport = snapshotSanLorenzoSupport(mj)
     const isRicSlzRoute =
       isRicSanLorenzoRouteCircuit(executiveCircuitCode) ||
       isRicSanLorenzoRouteCircuit(technicalCircuitCode) ||
       mj.preliminaryCircuitCode === 'CIRCUITO_SAN_LORENZO' ||
       journeyIsRicSanLorenzoRouteEvidence(mj)
-    const sequenceConfigured =
-      isRicSlzRoute && !ETL_SL_INTERNAL_CLASSIFICATION_ENABLED ?
-        true
-      : isExecutiveSequenceConfigured(executiveCircuitConfig)
+    const sequenceConfigured = isExecutiveSequenceConfigured(executiveCircuitConfig)
     const coveragePercent = executiveCircuitConfig?.coveragePercent ?? 0
     let hasStrongPoint =
       executiveCircuitConfig?.code === 'R8' || executiveCircuitConfig?.code === 'R16' ?
@@ -1441,6 +1504,22 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       case 'ANOMALIAS':
         committeeAnomalias++
         break
+    }
+    if (executiveCircuit.executiveStatus === 'VALIDO') {
+      if (executiveCircuitCode === 'R7') validR7Journeys++
+      if (executiveCircuitCode === 'SL1') validSlInternalJourneys++
+      if (executiveCircuitCode === 'R26' || executiveCircuitCode === 'R27' || executiveCircuitCode === 'R34') {
+        transileExternalJourneys++
+      }
+    }
+    if (
+      committee.committee_group === 'ANOMALIAS' ||
+      executiveCircuit.executiveStatus === 'ANOMALO' ||
+      executiveCircuit.executiveStatus === 'INCOMPLETO'
+    ) {
+      if (committee.anomaly_origin_plant === 'RICARDONE') anomaliesRicardone++
+      if (committee.anomaly_origin_plant === 'SAN_LORENZO') anomaliesSanLorenzo++
+      if (committee.anomaly_origin_plant === 'MIXTO') anomaliesMixto++
     }
     classifiedForSegmentTiming.push({
       journey: mj,
@@ -1647,6 +1726,10 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       show_as_exact_circuit: committee.show_as_exact_circuit,
       candidate_circuits: committee.candidate_circuits,
       missing_key_cameras: committee.missing_key_cameras,
+      anomaly_origin_plant: committee.anomaly_origin_plant,
+      anomaly_leg: committee.anomaly_leg,
+      matched_sequence_name: committee.matched_sequence_name,
+      matched_variation_name: committee.matched_variation_name,
     })
 
     const expectedSequence =
@@ -2130,7 +2213,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
 
   await yieldToBrowser()
 
-  const daysSorted = inp.events
+  const daysSorted = eventsForEtl
     .map((e) => occurredAtLocalDayKey(e.occurredAt))
     .filter(Boolean)
     .sort()
@@ -2224,6 +2307,9 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     loaded_alert_files_count: inp.loadedAlertFilesCount,
     raw_events_count: inp.events.length,
     raw_alerts_count: inp.alerts.length,
+    plate_registry_events_excluded: plateRegistryStat.eventsExcluded,
+    plate_registry_alerts_excluded: plateRegistryStat.alertsExcluded,
+    plate_registry_active_entries: plateRegistryStat.activeExclusionEntries,
     front_events_count: frontEv.length,
     rear_events_count: rearEv.length,
     front_alerts_count: frontAl.length,
@@ -2277,6 +2363,12 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     non_evaluable_by_coverage: executiveNonEvaluableByCoverage,
     non_evaluable_missing_sequence: executiveNonEvaluableMissingSequence,
     anomalous_no_respeta_secuencia: executiveAnomalousNoRespetaSecuencia,
+    valid_r7_journeys: validR7Journeys,
+    valid_sl_internal_journeys: validSlInternalJourneys,
+    transile_external_journeys: transileExternalJourneys,
+    anomalies_ricardone: anomaliesRicardone,
+    anomalies_san_lorenzo: anomaliesSanLorenzo,
+    anomalies_mixto: anomaliesMixto,
     date_min: dateMin ?? '',
     date_max: dateMax ?? '',
     rules_version: ETL_TRANSFORM_RULES_VERSION,
@@ -2310,8 +2402,8 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   const executiveStat = {
     periodStart: dateMin ?? '',
     periodEnd: dateMax ?? '',
-    eventCount: inp.events.length,
-    alertCount: inp.alerts.length,
+    eventCount: eventsForEtl.length,
+    alertCount: alertsForEtl.length,
     completos: executiveCompletos,
     incompletos: executiveIncompletos,
     anomalos: executiveAnomalos,
@@ -2358,6 +2450,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       merge_candidates_debug: merge_candidates_debug_csv,
       alerts_operational: operational_alerts_csv,
       transform_summary: transform_summary_csv,
+      plate_registry_excluded: plateRegistryExcludedCsv,
       segment_timing_kpi,
       segment_timing_legs,
       circuit_timing_summary,
@@ -2365,6 +2458,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     },
     stats: {
       step1: step1Stat,
+      plateRegistry: plateRegistryStat,
       step2: step2Stat,
       step3: step3Stat,
       step4: step4Stat,

@@ -17,7 +17,15 @@ import { parseTruckflowJsonFile, type ParsedTruckflowFile } from './parseTruckfl
 import { runEtlTransform, type EtlTransformOutput } from './etlTransformPipeline'
 import { inferSiteIdFromSectorCode } from '../../../services/realJourneyEventsMapper'
 import { occurredAtLocalDayKey } from '../../../services/realJourneyQuality'
-import { postTruckflowLoadLocalPeriod } from '../api/truckflowLocalServerApi'
+import {
+  countUniqueRawJourneyUids,
+  enrichApiJourneyStatsFromRawEvents,
+} from '../../../services/truckflowRawJourneyStats'
+import {
+  postTruckflowLoadLocalPeriod,
+  type TruckflowApiJourneyDayStat,
+} from '../api/truckflowLocalServerApi'
+import { getTruckPlateRegistry } from '../api/truckPlateRegistryApi'
 
 export type EtlLoadSummary = {
   loadedEventFilesCount: number
@@ -31,10 +39,14 @@ export type EtlLoadSummary = {
   parseErrors: string[]
 }
 
+export type { TruckflowApiJourneyDayStat }
+
 export type EtlDiskPeriod = { startDate: string; endDate: string }
 
 type Ctx = {
   loadSummary: EtlLoadSummary | null
+  /** journeyUid distintos por carpeta de extracción (JSON crudo API, pre-ETL). */
+  apiJourneyStatsPerDay: TruckflowApiJourneyDayStat[] | null
   /** Último rango descargado a disco (Extracción) o cargado en memoria. */
   diskPeriod: EtlDiskPeriod | null
   setDiskPeriod: (p: EtlDiskPeriod | null) => void
@@ -125,6 +137,9 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
   const [events, setEvents] = useState<RealJourneyEventDto[]>([])
   const [alerts, setAlerts] = useState<RealAlertDto[]>([])
   const [loadSummary, setLoadSummary] = useState<EtlLoadSummary | null>(null)
+  const [apiJourneyStatsPerDay, setApiJourneyStatsPerDay] = useState<TruckflowApiJourneyDayStat[] | null>(
+    null
+  )
   const [diskPeriod, setDiskPeriod] = useState<EtlDiskPeriod | null>(null)
   const [transformResult, setTransformResult] = useState<EtlTransformOutput | null>(null)
   const [transformBusy, setTransformBusy] = useState(false)
@@ -137,10 +152,35 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
     setEvents([])
     setAlerts([])
     setLoadSummary(null)
+    setApiJourneyStatsPerDay(null)
     setDiskPeriod(null)
     setTransformResult(null)
     setTransformError(null)
   }, [])
+
+function buildApiJourneyStatsFromParsedFiles(
+  evFiles: ParsedTruckflowFile[],
+  alFiles: ParsedTruckflowFile[]
+): TruckflowApiJourneyDayStat[] {
+  const dayKeys = new Set<string>()
+  for (const f of [...evFiles, ...alFiles]) {
+    if (f.dayHint && /^\d{4}-\d{2}-\d{2}$/.test(f.dayHint)) dayKeys.add(f.dayHint)
+  }
+  const days = [...dayKeys].sort()
+  return days.map((day) => {
+    const evRecs = evFiles.filter((f) => f.dayHint === day).flatMap((f) => f.records)
+    const alRecs = alFiles.filter((f) => f.dayHint === day).flatMap((f) => f.records)
+    return {
+      day,
+      events: evRecs.length,
+      alerts: alRecs.length,
+      uniqueJourneyUids: countUniqueRawJourneyUids(evRecs),
+      uniqueAlertJourneyUids: countUniqueRawJourneyUids(alRecs),
+      eventFile: evRecs.length > 0,
+      alertFile: alRecs.length > 0,
+    }
+  })
+}
 
   const loadJsonFiles = useCallback(async (list: FileList | File[]) => {
     const arr = [...list].filter((f) => f.name.toLowerCase().endsWith('.json'))
@@ -198,6 +238,7 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
       setEvents(evDedup)
       setAlerts(alDedup)
       setLoadSummary(buildLoadSummary(evFiles, alFiles, evDedup, alDedup, errors))
+      setApiJourneyStatsPerDay(buildApiJourneyStatsFromParsedFiles(evFiles, alFiles))
     } finally {
       setBusyLoad(false)
     }
@@ -254,6 +295,7 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
       setEvents(evDedup)
       setAlerts(alDedup)
       setLoadSummary(buildLoadSummary(evFiles, alFiles, evDedup, alDedup, errors))
+      setApiJourneyStatsPerDay(enrichApiJourneyStatsFromRawEvents(res.perDay, res.events))
       setDiskPeriod({ startDate, endDate })
       return evDedup.length > 0 || alDedup.length > 0
     } catch (e) {
@@ -262,6 +304,7 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
       setParsedEventFiles([])
       setParsedAlertFiles([])
       setLoadSummary(null)
+      setApiJourneyStatsPerDay(null)
       setTransformError(e instanceof Error ? e.message : String(e))
       return false
     } finally {
@@ -277,12 +320,19 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
     setTransformBusy(true)
     setTransformError(null)
     try {
+      let plateRegistry = null
+      try {
+        plateRegistry = await getTruckPlateRegistry()
+      } catch {
+        /* servidor local apagado: ETL sin exclusiones de catálogo */
+      }
       const out = await runEtlTransform({
         events,
         alerts,
         mergeWindowHours,
         loadedEventFilesCount: parsedEventFiles.length,
         loadedAlertFilesCount: parsedAlertFiles.length,
+        plateRegistry,
       })
       setTransformResult(out)
       return out
@@ -297,6 +347,7 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
   const value = useMemo<Ctx>(
     () => ({
       loadSummary,
+      apiJourneyStatsPerDay,
       diskPeriod,
       setDiskPeriod,
       parsedEventFiles,
@@ -316,6 +367,7 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
     }),
     [
       loadSummary,
+      apiJourneyStatsPerDay,
       diskPeriod,
       parsedEventFiles,
       parsedAlertFiles,

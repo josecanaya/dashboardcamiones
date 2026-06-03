@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { ApiJourneyCountByDayTable } from '../components/ApiJourneyCountByDayTable'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
 import { previousCalendarWeekRange, thisCalendarWeekRange } from '../utils/weekDateRange'
 
@@ -139,7 +140,7 @@ export function AnalisisLocalTab({ onTransformSucceeded }: Props) {
           </label>
         </details>
 
-        {wb.loadSummary?.parseErrors.length ?
+        {(wb.loadSummary?.parseErrors?.length ?? 0) > 0 ?
           <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs text-rose-950">
             {wb.loadSummary.parseErrors.map((ln) => (
               <div key={ln}>{ln}</div>
@@ -165,11 +166,15 @@ export function AnalisisLocalTab({ onTransformSucceeded }: Props) {
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="text-[11px] font-semibold uppercase text-slate-500">Eventos</div>
-          <div className="mt-1 text-2xl font-bold text-slate-900">{s?.rawEventsCount.toLocaleString() ?? '—'}</div>
+          <div className="mt-1 text-2xl font-bold text-slate-900">
+            {s?.rawEventsCount != null ? s.rawEventsCount.toLocaleString() : '—'}
+          </div>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="text-[11px] font-semibold uppercase text-slate-500">Alertas</div>
-          <div className="mt-1 text-2xl font-bold text-slate-900">{s?.rawAlertsCount.toLocaleString() ?? '—'}</div>
+          <div className="mt-1 text-2xl font-bold text-slate-900">
+            {s?.rawAlertsCount != null ? s.rawAlertsCount.toLocaleString() : '—'}
+          </div>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="text-[11px] font-semibold uppercase text-slate-500">Período</div>
@@ -189,6 +194,15 @@ export function AnalisisLocalTab({ onTransformSucceeded }: Props) {
               <span className="font-semibold">Rango:</span> {s.timeMin.slice(0, 10)} → {s.timeMax.slice(0, 10)}
             </>
           : null}
+        </div>
+      : null}
+
+      {wb.apiJourneyStatsPerDay?.length ?
+        <div className="rounded-3xl border border-violet-200 bg-gradient-to-br from-violet-50/60 via-white to-white p-6 shadow-sm">
+          <ApiJourneyCountByDayTable
+            rows={wb.apiJourneyStatsPerDay}
+            title="Journeys API por día (sin limpieza ETL)"
+          />
         </div>
       : null}
     </section>

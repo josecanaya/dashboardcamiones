@@ -236,14 +236,18 @@ export function buildOperationalSessionsPlateSite(
         cur = [e]
         continue
       }
-      const egressLike = prevL === 'EGRESO' || prevL === 'SL_INGRESO' || prevL === 'EGRESO_TRASERA_EXCLUIDA'
+      const egressLike =
+        prevL === 'EGRESO' ||
+        prevL === 'BALANZA_EGRESO' ||
+        prevL === 'SL_INGRESO' ||
+        prevL === 'EGRESO_TRASERA_EXCLUIDA'
       const entryLike = nextL === 'INGRESO' || nextL === 'PREINGRESO'
       if (egressLike && entryLike && Number.isFinite(dt) && dt > 15 * MS_MIN) {
         flush()
         cur = [e]
         continue
       }
-      if (Number.isFinite(dt) && dt > 12 * MS_HOUR) {
+      if (Number.isFinite(dt) && dt > 6 * MS_HOUR) {
         flush()
         cur = [e]
         continue
@@ -273,10 +277,14 @@ function validateMergedTimeline(sorted: readonly RealJourneyEventDto[], maxGapMs
     const dt = eventTs(sorted[i]!) - eventTs(sorted[i - 1]!)
     if (!Number.isFinite(dt)) return false
     if (dt > maxGapMs) return false
-    if (dt > 12 * MS_HOUR) return false
+    if (dt > 6 * MS_HOUR) return false
     const prevL = normalizeRealEventPoint(sorted[i - 1]!).logicalCode
     const nextL = normalizeRealEventPoint(sorted[i]!).logicalCode
-    const egressLike = prevL === 'EGRESO' || prevL === 'SL_INGRESO' || prevL === 'EGRESO_TRASERA_EXCLUIDA'
+    const egressLike =
+      prevL === 'EGRESO' ||
+      prevL === 'BALANZA_EGRESO' ||
+      prevL === 'SL_INGRESO' ||
+      prevL === 'EGRESO_TRASERA_EXCLUIDA'
     const entryLike = nextL === 'INGRESO' || nextL === 'PREINGRESO'
     if (egressLike && entryLike && dt > 15 * MS_MIN) return false
   }

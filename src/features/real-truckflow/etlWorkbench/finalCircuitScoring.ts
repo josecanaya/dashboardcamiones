@@ -2,7 +2,16 @@ import type { ReconstructedRealJourney } from '../../../services/realJourneyEven
 import { compareRealEvents } from '../../../services/realJourneyEventsMapper'
 import { normalizeRealEventPoint } from '../../../services/realEventNormalization'
 import { isEtlRearCameraDevice } from './etlRearDevices'
-import { journeyIsRicSanLorenzoRouteEvidence } from './etlRicSanLorenzoRoute'
+import {
+  DEFAULT_CIRCUIT_MATRIX_EXTENSIONS,
+  journeyIsRicSanLorenzoRouteEvidence,
+  journeyIsSlOnlyInternal,
+  journeyIsTransileC16ToSl,
+  journeyIsTransileSlToC16,
+  resolveTechnicalCircuitCodeForExecutive,
+} from './etlRicSanLorenzoRoute'
+import { ETL_SL_INTERNAL_CLASSIFICATION_ENABLED } from './etlSanLorenzoSupport'
+import { R7_RIC_ALLOWED_S_SEQUENCES, SL1_ALLOWED_S_SEQUENCES } from './validCircuitMatrix'
 import { lookupSanLorenzoCameraByDevice } from '../../../data/sanLorenzoCameraCatalog'
 
 export type EntrySource =
@@ -133,6 +142,7 @@ export const DEFAULT_CIRCUIT_MATRIX: JourneyCircuitMatrix = {
   ],
   CIRCUITO_LIQUIDO: ['INGRESO', 'PREINGRESO', 'LIQUIDO', 'BALANZA_INGRESO', 'BALANZA_EGRESO'],
   CIRCUITO_SAN_LORENZO: ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO'],
+  ...DEFAULT_CIRCUIT_MATRIX_EXTENSIONS,
   DESPACHO_SIN_PUNTO_INSTRUMENTADO: [
     'INGRESO',
     'PREINGRESO',
@@ -204,18 +214,29 @@ export const EXECUTIVE_CIRCUIT_MATRIX: Record<string, ExecutiveCircuitConfig> = 
   },
   R7: {
     code: 'R7',
-    label: 'Ricardone → San Lorenzo (ruta)',
+    label: 'Ricardone → San Lorenzo',
     coveragePercent: 80,
     hasStrongPoint: true,
     enabledForClassification: true,
-    aliases: ['CIRCUITO_SAN_LORENZO'],
-    baseSequence: ['S0', 'S1', 'S5', 'S7'],
+    aliases: ['CIRCUITO_SAN_LORENZO', 'CIRCUITO_R7_MIXTO'],
+    baseSequence: ['S0', 'S1', 'S2', 'S3'],
     allowedSequences: [
+      ...R7_RIC_ALLOWED_S_SEQUENCES,
       ['S0', 'S1', 'S3'],
-      ['S0', 'S1', 'S5', 'S7'],
       ['S0', 'S1', 'ESPERA', 'S5', 'S7'],
       ['S0', 'S2', 'S1', 'S5', 'S7'],
+      ['S0', 'S1', 'S2', 'S3', 'S0', 'S1', 'S3', 'S4', 'S5', 'S7'],
     ],
+  },
+  SL1: {
+    code: 'SL1',
+    label: 'Recepción interna San Lorenzo',
+    coveragePercent: 75,
+    hasStrongPoint: true,
+    enabledForClassification: true,
+    aliases: ['CIRCUITO_SL_RECEPCION'],
+    baseSequence: SL1_ALLOWED_S_SEQUENCES[0]!,
+    allowedSequences: SL1_ALLOWED_S_SEQUENCES.slice(1),
   },
   R8: {
     code: 'R8',
@@ -272,10 +293,55 @@ export const EXECUTIVE_CIRCUIT_MATRIX: Record<string, ExecutiveCircuitConfig> = 
   },
   R26: {
     code: 'R26',
-    label: 'Transile externo C16 SLZ',
+    label: 'Transile Celda 16 → San Lorenzo',
     coveragePercent: 60,
     hasStrongPoint: true,
     enabledForClassification: true,
+    aliases: ['TRANSILE_C16_A_SL', 'TRANSILE_C16_A_SL_DESCARGA'],
+    baseSequence: [
+      'S0',
+      'S1',
+      'S2',
+      'S4',
+      'S5',
+      'S6',
+      'S7',
+      'S4',
+      'S10',
+      'S0',
+      'S1',
+      'S3',
+      'S4',
+      'S5',
+      'S7',
+    ],
+    allowedSequences: [],
+  },
+  R27: {
+    code: 'R27',
+    label: 'Transile San Lorenzo → Celda 16',
+    coveragePercent: 60,
+    hasStrongPoint: true,
+    enabledForClassification: true,
+    aliases: ['TRANSILE_SL_A_C16', 'TRANSILE_SL_A_C16_DESCARGA'],
+    baseSequence: [
+      'S0',
+      'S1',
+      'S3',
+      'S4',
+      'S5',
+      'S7',
+      'S0',
+      'S1',
+      'S2',
+      'S4',
+      'S5',
+      'S6',
+      'S7',
+      'S4',
+      'S10',
+    ],
+    allowedSequences: [],
   },
   R34: {
     code: 'R34',
@@ -324,6 +390,8 @@ export const EXECUTIVE_CIRCUIT_ORDER = [
   'R19',
   'R20',
   'R26',
+  'R27',
+  'SL1',
   'R34',
   'RS_REC',
   'RS_DESP',
@@ -413,6 +481,48 @@ function sequenceOrderEvidence(
 
 function logicalSet(j: ReconstructedRealJourney): Set<string> {
   return new Set(j.logicalCodeSequence.map((x) => String(x)))
+}
+
+/** Preliminares Ricardone con descarga instrumentada (Volcable / Celda 16). */
+const FLEX_DISCHARGE_PRELIMINARY_CODES = new Set([
+  'CIRCUITO_VOLCABLE_1_2',
+  'CIRCUITO_CELDA16_DESCARGA',
+  'CIRCUITO_CELDA16_CARGA',
+])
+
+export function isFlexibleDischargePreliminaryCode(code: string | null | undefined): boolean {
+  return FLEX_DISCHARGE_PRELIMINARY_CODES.has(String(code ?? '').trim())
+}
+
+/** Volcable 1/2 o Celda 16 (carga/descarga) por lógica o deviceCode. */
+export function journeyHasInstrumentedDischargeEvidence(j: ReconstructedRealJourney): boolean {
+  const logical = logicalSet(j)
+  if (logical.has('VOLCABLE') || logical.has('CELDA16_DESCARGA') || logical.has('CELDA16_CARGA')) {
+    return true
+  }
+  return (
+    journeyHasDevicePattern(j, /RicVolcable[12]/i) ||
+    journeyHasDevicePattern(j, /RicC16Descarga/i) ||
+    journeyHasDevicePattern(j, /RicC16Carga/i)
+  )
+}
+
+export function journeyHasCaladaOrBalanzaEvidence(j: ReconstructedRealJourney): boolean {
+  const logical = logicalSet(j)
+  return (
+    logical.has('CALADA') ||
+    logical.has('BALANZA_INGRESO') ||
+    logical.has('BALANZA_EGRESO') ||
+    logical.has('BALANZA')
+  )
+}
+
+/**
+ * Regla operativa flexible: calada y/o balanza + punto de descarga/carga instrumentado
+ * (Volcable 1, Volcable 2, Celda 16) → circuito válido aunque falte egreso Ric o la secuencia S* no cierre.
+ */
+export function journeyMeetsFlexibleInstrumentedDischargeRule(j: ReconstructedRealJourney): boolean {
+  return journeyHasInstrumentedDischargeEvidence(j) && journeyHasCaladaOrBalanzaEvidence(j)
 }
 
 function normDevice(v: unknown): string {
@@ -521,6 +631,34 @@ export function classifyJourneyAgainstCircuitMatrix(
       missingPoints: [],
       matchedCircuitCode: null,
       confidence: 0,
+    }
+  }
+
+  if (
+    isFlexibleDischargePreliminaryCode(preliminaryCode) &&
+    journeyMeetsFlexibleInstrumentedDischargeRule(journey)
+  ) {
+    const flexMissing = missingPoints
+    const flexMatched = expectedSeq.length - flexMissing.length
+    const flexConfidence =
+      expectedSeq.length > 0 ? clampRoundPct((flexMatched / expectedSeq.length) * 100) : 85
+    if (flexMissing.length === 0 && sequenceRespected) {
+      return {
+        finalStatus: 'COMPLETO',
+        reason: 'DESCARGA_INSTRUMENTADA_FLEX',
+        sequenceRespected: true,
+        missingPoints: [],
+        matchedCircuitCode,
+        confidence: flexConfidence,
+      }
+    }
+    return {
+      finalStatus: 'DEDUCIDO',
+      reason: 'DESCARGA_INSTRUMENTADA_FLEX',
+      sequenceRespected,
+      missingPoints: flexMissing,
+      matchedCircuitCode,
+      confidence: flexConfidence,
     }
   }
 
@@ -754,8 +892,20 @@ export function resolveExecutiveCircuitConfigForJourney(
   const liquidCircuit = resolveLiquidExecutiveCircuit(journey)
   if (liquidCircuit) return liquidCircuit
 
+  if (journeyIsTransileC16ToSl(journey)) {
+    return EXECUTIVE_CIRCUIT_MATRIX.R26!
+  }
+
+  if (journeyIsTransileSlToC16(journey)) {
+    return EXECUTIVE_CIRCUIT_MATRIX.R27!
+  }
+
   if (journeyIsRicSanLorenzoRouteEvidence(journey)) {
     return EXECUTIVE_CIRCUIT_MATRIX.R7!
+  }
+
+  if (ETL_SL_INTERNAL_CLASSIFICATION_ENABLED && journeyIsSlOnlyInternal(journey)) {
+    return EXECUTIVE_CIRCUIT_MATRIX.SL1!
   }
 
   if (code === 'DESPACHO_SIN_PUNTO_INSTRUMENTADO') {
@@ -815,11 +965,13 @@ export function isExecutiveSequenceConfigured(config: ExecutiveCircuitConfig | n
   return Boolean(config.baseSequence?.length || config.allowedSequences?.some((seq) => seq.length > 0))
 }
 
-/** Ruta operativa Ricardone → San Lorenzo (no confundir con circuito interno SL1–SL7). */
+/** Ruta operativa Ricardone → San Lorenzo (no confundir con circuito interno SL1). */
 export function isRicSanLorenzoRouteCircuit(code: string | null | undefined): boolean {
   const c = String(code ?? '').trim()
-  return c === 'R7' || c === 'CIRCUITO_SAN_LORENZO'
+  return c === 'R7' || c === 'CIRCUITO_SAN_LORENZO' || c === 'CIRCUITO_R7_MIXTO'
 }
+
+export { resolveTechnicalCircuitCodeForExecutive }
 
 /** 4/5 o 4/6 puntos observados + evidencia operativa fuerte → deducible como circuito válido. */
 export function journeyHasDeducedStrongEvidence(input: {
@@ -1299,6 +1451,15 @@ export function resolveExecutiveBucket(
   }
 
   if (matrixResult.finalStatus === 'ANOMALO') {
+    if (
+      isFlexibleDischargePreliminaryCode(j.preliminaryCircuitCode) &&
+      journeyMeetsFlexibleInstrumentedDischargeRule(j) &&
+      hasOperationalEntry &&
+      hasOperationalExit &&
+      frontEventCount >= 4
+    ) {
+      return { bucket: 'DEDUCIDO', anomalyReason: null }
+    }
     return { bucket: 'ANOMALO', anomalyReason: 'NO_RESPETA_SECUENCIA' }
   }
 

@@ -9,11 +9,11 @@ import type { ExecutiveCircuitDecision } from './finalCircuitScoring'
 
 const SL_LOGICAL_CODES = new Set(SAN_LORENZO_CAMERAS.map((c) => c.logicalCode))
 
-/** Desactivado esta semana: SL no promociona journeys (comité). */
-export const ETL_SL_EXECUTIVE_SUPPORT_ENABLED = false
+/** Activado: refuerzo ejecutivo con evidencia SL en rutas mixtas. */
+export const ETL_SL_EXECUTIVE_SUPPORT_ENABLED = true
 
-/** Desactivado esta semana: no cerrar circuito SL interno (S1/S5/S7). La ruta Ric→SL (R7) sigue activa. */
-export const ETL_SL_INTERNAL_CLASSIFICATION_ENABLED = false
+/** Activado: clasificación SL1 interna (solo journeys exclusivamente San Lorenzo). */
+export const ETL_SL_INTERNAL_CLASSIFICATION_ENABLED = true
 
 export type SanLorenzoSupportSnapshot = {
   slPointCount: number

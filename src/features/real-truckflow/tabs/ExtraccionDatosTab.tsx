@@ -4,8 +4,12 @@ import {
   getTruckflowListDays,
   postTruckflowExportPeriod,
   postTruckflowExportWindow,
+  postTruckflowJourneyStatsPeriod,
   type TruckflowSiteParam,
 } from '../api/truckflowLocalServerApi'
+import { ApiJourneyCountByDayTable } from '../components/ApiJourneyCountByDayTable'
+import type { TruckflowApiJourneyDayStat } from '../api/truckflowLocalServerApi'
+import { normalizeApiJourneyDayStat } from '../../../services/truckflowRawJourneyStats'
 import { TimeInput24 } from '../components/TimeInput24'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
 import { isValidTimeHHMM, normalizeTimeHHMM } from '../dateTime'
@@ -18,6 +22,7 @@ type RowState = {
   endDatetime: string
   eventsDownloaded: number
   alertsDownloaded: number
+  uniqueJourneyUids?: number
   status: 'pending' | 'running' | 'ok' | 'error'
   error?: string
 }
@@ -99,19 +104,38 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
   const [rows, setRows] = useState<RowState[]>([])
   const [dataRoot, setDataRoot] = useState<string | null>(null)
   const [statusNote, setStatusNote] = useState<string | null>(null)
+  const [journeyStats, setJourneyStats] = useState<TruckflowApiJourneyDayStat[] | null>(null)
+  const [journeyStatsBusy, setJourneyStatsBusy] = useState(false)
+
+  const refreshJourneyStatsFromDisk = async (from: string, to: string) => {
+    setJourneyStatsBusy(true)
+    try {
+      const res = await postTruckflowJourneyStatsPeriod({ startDate: from, endDate: to })
+      setJourneyStats(res.perDay.map((d) => normalizeApiJourneyDayStat(d)))
+    } catch (e) {
+      setStatusNote((prev) => {
+        const msg = e instanceof Error ? e.message : String(e)
+        return prev ? `${prev}\n\nConteo journeys: ${msg}` : `Conteo journeys: ${msg}`
+      })
+    } finally {
+      setJourneyStatsBusy(false)
+    }
+  }
 
   const totals = useMemo(() => {
     let okDays = 0
     let ev = 0
     let al = 0
+    let journeys = 0
     let err = 0
     for (const r of rows) {
       if (r.status === 'ok') okDays++
       if (r.status === 'error') err++
       ev += r.eventsDownloaded
       al += r.alertsDownloaded
+      journeys += r.uniqueJourneyUids ?? 0
     }
-    return { okDays, ev, al, err }
+    return { okDays, ev, al, journeys, err }
   }, [rows])
 
   const applyWeekPreset = (preset: 'this' | 'last') => {
@@ -179,6 +203,7 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
           endDatetime: `${d.day}T23:59:59`,
           eventsDownloaded: d.eventsDownloaded,
           alertsDownloaded: d.alertsDownloaded,
+          uniqueJourneyUids: d.uniqueJourneyUids,
           status: d.status === 'ok' ? 'ok' : 'error',
           error: d.error,
         }))
@@ -187,6 +212,7 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
         setStatusNote(
           `Período guardado: ${okN}/${mapped.length} día(s) en data/truckflow/. Siguiente paso: Análisis → Cargar período.`
         )
+        if (okN > 0) await refreshJourneyStatsFromDisk(startDate, endDate)
       } catch (e) {
         setStatusNote(e instanceof Error ? e.message : String(e))
       } finally {
@@ -218,6 +244,7 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
     )
 
     try {
+      let anyOk = false
       for (let i = 0; i < chunks.length; i++) {
         const ch = chunks[i]
         setRows((prev) => prev.map((r, j) => (j === i ? { ...r, status: 'running' } : r)))
@@ -230,6 +257,7 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
             baseUrl: baseUrl.trim() || undefined,
           })
           setDataRoot(one.dataRoot)
+          if (one.status === 'ok') anyOk = true
           setRows((prev) =>
             prev.map((r, j) =>
               j === i
@@ -237,6 +265,7 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
                     ...r,
                     eventsDownloaded: one.eventsDownloaded,
                     alertsDownloaded: one.alertsDownloaded,
+                    uniqueJourneyUids: one.uniqueJourneyUids,
                     status: one.status === 'ok' ? 'ok' : 'error',
                     error: one.error,
                   }
@@ -256,6 +285,7 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
         await yieldToMain()
       }
       wb?.setDiskPeriod({ startDate, endDate })
+      if (anyOk) await refreshJourneyStatsFromDisk(startDate, endDate)
     } finally {
       setBusy(false)
     }
@@ -384,6 +414,14 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
           >
             Ver archivos en disco
           </button>
+          <button
+            type="button"
+            disabled={busy || journeyStatsBusy}
+            onClick={() => void refreshJourneyStatsFromDisk(startDate, endDate)}
+            className="rounded-xl border border-violet-300 bg-violet-50 px-5 py-2.5 text-sm font-semibold text-violet-950 shadow-sm hover:bg-violet-100 disabled:opacity-50"
+          >
+            {journeyStatsBusy ? 'Contando journeys…' : 'Journeys API por día (disco)'}
+          </button>
         </div>
 
         {statusNote ?
@@ -410,11 +448,21 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
           <div className="text-[11px] font-semibold uppercase text-rose-800">Errores</div>
           <div className="mt-1 text-2xl font-bold text-rose-950">{totals.err}</div>
         </div>
-        <div className="rounded-2xl border border-indigo-200 bg-indigo-50 p-4 shadow-sm">
+        <div className="rounded-2xl border border-violet-200 bg-violet-50 p-4 shadow-sm">
+          <div className="text-[11px] font-semibold uppercase text-violet-800">Σ journeys API</div>
+          <div className="mt-1 text-2xl font-bold text-violet-950">
+            {(journeyStats?.reduce((s, r) => s + r.uniqueJourneyUids, 0) ?? totals.journeys).toLocaleString()}
+          </div>
+        </div>
+        <div className="rounded-2xl border border-indigo-200 bg-indigo-50 p-4 shadow-sm sm:col-span-2 lg:col-span-1">
           <div className="text-[11px] font-semibold uppercase text-indigo-900">Carpeta</div>
           <div className="mt-1 font-mono text-[11px] text-indigo-950 break-all">{dataRoot ?? '—'}</div>
         </div>
       </div>
+
+      {journeyStats?.length ?
+        <ApiJourneyCountByDayTable rows={journeyStats} title="Journeys API por día (JSON en disco, pre-ETL)" />
+      : null}
 
       {rows.length ?
         <div className="overflow-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -423,6 +471,7 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
               <tr>
                 <th className="border-b border-slate-200 px-3 py-2">Día</th>
                 <th className="border-b border-slate-200 px-3 py-2 text-right">Eventos</th>
+                <th className="border-b border-slate-200 px-3 py-2 text-right">Journeys API</th>
                 <th className="border-b border-slate-200 px-3 py-2 text-right">Alertas</th>
                 <th className="border-b border-slate-200 px-3 py-2">Estado</th>
               </tr>
@@ -432,6 +481,9 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
                 <tr key={r.partitionDay} className="border-b border-slate-100">
                   <td className="px-3 py-2 font-mono text-xs">{r.partitionDay}</td>
                   <td className="px-3 py-2 text-right">{r.eventsDownloaded.toLocaleString()}</td>
+                  <td className="px-3 py-2 text-right font-semibold text-violet-900">
+                    {r.uniqueJourneyUids != null ? r.uniqueJourneyUids.toLocaleString() : '—'}
+                  </td>
                   <td className="px-3 py-2 text-right">{r.alertsDownloaded.toLocaleString()}</td>
                   <td className="px-3 py-2">
                     <span

@@ -109,8 +109,8 @@ describe('committeeClassification v10', () => {
     expect(r.committee_group).toBe('VARIACIONES_OPERATIVAS')
   })
 
-  it('7. NO_EVALUABLE no sube a PROBABLE por corroboración SL (apoyo desactivado)', () => {
-    expect(ETL_SL_EXECUTIVE_SUPPORT_ENABLED).toBe(false)
+  it('7. NO_EVALUABLE puede subir a PROBABLE con corroboración SL (apoyo activo)', () => {
+    expect(ETL_SL_EXECUTIVE_SUPPORT_ENABLED).toBe(true)
     const j = journey({
       events: [
         { deviceCode: 'SLZIngCamFrente', sectorCode: 'PUERTO_SAN_LORENZO_INGRESO_CAMIONES', occurredAt: '2026-05-12T09:00:00' } as never,
@@ -126,11 +126,12 @@ describe('committeeClassification v10', () => {
       hasOperationalEntry: true,
       hasOperationalExit: false,
     })
-    expect(r.executiveStatus).toBe('NO_EVALUABLE')
+    expect(r.executiveStatus).toBe('PROBABLE')
+    expect(r.executiveReason).toBe('SL_CORROBORACION_GENERICO')
   })
 
-  it('8. R7 ruta Ric→SL (SL interno desactivado) no usa bloque cámaras pendientes', () => {
-    expect(ETL_SL_INTERNAL_CLASSIFICATION_ENABLED).toBe(false)
+  it('8. R7 ruta Ric→SL no usa bloque cámaras pendientes (R7 ≠ SL1 interno)', () => {
+    expect(ETL_SL_INTERNAL_CLASSIFICATION_ENABLED).toBe(true)
     const r = resolveCommitteeClassification(
       baseInput({
         executiveCircuitCode: 'R7',
@@ -230,6 +231,34 @@ describe('committeeClassification v10', () => {
     expect(r.executive_status).toBe('NO_DIFERENCIABLE')
   })
 
+  it('Volcable + calada + balanza (sin egreso Ric) => COMPLETOS flex', () => {
+    const r = resolveCommitteeClassification(
+      baseInput({
+        journey: journey({
+          logicalCodeSequence: [
+            'INGRESO',
+            'PREINGRESO',
+            'CALADA',
+            'BALANZA_INGRESO',
+            'VOLCABLE',
+            'BALANZA_EGRESO',
+          ],
+          events: [
+            { deviceCode: 'RicVolcable1', sectorCode: 'RICARDONE_VOLCABLE_1', occurredAt: '2026-05-31T06:14:00' },
+            { deviceCode: 'RicCal03', sectorCode: 'RICARDONE_CALADA', occurredAt: '2026-05-30T23:41:00' },
+          ] as never[],
+        }),
+        matrixFinalStatus: 'ANOMALO',
+        matrixReason: 'NO_RESPETA_SECUENCIA',
+        executive: { executiveStatus: 'ANOMALO', executiveReason: 'NO_RESPETA_SECUENCIA', validDetail: '' },
+        observedSectorSequence: ['S0', 'S1', 'S4', 'S9'],
+      })
+    )
+    expect(r.committee_group).toBe('COMPLETOS')
+    expect(r.committee_reason).toContain('DESCARGA_INSTRUMENTADA')
+    expect(r.executive_status).toBe('VALIDO')
+  })
+
   it('13. no respeta secuencia => ANOMALIAS', () => {
     const r = resolveCommitteeClassification(
       baseInput({
@@ -239,7 +268,7 @@ describe('committeeClassification v10', () => {
       })
     )
     expect(r.committee_group).toBe('ANOMALIAS')
-    expect(r.committee_reason).toBe('NO_RESPETA_SECUENCIA')
+    expect(r.committee_reason).toBe('RIC_SECUENCIA_INVALIDA:NO_RESPETA_SECUENCIA')
   })
 
   it('SIN_PUNTO con ingreso+egreso+4 eventos => ANOMALIAS (no deducible)', () => {

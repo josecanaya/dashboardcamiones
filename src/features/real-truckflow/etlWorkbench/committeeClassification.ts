@@ -12,10 +12,12 @@ import {
   journeyHasLiquidStrongPoint,
   journeyMeetsDeducedEvidenceThreshold,
   journeyHasDeducedStrongEvidence,
+  isFlexibleDischargePreliminaryCode,
   isRicSanLorenzoRouteCircuit,
+  journeyMeetsFlexibleInstrumentedDischargeRule,
 } from './finalCircuitScoring'
 import { ETL_SL_INTERNAL_CLASSIFICATION_ENABLED, snapshotSanLorenzoSupport } from './etlSanLorenzoSupport'
-import { journeyHasSlIngresoEvidence, journeyIsRicSanLorenzoRouteEvidence } from './etlRicSanLorenzoRoute'
+import { journeyHasSlIngresoEvidence, journeyIsRicSanLorenzoRouteEvidence, journeyIsSlOnlyInternal } from './etlRicSanLorenzoRoute'
 
 export const SL_PENDING_KEY_CAMERAS = [
   'SLZBalIngFte',
@@ -48,6 +50,9 @@ export const R7_PREINGRESO_DUPLICATE_ERROR_MINUTES = 5
 
 export type AnalysisScope = 'RICARDONE' | 'SAN_LORENZO_INTERNO' | 'TRANSILE_EXTERNO' | 'MIXTO' | 'UNKNOWN'
 
+export type AnomalyOriginPlant = 'RICARDONE' | 'SAN_LORENZO' | 'MIXTO' | 'UNKNOWN'
+export type AnomalyLeg = 'RIC' | 'SL' | 'PUENTE' | 'UNKNOWN'
+
 export type CommitteeClassification = {
   committee_group: CommitteeGroup
   committee_reason: string
@@ -61,10 +66,14 @@ export type CommitteeClassification = {
   /** Override opcional del estado técnico interno para CSV. */
   executive_status: ExecutiveCircuitStatus
   executive_reason: string
+  anomaly_origin_plant: AnomalyOriginPlant
+  anomaly_leg: AnomalyLeg
+  matched_sequence_name: string
+  matched_variation_name: string
 }
 
-const SL_INTERNAL_CODES = new Set(['R7', 'CIRCUITO_SAN_LORENZO'])
-const TRANSILE_EXTERNAL_CODES = new Set(['R26', 'R34'])
+const SL_INTERNAL_CODES = new Set(['SL1', 'CIRCUITO_SL_RECEPCION'])
+const TRANSILE_EXTERNAL_CODES = new Set(['R26', 'R27', 'R34'])
 const AMBIGUOUS_INFERRED_CODES = new Set(['RS_REC', 'RS_DESP', 'SIN_PUNTO'])
 
 const SHARED_CIRCUIT_CANDIDATES: Record<string, readonly string[]> = {
@@ -193,7 +202,142 @@ export function detectOperationalVariation(
 function isSanLorenzoInternalCircuit(executiveCode: string, technicalCode: string): boolean {
   const a = executiveCode.trim()
   const b = technicalCode.trim()
-  return SL_INTERNAL_CODES.has(a) || SL_INTERNAL_CODES.has(b)
+  return a === 'SL1' || b === 'CIRCUITO_SL_RECEPCION' || SL_INTERNAL_CODES.has(a) || SL_INTERNAL_CODES.has(b)
+}
+
+function emptyAnomalyFields(): Pick<
+  CommitteeClassification,
+  'anomaly_origin_plant' | 'anomaly_leg' | 'matched_sequence_name' | 'matched_variation_name'
+> {
+  return {
+    anomaly_origin_plant: 'UNKNOWN',
+    anomaly_leg: 'UNKNOWN',
+    matched_sequence_name: '',
+    matched_variation_name: '',
+  }
+}
+
+function isSlLogicalCode(code: string): boolean {
+  const c = String(code ?? '').trim()
+  return c.startsWith('SL_') || c === 'SL_INGRESO'
+}
+
+function resolveAnomalyOriginFromJourney(
+  journey: ReconstructedRealJourney,
+  executiveCode: string,
+  baseReason: string
+): Pick<CommitteeClassification, 'anomaly_origin_plant' | 'anomaly_leg' | 'committee_reason'> {
+  const reason = String(baseReason ?? '').trim()
+  if (!reason || reason.includes('CONTEMPLAD') || reason.includes('COMPLETA') || reason.includes('DEDUCID')) {
+    return { ...emptyAnomalyFields(), committee_reason: reason }
+  }
+
+  const events = journeyFrontEventsSorted(journey)
+  const logical = collapsedLogicalCodes(journey)
+  let ricEndIdx = -1
+  let slStartIdx = -1
+  for (let i = 0; i < logical.length; i++) {
+    if (logical[i] === 'EGRESO' && ricEndIdx < 0) ricEndIdx = i
+    if (logical[i] === 'SL_INGRESO' && slStartIdx < 0) slStartIdx = i
+  }
+
+  const isSequenceAnomaly =
+    reason.includes('NO_RESPETA_SECUENCIA') ||
+    reason.includes('SECUENCIA_INVALIDA') ||
+    reason.includes('JOURNEY_INCOMPLETO')
+
+  if (!isSequenceAnomaly) {
+    return { ...emptyAnomalyFields(), committee_reason: reason }
+  }
+
+  if (executiveCode === 'R7' || executiveCode === 'R26' || executiveCode === 'R27') {
+    if (ricEndIdx >= 0 && slStartIdx > ricEndIdx && reason.includes('PUENTE')) {
+      return {
+        anomaly_origin_plant: 'MIXTO',
+        anomaly_leg: 'PUENTE',
+        committee_reason: `MIX_PUENTE_INVALIDO:${reason}`,
+      }
+    }
+    const lastRicIdx = (() => {
+      for (let i = logical.length - 1; i >= 0; i--) {
+        const c = logical[i]!
+        if (!isSlLogicalCode(c) && c !== 'SL_INGRESO') return i
+      }
+      return -1
+    })()
+    const firstSlIdx = logical.findIndex(isSlLogicalCode)
+    if (firstSlIdx >= 0 && lastRicIdx >= 0 && firstSlIdx > lastRicIdx) {
+      return {
+        anomaly_origin_plant: 'SAN_LORENZO',
+        anomaly_leg: 'SL',
+        committee_reason: `SLZ_SECUENCIA_INVALIDA:${reason}`,
+      }
+    }
+    if (lastRicIdx >= 0 && (firstSlIdx < 0 || lastRicIdx < firstSlIdx)) {
+      return {
+        anomaly_origin_plant: 'RICARDONE',
+        anomaly_leg: 'RIC',
+        committee_reason: `RIC_SECUENCIA_INVALIDA:${reason}`,
+      }
+    }
+    if (ricEndIdx >= 0 && slStartIdx > ricEndIdx) {
+      return {
+        anomaly_origin_plant: 'MIXTO',
+        anomaly_leg: 'PUENTE',
+        committee_reason: `MIX_PUENTE_INVALIDO:${reason}`,
+      }
+    }
+  }
+
+  if (executiveCode === 'SL1' || journeyIsSlOnlyInternal(journey)) {
+    return {
+      anomaly_origin_plant: 'SAN_LORENZO',
+      anomaly_leg: 'SL',
+      committee_reason: `SLZ_SECUENCIA_INVALIDA:${reason}`,
+    }
+  }
+
+  const hasSlEvent = events.some((e) => {
+    const code = normalizeRealEventPoint(e).logicalCode
+    return isSlLogicalCode(code)
+  })
+  if (hasSlEvent) {
+    return {
+      anomaly_origin_plant: 'SAN_LORENZO',
+      anomaly_leg: 'SL',
+      committee_reason: `SLZ_SECUENCIA_INVALIDA:${reason}`,
+    }
+  }
+
+  return {
+    anomaly_origin_plant: 'RICARDONE',
+    anomaly_leg: 'RIC',
+    committee_reason: `RIC_SECUENCIA_INVALIDA:${reason}`,
+  }
+}
+
+function attachSequenceMatchMeta(
+  base: CommitteeClassification,
+  config: ExecutiveCircuitConfig | null,
+  observedSectors: string[],
+  variationType: OperationalVariationType
+): CommitteeClassification {
+  if (!config?.baseSequence?.length) return base
+  if (patternsEqual(observedSectors, [...config.baseSequence])) {
+    return { ...base, matched_sequence_name: 'BASE', matched_variation_name: '' }
+  }
+  const variation = detectOperationalVariation(config, observedSectors)
+  if (variation) {
+    return {
+      ...base,
+      matched_sequence_name: 'VARIACION',
+      matched_variation_name: variation.type || variation.reason,
+    }
+  }
+  if (variationType) {
+    return { ...base, matched_sequence_name: 'VARIACION', matched_variation_name: variationType }
+  }
+  return base
 }
 
 function resolveStrongPointSource(
@@ -216,14 +360,11 @@ function isRicSanLorenzoRoute(executiveCode: string, technicalCode: string, jour
 }
 
 function resolveAnalysisScope(executiveCode: string, technicalCode: string): AnalysisScope {
-  if (!ETL_SL_INTERNAL_CLASSIFICATION_ENABLED && isRicSanLorenzoRoute(executiveCode, technicalCode)) {
-    return 'MIXTO'
-  }
-  if (
-    ETL_SL_INTERNAL_CLASSIFICATION_ENABLED &&
-    isSanLorenzoInternalCircuit(executiveCode, technicalCode)
-  ) {
+  if (executiveCode === 'SL1' || technicalCode === 'CIRCUITO_SL_RECEPCION') {
     return 'SAN_LORENZO_INTERNO'
+  }
+  if (isRicSanLorenzoRoute(executiveCode, technicalCode)) {
+    return 'MIXTO'
   }
   if (TRANSILE_EXTERNAL_CODES.has(executiveCode)) return 'TRANSILE_EXTERNO'
   if (executiveCode.startsWith('R') || technicalCode.startsWith('CIRCUITO_')) return 'RICARDONE'
@@ -407,12 +548,15 @@ function tryCommitteeOperationalVariation(
   if (!variation) return null
   return {
     ...base,
+    ...emptyAnomalyFields(),
     committee_group: 'VARIACIONES_OPERATIVAS',
     committee_reason: variation.reason,
     operational_variation_type: variation.type,
     show_as_exact_circuit: false,
     executive_status: input.executive.executiveStatus === 'ANOMALO' ? 'INCOMPLETO' : input.executive.executiveStatus,
     executive_reason: variation.reason,
+    matched_sequence_name: 'VARIACION',
+    matched_variation_name: variation.type,
   }
 }
 
@@ -443,6 +587,128 @@ function resolveDeducedEvidence(input: {
   })
 }
 
+function classifySlInternal(
+  input: {
+    journey: ReconstructedRealJourney
+    executiveCircuitConfig: ExecutiveCircuitConfig | null
+    matrixFinalStatus: JourneyMatrixFinalStatus
+    matrixReason: string
+    executive: ExecutiveCircuitDecision
+    hasOperationalEntry: boolean
+    hasOperationalExit: boolean
+    frontEventCount: number
+  },
+  base: Omit<
+    CommitteeClassification,
+    | 'committee_group'
+    | 'committee_reason'
+    | 'operational_variation_type'
+    | 'anomaly_origin_plant'
+    | 'anomaly_leg'
+    | 'matched_sequence_name'
+    | 'matched_variation_name'
+  >,
+  deducedEvidenceOk: boolean,
+  observedSectors: string[]
+): CommitteeClassification {
+  const slBase = {
+    ...base,
+    ...emptyAnomalyFields(),
+    analysis_scope: 'SAN_LORENZO_INTERNO' as const,
+    show_as_exact_circuit: false,
+    candidate_circuits: 'SL1',
+  }
+
+  if (input.frontEventCount <= 2) {
+    const anomaly = resolveAnomalyOriginFromJourney(input.journey, 'SL1', input.matrixReason || 'JOURNEY_INCOMPLETO')
+    return {
+      ...slBase,
+      ...anomaly,
+      committee_group: 'ANOMALIAS',
+      operational_variation_type: '',
+      executive_status: 'INCOMPLETO',
+      executive_reason: input.matrixReason || 'JOURNEY_INCOMPLETO',
+    }
+  }
+
+  const variation = tryCommitteeOperationalVariation(input, slBase, observedSectors)
+  if (variation) {
+    return attachSequenceMatchMeta(
+      { ...variation, ...emptyAnomalyFields() },
+      input.executiveCircuitConfig,
+      observedSectors,
+      variation.operational_variation_type
+    )
+  }
+
+  if (input.matrixFinalStatus === 'COMPLETO') {
+    return attachSequenceMatchMeta(
+      {
+        ...slBase,
+        committee_group: 'COMPLETOS',
+        committee_reason: 'SL_RECEPCION_COMPLETA',
+        operational_variation_type: '',
+        executive_status: 'VALIDO',
+        executive_reason: 'SL_RECEPCION_COMPLETA',
+      },
+      input.executiveCircuitConfig,
+      observedSectors,
+      ''
+    )
+  }
+
+  if (input.matrixFinalStatus === 'DEDUCIDO' && deducedEvidenceOk) {
+    return attachSequenceMatchMeta(
+      {
+        ...slBase,
+        committee_group: 'COMPLETOS',
+        committee_reason: 'SL_RECEPCION_DEDUCIDA',
+        operational_variation_type: '',
+        executive_status: 'VALIDO',
+        executive_reason: 'SL_RECEPCION_DEDUCIDA',
+        matched_sequence_name: 'BASE',
+        matched_variation_name: '',
+      },
+      input.executiveCircuitConfig,
+      observedSectors,
+      ''
+    )
+  }
+
+  if (input.matrixFinalStatus === 'ANOMALO' || input.executive.executiveStatus === 'ANOMALO') {
+    const anomaly = resolveAnomalyOriginFromJourney(input.journey, 'SL1', 'NO_RESPETA_SECUENCIA')
+    return {
+      ...slBase,
+      ...anomaly,
+      committee_group: 'ANOMALIAS',
+      operational_variation_type: '',
+      executive_status: 'ANOMALO',
+      executive_reason: 'NO_RESPETA_SECUENCIA',
+    }
+  }
+
+  if (input.matrixFinalStatus === 'INCOMPLETO' || input.executive.executiveStatus === 'INCOMPLETO') {
+    const anomaly = resolveAnomalyOriginFromJourney(input.journey, 'SL1', input.matrixReason || 'JOURNEY_INCOMPLETO')
+    return {
+      ...slBase,
+      ...anomaly,
+      committee_group: 'ANOMALIAS',
+      operational_variation_type: '',
+      executive_status: 'INCOMPLETO',
+      executive_reason: input.matrixReason || 'JOURNEY_INCOMPLETO',
+    }
+  }
+
+  return {
+    ...slBase,
+    committee_group: 'ANOMALIAS',
+    committee_reason: 'FALTA_EVIDENCIA_SL_INTERNO',
+    operational_variation_type: '',
+    executive_status: 'NO_EVALUABLE',
+    executive_reason: 'FALTA_EVIDENCIA_SL_INTERNO',
+  }
+}
+
 function classifyRicSanLorenzoRoute(
   input: {
     journey: ReconstructedRealJourney
@@ -463,6 +729,7 @@ function classifyRicSanLorenzoRoute(
   const routeClosed = input.hasOperationalExit || slIngreso
   const routeBase = {
     ...base,
+    ...emptyAnomalyFields(),
     analysis_scope: 'MIXTO' as const,
     show_as_exact_circuit: false,
     candidate_circuits: 'R7',
@@ -574,6 +841,24 @@ function classifyRicSanLorenzoRoute(
     }
   }
 
+  if (input.matrixFinalStatus === 'ANOMALO' || input.executive.executiveStatus === 'ANOMALO') {
+    const slStart = logical.indexOf('SL_INGRESO')
+    const hasSlLeg = slStart >= 0 && logical.slice(slStart).some(isSlLogicalCode)
+    const anomaly = resolveAnomalyOriginFromJourney(
+      input.journey,
+      'R7',
+      hasSlLeg ? 'NO_RESPETA_SECUENCIA_SL' : 'NO_RESPETA_SECUENCIA_RUTA'
+    )
+    return {
+      ...routeBase,
+      ...anomaly,
+      committee_group: 'ANOMALIAS',
+      operational_variation_type: '',
+      executive_status: 'ANOMALO',
+      executive_reason: anomaly.committee_reason.includes('SLZ') ? 'NO_RESPETA_SECUENCIA_SL' : 'NO_RESPETA_SECUENCIA_RUTA',
+    }
+  }
+
   if (routeClosed && input.hasOperationalEntry && input.frontEventCount >= 4) {
     return {
       ...routeBase,
@@ -586,24 +871,19 @@ function classifyRicSanLorenzoRoute(
   }
 
   if (input.matrixFinalStatus === 'INCOMPLETO' || input.executive.executiveStatus === 'INCOMPLETO') {
+    const anomaly = resolveAnomalyOriginFromJourney(
+      input.journey,
+      'R7',
+      input.matrixReason || 'JOURNEY_INCOMPLETO'
+    )
     return {
       ...routeBase,
+      ...anomaly,
       committee_group: 'ANOMALIAS',
-      committee_reason: 'JOURNEY_INCOMPLETO',
+      committee_reason: anomaly.committee_reason || 'JOURNEY_INCOMPLETO',
       operational_variation_type: '',
       executive_status: 'INCOMPLETO',
       executive_reason: input.matrixReason || 'JOURNEY_INCOMPLETO',
-    }
-  }
-
-  if (input.matrixFinalStatus === 'ANOMALO' || input.executive.executiveStatus === 'ANOMALO') {
-    return {
-      ...routeBase,
-      committee_group: 'ANOMALIAS',
-      committee_reason: 'NO_RESPETA_SECUENCIA_RUTA',
-      operational_variation_type: '',
-      executive_status: 'ANOMALO',
-      executive_reason: 'NO_RESPETA_SECUENCIA_RUTA',
     }
   }
 
@@ -641,7 +921,16 @@ export function resolveCommitteeClassification(input: {
   const scope = resolveAnalysisScope(executiveCode, technicalCode)
   const strongSource = resolveStrongPointSource(input.journey, input.hasStrongPoint)
 
-  const base: Omit<CommitteeClassification, 'committee_group' | 'committee_reason' | 'operational_variation_type'> = {
+  const base: Omit<
+    CommitteeClassification,
+    | 'committee_group'
+    | 'committee_reason'
+    | 'operational_variation_type'
+    | 'anomaly_origin_plant'
+    | 'anomaly_leg'
+    | 'matched_sequence_name'
+    | 'matched_variation_name'
+  > = {
     analysis_scope: scope,
     strong_point_source: strongSource,
     show_in_committee: true,
@@ -654,30 +943,16 @@ export function resolveCommitteeClassification(input: {
 
   // Fragmentos mínimos sin cierre operativo (post-merge o no mergeables)
   if (input.frontEventCount <= 2 && !input.hasOperationalExit) {
+    const anomaly = resolveAnomalyOriginFromJourney(input.journey, executiveCode, 'FRAGMENTO_SIN_CIERRE_OPERATIVO')
     return {
       ...base,
+      ...emptyAnomalyFields(),
+      ...anomaly,
       committee_group: 'ANOMALIAS',
-      committee_reason: 'FRAGMENTO_SIN_CIERRE_OPERATIVO',
       operational_variation_type: '',
       show_as_exact_circuit: false,
       executive_status: 'INCOMPLETO',
       executive_reason: 'FRAGMENTO_SIN_CIERRE_OPERATIVO',
-    }
-  }
-
-  // 1. San Lorenzo interno — solo si clasificación SL activa (deshabilitada esta semana)
-  if (ETL_SL_INTERNAL_CLASSIFICATION_ENABLED && isSanLorenzoInternalCircuit(executiveCode, technicalCode)) {
-    return {
-      ...base,
-      committee_group: 'ANOMALIAS',
-      committee_reason: 'CAMARAS_SLZ_S1_S5_S7_PENDIENTES',
-      operational_variation_type: '',
-      analysis_scope: 'SAN_LORENZO_INTERNO',
-      show_as_exact_circuit: false,
-      candidate_circuits: executiveCode || 'R7',
-      missing_key_cameras: SL_PENDING_KEY_CAMERAS.join('|'),
-      executive_status: 'NO_EVALUABLE',
-      executive_reason: 'CAMARAS_SLZ_S1_S5_S7_PENDIENTES',
     }
   }
 
@@ -693,8 +968,13 @@ export function resolveCommitteeClassification(input: {
     frontEventCount: input.frontEventCount,
   })
 
-  // Ruta Ric→SL (R7): matriz lógica ingreso/preingreso/calada/egreso — no secuencia interna S1/S5/S7
-  if (!ETL_SL_INTERNAL_CLASSIFICATION_ENABLED && isRicSanLorenzoRoute(executiveCode, technicalCode, input.journey)) {
+  // San Lorenzo interno (SL1) — solo journeys exclusivamente SL
+  if (ETL_SL_INTERNAL_CLASSIFICATION_ENABLED && isSanLorenzoInternalCircuit(executiveCode, technicalCode)) {
+    return classifySlInternal(input, base, deducedEvidenceOk, observedSectors)
+  }
+
+  // Ruta Ric→SL (R7): matriz lógica Ric + cadena SL extendida
+  if (isRicSanLorenzoRoute(executiveCode, technicalCode, input.journey)) {
     return classifyRicSanLorenzoRoute(input, base, deducedEvidenceOk)
   }
 
@@ -702,6 +982,7 @@ export function resolveCommitteeClassification(input: {
   if (solidInferredWithEvidence(input)) {
     return {
       ...base,
+      ...emptyAnomalyFields(),
       committee_group: 'COMPLETOS',
       committee_reason:
         input.executive.validDetail === 'DEDUCIDO' || input.matrixFinalStatus === 'DEDUCIDO' ?
@@ -722,12 +1003,38 @@ export function resolveCommitteeClassification(input: {
   if (executiveCode === 'SIN_PUNTO') {
     return {
       ...base,
+      ...emptyAnomalyFields(),
       committee_group: 'ANOMALIAS',
       committee_reason: 'NO_DIFERENCIABLE_SIN_PUNTO_FUERTE',
       operational_variation_type: '',
       show_as_exact_circuit: false,
       executive_status: 'NO_DIFERENCIABLE',
       executive_reason: 'NO_DIFERENCIABLE_SIN_PUNTO_FUERTE',
+    }
+  }
+
+  // Descarga instrumentada (Volcable / C16) + calada o balanza — válido aunque falte egreso Ric o S* no cierre
+  if (
+    isFlexibleDischargePreliminaryCode(technicalCode) &&
+    journeyMeetsFlexibleInstrumentedDischargeRule(input.journey) &&
+    input.hasOperationalEntry &&
+    input.hasOperationalExit &&
+    input.frontEventCount >= 4
+  ) {
+    const flexCompleto =
+      input.matrixFinalStatus === 'COMPLETO' ||
+      (input.matrixFinalStatus === 'DEDUCIDO' && deducedEvidenceOk)
+    return {
+      ...base,
+      ...emptyAnomalyFields(),
+      committee_group: 'COMPLETOS',
+      committee_reason: flexCompleto ? 'CIRCUITO_DESCARGA_INSTRUMENTADA' : 'CIRCUITO_DESCARGA_INSTRUMENTADA_FLEX',
+      operational_variation_type: '',
+      show_as_exact_circuit: input.hasStrongPoint,
+      executive_status: 'VALIDO',
+      executive_reason: flexCompleto ? 'CIRCUITO_DESCARGA_INSTRUMENTADA' : 'CIRCUITO_DESCARGA_INSTRUMENTADA_FLEX',
+      matched_sequence_name: 'BASE',
+      matched_variation_name: '',
     }
   }
 
@@ -739,6 +1046,7 @@ export function resolveCommitteeClassification(input: {
   if (!input.sequenceConfigured) {
     return {
       ...base,
+      ...emptyAnomalyFields(),
       committee_group: 'ANOMALIAS',
       committee_reason: 'SIN_SECUENCIA_CONFIGURADA',
       operational_variation_type: '',
@@ -756,6 +1064,7 @@ export function resolveCommitteeClassification(input: {
     ) {
       return {
         ...base,
+        ...emptyAnomalyFields(),
         committee_group: 'COMPLETOS',
         committee_reason: 'TRANSILE_EXTERNO_DEDUCIDO_CON_EVIDENCIA',
         operational_variation_type: '',
@@ -768,6 +1077,7 @@ export function resolveCommitteeClassification(input: {
     }
     return {
       ...base,
+      ...emptyAnomalyFields(),
       committee_group: 'ANOMALIAS',
       committee_reason: 'NO_DIFERENCIABLE_SIN_PUNTO_FUERTE',
       operational_variation_type: '',
@@ -783,6 +1093,8 @@ export function resolveCommitteeClassification(input: {
   if (input.matrixFinalStatus === 'COMPLETO') {
     return {
       ...base,
+      ...emptyAnomalyFields(),
+      matched_sequence_name: 'BASE',
       committee_group: 'COMPLETOS',
       committee_reason: 'CIRCUITO_COMPLETO',
       operational_variation_type: '',
@@ -794,6 +1106,8 @@ export function resolveCommitteeClassification(input: {
   if (input.matrixFinalStatus === 'DEDUCIDO' && deducedEvidenceOk) {
     return {
       ...base,
+      ...emptyAnomalyFields(),
+      matched_sequence_name: 'BASE',
       committee_group: 'COMPLETOS',
       committee_reason: 'CIRCUITO_DEDUCIDO_CON_EVIDENCIA',
       operational_variation_type: '',
@@ -813,6 +1127,7 @@ export function resolveCommitteeClassification(input: {
     const candidates = SHARED_CIRCUIT_CANDIDATES[executiveCode] ?? [executiveCode, technicalCode].filter(Boolean)
     return {
       ...base,
+      ...emptyAnomalyFields(),
       committee_group: 'ANOMALIAS',
       committee_reason: 'NO_DIFERENCIABLE_SIN_PUNTO_FUERTE',
       operational_variation_type: '',
@@ -826,6 +1141,7 @@ export function resolveCommitteeClassification(input: {
   if (input.executive.executiveStatus === 'VALIDO') {
     return {
       ...base,
+      ...emptyAnomalyFields(),
       committee_group: 'COMPLETOS',
       committee_reason:
         input.executive.validDetail === 'DEDUCIDO' ?
@@ -841,6 +1157,7 @@ export function resolveCommitteeClassification(input: {
   ) {
     return {
       ...base,
+      ...emptyAnomalyFields(),
       committee_group: 'COMPLETOS',
       committee_reason: 'SECUENCIA_OPERATIVA_RECONSTRUIDA',
       operational_variation_type: '',
@@ -855,21 +1172,25 @@ export function resolveCommitteeClassification(input: {
   if (variation && input.hasOperationalEntry && input.hasOperationalExit) {
     return {
       ...base,
+      ...emptyAnomalyFields(),
       committee_group: 'VARIACIONES_OPERATIVAS',
       committee_reason: variation.reason,
       operational_variation_type: variation.type,
       show_as_exact_circuit: false,
       executive_status: input.executive.executiveStatus === 'ANOMALO' ? 'INCOMPLETO' : input.executive.executiveStatus,
       executive_reason: variation.reason,
+      matched_sequence_name: 'VARIACION',
+      matched_variation_name: variation.type,
     }
   }
 
   // 6. No respeta secuencia
   if (input.matrixFinalStatus === 'ANOMALO' || input.executive.executiveStatus === 'ANOMALO') {
+    const anomaly = resolveAnomalyOriginFromJourney(input.journey, executiveCode, 'NO_RESPETA_SECUENCIA')
     return {
       ...base,
+      ...anomaly,
       committee_group: 'ANOMALIAS',
-      committee_reason: 'NO_RESPETA_SECUENCIA',
       operational_variation_type: '',
       show_as_exact_circuit: false,
       executive_status: 'ANOMALO',
@@ -879,8 +1200,10 @@ export function resolveCommitteeClassification(input: {
 
   // 7. Incompleto
   if (input.matrixFinalStatus === 'INCOMPLETO' || input.executive.executiveStatus === 'INCOMPLETO') {
+    const anomaly = resolveAnomalyOriginFromJourney(input.journey, executiveCode, input.matrixReason || 'JOURNEY_INCOMPLETO')
     return {
       ...base,
+      ...anomaly,
       committee_group: 'ANOMALIAS',
       committee_reason: 'JOURNEY_INCOMPLETO',
       operational_variation_type: '',
@@ -902,6 +1225,7 @@ export function resolveCommitteeClassification(input: {
       : 'NO_EVALUABLE'
     return {
       ...base,
+      ...emptyAnomalyFields(),
       committee_group: 'ANOMALIAS',
       committee_reason: reason,
       operational_variation_type: '',
@@ -914,6 +1238,7 @@ export function resolveCommitteeClassification(input: {
   // 9. Fallback
   return {
     ...base,
+    ...emptyAnomalyFields(),
     committee_group: 'ANOMALIAS',
     committee_reason: 'FALTA_EVIDENCIA_SUFICIENTE',
     operational_variation_type: '',

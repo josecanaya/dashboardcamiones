@@ -2,11 +2,17 @@
  * Servidor local: extracción día a día hacia data/truckflow/ y lectura fusionada para el dashboard.
  * Puerto: TRUCKFLOW_LOCAL_SERVER_PORT (default 8787)
  */
+import './load-env.mjs'
 import cors from 'cors'
 import express from 'express'
 import fs from 'fs/promises'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { createTruckPlateRegistryRouter } from './truck-plate-registry.mjs'
+import {
+  buildApiJourneyDayStat,
+  countUniqueRawJourneyUids,
+} from './truckflow-raw-journey-stats.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = path.resolve(__dirname, '..')
@@ -139,9 +145,29 @@ const app = express()
 app.use(cors({ origin: true }))
 app.use(express.json({ limit: '2mb' }))
 
-app.get('/api/truckflow/health', (_req, res) => {
-  res.json({ ok: true, dataRoot: DATA_ROOT })
+const plateRegistry = createTruckPlateRegistryRouter({
+  projectRoot: PROJECT_ROOT,
+  ensureDir,
+  writeJsonAtomic,
+  readJsonIfExists,
 })
+
+app.get('/api/truckflow/health', (_req, res) => {
+  res.json({
+    ok: true,
+    dataRoot: DATA_ROOT,
+    plateRegistryRoot: plateRegistry.registryRoot,
+    plateRegistryStorage: plateRegistry.storageMode,
+    supabaseConfigured: Boolean(process.env.SUPABASE_URL?.trim() && process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()),
+  })
+})
+
+/** Catálogo manual de patentes (JSON en data/truck-registry/). */
+app.get('/api/truckflow/plate-registry', plateRegistry.getRegistry)
+app.get('/api/truckflow/plate-registry/lookup', plateRegistry.lookupPlate)
+app.post('/api/truckflow/plate-registry', plateRegistry.createEntry)
+app.put('/api/truckflow/plate-registry/:id', plateRegistry.updateEntry)
+app.delete('/api/truckflow/plate-registry/:id', plateRegistry.deleteEntry)
 
 /** Lista carpetas día existentes (YYYY-MM-DD). */
 app.get('/api/truckflow/list-days', async (_req, res) => {
@@ -181,6 +207,8 @@ async function exportSingleDay(dayIso, baseUrl, siteQ) {
   const alertPath = path.join(dayDir, 'alert-list.json')
   let eventsDownloaded = 0
   let alertsDownloaded = 0
+  let uniqueJourneyUids = 0
+  let uniqueAlertJourneyUids = 0
   let status = 'ok'
   let error = ''
 
@@ -190,6 +218,7 @@ async function exportSingleDay(dayIso, baseUrl, siteQ) {
     const [evPayload, alPayload] = await Promise.all([fetchJson(evUrl), fetchJson(alUrl)])
     const evRecords = extractArray(evPayload)
     eventsDownloaded = evRecords.length
+    uniqueJourneyUids = countUniqueRawJourneyUids(evRecords)
     await writeJsonAtomic(eventPath, {
       day: dayIso,
       fetchedAt: new Date().toISOString(),
@@ -202,6 +231,7 @@ async function exportSingleDay(dayIso, baseUrl, siteQ) {
 
     const alRecords = extractArray(alPayload)
     alertsDownloaded = alRecords.length
+    uniqueAlertJourneyUids = countUniqueRawJourneyUids(alRecords)
     await writeJsonAtomic(alertPath, {
       day: dayIso,
       fetchedAt: new Date().toISOString(),
@@ -241,6 +271,8 @@ async function exportSingleDay(dayIso, baseUrl, siteQ) {
     day: dayIso,
     eventsDownloaded,
     alertsDownloaded,
+    uniqueJourneyUids: status === 'ok' ? uniqueJourneyUids : 0,
+    uniqueAlertJourneyUids: status === 'ok' ? uniqueAlertJourneyUids : 0,
     status,
     error: error || undefined,
   }
@@ -277,6 +309,7 @@ app.post('/api/truckflow/export-window', async (req, res) => {
   const alertPath = path.join(dayDir, 'alert-list.json')
   let eventsDownloaded = 0
   let alertsDownloaded = 0
+  let uniqueJourneyUids = 0
   let status = 'ok'
   let errorMsg = ''
 
@@ -286,6 +319,7 @@ app.post('/api/truckflow/export-window', async (req, res) => {
     const [evPayload, alPayload] = await Promise.all([fetchJson(evUrl), fetchJson(alUrl)])
     const evRecords = extractArray(evPayload)
     eventsDownloaded = evRecords.length
+    uniqueJourneyUids = countUniqueRawJourneyUids(evRecords)
     await writeJsonAtomic(eventPath, {
       day: parsed.iso,
       fetchedAt: new Date().toISOString(),
@@ -350,6 +384,7 @@ app.post('/api/truckflow/export-window', async (req, res) => {
     endDatetime,
     eventsDownloaded,
     alertsDownloaded,
+    uniqueJourneyUids: status === 'ok' ? uniqueJourneyUids : 0,
     status,
     error: errorMsg || undefined,
   })
@@ -484,13 +519,9 @@ app.post('/api/truckflow/load-local-period', async (req, res) => {
   for (const row of dayPayloads) {
     mergedEvents.push(...row.ev)
     mergedAlerts.push(...row.al)
-    perDay.push({
-      day: row.day,
-      eventFile: row.eventFile,
-      alertFile: row.alertFile,
-      events: row.ev.length,
-      alerts: row.al.length,
-    })
+    perDay.push(
+      buildApiJourneyDayStat(row.day, row.ev, row.al, row.eventFile, row.alertFile)
+    )
   }
 
   res.json({
@@ -501,6 +532,45 @@ app.post('/api/truckflow/load-local-period', async (req, res) => {
     perDay,
     events: mergedEvents,
     alerts: mergedAlerts,
+  })
+})
+
+/**
+ * Body: { startDate, endDate }
+ * Solo estadísticas de journeyUid en JSON en disco (sin devolver records).
+ */
+app.post('/api/truckflow/journey-stats-period', async (req, res) => {
+  const startDate = String(req.body?.startDate ?? '').trim()
+  const endDate = String(req.body?.endDate ?? '').trim()
+
+  let days
+  try {
+    days = daysInclusive(startDate, endDate)
+  } catch (e) {
+    res.status(400).json({ error: e instanceof Error ? e.message : String(e) })
+    return
+  }
+
+  const perDay = await mapPool(
+    days,
+    async (dayIso) => {
+      const dayDir = path.join(DATA_ROOT, dayIso)
+      const [evDoc, alDoc] = await Promise.all([
+        readJsonIfExists(path.join(dayDir, 'event-list.json')),
+        readJsonIfExists(path.join(dayDir, 'alert-list.json')),
+      ])
+      const ev = evDoc ? extractArray(evDoc.records ?? evDoc) : []
+      const al = alDoc ? extractArray(alDoc.records ?? alDoc) : []
+      return buildApiJourneyDayStat(dayIso, ev, al, Boolean(evDoc), Boolean(alDoc))
+    },
+    Math.min(7, Math.max(2, EXPORT_PERIOD_CONCURRENCY))
+  )
+
+  res.json({
+    dataRoot: DATA_ROOT,
+    startDate,
+    endDate,
+    perDay,
   })
 })
 

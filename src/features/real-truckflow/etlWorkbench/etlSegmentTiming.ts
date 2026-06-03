@@ -19,12 +19,38 @@ export const SHORT_SEGMENT_MAX_MINUTES: Record<string, number> = {
   'CALADA→EGRESO': 60,
 }
 
+/**
+ * Tramo rollup San Lorenzo: balanza ingreso → balanza salida (operación interna completa).
+ * Mientras S2/S3/S4 no tengan datos productivos, medimos este salto no consecutivo.
+ */
+export const SL_BALANZA_ROLLUP_TRANSITION = {
+  from: 'SL_BALANZA_INGRESO',
+  to: 'SL_BALANZA_SALIDA',
+} as const
+
+/** Pata SL en KPI tiempos: solo cámaras con datos operativos hoy. */
+export const SL_OPERATIONAL_KPI_CHAIN = [
+  'SL_INGRESO',
+  'SL_BALANZA_INGRESO',
+  'SL_BALANZA_SALIDA',
+  'SL_EGRESO',
+] as const
+
+const CIRCUITS_WITH_SL_BALANZA_ROLLUP = new Set(['R7', 'SL1'])
+
+/** Duración máxima del rollup balanza SL (estadía en puerto). */
+const SL_BALANZA_ROLLUP_MAX_MINUTES = 24 * 60
+
 export function transitionKey(fromCode: string, toCode: string): string {
   return `${fromCode}→${toCode}`
 }
 
 export function maxAllowedMinutesForTransition(fromCode: string, toCode: string): number {
-  return SHORT_SEGMENT_MAX_MINUTES[transitionKey(fromCode, toCode)] ?? MAX_SEGMENT_DURATION_MINUTES
+  const key = transitionKey(fromCode, toCode)
+  if (key === transitionKey(SL_BALANZA_ROLLUP_TRANSITION.from, SL_BALANZA_ROLLUP_TRANSITION.to)) {
+    return SL_BALANZA_ROLLUP_MAX_MINUTES
+  }
+  return SHORT_SEGMENT_MAX_MINUTES[key] ?? MAX_SEGMENT_DURATION_MINUTES
 }
 
 export function histogramBinMinutesForTransition(_fromCode?: string, _toCode?: string): number {
@@ -144,12 +170,14 @@ function buildExecutiveCircuitSegmentTemplate(): Record<string, readonly string[
     if (seq?.length) map[rCode] = templateWithoutEgreso(seq)
   }
   map.R16 = ['INGRESO', 'PREINGRESO', 'CALADA', 'LIQUIDO', 'BALANZA_INGRESO', 'BALANZA_EGRESO']
-  map.R7 = ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO', 'SL_INGRESO']
+  map.R7 = ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO', ...SL_OPERATIONAL_KPI_CHAIN]
+  map.R26 = DEFAULT_CIRCUIT_MATRIX.TRANSILE_C16_A_SL ?? map.R26
+  map.R27 = DEFAULT_CIRCUIT_MATRIX.TRANSILE_SL_A_C16 ?? map.R27
+  map.SL1 = [...SL_OPERATIONAL_KPI_CHAIN]
   map.R19 = ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO', 'CELDA16_CARGA', 'VOLCABLE', 'BALANZA_EGRESO']
   map.R20 = map.R19
   map.RS_REC = ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO']
   map.RS_DESP = ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'CALADA', 'BALANZA_EGRESO']
-  map.R26 = ['CELDA16_CARGA', 'VOLCABLE', 'BALANZA_EGRESO']
   map.R34 = ['LIQUIDO', 'BALANZA_EGRESO']
   return map
 }
@@ -165,6 +193,13 @@ export function isExpectedCircuitTransition(
   fromCode: string,
   toCode: string
 ): boolean {
+  if (
+    CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(circuitCode) &&
+    fromCode === SL_BALANZA_ROLLUP_TRANSITION.from &&
+    toCode === SL_BALANZA_ROLLUP_TRANSITION.to
+  ) {
+    return true
+  }
   const template = getCircuitSegmentTemplate(circuitCode)
   if (template.length < 2) return false
   for (let i = 0; i < template.length - 1; i++) {
@@ -297,6 +332,50 @@ export function extractSegmentLegs(
   return legs
 }
 
+/** Rollup balanza ingreso → balanza salida SL (primer par cronológico en el journey). */
+export function extractSlBalancaRollupLeg(
+  journey: ReconstructedRealJourney,
+  executiveCircuitCode: string
+): SegmentLeg | null {
+  if (!CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(executiveCircuitCode)) return null
+  const points = collapsedFrontLogicalPoints(journey)
+  const { from: fromCode, to: toCode } = SL_BALANZA_ROLLUP_TRANSITION
+  const fromIdx = points.findIndex((p) => p.code === fromCode)
+  if (fromIdx < 0) return null
+  const toIdx = points.findIndex((p, i) => i > fromIdx && p.code === toCode)
+  if (toIdx < 0) return null
+  const durationMinutes = minutesBetweenIso(points[fromIdx]!.occurredAt, points[toIdx]!.occurredAt)
+  if (!isValidSegmentDuration(durationMinutes, fromCode, toCode)) return null
+  return {
+    journeyId: journey.journeyUid,
+    plate: journey.normalizedPlate || journey.plate,
+    executiveCircuitCode,
+    fromCode,
+    toCode,
+    durationMinutes,
+  }
+}
+
+export function extractAllSegmentLegsForCircuit(
+  journey: ReconstructedRealJourney,
+  executiveCircuitCode: string
+): SegmentLeg[] {
+  const seen = new Set<string>()
+  const out: SegmentLeg[] = []
+  const push = (leg: SegmentLeg) => {
+    const key = `${leg.journeyId}|${leg.fromCode}|${leg.toCode}`
+    if (seen.has(key)) return
+    seen.add(key)
+    out.push(leg)
+  }
+  for (const leg of extractSegmentLegs(journey, executiveCircuitCode)) {
+    push(leg)
+  }
+  const rollup = extractSlBalancaRollupLeg(journey, executiveCircuitCode)
+  if (rollup) push(rollup)
+  return out
+}
+
 function sortAggregates(rows: SegmentTimingAggregate[]): SegmentTimingAggregate[] {
   return [...rows].sort((a, b) => {
     const byTransition = transitionSortKey(a.fromCode, a.toCode) - transitionSortKey(b.fromCode, b.toCode)
@@ -371,7 +450,7 @@ export function buildSegmentTimingIndex(
     const circuitCode = String(row.executiveCircuitCode ?? '').trim()
     if (!circuitCode) continue
     journeyIds.add(row.journey.journeyUid)
-    for (const leg of extractSegmentLegs(row.journey, circuitCode)) {
+    for (const leg of extractAllSegmentLegsForCircuit(row.journey, circuitCode)) {
       if (!isExpectedCircuitTransition(circuitCode, leg.fromCode, leg.toCode)) continue
       legs.push(leg)
       const key = `${circuitCode}|${leg.fromCode}|${leg.toCode}`

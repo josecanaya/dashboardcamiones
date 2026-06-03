@@ -4,6 +4,7 @@ import { computeStayTimeStats } from '../../../services/analyticsKpi'
 import {
   buildSegmentTimingIndex,
   extractSegmentLegs,
+  extractSlBalancaRollupLeg,
   histogramBinMinutesForTransition,
   listCircuitSegmentAggregates,
   type ClassifiedJourneyForTiming,
@@ -125,7 +126,7 @@ describe('etlSegmentTiming', () => {
     ])
   })
 
-  it('R7 incluye tramos hasta ingreso San Lorenzo', () => {
+  it('R7 incluye tramo rollup balanza ingreso SL → balanza salida SL', () => {
     const rows = listCircuitSegmentAggregates(
       buildSegmentTimingIndex([], { committeeGroups: ['COMPLETOS'] }),
       'R7'
@@ -135,7 +136,26 @@ describe('etlSegmentTiming', () => {
       'PREINGRESO→CALADA',
       'CALADA→EGRESO',
       'EGRESO→SL_INGRESO',
+      'SL_INGRESO→SL_BALANZA_INGRESO',
+      'SL_BALANZA_INGRESO→SL_BALANZA_SALIDA',
+      'SL_BALANZA_SALIDA→SL_EGRESO',
     ])
+  })
+
+  it('rollup balanza SL mide salto no consecutivo ingreso→salida', () => {
+    const j = journey({
+      journeyUid: 'j-sl-rollup',
+      events: [
+        ev('SLZBalIngFte', 'PUERTO_SAN_LORENZO_BALANZA_INGRESO', '2026-05-12T09:00:00'),
+        ev('SLZIngCamFrente', 'PUERTO_SAN_LORENZO_INGRESO_CAMIONES', '2026-05-12T09:30:00'),
+        ev('SLZBalSC1Fte', 'PUERTO_SAN_LORENZO_BALANZA_SALIDA', '2026-05-12T11:00:00'),
+      ],
+    })
+    const rollup = extractSlBalancaRollupLeg(j, 'R7')
+    expect(rollup).not.toBeNull()
+    expect(rollup!.durationMinutes).toBe(120)
+    expect(rollup!.fromCode).toBe('SL_BALANZA_INGRESO')
+    expect(rollup!.toCode).toBe('SL_BALANZA_SALIDA')
   })
 
   it('excluye ingreso→preingreso mayor a 1 h', () => {

@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "server:truckflow": "node server/truckflow-local-server.mjs",
+    "db:migrate:plate-registry": "node scripts/apply-plate-registry-migration.mjs",
+    "db:sync:plate-registry": "node scripts/sync-plate-registry-to-supabase.mjs",
     "dev:committee": "concurrently -k \"npm run server:truckflow\" \"npm run dev\"",
     "dev:live": "pnpm run seed:live && pnpm run dev",
     "seed:live": "cd simulador && npm run simulate -- --scenario=live --reset && npm run simulate -- --scenario=live",
@@ -35,8 +37,11 @@
     "web-ifc": "^0.0.77",
     "web-ifc-three": "^0.0.126",
     "xlsx": "^0.18.5",
+    "@supabase/supabase-js": "^2.49.1",
     "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "dotenv": "^16.4.7",
+    "express": "^5.2.1",
+    "pg": "^8.13.3"
   },
   "devDependencies": {
     "@types/react": "^18.3.12",

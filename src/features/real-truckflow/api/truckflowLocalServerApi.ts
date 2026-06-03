@@ -4,8 +4,20 @@ export type TruckflowExportDayResult = {
   day: string
   eventsDownloaded: number
   alertsDownloaded: number
+  /** journeyUid distintos en la respuesta de eventos de ese día (crudo API). */
+  uniqueJourneyUids?: number
   status: 'ok' | 'error'
   error?: string
+}
+
+export type TruckflowApiJourneyDayStat = {
+  day: string
+  events: number
+  alerts: number
+  uniqueJourneyUids: number
+  uniqueAlertJourneyUids: number
+  eventFile: boolean
+  alertFile: boolean
 }
 
 export type TruckflowExportPeriodResponse = {
@@ -24,7 +36,7 @@ export type TruckflowLoadLocalPeriodResponse = {
   startDate: string
   endDate: string
   daysLoaded: number
-  perDay: { day: string; eventFile: boolean; alertFile: boolean; events: number; alerts: number }[]
+  perDay: TruckflowApiJourneyDayStat[]
   events: unknown[]
   alerts: unknown[]
 }
@@ -36,7 +48,7 @@ export type TruckflowListDaysResponse = {
 
 export type TruckflowSiteParam = 'ricardone' | 'san_lorenzo' | 'all'
 
-function localApiPrefix(): string {
+export function localApiPrefix(): string {
   if (typeof import.meta !== 'undefined' && import.meta.env?.DEV) return '/api/truckflow'
   const env = typeof import.meta !== 'undefined' ? import.meta.env?.VITE_TRUCKFLOW_LOCAL_API_PREFIX : undefined
   if (typeof env === 'string' && env.trim()) return env.trim().replace(/\/$/, '')
@@ -58,7 +70,12 @@ async function parseJson<T>(res: Response): Promise<T> {
   return body as T
 }
 
-export async function getTruckflowHealth(): Promise<{ ok: boolean; dataRoot: string }> {
+export async function getTruckflowHealth(): Promise<{
+  ok: boolean
+  dataRoot: string
+  plateRegistryStorage?: string
+  supabaseConfigured?: boolean
+}> {
   const prefix = localApiPrefix()
   const res = await fetch(`${prefix}/health`, { headers: { Accept: 'application/json' } })
   const text = await res.text()
@@ -124,6 +141,7 @@ export type TruckflowExportWindowResponse = {
   endDatetime: string
   eventsDownloaded: number
   alertsDownloaded: number
+  uniqueJourneyUids?: number
   status: 'ok' | 'error'
   error?: string
 }
@@ -161,5 +179,19 @@ export async function postTruckflowLoadLocalPeriod(body: {
 export async function getTruckflowListDays(): Promise<TruckflowListDaysResponse> {
   const prefix = localApiPrefix()
   const res = await fetch(`${prefix}/list-days`, { headers: { Accept: 'application/json' } })
+  return parseJson(res)
+}
+
+/** Conteo journeyUid por día en JSON en disco (sin cargar todo el período al navegador). */
+export async function postTruckflowJourneyStatsPeriod(body: {
+  startDate: string
+  endDate: string
+}): Promise<{ dataRoot: string; startDate: string; endDate: string; perDay: TruckflowApiJourneyDayStat[] }> {
+  const prefix = localApiPrefix()
+  const res = await fetch(`${prefix}/journey-stats-period`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify(body),
+  })
   return parseJson(res)
 }

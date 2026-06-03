@@ -85,6 +85,10 @@ Además de estado/score del circuito, incluye cruce operativo:
 | `has_strong_point` | Si el circuito tiene punto fuerte instalado |
 | `enabled_for_classification` | Si el circuito está habilitado para clasificación productiva |
 | `sequence_configured` | Si existe secuencia configurada para evaluar productivamente |
+| `anomaly_origin_plant` | Origen de anomalía: `RICARDONE` · `SAN_LORENZO` · `MIXTO` · `UNKNOWN` |
+| `anomaly_leg` | Pata afectada: `RIC` · `SL` · `PUENTE` · `UNKNOWN` |
+| `matched_sequence_name` | Secuencia base (`BASE`) o variación (`VARIACION`) emparejada |
+| `matched_variation_name` | Tipo/nombre de variación operativa emparejada |
 | `operationalAlertCount` | Cantidad de alertas operativas asociadas al journey |
 | `hasInvalidRoute` | Tiene alerta `INVALID_ROUTE` |
 | `hasInvalidJourneyStart` | Tiene alerta `INVALID_START_JOURNEY` (API) |
@@ -122,6 +126,22 @@ Filtros típicos en Power BI:
 | `non_evaluable_by_coverage` | No evaluables por cobertura o punto fuerte |
 | `non_evaluable_missing_sequence` | No evaluables por secuencia no configurada |
 | `anomalous_no_respeta_secuencia` | Anómalos por secuencia ilógica |
+| `valid_r7_journeys` | Válidos con circuito ejecutivo R7 |
+| `valid_sl_internal_journeys` | Válidos con circuito ejecutivo SL1 |
+| `transile_external_journeys` | Válidos transile externo (R26/R27/R34) |
+| `anomalies_ricardone` | Anomalías/incompletos con origen Ricardone |
+| `anomalies_san_lorenzo` | Anomalías/incompletos con origen San Lorenzo |
+| `anomalies_mixto` | Anomalías/incompletos en puente Ric↔SL |
+
+## Columnas adicionales — `circuit_timing_journeys.csv` (R7)
+
+| Columna | Descripción |
+|---------|-------------|
+| `ric_duration_min` | Pata Ricardone: INGRESO → EGRESO |
+| `bridge_duration_min` | Puente: EGRESO Ric → SL_INGRESO |
+| `sl_duration_min` | Pata San Lorenzo: SL_INGRESO → SL_EGRESO |
+| `leg_plant` | `MIXTO` para R7 |
+| `leg_type` | `R7_MIXTO` |
 
 ## Columnas clave (debug) — `pb_alerts_operational.csv`
 

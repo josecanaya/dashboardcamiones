@@ -69,32 +69,32 @@ export const SAN_LORENZO_CAMERAS: readonly SanLorenzoCameraDef[] = [
     rearExcluded: true,
     installed: true,
   },
-  // —— S2 Calada (no instalada) ——
+  // —— S2 Calada ——
   {
     deviceCode: 'SLZCalCam',
     sectorCode: 'PUERTO_SAN_LORENZO_CALADA',
     logicalSector: 'S2',
     logicalCode: 'SL_CALADA',
     label: 'Calada San Lorenzo',
-    installed: false,
+    installed: true,
   },
-  // —— S3 Enlace (no instalada) ——
+  // —— S3 Enlace ——
   {
     deviceCode: 'SLZEnlace31Cam',
     sectorCode: 'PUERTO_SAN_LORENZO_ENLACE_S3',
     logicalSector: 'S3',
     logicalCode: 'SL_ENLACE',
     label: 'Enlace S1–S3',
-    installed: false,
+    installed: true,
   },
-  // —— S4 Descarga (no instalada) ——
+  // —— S4 Descarga ——
   {
     deviceCode: 'SLZDescCam',
     sectorCode: 'PUERTO_SAN_LORENZO_DESCARGA',
     logicalSector: 'S4',
     logicalCode: 'SL_DESCARGA',
     label: 'Descarga San Lorenzo',
-    installed: false,
+    installed: true,
   },
   // —— S5 Balanza salida (2 celdas / básculas) ——
   {
