@@ -4,6 +4,7 @@ import { normalizeRealEventPoint } from '../../../services/realEventNormalizatio
 import { isEtlRearCameraDevice } from './etlRearDevices'
 import {
   DEFAULT_CIRCUIT_MATRIX_EXTENSIONS,
+  getCollapsedLogicalCodes,
   journeyIsRicSanLorenzoRouteEvidence,
   journeyIsSlOnlyInternal,
   journeyIsTransileC16ToSl,
@@ -494,9 +495,13 @@ export function isFlexibleDischargePreliminaryCode(code: string | null | undefin
   return FLEX_DISCHARGE_PRELIMINARY_CODES.has(String(code ?? '').trim())
 }
 
+function journeyLogicalSetFromEvents(j: ReconstructedRealJourney): Set<string> {
+  return new Set(getCollapsedLogicalCodes(j))
+}
+
 /** Volcable 1/2 o Celda 16 (carga/descarga) por lógica o deviceCode. */
 export function journeyHasInstrumentedDischargeEvidence(j: ReconstructedRealJourney): boolean {
-  const logical = logicalSet(j)
+  const logical = journeyLogicalSetFromEvents(j)
   if (logical.has('VOLCABLE') || logical.has('CELDA16_DESCARGA') || logical.has('CELDA16_CARGA')) {
     return true
   }
@@ -508,7 +513,7 @@ export function journeyHasInstrumentedDischargeEvidence(j: ReconstructedRealJour
 }
 
 export function journeyHasCaladaOrBalanzaEvidence(j: ReconstructedRealJourney): boolean {
-  const logical = logicalSet(j)
+  const logical = journeyLogicalSetFromEvents(j)
   return (
     logical.has('CALADA') ||
     logical.has('BALANZA_INGRESO') ||
@@ -517,11 +522,42 @@ export function journeyHasCaladaOrBalanzaEvidence(j: ReconstructedRealJourney): 
   )
 }
 
+/** Código técnico matriz cuando hay evidencia clara de descarga instrumentada. */
+export function resolveFlexibleDischargePreliminaryCode(j: ReconstructedRealJourney): string {
+  const logical = journeyLogicalSetFromEvents(j)
+  if (logical.has('CELDA16_DESCARGA') || journeyHasDevicePattern(j, /RicC16Descarga/i)) {
+    return 'CIRCUITO_CELDA16_DESCARGA'
+  }
+  if (logical.has('CELDA16_CARGA') || journeyHasDevicePattern(j, /RicC16Carga/i)) {
+    return 'CIRCUITO_CELDA16_CARGA'
+  }
+  return 'CIRCUITO_VOLCABLE_1_2'
+}
+
+export function resolveFlexibleDischargeExecutiveCircuit(
+  j: ReconstructedRealJourney
+): ExecutiveCircuitConfig {
+  const prelim = resolveFlexibleDischargePreliminaryCode(j)
+  if (prelim === 'CIRCUITO_CELDA16_DESCARGA') return EXECUTIVE_CIRCUIT_MATRIX.R1!
+  if (prelim === 'CIRCUITO_CELDA16_CARGA') return EXECUTIVE_CIRCUIT_MATRIX.R9!
+  return resolveVolcableReceptionExecutiveCircuit(j)
+}
+
 /**
  * Regla operativa flexible: calada y/o balanza + punto de descarga/carga instrumentado
  * (Volcable 1, Volcable 2, Celda 16) → circuito válido aunque falte egreso Ric o la secuencia S* no cierre.
  */
 export function journeyMeetsFlexibleInstrumentedDischargeRule(j: ReconstructedRealJourney): boolean {
+  const logical = journeyLogicalSetFromEvents(j)
+  // Transile C16→Volcable (sin ingreso Ricardone): sigue R19/R20, no regla recepción flexible.
+  if (
+    logical.has('VOLCABLE') &&
+    logical.has('CELDA16_CARGA') &&
+    !logical.has('INGRESO') &&
+    !logical.has('PREINGRESO')
+  ) {
+    return false
+  }
   return journeyHasInstrumentedDischargeEvidence(j) && journeyHasCaladaOrBalanzaEvidence(j)
 }
 
@@ -593,7 +629,10 @@ export function classifyJourneyAgainstCircuitMatrix(
         [...usefulEvents].sort(compareRealEvents).map((e) => normalizeRealEventPoint(e).logicalCode)
       )
     : collapseConsecutiveEqual(journey.logicalCodeSequence.map((x) => String(x)))
-  const preliminaryCode = String(options?.preliminaryCodeOverride ?? journey.preliminaryCircuitCode ?? '').trim()
+  let preliminaryCode = String(options?.preliminaryCodeOverride ?? journey.preliminaryCircuitCode ?? '').trim()
+  if (journeyMeetsFlexibleInstrumentedDischargeRule(journey)) {
+    preliminaryCode = resolveFlexibleDischargePreliminaryCode(journey)
+  }
   const expectedSeq = preliminaryCode ? (circuitMatrix[preliminaryCode] ?? []) : []
   const matchedCircuitCode = expectedSeq.length > 0 ? preliminaryCode : null
   const hasSequenceEvidence = expectedSeq.length > 0 && observedSeq.length > 0
@@ -634,10 +673,7 @@ export function classifyJourneyAgainstCircuitMatrix(
     }
   }
 
-  if (
-    isFlexibleDischargePreliminaryCode(preliminaryCode) &&
-    journeyMeetsFlexibleInstrumentedDischargeRule(journey)
-  ) {
+  if (journeyMeetsFlexibleInstrumentedDischargeRule(journey)) {
     const flexMissing = missingPoints
     const flexMatched = expectedSeq.length - flexMissing.length
     const flexConfidence =
@@ -892,6 +928,10 @@ export function resolveExecutiveCircuitConfigForJourney(
   const liquidCircuit = resolveLiquidExecutiveCircuit(journey)
   if (liquidCircuit) return liquidCircuit
 
+  if (journeyMeetsFlexibleInstrumentedDischargeRule(journey)) {
+    return resolveFlexibleDischargeExecutiveCircuit(journey)
+  }
+
   if (journeyIsTransileC16ToSl(journey)) {
     return EXECUTIVE_CIRCUIT_MATRIX.R26!
   }
@@ -909,6 +949,9 @@ export function resolveExecutiveCircuitConfigForJourney(
   }
 
   if (code === 'DESPACHO_SIN_PUNTO_INSTRUMENTADO') {
+    if (journeyMeetsFlexibleInstrumentedDischargeRule(journey)) {
+      return resolveFlexibleDischargeExecutiveCircuit(journey)
+    }
     return inferSolidExecutiveCircuit(journey)
   }
 
@@ -1452,7 +1495,6 @@ export function resolveExecutiveBucket(
 
   if (matrixResult.finalStatus === 'ANOMALO') {
     if (
-      isFlexibleDischargePreliminaryCode(j.preliminaryCircuitCode) &&
       journeyMeetsFlexibleInstrumentedDischargeRule(j) &&
       hasOperationalEntry &&
       hasOperationalExit &&

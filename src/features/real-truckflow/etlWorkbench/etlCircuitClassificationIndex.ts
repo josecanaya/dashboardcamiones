@@ -1,5 +1,6 @@
 import { recordsToCsv } from './etlCsv'
 import { parseCsvToRecords } from './etlCsvParse'
+import { MERGE_STATUSES_WITH_PRODUCT } from './etlTruckflowMovimientosMerge'
 import {
   EXECUTIVE_CIRCUIT_MATRIX,
   EXECUTIVE_CIRCUIT_ORDER,
@@ -196,6 +197,8 @@ export type CircuitClassificationIndex = {
   pieSlices: CircuitPieSlice[]
   circuitBarSlices: ExecutiveCircuitBarSlice[]
   total: number
+  /** Anomalías reclasificadas como COMPLETOS por cruce Excel (plataforma/circuito). */
+  excelPromotedCount: number
 }
 
 export function classificationOrder(label: string): number {
@@ -391,6 +394,196 @@ const ANOMALY_SEQUENCE_EMPTY = '(SIN_SECUENCIA_DETECTADA)'
 
 const BALANZA_LOGICAL_CODES = new Set(['BALANZA', 'BALANZA_INGRESO', 'BALANZA_EGRESO'])
 const DISCHARGE_LOGICAL_CODES = new Set(['CELDA16_DESCARGA', 'VOLCABLE'])
+const DISCHARGE_EXECUTIVE_CODES = new Set(['R1', 'R5', 'R6', 'R9'])
+
+function entryHasDischargeClassification(e: CircuitClassificationEntry): boolean {
+  if (DISCHARGE_EXECUTIVE_CODES.has(e.executiveCircuitCode)) return true
+  return e.committeeReason.includes('DESCARGA_INSTRUMENTADA')
+}
+
+/** Fragmentos UID con pocos eventos heredan COMPLETOS de otro journey misma patente. */
+function promotePlateDischargeFragments(
+  entries: CircuitClassificationEntry[]
+): CircuitClassificationEntry[] {
+  const bestByPlate = new Map<string, CircuitClassificationEntry>()
+  for (const e of entries) {
+    if (e.committeeGroup !== 'COMPLETOS' && e.committeeGroup !== 'VARIACIONES_OPERATIVAS') continue
+    if (!entryHasDischargeClassification(e)) continue
+    const prev = bestByPlate.get(e.normalizedPlate)
+    if (!prev || e.usefulEventsCount > prev.usefulEventsCount) bestByPlate.set(e.normalizedPlate, e)
+  }
+
+  return entries.map((e) => {
+    if (e.committeeGroup !== 'ANOMALIAS' || !e.normalizedPlate || e.usefulEventsCount > 3) return e
+    const best = bestByPlate.get(e.normalizedPlate)
+    if (!best) return e
+    return {
+      ...e,
+      committeeGroup: 'COMPLETOS',
+      pieSliceLabel: 'COMPLETOS',
+      committeeReason: `HEREDA_DESCARGA_INSTRUMENTADA:${best.committeeReason}`,
+      executiveCircuitCode: best.executiveCircuitCode,
+      executiveCircuitLabel: best.executiveCircuitLabel,
+      executiveCircuitDisplay: best.executiveCircuitDisplay,
+      executiveStatus: 'VALIDO',
+      executiveReason: best.executiveReason,
+      matrixFinalStatus: best.matrixFinalStatus,
+      matchedCircuitCode: best.executiveCircuitCode,
+    }
+  })
+}
+
+type ExcelMergeLite = {
+  journey_uid: string
+  product_normalized: string
+  platform_normalized: string
+  circuit_code: string
+  circuit_label: string
+  merge_status: string
+}
+
+function parseExcelMergeByJourneyUid(mergeCsv: string | undefined | null): Map<string, ExcelMergeLite> {
+  const map = new Map<string, ExcelMergeLite>()
+  if (!mergeCsv?.trim()) return map
+  const { rows } = parseCsvToRecords(mergeCsv)
+  for (const r of rows) {
+    const journey_uid = String(r.journey_uid ?? '').trim()
+    if (!journey_uid) continue
+    map.set(journey_uid, {
+      journey_uid,
+      product_normalized: String(r.product_normalized ?? '').trim(),
+      platform_normalized: String(r.platform_normalized ?? '').trim(),
+      circuit_code: String(r.circuit_code ?? '').trim(),
+      circuit_label: String(r.circuit_label ?? '').trim(),
+      merge_status: String(r.merge_status ?? '').trim(),
+    })
+  }
+  return map
+}
+
+function shouldPromoteAnomalyFromExcel(entry: CircuitClassificationEntry, merge: ExcelMergeLite): boolean {
+  if (entry.committeeGroup !== 'ANOMALIAS') return false
+  if (!MERGE_STATUSES_WITH_PRODUCT.has(merge.merge_status as never)) return false
+  if (!merge.product_normalized || !merge.platform_normalized || !merge.circuit_code) return false
+  return true
+}
+
+function promoteEntryFromExcelMovimiento(
+  entry: CircuitClassificationEntry,
+  merge: ExcelMergeLite
+): CircuitClassificationEntry {
+  const code = merge.circuit_code
+  const cfg = EXECUTIVE_CIRCUIT_MATRIX[code as keyof typeof EXECUTIVE_CIRCUIT_MATRIX]
+  const label = merge.circuit_label || cfg?.label || code
+  return {
+    ...entry,
+    committeeGroup: 'COMPLETOS',
+    pieSliceLabel: 'COMPLETOS',
+    committeeReason: `EXCEL_CONTRATO:${merge.product_normalized}@${merge.platform_normalized}`,
+    operationalVariationType: '',
+    executiveCircuitCode: code,
+    executiveCircuitLabel: label,
+    executiveCircuitDisplay: formatExecutiveCircuitLabel(code, label),
+    matchedCircuitCode: code,
+    executiveStatus: 'PROBABLE',
+    executiveReason: 'EXCEL_MOVIMIENTOS_CONTRATO',
+    validDetail: 'DEDUCIDO',
+    executiveBucket: 'DEDUCIDO',
+  }
+}
+
+/**
+ * Camiones en Excel con producto+plataforma salen de ANOMALÍAS y entran al circuito del Excel.
+ */
+export function promoteExcelMovimientosContrato(
+  entries: CircuitClassificationEntry[],
+  mergeCsv: string | undefined | null
+): { entries: CircuitClassificationEntry[]; promotedCount: number } {
+  const byJourney = parseExcelMergeByJourneyUid(mergeCsv)
+  if (!byJourney.size) return { entries, promotedCount: 0 }
+
+  let promotedCount = 0
+  const out = entries.map((entry) => {
+    const merge = byJourney.get(entry.journeyId)
+    if (!merge || !shouldPromoteAnomalyFromExcel(entry, merge)) return entry
+    promotedCount++
+    return promoteEntryFromExcelMovimiento(entry, merge)
+  })
+  return { entries: out, promotedCount }
+}
+
+function rebuildClassificationIndexFromEntries(
+  entries: CircuitClassificationEntry[],
+  excelPromotedCount: number
+): CircuitClassificationIndex {
+  const { byJourneyId, byPlate, byPieSlice, sliceCounts } = rebuildIndexMaps(entries)
+
+  const sortedSliceNames = [...sliceCounts.keys()].sort((a, b) => {
+    const oa = classificationOrder(a)
+    const ob = classificationOrder(b)
+    if (oa !== ob) return oa - ob
+    return (sliceCounts.get(b) ?? 0) - (sliceCounts.get(a) ?? 0)
+  })
+
+  const colorBySlice = new Map<string, string>()
+  sortedSliceNames.forEach((name, idx) => {
+    colorBySlice.set(name, CIRCUIT_PIE_COLORS[idx % CIRCUIT_PIE_COLORS.length]!)
+  })
+  for (const e of entries) {
+    e.color = colorBySlice.get(e.pieSliceLabel) ?? CIRCUIT_PIE_COLORS[0]!
+  }
+
+  const pieSlices: CircuitPieSlice[] = sortedSliceNames.map((name) => ({
+    name,
+    value: sliceCounts.get(name) ?? 0,
+    color: colorBySlice.get(name) ?? CIRCUIT_PIE_COLORS[0]!,
+  }))
+
+  return {
+    entries,
+    byJourneyId,
+    byPlate,
+    byPieSlice,
+    pieSlices,
+    circuitBarSlices: buildExecutiveCircuitBarSlices(entries),
+    total: entries.length,
+    excelPromotedCount,
+  }
+}
+
+function rebuildIndexMaps(entries: CircuitClassificationEntry[]): {
+  byJourneyId: Map<string, CircuitClassificationEntry>
+  byPlate: Map<string, CircuitClassificationEntry[]>
+  byPieSlice: Map<string, CircuitClassificationEntry[]>
+  sliceCounts: Map<string, number>
+} {
+  const byJourneyId = new Map<string, CircuitClassificationEntry>()
+  const byPlate = new Map<string, CircuitClassificationEntry[]>()
+  const byPieSlice = new Map<string, CircuitClassificationEntry[]>()
+  const sliceCounts = new Map<string, number>()
+
+  for (const entry of entries) {
+    sliceCounts.set(entry.pieSliceLabel, (sliceCounts.get(entry.pieSliceLabel) ?? 0) + 1)
+    if (entry.journeyId) byJourneyId.set(entry.journeyId, entry)
+    if (entry.normalizedPlate) {
+      const bucket = byPlate.get(entry.normalizedPlate) ?? []
+      bucket.push(entry)
+      byPlate.set(entry.normalizedPlate, bucket)
+    }
+    const sliceBucket = byPieSlice.get(entry.pieSliceLabel) ?? []
+    sliceBucket.push(entry)
+    byPieSlice.set(entry.pieSliceLabel, sliceBucket)
+  }
+
+  for (const list of byPlate.values()) {
+    list.sort((a, b) => a.plate.localeCompare(b.plate))
+  }
+  for (const list of byPieSlice.values()) {
+    list.sort((a, b) => a.plate.localeCompare(b.plate) || a.journeyId.localeCompare(b.journeyId))
+  }
+
+  return { byJourneyId, byPlate, byPieSlice, sliceCounts }
+}
 
 export function parseLogicalSequence(detectedSequence: string): string[] {
   return String(detectedSequence ?? '')
@@ -839,7 +1032,8 @@ export function buildCommitteeCircuitCrossTab(
 }
 
 export function buildCircuitClassificationIndex(
-  debugMatrixCsv: string | undefined | null
+  debugMatrixCsv: string | undefined | null,
+  mergedTruckflowMovimientosCsv?: string | undefined | null
 ): CircuitClassificationIndex {
   const empty: CircuitClassificationIndex = {
     entries: [],
@@ -849,72 +1043,23 @@ export function buildCircuitClassificationIndex(
     pieSlices: [],
     circuitBarSlices: [],
     total: 0,
+    excelPromotedCount: 0,
   }
   if (!debugMatrixCsv?.trim()) return empty
 
   const { rows } = parseCsvToRecords(debugMatrixCsv)
   if (!rows.length) return empty
 
-  const sliceCounts = new Map<string, number>()
+  const prelimEntries: CircuitClassificationEntry[] = []
   for (const r of rows) {
-    const label = pieSliceLabelFromMatrixRow(r)
-    sliceCounts.set(label, (sliceCounts.get(label) ?? 0) + 1)
+    prelimEntries.push(rowToEntry(r, CIRCUIT_PIE_COLORS[0]!))
   }
 
-  const sortedSliceNames = [...sliceCounts.keys()].sort((a, b) => {
-    const oa = classificationOrder(a)
-    const ob = classificationOrder(b)
-    if (oa !== ob) return oa - ob
-    return (sliceCounts.get(b) ?? 0) - (sliceCounts.get(a) ?? 0)
-  })
+  let entries = promotePlateDischargeFragments(prelimEntries)
+  const excelPromo = promoteExcelMovimientosContrato(entries, mergedTruckflowMovimientosCsv)
+  entries = excelPromo.entries
 
-  const colorBySlice = new Map<string, string>()
-  sortedSliceNames.forEach((name, idx) => {
-    colorBySlice.set(name, CIRCUIT_PIE_COLORS[idx % CIRCUIT_PIE_COLORS.length]!)
-  })
-
-  const entries: CircuitClassificationEntry[] = []
-  const byJourneyId = new Map<string, CircuitClassificationEntry>()
-  const byPlate = new Map<string, CircuitClassificationEntry[]>()
-  const byPieSlice = new Map<string, CircuitClassificationEntry[]>()
-
-  for (const r of rows) {
-    const label = pieSliceLabelFromMatrixRow(r)
-    const entry = rowToEntry(r, colorBySlice.get(label) ?? CIRCUIT_PIE_COLORS[0]!)
-    entries.push(entry)
-    if (entry.journeyId) byJourneyId.set(entry.journeyId, entry)
-    if (entry.normalizedPlate) {
-      const bucket = byPlate.get(entry.normalizedPlate) ?? []
-      bucket.push(entry)
-      byPlate.set(entry.normalizedPlate, bucket)
-    }
-    const sliceBucket = byPieSlice.get(entry.pieSliceLabel) ?? []
-    sliceBucket.push(entry)
-    byPieSlice.set(entry.pieSliceLabel, sliceBucket)
-  }
-
-  for (const list of byPlate.values()) {
-    list.sort((a, b) => a.plate.localeCompare(b.plate))
-  }
-  for (const list of byPieSlice.values()) {
-    list.sort((a, b) => a.plate.localeCompare(b.plate) || a.journeyId.localeCompare(b.journeyId))
-  }
-
-  const pieSlices: CircuitPieSlice[] = sortedSliceNames.map((name) => ({
-    name,
-    value: sliceCounts.get(name) ?? 0,
-    color: colorBySlice.get(name) ?? CIRCUIT_PIE_COLORS[0]!,
-  }))
-
-  return {
-    entries,
-    byJourneyId,
-    byPlate,
-    byPieSlice,
-    pieSlices,
-    circuitBarSlices: buildExecutiveCircuitBarSlices(entries),
-    total: entries.length,
-  }
+  return rebuildClassificationIndexFromEntries(entries, excelPromo.promotedCount)
 }
 
 /** Resuelve clasificación ETL para una fila en vivo (prioriza journeyUid). */
@@ -932,6 +1077,16 @@ export function resolveClassificationForLiveRow(
   if (!p) return null
   const list = index.byPlate.get(p)
   if (!list?.length) return null
+  if (ju) {
+    const match = list.find((e) => e.journeyId === ju)
+    if (match && match.committeeGroup !== 'ANOMALIAS') return match
+  }
+  const dischargeCompletos = list
+    .filter((e) => e.committeeGroup === 'COMPLETOS' && entryHasDischargeClassification(e))
+    .sort((a, b) => b.usefulEventsCount - a.usefulEventsCount)
+  if (dischargeCompletos.length) return dischargeCompletos[0]!
+  const anyCompletos = list.filter((e) => e.committeeGroup === 'COMPLETOS').sort((a, b) => b.usefulEventsCount - a.usefulEventsCount)
+  if (anyCompletos.length) return anyCompletos[0]!
   if (list.length === 1) return list[0]!
   if (ju) {
     const match = list.find((e) => e.journeyId === ju)

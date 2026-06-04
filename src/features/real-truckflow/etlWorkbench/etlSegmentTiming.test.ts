@@ -5,6 +5,7 @@ import {
   buildSegmentTimingIndex,
   extractSegmentLegs,
   extractSlBalancaRollupLeg,
+  extractSlSalidaEgresoRollupLeg,
   histogramBinMinutesForTransition,
   listCircuitSegmentAggregates,
   type ClassifiedJourneyForTiming,
@@ -156,6 +157,34 @@ describe('etlSegmentTiming', () => {
     expect(rollup!.durationMinutes).toBe(120)
     expect(rollup!.fromCode).toBe('SL_BALANZA_INGRESO')
     expect(rollup!.toCode).toBe('SL_BALANZA_SALIDA')
+  })
+
+  it('rollup balanza ingreso SL usa egreso si no hay balanza salida', () => {
+    const j = journey({
+      journeyUid: 'j-sl-fallback',
+      events: [
+        ev('SLZIngCamFrente', 'PUERTO_SAN_LORENZO_INGRESO_CAMIONES', '2026-05-12T08:00:00'),
+        ev('SLZBalIngFte', 'PUERTO_SAN_LORENZO_BALANZA_INGRESO', '2026-05-12T08:30:00'),
+        ev('SLZSalidaC1Fte', 'PUERTO_SAN_LORENZO_EGRESO_CAMIONES', '2026-05-12T10:00:00'),
+      ],
+    })
+    const rollup = extractSlBalancaRollupLeg(j, 'R7')
+    expect(rollup).not.toBeNull()
+    expect(rollup!.durationMinutes).toBe(90)
+  })
+
+  it('rollup balanza salida SL → egreso con punto intermedio', () => {
+    const j = journey({
+      journeyUid: 'j-sl-sal-egr',
+      events: [
+        ev('SLZBalSC1Fte', 'PUERTO_SAN_LORENZO_BALANZA_SALIDA', '2026-05-12T09:00:00'),
+        ev('SLZDescCam', 'PUERTO_SAN_LORENZO_DESCARGA', '2026-05-12T09:45:00'),
+        ev('SLZSalidaC1Fte', 'PUERTO_SAN_LORENZO_EGRESO_CAMIONES', '2026-05-12T10:30:00'),
+      ],
+    })
+    const leg = extractSlSalidaEgresoRollupLeg(j, 'R7')
+    expect(leg).not.toBeNull()
+    expect(leg!.durationMinutes).toBe(90)
   })
 
   it('excluye ingreso→preingreso mayor a 1 h', () => {

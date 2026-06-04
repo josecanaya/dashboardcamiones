@@ -38,7 +38,17 @@ import {
   resolveOperationalExit,
 } from './finalCircuitScoring'
 import { applySanLorenzoExecutiveSupport, snapshotSanLorenzoSupport } from './etlSanLorenzoSupport'
-import { journeyHasSlIngresoEvidence, journeyIsRicSanLorenzoRouteEvidence, resolveTechnicalCircuitCodeForExecutive } from './etlRicSanLorenzoRoute'
+import {
+  getCollapsedLogicalCodes,
+  journeyHasSlIngresoEvidence,
+  journeyIsRicSanLorenzoRouteEvidence,
+  resolveTechnicalCircuitCodeForExecutive,
+} from './etlRicSanLorenzoRoute'
+import {
+  journeyMeetsFlexibleInstrumentedDischargeRule,
+  resolveFlexibleDischargeExecutiveCircuit,
+  resolveFlexibleDischargePreliminaryCode,
+} from './finalCircuitScoring'
 import { resolveCommitteeClassification } from './committeeClassification'
 import {
   buildSegmentTimingIndex,
@@ -77,8 +87,10 @@ import {
   filterAlertsByPlateRegistry,
   filterEventsByPlateRegistry,
 } from '../../../services/truckPlateRegistryFilter'
+import type { MovimientosContratoFileInput } from './etlExternalMovimientosContrato'
+import { runMovimientosContratoIntegration } from './etlMovimientosContratoIntegration'
 
-export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v11'
+export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v12'
 export type { FinalCircuitStatus } from './finalCircuitScoring'
 export { finalStatusLabel } from './finalCircuitScoring'
 
@@ -400,6 +412,8 @@ export type EtlTransformInput = {
   loadedAlertFilesCount: number
   /** Catálogo manual (servicios, asociados, particulares). Si hay entradas activas, se excluyen de métricas. */
   plateRegistry?: TruckPlateRegistryDocument | null
+  /** Archivos XLSX Movimientos por Contrato (opcional). */
+  movimientosContratoFiles?: MovimientosContratoFileInput[]
 }
 
 export type EtlTransformOutput = {
@@ -520,6 +534,24 @@ export type EtlTransformOutput = {
     }
     segmentTiming: SegmentTimingIndex
     circuitTiming: CircuitTimingIndex
+    movimientosContrato?: {
+      enabled: boolean
+      logs: string[]
+      warnings: string[]
+      filesRead: number
+      rawCount: number
+      normalizedCount: number
+      withPlate: number
+      withProduct: number
+      withPlatform: number
+      truckflowJourneys: number
+      analysisReadyCount: number
+      segmentScatterRows: number
+      operationalSampleSelected: number
+      merge: Record<string, unknown>
+      products: string[]
+      platforms: string[]
+    }
   }
   rulesVersion: string
 }
@@ -1365,7 +1397,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     const hasIngresoFrontal = ingresoN > 0
     const relPack = computeJourneyReliability(mj)
     const rel = reliabilityByUid.get(mj.journeyUid) ?? relPack.reliability_score
-    const logicals = new Set(mj.logicalCodeSequence.map((x) => String(x)))
+    const logicals = new Set(getCollapsedLogicalCodes(mj))
     const entry = resolveOperationalEntry(logicals)
     const exit = resolveOperationalExit(logicals, journeyHasRicB2EgresoDevice(mj))
     const strong = journeyHasStrongDefiningPoint(mj)
@@ -1376,8 +1408,16 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       journeyHasStrongConfidenceBonus(mj)
     )
 
-    let matrixClassification = classifyJourneyAgainstCircuitMatrix(mj, DEFAULT_CIRCUIT_MATRIX)
-    let technicalCircuitCode = matrixClassification.matchedCircuitCode ?? mj.preliminaryCircuitCode
+    const flexPreliminaryOverride =
+      journeyMeetsFlexibleInstrumentedDischargeRule(mj) ?
+        resolveFlexibleDischargePreliminaryCode(mj)
+      : null
+
+    let matrixClassification = classifyJourneyAgainstCircuitMatrix(mj, DEFAULT_CIRCUIT_MATRIX, {
+      preliminaryCodeOverride: flexPreliminaryOverride ?? undefined,
+    })
+    let technicalCircuitCode =
+      matrixClassification.matchedCircuitCode ?? flexPreliminaryOverride ?? mj.preliminaryCircuitCode
     const executiveCircuitConfig = resolveExecutiveCircuitConfigForJourney(mj, technicalCircuitCode)
     const technicalOverride =
       executiveCircuitConfig ?
@@ -1494,6 +1534,18 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
         : executiveCircuit.validDetail,
     }
 
+    let reportExecutiveCode = executiveCircuitCode
+    let reportExecutiveLabel = executiveCircuitLabel
+    if (
+      committee.committee_group === 'COMPLETOS' &&
+      (committee.committee_reason.includes('DESCARGA_INSTRUMENTADA') ||
+        journeyMeetsFlexibleInstrumentedDischargeRule(mj))
+    ) {
+      const flexCfg = resolveFlexibleDischargeExecutiveCircuit(mj)
+      reportExecutiveCode = flexCfg.code
+      reportExecutiveLabel = flexCfg.label
+    }
+
     switch (committee.committee_group) {
       case 'COMPLETOS':
         committeeCompletos++
@@ -1506,9 +1558,9 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
         break
     }
     if (executiveCircuit.executiveStatus === 'VALIDO') {
-      if (executiveCircuitCode === 'R7') validR7Journeys++
-      if (executiveCircuitCode === 'SL1') validSlInternalJourneys++
-      if (executiveCircuitCode === 'R26' || executiveCircuitCode === 'R27' || executiveCircuitCode === 'R34') {
+      if (reportExecutiveCode === 'R7') validR7Journeys++
+      if (reportExecutiveCode === 'SL1') validSlInternalJourneys++
+      if (reportExecutiveCode === 'R26' || reportExecutiveCode === 'R27' || reportExecutiveCode === 'R34') {
         transileExternalJourneys++
       }
     }
@@ -1523,11 +1575,11 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     }
     classifiedForSegmentTiming.push({
       journey: mj,
-      executiveCircuitCode,
+      executiveCircuitCode: reportExecutiveCode,
       committeeGroup: committee.committee_group,
       executiveStatus: executiveCircuit.executiveStatus,
       validDetail: executiveCircuit.validDetail,
-      circuitName: executiveCircuitLabel,
+      circuitName: reportExecutiveLabel,
     })
     const legacyFinalStatus = resolveFinalStatus({
       j: mj,
@@ -1711,10 +1763,10 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       enabled_for_classification: enabledForClassification,
       sequence_configured: sequenceConfigured,
       matrix_missing_points: matrixClassification.missingPoints.join('|'),
-      matched_circuit_code: executiveCircuitCode,
-      executive_circuit_code: executiveCircuitCode,
-      executive_circuit_label: executiveCircuitLabel,
-      technical_matched_circuit_code: matrixClassification.matchedCircuitCode ?? '',
+      matched_circuit_code: reportExecutiveCode,
+      executive_circuit_code: reportExecutiveCode,
+      executive_circuit_label: reportExecutiveLabel,
+      technical_matched_circuit_code: technicalCircuitCode,
       matrix_confidence: matrixClassification.confidence,
       final_status_legacy: legacyFinalStatus,
       committee_group: committee.committee_group,
@@ -1744,10 +1796,10 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       device_sequence: seqPack.deviceSequence,
       first_event_at: mj.startedAt,
       last_event_at: mj.endedAt,
-      matched_circuit_code: executiveCircuitCode,
-      executive_circuit_code: executiveCircuitCode,
-      executive_circuit_label: executiveCircuitLabel,
-      technical_matched_circuit_code: matrixClassification.matchedCircuitCode ?? '',
+      matched_circuit_code: reportExecutiveCode,
+      executive_circuit_code: reportExecutiveCode,
+      executive_circuit_label: reportExecutiveLabel,
+      technical_matched_circuit_code: technicalCircuitCode,
       expected_sequence: expectedSequence,
       matrix_final_status: matrixClassification.finalStatus,
       executive_status: executiveCircuit.executiveStatus,
@@ -1790,6 +1842,66 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   })
   const circuit_timing_summary = circuitTimingSummaryCsv(circuitTiming)
   const circuit_timing_journeys = circuitTimingJourneysCsv(circuitTiming)
+
+  const journeyTimesByUid = new Map<string, { start: string; end: string }>()
+  for (const row of debugMatrixRows) {
+    const uid = String(row.journey_id ?? '')
+    if (!uid) continue
+    journeyTimesByUid.set(uid, {
+      start: String(row.first_event_at ?? ''),
+      end: String(row.last_event_at ?? ''),
+    })
+  }
+
+  let movimientosContratoCsv: Record<string, string> = {}
+  let movimientosContratoStats: EtlTransformOutput['stats']['movimientosContrato']
+
+  if (inp.movimientosContratoFiles?.length) {
+    const mc = runMovimientosContratoIntegration({
+      finalCsvRows,
+      journeyTimesByUid,
+      classifiedJourneys: classifiedForSegmentTiming,
+      movimientosFiles: inp.movimientosContratoFiles,
+    })
+    movimientosContratoCsv = mc.csv
+    movimientosContratoStats = {
+      enabled: true,
+      logs: mc.logs,
+      warnings: mc.stats.movimientos.warnings,
+      filesRead: mc.stats.movimientos.filesRead,
+      rawCount: mc.stats.movimientos.rawCount,
+      normalizedCount: mc.stats.movimientos.normalizedCount,
+      withPlate: mc.stats.movimientos.withPlate,
+      withProduct: mc.stats.movimientos.withProduct,
+      withPlatform: mc.stats.movimientos.withPlatform,
+      truckflowJourneys: finalCsvRows.length,
+      analysisReadyCount: mc.stats.analysisReadyCount,
+      segmentScatterRows: mc.stats.segmentScatterRows,
+      operationalSampleSelected: mc.stats.operationalSampleSelected,
+      merge: mc.stats.merge,
+      products: mc.stats.products,
+      platforms: mc.stats.platforms,
+    }
+  } else {
+    movimientosContratoStats = {
+      enabled: false,
+      logs: ['Movimientos por Contrato: sin archivos cargados en memoria al procesar'],
+      warnings: [],
+      filesRead: 0,
+      rawCount: 0,
+      normalizedCount: 0,
+      withPlate: 0,
+      withProduct: 0,
+      withPlatform: 0,
+      truckflowJourneys: finalCsvRows.length,
+      analysisReadyCount: 0,
+      segmentScatterRows: 0,
+      operationalSampleSelected: 0,
+      merge: {},
+      products: [],
+      platforms: [],
+    }
+  }
 
   type LprMergeCandidateRow = {
     alert_id: string
@@ -2455,6 +2567,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       segment_timing_legs,
       circuit_timing_summary,
       circuit_timing_journeys,
+      ...movimientosContratoCsv,
     },
     stats: {
       step1: step1Stat,
@@ -2467,6 +2580,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       executive: executiveStat,
       segmentTiming,
       circuitTiming,
+      movimientosContrato: movimientosContratoStats,
     },
     rulesVersion: ETL_TRANSFORM_RULES_VERSION,
   }

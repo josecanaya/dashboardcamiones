@@ -12,9 +12,9 @@ import {
   journeyHasLiquidStrongPoint,
   journeyMeetsDeducedEvidenceThreshold,
   journeyHasDeducedStrongEvidence,
-  isFlexibleDischargePreliminaryCode,
   isRicSanLorenzoRouteCircuit,
   journeyMeetsFlexibleInstrumentedDischargeRule,
+  resolveFlexibleDischargeExecutiveCircuit,
 } from './finalCircuitScoring'
 import { ETL_SL_INTERNAL_CLASSIFICATION_ENABLED, snapshotSanLorenzoSupport } from './etlSanLorenzoSupport'
 import { journeyHasSlIngresoEvidence, journeyIsRicSanLorenzoRouteEvidence, journeyIsSlOnlyInternal } from './etlRicSanLorenzoRoute'
@@ -968,6 +968,35 @@ export function resolveCommitteeClassification(input: {
     frontEventCount: input.frontEventCount,
   })
 
+  // Volcable / Celda 16 + calada o balanza — prioridad máxima (antes de R7, RS_REC, SIN_PUNTO)
+  if (
+    journeyMeetsFlexibleInstrumentedDischargeRule(input.journey) &&
+    input.hasOperationalEntry &&
+    input.hasOperationalExit &&
+    input.frontEventCount >= 4
+  ) {
+    const flexExec = resolveFlexibleDischargeExecutiveCircuit(input.journey)
+    const flexCompleto =
+      input.matrixFinalStatus === 'COMPLETO' ||
+      input.matrixFinalStatus === 'DEDUCIDO' ||
+      deducedEvidenceOk
+    return {
+      ...base,
+      ...emptyAnomalyFields(),
+      analysis_scope: 'RICARDONE',
+      strong_point_source: 'RICARDONE',
+      committee_group: 'COMPLETOS',
+      committee_reason: flexCompleto ? 'CIRCUITO_DESCARGA_INSTRUMENTADA' : 'CIRCUITO_DESCARGA_INSTRUMENTADA_FLEX',
+      operational_variation_type: '',
+      show_as_exact_circuit: true,
+      candidate_circuits: flexExec.code,
+      executive_status: 'VALIDO',
+      executive_reason: flexCompleto ? 'CIRCUITO_DESCARGA_INSTRUMENTADA' : 'CIRCUITO_DESCARGA_INSTRUMENTADA_FLEX',
+      matched_sequence_name: 'BASE',
+      matched_variation_name: '',
+    }
+  }
+
   // San Lorenzo interno (SL1) — solo journeys exclusivamente SL
   if (ETL_SL_INTERNAL_CLASSIFICATION_ENABLED && isSanLorenzoInternalCircuit(executiveCode, technicalCode)) {
     return classifySlInternal(input, base, deducedEvidenceOk, observedSectors)
@@ -1010,31 +1039,6 @@ export function resolveCommitteeClassification(input: {
       show_as_exact_circuit: false,
       executive_status: 'NO_DIFERENCIABLE',
       executive_reason: 'NO_DIFERENCIABLE_SIN_PUNTO_FUERTE',
-    }
-  }
-
-  // Descarga instrumentada (Volcable / C16) + calada o balanza — válido aunque falte egreso Ric o S* no cierre
-  if (
-    isFlexibleDischargePreliminaryCode(technicalCode) &&
-    journeyMeetsFlexibleInstrumentedDischargeRule(input.journey) &&
-    input.hasOperationalEntry &&
-    input.hasOperationalExit &&
-    input.frontEventCount >= 4
-  ) {
-    const flexCompleto =
-      input.matrixFinalStatus === 'COMPLETO' ||
-      (input.matrixFinalStatus === 'DEDUCIDO' && deducedEvidenceOk)
-    return {
-      ...base,
-      ...emptyAnomalyFields(),
-      committee_group: 'COMPLETOS',
-      committee_reason: flexCompleto ? 'CIRCUITO_DESCARGA_INSTRUMENTADA' : 'CIRCUITO_DESCARGA_INSTRUMENTADA_FLEX',
-      operational_variation_type: '',
-      show_as_exact_circuit: input.hasStrongPoint,
-      executive_status: 'VALIDO',
-      executive_reason: flexCompleto ? 'CIRCUITO_DESCARGA_INSTRUMENTADA' : 'CIRCUITO_DESCARGA_INSTRUMENTADA_FLEX',
-      matched_sequence_name: 'BASE',
-      matched_variation_name: '',
     }
   }
 

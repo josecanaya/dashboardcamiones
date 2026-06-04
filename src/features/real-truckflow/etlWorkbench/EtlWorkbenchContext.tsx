@@ -15,6 +15,7 @@ import {
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 import { parseTruckflowJsonFile, type ParsedTruckflowFile } from './parseTruckflowJsonFiles'
 import { runEtlTransform, type EtlTransformOutput } from './etlTransformPipeline'
+import type { MovimientosContratoFileInput } from './etlExternalMovimientosContrato'
 import { inferSiteIdFromSectorCode } from '../../../services/realJourneyEventsMapper'
 import { occurredAtLocalDayKey } from '../../../services/realJourneyQuality'
 import {
@@ -61,6 +62,10 @@ type Ctx = {
   transformError: string | null
   mergeWindowHours: number
   setMergeWindowHours: (h: number) => void
+  movimientosContratoFiles: MovimientosContratoFileInput[]
+  movimientosContratoFileNames: string[]
+  loadMovimientosContratoXlsx: (list: FileList | File[]) => Promise<void>
+  clearMovimientosContrato: () => void
   loadJsonFiles: (list: FileList | File[]) => Promise<void>
   /** Lee data/truckflow/YYYY-MM-DD/*.json del servidor local (un solo request). */
   loadLocalPeriod: (startDate: string, endDate: string) => Promise<boolean>
@@ -145,6 +150,32 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
   const [transformBusy, setTransformBusy] = useState(false)
   const [transformError, setTransformError] = useState<string | null>(null)
   const [mergeWindowHours, setMergeWindowHours] = useState(2)
+  const [movimientosContratoFiles, setMovimientosContratoFiles] = useState<MovimientosContratoFileInput[]>(
+    []
+  )
+
+  const movimientosContratoFileNames = useMemo(
+    () => movimientosContratoFiles.map((f) => f.sourceFile),
+    [movimientosContratoFiles]
+  )
+
+  const clearMovimientosContrato = useCallback(() => {
+    setMovimientosContratoFiles([])
+  }, [])
+
+  const loadMovimientosContratoXlsx = useCallback(async (list: FileList | File[]) => {
+    const files = [...list].filter((f) => /\.xlsx?$/i.test(f.name))
+    const loaded: MovimientosContratoFileInput[] = []
+    for (const file of files) {
+      const arrayBuffer = await file.arrayBuffer()
+      loaded.push({ sourceFile: file.name, arrayBuffer })
+    }
+    setMovimientosContratoFiles((prev) => {
+      const byName = new Map(prev.map((p) => [p.sourceFile, p]))
+      for (const item of loaded) byName.set(item.sourceFile, item)
+      return [...byName.values()]
+    })
+  }, [])
 
   const clearLoaded = useCallback(() => {
     setParsedEventFiles([])
@@ -156,6 +187,7 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
     setDiskPeriod(null)
     setTransformResult(null)
     setTransformError(null)
+    setMovimientosContratoFiles([])
   }, [])
 
 function buildApiJourneyStatsFromParsedFiles(
@@ -333,6 +365,8 @@ function buildApiJourneyStatsFromParsedFiles(
         loadedEventFilesCount: parsedEventFiles.length,
         loadedAlertFilesCount: parsedAlertFiles.length,
         plateRegistry,
+        movimientosContratoFiles:
+          movimientosContratoFiles.length ? movimientosContratoFiles : undefined,
       })
       setTransformResult(out)
       return out
@@ -342,7 +376,14 @@ function buildApiJourneyStatsFromParsedFiles(
     } finally {
       setTransformBusy(false)
     }
-  }, [alerts, events, mergeWindowHours, parsedAlertFiles.length, parsedEventFiles.length])
+  }, [
+    alerts,
+    events,
+    mergeWindowHours,
+    movimientosContratoFiles,
+    parsedAlertFiles.length,
+    parsedEventFiles.length,
+  ])
 
   const value = useMemo<Ctx>(
     () => ({
@@ -360,6 +401,10 @@ function buildApiJourneyStatsFromParsedFiles(
       transformError,
       mergeWindowHours,
       setMergeWindowHours,
+      movimientosContratoFiles,
+      movimientosContratoFileNames,
+      loadMovimientosContratoXlsx,
+      clearMovimientosContrato,
       loadJsonFiles,
       loadLocalPeriod,
       clearLoaded,
@@ -378,6 +423,10 @@ function buildApiJourneyStatsFromParsedFiles(
       transformBusy,
       transformError,
       mergeWindowHours,
+      movimientosContratoFiles,
+      movimientosContratoFileNames,
+      loadMovimientosContratoXlsx,
+      clearMovimientosContrato,
       loadJsonFiles,
       loadLocalPeriod,
       clearLoaded,

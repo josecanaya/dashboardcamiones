@@ -68,7 +68,6 @@ export type RealDataMainTab =
   | 'dss_truckflow'
   | 'kpi_comite'
   | 'kpi_tiempos'
-
 /** Navegación completa Datos reales (modo histórico; muchas vistas no están en la barra y se enlazan desde otras pantallas). */
 export const MAIN_TABS: { id: RealDataMainTab; label: string }[] = [
   { id: 'eventos', label: 'Eventos' },

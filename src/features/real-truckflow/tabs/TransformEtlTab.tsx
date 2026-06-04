@@ -24,6 +24,13 @@ import {
   type SuspiciousDischargeWithoutBalanzaRow,
 } from '../etlWorkbench/etlCircuitClassificationIndex'
 import { committeePieFromGroup } from '../etlWorkbench/committeeClassification'
+import { MovimientosContratoPanel } from '../components/MovimientosContratoPanel'
+import { ProductFilterSelect } from '../components/ProductFilterSelect'
+import {
+  filterClassificationEntriesByProduct,
+  parseJourneyProductLookup,
+  PRODUCT_FILTER_ALL,
+} from '../etlWorkbench/etlProductFilter'
 
 const DEV_EXPORT_DEF: {
   csvKey: keyof EtlTransformOutput['csv']
@@ -55,6 +62,16 @@ const DEV_EXPORT_DEF: {
   { csvKey: 'segment_timing_kpi', filename: 'segment_timing_kpi.csv', label: 'KPI tiempos por tramo' },
   { csvKey: 'circuit_timing_summary', filename: 'circuit_timing_summary.csv', label: 'KPI tiempos por circuito' },
   { csvKey: 'circuit_timing_journeys', filename: 'circuit_timing_journeys.csv', label: 'Auditoría tiempos circuito' },
+  {
+    csvKey: 'external_movimientos_contrato_normalized',
+    filename: 'external_movimientos_contrato_normalized.csv',
+    label: 'Movimientos contrato normalizados',
+  },
+  { csvKey: 'merged_truckflow_movimientos', filename: 'merged_truckflow_movimientos.csv', label: 'Merge Truckflow + contrato' },
+  { csvKey: 'clean_journeys_for_analysis', filename: 'clean_journeys_for_analysis.csv', label: 'Journeys análisis' },
+  { csvKey: 'segment_scatter_analysis', filename: 'segment_scatter_analysis.csv', label: 'Dispersión por tramo' },
+  { csvKey: 'operational_sample', filename: 'operational_sample.csv', label: 'Muestra operativa' },
+  { csvKey: 'merge_summary', filename: 'merge_summary.csv', label: 'Resumen merge' },
 ]
 
 function truncateMiddle(text: string, max = 12): string {
@@ -532,10 +549,20 @@ export function TransformEtlTab() {
   const [expandedSlice, setExpandedSlice] = useState<string | null>(null)
   const [expandedCrossTab, setExpandedCrossTab] = useState<CrossTabDrilldownKey | null>(null)
   const [expandedAnomalySequence, setExpandedAnomalySequence] = useState<string | null>(null)
+  const [anomalyProductFilter, setAnomalyProductFilter] = useState(PRODUCT_FILTER_ALL)
+
+  const productLookup = useMemo(
+    () => parseJourneyProductLookup(tr?.csv.merged_truckflow_movimientos),
+    [tr?.csv.merged_truckflow_movimientos]
+  )
 
   const circuitClassIndex = useMemo(
-    () => buildCircuitClassificationIndex(tr?.csv.debug_matrix_classification),
-    [tr?.csv.debug_matrix_classification]
+    () =>
+      buildCircuitClassificationIndex(
+        tr?.csv.debug_matrix_classification,
+        tr?.csv.merged_truckflow_movimientos
+      ),
+    [tr?.csv.debug_matrix_classification, tr?.csv.merged_truckflow_movimientos]
   )
 
   const circuitClassificationPie = useMemo(() => {
@@ -565,13 +592,17 @@ export function TransformEtlTab() {
     () => buildCommitteeCircuitCrossTab(circuitClassIndex.entries),
     [circuitClassIndex.entries]
   )
+  const filteredEntriesForAnomalies = useMemo(
+    () => filterClassificationEntriesByProduct(circuitClassIndex.entries, productLookup, anomalyProductFilter),
+    [circuitClassIndex.entries, productLookup, anomalyProductFilter]
+  )
   const anomalyReview = useMemo(
-    () => buildAnomalyReviewSummary(circuitClassIndex.entries),
-    [circuitClassIndex.entries]
+    () => buildAnomalyReviewSummary(filteredEntriesForAnomalies),
+    [filteredEntriesForAnomalies]
   )
   const suspiciousDischargeRows = useMemo(
-    () => buildSuspiciousDischargeWithoutBalanza(circuitClassIndex.entries),
-    [circuitClassIndex.entries]
+    () => buildSuspiciousDischargeWithoutBalanza(filteredEntriesForAnomalies),
+    [filteredEntriesForAnomalies]
   )
   const totalAnomalies = useMemo(
     () => anomalyReview.incompleteCount + anomalyReview.listedAnomalyCount,
@@ -656,6 +687,10 @@ export function TransformEtlTab() {
         {wb.transformBusy ?
           <p className="mt-4 text-sm font-semibold text-amber-800">Ejecutando transform…</p>
         : null}
+
+        <div className="mt-5">
+          <MovimientosContratoPanel wb={wb} />
+        </div>
       </div>
 
       {exec ?
@@ -685,6 +720,15 @@ export function TransformEtlTab() {
               </span>
               . La torta responde: <strong>¿comité COMPLETOS o ANOMALÍAS?</strong> No coincide 1:1 con el
               circuito asignado (barras). Ver conciliación abajo.
+              {circuitClassIndex.excelPromotedCount > 0 ?
+                <>
+                  {' '}
+                  <strong className="text-emerald-700">
+                    {circuitClassIndex.excelPromotedCount.toLocaleString()} camiones del Excel salieron de
+                    anomalías y entraron a su circuito.
+                  </strong>
+                </>
+              : null}
             </p>
             {circuitPieTotal === 0 ?
               <p className="mt-8 text-center text-sm text-slate-400">Sin datos para esta comparación.</p>
@@ -1000,6 +1044,16 @@ export function TransformEtlTab() {
                 <strong>Por recorrido:</strong> incompletos (&lt;3 eventos) y anomalías agrupadas por secuencia.{' '}
                 <strong>Sospechosos:</strong> descarga en C16, Volcable 1 o Volcable 2 sin paso por balanza.
               </p>
+              <div className="mt-3 flex flex-wrap items-end gap-4">
+                <ProductFilterSelect
+                  lookup={productLookup}
+                  value={anomalyProductFilter}
+                  onChange={(p) => {
+                    setAnomalyProductFilter(p)
+                    setExpandedAnomalySequence(null)
+                  }}
+                />
+              </div>
               <AnomalyPanel
                 summary={anomalyReview}
                 suspiciousRows={suspiciousDischargeRows}

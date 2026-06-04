@@ -194,4 +194,37 @@ API → servidor local → data/truckflow/YYYY-MM-DD/
   → Análisis local → runEtlTransform → Load/Export → pb_*
 ```
 
-Versión reglas transform: `etl_transform_v10` — detalle completo en [`ETL_TRANSFORM_V9_RULES.md`](./ETL_TRANSFORM_V9_RULES.md) (sección v10).
+Versión reglas transform: `etl_transform_v12` — detalle completo en [`ETL_TRANSFORM_V9_RULES.md`](./ETL_TRANSFORM_V9_RULES.md) (sección v10+).
+
+## Integración Movimientos por Contrato + análisis por muestra
+
+Requiere cargar archivos `MovimientosPorContrato_YYYYMMDD.xlsx` en Análisis local antes del transform. Truckflow aporta trazabilidad física; el XLSX aporta producto, plataforma y movimiento administrativo.
+
+| Archivo | Uso |
+|---------|-----|
+| `external_movimientos_contrato_normalized.csv` | Movimientos externos normalizados |
+| `truckflow_journeys_for_merge.csv` | Journeys Truckflow listos para cruce |
+| `truckflow_segments_for_merge.csv` | Tramos por journey |
+| `merged_truckflow_movimientos.csv` | Merge enriquecido |
+| `truckflow_without_movimiento_match.csv` | Camiones Truckflow sin movimiento externo |
+| `movimientos_without_truckflow_match.csv` | Movimientos sin journey Truckflow |
+| `merge_ambiguous_cases.csv` | Cruces ambiguos |
+| `merge_summary.csv` | Resumen del merge |
+| `clean_journeys_for_analysis.csv` | Base filtrable (`analysis_ready`) |
+| `segment_scatter_analysis.csv` | Dispersión tramo a tramo (Power BI) |
+| `operational_sample.csv` | Muestra operativa estratificada (hasta 2000) |
+| `operational_sample_summary.csv` | Resumen de la muestra |
+| `operational_sample_by_circuit_product.csv` | Matriz circuito × producto |
+| `segment_scatter_sample.csv` | Dispersión solo para la muestra |
+
+### Pestaña Power BI sugerida: «Análisis por muestra»
+
+1. **Tarjetas:** camiones en muestra, productos, circuitos, match exacto/probable, sin match, confianza merge promedio.
+2. **Dispersión:** eje X `segment_start_time`, eje Y `segment_duration_min`, color `product_normalized`; filtros `circuit_code`, `segment_name`, `platform_normalized`, `merge_status`, `analysis_ready`.
+3. **Tabla demoras:** patente, producto, plataforma, circuito, tramo, duración, p90/p95, `is_outlier`.
+4. **Matriz circuito/producto:** conteos, p50/p90/p95, outliers.
+5. **Calidad merge:** exacto, probable, ambiguos, Truckflow sin movimiento, movimientos sin Truckflow.
+
+### `analysis_ready`
+
+`true` cuando hay producto, circuito evaluable, merge confiable (≥0.60, estados MATCH_EXACT / MATCH_PROBABLE / MATCH_MULTIPLE_RESOLVED), `executive_status = VALIDO` y `valid_detail` en COMPLETO / DEDUCIDO / DEDUCIDO_FUERTE / DEDUCIDO_GRUPO / VARIACION_OPERATIVA, sin anomalía real.

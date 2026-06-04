@@ -3,9 +3,11 @@ import {
   buildAnomalyReviewSummary,
   buildAnomalySequenceBreakdown,
   buildCommitteeCircuitCrossTab,
+  buildCircuitClassificationIndex,
   buildSuspiciousDischargeWithoutBalanza,
   committeeChartExportCsv,
   normalizeAnomalySequenceKey,
+  promoteExcelMovimientosContrato,
   resolveDischargePointLabel,
   type CircuitClassificationEntry,
 } from './etlCircuitClassificationIndex'
@@ -163,5 +165,56 @@ describe('etlCircuitClassificationIndex anomalías', () => {
     expect(rows.map((r) => r.plate).sort()).toEqual(['BBB222', 'CCC333'])
     expect(resolveDischargePointLabel('INGRESO>VOLCABLE', 'RicVolcable2')).toBe('Volcable 2')
     expect(resolveDischargePointLabel('CELDA16_DESCARGA', 'RicC16Descarga1')).toBe('C16 descarga 1')
+  })
+})
+
+describe('promoteExcelMovimientosContrato', () => {
+  const mergeCsv = [
+    'journey_uid,product_normalized,platform_normalized,circuit_code,circuit_label,merge_status',
+    'j-anom,SOJA,VOLCABLE_1,R5,R5 · Volcable 1,MATCH_EXCEL_ANCHOR',
+    'j-ok,TRIGO,CELDA_16,R1,R1 · C16 ingreso,MATCH_EXACT',
+  ].join('\n')
+
+  it('saca anomalías con Excel y las asigna al circuito del movimiento', () => {
+    const entries = [
+      entry({
+        journeyId: 'j-anom',
+        committeeGroup: 'ANOMALIAS',
+        pieSliceLabel: 'ANOMALÍAS',
+        executiveCircuitCode: 'SIN_PUNTO',
+      }),
+      entry({
+        journeyId: 'j-ok',
+        committeeGroup: 'COMPLETOS',
+        pieSliceLabel: 'COMPLETOS',
+        executiveCircuitCode: 'R1',
+      }),
+    ]
+    const { entries: promoted, promotedCount } = promoteExcelMovimientosContrato(entries, mergeCsv)
+    expect(promotedCount).toBe(1)
+    const recovered = promoted.find((e) => e.journeyId === 'j-anom')!
+    expect(recovered.committeeGroup).toBe('COMPLETOS')
+    expect(recovered.pieSliceLabel).toBe('COMPLETOS')
+    expect(recovered.executiveCircuitCode).toBe('R5')
+    expect(recovered.committeeReason).toContain('EXCEL_CONTRATO')
+
+    const anomalyReview = buildAnomalyReviewSummary(promoted)
+    expect(anomalyReview.listedAnomalyCount).toBe(0)
+
+    const cross = buildCommitteeCircuitCrossTab(promoted)
+    const r5 = cross.find((r) => r.code === 'R5')
+    expect(r5?.completos).toBe(1)
+    expect(r5?.anomalias).toBe(0)
+  })
+
+  it('integra promoción en buildCircuitClassificationIndex', () => {
+    const debugCsv = [
+      'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
+      'j-anom,ABC123,ricardone,ANOMALIAS,ANOMALÍAS,SIN_PUNTO,,INGRESO>PREINGRESO,4,ANOMALO,ANOMALO,JOURNEY_INCOMPLETO,,JOURNEY_INCOMPLETO,EVENTOS_INSUFICIENTES,,INCOMPLETO,2026-05-12T08:00:00.000Z,2026-05-12T09:00:00.000Z,',
+    ].join('\n')
+    const index = buildCircuitClassificationIndex(debugCsv, mergeCsv)
+    expect(index.excelPromotedCount).toBe(1)
+    expect(index.pieSlices.find((s) => s.name === 'COMPLETOS')?.value).toBe(1)
+    expect(index.pieSlices.find((s) => s.name === 'ANOMALÍAS')?.value ?? 0).toBe(0)
   })
 })

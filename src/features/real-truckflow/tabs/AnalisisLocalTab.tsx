@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ApiJourneyCountByDayTable } from '../components/ApiJourneyCountByDayTable'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
+import { MovimientosContratoPanel } from '../components/MovimientosContratoPanel'
 import { previousCalendarWeekRange, thisCalendarWeekRange } from '../utils/weekDateRange'
 
 type Props = {
@@ -103,6 +104,10 @@ export function AnalisisLocalTab({ onTransformSucceeded }: Props) {
           >
             Limpiar
           </button>
+        </div>
+
+        <div className="mt-4">
+          <MovimientosContratoPanel wb={wb} compact />
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2">

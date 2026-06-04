@@ -223,8 +223,15 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
 
   const wb = useEtlWorkbenchOptional()
   const circuitClassIndex = useMemo(
-    () => buildCircuitClassificationIndex(wb?.transformResult?.csv.debug_matrix_classification),
-    [wb?.transformResult?.csv.debug_matrix_classification]
+    () =>
+      buildCircuitClassificationIndex(
+        wb?.transformResult?.csv.debug_matrix_classification,
+        wb?.transformResult?.csv.merged_truckflow_movimientos
+      ),
+    [
+      wb?.transformResult?.csv.debug_matrix_classification,
+      wb?.transformResult?.csv.merged_truckflow_movimientos,
+    ]
   )
   const showCircuitClassColumn = timeMode === 'calendar_day' && circuitClassIndex.total > 0
 

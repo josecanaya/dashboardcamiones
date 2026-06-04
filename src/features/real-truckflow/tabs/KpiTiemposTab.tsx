@@ -5,10 +5,17 @@ import {
   getCircuitSegmentTemplate,
   listCircuitSegmentAggregates,
   logicalPointLabel,
+  filterSegmentTimingIndex,
   SEGMENT_TIMING_HISTOGRAM_BIN_MIN,
   type SegmentTimingAggregate,
 } from '../etlWorkbench/etlSegmentTiming'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
+import {
+  journeyIdsForProduct,
+  parseJourneyProductLookup,
+  PRODUCT_FILTER_ALL,
+} from '../etlWorkbench/etlProductFilter'
+import { ProductFilterSelect } from '../components/ProductFilterSelect'
 import { exportChartAsPng, safeExportFilename } from '../../../utils/chartExport'
 import { histogramWithKde } from '../../../utils/stats'
 import { SegmentTimingChartPanel } from './SegmentTimingChartPanel'
@@ -25,7 +32,21 @@ function buildChartDataForAggregate(agg: SegmentTimingAggregate) {
 export function KpiTiemposTab() {
   const wb = useEtlWorkbenchOptional()
   const tr = wb?.transformResult
-  const segmentTiming = tr?.stats.segmentTiming
+  const segmentTimingRaw = tr?.stats.segmentTiming
+
+  const productLookup = useMemo(
+    () => parseJourneyProductLookup(tr?.csv.merged_truckflow_movimientos),
+    [tr?.csv.merged_truckflow_movimientos]
+  )
+
+  const [productFilter, setProductFilter] = useState(PRODUCT_FILTER_ALL)
+
+  const segmentTiming = useMemo(() => {
+    if (!segmentTimingRaw) return null
+    if (productFilter === PRODUCT_FILTER_ALL || !productLookup) return segmentTimingRaw
+    const ids = journeyIdsForProduct(productLookup, productFilter)
+    return filterSegmentTimingIndex(segmentTimingRaw, ids)
+  }, [segmentTimingRaw, productFilter, productLookup])
 
   const periodLabel = useMemo(() => {
     if (!wb?.loadSummary?.daysDetected.length) return '—'
@@ -121,7 +142,8 @@ export function KpiTiemposTab() {
               destino → balanza salida.
             </p>
             <p className="mt-2 font-mono text-xs text-slate-500">
-              Período: {periodLabel} · Reglas: {tr?.rulesVersion ?? '—'} · Journeys COMPLETOS:{' '}
+              Período: {periodLabel} · Reglas: {tr?.rulesVersion ?? '—'} · Journeys COMPLETOS
+              {productFilter !== PRODUCT_FILTER_ALL ? ` · ${productFilter}` : ''}:{' '}
               {segmentTiming?.journeyCount ?? '—'} · Unidad: minutos
             </p>
           </div>
@@ -150,6 +172,7 @@ export function KpiTiemposTab() {
       : (
         <>
           <div className="flex flex-wrap items-end gap-4">
+            <ProductFilterSelect lookup={productLookup} value={productFilter} onChange={setProductFilter} />
             <label className="flex flex-col gap-1 text-sm">
               <span className="font-semibold text-slate-700">Circuito ejecutivo</span>
               <select
@@ -171,8 +194,9 @@ export function KpiTiemposTab() {
               <span className="font-semibold text-slate-700">Recorrido:</span> {circuitPathLabel}
               {(circuitFilter === 'R7' || circuitFilter === 'SL1') && (
                 <span className="mt-1 block text-xs text-violet-700">
-                  Pata San Lorenzo: tramo <strong>balanza ingreso SL → balanza salida SL</strong> consolida la
-                  estadía interna mientras calada/enlace/descarga no tengan datos productivos.
+                  Pata San Lorenzo: el tramo <strong>balanza ingreso SL → balanza salida SL</strong> incluye la
+                  estadía hasta salida, descarga o egreso si la cámara S5 no registró al camión.{' '}
+                  <strong>balanza salida SL → egreso</strong> admite puntos intermedios (calada, descarga).
                 </span>
               )}
             </div>

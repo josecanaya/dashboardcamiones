@@ -28,6 +28,18 @@ export const SL_BALANZA_ROLLUP_TRANSITION = {
   to: 'SL_BALANZA_SALIDA',
 } as const
 
+/** Rollup balanza salida → egreso SL (puede haber puntos intermedios S2–S4). */
+export const SL_SALIDA_EGRESO_ROLLUP_TRANSITION = {
+  from: 'SL_BALANZA_SALIDA',
+  to: 'SL_EGRESO',
+} as const
+
+/**
+ * Fin de estadía interna SL tras balanza ingreso.
+ * Muchos camiones no pasan cámara S5 (balanza salida) pero sí egreso o descarga.
+ */
+const SL_INTERNAL_STAY_END_CODES = ['SL_BALANZA_SALIDA', 'SL_DESCARGA', 'SL_EGRESO'] as const
+
 /** Pata SL en KPI tiempos: solo cámaras con datos operativos hoy. */
 export const SL_OPERATIONAL_KPI_CHAIN = [
   'SL_INGRESO',
@@ -48,6 +60,9 @@ export function transitionKey(fromCode: string, toCode: string): string {
 export function maxAllowedMinutesForTransition(fromCode: string, toCode: string): number {
   const key = transitionKey(fromCode, toCode)
   if (key === transitionKey(SL_BALANZA_ROLLUP_TRANSITION.from, SL_BALANZA_ROLLUP_TRANSITION.to)) {
+    return SL_BALANZA_ROLLUP_MAX_MINUTES
+  }
+  if (key === transitionKey(SL_SALIDA_EGRESO_ROLLUP_TRANSITION.from, SL_SALIDA_EGRESO_ROLLUP_TRANSITION.to)) {
     return SL_BALANZA_ROLLUP_MAX_MINUTES
   }
   return SHORT_SEGMENT_MAX_MINUTES[key] ?? MAX_SEGMENT_DURATION_MINUTES
@@ -200,6 +215,13 @@ export function isExpectedCircuitTransition(
   ) {
     return true
   }
+  if (
+    CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(circuitCode) &&
+    fromCode === SL_SALIDA_EGRESO_ROLLUP_TRANSITION.from &&
+    toCode === SL_SALIDA_EGRESO_ROLLUP_TRANSITION.to
+  ) {
+    return true
+  }
   const template = getCircuitSegmentTemplate(circuitCode)
   if (template.length < 2) return false
   for (let i = 0; i < template.length - 1; i++) {
@@ -332,14 +354,47 @@ export function extractSegmentLegs(
   return legs
 }
 
-/** Rollup balanza ingreso → balanza salida SL (primer par cronológico en el journey). */
+/** Rollup balanza ingreso → fin estadía SL (salida, descarga o egreso si no hay S5). */
 export function extractSlBalancaRollupLeg(
   journey: ReconstructedRealJourney,
   executiveCircuitCode: string
 ): SegmentLeg | null {
   if (!CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(executiveCircuitCode)) return null
   const points = collapsedFrontLogicalPoints(journey)
-  const { from: fromCode, to: toCode } = SL_BALANZA_ROLLUP_TRANSITION
+  const { from: fromCode, to: templateToCode } = SL_BALANZA_ROLLUP_TRANSITION
+  const fromIdx = points.findIndex((p) => p.code === fromCode)
+  if (fromIdx < 0) return null
+
+  let toIdx = -1
+  for (const endCode of SL_INTERNAL_STAY_END_CODES) {
+    const idx = points.findIndex((p, i) => i > fromIdx && p.code === endCode)
+    if (idx >= 0) {
+      toIdx = idx
+      break
+    }
+  }
+  if (toIdx < 0) return null
+
+  const durationMinutes = minutesBetweenIso(points[fromIdx]!.occurredAt, points[toIdx]!.occurredAt)
+  if (!isValidSegmentDuration(durationMinutes, fromCode, templateToCode)) return null
+  return {
+    journeyId: journey.journeyUid,
+    plate: journey.normalizedPlate || journey.plate,
+    executiveCircuitCode,
+    fromCode,
+    toCode: templateToCode,
+    durationMinutes,
+  }
+}
+
+/** Rollup balanza salida → egreso SL (salto no consecutivo). */
+export function extractSlSalidaEgresoRollupLeg(
+  journey: ReconstructedRealJourney,
+  executiveCircuitCode: string
+): SegmentLeg | null {
+  if (!CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(executiveCircuitCode)) return null
+  const points = collapsedFrontLogicalPoints(journey)
+  const { from: fromCode, to: toCode } = SL_SALIDA_EGRESO_ROLLUP_TRANSITION
   const fromIdx = points.findIndex((p) => p.code === fromCode)
   if (fromIdx < 0) return null
   const toIdx = points.findIndex((p, i) => i > fromIdx && p.code === toCode)
@@ -354,6 +409,48 @@ export function extractSlBalancaRollupLeg(
     toCode,
     durationMinutes,
   }
+}
+
+export type SegmentLegWithTimes = SegmentLeg & {
+  segment_start_time: string
+  segment_end_time: string
+}
+
+export function extractSegmentLegsWithTimes(
+  journey: ReconstructedRealJourney,
+  executiveCircuitCode = ''
+): SegmentLegWithTimes[] {
+  const points = collapsedFrontLogicalPoints(journey)
+  const legs: SegmentLegWithTimes[] = []
+  for (let i = 0; i < points.length - 1; i++) {
+    const from = points[i]!
+    const to = points[i + 1]!
+    const durationMinutes = minutesBetweenIso(from.occurredAt, to.occurredAt)
+    if (!isValidSegmentDuration(durationMinutes, from.code, to.code)) continue
+    legs.push({
+      journeyId: journey.journeyUid,
+      plate: journey.normalizedPlate || journey.plate,
+      executiveCircuitCode,
+      fromCode: from.code,
+      toCode: to.code,
+      durationMinutes,
+      segment_start_time: from.occurredAt,
+      segment_end_time: to.occurredAt,
+    })
+  }
+  const rollup = extractSlBalancaRollupLeg(journey, executiveCircuitCode)
+  if (rollup) {
+    const fromIdx = points.findIndex((p) => p.code === SL_BALANZA_ROLLUP_TRANSITION.from)
+    const toIdx = points.findIndex((p, i) => i > fromIdx && p.code === SL_BALANZA_ROLLUP_TRANSITION.to)
+    if (fromIdx >= 0 && toIdx >= 0) {
+      legs.push({
+        ...rollup,
+        segment_start_time: points[fromIdx]!.occurredAt,
+        segment_end_time: points[toIdx]!.occurredAt,
+      })
+    }
+  }
+  return legs
 }
 
 export function extractAllSegmentLegsForCircuit(
@@ -373,6 +470,8 @@ export function extractAllSegmentLegsForCircuit(
   }
   const rollup = extractSlBalancaRollupLeg(journey, executiveCircuitCode)
   if (rollup) push(rollup)
+  const salidaEgreso = extractSlSalidaEgresoRollupLeg(journey, executiveCircuitCode)
+  if (salidaEgreso) push(salidaEgreso)
   return out
 }
 
@@ -436,28 +535,16 @@ function aggregateFromLegs(
   }
 }
 
-export function buildSegmentTimingIndex(
-  journeys: ClassifiedJourneyForTiming[],
-  options?: { committeeGroups?: CommitteeGroup[] }
-): SegmentTimingIndex {
-  const allowedGroups = new Set(options?.committeeGroups ?? ['COMPLETOS'])
-  const legs: SegmentLeg[] = []
+function rebuildSegmentTimingIndexFromLegs(legs: SegmentLeg[]): SegmentTimingIndex {
   const bucketLegs = new Map<string, SegmentLeg[]>()
   const journeyIds = new Set<string>()
 
-  for (const row of journeys) {
-    if (!allowedGroups.has(row.committeeGroup)) continue
-    const circuitCode = String(row.executiveCircuitCode ?? '').trim()
-    if (!circuitCode) continue
-    journeyIds.add(row.journey.journeyUid)
-    for (const leg of extractAllSegmentLegsForCircuit(row.journey, circuitCode)) {
-      if (!isExpectedCircuitTransition(circuitCode, leg.fromCode, leg.toCode)) continue
-      legs.push(leg)
-      const key = `${circuitCode}|${leg.fromCode}|${leg.toCode}`
-      const arr = bucketLegs.get(key) ?? []
-      arr.push(leg)
-      bucketLegs.set(key, arr)
-    }
+  for (const leg of legs) {
+    journeyIds.add(leg.journeyId)
+    const key = `${leg.executiveCircuitCode}|${leg.fromCode}|${leg.toCode}`
+    const arr = bucketLegs.get(key) ?? []
+    arr.push(leg)
+    bucketLegs.set(key, arr)
   }
 
   const aggregates: SegmentTimingAggregate[] = []
@@ -491,6 +578,35 @@ export function buildSegmentTimingIndex(
     ),
     journeyCount: journeyIds.size,
   }
+}
+
+/** Filtra KPI de tiempos por journeys (p. ej. por producto del merge). */
+export function filterSegmentTimingIndex(
+  index: SegmentTimingIndex,
+  allowedJourneyIds: Set<string> | null
+): SegmentTimingIndex {
+  if (!allowedJourneyIds) return index
+  return rebuildSegmentTimingIndexFromLegs(index.legs.filter((l) => allowedJourneyIds.has(l.journeyId)))
+}
+
+export function buildSegmentTimingIndex(
+  journeys: ClassifiedJourneyForTiming[],
+  options?: { committeeGroups?: CommitteeGroup[] }
+): SegmentTimingIndex {
+  const allowedGroups = new Set(options?.committeeGroups ?? ['COMPLETOS'])
+  const legs: SegmentLeg[] = []
+
+  for (const row of journeys) {
+    if (!allowedGroups.has(row.committeeGroup)) continue
+    const circuitCode = String(row.executiveCircuitCode ?? '').trim()
+    if (!circuitCode) continue
+    for (const leg of extractAllSegmentLegsForCircuit(row.journey, circuitCode)) {
+      if (!isExpectedCircuitTransition(circuitCode, leg.fromCode, leg.toCode)) continue
+      legs.push(leg)
+    }
+  }
+
+  return rebuildSegmentTimingIndexFromLegs(legs)
 }
 
 export function segmentTimingKpiCsv(index: SegmentTimingIndex): string {
