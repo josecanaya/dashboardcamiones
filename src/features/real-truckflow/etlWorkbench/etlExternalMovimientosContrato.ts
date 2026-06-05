@@ -182,9 +182,9 @@ export function normalizeMovimientoContrato(
   const platform = normalizePlatform(cellStr(row.plataforma))
   if (platform.warning) warnings.push(platform.warning)
 
-  const ing = combineDateTime(row.fecha_ing, row.hora_ing)
-  const cal = combineDateTime(row.fecha_calado, row.hora_calado)
-  const sal = combineDateTime(row.fecha_sal, row.hora_sal)
+  const ing = combineDateTime(row.fecha_ing, row.hora_ing, sourceDate)
+  const cal = combineDateTime(row.fecha_calado, row.hora_calado, sourceDate)
+  const sal = combineDateTime(row.fecha_sal, row.hora_sal, sourceDate)
   if (ing.warning) warnings.push(`ingreso:${ing.warning}`)
   if (cal.warning) warnings.push(`calado:${cal.warning}`)
   if (sal.warning) warnings.push(`salida:${sal.warning}`)
@@ -299,7 +299,7 @@ function readSheetRows(sheet: XLSX.WorkSheet): {
   const headerRow = findHeaderRowIndex(sheet)
   const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, {
     defval: null,
-    raw: false,
+    raw: true,
     range: headerRow,
   })
   const headers = rows.length ? Object.keys(rows[0]!) : []
@@ -317,7 +317,7 @@ export function readMovimientosContratoXlsx(
   arrayBuffer: ArrayBuffer,
   sourceFile: string
 ): { rows: ExternalMovimientoContratoRaw[]; meta: MovimientosContratoReadMeta } {
-  const wb = XLSX.read(arrayBuffer, { type: 'array', cellDates: true })
+  const wb = XLSX.read(arrayBuffer, { type: 'array', cellDates: false })
   const sourceDate = inferSourceDateFromFileName(sourceFile)
 
   let best: {

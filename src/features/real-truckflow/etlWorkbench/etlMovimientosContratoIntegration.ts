@@ -1,5 +1,6 @@
 import { recordsToCsv } from './etlCsv'
-import type { ClassifiedJourneyForTiming } from './etlSegmentTiming'
+import type { ClassifiedJourneyForTiming, SegmentTimingIndex } from './etlSegmentTiming'
+import { buildSegmentTimingIndexFromExcelFirstSegments } from './etlSegmentTiming'
 import { extractSegmentLegsWithTimes } from './etlSegmentTiming'
 import {
   externalMovimientosNormalizedCsv,
@@ -9,6 +10,15 @@ import {
   type MovimientosContratoFileInput,
 } from './etlExternalMovimientosContrato'
 import { mergeTruckflowWithMovimientos } from './etlTruckflowMovimientosMerge'
+import {
+  excelFirstByProductPlatformCsv,
+  excelFirstMergeSummaryCsv,
+  excelFirstReviewSampleCsv,
+  excelNoTruckflowEvidenceDiagnosticsCsv,
+  excelOperationSegmentsForScatterCsv,
+  excelOperationsWithTruckflowCsv,
+  mergeExcelOperationsWithTruckflowEvidence,
+} from './etlExcelFirstMerge'
 import {
   buildCleanJourneysForAnalysis,
   buildSegmentScatterAnalysis,
@@ -38,11 +48,14 @@ export type MovimientosContratoIntegrationInput = {
 export type MovimientosContratoIntegrationOutput = {
   csv: Record<string, string>
   logs: string[]
+  segmentTimingFromExcelFirst: SegmentTimingIndex | null
   stats: {
     movimientos: ReturnType<typeof summarizeMovimientosContratoLoad>
     merge: Record<string, unknown>
+    excelFirst: Record<string, unknown>
     analysisReadyCount: number
     segmentScatterRows: number
+    excelFirstScatterRows: number
     operationalSampleSelected: number
     products: string[]
     platforms: string[]
@@ -124,7 +137,31 @@ export function runMovimientosContratoIntegration(
   logs.push(`Matches múltiples resueltos: ${mergeResult.summary.match_multiple_resolved}`)
   logs.push(`Ambiguos: ${mergeResult.summary.match_ambiguous}`)
   logs.push(`Truckflow sin movimiento: ${mergeResult.summary.no_external_match}`)
-  logs.push(`Movimientos sin Truckflow: ${mergeResult.summary.no_truckflow_match}`)
+  logs.push(`Movimientos sin Truckflow (diagnóstico): ${mergeResult.summary.no_truckflow_match}`)
+
+  const excelFirstResult = mergeExcelOperationsWithTruckflowEvidence(
+    normalized,
+    truckflowJourneys,
+    segments
+  )
+  logs.push(`Excel-first: operaciones totales ${excelFirstResult.summary.total_excel_operations}`)
+  logs.push(
+    `Excel-first: con evidencia Truckflow ${excelFirstResult.summary.total_with_truckflow_evidence}`
+  )
+  logs.push(
+    `Excel-first: sin evidencia Truckflow ${excelFirstResult.summary.total_without_truckflow_evidence}`
+  )
+  logs.push(`Excel-first: fragmentadas ${excelFirstResult.summary.external_match_fragmented}`)
+  logs.push(`Excel-first: wide window ${excelFirstResult.summary.external_match_wide_window}`)
+  logs.push(`Excel-first: low confidence ${excelFirstResult.summary.external_match_low_confidence}`)
+  logs.push(`Excel-first: listas scatter ${excelFirstResult.summary.ready_for_scatter}`)
+  logs.push(`Excel-first: listas KPI ruta completa ${excelFirstResult.summary.ready_for_full_route_kpi}`)
+  if (excelFirstResult.period.period_mismatch) {
+    logs.push(`ALERTA ${excelFirstResult.period.period_alert}: Truckflow no cubre rango Excel`)
+  }
+  logs.push(
+    `Excel-first sin evidencia: no_placa=${excelFirstResult.summary.no_evidence_no_plate_in_truckflow}, fuera_ventana=${excelFirstResult.summary.no_evidence_plate_out_of_window}, fuera_periodo=${excelFirstResult.summary.no_evidence_outside_period}`
+  )
 
   const clean = buildCleanJourneysForAnalysis(mergeResult.merged)
   const analysisReadyCount = clean.filter((r) => r.analysis_ready).length
@@ -141,8 +178,24 @@ export function runMovimientosContratoIntegration(
 
   const mergedByUid = new Map(mergeResult.merged.map((r) => [r.journey_uid, r]))
   const cleanByUid = new Map(clean.map((r) => [r.journey_uid, r]))
-  const scatter = buildSegmentScatterAnalysis(segments, mergedByUid, cleanByUid)
-  logs.push(`Filas segment_scatter_analysis: ${scatter.length}`)
+  const excelScatterReady = excelFirstResult.segmentRows.filter((r) => r.analysis_ready_for_scatter)
+  const segmentTimingFromExcelFirst =
+    excelScatterReady.length ?
+      buildSegmentTimingIndexFromExcelFirstSegments(excelScatterReady)
+    : null
+  if (segmentTimingFromExcelFirst) {
+    logs.push(
+      `KPI tiempos (Excel-first): ${segmentTimingFromExcelFirst.legs.length} tramos, ${segmentTimingFromExcelFirst.journeyCount} operaciones Excel`
+    )
+  }
+
+  const scatter =
+    excelScatterReady.length ?
+      excelScatterReady.map((r) => ({ ...r }) as Record<string, unknown>)
+    : buildSegmentScatterAnalysis(segments, mergedByUid, cleanByUid)
+  logs.push(
+    `Filas segment_scatter_analysis: ${scatter.length}${excelScatterReady.length ? ' (Excel-first)' : ''}`
+  )
 
   const samplePack = createOperationalSample(clean)
   logs.push(`Seleccionados en muestra operativa: ${samplePack.sample.length}`)
@@ -189,23 +242,39 @@ export function runMovimientosContratoIntegration(
         ],
       enrichedSinDescargaRows
     ),
-    segment_scatter_analysis: segmentScatterAnalysisCsv(scatter),
+    segment_scatter_analysis:
+      excelScatterReady.length ?
+        excelOperationSegmentsForScatterCsv(excelScatterReady)
+      : segmentScatterAnalysisCsv(scatter),
     operational_sample: operationalSampleCsv(samplePack.sample),
     operational_sample_summary: operationalSampleSummaryCsv(samplePack.summary),
     operational_sample_by_circuit_product: operationalSampleByCircuitProductCsv(
       samplePack.byCircuitProduct
     ),
     segment_scatter_sample: segmentScatterSampleCsv(scatter, sampleUids),
+    excel_operations_with_truckflow: excelOperationsWithTruckflowCsv(excelFirstResult.operations),
+    excel_operation_segments_for_scatter: excelOperationSegmentsForScatterCsv(
+      excelFirstResult.segmentRows
+    ),
+    excel_first_merge_summary: excelFirstMergeSummaryCsv(excelFirstResult.summary),
+    excel_first_by_product_platform: excelFirstByProductPlatformCsv(excelFirstResult.byProductPlatform),
+    excel_no_truckflow_evidence_diagnostics: excelNoTruckflowEvidenceDiagnosticsCsv(
+      excelFirstResult.noEvidenceDiagnostics
+    ),
+    excel_first_review_sample: excelFirstReviewSampleCsv(excelFirstResult.reviewSample),
   }
 
   return {
     csv,
     logs,
+    segmentTimingFromExcelFirst,
     stats: {
       movimientos: movStats,
       merge: mergeResult.summary,
+      excelFirst: excelFirstResult.summary,
       analysisReadyCount,
       segmentScatterRows: scatter.length,
+      excelFirstScatterRows: excelFirstResult.segmentRows.length,
       operationalSampleSelected: samplePack.sample.length,
       products,
       platforms,

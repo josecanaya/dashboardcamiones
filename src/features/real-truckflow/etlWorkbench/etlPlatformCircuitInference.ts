@@ -14,17 +14,35 @@ function circuitFromCode(code: string, source: InferredExecutiveCircuit['inferen
   return { circuit_code: code, circuit_label: cfg.label, inference_source: source }
 }
 
+/** Volcables PTO = descarga San Lorenzo (circuito R7), distinto de VOLCABLE 1/2 Ricardone. */
+export function isSanLorenzoVolcablePtoPlatform(platform: string | null | undefined): boolean {
+  return String(platform ?? '')
+    .trim()
+    .toUpperCase()
+    .startsWith('VOLCABLE_PTO_')
+}
+
 /** Circuito ejecutivo R* inferido desde plataforma/planta del Excel operativo. */
 export function inferCircuitFromExternalMovimiento(
   mov: Pick<
     ExternalMovimientoContratoNormalized,
-    'platform_normalized' | 'planta_normalized' | 'movement_type' | 'movement_type_detail' | 'mov'
+    | 'platform_normalized'
+    | 'plataforma_original'
+    | 'planta_normalized'
+    | 'movement_type'
+    | 'movement_type_detail'
+    | 'mov'
   >
 ): InferredExecutiveCircuit | null {
   const platform = String(mov.platform_normalized ?? '').toUpperCase()
+  const original = String(mov.plataforma_original ?? '').toUpperCase()
   const plant = String(mov.planta_normalized ?? '').toUpperCase()
   const movType = String(mov.movement_type ?? '').toUpperCase()
   const movCode = String(mov.mov ?? mov.movement_type_detail ?? '').toUpperCase()
+
+  if (isSanLorenzoVolcablePtoPlatform(platform) || /VOLCABLE\s+PTO/.test(original)) {
+    return circuitFromCode('R7', 'platform')
+  }
 
   if (platform.startsWith('VOLCABLE_')) {
     const num = Number.parseInt(platform.replace('VOLCABLE_', ''), 10)
@@ -41,8 +59,8 @@ export function inferCircuitFromExternalMovimiento(
 
   if (platform.startsWith('KEPPLER_') || platform.startsWith('KEPLER_')) {
     const num = Number.parseInt(platform.replace(/KEPPLER_|KEPLER_/, ''), 10)
-    if (num === 2) return circuitFromCode('R20', 'platform')
-    return circuitFromCode('R19', 'platform')
+    if (num === 2) return circuitFromCode('RK2', 'platform')
+    return circuitFromCode('RK1', 'platform')
   }
 
   if (platform === 'ACEITE_OSL') {
@@ -54,6 +72,9 @@ export function inferCircuitFromExternalMovimiento(
   }
 
   if (plant === 'TERMINAL_EMBARQUE') {
+    if (isSanLorenzoVolcablePtoPlatform(platform)) {
+      return circuitFromCode('R7', 'platform')
+    }
     if (platform.startsWith('VOLCABLE_')) {
       const num = Number.parseInt(platform.replace('VOLCABLE_', ''), 10)
       if (num === 2 || num === 4) return circuitFromCode('R20', 'platform')

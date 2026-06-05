@@ -217,4 +217,76 @@ describe('promoteExcelMovimientosContrato', () => {
     expect(index.pieSlices.find((s) => s.name === 'COMPLETOS')?.value).toBe(1)
     expect(index.pieSlices.find((s) => s.name === 'ANOMALÍAS')?.value ?? 0).toBe(0)
   })
+
+  it('concilia con excel_operations_with_truckflow en gráficos comité', () => {
+    const debugCsv = [
+      'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
+      'j-anom,ABC123,ricardone,ANOMALIAS,ANOMALÍAS,SIN_PUNTO,,INGRESO>PREINGRESO>CALADA,5,ANOMALO,ANOMALO,JOURNEY_INCOMPLETO,,JOURNEY_INCOMPLETO,EVENTOS_INSUFICIENTES,,INCOMPLETO,2026-05-12T08:00:00.000Z,2026-05-12T09:00:00.000Z,',
+      'j-var,DEF456,ricardone,VARIACIONES_OPERATIVAS,VARIACIONES OPERATIVAS,R1,R1 · C16,INGRESO>PREINGRESO,6,VALIDO,VALIDO,VAR,,,,COMPLETO,2026-05-12T10:00:00.000Z,2026-05-12T11:00:00.000Z,',
+    ].join('\n')
+    const excelCsv = [
+      'external_operation_id,matched_journey_uids,plate_normalized,planta_normalized,movement_type,source_date,resolved_product,product_normalized,resolved_platform,platform_normalized,truckflow_circuit_codes,resolved_circuit_family,match_quality,route_quality,evidence_count',
+      'op1,j-anom,ABC123,RICARDONE,INGRESO,2026-05-12,SOJA,SOJA,VOLCABLE_PTO_3,VOLCABLE PTO 3,SIN_PUNTO,SAN_LORENZO_VOLCABLE,EXTERNAL_MATCH_EXACT,ROUTE_NO_DISCHARGE_POINT,1',
+      'op2,j-var,DEF456,RICARDONE,INGRESO,2026-05-12,MAIZ,MAIZ,VOLCABLE_1,VOLCABLE_1,R5,VOLCABLE,EXTERNAL_MATCH_PROBABLE,ROUTE_COMPLETE,1',
+    ].join('\n')
+    const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
+    expect(index.excelFirstReconciledCount).toBe(2)
+    expect(index.excelPromotedCount).toBe(1)
+    const recovered = index.entries.find((e) => e.journeyId === 'j-anom')!
+    expect(recovered.committeeGroup).toBe('COMPLETOS')
+    expect(recovered.executiveCircuitCode).toBe('R7')
+    const moved = index.entries.find((e) => e.journeyId === 'j-var')!
+    expect(moved.executiveCircuitCode).toBe('R5')
+    const cross = buildCommitteeCircuitCrossTab(index.entries)
+    expect(cross.find((r) => r.code === 'R7')?.total).toBe(1)
+    expect(cross.find((r) => r.code === 'R5')?.total).toBe(1)
+    expect(cross.find((r) => r.code === 'SIN_PUNTO')).toBeUndefined()
+  })
+
+  it('VOLCABLE PTO 3 en Excel concilia a R7 no a R5', () => {
+    const debugCsv = [
+      'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
+      'j-sl,SL001,ricardone,COMPLETOS,COMPLETOS,RS_REC,Recepción sólida inferida,INGRESO>PREINGRESO>CALADA>EGRESO,8,PROBABLE,PROBABLE,RS_REC,,,,DEDUCIDO,2026-05-29T10:00:00.000Z,2026-05-29T12:00:00.000Z,',
+    ].join('\n')
+    const excelCsv = [
+      'external_operation_id,matched_journey_uids,plate_normalized,planta_normalized,movement_type,source_date,resolved_product,product_normalized,resolved_platform,platform_normalized,plataforma_original,truckflow_circuit_codes,resolved_circuit_family,match_quality,route_quality,evidence_count',
+      'op1,j-sl,SL001,RICARDONE,INGRESO,2026-05-29,SOJA,SOJA,VOLCABLE_PTO_3,VOLCABLE_PTO_3,VOLCABLE PTO 3,RS_REC,SAN_LORENZO_VOLCABLE,EXTERNAL_MATCH_EXACT,ROUTE_DEDUCED,1',
+    ].join('\n')
+    const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
+    const row = index.entries.find((e) => e.journeyId === 'j-sl')!
+    expect(row.executiveCircuitCode).toBe('R7')
+    expect(buildCommitteeCircuitCrossTab(index.entries).find((r) => r.code === 'RS_REC')).toBeUndefined()
+  })
+
+  it('RS_REC con VOLCABLE en Excel pasa a R5/R6 según plataforma', () => {
+    const debugCsv = [
+      'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
+      'j-rs,EQV925,ricardone,COMPLETOS,COMPLETOS,RS_REC,Recepción sólida inferida,INGRESO>PREINGRESO>CALADA>EGRESO,6,PROBABLE,PROBABLE,RS_REC,,,,DEDUCIDO,2026-05-29T10:00:00.000Z,2026-05-29T11:00:00.000Z,',
+    ].join('\n')
+    const excelCsv = [
+      'external_operation_id,matched_journey_uids,plate_normalized,planta_normalized,movement_type,source_date,resolved_product,product_normalized,resolved_platform,platform_normalized,truckflow_circuit_codes,resolved_circuit_family,match_quality,route_quality,evidence_count',
+      'op1,j-rs,EQV925,RICARDONE,INGRESO,2026-05-29,SOJA,SOJA,VOLCABLE_2,VOLCABLE_2,RS_REC,VOLCABLE,EXTERNAL_MATCH_EXACT,ROUTE_DEDUCED,1',
+    ].join('\n')
+    const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
+    const row = index.entries.find((e) => e.journeyId === 'j-rs')!
+    expect(row.executiveCircuitCode).toBe('R6')
+    expect(row.committeeGroup).toBe('COMPLETOS')
+    expect(buildCommitteeCircuitCrossTab(index.entries).find((r) => r.code === 'RS_REC')).toBeUndefined()
+  })
+
+  it('anomalía NO_DIFERENCIABLE con SOJA+CELDA_16 en Excel sale de anomalías a R1', () => {
+    const debugCsv = [
+      'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
+      'j-nd,SU0158,ricardone,ANOMALIAS,ANOMALÍAS,SIN_PUNTO,Sin punto,CALADA>EGRESO>SL_INGRESO,4,NO_DIFERENCIABLE,NO_DIFERENCIABLE,NO_DIFERENCIABLE_SIN_PUNTO_FUERTE,,,,,2026-05-29T12:00:00.000Z,2026-05-29T13:00:00.000Z,',
+    ].join('\n')
+    const excelCsv = [
+      'external_operation_id,matched_journey_uids,plate_normalized,planta_normalized,movement_type,source_date,resolved_product,product_normalized,resolved_platform,platform_normalized,truckflow_circuit_codes,resolved_circuit_family,match_quality,route_quality,evidence_count',
+      'op1,j-nd,SU0158,RICARDONE,INGRESO,2026-05-29,SOJA,SOJA,CELDA_16,CELDA_16,SIN_PUNTO,CELDA16,EXTERNAL_MATCH_PROBABLE,ROUTE_ANOMALOUS,1',
+    ].join('\n')
+    const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
+    const row = index.entries.find((e) => e.journeyId === 'j-nd')!
+    expect(row.committeeGroup).toBe('COMPLETOS')
+    expect(row.executiveCircuitCode).toBe('R1')
+    expect(buildAnomalyReviewSummary(index.entries).listedAnomalyCount).toBe(0)
+  })
 })

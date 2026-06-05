@@ -1,6 +1,7 @@
 import { recordsToCsv } from './etlCsv'
 import { parseCsvToRecords } from './etlCsvParse'
 import { MERGE_STATUSES_WITH_PRODUCT } from './etlTruckflowMovimientosMerge'
+import { inferCircuitFromExternalMovimiento } from './etlPlatformCircuitInference'
 import {
   EXECUTIVE_CIRCUIT_MATRIX,
   EXECUTIVE_CIRCUIT_ORDER,
@@ -197,6 +198,8 @@ export type CircuitClassificationIndex = {
   pieSlices: CircuitPieSlice[]
   circuitBarSlices: ExecutiveCircuitBarSlice[]
   total: number
+  /** Journeys actualizados por conciliación Excel-first (circuito/categoría). */
+  excelFirstReconciledCount: number
   /** Anomalías reclasificadas como COMPLETOS por cruce Excel (plataforma/circuito). */
   excelPromotedCount: number
 }
@@ -492,6 +495,283 @@ function promoteEntryFromExcelMovimiento(
   }
 }
 
+type ExcelFirstReconcileLite = {
+  product_normalized: string
+  platform_normalized: string
+  plataforma_original: string
+  plate_normalized: string
+  planta_normalized: string
+  movement_type: string
+  source_date: string
+  truckflow_circuit_codes: string
+  resolved_circuit_family: string
+  match_quality: string
+  route_quality: string
+  evidence_count: number
+}
+
+const EXCEL_FIRST_MATCH_RANK: Record<string, number> = {
+  EXTERNAL_MATCH_EXACT: 5,
+  EXTERNAL_MATCH_PROBABLE: 4,
+  EXTERNAL_MATCH_WIDE_WINDOW: 3,
+  EXTERNAL_MATCH_LOW_CONFIDENCE: 2,
+  EXTERNAL_MATCH_FRAGMENTED: 1,
+}
+
+const EXCEL_FIRST_RECONCILABLE_MATCH = new Set(Object.keys(EXCEL_FIRST_MATCH_RANK))
+
+/** Circuitos inferidos por Truckflow sin punto de descarga — no usar si Excel tiene plataforma. */
+const GENERIC_INFERRED_CIRCUIT_CODES = new Set([
+  'RS_REC',
+  'RS_DESP',
+  'SIN_PUNTO',
+  'SIN_ASIGNAR',
+  'DESCARGA_SIN_PUNTO',
+  'NO_DIFERENCIABLE',
+  'NO_EVALUABLE',
+])
+
+const FAMILY_TO_EXECUTIVE: Record<string, string> = {
+  VOLCABLE: 'R5',
+  SAN_LORENZO_VOLCABLE: 'R7',
+  CELDA16: 'R1',
+  KEPLER: 'RK1',
+  LIQUIDO: 'R9',
+}
+
+function excelFirstMatchRank(lite: ExcelFirstReconcileLite): number {
+  return EXCEL_FIRST_MATCH_RANK[lite.match_quality] ?? 0
+}
+
+function pickBestExcelFirstLite(candidates: ExcelFirstReconcileLite[]): ExcelFirstReconcileLite | undefined {
+  if (!candidates.length) return undefined
+  return candidates.reduce((best, c) => (excelFirstMatchRank(c) > excelFirstMatchRank(best) ? c : best))
+}
+
+function inferExecutiveCircuitFromExcelPlatform(lite: ExcelFirstReconcileLite): string {
+  const movType = String(lite.movement_type ?? '').toUpperCase()
+  const inferred = inferCircuitFromExternalMovimiento({
+    platform_normalized: lite.platform_normalized,
+    plataforma_original: lite.plataforma_original,
+    planta_normalized: lite.planta_normalized,
+    movement_type: movType,
+    movement_type_detail: movType,
+    mov: movType === 'DESPACHO' ? 'DE' : movType === 'INGRESO' ? 'I' : '',
+  })
+  return inferred?.circuit_code ?? ''
+}
+
+function pickExecutiveCircuitFromExcelFirst(lite: ExcelFirstReconcileLite): string {
+  const fromPlatform = inferExecutiveCircuitFromExcelPlatform(lite)
+  if (fromPlatform && !GENERIC_INFERRED_CIRCUIT_CODES.has(fromPlatform)) {
+    return fromPlatform
+  }
+
+  const codes = lite.truckflow_circuit_codes
+    .split('|')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  for (const code of codes) {
+    if (GENERIC_INFERRED_CIRCUIT_CODES.has(code)) continue
+    if ((EXECUTIVE_CIRCUIT_ORDER as readonly string[]).includes(code)) return code
+    if (EXECUTIVE_CIRCUIT_MATRIX[code as keyof typeof EXECUTIVE_CIRCUIT_MATRIX]) return code
+  }
+
+  if (fromPlatform) return fromPlatform
+
+  const fromFamily = FAMILY_TO_EXECUTIVE[lite.resolved_circuit_family.toUpperCase()]
+  if (fromFamily) return fromFamily
+
+  return ''
+}
+
+function committeeGroupFromExcelFirst(
+  _entry: CircuitClassificationEntry,
+  lite: ExcelFirstReconcileLite
+): { committeeGroup: string; pieSliceLabel: string; operationalVariationType: string } {
+  const hasExcelDestino = Boolean(lite.product_normalized && lite.platform_normalized)
+
+  if (!hasExcelDestino) {
+    if (lite.route_quality === 'ROUTE_OPERATIONAL_VARIATION') {
+      return {
+        committeeGroup: 'VARIACIONES_OPERATIVAS',
+        pieSliceLabel: 'VARIACIONES OPERATIVAS',
+        operationalVariationType: 'EXCEL_FIRST',
+      }
+    }
+    return {
+      committeeGroup: 'COMPLETOS',
+      pieSliceLabel: 'COMPLETOS',
+      operationalVariationType: '',
+    }
+  }
+
+  if (
+    lite.match_quality === 'EXTERNAL_MATCH_WIDE_WINDOW' ||
+    lite.match_quality === 'EXTERNAL_MATCH_LOW_CONFIDENCE' ||
+    lite.match_quality === 'EXTERNAL_MATCH_FRAGMENTED' ||
+    lite.route_quality === 'ROUTE_OPERATIONAL_VARIATION'
+  ) {
+    return {
+      committeeGroup: 'VARIACIONES_OPERATIVAS',
+      pieSliceLabel: 'VARIACIONES OPERATIVAS',
+      operationalVariationType: lite.match_quality || 'EXCEL_FIRST',
+    }
+  }
+
+  // Excel define producto + plataforma de descarga → circuito real (sale de RS_REC / SIN_PUNTO / anomalías)
+  return {
+    committeeGroup: 'COMPLETOS',
+    pieSliceLabel: 'COMPLETOS',
+    operationalVariationType: '',
+  }
+}
+
+export function parseExcelFirstByJourneyUid(
+  excelOpsCsv: string | undefined | null
+): Map<string, ExcelFirstReconcileLite> {
+  const map = new Map<string, ExcelFirstReconcileLite>()
+  if (!excelOpsCsv?.trim()) return map
+  const { rows } = parseCsvToRecords(excelOpsCsv)
+  for (const r of rows) {
+    const evidence = Number(r.evidence_count ?? 0)
+    const matchQuality = String(r.match_quality ?? '').trim()
+    if (evidence <= 0 || !EXCEL_FIRST_RECONCILABLE_MATCH.has(matchQuality)) continue
+    const lite: ExcelFirstReconcileLite = {
+      product_normalized: String(r.resolved_product ?? r.product_normalized ?? '').trim(),
+      platform_normalized: String(r.resolved_platform ?? r.platform_normalized ?? '').trim(),
+      plataforma_original: String(r.plataforma_original ?? r.platform_normalized ?? '').trim(),
+      plate_normalized: String(r.plate_normalized ?? '').trim(),
+      planta_normalized: String(r.planta_normalized ?? '').trim(),
+      movement_type: String(r.movement_type ?? '').trim(),
+      source_date: String(r.source_date ?? '').trim(),
+      truckflow_circuit_codes: String(r.truckflow_circuit_codes ?? '').trim(),
+      resolved_circuit_family: String(r.resolved_circuit_family ?? '').trim(),
+      match_quality: matchQuality,
+      route_quality: String(r.route_quality ?? '').trim(),
+      evidence_count: evidence,
+    }
+    const uids = String(r.matched_journey_uids ?? '')
+      .split('|')
+      .map((s) => s.trim())
+      .filter(Boolean)
+    for (const uid of uids) {
+      const prev = map.get(uid)
+      if (!prev || excelFirstMatchRank(lite) > excelFirstMatchRank(prev)) {
+        map.set(uid, lite)
+      }
+    }
+  }
+  return map
+}
+
+export function parseExcelFirstByPlate(
+  excelOpsCsv: string | undefined | null
+): Map<string, ExcelFirstReconcileLite[]> {
+  const map = new Map<string, ExcelFirstReconcileLite[]>()
+  if (!excelOpsCsv?.trim()) return map
+  const { rows } = parseCsvToRecords(excelOpsCsv)
+  for (const r of rows) {
+    const evidence = Number(r.evidence_count ?? 0)
+    const matchQuality = String(r.match_quality ?? '').trim()
+    const plate = normalizePlate(String(r.plate_normalized ?? ''))
+    if (!plate || evidence <= 0 || !EXCEL_FIRST_RECONCILABLE_MATCH.has(matchQuality)) continue
+    const lite: ExcelFirstReconcileLite = {
+      product_normalized: String(r.resolved_product ?? r.product_normalized ?? '').trim(),
+      platform_normalized: String(r.resolved_platform ?? r.platform_normalized ?? '').trim(),
+      plataforma_original: String(r.plataforma_original ?? r.platform_normalized ?? '').trim(),
+      plate_normalized: plate,
+      planta_normalized: String(r.planta_normalized ?? '').trim(),
+      movement_type: String(r.movement_type ?? '').trim(),
+      source_date: String(r.source_date ?? '').trim(),
+      truckflow_circuit_codes: String(r.truckflow_circuit_codes ?? '').trim(),
+      resolved_circuit_family: String(r.resolved_circuit_family ?? '').trim(),
+      match_quality: matchQuality,
+      route_quality: String(r.route_quality ?? '').trim(),
+      evidence_count: evidence,
+    }
+    const arr = map.get(plate) ?? []
+    arr.push(lite)
+    map.set(plate, arr)
+  }
+  return map
+}
+
+function resolveExcelFirstLiteForEntry(
+  entry: CircuitClassificationEntry,
+  byJourney: Map<string, ExcelFirstReconcileLite>,
+  byPlate: Map<string, ExcelFirstReconcileLite[]>
+): ExcelFirstReconcileLite | undefined {
+  const direct = byJourney.get(entry.journeyId)
+  if (direct) return direct
+  if (!entry.normalizedPlate) return undefined
+  const cands = byPlate.get(entry.normalizedPlate)
+  if (!cands?.length) return undefined
+  const dayKey = entry.firstEventAt.slice(0, 10)
+  const sameDay = dayKey ? cands.filter((c) => c.source_date === dayKey) : []
+  return pickBestExcelFirstLite(sameDay.length ? sameDay : cands)
+}
+
+function reconcileEntryFromExcelFirst(
+  entry: CircuitClassificationEntry,
+  lite: ExcelFirstReconcileLite
+): CircuitClassificationEntry {
+  const code = pickExecutiveCircuitFromExcelFirst(lite)
+  if (!code || !lite.platform_normalized) return entry
+  const cfg = EXECUTIVE_CIRCUIT_MATRIX[code as keyof typeof EXECUTIVE_CIRCUIT_MATRIX]
+  const label = cfg?.label || code
+  const group = committeeGroupFromExcelFirst(entry, lite)
+  return {
+    ...entry,
+    ...group,
+    executiveCircuitCode: code,
+    executiveCircuitLabel: label,
+    executiveCircuitDisplay: formatExecutiveCircuitLabel(code, label),
+    matchedCircuitCode: code,
+    committeeReason: `EXCEL_PLATAFORMA:${lite.product_normalized}@${lite.platform_normalized}:${lite.match_quality}`,
+    executiveStatus: group.committeeGroup === 'COMPLETOS' ? 'VALIDO' : entry.executiveStatus,
+    executiveReason: 'EXCEL_PLATAFORMA_RECONCILED',
+    validDetail: 'DEDUCIDO',
+    executiveBucket: group.committeeGroup === 'COMPLETOS' ? 'VALIDO' : entry.executiveBucket,
+  }
+}
+
+function entryChangedByExcelFirst(before: CircuitClassificationEntry, after: CircuitClassificationEntry): boolean {
+  return (
+    before.committeeGroup !== after.committeeGroup ||
+    before.executiveCircuitCode !== after.executiveCircuitCode ||
+    before.pieSliceLabel !== after.pieSliceLabel
+  )
+}
+
+/**
+ * Aplica conciliación Excel-first: circuito y categoría comité según operaciones con evidencia Truckflow.
+ */
+export function applyExcelFirstReconciliation(
+  entries: CircuitClassificationEntry[],
+  excelOpsCsv: string | undefined | null
+): { entries: CircuitClassificationEntry[]; reconciledCount: number; promotedCount: number } {
+  const byJourney = parseExcelFirstByJourneyUid(excelOpsCsv)
+  const byPlate = parseExcelFirstByPlate(excelOpsCsv)
+  if (!byJourney.size && !byPlate.size) return { entries, reconciledCount: 0, promotedCount: 0 }
+
+  let reconciledCount = 0
+  let promotedCount = 0
+  const out = entries.map((entry) => {
+    const lite = resolveExcelFirstLiteForEntry(entry, byJourney, byPlate)
+    if (!lite) return entry
+    const wasAnomaly = entry.committeeGroup === 'ANOMALIAS'
+    const wasGenericCircuit = GENERIC_INFERRED_CIRCUIT_CODES.has(entry.executiveCircuitCode)
+    const next = reconcileEntryFromExcelFirst(entry, lite)
+    if (!entryChangedByExcelFirst(entry, next)) return entry
+    reconciledCount++
+    if (wasAnomaly && next.committeeGroup !== 'ANOMALIAS') promotedCount++
+    else if (wasGenericCircuit && !GENERIC_INFERRED_CIRCUIT_CODES.has(next.executiveCircuitCode)) promotedCount++
+    return next
+  })
+  return { entries: out, reconciledCount, promotedCount }
+}
+
 /**
  * Camiones en Excel con producto+plataforma salen de ANOMALÍAS y entran al circuito del Excel.
  */
@@ -512,9 +792,19 @@ export function promoteExcelMovimientosContrato(
   return { entries: out, promotedCount }
 }
 
+/** Reconstruye torta, barras e índices desde un subconjunto de entries (p. ej. filtro por producto). */
+export function rebuildCircuitClassificationIndex(
+  entries: CircuitClassificationEntry[],
+  excelPromotedCount = 0,
+  excelFirstReconciledCount = excelPromotedCount
+): CircuitClassificationIndex {
+  return rebuildClassificationIndexFromEntries(entries, excelPromotedCount, excelFirstReconciledCount)
+}
+
 function rebuildClassificationIndexFromEntries(
   entries: CircuitClassificationEntry[],
-  excelPromotedCount: number
+  excelPromotedCount: number,
+  excelFirstReconciledCount = excelPromotedCount
 ): CircuitClassificationIndex {
   const { byJourneyId, byPlate, byPieSlice, sliceCounts } = rebuildIndexMaps(entries)
 
@@ -547,6 +837,7 @@ function rebuildClassificationIndexFromEntries(
     pieSlices,
     circuitBarSlices: buildExecutiveCircuitBarSlices(entries),
     total: entries.length,
+    excelFirstReconciledCount,
     excelPromotedCount,
   }
 }
@@ -1033,7 +1324,8 @@ export function buildCommitteeCircuitCrossTab(
 
 export function buildCircuitClassificationIndex(
   debugMatrixCsv: string | undefined | null,
-  mergedTruckflowMovimientosCsv?: string | undefined | null
+  mergedTruckflowMovimientosCsv?: string | undefined | null,
+  excelOperationsWithTruckflowCsv?: string | undefined | null
 ): CircuitClassificationIndex {
   const empty: CircuitClassificationIndex = {
     entries: [],
@@ -1043,6 +1335,7 @@ export function buildCircuitClassificationIndex(
     pieSlices: [],
     circuitBarSlices: [],
     total: 0,
+    excelFirstReconciledCount: 0,
     excelPromotedCount: 0,
   }
   if (!debugMatrixCsv?.trim()) return empty
@@ -1056,10 +1349,21 @@ export function buildCircuitClassificationIndex(
   }
 
   let entries = promotePlateDischargeFragments(prelimEntries)
+
+  if (excelOperationsWithTruckflowCsv?.trim()) {
+    const excelReco = applyExcelFirstReconciliation(entries, excelOperationsWithTruckflowCsv)
+    entries = excelReco.entries
+    return rebuildClassificationIndexFromEntries(
+      entries,
+      excelReco.promotedCount,
+      excelReco.reconciledCount
+    )
+  }
+
   const excelPromo = promoteExcelMovimientosContrato(entries, mergedTruckflowMovimientosCsv)
   entries = excelPromo.entries
 
-  return rebuildClassificationIndexFromEntries(entries, excelPromo.promotedCount)
+  return rebuildClassificationIndexFromEntries(entries, excelPromo.promotedCount, excelPromo.promotedCount)
 }
 
 /** Resuelve clasificación ETL para una fila en vivo (prioriza journeyUid). */

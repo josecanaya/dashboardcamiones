@@ -6,13 +6,14 @@ import {
   listCircuitSegmentAggregates,
   logicalPointLabel,
   filterSegmentTimingIndex,
+  countUniqueOperationsForCircuit,
   SEGMENT_TIMING_HISTOGRAM_BIN_MIN,
   type SegmentTimingAggregate,
 } from '../etlWorkbench/etlSegmentTiming'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
 import {
   journeyIdsForProduct,
-  parseJourneyProductLookup,
+  resolveAnalysisProductLookup,
   PRODUCT_FILTER_ALL,
 } from '../etlWorkbench/etlProductFilter'
 import { ProductFilterSelect } from '../components/ProductFilterSelect'
@@ -35,9 +36,16 @@ export function KpiTiemposTab() {
   const segmentTimingRaw = tr?.stats.segmentTiming
 
   const productLookup = useMemo(
-    () => parseJourneyProductLookup(tr?.csv.merged_truckflow_movimientos),
-    [tr?.csv.merged_truckflow_movimientos]
+    () => resolveAnalysisProductLookup(tr?.csv),
+    [tr?.csv]
   )
+
+  const analysisSourceLabel = tr?.csv.excel_operations_with_truckflow?.trim() ?
+    'Excel-first + Truckflow'
+  : 'Truckflow ETL'
+
+  const isExcelFirstKpi = Boolean(tr?.csv.excel_operations_with_truckflow?.trim())
+  const excelFirstReadyForScatter = Number(tr?.stats.movimientosContrato?.excelFirst?.ready_for_scatter ?? 0)
 
   const [productFilter, setProductFilter] = useState(PRODUCT_FILTER_ALL)
 
@@ -106,7 +114,7 @@ export function KpiTiemposTab() {
           title: `${circuitFilter} · KPI tiempos por tramo`,
           period: periodLabel,
           generatedAt,
-          source: 'Truckflow ETL',
+          source: analysisSourceLabel,
         },
         2,
         { excludeExportHide: true }
@@ -114,13 +122,18 @@ export function KpiTiemposTab() {
     } finally {
       setExportBusy(false)
     }
-  }, [aggregatesWithData.length, circuitFilter, exportBusy, periodLabel])
+  }, [aggregatesWithData.length, analysisSourceLabel, circuitFilter, exportBusy, periodLabel])
 
   const circuitPathLabel = useMemo(() => {
     const template = getCircuitSegmentTemplate(circuitFilter)
     if (!template.length) return '—'
     return template.map(logicalPointLabel).join(' → ')
   }, [circuitFilter])
+
+  const circuitOperationCount = useMemo(() => {
+    if (!segmentTiming || !circuitFilter) return 0
+    return countUniqueOperationsForCircuit(segmentTiming, circuitFilter)
+  }, [segmentTiming, circuitFilter])
 
   if (!wb) {
     return (
@@ -137,14 +150,17 @@ export function KpiTiemposTab() {
           <div>
             <h2 className="text-lg font-bold text-slate-900">KPI tiempos por circuito y tramo</h2>
             <p className="mt-2 max-w-3xl text-sm text-slate-600">
-              Tiempos reales entre los tramos operativos del circuito (solo journeys <strong>COMPLETOS</strong>).
-              Cada circuito muestra únicamente su secuencia definida: ingreso → preingreso → calada → balanza →
-              destino → balanza salida.
+              Tiempos reales entre tramos operativos. Con Movimientos por Contrato cargados, la fuente es el merge{' '}
+              <strong>Excel-first</strong> (operaciones Excel con evidencia Truckflow). Sin XLSX, se usa la
+              clasificación Truckflow COMPLETOS.
             </p>
             <p className="mt-2 font-mono text-xs text-slate-500">
-              Período: {periodLabel} · Reglas: {tr?.rulesVersion ?? '—'} · Journeys COMPLETOS
+              Período: {periodLabel} · Reglas: {tr?.rulesVersion ?? '—'} · Fuente: {analysisSourceLabel}
               {productFilter !== PRODUCT_FILTER_ALL ? ` · ${productFilter}` : ''}:{' '}
-              {segmentTiming?.journeyCount ?? '—'} · Unidad: minutos
+              {isExcelFirstKpi ?
+                `${segmentTiming?.journeyCount ?? '—'} operaciones Excel (ready_for_scatter: ${excelFirstReadyForScatter || '—'})`
+              : `${segmentTiming?.journeyCount ?? '—'} journeys`}{' '}
+              · Unidad: minutos
             </p>
           </div>
           <button
@@ -192,11 +208,50 @@ export function KpiTiemposTab() {
             </label>
             <div className="max-w-2xl text-sm text-slate-600">
               <span className="font-semibold text-slate-700">Recorrido:</span> {circuitPathLabel}
+              {isExcelFirstKpi && circuitOperationCount > 0 && (
+                <span className="mt-1 block text-xs text-violet-700">
+                  {circuitOperationCount} operaciones Excel con tramos en {circuitFilter}. N por fila = operaciones
+                  con ese tramo observado (puede variar si la ruta Truckflow está incompleta).
+                </span>
+              )}
               {(circuitFilter === 'R7' || circuitFilter === 'SL1') && (
                 <span className="mt-1 block text-xs text-violet-700">
-                  Pata San Lorenzo: el tramo <strong>balanza ingreso SL → balanza salida SL</strong> incluye la
-                  estadía hasta salida, descarga o egreso si la cámara S5 no registró al camión.{' '}
-                  <strong>balanza salida SL → egreso</strong> admite puntos intermedios (calada, descarga).
+                  Pata San Lorenzo (Excel-first): <strong>calado</strong> ancla balanza salida SL si falta S5;{' '}
+                  <strong>salida</strong> ancla egreso SL si falta S7. Tramos deducidos &gt; 6 h se descartan
+                  (mezcla de recorridos distintos del mismo camión).
+                </span>
+              )}
+              {(circuitFilter === 'R1' ||
+                circuitFilter === 'R5' ||
+                circuitFilter === 'R6' ||
+                circuitFilter === 'R9' ||
+                circuitFilter === 'R19' ||
+                circuitFilter === 'R20' ||
+                circuitFilter === 'RK1' ||
+                circuitFilter === 'RK2') && (
+                <span className="mt-1 block text-xs text-violet-700">
+                  Celda 16 / Volcable: tramos hacia descarga o carga se deducen con salto no consecutivo en Truckflow.
+                  Si el Excel tiene <strong>calado</strong>, se usa como hora de descarga; si no, <strong>salida</strong>.
+                  El tramo hacia balanza egreso usa salida Excel cuando falta cámara de egreso.
+                </span>
+              )}
+              {(circuitFilter === 'RK1' || circuitFilter === 'RK2') && (
+                <span className="mt-1 block text-xs text-violet-700">
+                  Silos Keppler/Kepler (Excel-first): el <strong>calado</strong> del contrato es la hora de descarga
+                  en silo (Volcable). Truckflow aporta balanza/egreso; si falta cámara de silo, se ancla Volcable en
+                  calado. El tránsito por Celda 16 solo se deduce antes del calado si no hay cámara C16.
+                </span>
+              )}
+              {(circuitFilter === 'R19' || circuitFilter === 'R20') && (
+                <span className="mt-1 block text-xs text-violet-700">
+                  Transile C16→Volcable: recorrido corto sin recepción Ricardone formal (carga C16 + descarga Volcable).
+                </span>
+              )}
+              {(circuitFilter === 'R26' || circuitFilter === 'R27') && (
+                <span className="mt-1 block text-xs text-violet-700">
+                  Transile Ricardone↔San Lorenzo: tramos C16 y puente Ric↔SL se deducen con salto no consecutivo.
+                  Puente <strong>balanza egreso Ric → ingreso SL</strong> (R26) o <strong>egreso SL → ingreso Ric</strong>{' '}
+                  (R27) usa calado/salida Excel cuando falta cámara intermedia.
                 </span>
               )}
             </div>

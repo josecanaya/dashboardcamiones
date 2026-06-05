@@ -3,6 +3,7 @@ import {
   applyExternalCircuitToJourney,
   inferCircuitFromExternalMovimiento,
 } from './etlPlatformCircuitInference'
+import { normalizePlatform } from './etlExternalNormalization'
 import type { TruckflowJourneyForMerge } from './etlTruckflowMovimientosMerge'
 
 function j(partial: Partial<TruckflowJourneyForMerge>): TruckflowJourneyForMerge {
@@ -35,25 +36,98 @@ function j(partial: Partial<TruckflowJourneyForMerge>): TruckflowJourneyForMerge
 }
 
 describe('etlPlatformCircuitInference', () => {
-  it('VOLCABLE_1 → R5', () => {
-    expect(inferCircuitFromExternalMovimiento({ platform_normalized: 'VOLCABLE_1', planta_normalized: 'RICARDONE', movement_type: 'INGRESO', movement_type_detail: 'I', mov: 'I' })?.circuit_code).toBe('R5')
+  it('VOLCABLE 1 Ricardone → R5', () => {
+    expect(
+      inferCircuitFromExternalMovimiento({
+        platform_normalized: 'VOLCABLE_1',
+        plataforma_original: 'VOLCABLE 1',
+        planta_normalized: 'RICARDONE',
+        movement_type: 'INGRESO',
+        movement_type_detail: 'I',
+        mov: 'I',
+      })?.circuit_code
+    ).toBe('R5')
+  })
+
+  it('VOLCABLE 2 Ricardone → R6', () => {
+    expect(
+      inferCircuitFromExternalMovimiento({
+        platform_normalized: 'VOLCABLE_2',
+        plataforma_original: 'VOLCABLE 2',
+        planta_normalized: 'RICARDONE',
+        movement_type: 'INGRESO',
+        movement_type_detail: 'I',
+        mov: 'I',
+      })?.circuit_code
+    ).toBe('R6')
+  })
+
+  it('VOLCABLE PTO 1/2/3/5 San Lorenzo → R7', () => {
+    for (const label of ['VOLCABLE PTO 1', 'VOLCABLE PTO 2', 'VOLCABLE PTO 3', 'VOLCABLE PTO 5']) {
+      const norm = normalizePlatform(label)
+      expect(
+        inferCircuitFromExternalMovimiento({
+          platform_normalized: norm.platform_normalized!,
+          plataforma_original: label,
+          planta_normalized: 'RICARDONE',
+          movement_type: 'INGRESO',
+          movement_type_detail: 'I',
+          mov: 'I',
+        })?.circuit_code
+      ).toBe('R7')
+    }
   })
 
   it('CELDA_16 ingreso → R1', () => {
-    expect(inferCircuitFromExternalMovimiento({ platform_normalized: 'CELDA_16', planta_normalized: 'RICARDONE', movement_type: 'INGRESO', movement_type_detail: 'I', mov: 'I' })?.circuit_code).toBe('R1')
+    expect(
+      inferCircuitFromExternalMovimiento({
+        platform_normalized: 'CELDA_16',
+        plataforma_original: 'CELDA 16',
+        planta_normalized: 'RICARDONE',
+        movement_type: 'INGRESO',
+        movement_type_detail: 'I',
+        mov: 'I',
+      })?.circuit_code
+    ).toBe('R1')
   })
 
-  it('asigna circuito a anomalía desde Excel', () => {
+  it('KEPPLER 1 → RK1 (descarga silos Keppler, no Transile)', () => {
+    const inferred = inferCircuitFromExternalMovimiento({
+      platform_normalized: 'KEPPLER_1',
+      plataforma_original: 'KEPPLER 1 P',
+      planta_normalized: 'RICARDONE',
+      movement_type: 'INGRESO',
+      movement_type_detail: 'I',
+      mov: 'I',
+    })
+    expect(inferred?.circuit_code).toBe('RK1')
+    expect(inferred?.circuit_label).toBe('Descarga silos Keppler 1')
+  })
+
+  it('KEPPLER 2 → RK2', () => {
+    expect(
+      inferCircuitFromExternalMovimiento({
+        platform_normalized: 'KEPPLER_2',
+        plataforma_original: 'KEPPLER 2',
+        planta_normalized: 'RICARDONE',
+        movement_type: 'INGRESO',
+        movement_type_detail: 'I',
+        mov: 'I',
+      })?.circuit_code
+    ).toBe('RK2')
+  })
+
+  it('asigna R7 a anomalía con VOLCABLE PTO en Excel', () => {
+    const norm = normalizePlatform('VOLCABLE PTO 1')
     const out = applyExternalCircuitToJourney(j(), {
-      platform_normalized: 'VOLCABLE_1',
+      platform_normalized: norm.platform_normalized!,
       plataforma_original: 'VOLCABLE PTO 1',
       planta_normalized: 'RICARDONE',
       movement_type: 'INGRESO',
       movement_type_detail: 'I',
       mov: 'I',
     } as never)
-    expect(out.circuit_code).toBe('R5')
+    expect(out.circuit_code).toBe('R7')
     expect(out.circuit_from_excel).toBe(true)
-    expect(out.truckflow_circuit_code).toBe('')
   })
 })

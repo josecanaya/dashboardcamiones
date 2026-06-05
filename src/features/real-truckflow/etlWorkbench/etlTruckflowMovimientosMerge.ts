@@ -186,6 +186,13 @@ export function isPlatformCompatibleWithCircuit(
     if (code.includes('VOLCABLE') && !seq.includes('CELDA')) return false
     return null
   }
+  if (p.startsWith('VOLCABLE_PTO_')) {
+    if (code === 'R7' || label.includes('SAN LORENZO') || seq.includes('SL_')) return true
+    if (code === 'R5' || code === 'R6' || label.includes('VOLCABLE 1') || label.includes('VOLCABLE 2')) {
+      return false
+    }
+    return null
+  }
   if (p.startsWith('VOLCABLE_')) {
     if (code.includes('VOLCABLE') || label.includes('VOLCABLE') || seq.includes('VOLCABLE')) return true
     if (code.includes('CELDA16') && !seq.includes('VOLCABLE')) return false

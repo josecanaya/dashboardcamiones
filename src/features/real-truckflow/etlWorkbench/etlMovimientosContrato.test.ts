@@ -117,7 +117,9 @@ describe('etlExternalNormalization', () => {
   })
 
   it('normalizePlatform', () => {
-    expect(normalizePlatform('VOLCABLE PTO 3').platform_normalized).toBe('VOLCABLE_3')
+    expect(normalizePlatform('VOLCABLE PTO 3').platform_normalized).toBe('VOLCABLE_PTO_3')
+    expect(normalizePlatform('VOLCABLE 1').platform_normalized).toBe('VOLCABLE_1')
+    expect(normalizePlatform('VOLCABLE 2').platform_normalized).toBe('VOLCABLE_2')
     expect(normalizePlatform('CELDA 16-4').platform_normalized).toBe('CELDA_16')
     expect(normalizePlatform('KEPPLER 1 P').platform_normalized).toBe('KEPPLER_1')
   })
@@ -289,7 +291,7 @@ describe('mergeTruckflowWithMovimientos', () => {
         movimiento({
           product_normalized: 'GIRASOL',
           producto_original: 'GIRASOL',
-          platform_normalized: 'VOLCABLE_1',
+          platform_normalized: 'VOLCABLE_PTO_1',
           plataforma_original: 'VOLCABLE PTO 1',
           external_salida_at: '2026-05-29T14:55:00',
           external_ingreso_at: '2026-05-29T13:40:00',
@@ -298,7 +300,7 @@ describe('mergeTruckflowWithMovimientos', () => {
     )
     const row = res.merged[0]!
     expect(row.product_normalized).toBe('GIRASOL')
-    expect(row.circuit_code).toBe('R5')
+    expect(row.circuit_code).toBe('R7')
     expect(row.circuit_from_excel).toBe(true)
     const clean = buildCleanJourneysForAnalysis(res.merged)[0]!
     expect(clean.operational_enrichment_ready).toBe(true)

@@ -16,6 +16,12 @@ type WbSlice = {
 }
 
 const MERGE_EXPORTS: { key: keyof EtlTransformOutput['csv']; filename: string; label: string }[] = [
+  { key: 'excel_operations_with_truckflow', filename: 'excel_operations_with_truckflow.csv', label: 'Excel-first operaciones' },
+  { key: 'excel_operation_segments_for_scatter', filename: 'excel_operation_segments_for_scatter.csv', label: 'Excel-first tramos scatter' },
+  { key: 'excel_no_truckflow_evidence_diagnostics', filename: 'excel_no_truckflow_evidence_diagnostics.csv', label: 'Diagnóstico sin evidencia' },
+  { key: 'excel_first_review_sample', filename: 'excel_first_review_sample.csv', label: 'Muestra revisión Excel-first' },
+  { key: 'excel_first_merge_summary', filename: 'excel_first_merge_summary.csv', label: 'Excel-first resumen' },
+  { key: 'excel_first_by_product_platform', filename: 'excel_first_by_product_platform.csv', label: 'Excel-first por producto/plataforma' },
   { key: 'merged_truckflow_movimientos', filename: 'merged_truckflow_movimientos.csv', label: 'Merge completo' },
   { key: 'clean_journeys_for_analysis', filename: 'clean_journeys_for_analysis.csv', label: 'Análisis listo' },
   { key: 'external_movimientos_contrato_normalized', filename: 'external_movimientos_contrato_normalized.csv', label: 'Externos normalizados' },
@@ -37,12 +43,13 @@ export function MovimientosContratoPanel({ wb, compact }: { wb: WbSlice; compact
   const mergeOk = mc?.enabled && (mc.withProduct ?? 0) > 0
 
   const productCounts = useMemo(() => {
-    const csv = wb.transformResult?.csv.merged_truckflow_movimientos
+    const excelCsv = wb.transformResult?.csv.excel_operations_with_truckflow
+    const csv = excelCsv?.trim() ? excelCsv : wb.transformResult?.csv.merged_truckflow_movimientos
     if (!csv?.trim()) return []
     const { rows } = parseCsvToRecords(csv)
     const m = new Map<string, number>()
     for (const r of rows) {
-      const p = String(r.product_normalized ?? r.producto_original ?? '').trim()
+      const p = String(r.resolved_product ?? r.product_normalized ?? r.producto_original ?? '').trim()
       if (!p) continue
       m.set(p, (m.get(p) ?? 0) + 1)
     }
@@ -50,7 +57,10 @@ export function MovimientosContratoPanel({ wb, compact }: { wb: WbSlice; compact
       .map(([product, count]) => ({ product, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 12)
-  }, [wb.transformResult?.csv.merged_truckflow_movimientos])
+  }, [
+    wb.transformResult?.csv.excel_operations_with_truckflow,
+    wb.transformResult?.csv.merged_truckflow_movimientos,
+  ])
 
   const canTransform = wb.events.length > 0 || wb.alerts.length > 0
 
@@ -70,8 +80,10 @@ export function MovimientosContratoPanel({ wb, compact }: { wb: WbSlice; compact
         <div>
           <h3 className="text-sm font-bold text-slate-900">Movimientos por Contrato + producto</h3>
           <p className="mt-1 max-w-2xl text-[11px] text-slate-700">
-            Cargá los XLSX <strong>antes</strong> de «Procesar Transform». El filtro por producto aparece en{' '}
-            <strong>KPI tiempos</strong> y en <strong>Transform → Anomalías</strong> cuando el merge está activo.
+            Cargá los XLSX <strong>antes</strong> de «Procesar Transform». El merge{' '}
+            <strong>Excel-first</strong> alimenta KPI tiempos, filtros por producto y la conciliación comité (
+            <code className="text-[10px]">excel_operations_with_truckflow.csv</code>
+            ).
           </p>
         </div>
         {!compact && canTransform ?
@@ -135,6 +147,78 @@ export function MovimientosContratoPanel({ wb, compact }: { wb: WbSlice; compact
 
       {mc?.enabled ?
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Metric
+            label="Operaciones Excel (total)"
+            value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.total_excel_operations ?? mc.normalizedCount ?? 0)}
+          />
+          <Metric
+            label="Excel con evidencia Truckflow"
+            value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.total_with_truckflow_evidence ?? 0)}
+          />
+          <Metric
+            label="Excel sin evidencia Truckflow"
+            value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.total_without_truckflow_evidence ?? 0)}
+          />
+          <Metric
+            label="Excel fragmentadas"
+            value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.external_match_fragmented ?? 0)}
+          />
+          <Metric
+            label="Listas para scatter (Excel-first)"
+            value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.ready_for_scatter ?? 0)}
+          />
+          <Metric
+            label="Listas KPI ruta completa"
+            value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.ready_for_full_route_kpi ?? 0)}
+          />
+          <Metric
+            label="Cobertura Excel-first"
+            value={
+              mc.normalizedCount > 0 ?
+                `${Number((mc.excelFirst as Record<string, unknown> | undefined)?.coverage_excel_first_pct ?? 0)}%`
+              : '—'
+            }
+          />
+          {(mc.excelFirst as Record<string, unknown> | undefined)?.period_mismatch ?
+            <div className="sm:col-span-2 lg:col-span-4 rounded-lg border border-rose-400 bg-rose-100 px-3 py-2 text-xs font-semibold text-rose-950">
+              PERIOD_MISMATCH: Truckflow no cubre el rango de los XLSX (
+              {String((mc.excelFirst as Record<string, unknown>).excel_min_source_date ?? '?')} →{' '}
+              {String((mc.excelFirst as Record<string, unknown>).excel_max_source_date ?? '?')}). Muchos
+              NO_TRUCKFLOW_EVIDENCE pueden deberse a esto, no a falla del merge.
+            </div>
+          : null}
+          <Metric
+            label="Sin evidencia: patente no en Truckflow"
+            value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.no_evidence_no_plate_in_truckflow ?? 0)}
+          />
+          <Metric
+            label="Sin evidencia: fuera de ventana"
+            value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.no_evidence_plate_out_of_window ?? 0)}
+          />
+          <Metric
+            label="Sin evidencia: fuera de período"
+            value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.no_evidence_outside_period ?? 0)}
+          />
+          <Metric
+            label="Sin evidencia: horarios inválidos TF"
+            value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.no_evidence_invalid_truckflow_time ?? 0)}
+          />
+          <Metric
+            label="Wide window matches"
+            value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.external_match_wide_window ?? 0)}
+          />
+          <Metric
+            label="Low confidence matches"
+            value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.external_match_low_confidence ?? 0)}
+          />
+          <Metric
+            label="Anómalos rescatados (Excel)"
+            value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.rescued_anomalous ?? 0)}
+          />
+          <Metric
+            label="Sin punto rescatados (Excel)"
+            value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.rescued_no_discharge_point ?? 0)}
+          />
           <Metric label="Movimientos leídos" value={mc.normalizedCount} />
           <Metric label="Con producto (XLSX)" value={mc.withProduct ?? 0} />
           <Metric label="Con patente (XLSX)" value={mc.withPlate ?? 0} />
@@ -198,7 +282,9 @@ export function MovimientosContratoPanel({ wb, compact }: { wb: WbSlice; compact
 
       {productCounts.length > 0 ?
         <div className="mt-4">
-          <p className="text-[11px] font-semibold uppercase text-slate-600">Productos en journeys matcheados</p>
+          <p className="text-[11px] font-semibold uppercase text-slate-600">
+            Productos en operaciones Excel-first
+          </p>
           <ul className="mt-2 flex flex-wrap gap-2">
             {productCounts.map(({ product, count }) => (
               <li

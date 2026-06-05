@@ -217,7 +217,84 @@ Requiere cargar archivos `MovimientosPorContrato_YYYYMMDD.xlsx` en Análisis loc
 | `operational_sample_by_circuit_product.csv` | Matriz circuito × producto |
 | `segment_scatter_sample.csv` | Dispersión solo para la muestra |
 
-### Pestaña Power BI sugerida: «Análisis por muestra»
+### Pestaña Power BI sugerida: «Análisis Excel + Truckflow» (Excel-first)
+
+**Fuente principal:** `excel_operations_with_truckflow.csv` (una fila por operación Excel).
+
+**Tramos para dispersión:** `excel_operation_segments_for_scatter.csv` (una fila por tramo Truckflow vinculado a una operación Excel).
+
+**Resúmenes:** `excel_first_merge_summary.csv`, `excel_first_by_product_platform.csv`.
+
+Regla conceptual: **Excel = verdad operativa** (producto, plataforma, circuito resuelto). **Truckflow = evidencia física** (secuencia, tramos, calidad de ruta). No se sobrescribe `truckflow_circuit_code`; se agrega `resolved_circuit_family` desde Excel.
+
+#### Visuales sugeridos
+
+1. Tarjetas: operaciones Excel totales, con evidencia Truckflow, sin evidencia, listas para scatter, listas para KPI ruta completa.
+2. Listas por producto / plataforma / `resolved_circuit_family`.
+3. **Dispersión por tramo** (`excel_operation_segments_for_scatter.csv`):
+   - Eje X: `segment_start_time`
+   - Eje Y: `segment_duration_min`
+   - Color: `product_normalized`
+   - Filtros: `resolved_circuit_family`, `resolved_operational_point`, `platform_normalized`, `segment_name`, `match_quality`, `route_quality`, `analysis_ready_for_scatter`
+4. Tabla operaciones enriquecidas: patente, producto, plataforma, `truckflow_executive_statuses`, `resolved_circuit_family`, `route_quality`, `match_quality`.
+
+#### `match_quality` (cruce Excel ↔ Truckflow)
+
+| Valor | Significado |
+|-------|-------------|
+| `EXTERNAL_MATCH_EXACT` | Patente exacta + ventana fuerte + alineación temporal |
+| `EXTERNAL_MATCH_PROBABLE` | Patente exacta, ventana estándar sin alineación fuerte |
+| `EXTERNAL_MATCH_FRAGMENTED` | Varios journeys Truckflow en la ventana (camión cortado) |
+| `EXTERNAL_MATCH_WIDE_WINDOW` | Match solo con ventana amplia (±480/720 min) |
+| `EXTERNAL_MATCH_LOW_CONFIDENCE` | Match solo por `source_date` ±6 h |
+| `EXTERNAL_MATCH_FUZZY_PLATE` | Solo match OCR fuzzy |
+| `EXTERNAL_MATCH_AMBIGUOUS` | Varios candidatos fuzzy similares |
+| `NO_TRUCKFLOW_EVIDENCE` | Operación Excel sin journey Truckflow en ventana |
+| `INSUFFICIENT_EXTERNAL_DATA` | Falta patente o timestamps en Excel |
+
+#### `no_truckflow_reason` (diagnóstico cuando no hay evidencia)
+
+Ver `excel_no_truckflow_evidence_diagnostics.csv`. Valores: `NO_PLATE_IN_TRUCKFLOW`, `PLATE_EXISTS_OUT_OF_TIME_WINDOW`, `PLATE_EXISTS_ONLY_OUTSIDE_EXCEL_PERIOD`, `TRUCKFLOW_JOURNEY_WITHOUT_VALID_TIME`, `ONLY_FUZZY_MATCH_REJECTED`, `MULTIPLE_AMBIGUOUS_REJECTED`, `INSUFFICIENT_EXTERNAL_TIME`, `UNKNOWN_NO_EVIDENCE`.
+
+El summary incluye `period_alert=PERIOD_MISMATCH` si Truckflow no cubre el rango de los XLSX cargados.
+
+#### Archivos adicionales Excel-first
+
+| Archivo | Uso |
+|---------|-----|
+| `excel_no_truckflow_evidence_diagnostics.csv` | Desglose de operaciones sin evidencia |
+| `excel_first_review_sample.csv` | 100 casos para auditoría manual |
+
+#### `route_quality` (diagnóstico Truckflow, no se sobrescribe)
+
+| Valor | Origen típico |
+|-------|---------------|
+| `ROUTE_COMPLETE` | `executive_status=VALIDO`, `valid_detail=COMPLETO` |
+| `ROUTE_DEDUCED` | `valid_detail` contiene DEDUCIDO |
+| `ROUTE_OPERATIONAL_VARIATION` | variación operativa |
+| `ROUTE_PARTIAL` | Varios fragments en una operación |
+| `ROUTE_NO_DISCHARGE_POINT` | SIN_PUNTO / DESCARGA_SIN_PUNTO / NO_DIFERENCIABLE |
+| `ROUTE_ANOMALOUS` | ANOMALO |
+| `ROUTE_INCOMPLETE` | INCOMPLETO |
+| `ROUTE_NO_EVALUABLE` | NO_EVALUABLE |
+| `ROUTE_UNKNOWN` | Sin evidencia Truckflow |
+
+#### Flags de análisis
+
+- `analysis_ready_for_scatter`: producto Excel + plataforma/circuito resuelto + tramo medible + match confiable (EXACT/PROBABLE/FRAGMENTED). **Incluye anómalos/sin punto** si tienen tramos.
+- `analysis_ready_for_full_route_kpi`: solo `ROUTE_COMPLETE`, `ROUTE_DEDUCED`, `ROUTE_OPERATIONAL_VARIATION` + match confiable.
+
+#### Diagnóstico Truckflow-first (se mantiene)
+
+| Archivo | Uso |
+|---------|-----|
+| `merged_truckflow_movimientos.csv` | Un journey Truckflow → enriquecimiento producto |
+| `truckflow_without_movimiento_match.csv` | Journeys sin fila Excel |
+| `movimientos_without_truckflow_match.csv` | Filas Excel sin journey (vista diagnóstico legacy) |
+
+---
+
+### Pestaña Power BI sugerida: «Análisis por muestra» (legacy Truckflow-first)
 
 1. **Tarjetas:** camiones en muestra, productos, circuitos, match exacto/probable, sin match, confianza merge promedio.
 2. **Dispersión:** eje X `segment_start_time`, eje Y `segment_duration_min`, color `product_normalized`; filtros `circuit_code`, `segment_name`, `platform_normalized`, `merge_status`, `analysis_ready`.

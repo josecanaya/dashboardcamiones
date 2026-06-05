@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useDeferredValue, useMemo, useState, useTransition } from 'react'
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { ETL_DEV_MODE } from '../../../config/committeeEtlLite'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
@@ -10,6 +10,7 @@ import {
   buildCircuitClassificationIndex,
   buildCommitteeCircuitCrossTab,
   buildSuspiciousDischargeWithoutBalanza,
+  rebuildCircuitClassificationIndex,
   ANOMALY_LIST_MIN_EVENTS,
   CIRCUIT_PIE_COLORS,
   committeeDrilldownCsv,
@@ -25,10 +26,12 @@ import {
 } from '../etlWorkbench/etlCircuitClassificationIndex'
 import { committeePieFromGroup } from '../etlWorkbench/committeeClassification'
 import { MovimientosContratoPanel } from '../components/MovimientosContratoPanel'
-import { ProductFilterSelect } from '../components/ProductFilterSelect'
+import { ExecutiveSampleProductFilter } from '../components/ExecutiveSampleProductFilter'
 import {
-  filterClassificationEntriesByProduct,
-  parseJourneyProductLookup,
+  buildExecutiveProductFilterPlan,
+  filterClassificationEntriesByJourneyIds,
+  executiveSampleProductLabel,
+  resolveAnalysisProductLookup,
   PRODUCT_FILTER_ALL,
 } from '../etlWorkbench/etlProductFilter'
 
@@ -549,25 +552,50 @@ export function TransformEtlTab() {
   const [expandedSlice, setExpandedSlice] = useState<string | null>(null)
   const [expandedCrossTab, setExpandedCrossTab] = useState<CrossTabDrilldownKey | null>(null)
   const [expandedAnomalySequence, setExpandedAnomalySequence] = useState<string | null>(null)
-  const [anomalyProductFilter, setAnomalyProductFilter] = useState(PRODUCT_FILTER_ALL)
+  const [executiveProductFilter, setExecutiveProductFilter] = useState(PRODUCT_FILTER_ALL)
+  const [productFilterPending, startProductFilterTransition] = useTransition()
+  const deferredProductFilter = useDeferredValue(executiveProductFilter)
 
   const productLookup = useMemo(
-    () => parseJourneyProductLookup(tr?.csv.merged_truckflow_movimientos),
-    [tr?.csv.merged_truckflow_movimientos]
+    () => resolveAnalysisProductLookup(tr?.csv),
+    [tr?.csv?.excel_operations_with_truckflow, tr?.csv?.merged_truckflow_movimientos]
   )
 
   const circuitClassIndex = useMemo(
     () =>
       buildCircuitClassificationIndex(
         tr?.csv.debug_matrix_classification,
-        tr?.csv.merged_truckflow_movimientos
+        tr?.csv.merged_truckflow_movimientos,
+        tr?.csv.excel_operations_with_truckflow
       ),
-    [tr?.csv.debug_matrix_classification, tr?.csv.merged_truckflow_movimientos]
+    [
+      tr?.csv.debug_matrix_classification,
+      tr?.csv.merged_truckflow_movimientos,
+      tr?.csv.excel_operations_with_truckflow,
+    ]
   )
 
+  const executiveProductFilterPlan = useMemo(
+    () =>
+      productLookup ?
+        buildExecutiveProductFilterPlan(circuitClassIndex.entries, productLookup)
+      : null,
+    [circuitClassIndex.entries, productLookup]
+  )
+
+  const displayClassIndex = useMemo(() => {
+    if (!deferredProductFilter || deferredProductFilter === PRODUCT_FILTER_ALL) return circuitClassIndex
+    const ids = executiveProductFilterPlan?.journeyIdsByProduct.get(deferredProductFilter) ?? new Set<string>()
+    const filteredEntries = filterClassificationEntriesByJourneyIds(circuitClassIndex.entries, ids)
+    return rebuildCircuitClassificationIndex(filteredEntries)
+  }, [circuitClassIndex, deferredProductFilter, executiveProductFilterPlan])
+
+  const executiveProductFilterActive = deferredProductFilter !== PRODUCT_FILTER_ALL
+  const productFilterIsStale = executiveProductFilter !== deferredProductFilter
+
   const circuitClassificationPie = useMemo(() => {
-    if (circuitClassIndex.pieSlices.length) {
-      return circuitClassIndex.pieSlices.map((s) => {
+    if (displayClassIndex.pieSlices.length) {
+      return displayClassIndex.pieSlices.map((s) => {
         if (s.name === 'COMPLETOS') return { ...s, color: committeePieFromGroup('COMPLETOS').color }
         if (s.name === 'VARIACIONES OPERATIVAS') return { ...s, color: committeePieFromGroup('VARIACIONES_OPERATIVAS').color }
         if (s.name === 'ANOMALÍAS' || s.name === 'ANOMALIAS') return { ...s, color: committeePieFromGroup('ANOMALIAS').color }
@@ -583,18 +611,18 @@ export function TransformEtlTab() {
       { name: 'VARIACIONES OPERATIVAS', value: variaciones, color: committeePieFromGroup('VARIACIONES_OPERATIVAS').color },
       { name: 'ANOMALÍAS', value: anomalias, color: committeePieFromGroup('ANOMALIAS').color },
     ].filter((d) => d.value > 0)
-  }, [circuitClassIndex.pieSlices, exec])
+  }, [displayClassIndex.pieSlices, exec])
 
   const circuitPieTotal = circuitClassificationPie.reduce((acc, d) => acc + Math.max(0, d.value), 0)
-  const circuitBarData = useMemo(() => circuitClassIndex.circuitBarSlices, [circuitClassIndex.circuitBarSlices])
+  const circuitBarData = useMemo(() => displayClassIndex.circuitBarSlices, [displayClassIndex.circuitBarSlices])
   const circuitBarTotal = circuitBarData.reduce((acc, d) => acc + d.count, 0)
   const committeeCrossTab = useMemo(
-    () => buildCommitteeCircuitCrossTab(circuitClassIndex.entries),
-    [circuitClassIndex.entries]
+    () => buildCommitteeCircuitCrossTab(displayClassIndex.entries),
+    [displayClassIndex.entries]
   )
   const filteredEntriesForAnomalies = useMemo(
-    () => filterClassificationEntriesByProduct(circuitClassIndex.entries, productLookup, anomalyProductFilter),
-    [circuitClassIndex.entries, productLookup, anomalyProductFilter]
+    () => displayClassIndex.entries,
+    [displayClassIndex.entries]
   )
   const anomalyReview = useMemo(
     () => buildAnomalyReviewSummary(filteredEntriesForAnomalies),
@@ -623,9 +651,9 @@ export function TransformEtlTab() {
       circuitClassificationPie.map((d) => ({
         ...d,
         pct: circuitPieTotal > 0 ? Math.round((d.value / circuitPieTotal) * 10000) / 100 : 0,
-        trucks: circuitClassIndex.byPieSlice.get(d.name) ?? [],
+        trucks: displayClassIndex.byPieSlice.get(d.name) ?? [],
       })),
-    [circuitClassificationPie, circuitClassIndex.byPieSlice, circuitPieTotal]
+    [circuitClassificationPie, displayClassIndex.byPieSlice, circuitPieTotal]
   )
 
   const downloadDevCsvs = () => {
@@ -637,14 +665,14 @@ export function TransformEtlTab() {
   }
 
   const downloadCommitteeChartCsv = (includeJourneyRows: boolean) => {
-    if (!circuitClassIndex.entries.length) return
+    if (!displayClassIndex.entries.length) return
     const csv = committeeChartExportCsv(
       {
-        entries: circuitClassIndex.entries,
+        entries: displayClassIndex.entries,
         crossTab: committeeCrossTab,
         crossTabTotals,
         anomalyReview,
-        circuitBarSlices: circuitClassIndex.circuitBarSlices,
+        circuitBarSlices: displayClassIndex.circuitBarSlices,
       },
       { includeJourneyRows }
     )
@@ -706,6 +734,29 @@ export function TransformEtlTab() {
             Reglas: <span className="font-mono text-xs">{tr?.rulesVersion ?? '—'}</span>
           </p>
 
+          <ExecutiveSampleProductFilter
+            plan={executiveProductFilterPlan}
+            value={executiveProductFilter}
+            pending={productFilterPending || productFilterIsStale}
+            onChange={(product) => {
+              startProductFilterTransition(() => {
+                setExecutiveProductFilter(product)
+                setExpandedSlice(null)
+                setExpandedCrossTab(null)
+                setExpandedAnomalySequence(null)
+              })
+            }}
+            className="rounded-2xl border border-violet-200 bg-violet-50/50 px-4 py-3"
+          />
+          {executiveProductFilterActive ?
+            <p className="text-xs text-violet-800">
+              Mostrando muestra filtrada por{' '}
+              <strong>{executiveSampleProductLabel(deferredProductFilter)}</strong>:{' '}
+              {displayClassIndex.total.toLocaleString()} journeys con producto en Excel. Torta, barras y conciliación
+              reflejan solo este producto.
+            </p>
+          : null}
+
           <article
             aria-label="Gráfico clasificación operativa de circuitos"
             className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
@@ -718,9 +769,20 @@ export function TransformEtlTab() {
               <span className="font-semibold tabular-nums text-slate-700">
                 {circuitPieTotal.toLocaleString()}
               </span>
-              . La torta responde: <strong>¿comité COMPLETOS o ANOMALÍAS?</strong> No coincide 1:1 con el
-              circuito asignado (barras). Ver conciliación abajo.
-              {circuitClassIndex.excelPromotedCount > 0 ?
+              . La torta responde: <strong>¿comité COMPLETOS o ANOMALÍAS?</strong> Con Movimientos por Contrato
+              cargados, incluye la <strong>conciliación Excel-first</strong> (operaciones con evidencia Truckflow).
+              {!executiveProductFilterActive && circuitClassIndex.excelFirstReconciledCount > 0 ?
+                <>
+                  {' '}
+                  <strong className="text-emerald-700">
+                    {circuitClassIndex.excelFirstReconciledCount.toLocaleString()} journeys conciliados con Excel
+                    {circuitClassIndex.excelPromotedCount > 0 ?
+                      ` (${circuitClassIndex.excelPromotedCount.toLocaleString()} salieron de anomalías)`
+                    : ''}
+                    .
+                  </strong>
+                </>
+              : !executiveProductFilterActive && circuitClassIndex.excelPromotedCount > 0 ?
                 <>
                   {' '}
                   <strong className="text-emerald-700">
@@ -899,12 +961,17 @@ export function TransformEtlTab() {
               className="rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50/60 via-white to-white p-4 shadow-sm"
             >
               <h4 className="text-[11px] font-semibold uppercase tracking-wide text-indigo-900">
-                Conciliación circuito × comité (válidos)
+                Conciliación comité — circuito × comité (válidos)
               </h4>
+              <p className="mt-1 text-xs text-indigo-800/90">
+                Cruce circuito R × categoría comité. Con XLSX cargados, la plataforma del Excel (
+                VOLCABLE 1/2→R5/R6 Ricardone, VOLCABLE PTO 1/2/3/5→R7 San Lorenzo, CELDA_16→R1) reemplaza RS_REC / SIN_PUNTO y saca
+                anomalías conciliadas a su circuito real.
+              </p>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <button
                   type="button"
-                  disabled={!circuitClassIndex.entries.length}
+                  disabled={!displayClassIndex.entries.length}
                   onClick={() => downloadCommitteeChartCsv(false)}
                   className="rounded-lg border border-indigo-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-indigo-900 shadow-sm hover:bg-indigo-50 disabled:opacity-40"
                   title="Resúmenes para barras apiladas, torta y anomalías por recorrido"
@@ -913,7 +980,7 @@ export function TransformEtlTab() {
                 </button>
                 <button
                   type="button"
-                  disabled={!circuitClassIndex.entries.length}
+                  disabled={!displayClassIndex.entries.length}
                   onClick={() => downloadCommitteeChartCsv(true)}
                   className="rounded-lg border border-indigo-300 bg-indigo-600 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-40"
                   title="Incluye una fila JOURNEY por camión con secuencia y clasificación"
@@ -1043,17 +1110,14 @@ export function TransformEtlTab() {
               <p className="mt-1 text-xs text-slate-600">
                 <strong>Por recorrido:</strong> incompletos (&lt;3 eventos) y anomalías agrupadas por secuencia.{' '}
                 <strong>Sospechosos:</strong> descarga en C16, Volcable 1 o Volcable 2 sin paso por balanza.
+                {executiveProductFilterActive ?
+                  <>
+                    {' '}
+                    Filtrado por{' '}
+                    <strong>{executiveSampleProductLabel(deferredProductFilter)}</strong> (mismo filtro del resumen).
+                  </>
+                : null}
               </p>
-              <div className="mt-3 flex flex-wrap items-end gap-4">
-                <ProductFilterSelect
-                  lookup={productLookup}
-                  value={anomalyProductFilter}
-                  onChange={(p) => {
-                    setAnomalyProductFilter(p)
-                    setExpandedAnomalySequence(null)
-                  }}
-                />
-              </div>
               <AnomalyPanel
                 summary={anomalyReview}
                 suspiciousRows={suspiciousDischargeRows}

@@ -549,8 +549,10 @@ export type EtlTransformOutput = {
       segmentScatterRows: number
       operationalSampleSelected: number
       merge: Record<string, unknown>
+      excelFirst: Record<string, unknown>
       products: string[]
       platforms: string[]
+      excelFirstScatterRows?: number
     }
   }
   rulesVersion: string
@@ -1831,11 +1833,11 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     })
   }
 
-  const segmentTiming = buildSegmentTimingIndex(classifiedForSegmentTiming, {
+  let segmentTiming = buildSegmentTimingIndex(classifiedForSegmentTiming, {
     committeeGroups: ['COMPLETOS'],
   })
-  const segment_timing_kpi = segmentTimingKpiCsv(segmentTiming)
-  const segment_timing_legs = segmentTimingLegsCsv(segmentTiming)
+  let segment_timing_kpi = segmentTimingKpiCsv(segmentTiming)
+  let segment_timing_legs = segmentTimingLegsCsv(segmentTiming)
 
   const circuitTiming = buildCircuitTimingIndex(classifiedForSegmentTiming, {
     committeeGroups: ['COMPLETOS'],
@@ -1864,6 +1866,11 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       movimientosFiles: inp.movimientosContratoFiles,
     })
     movimientosContratoCsv = mc.csv
+    if (mc.segmentTimingFromExcelFirst?.legs.length) {
+      segmentTiming = mc.segmentTimingFromExcelFirst
+      segment_timing_kpi = segmentTimingKpiCsv(segmentTiming)
+      segment_timing_legs = segmentTimingLegsCsv(segmentTiming)
+    }
     movimientosContratoStats = {
       enabled: true,
       logs: mc.logs,
@@ -1877,8 +1884,10 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       truckflowJourneys: finalCsvRows.length,
       analysisReadyCount: mc.stats.analysisReadyCount,
       segmentScatterRows: mc.stats.segmentScatterRows,
+      excelFirstScatterRows: mc.stats.excelFirstScatterRows,
       operationalSampleSelected: mc.stats.operationalSampleSelected,
       merge: mc.stats.merge,
+      excelFirst: mc.stats.excelFirst,
       products: mc.stats.products,
       platforms: mc.stats.platforms,
     }
@@ -1896,8 +1905,10 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       truckflowJourneys: finalCsvRows.length,
       analysisReadyCount: 0,
       segmentScatterRows: 0,
+      excelFirstScatterRows: 0,
       operationalSampleSelected: 0,
       merge: {},
+      excelFirst: {},
       products: [],
       platforms: [],
     }
