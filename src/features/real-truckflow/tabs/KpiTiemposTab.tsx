@@ -216,9 +216,16 @@ export function KpiTiemposTab() {
               )}
               {(circuitFilter === 'R7' || circuitFilter === 'SL1') && (
                 <span className="mt-1 block text-xs text-violet-700">
-                  Pata San Lorenzo (Excel-first): <strong>calado</strong> ancla balanza salida SL si falta S5;{' '}
-                  <strong>salida</strong> ancla egreso SL si falta S7. Tramos deducidos &gt; 6 h se descartan
-                  (mezcla de recorridos distintos del mismo camión).
+                  Pata San Lorenzo: solo las 4 cámaras — ingreso → balanza → balanza egreso → egreso. Sin pasos
+                  inventados. Tramos ≤ 3 min se descartan. Si falta S7, <strong>salida</strong> Excel = egreso;
+                  si falta S5, balanza egreso pocos min antes de salida Excel.
+                </span>
+              )}
+              {(circuitFilter === 'R1' || circuitFilter === 'R5' || circuitFilter === 'R6') && (
+                <span className="mt-1 block text-xs text-violet-700">
+                  Recepción Ricardone: un solo tramo <strong>balanza ingreso → balanza egreso</strong> (estadía
+                  completa). El destino de descarga (Celda 16 / Volcable 1-2) viene del Excel; no se usa la cámara de
+                  plataforma en el medio.
                 </span>
               )}
               {(circuitFilter === 'R1' ||
@@ -230,9 +237,9 @@ export function KpiTiemposTab() {
                 circuitFilter === 'RK1' ||
                 circuitFilter === 'RK2') && (
                 <span className="mt-1 block text-xs text-violet-700">
-                  Celda 16 / Volcable: tramos hacia descarga o carga se deducen con salto no consecutivo en Truckflow.
-                  Si el Excel tiene <strong>calado</strong>, se usa como hora de descarga; si no, <strong>salida</strong>.
-                  El tramo hacia balanza egreso usa salida Excel cuando falta cámara de egreso.
+                  Excel-first: match patente+producto → Truckflow da el recorrido. Si falta cámara:{' '}
+                  <strong>ingreso</strong>, <strong>calado</strong> o <strong>salida</strong> del Excel rellenan el
+                  punto. Truckflow medido tiene prioridad.
                 </span>
               )}
               {(circuitFilter === 'RK1' || circuitFilter === 'RK2') && (

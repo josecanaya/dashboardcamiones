@@ -17,6 +17,7 @@ import {
   enrichSlTimelineWithExcelSalida,
   synthesizeSlRollupLegsFromTimedSegments,
   synthesizeDischargeRollupLegsFromTimedSegments,
+  synthesizeTemplateChainLegsFromTimedSegments,
   selectCoherentSegmentGroup,
   OPERATIONAL_TRIP_GAP_MAX_MINUTES,
   INFERRED_KPI_ROLLUP_MAX_MINUTES,
@@ -134,12 +135,11 @@ describe('etlSegmentTiming', () => {
       'INGRESO→PREINGRESO',
       'PREINGRESO→CALADA',
       'CALADA→BALANZA_INGRESO',
-      'BALANZA_INGRESO→CELDA16_DESCARGA',
-      'CELDA16_DESCARGA→BALANZA_EGRESO',
+      'BALANZA_INGRESO→BALANZA_EGRESO',
     ])
   })
 
-  it('R7 incluye tramo rollup balanza ingreso SL → balanza salida SL', () => {
+  it('R7 incluye cadena operativa SL (4 cámaras: ingreso → balanza → balanza egreso → egreso)', () => {
     const rows = listCircuitSegmentAggregates(
       buildSegmentTimingIndex([], { committeeGroups: ['COMPLETOS'] }),
       'R7'
@@ -201,7 +201,7 @@ describe('etlSegmentTiming', () => {
     expect(rollup!.durationMinutes).toBe(90)
   })
 
-  it('buildSegmentTimingIndexFromExcelFirstSegments deduce rollup SL en KPI', () => {
+  it('buildSegmentTimingIndexFromExcelFirstSegments deduce cadena SL 4 cámaras con salida Excel', () => {
     const index = buildSegmentTimingIndexFromExcelFirstSegments([
       {
         analysis_ready_for_scatter: true,
@@ -217,26 +217,38 @@ describe('etlSegmentTiming', () => {
         resolved_executive_circuit_code: 'SL1',
         external_salida_at: '2026-05-12T10:00:00',
       },
+    ])
+    const ingresoBalanza = index.legs.find(
+      (l) => l.fromCode === 'SL_INGRESO' && l.toCode === 'SL_BALANZA_INGRESO'
+    )
+    const salidaEgreso = index.legs.find(
+      (l) => l.fromCode === 'SL_BALANZA_SALIDA' && l.toCode === 'SL_EGRESO'
+    )
+    expect(ingresoBalanza).toBeDefined()
+    expect(ingresoBalanza!.durationMinutes).toBe(15)
+    expect(salidaEgreso).toBeDefined()
+    expect(salidaEgreso!.durationMinutes).toBe(5)
+  })
+
+  it('descarta tramos SL de 3 minutos o menos', () => {
+    const index = buildSegmentTimingIndexFromExcelFirstSegments([
       {
         analysis_ready_for_scatter: true,
-        external_operation_id: 'op-sl',
+        external_operation_id: 'op-short',
         journey_uid: 'j1',
         plate_normalized: 'AA111',
-        segment_from: 'SL_BALANZA_INGRESO',
-        segment_to: 'SL_BALANZA_INGRESO',
-        segment_start_time: '2026-05-12T08:15:00',
-        segment_end_time: '2026-05-12T08:15:00',
-        segment_duration_min: 0.01,
+        segment_from: 'SL_BALANZA_SALIDA',
+        segment_to: 'SL_EGRESO',
+        segment_start_time: '2026-05-12T10:00:00',
+        segment_end_time: '2026-05-12T10:02:00',
+        segment_duration_min: 2,
         truckflow_circuit_code: 'SL1',
         resolved_executive_circuit_code: 'SL1',
-        external_salida_at: '2026-05-12T10:00:00',
       },
     ])
-    const rollup = index.legs.find(
-      (l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_BALANZA_SALIDA'
-    )
-    expect(rollup).toBeDefined()
-    expect(rollup!.durationMinutes).toBeCloseTo(105, 0)
+    expect(
+      index.legs.find((l) => l.fromCode === 'SL_BALANZA_SALIDA' && l.toCode === 'SL_EGRESO')
+    ).toBeUndefined()
   })
 
   it('enrichSlTimelineWithExcelSalida inyecta egreso SL tras balanza salida', () => {
@@ -264,14 +276,14 @@ describe('etlSegmentTiming', () => {
         segment_duration_min: 60,
         truckflow_circuit_code: 'R7',
         resolved_executive_circuit_code: 'R7',
-        external_salida_at: '2026-05-12T10:30:00',
+        external_salida_at: '2026-05-12T09:05:00',
       },
     ])
     const salidaEgreso = index.legs.find(
       (l) => l.fromCode === 'SL_BALANZA_SALIDA' && l.toCode === 'SL_EGRESO'
     )
     expect(salidaEgreso).toBeDefined()
-    expect(salidaEgreso!.durationMinutes).toBe(90)
+    expect(salidaEgreso!.durationMinutes).toBe(5)
   })
 
   it('deduce salida→egreso SL aunque egreso fragmentado sea anterior a balanza salida', () => {
@@ -293,13 +305,60 @@ describe('etlSegmentTiming', () => {
           segment_end_time: '2026-05-12T10:00:00',
         },
       ],
-      externalSalidaAt: '2026-05-12T11:00:00',
+      externalSalidaAt: '2026-05-12T10:05:00',
     })
     const salidaEgreso = legs.find(
       (l) => l.fromCode === 'SL_BALANZA_SALIDA' && l.toCode === 'SL_EGRESO'
     )
     expect(salidaEgreso).toBeDefined()
-    expect(salidaEgreso!.durationMinutes).toBe(60)
+    expect(salidaEgreso!.durationMinutes).toBe(5)
+  })
+
+  it('no deduce salida→egreso desde calado Excel (tránsito corto S5→salida)', () => {
+    const legs = synthesizeSlRollupLegsFromTimedSegments({
+      operationId: 'op-no-calado-exit',
+      plate: 'AA111',
+      executiveCircuitCode: 'R7',
+      segments: [
+        {
+          segment_from: 'SL_BALANZA_INGRESO',
+          segment_to: 'SL_BALANZA_INGRESO',
+          segment_start_time: '2026-05-12T08:00:00',
+          segment_end_time: '2026-05-12T08:30:00',
+        },
+      ],
+      externalCaladoAt: '2026-05-12T06:00:00',
+      externalSalidaAt: '2026-05-12T13:20:00',
+    })
+    const salidaEgreso = legs.find(
+      (l) => l.fromCode === 'SL_BALANZA_SALIDA' && l.toCode === 'SL_EGRESO'
+    )
+    expect(salidaEgreso).toBeDefined()
+    expect(salidaEgreso!.durationMinutes).toBe(5)
+  })
+
+  it('Truckflow mide salida→egreso SL: no lo pisa rollup Excel más largo', () => {
+    const index = buildSegmentTimingIndexFromExcelFirstSegments([
+      {
+        analysis_ready_for_scatter: true,
+        external_operation_id: 'op-sl-priority',
+        journey_uid: 'j1',
+        plate_normalized: 'AA111',
+        segment_from: 'SL_BALANZA_SALIDA',
+        segment_to: 'SL_EGRESO',
+        segment_start_time: '2026-05-12T10:00:00',
+        segment_end_time: '2026-05-12T10:08:00',
+        segment_duration_min: 8,
+        truckflow_circuit_code: 'R7',
+        resolved_executive_circuit_code: 'R7',
+        external_calado_at: '2026-05-12T06:00:00',
+        external_salida_at: '2026-05-12T13:20:00',
+      },
+    ])
+    const salidaEgreso = index.legs.find(
+      (l) => l.fromCode === 'SL_BALANZA_SALIDA' && l.toCode === 'SL_EGRESO'
+    )
+    expect(salidaEgreso?.durationMinutes).toBe(8)
   })
 
   it('selectCoherentSegmentGroup separa dos recorridos del mismo camión (>6 h)', () => {
@@ -392,6 +451,58 @@ describe('etlSegmentTiming', () => {
     expect(ingresoBalIn).toBeDefined()
   })
 
+  it('R5 Excel-first: rollup balanza ingreso → balanza egreso (sin volcable intermedio)', () => {
+    const dischargeLegs = synthesizeDischargeRollupLegsFromTimedSegments({
+      operationId: 'op-r5-volc',
+      plate: 'AA111',
+      executiveCircuitCode: 'R5',
+      segments: [
+        {
+          segment_from: 'BALANZA_INGRESO',
+          segment_to: 'VOLCABLE',
+          segment_start_time: '2026-05-12T08:00:00',
+          segment_end_time: '2026-05-12T08:30:00',
+        },
+      ],
+      externalCaladoAt: '2026-05-12T09:00:00',
+      externalSalidaAt: '2026-05-12T09:45:00',
+    })
+    expect(dischargeLegs).toHaveLength(1)
+    expect(dischargeLegs[0]).toMatchObject({
+      fromCode: 'BALANZA_INGRESO',
+      toCode: 'BALANZA_EGRESO',
+      durationMinutes: 105,
+    })
+
+    const templateLegs = synthesizeTemplateChainLegsFromTimedSegments({
+      operationId: 'op-r5-volc',
+      plate: 'AA111',
+      executiveCircuitCode: 'R5',
+      segments: [
+        {
+          segment_from: 'BALANZA_INGRESO',
+          segment_to: 'VOLCABLE',
+          segment_start_time: '2026-05-12T08:00:00',
+          segment_end_time: '2026-05-12T08:30:00',
+        },
+        {
+          segment_from: 'VOLCABLE',
+          segment_to: 'BALANZA_EGRESO',
+          segment_start_time: '2026-05-12T08:30:00',
+          segment_end_time: '2026-05-12T08:38:00',
+        },
+      ],
+      externalCaladoAt: '2026-05-12T09:00:00',
+      externalSalidaAt: '2026-05-12T09:45:00',
+    })
+    const stay = templateLegs.find(
+      (l) => l.fromCode === 'BALANZA_INGRESO' && l.toCode === 'BALANZA_EGRESO'
+    )
+    expect(stay).toBeDefined()
+    expect(stay!.durationMinutes).toBe(38)
+    expect(templateLegs.find((l) => l.fromCode === 'VOLCABLE')).toBeUndefined()
+  })
+
   it('synthesizeDischargeRollupLegs usa calado Excel para R1 sin cámara C16', () => {
     const legs = synthesizeDischargeRollupLegsFromTimedSegments({
       operationId: 'op-c16',
@@ -408,14 +519,11 @@ describe('etlSegmentTiming', () => {
       externalCaladoAt: '2026-05-12T09:00:00',
       externalSalidaAt: '2026-05-12T09:30:00',
     })
-    const approach = legs.find(
-      (l) => l.fromCode === 'BALANZA_INGRESO' && l.toCode === 'CELDA16_DESCARGA'
+    const stay = legs.find(
+      (l) => l.fromCode === 'BALANZA_INGRESO' && l.toCode === 'BALANZA_EGRESO'
     )
-    const exit = legs.find((l) => l.fromCode === 'CELDA16_DESCARGA' && l.toCode === 'BALANZA_EGRESO')
-    expect(approach).toBeDefined()
-    expect(approach!.durationMinutes).toBe(75)
-    expect(exit).toBeDefined()
-    expect(exit!.durationMinutes).toBe(30)
+    expect(stay).toBeDefined()
+    expect(stay!.durationMinutes).toBe(105)
   })
 
   it('extractDischargeRollupFromTimeline usa balanza egreso Truckflow como fin de descarga', () => {
@@ -426,7 +534,7 @@ describe('etlSegmentTiming', () => {
     const rule = getDischargeKpiRollupRules('R1')[0]!
     const leg = extractDischargeRollupFromTimeline(points, 'R1', 'j1', 'AA111', rule)
     expect(leg).not.toBeNull()
-    expect(leg!.toCode).toBe('CELDA16_DESCARGA')
+    expect(leg!.toCode).toBe('BALANZA_EGRESO')
     expect(leg!.durationMinutes).toBe(90)
   })
 
@@ -441,11 +549,11 @@ describe('etlSegmentTiming', () => {
     })
     expect(extractSegmentLegs(j, 'R1')).toHaveLength(0)
     const legs = extractAllSegmentLegsForCircuit(j, 'R1')
-    const approach = legs.find(
-      (l) => l.fromCode === 'BALANZA_INGRESO' && l.toCode === 'CELDA16_DESCARGA'
+    const stay = legs.find(
+      (l) => l.fromCode === 'BALANZA_INGRESO' && l.toCode === 'BALANZA_EGRESO'
     )
-    expect(approach).toBeDefined()
-    expect(approach!.durationMinutes).toBe(90)
+    expect(stay).toBeDefined()
+    expect(stay!.durationMinutes).toBe(90)
   })
 
   it('buildSegmentTimingIndexFromExcelFirstSegments deduce rollup R1 con calado Excel', () => {
@@ -466,11 +574,12 @@ describe('etlSegmentTiming', () => {
         external_salida_at: '2026-05-12T09:40:00',
       },
     ])
-    const approach = index.legs.find(
-      (l) => l.fromCode === 'BALANZA_INGRESO' && l.toCode === 'CELDA16_DESCARGA'
+    const stay = index.legs.find(
+      (l) => l.fromCode === 'BALANZA_INGRESO' && l.toCode === 'BALANZA_EGRESO'
     )
-    expect(approach).toBeDefined()
-    expect(approach!.journeyId).toBe('op-c16')
+    expect(stay).toBeDefined()
+    expect(stay!.journeyId).toBe('op-c16')
+    expect(stay!.durationMinutes).toBe(115)
   })
 
   it('synthesizeDischargeRollupLegs inyecta Volcable Kepler en calado Excel (descarga silo)', () => {
@@ -562,26 +671,26 @@ describe('etlSegmentTiming', () => {
     expect(bridge!.durationMinutes).toBe(150)
   })
 
-  it('rollup balanza salida SL → egreso con punto intermedio', () => {
+  it('rollup balanza salida SL → egreso con punto intermedio (tope tránsito corto)', () => {
     const j = journey({
       journeyUid: 'j-sl-sal-egr',
       events: [
         ev('SLZBalSC1Fte', 'PUERTO_SAN_LORENZO_BALANZA_SALIDA', '2026-05-12T09:00:00'),
-        ev('SLZDescCam', 'PUERTO_SAN_LORENZO_DESCARGA', '2026-05-12T09:45:00'),
-        ev('SLZSalidaC1Fte', 'PUERTO_SAN_LORENZO_EGRESO_CAMIONES', '2026-05-12T10:30:00'),
+        ev('SLZDescCam', 'PUERTO_SAN_LORENZO_DESCARGA', '2026-05-12T09:10:00'),
+        ev('SLZSalidaC1Fte', 'PUERTO_SAN_LORENZO_EGRESO_CAMIONES', '2026-05-12T09:20:00'),
       ],
     })
     const leg = extractSlSalidaEgresoRollupLeg(j, 'R7')
     expect(leg).not.toBeNull()
-    expect(leg!.durationMinutes).toBe(90)
+    expect(leg!.durationMinutes).toBe(20)
   })
 
-  it('excluye ingreso→preingreso mayor a 1 h', () => {
+  it('excluye ingreso→preingreso mayor a 6 h (360 min)', () => {
     const j = journey({
       journeyUid: 'j-long',
       events: [
         ev('RicIngCamFrente', 'RICARDONE_INGRESO_CAMIONES', '2026-05-12T08:00:00'),
-        ev('RicPreIngInFr', 'RICARDONE_PREINGRESO', '2026-05-12T10:30:00'),
+        ev('RicPreIngInFr', 'RICARDONE_PREINGRESO', '2026-05-12T15:00:00'),
       ],
       eventCount: 2,
     })
@@ -590,11 +699,11 @@ describe('etlSegmentTiming', () => {
       journeyUid: 'j-ok',
       events: [
         ev('RicIngCamFrente', 'RICARDONE_INGRESO_CAMIONES', '2026-05-12T08:00:00'),
-        ev('RicPreIngInFr', 'RICARDONE_PREINGRESO', '2026-05-12T08:12:00'),
+        ev('RicPreIngInFr', 'RICARDONE_PREINGRESO', '2026-05-12T10:30:00'),
       ],
       eventCount: 2,
     })
-    expect(extractSegmentLegs(jOk, 'R7')[0]?.durationMinutes).toBe(12)
+    expect(extractSegmentLegs(jOk, 'R7')[0]?.durationMinutes).toBe(150)
   })
 
   it('histograma siempre en bins de 5 min', () => {
@@ -757,5 +866,128 @@ describe('etlSegmentTiming', () => {
       },
     ])
     expect(index.legs).toHaveLength(0)
+  })
+
+  it('synthesizeTemplateChain deduce ingreso→preingreso con ingreso Excel y solo preingreso Truckflow', () => {
+    const legs = synthesizeTemplateChainLegsFromTimedSegments({
+      operationId: 'op-r5-ing',
+      plate: 'AA111',
+      executiveCircuitCode: 'R5',
+      segments: [
+        {
+          segment_from: 'PREINGRESO',
+          segment_to: 'CALADA',
+          segment_start_time: '2026-05-12T08:12:00',
+          segment_end_time: '2026-05-12T08:20:00',
+        },
+        {
+          segment_from: 'CALADA',
+          segment_to: 'BALANZA_INGRESO',
+          segment_start_time: '2026-05-12T08:20:00',
+          segment_end_time: '2026-05-12T08:25:00',
+        },
+      ],
+      externalIngresoAt: '2026-05-12T08:00:00',
+    })
+    const ingPre = legs.find((l) => l.fromCode === 'INGRESO' && l.toCode === 'PREINGRESO')
+    expect(ingPre).toBeDefined()
+    expect(ingPre!.durationMinutes).toBe(12)
+  })
+
+  it('balanza ingreso→egreso usa cámara B2 Truckflow, no salida Excel lejana', () => {
+    const legs = synthesizeTemplateChainLegsFromTimedSegments({
+      operationId: 'op-r5-vol',
+      plate: 'BB222',
+      executiveCircuitCode: 'R5',
+      segments: [
+        {
+          segment_from: 'BALANZA_INGRESO',
+          segment_to: 'VOLCABLE',
+          segment_start_time: '2026-05-12T10:00:00',
+          segment_end_time: '2026-05-12T10:30:00',
+        },
+        {
+          segment_from: 'VOLCABLE',
+          segment_to: 'BALANZA_EGRESO',
+          segment_start_time: '2026-05-12T10:30:00',
+          segment_end_time: '2026-05-12T10:38:00',
+        },
+      ],
+      externalCaladoAt: '2026-05-12T10:30:00',
+      externalSalidaAt: '2026-05-12T14:00:00',
+    })
+    const stay = legs.find((l) => l.fromCode === 'BALANZA_INGRESO' && l.toCode === 'BALANZA_EGRESO')
+    expect(stay).toBeDefined()
+    expect(stay!.durationMinutes).toBe(38)
+  })
+
+  it('balanza ingreso→egreso infiere salida Excel si falta cámara B2', () => {
+    const legs = synthesizeTemplateChainLegsFromTimedSegments({
+      operationId: 'op-r5-vol-far',
+      plate: 'CC333',
+      executiveCircuitCode: 'R5',
+      segments: [
+        {
+          segment_from: 'BALANZA_INGRESO',
+          segment_to: 'VOLCABLE',
+          segment_start_time: '2026-05-12T10:00:00',
+          segment_end_time: '2026-05-12T10:30:00',
+        },
+      ],
+      externalCaladoAt: '2026-05-12T10:30:00',
+      externalSalidaAt: '2026-05-12T14:00:00',
+    })
+    const stay = legs.find((l) => l.fromCode === 'BALANZA_INGRESO' && l.toCode === 'BALANZA_EGRESO')
+    expect(stay).toBeDefined()
+    expect(stay!.durationMinutes).toBe(240)
+  })
+
+  it('template chain salta calada faltante: preingreso→balanza ingreso', () => {
+    const legs = synthesizeTemplateChainLegsFromTimedSegments({
+      operationId: 'op-skip-calada',
+      plate: 'EE555',
+      executiveCircuitCode: 'R5',
+      segments: [
+        {
+          segment_from: 'PREINGRESO',
+          segment_to: 'BALANZA_INGRESO',
+          segment_start_time: '2026-05-12T08:10:00',
+          segment_end_time: '2026-05-12T08:22:00',
+        },
+        {
+          segment_from: 'BALANZA_INGRESO',
+          segment_to: 'VOLCABLE',
+          segment_start_time: '2026-05-12T08:22:00',
+          segment_end_time: '2026-05-12T08:35:00',
+        },
+      ],
+      externalIngresoAt: '2026-05-12T08:00:00',
+    })
+    const ingPre = legs.find((l) => l.fromCode === 'INGRESO' && l.toCode === 'PREINGRESO')
+    const preBal = legs.find((l) => l.fromCode === 'PREINGRESO' && l.toCode === 'BALANZA_INGRESO')
+    expect(ingPre?.durationMinutes).toBe(10)
+    expect(preBal?.durationMinutes).toBe(12)
+  })
+
+  it('buildSegmentTimingIndexFromExcelFirstSegments sintetiza ingreso→preingreso faltante', () => {
+    const index = buildSegmentTimingIndexFromExcelFirstSegments([
+      {
+        analysis_ready_for_scatter: true,
+        external_operation_id: 'op-ing',
+        journey_uid: 'j1',
+        plate_normalized: 'DD444',
+        segment_from: 'PREINGRESO',
+        segment_to: 'CALADA',
+        segment_start_time: '2026-05-12T08:15:00',
+        segment_end_time: '2026-05-12T08:22:00',
+        segment_duration_min: 7,
+        truckflow_circuit_code: 'R5',
+        resolved_executive_circuit_code: 'R5',
+        external_ingreso_at: '2026-05-12T08:00:00',
+      },
+    ])
+    const ingPre = index.legs.find((l) => l.fromCode === 'INGRESO' && l.toCode === 'PREINGRESO')
+    expect(ingPre).toBeDefined()
+    expect(ingPre!.durationMinutes).toBe(15)
   })
 })

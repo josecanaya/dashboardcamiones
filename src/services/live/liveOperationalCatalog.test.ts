@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  getLiveSectorEntries,
   inferLiveMonitorSiteId,
   isCanonicalLiveSectorCode,
   lookupCanonicalSectorByDevice,
@@ -37,5 +38,23 @@ describe('lookupCanonicalSectorByDevice', () => {
   it('mapea dispositivos Ricardone y San Lorenzo', () => {
     expect(lookupCanonicalSectorByDevice('RicB2Egreso')).toBe('RICARDONE_BALANZA')
     expect(lookupCanonicalSectorByDevice('SLZIngCamFrente')).toBe('PUERTO_SAN_LORENZO_INGRESO_CAMIONES')
+    expect(lookupCanonicalSectorByDevice('RenCargFte')).toBe('PUERTO_SAN_LORENZO_LIQUIDOS_PUNTO_1')
+    expect(lookupCanonicalSectorByDevice('RenDescTras')).toBe('PUERTO_SAN_LORENZO_LIQUIDOS_PUNTO_1')
+  })
+
+  it('infiera planta Renova líquidos como San Lorenzo', () => {
+    expect(inferLiveMonitorSiteId('1-S10', 'RenDescFte')).toBe('san_lorenzo')
+  })
+})
+
+describe('getLiveSectorEntries San Lorenzo líquidos S10', () => {
+  it('incluye sector líquidos punto 1 con las 4 cámaras Renova', () => {
+    const entry = getLiveSectorEntries('san_lorenzo').find(
+      (e) => e.kind === 'sector' && e.sectorCode === 'PUERTO_SAN_LORENZO_LIQUIDOS_PUNTO_1'
+    )
+    expect(entry?.kind).toBe('sector')
+    if (entry?.kind !== 'sector') return
+    expect(entry.devices).toEqual(['RenCargFte', 'RenCargTras', 'RenDescFte', 'RenDescTras'])
+    expect(entry.label).toMatch(/líquidos punto 1/i)
   })
 })

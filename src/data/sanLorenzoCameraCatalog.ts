@@ -170,6 +170,39 @@ export const SAN_LORENZO_CAMERAS: readonly SanLorenzoCameraDef[] = [
     rearExcluded: true,
     installed: true,
   },
+  // —— S10 Líquidos punto 1 (Renova carga / descarga) ——
+  {
+    deviceCode: 'RenCargFte',
+    sectorCode: 'PUERTO_SAN_LORENZO_LIQUIDOS_PUNTO_1',
+    logicalSector: 'S10',
+    logicalCode: 'SL_LIQUIDO_CARGA',
+    label: 'Líquidos punto 1 — carga (frente)',
+    installed: true,
+  },
+  {
+    deviceCode: 'RenCargTras',
+    sectorCode: 'PUERTO_SAN_LORENZO_LIQUIDOS_PUNTO_1',
+    logicalSector: 'S10',
+    logicalCode: 'SL_LIQUIDO_CARGA_TRASERA_EXCLUIDA',
+    label: 'Líquidos punto 1 — carga (trasera)',
+    installed: true,
+  },
+  {
+    deviceCode: 'RenDescFte',
+    sectorCode: 'PUERTO_SAN_LORENZO_LIQUIDOS_PUNTO_1',
+    logicalSector: 'S10',
+    logicalCode: 'SL_LIQUIDO_DESCARGA',
+    label: 'Líquidos punto 1 — descarga (frente)',
+    installed: true,
+  },
+  {
+    deviceCode: 'RenDescTras',
+    sectorCode: 'PUERTO_SAN_LORENZO_LIQUIDOS_PUNTO_1',
+    logicalSector: 'S10',
+    logicalCode: 'SL_LIQUIDO_DESCARGA_TRASERA_EXCLUIDA',
+    label: 'Líquidos punto 1 — descarga (trasera)',
+    installed: true,
+  },
 ] as const
 
 const DEVICE_MAP = new Map<string, SanLorenzoCameraDef>()
@@ -202,6 +235,11 @@ const SECTOR_LOGICAL_FALLBACK: Record<string, { logicalSector: string; logicalCo
     logicalSector: 'S7',
     logicalCode: 'SL_EGRESO',
     label: 'Egreso San Lorenzo',
+  },
+  PUERTO_SAN_LORENZO_LIQUIDOS_PUNTO_1: {
+    logicalSector: 'S10',
+    logicalCode: 'SL_LIQUIDO_CARGA',
+    label: 'Líquidos punto 1',
   },
 }
 

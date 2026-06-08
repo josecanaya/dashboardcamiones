@@ -205,6 +205,9 @@ export type ExcelOperationSegmentScatterRow = {
   external_salida_at?: string
   /** Calado/descarga operativa Excel (fallback punto C16/Volcable sin cámara). */
   external_calado_at?: string
+  /** Ingreso/balanza ingreso Excel (match patente). */
+  external_ingreso_at?: string
+  planta_normalized?: string
 }
 
 export type ExcelFirstMergeOptions = {
@@ -250,6 +253,7 @@ const SCATTER_MATCH_QUALITIES = new Set<MatchQuality>([
   'EXTERNAL_MATCH_PROBABLE',
   'EXTERNAL_MATCH_FRAGMENTED',
   'EXTERNAL_MATCH_WIDE_WINDOW',
+  'EXTERNAL_MATCH_FUZZY_PLATE',
 ])
 
 const KPI_ROUTE_QUALITIES = new Set<RouteQuality>([
@@ -1526,6 +1530,8 @@ export function mergeExcelOperationsWithTruckflowEvidence(
           analysis_warning: flags.analysis_warning,
           external_salida_at: mov.external_salida_at,
           external_calado_at: mov.external_calado_at,
+          external_ingreso_at: mov.external_ingreso_at,
+          planta_normalized: mov.planta_normalized,
         })
       }
     }
@@ -1550,6 +1556,7 @@ export function mergeExcelOperationsWithTruckflowEvidence(
         externalSalidaAt: mov.external_salida_at,
         externalIngresoAt: mov.external_ingreso_at,
         platformNormalized: ctx.resolved_platform,
+        plantaNormalized: mov.planta_normalized,
       })
       const existingTransitions = new Set(
         segmentRows
@@ -1589,6 +1596,8 @@ export function mergeExcelOperationsWithTruckflowEvidence(
           analysis_warning: flags.analysis_warning,
           external_salida_at: mov.external_salida_at,
           external_calado_at: mov.external_calado_at,
+          external_ingreso_at: mov.external_ingreso_at,
+          planta_normalized: mov.planta_normalized,
         })
       }
     }

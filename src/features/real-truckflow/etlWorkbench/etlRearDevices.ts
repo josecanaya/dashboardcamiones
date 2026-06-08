@@ -10,6 +10,8 @@ const RAW_REAR_DEVICES = [
   'RicB1Egreso',
   'RicB2Ingreso',
   'RicB3Egreso',
+  'RenCargTras',
+  'RenDescTras',
   ...listSanLorenzoRearDeviceCodes(),
 ] as const
 const SET = new Set(RAW_REAR_DEVICES.map((d) => d.trim().toLowerCase()))

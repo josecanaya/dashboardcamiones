@@ -120,6 +120,7 @@ export function inferLiveMonitorSiteId(sectorCode: string, deviceCode: string): 
   const dev = String(deviceCode ?? '').trim()
   if (dev.startsWith('Ric')) return 'ricardone'
   if (/^SLZ/i.test(dev)) return 'san_lorenzo'
+  if (/^Ren/i.test(dev)) return 'san_lorenzo'
   const canonical = lookupCanonicalSectorByDevice(dev)
   if (canonical) return inferSiteIdFromSectorCode(canonical)
   return 'unknown'

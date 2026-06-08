@@ -13,11 +13,8 @@ export const SEGMENT_TIMING_HISTOGRAM_BIN_MIN = 5
 /** Umbral máximo razonable por tramo (8 h). */
 export const MAX_SEGMENT_DURATION_MINUTES = 8 * 60
 
-/** Tramos cortos: tope operativo 1 h (outliers excluidos del cálculo). */
-export const SHORT_SEGMENT_MAX_MINUTES: Record<string, number> = {
-  'INGRESO→PREINGRESO': 60,
-  'CALADA→EGRESO': 60,
-}
+/** Tramos SL ≤ 3 min se descartan (ruido OCR / fragmentación en puerto). */
+export const MIN_SEGMENT_DURATION_MINUTES = 3
 
 /**
  * Tramo rollup San Lorenzo: balanza ingreso → balanza salida (operación interna completa).
@@ -28,11 +25,71 @@ export const SL_BALANZA_ROLLUP_TRANSITION = {
   to: 'SL_BALANZA_SALIDA',
 } as const
 
+/**
+ * Recepción Ricardone (Celda 16 / Volcable 1-2): estadía completa balanza ingreso → balanza egreso.
+ * La plataforma de descarga viene del Excel (circuito R1/R5/R6); no se fragmenta por cámara de descarga.
+ */
+export const BALANZA_STAY_ROLLUP_TRANSITION = {
+  from: 'BALANZA_INGRESO',
+  to: 'BALANZA_EGRESO',
+} as const
+
+const CIRCUITS_WITH_BALANZA_STAY_ROLLUP = new Set(['R1', 'R5', 'R6'])
+
+/** Template KPI recepción Ricardone sin punto intermedio de plataforma. */
+export const RECEPTION_BALANZA_KPI_CHAIN = [
+  'INGRESO',
+  'PREINGRESO',
+  'CALADA',
+  'BALANZA_INGRESO',
+  'BALANZA_EGRESO',
+] as const
+
 /** Rollup balanza salida → egreso SL (puede haber puntos intermedios S2–S4). */
 export const SL_SALIDA_EGRESO_ROLLUP_TRANSITION = {
   from: 'SL_BALANZA_SALIDA',
   to: 'SL_EGRESO',
 } as const
+
+/**
+ * Tránsito físico balanza salida SL → egreso (~200–300 m). No es estadía en puerto.
+ * El calado Excel NO aplica acá (eso es otra fase operativa).
+ */
+export const SL_SALIDA_EGRESO_MAX_MINUTES = 30
+
+/** Si falta cámara S5 y solo hay salida Excel, balanza salida se infiere pocos min antes. */
+export const SL_EXIT_TRANSIT_DEFAULT_MINUTES = 5
+
+/** Tránsito ingreso SL → balanza ingreso (cámaras S0→S1/S2); no inferir si el hueco es mayor. */
+export const SL_INGRESO_TO_BALANZA_MAX_MINUTES = 60
+
+/** Anclas Excel por operación (match patente + external_operation_id). */
+export type SlExcelTimelineAnchors = {
+  externalIngresoAt?: string
+  externalCaladoAt?: string
+  externalSalidaAt?: string
+  plantaNormalized?: string
+  executiveCircuitCode?: string
+}
+
+/** En SL1 / planta San Lorenzo, hora calado Excel ≈ descarga (no calada Ricardone). */
+export function shouldUseExcelCaladoAsSlDescarga(
+  executiveCircuitCode?: string,
+  plantaNormalized?: string
+): boolean {
+  if (executiveCircuitCode === 'SL1') return true
+  if (String(plantaNormalized ?? '').toUpperCase() === 'SAN_LORENZO') return true
+  return false
+}
+
+/** Tránsito físico Volcable → balanza egreso (~200 m): solo cámaras Truckflow o salida Excel cercana. */
+export const VOLCABLE_BALANZA_EGRESO_MAX_MINUTES = 30
+
+/** Tramos cortos: solo tránsitos físicos (~200 m). Resto: tope operativo 6 h (360 min). */
+export const SHORT_SEGMENT_MAX_MINUTES: Record<string, number> = {
+  'SL_BALANZA_SALIDA→SL_EGRESO': SL_SALIDA_EGRESO_MAX_MINUTES,
+  'VOLCABLE→BALANZA_EGRESO': VOLCABLE_BALANZA_EGRESO_MAX_MINUTES,
+}
 
 /** Rollup ingreso SL → balanza ingreso SL (falta cámara S2 u otras intermedias). */
 export const SL_INGRESO_BALANZA_ROLLUP_TRANSITION = {
@@ -44,9 +101,9 @@ export const SL_INGRESO_BALANZA_ROLLUP_TRANSITION = {
  * Fin de estadía interna SL tras balanza ingreso.
  * Muchos camiones no pasan cámara S5 (balanza salida) pero sí egreso o descarga.
  */
-const SL_INTERNAL_STAY_END_CODES = ['SL_BALANZA_SALIDA', 'SL_DESCARGA', 'SL_EGRESO'] as const
+const SL_INTERNAL_STAY_END_CODES = ['SL_BALANZA_SALIDA', 'SL_EGRESO'] as const
 
-/** Pata SL en KPI tiempos: solo cámaras con datos operativos hoy. */
+/** Pata SL en KPI: las 4 cámaras instrumentadas (sin pasos inventados). */
 export const SL_OPERATIONAL_KPI_CHAIN = [
   'SL_INGRESO',
   'SL_BALANZA_INGRESO',
@@ -83,43 +140,16 @@ export type DischargeKpiRollupRule = {
 
 const DISCHARGE_KPI_ROLLUP_MAX_MINUTES = INFERRED_KPI_ROLLUP_MAX_MINUTES
 
+const BALANZA_STAY_KPI_ROLLUP_RULE: DischargeKpiRollupRule = {
+  fromCode: BALANZA_STAY_ROLLUP_TRANSITION.from,
+  toCode: BALANZA_STAY_ROLLUP_TRANSITION.to,
+  endCodes: ['BALANZA_EGRESO', 'EGRESO'],
+}
+
 const DISCHARGE_KPI_ROLLUP_BY_CIRCUIT: Record<string, DischargeKpiRollupRule[]> = {
-  R1: [
-    {
-      fromCode: 'BALANZA_INGRESO',
-      toCode: 'CELDA16_DESCARGA',
-      endCodes: ['CELDA16_DESCARGA', 'BALANZA_EGRESO', 'EGRESO'],
-    },
-    {
-      fromCode: 'CELDA16_DESCARGA',
-      toCode: 'BALANZA_EGRESO',
-      endCodes: ['BALANZA_EGRESO', 'EGRESO'],
-    },
-  ],
-  R5: [
-    {
-      fromCode: 'BALANZA_INGRESO',
-      toCode: 'VOLCABLE',
-      endCodes: ['VOLCABLE', 'BALANZA_EGRESO', 'EGRESO'],
-    },
-    {
-      fromCode: 'VOLCABLE',
-      toCode: 'BALANZA_EGRESO',
-      endCodes: ['BALANZA_EGRESO', 'EGRESO'],
-    },
-  ],
-  R6: [
-    {
-      fromCode: 'BALANZA_INGRESO',
-      toCode: 'VOLCABLE',
-      endCodes: ['VOLCABLE', 'BALANZA_EGRESO', 'EGRESO'],
-    },
-    {
-      fromCode: 'VOLCABLE',
-      toCode: 'BALANZA_EGRESO',
-      endCodes: ['BALANZA_EGRESO', 'EGRESO'],
-    },
-  ],
+  R1: [BALANZA_STAY_KPI_ROLLUP_RULE],
+  R5: [BALANZA_STAY_KPI_ROLLUP_RULE],
+  R6: [BALANZA_STAY_KPI_ROLLUP_RULE],
   R9: [
     {
       fromCode: 'BALANZA_INGRESO',
@@ -143,11 +173,6 @@ const DISCHARGE_KPI_ROLLUP_BY_CIRCUIT: Record<string, DischargeKpiRollupRule[]> 
       toCode: 'VOLCABLE',
       endCodes: ['VOLCABLE', 'BALANZA_EGRESO', 'EGRESO'],
     },
-    {
-      fromCode: 'VOLCABLE',
-      toCode: 'BALANZA_EGRESO',
-      endCodes: ['BALANZA_EGRESO', 'EGRESO'],
-    },
   ],
   R20: [
     {
@@ -159,11 +184,6 @@ const DISCHARGE_KPI_ROLLUP_BY_CIRCUIT: Record<string, DischargeKpiRollupRule[]> 
       fromCode: 'CELDA16_CARGA',
       toCode: 'VOLCABLE',
       endCodes: ['VOLCABLE', 'BALANZA_EGRESO', 'EGRESO'],
-    },
-    {
-      fromCode: 'VOLCABLE',
-      toCode: 'BALANZA_EGRESO',
-      endCodes: ['BALANZA_EGRESO', 'EGRESO'],
     },
   ],
   RK1: [
@@ -177,11 +197,6 @@ const DISCHARGE_KPI_ROLLUP_BY_CIRCUIT: Record<string, DischargeKpiRollupRule[]> 
       toCode: 'VOLCABLE',
       endCodes: ['VOLCABLE', 'BALANZA_EGRESO', 'EGRESO'],
     },
-    {
-      fromCode: 'VOLCABLE',
-      toCode: 'BALANZA_EGRESO',
-      endCodes: ['BALANZA_EGRESO', 'EGRESO'],
-    },
   ],
   RK2: [
     {
@@ -193,11 +208,6 @@ const DISCHARGE_KPI_ROLLUP_BY_CIRCUIT: Record<string, DischargeKpiRollupRule[]> 
       fromCode: 'CELDA16_CARGA',
       toCode: 'VOLCABLE',
       endCodes: ['VOLCABLE', 'BALANZA_EGRESO', 'EGRESO'],
-    },
-    {
-      fromCode: 'VOLCABLE',
-      toCode: 'BALANZA_EGRESO',
-      endCodes: ['BALANZA_EGRESO', 'EGRESO'],
     },
   ],
   R26: [
@@ -214,7 +224,7 @@ const DISCHARGE_KPI_ROLLUP_BY_CIRCUIT: Record<string, DischargeKpiRollupRule[]> 
     {
       fromCode: 'BALANZA_EGRESO',
       toCode: 'SL_INGRESO',
-      endCodes: ['SL_INGRESO', 'SL_BALANZA_INGRESO', 'SL_BALANZA_SALIDA', 'SL_DESCARGA', 'SL_EGRESO'],
+      endCodes: ['SL_INGRESO', 'SL_BALANZA_INGRESO', 'SL_BALANZA_SALIDA', 'SL_EGRESO'],
     },
   ],
   R27: [
@@ -259,10 +269,13 @@ export function maxAllowedMinutesForTransition(fromCode: string, toCode: string)
     return SL_BALANZA_ROLLUP_MAX_MINUTES
   }
   if (key === transitionKey(SL_SALIDA_EGRESO_ROLLUP_TRANSITION.from, SL_SALIDA_EGRESO_ROLLUP_TRANSITION.to)) {
-    return SL_BALANZA_ROLLUP_MAX_MINUTES
+    return SL_SALIDA_EGRESO_MAX_MINUTES
   }
   if (key === transitionKey(SL_INGRESO_BALANZA_ROLLUP_TRANSITION.from, SL_INGRESO_BALANZA_ROLLUP_TRANSITION.to)) {
     return SL_BALANZA_ROLLUP_MAX_MINUTES
+  }
+  if (key === transitionKey('VOLCABLE', 'BALANZA_EGRESO')) {
+    return VOLCABLE_BALANZA_EGRESO_MAX_MINUTES
   }
   for (const rules of Object.values(DISCHARGE_KPI_ROLLUP_BY_CIRCUIT)) {
     for (const rule of rules) {
@@ -271,7 +284,7 @@ export function maxAllowedMinutesForTransition(fromCode: string, toCode: string)
       }
     }
   }
-  return SHORT_SEGMENT_MAX_MINUTES[key] ?? MAX_SEGMENT_DURATION_MINUTES
+  return SHORT_SEGMENT_MAX_MINUTES[key] ?? INFERRED_KPI_ROLLUP_MAX_MINUTES
 }
 
 export function histogramBinMinutesForTransition(_fromCode?: string, _toCode?: string): number {
@@ -298,8 +311,8 @@ const LOGICAL_LABEL_ES: Record<string, string> = {
   SL_PREINGRESO: 'preingreso san lorenzo',
   SL_CALADA: 'calada san lorenzo',
   SL_ENLACE: 'enlace san lorenzo',
-  SL_BALANZA_INGRESO: 'balanza ingreso SL',
-  SL_BALANZA_SALIDA: 'balanza salida SL',
+  SL_BALANZA_INGRESO: 'balanza SL',
+  SL_BALANZA_SALIDA: 'balanza egreso SL',
   SL_BALANZA_EGRESO: 'balanza egreso SL',
   SL_DESCARGA: 'descarga san lorenzo',
   SL_TRAMO: 'tramo san lorenzo',
@@ -396,6 +409,9 @@ function buildExecutiveCircuitSegmentTemplate(): Record<string, readonly string[
     if (seq?.length) map[rCode] = templateWithoutEgreso(seq)
   }
   map.R16 = ['INGRESO', 'PREINGRESO', 'CALADA', 'LIQUIDO', 'BALANZA_INGRESO', 'BALANZA_EGRESO']
+  map.R1 = RECEPTION_BALANZA_KPI_CHAIN
+  map.R5 = RECEPTION_BALANZA_KPI_CHAIN
+  map.R6 = RECEPTION_BALANZA_KPI_CHAIN
   map.R7 = ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO', ...SL_OPERATIONAL_KPI_CHAIN]
   map.R26 = [
     'INGRESO',
@@ -438,6 +454,23 @@ export function getCircuitSegmentTemplate(circuitCode: string): readonly string[
   return EXECUTIVE_CIRCUIT_SEGMENT_TEMPLATE[circuitCode] ?? []
 }
 
+/** Máx. puntos template omitidos en un rollup (p. ej. ingreso→balanza sin preingreso/calada). */
+const TEMPLATE_SKIP_ROLLUP_MAX_INDEX_GAP = 3
+
+/** Salto hacia adelante en el template (p. ej. preingreso→balanza si falta calada). */
+export function isTemplateForwardTransition(
+  circuitCode: string,
+  fromCode: string,
+  toCode: string
+): boolean {
+  const template = getCircuitSegmentTemplate(circuitCode)
+  const fi = template.indexOf(fromCode)
+  const ti = template.indexOf(toCode)
+  if (fi < 0 || ti <= fi) return false
+  const gap = ti - fi
+  return gap >= 1 && gap <= TEMPLATE_SKIP_ROLLUP_MAX_INDEX_GAP
+}
+
 export function isExpectedCircuitTransition(
   circuitCode: string,
   fromCode: string,
@@ -464,10 +497,18 @@ export function isExpectedCircuitTransition(
   ) {
     return true
   }
+  if (
+    CIRCUITS_WITH_BALANZA_STAY_ROLLUP.has(circuitCode) &&
+    fromCode === BALANZA_STAY_ROLLUP_TRANSITION.from &&
+    toCode === BALANZA_STAY_ROLLUP_TRANSITION.to
+  ) {
+    return true
+  }
   const bridge = TRANSILE_BRIDGE_KPI_TRANSITIONS[circuitCode as keyof typeof TRANSILE_BRIDGE_KPI_TRANSITIONS]
   if (bridge && fromCode === bridge.fromCode && toCode === bridge.toCode) {
     return true
   }
+  if (isTemplateForwardTransition(circuitCode, fromCode, toCode)) return true
   const template = getCircuitSegmentTemplate(circuitCode)
   if (template.length < 2) return false
   for (let i = 0; i < template.length - 1; i++) {
@@ -578,16 +619,30 @@ export function transitionSortKey(fromCode: string, toCode: string): number {
   return fi * 1000 + ti
 }
 
+function isSlKpiTransition(fromCode?: string, toCode?: string): boolean {
+  return Boolean(
+    fromCode?.startsWith('SL_') || toCode?.startsWith('SL_')
+  )
+}
+
 export function isValidSegmentDuration(
   minutes: number,
   fromCode?: string,
   toCode?: string
 ): boolean {
   if (!Number.isFinite(minutes) || minutes <= 0) return false
+  if (
+    fromCode &&
+    toCode &&
+    isSlKpiTransition(fromCode, toCode) &&
+    minutes <= MIN_SEGMENT_DURATION_MINUTES
+  ) {
+    return false
+  }
   const max =
     fromCode && toCode ?
       maxAllowedMinutesForTransition(fromCode, toCode)
-    : MAX_SEGMENT_DURATION_MINUTES
+    : INFERRED_KPI_ROLLUP_MAX_MINUTES
   return minutes <= max
 }
 
@@ -814,27 +869,135 @@ export function enrichSlTimelineWithExcelSalida(
   )
 }
 
-/** Excel-first: calado del contrato ancla balanza salida SL si falta S5. */
-function enrichSlCaladoAsBalanzaSalida(
+function normalizeSlExcelAnchors(anchors?: string | SlExcelTimelineAnchors): SlExcelTimelineAnchors {
+  if (typeof anchors === 'string') return { externalSalidaAt: anchors }
+  return anchors ?? {}
+}
+
+function injectSlIngresoFromExcel(
   points: TimedLogicalPoint[],
-  externalCaladoAt?: string
+  externalIngresoAt?: string
 ): TimedLogicalPoint[] {
-  if (points.some((p) => p.code === 'SL_BALANZA_SALIDA')) return points
-  const calado = String(externalCaladoAt ?? '').trim()
-  const calMs = Date.parse(calado)
-  if (!Number.isFinite(calMs)) return points
-
-  const afterMs = latestSlPointMs(points, ['SL_BALANZA_INGRESO', 'SL_INGRESO'])
-  if (!Number.isFinite(afterMs) || calMs <= afterMs) return points
-
+  if (points.some((p) => p.code === 'SL_INGRESO')) return points
+  const ingreso = String(externalIngresoAt ?? '').trim()
+  if (!ingreso || !Number.isFinite(Date.parse(ingreso))) return points
+  const hasSlContext = points.some((p) => p.code.startsWith('SL_'))
+  if (!hasSlContext) return points
   return collapseTimedPoints(
-    [...points, { code: 'SL_BALANZA_SALIDA', occurredAt: calado }].sort(
+    [...points, { code: 'SL_INGRESO', occurredAt: ingreso }].sort(
       (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
     )
   )
 }
 
-/** Infiere balanza ingreso SL entre ingreso SL y el siguiente hito (Truckflow o Excel). */
+/** Excel ingreso (match patente): hora de balanza ingreso SL si falta cámara S1/S2. */
+function injectSlBalanzaIngresoFromExcel(
+  points: TimedLogicalPoint[],
+  externalIngresoAt?: string
+): TimedLogicalPoint[] {
+  if (points.some((p) => p.code === 'SL_BALANZA_INGRESO')) return points
+  const ingreso = String(externalIngresoAt ?? '').trim()
+  if (!ingreso || !Number.isFinite(Date.parse(ingreso))) return points
+  const ingresoMs = latestSlPointMs(points, ['SL_INGRESO'])
+  const atMs = Date.parse(ingreso)
+  if (Number.isFinite(ingresoMs) && atMs < ingresoMs) return points
+  const hasSlContext =
+    points.some((p) => p.code.startsWith('SL_')) || Number.isFinite(ingresoMs)
+  if (!hasSlContext) return points
+  return collapseTimedPoints(
+    [...points, { code: 'SL_BALANZA_INGRESO', occurredAt: ingreso }].sort(
+      (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+    )
+  )
+}
+
+/** Excel calado en SL1 / San Lorenzo: hora de descarga (zona sin cámara). */
+function injectSlDescargaFromExcel(
+  points: TimedLogicalPoint[],
+  externalCaladoAt?: string,
+  useAsDescarga?: boolean
+): TimedLogicalPoint[] {
+  if (!useAsDescarga) return points
+  if (points.some((p) => p.code === 'SL_DESCARGA')) return points
+  const calado = String(externalCaladoAt ?? '').trim()
+  if (!calado || !Number.isFinite(Date.parse(calado))) return points
+  const anchorMs = latestSlPointMs(points, ['SL_BALANZA_INGRESO', 'SL_INGRESO'])
+  const calMs = Date.parse(calado)
+  if (Number.isFinite(anchorMs) && calMs <= anchorMs) return points
+  return collapseTimedPoints(
+    [...points, { code: 'SL_DESCARGA', occurredAt: calado }].sort(
+      (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+    )
+  )
+}
+
+/**
+ * Timeline SL: solo las 4 cámaras Truckflow.
+ * Fallback Excel (match patente): salida → egreso S7; si falta S5, balanza egreso pocos min antes.
+ */
+export function enrichSlTimelineWithExcelAnchors(
+  points: TimedLogicalPoint[],
+  anchors?: string | SlExcelTimelineAnchors
+): TimedLogicalPoint[] {
+  const opts = normalizeSlExcelAnchors(anchors)
+
+  let enriched = sanitizeMisplacedSlEgreso(points)
+  enriched = inferSlBalanzaSalidaFromTransit(enriched, opts.externalSalidaAt)
+  enriched = enrichSlTimelineWithExcelSalida(enriched, opts.externalSalidaAt)
+  return enriched
+}
+
+/** Descarga SL sin cámara: punto intermedio entre balanza ingreso y balanza salida (o egreso). */
+function inferSlDescargaFromTransit(points: TimedLogicalPoint[]): TimedLogicalPoint[] {
+  if (points.some((p) => p.code === 'SL_DESCARGA')) return points
+  const balInMs = latestSlPointMs(points, ['SL_BALANZA_INGRESO'])
+  if (!Number.isFinite(balInMs)) return points
+
+  const salidaMs = earliestSlPointMsAfter(points, ['SL_BALANZA_SALIDA', 'SL_EGRESO'], balInMs)
+  if (!Number.isFinite(salidaMs)) return points
+
+  const descargaAt = inferMidpointBetweenMs(balInMs, salidaMs)
+  if (!descargaAt) return points
+
+  return collapseTimedPoints(
+    [...points, { code: 'SL_DESCARGA', occurredAt: descargaAt }].sort(
+      (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+    )
+  )
+}
+
+/** Balanza salida SL sin cámara S5: pocos min antes de egreso Excel; cámara S5 tiene prioridad. */
+function inferSlBalanzaSalidaFromTransit(
+  points: TimedLogicalPoint[],
+  externalSalidaAt?: string
+): TimedLogicalPoint[] {
+  if (points.some((p) => p.code === 'SL_BALANZA_SALIDA')) return points
+
+  const salida = String(externalSalidaAt ?? '').trim()
+  if (salida && Number.isFinite(Date.parse(salida))) {
+    const withExcelProxy = inferSlBalanzaSalidaBeforeExcelSalida(points, externalSalidaAt)
+    if (withExcelProxy.some((p) => p.code === 'SL_BALANZA_SALIDA')) return withExcelProxy
+  }
+
+  const descargaMs = latestSlPointMs(points, ['SL_DESCARGA'])
+  const egresoMs = earliestSlPointMsAfter(points, ['SL_EGRESO'], descargaMs)
+  if (Number.isFinite(descargaMs) && Number.isFinite(egresoMs) && egresoMs > descargaMs) {
+    const proxyAt =
+      inferMidpointBetweenMs(descargaMs, egresoMs, 60_000, SL_SALIDA_EGRESO_MAX_MINUTES * 60_000) ||
+      isoLocalFromMs(egresoMs - SL_EXIT_TRANSIT_DEFAULT_MINUTES * 60_000)
+    if (proxyAt && Date.parse(proxyAt) > descargaMs) {
+      return collapseTimedPoints(
+        [...points, { code: 'SL_BALANZA_SALIDA', occurredAt: proxyAt }].sort(
+          (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+        )
+      )
+    }
+  }
+
+  return points
+}
+
+/** Infiere balanza ingreso SL entre ingreso SL y el siguiente hito (Truckflow). */
 function inferSlBalanzaIngresoFromTransit(points: TimedLogicalPoint[]): TimedLogicalPoint[] {
   if (points.some((p) => p.code === 'SL_BALANZA_INGRESO')) return points
   const ingresoPt = points.find((p) => p.code === 'SL_INGRESO')
@@ -844,6 +1007,8 @@ function inferSlBalanzaIngresoFromTransit(points: TimedLogicalPoint[]): TimedLog
 
   const nextMs = earliestSlPointMsAfter(points, ['SL_BALANZA_SALIDA', 'SL_DESCARGA', 'SL_EGRESO'], ingresoMs)
   if (!Number.isFinite(nextMs)) return points
+  const gapMin = (nextMs - ingresoMs) / 60_000
+  if (gapMin > SL_INGRESO_TO_BALANZA_MAX_MINUTES) return points
 
   const proxyAt = inferMidpointBetweenMs(ingresoMs, nextMs)
   if (!proxyAt) return points
@@ -854,17 +1019,41 @@ function inferSlBalanzaIngresoFromTransit(points: TimedLogicalPoint[]): TimedLog
   )
 }
 
-/** Timeline SL enriquecido: Truckflow + anclas Excel (calado/salida) + tránsitos inferidos. */
-export function enrichSlTimelineWithExcelAnchors(
+/**
+ * Solo para rollup balanza salida → egreso SL (~200–300 m).
+ * Usa S5 de Truckflow o tránsito corto antes de salida Excel; nunca calado Ricardone.
+ */
+export function enrichSlTimelineForSalidaEgresoRollup(
   points: TimedLogicalPoint[],
-  externalCaladoAt?: string,
+  anchors?: string | SlExcelTimelineAnchors
+): TimedLogicalPoint[] {
+  return enrichSlTimelineWithExcelAnchors(points, anchors)
+}
+
+/** Si falta S5 en Truckflow: balanza salida pocos minutos antes de salida Excel (tránsito corto). */
+function inferSlBalanzaSalidaBeforeExcelSalida(
+  points: TimedLogicalPoint[],
   externalSalidaAt?: string
 ): TimedLogicalPoint[] {
-  let enriched = sanitizeMisplacedSlEgreso(points)
-  enriched = inferSlBalanzaIngresoFromTransit(enriched)
-  enriched = enrichSlCaladoAsBalanzaSalida(enriched, externalCaladoAt)
-  enriched = enrichSlTimelineWithExcelSalida(enriched, externalSalidaAt)
-  return enriched
+  if (points.some((p) => p.code === 'SL_BALANZA_SALIDA')) return points
+  const salida = String(externalSalidaAt ?? '').trim()
+  const salMs = Date.parse(salida)
+  if (!Number.isFinite(salMs)) return points
+
+  const hasSlAnchor = points.some((p) =>
+    ['SL_INGRESO', 'SL_BALANZA_INGRESO', 'SL_DESCARGA'].includes(p.code)
+  )
+  if (!hasSlAnchor) return points
+
+  const anchorMs = latestSlPointMs(points, ['SL_BALANZA_INGRESO', 'SL_INGRESO', 'SL_DESCARGA'])
+  const proxyMs = salMs - SL_EXIT_TRANSIT_DEFAULT_MINUTES * 60_000
+  if (Number.isFinite(anchorMs) && proxyMs <= anchorMs) return points
+
+  return collapseTimedPoints(
+    [...points, { code: 'SL_BALANZA_SALIDA', occurredAt: isoLocalFromMs(proxyMs) }].sort(
+      (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+    )
+  )
 }
 
 function resolveSlSalidaEgresoEndpoints(
@@ -914,15 +1103,7 @@ function resolveSlIngresoBalancaEndpoints(
     return { from: ingresoPt, to: toPt }
   }
 
-  const nextMs = earliestSlPointMsAfter(
-    points,
-    ['SL_BALANZA_SALIDA', 'SL_DESCARGA', 'SL_EGRESO'],
-    ingresoMs
-  )
-  if (!Number.isFinite(nextMs)) return null
-  const proxyAt = inferMidpointBetweenMs(ingresoMs, nextMs)
-  if (!proxyAt) return null
-  return { from: ingresoPt, to: { code: toCode, occurredAt: proxyAt } }
+  return null
 }
 
 export function extractSlIngresoBalancaRollupFromTimeline(
@@ -1002,6 +1183,73 @@ export function extractSlSalidaEgresoRollupFromTimeline(
   }
 }
 
+function resolveChainEndpointAfter(
+  points: TimedLogicalPoint[],
+  code: string,
+  afterMs: number
+): TimedLogicalPoint | null {
+  const candidates = points.filter((p) => {
+    if (p.code !== code) return false
+    const ms = Date.parse(p.occurredAt)
+    return Number.isFinite(ms) && ms >= afterMs
+  })
+  if (!candidates.length) return null
+  return candidates.reduce((earliest, p) =>
+    Date.parse(p.occurredAt) < Date.parse(earliest.occurredAt) ? p : earliest
+  )
+}
+
+function resolveSlChainEndpointAfter(
+  points: TimedLogicalPoint[],
+  code: string,
+  afterMs: number
+): TimedLogicalPoint | null {
+  return resolveChainEndpointAfter(points, code, afterMs)
+}
+
+/** Tramos consecutivos de la cadena operativa SL (KPI template). */
+export function extractSlOperationalChainLegsFromTimeline(
+  points: TimedLogicalPoint[],
+  executiveCircuitCode: string,
+  journeyId: string,
+  plate: string
+): SegmentLegWithTimes[] {
+  if (!CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(executiveCircuitCode)) return []
+  const legs: SegmentLegWithTimes[] = []
+  let startIdx = 0
+  for (let i = 0; i < SL_OPERATIONAL_KPI_CHAIN.length; i++) {
+    if (points.some((p) => p.code === SL_OPERATIONAL_KPI_CHAIN[i])) {
+      startIdx = i
+      break
+    }
+  }
+  let afterMs = Number.NEGATIVE_INFINITY
+
+  for (let i = startIdx; i < SL_OPERATIONAL_KPI_CHAIN.length - 1; i++) {
+    const fromCode = SL_OPERATIONAL_KPI_CHAIN[i]!
+    const toCode = SL_OPERATIONAL_KPI_CHAIN[i + 1]!
+    const fromPt = resolveSlChainEndpointAfter(points, fromCode, afterMs)
+    if (!fromPt) break
+    const fromMs = Date.parse(fromPt.occurredAt)
+    const toPt = resolveSlChainEndpointAfter(points, toCode, fromMs)
+    if (!toPt) break
+    const durationMinutes = minutesBetweenIso(fromPt.occurredAt, toPt.occurredAt)
+    if (!isValidSegmentDuration(durationMinutes, fromCode, toCode)) break
+    legs.push({
+      journeyId,
+      plate,
+      executiveCircuitCode,
+      fromCode,
+      toCode,
+      durationMinutes,
+      segment_start_time: fromPt.occurredAt,
+      segment_end_time: toPt.occurredAt,
+    })
+    afterMs = Date.parse(toPt.occurredAt)
+  }
+  return legs
+}
+
 /** Rollup SL deducido cuando faltan cámaras intermedias (S5, etc.). */
 export function synthesizeSlRollupLegsFromTimedSegments(input: {
   operationId: string
@@ -1016,6 +1264,7 @@ export function synthesizeSlRollupLegsFromTimedSegments(input: {
   externalSalidaAt?: string
   externalCaladoAt?: string
   externalIngresoAt?: string
+  plantaNormalized?: string
 }): SegmentLegWithTimes[] {
   if (!CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(input.executiveCircuitCode)) return []
   if (!input.operationId) return []
@@ -1025,64 +1274,24 @@ export function synthesizeSlRollupLegsFromTimedSegments(input: {
     input.externalIngresoAt,
     input.externalSalidaAt
   )
-  let points = buildTimedLogicalTimelineFromSegments(coherentSegments, {
+  const truckflowPoints = buildTimedLogicalTimelineFromSegments(coherentSegments, {
     externalIngresoAt: input.externalIngresoAt,
     externalSalidaAt: input.externalSalidaAt,
   })
-  points = enrichSlTimelineWithExcelAnchors(points, input.externalCaladoAt, input.externalSalidaAt)
-  const out: SegmentLegWithTimes[] = []
-
-  const ingresoBalIn = extractSlIngresoBalancaRollupFromTimeline(
+  const slAnchors: SlExcelTimelineAnchors = {
+    externalIngresoAt: input.externalIngresoAt,
+    externalCaladoAt: input.externalCaladoAt,
+    externalSalidaAt: input.externalSalidaAt,
+    plantaNormalized: input.plantaNormalized,
+    executiveCircuitCode: input.executiveCircuitCode,
+  }
+  const points = enrichSlTimelineWithExcelAnchors(truckflowPoints, slAnchors)
+  return extractSlOperationalChainLegsFromTimeline(
     points,
     input.executiveCircuitCode,
     input.operationId,
     input.plate
   )
-  if (ingresoBalIn) {
-    const ingresoEndpoints = resolveSlIngresoBalancaEndpoints(points)
-    if (ingresoEndpoints) {
-      out.push({
-        ...ingresoBalIn,
-        segment_start_time: ingresoEndpoints.from.occurredAt,
-        segment_end_time: ingresoEndpoints.to.occurredAt,
-      })
-    }
-  }
-
-  const rollup = extractSlBalancaRollupFromTimeline(
-    points,
-    input.executiveCircuitCode,
-    input.operationId,
-    input.plate
-  )
-  if (rollup) {
-    const fromIdx = points.findIndex((p) => p.code === SL_BALANZA_ROLLUP_TRANSITION.from)
-    const endIdx = findSlBalancaRollupEndIdx(points, fromIdx)
-    if (fromIdx >= 0 && endIdx >= 0) {
-      out.push({
-        ...rollup,
-        segment_start_time: points[fromIdx]!.occurredAt,
-        segment_end_time: points[endIdx]!.occurredAt,
-      })
-    }
-  }
-  const salidaEgreso = extractSlSalidaEgresoRollupFromTimeline(
-    points,
-    input.executiveCircuitCode,
-    input.operationId,
-    input.plate
-  )
-  if (salidaEgreso) {
-    const endpoints = resolveSlSalidaEgresoEndpoints(points)
-    if (endpoints) {
-      out.push({
-        ...salidaEgreso,
-        segment_start_time: endpoints.from.occurredAt,
-        segment_end_time: endpoints.to.occurredAt,
-      })
-    }
-  }
-  return out
 }
 
 function findRollupEndIdx(
@@ -1095,6 +1304,19 @@ function findRollupEndIdx(
     if (idx >= 0) return idx
   }
   return -1
+}
+
+function findRollupFromIdx(
+  points: TimedLogicalPoint[],
+  fromCode: string,
+  preferLatest = false
+): number {
+  const indices: number[] = []
+  for (let i = 0; i < points.length; i++) {
+    if (points[i]!.code === fromCode) indices.push(i)
+  }
+  if (!indices.length) return -1
+  return preferLatest ? indices[indices.length - 1]! : indices[0]!
 }
 
 function pickExcelTimestampAfter(
@@ -1256,29 +1478,290 @@ function enrichTimelineWithExcelSiloAnchors(
   )
 }
 
+/** Ingreso Excel (match patente) cuando Truckflow no tiene ancla de entrada. */
+function injectIngresoFromExcel(
+  points: TimedLogicalPoint[],
+  externalIngresoAt?: string
+): TimedLogicalPoint[] {
+  if (points.some((p) => p.code === 'INGRESO')) return points
+  const ingreso = String(externalIngresoAt ?? '').trim()
+  const ingMs = Date.parse(ingreso)
+  if (!ingreso || !Number.isFinite(ingMs)) return points
+  const preingreso = points.find((p) => p.code === 'PREINGRESO')
+  if (preingreso) {
+    const preMs = Date.parse(preingreso.occurredAt)
+    if (Number.isFinite(preMs) && ingMs >= preMs) return points
+  }
+  return collapseTimedPoints(
+    [...points, { code: 'INGRESO', occurredAt: ingreso }].sort(
+      (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+    )
+  )
+}
+
+function isSlTemplateTransition(
+  circuitCode: string,
+  fromCode: string,
+  toCode: string
+): boolean {
+  if (!CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(circuitCode)) return false
+  return fromCode.startsWith('SL_') || toCode.startsWith('SL_')
+}
+
+function isBridgeTemplateTransition(
+  circuitCode: string,
+  fromCode: string,
+  toCode: string
+): boolean {
+  const bridge = TRANSILE_BRIDGE_KPI_TRANSITIONS[circuitCode as keyof typeof TRANSILE_BRIDGE_KPI_TRANSITIONS]
+  return Boolean(bridge && fromCode === bridge.fromCode && toCode === bridge.toCode)
+}
+
+/** volcable→balanza egreso: solo cámaras Truckflow o salida Excel si está a ≤30 min. */
+function resolveVolcableBalanzaEgresoEndpoints(
+  truckflowPoints: TimedLogicalPoint[],
+  externalSalidaAt?: string
+): { from: TimedLogicalPoint; to: TimedLogicalPoint } | null {
+  const volcCandidates = truckflowPoints.filter((p) => p.code === 'VOLCABLE')
+  if (!volcCandidates.length) return null
+  const fromPt = volcCandidates.reduce((latest, p) =>
+    Date.parse(p.occurredAt) >= Date.parse(latest.occurredAt) ? p : latest
+  )
+  const volcMs = Date.parse(fromPt.occurredAt)
+  if (!Number.isFinite(volcMs)) return null
+
+  const balCandidates = truckflowPoints.filter((p) => {
+    if (p.code !== 'BALANZA_EGRESO') return false
+    const ms = Date.parse(p.occurredAt)
+    return Number.isFinite(ms) && ms > volcMs
+  })
+  if (balCandidates.length) {
+    const toPt = balCandidates.reduce((earliest, p) =>
+      Date.parse(p.occurredAt) < Date.parse(earliest.occurredAt) ? p : earliest
+    )
+    return { from: fromPt, to: toPt }
+  }
+
+  const salida = String(externalSalidaAt ?? '').trim()
+  const salMs = Date.parse(salida)
+  if (Number.isFinite(salMs) && salMs > volcMs) {
+    const gapMin = (salMs - volcMs) / 60_000
+    if (gapMin <= VOLCABLE_BALANZA_EGRESO_MAX_MINUTES) {
+      return { from: fromPt, to: { code: 'BALANZA_EGRESO', occurredAt: salida } }
+    }
+  }
+  return null
+}
+
+function timelineSourceForTemplatePoint(code: string, executiveCircuitCode: string): 'enriched' | 'truckflow' {
+  if (code === 'INGRESO') return 'enriched'
+  if (code === 'BALANZA_EGRESO' && CIRCUITS_WITH_BALANZA_STAY_ROLLUP.has(executiveCircuitCode)) {
+    return 'enriched'
+  }
+  return 'truckflow'
+}
+
+function pickTimelineForTemplate(
+  source: 'enriched' | 'truckflow',
+  truckflowPoints: TimedLogicalPoint[],
+  enrichedPoints: TimedLogicalPoint[]
+): TimedLogicalPoint[] {
+  return source === 'enriched' ? enrichedPoints : truckflowPoints
+}
+
+/** Tramos consecutivos del template operativo (Truckflow + ingreso Excel). */
+export function extractTemplateChainLegsFromTimeline(input: {
+  truckflowPoints: TimedLogicalPoint[]
+  enrichedPoints: TimedLogicalPoint[]
+  executiveCircuitCode: string
+  journeyId: string
+  plate: string
+  externalSalidaAt?: string
+}): SegmentLegWithTimes[] {
+  const {
+    truckflowPoints,
+    enrichedPoints,
+    executiveCircuitCode,
+    journeyId,
+    plate,
+    externalSalidaAt,
+  } = input
+  const template = getCircuitSegmentTemplate(executiveCircuitCode)
+  if (template.length < 2) return []
+
+  const legs: SegmentLegWithTimes[] = []
+  let startIdx = 0
+  const ingresoIdx = template.indexOf('INGRESO')
+  if (ingresoIdx >= 0 && enrichedPoints.some((p) => p.code === 'INGRESO')) {
+    startIdx = ingresoIdx
+  } else {
+    for (let t = 0; t < template.length; t++) {
+      const code = template[t]!
+      if (
+        enrichedPoints.some((p) => p.code === code) ||
+        truckflowPoints.some((p) => p.code === code)
+      ) {
+        startIdx = t
+        break
+      }
+    }
+  }
+
+  let afterMs = Number.NEGATIVE_INFINITY
+  let i = startIdx
+
+  while (i < template.length - 1) {
+    const fromCode = template[i]!
+    if (isSlTemplateTransition(executiveCircuitCode, fromCode, template[i + 1]!)) {
+      i++
+      continue
+    }
+
+    if (fromCode === 'VOLCABLE') {
+      const volcIdx = template.indexOf('VOLCABLE')
+      const balIdx = template.indexOf('BALANZA_EGRESO')
+      if (balIdx > volcIdx) {
+        const endpoints = resolveVolcableBalanzaEgresoEndpoints(truckflowPoints, externalSalidaAt)
+        if (!endpoints) {
+          i = balIdx
+          continue
+        }
+        const durationMinutes = minutesBetweenIso(endpoints.from.occurredAt, endpoints.to.occurredAt)
+        if (isValidSegmentDuration(durationMinutes, 'VOLCABLE', 'BALANZA_EGRESO')) {
+          legs.push({
+            journeyId,
+            plate,
+            executiveCircuitCode,
+            fromCode: 'VOLCABLE',
+            toCode: 'BALANZA_EGRESO',
+            durationMinutes,
+            segment_start_time: endpoints.from.occurredAt,
+            segment_end_time: endpoints.to.occurredAt,
+          })
+        }
+        afterMs = Date.parse(endpoints.to.occurredAt)
+        i = balIdx
+        continue
+      }
+    }
+
+    const fromSource = timelineSourceForTemplatePoint(fromCode, executiveCircuitCode)
+    const fromTimeline = pickTimelineForTemplate(fromSource, truckflowPoints, enrichedPoints)
+    const fromPt = resolveChainEndpointAfter(fromTimeline, fromCode, afterMs)
+    if (!fromPt) {
+      i++
+      continue
+    }
+    const fromMs = Date.parse(fromPt.occurredAt)
+
+    let toIdx = -1
+    let toPt: TimedLogicalPoint | null = null
+    for (let j = i + 1; j < template.length; j++) {
+      const candidate = template[j]!
+      if (isSlTemplateTransition(executiveCircuitCode, fromCode, candidate)) continue
+      if (isBridgeTemplateTransition(executiveCircuitCode, fromCode, candidate)) continue
+      if (candidate === 'BALANZA_EGRESO' && template[j - 1] === 'VOLCABLE') continue
+
+      const toSource = timelineSourceForTemplatePoint(candidate, executiveCircuitCode)
+      const toTimeline = pickTimelineForTemplate(toSource, truckflowPoints, enrichedPoints)
+      const pt = resolveChainEndpointAfter(toTimeline, candidate, fromMs)
+      if (pt) {
+        toIdx = j
+        toPt = pt
+        break
+      }
+    }
+    if (!toPt || toIdx < 0) break
+
+    const toCode = template[toIdx]!
+    const durationMinutes = minutesBetweenIso(fromPt.occurredAt, toPt.occurredAt)
+    if (isValidSegmentDuration(durationMinutes, fromCode, toCode)) {
+      legs.push({
+        journeyId,
+        plate,
+        executiveCircuitCode,
+        fromCode,
+        toCode,
+        durationMinutes,
+        segment_start_time: fromPt.occurredAt,
+        segment_end_time: toPt.occurredAt,
+      })
+    }
+    afterMs = Date.parse(toPt.occurredAt)
+    i = toIdx
+  }
+  return legs
+}
+
+/** Template KPI: recorre puntos esperados del circuito con Truckflow + anclas Excel. */
+export function synthesizeTemplateChainLegsFromTimedSegments(input: {
+  operationId: string
+  plate: string
+  executiveCircuitCode: string
+  segments: TimedSegmentInput[]
+  externalCaladoAt?: string
+  externalSalidaAt?: string
+  platformNormalized?: string
+  externalIngresoAt?: string
+}): SegmentLegWithTimes[] {
+  if (!input.operationId) return []
+  const template = getCircuitSegmentTemplate(input.executiveCircuitCode)
+  if (template.length < 2) return []
+
+  const coherentSegments = selectCoherentSegmentGroup(
+    input.segments,
+    input.externalIngresoAt,
+    input.externalSalidaAt
+  )
+  const truckflowPoints = buildTimedLogicalTimelineFromSegments(coherentSegments, {
+    externalIngresoAt: input.externalIngresoAt,
+    externalSalidaAt: input.externalSalidaAt,
+  })
+  let enrichedPoints = injectIngresoFromExcel(truckflowPoints, input.externalIngresoAt)
+  enrichedPoints = enrichTimelineWithExcelDischarge(
+    enrichedPoints,
+    input.executiveCircuitCode,
+    input.externalCaladoAt,
+    input.externalSalidaAt,
+    input.platformNormalized,
+    input.externalIngresoAt
+  )
+
+  return extractTemplateChainLegsFromTimeline({
+    truckflowPoints,
+    enrichedPoints,
+    executiveCircuitCode: input.executiveCircuitCode,
+    journeyId: input.operationId,
+    plate: input.plate,
+    externalSalidaAt: input.externalSalidaAt,
+  })
+}
+
 /**
- * Inyecta puntos de descarga/carga y balanza egreso desde Excel cuando Truckflow no los registró.
- * Excel-first: calado/salida del contrato anclan descarga; Truckflow aporta lo observado en cámara.
+ * Excel-first (patente + producto): Truckflow da el recorrido; ingreso/calado/salida Excel
+ * rellenan puntos que falten en cámara.
  */
 export function enrichTimelineWithExcelDischarge(
   points: TimedLogicalPoint[],
   circuitCode: string,
   externalCaladoAt?: string,
   externalSalidaAt?: string,
-  platformNormalized?: string
+  platformNormalized?: string,
+  externalIngresoAt?: string
 ): TimedLogicalPoint[] {
+  let enriched = injectIngresoFromExcel(points, externalIngresoAt)
   const rules = DISCHARGE_KPI_ROLLUP_BY_CIRCUIT[circuitCode]
-  if (!rules?.length) return points
+  if (!rules?.length) return enriched
 
-  let enriched = enrichTimelineWithExcelSiloAnchors(
-    points,
+  enriched = enrichTimelineWithExcelSiloAnchors(
+    enriched,
     circuitCode,
     externalCaladoAt,
     externalSalidaAt,
     platformNormalized
   )
   for (const rule of rules) {
-    const fromIdx = enriched.findIndex((p) => p.code === rule.fromCode)
+    const fromIdx = findRollupFromIdx(enriched, rule.fromCode, rule.fromCode === 'VOLCABLE')
     if (fromIdx < 0) continue
     const fromMs = Date.parse(enriched[fromIdx]!.occurredAt)
     if (!Number.isFinite(fromMs)) continue
@@ -1320,7 +1803,8 @@ export function extractDischargeRollupFromTimeline(
   rule: DischargeKpiRollupRule
 ): SegmentLeg | null {
   if (!CIRCUITS_WITH_DISCHARGE_KPI_ROLLUP.has(executiveCircuitCode)) return null
-  const fromIdx = points.findIndex((p) => p.code === rule.fromCode)
+
+  const fromIdx = findRollupFromIdx(points, rule.fromCode, rule.fromCode === 'VOLCABLE')
   if (fromIdx < 0) return null
   const endIdx = findRollupEndIdx(points, fromIdx, rule.endCodes)
   if (endIdx < 0) return null
@@ -1370,7 +1854,8 @@ export function synthesizeDischargeRollupLegsFromTimedSegments(input: {
     input.executiveCircuitCode,
     input.externalCaladoAt,
     input.externalSalidaAt,
-    input.platformNormalized
+    input.platformNormalized,
+    input.externalIngresoAt
   )
 
   const out: SegmentLegWithTimes[] = []
@@ -1383,7 +1868,7 @@ export function synthesizeDischargeRollupLegsFromTimedSegments(input: {
       rule
     )
     if (!leg) continue
-    const fromIdx = points.findIndex((p) => p.code === rule.fromCode)
+    const fromIdx = findRollupFromIdx(points, rule.fromCode, rule.fromCode === 'VOLCABLE')
     const endIdx = findRollupEndIdx(points, fromIdx, rule.endCodes)
     if (fromIdx < 0 || endIdx < 0) continue
     out.push({
@@ -1410,8 +1895,10 @@ export function synthesizeInferredRollupLegsFromTimedSegments(input: {
   externalSalidaAt?: string
   platformNormalized?: string
   externalIngresoAt?: string
+  plantaNormalized?: string
 }): SegmentLegWithTimes[] {
   return [
+    ...synthesizeTemplateChainLegsFromTimedSegments(input),
     ...synthesizeSlRollupLegsFromTimedSegments({
       operationId: input.operationId,
       plate: input.plate,
@@ -1420,6 +1907,7 @@ export function synthesizeInferredRollupLegsFromTimedSegments(input: {
       externalSalidaAt: input.externalSalidaAt,
       externalCaladoAt: input.externalCaladoAt,
       externalIngresoAt: input.externalIngresoAt,
+      plantaNormalized: input.plantaNormalized,
     }),
     ...synthesizeDischargeRollupLegsFromTimedSegments(input),
   ]
@@ -1759,6 +2247,7 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
     external_calado_at?: string
     external_ingreso_at?: string
     platform_normalized?: string
+    planta_normalized?: string
   }>
 ): SegmentTimingIndex {
   const bestByOperationTransition = new Map<string, SegmentLeg>()
@@ -1777,6 +2266,7 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
       externalCaladoAt?: string
       externalIngresoAt?: string
       platformNormalized?: string
+      plantaNormalized?: string
     }
   >()
 
@@ -1793,6 +2283,7 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
       external_calado_at?: string
       external_ingreso_at?: string
       platform_normalized?: string
+      planta_normalized?: string
     }
   ) => {
     const start = String(row.segment_start_time ?? '').trim()
@@ -1808,6 +2299,7 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
         externalCaladoAt: String(row.external_calado_at ?? '').trim() || undefined,
         externalIngresoAt: String(row.external_ingreso_at ?? '').trim() || undefined,
         platformNormalized: String(row.platform_normalized ?? '').trim() || undefined,
+        plantaNormalized: String(row.planta_normalized ?? '').trim() || undefined,
       }
     bucket.segments.push({
       segment_from: row.segment_from,
@@ -1827,14 +2319,59 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
     if (!bucket.platformNormalized && row.platform_normalized) {
       bucket.platformNormalized = String(row.platform_normalized).trim() || undefined
     }
+    if (!bucket.plantaNormalized && row.planta_normalized) {
+      bucket.plantaNormalized = String(row.planta_normalized).trim() || undefined
+    }
     timedSegmentsByOperation.set(operationId, bucket)
   }
 
-  const pushLeg = (leg: SegmentLeg) => {
+  const pushOperationLeg = (leg: SegmentLeg, source: 'measured' | 'synth') => {
     const dedupeKey = `${leg.journeyId}|${leg.executiveCircuitCode}|${leg.fromCode}|${leg.toCode}`
     const prev = bestByOperationTransition.get(dedupeKey)
-    if (!prev || leg.durationMinutes > prev.durationMinutes) {
+    if (!prev) {
       bestByOperationTransition.set(dedupeKey, leg)
+      return
+    }
+    const max = maxAllowedMinutesForTransition(leg.fromCode, leg.toCode)
+    const prevOk = isValidSegmentDuration(prev.durationMinutes, leg.fromCode, leg.toCode) && prev.durationMinutes <= max
+    const legOk = isValidSegmentDuration(leg.durationMinutes, leg.fromCode, leg.toCode) && leg.durationMinutes <= max
+    if (source === 'measured' && legOk) {
+      bestByOperationTransition.set(dedupeKey, leg)
+      return
+    }
+    if (!prevOk && legOk) {
+      bestByOperationTransition.set(dedupeKey, leg)
+      return
+    }
+    if (prevOk && legOk && leg.durationMinutes < prev.durationMinutes) {
+      bestByOperationTransition.set(dedupeKey, leg)
+    }
+  }
+
+  for (const r of rows) {
+    if (!r.analysis_ready_for_scatter) continue
+    const circuitCode = resolveExcelFirstSegmentCircuitCode(r)
+    const operationId = String(r.external_operation_id ?? r.journey_uid ?? '').trim()
+    if (!circuitCode || !operationId) continue
+    rememberTimedSegment(operationId, String(r.plate_normalized ?? ''), circuitCode, r)
+  }
+
+  for (const [operationId, bucket] of timedSegmentsByOperation) {
+    const synthLegs = synthesizeInferredRollupLegsFromTimedSegments({
+      operationId,
+      plate: bucket.plate,
+      executiveCircuitCode: bucket.circuitCode,
+      segments: bucket.segments,
+      externalCaladoAt: bucket.externalCaladoAt,
+      externalSalidaAt: bucket.externalSalidaAt,
+      externalIngresoAt: bucket.externalIngresoAt,
+      platformNormalized: bucket.platformNormalized,
+      plantaNormalized: bucket.plantaNormalized,
+    })
+    for (const leg of synthLegs) {
+      if (!isExpectedCircuitTransition(leg.executiveCircuitCode, leg.fromCode, leg.toCode)) continue
+      if (!isValidSegmentDuration(leg.durationMinutes, leg.fromCode, leg.toCode)) continue
+      pushOperationLeg(leg, 'synth')
     }
   }
 
@@ -1848,34 +2385,19 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
     if (!fromCode || !toCode || !circuitCode || !operationId) continue
     if (!Number.isFinite(duration) || duration <= 0) continue
 
-    rememberTimedSegment(operationId, String(r.plate_normalized ?? ''), circuitCode, r)
-
     if (!isExpectedCircuitTransition(circuitCode, fromCode, toCode)) continue
-    pushLeg({
-      journeyId: operationId,
-      plate: String(r.plate_normalized ?? ''),
-      executiveCircuitCode: circuitCode,
-      fromCode,
-      toCode,
-      durationMinutes: duration,
-    })
-  }
-
-  for (const [operationId, bucket] of timedSegmentsByOperation) {
-    const synthLegs = synthesizeInferredRollupLegsFromTimedSegments({
-      operationId,
-      plate: bucket.plate,
-      executiveCircuitCode: bucket.circuitCode,
-      segments: bucket.segments,
-      externalCaladoAt: bucket.externalCaladoAt,
-      externalSalidaAt: bucket.externalSalidaAt,
-      externalIngresoAt: bucket.externalIngresoAt,
-      platformNormalized: bucket.platformNormalized,
-    })
-    for (const leg of synthLegs) {
-      if (!isExpectedCircuitTransition(leg.executiveCircuitCode, leg.fromCode, leg.toCode)) continue
-      pushLeg(leg)
-    }
+    if (!isValidSegmentDuration(duration, fromCode, toCode)) continue
+    pushOperationLeg(
+      {
+        journeyId: operationId,
+        plate: String(r.plate_normalized ?? ''),
+        executiveCircuitCode: circuitCode,
+        fromCode,
+        toCode,
+        durationMinutes: duration,
+      },
+      'measured'
+    )
   }
 
   return rebuildSegmentTimingIndexFromLegs([...bestByOperationTransition.values()])

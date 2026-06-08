@@ -101,6 +101,11 @@ export const REAL_SECTOR_CODE_MAP: Record<string, RealSectorMappingEntry> = {
     logicalSector: 'S7',
     label: 'Egreso camiones San Lorenzo',
   },
+  PUERTO_SAN_LORENZO_LIQUIDOS_PUNTO_1: {
+    siteId: 'san_lorenzo',
+    logicalSector: 'S10',
+    label: 'Líquidos punto 1 San Lorenzo',
+  },
 }
 
 /** Placeholder alineado con raw cuando aún no hay fila en REAL_SECTOR_CODE_MAP */
