@@ -1047,10 +1047,14 @@ export function TransformEtlTab() {
                             <td className="py-2 pl-2 text-slate-600">
                               {row.code === 'R7' ?
                                 row.variaciones > 0 ?
-                                  'Ruta Ric→SL: variaciones operativas contempladas'
+                                  'Ruta Ric→SL: espera calado / posible rechazo / recalado (cámaras)'
                                 : row.pctCompletos >= 80 ?
                                   'Ruta Ric→SL con matriz lógica OK'
                                 : 'Revisar casos incompletos en panel anomalías'
+                              : row.code === 'R5' || row.code === 'R6' ?
+                                row.variaciones > 0 ?
+                                  'Volcable: espera calado / posible egreso / recalado (cámaras)'
+                                : 'Circuito instrumentado OK'
                               : row.code === 'RS_REC' || row.code === 'RS_DESP' ?
                                 row.pctCompletos >= 80 ?
                                   'Inferido sólido con evidencia → completos'

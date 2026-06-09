@@ -43,8 +43,10 @@ export type OperationalVariationType =
   | 'DESCARGA_O_CARGA_CORRECTIVA'
   | ''
 
-/** Espera en calada Ricardone (alineado con ventana merge 4 h). */
-export const R7_CALADA_ESPERA_MINUTES = 240
+/** Espera en calada Ricardone — umbral operativo comité (6 h). */
+export const CALADA_ESPERA_MINUTES = 360
+/** @deprecated Usar CALADA_ESPERA_MINUTES */
+export const R7_CALADA_ESPERA_MINUTES = CALADA_ESPERA_MINUTES
 /** Repeticiones PREINGRESO < 5 min → ruido Truckflow, no variación. */
 export const R7_PREINGRESO_DUPLICATE_ERROR_MINUTES = 5
 
@@ -127,6 +129,10 @@ function patternsEqual(a: readonly string[], b: readonly string[]): boolean {
   return a.every((v, i) => v === b[i])
 }
 
+const CALADA_TIMING_CIRCUITS = new Set(['R5', 'R6'])
+/** Ricardone inferido / R7: demora en calada sin SL sigue siendo variación aunque Excel confirme destino. */
+const CALADA_TIMING_SL_GUARD_CIRCUITS = new Set(['R7', 'R26', 'R27', ...AMBIGUOUS_INFERRED_CODES])
+
 function hasRecaladoCycle(observed: string[]): boolean {
   for (let i = 0; i < observed.length - 3; i++) {
     if (observed[i] === 'S1' && observed[i + 1] === 'S2' && observed[i + 2] === 'S1' && observed[i + 3] === 'S2') {
@@ -134,6 +140,27 @@ function hasRecaladoCycle(observed: string[]): boolean {
     }
   }
   return false
+}
+
+/** Dos pasadas PREINGRESO → CALADA en secuencia lógica (cámaras Ricardone). */
+export function hasLogicalPreingresoCaladaRecalado(j: ReconstructedRealJourney): boolean {
+  const logical = collapsedLogicalCodes(j)
+  let pairs = 0
+  for (let i = 0; i < logical.length - 1; i++) {
+    if (logical[i] === 'PREINGRESO' && logical[i + 1] === 'CALADA') {
+      pairs++
+      if (pairs >= 2) return true
+    }
+  }
+  return false
+}
+
+export function detectRecaladoFromJourney(
+  j: ReconstructedRealJourney,
+  observedSectors?: string[]
+): boolean {
+  const sectors = observedSectors ?? journeyExecutiveSectorSequence(j)
+  return hasRecaladoCycle(sectors) || hasLogicalPreingresoCaladaRecalado(j)
 }
 
 function hasInternalLoop(observed: string[]): boolean {
@@ -535,31 +562,108 @@ function isCaladaOmittedR7Completo(logical: string[], hasRicEgreso: boolean, slI
   return hasRicRouteEntry(logical) && (hasRicEgreso || slIngreso)
 }
 
+function buildOperationalVariationClassification(
+  base: Omit<CommitteeClassification, 'committee_group' | 'committee_reason' | 'operational_variation_type'>,
+  input: { executive: ExecutiveCircuitDecision },
+  type: OperationalVariationType,
+  reason: string
+): CommitteeClassification {
+  return {
+    ...base,
+    ...emptyAnomalyFields(),
+    committee_group: 'VARIACIONES_OPERATIVAS',
+    committee_reason: reason,
+    operational_variation_type: type,
+    show_as_exact_circuit: false,
+    executive_status: input.executive.executiveStatus === 'ANOMALO' ? 'INCOMPLETO' : input.executive.executiveStatus,
+    executive_reason: reason,
+    matched_sequence_name: 'VARIACION',
+    matched_variation_name: type,
+  }
+}
+
+function buildCaladaTimingVariationClassification(
+  base: Omit<CommitteeClassification, 'committee_group' | 'committee_reason' | 'operational_variation_type'>,
+  input: { executive: ExecutiveCircuitDecision },
+  type: OperationalVariationType,
+  reason: string
+): CommitteeClassification {
+  const variation = buildOperationalVariationClassification(base, input, type, reason)
+  if (type === 'ESPERA_EN_CALADA' || type === 'POSIBLE_RECHAZO') {
+    return { ...variation, executive_status: 'INCOMPLETO', executive_reason: reason }
+  }
+  return variation
+}
+
+function tryCommitteeCaladaTimingVariation(
+  input: {
+    journey: ReconstructedRealJourney
+    executiveCircuitCode: string
+    hasOperationalEntry: boolean
+    hasOperationalExit: boolean
+    executive: ExecutiveCircuitDecision
+    observedSectorSequence?: string[]
+  },
+  base: Omit<CommitteeClassification, 'committee_group' | 'committee_reason' | 'operational_variation_type'>
+): CommitteeClassification | null {
+  const code = input.executiveCircuitCode.trim()
+  const ricSlGuard = CALADA_TIMING_SL_GUARD_CIRCUITS.has(code)
+  if (!CALADA_TIMING_CIRCUITS.has(code) && !ricSlGuard) return null
+  if (!input.hasOperationalEntry) return null
+  if (!collapsedLogicalCodes(input.journey).includes('CALADA')) return null
+  if (ricSlGuard && snapshotSanLorenzoSupport(input.journey).slPointCount > 0) return null
+
+  if (input.hasOperationalExit && detectEsperaDespuesCalada(input.journey)) {
+    return buildCaladaTimingVariationClassification(
+      base,
+      input,
+      'POSIBLE_RECHAZO',
+      'POSIBLE_RECHAZO_CONTEMPLADO'
+    )
+  }
+  if (detectEsperaAntesCalada(input.journey)) {
+    return buildCaladaTimingVariationClassification(
+      base,
+      input,
+      'ESPERA_EN_CALADA',
+      'ESPERA_EN_CALADA_CONTEMPLADA'
+    )
+  }
+  if (
+    input.hasOperationalExit &&
+    detectRecaladoFromJourney(input.journey, input.observedSectorSequence)
+  ) {
+    return buildOperationalVariationClassification(base, input, 'RECALADO', 'RECALADO_CONTEMPLADO')
+  }
+  if (ricSlGuard && detectDoblePreingresoVariation(input.journey)) {
+    return buildOperationalVariationClassification(
+      base,
+      input,
+      'DOBLE_PREINGRESO',
+      'DOBLE_PREINGRESO_CONTEMPLADO'
+    )
+  }
+  return null
+}
+
 function tryCommitteeOperationalVariation(
   input: {
     executiveCircuitConfig: ExecutiveCircuitConfig | null
     hasOperationalEntry: boolean
     hasOperationalExit: boolean
     executive: ExecutiveCircuitDecision
+    journey: ReconstructedRealJourney
   },
   base: Omit<CommitteeClassification, 'committee_group' | 'committee_reason' | 'operational_variation_type'>,
   observedSectors: string[]
 ): CommitteeClassification | null {
   if (!input.hasOperationalEntry || !input.hasOperationalExit) return null
+  if (detectRecaladoFromJourney(input.journey, observedSectors)) {
+    return buildOperationalVariationClassification(base, input, 'RECALADO', 'RECALADO_CONTEMPLADO')
+  }
   const variation = detectOperationalVariation(input.executiveCircuitConfig, observedSectors)
   if (!variation) return null
-  return {
-    ...base,
-    ...emptyAnomalyFields(),
-    committee_group: 'VARIACIONES_OPERATIVAS',
-    committee_reason: variation.reason,
-    operational_variation_type: variation.type,
-    show_as_exact_circuit: false,
-    executive_status: input.executive.executiveStatus === 'ANOMALO' ? 'INCOMPLETO' : input.executive.executiveStatus,
-    executive_reason: variation.reason,
-    matched_sequence_name: 'VARIACION',
-    matched_variation_name: variation.type,
-  }
+  return buildOperationalVariationClassification(base, input, variation.type, variation.reason)
 }
 
 function resolveDeducedEvidence(input: {
@@ -774,6 +878,17 @@ function classifyRicSanLorenzoRoute(
     }
   }
 
+  if (detectRecaladoFromJourney(input.journey)) {
+    return {
+      ...routeBase,
+      committee_group: 'VARIACIONES_OPERATIVAS',
+      committee_reason: 'RECALADO_CONTEMPLADO',
+      operational_variation_type: 'RECALADO',
+      executive_status: 'INCOMPLETO',
+      executive_reason: 'RECALADO_CONTEMPLADO',
+    }
+  }
+
   if (detectDoblePreingresoVariation(input.journey)) {
     return {
       ...routeBase,
@@ -970,6 +1085,19 @@ export function resolveCommitteeClassification(input: {
     frontEventCount: input.frontEventCount,
   })
 
+  const caladaTimingVariation = tryCommitteeCaladaTimingVariation(
+    {
+      journey: input.journey,
+      executiveCircuitCode: executiveCode,
+      hasOperationalEntry: input.hasOperationalEntry,
+      hasOperationalExit: input.hasOperationalExit,
+      executive: input.executive,
+      observedSectorSequence: observedSectors,
+    },
+    base
+  )
+  if (caladaTimingVariation) return caladaTimingVariation
+
   // Volcable / Celda 16 + calada o balanza — prioridad máxima (antes de R7, RS_REC, SIN_PUNTO)
   if (
     journeyMeetsFlexibleInstrumentedDischargeRule(input.journey) &&
@@ -1045,7 +1173,11 @@ export function resolveCommitteeClassification(input: {
   }
 
   // Variación S* contemplada — prioridad sobre COMPLETO/DEDUCIDO si hay cierre operativo
-  const sectorVariation = tryCommitteeOperationalVariation(input, base, observedSectors)
+  const sectorVariation = tryCommitteeOperationalVariation(
+    { ...input, journey: input.journey },
+    base,
+    observedSectors
+  )
   if (sectorVariation) return sectorVariation
 
   // 2. Sin secuencia configurada

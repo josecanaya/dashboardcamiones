@@ -351,13 +351,13 @@ describe('committeeClassification v10', () => {
         matrixFinalStatus: 'COMPLETO',
         logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO'],
         journey: journey({
-          durationMinutes: 300,
+          durationMinutes: 420,
           logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO'],
           events: [
             { deviceCode: 'RicIngCamFte', sectorCode: 'RICARDONE_INGRESO_CAMIONES', occurredAt: '2026-05-12T07:00:00' } as never,
             { deviceCode: 'RicPreIng', sectorCode: 'RICARDONE_PREINGRESO', occurredAt: '2026-05-12T07:30:00' } as never,
             { deviceCode: 'RicCal01', sectorCode: 'RICARDONE_CALADA', occurredAt: '2026-05-12T08:00:00' } as never,
-            { deviceCode: 'RicEgrCamFrente', sectorCode: 'RICARDONE_EGRESO_CAMIONES', occurredAt: '2026-05-12T13:00:00' } as never,
+            { deviceCode: 'RicEgrCamFrente', sectorCode: 'RICARDONE_EGRESO_CAMIONES', occurredAt: '2026-05-12T14:30:00' } as never,
           ],
         }),
         hasOperationalEntry: true,
@@ -380,13 +380,13 @@ describe('committeeClassification v10', () => {
         matrixFinalStatus: 'COMPLETO',
         logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO'],
         journey: journey({
-          durationMinutes: 300,
+          durationMinutes: 390,
           logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO'],
           events: [
             { deviceCode: 'RicIngCamFte', sectorCode: 'RICARDONE_INGRESO_CAMIONES', occurredAt: '2026-05-12T07:00:00' } as never,
             { deviceCode: 'RicPreIng', sectorCode: 'RICARDONE_PREINGRESO', occurredAt: '2026-05-12T07:30:00' } as never,
-            { deviceCode: 'RicCal01', sectorCode: 'RICARDONE_CALADA', occurredAt: '2026-05-12T13:00:00' } as never,
-            { deviceCode: 'RicEgrCamFrente', sectorCode: 'RICARDONE_EGRESO_CAMIONES', occurredAt: '2026-05-12T13:30:00' } as never,
+            { deviceCode: 'RicCal01', sectorCode: 'RICARDONE_CALADA', occurredAt: '2026-05-12T14:00:00' } as never,
+            { deviceCode: 'RicEgrCamFrente', sectorCode: 'RICARDONE_EGRESO_CAMIONES', occurredAt: '2026-05-12T14:30:00' } as never,
           ],
         }),
         hasOperationalEntry: true,
@@ -415,6 +415,125 @@ describe('committeeClassification v10', () => {
     )
     expect(r.committee_group).toBe('COMPLETOS')
     expect(r.committee_reason).toBe('CIRCUITO_DEDUCIDO_CON_EVIDENCIA')
+  })
+
+  it('RS_REC demora pre-calada sin SL => ESPERA_EN_CALADA (antes de deducido por Excel)', () => {
+    const r = resolveCommitteeClassification(
+      baseInput({
+        executiveCircuitCode: 'RS_REC',
+        executiveCircuitConfig: EXECUTIVE_CIRCUIT_MATRIX.RS_REC!,
+        technicalCircuitCode: 'DESPACHO_SIN_PUNTO_INSTRUMENTADO',
+        matrixFinalStatus: 'DEDUCIDO',
+        matchedPoints: 3,
+        expectedPoints: 4,
+        hasStrongPoint: false,
+        journey: journey({
+          durationMinutes: 390,
+          logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO'],
+          events: [
+            { deviceCode: 'RicIngCamFte', sectorCode: 'RICARDONE_INGRESO_CAMIONES', occurredAt: '2026-05-12T07:00:00' } as never,
+            { deviceCode: 'RicPreIng', sectorCode: 'RICARDONE_PREINGRESO', occurredAt: '2026-05-12T07:30:00' } as never,
+            { deviceCode: 'RicCal01', sectorCode: 'RICARDONE_CALADA', occurredAt: '2026-05-12T14:00:00' } as never,
+            { deviceCode: 'RicEgrCamFrente', sectorCode: 'RICARDONE_EGRESO_CAMIONES', occurredAt: '2026-05-12T14:30:00' } as never,
+          ],
+        }),
+        hasOperationalEntry: true,
+        hasOperationalExit: true,
+        frontEventCount: 4,
+        executive: { executiveStatus: 'VALIDO', executiveReason: 'CIRCUITO_DEDUCIDO_VALIDO', validDetail: 'DEDUCIDO' },
+      })
+    )
+    expect(r.committee_group).toBe('VARIACIONES_OPERATIVAS')
+    expect(r.operational_variation_type).toBe('ESPERA_EN_CALADA')
+    expect(r.committee_reason).toBe('ESPERA_EN_CALADA_CONTEMPLADA')
+  })
+
+  it('R5 demora post-calada con egreso => POSIBLE_RECHAZO (antes de regla flex Volcable)', () => {
+    const r = resolveCommitteeClassification(
+      baseInput({
+        executiveCircuitCode: 'R5',
+        matrixFinalStatus: 'COMPLETO',
+        journey: journey({
+          durationMinutes: 420,
+          logicalCodeSequence: [
+            'INGRESO',
+            'PREINGRESO',
+            'CALADA',
+            'BALANZA_INGRESO',
+            'VOLCABLE',
+            'BALANZA_EGRESO',
+            'EGRESO',
+          ],
+          events: [
+            { deviceCode: 'RicIngCamFte', sectorCode: 'RICARDONE_INGRESO_CAMIONES', occurredAt: '2026-05-12T07:00:00' } as never,
+            { deviceCode: 'RicPreIng', sectorCode: 'RICARDONE_PREINGRESO', occurredAt: '2026-05-12T07:30:00' } as never,
+            { deviceCode: 'RicCal01', sectorCode: 'RICARDONE_CALADA', occurredAt: '2026-05-12T08:00:00' } as never,
+            { deviceCode: 'RicVolcable1', sectorCode: 'RICARDONE_VOLCABLE_1', occurredAt: '2026-05-12T09:00:00' } as never,
+            { deviceCode: 'RicEgrCamFrente', sectorCode: 'RICARDONE_EGRESO_CAMIONES', occurredAt: '2026-05-12T15:00:00' } as never,
+          ],
+        }),
+        executive: { executiveStatus: 'VALIDO', executiveReason: 'CIRCUITO_COMPLETO', validDetail: 'COMPLETO' },
+      })
+    )
+    expect(r.committee_group).toBe('VARIACIONES_OPERATIVAS')
+    expect(r.operational_variation_type).toBe('POSIBLE_RECHAZO')
+  })
+
+  it('R5 demora pre-calada => ESPERA_EN_CALADA', () => {
+    const r = resolveCommitteeClassification(
+      baseInput({
+        executiveCircuitCode: 'R5',
+        matrixFinalStatus: 'COMPLETO',
+        journey: journey({
+          durationMinutes: 390,
+          logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO', 'VOLCABLE', 'EGRESO'],
+          events: [
+            { deviceCode: 'RicIngCamFte', sectorCode: 'RICARDONE_INGRESO_CAMIONES', occurredAt: '2026-05-12T07:00:00' } as never,
+            { deviceCode: 'RicPreIng', sectorCode: 'RICARDONE_PREINGRESO', occurredAt: '2026-05-12T07:30:00' } as never,
+            { deviceCode: 'RicCal01', sectorCode: 'RICARDONE_CALADA', occurredAt: '2026-05-12T14:00:00' } as never,
+            { deviceCode: 'RicVolcable1', sectorCode: 'RICARDONE_VOLCABLE_1', occurredAt: '2026-05-12T15:00:00' } as never,
+            { deviceCode: 'RicEgrCamFrente', sectorCode: 'RICARDONE_EGRESO_CAMIONES', occurredAt: '2026-05-12T16:00:00' } as never,
+          ],
+        }),
+        executive: { executiveStatus: 'VALIDO', executiveReason: 'CIRCUITO_COMPLETO', validDetail: 'COMPLETO' },
+      })
+    )
+    expect(r.committee_group).toBe('VARIACIONES_OPERATIVAS')
+    expect(r.operational_variation_type).toBe('ESPERA_EN_CALADA')
+  })
+
+  it('R5 recalado por doble PREINGRESO+CALADA en cámaras => RECALADO', () => {
+    const r = resolveCommitteeClassification(
+      baseInput({
+        executiveCircuitCode: 'R5',
+        matrixFinalStatus: 'COMPLETO',
+        journey: journey({
+          logicalCodeSequence: [
+            'INGRESO',
+            'PREINGRESO',
+            'CALADA',
+            'PREINGRESO',
+            'CALADA',
+            'BALANZA_INGRESO',
+            'VOLCABLE',
+            'EGRESO',
+          ],
+          events: [
+            { deviceCode: 'RicIngCamFte', sectorCode: 'RICARDONE_INGRESO_CAMIONES', occurredAt: '2026-05-12T07:00:00' } as never,
+            { deviceCode: 'RicPreIng', sectorCode: 'RICARDONE_PREINGRESO', occurredAt: '2026-05-12T07:30:00' } as never,
+            { deviceCode: 'RicCal01', sectorCode: 'RICARDONE_CALADA', occurredAt: '2026-05-12T08:00:00' } as never,
+            { deviceCode: 'RicPreIng', sectorCode: 'RICARDONE_PREINGRESO', occurredAt: '2026-05-12T09:00:00' } as never,
+            { deviceCode: 'RicCal02', sectorCode: 'RICARDONE_CALADA', occurredAt: '2026-05-12T09:30:00' } as never,
+            { deviceCode: 'RicVolcable1', sectorCode: 'RICARDONE_VOLCABLE_1', occurredAt: '2026-05-12T10:00:00' } as never,
+            { deviceCode: 'RicEgrCamFrente', sectorCode: 'RICARDONE_EGRESO_CAMIONES', occurredAt: '2026-05-12T11:00:00' } as never,
+          ],
+        }),
+        observedSectorSequence: ['S0', 'S1', 'S2', 'S4', 'S9', 'S10'],
+        executive: { executiveStatus: 'VALIDO', executiveReason: 'CIRCUITO_COMPLETO', validDetail: 'COMPLETO' },
+      })
+    )
+    expect(r.committee_group).toBe('VARIACIONES_OPERATIVAS')
+    expect(r.operational_variation_type).toBe('RECALADO')
   })
 
   it('recalado con matriz COMPLETA => VARIACIONES (prioridad sobre completos)', () => {

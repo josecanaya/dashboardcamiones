@@ -19,6 +19,7 @@ import {
   synthesizeDischargeRollupLegsFromTimedSegments,
   synthesizeTemplateChainLegsFromTimedSegments,
   selectCoherentSegmentGroup,
+  isValidSegmentDuration,
   OPERATIONAL_TRIP_GAP_MAX_MINUTES,
   INFERRED_KPI_ROLLUP_MAX_MINUTES,
   type ClassifiedJourneyForTiming,
@@ -228,6 +229,13 @@ describe('etlSegmentTiming', () => {
     expect(ingresoBalanza!.durationMinutes).toBe(15)
     expect(salidaEgreso).toBeDefined()
     expect(salidaEgreso!.durationMinutes).toBe(5)
+  })
+
+  it('rechaza balanza ingreso→egreso < 10 min (error cámara B1/B2)', () => {
+    expect(isValidSegmentDuration(3, 'BALANZA_INGRESO', 'BALANZA_EGRESO')).toBe(false)
+    expect(isValidSegmentDuration(9.9, 'BALANZA_INGRESO', 'BALANZA_EGRESO')).toBe(false)
+    expect(isValidSegmentDuration(10, 'BALANZA_INGRESO', 'BALANZA_EGRESO')).toBe(true)
+    expect(isValidSegmentDuration(30, 'BALANZA_INGRESO', 'BALANZA_EGRESO')).toBe(true)
   })
 
   it('descarta tramos SL de 3 minutos o menos', () => {

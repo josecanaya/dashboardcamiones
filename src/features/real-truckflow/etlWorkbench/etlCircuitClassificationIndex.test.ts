@@ -218,6 +218,68 @@ describe('promoteExcelMovimientosContrato', () => {
     expect(index.pieSlices.find((s) => s.name === 'ANOMALÍAS')?.value ?? 0).toBe(0)
   })
 
+  it('POSIBLE_RECHAZO no se concilia con Excel aunque exista fila emparejada', () => {
+    const debugCsv = [
+      'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
+      'j-rech,DEF456,ricardone,VARIACIONES_OPERATIVAS,VARIACIONES OPERATIVAS,R7,R7 · Ric→SL,INGRESO>PREINGRESO>CALADA>EGRESO,6,INCOMPLETO,INCOMPLETO,POSIBLE_RECHAZO_CONTEMPLADO,POSIBLE_RECHAZO,POSIBLE_RECHAZO_CONTEMPLADO,,,INCOMPLETO,2026-05-29T08:00:00.000Z,2026-05-29T18:00:00.000Z,',
+    ].join('\n')
+    const excelCsv = [
+      'external_operation_id,matched_journey_uids,plate_normalized,planta_normalized,movement_type,source_date,resolved_product,product_normalized,resolved_platform,platform_normalized,truckflow_circuit_codes,resolved_circuit_family,match_quality,route_quality,evidence_count',
+      'op1,j-rech,DEF456,RICARDONE,INGRESO,2026-05-29,SOJA,SOJA,VOLCABLE_PTO_3,VOLCABLE PTO 3,R7,SAN_LORENZO_VOLCABLE,EXTERNAL_MATCH_EXACT,ROUTE_COMPLETE,1',
+    ].join('\n')
+    const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
+    const row = index.entries.find((e) => e.journeyId === 'j-rech')!
+    expect(row.committeeGroup).toBe('VARIACIONES_OPERATIVAS')
+    expect(row.operationalVariationType).toBe('POSIBLE_RECHAZO')
+    expect(row.executiveCircuitCode).toBe('R7')
+    expect(row.committeeReason).toBe('POSIBLE_RECHAZO_CONTEMPLADO')
+    expect(index.excelFirstReconciledCount).toBe(0)
+  })
+
+  it('RS_REC con demora en calada concilia a R7 pero mantiene variación operativa', () => {
+    const debugCsv = [
+      'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
+      'j-rs,EQV925,ricardone,VARIACIONES_OPERATIVAS,VARIACIONES OPERATIVAS,RS_REC,Recepción sólida inferida,INGRESO>PREINGRESO>CALADA>EGRESO,6,DEDUCIDO,INCOMPLETO,ESPERA_EN_CALADA_CONTEMPLADA,ESPERA_EN_CALADA,ESPERA_EN_CALADA_CONTEMPLADA,,DEDUCIDO,DEDUCIDO,2026-05-29T07:00:00.000Z,2026-05-29T18:00:00.000Z,',
+    ].join('\n')
+    const excelCsv = [
+      'external_operation_id,matched_journey_uids,plate_normalized,planta_normalized,movement_type,source_date,resolved_product,product_normalized,resolved_platform,platform_normalized,truckflow_circuit_codes,resolved_circuit_family,match_quality,route_quality,evidence_count',
+      'op1,j-rs,EQV925,RICARDONE,INGRESO,2026-05-29,SOJA,SOJA,VOLCABLE_PTO_3,VOLCABLE PTO 3,RS_REC,SAN_LORENZO_VOLCABLE,EXTERNAL_MATCH_EXACT,ROUTE_COMPLETE,1',
+    ].join('\n')
+    const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
+    const row = index.entries.find((e) => e.journeyId === 'j-rs')!
+    expect(row.executiveCircuitCode).toBe('R7')
+    expect(row.committeeGroup).toBe('VARIACIONES_OPERATIVAS')
+    expect(row.operationalVariationType).toBe('ESPERA_EN_CALADA')
+    expect(buildCommitteeCircuitCrossTab(index.entries).find((r) => r.code === 'R7')?.variaciones).toBe(1)
+  })
+
+  it('preserva variaciones de calado por cámara al conciliar Excel-first', () => {
+    const debugCsv = [
+      'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
+      'j-wait,ABC123,ricardone,VARIACIONES_OPERATIVAS,VARIACIONES OPERATIVAS,R7,R7 · Ric→SL,INGRESO>PREINGRESO>CALADA>EGRESO,6,INCOMPLETO,INCOMPLETO,ESPERA_EN_CALADA_CONTEMPLADA,ESPERA_EN_CALADA,ESPERA_EN_CALADA_CONTEMPLADA,,,INCOMPLETO,2026-05-29T08:00:00.000Z,2026-05-29T18:00:00.000Z,',
+      'j-rech,DEF456,ricardone,VARIACIONES_OPERATIVAS,VARIACIONES OPERATIVAS,R5,R5 · Volcable,INGRESO>PREINGRESO>CALADA>EGRESO,6,INCOMPLETO,INCOMPLETO,POSIBLE_RECHAZO_CONTEMPLADO,POSIBLE_RECHAZO,POSIBLE_RECHAZO_CONTEMPLADO,,,INCOMPLETO,2026-05-29T08:00:00.000Z,2026-05-29T18:00:00.000Z,',
+    ].join('\n')
+    const excelCsv = [
+      'external_operation_id,matched_journey_uids,plate_normalized,planta_normalized,movement_type,source_date,resolved_product,product_normalized,resolved_platform,platform_normalized,truckflow_circuit_codes,resolved_circuit_family,match_quality,route_quality,evidence_count',
+      'op1,j-wait,ABC123,RICARDONE,INGRESO,2026-05-29,SOJA,SOJA,VOLCABLE_PTO_3,VOLCABLE PTO 3,R7,SAN_LORENZO_VOLCABLE,EXTERNAL_MATCH_EXACT,ROUTE_COMPLETE,1',
+      'op2,j-rech,DEF456,RICARDONE,INGRESO,2026-05-29,MAIZ,MAIZ,VOLCABLE_1,VOLCABLE_1,R5,VOLCABLE,EXTERNAL_MATCH_EXACT,ROUTE_COMPLETE,1',
+    ].join('\n')
+    const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
+    const wait = index.entries.find((e) => e.journeyId === 'j-wait')!
+    const rech = index.entries.find((e) => e.journeyId === 'j-rech')!
+    expect(wait.committeeGroup).toBe('VARIACIONES_OPERATIVAS')
+    expect(wait.operationalVariationType).toBe('ESPERA_EN_CALADA')
+    expect(wait.executiveCircuitCode).toBe('R7')
+    expect(rech.committeeGroup).toBe('VARIACIONES_OPERATIVAS')
+    expect(rech.operationalVariationType).toBe('POSIBLE_RECHAZO')
+    expect(rech.executiveCircuitCode).toBe('R5')
+    expect(rech.committeeReason).toBe('POSIBLE_RECHAZO_CONTEMPLADO')
+    expect(rech.committeeReason).not.toContain('EXCEL_PLATAFORMA')
+    const cross = buildCommitteeCircuitCrossTab(index.entries)
+    expect(cross.find((r) => r.code === 'R7')?.variaciones).toBe(1)
+    expect(cross.find((r) => r.code === 'R5')?.variaciones).toBe(1)
+  })
+
   it('concilia con excel_operations_with_truckflow en gráficos comité', () => {
     const debugCsv = [
       'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',

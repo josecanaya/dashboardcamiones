@@ -36,6 +36,9 @@ export const BALANZA_STAY_ROLLUP_TRANSITION = {
 
 const CIRCUITS_WITH_BALANZA_STAY_ROLLUP = new Set(['R1', 'R5', 'R6'])
 
+/** Balanza ingreso→egreso Ricardone: < 10 min = lecturas B1/B2 casi simultáneas (error cámara/OCR). */
+export const BALANZA_STAY_MIN_MINUTES = 10
+
 /** Template KPI recepción Ricardone sin punto intermedio de plataforma. */
 export const RECEPTION_BALANZA_KPI_CHAIN = [
   'INGRESO',
@@ -625,12 +628,27 @@ function isSlKpiTransition(fromCode?: string, toCode?: string): boolean {
   )
 }
 
+function isBalanzaStayKpiTransition(fromCode?: string, toCode?: string): boolean {
+  return (
+    fromCode === BALANZA_STAY_ROLLUP_TRANSITION.from &&
+    toCode === BALANZA_STAY_ROLLUP_TRANSITION.to
+  )
+}
+
 export function isValidSegmentDuration(
   minutes: number,
   fromCode?: string,
   toCode?: string
 ): boolean {
   if (!Number.isFinite(minutes) || minutes <= 0) return false
+  if (
+    fromCode &&
+    toCode &&
+    isBalanzaStayKpiTransition(fromCode, toCode) &&
+    minutes < BALANZA_STAY_MIN_MINUTES
+  ) {
+    return false
+  }
   if (
     fromCode &&
     toCode &&

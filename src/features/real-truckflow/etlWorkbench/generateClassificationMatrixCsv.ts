@@ -240,7 +240,7 @@ export function classifyLogicalSequence(logicalSequence: string[]): Classificati
   const slIngreso = journeyHasSlIngresoEvidence(journey)
   const hasCalada = logicalSequence.includes('CALADA')
   const hasEgresoRic = logicalSequence.includes('EGRESO')
-  let notas = 'Demoras R7 (ESPERA_EN_CALADA / POSIBLE_RECHAZO) dependen de gaps ≥4 h; aquí 30 min entre eventos.'
+  let notas = 'Demoras R5/R7 (ESPERA_EN_CALADA / POSIBLE_RECHAZO) dependen de gaps ≥6 h; aquí 30 min entre eventos.'
   if (prelim.isDiscardedOperational) notas = `Descartado operativo: ${prelim.preliminaryCircuitCode}. ${notas}`
   if (ricSlEvidence && !hasEgresoRic && hasCalada && slIngreso) {
     notas = `Ruta Ric→SL cerrada por SL_INGRESO sin egreso Ricardone. ${notas}`

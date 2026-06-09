@@ -262,6 +262,19 @@ describe('findTruckflowEvidenceForExcelOperation', () => {
     const ev = findEvidence(mov({}), [])
     expect(ev.match_quality).toBe('NO_TRUCKFLOW_EVIDENCE')
   })
+
+  it('POSIBLE_RECHAZO no se empareja con Excel (rechazo sin movimiento contrato)', () => {
+    const ev = findEvidence(mov({}), [
+      journey({
+        committee_reason: 'POSIBLE_RECHAZO_CONTEMPLADO',
+        matched_variation_name: 'POSIBLE_RECHAZO',
+        executive_status: 'INCOMPLETO',
+        valid_detail: '',
+      }),
+    ])
+    expect(ev.evidence_count).toBe(0)
+    expect(ev.match_quality).toBe('NO_TRUCKFLOW_EVIDENCE')
+  })
 })
 
 describe('mergeExcelOperationsWithTruckflowEvidence', () => {

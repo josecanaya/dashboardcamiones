@@ -8,6 +8,49 @@ import {
   formatExecutiveCircuitLabel,
 } from './finalCircuitScoring'
 
+/** Variaciones por cámaras que persisten si Excel confirma producto/plataforma. */
+export const CAMERA_PRESERVED_OPERATIONAL_VARIATIONS = new Set([
+  'ESPERA_EN_CALADA',
+  'RECALADO',
+  'DOBLE_PREINGRESO',
+])
+
+/** Rechazos: no figuran en Excel → no se concilian ni promueven por movimientos contrato. */
+export const EXCEL_RECONCILIATION_EXCLUDED_VARIATIONS = new Set(['POSIBLE_RECHAZO', 'RECHAZO_OPERATIVO'])
+
+function operationalVariationFromCommitteeReason(reason: string): string {
+  const u = String(reason ?? '').toUpperCase()
+  if (u.includes('ESPERA_EN_CALADA')) return 'ESPERA_EN_CALADA'
+  if (u.includes('POSIBLE_RECHAZO')) return 'POSIBLE_RECHAZO'
+  if (u.includes('RECHAZO_OPERATIVO')) return 'RECHAZO_OPERATIVO'
+  if (u.includes('DOBLE_PREINGRESO')) return 'DOBLE_PREINGRESO'
+  if (u.includes('RECALADO')) return 'RECALADO'
+  return ''
+}
+
+function resolveCameraVariationType(entry: CircuitClassificationEntry): string {
+  const direct = String(entry.operationalVariationType ?? '').trim()
+  if (direct) return direct
+  return operationalVariationFromCommitteeReason(entry.committeeReason)
+}
+
+export function isExcelReconciliationExcludedVariation(variation: string): boolean {
+  return EXCEL_RECONCILIATION_EXCLUDED_VARIATIONS.has(String(variation ?? '').trim())
+}
+
+/** POSIBLE_RECHAZO / RECHAZO_OPERATIVO: solo Truckflow, sin cruce Excel. */
+export function isExcelReconciliationExcludedEntry(entry: CircuitClassificationEntry): boolean {
+  return isExcelReconciliationExcludedVariation(resolveCameraVariationType(entry))
+}
+
+/** Demoras por cámaras que persisten aunque Excel confirme destino (no aplica a rechazos). */
+export function resolvePreservedCameraVariation(entry: CircuitClassificationEntry): string {
+  const variation = resolveCameraVariationType(entry)
+  if (!variation || isExcelReconciliationExcludedVariation(variation)) return ''
+  if (!CAMERA_PRESERVED_OPERATIONAL_VARIATIONS.has(variation)) return ''
+  return variation
+}
+
 export const CIRCUIT_PIE_COLORS = [
   '#059669',
   '#0ea5e9',
@@ -586,9 +629,18 @@ function pickExecutiveCircuitFromExcelFirst(lite: ExcelFirstReconcileLite): stri
 }
 
 function committeeGroupFromExcelFirst(
-  _entry: CircuitClassificationEntry,
+  entry: CircuitClassificationEntry,
   lite: ExcelFirstReconcileLite
 ): { committeeGroup: string; pieSliceLabel: string; operationalVariationType: string } {
+  const cameraVariation = resolvePreservedCameraVariation(entry)
+  if (cameraVariation) {
+    return {
+      committeeGroup: 'VARIACIONES_OPERATIVAS',
+      pieSliceLabel: 'VARIACIONES OPERATIVAS',
+      operationalVariationType: cameraVariation,
+    }
+  }
+
   const hasExcelDestino = Boolean(lite.product_normalized && lite.platform_normalized)
 
   if (!hasExcelDestino) {
@@ -721,6 +773,7 @@ function reconcileEntryFromExcelFirst(
   const cfg = EXECUTIVE_CIRCUIT_MATRIX[code as keyof typeof EXECUTIVE_CIRCUIT_MATRIX]
   const label = cfg?.label || code
   const group = committeeGroupFromExcelFirst(entry, lite)
+  const preservedCameraVariation = Boolean(resolvePreservedCameraVariation(entry))
   return {
     ...entry,
     ...group,
@@ -728,10 +781,14 @@ function reconcileEntryFromExcelFirst(
     executiveCircuitLabel: label,
     executiveCircuitDisplay: formatExecutiveCircuitLabel(code, label),
     matchedCircuitCode: code,
-    committeeReason: `EXCEL_PLATAFORMA:${lite.product_normalized}@${lite.platform_normalized}:${lite.match_quality}`,
+    committeeReason:
+      preservedCameraVariation ?
+        entry.committeeReason || `CAMARA_VARIACION:${entry.operationalVariationType}`
+      : `EXCEL_PLATAFORMA:${lite.product_normalized}@${lite.platform_normalized}:${lite.match_quality}`,
     executiveStatus: group.committeeGroup === 'COMPLETOS' ? 'VALIDO' : entry.executiveStatus,
-    executiveReason: 'EXCEL_PLATAFORMA_RECONCILED',
-    validDetail: 'DEDUCIDO',
+    executiveReason:
+      preservedCameraVariation ? entry.executiveReason || entry.committeeReason : 'EXCEL_PLATAFORMA_RECONCILED',
+    validDetail: preservedCameraVariation ? entry.validDetail || 'VARIACION_OPERATIVA' : 'DEDUCIDO',
     executiveBucket: group.committeeGroup === 'COMPLETOS' ? 'VALIDO' : entry.executiveBucket,
   }
 }
@@ -758,6 +815,7 @@ export function applyExcelFirstReconciliation(
   let reconciledCount = 0
   let promotedCount = 0
   const out = entries.map((entry) => {
+    if (isExcelReconciliationExcludedEntry(entry)) return entry
     const lite = resolveExcelFirstLiteForEntry(entry, byJourney, byPlate)
     if (!lite) return entry
     const wasAnomaly = entry.committeeGroup === 'ANOMALIAS'

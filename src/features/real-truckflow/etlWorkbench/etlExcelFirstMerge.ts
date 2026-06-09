@@ -524,10 +524,39 @@ export function resolveOperationalContextFromExcel(
   }
 }
 
+function committeeReasonImpliesOperationalVariation(committee: string, matchedVariation: string): boolean {
+  const markers = [
+    'ESPERA_EN_CALADA',
+    'POSIBLE_RECHAZO',
+    'DOBLE_PREINGRESO',
+    'RECALADO_CONTEMPLADO',
+    'RECALADO',
+  ]
+  const haystack = `${committee} ${matchedVariation}`.toUpperCase()
+  return markers.some((m) => haystack.includes(m))
+}
+
+/** Rechazos operativos: no se emparejan con filas Excel (no hay movimiento de descarga). */
+export function isPossibleRejectionTruckflowJourney(journey: TruckflowJourneyForMerge): boolean {
+  const committee = String(journey.committee_reason ?? '').toUpperCase()
+  const variation = String(journey.matched_variation_name ?? '').toUpperCase()
+  return (
+    committee.includes('POSIBLE_RECHAZO') ||
+    committee.includes('RECHAZO_OPERATIVO') ||
+    variation.includes('POSIBLE_RECHAZO') ||
+    variation.includes('RECHAZO_OPERATIVO')
+  )
+}
+
+function withoutPossibleRejectionJourneys(journeys: TruckflowJourneyForMerge[]): TruckflowJourneyForMerge[] {
+  return journeys.filter((j) => !isPossibleRejectionTruckflowJourney(j))
+}
+
 export function deriveRouteQualityForJourney(journey: TruckflowJourneyForMerge): RouteQuality {
   const exec = (journey.executive_status ?? '').toUpperCase()
   const valid = (journey.valid_detail ?? '').toUpperCase()
   const committee = (journey.committee_reason ?? '').toUpperCase()
+  const matchedVariation = (journey.matched_variation_name ?? '').toUpperCase()
   const circuit = (journey.circuit_code ?? '').toUpperCase()
 
   if (
@@ -541,6 +570,9 @@ export function deriveRouteQualityForJourney(journey: TruckflowJourneyForMerge):
   if (exec === 'NO_EVALUABLE') return 'ROUTE_NO_EVALUABLE'
   if (exec === 'NO_DIFERENCIABLE') return 'ROUTE_NO_DISCHARGE_POINT'
   if (exec === 'ANOMALO') return 'ROUTE_ANOMALOUS'
+  if (committeeReasonImpliesOperationalVariation(committee, matchedVariation)) {
+    return 'ROUTE_OPERATIONAL_VARIATION'
+  }
   if (exec === 'INCOMPLETO') return 'ROUTE_INCOMPLETE'
   if (valid.includes('VARIACION_OPERATIVA') || valid.includes('VARIACION')) {
     return 'ROUTE_OPERATIONAL_VARIATION'
@@ -1028,9 +1060,12 @@ export function findTruckflowEvidenceForExcelOperation(
     matched: TruckflowJourneyForMerge[]
   } => {
     const exactPool = plateIndex.byExactPlate.get(plateM) ?? []
-    const exact = filterJourneysInWindow(exactPool, window, mov)
+    const exact = withoutPossibleRejectionJourneys(filterJourneysInWindow(exactPool, window, mov))
     const fuzzyPool = exact.length ? [] : collectFuzzyCandidates(plateM, plateIndex.all, narrowOpts.plateOcrThreshold)
-    const fuzzy = exact.length ? [] : filterJourneysInWindow(fuzzyPool, window, mov)
+    const fuzzy =
+      exact.length ?
+        []
+      : withoutPossibleRejectionJourneys(filterJourneysInWindow(fuzzyPool, window, mov))
     const matched = exact.length ? exact : fuzzy
     return { exact, fuzzy, matched }
   }

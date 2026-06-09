@@ -225,7 +225,8 @@ export function KpiTiemposTab() {
                 <span className="mt-1 block text-xs text-violet-700">
                   Recepción Ricardone: un solo tramo <strong>balanza ingreso → balanza egreso</strong> (estadía
                   completa). El destino de descarga (Celda 16 / Volcable 1-2) viene del Excel; no se usa la cámara de
-                  plataforma en el medio.
+                  plataforma en el medio. Tramos &lt; 10 min se descartan (lecturas B1/B2 casi simultáneas = error de
+                  cámara).
                 </span>
               )}
               {(circuitFilter === 'R1' ||
