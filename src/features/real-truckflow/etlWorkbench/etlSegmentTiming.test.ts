@@ -172,7 +172,7 @@ describe('etlSegmentTiming', () => {
     expect(rollup!.toCode).toBe('SL_BALANZA_SALIDA')
   })
 
-  it('rollup balanza ingreso SL usa egreso si no hay balanza salida', () => {
+  it('rollup balanza SL no usa egreso S7 como fin de estadía balanza', () => {
     const j = journey({
       journeyUid: 'j-sl-fallback',
       events: [
@@ -182,11 +182,10 @@ describe('etlSegmentTiming', () => {
       ],
     })
     const rollup = extractSlBalancaRollupLeg(j, 'R7')
-    expect(rollup).not.toBeNull()
-    expect(rollup!.durationMinutes).toBe(90)
+    expect(rollup).toBeNull()
   })
 
-  it('extractSegmentLegsWithTimes exporta rollup ingreso→egreso sin S5', () => {
+  it('extractSegmentLegsWithTimes no arma rollup balanza con solo S1 y egreso S7', () => {
     const j = journey({
       journeyUid: 'j-sl-export',
       events: [
@@ -198,8 +197,7 @@ describe('etlSegmentTiming', () => {
     const rollup = legs.find(
       (l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_BALANZA_SALIDA'
     )
-    expect(rollup).toBeDefined()
-    expect(rollup!.durationMinutes).toBe(90)
+    expect(rollup).toBeUndefined()
   })
 
   it('buildSegmentTimingIndexFromExcelFirstSegments deduce cadena SL 4 cámaras con salida Excel', () => {

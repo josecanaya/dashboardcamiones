@@ -121,7 +121,7 @@ export function EstadiaHistogramWithRefs({
                 x1={indicadoresForma.rangoCentralMin}
                 x2={indicadoresForma.rangoCentralMax}
                 fill="#0ea5e9"
-                fillOpacity={0.12}
+                fillOpacity={0.35}
               />
               <ReferenceLine
                 x={indicadoresForma.rangoCentralMin}

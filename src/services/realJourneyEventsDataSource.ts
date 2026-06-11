@@ -1,3 +1,7 @@
+/**
+ * Capa: extract — orígenes API/archivo y URLs de listado.
+ * No clasifica circuitos. import.meta + yieldToBrowser en parseo largo.
+ */
 import type { ApiRealJourneyEventRow, RealJourneyEventDto } from './realJourneyEvents.types'
 import { annotateRealJourneyEventsWithPlateFields, annotateRealJourneyEventsWithPlateFieldsChunked } from './realJourneyEventPlate'
 import { fetchJourneyEvents } from './realTruckflowApi'

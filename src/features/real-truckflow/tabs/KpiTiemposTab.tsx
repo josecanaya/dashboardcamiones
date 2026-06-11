@@ -12,14 +12,18 @@ import {
 } from '../etlWorkbench/etlSegmentTiming'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
 import {
-  journeyIdsForProduct,
   resolveAnalysisProductLookup,
   PRODUCT_FILTER_ALL,
+  productMatchesExecutiveSampleFilter,
+  journeyIdsForProduct,
 } from '../etlWorkbench/etlProductFilter'
 import { ProductFilterSelect } from '../components/ProductFilterSelect'
 import { exportChartAsPng, safeExportFilename } from '../../../utils/chartExport'
 import { histogramWithKde } from '../../../utils/stats'
 import { SegmentTimingChartPanel } from './SegmentTimingChartPanel'
+import { SegmentOccupancyChartPanel } from './SegmentOccupancyChartPanel'
+import { parseSegmentScatterByDayCsv } from '../etlWorkbench/etlSegmentScatterByDay'
+import { legsForAggregate } from '../etlWorkbench/etlSegmentSlowTail'
 
 function fmtMin(v: number): string {
   return v.toFixed(1)
@@ -33,7 +37,8 @@ function buildChartDataForAggregate(agg: SegmentTimingAggregate) {
 export function KpiTiemposTab() {
   const wb = useEtlWorkbenchOptional()
   const tr = wb?.transformResult
-  const segmentTimingRaw = tr?.stats.segmentTiming
+  const kpiBuilt = wb?.kpiTiemposBuilt ?? tr?.stats.kpiTiemposBuilt ?? false
+  const segmentTimingRaw = kpiBuilt ? tr?.stats.segmentTiming : null
 
   const productLookup = useMemo(
     () => resolveAnalysisProductLookup(tr?.csv),
@@ -72,6 +77,18 @@ export function KpiTiemposTab() {
 
   const [circuitFilter, setCircuitFilter] = useState('')
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
+  const [chartView, setChartView] = useState<'tiempos' | 'ocupacion'>('tiempos')
+
+  const scatterByDayAll = useMemo(
+    () => parseSegmentScatterByDayCsv(tr?.csv.segment_scatter_by_day),
+    [tr?.csv.segment_scatter_by_day]
+  )
+
+  const periodFechas = useMemo(() => {
+    const fromDisk = [...(wb?.loadSummary?.daysDetected ?? [])]
+    const fromScatter = scatterByDayAll.map((r) => r.fecha_tramo).filter(Boolean)
+    return [...new Set([...fromDisk, ...fromScatter])].sort()
+  }, [wb?.loadSummary?.daysDetected, scatterByDayAll])
 
   useEffect(() => {
     if (!circuitFilter && circuitOptions[0]?.id) {
@@ -100,6 +117,28 @@ export function KpiTiemposTab() {
     }
     return aggregatesWithData[0] ?? null
   }, [aggregatesWithData, selectedKey])
+
+  const scatterByDayForTramo = useCallback(
+    (tramoLabel: string) => {
+      if (!circuitFilter) return []
+      let rows = scatterByDayAll.filter(
+        (r) => r.circuito === circuitFilter && r.tramo_operativo === tramoLabel
+      )
+      if (productFilter !== PRODUCT_FILTER_ALL) {
+        rows = rows.filter((r) => productMatchesExecutiveSampleFilter(r.producto, productFilter))
+      }
+      return rows
+    },
+    [scatterByDayAll, circuitFilter, productFilter]
+  )
+
+  const legsForTramo = useCallback(
+    (agg: SegmentTimingAggregate) => {
+      if (!segmentTiming) return []
+      return legsForAggregate(segmentTiming, circuitFilter, agg.fromCode, agg.toCode)
+    },
+    [segmentTiming, circuitFilter]
+  )
 
   const exportCircuitRecorrido = useCallback(async () => {
     if (!aggregatesWithData.length || exportBusy || !circuitExportRef.current) return
@@ -150,9 +189,8 @@ export function KpiTiemposTab() {
           <div>
             <h2 className="text-lg font-bold text-slate-900">KPI tiempos por circuito y tramo</h2>
             <p className="mt-2 max-w-3xl text-sm text-slate-600">
-              Tiempos reales entre tramos operativos. Con Movimientos por Contrato cargados, la fuente es el merge{' '}
-              <strong>Excel-first</strong> (operaciones Excel con evidencia Truckflow). Sin XLSX, se usa la
-              clasificación Truckflow COMPLETOS.
+              Tramo 4 del flujo: después del Transform, procesá acá los tiempos y la dispersión. Con XLSX cargados,
+              la fuente es <strong>Excel-first</strong>; sin XLSX, Truckflow COMPLETOS.
             </p>
             <p className="mt-2 font-mono text-xs text-slate-500">
               Período: {periodLabel} · Reglas: {tr?.rulesVersion ?? '—'} · Fuente: {analysisSourceLabel}
@@ -163,23 +201,82 @@ export function KpiTiemposTab() {
               · Unidad: minutos
             </p>
           </div>
-          <button
-            type="button"
-            disabled={!tr?.csv.segment_timing_kpi}
-            onClick={() => {
-              const csv = tr?.csv.segment_timing_kpi
-              if (csv) triggerBrowserCsvDownload('segment_timing_kpi.csv', csv)
-            }}
-            className="rounded-xl border border-violet-300 bg-white px-4 py-2 text-sm font-semibold text-violet-800 shadow-sm transition hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Export CSV KPI
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              disabled={!tr || wb?.transformBusy || wb?.kpiTiemposBusy}
+              onClick={() => void wb?.runKpiTiempos()}
+              className="rounded-xl bg-violet-700 px-5 py-2 text-sm font-bold uppercase tracking-wide text-white shadow-sm transition hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {wb?.kpiTiemposBusy ?
+                'Procesando KPI tiempos…'
+              : kpiBuilt ?
+                'Reprocesar KPI tiempos'
+              : 'Procesar KPI tiempos (tramo 4)'}
+            </button>
+            <button
+              type="button"
+              disabled={!tr?.csv.segment_timing_kpi}
+              onClick={() => {
+                const csv = tr?.csv.segment_timing_kpi
+                if (csv) triggerBrowserCsvDownload('segment_timing_kpi.csv', csv)
+              }}
+              className="rounded-xl border border-violet-300 bg-white px-4 py-2 text-sm font-semibold text-violet-800 shadow-sm transition hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Export CSV KPI
+            </button>
+            <button
+              type="button"
+              disabled={!tr?.csv.segment_scatter_by_day}
+              onClick={() => {
+                const csv = tr?.csv.segment_scatter_by_day
+                if (csv) triggerBrowserCsvDownload('segment_scatter_by_day.csv', csv)
+              }}
+              className="rounded-xl border border-violet-300 bg-white px-4 py-2 text-sm font-semibold text-violet-800 shadow-sm transition hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Export Power BI (dispersión día)
+            </button>
+            <button
+              type="button"
+              disabled={!tr?.csv.sector_occupancy_30min}
+              onClick={() => {
+                const csv = tr?.csv.sector_occupancy_30min
+                if (csv) triggerBrowserCsvDownload('sector_occupancy_30min.csv', csv)
+              }}
+              className="rounded-xl border border-violet-300 bg-white px-4 py-2 text-sm font-semibold text-violet-800 shadow-sm transition hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Export Power BI (ocupación 30 min)
+            </button>
+            <button
+              type="button"
+              disabled={!tr?.csv.sector_occupancy_events}
+              onClick={() => {
+                const csv = tr?.csv.sector_occupancy_events
+                if (csv) triggerBrowserCsvDownload('sector_occupancy_events.csv', csv)
+              }}
+              className="rounded-xl border border-violet-300 bg-white px-4 py-2 text-sm font-semibold text-violet-800 shadow-sm transition hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Export eventos ocupación
+            </button>
+          </div>
         </div>
       </div>
 
-      {!segmentTiming ?
+      {wb?.kpiTiemposError ?
+        <p className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-4 text-sm text-rose-900">
+          {wb.kpiTiemposError}
+        </p>
+      : null}
+
+      {!tr ?
         <p className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-700">
           Sin transform. Andá a <strong>Análisis local</strong> → Cargar período → <strong>Procesar Transform</strong>.
+        </p>
+      : !kpiBuilt ?
+        <p className="rounded-xl border border-violet-200 bg-violet-50 px-4 py-4 text-sm text-violet-950">
+          Transform listo. Los KPI de tiempos y dispersión <strong>no se calculan solos</strong>: usá{' '}
+          <strong>Procesar KPI tiempos (tramo 4)</strong> arriba. Así el Transform termina antes y esta pestaña
+          solo trabaja cuando la abrís.
         </p>
       : circuitOptions.length === 0 ?
         <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-950">
@@ -188,6 +285,29 @@ export function KpiTiemposTab() {
       : (
         <>
           <div className="flex flex-wrap items-end gap-4">
+            <div className="flex flex-col gap-1 text-sm">
+              <span className="font-semibold text-slate-700">Vista gráficos</span>
+              <div className="inline-flex rounded-xl border border-slate-300 bg-slate-50 p-0.5">
+                <button
+                  type="button"
+                  onClick={() => setChartView('tiempos')}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
+                    chartView === 'tiempos' ? 'bg-white text-violet-900 shadow-sm' : 'text-slate-600'
+                  }`}
+                >
+                  Tiempos (dispersión)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setChartView('ocupacion')}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
+                    chartView === 'ocupacion' ? 'bg-white text-violet-900 shadow-sm' : 'text-slate-600'
+                  }`}
+                >
+                  Ocupación sector (30 min)
+                </button>
+              </div>
+            </div>
             <ProductFilterSelect lookup={productLookup} value={productFilter} onChange={setProductFilter} />
             <label className="flex flex-col gap-1 text-sm">
               <span className="font-semibold text-slate-700">Circuito ejecutivo</span>
@@ -297,7 +417,12 @@ export function KpiTiemposTab() {
                       className={`border-b border-slate-100 transition ${
                         hasData ? 'cursor-pointer hover:bg-slate-50' : 'text-slate-400'
                       } ${active ? 'bg-violet-50' : ''}`}
-                      onClick={() => hasData && setSelectedKey(row.transitionKey)}
+                      onClick={() => {
+                        if (!hasData) return
+                        setSelectedKey(row.transitionKey)
+                        const id = `kpi-tramo-${row.transitionKey.replace(/→/g, '-')}`
+                        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                      }}
                     >
                       <td className="px-4 py-2.5 font-medium">{row.label}</td>
                       <td className="px-4 py-2.5 text-right tabular-nums">{row.stats.count || '—'}</td>
@@ -332,16 +457,39 @@ export function KpiTiemposTab() {
             </p>
           : (
             <>
-              {selectedAggregate ?
-                <SegmentTimingChartPanel
-                  title={selectedAggregate.label}
-                  circuitCode={circuitFilter}
-                  periodLabel={periodLabel}
-                  stats={selectedAggregate.stats}
-                  durationsMinutes={selectedAggregate.durationsMinutes}
-                  chartData={buildChartDataForAggregate(selectedAggregate)}
-                />
-              : null}
+              <div className="space-y-8">
+                {aggregatesWithData.map((agg) => (
+                  <div
+                    key={agg.transitionKey}
+                    id={`kpi-tramo-${agg.transitionKey.replace(/→/g, '-')}`}
+                    className={
+                      selectedAggregate?.transitionKey === agg.transitionKey ?
+                        'ring-2 ring-violet-300 ring-offset-2 rounded-2xl'
+                      : ''
+                    }
+                  >
+                    {chartView === 'ocupacion' ?
+                      <SegmentOccupancyChartPanel
+                        title={agg.label}
+                        circuitCode={circuitFilter}
+                        periodLabel={periodLabel}
+                        scatterRows={scatterByDayForTramo(agg.label)}
+                        periodFechas={periodFechas}
+                      />
+                    : <SegmentTimingChartPanel
+                        title={agg.label}
+                        circuitCode={circuitFilter}
+                        periodLabel={periodLabel}
+                        stats={agg.stats}
+                        durationsMinutes={agg.durationsMinutes}
+                        chartData={buildChartDataForAggregate(agg)}
+                        scatterByDayRows={scatterByDayForTramo(agg.label)}
+                        segmentLegs={legsForTramo(agg)}
+                      />
+                    }
+                  </div>
+                ))}
+              </div>
 
               <div
                 ref={circuitExportRef}
@@ -411,6 +559,8 @@ export function KpiTiemposTab() {
                     stats={agg.stats}
                     durationsMinutes={agg.durationsMinutes}
                     chartData={buildChartDataForAggregate(agg)}
+                    scatterByDayRows={scatterByDayForTramo(agg.label)}
+                    segmentLegs={legsForTramo(agg)}
                   />
                 ))}
               </div>

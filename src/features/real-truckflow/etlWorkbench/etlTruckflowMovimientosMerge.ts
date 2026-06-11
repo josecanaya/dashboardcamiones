@@ -1,3 +1,6 @@
+/**
+ * @deprecated Para imports nuevos usar `contractTruckflowMerge` en truckflowTransform/contractFirst.
+ */
 import type { ExternalMovimientoContratoNormalized } from './etlExternalMovimientosContrato'
 import { normalizePlate } from './etlExternalNormalization'
 import {

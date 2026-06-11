@@ -1,3 +1,6 @@
+/**
+ * Capa: diagnóstico — secuencias lógicas faltantes en journeys.
+ */
 import type { ReconstructedRealJourney } from './realJourneyEvents.types'
 
 const TRACKED_LOGICAL = [

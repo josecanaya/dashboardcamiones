@@ -1,3 +1,6 @@
+/**
+ * Capa: diagnóstico — auditoría patentes y ventanas SL↔RIC (parámetro windowMs ≠ DOM).
+ */
 import { isValidArgentinaPlate, normalizePlate } from './argentinaPlate'
 import { getEventOperationalInstantIso } from './liveCameraDiagnostics'
 import type { RealJourneyEventDto, ReconstructedRealJourney } from './realJourneyEvents.types'
@@ -101,6 +104,94 @@ export function detectRicardoneEgressToSanLorenzoWindow(
   }
 
   return out
+}
+
+const SL_EXIT_LOGICAL = new Set(['SL_EGRESO', 'SL_BALANZA_SALIDA'])
+const RIC_RETURN_LOGICAL = new Set(['INGRESO', 'PREINGRESO', 'CALADA'])
+
+export type SanLorenzoEgressRicardoneReturnHint = {
+  plate: string
+  day: string
+  slExitAt: string
+  slExitLogical: string
+  slExitLabel: string
+  ricReturnAt: string
+  ricReturnLogical: string
+  ricReturnLabel: string
+  deltaMs: number
+  journeyUidAtExit: string
+  journeyUidAtReturn: string
+}
+
+/** Ventana operativa típica: vuelta imposible Ricardone tras salida San Lorenzo. */
+export const SL_EGRESS_RIC_RETURN_WINDOW_MS_DEFAULT = 40 * 60 * 1000
+
+/**
+ * Salida San Lorenzo (egreso o balanza salida) seguida de ingreso/preingreso/calada Ricardone,
+ * misma patente, dentro de `windowMs`. Indicio de anomalía / recorrido corto interplanta.
+ */
+export function detectSanLorenzoEgressToRicardoneReturnFromEvents(
+  events: RealJourneyEventDto[],
+  windowMs: number
+): SanLorenzoEgressRicardoneReturnHint[] {
+  const eventInstant = (e: RealJourneyEventDto) => getEventOperationalInstantIso(e) || e.occurredAt
+
+  type Row = {
+    e: RealJourneyEventDto
+    t: number
+    pt: ReturnType<typeof normalizeRealEventPoint>
+    plate: string
+  }
+  const rows: Row[] = []
+  for (const e of events) {
+    const plate = (e.normalizedPlate ?? '').trim()
+    if (!plate) continue
+    const pt = normalizeRealEventPoint(e)
+    if (pt.logicalCode.includes('TRASERA_EXCLUIDA')) continue
+    const t = new Date(eventInstant(e)).getTime()
+    if (!Number.isFinite(t)) continue
+    rows.push({ e, t, pt, plate })
+  }
+  rows.sort((a, b) => a.t - b.t)
+
+  const byPlate = new Map<string, Row[]>()
+  for (const r of rows) {
+    if (!byPlate.has(r.plate)) byPlate.set(r.plate, [])
+    byPlate.get(r.plate)!.push(r)
+  }
+
+  const out: SanLorenzoEgressRicardoneReturnHint[] = []
+
+  for (const [plate, list] of byPlate) {
+    for (let i = 0; i < list.length; i++) {
+      const row = list[i]!
+      if (row.pt.siteId !== 'san_lorenzo' || !SL_EXIT_LOGICAL.has(row.pt.logicalCode)) continue
+      const slExitAt = eventInstant(row.e)
+      for (let j = i + 1; j < list.length; j++) {
+        const next = list[j]!
+        const delta = next.t - row.t
+        if (delta > windowMs) break
+        if (next.pt.siteId !== 'ricardone' || !RIC_RETURN_LOGICAL.has(next.pt.logicalCode)) continue
+        const ricReturnAt = eventInstant(next.e)
+        out.push({
+          plate,
+          day: occurredAtLocalDayKey(slExitAt),
+          slExitAt,
+          slExitLogical: row.pt.logicalCode,
+          slExitLabel: row.pt.pointLabel,
+          ricReturnAt,
+          ricReturnLogical: next.pt.logicalCode,
+          ricReturnLabel: next.pt.pointLabel,
+          deltaMs: delta,
+          journeyUidAtExit: row.e.journeyUid,
+          journeyUidAtReturn: next.e.journeyUid,
+        })
+        break
+      }
+    }
+  }
+
+  return out.sort((a, b) => new Date(a.slExitAt).getTime() - new Date(b.slExitAt).getTime())
 }
 
 export function buildPlateEventRows(events: RealJourneyEventDto[], journeyByUid: Map<string, ReconstructedRealJourney>) {

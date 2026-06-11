@@ -1,3 +1,6 @@
+/**
+ * Capa: diagnóstico — cobertura sector/dispositivo en el período.
+ */
 import type { RealJourneyEventDto, ReconstructedRealSiteId } from './realJourneyEvents.types'
 import { inferSiteIdFromSectorCode } from './realJourneyEventsMapper'
 import { lookupRealSectorCode, REAL_SECTOR_CODE_MAP } from '../data/realSectorCodeMap'

@@ -1,3 +1,6 @@
+/**
+ * Capa: normalización — formato patente Argentina (funciones puras).
+ */
 const PATENTE_VIEJA = /^[A-Z]{3}[0-9]{3}$/
 const PATENTE_MERCOSUR = /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/
 

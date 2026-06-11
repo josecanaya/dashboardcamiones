@@ -1,3 +1,7 @@
+/**
+ * Capa: normalización — punto lógico operativo y sitio desde sector/dispositivo.
+ * Núcleo para reconstrucción y clasificación; no depende de UI.
+ */
 import type { RealJourneyEventDto, ReconstructedRealSiteId } from './realJourneyEvents.types'
 
 import {

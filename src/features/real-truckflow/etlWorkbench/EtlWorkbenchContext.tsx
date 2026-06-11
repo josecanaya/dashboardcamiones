@@ -3,7 +3,9 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
+  startTransition,
   type ReactNode,
 } from 'react'
 import type { RealJourneyEventDto } from '../../../services/realJourneyEvents.types'
@@ -14,7 +16,15 @@ import {
 } from '../../../services/realTruckflowApi'
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 import { parseTruckflowJsonFile, type ParsedTruckflowFile } from './parseTruckflowJsonFiles'
-import { runEtlTransform, type EtlTransformOutput } from './etlTransformPipeline'
+import type { EtlTransformInput, EtlTransformOutput } from './etlTransformPipeline'
+import { buildKpiTiemposArtifacts, type KpiTiemposBuildInput } from './etlKpiTiemposBuild'
+import {
+  createTransformPhaseSession,
+  runEtlTransformTramo,
+  type TransformTramoId,
+  type TransformTramoStatus,
+} from './etlTransformPhaseRunner'
+import type { EtlTransformPhaseStore } from './etlTransformPhaseStore'
 import type { MovimientosContratoFileInput } from './etlExternalMovimientosContrato'
 import { inferSiteIdFromSectorCode } from '../../../services/realJourneyEventsMapper'
 import { occurredAtLocalDayKey } from '../../../services/realJourneyQuality'
@@ -60,6 +70,11 @@ type Ctx = {
   transformResult: EtlTransformOutput | null
   transformBusy: boolean
   transformError: string | null
+  /** Tramo 4: KPI tiempos / dispersión (pestaña KPI Tiempos). */
+  kpiTiemposBusy: boolean
+  kpiTiemposError: string | null
+  kpiTiemposBuilt: boolean
+  runKpiTiempos: () => Promise<boolean>
   mergeWindowHours: number
   setMergeWindowHours: (h: number) => void
   movimientosContratoFiles: MovimientosContratoFileInput[]
@@ -71,6 +86,14 @@ type Ctx = {
   loadLocalPeriod: (startDate: string, endDate: string) => Promise<boolean>
   clearLoaded: () => void
   runTransform: () => Promise<EtlTransformOutput | null>
+  transformTramoStatus: Record<TransformTramoId, TransformTramoStatus>
+  transformActiveTramo: TransformTramoId | null
+  transformTramoCompleted: 0 | 1 | 2 | 3
+  transformRunAllInProgress: boolean
+  runTransformTramo: (
+    tramo: TransformTramoId,
+    options?: { keepGlobalBusy?: boolean }
+  ) => Promise<EtlTransformOutput | null>
 }
 
 const EtlWorkbenchContext = createContext<Ctx | null>(null)
@@ -149,6 +172,24 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
   const [transformResult, setTransformResult] = useState<EtlTransformOutput | null>(null)
   const [transformBusy, setTransformBusy] = useState(false)
   const [transformError, setTransformError] = useState<string | null>(null)
+  const [kpiTiemposBusy, setKpiTiemposBusy] = useState(false)
+  const [kpiTiemposError, setKpiTiemposError] = useState<string | null>(null)
+  const [kpiTiemposBuilt, setKpiTiemposBuilt] = useState(false)
+  const kpiTiemposPreparedRef = useRef<KpiTiemposBuildInput | null>(null)
+  const transformPhaseStoreRef = useRef<EtlTransformPhaseStore>(createTransformPhaseSession())
+  const [transformTramoStatus, setTransformTramoStatus] = useState<
+    Record<TransformTramoId, TransformTramoStatus>
+  >({ 1: 'idle', 2: 'idle', 3: 'idle' })
+  const [transformActiveTramo, setTransformActiveTramo] = useState<TransformTramoId | null>(null)
+  const [transformTramoCompleted, setTransformTramoCompleted] = useState<0 | 1 | 2 | 3>(0)
+  const [transformRunAllInProgress, setTransformRunAllInProgress] = useState(false)
+
+  const resetKpiTiemposState = useCallback(() => {
+    kpiTiemposPreparedRef.current = null
+    setKpiTiemposBuilt(false)
+    setKpiTiemposError(null)
+  }, [])
+
   const [mergeWindowHours, setMergeWindowHours] = useState(2)
   const [movimientosContratoFiles, setMovimientosContratoFiles] = useState<MovimientosContratoFileInput[]>(
     []
@@ -187,8 +228,12 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
     setDiskPeriod(null)
     setTransformResult(null)
     setTransformError(null)
+    resetKpiTiemposState()
+    transformPhaseStoreRef.current = createTransformPhaseSession()
+    setTransformTramoStatus({ 1: 'idle', 2: 'idle', 3: 'idle' })
+    setTransformTramoCompleted(0)
     setMovimientosContratoFiles([])
-  }, [])
+  }, [resetKpiTiemposState])
 
 function buildApiJourneyStatsFromParsedFiles(
   evFiles: ParsedTruckflowFile[],
@@ -223,6 +268,7 @@ function buildApiJourneyStatsFromParsedFiles(
     setBusyLoad(true)
     setTransformError(null)
     setTransformResult(null)
+    resetKpiTiemposState()
     try {
       const evFiles: ParsedTruckflowFile[] = []
       const alFiles: ParsedTruckflowFile[] = []
@@ -274,12 +320,13 @@ function buildApiJourneyStatsFromParsedFiles(
     } finally {
       setBusyLoad(false)
     }
-  }, [])
+  }, [resetKpiTiemposState])
 
   const loadLocalPeriod = useCallback(async (startDate: string, endDate: string): Promise<boolean> => {
     setBusyLoad(true)
     setTransformError(null)
     setTransformResult(null)
+    resetKpiTiemposState()
     try {
       const res = await postTruckflowLoadLocalPeriod({ startDate, endDate })
       await yieldToBrowser()
@@ -342,39 +389,24 @@ function buildApiJourneyStatsFromParsedFiles(
     } finally {
       setBusyLoad(false)
     }
-  }, [])
+  }, [resetKpiTiemposState])
 
-  const runTransform = useCallback(async () => {
-    if (!events.length && !alerts.length) {
-      setTransformError('Cargá al menos un JSON de eventos o alertas.')
-      return null
-    }
-    setTransformBusy(true)
-    setTransformError(null)
+  const buildTransformInput = useCallback(async (): Promise<EtlTransformInput> => {
+    let plateRegistry = null
     try {
-      let plateRegistry = null
-      try {
-        plateRegistry = await getTruckPlateRegistry()
-      } catch {
-        /* servidor local apagado: ETL sin exclusiones de catálogo */
-      }
-      const out = await runEtlTransform({
-        events,
-        alerts,
-        mergeWindowHours,
-        loadedEventFilesCount: parsedEventFiles.length,
-        loadedAlertFilesCount: parsedAlertFiles.length,
-        plateRegistry,
-        movimientosContratoFiles:
-          movimientosContratoFiles.length ? movimientosContratoFiles : undefined,
-      })
-      setTransformResult(out)
-      return out
-    } catch (e) {
-      setTransformError(e instanceof Error ? e.message : String(e))
-      return null
-    } finally {
-      setTransformBusy(false)
+      plateRegistry = await getTruckPlateRegistry()
+    } catch {
+      /* servidor local apagado */
+    }
+    return {
+      events,
+      alerts,
+      mergeWindowHours,
+      loadedEventFilesCount: parsedEventFiles.length,
+      loadedAlertFilesCount: parsedAlertFiles.length,
+      plateRegistry,
+      movimientosContratoFiles:
+        movimientosContratoFiles.length ? movimientosContratoFiles : undefined,
     }
   }, [
     alerts,
@@ -384,6 +416,134 @@ function buildApiJourneyStatsFromParsedFiles(
     parsedAlertFiles.length,
     parsedEventFiles.length,
   ])
+
+  const commitTransformOutput = useCallback((out: EtlTransformOutput) => {
+    kpiTiemposPreparedRef.current = out.kpiTiemposPrepared ?? null
+    setKpiTiemposBuilt(false)
+    setKpiTiemposError(null)
+    const { kpiTiemposPrepared: _drop, ...publicOut } = out
+    startTransition(() => {
+      setTransformResult(publicOut)
+    })
+    return publicOut
+  }, [])
+
+  const syncTramoStatusFromStore = useCallback((store: EtlTransformPhaseStore) => {
+    setTransformTramoCompleted(store.tramoCompleted)
+    setTransformTramoStatus({
+      1: store.tramoCompleted >= 1 ? 'done' : 'idle',
+      2: store.tramoCompleted >= 2 ? 'done' : 'idle',
+      3: store.tramoCompleted >= 3 ? 'done' : 'idle',
+    })
+  }, [])
+
+  const runTransformTramo = useCallback(
+    async (tramo: TransformTramoId, options?: { keepGlobalBusy?: boolean }) => {
+      if (!events.length && !alerts.length) {
+        setTransformError('Cargá al menos un JSON de eventos o alertas.')
+        return null
+      }
+      if (tramo === 3 && !movimientosContratoFiles.length) {
+        setTransformError('Cargá XLSX de Movimientos por Contrato para el paso 3.')
+        return null
+      }
+      if (!options?.keepGlobalBusy) setTransformBusy(true)
+      setTransformActiveTramo(tramo)
+      setTransformError(null)
+      setTransformTramoStatus((s) => ({ ...s, [tramo]: 'running' }))
+      try {
+        const inp = await buildTransformInput()
+        const out = await runEtlTransformTramo(tramo, inp, transformPhaseStoreRef.current)
+        await yieldToBrowser()
+        const publicOut = commitTransformOutput(out)
+        syncTramoStatusFromStore(transformPhaseStoreRef.current)
+        setTransformTramoStatus((s) => ({ ...s, [tramo]: 'done' }))
+        return publicOut
+      } catch (e) {
+        setTransformError(e instanceof Error ? e.message : String(e))
+        setTransformTramoStatus((s) => ({ ...s, [tramo]: 'error' }))
+        return null
+      } finally {
+        setTransformActiveTramo(null)
+        if (!options?.keepGlobalBusy) setTransformBusy(false)
+      }
+    },
+    [
+      buildTransformInput,
+      commitTransformOutput,
+      events.length,
+      alerts.length,
+      movimientosContratoFiles.length,
+      syncTramoStatusFromStore,
+    ]
+  )
+
+  const runTransform = useCallback(async () => {
+    if (!events.length && !alerts.length) {
+      setTransformError('Cargá al menos un JSON de eventos o alertas.')
+      return null
+    }
+    setTransformBusy(true)
+    setTransformRunAllInProgress(true)
+    setTransformError(null)
+    transformPhaseStoreRef.current = createTransformPhaseSession()
+    setTransformTramoStatus({ 1: 'idle', 2: 'idle', 3: 'idle' })
+    setTransformTramoCompleted(0)
+    try {
+      let last: EtlTransformOutput | null = null
+      const steps: TransformTramoId[] =
+        movimientosContratoFiles.length ? [1, 2, 3] : [1, 2]
+      for (const tramo of steps) {
+        last = await runTransformTramo(tramo, { keepGlobalBusy: true })
+        if (!last) break
+      }
+      return last
+    } finally {
+      setTransformActiveTramo(null)
+      setTransformRunAllInProgress(false)
+      setTransformBusy(false)
+    }
+  }, [events.length, movimientosContratoFiles.length, runTransformTramo])
+
+  const runKpiTiempos = useCallback(async () => {
+    if (!transformResult) {
+      setKpiTiemposError('Primero ejecutá Procesar Transform en Análisis local.')
+      return false
+    }
+    const prepared = kpiTiemposPreparedRef.current
+    if (!prepared?.classifiedJourneys?.length) {
+      setKpiTiemposError('No hay datos preparados. Volvé a ejecutar Transform.')
+      return false
+    }
+    setKpiTiemposBusy(true)
+    setKpiTiemposError(null)
+    try {
+      const built = await buildKpiTiemposArtifacts(prepared)
+      await yieldToBrowser()
+      startTransition(() => {
+        setTransformResult((prev) => {
+          if (!prev) return prev
+          return {
+            ...prev,
+            csv: { ...prev.csv, ...built.csv },
+            stats: {
+              ...prev.stats,
+              segmentTiming: built.segmentTiming,
+              circuitTiming: built.circuitTiming,
+              kpiTiemposBuilt: true,
+            },
+          }
+        })
+        setKpiTiemposBuilt(true)
+      })
+      return true
+    } catch (e) {
+      setKpiTiemposError(e instanceof Error ? e.message : String(e))
+      return false
+    } finally {
+      setKpiTiemposBusy(false)
+    }
+  }, [transformResult])
 
   const value = useMemo<Ctx>(
     () => ({
@@ -399,6 +559,10 @@ function buildApiJourneyStatsFromParsedFiles(
       transformResult,
       transformBusy,
       transformError,
+      kpiTiemposBusy,
+      kpiTiemposError,
+      kpiTiemposBuilt,
+      runKpiTiempos,
       mergeWindowHours,
       setMergeWindowHours,
       movimientosContratoFiles,
@@ -409,6 +573,11 @@ function buildApiJourneyStatsFromParsedFiles(
       loadLocalPeriod,
       clearLoaded,
       runTransform,
+      transformTramoStatus,
+      transformActiveTramo,
+      transformTramoCompleted,
+      transformRunAllInProgress,
+      runTransformTramo,
     }),
     [
       loadSummary,
@@ -422,6 +591,10 @@ function buildApiJourneyStatsFromParsedFiles(
       transformResult,
       transformBusy,
       transformError,
+      kpiTiemposBusy,
+      kpiTiemposError,
+      kpiTiemposBuilt,
+      runKpiTiempos,
       mergeWindowHours,
       movimientosContratoFiles,
       movimientosContratoFileNames,
@@ -431,6 +604,11 @@ function buildApiJourneyStatsFromParsedFiles(
       loadLocalPeriod,
       clearLoaded,
       runTransform,
+      transformTramoStatus,
+      transformActiveTramo,
+      runTransformTramo,
+      transformTramoCompleted,
+      transformRunAllInProgress,
     ]
   )
 

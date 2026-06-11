@@ -1,3 +1,6 @@
+/**
+ * Capa: diagnóstico — cruces alerta ↔ journey incompleto. Exploración; no pipeline obligatorio.
+ */
 import { normalizePlate } from './argentinaPlate'
 import type { ReconstructedRealJourney } from './realJourneyEvents.types'
 import type { NormalizedRealAlertView } from './realAlertsInspector'

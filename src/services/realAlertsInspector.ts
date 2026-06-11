@@ -1,3 +1,6 @@
+/**
+ * Capa: diagnóstico / soporte export — vista normalizada de alertas.
+ */
 import { isValidArgentinaPlate, normalizePlate } from './argentinaPlate'
 import type { RealAlertDto } from './realTruckflowApi'
 

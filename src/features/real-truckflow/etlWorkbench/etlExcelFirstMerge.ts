@@ -1,3 +1,6 @@
+/**
+ * @deprecated Para imports nuevos usar `contractExcelFirstEvidence` en truckflowTransform/contractFirst.
+ */
 import { recordsToCsv } from './etlCsv'
 import type { ExternalMovimientoContratoNormalized } from './etlExternalMovimientosContrato'
 import type { TruckflowJourneyForMerge } from './etlTruckflowMovimientosMerge'
@@ -15,6 +18,7 @@ import {
   normalizePlateStrict,
   plateSimilarityScore,
 } from '../../../services/circuitPlateOcr'
+import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 
 export type MatchQuality =
   | 'EXTERNAL_MATCH_EXACT'
@@ -1307,12 +1311,12 @@ export function buildExcelFirstReviewSample(
   return out.slice(0, sampleSize)
 }
 
-export function mergeExcelOperationsWithTruckflowEvidence(
+export async function mergeExcelOperationsWithTruckflowEvidence(
   movimientosContrato: ExternalMovimientoContratoNormalized[],
   truckflowJourneys: TruckflowJourneyForMerge[],
   truckflowSegments: TruckflowSegmentForMerge[],
   options?: ExcelFirstMergeOptions
-): ExcelFirstMergeResult {
+): Promise<ExcelFirstMergeResult> {
   const period = buildExcelPeriodContext(movimientosContrato, truckflowJourneys)
   const plateIndex = buildPlateIndex(truckflowJourneys)
   const journeyByUid = new Map(truckflowJourneys.map((j) => [j.journey_uid, j]))
@@ -1382,7 +1386,9 @@ export function mergeExcelOperationsWithTruckflowEvidence(
     }
   >()
 
+  let excelMergePass = 0
   for (const mov of movimientosContrato) {
+    if (++excelMergePass % 35 === 0) await yieldToBrowser()
     const ctx = resolveOperationalContextFromExcel(mov)
     const evidence = findTruckflowEvidenceForExcelOperation(
       mov,

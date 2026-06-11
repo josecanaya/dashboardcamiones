@@ -322,6 +322,9 @@ export type RealJourneyDiagnosticsViewProps = {
   plateQueryFormatWarning: boolean
   plateTimelineRows: ReturnType<typeof import('../services/realPlateAudit').buildPlateEventRows>
   interplantHintsForPlate: ReturnType<typeof import('../services/realPlateAudit').detectRicardoneEgressToSanLorenzoWindow>
+  slRicFastReturnHintsForPlate: ReturnType<
+    typeof import('../services/realPlateAudit').detectSanLorenzoEgressToRicardoneReturnFromEvents
+  >
   plateMilestoneTimeline: { slot: string; event: RealJourneyEventDto | undefined }[]
   downloadPlateCsv: () => void
   incompleteGroups: IncompleteSequenceGroup[]
@@ -846,7 +849,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
         <ExtraccionDatosTab onGoToAnalysis={() => p.setMainTab('analisis_local')} />
       : null}
       {p.mainTab === 'analisis_local' ? (
-        <AnalisisLocalTab onTransformSucceeded={() => p.setMainTab('transform_etl')} />
+        <AnalisisLocalTab onOpenTransformTab={() => p.setMainTab('transform_etl')} />
       ) : null}
       {p.mainTab === 'transform_etl' ? <TransformEtlTab /> : null}
       {p.mainTab === 'kpi_tiempos' ? <KpiTiemposTab /> : null}
@@ -2622,6 +2625,24 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
                 {p.interplantHintsForPlate.map((hint, hi) => (
                   <div key={`${hint.journeyUidRicardone}-${hi}`} className="rounded-2xl border border-indigo-200 bg-indigo-50 px-5 py-4 text-sm text-indigo-950">
                     Posible Ricardone → San Lorenzo dentro de ventana configurada • Δ {(hint.deltaMs / 3600000).toFixed(2)} h
+                  </div>
+                ))}
+                {p.slRicFastReturnHintsForPlate.map((hint, hi) => (
+                  <div
+                    key={`${hint.journeyUidAtExit}-${hint.journeyUidAtReturn}-${hi}`}
+                    className="rounded-2xl border border-amber-300 bg-amber-50 px-5 py-4 text-sm text-amber-950"
+                  >
+                    <div className="font-semibold">Anomalía: salida San Lorenzo y vuelta a Ricardone en &lt; 40 min</div>
+                    <div className="mt-1 font-mono text-xs">
+                      {hint.day} · Δ {(hint.deltaMs / 60000).toFixed(1)} min
+                    </div>
+                    <div className="mt-1 text-xs">
+                      Salida: {hint.slExitLabel} ({hint.slExitLogical}) — {formatDateTimeShort(hint.slExitAt)}
+                    </div>
+                    <div className="text-xs">
+                      Vuelta Ric: {hint.ricReturnLabel} ({hint.ricReturnLogical}) —{' '}
+                      {formatDateTimeShort(hint.ricReturnAt)}
+                    </div>
                   </div>
                 ))}
                 <h4 className="text-base font-bold text-slate-900">Por journeyUid</h4>

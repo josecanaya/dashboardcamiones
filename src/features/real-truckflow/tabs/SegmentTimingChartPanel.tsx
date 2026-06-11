@@ -1,8 +1,20 @@
+import { useMemo } from 'react'
 import type { ChartPoint } from '../../../components/estadia/EstadiaHistogramWithRefs'
 import type { StayTimeStats } from '../../../services/analyticsKpi'
-import { SEGMENT_TIMING_HISTOGRAM_BIN_MIN } from '../etlWorkbench/etlSegmentTiming'
+import { safeExportFilename } from '../../../utils/chartExport'
+import { SEGMENT_TIMING_HISTOGRAM_BIN_MIN, type SegmentLeg } from '../etlWorkbench/etlSegmentTiming'
+import type { SegmentScatterByDayRow } from '../etlWorkbench/etlSegmentScatterByDay'
+import {
+  downloadSlowTailCsv,
+  isSlowTailDuration,
+  legsToSlowTailExport,
+  slowTailDurationThreshold,
+} from '../etlWorkbench/etlSegmentSlowTail'
+import { SegmentScatterByDayChart } from './SegmentScatterByDayChart'
 import {
   SegmentTimingScatterChart,
+  SEGMENT_TIMING_DOT_RADIUS,
+  buildColoredBinStackPoints,
   buildSegmentTimingBinStackPoints,
 } from './SegmentTimingScatterChart'
 
@@ -24,6 +36,8 @@ export function SegmentTimingChartPanel({
   stats,
   durationsMinutes,
   chartData,
+  scatterByDayRows,
+  segmentLegs,
   panelExportRef,
 }: {
   title: string
@@ -32,12 +46,50 @@ export function SegmentTimingChartPanel({
   stats: StayTimeStats
   durationsMinutes: number[]
   chartData: ChartPoint[]
+  scatterByDayRows?: SegmentScatterByDayRow[]
+  segmentLegs?: SegmentLeg[]
   panelExportRef?: (el: HTMLDivElement | null) => void
 }) {
+  const useDayScatter = Boolean(scatterByDayRows?.length)
+
+  const slowTailThreshold = useMemo(
+    () => slowTailDurationThreshold(durationsMinutes),
+    [durationsMinutes]
+  )
+
+  const coloredLegPoints = useMemo(() => {
+    if (useDayScatter || !segmentLegs?.length) return null
+    return buildColoredBinStackPoints(
+      segmentLegs.map((leg) => ({ leg, duracion_minutos: leg.durationMinutes })),
+      ({ leg, duracion_minutos }) => {
+        const slow = isSlowTailDuration(duracion_minutos, slowTailThreshold)
+        return {
+          fill: slow ? '#dc2626' : '#2563eb',
+          stroke: slow ? '#991b1b' : '#1e40af',
+          dotRadius: slow ? SEGMENT_TIMING_DOT_RADIUS + 2 : SEGMENT_TIMING_DOT_RADIUS,
+          tooltipTitle: leg.plate || leg.journeyId,
+          tooltipLines: [
+            `${duracion_minutos.toFixed(1)} min`,
+            slow ? 'Cola lenta (20 % más demorados, ≥ P80)' : '',
+            'Sin hora de ingreso/egreso en este modo',
+          ].filter(Boolean),
+        }
+      }
+    )
+  }, [segmentLegs, slowTailThreshold, useDayScatter])
+
   const scatterPoints = buildSegmentTimingBinStackPoints(
     durationsMinutes,
     SEGMENT_TIMING_HISTOGRAM_BIN_MIN
   )
+
+  const exportSlowTailLegs = () => {
+    if (!segmentLegs?.length) return
+    const rows = legsToSlowTailExport(segmentLegs, circuitCode, title)
+    if (!rows.length) return
+    const slug = title.replace(/\s*→\s*/g, '_').replace(/[^\w-]+/g, '_')
+    downloadSlowTailCsv(safeExportFilename(`kpi_${circuitCode}_${slug}_top20_lentos`, 'csv'), rows)
+  }
 
   return (
     <div
@@ -46,11 +98,29 @@ export function SegmentTimingChartPanel({
       style={{ minWidth: 720 }}
     >
       <div className="border-b border-slate-100 px-6 py-4">
-        <h3 className="text-lg font-bold text-slate-800">{title}</h3>
-        <p className="mt-0.5 text-sm text-slate-500">
-          Circuito {circuitCode} · {periodLabel} · {stats.count.toLocaleString('es-AR')} camiones · bins{' '}
-          {SEGMENT_TIMING_HISTOGRAM_BIN_MIN} min
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h3 className="text-lg font-bold text-slate-800">{title}</h3>
+            <p className="mt-0.5 text-sm text-slate-500">
+              Circuito {circuitCode} · {periodLabel} · {stats.count.toLocaleString('es-AR')} camiones
+              {useDayScatter ?
+                ' · general o por día · turnos 0–6 / 6–12 / 12–18 / 18–24'
+              : ` · bins ${SEGMENT_TIMING_HISTOGRAM_BIN_MIN} min`}
+            </p>
+            <p className="mt-1 text-xs text-slate-500">
+              Pasá el mouse sobre un punto para ver la patente. Los rojos son el 20 % más lento del tramo (≥ P80).
+            </p>
+          </div>
+          {!useDayScatter && segmentLegs?.length ?
+            <button
+              type="button"
+              onClick={exportSlowTailLegs}
+              className="shrink-0 rounded-lg border border-rose-300 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-900 hover:bg-rose-100"
+            >
+              CSV 20 % más lentos
+            </button>
+          : null}
+        </div>
       </div>
 
       <div className="grid gap-3 border-b border-slate-100 px-6 py-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -61,13 +131,27 @@ export function SegmentTimingChartPanel({
       </div>
 
       <div className="px-6 py-4">
-        <SegmentTimingScatterChart
-          scatterPoints={scatterPoints}
-          chartData={chartData}
-          mean={stats.mean}
-          std={stats.std}
-          binSize={SEGMENT_TIMING_HISTOGRAM_BIN_MIN}
-        />
+        {useDayScatter ?
+          <SegmentScatterByDayChart rows={scatterByDayRows!} tramoLabel={title} circuitCode={circuitCode} />
+        : <SegmentTimingScatterChart
+            coloredScatterPoints={coloredLegPoints ?? undefined}
+            scatterPoints={coloredLegPoints ? undefined : scatterPoints}
+            chartData={chartData}
+            mean={stats.mean}
+            std={stats.std}
+            legendExtra={
+              coloredLegPoints ?
+                <span className="inline-flex items-center gap-1.5">
+                  <span
+                    className="inline-block rounded-full bg-rose-600"
+                    style={{ width: 12, height: 12 }}
+                  />
+                  20 % más lentos (≥ P80)
+                </span>
+              : undefined
+            }
+          />
+        }
       </div>
     </div>
   )

@@ -1,3 +1,7 @@
+/**
+ * Capa: calidad / limpieza — dataset filtrado con índices de alertas.
+ * Soporte a export; no redefine reglas de matriz v2.
+ */
 import { normalizePlate } from './argentinaPlate'
 import { reconstructRealJourneys } from './realJourneyEventsMapper'
 import type { RealJourneyEventDto, ReconstructedRealJourney } from './realJourneyEvents.types'

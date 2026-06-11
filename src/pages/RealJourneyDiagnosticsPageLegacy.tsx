@@ -16,6 +16,8 @@ import { buildIncompleteSequenceGroups } from '../services/realIncompleteAnalysi
 import {
   buildPlateEventRows,
   detectRicardoneEgressToSanLorenzoWindow,
+  detectSanLorenzoEgressToRicardoneReturnFromEvents,
+  SL_EGRESS_RIC_RETURN_WINDOW_MS_DEFAULT,
   exportPlateEventsToCsv,
   filterEventsByPlate,
   normalizePlateQuery,
@@ -972,6 +974,17 @@ export function RealJourneyDiagnosticsPageLegacy() {
         ? detectRicardoneEgressToSanLorenzoWindow(plateJourneysFull, interplantWindowHours * 3600000)
         : [],
     [plateJourneysFull, interplantWindowHours]
+  )
+
+  const slRicFastReturnHintsForPlate = useMemo(
+    () =>
+      plateEventsAll.length
+        ? detectSanLorenzoEgressToRicardoneReturnFromEvents(
+            plateEventsAll,
+            SL_EGRESS_RIC_RETURN_WINDOW_MS_DEFAULT
+          )
+        : [],
+    [plateEventsAll]
   )
 
   const dailySummaries = useMemo(
@@ -2731,6 +2744,7 @@ export function RealJourneyDiagnosticsPageLegacy() {
       plateQueryFormatWarning={plateQueryFormatWarning}
       plateTimelineRows={plateTimelineRows}
       interplantHintsForPlate={interplantHintsForPlate}
+      slRicFastReturnHintsForPlate={slRicFastReturnHintsForPlate}
       plateMilestoneTimeline={plateMilestoneTimeline}
       downloadPlateCsv={downloadPlateCsv}
       incompleteGroups={incompleteGroups}

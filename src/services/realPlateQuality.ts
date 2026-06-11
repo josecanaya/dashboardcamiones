@@ -1,3 +1,6 @@
+/**
+ * Capa: diagnóstico — lecturas inválidas por cámara. No obligatorio en pipeline Transform.
+ */
 import type { RealJourneyEventDto } from './realJourneyEvents.types'
 
 export type TopInvalidReadingRow = {

@@ -1,6 +1,6 @@
 /**
- * Análisis de saturación por sector: episodios, heatmap, contexto operativo.
- * Ocupación simultánea estimada vía tripToSectorIntervals + solape temporal.
+ * Capa: analytics — saturación por sector (HistoricalTrip).
+ * Indicadores posteriores; no es clasificación Transform.
  */
 
 import type { HistoricalTrip, OperationalAlert } from '../domain/logistics'

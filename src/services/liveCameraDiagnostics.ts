@@ -1,3 +1,6 @@
+/**
+ * Capa: diagnóstico — cámaras y tiempos operativos (live/validación). Fuera del pipeline batch.
+ */
 import { isValidArgentinaPlate, normalizePlate } from './argentinaPlate'
 import type { NormalizedRealAlertView } from './realAlertsInspector'
 import type { RealJourneyEventDto } from './realJourneyEvents.types'

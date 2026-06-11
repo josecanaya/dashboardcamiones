@@ -1,3 +1,7 @@
+/**
+ * Capa: soporte extract — conteos journeyUid en JSON crudo (disco/API).
+ * No forma parte del pipeline de clasificación.
+ */
 import { occurredAtLocalDayKey } from './realJourneyQuality'
 
 /** UID de journey tal como viene en JSON crudo de Truckflow. */

@@ -1,3 +1,7 @@
+/**
+ * Capa: normalización — enriquecimiento DTO con patentes normalizadas.
+ * Chunked usa yieldToBrowser (entorno navegador).
+ */
 import { isValidArgentinaPlate, normalizePlate } from './argentinaPlate'
 import type { ApiRealJourneyEventRow, RealJourneyEventDto } from './realJourneyEvents.types'
 import { yieldToBrowser } from '../utils/yieldToBrowser'

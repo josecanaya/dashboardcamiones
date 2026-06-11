@@ -1,0 +1,255 @@
+import { useEffect, useMemo, useState } from 'react'
+import { histogramWithKde } from '../../../utils/stats'
+import { computeStayTimeStats } from '../../../services/analyticsKpi'
+import { SEGMENT_TIMING_HISTOGRAM_BIN_MIN } from '../etlWorkbench/etlSegmentTiming'
+import type { FranjaHoraria, SegmentScatterByDayRow } from '../etlWorkbench/etlSegmentScatterByDay'
+import {
+  FRANJA_HORARIA_COLORS,
+  FRANJA_HORARIA_ORDER,
+  FRANJA_HORARIA_WINDOWS,
+  SCATTER_DAY_FILTER_ALL,
+  colorForFranja,
+} from '../etlWorkbench/etlSegmentScatterByDay'
+import {
+  SegmentTimingScatterChart,
+  SEGMENT_TIMING_DOT_RADIUS,
+  buildColoredBinStackPoints,
+} from './SegmentTimingScatterChart'
+import {
+  downloadSlowTailCsv,
+  isSlowTailDuration,
+  scatterRowsToSlowTailExport,
+  slowTailDurationThreshold,
+} from '../etlWorkbench/etlSegmentSlowTail'
+import { safeExportFilename } from '../../../utils/chartExport'
+
+function franjaLegendLabel(f: (typeof FRANJA_HORARIA_ORDER)[number]): string {
+  const w = FRANJA_HORARIA_WINDOWS[f]
+  return `${f} (${w.desde}–${w.hasta})`
+}
+
+export function SegmentScatterByDayChart({
+  rows,
+  tramoLabel,
+  circuitCode,
+}: {
+  rows: SegmentScatterByDayRow[]
+  tramoLabel: string
+  circuitCode: string
+}) {
+  const dayOptions = useMemo(
+    () => [...new Set(rows.map((r) => r.fecha_tramo))].filter(Boolean).sort(),
+    [rows]
+  )
+
+  const [selectedDay, setSelectedDay] = useState(SCATTER_DAY_FILTER_ALL)
+  const [franjaFilter, setFranjaFilter] = useState<FranjaHoraria | null>(null)
+
+  useEffect(() => {
+    if (!dayOptions.length) {
+      setSelectedDay('')
+      return
+    }
+    if (selectedDay && selectedDay !== SCATTER_DAY_FILTER_ALL && !dayOptions.includes(selectedDay)) {
+      setSelectedDay(SCATTER_DAY_FILTER_ALL)
+    }
+  }, [dayOptions, selectedDay])
+
+  const isAllDays = selectedDay === SCATTER_DAY_FILTER_ALL
+
+  const visibleRows = useMemo(() => {
+    if (!rows.length) return []
+    if (isAllDays) return rows
+    return rows.filter((r) => r.fecha_tramo === selectedDay)
+  }, [rows, isAllDays, selectedDay])
+
+  const chartRows = useMemo(() => {
+    if (!franjaFilter) return visibleRows
+    return visibleRows.filter((r) => r.franja_horaria === franjaFilter)
+  }, [visibleRows, franjaFilter])
+
+  const durations = useMemo(() => chartRows.map((r) => r.duracion_minutos), [chartRows])
+
+  const stats = useMemo(() => computeStayTimeStats(durations), [durations])
+
+  const slowTailThreshold = useMemo(
+    () => slowTailDurationThreshold(durations),
+    [durations]
+  )
+
+  const chartData = useMemo(() => {
+    if (!durations.length) return []
+    return histogramWithKde(durations, SEGMENT_TIMING_HISTOGRAM_BIN_MIN, 5, { unit: 'min' })
+  }, [durations])
+
+  const coloredPoints = useMemo(
+    () =>
+      buildColoredBinStackPoints(chartRows, (row) => {
+        const slow = isSlowTailDuration(row.duracion_minutos, slowTailThreshold)
+        const fill = slow ? '#dc2626' : row.color_franja || colorForFranja(row.franja_horaria)
+        const stroke = slow ? '#991b1b' : fill
+        return {
+          fill,
+          stroke,
+          dotRadius: slow ? SEGMENT_TIMING_DOT_RADIUS + 2 : SEGMENT_TIMING_DOT_RADIUS,
+          tooltipTitle: row.patente || row.journey_id,
+          tooltipLines: [
+            `${row.duracion_minutos.toFixed(1)} min · ${row.franja_horaria || '—'} (${row.hora_inicio})`,
+            `Ingreso: ${row.timestamp_inicio || '—'}`,
+            `Egreso: ${row.timestamp_fin || '—'}`,
+            isAllDays ?
+              `fecha: ${row.fecha_tramo}`
+            : `${row.fecha_tramo} · ${row.hora_inicio}`,
+            `${row.producto || '—'} · ${row.circuito}`,
+            row.horario_fuente === 'excel_inferido' ?
+              'Horarios: balanza salida inferida desde salida Excel'
+            : '',
+            slow ? 'Cola lenta (20 % más demorados, ≥ P80)' : '',
+          ].filter(Boolean),
+        }
+      }),
+    [chartRows, isAllDays, slowTailThreshold]
+  )
+
+  const toggleFranjaFilter = (f: FranjaHoraria) => {
+    setFranjaFilter((prev) => (prev === f ? null : f))
+  }
+
+  const exportSlowTail = () => {
+    const exportRows = scatterRowsToSlowTailExport(chartRows)
+    if (!exportRows.length) return
+    const slug = tramoLabel.replace(/\s*→\s*/g, '_').replace(/[^\w-]+/g, '_')
+    downloadSlowTailCsv(
+      safeExportFilename(`kpi_${circuitCode}_${slug}_top20_lentos`, 'csv'),
+      exportRows
+    )
+  }
+
+  if (!rows.length) {
+    return (
+      <p className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-600">
+        Sin puntos con hora de inicio para este tramo. Reprocesá Transform con Movimientos por Contrato o revisá
+        timestamps en Truckflow.
+      </p>
+    )
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <p className="text-sm text-slate-600">
+          Tramo: <span className="font-semibold text-slate-800">{tramoLabel}</span> · un punto por camión · eje X =
+          duración (min)
+        </p>
+        <div className="flex flex-wrap items-end gap-2">
+          <label className="flex flex-col gap-1 text-sm">
+            <span className="font-semibold text-slate-700">Vista</span>
+            <select
+              value={selectedDay}
+              onChange={(e) => setSelectedDay(e.target.value)}
+              className="min-w-[13rem] rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm"
+            >
+              <option value={SCATTER_DAY_FILTER_ALL}>Todos los días (general)</option>
+              {dayOptions.map((d) => (
+                <option key={d} value={d}>
+                  Día {d}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            type="button"
+            disabled={!chartRows.length}
+            onClick={exportSlowTail}
+            className="rounded-lg border border-rose-300 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-900 hover:bg-rose-100 disabled:opacity-40"
+          >
+            CSV 20 % más lentos
+          </button>
+        </div>
+      </div>
+
+      <p className="text-xs text-slate-500">
+        {chartRows.length.toLocaleString('es-AR')} camiones
+        {franjaFilter ?
+          ` (filtro: ${franjaFilter})`
+        : null}
+        {visibleRows.length !== chartRows.length ?
+          ` · de ${visibleRows.length.toLocaleString('es-AR')} en la vista`
+        : null}
+        {isAllDays ?
+          ` · ${dayOptions.length} días del período`
+        : ` · ${selectedDay}`}{' '}
+        · promedio {stats.count ? `${stats.mean.toFixed(1)} min` : '—'}
+      </p>
+
+      {!chartRows.length ?
+        <p className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-600">
+          Sin camiones en la vista seleccionada.
+        </p>
+      : <SegmentTimingScatterChart
+          coloredScatterPoints={coloredPoints}
+          chartData={chartData}
+          mean={stats.mean}
+          std={stats.std}
+          binSize={SEGMENT_TIMING_HISTOGRAM_BIN_MIN}
+          legendExtra={
+            <>
+              <span className="mr-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                Filtrar:
+              </span>
+              {FRANJA_HORARIA_ORDER.map((f) => {
+                const active = franjaFilter === f
+                const dimmed = franjaFilter != null && !active
+                return (
+                  <button
+                    key={f}
+                    type="button"
+                    title={
+                      active ?
+                        `Quitar filtro ${f}`
+                      : `Mostrar solo ${f}`
+                    }
+                    onClick={() => toggleFranjaFilter(f)}
+                    className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] transition ${
+                      active ?
+                        'border-violet-400 bg-violet-100 font-semibold text-violet-950 ring-2 ring-violet-300'
+                      : dimmed ?
+                        'border-transparent text-slate-400 opacity-50 hover:opacity-80'
+                      : 'border-transparent text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    <span
+                      className="inline-block rounded-full"
+                      style={{
+                        width: 10,
+                        height: 10,
+                        backgroundColor: FRANJA_HORARIA_COLORS[f],
+                      }}
+                    />
+                    {franjaLegendLabel(f)}
+                  </button>
+                )
+              })}
+              {franjaFilter ?
+                <button
+                  type="button"
+                  onClick={() => setFranjaFilter(null)}
+                  className="rounded-full border border-slate-300 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-600 hover:bg-slate-50"
+                >
+                  Ver todas
+                </button>
+              : null}
+              <span className="inline-flex items-center gap-1.5 text-slate-600">
+                <span
+                  className="inline-block rounded-full bg-rose-600"
+                  style={{ width: 12, height: 12 }}
+                />
+                20 % más lentos (≥ P80)
+              </span>
+            </>
+          }
+        />
+      }
+    </div>
+  )
+}

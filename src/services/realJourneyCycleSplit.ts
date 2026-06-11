@@ -1,3 +1,7 @@
+/**
+ * Capa: reconstrucción — segmenta ciclos por huecos temporales (mismo journeyUid).
+ * Funciones puras; usado antes de clasificación v2/comité en algunos flujos.
+ */
 import type { RealJourneyEventDto } from './realJourneyEvents.types'
 import { compareRealEvents } from './realJourneyEventsMapper'
 import { normalizeRealEventPoint } from './realEventNormalization'

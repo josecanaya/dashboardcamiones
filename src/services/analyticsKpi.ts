@@ -1,6 +1,6 @@
 /**
- * Motor de cálculo de KPIs operativos.
- * Funciones reutilizables para estadía, variabilidad, flujo, densidad.
+ * Capa: analytics — KPIs sobre HistoricalTrip (posterior a clasificación Truckflow).
+ * No forma parte del pipeline obligatorio de circuitos; no tocar en tickets solo v2.
  */
 
 import type { HistoricalTrip, OperationalAlert } from '../domain/logistics'

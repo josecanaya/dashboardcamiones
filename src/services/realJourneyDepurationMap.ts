@@ -1,3 +1,6 @@
+/**
+ * Capa: diagnóstico — mapa de depuración por journey.
+ */
 import type { RealJourneyEventDto, ReconstructedRealJourney } from './realJourneyEvents.types'
 
 const RIC_LOGICAL = new Set([

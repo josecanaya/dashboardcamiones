@@ -22,7 +22,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "contract-first:local": "node scripts/run-truckflow-transform-local.mjs"
   },
   "dependencies": {
     "fflate": "^0.8.3",

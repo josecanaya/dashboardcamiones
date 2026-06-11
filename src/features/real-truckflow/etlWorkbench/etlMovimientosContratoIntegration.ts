@@ -1,3 +1,7 @@
+/**
+ * @deprecated Para imports nuevos usar `contractIntegrationRun` en truckflowTransform/contractFirst.
+ * Orden actual: clasificación Workbench → esta integración (no Excel-first global aún).
+ */
 import { recordsToCsv } from './etlCsv'
 import type { ClassifiedJourneyForTiming, SegmentTimingIndex } from './etlSegmentTiming'
 import { buildSegmentTimingIndexFromExcelFirstSegments } from './etlSegmentTiming'
@@ -37,18 +41,29 @@ import {
   operationalSampleSummaryCsv,
   segmentScatterSampleCsv,
 } from './etlOperationalSampling'
+import {
+  buildSegmentScatterByDayRows,
+  normalizeExcelSegmentForScatterByDay,
+  normalizeTruckflowScatterRowForByDay,
+  segmentScatterByDayCsv,
+} from './etlSegmentScatterByDay'
+
+import type { KpiTiemposMovimientosSnapshot } from './etlKpiTiemposBuild'
 
 export type MovimientosContratoIntegrationInput = {
   finalCsvRows: Record<string, unknown>[]
   journeyTimesByUid: Map<string, { start: string; end: string }>
   classifiedJourneys: ClassifiedJourneyForTiming[]
   movimientosFiles: MovimientosContratoFileInput[]
+  /** Si true, no arma scatter/KPI tiempos (tramo 4 en pestaña KPI Tiempos). */
+  skipKpiTiemposArtifacts?: boolean
 }
 
 export type MovimientosContratoIntegrationOutput = {
   csv: Record<string, string>
   logs: string[]
   segmentTimingFromExcelFirst: SegmentTimingIndex | null
+  kpiTiemposSnapshot: KpiTiemposMovimientosSnapshot | null
   stats: {
     movimientos: ReturnType<typeof summarizeMovimientosContratoLoad>
     merge: Record<string, unknown>
@@ -62,9 +77,9 @@ export type MovimientosContratoIntegrationOutput = {
   }
 }
 
-export function runMovimientosContratoIntegration(
+export async function runMovimientosContratoIntegration(
   input: MovimientosContratoIntegrationInput
-): MovimientosContratoIntegrationOutput {
+): Promise<MovimientosContratoIntegrationOutput> {
   const logs: string[] = []
 
   const { raw, warnings: loadWarnings, readMeta } = loadMovimientosContratoFiles(input.movimientosFiles)
@@ -139,7 +154,7 @@ export function runMovimientosContratoIntegration(
   logs.push(`Truckflow sin movimiento: ${mergeResult.summary.no_external_match}`)
   logs.push(`Movimientos sin Truckflow (diagnóstico): ${mergeResult.summary.no_truckflow_match}`)
 
-  const excelFirstResult = mergeExcelOperationsWithTruckflowEvidence(
+  const excelFirstResult = await mergeExcelOperationsWithTruckflowEvidence(
     normalized,
     truckflowJourneys,
     segments
@@ -176,30 +191,59 @@ export function runMovimientosContratoIntegration(
     .filter((r) => r.operational_enrichment_ready && r.missing_camera_discharge)
     .map((r) => ({ ...r }) as Record<string, unknown>)
 
-  const mergedByUid = new Map(mergeResult.merged.map((r) => [r.journey_uid, r]))
-  const cleanByUid = new Map(clean.map((r) => [r.journey_uid, r]))
-  const excelScatterReady = excelFirstResult.segmentRows.filter((r) => r.analysis_ready_for_scatter)
-  const segmentTimingFromExcelFirst =
-    excelScatterReady.length ?
-      buildSegmentTimingIndexFromExcelFirstSegments(excelScatterReady)
-    : null
-  if (segmentTimingFromExcelFirst) {
-    logs.push(
-      `KPI tiempos (Excel-first): ${segmentTimingFromExcelFirst.legs.length} tramos, ${segmentTimingFromExcelFirst.journeyCount} operaciones Excel`
-    )
-  }
-
-  const scatter =
-    excelScatterReady.length ?
-      excelScatterReady.map((r) => ({ ...r }) as Record<string, unknown>)
-    : buildSegmentScatterAnalysis(segments, mergedByUid, cleanByUid)
-  logs.push(
-    `Filas segment_scatter_analysis: ${scatter.length}${excelScatterReady.length ? ' (Excel-first)' : ''}`
-  )
-
   const samplePack = createOperationalSample(clean)
   logs.push(`Seleccionados en muestra operativa: ${samplePack.sample.length}`)
   const sampleUids = new Set(samplePack.sample.map((s) => s.journey_uid))
+  const skipKpi = input.skipKpiTiemposArtifacts === true
+
+  const kpiTiemposSnapshot: KpiTiemposMovimientosSnapshot | null = {
+    excelSegmentRows: excelFirstResult.segmentRows,
+    segments,
+    mergedRows: mergeResult.merged,
+    cleanRows: clean,
+    operationalSampleUids: [...sampleUids],
+  }
+
+  let segmentTimingFromExcelFirst: SegmentTimingIndex | null = null
+  let scatter: Record<string, unknown>[] = []
+  let scatterByDayCsvOut = 'circuito,tramo_operativo,fecha\n'
+
+  if (!skipKpi) {
+    const mergedByUid = new Map(mergeResult.merged.map((r) => [r.journey_uid, r]))
+    const cleanByUid = new Map(clean.map((r) => [r.journey_uid, r]))
+    const excelScatterReady = excelFirstResult.segmentRows.filter((r) => r.analysis_ready_for_scatter)
+    segmentTimingFromExcelFirst =
+      excelScatterReady.length ?
+        buildSegmentTimingIndexFromExcelFirstSegments(excelScatterReady)
+      : null
+    if (segmentTimingFromExcelFirst) {
+      logs.push(
+        `KPI tiempos (Excel-first): ${segmentTimingFromExcelFirst.legs.length} tramos, ${segmentTimingFromExcelFirst.journeyCount} operaciones Excel`
+      )
+    }
+
+    scatter =
+      excelScatterReady.length ?
+        excelScatterReady.map((r) => ({ ...r }) as Record<string, unknown>)
+      : buildSegmentScatterAnalysis(segments, mergedByUid, cleanByUid)
+    logs.push(
+      `Filas segment_scatter_analysis: ${scatter.length}${excelScatterReady.length ? ' (Excel-first)' : ''}`
+    )
+
+    const scatterByDaySources =
+      excelScatterReady.length ?
+        excelScatterReady
+          .map((r) => normalizeExcelSegmentForScatterByDay(r))
+          .filter((s): s is NonNullable<typeof s> => s !== null)
+      : scatter
+          .map((r) => normalizeTruckflowScatterRowForByDay(r as never))
+          .filter((s): s is NonNullable<typeof s> => s !== null)
+    const scatterByDay = buildSegmentScatterByDayRows(scatterByDaySources)
+    logs.push(`Filas segment_scatter_by_day: ${scatterByDay.length}`)
+    scatterByDayCsvOut = segmentScatterByDayCsv(scatterByDay)
+  } else {
+    logs.push('KPI tiempos / dispersión: diferido (procesar en pestaña KPI Tiempos)')
+  }
 
   const products = [...new Set(normalized.map((m) => m.product_normalized).filter(Boolean))].sort()
   const platforms = [...new Set(normalized.map((m) => m.platform_normalized).filter(Boolean))].sort()
@@ -242,16 +286,22 @@ export function runMovimientosContratoIntegration(
         ],
       enrichedSinDescargaRows
     ),
-    segment_scatter_analysis:
-      excelScatterReady.length ?
-        excelOperationSegmentsForScatterCsv(excelScatterReady)
-      : segmentScatterAnalysisCsv(scatter),
+    ...(skipKpi ?
+      {}
+    : {
+        segment_scatter_analysis:
+          excelFirstResult.segmentRows.some((r) => r.analysis_ready_for_scatter) ?
+            excelOperationSegmentsForScatterCsv(
+              excelFirstResult.segmentRows.filter((r) => r.analysis_ready_for_scatter)
+            )
+          : segmentScatterAnalysisCsv(scatter),
+      }),
     operational_sample: operationalSampleCsv(samplePack.sample),
     operational_sample_summary: operationalSampleSummaryCsv(samplePack.summary),
     operational_sample_by_circuit_product: operationalSampleByCircuitProductCsv(
       samplePack.byCircuitProduct
     ),
-    segment_scatter_sample: segmentScatterSampleCsv(scatter, sampleUids),
+    ...(skipKpi ? {} : { segment_scatter_sample: segmentScatterSampleCsv(scatter, sampleUids) }),
     excel_operations_with_truckflow: excelOperationsWithTruckflowCsv(excelFirstResult.operations),
     excel_operation_segments_for_scatter: excelOperationSegmentsForScatterCsv(
       excelFirstResult.segmentRows
@@ -262,18 +312,20 @@ export function runMovimientosContratoIntegration(
       excelFirstResult.noEvidenceDiagnostics
     ),
     excel_first_review_sample: excelFirstReviewSampleCsv(excelFirstResult.reviewSample),
+    ...(skipKpi ? {} : { segment_scatter_by_day: scatterByDayCsvOut }),
   }
 
   return {
     csv,
     logs,
     segmentTimingFromExcelFirst,
+    kpiTiemposSnapshot,
     stats: {
       movimientos: movStats,
       merge: mergeResult.summary,
       excelFirst: excelFirstResult.summary,
       analysisReadyCount,
-      segmentScatterRows: scatter.length,
+      segmentScatterRows: skipKpi ? 0 : scatter.length,
       excelFirstScatterRows: excelFirstResult.segmentRows.length,
       operationalSampleSelected: samplePack.sample.length,
       products,

@@ -1,3 +1,7 @@
+/**
+ * Capa: analytics / presentación — filtros de eventos para vistas Ricardone.
+ * No participa del motor v2 ni del comité interno.
+ */
 import type { RealJourneyEventDto } from './realJourneyEvents.types'
 import { filterRicardoneSiteEventsOnly } from './realJourneyEventsMapper'
 

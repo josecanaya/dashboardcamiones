@@ -100,11 +100,11 @@ export const SL_INGRESO_BALANZA_ROLLUP_TRANSITION = {
   to: 'SL_BALANZA_INGRESO',
 } as const
 
-/**
- * Fin de estadía interna SL tras balanza ingreso.
- * Muchos camiones no pasan cámara S5 (balanza salida) pero sí egreso o descarga.
- */
-const SL_INTERNAL_STAY_END_CODES = ['SL_BALANZA_SALIDA', 'SL_EGRESO'] as const
+/** Fin del tramo KPI balanza ingreso → balanza salida SL (S5). No usar egreso S7 como fin de estadía. */
+const SL_BALANZA_ROLLUP_END_CODES = ['SL_BALANZA_SALIDA', 'SL_BALANZA_EGRESO'] as const
+
+/** Estadía balanza SL (S1→S5): tope operativo; egreso S7 no cuenta como fin de balanza. */
+export const SL_BALANZA_STAY_MAX_MINUTES = 3 * 60
 
 /** Pata SL en KPI: las 4 cámaras instrumentadas (sin pasos inventados). */
 export const SL_OPERATIONAL_KPI_CHAIN = [
@@ -130,8 +130,8 @@ export const OPERATIONAL_TRIP_GAP_MAX_MINUTES = 6 * 60
 /** Rollups deducidos / Excel-first: no estimar tramos > 6 h (mezcla de viajes distintos). */
 export const INFERRED_KPI_ROLLUP_MAX_MINUTES = 6 * 60
 
-/** Duración máxima del rollup balanza SL (estadía en puerto). */
-const SL_BALANZA_ROLLUP_MAX_MINUTES = INFERRED_KPI_ROLLUP_MAX_MINUTES
+/** Duración máxima del rollup balanza SL (solo S1→S5, no estadía total en puerto). */
+const SL_BALANZA_ROLLUP_MAX_MINUTES = SL_BALANZA_STAY_MAX_MINUTES
 
 /** Rollup KPI descarga/carga Ricardone cuando faltan cámaras en Celda 16 / Volcable. */
 export type DischargeKpiRollupRule = {
@@ -1147,11 +1147,95 @@ export function extractSlIngresoBalancaRollupFromTimeline(
 }
 
 function findSlBalancaRollupEndIdx(points: TimedLogicalPoint[], fromIdx: number): number {
-  for (const endCode of SL_INTERNAL_STAY_END_CODES) {
+  for (const endCode of SL_BALANZA_ROLLUP_END_CODES) {
     const idx = points.findIndex((p, i) => i > fromIdx && p.code === endCode)
     if (idx >= 0) return idx
   }
   return -1
+}
+
+/** Puntos S1→S5 para rollup balanza SL; con salida Excel infiere S5 si falta cámara. */
+export function resolveSlBalancaRollupEndpoints(
+  points: TimedLogicalPoint[],
+  opts?: { externalSalidaAt?: string }
+): { from: TimedLogicalPoint; to: TimedLogicalPoint } | null {
+  let timeline = sanitizeMisplacedSlEgreso(points)
+  if (opts?.externalSalidaAt?.trim()) {
+    timeline = enrichSlTimelineWithExcelAnchors(timeline, { externalSalidaAt: opts.externalSalidaAt })
+  }
+  const fromIdx = timeline.findIndex((p) => p.code === SL_BALANZA_ROLLUP_TRANSITION.from)
+  if (fromIdx < 0) return null
+  const endIdx = findSlBalancaRollupEndIdx(timeline, fromIdx)
+  if (endIdx < 0) return null
+  return { from: timeline[fromIdx]!, to: timeline[endIdx]! }
+}
+
+/** Corrige timestamps de scatter Excel-first para tramo balanza SL (evita fin en egreso S7). */
+export function repairSlBalanzaScatterSegment(row: {
+  segment_from: string
+  segment_to: string
+  segment_start_time: string
+  segment_end_time: string
+  segment_duration_min: number
+  external_salida_at?: string
+}): {
+  segment_start_time: string
+  segment_end_time: string
+  segment_duration_min: number
+  horario_fuente: 'truckflow' | 'excel_inferido'
+} | null {
+  const from = String(row.segment_from ?? '').trim()
+  const to = String(row.segment_to ?? '').trim()
+  if (from !== SL_BALANZA_ROLLUP_TRANSITION.from || to !== SL_BALANZA_ROLLUP_TRANSITION.to) {
+    return null
+  }
+  const start = String(row.segment_start_time ?? '').trim()
+  const endRaw = String(row.segment_end_time ?? '').trim()
+  if (!start || !endRaw) return null
+
+  const duration = Number(row.segment_duration_min)
+  const clockDur = minutesBetweenIso(start, endRaw)
+  const max = SL_BALANZA_STAY_MAX_MINUTES
+  if (
+    Number.isFinite(duration) &&
+    duration > 0 &&
+    duration <= max &&
+    Number.isFinite(clockDur) &&
+    clockDur > 0 &&
+    clockDur <= max &&
+    Math.abs(clockDur - duration) <= 2
+  ) {
+    return {
+      segment_start_time: start,
+      segment_end_time: endRaw,
+      segment_duration_min: Math.round(duration * 10) / 10,
+      horario_fuente: 'truckflow',
+    }
+  }
+
+  const salida = String(row.external_salida_at ?? '').trim()
+  if (!salida) return null
+
+  const endpoints = resolveSlBalancaRollupEndpoints(
+    buildTimedLogicalTimelineFromSegments([
+      {
+        segment_from: from,
+        segment_to: to,
+        segment_start_time: start,
+        segment_end_time: endRaw,
+      },
+    ]),
+    { externalSalidaAt: salida }
+  )
+  if (!endpoints) return null
+  const fixedDur = minutesBetweenIso(endpoints.from.occurredAt, endpoints.to.occurredAt)
+  if (!isValidSegmentDuration(fixedDur, from, to)) return null
+  return {
+    segment_start_time: endpoints.from.occurredAt,
+    segment_end_time: endpoints.to.occurredAt,
+    segment_duration_min: Math.round(fixedDur * 10) / 10,
+    horario_fuente: 'excel_inferido',
+  }
 }
 
 export function extractSlBalancaRollupFromTimeline(
@@ -1162,12 +1246,10 @@ export function extractSlBalancaRollupFromTimeline(
 ): SegmentLeg | null {
   if (!CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(executiveCircuitCode)) return null
   const { from: fromCode, to: templateToCode } = SL_BALANZA_ROLLUP_TRANSITION
-  const fromIdx = points.findIndex((p) => p.code === fromCode)
-  if (fromIdx < 0) return null
-  const endIdx = findSlBalancaRollupEndIdx(points, fromIdx)
-  if (endIdx < 0) return null
+  const endpoints = resolveSlBalancaRollupEndpoints(points)
+  if (!endpoints) return null
 
-  const durationMinutes = minutesBetweenIso(points[fromIdx]!.occurredAt, points[endIdx]!.occurredAt)
+  const durationMinutes = minutesBetweenIso(endpoints.from.occurredAt, endpoints.to.occurredAt)
   if (!isValidSegmentDuration(durationMinutes, fromCode, templateToCode)) return null
   return {
     journeyId,
@@ -1304,12 +1386,56 @@ export function synthesizeSlRollupLegsFromTimedSegments(input: {
     executiveCircuitCode: input.executiveCircuitCode,
   }
   const points = enrichSlTimelineWithExcelAnchors(truckflowPoints, slAnchors)
-  return extractSlOperationalChainLegsFromTimeline(
+  const legs = extractSlOperationalChainLegsFromTimeline(
     points,
     input.executiveCircuitCode,
     input.operationId,
     input.plate
   )
+
+  const balanzaRollup = extractSlBalancaRollupFromTimeline(
+    points,
+    input.executiveCircuitCode,
+    input.operationId,
+    input.plate
+  )
+  if (balanzaRollup) {
+    const endpoints = resolveSlBalancaRollupEndpoints(points, {
+      externalSalidaAt: input.externalSalidaAt,
+    })
+    if (endpoints) {
+      const key = `${balanzaRollup.fromCode}|${balanzaRollup.toCode}`
+      if (!legs.some((l) => `${l.fromCode}|${l.toCode}` === key)) {
+        legs.push({
+          ...balanzaRollup,
+          segment_start_time: endpoints.from.occurredAt,
+          segment_end_time: endpoints.to.occurredAt,
+        })
+      }
+    }
+  }
+
+  const salidaEgreso = extractSlSalidaEgresoRollupFromTimeline(
+    points,
+    input.executiveCircuitCode,
+    input.operationId,
+    input.plate
+  )
+  if (salidaEgreso) {
+    const endpoints = resolveSlSalidaEgresoEndpoints(points)
+    if (endpoints) {
+      const key = `${salidaEgreso.fromCode}|${salidaEgreso.toCode}`
+      if (!legs.some((l) => `${l.fromCode}|${l.toCode}` === key)) {
+        legs.push({
+          ...salidaEgreso,
+          segment_start_time: endpoints.from.occurredAt,
+          segment_end_time: endpoints.to.occurredAt,
+        })
+      }
+    }
+  }
+
+  return legs
 }
 
 function findRollupEndIdx(
@@ -2034,13 +2160,12 @@ export function extractSegmentLegsWithTimes(
   }
   const rollup = extractSlBalancaRollupLeg(journey, executiveCircuitCode)
   if (rollup) {
-    const fromIdx = points.findIndex((p) => p.code === SL_BALANZA_ROLLUP_TRANSITION.from)
-    const endIdx = findSlBalancaRollupEndIdx(points, fromIdx)
-    if (fromIdx >= 0 && endIdx >= 0) {
+    const endpoints = resolveSlBalancaRollupEndpoints(points)
+    if (endpoints) {
       legs.push({
         ...rollup,
-        segment_start_time: points[fromIdx]!.occurredAt,
-        segment_end_time: points[endIdx]!.occurredAt,
+        segment_start_time: endpoints.from.occurredAt,
+        segment_end_time: endpoints.to.occurredAt,
       })
     }
   }

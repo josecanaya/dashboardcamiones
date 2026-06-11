@@ -27,6 +27,7 @@ const MERGE_EXPORTS: { key: keyof EtlTransformOutput['csv']; filename: string; l
   { key: 'external_movimientos_contrato_normalized', filename: 'external_movimientos_contrato_normalized.csv', label: 'Externos normalizados' },
   { key: 'merge_summary', filename: 'merge_summary.csv', label: 'Resumen merge' },
   { key: 'segment_scatter_analysis', filename: 'segment_scatter_analysis.csv', label: 'Dispersión tramos' },
+  { key: 'segment_scatter_by_day', filename: 'segment_scatter_by_day.csv', label: 'Dispersión día (Power BI)' },
   { key: 'operational_sample', filename: 'operational_sample.csv', label: 'Muestra operativa' },
   {
     key: 'journeys_enriched_sin_punto_descarga',
@@ -81,7 +82,8 @@ export function MovimientosContratoPanel({ wb, compact }: { wb: WbSlice; compact
           <h3 className="text-sm font-bold text-slate-900">Movimientos por Contrato + producto</h3>
           <p className="mt-1 max-w-2xl text-[11px] text-slate-700">
             Cargá los XLSX <strong>antes</strong> de «Procesar Transform». El merge{' '}
-            <strong>Excel-first</strong> alimenta KPI tiempos, filtros por producto y la conciliación comité (
+            <strong>Excel-first</strong> alimenta filtros por producto y comité; los KPI de tiempos se arman en la
+            pestaña <strong>KPI Tiempos</strong> (tramo 4). Conciliación: (
             <code className="text-[10px]">excel_operations_with_truckflow.csv</code>
             ).
           </p>

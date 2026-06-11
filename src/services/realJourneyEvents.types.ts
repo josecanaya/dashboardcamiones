@@ -1,4 +1,5 @@
 /**
+ * Capa: tipos núcleo Transform. Sin lógica ni dependencia de UI.
  * Evento desde API/archivo tras enriquecimiento de patentes (`annotateRealJourneyEventsWithPlateFields`).
  */
 export type RealJourneyEventDto = {

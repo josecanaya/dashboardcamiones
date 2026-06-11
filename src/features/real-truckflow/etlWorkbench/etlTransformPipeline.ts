@@ -50,19 +50,9 @@ import {
   resolveFlexibleDischargePreliminaryCode,
 } from './finalCircuitScoring'
 import { resolveCommitteeClassification } from './committeeClassification'
-import {
-  buildSegmentTimingIndex,
-  segmentTimingKpiCsv,
-  segmentTimingLegsCsv,
-  type ClassifiedJourneyForTiming,
-  type SegmentTimingIndex,
-} from './etlSegmentTiming'
-import {
-  buildCircuitTimingIndex,
-  circuitTimingJourneysCsv,
-  circuitTimingSummaryCsv,
-  type CircuitTimingIndex,
-} from './etlCircuitTiming'
+import { type ClassifiedJourneyForTiming } from './etlSegmentTiming'
+import type { CircuitTimingIndex } from './etlCircuitTiming'
+import type { SegmentTimingIndex } from './etlSegmentTiming'
 import { lookupSanLorenzoCameraByDevice } from '../../../data/sanLorenzoCameraCatalog'
 import {
   applyExecutiveJourneyMerges,
@@ -89,6 +79,12 @@ import {
 } from '../../../services/truckPlateRegistryFilter'
 import type { MovimientosContratoFileInput } from './etlExternalMovimientosContrato'
 import { runMovimientosContratoIntegration } from './etlMovimientosContratoIntegration'
+import type { KpiTiemposBuildInput } from './etlKpiTiemposBuild'
+import {
+  createPhaseStore,
+  type EtlTransformPhaseStore,
+  type EtlTransformRunOptions,
+} from './etlTransformPhaseStore'
 
 export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v12'
 export type { FinalCircuitStatus } from './finalCircuitScoring'
@@ -532,8 +528,9 @@ export type EtlTransformOutput = {
       committeeVariaciones: number
       committeeAnomalias: number
     }
-    segmentTiming: SegmentTimingIndex
-    circuitTiming: CircuitTimingIndex
+    segmentTiming?: SegmentTimingIndex | null
+    circuitTiming?: CircuitTimingIndex | null
+    kpiTiemposBuilt?: boolean
     movimientosContrato?: {
       enabled: boolean
       logs: string[]
@@ -556,6 +553,8 @@ export type EtlTransformOutput = {
     }
   }
   rulesVersion: string
+  /** Entrada para tramo 4 (KPI Tiempos); el contexto la guarda en ref y no la expone en estado. */
+  kpiTiemposPrepared?: KpiTiemposBuildInput
 }
 
 function summarizeDeviceRear(events: RealJourneyEventDto[]) {
@@ -570,9 +569,183 @@ function summarizeDeviceRear(events: RealJourneyEventDto[]) {
     .sort((a, b) => b.count - a.count)
 }
 
-export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransformOutput> {
+function hydrateTramo1(s: Tramo1Serialized) {
+  return {
+    eventsForEtl: s.eventsForEtl as RealJourneyEventDto[],
+    alertsForEtl: s.alertsForEtl as RealAlertDto[],
+    plateRegistryStat: s.plateRegistryStat as EtlTransformOutput['stats']['plateRegistry'],
+    plateRegistryExcludedCsv: String(s.plateRegistryExcludedCsv ?? ''),
+    frontEv: s.frontEv as RealJourneyEventDto[],
+    rearEv: s.rearEv as RealJourneyEventDto[],
+    frontAl: s.frontAl as RealAlertDto[],
+    rearAl: s.rearAl as RealAlertDto[],
+    front_events_csv: String(s.front_events_csv ?? ''),
+    rear_events_csv: String(s.rear_events_csv ?? ''),
+    front_alerts_csv: String(s.front_alerts_csv ?? ''),
+    rear_alerts_csv: String(s.rear_alerts_csv ?? ''),
+    camera_lpr_status_csv: String(s.camera_lpr_status_csv ?? ''),
+    step1Stat: s.step1Stat as EtlTransformOutput['stats']['step1'],
+    step2Stat: s.step2Stat as EtlTransformOutput['stats']['step2'],
+    slFrontEventsCount: Number(s.slFrontEventsCount ?? 0),
+    totalLprMalfunctionAlerts: Number(s.totalLprMalfunctionAlerts ?? 0),
+    lprMalfunctionByCamera: (s.lprMalfunctionByCamera ?? []) as { deviceCode: string; count: number }[],
+    cameraWithMostLpr: (s.cameraWithMostLpr as string | null) ?? null,
+    ingreso_frontal_event_count: Number(s.ingreso_frontal_event_count ?? 0),
+    ingreso_frontal_unique_plates: Number(s.ingreso_frontal_unique_plates ?? 0),
+    ingreso_frontal_unique_journeys: Number(s.ingreso_frontal_unique_journeys ?? 0),
+    byJSize: Number(s.byJSize ?? 0),
+    rear_only_journeys_excluded: Number(s.rear_only_journeys_excluded ?? 0),
+    journeys_after_rear_filter: Number(s.journeys_after_rear_filter ?? 0),
+    journeys_cycle_splits_applied: Number(s.journeys_cycle_splits_applied ?? 0),
+    journeys: s.journeys as ReconstructedRealJourney[],
+    journeyAuditByUid: new Map(s.journeyAuditEntries as [string, unknown][]),
+    rear_only_journeys_debug_csv: String(s.rear_only_journeys_debug_csv ?? ''),
+    cleanRows: (s.cleanRows ?? []) as Record<string, unknown>[],
+    classifiedRows: (s.classifiedRows ?? []) as Record<string, unknown>[],
+    unclassifiedRows: (s.unclassifiedRows ?? []) as Record<string, unknown>[],
+    clean_journeys_csv: String(s.clean_journeys_csv ?? ''),
+    classified_circuits_csv: String(s.classified_circuits_csv ?? ''),
+    unclassified_journeys_csv: String(s.unclassified_journeys_csv ?? ''),
+    reliabilityByUid: new Map((s.reliabilityEntries ?? []) as [string, number][]),
+    classifiedOperationalCt: Number(s.classifiedOperationalCt ?? 0),
+    incompleteOperationalCt: Number(s.incompleteOperationalCt ?? 0),
+    unclassifiedCt: Number(s.unclassifiedCt ?? 0),
+    journeysWithRearRemoved: Number(s.journeysWithRearRemoved ?? 0),
+    operationalFrontEvents: (
+      s.operationalFrontEvents ??
+      (s.journeys as ReconstructedRealJourney[] | undefined)?.flatMap((j) => j.events) ??
+      []
+    ) as RealJourneyEventDto[],
+  }
+}
+
+function buildPartialOutputTramo1(s: Tramo1Serialized): EtlTransformOutput {
+  return {
+    csv: {
+      front_events: s.front_events_csv,
+      rear_events: s.rear_events_csv,
+      front_alerts: s.front_alerts_csv,
+      rear_alerts: s.rear_alerts_csv,
+      camera_lpr_status: s.camera_lpr_status_csv,
+      clean_journeys: s.clean_journeys_csv,
+      classified_circuits: s.classified_circuits_csv,
+      unclassified_journeys: s.unclassified_journeys_csv,
+      rear_only_journeys_debug: s.rear_only_journeys_debug_csv,
+      plate_registry_excluded: s.plateRegistryExcludedCsv,
+    },
+    stats: {
+      step1: s.step1Stat,
+      plateRegistry: s.plateRegistryStat,
+      step2: s.step2Stat,
+      step3: {
+        journeysTotal: s.journeys.length,
+        journeysValidFront: s.journeys_after_rear_filter,
+        rearOnlyExcluded: s.rear_only_journeys_excluded,
+        journeysWithRearEventsRemoved: s.journeysWithRearRemoved,
+        single_event_discarded: 0,
+        duplicate_suspected: 0,
+        incomplete_sequence_count: s.incompleteOperationalCt,
+        classifiedCircuitsOperational: s.classifiedOperationalCt,
+        incompleteOperational: s.incompleteOperationalCt,
+        unclassifiedCount: s.unclassifiedCt,
+        cleanJourneysCount: s.cleanRows.length,
+      },
+      step4: {
+        candidates: 0,
+        candidatesBeforeCap: 0,
+        byExactPlate: 0,
+        bySimilarPlate: 0,
+        bySequenceAndPlate: 0,
+      },
+      coherence: {
+        ingreso_frontal_event_count: Number(s.ingreso_frontal_event_count ?? 0),
+        ingreso_frontal_unique_plates: Number(s.ingreso_frontal_unique_plates ?? 0),
+        ingreso_frontal_unique_journeys: Number(s.ingreso_frontal_unique_journeys ?? 0),
+        ingresos_operativos_count: 0,
+        total_journeys_raw: Number(s.byJSize ?? 0),
+        rear_only_journeys_excluded: Number(s.rear_only_journeys_excluded ?? 0),
+        journeys_cycle_splits_applied: Number(s.journeys_cycle_splits_applied ?? 0),
+        journeys_after_rear_filter: Number(s.journeys_after_rear_filter ?? 0),
+        final_circuits_count: 0,
+        final_classified_count: 0,
+        final_incomplete_count: 0,
+        final_circuitos_completos: 0,
+        final_circuitos_probables: 0,
+        final_circuitos_sin_ingreso: 0,
+        final_circuitos_sin_egreso: 0,
+        final_incompletos_revision: 0,
+        final_descartados: 0,
+        circuitos_con_ingreso_operativo: 0,
+        circuitos_con_egreso_operativo: 0,
+        circuitos_con_ingreso_y_egreso_operativo: 0,
+        journey_vs_ingreso_ratio: null,
+        final_circuits_vs_ingreso_ratio: null,
+        journeyFragmentationWarn: false,
+        circuitsVersusIngresoWarn: false,
+        coherenceLabel: 'Pendiente tramo 2',
+        coherenceDetail: 'Completá circuitos y comité (tramo 2).',
+        exclusionMotives: [],
+      },
+      validation: {
+        totalLprMalfunctionAlerts: Number(s.totalLprMalfunctionAlerts ?? 0),
+        lprMalfunctionByCamera: (s.lprMalfunctionByCamera ?? []) as { deviceCode: string; count: number }[],
+        cameraWithMostLpr: (s.cameraWithMostLpr as string | null) ?? null,
+        circuitosClasificados: Number(s.classifiedOperationalCt ?? 0),
+        registrosIncompletosOperativos: Number(s.incompleteOperationalCt ?? 0),
+        sinClasificar: Number(s.unclassifiedCt ?? 0),
+        mergeCandidatesFiltered: 0,
+        final_circuits_count: 0,
+      },
+      executive: {
+        periodStart: '',
+        periodEnd: '',
+        eventCount: (s.eventsForEtl as RealJourneyEventDto[]).length,
+        alertCount: (s.alertsForEtl as RealAlertDto[]).length,
+        completos: 0,
+        incompletos: 0,
+        anomalos: 0,
+        deducidos: 0,
+        validos: 0,
+        probables: 0,
+        journeysMergedApplied: 0,
+        noEvaluables: 0,
+        validComplete: 0,
+        validDeduced: 0,
+        lprAlerts: Number(s.totalLprMalfunctionAlerts ?? 0),
+        operationalAlerts: 0,
+        operationalAlertsCrossed: 0,
+        journeysWithInvalidRoute: 0,
+        journeysWithInvalidJourneyStart: 0,
+        incompletosWithOperationalAlert: 0,
+        anomalosWithOperationalAlert: 0,
+        exportReady: false,
+        slFrontEvents: Number(s.slFrontEventsCount ?? 0),
+        slJourneysWithCorroboration: 0,
+        slJourneysExecutiveReinforced: 0,
+        committeeCompletos: 0,
+        committeeVariaciones: 0,
+        committeeAnomalias: 0,
+      },
+      kpiTiemposBuilt: false,
+    },
+    rulesVersion: ETL_TRANSFORM_RULES_VERSION,
+  }
+}
+
+type Tramo1Serialized = Record<string, unknown>
+
+export async function runEtlTransform(
+  inp: EtlTransformInput,
+  runOpts?: EtlTransformRunOptions
+): Promise<EtlTransformOutput> {
+  const phaseStore = runOpts?.phaseStore ?? createPhaseStore()
+  const onlyTramo = runOpts?.onlyTramo
+  const skipTramo1 = (onlyTramo === 2 || onlyTramo === 3) && phaseStore.tramo1 != null
+  let tramo1: Tramo1Serialized | null = skipTramo1 ? (phaseStore.tramo1 as Tramo1Serialized) : null
+
   await yieldToBrowser()
 
+  if (!skipTramo1) {
   const evFiltered = filterEventsByPlateRegistry(inp.events, inp.plateRegistry)
   const alFiltered = filterAlertsByPlateRegistry(inp.alerts, inp.plateRegistry)
   const eventsForEtl = evFiltered.kept
@@ -1053,6 +1226,99 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       recordsToCsv(Object.keys(unclassifiedRows[0]), unclassifiedRows)
     : 'journey_uid\n'
 
+  tramo1 = {
+    eventsForEtl,
+    alertsForEtl,
+    plateRegistryStat,
+    plateRegistryExcludedCsv,
+    frontEv,
+    rearEv,
+    frontAl,
+    rearAl,
+    front_events_csv,
+    rear_events_csv,
+    front_alerts_csv,
+    rear_alerts_csv,
+    camera_lpr_status_csv,
+    step1Stat,
+    step2Stat,
+    slFrontEventsCount,
+    totalLprMalfunctionAlerts,
+    lprMalfunctionByCamera,
+    cameraWithMostLpr,
+    ingreso_frontal_event_count,
+    ingreso_frontal_unique_plates,
+    ingreso_frontal_unique_journeys,
+    byJSize: byJ.size,
+    rear_only_journeys_excluded,
+    journeys_after_rear_filter,
+    journeys_cycle_splits_applied,
+    journeys,
+    journeyAuditEntries: [...journeyAuditByUid.entries()],
+    rear_only_journeys_debug_csv,
+    cleanRows,
+    classifiedRows,
+    unclassifiedRows,
+    clean_journeys_csv,
+    classified_circuits_csv,
+    unclassified_journeys_csv,
+    reliabilityEntries: [...reliabilityByUid.entries()],
+    classifiedOperationalCt,
+    incompleteOperationalCt,
+    unclassifiedCt,
+    journeysWithRearRemoved,
+    operationalFrontEvents,
+  }
+  phaseStore.tramo1 = tramo1
+  phaseStore.tramoCompleted = 1
+  if (onlyTramo === 1) {
+    return buildPartialOutputTramo1(tramo1)
+  }
+  }
+
+  const t1 = hydrateTramo1((skipTramo1 ? phaseStore.tramo1 : tramo1)! as Tramo1Serialized)
+  const eventsForEtl = t1.eventsForEtl
+  const alertsForEtl = t1.alertsForEtl
+  const plateRegistryStat = t1.plateRegistryStat
+  const plateRegistryExcludedCsv = t1.plateRegistryExcludedCsv
+  const frontEv = t1.frontEv
+  const rearEv = t1.rearEv
+  const frontAl = t1.frontAl
+  const rearAl = t1.rearAl
+  const front_events_csv = t1.front_events_csv
+  const rear_events_csv = t1.rear_events_csv
+  const front_alerts_csv = t1.front_alerts_csv
+  const rear_alerts_csv = t1.rear_alerts_csv
+  const camera_lpr_status_csv = t1.camera_lpr_status_csv
+  const step1Stat = t1.step1Stat
+  const step2Stat = t1.step2Stat
+  const slFrontEventsCount = t1.slFrontEventsCount
+  const totalLprMalfunctionAlerts = t1.totalLprMalfunctionAlerts
+  const lprMalfunctionByCamera = t1.lprMalfunctionByCamera
+  const cameraWithMostLpr = t1.cameraWithMostLpr
+  const ingreso_frontal_event_count = t1.ingreso_frontal_event_count
+  const ingreso_frontal_unique_plates = t1.ingreso_frontal_unique_plates
+  const ingreso_frontal_unique_journeys = t1.ingreso_frontal_unique_journeys
+  const rear_only_journeys_excluded = t1.rear_only_journeys_excluded
+  const journeys_after_rear_filter = t1.journeys_after_rear_filter
+  const journeys_cycle_splits_applied = t1.journeys_cycle_splits_applied
+  const journeys = t1.journeys
+  const journeyAuditByUid = t1.journeyAuditByUid
+  const rear_only_journeys_debug_csv = t1.rear_only_journeys_debug_csv
+  const cleanRows = t1.cleanRows
+  const classifiedRows = t1.classifiedRows
+  const unclassifiedRows = t1.unclassifiedRows
+  const clean_journeys_csv = t1.clean_journeys_csv
+  const classified_circuits_csv = t1.classified_circuits_csv
+  const unclassified_journeys_csv = t1.unclassified_journeys_csv
+  const reliabilityByUid = t1.reliabilityByUid
+  const classifiedOperationalCt = t1.classifiedOperationalCt
+  const incompleteOperationalCt = t1.incompleteOperationalCt
+  const unclassifiedCt = t1.unclassifiedCt
+  const journeysWithRearRemoved = t1.journeysWithRearRemoved
+  const operationalFrontEvents = t1.operationalFrontEvents
+  const byJ = { size: t1.byJSize }
+
   await yieldToBrowser()
 
   /** —— Paso 4 merge sugerencias —— */
@@ -1098,7 +1364,8 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   }
 
   const list = journeys
-  const cap = Math.min(list.length, 2500)
+  /** Cap bajo para evitar O(n²) > ~1.2M comparaciones (bloquea UI varios minutos). */
+  const cap = Math.min(list.length, 1600)
 
   const seqCache = new Map<string, ReturnType<typeof journeyDeviceSectorLogical>>()
   function seqFor(j: ReconstructedRealJourney) {
@@ -1113,6 +1380,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   const rawMerge: MergeCand[] = []
 
   for (let i = 0; i < cap; i++) {
+    if (i > 0 && i % 20 === 0) await yieldToBrowser()
     for (let j = i + 1; j < cap; j++) {
       const ja = list[i]
       const jb = list[j]
@@ -1174,6 +1442,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       })
     }
   }
+  await yieldToBrowser()
 
   function mergeReliability(c: MergeCand): number {
     const ra = reliabilityByUid.get(c.a.journeyUid)
@@ -1384,7 +1653,9 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     },
   })
 
+  let executiveJourneyPass = 0
   for (const mj of journeysForExecutive) {
+    if (++executiveJourneyPass % 40 === 0) await yieldToBrowser()
     const tier = userCircuitTier(mj)
     const audit = journeyAuditByUid.get(mj.journeyUid)
     const seqPack = journeyDeviceSectorLogical(mj)
@@ -1832,18 +2103,7 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       executive_bucket: executive.bucket,
     })
   }
-
-  let segmentTiming = buildSegmentTimingIndex(classifiedForSegmentTiming, {
-    committeeGroups: ['COMPLETOS'],
-  })
-  let segment_timing_kpi = segmentTimingKpiCsv(segmentTiming)
-  let segment_timing_legs = segmentTimingLegsCsv(segmentTiming)
-
-  const circuitTiming = buildCircuitTimingIndex(classifiedForSegmentTiming, {
-    committeeGroups: ['COMPLETOS'],
-  })
-  const circuit_timing_summary = circuitTimingSummaryCsv(circuitTiming)
-  const circuit_timing_journeys = circuitTimingJourneysCsv(circuitTiming)
+  await yieldToBrowser()
 
   const journeyTimesByUid = new Map<string, { start: string; end: string }>()
   for (const row of debugMatrixRows) {
@@ -1857,20 +2117,21 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
 
   let movimientosContratoCsv: Record<string, string> = {}
   let movimientosContratoStats: EtlTransformOutput['stats']['movimientosContrato']
+  let kpiTiemposMovimientosSnapshot: KpiTiemposBuildInput['movimientosSnapshot'] = null
 
-  if (inp.movimientosContratoFiles?.length) {
-    const mc = runMovimientosContratoIntegration({
+  const skipMovimientosEnTramo2 = onlyTramo === 2
+
+  if (!skipMovimientosEnTramo2 && inp.movimientosContratoFiles?.length) {
+    await yieldToBrowser()
+    const mc = await runMovimientosContratoIntegration({
       finalCsvRows,
       journeyTimesByUid,
       classifiedJourneys: classifiedForSegmentTiming,
       movimientosFiles: inp.movimientosContratoFiles,
+      skipKpiTiemposArtifacts: true,
     })
     movimientosContratoCsv = mc.csv
-    if (mc.segmentTimingFromExcelFirst?.legs.length) {
-      segmentTiming = mc.segmentTimingFromExcelFirst
-      segment_timing_kpi = segmentTimingKpiCsv(segmentTiming)
-      segment_timing_legs = segmentTimingLegsCsv(segmentTiming)
-    }
+    kpiTiemposMovimientosSnapshot = mc.kpiTiemposSnapshot
     movimientosContratoStats = {
       enabled: true,
       logs: mc.logs,
@@ -1957,7 +2218,55 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
   const lprAlerts = frontAl.filter(isLprMalfunctionAlert)
   const journeyByUid = new Map(journeysForExecutive.map((j) => [j.journeyUid, j]))
 
-  for (const alert of lprAlerts) {
+  type LprJourneyScanCtx = {
+    uid: string
+    meta: { executiveBucket: string; normalizedPlate: string; startedAt: string; endedAt: string }
+    j: (typeof journeysForExecutive)[number]
+    matrix: {
+      usefulEventsCount: number
+      matrixFinalStatus: string
+      matrixReason: string
+      matrixConfidence: number
+      sequenceRespected: boolean
+      legacyFinalStatus: string
+      executiveBucket: string
+      executiveStatus: string
+      executiveReason: string
+      validDetail: string
+      coveragePercent: number
+      hasStrongPoint: boolean
+      enabledForClassification: boolean
+      sequenceConfigured: boolean
+    }
+    minW: number
+    maxW: number
+    jPlate: string
+    devSet: Set<string>
+    secSet: Set<string>
+    jSite: ReturnType<typeof inferSiteFromSectorCode>
+  }
+  const lprJourneyScanCtx: LprJourneyScanCtx[] = []
+  for (const [uid, meta] of journeyMetaByUid.entries()) {
+    const j = journeyByUid.get(uid)
+    if (!j) continue
+    if (meta.executiveBucket === '') continue
+    const matrix = journeyMatrixByUid.get(uid)
+    if (!matrix || matrix.usefulEventsCount <= 0) continue
+    const startMs = Date.parse(meta.startedAt)
+    const endMs = Date.parse(meta.endedAt)
+    if (!Number.isFinite(startMs) || !Number.isFinite(endMs)) continue
+    const minW = Math.min(startMs, endMs)
+    const maxW = Math.max(startMs, endMs)
+    const jPlate = normalizePlateStrict(meta.normalizedPlate || j.normalizedPlate || j.plate)
+    const devSet = new Set(j.events.map((e) => String(e.deviceCode ?? '').trim()))
+    const secSet = new Set(j.events.map((e) => String(e.sectorCode ?? '').trim()))
+    const jSite = inferSiteFromSectorCode(String(j.events[0]?.sectorCode ?? ''))
+    lprJourneyScanCtx.push({ uid, meta, j, matrix, minW, maxW, jPlate, devSet, secSet, jSite })
+  }
+
+  for (let lprAlertIdx = 0; lprAlertIdx < lprAlerts.length; lprAlertIdx++) {
+    if (lprAlertIdx > 0 && lprAlertIdx % 12 === 0) await yieldToBrowser()
+    const alert = lprAlerts[lprAlertIdx]!
     const alertId = pickStr(alert.id) || pickStr((alert as { alertId?: unknown }).alertId)
     const alertAt = alertOccurredAtIso(alert)
     const alertMs = Date.parse(alertAt)
@@ -1968,19 +2277,8 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     const ocrRaw = getLprObservedPlateRaw(alert)
     const ocrNorm = normalizePlateStrict(ocrRaw)
 
-    for (const [uid, meta] of journeyMetaByUid.entries()) {
-      const j = journeyByUid.get(uid)
-      if (!j) continue
-      if (meta.executiveBucket === '') continue
-      const matrix = journeyMatrixByUid.get(uid)
-      if (!matrix) continue
-      if (matrix.usefulEventsCount <= 0) continue
-
-      const startMs = Date.parse(meta.startedAt)
-      const endMs = Date.parse(meta.endedAt)
-      if (!Number.isFinite(startMs) || !Number.isFinite(endMs)) continue
-      const minW = Math.min(startMs, endMs)
-      const maxW = Math.max(startMs, endMs)
+    for (const scan of lprJourneyScanCtx) {
+      const { uid, meta, matrix, minW, maxW, jPlate, devSet, secSet, jSite } = scan
       const diffMin =
         alertMs < minW ? (minW - alertMs) / 60000
         : alertMs > maxW ? (alertMs - maxW) / 60000
@@ -1988,14 +2286,10 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       const tScore = timeScoreByDiffMinutes(diffMin)
       if (tScore <= 0) continue
 
-      const jPlate = normalizePlateStrict(meta.normalizedPlate || j.normalizedPlate || j.plate)
       const ocrScore = ocrNorm && jPlate ? plateSimilarityScore(ocrNorm, jPlate) : 0
 
-      const devSet = new Set(j.events.map((e) => String(e.deviceCode ?? '').trim()))
-      const secSet = new Set(j.events.map((e) => String(e.sectorCode ?? '').trim()))
       const sameDevice = !!alertDevice && devSet.has(alertDevice)
       const sameSector = !!alertSector && secSet.has(alertSector)
-      const jSite = inferSiteFromSectorCode(String(j.events[0]?.sectorCode ?? ''))
       const sameSite = jSite !== 'unknown' && alertSite !== 'unknown' && jSite === alertSite
 
       const deviceSectorScore = sameDevice ? 1 : sameSector ? 0.7 : sameSite ? 0.3 : 0
@@ -2553,6 +2847,17 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
     committeeAnomalias,
   }
 
+  phaseStore.tramo2Prep = {
+    finalCsvRows,
+    classifiedForSegmentTiming,
+    journeyTimesByUid: [...journeyTimesByUid.entries()],
+  }
+  if (onlyTramo === 2) {
+    phaseStore.tramoCompleted = 2
+  } else if (!onlyTramo || onlyTramo === 3) {
+    phaseStore.tramoCompleted = 3
+  }
+
   return {
     csv: {
       front_events: front_events_csv,
@@ -2574,10 +2879,6 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       alerts_operational: operational_alerts_csv,
       transform_summary: transform_summary_csv,
       plate_registry_excluded: plateRegistryExcludedCsv,
-      segment_timing_kpi,
-      segment_timing_legs,
-      circuit_timing_summary,
-      circuit_timing_journeys,
       ...movimientosContratoCsv,
     },
     stats: {
@@ -2589,10 +2890,15 @@ export async function runEtlTransform(inp: EtlTransformInput): Promise<EtlTransf
       coherence: coherenceStat,
       validation: validationStats,
       executive: executiveStat,
-      segmentTiming,
-      circuitTiming,
+      segmentTiming: null,
+      circuitTiming: null,
+      kpiTiemposBuilt: false,
       movimientosContrato: movimientosContratoStats,
     },
     rulesVersion: ETL_TRANSFORM_RULES_VERSION,
+    kpiTiemposPrepared: {
+      classifiedJourneys: classifiedForSegmentTiming,
+      movimientosSnapshot: kpiTiemposMovimientosSnapshot,
+    },
   }
 }

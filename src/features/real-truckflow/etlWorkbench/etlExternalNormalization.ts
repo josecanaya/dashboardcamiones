@@ -2,6 +2,9 @@
  * Normalización compartida para Movimientos por Contrato y merge Truckflow.
  */
 
+/**
+ * @deprecated Para imports nuevos usar `contractFieldNormalizer` en truckflowTransform/contractFirst.
+ */
 import * as XLSX from 'xlsx'
 
 export type PlantNormalized =

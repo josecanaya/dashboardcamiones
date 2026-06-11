@@ -1,3 +1,7 @@
+/**
+ * @deprecated Para imports nuevos usar `src/services/truckflowTransform/contractFirst/contractExcelParser`.
+ * Implementación física permanece aquí hasta migración completa (Etapa Contract-first).
+ */
 import * as XLSX from 'xlsx'
 import { recordsToCsv } from './etlCsv'
 import {

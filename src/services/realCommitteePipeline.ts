@@ -1,6 +1,6 @@
 /**
- * Pipeline operativo para datos útiles en comité:
- * carga → filtro traseras → segmentación temporal → clasificación operativa Ricardone → trazabilidad ETL.
+ * Capa: clasificación — salida ejecutiva / comité (segmentación temporal, flags).
+ * Complementa circuitEtlV2; alimenta powerBiEtlExport. No depende de gráficos.
  */
 
 import type { RealJourneyEventDto } from './realJourneyEvents.types'

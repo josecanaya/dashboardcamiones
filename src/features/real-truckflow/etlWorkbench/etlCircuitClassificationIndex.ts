@@ -1,3 +1,8 @@
+import type { RealJourneyEventDto } from '../../../services/realJourneyEvents.types'
+import {
+  detectSanLorenzoEgressToRicardoneReturnFromEvents,
+  SL_EGRESS_RIC_RETURN_WINDOW_MS_DEFAULT,
+} from '../../../services/realPlateAudit'
 import { recordsToCsv } from './etlCsv'
 import { parseCsvToRecords } from './etlCsvParse'
 import { MERGE_STATUSES_WITH_PRODUCT } from './etlTruckflowMovimientosMerge'
@@ -172,6 +177,31 @@ export const SUSPICIOUS_DISCHARGE_CSV_HEADERS = [
   'committee_group',
   'committee_reason',
   'useful_events_count',
+] as const
+
+/** Salida San Lorenzo y vuelta a Ricardone (ingreso/preingreso/calada) en ventana corta. */
+export type SuspiciousSlExitRicReturnRow = {
+  plate: string
+  day: string
+  slExitAt: string
+  slExitPoint: string
+  ricReturnAt: string
+  ricReturnPoint: string
+  deltaMinutes: number
+  journeyUidAtExit: string
+  journeyUidAtReturn: string
+}
+
+export const SUSPICIOUS_SL_RIC_RETURN_CSV_HEADERS = [
+  'plate',
+  'day',
+  'sl_exit_at',
+  'sl_exit_point',
+  'ric_return_at',
+  'ric_return_point',
+  'delta_minutes',
+  'journey_uid_exit',
+  'journey_uid_return',
 ] as const
 
 export const ANOMALY_SEQUENCE_CSV_HEADERS = [
@@ -1024,6 +1054,62 @@ export function suspiciousDischargeCsv(rows: SuspiciousDischargeWithoutBalanzaRo
     useful_events_count: r.usefulEventsCount,
   }))
   return recordsToCsv([...SUSPICIOUS_DISCHARGE_CSV_HEADERS], csvRows)
+}
+
+function journeyUidMatchesFilter(uid: string, allowed: Set<string>): boolean {
+  const u = String(uid ?? '').trim()
+  if (!u) return false
+  if (allowed.has(u)) return true
+  const base = u.split('__cycle')[0] ?? ''
+  return base !== '' && allowed.has(base)
+}
+
+/** Misma ventana que auditoría de patentes (40 min por defecto). */
+export function buildSuspiciousSlExitRicReturn(
+  events: RealJourneyEventDto[],
+  opts?: { windowMs?: number; allowedJourneyIds?: Set<string> | null }
+): SuspiciousSlExitRicReturnRow[] {
+  if (!events.length) return []
+  const windowMs = opts?.windowMs ?? SL_EGRESS_RIC_RETURN_WINDOW_MS_DEFAULT
+  const allowed = opts?.allowedJourneyIds
+  const hints = detectSanLorenzoEgressToRicardoneReturnFromEvents(events, windowMs)
+  const rows: SuspiciousSlExitRicReturnRow[] = []
+  for (const h of hints) {
+    if (allowed?.size) {
+      const ok =
+        journeyUidMatchesFilter(h.journeyUidAtExit, allowed) ||
+        journeyUidMatchesFilter(h.journeyUidAtReturn, allowed)
+      if (!ok) continue
+    }
+    rows.push({
+      plate: h.plate,
+      day: h.day,
+      slExitAt: h.slExitAt,
+      slExitPoint: `${h.slExitLabel} (${h.slExitLogical})`,
+      ricReturnAt: h.ricReturnAt,
+      ricReturnPoint: `${h.ricReturnLabel} (${h.ricReturnLogical})`,
+      deltaMinutes: Math.round((h.deltaMs / 60000) * 10) / 10,
+      journeyUidAtExit: h.journeyUidAtExit,
+      journeyUidAtReturn: h.journeyUidAtReturn,
+    })
+  }
+  return rows
+}
+
+export function suspiciousSlExitRicReturnCsv(rows: SuspiciousSlExitRicReturnRow[]): string {
+  if (!rows.length) return `${SUSPICIOUS_SL_RIC_RETURN_CSV_HEADERS.join(',')}\n`
+  const csvRows = rows.map((r) => ({
+    plate: r.plate,
+    day: r.day,
+    sl_exit_at: r.slExitAt,
+    sl_exit_point: r.slExitPoint,
+    ric_return_at: r.ricReturnAt,
+    ric_return_point: r.ricReturnPoint,
+    delta_minutes: r.deltaMinutes,
+    journey_uid_exit: r.journeyUidAtExit,
+    journey_uid_return: r.journeyUidAtReturn,
+  }))
+  return recordsToCsv([...SUSPICIOUS_SL_RIC_RETURN_CSV_HEADERS], csvRows)
 }
 
 /** Clave estable para agrupar recorridos anómalos. */

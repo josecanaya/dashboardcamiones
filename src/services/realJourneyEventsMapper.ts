@@ -1,3 +1,7 @@
+/**
+ * Capa: reconstrucción — agrupa eventos en journeys; aplica preliminar al armar.
+ * Núcleo Transform; cambios aquí impactan casi todo el downstream.
+ */
 import type {
   RealJourneyEventDto,
   ReconstructedRealJourney,

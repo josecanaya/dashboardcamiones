@@ -1,3 +1,6 @@
+/**
+ * Capa: soporte normalización — exclusiones por catálogo manual de patentes.
+ */
 import type { TruckPlateRegistryEntry } from '../domain/truckPlateRegistry'
 import { buildRegistryLookup, normalizeRegistryPlate } from '../domain/truckPlateRegistry'
 import type { TruckPlateRegistryDocument } from '../domain/truckPlateRegistry'

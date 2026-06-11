@@ -1,6 +1,7 @@
 /**
- * Capa de ingesta Truckflow: fetch HTTP, extracción de arrays y normalización inicial a DTO.
- * La reconstrucción/validación de circuitos vive en otra capa (p. ej. circuitAnalyzer.ts).
+ * Capa: extract / API Truckflow. Núcleo Transform.
+ * Fetch HTTP, extracción de arrays y normalización inicial a DTO.
+ * Usa import.meta (Vite) y yieldToBrowser en parseo por chunks — ver docs/TRUCKFLOW_TRANSFORM_BACKEND_MAP.md.
  */
 import type { ApiRealJourneyEventRow, RealJourneyEventDto } from './realJourneyEvents.types'
 import { annotateRealJourneyEventsWithPlateFieldsChunked } from './realJourneyEventPlate'

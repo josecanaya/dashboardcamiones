@@ -76,6 +76,11 @@ export function p5(values: number[]): number {
   return percentile(sorted, 5)
 }
 
+export function p75(values: number[]): number {
+  const sorted = [...values].sort((a, b) => a - b)
+  return percentile(sorted, 75)
+}
+
 export function p90(values: number[]): number {
   const sorted = [...values].sort((a, b) => a - b)
   return percentile(sorted, 90)

@@ -1,3 +1,7 @@
+/**
+ * Capa: normalización / filtro — excluye cámaras traseras (lista alineada con etlRearDevices).
+ * Tocar con cuidado si solo trabajás clasificación v2 (afecta comité y pre-filtros).
+ */
 import {
   isEtlRearCameraDevice,
   listEtlRearDeviceCodes,

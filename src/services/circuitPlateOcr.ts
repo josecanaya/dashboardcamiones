@@ -1,5 +1,5 @@
 /**
- * Similaridad controlada entre patentes normalizadas (errores OCR típicos de LPR).
+ * Capa: normalización — similaridad OCR entre patentes (funciones puras).
  * No sustituye reglas temporales/secuenciales del ETL: solo produce candidatos.
  */
 

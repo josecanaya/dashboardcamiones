@@ -1,0 +1,172 @@
+/**
+ * Ejecuta Contract-first sin UI (Excel + JSON local Truckflow).
+ * Invocado desde run-truckflow-transform-local.mjs vía `npx tsx`.
+ */
+import fs from 'fs/promises'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+import { buildCliFinalCsvRowsFromLocalEventJson } from '../src/services/truckflowTransform/contractFirst/contractFirstCliAdapter.ts'
+import {
+  runMovimientosContratoIntegration,
+  CONTRACT_FIRST_INTEGRATION_CSV_KEYS,
+} from '../src/services/truckflowTransform/contractFirst/contractIntegrationRun.ts'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const PROJECT_ROOT = path.resolve(__dirname, '..')
+
+export type ContractFirstCliArgs = {
+  from: string
+  to: string
+  excel: string
+  dataRoot: string
+  outDir: string
+}
+
+const MIN_OUTPUT_FILES: { csvKey: (typeof CONTRACT_FIRST_INTEGRATION_CSV_KEYS)[number]; filename: string }[] = [
+  { csvKey: 'excel_operations_with_truckflow', filename: 'excel_operations_with_truckflow.csv' },
+  { csvKey: 'merged_truckflow_movimientos', filename: 'merged_truckflow_movimientos.csv' },
+  { csvKey: 'movimientos_without_truckflow_match', filename: 'movimientos_without_truckflow_match.csv' },
+  { csvKey: 'truckflow_without_movimiento_match', filename: 'truckflow_without_movimiento_match.csv' },
+  { csvKey: 'excel_no_truckflow_evidence_diagnostics', filename: 'excel_no_truckflow_evidence_diagnostics.csv' },
+  { csvKey: 'clean_journeys_for_analysis', filename: 'clean_journeys_for_analysis.csv' },
+]
+
+function* dayRange(startIso: string, endIso: string) {
+  const start = new Date(`${startIso}T12:00:00`)
+  const end = new Date(`${endIso}T12:00:00`)
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return
+  if (start > end) return
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    yield `${y}-${m}-${day}`
+  }
+}
+
+export function parseContractFirstCliArgv(argv: string[]): ContractFirstCliArgs | { help: true } {
+  const out: ContractFirstCliArgs = {
+    from: '',
+    to: '',
+    excel: '',
+    dataRoot: path.join(PROJECT_ROOT, 'data', 'truckflow'),
+    outDir: path.join(PROJECT_ROOT, 'scripts', 'output', 'contract-first'),
+  }
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i]
+    if (a === '--help' || a === '-h') return { help: true }
+    if (a === '--from' || a === '--start') out.from = argv[++i] ?? ''
+    if (a === '--to' || a === '--end') out.to = argv[++i] ?? ''
+    if (a === '--excel') out.excel = argv[++i] ?? ''
+    if (a === '--data-root') out.dataRoot = path.resolve(argv[++i] ?? '')
+    if (a === '--out') out.outDir = path.resolve(argv[++i] ?? '')
+  }
+  return out
+}
+
+export async function runContractFirstCli(args: ContractFirstCliArgs): Promise<{ outDir: string; logs: string[] }> {
+  if (!args.from || !args.to || !args.excel) {
+    throw new Error('Faltan --from, --to y --excel')
+  }
+
+  const days = [...dayRange(args.from, args.to)]
+  if (days.length === 0) throw new Error('Rango de fechas inválido')
+
+  const eventFiles: { day: string; jsonText: string }[] = []
+  for (const day of days) {
+    const eventPath = path.join(args.dataRoot, day, 'event-list.json')
+    const jsonText = await fs.readFile(eventPath, 'utf8')
+    eventFiles.push({ day, jsonText })
+  }
+
+  const excelBuf = await fs.readFile(args.excel)
+  const excelName = path.basename(args.excel)
+
+  const logs: string[] = []
+  logs.push(`[contract-first-cli] días Truckflow: ${days.join(', ')}`)
+  logs.push(`[contract-first-cli] Excel: ${args.excel}`)
+
+  const built = await buildCliFinalCsvRowsFromLocalEventJson(eventFiles)
+  for (const d of built.perDay) {
+    logs.push(`  eventos crudos día ${d.day}: ${d.eventCount}`)
+  }
+  logs.push(
+    `[contract-first-cli] Ricardone eventos ${built.eventCount} → journeys reconstruidos ${built.journeyCount} (sin matriz Workbench)`
+  )
+
+  const result = await runMovimientosContratoIntegration({
+    finalCsvRows: built.finalCsvRows,
+    journeyTimesByUid: built.journeyTimesByUid,
+    classifiedJourneys: [],
+    movimientosFiles: [
+      {
+        sourceFile: excelName,
+        arrayBuffer: excelBuf.buffer.slice(
+          excelBuf.byteOffset,
+          excelBuf.byteOffset + excelBuf.byteLength
+        ) as ArrayBuffer,
+      },
+    ],
+    skipKpiTiemposArtifacts: true,
+  })
+
+  logs.push(...result.logs)
+
+  await fs.mkdir(args.outDir, { recursive: true })
+  const written: string[] = []
+  for (const { csvKey, filename } of MIN_OUTPUT_FILES) {
+    const content = result.csv[csvKey]
+    if (content === undefined) {
+      logs.push(`AVISO: sin contenido para clave ${csvKey}`)
+      continue
+    }
+    const dest = path.join(args.outDir, filename)
+    await fs.writeFile(dest, content, 'utf8')
+    written.push(dest)
+  }
+
+  const meta = {
+    generatedAt: new Date().toISOString(),
+    from: args.from,
+    to: args.to,
+    excel: args.excel,
+    dataRoot: args.dataRoot,
+    reconstruction: 'contract_first_cli_v1',
+    pipelineOrder: 'truckflow_reconstruct_then_excel_merge',
+    filesWritten: written.map((p) => path.relative(PROJECT_ROOT, p)),
+    stats: result.stats,
+  }
+  await fs.writeFile(path.join(args.outDir, 'contract-first-run-meta.json'), JSON.stringify(meta, null, 2), 'utf8')
+  logs.push(`[contract-first-cli] salida: ${args.outDir}`)
+  logs.push(`[contract-first-cli] archivos: ${written.length}`)
+
+  return { outDir: args.outDir, logs }
+}
+
+async function main() {
+  const parsed = parseContractFirstCliArgv(process.argv.slice(2))
+  if ('help' in parsed) {
+    console.log(`Contract-first CLI (tsx)
+
+Opciones:
+  --from / --start   YYYY-MM-DD
+  --to / --end       YYYY-MM-DD
+  --excel            Ruta a MovimientosPorContrato.xlsx
+  --data-root        Carpeta data/truckflow (default: data/truckflow)
+  --out              Carpeta salida (default: scripts/output/contract-first)
+`)
+    process.exit(0)
+  }
+
+  const { logs } = await runContractFirstCli(parsed)
+  for (const line of logs) console.log(line)
+}
+
+const isMain = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url))
+if (isMain) {
+  main().catch((e) => {
+    console.error(e)
+    process.exit(1)
+  })
+}

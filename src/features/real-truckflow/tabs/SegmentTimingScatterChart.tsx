@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -24,6 +25,14 @@ export type SegmentTimingScatterPoint = {
   y: number
   binStart: number
   pointKey: string
+}
+
+export type SegmentTimingColoredScatterPoint = SegmentTimingScatterPoint & {
+  fill: string
+  stroke: string
+  tooltipTitle?: string
+  tooltipLines?: string[]
+  dotRadius?: number
 }
 
 /** Un punto por camión: X = duración real, Y = apilado por bin de tiempo (como histograma con puntos). */
@@ -55,6 +64,39 @@ export function buildSegmentTimingBinStackPoints(
   return points
 }
 
+/** Puntos apilados por bin con color por camión (p. ej. franja horaria). */
+export function buildColoredBinStackPoints<T extends { duracion_minutos: number }>(
+  rows: T[],
+  pickStyle: (row: T) => { fill: string; stroke: string; tooltipTitle?: string; tooltipLines?: string[] },
+  binSizeMinutes = SEGMENT_TIMING_HISTOGRAM_BIN_MIN
+): SegmentTimingColoredScatterPoint[] {
+  const binSize = Math.max(1, binSizeMinutes)
+  const byBin = new Map<number, T[]>()
+  for (const row of rows) {
+    const duration = row.duracion_minutos
+    if (!Number.isFinite(duration) || duration <= 0) continue
+    const binStart = Math.floor(duration / binSize) * binSize
+    const arr = byBin.get(binStart) ?? []
+    arr.push(row)
+    byBin.set(binStart, arr)
+  }
+  const points: SegmentTimingColoredScatterPoint[] = []
+  for (const [binStart, values] of byBin.entries()) {
+    values.forEach((row, index) => {
+      const duration = row.duracion_minutos
+      const style = pickStyle(row)
+      points.push({
+        x: Math.round(duration * 10) / 10,
+        y: index + 1,
+        binStart,
+        pointKey: `${binStart}-${index}-${duration}-${style.fill}`,
+        ...style,
+      })
+    })
+  }
+  return points
+}
+
 function resolveDomainMax(chartData: ChartPoint[], binSize: number): number {
   const dataMax = Math.max(0, ...chartData.map((d) => d.x))
   const step = Math.max(1, binSize)
@@ -79,18 +121,23 @@ function gaussianCurveFromBins(
 
 export function SegmentTimingScatterChart({
   scatterPoints,
+  coloredScatterPoints,
   chartData,
   mean,
   std,
   binSize = SEGMENT_TIMING_HISTOGRAM_BIN_MIN,
+  legendExtra,
 }: {
-  scatterPoints: SegmentTimingScatterPoint[]
+  scatterPoints?: SegmentTimingScatterPoint[]
+  coloredScatterPoints?: SegmentTimingColoredScatterPoint[]
   chartData: ChartPoint[]
   mean: number
   std: number
   binSize?: number
+  legendExtra?: ReactNode
 }) {
-  const maxStack = Math.max(1, ...scatterPoints.map((p) => p.y), ...chartData.map((d) => d.count))
+  const dots = coloredScatterPoints ?? scatterPoints ?? []
+  const maxStack = Math.max(1, ...dots.map((p) => p.y), ...chartData.map((d) => d.count))
   const maxCount = Math.max(1, ...chartData.map((d) => d.count))
   const domainMax = resolveDomainMax(chartData, binSize)
   const domainMin = 0
@@ -108,13 +155,16 @@ export function SegmentTimingScatterChart({
           <span className="inline-block h-3 w-5 rounded-sm bg-sky-200/80" />
           ±1 Desv. Estándar
         </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span
-            className="inline-block rounded-full bg-blue-600/70"
-            style={{ width: SEGMENT_TIMING_DOT_RADIUS * 2, height: SEGMENT_TIMING_DOT_RADIUS * 2 }}
-          />
-          Camiones
-        </span>
+        {!coloredScatterPoints ?
+          <span className="inline-flex items-center gap-1.5">
+            <span
+              className="inline-block rounded-full bg-blue-600/70"
+              style={{ width: SEGMENT_TIMING_DOT_RADIUS * 2, height: SEGMENT_TIMING_DOT_RADIUS * 2 }}
+            />
+            Camiones
+          </span>
+        : null}
+        {legendExtra}
       </div>
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart data={gaussian} margin={{ top: 28, right: 24, bottom: 20, left: 8 }}>
@@ -169,10 +219,22 @@ export function SegmentTimingScatterChart({
             content={({ active, payload, label }) => {
               if (!active) return null
               const fromDot = payload?.find((p) => p.payload?.binStart != null)?.payload as
-                | SegmentTimingScatterPoint
+                | SegmentTimingColoredScatterPoint
                 | undefined
               if (fromDot) {
                 const binEnd = fromDot.binStart + binSize
+                if (fromDot.tooltipTitle || fromDot.tooltipLines?.length) {
+                  return (
+                    <div className="max-w-xs rounded-lg border border-slate-200 bg-white px-4 py-3 text-xs shadow-lg">
+                      <div className="font-semibold text-slate-900">{fromDot.tooltipTitle ?? fromDot.x.toFixed(1) + ' min'}</div>
+                      {fromDot.tooltipLines?.map((line) => (
+                        <div key={line} className="text-slate-600">
+                          {line}
+                        </div>
+                      ))}
+                    </div>
+                  )
+                }
                 return (
                   <div className="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-lg">
                     <div className="font-semibold text-slate-800">{fromDot.x.toFixed(1)} min</div>
@@ -205,19 +267,24 @@ export function SegmentTimingScatterChart({
               connectNulls
             />
           )}
-          {scatterPoints.map((p) => (
-            <ReferenceDot
-              key={p.pointKey}
-              x={p.x}
-              y={p.y}
-              r={SEGMENT_TIMING_DOT_RADIUS}
-              fill="#2563eb"
-              fillOpacity={0.62}
-              stroke="#1e40af"
-              strokeWidth={SEGMENT_TIMING_DOT_STROKE}
-              ifOverflow="visible"
-            />
-          ))}
+          {dots.map((p) => {
+            const colored = p as SegmentTimingColoredScatterPoint
+            const fill = colored.fill ?? '#2563eb'
+            const stroke = colored.stroke ?? '#1e40af'
+            return (
+              <ReferenceDot
+                key={p.pointKey}
+                x={p.x}
+                y={p.y}
+                r={colored.dotRadius ?? SEGMENT_TIMING_DOT_RADIUS}
+                fill={fill}
+                fillOpacity={0.72}
+                stroke={stroke}
+                strokeWidth={SEGMENT_TIMING_DOT_STROKE}
+                ifOverflow="visible"
+              />
+            )
+          })}
         </ComposedChart>
       </ResponsiveContainer>
     </div>

@@ -1,3 +1,7 @@
+/**
+ * Capa: clasificación preliminar / lectura rápida sobre journeys reconstruidos.
+ * No es el motor v2; no debe depender de UI. Evitar tocar si el ticket es solo export/KPI.
+ */
 import type {
   PreliminaryCircuitClassification,
   RealJourneyEventDto,

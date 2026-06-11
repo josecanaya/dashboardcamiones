@@ -1,6 +1,6 @@
 /**
- * ETL v2 de circuitos: reconstrucción por patente + site + ventana temporal,
- * scoring vs matriz de circuitos esperados, CSV limpios para Power BI.
+ * Capa: clasificación — motor oficial Transform v2 (sesiones, matriz, CSV v2).
+ * Fuente de verdad para clean_circuits_v2; funciones puras salvo dependencias de datos.
  */
 
 import type { RealJourneyEventDto } from './realJourneyEvents.types'

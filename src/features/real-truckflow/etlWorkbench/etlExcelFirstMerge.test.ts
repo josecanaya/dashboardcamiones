@@ -278,14 +278,14 @@ describe('findTruckflowEvidenceForExcelOperation', () => {
 })
 
 describe('mergeExcelOperationsWithTruckflowEvidence', () => {
-  it('genera fila sin evidencia con no_truckflow_reason', () => {
-    const res = mergeExcelOperationsWithTruckflowEvidence([mov({})], [], [])
+  it('genera fila sin evidencia con no_truckflow_reason', async () => {
+    const res = await mergeExcelOperationsWithTruckflowEvidence([mov({})], [], [])
     expect(res.operations[0]!.no_truckflow_reason).toBe('NO_PLATE_IN_TRUCKFLOW')
     expect(res.noEvidenceDiagnostics).toHaveLength(1)
   })
 
-  it('scatter true para ROUTE_NO_DISCHARGE_POINT con segmentos', () => {
-    const res = mergeExcelOperationsWithTruckflowEvidence(
+  it('scatter true para ROUTE_NO_DISCHARGE_POINT con segmentos', async () => {
+    const res = await mergeExcelOperationsWithTruckflowEvidence(
       [mov({})],
       [
         journey({
@@ -300,8 +300,8 @@ describe('mergeExcelOperationsWithTruckflowEvidence', () => {
     expect(res.operations[0]!.analysis_ready_for_full_route_kpi).toBe(false)
   })
 
-  it('KPI false para ROUTE_ANOMALOUS', () => {
-    const res = mergeExcelOperationsWithTruckflowEvidence(
+  it('KPI false para ROUTE_ANOMALOUS', async () => {
+    const res = await mergeExcelOperationsWithTruckflowEvidence(
       [mov({})],
       [journey({ executive_status: 'ANOMALO', anomaly_real: true })],
       [segment({})]
@@ -309,8 +309,8 @@ describe('mergeExcelOperationsWithTruckflowEvidence', () => {
     expect(res.operations[0]!.analysis_ready_for_full_route_kpi).toBe(false)
   })
 
-  it('journey completo -> scatter y KPI', () => {
-    const res = mergeExcelOperationsWithTruckflowEvidence(
+  it('journey completo -> scatter y KPI', async () => {
+    const res = await mergeExcelOperationsWithTruckflowEvidence(
       [mov({})],
       [journey({})],
       [segment({})]
@@ -319,13 +319,13 @@ describe('mergeExcelOperationsWithTruckflowEvidence', () => {
     expect(res.operations[0]!.analysis_ready_for_full_route_kpi).toBe(true)
   })
 
-  it('summary incluye rangos de fecha', () => {
-    const res = mergeExcelOperationsWithTruckflowEvidence([mov({})], [journey({})], [])
+  it('summary incluye rangos de fecha', async () => {
+    const res = await mergeExcelOperationsWithTruckflowEvidence([mov({})], [journey({})], [])
     expect(res.summary.excel_min_ingreso_at).toBeTruthy()
     expect(res.summary.truckflow_min_start_time).toBeTruthy()
   })
 
-  it('excel_first_review_sample con cuatro categorías', () => {
+  it('excel_first_review_sample con cuatro categorías', async () => {
     const ops = [
       mov({ external_operation_id: 'e1' }),
       mov({ external_operation_id: 'f1', plate_normalized: 'BB111CC', patente_original: 'BB111CC' }),
@@ -348,7 +348,7 @@ describe('mergeExcelOperationsWithTruckflowEvidence', () => {
         executive_status: 'ANOMALO',
       }),
     ]
-    const res = mergeExcelOperationsWithTruckflowEvidence(ops, journeys, [segment({}), segment({ journey_uid: 'j4' })])
+    const res = await mergeExcelOperationsWithTruckflowEvidence(ops, journeys, [segment({}), segment({ journey_uid: 'j4' })])
     const sample = buildExcelFirstReviewSample(res.operations)
     expect(sample.length).toBeGreaterThan(0)
     expect(res.reviewSample.length).toBeGreaterThan(0)
