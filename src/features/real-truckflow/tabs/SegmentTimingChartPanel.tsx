@@ -6,9 +6,8 @@ import { SEGMENT_TIMING_HISTOGRAM_BIN_MIN, type SegmentLeg } from '../etlWorkben
 import type { SegmentScatterByDayRow } from '../etlWorkbench/etlSegmentScatterByDay'
 import {
   downloadSlowTailCsv,
-  isSlowTailDuration,
   legsToSlowTailExport,
-  slowTailDurationThreshold,
+  SLOW_TAIL_MAX_TRUCKS,
 } from '../etlWorkbench/etlSegmentSlowTail'
 import { SegmentScatterByDayChart } from './SegmentScatterByDayChart'
 import {
@@ -52,31 +51,22 @@ export function SegmentTimingChartPanel({
 }) {
   const useDayScatter = Boolean(scatterByDayRows?.length)
 
-  const slowTailThreshold = useMemo(
-    () => slowTailDurationThreshold(durationsMinutes),
-    [durationsMinutes]
-  )
-
   const coloredLegPoints = useMemo(() => {
     if (useDayScatter || !segmentLegs?.length) return null
     return buildColoredBinStackPoints(
       segmentLegs.map((leg) => ({ leg, duracion_minutos: leg.durationMinutes })),
-      ({ leg, duracion_minutos }) => {
-        const slow = isSlowTailDuration(duracion_minutos, slowTailThreshold)
-        return {
-          fill: slow ? '#dc2626' : '#2563eb',
-          stroke: slow ? '#991b1b' : '#1e40af',
-          dotRadius: slow ? SEGMENT_TIMING_DOT_RADIUS + 2 : SEGMENT_TIMING_DOT_RADIUS,
-          tooltipTitle: leg.plate || leg.journeyId,
-          tooltipLines: [
-            `${duracion_minutos.toFixed(1)} min`,
-            slow ? 'Cola lenta (20 % más demorados, ≥ P80)' : '',
-            'Sin hora de ingreso/egreso en este modo',
-          ].filter(Boolean),
-        }
-      }
+      ({ leg, duracion_minutos }) => ({
+        fill: '#2563eb',
+        stroke: '#1e40af',
+        dotRadius: SEGMENT_TIMING_DOT_RADIUS,
+        tooltipTitle: leg.plate || leg.journeyId,
+        tooltipLines: [
+          `${duracion_minutos.toFixed(1)} min`,
+          'Sin hora de ingreso/egreso en este modo',
+        ],
+      })
     )
-  }, [segmentLegs, slowTailThreshold, useDayScatter])
+  }, [segmentLegs, useDayScatter])
 
   const scatterPoints = buildSegmentTimingBinStackPoints(
     durationsMinutes,
@@ -88,7 +78,7 @@ export function SegmentTimingChartPanel({
     const rows = legsToSlowTailExport(segmentLegs, circuitCode, title)
     if (!rows.length) return
     const slug = title.replace(/\s*→\s*/g, '_').replace(/[^\w-]+/g, '_')
-    downloadSlowTailCsv(safeExportFilename(`kpi_${circuitCode}_${slug}_top20_lentos`, 'csv'), rows)
+    downloadSlowTailCsv(safeExportFilename(`kpi_${circuitCode}_${slug}_top10_lentos`, 'csv'), rows)
   }
 
   return (
@@ -108,7 +98,8 @@ export function SegmentTimingChartPanel({
               : ` · bins ${SEGMENT_TIMING_HISTOGRAM_BIN_MIN} min`}
             </p>
             <p className="mt-1 text-xs text-slate-500">
-              Pasá el mouse sobre un punto para ver la patente. Los rojos son el 20 % más lento del tramo (≥ P80).
+              Pasá el mouse sobre un punto para ver la patente. Los más lentos se exportan con el botón CSV (10 %, máx.{' '}
+              {SLOW_TAIL_MAX_TRUCKS}).
             </p>
           </div>
           {!useDayScatter && segmentLegs?.length ?
@@ -117,7 +108,7 @@ export function SegmentTimingChartPanel({
               onClick={exportSlowTailLegs}
               className="shrink-0 rounded-lg border border-rose-300 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-900 hover:bg-rose-100"
             >
-              CSV 20 % más lentos
+              CSV 10 % más lentos (máx. {SLOW_TAIL_MAX_TRUCKS})
             </button>
           : null}
         </div>
@@ -139,17 +130,7 @@ export function SegmentTimingChartPanel({
             chartData={chartData}
             mean={stats.mean}
             std={stats.std}
-            legendExtra={
-              coloredLegPoints ?
-                <span className="inline-flex items-center gap-1.5">
-                  <span
-                    className="inline-block rounded-full bg-rose-600"
-                    style={{ width: 12, height: 12 }}
-                  />
-                  20 % más lentos (≥ P80)
-                </span>
-              : undefined
-            }
+            legendExtra={undefined}
           />
         }
       </div>

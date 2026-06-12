@@ -17,9 +17,8 @@ import {
 } from './SegmentTimingScatterChart'
 import {
   downloadSlowTailCsv,
-  isSlowTailDuration,
   scatterRowsToSlowTailExport,
-  slowTailDurationThreshold,
+  SLOW_TAIL_MAX_TRUCKS,
 } from '../etlWorkbench/etlSegmentSlowTail'
 import { safeExportFilename } from '../../../utils/chartExport'
 
@@ -72,11 +71,6 @@ export function SegmentScatterByDayChart({
 
   const stats = useMemo(() => computeStayTimeStats(durations), [durations])
 
-  const slowTailThreshold = useMemo(
-    () => slowTailDurationThreshold(durations),
-    [durations]
-  )
-
   const chartData = useMemo(() => {
     if (!durations.length) return []
     return histogramWithKde(durations, SEGMENT_TIMING_HISTOGRAM_BIN_MIN, 5, { unit: 'min' })
@@ -85,13 +79,11 @@ export function SegmentScatterByDayChart({
   const coloredPoints = useMemo(
     () =>
       buildColoredBinStackPoints(chartRows, (row) => {
-        const slow = isSlowTailDuration(row.duracion_minutos, slowTailThreshold)
-        const fill = slow ? '#dc2626' : row.color_franja || colorForFranja(row.franja_horaria)
-        const stroke = slow ? '#991b1b' : fill
+        const fill = row.color_franja || colorForFranja(row.franja_horaria)
         return {
           fill,
-          stroke,
-          dotRadius: slow ? SEGMENT_TIMING_DOT_RADIUS + 2 : SEGMENT_TIMING_DOT_RADIUS,
+          stroke: fill,
+          dotRadius: SEGMENT_TIMING_DOT_RADIUS,
           tooltipTitle: row.patente || row.journey_id,
           tooltipLines: [
             `${row.duracion_minutos.toFixed(1)} min · ${row.franja_horaria || '—'} (${row.hora_inicio})`,
@@ -104,11 +96,10 @@ export function SegmentScatterByDayChart({
             row.horario_fuente === 'excel_inferido' ?
               'Horarios: balanza salida inferida desde salida Excel'
             : '',
-            slow ? 'Cola lenta (20 % más demorados, ≥ P80)' : '',
           ].filter(Boolean),
         }
       }),
-    [chartRows, isAllDays, slowTailThreshold]
+    [chartRows, isAllDays]
   )
 
   const toggleFranjaFilter = (f: FranjaHoraria) => {
@@ -120,7 +111,7 @@ export function SegmentScatterByDayChart({
     if (!exportRows.length) return
     const slug = tramoLabel.replace(/\s*→\s*/g, '_').replace(/[^\w-]+/g, '_')
     downloadSlowTailCsv(
-      safeExportFilename(`kpi_${circuitCode}_${slug}_top20_lentos`, 'csv'),
+      safeExportFilename(`kpi_${circuitCode}_${slug}_top10_lentos`, 'csv'),
       exportRows
     )
   }
@@ -163,7 +154,7 @@ export function SegmentScatterByDayChart({
             onClick={exportSlowTail}
             className="rounded-lg border border-rose-300 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-900 hover:bg-rose-100 disabled:opacity-40"
           >
-            CSV 20 % más lentos
+            CSV 10 % más lentos (máx. {SLOW_TAIL_MAX_TRUCKS})
           </button>
         </div>
       </div>
@@ -239,13 +230,6 @@ export function SegmentScatterByDayChart({
                   Ver todas
                 </button>
               : null}
-              <span className="inline-flex items-center gap-1.5 text-slate-600">
-                <span
-                  className="inline-block rounded-full bg-rose-600"
-                  style={{ width: 12, height: 12 }}
-                />
-                20 % más lentos (≥ P80)
-              </span>
             </>
           }
         />

@@ -3,9 +3,17 @@ import { recordsToCsv, triggerBrowserCsvDownload } from './etlCsv'
 import type { SegmentScatterByDayRow } from './etlSegmentScatterByDay'
 import type { SegmentLeg, SegmentTimingIndex } from './etlSegmentTiming'
 
-/** Fracción más lenta de la cola (20 % superior en duración). */
-export const SLOW_TAIL_FRACTION = 0.2
+/** Fracción más lenta exportada / resaltada (10 % superior en duración). */
+export const SLOW_TAIL_FRACTION = 0.1
 export const SLOW_TAIL_PERCENTILE = (1 - SLOW_TAIL_FRACTION) * 100
+/** Tope de filas en CSV de lentos (más camiones no aporta lectura operativa). */
+export const SLOW_TAIL_MAX_TRUCKS = 30
+
+export function slowTailExportCount(total: number): number {
+  if (total < 1) return 0
+  if (total === 1) return 1
+  return Math.min(SLOW_TAIL_MAX_TRUCKS, Math.max(1, Math.ceil(total * SLOW_TAIL_FRACTION)))
+}
 
 export function slowTailDurationThreshold(durations: number[]): number | null {
   const clean = durations.filter((d) => Number.isFinite(d) && d > 0)
@@ -13,9 +21,27 @@ export function slowTailDurationThreshold(durations: number[]): number | null {
   return Math.round(percentile(clean, SLOW_TAIL_PERCENTILE) * 10) / 10
 }
 
+/** Top 10 % más lentos, máximo {@link SLOW_TAIL_MAX_TRUCKS} camiones. */
+export function pickSlowTailByDuration<T>(
+  items: T[],
+  getDuration: (item: T) => number
+): T[] {
+  if (!items.length) return []
+  const sorted = [...items].sort((a, b) => getDuration(b) - getDuration(a))
+  return sorted.slice(0, slowTailExportCount(sorted.length))
+}
+
 export function isSlowTailDuration(duration: number, threshold: number | null): boolean {
   if (threshold == null || !Number.isFinite(threshold)) return false
   return duration >= threshold
+}
+
+export function slowTailSelectionKeys<T>(
+  items: T[],
+  getDuration: (item: T) => number,
+  getKey: (item: T) => string
+): Set<string> {
+  return new Set(pickSlowTailByDuration(items, getDuration).map(getKey))
 }
 
 export type SlowTailExportRow = {
@@ -43,15 +69,7 @@ export const SLOW_TAIL_EXPORT_HEADERS = [
 ] as const
 
 export function pickSlowTailScatterRows(rows: SegmentScatterByDayRow[]): SegmentScatterByDayRow[] {
-  if (!rows.length) return []
-  const th = slowTailDurationThreshold(rows.map((r) => r.duracion_minutos))
-  if (th == null) {
-    const max = rows.reduce((a, b) => (a.duracion_minutos >= b.duracion_minutos ? a : b))
-    return [max]
-  }
-  return rows
-    .filter((r) => r.duracion_minutos >= th)
-    .sort((a, b) => b.duracion_minutos - a.duracion_minutos)
+  return pickSlowTailByDuration(rows, (r) => r.duracion_minutos)
 }
 
 export function scatterRowsToSlowTailExport(rows: SegmentScatterByDayRow[]): SlowTailExportRow[] {
@@ -73,24 +91,17 @@ export function legsToSlowTailExport(
   circuitCode: string,
   tramoLabel: string
 ): SlowTailExportRow[] {
-  if (!legs.length) return []
-  const th = slowTailDurationThreshold(legs.map((l) => l.durationMinutes))
-  const picked =
-    th == null ? [...legs]
-    : legs.filter((l) => l.durationMinutes >= th)
-  return picked
-    .sort((a, b) => b.durationMinutes - a.durationMinutes)
-    .map((l) => ({
-      patente: l.plate,
-      horario_ingreso: '',
-      horario_egreso: '',
-      duracion_minutos: Math.round(l.durationMinutes * 10) / 10,
-      horario_fuente: 'sin_timestamp',
-      journey_id: l.journeyId,
-      producto: '',
-      circuito: circuitCode,
-      tramo: tramoLabel,
-    }))
+  return pickSlowTailByDuration(legs, (l) => l.durationMinutes).map((l) => ({
+    patente: l.plate,
+    horario_ingreso: '',
+    horario_egreso: '',
+    duracion_minutos: Math.round(l.durationMinutes * 10) / 10,
+    horario_fuente: 'sin_timestamp',
+    journey_id: l.journeyId,
+    producto: '',
+    circuito: circuitCode,
+    tramo: tramoLabel,
+  }))
 }
 
 export function slowTailExportCsv(exportRows: SlowTailExportRow[]): string {
