@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import type { EtlTransformOutput } from '../etlWorkbench/etlTransformPipeline'
+import type { ContractFirstProgressEvent } from '../etlWorkbench/etlContractFirstProgress'
 import { triggerBrowserCsvDownload } from '../etlWorkbench/etlCsv'
 import { parseCsvToRecords } from '../etlWorkbench/etlCsvParse'
 
@@ -13,6 +14,7 @@ type WbSlice = {
   events: { length: number }
   alerts: { length: number }
   transformResult: EtlTransformOutput | null
+  contractFirstProgress?: ContractFirstProgressEvent | null
 }
 
 const MERGE_EXPORTS: { key: keyof EtlTransformOutput['csv']; filename: string; label: string }[] = [
@@ -126,6 +128,18 @@ export function MovimientosContratoPanel({ wb, compact }: { wb: WbSlice; compact
             Quitar
           </button>
         </p>
+      : null}
+
+      {wb.transformBusy && wb.contractFirstProgress ?
+        <div className="mt-3 rounded-lg border border-sky-300 bg-sky-50 px-3 py-2 text-xs text-sky-950">
+          <p className="font-semibold">Paso 3 en curso</p>
+          <p className="mt-1">
+            {wb.contractFirstProgress.label} —{' '}
+            {wb.contractFirstProgress.total > 0 ?
+              `${wb.contractFirstProgress.current}/${wb.contractFirstProgress.total}`
+            : '…'}
+          </p>
+        </div>
       : null}
 
       {needsRerun ?

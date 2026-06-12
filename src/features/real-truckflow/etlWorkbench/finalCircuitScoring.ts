@@ -153,6 +153,15 @@ export const DEFAULT_CIRCUIT_MATRIX: JourneyCircuitMatrix = {
     'EGRESO',
   ],
   TRANSILE_VOLCABLE_BALANZA: ['VOLCABLE', 'BALANZA_EGRESO'],
+  /** Silos Kepler (R3/R4): sin cámara en silo; calada/balanza vía Truckflow o Excel. */
+  CIRCUITO_KEPLER_SILOS: [
+    'INGRESO',
+    'PREINGRESO',
+    'CALADA',
+    'BALANZA_INGRESO',
+    'BALANZA_EGRESO',
+    'EGRESO',
+  ],
 }
 
 const R5_ALLOWED_SEQUENCES = [
@@ -170,6 +179,9 @@ const R19_ALLOWED_SEQUENCES = [
   ['S0', 'S1', 'ESPERA', 'S2', 'S4', 'S5', 'S6', 'S7', 'S9', 'S4', 'S10'],
   ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S9', 'S5', 'S6', 'S7', 'S9', 'S4', 'S10'],
 ] as const
+
+/** Provisorio: mismas cámaras R3 y R4 hasta instalar puntos de descarga en silo. */
+const KEPLER_ALLOWED_S_SEQUENCES = [['S0', 'S1', 'S2', 'S4', 'S4']] as const
 
 /**
  * Matriz ejecutiva habilitada para lectura de comité.
@@ -292,25 +304,25 @@ export const EXECUTIVE_CIRCUIT_MATRIX: Record<string, ExecutiveCircuitConfig> = 
     baseSequence: ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S9', 'S4', 'S10'],
     allowedSequences: R19_ALLOWED_SEQUENCES,
   },
-  RK1: {
-    code: 'RK1',
-    label: 'Descarga silos Keppler 1',
+  R3: {
+    code: 'R3',
+    label: 'Recepción Silos Kepler 1',
     coveragePercent: 67,
     hasStrongPoint: true,
     enabledForClassification: true,
-    aliases: ['KEPPLER_SILO_1'],
-    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S9', 'S4', 'S10'],
-    allowedSequences: R19_ALLOWED_SEQUENCES,
+    aliases: ['CIRCUITO_KEPLER_SILOS', 'KEPPLER_SILO_1'],
+    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S4'],
+    allowedSequences: KEPLER_ALLOWED_S_SEQUENCES,
   },
-  RK2: {
-    code: 'RK2',
-    label: 'Descarga silos Keppler 2',
+  R4: {
+    code: 'R4',
+    label: 'Recepción Silos Kepler 2',
     coveragePercent: 67,
     hasStrongPoint: true,
     enabledForClassification: true,
-    aliases: ['KEPPLER_SILO_2'],
-    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S9', 'S4', 'S10'],
-    allowedSequences: R19_ALLOWED_SEQUENCES,
+    aliases: ['CIRCUITO_KEPLER_SILOS', 'KEPPLER_SILO_2'],
+    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S4'],
+    allowedSequences: KEPLER_ALLOWED_S_SEQUENCES,
   },
   R26: {
     code: 'R26',
@@ -410,8 +422,8 @@ export const EXECUTIVE_CIRCUIT_ORDER = [
   'R16',
   'R19',
   'R20',
-  'RK1',
-  'RK2',
+  'R3',
+  'R4',
   'R26',
   'R27',
   'SL1',

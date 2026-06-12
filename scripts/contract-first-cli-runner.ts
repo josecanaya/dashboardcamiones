@@ -109,7 +109,13 @@ export async function runContractFirstCli(args: ContractFirstCliArgs): Promise<{
       },
     ],
     skipKpiTiemposArtifacts: true,
+    onProgress: (ev) => {
+      console.info('[CONTRACT_FIRST_PROGRESS]', ev.step, ev.label, `${ev.current}/${ev.total}`, ev.elapsedMs, 'ms')
+    },
   })
+  if (result.stageTimings.length) {
+    console.info('[CONTRACT_FIRST_PASO3] stageTimings', result.stageTimings)
+  }
 
   logs.push(...result.logs)
 
@@ -136,6 +142,30 @@ export async function runContractFirstCli(args: ContractFirstCliArgs): Promise<{
     pipelineOrder: 'truckflow_reconstruct_then_excel_merge',
     filesWritten: written.map((p) => path.relative(PROJECT_ROOT, p)),
     stats: result.stats,
+    excelFirstDiscardCounters:
+      (result.stats.excelFirst as Record<string, unknown> | undefined) ?
+        Object.fromEntries(
+          Object.entries(result.stats.excelFirst as Record<string, unknown>).filter(([k]) =>
+            [
+              'no_plate_in_truckflow',
+              'exact_plate_candidates',
+              'fuzzy_plate_candidates',
+              'rejected_by_time_window',
+              'rejected_by_low_ocr_similarity',
+              'rejected_by_ambiguous_fuzzy',
+              'rejected_by_site_or_plant',
+              'candidates_after_prefilter',
+              'candidates_after_time_filter',
+              'candidates_after_fuzzy_filter',
+              'operations_with_exact_plate',
+              'operations_with_only_fuzzy_plate',
+              'operations_without_any_candidate',
+              'use_candidate_prefilter',
+            ].includes(k)
+          )
+        )
+      : null,
+    stageTimings: result.stageTimings,
   }
   await fs.writeFile(path.join(args.outDir, 'contract-first-run-meta.json'), JSON.stringify(meta, null, 2), 'utf8')
   logs.push(`[contract-first-cli] salida: ${args.outDir}`)

@@ -355,19 +355,20 @@ export function KpiTiemposTab() {
                 circuitFilter === 'R9' ||
                 circuitFilter === 'R19' ||
                 circuitFilter === 'R20' ||
-                circuitFilter === 'RK1' ||
-                circuitFilter === 'RK2') && (
+                circuitFilter === 'R3' ||
+                circuitFilter === 'R4') && (
                 <span className="mt-1 block text-xs text-violet-700">
                   Excel-first: match patente+producto → Truckflow da el recorrido. Si falta cámara:{' '}
                   <strong>ingreso</strong>, <strong>calado</strong> o <strong>salida</strong> del Excel rellenan el
                   punto. Truckflow medido tiene prioridad.
                 </span>
               )}
-              {(circuitFilter === 'RK1' || circuitFilter === 'RK2') && (
+              {(circuitFilter === 'R3' || circuitFilter === 'R4') && (
                 <span className="mt-1 block text-xs text-violet-700">
-                  Silos Keppler/Kepler (Excel-first): el <strong>calado</strong> del contrato es la hora de descarga
-                  en silo (Volcable). Truckflow aporta balanza/egreso; si falta cámara de silo, se ancla Volcable en
-                  calado. El tránsito por Celda 16 solo se deduce antes del calado si no hay cámara C16.
+                  Silos Kepler (R3/R4): tramos <strong>ingreso → calada → balanza ingreso → balanza egreso</strong>.
+                  Secuencia provisional S0–S1–S2–S4–S4 (sin cámara en silo). Si falta un hito, se usa{' '}
+                  <strong>ingreso</strong>, <strong>calado</strong> o <strong>salida</strong> del Excel; no se inventan
+                  tiempos intermedios.
                 </span>
               )}
               {(circuitFilter === 'R19' || circuitFilter === 'R20') && (

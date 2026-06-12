@@ -91,7 +91,7 @@ describe('etlPlatformCircuitInference', () => {
     ).toBe('R1')
   })
 
-  it('KEPPLER 1 → RK1 (descarga silos Keppler, no Transile)', () => {
+  it('KEPPLER 1 → R3 (descarga silos Kepler, no Transile)', () => {
     const inferred = inferCircuitFromExternalMovimiento({
       platform_normalized: 'KEPPLER_1',
       plataforma_original: 'KEPPLER 1 P',
@@ -100,11 +100,11 @@ describe('etlPlatformCircuitInference', () => {
       movement_type_detail: 'I',
       mov: 'I',
     })
-    expect(inferred?.circuit_code).toBe('RK1')
-    expect(inferred?.circuit_label).toBe('Descarga silos Keppler 1')
+    expect(inferred?.circuit_code).toBe('R3')
+    expect(inferred?.circuit_label).toBe('Recepción Silos Kepler 1')
   })
 
-  it('KEPPLER 2 → RK2', () => {
+  it('KEPPLER 2 → R4', () => {
     expect(
       inferCircuitFromExternalMovimiento({
         platform_normalized: 'KEPPLER_2',
@@ -114,7 +114,7 @@ describe('etlPlatformCircuitInference', () => {
         movement_type_detail: 'I',
         mov: 'I',
       })?.circuit_code
-    ).toBe('RK2')
+    ).toBe('R4')
   })
 
   it('asigna R7 a anomalía con VOLCABLE PTO en Excel', () => {

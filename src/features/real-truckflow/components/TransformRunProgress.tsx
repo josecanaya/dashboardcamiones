@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { TransformTramoId } from '../etlWorkbench/etlTransformPhaseRunner'
+import type { ContractFirstProgressEvent } from '../etlWorkbench/etlContractFirstProgress'
 
 const TRAMO_LABEL: Record<TransformTramoId, string> = {
   1: 'Paso 1 — Journeys y calidad',
@@ -11,6 +12,7 @@ type Props = {
   active: boolean
   activeTramo: TransformTramoId | null
   runAll: boolean
+  contractFirst?: ContractFirstProgressEvent | null
 }
 
 function formatElapsed(ms: number): string {
@@ -21,7 +23,7 @@ function formatElapsed(ms: number): string {
   return `${rs} s`
 }
 
-export function TransformRunProgress({ active, activeTramo, runAll }: Props) {
+export function TransformRunProgress({ active, activeTramo, runAll, contractFirst }: Props) {
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const [tick, setTick] = useState(0)
 
@@ -46,6 +48,16 @@ export function TransformRunProgress({ active, activeTramo, runAll }: Props) {
     : runAll ? 'Procesando pasos 1→2→3'
     : 'Procesando…'
 
+  const showPaso3Detail = Boolean(contractFirst && activeTramo === 3)
+  const progressPct =
+    contractFirst && contractFirst.total > 0 ?
+      Math.min(100, Math.round((contractFirst.current / contractFirst.total) * 100))
+    : null
+  const longMsg =
+    contractFirst?.details?.longRunning ?
+      String(contractFirst.details.message ?? '')
+    : null
+
   return (
     <div
       className="rounded-xl border border-amber-300 bg-amber-50/90 px-4 py-3 text-sm text-amber-950"
@@ -60,8 +72,44 @@ export function TransformRunProgress({ active, activeTramo, runAll }: Props) {
         Podés seguir en esta página. No hace falta cambiar de pestaña; cuando termine cada paso verás el resumen
         abajo. Si el navegador tarda en responder, es normal en pasos largos.
       </p>
+      {showPaso3Detail && contractFirst ?
+        <div className="mt-3 rounded-lg border border-amber-400/60 bg-white/70 px-3 py-2 text-xs text-slate-800">
+          <div className="grid gap-1 sm:grid-cols-2">
+            <div>
+              <span className="font-semibold text-slate-600">Última acción: </span>
+              {contractFirst.label}
+            </div>
+            <div>
+              <span className="font-semibold text-slate-600">Tiempo corrida: </span>
+              <span className="font-mono">{formatElapsed(contractFirst.elapsedMs)}</span>
+            </div>
+            {progressPct !== null ?
+              <div>
+                <span className="font-semibold text-slate-600">Progreso: </span>
+                {contractFirst.current.toLocaleString()} / {contractFirst.total.toLocaleString()} (
+                {progressPct}%)
+              </div>
+            : null}
+            {contractFirst.details?.match_exact !== undefined ?
+              <div>
+                <span className="font-semibold text-slate-600">Matches (resumen): </span>
+                exactos {String(contractFirst.details.match_exact)}, fuzzy patente{' '}
+                {String(contractFirst.details.match_fuzzy_plate ?? '—')}
+              </div>
+            : null}
+          </div>
+          {longMsg ?
+            <p className="mt-2 font-medium text-amber-900">{longMsg}</p>
+          : null}
+        </div>
+      : null}
       <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-amber-200/80">
-        <div className="h-full w-1/3 animate-pulse rounded-full bg-amber-600" />
+        {progressPct !== null && showPaso3Detail ?
+          <div
+            className="h-full rounded-full bg-amber-600 transition-all duration-300"
+            style={{ width: `${Math.max(4, progressPct)}%` }}
+          />
+        : <div className="h-full w-1/3 animate-pulse rounded-full bg-amber-600" />}
       </div>
     </div>
   )

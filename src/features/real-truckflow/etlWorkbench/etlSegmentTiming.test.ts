@@ -588,11 +588,11 @@ describe('etlSegmentTiming', () => {
     expect(stay!.durationMinutes).toBe(115)
   })
 
-  it('synthesizeDischargeRollupLegs inyecta Volcable Kepler en calado Excel (descarga silo)', () => {
+  it('R3 Excel-first: rollup balanza ingreso → balanza egreso (sin C16/Volcable)', () => {
     const legs = synthesizeDischargeRollupLegsFromTimedSegments({
       operationId: 'op-kepler',
       plate: 'AA111',
-      executiveCircuitCode: 'RK1',
+      executiveCircuitCode: 'R3',
       segments: [
         {
           segment_from: 'BALANZA_INGRESO',
@@ -605,32 +605,41 @@ describe('etlSegmentTiming', () => {
       externalSalidaAt: '2026-05-12T10:00:00',
       platformNormalized: 'KEPPLER_1',
     })
-    const c16 = legs.find((l) => l.fromCode === 'BALANZA_INGRESO' && l.toCode === 'CELDA16_CARGA')
-    const silo = legs.find((l) => l.fromCode === 'CELDA16_CARGA' && l.toCode === 'VOLCABLE')
-    expect(c16).toBeDefined()
-    expect(silo).toBeDefined()
-    expect(c16!.durationMinutes).toBe(30)
-    expect(silo!.durationMinutes).toBe(30)
+    expect(legs).toHaveLength(1)
+    expect(legs[0]).toMatchObject({
+      fromCode: 'BALANZA_INGRESO',
+      toCode: 'BALANZA_EGRESO',
+      durationMinutes: 120,
+    })
+    expect(legs.find((l) => l.toCode === 'VOLCABLE')).toBeUndefined()
+    expect(legs.find((l) => l.toCode === 'CELDA16_CARGA')).toBeUndefined()
   })
 
-  it('Kepler sin calado Excel no inventa descarga en silo', () => {
-    const legs = synthesizeDischargeRollupLegsFromTimedSegments({
-      operationId: 'op-kepler-no-cal',
+  it('R3 template: calada desde Excel si falta cámara S2', () => {
+    const legs = synthesizeTemplateChainLegsFromTimedSegments({
+      operationId: 'op-kepler-cal',
       plate: 'AA111',
-      executiveCircuitCode: 'RK1',
+      executiveCircuitCode: 'R3',
       segments: [
+        {
+          segment_from: 'INGRESO',
+          segment_to: 'BALANZA_INGRESO',
+          segment_start_time: '2026-05-12T07:00:00',
+          segment_end_time: '2026-05-12T08:00:00',
+        },
         {
           segment_from: 'BALANZA_INGRESO',
           segment_to: 'BALANZA_EGRESO',
           segment_start_time: '2026-05-12T08:00:00',
-          segment_end_time: '2026-05-12T10:00:00',
+          segment_end_time: '2026-05-12T09:30:00',
         },
       ],
-      externalSalidaAt: '2026-05-12T10:00:00',
-      platformNormalized: 'KEPPLER_1',
+      externalCaladoAt: '2026-05-12T07:30:00',
+      externalSalidaAt: '2026-05-12T09:30:00',
     })
-    const silo = legs.find((l) => l.fromCode === 'CELDA16_CARGA' && l.toCode === 'VOLCABLE')
-    expect(silo).toBeUndefined()
+    const ingCal = legs.find((l) => l.fromCode === 'INGRESO' && l.toCode === 'CALADA')
+    expect(ingCal).toBeDefined()
+    expect(ingCal!.durationMinutes).toBe(30)
   })
 
   it('synthesizeDischargeRollupLegs deduce puente R26 Ric→SL', () => {

@@ -2,11 +2,11 @@ import { CircuitCatalogItem } from "../types/contracts.js";
 
 const CIRCUIT_TEMPLATES: Omit<CircuitCatalogItem, "plant">[] = [
   { code: "A1", name: "Descarga Celda 16", sectorSequence: ["S0", "S1", "S2", "S4", "S5", "S6", "S4", "S10"] },
-  { code: "A3", name: "Descarga Silos Kepler", sectorSequence: ["S0", "S1", "S2", "S4", "S6", "S7", "S4", "S10"] },
+  { code: "A3", name: "Descarga Silos Kepler", sectorSequence: ["S0", "S1", "S2", "S4", "S4"] },
   { code: "A4", name: "Descarga Volcable 1", sectorSequence: ["S0", "S1", "S2", "S4", "S6", "S9", "S4", "S10"] },
   { code: "A7", name: "Descarga San Lorenzo", sectorSequence: ["S0", "S1", "S2", "S4", "S10"] },
   { code: "B1", name: "Carga Celda 16", sectorSequence: ["S0", "S1", "S2", "S4", "S5", "S6", "S4", "S2", "S3"] },
-  { code: "B2", name: "Carga Silos Kepler", sectorSequence: ["S0", "S1", "S2", "S4", "S6", "S7", "S4", "S2", "S3"] },
+  { code: "B2", name: "Carga Silos Kepler", sectorSequence: ["S0", "S1", "S2", "S4", "S4"] },
   { code: "C1", name: "Recepción líquido Punto 1", sectorSequence: ["S0", "S1", "S2", "S4", "S8", "S4", "S10"] },
   { code: "C2", name: "Recepción líquido Punto 2", sectorSequence: ["S0", "S1", "S4", "S8", "S4", "S10"] },
   { code: "D1", name: "Despacho líquido Punto 1", sectorSequence: ["S0", "S1", "S2", "S4", "S8", "S4", "S2", "S3"] },

@@ -608,7 +608,7 @@ const FAMILY_TO_EXECUTIVE: Record<string, string> = {
   VOLCABLE: 'R5',
   SAN_LORENZO_VOLCABLE: 'R7',
   CELDA16: 'R1',
-  KEPLER: 'RK1',
+  KEPLER: 'R3',
   LIQUIDO: 'R9',
 }
 

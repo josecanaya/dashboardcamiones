@@ -105,6 +105,53 @@ node scripts/run-truckflow-transform-local.mjs \
 Salida y limitaciones: `scripts/run-truckflow-transform-local.README.md`.  
 Adaptador: `contractFirst/contractFirstCliAdapter.ts` (reconstrucción Ricardone mínima, no matriz Workbench).
 
+### Diagnóstico de performance Paso 3 Contract-first
+
+Orquestador: `runMovimientosContratoIntegration` (`etlMovimientosContratoIntegration.ts`).
+
+**Orden de sub-etapas (sin cambiar criterios de match):**
+
+| step | Función / módulo | Entrada → salida (orden de magnitud) |
+|------|------------------|--------------------------------------|
+| (previo) | `loadMovimientosContratoFiles` + `normalizeMovimientosContratoBatch` | XLSX → filas Excel normalizadas |
+| `build_truckflow_journeys` | `buildTruckflowJourneysForMerge` | `finalCsvRows` (~3.8k) → journeys merge |
+| `build_segments` | `extractSegmentLegsWithTimes` + `buildTruckflowSegmentsForMerge` | ~3.8k journeys → segmentos |
+| `merge_truckflow_movimientos` | `mergeTruckflowWithMovimientos` | journeys × mov Excel; fuzzy OCR con cache |
+| `merge_excel_first_evidence` | `mergeExcelOperationsWithTruckflowEvidence` | **cuello habitual:** O(mov × journey) si no hay exact; progreso cada 25 filas |
+| `clean_journeys` | `buildCleanJourneysForAnalysis` | merged → clean |
+| `operational_sample` | `createOperationalSample` | muestra operativa |
+| (si `skipKpiTiemposArtifacts` false) | scatter / `buildSegmentScatterByDayRows` | KPI tiempos |
+| `export_csv` | varios `*Csv()` | muchos strings CSV |
+
+**Telemetría:** callback opcional `onProgress` / `onContractFirstProgress` con `{ step, label, current, total, elapsedMs, details }`. Helpers: `etlContractFirstProgress.ts` (`runContractFirstStage`, `[SLOW_STEP]` si &gt; 30 s, aviso larga corrida &gt; 3 min). UI: `TransformRunProgress` + consola `[CONTRACT_FIRST_PROGRESS]`. Salida: `stageTimings[]` en el resultado de integración.
+
+**CLI:** `contract-first-cli-runner.ts` loguea progreso y `stageTimings` al final.
+
+**Optimizaciones seguras ya aplicadas (mismo resultado):** índice `journeysByExactPlate` en merge Truckflow; memo `fuzzyCandidatesByPlate` en Excel-first; `createPlateMatchCache()` compartido entre merge y Excel-first; prefiltrado OCR fuzzy `journeysForFuzzyOcrPrefilter` (`useCandidatePrefilter`, default **true**).
+
+### Contadores de descarte Excel-first
+
+Tras el merge, en `excelFirstResult.summary` / `discardCounters` / `onContractFirstProgress.details`:
+
+| Contador | Interpretación |
+|----------|----------------|
+| `no_plate_in_truckflow` | Operaciones sin patente exacta ni fuzzy OCR en Truckflow |
+| `exact_plate_candidates` | Suma de journeys con misma patente normalizada (antes de ventana) |
+| `fuzzy_plate_candidates` | Candidatos OCR fuzzy aceptados por umbral (antes de ventana) |
+| `rejected_by_time_window` | Candidatos exact/fuzzy descartados por no caer en ventana de búsqueda |
+| `rejected_by_low_ocr_similarity` | Comparaciones en pool prefiltrado que no alcanzaron fuzzy (métrica OCR) |
+| `rejected_by_ambiguous_fuzzy` | Operaciones con fuzzy ambiguo o rechazado por múltiples en ventana |
+| `rejected_by_site_or_plant` | **Informativo:** journeys en pool con `plant_scope` distinto a Excel (no filtra match) |
+| `candidates_after_prefilter` | Tamaño del pool antes de OCR (journeys que pueden entrar en ventana) |
+| `candidates_after_time_filter` | Candidatos exact+fuzzy tras ventana y rechazo operativo |
+| `operations_with_exact_plate` | Ops con al menos un journey de patente exacta en Truckflow |
+| `operations_with_only_fuzzy_plate` | Sin exacta pero con fuzzy OCR |
+| `operations_without_any_candidate` | Sin exacta ni fuzzy |
+
+**CSV diagnóstico (nuevo, no rompe exports previos):** `excel_first_candidate_diagnostics.csv` — una fila por operación Excel con conteos y `match_quality` / `no_truckflow_reason`.
+
+**Lectura rápida de causas:** mucho `rejected_by_time_window` → revisar ingreso/salida Excel vs horarios Truckflow; mucho `rejected_by_low_ocr_similarity` → OCR/patente en cámara; alto `no_plate_in_truckflow` → patente ausente en período o `PERIOD_MISMATCH`; `rejected_by_site_or_plant` alto solo indica mezcla RIC/SL en pool, no bloqueo automático.
+
 ## Servidor Node vs lógica TS
 
 | Pieza | Dónde corre |

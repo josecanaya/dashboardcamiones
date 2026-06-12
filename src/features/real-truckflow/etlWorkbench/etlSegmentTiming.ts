@@ -34,7 +34,7 @@ export const BALANZA_STAY_ROLLUP_TRANSITION = {
   to: 'BALANZA_EGRESO',
 } as const
 
-const CIRCUITS_WITH_BALANZA_STAY_ROLLUP = new Set(['R1', 'R5', 'R6'])
+const CIRCUITS_WITH_BALANZA_STAY_ROLLUP = new Set(['R1', 'R5', 'R6', 'R3', 'R4'])
 
 /** Balanza ingreso→egreso Ricardone: < 10 min = lecturas B1/B2 casi simultáneas (error cámara/OCR). */
 export const BALANZA_STAY_MIN_MINUTES = 10
@@ -47,6 +47,26 @@ export const RECEPTION_BALANZA_KPI_CHAIN = [
   'BALANZA_INGRESO',
   'BALANZA_EGRESO',
 ] as const
+
+/** KPI Silos Kepler (R3/R4): ingreso → calada → balanza ingreso → balanza egreso. */
+export const KEPLER_KPI_CHAIN = [
+  'INGRESO',
+  'CALADA',
+  'BALANZA_INGRESO',
+  'BALANZA_EGRESO',
+] as const
+
+/** Códigos ejecutivos legacy antes de renombrar a R3/R4. */
+export const LEGACY_KEPLER_EXECUTIVE_ALIASES: Record<string, string> = {
+  RK1: 'R3',
+  RK2: 'R4',
+}
+
+export function normalizeExecutiveCircuitForKpi(circuitCode: string): string {
+  return LEGACY_KEPLER_EXECUTIVE_ALIASES[circuitCode] ?? circuitCode
+}
+
+const KEPLER_KPI_CIRCUIT_CODES = new Set(['R3', 'R4'])
 
 /** Rollup balanza salida → egreso SL (puede haber puntos intermedios S2–S4). */
 export const SL_SALIDA_EGRESO_ROLLUP_TRANSITION = {
@@ -153,6 +173,8 @@ const DISCHARGE_KPI_ROLLUP_BY_CIRCUIT: Record<string, DischargeKpiRollupRule[]> 
   R1: [BALANZA_STAY_KPI_ROLLUP_RULE],
   R5: [BALANZA_STAY_KPI_ROLLUP_RULE],
   R6: [BALANZA_STAY_KPI_ROLLUP_RULE],
+  R3: [BALANZA_STAY_KPI_ROLLUP_RULE],
+  R4: [BALANZA_STAY_KPI_ROLLUP_RULE],
   R9: [
     {
       fromCode: 'BALANZA_INGRESO',
@@ -178,30 +200,6 @@ const DISCHARGE_KPI_ROLLUP_BY_CIRCUIT: Record<string, DischargeKpiRollupRule[]> 
     },
   ],
   R20: [
-    {
-      fromCode: 'BALANZA_INGRESO',
-      toCode: 'CELDA16_CARGA',
-      endCodes: ['CELDA16_CARGA', 'VOLCABLE', 'BALANZA_EGRESO', 'EGRESO'],
-    },
-    {
-      fromCode: 'CELDA16_CARGA',
-      toCode: 'VOLCABLE',
-      endCodes: ['VOLCABLE', 'BALANZA_EGRESO', 'EGRESO'],
-    },
-  ],
-  RK1: [
-    {
-      fromCode: 'BALANZA_INGRESO',
-      toCode: 'CELDA16_CARGA',
-      endCodes: ['CELDA16_CARGA', 'VOLCABLE', 'BALANZA_EGRESO', 'EGRESO'],
-    },
-    {
-      fromCode: 'CELDA16_CARGA',
-      toCode: 'VOLCABLE',
-      endCodes: ['VOLCABLE', 'BALANZA_EGRESO', 'EGRESO'],
-    },
-  ],
-  RK2: [
     {
       fromCode: 'BALANZA_INGRESO',
       toCode: 'CELDA16_CARGA',
@@ -259,7 +257,8 @@ const DISCHARGE_KPI_ROLLUP_BY_CIRCUIT: Record<string, DischargeKpiRollupRule[]> 
 const CIRCUITS_WITH_DISCHARGE_KPI_ROLLUP = new Set(Object.keys(DISCHARGE_KPI_ROLLUP_BY_CIRCUIT))
 
 export function getDischargeKpiRollupRules(circuitCode: string): DischargeKpiRollupRule[] {
-  return DISCHARGE_KPI_ROLLUP_BY_CIRCUIT[circuitCode] ?? []
+  const code = normalizeExecutiveCircuitForKpi(circuitCode)
+  return DISCHARGE_KPI_ROLLUP_BY_CIRCUIT[code] ?? []
 }
 
 export function transitionKey(fromCode: string, toCode: string): string {
@@ -443,8 +442,8 @@ function buildExecutiveCircuitSegmentTemplate(): Record<string, readonly string[
   map.SL1 = [...SL_OPERATIONAL_KPI_CHAIN]
   map.R19 = ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO', 'CELDA16_CARGA', 'VOLCABLE', 'BALANZA_EGRESO']
   map.R20 = map.R19
-  map.RK1 = map.R19
-  map.RK2 = map.R19
+  map.R3 = KEPLER_KPI_CHAIN
+  map.R4 = KEPLER_KPI_CHAIN
   map.RS_REC = ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO']
   map.RS_DESP = ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'CALADA', 'BALANZA_EGRESO']
   map.R34 = ['LIQUIDO', 'BALANZA_EGRESO']
@@ -454,7 +453,8 @@ function buildExecutiveCircuitSegmentTemplate(): Record<string, readonly string[
 export const EXECUTIVE_CIRCUIT_SEGMENT_TEMPLATE = buildExecutiveCircuitSegmentTemplate()
 
 export function getCircuitSegmentTemplate(circuitCode: string): readonly string[] {
-  return EXECUTIVE_CIRCUIT_SEGMENT_TEMPLATE[circuitCode] ?? []
+  const code = normalizeExecutiveCircuitForKpi(circuitCode)
+  return EXECUTIVE_CIRCUIT_SEGMENT_TEMPLATE[code] ?? []
 }
 
 /** Máx. puntos template omitidos en un rollup (p. ej. ingreso→balanza sin preingreso/calada). */
@@ -1484,54 +1484,43 @@ function resolveDefaultC16LogicalCode(circuitCode: string): 'CELDA16_CARGA' | 'C
   return 'CELDA16_CARGA'
 }
 
-function isKeplerFamilyPlatform(platformNormalized?: string): boolean {
-  return /KEPPLER|KEPLER/i.test(String(platformNormalized ?? ''))
-}
-
-/** RK1/RK2 o plataforma Kepler: calado Excel = descarga en silo (Volcable), no paso por C16. */
-function isKeplerSiloDischargeCircuit(circuitCode: string, platformNormalized?: string): boolean {
-  return ['RK1', 'RK2'].includes(circuitCode) || isKeplerFamilyPlatform(platformNormalized)
-}
-
-/** Tránsito C16 antes del calado Kepler (Excel-first: calado reservado para silo). */
-function inferC16TransitBeforeKeplerCalado(balanzaIngresoMs: number, caladoMs: number): string {
+/** Tránsito C16 inferido entre dos hitos (solo transile R19/R20, no Kepler). */
+function inferC16TransitMidpoint(balanzaIngresoMs: number, caladoMs: number): string {
   return inferMidpointBetweenMs(balanzaIngresoMs, caladoMs)
 }
 
-/**
- * Excel-first Kepler: external_calado_at = hora de descarga en silo (VOLCABLE).
- * Truckflow aporta balanza/egreso; C16 solo si hay cámara o tránsito inferido antes del calado.
- */
-function enrichKeplerSiloAnchorsFromExcel(
+/** Calada Ricardone desde Excel cuando falta cámara S2 (R3/R4). */
+function injectCaladaFromExcel(
   points: TimedLogicalPoint[],
-  externalCaladoAt?: string,
-  externalSalidaAt?: string
+  executiveCircuitCode: string,
+  externalCaladoAt?: string
 ): TimedLogicalPoint[] {
-  const enriched = [...points]
+  const code = normalizeExecutiveCircuitForKpi(executiveCircuitCode)
+  if (!KEPLER_KPI_CIRCUIT_CODES.has(code)) return points
+  if (points.some((p) => p.code === 'CALADA')) return points
   const calado = String(externalCaladoAt ?? '').trim()
   const calMs = Date.parse(calado)
-  if (!Number.isFinite(calMs)) return enriched
-
-  if (!enriched.some((p) => p.code === 'VOLCABLE')) {
-    enriched.push({ code: 'VOLCABLE', occurredAt: calado })
+  if (!calado || !Number.isFinite(calMs)) return points
+  const ingreso = points.find((p) => p.code === 'INGRESO')
+  if (ingreso) {
+    const ingMs = Date.parse(ingreso.occurredAt)
+    if (Number.isFinite(ingMs) && calMs <= ingMs) return points
   }
-
-  const hasC16 = enriched.some(
-    (p) => p.code === 'CELDA16_CARGA' || p.code === 'CELDA16_DESCARGA'
+  const preingreso = points.find((p) => p.code === 'PREINGRESO')
+  if (preingreso) {
+    const preMs = Date.parse(preingreso.occurredAt)
+    if (Number.isFinite(preMs) && calMs < preMs) return points
+  }
+  const balanza = points.find((p) => p.code === 'BALANZA_INGRESO')
+  if (balanza) {
+    const balMs = Date.parse(balanza.occurredAt)
+    if (Number.isFinite(balMs) && calMs >= balMs) return points
+  }
+  return collapseTimedPoints(
+    [...points, { code: 'CALADA', occurredAt: calado }].sort(
+      (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+    )
   )
-  if (!hasC16) {
-    const balanzaIdx = enriched.findIndex((p) => p.code === 'BALANZA_INGRESO')
-    if (balanzaIdx >= 0) {
-      const balMs = Date.parse(enriched[balanzaIdx]!.occurredAt)
-      const c16At = inferC16TransitBeforeKeplerCalado(balMs, calMs)
-      if (c16At) enriched.push({ code: 'CELDA16_CARGA', occurredAt: c16At })
-    } else {
-      const c16At = inferC16TransitBeforeKeplerCalado(calMs - 60_000, calMs)
-      if (c16At) enriched.push({ code: 'CELDA16_CARGA', occurredAt: c16At })
-    }
-  }
-
-  return enriched
 }
 
 /** Anclas C16 / Volcable / puente transile desde Excel cuando falta cámara en silo o ruta. */
@@ -1540,14 +1529,11 @@ function enrichTimelineWithExcelSiloAnchors(
   circuitCode: string,
   externalCaladoAt?: string,
   externalSalidaAt?: string,
-  platformNormalized?: string
+  _platformNormalized?: string
 ): TimedLogicalPoint[] {
-  if (isKeplerSiloDischargeCircuit(circuitCode, platformNormalized)) {
-    return collapseTimedPoints(
-      enrichKeplerSiloAnchorsFromExcel(points, externalCaladoAt, externalSalidaAt).sort(
-        (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
-      )
-    )
+  const executiveCode = normalizeExecutiveCircuitForKpi(circuitCode)
+  if (KEPLER_KPI_CIRCUIT_CODES.has(executiveCode)) {
+    return points
   }
 
   let enriched = [...points]
@@ -1561,14 +1547,14 @@ function enrichTimelineWithExcelSiloAnchors(
     )
     if (!hasC16 && Number.isFinite(fromMs)) {
       const anchor = pickExcelTimestampAfter(fromMs, externalCaladoAt, externalSalidaAt, true)
-      if (anchor) enriched.push({ code: resolveDefaultC16LogicalCode(circuitCode), occurredAt: anchor })
+      if (anchor) enriched.push({ code: resolveDefaultC16LogicalCode(executiveCode), occurredAt: anchor })
     }
   }
 
   const c16Idx = enriched.findIndex(
     (p) => p.code === 'CELDA16_CARGA' || p.code === 'CELDA16_DESCARGA'
   )
-  const needsVolcable = ['R19', 'R20', 'RK1', 'RK2'].includes(circuitCode)
+  const needsVolcable = ['R19', 'R20'].includes(executiveCode)
   if (needsVolcable && c16Idx >= 0) {
     const fromMs = Date.parse(enriched[c16Idx]!.occurredAt)
     const hasVolcable = enriched.some((p, i) => i > c16Idx && p.code === 'VOLCABLE')
@@ -1584,7 +1570,7 @@ function enrichTimelineWithExcelSiloAnchors(
     const calado = String(externalCaladoAt ?? '').trim()
     const calMs = Date.parse(calado)
     if (Number.isFinite(volcMs) && Number.isFinite(calMs) && calMs < volcMs) {
-      const c16At = inferC16TransitBeforeKeplerCalado(calMs, volcMs)
+      const c16At = inferC16TransitMidpoint(calMs, volcMs)
       if (c16At) enriched.push({ code: 'CELDA16_CARGA', occurredAt: c16At })
     }
   }
@@ -1698,8 +1684,10 @@ function resolveVolcableBalanzaEgresoEndpoints(
 }
 
 function timelineSourceForTemplatePoint(code: string, executiveCircuitCode: string): 'enriched' | 'truckflow' {
+  const circuit = normalizeExecutiveCircuitForKpi(executiveCircuitCode)
   if (code === 'INGRESO') return 'enriched'
-  if (code === 'BALANZA_EGRESO' && CIRCUITS_WITH_BALANZA_STAY_ROLLUP.has(executiveCircuitCode)) {
+  if (code === 'CALADA' && KEPLER_KPI_CIRCUIT_CODES.has(circuit)) return 'enriched'
+  if (code === 'BALANZA_EGRESO' && CIRCUITS_WITH_BALANZA_STAY_ROLLUP.has(circuit)) {
     return 'enriched'
   }
   return 'truckflow'
@@ -1862,6 +1850,11 @@ export function synthesizeTemplateChainLegsFromTimedSegments(input: {
     externalSalidaAt: input.externalSalidaAt,
   })
   let enrichedPoints = injectIngresoFromExcel(truckflowPoints, input.externalIngresoAt)
+  enrichedPoints = injectCaladaFromExcel(
+    enrichedPoints,
+    input.executiveCircuitCode,
+    input.externalCaladoAt
+  )
   enrichedPoints = enrichTimelineWithExcelDischarge(
     enrichedPoints,
     input.executiveCircuitCode,
@@ -1894,12 +1887,14 @@ export function enrichTimelineWithExcelDischarge(
   externalIngresoAt?: string
 ): TimedLogicalPoint[] {
   let enriched = injectIngresoFromExcel(points, externalIngresoAt)
-  const rules = DISCHARGE_KPI_ROLLUP_BY_CIRCUIT[circuitCode]
+  const executiveCode = normalizeExecutiveCircuitForKpi(circuitCode)
+  enriched = injectCaladaFromExcel(enriched, executiveCode, externalCaladoAt)
+  const rules = DISCHARGE_KPI_ROLLUP_BY_CIRCUIT[executiveCode]
   if (!rules?.length) return enriched
 
   enriched = enrichTimelineWithExcelSiloAnchors(
     enriched,
-    circuitCode,
+    executiveCode,
     externalCaladoAt,
     externalSalidaAt,
     platformNormalized
@@ -1916,18 +1911,6 @@ export function enrichTimelineWithExcelDischarge(
       const salidaAt = pickExcelTimestampAfter(fromMs, externalCaladoAt, externalSalidaAt, false)
       if (salidaAt) enriched.push({ code: 'BALANZA_EGRESO', occurredAt: salidaAt })
       continue
-    }
-
-    if (isKeplerSiloDischargeCircuit(circuitCode, platformNormalized)) {
-      if (rule.toCode === 'CELDA16_CARGA' || rule.toCode === 'CELDA16_DESCARGA') continue
-      if (rule.toCode === 'VOLCABLE') {
-        const calado = String(externalCaladoAt ?? '').trim()
-        const calMs = Date.parse(calado)
-        if (Number.isFinite(calMs) && calMs > fromMs) {
-          enriched.push({ code: 'VOLCABLE', occurredAt: calado })
-        }
-        continue
-      }
     }
 
     const dischargeAt = pickExcelTimestampAfter(fromMs, externalCaladoAt, externalSalidaAt, true)

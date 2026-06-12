@@ -13,11 +13,12 @@ import {
   OPERATIONAL_TRIP_GAP_MAX_MINUTES,
   synthesizeInferredRollupLegsFromTimedSegments,
 } from './etlSegmentTiming'
+import { normalizePlateStrict, plateSimilarityScore } from '../../../services/circuitPlateOcr'
 import {
-  isLikelyOcrPlateMatch,
-  normalizePlateStrict,
-  plateSimilarityScore,
-} from '../../../services/circuitPlateOcr'
+  createPlateMatchCache,
+  plateMatchKindCached,
+  type PlateMatchCache,
+} from './etlPlateMatchCache'
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 
 export type MatchQuality =
@@ -214,6 +215,36 @@ export type ExcelOperationSegmentScatterRow = {
   planta_normalized?: string
 }
 
+export type ExcelFirstCandidateDiscardCounters = {
+  no_plate_in_truckflow: number
+  exact_plate_candidates: number
+  fuzzy_plate_candidates: number
+  rejected_by_time_window: number
+  rejected_by_low_ocr_similarity: number
+  rejected_by_ambiguous_fuzzy: number
+  rejected_by_site_or_plant: number
+  candidates_after_prefilter: number
+  candidates_after_time_filter: number
+  candidates_after_fuzzy_filter: number
+  operations_with_exact_plate: number
+  operations_with_only_fuzzy_plate: number
+  operations_without_any_candidate: number
+}
+
+export type ExcelFirstCandidateDiagnosticsRow = {
+  external_operation_id: string
+  plate_normalized: string
+  operation_date: string
+  exact_candidates_count: number
+  fuzzy_candidates_count: number
+  rejected_by_time_window: number
+  rejected_by_low_ocr_similarity: number
+  rejected_by_ambiguous_fuzzy: number
+  final_candidate_count: number
+  match_quality: MatchQuality
+  no_truckflow_reason: NoTruckflowReason
+}
+
 export type ExcelFirstMergeOptions = {
   windowBeforeIngresoMin?: number
   windowAfterSalidaMin?: number
@@ -221,6 +252,43 @@ export type ExcelFirstMergeOptions = {
   plateOcrThreshold?: number
   /** Ventana amplia: ingreso+salida ±480, ancla ±720, source_date ±6h. Default true. */
   excelFirstWideWindow?: boolean
+  plateMatchCache?: PlateMatchCache
+  fuzzyCandidatesByPlate?: Map<string, TruckflowJourneyForMerge[]>
+  /** Acota universo OCR fuzzy a journeys que pueden entrar en ventana (equivalente si true). Default true. */
+  useCandidatePrefilter?: boolean
+  onExcelOperationProgress?: (
+    current: number,
+    total: number,
+    details?: Partial<ExcelFirstCandidateDiscardCounters>
+  ) => void
+}
+
+export function createEmptyExcelFirstDiscardCounters(): ExcelFirstCandidateDiscardCounters {
+  return {
+    no_plate_in_truckflow: 0,
+    exact_plate_candidates: 0,
+    fuzzy_plate_candidates: 0,
+    rejected_by_time_window: 0,
+    rejected_by_low_ocr_similarity: 0,
+    rejected_by_ambiguous_fuzzy: 0,
+    rejected_by_site_or_plant: 0,
+    candidates_after_prefilter: 0,
+    candidates_after_time_filter: 0,
+    candidates_after_fuzzy_filter: 0,
+    operations_with_exact_plate: 0,
+    operations_with_only_fuzzy_plate: 0,
+    operations_without_any_candidate: 0,
+  }
+}
+
+export function mergeExcelFirstDiscardCounters(
+  into: ExcelFirstCandidateDiscardCounters,
+  add: Partial<ExcelFirstCandidateDiscardCounters>
+): void {
+  for (const k of Object.keys(into) as (keyof ExcelFirstCandidateDiscardCounters)[]) {
+    const v = add[k]
+    if (typeof v === 'number' && v) into[k] += v
+  }
 }
 
 export type ExcelPeriodContext = {
@@ -328,15 +396,11 @@ function journeyInPeriod(
 function plateMatchKind(
   plateJ: string,
   plateM: string,
-  ocrThreshold: number
+  ocrThreshold: number,
+  cache?: PlateMatchCache
 ): 'exact' | 'fuzzy' | null {
-  if (!plateJ || !plateM) return null
-  const j = normalizePlateStrict(plateJ)
-  const m = normalizePlateStrict(plateM)
-  if (j === m) return 'exact'
-  const sim = plateSimilarityScore(j, m)
-  if (sim >= ocrThreshold || isLikelyOcrPlateMatch(j, m)) return 'fuzzy'
-  return null
+  if (cache) return plateMatchKindCached(plateJ, plateM, ocrThreshold, cache)
+  return plateMatchKindCached(plateJ, plateM, ocrThreshold, createPlateMatchCache())
 }
 
 function buildWindowFromOpts(
@@ -636,21 +700,115 @@ function temporalOverlapScore(
   return 0
 }
 
-type PlateIndex = {
+export type PlateIndex = {
   byExactPlate: Map<string, TruckflowJourneyForMerge[]>
+  /** Journeys por día calendario (start o end). */
+  byDay: Map<string, TruckflowJourneyForMerge[]>
   all: TruckflowJourneyForMerge[]
 }
 
 export function buildPlateIndex(journeys: TruckflowJourneyForMerge[]): PlateIndex {
   const byExactPlate = new Map<string, TruckflowJourneyForMerge[]>()
+  const byDay = new Map<string, TruckflowJourneyForMerge[]>()
   for (const j of journeys) {
     const p = normalizePlateStrict(j.plate_normalized)
-    if (!p) continue
-    const arr = byExactPlate.get(p) ?? []
-    arr.push(j)
-    byExactPlate.set(p, arr)
+    if (p) {
+      const arr = byExactPlate.get(p) ?? []
+      arr.push(j)
+      byExactPlate.set(p, arr)
+    }
+    const day = dayKeyFromIso(j.start_time) || dayKeyFromIso(j.end_time)
+    if (day) {
+      const darr = byDay.get(day) ?? []
+      darr.push(j)
+      byDay.set(day, darr)
+    }
   }
-  return { byExactPlate, all: journeys }
+  return { byExactPlate, byDay, all: journeys }
+}
+
+function normalizePlantScopeKey(v: string): string {
+  return String(v ?? '')
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, '_')
+}
+
+/** Solo métrica: no filtra matches (evita cambiar resultados). */
+function countPlantScopeMismatchesInPool(
+  mov: ExternalMovimientoContratoNormalized,
+  pool: TruckflowJourneyForMerge[]
+): number {
+  const excelPlant = normalizePlantScopeKey(mov.planta_normalized ?? '')
+  if (!excelPlant) return 0
+  let n = 0
+  for (const j of pool) {
+    const tf = normalizePlantScopeKey(j.plant_scope ?? '')
+    if (tf && tf !== excelPlant) n++
+  }
+  return n
+}
+
+/** Journeys que pueden pasar filterJourneysInWindow para esta ventana (prefiltro seguro antes de OCR fuzzy). */
+export function journeysForFuzzyOcrPrefilter(
+  plateIndex: PlateIndex,
+  window: SearchWindowSpec,
+  mov: ExternalMovimientoContratoNormalized
+): TruckflowJourneyForMerge[] {
+  const dayKey = mov.source_date || dayKeyFromIso(mov.external_salida_at) || dayKeyFromIso(mov.external_ingreso_at)
+  const out: TruckflowJourneyForMerge[] = []
+  const seen = new Set<string>()
+  for (const j of plateIndex.all) {
+    if (!journeyOverlapsWindow(j, window) && !(window.lowConfidence && sameCalendarDay(j, dayKey))) continue
+    if (seen.has(j.journey_uid)) continue
+    seen.add(j.journey_uid)
+    out.push(j)
+  }
+  return out
+}
+
+type FuzzyCollectResult = {
+  fuzzy: TruckflowJourneyForMerge[]
+  rejectedLowOcr: number
+}
+
+function fuzzyMemoCacheKey(plateM: string, window: SearchWindowSpec, poolSize: number): string {
+  return `${plateM}|${window.startMs}|${window.endMs}|${poolSize}`
+}
+
+function collectFuzzyCandidatesWithDiscardStats(
+  plateM: string,
+  pool: TruckflowJourneyForMerge[],
+  ocrThreshold: number,
+  cache: PlateMatchCache | undefined,
+  memo: Map<string, TruckflowJourneyForMerge[]> | undefined,
+  memoKey: string
+): FuzzyCollectResult {
+  if (memo?.has(memoKey)) {
+    const fuzzy = memo.get(memoKey)!
+    return { fuzzy, rejectedLowOcr: 0 }
+  }
+  const out: TruckflowJourneyForMerge[] = []
+  let rejectedLowOcr = 0
+  const c = cache ?? createPlateMatchCache()
+  for (const j of pool) {
+    const kind = plateMatchKind(j.plate_normalized, plateM, ocrThreshold, c)
+    if (kind === 'fuzzy') out.push(j)
+    else if (kind !== 'exact') rejectedLowOcr++
+  }
+  memo?.set(memoKey, out)
+  return { fuzzy: out, rejectedLowOcr }
+}
+
+function collectFuzzyCandidates(
+  plateM: string,
+  allJourneys: TruckflowJourneyForMerge[],
+  ocrThreshold: number,
+  cache?: PlateMatchCache,
+  memo?: Map<string, TruckflowJourneyForMerge[]>
+): TruckflowJourneyForMerge[] {
+  const memoKey = `${plateM}|all|${allJourneys.length}`
+  return collectFuzzyCandidatesWithDiscardStats(plateM, allJourneys, ocrThreshold, cache, memo, memoKey).fuzzy
 }
 
 function filterJourneysInWindow(
@@ -672,19 +830,6 @@ function sameCalendarDay(journey: TruckflowJourneyForMerge, dayKey: string): boo
   if (!dayKey) return false
   const jDay = dayKeyFromIso(journey.start_time) || dayKeyFromIso(journey.end_time)
   return Boolean(jDay && jDay === dayKey)
-}
-
-function collectFuzzyCandidates(
-  plateM: string,
-  allJourneys: TruckflowJourneyForMerge[],
-  ocrThreshold: number
-): TruckflowJourneyForMerge[] {
-  const out: TruckflowJourneyForMerge[] = []
-  for (const j of allJourneys) {
-    const kind = plateMatchKind(j.plate_normalized, plateM, ocrThreshold)
-    if (kind === 'fuzzy') out.push(j)
-  }
-  return out
 }
 
 function journeyBoundsMs(j: TruckflowJourneyForMerge): { startMs: number; endMs: number } | null {
@@ -990,18 +1135,57 @@ export function diagnoseNoTruckflowEvidence(
   return { ...base, no_truckflow_reason: 'UNKNOWN_NO_EVIDENCE', diagnostic_detail: 'unresolved_no_match' }
 }
 
+export type ExcelFirstOperationCandidateStats = {
+  exact_candidates_count: number
+  fuzzy_candidates_count: number
+  rejected_by_time_window: number
+  rejected_by_low_ocr_similarity: number
+  rejected_by_ambiguous_fuzzy: number
+  rejected_by_site_or_plant: number
+  candidates_after_prefilter: number
+  candidates_after_time_filter: number
+  candidates_after_fuzzy_filter: number
+  had_exact_plate_pool: boolean
+  had_fuzzy_only_pool: boolean
+  had_no_candidates: boolean
+  counted_no_plate_in_truckflow: boolean
+}
+
+export function createEmptyExcelFirstOperationCandidateStats(): ExcelFirstOperationCandidateStats {
+  return {
+    exact_candidates_count: 0,
+    fuzzy_candidates_count: 0,
+    rejected_by_time_window: 0,
+    rejected_by_low_ocr_similarity: 0,
+    rejected_by_ambiguous_fuzzy: 0,
+    rejected_by_site_or_plant: 0,
+    candidates_after_prefilter: 0,
+    candidates_after_time_filter: 0,
+    candidates_after_fuzzy_filter: 0,
+    had_exact_plate_pool: false,
+    had_fuzzy_only_pool: false,
+    had_no_candidates: false,
+    counted_no_plate_in_truckflow: false,
+  }
+}
+
 export function findTruckflowEvidenceForExcelOperation(
   mov: ExternalMovimientoContratoNormalized,
   truckflowJourneys: TruckflowJourneyForMerge[],
   truckflowSegments: TruckflowSegmentForMerge[],
   plateIndex: PlateIndex,
   period: ExcelPeriodContext,
-  options?: ExcelFirstMergeOptions
+  options?: ExcelFirstMergeOptions,
+  opStatsOut?: ExcelFirstOperationCandidateStats
 ): TruckflowEvidenceResult {
   const useWide = options?.excelFirstWideWindow !== false
   const narrowOpts = { ...NARROW_OPTS, ...options }
   const wideOpts = { ...WIDE_OPTS, ...options }
+  const plateCache = options?.plateMatchCache ?? createPlateMatchCache()
+  const fuzzyMemo = options?.fuzzyCandidatesByPlate
+  const useCandidatePrefilter = options?.useCandidatePrefilter !== false
   const plateM = normalizePlateStrict(mov.plate_normalized || mov.patente_original)
+  const opStats = opStatsOut ?? createEmptyExcelFirstOperationCandidateStats()
 
   const emptyDiag = (): TruckflowEvidenceResult => ({
     matched_journey_uids: [],
@@ -1058,28 +1242,92 @@ export function findTruckflowEvidenceForExcelOperation(
     return r
   }
 
-  const tryWindow = (window: SearchWindowSpec): {
+  const applyTryStats = (stats: ExcelFirstOperationCandidateStats) => {
+    opStats.exact_candidates_count = stats.exact_candidates_count
+    opStats.fuzzy_candidates_count = stats.fuzzy_candidates_count
+    opStats.rejected_by_time_window = stats.rejected_by_time_window
+    opStats.rejected_by_low_ocr_similarity = stats.rejected_by_low_ocr_similarity
+    opStats.rejected_by_ambiguous_fuzzy = stats.rejected_by_ambiguous_fuzzy
+    opStats.rejected_by_site_or_plant = stats.rejected_by_site_or_plant
+    opStats.candidates_after_prefilter = stats.candidates_after_prefilter
+    opStats.candidates_after_time_filter = stats.candidates_after_time_filter
+    opStats.candidates_after_fuzzy_filter = stats.candidates_after_fuzzy_filter
+    opStats.had_exact_plate_pool = stats.had_exact_plate_pool
+    opStats.had_fuzzy_only_pool = stats.had_fuzzy_only_pool
+    opStats.had_no_candidates = stats.had_no_candidates
+    opStats.counted_no_plate_in_truckflow = stats.counted_no_plate_in_truckflow
+  }
+
+  const tryWindow = (
+    window: SearchWindowSpec
+  ): {
     exact: TruckflowJourneyForMerge[]
     fuzzy: TruckflowJourneyForMerge[]
     matched: TruckflowJourneyForMerge[]
+    stats: ExcelFirstOperationCandidateStats
   } => {
+    const stats = createEmptyExcelFirstOperationCandidateStats()
     const exactPool = plateIndex.byExactPlate.get(plateM) ?? []
-    const exact = withoutPossibleRejectionJourneys(filterJourneysInWindow(exactPool, window, mov))
-    const fuzzyPool = exact.length ? [] : collectFuzzyCandidates(plateM, plateIndex.all, narrowOpts.plateOcrThreshold)
-    const fuzzy =
-      exact.length ?
-        []
-      : withoutPossibleRejectionJourneys(filterJourneysInWindow(fuzzyPool, window, mov))
+    stats.exact_candidates_count = exactPool.length
+    stats.had_exact_plate_pool = exactPool.length > 0
+
+    const exactInWindow = filterJourneysInWindow(exactPool, window, mov)
+    stats.rejected_by_time_window += exactPool.length - exactInWindow.length
+    const exact = withoutPossibleRejectionJourneys(exactInWindow)
+
+    let fuzzy: TruckflowJourneyForMerge[] = []
+    if (!exact.length) {
+      const ocrPool =
+        useCandidatePrefilter ?
+          journeysForFuzzyOcrPrefilter(plateIndex, window, mov)
+        : plateIndex.all
+      stats.candidates_after_prefilter = ocrPool.length
+      stats.rejected_by_site_or_plant = countPlantScopeMismatchesInPool(mov, ocrPool)
+      const memoKey = fuzzyMemoCacheKey(plateM, window, ocrPool.length)
+      const collected = collectFuzzyCandidatesWithDiscardStats(
+        plateM,
+        ocrPool,
+        narrowOpts.plateOcrThreshold,
+        plateCache,
+        fuzzyMemo,
+        memoKey
+      )
+      stats.fuzzy_candidates_count = collected.fuzzy.length
+      stats.rejected_by_low_ocr_similarity = collected.rejectedLowOcr
+      stats.had_fuzzy_only_pool = collected.fuzzy.length > 0
+
+      const fuzzyInWindow = filterJourneysInWindow(collected.fuzzy, window, mov)
+      stats.rejected_by_time_window += collected.fuzzy.length - fuzzyInWindow.length
+      fuzzy = withoutPossibleRejectionJourneys(fuzzyInWindow)
+      stats.candidates_after_fuzzy_filter = fuzzy.length
+    } else {
+      stats.candidates_after_prefilter = 0
+    }
+
+    stats.candidates_after_time_filter = exact.length + fuzzy.length
+    if (!exactPool.length && !stats.fuzzy_candidates_count) {
+      stats.had_no_candidates = true
+    }
+
     const matched = exact.length ? exact : fuzzy
-    return { exact, fuzzy, matched }
+    return { exact, fuzzy, matched, stats }
   }
 
-  let narrowTry = narrowWindow ? tryWindow(narrowWindow) : { exact: [], fuzzy: [], matched: [] as TruckflowJourneyForMerge[] }
+  let narrowTry = narrowWindow ?
+    tryWindow(narrowWindow)
+  : {
+      exact: [] as TruckflowJourneyForMerge[],
+      fuzzy: [] as TruckflowJourneyForMerge[],
+      matched: [] as TruckflowJourneyForMerge[],
+      stats: createEmptyExcelFirstOperationCandidateStats(),
+    }
   let windowUsed = narrowWindow ?? wideWindow!
   let narrowHadMatch = narrowTry.matched.length > 0
+  applyTryStats(narrowTry.stats)
 
   if (!narrowHadMatch && wideWindow && useWide) {
     const wideTry = tryWindow(wideWindow)
+    applyTryStats(wideTry.stats)
     if (wideTry.matched.length) {
       narrowTry = wideTry
       windowUsed = wideWindow
@@ -1096,6 +1344,19 @@ export function findTruckflowEvidenceForExcelOperation(
       wideWindow,
       narrowOpts.plateOcrThreshold
     )
+    if (diag.no_truckflow_reason === 'NO_PLATE_IN_TRUCKFLOW') {
+      opStats.counted_no_plate_in_truckflow = true
+      opStats.had_no_candidates = true
+    }
+    if (
+      diag.no_truckflow_reason === 'MULTIPLE_AMBIGUOUS_REJECTED' ||
+      diag.no_truckflow_reason === 'ONLY_FUZZY_MATCH_REJECTED'
+    ) {
+      opStats.rejected_by_ambiguous_fuzzy += 1
+    }
+    if (diag.no_truckflow_reason === 'PLATE_EXISTS_OUT_OF_TIME_WINDOW') {
+      opStats.rejected_by_time_window += Math.max(1, opStats.exact_candidates_count)
+    }
     return {
       ...emptyDiag(),
       match_quality: 'NO_TRUCKFLOW_EVIDENCE',
@@ -1125,6 +1386,9 @@ export function findTruckflowEvidenceForExcelOperation(
     windowUsed,
     narrowHadMatch
   )
+  if (built.match_quality === 'EXTERNAL_MATCH_AMBIGUOUS') {
+    opStats.rejected_by_ambiguous_fuzzy += 1
+  }
 
   return {
     ...built,
@@ -1139,7 +1403,7 @@ export function findTruckflowEvidenceForExcelOperation(
       journeyInPeriod(j, period.excel_period_start_ms, period.excel_period_end_ms)
     ).length,
     same_plate_journey_count_in_window: narrowTry.matched.length,
-    fuzzy_plate_candidates: collectFuzzyCandidates(plateM, plateIndex.all, narrowOpts.plateOcrThreshold).length,
+    fuzzy_plate_candidates: opStats.fuzzy_candidates_count,
     possible_duplicate_assignment: false,
   }
 }
@@ -1235,10 +1499,12 @@ export type ExcelFirstMergeResult = {
   operations: ExcelOperationWithTruckflowRow[]
   segmentRows: ExcelOperationSegmentScatterRow[]
   noEvidenceDiagnostics: ExcelNoTruckflowDiagnosticRow[]
+  candidateDiagnostics: ExcelFirstCandidateDiagnosticsRow[]
   reviewSample: ExcelOperationWithTruckflowRow[]
   summary: Record<string, unknown>
   byProductPlatform: Record<string, unknown>[]
   period: ExcelPeriodContext
+  discardCounters: ExcelFirstCandidateDiscardCounters
 }
 
 function incrementMatchSummary(summary: Record<string, number>, evidence: TruckflowEvidenceResult): void {
@@ -1321,10 +1587,21 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
   const plateIndex = buildPlateIndex(truckflowJourneys)
   const journeyByUid = new Map(truckflowJourneys.map((j) => [j.journey_uid, j]))
   const journeyAssignmentCount = new Map<string, number>()
+  const plateMatchCache = options?.plateMatchCache ?? createPlateMatchCache()
+  const fuzzyCandidatesByPlate = options?.fuzzyCandidatesByPlate ?? new Map<string, TruckflowJourneyForMerge[]>()
+  const mergeOptions: ExcelFirstMergeOptions = {
+    ...options,
+    plateMatchCache,
+    fuzzyCandidatesByPlate,
+  }
+  const totalMov = movimientosContrato.length
 
   const operations: ExcelOperationWithTruckflowRow[] = []
   const segmentRows: ExcelOperationSegmentScatterRow[] = []
   const noEvidenceDiagnostics: ExcelNoTruckflowDiagnosticRow[] = []
+  const candidateDiagnostics: ExcelFirstCandidateDiagnosticsRow[] = []
+  const discardCounters = createEmptyExcelFirstDiscardCounters()
+  const useCandidatePrefilter = options?.useCandidatePrefilter !== false
 
   const summaryCounts: Record<string, number> = {
     total_excel_operations: movimientosContrato.length,
@@ -1368,6 +1645,8 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
     no_evidence_insufficient_external_time: 0,
     no_evidence_unknown: 0,
     possible_duplicate_assignments: 0,
+    ...createEmptyExcelFirstDiscardCounters(),
+    use_candidate_prefilter: useCandidatePrefilter ? 1 : 0,
   }
 
   const byPp = new Map<
@@ -1389,15 +1668,51 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
   let excelMergePass = 0
   for (const mov of movimientosContrato) {
     if (++excelMergePass % 35 === 0) await yieldToBrowser()
+    if (excelMergePass % 25 === 0 || excelMergePass === totalMov) {
+      mergeOptions.onExcelOperationProgress?.(excelMergePass, totalMov, { ...discardCounters })
+    }
     const ctx = resolveOperationalContextFromExcel(mov)
+    const opCand = createEmptyExcelFirstOperationCandidateStats()
     const evidence = findTruckflowEvidenceForExcelOperation(
       mov,
       truckflowJourneys,
       truckflowSegments,
       plateIndex,
       period,
-      options
+      mergeOptions,
+      opCand
     )
+
+    mergeExcelFirstDiscardCounters(discardCounters, {
+      no_plate_in_truckflow: opCand.counted_no_plate_in_truckflow ? 1 : 0,
+      exact_plate_candidates: opCand.exact_candidates_count,
+      fuzzy_plate_candidates: opCand.fuzzy_candidates_count,
+      rejected_by_time_window: opCand.rejected_by_time_window,
+      rejected_by_low_ocr_similarity: opCand.rejected_by_low_ocr_similarity,
+      rejected_by_ambiguous_fuzzy: opCand.rejected_by_ambiguous_fuzzy,
+      rejected_by_site_or_plant: opCand.rejected_by_site_or_plant,
+      candidates_after_prefilter: opCand.candidates_after_prefilter,
+      candidates_after_time_filter: opCand.candidates_after_time_filter,
+      candidates_after_fuzzy_filter: opCand.candidates_after_fuzzy_filter,
+      operations_with_exact_plate: opCand.had_exact_plate_pool ? 1 : 0,
+      operations_with_only_fuzzy_plate:
+        !opCand.had_exact_plate_pool && opCand.had_fuzzy_only_pool ? 1 : 0,
+      operations_without_any_candidate: opCand.had_no_candidates ? 1 : 0,
+    })
+
+    candidateDiagnostics.push({
+      external_operation_id: mov.external_operation_id,
+      plate_normalized: mov.plate_normalized,
+      operation_date: mov.source_date || dayKeyFromIso(mov.external_salida_at),
+      exact_candidates_count: opCand.exact_candidates_count,
+      fuzzy_candidates_count: opCand.fuzzy_candidates_count,
+      rejected_by_time_window: opCand.rejected_by_time_window,
+      rejected_by_low_ocr_similarity: opCand.rejected_by_low_ocr_similarity,
+      rejected_by_ambiguous_fuzzy: opCand.rejected_by_ambiguous_fuzzy,
+      final_candidate_count: evidence.evidence_count,
+      match_quality: evidence.match_quality,
+      no_truckflow_reason: evidence.no_truckflow_reason,
+    })
     const flags = computeAnalysisFlags(mov, ctx, evidence)
 
     for (const uid of evidence.matched_journey_uids) {
@@ -1670,8 +1985,10 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
 
   const summary: Record<string, unknown> = {
     ...summaryCounts,
+    ...discardCounters,
     ...period,
     excel_first_wide_window: options?.excelFirstWideWindow !== false,
+    use_candidate_prefilter: useCandidatePrefilter,
     coverage_excel_first_pct: coveragePct,
     unique_products: products.size,
     unique_platforms: platforms.size,
@@ -1679,16 +1996,21 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
     segment_scatter_rows: segmentRows.length,
     no_evidence_diagnostics_rows: noEvidenceDiagnostics.length,
     review_sample_rows: reviewSample.length,
+    candidate_diagnostics_rows: candidateDiagnostics.length,
   }
+
+  console.info('[CONTRACT_FIRST_EXCEL_FIRST] discardCounters', discardCounters)
 
   return {
     operations,
     segmentRows,
     noEvidenceDiagnostics,
+    candidateDiagnostics,
     reviewSample,
     summary,
     byProductPlatform,
     period,
+    discardCounters,
   }
 }
 
@@ -1834,6 +2156,24 @@ export function excelOperationSegmentsForScatterCsv(rows: ExcelOperationSegmentS
 
 export function excelNoTruckflowEvidenceDiagnosticsCsv(rows: ExcelNoTruckflowDiagnosticRow[]): string {
   return recordsToCsv([...NO_EVIDENCE_HEADERS], rows as unknown as Record<string, unknown>[])
+}
+
+const CANDIDATE_DIAG_HEADERS = [
+  'external_operation_id',
+  'plate_normalized',
+  'operation_date',
+  'exact_candidates_count',
+  'fuzzy_candidates_count',
+  'rejected_by_time_window',
+  'rejected_by_low_ocr_similarity',
+  'rejected_by_ambiguous_fuzzy',
+  'final_candidate_count',
+  'match_quality',
+  'no_truckflow_reason',
+] as const
+
+export function excelFirstCandidateDiagnosticsCsv(rows: ExcelFirstCandidateDiagnosticsRow[]): string {
+  return recordsToCsv([...CANDIDATE_DIAG_HEADERS], rows as unknown as Record<string, unknown>[])
 }
 
 export function excelFirstReviewSampleCsv(rows: ExcelOperationWithTruckflowRow[]): string {

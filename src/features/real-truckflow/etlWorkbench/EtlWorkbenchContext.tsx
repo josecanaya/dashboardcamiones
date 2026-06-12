@@ -37,6 +37,7 @@ import {
   type TruckflowApiJourneyDayStat,
 } from '../api/truckflowLocalServerApi'
 import { getTruckPlateRegistry } from '../api/truckPlateRegistryApi'
+import type { ContractFirstProgressEvent } from './etlContractFirstProgress'
 
 export type EtlLoadSummary = {
   loadedEventFilesCount: number
@@ -90,6 +91,8 @@ type Ctx = {
   transformActiveTramo: TransformTramoId | null
   transformTramoCompleted: 0 | 1 | 2 | 3
   transformRunAllInProgress: boolean
+  /** Último evento de progreso del Paso 3 (Contract-first). */
+  contractFirstProgress: ContractFirstProgressEvent | null
   runTransformTramo: (
     tramo: TransformTramoId,
     options?: { keepGlobalBusy?: boolean }
@@ -181,6 +184,14 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
     Record<TransformTramoId, TransformTramoStatus>
   >({ 1: 'idle', 2: 'idle', 3: 'idle' })
   const [transformActiveTramo, setTransformActiveTramo] = useState<TransformTramoId | null>(null)
+  const [contractFirstProgress, setContractFirstProgress] = useState<ContractFirstProgressEvent | null>(
+    null
+  )
+
+  const onContractFirstProgress = useCallback((ev: ContractFirstProgressEvent) => {
+    console.info('[CONTRACT_FIRST_PROGRESS]', ev)
+    startTransition(() => setContractFirstProgress(ev))
+  }, [])
   const [transformTramoCompleted, setTransformTramoCompleted] = useState<0 | 1 | 2 | 3>(0)
   const [transformRunAllInProgress, setTransformRunAllInProgress] = useState(false)
 
@@ -407,12 +418,14 @@ function buildApiJourneyStatsFromParsedFiles(
       plateRegistry,
       movimientosContratoFiles:
         movimientosContratoFiles.length ? movimientosContratoFiles : undefined,
+      onContractFirstProgress,
     }
   }, [
     alerts,
     events,
     mergeWindowHours,
     movimientosContratoFiles,
+    onContractFirstProgress,
     parsedAlertFiles.length,
     parsedEventFiles.length,
   ])
@@ -449,6 +462,7 @@ function buildApiJourneyStatsFromParsedFiles(
       }
       if (!options?.keepGlobalBusy) setTransformBusy(true)
       setTransformActiveTramo(tramo)
+      if (tramo === 3) setContractFirstProgress(null)
       setTransformError(null)
       setTransformTramoStatus((s) => ({ ...s, [tramo]: 'running' }))
       try {
@@ -486,6 +500,7 @@ function buildApiJourneyStatsFromParsedFiles(
     setTransformBusy(true)
     setTransformRunAllInProgress(true)
     setTransformError(null)
+    setContractFirstProgress(null)
     transformPhaseStoreRef.current = createTransformPhaseSession()
     setTransformTramoStatus({ 1: 'idle', 2: 'idle', 3: 'idle' })
     setTransformTramoCompleted(0)
@@ -577,6 +592,7 @@ function buildApiJourneyStatsFromParsedFiles(
       transformActiveTramo,
       transformTramoCompleted,
       transformRunAllInProgress,
+      contractFirstProgress,
       runTransformTramo,
     }),
     [
@@ -609,6 +625,7 @@ function buildApiJourneyStatsFromParsedFiles(
       runTransformTramo,
       transformTramoCompleted,
       transformRunAllInProgress,
+      contractFirstProgress,
     ]
   )
 

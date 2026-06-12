@@ -282,6 +282,53 @@ describe('mergeExcelOperationsWithTruckflowEvidence', () => {
     const res = await mergeExcelOperationsWithTruckflowEvidence([mov({})], [], [])
     expect(res.operations[0]!.no_truckflow_reason).toBe('NO_PLATE_IN_TRUCKFLOW')
     expect(res.noEvidenceDiagnostics).toHaveLength(1)
+    expect(res.discardCounters.no_plate_in_truckflow).toBeGreaterThan(0)
+    expect(res.candidateDiagnostics[0]!.no_truckflow_reason).toBe('NO_PLATE_IN_TRUCKFLOW')
+  })
+
+  it('contabiliza rejected_by_time_window en diagnóstico por operación', async () => {
+    const m = mov({})
+    const j = journey({
+      start_time: '2026-05-29T20:00:00',
+      end_time: '2026-05-29T21:00:00',
+    })
+    const res = await mergeExcelOperationsWithTruckflowEvidence([m], [j], [])
+    expect(res.operations[0]!.no_truckflow_reason).toBe('PLATE_EXISTS_OUT_OF_TIME_WINDOW')
+    expect(res.candidateDiagnostics[0]!.rejected_by_time_window).toBeGreaterThan(0)
+    expect(res.discardCounters.rejected_by_time_window).toBeGreaterThan(0)
+  })
+
+  it('prefilter OCR pool: mismos matches que escaneo completo', async () => {
+    const journeys = [
+      journey({ journey_uid: 'j1' }),
+      journey({
+        journey_uid: 'j2',
+        plate_normalized: 'AB111CD',
+        plate_original: 'AB111CD',
+        start_time: '2026-05-29T09:10:00',
+        end_time: '2026-05-29T10:00:00',
+      }),
+    ]
+    const ops = [
+      mov({ external_operation_id: 'o1' }),
+      mov({
+        external_operation_id: 'o2',
+        plate_normalized: 'AB111CD',
+        patente_original: 'AB111CD',
+      }),
+    ]
+    const withPref = await mergeExcelOperationsWithTruckflowEvidence(ops, journeys, [], {
+      useCandidatePrefilter: true,
+    })
+    const withoutPref = await mergeExcelOperationsWithTruckflowEvidence(ops, journeys, [], {
+      useCandidatePrefilter: false,
+    })
+    expect(withPref.operations.map((o) => o.matched_journey_uids)).toEqual(
+      withoutPref.operations.map((o) => o.matched_journey_uids)
+    )
+    expect(withPref.operations.map((o) => o.match_quality)).toEqual(
+      withoutPref.operations.map((o) => o.match_quality)
+    )
   })
 
   it('scatter true para ROUTE_NO_DISCHARGE_POINT con segmentos', async () => {

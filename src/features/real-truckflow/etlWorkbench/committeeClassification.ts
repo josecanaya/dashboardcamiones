@@ -83,8 +83,8 @@ const SHARED_CIRCUIT_CANDIDATES: Record<string, readonly string[]> = {
   R6: ['R5', 'R6'],
   R19: ['R19', 'R20'],
   R20: ['R19', 'R20'],
-  RK1: ['RK1', 'RK2'],
-  RK2: ['RK1', 'RK2'],
+  R3: ['R3', 'R4'],
+  R4: ['R3', 'R4'],
 }
 
 function collapseConsecutiveEqual(seq: string[]): string[] {

@@ -16,6 +16,7 @@ import {
 import { mergeTruckflowWithMovimientos } from './etlTruckflowMovimientosMerge'
 import {
   excelFirstByProductPlatformCsv,
+  excelFirstCandidateDiagnosticsCsv,
   excelFirstMergeSummaryCsv,
   excelFirstReviewSampleCsv,
   excelNoTruckflowEvidenceDiagnosticsCsv,
@@ -49,6 +50,14 @@ import {
 } from './etlSegmentScatterByDay'
 
 import type { KpiTiemposMovimientosSnapshot } from './etlKpiTiemposBuild'
+import { createPlateMatchCache } from './etlPlateMatchCache'
+import {
+  countUniqueNormalizedPlates,
+  emitContractFirstProgress,
+  runContractFirstStage,
+  type ContractFirstProgressCallback,
+  type ContractFirstStageTiming,
+} from './etlContractFirstProgress'
 
 export type MovimientosContratoIntegrationInput = {
   finalCsvRows: Record<string, unknown>[]
@@ -57,11 +66,14 @@ export type MovimientosContratoIntegrationInput = {
   movimientosFiles: MovimientosContratoFileInput[]
   /** Si true, no arma scatter/KPI tiempos (tramo 4 en pestaña KPI Tiempos). */
   skipKpiTiemposArtifacts?: boolean
+  /** Telemetría opcional Paso 3 (UI / consola). */
+  onProgress?: ContractFirstProgressCallback
 }
 
 export type MovimientosContratoIntegrationOutput = {
   csv: Record<string, string>
   logs: string[]
+  stageTimings: ContractFirstStageTiming[]
   segmentTimingFromExcelFirst: SegmentTimingIndex | null
   kpiTiemposSnapshot: KpiTiemposMovimientosSnapshot | null
   stats: {
@@ -81,6 +93,11 @@ export async function runMovimientosContratoIntegration(
   input: MovimientosContratoIntegrationInput
 ): Promise<MovimientosContratoIntegrationOutput> {
   const logs: string[] = []
+  const stageTimings: ContractFirstStageTiming[] = []
+  const runStartedAt = performance.now()
+  const onProgress = input.onProgress
+  const plateMatchCache = createPlateMatchCache()
+  const fuzzyCandidatesByPlate = new Map<string, import('./etlTruckflowMovimientosMerge').TruckflowJourneyForMerge[]>()
 
   const { raw, warnings: loadWarnings, readMeta } = loadMovimientosContratoFiles(input.movimientosFiles)
   if (readMeta.length) {
@@ -92,6 +109,14 @@ export async function runMovimientosContratoIntegration(
   }
   const normalized = normalizeMovimientosContratoBatch(raw)
   const movStats = summarizeMovimientosContratoLoad(input.movimientosFiles, normalized, loadWarnings)
+  const excelUniquePlates = countUniqueNormalizedPlates(normalized.map((m) => m.plate_normalized))
+  console.info('[CONTRACT_FIRST_PASO3] inicio', {
+    excelRows: normalized.length,
+    excelUniquePlates,
+    truckflowFinalRows: input.finalCsvRows.length,
+    classifiedJourneys: input.classifiedJourneys.length,
+    skipKpi: input.skipKpiTiemposArtifacts === true,
+  })
 
   logs.push(`Archivos Movimientos por Contrato leídos: ${movStats.filesRead}`)
   logs.push(`Movimientos externos crudos/normalizados: ${movStats.rawCount}`)
@@ -101,7 +126,17 @@ export async function runMovimientosContratoIntegration(
   logs.push(`Con timestamp ingreso: ${movStats.withIngresoTimestamp}`)
   logs.push(`Con timestamp salida: ${movStats.withSalidaTimestamp}`)
 
-  const truckflowJourneys = buildTruckflowJourneysForMerge(input.finalCsvRows, input.journeyTimesByUid)
+  const truckflowJourneysStage = await runContractFirstStage(
+    'build_truckflow_journeys',
+    'Armar journeys Truckflow para merge',
+    runStartedAt,
+    onProgress,
+    () => buildTruckflowJourneysForMerge(input.finalCsvRows, input.journeyTimesByUid),
+    { finalCsvRows: input.finalCsvRows.length }
+  )
+  stageTimings.push(truckflowJourneysStage.timing)
+  const truckflowJourneys = truckflowJourneysStage.result
+  const truckflowUniquePlates = countUniqueNormalizedPlates(truckflowJourneys.map((j) => j.plate_normalized))
   logs.push(`Journeys Truckflow para merge: ${truckflowJourneys.length}`)
   logs.push(`Journeys Truckflow con patente: ${truckflowJourneys.filter((j) => j.plate_normalized).length}`)
 
@@ -143,9 +178,34 @@ export async function runMovimientosContratoIntegration(
     }
   }
 
-  const segments = buildTruckflowSegmentsForMerge(segmentLegInputs, journeyMeta)
+  const segmentsStage = await runContractFirstStage(
+    'build_segments',
+    'Armar segmentos Truckflow',
+    runStartedAt,
+    onProgress,
+    () => buildTruckflowSegmentsForMerge(segmentLegInputs, journeyMeta),
+    { segmentLegInputs: segmentLegInputs.length, classifiedJourneys: input.classifiedJourneys.length }
+  )
+  stageTimings.push(segmentsStage.timing)
+  const segments = segmentsStage.result
 
-  const mergeResult = mergeTruckflowWithMovimientos(truckflowJourneys, normalized)
+  const mergeStage = await runContractFirstStage(
+    'merge_truckflow_movimientos',
+    'Merge journey ↔ Excel (ancla + fuzzy)',
+    runStartedAt,
+    onProgress,
+    () =>
+      mergeTruckflowWithMovimientos(truckflowJourneys, normalized, {
+        plateMatchCache,
+      }),
+    {
+      excelRows: normalized.length,
+      journeys: truckflowJourneys.length,
+      complexity: 'O(mov×journey) en ancla Excel; fuzzy con cache OCR',
+    }
+  )
+  stageTimings.push(mergeStage.timing)
+  const mergeResult = mergeStage.result
   logs.push(`Matches Excel ancla: ${mergeResult.summary.match_excel_anchor}`)
   logs.push(`Circuito asignado desde Excel: ${mergeResult.merged.filter((r) => r.circuit_from_excel).length}`)
   logs.push(`Matches probables: ${mergeResult.summary.match_probable}`)
@@ -154,11 +214,40 @@ export async function runMovimientosContratoIntegration(
   logs.push(`Truckflow sin movimiento: ${mergeResult.summary.no_external_match}`)
   logs.push(`Movimientos sin Truckflow (diagnóstico): ${mergeResult.summary.no_truckflow_match}`)
 
-  const excelFirstResult = await mergeExcelOperationsWithTruckflowEvidence(
-    normalized,
-    truckflowJourneys,
-    segments
+  const excelFirstStage = await runContractFirstStage(
+    'merge_excel_first_evidence',
+    'Excel-first por operación contractual',
+    runStartedAt,
+    onProgress,
+    () =>
+      mergeExcelOperationsWithTruckflowEvidence(normalized, truckflowJourneys, segments, {
+        plateMatchCache,
+        fuzzyCandidatesByPlate,
+        onExcelOperationProgress: (current, total, discardPartial) => {
+          emitContractFirstProgress(onProgress, runStartedAt, {
+            step: 'merge_excel_first_evidence',
+            label: 'Excel-first por operación',
+            current,
+            total,
+            details: discardPartial ? { ...discardPartial } : undefined,
+          })
+        },
+      }),
+    {
+      excelRows: normalized.length,
+      journeys: truckflowJourneys.length,
+      segments: segments.length,
+      complexity: 'O(mov×journey) fuzzy sin exact; yield cada 35 filas',
+    }
   )
+  const excelFirstResult = excelFirstStage.result
+  stageTimings.push({
+    ...excelFirstStage.timing,
+    details: {
+      ...excelFirstStage.timing.details,
+      ...excelFirstResult.discardCounters,
+    },
+  })
   logs.push(`Excel-first: operaciones totales ${excelFirstResult.summary.total_excel_operations}`)
   logs.push(
     `Excel-first: con evidencia Truckflow ${excelFirstResult.summary.total_with_truckflow_evidence}`
@@ -177,8 +266,42 @@ export async function runMovimientosContratoIntegration(
   logs.push(
     `Excel-first sin evidencia: no_placa=${excelFirstResult.summary.no_evidence_no_plate_in_truckflow}, fuera_ventana=${excelFirstResult.summary.no_evidence_plate_out_of_window}, fuera_periodo=${excelFirstResult.summary.no_evidence_outside_period}`
   )
+  const dc = excelFirstResult.discardCounters
+  logs.push(
+    `Excel-first descartes: ventana=${dc.rejected_by_time_window}, OCR bajo=${dc.rejected_by_low_ocr_similarity}, fuzzy ambiguo=${dc.rejected_by_ambiguous_fuzzy}, planta(info)=${dc.rejected_by_site_or_plant}, prefilter pool=${dc.candidates_after_prefilter}`
+  )
 
-  const clean = buildCleanJourneysForAnalysis(mergeResult.merged)
+  emitContractFirstProgress(onProgress, runStartedAt, {
+    step: 'merge_summary',
+    label: 'Resumen merge',
+    current: 1,
+    total: 1,
+    details: {
+      excelUniquePlates,
+      truckflowUniquePlates,
+      match_exact: mergeResult.summary.match_exact,
+      match_probable: mergeResult.summary.match_probable,
+      match_fuzzy_plate: mergeResult.summary.match_fuzzy_plate,
+      match_ambiguous: mergeResult.summary.match_ambiguous,
+      no_external_match: mergeResult.summary.no_external_match,
+      no_truckflow_match: mergeResult.summary.no_truckflow_match,
+      excel_with_evidence: excelFirstResult.summary.total_with_truckflow_evidence,
+      excel_without_evidence: excelFirstResult.summary.total_without_truckflow_evidence,
+      ocrCacheEntries: plateMatchCache.size,
+      fuzzyPlateMemoSize: fuzzyCandidatesByPlate.size,
+      ...excelFirstResult.discardCounters,
+    },
+  })
+
+  const cleanStage = await runContractFirstStage(
+    'clean_journeys',
+    'Clean journeys for analysis',
+    runStartedAt,
+    onProgress,
+    () => buildCleanJourneysForAnalysis(mergeResult.merged)
+  )
+  stageTimings.push(cleanStage.timing)
+  const clean = cleanStage.result
   const analysisReadyCount = clean.filter((r) => r.analysis_ready).length
   const operationalEnrichmentCount = clean.filter((r) => r.operational_enrichment_ready).length
   logs.push(`Journeys analysis_ready: ${analysisReadyCount}`)
@@ -191,7 +314,15 @@ export async function runMovimientosContratoIntegration(
     .filter((r) => r.operational_enrichment_ready && r.missing_camera_discharge)
     .map((r) => ({ ...r }) as Record<string, unknown>)
 
-  const samplePack = createOperationalSample(clean)
+  const sampleStage = await runContractFirstStage(
+    'operational_sample',
+    'Muestra operativa',
+    runStartedAt,
+    onProgress,
+    () => createOperationalSample(clean)
+  )
+  stageTimings.push(sampleStage.timing)
+  const samplePack = sampleStage.result
   logs.push(`Seleccionados en muestra operativa: ${samplePack.sample.length}`)
   const sampleUids = new Set(samplePack.sample.map((s) => s.journey_uid))
   const skipKpi = input.skipKpiTiemposArtifacts === true
@@ -248,7 +379,13 @@ export async function runMovimientosContratoIntegration(
   const products = [...new Set(normalized.map((m) => m.product_normalized).filter(Boolean))].sort()
   const platforms = [...new Set(normalized.map((m) => m.platform_normalized).filter(Boolean))].sort()
 
-  const csv: Record<string, string> = {
+  const csvStage = await runContractFirstStage(
+    'export_csv',
+    'Generar CSV de conciliación',
+    runStartedAt,
+    onProgress,
+    () => {
+      const csv: Record<string, string> = {
     external_movimientos_contrato_normalized: externalMovimientosNormalizedCsv(normalized),
     truckflow_journeys_for_merge: truckflowJourneysForMergeCsv(truckflowJourneys),
     truckflow_segments_for_merge: truckflowSegmentsForMergeCsv(segments),
@@ -311,13 +448,30 @@ export async function runMovimientosContratoIntegration(
     excel_no_truckflow_evidence_diagnostics: excelNoTruckflowEvidenceDiagnosticsCsv(
       excelFirstResult.noEvidenceDiagnostics
     ),
+    excel_first_candidate_diagnostics: excelFirstCandidateDiagnosticsCsv(
+      excelFirstResult.candidateDiagnostics
+    ),
     excel_first_review_sample: excelFirstReviewSampleCsv(excelFirstResult.reviewSample),
     ...(skipKpi ? {} : { segment_scatter_by_day: scatterByDayCsvOut }),
+      }
+      return csv
+    },
+    { csvKeys: 20 }
+  )
+  stageTimings.push(csvStage.timing)
+  const csv = csvStage.result
+
+  const totalMs = Math.round(performance.now() - runStartedAt)
+  console.info('[CONTRACT_FIRST_PASO3] fin', { totalMs, stageTimings })
+  logs.push(`Duración total Paso 3 (ms): ${totalMs}`)
+  for (const t of stageTimings) {
+    logs.push(`  etapa ${t.step}: ${t.durationMs}ms`)
   }
 
   return {
     csv,
     logs,
+    stageTimings,
     segmentTimingFromExcelFirst,
     kpiTiemposSnapshot,
     stats: {

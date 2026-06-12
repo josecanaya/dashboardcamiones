@@ -9,11 +9,12 @@ import {
   inferCircuitFromExternalMovimiento,
   journeyNeedsCircuitFromExcel,
 } from './etlPlatformCircuitInference'
+import { normalizePlateStrict } from '../../../services/circuitPlateOcr'
 import {
-  isLikelyOcrPlateMatch,
-  normalizePlateStrict,
-  plateSimilarityScore,
-} from '../../../services/circuitPlateOcr'
+  createPlateMatchCache,
+  plateMatchKindCached,
+  type PlateMatchCache,
+} from './etlPlateMatchCache'
 
 export type TruckflowJourneyForMerge = {
   journey_uid: string
@@ -74,6 +75,8 @@ export type MergeTruckflowMovimientosOptions = {
   maxSameDayDischargeDeltaMin?: number
   /** Segunda pasada enrich: tope distancia salida ↔ journey. */
   maxEnrichDischargeDeltaMin?: number
+  /** Cache opcional OCR (misma salida, menos CPU en loops mov×journey). */
+  plateMatchCache?: PlateMatchCache
 }
 
 const DEFAULT_OPTIONS: Required<MergeTruckflowMovimientosOptions> = {
@@ -284,18 +287,13 @@ export function journeyNeedsOperationalEnrichment(journey: TruckflowJourneyForMe
   return false
 }
 
-function plateMatchKind(
+function resolvePlateMatchKind(
   plateJ: string,
   plateM: string,
-  ocrThreshold: number
+  ocrThreshold: number,
+  cache: PlateMatchCache
 ): 'exact' | 'fuzzy' | null {
-  if (!plateJ || !plateM) return null
-  const j = normalizePlateStrict(plateJ)
-  const m = normalizePlateStrict(plateM)
-  if (j === m) return 'exact'
-  const sim = plateSimilarityScore(j, m)
-  if (sim >= ocrThreshold || isLikelyOcrPlateMatch(j, m)) return 'fuzzy'
-  return null
+  return plateMatchKindCached(plateJ, plateM, ocrThreshold, cache)
 }
 
 function sameCalendarDay(journey: TruckflowJourneyForMerge, mov: ExternalMovimientoContratoNormalized): boolean {
@@ -477,7 +475,12 @@ function collectCandidatesForJourney(
   for (const mov of movByPlate.get(plateJ) ?? []) push(mov, 'exact')
 
   for (const mov of movimientosContrato) {
-    const kind = plateMatchKind(plateJ, mov.plate_normalized || mov.patente_original, opts.plateOcrThreshold)
+    const kind = resolvePlateMatchKind(
+      plateJ,
+      mov.plate_normalized || mov.patente_original,
+      opts.plateOcrThreshold,
+      opts.plateMatchCache
+    )
     if (kind === 'fuzzy') push(mov, 'fuzzy')
   }
 
@@ -487,6 +490,7 @@ function collectCandidatesForJourney(
 function collectCandidatesForMovimiento(
   mov: ExternalMovimientoContratoNormalized,
   truckflowJourneys: TruckflowJourneyForMerge[],
+  journeysByExactPlate: Map<string, TruckflowJourneyForMerge[]>,
   opts: Required<MergeTruckflowMovimientosOptions>,
   excludeJourneyUids: Set<string>
 ): { journey: TruckflowJourneyForMerge; score: MergeCandidateScore }[] {
@@ -495,16 +499,10 @@ function collectCandidatesForMovimiento(
   if (!Number.isFinite(externalDischargeReferenceMs(mov)) && !mov.source_date) return []
 
   const out: { journey: TruckflowJourneyForMerge; score: MergeCandidateScore }[] = []
-  for (const journey of truckflowJourneys) {
-    if (excludeJourneyUids.has(journey.journey_uid)) continue
-    const kind = plateMatchKind(
-      journey.plate_normalized,
-      mov.plate_normalized || mov.patente_original,
-      opts.plateOcrThreshold
-    )
-    if (!kind) continue
+  const pushJourney = (journey: TruckflowJourneyForMerge, kind: 'exact' | 'fuzzy') => {
+    if (excludeJourneyUids.has(journey.journey_uid)) return
     const sc = scoreCandidate(journey, mov, opts, kind)
-    if (!sc) continue
+    if (!sc) return
     const maxDelta =
       journey.anomaly_real ||
       journey.executive_status === 'ANOMALO' ||
@@ -512,8 +510,25 @@ function collectCandidatesForMovimiento(
       !journey.circuit_code ?
         Math.round(opts.maxDischargeDeltaMin * 1.5)
       : opts.maxDischargeDeltaMin
-    if (sc.time_delta_min > maxDelta) continue
+    if (sc.time_delta_min > maxDelta) return
     out.push({ journey, score: sc })
+  }
+
+  for (const journey of journeysByExactPlate.get(plateM) ?? []) {
+    pushJourney(journey, 'exact')
+  }
+
+  for (const journey of truckflowJourneys) {
+    const jPlate = normalizePlateStrict(journey.plate_normalized)
+    if (jPlate === plateM) continue
+    const kind = resolvePlateMatchKind(
+      journey.plate_normalized,
+      mov.plate_normalized || mov.patente_original,
+      opts.plateOcrThreshold,
+      opts.plateMatchCache
+    )
+    if (kind !== 'fuzzy') continue
+    pushJourney(journey, 'fuzzy')
   }
   out.sort((a, b) => {
     const pri = excelAnchorJourneyPriority(b.journey, mov) - excelAnchorJourneyPriority(a.journey, mov)
@@ -571,7 +586,12 @@ function pickBestPlateDayCandidate(
 
   const scored: MergeCandidateScore[] = []
   for (const mov of dayPool) {
-    const kind = plateMatchKind(plateJ, mov.plate_normalized || mov.patente_original, opts.plateOcrThreshold)
+    const kind = resolvePlateMatchKind(
+      plateJ,
+      mov.plate_normalized || mov.patente_original,
+      opts.plateOcrThreshold,
+      opts.plateMatchCache
+    )
     if (!kind) continue
     if (!mov.product_normalized && !mov.platform_normalized) continue
     const sc = scorePlateDayEnrichment(journey, mov, kind)
@@ -765,11 +785,24 @@ export function mergeTruckflowWithMovimientos(
   movimientosContrato: ExternalMovimientoContratoNormalized[],
   options?: MergeTruckflowMovimientosOptions
 ): MergeResult {
-  const opts = { ...DEFAULT_OPTIONS, ...options }
+  const opts: Required<MergeTruckflowMovimientosOptions> = {
+    ...DEFAULT_OPTIONS,
+    ...options,
+    plateMatchCache: options?.plateMatchCache ?? createPlateMatchCache(),
+  }
   const merged: MergedTruckflowMovimientoRow[] = []
   const truckflowWithoutMatch: Record<string, unknown>[] = []
   const ambiguousCases: Record<string, unknown>[] = []
   const matchedMovIds = new Set<string>()
+
+  const journeysByExactPlate = new Map<string, TruckflowJourneyForMerge[]>()
+  for (const j of truckflowJourneys) {
+    const p = normalizePlateStrict(j.plate_normalized)
+    if (!p) continue
+    const arr = journeysByExactPlate.get(p) ?? []
+    arr.push(j)
+    journeysByExactPlate.set(p, arr)
+  }
 
   const movByPlate = new Map<string, ExternalMovimientoContratoNormalized[]>()
   for (const m of movimientosContrato) {
@@ -795,6 +828,7 @@ export function mergeTruckflowWithMovimientos(
       const candidates = collectCandidatesForMovimiento(
         mov,
         truckflowJourneys,
+        journeysByExactPlate,
         opts,
         assignedJourneyUids
       )

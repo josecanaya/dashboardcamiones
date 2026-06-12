@@ -29,6 +29,7 @@ export const CONTRACT_FIRST_INTEGRATION_CSV_KEYS = [
   'excel_first_merge_summary',
   'excel_first_by_product_platform',
   'excel_no_truckflow_evidence_diagnostics',
+  'excel_first_candidate_diagnostics',
   'excel_first_review_sample',
 ] as const
 

@@ -410,6 +410,8 @@ export type EtlTransformInput = {
   plateRegistry?: TruckPlateRegistryDocument | null
   /** Archivos XLSX Movimientos por Contrato (opcional). */
   movimientosContratoFiles?: MovimientosContratoFileInput[]
+  /** Telemetría opcional Paso 3 (Contract-first). */
+  onContractFirstProgress?: import('./etlContractFirstProgress').ContractFirstProgressCallback
 }
 
 export type EtlTransformOutput = {
@@ -2129,6 +2131,7 @@ export async function runEtlTransform(
       classifiedJourneys: classifiedForSegmentTiming,
       movimientosFiles: inp.movimientosContratoFiles,
       skipKpiTiemposArtifacts: true,
+      onProgress: inp.onContractFirstProgress,
     })
     movimientosContratoCsv = mc.csv
     kpiTiemposMovimientosSnapshot = mc.kpiTiemposSnapshot

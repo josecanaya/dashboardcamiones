@@ -27,6 +27,7 @@ export async function runMovimientosContratoTramo3(
     classifiedJourneys: prep.classifiedForSegmentTiming,
     movimientosFiles: inp.movimientosContratoFiles,
     skipKpiTiemposArtifacts: true,
+    onProgress: inp.onContractFirstProgress,
   })
   const kpiTiemposPrepared: KpiTiemposBuildInput = {
     classifiedJourneys: prep.classifiedForSegmentTiming,

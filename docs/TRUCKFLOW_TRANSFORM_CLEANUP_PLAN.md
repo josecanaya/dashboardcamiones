@@ -58,6 +58,19 @@ Checklist por etapas. **Etapa 1** es la actual (documentación + barrels, sin mo
 
 **Criterio de salida:** un comando genera CSV sin navegador. **Contract-first:** cumplido en alcance acotado.
 
+### Diagnóstico de performance Paso 3 Contract-first
+
+- [x] `runContractFirstStage` + `onProgress` opcional en `runMovimientosContratoIntegration`
+- [x] `stageTimings` en salida; `[SLOW_STEP]` / aviso 3 min en consola
+- [x] Progreso UI mínimo (`TransformRunProgress`, panel XLSX)
+- [x] Cache OCR compartido + índice patente exacta (merge / Excel-first)
+- [x] Contadores agregados de descarte + `excel_first_candidate_diagnostics.csv`
+- [x] Prefiltro seguro `journeysForFuzzyOcrPrefilter` (`useCandidatePrefilter`, default true; test paridad vs full scan)
+- [ ] Medir en producción qué etapa supera 30 s y priorizar índice por día/site sin cambiar umbrales
+- [ ] Documentar paridad CLI vs Workbench con mismos `finalCsvRows`
+
+Detalle operativo: `docs/TRUCKFLOW_TRANSFORM_BACKEND_USAGE.md` § «Diagnóstico de performance Paso 3».
+
 ## Etapa 5 — Eliminar duplicaciones / legacy
 
 - [ ] Mover físicamente archivos a `src/services/truckflowTransform/` (subcarpetas) con reexports de compat en `src/services/*.ts`

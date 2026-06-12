@@ -217,6 +217,7 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
             active={wb.transformBusy}
             activeTramo={wb.transformActiveTramo}
             runAll={wb.transformRunAllInProgress}
+            contractFirst={wb.contractFirstProgress}
           />
         </div>
 

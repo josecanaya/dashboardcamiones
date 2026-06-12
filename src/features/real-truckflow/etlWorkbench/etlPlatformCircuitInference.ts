@@ -59,8 +59,8 @@ export function inferCircuitFromExternalMovimiento(
 
   if (platform.startsWith('KEPPLER_') || platform.startsWith('KEPLER_')) {
     const num = Number.parseInt(platform.replace(/KEPPLER_|KEPLER_/, ''), 10)
-    if (num === 2) return circuitFromCode('RK2', 'platform')
-    return circuitFromCode('RK1', 'platform')
+    if (num === 2) return circuitFromCode('R4', 'platform')
+    return circuitFromCode('R3', 'platform')
   }
 
   if (platform === 'ACEITE_OSL') {
