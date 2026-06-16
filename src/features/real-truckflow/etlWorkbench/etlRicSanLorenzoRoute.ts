@@ -9,6 +9,7 @@ import {
   TRANSILE_C16_RIC_CARGA_PREFIX,
   TRANSILE_C16_RIC_DESCARGA_PREFIX,
 } from './validCircuitMatrix'
+import { parseTimestampMs } from './etlTimestampNormalize'
 
 const RIC_LOGICAL_MARKERS = new Set([
   'INGRESO',
@@ -264,7 +265,7 @@ export function computeR7LegDurations(j: ReconstructedRealJourney): R7LegDuratio
   }
 
   const parseMin = (a: string, b: string) => {
-    const ms = Date.parse(b) - Date.parse(a)
+    const ms = parseTimestampMs(b) - parseTimestampMs(a)
     return Number.isFinite(ms) && ms > 0 ? ms / 60000 : 0
   }
 

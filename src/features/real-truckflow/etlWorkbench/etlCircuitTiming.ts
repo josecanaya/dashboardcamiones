@@ -12,6 +12,7 @@ import { computeR7LegDurations } from './etlRicSanLorenzoRoute'
 import { EXECUTIVE_CIRCUIT_ORDER } from './finalCircuitScoring'
 import type { CommitteeGroup } from './committeeClassification'
 import type { ClassifiedJourneyForTiming } from './etlSegmentTiming'
+import { parseTimestampMs } from './etlTimestampNormalize'
 
 export type ClassifiedJourneyForCircuitTiming = ClassifiedJourneyForTiming & {
   executiveStatus?: string
@@ -79,8 +80,8 @@ function usefulFrontEvents(j: ReconstructedRealJourney) {
 }
 
 function minutesBetweenIso(isoA: string, isoB: string): number {
-  const a = Date.parse(isoA)
-  const b = Date.parse(isoB)
+  const a = parseTimestampMs(isoA)
+  const b = parseTimestampMs(isoB)
   if (!Number.isFinite(a) || !Number.isFinite(b)) return Number.NaN
   return (b - a) / 60000
 }

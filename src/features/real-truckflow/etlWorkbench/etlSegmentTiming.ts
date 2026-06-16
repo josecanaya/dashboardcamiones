@@ -36,6 +36,9 @@ export const BALANZA_STAY_ROLLUP_TRANSITION = {
 
 const CIRCUITS_WITH_BALANZA_STAY_ROLLUP = new Set(['R1', 'R5', 'R6', 'R3', 'R4'])
 
+/** Mínimo estadía balanza con paso por Volcable (subtramos cortos son tránsito, no B1/B2). */
+const VOLCABLE_RECEIPT_BALANZA_STAY_MIN_MINUTES = 3
+
 /** Balanza ingreso→egreso Ricardone: < 10 min = lecturas B1/B2 casi simultáneas (error cámara/OCR). */
 export const BALANZA_STAY_MIN_MINUTES = 10
 
@@ -64,6 +67,22 @@ export const LEGACY_KEPLER_EXECUTIVE_ALIASES: Record<string, string> = {
 
 export function normalizeExecutiveCircuitForKpi(circuitCode: string): string {
   return LEGACY_KEPLER_EXECUTIVE_ALIASES[circuitCode] ?? circuitCode
+}
+
+/** Volcable 1 / Volcable 2: misma cadena KPI recepción; vista unificada en pestaña tiempos. */
+export const VOLCABLE_RECEIPT_KPI_UNION_CODE = 'R5+R6'
+
+export const VOLCABLE_RECEIPT_CIRCUIT_CODES = ['R5', 'R6'] as const
+
+export function isVolcableReceiptCircuit(circuitCode: string): boolean {
+  const c = normalizeExecutiveCircuitForKpi(String(circuitCode ?? '').trim())
+  return c === 'R5' || c === 'R6'
+}
+
+export function kpiCircuitCodesForScatterFilter(circuitFilter: string): string[] {
+  if (circuitFilter === VOLCABLE_RECEIPT_KPI_UNION_CODE) return [...VOLCABLE_RECEIPT_CIRCUIT_CODES]
+  const code = String(circuitFilter ?? '').trim()
+  return code ? [code] : []
 }
 
 const KEPLER_KPI_CIRCUIT_CODES = new Set(['R3', 'R4'])
@@ -95,13 +114,13 @@ export type SlExcelTimelineAnchors = {
   executiveCircuitCode?: string
 }
 
-/** En SL1 / planta San Lorenzo, hora calado Excel ≈ descarga (no calada Ricardone). */
 export function shouldUseExcelCaladoAsSlDescarga(
   executiveCircuitCode?: string,
   plantaNormalized?: string
 ): boolean {
-  if (executiveCircuitCode === 'SL1') return true
-  if (String(plantaNormalized ?? '').toUpperCase() === 'SAN_LORENZO') return true
+  // Importante: en SL no se debe usar `external_calado_at` como proxy de `SL_DESCARGA`.
+  // `SL_DESCARGA` debe provenir de cámara/traza de descarga (o el proxy correcto para el caso, si existiera),
+  // pero no fijarse con la hora de calado del contrato.
   return false
 }
 
@@ -132,8 +151,8 @@ export const OPERATIONAL_TRIP_GAP_MAX_MINUTES = 6 * 60
 /** Rollups deducidos / Excel-first: no estimar tramos > 6 h (mezcla de viajes distintos). */
 export const INFERRED_KPI_ROLLUP_MAX_MINUTES = 6 * 60
 
-/** Estadía máxima balanza entrada → egreso SL (S1→S7); operación real hasta ~6 h. */
-export const SL_BALANZA_STAY_MAX_MINUTES = INFERRED_KPI_ROLLUP_MAX_MINUTES
+/** Estadía máxima balanza entrada → egreso SL (comité scatter/CSV): 3 h operativas. */
+export const SL_BALANZA_STAY_MAX_MINUTES = 180
 
 /** Pata SL en KPI: ingreso puerto → balanza entrada → egreso. */
 export const SL_OPERATIONAL_KPI_CHAIN = [
@@ -453,7 +472,11 @@ function buildExecutiveCircuitSegmentTemplate(): Record<string, readonly string[
 export const EXECUTIVE_CIRCUIT_SEGMENT_TEMPLATE = buildExecutiveCircuitSegmentTemplate()
 
 export function getCircuitSegmentTemplate(circuitCode: string): readonly string[] {
-  const code = normalizeExecutiveCircuitForKpi(circuitCode)
+  const raw = String(circuitCode ?? '').trim()
+  if (raw === VOLCABLE_RECEIPT_KPI_UNION_CODE) {
+    return EXECUTIVE_CIRCUIT_SEGMENT_TEMPLATE.R5 ?? RECEPTION_BALANZA_KPI_CHAIN
+  }
+  const code = normalizeExecutiveCircuitForKpi(raw)
   return EXECUTIVE_CIRCUIT_SEGMENT_TEMPLATE[code] ?? []
 }
 
@@ -587,8 +610,8 @@ function collapsedLogicalPointsForDischargeRollup(j: ReconstructedRealJourney): 
 }
 
 function minutesBetweenIso(isoA: string, isoB: string): number {
-  const a = Date.parse(isoA)
-  const b = Date.parse(isoB)
+  const a = parseTimestampMs(isoA)
+  const b = parseTimestampMs(isoB)
   if (!Number.isFinite(a) || !Number.isFinite(b)) return Number.NaN
   return (b - a) / 60000
 }
@@ -677,10 +700,15 @@ function collapseTimedPoints(points: TimedLogicalPoint[]): TimedLogicalPoint[] {
   return out
 }
 
+import {
+  ensureArgentinaOffsetIso,
+  formatArgentinaIsoFromMs,
+  normalizeTimestampForExport,
+  parseTimestampMs,
+} from './etlTimestampNormalize'
+
 function isoLocalFromMs(ms: number): string {
-  const d = new Date(ms)
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+  return formatArgentinaIsoFromMs(ms)
 }
 
 function inferMidpointBetweenMs(fromMs: number, toMs: number, minOffsetMs = 60_000, maxOffsetMs = 30 * 60_000): string {
@@ -698,8 +726,8 @@ export type TimedSegmentInput = {
 }
 
 function segmentTimeBounds(seg: TimedSegmentInput): { startMs: number; endMs: number } | null {
-  const startMs = Date.parse(String(seg.segment_start_time ?? ''))
-  const endMs = Date.parse(String(seg.segment_end_time ?? ''))
+  const startMs = parseTimestampMs(String(seg.segment_start_time ?? ''))
+  const endMs = parseTimestampMs(String(seg.segment_end_time ?? ''))
   if (!Number.isFinite(startMs) || !Number.isFinite(endMs)) return null
   return { startMs, endMs: Math.max(startMs, endMs) }
 }
@@ -713,8 +741,8 @@ function scoreOperationalTimeSpan(
   const spanMin = (maxMs - minMs) / 60000
   let score = 0
   if (spanMin > INFERRED_KPI_ROLLUP_MAX_MINUTES) score -= 10_000
-  const ingMs = Date.parse(String(externalIngresoAt ?? ''))
-  const salMs = Date.parse(String(externalSalidaAt ?? ''))
+  const ingMs = parseTimestampMs(String(externalIngresoAt ?? ''))
+  const salMs = parseTimestampMs(String(externalSalidaAt ?? ''))
   if (Number.isFinite(ingMs) && Number.isFinite(salMs)) {
     if (maxMs >= ingMs && minMs <= salMs) score += 1000
     score -= Math.abs((minMs + maxMs) / 2 - (ingMs + salMs) / 2) / 60000
@@ -738,7 +766,7 @@ export function selectCoherentSegmentGroup(
 ): TimedSegmentInput[] {
   if (segments.length <= 1) return segments
 
-  const ingMs = Date.parse(String(externalIngresoAt ?? ''))
+  const ingMs = parseTimestampMs(String(externalIngresoAt ?? ''))
   let scoped = segments
   if (Number.isFinite(ingMs)) {
     const cutoffMs = ingMs - 30 * 60_000
@@ -805,19 +833,23 @@ export function buildTimedLogicalTimelineFromSegments(
     const to = String(seg.segment_to ?? '').trim()
     const start = String(seg.segment_start_time ?? '').trim()
     const end = String(seg.segment_end_time ?? '').trim()
-    if (from && start && Number.isFinite(Date.parse(start))) {
+    if (from && start && Number.isFinite(parseTimestampMs(start))) {
       const prev = pointTimes.get(from)
-      if (!prev || Date.parse(start) < Date.parse(prev)) pointTimes.set(from, start)
+      const startMs = parseTimestampMs(start)
+      const prevMs = prev ? parseTimestampMs(prev) : Number.NaN
+      if (!prev || (Number.isFinite(prevMs) && startMs < prevMs)) pointTimes.set(from, start)
     }
-    if (to && end && Number.isFinite(Date.parse(end))) {
+    if (to && end && Number.isFinite(parseTimestampMs(end))) {
       const prev = pointTimes.get(to)
-      if (!prev || Date.parse(end) > Date.parse(prev)) pointTimes.set(to, end)
+      const endMs = parseTimestampMs(end)
+      const prevMs = prev ? parseTimestampMs(prev) : Number.NaN
+      if (!prev || (Number.isFinite(prevMs) && endMs > prevMs)) pointTimes.set(to, end)
     }
   }
   return collapseTimedPoints(
     [...pointTimes.entries()]
       .map(([code, occurredAt]) => ({ code, occurredAt }))
-      .sort((a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt))
+      .sort((a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt))
   )
 }
 
@@ -825,13 +857,13 @@ export function buildTimedLogicalTimelineFromSegments(
 function sanitizeMisplacedSlEgreso(points: TimedLogicalPoint[]): TimedLogicalPoint[] {
   const salidaMs = points
     .filter((p) => p.code === 'SL_BALANZA_SALIDA')
-    .map((p) => Date.parse(p.occurredAt))
+    .map((p) => parseTimestampMs(p.occurredAt))
     .filter(Number.isFinite)
     .sort((a, b) => b - a)[0]
 
   const balInMs = points
     .filter((p) => p.code === 'SL_BALANZA_INGRESO')
-    .map((p) => Date.parse(p.occurredAt))
+    .map((p) => parseTimestampMs(p.occurredAt))
     .filter(Number.isFinite)
     .sort((a, b) => b - a)[0]
 
@@ -841,7 +873,7 @@ function sanitizeMisplacedSlEgreso(points: TimedLogicalPoint[]): TimedLogicalPoi
 
   return points.filter((p) => {
     if (p.code !== 'SL_EGRESO') return true
-    const ms = Date.parse(p.occurredAt)
+    const ms = parseTimestampMs(p.occurredAt)
     return Number.isFinite(ms) && ms >= cutoffMs
   })
 }
@@ -850,7 +882,7 @@ function latestSlPointMs(points: TimedLogicalPoint[], codes: readonly string[]):
   let max = Number.NaN
   for (const p of points) {
     if (!codes.includes(p.code)) continue
-    const ms = Date.parse(p.occurredAt)
+    const ms = parseTimestampMs(p.occurredAt)
     if (Number.isFinite(ms) && (!Number.isFinite(max) || ms > max)) max = ms
   }
   return max
@@ -860,7 +892,7 @@ function earliestSlPointMsAfter(points: TimedLogicalPoint[], codes: readonly str
   let min = Number.POSITIVE_INFINITY
   for (const p of points) {
     if (!codes.includes(p.code)) continue
-    const ms = Date.parse(p.occurredAt)
+    const ms = parseTimestampMs(p.occurredAt)
     if (Number.isFinite(ms) && ms > afterMs && ms < min) min = ms
   }
   return Number.isFinite(min) ? min : Number.NaN
@@ -872,21 +904,21 @@ export function enrichSlTimelineWithExcelSalida(
   externalSalidaAt: string | undefined
 ): TimedLogicalPoint[] {
   const salida = String(externalSalidaAt ?? '').trim()
-  if (!salida || !Number.isFinite(Date.parse(salida))) return points
+  if (!salida || !Number.isFinite(parseTimestampMs(salida))) return points
   if (resolveSlSalidaEgresoEndpoints(points)) return points
 
-  const salidaMs = Date.parse(salida)
+  const salidaMs = parseTimestampMs(salida)
   const anchorMs = latestSlPointMs(points, ['SL_BALANZA_SALIDA', 'SL_BALANZA_INGRESO', 'SL_INGRESO'])
   const hasEgresoAfterAnchor = points.some((p) => {
     if (p.code !== 'SL_EGRESO') return false
-    const ms = Date.parse(p.occurredAt)
+    const ms = parseTimestampMs(p.occurredAt)
     return Number.isFinite(ms) && Number.isFinite(anchorMs) && ms > anchorMs
   })
   if (Number.isFinite(anchorMs) && salidaMs <= anchorMs && hasEgresoAfterAnchor) return points
 
   return collapseTimedPoints(
     [...points, { code: 'SL_EGRESO', occurredAt: salida }].sort(
-      (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+      (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
     )
   )
 }
@@ -905,12 +937,12 @@ function injectSlIngresoFromExcel(
   if (points.some((p) => p.code === 'SL_INGRESO')) return points
   if (!shouldUseExcelCaladoAsSlDescarga(executiveCircuitCode, plantaNormalized)) return points
   const ingreso = String(externalIngresoAt ?? '').trim()
-  if (!ingreso || !Number.isFinite(Date.parse(ingreso))) return points
+  if (!ingreso || !Number.isFinite(parseTimestampMs(ingreso))) return points
   const hasSlContext = points.some((p) => p.code.startsWith('SL_'))
   if (!hasSlContext) return points
   return collapseTimedPoints(
     [...points, { code: 'SL_INGRESO', occurredAt: ingreso }].sort(
-      (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+      (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
     )
   )
 }
@@ -922,16 +954,16 @@ function injectSlBalanzaIngresoFromExcel(
 ): TimedLogicalPoint[] {
   if (points.some((p) => p.code === 'SL_BALANZA_INGRESO')) return points
   const ingreso = String(externalIngresoAt ?? '').trim()
-  if (!ingreso || !Number.isFinite(Date.parse(ingreso))) return points
+  if (!ingreso || !Number.isFinite(parseTimestampMs(ingreso))) return points
   const ingresoMs = latestSlPointMs(points, ['SL_INGRESO'])
-  const atMs = Date.parse(ingreso)
+  const atMs = parseTimestampMs(ingreso)
   if (Number.isFinite(ingresoMs) && atMs < ingresoMs) return points
   const hasSlContext =
     points.some((p) => p.code.startsWith('SL_')) || Number.isFinite(ingresoMs)
   if (!hasSlContext) return points
   return collapseTimedPoints(
     [...points, { code: 'SL_BALANZA_INGRESO', occurredAt: ingreso }].sort(
-      (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+      (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
     )
   )
 }
@@ -945,13 +977,13 @@ function injectSlDescargaFromExcel(
   if (!useAsDescarga) return points
   if (points.some((p) => p.code === 'SL_DESCARGA')) return points
   const calado = String(externalCaladoAt ?? '').trim()
-  if (!calado || !Number.isFinite(Date.parse(calado))) return points
+  if (!calado || !Number.isFinite(parseTimestampMs(calado))) return points
   const anchorMs = latestSlPointMs(points, ['SL_BALANZA_INGRESO', 'SL_INGRESO'])
-  const calMs = Date.parse(calado)
+  const calMs = parseTimestampMs(calado)
   if (Number.isFinite(anchorMs) && calMs <= anchorMs) return points
   return collapseTimedPoints(
     [...points, { code: 'SL_DESCARGA', occurredAt: calado }].sort(
-      (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+      (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
     )
   )
 }
@@ -998,7 +1030,7 @@ function inferSlDescargaFromTransit(points: TimedLogicalPoint[]): TimedLogicalPo
 
   return collapseTimedPoints(
     [...points, { code: 'SL_DESCARGA', occurredAt: descargaAt }].sort(
-      (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+      (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
     )
   )
 }
@@ -1011,7 +1043,7 @@ function inferSlBalanzaSalidaFromTransit(
   if (points.some((p) => p.code === 'SL_BALANZA_SALIDA')) return points
 
   const salida = String(externalSalidaAt ?? '').trim()
-  if (salida && Number.isFinite(Date.parse(salida))) {
+  if (salida && Number.isFinite(parseTimestampMs(salida))) {
     const withExcelProxy = inferSlBalanzaSalidaBeforeExcelSalida(points, externalSalidaAt)
     if (withExcelProxy.some((p) => p.code === 'SL_BALANZA_SALIDA')) return withExcelProxy
   }
@@ -1022,10 +1054,10 @@ function inferSlBalanzaSalidaFromTransit(
     const proxyAt =
       inferMidpointBetweenMs(descargaMs, egresoMs, 60_000, SL_SALIDA_EGRESO_MAX_MINUTES * 60_000) ||
       isoLocalFromMs(egresoMs - SL_EXIT_TRANSIT_DEFAULT_MINUTES * 60_000)
-    if (proxyAt && Date.parse(proxyAt) > descargaMs) {
+    if (proxyAt && parseTimestampMs(proxyAt) > descargaMs) {
       return collapseTimedPoints(
         [...points, { code: 'SL_BALANZA_SALIDA', occurredAt: proxyAt }].sort(
-          (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+          (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
         )
       )
     }
@@ -1058,7 +1090,7 @@ function inferSlBalanzaSalidaBeforeExcelSalida(
 ): TimedLogicalPoint[] {
   if (points.some((p) => p.code === 'SL_BALANZA_SALIDA')) return points
   const salida = String(externalSalidaAt ?? '').trim()
-  const salMs = Date.parse(salida)
+  const salMs = parseTimestampMs(salida)
   if (!Number.isFinite(salMs)) return points
 
   const hasSlAnchor = points.some((p) =>
@@ -1072,7 +1104,7 @@ function inferSlBalanzaSalidaBeforeExcelSalida(
 
   return collapseTimedPoints(
     [...points, { code: 'SL_BALANZA_SALIDA', occurredAt: isoLocalFromMs(proxyMs) }].sort(
-      (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+      (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
     )
   )
 }
@@ -1085,20 +1117,20 @@ function resolveSlSalidaEgresoEndpoints(
   if (!salidaPoints.length) return null
 
   const salidaPt = salidaPoints.reduce((latest, p) =>
-    Date.parse(p.occurredAt) >= Date.parse(latest.occurredAt) ? p : latest
+    parseTimestampMs(p.occurredAt) >= parseTimestampMs(latest.occurredAt) ? p : latest
   )
-  const salidaMs = Date.parse(salidaPt.occurredAt)
+  const salidaMs = parseTimestampMs(salidaPt.occurredAt)
   if (!Number.isFinite(salidaMs)) return null
 
   const egresoCandidates = points.filter((p) => {
     if (p.code !== toCode) return false
-    const ms = Date.parse(p.occurredAt)
+    const ms = parseTimestampMs(p.occurredAt)
     return Number.isFinite(ms) && ms > salidaMs
   })
   if (!egresoCandidates.length) return null
 
   const egresoPt = egresoCandidates.reduce((latest, p) =>
-    Date.parse(p.occurredAt) >= Date.parse(latest.occurredAt) ? p : latest
+    parseTimestampMs(p.occurredAt) >= parseTimestampMs(latest.occurredAt) ? p : latest
   )
   return { from: salidaPt, to: egresoPt }
 }
@@ -1109,17 +1141,17 @@ function resolveSlIngresoBalancaEndpoints(
   const { from: fromCode, to: toCode } = SL_INGRESO_BALANZA_ROLLUP_TRANSITION
   const ingresoPt = points.find((p) => p.code === fromCode)
   if (!ingresoPt) return null
-  const ingresoMs = Date.parse(ingresoPt.occurredAt)
+  const ingresoMs = parseTimestampMs(ingresoPt.occurredAt)
   if (!Number.isFinite(ingresoMs)) return null
 
   const balInCandidates = points.filter((p) => {
     if (p.code !== toCode) return false
-    const ms = Date.parse(p.occurredAt)
+    const ms = parseTimestampMs(p.occurredAt)
     return Number.isFinite(ms) && ms > ingresoMs
   })
   if (balInCandidates.length) {
     const toPt = balInCandidates.reduce((earliest, p) =>
-      Date.parse(p.occurredAt) < Date.parse(earliest.occurredAt) ? p : earliest
+      parseTimestampMs(p.occurredAt) < parseTimestampMs(earliest.occurredAt) ? p : earliest
     )
     return { from: ingresoPt, to: toPt }
   }
@@ -1154,17 +1186,107 @@ function resolveTrustedSlBalanzaIngresoFromSegments(
   truckflowPoints: TimedLogicalPoint[]
 ): TimedLogicalPoint | null {
   let bestMs = Number.POSITIVE_INFINITY
+  let bestIso = ''
   for (const seg of truckflowSegments) {
-    const hitMs = slBalanzaIngresoHitMsFromSegment(seg)
-    if (hitMs !== null && hitMs < bestMs) bestMs = hitMs
+    const hitIso = slBalanzaIngresoHitIsoFromSegment(seg)
+    if (!hitIso) continue
+    const hitMs = parseTimestampMs(hitIso)
+    if (Number.isFinite(hitMs) && hitMs < bestMs) {
+      bestMs = hitMs
+      bestIso = hitIso
+    }
   }
-  if (Number.isFinite(bestMs) && bestMs < Number.POSITIVE_INFINITY) {
-    return { code: 'SL_BALANZA_INGRESO', occurredAt: isoLocalFromMs(bestMs) }
+  if (bestIso) {
+    return { code: 'SL_BALANZA_INGRESO', occurredAt: ensureArgentinaOffsetIso(bestIso) }
   }
   if (!truckflowSegments.length) {
-    return earliestSlPoint(truckflowPoints, 'SL_BALANZA_INGRESO')
+    const cam = earliestSlPoint(truckflowPoints, 'SL_BALANZA_INGRESO')
+    if (!cam) return null
+    return { code: 'SL_BALANZA_INGRESO', occurredAt: ensureArgentinaOffsetIso(cam.occurredAt) }
   }
   return null
+}
+
+function slBalanzaSegmentCameraEvidence(segments: TimedSegmentInput[]): boolean {
+  return segments.some((seg) => {
+    const from = String(seg.segment_from ?? '').trim()
+    const to = String(seg.segment_to ?? '').trim()
+    if (from === 'SL_BALANZA_INGRESO' && to === 'SL_EGRESO') return false
+    if (from === 'SL_BALANZA_INGRESO' && to === 'SL_BALANZA_SALIDA') return true
+    if (to === 'SL_BALANZA_INGRESO' && from !== 'SL_BALANZA_INGRESO') return true
+    return false
+  })
+}
+
+function earliestSlIngresoMsForComite(
+  truckflowSegments: TimedSegmentInput[],
+  truckflowPoints: TimedLogicalPoint[]
+): number | null {
+  let minMs = Number.POSITIVE_INFINITY
+  for (const seg of truckflowSegments) {
+    const from = String(seg.segment_from ?? '').trim()
+    if (from !== 'SL_INGRESO') continue
+    const start = String(seg.segment_start_time ?? '').trim()
+    const ms = parseTimestampMs(start)
+    if (Number.isFinite(ms) && ms < minMs) minMs = ms
+  }
+  if (Number.isFinite(minMs) && minMs < Number.POSITIVE_INFINITY) return minMs
+  const pt = earliestSlPoint(truckflowPoints, 'SL_INGRESO')
+  if (!pt) return null
+  const ms = parseTimestampMs(pt.occurredAt)
+  return Number.isFinite(ms) ? ms : null
+}
+
+/** S1 para scatter/KPI comité: hits en segmento o cámara en timeline con evidencia de segmento Truckflow. */
+function resolveTrustedSlBalanzaIngresoForComite(
+  truckflowSegments: TimedSegmentInput[],
+  truckflowPoints: TimedLogicalPoint[],
+  _enrichedTimeline?: TimedLogicalPoint[]
+): TimedLogicalPoint | null {
+  const fromHits = resolveTrustedSlBalanzaIngresoFromSegments(truckflowSegments, truckflowPoints)
+  if (fromHits) return fromHits
+
+  const cam = earliestSlPoint(truckflowPoints, 'SL_BALANZA_INGRESO')
+  if (cam && slBalanzaSegmentCameraEvidence(truckflowSegments)) {
+    return { code: 'SL_BALANZA_INGRESO', occurredAt: ensureArgentinaOffsetIso(cam.occurredAt) }
+  }
+  if (cam && isTrustedSlBalanzaIngresoCamera(truckflowSegments, cam)) {
+    return { code: 'SL_BALANZA_INGRESO', occurredAt: ensureArgentinaOffsetIso(cam.occurredAt) }
+  }
+
+  return null
+}
+
+export function buildSlComiteTruckflowContext(input: {
+  segments: TimedSegmentInput[]
+  externalIngresoAt?: string
+  externalSalidaAt?: string
+  externalCaladoAt?: string
+  plantaNormalized?: string
+  executiveCircuitCode: string
+}): {
+  opSegments: TimedSegmentInput[]
+  truckflowPoints: TimedLogicalPoint[]
+  enrichedPoints: TimedLogicalPoint[]
+} {
+  const coherent = selectCoherentSegmentGroup(
+    input.segments,
+    input.externalIngresoAt,
+    input.externalSalidaAt
+  )
+  const opSegments = segmentsForSlTruckflowTimeline(coherent)
+  const truckflowPoints = buildTimedLogicalTimelineFromSegments(opSegments, {
+    externalIngresoAt: input.externalIngresoAt,
+    externalSalidaAt: input.externalSalidaAt,
+  })
+  const enrichedPoints = enrichSlTimelineWithExcelAnchors(truckflowPoints, {
+    externalIngresoAt: input.externalIngresoAt,
+    externalCaladoAt: input.externalCaladoAt,
+    externalSalidaAt: input.externalSalidaAt,
+    plantaNormalized: input.plantaNormalized,
+    executiveCircuitCode: input.executiveCircuitCode,
+  })
+  return { opSegments, truckflowPoints, enrichedPoints }
 }
 
 function truckflowPointsWithoutUntrustedBalanzaIngreso(
@@ -1191,13 +1313,10 @@ function resolveSlBalanzaIngresoForRollup(
     if (!seg) return null
     const from = String(seg.segment_from ?? '').trim()
     const to = String(seg.segment_to ?? '').trim()
-    if (
-      from === 'SL_BALANZA_INGRESO' &&
-      (to === 'SL_EGRESO' || to === 'SL_BALANZA_INGRESO')
-    ) {
+    if (from === 'SL_BALANZA_INGRESO' && to === 'SL_BALANZA_SALIDA') {
       const start = String(seg.segment_start_time ?? '').trim()
-      if (Number.isFinite(Date.parse(start))) {
-        return { code: 'SL_BALANZA_INGRESO', occurredAt: start }
+      if (Number.isFinite(parseTimestampMs(start))) {
+        return { code: 'SL_BALANZA_INGRESO', occurredAt: ensureArgentinaOffsetIso(start) }
       }
     }
   }
@@ -1206,20 +1325,27 @@ function resolveSlBalanzaIngresoForRollup(
   return resolveSlBalanzaIngresoStartPoint(cleaned, enrichedPoints)
 }
 
-function slBalanzaIngresoHitMsFromSegment(seg: TimedSegmentInput): number | null {
+function slBalanzaIngresoHitIsoFromSegment(seg: TimedSegmentInput): string | null {
   const from = String(seg.segment_from ?? '').trim()
   const to = String(seg.segment_to ?? '').trim()
   if (from === 'SL_BALANZA_INGRESO' && to === 'SL_EGRESO') return null
   if (from === 'SL_BALANZA_INGRESO' && to === 'SL_BALANZA_INGRESO') return null
   if (from === 'SL_BALANZA_INGRESO' && to === 'SL_BALANZA_SALIDA') {
-    const startMs = Date.parse(String(seg.segment_start_time ?? ''))
-    return Number.isFinite(startMs) ? startMs : null
+    const start = String(seg.segment_start_time ?? '').trim()
+    return start && Number.isFinite(parseTimestampMs(start)) ? start : null
   }
   if (to !== 'SL_BALANZA_INGRESO') return null
-  const endMs = Date.parse(String(seg.segment_end_time ?? ''))
-  if (Number.isFinite(endMs)) return endMs
-  const startMs = Date.parse(String(seg.segment_start_time ?? ''))
-  return Number.isFinite(startMs) ? startMs : null
+  const end = String(seg.segment_end_time ?? '').trim()
+  if (end && Number.isFinite(parseTimestampMs(end))) return end
+  const start = String(seg.segment_start_time ?? '').trim()
+  return start && Number.isFinite(parseTimestampMs(start)) ? start : null
+}
+
+function slBalanzaIngresoHitMsFromSegment(seg: TimedSegmentInput): number | null {
+  const iso = slBalanzaIngresoHitIsoFromSegment(seg)
+  if (!iso) return null
+  const ms = parseTimestampMs(iso)
+  return Number.isFinite(ms) ? ms : null
 }
 
 /** Cámara S1 confiable: segmento dedicado (S0→S1 o S1→S5), no rollup unificado ni self-loop. */
@@ -1228,7 +1354,7 @@ export function isTrustedSlBalanzaIngresoCamera(
   candidate: TimedLogicalPoint | null
 ): boolean {
   if (!candidate || candidate.code !== 'SL_BALANZA_INGRESO') return false
-  const candidateMs = Date.parse(candidate.occurredAt)
+  const candidateMs = parseTimestampMs(candidate.occurredAt)
   if (!Number.isFinite(candidateMs)) return false
   for (const seg of segments) {
     const hitMs = slBalanzaIngresoHitMsFromSegment(seg)
@@ -1237,7 +1363,7 @@ export function isTrustedSlBalanzaIngresoCamera(
   return false
 }
 
-function segmentsForSlTruckflowTimeline(
+export function segmentsForSlTruckflowTimeline(
   segments: Array<{
     segment_from: string
     segment_to: string
@@ -1269,7 +1395,7 @@ function earliestSlPoint(
   const candidates = points.filter((p) => p.code === code)
   if (!candidates.length) return null
   return candidates.reduce((earliest, p) =>
-    Date.parse(p.occurredAt) < Date.parse(earliest.occurredAt) ? p : earliest
+    parseTimestampMs(p.occurredAt) < parseTimestampMs(earliest.occurredAt) ? p : earliest
   )
 }
 
@@ -1284,7 +1410,7 @@ export function resolveSlBalanzaIngresoStartPoint(
   const slIngresoCam = earliestSlPoint(truckflowPoints, 'SL_INGRESO')
   if (!slIngresoCam) return null
 
-  const ingresoMs = Date.parse(slIngresoCam.occurredAt)
+  const ingresoMs = parseTimestampMs(slIngresoCam.occurredAt)
   if (!Number.isFinite(ingresoMs)) return null
 
   const nextMs = earliestSlPointMsAfter(
@@ -1300,14 +1426,13 @@ export function resolveSlBalanzaIngresoStartPoint(
   let proxyMs: number
   if (gapMin <= SL_INGRESO_TO_BALANZA_MAX_MINUTES) {
     const mid = inferMidpointBetweenMs(ingresoMs, nextMs)
-    proxyMs = mid ? Date.parse(mid) : ingresoMs + SL_INGRESO_TO_BALANZA_TRANSIT_DEFAULT_MINUTES * 60_000
+    proxyMs = mid ? parseTimestampMs(mid) : ingresoMs + SL_INGRESO_TO_BALANZA_TRANSIT_DEFAULT_MINUTES * 60_000
   } else {
-    // Cola larga: punto medio real S0→egreso (sin tope de 30 min que generaba duraciones artificiales).
     proxyMs = ingresoMs + Math.floor((nextMs - ingresoMs) / 2)
     if (proxyMs <= ingresoMs || proxyMs >= nextMs) return null
   }
 
-  return { code: 'SL_BALANZA_INGRESO', occurredAt: isoLocalFromMs(proxyMs) }
+  return { code: 'SL_BALANZA_INGRESO', occurredAt: formatArgentinaIsoFromMs(proxyMs) }
 }
 
 function finalizeSlBalanzaToEgresoEndpoints(
@@ -1315,16 +1440,368 @@ function finalizeSlBalanzaToEgresoEndpoints(
   to: TimedLogicalPoint,
   minFromMs?: number
 ): { from: TimedLogicalPoint; to: TimedLogicalPoint } {
-  let fromMs = Date.parse(from.occurredAt)
-  const toMs = Date.parse(to.occurredAt)
+  let fromMs = parseTimestampMs(from.occurredAt)
+  const toMs = parseTimestampMs(to.occurredAt)
   if (!Number.isFinite(fromMs) || !Number.isFinite(toMs) || toMs <= fromMs) {
     return { from, to }
   }
   if (Number.isFinite(minFromMs)) fromMs = Math.max(fromMs, minFromMs!)
   if (fromMs >= toMs) return { from, to }
   return {
-    from: { ...from, occurredAt: isoLocalFromMs(fromMs) },
+    from: { ...from, occurredAt: formatArgentinaIsoFromMs(fromMs) },
     to,
+  }
+}
+
+export type SlScatterHorarioInicioFuente = 'truckflow' | 'balanza_ingreso_inferido'
+export type SlScatterHorarioFinFuente = 'truckflow' | 'excel_salida'
+export type SlScatterHorarioFuente =
+  | 'truckflow'
+  | 'excel_salida'
+  | 'balanza_ingreso_inferido'
+  | 'mixto'
+  | 'excel_inferido'
+
+export function compositeSlScatterHorarioFuente(
+  inicio: SlScatterHorarioInicioFuente,
+  fin: SlScatterHorarioFinFuente
+): SlScatterHorarioFuente {
+  if (inicio === 'truckflow' && fin === 'truckflow') return 'truckflow'
+  if (inicio === 'balanza_ingreso_inferido' && fin === 'excel_salida') return 'mixto'
+  if (inicio === 'truckflow' && fin === 'excel_salida') return 'excel_salida'
+  if (inicio === 'balanza_ingreso_inferido' && fin === 'truckflow') return 'balanza_ingreso_inferido'
+  return 'mixto'
+}
+
+/** Inicio S1 tomado del ingreso Excel Ric (no cámara S1); no usar como hora de balanza. */
+export function isSlBalanzaIngresoAnchoredOnExcelIngreso(
+  balanzaIngresoAt: string,
+  externalIngresoAt?: string
+): boolean {
+  const ing = String(externalIngresoAt ?? '').trim()
+  const at = String(balanzaIngresoAt ?? '').trim()
+  if (!ing || !at) return false
+  const a = parseTimestampMs(at)
+  const b = parseTimestampMs(ing)
+  return Number.isFinite(a) && Number.isFinite(b) && Math.abs(a - b) <= 60_000
+}
+
+/** Scatter/CSV comité: nunca ingreso Excel Ric como hora de balanza S1. */
+export function shouldRejectSlBalanzaScatterForExcelIngreso(
+  _durationMin: number,
+  balanzaIngresoAt: string,
+  externalIngresoAt?: string
+): boolean {
+  return isSlBalanzaIngresoAnchoredOnExcelIngreso(balanzaIngresoAt, externalIngresoAt)
+}
+
+/** Cámara S1 en tramo dedicado balanza ingreso → balanza salida (no rollup unificado). */
+export function hasDedicatedSlBalanzaIngresoCameraSegment(segments: TimedSegmentInput[]): boolean {
+  return segments.some((seg) => {
+    const from = String(seg.segment_from ?? '').trim()
+    const to = String(seg.segment_to ?? '').trim()
+    if (from !== 'SL_BALANZA_INGRESO' || to !== 'SL_BALANZA_SALIDA') return false
+    return Number.isFinite(parseTimestampMs(String(seg.segment_start_time ?? '')))
+  })
+}
+
+export type SlBalanzaEgresoComiteScatterPayload = {
+  segment_start_time: string
+  segment_end_time: string
+  segment_duration_min: number
+  horario_fuente: SlScatterHorarioFuente
+  horario_fuente_inicio: SlScatterHorarioInicioFuente
+  horario_fuente_fin: SlScatterHorarioFinFuente
+}
+
+export type SlBalanzaComiteRejectReason =
+  | 'ok'
+  | 'sin_salida_excel'
+  | 'sin_inicio_balanza'
+  | 'inicio_anchored_excel_ric'
+  | 'inicio_antes_ingreso_sl'
+  | 'fin_no_posterior'
+  | 'duracion_corta'
+  | 'duracion_excede_180'
+
+export type SlBalanzaComiteEvaluation = {
+  payload: SlBalanzaEgresoComiteScatterPayload | null
+  reason: SlBalanzaComiteRejectReason
+  durationMin?: number
+}
+
+/**
+ * Corrección fija de cámaras SL (parseo): se restan 2 h 20 min a la estadía
+ * balanza ingreso → egreso para alinear con el reloj real.
+ */
+export const SL_BALANZA_TIME_CORRECTION_MINUTES = 140
+
+/** Tope de estadía corregida balanza ingreso → egreso en KPI/scatter Excel-first. */
+export const SL_BALANZA_COMITE_MAX_MINUTES = 240
+
+export type SlBalanzaComiteOptions = {
+  /** Minutos a restar a la duración (cámaras corridas). Default 0 = sin corrección. */
+  correctionMinutes?: number
+  /** Si false, no se aplica el tope legacy de 180 min ni el mínimo de tramo. Default true. */
+  enforceStayLimit?: boolean
+  /** Tope explícito (p. ej. 240 en producto); se evalúa sobre la duración ya corregida. */
+  maxStayMinutes?: number
+  /** Si true, acepta inicio inferido (rollup/timeline) cuando no hay cámara confiable. Default false. */
+  lenientStart?: boolean
+}
+
+/** Opciones de producto: inicio flexible, corrección −2 h 20, tope 240 min. */
+export const SL_BALANZA_COMITE_PRODUCT_OPTIONS: SlBalanzaComiteOptions = {
+  correctionMinutes: SL_BALANZA_TIME_CORRECTION_MINUTES,
+  maxStayMinutes: SL_BALANZA_COMITE_MAX_MINUTES,
+  enforceStayLimit: false,
+  lenientStart: true,
+}
+
+/** Evalúa contrato comité con motivo explícito (embudo / diagnóstico). */
+export function evaluateSlBalanzaComitePayload(
+  truckflowSegments: TimedSegmentInput[],
+  truckflowPoints: TimedLogicalPoint[],
+  externalSalidaAt: string,
+  externalIngresoAt?: string,
+  enrichedTimeline?: TimedLogicalPoint[],
+  opts?: SlBalanzaComiteOptions
+): SlBalanzaComiteEvaluation {
+  const correction = Math.max(0, opts?.correctionMinutes ?? 0)
+  const enforceLimit = opts?.enforceStayLimit ?? true
+  const lenient = opts?.lenientStart ?? false
+
+  const salida = String(externalSalidaAt ?? '').trim()
+  if (!salida || !Number.isFinite(parseTimestampMs(salida))) {
+    return { payload: null, reason: 'sin_salida_excel' }
+  }
+
+  let startIso: string | null = null
+  const trusted = resolveTrustedSlBalanzaIngresoForComite(
+    truckflowSegments,
+    truckflowPoints,
+    enrichedTimeline
+  )
+  if (trusted) {
+    startIso = trusted.occurredAt
+  } else if (lenient) {
+    const kpiEndpoints = resolveSlBalanzaRollupEndpointsForKpi(truckflowPoints, {
+      externalSalidaAt: salida,
+      externalIngresoAt,
+      truckflowPoints,
+      truckflowSegments,
+    })
+    if (kpiEndpoints) startIso = kpiEndpoints.from.occurredAt
+  }
+  if (!startIso) return { payload: null, reason: 'sin_inicio_balanza' }
+
+  if (shouldRejectSlBalanzaScatterForExcelIngreso(0, startIso, externalIngresoAt)) {
+    return { payload: null, reason: 'inicio_anchored_excel_ric' }
+  }
+
+  if (!lenient) {
+    const slIngresoMs = earliestSlIngresoMsForComite(truckflowSegments, truckflowPoints)
+    const s1MsTrusted = parseTimestampMs(startIso)
+    if (
+      Number.isFinite(slIngresoMs) &&
+      Number.isFinite(s1MsTrusted) &&
+      s1MsTrusted < slIngresoMs - 120_000
+    ) {
+      return { payload: null, reason: 'inicio_antes_ingreso_sl' }
+    }
+  }
+
+  const inicioRaw = normalizeTimestampForExport(startIso)
+  const fin = normalizeTimestampForExport(salida)
+  const salMs = parseTimestampMs(fin)
+  const s1Ms = parseTimestampMs(inicioRaw)
+  if (!Number.isFinite(salMs) || !Number.isFinite(s1Ms) || salMs <= s1Ms) {
+    return { payload: null, reason: 'fin_no_posterior' }
+  }
+
+  const rawDur = minutesBetweenIso(inicioRaw, fin)
+  const dur = rawDur - correction
+  const fromCode = SL_BALANZA_ROLLUP_TRANSITION.from
+  const toCode = SL_BALANZA_ROLLUP_TRANSITION.to
+
+  if (dur <= 0) {
+    return { payload: null, reason: 'duracion_corta', durationMin: dur }
+  }
+  const maxStay = opts?.maxStayMinutes
+  if (maxStay != null && Number.isFinite(maxStay) && dur > maxStay) {
+    return { payload: null, reason: 'duracion_excede_180', durationMin: dur }
+  }
+  if (enforceLimit) {
+    if (dur > SL_BALANZA_STAY_MAX_MINUTES) {
+      return { payload: null, reason: 'duracion_excede_180', durationMin: dur }
+    }
+    if (!isValidSegmentDuration(dur, fromCode, toCode)) {
+      return { payload: null, reason: 'duracion_corta', durationMin: dur }
+    }
+  }
+
+  // Con corrección, el fin queda fijo en la salida Excel y el inicio se recalcula.
+  const inicioOut =
+    correction > 0 ? formatArgentinaIsoFromMs(salMs - dur * 60_000) : inicioRaw
+  const inicioFuente: SlScatterHorarioInicioFuente = trusted ? 'truckflow' : 'balanza_ingreso_inferido'
+
+  return {
+    payload: {
+      segment_start_time: inicioOut,
+      segment_end_time: fin,
+      segment_duration_min: Math.round(dur * 10) / 10,
+      horario_fuente_inicio: inicioFuente,
+      horario_fuente_fin: 'excel_salida',
+      horario_fuente: compositeSlScatterHorarioFuente(inicioFuente, 'excel_salida'),
+    },
+    reason: 'ok',
+    durationMin: dur,
+  }
+}
+
+/**
+ * Contrato comité balanza ingreso → egreso (gráfica, CSV lentos, KPI fila):
+ * S1 cámara/inicio Truckflow, salida Excel. Con opciones de producto incluye a
+ * todos, sin tope de 180 y restando la corrección de cámaras.
+ */
+export function buildSlBalanzaEgresoComiteScatterPayload(
+  truckflowSegments: TimedSegmentInput[],
+  truckflowPoints: TimedLogicalPoint[],
+  externalSalidaAt: string,
+  externalIngresoAt?: string,
+  enrichedTimeline?: TimedLogicalPoint[],
+  opts?: SlBalanzaComiteOptions
+): SlBalanzaEgresoComiteScatterPayload | null {
+  return evaluateSlBalanzaComitePayload(
+    truckflowSegments,
+    truckflowPoints,
+    externalSalidaAt,
+    externalIngresoAt,
+    enrichedTimeline,
+    opts
+  ).payload
+}
+
+/** Solo para inferir S1: ancla fin con salida Excel literal (sin proxies de balanza salida/descarga). */
+function minimalTimelineForSlBalanzaIngresoInference(
+  truckflowPoints: TimedLogicalPoint[],
+  externalSalidaAt?: string
+): TimedLogicalPoint[] {
+  let pts = sanitizeMisplacedSlEgreso(truckflowPoints)
+  const salida = String(externalSalidaAt ?? '').trim()
+  const salMs = parseTimestampMs(salida)
+  if (!Number.isFinite(salMs)) return pts
+
+  const ingresoMs = earliestSlPointMsAfter(pts, ['SL_INGRESO'], Number.NEGATIVE_INFINITY)
+  const hasCameraEgresoAfterIngreso = pts.some((p) => {
+    if (p.code !== 'SL_EGRESO') return false
+    const ms = parseTimestampMs(p.occurredAt)
+    return Number.isFinite(ms) && Number.isFinite(ingresoMs) && ms > ingresoMs
+  })
+  if (hasCameraEgresoAfterIngreso) return pts
+
+  const hasSalidaAnchor = pts.some((p) => {
+    if (p.code !== 'SL_EGRESO') return false
+    return Math.abs(parseTimestampMs(p.occurredAt) - salMs) <= 1000
+  })
+  if (hasSalidaAnchor) return pts
+
+  return collapseTimedPoints(
+    [...pts, { code: 'SL_EGRESO', occurredAt: normalizeTimestampForExport(salida) }].sort(
+      (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
+    )
+  )
+}
+
+export type SlBalanzaRollupKpiEndpoints = {
+  from: TimedLogicalPoint
+  to: TimedLogicalPoint
+  inicio_fuente: SlScatterHorarioInicioFuente
+  fin_fuente: SlScatterHorarioFinFuente
+}
+
+/** KPI balanza ingreso→egreso: S1 cámara o inferido Truckflow; fin siempre salida Excel. */
+export function resolveSlBalanzaRollupEndpointsForKpi(
+  points: TimedLogicalPoint[],
+  opts?: {
+    externalSalidaAt?: string
+    externalIngresoAt?: string
+    truckflowPoints?: TimedLogicalPoint[]
+    truckflowSegments?: TimedSegmentInput[]
+  }
+): SlBalanzaRollupKpiEndpoints | null {
+  const truckflow = opts?.truckflowPoints ?? points
+  const truckflowSegments = opts?.truckflowSegments ?? []
+  const salida = String(opts?.externalSalidaAt ?? '').trim()
+  const salMs = parseTimestampMs(salida)
+  const useExcelSalida = Number.isFinite(salMs)
+
+  const timelineForFrom = minimalTimelineForSlBalanzaIngresoInference(truckflow, salida)
+  const resolvedFrom = resolveSlBalanzaIngresoForRollup(
+    truckflow,
+    truckflowSegments,
+    timelineForFrom
+  )
+  if (!resolvedFrom) return null
+
+  const fromMsSeed = parseTimestampMs(resolvedFrom.occurredAt)
+  if (!Number.isFinite(fromMsSeed)) return null
+
+  const trustedFrom = resolveTrustedSlBalanzaIngresoFromSegments(truckflowSegments, truckflow)
+  const externalIngresoAt = String(opts?.externalIngresoAt ?? '').trim()
+  if (
+    !trustedFrom &&
+    isSlBalanzaIngresoAnchoredOnExcelIngreso(resolvedFrom.occurredAt, externalIngresoAt)
+  ) {
+    return null
+  }
+
+  const inicio_fuente: SlScatterHorarioInicioFuente = trustedFrom ? 'truckflow' : 'balanza_ingreso_inferido'
+
+  let toPt: TimedLogicalPoint
+  let fin_fuente: SlScatterHorarioFinFuente
+  if (useExcelSalida) {
+    if (salMs! <= fromMsSeed) return null
+    toPt = { code: 'SL_EGRESO', occurredAt: normalizeTimestampForExport(salida) }
+    fin_fuente = 'excel_salida'
+  } else {
+    const realEgresoTimeline = sanitizeMisplacedSlEgreso(truckflow)
+    const toCandidates = realEgresoTimeline.filter((p) => {
+      if (p.code !== 'SL_EGRESO') return false
+      const ms = parseTimestampMs(p.occurredAt)
+      return Number.isFinite(ms) && ms > fromMsSeed
+    })
+    if (!toCandidates.length) return null
+    toPt = toCandidates.reduce((earliest, p) =>
+      parseTimestampMs(p.occurredAt) < parseTimestampMs(earliest.occurredAt) ? p : earliest
+    )
+    fin_fuente = 'truckflow'
+  }
+
+  const cameraPt = earliestSlPoint(truckflow, 'SL_BALANZA_INGRESO')
+  const trustedMs = parseTimestampMs(trustedFrom?.occurredAt ?? '')
+  const cameraBalMs = Number.isFinite(trustedMs) ?
+    trustedMs
+  : parseTimestampMs(cameraPt?.occurredAt ?? '')
+  const minFromMs = Number.isFinite(cameraBalMs) ? cameraBalMs : fromMsSeed
+
+  const endpoints = finalizeSlBalanzaToEgresoEndpoints(resolvedFrom, toPt, minFromMs)
+  const durationMin = minutesBetweenIso(endpoints.from.occurredAt, endpoints.to.occurredAt)
+  if (shouldRejectSlBalanzaScatterForExcelIngreso(durationMin, endpoints.from.occurredAt, externalIngresoAt)) {
+    return null
+  }
+
+  return {
+    from: {
+      ...endpoints.from,
+      occurredAt: normalizeTimestampForExport(endpoints.from.occurredAt),
+    },
+    to: {
+      ...endpoints.to,
+      occurredAt: normalizeTimestampForExport(endpoints.to.occurredAt),
+    },
+    inicio_fuente,
+    fin_fuente,
   }
 }
 
@@ -1337,42 +1814,9 @@ export function resolveSlBalancaRollupEndpoints(
     truckflowSegments?: TimedSegmentInput[]
   }
 ): { from: TimedLogicalPoint; to: TimedLogicalPoint } | null {
-  const truckflow = opts?.truckflowPoints ?? points
-  const truckflowSegments = opts?.truckflowSegments ?? []
-  let timeline = sanitizeMisplacedSlEgreso(points)
-  if (opts?.externalSalidaAt?.trim()) {
-    timeline = enrichSlTimelineWithExcelAnchors(timeline, { externalSalidaAt: opts.externalSalidaAt })
-  }
-
-  const cameraPt = earliestSlPoint(truckflow, 'SL_BALANZA_INGRESO')
-
-  const resolvedFrom =
-    resolveSlBalanzaIngresoForRollup(truckflow, truckflowSegments, timeline)
-  if (!resolvedFrom) return null
-
-  const fromMsSeed = Date.parse(resolvedFrom.occurredAt)
-  if (!Number.isFinite(fromMsSeed)) return null
-
-  const toCandidates = timeline.filter((p) => {
-    if (p.code !== 'SL_EGRESO') return false
-    const ms = Date.parse(p.occurredAt)
-    return Number.isFinite(ms) && ms > fromMsSeed
-  })
-  if (!toCandidates.length) return null
-
-  const toPt = toCandidates.reduce((latest, p) =>
-    Date.parse(p.occurredAt) >= Date.parse(latest.occurredAt) ? p : latest
-  )
-
-  const trustedMs = Date.parse(
-    resolveTrustedSlBalanzaIngresoFromSegments(truckflowSegments, truckflow)?.occurredAt ?? ''
-  )
-  const cameraBalMs = Number.isFinite(trustedMs) ?
-    trustedMs
-  : Date.parse(cameraPt?.occurredAt ?? '')
-  const minFromMs = Number.isFinite(cameraBalMs) ? cameraBalMs : fromMsSeed
-
-  return finalizeSlBalanzaToEgresoEndpoints(resolvedFrom, toPt, minFromMs)
+  const kpi = resolveSlBalanzaRollupEndpointsForKpi(points, opts)
+  if (!kpi) return null
+  return { from: kpi.from, to: kpi.to }
 }
 
 type SlBalanzaScatterRepairOpts = {
@@ -1388,7 +1832,7 @@ type SlBalanzaScatterRepairOpts = {
   }>
 }
 
-/** Corrige timestamps de scatter Excel-first para tramo balanza SL (evita fin en egreso S7). */
+/** Corrige timestamps de scatter Excel-first para tramo balanza SL (KPI S1→S7 / salida Excel). */
 export function repairSlBalanzaScatterSegment(
   row: {
     segment_from: string
@@ -1402,7 +1846,9 @@ export function repairSlBalanzaScatterSegment(
   segment_start_time: string
   segment_end_time: string
   segment_duration_min: number
-  horario_fuente: 'truckflow' | 'excel_inferido'
+  horario_fuente: SlScatterHorarioFuente
+  horario_fuente_inicio: SlScatterHorarioInicioFuente
+  horario_fuente_fin: SlScatterHorarioFinFuente
 } | null {
   const from = String(row.segment_from ?? '').trim()
   const to = String(row.segment_to ?? '').trim()
@@ -1429,82 +1875,29 @@ export function repairSlBalanzaScatterSegment(
       ]
 
   const truckflowSegments = segmentsForSlTruckflowTimeline(operationSegments)
-  const truckflowPoints = buildTimedLogicalTimelineFromSegments(truckflowSegments, {
-    externalIngresoAt: opts?.external_ingreso_at,
-  })
-
-  const rawDur = Number(row.segment_duration_min)
-  const rawClock = minutesBetweenIso(start, endRaw)
-  const trustedFrom = resolveTrustedSlBalanzaIngresoFromSegments(truckflowSegments, truckflowPoints)
-  if (
-    trustedFrom &&
-    Number.isFinite(rawDur) &&
-    rawDur > 0 &&
-    Number.isFinite(rawClock) &&
-    Math.abs(rawClock - rawDur) <= 2 &&
-    isValidSegmentDuration(rawDur, from, to) &&
-    Math.abs(Date.parse(trustedFrom.occurredAt) - Date.parse(start)) <= 60_000
-  ) {
-    return {
-      segment_start_time: start,
-      segment_end_time: endRaw,
-      segment_duration_min: Math.round(rawDur * 10) / 10,
-      horario_fuente: 'truckflow',
-    }
-  }
-
-  const hasOnlyUnifiedEvidence =
-    truckflowSegments.length === 1 &&
-    String(truckflowSegments[0]?.segment_from ?? '').trim() === SL_BALANZA_ROLLUP_TRANSITION.from &&
-    String(truckflowSegments[0]?.segment_to ?? '').trim() === SL_BALANZA_ROLLUP_TRANSITION.to
-  if (
-    hasOnlyUnifiedEvidence &&
-    Number.isFinite(rawDur) &&
-    rawDur > 0 &&
-    rawDur <= 30 &&
-    Number.isFinite(rawClock) &&
-    Math.abs(rawClock - rawDur) <= 2 &&
-    isValidSegmentDuration(rawDur, from, to)
-  ) {
-    return {
-      segment_start_time: start,
-      segment_end_time: endRaw,
-      segment_duration_min: Math.round(rawDur * 10) / 10,
-      horario_fuente: 'truckflow',
-    }
-  }
-
-  let timeline = enrichSlTimelineWithExcelAnchors(truckflowPoints, {
+  const { truckflowPoints, enrichedPoints } = buildSlComiteTruckflowContext({
+    segments: operationSegments,
     externalIngresoAt: opts?.external_ingreso_at,
     externalSalidaAt: salida,
     plantaNormalized: opts?.planta_normalized,
-    executiveCircuitCode: opts?.executive_circuit_code,
+    executiveCircuitCode: String(opts?.executive_circuit_code ?? '').trim() || 'SL1',
   })
 
-  const endpoints = resolveSlBalancaRollupEndpoints(timeline, {
-    externalSalidaAt: salida,
-    truckflowPoints,
+  const payload = buildSlBalanzaEgresoComiteScatterPayload(
     truckflowSegments,
-  })
-  if (!endpoints) return null
-  const fixedDur = minutesBetweenIso(endpoints.from.occurredAt, endpoints.to.occurredAt)
-  if (!isValidSegmentDuration(fixedDur, from, to)) return null
-
-  const fromIsCamera = Boolean(trustedFrom)
-  const rawMatchesCamera =
-    fromIsCamera &&
-    Number.isFinite(rawDur) &&
-    rawDur > 0 &&
-    Number.isFinite(rawClock) &&
-    Math.abs(rawClock - rawDur) <= 2 &&
-    Math.abs(Date.parse(start) - Date.parse(endpoints.from.occurredAt)) <= 60_000 &&
-    Math.abs(Date.parse(endRaw) - Date.parse(endpoints.to.occurredAt)) <= 60_000
-
+    truckflowPoints,
+    salida,
+    opts?.external_ingreso_at,
+    enrichedPoints
+  )
+  if (!payload) return null
   return {
-    segment_start_time: endpoints.from.occurredAt,
-    segment_end_time: endpoints.to.occurredAt,
-    segment_duration_min: Math.round(fixedDur * 10) / 10,
-    horario_fuente: rawMatchesCamera ? 'truckflow' : 'excel_inferido',
+    segment_start_time: payload.segment_start_time,
+    segment_end_time: payload.segment_end_time,
+    segment_duration_min: payload.segment_duration_min,
+    horario_fuente: payload.horario_fuente,
+    horario_fuente_inicio: payload.horario_fuente_inicio,
+    horario_fuente_fin: payload.horario_fuente_fin,
   }
 }
 
@@ -1560,12 +1953,12 @@ function resolveChainEndpointAfter(
 ): TimedLogicalPoint | null {
   const candidates = points.filter((p) => {
     if (p.code !== code) return false
-    const ms = Date.parse(p.occurredAt)
+    const ms = parseTimestampMs(p.occurredAt)
     return Number.isFinite(ms) && ms >= afterMs
   })
   if (!candidates.length) return null
   return candidates.reduce((earliest, p) =>
-    Date.parse(p.occurredAt) < Date.parse(earliest.occurredAt) ? p : earliest
+    parseTimestampMs(p.occurredAt) < parseTimestampMs(earliest.occurredAt) ? p : earliest
   )
 }
 
@@ -1606,7 +1999,7 @@ export function extractSlOperationalChainLegsFromTimeline(
     }
     const fromPt = resolveSlChainEndpointAfter(points, fromCode, afterMs)
     if (!fromPt) break
-    const fromMs = Date.parse(fromPt.occurredAt)
+    const fromMs = parseTimestampMs(fromPt.occurredAt)
     const toPt = resolveSlChainEndpointAfter(points, toCode, fromMs)
     if (!toPt) break
     const durationMinutes = minutesBetweenIso(fromPt.occurredAt, toPt.occurredAt)
@@ -1621,7 +2014,7 @@ export function extractSlOperationalChainLegsFromTimeline(
       segment_start_time: fromPt.occurredAt,
       segment_end_time: toPt.occurredAt,
     })
-    afterMs = Date.parse(toPt.occurredAt)
+    afterMs = parseTimestampMs(toPt.occurredAt)
   }
   return legs
 }
@@ -1655,6 +2048,10 @@ export function synthesizeSlRollupLegsFromTimedSegments(input: {
     externalIngresoAt: input.externalIngresoAt,
     externalSalidaAt: input.externalSalidaAt,
   })
+  const timelineForFrom = minimalTimelineForSlBalanzaIngresoInference(
+    truckflowPoints,
+    input.externalSalidaAt
+  )
   const slAnchors: SlExcelTimelineAnchors = {
     externalIngresoAt: input.externalIngresoAt,
     externalCaladoAt: input.externalCaladoAt,
@@ -1666,14 +2063,14 @@ export function synthesizeSlRollupLegsFromTimedSegments(input: {
   const trustedBalIn = resolveTrustedSlBalanzaIngresoFromSegments(truckflowSegments, truckflowPoints)
   const inferredForChain = resolveSlBalanzaIngresoStartPoint(
     truckflowPointsWithoutUntrustedBalanzaIngreso(truckflowSegments, truckflowPoints),
-    points
+    timelineForFrom
   )
   let timelineForLegs = points
   const balInForChain = trustedBalIn ?? inferredForChain
   if (balInForChain && !points.some((p) => p.code === 'SL_BALANZA_INGRESO')) {
     timelineForLegs = collapseTimedPoints(
       [...points, balInForChain].sort(
-        (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+        (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
       )
     )
   }
@@ -1684,25 +2081,28 @@ export function synthesizeSlRollupLegsFromTimedSegments(input: {
     input.plate
   )
 
-  const balanzaRollup = extractSlBalancaRollupFromTimeline(
-    points,
-    input.executiveCircuitCode,
-    input.operationId,
-    input.plate
-  )
-  if (balanzaRollup) {
-    const endpoints = resolveSlBalancaRollupEndpoints(points, {
-      externalSalidaAt: input.externalSalidaAt,
-      truckflowPoints,
-      truckflowSegments,
-    })
-    if (endpoints) {
-      const key = `${balanzaRollup.fromCode}|${balanzaRollup.toCode}`
+  const kpiBalanza = resolveSlBalanzaRollupEndpointsForKpi(truckflowPoints, {
+    externalSalidaAt: input.externalSalidaAt,
+    externalIngresoAt: input.externalIngresoAt,
+    truckflowPoints,
+    truckflowSegments,
+  })
+  if (kpiBalanza) {
+    const durationMinutes = minutesBetweenIso(kpiBalanza.from.occurredAt, kpiBalanza.to.occurredAt)
+    const fromCode = SL_BALANZA_ROLLUP_TRANSITION.from
+    const toCode = SL_BALANZA_ROLLUP_TRANSITION.to
+    if (isValidSegmentDuration(durationMinutes, fromCode, toCode)) {
+      const key = `${fromCode}|${toCode}`
       if (!legs.some((l) => `${l.fromCode}|${l.toCode}` === key)) {
         legs.push({
-          ...balanzaRollup,
-          segment_start_time: endpoints.from.occurredAt,
-          segment_end_time: endpoints.to.occurredAt,
+          journeyId: input.operationId,
+          plate: input.plate,
+          executiveCircuitCode: input.executiveCircuitCode,
+          fromCode,
+          toCode,
+          durationMinutes,
+          segment_start_time: kpiBalanza.from.occurredAt,
+          segment_end_time: kpiBalanza.to.occurredAt,
         })
       }
     }
@@ -1721,6 +2121,100 @@ function findRollupEndIdx(
     if (idx >= 0) return idx
   }
   return -1
+}
+
+/** Cierra estadía balanza (Volcable): último hito válido, no el primero espurio. */
+function findRollupEndIdxLatest(
+  points: TimedLogicalPoint[],
+  fromIdx: number,
+  endCodes: readonly string[]
+): number {
+  let bestIdx = -1
+  let bestMs = Number.NEGATIVE_INFINITY
+  for (let i = fromIdx + 1; i < points.length; i++) {
+    const code = points[i]!.code
+    if (!endCodes.includes(code)) continue
+    const ms = parseTimestampMs(points[i]!.occurredAt)
+    if (!Number.isFinite(ms) || ms <= bestMs) continue
+    bestMs = ms
+    bestIdx = i
+  }
+  return bestIdx
+}
+
+function timelineHasVolcableBetween(
+  points: TimedLogicalPoint[],
+  fromIdx: number,
+  endIdx: number
+): boolean {
+  if (fromIdx < 0 || endIdx <= fromIdx) return false
+  return points.slice(fromIdx + 1, endIdx).some((p) => p.code === 'VOLCABLE')
+}
+
+function pointsHaveVolcableAfter(points: TimedLogicalPoint[], fromIdx: number): boolean {
+  return points.slice(fromIdx + 1).some((p) => p.code === 'VOLCABLE')
+}
+
+function isValidVolcableReceiptBalanzaStayDuration(
+  minutes: number,
+  points: TimedLogicalPoint[],
+  fromIdx: number,
+  endIdx: number
+): boolean {
+  if (!Number.isFinite(minutes) || minutes <= 0) return false
+  if (minutes > INFERRED_KPI_ROLLUP_MAX_MINUTES) return false
+  const viaVolcable =
+    timelineHasVolcableBetween(points, fromIdx, endIdx) || pointsHaveVolcableAfter(points, fromIdx)
+  if (viaVolcable) {
+    return minutes >= VOLCABLE_RECEIPT_BALANZA_STAY_MIN_MINUTES
+  }
+  return minutes >= BALANZA_STAY_MIN_MINUTES
+}
+
+function earliestSegmentStartForCode(
+  segments: TimedSegmentInput[],
+  fromCode: string
+): string | null {
+  let bestMs = Number.POSITIVE_INFINITY
+  let best = ''
+  for (const seg of segments) {
+    if (String(seg.segment_from ?? '').trim() !== fromCode) continue
+    const start = String(seg.segment_start_time ?? '').trim()
+    const ms = parseTimestampMs(start)
+    if (!Number.isFinite(ms) || ms >= bestMs) continue
+    bestMs = ms
+    best = start
+  }
+  return best || null
+}
+
+function injectVolcableReceiptTimelineAnchors(
+  points: TimedLogicalPoint[],
+  segments: TimedSegmentInput[],
+  externalSalidaAt?: string,
+  externalCaladoAt?: string
+): TimedLogicalPoint[] {
+  let enriched = [...points]
+  const balInSeg = earliestSegmentStartForCode(segments, 'BALANZA_INGRESO')
+  if (balInSeg && !enriched.some((p) => p.code === 'BALANZA_INGRESO')) {
+    enriched.push({ code: 'BALANZA_INGRESO', occurredAt: balInSeg })
+  }
+  const volcSeg = earliestSegmentStartForCode(segments, 'VOLCABLE')
+  if (volcSeg && !enriched.some((p) => p.code === 'VOLCABLE')) {
+    enriched.push({ code: 'VOLCABLE', occurredAt: volcSeg })
+  }
+  const balanzaIdx = enriched.findIndex((p) => p.code === 'BALANZA_INGRESO')
+  if (balanzaIdx >= 0) {
+    const fromMs = parseTimestampMs(enriched[balanzaIdx]!.occurredAt)
+    const hasBalOut = enriched.some((p, i) => i > balanzaIdx && p.code === 'BALANZA_EGRESO')
+    if (!hasBalOut && Number.isFinite(fromMs)) {
+      const salida = pickExcelTimestampAfter(fromMs, externalCaladoAt, externalSalidaAt, false)
+      if (salida) enriched.push({ code: 'BALANZA_EGRESO', occurredAt: salida })
+    }
+  }
+  return collapseTimedPoints(
+    enriched.sort((a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt))
+  )
 }
 
 function findRollupFromIdx(
@@ -1744,8 +2238,8 @@ function pickExcelTimestampAfter(
 ): string {
   const calado = String(externalCaladoAt ?? '').trim()
   const salida = String(externalSalidaAt ?? '').trim()
-  const calMs = Date.parse(calado)
-  const salMs = Date.parse(salida)
+  const calMs = parseTimestampMs(calado)
+  const salMs = parseTimestampMs(salida)
   if (preferCalado && Number.isFinite(calMs) && calMs > afterMs) return calado
   if (Number.isFinite(salMs) && salMs > afterMs) return salida
   if (!preferCalado && Number.isFinite(calMs) && calMs > afterMs) return calado
@@ -1772,26 +2266,26 @@ function injectCaladaFromExcel(
   if (!KEPLER_KPI_CIRCUIT_CODES.has(code)) return points
   if (points.some((p) => p.code === 'CALADA')) return points
   const calado = String(externalCaladoAt ?? '').trim()
-  const calMs = Date.parse(calado)
+  const calMs = parseTimestampMs(calado)
   if (!calado || !Number.isFinite(calMs)) return points
   const ingreso = points.find((p) => p.code === 'INGRESO')
   if (ingreso) {
-    const ingMs = Date.parse(ingreso.occurredAt)
+    const ingMs = parseTimestampMs(ingreso.occurredAt)
     if (Number.isFinite(ingMs) && calMs <= ingMs) return points
   }
   const preingreso = points.find((p) => p.code === 'PREINGRESO')
   if (preingreso) {
-    const preMs = Date.parse(preingreso.occurredAt)
+    const preMs = parseTimestampMs(preingreso.occurredAt)
     if (Number.isFinite(preMs) && calMs < preMs) return points
   }
   const balanza = points.find((p) => p.code === 'BALANZA_INGRESO')
   if (balanza) {
-    const balMs = Date.parse(balanza.occurredAt)
+    const balMs = parseTimestampMs(balanza.occurredAt)
     if (Number.isFinite(balMs) && calMs >= balMs) return points
   }
   return collapseTimedPoints(
     [...points, { code: 'CALADA', occurredAt: calado }].sort(
-      (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+      (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
     )
   )
 }
@@ -1813,7 +2307,7 @@ function enrichTimelineWithExcelSiloAnchors(
 
   const balanzaIdx = enriched.findIndex((p) => p.code === 'BALANZA_INGRESO')
   if (balanzaIdx >= 0) {
-    const fromMs = Date.parse(enriched[balanzaIdx]!.occurredAt)
+    const fromMs = parseTimestampMs(enriched[balanzaIdx]!.occurredAt)
     const hasC16 = enriched.some(
       (p, i) =>
         i > balanzaIdx && (p.code === 'CELDA16_CARGA' || p.code === 'CELDA16_DESCARGA')
@@ -1829,7 +2323,7 @@ function enrichTimelineWithExcelSiloAnchors(
   )
   const needsVolcable = ['R19', 'R20'].includes(executiveCode)
   if (needsVolcable && c16Idx >= 0) {
-    const fromMs = Date.parse(enriched[c16Idx]!.occurredAt)
+    const fromMs = parseTimestampMs(enriched[c16Idx]!.occurredAt)
     const hasVolcable = enriched.some((p, i) => i > c16Idx && p.code === 'VOLCABLE')
     if (!hasVolcable && Number.isFinite(fromMs)) {
       const anchor = pickExcelTimestampAfter(fromMs, externalCaladoAt, externalSalidaAt, true)
@@ -1839,9 +2333,9 @@ function enrichTimelineWithExcelSiloAnchors(
 
   const volcIdx = enriched.findIndex((p) => p.code === 'VOLCABLE')
   if (volcIdx >= 0 && c16Idx < 0 && balanzaIdx < 0 && needsVolcable) {
-    const volcMs = Date.parse(enriched[volcIdx]!.occurredAt)
+    const volcMs = parseTimestampMs(enriched[volcIdx]!.occurredAt)
     const calado = String(externalCaladoAt ?? '').trim()
-    const calMs = Date.parse(calado)
+    const calMs = parseTimestampMs(calado)
     if (Number.isFinite(volcMs) && Number.isFinite(calMs) && calMs < volcMs) {
       const c16At = inferC16TransitMidpoint(calMs, volcMs)
       if (c16At) enriched.push({ code: 'CELDA16_CARGA', occurredAt: c16At })
@@ -1851,7 +2345,7 @@ function enrichTimelineWithExcelSiloAnchors(
   if (circuitCode === 'R26') {
     const ricOutIdx = enriched.findIndex((p) => p.code === 'BALANZA_EGRESO')
     if (ricOutIdx >= 0) {
-      const fromMs = Date.parse(enriched[ricOutIdx]!.occurredAt)
+      const fromMs = parseTimestampMs(enriched[ricOutIdx]!.occurredAt)
       const hasSl = enriched.some((p, i) => i > ricOutIdx && p.code.startsWith('SL_'))
       if (!hasSl && Number.isFinite(fromMs)) {
         const anchor = pickExcelTimestampAfter(fromMs, externalCaladoAt, externalSalidaAt, false)
@@ -1863,7 +2357,7 @@ function enrichTimelineWithExcelSiloAnchors(
   if (circuitCode === 'R27') {
     const slOutIdx = enriched.findIndex((p) => p.code === 'SL_EGRESO')
     if (slOutIdx >= 0) {
-      const fromMs = Date.parse(enriched[slOutIdx]!.occurredAt)
+      const fromMs = parseTimestampMs(enriched[slOutIdx]!.occurredAt)
       const hasRic = enriched.some(
         (p, i) =>
           i > slOutIdx &&
@@ -1877,7 +2371,7 @@ function enrichTimelineWithExcelSiloAnchors(
   }
 
   return collapseTimedPoints(
-    enriched.sort((a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt))
+    enriched.sort((a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt))
   )
 }
 
@@ -1888,16 +2382,16 @@ function injectIngresoFromExcel(
 ): TimedLogicalPoint[] {
   if (points.some((p) => p.code === 'INGRESO')) return points
   const ingreso = String(externalIngresoAt ?? '').trim()
-  const ingMs = Date.parse(ingreso)
+  const ingMs = parseTimestampMs(ingreso)
   if (!ingreso || !Number.isFinite(ingMs)) return points
   const preingreso = points.find((p) => p.code === 'PREINGRESO')
   if (preingreso) {
-    const preMs = Date.parse(preingreso.occurredAt)
+    const preMs = parseTimestampMs(preingreso.occurredAt)
     if (Number.isFinite(preMs) && ingMs >= preMs) return points
   }
   return collapseTimedPoints(
     [...points, { code: 'INGRESO', occurredAt: ingreso }].sort(
-      (a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt)
+      (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
     )
   )
 }
@@ -1928,25 +2422,25 @@ function resolveVolcableBalanzaEgresoEndpoints(
   const volcCandidates = truckflowPoints.filter((p) => p.code === 'VOLCABLE')
   if (!volcCandidates.length) return null
   const fromPt = volcCandidates.reduce((latest, p) =>
-    Date.parse(p.occurredAt) >= Date.parse(latest.occurredAt) ? p : latest
+    parseTimestampMs(p.occurredAt) >= parseTimestampMs(latest.occurredAt) ? p : latest
   )
-  const volcMs = Date.parse(fromPt.occurredAt)
+  const volcMs = parseTimestampMs(fromPt.occurredAt)
   if (!Number.isFinite(volcMs)) return null
 
   const balCandidates = truckflowPoints.filter((p) => {
     if (p.code !== 'BALANZA_EGRESO') return false
-    const ms = Date.parse(p.occurredAt)
+    const ms = parseTimestampMs(p.occurredAt)
     return Number.isFinite(ms) && ms > volcMs
   })
   if (balCandidates.length) {
     const toPt = balCandidates.reduce((earliest, p) =>
-      Date.parse(p.occurredAt) < Date.parse(earliest.occurredAt) ? p : earliest
+      parseTimestampMs(p.occurredAt) < parseTimestampMs(earliest.occurredAt) ? p : earliest
     )
     return { from: fromPt, to: toPt }
   }
 
   const salida = String(externalSalidaAt ?? '').trim()
-  const salMs = Date.parse(salida)
+  const salMs = parseTimestampMs(salida)
   if (Number.isFinite(salMs) && salMs > volcMs) {
     const gapMin = (salMs - volcMs) / 60_000
     if (gapMin <= VOLCABLE_BALANZA_EGRESO_MAX_MINUTES) {
@@ -2044,7 +2538,7 @@ export function extractTemplateChainLegsFromTimeline(input: {
             segment_end_time: endpoints.to.occurredAt,
           })
         }
-        afterMs = Date.parse(endpoints.to.occurredAt)
+        afterMs = parseTimestampMs(endpoints.to.occurredAt)
         i = balIdx
         continue
       }
@@ -2057,7 +2551,7 @@ export function extractTemplateChainLegsFromTimeline(input: {
       i++
       continue
     }
-    const fromMs = Date.parse(fromPt.occurredAt)
+    const fromMs = parseTimestampMs(fromPt.occurredAt)
 
     let toIdx = -1
     let toPt: TimedLogicalPoint | null = null
@@ -2092,7 +2586,7 @@ export function extractTemplateChainLegsFromTimeline(input: {
         segment_end_time: toPt.occurredAt,
       })
     }
-    afterMs = Date.parse(toPt.occurredAt)
+    afterMs = parseTimestampMs(toPt.occurredAt)
     i = toIdx
   }
   return legs
@@ -2136,6 +2630,14 @@ export function synthesizeTemplateChainLegsFromTimedSegments(input: {
     input.platformNormalized,
     input.externalIngresoAt
   )
+  if (isVolcableReceiptCircuit(input.executiveCircuitCode)) {
+    enrichedPoints = injectVolcableReceiptTimelineAnchors(
+      enrichedPoints,
+      coherentSegments,
+      input.externalSalidaAt,
+      input.externalCaladoAt
+    )
+  }
 
   return extractTemplateChainLegsFromTimeline({
     truckflowPoints,
@@ -2175,7 +2677,7 @@ export function enrichTimelineWithExcelDischarge(
   for (const rule of rules) {
     const fromIdx = findRollupFromIdx(enriched, rule.fromCode, rule.fromCode === 'VOLCABLE')
     if (fromIdx < 0) continue
-    const fromMs = Date.parse(enriched[fromIdx]!.occurredAt)
+    const fromMs = parseTimestampMs(enriched[fromIdx]!.occurredAt)
     if (!Number.isFinite(fromMs)) continue
     const hasEnd = enriched.some((p, i) => i > fromIdx && rule.endCodes.includes(p.code))
     if (hasEnd) continue
@@ -2191,7 +2693,7 @@ export function enrichTimelineWithExcelDischarge(
   }
 
   return collapseTimedPoints(
-    enriched.sort((a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt))
+    enriched.sort((a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt))
   )
 }
 
@@ -2200,17 +2702,50 @@ export function extractDischargeRollupFromTimeline(
   executiveCircuitCode: string,
   journeyId: string,
   plate: string,
-  rule: DischargeKpiRollupRule
+  rule: DischargeKpiRollupRule,
+  opts?: { externalSalidaAt?: string }
 ): SegmentLeg | null {
   if (!CIRCUITS_WITH_DISCHARGE_KPI_ROLLUP.has(executiveCircuitCode)) return null
 
-  const fromIdx = findRollupFromIdx(points, rule.fromCode, rule.fromCode === 'VOLCABLE')
-  if (fromIdx < 0) return null
-  const endIdx = findRollupEndIdx(points, fromIdx, rule.endCodes)
-  if (endIdx < 0) return null
+  const exec = normalizeExecutiveCircuitForKpi(executiveCircuitCode)
+  const isBalanzaStayRule =
+    rule.fromCode === BALANZA_STAY_ROLLUP_TRANSITION.from &&
+    rule.toCode === BALANZA_STAY_ROLLUP_TRANSITION.to
+  const volcableReceipt = isBalanzaStayRule && isVolcableReceiptCircuit(exec)
 
-  const durationMinutes = minutesBetweenIso(points[fromIdx]!.occurredAt, points[endIdx]!.occurredAt)
-  if (!isValidSegmentDuration(durationMinutes, rule.fromCode, rule.toCode)) return null
+  const fromIdx = findRollupFromIdx(
+    points,
+    rule.fromCode,
+    rule.fromCode === 'VOLCABLE' || volcableReceipt
+  )
+  if (fromIdx < 0) return null
+
+  let durationMinutes: number
+  if (volcableReceipt) {
+    const fromMs = parseTimestampMs(points[fromIdx]!.occurredAt)
+    if (!Number.isFinite(fromMs)) return null
+    let endMs = Number.NaN
+    const camIdx = findRollupEndIdxLatest(points, fromIdx, rule.endCodes)
+    if (camIdx >= 0) endMs = parseTimestampMs(points[camIdx]!.occurredAt)
+    const salida = pickExcelTimestampAfter(fromMs, undefined, opts?.externalSalidaAt, false)
+    const salMs = parseTimestampMs(salida)
+    if (Number.isFinite(salMs) && salMs > fromMs && (!Number.isFinite(endMs) || salMs > endMs)) {
+      endMs = salMs
+    }
+    if (!Number.isFinite(endMs) || endMs <= fromMs) return null
+    durationMinutes = (endMs - fromMs) / 60_000
+    const volcEndIdx =
+      camIdx >= 0 ? Math.max(camIdx, fromIdx + 1) : Math.max(fromIdx + 1, points.length - 1)
+    if (!isValidVolcableReceiptBalanzaStayDuration(durationMinutes, points, fromIdx, volcEndIdx)) {
+      return null
+    }
+  } else {
+    const endIdx = findRollupEndIdx(points, fromIdx, rule.endCodes)
+    if (endIdx < 0) return null
+    durationMinutes = minutesBetweenIso(points[fromIdx]!.occurredAt, points[endIdx]!.occurredAt)
+    if (!isValidSegmentDuration(durationMinutes, rule.fromCode, rule.toCode)) return null
+  }
+
   return {
     journeyId,
     plate,
@@ -2257,6 +2792,14 @@ export function synthesizeDischargeRollupLegsFromTimedSegments(input: {
     input.platformNormalized,
     input.externalIngresoAt
   )
+  if (isVolcableReceiptCircuit(input.executiveCircuitCode)) {
+    points = injectVolcableReceiptTimelineAnchors(
+      points,
+      coherentSegments,
+      input.externalSalidaAt,
+      input.externalCaladoAt
+    )
+  }
 
   const out: SegmentLegWithTimes[] = []
   for (const rule of rules) {
@@ -2265,16 +2808,44 @@ export function synthesizeDischargeRollupLegsFromTimedSegments(input: {
       input.executiveCircuitCode,
       input.operationId,
       input.plate,
-      rule
+      rule,
+      { externalSalidaAt: input.externalSalidaAt }
     )
     if (!leg) continue
-    const fromIdx = findRollupFromIdx(points, rule.fromCode, rule.fromCode === 'VOLCABLE')
-    const endIdx = findRollupEndIdx(points, fromIdx, rule.endCodes)
-    if (fromIdx < 0 || endIdx < 0) continue
+    const fromIdx = findRollupFromIdx(
+      points,
+      rule.fromCode,
+      rule.fromCode === 'VOLCABLE' ||
+        (isVolcableReceiptCircuit(input.executiveCircuitCode) &&
+          rule.fromCode === BALANZA_STAY_ROLLUP_TRANSITION.from)
+    )
+    const isVolcStay =
+      isVolcableReceiptCircuit(input.executiveCircuitCode) &&
+      rule.fromCode === BALANZA_STAY_ROLLUP_TRANSITION.from
+    let segment_end_time = ''
+    if (fromIdx >= 0) {
+      if (isVolcStay) {
+        const fromMs = parseTimestampMs(points[fromIdx]!.occurredAt)
+        const camIdx = findRollupEndIdxLatest(points, fromIdx, rule.endCodes)
+        let endMs = camIdx >= 0 ? parseTimestampMs(points[camIdx]!.occurredAt) : Number.NaN
+        const salida = pickExcelTimestampAfter(fromMs, undefined, input.externalSalidaAt, false)
+        const salMs = parseTimestampMs(salida)
+        if (Number.isFinite(salMs) && salMs > fromMs && (!Number.isFinite(endMs) || salMs > endMs)) {
+          endMs = salMs
+          segment_end_time = salida
+        } else if (camIdx >= 0) {
+          segment_end_time = points[camIdx]!.occurredAt
+        }
+      } else {
+        const endIdx = findRollupEndIdx(points, fromIdx, rule.endCodes)
+        if (endIdx >= 0) segment_end_time = points[endIdx]!.occurredAt
+      }
+    }
+    if (!segment_end_time) continue
     out.push({
       ...leg,
       segment_start_time: points[fromIdx]!.occurredAt,
-      segment_end_time: points[endIdx]!.occurredAt,
+      segment_end_time,
     })
   }
   return out
@@ -2583,6 +3154,14 @@ export function filterSegmentTimingIndex(
   return rebuildSegmentTimingIndexFromLegs(index.legs.filter((l) => allowedJourneyIds.has(l.journeyId)))
 }
 
+/** Une R5 y R6 bajo un solo circuito virtual para tablas y gráficos (misma plantilla KPI). */
+export function mergeVolcableReceiptSegmentTiming(index: SegmentTimingIndex): SegmentTimingIndex {
+  const legs = index.legs
+    .filter((l) => isVolcableReceiptCircuit(l.executiveCircuitCode))
+    .map((l) => ({ ...l, executiveCircuitCode: VOLCABLE_RECEIPT_KPI_UNION_CODE }))
+  return rebuildSegmentTimingIndexFromLegs(legs)
+}
+
 export function buildSegmentTimingIndex(
   journeys: ClassifiedJourneyForTiming[],
   options?: { committeeGroups?: CommitteeGroup[] }
@@ -2634,7 +3213,8 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
     external_ingreso_at?: string
     platform_normalized?: string
     planta_normalized?: string
-  }>
+  }>,
+  comiteOpts?: SlBalanzaComiteOptions
 ): SegmentTimingIndex {
   const bestByOperationTransition = new Map<string, SegmentLeg>()
   const timedSegmentsByOperation = new Map<
@@ -2721,7 +3301,8 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
     const max = maxAllowedMinutesForTransition(leg.fromCode, leg.toCode)
     const prevOk = isValidSegmentDuration(prev.durationMinutes, leg.fromCode, leg.toCode) && prev.durationMinutes <= max
     const legOk = isValidSegmentDuration(leg.durationMinutes, leg.fromCode, leg.toCode) && leg.durationMinutes <= max
-    if (source === 'measured' && legOk) {
+    const balanzaStay = isBalanzaStayKpiTransition(leg.fromCode, leg.toCode)
+    if (source === 'measured' && legOk && !balanzaStay) {
       bestByOperationTransition.set(dedupeKey, leg)
       return
     }
@@ -2729,8 +3310,16 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
       bestByOperationTransition.set(dedupeKey, leg)
       return
     }
-    if (prevOk && legOk && leg.durationMinutes < prev.durationMinutes) {
-      bestByOperationTransition.set(dedupeKey, leg)
+    if (prevOk && legOk) {
+      if (balanzaStay) {
+        if (leg.durationMinutes > prev.durationMinutes) {
+          bestByOperationTransition.set(dedupeKey, leg)
+        }
+        return
+      }
+      if (leg.durationMinutes < prev.durationMinutes) {
+        bestByOperationTransition.set(dedupeKey, leg)
+      }
     }
   }
 
@@ -2756,9 +3345,48 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
     })
     for (const leg of synthLegs) {
       if (!isExpectedCircuitTransition(leg.executiveCircuitCode, leg.fromCode, leg.toCode)) continue
+      if (
+        leg.fromCode === SL_BALANZA_ROLLUP_TRANSITION.from &&
+        leg.toCode === SL_BALANZA_ROLLUP_TRANSITION.to
+      ) {
+        continue
+      }
       if (!isValidSegmentDuration(leg.durationMinutes, leg.fromCode, leg.toCode)) continue
       pushOperationLeg(leg, 'synth')
     }
+  }
+
+  for (const [operationId, bucket] of timedSegmentsByOperation) {
+    const salida = String(bucket.externalSalidaAt ?? '').trim()
+    if (!salida) continue
+    const { opSegments, truckflowPoints: opPoints, enrichedPoints } = buildSlComiteTruckflowContext({
+      segments: bucket.segments,
+      externalIngresoAt: bucket.externalIngresoAt,
+      externalSalidaAt: bucket.externalSalidaAt,
+      externalCaladoAt: bucket.externalCaladoAt,
+      plantaNormalized: bucket.plantaNormalized,
+      executiveCircuitCode: bucket.circuitCode,
+    })
+    const payload = buildSlBalanzaEgresoComiteScatterPayload(
+      opSegments,
+      opPoints,
+      salida,
+      bucket.externalIngresoAt,
+      enrichedPoints,
+      comiteOpts
+    )
+    if (!payload) continue
+    pushOperationLeg(
+      {
+        journeyId: operationId,
+        plate: bucket.plate,
+        executiveCircuitCode: bucket.circuitCode,
+        fromCode: SL_BALANZA_ROLLUP_TRANSITION.from,
+        toCode: SL_BALANZA_ROLLUP_TRANSITION.to,
+        durationMinutes: payload.segment_duration_min,
+      },
+      'measured'
+    )
   }
 
   for (const r of rows) {
@@ -2778,23 +3406,30 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
       toCode === SL_BALANZA_ROLLUP_TRANSITION.to
     ) {
       const bucket = timedSegmentsByOperation.get(operationId)
-      const repaired = repairSlBalanzaScatterSegment(
-        {
-          segment_from: fromCode,
-          segment_to: toCode,
-          segment_start_time: String(r.segment_start_time ?? ''),
-          segment_end_time: String(r.segment_end_time ?? ''),
-          segment_duration_min: duration,
-        },
-        {
-          external_salida_at: r.external_salida_at,
-          external_ingreso_at: r.external_ingreso_at,
-          planta_normalized: r.planta_normalized,
-          executive_circuit_code: circuitCode,
-          operationSegments: bucket?.segments,
-        }
+      const comiteCtx =
+        bucket ?
+          buildSlComiteTruckflowContext({
+            segments: bucket.segments,
+            externalIngresoAt: bucket.externalIngresoAt ?? r.external_ingreso_at,
+            externalSalidaAt: bucket.externalSalidaAt ?? r.external_salida_at,
+            externalCaladoAt: bucket.externalCaladoAt ?? r.external_calado_at,
+            plantaNormalized: bucket.plantaNormalized ?? r.planta_normalized,
+            executiveCircuitCode: circuitCode,
+          })
+        : {
+            opSegments: [] as TimedSegmentInput[],
+            truckflowPoints: [] as TimedLogicalPoint[],
+            enrichedPoints: [] as TimedLogicalPoint[],
+          }
+      const payload = buildSlBalanzaEgresoComiteScatterPayload(
+        comiteCtx.opSegments,
+        comiteCtx.truckflowPoints,
+        String(r.external_salida_at ?? ''),
+        r.external_ingreso_at,
+        comiteCtx.enrichedPoints,
+        comiteOpts
       )
-      if (repaired && isValidSegmentDuration(repaired.segment_duration_min, fromCode, toCode)) {
+      if (payload) {
         pushOperationLeg(
           {
             journeyId: operationId,
@@ -2802,7 +3437,7 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
             executiveCircuitCode: circuitCode,
             fromCode,
             toCode,
-            durationMinutes: repaired.segment_duration_min,
+            durationMinutes: payload.segment_duration_min,
           },
           'measured'
         )

@@ -20,6 +20,7 @@ import {
   type PlateMatchCache,
 } from './etlPlateMatchCache'
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
+import { parseTimestampMs } from './etlTimestampNormalize'
 
 export type MatchQuality =
   | 'EXTERNAL_MATCH_EXACT'
@@ -353,7 +354,7 @@ const ROUTE_QUALITY_RANK: Record<RouteQuality, number> = {
 }
 
 function parseMs(iso: string): number {
-  const t = Date.parse(iso)
+  const t = parseTimestampMs(iso)
   return Number.isFinite(t) ? t : NaN
 }
 

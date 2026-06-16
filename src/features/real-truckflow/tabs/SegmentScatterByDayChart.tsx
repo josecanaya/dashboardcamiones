@@ -22,6 +22,28 @@ import {
 } from '../etlWorkbench/etlSegmentSlowTail'
 import { safeExportFilename } from '../../../utils/chartExport'
 
+function horarioFuenteTooltipLines(row: SegmentScatterByDayRow): string[] {
+  const lines: string[] = []
+  if (row.horario_fuente_inicio || row.horario_fuente_fin) {
+    lines.push(
+      `Fuente inicio: ${row.horario_fuente_inicio || '—'} · fin: ${row.horario_fuente_fin || '—'}`
+    )
+  } else if (row.horario_fuente) {
+    lines.push(`Fuente horarios: ${row.horario_fuente}`)
+  }
+  if (row.horario_fuente === 'excel_inferido') {
+    lines.push('(legacy) Horarios reconstruidos — revisar tramo ingreso→balanza')
+  }
+  return lines
+}
+
+function strokeForHorarioFuente(fuente: string): string {
+  if (fuente === 'excel_salida' || fuente === 'mixto') return '#b45309'
+  if (fuente === 'balanza_ingreso_inferido') return '#7c3aed'
+  if (fuente === 'excel_inferido') return '#94a3b8'
+  return '#0f172a'
+}
+
 function franjaLegendLabel(f: (typeof FRANJA_HORARIA_ORDER)[number]): string {
   const w = FRANJA_HORARIA_WINDOWS[f]
   return `${f} (${w.desde}–${w.hasta})`
@@ -80,12 +102,14 @@ export function SegmentScatterByDayChart({
     () =>
       buildColoredBinStackPoints(chartRows, (row) => {
         const fill = row.color_franja || colorForFranja(row.franja_horaria)
+        const stroke = strokeForHorarioFuente(row.horario_fuente || 'truckflow')
         return {
           fill,
-          stroke: fill,
+          stroke,
           dotRadius: SEGMENT_TIMING_DOT_RADIUS,
           tooltipTitle: row.patente || row.journey_id,
           tooltipLines: [
+            `Patente: ${row.patente || '—'}`,
             `${row.duracion_minutos.toFixed(1)} min · ${row.franja_horaria || '—'} (${row.hora_inicio})`,
             `Ingreso: ${row.timestamp_inicio || '—'}`,
             `Egreso: ${row.timestamp_fin || '—'}`,
@@ -93,9 +117,7 @@ export function SegmentScatterByDayChart({
               `fecha: ${row.fecha_tramo}`
             : `${row.fecha_tramo} · ${row.hora_inicio}`,
             `${row.producto || '—'} · ${row.circuito}`,
-            row.horario_fuente === 'excel_inferido' ?
-              'Horarios: balanza salida inferida desde salida Excel'
-            : '',
+            ...horarioFuenteTooltipLines(row),
           ].filter(Boolean),
         }
       }),
@@ -152,6 +174,7 @@ export function SegmentScatterByDayChart({
             type="button"
             disabled={!chartRows.length}
             onClick={exportSlowTail}
+            title="Mismos puntos que la gráfica (10 % más lentos, máx. 30)"
             className="rounded-lg border border-rose-300 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-900 hover:bg-rose-100 disabled:opacity-40"
           >
             CSV 10 % más lentos (máx. {SLOW_TAIL_MAX_TRUCKS})
@@ -177,7 +200,38 @@ export function SegmentScatterByDayChart({
         <p className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-600">
           Sin camiones en la vista seleccionada.
         </p>
-      : <SegmentTimingScatterChart
+      : <>
+          <div className="mb-3 rounded-lg border border-slate-200 bg-slate-50/80 px-3 py-2">
+            <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-700">
+              <span className="font-semibold uppercase tracking-wide text-slate-500">Turno (color):</span>
+              {FRANJA_HORARIA_ORDER.map((f) => {
+                const active = franjaFilter === f
+                const dimmed = franjaFilter != null && !active
+                return (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => toggleFranjaFilter(f)}
+                    className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 transition ${
+                      active ?
+                        'border-violet-400 bg-violet-100 font-semibold ring-2 ring-violet-300'
+                      : dimmed ?
+                        'opacity-50'
+                      : 'hover:bg-white'
+                    }`}
+                  >
+                    <span
+                      className="inline-block h-2.5 w-2.5 rounded-full"
+                      style={{ backgroundColor: FRANJA_HORARIA_COLORS[f] }}
+                    />
+                    {franjaLegendLabel(f)}
+                  </button>
+                )
+              })}
+              <span className="ml-2 text-slate-500">Borde: Truckflow / Excel salida</span>
+            </div>
+          </div>
+          <SegmentTimingScatterChart
           coloredScatterPoints={coloredPoints}
           chartData={chartData}
           mean={stats.mean}
@@ -230,9 +284,25 @@ export function SegmentScatterByDayChart({
                   Ver todas
                 </button>
               : null}
+              <span className="ml-2 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                Borde punto:
+              </span>
+              <span className="inline-flex items-center gap-1 text-[10px] text-slate-600">
+                <span className="inline-block h-2.5 w-2.5 rounded-full border-2 border-slate-900 bg-white" />
+                Truckflow
+              </span>
+              <span className="inline-flex items-center gap-1 text-[10px] text-slate-600">
+                <span className="inline-block h-2.5 w-2.5 rounded-full border-2 border-amber-700 bg-white" />
+                Fin Excel / mixto
+              </span>
+              <span className="inline-flex items-center gap-1 text-[10px] text-slate-600">
+                <span className="inline-block h-2.5 w-2.5 rounded-full border-2 border-violet-700 bg-white" />
+                S1 inferido
+              </span>
             </>
           }
         />
+        </>
       }
     </div>
   )

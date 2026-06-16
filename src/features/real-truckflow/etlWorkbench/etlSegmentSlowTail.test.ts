@@ -66,4 +66,26 @@ describe('etlSegmentSlowTail', () => {
     expect(csvRows[0]!.patente).toBe('P99')
     expect(csvRows[0]!.duracion_minutos).toBe(100)
   })
+
+  it('CSV lentos usa el mismo universo que la gráfica (incluye excel_salida)', () => {
+    const truckflowRows = Array.from({ length: 8 }, (_, i) =>
+      row({
+        duracion_minutos: 50 + i,
+        patente: `TF${i}`,
+        journey_id: `tf${i}`,
+        horario_fuente: 'truckflow',
+      })
+    )
+    const excelRows = Array.from({ length: 5 }, (_, i) =>
+      row({
+        duracion_minutos: 500 + i,
+        patente: `EX${i}`,
+        journey_id: `ex${i}`,
+        horario_fuente: 'excel_salida',
+      })
+    )
+    const tail = pickSlowTailScatterRows([...excelRows, ...truckflowRows])
+    expect(tail[0]!.patente).toBe('EX4')
+    expect(tail[0]!.duracion_minutos).toBe(504)
+  })
 })

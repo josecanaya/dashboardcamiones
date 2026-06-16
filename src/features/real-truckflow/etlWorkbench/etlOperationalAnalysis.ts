@@ -9,6 +9,7 @@ import {
 import { normalizePlateStrict } from '../../../services/circuitPlateOcr'
 import { p50, p90, p95, std, mean } from '../../../utils/stats'
 import { formatTransitionLabel } from './etlSegmentTiming'
+import { parseTimestampMs } from './etlTimestampNormalize'
 
 export type TruckflowSegmentForMerge = {
   journey_uid: string
@@ -47,8 +48,8 @@ export function buildTruckflowJourneysForMerge(
     const timing = timingByUid.get(uid)
     const start = timing?.start ?? String(row.first_event_at ?? '')
     const end = timing?.end ?? String(row.last_event_at ?? '')
-    const sMs = Date.parse(start)
-    const eMs = Date.parse(end)
+    const sMs = parseTimestampMs(start)
+    const eMs = parseTimestampMs(end)
     const duration_min =
       Number.isFinite(sMs) && Number.isFinite(eMs) ? Math.round(((eMs - sMs) / 60000) * 100) / 100 : 0
 

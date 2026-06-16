@@ -20,6 +20,11 @@ import {
   buildExcelScatterByDaySources,
   normalizeTruckflowScatterRowForByDay,
   segmentScatterByDayCsv,
+  auditSlBalanzaScatterEligibility,
+  summarizeSlBalanzaComiteFunnel,
+  formatSlBalanzaComiteFunnelLog,
+  summarizeSlBalanzaComiteRejectDetail,
+  formatSlBalanzaComiteRejectDetailLog,
 } from './etlSegmentScatterByDay'
 import {
   buildAllSectorOccupancy30MinRows,
@@ -31,6 +36,7 @@ import {
   buildSegmentTimingIndexFromExcelFirstSegments,
   segmentTimingKpiCsv,
   segmentTimingLegsCsv,
+  SL_BALANZA_COMITE_PRODUCT_OPTIONS,
   type ClassifiedJourneyForTiming,
   type SegmentTimingIndex,
 } from './etlSegmentTiming'
@@ -52,6 +58,10 @@ export type KpiTiemposBuildInput = {
 export type KpiTiemposBuildOutput = {
   segmentTiming: SegmentTimingIndex
   circuitTiming: CircuitTimingIndex
+  slBalanzaComiteDiagnostics?: {
+    funnelLog: string
+    detailLog: string
+  }
   csv: {
     segment_timing_kpi: string
     segment_timing_legs: string
@@ -82,7 +92,10 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
 
   if (excelScatterReady.length) {
     await yieldToBrowser()
-    const fromExcel = buildSegmentTimingIndexFromExcelFirstSegments(excelScatterReady)
+    const fromExcel = buildSegmentTimingIndexFromExcelFirstSegments(
+      excelScatterReady,
+      SL_BALANZA_COMITE_PRODUCT_OPTIONS
+    )
     segmentTiming = fromExcel
     logs.push(
       `Excel-first: ${fromExcel.legs.length} tramos, ${fromExcel.journeyCount} operaciones (ready_for_scatter)`
@@ -107,12 +120,29 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
   await yieldToBrowser()
   const scatterByDaySources =
     excelScatterReady.length ?
-      buildExcelScatterByDaySources(excelScatterReady)
+      buildExcelScatterByDaySources(excelScatterReady, SL_BALANZA_COMITE_PRODUCT_OPTIONS)
     : scatter
         .map((r) => normalizeTruckflowScatterRowForByDay(r as never))
         .filter((s): s is NonNullable<typeof s> => s !== null)
   const scatterByDay = buildSegmentScatterByDayRows(scatterByDaySources)
   logs.push(`segment_scatter_by_day: ${scatterByDay.length} filas`)
+  let slBalanzaComiteDiagnostics: KpiTiemposBuildOutput['slBalanzaComiteDiagnostics']
+  if (excelScatterReady.length) {
+    const slAudits = auditSlBalanzaScatterEligibility(
+      excelScatterReady,
+      SL_BALANZA_COMITE_PRODUCT_OPTIONS
+    )
+    const slFunnel = summarizeSlBalanzaComiteFunnel(excelScatterReady, slAudits)
+    const slDetail = summarizeSlBalanzaComiteRejectDetail(
+      excelScatterReady,
+      SL_BALANZA_COMITE_PRODUCT_OPTIONS
+    )
+    const funnelLog = formatSlBalanzaComiteFunnelLog(slFunnel)
+    const detailLog = formatSlBalanzaComiteRejectDetailLog(slDetail)
+    logs.push(funnelLog)
+    logs.push(detailLog)
+    slBalanzaComiteDiagnostics = { funnelLog, detailLog }
+  }
 
   const sampleUids = new Set(snap?.operationalSampleUids ?? [])
   const segment_scatter_analysis =
@@ -129,6 +159,7 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
   return {
     segmentTiming,
     circuitTiming,
+    slBalanzaComiteDiagnostics,
     csv: {
       segment_timing_kpi: segmentTimingKpiCsv(segmentTiming),
       segment_timing_legs: segmentTimingLegsCsv(segmentTiming),

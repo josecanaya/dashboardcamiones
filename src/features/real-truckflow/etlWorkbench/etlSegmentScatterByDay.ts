@@ -5,13 +5,25 @@ import {
   formatTransitionLabel,
   INFERRED_KPI_ROLLUP_MAX_MINUTES,
   repairSlBalanzaScatterSegment,
+  buildSlBalanzaEgresoComiteScatterPayload,
+  buildSlComiteTruckflowContext,
+  evaluateSlBalanzaComitePayload,
+  type SlBalanzaComiteRejectReason,
+  type SlBalanzaComiteOptions,
+  SL_BALANZA_COMITE_PRODUCT_OPTIONS,
   SL_BALANZA_ROLLUP_TRANSITION,
   SL_BALANZA_STAY_MAX_MINUTES,
   SL_INGRESO_BALANZA_ROLLUP_TRANSITION,
   SL_INGRESO_TO_BALANZA_MAX_MINUTES,
   SL_INGRESO_TO_BALANZA_TRANSIT_DEFAULT_MINUTES,
   synthesizeSlRollupLegsFromTimedSegments,
+  buildTimedLogicalTimelineFromSegments,
+  segmentsForSlTruckflowTimeline,
+  type SlScatterHorarioFuente,
+  type SlScatterHorarioInicioFuente,
+  type SlScatterHorarioFinFuente,
 } from './etlSegmentTiming'
+import { argentinaLocalParts, ARGENTINA_UTC_OFFSET_MINUTES, parseTimestampMs } from './etlTimestampNormalize'
 import type { ExcelOperationSegmentScatterRow } from './etlExcelFirstMerge'
 import type { SegmentScatterRow } from './etlOperationalAnalysis'
 import { p75, p90 } from '../../../utils/stats'
@@ -59,8 +71,10 @@ export type SegmentScatterByDayRow = {
   es_ultimo_cuarto: boolean
   p75_tramo: number
   p90_tramo: number
-  /** truckflow medido o inferido desde salida Excel (S5 proxy). */
-  horario_fuente: 'truckflow' | 'excel_inferido' | ''
+  /** Origen de horarios del tramo (KPI comité). */
+  horario_fuente: SlScatterHorarioFuente | 'excel_inferido' | ''
+  horario_fuente_inicio?: SlScatterHorarioInicioFuente | ''
+  horario_fuente_fin?: SlScatterHorarioFinFuente | ''
 }
 
 export type SegmentScatterByDaySource = {
@@ -74,28 +88,26 @@ export type SegmentScatterByDaySource = {
   timestamp_fin: string
   duracion_minutos: number
   estado_ejecutivo: string
-  horario_fuente?: 'truckflow' | 'excel_inferido' | ''
+  horario_fuente?: SlScatterHorarioFuente | 'excel_inferido' | ''
+  horario_fuente_inicio?: SlScatterHorarioInicioFuente | ''
+  horario_fuente_fin?: SlScatterHorarioFinFuente | ''
 }
 
 function pad2(n: number): string {
   return String(n).padStart(2, '0')
 }
 
-/** Fecha y hora local del navegador/ETL (misma convención que el resto del dashboard). */
+/** Fecha y hora local Argentina (-03:00) del inicio del tramo. */
 export function segmentStartLocalParts(iso: string): { fecha_tramo: string; hora_inicio: string } | null {
-  const ts = Date.parse(String(iso ?? '').trim())
-  if (!Number.isFinite(ts)) return null
-  const d = new Date(ts)
-  const fecha_tramo = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`
-  const hora_inicio = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`
-  return { fecha_tramo, hora_inicio }
+  return argentinaLocalParts(iso)
 }
 
-/** 00–06 · 06–12 · 12–18 · 18–24 */
+/** 00–06 · 06–12 · 12–18 · 18–24 (hora Argentina). */
 export function resolveFranjaHoraria(iso: string): FranjaHoraria | '' {
-  const ts = Date.parse(String(iso ?? '').trim())
-  if (!Number.isFinite(ts)) return ''
-  const minutes = new Date(ts).getHours() * 60 + new Date(ts).getMinutes()
+  const ms = parseTimestampMs(iso)
+  if (!Number.isFinite(ms)) return ''
+  const localMs = ms + ARGENTINA_UTC_OFFSET_MINUTES * 60_000
+  const minutes = new Date(localMs).getUTCHours() * 60 + new Date(localMs).getUTCMinutes()
   if (minutes < 6 * 60) return 'Madrugada'
   if (minutes < 12 * 60) return 'Mañana'
   if (minutes < 18 * 60) return 'Tarde'
@@ -152,7 +164,8 @@ function scatterMetaFromRow(row: ExcelOperationSegmentScatterRow) {
 }
 
 function resolveSlBalanzaScatterSourceForOperation(
-  opRows: ExcelOperationSegmentScatterRow[]
+  opRows: ExcelOperationSegmentScatterRow[],
+  comiteOpts?: SlBalanzaComiteOptions
 ): SegmentScatterByDaySource | null {
   const metaRow = opRows[0]
   if (!metaRow) return null
@@ -161,78 +174,40 @@ function resolveSlBalanzaScatterSourceForOperation(
   const operationId = String(metaRow.external_operation_id ?? metaRow.journey_uid ?? '').trim()
   if (!circuitCode || !operationId) return null
 
+  const salida = String(metaRow.external_salida_at ?? '').trim()
+  if (!salida) return null
+
   const operationSegments = operationTimedSegments(opRows)
+  const { opSegments: truckflowSegments, truckflowPoints, enrichedPoints } =
+    buildSlComiteTruckflowContext({
+      segments: operationSegments,
+      externalIngresoAt: metaRow.external_ingreso_at,
+      externalSalidaAt: salida,
+      externalCaladoAt: metaRow.external_calado_at,
+      plantaNormalized: metaRow.planta_normalized,
+      executiveCircuitCode: circuitCode,
+    })
 
-  const unifiedMeasured = opRows.find(
-    (r) =>
-      String(r.segment_from ?? '').trim() === SL_BALANZA_ROLLUP_TRANSITION.from &&
-      String(r.segment_to ?? '').trim() === SL_BALANZA_ROLLUP_TRANSITION.to
+  const payload = buildSlBalanzaEgresoComiteScatterPayload(
+    truckflowSegments,
+    truckflowPoints,
+    salida,
+    metaRow.external_ingreso_at,
+    enrichedPoints,
+    comiteOpts
   )
-  if (unifiedMeasured) {
-    const rawDur = Number(unifiedMeasured.segment_duration_min)
-    const start = String(unifiedMeasured.segment_start_time ?? '')
-    const end = String(unifiedMeasured.segment_end_time ?? '')
-    const clock = minutesBetweenScatter(start, end)
-    const repaired = repairSlBalanzaScatterSegment(
-      {
-        segment_from: SL_BALANZA_ROLLUP_TRANSITION.from,
-        segment_to: SL_BALANZA_ROLLUP_TRANSITION.to,
-        segment_start_time: start,
-        segment_end_time: end,
-        segment_duration_min: rawDur,
-      },
-      {
-        external_salida_at: metaRow.external_salida_at,
-        external_ingreso_at: metaRow.external_ingreso_at,
-        planta_normalized: metaRow.planta_normalized,
-        executive_circuit_code: circuitCode,
-        operationSegments,
-      }
-    )
-    if (
-      repaired &&
-      repaired.horario_fuente === 'truckflow' &&
-      repaired.segment_duration_min <= 30
-    ) {
-      return {
-        ...meta,
-        segment_from: SL_BALANZA_ROLLUP_TRANSITION.from,
-        segment_to: SL_BALANZA_ROLLUP_TRANSITION.to,
-        timestamp_inicio: repaired.segment_start_time,
-        timestamp_fin: repaired.segment_end_time,
-        duracion_minutos: repaired.segment_duration_min,
-        horario_fuente: 'truckflow',
-      }
-    }
-  }
-
-  const synthLegs = synthesizeSlRollupLegsFromTimedSegments({
-    operationId,
-    plate: meta.patente,
-    executiveCircuitCode: circuitCode,
-    segments: operationSegments,
-    externalCaladoAt: metaRow.external_calado_at,
-    externalSalidaAt: metaRow.external_salida_at,
-    externalIngresoAt: metaRow.external_ingreso_at,
-    plantaNormalized: metaRow.planta_normalized,
-  })
-  const leg = synthLegs.find(
-    (l) =>
-      l.fromCode === SL_BALANZA_ROLLUP_TRANSITION.from &&
-      l.toCode === SL_BALANZA_ROLLUP_TRANSITION.to
-  )
-  if (!leg || leg.durationMinutes <= 0 || leg.durationMinutes > SL_BALANZA_STAY_MAX_MINUTES) {
-    return null
-  }
+  if (!payload) return null
 
   return {
     ...meta,
     segment_from: SL_BALANZA_ROLLUP_TRANSITION.from,
     segment_to: SL_BALANZA_ROLLUP_TRANSITION.to,
-    timestamp_inicio: leg.segment_start_time,
-    timestamp_fin: leg.segment_end_time,
-    duracion_minutos: leg.durationMinutes,
-    horario_fuente: 'excel_inferido',
+    timestamp_inicio: payload.segment_start_time,
+    timestamp_fin: payload.segment_end_time,
+    duracion_minutos: payload.segment_duration_min,
+    horario_fuente: payload.horario_fuente,
+    horario_fuente_inicio: payload.horario_fuente_inicio,
+    horario_fuente_fin: payload.horario_fuente_fin,
   }
 }
 
@@ -324,7 +299,8 @@ function resolveSlIngresoBalanzaScatterSourceForOperation(
 
 /** Scatter Excel-first agrupado por operación (un punto SL balanza→egreso por camión). */
 export function buildExcelScatterByDaySources(
-  rows: ExcelOperationSegmentScatterRow[]
+  rows: ExcelOperationSegmentScatterRow[],
+  comiteOpts?: SlBalanzaComiteOptions
 ): SegmentScatterByDaySource[] {
   const byOperation = new Map<string, ExcelOperationSegmentScatterRow[]>()
   for (const row of rows) {
@@ -338,7 +314,7 @@ export function buildExcelScatterByDaySources(
 
   const sources: SegmentScatterByDaySource[] = []
   for (const opRows of byOperation.values()) {
-    const slScatter = resolveSlBalanzaScatterSourceForOperation(opRows)
+    const slScatter = resolveSlBalanzaScatterSourceForOperation(opRows, comiteOpts)
     if (slScatter) sources.push(slScatter)
 
     const ingresoBalanzaScatter = resolveSlIngresoBalanzaScatterSourceForOperation(opRows)
@@ -412,6 +388,8 @@ export function normalizeExcelSegmentForScatterByDay(
       duracion_minutos: repaired.segment_duration_min,
       estado_ejecutivo: String(row.truckflow_executive_status ?? '').trim(),
       horario_fuente: repaired.horario_fuente,
+      horario_fuente_inicio: repaired.horario_fuente_inicio,
+      horario_fuente_fin: repaired.horario_fuente_fin,
     }
   }
 
@@ -456,7 +434,7 @@ export function normalizeExcelSegmentForScatterByDay(
 }
 
 function minutesBetweenScatter(isoA: string, isoB: string): number {
-  const ms = Date.parse(isoB) - Date.parse(isoA)
+  const ms = parseTimestampMs(isoB) - parseTimestampMs(isoA)
   return Number.isFinite(ms) && ms > 0 ? ms / 60_000 : Number.NaN
 }
 
@@ -513,6 +491,8 @@ export function buildSegmentScatterByDayRows(sources: SegmentScatterByDaySource[
       p75_tramo: 0,
       p90_tramo: 0,
       horario_fuente: s.horario_fuente ?? '',
+      horario_fuente_inicio: s.horario_fuente_inicio ?? '',
+      horario_fuente_fin: s.horario_fuente_fin ?? '',
     })
   }
 
@@ -574,7 +554,255 @@ export const SEGMENT_SCATTER_BY_DAY_HEADERS = [
   'p75_tramo',
   'p90_tramo',
   'horario_fuente',
+  'horario_fuente_inicio',
+  'horario_fuente_fin',
 ] as const
+
+export type SlScatterAuditReason =
+  | 'not_ready_for_scatter'
+  | 'sin_salida_excel'
+  | 'sin_inicio_balanza'
+  | 'duracion_invalida'
+  | 'duracion_excede_tope'
+  | 'incluido'
+
+export type SlScatterAuditRow = {
+  external_operation_id: string
+  patente: string
+  circuito: string
+  reason: SlScatterAuditReason
+}
+
+const SL_BALANZA_COMITE_CIRCUITS = new Set(['R7', 'SL1', 'R26', 'R27'])
+
+function comiteRejectToAuditReason(reason: SlBalanzaComiteRejectReason): SlScatterAuditReason {
+  switch (reason) {
+    case 'ok':
+      return 'incluido'
+    case 'sin_salida_excel':
+      return 'sin_salida_excel'
+    case 'sin_inicio_balanza':
+      return 'sin_inicio_balanza'
+    case 'duracion_excede_180':
+      return 'duracion_excede_tope'
+    case 'inicio_anchored_excel_ric':
+    case 'inicio_antes_ingreso_sl':
+    case 'fin_no_posterior':
+    case 'duracion_corta':
+      return 'duracion_invalida'
+    default:
+      return 'duracion_invalida'
+  }
+}
+
+export type SlBalanzaComiteFunnelSummary = Record<SlScatterAuditReason, number> & {
+  operaciones_evaluadas: number
+  con_evidencia_camara_balanza: number
+  circuito_r7_sl: number
+}
+
+/** Embudo: por qué una operación no genera punto balanza ingreso→egreso en scatter. */
+export function auditSlBalanzaScatterEligibility(
+  rows: ExcelOperationSegmentScatterRow[],
+  comiteOpts?: SlBalanzaComiteOptions
+): SlScatterAuditRow[] {
+  const byOperation = new Map<string, ExcelOperationSegmentScatterRow[]>()
+  for (const row of rows) {
+    const opId = String(row.external_operation_id ?? row.journey_uid ?? '').trim()
+    if (!opId) continue
+    const bucket = byOperation.get(opId) ?? []
+    bucket.push(row)
+    byOperation.set(opId, bucket)
+  }
+
+  const audits: SlScatterAuditRow[] = []
+  for (const [opId, opRows] of byOperation) {
+    const metaRow = opRows[0]
+    if (!metaRow) continue
+    const patente = String(metaRow.plate_normalized ?? '').trim()
+    const circuito =
+      String(metaRow.resolved_executive_circuit_code ?? '').trim() ||
+      String(metaRow.truckflow_circuit_code ?? '').trim()
+
+    if (!metaRow.analysis_ready_for_scatter) {
+      audits.push({ external_operation_id: opId, patente, circuito, reason: 'not_ready_for_scatter' })
+      continue
+    }
+    if (!String(metaRow.external_salida_at ?? '').trim()) {
+      audits.push({ external_operation_id: opId, patente, circuito, reason: 'sin_salida_excel' })
+      continue
+    }
+
+    const operationSegments = operationTimedSegments(opRows)
+    const { opSegments: truckflowSegments, truckflowPoints, enrichedPoints } =
+      buildSlComiteTruckflowContext({
+        segments: operationSegments,
+        externalIngresoAt: metaRow.external_ingreso_at,
+        externalSalidaAt: String(metaRow.external_salida_at ?? ''),
+        externalCaladoAt: metaRow.external_calado_at,
+        plantaNormalized: metaRow.planta_normalized,
+        executiveCircuitCode: circuito,
+      })
+    const evaluation = evaluateSlBalanzaComitePayload(
+      truckflowSegments,
+      truckflowPoints,
+      String(metaRow.external_salida_at ?? ''),
+      metaRow.external_ingreso_at,
+      enrichedPoints,
+      comiteOpts
+    )
+    audits.push({
+      external_operation_id: opId,
+      patente,
+      circuito,
+      reason: comiteRejectToAuditReason(evaluation.reason),
+    })
+  }
+  return audits
+}
+
+export function summarizeSlBalanzaComiteFunnel(
+  rows: ExcelOperationSegmentScatterRow[],
+  audits: SlScatterAuditRow[]
+): SlBalanzaComiteFunnelSummary {
+  const base = summarizeSlScatterAudit(audits)
+  const byOperation = new Map<string, ExcelOperationSegmentScatterRow[]>()
+  for (const row of rows) {
+    const opId = String(row.external_operation_id ?? row.journey_uid ?? '').trim()
+    if (!opId) continue
+    const bucket = byOperation.get(opId) ?? []
+    bucket.push(row)
+    byOperation.set(opId, bucket)
+  }
+
+  let conEvidenciaCamara = 0
+  let circuitoR7Sl = 0
+  for (const [opId, opRows] of byOperation) {
+    const metaRow = opRows[0]
+    if (!metaRow?.analysis_ready_for_scatter) continue
+    const circuito =
+      String(metaRow.resolved_executive_circuit_code ?? '').trim() ||
+      String(metaRow.truckflow_circuit_code ?? '').trim()
+    if (SL_BALANZA_COMITE_CIRCUITS.has(circuito)) circuitoR7Sl++
+
+    const operationSegments = operationTimedSegments(opRows)
+    const hasCameraSeg = operationSegments.some((s) => {
+      const from = String(s.segment_from ?? '').trim()
+      const to = String(s.segment_to ?? '').trim()
+      if (from === 'SL_BALANZA_INGRESO' && to === 'SL_BALANZA_SALIDA') return true
+      if (to === 'SL_BALANZA_INGRESO' && from !== 'SL_BALANZA_INGRESO') return true
+      return false
+    })
+    if (hasCameraSeg) conEvidenciaCamara++
+  }
+
+  const evaluadas = audits.filter((a) => a.reason !== 'not_ready_for_scatter').length
+
+  return {
+    ...base,
+    operaciones_evaluadas: evaluadas,
+    con_evidencia_camara_balanza: conEvidenciaCamara,
+    circuito_r7_sl: circuitoR7Sl,
+  }
+}
+
+export function formatSlBalanzaComiteFunnelLog(summary: SlBalanzaComiteFunnelSummary): string {
+  return [
+    `SL balanza→egreso embudo`,
+    `incluido=${summary.incluido}`,
+    `evaluadas=${summary.operaciones_evaluadas}`,
+    `circuito_R7/SL=${summary.circuito_r7_sl}`,
+    `con_segmento_camara_balanza=${summary.con_evidencia_camara_balanza}`,
+    `sin_salida_excel=${summary.sin_salida_excel}`,
+    `sin_inicio_balanza=${summary.sin_inicio_balanza}`,
+    `duracion_invalida=${summary.duracion_invalida}`,
+    `duracion_excede_180=${summary.duracion_excede_tope}`,
+    `not_ready_scatter=${summary.not_ready_for_scatter}`,
+  ].join(' · ')
+}
+
+export function summarizeSlBalanzaComiteRejectDetail(
+  rows: ExcelOperationSegmentScatterRow[],
+  comiteOpts?: SlBalanzaComiteOptions
+): Record<SlBalanzaComiteRejectReason, number> {
+  const out: Record<SlBalanzaComiteRejectReason, number> = {
+    ok: 0,
+    sin_salida_excel: 0,
+    sin_inicio_balanza: 0,
+    inicio_anchored_excel_ric: 0,
+    inicio_antes_ingreso_sl: 0,
+    fin_no_posterior: 0,
+    duracion_corta: 0,
+    duracion_excede_180: 0,
+  }
+  const byOperation = new Map<string, ExcelOperationSegmentScatterRow[]>()
+  for (const row of rows) {
+    const opId = String(row.external_operation_id ?? row.journey_uid ?? '').trim()
+    if (!opId) continue
+    const bucket = byOperation.get(opId) ?? []
+    bucket.push(row)
+    byOperation.set(opId, bucket)
+  }
+  for (const opRows of byOperation.values()) {
+    const metaRow = opRows[0]
+    if (!metaRow?.analysis_ready_for_scatter) continue
+    const circuito =
+      String(metaRow.resolved_executive_circuit_code ?? '').trim() ||
+      String(metaRow.truckflow_circuit_code ?? '').trim()
+    if (!String(metaRow.external_salida_at ?? '').trim()) {
+      out.sin_salida_excel++
+      continue
+    }
+    const operationSegments = operationTimedSegments(opRows)
+    const { opSegments, truckflowPoints, enrichedPoints } = buildSlComiteTruckflowContext({
+      segments: operationSegments,
+      externalIngresoAt: metaRow.external_ingreso_at,
+      externalSalidaAt: String(metaRow.external_salida_at ?? ''),
+      externalCaladoAt: metaRow.external_calado_at,
+      plantaNormalized: metaRow.planta_normalized,
+      executiveCircuitCode: circuito,
+    })
+    const evaluation = evaluateSlBalanzaComitePayload(
+      opSegments,
+      truckflowPoints,
+      String(metaRow.external_salida_at ?? ''),
+      metaRow.external_ingreso_at,
+      enrichedPoints,
+      comiteOpts
+    )
+    out[evaluation.reason]++
+  }
+  return out
+}
+
+export function formatSlBalanzaComiteRejectDetailLog(
+  detail: Record<SlBalanzaComiteRejectReason, number>
+): string {
+  return [
+    `detalle_comité`,
+    `ok=${detail.ok}`,
+    `sin_inicio=${detail.sin_inicio_balanza}`,
+    `excel_ric_como_s1=${detail.inicio_anchored_excel_ric}`,
+    `s1_antes_ingreso_sl=${detail.inicio_antes_ingreso_sl}`,
+    `salida_antes_s1=${detail.fin_no_posterior}`,
+    `duracion_corta=${detail.duracion_corta}`,
+    `duracion_mayor_180=${detail.duracion_excede_180}`,
+    `sin_salida=${detail.sin_salida_excel}`,
+  ].join(' · ')
+}
+
+export function summarizeSlScatterAudit(audits: SlScatterAuditRow[]): Record<SlScatterAuditReason, number> {
+  const out: Record<SlScatterAuditReason, number> = {
+    not_ready_for_scatter: 0,
+    sin_salida_excel: 0,
+    sin_inicio_balanza: 0,
+    duracion_invalida: 0,
+    duracion_excede_tope: 0,
+    incluido: 0,
+  }
+  for (const a of audits) out[a.reason]++
+  return out
+}
 
 export function segmentScatterByDayCsv(rows: SegmentScatterByDayRow[]): string {
   const out = rows.map((r) => ({
@@ -618,6 +846,11 @@ export function parseSegmentScatterByDayCsv(csvText: string | undefined | null):
       p75_tramo: Number(String(r.p75_tramo ?? '').trim()) || 0,
       p90_tramo: Number(String(r.p90_tramo ?? '').trim()) || 0,
       horario_fuente: (String(r.horario_fuente ?? '').trim() as SegmentScatterByDayRow['horario_fuente']) || '',
+      horario_fuente_inicio:
+        (String(r.horario_fuente_inicio ?? '').trim() as SegmentScatterByDayRow['horario_fuente_inicio']) ||
+        '',
+      horario_fuente_fin:
+        (String(r.horario_fuente_fin ?? '').trim() as SegmentScatterByDayRow['horario_fuente_fin']) || '',
     })
   }
   return out

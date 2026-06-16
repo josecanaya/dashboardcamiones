@@ -50,6 +50,8 @@ export type SlowTailExportRow = {
   horario_egreso: string
   duracion_minutos: number
   horario_fuente: string
+  horario_fuente_inicio: string
+  horario_fuente_fin: string
   journey_id: string
   producto: string
   circuito: string
@@ -62,12 +64,15 @@ export const SLOW_TAIL_EXPORT_HEADERS = [
   'horario_egreso',
   'duracion_minutos',
   'horario_fuente',
+  'horario_fuente_inicio',
+  'horario_fuente_fin',
   'journey_id',
   'producto',
   'circuito',
   'tramo',
 ] as const
 
+/** Mismo universo que la gráfica (sin filtrar por fuente). */
 export function pickSlowTailScatterRows(rows: SegmentScatterByDayRow[]): SegmentScatterByDayRow[] {
   return pickSlowTailByDuration(rows, (r) => r.duracion_minutos)
 }
@@ -79,6 +84,8 @@ export function scatterRowsToSlowTailExport(rows: SegmentScatterByDayRow[]): Slo
     horario_egreso: r.timestamp_fin,
     duracion_minutos: r.duracion_minutos,
     horario_fuente: r.horario_fuente || 'truckflow',
+    horario_fuente_inicio: r.horario_fuente_inicio || '',
+    horario_fuente_fin: r.horario_fuente_fin || '',
     journey_id: r.journey_id,
     producto: r.producto,
     circuito: r.circuito,
@@ -97,6 +104,8 @@ export function legsToSlowTailExport(
     horario_egreso: '',
     duracion_minutos: Math.round(l.durationMinutes * 10) / 10,
     horario_fuente: 'sin_timestamp',
+    horario_fuente_inicio: '',
+    horario_fuente_fin: '',
     journey_id: l.journeyId,
     producto: '',
     circuito: circuitCode,

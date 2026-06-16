@@ -6,7 +6,10 @@ import {
   listCircuitSegmentAggregates,
   logicalPointLabel,
   filterSegmentTimingIndex,
+  mergeVolcableReceiptSegmentTiming,
   countUniqueOperationsForCircuit,
+  kpiCircuitCodesForScatterFilter,
+  VOLCABLE_RECEIPT_KPI_UNION_CODE,
   SEGMENT_TIMING_HISTOGRAM_BIN_MIN,
   type SegmentTimingAggregate,
 } from '../etlWorkbench/etlSegmentTiming'
@@ -51,15 +54,26 @@ export function KpiTiemposTab() {
 
   const isExcelFirstKpi = Boolean(tr?.csv.excel_operations_with_truckflow?.trim())
   const excelFirstReadyForScatter = Number(tr?.stats.movimientosContrato?.excelFirst?.ready_for_scatter ?? 0)
+  const slBalanzaComiteDiag = tr?.stats.slBalanzaComiteDiagnostics as
+    | { funnelLog: string; detailLog: string }
+    | undefined
 
   const [productFilter, setProductFilter] = useState(PRODUCT_FILTER_ALL)
 
-  const segmentTiming = useMemo(() => {
+  const segmentTimingFiltered = useMemo(() => {
     if (!segmentTimingRaw) return null
     if (productFilter === PRODUCT_FILTER_ALL || !productLookup) return segmentTimingRaw
     const ids = journeyIdsForProduct(productLookup, productFilter)
     return filterSegmentTimingIndex(segmentTimingRaw, ids)
   }, [segmentTimingRaw, productFilter, productLookup])
+
+  const segmentTiming = useMemo(() => {
+    if (!segmentTimingFiltered) return null
+    if (circuitFilter === VOLCABLE_RECEIPT_KPI_UNION_CODE) {
+      return mergeVolcableReceiptSegmentTiming(segmentTimingFiltered)
+    }
+    return segmentTimingFiltered
+  }, [segmentTimingFiltered, circuitFilter])
 
   const periodLabel = useMemo(() => {
     if (!wb?.loadSummary?.daysDetected.length) return '—'
@@ -68,12 +82,24 @@ export function KpiTiemposTab() {
   }, [wb?.loadSummary])
 
   const circuitOptions = useMemo(() => {
-    const codes = segmentTiming?.circuitCodes ?? []
-    return codes.map((c) => ({
+    const codes = segmentTimingFiltered?.circuitCodes ?? []
+    const opts = codes.map((c) => ({
       id: c,
       label: `${c} · ${EXECUTIVE_CIRCUIT_MATRIX[c]?.label ?? c}`,
     }))
-  }, [segmentTiming?.circuitCodes])
+    const hasR5 = codes.includes('R5')
+    const hasR6 = codes.includes('R6')
+    if (hasR5 && hasR6) {
+      return [
+        {
+          id: VOLCABLE_RECEIPT_KPI_UNION_CODE,
+          label: 'R5+R6 · Volcable 1 + Volcable 2 (unificado)',
+        },
+        ...opts,
+      ]
+    }
+    return opts
+  }, [segmentTimingFiltered?.circuitCodes])
 
   const [circuitFilter, setCircuitFilter] = useState('')
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
@@ -98,6 +124,9 @@ export function KpiTiemposTab() {
 
   const visibleAggregates = useMemo((): SegmentTimingAggregate[] => {
     if (!segmentTiming || !circuitFilter) return []
+    if (circuitFilter === VOLCABLE_RECEIPT_KPI_UNION_CODE) {
+      return listCircuitSegmentAggregates(segmentTiming, VOLCABLE_RECEIPT_KPI_UNION_CODE)
+    }
     return listCircuitSegmentAggregates(segmentTiming, circuitFilter)
   }, [segmentTiming, circuitFilter])
 
@@ -110,19 +139,20 @@ export function KpiTiemposTab() {
   const [exportBusy, setExportBusy] = useState(false)
 
   const selectedAggregate = useMemo(() => {
-    if (!aggregatesWithData.length) return null
+    if (!visibleAggregates.length) return null
     if (selectedKey) {
-      const hit = aggregatesWithData.find((a) => a.transitionKey === selectedKey)
+      const hit = visibleAggregates.find((a) => a.transitionKey === selectedKey)
       if (hit) return hit
     }
-    return aggregatesWithData[0] ?? null
-  }, [aggregatesWithData, selectedKey])
+    return aggregatesWithData[0] ?? visibleAggregates[visibleAggregates.length - 1] ?? null
+  }, [visibleAggregates, aggregatesWithData, selectedKey])
 
   const scatterByDayForTramo = useCallback(
     (tramoLabel: string) => {
       if (!circuitFilter) return []
+      const circuitCodes = kpiCircuitCodesForScatterFilter(circuitFilter)
       let rows = scatterByDayAll.filter(
-        (r) => r.circuito === circuitFilter && r.tramo_operativo === tramoLabel
+        (r) => circuitCodes.includes(r.circuito) && r.tramo_operativo === tramoLabel
       )
       if (productFilter !== PRODUCT_FILTER_ALL) {
         rows = rows.filter((r) => productMatchesExecutiveSampleFilter(r.producto, productFilter))
@@ -341,17 +371,23 @@ export function KpiTiemposTab() {
                   Tope 3 h (se corrige, no se elimina el camión). Salida Excel = egreso si falta S7.
                 </span>
               )}
-              {(circuitFilter === 'R1' || circuitFilter === 'R5' || circuitFilter === 'R6') && (
+              {(circuitFilter === 'R1' ||
+                circuitFilter === 'R5' ||
+                circuitFilter === 'R6' ||
+                circuitFilter === VOLCABLE_RECEIPT_KPI_UNION_CODE) && (
                 <span className="mt-1 block text-xs text-violet-700">
-                  Recepción Ricardone: un solo tramo <strong>balanza ingreso → balanza egreso</strong> (estadía
-                  completa). El destino de descarga (Celda 16 / Volcable 1-2) viene del Excel; no se usa la cámara de
-                  plataforma en el medio. Tramos &lt; 10 min se descartan (lecturas B1/B2 casi simultáneas = error de
-                  cámara).
+                  Recepción Ricardone / Volcable: tramo <strong>balanza ingreso → balanza egreso</strong> incluye
+                  estadía en plataforma (pasa por Volcable en R5/R6). Salida Excel cierra si falta cámara de egreso.
+                  Con Volcable en el medio se aceptan estadías ≥ 3 min; sin Volcable, mínimo 10 min (B1/B2).
+                  {circuitFilter === VOLCABLE_RECEIPT_KPI_UNION_CODE ?
+                    ' Vista unificada R5+R6 para más puntos en gráficos.'
+                  : null}
                 </span>
               )}
               {(circuitFilter === 'R1' ||
                 circuitFilter === 'R5' ||
                 circuitFilter === 'R6' ||
+                circuitFilter === VOLCABLE_RECEIPT_KPI_UNION_CODE ||
                 circuitFilter === 'R9' ||
                 circuitFilter === 'R19' ||
                 circuitFilter === 'R20' ||
@@ -415,14 +451,15 @@ export function KpiTiemposTab() {
                   return (
                     <tr
                       key={`${row.circuitCode}-${row.transitionKey}`}
-                      className={`border-b border-slate-100 transition ${
-                        hasData ? 'cursor-pointer hover:bg-slate-50' : 'text-slate-400'
+                      className={`border-b border-slate-100 transition cursor-pointer hover:bg-slate-50 ${
+                        !hasData ? 'text-slate-500' : ''
                       } ${active ? 'bg-violet-50' : ''}`}
                       onClick={() => {
-                        if (!hasData) return
                         setSelectedKey(row.transitionKey)
                         const id = `kpi-tramo-${row.transitionKey.replace(/→/g, '-')}`
-                        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                        requestAnimationFrame(() => {
+                          document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                        })
                       }}
                     >
                       <td className="px-4 py-2.5 font-medium">{row.label}</td>
@@ -452,14 +489,27 @@ export function KpiTiemposTab() {
             </table>
           </div>
 
-          {aggregatesWithData.length === 0 ?
+          {visibleAggregates.length === 0 ?
             <p className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-600">
-              Sin tramos con datos en este circuito.
+              Sin tramos en este circuito.
             </p>
           : (
             <>
+              {isExcelFirstKpi && slBalanzaComiteDiag && circuitFilter === 'R7' ?
+                <div className="rounded-xl border border-amber-200 bg-amber-50/80 px-4 py-3 text-xs text-amber-950">
+                  <p className="font-semibold">Embudo balanza ingreso → egreso (comité)</p>
+                  <p className="mt-1 font-mono leading-relaxed">{slBalanzaComiteDiag.funnelLog}</p>
+                  <p className="mt-1 font-mono leading-relaxed">{slBalanzaComiteDiag.detailLog}</p>
+                  <p className="mt-2 text-amber-900">
+                    Tramo balanza ingreso → egreso: operaciones R7/SL con inicio de balanza (cámara o inferido) y
+                    salida Excel. A cada estadía se restan 2 h 20 min (cámaras); no se muestran las que superan{' '}
+                    <span className="font-medium">240 min</span> corregidos ni las sin inicio (
+                    <span className="font-medium">sin_inicio</span>).
+                  </p>
+                </div>
+              : null}
               <div className="space-y-8">
-                {aggregatesWithData.map((agg) => (
+                {visibleAggregates.map((agg) => (
                   <div
                     key={agg.transitionKey}
                     id={`kpi-tramo-${agg.transitionKey.replace(/→/g, '-')}`}

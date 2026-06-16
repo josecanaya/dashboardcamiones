@@ -9,7 +9,7 @@ import {
   CartesianGrid,
   ReferenceLine,
   ReferenceArea,
-  ReferenceDot,
+  Scatter,
 } from 'recharts'
 import type { ChartPoint } from '../../../components/estadia/EstadiaHistogramWithRefs'
 import { SEGMENT_TIMING_HISTOGRAM_BIN_MIN } from '../etlWorkbench/etlSegmentTiming'
@@ -267,24 +267,29 @@ export function SegmentTimingScatterChart({
               connectNulls
             />
           )}
-          {dots.map((p) => {
-            const colored = p as SegmentTimingColoredScatterPoint
-            const fill = colored.fill ?? '#2563eb'
-            const stroke = colored.stroke ?? '#1e40af'
-            return (
-              <ReferenceDot
-                key={p.pointKey}
-                x={p.x}
-                y={p.y}
-                r={colored.dotRadius ?? SEGMENT_TIMING_DOT_RADIUS}
-                fill={fill}
-                fillOpacity={0.72}
-                stroke={stroke}
-                strokeWidth={SEGMENT_TIMING_DOT_STROKE}
-                ifOverflow="visible"
-              />
-            )
-          })}
+          <Scatter
+            data={dots}
+            dataKey="y"
+            xAxisId={0}
+            yAxisId={0}
+            isAnimationActive={false}
+            shape={({ cx, cy, payload }) => {
+              const colored = payload as SegmentTimingColoredScatterPoint
+              const fill = colored.fill ?? '#2563eb'
+              const stroke = colored.stroke ?? '#1e40af'
+              return (
+                <circle
+                  cx={cx}
+                  cy={cy}
+                  r={colored.dotRadius ?? SEGMENT_TIMING_DOT_RADIUS}
+                  fill={fill}
+                  fillOpacity={0.72}
+                  stroke={stroke}
+                  strokeWidth={SEGMENT_TIMING_DOT_STROKE}
+                />
+              )
+            }}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     </div>

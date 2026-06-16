@@ -3,6 +3,7 @@
  */
 import type { ExternalMovimientoContratoNormalized } from './etlExternalMovimientosContrato'
 import { normalizePlate } from './etlExternalNormalization'
+import { parseTimestampMs } from './etlTimestampNormalize'
 import {
   applyExternalCircuitToJourney,
   excelAnchorJourneyPriority,
@@ -160,7 +161,7 @@ export type MergeResult = {
 }
 
 function parseMs(iso: string): number {
-  const t = Date.parse(iso)
+  const t = parseTimestampMs(iso)
   return Number.isFinite(t) ? t : NaN
 }
 

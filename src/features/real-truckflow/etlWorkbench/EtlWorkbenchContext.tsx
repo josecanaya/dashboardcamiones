@@ -546,6 +546,7 @@ function buildApiJourneyStatsFromParsedFiles(
               segmentTiming: built.segmentTiming,
               circuitTiming: built.circuitTiming,
               kpiTiemposBuilt: true,
+              slBalanzaComiteDiagnostics: built.slBalanzaComiteDiagnostics,
             },
           }
         })
