@@ -44,7 +44,7 @@ import {
 } from './etlOperationalSampling'
 import {
   buildSegmentScatterByDayRows,
-  normalizeExcelSegmentForScatterByDay,
+  buildExcelScatterByDaySources,
   normalizeTruckflowScatterRowForByDay,
   segmentScatterByDayCsv,
 } from './etlSegmentScatterByDay'
@@ -363,9 +363,7 @@ export async function runMovimientosContratoIntegration(
 
     const scatterByDaySources =
       excelScatterReady.length ?
-        excelScatterReady
-          .map((r) => normalizeExcelSegmentForScatterByDay(r))
-          .filter((s): s is NonNullable<typeof s> => s !== null)
+        buildExcelScatterByDaySources(excelScatterReady)
       : scatter
           .map((r) => normalizeTruckflowScatterRowForByDay(r as never))
           .filter((s): s is NonNullable<typeof s> => s !== null)

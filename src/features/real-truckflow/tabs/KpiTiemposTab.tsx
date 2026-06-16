@@ -334,11 +334,11 @@ export function KpiTiemposTab() {
                   con ese tramo observado (puede variar si la ruta Truckflow está incompleta).
                 </span>
               )}
-              {(circuitFilter === 'R7' || circuitFilter === 'SL1') && (
+              {(circuitFilter === 'R7' || circuitFilter === 'SL1' || circuitFilter === 'R26' || circuitFilter === 'R27') && (
                 <span className="mt-1 block text-xs text-violet-700">
-                  Pata San Lorenzo: solo las 4 cámaras — ingreso → balanza → balanza egreso → egreso. Sin pasos
-                  inventados. Tramos ≤ 3 min se descartan. Si falta S7, <strong>salida</strong> Excel = egreso;
-                  si falta S5, balanza egreso pocos min antes de salida Excel.
+                  Pata San Lorenzo: ingreso → balanza de entrada → <strong>egreso</strong> (S1→S7).
+                  Inicio = cámara balanza; si falta S1, tránsito corto desde ingreso puerto Truckflow.
+                  Tope 3 h (se corrige, no se elimina el camión). Salida Excel = egreso si falta S7.
                 </span>
               )}
               {(circuitFilter === 'R1' || circuitFilter === 'R5' || circuitFilter === 'R6') && (

@@ -22,6 +22,8 @@ import {
   isValidSegmentDuration,
   OPERATIONAL_TRIP_GAP_MAX_MINUTES,
   INFERRED_KPI_ROLLUP_MAX_MINUTES,
+  SL_BALANZA_STAY_MAX_MINUTES,
+  SL_INGRESO_TO_BALANZA_MAX_MINUTES,
   type ClassifiedJourneyForTiming,
 } from './etlSegmentTiming'
 
@@ -140,7 +142,7 @@ describe('etlSegmentTiming', () => {
     ])
   })
 
-  it('R7 incluye cadena operativa SL (4 cámaras: ingreso → balanza → balanza egreso → egreso)', () => {
+  it('R7 incluye cadena operativa SL unificada (ingreso → balanza entrada → egreso)', () => {
     const rows = listCircuitSegmentAggregates(
       buildSegmentTimingIndex([], { committeeGroups: ['COMPLETOS'] }),
       'R7'
@@ -151,28 +153,29 @@ describe('etlSegmentTiming', () => {
       'CALADA→EGRESO',
       'EGRESO→SL_INGRESO',
       'SL_INGRESO→SL_BALANZA_INGRESO',
-      'SL_BALANZA_INGRESO→SL_BALANZA_SALIDA',
-      'SL_BALANZA_SALIDA→SL_EGRESO',
+      'SL_BALANZA_INGRESO→SL_EGRESO',
     ])
+    expect(rows.at(-1)?.label).toBe('balanza de entrada → egreso')
   })
 
-  it('rollup balanza SL mide salto no consecutivo ingreso→salida', () => {
+  it('rollup balanza SL mide S1→S7 con egreso real', () => {
     const j = journey({
       journeyUid: 'j-sl-rollup',
       events: [
         ev('SLZBalIngFte', 'PUERTO_SAN_LORENZO_BALANZA_INGRESO', '2026-05-12T09:00:00'),
         ev('SLZIngCamFrente', 'PUERTO_SAN_LORENZO_INGRESO_CAMIONES', '2026-05-12T09:30:00'),
         ev('SLZBalSC1Fte', 'PUERTO_SAN_LORENZO_BALANZA_SALIDA', '2026-05-12T11:00:00'),
+        ev('SLZSalidaC1Fte', 'PUERTO_SAN_LORENZO_EGRESO_CAMIONES', '2026-05-12T11:30:00'),
       ],
     })
     const rollup = extractSlBalancaRollupLeg(j, 'R7')
     expect(rollup).not.toBeNull()
-    expect(rollup!.durationMinutes).toBe(120)
+    expect(rollup!.durationMinutes).toBe(150)
     expect(rollup!.fromCode).toBe('SL_BALANZA_INGRESO')
-    expect(rollup!.toCode).toBe('SL_BALANZA_SALIDA')
+    expect(rollup!.toCode).toBe('SL_EGRESO')
   })
 
-  it('rollup balanza SL no usa egreso S7 como fin de estadía balanza', () => {
+  it('rollup balanza SL unifica S1→S7 cuando falta cámara S5', () => {
     const j = journey({
       journeyUid: 'j-sl-fallback',
       events: [
@@ -182,10 +185,12 @@ describe('etlSegmentTiming', () => {
       ],
     })
     const rollup = extractSlBalancaRollupLeg(j, 'R7')
-    expect(rollup).toBeNull()
+    expect(rollup).not.toBeNull()
+    expect(rollup!.durationMinutes).toBe(90)
+    expect(rollup!.toCode).toBe('SL_EGRESO')
   })
 
-  it('extractSegmentLegsWithTimes no arma rollup balanza con solo S1 y egreso S7', () => {
+  it('extractSegmentLegsWithTimes arma rollup S1→S7 con solo balanza ingreso y egreso', () => {
     const j = journey({
       journeyUid: 'j-sl-export',
       events: [
@@ -195,12 +200,13 @@ describe('etlSegmentTiming', () => {
     })
     const legs = extractSegmentLegsWithTimes(j, 'SL1')
     const rollup = legs.find(
-      (l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_BALANZA_SALIDA'
+      (l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_EGRESO'
     )
-    expect(rollup).toBeUndefined()
+    expect(rollup).toBeDefined()
+    expect(rollup!.durationMinutes).toBe(90)
   })
 
-  it('buildSegmentTimingIndexFromExcelFirstSegments deduce cadena SL 4 cámaras con salida Excel', () => {
+  it('buildSegmentTimingIndexFromExcelFirstSegments deduce cadena SL con salida Excel', () => {
     const index = buildSegmentTimingIndexFromExcelFirstSegments([
       {
         analysis_ready_for_scatter: true,
@@ -220,13 +226,13 @@ describe('etlSegmentTiming', () => {
     const ingresoBalanza = index.legs.find(
       (l) => l.fromCode === 'SL_INGRESO' && l.toCode === 'SL_BALANZA_INGRESO'
     )
-    const salidaEgreso = index.legs.find(
-      (l) => l.fromCode === 'SL_BALANZA_SALIDA' && l.toCode === 'SL_EGRESO'
+    const balanzaEgreso = index.legs.find(
+      (l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_EGRESO'
     )
     expect(ingresoBalanza).toBeDefined()
     expect(ingresoBalanza!.durationMinutes).toBe(15)
-    expect(salidaEgreso).toBeDefined()
-    expect(salidaEgreso!.durationMinutes).toBe(5)
+    expect(balanzaEgreso).toBeDefined()
+    expect(balanzaEgreso!.durationMinutes).toBe(105)
   })
 
   it('rechaza balanza ingreso→egreso < 10 min (error cámara B1/B2)', () => {
@@ -236,14 +242,14 @@ describe('etlSegmentTiming', () => {
     expect(isValidSegmentDuration(30, 'BALANZA_INGRESO', 'BALANZA_EGRESO')).toBe(true)
   })
 
-  it('descarta tramos SL de 3 minutos o menos', () => {
+  it('descarta tramos SL unificados de 3 minutos o menos', () => {
     const index = buildSegmentTimingIndexFromExcelFirstSegments([
       {
         analysis_ready_for_scatter: true,
         external_operation_id: 'op-short',
         journey_uid: 'j1',
         plate_normalized: 'AA111',
-        segment_from: 'SL_BALANZA_SALIDA',
+        segment_from: 'SL_BALANZA_INGRESO',
         segment_to: 'SL_EGRESO',
         segment_start_time: '2026-05-12T10:00:00',
         segment_end_time: '2026-05-12T10:02:00',
@@ -253,7 +259,7 @@ describe('etlSegmentTiming', () => {
       },
     ])
     expect(
-      index.legs.find((l) => l.fromCode === 'SL_BALANZA_SALIDA' && l.toCode === 'SL_EGRESO')
+      index.legs.find((l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_EGRESO')
     ).toBeUndefined()
   })
 
@@ -268,7 +274,7 @@ describe('etlSegmentTiming', () => {
     expect(enriched.some((p) => p.code === 'SL_EGRESO')).toBe(true)
   })
 
-  it('buildSegmentTimingIndexFromExcelFirstSegments deduce salida→egreso SL con salida Excel', () => {
+  it('buildSegmentTimingIndexFromExcelFirstSegments deduce balanza entrada→egreso con salida Excel', () => {
     const index = buildSegmentTimingIndexFromExcelFirstSegments([
       {
         analysis_ready_for_scatter: true,
@@ -285,14 +291,14 @@ describe('etlSegmentTiming', () => {
         external_salida_at: '2026-05-12T09:05:00',
       },
     ])
-    const salidaEgreso = index.legs.find(
-      (l) => l.fromCode === 'SL_BALANZA_SALIDA' && l.toCode === 'SL_EGRESO'
+    const balanzaEgreso = index.legs.find(
+      (l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_EGRESO'
     )
-    expect(salidaEgreso).toBeDefined()
-    expect(salidaEgreso!.durationMinutes).toBe(5)
+    expect(balanzaEgreso).toBeDefined()
+    expect(balanzaEgreso!.durationMinutes).toBe(65)
   })
 
-  it('deduce salida→egreso SL aunque egreso fragmentado sea anterior a balanza salida', () => {
+  it('deduce balanza entrada→egreso aunque egreso fragmentado sea anterior a balanza salida', () => {
     const legs = synthesizeSlRollupLegsFromTimedSegments({
       operationId: 'op-sl-frag',
       plate: 'AA111',
@@ -313,14 +319,14 @@ describe('etlSegmentTiming', () => {
       ],
       externalSalidaAt: '2026-05-12T10:05:00',
     })
-    const salidaEgreso = legs.find(
-      (l) => l.fromCode === 'SL_BALANZA_SALIDA' && l.toCode === 'SL_EGRESO'
+    const balanzaEgreso = legs.find(
+      (l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_EGRESO'
     )
-    expect(salidaEgreso).toBeDefined()
-    expect(salidaEgreso!.durationMinutes).toBe(5)
+    expect(balanzaEgreso).toBeDefined()
+    expect(balanzaEgreso!.durationMinutes).toBe(65)
   })
 
-  it('no deduce salida→egreso desde calado Excel (tránsito corto S5→salida)', () => {
+  it('deduce balanza entrada→egreso con solo S1 y salida Excel', () => {
     const legs = synthesizeSlRollupLegsFromTimedSegments({
       operationId: 'op-no-calado-exit',
       plate: 'AA111',
@@ -336,21 +342,22 @@ describe('etlSegmentTiming', () => {
       externalCaladoAt: '2026-05-12T06:00:00',
       externalSalidaAt: '2026-05-12T13:20:00',
     })
-    const salidaEgreso = legs.find(
-      (l) => l.fromCode === 'SL_BALANZA_SALIDA' && l.toCode === 'SL_EGRESO'
+    const balanzaEgreso = legs.find(
+      (l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_EGRESO'
     )
-    expect(salidaEgreso).toBeDefined()
-    expect(salidaEgreso!.durationMinutes).toBe(5)
+    expect(balanzaEgreso).toBeDefined()
+    expect(balanzaEgreso!.durationMinutes).toBeGreaterThan(280)
+    expect(balanzaEgreso!.durationMinutes).toBeLessThanOrEqual(320)
   })
 
-  it('Truckflow mide salida→egreso SL: no lo pisa rollup Excel más largo', () => {
+  it('Truckflow mide balanza→egreso SL: no lo pisa rollup Excel más largo', () => {
     const index = buildSegmentTimingIndexFromExcelFirstSegments([
       {
         analysis_ready_for_scatter: true,
         external_operation_id: 'op-sl-priority',
         journey_uid: 'j1',
         plate_normalized: 'AA111',
-        segment_from: 'SL_BALANZA_SALIDA',
+        segment_from: 'SL_BALANZA_INGRESO',
         segment_to: 'SL_EGRESO',
         segment_start_time: '2026-05-12T10:00:00',
         segment_end_time: '2026-05-12T10:08:00',
@@ -361,10 +368,10 @@ describe('etlSegmentTiming', () => {
         external_salida_at: '2026-05-12T13:20:00',
       },
     ])
-    const salidaEgreso = index.legs.find(
-      (l) => l.fromCode === 'SL_BALANZA_SALIDA' && l.toCode === 'SL_EGRESO'
+    const balanzaEgreso = index.legs.find(
+      (l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_EGRESO'
     )
-    expect(salidaEgreso?.durationMinutes).toBe(8)
+    expect(balanzaEgreso?.durationMinutes).toBe(8)
   })
 
   it('selectCoherentSegmentGroup separa dos recorridos del mismo camión (>6 h)', () => {
@@ -425,9 +432,14 @@ describe('etlSegmentTiming', () => {
       externalSalidaAt: '2026-06-01T14:09:47',
     })
     const ingresoSl = legs.find((l) => l.fromCode === 'SL_INGRESO' && l.toCode === 'SL_BALANZA_INGRESO')
-    expect(ingresoSl).toBeDefined()
-    expect(ingresoSl!.durationMinutes).toBeLessThanOrEqual(INFERRED_KPI_ROLLUP_MAX_MINUTES)
-    expect(ingresoSl!.durationMinutes).toBeGreaterThan(0)
+    const balanzaEgreso = legs.find(
+      (l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_EGRESO'
+    )
+    expect(balanzaEgreso).toBeDefined()
+    expect(balanzaEgreso!.durationMinutes).toBeGreaterThan(0)
+    if (ingresoSl) {
+      expect(ingresoSl.durationMinutes).toBeLessThanOrEqual(INFERRED_KPI_ROLLUP_MAX_MINUTES)
+    }
   })
 
   it('deduce ingreso SL → balanza ingreso SL sin cámara S2', () => {
@@ -455,6 +467,62 @@ describe('etlSegmentTiming', () => {
       (l) => l.fromCode === 'SL_INGRESO' && l.toCode === 'SL_BALANZA_INGRESO'
     )
     expect(ingresoBalIn).toBeDefined()
+  })
+
+  it('deduce cadena SL completa con solo ingreso SL + salida Excel (cola larga en puerto)', () => {
+    const legs = synthesizeSlRollupLegsFromTimedSegments({
+      operationId: 'op-sl-long-queue',
+      plate: 'BB222',
+      executiveCircuitCode: 'R26',
+      segments: [
+        {
+          segment_from: 'BALANZA_EGRESO',
+          segment_to: 'SL_INGRESO',
+          segment_start_time: '2026-05-12T08:00:00',
+          segment_end_time: '2026-05-12T10:00:00',
+        },
+      ],
+      externalSalidaAt: '2026-05-12T14:00:00',
+    })
+    const ingresoBalIn = legs.find(
+      (l) => l.fromCode === 'SL_INGRESO' && l.toCode === 'SL_BALANZA_INGRESO'
+    )
+    const balanzaEgreso = legs.find(
+      (l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_EGRESO'
+    )
+    expect(balanzaEgreso).toBeDefined()
+    expect(balanzaEgreso!.durationMinutes).toBeGreaterThan(0)
+    expect(balanzaEgreso!.durationMinutes).toBeLessThanOrEqual(SL_BALANZA_STAY_MAX_MINUTES)
+    if (ingresoBalIn) {
+      expect(ingresoBalIn.durationMinutes).toBeLessThanOrEqual(INFERRED_KPI_ROLLUP_MAX_MINUTES)
+    }
+  })
+
+  it('no usa ingreso Excel Ricardone como inicio de balanza SL (regresión tiempos > 3 h)', () => {
+    const legs = synthesizeSlRollupLegsFromTimedSegments({
+      operationId: 'op-ric-ingreso',
+      plate: 'CC333',
+      executiveCircuitCode: 'R26',
+      segments: [
+        {
+          segment_from: 'BALANZA_EGRESO',
+          segment_to: 'SL_INGRESO',
+          segment_start_time: '2026-05-12T10:00:00',
+          segment_end_time: '2026-05-12T10:30:00',
+        },
+      ],
+      externalIngresoAt: '2026-05-12T06:00:00',
+      externalSalidaAt: '2026-05-12T14:00:00',
+    })
+    const balanzaEgreso = legs.find(
+      (l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_EGRESO'
+    )
+    expect(balanzaEgreso).toBeDefined()
+    expect(balanzaEgreso!.durationMinutes).toBeLessThanOrEqual(SL_BALANZA_STAY_MAX_MINUTES)
+    expect(balanzaEgreso!.segment_start_time).not.toBe('2026-05-12T06:00:00')
+    expect(Date.parse(balanzaEgreso!.segment_start_time)).toBeGreaterThan(
+      Date.parse('2026-05-12T10:00:00')
+    )
   })
 
   it('R5 Excel-first: rollup balanza ingreso → balanza egreso (sin volcable intermedio)', () => {
