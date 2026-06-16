@@ -74,6 +74,9 @@ export const VOLCABLE_RECEIPT_KPI_UNION_CODE = 'R5+R6'
 
 export const VOLCABLE_RECEIPT_CIRCUIT_CODES = ['R5', 'R6'] as const
 
+/** Tope KPI recepción Volcable 1/2 (esperas en calada, estadía). */
+export const VOLCABLE_RECEIPT_KPI_MAX_MINUTES = 8 * 60
+
 export function isVolcableReceiptCircuit(circuitCode: string): boolean {
   const c = normalizeExecutiveCircuitForKpi(String(circuitCode ?? '').trim())
   return c === 'R5' || c === 'R6'
@@ -683,6 +686,29 @@ export function isValidSegmentDuration(
     fromCode && toCode ?
       maxAllowedMinutesForTransition(fromCode, toCode)
     : INFERRED_KPI_ROLLUP_MAX_MINUTES
+  return minutes <= max
+}
+
+/** Validación KPI por circuito (Volcable 1/2 más permisivo). */
+export function isValidKpiLegDuration(
+  minutes: number,
+  executiveCircuitCode: string,
+  fromCode: string,
+  toCode: string
+): boolean {
+  if (!isVolcableReceiptCircuit(executiveCircuitCode)) {
+    return isValidSegmentDuration(minutes, fromCode, toCode)
+  }
+  if (!Number.isFinite(minutes) || minutes < 1) return false
+  if (isBalanzaStayKpiTransition(fromCode, toCode)) {
+    if (minutes > INFERRED_KPI_ROLLUP_MAX_MINUTES) return false
+    return minutes >= VOLCABLE_RECEIPT_BALANZA_STAY_MIN_MINUTES
+  }
+  const shortMax = maxAllowedMinutesForTransition(fromCode, toCode)
+  const max =
+    shortMax <= VOLCABLE_BALANZA_EGRESO_MAX_MINUTES + 1 ?
+      shortMax
+    : VOLCABLE_RECEIPT_KPI_MAX_MINUTES
   return minutes <= max
 }
 
@@ -2217,6 +2243,169 @@ function injectVolcableReceiptTimelineAnchors(
   )
 }
 
+function injectVolcableReceiptExcelOperationalTimeline(
+  points: TimedLogicalPoint[],
+  segments: TimedSegmentInput[],
+  externalIngresoAt?: string,
+  externalCaladoAt?: string,
+  externalSalidaAt?: string
+): TimedLogicalPoint[] {
+  let enriched = injectVolcableReceiptTimelineAnchors(
+    points,
+    segments,
+    externalSalidaAt,
+    externalCaladoAt
+  )
+  const ingreso = String(externalIngresoAt ?? '').trim()
+  const calado = String(externalCaladoAt ?? '').trim()
+  const ingMs = parseTimestampMs(ingreso)
+  const calMs = parseTimestampMs(calado)
+
+  if (ingreso && Number.isFinite(ingMs) && !enriched.some((p) => p.code === 'INGRESO')) {
+    enriched.push({ code: 'INGRESO', occurredAt: normalizeTimestampForExport(ingreso) })
+  }
+  if (calado && Number.isFinite(calMs) && !enriched.some((p) => p.code === 'CALADA')) {
+    enriched.push({ code: 'CALADA', occurredAt: normalizeTimestampForExport(calado) })
+  }
+
+  if (!enriched.some((p) => p.code === 'PREINGRESO')) {
+    const ingPt = enriched.find((p) => p.code === 'INGRESO')
+    const calPt = enriched.find((p) => p.code === 'CALADA')
+    if (ingPt && calPt) {
+      const iMs = parseTimestampMs(ingPt.occurredAt)
+      const cMs = parseTimestampMs(calPt.occurredAt)
+      if (Number.isFinite(iMs) && Number.isFinite(cMs) && cMs > iMs) {
+        const mid = inferMidpointBetweenMs(iMs, cMs)
+        if (mid) enriched.push({ code: 'PREINGRESO', occurredAt: mid })
+      }
+    } else if (ingPt && Number.isFinite(ingMs)) {
+      enriched.push({
+        code: 'PREINGRESO',
+        occurredAt: formatArgentinaIsoFromMs(ingMs + 5 * 60_000),
+      })
+    }
+  }
+
+  if (!enriched.some((p) => p.code === 'BALANZA_INGRESO')) {
+    const balSeg = earliestSegmentStartForCode(segments, 'BALANZA_INGRESO')
+    if (balSeg) {
+      enriched.push({ code: 'BALANZA_INGRESO', occurredAt: balSeg })
+    } else if (Number.isFinite(calMs)) {
+      enriched.push({
+        code: 'BALANZA_INGRESO',
+        occurredAt: formatArgentinaIsoFromMs(calMs + 10 * 60_000),
+      })
+    }
+  }
+
+  enriched = injectVolcableReceiptTimelineAnchors(
+    enriched,
+    segments,
+    externalSalidaAt,
+    externalCaladoAt
+  )
+  return collapseTimedPoints(
+    enriched.sort((a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt))
+  )
+}
+
+function mergeVolcableReceiptLegsByTransition(
+  legs: SegmentLegWithTimes[]
+): SegmentLegWithTimes[] {
+  const byKey = new Map<string, SegmentLegWithTimes>()
+  for (const leg of legs) {
+    const key = `${leg.fromCode}|${leg.toCode}`
+    const prev = byKey.get(key)
+    if (!prev) {
+      byKey.set(key, leg)
+      continue
+    }
+    const balanzaStay = isBalanzaStayKpiTransition(leg.fromCode, leg.toCode)
+    if (balanzaStay) {
+      if (leg.durationMinutes > prev.durationMinutes) byKey.set(key, leg)
+    } else if (leg.durationMinutes < prev.durationMinutes) {
+      byKey.set(key, leg)
+    }
+  }
+  return [...byKey.values()]
+}
+
+/** KPI R5/R6: Truckflow + anclas Excel (girasol Volcable 1/2). */
+export function synthesizeVolcableReceiptKpiLegsForOperation(input: {
+  operationId: string
+  plate: string
+  executiveCircuitCode: string
+  segments: TimedSegmentInput[]
+  externalCaladoAt?: string
+  externalSalidaAt?: string
+  platformNormalized?: string
+  externalIngresoAt?: string
+  plantaNormalized?: string
+}): SegmentLegWithTimes[] {
+  if (!isVolcableReceiptCircuit(input.executiveCircuitCode)) {
+    return synthesizeInferredRollupLegsFromTimedSegments(input)
+  }
+  const truckflowLegs = synthesizeInferredRollupLegsFromTimedSegments(input)
+  const templateLegs = synthesizeVolcableReceiptTemplateChainLegs(input)
+  return mergeVolcableReceiptLegsByTransition([...truckflowLegs, ...templateLegs])
+}
+
+function synthesizeVolcableReceiptTemplateChainLegs(input: {
+  operationId: string
+  plate: string
+  executiveCircuitCode: string
+  segments: TimedSegmentInput[]
+  externalCaladoAt?: string
+  externalSalidaAt?: string
+  platformNormalized?: string
+  externalIngresoAt?: string
+}): SegmentLegWithTimes[] {
+  if (!input.operationId || !isVolcableReceiptCircuit(input.executiveCircuitCode)) return []
+  const template = getCircuitSegmentTemplate(input.executiveCircuitCode)
+  if (template.length < 2) return []
+
+  const coherentSegments = selectCoherentSegmentGroup(
+    input.segments,
+    input.externalIngresoAt,
+    input.externalSalidaAt,
+    OPERATIONAL_TRIP_GAP_MAX_MINUTES * 2
+  )
+  const truckflowPoints = buildTimedLogicalTimelineFromSegments(coherentSegments, {
+    externalIngresoAt: input.externalIngresoAt,
+    externalSalidaAt: input.externalSalidaAt,
+  })
+  let enrichedPoints = injectIngresoFromExcel(truckflowPoints, input.externalIngresoAt)
+  enrichedPoints = injectCaladaFromExcel(
+    enrichedPoints,
+    input.executiveCircuitCode,
+    input.externalCaladoAt
+  )
+  enrichedPoints = enrichTimelineWithExcelDischarge(
+    enrichedPoints,
+    input.executiveCircuitCode,
+    input.externalCaladoAt,
+    input.externalSalidaAt,
+    input.platformNormalized,
+    input.externalIngresoAt
+  )
+  enrichedPoints = injectVolcableReceiptExcelOperationalTimeline(
+    enrichedPoints,
+    coherentSegments,
+    input.externalIngresoAt,
+    input.externalCaladoAt,
+    input.externalSalidaAt
+  )
+
+  return extractTemplateChainLegsFromTimeline({
+    truckflowPoints,
+    enrichedPoints,
+    executiveCircuitCode: input.executiveCircuitCode,
+    journeyId: input.operationId,
+    plate: input.plate,
+    externalSalidaAt: input.externalSalidaAt,
+  })
+}
+
 function findRollupFromIdx(
   points: TimedLogicalPoint[],
   fromCode: string,
@@ -2570,11 +2759,14 @@ export function extractTemplateChainLegsFromTimeline(input: {
         break
       }
     }
-    if (!toPt || toIdx < 0) break
+    if (!toPt || toIdx < 0) {
+      i++
+      continue
+    }
 
     const toCode = template[toIdx]!
     const durationMinutes = minutesBetweenIso(fromPt.occurredAt, toPt.occurredAt)
-    if (isValidSegmentDuration(durationMinutes, fromCode, toCode)) {
+    if (isValidKpiLegDuration(durationMinutes, executiveCircuitCode, fromCode, toCode)) {
       legs.push({
         journeyId,
         plate,
@@ -2631,11 +2823,12 @@ export function synthesizeTemplateChainLegsFromTimedSegments(input: {
     input.externalIngresoAt
   )
   if (isVolcableReceiptCircuit(input.executiveCircuitCode)) {
-    enrichedPoints = injectVolcableReceiptTimelineAnchors(
+    enrichedPoints = injectVolcableReceiptExcelOperationalTimeline(
       enrichedPoints,
       coherentSegments,
-      input.externalSalidaAt,
-      input.externalCaladoAt
+      input.externalIngresoAt,
+      input.externalCaladoAt,
+      input.externalSalidaAt
     )
   }
 
@@ -3298,9 +3491,17 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
       bestByOperationTransition.set(dedupeKey, leg)
       return
     }
-    const max = maxAllowedMinutesForTransition(leg.fromCode, leg.toCode)
-    const prevOk = isValidSegmentDuration(prev.durationMinutes, leg.fromCode, leg.toCode) && prev.durationMinutes <= max
-    const legOk = isValidSegmentDuration(leg.durationMinutes, leg.fromCode, leg.toCode) && leg.durationMinutes <= max
+    const max =
+      isVolcableReceiptCircuit(leg.executiveCircuitCode) &&
+      !isShortOperationalTransition(leg.fromCode, leg.toCode) ?
+        VOLCABLE_RECEIPT_KPI_MAX_MINUTES
+      : maxAllowedMinutesForTransition(leg.fromCode, leg.toCode)
+    const prevOk =
+      isValidKpiLegDuration(prev.durationMinutes, leg.executiveCircuitCode, leg.fromCode, leg.toCode) &&
+      prev.durationMinutes <= max
+    const legOk =
+      isValidKpiLegDuration(leg.durationMinutes, leg.executiveCircuitCode, leg.fromCode, leg.toCode) &&
+      leg.durationMinutes <= max
     const balanzaStay = isBalanzaStayKpiTransition(leg.fromCode, leg.toCode)
     if (source === 'measured' && legOk && !balanzaStay) {
       bestByOperationTransition.set(dedupeKey, leg)
@@ -3332,17 +3533,30 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
   }
 
   for (const [operationId, bucket] of timedSegmentsByOperation) {
-    const synthLegs = synthesizeInferredRollupLegsFromTimedSegments({
-      operationId,
-      plate: bucket.plate,
-      executiveCircuitCode: bucket.circuitCode,
-      segments: bucket.segments,
-      externalCaladoAt: bucket.externalCaladoAt,
-      externalSalidaAt: bucket.externalSalidaAt,
-      externalIngresoAt: bucket.externalIngresoAt,
-      platformNormalized: bucket.platformNormalized,
-      plantaNormalized: bucket.plantaNormalized,
-    })
+    const synthLegs =
+      isVolcableReceiptCircuit(bucket.circuitCode) ?
+        synthesizeVolcableReceiptKpiLegsForOperation({
+          operationId,
+          plate: bucket.plate,
+          executiveCircuitCode: bucket.circuitCode,
+          segments: bucket.segments,
+          externalCaladoAt: bucket.externalCaladoAt,
+          externalSalidaAt: bucket.externalSalidaAt,
+          externalIngresoAt: bucket.externalIngresoAt,
+          platformNormalized: bucket.platformNormalized,
+          plantaNormalized: bucket.plantaNormalized,
+        })
+      : synthesizeInferredRollupLegsFromTimedSegments({
+          operationId,
+          plate: bucket.plate,
+          executiveCircuitCode: bucket.circuitCode,
+          segments: bucket.segments,
+          externalCaladoAt: bucket.externalCaladoAt,
+          externalSalidaAt: bucket.externalSalidaAt,
+          externalIngresoAt: bucket.externalIngresoAt,
+          platformNormalized: bucket.platformNormalized,
+          plantaNormalized: bucket.plantaNormalized,
+        })
     for (const leg of synthLegs) {
       if (!isExpectedCircuitTransition(leg.executiveCircuitCode, leg.fromCode, leg.toCode)) continue
       if (
@@ -3351,7 +3565,9 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
       ) {
         continue
       }
-      if (!isValidSegmentDuration(leg.durationMinutes, leg.fromCode, leg.toCode)) continue
+      if (!isValidKpiLegDuration(leg.durationMinutes, leg.executiveCircuitCode, leg.fromCode, leg.toCode)) {
+        continue
+      }
       pushOperationLeg(leg, 'synth')
     }
   }
@@ -3445,7 +3661,7 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
       continue
     }
 
-    if (!isValidSegmentDuration(duration, fromCode, toCode)) continue
+    if (!isValidKpiLegDuration(duration, circuitCode, fromCode, toCode)) continue
     pushOperationLeg(
       {
         journeyId: operationId,

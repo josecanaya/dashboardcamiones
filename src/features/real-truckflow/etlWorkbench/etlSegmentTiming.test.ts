@@ -21,6 +21,7 @@ import {
   synthesizeDischargeRollupLegsFromTimedSegments,
   synthesizeInferredRollupLegsFromTimedSegments,
   synthesizeTemplateChainLegsFromTimedSegments,
+  synthesizeVolcableReceiptKpiLegsForOperation,
   mergeVolcableReceiptSegmentTiming,
   VOLCABLE_RECEIPT_KPI_UNION_CODE,
   selectCoherentSegmentGroup,
@@ -1237,6 +1238,26 @@ describe('etlSegmentTiming', () => {
     const ingPre = index.legs.find((l) => l.fromCode === 'INGRESO' && l.toCode === 'PREINGRESO')
     expect(ingPre).toBeDefined()
     expect(ingPre!.durationMinutes).toBe(15)
+  })
+
+  it('Volcable 1 Excel-only: reconstruye cadena KPI desde ingreso/calado/salida', () => {
+    const legs = synthesizeVolcableReceiptKpiLegsForOperation({
+      operationId: 'op-excel-only',
+      plate: 'GG999',
+      executiveCircuitCode: 'R5',
+      segments: [],
+      externalIngresoAt: '2026-05-12T07:00:00',
+      externalCaladoAt: '2026-05-12T09:00:00',
+      externalSalidaAt: '2026-05-12T11:00:00',
+    })
+    expect(legs.find((l) => l.fromCode === 'INGRESO' && l.toCode === 'PREINGRESO')).toBeDefined()
+    expect(legs.find((l) => l.fromCode === 'PREINGRESO' && l.toCode === 'CALADA')).toBeDefined()
+    expect(legs.find((l) => l.fromCode === 'CALADA' && l.toCode === 'BALANZA_INGRESO')).toBeDefined()
+    const stay = legs.find(
+      (l) => l.fromCode === 'BALANZA_INGRESO' && l.toCode === 'BALANZA_EGRESO'
+    )
+    expect(stay).toBeDefined()
+    expect(stay!.durationMinutes).toBeGreaterThan(30)
   })
 
   it('mergeVolcableReceiptSegmentTiming une legs R5 y R6 bajo R5+R6', () => {

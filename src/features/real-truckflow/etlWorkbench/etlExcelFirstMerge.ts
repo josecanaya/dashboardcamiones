@@ -12,6 +12,8 @@ import {
   INFERRED_KPI_ROLLUP_MAX_MINUTES,
   OPERATIONAL_TRIP_GAP_MAX_MINUTES,
   synthesizeInferredRollupLegsFromTimedSegments,
+  synthesizeVolcableReceiptKpiLegsForOperation,
+  isVolcableReceiptCircuit,
 } from './etlSegmentTiming'
 import { normalizePlateStrict, plateSimilarityScore } from '../../../services/circuitPlateOcr'
 import {
@@ -1419,10 +1421,25 @@ function hasMeasurableSegment(segments: TruckflowSegmentForMerge[]): boolean {
   )
 }
 
+function isVolcableOneTwoGirasolExcelKpi(
+  mov: ExternalMovimientoContratoNormalized,
+  resolvedExecutiveCircuitCode: string
+): boolean {
+  const platform = String(mov.platform_normalized ?? '').toUpperCase()
+  if (platform !== 'VOLCABLE_1' && platform !== 'VOLCABLE_2') return false
+  if (!isVolcableReceiptCircuit(resolvedExecutiveCircuitCode)) return false
+  if (!String(mov.product_normalized ?? '').trim()) return false
+  return (
+    Boolean(String(mov.external_ingreso_at ?? '').trim()) &&
+    Boolean(String(mov.external_salida_at ?? '').trim())
+  )
+}
+
 function computeAnalysisFlags(
   mov: ExternalMovimientoContratoNormalized,
   ctx: OperationalContextFromExcel,
-  evidence: TruckflowEvidenceResult
+  evidence: TruckflowEvidenceResult,
+  resolvedExecutiveCircuitCode = ''
 ): {
   analysis_ready_for_scatter: boolean
   analysis_ready_for_full_route_kpi: boolean
@@ -1431,11 +1448,13 @@ function computeAnalysisFlags(
   const hasProduct = Boolean(ctx.resolved_product)
   const hasPlatformOrCircuit = Boolean(ctx.resolved_platform || ctx.resolved_circuit_family)
   const hasSegments = hasMeasurableSegment(evidence.combined_segments)
+  const volcableExcelKpi = isVolcableOneTwoGirasolExcelKpi(mov, resolvedExecutiveCircuitCode)
   const scatterOk =
-    hasProduct &&
-    hasPlatformOrCircuit &&
-    hasSegments &&
-    SCATTER_MATCH_QUALITIES.has(evidence.match_quality)
+    (hasProduct &&
+      hasPlatformOrCircuit &&
+      hasSegments &&
+      SCATTER_MATCH_QUALITIES.has(evidence.match_quality)) ||
+    volcableExcelKpi
 
   const kpiOk =
     scatterOk &&
@@ -1714,7 +1733,10 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
       match_quality: evidence.match_quality,
       no_truckflow_reason: evidence.no_truckflow_reason,
     })
-    const flags = computeAnalysisFlags(mov, ctx, evidence)
+    const inferredExecutive = inferCircuitFromExternalMovimiento(mov)
+    const resolvedExecutiveCircuitCode = inferredExecutive?.circuit_code ?? ''
+    const flags = computeAnalysisFlags(mov, ctx, evidence, resolvedExecutiveCircuitCode)
+    const volcableExcelKpi = isVolcableOneTwoGirasolExcelKpi(mov, resolvedExecutiveCircuitCode)
 
     for (const uid of evidence.matched_journey_uids) {
       journeyAssignmentCount.set(uid, (journeyAssignmentCount.get(uid) ?? 0) + 1)
@@ -1850,9 +1872,6 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
     }
     byPp.set(ppKey, pp)
 
-    const inferredExecutive = inferCircuitFromExternalMovimiento(mov)
-    const resolvedExecutiveCircuitCode = inferredExecutive?.circuit_code ?? ''
-
     let globalOrder = 0
     for (const uid of evidence.matched_journey_uids) {
       const j = journeyByUid.get(uid)
@@ -1896,7 +1915,7 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
     if (
       resolvedExecutiveCircuitCode &&
       flags.analysis_ready_for_scatter &&
-      evidence.combined_segments.length
+      (evidence.combined_segments.length > 0 || volcableExcelKpi)
     ) {
       const opTimedSegments = evidence.combined_segments.map((s) => ({
         segment_from: s.segment_from,
@@ -1904,17 +1923,30 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
         segment_start_time: s.segment_start_time,
         segment_end_time: s.segment_end_time,
       }))
-      const synthLegs = synthesizeInferredRollupLegsFromTimedSegments({
-        operationId: mov.external_operation_id,
-        plate: mov.plate_normalized,
-        executiveCircuitCode: resolvedExecutiveCircuitCode,
-        segments: opTimedSegments,
-        externalCaladoAt: mov.external_calado_at,
-        externalSalidaAt: mov.external_salida_at,
-        externalIngresoAt: mov.external_ingreso_at,
-        platformNormalized: ctx.resolved_platform,
-        plantaNormalized: mov.planta_normalized,
-      })
+      const synthLegs =
+        volcableExcelKpi ?
+          synthesizeVolcableReceiptKpiLegsForOperation({
+            operationId: mov.external_operation_id,
+            plate: mov.plate_normalized,
+            executiveCircuitCode: resolvedExecutiveCircuitCode,
+            segments: opTimedSegments,
+            externalCaladoAt: mov.external_calado_at,
+            externalSalidaAt: mov.external_salida_at,
+            externalIngresoAt: mov.external_ingreso_at,
+            platformNormalized: ctx.resolved_platform,
+            plantaNormalized: mov.planta_normalized,
+          })
+        : synthesizeInferredRollupLegsFromTimedSegments({
+            operationId: mov.external_operation_id,
+            plate: mov.plate_normalized,
+            executiveCircuitCode: resolvedExecutiveCircuitCode,
+            segments: opTimedSegments,
+            externalCaladoAt: mov.external_calado_at,
+            externalSalidaAt: mov.external_salida_at,
+            externalIngresoAt: mov.external_ingreso_at,
+            platformNormalized: ctx.resolved_platform,
+            plantaNormalized: mov.planta_normalized,
+          })
       const existingTransitions = new Set(
         segmentRows
           .filter((r) => r.external_operation_id === mov.external_operation_id)

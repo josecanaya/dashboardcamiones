@@ -59,6 +59,9 @@ export function KpiTiemposTab() {
     | undefined
 
   const [productFilter, setProductFilter] = useState(PRODUCT_FILTER_ALL)
+  const [circuitFilter, setCircuitFilter] = useState('')
+  const [selectedKey, setSelectedKey] = useState<string | null>(null)
+  const [chartView, setChartView] = useState<'tiempos' | 'ocupacion'>('tiempos')
 
   const segmentTimingFiltered = useMemo(() => {
     if (!segmentTimingRaw) return null
@@ -100,10 +103,6 @@ export function KpiTiemposTab() {
     }
     return opts
   }, [segmentTimingFiltered?.circuitCodes])
-
-  const [circuitFilter, setCircuitFilter] = useState('')
-  const [selectedKey, setSelectedKey] = useState<string | null>(null)
-  const [chartView, setChartView] = useState<'tiempos' | 'ocupacion'>('tiempos')
 
   const scatterByDayAll = useMemo(
     () => parseSegmentScatterByDayCsv(tr?.csv.segment_scatter_by_day),
@@ -380,7 +379,7 @@ export function KpiTiemposTab() {
                   estadía en plataforma (pasa por Volcable en R5/R6). Salida Excel cierra si falta cámara de egreso.
                   Con Volcable en el medio se aceptan estadías ≥ 3 min; sin Volcable, mínimo 10 min (B1/B2).
                   {circuitFilter === VOLCABLE_RECEIPT_KPI_UNION_CODE ?
-                    ' Vista unificada R5+R6 para más puntos en gráficos.'
+                    ' Vista unificada R5+R6. Volcable 1/2: se reconstruyen tramos con Excel (ingreso/calado/salida) + Truckflow; mínimo de cámaras reducido.'
                   : null}
                 </span>
               )}
