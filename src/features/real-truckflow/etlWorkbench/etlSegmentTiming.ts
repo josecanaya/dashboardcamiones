@@ -1233,17 +1233,6 @@ function resolveTrustedSlBalanzaIngresoFromSegments(
   return null
 }
 
-function slBalanzaSegmentCameraEvidence(segments: TimedSegmentInput[]): boolean {
-  return segments.some((seg) => {
-    const from = String(seg.segment_from ?? '').trim()
-    const to = String(seg.segment_to ?? '').trim()
-    if (from === 'SL_BALANZA_INGRESO' && to === 'SL_EGRESO') return false
-    if (from === 'SL_BALANZA_INGRESO' && to === 'SL_BALANZA_SALIDA') return true
-    if (to === 'SL_BALANZA_INGRESO' && from !== 'SL_BALANZA_INGRESO') return true
-    return false
-  })
-}
-
 function earliestSlIngresoMsForComite(
   truckflowSegments: TimedSegmentInput[],
   truckflowPoints: TimedLogicalPoint[]
@@ -1263,24 +1252,22 @@ function earliestSlIngresoMsForComite(
   return Number.isFinite(ms) ? ms : null
 }
 
-/** S1 para scatter/KPI comité: hits en segmento o cámara en timeline con evidencia de segmento Truckflow. */
+/**
+ * Inicio del tramo balanza ingreso → egreso (R7): la cámara SLZBalIngFte (SL_BALANZA_INGRESO)
+ * es la fuente de verdad. Nunca se inyecta desde Excel, así que se confía siempre que exista
+ * en el timeline. El guarda anti-Excel (shouldRejectSlBalanzaScatterForExcelIngreso) sigue
+ * rechazando inicios anclados al ingreso Excel de Ricardone.
+ */
 function resolveTrustedSlBalanzaIngresoForComite(
   truckflowSegments: TimedSegmentInput[],
   truckflowPoints: TimedLogicalPoint[],
   _enrichedTimeline?: TimedLogicalPoint[]
 ): TimedLogicalPoint | null {
-  const fromHits = resolveTrustedSlBalanzaIngresoFromSegments(truckflowSegments, truckflowPoints)
-  if (fromHits) return fromHits
-
   const cam = earliestSlPoint(truckflowPoints, 'SL_BALANZA_INGRESO')
-  if (cam && slBalanzaSegmentCameraEvidence(truckflowSegments)) {
+  if (cam) {
     return { code: 'SL_BALANZA_INGRESO', occurredAt: ensureArgentinaOffsetIso(cam.occurredAt) }
   }
-  if (cam && isTrustedSlBalanzaIngresoCamera(truckflowSegments, cam)) {
-    return { code: 'SL_BALANZA_INGRESO', occurredAt: ensureArgentinaOffsetIso(cam.occurredAt) }
-  }
-
-  return null
+  return resolveTrustedSlBalanzaIngresoFromSegments(truckflowSegments, truckflowPoints)
 }
 
 export function buildSlComiteTruckflowContext(input: {
@@ -1684,10 +1671,21 @@ export function evaluateSlBalanzaComitePayload(
   }
 
   const inicioRaw = normalizeTimestampForExport(startIso)
-  const fin = normalizeTimestampForExport(salida)
-  const salMs = parseTimestampMs(fin)
   const s1Ms = parseTimestampMs(inicioRaw)
-  if (!Number.isFinite(salMs) || !Number.isFinite(s1Ms) || salMs <= s1Ms) {
+  if (!Number.isFinite(s1Ms)) {
+    return { payload: null, reason: 'fin_no_posterior' }
+  }
+
+  // La cámara de egreso debe salir de las cámaras reales (truckflowPoints), no de la
+  // timeline enriquecida, que inyecta SL_EGRESO desde la salida Excel (fallback aparte).
+  const endResolved = resolveSlBalanzaEgresoEndForKpi(truckflowPoints, salida, s1Ms)
+  if (!endResolved) {
+    return { payload: null, reason: 'fin_no_posterior' }
+  }
+  const fin = endResolved.point.occurredAt
+  const finFuente = endResolved.fin_fuente
+  const salMs = parseTimestampMs(fin)
+  if (!Number.isFinite(salMs) || salMs <= s1Ms) {
     return { payload: null, reason: 'fin_no_posterior' }
   }
 
@@ -1725,8 +1723,8 @@ export function evaluateSlBalanzaComitePayload(
       segment_end_time: fin,
       segment_duration_min: Math.round(dur * 10) / 10,
       horario_fuente_inicio: inicioFuente,
-      horario_fuente_fin: 'excel_salida',
-      horario_fuente: compositeSlScatterHorarioFuente(inicioFuente, 'excel_salida'),
+      horario_fuente_fin: finFuente,
+      horario_fuente: compositeSlScatterHorarioFuente(inicioFuente, finFuente),
     },
     reason: 'ok',
     durationMin: dur,
@@ -1787,6 +1785,58 @@ function minimalTimelineForSlBalanzaIngresoInference(
   )
 }
 
+/** Última cámara S7 después del inicio S1 (post balanza salida si existe). */
+function latestSlEgresoCameraAfterMs(
+  points: TimedLogicalPoint[],
+  afterMs: number
+): TimedLogicalPoint | null {
+  const timeline = sanitizeMisplacedSlEgreso(points)
+  let best: TimedLogicalPoint | null = null
+  let bestMs = Number.NaN
+  for (const p of timeline) {
+    if (p.code !== 'SL_EGRESO') continue
+    const ms = parseTimestampMs(p.occurredAt)
+    if (!Number.isFinite(ms) || ms <= afterMs) continue
+    if (!Number.isFinite(bestMs) || ms > bestMs) {
+      bestMs = ms
+      best = p
+    }
+  }
+  return best
+}
+
+/**
+ * Fin KPI balanza→egreso: cámara S7 si hay lectura después de S1; si no, salida Excel.
+ * Evita estadías cortas cuando Excel marca salida antes que el egreso real (p. ej. LHT051).
+ */
+export function resolveSlBalanzaEgresoEndForKpi(
+  points: TimedLogicalPoint[],
+  externalSalidaAt: string | undefined,
+  afterMs: number
+): { point: TimedLogicalPoint; fin_fuente: SlScatterHorarioFinFuente } | null {
+  // Regla R7: el fin es el egreso por cámara (SL_EGRESO) siempre que exista una lectura
+  // posterior al inicio. Solo si no hay cámara de egreso se usa la salida Excel. La balanza
+  // de salida (S5) no participa de este muestreo.
+  const camera = latestSlEgresoCameraAfterMs(points, afterMs)
+  const camMs = camera ? parseTimestampMs(camera.occurredAt) : Number.NaN
+  if (Number.isFinite(camMs) && camMs > afterMs) {
+    return {
+      point: { code: 'SL_EGRESO', occurredAt: normalizeTimestampForExport(camera!.occurredAt) },
+      fin_fuente: 'truckflow',
+    }
+  }
+
+  const salida = String(externalSalidaAt ?? '').trim()
+  const salMs = parseTimestampMs(salida)
+  if (Number.isFinite(salMs) && salMs > afterMs) {
+    return {
+      point: { code: 'SL_EGRESO', occurredAt: normalizeTimestampForExport(salida) },
+      fin_fuente: 'excel_salida',
+    }
+  }
+  return null
+}
+
 export type SlBalanzaRollupKpiEndpoints = {
   from: TimedLogicalPoint
   to: TimedLogicalPoint
@@ -1794,7 +1844,7 @@ export type SlBalanzaRollupKpiEndpoints = {
   fin_fuente: SlScatterHorarioFinFuente
 }
 
-/** KPI balanza ingreso→egreso: S1 cámara o inferido Truckflow; fin siempre salida Excel. */
+/** KPI balanza ingreso→egreso: S1 cámara o inferido Truckflow; fin cámara S7 o salida Excel. */
 export function resolveSlBalanzaRollupEndpointsForKpi(
   points: TimedLogicalPoint[],
   opts?: {
@@ -1832,25 +1882,14 @@ export function resolveSlBalanzaRollupEndpointsForKpi(
 
   const inicio_fuente: SlScatterHorarioInicioFuente = trustedFrom ? 'truckflow' : 'balanza_ingreso_inferido'
 
-  let toPt: TimedLogicalPoint
-  let fin_fuente: SlScatterHorarioFinFuente
-  if (useExcelSalida) {
-    if (salMs! <= fromMsSeed) return null
-    toPt = { code: 'SL_EGRESO', occurredAt: normalizeTimestampForExport(salida) }
-    fin_fuente = 'excel_salida'
-  } else {
-    const realEgresoTimeline = sanitizeMisplacedSlEgreso(truckflow)
-    const toCandidates = realEgresoTimeline.filter((p) => {
-      if (p.code !== 'SL_EGRESO') return false
-      const ms = parseTimestampMs(p.occurredAt)
-      return Number.isFinite(ms) && ms > fromMsSeed
-    })
-    if (!toCandidates.length) return null
-    toPt = toCandidates.reduce((earliest, p) =>
-      parseTimestampMs(p.occurredAt) < parseTimestampMs(earliest.occurredAt) ? p : earliest
-    )
-    fin_fuente = 'truckflow'
-  }
+  const endResolved = resolveSlBalanzaEgresoEndForKpi(
+    truckflow,
+    useExcelSalida ? salida : undefined,
+    fromMsSeed
+  )
+  if (!endResolved) return null
+  const toPt = endResolved.point
+  const fin_fuente = endResolved.fin_fuente
 
   const cameraPt = earliestSlPoint(truckflow, 'SL_BALANZA_INGRESO')
   const trustedMs = parseTimestampMs(trustedFrom?.occurredAt ?? '')

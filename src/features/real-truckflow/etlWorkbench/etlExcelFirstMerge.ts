@@ -182,6 +182,9 @@ export type ExcelNoTruckflowDiagnosticRow = {
   diagnostic_detail: string
 }
 
+/** Marca de tramo deducido (rollup inferido), no proveniente de cámara real Truckflow. */
+export const INFERRED_ROLLUP_VALID_DETAIL = 'DEDUCIDO_INFERRED_ROLLUP'
+
 export type ExcelOperationSegmentScatterRow = {
   external_operation_id: string
   journey_uid: string
@@ -1978,7 +1981,7 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
           truckflow_circuit_code: leg.executiveCircuitCode,
           resolved_executive_circuit_code: resolvedExecutiveCircuitCode,
           truckflow_executive_status: '',
-          truckflow_valid_detail: 'DEDUCIDO_INFERRED_ROLLUP',
+          truckflow_valid_detail: INFERRED_ROLLUP_VALID_DETAIL,
           match_quality: evidence.match_quality,
           route_quality: evidence.route_quality,
           analysis_ready_for_scatter: flags.analysis_ready_for_scatter,

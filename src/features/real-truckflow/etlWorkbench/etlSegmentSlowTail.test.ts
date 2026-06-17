@@ -67,13 +67,15 @@ describe('etlSegmentSlowTail', () => {
     expect(csvRows[0]!.duracion_minutos).toBe(100)
   })
 
-  it('CSV lentos usa el mismo universo que la gráfica (incluye excel_salida)', () => {
+  it('CSV lentos (default) usa el mismo universo que la gráfica (incluye excel_salida)', () => {
     const truckflowRows = Array.from({ length: 8 }, (_, i) =>
       row({
         duracion_minutos: 50 + i,
         patente: `TF${i}`,
         journey_id: `tf${i}`,
         horario_fuente: 'truckflow',
+        horario_fuente_inicio: 'truckflow',
+        horario_fuente_fin: 'truckflow',
       })
     )
     const excelRows = Array.from({ length: 5 }, (_, i) =>
@@ -82,10 +84,76 @@ describe('etlSegmentSlowTail', () => {
         patente: `EX${i}`,
         journey_id: `ex${i}`,
         horario_fuente: 'excel_salida',
+        horario_fuente_inicio: 'truckflow',
+        horario_fuente_fin: 'excel_salida',
       })
     )
     const tail = pickSlowTailScatterRows([...excelRows, ...truckflowRows])
     expect(tail[0]!.patente).toBe('EX4')
     expect(tail[0]!.duracion_minutos).toBe(504)
+  })
+
+  it('máximos estrictos: excluye salida Excel e inicio inferido (sin inducir nada)', () => {
+    const truckflowRows = Array.from({ length: 8 }, (_, i) =>
+      row({
+        duracion_minutos: 135 + i,
+        patente: `TF${i}`,
+        journey_id: `tf${i}`,
+        horario_fuente: 'truckflow',
+        horario_fuente_inicio: 'truckflow',
+        horario_fuente_fin: 'truckflow',
+      })
+    )
+    const excelRows = [
+      row({
+        duracion_minutos: 239,
+        patente: 'EXCEL',
+        journey_id: 'excel',
+        horario_fuente: 'excel_salida',
+        horario_fuente_inicio: 'truckflow',
+        horario_fuente_fin: 'excel_salida',
+      }),
+      row({
+        duracion_minutos: 300,
+        patente: 'INFER',
+        journey_id: 'infer',
+        horario_fuente: 'mixto',
+        horario_fuente_inicio: 'balanza_ingreso_inferido',
+        horario_fuente_fin: 'truckflow',
+      }),
+    ]
+    const tail = pickSlowTailScatterRows([...excelRows, ...truckflowRows], {
+      strictTruckflowOnly: true,
+      minDurationMinutes: 130,
+    })
+    expect(tail.every((r) => r.horario_fuente_inicio === 'truckflow')).toBe(true)
+    expect(tail.every((r) => r.horario_fuente_fin === 'truckflow')).toBe(true)
+    expect(tail.some((r) => r.patente === 'EXCEL' || r.patente === 'INFER')).toBe(false)
+    expect(tail.every((r) => r.duracion_minutos > 130)).toBe(true)
+  })
+
+  it('máximos estrictos: umbral mínimo descarta duraciones ≤ 130 min', () => {
+    const rows = [
+      row({
+        duracion_minutos: 120,
+        patente: 'CORTO',
+        horario_fuente: 'truckflow',
+        horario_fuente_inicio: 'truckflow',
+        horario_fuente_fin: 'truckflow',
+      }),
+      row({
+        duracion_minutos: 145,
+        patente: 'LARGO',
+        horario_fuente: 'truckflow',
+        horario_fuente_inicio: 'truckflow',
+        horario_fuente_fin: 'truckflow',
+      }),
+    ]
+    const tail = pickSlowTailScatterRows(rows, {
+      strictTruckflowOnly: true,
+      minDurationMinutes: 130,
+    })
+    expect(tail).toHaveLength(1)
+    expect(tail[0]!.patente).toBe('LARGO')
   })
 })

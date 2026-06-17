@@ -18,6 +18,7 @@ import {
 import {
   downloadSlowTailCsv,
   scatterRowsToSlowTailExport,
+  DISCHARGE_MAX_MIN_MINUTES,
   SLOW_TAIL_MAX_TRUCKS,
 } from '../etlWorkbench/etlSegmentSlowTail'
 import { safeExportFilename } from '../../../utils/chartExport'
@@ -114,7 +115,15 @@ export function SegmentScatterByDayChart({
   }
 
   const exportSlowTail = () => {
-    const exportRows = scatterRowsToSlowTailExport(chartRows)
+    // Máximos estrictamente de cámara Truckflow (sin Excel ni inferencia). En el tramo de
+    // descarga (… → egreso) se exige además superar el mínimo de descarga (130 min).
+    const isDischargeTramo = chartRows.some(
+      (r) => r.segment_to === 'SL_EGRESO' || r.segment_to === 'BALANZA_EGRESO'
+    )
+    const exportRows = scatterRowsToSlowTailExport(chartRows, {
+      strictTruckflowOnly: true,
+      minDurationMinutes: isDischargeTramo ? DISCHARGE_MAX_MIN_MINUTES : 0,
+    })
     if (!exportRows.length) return
     const slug = tramoLabel.replace(/\s*→\s*/g, '_').replace(/[^\w-]+/g, '_')
     downloadSlowTailCsv(

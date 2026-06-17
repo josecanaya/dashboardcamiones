@@ -880,6 +880,74 @@ export function promoteExcelMovimientosContrato(
   return { entries: out, promotedCount }
 }
 
+/** Entrada a Ricardone (cualquiera de estas marca que el camión efectivamente ingresó/se preparó). */
+const RIC_ENTRY_LOGICAL_CODES = new Set(['INGRESO', 'PREINGRESO', 'PREINGRESO_EGRESO'])
+/** Evidencia de que la descarga se concretó en Ricardone (si está, NO es un rechazo). */
+const RIC_DISCHARGE_COMPLETION_CODES = new Set([
+  'VOLCABLE',
+  'CELDA16_DESCARGA',
+  'CELDA16_CARGA',
+  'BALANZA_EGRESO',
+])
+
+function sequenceTokens(detectedSequence: string): string[] {
+  const key = normalizeAnomalySequenceKey(detectedSequence)
+  if (key === ANOMALY_SEQUENCE_EMPTY) return []
+  return key.split('>').filter(Boolean)
+}
+
+function isSlSequenceToken(token: string): boolean {
+  return token === 'SL' || token.startsWith('SL_')
+}
+
+/**
+ * Patrón de posible rechazo (Ricardone): el camión ingresó y se caló, pero NO aparece en San Lorenzo
+ * y NO completó descarga (sin volcable/celda/balanza egreso). Combinado con que la pasada corre
+ * DESPUÉS de la conciliación Excel, equivale a "se caló, no fue a SL, no descargó y no figura en Excel".
+ * La demora calada→egreso es una señal adicional opcional, no requerida.
+ */
+function sequenceLooksLikePossibleRejection(detectedSequence: string): boolean {
+  const tokens = sequenceTokens(detectedSequence)
+  if (!tokens.length) return false
+  const hasCalada = tokens.includes('CALADA')
+  const hasRicEntry = tokens.some((t) => RIC_ENTRY_LOGICAL_CODES.has(t))
+  if (!hasCalada || !hasRicEntry) return false
+  if (tokens.some(isSlSequenceToken)) return false
+  if (tokens.some((t) => RIC_DISCHARGE_COMPLETION_CODES.has(t))) return false
+  return true
+}
+
+function reclassifyEntryAsPossibleRejection(entry: CircuitClassificationEntry): CircuitClassificationEntry {
+  return {
+    ...entry,
+    committeeGroup: 'VARIACIONES_OPERATIVAS',
+    pieSliceLabel: 'VARIACIONES OPERATIVAS',
+    committeeReason: 'POSIBLE_RECHAZO_CONTEMPLADO',
+    operationalVariationType: 'POSIBLE_RECHAZO',
+    executiveStatus: 'INCOMPLETO',
+    executiveReason: 'POSIBLE_RECHAZO_CONTEMPLADO',
+  }
+}
+
+/**
+ * Reclasifica anomalías que en realidad son posibles rechazos (ingreso/preingreso → calada sin SL,
+ * sin descarga instrumentada y sin confirmación de Excel). Debe ejecutarse DESPUÉS de las promociones
+ * Excel: cualquier journey confirmado por Excel ya salió de ANOMALÍAS, de modo que lo que queda con
+ * este patrón es precisamente lo que no figura en el Excel de movimientos por contrato.
+ */
+export function reclassifyPossibleRejections(
+  entries: CircuitClassificationEntry[]
+): { entries: CircuitClassificationEntry[]; reclassifiedCount: number } {
+  let reclassifiedCount = 0
+  const out = entries.map((entry) => {
+    if (entry.committeeGroup !== 'ANOMALIAS') return entry
+    if (!sequenceLooksLikePossibleRejection(entry.detectedSequence)) return entry
+    reclassifiedCount++
+    return reclassifyEntryAsPossibleRejection(entry)
+  })
+  return { entries: out, reclassifiedCount }
+}
+
 /** Reconstruye torta, barras e índices desde un subconjunto de entries (p. ej. filtro por producto). */
 export function rebuildCircuitClassificationIndex(
   entries: CircuitClassificationEntry[],
@@ -1496,7 +1564,7 @@ export function buildCircuitClassificationIndex(
 
   if (excelOperationsWithTruckflowCsv?.trim()) {
     const excelReco = applyExcelFirstReconciliation(entries, excelOperationsWithTruckflowCsv)
-    entries = excelReco.entries
+    entries = reclassifyPossibleRejections(excelReco.entries).entries
     return rebuildClassificationIndexFromEntries(
       entries,
       excelReco.promotedCount,
@@ -1505,7 +1573,7 @@ export function buildCircuitClassificationIndex(
   }
 
   const excelPromo = promoteExcelMovimientosContrato(entries, mergedTruckflowMovimientosCsv)
-  entries = excelPromo.entries
+  entries = reclassifyPossibleRejections(excelPromo.entries).entries
 
   return rebuildClassificationIndexFromEntries(entries, excelPromo.promotedCount, excelPromo.promotedCount)
 }

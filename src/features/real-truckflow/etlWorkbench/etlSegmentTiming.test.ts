@@ -32,6 +32,7 @@ import {
   isSlBalanzaIngresoAnchoredOnExcelIngreso,
   SL_BALANZA_STAY_MAX_MINUTES,
   evaluateSlBalanzaComitePayload,
+  SL_BALANZA_COMITE_PRODUCT_OPTIONS,
   buildSlComiteTruckflowContext,
   OPERATIONAL_TRIP_GAP_MAX_MINUTES,
   INFERRED_KPI_ROLLUP_MAX_MINUTES,
@@ -403,6 +404,69 @@ describe('etlSegmentTiming', () => {
     expect(ev.durationMin).toBeGreaterThan(SL_BALANZA_STAY_MAX_MINUTES)
   })
 
+  it('comité SL: rollup unificado balanza→egreso con cámara S1/S7 (LHT051, Excel salida temprana)', () => {
+    // Caso real: sin cámara S5 (balanza salida); única evidencia el rollup unificado
+    // SL_BALANZA_INGRESO → SL_EGRESO. Inicio = cámara SLZBalIngFte (02:33:32),
+    // fin = cámara SLZSalidaC1Fte (03:16:18), pese a salida Excel temprana (02:40).
+    const segments = [
+      {
+        segment_from: 'SL_BALANZA_INGRESO',
+        segment_to: 'SL_EGRESO',
+        segment_start_time: '2026-06-04T02:33:32',
+        segment_end_time: '2026-06-04T03:16:18',
+      },
+    ]
+    const { opSegments, truckflowPoints, enrichedPoints } = buildSlComiteTruckflowContext({
+      segments,
+      externalSalidaAt: '2026-06-04T02:40:00',
+      executiveCircuitCode: 'R7',
+    })
+    const ev = evaluateSlBalanzaComitePayload(
+      opSegments,
+      truckflowPoints,
+      '2026-06-04T02:40:00',
+      undefined,
+      enrichedPoints,
+      SL_BALANZA_COMITE_PRODUCT_OPTIONS
+    )
+    expect(ev.reason).toBe('ok')
+    expect(ev.payload).not.toBeNull()
+    expect(ev.payload!.segment_duration_min).toBeGreaterThan(40)
+    expect(ev.payload!.segment_duration_min).toBeLessThan(45)
+    expect(ev.payload!.horario_fuente_inicio).toBe('truckflow')
+    expect(ev.payload!.horario_fuente_fin).toBe('truckflow')
+    expect(ev.payload!.segment_start_time).toContain('02:33:32')
+    expect(ev.payload!.segment_end_time).toContain('03:16:18')
+  })
+
+  it('comité SL: rollup unificado NO confía inicio anclado al ingreso Excel Ricardone', () => {
+    const excelIng = '2026-06-04T02:33:32'
+    const segments = [
+      {
+        segment_from: 'SL_BALANZA_INGRESO',
+        segment_to: 'SL_EGRESO',
+        segment_start_time: excelIng,
+        segment_end_time: '2026-06-04T03:16:18',
+      },
+    ]
+    const { opSegments, truckflowPoints, enrichedPoints } = buildSlComiteTruckflowContext({
+      segments,
+      externalIngresoAt: excelIng,
+      externalSalidaAt: '2026-06-04T03:16:18',
+      executiveCircuitCode: 'R7',
+    })
+    const ev = evaluateSlBalanzaComitePayload(
+      opSegments,
+      truckflowPoints,
+      '2026-06-04T03:16:18',
+      excelIng,
+      enrichedPoints,
+      SL_BALANZA_COMITE_PRODUCT_OPTIONS
+    )
+    expect(ev.payload).toBeNull()
+    expect(ev.reason).toBe('inicio_anchored_excel_ric')
+  })
+
   it('comité SL balanza→egreso: fin Excel y duración ≤ 180 min con cámara S1', () => {
     const sources = buildExcelScatterByDaySources([
       {
@@ -636,7 +700,7 @@ describe('etlSegmentTiming', () => {
     expect(repaired!.horario_fuente_fin).toBe('excel_salida')
   })
 
-  it('KPI balanza: egreso siempre Excel aunque haya cámara S7 antes', () => {
+  it('KPI balanza: fin por cámara de egreso (S7), no Excel; balanza salida S5 ignorada', () => {
     const segments = [
       {
         segment_from: 'SL_BALANZA_INGRESO',
@@ -657,8 +721,10 @@ describe('etlSegmentTiming', () => {
       truckflowPoints,
       truckflowSegments: segments,
     })
-    expect(kpi?.fin_fuente).toBe('excel_salida')
-    expect(kpi?.to.occurredAt).toContain('14:00:00')
+    expect(kpi?.inicio_fuente).toBe('truckflow')
+    expect(kpi?.from.occurredAt).toContain('10:00:00')
+    expect(kpi?.fin_fuente).toBe('truckflow')
+    expect(kpi?.to.occurredAt).toContain('10:45:00')
   })
 
   it('no usa ingreso Excel Ric como inicio S1 ni en scatter > 180 min', () => {

@@ -8,6 +8,7 @@ import {
   committeeChartExportCsv,
   normalizeAnomalySequenceKey,
   promoteExcelMovimientosContrato,
+  reclassifyPossibleRejections,
   resolveDischargePointLabel,
   type CircuitClassificationEntry,
 } from './etlCircuitClassificationIndex'
@@ -349,6 +350,92 @@ describe('promoteExcelMovimientosContrato', () => {
     const row = index.entries.find((e) => e.journeyId === 'j-nd')!
     expect(row.committeeGroup).toBe('COMPLETOS')
     expect(row.executiveCircuitCode).toBe('R1')
+    expect(buildAnomalyReviewSummary(index.entries).listedAnomalyCount).toBe(0)
+  })
+})
+
+describe('reclassifyPossibleRejections', () => {
+  function anomalyRic(detectedSequence: string, partial: Partial<CircuitClassificationEntry> = {}) {
+    return entry({
+      committeeGroup: 'ANOMALIAS',
+      pieSliceLabel: 'ANOMALÍAS',
+      executiveCircuitCode: 'SIN_PUNTO',
+      committeeReason: 'NO_DIFERENCIABLE_SIN_PUNTO_FUERTE',
+      operationalVariationType: '',
+      detectedSequence,
+      ...partial,
+    })
+  }
+
+  it('marca POSIBLE_RECHAZO: ingreso→preingreso→calada sin egreso ni SL', () => {
+    const { entries, reclassifiedCount } = reclassifyPossibleRejections([
+      anomalyRic('INGRESO>PREINGRESO>CALADA'),
+    ])
+    expect(reclassifiedCount).toBe(1)
+    expect(entries[0]!.committeeGroup).toBe('VARIACIONES_OPERATIVAS')
+    expect(entries[0]!.pieSliceLabel).toBe('VARIACIONES OPERATIVAS')
+    expect(entries[0]!.operationalVariationType).toBe('POSIBLE_RECHAZO')
+    expect(entries[0]!.committeeReason).toBe('POSIBLE_RECHAZO_CONTEMPLADO')
+  })
+
+  it('marca POSIBLE_RECHAZO con balanza ingreso (sin balanza egreso) y con egreso', () => {
+    const { entries } = reclassifyPossibleRejections([
+      anomalyRic('INGRESO>PREINGRESO>CALADA>BALANZA_INGRESO', { journeyId: 'a' }),
+      anomalyRic('INGRESO>PREINGRESO>CALADA>EGRESO', { journeyId: 'b' }),
+    ])
+    expect(entries.every((e) => e.operationalVariationType === 'POSIBLE_RECHAZO')).toBe(true)
+  })
+
+  it('NO marca rechazo si completó descarga (volcable o balanza egreso)', () => {
+    const { entries, reclassifiedCount } = reclassifyPossibleRejections([
+      anomalyRic('INGRESO>PREINGRESO>CALADA>VOLCABLE>EGRESO', { journeyId: 'a' }),
+      anomalyRic('INGRESO>PREINGRESO>CALADA>BALANZA_INGRESO>BALANZA_EGRESO>EGRESO', { journeyId: 'b' }),
+    ])
+    expect(reclassifiedCount).toBe(0)
+    expect(entries.every((e) => e.committeeGroup === 'ANOMALIAS')).toBe(true)
+  })
+
+  it('NO marca rechazo si pasó por San Lorenzo', () => {
+    const { reclassifiedCount } = reclassifyPossibleRejections([
+      anomalyRic('INGRESO>PREINGRESO>CALADA>EGRESO>SL_INGRESO'),
+    ])
+    expect(reclassifiedCount).toBe(0)
+  })
+
+  it('NO marca rechazo sin calada ni sin entrada Ricardone', () => {
+    const { reclassifiedCount } = reclassifyPossibleRejections([
+      anomalyRic('INGRESO>PREINGRESO>EGRESO', { journeyId: 'a' }),
+      anomalyRic('CALADA>EGRESO', { journeyId: 'b' }),
+    ])
+    expect(reclassifiedCount).toBe(0)
+  })
+
+  it('NO toca entries que no son anomalías', () => {
+    const { reclassifiedCount } = reclassifyPossibleRejections([
+      anomalyRic('INGRESO>PREINGRESO>CALADA', {
+        committeeGroup: 'COMPLETOS',
+        pieSliceLabel: 'COMPLETOS',
+      }),
+    ])
+    expect(reclassifiedCount).toBe(0)
+  })
+
+  it('cableado Excel: en Excel → COMPLETOS; sin Excel mismo patrón → POSIBLE_RECHAZO', () => {
+    const debugCsv = [
+      'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
+      'j-excel,ABC123,ricardone,ANOMALIAS,ANOMALÍAS,SIN_PUNTO,,INGRESO>PREINGRESO>CALADA,5,ANOMALO,ANOMALO,NO_DIFERENCIABLE_SIN_PUNTO_FUERTE,,NO_DIFERENCIABLE_SIN_PUNTO_FUERTE,EVENTOS_INSUFICIENTES,,INCOMPLETO,2026-05-12T08:00:00.000Z,2026-05-12T09:00:00.000Z,',
+      'j-rech,XYZ789,ricardone,ANOMALIAS,ANOMALÍAS,SIN_PUNTO,,INGRESO>PREINGRESO>CALADA,5,ANOMALO,ANOMALO,NO_DIFERENCIABLE_SIN_PUNTO_FUERTE,,NO_DIFERENCIABLE_SIN_PUNTO_FUERTE,EVENTOS_INSUFICIENTES,,INCOMPLETO,2026-05-12T08:00:00.000Z,2026-05-12T09:00:00.000Z,',
+    ].join('\n')
+    const excelCsv = [
+      'external_operation_id,matched_journey_uids,plate_normalized,planta_normalized,movement_type,source_date,resolved_product,product_normalized,resolved_platform,platform_normalized,truckflow_circuit_codes,resolved_circuit_family,match_quality,route_quality,evidence_count',
+      'op1,j-excel,ABC123,RICARDONE,INGRESO,2026-05-12,SOJA,SOJA,VOLCABLE_PTO_3,VOLCABLE PTO 3,SIN_PUNTO,SAN_LORENZO_VOLCABLE,EXTERNAL_MATCH_EXACT,ROUTE_COMPLETE,1',
+    ].join('\n')
+    const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
+    const inExcel = index.entries.find((e) => e.journeyId === 'j-excel')!
+    const notInExcel = index.entries.find((e) => e.journeyId === 'j-rech')!
+    expect(inExcel.committeeGroup).toBe('COMPLETOS')
+    expect(notInExcel.committeeGroup).toBe('VARIACIONES_OPERATIVAS')
+    expect(notInExcel.operationalVariationType).toBe('POSIBLE_RECHAZO')
     expect(buildAnomalyReviewSummary(index.entries).listedAnomalyCount).toBe(0)
   })
 })

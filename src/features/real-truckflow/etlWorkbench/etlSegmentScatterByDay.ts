@@ -24,7 +24,7 @@ import {
   type SlScatterHorarioFinFuente,
 } from './etlSegmentTiming'
 import { argentinaLocalParts, ARGENTINA_UTC_OFFSET_MINUTES, parseTimestampMs } from './etlTimestampNormalize'
-import type { ExcelOperationSegmentScatterRow } from './etlExcelFirstMerge'
+import { INFERRED_ROLLUP_VALID_DETAIL, type ExcelOperationSegmentScatterRow } from './etlExcelFirstMerge'
 import type { SegmentScatterRow } from './etlOperationalAnalysis'
 import { p75, p90 } from '../../../utils/stats'
 
@@ -177,7 +177,12 @@ function resolveSlBalanzaScatterSourceForOperation(
   const salida = String(metaRow.external_salida_at ?? '').trim()
   if (!salida) return null
 
-  const operationSegments = operationTimedSegments(opRows)
+  // Solo segmentos de cámara real: los rollups deducidos (DEDUCIDO_INFERRED_ROLLUP) no deben
+  // aportar puntos de balanza ingreso/egreso "truckflow" porque no provienen de cámara.
+  const realCameraRows = opRows.filter(
+    (r) => String(r.truckflow_valid_detail ?? '').trim() !== INFERRED_ROLLUP_VALID_DETAIL
+  )
+  const operationSegments = operationTimedSegments(realCameraRows)
   const { opSegments: truckflowSegments, truckflowPoints, enrichedPoints } =
     buildSlComiteTruckflowContext({
       segments: operationSegments,

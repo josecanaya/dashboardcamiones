@@ -72,13 +72,49 @@ export const SLOW_TAIL_EXPORT_HEADERS = [
   'tramo',
 ] as const
 
-/** Mismo universo que la gráfica (sin filtrar por fuente). */
-export function pickSlowTailScatterRows(rows: SegmentScatterByDayRow[]): SegmentScatterByDayRow[] {
-  return pickSlowTailByDuration(rows, (r) => r.duracion_minutos)
+/** Umbral mínimo de los máximos del tramo de descarga (balanza ingreso → egreso). */
+export const DISCHARGE_MAX_MIN_MINUTES = 130
+
+/**
+ * Fila con horarios estrictamente de cámara Truckflow (sin inducir nada): inicio y fin
+ * por cámara. Excluye salida Excel (`excel_salida`), inicio inferido
+ * (`balanza_ingreso_inferido`) y rollups Excel (`excel_inferido`).
+ */
+export function isStrictTruckflowScatterRow(row: SegmentScatterByDayRow): boolean {
+  const inicio = row.horario_fuente_inicio
+  const fin = row.horario_fuente_fin
+  if (inicio || fin) return inicio === 'truckflow' && fin === 'truckflow'
+  return row.horario_fuente === 'truckflow'
 }
 
-export function scatterRowsToSlowTailExport(rows: SegmentScatterByDayRow[]): SlowTailExportRow[] {
-  return pickSlowTailScatterRows(rows).map((r) => ({
+export type SlowTailSelectionOptions = {
+  /** Solo filas con horarios estrictamente de cámara Truckflow (sin Excel ni inferencia). */
+  strictTruckflowOnly?: boolean
+  /** Excluye duraciones que no superen este mínimo (min). */
+  minDurationMinutes?: number
+}
+
+/** Mismo universo que la gráfica salvo que se pidan opciones (máximos estrictos). */
+export function pickSlowTailScatterRows(
+  rows: SegmentScatterByDayRow[],
+  opts?: SlowTailSelectionOptions
+): SegmentScatterByDayRow[] {
+  const strict = opts?.strictTruckflowOnly ?? false
+  const minDur = opts?.minDurationMinutes ?? 0
+  const filtered = rows.filter(
+    (r) =>
+      Number.isFinite(r.duracion_minutos) &&
+      r.duracion_minutos > minDur &&
+      (!strict || isStrictTruckflowScatterRow(r))
+  )
+  return pickSlowTailByDuration(filtered, (r) => r.duracion_minutos)
+}
+
+export function scatterRowsToSlowTailExport(
+  rows: SegmentScatterByDayRow[],
+  opts?: SlowTailSelectionOptions
+): SlowTailExportRow[] {
+  return pickSlowTailScatterRows(rows, opts).map((r) => ({
     patente: r.patente,
     horario_ingreso: r.timestamp_inicio,
     horario_egreso: r.timestamp_fin,
