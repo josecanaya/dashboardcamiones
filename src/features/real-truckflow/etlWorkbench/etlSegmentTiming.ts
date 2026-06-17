@@ -1557,10 +1557,56 @@ export type SlBalanzaComiteEvaluation = {
 }
 
 /**
- * Corrección fija de cámaras SL (parseo): se restan 2 h 20 min a la estadía
- * balanza ingreso → egreso para alinear con el reloj real.
+ * Corrección descarga SL (solo tramo balanza ingreso → egreso): las cámaras/reloj
+ * Truckflow marcan ~2 h antes del tiempo real de planta; se resta a la estadía.
  */
-export const SL_BALANZA_TIME_CORRECTION_MINUTES = 140
+export const SL_DESCARGA_TIME_CORRECTION_MINUTES = 120
+
+/** Duración bruta mínima para aplicar corrección de planta (evita restar 2 h en estadías cortas reales). */
+export const SL_DESCARGA_PLANT_OFFSET_RAW_MINUTES = 150
+
+export function resolveSlBalanzaDescargaPlantOffsetMinutes(rawDurationMinutes: number): number {
+  if (
+    !Number.isFinite(rawDurationMinutes) ||
+    rawDurationMinutes < SL_DESCARGA_PLANT_OFFSET_RAW_MINUTES
+  ) {
+    return 0
+  }
+  return SL_DESCARGA_TIME_CORRECTION_MINUTES
+}
+
+/** Alias histórico (comité / producto). */
+export const SL_BALANZA_TIME_CORRECTION_MINUTES = SL_DESCARGA_TIME_CORRECTION_MINUTES
+
+export function correctSlBalanzaDescargaStayTiming(
+  startIso: string,
+  endIso: string,
+  options?: { extraCorrectionMinutes?: number; applyPlantOffset?: boolean }
+): {
+  segment_start_time: string
+  segment_end_time: string
+  durationMinutes: number
+} | null {
+  const extraCorrection = Math.max(0, options?.extraCorrectionMinutes ?? 0)
+  const applyPlantOffset = options?.applyPlantOffset ?? true
+  const rawDur = minutesBetweenIso(startIso, endIso)
+  if (!Number.isFinite(rawDur) || rawDur <= 0) return null
+  const plantOffset = applyPlantOffset ? resolveSlBalanzaDescargaPlantOffsetMinutes(rawDur) : 0
+  const totalCorrection = plantOffset + extraCorrection
+  const dur = rawDur - totalCorrection
+  if (dur <= 0) return null
+  const endMs = parseTimestampMs(endIso)
+  if (!Number.isFinite(endMs)) return null
+  const startOut =
+    totalCorrection > 0 ?
+      formatArgentinaIsoFromMs(endMs - dur * 60_000)
+    : startIso
+  return {
+    segment_start_time: normalizeTimestampForExport(startOut),
+    segment_end_time: normalizeTimestampForExport(endIso),
+    durationMinutes: Math.round(dur * 10) / 10,
+  }
+}
 
 /** Tope de estadía corregida balanza ingreso → egreso en KPI/scatter Excel-first. */
 export const SL_BALANZA_COMITE_MAX_MINUTES = 240
@@ -1576,9 +1622,9 @@ export type SlBalanzaComiteOptions = {
   lenientStart?: boolean
 }
 
-/** Opciones de producto: inicio flexible, corrección −2 h 20, tope 240 min. */
+/** Opciones de producto: inicio flexible, −2 h si duración bruta ≥ 150 min, tope 240 min. */
 export const SL_BALANZA_COMITE_PRODUCT_OPTIONS: SlBalanzaComiteOptions = {
-  correctionMinutes: SL_BALANZA_TIME_CORRECTION_MINUTES,
+  correctionMinutes: 0,
   maxStayMinutes: SL_BALANZA_COMITE_MAX_MINUTES,
   enforceStayLimit: false,
   lenientStart: true,
@@ -1646,7 +1692,8 @@ export function evaluateSlBalanzaComitePayload(
   }
 
   const rawDur = minutesBetweenIso(inicioRaw, fin)
-  const dur = rawDur - correction
+  const plantOffset = resolveSlBalanzaDescargaPlantOffsetMinutes(rawDur)
+  const dur = rawDur - plantOffset - correction
   const fromCode = SL_BALANZA_ROLLUP_TRANSITION.from
   const toCode = SL_BALANZA_ROLLUP_TRANSITION.to
 
@@ -1667,8 +1714,9 @@ export function evaluateSlBalanzaComitePayload(
   }
 
   // Con corrección, el fin queda fijo en la salida Excel y el inicio se recalcula.
+  const totalShift = plantOffset + correction
   const inicioOut =
-    correction > 0 ? formatArgentinaIsoFromMs(salMs - dur * 60_000) : inicioRaw
+    totalShift > 0 ? formatArgentinaIsoFromMs(salMs - dur * 60_000) : inicioRaw
   const inicioFuente: SlScatterHorarioInicioFuente = trusted ? 'truckflow' : 'balanza_ingreso_inferido'
 
   return {
@@ -1938,15 +1986,20 @@ export function extractSlBalancaRollupFromTimeline(
   const endpoints = resolveSlBalancaRollupEndpoints(points)
   if (!endpoints) return null
 
-  const durationMinutes = minutesBetweenIso(endpoints.from.occurredAt, endpoints.to.occurredAt)
-  if (!isValidSegmentDuration(durationMinutes, fromCode, templateToCode)) return null
+  const corrected = correctSlBalanzaDescargaStayTiming(
+    endpoints.from.occurredAt,
+    endpoints.to.occurredAt,
+    { applyPlantOffset: true }
+  )
+  if (!corrected) return null
+  if (!isValidSegmentDuration(corrected.durationMinutes, fromCode, templateToCode)) return null
   return {
     journeyId,
     plate,
     executiveCircuitCode,
     fromCode,
     toCode: templateToCode,
-    durationMinutes,
+    durationMinutes: corrected.durationMinutes,
   }
 }
 
@@ -2114,10 +2167,17 @@ export function synthesizeSlRollupLegsFromTimedSegments(input: {
     truckflowSegments,
   })
   if (kpiBalanza) {
-    const durationMinutes = minutesBetweenIso(kpiBalanza.from.occurredAt, kpiBalanza.to.occurredAt)
+    const corrected = correctSlBalanzaDescargaStayTiming(
+      kpiBalanza.from.occurredAt,
+      kpiBalanza.to.occurredAt,
+      { applyPlantOffset: true }
+    )
     const fromCode = SL_BALANZA_ROLLUP_TRANSITION.from
     const toCode = SL_BALANZA_ROLLUP_TRANSITION.to
-    if (isValidSegmentDuration(durationMinutes, fromCode, toCode)) {
+    if (
+      corrected &&
+      isValidSegmentDuration(corrected.durationMinutes, fromCode, toCode)
+    ) {
       const key = `${fromCode}|${toCode}`
       if (!legs.some((l) => `${l.fromCode}|${l.toCode}` === key)) {
         legs.push({
@@ -2126,9 +2186,9 @@ export function synthesizeSlRollupLegsFromTimedSegments(input: {
           executiveCircuitCode: input.executiveCircuitCode,
           fromCode,
           toCode,
-          durationMinutes,
-          segment_start_time: kpiBalanza.from.occurredAt,
-          segment_end_time: kpiBalanza.to.occurredAt,
+          durationMinutes: corrected.durationMinutes,
+          segment_start_time: corrected.segment_start_time,
+          segment_end_time: corrected.segment_end_time,
         })
       }
     }
@@ -3105,6 +3165,28 @@ function collapsedFrontLogicalPoints(j: ReconstructedRealJourney): CollapsedLogi
   return out
 }
 
+function resolveTimedSegmentLeg(
+  from: { code: string; occurredAt: string },
+  to: { code: string; occurredAt: string },
+  applyPlantOffset = false
+): { durationMinutes: number; segment_start_time: string; segment_end_time: string } | null {
+  if (
+    from.code === SL_BALANZA_ROLLUP_TRANSITION.from &&
+    to.code === SL_BALANZA_ROLLUP_TRANSITION.to
+  ) {
+    return correctSlBalanzaDescargaStayTiming(from.occurredAt, to.occurredAt, {
+      applyPlantOffset,
+    })
+  }
+  const durationMinutes = minutesBetweenIso(from.occurredAt, to.occurredAt)
+  if (!Number.isFinite(durationMinutes)) return null
+  return {
+    durationMinutes,
+    segment_start_time: from.occurredAt,
+    segment_end_time: to.occurredAt,
+  }
+}
+
 export function extractSegmentLegs(
   journey: ReconstructedRealJourney,
   executiveCircuitCode = ''
@@ -3114,15 +3196,16 @@ export function extractSegmentLegs(
   for (let i = 0; i < points.length - 1; i++) {
     const from = points[i]!
     const to = points[i + 1]!
-    const durationMinutes = minutesBetweenIso(from.occurredAt, to.occurredAt)
-    if (!isValidSegmentDuration(durationMinutes, from.code, to.code)) continue
+    const resolved = resolveTimedSegmentLeg(from, to)
+    if (!resolved) continue
+    if (!isValidSegmentDuration(resolved.durationMinutes, from.code, to.code)) continue
     legs.push({
       journeyId: journey.journeyUid,
       plate: journey.normalizedPlate || journey.plate,
       executiveCircuitCode,
       fromCode: from.code,
       toCode: to.code,
-      durationMinutes,
+      durationMinutes: resolved.durationMinutes,
     })
   }
   return legs
@@ -3165,28 +3248,44 @@ export function extractSegmentLegsWithTimes(
   for (let i = 0; i < points.length - 1; i++) {
     const from = points[i]!
     const to = points[i + 1]!
-    const durationMinutes = minutesBetweenIso(from.occurredAt, to.occurredAt)
-    if (!isValidSegmentDuration(durationMinutes, from.code, to.code)) continue
+    if (
+      from.code === SL_BALANZA_ROLLUP_TRANSITION.from &&
+      to.code === SL_BALANZA_ROLLUP_TRANSITION.to
+    ) {
+      continue
+    }
+    const resolved = resolveTimedSegmentLeg(from, to)
+    if (!resolved) continue
+    if (!isValidSegmentDuration(resolved.durationMinutes, from.code, to.code)) continue
     legs.push({
       journeyId: journey.journeyUid,
       plate: journey.normalizedPlate || journey.plate,
       executiveCircuitCode,
       fromCode: from.code,
       toCode: to.code,
-      durationMinutes,
-      segment_start_time: from.occurredAt,
-      segment_end_time: to.occurredAt,
+      durationMinutes: resolved.durationMinutes,
+      segment_start_time: resolved.segment_start_time,
+      segment_end_time: resolved.segment_end_time,
     })
   }
   const rollup = extractSlBalancaRollupLeg(journey, executiveCircuitCode)
   if (rollup) {
-    const endpoints = resolveSlBalancaRollupEndpoints(points)
+    const kpi = resolveSlBalanzaRollupEndpointsForKpi(points)
+    const endpoints = kpi ?? resolveSlBalancaRollupEndpoints(points)
     if (endpoints) {
-      legs.push({
-        ...rollup,
-        segment_start_time: endpoints.from.occurredAt,
-        segment_end_time: endpoints.to.occurredAt,
-      })
+      const corrected = correctSlBalanzaDescargaStayTiming(
+        endpoints.from.occurredAt,
+        endpoints.to.occurredAt,
+        { applyPlantOffset: true }
+      )
+      if (corrected) {
+        legs.push({
+          ...rollup,
+          durationMinutes: corrected.durationMinutes,
+          segment_start_time: corrected.segment_start_time,
+          segment_end_time: corrected.segment_end_time,
+        })
+      }
     }
   }
   for (const leg of extractDischargeRollupLegsFromJourney(journey, executiveCircuitCode)) {

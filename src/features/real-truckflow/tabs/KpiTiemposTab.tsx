@@ -501,7 +501,8 @@ export function KpiTiemposTab() {
                   <p className="mt-1 font-mono leading-relaxed">{slBalanzaComiteDiag.detailLog}</p>
                   <p className="mt-2 text-amber-900">
                     Tramo balanza ingreso → egreso: operaciones R7/SL con inicio de balanza (cámara o inferido) y
-                    salida Excel. A cada estadía se restan 2 h 20 min (cámaras); no se muestran las que superan{' '}
+                    salida Excel. Si la duración bruta supera 150 min se restan 2 h (desfase cámaras/descarga); no se
+                    muestran las que superan{' '}
                     <span className="font-medium">240 min</span> corregidos ni las sin inicio (
                     <span className="font-medium">sin_inicio</span>).
                   </p>

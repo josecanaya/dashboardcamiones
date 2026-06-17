@@ -183,7 +183,7 @@ describe('etlSegmentTiming', () => {
     })
     const rollup = extractSlBalancaRollupLeg(j, 'R7')
     expect(rollup).not.toBeNull()
-    expect(rollup!.durationMinutes).toBe(150)
+    expect(rollup!.durationMinutes).toBe(30)
     expect(rollup!.fromCode).toBe('SL_BALANZA_INGRESO')
     expect(rollup!.toCode).toBe('SL_EGRESO')
   })
@@ -506,7 +506,7 @@ describe('etlSegmentTiming', () => {
       (l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_EGRESO'
     )
     expect(balanzaEgreso).toBeDefined()
-    expect(balanzaEgreso!.durationMinutes).toBeGreaterThan(60)
+    expect(balanzaEgreso!.durationMinutes).toBeGreaterThan(15)
     expect(balanzaEgreso!.durationMinutes).toBeLessThanOrEqual(INFERRED_KPI_ROLLUP_MAX_MINUTES)
     if (ingresoSl) {
       expect(ingresoSl.durationMinutes).toBeLessThanOrEqual(INFERRED_KPI_ROLLUP_MAX_MINUTES)

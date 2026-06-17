@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { histogramWithKde } from '../../../utils/stats'
-import { computeStayTimeStats } from '../../../services/analyticsKpi'
+import type { StayTimeStats } from '../../../services/analyticsKpi'
 import { SEGMENT_TIMING_HISTOGRAM_BIN_MIN } from '../etlWorkbench/etlSegmentTiming'
 import type { FranjaHoraria, SegmentScatterByDayRow } from '../etlWorkbench/etlSegmentScatterByDay'
 import {
@@ -51,47 +51,32 @@ function franjaLegendLabel(f: (typeof FRANJA_HORARIA_ORDER)[number]): string {
 
 export function SegmentScatterByDayChart({
   rows,
+  chartRows,
   tramoLabel,
   circuitCode,
+  selectedDay,
+  onSelectedDayChange,
+  franjaFilter,
+  onFranjaFilterChange,
+  dayOptions,
+  isAllDays,
+  stats,
+  visibleRowCount,
 }: {
   rows: SegmentScatterByDayRow[]
+  chartRows: SegmentScatterByDayRow[]
   tramoLabel: string
   circuitCode: string
+  selectedDay: string
+  onSelectedDayChange: (day: string) => void
+  franjaFilter: FranjaHoraria | null
+  onFranjaFilterChange: (franja: FranjaHoraria | null) => void
+  dayOptions: string[]
+  isAllDays: boolean
+  stats: StayTimeStats
+  visibleRowCount: number
 }) {
-  const dayOptions = useMemo(
-    () => [...new Set(rows.map((r) => r.fecha_tramo))].filter(Boolean).sort(),
-    [rows]
-  )
-
-  const [selectedDay, setSelectedDay] = useState(SCATTER_DAY_FILTER_ALL)
-  const [franjaFilter, setFranjaFilter] = useState<FranjaHoraria | null>(null)
-
-  useEffect(() => {
-    if (!dayOptions.length) {
-      setSelectedDay('')
-      return
-    }
-    if (selectedDay && selectedDay !== SCATTER_DAY_FILTER_ALL && !dayOptions.includes(selectedDay)) {
-      setSelectedDay(SCATTER_DAY_FILTER_ALL)
-    }
-  }, [dayOptions, selectedDay])
-
-  const isAllDays = selectedDay === SCATTER_DAY_FILTER_ALL
-
-  const visibleRows = useMemo(() => {
-    if (!rows.length) return []
-    if (isAllDays) return rows
-    return rows.filter((r) => r.fecha_tramo === selectedDay)
-  }, [rows, isAllDays, selectedDay])
-
-  const chartRows = useMemo(() => {
-    if (!franjaFilter) return visibleRows
-    return visibleRows.filter((r) => r.franja_horaria === franjaFilter)
-  }, [visibleRows, franjaFilter])
-
   const durations = useMemo(() => chartRows.map((r) => r.duracion_minutos), [chartRows])
-
-  const stats = useMemo(() => computeStayTimeStats(durations), [durations])
 
   const chartData = useMemo(() => {
     if (!durations.length) return []
@@ -125,7 +110,7 @@ export function SegmentScatterByDayChart({
   )
 
   const toggleFranjaFilter = (f: FranjaHoraria) => {
-    setFranjaFilter((prev) => (prev === f ? null : f))
+    onFranjaFilterChange(franjaFilter === f ? null : f)
   }
 
   const exportSlowTail = () => {
@@ -159,7 +144,7 @@ export function SegmentScatterByDayChart({
             <span className="font-semibold text-slate-700">Vista</span>
             <select
               value={selectedDay}
-              onChange={(e) => setSelectedDay(e.target.value)}
+              onChange={(e) => onSelectedDayChange(e.target.value)}
               className="min-w-[13rem] rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm"
             >
               <option value={SCATTER_DAY_FILTER_ALL}>Todos los días (general)</option>
@@ -187,13 +172,16 @@ export function SegmentScatterByDayChart({
         {franjaFilter ?
           ` (filtro: ${franjaFilter})`
         : null}
-        {visibleRows.length !== chartRows.length ?
-          ` · de ${visibleRows.length.toLocaleString('es-AR')} en la vista`
+        {visibleRowCount !== chartRows.length ?
+          ` · de ${visibleRowCount.toLocaleString('es-AR')} en la vista`
         : null}
         {isAllDays ?
           ` · ${dayOptions.length} días del período`
         : ` · ${selectedDay}`}{' '}
-        · promedio {stats.count ? `${stats.mean.toFixed(1)} min` : '—'}
+        · tiempo medio {stats.count ? `${stats.mean.toFixed(1)} min` : '—'}
+        {franjaFilter && stats.count ?
+          ` · desvío σ ${stats.std.toFixed(1)} min`
+        : null}
       </p>
 
       {!chartRows.length ?
@@ -278,7 +266,7 @@ export function SegmentScatterByDayChart({
               {franjaFilter ?
                 <button
                   type="button"
-                  onClick={() => setFranjaFilter(null)}
+                  onClick={() => onFranjaFilterChange(null)}
                   className="rounded-full border border-slate-300 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-600 hover:bg-slate-50"
                 >
                   Ver todas
