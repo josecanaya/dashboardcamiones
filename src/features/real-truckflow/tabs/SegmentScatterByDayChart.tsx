@@ -16,10 +16,9 @@ import {
   buildColoredBinStackPoints,
 } from './SegmentTimingScatterChart'
 import {
-  downloadSlowTailCsv,
-  scatterRowsToSlowTailExport,
-  DISCHARGE_MAX_MIN_MINUTES,
-  SLOW_TAIL_MAX_TRUCKS,
+  CHART_VISIBLE_SLOW_EXPORT_COUNT,
+  downloadChartVisibleCsv,
+  scatterRowsToChartVisibleExport,
 } from '../etlWorkbench/etlSegmentSlowTail'
 import { safeExportFilename } from '../../../utils/chartExport'
 
@@ -114,20 +113,12 @@ export function SegmentScatterByDayChart({
     onFranjaFilterChange(franjaFilter === f ? null : f)
   }
 
-  const exportSlowTail = () => {
-    // Máximos estrictamente de cámara Truckflow (sin Excel ni inferencia). En el tramo de
-    // descarga (… → egreso) se exige además superar el mínimo de descarga (130 min).
-    const isDischargeTramo = chartRows.some(
-      (r) => r.segment_to === 'SL_EGRESO' || r.segment_to === 'BALANZA_EGRESO'
-    )
-    const exportRows = scatterRowsToSlowTailExport(chartRows, {
-      strictTruckflowOnly: true,
-      minDurationMinutes: isDischargeTramo ? DISCHARGE_MAX_MIN_MINUTES : 0,
-    })
+  const exportChartVisible = () => {
+    const exportRows = scatterRowsToChartVisibleExport(chartRows, CHART_VISIBLE_SLOW_EXPORT_COUNT)
     if (!exportRows.length) return
     const slug = tramoLabel.replace(/\s*→\s*/g, '_').replace(/[^\w-]+/g, '_')
-    downloadSlowTailCsv(
-      safeExportFilename(`kpi_${circuitCode}_${slug}_top10_lentos`, 'csv'),
+    downloadChartVisibleCsv(
+      safeExportFilename(`kpi_${circuitCode}_${slug}_ultimos_${CHART_VISIBLE_SLOW_EXPORT_COUNT}_vista`, 'csv'),
       exportRows
     )
   }
@@ -167,11 +158,11 @@ export function SegmentScatterByDayChart({
           <button
             type="button"
             disabled={!chartRows.length}
-            onClick={exportSlowTail}
-            title="Mismos puntos que la gráfica (10 % más lentos, máx. 30)"
+            onClick={exportChartVisible}
+            title={`Los ${CHART_VISIBLE_SLOW_EXPORT_COUNT} camiones más lentos de esta vista (mismos puntos que la gráfica)`}
             className="rounded-lg border border-rose-300 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-900 hover:bg-rose-100 disabled:opacity-40"
           >
-            CSV 10 % más lentos (máx. {SLOW_TAIL_MAX_TRUCKS})
+            Export CSV ({CHART_VISIBLE_SLOW_EXPORT_COUNT} más lentos en vista)
           </button>
         </div>
       </div>

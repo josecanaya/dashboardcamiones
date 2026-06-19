@@ -1,0 +1,98 @@
+=== Participación circuitos R1/R5/R6/R7 en movimientos por contrato (Excel crudo) ===
+Movimientos en período: 3464
+CTG únicos en período: 2882
+
+circuito | filas | % filas | CTG únicos | % CTG
+R1 | 84 | 2.42% | 84 | 2.91%
+R5 | 140 | 4.04% | 140 | 4.86%
+R6 | 99 | 2.86% | 99 | 3.44%
+R7 | 2390 | 69% | 2390 | 82.93%
+
+Período egreso Excel: 2026-06-12 → 2026-06-18
+Eventos Truckflow cargados: 16369
+
+=== Matriz R1: captura por cámara (crudo vs listado Excel) ===
+Total camiones R1: 84
+Reconocidos en >= 4 puntos del recorrido: 10/84 (11.9%)
+
+columna | capturados | % ok | % error (no leído)
+ingreso | 19/84 | 22.62% | 77.38%
+preingreso | 18/84 | 21.43% | 78.57%
+calada | 47/84 | 55.95% | 44.05%
+balanza_ingreso | 31/84 | 36.9% | 63.1%
+balanza_egreso | 0/84 | 0% | 100%
+celda16_descarga | 2/84 | 2.38% | 97.62%
+Universo Excel (movimientos por contrato, sin transform):
+  filas leídas (archivo): 3464
+  movimientos en período (con patente/egreso): 3464
+  CTG únicos en período (total Excel): 2882
+  coinciden circuito R1 (plataforma): 84
+  filas circuito en rango egreso: 84
+  camiones únicos (CTG) matriz: 84
+  % del Excel (filas en rango): 2.42%
+  % del Excel (CTG únicos período): 2.91%
+
+=== Matriz R5: captura por cámara (crudo vs listado Excel) ===
+Total camiones R5: 140
+Reconocidos en >= 4 puntos del recorrido: 82/140 (58.57%)
+
+columna | capturados | % ok | % error (no leído)
+ingreso | 105/140 | 75% | 25%
+preingreso | 99/140 | 70.71% | 29.29%
+calada | 108/140 | 77.14% | 22.86%
+balanza_ingreso | 91/140 | 65% | 35%
+balanza_egreso | 0/140 | 0% | 100%
+volcable | 60/140 | 42.86% | 57.14%
+Universo Excel (movimientos por contrato, sin transform):
+  filas leídas (archivo): 3464
+  movimientos en período (con patente/egreso): 3464
+  CTG únicos en período (total Excel): 2882
+  coinciden circuito R5 (plataforma): 140
+  filas circuito en rango egreso: 140
+  camiones únicos (CTG) matriz: 140
+  % del Excel (filas en rango): 4.04%
+  % del Excel (CTG únicos período): 4.86%
+
+=== Matriz R6: captura por cámara (crudo vs listado Excel) ===
+Total camiones R6: 99
+Reconocidos en >= 4 puntos del recorrido: 57/99 (57.58%)
+
+columna | capturados | % ok | % error (no leído)
+ingreso | 73/99 | 73.74% | 26.26%
+preingreso | 66/99 | 66.67% | 33.33%
+calada | 74/99 | 74.75% | 25.25%
+balanza_ingreso | 74/99 | 74.75% | 25.25%
+balanza_egreso | 0/99 | 0% | 100%
+volcable | 38/99 | 38.38% | 61.62%
+Universo Excel (movimientos por contrato, sin transform):
+  filas leídas (archivo): 3464
+  movimientos en período (con patente/egreso): 3464
+  CTG únicos en período (total Excel): 2882
+  coinciden circuito R6 (plataforma): 99
+  filas circuito en rango egreso: 99
+  camiones únicos (CTG) matriz: 99
+  % del Excel (filas en rango): 2.86%
+  % del Excel (CTG únicos período): 3.44%
+
+=== Matriz R7: captura por cámara (crudo vs listado Excel) ===
+Total camiones R7: 2390
+Reconocidos en >= 4 puntos del recorrido: 1658/2390 (69.37%)
+
+columna | capturados | % ok | % error (no leído)
+ingreso | 1423/2390 | 59.54% | 40.46%
+preingreso | 1396/2390 | 58.41% | 41.59%
+calada | 1642/2390 | 68.7% | 31.3%
+egreso | 1669/2390 | 69.83% | 30.17%
+ingreso_slz | 1722/2390 | 72.05% | 27.95%
+balanza_ingreso_slz | 410/2390 | 17.15% | 82.85%
+balanza_egreso_slz | 94/2390 | 3.93% | 96.07%
+salida_slz | 1826/2390 | 76.4% | 23.6%
+Universo Excel (movimientos por contrato, sin transform):
+  filas leídas (archivo): 3464
+  movimientos en período (con patente/egreso): 3464
+  CTG únicos en período (total Excel): 2882
+  coinciden circuito R7 (plataforma): 2390
+  filas circuito en rango egreso: 2390
+  camiones únicos (CTG) matriz: 2390
+  % del Excel (filas en rango): 69%
+  % del Excel (CTG únicos período): 82.93%

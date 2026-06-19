@@ -847,7 +847,7 @@ function journeyBoundsMs(j: TruckflowJourneyForMerge): { startMs: number; endMs:
   return { startMs, endMs: Math.max(startMs, endMs) }
 }
 
-/** Evita mezclar recorridos distintos del mismo camión (>6 h entre journeys). */
+/** @deprecated Ya no se usa: el merge Excel-first incluye todos los journeys en ventana. */
 function selectCoherentJourneyCluster(
   matched: TruckflowJourneyForMerge[],
   mov: ExternalMovimientoContratoNormalized
@@ -994,7 +994,7 @@ function buildEvidenceFromMatches(
     truckflow_last_seen_at: ends.sort().reverse()[0] ?? '',
     combined_observed_sequence: combinedSeq,
     combined_segments: combinedSegments,
-    evidence_count: matched.length,
+    evidence_count: matchedIds.length,
     match_quality,
     route_quality,
     warnings,
@@ -1371,20 +1371,9 @@ export function findTruckflowEvidenceForExcelOperation(
     }
   }
 
-  let coherentMatched = narrowTry.matched
-  const ingMs = parseMs(mov.external_ingreso_at)
-  if (Number.isFinite(ingMs)) {
-    const cutoffMs = ingMs - 30 * 60_000
-    const afterIngreso = coherentMatched.filter((j) => {
-      const b = journeyBoundsMs(j)
-      return b && b.endMs >= cutoffMs
-    })
-    if (afterIngreso.length) coherentMatched = afterIngreso
-  }
-
-  coherentMatched = selectCoherentJourneyCluster(coherentMatched, mov)
+  let matchedForEvidence = narrowTry.matched
   const built = buildEvidenceFromMatches(
-    coherentMatched,
+    matchedForEvidence,
     narrowTry.exact,
     narrowTry.fuzzy,
     mov,
@@ -2166,6 +2155,7 @@ const SEGMENT_SCATTER_HEADERS = [
   'route_quality',
   'analysis_ready_for_scatter',
   'analysis_warning',
+  'external_ingreso_at',
   'external_salida_at',
   'external_calado_at',
 ] as const

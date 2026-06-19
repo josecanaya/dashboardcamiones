@@ -4,6 +4,8 @@ import { inferPlantaFromSegment } from './etlSectorOccupancy30min'
 import {
   formatTransitionLabel,
   INFERRED_KPI_ROLLUP_MAX_MINUTES,
+  SL_KPI_SEGMENT_MAX_MINUTES,
+  SL_INGRESO_BALANZA_ROLLUP_TRANSITION,
   repairSlBalanzaScatterSegment,
   buildSlBalanzaEgresoComiteScatterPayload,
   buildSlComiteTruckflowContext,
@@ -242,10 +244,10 @@ function resolveSlIngresoBalanzaScatterSourceForOperation(
     if (
       Number.isFinite(duration) &&
       duration > 0 &&
-      duration <= INFERRED_KPI_ROLLUP_MAX_MINUTES &&
+      duration <= SL_KPI_SEGMENT_MAX_MINUTES &&
       Number.isFinite(clock) &&
       clock > 0 &&
-      clock <= INFERRED_KPI_ROLLUP_MAX_MINUTES &&
+      clock <= SL_KPI_SEGMENT_MAX_MINUTES &&
       Math.abs(clock - duration) <= 2
     ) {
       return {
@@ -275,20 +277,7 @@ function resolveSlIngresoBalanzaScatterSourceForOperation(
       l.fromCode === SL_INGRESO_BALANZA_ROLLUP_TRANSITION.from &&
       l.toCode === SL_INGRESO_BALANZA_ROLLUP_TRANSITION.to
   )
-  if (!leg || leg.durationMinutes <= 0 || leg.durationMinutes > INFERRED_KPI_ROLLUP_MAX_MINUTES) {
-    return null
-  }
-  const hasTrustedS1 = operationSegments.some(
-    (s) =>
-      String(s.segment_to ?? '').trim() === 'SL_BALANZA_INGRESO' &&
-      String(s.segment_from ?? '').trim() !== 'SL_BALANZA_INGRESO'
-  )
-  const hasMeasuredIngresoBal = measuredRows.length > 0
-  if (
-    !hasTrustedS1 &&
-    !hasMeasuredIngresoBal &&
-    leg.durationMinutes <= SL_INGRESO_TO_BALANZA_TRANSIT_DEFAULT_MINUTES + 2
-  ) {
+  if (!leg || leg.durationMinutes <= 0 || leg.durationMinutes > SL_KPI_SEGMENT_MAX_MINUTES) {
     return null
   }
   return {
@@ -417,8 +406,8 @@ export function normalizeExcelSegmentForScatterByDay(
   if (
     from === SL_INGRESO_BALANZA_ROLLUP_TRANSITION.from &&
     to === SL_INGRESO_BALANZA_ROLLUP_TRANSITION.to &&
-    (duration > INFERRED_KPI_ROLLUP_MAX_MINUTES ||
-      minutesBetweenScatter(start, end || start) > INFERRED_KPI_ROLLUP_MAX_MINUTES)
+    (duration > SL_KPI_SEGMENT_MAX_MINUTES ||
+      minutesBetweenScatter(start, end || start) > SL_KPI_SEGMENT_MAX_MINUTES)
   ) {
     return null
   }

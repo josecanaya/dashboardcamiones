@@ -8,6 +8,8 @@ export const SLOW_TAIL_FRACTION = 0.1
 export const SLOW_TAIL_PERCENTILE = (1 - SLOW_TAIL_FRACTION) * 100
 /** Tope de filas en CSV de lentos (más camiones no aporta lectura operativa). */
 export const SLOW_TAIL_MAX_TRUCKS = 30
+/** Export desde gráfica KPI: los N más lentos visibles en la vista actual. */
+export const CHART_VISIBLE_SLOW_EXPORT_COUNT = 10
 
 export function slowTailExportCount(total: number): number {
   if (total < 1) return 0
@@ -156,6 +158,75 @@ export function slowTailExportCsv(exportRows: SlowTailExportRow[]): string {
 export function downloadSlowTailCsv(filename: string, rows: SlowTailExportRow[]): void {
   if (!rows.length) return
   triggerBrowserCsvDownload(filename, slowTailExportCsv(rows))
+}
+
+export type ChartVisibleExportRow = {
+  patente: string
+  fecha_tramo: string
+  hora_inicio: string
+  horario_ingreso: string
+  horario_egreso: string
+  duracion_minutos: number
+}
+
+export const CHART_VISIBLE_EXPORT_HEADERS = [
+  'patente',
+  'fecha_tramo',
+  'hora_inicio',
+  'horario_ingreso',
+  'horario_egreso',
+  'duracion_minutos',
+] as const
+
+/** Los N camiones con mayor duración entre los que se ven en la gráfica (misma vista/filtros). */
+export function pickTopDurationFromChartView<T>(
+  items: T[],
+  getDuration: (item: T) => number,
+  limit = CHART_VISIBLE_SLOW_EXPORT_COUNT
+): T[] {
+  if (!items.length) return []
+  const sorted = [...items].sort((a, b) => getDuration(b) - getDuration(a))
+  return sorted.slice(0, Math.min(limit, sorted.length))
+}
+
+export function scatterRowsToChartVisibleExport(
+  rows: SegmentScatterByDayRow[],
+  limit = CHART_VISIBLE_SLOW_EXPORT_COUNT
+): ChartVisibleExportRow[] {
+  return pickTopDurationFromChartView(rows, (r) => r.duracion_minutos, limit).map((r) => ({
+    patente: r.patente,
+    fecha_tramo: r.fecha_tramo,
+    hora_inicio: r.hora_inicio,
+    horario_ingreso: r.timestamp_inicio,
+    horario_egreso: r.timestamp_fin,
+    duracion_minutos: Math.round(r.duracion_minutos * 10) / 10,
+  }))
+}
+
+export function chartVisibleExportCsv(exportRows: ChartVisibleExportRow[]): string {
+  return recordsToCsv(
+    [...CHART_VISIBLE_EXPORT_HEADERS],
+    exportRows as unknown as Record<string, unknown>[]
+  )
+}
+
+export function downloadChartVisibleCsv(filename: string, rows: ChartVisibleExportRow[]): void {
+  if (!rows.length) return
+  triggerBrowserCsvDownload(filename, chartVisibleExportCsv(rows))
+}
+
+export function legsToChartVisibleExport(
+  legs: SegmentLeg[],
+  limit = CHART_VISIBLE_SLOW_EXPORT_COUNT
+): ChartVisibleExportRow[] {
+  return pickTopDurationFromChartView(legs, (l) => l.durationMinutes, limit).map((l) => ({
+    patente: l.plate,
+    fecha_tramo: '',
+    hora_inicio: '',
+    horario_ingreso: '',
+    horario_egreso: '',
+    duracion_minutos: Math.round(l.durationMinutes * 10) / 10,
+  }))
 }
 
 export function legsForAggregate(

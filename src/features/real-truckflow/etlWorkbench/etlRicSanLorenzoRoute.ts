@@ -10,6 +10,7 @@ import {
   TRANSILE_C16_RIC_DESCARGA_PREFIX,
 } from './validCircuitMatrix'
 import { parseTimestampMs } from './etlTimestampNormalize'
+import { eventOperationalInstantForTimeline } from '../../../services/realEventOperationalTime'
 
 const RIC_LOGICAL_MARKERS = new Set([
   'INGRESO',
@@ -269,10 +270,9 @@ export function computeR7LegDurations(j: ReconstructedRealJourney): R7LegDuratio
     return Number.isFinite(ms) && ms > 0 ? ms / 60000 : 0
   }
 
-  const totalDurationMin = parseMin(
-    String(events[0]!.occurredAt ?? ''),
-    String(events[events.length - 1]!.occurredAt ?? '')
-  )
+  const instantAt = (idx: number) => eventOperationalInstantForTimeline(events[idx]!)
+
+  const totalDurationMin = parseMin(instantAt(0), instantAt(events.length - 1))
   if (totalDurationMin <= 0) return null
 
   let ricDurationMin = 0
@@ -280,22 +280,13 @@ export function computeR7LegDurations(j: ReconstructedRealJourney): R7LegDuratio
   let slDurationMin = 0
 
   if (ricEndIdx >= ricStartIdx) {
-    ricDurationMin = parseMin(
-      String(events[ricStartIdx]!.occurredAt ?? ''),
-      String(events[ricEndIdx]!.occurredAt ?? '')
-    )
+    ricDurationMin = parseMin(instantAt(ricStartIdx), instantAt(ricEndIdx))
   }
   if (slStartIdx >= 0 && slEndIdx >= slStartIdx) {
-    slDurationMin = parseMin(
-      String(events[slStartIdx]!.occurredAt ?? ''),
-      String(events[slEndIdx]!.occurredAt ?? '')
-    )
+    slDurationMin = parseMin(instantAt(slStartIdx), instantAt(slEndIdx))
   }
   if (ricEndIdx >= 0 && slStartIdx > ricEndIdx) {
-    bridgeDurationMin = parseMin(
-      String(events[ricEndIdx]!.occurredAt ?? ''),
-      String(events[slStartIdx]!.occurredAt ?? '')
-    )
+    bridgeDurationMin = parseMin(instantAt(ricEndIdx), instantAt(slStartIdx))
   }
 
   return { ricDurationMin, bridgeDurationMin, slDurationMin, totalDurationMin }

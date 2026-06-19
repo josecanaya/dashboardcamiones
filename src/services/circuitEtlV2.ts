@@ -5,6 +5,7 @@
 
 import type { RealJourneyEventDto } from './realJourneyEvents.types'
 import { compareRealEvents } from './realJourneyEventsMapper'
+import { getEventOperationalInstantMs } from './realEventOperationalTime'
 import { normalizeRealEventPoint } from './realEventNormalization'
 import {
   normalizePlateStrict,
@@ -136,7 +137,7 @@ export function collapseGtSequence(parts: readonly string[]): string {
 }
 
 function eventTs(e: RealJourneyEventDto): number {
-  const t = new Date(e.occurredAt ?? e.recordedAt ?? '').getTime()
+  const t = getEventOperationalInstantMs(e)
   return Number.isFinite(t) ? t : NaN
 }
 

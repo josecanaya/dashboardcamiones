@@ -22,11 +22,14 @@ import {
   synthesizeInferredRollupLegsFromTimedSegments,
   synthesizeTemplateChainLegsFromTimedSegments,
   synthesizeVolcableReceiptKpiLegsForOperation,
+  diagnoseBalanzaStayFromTimedSegments,
+  diagnoseR7SlBalanzaIngresoSalida,
   mergeVolcableReceiptSegmentTiming,
   VOLCABLE_RECEIPT_KPI_UNION_CODE,
   selectCoherentSegmentGroup,
   isValidSegmentDuration,
   resolveSlBalanzaRollupEndpointsForKpi,
+  resolveSlBalanzaEgresoHorarioForKpi,
   repairSlBalanzaScatterSegment,
   shouldRejectSlBalanzaScatterForExcelIngreso,
   isSlBalanzaIngresoAnchoredOnExcelIngreso,
@@ -36,7 +39,7 @@ import {
   buildSlComiteTruckflowContext,
   OPERATIONAL_TRIP_GAP_MAX_MINUTES,
   INFERRED_KPI_ROLLUP_MAX_MINUTES,
-  SL_BALANZA_STAY_MAX_MINUTES,
+  SL_KPI_SEGMENT_MAX_MINUTES,
   SL_INGRESO_TO_BALANZA_MAX_MINUTES,
   type ClassifiedJourneyForTiming,
 } from './etlSegmentTiming'
@@ -184,7 +187,7 @@ describe('etlSegmentTiming', () => {
     })
     const rollup = extractSlBalancaRollupLeg(j, 'R7')
     expect(rollup).not.toBeNull()
-    expect(rollup!.durationMinutes).toBe(30)
+    expect(rollup!.durationMinutes).toBe(150)
     expect(rollup!.fromCode).toBe('SL_BALANZA_INGRESO')
     expect(rollup!.toCode).toBe('SL_EGRESO')
   })
@@ -268,6 +271,8 @@ describe('etlSegmentTiming', () => {
     expect(isValidSegmentDuration(9.9, 'BALANZA_INGRESO', 'BALANZA_EGRESO')).toBe(false)
     expect(isValidSegmentDuration(10, 'BALANZA_INGRESO', 'BALANZA_EGRESO')).toBe(true)
     expect(isValidSegmentDuration(30, 'BALANZA_INGRESO', 'BALANZA_EGRESO')).toBe(true)
+    expect(isValidSegmentDuration(480, 'SL_INGRESO', 'SL_BALANZA_INGRESO')).toBe(true)
+    expect(isValidSegmentDuration(361, 'INGRESO', 'PREINGRESO')).toBe(false)
   })
 
   it('descarta tramos SL unificados de 3 minutos o menos', () => {
@@ -405,14 +410,18 @@ describe('etlSegmentTiming', () => {
   })
 
   it('comité SL: rollup unificado balanza→egreso con cámara S1/S7 (LHT051, Excel salida temprana)', () => {
-    // Caso real: sin cámara S5 (balanza salida); única evidencia el rollup unificado
-    // SL_BALANZA_INGRESO → SL_EGRESO. Inicio = cámara SLZBalIngFte (02:33:32),
-    // fin = cámara SLZSalidaC1Fte (03:16:18), pese a salida Excel temprana (02:40).
+    // Caso real: sin cámara S5 (balanza salida); S1→S5 y S5→S7 como segmentos cámara.
     const segments = [
       {
         segment_from: 'SL_BALANZA_INGRESO',
-        segment_to: 'SL_EGRESO',
+        segment_to: 'SL_BALANZA_SALIDA',
         segment_start_time: '2026-06-04T02:33:32',
+        segment_end_time: '2026-06-04T03:00:00',
+      },
+      {
+        segment_from: 'SL_BALANZA_SALIDA',
+        segment_to: 'SL_EGRESO',
+        segment_start_time: '2026-06-04T03:00:00',
         segment_end_time: '2026-06-04T03:16:18',
       },
     ]
@@ -439,13 +448,46 @@ describe('etlSegmentTiming', () => {
     expect(ev.payload!.segment_end_time).toContain('03:16:18')
   })
 
+  it('comité SL: estadía larga conserva inicio cámara S1 (sin recalcular desde Excel salida)', () => {
+    const segments = [
+      {
+        segment_from: 'SL_BALANZA_INGRESO',
+        segment_to: 'SL_BALANZA_SALIDA',
+        segment_start_time: '2026-06-10T20:55:00',
+        segment_end_time: '2026-06-10T21:00:00',
+      },
+    ]
+    const { opSegments, truckflowPoints, enrichedPoints } = buildSlComiteTruckflowContext({
+      segments,
+      externalSalidaAt: '2026-06-11T00:30:00',
+      executiveCircuitCode: 'R7',
+    })
+    const ev = evaluateSlBalanzaComitePayload(
+      opSegments,
+      truckflowPoints,
+      '2026-06-11T00:30:00',
+      undefined,
+      enrichedPoints,
+      SL_BALANZA_COMITE_PRODUCT_OPTIONS
+    )
+    expect(ev.reason).toBe('ok')
+    expect(ev.payload!.segment_start_time).toContain('20:55:00')
+    expect(ev.payload!.segment_duration_min).toBeGreaterThan(200)
+  })
+
   it('comité SL: rollup unificado NO confía inicio anclado al ingreso Excel Ricardone', () => {
     const excelIng = '2026-06-04T02:33:32'
     const segments = [
       {
         segment_from: 'SL_BALANZA_INGRESO',
-        segment_to: 'SL_EGRESO',
+        segment_to: 'SL_BALANZA_SALIDA',
         segment_start_time: excelIng,
+        segment_end_time: '2026-06-04T03:16:18',
+      },
+      {
+        segment_from: 'SL_BALANZA_SALIDA',
+        segment_to: 'SL_EGRESO',
+        segment_start_time: '2026-06-04T03:00:00',
         segment_end_time: '2026-06-04T03:16:18',
       },
     ]
@@ -571,9 +613,9 @@ describe('etlSegmentTiming', () => {
     )
     expect(balanzaEgreso).toBeDefined()
     expect(balanzaEgreso!.durationMinutes).toBeGreaterThan(15)
-    expect(balanzaEgreso!.durationMinutes).toBeLessThanOrEqual(INFERRED_KPI_ROLLUP_MAX_MINUTES)
+    expect(balanzaEgreso!.durationMinutes).toBeLessThanOrEqual(SL_BALANZA_STAY_MAX_MINUTES)
     if (ingresoSl) {
-      expect(ingresoSl.durationMinutes).toBeLessThanOrEqual(INFERRED_KPI_ROLLUP_MAX_MINUTES)
+      expect(ingresoSl.durationMinutes).toBeLessThanOrEqual(SL_KPI_SEGMENT_MAX_MINUTES)
     }
   })
 
@@ -604,7 +646,7 @@ describe('etlSegmentTiming', () => {
     expect(ingresoBalIn).toBeDefined()
   })
 
-  it('rollup balanza→egreso con ingreso SL + salida Excel (cola en puerto)', () => {
+  it('rollup balanza→egreso con ingreso SL + salida Excel: sin cámara S1 no hay tramo KPI', () => {
     const legs = synthesizeSlRollupLegsFromTimedSegments({
       operationId: 'op-sl-long-queue',
       plate: 'BB222',
@@ -619,21 +661,13 @@ describe('etlSegmentTiming', () => {
       ],
       externalSalidaAt: '2026-05-12T14:00:00',
     })
-    const ingresoBalIn = legs.find(
-      (l) => l.fromCode === 'SL_INGRESO' && l.toCode === 'SL_BALANZA_INGRESO'
-    )
     const balanzaEgreso = legs.find(
       (l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_EGRESO'
     )
-    expect(balanzaEgreso).toBeDefined()
-    expect(balanzaEgreso!.durationMinutes).toBeGreaterThan(0)
-    expect(balanzaEgreso!.durationMinutes).toBeLessThanOrEqual(SL_BALANZA_STAY_MAX_MINUTES)
-    if (ingresoBalIn) {
-      expect(ingresoBalIn.durationMinutes).toBeLessThanOrEqual(INFERRED_KPI_ROLLUP_MAX_MINUTES)
-    }
+    expect(balanzaEgreso).toBeUndefined()
   })
 
-  it('no usa ingreso Excel Ricardone como inicio de balanza SL (regresión tiempos > 3 h)', () => {
+  it('no usa ingreso Excel Ricardone como inicio de balanza SL (solo cámara S1)', () => {
     const legs = synthesizeSlRollupLegsFromTimedSegments({
       operationId: 'op-ric-ingreso',
       plate: 'CC333',
@@ -644,6 +678,12 @@ describe('etlSegmentTiming', () => {
           segment_to: 'SL_INGRESO',
           segment_start_time: '2026-05-12T10:00:00',
           segment_end_time: '2026-05-12T10:30:00',
+        },
+        {
+          segment_from: 'SL_BALANZA_INGRESO',
+          segment_to: 'SL_BALANZA_SALIDA',
+          segment_start_time: '2026-05-12T11:00:00',
+          segment_end_time: '2026-05-12T11:30:00',
         },
       ],
       externalIngresoAt: '2026-05-12T06:00:00',
@@ -658,6 +698,34 @@ describe('etlSegmentTiming', () => {
     expect(Date.parse(balanzaEgreso!.segment_start_time)).toBeGreaterThan(
       Date.parse('2026-05-12T10:00:00')
     )
+  })
+
+  it('resolveSlBalanzaEgresoHorarioForKpi: ignora SL_INGRESO→SL_EGRESO (Excel) y usa cámara S7', () => {
+    const s1Ms = parseTimestampMs('2026-06-11T02:01:11.342-03:00')
+    const segments = [
+      {
+        segment_from: 'SL_BALANZA_INGRESO',
+        segment_to: 'SL_BALANZA_SALIDA',
+        segment_start_time: '2026-06-11T02:01:11.342-03:00',
+        segment_end_time: '2026-06-11T02:05:00-03:00',
+      },
+      {
+        segment_from: 'SL_BALANZA_SALIDA',
+        segment_to: 'SL_EGRESO',
+        segment_start_time: '2026-06-11T02:05:00-03:00',
+        segment_end_time: '2026-06-11T02:45:30.123-03:00',
+      },
+      {
+        segment_from: 'SL_INGRESO',
+        segment_to: 'SL_EGRESO',
+        segment_start_time: '2026-06-11T01:00:00',
+        segment_end_time: '2026-06-11T06:01:00',
+      },
+    ]
+    const r = resolveSlBalanzaEgresoHorarioForKpi(segments, s1Ms, '2026-06-11T06:01:00')
+    expect(r).not.toBeNull()
+    expect(r!.fin_fuente).toBe('truckflow')
+    expect(r!.endIso).toContain('02:45:30')
   })
 
   it('KPI balanza: inicio Truckflow 15:00 + salida Excel 17:00 = 2 h (sin desfase -3h)', () => {
@@ -696,6 +764,7 @@ describe('etlSegmentTiming', () => {
     )
     expect(repaired).not.toBeNull()
     expect(repaired!.segment_duration_min).toBe(120)
+    expect(repaired!.segment_start_time).toContain('15:00:00')
     expect(repaired!.horario_fuente_inicio).toBe('truckflow')
     expect(repaired!.horario_fuente_fin).toBe('excel_salida')
   })
@@ -1361,5 +1430,63 @@ describe('etlSegmentTiming', () => {
     expect(merged.circuitCodes).toContain(VOLCABLE_RECEIPT_KPI_UNION_CODE)
     expect(merged.legs.every((l) => l.executiveCircuitCode === VOLCABLE_RECEIPT_KPI_UNION_CODE)).toBe(true)
     expect(merged.legs.length).toBeGreaterThanOrEqual(2)
+  })
+
+  it('diagnoseBalanzaStayFromTimedSegments marca rollup Excel largo vs cámara (R5)', () => {
+    const diag = diagnoseBalanzaStayFromTimedSegments({
+      operationId: 'op-r5-volc',
+      plate: 'AA111',
+      executiveCircuitCode: 'R5',
+      segments: [
+        {
+          segment_from: 'BALANZA_INGRESO',
+          segment_to: 'VOLCABLE',
+          segment_start_time: '2026-05-12T08:00:00',
+          segment_end_time: '2026-05-12T08:30:00',
+        },
+        {
+          segment_from: 'VOLCABLE',
+          segment_to: 'BALANZA_EGRESO',
+          segment_start_time: '2026-05-12T08:30:00',
+          segment_end_time: '2026-05-12T08:38:00',
+        },
+      ],
+      externalCaladoAt: '2026-05-12T09:00:00',
+      externalSalidaAt: '2026-05-12T09:45:00',
+    })
+    expect(diag).not.toBeNull()
+    expect(diag!.cameraBalanzaStayMinutes).toBe(38)
+    expect(diag!.flags).toContain('ROLLUP_VS_TEMPLATE_GAP>=15MIN')
+    expect(diag!.flags).toContain('KPI_VS_CAMARA_DELTA>=15MIN')
+    expect(diag!.kpiWinnerMinutes).toBe(105)
+    expect(['excel_discharge_rollup', 'excel_volcable_merged']).toContain(diag!.kpiWinnerSource)
+  })
+
+  it('diagnoseR7SlBalanzaIngresoSalida: fin cámara S7 aunque Excel salida sea más temprana', () => {
+    const diag = diagnoseR7SlBalanzaIngresoSalida({
+      operationId: 'op-lht051',
+      plate: 'LHT051',
+      executiveCircuitCode: 'R7',
+      segments: [
+        {
+          segment_from: 'SL_BALANZA_INGRESO',
+          segment_to: 'SL_BALANZA_SALIDA',
+          segment_start_time: '2026-06-04T02:33:32',
+          segment_end_time: '2026-06-04T03:00:00',
+        },
+        {
+          segment_from: 'SL_BALANZA_SALIDA',
+          segment_to: 'SL_EGRESO',
+          segment_start_time: '2026-06-04T03:00:00',
+          segment_end_time: '2026-06-04T03:16:18',
+        },
+      ],
+      externalSalidaAt: '2026-06-04T02:40:00',
+    })
+    expect(diag).not.toBeNull()
+    expect(diag!.comite.payload?.horario_fuente_fin).toBe('truckflow')
+    expect(diag!.flags).toContain('EXCEL_SALIDA_ANTES_QUE_EGRESO_CAMARA')
+    expect(diag!.flags).toContain('FIN_CAMARA_EGRESO_S7')
+    expect(diag!.comite.reason).toBe('ok')
   })
 })

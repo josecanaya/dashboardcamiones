@@ -1,6 +1,7 @@
 import type { ReconstructedRealJourney } from '../../../services/realJourneyEvents.types'
 import { compareRealEvents } from '../../../services/realJourneyEventsMapper'
 import { normalizeRealEventPoint } from '../../../services/realEventNormalization'
+import { eventOperationalInstantForTimeline } from '../../../services/realEventOperationalTime'
 import { computeStayTimeStats, type StayTimeStats } from '../../../services/analyticsKpi'
 import { recordsToCsv } from './etlCsv'
 import { DEFAULT_CIRCUIT_MATRIX, EXECUTIVE_CIRCUIT_MATRIX, EXECUTIVE_CIRCUIT_ORDER } from './finalCircuitScoring'
@@ -151,8 +152,11 @@ const SL_BALANZA_ROLLUP_END_CODES = ['SL_EGRESO'] as const
 /** Brecha máxima entre hitos del mismo recorrido operativo (mismo viaje). */
 export const OPERATIONAL_TRIP_GAP_MAX_MINUTES = 6 * 60
 
-/** Rollups deducidos / Excel-first: no estimar tramos > 6 h (mezcla de viajes distintos). */
+/** Rollups deducidos Ric/Volcable: tope para no mezclar viajes distintos. */
 export const INFERRED_KPI_ROLLUP_MAX_MINUTES = 6 * 60
+
+/** Tramos KPI San Lorenzo (S0→S1, etc.): sin tope 6 h — estadías reales pueden superarlo. */
+export const SL_KPI_SEGMENT_MAX_MINUTES = 72 * 60
 
 /** Estadía máxima balanza entrada → egreso SL (comité scatter/CSV): 3 h operativas. */
 export const SL_BALANZA_STAY_MAX_MINUTES = 180
@@ -298,7 +302,7 @@ export function maxAllowedMinutesForTransition(fromCode: string, toCode: string)
     return SL_SALIDA_EGRESO_MAX_MINUTES
   }
   if (key === transitionKey(SL_INGRESO_BALANZA_ROLLUP_TRANSITION.from, SL_INGRESO_BALANZA_ROLLUP_TRANSITION.to)) {
-    return INFERRED_KPI_ROLLUP_MAX_MINUTES
+    return SL_KPI_SEGMENT_MAX_MINUTES
   }
   if (key === transitionKey('VOLCABLE', 'BALANZA_EGRESO')) {
     return VOLCABLE_BALANZA_EGRESO_MAX_MINUTES
@@ -309,6 +313,9 @@ export function maxAllowedMinutesForTransition(fromCode: string, toCode: string)
         return DISCHARGE_KPI_ROLLUP_MAX_MINUTES
       }
     }
+  }
+  if (fromCode.startsWith('SL_') || toCode.startsWith('SL_')) {
+    return SL_KPI_SEGMENT_MAX_MINUTES
   }
   return SHORT_SEGMENT_MAX_MINUTES[key] ?? INFERRED_KPI_ROLLUP_MAX_MINUTES
 }
@@ -607,7 +614,7 @@ function collapsedLogicalPointsForDischargeRollup(j: ReconstructedRealJourney): 
     if (isExcludedLogicalCode(code)) continue
     const last = out[out.length - 1]
     if (last?.code === code) continue
-    out.push({ code, occurredAt: String(e.occurredAt ?? '') })
+    out.push({ code, occurredAt: eventOperationalInstantForTimeline(e) })
   }
   return out
 }
@@ -1282,16 +1289,17 @@ export function buildSlComiteTruckflowContext(input: {
   truckflowPoints: TimedLogicalPoint[]
   enrichedPoints: TimedLogicalPoint[]
 } {
-  const coherent = selectCoherentSegmentGroup(
-    input.segments,
-    input.externalIngresoAt,
-    input.externalSalidaAt
-  )
-  const opSegments = segmentsForSlTruckflowTimeline(coherent)
-  const truckflowPoints = buildTimedLogicalTimelineFromSegments(opSegments, {
-    externalIngresoAt: input.externalIngresoAt,
-    externalSalidaAt: input.externalSalidaAt,
-  })
+  const circuit = normalizeExecutiveCircuitForKpi(String(input.executiveCircuitCode ?? '').trim())
+  const useAllSlSegments = CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(circuit)
+  const coherent = useAllSlSegments
+    ? input.segments
+    : selectCoherentSegmentGroup(
+        input.segments,
+        input.externalIngresoAt,
+        input.externalSalidaAt
+      )
+  const opSegments = segmentsForSlBalanzaKpiHorarios(coherent)
+  const truckflowPoints = buildTimedLogicalTimelineFromSegments(opSegments)
   const enrichedPoints = enrichSlTimelineWithExcelAnchors(truckflowPoints, {
     externalIngresoAt: input.externalIngresoAt,
     externalCaladoAt: input.externalCaladoAt,
@@ -1316,10 +1324,18 @@ function truckflowPointsWithoutUntrustedBalanzaIngreso(
 function resolveSlBalanzaIngresoForRollup(
   truckflowPoints: TimedLogicalPoint[],
   truckflowSegments: TimedSegmentInput[],
-  enrichedPoints: TimedLogicalPoint[]
+  _enrichedPoints: TimedLogicalPoint[]
 ): TimedLogicalPoint | null {
-  const trusted = resolveTrustedSlBalanzaIngresoFromSegments(truckflowSegments, truckflowPoints)
-  if (trusted) return trusted
+  return resolveSlBalanzaIngresoCameraStart(truckflowSegments, truckflowPoints)
+}
+
+/** Inicio S1 solo con evidencia Truckflow (segmento o punto); sin proxy desde S0/Excel. */
+export function resolveSlBalanzaIngresoCameraStart(
+  truckflowSegments: TimedSegmentInput[],
+  truckflowPoints: TimedLogicalPoint[]
+): TimedLogicalPoint | null {
+  const fromSegments = resolveTrustedSlBalanzaIngresoFromSegments(truckflowSegments, truckflowPoints)
+  if (fromSegments) return fromSegments
 
   if (truckflowSegments.length === 1) {
     const seg = truckflowSegments[0]
@@ -1334,13 +1350,14 @@ function resolveSlBalanzaIngresoForRollup(
     }
   }
 
-  const cleaned = truckflowPointsWithoutUntrustedBalanzaIngreso(truckflowPoints, truckflowSegments)
-  return resolveSlBalanzaIngresoStartPoint(cleaned, enrichedPoints)
+  if (!truckflowPoints.some((p) => p.code === 'SL_BALANZA_INGRESO')) return null
+  return resolveTrustedSlBalanzaIngresoForComite(truckflowSegments, truckflowPoints)
 }
 
 function slBalanzaIngresoHitIsoFromSegment(seg: TimedSegmentInput): string | null {
   const from = String(seg.segment_from ?? '').trim()
   const to = String(seg.segment_to ?? '').trim()
+  // Rollup unificado: el inicio suele venir de Excel/inferencia, no de cámara S1.
   if (from === 'SL_BALANZA_INGRESO' && to === 'SL_EGRESO') return null
   if (from === 'SL_BALANZA_INGRESO' && to === 'SL_BALANZA_INGRESO') return null
   if (from === 'SL_BALANZA_INGRESO' && to === 'SL_BALANZA_SALIDA') {
@@ -1399,6 +1416,81 @@ export function segmentsForSlTruckflowTimeline(
       from === SL_BALANZA_ROLLUP_TRANSITION.from && to === SL_BALANZA_ROLLUP_TRANSITION.to
     )
   })
+}
+
+/**
+ * Segmentos permitidos para fijar horarios KPI balanza ingreso → egreso (solo Truckflow).
+ * Excluye rollups que anclan SL_EGRESO a salida Excel (p. ej. SL_INGRESO→SL_EGRESO).
+ */
+export function segmentsForSlBalanzaKpiHorarios(segments: TimedSegmentInput[]): TimedSegmentInput[] {
+  const base = segmentsForSlTruckflowTimeline(segments)
+  return base.filter((seg) => {
+    const from = String(seg.segment_from ?? '').trim()
+    const to = String(seg.segment_to ?? '').trim()
+    if (from === SL_BALANZA_ROLLUP_TRANSITION.from && to === SL_BALANZA_ROLLUP_TRANSITION.to) {
+      return false
+    }
+    if (from === 'SL_INGRESO' && to === 'SL_EGRESO') return false
+    return true
+  })
+}
+
+function isTrustedSlEgresoCameraSegment(from: string, to: string): boolean {
+  if (to !== 'SL_EGRESO') return false
+  if (from === 'SL_BALANZA_INGRESO' || from === 'SL_INGRESO') return false
+  return true
+}
+
+/**
+ * Fin tramo balanza→egreso: última hora SL_EGRESO en segmento cámara Truckflow;
+ * si no hay lectura, `external_salida_at` (Excel).
+ */
+export function resolveSlBalanzaEgresoHorarioForKpi(
+  segments: TimedSegmentInput[],
+  afterMs: number,
+  externalSalidaAt: string,
+  truckflowPointsFallback?: TimedLogicalPoint[]
+): { endIso: string; fin_fuente: SlScatterHorarioFinFuente } | null {
+  const horarioSegments = segmentsForSlBalanzaKpiHorarios(segments)
+  let bestMs = Number.NaN
+  let bestIso = ''
+  for (const seg of horarioSegments) {
+    const from = String(seg.segment_from ?? '').trim()
+    const to = String(seg.segment_to ?? '').trim()
+    if (!isTrustedSlEgresoCameraSegment(from, to)) continue
+    const end = String(seg.segment_end_time ?? '').trim()
+    const ms = parseTimestampMs(end)
+    if (!Number.isFinite(ms) || ms <= afterMs) continue
+    if (!Number.isFinite(bestMs) || ms > bestMs) {
+      bestMs = ms
+      bestIso = end
+    }
+  }
+  if (bestIso) {
+    return { endIso: normalizeTimestampForExport(bestIso), fin_fuente: 'truckflow' }
+  }
+
+  const points =
+    horarioSegments.length > 0 ?
+      buildTimedLogicalTimelineFromSegments(horarioSegments)
+    : (truckflowPointsFallback ?? [])
+  const camera = latestSlEgresoCameraAfterMs(points, afterMs)
+  if (camera) {
+    const camMs = parseTimestampMs(camera.occurredAt)
+    if (Number.isFinite(camMs) && camMs > afterMs) {
+      return {
+        endIso: normalizeTimestampForExport(camera.occurredAt),
+        fin_fuente: 'truckflow',
+      }
+    }
+  }
+
+  const salida = String(externalSalidaAt ?? '').trim()
+  const salMs = parseTimestampMs(salida)
+  if (Number.isFinite(salMs) && salMs > afterMs) {
+    return { endIso: normalizeTimestampForExport(salida), fin_fuente: 'excel_salida' }
+  }
+  return null
 }
 
 function earliestSlPoint(
@@ -1544,8 +1636,8 @@ export type SlBalanzaComiteEvaluation = {
 }
 
 /**
- * Corrección descarga SL (solo tramo balanza ingreso → egreso): las cámaras/reloj
- * Truckflow marcan ~2 h antes del tiempo real de planta; se resta a la estadía.
+ * Corrección legacy descarga SL (−120 min a la duración si bruta ≥ 150 min).
+ * No altera `segment_start_time`: S1 balanza ingreso = cámara Truckflow.
  */
 export const SL_DESCARGA_TIME_CORRECTION_MINUTES = 120
 
@@ -1575,21 +1667,15 @@ export function correctSlBalanzaDescargaStayTiming(
   durationMinutes: number
 } | null {
   const extraCorrection = Math.max(0, options?.extraCorrectionMinutes ?? 0)
-  const applyPlantOffset = options?.applyPlantOffset ?? true
+  const applyPlantOffset = options?.applyPlantOffset ?? false
   const rawDur = minutesBetweenIso(startIso, endIso)
   if (!Number.isFinite(rawDur) || rawDur <= 0) return null
   const plantOffset = applyPlantOffset ? resolveSlBalanzaDescargaPlantOffsetMinutes(rawDur) : 0
   const totalCorrection = plantOffset + extraCorrection
   const dur = rawDur - totalCorrection
   if (dur <= 0) return null
-  const endMs = parseTimestampMs(endIso)
-  if (!Number.isFinite(endMs)) return null
-  const startOut =
-    totalCorrection > 0 ?
-      formatArgentinaIsoFromMs(endMs - dur * 60_000)
-    : startIso
   return {
-    segment_start_time: normalizeTimestampForExport(startOut),
+    segment_start_time: normalizeTimestampForExport(startIso),
     segment_end_time: normalizeTimestampForExport(endIso),
     durationMinutes: Math.round(dur * 10) / 10,
   }
@@ -1607,14 +1693,20 @@ export type SlBalanzaComiteOptions = {
   maxStayMinutes?: number
   /** Si true, acepta inicio inferido (rollup/timeline) cuando no hay cámara confiable. Default false. */
   lenientStart?: boolean
+  /**
+   * Si true, resta corrección legacy de planta (−120 min) a la duración cuando bruta ≥ 150 min.
+   * No mueve el inicio S1: el horario de balanza ingreso es siempre cámara Truckflow.
+   */
+  applyPlantTimeCorrection?: boolean
 }
 
-/** Opciones de producto: inicio flexible, −2 h si duración bruta ≥ 150 min, tope 240 min. */
+/** Opciones de producto: inicio S1 solo cámara; duración reloj cámara→fin; tope 240 min. */
 export const SL_BALANZA_COMITE_PRODUCT_OPTIONS: SlBalanzaComiteOptions = {
   correctionMinutes: 0,
   maxStayMinutes: SL_BALANZA_COMITE_MAX_MINUTES,
   enforceStayLimit: false,
-  lenientStart: true,
+  lenientStart: false,
+  applyPlantTimeCorrection: false,
 }
 
 /** Evalúa contrato comité con motivo explícito (embudo / diagnóstico). */
@@ -1628,46 +1720,24 @@ export function evaluateSlBalanzaComitePayload(
 ): SlBalanzaComiteEvaluation {
   const correction = Math.max(0, opts?.correctionMinutes ?? 0)
   const enforceLimit = opts?.enforceStayLimit ?? true
-  const lenient = opts?.lenientStart ?? false
 
   const salida = String(externalSalidaAt ?? '').trim()
   if (!salida || !Number.isFinite(parseTimestampMs(salida))) {
     return { payload: null, reason: 'sin_salida_excel' }
   }
 
-  let startIso: string | null = null
-  const trusted = resolveTrustedSlBalanzaIngresoForComite(
-    truckflowSegments,
-    truckflowPoints,
-    enrichedTimeline
-  )
-  if (trusted) {
-    startIso = trusted.occurredAt
-  } else if (lenient) {
-    const kpiEndpoints = resolveSlBalanzaRollupEndpointsForKpi(truckflowPoints, {
-      externalSalidaAt: salida,
-      externalIngresoAt,
-      truckflowPoints,
-      truckflowSegments,
-    })
-    if (kpiEndpoints) startIso = kpiEndpoints.from.occurredAt
-  }
+  const horarioSegments = segmentsForSlBalanzaKpiHorarios(truckflowSegments)
+  const horarioPoints =
+    horarioSegments === truckflowSegments ?
+      truckflowPoints
+    : buildTimedLogicalTimelineFromSegments(horarioSegments)
+
+  const cameraStart = resolveSlBalanzaIngresoCameraStart(horarioSegments, horarioPoints)
+  const startIso = cameraStart?.occurredAt ?? null
   if (!startIso) return { payload: null, reason: 'sin_inicio_balanza' }
 
   if (shouldRejectSlBalanzaScatterForExcelIngreso(0, startIso, externalIngresoAt)) {
     return { payload: null, reason: 'inicio_anchored_excel_ric' }
-  }
-
-  if (!lenient) {
-    const slIngresoMs = earliestSlIngresoMsForComite(truckflowSegments, truckflowPoints)
-    const s1MsTrusted = parseTimestampMs(startIso)
-    if (
-      Number.isFinite(slIngresoMs) &&
-      Number.isFinite(s1MsTrusted) &&
-      s1MsTrusted < slIngresoMs - 120_000
-    ) {
-      return { payload: null, reason: 'inicio_antes_ingreso_sl' }
-    }
   }
 
   const inicioRaw = normalizeTimestampForExport(startIso)
@@ -1676,13 +1746,11 @@ export function evaluateSlBalanzaComitePayload(
     return { payload: null, reason: 'fin_no_posterior' }
   }
 
-  // La cámara de egreso debe salir de las cámaras reales (truckflowPoints), no de la
-  // timeline enriquecida, que inyecta SL_EGRESO desde la salida Excel (fallback aparte).
-  const endResolved = resolveSlBalanzaEgresoEndForKpi(truckflowPoints, salida, s1Ms)
+  const endResolved = resolveSlBalanzaEgresoHorarioForKpi(horarioSegments, s1Ms, salida, horarioPoints)
   if (!endResolved) {
     return { payload: null, reason: 'fin_no_posterior' }
   }
-  const fin = endResolved.point.occurredAt
+  const fin = endResolved.endIso
   const finFuente = endResolved.fin_fuente
   const salMs = parseTimestampMs(fin)
   if (!Number.isFinite(salMs) || salMs <= s1Ms) {
@@ -1690,7 +1758,10 @@ export function evaluateSlBalanzaComitePayload(
   }
 
   const rawDur = minutesBetweenIso(inicioRaw, fin)
-  const plantOffset = resolveSlBalanzaDescargaPlantOffsetMinutes(rawDur)
+  const plantOffset =
+    opts?.applyPlantTimeCorrection === true ?
+      resolveSlBalanzaDescargaPlantOffsetMinutes(rawDur)
+    : 0
   const dur = rawDur - plantOffset - correction
   const fromCode = SL_BALANZA_ROLLUP_TRANSITION.from
   const toCode = SL_BALANZA_ROLLUP_TRANSITION.to
@@ -1711,11 +1782,8 @@ export function evaluateSlBalanzaComitePayload(
     }
   }
 
-  // Con corrección, el fin queda fijo en la salida Excel y el inicio se recalcula.
-  const totalShift = plantOffset + correction
-  const inicioOut =
-    totalShift > 0 ? formatArgentinaIsoFromMs(salMs - dur * 60_000) : inicioRaw
-  const inicioFuente: SlScatterHorarioInicioFuente = trusted ? 'truckflow' : 'balanza_ingreso_inferido'
+  const inicioOut = inicioRaw
+  const inicioFuente: SlScatterHorarioInicioFuente = 'truckflow'
 
   return {
     payload: {
@@ -1855,47 +1923,46 @@ export function resolveSlBalanzaRollupEndpointsForKpi(
   }
 ): SlBalanzaRollupKpiEndpoints | null {
   const truckflow = opts?.truckflowPoints ?? points
-  const truckflowSegments = opts?.truckflowSegments ?? []
+  const rawSegments = opts?.truckflowSegments ?? []
+  const horarioSegments =
+    rawSegments.length > 0 ? segmentsForSlBalanzaKpiHorarios(rawSegments) : []
+  const horarioPoints =
+    horarioSegments.length > 0 ?
+      buildTimedLogicalTimelineFromSegments(horarioSegments)
+    : truckflow
   const salida = String(opts?.externalSalidaAt ?? '').trim()
-  const salMs = parseTimestampMs(salida)
-  const useExcelSalida = Number.isFinite(salMs)
 
-  const timelineForFrom = minimalTimelineForSlBalanzaIngresoInference(truckflow, salida)
-  const resolvedFrom = resolveSlBalanzaIngresoForRollup(
-    truckflow,
-    truckflowSegments,
-    timelineForFrom
+  const resolvedFrom = resolveSlBalanzaIngresoCameraStart(
+    horarioSegments.length > 0 ? horarioSegments : rawSegments,
+    horarioPoints
   )
   if (!resolvedFrom) return null
 
   const fromMsSeed = parseTimestampMs(resolvedFrom.occurredAt)
   if (!Number.isFinite(fromMsSeed)) return null
 
-  const trustedFrom = resolveTrustedSlBalanzaIngresoFromSegments(truckflowSegments, truckflow)
   const externalIngresoAt = String(opts?.externalIngresoAt ?? '').trim()
-  if (
-    !trustedFrom &&
-    isSlBalanzaIngresoAnchoredOnExcelIngreso(resolvedFrom.occurredAt, externalIngresoAt)
-  ) {
+  if (isSlBalanzaIngresoAnchoredOnExcelIngreso(resolvedFrom.occurredAt, externalIngresoAt)) {
     return null
   }
 
-  const inicio_fuente: SlScatterHorarioInicioFuente = trustedFrom ? 'truckflow' : 'balanza_ingreso_inferido'
+  const inicio_fuente: SlScatterHorarioInicioFuente = 'truckflow'
 
-  const endResolved = resolveSlBalanzaEgresoEndForKpi(
-    truckflow,
-    useExcelSalida ? salida : undefined,
-    fromMsSeed
+  const endResolved = resolveSlBalanzaEgresoHorarioForKpi(
+    horarioSegments.length > 0 ? horarioSegments : rawSegments,
+    fromMsSeed,
+    salida,
+    horarioPoints
   )
   if (!endResolved) return null
-  const toPt = endResolved.point
+  const toPt: TimedLogicalPoint = {
+    code: 'SL_EGRESO',
+    occurredAt: endResolved.endIso,
+  }
   const fin_fuente = endResolved.fin_fuente
 
   const cameraPt = earliestSlPoint(truckflow, 'SL_BALANZA_INGRESO')
-  const trustedMs = parseTimestampMs(trustedFrom?.occurredAt ?? '')
-  const cameraBalMs = Number.isFinite(trustedMs) ?
-    trustedMs
-  : parseTimestampMs(cameraPt?.occurredAt ?? '')
+  const cameraBalMs = parseTimestampMs(cameraPt?.occurredAt ?? resolvedFrom.occurredAt)
   const minFromMs = Number.isFinite(cameraBalMs) ? cameraBalMs : fromMsSeed
 
   const endpoints = finalizeSlBalanzaToEgresoEndpoints(resolvedFrom, toPt, minFromMs)
@@ -2027,8 +2094,7 @@ export function extractSlBalancaRollupFromTimeline(
 
   const corrected = correctSlBalanzaDescargaStayTiming(
     endpoints.from.occurredAt,
-    endpoints.to.occurredAt,
-    { applyPlantOffset: true }
+    endpoints.to.occurredAt
   )
   if (!corrected) return null
   if (!isValidSegmentDuration(corrected.durationMinutes, fromCode, templateToCode)) return null
@@ -2039,6 +2105,8 @@ export function extractSlBalancaRollupFromTimeline(
     fromCode,
     toCode: templateToCode,
     durationMinutes: corrected.durationMinutes,
+    segment_start_time: corrected.segment_start_time,
+    segment_end_time: corrected.segment_end_time,
   }
 }
 
@@ -2156,20 +2224,19 @@ export function synthesizeSlRollupLegsFromTimedSegments(input: {
   if (!CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(input.executiveCircuitCode)) return []
   if (!input.operationId) return []
 
-  const coherentSegments = selectCoherentSegmentGroup(
-    input.segments,
-    input.externalIngresoAt,
-    input.externalSalidaAt
-  )
+  const useAllSlSegments = CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(input.executiveCircuitCode)
+  const coherentSegments = useAllSlSegments
+    ? input.segments
+    : selectCoherentSegmentGroup(
+        input.segments,
+        input.externalIngresoAt,
+        input.externalSalidaAt
+      )
   const truckflowSegments = segmentsForSlTruckflowTimeline(coherentSegments)
   const truckflowPoints = buildTimedLogicalTimelineFromSegments(truckflowSegments, {
     externalIngresoAt: input.externalIngresoAt,
     externalSalidaAt: input.externalSalidaAt,
   })
-  const timelineForFrom = minimalTimelineForSlBalanzaIngresoInference(
-    truckflowPoints,
-    input.externalSalidaAt
-  )
   const slAnchors: SlExcelTimelineAnchors = {
     externalIngresoAt: input.externalIngresoAt,
     externalCaladoAt: input.externalCaladoAt,
@@ -2179,18 +2246,23 @@ export function synthesizeSlRollupLegsFromTimedSegments(input: {
   }
   const points = enrichSlTimelineWithExcelAnchors(truckflowPoints, slAnchors)
   const trustedBalIn = resolveTrustedSlBalanzaIngresoFromSegments(truckflowSegments, truckflowPoints)
-  const inferredForChain = resolveSlBalanzaIngresoStartPoint(
-    truckflowPointsWithoutUntrustedBalanzaIngreso(truckflowSegments, truckflowPoints),
-    timelineForFrom
-  )
   let timelineForLegs = points
-  const balInForChain = trustedBalIn ?? inferredForChain
-  if (balInForChain && !points.some((p) => p.code === 'SL_BALANZA_INGRESO')) {
+  if (trustedBalIn && !points.some((p) => p.code === 'SL_BALANZA_INGRESO')) {
     timelineForLegs = collapseTimedPoints(
-      [...points, balInForChain].sort(
+      [...points, trustedBalIn].sort(
         (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
       )
     )
+  }
+  if (!timelineForLegs.some((p) => p.code === 'SL_BALANZA_INGRESO')) {
+    const proxyStart = resolveSlBalanzaIngresoStartPoint(truckflowPoints, timelineForLegs)
+    if (proxyStart) {
+      timelineForLegs = collapseTimedPoints(
+        [...timelineForLegs, proxyStart].sort(
+          (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
+        )
+      )
+    }
   }
   const legs = extractSlOperationalChainLegsFromTimeline(
     timelineForLegs,
@@ -2208,8 +2280,7 @@ export function synthesizeSlRollupLegsFromTimedSegments(input: {
   if (kpiBalanza) {
     const corrected = correctSlBalanzaDescargaStayTiming(
       kpiBalanza.from.occurredAt,
-      kpiBalanza.to.occurredAt,
-      { applyPlantOffset: true }
+      kpiBalanza.to.occurredAt
     )
     const fromCode = SL_BALANZA_ROLLUP_TRANSITION.from
     const toCode = SL_BALANZA_ROLLUP_TRANSITION.to
@@ -3199,7 +3270,7 @@ function collapsedFrontLogicalPoints(j: ReconstructedRealJourney): CollapsedLogi
     if (isExcludedLogicalCode(code)) continue
     const last = out[out.length - 1]
     if (last?.code === code) continue
-    out.push({ code, occurredAt: String(e.occurredAt ?? '') })
+    out.push({ code, occurredAt: eventOperationalInstantForTimeline(e) })
   }
   return out
 }
@@ -3314,8 +3385,7 @@ export function extractSegmentLegsWithTimes(
     if (endpoints) {
       const corrected = correctSlBalanzaDescargaStayTiming(
         endpoints.from.occurredAt,
-        endpoints.to.occurredAt,
-        { applyPlantOffset: true }
+        endpoints.to.occurredAt
       )
       if (corrected) {
         legs.push({
@@ -3884,4 +3954,796 @@ export function segmentTimingLegsCsv(index: SegmentTimingIndex): string {
     duration_min: leg.durationMinutes.toFixed(2),
   }))
   return recordsToCsv(headers, rows)
+}
+
+/** Candidato de duración balanza ingreso → egreso (varias rutas del pipeline KPI). */
+export type BalanzaStayCandidateDiagnostic = {
+  source: string
+  durationMinutes: number
+  segment_start_time: string
+  segment_end_time: string
+  kpiValid: boolean
+  notes: string[]
+}
+
+/** Traza para auditar pérdida o sustitución de tiempos reales en estadía balanza Ricardone. */
+export type BalanzaStayTimingDiagnostic = {
+  operationId: string
+  plate: string
+  executiveCircuitCode: string
+  externalIngresoAt?: string
+  externalCaladoAt?: string
+  externalSalidaAt?: string
+  truckflowTimeline: TimedLogicalPoint[]
+  enrichedTimeline: TimedLogicalPoint[]
+  rawBalanzaCameraEvents: Array<{
+    deviceCode: string
+    sectorCode: string
+    occurredAt: string
+    logicalCode: string
+    rearCamera: boolean
+  }>
+  /** Primera B1 → última B2 posteriores (solo cámaras / timeline Truckflow). */
+  cameraBalanzaStayMinutes: number | null
+  candidates: BalanzaStayCandidateDiagnostic[]
+  kpiWinnerMinutes: number | null
+  kpiWinnerSource: string | null
+  flags: string[]
+}
+
+export type BalanzaStayTimedSegmentsInput = {
+  operationId: string
+  plate: string
+  executiveCircuitCode: string
+  segments: TimedSegmentInput[]
+  externalCaladoAt?: string
+  externalSalidaAt?: string
+  platformNormalized?: string
+  externalIngresoAt?: string
+  plantaNormalized?: string
+}
+
+function listBalanzaCameraEvents(journey: ReconstructedRealJourney) {
+  const out: BalanzaStayTimingDiagnostic['rawBalanzaCameraEvents'] = []
+  for (const e of journey.events) {
+    const norm = normalizeRealEventPoint(e)
+    if (norm.logicalCode !== 'BALANZA_INGRESO' && norm.logicalCode !== 'BALANZA_EGRESO') continue
+    out.push({
+      deviceCode: String(e.deviceCode ?? ''),
+      sectorCode: String(e.sectorCode ?? ''),
+      occurredAt: eventOperationalInstantForTimeline(e),
+      logicalCode: norm.logicalCode,
+      rearCamera: isEtlRearCameraDevice(e.deviceCode),
+    })
+  }
+  return out.sort((a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt))
+}
+
+function computeCameraBalanzaStayMinutesFromEvents(
+  events: BalanzaStayTimingDiagnostic['rawBalanzaCameraEvents']
+): number | null {
+  const b1Ms = events
+    .filter((e) => e.logicalCode === 'BALANZA_INGRESO')
+    .map((e) => parseTimestampMs(e.occurredAt))
+    .filter(Number.isFinite)
+  const b2Ms = events
+    .filter((e) => e.logicalCode === 'BALANZA_EGRESO')
+    .map((e) => parseTimestampMs(e.occurredAt))
+    .filter(Number.isFinite)
+  if (!b1Ms.length || !b2Ms.length) return null
+  const start = Math.min(...b1Ms)
+  const after = b2Ms.filter((ms) => ms > start)
+  if (!after.length) return null
+  return (Math.max(...after) - start) / 60_000
+}
+
+function computeCameraBalanzaStayMinutesFromTimeline(points: TimedLogicalPoint[]): number | null {
+  const b1Ms = points
+    .filter((p) => p.code === 'BALANZA_INGRESO')
+    .map((p) => parseTimestampMs(p.occurredAt))
+    .filter(Number.isFinite)
+  const b2Ms = points
+    .filter((p) => p.code === 'BALANZA_EGRESO')
+    .map((p) => parseTimestampMs(p.occurredAt))
+    .filter(Number.isFinite)
+  if (!b1Ms.length || !b2Ms.length) return null
+  const start = Math.min(...b1Ms)
+  const after = b2Ms.filter((ms) => ms > start)
+  if (!after.length) return null
+  return (Math.max(...after) - start) / 60_000
+}
+
+function explainDischargeRollupEndpoints(
+  points: TimedLogicalPoint[],
+  executiveCircuitCode: string,
+  rule: DischargeKpiRollupRule,
+  externalSalidaAt?: string
+): { start: string; end: string; notes: string[] } | null {
+  const notes: string[] = []
+  const volcableReceipt =
+    isVolcableReceiptCircuit(executiveCircuitCode) &&
+    rule.fromCode === BALANZA_STAY_ROLLUP_TRANSITION.from &&
+    rule.toCode === BALANZA_STAY_ROLLUP_TRANSITION.to
+  const fromIdx = findRollupFromIdx(points, rule.fromCode, volcableReceipt)
+  if (fromIdx < 0) return null
+  notes.push(
+    volcableReceipt ?
+      'inicio_rollup=último BALANZA_INGRESO (Volcable R5/R6)'
+    : 'inicio_rollup=primer BALANZA_INGRESO'
+  )
+  const fromMs = parseTimestampMs(points[fromIdx]!.occurredAt)
+  if (!Number.isFinite(fromMs)) return null
+
+  if (volcableReceipt) {
+    let endAt = ''
+    const camIdx = findRollupEndIdxLatest(points, fromIdx, rule.endCodes)
+    if (camIdx >= 0) {
+      endAt = points[camIdx]!.occurredAt
+      notes.push(`fin_rollup=cámara (${points[camIdx]!.code}, último hito)`)
+    }
+    const salida = pickExcelTimestampAfter(fromMs, undefined, externalSalidaAt, false)
+    const salMs = parseTimestampMs(salida)
+    const endMs = endAt ? parseTimestampMs(endAt) : Number.NaN
+    if (Number.isFinite(salMs) && salMs > fromMs && (!Number.isFinite(endMs) || salMs > endMs)) {
+      endAt = salida
+      notes.push('fin_rollup=external_salida_at (más tarde que cámara)')
+    }
+    if (!endAt) return null
+    return { start: points[fromIdx]!.occurredAt, end: endAt, notes }
+  }
+
+  const endIdx = findRollupEndIdx(points, fromIdx, rule.endCodes)
+  if (endIdx < 0) return null
+  notes.push(`fin_rollup=primer ${points[endIdx]!.code} tras ingreso (no el último B2)`)
+  return { start: points[fromIdx]!.occurredAt, end: points[endIdx]!.occurredAt, notes }
+}
+
+function buildEnrichedTimelineForBalanzaDiagnosis(
+  input: BalanzaStayTimedSegmentsInput
+): { truckflowPoints: TimedLogicalPoint[]; enrichedPoints: TimedLogicalPoint[] } {
+  const coherentSegments = selectCoherentSegmentGroup(
+    input.segments,
+    input.externalIngresoAt,
+    input.externalSalidaAt
+  )
+  const truckflowPoints = buildTimedLogicalTimelineFromSegments(coherentSegments, {
+    externalIngresoAt: input.externalIngresoAt,
+    externalSalidaAt: input.externalSalidaAt,
+  })
+  let enrichedPoints = injectIngresoFromExcel(truckflowPoints, input.externalIngresoAt)
+  enrichedPoints = injectCaladaFromExcel(
+    enrichedPoints,
+    input.executiveCircuitCode,
+    input.externalCaladoAt
+  )
+  enrichedPoints = enrichTimelineWithExcelDischarge(
+    enrichedPoints,
+    input.executiveCircuitCode,
+    input.externalCaladoAt,
+    input.externalSalidaAt,
+    input.platformNormalized,
+    input.externalIngresoAt
+  )
+  if (isVolcableReceiptCircuit(input.executiveCircuitCode)) {
+    enrichedPoints = injectVolcableReceiptExcelOperationalTimeline(
+      enrichedPoints,
+      coherentSegments,
+      input.externalIngresoAt,
+      input.externalCaladoAt,
+      input.externalSalidaAt
+    )
+  }
+  return { truckflowPoints, enrichedPoints }
+}
+
+function pushBalanzaStayCandidate(
+  list: BalanzaStayCandidateDiagnostic[],
+  source: string,
+  start: string,
+  end: string,
+  executiveCircuitCode: string,
+  notes: string[] = []
+) {
+  const durationMinutes = minutesBetweenIso(start, end)
+  if (!Number.isFinite(durationMinutes)) return
+  list.push({
+    source,
+    durationMinutes,
+    segment_start_time: start,
+    segment_end_time: end,
+    kpiValid: isValidKpiLegDuration(
+      durationMinutes,
+      executiveCircuitCode,
+      BALANZA_STAY_ROLLUP_TRANSITION.from,
+      BALANZA_STAY_ROLLUP_TRANSITION.to
+    ),
+    notes,
+  })
+}
+
+function resolveBalanzaStayKpiWinner(
+  candidates: BalanzaStayCandidateDiagnostic[],
+  executiveCircuitCode: string
+): { minutes: number; source: string } | null {
+  const stay = candidates.filter(
+    (c) => c.kpiValid && c.durationMinutes > 0 && Number.isFinite(c.durationMinutes)
+  )
+  if (!stay.length) return null
+  const measured = stay.find((c) => c.source === 'scatter_measured')
+  const synth = stay.filter((c) => c.source !== 'scatter_measured')
+  if (!synth.length) {
+    return measured ? { minutes: measured.durationMinutes, source: measured.source } : null
+  }
+  let best = synth[0]!
+  for (const c of synth.slice(1)) {
+    if (isVolcableReceiptCircuit(executiveCircuitCode)) {
+      if (c.durationMinutes > best.durationMinutes) best = c
+    } else if (c.durationMinutes < best.durationMinutes) {
+      best = c
+    }
+  }
+  if (measured && measured.durationMinutes > best.durationMinutes) {
+    return { minutes: measured.durationMinutes, source: measured.source }
+  }
+  return { minutes: best.durationMinutes, source: best.source }
+}
+
+function buildBalanzaStayFlags(input: {
+  executiveCircuitCode: string
+  cameraBalanzaStayMinutes: number | null
+  candidates: BalanzaStayCandidateDiagnostic[]
+  kpiWinnerMinutes: number | null
+  enrichedTimeline: TimedLogicalPoint[]
+  externalSalidaAt?: string
+  rawBalanzaCameraEvents: BalanzaStayTimingDiagnostic['rawBalanzaCameraEvents']
+}): string[] {
+  const flags: string[] = []
+  if (input.enrichedTimeline.filter((p) => p.code === 'BALANZA_INGRESO').length > 1) {
+    flags.push('MULTIPLE_BALANZA_INGRESO_EN_TIMELINE')
+  }
+  if (input.enrichedTimeline.filter((p) => p.code === 'BALANZA_EGRESO').length > 1) {
+    flags.push('MULTIPLE_BALANZA_EGRESO_EN_TIMELINE')
+  }
+  const rearB2 = input.rawBalanzaCameraEvents.some(
+    (e) => e.logicalCode === 'BALANZA_EGRESO' && e.rearCamera
+  )
+  const frontB2 = input.rawBalanzaCameraEvents.some(
+    (e) => e.logicalCode === 'BALANZA_EGRESO' && !e.rearCamera
+  )
+  if (rearB2 && !frontB2) flags.push('EGRESO_BALANZA_SOLO_CAMARA_TRASERA')
+
+  const salMs = parseTimestampMs(input.externalSalidaAt ?? '')
+  if (
+    Number.isFinite(salMs) &&
+    input.enrichedTimeline.some(
+      (p) => p.code === 'BALANZA_EGRESO' && parseTimestampMs(p.occurredAt) === salMs
+    )
+  ) {
+    flags.push('EXCEL_SALIDA_USADA_COMO_BALANZA_EGRESO')
+  }
+
+  const rollup = input.candidates.find((c) => c.source === 'excel_discharge_rollup')
+  const template = input.candidates.find((c) => c.source === 'excel_template_chain')
+  if (rollup && template && Math.abs(rollup.durationMinutes - template.durationMinutes) >= 15) {
+    flags.push('ROLLUP_VS_TEMPLATE_GAP>=15MIN')
+  }
+  if (
+    input.kpiWinnerMinutes != null &&
+    input.cameraBalanzaStayMinutes != null &&
+    Math.abs(input.kpiWinnerMinutes - input.cameraBalanzaStayMinutes) >= 15
+  ) {
+    flags.push('KPI_VS_CAMARA_DELTA>=15MIN')
+  }
+  const winner = input.candidates.find((c) => c.durationMinutes === input.kpiWinnerMinutes)
+  if (
+    winner?.source === 'excel_discharge_rollup' &&
+    template &&
+    winner.durationMinutes > template.durationMinutes
+  ) {
+    flags.push('KPI_GANO_ROLLUP_EXCEL_LARGO')
+  }
+  if (
+    input.kpiWinnerMinutes != null &&
+    input.kpiWinnerMinutes < BALANZA_STAY_MIN_MINUTES &&
+    !isVolcableReceiptCircuit(input.executiveCircuitCode)
+  ) {
+    flags.push('DEBAJO_MINIMO_10MIN_NO_ENTRA_KPI')
+  }
+  return flags
+}
+
+function supportsBalanzaStayKpi(circuitCode: string): boolean {
+  return CIRCUITS_WITH_BALANZA_STAY_ROLLUP.has(normalizeExecutiveCircuitForKpi(circuitCode))
+}
+
+/** Excel-first: compara cámara, template, rollup y ganador KPI para una operación. */
+export function diagnoseBalanzaStayFromTimedSegments(
+  input: BalanzaStayTimedSegmentsInput,
+  opts?: {
+    measuredBalanzaStay?: Pick<
+      SegmentLegWithTimes,
+      'durationMinutes' | 'segment_start_time' | 'segment_end_time'
+    >
+  }
+): BalanzaStayTimingDiagnostic | null {
+  const executiveCircuitCode = normalizeExecutiveCircuitForKpi(input.executiveCircuitCode)
+  if (!supportsBalanzaStayKpi(executiveCircuitCode)) return null
+
+  const { truckflowPoints, enrichedPoints } = buildEnrichedTimelineForBalanzaDiagnosis(input)
+  const candidates: BalanzaStayCandidateDiagnostic[] = []
+
+  const camMin = computeCameraBalanzaStayMinutesFromTimeline(truckflowPoints)
+  if (camMin != null) {
+    const b1 = truckflowPoints
+      .filter((p) => p.code === 'BALANZA_INGRESO')
+      .sort((a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt))[0]
+    const b2 = truckflowPoints
+      .filter((p) => p.code === 'BALANZA_EGRESO')
+      .sort((a, b) => parseTimestampMs(b.occurredAt) - parseTimestampMs(a.occurredAt))
+      .pop()
+    if (b1 && b2) {
+      pushBalanzaStayCandidate(candidates, 'truckflow_timeline', b1.occurredAt, b2.occurredAt, executiveCircuitCode, [
+        'solo puntos derivados de tramos scatter (sin Excel)',
+      ])
+    }
+  }
+
+  const templateLeg = synthesizeTemplateChainLegsFromTimedSegments(input).find(
+    (l) => l.fromCode === BALANZA_STAY_ROLLUP_TRANSITION.from && l.toCode === BALANZA_STAY_ROLLUP_TRANSITION.to
+  )
+  if (templateLeg) {
+    pushBalanzaStayCandidate(
+      candidates,
+      'excel_template_chain',
+      templateLeg.segment_start_time,
+      templateLeg.segment_end_time,
+      executiveCircuitCode,
+      [
+        'cadena template; BALANZA_EGRESO puede venir de timeline enriquecido (Excel)',
+        `timelineSource B2=${timelineSourceForTemplatePoint('BALANZA_EGRESO', executiveCircuitCode)}`,
+      ]
+    )
+  }
+
+  const rule = getDischargeKpiRollupRules(executiveCircuitCode).find(
+    (r) =>
+      r.fromCode === BALANZA_STAY_ROLLUP_TRANSITION.from &&
+      r.toCode === BALANZA_STAY_ROLLUP_TRANSITION.to
+  )
+  if (rule) {
+    const endpoints = explainDischargeRollupEndpoints(
+      enrichedPoints,
+      executiveCircuitCode,
+      rule,
+      input.externalSalidaAt
+    )
+    if (endpoints) {
+      pushBalanzaStayCandidate(
+        candidates,
+        'excel_discharge_rollup',
+        endpoints.start,
+        endpoints.end,
+        executiveCircuitCode,
+        endpoints.notes
+      )
+    }
+  }
+
+  if (isVolcableReceiptCircuit(executiveCircuitCode)) {
+    const merged = synthesizeVolcableReceiptKpiLegsForOperation(input).find(
+      (l) =>
+        l.fromCode === BALANZA_STAY_ROLLUP_TRANSITION.from &&
+        l.toCode === BALANZA_STAY_ROLLUP_TRANSITION.to
+    )
+    if (merged) {
+      pushBalanzaStayCandidate(
+        candidates,
+        'excel_volcable_merged',
+        merged.segment_start_time,
+        merged.segment_end_time,
+        executiveCircuitCode,
+        ['merge Volcable: se queda el tramo balanza más largo']
+      )
+    }
+  }
+
+  if (opts?.measuredBalanzaStay) {
+    const m = opts.measuredBalanzaStay
+    pushBalanzaStayCandidate(
+      candidates,
+      'scatter_measured',
+      m.segment_start_time,
+      m.segment_end_time,
+      executiveCircuitCode,
+      ['tramo B1→B2 medido en filas scatter (si existía consecutivo)']
+    )
+  }
+
+  const winner = resolveBalanzaStayKpiWinner(candidates, executiveCircuitCode)
+  const flags = buildBalanzaStayFlags({
+    executiveCircuitCode,
+    cameraBalanzaStayMinutes: camMin,
+    candidates,
+    kpiWinnerMinutes: winner?.minutes ?? null,
+    enrichedTimeline: enrichedPoints,
+    externalSalidaAt: input.externalSalidaAt,
+    rawBalanzaCameraEvents: [],
+  })
+
+  return {
+    operationId: input.operationId,
+    plate: input.plate,
+    executiveCircuitCode,
+    externalIngresoAt: input.externalIngresoAt,
+    externalCaladoAt: input.externalCaladoAt,
+    externalSalidaAt: input.externalSalidaAt,
+    truckflowTimeline: truckflowPoints,
+    enrichedTimeline: enrichedPoints,
+    rawBalanzaCameraEvents: [],
+    cameraBalanzaStayMinutes: camMin,
+    candidates,
+    kpiWinnerMinutes: winner?.minutes ?? null,
+    kpiWinnerSource: winner?.source ?? null,
+    flags,
+  }
+}
+
+/** Journey Truckflow: eventos B1/B2, rollup descarga y tramos consecutivos (frente). */
+export function diagnoseBalanzaStayFromJourney(
+  journey: ReconstructedRealJourney,
+  executiveCircuitCode: string
+): BalanzaStayTimingDiagnostic | null {
+  const circuit = normalizeExecutiveCircuitForKpi(executiveCircuitCode)
+  if (!supportsBalanzaStayKpi(circuit)) return null
+
+  const rawBalanzaCameraEvents = listBalanzaCameraEvents(journey)
+  const cameraBalanzaStayMinutes = computeCameraBalanzaStayMinutesFromEvents(rawBalanzaCameraEvents)
+  const frontPoints = collapsedFrontLogicalPoints(journey)
+  const dischargePoints = collapsedLogicalPointsForDischargeRollup(journey)
+  const candidates: BalanzaStayCandidateDiagnostic[] = []
+
+  for (let i = 0; i < frontPoints.length - 1; i++) {
+    const from = frontPoints[i]!
+    const to = frontPoints[i + 1]!
+    if (from.code !== BALANZA_STAY_ROLLUP_TRANSITION.from || to.code !== BALANZA_STAY_ROLLUP_TRANSITION.to) {
+      continue
+    }
+    pushBalanzaStayCandidate(
+      candidates,
+      'journey_consecutive_front',
+      from.occurredAt,
+      to.occurredAt,
+      circuit,
+      ['solo cámaras frente; egreso balanza trasera no aparece aquí']
+    )
+  }
+
+  const rule = getDischargeKpiRollupRules(circuit).find(
+    (r) =>
+      r.fromCode === BALANZA_STAY_ROLLUP_TRANSITION.from &&
+      r.toCode === BALANZA_STAY_ROLLUP_TRANSITION.to
+  )
+  if (rule) {
+    const endpoints = explainDischargeRollupEndpoints(dischargePoints, circuit, rule)
+    if (endpoints) {
+      pushBalanzaStayCandidate(
+        candidates,
+        'journey_discharge_rollup',
+        endpoints.start,
+        endpoints.end,
+        circuit,
+        [...endpoints.notes, 'incluye RicB1/B2/B3 egreso (trasera permitida)']
+      )
+    }
+  }
+
+  const withTimes = extractSegmentLegsWithTimes(journey, circuit).find(
+    (l) =>
+      l.fromCode === BALANZA_STAY_ROLLUP_TRANSITION.from &&
+      l.toCode === BALANZA_STAY_ROLLUP_TRANSITION.to
+  )
+  if (withTimes?.segment_start_time && withTimes.segment_end_time) {
+    pushBalanzaStayCandidate(
+      candidates,
+      'journey_extract_all',
+      withTimes.segment_start_time,
+      withTimes.segment_end_time,
+      circuit,
+      ['extractSegmentLegsWithTimes (rollup + consecutivos)']
+    )
+  }
+
+  const winner = resolveBalanzaStayKpiWinner(candidates, circuit)
+  const flags = buildBalanzaStayFlags({
+    executiveCircuitCode: circuit,
+    cameraBalanzaStayMinutes,
+    candidates,
+    kpiWinnerMinutes: winner?.minutes ?? null,
+    enrichedTimeline: dischargePoints,
+    rawBalanzaCameraEvents,
+  })
+
+  return {
+    operationId: journey.journeyUid,
+    plate: journey.normalizedPlate || journey.plate,
+    executiveCircuitCode: circuit,
+    truckflowTimeline: frontPoints.filter((p) =>
+      ['BALANZA_INGRESO', 'BALANZA_EGRESO', 'VOLCABLE', 'CELDA16_CARGA', 'CELDA16_DESCARGA'].includes(
+        p.code
+      )
+    ),
+    enrichedTimeline: dischargePoints.filter((p) =>
+      ['BALANZA_INGRESO', 'BALANZA_EGRESO', 'VOLCABLE', 'CELDA16_CARGA', 'CELDA16_DESCARGA'].includes(
+        p.code
+      )
+    ),
+    rawBalanzaCameraEvents,
+    cameraBalanzaStayMinutes,
+    candidates,
+    kpiWinnerMinutes: winner?.minutes ?? null,
+    kpiWinnerSource: winner?.source ?? null,
+    flags,
+  }
+}
+
+export function balanzaStayDiagnosticsToCsv(rows: BalanzaStayTimingDiagnostic[]): string {
+  const headers = [
+    'operation_id',
+    'plate',
+    'executive_circuit_code',
+    'camera_stay_min',
+    'kpi_winner_min',
+    'kpi_winner_source',
+    'flags',
+    'external_salida_at',
+    'external_calado_at',
+    'candidates_json',
+  ]
+  const body = rows.map((r) => ({
+    operation_id: r.operationId,
+    plate: r.plate,
+    executive_circuit_code: r.executiveCircuitCode,
+    camera_stay_min:
+      r.cameraBalanzaStayMinutes != null ? r.cameraBalanzaStayMinutes.toFixed(2) : '',
+    kpi_winner_min: r.kpiWinnerMinutes != null ? r.kpiWinnerMinutes.toFixed(2) : '',
+    kpi_winner_source: r.kpiWinnerSource ?? '',
+    flags: r.flags.join('|'),
+    external_salida_at: r.externalSalidaAt ?? '',
+    external_calado_at: r.externalCaladoAt ?? '',
+    candidates_json: JSON.stringify(r.candidates),
+  }))
+  return recordsToCsv(headers, body)
+}
+
+/** Diagnóstico R7: balanza ingreso (S1) → salida/egreso (S7 o Excel). */
+export type R7SlBalanzaSalidaDiagnostic = {
+  operationId: string
+  plate: string
+  executiveCircuitCode: string
+  externalIngresoAt?: string
+  externalCaladoAt?: string
+  externalSalidaAt?: string
+  /** Primera lectura S1 en timeline Truckflow (SLZBalIngFte). */
+  slBalanzaIngresoCameraAt: string | null
+  /** Última SL_EGRESO en Truckflow después de S1. */
+  slEgresoCameraAt: string | null
+  trustedS1Camera: boolean
+  dedicatedS1Segment: boolean
+  kpiEndpoints: SlBalanzaRollupKpiEndpoints | null
+  comite: SlBalanzaComiteEvaluation
+  rawDurationMinutes: number | null
+  correctedDurationMinutes: number | null
+  plantOffsetMinutes: number
+  flags: string[]
+}
+
+function isR7SlBalanzaKpiCircuit(circuitCode: string): boolean {
+  const c = String(circuitCode ?? '').trim()
+  return c === 'R7' || CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(c)
+}
+
+function buildR7SlBalanzaSalidaFlags(input: {
+  trustedS1: boolean
+  dedicatedS1: boolean
+  kpi: SlBalanzaRollupKpiEndpoints | null
+  comite: SlBalanzaComiteEvaluation
+  rawDurationMinutes: number | null
+  plantOffsetMinutes: number
+  externalSalidaAt?: string
+  slEgresoCameraAt: string | null
+  slBalanzaIngresoCameraAt: string | null
+  correctedDurationMinutes: number | null
+}): string[] {
+  const flags: string[] = []
+  if (!input.externalSalidaAt?.trim()) flags.push('SIN_SALIDA_EXCEL')
+  if (!input.trustedS1 && !input.slBalanzaIngresoCameraAt) flags.push('SIN_INICIO_BALANZA_CAMARA')
+  if (input.trustedS1) flags.push('INICIO_CAMARA_S1')
+  if (input.dedicatedS1) flags.push('SEGMENTO_DEDICADO_S1_S5')
+  if (input.kpi?.fin_fuente === 'excel_salida') flags.push('FIN_SALIDA_EXCEL')
+  if (input.kpi?.fin_fuente === 'truckflow') flags.push('FIN_CAMARA_EGRESO_S7')
+  if (!input.kpi && input.comite.payload?.horario_fuente_fin === 'excel_salida') {
+    flags.push('FIN_SALIDA_EXCEL')
+  }
+  if (!input.kpi && input.comite.payload?.horario_fuente_fin === 'truckflow') {
+    flags.push('FIN_CAMARA_EGRESO_S7')
+  }
+  if (!input.kpi && input.comite.reason === 'ok') {
+    flags.push('KPI_ROLLUP_NULL_COMITE_OK')
+  }
+  if (input.comite.reason === 'inicio_anchored_excel_ric') {
+    flags.push('RECHAZO_INICIO_ANCLADO_INGRESO_RIC')
+  }
+  if (input.plantOffsetMinutes > 0) flags.push('CORRECCION_PLANTA_MENOS_120MIN')
+  if (input.slBalanzaIngresoCameraAt && input.slEgresoCameraAt && input.externalSalidaAt) {
+    const camDur = minutesBetweenIso(input.slBalanzaIngresoCameraAt, input.slEgresoCameraAt)
+    const salMs = parseTimestampMs(input.externalSalidaAt)
+    const s1Ms = parseTimestampMs(input.slBalanzaIngresoCameraAt)
+    const s7Ms = parseTimestampMs(input.slEgresoCameraAt)
+    if (
+      Number.isFinite(salMs) &&
+      Number.isFinite(s1Ms) &&
+      Number.isFinite(s7Ms) &&
+      salMs < s7Ms &&
+      salMs > s1Ms
+    ) {
+      flags.push('EXCEL_SALIDA_ANTES_QUE_EGRESO_CAMARA')
+    }
+    if (
+      input.correctedDurationMinutes != null &&
+      Number.isFinite(camDur) &&
+      Math.abs(input.correctedDurationMinutes - camDur) >= 15
+    ) {
+      flags.push('KPI_VS_SOLO_CAMERAS_DELTA>=15MIN')
+    }
+  }
+  if (!input.slEgresoCameraAt && input.externalSalidaAt) {
+    flags.push('SIN_EGRESO_CAMARA_USA_EXCEL')
+  }
+  if (input.comite.reason !== 'ok' && input.comite.reason !== 'sin_salida_excel') {
+    flags.push(`COMITE_${input.comite.reason.toUpperCase()}`)
+  }
+  return flags
+}
+
+/**
+ * R7 / SL rollup: de dónde sale cada extremo del tramo balanza ingreso → egreso
+ * (cámara S1, cámara S7, salida Excel, corrección −2 h).
+ */
+export function diagnoseR7SlBalanzaIngresoSalida(input: {
+  operationId: string
+  plate: string
+  executiveCircuitCode: string
+  segments: TimedSegmentInput[]
+  externalSalidaAt?: string
+  externalCaladoAt?: string
+  externalIngresoAt?: string
+  plantaNormalized?: string
+  comiteOpts?: SlBalanzaComiteOptions
+}): R7SlBalanzaSalidaDiagnostic | null {
+  const executiveCircuitCode = String(input.executiveCircuitCode ?? '').trim()
+  if (!isR7SlBalanzaKpiCircuit(executiveCircuitCode)) return null
+
+  const { opSegments, truckflowPoints, enrichedPoints } = buildSlComiteTruckflowContext({
+    segments: input.segments,
+    externalIngresoAt: input.externalIngresoAt,
+    externalSalidaAt: input.externalSalidaAt,
+    externalCaladoAt: input.externalCaladoAt,
+    plantaNormalized: input.plantaNormalized,
+    executiveCircuitCode,
+  })
+
+  const camS1 = resolveSlBalanzaIngresoCameraStart(opSegments, truckflowPoints)
+
+  const trustedS1 = isTrustedSlBalanzaIngresoCamera(opSegments, camS1)
+  const s1Ms = camS1 ? parseTimestampMs(camS1.occurredAt) : Number.NaN
+  const camS7 =
+    Number.isFinite(s1Ms) ? latestSlEgresoCameraAfterMs(truckflowPoints, s1Ms) : null
+
+  const dedicatedS1 = hasDedicatedSlBalanzaIngresoCameraSegment(opSegments)
+
+  const kpi = resolveSlBalanzaRollupEndpointsForKpi(truckflowPoints, {
+    externalSalidaAt: input.externalSalidaAt,
+    externalIngresoAt: input.externalIngresoAt,
+    truckflowPoints,
+    truckflowSegments: opSegments,
+  })
+
+  let rawDurationMinutes: number | null = null
+  let correctedDurationMinutes: number | null = null
+  let plantOffsetMinutes = 0
+  if (kpi) {
+    rawDurationMinutes = minutesBetweenIso(kpi.from.occurredAt, kpi.to.occurredAt)
+    plantOffsetMinutes = resolveSlBalanzaDescargaPlantOffsetMinutes(rawDurationMinutes)
+    const corrected = correctSlBalanzaDescargaStayTiming(
+      kpi.from.occurredAt,
+      kpi.to.occurredAt,
+      { applyPlantOffset: true }
+    )
+    correctedDurationMinutes = corrected?.durationMinutes ?? null
+  }
+
+  const comite = evaluateSlBalanzaComitePayload(
+    opSegments,
+    truckflowPoints,
+    String(input.externalSalidaAt ?? ''),
+    input.externalIngresoAt,
+    enrichedPoints,
+    input.comiteOpts ?? SL_BALANZA_COMITE_PRODUCT_OPTIONS
+  )
+
+  const flags = buildR7SlBalanzaSalidaFlags({
+    trustedS1,
+    dedicatedS1,
+    kpi,
+    comite,
+    rawDurationMinutes,
+    plantOffsetMinutes,
+    externalSalidaAt: input.externalSalidaAt,
+    slEgresoCameraAt: camS7?.occurredAt ?? null,
+    slBalanzaIngresoCameraAt: camS1?.occurredAt ?? null,
+    correctedDurationMinutes,
+  })
+
+  return {
+    operationId: input.operationId,
+    plate: input.plate,
+    executiveCircuitCode,
+    externalIngresoAt: input.externalIngresoAt,
+    externalCaladoAt: input.externalCaladoAt,
+    externalSalidaAt: input.externalSalidaAt,
+    slBalanzaIngresoCameraAt: camS1?.occurredAt ?? null,
+    slEgresoCameraAt: camS7?.occurredAt ?? null,
+    trustedS1Camera: trustedS1,
+    dedicatedS1Segment: dedicatedS1,
+    kpiEndpoints: kpi,
+    comite,
+    rawDurationMinutes,
+    correctedDurationMinutes,
+    plantOffsetMinutes,
+    flags,
+  }
+}
+
+export function r7SlBalanzaSalidaDiagnosticsToCsv(rows: R7SlBalanzaSalidaDiagnostic[]): string {
+  const headers = [
+    'operation_id',
+    'plate',
+    'executive_circuit_code',
+    's1_camera_at',
+    's7_camera_at',
+    'external_salida_at',
+    'inicio_fuente',
+    'fin_fuente',
+    'horario_fuente',
+    'raw_duration_min',
+    'plant_offset_min',
+    'kpi_corrected_min',
+    'comite_duration_min',
+    'comite_reason',
+    'trusted_s1',
+    'flags',
+  ]
+  const body = rows.map((r) => ({
+    operation_id: r.operationId,
+    plate: r.plate,
+    executive_circuit_code: r.executiveCircuitCode,
+    s1_camera_at: r.slBalanzaIngresoCameraAt ?? '',
+    s7_camera_at: r.slEgresoCameraAt ?? '',
+    external_salida_at: r.externalSalidaAt ?? '',
+    inicio_fuente: r.kpiEndpoints?.inicio_fuente ?? '',
+    fin_fuente: r.kpiEndpoints?.fin_fuente ?? '',
+    horario_fuente: r.comite.payload?.horario_fuente ?? '',
+    raw_duration_min: r.rawDurationMinutes != null ? r.rawDurationMinutes.toFixed(2) : '',
+    plant_offset_min: String(r.plantOffsetMinutes),
+    kpi_corrected_min:
+      r.correctedDurationMinutes != null ? r.correctedDurationMinutes.toFixed(2) : '',
+    comite_duration_min:
+      r.comite.payload?.segment_duration_min != null ?
+        String(r.comite.payload.segment_duration_min)
+      : '',
+    comite_reason: r.comite.reason,
+    trusted_s1: r.trustedS1Camera ? '1' : '0',
+    flags: r.flags.join('|'),
+  }))
+  return recordsToCsv(headers, body)
 }

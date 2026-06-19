@@ -1,6 +1,6 @@
 # Mapa del backend lógico — Transform Truckflow (`src/services`)
 
-Documento de referencia (Etapa 1). **No sustituye** los archivos en su ubicación actual; complementa `src/services/truckflowTransform/` (barrels de reexportación).
+Documento de referencia (Etapa 1 ✅). **No sustituye** los archivos en su ubicación actual; complementa `src/services/truckflowTransform/` (barrels de reexportación). Guía Cursor: `.cursor/rules/truckflow-transform-backend.mdc`.
 
 ## Jerarquía conceptual del Transform (objetivo)
 

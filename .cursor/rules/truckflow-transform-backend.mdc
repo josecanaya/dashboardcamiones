@@ -1,0 +1,36 @@
+---
+description: Modo backend Transform Truckflow — capas, imports y CLI sin UI (Etapa 1)
+globs: docs/TRUCKFLOW_TRANSFORM*.md,src/services/truckflowTransform/**,src/features/real-truckflow/etlWorkbench/**,src/services/powerBi*.ts,src/services/circuitEtlV2.ts,src/services/realPreliminaryCircuit.ts,src/services/realCommitteePipeline.ts,scripts/run-truckflow-transform-local.mjs,scripts/contract-first-cli-runner.ts
+alwaysApply: false
+---
+
+# Modo backend Transform (sin UI)
+
+Antes de cambiar lógica, leer `docs/TRUCKFLOW_TRANSFORM_BACKEND_MAP.md` y `docs/TRUCKFLOW_TRANSFORM_BACKEND_USAGE.md`.
+
+## Capas (no mezclar responsabilidades)
+
+| Capa | Dónde | No hacer aquí |
+|------|--------|----------------|
+| Clasificación | `truckflowTransform/classify` → `realPreliminaryCircuit`, `circuitEtlV2`, `realCommitteePipeline` | Export ZIP, KPIs dashboard |
+| Diagnóstico | `truckflowTransform/diagnostics`, `liveCamera*`, `realPlate*`, `nearbyAlert*` | Reglas oficiales Power BI |
+| Export Power BI | `powerBiEtlExportBuilder.ts` (puro) + `powerBiBrowserDownload.ts` (DOM) | Clasificar journeys |
+| Contract-first / Excel | `truckflowTransform/contractFirst/` | Matriz Workbench ni comité/v2 ZIP |
+| Analytics | `truckflowTransform/analytics` | Pipeline batch obligatorio |
+
+## Imports nuevos
+
+- Preferir barrels: `src/services/truckflowTransform/` (y `contractFirst/` para Excel/merge integración).
+- Workbench (`etlWorkbench/*`): solo si la UI lo exige; cabeceras `@deprecated` → usar `contractFirst` en código nuevo.
+- CLI/tests Node: `powerBiEtlExportBuilder`, no `powerBiBrowserDownload`; sin asumir `import.meta.env` — inyectar `baseUrl` cuando toque API (Etapa 2).
+
+## Dos motores de clasificación (paralelos)
+
+- **Servicios:** preliminary + v2 + comité → export Power BI.
+- **Workbench:** `etlTransformPipeline` / `finalCircuitScoring` → UI ETL.
+
+Si tocas uno que afecte al otro, ejecutar **ambas** suites: `npx vitest run src/services/*.test.ts` (relevantes) y `npx vitest run src/features/real-truckflow/etlWorkbench`.
+
+## Etapa 1: no mover archivos
+
+La fuente física sigue en `src/services/*.ts` y `etlWorkbench/`; `truckflowTransform/` son reexports. Reubicación física = Etapa 5 del plan en `docs/TRUCKFLOW_TRANSFORM_CLEANUP_PLAN.md`.

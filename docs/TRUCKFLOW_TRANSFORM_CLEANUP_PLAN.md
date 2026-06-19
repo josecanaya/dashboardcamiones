@@ -1,17 +1,17 @@
 # Plan de limpieza futura — Transform Truckflow
 
-Checklist por etapas. **Etapa 1** es la actual (documentación + barrels, sin mover archivos).
+Checklist por etapas. **Etapa 1** cerrada (documentación + barrels + regla Cursor; sin mover archivos). Siguiente foco habitual: **Etapa 2** (Node puro) y **Contract-first** (mover implementación).
 
-## Etapa 1 — Documentación y barrels ✅ (en curso)
+## Etapa 1 — Documentación y barrels ✅
 
 - [x] `docs/TRUCKFLOW_TRANSFORM_BACKEND_MAP.md`
 - [x] `docs/TRUCKFLOW_TRANSFORM_BACKEND_USAGE.md`
-- [x] `src/services/truckflowTransform/*` (reexportaciones)
+- [x] `src/services/truckflowTransform/`* (reexportaciones)
 - [x] Comentarios de cabecera en archivos núcleo
 - [x] Stub CLI + README
-- [ ] Regla Cursor opcional «modo backend Transform»
+- [x] Regla Cursor opcional «modo backend Transform» — `.cursor/rules/truckflow-transform-backend.mdc` (globs backend; activar al editar esos paths o @-mencionar la regla)
 
-**Criterio de salida:** cualquier dev puede ubicar clasificación vs diagnóstico vs export sin abrir UI.
+**Criterio de salida:** cualquier dev puede ubicar clasificación vs diagnóstico vs export sin abrir UI. ✅
 
 ## Etapa 2 — Separar browser de funciones puras (parcial ✅)
 
@@ -27,7 +27,7 @@ Checklist por etapas. **Etapa 1** es la actual (documentación + barrels, sin mo
 
 ## Etapa Contract-first — Capa backend (parcial ✅)
 
-- [x] `src/services/truckflowTransform/contractFirst/*` (reexports + `CONTRACT_FIRST_INTEGRATION_CSV_KEYS`)
+- [x] `src/services/truckflowTransform/contractFirst/`* (reexports + `CONTRACT_FIRST_INTEGRATION_CSV_KEYS`)
 - [x] Documentación en MAP / USAGE
 - [x] `@deprecated` en cabeceras Workbench (imports nuevos → contractFirst)
 - [ ] Mover implementación física de `etlWorkbench` → `contractFirst` (sin reexport inverso)
@@ -94,3 +94,4 @@ Detalle operativo: `docs/TRUCKFLOW_TRANSFORM_BACKEND_USAGE.md` § «Diagnóstico
 - Cambiar `realPreliminaryCircuit` impacta `realJourneyEventsMapper` y clean dataset.
 - Cambiar `circuitEtlV2` impacta ZIP Power BI y tests v2.
 - Workbench puede divergir silenciosamente si no se ejecutan ambas suites de tests.
+

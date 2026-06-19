@@ -1,6 +1,7 @@
 import type { ReconstructedRealJourney } from '../../../services/realJourneyEvents.types'
 import { compareRealEvents } from '../../../services/realJourneyEventsMapper'
 import { normalizeRealEventPoint } from '../../../services/realEventNormalization'
+import { eventOperationalInstantForTimeline } from '../../../services/realEventOperationalTime'
 import { MAX_DURATION_MINUTES } from '../../../config/durationBounds'
 
 /** Duración mínima operativa del circuito completo (excluye ruido / falsos positivos). */
@@ -99,8 +100,8 @@ export function extractJourneyCircuitTotal(
 ): Omit<CircuitTimingJourneyRow, 'executiveCircuitCode' | 'circuitName' | 'executiveStatus' | 'validDetail'> | null {
   const events = usefulFrontEvents(journey)
   if (events.length < 2) return null
-  const startTime = String(events[0]!.occurredAt ?? '')
-  const endTime = String(events[events.length - 1]!.occurredAt ?? '')
+  const startTime = eventOperationalInstantForTimeline(events[0]!)
+  const endTime = eventOperationalInstantForTimeline(events[events.length - 1]!)
   const totalDurationMin = minutesBetweenIso(startTime, endTime)
   if (!isValidCircuitTotalDuration(totalDurationMin)) return null
   return {

@@ -1,5 +1,10 @@
 import type { RealJourneyEventDto } from '../realJourneyEvents.types'
 import type { NormalizedRealAlertView } from '../realAlertsInspector'
+import {
+  getEventOperationalInstantIso as getOperationalInstantIsoCore,
+  getEventOperationalInstantMs as getOperationalInstantMsCore,
+  parseOperationalMillis,
+} from '../realEventOperationalTime'
 
 export const LIVE_ROLLING_WINDOW_MS = 60 * 60 * 1000
 export const LIVE_API_LOOKBACK_MS = 6 * 60 * 60 * 1000
@@ -22,8 +27,7 @@ export type LiveUiWindow = {
 }
 
 export function parseLiveMillis(iso: string): number {
-  const t = new Date(iso).getTime()
-  return Number.isNaN(t) ? NaN : t
+  return parseOperationalMillis(iso)
 }
 
 export function fmtShort(iso: string): string {
@@ -153,19 +157,11 @@ export function getEventLiveInstantMs(e: RealJourneyEventDto): number {
 }
 
 export function getEventOperationalInstantMs(e: RealJourneyEventDto): number {
-  const a = alignJourneyEventTimeForLiveView(e)
-  const times = [
-    parseLiveMillis(a.occurredAt),
-    parseLiveMillis((a.createdAt || '').trim()),
-    parseLiveMillis((a.modifiedAt || '').trim()),
-  ].filter((t) => !Number.isNaN(t))
-  return times.length ? Math.max(...times) : NaN
+  return getOperationalInstantMsCore(e)
 }
 
 export function getEventOperationalInstantIso(e: RealJourneyEventDto): string {
-  const ms = getEventOperationalInstantMs(e)
-  if (Number.isNaN(ms)) return (alignJourneyEventTimeForLiveView(e).occurredAt || '').trim() || ''
-  return new Date(ms).toISOString()
+  return getOperationalInstantIsoCore(e)
 }
 
 export function journeyEventInUiWindow(

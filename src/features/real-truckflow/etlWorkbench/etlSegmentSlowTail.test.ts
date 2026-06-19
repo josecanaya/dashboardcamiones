@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import {
+  CHART_VISIBLE_SLOW_EXPORT_COUNT,
   pickSlowTailScatterRows,
+  scatterRowsToChartVisibleExport,
   slowTailDurationThreshold,
   slowTailExportCount,
   scatterRowsToSlowTailExport,
@@ -155,5 +157,24 @@ describe('etlSegmentSlowTail', () => {
     })
     expect(tail).toHaveLength(1)
     expect(tail[0]!.patente).toBe('LARGO')
+  })
+
+  it('scatterRowsToChartVisibleExport: top 10 de la vista con patente fecha y hora', () => {
+    const rows = Array.from({ length: 15 }, (_, i) =>
+      row({
+        duracion_minutos: (i + 1) * 10,
+        patente: `P${i}`,
+        fecha_tramo: '2026-06-04',
+        hora_inicio: `0${Math.min(9, i)}:30`,
+        timestamp_inicio: `2026-06-04T0${Math.min(9, i)}:30:00`,
+      })
+    )
+    const out = scatterRowsToChartVisibleExport(rows)
+    expect(out).toHaveLength(CHART_VISIBLE_SLOW_EXPORT_COUNT)
+    expect(out[0]!.patente).toBe('P14')
+    expect(out[0]!.duracion_minutos).toBe(150)
+    expect(out[0]!.fecha_tramo).toBe('2026-06-04')
+    expect(out[0]!.hora_inicio).toBeTruthy()
+    expect(out[9]!.patente).toBe('P5')
   })
 })

@@ -13,6 +13,10 @@ import { lookupRealSectorCode, UNMAPPED_LOGICAL_SECTOR_PLACEHOLDER } from '../da
 import { analyzeRealJourneyQuality, occurredAtLocalDayKey } from './realJourneyQuality'
 import { normalizeRealEventPoint } from './realEventNormalization'
 import { classifyOperationalPreliminaryCircuit } from './realPreliminaryCircuit'
+import {
+  getEventOperationalInstantIso,
+  getEventOperationalInstantMs,
+} from './realEventOperationalTime'
 
 /** Quita lecturas del puerto San Lorenzo por prefijo. Preferir {@link filterRicardoneSiteEventsOnly}. */
 export function excludePuertoSanLorenzoSectorEvents(events: RealJourneyEventDto[]): RealJourneyEventDto[] {
@@ -48,10 +52,10 @@ function buildLogicalSequences(rawSectorSequence: string[]): {
   return { logicalSectorSequence, unmappedSectorCodes }
 }
 
-/** Orden dentro de un mismo journey: occurredAt asc, fallback sequenceNumber asc. */
+/** Orden dentro de un mismo journey: instante operativo (createdAt) asc, fallback sequenceNumber asc. */
 export function compareRealEvents(a: RealJourneyEventDto, b: RealJourneyEventDto): number {
-  const ta = new Date(a.occurredAt).getTime()
-  const tb = new Date(b.occurredAt).getTime()
+  const ta = getEventOperationalInstantMs(a)
+  const tb = getEventOperationalInstantMs(b)
   if (Number.isFinite(ta) && Number.isFinite(tb) && ta !== tb) return ta - tb
   const sq = a.sequenceNumber - b.sequenceNumber
   if (sq !== 0) return sq
@@ -99,10 +103,10 @@ function reconstructRealJourneysInner(operational: RealJourneyEventDto[]): Recon
     const sorted = [...group].sort(compareRealEvents)
     const first = sorted[0]
     const last = sorted[sorted.length - 1]
-    const startedAt = first.occurredAt
-    const endedAt = last.occurredAt
-    const t0 = new Date(startedAt).getTime()
-    const t1 = new Date(endedAt).getTime()
+    const startedAt = getEventOperationalInstantIso(first) || first.occurredAt
+    const endedAt = getEventOperationalInstantIso(last) || last.occurredAt
+    const t0 = getEventOperationalInstantMs(first)
+    const t1 = getEventOperationalInstantMs(last)
     const durationMinutes =
       Number.isFinite(t0) && Number.isFinite(t1) ? Math.max(0, Math.round((t1 - t0) / 60000)) : 0
 

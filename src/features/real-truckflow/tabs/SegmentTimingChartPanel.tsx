@@ -8,9 +8,9 @@ import { histogramWithKde } from '../../../utils/stats'
 import type { FranjaHoraria, SegmentScatterByDayRow } from '../etlWorkbench/etlSegmentScatterByDay'
 import { SCATTER_DAY_FILTER_ALL } from '../etlWorkbench/etlSegmentScatterByDay'
 import {
-  downloadSlowTailCsv,
-  legsToSlowTailExport,
-  SLOW_TAIL_MAX_TRUCKS,
+  CHART_VISIBLE_SLOW_EXPORT_COUNT,
+  downloadChartVisibleCsv,
+  legsToChartVisibleExport,
 } from '../etlWorkbench/etlSegmentSlowTail'
 import { SegmentScatterByDayChart } from './SegmentScatterByDayChart'
 import {
@@ -143,12 +143,15 @@ export function SegmentTimingChartPanel({
     SEGMENT_TIMING_HISTOGRAM_BIN_MIN
   )
 
-  const exportSlowTailLegs = () => {
+  const exportChartVisibleLegs = () => {
     if (!segmentLegs?.length) return
-    const rows = legsToSlowTailExport(segmentLegs, circuitCode, title)
+    const rows = legsToChartVisibleExport(segmentLegs, CHART_VISIBLE_SLOW_EXPORT_COUNT)
     if (!rows.length) return
     const slug = title.replace(/\s*→\s*/g, '_').replace(/[^\w-]+/g, '_')
-    downloadSlowTailCsv(safeExportFilename(`kpi_${circuitCode}_${slug}_top10_lentos`, 'csv'), rows)
+    downloadChartVisibleCsv(
+      safeExportFilename(`kpi_${circuitCode}_${slug}_ultimos_${CHART_VISIBLE_SLOW_EXPORT_COUNT}_vista`, 'csv'),
+      rows
+    )
   }
 
   const showCharts = displayStats.count > 0 || useDayScatter
@@ -170,17 +173,17 @@ export function SegmentTimingChartPanel({
               : ` · bins ${SEGMENT_TIMING_HISTOGRAM_BIN_MIN} min`}
             </p>
             <p className="mt-1 text-xs text-slate-500">
-              Pasá el mouse sobre un punto para ver la patente. Los más lentos se exportan con el botón CSV (10 %, máx.{' '}
-              {SLOW_TAIL_MAX_TRUCKS}).
+              Pasá el mouse sobre un punto para ver la patente. El botón CSV exporta los{' '}
+              {CHART_VISIBLE_SLOW_EXPORT_COUNT} más lentos de la vista actual (patente, día y hora).
             </p>
           </div>
           {!useDayScatter && segmentLegs?.length ?
             <button
               type="button"
-              onClick={exportSlowTailLegs}
+              onClick={exportChartVisibleLegs}
               className="shrink-0 rounded-lg border border-rose-300 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-900 hover:bg-rose-100"
             >
-              CSV 10 % más lentos (máx. {SLOW_TAIL_MAX_TRUCKS})
+              Export CSV ({CHART_VISIBLE_SLOW_EXPORT_COUNT} más lentos en vista)
             </button>
           : null}
         </div>

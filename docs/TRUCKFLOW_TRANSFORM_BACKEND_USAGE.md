@@ -4,6 +4,8 @@
 
 Trabajar clasificación, normalización y export **sin** abrir Vite, componentes ni páginas.
 
+**Cursor (opcional):** regla de proyecto `.cursor/rules/truckflow-transform-backend.mdc` — se sugiere al abrir archivos bajo `truckflowTransform/`, `etlWorkbench/`, export Power BI o scripts CLI Transform.
+
 ## Arranque mínimo
 
 1. **Datos en disco** (opcional pero habitual):
