@@ -48,7 +48,7 @@ const LOGICAL_DEVICE: Record<string, { deviceCode: string; sectorCode: string }>
   PREINGRESO: { deviceCode: 'RicPreIngInFr', sectorCode: 'RICARDONE_PREINGRESO' },
   CALADA: { deviceCode: 'RicCal01', sectorCode: 'RICARDONE_CALADA' },
   BALANZA_INGRESO: { deviceCode: 'RicB1Ingreso', sectorCode: 'RICARDONE_BALANZA' },
-  BALANZA_EGRESO: { deviceCode: 'RicB1Egreso', sectorCode: 'RICARDONE_BALANZA' },
+  BALANZA_EGRESO: { deviceCode: 'RicB2Egreso', sectorCode: 'RICARDONE_BALANZA' },
   BALANZA: { deviceCode: 'RicB1Ingreso', sectorCode: 'RICARDONE_BALANZA' },
   VOLCABLE: { deviceCode: 'RicVolcable1', sectorCode: 'RICARDONE_VOLCABLE_1' },
   CELDA16_DESCARGA: { deviceCode: 'RicC16Descarga1', sectorCode: 'RICARDONE_CELDA_16' },

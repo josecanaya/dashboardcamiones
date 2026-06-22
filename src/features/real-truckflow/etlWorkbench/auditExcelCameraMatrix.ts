@@ -127,7 +127,12 @@ function toEventDto(e: RawJourneyEventLike): RealJourneyEventDto {
   } as RealJourneyEventDto
 }
 
+/** Balanza egreso Ricardone operativa (cámaras B2/B3; también B1 si aparece en crudo). */
+const RIC_BALANZA_EGRESO_DEVICE_RE = /^ricb[123]egreso$/i
+
 export function eventLogicalCodeOperational(e: RawJourneyEventLike): string {
+  const device = String(e.deviceCode ?? e.device_code ?? '').trim()
+  if (RIC_BALANZA_EGRESO_DEVICE_RE.test(device)) return 'BALANZA_EGRESO'
   try {
     const pt = normalizeRealEventPoint(toEventDto(e))
     const code = String(pt.logicalCode ?? '').trim()

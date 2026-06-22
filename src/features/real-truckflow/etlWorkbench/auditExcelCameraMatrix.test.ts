@@ -7,6 +7,31 @@ import {
 } from './auditExcelCameraMatrix'
 
 describe('auditExcelCameraMatrix R1', () => {
+  it('marca balanza egreso con RicB2Egreso y RicB3Egreso', () => {
+    const rows = buildExcelCameraMatrix(
+      'R1',
+      [
+        {
+          operationId: 'CTG_7',
+          ctg: '7',
+          plate: 'XX999YY',
+          executiveCircuitCode: 'R1',
+          externalIngresoAt: '2026-06-10T08:00:00',
+          externalSalidaAt: '2026-06-10T12:00:00',
+        },
+      ],
+      [
+        {
+          truckPlate: 'XX999YY',
+          deviceCode: 'RicB3Egreso',
+          sectorCode: 'RICARDONE_BALANZA',
+          createdAt: '2026-06-10T10:00:00-03:00',
+        },
+      ]
+    )
+    expect(rows[0]!.captures.balanza_egreso).toBe(true)
+  })
+
   it('marca balanza y celda16 en ventana R1', () => {
     const rows = buildExcelCameraMatrix(
       'R1',

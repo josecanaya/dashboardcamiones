@@ -194,6 +194,16 @@ export type NormalizedRealEventPoint = {
   operationalPoint: string
 }
 
+function lookupRicDevicePoint(deviceRaw: string) {
+  const trimmed = deviceRaw.trim()
+  if (!trimmed) return undefined
+  const direct = RIC_DEVICE_POINT_MAP[trimmed]
+  if (direct) return direct
+  const lower = trimmed.toLowerCase()
+  const key = Object.keys(RIC_DEVICE_POINT_MAP).find((k) => k.toLowerCase() === lower)
+  return key ? RIC_DEVICE_POINT_MAP[key] : undefined
+}
+
 /** Punto semántico único por evento (sector + dirección balanza cuando aplica). */
 export function normalizeRealEventPoint(event: RealJourneyEventDto): NormalizedRealEventPoint {
   const sector = (event.sectorCode ?? '').trim()
@@ -212,7 +222,7 @@ export function normalizeRealEventPoint(event: RealJourneyEventDto): NormalizedR
     }
   }
 
-  const devicePoint = RIC_DEVICE_POINT_MAP[deviceRaw.trim()]
+  const devicePoint = lookupRicDevicePoint(deviceRaw)
   const siteId = devicePoint ? 'ricardone' : inferSiteLocal(sector)
 
   if (devicePoint) {

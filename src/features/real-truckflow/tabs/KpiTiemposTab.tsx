@@ -24,6 +24,7 @@ import { ProductFilterSelect } from '../components/ProductFilterSelect'
 import { exportChartAsPng, safeExportFilename } from '../../../utils/chartExport'
 import { histogramWithKde } from '../../../utils/stats'
 import { SegmentTimingChartPanel } from './SegmentTimingChartPanel'
+import { RicardoneSectorScatterPanel } from './RicardoneSectorScatterPanel'
 import { SegmentOccupancyChartPanel } from './SegmentOccupancyChartPanel'
 import { parseSegmentScatterByDayCsv } from '../etlWorkbench/etlSegmentScatterByDay'
 import { legsForAggregate } from '../etlWorkbench/etlSegmentSlowTail'
@@ -61,7 +62,7 @@ export function KpiTiemposTab() {
   const [productFilter, setProductFilter] = useState(PRODUCT_FILTER_ALL)
   const [circuitFilter, setCircuitFilter] = useState('')
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
-  const [chartView, setChartView] = useState<'tiempos' | 'ocupacion'>('tiempos')
+  const [chartView, setChartView] = useState<'tiempos' | 'ocupacion' | 'sectores_ric'>('tiempos')
 
   const segmentTimingFiltered = useMemo(() => {
     if (!segmentTimingRaw) return null
@@ -335,9 +336,21 @@ export function KpiTiemposTab() {
                 >
                   Ocupación sector (30 min)
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setChartView('sectores_ric')}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
+                    chartView === 'sectores_ric' ? 'bg-white text-violet-900 shadow-sm' : 'text-slate-600'
+                  }`}
+                >
+                  Sectores Ric (general)
+                </button>
               </div>
             </div>
             <ProductFilterSelect lookup={productLookup} value={productFilter} onChange={setProductFilter} />
+            {chartView === 'sectores_ric' ?
+              null
+            : <>
             <label className="flex flex-col gap-1 text-sm">
               <span className="font-semibold text-slate-700">Circuito ejecutivo</span>
               <select
@@ -427,8 +440,18 @@ export function KpiTiemposTab() {
             >
               {exportBusy ? 'Exportando PNG…' : 'Exportar circuito (1 PNG)'}
             </button>
+            </>}
           </div>
 
+          {chartView === 'sectores_ric' ?
+            <RicardoneSectorScatterPanel
+              scatterByDayAll={scatterByDayAll}
+              segmentTiming={segmentTimingFiltered}
+              productFilter={productFilter}
+              periodLabel={periodLabel}
+            />
+          : (
+          <>
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
             <table className="min-w-full text-sm">
               <thead>
@@ -616,6 +639,8 @@ export function KpiTiemposTab() {
                 ))}
               </div>
             </>
+          )}
+          </>
           )}
         </>
       )}

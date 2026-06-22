@@ -9,7 +9,6 @@ const RAW_REAR_DEVICES = [
   'RicPreIngEgTr',
   'RicB1Egreso',
   'RicB2Ingreso',
-  'RicB3Egreso',
   'RenCargTras',
   'RenDescTras',
   ...listSanLorenzoRearDeviceCodes(),
