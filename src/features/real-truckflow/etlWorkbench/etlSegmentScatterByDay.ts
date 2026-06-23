@@ -19,6 +19,7 @@ import {
   SL_INGRESO_TO_BALANZA_MAX_MINUTES,
   SL_INGRESO_TO_BALANZA_TRANSIT_DEFAULT_MINUTES,
   synthesizeSlRollupLegsFromTimedSegments,
+  buildSlBalanzaComiteOptionsFromTiemposEntrePasos,
   buildTimedLogicalTimelineFromSegments,
   segmentsForSlTruckflowTimeline,
   type SlScatterHorarioFuente,
@@ -29,6 +30,17 @@ import { argentinaLocalParts, ARGENTINA_UTC_OFFSET_MINUTES, parseTimestampMs } f
 import { INFERRED_ROLLUP_VALID_DETAIL, type ExcelOperationSegmentScatterRow } from './etlExcelFirstMerge'
 import type { SegmentScatterRow } from './etlOperationalAnalysis'
 import { p75, p90 } from '../../../utils/stats'
+
+/** Tope 6 h: tramos más largos no entran en dispersión ni estadísticas del gráfico. */
+export const SEGMENT_SCATTER_DISPLAY_MAX_MINUTES = 360
+
+export function isWithinSegmentScatterDisplayMax(minutes: number): boolean {
+  return (
+    Number.isFinite(minutes) &&
+    minutes > 0 &&
+    minutes <= SEGMENT_SCATTER_DISPLAY_MAX_MINUTES
+  )
+}
 
 /** Turnos de 6 h según hora local de inicio del tramo. */
 export type FranjaHoraria = 'Madrugada' | 'Mañana' | 'Tarde' | 'Noche'
@@ -179,6 +191,18 @@ function resolveSlBalanzaScatterSourceForOperation(
   const salida = String(metaRow.external_salida_at ?? '').trim()
   if (!salida) return null
 
+  const perOpComiteOpts =
+    buildSlBalanzaComiteOptionsFromTiemposEntrePasos({
+      executiveCircuitCode: circuitCode,
+      externalSlBalanzaEntradaAt: metaRow.external_sl_balanza_entrada_at,
+      externalSlBalanzaSalidaAt: metaRow.external_sl_balanza_salida_at,
+      tiemposEntrePasosMatch: metaRow.tiempos_entre_pasos_match,
+      truckflowCircuitCodes: metaRow.truckflow_circuit_code || circuitCode,
+      platformNormalized: metaRow.platform_normalized,
+      plantaNormalized: metaRow.planta_normalized,
+    }) ?? comiteOpts ?? SL_BALANZA_COMITE_PRODUCT_OPTIONS
+  const tepOverride = Boolean(perOpComiteOpts.useTiemposEntrePasosBalanza)
+
   // Solo segmentos de cámara real: los rollups deducidos (DEDUCIDO_INFERRED_ROLLUP) no deben
   // aportar puntos de balanza ingreso/egreso "truckflow" porque no provienen de cámara.
   const realCameraRows = opRows.filter(
@@ -191,6 +215,9 @@ function resolveSlBalanzaScatterSourceForOperation(
       externalIngresoAt: metaRow.external_ingreso_at,
       externalSalidaAt: salida,
       externalCaladoAt: metaRow.external_calado_at,
+      externalSlBalanzaEntradaAt: metaRow.external_sl_balanza_entrada_at,
+      externalSlBalanzaSalidaAt: metaRow.external_sl_balanza_salida_at,
+      tiemposEntrePasosOverride: tepOverride,
       plantaNormalized: metaRow.planta_normalized,
       executiveCircuitCode: circuitCode,
     })
@@ -201,7 +228,7 @@ function resolveSlBalanzaScatterSourceForOperation(
     salida,
     metaRow.external_ingreso_at,
     enrichedPoints,
-    comiteOpts
+    perOpComiteOpts
   )
   if (!payload) return null
 
@@ -459,6 +486,7 @@ export function normalizeTruckflowScatterRowForByDay(row: SegmentScatterRow): Se
 export function buildSegmentScatterByDayRows(sources: SegmentScatterByDaySource[]): SegmentScatterByDayRow[] {
   const base: SegmentScatterByDayRow[] = []
   for (const s of sources) {
+    if (!isWithinSegmentScatterDisplayMax(s.duracion_minutos)) continue
     const local = segmentStartLocalParts(s.timestamp_inicio)
     if (!local) continue
     const franja = resolveFranjaHoraria(s.timestamp_inicio)

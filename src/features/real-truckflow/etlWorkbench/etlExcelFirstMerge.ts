@@ -14,6 +14,7 @@ import {
   synthesizeInferredRollupLegsFromTimedSegments,
   synthesizeVolcableReceiptKpiLegsForOperation,
   isVolcableReceiptCircuit,
+  buildSlBalanzaComiteOptionsFromTiemposEntrePasos,
 } from './etlSegmentTiming'
 import { normalizePlateStrict, plateSimilarityScore } from '../../../services/circuitPlateOcr'
 import {
@@ -159,6 +160,11 @@ export type ExcelOperationWithTruckflowRow = {
   no_truckflow_reason: NoTruckflowReason
   diagnostic_detail: string
   possible_duplicate_assignment: boolean
+  external_sl_balanza_entrada_at: string
+  external_sl_balanza_salida_at: string
+  tiempos_entre_pasos_match: string
+  tiempos_entre_pasos_source_file: string
+  sl_balanza_fuente: string
 }
 
 export type ExcelNoTruckflowDiagnosticRow = {
@@ -184,6 +190,37 @@ export type ExcelNoTruckflowDiagnosticRow = {
 
 /** Marca de tramo deducido (rollup inferido), no proveniente de cámara real Truckflow. */
 export const INFERRED_ROLLUP_VALID_DETAIL = 'DEDUCIDO_INFERRED_ROLLUP'
+
+function tepSlFieldsForOperation(
+  mov: ExternalMovimientoContratoNormalized,
+  resolvedExecutiveCircuitCode: string,
+  truckflowCircuitCodes: string
+): {
+  external_sl_balanza_entrada_at: string
+  external_sl_balanza_salida_at: string
+  tiempos_entre_pasos_match: string
+  tiempos_entre_pasos_source_file: string
+  sl_balanza_fuente: string
+  tiemposEntrePasosOverride: boolean
+} {
+  const tepOpts = buildSlBalanzaComiteOptionsFromTiemposEntrePasos({
+    executiveCircuitCode: resolvedExecutiveCircuitCode || truckflowCircuitCodes || 'R7',
+    externalSlBalanzaEntradaAt: mov.external_sl_balanza_entrada_at,
+    externalSlBalanzaSalidaAt: mov.external_sl_balanza_salida_at,
+    tiemposEntrePasosMatch: mov.tiempos_entre_pasos_match,
+    truckflowCircuitCodes,
+    platformNormalized: mov.platform_normalized,
+    plantaNormalized: mov.planta_normalized,
+  })
+  return {
+    external_sl_balanza_entrada_at: mov.external_sl_balanza_entrada_at,
+    external_sl_balanza_salida_at: mov.external_sl_balanza_salida_at,
+    tiempos_entre_pasos_match: mov.tiempos_entre_pasos_match,
+    tiempos_entre_pasos_source_file: mov.tiempos_entre_pasos_source_file,
+    sl_balanza_fuente: tepOpts ? 'tiempos_entre_pasos' : '',
+    tiemposEntrePasosOverride: Boolean(tepOpts),
+  }
+}
 
 export type ExcelOperationSegmentScatterRow = {
   external_operation_id: string
@@ -219,6 +256,10 @@ export type ExcelOperationSegmentScatterRow = {
   /** Ingreso/balanza ingreso Excel (match patente). */
   external_ingreso_at?: string
   planta_normalized?: string
+  external_sl_balanza_entrada_at?: string
+  external_sl_balanza_salida_at?: string
+  tiempos_entre_pasos_match?: string
+  tiempos_entre_pasos_source_file?: string
 }
 
 export type ExcelFirstCandidateDiscardCounters = {
@@ -1744,6 +1785,8 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
     )
     if (possibleDup) summaryCounts.possible_duplicate_assignments = (summaryCounts.possible_duplicate_assignments ?? 0) + 1
 
+    const tepSl = tepSlFieldsForOperation(mov, resolvedExecutiveCircuitCode, agg.circuit_codes)
+
     const row: ExcelOperationWithTruckflowRow = {
       external_operation_id: mov.external_operation_id,
       source_file: mov.source_file,
@@ -1791,6 +1834,11 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
       no_truckflow_reason: evidence.no_truckflow_reason,
       diagnostic_detail: evidence.diagnostic_detail,
       possible_duplicate_assignment: possibleDup,
+      external_sl_balanza_entrada_at: tepSl.external_sl_balanza_entrada_at,
+      external_sl_balanza_salida_at: tepSl.external_sl_balanza_salida_at,
+      tiempos_entre_pasos_match: tepSl.tiempos_entre_pasos_match,
+      tiempos_entre_pasos_source_file: tepSl.tiempos_entre_pasos_source_file,
+      sl_balanza_fuente: tepSl.sl_balanza_fuente,
     }
     operations.push(row)
 
@@ -1900,6 +1948,10 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
           external_calado_at: mov.external_calado_at,
           external_ingreso_at: mov.external_ingreso_at,
           planta_normalized: mov.planta_normalized,
+          external_sl_balanza_entrada_at: mov.external_sl_balanza_entrada_at,
+          external_sl_balanza_salida_at: mov.external_sl_balanza_salida_at,
+          tiempos_entre_pasos_match: mov.tiempos_entre_pasos_match,
+          tiempos_entre_pasos_source_file: mov.tiempos_entre_pasos_source_file,
         })
       }
     }
@@ -1927,6 +1979,9 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
             externalIngresoAt: mov.external_ingreso_at,
             platformNormalized: ctx.resolved_platform,
             plantaNormalized: mov.planta_normalized,
+            externalSlBalanzaEntradaAt: mov.external_sl_balanza_entrada_at,
+            externalSlBalanzaSalidaAt: mov.external_sl_balanza_salida_at,
+            tiemposEntrePasosOverride: tepSl.tiemposEntrePasosOverride,
           })
         : synthesizeInferredRollupLegsFromTimedSegments({
             operationId: mov.external_operation_id,
@@ -1938,6 +1993,9 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
             externalIngresoAt: mov.external_ingreso_at,
             platformNormalized: ctx.resolved_platform,
             plantaNormalized: mov.planta_normalized,
+            externalSlBalanzaEntradaAt: mov.external_sl_balanza_entrada_at,
+            externalSlBalanzaSalidaAt: mov.external_sl_balanza_salida_at,
+            tiemposEntrePasosOverride: tepSl.tiemposEntrePasosOverride,
           })
       const existingTransitions = new Set(
         segmentRows
@@ -1979,6 +2037,10 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
           external_calado_at: mov.external_calado_at,
           external_ingreso_at: mov.external_ingreso_at,
           planta_normalized: mov.planta_normalized,
+          external_sl_balanza_entrada_at: mov.external_sl_balanza_entrada_at,
+          external_sl_balanza_salida_at: mov.external_sl_balanza_salida_at,
+          tiempos_entre_pasos_match: mov.tiempos_entre_pasos_match,
+          tiempos_entre_pasos_source_file: mov.tiempos_entre_pasos_source_file,
         })
       }
     }
@@ -2086,6 +2148,11 @@ const EXCEL_OPS_HEADERS = [
   'no_truckflow_reason',
   'diagnostic_detail',
   'possible_duplicate_assignment',
+  'external_sl_balanza_entrada_at',
+  'external_sl_balanza_salida_at',
+  'tiempos_entre_pasos_match',
+  'tiempos_entre_pasos_source_file',
+  'sl_balanza_fuente',
 ] as const
 
 const NO_EVIDENCE_HEADERS = [

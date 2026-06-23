@@ -56,6 +56,36 @@ describe('buildSegmentScatterByDayRows', () => {
     expect(segmentStartLocalParts(top!.timestamp_inicio)?.fecha_tramo).toBe('2026-05-29')
   })
 
+  it('descarta tramos mayores a 360 min', () => {
+    const ok = normalizeTruckflowScatterRowForByDay({
+      journey_uid: 'j1',
+      plate_normalized: 'AA111',
+      product_normalized: 'SOJA',
+      circuit_code: 'R7',
+      segment_from: 'PREINGRESO',
+      segment_to: 'CALADA',
+      segment_start_time: '2026-05-29T08:00:00',
+      segment_end_time: '2026-05-29T10:00:00',
+      segment_duration_min: 120,
+      executive_status: 'VALIDO',
+    } as never)
+    const slow = normalizeTruckflowScatterRowForByDay({
+      journey_uid: 'j2',
+      plate_normalized: 'BB222',
+      product_normalized: 'SOJA',
+      circuit_code: 'R7',
+      segment_from: 'PREINGRESO',
+      segment_to: 'CALADA',
+      segment_start_time: '2026-05-29T08:00:00',
+      segment_end_time: '2026-05-30T10:00:00',
+      segment_duration_min: 500,
+      executive_status: 'VALIDO',
+    } as never)
+    const rows = buildSegmentScatterByDayRows([ok!, slow!].filter(Boolean))
+    expect(rows).toHaveLength(1)
+    expect(rows[0]?.duracion_minutos).toBe(120)
+  })
+
   it('scatter SL balanza→egreso no se genera si el egreso crudo es de otro viaje (hay ingreso puerto posterior)', () => {
     const rows = [
       {

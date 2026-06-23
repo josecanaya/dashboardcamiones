@@ -26,6 +26,10 @@ import {
 } from './etlTransformPhaseRunner'
 import type { EtlTransformPhaseStore } from './etlTransformPhaseStore'
 import type { MovimientosContratoFileInput } from './etlExternalMovimientosContrato'
+import {
+  peekContratoXlsxKind,
+  type TiemposEntrePasosFileInput,
+} from './etlTiemposEntrePasos'
 import { inferSiteIdFromSectorCode } from '../../../services/realJourneyEventsMapper'
 import { occurredAtLocalDayKey } from '../../../services/realJourneyQuality'
 import {
@@ -80,6 +84,8 @@ type Ctx = {
   setMergeWindowHours: (h: number) => void
   movimientosContratoFiles: MovimientosContratoFileInput[]
   movimientosContratoFileNames: string[]
+  tiemposEntrePasosFiles: TiemposEntrePasosFileInput[]
+  tiemposEntrePasosFileNames: string[]
   loadMovimientosContratoXlsx: (list: FileList | File[]) => Promise<void>
   clearMovimientosContrato: () => void
   loadJsonFiles: (list: FileList | File[]) => Promise<void>
@@ -205,26 +211,47 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
   const [movimientosContratoFiles, setMovimientosContratoFiles] = useState<MovimientosContratoFileInput[]>(
     []
   )
+  const [tiemposEntrePasosFiles, setTiemposEntrePasosFiles] = useState<TiemposEntrePasosFileInput[]>([])
 
   const movimientosContratoFileNames = useMemo(
     () => movimientosContratoFiles.map((f) => f.sourceFile),
     [movimientosContratoFiles]
   )
 
+  const tiemposEntrePasosFileNames = useMemo(
+    () => tiemposEntrePasosFiles.map((f) => f.sourceFile),
+    [tiemposEntrePasosFiles]
+  )
+
   const clearMovimientosContrato = useCallback(() => {
     setMovimientosContratoFiles([])
+    setTiemposEntrePasosFiles([])
   }, [])
 
   const loadMovimientosContratoXlsx = useCallback(async (list: FileList | File[]) => {
     const files = [...list].filter((f) => /\.xlsx?$/i.test(f.name))
-    const loaded: MovimientosContratoFileInput[] = []
+    const movLoaded: MovimientosContratoFileInput[] = []
+    const tepLoaded: TiemposEntrePasosFileInput[] = []
+    const unknownNames: string[] = []
     for (const file of files) {
       const arrayBuffer = await file.arrayBuffer()
-      loaded.push({ sourceFile: file.name, arrayBuffer })
+      const item = { sourceFile: file.name, arrayBuffer }
+      const kind = peekContratoXlsxKind(arrayBuffer)
+      if (kind === 'tiempos_entre_pasos') tepLoaded.push(item)
+      else if (kind === 'movimientos_contrato') movLoaded.push(item)
+      else unknownNames.push(file.name)
+    }
+    if (unknownNames.length) {
+      console.warn('[ETL] XLSX no reconocido (ni Movimientos ni TiemposEntrePasos):', unknownNames)
     }
     setMovimientosContratoFiles((prev) => {
       const byName = new Map(prev.map((p) => [p.sourceFile, p]))
-      for (const item of loaded) byName.set(item.sourceFile, item)
+      for (const item of movLoaded) byName.set(item.sourceFile, item)
+      return [...byName.values()]
+    })
+    setTiemposEntrePasosFiles((prev) => {
+      const byName = new Map(prev.map((p) => [p.sourceFile, p]))
+      for (const item of tepLoaded) byName.set(item.sourceFile, item)
       return [...byName.values()]
     })
   }, [])
@@ -244,6 +271,7 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
     setTransformTramoStatus({ 1: 'idle', 2: 'idle', 3: 'idle' })
     setTransformTramoCompleted(0)
     setMovimientosContratoFiles([])
+    setTiemposEntrePasosFiles([])
   }, [resetKpiTiemposState])
 
 function buildApiJourneyStatsFromParsedFiles(
@@ -418,6 +446,8 @@ function buildApiJourneyStatsFromParsedFiles(
       plateRegistry,
       movimientosContratoFiles:
         movimientosContratoFiles.length ? movimientosContratoFiles : undefined,
+      tiemposEntrePasosFiles:
+        tiemposEntrePasosFiles.length ? tiemposEntrePasosFiles : undefined,
       onContractFirstProgress,
     }
   }, [
@@ -425,6 +455,7 @@ function buildApiJourneyStatsFromParsedFiles(
     events,
     mergeWindowHours,
     movimientosContratoFiles,
+    tiemposEntrePasosFiles,
     onContractFirstProgress,
     parsedAlertFiles.length,
     parsedEventFiles.length,
@@ -583,6 +614,8 @@ function buildApiJourneyStatsFromParsedFiles(
       setMergeWindowHours,
       movimientosContratoFiles,
       movimientosContratoFileNames,
+      tiemposEntrePasosFiles,
+      tiemposEntrePasosFileNames,
       loadMovimientosContratoXlsx,
       clearMovimientosContrato,
       loadJsonFiles,
@@ -615,6 +648,8 @@ function buildApiJourneyStatsFromParsedFiles(
       mergeWindowHours,
       movimientosContratoFiles,
       movimientosContratoFileNames,
+      tiemposEntrePasosFiles,
+      tiemposEntrePasosFileNames,
       loadMovimientosContratoXlsx,
       clearMovimientosContrato,
       loadJsonFiles,

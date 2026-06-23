@@ -27,6 +27,7 @@ import { SegmentTimingChartPanel } from './SegmentTimingChartPanel'
 import { RicardoneSectorScatterPanel } from './RicardoneSectorScatterPanel'
 import { SegmentOccupancyChartPanel } from './SegmentOccupancyChartPanel'
 import { parseSegmentScatterByDayCsv } from '../etlWorkbench/etlSegmentScatterByDay'
+import { isWithinSegmentScatterDisplayMax } from '../etlWorkbench/etlSegmentScatterByDay'
 import { legsForAggregate } from '../etlWorkbench/etlSegmentSlowTail'
 
 function fmtMin(v: number): string {
@@ -157,7 +158,7 @@ export function KpiTiemposTab() {
       if (productFilter !== PRODUCT_FILTER_ALL) {
         rows = rows.filter((r) => productMatchesExecutiveSampleFilter(r.producto, productFilter))
       }
-      return rows
+      return rows.filter((r) => isWithinSegmentScatterDisplayMax(r.duracion_minutos))
     },
     [scatterByDayAll, circuitFilter, productFilter]
   )

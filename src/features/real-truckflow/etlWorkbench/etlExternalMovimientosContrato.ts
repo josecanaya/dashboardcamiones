@@ -67,6 +67,10 @@ export type ExternalMovimientoContratoNormalized = {
   observaciones: string
   observacion_calidad: string
   normalization_warnings: string
+  external_sl_balanza_entrada_at: string
+  external_sl_balanza_salida_at: string
+  tiempos_entre_pasos_source_file: string
+  tiempos_entre_pasos_match: string
 }
 
 export type MovimientosContratoFileInput = {
@@ -256,6 +260,10 @@ export function normalizeMovimientoContrato(
     observaciones: cellStr(row.observaciones),
     observacion_calidad: cellStr(row.observacion_calidad),
     normalization_warnings: warnings.join('|'),
+    external_sl_balanza_entrada_at: '',
+    external_sl_balanza_salida_at: '',
+    tiempos_entre_pasos_source_file: '',
+    tiempos_entre_pasos_match: '',
   }
 }
 
@@ -452,6 +460,10 @@ export const EXTERNAL_MOVIMIENTOS_NORMALIZED_HEADERS: (keyof ExternalMovimientoC
   'observaciones',
   'observacion_calidad',
   'normalization_warnings',
+  'external_sl_balanza_entrada_at',
+  'external_sl_balanza_salida_at',
+  'tiempos_entre_pasos_source_file',
+  'tiempos_entre_pasos_match',
 ]
 
 export function externalMovimientosNormalizedCsv(

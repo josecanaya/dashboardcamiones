@@ -410,6 +410,8 @@ export type EtlTransformInput = {
   plateRegistry?: TruckPlateRegistryDocument | null
   /** Archivos XLSX Movimientos por Contrato (opcional). */
   movimientosContratoFiles?: MovimientosContratoFileInput[]
+  /** Planillas TiemposEntrePasos (balanza SL, opcional). */
+  tiemposEntrePasosFiles?: import('./etlTiemposEntrePasos').TiemposEntrePasosFileInput[]
   /** Telemetría opcional Paso 3 (Contract-first). */
   onContractFirstProgress?: import('./etlContractFirstProgress').ContractFirstProgressCallback
 }
@@ -2130,6 +2132,7 @@ export async function runEtlTransform(
       journeyTimesByUid,
       classifiedJourneys: classifiedForSegmentTiming,
       movimientosFiles: inp.movimientosContratoFiles,
+      tiemposEntrePasosFiles: inp.tiemposEntrePasosFiles,
       skipKpiTiemposArtifacts: true,
       onProgress: inp.onContractFirstProgress,
     })

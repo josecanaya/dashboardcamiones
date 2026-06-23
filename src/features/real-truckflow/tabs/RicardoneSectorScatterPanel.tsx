@@ -3,9 +3,9 @@ import { histogramWithKde } from '../../../utils/stats'
 import { SEGMENT_TIMING_HISTOGRAM_BIN_MIN } from '../etlWorkbench/etlSegmentTiming'
 import {
   RICARDONE_CROSS_CIRCUIT_SECTORS,
+  filterScatterByDayForSector,
   summarizeCrossCircuitSectorFromScatter,
   legsForCrossCircuitSector,
-  filterScatterByDayForSector,
   type CrossCircuitSectorSummary,
 } from '../etlWorkbench/etlRicardoneSectorScatter'
 import type { SegmentScatterByDayRow } from '../etlWorkbench/etlSegmentScatterByDay'

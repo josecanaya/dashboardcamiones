@@ -8,6 +8,10 @@ import { histogramWithKde } from '../../../utils/stats'
 import type { FranjaHoraria, SegmentScatterByDayRow } from '../etlWorkbench/etlSegmentScatterByDay'
 import { SCATTER_DAY_FILTER_ALL } from '../etlWorkbench/etlSegmentScatterByDay'
 import {
+  isWithinSegmentScatterDisplayMax,
+  SEGMENT_SCATTER_DISPLAY_MAX_MINUTES,
+} from '../etlWorkbench/etlSegmentScatterByDay'
+import {
   CHART_VISIBLE_SLOW_EXPORT_COUNT,
   downloadChartVisibleCsv,
   legsToChartVisibleExport,
@@ -97,33 +101,38 @@ export function SegmentTimingChartPanel({
     return visibleScatterRows.filter((r) => r.franja_horaria === franjaFilter)
   }, [visibleScatterRows, franjaFilter])
 
-  const scatterRowsForStats = useDayScatter ? filteredScatterRows : []
+  const scatterWithinMax = useMemo(
+    () => filteredScatterRows.filter((r) => isWithinSegmentScatterDisplayMax(r.duracion_minutos)),
+    [filteredScatterRows]
+  )
 
-  const displayStats = useMemo((): StayTimeStats => {
-    if (useDayScatter) {
-      return computeStayTimeStats(scatterRowsForStats.map((r) => r.duracion_minutos))
-    }
-    return stats
-  }, [useDayScatter, scatterRowsForStats, stats])
+  const scatterRowsForStats = useDayScatter ? scatterWithinMax : []
 
   const displayDurations = useMemo(() => {
     if (useDayScatter) {
-      return scatterRowsForStats.map((r) => r.duracion_minutos)
+      return scatterWithinMax.map((r) => r.duracion_minutos)
     }
-    return durationsMinutes
-  }, [useDayScatter, scatterRowsForStats, durationsMinutes])
+    return durationsMinutes.filter((d) => isWithinSegmentScatterDisplayMax(d))
+  }, [useDayScatter, scatterWithinMax, durationsMinutes])
+
+  const displayStats = useMemo(
+    (): StayTimeStats => computeStayTimeStats(displayDurations),
+    [displayDurations]
+  )
 
   const displayChartData = useMemo(() => {
-    if (useDayScatter && displayDurations.length) {
+    if (displayDurations.length) {
       return histogramWithKde(displayDurations, SEGMENT_TIMING_HISTOGRAM_BIN_MIN, 5, { unit: 'min' })
     }
     return chartData
-  }, [useDayScatter, displayDurations, chartData])
+  }, [displayDurations, chartData])
 
   const coloredLegPoints = useMemo(() => {
     if (useDayScatter || !segmentLegs?.length) return null
+    const legs = segmentLegs.filter((leg) => isWithinSegmentScatterDisplayMax(leg.durationMinutes))
+    if (!legs.length) return null
     return buildColoredBinStackPoints(
-      segmentLegs.map((leg) => ({ leg, duracion_minutos: leg.durationMinutes })),
+      legs.map((leg) => ({ leg, duracion_minutos: leg.durationMinutes })),
       ({ leg, duracion_minutos }) => ({
         fill: '#2563eb',
         stroke: '#1e40af',
@@ -171,6 +180,8 @@ export function SegmentTimingChartPanel({
               {useDayScatter ?
                 ' · general o por día · turnos 0–6 / 6–12 / 12–18 / 18–24'
               : ` · bins ${SEGMENT_TIMING_HISTOGRAM_BIN_MIN} min`}
+              {' · '}
+              máx. {SEGMENT_SCATTER_DISPLAY_MAX_MINUTES} min en gráfico
             </p>
             <p className="mt-1 text-xs text-slate-500">
               Pasá el mouse sobre un punto para ver la patente. El botón CSV exporta los{' '}
@@ -225,7 +236,7 @@ export function SegmentTimingChartPanel({
         : useDayScatter ?
           <SegmentScatterByDayChart
             rows={scatterByDayRows!}
-            chartRows={filteredScatterRows}
+            chartRows={scatterWithinMax}
             tramoLabel={title}
             circuitCode={circuitCode}
             selectedDay={selectedDay}
@@ -235,7 +246,7 @@ export function SegmentTimingChartPanel({
             dayOptions={dayOptions}
             isAllDays={isAllDays}
             stats={displayStats}
-            visibleRowCount={visibleScatterRows.length}
+            visibleRowCount={scatterWithinMax.length}
           />
         : <SegmentTimingScatterChart
             coloredScatterPoints={coloredLegPoints ?? undefined}

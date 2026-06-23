@@ -7,6 +7,7 @@ import { recordsToCsv } from './etlCsv'
 import { DEFAULT_CIRCUIT_MATRIX, EXECUTIVE_CIRCUIT_MATRIX, EXECUTIVE_CIRCUIT_ORDER } from './finalCircuitScoring'
 import { isEtlRearCameraDevice } from './etlRearDevices'
 import type { CommitteeGroup } from './committeeClassification'
+import { shouldApplyTiemposEntrePasosBalanzaOverride } from './etlTiemposEntrePasos'
 
 /** Bins del histograma de tramos largos (minutos). */
 export const SEGMENT_TIMING_HISTOGRAM_BIN_MIN = 5
@@ -114,6 +115,9 @@ export type SlExcelTimelineAnchors = {
   externalIngresoAt?: string
   externalCaladoAt?: string
   externalSalidaAt?: string
+  externalSlBalanzaEntradaAt?: string
+  externalSlBalanzaSalidaAt?: string
+  tiemposEntrePasosOverride?: boolean
   plantaNormalized?: string
   executiveCircuitCode?: string
 }
@@ -1025,6 +1029,72 @@ function injectSlDescargaFromExcel(
  * Timeline SL: cámaras Truckflow + anclas Excel (salida → egreso).
  * El inicio del tramo balanza usa solo cámara S1 o tránsito corto desde S0 Truckflow.
  */
+export function injectSlBalanzaFromTiemposEntrePasos(
+  points: TimedLogicalPoint[],
+  entradaAt?: string,
+  salidaAt?: string,
+  opts?: { replaceCamera?: boolean }
+): TimedLogicalPoint[] {
+  const entrada = String(entradaAt ?? '').trim()
+  const salida = String(salidaAt ?? '').trim()
+  if (!opts?.replaceCamera || (!entrada && !salida)) return points
+  let filtered = points.filter(
+    (p) => p.code !== 'SL_BALANZA_INGRESO' && p.code !== 'SL_BALANZA_SALIDA'
+  )
+  const additions: TimedLogicalPoint[] = []
+  if (entrada && Number.isFinite(parseTimestampMs(entrada))) {
+    additions.push({
+      code: 'SL_BALANZA_INGRESO',
+      occurredAt: ensureArgentinaOffsetIso(entrada),
+    })
+  }
+  if (salida && Number.isFinite(parseTimestampMs(salida))) {
+    additions.push({
+      code: 'SL_BALANZA_SALIDA',
+      occurredAt: ensureArgentinaOffsetIso(salida),
+    })
+  }
+  if (!additions.length) return points
+  return collapseTimedPoints(
+    [...filtered, ...additions].sort(
+      (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
+    )
+  )
+}
+
+export function buildSlBalanzaComiteOptionsFromTiemposEntrePasos(input: {
+  executiveCircuitCode: string
+  externalSlBalanzaEntradaAt?: string
+  externalSlBalanzaSalidaAt?: string
+  tiemposEntrePasosMatch?: string
+  truckflowCircuitCodes?: string
+  platformNormalized?: string
+  plantaNormalized?: string
+}): SlBalanzaComiteOptions | undefined {
+  const circuit = normalizeExecutiveCircuitForKpi(String(input.executiveCircuitCode ?? '').trim())
+  if (circuit !== 'R7') return undefined
+  const apply = shouldApplyTiemposEntrePasosBalanzaOverride({
+    external_sl_balanza_entrada_at: input.externalSlBalanzaEntradaAt,
+    tiempos_entre_pasos_match: input.tiemposEntrePasosMatch,
+    truckflow_circuit_codes: input.truckflowCircuitCodes,
+    platform_normalized: input.platformNormalized,
+    planta_normalized: input.plantaNormalized,
+  })
+  if (!apply) return undefined
+  const entrada = String(input.externalSlBalanzaEntradaAt ?? '').trim()
+  if (!entrada) return undefined
+  return {
+    ...SL_BALANZA_COMITE_PRODUCT_OPTIONS,
+    useTiemposEntrePasosBalanza: true,
+    tiemposEntrePasosEntradaAt: entrada,
+    tiemposEntrePasosSalidaAt: String(input.externalSlBalanzaSalidaAt ?? '').trim() || undefined,
+  }
+}
+
+/**
+ * Timeline SL: cámaras Truckflow + anclas Excel (salida → egreso).
+ * El inicio del tramo balanza usa solo cámara S1 o tránsito corto desde S0 Truckflow.
+ */
 export function enrichSlTimelineWithExcelAnchors(
   points: TimedLogicalPoint[],
   anchors?: string | SlExcelTimelineAnchors
@@ -1032,6 +1102,17 @@ export function enrichSlTimelineWithExcelAnchors(
   const opts = normalizeSlExcelAnchors(anchors)
 
   let enriched = sanitizeMisplacedSlEgreso(points)
+  if (
+    opts.tiemposEntrePasosOverride &&
+    normalizeExecutiveCircuitForKpi(String(opts.executiveCircuitCode ?? '')) === 'R7'
+  ) {
+    enriched = injectSlBalanzaFromTiemposEntrePasos(
+      enriched,
+      opts.externalSlBalanzaEntradaAt,
+      opts.externalSlBalanzaSalidaAt,
+      { replaceCamera: true }
+    )
+  }
   enriched = injectSlIngresoFromExcel(
     enriched,
     opts.externalIngresoAt,
@@ -1282,6 +1363,9 @@ export function buildSlComiteTruckflowContext(input: {
   externalIngresoAt?: string
   externalSalidaAt?: string
   externalCaladoAt?: string
+  externalSlBalanzaEntradaAt?: string
+  externalSlBalanzaSalidaAt?: string
+  tiemposEntrePasosOverride?: boolean
   plantaNormalized?: string
   executiveCircuitCode: string
 }): {
@@ -1304,6 +1388,9 @@ export function buildSlComiteTruckflowContext(input: {
     externalIngresoAt: input.externalIngresoAt,
     externalCaladoAt: input.externalCaladoAt,
     externalSalidaAt: input.externalSalidaAt,
+    externalSlBalanzaEntradaAt: input.externalSlBalanzaEntradaAt,
+    externalSlBalanzaSalidaAt: input.externalSlBalanzaSalidaAt,
+    tiemposEntrePasosOverride: input.tiemposEntrePasosOverride,
     plantaNormalized: input.plantaNormalized,
     executiveCircuitCode: input.executiveCircuitCode,
   })
@@ -1558,20 +1645,22 @@ function finalizeSlBalanzaToEgresoEndpoints(
   }
 }
 
-export type SlScatterHorarioInicioFuente = 'truckflow' | 'balanza_ingreso_inferido'
-export type SlScatterHorarioFinFuente = 'truckflow' | 'excel_salida'
+export type SlScatterHorarioInicioFuente = 'truckflow' | 'balanza_ingreso_inferido' | 'tiempos_entre_pasos'
+export type SlScatterHorarioFinFuente = 'truckflow' | 'excel_salida' | 'tiempos_entre_pasos'
 export type SlScatterHorarioFuente =
   | 'truckflow'
   | 'excel_salida'
   | 'balanza_ingreso_inferido'
   | 'mixto'
   | 'excel_inferido'
+  | 'tiempos_entre_pasos'
 
 export function compositeSlScatterHorarioFuente(
   inicio: SlScatterHorarioInicioFuente,
   fin: SlScatterHorarioFinFuente
 ): SlScatterHorarioFuente {
   if (inicio === 'truckflow' && fin === 'truckflow') return 'truckflow'
+  if (inicio === 'tiempos_entre_pasos' && fin === 'tiempos_entre_pasos') return 'tiempos_entre_pasos'
   if (inicio === 'balanza_ingreso_inferido' && fin === 'excel_salida') return 'mixto'
   if (inicio === 'truckflow' && fin === 'excel_salida') return 'excel_salida'
   if (inicio === 'balanza_ingreso_inferido' && fin === 'truckflow') return 'balanza_ingreso_inferido'
@@ -1693,11 +1782,14 @@ export type SlBalanzaComiteOptions = {
   maxStayMinutes?: number
   /** Si true, acepta inicio inferido (rollup/timeline) cuando no hay cámara confiable. Default false. */
   lenientStart?: boolean
-  /**
-   * Si true, resta corrección legacy de planta (−120 min) a la duración cuando bruta ≥ 150 min.
+  /** Si true, resta corrección legacy de planta (−120 min) a la duración cuando bruta ≥ 150 min.
    * No mueve el inicio S1: el horario de balanza ingreso es siempre cámara Truckflow.
    */
   applyPlantTimeCorrection?: boolean
+  /** Horarios balanza SL desde planilla TiemposEntrePasos (override cámara en ventana acordada). */
+  useTiemposEntrePasosBalanza?: boolean
+  tiemposEntrePasosEntradaAt?: string
+  tiemposEntrePasosSalidaAt?: string
 }
 
 /** Opciones de producto: inicio S1 solo cámara; duración reloj cámara→fin; tope 240 min. */
@@ -1724,6 +1816,49 @@ export function evaluateSlBalanzaComitePayload(
   const salida = String(externalSalidaAt ?? '').trim()
   if (!salida || !Number.isFinite(parseTimestampMs(salida))) {
     return { payload: null, reason: 'sin_salida_excel' }
+  }
+
+  const tepEntrada = String(opts?.tiemposEntrePasosEntradaAt ?? '').trim()
+  const tepSalida = String(opts?.tiemposEntrePasosSalidaAt ?? '').trim()
+  if (opts?.useTiemposEntrePasosBalanza && tepEntrada && Number.isFinite(parseTimestampMs(tepEntrada))) {
+    const inicioRaw = normalizeTimestampForExport(tepEntrada)
+    const s1Ms = parseTimestampMs(inicioRaw)
+    let fin = tepSalida && Number.isFinite(parseTimestampMs(tepSalida)) ? normalizeTimestampForExport(tepSalida) : ''
+    let finFuente: SlScatterHorarioFinFuente =
+      fin ? 'tiempos_entre_pasos' : 'excel_salida'
+    if (!fin) {
+      const horarioSegments = segmentsForSlBalanzaKpiHorarios(truckflowSegments)
+      const horarioPoints =
+        horarioSegments === truckflowSegments ?
+          truckflowPoints
+        : buildTimedLogicalTimelineFromSegments(horarioSegments)
+      const endResolved = resolveSlBalanzaEgresoHorarioForKpi(horarioSegments, s1Ms, salida, horarioPoints)
+      if (!endResolved) return { payload: null, reason: 'fin_no_posterior' }
+      fin = endResolved.endIso
+      finFuente = endResolved.fin_fuente
+    }
+    const salMs = parseTimestampMs(fin)
+    if (!Number.isFinite(salMs) || salMs <= s1Ms) {
+      return { payload: null, reason: 'fin_no_posterior' }
+    }
+    const dur = minutesBetweenIso(inicioRaw, fin)
+    const maxStay = opts?.maxStayMinutes
+    if (maxStay != null && Number.isFinite(maxStay) && dur > maxStay) {
+      return { payload: null, reason: 'duracion_excede_180', durationMin: dur }
+    }
+    if (dur <= 0) return { payload: null, reason: 'duracion_corta', durationMin: dur }
+    return {
+      payload: {
+        segment_start_time: inicioRaw,
+        segment_end_time: fin,
+        segment_duration_min: Math.round(dur * 10) / 10,
+        horario_fuente_inicio: 'tiempos_entre_pasos',
+        horario_fuente_fin: finFuente,
+        horario_fuente: compositeSlScatterHorarioFuente('tiempos_entre_pasos', finFuente),
+      },
+      reason: 'ok',
+      durationMin: dur,
+    }
   }
 
   const horarioSegments = segmentsForSlBalanzaKpiHorarios(truckflowSegments)
@@ -2220,6 +2355,9 @@ export function synthesizeSlRollupLegsFromTimedSegments(input: {
   externalCaladoAt?: string
   externalIngresoAt?: string
   plantaNormalized?: string
+  externalSlBalanzaEntradaAt?: string
+  externalSlBalanzaSalidaAt?: string
+  tiemposEntrePasosOverride?: boolean
 }): SegmentLegWithTimes[] {
   if (!CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(input.executiveCircuitCode)) return []
   if (!input.operationId) return []
@@ -2241,6 +2379,9 @@ export function synthesizeSlRollupLegsFromTimedSegments(input: {
     externalIngresoAt: input.externalIngresoAt,
     externalCaladoAt: input.externalCaladoAt,
     externalSalidaAt: input.externalSalidaAt,
+    externalSlBalanzaEntradaAt: input.externalSlBalanzaEntradaAt,
+    externalSlBalanzaSalidaAt: input.externalSlBalanzaSalidaAt,
+    tiemposEntrePasosOverride: input.tiemposEntrePasosOverride,
     plantaNormalized: input.plantaNormalized,
     executiveCircuitCode: input.executiveCircuitCode,
   }
@@ -3230,6 +3371,9 @@ export function synthesizeInferredRollupLegsFromTimedSegments(input: {
   platformNormalized?: string
   externalIngresoAt?: string
   plantaNormalized?: string
+  externalSlBalanzaEntradaAt?: string
+  externalSlBalanzaSalidaAt?: string
+  tiemposEntrePasosOverride?: boolean
 }): SegmentLegWithTimes[] {
   return [
     ...synthesizeTemplateChainLegsFromTimedSegments(input),
@@ -3242,6 +3386,9 @@ export function synthesizeInferredRollupLegsFromTimedSegments(input: {
       externalCaladoAt: input.externalCaladoAt,
       externalIngresoAt: input.externalIngresoAt,
       plantaNormalized: input.plantaNormalized,
+      externalSlBalanzaEntradaAt: input.externalSlBalanzaEntradaAt,
+      externalSlBalanzaSalidaAt: input.externalSlBalanzaSalidaAt,
+      tiemposEntrePasosOverride: input.tiemposEntrePasosOverride,
     }),
     ...synthesizeDischargeRollupLegsFromTimedSegments(input),
   ]

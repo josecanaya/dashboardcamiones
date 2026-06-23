@@ -6,6 +6,7 @@ import { parseCsvToRecords } from '../etlWorkbench/etlCsvParse'
 
 type WbSlice = {
   movimientosContratoFileNames: string[]
+  tiemposEntrePasosFileNames: string[]
   loadMovimientosContratoXlsx: (list: FileList | File[]) => Promise<void>
   clearMovimientosContrato: () => void
   runTransform: () => Promise<EtlTransformOutput | null>
@@ -83,11 +84,8 @@ export function MovimientosContratoPanel({ wb, compact }: { wb: WbSlice; compact
         <div>
           <h3 className="text-sm font-bold text-slate-900">Movimientos por Contrato + producto</h3>
           <p className="mt-1 max-w-2xl text-[11px] text-slate-700">
-            Cargá los XLSX <strong>antes</strong> de «Procesar Transform». El merge{' '}
-            <strong>Excel-first</strong> alimenta filtros por producto y comité; los KPI de tiempos se arman en la
-            pestaña <strong>KPI Tiempos</strong> (tramo 4). Conciliación: (
-            <code className="text-[10px]">excel_operations_with_truckflow.csv</code>
-            ).
+            Cargá los XLSX <strong>antes</strong> de «Procesar Transform»:{' '}
+            <strong>MovimientosPorContrato</strong> y/o <strong>TiemposEntrePasos</strong> (balanza SL, 17–21 jun).
           </p>
         </div>
         {!compact && canTransform ?
@@ -103,7 +101,7 @@ export function MovimientosContratoPanel({ wb, compact }: { wb: WbSlice; compact
       </div>
 
       <label className="mt-3 inline-flex cursor-pointer flex-col text-sm">
-        <span className="text-xs font-semibold text-slate-800">Archivos XLSX</span>
+        <span className="text-xs font-semibold text-slate-800">Archivos XLSX (Movimientos + TiemposEntrePasos)</span>
         <input
           type="file"
           accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -117,9 +115,17 @@ export function MovimientosContratoPanel({ wb, compact }: { wb: WbSlice; compact
         />
       </label>
 
-      {filesLoaded > 0 ?
+      {filesLoaded > 0 || wb.tiemposEntrePasosFileNames.length > 0 ?
         <p className="mt-2 text-[11px] font-medium text-slate-800">
-          En memoria: {filesLoaded} archivo(s) — {wb.movimientosContratoFileNames.join(', ')}
+          Movimientos: {wb.movimientosContratoFileNames.length} —{' '}
+          {wb.movimientosContratoFileNames.join(', ') || '—'}
+          {wb.tiemposEntrePasosFileNames.length > 0 ?
+            <>
+              <br />
+              TiemposEntrePasos: {wb.tiemposEntrePasosFileNames.length} —{' '}
+              {wb.tiemposEntrePasosFileNames.join(', ')}
+            </>
+          : null}
           <button
             type="button"
             className="ml-2 rounded border border-slate-400 px-1.5 py-0.5 text-[10px] font-semibold hover:bg-white"

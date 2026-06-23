@@ -26,6 +26,7 @@ export async function runMovimientosContratoTramo3(
     journeyTimesByUid,
     classifiedJourneys: prep.classifiedForSegmentTiming,
     movimientosFiles: inp.movimientosContratoFiles,
+    tiemposEntrePasosFiles: inp.tiemposEntrePasosFiles,
     skipKpiTiemposArtifacts: true,
     onProgress: inp.onContractFirstProgress,
   })

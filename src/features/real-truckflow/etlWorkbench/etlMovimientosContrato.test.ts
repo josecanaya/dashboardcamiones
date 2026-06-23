@@ -96,6 +96,10 @@ function movimiento(partial: Partial<ExternalMovimientoContratoNormalized>): Ext
     observaciones: '',
     observacion_calidad: '',
     normalization_warnings: '',
+    external_sl_balanza_entrada_at: '',
+    external_sl_balanza_salida_at: '',
+    tiempos_entre_pasos_source_file: '',
+    tiempos_entre_pasos_match: '',
     ...partial,
   }
 }

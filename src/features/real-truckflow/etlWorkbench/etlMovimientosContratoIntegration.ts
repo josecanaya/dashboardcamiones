@@ -50,6 +50,10 @@ import {
 } from './etlSegmentScatterByDay'
 
 import type { KpiTiemposMovimientosSnapshot } from './etlKpiTiemposBuild'
+import {
+  enrichMovimientosWithTiemposEntrePasos,
+  loadTiemposEntrePasosFiles,
+} from './etlTiemposEntrePasos'
 import { createPlateMatchCache } from './etlPlateMatchCache'
 import {
   countUniqueNormalizedPlates,
@@ -64,6 +68,7 @@ export type MovimientosContratoIntegrationInput = {
   journeyTimesByUid: Map<string, { start: string; end: string }>
   classifiedJourneys: ClassifiedJourneyForTiming[]
   movimientosFiles: MovimientosContratoFileInput[]
+  tiemposEntrePasosFiles?: import('./etlTiemposEntrePasos').TiemposEntrePasosFileInput[]
   /** Si true, no arma scatter/KPI tiempos (tramo 4 en pestaña KPI Tiempos). */
   skipKpiTiemposArtifacts?: boolean
   /** Telemetría opcional Paso 3 (UI / consola). */
@@ -107,7 +112,19 @@ export async function runMovimientosContratoIntegration(
       )
     }
   }
-  const normalized = normalizeMovimientosContratoBatch(raw)
+  const normalizedBase = normalizeMovimientosContratoBatch(raw)
+  const tepLoad =
+    input.tiemposEntrePasosFiles?.length ?
+      loadTiemposEntrePasosFiles(input.tiemposEntrePasosFiles)
+    : { rows: [], warnings: [] as string[] }
+  for (const w of tepLoad.warnings) logs.push(w)
+  if (tepLoad.rows.length) {
+    logs.push(`TiemposEntrePasos filas: ${tepLoad.rows.length}`)
+    logs.push(
+      `TiemposEntrePasos con balanza entrada: ${tepLoad.rows.filter((r) => r.balanza_entrada_at).length}`
+    )
+  }
+  const normalized = enrichMovimientosWithTiemposEntrePasos(normalizedBase, tepLoad.rows)
   const movStats = summarizeMovimientosContratoLoad(input.movimientosFiles, normalized, loadWarnings)
   const excelUniquePlates = countUniqueNormalizedPlates(normalized.map((m) => m.plate_normalized))
   console.info('[CONTRACT_FIRST_PASO3] inicio', {

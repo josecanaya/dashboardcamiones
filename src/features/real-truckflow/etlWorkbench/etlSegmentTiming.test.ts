@@ -409,6 +409,34 @@ describe('etlSegmentTiming', () => {
     expect(ev.durationMin).toBeGreaterThan(SL_BALANZA_STAY_MAX_MINUTES)
   })
 
+  it('TiemposEntrePasos override: usa balanza entrada/salida planilla aunque haya cámara S1', () => {
+    const segments = [
+      {
+        segment_from: 'SL_BALANZA_INGRESO',
+        segment_to: 'SL_BALANZA_SALIDA',
+        segment_start_time: '2026-06-18T20:00:00',
+        segment_end_time: '2026-06-18T20:30:00',
+      },
+    ]
+    const ev = evaluateSlBalanzaComitePayload(
+      segments,
+      buildTimedLogicalTimelineFromSegments(segments),
+      '2026-06-19T00:01:00',
+      '2026-06-18T22:13:00',
+      undefined,
+      {
+        ...SL_BALANZA_COMITE_PRODUCT_OPTIONS,
+        useTiemposEntrePasosBalanza: true,
+        tiemposEntrePasosEntradaAt: '2026-06-18T23:23:00',
+        tiemposEntrePasosSalidaAt: '2026-06-19T00:05:00',
+      }
+    )
+    expect(ev.reason).toBe('ok')
+    expect(ev.payload?.segment_start_time).toContain('23:23')
+    expect(ev.payload?.segment_end_time).toContain('00:05')
+    expect(ev.payload?.horario_fuente).toBe('tiempos_entre_pasos')
+  })
+
   it('comité SL: rollup unificado balanza→egreso con cámara S1/S7 (LHT051, Excel salida temprana)', () => {
     // Caso real: sin cámara S5 (balanza salida); S1→S5 y S5→S7 como segmentos cámara.
     const segments = [

@@ -4,6 +4,7 @@
 
 import { computeStayTimeStats, type StayTimeStats } from '../../../services/analyticsKpi'
 import type { SegmentScatterByDayRow } from './etlSegmentScatterByDay'
+import { isWithinSegmentScatterDisplayMax } from './etlSegmentScatterByDay'
 import { formatTransitionLabel, type SegmentLeg, type SegmentTimingIndex } from './etlSegmentTiming'
 import { productMatchesExecutiveSampleFilter, PRODUCT_FILTER_ALL } from './etlProductFilter'
 
@@ -48,7 +49,11 @@ export function filterScatterByDayForSector(
     if (productFilter && productFilter !== PRODUCT_FILTER_ALL) {
       if (!productMatchesExecutiveSampleFilter(r.producto, productFilter)) return false
     }
-    return Number.isFinite(r.duracion_minutos) && r.duracion_minutos > 0
+    return (
+      isWithinSegmentScatterDisplayMax(r.duracion_minutos) &&
+      Number.isFinite(r.duracion_minutos) &&
+      r.duracion_minutos > 0
+    )
   })
 }
 

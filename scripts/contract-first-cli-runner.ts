@@ -19,6 +19,7 @@ export type ContractFirstCliArgs = {
   from: string
   to: string
   excel: string
+  tiemposEntrePasos: string[]
   dataRoot: string
   outDir: string
 }
@@ -50,6 +51,7 @@ export function parseContractFirstCliArgv(argv: string[]): ContractFirstCliArgs 
     from: '',
     to: '',
     excel: '',
+    tiemposEntrePasos: [],
     dataRoot: path.join(PROJECT_ROOT, 'data', 'truckflow'),
     outDir: path.join(PROJECT_ROOT, 'scripts', 'output', 'contract-first'),
   }
@@ -59,6 +61,7 @@ export function parseContractFirstCliArgv(argv: string[]): ContractFirstCliArgs 
     if (a === '--from' || a === '--start') out.from = argv[++i] ?? ''
     if (a === '--to' || a === '--end') out.to = argv[++i] ?? ''
     if (a === '--excel') out.excel = argv[++i] ?? ''
+    if (a === '--tiempos-entre-pasos') out.tiemposEntrePasos.push(argv[++i] ?? '')
     if (a === '--data-root') out.dataRoot = path.resolve(argv[++i] ?? '')
     if (a === '--out') out.outDir = path.resolve(argv[++i] ?? '')
   }
@@ -83,9 +86,22 @@ export async function runContractFirstCli(args: ContractFirstCliArgs): Promise<{
   const excelBuf = await fs.readFile(args.excel)
   const excelName = path.basename(args.excel)
 
+  const tiemposFiles: { sourceFile: string; arrayBuffer: ArrayBuffer }[] = []
+  for (const p of args.tiemposEntrePasos) {
+    if (!p?.trim()) continue
+    const buf = await fs.readFile(p)
+    tiemposFiles.push({
+      sourceFile: path.basename(p),
+      arrayBuffer: buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer,
+    })
+  }
+
   const logs: string[] = []
   logs.push(`[contract-first-cli] días Truckflow: ${days.join(', ')}`)
   logs.push(`[contract-first-cli] Excel: ${args.excel}`)
+  if (tiemposFiles.length) {
+    logs.push(`[contract-first-cli] TiemposEntrePasos: ${tiemposFiles.map((f) => f.sourceFile).join(', ')}`)
+  }
 
   const built = await buildCliFinalCsvRowsFromLocalEventJson(eventFiles)
   for (const d of built.perDay) {
@@ -108,6 +124,7 @@ export async function runContractFirstCli(args: ContractFirstCliArgs): Promise<{
         ) as ArrayBuffer,
       },
     ],
+    tiemposEntrePasosFiles: tiemposFiles.length ? tiemposFiles : undefined,
     skipKpiTiemposArtifacts: true,
     onProgress: (ev) => {
       console.info('[CONTRACT_FIRST_PROGRESS]', ev.step, ev.label, `${ev.current}/${ev.total}`, ev.elapsedMs, 'ms')
@@ -183,6 +200,7 @@ Opciones:
   --from / --start   YYYY-MM-DD
   --to / --end       YYYY-MM-DD
   --excel            Ruta a MovimientosPorContrato.xlsx
+  --tiempos-entre-pasos  Ruta a TiemposEntrePasos_YYYYMMDD.xlsx (repetible)
   --data-root        Carpeta data/truckflow (default: data/truckflow)
   --out              Carpeta salida (default: scripts/output/contract-first)
 `)
