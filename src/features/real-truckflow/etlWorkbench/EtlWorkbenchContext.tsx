@@ -41,6 +41,11 @@ import {
   type TruckflowApiJourneyDayStat,
 } from '../api/truckflowLocalServerApi'
 import { getTruckPlateRegistry } from '../api/truckPlateRegistryApi'
+import {
+  buildPlantVisitUpsertsFromTransform,
+  type FleetDatabaseSaveResult,
+} from './truckPlantVisitSync'
+import { syncPlantVisits, FLEET_SYNC_BATCH_SIZE } from '../api/truckFleetApi'
 import type { ContractFirstProgressEvent } from './etlContractFirstProgress'
 
 export type EtlLoadSummary = {
@@ -103,6 +108,11 @@ type Ctx = {
     tramo: TransformTramoId,
     options?: { keepGlobalBusy?: boolean }
   ) => Promise<EtlTransformOutput | null>
+  /** Guarda visitas del último transform en camion/visita_planta (manual, no automático). */
+  fleetSaveBusy: boolean
+  fleetSaveError: string | null
+  fleetSaveMessage: string | null
+  saveFleetDatabase: () => Promise<FleetDatabaseSaveResult | null>
 }
 
 const EtlWorkbenchContext = createContext<Ctx | null>(null)
@@ -179,6 +189,9 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
   )
   const [diskPeriod, setDiskPeriod] = useState<EtlDiskPeriod | null>(null)
   const [transformResult, setTransformResult] = useState<EtlTransformOutput | null>(null)
+  const [fleetSaveBusy, setFleetSaveBusy] = useState(false)
+  const [fleetSaveError, setFleetSaveError] = useState<string | null>(null)
+  const [fleetSaveMessage, setFleetSaveMessage] = useState<string | null>(null)
   const [transformBusy, setTransformBusy] = useState(false)
   const [transformError, setTransformError] = useState<string | null>(null)
   const [kpiTiemposBusy, setKpiTiemposBusy] = useState(false)
@@ -469,6 +482,8 @@ function buildApiJourneyStatsFromParsedFiles(
     startTransition(() => {
       setTransformResult(publicOut)
     })
+    setFleetSaveError(null)
+    setFleetSaveMessage(null)
     return publicOut
   }, [])
 
@@ -592,6 +607,75 @@ function buildApiJourneyStatsFromParsedFiles(
     }
   }, [transformResult])
 
+  const saveFleetDatabase = useCallback(async () => {
+    if (!transformResult) {
+      setFleetSaveError('Ejecutá Procesar Transform antes de guardar en la base.')
+      return null
+    }
+    setFleetSaveBusy(true)
+    setFleetSaveError(null)
+    setFleetSaveMessage('Conectando con servidor local…')
+    try {
+      const visitas = buildPlantVisitUpsertsFromTransform(transformResult)
+        if (!visitas.length) {
+        const empty: FleetDatabaseSaveResult = {
+          ok: false,
+          visitCount: 0,
+          inserted: 0,
+          updated: 0,
+          skipped: 0,
+          storage: '',
+          message:
+            'No hay visitas con patente Argentina válida (ABC123 o AB123CD). Revisá el merge/clean del transform o datos OCR erróneos.',
+        }
+        setFleetSaveError(empty.message)
+        return empty
+      }
+
+      const res = await syncPlantVisits(visitas, {
+        onProgress: ({ batch, totalBatches, rowsDone, rowsTotal }) => {
+          setFleetSaveMessage(
+            `Guardando lote ${batch}/${totalBatches} (${Math.min(rowsDone + FLEET_SYNC_BATCH_SIZE, rowsTotal)}/${rowsTotal} filas)…`
+          )
+        },
+      })
+
+      const storage = res.storage || 'desconocido'
+      const batchNote = res.batches > 1 ? ` (${res.batches} lotes)` : ''
+      const countNote =
+        res.dbCounts ?
+          ` En ${res.supabaseHost ?? 'Supabase'} hay ${res.dbCounts.camion} camiones y ${res.dbCounts.visitaPlanta} visitas.`
+        : ''
+      const result: FleetDatabaseSaveResult = {
+        ok: !res.syncWarning,
+        visitCount: visitas.length,
+        inserted: res.inserted,
+        updated: res.updated,
+        skipped: res.skipped,
+        storage,
+        message: `Guardado en ${storage}${batchNote}: ${res.inserted} filas procesadas, ${res.skipped} omitidas.${countNote}`,
+      }
+      if (res.syncWarning) {
+        setFleetSaveError(res.syncWarning)
+        setFleetSaveMessage(result.message)
+        return { ...result, ok: false }
+      }
+      setFleetSaveMessage(result.message)
+      return result
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e)
+      const hint = msg.includes('8787') || msg.includes('fetch') || msg.includes('Servidor local') ?
+        ''
+      : msg.includes('camion_plate_normalized_chk') || msg.includes('Patente inválida') ?
+        ' Solo se guardan patentes Argentina (6–7 caracteres). Reiniciá server:truckflow tras actualizar.'
+      : ' Si el servidor responde, revisá la migración camion/visita_planta en Supabase.'
+      setFleetSaveError(msg + hint)
+      return null
+    } finally {
+      setFleetSaveBusy(false)
+    }
+  }, [transformResult])
+
   const value = useMemo<Ctx>(
     () => ({
       loadSummary,
@@ -628,6 +712,10 @@ function buildApiJourneyStatsFromParsedFiles(
       transformRunAllInProgress,
       contractFirstProgress,
       runTransformTramo,
+      fleetSaveBusy,
+      fleetSaveError,
+      fleetSaveMessage,
+      saveFleetDatabase,
     }),
     [
       loadSummary,
@@ -662,6 +750,10 @@ function buildApiJourneyStatsFromParsedFiles(
       transformTramoCompleted,
       transformRunAllInProgress,
       contractFirstProgress,
+      fleetSaveBusy,
+      fleetSaveError,
+      fleetSaveMessage,
+      saveFleetDatabase,
     ]
   )
 

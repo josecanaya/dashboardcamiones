@@ -26,10 +26,18 @@ import {
   type SlScatterHorarioInicioFuente,
   type SlScatterHorarioFinFuente,
 } from './etlSegmentTiming'
-import { argentinaLocalParts, ARGENTINA_UTC_OFFSET_MINUTES, parseTimestampMs } from './etlTimestampNormalize'
+import { argentinaLocalParts, parseTimestampMs } from './etlTimestampNormalize'
 import { INFERRED_ROLLUP_VALID_DETAIL, type ExcelOperationSegmentScatterRow } from './etlExcelFirstMerge'
 import type { SegmentScatterRow } from './etlOperationalAnalysis'
 import { p75, p90 } from '../../../utils/stats'
+import {
+  turnoFromIso,
+  turnoLabel,
+  TURNOS_OPERATIVOS,
+  TURNO_SCATTER_COLORS,
+  TURNO_SCATTER_WINDOWS,
+  type Turno,
+} from './operationalTurno'
 
 /** Tope 6 h: tramos más largos no entran en dispersión ni estadísticas del gráfico. */
 export const SEGMENT_SCATTER_DISPLAY_MAX_MINUTES = 360
@@ -42,24 +50,14 @@ export function isWithinSegmentScatterDisplayMax(minutes: number): boolean {
   )
 }
 
-/** Turnos de 6 h según hora local de inicio del tramo. */
-export type FranjaHoraria = 'Madrugada' | 'Mañana' | 'Tarde' | 'Noche'
+/** Turno operativo según hora local de inicio del tramo (Argentina). */
+export type FranjaHoraria = Exclude<Turno, 'unknown'>
 
-export const FRANJA_HORARIA_WINDOWS: Record<FranjaHoraria, { desde: string; hasta: string }> = {
-  Madrugada: { desde: '00:00', hasta: '06:00' },
-  Mañana: { desde: '06:00', hasta: '12:00' },
-  Tarde: { desde: '12:00', hasta: '18:00' },
-  Noche: { desde: '18:00', hasta: '24:00' },
-}
+export const FRANJA_HORARIA_WINDOWS = TURNO_SCATTER_WINDOWS
 
-export const FRANJA_HORARIA_COLORS: Record<FranjaHoraria, string> = {
-  Madrugada: '#2563eb',
-  Mañana: '#f97316',
-  Tarde: '#16a34a',
-  Noche: '#dc2626',
-}
+export const FRANJA_HORARIA_COLORS = TURNO_SCATTER_COLORS
 
-export const FRANJA_HORARIA_ORDER: FranjaHoraria[] = ['Madrugada', 'Mañana', 'Tarde', 'Noche']
+export const FRANJA_HORARIA_ORDER: FranjaHoraria[] = [...TURNOS_OPERATIVOS]
 
 /** Valor del selector de día para vista general (todos los días del período). */
 export const SCATTER_DAY_FILTER_ALL = '__ALL_DAYS__'
@@ -116,16 +114,10 @@ export function segmentStartLocalParts(iso: string): { fecha_tramo: string; hora
   return argentinaLocalParts(iso)
 }
 
-/** 00–06 · 06–12 · 12–18 · 18–24 (hora Argentina). */
+/** Turnos 02–08 · 08–14 · 14–20 · 20–02 (hora Argentina). */
 export function resolveFranjaHoraria(iso: string): FranjaHoraria | '' {
-  const ms = parseTimestampMs(iso)
-  if (!Number.isFinite(ms)) return ''
-  const localMs = ms + ARGENTINA_UTC_OFFSET_MINUTES * 60_000
-  const minutes = new Date(localMs).getUTCHours() * 60 + new Date(localMs).getUTCMinutes()
-  if (minutes < 6 * 60) return 'Madrugada'
-  if (minutes < 12 * 60) return 'Mañana'
-  if (minutes < 18 * 60) return 'Tarde'
-  return 'Noche'
+  const t = turnoFromIso(iso)
+  return t === 'unknown' ? '' : t
 }
 
 export function colorForFranja(franja: FranjaHoraria | ''): string {
@@ -135,10 +127,16 @@ export function colorForFranja(franja: FranjaHoraria | ''): string {
 
 function normalizeFranjaLabel(raw: string, timestampInicio = ''): FranjaHoraria | '' {
   const u = String(raw ?? '').trim()
-  if (u === 'Madrugada' || u === 'Mañana' || u === 'Tarde' || u === 'Noche') return u
-  if (u === 'Día') return resolveFranjaHoraria(timestampInicio) || 'Mañana'
-  const fromTs = resolveFranjaHoraria(timestampInicio)
-  return fromTs
+  if (u === '02_08' || u === '08_14' || u === '14_20' || u === '20_02') return u
+  if (u === '02–08') return '02_08'
+  if (u === '08–14') return '08_14'
+  if (u === '14–20') return '14_20'
+  if (u === '20–02') return '20_02'
+  if (u === 'Madrugada' || u === 'Mañana' || u === 'Tarde' || u === 'Noche') {
+    return resolveFranjaHoraria(timestampInicio)
+  }
+  if (u === 'Día') return resolveFranjaHoraria(timestampInicio) || '08_14'
+  return resolveFranjaHoraria(timestampInicio)
 }
 
 function tramoOperativoLabel(fromCode: string, toCode: string): string {

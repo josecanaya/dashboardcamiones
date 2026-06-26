@@ -14,3 +14,14 @@ export function createServerSupabaseClient() {
     auth: { persistSession: false, autoRefreshToken: false },
   })
 }
+
+/** Host del proyecto (sin credenciales), para cruzar con el dashboard de Supabase. */
+export function supabasePublicHost() {
+  const url = process.env.SUPABASE_URL?.trim()
+  if (!url) return null
+  try {
+    return new URL(url).hostname
+  } catch {
+    return null
+  }
+}

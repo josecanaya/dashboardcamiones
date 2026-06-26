@@ -174,12 +174,17 @@ function loadJsonEventArray(raw) {
 function loadEventsFromFile(path) {
   if (path.toLowerCase().endsWith('.csv')) {
     return parseCsv(readFileSync(path, 'utf8')).rows.map((row) => ({
+      journeyUid: row.journey_uid ?? row.journeyUid,
       truckPlate: row.truck_plate ?? row.truckPlate,
-      normalizedPlate: row.normalized_plate,
+      normalizedPlate: row.normalized_plate ?? row.normalizedPlate,
+      rawTruckPlate: row.raw_truck_plate ?? row.rawTruckPlate,
       deviceCode: row.device_code ?? row.deviceCode,
       sectorCode: row.sector_code ?? row.sectorCode,
-      occurredAt: row.occurred_at,
-      createdAt: row.created_at,
+      occurredAt: row.occurred_at ?? row.occurredAt,
+      createdAt: row.created_at ?? row.createdAt,
+      modifiedAt: row.modified_at ?? row.modifiedAt,
+      recordedAt: row.recorded_at ?? row.recordedAt,
+      payload: row.payload,
     }))
   }
   return loadJsonEventArray(JSON.parse(readFileSync(path, 'utf8')))

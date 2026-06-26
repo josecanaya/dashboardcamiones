@@ -74,6 +74,7 @@ export async function getTruckflowHealth(): Promise<{
   ok: boolean
   dataRoot: string
   plateRegistryStorage?: string
+  fleetRegistryStorage?: string
   supabaseConfigured?: boolean
 }> {
   const prefix = localApiPrefix()

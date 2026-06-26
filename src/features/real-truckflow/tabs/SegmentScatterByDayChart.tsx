@@ -10,6 +10,7 @@ import {
   SCATTER_DAY_FILTER_ALL,
   colorForFranja,
 } from '../etlWorkbench/etlSegmentScatterByDay'
+import { turnoLabel } from '../etlWorkbench/operationalTurno'
 import {
   SegmentTimingScatterChart,
   SEGMENT_TIMING_DOT_RADIUS,
@@ -46,7 +47,7 @@ function strokeForHorarioFuente(fuente: string): string {
 
 function franjaLegendLabel(f: (typeof FRANJA_HORARIA_ORDER)[number]): string {
   const w = FRANJA_HORARIA_WINDOWS[f]
-  return `${f} (${w.desde}–${w.hasta})`
+  return `${turnoLabel(f)} (${w.desde}–${w.hasta})`
 }
 
 export function SegmentScatterByDayChart({
@@ -62,6 +63,7 @@ export function SegmentScatterByDayChart({
   isAllDays,
   stats,
   visibleRowCount,
+  scatterPoolHint,
 }: {
   rows: SegmentScatterByDayRow[]
   chartRows: SegmentScatterByDayRow[]
@@ -75,6 +77,10 @@ export function SegmentScatterByDayChart({
   isAllDays: boolean
   stats: StayTimeStats
   visibleRowCount: number
+  scatterPoolHint?: {
+    uniqueOpsInCircuit: number
+    globalReadyForScatter?: number
+  }
 }) {
   const durations = useMemo(() => chartRows.map((r) => r.duracion_minutos), [chartRows])
 
@@ -95,7 +101,7 @@ export function SegmentScatterByDayChart({
           tooltipTitle: row.patente || row.journey_id,
           tooltipLines: [
             `Patente: ${row.patente || '—'}`,
-            `${row.duracion_minutos.toFixed(1)} min · ${row.franja_horaria || '—'} (${row.hora_inicio})`,
+            `${row.duracion_minutos.toFixed(1)} min · turno ${row.franja_horaria ? turnoLabel(row.franja_horaria) : '—'} (${row.hora_inicio})`,
             `Ingreso: ${row.timestamp_inicio || '—'}`,
             `Egreso: ${row.timestamp_fin || '—'}`,
             isAllDays ?
@@ -170,7 +176,7 @@ export function SegmentScatterByDayChart({
       <p className="text-xs text-slate-500">
         {chartRows.length.toLocaleString('es-AR')} camiones
         {franjaFilter ?
-          ` (filtro: ${franjaFilter})`
+          ` (filtro: ${turnoLabel(franjaFilter)})`
         : null}
         {visibleRowCount !== chartRows.length ?
           ` · de ${visibleRowCount.toLocaleString('es-AR')} en la vista`
@@ -181,6 +187,13 @@ export function SegmentScatterByDayChart({
         · tiempo medio {stats.count ? `${stats.mean.toFixed(1)} min` : '—'}
         {franjaFilter && stats.count ?
           ` · desvío σ ${stats.std.toFixed(1)} min`
+        : null}
+        {scatterPoolHint ?
+          ` · ${scatterPoolHint.uniqueOpsInCircuit.toLocaleString('es-AR')} operaciones con dispersión en ${circuitCode}${
+            scatterPoolHint.globalReadyForScatter ?
+              ` (de ${scatterPoolHint.globalReadyForScatter.toLocaleString('es-AR')} listas para scatter en el Excel)`
+            : ''
+          }`
         : null}
       </p>
 
@@ -239,8 +252,8 @@ export function SegmentScatterByDayChart({
                     type="button"
                     title={
                       active ?
-                        `Quitar filtro ${f}`
-                      : `Mostrar solo ${f}`
+                        `Quitar filtro ${turnoLabel(f)}`
+                      : `Mostrar solo ${turnoLabel(f)}`
                     }
                     onClick={() => toggleFranjaFilter(f)}
                     className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] transition ${

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ApiJourneyCountByDayTable } from '../components/ApiJourneyCountByDayTable'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
 import { MovimientosContratoPanel } from '../components/MovimientosContratoPanel'
+import { PostTransformOptionalActions } from '../components/PostTransformOptionalActions'
 import { TransformPhaseStepper } from '../components/TransformPhaseStepper'
 import { TransformRunProgress } from '../components/TransformRunProgress'
 import { TransformTramoSummary } from '../components/TransformTramoSummary'
@@ -51,9 +52,9 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
     <section className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900">Análisis local</h2>
-        <p className="mt-1 max-w-3xl text-sm text-slate-600">
-          En esta misma pantalla: <strong>cargar datos</strong> (paso 0) y <strong>procesar</strong> (pasos 1–3).
-          No te movemos a otra pestaña al terminar.
+        <p className="mt-1 text-sm text-slate-600">
+          En esta misma pantalla: <strong>cargar datos</strong> (paso 0), <strong>procesar</strong> (pasos 1–3) y,
+          si hace falta, <strong>KPI / cámaras / base de datos</strong> en la sección manual más abajo.
         </p>
       </div>
 
@@ -249,6 +250,8 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
           />
         </div>
       </article>
+
+      <PostTransformOptionalActions />
 
       {s ?
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm text-sm text-slate-800">

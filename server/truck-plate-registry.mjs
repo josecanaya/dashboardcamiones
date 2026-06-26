@@ -238,6 +238,16 @@ export function createTruckPlateRegistryRouter({
       }
     },
 
+    async lookupPlateEntry(plate) {
+      const normalized = normalizePlate(plate)
+      if (!normalized) return null
+      if (store.mode === 'supabase') {
+        return store.findActiveByPlate(normalized)
+      }
+      const doc = await store.readRegistry()
+      return doc.entries.find((e) => e.active && normalizePlate(e.plate) === normalized) ?? null
+    },
+
     async deleteEntry(req, res) {
       try {
         const id = String(req.params?.id ?? '').trim()

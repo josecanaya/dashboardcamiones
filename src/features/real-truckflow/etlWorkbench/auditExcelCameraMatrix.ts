@@ -2,13 +2,18 @@
  * Matriz Excel por circuito: CTG, patente, día egreso + SI/NO por hito de cámara en crudo.
  */
 
+import { isLikelyOcrPlateMatch } from '../../../services/circuitPlateOcr'
 import { normalizeRealEventPoint } from '../../../services/realEventNormalization'
 import type { RealJourneyEventDto } from '../../../services/realJourneyEvents.types'
 import { operationalInstantIso, parseInstantMs, normalizePlateKey } from './auditSlCameraExcelCoverage'
 
 export type RawJourneyEventLike = {
+  journeyUid?: string
+  journey_uuid?: string
   truckPlate?: string
   normalizedPlate?: string
+  rawTruckPlate?: string
+  raw_truck_plate?: string
   deviceCode?: string
   device_code?: string
   sectorCode?: string
@@ -21,6 +26,20 @@ export type RawJourneyEventLike = {
   modified_at?: string
   recordedAt?: string
   recorded_at?: string
+  payload?: unknown
+}
+
+export type CameraAuditAlertLike = {
+  journeyUid?: string
+  journeyUuid?: string
+  truckPlate?: string
+  deviceCode?: string
+  sectorCode?: string
+  occurredAt?: string
+  createdAt?: string
+  modifiedAt?: string
+  recordedAt?: string
+  payload?: unknown
 }
 
 export type ExcelCameraStep = {
@@ -117,7 +136,10 @@ export type CameraStepSummary = {
 
 function toEventDto(e: RawJourneyEventLike): RealJourneyEventDto {
   return {
+    journeyUid: String(e.journeyUid ?? e.journey_uuid ?? '').trim(),
     truckPlate: String(e.truckPlate ?? e.normalizedPlate ?? ''),
+    rawTruckPlate: String(e.rawTruckPlate ?? e.raw_truck_plate ?? ''),
+    normalizedPlate: String(e.normalizedPlate ?? ''),
     deviceCode: String(e.deviceCode ?? e.device_code ?? ''),
     sectorCode: String(e.sectorCode ?? e.sector_code ?? ''),
     occurredAt: String(e.occurredAt ?? e.occurred_at ?? ''),
@@ -127,20 +149,246 @@ function toEventDto(e: RawJourneyEventLike): RealJourneyEventDto {
   } as RealJourneyEventDto
 }
 
-/** Balanza egreso Ricardone operativa (cámaras B2/B3; también B1 si aparece en crudo). */
-const RIC_BALANZA_EGRESO_DEVICE_RE = /^ricb[123]egreso$/i
+const RIC_BALANZA_EGRESO_DEVICE_RE = /^ricb[123]egreso/i
+const RIC_BALANZA_INGRESO_DEVICE_RE = /^ricb[123]ingreso/i
 
+/** Mismo criterio lógico que el ETL (`normalizeRealEventPoint`) + alias de dispositivo balanza. */
 export function eventLogicalCodeOperational(e: RawJourneyEventLike): string {
   const device = String(e.deviceCode ?? e.device_code ?? '').trim()
   if (RIC_BALANZA_EGRESO_DEVICE_RE.test(device)) return 'BALANZA_EGRESO'
+  if (RIC_BALANZA_INGRESO_DEVICE_RE.test(device)) return 'BALANZA_INGRESO'
+
   try {
     const pt = normalizeRealEventPoint(toEventDto(e))
-    const code = String(pt.logicalCode ?? '').trim()
+    let code = String(pt.logicalCode ?? '').trim()
     if (code.includes('EXCLUIDA') || code.includes('TRASERA')) return ''
-    return code
+    if (code === 'BALANZA' && device) {
+      const d = device.toLowerCase()
+      if (d.includes('egreso') || d.includes('salida')) return 'BALANZA_EGRESO'
+      if (d.includes('ingreso') || d.includes('entrada')) return 'BALANZA_INGRESO'
+    }
+    if (code && code !== 'UNKNOWN') return code
   } catch {
-    return ''
+    /* fallback device */
   }
+
+  if (RIC_BALANZA_EGRESO_DEVICE_RE.test(device)) return 'BALANZA_EGRESO'
+  if (RIC_BALANZA_INGRESO_DEVICE_RE.test(device)) return 'BALANZA_INGRESO'
+  return ''
+}
+
+export function eventMatchesCameraStep(e: RawJourneyEventLike, step: ExcelCameraStep): boolean {
+  const code = eventLogicalCodeOperational(e)
+  if (code === step.logicalCode) return true
+  const device = String(e.deviceCode ?? e.device_code ?? '').trim().toLowerCase()
+  if (step.logicalCode === 'BALANZA_EGRESO' && RIC_BALANZA_EGRESO_DEVICE_RE.test(device)) return true
+  if (step.logicalCode === 'BALANZA_INGRESO' && RIC_BALANZA_INGRESO_DEVICE_RE.test(device)) return true
+  return false
+}
+
+function journeyUidFromRaw(e: RawJourneyEventLike): string {
+  return String(e.journeyUid ?? e.journey_uuid ?? '').trim()
+}
+
+function parsePayloadRecord(payload: unknown): Record<string, unknown> | null {
+  if (!payload) return null
+  if (typeof payload === 'object') return payload as Record<string, unknown>
+  if (typeof payload === 'string') {
+    const t = payload.trim()
+    if (!t.startsWith('{')) return null
+    try {
+      const parsed = JSON.parse(t) as unknown
+      return parsed && typeof parsed === 'object' ? (parsed as Record<string, unknown>) : null
+    } catch {
+      return null
+    }
+  }
+  return null
+}
+
+function plateFromPayload(payload: unknown): string {
+  const p = parsePayloadRecord(payload)
+  if (!p) return ''
+  const keys = [
+    'normalizedPlate',
+    'payload_normalized_plate',
+    'plate',
+    'truckPlate',
+    'truck_plate',
+    'lprPlate',
+    'Patente',
+  ]
+  for (const k of keys) {
+    const v = normalizePlateKey(String(p[k] ?? ''))
+    if (v) return v
+  }
+  return ''
+}
+
+/** Patente en fila cruda: campos DTO + payload LPR (alertas / eventos sin truckPlate). */
+export function plateFromCameraAuditRow(e: RawJourneyEventLike): string {
+  for (const raw of [
+    e.normalizedPlate,
+    e.truckPlate,
+    e.rawTruckPlate,
+    e.raw_truck_plate,
+  ]) {
+    const k = normalizePlateKey(raw ?? '')
+    if (k) return k
+  }
+  return plateFromPayload(e.payload)
+}
+
+/** Cruce Excel ↔ lectura: clave exacta u OCR tolerante (balanza egreso Ric). */
+export function platesMatchExcelCameraAudit(excelPlate: string, eventPlate: string): boolean {
+  const a = normalizePlateKey(excelPlate)
+  const b = normalizePlateKey(eventPlate)
+  if (!a || !b) return false
+  if (a === b) return true
+  return isLikelyOcrPlateMatch(a, b)
+}
+
+/** Diagnóstico runtime (debug): fuentes de patente en lecturas RicB*Egreso. */
+export function diagnoseBalanzaEgresoPlateSources(
+  events: RawJourneyEventLike[],
+  alerts?: CameraAuditAlertLike[]
+): Record<string, number | string | boolean> {
+  const corpus = buildCameraAuditCorpus(events, alerts)
+  const stats = {
+    corpusSize: corpus.length,
+    alertInputCount: alerts?.length ?? 0,
+    egressRows: 0,
+    plateFromNormalized: 0,
+    plateFromTruck: 0,
+    plateFromRawTruckPlate: 0,
+    plateFromPayload: 0,
+    plateEmpty: 0,
+    payloadIsString: 0,
+    egressWithJourneyUid: 0,
+    samplePayloadKeys: '' as string,
+  }
+  let sampleKeys = ''
+  for (const e of corpus) {
+    const dev = String(e.deviceCode ?? e.device_code ?? '').trim()
+    if (!RIC_BALANZA_EGRESO_DEVICE_RE.test(dev)) continue
+    stats.egressRows += 1
+    if (journeyUidFromRaw(e)) stats.egressWithJourneyUid += 1
+    const norm = normalizePlateKey(e.normalizedPlate ?? '')
+    const truck = normalizePlateKey(e.truckPlate ?? '')
+    const raw = normalizePlateKey(String(e.rawTruckPlate ?? e.raw_truck_plate ?? ''))
+    const pay = plateFromPayload(e.payload)
+    if (typeof e.payload === 'string') stats.payloadIsString += 1
+    if (norm) stats.plateFromNormalized += 1
+    else if (truck) stats.plateFromTruck += 1
+    else if (raw) stats.plateFromRawTruckPlate += 1
+    else if (pay) stats.plateFromPayload += 1
+    else {
+      stats.plateEmpty += 1
+      if (!sampleKeys && e.payload && typeof e.payload === 'object') {
+        sampleKeys = Object.keys(e.payload as object).slice(0, 12).join(',')
+      }
+    }
+  }
+  stats.samplePayloadKeys = sampleKeys
+  return stats
+}
+
+/** Instantáneas operativas: occurred/recorded y created/modified (API inconsistente en balanza egreso). */
+export function auditEventInstantsMs(e: RawJourneyEventLike): number[] {
+  const out = new Set<number>()
+  for (const preferCreatedAt of [false, true]) {
+    const t = parseInstantMs(operationalInstantIso(e, preferCreatedAt))
+    if (Number.isFinite(t)) out.add(t)
+  }
+  return [...out]
+}
+
+export function auditEventInOperationWindow(
+  e: RawJourneyEventLike,
+  fromMs: number,
+  toMs: number
+): boolean {
+  if (!Number.isFinite(fromMs) || !Number.isFinite(toMs)) return true
+  return auditEventInstantsMs(e).some((t) => t >= fromMs && t <= toMs)
+}
+
+/** Alertas RicB* / balanza con patente en payload → filas tipo evento para la matriz. */
+export function buildCameraAuditCorpus(
+  events: RawJourneyEventLike[],
+  alerts?: CameraAuditAlertLike[]
+): RawJourneyEventLike[] {
+  const out: RawJourneyEventLike[] = [...events]
+  if (!alerts?.length) return out
+  for (const a of alerts) {
+    const dev = String(a.deviceCode ?? '').trim()
+    if (!dev) continue
+    const sectorU = String(a.sectorCode ?? '').trim().toUpperCase()
+    const balanzaDev = RIC_BALANZA_EGRESO_DEVICE_RE.test(dev) || RIC_BALANZA_INGRESO_DEVICE_RE.test(dev)
+    if (!balanzaDev && !sectorU.includes('BALANZA')) continue
+    const payloadPlate = plateFromPayload(a.payload)
+    const plate = String(a.truckPlate ?? '').trim() || payloadPlate
+    out.push({
+      journeyUid: String(a.journeyUid ?? a.journeyUuid ?? ''),
+      truckPlate: plate,
+      normalizedPlate: payloadPlate || plate,
+      deviceCode: dev,
+      sectorCode: a.sectorCode,
+      occurredAt: a.occurredAt,
+      createdAt: a.createdAt,
+      modifiedAt: a.modifiedAt,
+      recordedAt: a.recordedAt,
+      payload: a.payload,
+    })
+  }
+  return out
+}
+
+/** Eventos en ventana Excel: patente + mismo journeyUid (egreso balanza sin OCR en patente). */
+export function collectOperationWindowEvents(
+  mov: ExcelMovimientoLike,
+  events: RawJourneyEventLike[],
+  opts?: { preferCreatedAt?: boolean; windowPaddingHours?: number }
+): RawJourneyEventLike[] {
+  const padding = opts?.windowPaddingHours ?? 6
+  const plateKey = normalizePlateKey(mov.plate)
+  const { fromMs, toMs } = operationCaptureWindowMs(mov, padding)
+
+  const byPlate: RawJourneyEventLike[] = []
+  const journeyUids = new Set<string>()
+
+  for (const e of events) {
+    const plate = plateFromCameraAuditRow(e)
+    if (!auditEventInOperationWindow(e, fromMs, toMs)) continue
+    if (!plate || !platesMatchExcelCameraAudit(plateKey, plate)) continue
+    byPlate.push(e)
+    const uid = journeyUidFromRaw(e)
+    if (uid) journeyUids.add(uid)
+  }
+
+  const seen = new Set(byPlate)
+  const expanded = [...byPlate]
+
+  for (const e of events) {
+    const uid = journeyUidFromRaw(e)
+    if (uid && journeyUids.has(uid) && auditEventInOperationWindow(e, fromMs, toMs) && !seen.has(e)) {
+      seen.add(e)
+      expanded.push(e)
+    }
+  }
+
+  for (const e of events) {
+    if (seen.has(e) || !auditEventInOperationWindow(e, fromMs, toMs)) continue
+    const dev = String(e.deviceCode ?? e.device_code ?? '').trim()
+    if (!RIC_BALANZA_EGRESO_DEVICE_RE.test(dev)) continue
+    const plate = plateFromCameraAuditRow(e)
+    if (!plate || !platesMatchExcelCameraAudit(plateKey, plate)) continue
+    seen.add(e)
+    expanded.push(e)
+    const uid = journeyUidFromRaw(e)
+    if (uid) journeyUids.add(uid)
+  }
+
+  return expanded
 }
 
 export function extractCtgFromOperationId(operationId: string, ctgField?: string): string {
@@ -178,8 +426,7 @@ export function indexEventsByPlate(
 ): Map<string, Array<{ ms: number; logicalCode: string }>> {
   const map = new Map<string, Array<{ ms: number; logicalCode: string }>>()
   for (const e of events) {
-    const plate =
-      normalizePlateKey(e.normalizedPlate ?? '') || normalizePlateKey(e.truckPlate ?? '')
+    const plate = plateFromCameraAuditRow(e)
     if (!plate) continue
     const logicalCode = eventLogicalCodeOperational(e)
     if (!logicalCode) continue
@@ -197,25 +444,17 @@ export function buildExcelCameraMatrix(
   circuitCode: string,
   movimientos: ExcelMovimientoLike[],
   events: RawJourneyEventLike[],
-  opts?: { preferCreatedAt?: boolean; windowPaddingHours?: number }
+  opts?: { preferCreatedAt?: boolean; windowPaddingHours?: number; alerts?: CameraAuditAlertLike[] }
 ): CameraMatrixRow[] {
   const steps = getExcelCameraStepsForCircuit(circuitCode)
-  const preferCreatedAt = opts?.preferCreatedAt !== false
-  const padding = opts?.windowPaddingHours ?? 6
-  const byPlate = indexEventsByPlate(events, preferCreatedAt)
+  const corpus = buildCameraAuditCorpus(events, opts?.alerts)
 
   return movimientos.map((mov) => {
-    const plateKey = normalizePlateKey(mov.plate)
-    const hits = byPlate.get(plateKey) ?? []
-    const { fromMs, toMs } = operationCaptureWindowMs(mov, padding)
-    const inWindow =
-      Number.isFinite(fromMs) && Number.isFinite(toMs) ?
-        hits.filter((h) => h.ms >= fromMs && h.ms <= toMs)
-      : hits
+    const windowEvents = collectOperationWindowEvents(mov, corpus, opts)
 
     const captures: Record<string, boolean> = {}
     for (const step of steps) {
-      captures[step.key] = inWindow.some((h) => h.logicalCode === step.logicalCode)
+      captures[step.key] = windowEvents.some((e) => eventMatchesCameraStep(e, step))
     }
 
     return {
@@ -339,6 +578,22 @@ export function excelCameraMatrixToCsv(
     }
   }
   return lines.join('\n')
+}
+
+/** Mapeo DTO API → filas de auditoría (incluye rawTruckPlate de balanza egreso). */
+export function realJourneyEventDtoToCameraAuditRow(e: RealJourneyEventDto): RawJourneyEventLike {
+  return {
+    journeyUid: e.journeyUid,
+    truckPlate: e.truckPlate,
+    normalizedPlate: e.normalizedPlate,
+    rawTruckPlate: e.rawTruckPlate,
+    deviceCode: e.deviceCode,
+    sectorCode: e.sectorCode,
+    occurredAt: e.occurredAt,
+    createdAt: e.createdAt,
+    modifiedAt: e.modifiedAt,
+    recordedAt: e.recordedAt,
+  }
 }
 
 export function formatExcelCameraSummaryLog(

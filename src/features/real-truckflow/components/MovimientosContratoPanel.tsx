@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
+import type { RealJourneyEventDto } from '../../../services/realJourneyEvents.types'
 import type { EtlTransformOutput } from '../etlWorkbench/etlTransformPipeline'
 import type { ContractFirstProgressEvent } from '../etlWorkbench/etlContractFirstProgress'
+import type { EtlDiskPeriod } from '../etlWorkbench/EtlWorkbenchContext'
 import { triggerBrowserCsvDownload } from '../etlWorkbench/etlCsv'
 import { parseCsvToRecords } from '../etlWorkbench/etlCsvParse'
 
@@ -12,10 +14,11 @@ type WbSlice = {
   runTransform: () => Promise<EtlTransformOutput | null>
   transformBusy: boolean
   busyLoad: boolean
-  events: { length: number }
+  events: RealJourneyEventDto[]
   alerts: { length: number }
   transformResult: EtlTransformOutput | null
   contractFirstProgress?: ContractFirstProgressEvent | null
+  diskPeriod?: EtlDiskPeriod | null
 }
 
 const MERGE_EXPORTS: { key: keyof EtlTransformOutput['csv']; filename: string; label: string }[] = [

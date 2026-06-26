@@ -12,6 +12,7 @@ import {
   getTruckPlateRegistry,
 } from '../api/truckPlateRegistryApi'
 import { getTruckflowHealth } from '../api/truckflowLocalServerApi'
+import { TruckFleetLookupPanel } from './TruckFleetLookupPanel'
 
 const CATEGORY_OPTIONS: TruckPlateRegistryCategory[] = [
   'vicentin_asociado',
@@ -24,7 +25,11 @@ type Props = {
   onClose: () => void
 }
 
+type TabId = 'exclusiones' | 'visitas'
+
 export function TruckPlateRegistryModal({ open, onClose }: Props) {
+  const [tab, setTab] = useState<TabId>('exclusiones')
+  const [visitasPlateSeed, setVisitasPlateSeed] = useState('')
   const [plate, setPlate] = useState('')
   const [category, setCategory] = useState<TruckPlateRegistryCategory>('prestador_servicio')
   const [label, setLabel] = useState('')
@@ -35,6 +40,7 @@ export function TruckPlateRegistryModal({ open, onClose }: Props) {
   const [success, setSuccess] = useState<string | null>(null)
   const [entries, setEntries] = useState<TruckPlateRegistryEntry[]>([])
   const [storage, setStorage] = useState<string | null>(null)
+  const [fleetStorage, setFleetStorage] = useState<string | null>(null)
   const [serverOk, setServerOk] = useState<boolean | null>(null)
 
   const normalizedPreview = useMemo(() => normalizeRegistryPlate(plate), [plate])
@@ -52,6 +58,11 @@ export function TruckPlateRegistryModal({ open, onClose }: Props) {
       setStorage(
         health && 'plateRegistryStorage' in health ?
           String((health as { plateRegistryStorage?: string }).plateRegistryStorage ?? '')
+        : null
+      )
+      setFleetStorage(
+        health && 'fleetRegistryStorage' in health ?
+          String((health as { fleetRegistryStorage?: string }).fleetRegistryStorage ?? '')
         : null
       )
       const active = (doc.entries ?? []).filter((e) => e.active)
@@ -139,7 +150,7 @@ export function TruckPlateRegistryModal({ open, onClose }: Props) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="plate-registry-title"
-        className="fixed left-1/2 top-1/2 z-[61] flex max-h-[90vh] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
+        className="fixed left-1/2 top-1/2 z-[61] flex max-h-[90vh] w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
       >
         <div className="flex items-start justify-between gap-3 border-b border-slate-200 bg-slate-50 px-5 py-4">
           <div>
@@ -147,17 +158,18 @@ export function TruckPlateRegistryModal({ open, onClose }: Props) {
               Catálogo de patentes
             </h2>
             <p className="mt-1 text-xs text-slate-600">
-              Excluye servicios, asociados y particulares del ETL para no contarlos como anomalías.
+              Exclusiones ETL y registro de visitas a planta por patente.
             </p>
             {serverOk === false ? (
               <p className="mt-2 rounded-lg border border-amber-300 bg-amber-50 px-2 py-1 text-xs font-medium text-amber-950">
                 Servidor local no disponible. Ejecutá{' '}
                 <code className="rounded bg-white px-1">npm run server:truckflow</code>
               </p>
-            ) : storage ? (
+            ) : storage || fleetStorage ? (
               <p className="mt-2 text-xs text-slate-500">
-                Almacenamiento: <span className="font-semibold text-indigo-700">{storage}</span>
-                {storage === 'supabase' ? ' (Supabase)' : ' (JSON local)'}
+                Exclusiones: <span className="font-semibold text-indigo-700">{storage ?? '—'}</span>
+                {' · '}
+                Visitas: <span className="font-semibold text-indigo-700">{fleetStorage ?? '—'}</span>
               </p>
             ) : null}
           </div>
@@ -171,6 +183,33 @@ export function TruckPlateRegistryModal({ open, onClose }: Props) {
           </button>
         </div>
 
+        <div className="flex gap-1 border-b border-slate-200 px-5 pt-2">
+          <button
+            type="button"
+            onClick={() => setTab('exclusiones')}
+            className={`rounded-t-lg px-3 py-2 text-xs font-bold ${
+              tab === 'exclusiones' ?
+                'bg-white text-slate-900 shadow-sm ring-1 ring-slate-200'
+              : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            Exclusiones ETL
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab('visitas')}
+            className={`rounded-t-lg px-3 py-2 text-xs font-bold ${
+              tab === 'visitas' ?
+                'bg-white text-slate-900 shadow-sm ring-1 ring-slate-200'
+              : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            Visitas por patente
+          </button>
+        </div>
+
+        {tab === 'exclusiones' ?
+          <>
         <form onSubmit={handleSubmit} className="space-y-4 border-b border-slate-100 px-5 py-4">
           <div>
             <label htmlFor="plate-registry-plate" className="block text-xs font-semibold uppercase text-slate-500">
@@ -295,7 +334,17 @@ export function TruckPlateRegistryModal({ open, onClose }: Props) {
                   className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2"
                 >
                   <div className="min-w-0">
-                    <span className="font-mono text-sm font-bold text-slate-900">{e.plate}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setVisitasPlateSeed(e.plate)
+                        setTab('visitas')
+                      }}
+                      className="font-mono text-sm font-bold text-slate-900 hover:text-indigo-700"
+                      title="Ver visitas a planta"
+                    >
+                      {e.plate}
+                    </button>
                     <span className="mt-0.5 block truncate text-xs text-slate-600">
                       {TRUCK_PLATE_REGISTRY_CATEGORY_LABELS[e.category]}
                       {e.label ? ` · ${e.label}` : ''}
@@ -314,6 +363,15 @@ export function TruckPlateRegistryModal({ open, onClose }: Props) {
             </ul>
           )}
         </div>
+          </>
+        : (
+          <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+            <TruckFleetLookupPanel
+              initialPlate={visitasPlateSeed}
+              disabled={serverOk === false || busy}
+            />
+          </div>
+        )}
       </div>
     </>
   )

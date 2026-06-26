@@ -9,6 +9,8 @@ import fs from 'fs/promises'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { createTruckPlateRegistryRouter } from './truck-plate-registry.mjs'
+import { createTruckFleetRouter } from './truck-fleet-registry.mjs'
+import { supabasePublicHost } from './supabase-client.mjs'
 import {
   buildApiJourneyDayStat,
   countUniqueRawJourneyUids,
@@ -143,7 +145,8 @@ async function readJsonIfExists(filePath) {
 
 const app = express()
 app.use(cors({ origin: true }))
-app.use(express.json({ limit: '2mb' }))
+const JSON_BODY_LIMIT = process.env.TRUCKFLOW_JSON_BODY_LIMIT?.trim() || '64mb'
+app.use(express.json({ limit: JSON_BODY_LIMIT }))
 
 const plateRegistry = createTruckPlateRegistryRouter({
   projectRoot: PROJECT_ROOT,
@@ -152,12 +155,23 @@ const plateRegistry = createTruckPlateRegistryRouter({
   readJsonIfExists,
 })
 
+const fleetRegistry = createTruckFleetRouter({
+  projectRoot: PROJECT_ROOT,
+  ensureDir,
+  writeJsonAtomic,
+  readJsonIfExists,
+  lookupRegistryEntry: (plate) => plateRegistry.lookupPlateEntry(plate),
+})
+
 app.get('/api/truckflow/health', (_req, res) => {
   res.json({
     ok: true,
     dataRoot: DATA_ROOT,
     plateRegistryRoot: plateRegistry.registryRoot,
     plateRegistryStorage: plateRegistry.storageMode,
+    fleetRegistryRoot: fleetRegistry.fleetRoot,
+    fleetRegistryStorage: fleetRegistry.storageMode,
+    supabaseHost: supabasePublicHost(),
     supabaseConfigured: Boolean(process.env.SUPABASE_URL?.trim() && process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()),
   })
 })
@@ -168,6 +182,11 @@ app.get('/api/truckflow/plate-registry/lookup', plateRegistry.lookupPlate)
 app.post('/api/truckflow/plate-registry', plateRegistry.createEntry)
 app.put('/api/truckflow/plate-registry/:id', plateRegistry.updateEntry)
 app.delete('/api/truckflow/plate-registry/:id', plateRegistry.deleteEntry)
+
+app.get('/api/truckflow/fleet/lookup', fleetRegistry.lookup)
+app.get('/api/truckflow/fleet/status', fleetRegistry.status)
+app.patch('/api/truckflow/fleet/camion/:plate', fleetRegistry.updateCamion)
+app.post('/api/truckflow/fleet/visitas/sync', fleetRegistry.syncVisitas)
 
 /** Lista carpetas día existentes (YYYY-MM-DD). */
 app.get('/api/truckflow/list-days', async (_req, res) => {

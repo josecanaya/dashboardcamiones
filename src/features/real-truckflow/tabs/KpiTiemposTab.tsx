@@ -148,6 +148,25 @@ export function KpiTiemposTab() {
     return aggregatesWithData[0] ?? visibleAggregates[visibleAggregates.length - 1] ?? null
   }, [visibleAggregates, aggregatesWithData, selectedKey])
 
+  const circuitScatterUniqueOps = useMemo(() => {
+    if (!circuitFilter) return 0
+    const codes = kpiCircuitCodesForScatterFilter(circuitFilter)
+    const ids = new Set(
+      scatterByDayAll
+        .filter((r) => codes.includes(r.circuito) && isWithinSegmentScatterDisplayMax(r.duracion_minutos))
+        .map((r) => r.journey_id)
+    )
+    return ids.size
+  }, [scatterByDayAll, circuitFilter])
+
+  const scatterPoolHint = useMemo(
+    () => ({
+      uniqueOpsInCircuit: circuitScatterUniqueOps,
+      globalReadyForScatter: isExcelFirstKpi && excelFirstReadyForScatter > 0 ? excelFirstReadyForScatter : undefined,
+    }),
+    [circuitScatterUniqueOps, isExcelFirstKpi, excelFirstReadyForScatter]
+  )
+
   const scatterByDayForTramo = useCallback(
     (tramoLabel: string) => {
       if (!circuitFilter) return []
@@ -221,7 +240,10 @@ export function KpiTiemposTab() {
             <h2 className="text-lg font-bold text-slate-900">KPI tiempos por circuito y tramo</h2>
             <p className="mt-2 max-w-3xl text-sm text-slate-600">
               Tramo 4 del flujo: después del Transform, procesá acá los tiempos y la dispersión. Con XLSX cargados,
-              la fuente es <strong>Excel-first</strong>; sin XLSX, Truckflow COMPLETOS.
+              la fuente es <strong>Excel-first</strong>; sin XLSX, Truckflow COMPLETOS. Cada gráfico cuenta solo
+              camiones con <strong>KPI válido en ese tramo</strong> (p. ej. balanza ingreso→egreso exige cámaras,
+              duración mínima y tope); el total <strong>ready_for_scatter</strong> incluye operaciones de otros
+              tramos o aún sin ese KPI.
             </p>
             <p className="mt-2 font-mono text-xs text-slate-500">
               Período: {periodLabel} · Reglas: {tr?.rulesVersion ?? '—'} · Fuente: {analysisSourceLabel}
@@ -560,6 +582,7 @@ export function KpiTiemposTab() {
                         chartData={buildChartDataForAggregate(agg)}
                         scatterByDayRows={scatterByDayForTramo(agg.label)}
                         segmentLegs={legsForTramo(agg)}
+                        scatterPoolHint={scatterPoolHint}
                       />
                     }
                   </div>

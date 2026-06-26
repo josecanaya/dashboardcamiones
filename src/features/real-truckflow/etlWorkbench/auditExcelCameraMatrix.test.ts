@@ -73,6 +73,189 @@ describe('auditExcelCameraMatrix R1', () => {
     const sum = summarizeExcelCameraMatrix('R1', rows)
     expect(sum.find((s) => s.key === 'celda16_descarga')!.captured).toBe(1)
   })
+
+  it('balanza egreso con occurredAt en ventana y createdAt fuera', () => {
+    const rows = buildExcelCameraMatrix(
+      'R5',
+      [
+        {
+          operationId: 'CTG_1',
+          ctg: '1',
+          plate: 'EPL048',
+          executiveCircuitCode: 'R5',
+          externalIngresoAt: '2026-06-12T06:00:00',
+          externalSalidaAt: '2026-06-12T18:00:00',
+        },
+      ],
+      [
+        {
+          truckPlate: 'EPL048',
+          deviceCode: 'RicB1Ingreso',
+          sectorCode: 'RICARDONE_BALANZA',
+          createdAt: '2026-06-12T08:00:00-03:00',
+          occurredAt: '2026-06-12T08:00:00-03:00',
+        },
+        {
+          truckPlate: 'EPL048',
+          deviceCode: 'RicB2Egreso',
+          sectorCode: 'RICARDONE_BALANZA',
+          createdAt: '2026-06-20T08:00:00-03:00',
+          occurredAt: '2026-06-12T09:30:00-03:00',
+        },
+      ]
+    )
+    expect(rows[0]!.captures.balanza_ingreso).toBe(true)
+    expect(rows[0]!.captures.balanza_egreso).toBe(true)
+  })
+
+  it('balanza egreso desde alerta con patente en payload', () => {
+    const rows = buildExcelCameraMatrix(
+      'R5',
+      [
+        {
+          operationId: 'CTG_2',
+          ctg: '2',
+          plate: 'AA111BB',
+          executiveCircuitCode: 'R5',
+          externalIngresoAt: '2026-06-12T08:00:00',
+          externalSalidaAt: '2026-06-12T12:00:00',
+        },
+      ],
+      [
+        {
+          truckPlate: 'AA111BB',
+          deviceCode: 'RicB1Ingreso',
+          sectorCode: 'RICARDONE_BALANZA',
+          occurredAt: '2026-06-12T08:10:00-03:00',
+        },
+      ],
+      {
+        alerts: [
+          {
+            deviceCode: 'RicB2Egreso',
+            sectorCode: 'RICARDONE_BALANZA',
+            occurredAt: '2026-06-12T09:00:00-03:00',
+            payload: { plate: 'AA111BB', normalizedPlate: 'AA111BB' },
+          },
+        ],
+      }
+    )
+    expect(rows[0]!.captures.balanza_egreso).toBe(true)
+  })
+
+  it('balanza egreso sin patente en evento pero mismo journeyUid que ingreso', () => {
+    const rows = buildExcelCameraMatrix(
+      'R1',
+      [
+        {
+          operationId: 'CTG_77',
+          ctg: '77',
+          plate: 'AA111BB',
+          executiveCircuitCode: 'R1',
+          externalIngresoAt: '2026-06-10T08:00:00',
+          externalSalidaAt: '2026-06-10T12:00:00',
+        },
+      ],
+      [
+        {
+          journeyUid: 'j-77',
+          truckPlate: 'AA111BB',
+          deviceCode: 'RicB1Ingreso',
+          sectorCode: 'RICARDONE_BALANZA',
+          createdAt: '2026-06-10T09:00:00-03:00',
+        },
+        {
+          journeyUid: 'j-77',
+          truckPlate: '',
+          deviceCode: 'RicB1Egreso',
+          sectorCode: 'RICARDONE_BALANZA',
+          createdAt: '2026-06-10T10:00:00-03:00',
+        },
+      ]
+    )
+    expect(rows[0]!.captures.balanza_ingreso).toBe(true)
+    expect(rows[0]!.captures.balanza_egreso).toBe(true)
+  })
+
+  it('balanza egreso con patente solo en rawTruckPlate (OCR crudo)', () => {
+    const rows = buildExcelCameraMatrix(
+      'R6',
+      [
+        {
+          operationId: 'CTG_3',
+          ctg: '3',
+          plate: 'AA702TR',
+          executiveCircuitCode: 'R6',
+          externalIngresoAt: '2026-06-12T08:00:00',
+          externalSalidaAt: '2026-06-12T12:00:00',
+        },
+      ],
+      [
+        {
+          truckPlate: '',
+          normalizedPlate: '',
+          rawTruckPlate: 'AA702TR',
+          deviceCode: 'RicB3Egreso',
+          sectorCode: 'RICARDONE_BALANZA',
+          occurredAt: '2026-06-12T09:00:00-03:00',
+        },
+      ]
+    )
+    expect(rows[0]!.captures.balanza_egreso).toBe(true)
+  })
+
+  it('balanza egreso con OCR fuzzy vs Excel', () => {
+    const rows = buildExcelCameraMatrix(
+      'R5',
+      [
+        {
+          operationId: 'CTG_4',
+          ctg: '4',
+          plate: 'AA702TR',
+          executiveCircuitCode: 'R5',
+          externalIngresoAt: '2026-06-12T08:00:00',
+          externalSalidaAt: '2026-06-12T12:00:00',
+        },
+      ],
+      [
+        {
+          truckPlate: 'AA7O2TR',
+          deviceCode: 'RicB2Egreso',
+          sectorCode: 'RICARDONE_BALANZA',
+          occurredAt: '2026-06-12T09:00:00-03:00',
+        },
+      ]
+    )
+    expect(rows[0]!.captures.balanza_egreso).toBe(true)
+  })
+
+  it('balanza egreso desde alerta con payload JSON string', () => {
+    const rows = buildExcelCameraMatrix(
+      'R1',
+      [
+        {
+          operationId: 'CTG_8',
+          ctg: '8',
+          plate: 'BB333CC',
+          executiveCircuitCode: 'R1',
+          externalIngresoAt: '2026-06-10T08:00:00',
+          externalSalidaAt: '2026-06-10T12:00:00',
+        },
+      ],
+      [],
+      {
+        alerts: [
+          {
+            deviceCode: 'RicB1Egreso',
+            sectorCode: 'RICARDONE_BALANZA',
+            occurredAt: '2026-06-10T10:00:00-03:00',
+            payload: JSON.stringify({ plate: 'BB333CC' }),
+          },
+        ],
+      }
+    )
+    expect(rows[0]!.captures.balanza_egreso).toBe(true)
+  })
 })
 
 describe('auditExcelCameraMatrix R5', () => {

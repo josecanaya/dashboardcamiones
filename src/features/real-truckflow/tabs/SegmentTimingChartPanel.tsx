@@ -5,12 +5,13 @@ import { computeStayTimeStats } from '../../../services/analyticsKpi'
 import { safeExportFilename } from '../../../utils/chartExport'
 import { SEGMENT_TIMING_HISTOGRAM_BIN_MIN, type SegmentLeg } from '../etlWorkbench/etlSegmentTiming'
 import { histogramWithKde } from '../../../utils/stats'
-import type { FranjaHoraria, SegmentScatterByDayRow } from '../etlWorkbench/etlSegmentScatterByDay'
 import { SCATTER_DAY_FILTER_ALL } from '../etlWorkbench/etlSegmentScatterByDay'
 import {
   isWithinSegmentScatterDisplayMax,
   SEGMENT_SCATTER_DISPLAY_MAX_MINUTES,
 } from '../etlWorkbench/etlSegmentScatterByDay'
+import type { FranjaHoraria, SegmentScatterByDayRow } from '../etlWorkbench/etlSegmentScatterByDay'
+import { turnoLabel } from '../etlWorkbench/operationalTurno'
 import {
   CHART_VISIBLE_SLOW_EXPORT_COUNT,
   downloadChartVisibleCsv,
@@ -57,6 +58,7 @@ export function SegmentTimingChartPanel({
   scatterByDayRows,
   segmentLegs,
   panelExportRef,
+  scatterPoolHint,
 }: {
   title: string
   circuitCode: string
@@ -67,6 +69,10 @@ export function SegmentTimingChartPanel({
   scatterByDayRows?: SegmentScatterByDayRow[]
   segmentLegs?: SegmentLeg[]
   panelExportRef?: (el: HTMLDivElement | null) => void
+  scatterPoolHint?: {
+    uniqueOpsInCircuit: number
+    globalReadyForScatter?: number
+  }
 }) {
   const useDayScatter = Boolean(scatterByDayRows?.length)
 
@@ -178,7 +184,7 @@ export function SegmentTimingChartPanel({
             <p className="mt-0.5 text-sm text-slate-500">
               Circuito {circuitCode} · {periodLabel} · {displayStats.count.toLocaleString('es-AR')} camiones
               {useDayScatter ?
-                ' · general o por día · turnos 0–6 / 6–12 / 12–18 / 18–24'
+                ' · general o por día · turnos 02–08 / 08–14 / 14–20 / 20–02 (AR)'
               : ` · bins ${SEGMENT_TIMING_HISTOGRAM_BIN_MIN} min`}
               {' · '}
               máx. {SEGMENT_SCATTER_DISPLAY_MAX_MINUTES} min en gráfico
@@ -204,19 +210,19 @@ export function SegmentTimingChartPanel({
         <MetricCard label="Tiempo mínimo" value={displayStats.min} />
         <MetricCard label="Tiempo máximo" value={displayStats.max} />
         <MetricCard
-          label={franjaFilter ? `Tiempo medio · ${franjaFilter}` : 'Tiempo medio'}
+          label={franjaFilter ? `Tiempo medio · ${turnoLabel(franjaFilter)}` : 'Tiempo medio'}
           value={displayStats.mean}
           highlighted={Boolean(franjaFilter)}
         />
         <MetricCard
-          label={franjaFilter ? `Desvío estándar · ${franjaFilter}` : 'Desvío estándar'}
+          label={franjaFilter ? `Desvío estándar · ${turnoLabel(franjaFilter)}` : 'Desvío estándar'}
           value={displayStats.std}
           highlighted={Boolean(franjaFilter)}
         />
       </div>
       {franjaFilter ?
         <p className="border-b border-slate-100 px-6 pb-3 text-xs text-violet-800">
-          KPI de la franja <strong>{franjaFilter}</strong>
+          KPI de la franja <strong>{turnoLabel(franjaFilter)}</strong>
           {!isAllDays ? ` · día ${selectedDay}` : ''}
           {' · '}
           {displayStats.count.toLocaleString('es-AR')} camiones
@@ -247,6 +253,7 @@ export function SegmentTimingChartPanel({
             isAllDays={isAllDays}
             stats={displayStats}
             visibleRowCount={scatterWithinMax.length}
+            scatterPoolHint={scatterPoolHint}
           />
         : <SegmentTimingScatterChart
             coloredScatterPoints={coloredLegPoints ?? undefined}
