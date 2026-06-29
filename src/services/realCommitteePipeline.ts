@@ -119,7 +119,6 @@ export function classifyCommitteeOperationalCircuit(sortedOperationalEvents: Rea
   if (has('RicC16Descarga1') || has('RicC16Descarga2')) return 'CIRCUITO_CELDA16_DESCARGA'
   if (has('RicC16Carga1') || has('RicC16Carga2')) return 'CIRCUITO_CELDA16_CARGA'
   if (has('RicVolcable1') || has('RicVolcable2')) return 'CIRCUITO_VOLCABLE_1_2'
-  if (has('RicCalLiq')) return 'CIRCUITO_LIQUIDO'
 
   const hasBal = [...logicals].some((c) => c.startsWith('BALANZA'))
   const hasVol = logicals.has('VOLCABLE')
@@ -128,17 +127,36 @@ export function classifyCommitteeOperationalCircuit(sortedOperationalEvents: Rea
   const hasPre = logicals.has('PREINGRESO')
   const hasEgr = logicals.has('EGRESO')
   const hasSl = logicals.has('SL_INGRESO')
+  const hasSlLiquid = logicals.has('SL_LIQUIDO_CARGA') || logicals.has('SL_LIQUIDO_DESCARGA')
 
   const hasCeldaDevices = [...devices].some((d) => d.includes('C16') || d.includes('CELDA'))
   const hasLiquidoDevice = has('RicCalLiq')
+  const hasRenS10 =
+    has('RenCargFte') || has('RenDescFte') || has('RenCargTras') || has('RenDescTras')
 
-  // Ricardone → San Lorenzo: ruta calada / puerto sin balanza ni volcable ni celda ni líquido explícito
-  if ((hasIng || hasPre) && (hasEgr || hasSl) && !hasBal && !hasVol && !hasCel && !hasCeldaDevices && !hasLiquidoDevice) {
+  // Ricardone → San Lorenzo: ruta calada / puerto sin balanza ni volcable ni celda
+  if (
+    (hasIng || hasPre) &&
+    (hasEgr || hasSl) &&
+    !hasBal &&
+    !hasVol &&
+    !hasCel &&
+    !hasCeldaDevices &&
+    !hasRenS10
+  ) {
     return 'CIRCUITO_SAN_LORENZO'
   }
 
-  // Despacho / descarga sin punto instrumentado (balanza en juego pero sin celda/volc/líquido)
-  if ((hasIng || hasPre) && hasBal && hasEgr && !hasVol && !hasCel && !hasCeldaDevices && !hasLiquidoDevice) {
+  // Despacho / descarga sin punto instrumentado (balanza en juego pero sin celda/volc/líquido SL)
+  if (
+    (hasIng || hasPre) &&
+    hasBal &&
+    hasEgr &&
+    !hasVol &&
+    !hasCel &&
+    !hasCeldaDevices &&
+    !hasRenS10
+  ) {
     return 'DESPACHO_SIN_PUNTO_INSTRUMENTADO'
   }
 
@@ -150,6 +168,12 @@ export function classifyCommitteeOperationalCircuit(sortedOperationalEvents: Rea
     !(hasIng && hasPre && logicals.has('BALANZA_INGRESO'))
   ) {
     return 'TRANSILE_VOLCABLE_BALANZA'
+  }
+
+  // RicCalLiq: solo líquido Ric si no encajó despacho/transile/SL; paso por calada compartida
+  if (hasLiquidoDevice || hasSlLiquid || hasRenS10) {
+    if (hasSl || hasRenS10) return 'CIRCUITO_SAN_LORENZO'
+    return 'CIRCUITO_LIQUIDO'
   }
 
   return 'REGISTRO_INCOMPLETO_COMITE'

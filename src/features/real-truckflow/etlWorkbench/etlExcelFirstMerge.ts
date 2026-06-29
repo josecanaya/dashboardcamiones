@@ -124,6 +124,8 @@ export type ExcelOperationWithTruckflowRow = {
   plataforma_original: string
   planta_normalized: string
   movement_type: string
+  mov: string
+  movement_type_detail: string
   external_ingreso_at: string
   external_calado_at: string
   external_salida_at: string
@@ -148,6 +150,7 @@ export type ExcelOperationWithTruckflowRow = {
   resolved_product: string
   resolved_platform: string
   resolved_circuit_family: string
+  resolved_executive_circuit_code: string
   resolved_operational_point: string
   resolved_plant_hint: string
   resolution_source: string
@@ -603,8 +606,20 @@ export function resolveOperationalContextFromExcel(
     platform.includes('KEPLER')
   ) {
     family = 'KEPLER'
-  } else if (platform === 'ACEITE_OSL' || platform.includes('ACEITE')) {
+  } else if (platform === 'ACEITE_OSL' || platform === 'ACEITE_PTO' || platform.includes('ACEITE')) {
     family = 'LIQUIDO'
+  }
+
+  if (!family) {
+    const prod = `${product} ${platform}`.toUpperCase()
+    if (
+      prod.includes('ACEITE') ||
+      prod.includes('AC GIRASOL') ||
+      (prod.includes('GIRASOL') &&
+        (prod.includes('OLEICO') || prod.includes('CRUDO') || prod.includes('REFIN')))
+    ) {
+      family = 'LIQUIDO'
+    }
   }
 
   if (!family && platform.startsWith('VOLCABLE')) family = 'VOLCABLE'
@@ -1798,6 +1813,8 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
       plataforma_original: mov.plataforma_original,
       planta_normalized: mov.planta_normalized,
       movement_type: mov.movement_type,
+      mov: mov.mov,
+      movement_type_detail: mov.movement_type_detail,
       external_ingreso_at: mov.external_ingreso_at,
       external_calado_at: mov.external_calado_at,
       external_salida_at: mov.external_salida_at,
@@ -1822,6 +1839,7 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
       resolved_product: ctx.resolved_product,
       resolved_platform: ctx.resolved_platform,
       resolved_circuit_family: ctx.resolved_circuit_family,
+      resolved_executive_circuit_code: resolvedExecutiveCircuitCode,
       resolved_operational_point: ctx.resolved_operational_point,
       resolved_plant_hint: ctx.resolved_plant_hint,
       resolution_source: ctx.resolution_source,
@@ -2112,6 +2130,8 @@ const EXCEL_OPS_HEADERS = [
   'plataforma_original',
   'planta_normalized',
   'movement_type',
+  'mov',
+  'movement_type_detail',
   'external_ingreso_at',
   'external_calado_at',
   'external_salida_at',
@@ -2136,6 +2156,7 @@ const EXCEL_OPS_HEADERS = [
   'resolved_product',
   'resolved_platform',
   'resolved_circuit_family',
+  'resolved_executive_circuit_code',
   'resolved_operational_point',
   'resolved_plant_hint',
   'resolution_source',

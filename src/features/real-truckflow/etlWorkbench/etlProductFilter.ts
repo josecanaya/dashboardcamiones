@@ -1,6 +1,7 @@
 import type { CircuitClassificationEntry } from './etlCircuitClassificationIndex'
 import { parseExcelFirstByJourneyUid } from './etlCircuitClassificationIndex'
 import { parseCsvToRecords } from './etlCsvParse'
+import { isExcelLiquidProductName } from './slLiquidCameras'
 
 export type JourneyProductLookup = {
   byJourneyId: Map<string, string>
@@ -25,12 +26,13 @@ export function executiveSampleProductLabel(product: string): string {
   return EXECUTIVE_SAMPLE_PRODUCT_LABELS[product.toUpperCase()] ?? product
 }
 
-/** Coincide producto Excel con filtro de muestra (ACEITE incluye variantes ACEITE *). */
+/** Coincide producto Excel con filtro de muestra (ACEITE = aceites y AC GIRASOL / girasol industrial). */
 export function productMatchesExecutiveSampleFilter(product: string, filter: string): boolean {
   const p = String(product ?? '').trim().toUpperCase()
   const f = String(filter ?? '').trim().toUpperCase()
   if (!f || f === PRODUCT_FILTER_ALL) return true
-  if (f === 'ACEITE') return p === 'ACEITE' || p.startsWith('ACEITE ')
+  if (f === 'ACEITE') return isExcelLiquidProductName(p)
+  if (f === 'GIRASOL') return p === 'GIRASOL' || p.startsWith('GIRASOL ')
   return p === f
 }
 
@@ -91,8 +93,10 @@ export function parseExcelFirstProductLookup(excelOpsCsv: string | undefined): J
     if (!product) continue
     productSet.add(product)
     const operationId = String(r.external_operation_id ?? '').trim()
-    if (operationId && !byJourneyId.has(operationId)) {
-      byJourneyId.set(operationId, product)
+    if (operationId) {
+      if (!byJourneyId.has(operationId)) byJourneyId.set(operationId, product)
+      const excelJourneyId = `excel:${operationId}`
+      if (!byJourneyId.has(excelJourneyId)) byJourneyId.set(excelJourneyId, product)
     }
   }
 

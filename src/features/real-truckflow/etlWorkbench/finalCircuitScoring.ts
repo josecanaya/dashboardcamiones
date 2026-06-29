@@ -7,6 +7,7 @@ import {
   getCollapsedLogicalCodes,
   journeyIsRicSanLorenzoRouteEvidence,
   journeyIsSlOnlyInternal,
+  journeyBlocksSl1ExecutiveClassification,
   journeyIsTransileC16ToSl,
   journeyIsTransileSlToC16,
   resolveTechnicalCircuitCodeForExecutive,
@@ -427,6 +428,7 @@ export const EXECUTIVE_CIRCUIT_ORDER = [
   'R26',
   'R27',
   'SL1',
+  'SL5',
   'R34',
   'RS_REC',
   'RS_DESP',
@@ -962,16 +964,16 @@ export function resolveExecutiveCircuitConfigForJourney(
   const liquidCircuit = resolveLiquidExecutiveCircuit(journey)
   if (liquidCircuit) return liquidCircuit
 
-  if (journeyMeetsFlexibleInstrumentedDischargeRule(journey)) {
-    return resolveFlexibleDischargeExecutiveCircuit(journey)
-  }
-
   if (journeyIsTransileC16ToSl(journey)) {
     return EXECUTIVE_CIRCUIT_MATRIX.R26!
   }
 
   if (journeyIsTransileSlToC16(journey)) {
     return EXECUTIVE_CIRCUIT_MATRIX.R27!
+  }
+
+  if (journeyMeetsFlexibleInstrumentedDischargeRule(journey)) {
+    return resolveFlexibleDischargeExecutiveCircuit(journey)
   }
 
   if (journeyIsRicSanLorenzoRouteEvidence(journey)) {
@@ -994,7 +996,7 @@ export function resolveExecutiveCircuitConfigForJourney(
   }
 
   const direct = EXECUTIVE_CIRCUIT_MATRIX[code]
-  if (direct) return direct
+  if (direct) return redirectSl1IfRicardoneMisclassified(journey, direct)
 
   if (code === 'CIRCUITO_VOLCABLE_1_2') {
     return journeyHasDevicePattern(journey, /RicVolcable2/i) ?
@@ -1014,8 +1016,22 @@ export function resolveExecutiveCircuitConfigForJourney(
   const matches = Object.values(EXECUTIVE_CIRCUIT_MATRIX).filter((cfg) =>
     (cfg.aliases ?? []).some((alias) => alias === code)
   )
-  if (matches.length === 1) return matches[0]!
-  return matches[0] ?? null
+  if (matches.length === 1) return redirectSl1IfRicardoneMisclassified(journey, matches[0]!)
+  return matches[0] ? redirectSl1IfRicardoneMisclassified(journey, matches[0]!) : null
+}
+
+function redirectSl1IfRicardoneMisclassified(
+  journey: ReconstructedRealJourney,
+  cfg: ExecutiveCircuitConfig
+): ExecutiveCircuitConfig {
+  if (cfg.code !== 'SL1' || !journeyBlocksSl1ExecutiveClassification(journey)) return cfg
+  const liquid = resolveLiquidExecutiveCircuit(journey)
+  if (liquid) return liquid
+  if (journeyMeetsFlexibleInstrumentedDischargeRule(journey)) {
+    return resolveFlexibleDischargeExecutiveCircuit(journey)
+  }
+  if (logicalSet(journey).has('LIQUIDO')) return EXECUTIVE_CIRCUIT_MATRIX.R8!
+  return inferSolidExecutiveCircuit(journey)
 }
 
 export function resolveExecutiveCircuitConfig(circuitCode: string | null | undefined): ExecutiveCircuitConfig | null {

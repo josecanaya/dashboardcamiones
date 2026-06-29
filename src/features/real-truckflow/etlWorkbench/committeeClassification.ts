@@ -17,7 +17,7 @@ import {
   resolveFlexibleDischargeExecutiveCircuit,
 } from './finalCircuitScoring'
 import { ETL_SL_INTERNAL_CLASSIFICATION_ENABLED, snapshotSanLorenzoSupport } from './etlSanLorenzoSupport'
-import { journeyHasSlIngresoEvidence, journeyIsRicSanLorenzoRouteEvidence, journeyIsSlOnlyInternal } from './etlRicSanLorenzoRoute'
+import { journeyHasSlIngresoEvidence, journeyIsRicSanLorenzoRouteEvidence, journeyIsSlOnlyInternal, journeyBlocksSl1ExecutiveClassification } from './etlRicSanLorenzoRoute'
 
 export const SL_PENDING_KEY_CAMERAS = [
   'SLZBalIngFte',
@@ -1128,7 +1128,12 @@ export function resolveCommitteeClassification(input: {
   }
 
   // San Lorenzo interno (SL1) — solo journeys exclusivamente SL
-  if (ETL_SL_INTERNAL_CLASSIFICATION_ENABLED && isSanLorenzoInternalCircuit(executiveCode, technicalCode)) {
+  if (
+    ETL_SL_INTERNAL_CLASSIFICATION_ENABLED &&
+    isSanLorenzoInternalCircuit(executiveCode, technicalCode) &&
+    !journeyBlocksSl1ExecutiveClassification(input.journey) &&
+    (journeyIsSlOnlyInternal(input.journey) || journeyHasSlIngresoEvidence(input.journey))
+  ) {
     return classifySlInternal(input, base, deducedEvidenceOk, observedSectors)
   }
 

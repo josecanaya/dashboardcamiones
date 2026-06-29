@@ -1,5 +1,7 @@
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
 import { ExcelCameraComparativaPanel } from './ExcelCameraComparativaPanel'
+import { LiquidMovementsPanel } from './LiquidMovementsPanel'
+import { TransileInternoVolcablePanel } from './TransileInternoVolcablePanel'
 import { TruckFleetDatabaseSaveCard } from './TruckFleetDatabaseSaveCard'
 
 /**
@@ -59,6 +61,32 @@ export function PostTransformOptionalActions() {
               diskPeriod={wb.diskPeriod ?? null}
               normalizedMovimientosCsv={wb.transformResult?.csv.external_movimientos_contrato_normalized}
               excelTotalMovimientos={mc?.normalizedCount}
+              disabled={wb.transformBusy}
+            />
+          </section>
+
+          <section className="rounded-2xl border border-sky-200 bg-sky-50/40 px-4 py-4">
+            <h4 className="text-sm font-bold text-slate-900">D · Líquidos RicCalLiq y SL1/SL5 (S10)</h4>
+            <p className="mt-1 text-xs text-slate-600">
+              Informe generado en el Transform (cohorte RicCalLiq, captura Renova S10, puente Ric→SL).
+            </p>
+            <LiquidMovementsPanel
+              ricCsv={wb.transformResult?.csv.liquid_movements_riccalliq_cohort}
+              slCsv={wb.transformResult?.csv.liquid_movements_sl1_sl5_s10}
+              aceiteCrossCsv={wb.transformResult?.csv.liquid_movements_aceite_truckflow_excel}
+              summaryCsv={wb.transformResult?.csv.liquid_movements_summary}
+              disabled={wb.transformBusy}
+            />
+          </section>
+
+          <section className="rounded-2xl border border-violet-200 bg-violet-50/40 px-4 py-4">
+            <h4 className="text-sm font-bold text-slate-900">E · Transile interno (Volcable 1 / 2)</h4>
+            <p className="mt-1 text-xs text-slate-600">
+              Sesiones con ≥4 pasadas y lapsos 20 min–3 h entre lecturas en RicVolcable1/2.
+            </p>
+            <TransileInternoVolcablePanel
+              sessionsCsv={wb.transformResult?.csv.transile_interno_volcable_sessions}
+              summaryCsv={wb.transformResult?.csv.transile_interno_volcable_summary}
               disabled={wb.transformBusy}
             />
           </section>

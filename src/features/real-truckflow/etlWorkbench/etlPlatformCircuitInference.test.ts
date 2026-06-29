@@ -117,6 +117,91 @@ describe('etlPlatformCircuitInference', () => {
     ).toBe('R4')
   })
 
+  it('ACEITE OSL Ricardone ingreso → R8', () => {
+    expect(
+      inferCircuitFromExternalMovimiento({
+        platform_normalized: 'ACEITE_OSL',
+        plataforma_original: 'ACEITE OSL',
+        planta_normalized: 'RICARDONE',
+        movement_type: 'INGRESO',
+        movement_type_detail: 'I',
+        mov: 'I',
+      })?.circuit_code
+    ).toBe('R8')
+  })
+
+  it('ACEITE OSL Ricardone despacho → R16', () => {
+    expect(
+      inferCircuitFromExternalMovimiento({
+        platform_normalized: 'ACEITE_OSL',
+        plataforma_original: 'ACEITE OSL',
+        planta_normalized: 'RICARDONE',
+        movement_type: 'DESPACHO',
+        movement_type_detail: 'DE',
+        mov: 'DE',
+      })?.circuit_code
+    ).toBe('R16')
+  })
+
+  it('ACEITE OSL San Lorenzo → SL1 / SL5', () => {
+    expect(
+      inferCircuitFromExternalMovimiento({
+        platform_normalized: 'ACEITE_OSL',
+        plataforma_original: 'ACEITE OSL',
+        planta_normalized: 'SAN_LORENZO',
+        movement_type: 'INGRESO',
+        movement_type_detail: 'I',
+        mov: 'I',
+      })?.circuit_code
+    ).toBe('SL1')
+    expect(
+      inferCircuitFromExternalMovimiento({
+        platform_normalized: 'ACEITE_OSL',
+        plataforma_original: 'ACEITE OSL',
+        planta_normalized: 'SAN_LORENZO',
+        movement_type: 'DESPACHO',
+        movement_type_detail: 'DE',
+        mov: 'DE',
+      })?.circuit_code
+    ).toBe('SL5')
+  })
+
+  it('ACEITE OSL / PTO Terminal de embarque descarga → SL1', () => {
+    expect(
+      inferCircuitFromExternalMovimiento({
+        platform_normalized: 'ACEITE_OSL',
+        plataforma_original: 'ACEITE OSL',
+        planta_normalized: 'TERMINAL_EMBARQUE',
+        movement_type: 'DESPACHO',
+        movement_type_detail: 'DE',
+        mov: 'DE',
+      })?.circuit_code
+    ).toBe('SL1')
+    expect(
+      inferCircuitFromExternalMovimiento({
+        platform_normalized: 'ACEITE_PTO',
+        plataforma_original: 'ACEITE PTO',
+        planta_normalized: 'TERMINAL_EMBARQUE',
+        movement_type: 'DESPACHO',
+        movement_type_detail: 'DE',
+        mov: 'DE',
+      })?.circuit_code
+    ).toBe('SL1')
+  })
+
+  it('plataforma ACEITE en terminal → SL1 descarga', () => {
+    expect(
+      inferCircuitFromExternalMovimiento({
+        platform_normalized: 'ACEITE',
+        plataforma_original: 'ACEITE',
+        planta_normalized: 'TERMINAL_EMBARQUE',
+        movement_type: 'DESPACHO',
+        movement_type_detail: 'DE',
+        mov: 'DE',
+      })?.circuit_code
+    ).toBe('SL1')
+  })
+
   it('asigna R7 a anomalía con VOLCABLE PTO en Excel', () => {
     const norm = normalizePlatform('VOLCABLE PTO 1')
     const out = applyExternalCircuitToJourney(j(), {
@@ -128,6 +213,22 @@ describe('etlPlatformCircuitInference', () => {
       mov: 'I',
     } as never)
     expect(out.circuit_code).toBe('R7')
+    expect(out.circuit_from_excel).toBe(true)
+  })
+
+  it('corrige SL1 Truckflow cuando Excel es ACEITE OSL Ricardone → R8', () => {
+    const out = applyExternalCircuitToJourney(
+      j({ circuit_code: 'SL1', executive_status: 'VALIDO', anomaly_real: false }),
+      {
+        platform_normalized: 'ACEITE_OSL',
+        plataforma_original: 'ACEITE OSL',
+        planta_normalized: 'RICARDONE',
+        movement_type: 'INGRESO',
+        movement_type_detail: 'I',
+        mov: 'I',
+      } as never
+    )
+    expect(out.circuit_code).toBe('R8')
     expect(out.circuit_from_excel).toBe(true)
   })
 })

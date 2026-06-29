@@ -890,7 +890,9 @@ export function TransformEtlTab() {
                 {circuitPieTotal.toLocaleString()}
               </span>
               . La torta responde: <strong>¿comité COMPLETOS o ANOMALÍAS?</strong> Con Movimientos por Contrato
-              cargados, incluye la <strong>conciliación Excel-first</strong> (operaciones con evidencia Truckflow).
+              cargados, incluye la <strong>conciliación Excel-first</strong> (operaciones con evidencia Truckflow) y{' '}
+              <strong>filas Excel aceite (OSL/PTO/ACEITE) sin match en cámaras</strong> como ancla{' '}
+              <code className="text-[10px]">excel:…</code>.
               {!executiveProductFilterActive && circuitClassIndex.excelFirstReconciledCount > 0 ?
                 <>
                   {' '}
@@ -1039,6 +1041,8 @@ export function TransformEtlTab() {
                 {circuitBarTotal.toLocaleString()}
               </span>
               . Las barras indican <strong>qué plantilla R* / RS_* se asignó</strong>, no el veredicto del comité.
+              Con Excel cargado, cada movimiento líquido/aceite sin Truckflow entra como fila <code className="text-[10px]">excel:…</code>{' '}
+              (los chips de producto arriba cuentan <strong>operaciones Excel</strong>, no siempre 1:1 con journeys).
               Ej.: R7 (ruta Ric→SL) con ingreso/preingreso/calada/egreso → COMPLETOS; RS_REC con evidencia → COMPLETOS.
             </p>
             {circuitBarData.length === 0 ?
@@ -1086,7 +1090,7 @@ export function TransformEtlTab() {
               </h4>
               <p className="mt-1 text-xs text-indigo-800/90">
                 Cruce circuito R × categoría comité. Con XLSX cargados, la plataforma del Excel (
-                VOLCABLE 1/2→R5/R6 Ricardone, VOLCABLE PTO 1/2/3/5→R7 San Lorenzo, CELDA_16→R1) reemplaza RS_REC / SIN_PUNTO y saca
+                VOLCABLE 1/2→R5/R6 Ricardone, VOLCABLE PTO 1/2/3/5→R7 sólidos, ACEITE OSL/PTO→SL1/SL5 o R8/R16 Ric, CELDA_16→R1) reemplaza RS_REC / SIN_PUNTO y saca
                 anomalías conciliadas a su circuito real.
               </p>
               <div className="mt-2 flex flex-wrap items-center gap-2">

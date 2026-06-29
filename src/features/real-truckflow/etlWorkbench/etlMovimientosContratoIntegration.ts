@@ -48,6 +48,22 @@ import {
   normalizeTruckflowScatterRowForByDay,
   segmentScatterByDayCsv,
 } from './etlSegmentScatterByDay'
+import {
+  buildLiquidMovementsReport,
+  formatLiquidMovementsLog,
+  liquidMovementsRicCalLiqCsv,
+  liquidMovementsAceiteTruckflowExcelCsv,
+  liquidMovementsSlS10Csv,
+  liquidMovementsSummaryCsv,
+  type LiquidMovementsSummary,
+} from './liquidMovementsWorkbench'
+import {
+  buildTransileInternoVolcableReport,
+  formatTransileInternoVolcableLog,
+  transileInternoVolcableSessionsCsv,
+  transileInternoVolcableSummaryCsv,
+  type TransileInternoVolcableSummary,
+} from './transileInternoVolcable'
 
 import type { KpiTiemposMovimientosSnapshot } from './etlKpiTiemposBuild'
 import {
@@ -67,6 +83,7 @@ export type MovimientosContratoIntegrationInput = {
   finalCsvRows: Record<string, unknown>[]
   journeyTimesByUid: Map<string, { start: string; end: string }>
   classifiedJourneys: ClassifiedJourneyForTiming[]
+  rawTruckflowEvents?: import('./auditSlCameraExcelCoverage').RawJourneyEventLike[]
   movimientosFiles: MovimientosContratoFileInput[]
   tiemposEntrePasosFiles?: import('./etlTiemposEntrePasos').TiemposEntrePasosFileInput[]
   /** Si true, no arma scatter/KPI tiempos (tramo 4 en pestaña KPI Tiempos). */
@@ -91,6 +108,8 @@ export type MovimientosContratoIntegrationOutput = {
     operationalSampleSelected: number
     products: string[]
     platforms: string[]
+    liquidMovements?: LiquidMovementsSummary
+    transileInternoVolcable?: TransileInternoVolcableSummary
   }
 }
 
@@ -344,6 +363,20 @@ export async function runMovimientosContratoIntegration(
   const sampleUids = new Set(samplePack.sample.map((s) => s.journey_uid))
   const skipKpi = input.skipKpiTiemposArtifacts === true
 
+  const liquidReport = buildLiquidMovementsReport({
+    operations: excelFirstResult.operations,
+    segmentRows: excelFirstResult.segmentRows,
+    classifiedJourneys: input.classifiedJourneys,
+    rawEvents: input.rawTruckflowEvents,
+  })
+  logs.push(formatLiquidMovementsLog(liquidReport.summary))
+
+  const transileVolcableReport = buildTransileInternoVolcableReport({
+    classifiedJourneys: input.classifiedJourneys,
+    operations: excelFirstResult.operations,
+  })
+  logs.push(formatTransileInternoVolcableLog(transileVolcableReport.summary))
+
   const kpiTiemposSnapshot: KpiTiemposMovimientosSnapshot | null = {
     excelSegmentRows: excelFirstResult.segmentRows,
     segments,
@@ -467,6 +500,18 @@ export async function runMovimientosContratoIntegration(
       excelFirstResult.candidateDiagnostics
     ),
     excel_first_review_sample: excelFirstReviewSampleCsv(excelFirstResult.reviewSample),
+    liquid_movements_riccalliq_cohort: liquidMovementsRicCalLiqCsv(liquidReport.ricCalLiqRows),
+    liquid_movements_sl1_sl5_s10: liquidMovementsSlS10Csv(liquidReport.slLiquidRows),
+    liquid_movements_aceite_truckflow_excel: liquidMovementsAceiteTruckflowExcelCsv(
+      liquidReport.aceiteTruckflowExcelRows
+    ),
+    liquid_movements_summary: liquidMovementsSummaryCsv(liquidReport.summary),
+    transile_interno_volcable_sessions: transileInternoVolcableSessionsCsv(
+      transileVolcableReport.sessions
+    ),
+    transile_interno_volcable_summary: transileInternoVolcableSummaryCsv(
+      transileVolcableReport.summary
+    ),
     ...(skipKpi ? {} : { segment_scatter_by_day: scatterByDayCsvOut }),
       }
       return csv
@@ -499,6 +544,8 @@ export async function runMovimientosContratoIntegration(
       operationalSampleSelected: samplePack.sample.length,
       products,
       platforms,
+      liquidMovements: liquidReport.summary,
+      transileInternoVolcable: transileVolcableReport.summary,
     },
   }
 }

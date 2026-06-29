@@ -140,8 +140,44 @@ export function journeyIsTransileSlToC16(j: ReconstructedRealJourney): boolean {
   return slIdx >= 0 && c16Idx > slIdx
 }
 
+/** Planta Excel que habilita circuitos SL sin restricción de plataforma. */
+export function excelPlantaIsSanLorenzoTerminal(plantaNormalized: string | null | undefined): boolean {
+  const p = String(plantaNormalized ?? '')
+    .trim()
+    .toUpperCase()
+  return p === 'SAN_LORENZO' || p === 'TERMINAL_PORTUARIA'
+}
+
+/**
+ * Truckflow no debe etiquetarse SL1 si el recorrido es Ricardone (líquido, volcable, calada, etc.)
+ * sin ingreso operativo San Lorenzo (SL_INGRESO / cámaras SLZ).
+ */
+export function journeyBlocksSl1ExecutiveClassification(j: ReconstructedRealJourney): boolean {
+  if (journeyIsTransileC16ToSl(j) || journeyIsTransileSlToC16(j)) return false
+  if (journeyHasSlIngresoEvidence(j)) return false
+  if (!journeyHasRicardoneLogicalEvidence(j)) return false
+  const logical = logicalSet(j)
+  if (
+    logical.has('VOLCABLE') ||
+    logical.has('LIQUIDO') ||
+    logical.has('CALADA') ||
+    logical.has('CELDA16_CARGA') ||
+    logical.has('CELDA16_DESCARGA')
+  ) {
+    return true
+  }
+  if (logical.has('BALANZA_INGRESO') || logical.has('BALANZA_EGRESO') || logical.has('BALANZA')) {
+    return true
+  }
+  for (const e of journeyFrontEvents(j)) {
+    if (isRicDevice(String(e.deviceCode ?? ''))) return true
+  }
+  return false
+}
+
 /** Solo San Lorenzo — sin eventos Ricardone útiles. */
 export function journeyIsSlOnlyInternal(j: ReconstructedRealJourney): boolean {
+  if (journeyBlocksSl1ExecutiveClassification(j)) return false
   if (journeyHasRicardoneLogicalEvidence(j)) return false
   const events = journeyFrontEvents(j)
   if (events.length < 2) return false
@@ -151,6 +187,11 @@ export function journeyIsSlOnlyInternal(j: ReconstructedRealJourney): boolean {
     const dev = lookupSanLorenzoCameraByDevice(String(e.deviceCode ?? '').trim())
     const code = dev?.logicalCode ?? norm.logicalCode
     if (RIC_LOGICAL_MARKERS.has(code)) return false
+  }
+  if (!journeyHasSlIngresoEvidence(j)) {
+    const logical = getCollapsedLogicalCodes(j)
+    const hasSlBal = logical.some((c) => c.startsWith('SL_'))
+    if (!hasSlBal) return false
   }
   return journeyHasSlOperationalEvidence(j)
 }

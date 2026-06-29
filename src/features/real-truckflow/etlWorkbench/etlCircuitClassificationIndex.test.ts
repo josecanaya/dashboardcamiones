@@ -438,4 +438,19 @@ describe('reclassifyPossibleRejections', () => {
     expect(notInExcel.operationalVariationType).toBe('POSIBLE_RECHAZO')
     expect(buildAnomalyReviewSummary(index.entries).listedAnomalyCount).toBe(0)
   })
+
+  it('aceite/líquido Excel no conserva R7 de Truckflow (R7 es ruta sólidos)', () => {
+    const debugCsv = [
+      'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
+      'j-aceite,EQV925,terminal_embarque,COMPLETOS,COMPLETOS,R7,Ric→SL,INGRESO>PREINGRESO>CALADA>SL_INGRESO,8,COMPLETO,VALIDO,RUTA_RIC_SAN_LORENZO_COMPLETA,,RUTA_RIC_SAN_LORENZO_COMPLETA,,COMPLETO,COMPLETO,2026-05-12T08:00:00.000Z,2026-05-12T12:00:00.000Z,',
+    ].join('\n')
+    const excelCsv = [
+      'external_operation_id,matched_journey_uids,plate_normalized,planta_normalized,movement_type,source_date,resolved_product,product_normalized,resolved_platform,platform_normalized,plataforma_original,truckflow_circuit_codes,resolved_circuit_family,resolved_executive_circuit_code,match_quality,route_quality,evidence_count',
+      'op-aceite,j-aceite,EQV925,TERMINAL_EMBARQUE,INGRESO,2026-05-12,AC GIRASOL OLEICO,AC GIRASOL OLEICO,ACEITE_OSL,ACEITE OSL,ACEITE OSL,R7,LIQUIDO,SL1,EXTERNAL_MATCH_EXACT,ROUTE_COMPLETE,1',
+    ].join('\n')
+    const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
+    const row = index.entries.find((e) => e.journeyId === 'j-aceite')!
+    expect(row.executiveCircuitCode).toBe('SL1')
+    expect(row.executiveCircuitCode).not.toBe('R7')
+  })
 })

@@ -10,6 +10,7 @@ import {
   inferCircuitFromExternalMovimiento,
   journeyNeedsCircuitFromExcel,
 } from './etlPlatformCircuitInference'
+import { isSlLiquidCircuit } from './slLiquidCameras'
 import { normalizePlateStrict } from '../../../services/circuitPlateOcr'
 import {
   createPlateMatchCache,
@@ -211,8 +212,17 @@ export function isPlatformCompatibleWithCircuit(
     }
     return null
   }
-  if (p === 'ACEITE_OSL') {
-    if (code.includes('R34') || label.includes('LIQUIDO') || seq.includes('LIQUIDO')) return true
+  if (p === 'ACEITE_OSL' || p === 'ACEITE_PTO' || p === 'ACEITE') {
+    if (
+      code.includes('R34') ||
+      code.includes('R8') ||
+      code.includes('R16') ||
+      label.includes('LIQUIDO') ||
+      seq.includes('LIQUIDO') ||
+      isSlLiquidCircuit(code)
+    ) {
+      return true
+    }
     return null
   }
   return null

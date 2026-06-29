@@ -2131,6 +2131,15 @@ export async function runEtlTransform(
       finalCsvRows,
       journeyTimesByUid,
       classifiedJourneys: classifiedForSegmentTiming,
+      rawTruckflowEvents: operationalFrontEvents.map((e) => ({
+        journeyUid: e.journeyUid,
+        truckPlate: e.truckPlate,
+        normalizedPlate: e.normalizedPlate,
+        deviceCode: e.deviceCode,
+        sectorCode: e.sectorCode,
+        occurredAt: e.occurredAt,
+        createdAt: e.createdAt,
+      })),
       movimientosFiles: inp.movimientosContratoFiles,
       tiemposEntrePasosFiles: inp.tiemposEntrePasosFiles,
       skipKpiTiemposArtifacts: true,
@@ -2157,6 +2166,8 @@ export async function runEtlTransform(
       excelFirst: mc.stats.excelFirst,
       products: mc.stats.products,
       platforms: mc.stats.platforms,
+      liquidMovements: mc.stats.liquidMovements,
+      transileInternoVolcable: mc.stats.transileInternoVolcable,
     }
   } else {
     movimientosContratoStats = {

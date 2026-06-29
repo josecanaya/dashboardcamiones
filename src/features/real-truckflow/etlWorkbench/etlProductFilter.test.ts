@@ -7,6 +7,7 @@ import {
   parseJourneyProductLookup,
   resolveAnalysisProductLookup,
   PRODUCT_FILTER_ALL,
+  productMatchesExecutiveSampleFilter,
   journeyIdsForProduct,
 } from './etlProductFilter'
 
@@ -76,6 +77,12 @@ describe('etlProductFilter', () => {
       merged_truckflow_movimientos: mergedCsv,
     })
     expect(lookup?.byJourneyId.get('j1')).toBe('SOJA')
+  })
+
+  it('ACEITE incluye AC GIRASOL OLEICO y aceites girasol', () => {
+    expect(productMatchesExecutiveSampleFilter('AC GIRASOL OLEICO', 'ACEITE')).toBe(true)
+    expect(productMatchesExecutiveSampleFilter('ACEITE GIRASOL CRUDO', 'ACEITE')).toBe(true)
+    expect(productMatchesExecutiveSampleFilter('GIRASOL', 'ACEITE')).toBe(false)
   })
 
   it('buildExecutiveProductFilterPlan cuenta en un solo paso', () => {

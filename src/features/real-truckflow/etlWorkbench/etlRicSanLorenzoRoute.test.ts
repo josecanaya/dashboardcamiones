@@ -4,6 +4,7 @@ import {
   journeyHasSlIngresoEvidence,
   journeyIsRicSanLorenzoRouteEvidence,
   journeyIsSlOnlyInternal,
+  journeyBlocksSl1ExecutiveClassification,
   journeyIsTransileC16ToSl,
   journeyIsTransileSlToC16,
   resolveTechnicalCircuitCodeForExecutive,
@@ -222,5 +223,21 @@ describe('etlRicSanLorenzoRoute resolvers', () => {
     })
     expect(journeyIsRicSanLorenzoRouteEvidence(j)).toBe(false)
     expect(journeyHasSlIngresoEvidence(j)).toBe(true)
+  })
+
+  it('11. Ric líquido sin SL_INGRESO no es SL1 interno', () => {
+    const j = journey({
+      logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'LIQUIDO', 'BALANZA_INGRESO'],
+      events: [
+        ev('RicIngCamFte', 'INGRESO', '2026-05-12T08:00:00'),
+        ev('RicCalLiq', 'LIQUIDO', '2026-05-12T08:30:00'),
+        ev('RicBalIng', 'BALANZA_INGRESO', '2026-05-12T09:00:00'),
+      ],
+      eventCount: 3,
+      preliminaryCircuitCode: 'CIRCUITO_SL_RECEPCION',
+    })
+    expect(journeyBlocksSl1ExecutiveClassification(j)).toBe(true)
+    expect(journeyIsSlOnlyInternal(j)).toBe(false)
+    expect(resolveExecutiveCircuitConfigForJourney(j)?.code).toBe('R8')
   })
 })
