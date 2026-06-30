@@ -885,7 +885,7 @@ export function TransformEtlTab() {
               Clasificación ejecutiva comité (3 categorías)
             </h4>
             <p className="mt-1 text-xs text-slate-500">
-              Total de journeys clasificados:{' '}
+              Total de operaciones / journeys en gráficos:{' '}
               <span className="font-semibold tabular-nums text-slate-700">
                 {circuitPieTotal.toLocaleString()}
               </span>
@@ -897,7 +897,7 @@ export function TransformEtlTab() {
                 <>
                   {' '}
                   <strong className="text-emerald-700">
-                    {circuitClassIndex.excelFirstReconciledCount.toLocaleString()} journeys conciliados con Excel
+                    {circuitClassIndex.excelFirstReconciledCount.toLocaleString()} operaciones Excel con evidencia Truckflow
                     {circuitClassIndex.excelPromotedCount > 0 ?
                       ` (${circuitClassIndex.excelPromotedCount.toLocaleString()} salieron de anomalías)`
                     : ''}
@@ -1090,7 +1090,7 @@ export function TransformEtlTab() {
               </h4>
               <p className="mt-1 text-xs text-indigo-800/90">
                 Cruce circuito R × categoría comité. Con XLSX cargados, la plataforma del Excel (
-                VOLCABLE 1/2→R5/R6 Ricardone, VOLCABLE PTO 1/2/3/5→R7 sólidos, ACEITE OSL/PTO→SL1/SL5 o R8/R16 Ric, CELDA_16→R1) reemplaza RS_REC / SIN_PUNTO y saca
+                VOLCABLE 1/2→R5/R6 Ricardone, VOLCABLE PTO 1/2/3/5→R7 sólidos, ACEITE OSL→SL1, ACEITE PTO→SL2, aceite Ric→R8, CELDA_16→R1) reemplaza RS_REC / SIN_PUNTO y saca
                 anomalías conciliadas a su circuito real.
               </p>
               <div className="mt-2 flex flex-wrap items-center gap-2">

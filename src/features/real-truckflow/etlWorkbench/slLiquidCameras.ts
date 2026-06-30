@@ -4,7 +4,7 @@
 
 import type { SlCameraAuditSlot } from './auditSlCameraExcelCoverage'
 
-export const SL_LIQUID_CIRCUIT_CODES = ['SL1', 'SL5'] as const
+export const SL_LIQUID_CIRCUIT_CODES = ['SL1', 'SL2', 'SL5'] as const
 export type SlLiquidCircuitCode = (typeof SL_LIQUID_CIRCUIT_CODES)[number]
 
 export const RIC_LIQUIDO_CAMERA = 'RicCalLiq'
@@ -26,7 +26,101 @@ const RIC_LIQUIDO_DESPACHO = new Set(['R16'])
 
 export function isSlLiquidCircuit(circuit: string): boolean {
   const c = String(circuit ?? '').trim().toUpperCase()
-  return c === 'SL1' || c === 'SL5'
+  return c === 'SL1' || c === 'SL2' || c === 'SL5'
+}
+
+/** Circuitos ejecutivos aceite/líquido (comité): solo SL1, SL2 y R8 Ricardone. */
+export const ACEITE_EXECUTIVE_CIRCUIT_CODES = ['SL1', 'SL2', 'R8'] as const
+export type AceiteExecutiveCircuitCode = (typeof ACEITE_EXECUTIVE_CIRCUIT_CODES)[number]
+
+export function isAceiteExecutiveCircuitCode(code: string): code is AceiteExecutiveCircuitCode {
+  return (ACEITE_EXECUTIVE_CIRCUIT_CODES as readonly string[]).includes(String(code ?? '').trim().toUpperCase())
+}
+
+export function normalizeAceitePlatformKey(
+  platformNormalized: string | null | undefined,
+  plataformaOriginal?: string | null
+): 'OSL' | 'PTO' | 'GENERIC' | '' {
+  const p = String(platformNormalized ?? '').trim().toUpperCase()
+  const o = String(plataformaOriginal ?? '')
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, ' ')
+  if (p === 'ACEITE_OSL' || o === 'ACEITE OSL') return 'OSL'
+  if (p === 'ACEITE_PTO' || o === 'ACEITE PTO') return 'PTO'
+  if (p === 'ACEITE' || o === 'ACEITE') return 'GENERIC'
+  if (p.includes('OSL')) return 'OSL'
+  if (p.includes('PTO') && p.includes('ACEITE')) return 'PTO'
+  return ''
+}
+
+/**
+ * Excel plataforma + planta → circuito ejecutivo aceite (SL1 OSL/S10, SL2 PTO, R8 Ricardone).
+ */
+export function inferAceiteExecutiveCircuitFromPlatform(
+  platformNormalized: string | null | undefined,
+  plataformaOriginal: string | null | undefined,
+  plantaNormalized: string | null | undefined
+): AceiteExecutiveCircuitCode | null {
+  if (!isPermittedAceiteLiquidDischargePlatform(platformNormalized, plataformaOriginal)) {
+    const key = normalizeAceitePlatformKey(platformNormalized, plataformaOriginal)
+    if (!key) return null
+  }
+  const plant = String(plantaNormalized ?? '').trim().toUpperCase()
+  const key = normalizeAceitePlatformKey(platformNormalized, plataformaOriginal)
+
+  if (plant === 'RICARDONE') return 'R8'
+  if (plant === 'TERMINAL_EMBARQUE' || plant === 'SAN_LORENZO') {
+    if (key === 'PTO') return 'SL2'
+    return 'SL1'
+  }
+  return null
+}
+
+function haystackHasRicLiquidBalanza(hay: string): boolean {
+  if (/RICB1INGRESO|RIC_B1_INGRESO/.test(hay) && /RICB2EGRESO|RIC_B2_EGRESO/.test(hay)) return true
+  return /RICB1|RIC_B1/.test(hay) && /RICB2|RIC_B2/.test(hay)
+}
+
+/** Descarga líquida en Ricardone (sin paso por terminal SL en secuencia). */
+export function haystackIndicatesAceiteRicardoneDischarge(hay: string): boolean {
+  const h = `${hay ?? ''}`.toUpperCase()
+  if (haystackHasRicLiquidBalanza(h) || /RICALIQ|RIC_CAL_LIQ/.test(h)) return true
+  if (/SL_INGRESO|SL_BALANZA|SL_EGRESO|RENCARG|RENDESC/.test(h)) return false
+  if (/LIQUIDO/.test(h) && /BALANZA_INGRESO|BALANZA_EGRESO/.test(h)) return true
+  if (/LIQUIDO/.test(h) && /INGRESO|PREINGRESO/.test(h) && !/SL_/.test(h)) return true
+  return false
+}
+
+function haystackHasSlS10Camera(hay: string): boolean {
+  return /RENCARGFTE|RENDESCFTE|RENCARGTRAS|RENDESCTRAS|RENDESCTTRAS|RENCARG|RENDESC/.test(hay)
+}
+
+/** Truckflow (códigos + secuencia/dispositivos) desempata blanks y corrige R7 erróneo en aceite. */
+export function inferAceiteExecutiveCircuitFromTruckflowEvidence(
+  truckflowCircuitCodes: string,
+  observedSequenceCombined: string
+): AceiteExecutiveCircuitCode | null {
+  const codes = String(truckflowCircuitCodes ?? '')
+    .toUpperCase()
+    .split(/[|,]/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+  const hay = `${observedSequenceCombined ?? ''}`.toUpperCase()
+
+  if (haystackHasSlS10Camera(hay) || /SL_LIQUIDO_DESCARGA|SL_LIQUIDO_OPERACION/.test(hay)) return 'SL1'
+  if (codes.includes('R8') || /RICALIQ|RIC_CAL_LIQ/.test(hay) || haystackHasRicLiquidBalanza(hay)) return 'R8'
+  if (haystackIndicatesAceiteRicardoneDischarge(hay)) return 'R8'
+  if (codes.includes('SL1')) return 'SL1'
+  if (codes.includes('SL2')) return 'SL2'
+
+  const slTerminal =
+    /SL_INGRESO|SL_BALANZA/.test(hay) &&
+    /SL_EGRESO|SL_BALANZA_EGRESO|SL_BALANZA_SALIDA/.test(hay)
+  if (slTerminal && !haystackHasSlS10Camera(hay)) return 'SL2'
+
+  if (codes.includes('R7') && slTerminal) return 'SL2'
+  return null
 }
 
 /** Plataformas de descarga permitidas para camiones de aceite (Excel operativo). */

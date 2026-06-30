@@ -1,6 +1,6 @@
 import type { ExternalMovimientoContratoNormalized } from './etlExternalMovimientosContrato'
 import { EXECUTIVE_CIRCUIT_MATRIX } from './finalCircuitScoring'
-import { isSanLorenzoAceiteLiquidPlatform } from './slLiquidCameras'
+import { isSanLorenzoAceiteLiquidPlatform, inferAceiteExecutiveCircuitFromPlatform } from './slLiquidCameras'
 import type { TruckflowJourneyForMerge } from './etlTruckflowMovimientosMerge'
 
 export type InferredExecutiveCircuit = {
@@ -23,47 +23,21 @@ function isExcelDispatchMovement(
   return movType === 'DESPACHO' || movCode === 'DE' || movCode === 'DI' || movCode === 'EA'
 }
 
-function slLiquidCircuitFromAceiteAtTerminal(
-  plant: string,
-  dispatch: boolean
+function inferAceiteLiquidExecutiveCircuit(
+  mov: Pick<
+    ExternalMovimientoContratoNormalized,
+    'platform_normalized' | 'plataforma_original' | 'planta_normalized' | 'movement_type' | 'movement_type_detail' | 'mov'
+  >
 ): InferredExecutiveCircuit | null {
-  /** Terminal de embarque: descarga en plataforma Aceite OSL/PTO → SL1 (S10). */
-  if (plant === 'TERMINAL_EMBARQUE') {
-    const code = dispatch ? 'SL1' : 'SL5'
-    return (
-      circuitFromCode(code, 'plant') ?? {
-        circuit_code: code,
-        circuit_label:
-          code === 'SL1' ?
-            'Recepción interna San Lorenzo'
-          : 'Despacho líquidos San Lorenzo (S10)',
-        inference_source: 'plant',
-      }
-    )
-  }
-  if (plant === 'SAN_LORENZO') {
-    const code = dispatch ? 'SL5' : 'SL1'
-    return (
-      circuitFromCode(code, 'plant') ?? {
-        circuit_code: code,
-        circuit_label: dispatch ? 'Despacho líquidos San Lorenzo (S10)' : 'Recepción interna San Lorenzo',
-        inference_source: 'plant',
-      }
-    )
-  }
-  return null
-}
+  const fromPlatform = inferAceiteExecutiveCircuitFromPlatform(
+    mov.platform_normalized,
+    mov.plataforma_original,
+    mov.planta_normalized
+  )
+  if (fromPlatform) return circuitFromCode(fromPlatform, 'platform')
 
-function inferAceiteOslExecutiveCircuit(
-  plant: string,
-  mov: Pick<ExternalMovimientoContratoNormalized, 'movement_type' | 'movement_type_detail' | 'mov'>
-): InferredExecutiveCircuit | null {
-  const dispatch = isExcelDispatchMovement(mov)
-  if (plant === 'RICARDONE') {
-    return circuitFromCode(dispatch ? 'R16' : 'R8', 'platform')
-  }
-  const atTerminal = slLiquidCircuitFromAceiteAtTerminal(plant, dispatch)
-  if (atTerminal) return atTerminal
+  const plant = String(mov.planta_normalized ?? '').toUpperCase()
+  if (plant === 'RICARDONE') return circuitFromCode('R8', 'platform')
   return circuitFromCode('R34', 'platform')
 }
 
@@ -117,7 +91,7 @@ export function inferCircuitFromExternalMovimiento(
   }
 
   if (isSanLorenzoAceiteLiquidPlatform(platform, original)) {
-    return inferAceiteOslExecutiveCircuit(plant, mov)
+    return inferAceiteLiquidExecutiveCircuit(mov)
   }
 
   if (plant === 'TERMINAL_EMBARQUE') {
@@ -155,10 +129,13 @@ export function applyExternalCircuitToJourney(
 
   const truckflowCode = String(journey.circuit_code ?? '').trim().toUpperCase()
   const excelOverridesSlOnRicLiquid =
-    (truckflowCode === 'SL1' || truckflowCode === 'SL5') &&
+    (truckflowCode === 'SL1' || truckflowCode === 'SL2' || truckflowCode === 'SL5') &&
     (inferred.circuit_code === 'R8' || inferred.circuit_code === 'R16')
+  const excelOverridesR7OnSlAceite =
+    truckflowCode === 'R7' &&
+    (inferred.circuit_code === 'SL1' || inferred.circuit_code === 'SL2')
 
-  if (!journeyNeedsCircuitFromExcel(journey) && !excelOverridesSlOnRicLiquid) {
+  if (!journeyNeedsCircuitFromExcel(journey) && !excelOverridesSlOnRicLiquid && !excelOverridesR7OnSlAceite) {
     return { ...journey, circuit_from_excel: false, truckflow_circuit_code }
   }
 

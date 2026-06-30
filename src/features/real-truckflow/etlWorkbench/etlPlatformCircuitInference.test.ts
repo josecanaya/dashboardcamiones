@@ -130,7 +130,7 @@ describe('etlPlatformCircuitInference', () => {
     ).toBe('R8')
   })
 
-  it('ACEITE OSL Ricardone despacho → R16', () => {
+  it('ACEITE OSL Ricardone despacho → R8 (recepción líquida Ric)', () => {
     expect(
       inferCircuitFromExternalMovimiento({
         platform_normalized: 'ACEITE_OSL',
@@ -140,10 +140,10 @@ describe('etlPlatformCircuitInference', () => {
         movement_type_detail: 'DE',
         mov: 'DE',
       })?.circuit_code
-    ).toBe('R16')
+    ).toBe('R8')
   })
 
-  it('ACEITE OSL San Lorenzo → SL1 / SL5', () => {
+  it('ACEITE OSL San Lorenzo ingreso → SL1; ACEITE PTO → SL2', () => {
     expect(
       inferCircuitFromExternalMovimiento({
         platform_normalized: 'ACEITE_OSL',
@@ -156,17 +156,17 @@ describe('etlPlatformCircuitInference', () => {
     ).toBe('SL1')
     expect(
       inferCircuitFromExternalMovimiento({
-        platform_normalized: 'ACEITE_OSL',
-        plataforma_original: 'ACEITE OSL',
+        platform_normalized: 'ACEITE_PTO',
+        plataforma_original: 'ACEITE PTO',
         planta_normalized: 'SAN_LORENZO',
-        movement_type: 'DESPACHO',
-        movement_type_detail: 'DE',
-        mov: 'DE',
+        movement_type: 'INGRESO',
+        movement_type_detail: 'I',
+        mov: 'I',
       })?.circuit_code
-    ).toBe('SL5')
+    ).toBe('SL2')
   })
 
-  it('ACEITE OSL / PTO Terminal de embarque descarga → SL1', () => {
+  it('ACEITE OSL / PTO Terminal de embarque → SL1 OSL y SL2 PTO', () => {
     expect(
       inferCircuitFromExternalMovimiento({
         platform_normalized: 'ACEITE_OSL',
@@ -186,7 +186,7 @@ describe('etlPlatformCircuitInference', () => {
         movement_type_detail: 'DE',
         mov: 'DE',
       })?.circuit_code
-    ).toBe('SL1')
+    ).toBe('SL2')
   })
 
   it('plataforma ACEITE en terminal → SL1 descarga', () => {
@@ -230,5 +230,37 @@ describe('etlPlatformCircuitInference', () => {
     )
     expect(out.circuit_code).toBe('R8')
     expect(out.circuit_from_excel).toBe(true)
+  })
+})
+
+describe('inferAceiteExecutiveCircuitFromTruckflowEvidence', () => {
+  it('RenDescFte / RenCargFte → SL1 (S10)', async () => {
+    const { inferAceiteExecutiveCircuitFromTruckflowEvidence } = await import('./slLiquidCameras')
+    expect(inferAceiteExecutiveCircuitFromTruckflowEvidence('R7', 'INGRESO>RenDescFte>EGRESO')).toBe('SL1')
+    expect(inferAceiteExecutiveCircuitFromTruckflowEvidence('R7', 'RenCargFte')).toBe('SL1')
+  })
+
+  it('RicB1Ingreso + RicB2Egreso → R8', async () => {
+    const { inferAceiteExecutiveCircuitFromTruckflowEvidence } = await import('./slLiquidCameras')
+    expect(
+      inferAceiteExecutiveCircuitFromTruckflowEvidence('R7', 'RicB1Ingreso>RicB2Egreso')
+    ).toBe('R8')
+  })
+
+  it('Ric líquido con balanza Ric (sin SL_) → R8', async () => {
+    const { inferAceiteExecutiveCircuitFromTruckflowEvidence } = await import('./slLiquidCameras')
+    expect(
+      inferAceiteExecutiveCircuitFromTruckflowEvidence(
+        'R8',
+        'INGRESO>PREINGRESO>LIQUIDO>BALANZA_INGRESO>BALANZA_EGRESO>EGRESO'
+      )
+    ).toBe('R8')
+  })
+
+  it('SL terminal sin Ren* → SL2', async () => {
+    const { inferAceiteExecutiveCircuitFromTruckflowEvidence } = await import('./slLiquidCameras')
+    expect(
+      inferAceiteExecutiveCircuitFromTruckflowEvidence('R7', 'INGRESO>SL_INGRESO>SL_BALANZA_INGRESO>SL_EGRESO')
+    ).toBe('SL2')
   })
 })

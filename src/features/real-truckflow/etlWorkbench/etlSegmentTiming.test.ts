@@ -1062,6 +1062,33 @@ describe('etlSegmentTiming', () => {
     expect(bridge!.durationMinutes).toBe(120)
   })
 
+  it('synthesizeDischargeRollupLegs deduce puente R7 egreso Ric→SL ingreso', () => {
+    const legs = synthesizeDischargeRollupLegsFromTimedSegments({
+      operationId: 'op-r7',
+      plate: 'AA111',
+      executiveCircuitCode: 'R7',
+      segments: [
+        {
+          segment_from: 'CALADA',
+          segment_to: 'EGRESO',
+          segment_start_time: '2026-05-12T08:00:00',
+          segment_end_time: '2026-05-12T09:00:00',
+        },
+        {
+          segment_from: 'SL_INGRESO',
+          segment_to: 'SL_BALANZA_INGRESO',
+          segment_start_time: '2026-05-12T10:30:00',
+          segment_end_time: '2026-05-12T10:35:00',
+        },
+      ],
+      externalCaladoAt: '2026-05-12T08:30:00',
+      externalSalidaAt: '2026-05-12T11:00:00',
+    })
+    const bridge = legs.find((l) => l.fromCode === 'EGRESO' && l.toCode === 'SL_INGRESO')
+    expect(bridge).toBeDefined()
+    expect(bridge!.durationMinutes).toBe(90)
+  })
+
   it('synthesizeDischargeRollupLegs deduce puente R27 SL→Ric', () => {
     const legs = synthesizeDischargeRollupLegsFromTimedSegments({
       operationId: 'op-r27',

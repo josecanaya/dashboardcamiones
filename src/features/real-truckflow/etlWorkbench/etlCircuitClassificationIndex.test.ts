@@ -247,7 +247,7 @@ describe('promoteExcelMovimientosContrato', () => {
       'op1,j-rs,EQV925,RICARDONE,INGRESO,2026-05-29,SOJA,SOJA,VOLCABLE_PTO_3,VOLCABLE PTO 3,RS_REC,SAN_LORENZO_VOLCABLE,EXTERNAL_MATCH_EXACT,ROUTE_COMPLETE,1',
     ].join('\n')
     const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
-    const row = index.entries.find((e) => e.journeyId === 'j-rs')!
+    const row = index.entries.find((e) => e.journeyId === 'excel:op1')!
     expect(row.executiveCircuitCode).toBe('R7')
     expect(row.committeeGroup).toBe('VARIACIONES_OPERATIVAS')
     expect(row.operationalVariationType).toBe('ESPERA_EN_CALADA')
@@ -266,7 +266,7 @@ describe('promoteExcelMovimientosContrato', () => {
       'op2,j-rech,DEF456,RICARDONE,INGRESO,2026-05-29,MAIZ,MAIZ,VOLCABLE_1,VOLCABLE_1,R5,VOLCABLE,EXTERNAL_MATCH_EXACT,ROUTE_COMPLETE,1',
     ].join('\n')
     const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
-    const wait = index.entries.find((e) => e.journeyId === 'j-wait')!
+    const wait = index.entries.find((e) => e.journeyId === 'excel:op1')!
     const rech = index.entries.find((e) => e.journeyId === 'j-rech')!
     expect(wait.committeeGroup).toBe('VARIACIONES_OPERATIVAS')
     expect(wait.operationalVariationType).toBe('ESPERA_EN_CALADA')
@@ -295,10 +295,10 @@ describe('promoteExcelMovimientosContrato', () => {
     const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
     expect(index.excelFirstReconciledCount).toBe(2)
     expect(index.excelPromotedCount).toBe(1)
-    const recovered = index.entries.find((e) => e.journeyId === 'j-anom')!
+    const recovered = index.entries.find((e) => e.journeyId === 'excel:op1')!
     expect(recovered.committeeGroup).toBe('COMPLETOS')
     expect(recovered.executiveCircuitCode).toBe('R7')
-    const moved = index.entries.find((e) => e.journeyId === 'j-var')!
+    const moved = index.entries.find((e) => e.journeyId === 'excel:op2')!
     expect(moved.executiveCircuitCode).toBe('R5')
     const cross = buildCommitteeCircuitCrossTab(index.entries)
     expect(cross.find((r) => r.code === 'R7')?.total).toBe(1)
@@ -316,9 +316,26 @@ describe('promoteExcelMovimientosContrato', () => {
       'op1,j-sl,SL001,RICARDONE,INGRESO,2026-05-29,SOJA,SOJA,VOLCABLE_PTO_3,VOLCABLE_PTO_3,VOLCABLE PTO 3,RS_REC,SAN_LORENZO_VOLCABLE,EXTERNAL_MATCH_EXACT,ROUTE_DEDUCED,1',
     ].join('\n')
     const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
-    const row = index.entries.find((e) => e.journeyId === 'j-sl')!
+    const row = index.entries.find((e) => e.journeyId === 'excel:op1')!
     expect(row.executiveCircuitCode).toBe('R7')
     expect(buildCommitteeCircuitCrossTab(index.entries).find((r) => r.code === 'RS_REC')).toBeUndefined()
+  })
+
+  it('gráficos ejecutivos: una entrada por operación Excel con evidencia', () => {
+    const debugCsv = [
+      'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
+      'j-a,AAA111,terminal_embarque,ANOMALIAS,ANOMALÍAS,RS_REC,Recepción,INGRESO>CALADA,4,ANOMALO,ANOMALO,SIN_PUNTO,,,,INCOMPLETO,2026-06-28T08:00:00.000Z,2026-06-28T09:00:00.000Z,',
+    ].join('\n')
+    const excelCsv = [
+      'external_operation_id,matched_journey_uids,plate_normalized,planta_normalized,movement_type,source_date,resolved_product,product_normalized,resolved_platform,platform_normalized,plataforma_original,truckflow_circuit_codes,resolved_circuit_family,resolved_executive_circuit_code,match_quality,route_quality,evidence_count',
+      'CTG_A,j-a,AAA111,TERMINAL_EMBARQUE,INGRESO,2026-06-28,SOJA,SOJA,VOLCABLE_PTO_3,VOLCABLE_PTO_3,VOLCABLE PTO 3,R7,SAN_LORENZO_VOLCABLE,R7,EXTERNAL_MATCH_EXACT,ROUTE_COMPLETE,1',
+      'CTG_B,j-a,AAA111,TERMINAL_EMBARQUE,INGRESO,2026-06-28,SOJA,SOJA,VOLCABLE_PTO_3,VOLCABLE_PTO_3,VOLCABLE PTO 3,R7,SAN_LORENZO_VOLCABLE,R7,EXTERNAL_MATCH_EXACT,ROUTE_COMPLETE,1',
+    ].join('\n')
+    const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
+    expect(index.entries.filter((e) => e.journeyId.startsWith('excel:'))).toHaveLength(2)
+    expect(index.entries.find((e) => e.journeyId === 'j-a')).toBeUndefined()
+    expect(index.excelFirstReconciledCount).toBe(2)
+    expect(buildCommitteeCircuitCrossTab(index.entries).find((r) => r.code === 'R7')?.total).toBe(2)
   })
 
   it('RS_REC con VOLCABLE en Excel pasa a R5/R6 según plataforma', () => {
@@ -331,7 +348,7 @@ describe('promoteExcelMovimientosContrato', () => {
       'op1,j-rs,EQV925,RICARDONE,INGRESO,2026-05-29,SOJA,SOJA,VOLCABLE_2,VOLCABLE_2,RS_REC,VOLCABLE,EXTERNAL_MATCH_EXACT,ROUTE_DEDUCED,1',
     ].join('\n')
     const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
-    const row = index.entries.find((e) => e.journeyId === 'j-rs')!
+    const row = index.entries.find((e) => e.journeyId === 'excel:op1')!
     expect(row.executiveCircuitCode).toBe('R6')
     expect(row.committeeGroup).toBe('COMPLETOS')
     expect(buildCommitteeCircuitCrossTab(index.entries).find((r) => r.code === 'RS_REC')).toBeUndefined()
@@ -347,7 +364,7 @@ describe('promoteExcelMovimientosContrato', () => {
       'op1,j-nd,SU0158,RICARDONE,INGRESO,2026-05-29,SOJA,SOJA,CELDA_16,CELDA_16,SIN_PUNTO,CELDA16,EXTERNAL_MATCH_PROBABLE,ROUTE_ANOMALOUS,1',
     ].join('\n')
     const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
-    const row = index.entries.find((e) => e.journeyId === 'j-nd')!
+    const row = index.entries.find((e) => e.journeyId === 'excel:op1')!
     expect(row.committeeGroup).toBe('COMPLETOS')
     expect(row.executiveCircuitCode).toBe('R1')
     expect(buildAnomalyReviewSummary(index.entries).listedAnomalyCount).toBe(0)
@@ -431,7 +448,7 @@ describe('reclassifyPossibleRejections', () => {
       'op1,j-excel,ABC123,RICARDONE,INGRESO,2026-05-12,SOJA,SOJA,VOLCABLE_PTO_3,VOLCABLE PTO 3,SIN_PUNTO,SAN_LORENZO_VOLCABLE,EXTERNAL_MATCH_EXACT,ROUTE_COMPLETE,1',
     ].join('\n')
     const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
-    const inExcel = index.entries.find((e) => e.journeyId === 'j-excel')!
+    const inExcel = index.entries.find((e) => e.journeyId === 'excel:op1')!
     const notInExcel = index.entries.find((e) => e.journeyId === 'j-rech')!
     expect(inExcel.committeeGroup).toBe('COMPLETOS')
     expect(notInExcel.committeeGroup).toBe('VARIACIONES_OPERATIVAS')
@@ -449,8 +466,37 @@ describe('reclassifyPossibleRejections', () => {
       'op-aceite,j-aceite,EQV925,TERMINAL_EMBARQUE,INGRESO,2026-05-12,AC GIRASOL OLEICO,AC GIRASOL OLEICO,ACEITE_OSL,ACEITE OSL,ACEITE OSL,R7,LIQUIDO,SL1,EXTERNAL_MATCH_EXACT,ROUTE_COMPLETE,1',
     ].join('\n')
     const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
-    const row = index.entries.find((e) => e.journeyId === 'j-aceite')!
+    const row = index.entries.find((e) => e.journeyId === 'excel:op-aceite')!
     expect(row.executiveCircuitCode).toBe('SL1')
     expect(row.executiveCircuitCode).not.toBe('R7')
+  })
+
+  it('suprime R7 Ric→SL huérfano si Excel aceite en la misma patente y día', () => {
+    const debugCsv = [
+      'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
+      'j-r7-orphan,GFL685,ricardone,COMPLETOS,COMPLETOS,R7,Ric→SL,INGRESO>PREINGRESO>EGRESO>SL_INGRESO>SL_BALANZA_INGRESO,5,COMPLETO,VALIDO,RUTA_RIC_SAN_LORENZO_COMPLETA,,RUTA_RIC_SAN_LORENZO_COMPLETA,,COMPLETO,COMPLETO,2026-06-28T08:00:00.000Z,2026-06-28T12:00:00.000Z,',
+      'j-other,GFL685,terminal_embarque,COMPLETOS,COMPLETOS,SL2,SL2,SL_INGRESO>SL_EGRESO,4,COMPLETO,VALIDO,EXCEL_PLATAFORMA,,EXCEL_PLATAFORMA_RECONCILED,,COMPLETO,COMPLETO,2026-06-28T08:00:00.000Z,2026-06-28T12:00:00.000Z,',
+    ].join('\n')
+    const excelCsv = [
+      'external_operation_id,matched_journey_uids,plate_normalized,planta_normalized,movement_type,source_date,resolved_product,product_normalized,resolved_platform,platform_normalized,plataforma_original,truckflow_circuit_codes,resolved_circuit_family,match_quality,route_quality,evidence_count,truckflow_observed_sequence_combined',
+      'CTG_GFL,j-other,GFL685,TERMINAL_EMBARQUE,INGRESO,2026-06-28,ACEITE GIRASOL,ACEITE GIRASOL,ACEITE_PTO,ACEITE_PTO,ACEITE PTO,SL2,LIQUIDO,EXTERNAL_MATCH_EXACT,ROUTE_COMPLETE,1,SL_INGRESO>SL_EGRESO',
+    ].join('\n')
+    const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
+    expect(index.entries.some((e) => e.journeyId === 'j-r7-orphan')).toBe(false)
+    expect(index.entries.find((e) => e.journeyId === 'excel:CTG_GFL')?.executiveCircuitCode).toBe('SL2')
+  })
+
+  it('matriz Ric líquida conserva R8 aunque Excel SL empareje por patente', () => {
+    const debugCsv = [
+      'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
+      'j-ric-r8,CDN829,ricardone,COMPLETOS,COMPLETOS,R8,Recepción líquida,INGRESO>PREINGRESO>LIQUIDO>BALANZA_INGRESO>BALANZA_EGRESO>EGRESO,6,COMPLETO,VALIDO,CIRCUITO_COMPLETO,,CIRCUITO_COMPLETO,,COMPLETO,COMPLETO,2026-06-28T08:00:00-03:00,2026-06-28T10:00:00-03:00,RicB1Ingreso>RicB2Egreso',
+    ].join('\n')
+    const excelCsv = [
+      'external_operation_id,matched_journey_uids,plate_normalized,planta_normalized,movement_type,source_date,resolved_product,product_normalized,resolved_platform,platform_normalized,plataforma_original,truckflow_circuit_codes,resolved_circuit_family,match_quality,route_quality,evidence_count,truckflow_observed_sequence_combined',
+      'CTG_SL,j-other,CDN829,TERMINAL_EMBARQUE,INGRESO,2026-06-28,ACEITE GIRASOL,ACEITE GIRASOL,ACEITE_PTO,ACEITE_PTO,ACEITE PTO,SL2,LIQUIDO,EXTERNAL_MATCH_EXACT,ROUTE_COMPLETE,1,SL_INGRESO>SL_EGRESO',
+    ].join('\n')
+    const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
+    const ric = index.entries.find((e) => e.journeyId === 'j-ric-r8')
+    expect(ric?.executiveCircuitCode).toBe('R8')
   })
 })

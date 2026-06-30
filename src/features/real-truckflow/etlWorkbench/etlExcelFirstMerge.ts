@@ -7,6 +7,7 @@ import type { TruckflowJourneyForMerge } from './etlTruckflowMovimientosMerge'
 import { externalDischargeReferenceMs } from './etlTruckflowMovimientosMerge'
 import type { TruckflowSegmentForMerge } from './etlOperationalAnalysis'
 import { inferCircuitFromExternalMovimiento } from './etlPlatformCircuitInference'
+import { resolveExecutiveCircuitForExcelOperation } from './etlCircuitClassificationIndex'
 import {
   formatTransitionLabel,
   INFERRED_KPI_ROLLUP_MAX_MINUTES,
@@ -23,7 +24,7 @@ import {
   type PlateMatchCache,
 } from './etlPlateMatchCache'
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
-import { parseTimestampMs } from './etlTimestampNormalize'
+import { parseTimestampMs, operationalDayKeyFromIso } from './etlTimestampNormalize'
 
 export type MatchQuality =
   | 'EXTERNAL_MATCH_EXACT'
@@ -407,11 +408,21 @@ function parseMs(iso: string): number {
   return Number.isFinite(t) ? t : NaN
 }
 
+/** Límites del día operativo Argentina (misma convención que parseTimestampMs). */
+function argentinaDayBoundsMs(dayKey: string): { startMs: number; endMs: number } | null {
+  const day = String(dayKey ?? '').trim()
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return null
+  const startMs = parseTimestampMs(`${day}T00:00:00-03:00`)
+  const endMs = parseTimestampMs(`${day}T23:59:59-03:00`)
+  if (!Number.isFinite(startMs) || !Number.isFinite(endMs)) return null
+  return { startMs, endMs }
+}
+
 function dayKeyFromIso(iso: string): string {
+  const ar = operationalDayKeyFromIso(iso)
+  if (ar) return ar
   if (!iso) return ''
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return iso.slice(0, 10)
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  return iso.slice(0, 10)
 }
 
 function journeyHasValidTime(j: TruckflowJourneyForMerge): boolean {
@@ -481,16 +492,12 @@ function buildWindowFromOpts(
     return { startMs: ing - w, endMs: ing + w, lowConfidence: false, wide }
   }
   if (mov.source_date) {
-    const d = new Date(`${mov.source_date}T12:00:00`)
-    if (!Number.isNaN(d.getTime())) {
+    const bounds = argentinaDayBoundsMs(mov.source_date)
+    if (bounds) {
       const pad = wide ? 6 * 3600000 : 0
-      const dayStart = new Date(d)
-      dayStart.setHours(0, 0, 0, 0)
-      const dayEnd = new Date(d)
-      dayEnd.setHours(23, 59, 59, 999)
       return {
-        startMs: dayStart.getTime() - pad,
-        endMs: dayEnd.getTime() + pad,
+        startMs: bounds.startMs - pad,
+        endMs: bounds.endMs + pad,
         lowConfidence: true,
         wide,
       }
@@ -529,12 +536,10 @@ export function buildExcelPeriodContext(
 
   const periodStartKey = excelMinSrc || dayKeyFromIso(excelMinIng) || ''
   const periodEndKey = excelMaxSrc || dayKeyFromIso(excelMaxSal) || ''
-  const periodStartMs = periodStartKey ?
-    new Date(`${periodStartKey}T00:00:00`).getTime()
-  : NaN
-  const periodEndMs = periodEndKey ?
-    new Date(`${periodEndKey}T23:59:59.999`).getTime()
-  : NaN
+  const periodStartBounds = periodStartKey ? argentinaDayBoundsMs(periodStartKey) : null
+  const periodEndBounds = periodEndKey ? argentinaDayBoundsMs(periodEndKey) : null
+  const periodStartMs = periodStartBounds?.startMs ?? Number.NaN
+  const periodEndMs = periodEndBounds?.endMs ?? Number.NaN
 
   let tfMin = ''
   let tfMax = ''
@@ -680,6 +685,12 @@ export function isPossibleRejectionTruckflowJourney(journey: TruckflowJourneyFor
 
 function withoutPossibleRejectionJourneys(journeys: TruckflowJourneyForMerge[]): TruckflowJourneyForMerge[] {
   return journeys.filter((j) => !isPossibleRejectionTruckflowJourney(j))
+}
+
+/** Si solo quedan rechazos en ventana, conservar el pool (mejor match débil que ninguno). */
+function preferNonRejectionJourneys(journeys: TruckflowJourneyForMerge[]): TruckflowJourneyForMerge[] {
+  const filtered = withoutPossibleRejectionJourneys(journeys)
+  return filtered.length ? filtered : journeys
 }
 
 export function deriveRouteQualityForJourney(journey: TruckflowJourneyForMerge): RouteQuality {
@@ -956,6 +967,12 @@ function selectCoherentJourneyCluster(
     }
   }
   return best
+}
+
+const MIN_USEFUL_EVENTS_FOR_EXCEL_TRUCKFLOW_EVIDENCE = 2
+
+function journeysWithMinimumUsefulReads(journeys: TruckflowJourneyForMerge[]): TruckflowJourneyForMerge[] {
+  return journeys.filter((j) => Number(j.useful_events_count ?? 0) >= MIN_USEFUL_EVENTS_FOR_EXCEL_TRUCKFLOW_EVIDENCE)
 }
 
 function buildEvidenceFromMatches(
@@ -1335,7 +1352,7 @@ export function findTruckflowEvidenceForExcelOperation(
 
     const exactInWindow = filterJourneysInWindow(exactPool, window, mov)
     stats.rejected_by_time_window += exactPool.length - exactInWindow.length
-    const exact = withoutPossibleRejectionJourneys(exactInWindow)
+    const exact = preferNonRejectionJourneys(exactInWindow)
 
     let fuzzy: TruckflowJourneyForMerge[] = []
     if (!exact.length) {
@@ -1360,7 +1377,7 @@ export function findTruckflowEvidenceForExcelOperation(
 
       const fuzzyInWindow = filterJourneysInWindow(collected.fuzzy, window, mov)
       stats.rejected_by_time_window += collected.fuzzy.length - fuzzyInWindow.length
-      fuzzy = withoutPossibleRejectionJourneys(fuzzyInWindow)
+      fuzzy = preferNonRejectionJourneys(fuzzyInWindow)
       stats.candidates_after_fuzzy_filter = fuzzy.length
     } else {
       stats.candidates_after_prefilter = 0
@@ -1427,7 +1444,32 @@ export function findTruckflowEvidenceForExcelOperation(
     }
   }
 
-  let matchedForEvidence = narrowTry.matched
+  let matchedForEvidence = journeysWithMinimumUsefulReads(narrowTry.matched)
+  if (!matchedForEvidence.length) {
+    const diag = diagnoseNoTruckflowEvidence(
+      mov,
+      plateIndex,
+      period,
+      narrowWindow,
+      wideWindow,
+      narrowOpts.plateOcrThreshold
+    )
+    return {
+      ...emptyDiag(),
+      match_quality: 'NO_TRUCKFLOW_EVIDENCE',
+      warnings: ['INSUFFICIENT_USEFUL_EVENTS'],
+      no_truckflow_reason: diag.no_truckflow_reason || 'UNKNOWN_NO_EVIDENCE',
+      diagnostic_detail: 'INSUFFICIENT_USEFUL_EVENTS',
+      same_plate_journey_count: (plateIndex.byExactPlate.get(plateM) ?? []).length,
+      same_plate_journey_count_in_period: (plateIndex.byExactPlate.get(plateM) ?? []).filter((j) =>
+        journeyInPeriod(j, period.excel_period_start_ms, period.excel_period_end_ms)
+      ).length,
+      same_plate_journey_count_in_window: narrowTry.matched.length,
+      fuzzy_plate_candidates: opStats.fuzzy_candidates_count,
+      possible_duplicate_assignment: false,
+    }
+  }
+
   const built = buildEvidenceFromMatches(
     matchedForEvidence,
     narrowTry.exact,
@@ -1483,6 +1525,35 @@ function isVolcableOneTwoGirasolExcelKpi(
   )
 }
 
+const EXCEL_TIMED_KPI_EXECUTIVE_CODES = new Set([
+  'R1',
+  'R5',
+  'R6',
+  'R7',
+  'R8',
+  'SL1',
+  'SL2',
+  'R3',
+  'R4',
+  'R26',
+  'R27',
+])
+
+function isExcelPlatformTimedKpi(
+  mov: ExternalMovimientoContratoNormalized,
+  resolvedExecutiveCircuitCode: string
+): boolean {
+  const code = String(resolvedExecutiveCircuitCode ?? '').trim().toUpperCase()
+  if (!code || !EXCEL_TIMED_KPI_EXECUTIVE_CODES.has(code)) return false
+  if (!String(mov.product_normalized ?? '').trim()) return false
+  const platform = String(mov.platform_normalized ?? mov.plataforma_original ?? '').trim()
+  if (!platform) return false
+  return (
+    Boolean(String(mov.external_ingreso_at ?? '').trim()) &&
+    Boolean(String(mov.external_salida_at ?? '').trim())
+  )
+}
+
 function computeAnalysisFlags(
   mov: ExternalMovimientoContratoNormalized,
   ctx: OperationalContextFromExcel,
@@ -1497,12 +1568,15 @@ function computeAnalysisFlags(
   const hasPlatformOrCircuit = Boolean(ctx.resolved_platform || ctx.resolved_circuit_family)
   const hasSegments = hasMeasurableSegment(evidence.combined_segments)
   const volcableExcelKpi = isVolcableOneTwoGirasolExcelKpi(mov, resolvedExecutiveCircuitCode)
+  const excelTimedKpi = isExcelPlatformTimedKpi(mov, resolvedExecutiveCircuitCode)
+  const reconcilableMatch = SCATTER_MATCH_QUALITIES.has(evidence.match_quality)
   const scatterOk =
     (hasProduct &&
       hasPlatformOrCircuit &&
-      hasSegments &&
-      SCATTER_MATCH_QUALITIES.has(evidence.match_quality)) ||
-    volcableExcelKpi
+      (hasSegments || excelTimedKpi) &&
+      reconcilableMatch) ||
+    volcableExcelKpi ||
+    (excelTimedKpi && reconcilableMatch && evidence.evidence_count > 0)
 
   const kpiOk =
     scatterOk &&
@@ -1673,6 +1747,7 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
 
   const summaryCounts: Record<string, number> = {
     total_excel_operations: movimientosContrato.length,
+    truckflow_journeys_in_merge_pool: truckflowJourneys.length,
     total_with_truckflow_evidence: 0,
     total_without_truckflow_evidence: 0,
     external_match_exact: 0,
@@ -1782,18 +1857,35 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
       no_truckflow_reason: evidence.no_truckflow_reason,
     })
     const inferredExecutive = inferCircuitFromExternalMovimiento(mov)
-    const resolvedExecutiveCircuitCode = inferredExecutive?.circuit_code ?? ''
+    const matchedJourneys = evidence.matched_journey_uids
+      .map((uid) => journeyByUid.get(uid))
+      .filter(Boolean) as TruckflowJourneyForMerge[]
+    const agg = aggregateJourneyStats(matchedJourneys)
+    const resolvedExecutiveCircuitCode =
+      resolveExecutiveCircuitForExcelOperation({
+        product_normalized: ctx.resolved_product || mov.product_normalized,
+        platform_normalized: ctx.resolved_platform || mov.platform_normalized,
+        plataforma_original: mov.plataforma_original,
+        plate_normalized: mov.plate_normalized,
+        planta_normalized: mov.planta_normalized,
+        movement_type: mov.movement_type,
+        mov: mov.mov,
+        source_date: mov.source_date,
+        resolved_circuit_family: ctx.resolved_circuit_family,
+        match_quality: evidence.match_quality,
+        route_quality: evidence.route_quality,
+        evidence_count: evidence.evidence_count,
+        truckflow_observed_sequence_combined: evidence.combined_observed_sequence,
+        truckflow_circuit_codes: agg.circuit_codes,
+      }) ||
+      inferredExecutive?.circuit_code ||
+      ''
     const flags = computeAnalysisFlags(mov, ctx, evidence, resolvedExecutiveCircuitCode)
     const volcableExcelKpi = isVolcableOneTwoGirasolExcelKpi(mov, resolvedExecutiveCircuitCode)
 
     for (const uid of evidence.matched_journey_uids) {
       journeyAssignmentCount.set(uid, (journeyAssignmentCount.get(uid) ?? 0) + 1)
     }
-
-    const matchedJourneys = evidence.matched_journey_uids
-      .map((uid) => journeyByUid.get(uid))
-      .filter(Boolean) as TruckflowJourneyForMerge[]
-    const agg = aggregateJourneyStats(matchedJourneys)
 
     const possibleDup = evidence.matched_journey_uids.some(
       (uid) => (journeyAssignmentCount.get(uid) ?? 0) > 1
@@ -1977,7 +2069,9 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
     if (
       resolvedExecutiveCircuitCode &&
       flags.analysis_ready_for_scatter &&
-      (evidence.combined_segments.length > 0 || volcableExcelKpi)
+      (evidence.combined_segments.length > 0 ||
+        volcableExcelKpi ||
+        isExcelPlatformTimedKpi(mov, resolvedExecutiveCircuitCode))
     ) {
       const opTimedSegments = evidence.combined_segments.map((s) => ({
         segment_from: s.segment_from,

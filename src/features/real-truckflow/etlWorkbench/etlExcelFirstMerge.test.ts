@@ -212,10 +212,16 @@ describe('findTruckflowEvidenceForExcelOperation', () => {
 
   it('journey anómalo -> ROUTE_ANOMALOUS', () => {
     const ev = findEvidence(mov({}), [
-      journey({ executive_status: 'ANOMALO', valid_detail: '', anomaly_real: true }),
+      journey({ executive_status: 'ANOMALO', valid_detail: '', anomaly_real: true, useful_events_count: 2 }),
     ])
     expect(ev.route_quality).toBe('ROUTE_ANOMALOUS')
     expect(ev.evidence_count).toBe(1)
+  })
+
+  it('rechaza evidencia con una sola toma útil en Truckflow', () => {
+    const ev = findEvidence(mov({}), [journey({ useful_events_count: 1 })])
+    expect(ev.match_quality).toBe('NO_TRUCKFLOW_EVIDENCE')
+    expect(ev.diagnostic_detail).toBe('INSUFFICIENT_USEFUL_EVENTS')
   })
 
   it('DESCARGA_SIN_PUNTO + VOLCABLE_3', () => {
@@ -263,7 +269,7 @@ describe('findTruckflowEvidenceForExcelOperation', () => {
     expect(ev.match_quality).toBe('NO_TRUCKFLOW_EVIDENCE')
   })
 
-  it('POSIBLE_RECHAZO no se empareja con Excel (rechazo sin movimiento contrato)', () => {
+  it('si solo hay journey POSIBLE_RECHAZO en ventana, Excel-first conserva evidencia (cobertura)', () => {
     const ev = findEvidence(mov({}), [
       journey({
         committee_reason: 'POSIBLE_RECHAZO_CONTEMPLADO',
@@ -272,8 +278,26 @@ describe('findTruckflowEvidenceForExcelOperation', () => {
         valid_detail: '',
       }),
     ])
-    expect(ev.evidence_count).toBe(0)
-    expect(ev.match_quality).toBe('NO_TRUCKFLOW_EVIDENCE')
+    expect(ev.evidence_count).toBe(1)
+    expect(ev.match_quality).not.toBe('NO_TRUCKFLOW_EVIDENCE')
+  })
+
+  it('prefiere journey válido sobre POSIBLE_RECHAZO si ambos están en ventana', () => {
+    const ev = findEvidence(mov({}), [
+      journey({
+        journey_uid: 'rej',
+        committee_reason: 'POSIBLE_RECHAZO',
+        matched_variation_name: 'POSIBLE_RECHAZO',
+        executive_status: 'INCOMPLETO',
+      }),
+      journey({
+        journey_uid: 'ok',
+        committee_reason: 'CIRCUITO_COMPLETO',
+        executive_status: 'VALIDO',
+        valid_detail: 'COMPLETO',
+      }),
+    ])
+    expect(ev.matched_journey_uids).toEqual(['ok'])
   })
 })
 

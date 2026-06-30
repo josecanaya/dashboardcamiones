@@ -15,6 +15,8 @@ import {
   SL_BALANZA_COMITE_PRODUCT_OPTIONS,
   SL_BALANZA_ROLLUP_TRANSITION,
   SL_BALANZA_STAY_MAX_MINUTES,
+  KPI_SEGMENT_DISPLAY_MAX_MINUTES,
+  isWithinKpiSegmentDisplayMax,
   SL_INGRESO_BALANZA_ROLLUP_TRANSITION,
   SL_INGRESO_TO_BALANZA_MAX_MINUTES,
   SL_INGRESO_TO_BALANZA_TRANSIT_DEFAULT_MINUTES,
@@ -40,14 +42,10 @@ import {
 } from './operationalTurno'
 
 /** Tope 6 h: tramos más largos no entran en dispersión ni estadísticas del gráfico. */
-export const SEGMENT_SCATTER_DISPLAY_MAX_MINUTES = 360
+export const SEGMENT_SCATTER_DISPLAY_MAX_MINUTES = KPI_SEGMENT_DISPLAY_MAX_MINUTES
 
 export function isWithinSegmentScatterDisplayMax(minutes: number): boolean {
-  return (
-    Number.isFinite(minutes) &&
-    minutes > 0 &&
-    minutes <= SEGMENT_SCATTER_DISPLAY_MAX_MINUTES
-  )
+  return isWithinKpiSegmentDisplayMax(minutes)
 }
 
 /** Turno operativo según hora local de inicio del tramo (Argentina). */

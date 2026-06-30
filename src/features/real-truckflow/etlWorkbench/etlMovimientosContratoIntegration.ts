@@ -28,6 +28,7 @@ import {
   buildCleanJourneysForAnalysis,
   buildSegmentScatterAnalysis,
   buildTruckflowJourneysForMerge,
+  buildTruckflowJourneysForExcelMerge,
   buildTruckflowSegmentsForMerge,
   cleanJourneysForAnalysisCsv,
   mergedTruckflowMovimientosCsv,
@@ -164,16 +165,16 @@ export async function runMovimientosContratoIntegration(
 
   const truckflowJourneysStage = await runContractFirstStage(
     'build_truckflow_journeys',
-    'Armar journeys Truckflow para merge',
+    'Armar journeys Truckflow para merge Excel',
     runStartedAt,
     onProgress,
-    () => buildTruckflowJourneysForMerge(input.finalCsvRows, input.journeyTimesByUid),
-    { finalCsvRows: input.finalCsvRows.length }
+    () => buildTruckflowJourneysForExcelMerge(input.classifiedJourneys, input.finalCsvRows, input.journeyTimesByUid),
+    { classifiedJourneys: input.classifiedJourneys.length, finalRows: input.finalCsvRows.length }
   )
   stageTimings.push(truckflowJourneysStage.timing)
   const truckflowJourneys = truckflowJourneysStage.result
   const truckflowUniquePlates = countUniqueNormalizedPlates(truckflowJourneys.map((j) => j.plate_normalized))
-  logs.push(`Journeys Truckflow para merge: ${truckflowJourneys.length}`)
+  logs.push(`Journeys Truckflow para merge: ${truckflowJourneys.length} (CSV final: ${input.finalCsvRows.length})`)
   logs.push(`Journeys Truckflow con patente: ${truckflowJourneys.filter((j) => j.plate_normalized).length}`)
 
   const journeyMeta = new Map<

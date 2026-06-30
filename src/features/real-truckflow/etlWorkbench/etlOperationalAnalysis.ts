@@ -8,7 +8,7 @@ import {
 } from './etlTruckflowMovimientosMerge'
 import { normalizePlateStrict } from '../../../services/circuitPlateOcr'
 import { p50, p90, p95, std, mean } from '../../../utils/stats'
-import { formatTransitionLabel } from './etlSegmentTiming'
+import { formatTransitionLabel, type ClassifiedJourneyForTiming } from './etlSegmentTiming'
 import { parseTimestampMs } from './etlTimestampNormalize'
 
 export type TruckflowSegmentForMerge = {
@@ -90,6 +90,86 @@ export function buildTruckflowJourneysForMerge(
       committee_reason: String(row.committee_reason ?? ''),
     }
   })
+}
+
+function classifiedJourneyToMergeRow(
+  cj: ClassifiedJourneyForTiming,
+  timingByUid: Map<string, { start: string; end: string }>
+): TruckflowJourneyForMerge | null {
+  const mj = cj.journey
+  const uid = String(mj.journeyUid ?? '').trim()
+  if (!uid) return null
+  const timing = timingByUid.get(uid)
+  const start = timing?.start ?? mj.startedAt ?? ''
+  const end = timing?.end ?? mj.endedAt ?? ''
+  const sMs = parseTimestampMs(start)
+  const eMs = parseTimestampMs(end)
+  const duration_min =
+    Number.isFinite(sMs) && Number.isFinite(eMs) ? Math.round(((eMs - sMs) / 60000) * 100) / 100 : 0
+  const plateOriginal = String(mj.plate ?? '')
+  const plateNorm =
+    normalizePlateStrict(String(mj.normalizedPlate ?? '')) ||
+    normalizePlate(String(mj.normalizedPlate ?? '')) ||
+    normalizePlate(plateOriginal) ||
+    ''
+  if (!plateNorm) return null
+  const exec = String(cj.executiveStatus ?? '')
+  const anomaly_real = exec === 'ANOMALO' || cj.committeeGroup === 'ANOMALIAS'
+  const logicalSeq = (mj.logicalCodeSequence ?? []).map(String).join('>')
+  return {
+    journey_uid: uid,
+    plate_original: plateOriginal,
+    plate_normalized: plateNorm,
+    start_time: start,
+    end_time: end,
+    duration_min,
+    plant_scope: '',
+    circuit_code: String(cj.executiveCircuitCode ?? ''),
+    circuit_label: String(cj.circuitName ?? ''),
+    executive_status: exec,
+    valid_detail: String(cj.validDetail ?? ''),
+    observed_sequence: logicalSeq,
+    expected_sequence: '',
+    matched_sequence_name: '',
+    matched_variation_name: '',
+    coverage_percent: 0,
+    has_strong_point: false,
+    useful_events_count: mj.events?.length ?? mj.eventCount ?? 0,
+    anomaly_real,
+    anomaly_type: anomaly_real ? exec : '',
+    anomaly_origin_plant: '',
+    anomaly_leg: '',
+    committee_reason: '',
+  }
+}
+
+/**
+ * Pool amplio para Excel-first: todos los journeys clasificados con patente,
+ * enriquecidos con fila final cuando existe (comité / matriz).
+ */
+export function buildTruckflowJourneysForExcelMerge(
+  classified: ClassifiedJourneyForTiming[],
+  finalRows: Record<string, unknown>[],
+  timingByUid: Map<string, { start: string; end: string }>
+): TruckflowJourneyForMerge[] {
+  const finalByUid = new Map<string, Record<string, unknown>>()
+  for (const row of finalRows) {
+    const uid = String(row.journey_uid ?? '').trim()
+    if (uid) finalByUid.set(uid, row)
+  }
+  const fromFinal = buildTruckflowJourneysForMerge(finalRows, timingByUid)
+  const finalIndex = new Map(fromFinal.map((j) => [j.journey_uid, j]))
+  const out: TruckflowJourneyForMerge[] = [...fromFinal]
+  const seen = new Set(finalIndex.keys())
+  for (const cj of classified) {
+    const uid = String(cj.journey.journeyUid ?? '').trim()
+    if (!uid || seen.has(uid)) continue
+    const extra = classifiedJourneyToMergeRow(cj, timingByUid)
+    if (!extra) continue
+    seen.add(uid)
+    out.push(extra)
+  }
+  return out
 }
 
 export function buildTruckflowSegmentsForMerge(

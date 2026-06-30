@@ -77,3 +77,8 @@ export function argentinaLocalMinutesOfDay(iso: string): number | null {
   if (!Number.isFinite(h) || !Number.isFinite(m)) return null
   return h * 60 + m
 }
+
+/** Día calendario operativo Argentina (YYYY-MM-DD) para cruce Excel source_date ↔ Truckflow. */
+export function operationalDayKeyFromIso(iso: string): string {
+  return argentinaLocalParts(iso)?.fecha_tramo ?? ''
+}

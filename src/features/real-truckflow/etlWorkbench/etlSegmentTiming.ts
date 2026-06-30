@@ -135,6 +135,13 @@ export function shouldUseExcelCaladoAsSlDescarga(
 /** Tránsito físico Volcable → balanza egreso (~200 m): solo cámaras Truckflow o salida Excel cercana. */
 export const VOLCABLE_BALANZA_EGRESO_MAX_MINUTES = 30
 
+/** Tope gráfico KPI / dispersión (6 h) — tabla y scatter usan el mismo filtro. */
+export const KPI_SEGMENT_DISPLAY_MAX_MINUTES = 360
+
+export function isWithinKpiSegmentDisplayMax(minutes: number): boolean {
+  return Number.isFinite(minutes) && minutes > 0 && minutes <= KPI_SEGMENT_DISPLAY_MAX_MINUTES
+}
+
 /** Tramos cortos: solo tránsitos físicos (~200 m). Resto: tope operativo 6 h (360 min). */
 export const SHORT_SEGMENT_MAX_MINUTES: Record<string, number> = {
   'SL_BALANZA_SALIDA→SL_EGRESO': SL_SALIDA_EGRESO_MAX_MINUTES,
@@ -176,11 +183,19 @@ const CIRCUITS_WITH_SL_BALANZA_ROLLUP = new Set(['R7', 'SL1', 'R26', 'R27'])
 
 /** Puente Ricardone ↔ San Lorenzo en transiles externos (sin cámaras en ruta). */
 export const TRANSILE_BRIDGE_KPI_TRANSITIONS = {
+  R7: { fromCode: 'EGRESO', toCode: 'SL_INGRESO' },
   R26: { fromCode: 'BALANZA_EGRESO', toCode: 'SL_INGRESO' },
   R27: { fromCode: 'SL_EGRESO', toCode: 'INGRESO' },
 } as const
 
 const CIRCUITS_WITH_TRANSILE_BRIDGE_ROLLUP = new Set(Object.keys(TRANSILE_BRIDGE_KPI_TRANSITIONS))
+
+function usesFullOperationalSegmentTimeline(executiveCircuitCode: string): boolean {
+  const code = normalizeExecutiveCircuitForKpi(executiveCircuitCode)
+  return (
+    CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(code) || CIRCUITS_WITH_TRANSILE_BRIDGE_ROLLUP.has(code)
+  )
+}
 
 /** Duración máxima del rollup balanza SL → egreso (S1→S7). */
 const SL_BALANZA_ROLLUP_MAX_MINUTES = SL_BALANZA_STAY_MAX_MINUTES
@@ -241,6 +256,13 @@ const DISCHARGE_KPI_ROLLUP_BY_CIRCUIT: Record<string, DischargeKpiRollupRule[]> 
       fromCode: 'CELDA16_CARGA',
       toCode: 'VOLCABLE',
       endCodes: ['VOLCABLE', 'BALANZA_EGRESO', 'EGRESO'],
+    },
+  ],
+  R7: [
+    {
+      fromCode: 'EGRESO',
+      toCode: 'SL_INGRESO',
+      endCodes: ['SL_INGRESO', 'SL_BALANZA_INGRESO', 'SL_BALANZA_SALIDA', 'SL_EGRESO'],
     },
   ],
   R26: [
@@ -450,6 +472,7 @@ function buildExecutiveCircuitSegmentTemplate(): Record<string, readonly string[
   map.R5 = RECEPTION_BALANZA_KPI_CHAIN
   map.R6 = RECEPTION_BALANZA_KPI_CHAIN
   map.R7 = ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO', ...SL_OPERATIONAL_KPI_CHAIN]
+  map.R8 = ['INGRESO', 'PREINGRESO', 'CALADA', 'LIQUIDO', 'BALANZA_INGRESO', 'BALANZA_EGRESO']
   map.R26 = [
     'INGRESO',
     'PREINGRESO',
@@ -2796,7 +2819,8 @@ function enrichTimelineWithExcelSiloAnchors(
   circuitCode: string,
   externalCaladoAt?: string,
   externalSalidaAt?: string,
-  _platformNormalized?: string
+  _platformNormalized?: string,
+  externalSlBalanzaEntradaAt?: string
 ): TimedLogicalPoint[] {
   const executiveCode = normalizeExecutiveCircuitForKpi(circuitCode)
   if (KEPLER_KPI_CIRCUIT_CODES.has(executiveCode)) {
@@ -2849,6 +2873,25 @@ function enrichTimelineWithExcelSiloAnchors(
       const hasSl = enriched.some((p, i) => i > ricOutIdx && p.code.startsWith('SL_'))
       if (!hasSl && Number.isFinite(fromMs)) {
         const anchor = pickExcelTimestampAfter(fromMs, externalCaladoAt, externalSalidaAt, false)
+        if (anchor) enriched.push({ code: 'SL_INGRESO', occurredAt: anchor })
+      }
+    }
+  }
+
+  if (circuitCode === 'R7') {
+    const ricOutIdx = enriched.findIndex((p) => p.code === 'EGRESO')
+    if (ricOutIdx >= 0) {
+      const fromMs = parseTimestampMs(enriched[ricOutIdx]!.occurredAt)
+      const hasSl = enriched.some((p, i) => i > ricOutIdx && p.code.startsWith('SL_'))
+      if (!hasSl && Number.isFinite(fromMs)) {
+        const tepSl = String(externalSlBalanzaEntradaAt ?? '').trim()
+        const tepMs = parseTimestampMs(tepSl)
+        let anchor = ''
+        if (tepSl && Number.isFinite(tepMs) && tepMs > fromMs) {
+          anchor = tepSl
+        } else {
+          anchor = pickExcelTimestampAfter(fromMs, externalCaladoAt, externalSalidaAt, false) ?? ''
+        }
         if (anchor) enriched.push({ code: 'SL_INGRESO', occurredAt: anchor })
       }
     }
@@ -3105,16 +3148,19 @@ export function synthesizeTemplateChainLegsFromTimedSegments(input: {
   externalSalidaAt?: string
   platformNormalized?: string
   externalIngresoAt?: string
+  externalSlBalanzaEntradaAt?: string
 }): SegmentLegWithTimes[] {
   if (!input.operationId) return []
   const template = getCircuitSegmentTemplate(input.executiveCircuitCode)
   if (template.length < 2) return []
 
-  const coherentSegments = selectCoherentSegmentGroup(
-    input.segments,
-    input.externalIngresoAt,
-    input.externalSalidaAt
-  )
+  const coherentSegments = usesFullOperationalSegmentTimeline(input.executiveCircuitCode)
+    ? input.segments
+    : selectCoherentSegmentGroup(
+        input.segments,
+        input.externalIngresoAt,
+        input.externalSalidaAt
+      )
   const truckflowPoints = buildTimedLogicalTimelineFromSegments(coherentSegments, {
     externalIngresoAt: input.externalIngresoAt,
     externalSalidaAt: input.externalSalidaAt,
@@ -3131,7 +3177,8 @@ export function synthesizeTemplateChainLegsFromTimedSegments(input: {
     input.externalCaladoAt,
     input.externalSalidaAt,
     input.platformNormalized,
-    input.externalIngresoAt
+    input.externalIngresoAt,
+    input.externalSlBalanzaEntradaAt
   )
   if (isVolcableReceiptCircuit(input.executiveCircuitCode)) {
     enrichedPoints = injectVolcableReceiptExcelOperationalTimeline(
@@ -3163,7 +3210,8 @@ export function enrichTimelineWithExcelDischarge(
   externalCaladoAt?: string,
   externalSalidaAt?: string,
   platformNormalized?: string,
-  externalIngresoAt?: string
+  externalIngresoAt?: string,
+  externalSlBalanzaEntradaAt?: string
 ): TimedLogicalPoint[] {
   let enriched = injectIngresoFromExcel(points, externalIngresoAt)
   const executiveCode = normalizeExecutiveCircuitForKpi(circuitCode)
@@ -3176,7 +3224,8 @@ export function enrichTimelineWithExcelDischarge(
     executiveCode,
     externalCaladoAt,
     externalSalidaAt,
-    platformNormalized
+    platformNormalized,
+    externalSlBalanzaEntradaAt
   )
   for (const rule of rules) {
     const fromIdx = findRollupFromIdx(enriched, rule.fromCode, rule.fromCode === 'VOLCABLE')
@@ -3275,26 +3324,54 @@ export function synthesizeDischargeRollupLegsFromTimedSegments(input: {
   externalSalidaAt?: string
   platformNormalized?: string
   externalIngresoAt?: string
+  externalSlBalanzaEntradaAt?: string
 }): SegmentLegWithTimes[] {
   const rules = DISCHARGE_KPI_ROLLUP_BY_CIRCUIT[input.executiveCircuitCode]
   if (!rules?.length || !input.operationId) return []
 
-  const coherentSegments = selectCoherentSegmentGroup(
-    input.segments,
-    input.externalIngresoAt,
-    input.externalSalidaAt
-  )
+  const coherentSegments = usesFullOperationalSegmentTimeline(input.executiveCircuitCode)
+    ? input.segments
+    : selectCoherentSegmentGroup(
+        input.segments,
+        input.externalIngresoAt,
+        input.externalSalidaAt
+      )
   let points = buildTimedLogicalTimelineFromSegments(coherentSegments, {
     externalIngresoAt: input.externalIngresoAt,
     externalSalidaAt: input.externalSalidaAt,
   })
+  const slIngresoStart = earliestSegmentStartForCode(coherentSegments, 'SL_INGRESO')
+  if (
+    input.executiveCircuitCode === 'R7' &&
+    slIngresoStart &&
+    !points.some((p) => p.code === 'SL_INGRESO')
+  ) {
+    points = collapseTimedPoints(
+      [...points, { code: 'SL_INGRESO', occurredAt: slIngresoStart }].sort(
+        (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
+      )
+    )
+  }
+  const egresoStart = earliestSegmentStartForCode(coherentSegments, 'EGRESO')
+  if (
+    input.executiveCircuitCode === 'R7' &&
+    egresoStart &&
+    !points.some((p) => p.code === 'EGRESO')
+  ) {
+    points = collapseTimedPoints(
+      [...points, { code: 'EGRESO', occurredAt: egresoStart }].sort(
+        (a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt)
+      )
+    )
+  }
   points = enrichTimelineWithExcelDischarge(
     points,
     input.executiveCircuitCode,
     input.externalCaladoAt,
     input.externalSalidaAt,
     input.platformNormalized,
-    input.externalIngresoAt
+    input.externalIngresoAt,
+    input.externalSlBalanzaEntradaAt
   )
   if (isVolcableReceiptCircuit(input.executiveCircuitCode)) {
     points = injectVolcableReceiptTimelineAnchors(
@@ -3376,7 +3453,17 @@ export function synthesizeInferredRollupLegsFromTimedSegments(input: {
   tiemposEntrePasosOverride?: boolean
 }): SegmentLegWithTimes[] {
   return [
-    ...synthesizeTemplateChainLegsFromTimedSegments(input),
+    ...synthesizeTemplateChainLegsFromTimedSegments({
+      operationId: input.operationId,
+      plate: input.plate,
+      executiveCircuitCode: input.executiveCircuitCode,
+      segments: input.segments,
+      externalCaladoAt: input.externalCaladoAt,
+      externalSalidaAt: input.externalSalidaAt,
+      platformNormalized: input.platformNormalized,
+      externalIngresoAt: input.externalIngresoAt,
+      externalSlBalanzaEntradaAt: input.externalSlBalanzaEntradaAt,
+    }),
     ...synthesizeSlRollupLegsFromTimedSegments({
       operationId: input.operationId,
       plate: input.plate,
@@ -3390,7 +3477,17 @@ export function synthesizeInferredRollupLegsFromTimedSegments(input: {
       externalSlBalanzaSalidaAt: input.externalSlBalanzaSalidaAt,
       tiemposEntrePasosOverride: input.tiemposEntrePasosOverride,
     }),
-    ...synthesizeDischargeRollupLegsFromTimedSegments(input),
+    ...synthesizeDischargeRollupLegsFromTimedSegments({
+      operationId: input.operationId,
+      plate: input.plate,
+      executiveCircuitCode: input.executiveCircuitCode,
+      segments: input.segments,
+      externalCaladoAt: input.externalCaladoAt,
+      externalSalidaAt: input.externalSalidaAt,
+      platformNormalized: input.platformNormalized,
+      externalIngresoAt: input.externalIngresoAt,
+      externalSlBalanzaEntradaAt: input.externalSlBalanzaEntradaAt,
+    }),
   ]
 }
 
@@ -3635,7 +3732,13 @@ function aggregateFromLegs(
   toCode: string,
   legs: SegmentLeg[]
 ): SegmentTimingAggregate {
-  const durationsMinutes = legs.map((l) => l.durationMinutes)
+  const durationsMinutes = legs
+    .map((l) => l.durationMinutes)
+    .filter((d) => isWithinKpiSegmentDisplayMax(d))
+  const legsForExtremes =
+    durationsMinutes.length ?
+      legs.filter((l) => isWithinKpiSegmentDisplayMax(l.durationMinutes))
+    : legs
   return {
     circuitCode,
     fromCode,
@@ -3644,7 +3747,7 @@ function aggregateFromLegs(
     transitionKey: `${fromCode}→${toCode}`,
     stats: computeStayTimeStats(durationsMinutes),
     durationsMinutes,
-    ...resolveExtremeLegs(legs),
+    ...resolveExtremeLegs(legsForExtremes),
   }
 }
 
@@ -3761,6 +3864,8 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
     external_ingreso_at?: string
     platform_normalized?: string
     planta_normalized?: string
+    external_sl_balanza_entrada_at?: string
+    external_sl_balanza_salida_at?: string
   }>,
   comiteOpts?: SlBalanzaComiteOptions
 ): SegmentTimingIndex {
@@ -3781,6 +3886,8 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
       externalIngresoAt?: string
       platformNormalized?: string
       plantaNormalized?: string
+      externalSlBalanzaEntradaAt?: string
+      externalSlBalanzaSalidaAt?: string
     }
   >()
 
@@ -3798,6 +3905,8 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
       external_ingreso_at?: string
       platform_normalized?: string
       planta_normalized?: string
+      external_sl_balanza_entrada_at?: string
+      external_sl_balanza_salida_at?: string
     }
   ) => {
     const start = String(row.segment_start_time ?? '').trim()
@@ -3814,6 +3923,10 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
         externalIngresoAt: String(row.external_ingreso_at ?? '').trim() || undefined,
         platformNormalized: String(row.platform_normalized ?? '').trim() || undefined,
         plantaNormalized: String(row.planta_normalized ?? '').trim() || undefined,
+        externalSlBalanzaEntradaAt:
+          String(row.external_sl_balanza_entrada_at ?? '').trim() || undefined,
+        externalSlBalanzaSalidaAt:
+          String(row.external_sl_balanza_salida_at ?? '').trim() || undefined,
       }
     bucket.segments.push({
       segment_from: row.segment_from,
@@ -3835,6 +3948,14 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
     }
     if (!bucket.plantaNormalized && row.planta_normalized) {
       bucket.plantaNormalized = String(row.planta_normalized).trim() || undefined
+    }
+    if (!bucket.externalSlBalanzaEntradaAt && row.external_sl_balanza_entrada_at) {
+      bucket.externalSlBalanzaEntradaAt =
+        String(row.external_sl_balanza_entrada_at).trim() || undefined
+    }
+    if (!bucket.externalSlBalanzaSalidaAt && row.external_sl_balanza_salida_at) {
+      bucket.externalSlBalanzaSalidaAt =
+        String(row.external_sl_balanza_salida_at).trim() || undefined
     }
     timedSegmentsByOperation.set(operationId, bucket)
   }
@@ -3911,6 +4032,8 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
           externalIngresoAt: bucket.externalIngresoAt,
           platformNormalized: bucket.platformNormalized,
           plantaNormalized: bucket.plantaNormalized,
+          externalSlBalanzaEntradaAt: bucket.externalSlBalanzaEntradaAt,
+          externalSlBalanzaSalidaAt: bucket.externalSlBalanzaSalidaAt,
         })
     for (const leg of synthLegs) {
       if (!isExpectedCircuitTransition(leg.executiveCircuitCode, leg.fromCode, leg.toCode)) continue

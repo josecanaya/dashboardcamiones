@@ -197,6 +197,10 @@ export function MovimientosContratoPanel({ wb, compact }: { wb: WbSlice; compact
             value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.ready_for_full_route_kpi ?? 0)}
           />
           <Metric
+            label="Journeys en pool merge"
+            value={Number((mc.excelFirst as Record<string, unknown> | undefined)?.truckflow_journeys_in_merge_pool ?? mc.truckflowJourneys ?? 0)}
+          />
+          <Metric
             label="Cobertura Excel-first"
             value={
               mc.normalizedCount > 0 ?
