@@ -3,8 +3,11 @@ import {
   applyExternalCircuitToJourney,
   inferCircuitFromExternalMovimiento,
 } from './etlPlatformCircuitInference'
-import { normalizePlatform } from './etlExternalNormalization'
+import { normalizePlatform, normalizePlant } from './etlExternalNormalization'
 import type { TruckflowJourneyForMerge } from './etlTruckflowMovimientosMerge'
+
+const EXCEL_TERMINAL = () => normalizePlant('SAN LORENZO').planta_normalized!
+const EXCEL_RICARDONE = () => normalizePlant('PLANTA SAN LORENZO').planta_normalized!
 
 function j(partial: Partial<TruckflowJourneyForMerge>): TruckflowJourneyForMerge {
   return {
@@ -41,7 +44,7 @@ describe('etlPlatformCircuitInference', () => {
       inferCircuitFromExternalMovimiento({
         platform_normalized: 'VOLCABLE_1',
         plataforma_original: 'VOLCABLE 1',
-        planta_normalized: 'RICARDONE',
+        planta_normalized: EXCEL_RICARDONE(),
         movement_type: 'INGRESO',
         movement_type_detail: 'I',
         mov: 'I',
@@ -54,7 +57,7 @@ describe('etlPlatformCircuitInference', () => {
       inferCircuitFromExternalMovimiento({
         platform_normalized: 'VOLCABLE_2',
         plataforma_original: 'VOLCABLE 2',
-        planta_normalized: 'RICARDONE',
+        planta_normalized: EXCEL_RICARDONE(),
         movement_type: 'INGRESO',
         movement_type_detail: 'I',
         mov: 'I',
@@ -69,7 +72,7 @@ describe('etlPlatformCircuitInference', () => {
         inferCircuitFromExternalMovimiento({
           platform_normalized: norm.platform_normalized!,
           plataforma_original: label,
-          planta_normalized: 'RICARDONE',
+          planta_normalized: EXCEL_RICARDONE(),
           movement_type: 'INGRESO',
           movement_type_detail: 'I',
           mov: 'I',
@@ -83,7 +86,7 @@ describe('etlPlatformCircuitInference', () => {
       inferCircuitFromExternalMovimiento({
         platform_normalized: 'CELDA_16',
         plataforma_original: 'CELDA 16',
-        planta_normalized: 'RICARDONE',
+        planta_normalized: EXCEL_RICARDONE(),
         movement_type: 'INGRESO',
         movement_type_detail: 'I',
         mov: 'I',
@@ -109,7 +112,7 @@ describe('etlPlatformCircuitInference', () => {
       inferCircuitFromExternalMovimiento({
         platform_normalized: 'KEPPLER_2',
         plataforma_original: 'KEPPLER 2',
-        planta_normalized: 'RICARDONE',
+        planta_normalized: EXCEL_RICARDONE(),
         movement_type: 'INGRESO',
         movement_type_detail: 'I',
         mov: 'I',
@@ -117,61 +120,42 @@ describe('etlPlatformCircuitInference', () => {
     ).toBe('R4')
   })
 
-  it('ACEITE OSL Ricardone ingreso → R8', () => {
+  it('ACEITE OSL Ricardone ingreso → SL1', () => {
     expect(
       inferCircuitFromExternalMovimiento({
         platform_normalized: 'ACEITE_OSL',
         plataforma_original: 'ACEITE OSL',
-        planta_normalized: 'RICARDONE',
+        planta_normalized: EXCEL_RICARDONE(),
         movement_type: 'INGRESO',
         movement_type_detail: 'I',
         mov: 'I',
+        observaciones: '',
+        observacion_calidad: '',
       })?.circuit_code
-    ).toBe('R8')
+    ).toBe('SL1')
   })
 
-  it('ACEITE OSL Ricardone despacho → R8 (recepción líquida Ric)', () => {
+  it('ACEITE OSL Ricardone despacho → SL1', () => {
     expect(
       inferCircuitFromExternalMovimiento({
         platform_normalized: 'ACEITE_OSL',
         plataforma_original: 'ACEITE OSL',
-        planta_normalized: 'RICARDONE',
+        planta_normalized: EXCEL_RICARDONE(),
         movement_type: 'DESPACHO',
         movement_type_detail: 'DE',
         mov: 'DE',
-      })?.circuit_code
-    ).toBe('R8')
-  })
-
-  it('ACEITE OSL San Lorenzo ingreso → SL1; ACEITE PTO → SL2', () => {
-    expect(
-      inferCircuitFromExternalMovimiento({
-        platform_normalized: 'ACEITE_OSL',
-        plataforma_original: 'ACEITE OSL',
-        planta_normalized: 'SAN_LORENZO',
-        movement_type: 'INGRESO',
-        movement_type_detail: 'I',
-        mov: 'I',
+        observaciones: '',
+        observacion_calidad: '',
       })?.circuit_code
     ).toBe('SL1')
-    expect(
-      inferCircuitFromExternalMovimiento({
-        platform_normalized: 'ACEITE_PTO',
-        plataforma_original: 'ACEITE PTO',
-        planta_normalized: 'SAN_LORENZO',
-        movement_type: 'INGRESO',
-        movement_type_detail: 'I',
-        mov: 'I',
-      })?.circuit_code
-    ).toBe('SL2')
   })
 
-  it('ACEITE OSL / PTO Terminal de embarque → SL1 OSL y SL2 PTO', () => {
+  it('ACEITE OSL / PTO con planta Excel “San Lorenzo” (terminal) → SL1 OSL y SL2 PTO', () => {
     expect(
       inferCircuitFromExternalMovimiento({
         platform_normalized: 'ACEITE_OSL',
         plataforma_original: 'ACEITE OSL',
-        planta_normalized: 'TERMINAL_EMBARQUE',
+        planta_normalized: EXCEL_TERMINAL(),
         movement_type: 'DESPACHO',
         movement_type_detail: 'DE',
         mov: 'DE',
@@ -181,7 +165,7 @@ describe('etlPlatformCircuitInference', () => {
       inferCircuitFromExternalMovimiento({
         platform_normalized: 'ACEITE_PTO',
         plataforma_original: 'ACEITE PTO',
-        planta_normalized: 'TERMINAL_EMBARQUE',
+        planta_normalized: EXCEL_TERMINAL(),
         movement_type: 'DESPACHO',
         movement_type_detail: 'DE',
         mov: 'DE',
@@ -189,17 +173,19 @@ describe('etlPlatformCircuitInference', () => {
     ).toBe('SL2')
   })
 
-  it('plataforma ACEITE en terminal → SL1 descarga', () => {
+  it('plataforma ACEITE en terminal Excel → R8', () => {
     expect(
       inferCircuitFromExternalMovimiento({
         platform_normalized: 'ACEITE',
         plataforma_original: 'ACEITE',
-        planta_normalized: 'TERMINAL_EMBARQUE',
+        planta_normalized: EXCEL_TERMINAL(),
         movement_type: 'DESPACHO',
         movement_type_detail: 'DE',
         mov: 'DE',
+        observaciones: '',
+        observacion_calidad: '',
       })?.circuit_code
-    ).toBe('SL1')
+    ).toBe('R8')
   })
 
   it('asigna R7 a anomalía con VOLCABLE PTO en Excel', () => {
@@ -207,7 +193,7 @@ describe('etlPlatformCircuitInference', () => {
     const out = applyExternalCircuitToJourney(j(), {
       platform_normalized: norm.platform_normalized!,
       plataforma_original: 'VOLCABLE PTO 1',
-      planta_normalized: 'RICARDONE',
+      planta_normalized: EXCEL_RICARDONE(),
       movement_type: 'INGRESO',
       movement_type_detail: 'I',
       mov: 'I',
@@ -216,20 +202,22 @@ describe('etlPlatformCircuitInference', () => {
     expect(out.circuit_from_excel).toBe(true)
   })
 
-  it('corrige SL1 Truckflow cuando Excel es ACEITE OSL Ricardone → R8', () => {
+  it('mantiene SL1 cuando Excel es ACEITE OSL Ricardone y Truckflow ya es SL1', () => {
     const out = applyExternalCircuitToJourney(
       j({ circuit_code: 'SL1', executive_status: 'VALIDO', anomaly_real: false }),
       {
         platform_normalized: 'ACEITE_OSL',
         plataforma_original: 'ACEITE OSL',
-        planta_normalized: 'RICARDONE',
+        planta_normalized: EXCEL_RICARDONE(),
         movement_type: 'INGRESO',
         movement_type_detail: 'I',
         mov: 'I',
+        observaciones: '',
+        observacion_calidad: '',
       } as never
     )
-    expect(out.circuit_code).toBe('R8')
-    expect(out.circuit_from_excel).toBe(true)
+    expect(out.circuit_code).toBe('SL1')
+    expect(out.circuit_from_excel).toBe(false)
   })
 })
 

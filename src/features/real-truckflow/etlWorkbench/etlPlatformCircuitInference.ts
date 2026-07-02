@@ -1,6 +1,6 @@
 import type { ExternalMovimientoContratoNormalized } from './etlExternalMovimientosContrato'
 import { EXECUTIVE_CIRCUIT_MATRIX } from './finalCircuitScoring'
-import { isSanLorenzoAceiteLiquidPlatform, inferAceiteExecutiveCircuitFromPlatform } from './slLiquidCameras'
+import { isSanLorenzoAceiteLiquidPlatform, inferAceiteExecutiveCircuitFromExcel } from './slLiquidCameras'
 import type { TruckflowJourneyForMerge } from './etlTruckflowMovimientosMerge'
 
 export type InferredExecutiveCircuit = {
@@ -26,19 +26,22 @@ function isExcelDispatchMovement(
 function inferAceiteLiquidExecutiveCircuit(
   mov: Pick<
     ExternalMovimientoContratoNormalized,
-    'platform_normalized' | 'plataforma_original' | 'planta_normalized' | 'movement_type' | 'movement_type_detail' | 'mov'
+    | 'platform_normalized'
+    | 'plataforma_original'
+    | 'planta_normalized'
+    | 'observaciones'
+    | 'observacion_calidad'
   >
 ): InferredExecutiveCircuit | null {
-  const fromPlatform = inferAceiteExecutiveCircuitFromPlatform(
+  const fromExcel = inferAceiteExecutiveCircuitFromExcel(
     mov.platform_normalized,
     mov.plataforma_original,
-    mov.planta_normalized
+    mov.planta_normalized,
+    mov.observaciones,
+    mov.observacion_calidad
   )
-  if (fromPlatform) return circuitFromCode(fromPlatform, 'platform')
-
-  const plant = String(mov.planta_normalized ?? '').toUpperCase()
-  if (plant === 'RICARDONE') return circuitFromCode('R8', 'platform')
-  return circuitFromCode('R34', 'platform')
+  if (fromExcel) return circuitFromCode(fromExcel, 'platform')
+  return null
 }
 
 /** Volcables PTO = descarga San Lorenzo (circuito R7), distinto de VOLCABLE 1/2 Ricardone. */
@@ -59,7 +62,8 @@ export function inferCircuitFromExternalMovimiento(
     | 'movement_type'
     | 'movement_type_detail'
     | 'mov'
-  >
+  > &
+    Partial<Pick<ExternalMovimientoContratoNormalized, 'observaciones' | 'observacion_calidad'>>
 ): InferredExecutiveCircuit | null {
   const platform = String(mov.platform_normalized ?? '').toUpperCase()
   const original = String(mov.plataforma_original ?? '').toUpperCase()
@@ -93,6 +97,15 @@ export function inferCircuitFromExternalMovimiento(
   if (isSanLorenzoAceiteLiquidPlatform(platform, original)) {
     return inferAceiteLiquidExecutiveCircuit(mov)
   }
+
+  const aceiteRenova = inferAceiteExecutiveCircuitFromExcel(
+    mov.platform_normalized,
+    mov.plataforma_original,
+    mov.planta_normalized,
+    mov.observaciones,
+    mov.observacion_calidad
+  )
+  if (aceiteRenova) return circuitFromCode(aceiteRenova, 'platform')
 
   if (plant === 'TERMINAL_EMBARQUE') {
     if (isSanLorenzoVolcablePtoPlatform(platform)) {

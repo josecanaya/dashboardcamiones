@@ -3,6 +3,8 @@ import {
   combineDateTime,
   formatIsoLocal,
   inferSourceDateFromFileName,
+  normalizePlatform,
+  normalizePlant,
   tryMonthDaySwapCorrection,
 } from './etlExternalNormalization'
 import { normalizeMovimientoContrato } from './etlExternalMovimientosContrato'
@@ -202,5 +204,26 @@ describe('tryMonthDaySwapCorrection', () => {
 describe('inferSourceDateFromFileName', () => {
   it('extrae yyyy-mm-dd del nombre', () => {
     expect(inferSourceDateFromFileName('MovimientosPorContrato_20260602.xlsx')).toBe('2026-06-02')
+  })
+})
+
+describe('normalizePlatform aceite', () => {
+  it('normaliza variantes OSL y PTO', () => {
+    expect(normalizePlatform('ACEITE OSL').platform_normalized).toBe('ACEITE_OSL')
+    expect(normalizePlatform('ACEITEOSL').platform_normalized).toBe('ACEITE_OSL')
+    expect(normalizePlatform('ACEITE PTO').platform_normalized).toBe('ACEITE_PTO')
+    expect(normalizePlatform('ACEITEPTO').platform_normalized).toBe('ACEITE_PTO')
+    expect(normalizePlatform('ACEITE').platform_normalized).toBe('ACEITE')
+  })
+})
+
+describe('normalizePlant convención Excel', () => {
+  it('San Lorenzo = terminal de embarque; Planta San Lorenzo = Ricardone', () => {
+    expect(normalizePlant('SAN LORENZO').planta_normalized).toBe('TERMINAL_EMBARQUE')
+    expect(normalizePlant('San Lorenzo').planta_normalized).toBe('TERMINAL_EMBARQUE')
+    expect(normalizePlant('TERMINAL DE EMBARQUE').planta_normalized).toBe('TERMINAL_EMBARQUE')
+    expect(normalizePlant('PLANTA SAN LORENZO').planta_normalized).toBe('RICARDONE')
+    expect(normalizePlant('Planta San Lorenzo').planta_normalized).toBe('RICARDONE')
+    expect(normalizePlant('RICARDONE').planta_normalized).toBe('RICARDONE')
   })
 })

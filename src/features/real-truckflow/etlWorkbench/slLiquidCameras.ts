@@ -29,8 +29,8 @@ export function isSlLiquidCircuit(circuit: string): boolean {
   return c === 'SL1' || c === 'SL2' || c === 'SL5'
 }
 
-/** Circuitos ejecutivos aceite/líquido (comité): solo SL1, SL2 y R8 Ricardone. */
-export const ACEITE_EXECUTIVE_CIRCUIT_CODES = ['SL1', 'SL2', 'R8'] as const
+/** Circuitos ejecutivos aceite/líquido (comité): SL1 OSL, SL2 PTO, SL3 Renova, R8 genérico. */
+export const ACEITE_EXECUTIVE_CIRCUIT_CODES = ['SL1', 'SL2', 'SL3', 'R8'] as const
 export type AceiteExecutiveCircuitCode = (typeof ACEITE_EXECUTIVE_CIRCUIT_CODES)[number]
 
 export function isAceiteExecutiveCircuitCode(code: string): code is AceiteExecutiveCircuitCode {
@@ -46,33 +46,59 @@ export function normalizeAceitePlatformKey(
     .trim()
     .toUpperCase()
     .replace(/\s+/g, ' ')
-  if (p === 'ACEITE_OSL' || o === 'ACEITE OSL') return 'OSL'
-  if (p === 'ACEITE_PTO' || o === 'ACEITE PTO') return 'PTO'
+  if (p === 'ACEITE_OSL' || p === 'ACEITEOSL' || o === 'ACEITE OSL' || o === 'ACEITEOSL') return 'OSL'
+  if (p === 'ACEITE_PTO' || p === 'ACEITEPTO' || o === 'ACEITE PTO' || o === 'ACEITEPTO') return 'PTO'
   if (p === 'ACEITE' || o === 'ACEITE') return 'GENERIC'
   if (p.includes('OSL')) return 'OSL'
   if (p.includes('PTO') && p.includes('ACEITE')) return 'PTO'
   return ''
 }
 
+export function excelObservacionesIndicateRenovaAceite(
+  ...fields: (string | null | undefined)[]
+): boolean {
+  const hay = fields.map((f) => String(f ?? '').toUpperCase()).join(' ')
+  return /\bRENOVA\b/.test(hay)
+}
+
 /**
- * Excel plataforma + planta → circuito ejecutivo aceite (SL1 OSL/S10, SL2 PTO, R8 Ricardone).
+ * Excel plataforma → circuito ejecutivo aceite (ACEITE→R8, OSL→SL1, PTO→SL2).
+ * La planta no redefine la plataforma aceite explícita del Excel.
  */
 export function inferAceiteExecutiveCircuitFromPlatform(
   platformNormalized: string | null | undefined,
   plataformaOriginal: string | null | undefined,
-  plantaNormalized: string | null | undefined
+  _plantaNormalized?: string | null | undefined
 ): AceiteExecutiveCircuitCode | null {
-  if (!isPermittedAceiteLiquidDischargePlatform(platformNormalized, plataformaOriginal)) {
-    const key = normalizeAceitePlatformKey(platformNormalized, plataformaOriginal)
-    if (!key) return null
-  }
-  const plant = String(plantaNormalized ?? '').trim().toUpperCase()
   const key = normalizeAceitePlatformKey(platformNormalized, plataformaOriginal)
+  if (!key) {
+    if (!isPermittedAceiteLiquidDischargePlatform(platformNormalized, plataformaOriginal)) return null
+    return null
+  }
+  if (key === 'OSL') return 'SL1'
+  if (key === 'PTO') return 'SL2'
+  if (key === 'GENERIC') return 'R8'
+  return null
+}
 
-  if (plant === 'RICARDONE') return 'R8'
-  if (plant === 'TERMINAL_EMBARQUE' || plant === 'SAN_LORENZO') {
-    if (key === 'PTO') return 'SL2'
-    return 'SL1'
+/** Plataforma aceite u observación RENOVA con plataforma vacía (SL3). */
+export function inferAceiteExecutiveCircuitFromExcel(
+  platformNormalized: string | null | undefined,
+  plataformaOriginal: string | null | undefined,
+  plantaNormalized: string | null | undefined,
+  observaciones?: string | null,
+  observacionCalidad?: string | null
+): AceiteExecutiveCircuitCode | null {
+  const fromPlatform = inferAceiteExecutiveCircuitFromPlatform(
+    platformNormalized,
+    plataformaOriginal,
+    plantaNormalized
+  )
+  if (fromPlatform) return fromPlatform
+  const platformEmpty =
+    !String(platformNormalized ?? '').trim() && !String(plataformaOriginal ?? '').trim()
+  if (platformEmpty && excelObservacionesIndicateRenovaAceite(observaciones, observacionCalidad)) {
+    return 'SL3'
   }
   return null
 }
@@ -136,11 +162,12 @@ export function isPermittedAceiteLiquidDischargePlatform(
 ): boolean {
   const p = String(platformNormalized ?? '').trim().toUpperCase()
   if ((PERMITTED_ACEITE_LIQUID_DISCHARGE_PLATFORMS as readonly string[]).includes(p)) return true
+  if (normalizeAceitePlatformKey(platformNormalized, plataformaOriginal)) return true
   const o = String(plataformaOriginal ?? '')
     .trim()
     .toUpperCase()
     .replace(/\s+/g, ' ')
-  if (o === 'ACEITE') return true
+  if (o === 'ACEITE' || o === 'ACEITEOSL' || o === 'ACEITEPTO') return true
   return o === 'ACEITE OSL' || o === 'ACEITE PTO'
 }
 
@@ -169,6 +196,8 @@ export function isExcelLiquidMovementForOrphanCommittee(row: {
   platform_normalized?: string
   plataforma_original?: string
   planta_normalized?: string
+  observaciones?: string
+  observacion_calidad?: string
   resolved_executive_circuit_code?: string
   resolved_circuit_family?: string
   resolved_product?: string
@@ -176,6 +205,17 @@ export function isExcelLiquidMovementForOrphanCommittee(row: {
 }): boolean {
   const platform = String(row.platform_normalized ?? '')
   const original = String(row.plataforma_original ?? row.platform_normalized ?? '')
+  if (
+    inferAceiteExecutiveCircuitFromExcel(
+      platform,
+      original,
+      row.planta_normalized,
+      row.observaciones,
+      row.observacion_calidad
+    )
+  ) {
+    return true
+  }
   if (isPermittedAceiteLiquidDischargePlatform(platform, original)) return true
   const family = String(row.resolved_circuit_family ?? '').trim().toUpperCase()
   if (family === 'LIQUIDO') return true

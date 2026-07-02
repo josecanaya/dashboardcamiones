@@ -145,7 +145,7 @@ export function excelPlantaIsSanLorenzoTerminal(plantaNormalized: string | null 
   const p = String(plantaNormalized ?? '')
     .trim()
     .toUpperCase()
-  return p === 'SAN_LORENZO' || p === 'TERMINAL_PORTUARIA'
+  return p === 'SAN_LORENZO' || p === 'TERMINAL_EMBARQUE' || p === 'TERMINAL_PORTUARIA'
 }
 
 /**

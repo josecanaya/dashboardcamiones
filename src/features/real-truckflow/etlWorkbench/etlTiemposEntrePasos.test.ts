@@ -14,7 +14,7 @@ function baseMov(partial: Partial<ExternalMovimientoContratoNormalized>): Extern
     source_file: 'MovimientosPorContrato_20260618.xlsx',
     source_date: '2026-06-18',
     planta_original: 'PLANTA SAN LORENZO',
-    planta_normalized: 'SAN_LORENZO',
+    planta_normalized: 'RICARDONE',
     mov_original: 'I',
     mov: 'I',
     movement_type: 'INGRESO',

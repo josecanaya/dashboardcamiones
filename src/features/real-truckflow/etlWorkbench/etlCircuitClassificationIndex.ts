@@ -9,14 +9,13 @@ import { MERGE_STATUSES_WITH_PRODUCT } from './etlTruckflowMovimientosMerge'
 import { inferCircuitFromExternalMovimiento } from './etlPlatformCircuitInference'
 import { excelPlantaIsSanLorenzoTerminal } from './etlRicSanLorenzoRoute'
 import {
+  inferAceiteExecutiveCircuitFromExcel,
   inferAceiteExecutiveCircuitFromPlatform,
   inferAceiteExecutiveCircuitFromTruckflowEvidence,
-  haystackIndicatesAceiteRicardoneDischarge,
   isAceiteExecutiveCircuitCode,
   isExcelLiquidMovementForOrphanCommittee,
   isExcelLiquidProductName,
   isPermittedAceiteLiquidDischargePlatform,
-  normalizeAceitePlatformKey,
 } from './slLiquidCameras'
 import {
   EXECUTIVE_CIRCUIT_MATRIX,
@@ -597,6 +596,8 @@ type ExcelFirstReconcileLite = {
   evidence_count: number
   truckflow_observed_sequence_combined: string
   truckflow_device_sequence_combined: string
+  observaciones: string
+  observacion_calidad: string
 }
 
 const EXCEL_FIRST_MATCH_RANK: Record<string, number> = {
@@ -643,7 +644,7 @@ const SOLID_EXECUTIVE_CIRCUITS = new Set([
   'R26',
 ])
 
-const LIQUID_EXECUTIVE_CIRCUITS = new Set(['R8', 'SL1', 'SL2', 'R16', 'SL5', 'R34', 'R27'])
+const LIQUID_EXECUTIVE_CIRCUITS = new Set(['R8', 'SL1', 'SL2', 'SL3', 'R16', 'SL5', 'R34', 'R27'])
 
 function excelLiteIsLiquidOperational(lite: ExcelFirstReconcileLite): boolean {
   if (lite.resolved_circuit_family.toUpperCase() === 'LIQUIDO') return true
@@ -703,6 +704,8 @@ function inferExecutiveCircuitFromExcelPlatform(lite: ExcelFirstReconcileLite): 
     movement_type: movType,
     movement_type_detail: movCode || movType,
     mov: movCode || (movType === 'DESPACHO' ? 'DE' : movType === 'INGRESO' ? 'I' : ''),
+    observaciones: lite.observaciones,
+    observacion_calidad: lite.observacion_calidad,
   })
   return inferred?.circuit_code ?? ''
 }
@@ -754,48 +757,42 @@ function normalizeLiquidExecutiveCircuitCode(code: string): string {
   return c
 }
 
+function excelRowIndicatesAceite(lite: ExcelFirstReconcileLite): boolean {
+  if (isPermittedAceiteLiquidDischargePlatform(lite.platform_normalized, lite.plataforma_original)) {
+    return true
+  }
+  return Boolean(
+    inferAceiteExecutiveCircuitFromExcel(
+      lite.platform_normalized,
+      lite.plataforma_original,
+      lite.planta_normalized,
+      lite.observaciones,
+      lite.observacion_calidad
+    )
+  )
+}
+
 function pickExecutiveCircuitFromExcelFirst(lite: ExcelFirstReconcileLite): string {
+  const stored = String(lite.resolved_executive_circuit_code ?? '').trim().toUpperCase()
+  if (stored && slCircuitAllowedForExcelLite(lite, stored) && !GENERIC_INFERRED_CIRCUIT_CODES.has(stored)) {
+    return stored
+  }
+
+  const aceiteExcel = inferAceiteExecutiveCircuitFromExcel(
+    lite.platform_normalized,
+    lite.plataforma_original,
+    lite.planta_normalized,
+    lite.observaciones,
+    lite.observacion_calidad
+  )
+  if (aceiteExcel && slCircuitAllowedForExcelLite(lite, aceiteExcel)) {
+    return aceiteExcel
+  }
+
   const platform = String(lite.platform_normalized || lite.plataforma_original || '').trim()
   const fromPlatformRaw = platform ? inferExecutiveCircuitFromExcelPlatform(lite) : ''
   const fromPlatform = normalizeLiquidExecutiveCircuitCode(fromPlatformRaw)
 
-  if (excelLiteIsLiquidOperational(lite)) {
-    const tfHay = `${lite.truckflow_observed_sequence_combined ?? ''}|${lite.truckflow_device_sequence_combined ?? ''}`
-    if (haystackIndicatesAceiteRicardoneDischarge(tfHay) && slCircuitAllowedForExcelLite(lite, 'R8')) {
-      return 'R8'
-    }
-
-    const aceitePlatform = inferAceiteExecutiveCircuitFromPlatform(
-      lite.platform_normalized,
-      lite.plataforma_original,
-      lite.planta_normalized
-    )
-    if (aceitePlatform && slCircuitAllowedForExcelLite(lite, aceitePlatform)) return aceitePlatform
-
-    const fromTf = inferAceiteExecutiveCircuitFromTruckflowEvidence(
-      lite.truckflow_circuit_codes,
-      tfHay
-    )
-    if (fromTf && slCircuitAllowedForExcelLite(lite, fromTf)) return fromTf
-
-    if (fromPlatform && slCircuitAllowedForExcelLite(lite, fromPlatform)) return fromPlatform
-
-    const codes = lite.truckflow_circuit_codes
-      .split('|')
-      .map((s) => normalizeLiquidExecutiveCircuitCode(s.trim()))
-      .filter(Boolean)
-    for (const prefer of ['R8', 'SL1', 'SL2'] as const) {
-      if (codes.includes(prefer) && slCircuitAllowedForExcelLite(lite, prefer)) return prefer
-    }
-    const plant = String(lite.planta_normalized ?? '').trim().toUpperCase()
-    if (plant === 'RICARDONE') return 'R8'
-    if (excelPlantaIsSanLorenzoTerminal(lite.planta_normalized) || plant === 'TERMINAL_EMBARQUE') {
-      const key = normalizeAceitePlatformKey(lite.platform_normalized, lite.plataforma_original)
-      return key === 'PTO' ? 'SL2' : 'SL1'
-    }
-  }
-
-  // Plataforma Excel define circuito (R5/R6/R1/R7…), no el código de ruta física Truckflow (R7 Ric→SL).
   if (
     platform &&
     fromPlatform &&
@@ -805,13 +802,10 @@ function pickExecutiveCircuitFromExcelFirst(lite: ExcelFirstReconcileLite): stri
     return fromPlatform
   }
 
-  const stored = String(lite.resolved_executive_circuit_code ?? '').trim().toUpperCase()
-  if (stored && slCircuitAllowedForExcelLite(lite, stored) && !GENERIC_INFERRED_CIRCUIT_CODES.has(stored)) {
-    return stored
-  }
-
-  if (fromPlatform && !GENERIC_INFERRED_CIRCUIT_CODES.has(fromPlatform) && slCircuitAllowedForExcelLite(lite, fromPlatform)) {
-    return fromPlatform
+  if (excelRowIndicatesAceite(lite)) {
+    const tfHay = `${lite.truckflow_observed_sequence_combined ?? ''}|${lite.truckflow_device_sequence_combined ?? ''}`
+    const fromTf = inferAceiteExecutiveCircuitFromTruckflowEvidence(lite.truckflow_circuit_codes, tfHay)
+    if (fromTf && slCircuitAllowedForExcelLite(lite, fromTf)) return fromTf
   }
 
   const codes = lite.truckflow_circuit_codes
@@ -827,6 +821,8 @@ function pickExecutiveCircuitFromExcelFirst(lite: ExcelFirstReconcileLite): stri
 
   const ricFallback = ricExecutiveFallbackFromExcelLite(lite)
   if (ricFallback) return ricFallback
+
+  if (fromPlatform && slCircuitAllowedForExcelLite(lite, fromPlatform)) return fromPlatform
 
   const fromFamily = FAMILY_TO_EXECUTIVE[lite.resolved_circuit_family.toUpperCase()]
   if (fromFamily && slCircuitAllowedForExcelLite(lite, fromFamily)) return fromFamily
@@ -855,16 +851,29 @@ export type ExcelOperationExecutiveCircuitInput = {
   truckflow_observed_sequence_combined: string
   truckflow_circuit_codes: string
   truckflow_device_sequence_combined?: string
+  observaciones?: string
+  observacion_calidad?: string
 }
 
 /** Mismo criterio que comité / gráficos ejecutivos (Excel + Truckflow). */
 export function resolveExecutiveCircuitForExcelOperation(
   input: ExcelOperationExecutiveCircuitInput
 ): string {
+  const aceite = inferAceiteExecutiveCircuitFromExcel(
+    input.platform_normalized,
+    input.plataforma_original,
+    input.planta_normalized,
+    input.observaciones,
+    input.observacion_calidad
+  )
+  if (aceite) return aceite
+
   const lite: ExcelFirstReconcileLite = {
     ...input,
     resolved_executive_circuit_code: '',
     truckflow_device_sequence_combined: input.truckflow_device_sequence_combined ?? '',
+    observaciones: String(input.observaciones ?? '').trim(),
+    observacion_calidad: String(input.observacion_calidad ?? '').trim(),
   }
   return resolveExecutiveCircuitFromExcelLite(lite)
 }
@@ -1072,16 +1081,14 @@ function reclassifyMislabeledR7AceiteMatrixEntries(
       out.push(entry)
       continue
     }
-    const hay = aceiteTruckflowHaystackFromEntry(entry, lite?.truckflow_observed_sequence_combined ?? '')
-    let code =
-      inferAceiteExecutiveCircuitFromTruckflowEvidence(lite?.truckflow_circuit_codes ?? 'R7', hay) ?? ''
-
-    if (!code && lite && excelLiteIsLiquidOperational(lite)) {
-      const fromExcel = pickExecutiveCircuitFromExcelFirst(lite)
-      if (fromExcel && fromExcel !== 'R7') code = fromExcel
+    if (!lite || !excelRowIndicatesAceite(lite)) {
+      out.push(entry)
+      continue
     }
+    const hay = aceiteTruckflowHaystackFromEntry(entry, lite.truckflow_observed_sequence_combined ?? '')
+    const code = pickExecutiveCircuitFromExcelFirst(lite)
 
-    if (code && isAceiteExecutiveCircuitCode(code)) {
+    if (code && code !== 'R7' && isAceiteExecutiveCircuitCode(code)) {
       let next = applyExecutiveCircuitCodeToEntry(entry, code)
       if (lite && excelLiteIsLiquidOperational(lite)) {
         next = reconcileEntryFromExcelFirst(next, lite)
@@ -1122,6 +1129,8 @@ function excelFirstLiteFromOperationRow(r: Record<string, string>): ExcelFirstRe
     evidence_count: evidence,
     truckflow_observed_sequence_combined: String(r.truckflow_observed_sequence_combined ?? '').trim(),
     truckflow_device_sequence_combined: truckflowDeviceSequenceFromExcelRow(r),
+    observaciones: String(r.observaciones ?? '').trim(),
+    observacion_calidad: String(r.observacion_calidad ?? '').trim(),
   }
 }
 
@@ -1133,7 +1142,8 @@ function buildExecutiveEntryFromExcelOperationRow(
   if (!lite) return null
   const platform = String(lite.platform_normalized || lite.plataforma_original || '').trim()
   const code = pickExecutiveCircuitFromExcelFirst(lite)
-  if (!code || !platform) return null
+  if (!code) return null
+  if (!platform && code !== 'SL3') return null
 
   const opId = String(r.external_operation_id ?? '').trim()
   if (!opId) return null

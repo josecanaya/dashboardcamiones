@@ -1877,6 +1877,8 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
         evidence_count: evidence.evidence_count,
         truckflow_observed_sequence_combined: evidence.combined_observed_sequence,
         truckflow_circuit_codes: agg.circuit_codes,
+        observaciones: mov.observaciones,
+        observacion_calidad: mov.observacion_calidad,
       }) ||
       inferredExecutive?.circuit_code ||
       ''

@@ -113,7 +113,8 @@ describe('etlExternalNormalization', () => {
 
   it('normalizePlant', () => {
     expect(normalizePlant('TERMINAL DE EMBARQUE').planta_normalized).toBe('TERMINAL_EMBARQUE')
-    expect(normalizePlant('PLANTA SAN LORENZO').planta_normalized).toBe('SAN_LORENZO')
+    expect(normalizePlant('PLANTA SAN LORENZO').planta_normalized).toBe('RICARDONE')
+    expect(normalizePlant('SAN LORENZO').planta_normalized).toBe('TERMINAL_EMBARQUE')
   })
 
   it('normalizeProduct', () => {
