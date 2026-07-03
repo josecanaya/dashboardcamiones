@@ -15,6 +15,7 @@ import {
   normalizeProduct,
   stableExternalHash,
 } from './etlExternalNormalization'
+import { buildStableExcelOperationId } from './excelStableOperationId'
 
 export { normalizePlate }
 
@@ -160,18 +161,19 @@ function buildExternalOperationId(parts: {
   external_ingreso_at: string
   product_normalized: string | null
   platform_normalized: string | null
+  ingreso_id?: string
 }): string {
-  if (parts.ctg) return `CTG_${parts.ctg}`
-  if (parts.comprob) return `COMPROB_${parts.comprob}`
-  if (parts.cp_remito) return `REMITO_${parts.cp_remito}`
-  const hashInput = [
-    parts.source_file,
-    parts.plate_normalized ?? '',
-    parts.external_ingreso_at,
-    parts.product_normalized ?? '',
-    parts.platform_normalized ?? '',
-  ].join('|')
-  return stableExternalHash(hashInput)
+  return buildStableExcelOperationId({
+    ctg: parts.ctg,
+    comprob: parts.comprob,
+    cp_remito: parts.cp_remito,
+    source_file: parts.source_file,
+    plate_normalized: parts.plate_normalized ?? '',
+    external_ingreso_at: parts.external_ingreso_at,
+    product_normalized: parts.product_normalized ?? '',
+    platform_normalized: parts.platform_normalized ?? '',
+    ingreso_id: parts.ingreso_id ?? '',
+  })
 }
 
 export function normalizeMovimientoContrato(
@@ -214,6 +216,7 @@ export function normalizeMovimientoContrato(
     external_ingreso_at,
     product_normalized: product.product_normalized,
     platform_normalized: platform.platform_normalized,
+    ingreso_id: cellStr(row.ingreso),
   })
 
   return {

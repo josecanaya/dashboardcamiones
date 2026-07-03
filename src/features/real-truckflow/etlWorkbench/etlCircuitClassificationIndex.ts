@@ -7,6 +7,7 @@ import { recordsToCsv } from './etlCsv'
 import { parseCsvToRecords } from './etlCsvParse'
 import { MERGE_STATUSES_WITH_PRODUCT } from './etlTruckflowMovimientosMerge'
 import { inferCircuitFromExternalMovimiento } from './etlPlatformCircuitInference'
+import { resolveCommitteeExcelOperationId } from './excelStableOperationId'
 import { excelPlantaIsSanLorenzoTerminal } from './etlRicSanLorenzoRoute'
 import {
   inferAceiteExecutiveCircuitFromExcel,
@@ -16,6 +17,7 @@ import {
   isExcelLiquidMovementForOrphanCommittee,
   isExcelLiquidProductName,
   isPermittedAceiteLiquidDischargePlatform,
+  excelObservacionesIndicateRenovaAceite,
 } from './slLiquidCameras'
 import {
   EXECUTIVE_CIRCUIT_MATRIX,
@@ -100,6 +102,8 @@ export type CircuitClassificationEntry = {
   executiveReason: string
   pieSliceLabel: string
   usefulEventsCount: number
+  /** Cruces Truckflow (columna event_count comité; pasos en detected_sequence). No confundir con usefulEventsCount. */
+  eventCount: number
   executiveBucket: string
   matrixReason: string
   color: string
@@ -251,11 +255,44 @@ export const COMMITTEE_CHART_EXPORT_HEADERS = [
   'top_committee_reason',
   'committee_reasons_breakdown',
   'event_count',
+  'sample_filter',
 ] as const
 
 export type CommitteeChartExportOptions = {
   /** Incluir una fila JOURNEY por camión (archivo más grande). Default true. */
   includeJourneyRows?: boolean
+  /** Metadata de muestra aplicada en la exportación (p. ej. ACEITE_TRUCKFLOW_EVENT_COUNT_GTE_2). */
+  sampleFilter?: string
+}
+
+export function eventCountFromDetectedSequence(detectedSequence: string): number {
+  const s = String(detectedSequence ?? '').trim()
+  if (!s) return 0
+  return s.split('>').filter(Boolean).length
+}
+
+function eventCountFromMatrixRow(row: Record<string, string>, detectedSequence: string): number {
+  const raw = String(row.event_count ?? '').trim()
+  if (raw !== '') {
+    const n = Number(raw)
+    if (Number.isFinite(n)) return Math.max(0, n)
+  }
+  return eventCountFromDetectedSequence(detectedSequence)
+}
+
+/** Cruces Truckflow usados en comité (event_count), no useful_events_count. */
+export function truckflowCrossingCountFromEntry(entry: CircuitClassificationEntry): number {
+  const n = Number(entry.eventCount)
+  if (Number.isFinite(n) && n >= 0) return n
+  return eventCountFromDetectedSequence(entry.detectedSequence)
+}
+
+export function filterEntriesByMinTruckflowCrossings(
+  entries: CircuitClassificationEntry[],
+  minCrossings = 2
+): CircuitClassificationEntry[] {
+  const min = Math.max(0, minCrossings)
+  return entries.filter((entry) => truckflowCrossingCountFromEntry(entry) >= min)
 }
 
 export const COMMITTEE_DRILLDOWN_CSV_HEADERS = [
@@ -366,6 +403,7 @@ function rowToEntry(row: Record<string, string>, color: string): CircuitClassifi
   const pieSliceLabel = pieSliceLabelFromMatrixRow(row)
   const plate = String(row.plate ?? '').trim()
   const executive = resolveExecutiveFields(row)
+  const detectedSequence = String(row.detected_sequence ?? '').trim()
   return {
     journeyId: String(row.journey_id ?? '').trim(),
     plate,
@@ -381,13 +419,14 @@ function rowToEntry(row: Record<string, string>, color: string): CircuitClassifi
     committeeGroup: String(row.committee_group ?? '').trim().toUpperCase(),
     committeeReason: String(row.committee_reason ?? '').trim(),
     operationalVariationType: String(row.operational_variation_type ?? '').trim(),
-    detectedSequence: String(row.detected_sequence ?? '').trim(),
+    detectedSequence,
     deviceSequence: String(row.device_sequence ?? '').trim(),
     firstEventAt: String(row.first_event_at ?? '').trim(),
     lastEventAt: String(row.last_event_at ?? '').trim(),
     executiveReason: String(row.executive_reason ?? '').trim(),
     pieSliceLabel,
     usefulEventsCount: Number(String(row.useful_events_count ?? '').trim()) || 0,
+    eventCount: eventCountFromMatrixRow(row, detectedSequence),
     executiveBucket: String(row.executive_bucket ?? '').trim().toUpperCase(),
     matrixReason: String(row.matrix_reason ?? '').trim(),
     color,
@@ -719,7 +758,15 @@ function slCircuitAllowedForExcelLite(lite: ExcelFirstReconcileLite, code: strin
     if (!LIQUID_EXECUTIVE_CIRCUITS.has(c)) return false
   }
 
-  if (c !== 'SL1' && c !== 'SL2' && c !== 'SL5') return true
+  if (c !== 'SL1' && c !== 'SL2' && c !== 'SL3' && c !== 'SL5') return true
+  if (c === 'SL3') {
+    const platformEmpty =
+      !String(lite.platform_normalized ?? '').trim() && !String(lite.plataforma_original ?? '').trim()
+    return (
+      platformEmpty &&
+      excelObservacionesIndicateRenovaAceite(lite.observaciones, lite.observacion_calidad)
+    )
+  }
   if (excelPlantaIsSanLorenzoTerminal(lite.planta_normalized)) return true
   const plant = String(lite.planta_normalized ?? '').trim().toUpperCase()
   if (plant === 'TERMINAL_EMBARQUE' && isPermittedAceiteLiquidDischargePlatform(lite.platform_normalized, lite.plataforma_original)) {
@@ -761,7 +808,7 @@ function excelRowIndicatesAceite(lite: ExcelFirstReconcileLite): boolean {
   if (isPermittedAceiteLiquidDischargePlatform(lite.platform_normalized, lite.plataforma_original)) {
     return true
   }
-  return Boolean(
+  if (
     inferAceiteExecutiveCircuitFromExcel(
       lite.platform_normalized,
       lite.plataforma_original,
@@ -769,15 +816,34 @@ function excelRowIndicatesAceite(lite: ExcelFirstReconcileLite): boolean {
       lite.observaciones,
       lite.observacion_calidad
     )
-  )
+  ) {
+    return true
+  }
+  return isExcelLiquidProductName(lite.product_normalized, lite.platform_normalized)
 }
 
-function pickExecutiveCircuitFromExcelFirst(lite: ExcelFirstReconcileLite): string {
-  const stored = String(lite.resolved_executive_circuit_code ?? '').trim().toUpperCase()
-  if (stored && slCircuitAllowedForExcelLite(lite, stored) && !GENERIC_INFERRED_CIRCUIT_CODES.has(stored)) {
-    return stored
-  }
+/** Excel aceite por journey/patente (prioriza plataforma aceite explícita). */
+function resolveExcelAceiteLiteForEntry(
+  entry: CircuitClassificationEntry,
+  byJourney: Map<string, ExcelFirstReconcileLite>,
+  byPlate: Map<string, ExcelFirstReconcileLite[]>
+): ExcelFirstReconcileLite | undefined {
+  const direct = resolveExcelFirstLiteForEntry(entry, byJourney, byPlate)
+  if (direct && excelRowIndicatesAceite(direct)) return direct
 
+  const plate = entry.normalizedPlate
+  if (!plate) return undefined
+  const aceiteCands = (byPlate.get(plate) ?? []).filter(excelRowIndicatesAceite)
+  if (!aceiteCands.length) return undefined
+
+  const dayKey = operationalDayKeyFromIso(entry.firstEventAt)
+  const sameDay = dayKey ? aceiteCands.filter((c) => c.source_date === dayKey) : []
+  return pickBestExcelFirstLite(sameDay.length ? sameDay : aceiteCands)
+}
+
+const SOLID_ROUTE_EXECUTIVE_FOR_ACEITE_VIEW = new Set(['R7', 'R5', 'R6'])
+
+function pickExecutiveCircuitFromExcelFirst(lite: ExcelFirstReconcileLite): string {
   const aceiteExcel = inferAceiteExecutiveCircuitFromExcel(
     lite.platform_normalized,
     lite.plataforma_original,
@@ -787,6 +853,11 @@ function pickExecutiveCircuitFromExcelFirst(lite: ExcelFirstReconcileLite): stri
   )
   if (aceiteExcel && slCircuitAllowedForExcelLite(lite, aceiteExcel)) {
     return aceiteExcel
+  }
+
+  const stored = String(lite.resolved_executive_circuit_code ?? '').trim().toUpperCase()
+  if (stored && slCircuitAllowedForExcelLite(lite, stored) && !GENERIC_INFERRED_CIRCUIT_CODES.has(stored)) {
+    return stored
   }
 
   const platform = String(lite.platform_normalized || lite.plataforma_original || '').trim()
@@ -955,6 +1026,8 @@ export function parseExcelFirstByJourneyUid(
       evidence_count: evidence,
       truckflow_observed_sequence_combined: String(r.truckflow_observed_sequence_combined ?? '').trim(),
       truckflow_device_sequence_combined: truckflowDeviceSequenceFromExcelRow(r),
+      observaciones: String(r.observaciones ?? '').trim(),
+      observacion_calidad: String(r.observacion_calidad ?? '').trim(),
     }
     const uids = String(r.matched_journey_uids ?? '')
       .split('|')
@@ -998,6 +1071,8 @@ export function parseExcelFirstByPlate(
       evidence_count: evidence,
       truckflow_observed_sequence_combined: String(r.truckflow_observed_sequence_combined ?? '').trim(),
       truckflow_device_sequence_combined: truckflowDeviceSequenceFromExcelRow(r),
+      observaciones: String(r.observaciones ?? '').trim(),
+      observacion_calidad: String(r.observacion_calidad ?? '').trim(),
     }
     const arr = map.get(plate) ?? []
     arr.push(lite)
@@ -1041,16 +1116,33 @@ function applyExecutiveCircuitCodeToEntry(entry: CircuitClassificationEntry, cod
 function shouldDropAceiteMatrixFragmentForExcelPlate(
   entry: CircuitClassificationEntry,
   lite: ExcelFirstReconcileLite | undefined,
-  byJourney: Map<string, ExcelFirstReconcileLite>
+  byJourney: Map<string, ExcelFirstReconcileLite>,
+  byPlate: Map<string, ExcelFirstReconcileLite[]>
 ): boolean {
   if (entry.journeyId.startsWith('excel:')) return false
   if (entry.executiveCircuitCode === 'R8') return false
   if (entryAceiteTruckflowExecutiveCode(entry) === 'R8') return false
-  if (!lite || !excelLiteIsLiquidOperational(lite)) return false
-  if (byJourney.has(entry.journeyId)) return false
-  if (entryLooksLikeRicSanLorenzoRouteLabel(entry)) return true
-  if (entry.executiveCircuitCode === 'R7') return true
+
+  const aceiteLite =
+    lite && excelRowIndicatesAceite(lite) ? lite : resolveExcelAceiteLiteForEntry(entry, byJourney, byPlate)
+  if (!aceiteLite) return false
+
+  const excelMatchedThisJourney =
+    byJourney.has(entry.journeyId) && excelRowIndicatesAceite(byJourney.get(entry.journeyId)!)
+  if (excelMatchedThisJourney) return false
+
   const hay = aceiteTruckflowHaystackFromEntry(entry).toUpperCase()
+  const hasLiquidTruckflowEvidence =
+    /SL_INGRESO|SL_BALANZA|SL_LIQUIDO|LIQUIDO>/.test(hay) || Boolean(entryAceiteTruckflowExecutiveCode(entry))
+
+  if (entry.executiveCircuitCode === 'R7' || entryLooksLikeRicSanLorenzoRouteLabel(entry)) return true
+
+  if (isAceiteExecutiveCircuitCode(entry.executiveCircuitCode)) {
+    if (!excelLiteMatchesEntrySite(aceiteLite, entry)) return true
+    if (!hasLiquidTruckflowEvidence) return true
+    return false
+  }
+
   return /SL_INGRESO|SL_BALANZA|SL_LIQUIDO/.test(hay)
 }
 
@@ -1073,7 +1165,7 @@ function reclassifyMislabeledR7AceiteMatrixEntries(
     }
 
     const lite = resolveExcelFirstLiteForEntry(entry, byJourney, byPlate)
-    if (shouldDropAceiteMatrixFragmentForExcelPlate(entry, lite, byJourney)) {
+    if (shouldDropAceiteMatrixFragmentForExcelPlate(entry, lite, byJourney, byPlate)) {
       continue
     }
 
@@ -1081,25 +1173,21 @@ function reclassifyMislabeledR7AceiteMatrixEntries(
       out.push(entry)
       continue
     }
-    if (!lite || !excelRowIndicatesAceite(lite)) {
+    const aceiteLite = resolveExcelAceiteLiteForEntry(entry, byJourney, byPlate)
+    if (!aceiteLite || !excelRowIndicatesAceite(aceiteLite)) {
       out.push(entry)
       continue
     }
-    const hay = aceiteTruckflowHaystackFromEntry(entry, lite.truckflow_observed_sequence_combined ?? '')
-    const code = pickExecutiveCircuitFromExcelFirst(lite)
+    const code = pickExecutiveCircuitFromExcelFirst(aceiteLite)
 
     if (code && code !== 'R7' && isAceiteExecutiveCircuitCode(code)) {
       let next = applyExecutiveCircuitCodeToEntry(entry, code)
-      if (lite && excelLiteIsLiquidOperational(lite)) {
-        next = reconcileEntryFromExcelFirst(next, lite)
-      }
+      next = reconcileEntryFromExcelFirst(next, aceiteLite)
       out.push(next)
       continue
     }
 
-    const liquidExcelSamePlate = lite && excelLiteIsLiquidOperational(lite)
-    const liquidSequence = /SL_INGRESO|SL_BALANZA|SL_LIQUIDO|LIQUIDO>SL_/.test(hay.toUpperCase())
-    if (liquidExcelSamePlate && (entryLooksLikeRicSanLorenzoRouteLabel(entry) || liquidSequence)) {
+    if (entryLooksLikeRicSanLorenzoRouteLabel(entry)) {
       continue
     }
 
@@ -1136,7 +1224,8 @@ function excelFirstLiteFromOperationRow(r: Record<string, string>): ExcelFirstRe
 
 function buildExecutiveEntryFromExcelOperationRow(
   r: Record<string, string>,
-  cameraSeed?: CircuitClassificationEntry
+  cameraSeed?: CircuitClassificationEntry,
+  rowIndex?: number
 ): CircuitClassificationEntry | null {
   const lite = excelFirstLiteFromOperationRow(r)
   if (!lite) return null
@@ -1145,7 +1234,7 @@ function buildExecutiveEntryFromExcelOperationRow(
   if (!code) return null
   if (!platform && code !== 'SL3') return null
 
-  const opId = String(r.external_operation_id ?? '').trim()
+  const opId = resolveCommitteeExcelOperationId(r, rowIndex)
   if (!opId) return null
 
   const cfg = EXECUTIVE_CIRCUIT_MATRIX[code as keyof typeof EXECUTIVE_CIRCUIT_MATRIX]
@@ -1175,6 +1264,7 @@ function buildExecutiveEntryFromExcelOperationRow(
       executiveReason: '',
       pieSliceLabel: '',
       usefulEventsCount: 0,
+      eventCount: 0,
       executiveBucket: '',
       matrixReason: '',
       color: CIRCUIT_PIE_COLORS[0]!,
@@ -1184,6 +1274,7 @@ function buildExecutiveEntryFromExcelOperationRow(
   const sourceDate = String(r.source_date ?? '').trim()
   const dayIso =
     sourceDate && /^\d{4}-\d{2}-\d{2}$/.test(sourceDate) ? `${sourceDate}T12:00:00-03:00` : ''
+  const detectedSequence = String(r.truckflow_observed_sequence_combined ?? '').trim()
   const firstAt = ensureArgentinaOffsetIso(
     String(r.truckflow_first_seen_at || r.external_ingreso_at || dayIso || '').trim()
   )
@@ -1210,7 +1301,7 @@ function buildExecutiveEntryFromExcelOperationRow(
         seed.committeeReason || `CAMARA_VARIACION:${seed.operationalVariationType}`
       : `EXCEL_PLATAFORMA:${lite.product_normalized}@${lite.platform_normalized}:${lite.match_quality}`,
     operationalVariationType: group.operationalVariationType,
-    detectedSequence: String(r.truckflow_observed_sequence_combined ?? '').trim(),
+    detectedSequence,
     deviceSequence: '',
     firstEventAt: firstAt || dayIso,
     lastEventAt: lastAt || firstAt || dayIso,
@@ -1218,6 +1309,7 @@ function buildExecutiveEntryFromExcelOperationRow(
       preservedCameraVariation ? seed.executiveReason || seed.committeeReason : 'EXCEL_PLATAFORMA_RECONCILED',
     pieSliceLabel: group.pieSliceLabel,
     usefulEventsCount: Math.max(Number(r.matched_journey_count ?? 0), lite.evidence_count),
+    eventCount: eventCountFromDetectedSequence(detectedSequence),
     executiveBucket: group.committeeGroup === 'COMPLETOS' ? 'COMPLETO' : seed.executiveBucket || 'INCOMPLETO',
     matrixReason: String(r.route_quality ?? lite.match_quality),
     color: CIRCUIT_PIE_COLORS[0]!,
@@ -1246,10 +1338,11 @@ export function reindexExecutiveChartsForExcelFirstOperations(
   const excelEntries: CircuitClassificationEntry[] = []
   const seenOp = new Set<string>()
 
-  for (const r of rows) {
+  for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+    const r = rows[rowIndex]!
     const lite = excelFirstLiteFromOperationRow(r)
     if (!lite) continue
-    const opId = String(r.external_operation_id ?? '').trim()
+    const opId = resolveCommitteeExcelOperationId(r, rowIndex)
     if (!opId || seenOp.has(opId)) continue
     seenOp.add(opId)
 
@@ -1268,7 +1361,7 @@ export function reindexExecutiveChartsForExcelFirstOperations(
     }
 
     const cameraSeed = uids.map((uid) => matrixByUid.get(uid)).find(Boolean)
-    const built = buildExecutiveEntryFromExcelOperationRow(r, cameraSeed)
+    const built = buildExecutiveEntryFromExcelOperationRow(r, cameraSeed, rowIndex)
     if (built) excelEntries.push(built)
   }
 
@@ -1304,7 +1397,8 @@ function reconcileEntryFromExcelFirst(
 ): CircuitClassificationEntry {
   const code = pickExecutiveCircuitFromExcelFirst(lite)
   const platform = String(lite.platform_normalized || lite.plataforma_original || '').trim()
-  if (!code || !platform) return entry
+  if (!code) return entry
+  if (!platform && code !== 'SL3') return entry
   const cfg = EXECUTIVE_CIRCUIT_MATRIX[code as keyof typeof EXECUTIVE_CIRCUIT_MATRIX]
   const label = cfg?.label || code
   const group = committeeGroupFromExcelFirst(entry, lite)
@@ -1344,13 +1438,13 @@ function enforceLiquidExcelExecutiveCircuits(
   const byJourney = parseExcelFirstByJourneyUid(excelOpsCsv)
   const byPlate = parseExcelFirstByPlate(excelOpsCsv)
   return entries.map((entry) => {
-    const lite = resolveExcelFirstLiteForEntry(entry, byJourney, byPlate)
-    if (!lite || !excelLiteIsLiquidOperational(lite)) return entry
-    if (shouldSkipCrossPlantAceiteExcelReconcile(entry, lite, byJourney)) return entry
-    const code = pickExecutiveCircuitFromExcelFirst(lite)
-    if (!code || code === 'R7') return entry
-    if (code === entry.executiveCircuitCode) return entry
-    return reconcileEntryFromExcelFirst(entry, lite)
+    const aceiteLite = resolveExcelAceiteLiteForEntry(entry, byJourney, byPlate)
+    if (!aceiteLite) return entry
+    if (shouldSkipCrossPlantAceiteExcelReconcile(entry, aceiteLite, byJourney)) return entry
+    const code = pickExecutiveCircuitFromExcelFirst(aceiteLite)
+    if (!code || code === 'R7' || SOLID_ROUTE_EXECUTIVE_FOR_ACEITE_VIEW.has(code)) return entry
+    if (code === entry.executiveCircuitCode && entry.committeeReason.includes('EXCEL_PLATAFORMA')) return entry
+    return reconcileEntryFromExcelFirst(entry, aceiteLite)
   })
 }
 
@@ -1383,7 +1477,13 @@ export function applyExcelFirstReconciliation(
     if (isExcelReconciliationExcludedEntry(entry)) return entry
     const lite = resolveExcelFirstLiteForEntry(entry, byJourney, byPlate)
     if (!lite) return entry
-    if (shouldSkipCrossPlantAceiteExcelReconcile(entry, lite, byJourney)) return entry
+    if (byJourney.has(entry.journeyId)) {
+      if (shouldSkipCrossPlantAceiteExcelReconcile(entry, lite, byJourney)) return entry
+    } else if (excelRowIndicatesAceite(lite) && !excelLiteMatchesEntrySite(lite, entry)) {
+      return entry
+    } else if (shouldSkipCrossPlantAceiteExcelReconcile(entry, lite, byJourney)) {
+      return entry
+    }
     const wasAnomaly = entry.committeeGroup === 'ANOMALIAS'
     const wasGenericCircuit = GENERIC_INFERRED_CIRCUIT_CODES.has(entry.executiveCircuitCode)
     const next = reconcileEntryFromExcelFirst(entry, lite)
@@ -1498,7 +1598,8 @@ export function appendPermittedAceiteExcelOrphansToEntries(
   const out = [...entries]
   let appendedCount = 0
 
-  for (const r of rows) {
+  for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+    const r = rows[rowIndex]!
     const evidence = Number(r.evidence_count ?? 0)
     if (evidence > 0) continue
 
@@ -1513,6 +1614,8 @@ export function appendPermittedAceiteExcelOrphansToEntries(
         resolved_circuit_family: String(r.resolved_circuit_family ?? '').trim(),
         resolved_product: String(r.resolved_product ?? r.product_normalized ?? '').trim(),
         product_normalized: String(r.product_normalized ?? '').trim(),
+        observaciones: String(r.observaciones ?? '').trim(),
+        observacion_calidad: String(r.observacion_calidad ?? '').trim(),
       })
     ) {
       continue
@@ -1527,7 +1630,7 @@ export function appendPermittedAceiteExcelOrphansToEntries(
       if (representedInMatrix) continue
     }
 
-    const opId = String(r.external_operation_id ?? '').trim()
+    const opId = resolveCommitteeExcelOperationId(r, rowIndex)
     if (!opId) continue
     const journeyId = `excel:${opId}`
     if (existingIds.has(journeyId)) continue
@@ -1552,22 +1655,13 @@ export function appendPermittedAceiteExcelOrphansToEntries(
       evidence_count: Number(r.evidence_count ?? 0),
       truckflow_observed_sequence_combined: String(r.truckflow_observed_sequence_combined ?? '').trim(),
       truckflow_device_sequence_combined: truckflowDeviceSequenceFromExcelRow(r),
+      observaciones: String(r.observaciones ?? '').trim(),
+      observacion_calidad: String(r.observacion_calidad ?? '').trim(),
     }
-    const inferred = inferCircuitFromExternalMovimiento({
-      platform_normalized: platform,
-      plataforma_original: original,
-      planta_normalized: lite.planta_normalized,
-      movement_type: lite.movement_type,
-      movement_type_detail: String(r.movement_type_detail ?? r.mov ?? '').trim(),
-      mov: String(r.mov ?? r.movement_type_detail ?? '').trim(),
-    })
-    const code =
-      resolveExecutiveCircuitFromExcelLite(lite) ||
-      inferred?.circuit_code ||
-      (excelLiteIsLiquidOperational(lite) ? 'SL1' : '')
+    const code = resolveExecutiveCircuitFromExcelLite(lite)
     if (!code) continue
     const cfg = EXECUTIVE_CIRCUIT_MATRIX[code as keyof typeof EXECUTIVE_CIRCUIT_MATRIX]
-    const label = cfg?.label ?? inferred?.circuit_label ?? code
+    const label = cfg?.label ?? code
     const sourceDate = String(r.source_date ?? '').trim()
     const dayIso = sourceDate && /^\d{4}-\d{2}-\d{2}$/.test(sourceDate) ? `${sourceDate}T12:00:00-03:00` : ''
 
@@ -1593,6 +1687,7 @@ export function appendPermittedAceiteExcelOrphansToEntries(
       executiveReason: 'EXCEL_SIN_EVIDENCIA_TRUCKFLOW',
       pieSliceLabel: 'COMPLETOS',
       usefulEventsCount: 0,
+      eventCount: 0,
       executiveBucket: '',
       matrixReason: String(r.no_truckflow_reason ?? 'NO_TRUCKFLOW_EVIDENCE'),
       color: CIRCUIT_PIE_COLORS[0]!,
@@ -1949,6 +2044,7 @@ function emptyChartRow(recordType: string): Record<string, string | number> {
     top_committee_reason: '',
     committee_reasons_breakdown: '',
     event_count: '',
+    sample_filter: '',
   }
 }
 
@@ -1968,6 +2064,9 @@ export function committeeChartExportCsv(
   options: CommitteeChartExportOptions = {}
 ): string {
   const includeJourneyRows = options.includeJourneyRows !== false
+  const sampleFilter = String(options.sampleFilter ?? '').trim()
+  const withSample = (row: Record<string, string | number>) =>
+    sampleFilter ? { ...row, sample_filter: sampleFilter } : row
   const rows: Record<string, string | number>[] = []
   const grandTotal =
     input.crossTabTotals.total +
@@ -2091,12 +2190,13 @@ export function committeeChartExportCsv(
         executive_status: e.executiveStatus,
         executive_reason: e.executiveReason,
         matrix_reason: e.matrixReason,
-        event_count: e.detectedSequence ? e.detectedSequence.split('>').length : 0,
+        event_count: truckflowCrossingCountFromEntry(e),
       })
     }
   }
 
-  return recordsToCsv([...COMMITTEE_CHART_EXPORT_HEADERS], rows)
+  const stamped = sampleFilter ? rows.map((r) => withSample(r)) : rows
+  return recordsToCsv([...COMMITTEE_CHART_EXPORT_HEADERS], stamped)
 }
 
 /** Cruce circuito ejecutivo × categoría comité — reconcilia torta vs barras. */
@@ -2237,6 +2337,61 @@ export function buildCircuitClassificationIndex(
   entries = reclassifyPossibleRejections(excelPromo.entries).entries
 
   return rebuildClassificationIndexFromEntries(entries, excelPromo.promotedCount, excelPromo.promotedCount)
+}
+
+/** Auditoría aceite: plataforma Excel → circuito ejecutivo (filas del CSV excel_operations_with_truckflow). */
+export function buildAceiteCircuitResolutionDebugCsv(excelOpsCsv: string | undefined | null): string {
+  if (!excelOpsCsv?.trim()) return ''
+  const { rows } = parseCsvToRecords(excelOpsCsv)
+  const debugRows = rows.map((r, rowIndex) => {
+    const platformRaw = String(r.plataforma_original ?? r.platform_normalized ?? '').trim()
+    const platformNorm = String(r.resolved_platform ?? r.platform_normalized ?? '').trim()
+    const product = String(r.resolved_product ?? r.product_normalized ?? '').trim()
+    const obs = String(r.observaciones ?? '').trim()
+    const obsCal = String(r.observacion_calidad ?? '').trim()
+    const lite: ExcelFirstReconcileLite = {
+      product_normalized: product,
+      platform_normalized: platformNorm,
+      plataforma_original: platformRaw,
+      plate_normalized: String(r.plate_normalized ?? '').trim(),
+      planta_normalized: String(r.planta_normalized ?? '').trim(),
+      movement_type: String(r.movement_type ?? '').trim(),
+      mov: String(r.mov ?? r.movement_type_detail ?? '').trim(),
+      source_date: String(r.source_date ?? '').trim(),
+      truckflow_circuit_codes: String(r.truckflow_circuit_codes ?? '').trim(),
+      resolved_circuit_family: String(r.resolved_circuit_family ?? '').trim(),
+      resolved_executive_circuit_code: String(r.resolved_executive_circuit_code ?? '').trim(),
+      match_quality: String(r.match_quality ?? '').trim(),
+      route_quality: String(r.route_quality ?? '').trim(),
+      evidence_count: Number(r.evidence_count ?? 0),
+      truckflow_observed_sequence_combined: String(r.truckflow_observed_sequence_combined ?? '').trim(),
+      truckflow_device_sequence_combined: truckflowDeviceSequenceFromExcelRow(r),
+      observaciones: obs,
+      observacion_calidad: obsCal,
+    }
+    const resolved = String(r.resolved_executive_circuit_code ?? '').trim()
+    const finalCode = pickExecutiveCircuitFromExcelFirst(lite)
+    const opId = resolveCommitteeExcelOperationId(r, rowIndex)
+    return {
+      row_index: String(rowIndex),
+      plate: String(r.plate_normalized ?? '').trim(),
+      ctg: String(r.ctg ?? '').trim(),
+      ingreso: String(r.ingreso_id ?? '').trim(),
+      comprob: String(r.comprob ?? '').trim(),
+      producto: product,
+      platform_raw: platformRaw,
+      platform_normalized: platformNorm,
+      observaciones: obs,
+      is_aceite: excelRowIndicatesAceite(lite) ? '1' : '0',
+      is_renova_observation: excelObservacionesIndicateRenovaAceite(obs, obsCal) ? '1' : '0',
+      resolved_executive_circuit_code: resolved,
+      final_executive_circuit_code: finalCode,
+      journey_id: `excel:${opId}`,
+      source: 'excel_operations_with_truckflow',
+      matched_truckflow: String(Number(r.evidence_count ?? 0) > 0 ? '1' : '0'),
+    }
+  })
+  return recordsToCsv(debugRows)
 }
 
 /** Resuelve clasificación ETL para una fila en vivo (prioriza journeyUid). */

@@ -6,10 +6,12 @@ import {
   buildCircuitClassificationIndex,
   buildSuspiciousDischargeWithoutBalanza,
   committeeChartExportCsv,
+  filterEntriesByMinTruckflowCrossings,
   normalizeAnomalySequenceKey,
   promoteExcelMovimientosContrato,
   reclassifyPossibleRejections,
   resolveDischargePointLabel,
+  truckflowCrossingCountFromEntry,
   type CircuitClassificationEntry,
 } from './etlCircuitClassificationIndex'
 
@@ -36,12 +38,45 @@ function entry(partial: Partial<CircuitClassificationEntry>): CircuitClassificat
     executiveReason: 'JOURNEY_INCOMPLETO',
     pieSliceLabel: 'ANOMALÍAS',
     usefulEventsCount: 3,
+    eventCount: 3,
     executiveBucket: 'INCOMPLETO',
     matrixReason: 'EVENTOS_INSUFICIENTES',
     color: '#e11d48',
     ...partial,
   }
 }
+
+describe('filterEntriesByMinTruckflowCrossings', () => {
+  it('excluye event_count 0 y 1; incluye 2 y 3', () => {
+    const rows = [
+      entry({ journeyId: 'e0', eventCount: 0, usefulEventsCount: 5, detectedSequence: '' }),
+      entry({ journeyId: 'e1', eventCount: 1, detectedSequence: 'INGRESO' }),
+      entry({ journeyId: 'e2', eventCount: 2, detectedSequence: 'INGRESO>EGRESO' }),
+      entry({ journeyId: 'e3', eventCount: 3, detectedSequence: 'A>B>C' }),
+    ]
+    const out = filterEntriesByMinTruckflowCrossings(rows, 2)
+    expect(out.map((e) => e.journeyId)).toEqual(['e2', 'e3'])
+  })
+
+  it('no usa useful_events_count cuando eventCount está definido', () => {
+    const kept = filterEntriesByMinTruckflowCrossings(
+      [entry({ eventCount: 0, usefulEventsCount: 10 })],
+      2
+    )
+    expect(kept).toHaveLength(0)
+    expect(truckflowCrossingCountFromEntry(entry({ eventCount: 0, usefulEventsCount: 10 }))).toBe(0)
+  })
+
+  it('R7 soja no se altera al filtrar (solo filtra lista)', () => {
+    const r7 = entry({
+      executiveCircuitCode: 'R7',
+      committeeReason: 'RUTA_RIC_SAN_LORENZO',
+      eventCount: 4,
+    })
+    expect(filterEntriesByMinTruckflowCrossings([r7], 2)).toHaveLength(1)
+    expect(filterEntriesByMinTruckflowCrossings([r7], 2)[0]!.executiveCircuitCode).toBe('R7')
+  })
+})
 
 describe('etlCircuitClassificationIndex anomalías', () => {
   it('excluye incompletos (<3 evt) del listado por secuencia', () => {
@@ -471,6 +506,20 @@ describe('reclassifyPossibleRejections', () => {
     expect(row.executiveCircuitCode).not.toBe('R7')
   })
 
+  it('suprime R7 Ric→SL huérfano INGRESO>EGRESO si Excel aceite en la misma patente', () => {
+    const debugCsv = [
+      'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
+      'j-r7-simple,GFL685,ricardone,COMPLETOS,COMPLETOS,R7,Ric→SL,INGRESO>PREINGRESO>EGRESO,3,COMPLETO,VALIDO,RUTA_RIC_SAN_LORENZO_DEDUCIDA,,RUTA_RIC_SAN_LORENZO_DEDUCIDA,,COMPLETO,COMPLETO,2026-06-28T08:00:00.000Z,2026-06-28T09:00:00.000Z,',
+    ].join('\n')
+    const excelCsv = [
+      'external_operation_id,matched_journey_uids,plate_normalized,planta_normalized,movement_type,source_date,resolved_product,product_normalized,resolved_platform,platform_normalized,plataforma_original,truckflow_circuit_codes,resolved_circuit_family,resolved_executive_circuit_code,match_quality,route_quality,evidence_count',
+      'CTG_GFL,j-other,GFL685,TERMINAL_EMBARQUE,INGRESO,2026-06-28,ACEITE GIRASOL,ACEITE GIRASOL,ACEITE_PTO,ACEITE_PTO,ACEITE PTO,SL2,LIQUIDO,SL2,EXTERNAL_MATCH_EXACT,ROUTE_COMPLETE,1',
+    ].join('\n')
+    const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
+    expect(index.entries.some((e) => e.journeyId === 'j-r7-simple')).toBe(false)
+    expect(index.entries.some((e) => e.executiveCircuitCode === 'R7')).toBe(false)
+  })
+
   it('suprime R7 Ric→SL huérfano si Excel aceite en la misma patente y día', () => {
     const debugCsv = [
       'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
@@ -498,5 +547,21 @@ describe('reclassifyPossibleRejections', () => {
     const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
     const ric = index.entries.find((e) => e.journeyId === 'j-ric-r8')
     expect(ric?.executiveCircuitCode).toBe('R8')
+  })
+
+  it('huérfanas ACEITE_OSL con CTG=0 generan dos filas SL1 distintas', () => {
+    const debugCsv = [
+      'journey_id,plate,site,committee_group,pie_slice_label,executive_circuit_code,executive_circuit_label,detected_sequence,useful_events_count,matrix_final_status,executive_status,committee_reason,operational_variation_type,executive_reason,matrix_reason,valid_detail,executive_bucket,first_event_at,last_event_at,device_sequence',
+      'j-dummy,ZZZ999,ricardone,ANOMALIAS,ANOMALIAS,,,,0,INCOMPLETO,NO_EVALUABLE,,,,,,,2026-06-01T08:00:00.000Z,2026-06-01T09:00:00.000Z,',
+    ].join('\n')
+    const excelCsv = [
+      'external_operation_id,matched_journey_uids,plate_normalized,planta_normalized,movement_type,source_date,resolved_product,product_normalized,resolved_platform,platform_normalized,plataforma_original,truckflow_circuit_codes,resolved_circuit_family,resolved_executive_circuit_code,match_quality,route_quality,evidence_count,ctg,comprob,ingreso_id',
+      'CTG_0,,AAA111,TERMINAL_EMBARQUE,INGRESO,2026-06-01,ACEITE GIRASOL,ACEITE GIRASOL,ACEITE_OSL,ACEITE_OSL,ACEITE OSL,,LIQUIDO,SL1,NO_TRUCKFLOW_EVIDENCE,ROUTE_NO_EVALUABLE,0,0,10,1001',
+      'CTG_0,,BBB222,TERMINAL_EMBARQUE,INGRESO,2026-06-01,ACEITE GIRASOL,ACEITE GIRASOL,ACEITE_OSL,ACEITE_OSL,ACEITE OSL,,LIQUIDO,SL1,NO_TRUCKFLOW_EVIDENCE,ROUTE_NO_EVALUABLE,0,0,11,1002',
+    ].join('\n')
+    const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
+    const sl1 = index.entries.filter((e) => e.executiveCircuitCode === 'SL1' && e.journeyId.startsWith('excel:'))
+    expect(sl1).toHaveLength(2)
+    expect(new Set(sl1.map((e) => e.journeyId)).size).toBe(2)
   })
 })

@@ -143,6 +143,23 @@ describe('etlExternalNormalization', () => {
     )
     expect(withCtg.external_operation_id).toBe('CTG_ABC')
 
+    const ctgZero = normalizeMovimientoContrato(
+      {
+        ctg: '0',
+        comprob: '99',
+        patente: 'AA123BB',
+        producto: 'ACEITE',
+        plataforma: 'ACEITE OSL',
+        fecha_ing: '29/05/2026',
+        hora_ing: '10:00',
+        ingreso: '5001',
+      },
+      'f.xlsx',
+      '2026-05-29'
+    )
+    expect(ctgZero.external_operation_id).not.toBe('CTG_0')
+    expect(ctgZero.external_operation_id).toBe('COMPROB_99')
+
     const withComprob = normalizeMovimientoContrato(
       { comprob: '55', patente: 'AA123BB', producto: 'SOJA', fecha_ing: '29/05/2026', hora_ing: '10:00' },
       'f.xlsx',

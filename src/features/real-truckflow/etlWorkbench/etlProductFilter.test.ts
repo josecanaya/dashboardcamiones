@@ -109,6 +109,28 @@ describe('etlProductFilter', () => {
     expect(filterClassificationEntriesByJourneyIds(entries, plan.journeyIdsByProduct.get('SOJA'))).toHaveLength(2)
   })
 
+  it('ACEITE no cuenta journeys matriz R7 aunque el merge traiga producto líquido', () => {
+    const lookup = parseJourneyProductLookup('journey_uid,product_normalized\nj-r7,ACEITE GIRASOL')!
+    const entries = [
+      {
+        journeyId: 'j-r7',
+        plate: 'GFL685',
+        executiveCircuitCode: 'R7',
+        committeeReason: 'RUTA_RIC_SAN_LORENZO_DEDUCIDA',
+      },
+      {
+        journeyId: 'excel:CTG',
+        plate: 'GFL685',
+        executiveCircuitCode: 'SL2',
+        committeeReason: 'EXCEL_PLATAFORMA:ACEITE@ACEITE_PTO:EXTERNAL_MATCH_EXACT',
+      },
+    ] as Parameters<typeof buildExecutiveProductFilterPlan>[0]
+    const plan = buildExecutiveProductFilterPlan(entries, lookup)
+    expect(plan.counts.ACEITE).toBe(1)
+    expect(plan.journeyIdsByProduct.get('ACEITE')?.has('j-r7')).toBe(false)
+    expect(plan.journeyIdsByProduct.get('ACEITE')?.has('excel:CTG')).toBe(true)
+  })
+
   it('prioriza producto del committeeReason Excel sobre lookup erróneo (GIRASOL vs SOJA)', () => {
     const lookup = parseJourneyProductLookup('journey_uid,product_normalized\nj1,SOJA\nj2,SOJA')!
     const entries = [

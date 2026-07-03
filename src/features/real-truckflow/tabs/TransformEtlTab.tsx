@@ -13,6 +13,7 @@ import {
   buildSuspiciousDischargeWithoutBalanza,
   buildSuspiciousSlExitRicReturn,
   rebuildCircuitClassificationIndex,
+  filterEntriesByMinTruckflowCrossings,
   ANOMALY_LIST_MIN_EVENTS,
   CIRCUIT_PIE_COLORS,
   committeeDrilldownCsv,
@@ -38,7 +39,11 @@ import {
   executiveSampleProductLabel,
   resolveAnalysisProductLookup,
   PRODUCT_FILTER_ALL,
+  PRODUCT_FILTER_ACEITE,
 } from '../etlWorkbench/etlProductFilter'
+
+const ACEITE_TRUCKFLOW_VALIDATED_SAMPLE_FILTER = 'ACEITE_TRUCKFLOW_EVENT_COUNT_GTE_2'
+const ACEITE_MIN_TRUCKFLOW_CROSSINGS = 2
 
 const DEV_EXPORT_DEF: {
   csvKey: keyof EtlTransformOutput['csv']
@@ -648,6 +653,7 @@ export function TransformEtlTab() {
   const [expandedCrossTab, setExpandedCrossTab] = useState<CrossTabDrilldownKey | null>(null)
   const [expandedAnomalySequence, setExpandedAnomalySequence] = useState<string | null>(null)
   const [executiveProductFilter, setExecutiveProductFilter] = useState(PRODUCT_FILTER_ALL)
+  const [onlyTruckflowValidatedSample, setOnlyTruckflowValidatedSample] = useState(false)
   const [productFilterPending, startProductFilterTransition] = useTransition()
   const deferredProductFilter = useDeferredValue(executiveProductFilter)
 
@@ -691,12 +697,37 @@ export function TransformEtlTab() {
     [circuitClassIndex.entries, productLookup]
   )
 
-  const displayClassIndex = useMemo(() => {
-    if (!deferredProductFilter || deferredProductFilter === PRODUCT_FILTER_ALL) return circuitClassIndex
-    const ids = executiveProductFilterPlan?.journeyIdsByProduct.get(deferredProductFilter) ?? new Set<string>()
+  const aceiteValidatedSampleActive =
+    deferredProductFilter === PRODUCT_FILTER_ACEITE && onlyTruckflowValidatedSample
+
+  const aceiteExcelFirstClassIndex = useMemo(() => {
+    if (deferredProductFilter !== PRODUCT_FILTER_ACEITE || !executiveProductFilterPlan) return null
+    const ids = executiveProductFilterPlan.journeyIdsByProduct.get(PRODUCT_FILTER_ACEITE) ?? new Set<string>()
     const filteredEntries = filterClassificationEntriesByJourneyIds(circuitClassIndex.entries, ids)
     return rebuildCircuitClassificationIndex(filteredEntries)
-  }, [circuitClassIndex, deferredProductFilter, executiveProductFilterPlan])
+  }, [circuitClassIndex.entries, deferredProductFilter, executiveProductFilterPlan])
+
+  const displayClassIndex = useMemo(() => {
+    let baseIndex = circuitClassIndex
+    if (deferredProductFilter && deferredProductFilter !== PRODUCT_FILTER_ALL) {
+      const ids = executiveProductFilterPlan?.journeyIdsByProduct.get(deferredProductFilter) ?? new Set<string>()
+      const filteredEntries = filterClassificationEntriesByJourneyIds(circuitClassIndex.entries, ids)
+      baseIndex = rebuildCircuitClassificationIndex(filteredEntries)
+    }
+    if (aceiteValidatedSampleActive) {
+      const filteredEntries = filterEntriesByMinTruckflowCrossings(
+        baseIndex.entries,
+        ACEITE_MIN_TRUCKFLOW_CROSSINGS
+      )
+      return rebuildCircuitClassificationIndex(filteredEntries)
+    }
+    return baseIndex
+  }, [
+    circuitClassIndex,
+    deferredProductFilter,
+    executiveProductFilterPlan,
+    aceiteValidatedSampleActive,
+  ])
 
   const executiveProductFilterActive = deferredProductFilter !== PRODUCT_FILTER_ALL
   const productFilterIsStale = executiveProductFilter !== deferredProductFilter
@@ -794,12 +825,20 @@ export function TransformEtlTab() {
         anomalyReview,
         circuitBarSlices: displayClassIndex.circuitBarSlices,
       },
-      { includeJourneyRows }
+      {
+        includeJourneyRows,
+        sampleFilter: aceiteValidatedSampleActive ? ACEITE_TRUCKFLOW_VALIDATED_SAMPLE_FILTER : undefined,
+      }
     )
-    triggerBrowserCsvDownload(
-      includeJourneyRows ? 'conciliacion_comite_completa.csv' : 'conciliacion_comite_graficos.csv',
-      csv
-    )
+    const baseName =
+      aceiteValidatedSampleActive ?
+        includeJourneyRows ?
+          'conciliacion_comite_aceite_tf2_completa.csv'
+        : 'conciliacion_comite_aceite_tf2_graficos.csv'
+      : includeJourneyRows ?
+        'conciliacion_comite_completa.csv'
+      : 'conciliacion_comite_graficos.csv'
+    triggerBrowserCsvDownload(baseName, csv)
   }
 
   if (!wb) {
@@ -861,6 +900,7 @@ export function TransformEtlTab() {
             onChange={(product) => {
               startProductFilterTransition(() => {
                 setExecutiveProductFilter(product)
+                if (product !== PRODUCT_FILTER_ACEITE) setOnlyTruckflowValidatedSample(false)
                 setExpandedSlice(null)
                 setExpandedCrossTab(null)
                 setExpandedAnomalySequence(null)
@@ -868,6 +908,31 @@ export function TransformEtlTab() {
             }}
             className="rounded-2xl border border-violet-200 bg-violet-50/50 px-4 py-3"
           />
+          {deferredProductFilter === PRODUCT_FILTER_ACEITE ?
+            <div className="rounded-2xl border border-sky-200 bg-sky-50/60 px-4 py-3 text-sm text-sky-950">
+              <label className="flex cursor-pointer items-start gap-2">
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={onlyTruckflowValidatedSample}
+                  onChange={(e) => setOnlyTruckflowValidatedSample(e.target.checked)}
+                />
+                <span>
+                  <span className="font-semibold">Muestra validada Truckflow ≥2 cruces</span>
+                  <span className="mt-1 block text-xs text-sky-900/90">
+                    Excluye operaciones aceite Excel-only o con menos de 2 eventos Truckflow. Se usa como muestra
+                    real para presentación.
+                  </span>
+                </span>
+              </label>
+              {aceiteValidatedSampleActive && aceiteExcelFirstClassIndex ?
+                <p className="mt-2 text-xs font-medium text-sky-900">
+                  Muestra validada Aceite: {displayClassIndex.total.toLocaleString()} operaciones con ≥2 cruces
+                  Truckflow sobre {aceiteExcelFirstClassIndex.total.toLocaleString()} operaciones aceite Excel-first.
+                </p>
+              : null}
+            </div>
+          : null}
           {executiveProductFilterActive ?
             <p className="text-xs text-violet-800">
               Mostrando muestra filtrada por{' '}

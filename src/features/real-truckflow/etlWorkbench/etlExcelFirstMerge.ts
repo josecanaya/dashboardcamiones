@@ -169,6 +169,9 @@ export type ExcelOperationWithTruckflowRow = {
   tiempos_entre_pasos_match: string
   tiempos_entre_pasos_source_file: string
   sl_balanza_fuente: string
+  observaciones: string
+  observacion_calidad: string
+  ingreso_id: string
 }
 
 export type ExcelNoTruckflowDiagnosticRow = {
@@ -1951,6 +1954,9 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
       tiempos_entre_pasos_match: tepSl.tiempos_entre_pasos_match,
       tiempos_entre_pasos_source_file: tepSl.tiempos_entre_pasos_source_file,
       sl_balanza_fuente: tepSl.sl_balanza_fuente,
+      observaciones: mov.observaciones,
+      observacion_calidad: mov.observacion_calidad,
+      ingreso_id: mov.ingreso_id,
     }
     operations.push(row)
 
@@ -2270,6 +2276,9 @@ const EXCEL_OPS_HEADERS = [
   'tiempos_entre_pasos_match',
   'tiempos_entre_pasos_source_file',
   'sl_balanza_fuente',
+  'observaciones',
+  'observacion_calidad',
+  'ingreso_id',
 ] as const
 
 const NO_EVIDENCE_HEADERS = [

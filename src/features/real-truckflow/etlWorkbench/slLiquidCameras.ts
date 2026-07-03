@@ -57,7 +57,20 @@ export function normalizeAceitePlatformKey(
 export function excelObservacionesIndicateRenovaAceite(
   ...fields: (string | null | undefined)[]
 ): boolean {
-  const hay = fields.map((f) => String(f ?? '').toUpperCase()).join(' ')
+  return hasRenovaObservation(...fields)
+}
+
+/** RENOVA en observaciones Excel (case-insensitive, sin tildes). */
+export function hasRenovaObservation(...fields: (string | null | undefined)[]): boolean {
+  const hay = fields
+    .map((f) =>
+      String(f ?? '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toUpperCase()
+    )
+    .join(' ')
+    .replace(/[^A-Z0-9/\s-]/g, ' ')
   return /\bRENOVA\b/.test(hay)
 }
 

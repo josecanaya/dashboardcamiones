@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  hasRenovaObservation,
   inferAceiteExecutiveCircuitFromExcel,
   inferAceiteExecutiveCircuitFromPlatform,
 } from './slLiquidCameras'
@@ -15,6 +16,15 @@ describe('convención Excel plantas (aceite)', () => {
     expect(normalizePlant('SAN LORENZO').planta_normalized).toBe('TERMINAL_EMBARQUE')
     expect(normalizePlant('Planta San Lorenzo').planta_normalized).toBe('RICARDONE')
     expect(normalizePlant('TERMINAL DE EMBARQUE').planta_normalized).toBe('TERMINAL_EMBARQUE')
+  })
+})
+
+describe('hasRenovaObservation', () => {
+  it('detecta variantes de texto RENOVA', () => {
+    expect(hasRenovaObservation('RENOVA')).toBe(true)
+    expect(hasRenovaObservation('Renova / aceite')).toBe(true)
+    expect(hasRenovaObservation('OBS RENOVA')).toBe(true)
+    expect(hasRenovaObservation('sin marca')).toBe(false)
   })
 })
 
@@ -41,6 +51,33 @@ describe('inferAceiteExecutiveCircuitFromExcel', () => {
     expect(
       inferAceiteExecutiveCircuitFromExcel('', '', EXCEL_TERMINAL(), 'Descarga RENOVA sector', '')
     ).toBe('SL3')
+    expect(
+      inferAceiteExecutiveCircuitFromExcel('', '', EXCEL_TERMINAL(), 'Destino Renova', '')
+    ).toBe('SL3')
+  })
+
+  it('ACEITE_OSL + observación RENOVA permanece SL1', () => {
+    expect(
+      inferAceiteExecutiveCircuitFromExcel(
+        'ACEITE_OSL',
+        'ACEITE OSL',
+        EXCEL_TERMINAL(),
+        'RENOVA en obs',
+        ''
+      )
+    ).toBe('SL1')
+  })
+
+  it('ACEITE_PTO + observación RENOVA permanece SL2', () => {
+    expect(
+      inferAceiteExecutiveCircuitFromExcel(
+        'ACEITE_PTO',
+        'ACEITE PTO',
+        EXCEL_TERMINAL(),
+        'playa RENOVA',
+        ''
+      )
+    ).toBe('SL2')
   })
 
   it('plataforma vacía sin RENOVA no devuelve SL3', () => {

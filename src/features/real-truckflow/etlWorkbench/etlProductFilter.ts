@@ -1,7 +1,7 @@
 import type { CircuitClassificationEntry } from './etlCircuitClassificationIndex'
 import { parseExcelFirstByJourneyUid } from './etlCircuitClassificationIndex'
 import { parseCsvToRecords } from './etlCsvParse'
-import { isExcelLiquidProductName } from './slLiquidCameras'
+import { isAceiteExecutiveCircuitCode, isExcelLiquidProductName } from './slLiquidCameras'
 
 export type JourneyProductLookup = {
   byJourneyId: Map<string, string>
@@ -15,6 +15,8 @@ export const EXECUTIVE_SAMPLE_PRODUCTS = ['SOJA', 'GIRASOL', 'ACEITE'] as const
 
 export type ExecutiveSampleProduct = (typeof EXECUTIVE_SAMPLE_PRODUCTS)[number]
 
+export const PRODUCT_FILTER_ACEITE: ExecutiveSampleProduct = 'ACEITE'
+
 const EXECUTIVE_SAMPLE_PRODUCT_LABELS: Record<string, string> = {
   [PRODUCT_FILTER_ALL]: 'Todos',
   SOJA: 'Soja',
@@ -25,6 +27,21 @@ const EXECUTIVE_SAMPLE_PRODUCT_LABELS: Record<string, string> = {
 export function executiveSampleProductLabel(product: string): string {
   return EXECUTIVE_SAMPLE_PRODUCT_LABELS[product.toUpperCase()] ?? product
 }
+
+/** Filtro Aceite: no incluir R7/R5/R6 de matriz aunque el merge traiga producto líquido. */
+function entryBelongsToAceiteExecutiveView(
+  entry: CircuitClassificationEntry,
+  product: string
+): boolean {
+  if (!productMatchesExecutiveSampleFilter(product, 'ACEITE')) return false
+  if (entry.journeyId.startsWith('excel:')) return true
+  if (parseExcelProductFromCommitteeReason(entry.committeeReason ?? '')) return true
+  if (isAceiteExecutiveCircuitCode(entry.executiveCircuitCode)) return true
+  if (SOLID_ROUTE_EXECUTIVE_FOR_ACEITE_VIEW.has(entry.executiveCircuitCode)) return false
+  return true
+}
+
+const SOLID_ROUTE_EXECUTIVE_FOR_ACEITE_VIEW = new Set(['R7', 'R5', 'R6'])
 
 /** Coincide producto Excel con filtro de muestra (ACEITE = aceites y AC GIRASOL / girasol industrial). */
 export function productMatchesExecutiveSampleFilter(product: string, filter: string): boolean {
@@ -152,8 +169,13 @@ export function buildExecutiveProductFilterPlan(
     if (!product) continue
     for (const sample of EXECUTIVE_SAMPLE_PRODUCTS) {
       if (!productMatchesExecutiveSampleFilter(product, sample)) continue
-      counts[sample] = (counts[sample] ?? 0) + 1
-      journeyIdsByProduct.get(sample)!.add(entry.journeyId)
+      if (sample === 'ACEITE' && entryBelongsToAceiteExecutiveView(entry, product)) {
+        counts[sample] = (counts[sample] ?? 0) + 1
+        journeyIdsByProduct.get(sample)!.add(entry.journeyId)
+      } else if (sample !== 'ACEITE') {
+        counts[sample] = (counts[sample] ?? 0) + 1
+        journeyIdsByProduct.get(sample)!.add(entry.journeyId)
+      }
     }
   }
   return { counts, journeyIdsByProduct }
