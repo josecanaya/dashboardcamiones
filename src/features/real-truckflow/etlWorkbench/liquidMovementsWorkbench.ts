@@ -280,9 +280,21 @@ function excelOperationWindowMs(
   return { fromMs, toMs }
 }
 
+function buildEventsByPlate(allEvents: RawJourneyEventLike[]): Map<string, RawJourneyEventLike[]> {
+  const m = new Map<string, RawJourneyEventLike[]>()
+  for (const e of allEvents) {
+    const p = normalizePlateKey(e.normalizedPlate ?? e.truckPlate ?? '')
+    if (!p) continue
+    const arr = m.get(p) ?? []
+    arr.push(e)
+    m.set(p, arr)
+  }
+  return m
+}
+
 function eventsForLiquidAuditOperation(
   op: ExcelOperationWithTruckflowRow,
-  allEvents: RawJourneyEventLike[],
+  eventsByPlate: Map<string, RawJourneyEventLike[]>,
   journeyByUid: Map<string, ClassifiedJourneyForTiming>
 ): RawJourneyEventLike[] {
   const plate = normalizePlateKey(op.plate_normalized ?? '')
@@ -315,9 +327,8 @@ function eventsForLiquidAuditOperation(
       })
     }
   }
-  for (const e of allEvents) {
-    const p = normalizePlateKey(e.normalizedPlate ?? e.truckPlate ?? '')
-    if (plate && p === plate) push(e)
+  for (const e of eventsByPlate.get(plate) ?? []) {
+    push(e)
   }
   return out
 }
@@ -528,6 +539,8 @@ export function buildLiquidMovementsReport(input: {
         }))
       )
 
+  const eventsByPlate = buildEventsByPlate(events)
+
   const segmentsByOp = new Map<string, { segment_from: string; segment_to: string }[]>()
   for (const row of input.segmentRows) {
     const id = String(row.external_operation_id ?? '').trim()
@@ -555,7 +568,7 @@ export function buildLiquidMovementsReport(input: {
   }
 
   for (const op of input.operations) {
-    const opEvents = eventsForLiquidAuditOperation(op, events, journeyByUid)
+    const opEvents = eventsForLiquidAuditOperation(op, eventsByPlate, journeyByUid)
     const devices = journeyDevicesForOperation(op, journeyByUid)
     for (const e of opEvents) {
       const d = String(e.deviceCode ?? e.device_code ?? '').trim()
@@ -617,7 +630,7 @@ export function buildLiquidMovementsReport(input: {
     const id = String(op.external_operation_id ?? '')
     const circuit = primaryCircuit(op)
     const site = resolveLiquidAuditSite(op)
-    const opEvents = eventsForLiquidAuditOperation(op, events, journeyByUid)
+    const opEvents = eventsForLiquidAuditOperation(op, eventsByPlate, journeyByUid)
     const slRole = expectedS10Role(circuit)
     const s10Hit = s10HitsForOperation(op, opEvents, slRole)
     const ricHit = ricCalLiqHitsForOperation(op, opEvents)

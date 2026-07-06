@@ -141,7 +141,7 @@ export function MovimientosContratoPanel({ wb, compact }: { wb: WbSlice; compact
 
       {wb.transformBusy && wb.contractFirstProgress ?
         <div className="mt-3 rounded-lg border border-sky-300 bg-sky-50 px-3 py-2 text-xs text-sky-950">
-          <p className="font-semibold">Paso 3 en curso</p>
+          <p className="font-semibold">Paso 2 en curso (Excel → Truckflow)</p>
           <p className="mt-1">
             {wb.contractFirstProgress.label} —{' '}
             {wb.contractFirstProgress.total > 0 ?

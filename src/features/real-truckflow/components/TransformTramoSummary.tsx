@@ -26,48 +26,50 @@ export function TransformTramoSummary({
         {tramoCompleted >= 3 ?
           'Pasos 1–3 completos'
         : tramoCompleted >= 2 ?
-          'Pasos 1 y 2 listos'
-        : 'Paso 1 listo'}{' '}
+          'Pasos 1–2 listos'
+        : 'Paso 1 (Excel) listo'}{' '}
         — seguí en esta pantalla.
       </p>
 
       <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {tramoCompleted >= 1 && s3 ?
+        {tramoCompleted >= 1 && hasXlsx && mov ?
           <li className="rounded-lg bg-white/80 px-3 py-2 text-xs">
             <span className="font-semibold text-slate-700">Paso 1</span>
             <div className="mt-0.5">
-              {s3.journeysValidFront?.toLocaleString() ?? '—'} journeys ·{' '}
-              {s3.classifiedCircuitsOperational?.toLocaleString() ?? '—'} clasificados
+              Excel: {mov.normalizedCount ?? '—'} filas
+              {mov.excelFirst && typeof mov.excelFirst === 'object' && 'unique_plates' in mov.excelFirst ?
+                ` · ${String((mov.excelFirst as { unique_plates?: number }).unique_plates ?? '—')} patentes`
+              : null}
             </div>
           </li>
         : null}
-        {tramoCompleted >= 2 && exec ?
+        {tramoCompleted >= 2 && mov?.merge && Object.keys(mov.merge).length > 0 ?
           <li className="rounded-lg bg-white/80 px-3 py-2 text-xs">
             <span className="font-semibold text-slate-700">Paso 2</span>
             <div className="mt-0.5">
-              Comité: {exec.committeeCompletos ?? '—'} completos · {exec.committeeVariaciones ?? '—'} variaciones ·{' '}
-              {exec.committeeAnomalias ?? '—'} anomalías
+              Cruce Truckflow · {mov.truckflowJourneys ?? '—'} journeys acotados · merge listo
+            </div>
+            {s3 ?
+              <div className="text-slate-600">
+                {s3.journeysValidFront?.toLocaleString() ?? '—'} journeys reconstruidos
+              </div>
+            : null}
+          </li>
+        : null}
+        {tramoCompleted >= 3 && exec ?
+          <li className="rounded-lg bg-white/80 px-3 py-2 text-xs">
+            <span className="font-semibold text-slate-700">Paso 3</span>
+            <div className="mt-0.5">
+              Comité: {exec.committeeCompletos ?? '—'} completos · {exec.committeeVariaciones ?? '—'} variaciones
             </div>
             {coh?.final_circuits_count != null ?
               <div className="text-slate-600">{coh.final_circuits_count} circuitos finales</div>
             : null}
           </li>
         : null}
-        {tramoCompleted >= 3 && mov?.enabled ?
-          <li className="rounded-lg bg-white/80 px-3 py-2 text-xs">
-            <span className="font-semibold text-slate-700">Paso 3</span>
-            <div className="mt-0.5">
-              Excel: {mov.normalizedCount ?? '—'} movimientos · merge listo
-            </div>
-          </li>
-        : tramoCompleted >= 2 && !hasXlsx ?
-          <li className="rounded-lg border border-dashed border-slate-300 bg-white/60 px-3 py-2 text-xs text-slate-600">
-            Paso 3 omitido (sin XLSX). Cargá movimientos y ejecutá paso 3 si lo necesitás.
-          </li>
-        : null}
       </ul>
 
-      {tramoCompleted >= 2 && onOpenTransformTab ?
+      {tramoCompleted >= 3 && onOpenTransformTab ?
         <button
           type="button"
           onClick={onOpenTransformTab}
@@ -75,12 +77,6 @@ export function TransformTramoSummary({
         >
           Ver tablero completo en Transform ETL (opcional)
         </button>
-      : null}
-
-      {tramoCompleted >= 2 ?
-        <p className="text-xs text-slate-600">
-          Paso 4 (KPI tiempos): pestaña <strong>KPI Tiempos</strong> → Procesar KPI tiempos.
-        </p>
       : null}
     </div>
   )

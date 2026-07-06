@@ -102,7 +102,7 @@ type Ctx = {
   transformActiveTramo: TransformTramoId | null
   transformTramoCompleted: 0 | 1 | 2 | 3
   transformRunAllInProgress: boolean
-  /** Último evento de progreso del Paso 3 (Contract-first). */
+  /** Último evento de progreso del Paso 1 (Excel ↔ Truckflow). */
   contractFirstProgress: ContractFirstProgressEvent | null
   runTransformTramo: (
     tramo: TransformTramoId,
@@ -498,17 +498,17 @@ function buildApiJourneyStatsFromParsedFiles(
 
   const runTransformTramo = useCallback(
     async (tramo: TransformTramoId, options?: { keepGlobalBusy?: boolean }) => {
-      if (!events.length && !alerts.length) {
-        setTransformError('Cargá al menos un JSON de eventos o alertas.')
+      if (tramo === 1 && !movimientosContratoFiles.length) {
+        setTransformError('Cargá XLSX de Movimientos por Contrato para el paso 1.')
         return null
       }
-      if (tramo === 3 && !movimientosContratoFiles.length) {
-        setTransformError('Cargá XLSX de Movimientos por Contrato para el paso 3.')
+      if (tramo !== 1 && !events.length && !alerts.length) {
+        setTransformError('Cargá al menos un JSON de eventos o alertas.')
         return null
       }
       if (!options?.keepGlobalBusy) setTransformBusy(true)
       setTransformActiveTramo(tramo)
-      if (tramo === 3) setContractFirstProgress(null)
+      if (tramo === 2) setContractFirstProgress(null)
       setTransformError(null)
       setTransformTramoStatus((s) => ({ ...s, [tramo]: 'running' }))
       try {
@@ -539,7 +539,11 @@ function buildApiJourneyStatsFromParsedFiles(
   )
 
   const runTransform = useCallback(async () => {
-    if (!events.length && !alerts.length) {
+    if (movimientosContratoFiles.length && !events.length && !alerts.length) {
+      setTransformError('Cargá JSON Truckflow además del Excel para procesar todo.')
+      return null
+    }
+    if (!movimientosContratoFiles.length && !events.length && !alerts.length) {
       setTransformError('Cargá al menos un JSON de eventos o alertas.')
       return null
     }
@@ -553,7 +557,7 @@ function buildApiJourneyStatsFromParsedFiles(
     try {
       let last: EtlTransformOutput | null = null
       const steps: TransformTramoId[] =
-        movimientosContratoFiles.length ? [1, 2, 3] : [1, 2]
+        movimientosContratoFiles.length ? [1, 2, 3] : [2, 3]
       for (const tramo of steps) {
         last = await runTransformTramo(tramo, { keepGlobalBusy: true })
         if (!last) break

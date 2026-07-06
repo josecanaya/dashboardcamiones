@@ -178,14 +178,14 @@ describe('etlExternalNormalization', () => {
 })
 
 describe('mergeTruckflowWithMovimientos', () => {
-  it('MATCH_EXACT con patente y ventana', () => {
-    const res = mergeTruckflowWithMovimientos([journey({})], [movimiento({})])
+  it('MATCH_EXACT con patente y ventana', async () => {
+    const res = await mergeTruckflowWithMovimientos([journey({})], [movimiento({})])
     expect(['MATCH_EXACT', 'MATCH_EXCEL_ANCHOR']).toContain(res.merged[0]!.merge_status)
     expect(res.merged[0]!.product_normalized).toBe('SOJA')
   })
 
-  it('MATCH_PROBABLE sin plataforma/planta extra', () => {
-    const res = mergeTruckflowWithMovimientos(
+  it('MATCH_PROBABLE sin plataforma/planta extra', async () => {
+    const res = await mergeTruckflowWithMovimientos(
       [journey({ plant_scope: 'UNKNOWN' })],
       [movimiento({ platform_normalized: '', planta_normalized: '' })],
       { minExactConfidence: 0.95 }
@@ -193,8 +193,8 @@ describe('mergeTruckflowWithMovimientos', () => {
     expect(['MATCH_PROBABLE', 'MATCH_EXACT', 'MATCH_EXCEL_ANCHOR']).toContain(res.merged[0]!.merge_status)
   })
 
-  it('MATCH_AMBIGUOUS con varios candidatos', () => {
-    const res = mergeTruckflowWithMovimientos(
+  it('MATCH_AMBIGUOUS con varios candidatos', async () => {
+    const res = await mergeTruckflowWithMovimientos(
       [journey({})],
       [
         movimiento({ external_operation_id: 'CTG_1', ctg: '1' }),
@@ -206,8 +206,8 @@ describe('mergeTruckflowWithMovimientos', () => {
     )
   })
 
-  it('NO_EXTERNAL_MATCH', () => {
-    const res = mergeTruckflowWithMovimientos(
+  it('NO_EXTERNAL_MATCH', async () => {
+    const res = await mergeTruckflowWithMovimientos(
       [journey({ plate_normalized: 'ZZ999ZZ' })],
       [movimiento({ plate_normalized: 'AA123BB' })],
       { enrichUnmatchedByPlateDay: false }
@@ -215,8 +215,8 @@ describe('mergeTruckflowWithMovimientos', () => {
     expect(res.merged[0]!.merge_status).toBe('NO_EXTERNAL_MATCH')
   })
 
-  it('enriquece por patente+día alineado a salida Excel (sin descarga cámara)', () => {
-    const res = mergeTruckflowWithMovimientos(
+  it('enriquece por patente+día alineado a salida Excel (sin descarga cámara)', async () => {
+    const res = await mergeTruckflowWithMovimientos(
       [
         journey({
           executive_status: 'NO_DIFERENCIABLE',
@@ -242,8 +242,8 @@ describe('mergeTruckflowWithMovimientos', () => {
     expect(res.merged[0]!.missing_camera_discharge).toBe(true)
   })
 
-  it('misma patente dos productos mismo día — elige por hora salida Excel', () => {
-    const res = mergeTruckflowWithMovimientos(
+  it('misma patente dos productos mismo día — elige por hora salida Excel', async () => {
+    const res = await mergeTruckflowWithMovimientos(
       [
         journey({
           journey_uid: 'j-am',
@@ -295,8 +295,8 @@ describe('mergeTruckflowWithMovimientos', () => {
     expect(pm?.product_normalized).toBe('GIRASOL')
   })
 
-  it('anomalía con circuito Excel queda analysis_ready', () => {
-    const res = mergeTruckflowWithMovimientos(
+  it('anomalía con circuito Excel queda analysis_ready', async () => {
+    const res = await mergeTruckflowWithMovimientos(
       [
         journey({
           journey_uid: 'j-anom',
@@ -329,8 +329,8 @@ describe('mergeTruckflowWithMovimientos', () => {
     expect(clean.analysis_ready).toBe(true)
   })
 
-  it('NO_TRUCKFLOW_MATCH', () => {
-    const res = mergeTruckflowWithMovimientos([journey({})], [
+  it('NO_TRUCKFLOW_MATCH', async () => {
+    const res = await mergeTruckflowWithMovimientos([journey({})], [
       movimiento({ plate_normalized: 'XX000XX', ctg: '77' }),
     ])
     expect(res.movimientosWithoutMatch.length).toBe(1)
@@ -338,23 +338,24 @@ describe('mergeTruckflowWithMovimientos', () => {
 })
 
 describe('analysis_ready y scatter', () => {
-  it('analysis_ready true con producto y merge confiable', () => {
-    const res = mergeTruckflowWithMovimientos([journey({})], [movimiento({})])
+  it('analysis_ready true con producto y merge confiable', async () => {
+    const res = await mergeTruckflowWithMovimientos([journey({})], [movimiento({})])
     const clean = buildCleanJourneysForAnalysis(res.merged)
     expect(clean[0]!.analysis_ready).toBe(true)
   })
 
-  it('analysis_ready false sin producto', () => {
-    const row = mergeTruckflowWithMovimientos(
+  it('analysis_ready false sin producto', async () => {
+    const row = (
+      await mergeTruckflowWithMovimientos(
       [journey({})],
       [movimiento({ product_normalized: '' })]
-    ).merged[0]!
+    )).merged[0]!
     const ev = evaluateAnalysisReady(row)
     expect(ev.analysis_ready).toBe(false)
     expect(ev.analysis_exclusion_reason).toBe('NO_PRODUCT')
   })
 
-  it('outlier por encima de p95', () => {
+  it('outlier por encima de p95', async () => {
     const segments = Array.from({ length: 8 }, (_, i) => ({
       journey_uid: `j${i}`,
       plate_normalized: 'AA123BB',
@@ -373,11 +374,17 @@ describe('analysis_ready y scatter', () => {
       valid_detail: 'COMPLETO',
     }))
     const merged = new Map(
-      segments.map((s) => [
-        s.journey_uid,
-        mergeTruckflowWithMovimientos([journey({ journey_uid: s.journey_uid })], [movimiento({})])
-          .merged[0]!,
-      ])
+      await Promise.all(
+        segments.map(async (s) => [
+          s.journey_uid,
+          (
+            await mergeTruckflowWithMovimientos(
+              [journey({ journey_uid: s.journey_uid })],
+              [movimiento({})]
+            )
+          ).merged[0]!,
+        ] as const)
+      )
     )
     const clean = new Map(
       [...merged.entries()].map(([uid, m]) => [

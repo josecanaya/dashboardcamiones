@@ -1,0 +1,16 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`etlGoldenMaster > congela conteos y fingerprint ejecutivo en fixture S 1`] = `
+{
+  "anomalos": 0,
+  "committeeAnomalias": 8,
+  "committeeCompletos": 5,
+  "committeeVariaciones": 0,
+  "completos": 0,
+  "deducidos": 0,
+  "executiveFingerprint": "8d6ebe02f8d6a3c43522062841fed64f578a46ebc2883881150afc9d45367027",
+  "finalCircuitRowLines": 5,
+  "incompletos": 5,
+  "noEvaluables": 0,
+}
+`;

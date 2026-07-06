@@ -1,0 +1,76 @@
+{
+  "ranAt": "2026-07-06T18:35:24.864Z",
+  "eventsFile": "public/mock-data/realdata/journey-events_2026-05-04_2026-05-10.json",
+  "eventCount": 3436,
+  "finalCircuitRows": 661,
+  "executive": {
+    "periodStart": "2026-05-04",
+    "periodEnd": "2026-05-06",
+    "eventCount": 3436,
+    "alertCount": 0,
+    "completos": 0,
+    "incompletos": 568,
+    "anomalos": 0,
+    "deducidos": 93,
+    "validos": 569,
+    "probables": 0,
+    "journeysMergedApplied": 0,
+    "noEvaluables": 0,
+    "validComplete": 0,
+    "validDeduced": 72,
+    "lprAlerts": 0,
+    "operationalAlerts": 0,
+    "operationalAlertsCrossed": 0,
+    "journeysWithInvalidRoute": 0,
+    "journeysWithInvalidJourneyStart": 0,
+    "incompletosWithOperationalAlert": 0,
+    "anomalosWithOperationalAlert": 0,
+    "exportReady": true,
+    "slFrontEvents": 3195,
+    "slJourneysWithCorroboration": 971,
+    "slJourneysExecutiveReinforced": 55,
+    "committeeCompletos": 569,
+    "committeeVariaciones": 1,
+    "committeeAnomalias": 1697
+  },
+  "totalWallMs": 4384,
+  "spans": [
+    {
+      "name": "plateRegistryFilter",
+      "durationMs": 0
+    },
+    {
+      "name": "splitFrontRear",
+      "durationMs": 10
+    },
+    {
+      "name": "cameraAggregates",
+      "durationMs": 387
+    },
+    {
+      "name": "reconstructJourneys",
+      "durationMs": 195
+    },
+    {
+      "name": "executiveJourneyMerge",
+      "durationMs": 2957
+    },
+    {
+      "name": "operationalAlertsMatch",
+      "durationMs": 13
+    },
+    {
+      "name": "classifyCircuits",
+      "durationMs": 770
+    },
+    {
+      "name": "lprMerge",
+      "durationMs": 21
+    },
+    {
+      "name": "exportCsv",
+      "durationMs": 28
+    }
+  ],
+  "heapMb": 104.1
+}

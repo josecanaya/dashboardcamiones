@@ -189,7 +189,7 @@ type MatchCandidate = {
 
 function findBestJourneyMatch(
   alert: RealAlertDto,
-  journeys: ReconstructedRealJourney[],
+  journeysByPlate: Map<string, ReconstructedRealJourney[]>,
   journeyMetaByUid: Map<string, JourneyMetaForAlertMatch>,
   eventsByJourney: Map<string, RealJourneyEventDto[]>,
   read: {
@@ -222,11 +222,19 @@ function findBestJourneyMatch(
     })
   }
 
-  for (const j of journeys) {
+  if (!alertPlate) {
+    if (!candidates.length) {
+      return { journeyUid: '', strategy: 'none', confidence: 'none', pri: 99 }
+    }
+    candidates.sort((a, b) => a.pri - b.pri)
+    return candidates[0]!
+  }
+
+  for (const j of journeysByPlate.get(alertPlate) ?? []) {
     const meta = journeyMetaByUid.get(j.journeyUid)
     if (!meta) continue
     const jPlate = normPlate(meta.normalizedPlate || j.normalizedPlate || j.plate)
-    if (!alertPlate || !jPlate || alertPlate !== jPlate) continue
+    if (!jPlate || alertPlate !== jPlate) continue
 
     const { start, end } = journeyWindowMs(meta.startedAt, meta.endedAt)
     const inWindow = Number.isFinite(taMs) && Number.isFinite(start) && Number.isFinite(end) && taMs >= start && taMs <= end
@@ -355,13 +363,24 @@ export function accumulateOperationalAlertsMatch(
   const alertRows: EnrichedOperationalAlertRow[] = []
   let operationalAlertsCrossed = 0
 
+  const journeysByPlate = new Map<string, ReconstructedRealJourney[]>()
+  for (const j of input.journeys) {
+    const meta = input.journeyMetaByUid.get(j.journeyUid)
+    if (!meta) continue
+    const p = normPlate(meta.normalizedPlate || j.normalizedPlate || j.plate)
+    if (!p) continue
+    const arr = journeysByPlate.get(p) ?? []
+    arr.push(j)
+    journeysByPlate.set(p, arr)
+  }
+
   for (const alert of input.operationalAlerts) {
     const code = input.read.alertCode(alert)
     if (!isOperationalAlertCode(code)) continue
 
     const match = findBestJourneyMatch(
       alert,
-      input.journeys,
+      journeysByPlate,
       input.journeyMetaByUid,
       input.eventsByJourney,
       input.read

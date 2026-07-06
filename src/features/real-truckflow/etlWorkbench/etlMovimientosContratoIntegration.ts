@@ -3,6 +3,7 @@
  * Orden actual: clasificación Workbench → esta integración (no Excel-first global aún).
  */
 import { recordsToCsv } from './etlCsv'
+import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 import type { ClassifiedJourneyForTiming, SegmentTimingIndex } from './etlSegmentTiming'
 import { buildSegmentTimingIndexFromExcelFirstSegments } from './etlSegmentTiming'
 import { extractSegmentLegsWithTimes } from './etlSegmentTiming'
@@ -13,6 +14,12 @@ import {
   summarizeMovimientosContratoLoad,
   type MovimientosContratoFileInput,
 } from './etlExternalMovimientosContrato'
+import type { ExternalMovimientoContratoNormalized } from './etlExternalMovimientosContrato'
+import {
+  filterFinalCsvRowsByJourneyUids,
+  filterJourneysForExcelSearch,
+  filterRawTruckflowEventsForExcel,
+} from './etlExcelDrivenTruckflow'
 import { mergeTruckflowWithMovimientos } from './etlTruckflowMovimientosMerge'
 import {
   excelFirstByProductPlatformCsv,
@@ -71,7 +78,7 @@ import {
   enrichMovimientosWithTiemposEntrePasos,
   loadTiemposEntrePasosFiles,
 } from './etlTiemposEntrePasos'
-import { createPlateMatchCache } from './etlPlateMatchCache'
+import { createPlateMatchCache, plateMatchCacheSize } from './etlPlateMatchCache'
 import {
   countUniqueNormalizedPlates,
   emitContractFirstProgress,
@@ -79,6 +86,7 @@ import {
   type ContractFirstProgressCallback,
   type ContractFirstStageTiming,
 } from './etlContractFirstProgress'
+import type { EtlProfiler } from './etlProfile'
 
 export type MovimientosContratoIntegrationInput = {
   finalCsvRows: Record<string, unknown>[]
@@ -86,11 +94,16 @@ export type MovimientosContratoIntegrationInput = {
   classifiedJourneys: ClassifiedJourneyForTiming[]
   rawTruckflowEvents?: import('./auditSlCameraExcelCoverage').RawJourneyEventLike[]
   movimientosFiles: MovimientosContratoFileInput[]
+  /** Si viene del paso 1 UI, no se vuelve a leer el XLSX. */
+  preNormalizedMovimientos?: ExternalMovimientoContratoNormalized[]
+  /** Acota journeys/eventos Truckflow a patentes del Excel (default true). */
+  excelDrivenTruckflowFilter?: boolean
   tiemposEntrePasosFiles?: import('./etlTiemposEntrePasos').TiemposEntrePasosFileInput[]
   /** Si true, no arma scatter/KPI tiempos (tramo 4 en pestaña KPI Tiempos). */
   skipKpiTiemposArtifacts?: boolean
   /** Telemetría opcional Paso 3 (UI / consola). */
   onProgress?: ContractFirstProgressCallback
+  profiler?: EtlProfiler
 }
 
 export type MovimientosContratoIntegrationOutput = {
@@ -121,31 +134,51 @@ export async function runMovimientosContratoIntegration(
   const stageTimings: ContractFirstStageTiming[] = []
   const runStartedAt = performance.now()
   const onProgress = input.onProgress
+  const profiler = input.profiler
   const plateMatchCache = createPlateMatchCache()
   const fuzzyCandidatesByPlate = new Map<string, import('./etlTruckflowMovimientosMerge').TruckflowJourneyForMerge[]>()
 
-  const { raw, warnings: loadWarnings, readMeta } = loadMovimientosContratoFiles(input.movimientosFiles)
-  if (readMeta.length) {
-    for (const m of readMeta) {
-      logs.push(
-        `Lectura ${m.sheetName || '?'}: ${m.rowCount} filas, cabecera fila ${m.headerRow}, cols=${m.headers.slice(0, 6).join(', ')}`
-      )
+  let profileAt = performance.now()
+  let normalized: ExternalMovimientoContratoNormalized[]
+  let loadWarnings: string[] = []
+  let readMeta: { sheetName?: string; rowCount: number; headerRow: number; headers: string[] }[] = []
+
+  if (input.preNormalizedMovimientos?.length) {
+    normalized = input.preNormalizedMovimientos
+    if (profiler?.enabled) profiler.mark('normalizeRows', 0)
+  } else {
+    const loaded = loadMovimientosContratoFiles(input.movimientosFiles)
+    const { raw } = loaded
+    loadWarnings = loaded.warnings
+    readMeta = loaded.readMeta
+    if (profiler?.enabled) profiler.mark('readExcel', performance.now() - profileAt)
+    profileAt = performance.now()
+    if (readMeta.length) {
+      for (const m of readMeta) {
+        logs.push(
+          `Lectura ${m.sheetName || '?'}: ${m.rowCount} filas, cabecera fila ${m.headerRow}, cols=${m.headers.slice(0, 6).join(', ')}`
+        )
+      }
     }
+    const normalizedBase = normalizeMovimientosContratoBatch(raw)
+    const tepLoad =
+      input.tiemposEntrePasosFiles?.length ?
+        loadTiemposEntrePasosFiles(input.tiemposEntrePasosFiles)
+      : { rows: [], warnings: [] as string[] }
+    for (const w of tepLoad.warnings) logs.push(w)
+    if (tepLoad.rows.length) {
+      logs.push(`TiemposEntrePasos filas: ${tepLoad.rows.length}`)
+    }
+    normalized = enrichMovimientosWithTiemposEntrePasos(normalizedBase, tepLoad.rows)
+    if (profiler?.enabled) profiler.mark('normalizeRows', performance.now() - profileAt)
+    profileAt = performance.now()
   }
-  const normalizedBase = normalizeMovimientosContratoBatch(raw)
-  const tepLoad =
-    input.tiemposEntrePasosFiles?.length ?
-      loadTiemposEntrePasosFiles(input.tiemposEntrePasosFiles)
-    : { rows: [], warnings: [] as string[] }
-  for (const w of tepLoad.warnings) logs.push(w)
-  if (tepLoad.rows.length) {
-    logs.push(`TiemposEntrePasos filas: ${tepLoad.rows.length}`)
-    logs.push(
-      `TiemposEntrePasos con balanza entrada: ${tepLoad.rows.filter((r) => r.balanza_entrada_at).length}`
-    )
-  }
-  const normalized = enrichMovimientosWithTiemposEntrePasos(normalizedBase, tepLoad.rows)
-  const movStats = summarizeMovimientosContratoLoad(input.movimientosFiles, normalized, loadWarnings)
+
+  const movStats = summarizeMovimientosContratoLoad(
+    input.movimientosFiles,
+    normalized,
+    loadWarnings
+  )
   const excelUniquePlates = countUniqueNormalizedPlates(normalized.map((m) => m.plate_normalized))
   console.info('[CONTRACT_FIRST_PASO3] inicio', {
     excelRows: normalized.length,
@@ -172,7 +205,24 @@ export async function runMovimientosContratoIntegration(
     { classifiedJourneys: input.classifiedJourneys.length, finalRows: input.finalCsvRows.length }
   )
   stageTimings.push(truckflowJourneysStage.timing)
-  const truckflowJourneys = truckflowJourneysStage.result
+  let truckflowJourneys = truckflowJourneysStage.result
+  const excelFilter = input.excelDrivenTruckflowFilter !== false
+  let finalCsvRowsForMerge = input.finalCsvRows
+  let rawEventsForMerge = input.rawTruckflowEvents
+
+  if (excelFilter) {
+    const beforeJ = truckflowJourneys.length
+    truckflowJourneys = filterJourneysForExcelSearch(truckflowJourneys, normalized)
+    const journeyUids = new Set(truckflowJourneys.map((j) => j.journey_uid))
+    finalCsvRowsForMerge = filterFinalCsvRowsByJourneyUids(input.finalCsvRows, journeyUids)
+    if (rawEventsForMerge?.length) {
+      rawEventsForMerge = filterRawTruckflowEventsForExcel(rawEventsForMerge, normalized, journeyUids)
+    }
+    logs.push(
+      `Búsqueda acotada a Excel: ${truckflowJourneys.length} journeys Truckflow (antes ${beforeJ}), ${finalCsvRowsForMerge.length} filas prep`
+    )
+  }
+
   const truckflowUniquePlates = countUniqueNormalizedPlates(truckflowJourneys.map((j) => j.plate_normalized))
   logs.push(`Journeys Truckflow para merge: ${truckflowJourneys.length} (CSV final: ${input.finalCsvRows.length})`)
   logs.push(`Journeys Truckflow con patente: ${truckflowJourneys.filter((j) => j.plate_normalized).length}`)
@@ -231,14 +281,14 @@ export async function runMovimientosContratoIntegration(
     'Merge journey ↔ Excel (ancla + fuzzy)',
     runStartedAt,
     onProgress,
-    () =>
+    async () =>
       mergeTruckflowWithMovimientos(truckflowJourneys, normalized, {
         plateMatchCache,
       }),
     {
       excelRows: normalized.length,
       journeys: truckflowJourneys.length,
-      complexity: 'O(mov×journey) en ancla Excel; fuzzy con cache OCR',
+      complexity: 'O(mov×journey_len_bucket) ancla Excel; fuzzy por longitud patente',
     }
   )
   stageTimings.push(mergeStage.timing)
@@ -324,7 +374,7 @@ export async function runMovimientosContratoIntegration(
       no_truckflow_match: mergeResult.summary.no_truckflow_match,
       excel_with_evidence: excelFirstResult.summary.total_with_truckflow_evidence,
       excel_without_evidence: excelFirstResult.summary.total_without_truckflow_evidence,
-      ocrCacheEntries: plateMatchCache.size,
+      ocrCacheEntries: plateMatchCacheSize(plateMatchCache),
       fuzzyPlateMemoSize: fuzzyCandidatesByPlate.size,
       ...excelFirstResult.discardCounters,
     },
@@ -368,7 +418,7 @@ export async function runMovimientosContratoIntegration(
     operations: excelFirstResult.operations,
     segmentRows: excelFirstResult.segmentRows,
     classifiedJourneys: input.classifiedJourneys,
-    rawEvents: input.rawTruckflowEvents,
+    rawEvents: rawEventsForMerge,
   })
   logs.push(formatLiquidMovementsLog(liquidReport.summary))
 
@@ -433,7 +483,8 @@ export async function runMovimientosContratoIntegration(
     'Generar CSV de conciliación',
     runStartedAt,
     onProgress,
-    () => {
+    async () => {
+      await yieldToBrowser()
       const csv: Record<string, string> = {
     external_movimientos_contrato_normalized: externalMovimientosNormalizedCsv(normalized),
     truckflow_journeys_for_merge: truckflowJourneysForMergeCsv(truckflowJourneys),
@@ -527,6 +578,14 @@ export async function runMovimientosContratoIntegration(
   logs.push(`Duración total Paso 3 (ms): ${totalMs}`)
   for (const t of stageTimings) {
     logs.push(`  etapa ${t.step}: ${t.durationMs}ms`)
+    if (!profiler?.enabled) continue
+    const profileKey =
+      t.step === 'merge_truckflow_movimientos' ? 'mergeTruckflow'
+      : t.step === 'merge_excel_first_evidence' ? 'mergeExcelFirst'
+      : t.step === 'export_csv' ? 'exportCsv'
+      : t.step === 'build_truckflow_journeys' || t.step === 'build_segments' ? 'buildIndexes'
+      : t.step
+    profiler.mark(profileKey, t.durationMs)
   }
 
   return {

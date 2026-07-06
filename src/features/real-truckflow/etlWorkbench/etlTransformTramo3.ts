@@ -4,11 +4,14 @@ import type { ClassifiedJourneyForTiming } from './etlSegmentTiming'
 import type { KpiTiemposBuildInput } from './etlKpiTiemposBuild'
 import { runMovimientosContratoIntegration } from './etlMovimientosContratoIntegration'
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
+import type { RawJourneyEventLike } from './auditSlCameraExcelCoverage'
 
 export type Tramo2PrepForMovimientos = {
   finalCsvRows: Record<string, unknown>[]
   classifiedForSegmentTiming: ClassifiedJourneyForTiming[]
   journeyTimesByUid: [string, { start: string; end: string }][]
+  /** Eventos frontales operativos (mismo subconjunto que merge en tramo 2). Evita O(ops×eventos) en paso 3. */
+  rawTruckflowEvents: RawJourneyEventLike[]
 }
 
 export async function runMovimientosContratoTramo3(
@@ -25,15 +28,7 @@ export async function runMovimientosContratoTramo3(
     finalCsvRows: prep.finalCsvRows,
     journeyTimesByUid,
     classifiedJourneys: prep.classifiedForSegmentTiming,
-    rawTruckflowEvents: inp.events?.map((e) => ({
-      journeyUid: e.journeyUid,
-      truckPlate: e.truckPlate,
-      normalizedPlate: e.normalizedPlate,
-      deviceCode: e.deviceCode,
-      sectorCode: e.sectorCode,
-      occurredAt: e.occurredAt,
-      createdAt: e.createdAt,
-    })),
+    rawTruckflowEvents: prep.rawTruckflowEvents,
     movimientosFiles: inp.movimientosContratoFiles,
     tiemposEntrePasosFiles: inp.tiemposEntrePasosFiles,
     skipKpiTiemposArtifacts: true,

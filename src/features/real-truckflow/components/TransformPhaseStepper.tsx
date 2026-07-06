@@ -3,18 +3,18 @@ import type { TransformTramoId, TransformTramoStatus } from '../etlWorkbench/etl
 const TRAMO_META: { id: TransformTramoId; title: string; hint: string }[] = [
   {
     id: 1,
-    title: 'Journeys y calidad',
-    hint: 'Limpieza front/rear y reconstrucción de recorridos.',
+    title: 'Limpieza Excel',
+    hint: 'Solo XLSX: patente, producto, plataforma, horarios. Sin Truckflow.',
   },
   {
     id: 2,
-    title: 'Circuitos y comité',
-    hint: 'Merge, matriz comité, LPR y circuitos finales.',
+    title: 'Buscar en Truckflow',
+    hint: 'Cruce por las patentes del Excel (JSON API). Ignora journeys irrelevantes.',
   },
   {
     id: 3,
-    title: 'Movimientos por contrato',
-    hint: 'Cruce Excel-first (requiere XLSX en paso 0).',
+    title: 'Circuitos y comité',
+    hint: 'Matriz y tramos sobre el merge ya hecho.',
   },
 ]
 
@@ -59,19 +59,25 @@ export function TransformPhaseStepper({
   onRunTramo,
   onRunAll,
 }: Props) {
-  const canRun2 = tramoCompleted >= 1
-  const canRun3 = tramoCompleted >= 2 && hasXlsx
+  const canRun1 = hasXlsx
+  const canRun2 = hasXlsx ? tramoCompleted >= 1 : true
+  const canRun3 = tramoCompleted >= 2
+
   const nextSuggested: TransformTramoId | null =
-    tramoCompleted < 1 ? 1
+    hasXlsx ?
+      tramoCompleted < 1 ? 1
+      : tramoCompleted < 2 ? 2
+      : tramoCompleted < 3 ? 3
+      : null
     : tramoCompleted < 2 ? 2
-    : tramoCompleted < 3 && hasXlsx ? 3
+    : tramoCompleted < 3 ? 3
     : null
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs text-slate-600">
-          Ejecutá en orden o usá <strong>Procesar todo</strong>. Todo ocurre en esta página.
+          Ejecutá en orden o usá <strong>Procesar todo</strong>. Excel → journeys → circuitos.
         </p>
         <button
           type="button"
@@ -79,7 +85,13 @@ export function TransformPhaseStepper({
           onClick={onRunAll}
           className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold uppercase tracking-wide text-white hover:bg-slate-800 disabled:opacity-50"
         >
-          {runAllInProgress ? 'Procesando 1→2→3…' : 'Procesar todo (1→2→3)'}
+          {runAllInProgress ?
+            hasXlsx ?
+              'Procesando 1→2→3…'
+            : 'Procesando 2→3…'
+          : hasXlsx ?
+            'Procesar todo (1→2→3)'
+          : 'Procesar todo (2→3)'}
         </button>
       </div>
 
@@ -92,6 +104,7 @@ export function TransformPhaseStepper({
             disabled ||
             active ||
             runAllInProgress ||
+            (t.id === 1 && !canRun1) ||
             (t.id === 2 && !canRun2) ||
             (t.id === 3 && !canRun3)
 

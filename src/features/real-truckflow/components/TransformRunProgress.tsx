@@ -3,9 +3,9 @@ import type { TransformTramoId } from '../etlWorkbench/etlTransformPhaseRunner'
 import type { ContractFirstProgressEvent } from '../etlWorkbench/etlContractFirstProgress'
 
 const TRAMO_LABEL: Record<TransformTramoId, string> = {
-  1: 'Paso 1 — Journeys y calidad',
-  2: 'Paso 2 — Circuitos y comité',
-  3: 'Paso 3 — Movimientos por contrato',
+  1: 'Paso 1 — Limpieza Excel',
+  2: 'Paso 2 — Buscar patentes en Truckflow',
+  3: 'Paso 3 — Circuitos y comité',
 }
 
 type Props = {
@@ -45,7 +45,7 @@ export function TransformRunProgress({ active, activeTramo, runAll, contractFirs
 
   const stepLabel =
     activeTramo ? TRAMO_LABEL[activeTramo]
-    : runAll ? 'Procesando pasos 1→2→3'
+    : runAll ? 'Procesando pasos 1→2→3 (Excel, journeys, circuitos)'
     : 'Procesando…'
 
   const showPaso3Detail = Boolean(contractFirst && activeTramo === 3)

@@ -77,18 +77,30 @@ import {
   filterAlertsByPlateRegistry,
   filterEventsByPlateRegistry,
 } from '../../../services/truckPlateRegistryFilter'
-import type { MovimientosContratoFileInput } from './etlExternalMovimientosContrato'
+import {
+  buildContractPrepFromTramo1Serialized,
+  movimientosStatsFromIntegration,
+  runContractFirstIntegration,
+} from './etlTransformContractFirst'
 import { runMovimientosContratoIntegration } from './etlMovimientosContratoIntegration'
+import type { MovimientosContratoFileInput } from './etlExternalMovimientosContrato'
 import type { KpiTiemposBuildInput } from './etlKpiTiemposBuild'
 import {
   createPhaseStore,
   type EtlTransformPhaseStore,
   type EtlTransformRunOptions,
 } from './etlTransformPhaseStore'
+import { createEtlProfiler, type EtlProfiler } from './etlProfile'
+import { ETL_DEV_MODE } from '../../../config/committeeEtlLite'
 
 export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v12'
 export type { FinalCircuitStatus } from './finalCircuitScoring'
 export { finalStatusLabel } from './finalCircuitScoring'
+
+function etlProfileMark(profiler: EtlProfiler, name: string, startMs: number): number {
+  if (profiler.enabled) profiler.mark(name, performance.now() - startMs)
+  return performance.now()
+}
 
 /** Cámara frontal de ingreso de referencia (comité Truckflow vs ingresos reales). Comparación trim + lowercase. */
 const INGRESO_FRONT_REFERENCE_DEVICE_NORM = 'ricingcamfrente'
@@ -746,6 +758,14 @@ export async function runEtlTransform(
   const onlyTramo = runOpts?.onlyTramo
   const skipTramo1 = (onlyTramo === 2 || onlyTramo === 3) && phaseStore.tramo1 != null
   let tramo1: Tramo1Serialized | null = skipTramo1 ? (phaseStore.tramo1 as Tramo1Serialized) : null
+  const profiler = runOpts?.profiler ?? createEtlProfiler()
+  const emitDebugCsv = ETL_DEV_MODE || runOpts?.emitDebugCsv === true
+  let profileAt = performance.now()
+
+  if (onlyTramo === 1 && phaseStore.tramo1) {
+    profiler.end()
+    return buildPartialOutputTramo1(phaseStore.tramo1 as Tramo1Serialized)
+  }
 
   await yieldToBrowser()
 
@@ -779,6 +799,8 @@ export async function runEtlTransform(
         })
       )
     : ''
+
+  profileAt = etlProfileMark(profiler, 'plateRegistryFilter', profileAt)
 
   /** —— Paso 1 —— */
   const frontEv: RealJourneyEventDto[] = []
@@ -832,8 +854,8 @@ export async function runEtlTransform(
       eventType: e.eventType,
       eventCategory: e.eventCategory,
     }) as Record<string, unknown>
-  const front_events_csv = recordsToCsv([...eventCols], frontEv.map(evtRow))
-  const rear_events_csv = recordsToCsv([...eventCols], rearEv.map(evtRow))
+  const front_events_csv = emitDebugCsv ? recordsToCsv([...eventCols], frontEv.map(evtRow)) : ''
+  const rear_events_csv = emitDebugCsv ? recordsToCsv([...eventCols], rearEv.map(evtRow)) : ''
 
   const alertCols = [
     'id',
@@ -857,8 +879,8 @@ export async function runEtlTransform(
     'camera_type',
     'occurredAt',
   ] as const
-  const front_alerts_csv = recordsToCsv([...alertCols], frontAl.map(flattenAlertForEtlCsv))
-  const rear_alerts_csv = recordsToCsv([...alertCols], rearAl.map(flattenAlertForEtlCsv))
+  const front_alerts_csv = emitDebugCsv ? recordsToCsv([...alertCols], frontAl.map(flattenAlertForEtlCsv)) : ''
+  const rear_alerts_csv = emitDebugCsv ? recordsToCsv([...alertCols], rearAl.map(flattenAlertForEtlCsv)) : ''
 
   const totalLprMalfunctionAlerts = alertsForEtl.filter(isLprMalfunctionAlert).length
   const lprMalDeviceMap = new Map<string, number>()
@@ -880,6 +902,8 @@ export async function runEtlTransform(
     pctExcludedEvents: pctExcluded,
     deviceRearCounts: summarizeDeviceRear(eventsForEtl),
   }
+
+  profileAt = etlProfileMark(profiler, 'splitFrontRear', profileAt)
 
   await yieldToBrowser()
 
@@ -1002,7 +1026,9 @@ export async function runEtlTransform(
   })
 
   const hdrCam = Object.keys(camRowsArr[0] ?? { date: '' })
-  const camera_lpr_status_csv = recordsToCsv(hdrCam.length ? hdrCam : ['date'], camRowsArr)
+  const camera_lpr_status_csv = emitDebugCsv ?
+    recordsToCsv(hdrCam.length ? hdrCam : ['date'], camRowsArr)
+  : ''
 
   let criticalCameras = 0
   let sinBase = 0
@@ -1022,6 +1048,8 @@ export async function runEtlTransform(
     lprMalfunctionByCamera,
     cameraWithMostLpr,
   }
+
+  profileAt = etlProfileMark(profiler, 'cameraAggregates', profileAt)
 
   await yieldToBrowser()
 
@@ -1275,7 +1303,9 @@ export async function runEtlTransform(
   }
   phaseStore.tramo1 = tramo1
   phaseStore.tramoCompleted = 1
+  profileAt = etlProfileMark(profiler, 'reconstructJourneys', profileAt)
   if (onlyTramo === 1) {
+    profiler.end()
     return buildPartialOutputTramo1(tramo1)
   }
   }
@@ -1324,6 +1354,18 @@ export async function runEtlTransform(
   const byJ = { size: t1.byJSize }
 
   await yieldToBrowser()
+
+  if (inp.movimientosContratoFiles?.length && !phaseStore.contractIntegration) {
+    const prep = buildContractPrepFromTramo1Serialized(
+      (phaseStore.tramo1 ?? tramo1)! as import('./etlTransformContractFirst').Tramo1SerializedLike
+    )
+    phaseStore.tramo2Prep = prep
+    phaseStore.contractIntegration = await runContractFirstIntegration(
+      inp,
+      prep,
+      phaseStore.excelStep?.normalized
+    )
+  }
 
   /** —— Paso 4 merge sugerencias —— */
   function sequencesComplementary(sa: string, sb: string): boolean {
@@ -1469,6 +1511,8 @@ export async function runEtlTransform(
   const mergePack = applyExecutiveJourneyMerges(journeys, mergeTop)
   const journeysForExecutive = mergePack.journeys
   const journeys_merged_applied = mergePack.mergeAppliedCount
+
+  profileAt = etlProfileMark(profiler, 'executiveJourneyMerge', profileAt)
 
   /** UIDs absorbidos por merge automático (exacto u OCR+secuencia). */
   const mergeHighConfidenceUids = new Set(mergePack.suppressedSourceUids)
@@ -1657,12 +1701,21 @@ export async function runEtlTransform(
     },
   })
 
+  profileAt = etlProfileMark(profiler, 'operationalAlertsMatch', profileAt)
+
+  const execSeqCache = new Map<string, ReturnType<typeof journeyDeviceSectorLogical>>()
+  const execCollapsedCache = new Map<string, string[]>()
+
   let executiveJourneyPass = 0
   for (const mj of journeysForExecutive) {
     if (++executiveJourneyPass % 40 === 0) await yieldToBrowser()
     const tier = userCircuitTier(mj)
     const audit = journeyAuditByUid.get(mj.journeyUid)
-    const seqPack = journeyDeviceSectorLogical(mj)
+    let seqPack = execSeqCache.get(mj.journeyUid)
+    if (!seqPack) {
+      seqPack = journeyDeviceSectorLogical(mj)
+      execSeqCache.set(mj.journeyUid, seqPack)
+    }
     const dupSev = duplicateSeverityFor(mj)
     const dupSus = dupSev !== 'none'
     const mergedFrag =
@@ -1674,7 +1727,12 @@ export async function runEtlTransform(
     const hasIngresoFrontal = ingresoN > 0
     const relPack = computeJourneyReliability(mj)
     const rel = reliabilityByUid.get(mj.journeyUid) ?? relPack.reliability_score
-    const logicals = new Set(getCollapsedLogicalCodes(mj))
+    let collapsedLogical = execCollapsedCache.get(mj.journeyUid)
+    if (!collapsedLogical) {
+      collapsedLogical = getCollapsedLogicalCodes(mj)
+      execCollapsedCache.set(mj.journeyUid, collapsedLogical)
+    }
+    const logicals = new Set(collapsedLogical)
     const entry = resolveOperationalEntry(logicals)
     const exit = resolveOperationalExit(logicals, journeyHasRicB2EgresoDevice(mj))
     const strong = journeyHasStrongDefiningPoint(mj)
@@ -2107,6 +2165,7 @@ export async function runEtlTransform(
       executive_bucket: executive.bucket,
     })
   }
+  profileAt = etlProfileMark(profiler, 'classifyCircuits', profileAt)
   await yieldToBrowser()
 
   const journeyTimesByUid = new Map<string, { start: string; end: string }>()
@@ -2123,9 +2182,18 @@ export async function runEtlTransform(
   let movimientosContratoStats: EtlTransformOutput['stats']['movimientosContrato']
   let kpiTiemposMovimientosSnapshot: KpiTiemposBuildInput['movimientosSnapshot'] = null
 
-  const skipMovimientosEnTramo2 = onlyTramo === 2
+  const skipMovimientosEnTramo2 =
+    onlyTramo === 2 ||
+    Boolean(phaseStore.contractIntegration) ||
+    Boolean(inp.movimientosContratoFiles?.length)
 
-  if (!skipMovimientosEnTramo2 && inp.movimientosContratoFiles?.length) {
+  if (phaseStore.contractIntegration && phaseStore.tramo2Prep) {
+    const mc = phaseStore.contractIntegration
+    const prep = phaseStore.tramo2Prep
+    movimientosContratoCsv = mc.csv
+    kpiTiemposMovimientosSnapshot = mc.kpiTiemposSnapshot
+    movimientosContratoStats = movimientosStatsFromIntegration(mc, prep.finalCsvRows.length)
+  } else if (!skipMovimientosEnTramo2 && inp.movimientosContratoFiles?.length) {
     await yieldToBrowser()
     const mc = await runMovimientosContratoIntegration({
       finalCsvRows,
@@ -2144,6 +2212,7 @@ export async function runEtlTransform(
       tiemposEntrePasosFiles: inp.tiemposEntrePasosFiles,
       skipKpiTiemposArtifacts: true,
       onProgress: inp.onContractFirstProgress,
+      profiler,
     })
     movimientosContratoCsv = mc.csv
     kpiTiemposMovimientosSnapshot = mc.kpiTiemposSnapshot
@@ -2281,6 +2350,21 @@ export async function runEtlTransform(
     lprJourneyScanCtx.push({ uid, meta, j, matrix, minW, maxW, jPlate, devSet, secSet, jSite })
   }
 
+  const LPR_MAX_WINDOW_MS = 60 * 60 * 1000
+  const lprScansByTime = [...lprJourneyScanCtx].sort((a, b) => a.minW - b.minW)
+
+  function lprScansForAlertMs(alertMs: number): LprJourneyScanCtx[] {
+    const lo = alertMs - LPR_MAX_WINDOW_MS
+    const hi = alertMs + LPR_MAX_WINDOW_MS
+    const out: LprJourneyScanCtx[] = []
+    for (const scan of lprScansByTime) {
+      if (scan.maxW < lo) continue
+      if (scan.minW > hi) break
+      out.push(scan)
+    }
+    return out
+  }
+
   for (let lprAlertIdx = 0; lprAlertIdx < lprAlerts.length; lprAlertIdx++) {
     if (lprAlertIdx > 0 && lprAlertIdx % 12 === 0) await yieldToBrowser()
     const alert = lprAlerts[lprAlertIdx]!
@@ -2294,7 +2378,7 @@ export async function runEtlTransform(
     const ocrRaw = getLprObservedPlateRaw(alert)
     const ocrNorm = normalizePlateStrict(ocrRaw)
 
-    for (const scan of lprJourneyScanCtx) {
+    for (const scan of lprScansForAlertMs(alertMs)) {
       const { uid, meta, matrix, minW, maxW, jPlate, devSet, secSet, jSite } = scan
       const diffMin =
         alertMs < minW ? (minW - alertMs) / 60000
@@ -2433,6 +2517,8 @@ export async function runEtlTransform(
       lprMergeCandidatesRows.push(row)
     }
   }
+
+  profileAt = etlProfileMark(profiler, 'lprMerge', profileAt)
 
   await yieldToBrowser()
 
@@ -2868,14 +2954,23 @@ export async function runEtlTransform(
     finalCsvRows,
     classifiedForSegmentTiming,
     journeyTimesByUid: [...journeyTimesByUid.entries()],
+    rawTruckflowEvents: operationalFrontEvents.map((e) => ({
+      journeyUid: e.journeyUid,
+      truckPlate: e.truckPlate,
+      normalizedPlate: e.normalizedPlate,
+      deviceCode: e.deviceCode,
+      sectorCode: e.sectorCode,
+      occurredAt: e.occurredAt,
+      createdAt: e.createdAt,
+    })),
   }
   if (onlyTramo === 2) {
     phaseStore.tramoCompleted = 2
-  } else if (!onlyTramo || onlyTramo === 3) {
-    phaseStore.tramoCompleted = 3
+  } else if (!onlyTramo) {
+    phaseStore.tramoCompleted = phaseStore.contractIntegration ? 3 : 2
   }
 
-  return {
+  const outFinal = {
     csv: {
       front_events: front_events_csv,
       rear_events: rear_events_csv,
@@ -2917,5 +3012,8 @@ export async function runEtlTransform(
       classifiedJourneys: classifiedForSegmentTiming,
       movimientosSnapshot: kpiTiemposMovimientosSnapshot,
     },
-  }
+  } as EtlTransformOutput
+  profileAt = etlProfileMark(profiler, 'exportCsv', profileAt)
+  profiler.end()
+  return outFinal
 }
