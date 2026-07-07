@@ -26,19 +26,22 @@ function isExcelDispatchMovement(
 function inferAceiteLiquidExecutiveCircuit(
   mov: Pick<
     ExternalMovimientoContratoNormalized,
-    | 'platform_normalized'
-    | 'plataforma_original'
-    | 'planta_normalized'
-    | 'observaciones'
-    | 'observacion_calidad'
-  >
+    'platform_normalized' | 'plataforma_original' | 'planta_normalized'
+  > &
+    Partial<
+      Pick<
+        ExternalMovimientoContratoNormalized,
+        'observaciones' | 'observacion_calidad' | 'product_normalized'
+      >
+    >
 ): InferredExecutiveCircuit | null {
   const fromExcel = inferAceiteExecutiveCircuitFromExcel(
     mov.platform_normalized,
     mov.plataforma_original,
     mov.planta_normalized,
     mov.observaciones,
-    mov.observacion_calidad
+    mov.observacion_calidad,
+    mov.product_normalized
   )
   if (fromExcel) return circuitFromCode(fromExcel, 'platform')
   return null
@@ -63,7 +66,12 @@ export function inferCircuitFromExternalMovimiento(
     | 'movement_type_detail'
     | 'mov'
   > &
-    Partial<Pick<ExternalMovimientoContratoNormalized, 'observaciones' | 'observacion_calidad'>>
+    Partial<
+      Pick<
+        ExternalMovimientoContratoNormalized,
+        'observaciones' | 'observacion_calidad' | 'product_normalized'
+      >
+    >
 ): InferredExecutiveCircuit | null {
   const platform = String(mov.platform_normalized ?? '').toUpperCase()
   const original = String(mov.plataforma_original ?? '').toUpperCase()
@@ -103,7 +111,8 @@ export function inferCircuitFromExternalMovimiento(
     mov.plataforma_original,
     mov.planta_normalized,
     mov.observaciones,
-    mov.observacion_calidad
+    mov.observacion_calidad,
+    mov.product_normalized
   )
   if (aceiteRenova) return circuitFromCode(aceiteRenova, 'platform')
 

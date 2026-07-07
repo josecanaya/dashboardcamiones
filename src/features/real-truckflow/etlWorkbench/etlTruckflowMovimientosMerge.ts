@@ -12,7 +12,7 @@ import {
 } from './etlPlatformCircuitInference'
 import { isSlLiquidCircuit } from './slLiquidCameras'
 import { normalizePlateStrict } from '../../../services/circuitPlateOcr'
-import { createPlateMatchCache, plateMatchKindCached, type PlateMatchCache } from './etlPlateMatchCache'
+import { createPlateMatchCache, type PlateMatchCache } from './etlPlateMatchCache'
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 
 export type TruckflowJourneyForMerge = {
@@ -295,15 +295,6 @@ export function journeyNeedsOperationalEnrichment(journey: TruckflowJourneyForMe
   return false
 }
 
-function resolvePlateMatchKind(
-  plateJ: string,
-  plateM: string,
-  ocrThreshold: number,
-  cache: PlateMatchCache
-): 'exact' | 'fuzzy' | null {
-  return plateMatchKindCached(plateJ, plateM, ocrThreshold, cache)
-}
-
 function sameCalendarDay(journey: TruckflowJourneyForMerge, mov: ExternalMovimientoContratoNormalized): boolean {
   const jDay = dayKeyFromIso(journey.start_time) || dayKeyFromIso(journey.end_time)
   const mDay =
@@ -460,7 +451,6 @@ function scoreCandidate(
 function collectCandidatesForJourney(
   journey: TruckflowJourneyForMerge,
   movByPlate: Map<string, ExternalMovimientoContratoNormalized[]>,
-  movByPlateLen: Map<number, ExternalMovimientoContratoNormalized[]>,
   opts: Required<MergeTruckflowMovimientosOptions>,
   excludeMovIds?: Set<string>
 ): MergeCandidateScore[] {
@@ -470,26 +460,14 @@ function collectCandidatesForJourney(
   const seen = new Set<string>()
   const candidates: MergeCandidateScore[] = []
 
-  const push = (mov: ExternalMovimientoContratoNormalized, kind: 'exact' | 'fuzzy') => {
-    if (excludeMovIds?.has(mov.external_operation_id)) return
-    if (seen.has(mov.external_operation_id)) return
-    const sc = scoreCandidate(journey, mov, opts, kind)
+  for (const mov of movByPlate.get(plateJ) ?? []) {
+    if (excludeMovIds?.has(mov.external_operation_id)) continue
+    if (seen.has(mov.external_operation_id)) continue
+    const sc = scoreCandidate(journey, mov, opts, 'exact')
     if (sc) {
       seen.add(mov.external_operation_id)
       candidates.push(sc)
     }
-  }
-
-  for (const mov of movByPlate.get(plateJ) ?? []) push(mov, 'exact')
-
-  for (const mov of movByPlateLen.get(plateJ.length) ?? []) {
-    const mp =
-      normalizePlateStrict(mov.plate_normalized || mov.patente_original) ||
-      normalizePlate(mov.patente_original) ||
-      ''
-    if (mp === plateJ) continue
-    const kind = resolvePlateMatchKind(plateJ, mov.plate_normalized || mov.patente_original, opts.plateOcrThreshold, opts.plateMatchCache)
-    if (kind === 'fuzzy') push(mov, 'fuzzy')
   }
 
   return candidates
@@ -497,7 +475,6 @@ function collectCandidatesForJourney(
 
 function collectCandidatesForMovimiento(
   mov: ExternalMovimientoContratoNormalized,
-  fuzzyPool: TruckflowJourneyForMerge[],
   journeysByExactPlate: Map<string, TruckflowJourneyForMerge[]>,
   opts: Required<MergeTruckflowMovimientosOptions>,
   excludeJourneyUids: Set<string>
@@ -507,9 +484,9 @@ function collectCandidatesForMovimiento(
   if (!Number.isFinite(externalDischargeReferenceMs(mov)) && !mov.source_date) return []
 
   const out: { journey: TruckflowJourneyForMerge; score: MergeCandidateScore }[] = []
-  const pushJourney = (journey: TruckflowJourneyForMerge, kind: 'exact' | 'fuzzy') => {
+  const pushJourney = (journey: TruckflowJourneyForMerge) => {
     if (excludeJourneyUids.has(journey.journey_uid)) return
-    const sc = scoreCandidate(journey, mov, opts, kind)
+    const sc = scoreCandidate(journey, mov, opts, 'exact')
     if (!sc) return
     const maxDelta =
       journey.anomaly_real ||
@@ -523,20 +500,7 @@ function collectCandidatesForMovimiento(
   }
 
   for (const journey of journeysByExactPlate.get(plateM) ?? []) {
-    pushJourney(journey, 'exact')
-  }
-
-  for (const journey of fuzzyPool) {
-    const jPlate = normalizePlateStrict(journey.plate_normalized)
-    if (jPlate === plateM) continue
-    const kind = resolvePlateMatchKind(
-      journey.plate_normalized,
-      mov.plate_normalized || mov.patente_original,
-      opts.plateOcrThreshold,
-      opts.plateMatchCache
-    )
-    if (kind !== 'fuzzy') continue
-    pushJourney(journey, 'fuzzy')
+    pushJourney(journey)
   }
   out.sort((a, b) => {
     const pri = excelAnchorJourneyPriority(b.journey, mov) - excelAnchorJourneyPriority(a.journey, mov)
@@ -548,14 +512,10 @@ function collectCandidatesForMovimiento(
 
 function scorePlateDayEnrichment(
   journey: TruckflowJourneyForMerge,
-  mov: ExternalMovimientoContratoNormalized,
-  plateKind: 'exact' | 'fuzzy'
+  mov: ExternalMovimientoContratoNormalized
 ): MergeCandidateScore {
-  let confidence = plateKind === 'exact' ? 0.62 : 0.58
-  const reasons = [
-    'operational_enrichment',
-    plateKind === 'exact' ? 'plate_day' : 'plate_fuzzy_day',
-  ]
+  let confidence = 0.62
+  const reasons = ['operational_enrichment', 'plate_day']
   if (mov.product_normalized) reasons.push('product_present')
   if (mov.platform_normalized) reasons.push('platform_from_external')
   if (journeyNeedsOperationalEnrichment(journey)) reasons.push('missing_camera_discharge')
@@ -567,7 +527,7 @@ function scorePlateDayEnrichment(
     merge_reason: reasons.join('+'),
     matched_by: 'enrich_plate_day',
     platform_compatible: null,
-    plate_match: plateKind,
+    plate_match: 'exact',
   }
 }
 
@@ -594,15 +554,10 @@ function pickBestPlateDayCandidate(
 
   const scored: MergeCandidateScore[] = []
   for (const mov of dayPool) {
-    const kind = resolvePlateMatchKind(
-      plateJ,
-      mov.plate_normalized || mov.patente_original,
-      opts.plateOcrThreshold,
-      opts.plateMatchCache
-    )
-    if (!kind) continue
+    const mp = normalizePlateStrict(mov.plate_normalized || mov.patente_original)
+    if (mp !== plateJ) continue
     if (!mov.product_normalized && !mov.platform_normalized) continue
-    const sc = scorePlateDayEnrichment(journey, mov, kind)
+    const sc = scorePlateDayEnrichment(journey, mov)
     if (sc.time_delta_min > opts.maxEnrichDischargeDeltaMin) continue
     const platformOk = isPlatformCompatibleWithCircuit(
       mov.platform_normalized,
@@ -804,21 +759,15 @@ export async function mergeTruckflowWithMovimientos(
   const matchedMovIds = new Set<string>()
 
   const journeysByExactPlate = new Map<string, TruckflowJourneyForMerge[]>()
-  const journeysByPlateLen = new Map<number, TruckflowJourneyForMerge[]>()
   for (const j of truckflowJourneys) {
     const p = normalizePlateStrict(j.plate_normalized)
     if (!p) continue
     const arr = journeysByExactPlate.get(p) ?? []
     arr.push(j)
     journeysByExactPlate.set(p, arr)
-    const len = p.length
-    const lenArr = journeysByPlateLen.get(len) ?? []
-    lenArr.push(j)
-    journeysByPlateLen.set(len, lenArr)
   }
 
   const movByPlate = new Map<string, ExternalMovimientoContratoNormalized[]>()
-  const movByPlateLen = new Map<number, ExternalMovimientoContratoNormalized[]>()
   for (const m of movimientosContrato) {
     const p =
       normalizePlateStrict(m.plate_normalized || m.patente_original) ||
@@ -828,10 +777,6 @@ export async function mergeTruckflowWithMovimientos(
     const arr = movByPlate.get(p) ?? []
     arr.push(m)
     movByPlate.set(p, arr)
-    const len = p.length
-    const lenArr = movByPlateLen.get(len) ?? []
-    lenArr.push(m)
-    movByPlateLen.set(len, lenArr)
   }
 
   const statusCounts = new Map<MergeStatus, number>()
@@ -845,10 +790,8 @@ export async function mergeTruckflowWithMovimientos(
     for (const mov of movimientosContrato) {
       if (++excelAnchorPass % 25 === 0) await yieldToBrowser()
       if (matchedMovIds.has(mov.external_operation_id)) continue
-      const movPlate = normalizePlateStrict(mov.plate_normalized || mov.patente_original)
       const candidates = collectCandidatesForMovimiento(
         mov,
-        movPlate ? (journeysByPlateLen.get(movPlate.length) ?? []) : [],
         journeysByExactPlate,
         opts,
         assignedJourneyUids
@@ -944,7 +887,6 @@ export async function mergeTruckflowWithMovimientos(
     const candidates = collectCandidatesForJourney(
       journey,
       movByPlate,
-      movByPlateLen,
       opts,
       matchedMovIds
     )

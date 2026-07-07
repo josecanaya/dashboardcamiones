@@ -17,14 +17,8 @@ import {
   isVolcableReceiptCircuit,
   buildSlBalanzaComiteOptionsFromTiemposEntrePasos,
 } from './etlSegmentTiming'
-import { normalizePlateStrict, plateSimilarityScore } from '../../../services/circuitPlateOcr'
-import {
-  createPlateMatchCache,
-  plateMatchKindCached,
-  prunePlateMatchCache,
-  plateMatchCacheSize,
-  type PlateMatchCache,
-} from './etlPlateMatchCache'
+import { normalizePlateStrict } from '../../../services/circuitPlateOcr'
+import type { PlateMatchCache } from './etlPlateMatchCache'
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 import { parseTimestampMs, operationalDayKeyFromIso, formatArgentinaIsoFromMs } from './etlTimestampNormalize'
 
@@ -49,6 +43,13 @@ export type NoTruckflowReason =
   | 'NO_RECONSTRUCTED_JOURNEY'
   | 'INSUFFICIENT_EXTERNAL_TIME'
   | 'UNKNOWN_NO_EVIDENCE'
+  /** Cruce exacto de patente (nuevos códigos). */
+  | 'NO_EXCEL_PLATE'
+  | 'NO_TRUCKFLOW_EXACT_PLATE_MATCH'
+  | 'EXACT_PLATE_MATCH_OUTSIDE_TIME_WINDOW'
+  | 'EXACT_PLATE_MATCH_REJECTED_BY_PLANT_SCOPE'
+  | 'EXACT_PLATE_MATCH_REJECTED_BY_RULES'
+  | 'EXACT_PLATE_MATCH_OK'
   | ''
 
 export type RouteQuality =
@@ -308,9 +309,9 @@ export type ExcelFirstMergeOptions = {
   plateOcrThreshold?: number
   /** Ventana amplia: ingreso+salida ±480, ancla ±720, source_date ±6h. Default true. */
   excelFirstWideWindow?: boolean
+  /** @deprecated Sin efecto: el cruce ahora es exacto por patente (sin fuzzy OCR). */
   plateMatchCache?: PlateMatchCache
-  fuzzyCandidatesByPlate?: Map<string, TruckflowJourneyForMerge[]>
-  /** Acota universo OCR fuzzy a journeys que pueden entrar en ventana (equivalente si true). Default true. */
+  /** @deprecated Sin efecto: se conserva por compatibilidad de firma. Default true. */
   useCandidatePrefilter?: boolean
   onExcelOperationProgress?: (
     current: number,
@@ -430,75 +431,6 @@ function dayKeyFromIso(iso: string): string {
   return iso.slice(0, 10)
 }
 
-function dayKeyFromMs(ms: number): string {
-  if (!Number.isFinite(ms)) return ''
-  return operationalDayKeyFromIso(formatArgentinaIsoFromMs(ms)) || ''
-}
-
-function addCalendarDay(dayKey: string, deltaDays: number): string {
-  const b = argentinaDayBoundsMs(dayKey)
-  if (!b) return ''
-  const dk = operationalDayKeyFromIso(formatArgentinaIsoFromMs(b.startMs + deltaDays * 86_400_000))
-  return dk || ''
-}
-
-/** Días candidatos para fuzzy OCR (subconjunto seguro de plateIndex.all). */
-function dayKeysForJourneyFuzzySearch(
-  window: SearchWindowSpec,
-  mov: ExternalMovimientoContratoNormalized,
-  period?: ExcelPeriodContext
-): Set<string> {
-  const keys = new Set<string>()
-  const add = (d: string) => {
-    if (d) keys.add(d)
-  }
-  add(mov.source_date)
-  add(dayKeyFromIso(mov.external_ingreso_at))
-  add(dayKeyFromIso(mov.external_calado_at))
-  add(dayKeyFromIso(mov.external_salida_at))
-  const w0 = dayKeyFromMs(window.startMs)
-  const w1 = dayKeyFromMs(window.endMs)
-  for (const base of [w0, w1]) {
-    if (!base) continue
-    for (let d = -2; d <= 2; d++) add(addCalendarDay(base, d))
-  }
-  const minD = period?.excel_min_source_date
-  const maxD = period?.excel_max_source_date || minD
-  if (minD && maxD) {
-    let cur = minD
-    let guard = 0
-    while (guard++ < 45) {
-      keys.add(cur)
-      if (cur >= maxD) break
-      cur = addCalendarDay(cur, 1)
-    }
-  }
-  return keys
-}
-
-function journeysFromDayKeys(plateIndex: PlateIndex, dayKeys: Iterable<string>): TruckflowJourneyForMerge[] {
-  const seen = new Set<string>()
-  const pool: TruckflowJourneyForMerge[] = []
-  for (const dk of dayKeys) {
-    for (const j of plateIndex.byDay.get(dk) ?? []) {
-      if (seen.has(j.journey_uid)) continue
-      seen.add(j.journey_uid)
-      pool.push(j)
-    }
-  }
-  return pool
-}
-
-function journeyPoolForFuzzySearch(
-  plateIndex: PlateIndex,
-  window: SearchWindowSpec,
-  mov: ExternalMovimientoContratoNormalized,
-  period?: ExcelPeriodContext
-): TruckflowJourneyForMerge[] {
-  const pool = journeysFromDayKeys(plateIndex, dayKeysForJourneyFuzzySearch(window, mov, period))
-  return pool.length ? pool : plateIndex.all
-}
-
 function journeyHasValidTime(j: TruckflowJourneyForMerge): boolean {
   return Number.isFinite(parseMs(j.start_time)) || Number.isFinite(parseMs(j.end_time))
 }
@@ -526,16 +458,6 @@ function journeyInPeriod(
   const je = Number.isFinite(e) ? e : s
   if (!Number.isFinite(js) && !Number.isFinite(je)) return false
   return je >= periodStartMs && js <= periodEndMs
-}
-
-function plateMatchKind(
-  plateJ: string,
-  plateM: string,
-  ocrThreshold: number,
-  cache?: PlateMatchCache
-): 'exact' | 'fuzzy' | null {
-  if (cache) return plateMatchKindCached(plateJ, plateM, ocrThreshold, cache)
-  return plateMatchKindCached(plateJ, plateM, ocrThreshold, createPlateMatchCache())
 }
 
 function buildWindowFromOpts(
@@ -874,105 +796,6 @@ export function buildPlateIndex(journeys: TruckflowJourneyForMerge[]): PlateInde
   return { byExactPlate, byDay, all: journeys }
 }
 
-function normalizePlantScopeKey(v: string): string {
-  return String(v ?? '')
-    .trim()
-    .toUpperCase()
-    .replace(/\s+/g, '_')
-}
-
-/** Solo métrica: no filtra matches (evita cambiar resultados). */
-function countPlantScopeMismatchesInPool(
-  mov: ExternalMovimientoContratoNormalized,
-  pool: TruckflowJourneyForMerge[]
-): number {
-  const excelPlant = normalizePlantScopeKey(mov.planta_normalized ?? '')
-  if (!excelPlant) return 0
-  let n = 0
-  for (const j of pool) {
-    const tf = normalizePlantScopeKey(j.plant_scope ?? '')
-    if (tf && tf !== excelPlant) n++
-  }
-  return n
-}
-
-/** Journeys que pueden pasar filterJourneysInWindow para esta ventana (prefiltro seguro antes de OCR fuzzy). */
-export function journeysForFuzzyOcrPrefilter(
-  plateIndex: PlateIndex,
-  window: SearchWindowSpec,
-  mov: ExternalMovimientoContratoNormalized,
-  period?: ExcelPeriodContext
-): TruckflowJourneyForMerge[] {
-  const dayKey = mov.source_date || dayKeyFromIso(mov.external_salida_at) || dayKeyFromIso(mov.external_ingreso_at)
-  const pool = journeyPoolForFuzzySearch(plateIndex, window, mov, period)
-  const out: TruckflowJourneyForMerge[] = []
-  const seen = new Set<string>()
-  for (const j of pool) {
-    if (!journeyOverlapsWindow(j, window) && !(window.lowConfidence && sameCalendarDay(j, dayKey))) continue
-    if (seen.has(j.journey_uid)) continue
-    seen.add(j.journey_uid)
-    out.push(j)
-  }
-  return out
-}
-
-type FuzzyCollectResult = {
-  fuzzy: TruckflowJourneyForMerge[]
-  rejectedLowOcr: number
-}
-
-function fuzzyMemoCacheKey(plateM: string, window: SearchWindowSpec, poolSize: number): string {
-  return `${plateM}|${window.startMs}|${window.endMs}|${poolSize}`
-}
-
-/** Evita Map ilimitado por operación × ventana (semanas largas / muchos eventos). */
-const FUZZY_CANDIDATES_MEMO_MAX = 60_000
-
-function fuzzyCandidatesMemoSet(
-  memo: Map<string, TruckflowJourneyForMerge[]> | undefined,
-  key: string,
-  value: TruckflowJourneyForMerge[]
-): void {
-  if (!memo) return
-  if (memo.size >= FUZZY_CANDIDATES_MEMO_MAX) memo.clear()
-  memo.set(key, value)
-}
-
-function collectFuzzyCandidatesWithDiscardStats(
-  plateM: string,
-  pool: TruckflowJourneyForMerge[],
-  ocrThreshold: number,
-  cache: PlateMatchCache | undefined,
-  memo: Map<string, TruckflowJourneyForMerge[]> | undefined,
-  memoKey: string
-): FuzzyCollectResult {
-  if (memo?.has(memoKey)) {
-    const fuzzy = memo.get(memoKey)!
-    return { fuzzy, rejectedLowOcr: 0 }
-  }
-  const out: TruckflowJourneyForMerge[] = []
-  let rejectedLowOcr = 0
-  const c = cache ?? createPlateMatchCache()
-  for (const j of pool) {
-    const kind = plateMatchKind(j.plate_normalized, plateM, ocrThreshold, c)
-    if (kind === 'fuzzy') out.push(j)
-    else if (kind !== 'exact') rejectedLowOcr++
-  }
-  fuzzyCandidatesMemoSet(memo, memoKey, out)
-  return { fuzzy: out, rejectedLowOcr }
-}
-
-function collectFuzzyCandidates(
-  plateM: string,
-  allJourneys: TruckflowJourneyForMerge[],
-  ocrThreshold: number,
-  cache?: PlateMatchCache,
-  memo?: Map<string, TruckflowJourneyForMerge[]>
-): TruckflowJourneyForMerge[] {
-  const memoKey = `${plateM}|all|${allJourneys.length}`
-  return collectFuzzyCandidatesWithDiscardStats(plateM, allJourneys, ocrThreshold, cache, memo, memoKey).fuzzy
-}
-
 function filterJourneysInWindow(
   journeys: TruckflowJourneyForMerge[],
   window: SearchWindowSpec,
@@ -1067,7 +890,6 @@ function journeysWithMinimumUsefulReads(journeys: TruckflowJourneyForMerge[]): T
 function buildEvidenceFromMatches(
   matched: TruckflowJourneyForMerge[],
   exactMatches: TruckflowJourneyForMerge[],
-  fuzzyMatches: TruckflowJourneyForMerge[],
   mov: ExternalMovimientoContratoNormalized,
   truckflowSegments: TruckflowSegmentForMerge[],
   windowUsed: SearchWindowSpec,
@@ -1117,28 +939,16 @@ function buildEvidenceFromMatches(
   } else if (windowUsed.wide && !narrowHadMatch) {
     match_quality = fragmented ? 'EXTERNAL_MATCH_FRAGMENTED' : 'EXTERNAL_MATCH_WIDE_WINDOW'
     warnings.push('WIDE_WINDOW_MATCH')
-  } else if (usedExact) {
-    if (fragmented) {
-      match_quality = 'EXTERNAL_MATCH_FRAGMENTED'
-    } else {
-      const overlap = temporalOverlapScore(matched[0]!, mov)
-      match_quality = overlap >= 2 ? 'EXTERNAL_MATCH_EXACT' : 'EXTERNAL_MATCH_PROBABLE'
-    }
+  } else if (fragmented) {
+    match_quality = 'EXTERNAL_MATCH_FRAGMENTED'
   } else {
-    if (fuzzyMatches.length > 1) {
-      const sims = fuzzyMatches.map((j) => plateSimilarityScore(j.plate_normalized, mov.plate_normalized))
-      const spread = Math.max(...sims) - Math.min(...sims)
-      match_quality = spread < 0.08 ? 'EXTERNAL_MATCH_AMBIGUOUS' : 'EXTERNAL_MATCH_FUZZY_PLATE'
-      if (match_quality === 'EXTERNAL_MATCH_AMBIGUOUS') warnings.push('FUZZY_PLATE_AMBIGUOUS')
-    } else {
-      match_quality = fragmented ? 'EXTERNAL_MATCH_FRAGMENTED' : 'EXTERNAL_MATCH_FUZZY_PLATE'
-    }
-    warnings.push('FUZZY_PLATE_MATCH')
+    const overlap = temporalOverlapScore(matched[0]!, mov)
+    match_quality = overlap >= 2 ? 'EXTERNAL_MATCH_EXACT' : 'EXTERNAL_MATCH_PROBABLE'
   }
 
   const match_signals: MatchSignals = {
     exact_plate: usedExact,
-    fuzzy_plate: !usedExact && fuzzyMatches.length > 0,
+    fuzzy_plate: false,
     same_day: windowUsed.lowConfidence,
     wide_window: windowUsed.wide && !narrowHadMatch,
     low_confidence_date: windowUsed.lowConfidence && !narrowHadMatch,
@@ -1151,7 +961,7 @@ function buildEvidenceFromMatches(
   return {
     matched_journey_uids: matchedIds,
     exact_plate_journey_uids: exactMatches.map((j) => j.journey_uid),
-    fuzzy_plate_journey_uids: fuzzyMatches.map((j) => j.journey_uid),
+    fuzzy_plate_journey_uids: [],
     truckflow_first_seen_at: starts.sort()[0] ?? '',
     truckflow_last_seen_at: ends.sort().reverse()[0] ?? '',
     combined_observed_sequence: combinedSeq,
@@ -1170,7 +980,7 @@ export function diagnoseNoTruckflowEvidence(
   period: ExcelPeriodContext,
   narrowWindow: SearchWindowSpec | null,
   wideWindow: SearchWindowSpec | null,
-  ocrThreshold: number
+  _ocrThreshold?: number
 ): Pick<
   TruckflowEvidenceResult,
   | 'no_truckflow_reason'
@@ -1199,41 +1009,30 @@ export function diagnoseNoTruckflowEvidence(
   }
 
   if (!plateM) {
-    return { ...empty, no_truckflow_reason: 'INSUFFICIENT_EXTERNAL_TIME', diagnostic_detail: 'MISSING_PLATE' }
+    return { ...empty, no_truckflow_reason: 'NO_EXCEL_PLATE', diagnostic_detail: 'MISSING_PLATE' }
   }
 
+  // Cruce exacto únicamente: sin fuzzy OCR, sin Levenshtein, sin longitudes.
   const exactPlateJourneys = plateIndex.byExactPlate.get(plateM) ?? []
 
-  if (!narrowWindow && !wideWindow) {
-    const fuzzyAllNoWin = collectFuzzyCandidates(plateM, plateIndex.all, ocrThreshold)
-    if (!exactPlateJourneys.length && !fuzzyAllNoWin.length) {
-      return {
-        ...empty,
-        no_truckflow_reason: 'NO_PLATE_IN_TRUCKFLOW',
-        diagnostic_detail: period.period_mismatch ? period.period_alert : 'plate_not_in_any_journey',
-      }
+  if (!exactPlateJourneys.length) {
+    return {
+      ...empty,
+      no_truckflow_reason: 'NO_TRUCKFLOW_EXACT_PLATE_MATCH',
+      diagnostic_detail: period.period_mismatch ? period.period_alert : 'plate_not_in_any_journey',
     }
+  }
+
+  if (!narrowWindow && !wideWindow) {
     return {
       ...empty,
       no_truckflow_reason: 'INSUFFICIENT_EXTERNAL_TIME',
       diagnostic_detail: 'NO_INGRESO_CALADO_SALIDA_NOR_SOURCE_DATE',
       same_plate_journey_count: exactPlateJourneys.length,
-      fuzzy_plate_candidates: fuzzyAllNoWin.length,
     }
   }
 
   const searchWindow = wideWindow ?? narrowWindow!
-  const fuzzyPool = journeyPoolForFuzzySearch(plateIndex, searchWindow, mov, period)
-  const fuzzyAll = collectFuzzyCandidates(plateM, fuzzyPool, ocrThreshold)
-
-  if (!exactPlateJourneys.length && !fuzzyAll.length) {
-    return {
-      ...empty,
-      no_truckflow_reason: 'NO_PLATE_IN_TRUCKFLOW',
-      diagnostic_detail: period.period_mismatch ? period.period_alert : 'plate_not_in_any_journey',
-    }
-  }
-
   const inWindowExact = filterJourneysInWindow(exactPlateJourneys, searchWindow, mov)
   const inPeriodExact = exactPlateJourneys.filter((j) =>
     journeyInPeriod(j, period.excel_period_start_ms, period.excel_period_end_ms)
@@ -1241,7 +1040,7 @@ export function diagnoseNoTruckflowEvidence(
 
   let nearest: TruckflowJourneyForMerge | null = null
   let nearestDelta = 999
-  for (const j of exactPlateJourneys.length ? exactPlateJourneys : fuzzyAll) {
+  for (const j of exactPlateJourneys) {
     const d = temporalDeltaToJourney(j, mov)
     if (d < nearestDelta) {
       nearestDelta = d
@@ -1258,30 +1057,7 @@ export function diagnoseNoTruckflowEvidence(
     same_plate_journey_count: exactPlateJourneys.length,
     same_plate_journey_count_in_period: inPeriodExact.length,
     same_plate_journey_count_in_window: inWindowExact.length,
-    fuzzy_plate_candidates: fuzzyAll.length,
-  }
-
-  if (!exactPlateJourneys.length) {
-    if (fuzzyAll.length) {
-      const inWindowFuzzy = filterJourneysInWindow(fuzzyAll, searchWindow, mov)
-      if (inWindowFuzzy.length > 1) {
-        return {
-          ...base,
-          no_truckflow_reason: 'MULTIPLE_AMBIGUOUS_REJECTED',
-          diagnostic_detail: `fuzzy_in_window=${inWindowFuzzy.length}`,
-        }
-      }
-      return {
-        ...base,
-        no_truckflow_reason: 'ONLY_FUZZY_MATCH_REJECTED',
-        diagnostic_detail: `fuzzy_candidates=${fuzzyAll.length}`,
-      }
-    }
-    return {
-      ...base,
-      no_truckflow_reason: 'NO_PLATE_IN_TRUCKFLOW',
-      diagnostic_detail: period.period_mismatch ? period.period_alert : 'plate_not_in_any_journey',
-    }
+    fuzzy_plate_candidates: 0,
   }
 
   const invalidTime = exactPlateJourneys.filter((j) => !journeyHasValidTime(j))
@@ -1304,7 +1080,7 @@ export function diagnoseNoTruckflowEvidence(
   if (inWindowExact.length === 0) {
     return {
       ...base,
-      no_truckflow_reason: 'PLATE_EXISTS_OUT_OF_TIME_WINDOW',
+      no_truckflow_reason: 'EXACT_PLATE_MATCH_OUTSIDE_TIME_WINDOW',
       diagnostic_detail: `in_period=${inPeriodExact.length},in_window=0,delta_min=${base.nearest_time_delta_min}`,
     }
   }
@@ -1358,9 +1134,6 @@ export function findTruckflowEvidenceForExcelOperation(
   const useWide = options?.excelFirstWideWindow !== false
   const narrowOpts = { ...NARROW_OPTS, ...options }
   const wideOpts = { ...WIDE_OPTS, ...options }
-  const plateCache = options?.plateMatchCache ?? createPlateMatchCache()
-  const fuzzyMemo = options?.fuzzyCandidatesByPlate
-  const useCandidatePrefilter = options?.useCandidatePrefilter !== false
   const plateM = normalizePlateStrict(mov.plate_normalized || mov.patente_original)
   const opStats = opStatsOut ?? createEmptyExcelFirstOperationCandidateStats()
 
@@ -1403,7 +1176,7 @@ export function findTruckflowEvidenceForExcelOperation(
   if (!plateM) {
     const r = emptyDiag()
     r.warnings = ['MISSING_PLATE']
-    r.no_truckflow_reason = 'INSUFFICIENT_EXTERNAL_TIME'
+    r.no_truckflow_reason = 'NO_EXCEL_PLATE'
     r.diagnostic_detail = 'MISSING_PLATE'
     return r
   }
@@ -1452,41 +1225,14 @@ export function findTruckflowEvidenceForExcelOperation(
     stats.rejected_by_time_window += exactPool.length - exactInWindow.length
     const exact = preferNonRejectionJourneys(exactInWindow)
 
-    let fuzzy: TruckflowJourneyForMerge[] = []
-    if (!exact.length) {
-      const ocrPool =
-        useCandidatePrefilter ?
-          journeysForFuzzyOcrPrefilter(plateIndex, window, mov, period)
-        : plateIndex.all
-      stats.candidates_after_prefilter = ocrPool.length
-      stats.rejected_by_site_or_plant = countPlantScopeMismatchesInPool(mov, ocrPool)
-      const memoKey = fuzzyMemoCacheKey(plateM, window, ocrPool.length)
-      const collected = collectFuzzyCandidatesWithDiscardStats(
-        plateM,
-        ocrPool,
-        narrowOpts.plateOcrThreshold,
-        plateCache,
-        fuzzyMemo,
-        memoKey
-      )
-      stats.fuzzy_candidates_count = collected.fuzzy.length
-      stats.rejected_by_low_ocr_similarity = collected.rejectedLowOcr
-      stats.had_fuzzy_only_pool = collected.fuzzy.length > 0
+    // Cruce exacto únicamente: no se construye pool fuzzy ni OCR.
+    const fuzzy: TruckflowJourneyForMerge[] = []
+    stats.candidates_after_prefilter = 0
+    stats.candidates_after_fuzzy_filter = 0
+    stats.candidates_after_time_filter = exact.length
+    if (!exactPool.length) stats.had_no_candidates = true
 
-      const fuzzyInWindow = filterJourneysInWindow(collected.fuzzy, window, mov)
-      stats.rejected_by_time_window += collected.fuzzy.length - fuzzyInWindow.length
-      fuzzy = preferNonRejectionJourneys(fuzzyInWindow)
-      stats.candidates_after_fuzzy_filter = fuzzy.length
-    } else {
-      stats.candidates_after_prefilter = 0
-    }
-
-    stats.candidates_after_time_filter = exact.length + fuzzy.length
-    if (!exactPool.length && !stats.fuzzy_candidates_count) {
-      stats.had_no_candidates = true
-    }
-
-    const matched = exact.length ? exact : fuzzy
+    const matched = exact
     return { exact, fuzzy, matched, stats }
   }
 
@@ -1521,17 +1267,14 @@ export function findTruckflowEvidenceForExcelOperation(
       wideWindow,
       narrowOpts.plateOcrThreshold
     )
-    if (diag.no_truckflow_reason === 'NO_PLATE_IN_TRUCKFLOW') {
+    if (
+      diag.no_truckflow_reason === 'NO_TRUCKFLOW_EXACT_PLATE_MATCH' ||
+      diag.no_truckflow_reason === 'NO_EXCEL_PLATE'
+    ) {
       opStats.counted_no_plate_in_truckflow = true
       opStats.had_no_candidates = true
     }
-    if (
-      diag.no_truckflow_reason === 'MULTIPLE_AMBIGUOUS_REJECTED' ||
-      diag.no_truckflow_reason === 'ONLY_FUZZY_MATCH_REJECTED'
-    ) {
-      opStats.rejected_by_ambiguous_fuzzy += 1
-    }
-    if (diag.no_truckflow_reason === 'PLATE_EXISTS_OUT_OF_TIME_WINDOW') {
+    if (diag.no_truckflow_reason === 'EXACT_PLATE_MATCH_OUTSIDE_TIME_WINDOW') {
       opStats.rejected_by_time_window += Math.max(1, opStats.exact_candidates_count)
     }
     return {
@@ -1571,15 +1314,11 @@ export function findTruckflowEvidenceForExcelOperation(
   const built = buildEvidenceFromMatches(
     matchedForEvidence,
     narrowTry.exact,
-    narrowTry.fuzzy,
     mov,
     truckflowSegments,
     windowUsed,
     narrowHadMatch
   )
-  if (built.match_quality === 'EXTERNAL_MATCH_AMBIGUOUS') {
-    opStats.rejected_by_ambiguous_fuzzy += 1
-  }
 
   return {
     ...built,
@@ -1823,18 +1562,27 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
   truckflowSegments: TruckflowSegmentForMerge[],
   options?: ExcelFirstMergeOptions
 ): Promise<ExcelFirstMergeResult> {
+  const profileEnabled =
+    typeof process !== 'undefined' && process?.env?.ETL_PROFILE === 'true'
+  const profileTotalStart = performance.now()
   const period = buildExcelPeriodContext(movimientosContrato, truckflowJourneys)
   const plateIndex = buildPlateIndex(truckflowJourneys)
   const journeyByUid = new Map(truckflowJourneys.map((j) => [j.journey_uid, j]))
   const journeyAssignmentCount = new Map<string, number>()
-  const plateMatchCache = options?.plateMatchCache ?? createPlateMatchCache()
-  const fuzzyCandidatesByPlate = options?.fuzzyCandidatesByPlate ?? new Map<string, TruckflowJourneyForMerge[]>()
   const mergeOptions: ExcelFirstMergeOptions = {
     ...options,
-    plateMatchCache,
-    fuzzyCandidatesByPlate,
   }
   const totalMov = movimientosContrato.length
+
+  // Perfilado del cruce exacto de patente (ETL_PROFILE=true).
+  const exactPlateProfile = {
+    excelRowsWithValidPlate: 0,
+    exactPlateMatches: 0,
+    rowsWithoutExactPlateMatch: 0,
+    candidatesSum: 0,
+    candidatesMax: 0,
+  }
+  const mergeExactPlateStart = performance.now()
 
   const operations: ExcelOperationWithTruckflowRow[] = []
   const segmentRows: ExcelOperationSegmentScatterRow[] = []
@@ -1909,14 +1657,6 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
   let excelMergePass = 0
   for (const mov of movimientosContrato) {
     if (++excelMergePass % 15 === 0) await yieldToBrowser()
-    if (excelMergePass % 250 === 0) {
-      if (plateMatchCacheSize(plateMatchCache) > 900_000) {
-        prunePlateMatchCache(plateMatchCache, 450_000)
-      }
-      if (fuzzyCandidatesByPlate.size > FUZZY_CANDIDATES_MEMO_MAX) {
-        fuzzyCandidatesByPlate.clear()
-      }
-    }
     if (excelMergePass % 25 === 0 || excelMergePass === totalMov) {
       mergeOptions.onExcelOperationProgress?.(excelMergePass, totalMov, { ...discardCounters })
     }
@@ -1931,6 +1671,21 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
       mergeOptions,
       opCand
     )
+
+    if (profileEnabled) {
+      const plateM = normalizePlateStrict(mov.plate_normalized || mov.patente_original)
+      if (plateM) {
+        exactPlateProfile.excelRowsWithValidPlate++
+        const poolSize = opCand.exact_candidates_count
+        if (evidence.evidence_count > 0) {
+          exactPlateProfile.exactPlateMatches++
+          exactPlateProfile.candidatesSum += poolSize
+          if (poolSize > exactPlateProfile.candidatesMax) exactPlateProfile.candidatesMax = poolSize
+        } else {
+          exactPlateProfile.rowsWithoutExactPlateMatch++
+        }
+      }
+    }
 
     mergeExcelFirstDiscardCounters(discardCounters, {
       no_plate_in_truckflow: opCand.counted_no_plate_in_truckflow ? 1 : 0,
@@ -2310,6 +2065,34 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
   }
 
   console.info('[CONTRACT_FIRST_EXCEL_FIRST] discardCounters', discardCounters)
+
+  if (profileEnabled) {
+    const mergeExactPlateMs = Math.round(performance.now() - mergeExactPlateStart)
+    const totalMs = Math.round(performance.now() - profileTotalStart)
+    const truckflowJourneysWithValidPlate = plateIndex.all.reduce(
+      (n, j) => (normalizePlateStrict(j.plate_normalized) ? n + 1 : n),
+      0
+    )
+    const avgCandidates =
+      exactPlateProfile.exactPlateMatches > 0 ?
+        Math.round((exactPlateProfile.candidatesSum / exactPlateProfile.exactPlateMatches) * 100) / 100
+      : 0
+    console.info(
+      [
+        '[EXACT PLATE MERGE PROFILE]',
+        `excelRows: ${movimientosContrato.length}`,
+        `truckflowJourneys: ${truckflowJourneys.length}`,
+        `excelRowsWithValidPlate: ${exactPlateProfile.excelRowsWithValidPlate}`,
+        `truckflowJourneysWithValidPlate: ${truckflowJourneysWithValidPlate}`,
+        `exactPlateMatches: ${exactPlateProfile.exactPlateMatches}`,
+        `rowsWithoutExactPlateMatch: ${exactPlateProfile.rowsWithoutExactPlateMatch}`,
+        `avgCandidatesPerMatchedPlate: ${avgCandidates}`,
+        `maxCandidatesPerMatchedPlate: ${exactPlateProfile.candidatesMax}`,
+        `mergeExactPlateMs: ${mergeExactPlateMs}`,
+        `totalMs: ${totalMs}`,
+      ].join('\n')
+    )
+  }
 
   return {
     operations,

@@ -4,38 +4,32 @@ import { normalizePlate } from './etlExternalNormalization'
 import type { TruckflowJourneyForMerge } from './etlTruckflowMovimientosMerge'
 import type { RawJourneyEventLike } from './auditSlCameraExcelCoverage'
 
-export function excelPlateKeysFromMovimientos(movimientos: ExternalMovimientoContratoNormalized[]): {
-  plates: Set<string>
-  plateLengths: Set<number>
-} {
+/** Patentes normalizadas exactas presentes en el Excel (sin longitudes ni fuzzy). */
+export function excelPlateKeysFromMovimientos(
+  movimientos: ExternalMovimientoContratoNormalized[]
+): Set<string> {
   const plates = new Set<string>()
-  const plateLengths = new Set<number>()
   for (const m of movimientos) {
     const p =
       normalizePlateStrict(m.plate_normalized || m.patente_original) ||
       normalizePlate(m.patente_original) ||
       ''
-    if (!p) continue
-    plates.add(p)
-    plateLengths.add(p.length)
+    if (p) plates.add(p)
   }
-  return { plates, plateLengths }
+  return plates
 }
 
-/** Solo journeys que pueden cruzar con filas Excel (patente exacta o bucket OCR por longitud). */
+/** Solo journeys cuya patente normalizada coincide exactamente con alguna patente del Excel. */
 export function filterJourneysForExcelSearch(
   journeys: TruckflowJourneyForMerge[],
   movimientos: ExternalMovimientoContratoNormalized[]
 ): TruckflowJourneyForMerge[] {
-  const { plates, plateLengths } = excelPlateKeysFromMovimientos(movimientos)
+  const plates = excelPlateKeysFromMovimientos(movimientos)
   if (!plates.size) return journeys
-
-  const filtered = journeys.filter((j) => {
+  return journeys.filter((j) => {
     const p = normalizePlateStrict(j.plate_normalized) || ''
-    if (!p) return false
-    return plates.has(p) || plateLengths.has(p.length)
+    return p ? plates.has(p) : false
   })
-  return filtered.length > 0 ? filtered : journeys
 }
 
 export function filterFinalCsvRowsByJourneyUids(
@@ -51,7 +45,7 @@ export function filterRawTruckflowEventsForExcel(
   movimientos: ExternalMovimientoContratoNormalized[],
   journeyUids?: Set<string>
 ): RawJourneyEventLike[] {
-  const { plates } = excelPlateKeysFromMovimientos(movimientos)
+  const plates = excelPlateKeysFromMovimientos(movimientos)
   if (!plates.size && !journeyUids?.size) return events
 
   return events.filter((e) => {
@@ -61,6 +55,6 @@ export function filterRawTruckflowEventsForExcel(
       normalizePlateStrict(String(e.normalizedPlate ?? e.truckPlate ?? '')) ||
       normalizePlate(String(e.truckPlate ?? '')) ||
       ''
-    return p && plates.has(p)
+    return p ? plates.has(p) : false
   })
 }

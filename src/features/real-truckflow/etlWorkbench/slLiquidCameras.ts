@@ -94,13 +94,19 @@ export function inferAceiteExecutiveCircuitFromPlatform(
   return null
 }
 
-/** Plataforma aceite u observación RENOVA con plataforma vacía (SL3). */
+/**
+ * Plataforma aceite explícita (OSL/PTO/genérica) → SL1/SL2/R8.
+ * Cualquier otro caso de movimiento aceite/líquido (plataforma vacía o distinta de las
+ * tres reconocidas) descarga en Renova aunque no diga "RENOVA" en observaciones: prestamos
+ * el servicio pero la descarga física es en la planta de Renova → SL3.
+ */
 export function inferAceiteExecutiveCircuitFromExcel(
   platformNormalized: string | null | undefined,
   plataformaOriginal: string | null | undefined,
   plantaNormalized: string | null | undefined,
   observaciones?: string | null,
-  observacionCalidad?: string | null
+  observacionCalidad?: string | null,
+  product?: string | null
 ): AceiteExecutiveCircuitCode | null {
   const fromPlatform = inferAceiteExecutiveCircuitFromPlatform(
     platformNormalized,
@@ -108,12 +114,11 @@ export function inferAceiteExecutiveCircuitFromExcel(
     plantaNormalized
   )
   if (fromPlatform) return fromPlatform
-  const platformEmpty =
-    !String(platformNormalized ?? '').trim() && !String(plataformaOriginal ?? '').trim()
-  if (platformEmpty && excelObservacionesIndicateRenovaAceite(observaciones, observacionCalidad)) {
-    return 'SL3'
-  }
-  return null
+  if (isPermittedAceiteLiquidDischargePlatform(platformNormalized, plataformaOriginal)) return null
+  const looksLikeAceiteMovement =
+    excelObservacionesIndicateRenovaAceite(observaciones, observacionCalidad) ||
+    isExcelLiquidProductName(String(product ?? ''), String(platformNormalized ?? ''))
+  return looksLikeAceiteMovement ? 'SL3' : null
 }
 
 function haystackHasRicLiquidBalanza(hay: string): boolean {
@@ -218,13 +223,15 @@ export function isExcelLiquidMovementForOrphanCommittee(row: {
 }): boolean {
   const platform = String(row.platform_normalized ?? '')
   const original = String(row.plataforma_original ?? row.platform_normalized ?? '')
+  const product = String(row.resolved_product ?? row.product_normalized ?? '')
   if (
     inferAceiteExecutiveCircuitFromExcel(
       platform,
       original,
       row.planta_normalized,
       row.observaciones,
-      row.observacion_calidad
+      row.observacion_calidad,
+      product
     )
   ) {
     return true
@@ -232,7 +239,6 @@ export function isExcelLiquidMovementForOrphanCommittee(row: {
   if (isPermittedAceiteLiquidDischargePlatform(platform, original)) return true
   const family = String(row.resolved_circuit_family ?? '').trim().toUpperCase()
   if (family === 'LIQUIDO') return true
-  const product = String(row.resolved_product ?? row.product_normalized ?? '')
   if (isExcelLiquidProductName(product, platform)) return true
   const plant = String(row.planta_normalized ?? '').trim().toUpperCase()
   const circuit = String(row.resolved_executive_circuit_code ?? '').trim().toUpperCase()

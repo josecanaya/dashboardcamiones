@@ -745,6 +745,7 @@ function inferExecutiveCircuitFromExcelPlatform(lite: ExcelFirstReconcileLite): 
     mov: movCode || (movType === 'DESPACHO' ? 'DE' : movType === 'INGRESO' ? 'I' : ''),
     observaciones: lite.observaciones,
     observacion_calidad: lite.observacion_calidad,
+    product_normalized: lite.product_normalized,
   })
   return inferred?.circuit_code ?? ''
 }
@@ -760,11 +761,12 @@ function slCircuitAllowedForExcelLite(lite: ExcelFirstReconcileLite, code: strin
 
   if (c !== 'SL1' && c !== 'SL2' && c !== 'SL3' && c !== 'SL5') return true
   if (c === 'SL3') {
-    const platformEmpty =
-      !String(lite.platform_normalized ?? '').trim() && !String(lite.plataforma_original ?? '').trim()
+    if (isPermittedAceiteLiquidDischargePlatform(lite.platform_normalized, lite.plataforma_original)) {
+      return false
+    }
     return (
-      platformEmpty &&
-      excelObservacionesIndicateRenovaAceite(lite.observaciones, lite.observacion_calidad)
+      excelObservacionesIndicateRenovaAceite(lite.observaciones, lite.observacion_calidad) ||
+      isExcelLiquidProductName(lite.product_normalized, lite.platform_normalized)
     )
   }
   if (excelPlantaIsSanLorenzoTerminal(lite.planta_normalized)) return true
@@ -814,7 +816,8 @@ function excelRowIndicatesAceite(lite: ExcelFirstReconcileLite): boolean {
       lite.plataforma_original,
       lite.planta_normalized,
       lite.observaciones,
-      lite.observacion_calidad
+      lite.observacion_calidad,
+      lite.product_normalized
     )
   ) {
     return true
@@ -849,7 +852,8 @@ function pickExecutiveCircuitFromExcelFirst(lite: ExcelFirstReconcileLite): stri
     lite.plataforma_original,
     lite.planta_normalized,
     lite.observaciones,
-    lite.observacion_calidad
+    lite.observacion_calidad,
+    lite.product_normalized
   )
   if (aceiteExcel && slCircuitAllowedForExcelLite(lite, aceiteExcel)) {
     return aceiteExcel

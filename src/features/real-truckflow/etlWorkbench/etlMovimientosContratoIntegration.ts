@@ -136,7 +136,6 @@ export async function runMovimientosContratoIntegration(
   const onProgress = input.onProgress
   const profiler = input.profiler
   const plateMatchCache = createPlateMatchCache()
-  const fuzzyCandidatesByPlate = new Map<string, import('./etlTruckflowMovimientosMerge').TruckflowJourneyForMerge[]>()
 
   let profileAt = performance.now()
   let normalized: ExternalMovimientoContratoNormalized[]
@@ -180,7 +179,7 @@ export async function runMovimientosContratoIntegration(
     loadWarnings
   )
   const excelUniquePlates = countUniqueNormalizedPlates(normalized.map((m) => m.plate_normalized))
-  console.info('[CONTRACT_FIRST_PASO3] inicio', {
+  console.info('[CONTRACT_FIRST_MERGE] inicio', {
     excelRows: normalized.length,
     excelUniquePlates,
     truckflowFinalRows: input.finalCsvRows.length,
@@ -278,7 +277,7 @@ export async function runMovimientosContratoIntegration(
 
   const mergeStage = await runContractFirstStage(
     'merge_truckflow_movimientos',
-    'Merge journey ↔ Excel (ancla + fuzzy)',
+    'Merge journey ↔ Excel (patente exacta)',
     runStartedAt,
     onProgress,
     async () =>
@@ -288,7 +287,7 @@ export async function runMovimientosContratoIntegration(
     {
       excelRows: normalized.length,
       journeys: truckflowJourneys.length,
-      complexity: 'O(mov×journey_len_bucket) ancla Excel; fuzzy por longitud patente',
+      complexity: 'O(mov+journey) cruce exacto por patente (Map.get)',
     }
   )
   stageTimings.push(mergeStage.timing)
@@ -309,7 +308,6 @@ export async function runMovimientosContratoIntegration(
     () =>
       mergeExcelOperationsWithTruckflowEvidence(normalized, truckflowJourneys, segments, {
         plateMatchCache,
-        fuzzyCandidatesByPlate,
         onExcelOperationProgress: (current, total, discardPartial) => {
           emitContractFirstProgress(onProgress, runStartedAt, {
             step: 'merge_excel_first_evidence',
@@ -324,7 +322,7 @@ export async function runMovimientosContratoIntegration(
       excelRows: normalized.length,
       journeys: truckflowJourneys.length,
       segments: segments.length,
-      complexity: 'O(mov×journey) fuzzy sin exact; yield cada 35 filas',
+      complexity: 'O(mov+journey) cruce exacto por patente (sin fuzzy OCR)',
     }
   )
   const excelFirstResult = excelFirstStage.result
@@ -375,7 +373,6 @@ export async function runMovimientosContratoIntegration(
       excel_with_evidence: excelFirstResult.summary.total_with_truckflow_evidence,
       excel_without_evidence: excelFirstResult.summary.total_without_truckflow_evidence,
       ocrCacheEntries: plateMatchCacheSize(plateMatchCache),
-      fuzzyPlateMemoSize: fuzzyCandidatesByPlate.size,
       ...excelFirstResult.discardCounters,
     },
   })
@@ -574,7 +571,7 @@ export async function runMovimientosContratoIntegration(
   const csv = csvStage.result
 
   const totalMs = Math.round(performance.now() - runStartedAt)
-  console.info('[CONTRACT_FIRST_PASO3] fin', { totalMs, stageTimings })
+  console.info('[CONTRACT_FIRST_MERGE] fin', { totalMs, stageTimings })
   logs.push(`Duración total Paso 3 (ms): ${totalMs}`)
   for (const t of stageTimings) {
     logs.push(`  etapa ${t.step}: ${t.durationMs}ms`)

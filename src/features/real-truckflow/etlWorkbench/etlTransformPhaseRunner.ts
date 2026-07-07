@@ -71,7 +71,21 @@ export async function runEtlTransformTramo(
   if (inp.movimientosContratoFiles?.length && !phaseStore.contractIntegration) {
     throw new Error('Completá el paso 2 (Excel en Truckflow) antes de circuitos.')
   }
-  const out = await runEtlTransform(inp, { onlyTramo: 2, phaseStore })
+  let out = await runEtlTransform(inp, { onlyTramo: 2, phaseStore })
+  // El paso 2 arma la evidencia Excel-first sin circuitos (todavía no existen),
+  // por eso el snapshot de KPI por tiempo queda sin segmentos. Ya con los circuitos
+  // clasificados en este paso, regeneramos la integración con las journeys reales.
+  // El cruce de patentes es exacto (O(mov+journey)) y no se relee el XLSX.
+  if (
+    inp.movimientosContratoFiles?.length &&
+    phaseStore.excelStep?.normalized.length &&
+    phaseStore.tramo2Prep?.classifiedForSegmentTiming.length
+  ) {
+    const prep = phaseStore.tramo2Prep
+    const mc = await runContractFirstIntegration(inp, prep, phaseStore.excelStep.normalized)
+    phaseStore.contractIntegration = mc
+    out = attachContractIntegrationToOutput(out, mc, prep)
+  }
   phaseStore.tramo2Output = out
   phaseStore.tramoCompleted = 3
   return out
@@ -95,23 +109,23 @@ export async function runEtlTransformAllTramos(
     phaseStore.tramoCompleted = 1
   }
 
-  if (inp.movimientosContratoFiles?.length) {
-    await ensureJourneyPrep(inp, phaseStore)
-    const prep = buildContractPrepFromTramo1Serialized(
-      phaseStore.tramo1 as import('./etlTransformContractFirst').Tramo1SerializedLike
-    )
-    phaseStore.tramo2Prep = prep
-    phaseStore.contractIntegration = await runContractFirstIntegration(
-      inp,
-      prep,
-      phaseStore.excelStep!.normalized
-    )
-    phaseStore.tramoCompleted = 2
-  } else {
-    await ensureJourneyPrep(inp, phaseStore)
+  await ensureJourneyPrep(inp, phaseStore)
+
+  // Clasificamos circuitos primero (una sola pasada) para tener las journeys reales;
+  // recién después cruzamos el Excel-first, así el snapshot de KPI por tiempo trae
+  // segmentos/tramos y no hace falta repetir el cruce.
+  const oCircuits = await runEtlTransform(inp, { ...runOpts, onlyTramo: 2 })
+
+  if (inp.movimientosContratoFiles?.length && phaseStore.tramo2Prep) {
+    const prep = phaseStore.tramo2Prep
+    const mc = await runContractFirstIntegration(inp, prep, phaseStore.excelStep!.normalized)
+    phaseStore.contractIntegration = mc
+    const out = attachContractIntegrationToOutput(oCircuits, mc, prep)
+    phaseStore.tramo2Output = out
+    phaseStore.tramoCompleted = 3
+    return out
   }
 
-  const oCircuits = await runEtlTransform(inp, { ...runOpts, onlyTramo: 2 })
   phaseStore.tramo2Output = oCircuits
   phaseStore.tramoCompleted = 3
   return oCircuits

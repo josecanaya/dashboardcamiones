@@ -157,15 +157,23 @@ describe('buildExcelPeriodContext', () => {
 })
 
 describe('diagnoseNoTruckflowEvidence', () => {
-  it('NO_PLATE_IN_TRUCKFLOW', () => {
+  it('NO_TRUCKFLOW_EXACT_PLATE_MATCH cuando la patente no existe en Truckflow', () => {
     const m = mov({ plate_normalized: 'ZZZ999', patente_original: 'ZZZ999' })
     const period = buildExcelPeriodContext([m], [])
     const plateIndex = buildPlateIndex([])
-    const diag = diagnoseNoTruckflowEvidence(m, plateIndex, period, null, null, 0.82)
-    expect(diag.no_truckflow_reason).toBe('NO_PLATE_IN_TRUCKFLOW')
+    const diag = diagnoseNoTruckflowEvidence(m, plateIndex, period, null, null)
+    expect(diag.no_truckflow_reason).toBe('NO_TRUCKFLOW_EXACT_PLATE_MATCH')
   })
 
-  it('PLATE_EXISTS_OUT_OF_TIME_WINDOW', () => {
+  it('NO_EXCEL_PLATE cuando el movimiento no tiene patente', () => {
+    const m = mov({ plate_normalized: '', patente_original: '' })
+    const period = buildExcelPeriodContext([m], [])
+    const plateIndex = buildPlateIndex([])
+    const diag = diagnoseNoTruckflowEvidence(m, plateIndex, period, null, null)
+    expect(diag.no_truckflow_reason).toBe('NO_EXCEL_PLATE')
+  })
+
+  it('EXACT_PLATE_MATCH_OUTSIDE_TIME_WINDOW', () => {
     const m = mov({})
     const j = journey({
       start_time: '2026-05-29T20:00:00',
@@ -175,8 +183,8 @@ describe('diagnoseNoTruckflowEvidence', () => {
     const plateIndex = buildPlateIndex([j])
     const narrow = { startMs: Date.parse('2026-05-29T08:00:00'), endMs: Date.parse('2026-05-29T11:00:00'), lowConfidence: false, wide: false }
     const wide = { startMs: Date.parse('2026-05-29T06:00:00'), endMs: Date.parse('2026-05-29T13:00:00'), lowConfidence: false, wide: true }
-    const diag = diagnoseNoTruckflowEvidence(m, plateIndex, period, narrow, wide, 0.82)
-    expect(diag.no_truckflow_reason).toBe('PLATE_EXISTS_OUT_OF_TIME_WINDOW')
+    const diag = diagnoseNoTruckflowEvidence(m, plateIndex, period, narrow, wide)
+    expect(diag.no_truckflow_reason).toBe('EXACT_PLATE_MATCH_OUTSIDE_TIME_WINDOW')
   })
 
   it('PLATE_EXISTS_ONLY_OUTSIDE_EXCEL_PERIOD', () => {
@@ -188,7 +196,7 @@ describe('diagnoseNoTruckflowEvidence', () => {
     const period = buildExcelPeriodContext([m], [j])
     const plateIndex = buildPlateIndex([j])
     const win = { startMs: 0, endMs: Date.now() + 1e9, lowConfidence: false, wide: true }
-    const diag = diagnoseNoTruckflowEvidence(m, plateIndex, period, win, win, 0.82)
+    const diag = diagnoseNoTruckflowEvidence(m, plateIndex, period, win, win)
     expect(diag.no_truckflow_reason).toBe('PLATE_EXISTS_ONLY_OUTSIDE_EXCEL_PERIOD')
   })
 
@@ -304,10 +312,10 @@ describe('findTruckflowEvidenceForExcelOperation', () => {
 describe('mergeExcelOperationsWithTruckflowEvidence', () => {
   it('genera fila sin evidencia con no_truckflow_reason', async () => {
     const res = await mergeExcelOperationsWithTruckflowEvidence([mov({})], [], [])
-    expect(res.operations[0]!.no_truckflow_reason).toBe('NO_PLATE_IN_TRUCKFLOW')
+    expect(res.operations[0]!.no_truckflow_reason).toBe('NO_TRUCKFLOW_EXACT_PLATE_MATCH')
     expect(res.noEvidenceDiagnostics).toHaveLength(1)
     expect(res.discardCounters.no_plate_in_truckflow).toBeGreaterThan(0)
-    expect(res.candidateDiagnostics[0]!.no_truckflow_reason).toBe('NO_PLATE_IN_TRUCKFLOW')
+    expect(res.candidateDiagnostics[0]!.no_truckflow_reason).toBe('NO_TRUCKFLOW_EXACT_PLATE_MATCH')
   })
 
   it('contabiliza rejected_by_time_window en diagnóstico por operación', async () => {
@@ -317,42 +325,60 @@ describe('mergeExcelOperationsWithTruckflowEvidence', () => {
       end_time: '2026-05-29T21:00:00',
     })
     const res = await mergeExcelOperationsWithTruckflowEvidence([m], [j], [])
-    expect(res.operations[0]!.no_truckflow_reason).toBe('PLATE_EXISTS_OUT_OF_TIME_WINDOW')
+    expect(res.operations[0]!.no_truckflow_reason).toBe('EXACT_PLATE_MATCH_OUTSIDE_TIME_WINDOW')
     expect(res.candidateDiagnostics[0]!.rejected_by_time_window).toBeGreaterThan(0)
     expect(res.discardCounters.rejected_by_time_window).toBeGreaterThan(0)
   })
 
-  it('prefilter OCR pool: mismos matches que escaneo completo', async () => {
+  it('cruce exacto: patente idéntica en Excel y Truckflow matchea', async () => {
+    const res = await mergeExcelOperationsWithTruckflowEvidence([mov({})], [journey({})], [])
+    expect(res.operations[0]!.evidence_count).toBe(1)
+    expect(res.operations[0]!.match_quality).not.toBe('NO_TRUCKFLOW_EVIDENCE')
+  })
+
+  it('cruce exacto: patente distinta por OCR NO matchea (sin fuzzy)', async () => {
+    // Truckflow tiene O donde Excel tiene 0 (confusión OCR clásica): no debe cruzar.
+    const res = await mergeExcelOperationsWithTruckflowEvidence(
+      [mov({ plate_normalized: 'AA123B0', patente_original: 'AA123B0' })],
+      [journey({ plate_normalized: 'AA123BO', plate_original: 'AA123BO' })],
+      []
+    )
+    expect(res.operations[0]!.no_truckflow_reason).toBe('NO_TRUCKFLOW_EXACT_PLATE_MATCH')
+  })
+
+  it('cruce exacto: misma longitud pero patente distinta NO matchea', async () => {
+    const res = await mergeExcelOperationsWithTruckflowEvidence(
+      [mov({ plate_normalized: 'AA123BB', patente_original: 'AA123BB' })],
+      [journey({ plate_normalized: 'CC456DD', plate_original: 'CC456DD' })],
+      []
+    )
+    expect(res.operations[0]!.no_truckflow_reason).toBe('NO_TRUCKFLOW_EXACT_PLATE_MATCH')
+  })
+
+  it('cruce exacto: diferencia de 1 carácter NO matchea', async () => {
+    const res = await mergeExcelOperationsWithTruckflowEvidence(
+      [mov({ plate_normalized: 'AA123BB', patente_original: 'AA123BB' })],
+      [journey({ plate_normalized: 'AA123BC', plate_original: 'AA123BC' })],
+      []
+    )
+    expect(res.operations[0]!.no_truckflow_reason).toBe('NO_TRUCKFLOW_EXACT_PLATE_MATCH')
+  })
+
+  it('cruce exacto: varios Truckflow con la misma patente elige el mejor por ventana temporal', async () => {
     const journeys = [
-      journey({ journey_uid: 'j1' }),
       journey({
-        journey_uid: 'j2',
-        plate_normalized: 'AB111CD',
-        plate_original: 'AB111CD',
-        start_time: '2026-05-29T09:10:00',
-        end_time: '2026-05-29T10:00:00',
+        journey_uid: 'lejos',
+        start_time: '2026-05-29T14:00:00',
+        end_time: '2026-05-29T15:00:00',
+      }),
+      journey({
+        journey_uid: 'cerca',
+        start_time: '2026-05-29T09:15:00',
+        end_time: '2026-05-29T10:30:00',
       }),
     ]
-    const ops = [
-      mov({ external_operation_id: 'o1' }),
-      mov({
-        external_operation_id: 'o2',
-        plate_normalized: 'AB111CD',
-        patente_original: 'AB111CD',
-      }),
-    ]
-    const withPref = await mergeExcelOperationsWithTruckflowEvidence(ops, journeys, [], {
-      useCandidatePrefilter: true,
-    })
-    const withoutPref = await mergeExcelOperationsWithTruckflowEvidence(ops, journeys, [], {
-      useCandidatePrefilter: false,
-    })
-    expect(withPref.operations.map((o) => o.matched_journey_uids)).toEqual(
-      withoutPref.operations.map((o) => o.matched_journey_uids)
-    )
-    expect(withPref.operations.map((o) => o.match_quality)).toEqual(
-      withoutPref.operations.map((o) => o.match_quality)
-    )
+    const res = await mergeExcelOperationsWithTruckflowEvidence([mov({})], journeys, [])
+    expect(res.operations[0]!.matched_journey_uids).toContain('cerca')
   })
 
   it('scatter true para ROUTE_NO_DISCHARGE_POINT con segmentos', async () => {
