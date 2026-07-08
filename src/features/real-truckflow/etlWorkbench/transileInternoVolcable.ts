@@ -46,6 +46,10 @@ export type TransileInternoSession = {
   volcable_devices: string
   session_start: string
   session_end: string
+  /** Horario de ingreso del camión (Excel: external_ingreso_at) que solapa la sesión. */
+  ingreso_camion: string
+  /** Horario de egreso/salida del camión (Excel: external_salida_at) que solapa la sesión. */
+  egreso_camion: string
   duration_min: number
   inferred_transile_interno: boolean
   excel_circuit_hint: string
@@ -196,6 +200,43 @@ function excelCircuitHintForSession(
   return ''
 }
 
+/**
+ * Ingreso/egreso del camión (Excel) que enmarca la sesión de transile: menor ingreso y mayor
+ * salida entre las operaciones de esa patente cuya ventana solapa la sesión (± 2 h).
+ */
+function excelIngresoEgresoForSession(
+  plate: string,
+  sessionStartMs: number,
+  sessionEndMs: number,
+  operations: ExcelOperationWithTruckflowRow[]
+): { ingresoAt: string; salidaAt: string } {
+  const pad = 2 * 3600_000
+  let ingresoMs = Number.POSITIVE_INFINITY
+  let ingresoAt = ''
+  let salidaMs = Number.NEGATIVE_INFINITY
+  let salidaAt = ''
+  for (const op of operations) {
+    if (normalizePlateKey(op.plate_normalized) !== plate) continue
+    const ingRaw = String(op.external_ingreso_at ?? '').trim()
+    const salRaw = String(op.external_salida_at ?? '').trim()
+    const ing = parseInstantMs(ingRaw)
+    const sal = parseInstantMs(salRaw)
+    if (!Number.isFinite(ing) && !Number.isFinite(sal)) continue
+    const from = Number.isFinite(ing) ? ing - pad : sessionStartMs - pad
+    const to = Number.isFinite(sal) ? sal + pad : sessionEndMs + pad
+    if (!(sessionStartMs <= to && sessionEndMs >= from)) continue
+    if (Number.isFinite(ing) && ing < ingresoMs) {
+      ingresoMs = ing
+      ingresoAt = ingRaw
+    }
+    if (Number.isFinite(sal) && sal > salidaMs) {
+      salidaMs = sal
+      salidaAt = salRaw
+    }
+  }
+  return { ingresoAt, salidaAt }
+}
+
 export function buildTransileInternoVolcableReport(input: {
   classifiedJourneys: ClassifiedJourneyForTiming[]
   rawEvents?: RawJourneyEventLike[]
@@ -222,6 +263,7 @@ export function buildTransileInternoVolcableReport(input: {
       const devices = [...new Set(group.map((v) => v.deviceCode))].sort().join('|')
       const uids = [...new Set(group.map((v) => v.journeyUid).filter(Boolean))].join('|')
       const fecha = fechaArgentina(start.instant)
+      const { ingresoAt, salidaAt } = excelIngresoEgresoForSession(plate, start.ms, end.ms, operations)
       sessions.push({
         session_id: `${plate}_${fecha || 'sin-fecha'}_${idx + 1}`,
         patente: plate,
@@ -231,6 +273,8 @@ export function buildTransileInternoVolcableReport(input: {
         volcable_devices: devices,
         session_start: start.instant,
         session_end: end.instant,
+        ingreso_camion: ingresoAt,
+        egreso_camion: salidaAt,
         duration_min: Math.round(((end.ms - start.ms) / 60_000) * 10) / 10,
         inferred_transile_interno: inferred,
         excel_circuit_hint: excelCircuitHintForSession(plate, start.ms, end.ms, operations),
@@ -263,6 +307,8 @@ const SESSION_HEADERS = [
   'volcable_devices',
   'session_start',
   'session_end',
+  'ingreso_camion',
+  'egreso_camion',
   'duration_min',
   'inferred_transile_interno',
   'excel_circuit_hint',

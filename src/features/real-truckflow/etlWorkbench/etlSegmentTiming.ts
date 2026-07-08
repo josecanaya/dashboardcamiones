@@ -179,11 +179,47 @@ export const SL_OPERATIONAL_KPI_CHAIN = [
   'SL_EGRESO',
 ] as const
 
-const CIRCUITS_WITH_SL_BALANZA_ROLLUP = new Set(['R7', 'SL1', 'R26', 'R27'])
+/** Cadena SL con descarga instrumentada S10 (SL1 aceite OSL): balanza → descarga → egreso. */
+export const SL_OPERATIONAL_KPI_CHAIN_S10 = [
+  'SL_INGRESO',
+  'SL_BALANZA_INGRESO',
+  'SL_DESCARGA',
+  'SL_EGRESO',
+] as const
+
+const CIRCUITS_WITH_SL_BALANZA_ROLLUP = new Set(['R7', 'SL1', 'SL2', 'R26', 'R27'])
+
+/**
+ * Circuitos con recorrido físico Ricardone → puente → San Lorenzo (mismos tramos que R7).
+ * R7 = soja (VOLCABLE PTO); SL1/SL2 = aceite (OSL/PTO). Comparten INGRESO/PREINGRESO/(calada)/EGRESO
+ * en Ricardone y SL_INGRESO/SL_BALANZA_INGRESO/.../SL_EGRESO en San Lorenzo, con el puente
+ * EGRESO→SL_INGRESO. En aceite la calada es la de líquidos (RicCalLiq → LIQUIDO), no la de granos.
+ */
+const CIRCUITS_WITH_R7_RIC_SL_TIMELINE = new Set(['R7', 'SL2', 'SL1'])
+function usesR7RicSlTimeline(circuitCode: string): boolean {
+  return CIRCUITS_WITH_R7_RIC_SL_TIMELINE.has(
+    normalizeExecutiveCircuitForKpi(String(circuitCode ?? '').trim())
+  )
+}
+
+/** Circuitos aceite con cámara de descarga S10 (parten balanza→descarga→egreso, no rollup colapsado). */
+const CIRCUITS_WITH_S10_DESCARGA_SPLIT = new Set(['SL1'])
+function circuitSplitsOnS10Descarga(circuitCode: string): boolean {
+  return CIRCUITS_WITH_S10_DESCARGA_SPLIT.has(
+    normalizeExecutiveCircuitForKpi(String(circuitCode ?? '').trim())
+  )
+}
+
+/** Cadena operativa SL por circuito (SL1 incluye la descarga S10 instrumentada). */
+function slOperationalKpiChain(circuitCode: string): readonly string[] {
+  return circuitSplitsOnS10Descarga(circuitCode) ? SL_OPERATIONAL_KPI_CHAIN_S10 : SL_OPERATIONAL_KPI_CHAIN
+}
 
 /** Puente Ricardone ↔ San Lorenzo en transiles externos (sin cámaras en ruta). */
 export const TRANSILE_BRIDGE_KPI_TRANSITIONS = {
   R7: { fromCode: 'EGRESO', toCode: 'SL_INGRESO' },
+  SL2: { fromCode: 'EGRESO', toCode: 'SL_INGRESO' },
+  SL1: { fromCode: 'EGRESO', toCode: 'SL_INGRESO' },
   R26: { fromCode: 'BALANZA_EGRESO', toCode: 'SL_INGRESO' },
   R27: { fromCode: 'SL_EGRESO', toCode: 'INGRESO' },
 } as const
@@ -263,6 +299,22 @@ const DISCHARGE_KPI_ROLLUP_BY_CIRCUIT: Record<string, DischargeKpiRollupRule[]> 
       fromCode: 'EGRESO',
       toCode: 'SL_INGRESO',
       endCodes: ['SL_INGRESO', 'SL_BALANZA_INGRESO', 'SL_BALANZA_SALIDA', 'SL_EGRESO'],
+    },
+  ],
+  // SL2 aceite PTO: mismo puente Ricardone→San Lorenzo que R7.
+  SL2: [
+    {
+      fromCode: 'EGRESO',
+      toCode: 'SL_INGRESO',
+      endCodes: ['SL_INGRESO', 'SL_BALANZA_INGRESO', 'SL_BALANZA_SALIDA', 'SL_EGRESO'],
+    },
+  ],
+  // SL1 aceite OSL: mismo puente que SL2 (recepción interna con descarga S10 instrumentada).
+  SL1: [
+    {
+      fromCode: 'EGRESO',
+      toCode: 'SL_INGRESO',
+      endCodes: ['SL_INGRESO', 'SL_BALANZA_INGRESO', 'SL_BALANZA_SALIDA', 'SL_DESCARGA', 'SL_EGRESO'],
     },
   ],
   R26: [
@@ -472,6 +524,11 @@ function buildExecutiveCircuitSegmentTemplate(): Record<string, readonly string[
   map.R5 = RECEPTION_BALANZA_KPI_CHAIN
   map.R6 = RECEPTION_BALANZA_KPI_CHAIN
   map.R7 = ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO', ...SL_OPERATIONAL_KPI_CHAIN]
+  // Aceite: mismo recorrido Ricardone→San Lorenzo que R7, pero la calada es la de líquidos
+  // (RicCalLiq → LIQUIDO), no la de granos. SL2 (PTO) sin cámara de descarga; SL1 (OSL) con S10.
+  const ACEITE_RIC_PREFIX = ['INGRESO', 'PREINGRESO', 'LIQUIDO', 'EGRESO'] as const
+  map.SL2 = [...ACEITE_RIC_PREFIX, ...SL_OPERATIONAL_KPI_CHAIN]
+  map.SL1 = [...ACEITE_RIC_PREFIX, ...SL_OPERATIONAL_KPI_CHAIN_S10]
   map.R8 = ['INGRESO', 'PREINGRESO', 'CALADA', 'LIQUIDO', 'BALANZA_INGRESO', 'BALANZA_EGRESO']
   map.R26 = [
     'INGRESO',
@@ -495,7 +552,7 @@ function buildExecutiveCircuitSegmentTemplate(): Record<string, readonly string[
     'CELDA16_DESCARGA',
     'BALANZA_EGRESO',
   ]
-  map.SL1 = [...SL_OPERATIONAL_KPI_CHAIN]
+  // (SL1 se define arriba junto con SL2 — recorrido aceite Ricardone→San Lorenzo con descarga S10.)
   map.R19 = ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO', 'CELDA16_CARGA', 'VOLCABLE', 'BALANZA_EGRESO']
   map.R20 = map.R19
   map.R3 = KEPLER_KPI_CHAIN
@@ -2246,6 +2303,11 @@ export function extractSlBalancaRollupFromTimeline(
   plate: string
 ): SegmentLeg | null {
   if (!CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(executiveCircuitCode)) return null
+  // SL1 con cámara S10: si hay descarga instrumentada, el tramo se parte balanza→descarga→egreso
+  // y no se colapsa en el rollup balanza→egreso (evita doble conteo).
+  if (circuitSplitsOnS10Descarga(executiveCircuitCode) && points.some((p) => p.code === 'SL_DESCARGA')) {
+    return null
+  }
   const { from: fromCode, to: templateToCode } = SL_BALANZA_ROLLUP_TRANSITION
   const endpoints = resolveSlBalancaRollupEndpoints(points)
   if (!endpoints) return null
@@ -2322,19 +2384,20 @@ export function extractSlOperationalChainLegsFromTimeline(
   plate: string
 ): SegmentLegWithTimes[] {
   if (!CIRCUITS_WITH_SL_BALANZA_ROLLUP.has(executiveCircuitCode)) return []
+  const chain = slOperationalKpiChain(executiveCircuitCode)
   const legs: SegmentLegWithTimes[] = []
   let startIdx = 0
-  for (let i = 0; i < SL_OPERATIONAL_KPI_CHAIN.length; i++) {
-    if (points.some((p) => p.code === SL_OPERATIONAL_KPI_CHAIN[i])) {
+  for (let i = 0; i < chain.length; i++) {
+    if (points.some((p) => p.code === chain[i])) {
       startIdx = i
       break
     }
   }
   let afterMs = Number.NEGATIVE_INFINITY
 
-  for (let i = startIdx; i < SL_OPERATIONAL_KPI_CHAIN.length - 1; i++) {
-    const fromCode = SL_OPERATIONAL_KPI_CHAIN[i]!
-    const toCode = SL_OPERATIONAL_KPI_CHAIN[i + 1]!
+  for (let i = startIdx; i < chain.length - 1; i++) {
+    const fromCode = chain[i]!
+    const toCode = chain[i + 1]!
     if (
       fromCode === SL_BALANZA_ROLLUP_TRANSITION.from &&
       toCode === SL_BALANZA_ROLLUP_TRANSITION.to
@@ -2435,12 +2498,18 @@ export function synthesizeSlRollupLegsFromTimedSegments(input: {
     input.plate
   )
 
-  const kpiBalanza = resolveSlBalanzaRollupEndpointsForKpi(truckflowPoints, {
-    externalSalidaAt: input.externalSalidaAt,
-    externalIngresoAt: input.externalIngresoAt,
-    truckflowPoints,
-    truckflowSegments,
-  })
+  // SL1 con descarga S10 ya partida (balanza→descarga→egreso): no colapsar el rollup balanza→egreso.
+  const hasS10DescargaSplit =
+    circuitSplitsOnS10Descarga(input.executiveCircuitCode) &&
+    legs.some((l) => l.fromCode === 'SL_DESCARGA' || l.toCode === 'SL_DESCARGA')
+  const kpiBalanza = hasS10DescargaSplit
+    ? null
+    : resolveSlBalanzaRollupEndpointsForKpi(truckflowPoints, {
+        externalSalidaAt: input.externalSalidaAt,
+        externalIngresoAt: input.externalIngresoAt,
+        truckflowPoints,
+        truckflowSegments,
+      })
   if (kpiBalanza) {
     const corrected = correctSlBalanzaDescargaStayTiming(
       kpiBalanza.from.occurredAt,
@@ -2878,7 +2947,7 @@ function enrichTimelineWithExcelSiloAnchors(
     }
   }
 
-  if (circuitCode === 'R7') {
+  if (usesR7RicSlTimeline(circuitCode)) {
     const ricOutIdx = enriched.findIndex((p) => p.code === 'EGRESO')
     if (ricOutIdx >= 0) {
       const fromMs = parseTimestampMs(enriched[ricOutIdx]!.occurredAt)
@@ -3342,7 +3411,7 @@ export function synthesizeDischargeRollupLegsFromTimedSegments(input: {
   })
   const slIngresoStart = earliestSegmentStartForCode(coherentSegments, 'SL_INGRESO')
   if (
-    input.executiveCircuitCode === 'R7' &&
+    usesR7RicSlTimeline(input.executiveCircuitCode) &&
     slIngresoStart &&
     !points.some((p) => p.code === 'SL_INGRESO')
   ) {
@@ -3354,7 +3423,7 @@ export function synthesizeDischargeRollupLegsFromTimedSegments(input: {
   }
   const egresoStart = earliestSegmentStartForCode(coherentSegments, 'EGRESO')
   if (
-    input.executiveCircuitCode === 'R7' &&
+    usesR7RicSlTimeline(input.executiveCircuitCode) &&
     egresoStart &&
     !points.some((p) => p.code === 'EGRESO')
   ) {
@@ -4053,6 +4122,13 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
   for (const [operationId, bucket] of timedSegmentsByOperation) {
     const salida = String(bucket.externalSalidaAt ?? '').trim()
     if (!salida) continue
+    // SL1 con descarga S10 instrumentada: el tramo se parte balanza→descarga→egreso; no colapsar.
+    if (
+      circuitSplitsOnS10Descarga(bucket.circuitCode) &&
+      bucket.segments.some((s) => s.segment_from === 'SL_DESCARGA' || s.segment_to === 'SL_DESCARGA')
+    ) {
+      continue
+    }
     const { opSegments, truckflowPoints: opPoints, enrichedPoints } = buildSlComiteTruckflowContext({
       segments: bucket.segments,
       externalIngresoAt: bucket.externalIngresoAt,
@@ -4099,6 +4175,16 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
       fromCode === SL_BALANZA_ROLLUP_TRANSITION.from &&
       toCode === SL_BALANZA_ROLLUP_TRANSITION.to
     ) {
+      const splitBucket = timedSegmentsByOperation.get(operationId)
+      if (
+        splitBucket &&
+        circuitSplitsOnS10Descarga(circuitCode) &&
+        splitBucket.segments.some(
+          (s) => s.segment_from === 'SL_DESCARGA' || s.segment_to === 'SL_DESCARGA'
+        )
+      ) {
+        continue
+      }
       const bucket = timedSegmentsByOperation.get(operationId)
       const comiteCtx =
         bucket ?

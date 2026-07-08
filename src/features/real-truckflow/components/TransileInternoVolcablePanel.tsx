@@ -1,11 +1,21 @@
 import { useMemo } from 'react'
 import { parseCsvToRecords } from '../etlWorkbench/etlCsvParse'
 import { triggerBrowserCsvDownload } from '../etlWorkbench/etlCsv'
+import { argentinaLocalParts } from '../etlWorkbench/etlTimestampNormalize'
 import {
   TRANSILE_LAP_MIN_MS,
   TRANSILE_SESSION_BREAK_MS,
   VOLCABLE_TRANSILE_DEVICES,
 } from '../etlWorkbench/transileInternoVolcable'
+
+/** Horario legible (fecha + HH:MM, hora Argentina) para ingreso/egreso del camión. */
+function formatCamionDatetime(iso: string | undefined): string {
+  const raw = String(iso ?? '').trim()
+  if (!raw) return '—'
+  const parts = argentinaLocalParts(raw)
+  if (!parts) return raw
+  return `${parts.fecha_tramo} ${parts.hora_inicio}`
+}
 
 type Props = {
   sessionsCsv?: string
@@ -82,6 +92,8 @@ export function TransileInternoVolcablePanel({ sessionsCsv, summaryCsv, disabled
                 <th className="px-2 py-2">Visitas</th>
                 <th className="px-2 py-2">Lapsos válidos</th>
                 <th className="px-2 py-2">Cámaras</th>
+                <th className="px-2 py-2">Ingreso camión</th>
+                <th className="px-2 py-2">Egreso camión</th>
                 <th className="px-2 py-2">Excel</th>
                 <th className="px-2 py-2">Duración (min)</th>
               </tr>
@@ -94,6 +106,8 @@ export function TransileInternoVolcablePanel({ sessionsCsv, summaryCsv, disabled
                   <td className="px-2 py-1.5 tabular-nums">{r.visit_count}</td>
                   <td className="px-2 py-1.5 tabular-nums">{r.valid_laps}</td>
                   <td className="px-2 py-1.5 font-mono text-[10px]">{r.volcable_devices}</td>
+                  <td className="px-2 py-1.5 tabular-nums">{formatCamionDatetime(r.ingreso_camion)}</td>
+                  <td className="px-2 py-1.5 tabular-nums">{formatCamionDatetime(r.egreso_camion)}</td>
                   <td className="px-2 py-1.5">{r.excel_circuit_hint || '—'}</td>
                   <td className="px-2 py-1.5 tabular-nums">{r.duration_min}</td>
                 </tr>

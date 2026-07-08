@@ -95,10 +95,13 @@ export function inferAceiteExecutiveCircuitFromPlatform(
 }
 
 /**
- * Plataforma aceite explícita (OSL/PTO/genérica) → SL1/SL2/R8.
- * Cualquier otro caso de movimiento aceite/líquido (plataforma vacía o distinta de las
- * tres reconocidas) descarga en Renova aunque no diga "RENOVA" en observaciones: prestamos
- * el servicio pero la descarga física es en la planta de Renova → SL3.
+ * Reglas Excel plataforma de descarga → circuito ejecutivo aceite:
+ *   - "Aceite OSL" → SL1
+ *   - "Aceite PTO" → SL2
+ *   - "Aceite"     → R8
+ *   - Observación/descripción dice "RENOVA" **y** la plataforma de descarga viene vacía → SL3
+ * Cualquier otro caso (plataforma vacía sin RENOVA, o plataforma distinta de las reconocidas)
+ * no se fuerza a SL3: se deja que la evidencia Truckflow / demás reglas resuelvan el circuito.
  */
 export function inferAceiteExecutiveCircuitFromExcel(
   platformNormalized: string | null | undefined,
@@ -106,7 +109,7 @@ export function inferAceiteExecutiveCircuitFromExcel(
   plantaNormalized: string | null | undefined,
   observaciones?: string | null,
   observacionCalidad?: string | null,
-  product?: string | null
+  _product?: string | null
 ): AceiteExecutiveCircuitCode | null {
   const fromPlatform = inferAceiteExecutiveCircuitFromPlatform(
     platformNormalized,
@@ -115,10 +118,11 @@ export function inferAceiteExecutiveCircuitFromExcel(
   )
   if (fromPlatform) return fromPlatform
   if (isPermittedAceiteLiquidDischargePlatform(platformNormalized, plataformaOriginal)) return null
-  const looksLikeAceiteMovement =
-    excelObservacionesIndicateRenovaAceite(observaciones, observacionCalidad) ||
-    isExcelLiquidProductName(String(product ?? ''), String(platformNormalized ?? ''))
-  return looksLikeAceiteMovement ? 'SL3' : null
+  // SL3 (Renova) SOLO cuando la descripción dice RENOVA y la plataforma de descarga está vacía.
+  const dischargePlatformEmpty =
+    !String(platformNormalized ?? '').trim() && !String(plataformaOriginal ?? '').trim()
+  const renova = excelObservacionesIndicateRenovaAceite(observaciones, observacionCalidad)
+  return renova && dischargePlatformEmpty ? 'SL3' : null
 }
 
 function haystackHasRicLiquidBalanza(hay: string): boolean {

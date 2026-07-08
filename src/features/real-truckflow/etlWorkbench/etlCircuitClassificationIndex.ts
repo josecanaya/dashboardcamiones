@@ -764,9 +764,12 @@ function slCircuitAllowedForExcelLite(lite: ExcelFirstReconcileLite, code: strin
     if (isPermittedAceiteLiquidDischargePlatform(lite.platform_normalized, lite.plataforma_original)) {
       return false
     }
+    // SL3 = Renova: descripción dice RENOVA y la plataforma de descarga viene vacía.
+    const dischargePlatformEmpty =
+      !String(lite.platform_normalized ?? '').trim() && !String(lite.plataforma_original ?? '').trim()
     return (
-      excelObservacionesIndicateRenovaAceite(lite.observaciones, lite.observacion_calidad) ||
-      isExcelLiquidProductName(lite.product_normalized, lite.platform_normalized)
+      dischargePlatformEmpty &&
+      excelObservacionesIndicateRenovaAceite(lite.observaciones, lite.observacion_calidad)
     )
   }
   if (excelPlantaIsSanLorenzoTerminal(lite.planta_normalized)) return true

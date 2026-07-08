@@ -83,6 +83,18 @@ describe('inferAceiteExecutiveCircuitFromExcel', () => {
   it('plataforma vacía sin RENOVA no devuelve SL3', () => {
     expect(inferAceiteExecutiveCircuitFromExcel('', '', EXCEL_TERMINAL(), 'sin marca', '')).toBeNull()
   })
+
+  it('producto aceite con plataforma vacía y sin RENOVA no se fuerza a SL3', () => {
+    expect(
+      inferAceiteExecutiveCircuitFromExcel('', '', EXCEL_TERMINAL(), 'sin marca', '', 'ACEITE GIRASOL')
+    ).toBeNull()
+  })
+
+  it('plataforma ACEITE (genérica) devuelve R8 aunque la observación diga RENOVA', () => {
+    expect(
+      inferAceiteExecutiveCircuitFromExcel('ACEITE', 'ACEITE', EXCEL_TERMINAL(), 'destino RENOVA', '')
+    ).toBe('R8')
+  })
 })
 
 describe('aceite vs soja / R7 sólido', () => {

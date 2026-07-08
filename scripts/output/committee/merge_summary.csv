@@ -1,0 +1,2 @@
+total_truckflow_journeys,total_movimientos,match_exact,match_probable,match_multiple_resolved,match_enriched_plate_day,match_excel_anchor,match_fuzzy_plate,match_multiple,match_ambiguous,no_external_match,no_truckflow_match,insufficient_data,journeys_with_product,operational_enrichment_ready,enriched_sin_descarga_camara,match_rate_truckflow,match_rate_movimientos,unique_products,unique_platforms
+0,5906,0,0,0,0,0,0,0,0,0,5906,0,0,0,0,0,0,0,0

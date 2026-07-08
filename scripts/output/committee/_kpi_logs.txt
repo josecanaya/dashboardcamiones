@@ -1,0 +1,7 @@
+Truckflow COMPLETOS: 11267 tramos, 3186 journeys
+Excel-first: 0 tramos, 0 operaciones (ready_for_scatter)
+segment_scatter_analysis: 199 filas
+segment_scatter_by_day: 144 filas
+SL balanza→egreso embudo · incluido=0 · evaluadas=199 · circuito_R7/SL=0 · con_segmento_camara_balanza=0 · sin_salida_excel=0 · sin_inicio_balanza=199 · duracion_invalida=0 · duracion_excede_180=0 · not_ready_scatter=0
+detalle_comité · ok=0 · sin_inicio=199 · excel_ric_como_s1=0 · s1_antes_ingreso_sl=0 · salida_antes_s1=0 · duracion_corta=0 · duracion_mayor_180=0 · sin_salida=0
+sector_occupancy_30min: 912 intervalos · events: 144

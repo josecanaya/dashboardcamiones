@@ -1,0 +1,728 @@
+{
+  "step1": {
+    "frontEvents": 47514,
+    "rearEvents": 0,
+    "frontAlerts": 28763,
+    "rearAlerts": 22852,
+    "pctExcludedEvents": 0,
+    "deviceRearCounts": []
+  },
+  "plateRegistry": {
+    "activeExclusionEntries": 0,
+    "eventsExcluded": 0,
+    "alertsExcluded": 0,
+    "uniquePlatesExcluded": 0
+  },
+  "step2": {
+    "rows": 2830,
+    "camerasWithEvents": 26,
+    "camerasWithLpr": 41,
+    "criticalCameras": 149,
+    "sinBaseCameras": 1029,
+    "totalLprMalfunctionAlerts": 25574,
+    "lprMalfunctionByCamera": [
+      {
+        "deviceCode": "RicIngCamTrasera",
+        "count": 4369
+      },
+      {
+        "deviceCode": "SLZSalidaC1Tras",
+        "count": 3551
+      },
+      {
+        "deviceCode": "RicPreIngInTr",
+        "count": 3129
+      },
+      {
+        "deviceCode": "SLZBalIngFte",
+        "count": 2159
+      },
+      {
+        "deviceCode": "RicEgrCamTraser",
+        "count": 2117
+      },
+      {
+        "deviceCode": "RicIngCamFrente",
+        "count": 1051
+      },
+      {
+        "deviceCode": "SLZBalIngTras",
+        "count": 970
+      },
+      {
+        "deviceCode": "SLZBalSC2Tras",
+        "count": 954
+      },
+      {
+        "deviceCode": "RicEgrCamFrente",
+        "count": 740
+      },
+      {
+        "deviceCode": "RicPreIngInFr",
+        "count": 649
+      },
+      {
+        "deviceCode": "RicPreIngEgFr",
+        "count": 640
+      },
+      {
+        "deviceCode": "SLZIngCamFrente",
+        "count": 622
+      },
+      {
+        "deviceCode": "RenCargTras",
+        "count": 562
+      },
+      {
+        "deviceCode": "RenCargFte",
+        "count": 489
+      },
+      {
+        "deviceCode": "SLZSalidaC1Fte",
+        "count": 461
+      },
+      {
+        "deviceCode": "RicCal01",
+        "count": 390
+      },
+      {
+        "deviceCode": "RicC16Descarga2",
+        "count": 372
+      },
+      {
+        "deviceCode": "RicCal02",
+        "count": 336
+      },
+      {
+        "deviceCode": "RicVolcable1",
+        "count": 316
+      },
+      {
+        "deviceCode": "RicVolcable2",
+        "count": 254
+      },
+      {
+        "deviceCode": "RicB1Ingreso",
+        "count": 250
+      },
+      {
+        "deviceCode": "RenDescTras",
+        "count": 244
+      },
+      {
+        "deviceCode": "RicB2Egreso",
+        "count": 233
+      },
+      {
+        "deviceCode": "RenDescFte",
+        "count": 202
+      },
+      {
+        "deviceCode": "SLZSalidaC2Fte",
+        "count": 114
+      },
+      {
+        "deviceCode": "RicCal05",
+        "count": 71
+      },
+      {
+        "deviceCode": "RicCal06",
+        "count": 58
+      },
+      {
+        "deviceCode": "SLZBalSC1Fte",
+        "count": 50
+      },
+      {
+        "deviceCode": "RicCalLiq",
+        "count": 46
+      },
+      {
+        "deviceCode": "SLZSalidaC2Tras",
+        "count": 45
+      },
+      {
+        "deviceCode": "RicB3Ingreso",
+        "count": 41
+      },
+      {
+        "deviceCode": "RicB3Egreso",
+        "count": 28
+      },
+      {
+        "deviceCode": "SLZBalSC2Fte",
+        "count": 17
+      },
+      {
+        "deviceCode": "RicC16Carga2",
+        "count": 11
+      },
+      {
+        "deviceCode": "RicB1Egreso",
+        "count": 9
+      },
+      {
+        "deviceCode": "SLZIngCamTrasera",
+        "count": 6
+      },
+      {
+        "deviceCode": "RicCal03",
+        "count": 5
+      },
+      {
+        "deviceCode": "RicC16Carga1",
+        "count": 5
+      },
+      {
+        "deviceCode": "SLZBalSC1Tras",
+        "count": 4
+      },
+      {
+        "deviceCode": "RicPreIngEgTr",
+        "count": 3
+      },
+      {
+        "deviceCode": "RicCal04",
+        "count": 1
+      }
+    ],
+    "cameraWithMostLpr": "RicIngCamTrasera"
+  },
+  "step3": {
+    "journeysTotal": 13202,
+    "journeysValidFront": 18229,
+    "rearOnlyExcluded": 0,
+    "journeysWithRearEventsRemoved": 0,
+    "single_event_discarded": 7613,
+    "duplicate_suspected": 0,
+    "incomplete_sequence_count": 0,
+    "classifiedCircuitsOperational": 5641,
+    "incompleteOperational": 0,
+    "unclassifiedCount": 12588,
+    "cleanJourneysCount": 18229
+  },
+  "step4": {
+    "candidates": 0,
+    "candidatesBeforeCap": 0,
+    "byExactPlate": 0,
+    "bySimilarPlate": 0,
+    "bySequenceAndPlate": 0
+  },
+  "coherence": {
+    "ingreso_frontal_event_count": 0,
+    "ingreso_frontal_unique_plates": 0,
+    "ingreso_frontal_unique_journeys": 0,
+    "ingresos_operativos_count": 6599,
+    "total_journeys_raw": 13202,
+    "rear_only_journeys_excluded": 0,
+    "journeys_after_rear_filter": 18229,
+    "final_circuits_count": 5242,
+    "final_classified_count": 2029,
+    "final_incomplete_count": 3213,
+    "final_circuitos_completos": 749,
+    "final_circuitos_probables": 1280,
+    "final_circuitos_sin_ingreso": 0,
+    "final_circuitos_sin_egreso": 0,
+    "final_incompletos_revision": 3213,
+    "final_descartados": 7613,
+    "circuitos_con_ingreso_operativo": 4233,
+    "circuitos_con_egreso_operativo": 3637,
+    "circuitos_con_ingreso_y_egreso_operativo": 2773,
+    "journey_vs_ingreso_ratio": null,
+    "final_circuits_vs_ingreso_ratio": null,
+    "journeyFragmentationWarn": false,
+    "circuitsVersusIngresoWarn": false,
+    "coherenceLabel": "Coherente",
+    "coherenceDetail": "Ingresos frontales RicIngCamFrente: 0. Ingresos operativos (INGRESO/PREINGRESO en journey): 6599. Journeys Truckflow: 18229. Circuitos finales: 5242 (completos 749, probables 1280).",
+    "exclusionMotives": [
+      {
+        "motive": "rear_only_journey",
+        "count": 0
+      },
+      {
+        "motive": "single_event_discarded",
+        "count": 7613
+      },
+      {
+        "motive": "duplicate_suspected",
+        "count": 0
+      },
+      {
+        "motive": "incomplete_sequence",
+        "count": 0
+      }
+    ]
+  },
+  "validation": {
+    "totalLprMalfunctionAlerts": 25574,
+    "lprMalfunctionByCamera": [
+      {
+        "deviceCode": "RicIngCamTrasera",
+        "count": 4369
+      },
+      {
+        "deviceCode": "SLZSalidaC1Tras",
+        "count": 3551
+      },
+      {
+        "deviceCode": "RicPreIngInTr",
+        "count": 3129
+      },
+      {
+        "deviceCode": "SLZBalIngFte",
+        "count": 2159
+      },
+      {
+        "deviceCode": "RicEgrCamTraser",
+        "count": 2117
+      },
+      {
+        "deviceCode": "RicIngCamFrente",
+        "count": 1051
+      },
+      {
+        "deviceCode": "SLZBalIngTras",
+        "count": 970
+      },
+      {
+        "deviceCode": "SLZBalSC2Tras",
+        "count": 954
+      },
+      {
+        "deviceCode": "RicEgrCamFrente",
+        "count": 740
+      },
+      {
+        "deviceCode": "RicPreIngInFr",
+        "count": 649
+      },
+      {
+        "deviceCode": "RicPreIngEgFr",
+        "count": 640
+      },
+      {
+        "deviceCode": "SLZIngCamFrente",
+        "count": 622
+      },
+      {
+        "deviceCode": "RenCargTras",
+        "count": 562
+      },
+      {
+        "deviceCode": "RenCargFte",
+        "count": 489
+      },
+      {
+        "deviceCode": "SLZSalidaC1Fte",
+        "count": 461
+      },
+      {
+        "deviceCode": "RicCal01",
+        "count": 390
+      },
+      {
+        "deviceCode": "RicC16Descarga2",
+        "count": 372
+      },
+      {
+        "deviceCode": "RicCal02",
+        "count": 336
+      },
+      {
+        "deviceCode": "RicVolcable1",
+        "count": 316
+      },
+      {
+        "deviceCode": "RicVolcable2",
+        "count": 254
+      },
+      {
+        "deviceCode": "RicB1Ingreso",
+        "count": 250
+      },
+      {
+        "deviceCode": "RenDescTras",
+        "count": 244
+      },
+      {
+        "deviceCode": "RicB2Egreso",
+        "count": 233
+      },
+      {
+        "deviceCode": "RenDescFte",
+        "count": 202
+      },
+      {
+        "deviceCode": "SLZSalidaC2Fte",
+        "count": 114
+      },
+      {
+        "deviceCode": "RicCal05",
+        "count": 71
+      },
+      {
+        "deviceCode": "RicCal06",
+        "count": 58
+      },
+      {
+        "deviceCode": "SLZBalSC1Fte",
+        "count": 50
+      },
+      {
+        "deviceCode": "RicCalLiq",
+        "count": 46
+      },
+      {
+        "deviceCode": "SLZSalidaC2Tras",
+        "count": 45
+      },
+      {
+        "deviceCode": "RicB3Ingreso",
+        "count": 41
+      },
+      {
+        "deviceCode": "RicB3Egreso",
+        "count": 28
+      },
+      {
+        "deviceCode": "SLZBalSC2Fte",
+        "count": 17
+      },
+      {
+        "deviceCode": "RicC16Carga2",
+        "count": 11
+      },
+      {
+        "deviceCode": "RicB1Egreso",
+        "count": 9
+      },
+      {
+        "deviceCode": "SLZIngCamTrasera",
+        "count": 6
+      },
+      {
+        "deviceCode": "RicCal03",
+        "count": 5
+      },
+      {
+        "deviceCode": "RicC16Carga1",
+        "count": 5
+      },
+      {
+        "deviceCode": "SLZBalSC1Tras",
+        "count": 4
+      },
+      {
+        "deviceCode": "RicPreIngEgTr",
+        "count": 3
+      },
+      {
+        "deviceCode": "RicCal04",
+        "count": 1
+      }
+    ],
+    "cameraWithMostLpr": "RicIngCamTrasera",
+    "circuitosClasificados": 5641,
+    "registrosIncompletosOperativos": 0,
+    "sinClasificar": 12588,
+    "mergeCandidatesFiltered": 0,
+    "final_circuits_count": 5242
+  },
+  "executive": {
+    "periodStart": "2026-06-22",
+    "periodEnd": "2026-07-05",
+    "eventCount": 47514,
+    "alertCount": 51615,
+    "completos": 1112,
+    "incompletos": 1888,
+    "anomalos": 1227,
+    "deducidos": 1015,
+    "validos": 3202,
+    "probables": 2,
+    "journeysMergedApplied": 0,
+    "noEvaluables": 3,
+    "validComplete": 671,
+    "validDeduced": 1119,
+    "lprAlerts": 25574,
+    "operationalAlerts": 19152,
+    "operationalAlertsCrossed": 14228,
+    "journeysWithInvalidRoute": 7603,
+    "journeysWithInvalidJourneyStart": 6625,
+    "incompletosWithOperationalAlert": 6958,
+    "anomalosWithOperationalAlert": 1204,
+    "exportReady": true,
+    "slFrontEvents": 47514,
+    "slJourneysWithCorroboration": 9589,
+    "slJourneysExecutiveReinforced": 1430,
+    "committeeCompletos": 3203,
+    "committeeVariaciones": 201,
+    "committeeAnomalias": 14825
+  },
+  "segmentTiming": null,
+  "circuitTiming": null,
+  "kpiTiemposBuilt": false,
+  "movimientosContrato": {
+    "enabled": true,
+    "logs": [
+      "Archivos Movimientos por Contrato leídos: 10",
+      "Movimientos externos crudos/normalizados: 5906",
+      "Con patente válida: 5906",
+      "Con producto: 5906",
+      "Con plataforma: 5352",
+      "Con timestamp ingreso: 5906",
+      "Con timestamp salida: 5906",
+      "Búsqueda acotada a Excel: 0 journeys Truckflow (antes 5242), 5242 filas prep",
+      "Journeys Truckflow para merge: 0 (CSV final: 5242)",
+      "Journeys Truckflow con patente: 0",
+      "Matches Excel ancla: 0",
+      "Circuito asignado desde Excel: 0",
+      "Matches probables: 0",
+      "Matches múltiples resueltos: 0",
+      "Ambiguos: 0",
+      "Truckflow sin movimiento: 0",
+      "Movimientos sin Truckflow (diagnóstico): 5906",
+      "Excel-first: operaciones totales 5906",
+      "Excel-first: con evidencia Truckflow 0",
+      "Excel-first: sin evidencia Truckflow 5906",
+      "Excel-first: fragmentadas 0",
+      "Excel-first: wide window 0",
+      "Excel-first: low confidence 0",
+      "Excel-first: listas scatter 288",
+      "Excel-first: listas KPI ruta completa 0",
+      "Excel-first sin evidencia: no_placa=0, fuera_ventana=0, fuera_periodo=0",
+      "Excel-first descartes: ventana=0, OCR bajo=0, fuzzy ambiguo=0, planta(info)=0, prefilter pool=0",
+      "Journeys analysis_ready: 0",
+      "Journeys enriquecidos operativos (producto/plataforma): 0",
+      "Sin descarga en cámara pero con dato externo: 0",
+      "Seleccionados en muestra operativa: 0",
+      "Líquidos / RicCalLiq · riccalliq_ops=140 · aceite_excel=391 · aceite_s10=0 · aceite_tf_match=0 · tf_s10_desc=366 · tf_s10_excel=0 · SL1+SL5=391 · S10_capt=0 · puente_ric_sl=0 · cohorte_recep=34 · cohorte_desp=0 · transile_ext=825 · ambiguo=7",
+      "Transile interno Volcable · patentes=0 · sesiones=0 · transile_inferido=0 · visitas=0",
+      "KPI tiempos / dispersión: diferido (procesar en pestaña KPI Tiempos)",
+      "Duración total Paso 3 (ms): 10471",
+      "  etapa build_truckflow_journeys: 52ms",
+      "  etapa build_segments: 33ms",
+      "  etapa merge_truckflow_movimientos: 3553ms",
+      "  etapa merge_excel_first_evidence: 5836ms",
+      "  etapa clean_journeys: 0ms",
+      "  etapa operational_sample: 0ms",
+      "  etapa export_csv: 139ms"
+    ],
+    "warnings": [],
+    "filesRead": 10,
+    "rawCount": 5906,
+    "normalizedCount": 5906,
+    "withPlate": 5906,
+    "withProduct": 5906,
+    "withPlatform": 5352,
+    "truckflowJourneys": 5242,
+    "analysisReadyCount": 0,
+    "segmentScatterRows": 0,
+    "excelFirstScatterRows": 199,
+    "operationalSampleSelected": 0,
+    "merge": {
+      "total_truckflow_journeys": 0,
+      "total_movimientos": 5906,
+      "match_exact": 0,
+      "match_probable": 0,
+      "match_multiple_resolved": 0,
+      "match_enriched_plate_day": 0,
+      "match_excel_anchor": 0,
+      "match_fuzzy_plate": 0,
+      "match_multiple": 0,
+      "match_ambiguous": 0,
+      "no_external_match": 0,
+      "no_truckflow_match": 5906,
+      "insufficient_data": 0,
+      "journeys_with_product": 0,
+      "operational_enrichment_ready": 0,
+      "enriched_sin_descarga_camara": 0,
+      "match_rate_truckflow": 0,
+      "match_rate_movimientos": 0,
+      "unique_products": 0,
+      "unique_platforms": 0
+    },
+    "excelFirst": {
+      "total_excel_operations": 5906,
+      "truckflow_journeys_in_merge_pool": 0,
+      "total_with_truckflow_evidence": 0,
+      "total_without_truckflow_evidence": 5906,
+      "external_match_exact": 0,
+      "external_match_probable": 0,
+      "external_match_fragmented": 0,
+      "external_match_wide_window": 0,
+      "external_match_low_confidence": 0,
+      "external_match_fuzzy_plate": 0,
+      "external_match_ambiguous": 0,
+      "insufficient_external_data": 0,
+      "no_truckflow_evidence": 5906,
+      "ready_for_scatter": 288,
+      "ready_for_full_route_kpi": 0,
+      "route_complete": 0,
+      "route_deduced": 0,
+      "route_partial": 0,
+      "route_no_discharge_point": 0,
+      "route_anomalous": 0,
+      "route_incomplete": 0,
+      "route_no_evaluable": 0,
+      "rescued_anomalous": 0,
+      "rescued_no_discharge_point": 0,
+      "exact_plate_matches": 0,
+      "fuzzy_plate_matches": 0,
+      "same_day_matches": 0,
+      "wide_window_matches": 0,
+      "low_confidence_matches": 0,
+      "fragmented_matches": 0,
+      "exact_time_matches": 0,
+      "platform_compatible_matches": 0,
+      "product_assigned_matches": 0,
+      "no_evidence_no_plate_in_truckflow": 0,
+      "no_evidence_plate_out_of_window": 0,
+      "no_evidence_outside_period": 0,
+      "no_evidence_invalid_truckflow_time": 0,
+      "no_evidence_fuzzy_rejected": 0,
+      "no_evidence_ambiguous": 0,
+      "no_evidence_insufficient_external_time": 0,
+      "no_evidence_unknown": 0,
+      "possible_duplicate_assignments": 0,
+      "no_plate_in_truckflow": 5906,
+      "exact_plate_candidates": 0,
+      "fuzzy_plate_candidates": 0,
+      "rejected_by_time_window": 0,
+      "rejected_by_low_ocr_similarity": 0,
+      "rejected_by_ambiguous_fuzzy": 0,
+      "rejected_by_site_or_plant": 0,
+      "candidates_after_prefilter": 0,
+      "candidates_after_time_filter": 0,
+      "candidates_after_fuzzy_filter": 0,
+      "operations_with_exact_plate": 0,
+      "operations_with_only_fuzzy_plate": 0,
+      "operations_without_any_candidate": 5906,
+      "use_candidate_prefilter": true,
+      "excel_min_ingreso_at": "2026-06-25T10:29:00",
+      "excel_max_salida_at": "2026-07-05T23:59:00",
+      "excel_min_source_date": "2026-06-26",
+      "excel_max_source_date": "2026-07-05",
+      "excel_period_start_ms": 1782442800000,
+      "excel_period_end_ms": 1783306799000,
+      "truckflow_min_start_time": "",
+      "truckflow_max_end_time": "",
+      "truckflow_total_journeys_in_excel_period": 0,
+      "truckflow_total_journeys_outside_excel_period": 0,
+      "period_mismatch": false,
+      "period_alert": "",
+      "excel_first_wide_window": true,
+      "coverage_excel_first_pct": 0,
+      "unique_products": 49,
+      "unique_platforms": 25,
+      "unique_resolved_circuit_families": 4,
+      "segment_scatter_rows": 199,
+      "no_evidence_diagnostics_rows": 5906,
+      "review_sample_rows": 25,
+      "candidate_diagnostics_rows": 5906
+    },
+    "products": [
+      "AC GIRASOL OLEICO REFINADO",
+      "ACEITE GIRASOL CRUDO",
+      "ACEITE GIRASOL ENVASADO",
+      "ACEITE GIRASOL PARA REFINAR",
+      "ACEITE GIRASOL REFINADO",
+      "ACEITE SOJA CRUDO DESGOMADO",
+      "ACEITE SOJA ENVASADO",
+      "ACEITE SOJA NEUTRO",
+      "ACIDO CITRICO ANHIDRO",
+      "AGUA INDUSTRIAL",
+      "AGUA POTABLE",
+      "ALCOHOL ETILICO ANHIDRO P/ BIOCOMB ORIG CEREAL",
+      "ALCOHOL ETILICO BUEN GUSTO/POTABLE DE CEREAL",
+      "ALCOHOL ETILICO DESNATURALIZADO OTROS USOS",
+      "BARRIDO DE MERCADERIA",
+      "BORRA ACEITE GIRASOL REFINADO",
+      "BORRA DE ACSOJA REFINADO",
+      "BURLANDA HUMEDA",
+      "CARTON-PAPEL",
+      "CASCARA DE SOJA PELLETEADA",
+      "CHIP DE EUCALIPTUS",
+      "CHIP DE PINO",
+      "CHIP EN ORIGEN",
+      "DDG BURLANDA SECA DE MAIZ SIN SOLUBLES",
+      "DESPERDICIO DE BALANCEADO",
+      "FUEL-OIL",
+      "GAS OIL",
+      "GIRASOL",
+      "GLICERINA",
+      "GLICERINA REFINADA",
+      "HARINA DE SOJA ESPECIAL",
+      "HIPOCLORITO DE SODIO",
+      "LEÑA CORTA",
+      "LEÑA CORTA SELECC",
+      "LEÑA EUCALIPTUS",
+      "MAIZ",
+      "MERMA DE ZARANDA",
+      "NITROGENO LIQUIDO",
+      "PELLETS GIRASOL",
+      "PRODUCTOS VARIOS",
+      "RESIDUOS ASIMILABLES A DOMICILIARIOS",
+      "RESIDUOS ORG",
+      "SEMILLA CON AGUA/BARRO",
+      "SODA CAUSTICA LIQUIDA",
+      "SOJA",
+      "SOLVENTE HEXANO",
+      "TARIMAS MADERA",
+      "THIN STILLAGE DE MAIZ",
+      "TIERRA DESC FILTROS"
+    ],
+    "platforms": [
+      "ACEITE",
+      "ACEITE_OSL",
+      "ACEITE_PTO",
+      "CALADITO",
+      "CARGA_SILO_11",
+      "CELDA_16",
+      "CELDA_171_-_BUENO",
+      "CELDA_171_-_CENTRO",
+      "DEPOSITO_BALANCEADO",
+      "DEPOSITO_BURLANDAS",
+      "PLAYA_LEÑA_Y_CHIP",
+      "SECCION_4",
+      "SIN_ESPECIFICAR",
+      "T1002",
+      "T1005",
+      "TANQUE_AEREO_TK-19K_(PLAYA_DE_TANQUE)",
+      "VAGONES",
+      "VARIOS",
+      "VOLCABLE_1",
+      "VOLCABLE_2",
+      "VOLCABLE_PTO_1",
+      "VOLCABLE_PTO_2",
+      "VOLCABLE_PTO_3",
+      "VOLCABLE_PTO_4",
+      "VOLCABLE_PTO_5"
+    ],
+    "liquidMovements": {
+      "riccalliq_operations": 140,
+      "by_cohort": {
+        "liquido_recepcion_ric": 34,
+        "liquido_despacho_ric": 0,
+        "transile_externo_ric_sl": 825,
+        "despacho_generico_calada": 3,
+        "sl_liquido_san_lorenzo": 366,
+        "ambiguo_riccalliq": 7,
+        "sin_riccalliq": 4671
+      },
+      "aceite_platform_excel_ops": 391,
+      "aceite_platform_s10_captured": 0,
+      "aceite_platform_excel_with_truckflow": 0,
+      "truckflow_s10_descarga_events": 366,
+      "truckflow_s10_with_excel_match": 0,
+      "sl1_sl5_operations": 391,
+      "sl1_sl5_s10_captured": 0,
+      "bridge_ric_sl_count": 0
+    },
+    "transileInternoVolcable": {
+      "patentes_con_volcable": 0,
+      "sesiones_detectadas": 0,
+      "sesiones_transile_interno": 0,
+      "visitas_volcable_total": 0
+    }
+  }
+}

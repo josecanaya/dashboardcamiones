@@ -1,0 +1,2 @@
+total_available,total_analysis_ready,total_selected,sample_size_target,unique_circuits,unique_products,unique_platforms,valid_complete,valid_deduced,valid_operational_variation,incomplete,anomalous_real,non_evaluable,matched_exact,matched_probable,matched_multiple_resolved,no_external_match,avg_merge_confidence,avg_coverage_percent,p50_duration_min,p90_duration_min
+0,0,0,2000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

@@ -6,6 +6,7 @@ import { computeStayTimeStats } from '../../../services/analyticsKpi'
 import {
   buildSegmentTimingIndex,
   buildSegmentTimingIndexFromExcelFirstSegments,
+  getCircuitSegmentTemplate,
   extractSegmentLegs,
   extractSlBalancaRollupLeg,
   extractSlSalidaEgresoRollupLeg,
@@ -264,6 +265,48 @@ describe('etlSegmentTiming', () => {
     expect(ingresoBalanza!.durationMinutes).toBe(15)
     expect(balanzaEgreso).toBeDefined()
     expect(balanzaEgreso!.durationMinutes).toBe(105)
+  })
+
+  it('templates aceite SL1/SL2 usan calada de líquidos (LIQUIDO), no calada de granos', () => {
+    expect(getCircuitSegmentTemplate('SL2')).toEqual([
+      'INGRESO', 'PREINGRESO', 'LIQUIDO', 'EGRESO', 'SL_INGRESO', 'SL_BALANZA_INGRESO', 'SL_EGRESO',
+    ])
+    expect(getCircuitSegmentTemplate('SL1')).toEqual([
+      'INGRESO', 'PREINGRESO', 'LIQUIDO', 'EGRESO', 'SL_INGRESO', 'SL_BALANZA_INGRESO', 'SL_DESCARGA', 'SL_EGRESO',
+    ])
+    expect(getCircuitSegmentTemplate('SL1')).not.toContain('CALADA')
+    expect(getCircuitSegmentTemplate('SL2')).not.toContain('CALADA')
+  })
+
+  it('SL1 con cámara S10 parte balanza→descarga→egreso y no colapsa el rollup', () => {
+    const s = (from: string, to: string, start: string, end: string, d: number) => ({
+      analysis_ready_for_scatter: true,
+      external_operation_id: 'op-sl1',
+      journey_uid: 'j-sl1',
+      plate_normalized: 'ZZ999',
+      truckflow_circuit_code: 'SL1',
+      resolved_executive_circuit_code: 'SL1',
+      external_ingreso_at: '2026-05-12T08:00:00',
+      external_salida_at: '2026-05-12T10:30:00',
+      segment_from: from,
+      segment_to: to,
+      segment_start_time: start,
+      segment_end_time: end,
+      segment_duration_min: d,
+    })
+    const index = buildSegmentTimingIndexFromExcelFirstSegments([
+      s('PREINGRESO', 'LIQUIDO', '2026-05-12T08:10:00', '2026-05-12T08:25:00', 15),
+      s('LIQUIDO', 'EGRESO', '2026-05-12T08:25:00', '2026-05-12T08:40:00', 15),
+      s('EGRESO', 'SL_INGRESO', '2026-05-12T08:40:00', '2026-05-12T09:30:00', 50),
+      s('SL_INGRESO', 'SL_BALANZA_INGRESO', '2026-05-12T09:30:00', '2026-05-12T09:45:00', 15),
+      s('SL_BALANZA_INGRESO', 'SL_DESCARGA', '2026-05-12T09:45:00', '2026-05-12T10:15:00', 30),
+      s('SL_DESCARGA', 'SL_EGRESO', '2026-05-12T10:15:00', '2026-05-12T10:30:00', 15),
+    ])
+    const keys = index.legs.map((l) => `${l.fromCode}→${l.toCode}`)
+    expect(keys).toContain('PREINGRESO→LIQUIDO')
+    expect(keys).toContain('SL_BALANZA_INGRESO→SL_DESCARGA')
+    expect(keys).toContain('SL_DESCARGA→SL_EGRESO')
+    expect(keys).not.toContain('SL_BALANZA_INGRESO→SL_EGRESO')
   })
 
   it('rechaza balanza ingreso→egreso < 10 min (error cámara B1/B2)', () => {

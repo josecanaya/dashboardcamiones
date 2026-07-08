@@ -1,0 +1,8 @@
+executive_circuit_code,circuit_name,executive_status,n_journeys,mean_total_min,std_total_min,median_total_min,p90_total_min,min_total_min,max_total_min,q1_total_min,q3_total_min,iqr_total_min,min_plate,max_plate
+R1,Recepción Celda 16,VALIDO,60,209.71,201.07,100.20,597.20,30.23,634.40,67.10,288.16,221.06,,
+R5,Recepción Volcable 1,VALIDO,84,211.36,87.47,195.85,324.19,19.86,462.63,142.39,281.62,139.23,,
+R6,Recepción Volcable 2,VALIDO,35,403.67,264.78,295.97,713.71,57.99,991.09,204.05,620.22,416.16,,
+R7,Ricardone → San Lorenzo,VALIDO,2775,232.21,126.60,236.22,371.51,3.52,884.36,137.68,310.12,172.43,,
+R8,Recepción Mercadería Líquida,VALIDO,227,359.41,312.69,261.74,779.95,4.87,1431.04,132.53,508.66,376.14,,
+R9,Despacho Celda 16,VALIDO,2,239.70,31.26,239.70,257.38,217.60,261.80,228.65,250.75,22.10,,
+RS_REC,Recepción sólida inferida (sin cámara destino),VALIDO,4,141.95,23.57,136.76,165.24,120.76,173.51,125.89,152.82,26.94,,
