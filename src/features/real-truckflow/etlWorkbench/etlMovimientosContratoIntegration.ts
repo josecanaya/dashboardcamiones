@@ -63,6 +63,7 @@ import {
   liquidMovementsAceiteTruckflowExcelCsv,
   liquidMovementsSlS10Csv,
   liquidMovementsSummaryCsv,
+  liquidMovementsTables,
   type LiquidMovementsSummary,
 } from './liquidMovementsWorkbench'
 import {
@@ -604,6 +605,7 @@ export async function runMovimientosContratoIntegration(
 
   const teTables = transileExternoTables(transileExternoReport)
   const tiTables = transileInternoVolcableTables(transileVolcableReport)
+  const liTables = liquidMovementsTables(liquidReport)
   type AnyTable = import('../../../etl-core/typedTable').TypedTable
   const tables: Record<string, AnyTable> = {
     transile_externo_operaciones: teTables.operaciones as unknown as AnyTable,
@@ -611,6 +613,10 @@ export async function runMovimientosContratoIntegration(
     transile_externo_summary: teTables.summary as unknown as AnyTable,
     transile_interno_volcable_sessions: tiTables.sessions as unknown as AnyTable,
     transile_interno_volcable_summary: tiTables.summary as unknown as AnyTable,
+    liquid_movements_riccalliq_cohort: liTables.riccalliq_cohort,
+    liquid_movements_sl1_sl5_s10: liTables.sl1_sl5_s10,
+    liquid_movements_aceite_truckflow_excel: liTables.aceite_truckflow_excel,
+    liquid_movements_summary: liTables.summary,
   }
 
   const totalMs = Math.round(performance.now() - runStartedAt)

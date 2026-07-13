@@ -76,6 +76,22 @@ export function PostTransformOptionalActions() {
               slCsv={wb.transformResult?.csv.liquid_movements_sl1_sl5_s10}
               aceiteCrossCsv={wb.transformResult?.csv.liquid_movements_aceite_truckflow_excel}
               summaryCsv={wb.transformResult?.csv.liquid_movements_summary}
+              ricRows={wb.transformResult?.tables?.liquid_movements_riccalliq_cohort?.rows as
+                | Record<string, unknown>[]
+                | undefined}
+              slRows={wb.transformResult?.tables?.liquid_movements_sl1_sl5_s10?.rows as
+                | Record<string, unknown>[]
+                | undefined}
+              aceiteCrossRows={
+                wb.transformResult?.tables?.liquid_movements_aceite_truckflow_excel?.rows as
+                  | Record<string, unknown>[]
+                  | undefined
+              }
+              summaryRow={
+                wb.transformResult?.tables?.liquid_movements_summary?.rows?.[0] as
+                  | Record<string, unknown>
+                  | undefined
+              }
               disabled={wb.transformBusy}
             />
           </section>

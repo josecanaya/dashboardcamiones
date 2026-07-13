@@ -2,7 +2,7 @@
  * Fases A0–A4: líquidos Ric (RicCalLiq), SL1/SL5 (S10 Ren*), puente Ric↔SL.
  */
 
-import { recordsToCsv } from './etlCsv'
+import { makeTable, tableToCsv, type TypedTable } from '../../../etl-core/typedTable'
 import type { ExcelOperationWithTruckflowRow } from './etlExcelFirstMerge'
 import { inferCircuitFromExternalMovimiento } from './etlPlatformCircuitInference'
 import type { ClassifiedJourneyForTiming } from './etlSegmentTiming'
@@ -695,7 +695,7 @@ export function buildLiquidMovementsReport(input: {
   }
 }
 
-const RIC_COHORT_HEADERS = [
+export const RIC_COHORT_HEADERS = [
   'external_operation_id',
   'plate_normalized',
   'resolved_executive_circuit',
@@ -711,7 +711,7 @@ const RIC_COHORT_HEADERS = [
   'notes',
 ] as const
 
-const SL_S10_HEADERS = [
+export const SL_S10_HEADERS = [
   'external_operation_id',
   'plate_normalized',
   'excel_planta',
@@ -720,10 +720,10 @@ const SL_S10_HEADERS = [
   'excel_platform',
   'audit_site',
   'required_camera',
-  'riccalliq_captured',
   's10_captured',
   's10_devices_hit',
   's10_roles',
+  'riccalliq_captured',
   'unified_slot_gap',
   'expected_sl_role',
   'truckflow_match_quality',
@@ -733,7 +733,7 @@ const SL_S10_HEADERS = [
   'camera_best_instant',
 ] as const
 
-const ACEITE_TF_EXCEL_HEADERS = [
+export const ACEITE_TF_EXCEL_HEADERS = [
   'external_operation_id',
   'plate_normalized',
   'source_date',
@@ -747,32 +747,37 @@ const ACEITE_TF_EXCEL_HEADERS = [
   'gap_note',
 ] as const
 
-export function liquidMovementsRicCalLiqCsv(rows: RicCalLiqCohortRow[]): string {
-  return recordsToCsv([...RIC_COHORT_HEADERS], rows as unknown as Record<string, unknown>[])
-}
+type CsvBool = 'true' | 'false'
 
-export function liquidMovementsSlS10Csv(rows: SlLiquidS10OpSummary[]): string {
-  const mapped = rows.map((r) => ({
+function mapRicCsvRows(rows: RicCalLiqCohortRow[]) {
+  return rows.map((r) => ({
     ...r,
-    s10_captured: r.s10_captured ? 'true' : 'false',
-    riccalliq_captured: r.riccalliq_captured ? 'true' : 'false',
-    excel_in_truckflow_window: r.excel_in_truckflow_window ? 'true' : 'false',
-    analysis_ready_for_scatter: r.analysis_ready_for_scatter ? 'true' : 'false',
+    riccalliq_in_truckflow: (r.riccalliq_in_truckflow ? 'true' : 'false') as CsvBool,
+    s10_liquid_in_truckflow: (r.s10_liquid_in_truckflow ? 'true' : 'false') as CsvBool,
+    bridge_ric_sl: (r.bridge_ric_sl ? 'true' : 'false') as CsvBool,
   }))
-  return recordsToCsv([...SL_S10_HEADERS], mapped as unknown as Record<string, unknown>[])
 }
 
-export function liquidMovementsAceiteTruckflowExcelCsv(rows: AceiteTruckflowExcelCrossRow[]): string {
-  const mapped = rows.map((r) => ({
+function mapSlCsvRows(rows: SlLiquidS10OpSummary[]) {
+  return rows.map((r) => ({
     ...r,
-    truckflow_matched: r.truckflow_matched ? 'true' : 'false',
-    camera_captured: r.camera_captured ? 'true' : 'false',
+    s10_captured: (r.s10_captured ? 'true' : 'false') as CsvBool,
+    riccalliq_captured: (r.riccalliq_captured ? 'true' : 'false') as CsvBool,
+    excel_in_truckflow_window: (r.excel_in_truckflow_window ? 'true' : 'false') as CsvBool,
+    analysis_ready_for_scatter: (r.analysis_ready_for_scatter ? 'true' : 'false') as CsvBool,
   }))
-  return recordsToCsv([...ACEITE_TF_EXCEL_HEADERS], mapped as unknown as Record<string, unknown>[])
 }
 
-export function liquidMovementsSummaryCsv(summary: LiquidMovementsSummary): string {
-  const flat = {
+function mapAceiteCsvRows(rows: AceiteTruckflowExcelCrossRow[]) {
+  return rows.map((r) => ({
+    ...r,
+    truckflow_matched: (r.truckflow_matched ? 'true' : 'false') as CsvBool,
+    camera_captured: (r.camera_captured ? 'true' : 'false') as CsvBool,
+  }))
+}
+
+function flattenLiquidSummary(summary: LiquidMovementsSummary): Record<string, unknown> {
+  return {
     riccalliq_operations: summary.riccalliq_operations,
     aceite_platform_excel_ops: summary.aceite_platform_excel_ops,
     aceite_platform_s10_captured: summary.aceite_platform_s10_captured,
@@ -782,11 +787,74 @@ export function liquidMovementsSummaryCsv(summary: LiquidMovementsSummary): stri
     sl1_sl5_operations: summary.sl1_sl5_operations,
     sl1_sl5_s10_captured: summary.sl1_sl5_s10_captured,
     bridge_ric_sl_count: summary.bridge_ric_sl_count,
-    ...Object.fromEntries(
-      Object.entries(summary.by_cohort).map(([k, v]) => [`cohort_${k}`, v])
+    ...Object.fromEntries(Object.entries(summary.by_cohort).map(([k, v]) => [`cohort_${k}`, v])),
+  }
+}
+
+export function liquidMovementsTables(report: LiquidMovementsReport): {
+  riccalliq_cohort: TypedTable
+  sl1_sl5_s10: TypedTable
+  aceite_truckflow_excel: TypedTable
+  summary: TypedTable
+} {
+  const summaryFlat = flattenLiquidSummary(report.summary)
+  return {
+    riccalliq_cohort: makeTable(
+      'liquid_movements_riccalliq_cohort',
+      RIC_COHORT_HEADERS,
+      mapRicCsvRows(report.ricCalLiqRows) as unknown as Record<string, unknown>[]
+    ),
+    sl1_sl5_s10: makeTable(
+      'liquid_movements_sl1_sl5_s10',
+      SL_S10_HEADERS,
+      mapSlCsvRows(report.slLiquidRows) as unknown as Record<string, unknown>[]
+    ),
+    aceite_truckflow_excel: makeTable(
+      'liquid_movements_aceite_truckflow_excel',
+      ACEITE_TF_EXCEL_HEADERS,
+      mapAceiteCsvRows(report.aceiteTruckflowExcelRows) as unknown as Record<string, unknown>[]
+    ),
+    summary: makeTable(
+      'liquid_movements_summary',
+      Object.keys(summaryFlat),
+      [summaryFlat]
     ),
   }
-  return recordsToCsv(Object.keys(flat), [flat])
+}
+
+export function liquidMovementsRicCalLiqCsv(rows: RicCalLiqCohortRow[]): string {
+  return tableToCsv(
+    makeTable(
+      'liquid_movements_riccalliq_cohort',
+      RIC_COHORT_HEADERS,
+      mapRicCsvRows(rows) as unknown as Record<string, unknown>[]
+    )
+  )
+}
+
+export function liquidMovementsSlS10Csv(rows: SlLiquidS10OpSummary[]): string {
+  return tableToCsv(
+    makeTable(
+      'liquid_movements_sl1_sl5_s10',
+      SL_S10_HEADERS,
+      mapSlCsvRows(rows) as unknown as Record<string, unknown>[]
+    )
+  )
+}
+
+export function liquidMovementsAceiteTruckflowExcelCsv(rows: AceiteTruckflowExcelCrossRow[]): string {
+  return tableToCsv(
+    makeTable(
+      'liquid_movements_aceite_truckflow_excel',
+      ACEITE_TF_EXCEL_HEADERS,
+      mapAceiteCsvRows(rows) as unknown as Record<string, unknown>[]
+    )
+  )
+}
+
+export function liquidMovementsSummaryCsv(summary: LiquidMovementsSummary): string {
+  const flat = flattenLiquidSummary(summary)
+  return tableToCsv(makeTable('liquid_movements_summary', Object.keys(flat), [flat]))
 }
 
 export function formatLiquidMovementsLog(summary: LiquidMovementsSummary): string {

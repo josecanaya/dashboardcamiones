@@ -23,6 +23,7 @@
 - [x] 2.4 Panel piloto consume filas tipadas
 - [ ] 2.5 Resto de claves migradas (listar acá las completadas)
   - [x] `transile_interno_volcable_*`
+  - [x] `liquid_movements_*`
 - [ ] 2.6 🛑 Poda de csv interno (decisión usuario)
 
 ## Fase 3 — Catálogo único
@@ -54,3 +55,4 @@
 - 2026-07-13 — Fase 1: check-arch permite (a) tests de etl-core, (b) `src/etl-core/reports/*` importando etlWorkbench (helpers de audit), (c) `domain/pipelineTypes.ts` re-exportando tipos. Quitar al cerrar tipos en domain.
 - 2026-07-13 — 🛑 STOP 1.6: aprobado por el usuario → Fase 2 en curso.
 - 2026-07-13 — 2.5: `transile_interno_volcable_*` tipada end-to-end (espejo del piloto externo).
+- 2026-07-13 — 2.5: `liquid_movements_*` tipada end-to-end (tablas + panel).

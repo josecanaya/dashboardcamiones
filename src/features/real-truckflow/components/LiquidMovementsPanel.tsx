@@ -7,6 +7,12 @@ import {
 } from '../etlWorkbench/slLiquidCameras'
 import { triggerBrowserCsvDownload } from '../etlWorkbench/etlCsv'
 import { parseCsvToRecords } from '../etlWorkbench/etlCsvParse'
+import { makeTable, tableToCsv } from '../../../etl-core/typedTable'
+import {
+  ACEITE_TF_EXCEL_HEADERS,
+  RIC_COHORT_HEADERS,
+  SL_S10_HEADERS,
+} from '../etlWorkbench/liquidMovementsWorkbench'
 
 const COHORT_LABELS: Record<RicCalLiqCohort, string> = {
   liquido_recepcion_ric: 'Recepción líquido Ric (R8)',
@@ -18,11 +24,18 @@ const COHORT_LABELS: Record<RicCalLiqCohort, string> = {
   sin_riccalliq: 'Sin RicCalLiq',
 }
 
+type Row = Record<string, unknown>
+
 type Props = {
   ricCsv?: string
   slCsv?: string
   aceiteCrossCsv?: string
   summaryCsv?: string
+  /** Fase 2: filas tipadas (preferidas sobre CSV). */
+  ricRows?: Row[]
+  slRows?: Row[]
+  aceiteCrossRows?: Row[]
+  summaryRow?: Row
   disabled?: boolean
 }
 
@@ -32,17 +45,47 @@ function parseSummary(csv: string | undefined): Record<string, string> {
   return rows[0] ?? {}
 }
 
-export function LiquidMovementsPanel({ ricCsv, slCsv, aceiteCrossCsv, summaryCsv, disabled }: Props) {
-  const summary = useMemo(() => parseSummary(summaryCsv), [summaryCsv])
-  const slRows = useMemo(() => {
+function summaryFromRow(row: Row): Record<string, string> {
+  return Object.fromEntries(Object.entries(row).map(([k, v]) => [k, v == null ? '' : String(v)]))
+}
+
+function isCsvTrue(v: unknown): boolean {
+  return v === true || String(v).toLowerCase() === 'true'
+}
+
+export function LiquidMovementsPanel({
+  ricCsv,
+  slCsv,
+  aceiteCrossCsv,
+  summaryCsv,
+  ricRows: ricRowsProp,
+  slRows: slRowsProp,
+  aceiteCrossRows: aceiteCrossProp,
+  summaryRow: summaryRowProp,
+  disabled,
+}: Props) {
+  const summary = useMemo(() => {
+    if (summaryRowProp) return summaryFromRow(summaryRowProp)
+    return parseSummary(summaryCsv)
+  }, [summaryRowProp, summaryCsv])
+
+  const slRows = useMemo((): Row[] => {
+    if (slRowsProp?.length) return slRowsProp
     if (!slCsv?.trim()) return []
     return parseCsvToRecords(slCsv).rows
-  }, [slCsv])
+  }, [slRowsProp, slCsv])
 
-  const aceiteCrossRows = useMemo(() => {
+  const aceiteCrossRows = useMemo((): Row[] => {
+    if (aceiteCrossProp?.length) return aceiteCrossProp
     if (!aceiteCrossCsv?.trim()) return []
     return parseCsvToRecords(aceiteCrossCsv).rows
-  }, [aceiteCrossCsv])
+  }, [aceiteCrossProp, aceiteCrossCsv])
+
+  const ricRows = useMemo((): Row[] => {
+    if (ricRowsProp?.length) return ricRowsProp
+    if (!ricCsv?.trim()) return []
+    return parseCsvToRecords(ricCsv).rows
+  }, [ricRowsProp, ricCsv])
 
   const aceitePlatformLabels = PERMITTED_ACEITE_LIQUID_DISCHARGE_PLATFORMS.map((p) =>
     p.replace(/_/g, ' ')
@@ -58,7 +101,16 @@ export function LiquidMovementsPanel({ ricCsv, slCsv, aceiteCrossCsv, summaryCsv
       .filter((c) => c.count > 0)
   }, [summary])
 
-  if (!ricCsv?.trim() && !slCsv?.trim()) {
+  const hasData = Boolean(
+    ricRowsProp?.length ||
+      slRowsProp?.length ||
+      ricCsv?.trim() ||
+      slCsv?.trim() ||
+      summaryRowProp ||
+      summaryCsv?.trim()
+  )
+
+  if (!hasData) {
     return (
       <p className="mt-3 rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
         Ejecutá el <strong>Transform</strong> con movimientos Excel para generar el informe de líquidos
@@ -66,6 +118,24 @@ export function LiquidMovementsPanel({ ricCsv, slCsv, aceiteCrossCsv, summaryCsv
       </p>
     )
   }
+
+  const exportRic =
+    ricCsv?.trim() ||
+    (ricRows.length ?
+      tableToCsv(makeTable('liquid_movements_riccalliq_cohort', RIC_COHORT_HEADERS, ricRows as never))
+    : '')
+  const exportSl =
+    slCsv?.trim() ||
+    (slRows.length ?
+      tableToCsv(makeTable('liquid_movements_sl1_sl5_s10', SL_S10_HEADERS, slRows as never))
+    : '')
+  const exportAceite =
+    aceiteCrossCsv?.trim() ||
+    (aceiteCrossRows.length ?
+      tableToCsv(
+        makeTable('liquid_movements_aceite_truckflow_excel', ACEITE_TF_EXCEL_HEADERS, aceiteCrossRows as never)
+      )
+    : '')
 
   return (
     <div className="mt-3 space-y-4">
@@ -137,12 +207,12 @@ export function LiquidMovementsPanel({ ricCsv, slCsv, aceiteCrossCsv, summaryCsv
             </thead>
             <tbody>
               {aceiteCrossRows.slice(0, 20).map((r, i) => (
-                <tr key={`${r.external_operation_id ?? r.plate_normalized}-${i}`} className="border-t border-amber-100">
-                  <td className="px-2 py-1.5">{r.audit_site}</td>
-                  <td className="px-2 py-1.5 font-mono">{r.plate_normalized}</td>
-                  <td className="px-2 py-1.5">{r.truckflow_matched === 'true' ? 'Sí' : 'No'}</td>
-                  <td className="px-2 py-1.5">{r.camera_captured === 'true' ? 'Sí' : 'No'}</td>
-                  <td className="px-2 py-1.5 text-[10px]">{r.gap_note || '—'}</td>
+                <tr key={`${String(r.external_operation_id ?? r.plate_normalized)}-${i}`} className="border-t border-amber-100">
+                  <td className="px-2 py-1.5">{String(r.audit_site ?? '')}</td>
+                  <td className="px-2 py-1.5 font-mono">{String(r.plate_normalized ?? '')}</td>
+                  <td className="px-2 py-1.5">{isCsvTrue(r.truckflow_matched) ? 'Sí' : 'No'}</td>
+                  <td className="px-2 py-1.5">{isCsvTrue(r.camera_captured) ? 'Sí' : 'No'}</td>
+                  <td className="px-2 py-1.5 text-[10px]">{String(r.gap_note || '—')}</td>
                 </tr>
               ))}
             </tbody>
@@ -168,14 +238,14 @@ export function LiquidMovementsPanel({ ricCsv, slCsv, aceiteCrossCsv, summaryCsv
             <tbody>
               {slRows.slice(0, 25).map((r) => (
                 <tr key={String(r.external_operation_id)} className="border-t border-slate-100">
-                  <td className="px-2 py-1.5 text-[10px]">{r.audit_site || '—'}</td>
-                  <td className="px-2 py-1.5 font-mono text-[10px]">{r.excel_platform || '—'}</td>
-                  <td className="px-2 py-1.5 font-medium">{r.circuit}</td>
-                  <td className="px-2 py-1.5 font-mono">{r.plate_normalized}</td>
-                  <td className="px-2 py-1.5">{r.riccalliq_captured === 'true' ? 'Sí' : 'No'}</td>
-                  <td className="px-2 py-1.5">{r.s10_captured === 'true' ? 'Sí' : 'No'}</td>
-                  <td className="px-2 py-1.5">{r.excel_in_truckflow_window === 'true' ? 'Sí' : 'No'}</td>
-                  <td className="px-2 py-1.5">{r.analysis_ready_for_scatter === 'true' ? 'Sí' : 'No'}</td>
+                  <td className="px-2 py-1.5 text-[10px]">{String(r.audit_site || '—')}</td>
+                  <td className="px-2 py-1.5 font-mono text-[10px]">{String(r.excel_platform || '—')}</td>
+                  <td className="px-2 py-1.5 font-medium">{String(r.circuit ?? '')}</td>
+                  <td className="px-2 py-1.5 font-mono">{String(r.plate_normalized ?? '')}</td>
+                  <td className="px-2 py-1.5">{isCsvTrue(r.riccalliq_captured) ? 'Sí' : 'No'}</td>
+                  <td className="px-2 py-1.5">{isCsvTrue(r.s10_captured) ? 'Sí' : 'No'}</td>
+                  <td className="px-2 py-1.5">{isCsvTrue(r.excel_in_truckflow_window) ? 'Sí' : 'No'}</td>
+                  <td className="px-2 py-1.5">{isCsvTrue(r.analysis_ready_for_scatter) ? 'Sí' : 'No'}</td>
                 </tr>
               ))}
             </tbody>
@@ -191,26 +261,26 @@ export function LiquidMovementsPanel({ ricCsv, slCsv, aceiteCrossCsv, summaryCsv
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
-          disabled={disabled || !ricCsv}
-          onClick={() => ricCsv && triggerBrowserCsvDownload('liquid_movements_riccalliq_cohort.csv', ricCsv)}
+          disabled={disabled || !exportRic}
+          onClick={() => exportRic && triggerBrowserCsvDownload('liquid_movements_riccalliq_cohort.csv', exportRic)}
           className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 hover:bg-slate-50 disabled:opacity-40"
         >
           CSV cohorte RicCalLiq
         </button>
         <button
           type="button"
-          disabled={disabled || !slCsv}
-          onClick={() => slCsv && triggerBrowserCsvDownload('liquid_movements_sl1_sl5_s10.csv', slCsv)}
+          disabled={disabled || !exportSl}
+          onClick={() => exportSl && triggerBrowserCsvDownload('liquid_movements_sl1_sl5_s10.csv', exportSl)}
           className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 hover:bg-slate-50 disabled:opacity-40"
         >
           CSV Excel aceite ↔ S10
         </button>
         <button
           type="button"
-          disabled={disabled || !aceiteCrossCsv}
+          disabled={disabled || !exportAceite}
           onClick={() =>
-            aceiteCrossCsv &&
-            triggerBrowserCsvDownload('liquid_movements_aceite_truckflow_excel.csv', aceiteCrossCsv)
+            exportAceite &&
+            triggerBrowserCsvDownload('liquid_movements_aceite_truckflow_excel.csv', exportAceite)
           }
           className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 hover:bg-slate-50 disabled:opacity-40"
         >
