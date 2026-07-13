@@ -4,7 +4,7 @@
 > Anotar bloqueos/decisiones en la sección Notas con fecha.
 
 ## Fase 0 — Red de seguridad
-- [ ] 0.1 Golden master ampliado (hash de todos los CSVs)
+- [x] 0.1 Golden master ampliado (hash de todos los CSVs)
 - [ ] 0.2 Script check-arch-rules + integrado a npm test
 - [ ] 0.3 Línea base tsc documentada (TSC_BASELINE.md)
 

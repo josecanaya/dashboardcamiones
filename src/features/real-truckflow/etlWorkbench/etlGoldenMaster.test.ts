@@ -51,4 +51,25 @@ describe('etlGoldenMaster', () => {
       executiveFingerprint: executiveFingerprint(ex!),
     }).toMatchSnapshot()
   })
+
+  it('congela hash de cada CSV de salida en fixture S', async () => {
+    const events = fixtureEvents as import('../../../services/realJourneyEvents.types').RealJourneyEventDto[]
+    const out = await runEtlTransform({
+      events,
+      alerts: [],
+      mergeWindowHours: 4,
+      loadedEventFilesCount: 1,
+      loadedAlertFilesCount: 0,
+    })
+    const hashes: Record<string, string> = {}
+    for (const key of Object.keys(out.csv).sort()) {
+      let content = out.csv[key] ?? ''
+      // transform_summary incluye generated_at (wall-clock); se neutraliza para el hash.
+      if (key === 'transform_summary') {
+        content = content.replace(/\d{4}-\d{2}-\d{2}T[\d:.]+Z/g, '<TIMESTAMP>')
+      }
+      hashes[key] = createHash('sha256').update(content).digest('hex').slice(0, 16)
+    }
+    expect(hashes).toMatchSnapshot()
+  })
 })

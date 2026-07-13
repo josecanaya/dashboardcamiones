@@ -14,3 +14,27 @@ exports[`etlGoldenMaster > congela conteos y fingerprint ejecutivo en fixture S 
   "noEvaluables": 0,
 }
 `;
+
+exports[`etlGoldenMaster > congela hash de cada CSV de salida en fixture S 1`] = `
+{
+  "alerts_operational": "adf3b85e1dc7df24",
+  "camera_lpr_status": "1cb0d735dc38c762",
+  "classified_circuits": "51f91ea9d75a9f0d",
+  "clean_journeys": "d635e1b67638edbf",
+  "debug_matrix_classification": "7f9737a9aca448ba",
+  "final_circuits": "9b29f39dc80f8594",
+  "front_alerts": "4074406f458fa402",
+  "front_events": "cc72dd7959d8c37c",
+  "journey_merge_candidates": "665933be87735ac6",
+  "lpr_merge_applied": "9ba737bb03914e32",
+  "lpr_merge_candidates": "9ba737bb03914e32",
+  "lpr_merge_review": "9ba737bb03914e32",
+  "merge_candidates_debug": "ed85fc1819ea5208",
+  "plate_registry_excluded": "e3b0c44298fc1c14",
+  "rear_alerts": "4074406f458fa402",
+  "rear_events": "e7a065dad488384e",
+  "rear_only_journeys_debug": "0bb7e7621193b50b",
+  "transform_summary": "05f52c1b081f2f0d",
+  "unclassified_journeys": "114daf4202491b56",
+}
+`;
