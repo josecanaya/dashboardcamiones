@@ -39,7 +39,7 @@
 ## Fase 4 — Servicio + persistencia
 - [x] 4.1 Runner headless con persistencia (runs/<runId>/)
 - [x] 4.2 Endpoints /api/etl/runs
-- [ ] 4.3 Smoke test de la API
+- [x] 4.3 Smoke test de la API
 - [ ] 4.4 🛑 Decisión Supabase
 
 ## Fase 5 — Agentes Python
@@ -67,3 +67,4 @@
 - 2026-07-13 — 3.5: `realPreliminaryCircuit` → `preliminaryCircuitClassify.ts`; `circuitEtlV2` → `powerBiCircuitCsvBundle.ts`. Freeze arch actualizado.
 - 2026-07-13 — 4.1: `scripts/run-etl-headless.ts` + `npm run etl:run`; `runs/` en gitignore; catálogo en `runs/_catalog/circuits.json`. Golden alineado a `parsePayloadToJourneyEvents` (misma vía que el runner). `ETL_DEV_MODE` seguro en Node (sin Vite).
 - 2026-07-13 — 4.2: endpoints `/api/etl/runs` (+ summary/tables/catalog) en `truckflow-local-server.mjs` (puerto 8787).
+- 2026-07-13 — 4.3: `npm run smoke:etl` (`scripts/smoke-etl-api.mjs`); si 8787 no tiene endpoints ETL, levanta server efímero.

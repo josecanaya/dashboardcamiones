@@ -24,6 +24,7 @@
     "test": "node scripts/check-arch-rules.mjs && vitest run",
     "check:arch": "node scripts/check-arch-rules.mjs",
     "etl:run": "npx tsx scripts/run-etl-headless.ts",
+    "smoke:etl": "node scripts/smoke-etl-api.mjs",
     "test:watch": "vitest",
     "contract-first:local": "node scripts/run-truckflow-transform-local.mjs"
   },
