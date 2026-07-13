@@ -13,13 +13,18 @@ const MAX_ROUNDS = 12
 const SYSTEM = `Sos el orquestador analista de logística de planta Ricardone / Puerto San Lorenzo (Vicentin).
 Respondés en el dashboard del comité ETL.
 
-Tools: run_etl, list_runs, get_summary, list_tables, query_table, get_circuit_catalog, explain_journey.
+Tools: run_etl, list_runs, list_data_days, get_summary, list_tables, query_table, count_rows, get_circuit_catalog, explain_journey.
 
-Reglas:
+Reglas CRÍTICAS:
 1. Si la pregunta es de datos, SIEMPRE usá tools. Nunca inventes cifras, patentes ni circuitos.
-2. Preferí list_runs → get_summary / query_table sobre la corrida más reciente útil.
-3. Para explicar un R* usá get_circuit_catalog.
-4. Respondé en español, conciso, citando run_id y tablas usadas.`
+2. list_runs marca isFixtureSample=true en corridas de prueba (p.ej. s-events-slice, <50 eventos).
+   - Esas corridas NO son totales de planta. Si el usuario pregunta "cuántos R7 / camiones / últimos KPIs de operación",
+     NO uses un fixture como si fuera producción.
+   - En ese caso: list_data_days → run_etl(from_day, to_day) sobre data/truckflow, o pedí el rango de fechas.
+3. Para CONTAR (ej. cuántos R7): usá count_rows con table_name=final_circuits, col=executive_circuit_code, eq=R7.
+   El número correcto es el campo total. NUNCA cuentes solo las filas devueltas por query_table (están limitadas).
+4. Para explicar un R* (definición): get_circuit_catalog.
+5. Respondé en español, citando run_id, eventCount e isFixtureSample cuando aplique. Si usaste un fixture, decilo explícitamente.`
 
 function tool(name, description, properties, required) {
   const schema = { type: 'object', properties, additionalProperties: false }
@@ -30,7 +35,7 @@ function tool(name, description, properties, required) {
 const TOOLS = [
   tool(
     'run_etl',
-    'Ejecuta una corrida ETL y devuelve run_id. Usá events_paths (fixture o JSON) o from_day/to_day.',
+    'Ejecuta una corrida ETL y devuelve run_id. Para datos reales de planta usá from_day+to_day (YYYY-MM-DD) sobre data/truckflow. events_paths solo para fixtures de prueba.',
     {
       events_paths: { type: 'array', items: { type: 'string' } },
       excel_path: { type: 'string' },
@@ -38,9 +43,16 @@ const TOOLS = [
       to_day: { type: 'string' },
     }
   ),
-  tool('list_runs', 'Lista corridas ETL (runId, estado, timestamps).', {
-    remote: { type: 'boolean' },
-  }),
+  tool(
+    'list_runs',
+    'Lista corridas. Revisá isFixtureSample y eventCount antes de usar una como "última corrida de planta".',
+    { remote: { type: 'boolean' } }
+  ),
+  tool(
+    'list_data_days',
+    'Lista días disponibles en data/truckflow/ (event-list.json). Usar antes de run_etl con from_day/to_day.',
+    {}
+  ),
   tool(
     'get_summary',
     'KPIs ejecutivos de una corrida (committeeCompletos, anomalías, etc.).',
@@ -52,12 +64,23 @@ const TOOLS = [
   ]),
   tool(
     'query_table',
-    'Filas de una tabla. Filtro opcional col+eq. Ej: final_circuits, alerts_operational.',
+    'Filas de una tabla (limitadas). Para conteos usá count_rows. Circuito ejecutivo: col=executive_circuit_code.',
     {
       run_id: { type: 'string' },
       table_name: { type: 'string' },
       limit: { type: 'integer' },
       offset: { type: 'integer' },
+      col: { type: 'string' },
+      eq: { type: 'string' },
+    },
+    ['run_id', 'table_name']
+  ),
+  tool(
+    'count_rows',
+    'Cuenta filas de una tabla con filtro opcional col+eq. Devolvés { total }. Usar para "cuántos R7", etc. Columna tipica: executive_circuit_code.',
+    {
+      run_id: { type: 'string' },
+      table_name: { type: 'string' },
       col: { type: 'string' },
       eq: { type: 'string' },
     },
@@ -236,6 +259,9 @@ export function createEtlAgentChat({ projectRoot, runsRoot, port, etlHeadlessScr
           params: args.remote ? { remote: '1' } : undefined,
         })
       }
+      if (name === 'list_data_days') {
+        return await etlFetch('GET', '/api/etl/data-days')
+      }
       if (name === 'get_summary') {
         return await etlFetch('GET', `/api/etl/runs/${encodeURIComponent(args.run_id)}/summary`)
       }
@@ -255,6 +281,28 @@ export function createEtlAgentChat({ projectRoot, runsRoot, port, etlHeadlessScr
             },
           }
         )
+      }
+      if (name === 'count_rows') {
+        const q = await etlFetch(
+          'GET',
+          `/api/etl/runs/${encodeURIComponent(args.run_id)}/tables/${encodeURIComponent(args.table_name)}`,
+          {
+            params: {
+              limit: 1,
+              offset: 0,
+              col: args.col,
+              eq: args.eq,
+            },
+          }
+        )
+        if (q?.error) return q
+        return {
+          run_id: args.run_id,
+          table_name: args.table_name,
+          col: args.col ?? null,
+          eq: args.eq ?? null,
+          total: Number(q?.total ?? 0),
+        }
       }
       if (name === 'get_circuit_catalog') {
         return await etlFetch('GET', '/api/etl/catalog/circuits')

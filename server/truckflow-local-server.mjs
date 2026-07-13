@@ -641,6 +641,24 @@ function readJsonSyncSafe(filePath) {
   }
 }
 
+function annotateRunManifest(manifest) {
+  if (!manifest || typeof manifest !== 'object') return manifest
+  const paths = manifest.input?.eventsPaths || []
+  const pathStr = Array.isArray(paths) ? paths.join('|') : String(paths || '')
+  const eventCount = Number(manifest.input?.eventCount ?? 0)
+  const isFixtureSample =
+    /s-events-slice|fixtures[\\/]+etl/i.test(pathStr) || (eventCount > 0 && eventCount < 50)
+  return {
+    ...manifest,
+    eventCount,
+    isFixtureSample,
+    warning:
+      isFixtureSample ?
+        'Corrida de muestra/fixture — NO usar como totales de planta. Para volúmenes reales: run_etl con from_day/to_day sobre data/truckflow.'
+      : undefined,
+  }
+}
+
 function listEtlRunManifests() {
   if (!existsSync(RUNS_ROOT)) return []
   const names = readdirSync(RUNS_ROOT, { withFileTypes: true })
@@ -648,10 +666,18 @@ function listEtlRunManifests() {
   for (const ent of names) {
     if (!ent.isDirectory() || ent.name.startsWith('_')) continue
     const manifest = readJsonSyncSafe(path.join(RUNS_ROOT, ent.name, 'manifest.json'))
-    if (manifest) out.push(manifest)
+    if (manifest) out.push(annotateRunManifest(manifest))
   }
   out.sort((a, b) => String(b.startedAt || '').localeCompare(String(a.startedAt || '')))
   return out
+}
+
+function listTruckflowDataDays() {
+  if (!existsSync(DATA_ROOT)) return []
+  return readdirSync(DATA_ROOT, { withFileTypes: true })
+    .filter((ent) => ent.isDirectory() && /^\d{4}-\d{2}-\d{2}$/.test(ent.name))
+    .map((ent) => ent.name)
+    .sort()
 }
 
 /** POST /api/etl/runs — spawnea runner headless; responde { runId }. */
@@ -837,6 +863,18 @@ app.get('/api/etl/catalog/circuits', (_req, res) => {
   }
   const catalog = readJsonSyncSafe(catalogPath)
   res.json({ catalog })
+})
+
+/** GET /api/etl/data-days — días con event-list.json en data/truckflow/ */
+app.get('/api/etl/data-days', (_req, res) => {
+  const days = listTruckflowDataDays()
+  res.json({
+    dataRoot: DATA_ROOT,
+    days,
+    min: days[0] || null,
+    max: days[days.length - 1] || null,
+    count: days.length,
+  })
 })
 
 const etlAgent = createEtlAgentChat({

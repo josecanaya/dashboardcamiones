@@ -12,9 +12,9 @@ type UiMessage = EtlAgentChatMessage & {
 }
 
 const SUGGESTIONS = [
-  '¿Cuáles son los KPIs de la última corrida?',
-  'Explicame el circuito R26',
-  'Listá las tablas de la corrida más reciente',
+  '¿Hay corridas reales o solo fixtures? Listá data/truckflow',
+  'Corrê ETL del 2026-05-28 al 2026-05-29 y contá cuántos R7 hay',
+  'Explicame el circuito R26 (definición del catálogo)',
 ]
 
 export function AgenteChatTab() {
@@ -92,7 +92,9 @@ export function AgenteChatTab() {
         <h2 className="text-lg font-bold text-slate-900">Agente ETL</h2>
         <p className="mt-1 text-sm text-slate-600">
           Preguntas sobre corridas, circuitos y tablas. Las cifras salen del etl-api (tools), no se inventan.
-          La API key de Anthropic vive solo en el <span className="font-mono">.env</span> del server.
+          Las corridas de <span className="font-mono">s-events-slice</span> son fixtures de prueba (~18 eventos):
+          para totales de planta pedí un rango y el agente corre ETL sobre{' '}
+          <span className="font-mono">data/truckflow</span>.
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-3 text-xs">
           {statusError ?
