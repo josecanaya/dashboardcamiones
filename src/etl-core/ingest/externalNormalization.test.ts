@@ -6,13 +6,13 @@ import {
   normalizePlatform,
   normalizePlant,
   tryMonthDaySwapCorrection,
-} from './etlExternalNormalization'
-import { normalizeMovimientoContrato } from './etlExternalMovimientosContrato'
+} from './externalNormalization'
+import { normalizeMovimientoContrato } from '../../features/real-truckflow/etlWorkbench/etlExternalMovimientosContrato'
 import {
   COMMITTEE_CONCILIATION_CSV_KEYS,
   EXCEL_FIRST_PANEL_CSV_KEYS,
   buildExcelPeriodContext,
-} from './etlExcelFirstMerge'
+} from '../../features/real-truckflow/etlWorkbench/etlExcelFirstMerge'
 
 describe('combineDateTime Argentina dd/mm/yyyy', () => {
   it('"01/06/2026" + "00:04" -> junio 1, no enero 6', () => {

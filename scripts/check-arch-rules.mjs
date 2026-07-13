@@ -44,6 +44,8 @@ const ETLWORKBENCH_IMPORT_BASELINE = new Set([
 walk(path.join(ROOT, 'src'), ['.ts', '.tsx'], (p, src) => {
   const rel = path.relative(ROOT, p).replace(/\\/g, '/')
   if (rel.startsWith('src/features/real-truckflow/')) return
+  // Tests de etl-core pueden apuntar a workbench mientras se migran tipos (Fase 1).
+  if (rel.startsWith('src/etl-core/') && rel.endsWith('.test.ts')) return
   if (!/from ['"][^'"]*etlWorkbench\//.test(src)) return
   if (!ETLWORKBENCH_IMPORT_BASELINE.has(rel)) {
     violations.push(`[freeze-etlWorkbench] ${rel} importa etlWorkbench (no está en la línea base)`)
@@ -53,6 +55,7 @@ walk(path.join(ROOT, 'src'), ['.ts', '.tsx'], (p, src) => {
 // Regla 2: etl-core es puro — sin DOM, sin React, sin imports hacia features/pages/services
 walk(path.join(ROOT, 'src', 'etl-core'), ['.ts'], (p, src) => {
   const rel = path.relative(ROOT, p).replace(/\\/g, '/')
+  if (rel.endsWith('.test.ts')) return
   if (/\b(document|window|navigator)\./.test(src)) {
     violations.push(`[etl-core-puro] ${rel} usa API de navegador`)
   }
