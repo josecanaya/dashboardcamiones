@@ -5,66 +5,18 @@
 import { spawnSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
+import { ORCHESTRATOR_SKILL, SUBAGENT_SKILLS } from './etl-agent-skills.mjs'
 
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages'
 const DEFAULT_MODEL = process.env.ORQUESTADOR_MODEL?.trim() || 'claude-sonnet-4-6'
 const MAX_ROUNDS = 12
-
-const SYSTEM = `Sos el orquestador analista de logística de planta Ricardone / Puerto San Lorenzo (Vicentin).
-Respondés en el dashboard del comité ETL.
-
-Tools: run_etl, list_runs, list_data_days, get_summary, list_tables, query_table, count_rows, get_segment_kpi, get_circuit_catalog, explain_journey, delegar.
-
-Reglas CRÍTICAS:
-1. Datos → SIEMPRE tools. Nunca inventes cifras.
-2. Corridas con isFixtureSample o eventCount=0 no son operación real.
-3. Preguntas de TIEMPOS / TRAMOS (ej. “Preingreso → Calada”, “tiempo medio”, “cuánto tarda”):
-   - NO exijas un código de circuito R* para empezar.
-   - Usá get_segment_kpi(from_logical=PREINGRESO, to_logical=CALADA).
-   - Si mencionan “Q1”: puede ser R1 (Celda 16), el cuartil estadístico, o jerga de planta.
-     Calculá primero el tramo global; si hay filas R1, mostrá también el mean de R1. No te trabes pidiendo confirmación.
-4. Conteos de circuitos: count_rows(final_circuits, col=executive_circuit_code, eq=R7) → campo total.
-5. Tono: útil, directo, sin emojis decorativos ni tablas markdown densas. Empezá con el número.
-   Formato preferido:
-   Tiempo medio Preingreso→Calada: XX.X min (n=N, mediana=YY)
-   Corrida: run_id · eventos=…
-6. Delegá solo cuando aporte (Truckflow/contratos/seguridad/comité).
-`
 const KNOWLEDGE_MODEL = process.env.KNOWLEDGE_MODEL?.trim() || 'claude-haiku-4-5-20251001'
 
-const SUBAGENTS = {
-  knowledge_truckflow: {
-    system:
-      'Sos Knowledge Truckflow: cámaras, journeys, circuitos y tiempos de tramo. ' +
-      'Para Preingreso→Calada usá get_segment_kpi; no exijas un código R* si el usuario preguntó por el tramo. ' +
-      'Si dice Q1, reportá mean global del tramo y también R1 si hay datos. Solo cifras de tools.',
-    tools: [
-      'list_runs',
-      'list_tables',
-      'query_table',
-      'count_rows',
-      'get_segment_kpi',
-      'explain_journey',
-      'get_summary',
-      'get_circuit_catalog',
-    ],
-  },
-  knowledge_contratos: {
-    system:
-      'Sos Knowledge Contratos: Movimientos/Excel/transiles. Solo leé tablas del ETL; no reclasifiques.',
-    tools: ['list_runs', 'list_tables', 'query_table', 'count_rows', 'get_summary', 'run_etl'],
-  },
-  seguridad: {
-    system:
-      'Sos Seguridad operativa: anomalías y alertas. Citá filas concretas de tools.',
-    tools: ['list_runs', 'get_summary', 'list_tables', 'query_table', 'count_rows', 'explain_journey'],
-  },
-  comunicador: {
-    system:
-      'Sos Comunicador de comité: resumí KPIs en lenguaje claro. Cifras solo desde get_summary/count_rows.',
-    tools: ['list_runs', 'get_summary', 'list_tables', 'query_table', 'count_rows'],
-  },
-}
+const SYSTEM = ORCHESTRATOR_SKILL
+
+const SUBAGENTS = Object.fromEntries(
+  Object.entries(SUBAGENT_SKILLS).map(([id, s]) => [id, { system: s.system, tools: s.tools }])
+)
 
 function tool(name, description, properties, required) {
   const schema = { type: 'object', properties, additionalProperties: false }
@@ -592,6 +544,19 @@ export function createEtlAgentChat({ projectRoot, runsRoot, port, etlHeadlessScr
     return highlights
   }
 
+  function parseAgentUiBlock(reply) {
+    const text = String(reply || '')
+    const m = text.match(/<<AGENT_UI\s*([\s\S]*?)\s*AGENT_UI>>/)
+    if (!m) return { plain: text.trim(), ui: null }
+    try {
+      const ui = JSON.parse(m[1].trim())
+      const plain = text.replace(m[0], '').trim()
+      return { plain, ui }
+    } catch {
+      return { plain: text.trim(), ui: null }
+    }
+  }
+
   /**
    * @param {{ message: string, history?: { role: string, content: string }[] }} input
    */
@@ -614,8 +579,13 @@ export function createEtlAgentChat({ projectRoot, runsRoot, port, etlHeadlessScr
       toolTrace,
     })
     const publicTrace = toolTrace.map(({ name, input }) => ({ name, input }))
+    const { plain, ui } = parseAgentUiBlock(out.reply)
+    const delegated = [...toolTrace].reverse().find((t) => t.name === 'delegar' && t.result?.subagente)
     return {
       ...out,
+      reply: plain || (ui?.verdict ? String(ui.verdict) : out.reply),
+      ui,
+      agentUsed: delegated?.result?.subagente || 'orquestador',
       toolTrace: publicTrace,
       highlights: buildHighlights(toolTrace),
     }

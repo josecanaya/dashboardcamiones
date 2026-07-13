@@ -19,11 +19,28 @@ export type EtlAgentChatMessage = {
   content: string
 }
 
+export type EtlAgentUiPayload = {
+  title: string
+  verdict?: string
+  context?: { runId?: string; scope?: string }
+  metrics?: { label: string; value: string; hint?: string; tone?: 'neutral' | 'good' | 'warn' | 'critical' }[]
+  rankings?: {
+    label: string
+    sublabel?: string
+    emphasize?: boolean
+    values?: { k: string; v: string }[]
+  }[]
+  findings?: string[]
+  ask?: string | null
+}
+
 export type EtlAgentChatResponse = {
   reply: string
   model?: string
   toolTrace?: { name: string; input?: unknown }[]
   highlights?: { label: string; value: string; detail?: string }[]
+  ui?: EtlAgentUiPayload | null
+  agentUsed?: string
   stopReason?: string
   error?: string
 }

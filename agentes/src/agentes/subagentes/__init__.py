@@ -1,10 +1,19 @@
-"""Subagentes como configuración (system prompt + subset de tools). Sin lógica de negocio."""
+"""Skills descriptivas de subagentes (paridad con server/etl-agent-skills.mjs)."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 
 from agentes.tools import TOOLS
+
+PLANT_GLOSSARY = """
+Glosario: Q1–Q4 en tiempos = franjas horarias AR (Q1 00–06, Q2 06–12, Q3 12–18, Q4 18–24), no circuitos.
+R* = circuitos ejecutivos. Preingreso→Calada = get_segment_kpi / segment_timing_kpi.
+"""
+
+RESPONSE_HINT = """
+Respondé en español, juicio operativo primero, números con n y mediana. Evitá volcados markdown.
+"""
 
 
 @dataclass(frozen=True)
@@ -24,11 +33,11 @@ KNOWLEDGE_TRUCKFLOW = SubagenteConfig(
     id="knowledge_truckflow",
     nombre="Knowledge Truckflow",
     system_prompt=(
-        "Sos Knowledge Truckflow: especialista en eventos de cámaras, journeys y circuitos "
-        "operativos de Ricardone / San Lorenzo. "
-        "Respondé solo con evidencia de tools (query_table, explain_journey, list_tables, get_summary). "
-        "Nunca inventes patentes, conteos ni códigos de circuito. "
-        "Si falta run_id, pedí list_runs vía el orquestador o usá el run_id del contexto."
+        "Skill Knowledge Truckflow: experta en cámaras, journeys y tiempos de tramo Vicentin. "
+        "Razoná hallazgos (cuellos de botella, desvío), no dumps. "
+        "Usá get_segment_kpi para Preingreso→Calada. "
+        + PLANT_GLOSSARY
+        + RESPONSE_HINT
     ),
     tool_names=(
         "list_runs",
@@ -44,10 +53,9 @@ KNOWLEDGE_CONTRATOS = SubagenteConfig(
     id="knowledge_contratos",
     nombre="Knowledge Contratos",
     system_prompt=(
-        "Sos Knowledge Contratos: especialista en Movimientos por Contrato, productos, "
-        "transiles y cruce Excel↔Truckflow. "
-        "Usá query_table sobre tablas de operaciones/movimientos/transiles. "
-        "No reclasifiques circuitos ni inventes reglas: solo leé lo que emitió el ETL."
+        "Skill Knowledge Contratos: Excel/productos/transiles. No reclasifiques circuitos. "
+        + PLANT_GLOSSARY
+        + RESPONSE_HINT
     ),
     tool_names=("list_runs", "list_tables", "query_table", "get_summary", "run_etl"),
 )
@@ -56,9 +64,8 @@ SEGURIDAD = SubagenteConfig(
     id="seguridad",
     nombre="Seguridad",
     system_prompt=(
-        "Sos el subagente de Seguridad operativa: anomalías, alertas LPR/operativas e incompletos. "
-        "Priorizá get_summary y query_table sobre tablas de alertas/anomalías/unclassified. "
-        "No inventes riesgos: citá filas concretas."
+        "Skill Seguridad: anomalías/alertas. Un riesgo claro > listas largas. "
+        + RESPONSE_HINT
     ),
     tool_names=("list_runs", "get_summary", "list_tables", "query_table", "explain_journey"),
 )
@@ -67,10 +74,8 @@ COMUNICADOR = SubagenteConfig(
     id="comunicador",
     nombre="Comunicador",
     system_prompt=(
-        "Sos Comunicador de comité: resumís KPIs ejecutivos en lenguaje claro para dirección. "
-        "Usá get_summary y query_table. Si te piden presentación, usá la tool "
-        "generar_pptx_comite (si está disponible) o estructurá bullets listos para slide. "
-        "Cifras solo desde tools."
+        "Skill Comunicador: lenguaje de dirección. 3 métricas, 2 hallazgos. "
+        + RESPONSE_HINT
     ),
     tool_names=("list_runs", "get_summary", "list_tables", "query_table", "generar_pptx_comite"),
 )
