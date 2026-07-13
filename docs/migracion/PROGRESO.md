@@ -47,7 +47,7 @@
 - [x] 5.2 tools.py
 - [x] 5.3 Orquestador REPL
 - [x] 5.4 Subagentes (Knowledge Truckflow → Contratos → Seguridad → Comunicador)
-- [ ] 5.5 🛑 Decisión MCP / exposición
+- [x] 5.5 🛑 Decisión MCP / exposición — **UI en dashboard** (pestaña Agente)
 
 ## Notas y bloqueos
 
@@ -71,3 +71,4 @@
 - 2026-07-13 — 🛑 STOP 4.4: usuario eligió **Supabase**. Migración `20260713150000_etl_runs.sql` (tablas + bucket); upload post-corrida en API; `npm run db:migrate:etl-runs` / `etl:upload`.
 - 2026-07-13 — 5.1: paquete `agentes/` (httpx client 1:1 con etl-api); pytest 5 passed con server efímero.
 - 2026-07-13 — 5.2–5.4: `tools.py` (tool-use ES) + orquestador REPL + subagentes (Truckflow, Contratos, Seguridad, Comunicador+pptx). `python -m agentes.orquestador`.
+- 2026-07-13 — 🛑 STOP 5.5: usuario eligió **UI en dashboard**. Pestaña `Agente` → `POST /api/etl/agent/chat` (ANTHROPIC_API_KEY solo en .env del server).

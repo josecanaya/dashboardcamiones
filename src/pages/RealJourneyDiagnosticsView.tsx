@@ -40,6 +40,7 @@ import { TransformEtlTab } from '../features/real-truckflow/tabs/TransformEtlTab
 import { KpiComiteTab } from '../features/real-truckflow/tabs/KpiComiteTab'
 import { KpiTiemposTab } from '../features/real-truckflow/tabs/KpiTiemposTab'
 import { LoadExportTab } from '../features/real-truckflow/tabs/LoadExportTab'
+import { AgenteChatTab } from '../features/real-truckflow/tabs/AgenteChatTab'
 import {
   ETL_DEV_MODE,
   ETL_DEV_TAB_IDS,
@@ -55,6 +56,7 @@ export type RealDataMainTab =
   | 'transform_etl'
   | 'load_export'
   | 'analisis_local'
+  | 'agente'
   | 'eventos'
   | 'alertas'
   | 'resumen'
@@ -84,6 +86,7 @@ const ETL_TAB_LABELS: Record<RealDataMainTab, string> = {
   transform_etl: 'Transform',
   kpi_tiempos: 'KPI tiempos',
   load_export: 'Load / Export',
+  agente: 'Agente',
   kpi_comite: 'KPIs ETL',
   resumen: 'Resumen',
   depuracion: 'Depuración',
@@ -855,6 +858,7 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
       {p.mainTab === 'kpi_tiempos' ? <KpiTiemposTab /> : null}
       {ETL_DEV_MODE && p.mainTab === 'kpi_comite' ? <KpiComiteTab /> : null}
       {p.mainTab === 'load_export' ? <LoadExportTab /> : null}
+      {p.mainTab === 'agente' ? <AgenteChatTab /> : null}
 
       {isDevEtlTab && !p.hideLegacyPeriodFilters ? (
         <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">

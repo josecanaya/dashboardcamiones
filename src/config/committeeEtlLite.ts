@@ -14,6 +14,7 @@ export const ETL_PRODUCT_TAB_IDS = [
   'transform_etl',
   'kpi_tiempos',
   'load_export',
+  'agente',
 ] as const
 
 /** Pestañas de diagnóstico técnico — solo visibles en modo DEV. */

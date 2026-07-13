@@ -14,6 +14,7 @@ import { createTruckPlateRegistryRouter } from './truck-plate-registry.mjs'
 import { createTruckFleetRouter } from './truck-fleet-registry.mjs'
 import { supabasePublicHost } from './supabase-client.mjs'
 import { uploadEtlRunFromDisk, listEtlRunsFromSupabase } from './etl-runs-store.mjs'
+import { createEtlAgentChat } from './etl-agent-chat.mjs'
 import {
   buildApiJourneyDayStat,
   countUniqueRawJourneyUids,
@@ -838,6 +839,50 @@ app.get('/api/etl/catalog/circuits', (_req, res) => {
   res.json({ catalog })
 })
 
+const etlAgent = createEtlAgentChat({
+  projectRoot: PROJECT_ROOT,
+  runsRoot: RUNS_ROOT,
+  port: PORT,
+  etlHeadlessScript: ETL_HEADLESS_SCRIPT,
+})
+
+/** GET /api/etl/agent/status — ¿hay ANTHROPIC_API_KEY? (sin revelar la clave). */
+app.get('/api/etl/agent/status', (_req, res) => {
+  res.json(etlAgent.status())
+})
+
+/**
+ * POST /api/etl/agent/chat
+ * body: { message: string, history?: { role: 'user'|'assistant', content: string }[] }
+ */
+app.post('/api/etl/agent/chat', async (req, res) => {
+  const message = String(req.body?.message ?? '').trim()
+  if (!message) {
+    res.status(400).json({ error: 'Falta message' })
+    return
+  }
+  if (!etlAgent.isConfigured()) {
+    res.status(503).json({
+      error:
+        'Falta ANTHROPIC_API_KEY en el .env del proyecto. Pegá la clave completa (sk-ant-...), no el JSON de metadatos de la consola Anthropic.',
+      configured: false,
+    })
+    return
+  }
+  const history = Array.isArray(req.body?.history) ? req.body.history : []
+  try {
+    const out = await etlAgent.chat({ message, history })
+    res.json(out)
+  } catch (e) {
+    const messageErr = e instanceof Error ? e.message : String(e)
+    const status = e?.code === 'NO_API_KEY' ? 503 : e?.status && e.status < 600 ? e.status : 500
+    res.status(status).json({ error: messageErr })
+  }
+})
+
 app.listen(PORT, () => {
   console.info(`[truckflow-local] http://localhost:${PORT}  data→ ${DATA_ROOT}  powerbi→ ${POWERBI_ROOT}`)
+  console.info(
+    `[truckflow-local] agente ETL: ${etlAgent.isConfigured() ? 'ANTHROPIC_API_KEY ok' : 'sin ANTHROPIC_API_KEY'}`
+  )
 })
