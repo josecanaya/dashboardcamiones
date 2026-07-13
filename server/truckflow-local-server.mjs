@@ -6,6 +6,8 @@ import './load-env.mjs'
 import cors from 'cors'
 import express from 'express'
 import fs from 'fs/promises'
+import { spawnSync } from 'node:child_process'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { createTruckPlateRegistryRouter } from './truck-plate-registry.mjs'
@@ -20,6 +22,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = path.resolve(__dirname, '..')
 const DATA_ROOT = path.join(PROJECT_ROOT, 'data', 'truckflow')
 const POWERBI_ROOT = path.join(PROJECT_ROOT, 'data', 'powerbi')
+const RUNS_ROOT = path.join(PROJECT_ROOT, 'runs')
+const ETL_HEADLESS_SCRIPT = path.join(PROJECT_ROOT, 'scripts', 'run-etl-headless.ts')
+
 
 const DEFAULT_API_BASE = process.env.TRUCKFLOW_EXPORT_API_BASE?.trim() || 'http://138.36.237.33:8090'
 const FETCH_TIMEOUT_MS = Number(process.env.TRUCKFLOW_FETCH_TIMEOUT_MS || 120_000)
@@ -591,6 +596,214 @@ app.post('/api/truckflow/journey-stats-period', async (req, res) => {
     endDate,
     perDay,
   })
+})
+
+// ─── ETL headless / corridas (Fase 4) ───────────────────────────────────────
+
+function* etlDayRange(startIso, endIso) {
+  const start = new Date(`${startIso}T12:00:00`)
+  const end = new Date(`${endIso}T12:00:00`)
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || start > end) return
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    yield `${y}-${m}-${day}`
+  }
+}
+
+function resolveEtlEventsPaths({ eventsPaths, from, to }) {
+  const paths = []
+  if (Array.isArray(eventsPaths)) {
+    for (const p of eventsPaths) {
+      const abs = path.isAbsolute(p) ? p : path.resolve(PROJECT_ROOT, p)
+      paths.push(abs)
+    }
+  }
+  const fromDay = String(from ?? '').trim()
+  const toDay = String(to ?? '').trim()
+  if (fromDay && toDay) {
+    for (const day of etlDayRange(fromDay, toDay)) {
+      const eventPath = path.join(DATA_ROOT, day, 'event-list.json')
+      if (existsSync(eventPath)) paths.push(eventPath)
+    }
+  }
+  return [...new Set(paths)]
+}
+
+function readJsonSyncSafe(filePath) {
+  try {
+    return JSON.parse(readFileSync(filePath, 'utf8'))
+  } catch {
+    return null
+  }
+}
+
+function listEtlRunManifests() {
+  if (!existsSync(RUNS_ROOT)) return []
+  const names = readdirSync(RUNS_ROOT, { withFileTypes: true })
+  const out = []
+  for (const ent of names) {
+    if (!ent.isDirectory() || ent.name.startsWith('_')) continue
+    const manifest = readJsonSyncSafe(path.join(RUNS_ROOT, ent.name, 'manifest.json'))
+    if (manifest) out.push(manifest)
+  }
+  out.sort((a, b) => String(b.startedAt || '').localeCompare(String(a.startedAt || '')))
+  return out
+}
+
+/** POST /api/etl/runs — spawnea runner headless; responde { runId }. */
+app.post('/api/etl/runs', (req, res) => {
+  const eventsPaths = resolveEtlEventsPaths({
+    eventsPaths: req.body?.eventsPaths,
+    from: req.body?.from,
+    to: req.body?.to,
+  })
+  if (!eventsPaths.length) {
+    res.status(400).json({
+      error: 'Indicá eventsPaths[] y/o from+to con event-list.json en data/truckflow/',
+    })
+    return
+  }
+  for (const p of eventsPaths) {
+    if (!existsSync(p)) {
+      res.status(400).json({ error: `No existe events path: ${p}` })
+      return
+    }
+  }
+
+  let excelPath = ''
+  if (req.body?.excelPath) {
+    excelPath = path.isAbsolute(req.body.excelPath)
+      ? req.body.excelPath
+      : path.resolve(PROJECT_ROOT, String(req.body.excelPath))
+    if (!existsSync(excelPath)) {
+      res.status(400).json({ error: `No existe excelPath: ${excelPath}` })
+      return
+    }
+  }
+
+  const args = [ETL_HEADLESS_SCRIPT, '--out', RUNS_ROOT]
+  for (const p of eventsPaths) {
+    args.push('--events', p)
+  }
+  if (excelPath) args.push('--excel', excelPath)
+
+  const result = spawnSync('npx', ['tsx', ...args], {
+    cwd: PROJECT_ROOT,
+    encoding: 'utf8',
+    shell: true,
+    env: process.env,
+    maxBuffer: 32 * 1024 * 1024,
+  })
+
+  const stdout = String(result.stdout || '')
+  const stderr = String(result.stderr || '')
+  const lines = stdout
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean)
+  const runId = lines[lines.length - 1] || ''
+
+  if (result.status !== 0 || !runId) {
+    res.status(500).json({
+      error: 'Falló el runner headless',
+      status: result.status,
+      runId: runId || null,
+      stderr: stderr.slice(-4000),
+      stdout: stdout.slice(-4000),
+    })
+    return
+  }
+
+  res.json({ runId })
+})
+
+/** GET /api/etl/runs — lista manifests. */
+app.get('/api/etl/runs', (_req, res) => {
+  res.json({ runs: listEtlRunManifests() })
+})
+
+/** GET /api/etl/runs/:id/summary — stats.json */
+app.get('/api/etl/runs/:id/summary', (req, res) => {
+  const runId = String(req.params.id || '').trim()
+  const statsPath = path.join(RUNS_ROOT, runId, 'stats.json')
+  if (!existsSync(statsPath)) {
+    res.status(404).json({ error: `Corrida no encontrada: ${runId}` })
+    return
+  }
+  const stats = readJsonSyncSafe(statsPath)
+  const manifest = readJsonSyncSafe(path.join(RUNS_ROOT, runId, 'manifest.json'))
+  res.json({ runId, manifest, stats })
+})
+
+/** GET /api/etl/runs/:id/tables — nombres de tablas */
+app.get('/api/etl/runs/:id/tables', (req, res) => {
+  const runId = String(req.params.id || '').trim()
+  const tablesDir = path.join(RUNS_ROOT, runId, 'tables')
+  if (!existsSync(tablesDir)) {
+    res.status(404).json({ error: `Corrida no encontrada: ${runId}` })
+    return
+  }
+  const names = readdirSync(tablesDir)
+    .filter((n) => n.endsWith('.json'))
+    .map((n) => n.replace(/\.json$/i, ''))
+    .sort()
+  res.json({ runId, tables: names })
+})
+
+/** GET /api/etl/runs/:id/tables/:name — filas con limit/offset/col/eq */
+app.get('/api/etl/runs/:id/tables/:name', (req, res) => {
+  const runId = String(req.params.id || '').trim()
+  const name = String(req.params.name || '').trim()
+  if (!name || name.includes('..') || name.includes('/') || name.includes('\\')) {
+    res.status(400).json({ error: 'Nombre de tabla inválido' })
+    return
+  }
+  const tablePath = path.join(RUNS_ROOT, runId, 'tables', `${name}.json`)
+  if (!existsSync(tablePath)) {
+    res.status(404).json({ error: `Tabla no encontrada: ${name}` })
+    return
+  }
+  const doc = readJsonSyncSafe(tablePath)
+  if (!doc || !Array.isArray(doc.rows)) {
+    res.status(500).json({ error: 'Tabla corrupta o sin filas' })
+    return
+  }
+
+  let rows = doc.rows
+  const col = req.query.col != null ? String(req.query.col) : ''
+  const eq = req.query.eq != null ? String(req.query.eq) : ''
+  if (col) {
+    rows = rows.filter((r) => String(r?.[col] ?? '') === eq)
+  }
+
+  const limit = Math.max(0, Math.min(10_000, Number(req.query.limit ?? 100) || 100))
+  const offset = Math.max(0, Number(req.query.offset ?? 0) || 0)
+  const slice = rows.slice(offset, offset + limit)
+
+  res.json({
+    runId,
+    name,
+    headers: doc.headers ?? [],
+    total: rows.length,
+    limit,
+    offset,
+    rows: slice,
+  })
+})
+
+/** GET /api/etl/catalog/circuits — CIRCUIT_CATALOG (escrito por el runner). */
+app.get('/api/etl/catalog/circuits', (_req, res) => {
+  const catalogPath = path.join(RUNS_ROOT, '_catalog', 'circuits.json')
+  if (!existsSync(catalogPath)) {
+    res.status(404).json({
+      error: 'Catálogo no generado aún. Ejecutá una corrida ETL (POST /api/etl/runs) primero.',
+    })
+    return
+  }
+  const catalog = readJsonSyncSafe(catalogPath)
+  res.json({ catalog })
 })
 
 app.listen(PORT, () => {
