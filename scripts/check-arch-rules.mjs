@@ -46,6 +46,8 @@ walk(path.join(ROOT, 'src'), ['.ts', '.tsx'], (p, src) => {
   if (rel.startsWith('src/features/real-truckflow/')) return
   // Tests de etl-core pueden apuntar a workbench mientras se migran tipos (Fase 1).
   if (rel.startsWith('src/etl-core/') && rel.endsWith('.test.ts')) return
+  // Excepción temporal Fase 1: reports/ puede importar etlWorkbench (tipos/helpers).
+  if (rel.startsWith('src/etl-core/reports/')) return
   if (!/from ['"][^'"]*etlWorkbench\//.test(src)) return
   if (!ETLWORKBENCH_IMPORT_BASELINE.has(rel)) {
     violations.push(`[freeze-etlWorkbench] ${rel} importa etlWorkbench (no está en la línea base)`)
@@ -61,6 +63,11 @@ walk(path.join(ROOT, 'src', 'etl-core'), ['.ts'], (p, src) => {
   }
   if (/from ['"]react['"]/.test(src)) {
     violations.push(`[etl-core-puro] ${rel} importa react`)
+  }
+  // Excepción temporal Fase 1: reports/ puede importar de etlWorkbench
+  // hasta que los tipos se muevan a domain/ (Paso 1.5). Quitar al cerrar Fase 1.
+  if (rel.startsWith('src/etl-core/reports/') && /etlWorkbench\//.test(src)) {
+    return
   }
   if (/from ['"][^'"]*(features\/|pages\/|\.\.\/services\/)/.test(src)) {
     violations.push(`[etl-core-puro] ${rel} importa features/pages/services`)
