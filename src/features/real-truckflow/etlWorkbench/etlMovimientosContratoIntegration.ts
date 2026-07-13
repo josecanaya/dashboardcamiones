@@ -78,6 +78,7 @@ import {
   transileExternoOperationsCsv,
   transileExternoSessionsCsv,
   transileExternoSummaryCsv,
+  transileExternoTables,
   type TransileExternoSummary,
 } from './transileExternoCiclo'
 
@@ -116,6 +117,8 @@ export type MovimientosContratoIntegrationInput = {
 
 export type MovimientosContratoIntegrationOutput = {
   csv: Record<string, string>
+  /** Fase 2: tablas tipadas (piloto transile externo). */
+  tables?: Record<string, import('../../../etl-core/typedTable').TypedTable>
   logs: string[]
   stageTimings: ContractFirstStageTiming[]
   segmentTimingFromExcelFirst: SegmentTimingIndex | null
@@ -598,6 +601,14 @@ export async function runMovimientosContratoIntegration(
   stageTimings.push(csvStage.timing)
   const csv = csvStage.result
 
+  const teTables = transileExternoTables(transileExternoReport)
+  type AnyTable = import('../../../etl-core/typedTable').TypedTable
+  const tables: Record<string, AnyTable> = {
+    transile_externo_operaciones: teTables.operaciones as unknown as AnyTable,
+    transile_externo_sessions: teTables.sessions as unknown as AnyTable,
+    transile_externo_summary: teTables.summary as unknown as AnyTable,
+  }
+
   const totalMs = Math.round(performance.now() - runStartedAt)
   console.info('[CONTRACT_FIRST_MERGE] fin', { totalMs, stageTimings })
   logs.push(`Duración total Paso 3 (ms): ${totalMs}`)
@@ -615,6 +626,7 @@ export async function runMovimientosContratoIntegration(
 
   return {
     csv,
+    tables,
     logs,
     stageTimings,
     segmentTimingFromExcelFirst,

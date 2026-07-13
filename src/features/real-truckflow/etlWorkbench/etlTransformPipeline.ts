@@ -430,6 +430,8 @@ export type EtlTransformInput = {
 
 export type EtlTransformOutput = {
   csv: Record<string, string>
+  /** Fase 2: artefactos tipados. Las claves espejan las de csv. Opcional durante migración. */
+  tables?: Record<string, import('../../../etl-core/typedTable').TypedTable>
   stats: {
     step1: {
       frontEvents: number
@@ -2179,6 +2181,7 @@ export async function runEtlTransform(
   }
 
   let movimientosContratoCsv: Record<string, string> = {}
+  let movimientosContratoTables: Record<string, import('../../../etl-core/typedTable').TypedTable> = {}
   let movimientosContratoStats: EtlTransformOutput['stats']['movimientosContrato']
   let kpiTiemposMovimientosSnapshot: KpiTiemposBuildInput['movimientosSnapshot'] = null
 
@@ -2191,6 +2194,7 @@ export async function runEtlTransform(
     const mc = phaseStore.contractIntegration
     const prep = phaseStore.tramo2Prep
     movimientosContratoCsv = mc.csv
+    movimientosContratoTables = mc.tables ?? {}
     kpiTiemposMovimientosSnapshot = mc.kpiTiemposSnapshot
     movimientosContratoStats = movimientosStatsFromIntegration(mc, prep.finalCsvRows.length)
   } else if (!skipMovimientosEnTramo2 && inp.movimientosContratoFiles?.length) {
@@ -2215,6 +2219,7 @@ export async function runEtlTransform(
       profiler,
     })
     movimientosContratoCsv = mc.csv
+    movimientosContratoTables = mc.tables ?? {}
     kpiTiemposMovimientosSnapshot = mc.kpiTiemposSnapshot
     movimientosContratoStats = {
       enabled: true,
@@ -2993,6 +2998,7 @@ export async function runEtlTransform(
       plate_registry_excluded: plateRegistryExcludedCsv,
       ...movimientosContratoCsv,
     },
+    tables: Object.keys(movimientosContratoTables).length ? movimientosContratoTables : undefined,
     stats: {
       step1: step1Stat,
       plateRegistry: plateRegistryStat,

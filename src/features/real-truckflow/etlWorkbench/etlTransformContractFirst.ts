@@ -103,6 +103,7 @@ export function attachContractIntegrationToOutput(
   return {
     ...base,
     csv: { ...base.csv, ...mc.csv },
+    tables: { ...base.tables, ...mc.tables },
     stats: {
       ...base.stats,
       movimientosContrato: movimientosStatsFromIntegration(mc, prep.finalCsvRows.length),
