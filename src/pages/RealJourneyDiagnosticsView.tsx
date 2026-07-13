@@ -16,7 +16,7 @@ const COMMITTEE_SINGLE_CSV_ROWS: readonly { key: PowerBiCommitteeCsvKey; label: 
   { key: 'camera_diagnostics', label: 'Diagnóstico cámaras' },
 ]
 import { normalizeSequenceForPattern, pctOfIncomplete } from '../services/realIncompleteAnalysis'
-import { preliminaryCircuitTypicalSectorPath } from '../services/realPreliminaryCircuit'
+import { preliminaryCircuitTypicalSectorPath } from '../features/real-truckflow/etlWorkbench/preliminaryCircuitClassify'
 import type { OperationalDepurationSnapshot, OperationalJourneyScopeFilter } from '../services/realJourneyDepurationMap'
 import type { PlateQualitySummaryResult } from '../services/realPlateQuality'
 import type { CameraCoverageBuildResult } from '../services/realCameraCoverage'
@@ -352,7 +352,7 @@ export type RealJourneyDiagnosticsViewProps = {
   datasetQualityBadge: { cls: string; text: string }
   filteredJourneys: ReconstructedRealJourney[]
   filteredPlateRows: ReturnType<typeof import('../services/realJourneyQuality').buildPlateRowsByDay>
-  prelimCircuitDailyFiltered: import('../services/realPreliminaryCircuit').PreliminaryCircuitDailyRow[]
+  prelimCircuitDailyFiltered: import('../features/real-truckflow/etlWorkbench/preliminaryCircuitClassify').PreliminaryCircuitDailyRow[]
 
   drawerCircuitCode: string | null
   setDrawerCircuitCode: (v: string | null) => void

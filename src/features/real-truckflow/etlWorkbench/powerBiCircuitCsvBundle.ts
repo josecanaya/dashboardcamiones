@@ -1,18 +1,18 @@
 /**
- * Capa: clasificación — motor oficial Transform v2 (sesiones, matriz, CSV v2).
- * Fuente de verdad para clean_circuits_v2; funciones puras salvo dependencias de datos.
+ * Bundle CSV compatible Power BI (ex circuitEtlV2). Conservado como artefacto de export;
+ * la clasificación ejecutiva vigente vive en finalCircuitScoring / CIRCUIT_CATALOG.
  */
 
-import type { RealJourneyEventDto } from './realJourneyEvents.types'
-import { compareRealEvents } from './realJourneyEventsMapper'
-import { getEventOperationalInstantMs } from './realEventOperationalTime'
-import { normalizeRealEventPoint } from './realEventNormalization'
+import type { RealJourneyEventDto } from '../../../services/realJourneyEvents.types'
+import { compareRealEvents } from '../../../services/realJourneyEventsMapper'
+import { getEventOperationalInstantMs } from '../../../services/realEventOperationalTime'
+import { normalizeRealEventPoint } from '../../../services/realEventNormalization'
 import {
   normalizePlateStrict,
   plateSimilarityScore,
   isLikelyOcrPlateMatch,
   weightedOcrLevenshtein,
-} from './circuitPlateOcr'
+} from '../../../services/circuitPlateOcr'
 
 const MS_MIN = 60 * 1000
 const MS_HOUR = 60 * MS_MIN

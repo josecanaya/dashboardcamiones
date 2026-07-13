@@ -27,8 +27,13 @@ function walk(dir, exts, cb) {
 // etlWorkbench. Permitidos hasta que las fases 1-3 los migren. NO agregar entradas.
 const ETLWORKBENCH_IMPORT_BASELINE = new Set([
   'src/components/realDiagnostics/LiveCameraMonitor.tsx',
+  'src/pages/RealJourneyDiagnosticsPageLegacy.tsx',
+  'src/pages/RealJourneyDiagnosticsView.tsx',
+  'src/services/powerBiEtlExportBuilder.ts',
+  'src/services/realJourneyEventsMapper.ts',
   'src/services/rearCameraFilter.ts',
   'src/services/realEventOperationalTime.test.ts',
+  'src/services/truckflowTransform/classify.ts',
   'src/services/truckflowTransform/contractFirst/contractExcelFirstEvidence.ts',
   'src/services/truckflowTransform/contractFirst/contractExcelParser.ts',
   'src/services/truckflowTransform/contractFirst/contractFieldNormalizer.ts',

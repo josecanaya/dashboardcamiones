@@ -26,7 +26,7 @@ import {
   resolveOperationalEntry,
   resolveOperationalExit,
 } from './finalCircuitScoring'
-import { classifyOperationalPreliminaryCircuit } from '../../../services/realPreliminaryCircuit'
+import { classifyOperationalPreliminaryCircuit } from './preliminaryCircuitClassify'
 
 function journey(partial: Partial<ReconstructedRealJourney>): ReconstructedRealJourney {
   return {

@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import type { RealJourneyEventDto } from './realJourneyEvents.types'
+import type { RealJourneyEventDto } from '../../../services/realJourneyEvents.types'
 import {
   buildCircuitEtlV2CsvBundle,
   buildOperationalSessionsPlateSite,
   classifyOperationalSession,
   CIRCUIT_ETL_V2_FILENAMES,
-} from './circuitEtlV2'
+} from './powerBiCircuitCsvBundle'
 
 function ev(o: Partial<RealJourneyEventDto>): RealJourneyEventDto {
   return {
@@ -29,7 +29,7 @@ function ev(o: Partial<RealJourneyEventDto>): RealJourneyEventDto {
   }
 }
 
-describe('circuitEtlV2', () => {
+describe('powerBiCircuitCsvBundle', () => {
   it('fusiona mismos UID de viaje dentro de gap 4h y bandera merged_fragment', () => {
     const events: RealJourneyEventDto[] = [
       ev({ id: 1, occurredAt: '2026-05-17T10:00:00.000Z', recordedAt: '2026-05-17T10:00:00.000Z', journeyUid: 'a' }),

@@ -1,12 +1,12 @@
 /**
- * Capa: clasificación preliminar / lectura rápida sobre journeys reconstruidos.
- * No es el motor v2; no debe depender de UI. Evitar tocar si el ticket es solo export/KPI.
+ * Clasificación preliminar técnica (códigos CIRCUITO_*) sobre journeys reconstruidos.
+ * Alimenta resolveExecutiveCircuit (CIRCUIT_CATALOG). Ex realPreliminaryCircuit.
  */
 import type {
   PreliminaryCircuitClassification,
   RealJourneyEventDto,
   ReconstructedRealJourney,
-} from './realJourneyEvents.types'
+} from '../../../services/realJourneyEvents.types'
 
 
 

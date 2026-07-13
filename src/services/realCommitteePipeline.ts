@@ -1,6 +1,6 @@
 /**
  * Capa: clasificación — salida ejecutiva / comité (segmentación temporal, flags).
- * Complementa circuitEtlV2; alimenta powerBiEtlExport. No depende de gráficos.
+ * Complementa el clasificador ejecutivo; alimenta powerBiEtlExport. No depende de gráficos.
  */
 
 import type { RealJourneyEventDto } from './realJourneyEvents.types'

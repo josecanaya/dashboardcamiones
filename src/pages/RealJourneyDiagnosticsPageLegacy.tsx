@@ -32,7 +32,7 @@ import {
   occurredAtCalendarBounds,
   enumerateLocalDatesInclusive,
 } from '../services/realJourneyQuality'
-import { buildPreliminaryCircuitDailySummary, enrichCaladaSanLorenzoConfidence } from '../services/realPreliminaryCircuit'
+import { buildPreliminaryCircuitDailySummary, enrichCaladaSanLorenzoConfidence } from '../features/real-truckflow/etlWorkbench/preliminaryCircuitClassify'
 import {
   buildOperationalDepurationSnapshot,
   journeyMatchesOperationalScope,

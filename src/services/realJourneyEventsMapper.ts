@@ -12,7 +12,7 @@ import { lookupRealSectorCode, UNMAPPED_LOGICAL_SECTOR_PLACEHOLDER } from '../da
 
 import { analyzeRealJourneyQuality, occurredAtLocalDayKey } from './realJourneyQuality'
 import { normalizeRealEventPoint } from './realEventNormalization'
-import { classifyOperationalPreliminaryCircuit } from './realPreliminaryCircuit'
+import { classifyOperationalPreliminaryCircuit } from '../features/real-truckflow/etlWorkbench/preliminaryCircuitClassify'
 import {
   getEventOperationalInstantIso,
   getEventOperationalInstantMs,

@@ -13,7 +13,7 @@ import {
   buildCameraDiagnostics,
   getEventOperationalInstantMs,
 } from './liveCameraDiagnostics'
-import { buildCircuitEtlV2CsvBundle, CIRCUIT_ETL_V2_FILENAMES } from './circuitEtlV2'
+import { buildCircuitEtlV2CsvBundle, CIRCUIT_ETL_V2_FILENAMES } from '../features/real-truckflow/etlWorkbench/powerBiCircuitCsvBundle'
 
 function normalizedAlertOccurredMs(a: NormalizedRealAlertView): number {
   const t = new Date(a.occurredAt).getTime()

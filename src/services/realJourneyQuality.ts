@@ -1,6 +1,6 @@
 /**
  * Capa: calidad — flags y reglas por journey (sectores Ricardone / San Lorenzo).
- * Soporte a reconstrucción y filtros; no reemplaza circuitEtlV2.
+ * Soporte a reconstrucción y filtros; no reemplaza el clasificador ejecutivo vigente.
  */
 import { lookupRealSectorCode } from '../data/realSectorCodeMap'
 import type { RealJourneyEventDto } from './realJourneyEvents.types'
