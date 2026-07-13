@@ -678,19 +678,20 @@ export function TransformEtlTab() {
     buildCircuitClassificationIndex('')
   )
   useEffect(() => {
-    if (!tr?.csv.debug_matrix_classification) {
+    if (!tr?.csv.debug_matrix_classification && !tr?.tables?.debug_matrix_classification?.rows?.length) {
       setCircuitClassIndex(buildCircuitClassificationIndex(''))
       return
     }
     let cancelled = false
-    const debugCsv = tr.csv.debug_matrix_classification
+    const debugMatrix =
+      tr.tables?.debug_matrix_classification?.rows ?? tr.csv.debug_matrix_classification
     const mergedCsv = tr.csv.merged_truckflow_movimientos
     const excelOps =
       tr.tables?.excel_operations_with_truckflow?.rows ?? tr.csv.excel_operations_with_truckflow
     void (async () => {
       await yieldToBrowser()
       if (cancelled) return
-      const idx = buildCircuitClassificationIndex(debugCsv, mergedCsv, excelOps)
+      const idx = buildCircuitClassificationIndex(debugMatrix, mergedCsv, excelOps)
       if (!cancelled) setCircuitClassIndex(idx)
     })()
     return () => {
@@ -700,6 +701,7 @@ export function TransformEtlTab() {
     tr?.csv.debug_matrix_classification,
     tr?.csv.merged_truckflow_movimientos,
     tr?.csv.excel_operations_with_truckflow,
+    tr?.tables?.debug_matrix_classification,
     tr?.tables?.excel_operations_with_truckflow,
   ])
 

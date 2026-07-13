@@ -9,6 +9,7 @@ import { applyJourneyCycleSplitsToEvents } from '../../../services/realJourneyCy
 import { normalizeRealEventPoint } from '../../../services/realEventNormalization'
 import { isEtlRearCameraDevice } from './etlRearDevices'
 import { recordsToCsv } from './etlCsv'
+import { makeTable, tableToCsv, type TypedTable } from '../../../etl-core/typedTable'
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 import {
   classifyJourneyAgainstCircuitMatrix,
@@ -2550,57 +2551,76 @@ export async function runEtlTransform(
     Object.assign(row, sum ? journeyAlertSummaryToRow(sum) : emptyJourneyAlertSummaryRow())
   }
 
+  const FINAL_CIRCUITS_EMPTY_HEADERS = [
+    'journey_uid',
+    'final_status',
+    'final_status_label',
+    'data_quality_flag',
+  ] as const
+  const finalCircuitsHeaders =
+    finalCsvRows.length ?
+      (Object.keys(finalCsvRows[0]!) as string[])
+    : [...FINAL_CIRCUITS_EMPTY_HEADERS]
+  const finalCircuitsTable: TypedTable = makeTable(
+    'final_circuits',
+    finalCircuitsHeaders,
+    finalCsvRows
+  )
   const final_circuits_csv =
     finalCsvRows.length ?
-      recordsToCsv(Object.keys(finalCsvRows[0]), finalCsvRows)
-    : 'journey_uid,final_status,final_status_label,data_quality_flag\n'
+      tableToCsv(finalCircuitsTable)
+    : `${FINAL_CIRCUITS_EMPTY_HEADERS.join(',')}\n`
+
+  const DEBUG_MATRIX_HEADERS = [
+    'journey_id',
+    'plate',
+    'site',
+    'detected_sequence',
+    'device_sequence',
+    'first_event_at',
+    'last_event_at',
+    'matched_circuit_code',
+    'executive_circuit_code',
+    'executive_circuit_label',
+    'technical_matched_circuit_code',
+    'expected_sequence',
+    'matrix_final_status',
+    'executive_status',
+    'executive_reason',
+    'valid_detail',
+    'matrix_reason',
+    'sequence_respected',
+    'coverage_percent',
+    'has_strong_point',
+    'enabled_for_classification',
+    'sequence_configured',
+    'matrix_missing_points',
+    'matrix_confidence',
+    'useful_events_count',
+    'sl_support_points',
+    'sl_support_strong_points',
+    'sl_support_corroboration',
+    'committee_group',
+    'committee_reason',
+    'operational_variation_type',
+    'analysis_scope',
+    'strong_point_source',
+    'show_in_committee',
+    'show_as_exact_circuit',
+    'candidate_circuits',
+    'missing_key_cameras',
+    'final_status_legacy',
+    'executive_bucket',
+  ] as const
+  const DEBUG_MATRIX_EMPTY_CSV =
+    'journey_id,plate,site,detected_sequence,matched_circuit_code,executive_circuit_code,executive_circuit_label,technical_matched_circuit_code,expected_sequence,matrix_final_status,executive_status,executive_reason,valid_detail,matrix_reason,sequence_respected,coverage_percent,has_strong_point,enabled_for_classification,sequence_configured,matrix_missing_points,matrix_confidence,useful_events_count,final_status_legacy,executive_bucket\n'
+  const debugMatrixTable: TypedTable = makeTable(
+    'debug_matrix_classification',
+    DEBUG_MATRIX_HEADERS,
+    debugMatrixRows as Record<string, unknown>[]
+  )
   const debug_matrix_classification_csv =
-    debugMatrixRows.length ?
-      recordsToCsv(
-        [
-          'journey_id',
-          'plate',
-          'site',
-          'detected_sequence',
-          'device_sequence',
-          'first_event_at',
-          'last_event_at',
-          'matched_circuit_code',
-          'executive_circuit_code',
-          'executive_circuit_label',
-          'technical_matched_circuit_code',
-          'expected_sequence',
-          'matrix_final_status',
-          'executive_status',
-          'executive_reason',
-          'valid_detail',
-          'matrix_reason',
-          'sequence_respected',
-          'coverage_percent',
-          'has_strong_point',
-          'enabled_for_classification',
-          'sequence_configured',
-          'matrix_missing_points',
-          'matrix_confidence',
-          'useful_events_count',
-          'sl_support_points',
-          'sl_support_strong_points',
-          'sl_support_corroboration',
-          'committee_group',
-          'committee_reason',
-          'operational_variation_type',
-          'analysis_scope',
-          'strong_point_source',
-          'show_in_committee',
-          'show_as_exact_circuit',
-          'candidate_circuits',
-          'missing_key_cameras',
-          'final_status_legacy',
-          'executive_bucket',
-        ],
-        debugMatrixRows
-      )
-    : 'journey_id,plate,site,detected_sequence,matched_circuit_code,executive_circuit_code,executive_circuit_label,technical_matched_circuit_code,expected_sequence,matrix_final_status,executive_status,executive_reason,valid_detail,matrix_reason,sequence_respected,coverage_percent,has_strong_point,enabled_for_classification,sequence_configured,matrix_missing_points,matrix_confidence,useful_events_count,final_status_legacy,executive_bucket\n'
+    debugMatrixRows.length ? tableToCsv(debugMatrixTable) : DEBUG_MATRIX_EMPTY_CSV
   const lprMergeHeaders = [
     'alert_id',
     'journey_uid',
@@ -2998,7 +3018,11 @@ export async function runEtlTransform(
       plate_registry_excluded: plateRegistryExcludedCsv,
       ...movimientosContratoCsv,
     },
-    tables: Object.keys(movimientosContratoTables).length ? movimientosContratoTables : undefined,
+    tables: {
+      ...movimientosContratoTables,
+      final_circuits: finalCircuitsTable,
+      debug_matrix_classification: debugMatrixTable,
+    },
     stats: {
       step1: step1Stat,
       plateRegistry: plateRegistryStat,

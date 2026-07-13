@@ -48,7 +48,8 @@ export function TruckFleetDatabaseSaveCard({ embedded = false }: { embedded?: bo
       'merge Truckflow + contrato'
     : wb.transformResult?.csv.clean_journeys_for_analysis?.trim() ?
       'journeys análisis'
-    : wb.transformResult?.csv.final_circuits?.trim() ?
+    : wb.transformResult?.tables?.final_circuits?.rows?.length ||
+        wb.transformResult?.csv.final_circuits?.trim() ?
       'circuitos finales'
     : 'sin CSV de visitas')
   : null

@@ -25,6 +25,7 @@
   - [x] `transile_interno_volcable_*`
   - [x] `liquid_movements_*`
   - [x] `excel_operations_with_truckflow`
+  - [x] `final_circuits` + `debug_matrix_classification`
 - [ ] 2.6 🛑 Poda de csv interno (decisión usuario)
 
 ## Fase 3 — Catálogo único
@@ -58,3 +59,4 @@
 - 2026-07-13 — 2.5: `transile_interno_volcable_*` tipada end-to-end (espejo del piloto externo).
 - 2026-07-13 — 2.5: `liquid_movements_*` tipada end-to-end (tablas + panel).
 - 2026-07-13 — 2.5: `excel_operations_with_truckflow` tipada; parsers/UI aceptan filas TypedTable.
+- 2026-07-13 — 2.5: `final_circuits` + `debug_matrix_classification` tipadas; índice de clasificación consume filas.

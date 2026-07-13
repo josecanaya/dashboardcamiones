@@ -225,7 +225,8 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
   const circuitClassIndex = useMemo(
     () =>
       buildCircuitClassificationIndex(
-        wb?.transformResult?.csv.debug_matrix_classification,
+        wb?.transformResult?.tables?.debug_matrix_classification?.rows ??
+          wb?.transformResult?.csv.debug_matrix_classification,
         wb?.transformResult?.csv.merged_truckflow_movimientos,
         wb?.transformResult?.tables?.excel_operations_with_truckflow?.rows ??
           wb?.transformResult?.csv.excel_operations_with_truckflow
@@ -234,6 +235,7 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
       wb?.transformResult?.csv.debug_matrix_classification,
       wb?.transformResult?.csv.merged_truckflow_movimientos,
       wb?.transformResult?.csv.excel_operations_with_truckflow,
+      wb?.transformResult?.tables?.debug_matrix_classification,
       wb?.transformResult?.tables?.excel_operations_with_truckflow,
     ]
   )

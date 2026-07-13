@@ -26,6 +26,21 @@ import {
 } from './finalCircuitScoring'
 import { ensureArgentinaOffsetIso, operationalDayKeyFromIso } from './etlTimestampNormalize'
 
+/** Fuente de matriz de clasificación: CSV legacy o filas TypedTable (Fase 2). */
+export type DebugMatrixSource = string | readonly Record<string, unknown>[] | null | undefined
+
+export function debugMatrixHasData(source: DebugMatrixSource): boolean {
+  if (source == null) return false
+  if (typeof source === 'string') return Boolean(source.trim())
+  return source.length > 0
+}
+
+export function debugMatrixRowsFrom(source: DebugMatrixSource): Record<string, unknown>[] {
+  if (!debugMatrixHasData(source)) return []
+  if (typeof source === 'string') return parseCsvToRecords(source).rows
+  return [...(source as readonly Record<string, unknown>[])]
+}
+
 /** Fuente de operaciones Excel-first: CSV legacy o filas TypedTable (Fase 2). */
 export type ExcelOpsSource = string | readonly Record<string, unknown>[] | null | undefined
 
@@ -320,7 +335,7 @@ export function eventCountFromDetectedSequence(detectedSequence: string): number
   return s.split('>').filter(Boolean).length
 }
 
-function eventCountFromMatrixRow(row: Record<string, string>, detectedSequence: string): number {
+function eventCountFromMatrixRow(row: Record<string, unknown>, detectedSequence: string): number {
   const raw = String(row.event_count ?? '').trim()
   if (raw !== '') {
     const n = Number(raw)
@@ -391,7 +406,7 @@ export function classificationOrder(label: string): number {
   return 999
 }
 
-export function pieSliceLabelFromMatrixRow(row: Record<string, string>): string {
+export function pieSliceLabelFromMatrixRow(row: Record<string, unknown>): string {
   const committeeGroup = String(row.committee_group ?? '').trim().toUpperCase()
   if (committeeGroup === 'COMPLETOS') return 'COMPLETOS'
   if (committeeGroup === 'VARIACIONES_OPERATIVAS') return 'VARIACIONES OPERATIVAS'
@@ -424,7 +439,7 @@ function normalizePlate(v: unknown): string {
   return typeof v === 'string' ? v.trim().toUpperCase().replace(/[^A-Z0-9]/g, '') : ''
 }
 
-function resolveExecutiveFields(row: Record<string, string>): {
+function resolveExecutiveFields(row: Record<string, unknown>): {
   code: string
   label: string
   display: string
@@ -448,7 +463,7 @@ function resolveExecutiveFields(row: Record<string, string>): {
   }
 }
 
-function rowToEntry(row: Record<string, string>, color: string): CircuitClassificationEntry {
+function rowToEntry(row: Record<string, unknown>, color: string): CircuitClassificationEntry {
   const pieSliceLabel = pieSliceLabelFromMatrixRow(row)
   const plate = String(row.plate ?? '').trim()
   const executive = resolveExecutiveFields(row)
@@ -2435,7 +2450,7 @@ export function buildCommitteeCircuitCrossTab(
 }
 
 export function buildCircuitClassificationIndex(
-  debugMatrixCsv: string | undefined | null,
+  debugMatrix: DebugMatrixSource,
   mergedTruckflowMovimientosCsv?: string | undefined | null,
   excelOperationsWithTruckflow?: ExcelOpsSource
 ): CircuitClassificationIndex {
@@ -2450,9 +2465,9 @@ export function buildCircuitClassificationIndex(
     excelFirstReconciledCount: 0,
     excelPromotedCount: 0,
   }
-  if (!debugMatrixCsv?.trim()) return empty
+  if (!debugMatrixHasData(debugMatrix)) return empty
 
-  const { rows } = parseCsvToRecords(debugMatrixCsv)
+  const rows = debugMatrixRowsFrom(debugMatrix)
   if (!rows.length) return empty
 
   const prelimEntries: CircuitClassificationEntry[] = []
