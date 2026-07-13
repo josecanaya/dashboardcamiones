@@ -21,12 +21,12 @@
 - [x] 2.2 Piloto transile externo emite tablas
 - [x] 2.3 EtlTransformOutput.tables
 - [x] 2.4 Panel piloto consume filas tipadas
-- [ ] 2.5 Resto de claves migradas (listar acá las completadas)
+- [x] 2.5 Resto de claves migradas (listar acá las completadas)
   - [x] `transile_interno_volcable_*`
   - [x] `liquid_movements_*`
   - [x] `excel_operations_with_truckflow`
   - [x] `final_circuits` + `debug_matrix_classification`
-- [ ] 2.6 🛑 Poda de csv interno (decisión usuario)
+- [x] 2.6 🛑 Poda de csv interno — **diferida** (csv+tables en paralelo; claves UI críticas ya tipadas)
 
 ## Fase 3 — Catálogo único
 - [ ] 3.1 circuitCatalog + test de paridad
@@ -60,3 +60,5 @@
 - 2026-07-13 — 2.5: `liquid_movements_*` tipada end-to-end (tablas + panel).
 - 2026-07-13 — 2.5: `excel_operations_with_truckflow` tipada; parsers/UI aceptan filas TypedTable.
 - 2026-07-13 — 2.5: `final_circuits` + `debug_matrix_classification` tipadas; índice de clasificación consume filas.
+- 2026-07-13 — 🛑 STOP 2.6: poda de `csv` interno **diferida** (OK usuario para avanzar a Fase 3 con csv+tables en paralelo). Fixture matriz: `docs/migracion/fixtures/Matriz_de_circuitos.xlsx`.
+- 2026-07-13 — Fase 3: Excel Movimientos **enriquece** producto (no se reclasifica). C16=soja→R26; C9/10/11=pellet→R30–32; GIRASOL→R27/R28.
