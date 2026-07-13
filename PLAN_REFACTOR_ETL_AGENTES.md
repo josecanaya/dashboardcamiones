@@ -53,7 +53,8 @@ dirección contraria. Resultado: `services → etlWorkbench` (11 archivos) y
 
 `etlSegmentTiming.ts` **5.019** LOC · `etlTransformPipeline.ts` 3.019 ·
 `etlCircuitClassificationIndex.ts` 2.547 · `etlExcelFirstMerge.ts` 2.327.
-`RealJourneyDiagnosticsPageLegacy.tsx` (2.877 LOC) **no está ruteado en ningún lado** → código muerto.
+(Corrección 2026-07-13: `RealJourneyDiagnosticsPageLegacy.tsx` SÍ está en uso —
+App → RealJourneyDiagnosticsPage → RealTruckflowPage la renderiza. No borrar.)
 
 ### 1.6 Lo que SÍ está bien (y hay que preservar)
 
@@ -121,12 +122,15 @@ agente/chat              ← servidor MCP con tools: run_etl, list_runs, get_sum
 ## 4. Plan por fases (estrangulamiento progresivo, nunca big-bang)
 
 ### Fase 0 — Red de seguridad (1-2 días) ⚠️ prerequisito de todo
-1. **Golden test del pipeline**: correr `runEtlTransform` sobre
-   `tests/fixtures/etl/s-events-slice.json` + un Excel sintético y snapshotear
-   `stats` + 5-6 CSVs clave. Cualquier refactor posterior debe dejar el golden verde.
-2. **Congelar etlWorkbench**: regla ESLint `no-restricted-imports` — código nuevo no
-   puede agregar imports hacia `etlWorkbench` desde fuera.
-3. Borrar código muerto confirmado: `RealJourneyDiagnosticsPageLegacy.tsx` (2.877 LOC).
+1. **Golden test del pipeline**: YA EXISTE `etlGoldenMaster.test.ts` (fingerprint
+   ejecutivo sobre `tests/fixtures/etl/s-events-slice.json`). Ampliarlo con hash
+   de todos los CSVs de salida. Cualquier refactor posterior debe dejarlo verde.
+2. **Congelar etlWorkbench**: no hay ESLint en el repo → script Node
+   `check-arch-rules.mjs` encadenado a `npm test`.
+3. (Se descartó borrar `RealJourneyDiagnosticsPageLegacy.tsx`: está en uso.)
+
+> **Guía de implementación paso a paso: `docs/migracion/`** (README + un archivo
+> por fase + PROGRESO.md). Escrita para ser ejecutada por un agente económico.
 
 ### Fase 1 — Extraer el núcleo puro (1-2 semanas, mecánico)
 1. Crear `src/etl-core/` y mover **primero los módulos ya puros** (bajo riesgo):
