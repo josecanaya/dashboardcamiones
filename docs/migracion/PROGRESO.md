@@ -29,7 +29,7 @@
 - [x] 2.6 🛑 Poda de csv interno — **diferida** (csv+tables en paralelo; claves UI críticas ya tipadas)
 
 ## Fase 3 — Catálogo único
-- [ ] 3.1 circuitCatalog + test de paridad
+- [x] 3.1 circuitCatalog + test de paridad
 - [ ] 3.2 🛑 R26-R32 transile externo (necesita matriz Excel del usuario)
 - [ ] 3.3 EXECUTIVE_CIRCUIT_MATRIX derivada del catálogo
 - [ ] 3.4 Reclasificación transile externo (propuesta → 🛑 aprobación → override)
