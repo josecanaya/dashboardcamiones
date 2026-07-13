@@ -6,7 +6,7 @@
 ## Fase 0 — Red de seguridad
 - [x] 0.1 Golden master ampliado (hash de todos los CSVs)
 - [x] 0.2 Script check-arch-rules + integrado a npm test
-- [ ] 0.3 Línea base tsc documentada (TSC_BASELINE.md)
+- [x] 0.3 Línea base tsc documentada (TSC_BASELINE.md)
 
 ## Fase 1 — etl-core
 - [ ] 1.1 etl-core/csv.ts separado de descarga browser
@@ -47,4 +47,6 @@
 
 ## Notas y bloqueos
 
-- (fecha) — nota
+- 2026-07-13 — Paso 0.1: el hash de `transform_summary` se estabiliza neutralizando `generated_at` (wall-clock) en el golden.
+- 2026-07-13 — Paso 0.2: se agregó `src/components/realDiagnostics/LiveCameraMonitor.tsx` a la línea base del freeze (ya importaba etlWorkbench y no estaba en el set del plan).
+- 2026-07-13 — Paso 0.3: TSC_BASELINE = 199 errores `error TS` (segunda corrida coincidente).
