@@ -347,11 +347,16 @@ export const EXECUTIVE_CIRCUIT_MATRIX: Record<string, ExecutiveCircuitConfig> = 
   },
   R26: {
     code: 'R26',
-    label: 'Transile Celda 16 → San Lorenzo',
+    label: 'Transile externo Soja (Celda 16)',
     coveragePercent: 60,
     hasStrongPoint: true,
     enabledForClassification: true,
-    aliases: ['TRANSILE_C16_A_SL', 'TRANSILE_C16_A_SL_DESCARGA'],
+    aliases: [
+      'TRANSILE_C16_A_SL',
+      'TRANSILE_C16_A_SL_DESCARGA',
+      'TRANSILE_SL_A_C16',
+      'TRANSILE_SL_A_C16_DESCARGA',
+    ],
     baseSequence: [
       'S0',
       'S1',
@@ -373,28 +378,76 @@ export const EXECUTIVE_CIRCUIT_MATRIX: Record<string, ExecutiveCircuitConfig> = 
   },
   R27: {
     code: 'R27',
-    label: 'Transile San Lorenzo → Celda 16',
+    label: 'Transile externo Girasol (candidato)',
     coveragePercent: 60,
     hasStrongPoint: true,
     enabledForClassification: true,
-    aliases: ['TRANSILE_SL_A_C16', 'TRANSILE_SL_A_C16_DESCARGA'],
+    aliases: ['TRANSILE_EXTERNO_GIRASOL'],
     baseSequence: [
+      'S0',
+      'S1',
+      'S2',
+      'S4',
+      'S10',
       'S0',
       'S1',
       'S3',
       'S4',
       'S5',
       'S7',
+    ],
+    allowedSequences: [],
+  },
+  R28: {
+    code: 'R28',
+    label: 'Transile externo Girasol (variante matriz)',
+    coveragePercent: 60,
+    hasStrongPoint: true,
+    enabledForClassification: true,
+    aliases: ['TRANSILE_EXTERNO_GIRASOL_R28'],
+    baseSequence: [
       'S0',
       'S1',
       'S2',
       'S4',
-      'S5',
-      'S6',
-      'S7',
-      'S4',
       'S10',
+      'S0',
+      'S1',
+      'S3',
+      'S4',
+      'S5',
+      'S7',
     ],
+    allowedSequences: [],
+  },
+  R30: {
+    code: 'R30',
+    label: 'Transile externo Pellet (Celda 09)',
+    coveragePercent: 55,
+    hasStrongPoint: false,
+    enabledForClassification: true,
+    aliases: ['TRANSILE_EXTERNO_PELLET_C09'],
+    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S4', 'S10', 'S0', 'S1', 'S3', 'S4', 'S5', 'S7'],
+    allowedSequences: [],
+  },
+  R31: {
+    code: 'R31',
+    label: 'Transile externo Pellet (Celda 10)',
+    coveragePercent: 55,
+    hasStrongPoint: false,
+    enabledForClassification: true,
+    aliases: ['TRANSILE_EXTERNO_PELLET_C10'],
+    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S4', 'S10', 'S0', 'S1', 'S3', 'S4', 'S5', 'S7'],
+    allowedSequences: [],
+  },
+  R32: {
+    code: 'R32',
+    label: 'Transile externo Pellet (Celda 11)',
+    coveragePercent: 55,
+    hasStrongPoint: false,
+    enabledForClassification: true,
+    aliases: ['TRANSILE_EXTERNO_PELLET_C11'],
+    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S4', 'S10', 'S0', 'S1', 'S3', 'S4', 'S5', 'S7'],
     allowedSequences: [],
   },
   R34: {
@@ -447,6 +500,10 @@ export const EXECUTIVE_CIRCUIT_ORDER = [
   'R4',
   'R26',
   'R27',
+  'R28',
+  'R30',
+  'R31',
+  'R32',
   'SL1',
   'SL2',
   'SL3',
@@ -986,12 +1043,9 @@ export function resolveExecutiveCircuitConfigForJourney(
   const liquidCircuit = resolveLiquidExecutiveCircuit(journey)
   if (liquidCircuit) return liquidCircuit
 
-  if (journeyIsTransileC16ToSl(journey)) {
+  // Celda 16 solo soja: ambos sentidos de cámara C16↔SL → R26 (liberta R27 para girasol).
+  if (journeyIsTransileC16ToSl(journey) || journeyIsTransileSlToC16(journey)) {
     return EXECUTIVE_CIRCUIT_MATRIX.R26!
-  }
-
-  if (journeyIsTransileSlToC16(journey)) {
-    return EXECUTIVE_CIRCUIT_MATRIX.R27!
   }
 
   if (journeyMeetsFlexibleInstrumentedDischargeRule(journey)) {

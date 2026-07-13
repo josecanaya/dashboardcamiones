@@ -614,7 +614,7 @@ describe('finalCircuitScoring', () => {
     })
   })
 
-  it('R26 y R27 tienen secuencia ejecutiva configurada', () => {
+  it('C16↔SL (ambos sentidos) resuelven a R26 soja; R27 queda para girasol Excel', () => {
     const j26 = journey({
       logicalCodeSequence: ['INGRESO', 'CELDA16_CARGA', 'EGRESO', 'SL_INGRESO'],
       preliminaryCircuitCode: 'TRANSILE_C16_A_SL',
@@ -626,6 +626,6 @@ describe('finalCircuitScoring', () => {
     expect(isExecutiveSequenceConfigured(resolveExecutiveCircuitConfigForJourney(j26))).toBe(true)
     expect(isExecutiveSequenceConfigured(resolveExecutiveCircuitConfigForJourney(j27))).toBe(true)
     expect(resolveExecutiveCircuitConfigForJourney(j26)?.code).toBe('R26')
-    expect(resolveExecutiveCircuitConfigForJourney(j27)?.code).toBe('R27')
+    expect(resolveExecutiveCircuitConfigForJourney(j27)?.code).toBe('R26')
   })
 })

@@ -1,0 +1,7 @@
+﻿node.exe : npm warn exec The following package was not found and will be installed: tsx@4.23.1
+At C:\Program Files\nodejs\npx.ps1:29 char:3
++   & $NODE_EXE $NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (npm warn exec T...led: tsx@4.23.1:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

@@ -20,7 +20,7 @@ export const SL_LIQUIDOS_S10_ALL_DEVICES = [
 /** Código lógico unificado para KPI/auditoría (carga o descarga en S10). */
 export const SL_LIQUIDO_OPERACION_LOGICAL = 'SL_LIQUIDO_OPERACION'
 
-const TRANSILE_EXTERNO_RIC_SL = new Set(['R26', 'R27', 'R34'])
+const TRANSILE_EXTERNO_RIC_SL = new Set(['R26', 'R27', 'R28', 'R30', 'R31', 'R32', 'R34'])
 const RIC_LIQUIDO_RECEPCION = new Set(['R8'])
 const RIC_LIQUIDO_DESPACHO = new Set(['R16'])
 

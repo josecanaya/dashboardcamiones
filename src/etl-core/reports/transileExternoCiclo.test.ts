@@ -84,6 +84,12 @@ describe('classifyTransileExternoProduct', () => {
     expect(c.candidates).toEqual(['R30', 'R31', 'R32'])
   })
 
+  it('PELLET + Celda 09 → R30 asignado', () => {
+    const c = classifyTransileExternoProduct('PELLET', 'Tolva Celda 09')
+    expect(c.family).toBe('PELLET')
+    expect(c.assigned).toBe('R30')
+  })
+
   it('producto no reconocido → sin familia', () => {
     expect(classifyTransileExternoProduct('MAIZ').family).toBe('')
   })

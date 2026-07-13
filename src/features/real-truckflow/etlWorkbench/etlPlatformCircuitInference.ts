@@ -126,6 +126,9 @@ export function inferCircuitFromExternalMovimiento(
       return circuitFromCode('R19', 'platform')
     }
     if (platform === 'CELDA_16') return circuitFromCode('R26', 'platform')
+    if (/CELDA_0?9|CELDA09/.test(platform)) return circuitFromCode('R30', 'platform')
+    if (platform === 'CELDA_10' || platform.includes('CELDA_10')) return circuitFromCode('R31', 'platform')
+    if (platform === 'CELDA_11' || platform.includes('CELDA_11')) return circuitFromCode('R32', 'platform')
   }
 
   return null

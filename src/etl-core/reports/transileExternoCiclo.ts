@@ -55,8 +55,12 @@ export type TransileExternoProductClassification = {
 /**
  * Clasifica el producto Excel en familia de circuito externo.
  * PELLET tiene prioridad (ej. "PELLET DE SOJA" es PELLET, no SOJA).
+ * Subcódigo pellet: Celda 09→R30, 10→R31, 11→R32 (sin cámara Truckflow).
  */
-export function classifyTransileExternoProduct(product: string): TransileExternoProductClassification {
+export function classifyTransileExternoProduct(
+  product: string,
+  platformHint = ''
+): TransileExternoProductClassification {
   const p = String(product ?? '')
     .toUpperCase()
     .normalize('NFD')
@@ -69,8 +73,28 @@ export function classifyTransileExternoProduct(product: string): TransileExterno
   else if (has('GIRASOL')) family = 'GIRASOL'
 
   if (!family) return { family: '', candidates: [], assigned: '' }
-  const candidates = TRANSILE_EXTERNO_CIRCUIT_FAMILIES[family]
-  return { family, candidates, assigned: candidates.length === 1 ? candidates[0]! : '' }
+  const candidates = [...TRANSILE_EXTERNO_CIRCUIT_FAMILIES[family]]
+  let assigned = candidates.length === 1 ? candidates[0]! : ''
+
+  if (family === 'PELLET') {
+    const pelletCode = resolvePelletCircuitFromPlatform(platformHint)
+    if (pelletCode) assigned = pelletCode
+  }
+
+  return { family, candidates, assigned }
+}
+
+/** Celda 09/10/11 (Excel) → R30/R31/R32. Sin evidencia cámara TF en esas tolvas. */
+export function resolvePelletCircuitFromPlatform(platform: string): string {
+  const raw = String(platform ?? '')
+  const u = raw
+    .toUpperCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+  if (/CELDA\s*0*9\b|TOLVA.*\b0*9\b|C0*9\b/.test(u)) return 'R30'
+  if (/CELDA\s*10\b|TOLVA.*\b10\b|C10\b/.test(u)) return 'R31'
+  if (/CELDA\s*11\b|TOLVA.*\b11\b|C11\b/.test(u)) return 'R32'
+  return ''
 }
 
 export type TransileExternoOperation = {
@@ -197,7 +221,10 @@ export function buildTransileExternoReport(input: {
     const circuitos = new Set<string>()
 
     movs.forEach((m, idx) => {
-      const cls = classifyTransileExternoProduct(m.product_normalized || m.producto_original)
+      const cls = classifyTransileExternoProduct(
+        m.product_normalized || m.producto_original,
+        m.platform_normalized || m.plataforma_original
+      )
       if (cls.family === 'PELLET') summary.operaciones_pellet++
       else if (cls.family === 'SOJA') summary.operaciones_soja++
       else if (cls.family === 'GIRASOL') summary.operaciones_girasol++

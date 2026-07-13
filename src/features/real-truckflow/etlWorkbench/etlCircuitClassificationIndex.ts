@@ -177,7 +177,15 @@ export type AnomalyReasonCount = { reason: string; count: number }
 export const ANOMALY_LIST_MIN_EVENTS = 2
 
 /** Circuitos transile externo: no figuran en el listado de anomalías. */
-export const TRANSILE_EXTERNO_ANOMALY_EXCLUDED_CODES = new Set(['R26', 'R27', 'R34'])
+export const TRANSILE_EXTERNO_ANOMALY_EXCLUDED_CODES = new Set([
+  'R26',
+  'R27',
+  'R28',
+  'R30',
+  'R31',
+  'R32',
+  'R34',
+])
 
 /** Circuitos transile interno (Volcable / C16 interno): no figuran en el listado de anomalías. */
 export const TRANSILE_INTERNO_ANOMALY_EXCLUDED_CODES = new Set([
@@ -747,7 +755,7 @@ const SOLID_EXECUTIVE_CIRCUITS = new Set([
   'R26',
 ])
 
-const LIQUID_EXECUTIVE_CIRCUITS = new Set(['R8', 'SL1', 'SL2', 'SL3', 'R16', 'SL5', 'R34', 'R27'])
+const LIQUID_EXECUTIVE_CIRCUITS = new Set(['R8', 'SL1', 'SL2', 'SL3', 'R16', 'SL5', 'R34'])
 
 function excelLiteIsLiquidOperational(lite: ExcelFirstReconcileLite): boolean {
   if (lite.resolved_circuit_family.toUpperCase() === 'LIQUIDO') return true

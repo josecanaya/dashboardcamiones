@@ -236,13 +236,19 @@ export function resolveTechnicalCircuitCodeForExecutive(
     case 'R7':
       return journeyHasExtendedSlChain(journey) ? 'CIRCUITO_R7_MIXTO' : 'CIRCUITO_SAN_LORENZO'
     case 'R26':
-      return logicalSet(journey).has('CELDA16_DESCARGA') ?
+      return journeyIsTransileSlToC16(journey) ?
+          logicalSet(journey).has('CELDA16_DESCARGA') ?
+            'TRANSILE_SL_A_C16_DESCARGA'
+          : 'TRANSILE_SL_A_C16'
+        : logicalSet(journey).has('CELDA16_DESCARGA') ?
           'TRANSILE_C16_A_SL_DESCARGA'
         : 'TRANSILE_C16_A_SL'
     case 'R27':
-      return logicalSet(journey).has('CELDA16_DESCARGA') ?
-          'TRANSILE_SL_A_C16_DESCARGA'
-        : 'TRANSILE_SL_A_C16'
+    case 'R28':
+    case 'R30':
+    case 'R31':
+    case 'R32':
+      return null
     case 'SL1':
       return 'CIRCUITO_SL_RECEPCION'
     default:
