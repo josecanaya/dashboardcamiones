@@ -5,7 +5,7 @@
 
 ## Fase 0 — Red de seguridad
 - [x] 0.1 Golden master ampliado (hash de todos los CSVs)
-- [ ] 0.2 Script check-arch-rules + integrado a npm test
+- [x] 0.2 Script check-arch-rules + integrado a npm test
 - [ ] 0.3 Línea base tsc documentada (TSC_BASELINE.md)
 
 ## Fase 1 — etl-core
