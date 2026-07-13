@@ -43,7 +43,7 @@
 - [x] 4.4 🛑 Decisión Supabase — **aprobado**: `etl_runs` + bucket `etl-runs`
 
 ## Fase 5 — Agentes Python
-- [ ] 5.1 Paquete agentes/ + etl_client
+- [x] 5.1 Paquete agentes/ + etl_client
 - [ ] 5.2 tools.py
 - [ ] 5.3 Orquestador REPL
 - [ ] 5.4 Subagentes (Knowledge Truckflow → Contratos → Seguridad → Comunicador)
@@ -69,3 +69,4 @@
 - 2026-07-13 — 4.2: endpoints `/api/etl/runs` (+ summary/tables/catalog) en `truckflow-local-server.mjs` (puerto 8787).
 - 2026-07-13 — 4.3: `npm run smoke:etl` (`scripts/smoke-etl-api.mjs`); si 8787 no tiene endpoints ETL, levanta server efímero.
 - 2026-07-13 — 🛑 STOP 4.4: usuario eligió **Supabase**. Migración `20260713150000_etl_runs.sql` (tablas + bucket); upload post-corrida en API; `npm run db:migrate:etl-runs` / `etl:upload`.
+- 2026-07-13 — 5.1: paquete `agentes/` (httpx client 1:1 con etl-api); pytest 5 passed con server efímero.

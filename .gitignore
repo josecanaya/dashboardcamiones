@@ -37,3 +37,11 @@ simulador/.runtime/
 
 # Corridas ETL headless (Fase 4)
 /runs/
+
+# Agentes Python (Fase 5)
+/agentes/.venv/
+/agentes/**/__pycache__/
+/agentes/.pytest_cache/
+/agentes/*.egg-info/
+/agentes/src/*.egg-info/
+/agentes/.env
