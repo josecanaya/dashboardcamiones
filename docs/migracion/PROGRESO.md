@@ -31,7 +31,7 @@
 ## Fase 3 — Catálogo único
 - [x] 3.1 circuitCatalog + test de paridad
 - [x] 3.2 🛑 R26-R32 transile externo (matriz Excel + C16→R26 soja)
-- [ ] 3.3 EXECUTIVE_CIRCUIT_MATRIX derivada del catálogo
+- [x] 3.3 EXECUTIVE_CIRCUIT_MATRIX derivada del catálogo
 - [ ] 3.4 Reclasificación transile externo (propuesta → 🛑 aprobación → override)
 - [ ] 3.5 circuitEtlV2 y realPreliminaryCircuit eliminados
 - [ ] 3.6 etlSegmentTiming.ts particionado (opcional)
