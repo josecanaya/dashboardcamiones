@@ -41,7 +41,9 @@ export const COMMITTEE_ETL_LITE_MAIN_TAB_IDS = ETL_MAIN_TAB_IDS
  * En build de producción queda desactivado salvo VITE_ETL_DEV=true.
  */
 export const ETL_DEV_MODE =
-  import.meta.env.DEV || String(import.meta.env.VITE_ETL_DEV ?? '').toLowerCase() === 'true'
+  (typeof import.meta !== 'undefined' && Boolean(import.meta.env?.DEV)) ||
+  String((typeof import.meta !== 'undefined' ? import.meta.env?.VITE_ETL_DEV : undefined) ?? '')
+    .toLowerCase() === 'true'
 
 /** Archivos finales para comité / Power BI — única salida productiva esperada. */
 export const POWER_BI_PRODUCT_FILES = [

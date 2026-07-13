@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 import { runEtlTransform } from './etlTransformPipeline'
 import { ETL_TRANSFORM_RULES_VERSION } from './etlTransformPipeline'
+import { parsePayloadToJourneyEvents } from '../../../services/realJourneyEventsDataSource'
 
 import fixtureEvents from '../../../../tests/fixtures/etl/s-events-slice.json'
 
@@ -21,7 +22,7 @@ function executiveFingerprint(ex: NonNullable<Awaited<ReturnType<typeof runEtlTr
 
 describe('etlGoldenMaster', () => {
   it('congela conteos y fingerprint ejecutivo en fixture S', async () => {
-    const events = fixtureEvents as import('../../../services/realJourneyEvents.types').RealJourneyEventDto[]
+    const events = await parsePayloadToJourneyEvents(fixtureEvents)
     expect(events.length).toBeGreaterThan(0)
 
     const out = await runEtlTransform({
@@ -53,7 +54,7 @@ describe('etlGoldenMaster', () => {
   })
 
   it('congela hash de cada CSV de salida en fixture S', async () => {
-    const events = fixtureEvents as import('../../../services/realJourneyEvents.types').RealJourneyEventDto[]
+    const events = await parsePayloadToJourneyEvents(fixtureEvents)
     const out = await runEtlTransform({
       events,
       alerts: [],

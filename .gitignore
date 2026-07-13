@@ -34,3 +34,6 @@ simulador/.runtime/
 
 # Extracción local Truckflow (JSON por día)
 /data/truckflow/
+
+# Corridas ETL headless (Fase 4)
+/runs/
