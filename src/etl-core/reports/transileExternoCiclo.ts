@@ -16,7 +16,7 @@
  */
 
 import { recordsToCsv } from '../csv'
-import type { ExternalMovimientoContratoNormalized } from '../../features/real-truckflow/etlWorkbench/etlExternalMovimientosContrato'
+import type { ExternalMovimientoContratoNormalized } from '../domain/pipelineTypes'
 import { normalizePlate } from '../ingest/externalNormalization'
 import { operationalDayKeyFromIso, parseTimestampMs } from '../domain/timestamps'
 

@@ -4,7 +4,7 @@ import {
   classifyTransileExternoProduct,
   detectDeVueltaHeader,
 } from './transileExternoCiclo'
-import type { ExternalMovimientoContratoNormalized } from '../../features/real-truckflow/etlWorkbench/etlExternalMovimientosContrato'
+import type { ExternalMovimientoContratoNormalized } from '../domain/pipelineTypes'
 
 function mov(
   partial: Partial<ExternalMovimientoContratoNormalized>

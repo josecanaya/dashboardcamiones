@@ -13,7 +13,7 @@
 - [x] 1.2 Módulos hoja movidos (timestamps, externalNormalization, rearDevices, csvParse)
 - [x] 1.3 Transiles interno/externo en etl-core/reports (piloto)
 - [x] 1.4 argentinaPlate, eventNormalization, journeyEvents.types en domain
-- [ ] 1.5 pipelineTypes.ts centralizado
+- [x] 1.5 pipelineTypes.ts centralizado
 - [ ] 1.6 🛑 Revisión de cierre con usuario
 
 ## Fase 2 — TypedTable
@@ -50,3 +50,5 @@
 - 2026-07-13 — Paso 0.1: el hash de `transform_summary` se estabiliza neutralizando `generated_at` (wall-clock) en el golden.
 - 2026-07-13 — Paso 0.2: se agregó `src/components/realDiagnostics/LiveCameraMonitor.tsx` a la línea base del freeze (ya importaba etlWorkbench y no estaba en el set del plan).
 - 2026-07-13 — Paso 0.3: TSC_BASELINE = 199 errores `error TS` (segunda corrida coincidente).
+- 2026-07-13 — Fase 1: check-arch permite (a) tests de etl-core, (b) `src/etl-core/reports/*` importando etlWorkbench (helpers de audit), (c) `domain/pipelineTypes.ts` re-exportando tipos. Quitar al cerrar tipos en domain.
+- 2026-07-13 — 🛑 STOP 1.6: esperando revisión de cierre del usuario antes de Fase 2.

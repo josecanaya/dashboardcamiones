@@ -4,13 +4,11 @@
  */
 
 import { recordsToCsv } from '../csv'
-import type { ExcelOperationWithTruckflowRow } from '../../features/real-truckflow/etlWorkbench/etlExcelFirstMerge'
-import type { ClassifiedJourneyForTiming } from '../../features/real-truckflow/etlWorkbench/etlSegmentTiming'
+import type { ExcelOperationWithTruckflowRow, ClassifiedJourneyForTiming, RawJourneyEventLike } from '../domain/pipelineTypes'
 import {
   normalizePlateKey,
   operationalInstantIso,
   parseInstantMs,
-  type RawJourneyEventLike,
 } from '../../features/real-truckflow/etlWorkbench/auditSlCameraExcelCoverage'
 import { argentinaLocalParts } from '../domain/timestamps'
 import { isEtlRearCameraDevice } from '../domain/rearDevices'
