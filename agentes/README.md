@@ -10,6 +10,9 @@
 #   npm run server:truckflow
 #
 # Chat REPL:
+#   npm run server:truckflow   # otra terminal
+#   cd agentes && .\.venv\Scripts\Activate.ps1
+#   copy .env.example .env     # + ANTHROPIC_API_KEY
 #   python -m agentes.orquestador
 #
 # Tests del cliente (levantan server efímero si hace falta):
