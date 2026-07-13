@@ -88,6 +88,16 @@ export function PostTransformOptionalActions() {
             <TransileInternoVolcablePanel
               sessionsCsv={wb.transformResult?.csv.transile_interno_volcable_sessions}
               summaryCsv={wb.transformResult?.csv.transile_interno_volcable_summary}
+              sessions={
+                wb.transformResult?.tables?.transile_interno_volcable_sessions?.rows as
+                  | import('../etlWorkbench/transileInternoVolcable').TransileInternoSession[]
+                  | undefined
+              }
+              summary={
+                wb.transformResult?.tables?.transile_interno_volcable_summary?.rows?.[0] as
+                  | import('../etlWorkbench/transileInternoVolcable').TransileInternoVolcableSummary
+                  | undefined
+              }
               disabled={wb.transformBusy}
             />
           </section>

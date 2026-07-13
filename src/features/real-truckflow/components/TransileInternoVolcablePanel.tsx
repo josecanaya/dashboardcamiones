@@ -5,11 +5,19 @@ import {
   TRANSILE_LAP_MIN_MS,
   TRANSILE_SESSION_BREAK_MS,
   VOLCABLE_TRANSILE_DEVICES,
+  type TransileInternoSession,
+  type TransileInternoVolcableSummary,
 } from '../etlWorkbench/transileInternoVolcable'
+import { makeTable, tableToCsv } from '../../../etl-core/typedTable'
+import { TRANSILE_INTERNO_SESSION_HEADERS } from '../../../etl-core/reports/transileInternoVolcable'
+
+type SessionRow = Record<string, string> | (TransileInternoSession & Record<string, unknown>)
 
 type Props = {
   sessionsCsv?: string
   summaryCsv?: string
+  sessions?: TransileInternoSession[]
+  summary?: TransileInternoVolcableSummary
   disabled?: boolean
 }
 
@@ -18,19 +26,40 @@ function parseSummary(csv: string | undefined): Record<string, string> {
   return parseCsvToRecords(csv).rows[0] ?? {}
 }
 
-export function TransileInternoVolcablePanel({ sessionsCsv, summaryCsv, disabled }: Props) {
-  const summary = useMemo(() => parseSummary(summaryCsv), [summaryCsv])
-  const sessions = useMemo(() => {
+function summaryFromTyped(s: TransileInternoVolcableSummary): Record<string, string> {
+  return Object.fromEntries(Object.entries(s).map(([k, v]) => [k, v == null ? '' : String(v)]))
+}
+
+export function TransileInternoVolcablePanel({
+  sessionsCsv,
+  summaryCsv,
+  sessions: sessionsProp,
+  summary: summaryProp,
+  disabled,
+}: Props) {
+  const summary = useMemo(() => {
+    if (summaryProp) return summaryFromTyped(summaryProp)
+    return parseSummary(summaryCsv)
+  }, [summaryProp, summaryCsv])
+
+  const sessions = useMemo((): SessionRow[] => {
+    if (sessionsProp?.length) return sessionsProp as SessionRow[]
     if (!sessionsCsv?.trim()) return []
     return parseCsvToRecords(sessionsCsv).rows
-  }, [sessionsCsv])
+  }, [sessionsProp, sessionsCsv])
 
   const transileSessions = useMemo(
-    () => sessions.filter((s) => String(s.inferred_transile_interno).toLowerCase() === 'true'),
+    () =>
+      sessions.filter((s) => {
+        const v = s.inferred_transile_interno
+        return v === true || String(v).toLowerCase() === 'true'
+      }),
     [sessions]
   )
 
-  if (!sessionsCsv?.trim()) {
+  const hasData = Boolean(sessionsProp?.length || sessionsCsv?.trim() || summaryProp || summaryCsv?.trim())
+
+  if (!hasData) {
     return (
       <p className="mt-3 rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
         Ejecutá el <strong>Transform</strong> para detectar transiles internos por repeticiones en{' '}
@@ -38,6 +67,21 @@ export function TransileInternoVolcablePanel({ sessionsCsv, summaryCsv, disabled
       </p>
     )
   }
+
+  const exportCsv =
+    sessionsCsv?.trim() ||
+    (sessionsProp?.length ?
+      tableToCsv(
+        makeTable(
+          'transile_interno_volcable_sessions',
+          TRANSILE_INTERNO_SESSION_HEADERS,
+          sessionsProp.map((s) => ({
+            ...s,
+            inferred_transile_interno: s.inferred_transile_interno ? 'true' : 'false',
+          })) as never
+        )
+      )
+    : '')
 
   const lapMin = Math.round(TRANSILE_LAP_MIN_MS / 60_000)
   const breakH = TRANSILE_SESSION_BREAK_MS / (60 * 60_000)
@@ -89,13 +133,13 @@ export function TransileInternoVolcablePanel({ sessionsCsv, summaryCsv, disabled
             <tbody>
               {transileSessions.slice(0, 30).map((r) => (
                 <tr key={String(r.session_id)} className="border-t border-slate-100">
-                  <td className="px-2 py-1.5 font-mono">{r.patente}</td>
-                  <td className="px-2 py-1.5">{r.fecha_sesion}</td>
-                  <td className="px-2 py-1.5 tabular-nums">{r.visit_count}</td>
-                  <td className="px-2 py-1.5 tabular-nums">{r.valid_laps}</td>
-                  <td className="px-2 py-1.5 font-mono text-[10px]">{r.volcable_devices}</td>
-                  <td className="px-2 py-1.5">{r.excel_circuit_hint || '—'}</td>
-                  <td className="px-2 py-1.5 tabular-nums">{r.duration_min}</td>
+                  <td className="px-2 py-1.5 font-mono">{String(r.patente ?? '')}</td>
+                  <td className="px-2 py-1.5">{String(r.fecha_sesion ?? '')}</td>
+                  <td className="px-2 py-1.5 tabular-nums">{String(r.visit_count ?? '')}</td>
+                  <td className="px-2 py-1.5 tabular-nums">{String(r.valid_laps ?? '')}</td>
+                  <td className="px-2 py-1.5 font-mono text-[10px]">{String(r.volcable_devices ?? '')}</td>
+                  <td className="px-2 py-1.5">{String(r.excel_circuit_hint || '—')}</td>
+                  <td className="px-2 py-1.5 tabular-nums">{String(r.duration_min ?? '')}</td>
                 </tr>
               ))}
             </tbody>
@@ -105,9 +149,9 @@ export function TransileInternoVolcablePanel({ sessionsCsv, summaryCsv, disabled
 
       <button
         type="button"
-        disabled={disabled || !sessionsCsv}
+        disabled={disabled || !exportCsv}
         onClick={() =>
-          sessionsCsv && triggerBrowserCsvDownload('transile_interno_volcable_sessions.csv', sessionsCsv)
+          exportCsv && triggerBrowserCsvDownload('transile_interno_volcable_sessions.csv', exportCsv)
         }
         className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 hover:bg-slate-50 disabled:opacity-40"
       >

@@ -70,6 +70,7 @@ import {
   formatTransileInternoVolcableLog,
   transileInternoVolcableSessionsCsv,
   transileInternoVolcableSummaryCsv,
+  transileInternoVolcableTables,
   type TransileInternoVolcableSummary,
 } from './transileInternoVolcable'
 import {
@@ -602,11 +603,14 @@ export async function runMovimientosContratoIntegration(
   const csv = csvStage.result
 
   const teTables = transileExternoTables(transileExternoReport)
+  const tiTables = transileInternoVolcableTables(transileVolcableReport)
   type AnyTable = import('../../../etl-core/typedTable').TypedTable
   const tables: Record<string, AnyTable> = {
     transile_externo_operaciones: teTables.operaciones as unknown as AnyTable,
     transile_externo_sessions: teTables.sessions as unknown as AnyTable,
     transile_externo_summary: teTables.summary as unknown as AnyTable,
+    transile_interno_volcable_sessions: tiTables.sessions as unknown as AnyTable,
+    transile_interno_volcable_summary: tiTables.summary as unknown as AnyTable,
   }
 
   const totalMs = Math.round(performance.now() - runStartedAt)

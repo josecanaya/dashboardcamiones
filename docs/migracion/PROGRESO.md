@@ -22,6 +22,7 @@
 - [x] 2.3 EtlTransformOutput.tables
 - [x] 2.4 Panel piloto consume filas tipadas
 - [ ] 2.5 Resto de claves migradas (listar acá las completadas)
+  - [x] `transile_interno_volcable_*`
 - [ ] 2.6 🛑 Poda de csv interno (decisión usuario)
 
 ## Fase 3 — Catálogo único
@@ -51,4 +52,5 @@
 - 2026-07-13 — Paso 0.2: se agregó `src/components/realDiagnostics/LiveCameraMonitor.tsx` a la línea base del freeze (ya importaba etlWorkbench y no estaba en el set del plan).
 - 2026-07-13 — Paso 0.3: TSC_BASELINE = 199 errores `error TS` (segunda corrida coincidente).
 - 2026-07-13 — Fase 1: check-arch permite (a) tests de etl-core, (b) `src/etl-core/reports/*` importando etlWorkbench (helpers de audit), (c) `domain/pipelineTypes.ts` re-exportando tipos. Quitar al cerrar tipos en domain.
-- 2026-07-13 — 🛑 STOP 1.6: esperando revisión de cierre del usuario antes de Fase 2.
+- 2026-07-13 — 🛑 STOP 1.6: aprobado por el usuario → Fase 2 en curso.
+- 2026-07-13 — 2.5: `transile_interno_volcable_*` tipada end-to-end (espejo del piloto externo).

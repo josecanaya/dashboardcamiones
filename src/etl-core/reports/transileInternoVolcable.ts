@@ -3,7 +3,7 @@
  * Regla: >3 pasadas (≥4 visitas), entre pasadas Δ > 20 min y < 3 h; nueva sesión si Δ ≥ 3 h.
  */
 
-import { recordsToCsv } from '../csv'
+import { makeTable, tableToCsv, type TypedTable } from '../typedTable'
 import type { ExcelOperationWithTruckflowRow, ClassifiedJourneyForTiming, RawJourneyEventLike } from '../domain/pipelineTypes'
 import {
   normalizePlateKey,
@@ -252,7 +252,7 @@ export function buildTransileInternoVolcableReport(input: {
   }
 }
 
-const SESSION_HEADERS = [
+export const TRANSILE_INTERNO_SESSION_HEADERS = [
   'session_id',
   'patente',
   'fecha_sesion',
@@ -268,16 +268,54 @@ const SESSION_HEADERS = [
   'lap_minutes',
 ] as const
 
-export function transileInternoVolcableSessionsCsv(sessions: TransileInternoSession[]): string {
-  const rows = sessions.map((s) => ({
+export type TransileInternoSessionCsvRow = Omit<TransileInternoSession, 'inferred_transile_interno'> & {
+  inferred_transile_interno: string
+}
+
+export function transileInternoVolcableTables(report: TransileInternoVolcableReport): {
+  sessions: TypedTable<TransileInternoSessionCsvRow & Record<string, unknown>>
+  summary: TypedTable<TransileInternoVolcableSummary & Record<string, unknown>>
+} {
+  const sessionRows: TransileInternoSessionCsvRow[] = report.sessions.map((s) => ({
     ...s,
     inferred_transile_interno: s.inferred_transile_interno ? 'true' : 'false',
   }))
-  return recordsToCsv([...SESSION_HEADERS], rows as unknown as Record<string, unknown>[])
+  return {
+    sessions: makeTable(
+      'transile_interno_volcable_sessions',
+      TRANSILE_INTERNO_SESSION_HEADERS,
+      sessionRows as (TransileInternoSessionCsvRow & Record<string, unknown>)[]
+    ),
+    summary: makeTable(
+      'transile_interno_volcable_summary',
+      Object.keys(report.summary) as (keyof TransileInternoVolcableSummary & string)[],
+      [report.summary as TransileInternoVolcableSummary & Record<string, unknown>]
+    ),
+  }
+}
+
+export function transileInternoVolcableSessionsCsv(sessions: TransileInternoSession[]): string {
+  const rows: TransileInternoSessionCsvRow[] = sessions.map((s) => ({
+    ...s,
+    inferred_transile_interno: s.inferred_transile_interno ? 'true' : 'false',
+  }))
+  return tableToCsv(
+    makeTable(
+      'transile_interno_volcable_sessions',
+      TRANSILE_INTERNO_SESSION_HEADERS,
+      rows as (TransileInternoSessionCsvRow & Record<string, unknown>)[]
+    )
+  )
 }
 
 export function transileInternoVolcableSummaryCsv(summary: TransileInternoVolcableSummary): string {
-  return recordsToCsv(Object.keys(summary), [summary as unknown as Record<string, unknown>])
+  return tableToCsv(
+    makeTable(
+      'transile_interno_volcable_summary',
+      Object.keys(summary) as (keyof TransileInternoVolcableSummary & string)[],
+      [summary as TransileInternoVolcableSummary & Record<string, unknown>]
+    )
+  )
 }
 
 export function formatTransileInternoVolcableLog(summary: TransileInternoVolcableSummary): string {
