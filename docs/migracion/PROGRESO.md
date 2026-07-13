@@ -11,8 +11,8 @@
 ## Fase 1 — etl-core
 - [x] 1.1 etl-core/csv.ts separado de descarga browser
 - [x] 1.2 Módulos hoja movidos (timestamps, externalNormalization, rearDevices, csvParse)
-- [ ] 1.3 Transiles interno/externo en etl-core/reports (piloto)
-- [ ] 1.4 argentinaPlate, eventNormalization, journeyEvents.types en domain
+- [x] 1.3 Transiles interno/externo en etl-core/reports (piloto)
+- [x] 1.4 argentinaPlate, eventNormalization, journeyEvents.types en domain
 - [ ] 1.5 pipelineTypes.ts centralizado
 - [ ] 1.6 🛑 Revisión de cierre con usuario
 
