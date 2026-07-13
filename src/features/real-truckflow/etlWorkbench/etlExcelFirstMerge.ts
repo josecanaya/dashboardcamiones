@@ -1,6 +1,7 @@
 /**
  * @deprecated Para imports nuevos usar `contractExcelFirstEvidence` en truckflowTransform/contractFirst.
  */
+import { makeTable, tableToCsv, type TypedTable } from '../../../etl-core/typedTable'
 import { recordsToCsv } from './etlCsv'
 import type { ExternalMovimientoContratoNormalized } from './etlExternalMovimientosContrato'
 import type { TruckflowJourneyForMerge } from './etlTruckflowMovimientosMerge'
@@ -2107,7 +2108,7 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
   }
 }
 
-const EXCEL_OPS_HEADERS = [
+export const EXCEL_OPS_HEADERS = [
   'external_operation_id',
   'source_file',
   'source_date',
@@ -2239,8 +2240,18 @@ const SEGMENT_SCATTER_HEADERS = [
   'external_calado_at',
 ] as const
 
+export function excelOperationsWithTruckflowTable(
+  rows: ExcelOperationWithTruckflowRow[]
+): TypedTable {
+  return makeTable(
+    'excel_operations_with_truckflow',
+    EXCEL_OPS_HEADERS,
+    rows as unknown as Record<string, unknown>[]
+  )
+}
+
 export function excelOperationsWithTruckflowCsv(rows: ExcelOperationWithTruckflowRow[]): string {
-  return recordsToCsv([...EXCEL_OPS_HEADERS], rows as unknown as Record<string, unknown>[])
+  return tableToCsv(excelOperationsWithTruckflowTable(rows))
 }
 
 export const EXCEL_FIRST_PANEL_CSV_KEYS = [

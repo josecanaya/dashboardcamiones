@@ -29,6 +29,7 @@ import {
   excelNoTruckflowEvidenceDiagnosticsCsv,
   excelOperationSegmentsForScatterCsv,
   excelOperationsWithTruckflowCsv,
+  excelOperationsWithTruckflowTable,
   mergeExcelOperationsWithTruckflowEvidence,
 } from './etlExcelFirstMerge'
 import {
@@ -617,6 +618,7 @@ export async function runMovimientosContratoIntegration(
     liquid_movements_sl1_sl5_s10: liTables.sl1_sl5_s10,
     liquid_movements_aceite_truckflow_excel: liTables.aceite_truckflow_excel,
     liquid_movements_summary: liTables.summary,
+    excel_operations_with_truckflow: excelOperationsWithTruckflowTable(excelFirstResult.operations),
   }
 
   const totalMs = Math.round(performance.now() - runStartedAt)

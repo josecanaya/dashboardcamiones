@@ -1,5 +1,10 @@
 import type { CircuitClassificationEntry } from './etlCircuitClassificationIndex'
-import { parseExcelFirstByJourneyUid } from './etlCircuitClassificationIndex'
+import {
+  excelOpsHasData,
+  excelOpsRows,
+  parseExcelFirstByJourneyUid,
+  type ExcelOpsSource,
+} from './etlCircuitClassificationIndex'
 import { parseCsvToRecords } from './etlCsvParse'
 import { isAceiteExecutiveCircuitCode, isExcelLiquidProductName } from './slLiquidCameras'
 
@@ -91,9 +96,9 @@ export function parseJourneyProductLookup(mergeCsv: string | undefined): Journey
  * Producto por journey desde operaciones Excel-first.
  * Usa la misma regla de mejor match por journey_uid que la conciliación comité.
  */
-export function parseExcelFirstProductLookup(excelOpsCsv: string | undefined): JourneyProductLookup | null {
-  if (!excelOpsCsv?.trim()) return null
-  const byJourney = parseExcelFirstByJourneyUid(excelOpsCsv)
+export function parseExcelFirstProductLookup(excelOps: ExcelOpsSource): JourneyProductLookup | null {
+  if (!excelOpsHasData(excelOps)) return null
+  const byJourney = parseExcelFirstByJourneyUid(excelOps)
   const byJourneyId = new Map<string, string>()
   const productSet = new Set<string>()
 
@@ -104,8 +109,7 @@ export function parseExcelFirstProductLookup(excelOpsCsv: string | undefined): J
     productSet.add(product)
   }
 
-  const { rows } = parseCsvToRecords(excelOpsCsv)
-  for (const r of rows) {
+  for (const r of excelOpsRows(excelOps)) {
     const product = String(r.resolved_product ?? r.product_normalized ?? '').trim()
     if (!product) continue
     productSet.add(product)
@@ -123,17 +127,18 @@ export function parseExcelFirstProductLookup(excelOpsCsv: string | undefined): J
 
 /** Prefiere Excel-first; fallback al merge Truckflow-first (diagnóstico). */
 export function resolveAnalysisProductLookup(
-  csv:
+  source:
     | {
         excel_operations_with_truckflow?: string
         merged_truckflow_movimientos?: string
+        excelOperationsRows?: readonly Record<string, unknown>[]
       }
     | undefined
 ): JourneyProductLookup | null {
-  if (!csv) return null
+  if (!source) return null
   return (
-    parseExcelFirstProductLookup(csv.excel_operations_with_truckflow) ??
-    parseJourneyProductLookup(csv.merged_truckflow_movimientos)
+    parseExcelFirstProductLookup(source.excelOperationsRows ?? source.excel_operations_with_truckflow) ??
+    parseJourneyProductLookup(source.merged_truckflow_movimientos)
   )
 }
 

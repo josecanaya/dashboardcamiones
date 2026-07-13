@@ -661,8 +661,17 @@ export function TransformEtlTab() {
   const deferredProductFilter = useDeferredValue(executiveProductFilter)
 
   const productLookup = useMemo(
-    () => resolveAnalysisProductLookup(tr?.csv),
-    [tr?.csv?.excel_operations_with_truckflow, tr?.csv?.merged_truckflow_movimientos]
+    () =>
+      resolveAnalysisProductLookup({
+        excel_operations_with_truckflow: tr?.csv?.excel_operations_with_truckflow,
+        merged_truckflow_movimientos: tr?.csv?.merged_truckflow_movimientos,
+        excelOperationsRows: tr?.tables?.excel_operations_with_truckflow?.rows,
+      }),
+    [
+      tr?.csv?.excel_operations_with_truckflow,
+      tr?.csv?.merged_truckflow_movimientos,
+      tr?.tables?.excel_operations_with_truckflow,
+    ]
   )
 
   const [circuitClassIndex, setCircuitClassIndex] = useState<CircuitClassificationIndex>(() =>
@@ -676,11 +685,12 @@ export function TransformEtlTab() {
     let cancelled = false
     const debugCsv = tr.csv.debug_matrix_classification
     const mergedCsv = tr.csv.merged_truckflow_movimientos
-    const excelCsv = tr.csv.excel_operations_with_truckflow
+    const excelOps =
+      tr.tables?.excel_operations_with_truckflow?.rows ?? tr.csv.excel_operations_with_truckflow
     void (async () => {
       await yieldToBrowser()
       if (cancelled) return
-      const idx = buildCircuitClassificationIndex(debugCsv, mergedCsv, excelCsv)
+      const idx = buildCircuitClassificationIndex(debugCsv, mergedCsv, excelOps)
       if (!cancelled) setCircuitClassIndex(idx)
     })()
     return () => {
@@ -690,6 +700,7 @@ export function TransformEtlTab() {
     tr?.csv.debug_matrix_classification,
     tr?.csv.merged_truckflow_movimientos,
     tr?.csv.excel_operations_with_truckflow,
+    tr?.tables?.excel_operations_with_truckflow,
   ])
 
   const executiveProductFilterPlan = useMemo(
@@ -767,11 +778,16 @@ export function TransformEtlTab() {
     [displayClassIndex.entries]
   )
   const anomalyListCtx = useMemo(
-    () => buildAnomalyListContextFromTransformCsv(tr?.csv),
+    () =>
+      buildAnomalyListContextFromTransformCsv(
+        tr?.csv,
+        tr?.tables?.excel_operations_with_truckflow?.rows
+      ),
     [
       tr?.csv?.external_movimientos_contrato_normalized,
       tr?.csv?.excel_operations_with_truckflow,
       tr?.csv?.plate_registry_excluded,
+      tr?.tables?.excel_operations_with_truckflow,
     ]
   )
   const anomalyReview = useMemo(

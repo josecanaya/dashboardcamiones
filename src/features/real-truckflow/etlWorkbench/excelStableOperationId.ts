@@ -108,24 +108,24 @@ export function buildStableExcelOperationId(input: StableExcelOperationIdInput):
 
 /** Lee fila CSV de excel_operations_with_truckflow → ID para journey `excel:…`. */
 export function resolveCommitteeExcelOperationId(
-  r: Record<string, string>,
+  r: Record<string, unknown>,
   rowIndex?: number
 ): string {
   return buildStableExcelOperationId({
-    external_operation_id: r.external_operation_id,
-    ctg: r.ctg,
-    ingreso_id: r.ingreso_id,
-    comprob: r.comprob,
-    cp_remito: r.cp_remito,
-    plate_normalized: r.plate_normalized,
-    source_date: r.source_date,
-    external_ingreso_at: r.external_ingreso_at,
-    platform_normalized: r.platform_normalized,
-    resolved_platform: r.resolved_platform,
-    plataforma_original: r.plataforma_original,
-    product_normalized: r.product_normalized,
-    resolved_product: r.resolved_product,
-    source_file: r.source_file,
+    external_operation_id: String(r.external_operation_id ?? ''),
+    ctg: String(r.ctg ?? ''),
+    ingreso_id: String(r.ingreso_id ?? ''),
+    comprob: String(r.comprob ?? ''),
+    cp_remito: String(r.cp_remito ?? ''),
+    plate_normalized: String(r.plate_normalized ?? ''),
+    source_date: String(r.source_date ?? ''),
+    external_ingreso_at: String(r.external_ingreso_at ?? ''),
+    platform_normalized: String(r.platform_normalized ?? ''),
+    resolved_platform: String(r.resolved_platform ?? ''),
+    plataforma_original: String(r.plataforma_original ?? ''),
+    product_normalized: String(r.product_normalized ?? ''),
+    resolved_product: String(r.resolved_product ?? ''),
+    source_file: String(r.source_file ?? ''),
     row_index: rowIndex,
   })
 }

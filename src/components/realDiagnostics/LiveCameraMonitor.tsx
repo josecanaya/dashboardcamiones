@@ -227,12 +227,14 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
       buildCircuitClassificationIndex(
         wb?.transformResult?.csv.debug_matrix_classification,
         wb?.transformResult?.csv.merged_truckflow_movimientos,
-        wb?.transformResult?.csv.excel_operations_with_truckflow
+        wb?.transformResult?.tables?.excel_operations_with_truckflow?.rows ??
+          wb?.transformResult?.csv.excel_operations_with_truckflow
       ),
     [
       wb?.transformResult?.csv.debug_matrix_classification,
       wb?.transformResult?.csv.merged_truckflow_movimientos,
       wb?.transformResult?.csv.excel_operations_with_truckflow,
+      wb?.transformResult?.tables?.excel_operations_with_truckflow,
     ]
   )
   const showCircuitClassColumn = timeMode === 'calendar_day' && circuitClassIndex.total > 0

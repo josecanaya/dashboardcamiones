@@ -50,10 +50,19 @@ export function MovimientosContratoPanel({ wb, compact }: { wb: WbSlice; compact
   const mergeOk = mc?.enabled && (mc.withProduct ?? 0) > 0
 
   const productCounts = useMemo(() => {
+    const excelRows = wb.transformResult?.tables?.excel_operations_with_truckflow?.rows
     const excelCsv = wb.transformResult?.csv.excel_operations_with_truckflow
-    const csv = excelCsv?.trim() ? excelCsv : wb.transformResult?.csv.merged_truckflow_movimientos
-    if (!csv?.trim()) return []
-    const { rows } = parseCsvToRecords(csv)
+    const mergeCsv = wb.transformResult?.csv.merged_truckflow_movimientos
+    let rows: Record<string, unknown>[] = []
+    if (excelRows?.length) {
+      rows = [...excelRows]
+    } else if (excelCsv?.trim()) {
+      rows = parseCsvToRecords(excelCsv).rows
+    } else if (mergeCsv?.trim()) {
+      rows = parseCsvToRecords(mergeCsv).rows
+    } else {
+      return []
+    }
     const m = new Map<string, number>()
     for (const r of rows) {
       const p = String(r.resolved_product ?? r.product_normalized ?? r.producto_original ?? '').trim()
@@ -65,6 +74,7 @@ export function MovimientosContratoPanel({ wb, compact }: { wb: WbSlice; compact
       .sort((a, b) => b.count - a.count)
       .slice(0, 12)
   }, [
+    wb.transformResult?.tables?.excel_operations_with_truckflow,
     wb.transformResult?.csv.excel_operations_with_truckflow,
     wb.transformResult?.csv.merged_truckflow_movimientos,
   ])

@@ -26,6 +26,21 @@ import {
 } from './finalCircuitScoring'
 import { ensureArgentinaOffsetIso, operationalDayKeyFromIso } from './etlTimestampNormalize'
 
+/** Fuente de operaciones Excel-first: CSV legacy o filas TypedTable (Fase 2). */
+export type ExcelOpsSource = string | readonly Record<string, unknown>[] | null | undefined
+
+export function excelOpsHasData(source: ExcelOpsSource): boolean {
+  if (source == null) return false
+  if (typeof source === 'string') return Boolean(source.trim())
+  return source.length > 0
+}
+
+export function excelOpsRows(source: ExcelOpsSource): Record<string, unknown>[] {
+  if (!excelOpsHasData(source)) return []
+  if (typeof source === 'string') return parseCsvToRecords(source).rows
+  return [...(source as readonly Record<string, unknown>[])]
+}
+
 /** Variaciones por cámaras que persisten si Excel confirma producto/plataforma. */
 export const CAMERA_PRESERVED_OPERATIONAL_VARIATIONS = new Set([
   'ESPERA_EN_CALADA',
@@ -1038,11 +1053,10 @@ function committeeGroupFromExcelFirst(
 }
 
 export function parseExcelFirstByJourneyUid(
-  excelOpsCsv: string | undefined | null
+  excelOps: ExcelOpsSource
 ): Map<string, ExcelFirstReconcileLite> {
   const map = new Map<string, ExcelFirstReconcileLite>()
-  if (!excelOpsCsv?.trim()) return map
-  const { rows } = parseCsvToRecords(excelOpsCsv)
+  const rows = excelOpsRows(excelOps)
   for (const r of rows) {
     const evidence = Number(r.evidence_count ?? 0)
     const matchQuality = String(r.match_quality ?? '').trim()
@@ -1082,11 +1096,10 @@ export function parseExcelFirstByJourneyUid(
 }
 
 export function parseExcelFirstByPlate(
-  excelOpsCsv: string | undefined | null
+  excelOps: ExcelOpsSource
 ): Map<string, ExcelFirstReconcileLite[]> {
   const map = new Map<string, ExcelFirstReconcileLite[]>()
-  if (!excelOpsCsv?.trim()) return map
-  const { rows } = parseCsvToRecords(excelOpsCsv)
+  const rows = excelOpsRows(excelOps)
   for (const r of rows) {
     const evidence = Number(r.evidence_count ?? 0)
     const matchQuality = String(r.match_quality ?? '').trim()
@@ -1119,14 +1132,14 @@ export function parseExcelFirstByPlate(
   return map
 }
 
-function parseMatchedJourneyUidsFromExcelRow(r: Record<string, string>): string[] {
+function parseMatchedJourneyUidsFromExcelRow(r: Record<string, unknown>): string[] {
   return String(r.matched_journey_uids ?? '')
     .split(/[|,]/)
     .map((s) => s.trim())
     .filter(Boolean)
 }
 
-function truckflowDeviceSequenceFromExcelRow(r: Record<string, string>): string {
+function truckflowDeviceSequenceFromExcelRow(r: Record<string, unknown>): string {
   return String(r.truckflow_device_sequence_combined ?? r.device_sequence_combined ?? '').trim()
 }
 
@@ -1189,11 +1202,11 @@ function shouldDropAceiteMatrixFragmentForExcelPlate(
  */
 function reclassifyMislabeledR7AceiteMatrixEntries(
   entries: CircuitClassificationEntry[],
-  excelOpsCsv: string | undefined | null
+  excelOps: ExcelOpsSource
 ): CircuitClassificationEntry[] {
-  if (!excelOpsCsv?.trim()) return entries
-  const byJourney = parseExcelFirstByJourneyUid(excelOpsCsv)
-  const byPlate = parseExcelFirstByPlate(excelOpsCsv)
+  if (!excelOpsHasData(excelOps)) return entries
+  const byJourney = parseExcelFirstByJourneyUid(excelOps)
+  const byPlate = parseExcelFirstByPlate(excelOps)
   const out: CircuitClassificationEntry[] = []
 
   for (const entry of entries) {
@@ -1234,7 +1247,7 @@ function reclassifyMislabeledR7AceiteMatrixEntries(
   return out
 }
 
-function excelFirstLiteFromOperationRow(r: Record<string, string>): ExcelFirstReconcileLite | null {
+function excelFirstLiteFromOperationRow(r: Record<string, unknown>): ExcelFirstReconcileLite | null {
   const evidence = Number(r.evidence_count ?? 0)
   const matchQuality = String(r.match_quality ?? '').trim()
   if (evidence <= 0 || !EXCEL_FIRST_RECONCILABLE_MATCH.has(matchQuality)) return null
@@ -1261,7 +1274,7 @@ function excelFirstLiteFromOperationRow(r: Record<string, string>): ExcelFirstRe
 }
 
 function buildExecutiveEntryFromExcelOperationRow(
-  r: Record<string, string>,
+  r: Record<string, unknown>,
   cameraSeed?: CircuitClassificationEntry,
   rowIndex?: number
 ): CircuitClassificationEntry | null {
@@ -1360,17 +1373,17 @@ function buildExecutiveEntryFromExcelOperationRow(
  */
 export function reindexExecutiveChartsForExcelFirstOperations(
   matrixEntries: CircuitClassificationEntry[],
-  excelOpsCsv: string | undefined | null
+  excelOps: ExcelOpsSource
 ): {
   entries: CircuitClassificationEntry[]
   excelOperationCount: number
   supersededMatrixJourneyCount: number
 } {
-  if (!excelOpsCsv?.trim()) {
+  if (!excelOpsHasData(excelOps)) {
     return { entries: matrixEntries, excelOperationCount: 0, supersededMatrixJourneyCount: 0 }
   }
 
-  const { rows } = parseCsvToRecords(excelOpsCsv)
+  const rows = excelOpsRows(excelOps)
   const matrixByUid = new Map(matrixEntries.map((e) => [e.journeyId, e]))
   const supersededUids = new Set<string>()
   const excelEntries: CircuitClassificationEntry[] = []
@@ -1471,10 +1484,10 @@ function entryChangedByExcelFirst(before: CircuitClassificationEntry, after: Cir
 /** Segunda pasada: líquidos con Excel no pueden quedar en R7/R5 (ruta sólidos). */
 function enforceLiquidExcelExecutiveCircuits(
   entries: CircuitClassificationEntry[],
-  excelOpsCsv: string
+  excelOps: ExcelOpsSource
 ): CircuitClassificationEntry[] {
-  const byJourney = parseExcelFirstByJourneyUid(excelOpsCsv)
-  const byPlate = parseExcelFirstByPlate(excelOpsCsv)
+  const byJourney = parseExcelFirstByJourneyUid(excelOps)
+  const byPlate = parseExcelFirstByPlate(excelOps)
   return entries.map((entry) => {
     const aceiteLite = resolveExcelAceiteLiteForEntry(entry, byJourney, byPlate)
     if (!aceiteLite) return entry
@@ -1503,10 +1516,10 @@ function promoteAceiteRicardoneTruckflowExecutiveCircuits(
  */
 export function applyExcelFirstReconciliation(
   entries: CircuitClassificationEntry[],
-  excelOpsCsv: string | undefined | null
+  excelOps: ExcelOpsSource
 ): { entries: CircuitClassificationEntry[]; reconciledCount: number; promotedCount: number } {
-  const byJourney = parseExcelFirstByJourneyUid(excelOpsCsv)
-  const byPlate = parseExcelFirstByPlate(excelOpsCsv)
+  const byJourney = parseExcelFirstByJourneyUid(excelOps)
+  const byPlate = parseExcelFirstByPlate(excelOps)
   if (!byJourney.size && !byPlate.size) return { entries, reconciledCount: 0, promotedCount: 0 }
 
   let reconciledCount = 0
@@ -1628,11 +1641,11 @@ export function reclassifyPossibleRejections(
  */
 export function appendPermittedAceiteExcelOrphansToEntries(
   entries: CircuitClassificationEntry[],
-  excelOpsCsv: string | undefined | null
+  excelOps: ExcelOpsSource
 ): { entries: CircuitClassificationEntry[]; appendedCount: number } {
-  if (!excelOpsCsv?.trim()) return { entries, appendedCount: 0 }
+  if (!excelOpsHasData(excelOps)) return { entries, appendedCount: 0 }
   const existingIds = new Set(entries.map((e) => e.journeyId))
-  const { rows } = parseCsvToRecords(excelOpsCsv)
+  const rows = excelOpsRows(excelOps)
   const out = [...entries]
   let appendedCount = 0
 
@@ -2050,21 +2063,35 @@ export function collectNormalizedPlatesFromCsv(csv: string | undefined | null): 
   return out
 }
 
-/** Contexto de listado de anomalías a partir de CSV de transform. */
+/** Contexto de listado de anomalías a partir de CSV/tablas de transform. */
 export function buildAnomalyListContextFromTransformCsv(csv: {
   external_movimientos_contrato_normalized?: string
   excel_operations_with_truckflow?: string
   plate_registry_excluded?: string
-} | null | undefined): AnomalyListContext {
+} | null | undefined, excelOpsRowsPreferred?: ExcelOpsSource): AnomalyListContext {
   const normalized = String(csv?.external_movimientos_contrato_normalized ?? '').trim()
-  const excelOps = String(csv?.excel_operations_with_truckflow ?? '').trim()
-  const hasExcel = Boolean(normalized || excelOps)
+  const excelOps =
+    excelOpsHasData(excelOpsRowsPreferred) ? excelOpsRowsPreferred
+    : String(csv?.excel_operations_with_truckflow ?? '').trim()
+  const hasExcel = Boolean(normalized || excelOpsHasData(excelOps))
   if (!hasExcel) {
     return { excelPlates: null }
   }
-  const excelPlates = collectNormalizedPlatesFromCsv(normalized || excelOps)
+  const excelPlates =
+    normalized ?
+      collectNormalizedPlatesFromCsv(normalized)
+    : collectNormalizedPlatesFromExcelOps(excelOps)
   const excludedRegistryPlates = collectNormalizedPlatesFromCsv(csv?.plate_registry_excluded)
   return { excelPlates, excludedRegistryPlates }
+}
+
+function collectNormalizedPlatesFromExcelOps(source: ExcelOpsSource): Set<string> {
+  const out = new Set<string>()
+  for (const r of excelOpsRows(source)) {
+    const plate = normalizePlate(String(r.plate_normalized ?? r.plate ?? r.patente ?? ''))
+    if (plate) out.add(plate)
+  }
+  return out
 }
 
 /** Agrupa journeys anómalos listables (≥ minEvents) por recorrido observado. */
@@ -2410,7 +2437,7 @@ export function buildCommitteeCircuitCrossTab(
 export function buildCircuitClassificationIndex(
   debugMatrixCsv: string | undefined | null,
   mergedTruckflowMovimientosCsv?: string | undefined | null,
-  excelOperationsWithTruckflowCsv?: string | undefined | null
+  excelOperationsWithTruckflow?: ExcelOpsSource
 ): CircuitClassificationIndex {
   const empty: CircuitClassificationIndex = {
     entries: [],
@@ -2435,16 +2462,16 @@ export function buildCircuitClassificationIndex(
 
   let entries = promotePlateDischargeFragments(prelimEntries)
 
-  if (excelOperationsWithTruckflowCsv?.trim()) {
-    const excelReco = applyExcelFirstReconciliation(entries, excelOperationsWithTruckflowCsv)
+  if (excelOpsHasData(excelOperationsWithTruckflow)) {
+    const excelReco = applyExcelFirstReconciliation(entries, excelOperationsWithTruckflow)
     entries = reclassifyPossibleRejections(excelReco.entries).entries
-    const opCentric = reindexExecutiveChartsForExcelFirstOperations(entries, excelOperationsWithTruckflowCsv)
+    const opCentric = reindexExecutiveChartsForExcelFirstOperations(entries, excelOperationsWithTruckflow)
     entries = opCentric.entries
-    const orphans = appendPermittedAceiteExcelOrphansToEntries(entries, excelOperationsWithTruckflowCsv)
+    const orphans = appendPermittedAceiteExcelOrphansToEntries(entries, excelOperationsWithTruckflow)
     entries = orphans.entries
-    entries = enforceLiquidExcelExecutiveCircuits(entries, excelOperationsWithTruckflowCsv)
+    entries = enforceLiquidExcelExecutiveCircuits(entries, excelOperationsWithTruckflow)
     entries = promoteAceiteRicardoneTruckflowExecutiveCircuits(entries)
-    entries = reclassifyMislabeledR7AceiteMatrixEntries(entries, excelOperationsWithTruckflowCsv)
+    entries = reclassifyMislabeledR7AceiteMatrixEntries(entries, excelOperationsWithTruckflow)
     return rebuildClassificationIndexFromEntries(
       entries,
       excelReco.promotedCount + orphans.appendedCount,
@@ -2459,9 +2486,9 @@ export function buildCircuitClassificationIndex(
 }
 
 /** Auditoría aceite: plataforma Excel → circuito ejecutivo (filas del CSV excel_operations_with_truckflow). */
-export function buildAceiteCircuitResolutionDebugCsv(excelOpsCsv: string | undefined | null): string {
-  if (!excelOpsCsv?.trim()) return ''
-  const { rows } = parseCsvToRecords(excelOpsCsv)
+export function buildAceiteCircuitResolutionDebugCsv(excelOps: ExcelOpsSource): string {
+  if (!excelOpsHasData(excelOps)) return ''
+  const rows = excelOpsRows(excelOps)
   const debugRows = rows.map((r, rowIndex) => {
     const platformRaw = String(r.plataforma_original ?? r.platform_normalized ?? '').trim()
     const platformNorm = String(r.resolved_platform ?? r.platform_normalized ?? '').trim()
@@ -2510,7 +2537,8 @@ export function buildAceiteCircuitResolutionDebugCsv(excelOpsCsv: string | undef
       matched_truckflow: String(Number(r.evidence_count ?? 0) > 0 ? '1' : '0'),
     }
   })
-  return recordsToCsv(debugRows)
+  if (!debugRows.length) return ''
+  return recordsToCsv(Object.keys(debugRows[0]!), debugRows)
 }
 
 /** Resuelve clasificación ETL para una fila en vivo (prioriza journeyUid). */
