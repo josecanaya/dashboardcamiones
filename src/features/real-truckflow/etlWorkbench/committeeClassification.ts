@@ -18,6 +18,7 @@ import {
 } from './finalCircuitScoring'
 import { ETL_SL_INTERNAL_CLASSIFICATION_ENABLED, snapshotSanLorenzoSupport } from './etlSanLorenzoSupport'
 import { journeyHasSlIngresoEvidence, journeyIsRicSanLorenzoRouteEvidence, journeyIsSlOnlyInternal, journeyBlocksSl1ExecutiveClassification } from './etlRicSanLorenzoRoute'
+import { classifyAnomaly, type AnomalyKind, type AnomalyReason } from '../../../etl-core/domain/anomalyClassifier'
 
 export const SL_PENDING_KEY_CAMERAS = [
   'SLZBalIngFte',
@@ -72,6 +73,13 @@ export type CommitteeClassification = {
   anomaly_leg: AnomalyLeg
   matched_sequence_name: string
   matched_variation_name: string
+  /**
+   * Eje comportamiento/datos (fuente única `classifyAnomaly`). Lo adjunta el
+   * wrapper `resolveCommitteeClassification`; el core no lo setea.
+   * BEHAVIORAL = anomalía real del camión; DATA_COVERAGE = hueco de datos.
+   */
+  anomaly_kind?: AnomalyKind
+  anomaly_kind_reason?: AnomalyReason
 }
 
 const SL_INTERNAL_CODES = new Set(['SL1', 'CIRCUITO_SL_RECEPCION'])
@@ -1014,7 +1022,52 @@ function classifyRicSanLorenzoRoute(
   }
 }
 
-export function resolveCommitteeClassification(input: {
+export type ResolveCommitteeClassificationInput = {
+  journey: ReconstructedRealJourney
+  executiveCircuitConfig: ExecutiveCircuitConfig | null
+  executiveCircuitCode: string
+  technicalCircuitCode: string
+  matrixFinalStatus: JourneyMatrixFinalStatus
+  matrixReason: string
+  executive: ExecutiveCircuitDecision
+  sequenceConfigured: boolean
+  hasStrongPoint: boolean
+  frontEventCount: number
+  hasOperationalEntry: boolean
+  hasOperationalExit: boolean
+  observedSectorSequence?: string[]
+  matchedPoints?: number
+  expectedPoints?: number
+  matrixConfidence?: number
+  /** Alertas operativas duras (default false); alimentan `classifyAnomaly`. */
+  hasInvalidRouteOperationalAlert?: boolean
+  hasInvalidJourneyStartOperationalAlert?: boolean
+}
+
+/**
+ * Entrada pública: corre el clasificador comité y le adjunta el eje
+ * comportamiento/datos (`anomaly_kind`) desde la fuente única `classifyAnomaly`.
+ * No cambia `committee_group` ni `executive_status` — es puramente aditivo.
+ */
+export function resolveCommitteeClassification(
+  input: ResolveCommitteeClassificationInput
+): CommitteeClassification {
+  const result = resolveCommitteeClassificationCore(input)
+  const verdict = classifyAnomaly({
+    matrixFinalStatus: input.matrixFinalStatus,
+    executiveStatus: result.executive_status,
+    hasInvalidRouteOperationalAlert: input.hasInvalidRouteOperationalAlert ?? false,
+    hasInvalidJourneyStartOperationalAlert: input.hasInvalidJourneyStartOperationalAlert ?? false,
+    frontEventCount: input.frontEventCount,
+  })
+  return {
+    ...result,
+    anomaly_kind: verdict.kind,
+    anomaly_kind_reason: verdict.reason,
+  }
+}
+
+function resolveCommitteeClassificationCore(input: {
   journey: ReconstructedRealJourney
   executiveCircuitConfig: ExecutiveCircuitConfig | null
   executiveCircuitCode: string

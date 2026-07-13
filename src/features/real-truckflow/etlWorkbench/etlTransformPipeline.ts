@@ -1844,6 +1844,10 @@ export async function runEtlTransform(
     if (slSupport.hasSlCorroboration) slJourneysWithCorroboration++
     if (String(executiveCircuit.executiveReason ?? '').startsWith('SL_')) slJourneysExecutiveReinforced++
 
+    const operationalAlertAgg =
+      operationalAlertsMatchAccumulator.journeySummaries.get(mj.journeyUid) ??
+      emptyJourneyOperationalAlertSummary()
+
     const committee = resolveCommitteeClassification({
       journey: mj,
       executiveCircuitConfig,
@@ -1860,6 +1864,8 @@ export async function runEtlTransform(
       matchedPoints: journeyEvidence.matchedPoints,
       expectedPoints: journeyEvidence.expectedPoints,
       matrixConfidence: matrixClassification.confidence,
+      hasInvalidRouteOperationalAlert: operationalAlertAgg.hasInvalidRoute,
+      hasInvalidJourneyStartOperationalAlert: operationalAlertAgg.hasInvalidJourneyStart,
     })
     executiveCircuit = {
       executiveStatus: committee.executive_status,
@@ -1936,10 +1942,6 @@ export async function runEtlTransform(
       : matrixClassification.finalStatus === 'DEDUCIDO' ? 'circuito_probable'
       : matrixClassification.finalStatus === 'ANOMALO' ? 'incompleto_revision'
       : 'incompleto_revision'
-
-    const operationalAlertAgg =
-      operationalAlertsMatchAccumulator.journeySummaries.get(mj.journeyUid) ??
-      emptyJourneyOperationalAlertSummary()
 
     const executive = resolveExecutiveBucket({
       finalStatus: final_status,
@@ -2120,6 +2122,8 @@ export async function runEtlTransform(
       anomaly_leg: committee.anomaly_leg,
       matched_sequence_name: committee.matched_sequence_name,
       matched_variation_name: committee.matched_variation_name,
+      anomaly_kind: committee.anomaly_kind ?? 'NONE',
+      anomaly_kind_reason: committee.anomaly_kind_reason ?? '',
     })
 
     const expectedSequence =
