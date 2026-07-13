@@ -10,6 +10,7 @@ import {
   runEtlTransform,
   ETL_TRANSFORM_RULES_VERSION,
 } from '../src/features/real-truckflow/etlWorkbench/etlTransformPipeline.ts'
+import { buildKpiTiemposArtifacts } from '../src/features/real-truckflow/etlWorkbench/etlKpiTiemposBuild.ts'
 import { parseCsvToRecords } from '../src/etl-core/csvParse.ts'
 import { CIRCUIT_CATALOG } from '../src/etl-core/domain/circuitCatalog.ts'
 import type { RealJourneyEventDto } from '../src/services/realJourneyEvents.types.ts'
@@ -202,7 +203,41 @@ async function main() {
       movimientosContratoFiles,
     })
 
-    writeFileSync(join(runDir, 'stats.json'), JSON.stringify(out.stats, null, 2), 'utf8')
+    // KPI tiempos (tramos Preingreso→Calada, etc.) — necesario para el agente / pestaña KPI
+    if (out.kpiTiemposPrepared) {
+      log('[etl-headless] construyendo KPI tiempos…')
+      const kpi = await buildKpiTiemposArtifacts(out.kpiTiemposPrepared)
+      Object.assign(out.csv, kpi.csv)
+      out.stats = {
+        ...out.stats,
+        segmentTiming: kpi.segmentTiming,
+        circuitTiming: kpi.circuitTiming,
+        kpiTiemposBuilt: true,
+      }
+      for (const line of kpi.logs) log(`[etl-headless] ${line}`)
+    } else {
+      log('[etl-headless] sin kpiTiemposPrepared — se omite segment_timing_kpi')
+    }
+
+    const statsForDisk = {
+      ...out.stats,
+      segmentTiming:
+        out.stats.segmentTiming ?
+          {
+            journeyCount: out.stats.segmentTiming.journeyCount,
+            legCount: out.stats.segmentTiming.legs.length,
+            aggregateCount: out.stats.segmentTiming.aggregates.filter((a) => a.stats.count > 0).length,
+          }
+        : null,
+      circuitTiming:
+        out.stats.circuitTiming ?
+          {
+            journeyCount: out.stats.circuitTiming.journeys.length,
+            summaryCount: out.stats.circuitTiming.summaries.length,
+          }
+        : null,
+    }
+    writeFileSync(join(runDir, 'stats.json'), JSON.stringify(statsForDisk, null, 2), 'utf8')
     const tableCount = persistTables(tablesDir, out.csv, out.tables)
     const finishedAt = new Date().toISOString()
     log(`[etl-headless] tablas=${tableCount} rules=${out.rulesVersion}`)

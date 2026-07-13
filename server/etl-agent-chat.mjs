@@ -13,31 +13,37 @@ const MAX_ROUNDS = 12
 const SYSTEM = `Sos el orquestador analista de logística de planta Ricardone / Puerto San Lorenzo (Vicentin).
 Respondés en el dashboard del comité ETL.
 
-Tools: run_etl, list_runs, list_data_days, get_summary, list_tables, query_table, count_rows, get_circuit_catalog, explain_journey, delegar.
+Tools: run_etl, list_runs, list_data_days, get_summary, list_tables, query_table, count_rows, get_segment_kpi, get_circuit_catalog, explain_journey, delegar.
 
 Reglas CRÍTICAS:
-1. Si la pregunta es de datos, SIEMPRE usá tools. Nunca inventes cifras, patentes ni circuitos.
-2. list_runs marca isFixtureSample=true en corridas de prueba (p.ej. s-events-slice, <50 eventos).
-   - Esas corridas NO son totales de planta. Si el usuario pregunta volúmenes de operación,
-     NO uses un fixture. Usá list_data_days → run_etl(from_day, to_day).
-3. Tras run_etl, verificá eventCount > 0 en get_summary/list_runs. Si eventCount=0 la corrida es inválida: no inventes conclusiones.
-4. Para CONTAR (ej. cuántos R7): count_rows(table_name=final_circuits, col=executive_circuit_code, eq=R7) y usá el campo total.
-5. Delegá con delegar cuando el dominio sea claro:
-   knowledge_truckflow (cámaras/journeys), knowledge_contratos (Excel/productos),
-   seguridad (anomalías/alertas), comunicador (resumen comité).
-6. Respondé en español, citando run_id y eventCount.`
-
+1. Datos → SIEMPRE tools. Nunca inventes cifras.
+2. Corridas con isFixtureSample o eventCount=0 no son operación real.
+3. Preguntas de TIEMPOS / TRAMOS (ej. “Preingreso → Calada”, “tiempo medio”, “cuánto tarda”):
+   - NO exijas un código de circuito R* para empezar.
+   - Usá get_segment_kpi(from_logical=PREINGRESO, to_logical=CALADA).
+   - Si mencionan “Q1”: puede ser R1 (Celda 16), el cuartil estadístico, o jerga de planta.
+     Calculá primero el tramo global; si hay filas R1, mostrá también el mean de R1. No te trabes pidiendo confirmación.
+4. Conteos de circuitos: count_rows(final_circuits, col=executive_circuit_code, eq=R7) → campo total.
+5. Tono: útil, directo, sin emojis decorativos ni tablas markdown densas. Empezá con el número.
+   Formato preferido:
+   Tiempo medio Preingreso→Calada: XX.X min (n=N, mediana=YY)
+   Corrida: run_id · eventos=…
+6. Delegá solo cuando aporte (Truckflow/contratos/seguridad/comité).
+`
 const KNOWLEDGE_MODEL = process.env.KNOWLEDGE_MODEL?.trim() || 'claude-haiku-4-5-20251001'
 
 const SUBAGENTS = {
   knowledge_truckflow: {
     system:
-      'Sos Knowledge Truckflow: cámaras, journeys y circuitos. Solo evidencia de tools. Nunca inventes cifras.',
+      'Sos Knowledge Truckflow: cámaras, journeys, circuitos y tiempos de tramo. ' +
+      'Para Preingreso→Calada usá get_segment_kpi; no exijas un código R* si el usuario preguntó por el tramo. ' +
+      'Si dice Q1, reportá mean global del tramo y también R1 si hay datos. Solo cifras de tools.',
     tools: [
       'list_runs',
       'list_tables',
       'query_table',
       'count_rows',
+      'get_segment_kpi',
       'explain_journey',
       'get_summary',
       'get_circuit_catalog',
@@ -119,6 +125,20 @@ const TOOLS = [
       eq: { type: 'string' },
     },
     ['run_id', 'table_name']
+  ),
+  tool(
+    'get_segment_kpi',
+    'KPI de tiempos por tramo lógico (tabla segment_timing_kpi). Usar para Preingreso→Calada u otros tramos. from/to: PREINGRESO, CALADA, INGRESO, EGRESO, BALANZA_INGRESO, etc. circuit_code opcional (R1, R7…).',
+    {
+      run_id: { type: 'string' },
+      from_logical: { type: 'string', description: 'Ej. PREINGRESO' },
+      to_logical: { type: 'string', description: 'Ej. CALADA' },
+      circuit_code: {
+        type: 'string',
+        description: 'Opcional. Si se omite, devolvés todos los circuitos de ese tramo + resumen.',
+      },
+    },
+    ['run_id', 'from_logical', 'to_logical']
   ),
   tool('get_circuit_catalog', 'Catálogo de circuitos R* (definiciones).', {}),
   tool(
@@ -351,6 +371,71 @@ export function createEtlAgentChat({ projectRoot, runsRoot, port, etlHeadlessScr
           total: Number(q?.total ?? 0),
         }
       }
+      if (name === 'get_segment_kpi') {
+        const runId = String(args.run_id || '')
+        const fromL = String(args.from_logical || '')
+          .trim()
+          .toUpperCase()
+          .replace(/→/g, '>')
+          .replace(/--/g, '>')
+        const toL = String(args.to_logical || '')
+          .trim()
+          .toUpperCase()
+          .replace(/→/g, '>')
+          .replace(/--/g, '>')
+        const circuit = args.circuit_code ? String(args.circuit_code).trim().toUpperCase() : ''
+        const q = await etlFetch(
+          'GET',
+          `/api/etl/runs/${encodeURIComponent(runId)}/tables/segment_timing_kpi`,
+          { params: { limit: 5000 } }
+        )
+        if (q?.error || q?.status === 404) {
+          return {
+            error:
+              'No hay segment_timing_kpi en esta corrida. Volvé a correr run_etl (versiones nuevas persisten KPI tiempos).',
+            hint: q,
+          }
+        }
+        const rows = Array.isArray(q?.rows) ? q.rows : []
+        const match = rows.filter((row) => {
+          const from = String(row.from_logical || '').toUpperCase()
+          const to = String(row.to_logical || '').toUpperCase()
+          const label = String(row.transition_label || '').toUpperCase()
+          const okPair =
+            (from === fromL && to === toL) ||
+            label.includes(`${fromL}→${toL}`) ||
+            label.includes(`${fromL}>${toL}`) ||
+            label.includes(`${fromL} -- ${toL}`)
+          if (!okPair) return false
+          if (!circuit) return true
+          return String(row.executive_circuit_code || '').toUpperCase() === circuit
+        })
+        const parsed = match.map((row) => ({
+          circuit: row.executive_circuit_code || '',
+          from: row.from_logical,
+          to: row.to_logical,
+          label: row.transition_label,
+          n: Number(row.n) || 0,
+          mean_min: Number(row.mean_min) || 0,
+          median_min: Number(row.median_min) || 0,
+          p90_min: Number(row.p90_min) || 0,
+          min_min: Number(row.min_min) || 0,
+          max_min: Number(row.max_min) || 0,
+        }))
+        const weightSum = parsed.reduce((a, r) => a + r.n, 0)
+        const weightedMean =
+          weightSum > 0 ? parsed.reduce((a, r) => a + r.mean_min * r.n, 0) / weightSum : null
+        return {
+          run_id: runId,
+          from_logical: fromL,
+          to_logical: toL,
+          circuit_code: circuit || null,
+          rows: parsed,
+          total_n: weightSum,
+          weighted_mean_min: weightedMean != null ? Math.round(weightedMean * 100) / 100 : null,
+          table_missing: false,
+        }
+      }
       if (name === 'get_circuit_catalog') {
         return await etlFetch('GET', '/api/etl/catalog/circuits')
       }
@@ -443,7 +528,7 @@ export function createEtlAgentChat({ projectRoot, runsRoot, port, etlHeadlessScr
           } else {
             result = await dispatchTool(block.name, block.input || {})
           }
-          toolTrace.push({ name: block.name, input: block.input })
+          toolTrace.push({ name: block.name, input: block.input, result })
           toolResults.push({
             type: 'tool_result',
             tool_use_id: block.id,
@@ -482,6 +567,31 @@ export function createEtlAgentChat({ projectRoot, runsRoot, port, etlHeadlessScr
     return { subagente: subId, respuesta: out.reply }
   }
 
+  function buildHighlights(toolTrace) {
+    const highlights = []
+    for (const step of [...toolTrace].reverse()) {
+      const r = step.result
+      if (!r || typeof r !== 'object' || r.error) continue
+      if (step.name === 'get_segment_kpi' && r.weighted_mean_min != null) {
+        highlights.push({
+          label: `${r.from_logical || '?'} → ${r.to_logical || '?'}`,
+          value: `${r.weighted_mean_min} min`,
+          detail: `n=${r.total_n}${r.circuit_code ? ` · ${r.circuit_code}` : ' · todos los circuitos'}`,
+        })
+        break
+      }
+      if (step.name === 'count_rows' && typeof r.total === 'number') {
+        highlights.push({
+          label: r.eq ? `${r.table_name} = ${r.eq}` : r.table_name,
+          value: String(r.total),
+          detail: r.col ? `filtro ${r.col}` : 'filas',
+        })
+        break
+      }
+    }
+    return highlights
+  }
+
   /**
    * @param {{ message: string, history?: { role: string, content: string }[] }} input
    */
@@ -503,7 +613,12 @@ export function createEtlAgentChat({ projectRoot, runsRoot, port, etlHeadlessScr
       allowDelegate: true,
       toolTrace,
     })
-    return { ...out, toolTrace }
+    const publicTrace = toolTrace.map(({ name, input }) => ({ name, input }))
+    return {
+      ...out,
+      toolTrace: publicTrace,
+      highlights: buildHighlights(toolTrace),
+    }
   }
 
   return {

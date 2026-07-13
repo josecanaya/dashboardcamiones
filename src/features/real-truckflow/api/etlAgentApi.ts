@@ -23,6 +23,7 @@ export type EtlAgentChatResponse = {
   reply: string
   model?: string
   toolTrace?: { name: string; input?: unknown }[]
+  highlights?: { label: string; value: string; detail?: string }[]
   stopReason?: string
   error?: string
 }
