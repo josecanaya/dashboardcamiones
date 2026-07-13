@@ -5,7 +5,7 @@ import {
   formatArgentinaIsoFromMs,
   normalizeTimestampForExport,
   parseTimestampMs,
-} from './etlTimestampNormalize'
+} from './timestamps'
 
 describe('etlTimestampNormalize', () => {
   it('interpreta naive como hora Argentina (-03:00)', () => {
