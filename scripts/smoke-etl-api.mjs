@@ -85,7 +85,7 @@ async function runSmoke(base) {
   const post = await fetchJson(`${base}/api/etl/runs`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ eventsPaths: [FIXTURE] }),
+    body: JSON.stringify({ eventsPaths: [FIXTURE], skipSupabase: true }),
   })
   if (!post.res.ok || !post.body?.runId) {
     fail(`POST /api/etl/runs → ${post.res.status} ${JSON.stringify(post.body).slice(0, 500)}`)

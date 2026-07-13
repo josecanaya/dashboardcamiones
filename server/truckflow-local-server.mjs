@@ -13,6 +13,7 @@ import { fileURLToPath } from 'url'
 import { createTruckPlateRegistryRouter } from './truck-plate-registry.mjs'
 import { createTruckFleetRouter } from './truck-fleet-registry.mjs'
 import { supabasePublicHost } from './supabase-client.mjs'
+import { uploadEtlRunFromDisk, listEtlRunsFromSupabase } from './etl-runs-store.mjs'
 import {
   buildApiJourneyDayStat,
   countUniqueRawJourneyUids,
@@ -653,7 +654,7 @@ function listEtlRunManifests() {
 }
 
 /** POST /api/etl/runs — spawnea runner headless; responde { runId }. */
-app.post('/api/etl/runs', (req, res) => {
+app.post('/api/etl/runs', async (req, res) => {
   const eventsPaths = resolveEtlEventsPaths({
     eventsPaths: req.body?.eventsPaths,
     from: req.body?.from,
@@ -682,6 +683,8 @@ app.post('/api/etl/runs', (req, res) => {
       return
     }
   }
+
+  const skipUpload = req.body?.skipSupabase === true
 
   const args = [ETL_HEADLESS_SCRIPT, '--out', RUNS_ROOT]
   for (const p of eventsPaths) {
@@ -716,12 +719,41 @@ app.post('/api/etl/runs', (req, res) => {
     return
   }
 
-  res.json({ runId })
+  let supabase = null
+  if (!skipUpload) {
+    try {
+      supabase = await uploadEtlRunFromDisk(path.join(RUNS_ROOT, runId))
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e)
+      console.warn(`[etl] upload Supabase falló: ${message}`)
+      supabase = { error: message }
+    }
+  }
+
+  res.json({ runId, supabase })
 })
 
-/** GET /api/etl/runs — lista manifests. */
-app.get('/api/etl/runs', (_req, res) => {
-  res.json({ runs: listEtlRunManifests() })
+/** GET /api/etl/runs — lista manifests (disco; ?remote=1 agrega Supabase). */
+app.get('/api/etl/runs', async (req, res) => {
+  const local = listEtlRunManifests().map((m) => ({ ...m, source: 'disk' }))
+  const wantRemote = String(req.query.remote ?? '') === '1' || String(req.query.remote ?? '') === 'true'
+  if (!wantRemote) {
+    res.json({ runs: local })
+    return
+  }
+  try {
+    const remote = (await listEtlRunsFromSupabase()) || []
+    const byId = new Map()
+    for (const r of remote) byId.set(r.runId, r)
+    for (const r of local) byId.set(r.runId, { ...r, source: 'disk' })
+    const runs = [...byId.values()].sort((a, b) =>
+      String(b.startedAt || '').localeCompare(String(a.startedAt || ''))
+    )
+    res.json({ runs })
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e)
+    res.json({ runs: local, supabaseError: message })
+  }
 })
 
 /** GET /api/etl/runs/:id/summary — stats.json */
