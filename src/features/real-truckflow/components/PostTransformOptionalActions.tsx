@@ -100,6 +100,16 @@ export function PostTransformOptionalActions() {
             <TransileExternoCicloPanel
               operationsCsv={wb.transformResult?.csv.transile_externo_operaciones}
               summaryCsv={wb.transformResult?.csv.transile_externo_summary}
+              operations={
+                wb.transformResult?.tables?.transile_externo_operaciones?.rows as
+                  | import('../etlWorkbench/transileExternoCiclo').TransileExternoOperation[]
+                  | undefined
+              }
+              summary={
+                wb.transformResult?.tables?.transile_externo_summary?.rows?.[0] as
+                  | import('../etlWorkbench/transileExternoCiclo').TransileExternoSummary
+                  | undefined
+              }
               disabled={wb.transformBusy}
             />
           </section>

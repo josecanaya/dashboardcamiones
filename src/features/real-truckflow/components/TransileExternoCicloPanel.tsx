@@ -1,11 +1,22 @@
 import { useMemo } from 'react'
 import { parseCsvToRecords } from '../etlWorkbench/etlCsvParse'
 import { triggerBrowserCsvDownload } from '../etlWorkbench/etlCsv'
-import { TRANSILE_EXTERNO_CIRCUIT_FAMILIES } from '../etlWorkbench/transileExternoCiclo'
+import {
+  TRANSILE_EXTERNO_CIRCUIT_FAMILIES,
+  type TransileExternoOperation,
+  type TransileExternoSummary,
+} from '../etlWorkbench/transileExternoCiclo'
+import { tableToCsv, makeTable } from '../../../etl-core/typedTable'
+import { TRANSILE_EXTERNO_OPERATION_HEADERS } from '../../../etl-core/reports/transileExternoCiclo'
+
+type OperationRow = Record<string, string> | (TransileExternoOperation & Record<string, unknown>)
 
 type Props = {
   operationsCsv?: string
   summaryCsv?: string
+  /** Fase 2: filas tipadas (preferidas sobre CSV). */
+  operations?: TransileExternoOperation[]
+  summary?: TransileExternoSummary
   disabled?: boolean
 }
 
@@ -14,14 +25,33 @@ function parseSummary(csv: string | undefined): Record<string, string> {
   return parseCsvToRecords(csv).rows[0] ?? {}
 }
 
-export function TransileExternoCicloPanel({ operationsCsv, summaryCsv, disabled }: Props) {
-  const summary = useMemo(() => parseSummary(summaryCsv), [summaryCsv])
-  const operations = useMemo(() => {
+function summaryFromTyped(s: TransileExternoSummary): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(s).map(([k, v]) => [k, v == null ? '' : String(v)])
+  )
+}
+
+export function TransileExternoCicloPanel({
+  operationsCsv,
+  summaryCsv,
+  operations: operationsProp,
+  summary: summaryProp,
+  disabled,
+}: Props) {
+  const summary = useMemo(() => {
+    if (summaryProp) return summaryFromTyped(summaryProp)
+    return parseSummary(summaryCsv)
+  }, [summaryProp, summaryCsv])
+
+  const operations = useMemo((): OperationRow[] => {
+    if (operationsProp?.length) return operationsProp as OperationRow[]
     if (!operationsCsv?.trim()) return []
     return parseCsvToRecords(operationsCsv).rows
-  }, [operationsCsv])
+  }, [operationsProp, operationsCsv])
 
-  if (!operationsCsv?.trim()) {
+  const hasData = Boolean(operationsProp?.length || operationsCsv?.trim() || summaryProp || summaryCsv?.trim())
+
+  if (!hasData) {
     return (
       <p className="mt-3 rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
         Ejecutá el <strong>Transform</strong> para detectar transiles externos por la columna{' '}
@@ -29,6 +59,21 @@ export function TransileExternoCicloPanel({ operationsCsv, summaryCsv, disabled 
       </p>
     )
   }
+
+  const exportCsv =
+    operationsCsv?.trim() ||
+    (operationsProp?.length ?
+      tableToCsv(
+        makeTable(
+          'transile_externo_operaciones',
+          TRANSILE_EXTERNO_OPERATION_HEADERS,
+          operationsProp.map((o) => ({
+            ...o,
+            es_de_vuelta: o.es_de_vuelta ? 'true' : 'false',
+          })) as never
+        )
+      )
+    : '')
 
   return (
     <div className="mt-3 space-y-4">
@@ -77,14 +122,16 @@ export function TransileExternoCicloPanel({ operationsCsv, summaryCsv, disabled 
             </thead>
             <tbody>
               {operations.slice(0, 40).map((r, i) => (
-                <tr key={`${r.external_operation_id}_${i}`} className="border-t border-slate-100">
-                  <td className="px-2 py-1.5 font-mono">{r.patente}</td>
-                  <td className="px-2 py-1.5">{r.fecha}</td>
-                  <td className="px-2 py-1.5">{r.producto || '—'}</td>
-                  <td className="px-2 py-1.5">{r.product_family || '—'}</td>
-                  <td className="px-2 py-1.5 font-mono">{r.circuit_assigned || r.circuit_candidates || '—'}</td>
-                  <td className="px-2 py-1.5 tabular-nums">{r.cycle_index}</td>
-                  <td className="px-2 py-1.5">{r.external_ingreso_at || '—'}</td>
+                <tr key={`${String(r.external_operation_id)}_${i}`} className="border-t border-slate-100">
+                  <td className="px-2 py-1.5 font-mono">{String(r.patente ?? '')}</td>
+                  <td className="px-2 py-1.5">{String(r.fecha ?? '')}</td>
+                  <td className="px-2 py-1.5">{String(r.producto || '—')}</td>
+                  <td className="px-2 py-1.5">{String(r.product_family || '—')}</td>
+                  <td className="px-2 py-1.5 font-mono">
+                    {String(r.circuit_assigned || r.circuit_candidates || '—')}
+                  </td>
+                  <td className="px-2 py-1.5 tabular-nums">{String(r.cycle_index ?? '')}</td>
+                  <td className="px-2 py-1.5">{String(r.external_ingreso_at || '—')}</td>
                 </tr>
               ))}
             </tbody>
@@ -102,10 +149,8 @@ export function TransileExternoCicloPanel({ operationsCsv, summaryCsv, disabled 
 
       <button
         type="button"
-        disabled={disabled || !operationsCsv}
-        onClick={() =>
-          operationsCsv && triggerBrowserCsvDownload('transile_externo_operaciones.csv', operationsCsv)
-        }
+        disabled={disabled || !exportCsv}
+        onClick={() => exportCsv && triggerBrowserCsvDownload('transile_externo_operaciones.csv', exportCsv)}
         className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 hover:bg-slate-50 disabled:opacity-40"
       >
         Export CSV operaciones
