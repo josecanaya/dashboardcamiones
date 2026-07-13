@@ -15,7 +15,7 @@
  * Espeja el patrón de `transileInternoVolcable.ts` (rows + sessions + summary + CSV).
  */
 
-import { recordsToCsv } from '../csv'
+import { makeTable, tableToCsv, type TypedTable } from '../typedTable'
 import type { ExternalMovimientoContratoNormalized } from '../domain/pipelineTypes'
 import { normalizePlate } from '../ingest/externalNormalization'
 import { operationalDayKeyFromIso, parseTimestampMs } from '../domain/timestamps'
@@ -249,7 +249,7 @@ export function buildTransileExternoReport(input: {
   return { operations, sessions, summary }
 }
 
-const OPERATION_HEADERS = [
+export const TRANSILE_EXTERNO_OPERATION_HEADERS = [
   'external_operation_id',
   'patente',
   'fecha',
@@ -266,7 +266,7 @@ const OPERATION_HEADERS = [
   'source_file',
 ] as const
 
-const SESSION_HEADERS = [
+export const TRANSILE_EXTERNO_SESSION_HEADERS = [
   'patente',
   'return_operations',
   'productos',
@@ -276,17 +276,71 @@ const SESSION_HEADERS = [
   'last_at',
 ] as const
 
+export type TransileExternoOperationCsvRow = Omit<TransileExternoOperation, 'es_de_vuelta'> & {
+  es_de_vuelta: string
+}
+
+export function transileExternoTables(report: TransileExternoReport): {
+  operaciones: TypedTable<TransileExternoOperationCsvRow & Record<string, unknown>>
+  sessions: TypedTable<TransileExternoSession & Record<string, unknown>>
+  summary: TypedTable<TransileExternoSummary & Record<string, unknown>>
+} {
+  const opRows: TransileExternoOperationCsvRow[] = report.operations.map((o) => ({
+    ...o,
+    es_de_vuelta: o.es_de_vuelta ? 'true' : 'false',
+  }))
+  const summaryHeaders = Object.keys(report.summary) as (keyof TransileExternoSummary & string)[]
+  return {
+    operaciones: makeTable(
+      'transile_externo_operaciones',
+      TRANSILE_EXTERNO_OPERATION_HEADERS,
+      opRows as (TransileExternoOperationCsvRow & Record<string, unknown>)[]
+    ),
+    sessions: makeTable(
+      'transile_externo_sessions',
+      TRANSILE_EXTERNO_SESSION_HEADERS,
+      report.sessions as (TransileExternoSession & Record<string, unknown>)[]
+    ),
+    summary: makeTable(
+      'transile_externo_summary',
+      summaryHeaders,
+      [report.summary as TransileExternoSummary & Record<string, unknown>]
+    ),
+  }
+}
+
 export function transileExternoOperationsCsv(operations: TransileExternoOperation[]): string {
-  const rows = operations.map((o) => ({ ...o, es_de_vuelta: o.es_de_vuelta ? 'true' : 'false' }))
-  return recordsToCsv([...OPERATION_HEADERS], rows as unknown as Record<string, unknown>[])
+  const rows: TransileExternoOperationCsvRow[] = operations.map((o) => ({
+    ...o,
+    es_de_vuelta: o.es_de_vuelta ? 'true' : 'false',
+  }))
+  return tableToCsv(
+    makeTable(
+      'transile_externo_operaciones',
+      TRANSILE_EXTERNO_OPERATION_HEADERS,
+      rows as (TransileExternoOperationCsvRow & Record<string, unknown>)[]
+    )
+  )
 }
 
 export function transileExternoSessionsCsv(sessions: TransileExternoSession[]): string {
-  return recordsToCsv([...SESSION_HEADERS], sessions as unknown as Record<string, unknown>[])
+  return tableToCsv(
+    makeTable(
+      'transile_externo_sessions',
+      TRANSILE_EXTERNO_SESSION_HEADERS,
+      sessions as (TransileExternoSession & Record<string, unknown>)[]
+    )
+  )
 }
 
 export function transileExternoSummaryCsv(summary: TransileExternoSummary): string {
-  return recordsToCsv(Object.keys(summary), [summary as unknown as Record<string, unknown>])
+  return tableToCsv(
+    makeTable(
+      'transile_externo_summary',
+      Object.keys(summary) as (keyof TransileExternoSummary & string)[],
+      [summary as TransileExternoSummary & Record<string, unknown>]
+    )
+  )
 }
 
 export function formatTransileExternoLog(summary: TransileExternoSummary): string {

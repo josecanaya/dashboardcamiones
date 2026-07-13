@@ -18,7 +18,7 @@
 
 ## Fase 2 — TypedTable
 - [x] 2.1 TypedTable + test
-- [ ] 2.2 Piloto transile externo emite tablas
+- [x] 2.2 Piloto transile externo emite tablas
 - [ ] 2.3 EtlTransformOutput.tables
 - [ ] 2.4 Panel piloto consume filas tipadas
 - [ ] 2.5 Resto de claves migradas (listar acá las completadas)
