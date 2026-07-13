@@ -7,7 +7,7 @@ import { existsSync } from 'node:fs'
 import path from 'node:path'
 
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages'
-const DEFAULT_MODEL = process.env.ORQUESTADOR_MODEL?.trim() || 'claude-sonnet-4-20250514'
+const DEFAULT_MODEL = process.env.ORQUESTADOR_MODEL?.trim() || 'claude-sonnet-4-6'
 const MAX_ROUNDS = 12
 
 const SYSTEM = `Sos el orquestador analista de logística de planta Ricardone / Puerto San Lorenzo (Vicentin).
