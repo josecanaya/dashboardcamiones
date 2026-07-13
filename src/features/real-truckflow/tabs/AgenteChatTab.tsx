@@ -106,6 +106,9 @@ export function AgenteChatTab() {
           : configured ?
             <span className="rounded-lg bg-emerald-50 px-2.5 py-1 font-medium text-emerald-800">
               Claude listo · {status.model}
+              {Array.isArray(status.subagents) && status.subagents.length ?
+                ` · subagentes: ${status.subagents.join(', ')}`
+              : ''}
             </span>
           : <span className="rounded-lg bg-rose-50 px-2.5 py-1 font-medium text-rose-900">
               Falta ANTHROPIC_API_KEY en .env (clave sk-ant-… completa, no el JSON de la consola)

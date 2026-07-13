@@ -13,18 +13,52 @@ const MAX_ROUNDS = 12
 const SYSTEM = `Sos el orquestador analista de logística de planta Ricardone / Puerto San Lorenzo (Vicentin).
 Respondés en el dashboard del comité ETL.
 
-Tools: run_etl, list_runs, list_data_days, get_summary, list_tables, query_table, count_rows, get_circuit_catalog, explain_journey.
+Tools: run_etl, list_runs, list_data_days, get_summary, list_tables, query_table, count_rows, get_circuit_catalog, explain_journey, delegar.
 
 Reglas CRÍTICAS:
 1. Si la pregunta es de datos, SIEMPRE usá tools. Nunca inventes cifras, patentes ni circuitos.
 2. list_runs marca isFixtureSample=true en corridas de prueba (p.ej. s-events-slice, <50 eventos).
-   - Esas corridas NO son totales de planta. Si el usuario pregunta "cuántos R7 / camiones / últimos KPIs de operación",
-     NO uses un fixture como si fuera producción.
-   - En ese caso: list_data_days → run_etl(from_day, to_day) sobre data/truckflow, o pedí el rango de fechas.
-3. Para CONTAR (ej. cuántos R7): usá count_rows con table_name=final_circuits, col=executive_circuit_code, eq=R7.
-   El número correcto es el campo total. NUNCA cuentes solo las filas devueltas por query_table (están limitadas).
-4. Para explicar un R* (definición): get_circuit_catalog.
-5. Respondé en español, citando run_id, eventCount e isFixtureSample cuando aplique. Si usaste un fixture, decilo explícitamente.`
+   - Esas corridas NO son totales de planta. Si el usuario pregunta volúmenes de operación,
+     NO uses un fixture. Usá list_data_days → run_etl(from_day, to_day).
+3. Tras run_etl, verificá eventCount > 0 en get_summary/list_runs. Si eventCount=0 la corrida es inválida: no inventes conclusiones.
+4. Para CONTAR (ej. cuántos R7): count_rows(table_name=final_circuits, col=executive_circuit_code, eq=R7) y usá el campo total.
+5. Delegá con delegar cuando el dominio sea claro:
+   knowledge_truckflow (cámaras/journeys), knowledge_contratos (Excel/productos),
+   seguridad (anomalías/alertas), comunicador (resumen comité).
+6. Respondé en español, citando run_id y eventCount.`
+
+const KNOWLEDGE_MODEL = process.env.KNOWLEDGE_MODEL?.trim() || 'claude-haiku-4-5-20251001'
+
+const SUBAGENTS = {
+  knowledge_truckflow: {
+    system:
+      'Sos Knowledge Truckflow: cámaras, journeys y circuitos. Solo evidencia de tools. Nunca inventes cifras.',
+    tools: [
+      'list_runs',
+      'list_tables',
+      'query_table',
+      'count_rows',
+      'explain_journey',
+      'get_summary',
+      'get_circuit_catalog',
+    ],
+  },
+  knowledge_contratos: {
+    system:
+      'Sos Knowledge Contratos: Movimientos/Excel/transiles. Solo leé tablas del ETL; no reclasifiques.',
+    tools: ['list_runs', 'list_tables', 'query_table', 'count_rows', 'get_summary', 'run_etl'],
+  },
+  seguridad: {
+    system:
+      'Sos Seguridad operativa: anomalías y alertas. Citá filas concretas de tools.',
+    tools: ['list_runs', 'get_summary', 'list_tables', 'query_table', 'count_rows', 'explain_journey'],
+  },
+  comunicador: {
+    system:
+      'Sos Comunicador de comité: resumí KPIs en lenguaje claro. Cifras solo desde get_summary/count_rows.',
+    tools: ['list_runs', 'get_summary', 'list_tables', 'query_table', 'count_rows'],
+  },
+}
 
 function tool(name, description, properties, required) {
   const schema = { type: 'object', properties, additionalProperties: false }
@@ -97,6 +131,19 @@ const TOOLS = [
       limit: { type: 'integer' },
     },
     ['run_id']
+  ),
+  tool(
+    'delegar',
+    'Delega a un subagente: knowledge_truckflow | knowledge_contratos | seguridad | comunicador.',
+    {
+      subagente: {
+        type: 'string',
+        enum: Object.keys(SUBAGENTS),
+      },
+      consulta: { type: 'string' },
+      run_id: { type: 'string' },
+    },
+    ['subagente', 'consulta']
   ),
 ]
 
@@ -310,13 +357,16 @@ export function createEtlAgentChat({ projectRoot, runsRoot, port, etlHeadlessScr
       if (name === 'explain_journey') {
         return await explainJourney(args)
       }
+      if (name === 'delegar') {
+        return { error: 'delegar solo desde el orquestador principal' }
+      }
       return { error: `tool desconocida: ${name}` }
     } catch (e) {
       return { error: e instanceof Error ? e.message : String(e) }
     }
   }
 
-  async function anthropicCreate(messages) {
+  async function anthropicCreate({ messages, system, tools, model }) {
     const key = apiKey()
     if (!key) {
       const err = new Error(
@@ -333,10 +383,10 @@ export function createEtlAgentChat({ projectRoot, runsRoot, port, etlHeadlessScr
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: DEFAULT_MODEL,
+        model: model || DEFAULT_MODEL,
         max_tokens: 4096,
-        system: SYSTEM,
-        tools: TOOLS,
+        system: system || SYSTEM,
+        tools: tools || TOOLS,
         messages,
       }),
     })
@@ -359,26 +409,40 @@ export function createEtlAgentChat({ projectRoot, runsRoot, port, etlHeadlessScr
       .trim()
   }
 
-  /**
-   * @param {{ message: string, history?: { role: string, content: string }[] }} input
-   */
-  async function chat({ message, history = [] }) {
-    const messages = []
-    for (const h of history.slice(-20)) {
-      if (!h?.content) continue
-      const role = h.role === 'assistant' ? 'assistant' : 'user'
-      messages.push({ role, content: String(h.content) })
-    }
-    messages.push({ role: 'user', content: String(message || '').trim() })
+  function toolsByNames(names) {
+    const set = new Set(names)
+    return TOOLS.filter((t) => set.has(t.name) && t.name !== 'delegar')
+  }
 
-    const toolTrace = []
+  async function runToolLoop({
+    messages,
+    system,
+    tools,
+    model,
+    allowDelegate,
+    toolTrace,
+  }) {
     for (let round = 0; round < MAX_ROUNDS; round++) {
-      const resp = await anthropicCreate(messages)
+      const resp = await anthropicCreate({ messages, system, tools, model })
       if (resp.stop_reason === 'tool_use') {
         const toolResults = []
         for (const block of resp.content || []) {
           if (block.type !== 'tool_use') continue
-          const result = await dispatchTool(block.name, block.input || {})
+          let result
+          if (block.name === 'delegar') {
+            if (!allowDelegate) {
+              result = { error: 'delegación anidada no permitida' }
+            } else {
+              result = await runSubagente(
+                String(block.input?.subagente || ''),
+                String(block.input?.consulta || ''),
+                block.input?.run_id ? String(block.input.run_id) : null,
+                toolTrace
+              )
+            }
+          } else {
+            result = await dispatchTool(block.name, block.input || {})
+          }
           toolTrace.push({ name: block.name, input: block.input })
           toolResults.push({
             type: 'tool_result',
@@ -392,17 +456,54 @@ export function createEtlAgentChat({ projectRoot, runsRoot, port, etlHeadlessScr
       }
       return {
         reply: extractText(resp.content) || '(sin texto)',
-        model: DEFAULT_MODEL,
-        toolTrace,
+        model: model || DEFAULT_MODEL,
         stopReason: resp.stop_reason,
       }
     }
     return {
       reply: 'Se alcanzó el límite de rondas de tools sin respuesta final.',
-      model: DEFAULT_MODEL,
-      toolTrace,
+      model: model || DEFAULT_MODEL,
       stopReason: 'max_rounds',
     }
+  }
+
+  async function runSubagente(subId, consulta, runId, toolTrace) {
+    const cfg = SUBAGENTS[subId]
+    if (!cfg) return { error: `subagente desconocido: ${subId}` }
+    const hint = runId ? `\n\nContexto: run_id=${runId}` : ''
+    const out = await runToolLoop({
+      messages: [{ role: 'user', content: consulta }],
+      system: cfg.system + hint,
+      tools: toolsByNames(cfg.tools),
+      model: KNOWLEDGE_MODEL,
+      allowDelegate: false,
+      toolTrace,
+    })
+    return { subagente: subId, respuesta: out.reply }
+  }
+
+  /**
+   * @param {{ message: string, history?: { role: string, content: string }[] }} input
+   */
+  async function chat({ message, history = [] }) {
+    const messages = []
+    for (const h of history.slice(-20)) {
+      if (!h?.content) continue
+      const role = h.role === 'assistant' ? 'assistant' : 'user'
+      messages.push({ role, content: String(h.content) })
+    }
+    messages.push({ role: 'user', content: String(message || '').trim() })
+
+    const toolTrace = []
+    const out = await runToolLoop({
+      messages,
+      system: SYSTEM,
+      tools: TOOLS,
+      model: DEFAULT_MODEL,
+      allowDelegate: true,
+      toolTrace,
+    })
+    return { ...out, toolTrace }
   }
 
   return {
@@ -411,6 +512,7 @@ export function createEtlAgentChat({ projectRoot, runsRoot, port, etlHeadlessScr
     status: () => ({
       configured: Boolean(apiKey()),
       model: DEFAULT_MODEL,
+      subagents: Object.keys(SUBAGENTS),
       hasHeadlessScript: existsSync(etlHeadlessScript),
     }),
   }

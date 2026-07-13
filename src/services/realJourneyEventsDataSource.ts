@@ -80,6 +80,11 @@ export function extractEventsArray(payload: unknown): unknown[] {
     if (Array.isArray(d)) return d
     const events = obj.events
     if (Array.isArray(events)) return events
+    // Export local server: data/truckflow/<day>/event-list.json
+    const records = obj.records
+    if (Array.isArray(records)) return records
+    const items = obj.items
+    if (Array.isArray(items)) return items
   }
   return []
 }

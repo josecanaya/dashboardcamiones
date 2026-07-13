@@ -11,6 +11,7 @@ export type EtlAgentStatus = {
   configured: boolean
   model: string
   hasHeadlessScript?: boolean
+  subagents?: string[]
 }
 
 export type EtlAgentChatMessage = {

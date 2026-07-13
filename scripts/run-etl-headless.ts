@@ -146,6 +146,12 @@ async function main() {
     log(`[etl-headless] cargados ${chunk.length} eventos de ${basename(p)}`)
     events = events.concat(chunk)
   }
+  if (events.length === 0) {
+    throw new Error(
+      `0 eventos parseados de ${args.eventsPaths.length} archivo(s). ` +
+        `Si son exports locales, deben tener array "records" (data/truckflow/<día>/event-list.json).`
+    )
+  }
 
   const movimientosContratoFiles =
     args.excelPath ?
