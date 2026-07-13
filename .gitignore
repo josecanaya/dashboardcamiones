@@ -45,3 +45,4 @@ simulador/.runtime/
 /agentes/*.egg-info/
 /agentes/src/*.egg-info/
 /agentes/.env
+/agentes/output/
