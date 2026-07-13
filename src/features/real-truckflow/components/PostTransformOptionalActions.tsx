@@ -2,6 +2,7 @@ import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
 import { ExcelCameraComparativaPanel } from './ExcelCameraComparativaPanel'
 import { LiquidMovementsPanel } from './LiquidMovementsPanel'
 import { TransileInternoVolcablePanel } from './TransileInternoVolcablePanel'
+import { TransileExternoCicloPanel } from './TransileExternoCicloPanel'
 import { TruckFleetDatabaseSaveCard } from './TruckFleetDatabaseSaveCard'
 
 /**
@@ -87,6 +88,18 @@ export function PostTransformOptionalActions() {
             <TransileInternoVolcablePanel
               sessionsCsv={wb.transformResult?.csv.transile_interno_volcable_sessions}
               summaryCsv={wb.transformResult?.csv.transile_interno_volcable_summary}
+              disabled={wb.transformBusy}
+            />
+          </section>
+
+          <section className="rounded-2xl border border-amber-200 bg-amber-50/40 px-4 py-4">
+            <h4 className="text-sm font-bold text-slate-900">E · Transile externo (es de vuelta)</h4>
+            <p className="mt-1 text-xs text-slate-600">
+              Movimientos Excel marcados “es de vuelta = SI”; circuito por producto (Pellet/Soja/Girasol).
+            </p>
+            <TransileExternoCicloPanel
+              operationsCsv={wb.transformResult?.csv.transile_externo_operaciones}
+              summaryCsv={wb.transformResult?.csv.transile_externo_summary}
               disabled={wb.transformBusy}
             />
           </section>

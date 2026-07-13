@@ -117,6 +117,23 @@ export function normalizeMovementType(mov: string | null | undefined): {
   }
 }
 
+/**
+ * Bandera "es de vuelta" del Excel de Movimientos por Contrato.
+ * Habilita la detección de transile externo (camión que vuelve a Ricardone a hacer otro ciclo).
+ */
+export function normalizeDeVuelta(value: string | null | undefined): {
+  es_de_vuelta_original: string
+  es_de_vuelta: boolean
+} {
+  const original = String(value ?? '').trim()
+  const key = original
+    .toUpperCase()
+    .normalize('NFD')
+    .replace(/[^A-Z0-9]/g, '')
+  const TRUTHY = new Set(['SI', 'S', 'TRUE', 'VERDADERO', 'V', 'X', '1'])
+  return { es_de_vuelta_original: original, es_de_vuelta: TRUTHY.has(key) }
+}
+
 export function normalizeProduct(value: string | null | undefined): {
   producto_original: string
   product_normalized: string | null

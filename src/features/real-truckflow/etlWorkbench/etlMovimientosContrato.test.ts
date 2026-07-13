@@ -95,6 +95,8 @@ function movimiento(partial: Partial<ExternalMovimientoContratoNormalized>): Ext
     humedad: '',
     observaciones: '',
     observacion_calidad: '',
+    es_de_vuelta_original: '',
+    es_de_vuelta: false,
     normalization_warnings: '',
     external_sl_balanza_entrada_at: '',
     external_sl_balanza_salida_at: '',

@@ -7,6 +7,7 @@ import type { EtlTransformOutput } from '../etlWorkbench/etlTransformPipeline'
 import { triggerBrowserCsvDownload } from '../etlWorkbench/etlCsv'
 import {
   anomalySequenceSummaryCsv,
+  buildAnomalyListContextFromTransformCsv,
   buildAnomalyReviewSummary,
   buildCircuitClassificationIndex,
   buildCommitteeCircuitCrossTab,
@@ -482,7 +483,8 @@ function AnomalySequenceBreakdownPanel({
           <span className="font-semibold uppercase tracking-wide text-[10px]">Incompletos</span>
           <span className="font-mono text-lg font-bold tabular-nums">{incompleteCount.toLocaleString()}</span>
           <span className="text-amber-900/80">
-            journeys con menos de {ANOMALY_LIST_MIN_EVENTS} eventos — no se listan por recorrido.
+            journeys con menos de {ANOMALY_LIST_MIN_EVENTS} eventos (Truckflow sin Excel) — no se listan por
+            recorrido.
           </span>
         </div>
       : null}
@@ -493,7 +495,8 @@ function AnomalySequenceBreakdownPanel({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-[11px] text-slate-600">
               <strong>{sequenceRows.length.toLocaleString()}</strong> recorridos distintos ·{' '}
-              <strong>{listedAnomalyCount.toLocaleString()}</strong> anomalías (≥{ANOMALY_LIST_MIN_EVENTS} eventos)
+              <strong>{listedAnomalyCount.toLocaleString()}</strong> anomalías (≥{ANOMALY_LIST_MIN_EVENTS}{' '}
+              eventos Truckflow, patente ausente del Excel; sin transile ni flota servicio)
               {incompleteCount > 0 ?
                 <> · + {incompleteCount.toLocaleString()} incompletos</>
               : null}
@@ -763,9 +766,17 @@ export function TransformEtlTab() {
     () => displayClassIndex.entries,
     [displayClassIndex.entries]
   )
+  const anomalyListCtx = useMemo(
+    () => buildAnomalyListContextFromTransformCsv(tr?.csv),
+    [
+      tr?.csv?.external_movimientos_contrato_normalized,
+      tr?.csv?.excel_operations_with_truckflow,
+      tr?.csv?.plate_registry_excluded,
+    ]
+  )
   const anomalyReview = useMemo(
-    () => buildAnomalyReviewSummary(filteredEntriesForAnomalies),
-    [filteredEntriesForAnomalies]
+    () => buildAnomalyReviewSummary(filteredEntriesForAnomalies, anomalyListCtx),
+    [filteredEntriesForAnomalies, anomalyListCtx]
   )
   const suspiciousDischargeRows = useMemo(
     () => buildSuspiciousDischargeWithoutBalanza(filteredEntriesForAnomalies),

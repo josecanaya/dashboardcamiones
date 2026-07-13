@@ -8,6 +8,7 @@ import {
   combineDateTime,
   formatIsoLocal,
   inferSourceDateFromFileName,
+  normalizeDeVuelta,
   normalizeMovementType,
   normalizePlant,
   normalizePlatform,
@@ -67,6 +68,8 @@ export type ExternalMovimientoContratoNormalized = {
   humedad: string
   observaciones: string
   observacion_calidad: string
+  es_de_vuelta_original: string
+  es_de_vuelta: boolean
   normalization_warnings: string
   external_sl_balanza_entrada_at: string
   external_sl_balanza_salida_at: string
@@ -104,6 +107,19 @@ const COLUMN_ALIASES: Record<string, string[]> = {
   kgs_neto: ['kgsneto', 'kgs.neto'],
   kgs_neto_neto: ['kgsnetoneto', 'kgs.neto neto', 'kgs.neto neto'],
   observaciones: ['observaciones'],
+  es_de_vuelta: [
+    'esdevuelta',
+    'es de vuelta',
+    'devuelta',
+    'de vuelta',
+    'de la vuelta',
+    'dela vuelta',
+    'la vuelta',
+    'lavuelta',
+    'esvuelta',
+    'es vuelta',
+    'vuelta',
+  ],
   cod_prod: ['codprod', 'cod prod'],
   producto: ['producto'],
   plataforma: ['plataforma'],
@@ -132,6 +148,16 @@ function buildHeaderMap(headers: string[]): Map<string, string> {
   for (const h of headers) {
     const field = aliasToField.get(normalizeHeaderKey(h))
     if (field) map.set(h, field)
+  }
+  // Fallback tolerante para "es de vuelta": headers reales suelen traer sufijos
+  // ("Es de vuelta (S/N)", "¿Es de vuelta?") que rompen la igualdad exacta.
+  if (![...map.values()].includes('es_de_vuelta')) {
+    const hit = headers.find((h) => {
+      const k = normalizeHeaderKey(h)
+      if (k.includes('codigo') || k.startsWith('cod')) return false
+      return k.includes('vuelta') || k.includes('retorno')
+    })
+    if (hit) map.set(hit, 'es_de_vuelta')
   }
   return map
 }
@@ -188,6 +214,7 @@ export function normalizeMovimientoContrato(
   if (movPack.warning) warnings.push(movPack.warning)
 
   const plateNorm = normalizePlate(cellStr(row.patente))
+  const deVuelta = normalizeDeVuelta(cellStr(row.es_de_vuelta))
   const product = normalizeProduct(cellStr(row.producto))
   const platform = normalizePlatform(cellStr(row.plataforma))
   if (platform.warning) warnings.push(platform.warning)
@@ -262,6 +289,8 @@ export function normalizeMovimientoContrato(
     humedad: cellStr(row.humedad),
     observaciones: cellStr(row.observaciones),
     observacion_calidad: cellStr(row.observacion_calidad),
+    es_de_vuelta_original: deVuelta.es_de_vuelta_original,
+    es_de_vuelta: deVuelta.es_de_vuelta,
     normalization_warnings: warnings.join('|'),
     external_sl_balanza_entrada_at: '',
     external_sl_balanza_salida_at: '',
@@ -462,6 +491,8 @@ export const EXTERNAL_MOVIMIENTOS_NORMALIZED_HEADERS: (keyof ExternalMovimientoC
   'humedad',
   'observaciones',
   'observacion_calidad',
+  'es_de_vuelta_original',
+  'es_de_vuelta',
   'normalization_warnings',
   'external_sl_balanza_entrada_at',
   'external_sl_balanza_salida_at',

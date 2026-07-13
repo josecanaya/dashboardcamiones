@@ -57,6 +57,8 @@ function mov(partial: Partial<ExternalMovimientoContratoNormalized>): ExternalMo
     humedad: '',
     observaciones: '',
     observacion_calidad: '',
+    es_de_vuelta_original: '',
+    es_de_vuelta: false,
     normalization_warnings: '',
     ...partial,
   }

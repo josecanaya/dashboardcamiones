@@ -144,12 +144,46 @@ export type CommitteeCircuitCrossTabRow = {
 export type AnomalyReasonCount = { reason: string; count: number }
 
 /** Mínimo de eventos útiles para listar un journey en el panel de anomalías por recorrido. */
-export const ANOMALY_LIST_MIN_EVENTS = 3
+export const ANOMALY_LIST_MIN_EVENTS = 2
+
+/** Circuitos transile externo: no figuran en el listado de anomalías. */
+export const TRANSILE_EXTERNO_ANOMALY_EXCLUDED_CODES = new Set(['R26', 'R27', 'R34'])
+
+/** Circuitos transile interno (Volcable / C16 interno): no figuran en el listado de anomalías. */
+export const TRANSILE_INTERNO_ANOMALY_EXCLUDED_CODES = new Set([
+  'R17',
+  'R18',
+  'R19',
+  'R20',
+  'R21',
+  'R22',
+  'R23',
+  'R24',
+  'R25',
+  'R28',
+  'R29',
+  'R30',
+  'R31',
+  'R32',
+  'R33',
+])
+
+export type AnomalyListContext = {
+  /**
+   * Patentes normalizadas presentes en Movimientos por Contrato.
+   * `null` / omitido = no hay Excel cargado → listado vacío.
+   * `Set` (aunque vacío) = Excel cargado; solo listan patentes ausentes del set.
+   */
+  excelPlates: Set<string> | null
+  /** Patentes del plate registry con excludeFromAnalytics (refuerzo del filtro ETL). */
+  excludedRegistryPlates?: Set<string>
+  minEvents?: number
+}
 
 export type AnomalyReviewSummary = {
-  /** Journeys comité ANOMALÍAS con menos de 3 eventos — solo contador, sin listado. */
+  /** Candidatos sin Excel/transile/registry con menos de minEvents — solo contador, sin listado. */
   incompleteCount: number
-  /** Journeys anómalos listables (≥3 eventos) agrupados por secuencia. */
+  /** Journeys listables (≥ minEvents, sin Excel, sin transile, sin registry) agrupados por secuencia. */
   sequenceRows: AnomalySequenceBreakdownRow[]
   /** Total de journeys en sequenceRows. */
   listedAnomalyCount: number
@@ -1959,14 +1993,88 @@ function countReasons(trucks: CircuitClassificationEntry[]): AnomalyReasonCount[
     .sort((a, b) => b.count - a.count || a.reason.localeCompare(b.reason))
 }
 
+/** True si el journey es transile interno o externo (no debe listarse como anomalía). */
+export function isTransileExcludedFromAnomalyList(entry: CircuitClassificationEntry): boolean {
+  const code = String(entry.executiveCircuitCode ?? '').trim().toUpperCase()
+  if (TRANSILE_EXTERNO_ANOMALY_EXCLUDED_CODES.has(code)) return true
+  if (TRANSILE_INTERNO_ANOMALY_EXCLUDED_CODES.has(code)) return true
+  const matched = String(entry.matchedCircuitCode ?? '').trim().toUpperCase()
+  if (matched.includes('TRANSILE')) return true
+  const reason = `${entry.committeeReason} ${entry.executiveReason}`.toUpperCase()
+  if (reason.includes('TRANSILE_EXTERNO') || reason.includes('TRANSILE_INTERNO')) return true
+  return false
+}
+
+/**
+ * Candidato al listado de anomalías (Truckflow ≥ minEvents, patente ausente del Excel,
+ * sin transile, sin flota excludeFromAnalytics). Sin Excel cargado → nunca.
+ */
+export function isListedAnomalyCandidate(
+  entry: CircuitClassificationEntry,
+  ctx: AnomalyListContext
+): boolean {
+  if (ctx.excelPlates == null) return false
+  const minEvents = ctx.minEvents ?? ANOMALY_LIST_MIN_EVENTS
+  if (entry.usefulEventsCount < minEvents) return false
+  const plate = normalizePlate(entry.normalizedPlate || entry.plate)
+  if (!plate) return false
+  if (ctx.excelPlates.has(plate)) return false
+  if (ctx.excludedRegistryPlates?.has(plate)) return false
+  if (isTransileExcludedFromAnomalyList(entry)) return false
+  return true
+}
+
+/** Cumple exclusiones Excel/transile/registry pero puede tener pocos eventos (incompleto). */
+export function isAnomalyListPoolEntry(
+  entry: CircuitClassificationEntry,
+  ctx: AnomalyListContext
+): boolean {
+  if (ctx.excelPlates == null) return false
+  const plate = normalizePlate(entry.normalizedPlate || entry.plate)
+  if (!plate) return false
+  if (ctx.excelPlates.has(plate)) return false
+  if (ctx.excludedRegistryPlates?.has(plate)) return false
+  if (isTransileExcludedFromAnomalyList(entry)) return false
+  return true
+}
+
+/** Patentes normalizadas desde CSV de movimientos / operaciones (columna plate_normalized o plate). */
+export function collectNormalizedPlatesFromCsv(csv: string | undefined | null): Set<string> {
+  const out = new Set<string>()
+  if (!csv?.trim()) return out
+  const { rows } = parseCsvToRecords(csv)
+  for (const r of rows) {
+    const plate = normalizePlate(r.plate_normalized ?? r.plate ?? r.patente ?? '')
+    if (plate) out.add(plate)
+  }
+  return out
+}
+
+/** Contexto de listado de anomalías a partir de CSV de transform. */
+export function buildAnomalyListContextFromTransformCsv(csv: {
+  external_movimientos_contrato_normalized?: string
+  excel_operations_with_truckflow?: string
+  plate_registry_excluded?: string
+} | null | undefined): AnomalyListContext {
+  const normalized = String(csv?.external_movimientos_contrato_normalized ?? '').trim()
+  const excelOps = String(csv?.excel_operations_with_truckflow ?? '').trim()
+  const hasExcel = Boolean(normalized || excelOps)
+  if (!hasExcel) {
+    return { excelPlates: null }
+  }
+  const excelPlates = collectNormalizedPlatesFromCsv(normalized || excelOps)
+  const excludedRegistryPlates = collectNormalizedPlatesFromCsv(csv?.plate_registry_excluded)
+  return { excelPlates, excludedRegistryPlates }
+}
+
 /** Agrupa journeys anómalos listables (≥ minEvents) por recorrido observado. */
 export function buildAnomalySequenceBreakdown(
   entries: CircuitClassificationEntry[],
-  minEvents = ANOMALY_LIST_MIN_EVENTS
+  minEvents = ANOMALY_LIST_MIN_EVENTS,
+  ctx: AnomalyListContext = { excelPlates: null }
 ): AnomalySequenceBreakdownRow[] {
-  const anomalies = entries.filter(
-    (e) => committeeCategoryFromEntry(e) === 'anomalias' && e.usefulEventsCount >= minEvents
-  )
+  const listCtx: AnomalyListContext = { ...ctx, minEvents }
+  const anomalies = entries.filter((e) => isListedAnomalyCandidate(e, listCtx))
   const total = anomalies.length
   if (total <= 0) return []
 
@@ -1999,11 +2107,18 @@ export function buildAnomalySequenceBreakdown(
   )
 }
 
-/** Separa anomalías en incompletos (&lt;3 evt, solo contador) y listado por recorrido (≥3 evt). */
-export function buildAnomalyReviewSummary(entries: CircuitClassificationEntry[]): AnomalyReviewSummary {
-  const anomalies = entries.filter((e) => committeeCategoryFromEntry(e) === 'anomalias')
-  const incompleteCount = anomalies.filter((e) => e.usefulEventsCount < ANOMALY_LIST_MIN_EVENTS).length
-  const sequenceRows = buildAnomalySequenceBreakdown(entries, ANOMALY_LIST_MIN_EVENTS)
+/**
+ * Listado de anomalías = Truckflow sin Excel (≥2 evt), excluyendo transile y flota servicio.
+ * Sin Excel cargado (`excelPlates: null`) el listado queda vacío.
+ */
+export function buildAnomalyReviewSummary(
+  entries: CircuitClassificationEntry[],
+  ctx: AnomalyListContext = { excelPlates: null }
+): AnomalyReviewSummary {
+  const minEvents = ctx.minEvents ?? ANOMALY_LIST_MIN_EVENTS
+  const pool = entries.filter((e) => isAnomalyListPoolEntry(e, ctx))
+  const incompleteCount = pool.filter((e) => e.usefulEventsCount < minEvents).length
+  const sequenceRows = buildAnomalySequenceBreakdown(entries, minEvents, ctx)
   const listedAnomalyCount = sequenceRows.reduce((acc, r) => acc + r.count, 0)
   return { incompleteCount, sequenceRows, listedAnomalyCount }
 }

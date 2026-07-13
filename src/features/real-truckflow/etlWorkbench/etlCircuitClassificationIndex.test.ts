@@ -1,19 +1,27 @@
 import { describe, expect, it } from 'vitest'
 import {
+  buildAnomalyListContextFromTransformCsv,
   buildAnomalyReviewSummary,
   buildAnomalySequenceBreakdown,
   buildCommitteeCircuitCrossTab,
   buildCircuitClassificationIndex,
   buildSuspiciousDischargeWithoutBalanza,
   committeeChartExportCsv,
+  collectNormalizedPlatesFromCsv,
   filterEntriesByMinTruckflowCrossings,
+  isListedAnomalyCandidate,
+  isTransileExcludedFromAnomalyList,
   normalizeAnomalySequenceKey,
   promoteExcelMovimientosContrato,
   reclassifyPossibleRejections,
   resolveDischargePointLabel,
   truckflowCrossingCountFromEntry,
+  type AnomalyListContext,
   type CircuitClassificationEntry,
 } from './etlCircuitClassificationIndex'
+
+/** Excel cargado sin esas patentes → candidatas a anomalía. */
+const excelLoadedEmpty: AnomalyListContext = { excelPlates: new Set() }
 
 function entry(partial: Partial<CircuitClassificationEntry>): CircuitClassificationEntry {
   return {
@@ -79,24 +87,102 @@ describe('filterEntriesByMinTruckflowCrossings', () => {
 })
 
 describe('etlCircuitClassificationIndex anomalías', () => {
-  it('excluye incompletos (<3 evt) del listado por secuencia', () => {
+  it('sin Excel cargado el listado queda vacío', () => {
     const summary = buildAnomalyReviewSummary([
-      entry({ journeyId: 'a', usefulEventsCount: 2, detectedSequence: 'INGRESO' }),
-      entry({ journeyId: 'b', usefulEventsCount: 2, detectedSequence: 'INGRESO' }),
       entry({ journeyId: 'c', usefulEventsCount: 4, detectedSequence: 'INGRESO>PREINGRESO>CALADA' }),
     ])
+    expect(summary.incompleteCount).toBe(0)
+    expect(summary.listedAnomalyCount).toBe(0)
+  })
+
+  it('excluye incompletos (<2 evt) del listado por secuencia', () => {
+    const summary = buildAnomalyReviewSummary(
+      [
+        entry({ journeyId: 'a', usefulEventsCount: 1, detectedSequence: 'INGRESO' }),
+        entry({ journeyId: 'b', usefulEventsCount: 1, detectedSequence: 'INGRESO' }),
+        entry({ journeyId: 'c', usefulEventsCount: 4, detectedSequence: 'INGRESO>PREINGRESO>CALADA' }),
+      ],
+      excelLoadedEmpty
+    )
     expect(summary.incompleteCount).toBe(2)
     expect(summary.listedAnomalyCount).toBe(1)
     expect(summary.sequenceRows).toHaveLength(1)
     expect(summary.sequenceRows[0]!.count).toBe(1)
   })
 
+  it('lista ≥2 capturas Truckflow aunque el comité no diga ANOMALIAS', () => {
+    const summary = buildAnomalyReviewSummary(
+      [
+        entry({
+          journeyId: 'ok',
+          committeeGroup: 'COMPLETOS',
+          pieSliceLabel: 'COMPLETOS',
+          usefulEventsCount: 2,
+          detectedSequence: 'INGRESO>EGRESO',
+        }),
+      ],
+      excelLoadedEmpty
+    )
+    expect(summary.listedAnomalyCount).toBe(1)
+  })
+
+  it('excluye patente presente en Excel contractual', () => {
+    const ctx: AnomalyListContext = { excelPlates: new Set(['ABC123']) }
+    expect(isListedAnomalyCandidate(entry({ usefulEventsCount: 4 }), ctx)).toBe(false)
+    expect(buildAnomalyReviewSummary([entry({ usefulEventsCount: 4 })], ctx).listedAnomalyCount).toBe(0)
+  })
+
+  it('excluye transile externo e interno', () => {
+    expect(isTransileExcludedFromAnomalyList(entry({ executiveCircuitCode: 'R26' }))).toBe(true)
+    expect(isTransileExcludedFromAnomalyList(entry({ executiveCircuitCode: 'R19' }))).toBe(true)
+    expect(isTransileExcludedFromAnomalyList(entry({ executiveCircuitCode: 'R7' }))).toBe(false)
+    const summary = buildAnomalyReviewSummary(
+      [
+        entry({ journeyId: 'ext', executiveCircuitCode: 'R27', usefulEventsCount: 5 }),
+        entry({ journeyId: 'int', executiveCircuitCode: 'R20', usefulEventsCount: 5 }),
+        entry({
+          journeyId: 'ok',
+          executiveCircuitCode: 'R5',
+          usefulEventsCount: 5,
+          plate: 'ZZZ999',
+          normalizedPlate: 'ZZZ999',
+        }),
+      ],
+      excelLoadedEmpty
+    )
+    expect(summary.listedAnomalyCount).toBe(1)
+    expect(summary.sequenceRows[0]!.trucks[0]!.journeyId).toBe('ok')
+  })
+
+  it('excluye flota del plate registry', () => {
+    const ctx: AnomalyListContext = {
+      excelPlates: new Set(),
+      excludedRegistryPlates: new Set(['ABC123']),
+    }
+    expect(buildAnomalyReviewSummary([entry({ usefulEventsCount: 5 })], ctx).listedAnomalyCount).toBe(0)
+  })
+
+  it('arma contexto desde CSV de transform', () => {
+    const ctx = buildAnomalyListContextFromTransformCsv({
+      external_movimientos_contrato_normalized: 'plate_normalized\nABC123\nDEF456\n',
+      plate_registry_excluded: 'plate\nSRV001\n',
+    })
+    expect(ctx.excelPlates?.has('ABC123')).toBe(true)
+    expect(ctx.excelPlates?.has('DEF456')).toBe(true)
+    expect(ctx.excludedRegistryPlates?.has('SRV001')).toBe(true)
+    expect(collectNormalizedPlatesFromCsv('plate_normalized\nAA11BB\n').has('AA11BB')).toBe(true)
+  })
+
   it('agrupa anomalías por secuencia detectada', () => {
-    const rows = buildAnomalySequenceBreakdown([
-      entry({ journeyId: 'a', plate: 'A1', detectedSequence: 'INGRESO>PREINGRESO>CALADA' }),
-      entry({ journeyId: 'b', plate: 'A2', detectedSequence: 'INGRESO>PREINGRESO>CALADA' }),
-      entry({ journeyId: 'c', plate: 'B1', detectedSequence: 'INGRESO>EGRESO' }),
-    ])
+    const rows = buildAnomalySequenceBreakdown(
+      [
+        entry({ journeyId: 'a', plate: 'A1', normalizedPlate: 'A1', detectedSequence: 'INGRESO>PREINGRESO>CALADA' }),
+        entry({ journeyId: 'b', plate: 'A2', normalizedPlate: 'A2', detectedSequence: 'INGRESO>PREINGRESO>CALADA' }),
+        entry({ journeyId: 'c', plate: 'B1', normalizedPlate: 'B1', detectedSequence: 'INGRESO>EGRESO' }),
+      ],
+      undefined,
+      excelLoadedEmpty
+    )
     expect(rows).toHaveLength(2)
     expect(rows[0]!.displaySequence).toBe('INGRESO>PREINGRESO>CALADA')
     expect(rows[0]!.count).toBe(2)
@@ -146,7 +232,7 @@ describe('etlCircuitClassificationIndex anomalías', () => {
         detectedSequence: 'INGRESO>PREINGRESO>CALADA>EGRESO',
         usefulEventsCount: 5,
       }),
-      entry({ journeyId: 'an1', usefulEventsCount: 2, detectedSequence: 'INGRESO' }),
+      entry({ journeyId: 'an1', usefulEventsCount: 1, detectedSequence: 'INGRESO' }),
       entry({
         journeyId: 'an2',
         usefulEventsCount: 4,
@@ -155,7 +241,7 @@ describe('etlCircuitClassificationIndex anomalías', () => {
       }),
     ]
     const crossTab = buildCommitteeCircuitCrossTab(entries)
-    const anomalyReview = buildAnomalyReviewSummary(entries)
+    const anomalyReview = buildAnomalyReviewSummary(entries, excelLoadedEmpty)
     const csv = committeeChartExportCsv({
       entries,
       crossTab,
@@ -234,7 +320,9 @@ describe('promoteExcelMovimientosContrato', () => {
     expect(recovered.executiveCircuitCode).toBe('R5')
     expect(recovered.committeeReason).toContain('EXCEL_CONTRATO')
 
-    const anomalyReview = buildAnomalyReviewSummary(promoted)
+    const anomalyReview = buildAnomalyReviewSummary(promoted, {
+      excelPlates: new Set(['ABC123']),
+    })
     expect(anomalyReview.listedAnomalyCount).toBe(0)
 
     const cross = buildCommitteeCircuitCrossTab(promoted)

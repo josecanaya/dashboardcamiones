@@ -72,6 +72,14 @@ import {
   transileInternoVolcableSummaryCsv,
   type TransileInternoVolcableSummary,
 } from './transileInternoVolcable'
+import {
+  buildTransileExternoReport,
+  formatTransileExternoLog,
+  transileExternoOperationsCsv,
+  transileExternoSessionsCsv,
+  transileExternoSummaryCsv,
+  type TransileExternoSummary,
+} from './transileExternoCiclo'
 
 import type { KpiTiemposMovimientosSnapshot } from './etlKpiTiemposBuild'
 import {
@@ -124,6 +132,7 @@ export type MovimientosContratoIntegrationOutput = {
     platforms: string[]
     liquidMovements?: LiquidMovementsSummary
     transileInternoVolcable?: TransileInternoVolcableSummary
+    transileExterno?: TransileExternoSummary
   }
 }
 
@@ -425,6 +434,22 @@ export async function runMovimientosContratoIntegration(
   })
   logs.push(formatTransileInternoVolcableLog(transileVolcableReport.summary))
 
+  const detectedExcelHeaders = [...new Set(readMeta.flatMap((m) => m.headers ?? []))]
+  const transileExternoReport = buildTransileExternoReport({
+    movimientos: normalized,
+    detectedHeaders: detectedExcelHeaders,
+  })
+  logs.push(formatTransileExternoLog(transileExternoReport.summary))
+  if (transileExternoReport.summary.movimientos_de_vuelta === 0) {
+    logs.push(
+      `Transile externo: columna "es de vuelta" ${
+        transileExternoReport.summary.columna_detectada ?
+          `detectada como "${transileExternoReport.summary.columna_detectada}" pero sin valores SI`
+        : 'NO detectada'
+      }. Headers Excel: ${detectedExcelHeaders.join(' | ') || '(sin headers)'}`
+    )
+  }
+
   const kpiTiemposSnapshot: KpiTiemposMovimientosSnapshot | null = {
     excelSegmentRows: excelFirstResult.segmentRows,
     segments,
@@ -561,6 +586,9 @@ export async function runMovimientosContratoIntegration(
     transile_interno_volcable_summary: transileInternoVolcableSummaryCsv(
       transileVolcableReport.summary
     ),
+    transile_externo_operaciones: transileExternoOperationsCsv(transileExternoReport.operations),
+    transile_externo_sessions: transileExternoSessionsCsv(transileExternoReport.sessions),
+    transile_externo_summary: transileExternoSummaryCsv(transileExternoReport.summary),
     ...(skipKpi ? {} : { segment_scatter_by_day: scatterByDayCsvOut }),
       }
       return csv
@@ -603,6 +631,7 @@ export async function runMovimientosContratoIntegration(
       platforms,
       liquidMovements: liquidReport.summary,
       transileInternoVolcable: transileVolcableReport.summary,
+      transileExterno: transileExternoReport.summary,
     },
   }
 }
