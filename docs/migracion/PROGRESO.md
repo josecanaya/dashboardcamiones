@@ -32,7 +32,7 @@
 - [x] 3.1 circuitCatalog + test de paridad
 - [x] 3.2 🛑 R26-R32 transile externo (matriz Excel + C16→R26 soja)
 - [x] 3.3 EXECUTIVE_CIRCUIT_MATRIX derivada del catálogo
-- [ ] 3.4 Reclasificación transile externo (propuesta → 🛑 aprobación → override)
+- [x] 3.4 Reclasificación transile externo (propuesta → override; Excel no se muta)
 - [ ] 3.5 circuitEtlV2 y realPreliminaryCircuit eliminados
 - [ ] 3.6 etlSegmentTiming.ts particionado (opcional)
 
@@ -63,3 +63,4 @@
 - 2026-07-13 — 🛑 STOP 2.6: poda de `csv` interno **diferida** (OK usuario para avanzar a Fase 3 con csv+tables en paralelo). Fixture matriz: `docs/migracion/fixtures/Matriz_de_circuitos.xlsx`.
 - 2026-07-13 — Fase 3: Excel Movimientos **enriquece** producto (no se reclasifica). C16=soja→R26; C9/10/11=pellet→R30–32; GIRASOL→R27/R28.
 - 2026-07-13 — 3.2: R26–R32 en catálogo+matriz; cámara C16↔SL → siempre R26; pellet por plataforma Excel Celda 09/10/11.
+- 2026-07-13 — 3.4: tabla `transile_externo_reclasificacion` + override comité; `inferCircuitFromExternalMovimiento` enriquece por es_de_vuelta (Excel intacto).

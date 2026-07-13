@@ -31,6 +31,11 @@ import {
   type SuspiciousSlExitRicReturnRow,
   type CircuitClassificationIndex,
 } from '../etlWorkbench/etlCircuitClassificationIndex'
+import { EXECUTIVE_CIRCUIT_MATRIX } from '../etlWorkbench/finalCircuitScoring'
+import {
+  applyTransileExternoCircuitOverrides,
+  type TransileExternoReclasificacionRow,
+} from '../../../etl-core/reports/transileExternoReclasificacion'
 import { committeePieFromGroup } from '../etlWorkbench/committeeClassification'
 import { MovimientosContratoPanel } from '../components/MovimientosContratoPanel'
 import { ExecutiveSampleProductFilter } from '../components/ExecutiveSampleProductFilter'
@@ -691,7 +696,16 @@ export function TransformEtlTab() {
     void (async () => {
       await yieldToBrowser()
       if (cancelled) return
-      const idx = buildCircuitClassificationIndex(debugMatrix, mergedCsv, excelOps)
+      let idx = buildCircuitClassificationIndex(debugMatrix, mergedCsv, excelOps)
+      const proposals = (tr.tables?.transile_externo_reclasificacion?.rows ?? []) as TransileExternoReclasificacionRow[]
+      if (proposals.length) {
+        const overridden = applyTransileExternoCircuitOverrides(
+          idx.entries,
+          proposals,
+          (code) => EXECUTIVE_CIRCUIT_MATRIX[code]?.label ?? code
+        )
+        idx = rebuildCircuitClassificationIndex(overridden)
+      }
       if (!cancelled) setCircuitClassIndex(idx)
     })()
     return () => {
@@ -703,6 +717,7 @@ export function TransformEtlTab() {
     tr?.csv.excel_operations_with_truckflow,
     tr?.tables?.debug_matrix_classification,
     tr?.tables?.excel_operations_with_truckflow,
+    tr?.tables?.transile_externo_reclasificacion,
   ])
 
   const executiveProductFilterPlan = useMemo(

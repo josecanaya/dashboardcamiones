@@ -84,6 +84,11 @@ import {
   transileExternoTables,
   type TransileExternoSummary,
 } from './transileExternoCiclo'
+import {
+  buildTransileExternoReclasificacion,
+  transileExternoReclasificacionCsv,
+  transileExternoReclasificacionTable,
+} from '../../../etl-core/reports/transileExternoReclasificacion'
 
 import type { KpiTiemposMovimientosSnapshot } from './etlKpiTiemposBuild'
 import {
@@ -456,6 +461,26 @@ export async function runMovimientosContratoIntegration(
     )
   }
 
+  const journeyLitesForTransile = input.finalCsvRows.map((r) => {
+    const uid = String(r.journey_uid ?? '')
+    const times = input.journeyTimesByUid.get(uid)
+    return {
+      journey_uid: uid,
+      plate: String(r.plate_normalized ?? r.plate ?? ''),
+      start_at: times?.start ?? String(r.first_event_at ?? r.started_at ?? ''),
+      end_at: times?.end ?? String(r.last_event_at ?? r.ended_at ?? ''),
+      executive_status: String(r.executive_status ?? r.final_status ?? ''),
+      executive_circuit_code: String(r.executive_circuit_code ?? r.matched_circuit_code ?? ''),
+    }
+  })
+  const transileReclasificacionRows = buildTransileExternoReclasificacion(
+    transileExternoReport.operations,
+    journeyLitesForTransile
+  )
+  if (transileReclasificacionRows.length) {
+    logs.push(`Transile externo enriquecimiento propuesto: ${transileReclasificacionRows.length} journeys`)
+  }
+
   const kpiTiemposSnapshot: KpiTiemposMovimientosSnapshot | null = {
     excelSegmentRows: excelFirstResult.segmentRows,
     segments,
@@ -595,6 +620,7 @@ export async function runMovimientosContratoIntegration(
     transile_externo_operaciones: transileExternoOperationsCsv(transileExternoReport.operations),
     transile_externo_sessions: transileExternoSessionsCsv(transileExternoReport.sessions),
     transile_externo_summary: transileExternoSummaryCsv(transileExternoReport.summary),
+    transile_externo_reclasificacion: transileExternoReclasificacionCsv(transileReclasificacionRows),
     ...(skipKpi ? {} : { segment_scatter_by_day: scatterByDayCsvOut }),
       }
       return csv
@@ -619,6 +645,7 @@ export async function runMovimientosContratoIntegration(
     liquid_movements_aceite_truckflow_excel: liTables.aceite_truckflow_excel,
     liquid_movements_summary: liTables.summary,
     excel_operations_with_truckflow: excelOperationsWithTruckflowTable(excelFirstResult.operations),
+    transile_externo_reclasificacion: transileExternoReclasificacionTable(transileReclasificacionRows),
   }
 
   const totalMs = Math.round(performance.now() - runStartedAt)

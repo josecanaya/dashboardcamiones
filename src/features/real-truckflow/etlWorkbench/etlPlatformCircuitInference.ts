@@ -2,6 +2,7 @@ import type { ExternalMovimientoContratoNormalized } from './etlExternalMovimien
 import { EXECUTIVE_CIRCUIT_MATRIX } from './finalCircuitScoring'
 import { isSanLorenzoAceiteLiquidPlatform, inferAceiteExecutiveCircuitFromExcel } from './slLiquidCameras'
 import type { TruckflowJourneyForMerge } from './etlTruckflowMovimientosMerge'
+import { classifyTransileExternoProduct } from '../../../etl-core/reports/transileExternoCiclo'
 
 export type InferredExecutiveCircuit = {
   circuit_code: string
@@ -69,10 +70,24 @@ export function inferCircuitFromExternalMovimiento(
     Partial<
       Pick<
         ExternalMovimientoContratoNormalized,
-        'observaciones' | 'observacion_calidad' | 'product_normalized'
+        | 'observaciones'
+        | 'observacion_calidad'
+        | 'product_normalized'
+        | 'producto_original'
+        | 'es_de_vuelta'
       >
     >
 ): InferredExecutiveCircuit | null {
+  // Excel enriquece: es_de_vuelta + producto → R26/R27–28/R30–32 (no reclasifica la fila Excel).
+  if (mov.es_de_vuelta) {
+    const cls = classifyTransileExternoProduct(
+      mov.product_normalized || mov.producto_original || '',
+      mov.platform_normalized || mov.plataforma_original || ''
+    )
+    const code = cls.assigned || (cls.candidates.length === 1 ? cls.candidates[0]! : '')
+    if (code) return circuitFromCode(code, 'platform')
+  }
+
   const platform = String(mov.platform_normalized ?? '').toUpperCase()
   const original = String(mov.plataforma_original ?? '').toUpperCase()
   const plant = String(mov.planta_normalized ?? '').toUpperCase()
