@@ -14,10 +14,10 @@
 - [x] 1.3 Transiles interno/externo en etl-core/reports (piloto)
 - [x] 1.4 argentinaPlate, eventNormalization, journeyEvents.types en domain
 - [x] 1.5 pipelineTypes.ts centralizado
-- [ ] 1.6 🛑 Revisión de cierre con usuario
+- [x] 1.6 🛑 Revisión de cierre con usuario
 
 ## Fase 2 — TypedTable
-- [ ] 2.1 TypedTable + test
+- [x] 2.1 TypedTable + test
 - [ ] 2.2 Piloto transile externo emite tablas
 - [ ] 2.3 EtlTransformOutput.tables
 - [ ] 2.4 Panel piloto consume filas tipadas
