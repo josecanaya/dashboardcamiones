@@ -25,6 +25,7 @@ import {
   formatExecutiveCircuitLabel,
 } from './finalCircuitScoring'
 import { ensureArgentinaOffsetIso, operationalDayKeyFromIso } from './etlTimestampNormalize'
+import type { AnomalyKind } from '../../../etl-core/domain/anomalyClassifier'
 
 /** Fuente de matriz de clasificación: CSV legacy o filas TypedTable (Fase 2). */
 export type DebugMatrixSource = string | readonly Record<string, unknown>[] | null | undefined
@@ -136,6 +137,13 @@ export type CircuitClassificationEntry = {
   eventCount: number
   executiveBucket: string
   matrixReason: string
+  /**
+   * Eje comportamiento/datos del clasificador único `classifyAnomaly` (columna
+   * anomaly_kind de debug_matrix). Opcional: entradas sintéticas/legacy no lo traen.
+   * Cuando está presente, gobierna el listado de anomalías (BEHAVIORAL = real).
+   */
+  anomalyKind?: AnomalyKind
+  anomalyKindReason?: string
   color: string
 }
 
@@ -215,6 +223,12 @@ export type AnomalyListContext = {
   excelPlates: Set<string> | null
   /** Patentes del plate registry con excludeFromAnalytics (refuerzo del filtro ETL). */
   excludedRegistryPlates?: Set<string>
+  /**
+   * Patentes (normalizadas) de sesiones transile interno/externo inferidas.
+   * El transile interno no se estampa como código/razón en la entrada (es un
+   * reporte de sesiones por patente), así que se excluye por patente acá.
+   */
+  transileExcludedPlates?: Set<string>
   minEvents?: number
 }
 
@@ -501,8 +515,26 @@ function rowToEntry(row: Record<string, unknown>, color: string): CircuitClassif
     eventCount: eventCountFromMatrixRow(row, detectedSequence),
     executiveBucket: String(row.executive_bucket ?? '').trim().toUpperCase(),
     matrixReason: String(row.matrix_reason ?? '').trim(),
+    ...parseAnomalyKindColumns(row),
     color,
   }
+}
+
+/**
+ * Extrae `anomalyKind`/`anomalyKindReason` solo si la fuente trae la columna
+ * `anomaly_kind` (debug_matrix nuevo). Sin la columna, deja los campos ausentes
+ * para que el listado use el camino legacy (compatibilidad con corridas viejas y tests).
+ */
+function parseAnomalyKindColumns(
+  row: Record<string, unknown>
+): { anomalyKind?: AnomalyKind; anomalyKindReason?: string } {
+  if (!('anomaly_kind' in row)) return {}
+  const raw = String(row.anomaly_kind ?? '').trim().toUpperCase()
+  const kind: AnomalyKind =
+    raw === 'BEHAVIORAL' ? 'BEHAVIORAL'
+    : raw === 'DATA_COVERAGE' ? 'DATA_COVERAGE'
+    : 'NONE'
+  return { anomalyKind: kind, anomalyKindReason: String(row.anomaly_kind_reason ?? '').trim() }
 }
 
 export function buildExecutiveCircuitBarSlices(
@@ -1898,13 +1930,56 @@ export function resolveDischargePointLabel(detectedSequence: string, deviceSeque
   return parts.join(' · ') || '—'
 }
 
+/**
+ * Exclusiones compartidas con el listado de anomalías, aplicables a los paneles
+ * de "sospechosos". A diferencia de `isAnomalyListPoolEntry`, NO exige que el
+ * Excel esté cargado ni descarta por "ausencia del Excel": solo excluye por
+ * pertenencia positiva a transile, registry (Supabase) o al plan del Excel. Así
+ * un transile/servicio nunca aparece como sospechoso, pero un camión legítimo
+ * fuera del Excel sigue siendo visible aunque no haya Excel cargado.
+ */
+export function isExcludedFromSuspiciousList(
+  entry: CircuitClassificationEntry,
+  ctx: AnomalyListContext
+): boolean {
+  const plate = normalizePlate(entry.normalizedPlate || entry.plate)
+  if (plate && ctx.excelPlates?.has(plate)) return true
+  if (plate && ctx.excludedRegistryPlates?.has(plate)) return true
+  if (plate && ctx.transileExcludedPlates?.has(plate)) return true
+  if (isTransileExcludedFromAnomalyList(entry)) return true
+  return false
+}
+
+/**
+ * Conjunto de patentes normalizadas a excluir de paneles de sospechosos basados
+ * en eventos crudos (p. ej. SL → Ricardone), donde no se dispone del entry para
+ * evaluar transile. Combina Excel + registry (Supabase) + patentes transile.
+ */
+export function collectSuspiciousExcludedPlates(
+  entries: CircuitClassificationEntry[],
+  ctx: AnomalyListContext = { excelPlates: null }
+): Set<string> {
+  const set = new Set<string>()
+  for (const p of ctx.excelPlates ?? []) set.add(p)
+  for (const p of ctx.excludedRegistryPlates ?? []) set.add(p)
+  for (const p of ctx.transileExcludedPlates ?? []) set.add(p)
+  for (const e of entries) {
+    if (!isTransileExcludedFromAnomalyList(e)) continue
+    const plate = normalizePlate(e.normalizedPlate || e.plate)
+    if (plate) set.add(plate)
+  }
+  return set
+}
+
 /** Descarga en C16 o Volcable sin ningún paso por balanza. */
 export function buildSuspiciousDischargeWithoutBalanza(
-  entries: CircuitClassificationEntry[]
+  entries: CircuitClassificationEntry[],
+  ctx: AnomalyListContext = { excelPlates: null }
 ): SuspiciousDischargeWithoutBalanzaRow[] {
   const rows: SuspiciousDischargeWithoutBalanzaRow[] = []
 
   for (const entry of entries) {
+    if (isExcludedFromSuspiciousList(entry, ctx)) continue
     if (!journeyHasInstrumentedDischarge(entry.detectedSequence)) continue
     if (journeyHasBalanzaInSequence(entry.detectedSequence)) continue
 
@@ -1958,14 +2033,21 @@ function journeyUidMatchesFilter(uid: string, allowed: Set<string>): boolean {
 /** Misma ventana que auditoría de patentes (40 min por defecto). */
 export function buildSuspiciousSlExitRicReturn(
   events: RealJourneyEventDto[],
-  opts?: { windowMs?: number; allowedJourneyIds?: Set<string> | null }
+  opts?: {
+    windowMs?: number
+    allowedJourneyIds?: Set<string> | null
+    /** Patentes (normalizadas) a excluir: transile / registry Supabase / Excel. */
+    excludedPlates?: Set<string> | null
+  }
 ): SuspiciousSlExitRicReturnRow[] {
   if (!events.length) return []
   const windowMs = opts?.windowMs ?? SL_EGRESS_RIC_RETURN_WINDOW_MS_DEFAULT
   const allowed = opts?.allowedJourneyIds
+  const excludedPlates = opts?.excludedPlates
   const hints = detectSanLorenzoEgressToRicardoneReturnFromEvents(events, windowMs)
   const rows: SuspiciousSlExitRicReturnRow[] = []
   for (const h of hints) {
+    if (excludedPlates?.size && excludedPlates.has(normalizePlate(h.plate))) continue
     if (allowed?.size) {
       const ok =
         journeyUidMatchesFilter(h.journeyUidAtExit, allowed) ||
@@ -2042,35 +2124,60 @@ export function isTransileExcludedFromAnomalyList(entry: CircuitClassificationEn
 }
 
 /**
- * Candidato al listado de anomalías (Truckflow ≥ minEvents, patente ausente del Excel,
- * sin transile, sin flota excludeFromAnalytics). Sin Excel cargado → nunca.
+ * Exclusiones duras del listado de anomalías: transile (interno/externo, por
+ * código/razón o por patente de sesión inferida) y flota registry con
+ * excludeFromAnalytics. Aplican tanto al camino de comportamiento como al legacy.
+ */
+function isHardExcludedFromAnomalyList(
+  entry: CircuitClassificationEntry,
+  ctx: AnomalyListContext,
+  plate: string
+): boolean {
+  if (plate && ctx.excludedRegistryPlates?.has(plate)) return true
+  if (plate && ctx.transileExcludedPlates?.has(plate)) return true
+  if (isTransileExcludedFromAnomalyList(entry)) return true
+  return false
+}
+
+/**
+ * Candidato al listado de anomalías.
+ * - Corridas nuevas (traen `anomalyKind`): solo comportamiento real (`BEHAVIORAL`),
+ *   fuente única `classifyAnomaly`. Transile/registry siempre excluidos.
+ * - Corridas viejas / tests (sin `anomalyKind`): heurística legacy "Truckflow
+ *   ≥ minEvents, patente ausente del Excel". Sin Excel cargado → nunca.
  */
 export function isListedAnomalyCandidate(
   entry: CircuitClassificationEntry,
   ctx: AnomalyListContext
 ): boolean {
+  const plate = normalizePlate(entry.normalizedPlate || entry.plate)
+  if (!plate) return false
+  if (isHardExcludedFromAnomalyList(entry, ctx, plate)) return false
+  if (entry.anomalyKind !== undefined) return entry.anomalyKind === 'BEHAVIORAL'
+  // Camino legacy.
   if (ctx.excelPlates == null) return false
   const minEvents = ctx.minEvents ?? ANOMALY_LIST_MIN_EVENTS
   if (entry.usefulEventsCount < minEvents) return false
-  const plate = normalizePlate(entry.normalizedPlate || entry.plate)
-  if (!plate) return false
   if (ctx.excelPlates.has(plate)) return false
-  if (ctx.excludedRegistryPlates?.has(plate)) return false
-  if (isTransileExcludedFromAnomalyList(entry)) return false
   return true
 }
 
-/** Cumple exclusiones Excel/transile/registry pero puede tener pocos eventos (incompleto). */
+/**
+ * Pool de journeys "problemáticos" para separar comportamiento vs datos.
+ * Nuevas corridas: cualquier `anomalyKind` distinto de NONE. Legacy: mismas
+ * exclusiones Excel/transile/registry, con eventos posiblemente insuficientes.
+ */
 export function isAnomalyListPoolEntry(
   entry: CircuitClassificationEntry,
   ctx: AnomalyListContext
 ): boolean {
-  if (ctx.excelPlates == null) return false
   const plate = normalizePlate(entry.normalizedPlate || entry.plate)
   if (!plate) return false
+  if (isHardExcludedFromAnomalyList(entry, ctx, plate)) return false
+  if (entry.anomalyKind !== undefined) return entry.anomalyKind !== 'NONE'
+  // Camino legacy.
+  if (ctx.excelPlates == null) return false
   if (ctx.excelPlates.has(plate)) return false
-  if (ctx.excludedRegistryPlates?.has(plate)) return false
-  if (isTransileExcludedFromAnomalyList(entry)) return false
   return true
 }
 
@@ -2086,26 +2193,46 @@ export function collectNormalizedPlatesFromCsv(csv: string | undefined | null): 
   return out
 }
 
-/** Contexto de listado de anomalías a partir de CSV/tablas de transform. */
-export function buildAnomalyListContextFromTransformCsv(csv: {
-  external_movimientos_contrato_normalized?: string
-  excel_operations_with_truckflow?: string
-  plate_registry_excluded?: string
-} | null | undefined, excelOpsRowsPreferred?: ExcelOpsSource): AnomalyListContext {
+/** Patentes normalizadas de sesiones transile interno inferidas (para excluir de anomalías). */
+export function collectTransileInternoExcludedPlates(
+  rows: readonly Record<string, unknown>[] | null | undefined
+): Set<string> {
+  const set = new Set<string>()
+  for (const r of rows ?? []) {
+    const inferred = String(r.inferred_transile_interno ?? '').trim().toLowerCase()
+    if (inferred !== 'true' && inferred !== '1' && inferred !== 'yes') continue
+    const plate = normalizePlate(String(r.patente ?? r.plate ?? ''))
+    if (plate) set.add(plate)
+  }
+  return set
+}
+
+/**
+ * Contexto de listado de anomalías a partir de CSV/tablas de transform.
+ * Registry y transile interno se incluyen siempre (aplican también al camino de
+ * comportamiento, que no depende del Excel). `excelPlates` solo se puebla si hay Excel.
+ */
+export function buildAnomalyListContextFromTransformCsv(
+  csv: {
+    external_movimientos_contrato_normalized?: string
+    excel_operations_with_truckflow?: string
+    plate_registry_excluded?: string
+  } | null | undefined,
+  excelOpsRowsPreferred?: ExcelOpsSource,
+  transileInternoSessionRows?: readonly Record<string, unknown>[] | null
+): AnomalyListContext {
   const normalized = String(csv?.external_movimientos_contrato_normalized ?? '').trim()
   const excelOps =
     excelOpsHasData(excelOpsRowsPreferred) ? excelOpsRowsPreferred
     : String(csv?.excel_operations_with_truckflow ?? '').trim()
   const hasExcel = Boolean(normalized || excelOpsHasData(excelOps))
-  if (!hasExcel) {
-    return { excelPlates: null }
-  }
   const excelPlates =
-    normalized ?
-      collectNormalizedPlatesFromCsv(normalized)
+    !hasExcel ? null
+    : normalized ? collectNormalizedPlatesFromCsv(normalized)
     : collectNormalizedPlatesFromExcelOps(excelOps)
   const excludedRegistryPlates = collectNormalizedPlatesFromCsv(csv?.plate_registry_excluded)
-  return { excelPlates, excludedRegistryPlates }
+  const transileExcludedPlates = collectTransileInternoExcludedPlates(transileInternoSessionRows)
+  return { excelPlates, excludedRegistryPlates, transileExcludedPlates }
 }
 
 function collectNormalizedPlatesFromExcelOps(source: ExcelOpsSource): Set<string> {
@@ -2158,8 +2285,11 @@ export function buildAnomalySequenceBreakdown(
 }
 
 /**
- * Listado de anomalías = Truckflow sin Excel (≥2 evt), excluyendo transile y flota servicio.
- * Sin Excel cargado (`excelPlates: null`) el listado queda vacío.
+ * Anomalías por recorrido. Corridas nuevas: `listedAnomalyCount` = comportamiento
+ * real (`classifyAnomaly` → BEHAVIORAL) e `incompleteCount` = huecos de datos
+ * (DATA_COVERAGE). Corridas viejas/tests (sin anomaly_kind): heurística legacy
+ * "Truckflow ≥ minEvents fuera del Excel", incompletos por < minEvents.
+ * En ambos casos transile y flota servicio quedan excluidos.
  */
 export function buildAnomalyReviewSummary(
   entries: CircuitClassificationEntry[],
@@ -2167,7 +2297,11 @@ export function buildAnomalyReviewSummary(
 ): AnomalyReviewSummary {
   const minEvents = ctx.minEvents ?? ANOMALY_LIST_MIN_EVENTS
   const pool = entries.filter((e) => isAnomalyListPoolEntry(e, ctx))
-  const incompleteCount = pool.filter((e) => e.usefulEventsCount < minEvents).length
+  const incompleteCount = pool.filter((e) =>
+    e.anomalyKind !== undefined ?
+      e.anomalyKind === 'DATA_COVERAGE'
+    : e.usefulEventsCount < minEvents
+  ).length
   const sequenceRows = buildAnomalySequenceBreakdown(entries, minEvents, ctx)
   const listedAnomalyCount = sequenceRows.reduce((acc, r) => acc + r.count, 0)
   return { incompleteCount, sequenceRows, listedAnomalyCount }

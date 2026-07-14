@@ -13,6 +13,7 @@ import {
   buildCommitteeCircuitCrossTab,
   buildSuspiciousDischargeWithoutBalanza,
   buildSuspiciousSlExitRicReturn,
+  collectSuspiciousExcludedPlates,
   rebuildCircuitClassificationIndex,
   filterEntriesByMinTruckflowCrossings,
   ANOMALY_LIST_MIN_EVENTS,
@@ -798,22 +799,28 @@ export function TransformEtlTab() {
     () =>
       buildAnomalyListContextFromTransformCsv(
         tr?.csv,
-        tr?.tables?.excel_operations_with_truckflow?.rows
+        tr?.tables?.excel_operations_with_truckflow?.rows,
+        tr?.tables?.transile_interno_volcable_sessions?.rows
       ),
     [
       tr?.csv?.external_movimientos_contrato_normalized,
       tr?.csv?.excel_operations_with_truckflow,
       tr?.csv?.plate_registry_excluded,
       tr?.tables?.excel_operations_with_truckflow,
+      tr?.tables?.transile_interno_volcable_sessions,
     ]
   )
   const anomalyReview = useMemo(
     () => buildAnomalyReviewSummary(filteredEntriesForAnomalies, anomalyListCtx),
     [filteredEntriesForAnomalies, anomalyListCtx]
   )
+  const suspiciousExcludedPlates = useMemo(
+    () => collectSuspiciousExcludedPlates(filteredEntriesForAnomalies, anomalyListCtx),
+    [filteredEntriesForAnomalies, anomalyListCtx]
+  )
   const suspiciousDischargeRows = useMemo(
-    () => buildSuspiciousDischargeWithoutBalanza(filteredEntriesForAnomalies),
-    [filteredEntriesForAnomalies]
+    () => buildSuspiciousDischargeWithoutBalanza(filteredEntriesForAnomalies, anomalyListCtx),
+    [filteredEntriesForAnomalies, anomalyListCtx]
   )
   const suspiciousSlRicAllowedJourneyIds = useMemo(() => {
     if (!executiveProductFilterActive || !executiveProductFilterPlan) return null
@@ -823,8 +830,9 @@ export function TransformEtlTab() {
     () =>
       buildSuspiciousSlExitRicReturn(wb?.events ?? [], {
         allowedJourneyIds: suspiciousSlRicAllowedJourneyIds,
+        excludedPlates: suspiciousExcludedPlates,
       }),
-    [wb?.events, suspiciousSlRicAllowedJourneyIds]
+    [wb?.events, suspiciousSlRicAllowedJourneyIds, suspiciousExcludedPlates]
   )
   const suspiciousTotalCount = suspiciousDischargeRows.length + suspiciousSlRicRows.length
   const totalAnomalies = useMemo(

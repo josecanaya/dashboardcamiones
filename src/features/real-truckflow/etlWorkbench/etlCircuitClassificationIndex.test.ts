@@ -8,6 +8,7 @@ import {
   buildSuspiciousDischargeWithoutBalanza,
   committeeChartExportCsv,
   collectNormalizedPlatesFromCsv,
+  collectTransileInternoExcludedPlates,
   filterEntriesByMinTruckflowCrossings,
   isListedAnomalyCandidate,
   isTransileExcludedFromAnomalyList,
@@ -160,6 +161,88 @@ describe('etlCircuitClassificationIndex anomalías', () => {
       excludedRegistryPlates: new Set(['ABC123']),
     }
     expect(buildAnomalyReviewSummary([entry({ usefulEventsCount: 5 })], ctx).listedAnomalyCount).toBe(0)
+  })
+
+  describe('corridas nuevas con anomaly_kind (clasificador de comportamiento)', () => {
+    it('lista solo BEHAVIORAL; separa DATA_COVERAGE en incompleteCount', () => {
+      const summary = buildAnomalyReviewSummary(
+        [
+          entry({
+            journeyId: 'beh',
+            plate: 'B1',
+            normalizedPlate: 'B1',
+            anomalyKind: 'BEHAVIORAL',
+            anomalyKindReason: 'RETROCESO_SECUENCIA',
+            detectedSequence: 'INGRESO>PREINGRESO>EGRESO>INGRESO',
+          }),
+          entry({
+            journeyId: 'data',
+            plate: 'D1',
+            normalizedPlate: 'D1',
+            anomalyKind: 'DATA_COVERAGE',
+            anomalyKindReason: 'EVENTOS_INSUFICIENTES',
+            detectedSequence: 'INGRESO',
+          }),
+          entry({
+            journeyId: 'ok',
+            plate: 'O1',
+            normalizedPlate: 'O1',
+            anomalyKind: 'NONE',
+            detectedSequence: 'INGRESO>PREINGRESO>CALADA>EGRESO',
+          }),
+        ],
+        excelLoadedEmpty
+      )
+      expect(summary.listedAnomalyCount).toBe(1)
+      expect(summary.sequenceRows[0]!.trucks[0]!.journeyId).toBe('beh')
+      expect(summary.incompleteCount).toBe(1)
+    })
+
+    it('BEHAVIORAL aparece aunque no haya Excel cargado', () => {
+      const summary = buildAnomalyReviewSummary([
+        entry({ anomalyKind: 'BEHAVIORAL', detectedSequence: 'INGRESO>EGRESO>INGRESO' }),
+      ])
+      expect(summary.listedAnomalyCount).toBe(1)
+    })
+
+    it('excluye BEHAVIORAL cuya patente es transile interno de sesión', () => {
+      const ctx: AnomalyListContext = {
+        excelPlates: null,
+        transileExcludedPlates: new Set(['TR1']),
+      }
+      const summary = buildAnomalyReviewSummary(
+        [
+          entry({ journeyId: 't', plate: 'TR1', normalizedPlate: 'TR1', anomalyKind: 'BEHAVIORAL' }),
+          entry({ journeyId: 'x', plate: 'XX9', normalizedPlate: 'XX9', anomalyKind: 'BEHAVIORAL' }),
+        ],
+        ctx
+      )
+      expect(summary.listedAnomalyCount).toBe(1)
+      expect(summary.sequenceRows[0]!.trucks[0]!.journeyId).toBe('x')
+    })
+
+    it('registry excluye BEHAVIORAL también', () => {
+      const ctx: AnomalyListContext = {
+        excelPlates: null,
+        excludedRegistryPlates: new Set(['SRV1']),
+      }
+      const summary = buildAnomalyReviewSummary(
+        [entry({ plate: 'SRV1', normalizedPlate: 'SRV1', anomalyKind: 'BEHAVIORAL' })],
+        ctx
+      )
+      expect(summary.listedAnomalyCount).toBe(0)
+    })
+  })
+
+  it('collectTransileInternoExcludedPlates toma solo sesiones inferred=true', () => {
+    const set = collectTransileInternoExcludedPlates([
+      { patente: 'AA1', inferred_transile_interno: 'true' },
+      { patente: 'BB2', inferred_transile_interno: 'false' },
+      { patente: 'CC3', inferred_transile_interno: 'true' },
+    ])
+    expect(set.has('AA1')).toBe(true)
+    expect(set.has('CC3')).toBe(true)
+    expect(set.has('BB2')).toBe(false)
   })
 
   it('arma contexto desde CSV de transform', () => {

@@ -2170,6 +2170,8 @@ export async function runEtlTransform(
       missing_key_cameras: committee.missing_key_cameras,
       final_status_legacy: legacyFinalStatus,
       executive_bucket: executive.bucket,
+      anomaly_kind: committee.anomaly_kind ?? 'NONE',
+      anomaly_kind_reason: committee.anomaly_kind_reason ?? '',
     })
   }
   profileAt = etlProfileMark(profiler, 'classifyCircuits', profileAt)
@@ -2615,6 +2617,8 @@ export async function runEtlTransform(
     'missing_key_cameras',
     'final_status_legacy',
     'executive_bucket',
+    'anomaly_kind',
+    'anomaly_kind_reason',
   ] as const
   const DEBUG_MATRIX_EMPTY_CSV =
     'journey_id,plate,site,detected_sequence,matched_circuit_code,executive_circuit_code,executive_circuit_label,technical_matched_circuit_code,expected_sequence,matrix_final_status,executive_status,executive_reason,valid_detail,matrix_reason,sequence_respected,coverage_percent,has_strong_point,enabled_for_classification,sequence_configured,matrix_missing_points,matrix_confidence,useful_events_count,final_status_legacy,executive_bucket\n'

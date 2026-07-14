@@ -21,7 +21,7 @@ exports[`etlGoldenMaster > congela hash de cada CSV de salida en fixture S 1`] =
   "camera_lpr_status": "1cb0d735dc38c762",
   "classified_circuits": "a14ba89c47133c02",
   "clean_journeys": "d4aa260e9e36debd",
-  "debug_matrix_classification": "3c9e923329938f46",
+  "debug_matrix_classification": "ea73d68b976c1749",
   "final_circuits": "ac0ef525d134a04d",
   "front_alerts": "4074406f458fa402",
   "front_events": "4eb36774ffbe5a77",
