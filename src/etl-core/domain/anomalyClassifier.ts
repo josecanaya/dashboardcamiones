@@ -34,6 +34,14 @@ export type AnomalyReason =
   | 'ARRANQUE_INVALIDO'
   /** La secuencia observada retrocede / contradice el circuito esperado. */
   | 'RETROCESO_SECUENCIA'
+  /** Regla de oro G1: SL→Ric ≤30 min sin pellet. */
+  | 'SL_RIC_VUELTA_RAPIDA_NO_PELLET'
+  /** Regla de oro G2: Calada→Preingreso <20 min. */
+  | 'REGRESION_CALADA_PREINGRESO'
+  /** Regla de oro G3: skip de hito + lapso extremo entre flanqueantes. */
+  | 'SKIP_PUNTO_LAPSO_EXTREMO'
+  /** Regla de oro G4: Ric→SL >30 min. */
+  | 'RIC_SL_DEMORA'
   // --- DATA_COVERAGE ---
   /** Muy pocos eventos útiles para evaluar (ruido / captura parcial). */
   | 'EVENTOS_INSUFICIENTES'
@@ -126,6 +134,24 @@ export function classifyAnomaly(input: ClassifyAnomalyInput): AnomalyVerdict {
 /** True si el verdicto debe contar como anomalía real del camión (panel comité). */
 export function isBehavioralAnomaly(verdict: AnomalyVerdict): boolean {
   return verdict.kind === 'BEHAVIORAL'
+}
+
+/**
+ * Las reglas de oro (comportamiento temporal) ganan sobre NONE / DATA_COVERAGE.
+ * No pisan alertas duras ya BEHAVIORAL (ruta/arranque inválido).
+ */
+export function applyGoldenAnomalyOverride(
+  base: AnomalyVerdict,
+  goldenReason: AnomalyReason | null | undefined
+): AnomalyVerdict {
+  if (!goldenReason) return base
+  if (
+    base.kind === 'BEHAVIORAL' &&
+    (base.reason === 'RUTA_INVALIDA' || base.reason === 'ARRANQUE_INVALIDO')
+  ) {
+    return base
+  }
+  return { kind: 'BEHAVIORAL', reason: goldenReason }
 }
 
 function normUpper(v: unknown): string {

@@ -123,8 +123,8 @@ export type SanLorenzoEgressRicardoneReturnHint = {
   journeyUidAtReturn: string
 }
 
-/** Ventana operativa típica: vuelta imposible Ricardone tras salida San Lorenzo. */
-export const SL_EGRESS_RIC_RETURN_WINDOW_MS_DEFAULT = 40 * 60 * 1000
+/** Ventana operativa: vuelta imposible Ricardone tras salida San Lorenzo (reglas de oro = 30 min). */
+export const SL_EGRESS_RIC_RETURN_WINDOW_MS_DEFAULT = 30 * 60 * 1000
 
 /**
  * Salida San Lorenzo (egreso o balanza salida) seguida de ingreso/preingreso/calada Ricardone,

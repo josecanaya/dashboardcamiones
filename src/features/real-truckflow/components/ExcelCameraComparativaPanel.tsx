@@ -131,6 +131,14 @@ export function ExcelCameraComparativaPanel({
     [active]
   )
 
+  const circuitDepthByCode = useMemo(() => {
+    const map = new Map<string, ReturnType<typeof buildCalibrationDashboardModel>>()
+    for (const c of effectiveReport?.circuits ?? []) {
+      map.set(c.circuitCode, buildCalibrationDashboardModel(c))
+    }
+    return map
+  }, [effectiveReport])
+
   const missedRows = useMemo(() => {
     const all = active?.calibration.missedPlatesByCamera ?? []
     if (missedDeviceFilter === 'all') return all
@@ -260,18 +268,19 @@ export function ExcelCameraComparativaPanel({
         />
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
         {RAW_AUDIT_CIRCUIT_CODES.map((code) => {
           const c = effectiveReport.circuits.find((x) => x.circuitCode === code)
           const n = c?.excelCamiones ?? 0
           const selected = active.circuitCode === code
+          const depth = circuitDepthByCode.get(code)?.pointDepth
           return (
             <button
               key={code}
               type="button"
               disabled={n === 0}
               onClick={() => setCircuit(code)}
-              className="rounded-full px-3 py-1.5 text-sm font-bold transition"
+              className="rounded-xl px-3 py-2.5 text-left transition"
               style={{
                 background: selected ? BLUE : '#fff',
                 color: selected ? '#fff' : n === 0 ? '#94a3b8' : '#1e293b',
@@ -279,7 +288,27 @@ export function ExcelCameraComparativaPanel({
                 opacity: n === 0 ? 0.5 : 1,
               }}
             >
-              {code} · {n}
+              <div className="text-sm font-bold">
+                {code} · {n}
+              </div>
+              {depth ?
+                <div
+                  className="mt-1.5 space-y-0.5 text-[11px] leading-snug"
+                  style={{ color: selected ? 'rgba(255,255,255,0.88)' : '#64748b' }}
+                >
+                  <div>
+                    Todos los puntos:{' '}
+                    <span className="font-semibold tabular-nums">{depth.allPoints}</span>
+                  </div>
+                  <div>
+                    Todos excepto descarga:{' '}
+                    <span className="font-semibold tabular-nums">{depth.allExceptDescarga}</span>
+                  </div>
+                  <div>
+                    En 3 puntos: <span className="font-semibold tabular-nums">{depth.exactly3Points}</span>
+                  </div>
+                </div>
+              : <div className="mt-1.5 text-[11px]">Sin datos</div>}
             </button>
           )
         })}

@@ -1,7 +1,6 @@
 import type { RealJourneyEventDto } from '../../../services/realJourneyEvents.types'
 import {
   detectSanLorenzoEgressToRicardoneReturnFromEvents,
-  SL_EGRESS_RIC_RETURN_WINDOW_MS_DEFAULT,
 } from '../../../services/realPlateAudit'
 import { recordsToCsv } from './etlCsv'
 import { parseCsvToRecords } from './etlCsvParse'
@@ -26,6 +25,12 @@ import {
 } from './finalCircuitScoring'
 import { ensureArgentinaOffsetIso, operationalDayKeyFromIso } from './etlTimestampNormalize'
 import type { AnomalyKind } from '../../../etl-core/domain/anomalyClassifier'
+import {
+  GOLDEN_SL_RIC_MAX_MS,
+  isGoldenAnomalyReason,
+  isPelletCircuitCode,
+  PELLET_TRANSILE_CIRCUIT_CODES,
+} from '../../../etl-core/domain/goldenAnomalyRules'
 
 /** Fuente de matriz de clasificación: CSV legacy o filas TypedTable (Fase 2). */
 export type DebugMatrixSource = string | readonly Record<string, unknown>[] | null | undefined
@@ -166,10 +171,11 @@ export type CommitteeCircuitCrossTabRow = {
   code: string
   label: string
   displayLabel: string
-  /** Solo completos + variaciones (anomalías van al panel por recorrido). */
+  /** Solo completos + variaciones (el total de la fila sigue siendo circuito válido). */
   total: number
   completos: number
   variaciones: number
+  /** Anomalías de oro (BEHAVIORAL G*) que mantienen este circuito. */
   anomalias: number
   pctCompletos: number
   pctVariaciones: number
@@ -1951,6 +1957,32 @@ export function isExcludedFromSuspiciousList(
 }
 
 /**
+ * Patentes a excluir del panel SL→Ric (solo pellet / R30–R32), según plan reglas de oro.
+ * No excluye el resto de transile externo (soja/girasol sí pueden ser anomalía).
+ */
+export function collectPelletExcludedPlates(
+  entries: CircuitClassificationEntry[],
+  ctx: AnomalyListContext = { excelPlates: null }
+): Set<string> {
+  const set = new Set<string>()
+  for (const e of entries) {
+    if (
+      !isPelletCircuitCode(e.executiveCircuitCode) &&
+      !isPelletCircuitCode(e.matchedCircuitCode) &&
+      !PELLET_TRANSILE_CIRCUIT_CODES.has(String(e.executiveCircuitCode ?? '').trim().toUpperCase())
+    ) {
+      continue
+    }
+    const plate = normalizePlate(e.normalizedPlate || e.plate)
+    if (plate) set.add(plate)
+  }
+  // Registry sigue excluida en sospechosos vía collectSuspiciousExcludedPlates legacy;
+  // aquí solo pellet.
+  void ctx
+  return set
+}
+
+/**
  * Conjunto de patentes normalizadas a excluir de paneles de sospechosos basados
  * en eventos crudos (p. ej. SL → Ricardone), donde no se dispone del entry para
  * evaluar transile. Combina Excel + registry (Supabase) + patentes transile.
@@ -2030,18 +2062,18 @@ function journeyUidMatchesFilter(uid: string, allowed: Set<string>): boolean {
   return base !== '' && allowed.has(base)
 }
 
-/** Misma ventana que auditoría de patentes (40 min por defecto). */
+/** Misma ventana que reglas de oro G1 (30 min por defecto). */
 export function buildSuspiciousSlExitRicReturn(
   events: RealJourneyEventDto[],
   opts?: {
     windowMs?: number
     allowedJourneyIds?: Set<string> | null
-    /** Patentes (normalizadas) a excluir: transile / registry Supabase / Excel. */
+    /** Patentes (normalizadas) a excluir: pellet / registry. */
     excludedPlates?: Set<string> | null
   }
 ): SuspiciousSlExitRicReturnRow[] {
   if (!events.length) return []
-  const windowMs = opts?.windowMs ?? SL_EGRESS_RIC_RETURN_WINDOW_MS_DEFAULT
+  const windowMs = opts?.windowMs ?? GOLDEN_SL_RIC_MAX_MS
   const allowed = opts?.allowedJourneyIds
   const excludedPlates = opts?.excludedPlates
   const hints = detectSanLorenzoEgressToRicardoneReturnFromEvents(events, windowMs)
@@ -2127,6 +2159,8 @@ export function isTransileExcludedFromAnomalyList(entry: CircuitClassificationEn
  * Exclusiones duras del listado de anomalías: transile (interno/externo, por
  * código/razón o por patente de sesión inferida) y flota registry con
  * excludeFromAnalytics. Aplican tanto al camino de comportamiento como al legacy.
+ * Excepción: reglas de oro (`anomalyKindReason` G*) se listan aunque el circuito
+ * sea transile externo no-pellet (p. ej. SL→Ric rápido en soja).
  */
 function isHardExcludedFromAnomalyList(
   entry: CircuitClassificationEntry,
@@ -2134,6 +2168,11 @@ function isHardExcludedFromAnomalyList(
   plate: string
 ): boolean {
   if (plate && ctx.excludedRegistryPlates?.has(plate)) return true
+  if (isGoldenAnomalyReason(entry.anomalyKindReason)) {
+    return (
+      isPelletCircuitCode(entry.executiveCircuitCode) || isPelletCircuitCode(entry.matchedCircuitCode)
+    )
+  }
   if (plate && ctx.transileExcludedPlates?.has(plate)) return true
   if (isTransileExcludedFromAnomalyList(entry)) return true
   return false
@@ -2538,7 +2577,14 @@ export function buildCommitteeCircuitCrossTab(
       bucket.variaciones++
       bucket.trucksVariaciones.push(entry)
     }
-    // Anomalías: no se asignan a filas de circuito (ver buildAnomalySequenceBreakdown).
+    // Reglas de oro: se contabilizan bajo el circuito asignado (dual visibilidad).
+    if (
+      entry.anomalyKind === 'BEHAVIORAL' &&
+      isGoldenAnomalyReason(entry.anomalyKindReason)
+    ) {
+      bucket.anomalias++
+      bucket.trucksAnomalias.push(entry)
+    }
     byCode.set(code, bucket)
   }
 
@@ -2556,6 +2602,7 @@ export function buildCommitteeCircuitCrossTab(
     }
   ) => {
     const total = data.completos + data.variaciones
+    if (total <= 0 && data.anomalias <= 0) return
     if (total <= 0) return
     const cfg = EXECUTIVE_CIRCUIT_MATRIX[code]
     const label = cfg?.label ?? data.label ?? code
@@ -2566,13 +2613,13 @@ export function buildCommitteeCircuitCrossTab(
       total,
       completos: data.completos,
       variaciones: data.variaciones,
-      anomalias: 0,
+      anomalias: data.anomalias,
       pctCompletos: Math.round((data.completos / total) * 1000) / 10,
       pctVariaciones: Math.round((data.variaciones / total) * 1000) / 10,
-      pctAnomalias: 0,
+      pctAnomalias: Math.round((data.anomalias / total) * 1000) / 10,
       trucksCompletos: sortDrilldownEntries(data.trucksCompletos),
       trucksVariaciones: sortDrilldownEntries(data.trucksVariaciones),
-      trucksAnomalias: [],
+      trucksAnomalias: sortDrilldownEntries(data.trucksAnomalias),
     })
   }
 

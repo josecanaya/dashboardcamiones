@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { classifyAnomaly, isBehavioralAnomaly, type ClassifyAnomalyInput } from './anomalyClassifier'
+import {
+  applyGoldenAnomalyOverride,
+  classifyAnomaly,
+  isBehavioralAnomaly,
+  type ClassifyAnomalyInput,
+} from './anomalyClassifier'
 
 const base: ClassifyAnomalyInput = {
   matrixFinalStatus: 'COMPLETO',
@@ -16,7 +21,7 @@ describe('classifyAnomaly', () => {
         ...base,
         matrixFinalStatus: 'INCOMPLETO',
         executiveStatus: 'NO_EVALUABLE',
-        frontEventCount: 1, // aun con datos pobres, la ruta inválida es comportamiento
+        frontEventCount: 1,
         hasInvalidRouteOperationalAlert: true,
       })
       expect(v).toEqual({ kind: 'BEHAVIORAL', reason: 'RUTA_INVALIDA' })
@@ -50,8 +55,8 @@ describe('classifyAnomaly', () => {
     it('executive NO_EVALUABLE → COBERTURA_INSUFICIENTE (sacado de anómalo)', () => {
       const v = classifyAnomaly({
         ...base,
-        matrixFinalStatus: 'ANOMALO', // matriz gritaría anomalía...
-        executiveStatus: 'NO_EVALUABLE', // ...pero no hay cobertura para afirmarlo
+        matrixFinalStatus: 'ANOMALO',
+        executiveStatus: 'NO_EVALUABLE',
       })
       expect(v).toEqual({ kind: 'DATA_COVERAGE', reason: 'COBERTURA_INSUFICIENTE' })
     })
@@ -87,6 +92,21 @@ describe('classifyAnomaly', () => {
         executiveStatus: 'NO_EVALUABLE',
       })
       expect(v.kind).toBe('DATA_COVERAGE')
+    })
+  })
+
+  describe('applyGoldenAnomalyOverride', () => {
+    it('promueve NONE a BEHAVIORAL con razón de oro', () => {
+      expect(applyGoldenAnomalyOverride({ kind: 'NONE', reason: null }, 'RIC_SL_DEMORA')).toEqual({
+        kind: 'BEHAVIORAL',
+        reason: 'RIC_SL_DEMORA',
+      })
+    })
+
+    it('no pisa RUTA_INVALIDA', () => {
+      expect(
+        applyGoldenAnomalyOverride({ kind: 'BEHAVIORAL', reason: 'RUTA_INVALIDA' }, 'RIC_SL_DEMORA')
+      ).toEqual({ kind: 'BEHAVIORAL', reason: 'RUTA_INVALIDA' })
     })
   })
 })

@@ -50,7 +50,7 @@ import {
   resolveFlexibleDischargeExecutiveCircuit,
   resolveFlexibleDischargePreliminaryCode,
 } from './finalCircuitScoring'
-import { resolveCommitteeClassification } from './committeeClassification'
+import { resolveCommitteeClassification, buildGoldenTimelineFromJourney } from './committeeClassification'
 import { type ClassifiedJourneyForTiming } from './etlSegmentTiming'
 import type { CircuitTimingIndex } from './etlCircuitTiming'
 import type { SegmentTimingIndex } from './etlSegmentTiming'
@@ -1709,6 +1709,22 @@ export async function runEtlTransform(
   const execSeqCache = new Map<string, ReturnType<typeof journeyDeviceSectorLogical>>()
   const execCollapsedCache = new Map<string, string[]>()
 
+  /** Timeline por patente para reglas de oro G1/G4 (cruza journeys). */
+  const plateGoldenTimeline = new Map<string, ReturnType<typeof buildGoldenTimelineFromJourney>>()
+  for (const j of journeysForExecutive) {
+    const plate = String(j.normalizedPlate || j.plate || '').trim().toUpperCase()
+    if (!plate) continue
+    const pts = buildGoldenTimelineFromJourney(j)
+    const prev = plateGoldenTimeline.get(plate) ?? []
+    plateGoldenTimeline.set(plate, prev.concat(pts))
+  }
+  for (const [plate, pts] of plateGoldenTimeline) {
+    plateGoldenTimeline.set(
+      plate,
+      [...pts].sort((a, b) => a.t - b.t)
+    )
+  }
+
   let executiveJourneyPass = 0
   for (const mj of journeysForExecutive) {
     if (++executiveJourneyPass % 40 === 0) await yieldToBrowser()
@@ -1866,6 +1882,15 @@ export async function runEtlTransform(
       matrixConfidence: matrixClassification.confidence,
       hasInvalidRouteOperationalAlert: operationalAlertAgg.hasInvalidRoute,
       hasInvalidJourneyStartOperationalAlert: operationalAlertAgg.hasInvalidJourneyStart,
+      plateTimelinePoints: (() => {
+        const plate = String(mj.normalizedPlate || mj.plate || '').trim().toUpperCase()
+        return plate ? plateGoldenTimeline.get(plate) : undefined
+      })(),
+      expectedLogicalSequence:
+        matrixClassification.matchedCircuitCode ?
+          DEFAULT_CIRCUIT_MATRIX[matrixClassification.matchedCircuitCode]
+        : undefined,
+      missingExpectedPoints: matrixClassification.missingPoints,
     })
     executiveCircuit = {
       executiveStatus: committee.executive_status,

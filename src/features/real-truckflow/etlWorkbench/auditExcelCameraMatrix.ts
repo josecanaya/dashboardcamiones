@@ -471,6 +471,68 @@ export function countRowCapturePoints(row: CameraMatrixRow, circuitCode: string)
   return steps.filter((s) => row.captures[s.key]).length
 }
 
+/** Hitos que ensucian conclusiones generales del cuadro de calibración (no se usan en KPIs/brief). */
+export const CALIBRATION_GENERAL_EXCLUDED_STEP_KEYS = new Set(['balanza_egreso_slz'])
+
+/** Puntos de “descarga” por circuito (Celda 16 / Volcable). */
+export const DESCARGA_CAMERA_STEP_KEYS = new Set(['celda16_descarga', 'volcable'])
+
+export function getCalibrationAnalysisSteps(circuitCode: string): readonly ExcelCameraStep[] {
+  return getExcelCameraStepsForCircuit(circuitCode).filter(
+    (s) => !CALIBRATION_GENERAL_EXCLUDED_STEP_KEYS.has(s.key)
+  )
+}
+
+export function countRowCapturePointsForCalibration(
+  row: CameraMatrixRow,
+  circuitCode: string
+): number {
+  return getCalibrationAnalysisSteps(circuitCode).filter((s) => row.captures[s.key]).length
+}
+
+export type PointCaptureDepthSummary = {
+  total: number
+  /** Camiones con todos los hitos de análisis capturados. */
+  allPoints: number
+  /** Todos los hitos de análisis excepto descarga (celda16/volcable). */
+  allExceptDescarga: number
+  /** Exactamente 3 hitos de análisis capturados. */
+  exactly3Points: number
+  analysisStepCount: number
+  descargaStepKeys: string[]
+}
+
+/** Profundidad de lectura por camión (usa hitos de calibración, sin balanza egreso SL). */
+export function summarizePointCaptureDepth(
+  circuitCode: string,
+  rows: CameraMatrixRow[]
+): PointCaptureDepthSummary {
+  const steps = getCalibrationAnalysisSteps(circuitCode)
+  const descargaStepKeys = steps
+    .filter((s) => DESCARGA_CAMERA_STEP_KEYS.has(s.key))
+    .map((s) => s.key)
+  const nonDescarga = steps.filter((s) => !DESCARGA_CAMERA_STEP_KEYS.has(s.key))
+  let allPoints = 0
+  let allExceptDescarga = 0
+  let exactly3Points = 0
+  for (const row of rows) {
+    const n = steps.filter((s) => row.captures[s.key]).length
+    if (steps.length > 0 && n === steps.length) allPoints += 1
+    if (nonDescarga.length > 0 && nonDescarga.every((s) => row.captures[s.key])) {
+      allExceptDescarga += 1
+    }
+    if (n === 3) exactly3Points += 1
+  }
+  return {
+    total: rows.length,
+    allPoints,
+    allExceptDescarga,
+    exactly3Points,
+    analysisStepCount: steps.length,
+    descargaStepKeys,
+  }
+}
+
 export type RouteRecognitionSummary = {
   minPoints: number
   recognizedCount: number
@@ -487,6 +549,21 @@ export function summarizeRouteRecognition(
   const total = rows.length
   const recognizedCount = rows.filter(
     (r) => countRowCapturePoints(r, circuitCode) >= minPoints
+  ).length
+  const recognizedRatePct =
+    total > 0 ? Math.round((recognizedCount / total) * 10000) / 100 : 0
+  return { minPoints, recognizedCount, total, recognizedRatePct }
+}
+
+/** Reconocimiento para el cuadro general de calibración (excluye balanza egreso SL). */
+export function summarizeRouteRecognitionForCalibration(
+  circuitCode: string,
+  rows: CameraMatrixRow[],
+  minPoints = 4
+): RouteRecognitionSummary {
+  const total = rows.length
+  const recognizedCount = rows.filter(
+    (r) => countRowCapturePointsForCalibration(r, circuitCode) >= minPoints
   ).length
   const recognizedRatePct =
     total > 0 ? Math.round((recognizedCount / total) * 10000) / 100 : 0

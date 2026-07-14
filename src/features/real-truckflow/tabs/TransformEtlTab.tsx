@@ -13,7 +13,7 @@ import {
   buildCommitteeCircuitCrossTab,
   buildSuspiciousDischargeWithoutBalanza,
   buildSuspiciousSlExitRicReturn,
-  collectSuspiciousExcludedPlates,
+  collectPelletExcludedPlates,
   rebuildCircuitClassificationIndex,
   filterEntriesByMinTruckflowCrossings,
   ANOMALY_LIST_MIN_EVENTS,
@@ -233,12 +233,17 @@ function AnomalySequenceDrilldown({
           >
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
               <span className="font-mono font-bold text-slate-900">{t.plate || '—'}</span>
-              <span className="text-slate-600">{t.committeeReason || '—'}</span>
               {t.executiveCircuitDisplay ?
-                <span className="text-[10px] text-slate-400" title="Circuito inferido (referencia, no agrupa la anomalía)">
-                  ref. {t.executiveCircuitDisplay}
+                <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-slate-800">
+                  {t.executiveCircuitDisplay}
                 </span>
               : null}
+              {t.anomalyKindReason ?
+                <span className="rounded bg-rose-100 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-rose-900">
+                  {t.anomalyKindReason}
+                </span>
+              : null}
+              <span className="text-slate-600">{t.committeeReason || '—'}</span>
               <span className="font-mono text-[10px] text-slate-400" title={t.journeyId}>
                 {truncateMiddle(t.journeyId, 18)}
               </span>
@@ -259,7 +264,7 @@ function SuspiciousSlExitRicReturnTable({ rows }: { rows: SuspiciousSlExitRicRet
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-[11px] text-slate-600">
           <strong>{rows.length.toLocaleString()}</strong> casos: salida San Lorenzo (egreso o balanza salida) y vuelta a
-          Ricardone (ingreso, preingreso o calada) en <strong>&lt; 40 min</strong> (misma patente).
+          Ricardone (ingreso, preingreso o calada) en <strong>≤ 30 min</strong> (misma patente; excluye pellet).
         </p>
         <button
           type="button"
@@ -629,6 +634,16 @@ function CommitteeCrossTabDrilldown({
           >
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
               <span className="font-mono font-bold text-slate-900">{t.plate || '—'}</span>
+              {t.executiveCircuitDisplay ?
+                <span className="rounded bg-slate-100 px-1 font-mono text-[10px] text-slate-700">
+                  {t.executiveCircuitDisplay}
+                </span>
+              : null}
+              {t.anomalyKindReason ?
+                <span className="rounded bg-rose-100 px-1 font-mono text-[10px] text-rose-900">
+                  {t.anomalyKindReason}
+                </span>
+              : null}
               {t.operationalVariationType ?
                 <span className="rounded bg-sky-100 px-1 font-mono text-[10px] text-sky-800">
                   {t.operationalVariationType}
@@ -817,10 +832,14 @@ export function TransformEtlTab() {
     () => buildAnomalyReviewSummary(filteredEntriesForAnomalies, anomalyListCtx),
     [filteredEntriesForAnomalies, anomalyListCtx]
   )
-  const suspiciousExcludedPlates = useMemo(
-    () => collectSuspiciousExcludedPlates(filteredEntriesForAnomalies, anomalyListCtx),
-    [filteredEntriesForAnomalies, anomalyListCtx]
-  )
+  const suspiciousExcludedPlates = useMemo(() => {
+    const pellet = collectPelletExcludedPlates(filteredEntriesForAnomalies, anomalyListCtx)
+    const registry = anomalyListCtx.excludedRegistryPlates
+    if (!registry?.size) return pellet
+    const merged = new Set(pellet)
+    for (const p of registry) merged.add(p)
+    return merged
+  }, [filteredEntriesForAnomalies, anomalyListCtx])
   const suspiciousDischargeRows = useMemo(
     () => buildSuspiciousDischargeWithoutBalanza(filteredEntriesForAnomalies, anomalyListCtx),
     [filteredEntriesForAnomalies, anomalyListCtx]
@@ -848,8 +867,9 @@ export function TransformEtlTab() {
         total: acc.total + row.total,
         completos: acc.completos + row.completos,
         variaciones: acc.variaciones + row.variaciones,
+        anomaliasOro: acc.anomaliasOro + row.anomalias,
       }),
-      { total: 0, completos: 0, variaciones: 0 }
+      { total: 0, completos: 0, variaciones: 0, anomaliasOro: 0 }
     )
   }, [committeeCrossTab])
   const circuitClassificationRows = useMemo(
@@ -1234,9 +1254,10 @@ export function TransformEtlTab() {
                 </button>
               </div>
               <p className="mt-1 text-xs text-slate-600">
-                Solo <strong>completos</strong> y <strong>variaciones</strong> por circuito R*. Las{' '}
-                <strong>{totalAnomalies.toLocaleString()} anomalías</strong> se analizan abajo por recorrido
-                observado, sin forzarlas a un circuito preseteado.
+                Completos y variaciones por circuito R*. Las{' '}
+                <strong>reglas de oro</strong> (comportamiento) se cuentan en la columna «Anom. oro» bajo el
+                mismo circuito y también en el panel de anomalías abajo (
+                {totalAnomalies.toLocaleString()} listadas).
               </p>
               <div className="mt-3 overflow-x-auto">
                 <table className="min-w-full text-left text-xs">
@@ -1246,6 +1267,7 @@ export function TransformEtlTab() {
                       <th className="py-2 px-2 font-semibold text-right">Total</th>
                       <th className="py-2 px-2 font-semibold text-right text-emerald-700">Completos</th>
                       <th className="py-2 px-2 font-semibold text-right text-sky-700">Variaciones</th>
+                      <th className="py-2 px-2 font-semibold text-right text-rose-700">Anom. oro</th>
                       <th className="py-2 pl-2 font-semibold">Lectura</th>
                     </tr>
                   </thead>
@@ -1289,8 +1311,19 @@ export function TransformEtlTab() {
                                 onClick={() => toggle('variaciones')}
                               />
                             </td>
+                            <td className="py-2 px-2 text-right">
+                              <CrossTabCountButton
+                                count={row.anomalias}
+                                pct={row.pctAnomalias}
+                                colorClass="text-rose-700"
+                                active={isOpen('anomalias')}
+                                onClick={() => toggle('anomalias')}
+                              />
+                            </td>
                             <td className="py-2 pl-2 text-slate-600">
-                              {row.code === 'R7' ?
+                              {row.anomalias > 0 ?
+                                `${row.anomalias.toLocaleString()} regla(s) de oro en este circuito`
+                              : row.code === 'R7' ?
                                 row.variaciones > 0 ?
                                   'Ruta Ric→SL: espera calado / posible rechazo / recalado (cámaras)'
                                 : row.pctCompletos >= 80 ?
@@ -1317,7 +1350,7 @@ export function TransformEtlTab() {
                           </tr>
                           {expandedCrossTab?.code === row.code ?
                             <tr className="border-b border-slate-100 bg-indigo-50/30">
-                              <td colSpan={5} className="px-2 py-2">
+                              <td colSpan={6} className="px-2 py-2">
                                 <CommitteeCrossTabDrilldown
                                   row={row}
                                   category={expandedCrossTab.category}
@@ -1338,8 +1371,11 @@ export function TransformEtlTab() {
                       <td className="py-2 px-2 text-right font-mono tabular-nums text-sky-700">
                         {crossTabTotals.variaciones.toLocaleString()}
                       </td>
+                      <td className="py-2 px-2 text-right font-mono tabular-nums text-rose-700">
+                        {crossTabTotals.anomaliasOro.toLocaleString()}
+                      </td>
                       <td className="py-2 pl-2 text-slate-600">
-                        + {totalAnomalies.toLocaleString()} anomalías (panel abajo)
+                        + {totalAnomalies.toLocaleString()} en panel de anomalías
                       </td>
                     </tr>
                   </tbody>

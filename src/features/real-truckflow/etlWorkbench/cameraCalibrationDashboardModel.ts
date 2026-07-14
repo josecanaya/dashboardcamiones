@@ -8,9 +8,19 @@ import type { Turno } from './operationalTurno'
 import { turnoLabel, TURNOS_OPERATIVOS } from './operationalTurno'
 import type { CameraStepSummary } from './auditExcelCameraMatrix'
 import {
+  CALIBRATION_GENERAL_EXCLUDED_STEP_KEYS,
+  summarizePointCaptureDepth,
+  summarizeRouteRecognitionForCalibration,
+  type PointCaptureDepthSummary,
+} from './auditExcelCameraMatrix'
+import {
   summarizeMissedPlatesByDevice,
   type MissedPlateByCameraRow,
 } from './auditExcelCameraMissedPlates'
+
+function isExcludedFromGeneralCalibration(stepKey: string): boolean {
+  return CALIBRATION_GENERAL_EXCLUDED_STEP_KEYS.has(String(stepKey ?? '').trim())
+}
 
 export type CaptureEstado = 'OK' | 'Revisar' | 'Crítico'
 
@@ -172,6 +182,9 @@ export type CalibrationDashboardModel = {
   minRoutePoints: number
   reconocimientoPct: number
   circuitSubtitle: string
+  /** Conteos de profundidad de lectura (sin balanza egreso SL). */
+  pointDepth: PointCaptureDepthSummary
+  pointDepthLine: string
   hitoRows: HitoCaptureRow[]
   stackedBars: StackedHitoBar[]
   brief: AutoCalibrationBrief
@@ -223,7 +236,9 @@ function buildTurnoCard(
   circuit: CircuitCameraComparativa
 ): TurnoCardModel | null {
   const cal = circuit.calibration
-  const steps = cal.stepByDayNight.filter((s) => s.dayNight === turno)
+  const steps = cal.stepByDayNight.filter(
+    (s) => s.dayNight === turno && !isExcludedFromGeneralCalibration(s.stepKey)
+  )
   if (!steps.length) return null
 
   const seg = cal.recognitionByDayNight.filter((r) => r.dayNight === turno)
@@ -237,7 +252,9 @@ function buildTurnoCard(
     : 0
 
   const worstStep = [...steps].sort((a, b) => a.captureRatePct - b.captureRatePct)[0]
-  const devices = cal.deviceByStep.filter((d) => d.dayNight === turno)
+  const devices = cal.deviceByStep.filter(
+    (d) => d.dayNight === turno && !isExcludedFromGeneralCalibration(d.stepKey)
+  )
   const worstDev = [...devices]
     .filter((d) => d.trucksMissingStep > 0)
     .sort((a, b) => b.trucksMissingStep - a.trucksMissingStep)[0]
@@ -257,7 +274,9 @@ function buildTurnoCard(
 
 function buildHitoTurnoCompare(circuit: CircuitCameraComparativa): HitoTurnoCompareRow[] {
   const cal = circuit.calibration
-  const steps = circuit.summaries.map((s) => s.key)
+  const steps = circuit.summaries
+    .map((s) => s.key)
+    .filter((k) => !isExcludedFromGeneralCalibration(k))
   const rows: HitoTurnoCompareRow[] = []
 
   for (const hito of steps) {
@@ -302,6 +321,7 @@ function buildTopProblems(circuit: CircuitCameraComparativa): TopCalibrationProb
   const total = circuit.excelCamiones
   const devicesPerStep = new Map<string, Set<string>>()
   for (const d of cal.deviceByStep) {
+    if (isExcludedFromGeneralCalibration(d.stepKey)) continue
     const set = devicesPerStep.get(d.stepKey) ?? new Set()
     set.add(d.deviceCode)
     devicesPerStep.set(d.stepKey, set)
@@ -310,6 +330,7 @@ function buildTopProblems(circuit: CircuitCameraComparativa): TopCalibrationProb
   const candidates: TopCalibrationProblem[] = []
   for (const d of cal.deviceByStep) {
     if (d.dayNight === 'unknown') continue
+    if (isExcludedFromGeneralCalibration(d.stepKey)) continue
     const faltantes = d.trucksMissingStep
     if (faltantes <= 0 && d.trucksContributingToCapture <= 0) continue
     const stepRow = circuit.summaries.find((s) => s.key === d.stepKey)
@@ -344,10 +365,10 @@ function buildTopProblems(circuit: CircuitCameraComparativa): TopCalibrationProb
 function buildBrief(
   circuit: CircuitCameraComparativa,
   hitoRows: HitoCaptureRow[],
-  turnoCards: TurnoCardModel[]
+  turnoCards: TurnoCardModel[],
+  recognition: { recognizedRatePct: number; minPoints: number }
 ): AutoCalibrationBrief {
-  const rr = circuit.routeRecognition
-  const reconocimientoGeneralPct = rr.recognizedRatePct
+  const reconocimientoGeneralPct = recognition.recognizedRatePct
   const sorted = [...hitoRows].sort((a, b) => b.porcentajeCaptura - a.porcentajeCaptura)
   const mejor = sorted[0]
   const peor = [...hitoRows].sort((a, b) => a.porcentajeCaptura - b.porcentajeCaptura)[0]
@@ -375,7 +396,7 @@ function buildBrief(
     : 'Sin datos de hitos.'
 
   const parrafos = [
-    `Reconocimiento general del circuito: ${reconocimientoGeneralPct}% con ≥${rr.minPoints} puntos.`,
+    `Reconocimiento general del circuito: ${reconocimientoGeneralPct}% con ≥${recognition.minPoints} puntos (sin balanza egreso SL).`,
     mejor && peor ?
       `Mejor hito: ${mejor.hitoLabel} (${mejor.porcentajeCaptura}%). Peor: ${peor.hitoLabel} (${peor.porcentajeCaptura}%).`
     : '',
@@ -404,6 +425,7 @@ function buildBrief(
 function buildUiRows(circuit: CircuitCameraComparativa): CalibrationUiRow[] {
   const rows: CalibrationUiRow[] = []
   for (const s of circuit.summaries) {
+    if (isExcludedFromGeneralCalibration(s.key)) continue
     const base = summaryToHitoRow(s)
     rows.push({
       circuito: circuit.circuitCode,
@@ -431,6 +453,7 @@ function buildUiRows(circuit: CircuitCameraComparativa): CalibrationUiRow[] {
   }
   for (const d of circuit.calibration.deviceByStep) {
     if (d.dayNight === 'unknown') continue
+    if (isExcludedFromGeneralCalibration(d.stepKey)) continue
     const step = circuit.summaries.find((x) => x.key === d.stepKey)
     const totalExcel = step?.total ?? circuit.excelCamiones
     const sinLectura = d.trucksMissingStep
@@ -463,10 +486,20 @@ function buildUiRows(circuit: CircuitCameraComparativa): CalibrationUiRow[] {
   return rows
 }
 
+function formatPointDepthLine(depth: PointCaptureDepthSummary): string {
+  const descargaNote =
+    depth.descargaStepKeys.length > 0 ?
+      'todos excepto descarga'
+    : 'todos excepto descarga (N/A en este circuito → = todos)'
+  return `${depth.allPoints} en todos los puntos · ${depth.allExceptDescarga} en ${descargaNote} · ${depth.exactly3Points} en 3 puntos`
+}
+
 export function buildCalibrationDashboardModel(
   circuit: CircuitCameraComparativa
 ): CalibrationDashboardModel {
-  const hitoRows = circuit.summaries.map(summaryToHitoRow)
+  const hitoRows = circuit.summaries
+    .filter((s) => !isExcludedFromGeneralCalibration(s.key))
+    .map(summaryToHitoRow)
   const stackedBars = [...hitoRows]
     .sort((a, b) => b.porcentajeSinLectura - a.porcentajeSinLectura)
     .map((r) => ({
@@ -477,20 +510,34 @@ export function buildCalibrationDashboardModel(
   const turnoCards = TURNOS_OPERATIVOS.map((t) => buildTurnoCard(t, circuit)).filter(
     (c): c is TurnoCardModel => c != null
   )
-  const rr = circuit.routeRecognition
+  const minPoints = circuit.routeRecognition.minPoints
+  const rr = summarizeRouteRecognitionForCalibration(
+    circuit.circuitCode,
+    circuit.matrixRows,
+    minPoints
+  )
+  const pointDepth = summarizePointCaptureDepth(circuit.circuitCode, circuit.matrixRows)
+  const pointDepthLine = formatPointDepthLine(pointDepth)
 
-  const missedSummary = summarizeMissedPlatesByDevice(circuit.calibration.missedPlatesByCamera)
+  const missedSummary = summarizeMissedPlatesByDevice(
+    circuit.calibration.missedPlatesByCamera.filter(
+      (r) => !isExcludedFromGeneralCalibration(r.stepKey)
+    )
+  )
   const missedByDevice = missedSummary.map((s) => ({
     deviceCode: s.deviceCode,
     deviceLabel: deviceOperativoLabel(s.deviceCode),
     uniquePlates: s.uniquePlates,
     missedRows: s.missedRows,
   }))
-  const missedPlatesSample = circuit.calibration.missedPlatesByCamera.slice(0, 200).map((r) => ({
-    ...r,
-    deviceLabel: deviceOperativoLabel(r.deviceCode),
-    hitoLabel: hitoOperativoLabel(r.stepKey, r.hitoHeader),
-  }))
+  const missedPlatesSample = circuit.calibration.missedPlatesByCamera
+    .filter((r) => !isExcludedFromGeneralCalibration(r.stepKey))
+    .slice(0, 200)
+    .map((r) => ({
+      ...r,
+      deviceLabel: deviceOperativoLabel(r.deviceCode),
+      hitoLabel: hitoOperativoLabel(r.stepKey, r.hitoHeader),
+    }))
 
   return {
     circuito: circuit.circuitCode,
@@ -499,9 +546,11 @@ export function buildCalibrationDashboardModel(
     minRoutePoints: rr.minPoints,
     reconocimientoPct: rr.recognizedRatePct,
     circuitSubtitle: `${circuit.circuitCode}: ${circuit.excelCamiones} camiones Excel · ${rr.recognizedCount} reconocidos ≥${rr.minPoints} puntos · ${rr.recognizedRatePct}%`,
+    pointDepth,
+    pointDepthLine,
     hitoRows: [...hitoRows].sort((a, b) => b.porcentajeSinLectura - a.porcentajeSinLectura),
     stackedBars,
-    brief: buildBrief(circuit, hitoRows, turnoCards),
+    brief: buildBrief(circuit, hitoRows, turnoCards, rr),
     turnoCards,
     hitoTurnoCompare: buildHitoTurnoCompare(circuit),
     topProblems: buildTopProblems(circuit),

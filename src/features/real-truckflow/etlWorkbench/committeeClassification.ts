@@ -18,7 +18,16 @@ import {
 } from './finalCircuitScoring'
 import { ETL_SL_INTERNAL_CLASSIFICATION_ENABLED, snapshotSanLorenzoSupport } from './etlSanLorenzoSupport'
 import { journeyHasSlIngresoEvidence, journeyIsRicSanLorenzoRouteEvidence, journeyIsSlOnlyInternal, journeyBlocksSl1ExecutiveClassification } from './etlRicSanLorenzoRoute'
-import { classifyAnomaly, type AnomalyKind, type AnomalyReason } from '../../../etl-core/domain/anomalyClassifier'
+import { classifyAnomaly, applyGoldenAnomalyOverride, type AnomalyKind, type AnomalyReason } from '../../../etl-core/domain/anomalyClassifier'
+import {
+  evaluateGoldenAnomalyRules,
+  isGoldenAnomalyReason,
+  isPelletCircuitCode,
+  type GoldenTimelinePoint,
+} from '../../../etl-core/domain/goldenAnomalyRules'
+import { getEventOperationalInstantIso } from '../../../services/liveCameraDiagnostics'
+import { CIRCUIT_CATALOG } from '../../../etl-core/domain/circuitCatalog'
+import { DEFAULT_CIRCUIT_MATRIX } from './finalCircuitScoring'
 
 export const SL_PENDING_KEY_CAMERAS = [
   'SLZBalIngFte',
@@ -1042,24 +1051,101 @@ export type ResolveCommitteeClassificationInput = {
   /** Alertas operativas duras (default false); alimentan `classifyAnomaly`. */
   hasInvalidRouteOperationalAlert?: boolean
   hasInvalidJourneyStartOperationalAlert?: boolean
+  /**
+   * Timeline de la misma patente (puede cruzar journeys). Si falta, G1/G4 usan
+   * solo eventos del journey.
+   */
+  plateTimelinePoints?: readonly GoldenTimelinePoint[]
+  /** Plantilla lógica esperada (matriz). Si falta, se deriva del circuito. */
+  expectedLogicalSequence?: readonly string[]
+  missingExpectedPoints?: readonly string[]
+  /** Excel/producto pellet o circuito R30–R32. */
+  isPelletTransile?: boolean
+}
+
+/** Construye puntos de timeline para reglas de oro desde eventos del journey. */
+export function buildGoldenTimelineFromJourney(j: ReconstructedRealJourney): GoldenTimelinePoint[] {
+  const out: GoldenTimelinePoint[] = []
+  for (const e of j.events) {
+    if (isEtlRearCameraDevice(e.deviceCode)) continue
+    const pt = normalizeRealEventPoint(e)
+    if (pt.logicalCode.includes('TRASERA_EXCLUIDA')) continue
+    const iso = getEventOperationalInstantIso(e) || e.occurredAt
+    const t = new Date(iso).getTime()
+    if (!Number.isFinite(t)) continue
+    out.push({
+      t,
+      logicalCode: pt.logicalCode,
+      siteId: pt.siteId,
+      journeyUid: e.journeyUid || j.journeyUid,
+    })
+  }
+  return out.sort((a, b) => a.t - b.t)
+}
+
+/** Secuencia lógica esperada desde alias del catálogo / matriz DEFAULT. */
+export function expectedLogicalSequenceForExecutiveCircuit(circuitCode: string): string[] {
+  const code = String(circuitCode ?? '').trim().toUpperCase()
+  const entry = CIRCUIT_CATALOG[code]
+  for (const alias of entry?.aliases ?? []) {
+    const seq = DEFAULT_CIRCUIT_MATRIX[alias]
+    if (seq?.length) return [...seq]
+  }
+  if (code === 'R7') {
+    return ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO', 'SL_INGRESO', 'SL_BALANZA_INGRESO', 'SL_EGRESO']
+  }
+  return []
+}
+
+function resolveIsPelletTransile(
+  circuitCode: string,
+  explicit?: boolean
+): boolean {
+  if (explicit === true) return true
+  if (isPelletCircuitCode(circuitCode)) return true
+  const entry = CIRCUIT_CATALOG[String(circuitCode ?? '').trim().toUpperCase()]
+  return entry?.product === 'PELLET'
 }
 
 /**
  * Entrada pública: corre el clasificador comité y le adjunta el eje
- * comportamiento/datos (`anomaly_kind`) desde la fuente única `classifyAnomaly`.
- * No cambia `committee_group` ni `executive_status` — es puramente aditivo.
+ * comportamiento/datos (`anomaly_kind`) desde `classifyAnomaly` + reglas de oro.
+ * No cambia `committee_group` ni borra el circuito ejecutivo — es aditivo.
  */
 export function resolveCommitteeClassification(
   input: ResolveCommitteeClassificationInput
 ): CommitteeClassification {
   const result = resolveCommitteeClassificationCore(input)
-  const verdict = classifyAnomaly({
+  let verdict = classifyAnomaly({
     matrixFinalStatus: input.matrixFinalStatus,
     executiveStatus: result.executive_status,
     hasInvalidRouteOperationalAlert: input.hasInvalidRouteOperationalAlert ?? false,
     hasInvalidJourneyStartOperationalAlert: input.hasInvalidJourneyStartOperationalAlert ?? false,
     frontEventCount: input.frontEventCount,
   })
+
+  const journeyPoints = buildGoldenTimelineFromJourney(input.journey)
+  const expected =
+    input.expectedLogicalSequence?.length ?
+      input.expectedLogicalSequence
+    : expectedLogicalSequenceForExecutiveCircuit(input.executiveCircuitCode)
+  const missing =
+    input.missingExpectedPoints ??
+    input.journey.missingExpectedPoints ??
+    []
+  const goldenHits = evaluateGoldenAnomalyRules({
+    points: journeyPoints,
+    platePoints: input.plateTimelinePoints?.length ? input.plateTimelinePoints : journeyPoints,
+    circuitCode: input.executiveCircuitCode,
+    expectedLogicalSequence: expected,
+    missingExpectedPoints: missing,
+    isPelletTransile: resolveIsPelletTransile(input.executiveCircuitCode, input.isPelletTransile),
+  })
+  const goldenReason = goldenHits[0]?.reason
+  if (goldenReason && isGoldenAnomalyReason(goldenReason)) {
+    verdict = applyGoldenAnomalyOverride(verdict, goldenReason)
+  }
+
   return {
     ...result,
     anomaly_kind: verdict.kind,
