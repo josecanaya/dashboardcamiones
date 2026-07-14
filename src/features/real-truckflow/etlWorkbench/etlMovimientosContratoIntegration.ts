@@ -17,6 +17,10 @@ import {
 import type { ExternalMovimientoContratoNormalized } from './etlExternalMovimientosContrato'
 import { dedupeMovimientosByOperationId } from '../../../etl-core/ingest/dedupeMovimientos'
 import {
+  reconcileMovimientos,
+  movimientosReconciliationCsv,
+} from '../../../etl-core/reports/movimientosReconciliation'
+import {
   filterFinalCsvRowsByJourneyUids,
   filterJourneysForExcelSearch,
   filterRawTruckflowEventsForExcel,
@@ -392,6 +396,34 @@ export async function runMovimientosContratoIntegration(
     `Excel-first descartes: ventana=${dc.rejected_by_time_window}, OCR bajo=${dc.rejected_by_low_ocr_similarity}, fuzzy ambiguo=${dc.rejected_by_ambiguous_fuzzy}, planta(info)=${dc.rejected_by_site_or_plant}, prefilter pool=${dc.candidates_after_prefilter}`
   )
 
+  // Guardia de reconciliación: el ETL nunca puede emitir más operaciones que las
+  // filas del Excel por patente (las cámaras pierden, nunca inventan). Si salta,
+  // hay duplicación/misasignación y queda registrada en logs + CSV.
+  const recon = reconcileMovimientos(
+    normalized.map((m) => ({
+      plate_normalized: m.plate_normalized,
+      external_operation_id: m.external_operation_id,
+    })),
+    excelFirstResult.operations.map((o) => ({
+      plate_normalized: o.plate_normalized,
+      external_operation_id: o.external_operation_id,
+    }))
+  )
+  if (!recon.ok) {
+    const top = recon.violations
+      .slice(0, 8)
+      .map((v) => `${v.plate}(+${v.diff})`)
+      .join(', ')
+    logs.push(
+      `⚠ RECONCILIACIÓN: ${recon.violations.length} patentes emiten más que el Excel` +
+        `${recon.phantomEmittedIds.length ? `, ${recon.phantomEmittedIds.length} ids fantasma` : ''}` +
+        `${recon.crossPlateIds.length ? `, ${recon.crossPlateIds.length} ids en varias patentes` : ''}` +
+        `${top ? ` — ${top}` : ''}`
+    )
+  } else {
+    logs.push(`Reconciliación OK: ${recon.totalEmitted} operaciones ≤ ${recon.totalLoaded} movimientos, sin duplicación`)
+  }
+
   emitContractFirstProgress(onProgress, runStartedAt, {
     step: 'merge_summary',
     label: 'Resumen merge',
@@ -609,6 +641,7 @@ export async function runMovimientosContratoIntegration(
     ),
     ...(skipKpi ? {} : { segment_scatter_sample: segmentScatterSampleCsv(scatter, sampleUids) }),
     excel_operations_with_truckflow: excelOperationsWithTruckflowCsv(excelFirstResult.operations),
+    movimientos_reconciliation: movimientosReconciliationCsv(recon),
     excel_operation_segments_for_scatter: excelOperationSegmentsForScatterCsv(
       excelFirstResult.segmentRows
     ),
