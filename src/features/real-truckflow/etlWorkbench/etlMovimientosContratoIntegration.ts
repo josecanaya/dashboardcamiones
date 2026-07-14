@@ -15,6 +15,7 @@ import {
   type MovimientosContratoFileInput,
 } from './etlExternalMovimientosContrato'
 import type { ExternalMovimientoContratoNormalized } from './etlExternalMovimientosContrato'
+import { dedupeMovimientosByOperationId } from '../../../etl-core/ingest/dedupeMovimientos'
 import {
   filterFinalCsvRowsByJourneyUids,
   filterJourneysForExcelSearch,
@@ -191,6 +192,21 @@ export async function runMovimientosContratoIntegration(
     normalized = enrichMovimientosWithTiemposEntrePasos(normalizedBase, tepLoad.rows)
     if (profiler?.enabled) profiler.mark('normalizeRows', performance.now() - profileAt)
     profileAt = performance.now()
+  }
+
+  // Dedup por operación estable: colapsa solapes de archivos semanales/planta.
+  // Los movimientos sin CTG (aceite/líquido) no se deduplicaban y se inflaba el
+  // conteo (ver [[etl-refactor-plan]] / excelStableOperationId).
+  {
+    const beforeDedup = normalized.length
+    const dedupe = dedupeMovimientosByOperationId(normalized)
+    normalized = dedupe.deduped
+    if (dedupe.duplicatesRemoved > 0) {
+      logs.push(
+        `Dedup movimientos: ${beforeDedup} → ${normalized.length} filas ` +
+          `(${dedupe.duplicatesRemoved} duplicados en ${dedupe.collapsedGroups} operaciones por solape de archivos)`
+      )
+    }
   }
 
   const movStats = summarizeMovimientosContratoLoad(
