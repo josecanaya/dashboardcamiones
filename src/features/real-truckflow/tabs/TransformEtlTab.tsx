@@ -662,7 +662,10 @@ export function TransformEtlTab() {
   const [expandedCrossTab, setExpandedCrossTab] = useState<CrossTabDrilldownKey | null>(null)
   const [expandedAnomalySequence, setExpandedAnomalySequence] = useState<string | null>(null)
   const [executiveProductFilter, setExecutiveProductFilter] = useState(PRODUCT_FILTER_ALL)
-  const [onlyTruckflowValidatedSample, setOnlyTruckflowValidatedSample] = useState(false)
+  // Default ON: la cámara de descarga en Renova repite tomas, así que las
+  // operaciones aceite con <2 cruces Truckflow son ruido (inflan el conteo).
+  // La muestra ≥2 cruces es la realista; el usuario puede desactivarla.
+  const [onlyTruckflowValidatedSample, setOnlyTruckflowValidatedSample] = useState(true)
   const [productFilterPending, startProductFilterTransition] = useTransition()
   const deferredProductFilter = useDeferredValue(executiveProductFilter)
 
