@@ -19,7 +19,6 @@ La etiqueta "anómalo" se decide en **tres** clasificadores que pueden discrepar
 - G2 `REGRESION_CALADA_PREINGRESO` — Calada→Preingreso <20 min
 - G3 `SKIP_PUNTO_LAPSO_EXTREMO` — falta hito esperado + gap flanqueante >4 h
 - G4 `RIC_SL_DEMORA` — Ric EGRESO→SL_INGRESO >30 min
+- G5 `SIN_MOVIMIENTO_EXCEL` — entrada+salida (Ric o SL) y patente+día ausente de Movimientos; stamped en UI v1 (`stampMissingExcelAnomalies`)
 
-**Doctrina dual:** el journey **conserva** su circuito R*; las reglas de oro solo setean `anomaly_kind=BEHAVIORAL` (vía `applyGoldenAnomalyOverride` en `resolveCommitteeClassification`). Cross-tab muestra columna «Anom. oro» bajo el mismo R*; el panel de anomalías lista esos journeys con circuito + reason.
-
-**No confundir:** cobertura LPR insuficiente → `DATA_COVERAGE` (incompletos). Reglas de oro → comportamiento aunque el circuito esté completo.
+Excel «De la vuelta»=SI → excluida de anomalías / sospechosos SL→Ric.
