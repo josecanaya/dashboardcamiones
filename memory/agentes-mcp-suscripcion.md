@@ -18,4 +18,8 @@ metadata:
 
 **Requisito runtime:** el ETL API debe estar arriba (`node server/truckflow-local-server.mjs`, puerto 8787); el MCP compone llamadas HTTP a ese server vía `ETL_API_BASE`.
 
-**Pendiente (Decisión #2):** el chat web embebido `server/etl-agent-chat.mjs` (+ UI `src/features/real-truckflow/api/etlAgentApi.ts`) quedó **@deprecated pero funcional** con API key. Falta decidir si se elimina del todo o se deja un acceso a Claude Code. NO se puede usar la suscripción desde el backend de la web propia. Relacionado con [[etl-refactor-plan]].
+**Chat web (resuelto 2026-07-14):** se mantuvo la MISMA UI del chat embebido pero se **cortó el vínculo con la API key**. `server/etl-agent-chat.mjs` se reescribió como **puente a Claude Code headless**: `chat()` hace `spawn(claude, ['-p', prompt, '--output-format','json','--mcp-config','.mcp.json','--append-system-prompt',...,'--allowedTools','Task','mcp__etl__*'])` con **ANTHROPIC_API_KEY/ANTHROPIC_AUTH_TOKEN/ANTHROPIC_BASE_URL borradas del env del hijo** → usa la suscripción. `findClaudeCli()` autodetecta el `claude.exe` del paquete Claude Desktop (`%LOCALAPPDATA%\Packages\Claude_*\...\claude-code\<ver>\claude.exe`, toma la mayor versión); override con `CLAUDE_CLI_PATH`. Se eliminó `etl-agent-skills.mjs`.
+
+**Verificado:** con API key dummy en el entorno padre, el hijo la ignora (va a suscripción). **Requisito manual del usuario:** `claude login` del CLI (el desktop-bundled dio "Not logged in" en headless hasta loguear). Si no está logueado, el chat devuelve error 503 accionable.
+
+**Caveat de términos:** usar la suscripción para un backend servido es un workaround (la suscripción apunta a uso interactivo; el camino soportado para web es la API). Latencia mayor (spawn por mensaje). Relacionado con [[etl-refactor-plan]].
