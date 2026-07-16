@@ -16,7 +16,7 @@ import { spawn } from 'node:child_process'
 import { existsSync, readdirSync } from 'node:fs'
 import path from 'node:path'
 
-const CHAT_TIMEOUT_MS = Number(process.env.ETL_AGENT_TIMEOUT_MS || 180_000)
+const CHAT_TIMEOUT_MS = Number(process.env.ETL_AGENT_TIMEOUT_MS || 300_000)
 
 const ALLOWED_TOOLS = [
   'Task',
@@ -166,7 +166,13 @@ export function createEtlAgentChat({ projectRoot, port }) {
 
       let child
       try {
-        child = spawn(cliPath, args, { cwd: projectRoot, env, windowsHide: true })
+        // stdin 'ignore': el prompt va como argumento; evita que claude espere en stdin.
+        child = spawn(cliPath, args, {
+          cwd: projectRoot,
+          env,
+          windowsHide: true,
+          stdio: ['ignore', 'pipe', 'pipe'],
+        })
       } catch (e) {
         const err = new Error(`No se pudo lanzar Claude Code (${cliPath}): ${e.message}`)
         err.code = 'NO_CLI'
@@ -178,7 +184,11 @@ export function createEtlAgentChat({ projectRoot, port }) {
       let stderr = ''
       const timer = setTimeout(() => {
         child.kill()
-        const err = new Error('Timeout esperando a Claude Code.')
+        const tail = (stderr || stdout || '').slice(-400)
+        const err = new Error(
+          `Timeout (${Math.round(CHAT_TIMEOUT_MS / 1000)}s) esperando a Claude Code.` +
+            (tail ? ` Último output: ${tail}` : '')
+        )
         err.code = 'TIMEOUT'
         reject(err)
       }, CHAT_TIMEOUT_MS)
