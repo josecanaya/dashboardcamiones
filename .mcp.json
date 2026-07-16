@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "etl": {
+      "command": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\agentes\\.venv\\Scripts\\etl-mcp.exe",
+      "args": [],
+      "env": {
+        "ETL_API_BASE": "http://127.0.0.1:8787"
+      }
+    }
+  }
+}

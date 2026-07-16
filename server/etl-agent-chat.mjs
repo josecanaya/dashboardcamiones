@@ -1,4 +1,10 @@
 /**
+ * @deprecated Camino LEGACY con ANTHROPIC_API_KEY (se factura por token).
+ * Reemplazado por la capa MCP + Claude Code (suscripción, sin API key):
+ * ver `.mcp.json`, `agentes/src/agentes/mcp_server.py` y `agentes/README.md`.
+ * Se conserva temporalmente hasta decidir el destino del chat embebido en la web
+ * (Decisión #2 del plan). No agregar features nuevas acá.
+ *
  * Chat del agente ETL vía Anthropic Messages API (tool-use).
  * La clave NUNCA sale al browser: solo SUPABASE/ANTHROPIC_* en .env del server.
  */
