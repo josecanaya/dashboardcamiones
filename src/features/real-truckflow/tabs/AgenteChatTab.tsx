@@ -33,13 +33,36 @@ function parseUiFromReply(reply: string): { plain: string; ui: EtlAgentUiPayload
   }
 }
 
+// La conversación se persiste en sessionStorage para que no se pierda al cambiar
+// de pestaña (el tab se desmonta) ni al recargar. Se limpia al cerrar el navegador.
+const CHAT_STORAGE_KEY = 'etl-agent-chat-messages-v1'
+
+function loadStoredMessages(): UiMessage[] {
+  try {
+    const raw = sessionStorage.getItem(CHAT_STORAGE_KEY)
+    const parsed = raw ? JSON.parse(raw) : null
+    return Array.isArray(parsed) ? (parsed as UiMessage[]) : []
+  } catch {
+    return []
+  }
+}
+
 export function AgenteChatTab() {
   const [status, setStatus] = useState<EtlAgentStatus | null>(null)
   const [statusError, setStatusError] = useState('')
-  const [messages, setMessages] = useState<UiMessage[]>([])
+  const [messages, setMessages] = useState<UiMessage[]>(loadStoredMessages)
   const [draft, setDraft] = useState('')
   const [busy, setBusy] = useState(false)
   const bottomRef = useRef<HTMLDivElement | null>(null)
+
+  // Persistir la conversación entre cambios de pestaña / recargas.
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages))
+    } catch {
+      /* storage lleno o no disponible: la conversación sigue en memoria */
+    }
+  }, [messages])
 
   useEffect(() => {
     let cancelled = false
@@ -126,7 +149,7 @@ export function AgenteChatTab() {
           : status == null ?
             <span className="text-xs text-slate-400">…</span>
           : <span className="rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-medium text-rose-800">
-              Falta API key
+              Chat no disponible
             </span>
           }
           {messages.length > 0 ?
