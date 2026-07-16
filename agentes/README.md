@@ -16,7 +16,7 @@ pip install -e ".[dev]"        # instala el SDK mcp y el script etl-mcp
 Login de Claude Code por suscripción (NO seteés ANTHROPIC_API_KEY):
 
 ```powershell
-claude login
+claude auth login
 ```
 
 El servidor MCP ya está registrado en `.mcp.json` (raíz del repo) apuntando a

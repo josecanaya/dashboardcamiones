@@ -903,7 +903,7 @@ app.post('/api/etl/agent/chat', async (req, res) => {
     res.status(503).json({
       error:
         'Chat vía Claude Code (suscripción) no disponible: falta el CLI `claude` o `.mcp.json`. ' +
-        'Instalá Claude Code y corré `claude login` (sin ANTHROPIC_API_KEY).',
+        'Instalá Claude Code y corré `claude auth login` (sin ANTHROPIC_API_KEY).',
       configured: false,
     })
     return

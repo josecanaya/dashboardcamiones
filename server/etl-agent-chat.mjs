@@ -7,7 +7,7 @@
  * → usa la suscripción. Las tools y los subagentes los provee el MCP (.mcp.json)
  * + `.claude/agents/`, no este archivo.
  *
- * Requisito: `claude login` (suscripción) hecho para el CLI, y el ETL API arriba.
+ * Requisito: `claude auth login` (suscripción) hecho para el CLI, y el ETL API arriba.
  * Nota: usar la suscripción para un backend servido es un workaround (los términos
  * de la suscripción apuntan a uso interactivo). Si querés el camino soportado,
  * volvé a la API key.
@@ -221,7 +221,7 @@ export function createEtlAgentChat({ projectRoot, port }) {
     if (parsed.is_error || parsed.subtype !== 'success') {
       if (/not logged in|please run \/login/i.test(resultText)) {
         const err = new Error(
-          'Claude Code no está logueado. Abrí una terminal y corré `claude login` (suscripción), sin ANTHROPIC_API_KEY.'
+          'Claude Code no está logueado. Abrí una terminal y corré `claude auth login` (suscripción), sin ANTHROPIC_API_KEY.'
         )
         err.code = 'NOT_LOGGED_IN'
         err.status = 503
