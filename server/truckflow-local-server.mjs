@@ -902,7 +902,8 @@ app.post('/api/etl/agent/chat', async (req, res) => {
   if (!etlAgent.isConfigured()) {
     res.status(503).json({
       error:
-        'Falta ANTHROPIC_API_KEY en el .env del proyecto. Pegá la clave completa (sk-ant-...), no el JSON de metadatos de la consola Anthropic.',
+        'Chat vía Claude Code (suscripción) no disponible: falta el CLI `claude` o `.mcp.json`. ' +
+        'Instalá Claude Code y corré `claude login` (sin ANTHROPIC_API_KEY).',
       configured: false,
     })
     return
@@ -921,6 +922,6 @@ app.post('/api/etl/agent/chat', async (req, res) => {
 app.listen(PORT, () => {
   console.info(`[truckflow-local] http://localhost:${PORT}  data→ ${DATA_ROOT}  powerbi→ ${POWERBI_ROOT}`)
   console.info(
-    `[truckflow-local] agente ETL: ${etlAgent.isConfigured() ? 'ANTHROPIC_API_KEY ok' : 'sin ANTHROPIC_API_KEY'}`
+    `[truckflow-local] agente ETL: ${etlAgent.isConfigured() ? 'Claude Code (suscripción) listo' : 'falta CLI claude / .mcp.json'}`
   )
 })
