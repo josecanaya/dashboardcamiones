@@ -423,6 +423,8 @@ export type EtlTransformInput = {
   plateRegistry?: TruckPlateRegistryDocument | null
   /** Archivos XLSX Movimientos por Contrato (opcional). */
   movimientosContratoFiles?: MovimientosContratoFileInput[]
+  /** Movimientos ya normalizados (backup por día leído por rango; evita re-parsear XLSX). */
+  preNormalizedMovimientos?: import('./etlExternalMovimientosContrato').ExternalMovimientoContratoNormalized[]
   /** Planillas TiemposEntrePasos (balanza SL, opcional). */
   tiemposEntrePasosFiles?: import('./etlTiemposEntrePasos').TiemposEntrePasosFileInput[]
   /** Telemetría opcional Paso 3 (Contract-first). */
@@ -1358,7 +1360,10 @@ export async function runEtlTransform(
 
   await yieldToBrowser()
 
-  if (inp.movimientosContratoFiles?.length && !phaseStore.contractIntegration) {
+  if (
+    (inp.movimientosContratoFiles?.length || inp.preNormalizedMovimientos?.length) &&
+    !phaseStore.contractIntegration
+  ) {
     const prep = buildContractPrepFromTramo1Serialized(
       (phaseStore.tramo1 ?? tramo1)! as import('./etlTransformContractFirst').Tramo1SerializedLike
     )
@@ -1366,7 +1371,7 @@ export async function runEtlTransform(
     phaseStore.contractIntegration = await runContractFirstIntegration(
       inp,
       prep,
-      phaseStore.excelStep?.normalized
+      phaseStore.excelStep?.normalized ?? inp.preNormalizedMovimientos
     )
   }
 
@@ -2220,7 +2225,8 @@ export async function runEtlTransform(
   const skipMovimientosEnTramo2 =
     onlyTramo === 2 ||
     Boolean(phaseStore.contractIntegration) ||
-    Boolean(inp.movimientosContratoFiles?.length)
+    Boolean(inp.movimientosContratoFiles?.length) ||
+    Boolean(inp.preNormalizedMovimientos?.length)
 
   if (phaseStore.contractIntegration && phaseStore.tramo2Prep) {
     const mc = phaseStore.contractIntegration

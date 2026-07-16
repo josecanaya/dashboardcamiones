@@ -3,8 +3,9 @@
  * Uso: npx tsx scripts/run-etl-headless.ts --events <json> [--excel <xlsx>] [--out runs/]
  */
 import { createHash, randomBytes } from 'node:crypto'
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs'
 import { resolve, basename, join } from 'node:path'
+import { dedupeMovimientosByOperationId } from '../src/etl-core/ingest/dedupeMovimientos.ts'
 import { parsePayloadToJourneyEvents } from '../src/services/realJourneyEventsDataSource.ts'
 import {
   runEtlTransform,
@@ -19,6 +20,9 @@ type Args = {
   eventsPaths: string[]
   excelPath: string
   outRoot: string
+  movimientosRoot: string
+  fromDay: string
+  toDay: string
   help: boolean
 }
 
@@ -41,6 +45,9 @@ function parseArgs(argv: string[]): Args {
     eventsPaths: [],
     excelPath: '',
     outRoot: resolve('runs'),
+    movimientosRoot: resolve('data/movimientos'),
+    fromDay: '',
+    toDay: '',
     help: false,
   }
   for (let i = 0; i < argv.length; i++) {
@@ -49,8 +56,38 @@ function parseArgs(argv: string[]): Args {
     else if (a === '--events') out.eventsPaths.push(resolve(argv[++i] ?? ''))
     else if (a === '--excel') out.excelPath = resolve(argv[++i] ?? '')
     else if (a === '--out') out.outRoot = resolve(argv[++i] ?? 'runs')
+    else if (a === '--movimientos-root') out.movimientosRoot = resolve(argv[++i] ?? 'data/movimientos')
+    else if (a === '--from-day') out.fromDay = String(argv[++i] ?? '').trim()
+    else if (a === '--to-day') out.toDay = String(argv[++i] ?? '').trim()
   }
   return out
+}
+
+const DAY_RE = /^\d{4}-\d{2}-\d{2}$/
+
+/** Lee las particiones de movimientos del backup entre fromDay y toDay (inclusive). */
+function readMovimientosRange(
+  root: string,
+  fromDay: string,
+  toDay: string
+): import('../src/features/real-truckflow/etlWorkbench/etlExternalMovimientosContrato.ts').ExternalMovimientoContratoNormalized[] {
+  if (!existsSync(root)) return []
+  const days = readdirSync(root)
+    .filter((d) => DAY_RE.test(d) && (!fromDay || d >= fromDay) && (!toDay || d <= toDay))
+    .sort()
+  const all: import('../src/features/real-truckflow/etlWorkbench/etlExternalMovimientosContrato.ts').ExternalMovimientoContratoNormalized[] =
+    []
+  for (const day of days) {
+    const f = join(root, day, 'movimientos.json')
+    if (!existsSync(f)) continue
+    try {
+      const rows = JSON.parse(readFileSync(f, 'utf8'))
+      if (Array.isArray(rows)) all.push(...rows)
+    } catch {
+      /* partición ilegible: se omite */
+    }
+  }
+  return dedupeMovimientosByOperationId(all).deduped
 }
 
 function makeRunId(): string {
@@ -167,6 +204,25 @@ async function main() {
       })()
     : undefined
 
+  // Movimientos backup: si no viene --excel, leer particiones por día del rango.
+  // Rango: --from-day/--to-day explícitos, o inferido del min/max de los eventos.
+  let preNormalizedMovimientos:
+    | import('../src/features/real-truckflow/etlWorkbench/etlExternalMovimientosContrato.ts').ExternalMovimientoContratoNormalized[]
+    | undefined
+  if (!movimientosContratoFiles && existsSync(args.movimientosRoot)) {
+    const eventDays = events
+      .map((e) => String(e.occurredAt ?? '').slice(0, 10))
+      .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d))
+      .sort()
+    const fromDay = args.fromDay || eventDays[0] || ''
+    const toDay = args.toDay || eventDays[eventDays.length - 1] || ''
+    const mov = readMovimientosRange(args.movimientosRoot, fromDay, toDay)
+    if (mov.length) {
+      preNormalizedMovimientos = mov
+      log(`[etl-headless] movimientos backup: ${mov.length} filas (${fromDay || '?'}→${toDay || '?'})`)
+    }
+  }
+
   const inputHash = createHash('sha256')
     .update(JSON.stringify({ events: args.eventsPaths, excel: args.excelPath || null }))
     .digest('hex')
@@ -201,6 +257,7 @@ async function main() {
       loadedEventFilesCount: args.eventsPaths.length,
       loadedAlertFilesCount: 0,
       movimientosContratoFiles,
+      preNormalizedMovimientos,
     })
 
     // KPI tiempos (tramos Preingreso→Calada, etc.) — necesario para el agente / pestaña KPI
