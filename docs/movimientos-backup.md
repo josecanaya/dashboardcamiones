@@ -26,14 +26,25 @@ el histórico quede como backup y el agente/ETL lo consulte corriendo cualquier 
    deduplica, y pasa como `preNormalizedMovimientos` a `runMovimientosContratoIntegration`
    (camino ya existente que salta la relectura de XLSX).
 
-## Piezas a construir
-- **Núcleo puro** (`src/etl-core/ingest/movimientosDayPartition.ts`): `dayIsoFromMovimiento`,
-  `partitionMovimientosByDay`, `mergeMovimientosDedup`. + tests. ✅ (este commit)
-- **Server**: `POST /api/movimientos/ingest` (guarda crudo + normaliza + particiona + mergea),
-  `GET /api/movimientos/list-days` (cobertura del backup). Usa el núcleo puro.
-- **Runner/run_etl**: leer `data/movimientos/<día>/movimientos.json` del rango → `preNormalizedMovimientos`.
-  Retirar el requisito de `--excel <uno>` (queda opcional para cargas puntuales).
-- **UI (opcional)**: botón "Subir movimientos al backup" que pega a `/ingest`.
+## Piezas
+- ✅ **Núcleo puro** (`src/etl-core/ingest/movimientosDayPartition.ts`): `dayIsoFromMovimiento`,
+  `partitionMovimientosByDay`, `mergeMovimientosDedup` + 7 tests.
+- ✅ **Ingesta** (`scripts/ingest-movimientos.ts`): `--excel <xlsx>` → normaliza, particiona por
+  día, mergea+dedup a `data/movimientos/<día>/movimientos.json`, crudo a `_raw/`. Idempotente.
+  Exporta `ingestMovimientosBuffer` para el server. Verificado sobre Excel real.
+- ✅ **Runner** (`scripts/run-etl-headless.ts`): `--movimientos-root/--from-day/--to-day`; sin
+  `--excel` lee las particiones del rango (inferido del min/max de eventos si no se pasa) y las
+  pasa como `preNormalizedMovimientos`. Pipeline (`etlTransformPipeline`) cablea ese campo.
+- ⏳ **Server (opcional, siguiente)**: `POST /api/movimientos/ingest` (reusa `ingestMovimientosBuffer`)
+  + `GET /api/movimientos/list-days` (cobertura). Hoy la ingesta se hace por CLI.
+- ⏳ **UI (opcional)**: botón "Subir movimientos al backup" → `/ingest`.
+
+## Cómo usarlo hoy (CLI)
+1. Cargar los Excel al backup (repetible, idempotente):
+   `npx tsx scripts/ingest-movimientos.ts --excel "ruta/uno.xlsx" --excel "ruta/dos.xlsx"`
+2. Correr el ETL sobre un rango — toma los movimientos del backup automáticamente:
+   `npx tsx scripts/run-etl-headless.ts --events data/truckflow/<día>/... --from-day 2026-05-01 --to-day 2026-07-31`
+   (o vía el agente con `run_etl(from_day, to_day)` sin `excel_path`).
 
 ## Reusa
 - `dedupeMovimientosByOperationId` (`src/etl-core/ingest/dedupeMovimientos.ts`).
