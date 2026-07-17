@@ -42,6 +42,8 @@ export type AnomalyReason =
   | 'SKIP_PUNTO_LAPSO_EXTREMO'
   /** Regla de oro G4: Ric→SL >30 min. */
   | 'RIC_SL_DEMORA'
+  /** Regla de oro G5: entrada+salida en planta pero no figura en Movimientos Excel (patente+día). */
+  | 'SIN_MOVIMIENTO_EXCEL'
   // --- DATA_COVERAGE ---
   /** Muy pocos eventos útiles para evaluar (ruido / captura parcial). */
   | 'EVENTOS_INSUFICIENTES'

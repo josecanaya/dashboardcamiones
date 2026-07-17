@@ -131,6 +131,38 @@ describe('etlProductFilter', () => {
     expect(plan.journeyIdsByProduct.get('ACEITE')?.has('excel:CTG')).toBe(true)
   })
 
+  it('ACEITE excluye plantas Avellaneda y Renopack', () => {
+    const excelCsv = [
+      'external_operation_id,resolved_product,product_normalized,matched_journey_uids,evidence_count,match_quality,planta_normalized,planta_original',
+      'op-av,ACEITE DE SOJA,ACEITE DE SOJA,j-av,1,EXTERNAL_MATCH_PROBABLE,AVELLANEDA,Planta AVELLANEDA',
+      'op-rn,ACEITE DE SOJA,ACEITE DE SOJA,j-rn,1,EXTERNAL_MATCH_PROBABLE,RENOPACK,RENOPACK',
+      'op-ok,ACEITE DE SOJA,ACEITE DE SOJA,j-ok,1,EXTERNAL_MATCH_PROBABLE,TERMINAL_EMBARQUE,SAN LORENZO',
+    ].join('\n')
+    const lookup = parseExcelFirstProductLookup(excelCsv)!
+    expect(lookup.aceiteExcludedJourneyIds?.has('j-av')).toBe(true)
+    expect(lookup.aceiteExcludedJourneyIds?.has('j-rn')).toBe(true)
+    expect(lookup.aceiteExcludedJourneyIds?.has('excel:op-av')).toBe(true)
+    expect(lookup.aceiteExcludedJourneyIds?.has('j-ok')).toBe(false)
+
+    const entries = [
+      { journeyId: 'j-av', site: 'AVELLANEDA', executiveCircuitCode: 'SL1' },
+      { journeyId: 'j-rn', site: 'RENOPACK', executiveCircuitCode: 'SL1' },
+      { journeyId: 'j-ok', site: 'TERMINAL_EMBARQUE', executiveCircuitCode: 'SL1' },
+      {
+        journeyId: 'excel:op-av',
+        site: 'AVELLANEDA',
+        executiveCircuitCode: 'SL3',
+        committeeReason: 'EXCEL_PLATAFORMA:ACEITE DE SOJA@ACEITE:EXTERNAL_MATCH_EXACT',
+      },
+    ] as Parameters<typeof buildExecutiveProductFilterPlan>[0]
+    const plan = buildExecutiveProductFilterPlan(entries, lookup)
+    expect(plan.journeyIdsByProduct.get('ACEITE')?.has('j-av')).toBe(false)
+    expect(plan.journeyIdsByProduct.get('ACEITE')?.has('j-rn')).toBe(false)
+    expect(plan.journeyIdsByProduct.get('ACEITE')?.has('excel:op-av')).toBe(false)
+    expect(plan.journeyIdsByProduct.get('ACEITE')?.has('j-ok')).toBe(true)
+    expect(plan.counts.ACEITE).toBe(1)
+  })
+
   it('prioriza producto del committeeReason Excel sobre lookup erróneo (GIRASOL vs SOJA)', () => {
     const lookup = parseJourneyProductLookup('journey_uid,product_normalized\nj1,SOJA\nj2,SOJA')!
     const entries = [

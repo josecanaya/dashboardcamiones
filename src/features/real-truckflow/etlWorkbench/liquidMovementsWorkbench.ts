@@ -23,6 +23,7 @@ import {
   RIC_LIQUIDO_CAMERA,
   buildSlLiquidS10PerDeviceSlots,
   buildSlLiquidS10UnifiedSlot,
+  isAceiteAnalysisExcludedPlant,
   isExcelLiquidProductName,
   isPermittedAceiteLiquidDischargePlatform,
   isRicLiquidDespachoCode,
@@ -205,6 +206,14 @@ function isRicardoneLiquidExcelOp(op: ExcelOperationWithTruckflowRow): boolean {
 }
 
 function isLiquidExcelAuditOperation(op: ExcelOperationWithTruckflowRow): boolean {
+  if (
+    isAceiteAnalysisExcludedPlant(
+      op.planta_normalized,
+      (op as { planta_original?: string }).planta_original
+    )
+  ) {
+    return false
+  }
   if (operationOnPermittedAceiteDischargePlatform(op)) return true
   if (isRicardoneLiquidExcelOp(op)) return true
   const circuit = primaryCircuit(op)

@@ -3,13 +3,13 @@ import type { TransformTramoId, TransformTramoStatus } from '../etlWorkbench/etl
 const TRAMO_META: { id: TransformTramoId; title: string; hint: string }[] = [
   {
     id: 1,
-    title: 'Limpieza Excel',
-    hint: 'Solo XLSX: patente, producto, plataforma, horarios. Sin Truckflow.',
+    title: 'Movimientos (backup)',
+    hint: 'Lee el backup local por el rango de fechas de los eventos. Sin subir Excel.',
   },
   {
     id: 2,
     title: 'Buscar en Truckflow',
-    hint: 'Cruce por las patentes del Excel (JSON API). Ignora journeys irrelevantes.',
+    hint: 'Cruce por las patentes del backup. Ignora journeys irrelevantes.',
   },
   {
     id: 3,
@@ -77,7 +77,7 @@ export function TransformPhaseStepper({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs text-slate-600">
-          Ejecutá en orden o usá <strong>Procesar todo</strong>. Excel → journeys → circuitos.
+          Ejecutá en orden o usá <strong>Procesar y guardar</strong>. Backup → journeys → circuitos.
         </p>
         <button
           type="button"
@@ -90,8 +90,8 @@ export function TransformPhaseStepper({
               'Procesando 1→2→3…'
             : 'Procesando 2→3…'
           : hasXlsx ?
-            'Procesar todo (1→2→3)'
-          : 'Procesar todo (2→3)'}
+            'Procesar y guardar (1→2→3)'
+          : 'Procesar y guardar (2→3)'}
         </button>
       </div>
 

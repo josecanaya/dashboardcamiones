@@ -27,7 +27,7 @@ export function TransformTramoSummary({
           'Pasos 1–3 completos'
         : tramoCompleted >= 2 ?
           'Pasos 1–2 listos'
-        : 'Paso 1 (Excel) listo'}{' '}
+        : 'Paso 1 (movimientos) listo'}{' '}
         — seguí en esta pantalla.
       </p>
 
@@ -36,7 +36,7 @@ export function TransformTramoSummary({
           <li className="rounded-lg bg-white/80 px-3 py-2 text-xs">
             <span className="font-semibold text-slate-700">Paso 1</span>
             <div className="mt-0.5">
-              Excel: {mov.normalizedCount ?? '—'} filas
+              Backup: {mov.normalizedCount ?? '—'} filas
               {mov.excelFirst && typeof mov.excelFirst === 'object' && 'unique_plates' in mov.excelFirst ?
                 ` · ${String((mov.excelFirst as { unique_plates?: number }).unique_plates ?? '—')} patentes`
               : null}

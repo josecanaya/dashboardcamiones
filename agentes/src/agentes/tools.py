@@ -121,6 +121,20 @@ TOOLS: list[dict[str, Any]] = [
         {},
     ),
     _tool(
+        "resolve_window",
+        (
+            "Devuelve el run_id ya cacheado para una ventana (from,to). Usar SIEMPRE antes de run_etl "
+            "cuando el usuario pregunta por un rango o día — evita reprocesar. "
+            "Si stale=true, las reglas cambiaron y conviene run_etl con force=true; caso contrario, "
+            "usar list_tables/query_table/get_summary con el run_id devuelto."
+        ),
+        {
+            "from_day": {"type": "string", "description": "Inicio inclusive YYYY-MM-DD."},
+            "to_day": {"type": "string", "description": "Fin inclusive YYYY-MM-DD."},
+        },
+        required=["from_day", "to_day"],
+    ),
+    _tool(
         "explain_journey",
         (
             "Explica un viaje buscando evidencia en tablas de clasificación (final_circuits, "
@@ -262,6 +276,8 @@ def dispatch_tool(
             )
         if name == "get_circuit_catalog":
             return c.get_circuit_catalog()
+        if name == "resolve_window":
+            return c.resolve_window(str(args["from_day"]), str(args["to_day"]))
         if name == "explain_journey":
             return _explain_journey(c, args)
         if name == "delegar":

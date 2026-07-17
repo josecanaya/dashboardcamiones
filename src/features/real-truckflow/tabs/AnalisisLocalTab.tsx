@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ApiJourneyCountByDayTable } from '../components/ApiJourneyCountByDayTable'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
-import { MovimientosContratoPanel } from '../components/MovimientosContratoPanel'
+import { MovimientosBackupPanel } from '../components/MovimientosBackupPanel'
 import { PostTransformOptionalActions } from '../components/PostTransformOptionalActions'
 import { TransformPhaseStepper } from '../components/TransformPhaseStepper'
 import { TransformRunProgress } from '../components/TransformRunProgress'
@@ -74,6 +74,47 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
           : <span className="text-[11px] text-slate-500">Pendiente: cargar período</span>}
         </div>
 
+        {wb.savedWindows.length ?
+          <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50/60 px-4 py-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-[11px] font-bold uppercase tracking-wide text-emerald-900">
+                Procesos guardados
+              </span>
+              <span className="text-[11px] text-emerald-800">
+                (fuente de la verdad · clic = ver sin reprocesar)
+              </span>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {wb.savedWindows.map((w) => {
+                const active = wb.cachedWindow?.runId === w.runId
+                return (
+                  <button
+                    key={w.runId}
+                    type="button"
+                    disabled={wb.busyLoad || wb.transformBusy}
+                    onClick={() => {
+                      setPeriodStart(w.from)
+                      setPeriodEnd(w.to)
+                      void wb.hydrateSavedWindow(w)
+                    }}
+                    title={`run ${w.runId} · ${w.createdAt.slice(0, 10)}${w.stale ? ' · reglas viejas' : ''}`}
+                    className={`rounded-lg border px-3 py-1.5 text-xs font-semibold disabled:opacity-50 ${
+                      active ?
+                        'border-emerald-500 bg-emerald-600 text-white'
+                      : w.stale ?
+                        'border-amber-300 bg-amber-50 text-amber-950 hover:bg-amber-100'
+                      : 'border-emerald-300 bg-white text-emerald-900 hover:bg-emerald-100'
+                    }`}
+                  >
+                    {w.from} → {w.to}
+                    {w.stale ? ' ⚠' : ''}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        : null}
+
         <div className="mt-4 flex flex-wrap gap-2">
           <button
             type="button"
@@ -125,7 +166,12 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
           <button
             type="button"
             disabled={wb.busyLoad || wb.transformBusy}
-            onClick={() => void wb.loadLocalPeriod(periodStart, periodEnd)}
+            onClick={() =>
+              void (async () => {
+                const ok = await wb.loadLocalPeriod(periodStart, periodEnd)
+                if (ok) await wb.loadWindowOrOffer(periodStart, periodEnd)
+              })()
+            }
             className="rounded-xl bg-sky-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-sky-800 disabled:opacity-50"
           >
             {wb.busyLoad ? 'Cargando período…' : 'Cargar período'}
@@ -141,7 +187,7 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
         </div>
 
         <div className="mt-4">
-          <MovimientosContratoPanel wb={wb} compact />
+          <MovimientosBackupPanel />
         </div>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -201,6 +247,49 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
         : null}
       </article>
 
+      {wb.cachedWindow ?
+        <div
+          className={`rounded-2xl border px-4 py-3 text-sm ${
+            wb.cachedWindow.stale ?
+              'border-amber-300 bg-amber-50 text-amber-950'
+            : 'border-emerald-300 bg-emerald-50 text-emerald-950'
+          }`}
+        >
+          {wb.cachedWindow.stale ?
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span>
+                Cache disponible para {wb.cachedWindow.from} → {wb.cachedWindow.to} pero{' '}
+                <strong>reglas cambiaron</strong> ({wb.cachedWindow.rulesVersion} →{' '}
+                {wb.cachedWindow.currentRulesVersion}).
+              </span>
+              <button
+                type="button"
+                disabled={wb.transformBusy}
+                className="rounded-lg bg-amber-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-800 disabled:opacity-50"
+                onClick={() => void wb.recomputeWindow(wb.cachedWindow!.from, wb.cachedWindow!.to)}
+              >
+                {wb.transformBusy ? 'Recalculando…' : 'Recalcular'}
+              </button>
+            </div>
+          : <div className="flex flex-wrap items-center justify-between gap-2">
+              <span>
+                Resultado <strong>en caché</strong> · run{' '}
+                <span className="font-mono text-xs">{wb.cachedWindow.runId}</span> · reglas{' '}
+                {wb.cachedWindow.rulesVersion} · {wb.cachedWindow.createdAt.slice(0, 10)}
+              </span>
+              <button
+                type="button"
+                disabled={wb.transformBusy}
+                className="rounded-lg border border-emerald-400 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-900 hover:bg-emerald-100 disabled:opacity-50"
+                onClick={() => void wb.recomputeWindow(wb.cachedWindow!.from, wb.cachedWindow!.to)}
+              >
+                {wb.transformBusy ? 'Recalculando…' : 'Recalcular'}
+              </button>
+            </div>
+          }
+        </div>
+      : null}
+
       {/* —— Pasos 1–3 —— */}
       <article
         ref={transformSectionRef}
@@ -227,7 +316,7 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
             tramoStatus={wb.transformTramoStatus}
             activeTramo={wb.transformActiveTramo}
             tramoCompleted={wb.transformTramoCompleted}
-            hasXlsx={wb.movimientosContratoFiles.length > 0}
+            hasXlsx
             disabled={transformDisabled}
             runAllInProgress={wb.transformRunAllInProgress}
             onRunTramo={(tramo) => void wb.runTransformTramo(tramo)}
@@ -245,7 +334,7 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
           <TransformTramoSummary
             tramoCompleted={wb.transformTramoCompleted}
             transformResult={wb.transformResult}
-            hasXlsx={wb.movimientosContratoFiles.length > 0}
+            hasXlsx
             onOpenTransformTab={onOpenTransformTab}
           />
         </div>

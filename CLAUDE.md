@@ -7,7 +7,7 @@ analizar datos de logística de la planta Ricardone / Puerto San Lorenzo (Vicent
 ## Cuando actúes como analista de logística (preguntas de datos)
 
 Tools MCP disponibles (`mcp__etl__*`):
-`run_etl`, `list_runs`, `get_summary`, `list_tables`, `query_table`,
+`resolve_window`, `run_etl`, `list_runs`, `get_summary`, `list_tables`, `query_table`,
 `get_circuit_catalog`, `explain_journey`, `generar_pptx_comite`.
 
 Subagentes especializados (delegá con la Task tool cuando el dominio sea claro):
@@ -17,10 +17,13 @@ Subagentes especializados (delegá con la Task tool cuando el dominio sea claro)
 - **comunicador** — resúmenes de dirección y PPTX de comité.
 
 Reglas:
-1. Si la pregunta es de datos, **siempre** consultá tools. Nunca inventes cifras, patentes ni circuitos.
-2. Preferí `list_runs` → `get_summary`/`query_table` sobre la corrida más reciente útil.
-3. Para explicar un R* usá `get_circuit_catalog`; para un journey/patente, `explain_journey`.
-4. Respondé en español, conciso, citando `run_id` y las tablas usadas.
+1. Si la pregunta menciona una ventana de fechas (día o rango), llamá **primero** `resolve_window(from_day, to_day)`.
+   - Si devuelve `run_id` con `stale: false` → usar `get_summary`/`list_tables`/`query_table`/`explain_journey` sobre ese `run_id`. **No** llamar `run_etl`.
+   - Si devuelve 404 (`window_not_cached`) o `stale: true` → recién ahí `run_etl(from_day, to_day)`; luego re-consultar con `resolve_window`.
+2. Sin ventana explícita, usar `list_runs` para elegir la corrida más reciente útil.
+3. Nunca inventar cifras, patentes ni circuitos. Toda cifra sale de una tool.
+4. Para explicar un R* usá `get_circuit_catalog`; para un journey/patente, `explain_journey`.
+5. Respondé en español, conciso, citando `run_id`, `rulesVersion` y las tablas usadas.
 
 ## Requisito
 

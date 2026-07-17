@@ -46,6 +46,32 @@ export async function getMovimientosBackupCoverage(): Promise<MovimientosBackupC
   return parseJson<MovimientosBackupCoverage>(res)
 }
 
+type MovimientoNormalized =
+  import('../etlWorkbench/etlExternalMovimientosContrato').ExternalMovimientoContratoNormalized
+
+/** Movimientos normalizados del backup en el rango (para nutrir el transform). */
+export async function getMovimientosRange(from: string, to: string): Promise<MovimientoNormalized[]> {
+  const q = new URLSearchParams()
+  if (from) q.set('from', from)
+  if (to) q.set('to', to)
+  const url = `${movimientosApiPrefix()}/range?${q.toString()}`
+  let res: Response
+  try {
+    res = await fetch(url, { cache: 'no-store' })
+  } catch (e) {
+    throw new Error(
+      `No hay conexión con el servidor local (${url}): ${e instanceof Error ? e.message : String(e)}`
+    )
+  }
+  if (res.status === 404) {
+    throw new Error(
+      `GET ${url} → 404. El servidor local no tiene la ruta /api/movimientos/range; reinicialo (node server/truckflow-local-server.mjs).`
+    )
+  }
+  const body = await parseJson<{ rows?: MovimientoNormalized[]; count?: number }>(res)
+  return body.rows ?? []
+}
+
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()

@@ -97,6 +97,12 @@ class EtlClient:
     def get_circuit_catalog(self) -> dict[str, Any]:
         return self._request("GET", "/api/etl/catalog/circuits")
 
+    def resolve_window(self, from_day: str, to_day: str) -> dict[str, Any]:
+        return self._request(
+            "GET", "/api/etl/resolve-window",
+            params={"from": from_day, "to": to_day},
+        )
+
 
 # API de módulo (funciones síncronas finas)
 _default: EtlClient | None = None
@@ -133,3 +139,7 @@ def query_table(run_id: str, name: str, **kwargs: Any) -> dict[str, Any]:
 
 def get_circuit_catalog() -> dict[str, Any]:
     return get_client().get_circuit_catalog()
+
+
+def resolve_window(from_day: str, to_day: str) -> dict[str, Any]:
+    return get_client().resolve_window(from_day, to_day)

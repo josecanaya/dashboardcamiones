@@ -6,7 +6,7 @@
  */
 import { createHash, randomBytes } from 'node:crypto'
 import { mkdirSync, readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs'
-import { resolve, basename, join } from 'node:path'
+import { resolve, basename, join, dirname } from 'node:path'
 import { dedupeMovimientosByOperationId } from '../src/etl-core/ingest/dedupeMovimientos.ts'
 import { parsePayloadToJourneyEvents } from '../src/services/realJourneyEventsDataSource.ts'
 import {
@@ -114,6 +114,40 @@ function writeCatalog(outRoot: string) {
   return path
 }
 
+/**
+ * Índice por ventana runs/_index/by-window.json: clave `<from>..<to>` → último
+ * run OK. Se pisa por ventana; los runs viejos siguen en runs/<runId>/.
+ */
+function updateWindowIndex(opts: {
+  outRoot: string
+  fromDay: string | null
+  toDay: string | null
+  runId: string
+  inputHash: string
+  rulesVersion: string
+}): void {
+  if (!opts.fromDay || !opts.toDay) return
+  const indexPath = join(opts.outRoot, '_index', 'by-window.json')
+  mkdirSync(dirname(indexPath), { recursive: true })
+  let doc: { version: number; entries: Record<string, unknown> } = { version: 1, entries: {} }
+  if (existsSync(indexPath)) {
+    try {
+      const raw = JSON.parse(readFileSync(indexPath, 'utf8'))
+      if (raw && typeof raw === 'object' && raw.entries) doc = raw
+    } catch {
+      /* índice corrupto: se reescribe */
+    }
+  }
+  const key = `${opts.fromDay}..${opts.toDay}`
+  doc.entries[key] = {
+    runId: opts.runId,
+    inputHash: opts.inputHash,
+    rulesVersion: opts.rulesVersion,
+    createdAt: new Date().toISOString(),
+  }
+  writeFileSync(indexPath, JSON.stringify(doc, null, 2), 'utf8')
+}
+
 function persistTables(
   tablesDir: string,
   csv: Record<string, string>,
@@ -206,7 +240,13 @@ async function main() {
   }
 
   const inputHash = createHash('sha256')
-    .update(JSON.stringify({ events: args.eventsPaths, movimientosRows: preNormalizedMovimientos?.length ?? 0 }))
+    .update(JSON.stringify({
+      events: args.eventsPaths,
+      movimientosRows: preNormalizedMovimientos?.length ?? 0,
+      rulesVersion: ETL_TRANSFORM_RULES_VERSION,
+      from: args.fromDay || null,
+      to: args.toDay || null,
+    }))
     .digest('hex')
     .slice(0, 12)
 
@@ -307,6 +347,21 @@ async function main() {
       ),
       'utf8'
     )
+
+    const eventDaysSorted = events
+      .map((e) => String(e.occurredAt ?? '').slice(0, 10))
+      .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d))
+      .sort()
+    const effectiveFrom = args.fromDay || eventDaysSorted[0] || null
+    const effectiveTo = args.toDay || eventDaysSorted[eventDaysSorted.length - 1] || null
+    updateWindowIndex({
+      outRoot: args.outRoot,
+      fromDay: effectiveFrom,
+      toDay: effectiveTo,
+      runId,
+      inputHash,
+      rulesVersion: out.rulesVersion ?? ETL_TRANSFORM_RULES_VERSION,
+    })
 
     // Última línea: runId (contrato CLI / API)
     console.log(runId)

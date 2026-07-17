@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -41,6 +42,15 @@ import {
   type TruckflowApiJourneyDayStat,
 } from '../api/truckflowLocalServerApi'
 import { getTruckPlateRegistry } from '../api/truckPlateRegistryApi'
+import { getMovimientosRange } from '../api/movimientosBackupApi'
+import {
+  resolveWindow,
+  requestRunEtl,
+  listWindows,
+  type ResolveWindowResult,
+  type SavedWindow,
+} from '../api/etlRunCacheApi'
+import { loadTransformOutputFromRun } from './etlTransformOutputFromDisk'
 import {
   buildPlantVisitUpsertsFromTransform,
   type FleetDatabaseSaveResult,
@@ -80,6 +90,18 @@ type Ctx = {
   transformResult: EtlTransformOutput | null
   transformBusy: boolean
   transformError: string | null
+  /** Run cacheado en disco para la ventana elegida (runs/_index/by-window.json). */
+  cachedWindow: ResolveWindowResult | null
+  /** Si hay run vigente para (from,to), hidrata transformResult desde disco. */
+  loadWindowOrOffer: (from: string, to: string) => Promise<{ cached: boolean; stale?: boolean } | null>
+  /** Reprocesa la ventana en el servidor (force) y rehidrata desde el run nuevo. */
+  recomputeWindow: (from: string, to: string) => Promise<void>
+  /** Procesos guardados (ventanas cacheadas), más reciente primero. */
+  savedWindows: SavedWindow[]
+  savedWindowsLoading: boolean
+  refreshSavedWindows: () => Promise<void>
+  /** Carga un proceso guardado a memoria desde disco (sin reprocesar). */
+  hydrateSavedWindow: (w: SavedWindow) => Promise<void>
   /** Tramo 4: KPI tiempos / dispersión (pestaña KPI Tiempos). */
   kpiTiemposBusy: boolean
   kpiTiemposError: string | null
@@ -189,6 +211,9 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
   )
   const [diskPeriod, setDiskPeriod] = useState<EtlDiskPeriod | null>(null)
   const [transformResult, setTransformResult] = useState<EtlTransformOutput | null>(null)
+  const [cachedWindow, setCachedWindow] = useState<ResolveWindowResult | null>(null)
+  const [savedWindows, setSavedWindows] = useState<SavedWindow[]>([])
+  const [savedWindowsLoading, setSavedWindowsLoading] = useState(false)
   const [fleetSaveBusy, setFleetSaveBusy] = useState(false)
   const [fleetSaveError, setFleetSaveError] = useState<string | null>(null)
   const [fleetSaveMessage, setFleetSaveMessage] = useState<string | null>(null)
@@ -278,6 +303,7 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
     setApiJourneyStatsPerDay(null)
     setDiskPeriod(null)
     setTransformResult(null)
+    setCachedWindow(null)
     setTransformError(null)
     resetKpiTiemposState()
     transformPhaseStoreRef.current = createTransformPhaseSession()
@@ -450,6 +476,40 @@ function buildApiJourneyStatsFromParsedFiles(
     } catch {
       /* servidor local apagado */
     }
+
+    // Movimientos: SOLO del backup local (data/movimientos) por rango de eventos.
+    // Si el endpoint falla, abortamos: sin productos el Transform se ve "roto"
+    // (sin filtro Soja/Girasol/Aceite y anomalías sin curar).
+    let preNormalizedMovimientos: EtlTransformInput['preNormalizedMovimientos']
+    const evDays = events
+      .map((e) => String(e.occurredAt ?? '').slice(0, 10))
+      .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d))
+      .sort()
+    if (evDays.length) {
+      const from = evDays[0]!
+      const to = evDays[evDays.length - 1]!
+      try {
+        const rows = await getMovimientosRange(from, to)
+        if (rows.length) preNormalizedMovimientos = rows
+        else {
+          throw new Error(
+            `Backup de movimientos vacío para ${from}→${to}. ` +
+              `Subí los Excel en «Backup de Movimientos» y reiniciá el servidor local si hace falta.`
+          )
+        }
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e)
+        // 404 típico: servidor viejo sin GET /api/movimientos/range
+        if (/404|Not Found/i.test(msg) || /Failed to fetch|NetworkError|ECONNREFUSED/i.test(msg)) {
+          throw new Error(
+            `No se pudo leer el backup de movimientos (${from}→${to}): ${msg}. ` +
+              `Reiniciá el servidor local (node server/truckflow-local-server.mjs) y volvé a Procesar.`
+          )
+        }
+        throw e instanceof Error ? e : new Error(msg)
+      }
+    }
+
     return {
       events,
       alerts,
@@ -457,8 +517,7 @@ function buildApiJourneyStatsFromParsedFiles(
       loadedEventFilesCount: parsedEventFiles.length,
       loadedAlertFilesCount: parsedAlertFiles.length,
       plateRegistry,
-      movimientosContratoFiles:
-        movimientosContratoFiles.length ? movimientosContratoFiles : undefined,
+      preNormalizedMovimientos,
       tiemposEntrePasosFiles:
         tiemposEntrePasosFiles.length ? tiemposEntrePasosFiles : undefined,
       onContractFirstProgress,
@@ -467,7 +526,6 @@ function buildApiJourneyStatsFromParsedFiles(
     alerts,
     events,
     mergeWindowHours,
-    movimientosContratoFiles,
     tiemposEntrePasosFiles,
     onContractFirstProgress,
     parsedAlertFiles.length,
@@ -498,11 +556,7 @@ function buildApiJourneyStatsFromParsedFiles(
 
   const runTransformTramo = useCallback(
     async (tramo: TransformTramoId, options?: { keepGlobalBusy?: boolean }) => {
-      if (tramo === 1 && !movimientosContratoFiles.length) {
-        setTransformError('Cargá XLSX de Movimientos por Contrato para el paso 1.')
-        return null
-      }
-      if (tramo !== 1 && !events.length && !alerts.length) {
+      if (!events.length && !alerts.length) {
         setTransformError('Cargá al menos un JSON de eventos o alertas.')
         return null
       }
@@ -533,17 +587,12 @@ function buildApiJourneyStatsFromParsedFiles(
       commitTransformOutput,
       events.length,
       alerts.length,
-      movimientosContratoFiles.length,
       syncTramoStatusFromStore,
     ]
   )
 
   const runTransform = useCallback(async () => {
-    if (movimientosContratoFiles.length && !events.length && !alerts.length) {
-      setTransformError('Cargá JSON Truckflow además del Excel para procesar todo.')
-      return null
-    }
-    if (!movimientosContratoFiles.length && !events.length && !alerts.length) {
+    if (!events.length && !alerts.length) {
       setTransformError('Cargá al menos un JSON de eventos o alertas.')
       return null
     }
@@ -556,8 +605,9 @@ function buildApiJourneyStatsFromParsedFiles(
     setTransformTramoCompleted(0)
     try {
       let last: EtlTransformOutput | null = null
-      const steps: TransformTramoId[] =
-        movimientosContratoFiles.length ? [1, 2, 3] : [2, 3]
+      // Movimientos del backup (tramo 1); si el rango no tiene, la integración se
+      // saltea sola. Truckflow (tramo 2/3) siempre.
+      const steps: TransformTramoId[] = [1, 2, 3]
       for (const tramo of steps) {
         last = await runTransformTramo(tramo, { keepGlobalBusy: true })
         if (!last) break
@@ -568,7 +618,7 @@ function buildApiJourneyStatsFromParsedFiles(
       setTransformRunAllInProgress(false)
       setTransformBusy(false)
     }
-  }, [events.length, movimientosContratoFiles.length, runTransformTramo])
+  }, [events.length, alerts.length, runTransformTramo])
 
   const runKpiTiempos = useCallback(async () => {
     if (!transformResult) {
@@ -680,6 +730,126 @@ function buildApiJourneyStatsFromParsedFiles(
     }
   }, [transformResult])
 
+  const loadWindowOrOffer = useCallback(async (from: string, to: string) => {
+    setTransformError(null)
+    let hit: ResolveWindowResult | null = null
+    try {
+      hit = await resolveWindow(from, to)
+    } catch (e) {
+      setTransformError(e instanceof Error ? e.message : String(e))
+      setCachedWindow(null)
+      return null
+    }
+    if (!hit) {
+      setCachedWindow(null)
+      return { cached: false }
+    }
+    setCachedWindow(hit)
+    if (hit.stale) return { cached: true, stale: true }
+    try {
+      const out = await loadTransformOutputFromRun(hit.runId)
+      startTransition(() => {
+        setTransformResult(out)
+      })
+      setTransformTramoCompleted(3)
+      setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
+      return { cached: true, stale: false }
+    } catch (e) {
+      setTransformError(e instanceof Error ? e.message : String(e))
+      return { cached: true, stale: false }
+    }
+  }, [])
+
+  const recomputeWindow = useCallback(async (from: string, to: string) => {
+    setTransformError(null)
+    setTransformBusy(true)
+    try {
+      const { runId } = await requestRunEtl(from, to, { force: true })
+      const hit = await resolveWindow(from, to)
+      setCachedWindow(hit)
+      const out = await loadTransformOutputFromRun(runId)
+      startTransition(() => {
+        setTransformResult(out)
+      })
+      setTransformTramoCompleted(3)
+      setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
+      try {
+        setSavedWindows(await listWindows())
+      } catch {
+        /* servidor local apagado */
+      }
+    } catch (e) {
+      setTransformError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setTransformBusy(false)
+    }
+  }, [])
+
+  const refreshSavedWindows = useCallback(async () => {
+    setSavedWindowsLoading(true)
+    try {
+      const ws = await listWindows()
+      setSavedWindows(ws)
+    } catch {
+      /* servidor local apagado: dejamos la lista como está */
+    } finally {
+      setSavedWindowsLoading(false)
+    }
+  }, [])
+
+  const hydrateSavedWindow = useCallback(
+    async (w: SavedWindow) => {
+      setTransformError(null)
+      setCachedWindow({
+        from: w.from,
+        to: w.to,
+        runId: w.runId,
+        inputHash: '',
+        rulesVersion: w.rulesVersion,
+        createdAt: w.createdAt,
+        stale: w.stale,
+        currentRulesVersion: w.rulesVersion,
+      })
+      setDiskPeriod({ startDate: w.from, endDate: w.to })
+      try {
+        const out = await loadTransformOutputFromRun(w.runId)
+        startTransition(() => {
+          setTransformResult(out)
+        })
+        setTransformTramoCompleted(3)
+        setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
+      } catch (e) {
+        setTransformError(e instanceof Error ? e.message : String(e))
+      }
+    },
+    []
+  )
+
+  // Al montar: traer los procesos guardados y, si no hay nada cargado, hidratar
+  // el más reciente como "fuente de la verdad" por default (sin reprocesar).
+  const didAutoHydrateRef = useRef(false)
+  useEffect(() => {
+    if (didAutoHydrateRef.current) return
+    didAutoHydrateRef.current = true
+    void (async () => {
+      let ws: SavedWindow[] = []
+      setSavedWindowsLoading(true)
+      try {
+        ws = await listWindows()
+        setSavedWindows(ws)
+      } catch {
+        /* servidor local apagado */
+      } finally {
+        setSavedWindowsLoading(false)
+      }
+      const latestVigente = ws.find((w) => !w.stale)
+      if (latestVigente && !transformResult) {
+        await hydrateSavedWindow(latestVigente)
+      }
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const value = useMemo<Ctx>(
     () => ({
       loadSummary,
@@ -694,6 +864,13 @@ function buildApiJourneyStatsFromParsedFiles(
       transformResult,
       transformBusy,
       transformError,
+      cachedWindow,
+      loadWindowOrOffer,
+      recomputeWindow,
+      savedWindows,
+      savedWindowsLoading,
+      refreshSavedWindows,
+      hydrateSavedWindow,
       kpiTiemposBusy,
       kpiTiemposError,
       kpiTiemposBuilt,
@@ -733,6 +910,13 @@ function buildApiJourneyStatsFromParsedFiles(
       transformResult,
       transformBusy,
       transformError,
+      cachedWindow,
+      loadWindowOrOffer,
+      recomputeWindow,
+      savedWindows,
+      savedWindowsLoading,
+      refreshSavedWindows,
+      hydrateSavedWindow,
       kpiTiemposBusy,
       kpiTiemposError,
       kpiTiemposBuilt,

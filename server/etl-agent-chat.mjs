@@ -20,6 +20,7 @@ const CHAT_TIMEOUT_MS = Number(process.env.ETL_AGENT_TIMEOUT_MS || 300_000)
 
 const ALLOWED_TOOLS = [
   'Task',
+  'mcp__etl__resolve_window',
   'mcp__etl__run_etl',
   'mcp__etl__list_runs',
   'mcp__etl__get_summary',

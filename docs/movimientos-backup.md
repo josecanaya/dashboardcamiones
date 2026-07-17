@@ -36,20 +36,24 @@ el histórico quede como backup y el agente/ETL lo consulte corriendo cualquier 
   `--excel` lee las particiones del rango (inferido del min/max de eventos si no se pasa) y las
   pasa como `preNormalizedMovimientos`. Pipeline (`etlTransformPipeline`) cablea ese campo.
 - ✅ **Server**: `POST /api/movimientos/ingest` (`{filename, base64}` → spawnea el script de ingesta)
-  + `GET /api/movimientos/list-days` (cobertura por día). Se quitó `--excel` de `POST /api/etl/runs`.
-- ✅ **UI**: `MovimientosBackupPanel` (tope del tab Transform) — botón "Subir movimientos" (multi-archivo)
-  + tabla de cobertura por día. `src/features/real-truckflow/api/movimientosBackupApi.ts`.
+  + `GET /api/movimientos/list-days` (cobertura por día)
+  + `GET /api/movimientos/range?from=&to=` (filas normalizadas del rango para el transform del navegador).
+  Se quitó `--excel` de `POST /api/etl/runs`.
+- ✅ **UI**: `MovimientosBackupPanel` (Análisis local + tope del tab Transform) — botón "Subir movimientos"
+  + tabla de cobertura por día. El transform del navegador llama `/range` y pasa `preNormalizedMovimientos`
+  (ya no pide subir XLSX a mano en el workbench).
 - ✅ **Solo-backup**: `run-etl-headless` ya no acepta `--excel`; la corrida se nutre del backup por rango.
 
 ## Cómo usarlo
-1. **UI**: tab Transform → "Backup de Movimientos" → "Subir movimientos" (arrastrás los Excel de meses).
-   Se parten por día y quedan de respaldo (`data/movimientos/<día>/`, gitignored).
+1. **UI**: Análisis local o tab Transform → "Backup de Movimientos" → "Subir movimientos"
+   (arrastrás los Excel de meses). Se parten por día y quedan de respaldo (`data/movimientos/<día>/`, gitignored).
 2. **Correr** el ETL sobre un rango — toma el backup automáticamente:
-   `run_etl(from_day, to_day)` (agente) o `POST /api/etl/runs {from,to}` o
-   `npx tsx scripts/run-etl-headless.ts --events ... --from-day 2026-05-01 --to-day 2026-07-31`.
+   - Navegador: cargá el período Truckflow y pulsá **Procesar todo** (pasos 1→2→3).
+     El paso 1 llama `GET /api/movimientos/range` con el rango de los eventos.
+   - Agente/API: `run_etl(from_day, to_day)` o `POST /api/etl/runs {from,to}` o
+     `npx tsx scripts/run-etl-headless.ts --events ... --from-day 2026-05-01 --to-day 2026-07-31`.
 
-El script `scripts/ingest-movimientos.ts` sigue existiendo como worker (lo invoca el endpoint);
-ya no hace falta usarlo a mano.
+Ya **no** hace falta subir el Excel a mano en el workbench ni pasar `--excel` al CLI.
 
 ## Reusa
 - `dedupeMovimientosByOperationId` (`src/etl-core/ingest/dedupeMovimientos.ts`).

@@ -6,11 +6,15 @@ import {
   type ExcelOpsSource,
 } from './etlCircuitClassificationIndex'
 import { parseCsvToRecords } from './etlCsvParse'
-import { isAceiteExecutiveCircuitCode, isExcelLiquidProductName } from './slLiquidCameras'
+import { isAceiteExecutiveCircuitCode, isAceiteAnalysisExcludedPlant, isExcelLiquidProductName } from './slLiquidCameras'
 
 export type JourneyProductLookup = {
   byJourneyId: Map<string, string>
   products: string[]
+  /**
+   * Journeys / excel:ops de plantas Avellaneda o Renopack — fuera del filtro Aceite.
+   */
+  aceiteExcludedJourneyIds?: Set<string>
 }
 
 export const PRODUCT_FILTER_ALL = 'ALL'
@@ -36,9 +40,12 @@ export function executiveSampleProductLabel(product: string): string {
 /** Filtro Aceite: no incluir R7/R5/R6 de matriz aunque el merge traiga producto líquido. */
 function entryBelongsToAceiteExecutiveView(
   entry: CircuitClassificationEntry,
-  product: string
+  product: string,
+  lookup: JourneyProductLookup | null
 ): boolean {
   if (!productMatchesExecutiveSampleFilter(product, 'ACEITE')) return false
+  if (lookup?.aceiteExcludedJourneyIds?.has(entry.journeyId)) return false
+  if (isAceiteAnalysisExcludedPlant(entry.site)) return false
   if (entry.journeyId.startsWith('excel:')) return true
   if (parseExcelProductFromCommitteeReason(entry.committeeReason ?? '')) return true
   if (isAceiteExecutiveCircuitCode(entry.executiveCircuitCode)) return true
@@ -101,15 +108,42 @@ export function parseExcelFirstProductLookup(excelOps: ExcelOpsSource): JourneyP
   const byJourney = parseExcelFirstByJourneyUid(excelOps)
   const byJourneyId = new Map<string, string>()
   const productSet = new Set<string>()
+  const aceiteExcludedJourneyIds = new Set<string>()
+
+  const markExcluded = (r: Record<string, unknown>) => {
+    if (
+      !isAceiteAnalysisExcludedPlant(
+        String(r.planta_normalized ?? ''),
+        String(r.planta_original ?? '')
+      )
+    ) {
+      return
+    }
+    const operationId = String(r.external_operation_id ?? '').trim()
+    if (operationId) {
+      aceiteExcludedJourneyIds.add(operationId)
+      aceiteExcludedJourneyIds.add(`excel:${operationId}`)
+    }
+    for (const uid of String(r.matched_journey_uids ?? '')
+      .split(/[|,]/)
+      .map((s) => s.trim())
+      .filter(Boolean)) {
+      aceiteExcludedJourneyIds.add(uid)
+    }
+  }
 
   for (const [uid, lite] of byJourney) {
     const product = lite.product_normalized
     if (!product) continue
     byJourneyId.set(uid, product)
     productSet.add(product)
+    if (isAceiteAnalysisExcludedPlant(lite.planta_normalized)) {
+      aceiteExcludedJourneyIds.add(uid)
+    }
   }
 
   for (const r of excelOpsRows(excelOps)) {
+    markExcluded(r)
     const product = String(r.resolved_product ?? r.product_normalized ?? '').trim()
     if (!product) continue
     productSet.add(product)
@@ -122,7 +156,11 @@ export function parseExcelFirstProductLookup(excelOps: ExcelOpsSource): JourneyP
   }
 
   if (!productSet.size) return null
-  return { byJourneyId, products: [...productSet].sort((a, b) => a.localeCompare(b, 'es')) }
+  return {
+    byJourneyId,
+    products: [...productSet].sort((a, b) => a.localeCompare(b, 'es')),
+    aceiteExcludedJourneyIds,
+  }
 }
 
 /** Prefiere Excel-first; fallback al merge Truckflow-first (diagnóstico). */
@@ -174,7 +212,7 @@ export function buildExecutiveProductFilterPlan(
     if (!product) continue
     for (const sample of EXECUTIVE_SAMPLE_PRODUCTS) {
       if (!productMatchesExecutiveSampleFilter(product, sample)) continue
-      if (sample === 'ACEITE' && entryBelongsToAceiteExecutiveView(entry, product)) {
+      if (sample === 'ACEITE' && entryBelongsToAceiteExecutiveView(entry, product, lookup)) {
         counts[sample] = (counts[sample] ?? 0) + 1
         journeyIdsByProduct.get(sample)!.add(entry.journeyId)
       } else if (sample !== 'ACEITE') {

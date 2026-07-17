@@ -2235,7 +2235,10 @@ export async function runEtlTransform(
     movimientosContratoTables = mc.tables ?? {}
     kpiTiemposMovimientosSnapshot = mc.kpiTiemposSnapshot
     movimientosContratoStats = movimientosStatsFromIntegration(mc, prep.finalCsvRows.length)
-  } else if (!skipMovimientosEnTramo2 && inp.movimientosContratoFiles?.length) {
+  } else if (
+    !skipMovimientosEnTramo2 &&
+    (inp.movimientosContratoFiles?.length || inp.preNormalizedMovimientos?.length)
+  ) {
     await yieldToBrowser()
     const mc = await runMovimientosContratoIntegration({
       finalCsvRows,
@@ -2250,7 +2253,8 @@ export async function runEtlTransform(
         occurredAt: e.occurredAt,
         createdAt: e.createdAt,
       })),
-      movimientosFiles: inp.movimientosContratoFiles,
+      movimientosFiles: inp.movimientosContratoFiles ?? [],
+      preNormalizedMovimientos: inp.preNormalizedMovimientos,
       tiemposEntrePasosFiles: inp.tiemposEntrePasosFiles,
       skipKpiTiemposArtifacts: true,
       onProgress: inp.onContractFirstProgress,

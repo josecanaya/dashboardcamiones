@@ -10,6 +10,7 @@ export const GOLDEN_ANOMALY_REASONS = [
   'REGRESION_CALADA_PREINGRESO',
   'SKIP_PUNTO_LAPSO_EXTREMO',
   'RIC_SL_DEMORA',
+  'SIN_MOVIMIENTO_EXCEL',
 ] as const
 
 export type GoldenAnomalyReason = (typeof GOLDEN_ANOMALY_REASONS)[number]
@@ -32,6 +33,62 @@ export const GOLDEN_RIC_SL_MIN_MS = 30 * 60 * 1000
 
 const SL_EXIT_LOGICAL = new Set(['SL_EGRESO', 'SL_BALANZA_SALIDA'])
 const RIC_RETURN_LOGICAL = new Set(['INGRESO', 'PREINGRESO', 'CALADA'])
+const RIC_ENTRY_LOGICAL = new Set(['INGRESO', 'PREINGRESO', 'PREINGRESO_EGRESO'])
+const RIC_EXIT_LOGICAL = new Set(['EGRESO'])
+const SL_ENTRY_LOGICAL = new Set(['SL_INGRESO'])
+
+/** Par Ricardone: ingreso/preingreso + egreso. */
+export function hasRicEntryExitPair(logicalCodes: Iterable<string>): boolean {
+  let entry = false
+  let exit = false
+  for (const raw of logicalCodes) {
+    const c = String(raw ?? '').trim().toUpperCase()
+    if (RIC_ENTRY_LOGICAL.has(c)) entry = true
+    if (RIC_EXIT_LOGICAL.has(c)) exit = true
+  }
+  return entry && exit
+}
+
+/** Par San Lorenzo: SL_INGRESO + SL_EGRESO / balanza salida. */
+export function hasSlEntryExitPair(logicalCodes: Iterable<string>): boolean {
+  let entry = false
+  let exit = false
+  for (const raw of logicalCodes) {
+    const c = String(raw ?? '').trim().toUpperCase()
+    if (SL_ENTRY_LOGICAL.has(c)) entry = true
+    if (SL_EXIT_LOGICAL.has(c)) exit = true
+  }
+  return entry && exit
+}
+
+export function hasPlantEntryExitEvidence(logicalCodes: Iterable<string>): boolean {
+  return hasRicEntryExitPair(logicalCodes) || hasSlEntryExitPair(logicalCodes)
+}
+
+/**
+ * G5: entrada+salida en Ric o SL y el movimiento no figura en Excel (patente+día).
+ * `inExcelSameDay`: null = Excel no cargado (no dispara); true = figura; false = ausente.
+ */
+export function detectMissingExcelMovement(input: {
+  logicalCodes: readonly string[]
+  inExcelSameDay: boolean | null
+  circuitCode?: string
+}): GoldenAnomalyHit | null {
+  if (input.inExcelSameDay !== false) return null
+  if (!hasPlantEntryExitEvidence(input.logicalCodes)) return null
+  const ric = hasRicEntryExitPair(input.logicalCodes)
+  const sl = hasSlEntryExitPair(input.logicalCodes)
+  const where =
+    ric && sl ? 'Ricardone y San Lorenzo'
+    : ric ? 'Ricardone'
+    : 'San Lorenzo'
+  return {
+    reason: 'SIN_MOVIMIENTO_EXCEL',
+    kind: 'BEHAVIORAL',
+    detail: `Entrada+salida en ${where} sin registro en Movimientos por Contrato (patente+día)`,
+    circuitCode: input.circuitCode,
+  }
+}
 
 export type GoldenTimelinePoint = {
   t: number
@@ -64,6 +121,8 @@ export type EvaluateGoldenAnomalyInput = {
   missingExpectedPoints?: readonly string[]
   /** True si Excel/circuito indica pellet / R30–R32. */
   isPelletTransile?: boolean
+  /** True si Excel «De la vuelta» = SI (transile de vuelta legítimo). */
+  isDeVuelta?: boolean
 }
 
 function roundMin(ms: number): number {
@@ -88,12 +147,12 @@ function sortedPoints(points: readonly GoldenTimelinePoint[]): GoldenTimelinePoi
     .sort((a, b) => a.t - b.t)
 }
 
-/** G1: salida SL seguida de ingreso Ric ≤ 30 min, y no es pellet. */
+/** G1: salida SL seguida de ingreso Ric ≤ 30 min, y no es pellet ni «De la vuelta». */
 export function detectSlRicQuickReturnNoPellet(
   platePoints: readonly GoldenTimelinePoint[],
-  opts?: { maxMs?: number; isPelletTransile?: boolean }
+  opts?: { maxMs?: number; isPelletTransile?: boolean; isDeVuelta?: boolean }
 ): GoldenAnomalyHit | null {
-  if (opts?.isPelletTransile) return null
+  if (opts?.isPelletTransile || opts?.isDeVuelta) return null
   const maxMs = opts?.maxMs ?? GOLDEN_SL_RIC_MAX_MS
   const list = sortedPoints(platePoints)
   for (let i = 0; i < list.length; i++) {
@@ -229,15 +288,20 @@ export function isPelletCircuitCode(circuitCode: string | null | undefined): boo
 
 /**
  * Evalúa G1–G4. Prioridad: G1 → G2 → G3 → G4 (primera hit gana para `anomaly_kind_reason`).
+ * G5 (sin Excel) se evalúa en el índice UI con patente+día — ver `stampMissingExcelAnomalies`.
  * Devuelve todas las hits; el cableado usa la primera.
  */
 export function evaluateGoldenAnomalyRules(input: EvaluateGoldenAnomalyInput): GoldenAnomalyHit[] {
   const platePts = input.platePoints?.length ? input.platePoints : input.points
   const isPellet =
     input.isPelletTransile === true || isPelletCircuitCode(input.circuitCode)
+  const isDeVuelta = input.isDeVuelta === true
   const hits: GoldenAnomalyHit[] = []
 
-  const g1 = detectSlRicQuickReturnNoPellet(platePts, { isPelletTransile: isPellet })
+  const g1 = detectSlRicQuickReturnNoPellet(platePts, {
+    isPelletTransile: isPellet,
+    isDeVuelta,
+  })
   if (g1) hits.push({ ...g1, circuitCode: input.circuitCode })
 
   const g2 = detectCaladaToPreingresoRegression(input.points)

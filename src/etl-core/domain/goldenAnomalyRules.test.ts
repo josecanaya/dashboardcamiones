@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  detectMissingExcelMovement,
   detectCaladaToPreingresoRegression,
   detectRicToSlTravelTooSlow,
   detectSkippedPointWithExtremeGap,
@@ -31,6 +32,14 @@ describe('goldenAnomalyRules', () => {
       ])
       expect(hit?.reason).toBe('SL_RIC_VUELTA_RAPIDA_NO_PELLET')
       expect(hit?.deltaMinutes).toBe(25)
+    })
+
+    it('no marca si es De la vuelta', () => {
+      const hit = detectSlRicQuickReturnNoPellet(
+        [pt(0, 'SL_EGRESO', 'san_lorenzo'), pt(20, 'PREINGRESO', 'ricardone')],
+        { isDeVuelta: true }
+      )
+      expect(hit).toBeNull()
     })
 
     it('no marca si es pellet', () => {
@@ -142,6 +151,51 @@ describe('goldenAnomalyRules', () => {
         circuitCode: 'R30',
       })
       expect(hits.some((h) => h.reason === 'SL_RIC_VUELTA_RAPIDA_NO_PELLET')).toBe(false)
+    })
+  })
+
+  describe('G5 sin movimiento Excel', () => {
+    it('marca Ric ingreso+egreso ausente Excel', () => {
+      const hit = detectMissingExcelMovement({
+        logicalCodes: ['INGRESO', 'PREINGRESO', 'EGRESO'],
+        inExcelSameDay: false,
+      })
+      expect(hit?.reason).toBe('SIN_MOVIMIENTO_EXCEL')
+    })
+
+    it('marca SL ingreso+egreso ausente Excel', () => {
+      const hit = detectMissingExcelMovement({
+        logicalCodes: ['SL_INGRESO', 'SL_EGRESO'],
+        inExcelSameDay: false,
+      })
+      expect(hit?.reason).toBe('SIN_MOVIMIENTO_EXCEL')
+    })
+
+    it('no marca si figura en Excel mismo día', () => {
+      expect(
+        detectMissingExcelMovement({
+          logicalCodes: ['INGRESO', 'EGRESO'],
+          inExcelSameDay: true,
+        })
+      ).toBeNull()
+    })
+
+    it('no marca si Excel no está cargado', () => {
+      expect(
+        detectMissingExcelMovement({
+          logicalCodes: ['INGRESO', 'EGRESO'],
+          inExcelSameDay: null,
+        })
+      ).toBeNull()
+    })
+
+    it('no marca sin egreso', () => {
+      expect(
+        detectMissingExcelMovement({
+          logicalCodes: ['INGRESO', 'PREINGRESO'],
+          inExcelSameDay: false,
+        })
+      ).toBeNull()
     })
   })
 

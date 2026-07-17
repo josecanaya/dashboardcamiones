@@ -50,6 +50,8 @@ import {
 } from '../../features/real-truckflow/etlWorkbench/etlCircuitClassificationIndex'
 import type { RealJourneyEventDto } from '../../services/realJourneyEvents.types'
 import type { NormalizedRealAlertView } from '../../services/realAlertsInspector'
+import { getLiveCameraStatus, type LiveCameraStatus } from '../../services/live/liveCameraStreamApi'
+import { LiveCameraPlayerModal } from './LiveCameraPlayerModal'
 
 const AUTO_REFRESH_MS = 30_000
 
@@ -220,6 +222,17 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
   const [detailTab, setDetailTab] = useState<LiveDetailTab>('actividad')
   /** LPR_MALFUNCTION es ruido OCR frecuente de madrugada; oculto por defecto en vista operativa. */
   const [hideLprMalfunction, setHideLprMalfunction] = useState(true)
+
+  /** Video en vivo DSS→go2rtc: si el status falla, el botón queda deshabilitado sin romper el monitor. */
+  const [liveVideoOpen, setLiveVideoOpen] = useState(false)
+  const [liveVideoStatus, setLiveVideoStatus] = useState<LiveCameraStatus | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    getLiveCameraStatus()
+      .then((s) => { if (!cancelled) setLiveVideoStatus(s) })
+      .catch(() => { if (!cancelled) setLiveVideoStatus({ dssConfigured: false, go2rtcOk: false, go2rtcBase: '' }) })
+    return () => { cancelled = true }
+  }, [])
 
   const wb = useEtlWorkbenchOptional()
   const circuitClassIndex = useMemo(
@@ -922,6 +935,19 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
                     <div className="flex flex-wrap items-center gap-2">
                       <button
                         type="button"
+                        onClick={() => setLiveVideoOpen(true)}
+                        disabled={!liveVideoStatus?.dssConfigured}
+                        title={
+                          liveVideoStatus?.dssConfigured
+                            ? 'Abrir video en vivo de esta cámara'
+                            : 'Video en vivo no disponible: configurá DSS_HOST/DSS_USER/DSS_PASS en el .env del server (ver docs/POC_DSS_LIVE.md)'
+                        }
+                        className="rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 py-1.5 text-[11px] font-bold text-rose-100 disabled:opacity-40"
+                      >
+                        ● Ver en vivo
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => exportSelectedCamera('json')}
                         disabled={!exportScope}
                         className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-3 py-1.5 text-[11px] font-bold text-cyan-100 disabled:opacity-40"
@@ -1118,6 +1144,12 @@ export const LiveCameraMonitor = memo(function LiveCameraMonitor() {
           </div>
         </div>
       </details>
+
+      <LiveCameraPlayerModal
+        open={liveVideoOpen}
+        deviceCode={selectedDeviceCode}
+        onClose={() => setLiveVideoOpen(false)}
+      />
     </section>
   )
 })

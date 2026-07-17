@@ -689,6 +689,22 @@ function listTruckflowDataDays() {
     .sort()
 }
 
+/** Índice runs/_index/by-window.json: ventana `<from>..<to>` → último run OK. */
+function readWindowIndex() {
+  const p = path.join(RUNS_ROOT, '_index', 'by-window.json')
+  if (!existsSync(p)) return { version: 1, entries: {} }
+  try {
+    const raw = JSON.parse(readFileSync(p, 'utf8'))
+    return raw && typeof raw === 'object' && raw.entries ? raw : { version: 1, entries: {} }
+  } catch {
+    return { version: 1, entries: {} }
+  }
+}
+
+// Debe coincidir con ETL_TRANSFORM_RULES_VERSION en etlTransformPipeline.ts.
+// Si se bumpea allá, actualizar acá (marca las ventanas cacheadas como stale).
+const CURRENT_RULES_VERSION = 'etl_transform_v12'
+
 /** POST /api/etl/runs — spawnea runner headless; responde { runId }. */
 app.post('/api/etl/runs', async (req, res) => {
   const eventsPaths = resolveEtlEventsPaths({
@@ -710,6 +726,21 @@ app.post('/api/etl/runs', async (req, res) => {
   }
 
   const skipUpload = req.body?.skipSupabase === true
+  const force = req.body?.force === true
+
+  // Cache por ventana: si ya hay un run vigente para (from,to), no se reprocesa.
+  if (!force && req.body?.from && req.body?.to) {
+    const idxKey = `${String(req.body.from)}..${String(req.body.to)}`
+    const idx = readWindowIndex()
+    const hit = idx.entries[idxKey]
+    if (hit && existsSync(path.join(RUNS_ROOT, hit.runId))) {
+      const stale = String(hit.rulesVersion || '') !== CURRENT_RULES_VERSION
+      if (!stale) {
+        res.json({ runId: hit.runId, cached: true, supabase: null })
+        return
+      }
+    }
+  }
 
   // Movimientos: la corrida se nutre SOLO del backup local (data/movimientos/<día>/),
   // leído por rango dentro del runner. Ya no se pasa un Excel por corrida.
@@ -789,6 +820,39 @@ app.get('/api/movimientos/list-days', (_req, res) => {
 })
 
 /**
+ * GET /api/movimientos/range?from=YYYY-MM-DD&to=YYYY-MM-DD
+ * Devuelve los movimientos normalizados del backup en el rango (dedup por
+ * external_operation_id). El transform del navegador se nutre de acá.
+ */
+app.get('/api/movimientos/range', (req, res) => {
+  const from = String(req.query.from ?? '').trim()
+  const to = String(req.query.to ?? '').trim()
+  if (!existsSync(MOV_DATA_ROOT)) {
+    res.json({ from, to, rows: [], count: 0 })
+    return
+  }
+  const dayDirs = readdirSync(MOV_DATA_ROOT)
+    .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d) && (!from || d >= from) && (!to || d <= to))
+    .sort()
+  const byId = new Map()
+  for (const day of dayDirs) {
+    try {
+      const arr = JSON.parse(readFileSync(path.join(MOV_DATA_ROOT, day, 'movimientos.json'), 'utf8'))
+      if (!Array.isArray(arr)) continue
+      for (const row of arr) {
+        const id = String(row?.external_operation_id ?? '').trim()
+        if (id && byId.has(id)) continue // dedup cross-partición
+        byId.set(id || Symbol(), row)
+      }
+    } catch {
+      /* partición ilegible */
+    }
+  }
+  const rows = [...byId.values()]
+  res.json({ from, to, rows, count: rows.length })
+})
+
+/**
  * POST /api/movimientos/ingest — sube un .xlsx al backup local por día.
  * body: { filename, base64 }. Normaliza, particiona por fecha de fila y deduplica.
  */
@@ -862,6 +926,61 @@ app.get('/api/etl/runs', async (req, res) => {
     const message = e instanceof Error ? e.message : String(e)
     res.json({ runs: local, supabaseError: message })
   }
+})
+
+/** GET /api/etl/resolve-window?from=&to= — run cacheado para la ventana. */
+app.get('/api/etl/resolve-window', (req, res) => {
+  const from = String(req.query.from ?? '').trim()
+  const to = String(req.query.to ?? '').trim()
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) {
+    res.status(400).json({ error: 'Enviá from & to en formato YYYY-MM-DD' })
+    return
+  }
+  const key = `${from}..${to}`
+  const idx = readWindowIndex()
+  const entry = idx.entries[key]
+  if (!entry) {
+    res.status(404).json({ error: 'window_not_cached', from, to })
+    return
+  }
+  const runDir = path.join(RUNS_ROOT, entry.runId)
+  if (!existsSync(runDir)) {
+    res.status(404).json({ error: 'run_missing', from, to, runId: entry.runId })
+    return
+  }
+  const stale = String(entry.rulesVersion || '') !== CURRENT_RULES_VERSION
+  res.json({
+    from,
+    to,
+    runId: entry.runId,
+    inputHash: entry.inputHash,
+    rulesVersion: entry.rulesVersion,
+    createdAt: entry.createdAt,
+    stale,
+    currentRulesVersion: CURRENT_RULES_VERSION,
+  })
+})
+
+/** GET /api/etl/windows — lista de ventanas guardadas (índice by-window). */
+app.get('/api/etl/windows', (_req, res) => {
+  const idx = readWindowIndex()
+  const windows = Object.entries(idx.entries || {})
+    .map(([key, e]) => {
+      const [from, to] = key.split('..')
+      const runDir = path.join(RUNS_ROOT, e.runId)
+      return {
+        from,
+        to,
+        runId: e.runId,
+        rulesVersion: e.rulesVersion,
+        createdAt: e.createdAt,
+        stale: String(e.rulesVersion || '') !== CURRENT_RULES_VERSION,
+        exists: existsSync(runDir),
+      }
+    })
+    .filter((w) => w.exists)
+    .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')))
+  res.json({ windows, currentRulesVersion: CURRENT_RULES_VERSION })
 })
 
 /** GET /api/etl/runs/:id/summary — stats.json */

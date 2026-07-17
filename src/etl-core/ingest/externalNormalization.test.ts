@@ -226,4 +226,11 @@ describe('normalizePlant convención Excel', () => {
     expect(normalizePlant('Planta San Lorenzo').planta_normalized).toBe('RICARDONE')
     expect(normalizePlant('RICARDONE').planta_normalized).toBe('RICARDONE')
   })
+
+  it('Planta Avellaneda y Renopack se normalizan (fuera de análisis aceite)', () => {
+    expect(normalizePlant('Planta AVELLANEDA').planta_normalized).toBe('AVELLANEDA')
+    expect(normalizePlant('AVELLANEDA').planta_normalized).toBe('AVELLANEDA')
+    expect(normalizePlant('RENOPACK').planta_normalized).toBe('RENOPACK')
+    expect(normalizePlant('PLANTA RENOPACK').planta_normalized).toBe('RENOPACK')
+  })
 })

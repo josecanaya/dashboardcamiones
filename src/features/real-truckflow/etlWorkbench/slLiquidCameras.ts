@@ -33,6 +33,31 @@ export function isSlLiquidCircuit(circuit: string): boolean {
 export const ACEITE_EXECUTIVE_CIRCUIT_CODES = ['SL1', 'SL2', 'SL3', 'R8'] as const
 export type AceiteExecutiveCircuitCode = (typeof ACEITE_EXECUTIVE_CIRCUIT_CODES)[number]
 
+/**
+ * Plantas Excel fuera del análisis de circuitos de aceite (columna Planta).
+ * Avellaneda / Renopack no operan el circuito aceite Ricardone–SL que se concilia acá.
+ */
+export function isAceiteAnalysisExcludedPlant(
+  plantaNormalized?: string | null,
+  plantaOriginal?: string | null
+): boolean {
+  const n = String(plantaNormalized ?? '')
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, '_')
+  const o = String(plantaOriginal ?? '')
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase()
+    .replace(/\s+/g, ' ')
+  if (n === 'AVELLANEDA' || n.includes('AVELLANEDA')) return true
+  if (n === 'RENOPACK' || n.includes('RENOPACK')) return true
+  if (/\bAVELLANEDA\b/.test(o) || /PLANTA\s+AVELLANEDA/.test(o)) return true
+  if (/\bRENOPACK\b/.test(o) || /PLANTA\s+RENOPACK/.test(o)) return true
+  return false
+}
+
 export function isAceiteExecutiveCircuitCode(code: string): code is AceiteExecutiveCircuitCode {
   return (ACEITE_EXECUTIVE_CIRCUIT_CODES as readonly string[]).includes(String(code ?? '').trim().toUpperCase())
 }
@@ -106,8 +131,10 @@ export function inferAceiteExecutiveCircuitFromExcel(
   plantaNormalized: string | null | undefined,
   observaciones?: string | null,
   observacionCalidad?: string | null,
-  product?: string | null
+  product?: string | null,
+  plantaOriginal?: string | null
 ): AceiteExecutiveCircuitCode | null {
+  if (isAceiteAnalysisExcludedPlant(plantaNormalized, plantaOriginal)) return null
   const fromPlatform = inferAceiteExecutiveCircuitFromPlatform(
     platformNormalized,
     plataformaOriginal,
@@ -214,6 +241,7 @@ export function isExcelLiquidMovementForOrphanCommittee(row: {
   platform_normalized?: string
   plataforma_original?: string
   planta_normalized?: string
+  planta_original?: string
   observaciones?: string
   observacion_calidad?: string
   resolved_executive_circuit_code?: string
@@ -221,6 +249,7 @@ export function isExcelLiquidMovementForOrphanCommittee(row: {
   resolved_product?: string
   product_normalized?: string
 }): boolean {
+  if (isAceiteAnalysisExcludedPlant(row.planta_normalized, row.planta_original)) return false
   const platform = String(row.platform_normalized ?? '')
   const original = String(row.plataforma_original ?? row.platform_normalized ?? '')
   const product = String(row.resolved_product ?? row.product_normalized ?? '')
@@ -231,7 +260,8 @@ export function isExcelLiquidMovementForOrphanCommittee(row: {
       row.planta_normalized,
       row.observaciones,
       row.observacion_calidad,
-      product
+      product,
+      row.planta_original
     )
   ) {
     return true

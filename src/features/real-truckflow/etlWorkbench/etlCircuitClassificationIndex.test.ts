@@ -9,6 +9,9 @@ import {
   committeeChartExportCsv,
   collectNormalizedPlatesFromCsv,
   collectTransileInternoExcludedPlates,
+  collectExcelPlateDaysFromCsv,
+  excelPlateDayKey,
+  stampMissingExcelAnomalies,
   filterEntriesByMinTruckflowCrossings,
   isListedAnomalyCandidate,
   isTransileExcludedFromAnomalyList,
@@ -231,6 +234,88 @@ describe('etlCircuitClassificationIndex anomalías', () => {
         ctx
       )
       expect(summary.listedAnomalyCount).toBe(0)
+    })
+
+    it('excluye BEHAVIORAL / reglas de oro si Excel De la vuelta = SI', () => {
+      const ctx: AnomalyListContext = {
+        excelPlates: new Set(['V1', 'V2']),
+        deVueltaExcludedPlates: new Set(['V1']),
+      }
+      const summary = buildAnomalyReviewSummary(
+        [
+          entry({
+            journeyId: 'vuelta',
+            plate: 'V1',
+            normalizedPlate: 'V1',
+            anomalyKind: 'BEHAVIORAL',
+            anomalyKindReason: 'SL_RIC_VUELTA_RAPIDA_NO_PELLET',
+          }),
+          entry({
+            journeyId: 'otra',
+            plate: 'V2',
+            normalizedPlate: 'V2',
+            anomalyKind: 'BEHAVIORAL',
+            anomalyKindReason: 'RIC_SL_DEMORA',
+          }),
+        ],
+        ctx
+      )
+      expect(summary.listedAnomalyCount).toBe(1)
+      expect(summary.sequenceRows[0]!.trucks[0]!.journeyId).toBe('otra')
+    })
+
+    it('G5 stampMissingExcelAnomalies: entrada+salida sin Excel patente+día', () => {
+      const day = '2026-07-10'
+      const ctx: AnomalyListContext = {
+        excelPlates: new Set(['EN_EXCEL']),
+        excelPlateDays: new Set([excelPlateDayKey('EN_EXCEL', day)]),
+      }
+      const stamped = stampMissingExcelAnomalies(
+        [
+          entry({
+            journeyId: 'sin',
+            plate: 'XX1',
+            normalizedPlate: 'XX1',
+            anomalyKind: 'NONE',
+            detectedSequence: 'INGRESO>PREINGRESO>EGRESO',
+            firstEventAt: `${day}T10:00:00-03:00`,
+            lastEventAt: `${day}T18:00:00-03:00`,
+          }),
+          entry({
+            journeyId: 'con',
+            plate: 'EN_EXCEL',
+            normalizedPlate: 'EN_EXCEL',
+            anomalyKind: 'NONE',
+            detectedSequence: 'INGRESO>EGRESO',
+            firstEventAt: `${day}T10:00:00-03:00`,
+            lastEventAt: `${day}T12:00:00-03:00`,
+          }),
+          entry({
+            journeyId: 'solo_ing',
+            plate: 'YY2',
+            normalizedPlate: 'YY2',
+            anomalyKind: 'NONE',
+            detectedSequence: 'INGRESO>PREINGRESO',
+            firstEventAt: `${day}T10:00:00-03:00`,
+          }),
+        ],
+        ctx
+      )
+      expect(stamped.find((e) => e.journeyId === 'sin')?.anomalyKindReason).toBe('SIN_MOVIMIENTO_EXCEL')
+      expect(stamped.find((e) => e.journeyId === 'con')?.anomalyKind).toBe('NONE')
+      expect(stamped.find((e) => e.journeyId === 'solo_ing')?.anomalyKind).toBe('NONE')
+      const summary = buildAnomalyReviewSummary(stamped, ctx)
+      expect(summary.listedAnomalyCount).toBe(1)
+    })
+
+    it('collectExcelPlateDaysFromCsv arma PLATE|día', () => {
+      const csv =
+        'plate_normalized,source_date\n' +
+        'ABC123,2026-07-10\n' +
+        'DEF456,2026-07-11\n'
+      const set = collectExcelPlateDaysFromCsv(csv)
+      expect(set.has(excelPlateDayKey('ABC123', '2026-07-10'))).toBe(true)
+      expect(set.has(excelPlateDayKey('DEF456', '2026-07-11'))).toBe(true)
     })
   })
 

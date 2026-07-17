@@ -11,6 +11,7 @@ export type PlantNormalized =
   | 'TERMINAL_EMBARQUE'
   | 'SAN_LORENZO'
   | 'AVELLANEDA'
+  | 'RENOPACK'
   | 'RICARDONE'
   | string
 
@@ -25,6 +26,9 @@ const PLANT_MAP: Record<string, PlantNormalized> = {
   'TERMINAL PORTUARIA SAN LORENZO': 'TERMINAL_EMBARQUE',
   'PLANTA AVELLANEDA': 'AVELLANEDA',
   'AVELLANEDA': 'AVELLANEDA',
+  /** Excel: planta Renopack — fuera del análisis aceite Ric/SL. */
+  'RENOPACK': 'RENOPACK',
+  'PLANTA RENOPACK': 'RENOPACK',
   RICARDONE: 'RICARDONE',
 }
 

@@ -12,6 +12,7 @@ import {
   inferAceiteExecutiveCircuitFromExcel,
   inferAceiteExecutiveCircuitFromPlatform,
   inferAceiteExecutiveCircuitFromTruckflowEvidence,
+  isAceiteAnalysisExcludedPlant,
   isAceiteExecutiveCircuitCode,
   isExcelLiquidMovementForOrphanCommittee,
   isExcelLiquidProductName,
@@ -26,11 +27,13 @@ import {
 import { ensureArgentinaOffsetIso, operationalDayKeyFromIso } from './etlTimestampNormalize'
 import type { AnomalyKind } from '../../../etl-core/domain/anomalyClassifier'
 import {
+  detectMissingExcelMovement,
   GOLDEN_SL_RIC_MAX_MS,
   isGoldenAnomalyReason,
   isPelletCircuitCode,
   PELLET_TRANSILE_CIRCUIT_CODES,
 } from '../../../etl-core/domain/goldenAnomalyRules'
+import { normalizeDeVuelta } from '../../../etl-core/ingest/externalNormalization'
 
 /** Fuente de matriz de clasificación: CSV legacy o filas TypedTable (Fase 2). */
 export type DebugMatrixSource = string | readonly Record<string, unknown>[] | null | undefined
@@ -227,6 +230,11 @@ export type AnomalyListContext = {
    * `Set` (aunque vacío) = Excel cargado; solo listan patentes ausentes del set.
    */
   excelPlates: Set<string> | null
+  /**
+   * Claves `PLATE|YYYY-MM-DD` de Movimientos por Contrato (G5).
+   * `null` = Excel no cargado → G5 no dispara.
+   */
+  excelPlateDays?: Set<string> | null
   /** Patentes del plate registry con excludeFromAnalytics (refuerzo del filtro ETL). */
   excludedRegistryPlates?: Set<string>
   /**
@@ -235,7 +243,17 @@ export type AnomalyListContext = {
    * reporte de sesiones por patente), así que se excluye por patente acá.
    */
   transileExcludedPlates?: Set<string>
+  /**
+   * Patentes con Excel «De la vuelta» = SI (`es_de_vuelta`).
+   * No deben figurar en anomalías ni en sospechosos SL→Ric.
+   */
+  deVueltaExcludedPlates?: Set<string>
   minEvents?: number
+}
+
+/** Clave estable patente+día operativo para matching Excel (G5). */
+export function excelPlateDayKey(plate: string, day: string): string {
+  return `${normalizePlate(plate)}|${String(day ?? '').trim()}`
 }
 
 export type AnomalyReviewSummary = {
@@ -796,6 +814,7 @@ const SOLID_EXECUTIVE_CIRCUITS = new Set([
 const LIQUID_EXECUTIVE_CIRCUITS = new Set(['R8', 'SL1', 'SL2', 'SL3', 'R16', 'SL5', 'R34'])
 
 function excelLiteIsLiquidOperational(lite: ExcelFirstReconcileLite): boolean {
+  if (isAceiteAnalysisExcludedPlant(lite.planta_normalized)) return false
   if (lite.resolved_circuit_family.toUpperCase() === 'LIQUIDO') return true
   if (isPermittedAceiteLiquidDischargePlatform(lite.platform_normalized, lite.plataforma_original)) return true
   return isExcelLiquidProductName(lite.product_normalized, lite.platform_normalized)
@@ -917,6 +936,7 @@ function normalizeLiquidExecutiveCircuitCode(code: string): string {
 }
 
 function excelRowIndicatesAceite(lite: ExcelFirstReconcileLite): boolean {
+  if (isAceiteAnalysisExcludedPlant(lite.planta_normalized)) return false
   if (isPermittedAceiteLiquidDischargePlatform(lite.platform_normalized, lite.plataforma_original)) {
     return true
   }
@@ -1722,6 +1742,7 @@ export function appendPermittedAceiteExcelOrphansToEntries(
         platform_normalized: platform,
         plataforma_original: original,
         planta_normalized: String(r.planta_normalized ?? '').trim(),
+        planta_original: String(r.planta_original ?? '').trim(),
         resolved_executive_circuit_code: String(r.resolved_executive_circuit_code ?? '').trim(),
         resolved_circuit_family: String(r.resolved_circuit_family ?? '').trim(),
         resolved_product: String(r.resolved_product ?? r.product_normalized ?? '').trim(),
@@ -1952,6 +1973,7 @@ export function isExcludedFromSuspiciousList(
   if (plate && ctx.excelPlates?.has(plate)) return true
   if (plate && ctx.excludedRegistryPlates?.has(plate)) return true
   if (plate && ctx.transileExcludedPlates?.has(plate)) return true
+  if (plate && ctx.deVueltaExcludedPlates?.has(plate)) return true
   if (isTransileExcludedFromAnomalyList(entry)) return true
   return false
 }
@@ -2168,6 +2190,7 @@ function isHardExcludedFromAnomalyList(
   plate: string
 ): boolean {
   if (plate && ctx.excludedRegistryPlates?.has(plate)) return true
+  if (plate && ctx.deVueltaExcludedPlates?.has(plate)) return true
   if (isGoldenAnomalyReason(entry.anomalyKindReason)) {
     return (
       isPelletCircuitCode(entry.executiveCircuitCode) || isPelletCircuitCode(entry.matchedCircuitCode)
@@ -2232,6 +2255,141 @@ export function collectNormalizedPlatesFromCsv(csv: string | undefined | null): 
   return out
 }
 
+/**
+ * Claves `PLATE|YYYY-MM-DD` desde Movimientos normalizados (`source_date` o día de ingreso).
+ */
+export function collectExcelPlateDaysFromCsv(csv: string | undefined | null): Set<string> {
+  const out = new Set<string>()
+  if (!csv?.trim()) return out
+  const { rows } = parseCsvToRecords(csv)
+  for (const r of rows) {
+    const plate = normalizePlate(r.plate_normalized ?? r.plate ?? r.patente ?? '')
+    if (!plate) continue
+    const day =
+      String(r.source_date ?? '').trim() ||
+      operationalDayKeyFromIso(String(r.external_ingreso_at ?? r.external_salida_at ?? ''))
+    if (!day) continue
+    out.add(excelPlateDayKey(plate, day))
+  }
+  return out
+}
+
+function collectExcelPlateDaysFromExcelOps(source: ExcelOpsSource): Set<string> {
+  const out = new Set<string>()
+  for (const r of excelOpsRows(source)) {
+    const plate = normalizePlate(String(r.plate_normalized ?? r.plate ?? r.patente ?? ''))
+    if (!plate) continue
+    const day =
+      String(r.source_date ?? '').trim() ||
+      operationalDayKeyFromIso(String(r.external_ingreso_at ?? r.external_salida_at ?? ''))
+    if (!day) continue
+    out.add(excelPlateDayKey(plate, day))
+  }
+  return out
+}
+
+function sequenceLogicalCodes(detectedSequence: string): string[] {
+  const raw = String(detectedSequence ?? '').trim()
+  if (!raw) return []
+  return raw
+    .split(/>|→|,|\|/g)
+    .map((t) => t.trim().toUpperCase())
+    .filter(Boolean)
+}
+
+function entryOperativeDays(entry: CircuitClassificationEntry): string[] {
+  const days = new Set<string>()
+  const a = operationalDayKeyFromIso(entry.firstEventAt)
+  const b = operationalDayKeyFromIso(entry.lastEventAt)
+  if (a) days.add(a)
+  if (b) days.add(b)
+  return [...days]
+}
+
+function entryInExcelSameDay(
+  entry: CircuitClassificationEntry,
+  excelPlateDays: Set<string> | null | undefined
+): boolean | null {
+  if (excelPlateDays == null) return null
+  const plate = normalizePlate(entry.normalizedPlate || entry.plate)
+  if (!plate) return null
+  const days = entryOperativeDays(entry)
+  if (!days.length) return false
+  return days.some((d) => excelPlateDays.has(excelPlateDayKey(plate, d)))
+}
+
+/**
+ * G5 v1: marca BEHAVIORAL `SIN_MOVIMIENTO_EXCEL` si hay entrada+salida (Ric o SL)
+ * y la patente+día no figura en Movimientos. No pisa un BEHAVIORAL ya existente.
+ */
+export function stampMissingExcelAnomalies(
+  entries: CircuitClassificationEntry[],
+  ctx: AnomalyListContext
+): CircuitClassificationEntry[] {
+  if (ctx.excelPlateDays == null && ctx.excelPlates == null) return entries
+  const plateDays = ctx.excelPlateDays ?? null
+  // Si hay Excel cargado pero aún no hay plateDays (CSV sin fechas), no disparar G5.
+  if (plateDays == null) return entries
+
+  return entries.map((entry) => {
+    if (entry.anomalyKind === 'BEHAVIORAL') return entry
+    const plate = normalizePlate(entry.normalizedPlate || entry.plate)
+    if (!plate) return entry
+    if (ctx.deVueltaExcludedPlates?.has(plate)) return entry
+    if (ctx.excludedRegistryPlates?.has(plate)) return entry
+    if (ctx.transileExcludedPlates?.has(plate)) return entry
+    if (isTransileExcludedFromAnomalyList(entry)) return entry
+
+    const hit = detectMissingExcelMovement({
+      logicalCodes: sequenceLogicalCodes(entry.detectedSequence),
+      inExcelSameDay: entryInExcelSameDay(entry, plateDays),
+      circuitCode: entry.executiveCircuitCode,
+    })
+    if (!hit) return entry
+    return {
+      ...entry,
+      anomalyKind: 'BEHAVIORAL',
+      anomalyKindReason: hit.reason,
+    }
+  })
+}
+
+/**
+ * Patentes con Excel «De la vuelta» = SI (`es_de_vuelta` / `es_de_vuelta_original`).
+ * Se sacan del listado de anomalías y de sospechosos SL→Ric.
+ */
+export function collectDeVueltaPlatesFromCsv(csv: string | undefined | null): Set<string> {
+  const out = new Set<string>()
+  if (!csv?.trim()) return out
+  const { rows } = parseCsvToRecords(csv)
+  for (const r of rows) {
+    const flag = r.es_de_vuelta ?? r.es_de_vuelta_original ?? ''
+    const truthy =
+      typeof flag === 'boolean' ? flag
+      : normalizeDeVuelta(String(flag)).es_de_vuelta ||
+        ['true', '1', 'yes'].includes(String(flag).trim().toLowerCase())
+    if (!truthy) continue
+    const plate = normalizePlate(r.plate_normalized ?? r.plate ?? r.patente ?? '')
+    if (plate) out.add(plate)
+  }
+  return out
+}
+
+function collectDeVueltaPlatesFromExcelOps(source: ExcelOpsSource): Set<string> {
+  const out = new Set<string>()
+  for (const r of excelOpsRows(source)) {
+    const flag = r.es_de_vuelta ?? r.es_de_vuelta_original ?? ''
+    const truthy =
+      typeof flag === 'boolean' ? flag
+      : normalizeDeVuelta(String(flag)).es_de_vuelta ||
+        ['true', '1', 'yes'].includes(String(flag).trim().toLowerCase())
+    if (!truthy) continue
+    const plate = normalizePlate(String(r.plate_normalized ?? r.plate ?? r.patente ?? ''))
+    if (plate) out.add(plate)
+  }
+  return out
+}
+
 /** Patentes normalizadas de sesiones transile interno inferidas (para excluir de anomalías). */
 export function collectTransileInternoExcludedPlates(
   rows: readonly Record<string, unknown>[] | null | undefined
@@ -2269,9 +2427,23 @@ export function buildAnomalyListContextFromTransformCsv(
     !hasExcel ? null
     : normalized ? collectNormalizedPlatesFromCsv(normalized)
     : collectNormalizedPlatesFromExcelOps(excelOps)
+  const excelPlateDays =
+    !hasExcel ? null
+    : normalized ? collectExcelPlateDaysFromCsv(normalized)
+    : collectExcelPlateDaysFromExcelOps(excelOps)
   const excludedRegistryPlates = collectNormalizedPlatesFromCsv(csv?.plate_registry_excluded)
   const transileExcludedPlates = collectTransileInternoExcludedPlates(transileInternoSessionRows)
-  return { excelPlates, excludedRegistryPlates, transileExcludedPlates }
+  const deVueltaExcludedPlates =
+    normalized ? collectDeVueltaPlatesFromCsv(normalized)
+    : excelOpsHasData(excelOps) ? collectDeVueltaPlatesFromExcelOps(excelOps)
+    : new Set<string>()
+  return {
+    excelPlates,
+    excelPlateDays,
+    excludedRegistryPlates,
+    transileExcludedPlates,
+    deVueltaExcludedPlates,
+  }
 }
 
 function collectNormalizedPlatesFromExcelOps(source: ExcelOpsSource): Set<string> {
@@ -2543,8 +2715,10 @@ export function committeeChartExportCsv(
 
 /** Cruce circuito ejecutivo × categoría comité — reconcilia torta vs barras. */
 export function buildCommitteeCircuitCrossTab(
-  entries: CircuitClassificationEntry[]
+  entries: CircuitClassificationEntry[],
+  opts?: { excludeGoldenPlates?: Set<string> | null }
 ): CommitteeCircuitCrossTabRow[] {
+  const excludeGolden = opts?.excludeGoldenPlates
   const byCode = new Map<
     string,
     {
@@ -2578,7 +2752,10 @@ export function buildCommitteeCircuitCrossTab(
       bucket.trucksVariaciones.push(entry)
     }
     // Reglas de oro: se contabilizan bajo el circuito asignado (dual visibilidad).
+    const plate = normalizePlate(entry.normalizedPlate || entry.plate)
+    const skipGolden = Boolean(plate && excludeGolden?.has(plate))
     if (
+      !skipGolden &&
       entry.anomalyKind === 'BEHAVIORAL' &&
       isGoldenAnomalyReason(entry.anomalyKindReason)
     ) {

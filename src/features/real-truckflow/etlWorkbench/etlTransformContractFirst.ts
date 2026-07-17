@@ -77,7 +77,7 @@ export async function runContractFirstIntegration(
   preNormalizedMovimientos?: ExternalMovimientoContratoNormalized[]
 ): Promise<MovimientosContratoIntegrationOutput> {
   if (!inp.movimientosContratoFiles?.length && !preNormalizedMovimientos?.length) {
-    throw new Error('Cargá archivos XLSX de Movimientos por Contrato.')
+    throw new Error('No hay movimientos del backup para el rango (ni XLSX legacy).')
   }
   await yieldToBrowser()
   const journeyTimesByUid = new Map(prep.journeyTimesByUid)

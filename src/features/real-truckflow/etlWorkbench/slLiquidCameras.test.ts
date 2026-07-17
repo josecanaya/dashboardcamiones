@@ -3,6 +3,8 @@ import {
   hasRenovaObservation,
   inferAceiteExecutiveCircuitFromExcel,
   inferAceiteExecutiveCircuitFromPlatform,
+  isAceiteAnalysisExcludedPlant,
+  isExcelLiquidMovementForOrphanCommittee,
 } from './slLiquidCameras'
 import { inferCircuitFromExternalMovimiento } from './etlPlatformCircuitInference'
 import { normalizePlatform, normalizePlant } from './etlExternalNormalization'
@@ -82,6 +84,47 @@ describe('inferAceiteExecutiveCircuitFromExcel', () => {
 
   it('plataforma vacía sin RENOVA no devuelve SL3', () => {
     expect(inferAceiteExecutiveCircuitFromExcel('', '', EXCEL_TERMINAL(), 'sin marca', '')).toBeNull()
+  })
+
+  it('excluye Planta Avellaneda y Renopack del análisis aceite', () => {
+    expect(isAceiteAnalysisExcludedPlant('AVELLANEDA')).toBe(true)
+    expect(isAceiteAnalysisExcludedPlant('RENOPACK')).toBe(true)
+    expect(isAceiteAnalysisExcludedPlant('', 'Planta AVELLANEDA')).toBe(true)
+    expect(isAceiteAnalysisExcludedPlant('', 'RENOPACK')).toBe(true)
+    expect(isAceiteAnalysisExcludedPlant('RICARDONE')).toBe(false)
+
+    expect(
+      inferAceiteExecutiveCircuitFromExcel(
+        'ACEITE_OSL',
+        'ACEITE OSL',
+        'AVELLANEDA',
+        'RENOVA',
+        '',
+        'ACEITE DE SOJA',
+        'Planta AVELLANEDA'
+      )
+    ).toBeNull()
+    expect(
+      inferAceiteExecutiveCircuitFromExcel(
+        'ACEITE',
+        'ACEITE',
+        'RENOPACK',
+        '',
+        '',
+        'ACEITE',
+        'RENOPACK'
+      )
+    ).toBeNull()
+    expect(
+      isExcelLiquidMovementForOrphanCommittee({
+        platform_normalized: 'ACEITE_OSL',
+        plataforma_original: 'ACEITE OSL',
+        planta_normalized: 'AVELLANEDA',
+        planta_original: 'Planta AVELLANEDA',
+        resolved_product: 'ACEITE DE SOJA',
+        resolved_circuit_family: 'LIQUIDO',
+      })
+    ).toBe(false)
   })
 })
 

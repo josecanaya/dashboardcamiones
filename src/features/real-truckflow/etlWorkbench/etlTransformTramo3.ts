@@ -19,8 +19,8 @@ export async function runMovimientosContratoTramo3(
   prep: Tramo2PrepForMovimientos,
   base: EtlTransformOutput
 ): Promise<EtlTransformOutput> {
-  if (!inp.movimientosContratoFiles?.length) {
-    throw new Error('Cargá archivos XLSX de Movimientos por Contrato antes del tramo 3.')
+  if (!inp.movimientosContratoFiles?.length && !inp.preNormalizedMovimientos?.length) {
+    throw new Error('No hay movimientos del backup para el rango (ni XLSX legacy) antes del tramo 3.')
   }
   await yieldToBrowser()
   const journeyTimesByUid = new Map(prep.journeyTimesByUid)
@@ -29,7 +29,8 @@ export async function runMovimientosContratoTramo3(
     journeyTimesByUid,
     classifiedJourneys: prep.classifiedForSegmentTiming,
     rawTruckflowEvents: prep.rawTruckflowEvents,
-    movimientosFiles: inp.movimientosContratoFiles,
+    movimientosFiles: inp.movimientosContratoFiles ?? [],
+    preNormalizedMovimientos: inp.preNormalizedMovimientos,
     tiemposEntrePasosFiles: inp.tiemposEntrePasosFiles,
     skipKpiTiemposArtifacts: true,
     onProgress: inp.onContractFirstProgress,

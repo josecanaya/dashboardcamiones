@@ -39,7 +39,6 @@ import {
   type TransileExternoReclasificacionRow,
 } from '../../../etl-core/reports/transileExternoReclasificacion'
 import { committeePieFromGroup } from '../etlWorkbench/committeeClassification'
-import { MovimientosContratoPanel } from '../components/MovimientosContratoPanel'
 import { MovimientosBackupPanel } from '../components/MovimientosBackupPanel'
 import { ExecutiveSampleProductFilter } from '../components/ExecutiveSampleProductFilter'
 import {
@@ -942,10 +941,38 @@ export function TransformEtlTab() {
         </p>
 
         {!tr ?
-          <p className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
-            Aún no hay transform ejecutado. Cargá JSON en «Análisis local» y pulsá{' '}
-            <strong>Procesar Transform</strong>.
-          </p>
+          <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+            {wb.savedWindows.length ?
+              <div className="space-y-2">
+                <p>
+                  Elegí un <strong>proceso guardado</strong> para verlo al toque (sin reprocesar):
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {wb.savedWindows.map((w) => (
+                    <button
+                      key={w.runId}
+                      type="button"
+                      disabled={wb.transformBusy}
+                      onClick={() => void wb.hydrateSavedWindow(w)}
+                      className={`rounded-lg border px-3 py-1.5 text-xs font-semibold disabled:opacity-50 ${
+                        w.stale ?
+                          'border-amber-300 bg-amber-50 text-amber-950 hover:bg-amber-100'
+                        : 'border-emerald-300 bg-emerald-50 text-emerald-950 hover:bg-emerald-100'
+                      }`}
+                      title={`run ${w.runId} · ${w.createdAt.slice(0, 10)}${w.stale ? ' · reglas viejas' : ''}`}
+                    >
+                      {w.from} → {w.to}
+                      {w.stale ? ' ⚠' : ''}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            : <p>
+                Aún no hay ningún proceso guardado. Cargá un período en «Análisis local» y pulsá{' '}
+                <strong>Procesar y guardar</strong>.
+              </p>
+            }
+          </div>
         : null}
 
         {wb.transformError ?
@@ -957,10 +984,6 @@ export function TransformEtlTab() {
         {wb.transformBusy ?
           <p className="mt-4 text-sm font-semibold text-amber-800">Ejecutando transform…</p>
         : null}
-
-        <div className="mt-5">
-          <MovimientosContratoPanel wb={wb} />
-        </div>
       </div>
 
       {exec ?

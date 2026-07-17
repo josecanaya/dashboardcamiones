@@ -23,35 +23,63 @@ export type ExcelMovimientosStepResult = {
   logs: string[]
 }
 
-/** Paso UI 1: solo lectura y limpieza de Excel (sin JSON Truckflow). */
+function hasMovimientosSource(inp: EtlTransformInput): boolean {
+  return Boolean(inp.movimientosContratoFiles?.length || inp.preNormalizedMovimientos?.length)
+}
+
+/** Paso UI 1: movimientos del backup (preNormalized) o Excel legacy. */
 export async function runExcelMovimientosNormalizeStep(
   inp: EtlTransformInput
 ): Promise<ExcelMovimientosStepResult> {
-  if (!inp.movimientosContratoFiles?.length) {
-    throw new Error('Cargá archivos XLSX de Movimientos por Contrato.')
-  }
   await yieldToBrowser()
   const logs: string[] = []
-  const { raw, warnings: loadWarnings, readMeta } = loadMovimientosContratoFiles(inp.movimientosContratoFiles)
-  if (readMeta.length) {
-    for (const m of readMeta) {
-      logs.push(
-        `Lectura ${m.sheetName || '?'}: ${m.rowCount} filas, cabecera fila ${m.headerRow}, cols=${m.headers.slice(0, 6).join(', ')}`
-      )
+
+  // Sin fuente: soft-skip (corrida Truckflow-only).
+  if (!hasMovimientosSource(inp)) {
+    logs.push('Sin movimientos en backup para el rango; se omite integración contrato.')
+    return {
+      normalized: [],
+      loadWarnings: [],
+      movStats: summarizeMovimientosContratoLoad([], [], []),
+      uniquePlates: 0,
+      csvNormalized: '',
+      logs,
     }
   }
-  const normalizedBase = normalizeMovimientosContratoBatch(raw)
+
+  let normalizedBase: ExternalMovimientoContratoNormalized[]
+  let loadWarnings: string[] = []
+  let filesForStats = inp.movimientosContratoFiles ?? []
+
+  if (inp.preNormalizedMovimientos?.length) {
+    normalizedBase = inp.preNormalizedMovimientos
+    loadWarnings = [`Backup local: ${normalizedBase.length} filas en rango`]
+    logs.push(`Movimientos desde backup: ${normalizedBase.length} filas`)
+    filesForStats = []
+  } else {
+    const { raw, warnings, readMeta } = loadMovimientosContratoFiles(inp.movimientosContratoFiles!)
+    loadWarnings = warnings
+    if (readMeta.length) {
+      for (const m of readMeta) {
+        logs.push(
+          `Lectura ${m.sheetName || '?'}: ${m.rowCount} filas, cabecera fila ${m.headerRow}, cols=${m.headers.slice(0, 6).join(', ')}`
+        )
+      }
+    }
+    normalizedBase = normalizeMovimientosContratoBatch(raw)
+  }
+
   const tepLoad =
     inp.tiemposEntrePasosFiles?.length ?
       loadTiemposEntrePasosFiles(inp.tiemposEntrePasosFiles)
     : { rows: [], warnings: [] as string[] }
   for (const w of tepLoad.warnings) logs.push(w)
   const normalized = enrichMovimientosWithTiemposEntrePasos(normalizedBase, tepLoad.rows)
-  const movStats = summarizeMovimientosContratoLoad(inp.movimientosContratoFiles, normalized, loadWarnings)
+  const movStats = summarizeMovimientosContratoLoad(filesForStats, normalized, loadWarnings)
   const uniquePlates = countUniqueNormalizedPlates(normalized.map((m) => m.plate_normalized))
 
   logs.push(`Movimientos normalizados: ${movStats.normalizedCount}`)
-  logs.push(`Patentes únicas en Excel: ${uniquePlates}`)
+  logs.push(`Patentes únicas: ${uniquePlates}`)
   logs.push(`Con producto: ${movStats.withProduct} · Con plataforma: ${movStats.withPlatform}`)
 
   return {
@@ -65,6 +93,7 @@ export async function runExcelMovimientosNormalizeStep(
 }
 
 export function buildOutputAfterExcelOnlyStep(excel: ExcelMovimientosStepResult): EtlTransformOutput {
+  const empty = excel.normalized.length === 0
   return {
     csv: {
       external_movimientos_contrato_normalized: excel.csvNormalized,
@@ -129,8 +158,11 @@ export function buildOutputAfterExcelOnlyStep(excel: ExcelMovimientosStepResult)
         final_circuits_vs_ingreso_ratio: null,
         journeyFragmentationWarn: false,
         circuitsVersusIngresoWarn: false,
-        coherenceLabel: 'Excel listo',
-        coherenceDetail: 'Ejecutá paso 2 para buscar estas patentes en Truckflow.',
+        coherenceLabel: empty ? 'Sin movimientos' : 'Movimientos listos',
+        coherenceDetail:
+          empty ?
+            'No hay filas en el backup para el rango; el paso 2 sigue solo con Truckflow.'
+          : 'Ejecutá paso 2 para buscar estas patentes en Truckflow.',
         exclusionMotives: [],
       },
       validation: {
@@ -145,7 +177,7 @@ export function buildOutputAfterExcelOnlyStep(excel: ExcelMovimientosStepResult)
       },
       executive: undefined,
       movimientosContrato: {
-        enabled: true,
+        enabled: !empty,
         logs: excel.logs,
         warnings: excel.movStats.warnings,
         filesRead: excel.movStats.filesRead,
