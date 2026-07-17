@@ -66,6 +66,28 @@ export default defineConfig({
           })
         },
       },
+      /** Backup local de Movimientos por Contrato (mismo proceso :8787) */
+      '/api/movimientos': {
+        target: 'http://127.0.0.1:8787',
+        changeOrigin: true,
+        timeout: 600_000,
+        proxyTimeout: 600_000,
+        configure(proxy) {
+          proxy.on('error', (err, _req, res: any) => {
+            console.error('[vite proxy /api/movimientos]', err.message)
+            if (res && typeof res.writeHead === 'function' && !res.headersSent) {
+              res.writeHead(503, { 'Content-Type': 'application/json' })
+              res.end(
+                JSON.stringify({
+                  error:
+                    'Servidor local Truckflow no disponible en 8787. En otra terminal: npm run server:truckflow',
+                  detail: err.message,
+                })
+              )
+            }
+          })
+        },
+      },
       /** Evita CORS en desarrollo hacia journey-event/list */
       '/journey-api': {
         target: 'http://138.36.237.33:8090',
