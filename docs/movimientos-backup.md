@@ -35,16 +35,21 @@ el histórico quede como backup y el agente/ETL lo consulte corriendo cualquier 
 - ✅ **Runner** (`scripts/run-etl-headless.ts`): `--movimientos-root/--from-day/--to-day`; sin
   `--excel` lee las particiones del rango (inferido del min/max de eventos si no se pasa) y las
   pasa como `preNormalizedMovimientos`. Pipeline (`etlTransformPipeline`) cablea ese campo.
-- ⏳ **Server (opcional, siguiente)**: `POST /api/movimientos/ingest` (reusa `ingestMovimientosBuffer`)
-  + `GET /api/movimientos/list-days` (cobertura). Hoy la ingesta se hace por CLI.
-- ⏳ **UI (opcional)**: botón "Subir movimientos al backup" → `/ingest`.
+- ✅ **Server**: `POST /api/movimientos/ingest` (`{filename, base64}` → spawnea el script de ingesta)
+  + `GET /api/movimientos/list-days` (cobertura por día). Se quitó `--excel` de `POST /api/etl/runs`.
+- ✅ **UI**: `MovimientosBackupPanel` (tope del tab Transform) — botón "Subir movimientos" (multi-archivo)
+  + tabla de cobertura por día. `src/features/real-truckflow/api/movimientosBackupApi.ts`.
+- ✅ **Solo-backup**: `run-etl-headless` ya no acepta `--excel`; la corrida se nutre del backup por rango.
 
-## Cómo usarlo hoy (CLI)
-1. Cargar los Excel al backup (repetible, idempotente):
-   `npx tsx scripts/ingest-movimientos.ts --excel "ruta/uno.xlsx" --excel "ruta/dos.xlsx"`
-2. Correr el ETL sobre un rango — toma los movimientos del backup automáticamente:
-   `npx tsx scripts/run-etl-headless.ts --events data/truckflow/<día>/... --from-day 2026-05-01 --to-day 2026-07-31`
-   (o vía el agente con `run_etl(from_day, to_day)` sin `excel_path`).
+## Cómo usarlo
+1. **UI**: tab Transform → "Backup de Movimientos" → "Subir movimientos" (arrastrás los Excel de meses).
+   Se parten por día y quedan de respaldo (`data/movimientos/<día>/`, gitignored).
+2. **Correr** el ETL sobre un rango — toma el backup automáticamente:
+   `run_etl(from_day, to_day)` (agente) o `POST /api/etl/runs {from,to}` o
+   `npx tsx scripts/run-etl-headless.ts --events ... --from-day 2026-05-01 --to-day 2026-07-31`.
+
+El script `scripts/ingest-movimientos.ts` sigue existiendo como worker (lo invoca el endpoint);
+ya no hace falta usarlo a mano.
 
 ## Reusa
 - `dedupeMovimientosByOperationId` (`src/etl-core/ingest/dedupeMovimientos.ts`).

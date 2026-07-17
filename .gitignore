@@ -35,6 +35,9 @@ simulador/.runtime/
 # Extracción local Truckflow (JSON por día)
 /data/truckflow/
 
+# Backup local Movimientos por Contrato (particiones por día + crudos)
+/data/movimientos/
+
 # Corridas ETL headless (Fase 4)
 /runs/
 

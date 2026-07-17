@@ -7,7 +7,7 @@ import cors from 'cors'
 import express from 'express'
 import fs from 'fs/promises'
 import { spawnSync } from 'node:child_process'
-import { existsSync, readdirSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, writeFileSync, unlinkSync, mkdirSync } from 'node:fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { createTruckPlateRegistryRouter } from './truck-plate-registry.mjs'
@@ -15,6 +15,7 @@ import { createTruckFleetRouter } from './truck-fleet-registry.mjs'
 import { supabasePublicHost } from './supabase-client.mjs'
 import { uploadEtlRunFromDisk, listEtlRunsFromSupabase } from './etl-runs-store.mjs'
 import { createEtlAgentChat } from './etl-agent-chat.mjs'
+import { createDssLiveRouter } from './dss-live.mjs'
 import {
   buildApiJourneyDayStat,
   countUniqueRawJourneyUids,
@@ -26,6 +27,8 @@ const DATA_ROOT = path.join(PROJECT_ROOT, 'data', 'truckflow')
 const POWERBI_ROOT = path.join(PROJECT_ROOT, 'data', 'powerbi')
 const RUNS_ROOT = path.join(PROJECT_ROOT, 'runs')
 const ETL_HEADLESS_SCRIPT = path.join(PROJECT_ROOT, 'scripts', 'run-etl-headless.ts')
+const MOV_DATA_ROOT = path.join(PROJECT_ROOT, 'data', 'movimientos')
+const INGEST_MOV_SCRIPT = path.join(PROJECT_ROOT, 'scripts', 'ingest-movimientos.ts')
 
 
 const DEFAULT_API_BASE = process.env.TRUCKFLOW_EXPORT_API_BASE?.trim() || 'http://138.36.237.33:8090'
@@ -194,6 +197,12 @@ app.get('/api/truckflow/fleet/lookup', fleetRegistry.lookup)
 app.get('/api/truckflow/fleet/status', fleetRegistry.status)
 app.patch('/api/truckflow/fleet/camion/:plate', fleetRegistry.updateCamion)
 app.post('/api/truckflow/fleet/visitas/sync', fleetRegistry.syncVisitas)
+
+/** Video en vivo vía DSS + go2rtc (ver docs/POC_DSS_LIVE.md). */
+const dssLive = createDssLiveRouter({ projectRoot: PROJECT_ROOT })
+app.get('/api/truckflow/live-camera/status', dssLive.status)
+app.get('/api/truckflow/live-camera/channels', dssLive.listChannels)
+app.post('/api/truckflow/live-camera/:deviceCode/stream', dssLive.getStream)
 
 /** Lista carpetas día existentes (YYYY-MM-DD). */
 app.get('/api/truckflow/list-days', async (_req, res) => {
@@ -700,24 +709,16 @@ app.post('/api/etl/runs', async (req, res) => {
     }
   }
 
-  let excelPath = ''
-  if (req.body?.excelPath) {
-    excelPath = path.isAbsolute(req.body.excelPath)
-      ? req.body.excelPath
-      : path.resolve(PROJECT_ROOT, String(req.body.excelPath))
-    if (!existsSync(excelPath)) {
-      res.status(400).json({ error: `No existe excelPath: ${excelPath}` })
-      return
-    }
-  }
-
   const skipUpload = req.body?.skipSupabase === true
 
+  // Movimientos: la corrida se nutre SOLO del backup local (data/movimientos/<día>/),
+  // leído por rango dentro del runner. Ya no se pasa un Excel por corrida.
   const args = [ETL_HEADLESS_SCRIPT, '--out', RUNS_ROOT]
   for (const p of eventsPaths) {
     args.push('--events', p)
   }
-  if (excelPath) args.push('--excel', excelPath)
+  if (req.body?.from) args.push('--from-day', String(req.body.from))
+  if (req.body?.to) args.push('--to-day', String(req.body.to))
 
   const result = spawnSync('npx', ['tsx', ...args], {
     cwd: PROJECT_ROOT,
@@ -758,6 +759,86 @@ app.post('/api/etl/runs', async (req, res) => {
   }
 
   res.json({ runId, supabase })
+})
+
+/** Cobertura del backup de movimientos: días con particiones + filas por día. */
+function movimientosCoverage() {
+  if (!existsSync(MOV_DATA_ROOT)) return { days: [], totalRows: 0, totalDays: 0 }
+  const dayNames = readdirSync(MOV_DATA_ROOT)
+    .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d))
+    .sort()
+  const days = []
+  let totalRows = 0
+  for (const day of dayNames) {
+    let rows = 0
+    try {
+      const arr = JSON.parse(readFileSync(path.join(MOV_DATA_ROOT, day, 'movimientos.json'), 'utf8'))
+      rows = Array.isArray(arr) ? arr.length : 0
+    } catch {
+      /* partición ilegible */
+    }
+    days.push({ day, rows })
+    totalRows += rows
+  }
+  return { days, totalRows, totalDays: days.length }
+}
+
+/** GET /api/movimientos/list-days — cobertura del backup local. */
+app.get('/api/movimientos/list-days', (_req, res) => {
+  res.json({ dataRoot: MOV_DATA_ROOT, ...movimientosCoverage() })
+})
+
+/**
+ * POST /api/movimientos/ingest — sube un .xlsx al backup local por día.
+ * body: { filename, base64 }. Normaliza, particiona por fecha de fila y deduplica.
+ */
+app.post('/api/movimientos/ingest', (req, res) => {
+  const filename = String(req.body?.filename || '').trim()
+  const base64 = String(req.body?.base64 || '')
+  if (!filename || !base64) {
+    res.status(400).json({ error: 'Enviá { filename, base64 } del .xlsx' })
+    return
+  }
+  if (!/\.xlsx?$/i.test(filename)) {
+    res.status(400).json({ error: 'Solo se aceptan archivos .xlsx' })
+    return
+  }
+  const safeName = path.basename(filename)
+  const tmpDir = path.join(MOV_DATA_ROOT, '_upload')
+  let tmpPath = ''
+  try {
+    mkdirSync(tmpDir, { recursive: true })
+    tmpPath = path.join(tmpDir, safeName)
+    writeFileSync(tmpPath, Buffer.from(base64, 'base64'))
+  } catch (e) {
+    res.status(400).json({ error: `No se pudo guardar el archivo: ${e instanceof Error ? e.message : String(e)}` })
+    return
+  }
+
+  const result = spawnSync(
+    'npx',
+    ['tsx', INGEST_MOV_SCRIPT, '--excel', tmpPath, '--data-root', MOV_DATA_ROOT],
+    { cwd: PROJECT_ROOT, encoding: 'utf8', shell: true, env: process.env, maxBuffer: 32 * 1024 * 1024 }
+  )
+  try {
+    if (tmpPath) unlinkSync(tmpPath)
+  } catch {
+    /* el script ya copió el crudo a _raw/ */
+  }
+
+  if (result.status !== 0) {
+    res.status(500).json({
+      error: 'Falló la ingesta de movimientos',
+      stderr: String(result.stderr || '').slice(-3000),
+    })
+    return
+  }
+  const summary =
+    String(result.stdout || '')
+      .split(/\r?\n/)
+      .find((l) => l.includes('[ingest]'))
+      ?.trim() || ''
+  res.json({ ok: true, file: safeName, summary, coverage: movimientosCoverage() })
 })
 
 /** GET /api/etl/runs — lista manifests (disco; ?remote=1 agrega Supabase). */

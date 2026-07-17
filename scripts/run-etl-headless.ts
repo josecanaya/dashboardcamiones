@@ -1,6 +1,8 @@
 /**
  * Runner ETL headless con persistencia por runId.
- * Uso: npx tsx scripts/run-etl-headless.ts --events <json> [--excel <xlsx>] [--out runs/]
+ * Los movimientos se nutren SOLO del backup local (data/movimientos/<día>/), leído
+ * por rango. La ingesta al backup es aparte (scripts/ingest-movimientos.ts o UI).
+ * Uso: npx tsx scripts/run-etl-headless.ts --events <json> [--from-day <d>] [--to-day <d>] [--out runs/]
  */
 import { createHash, randomBytes } from 'node:crypto'
 import { mkdirSync, readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs'
@@ -18,7 +20,6 @@ import type { RealJourneyEventDto } from '../src/services/realJourneyEvents.type
 
 type Args = {
   eventsPaths: string[]
-  excelPath: string
   outRoot: string
   movimientosRoot: string
   fromDay: string
@@ -28,14 +29,16 @@ type Args = {
 
 function printHelp() {
   console.log(`Uso:
-  npx tsx scripts/run-etl-headless.ts --events <ruta.json> [--events <otra.json>] [--excel <xlsx>] [--out runs/]
+  npx tsx scripts/run-etl-headless.ts --events <ruta.json> [--events <otra.json>] [--from-day <d>] [--to-day <d>] [--out runs/]
 
 Opciones:
-  --events   JSON de eventos Truckflow (repetible). Obligatorio al menos uno.
-  --excel    XLSX Movimientos por Contrato (opcional).
-  --out      Raíz de corridas (default: runs/).
-  --help     Esta ayuda.
+  --events           JSON de eventos Truckflow (repetible). Obligatorio al menos uno.
+  --from-day/--to-day  Rango YYYY-MM-DD para leer el backup de movimientos (default: min/max de eventos).
+  --movimientos-root Carpeta del backup (default: data/movimientos).
+  --out              Raíz de corridas (default: runs/).
+  --help             Esta ayuda.
 
+Los movimientos se toman del backup local; no se pasa Excel por corrida.
 La última línea de stdout es el runId.
 `)
 }
@@ -43,7 +46,6 @@ La última línea de stdout es el runId.
 function parseArgs(argv: string[]): Args {
   const out: Args = {
     eventsPaths: [],
-    excelPath: '',
     outRoot: resolve('runs'),
     movimientosRoot: resolve('data/movimientos'),
     fromDay: '',
@@ -54,7 +56,6 @@ function parseArgs(argv: string[]): Args {
     const a = argv[i]
     if (a === '--help' || a === '-h') out.help = true
     else if (a === '--events') out.eventsPaths.push(resolve(argv[++i] ?? ''))
-    else if (a === '--excel') out.excelPath = resolve(argv[++i] ?? '')
     else if (a === '--out') out.outRoot = resolve(argv[++i] ?? 'runs')
     else if (a === '--movimientos-root') out.movimientosRoot = resolve(argv[++i] ?? 'data/movimientos')
     else if (a === '--from-day') out.fromDay = String(argv[++i] ?? '').trim()
@@ -154,11 +155,6 @@ async function main() {
       process.exit(1)
     }
   }
-  if (args.excelPath && !existsSync(args.excelPath)) {
-    console.error(`No existe --excel: ${args.excelPath}`)
-    process.exit(1)
-  }
-
   mkdirSync(args.outRoot, { recursive: true })
   writeCatalog(args.outRoot)
 
@@ -176,7 +172,6 @@ async function main() {
 
   log(`[etl-headless] runId=${runId}`)
   log(`[etl-headless] events=${args.eventsPaths.join(', ')}`)
-  if (args.excelPath) log(`[etl-headless] excel=${args.excelPath}`)
 
   let events: RealJourneyEventDto[] = []
   for (const p of args.eventsPaths) {
@@ -191,25 +186,12 @@ async function main() {
     )
   }
 
-  const movimientosContratoFiles =
-    args.excelPath ?
-      (() => {
-        const buf = readFileSync(args.excelPath)
-        return [
-          {
-            sourceFile: basename(args.excelPath),
-            arrayBuffer: buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength),
-          },
-        ]
-      })()
-    : undefined
-
-  // Movimientos backup: si no viene --excel, leer particiones por día del rango.
+  // Movimientos: la corrida se nutre SOLO del backup local particionado por día.
   // Rango: --from-day/--to-day explícitos, o inferido del min/max de los eventos.
   let preNormalizedMovimientos:
     | import('../src/features/real-truckflow/etlWorkbench/etlExternalMovimientosContrato.ts').ExternalMovimientoContratoNormalized[]
     | undefined
-  if (!movimientosContratoFiles && existsSync(args.movimientosRoot)) {
+  if (existsSync(args.movimientosRoot)) {
     const eventDays = events
       .map((e) => String(e.occurredAt ?? '').slice(0, 10))
       .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d))
@@ -224,7 +206,7 @@ async function main() {
   }
 
   const inputHash = createHash('sha256')
-    .update(JSON.stringify({ events: args.eventsPaths, excel: args.excelPath || null }))
+    .update(JSON.stringify({ events: args.eventsPaths, movimientosRows: preNormalizedMovimientos?.length ?? 0 }))
     .digest('hex')
     .slice(0, 12)
 
@@ -238,7 +220,7 @@ async function main() {
         rulesVersion: ETL_TRANSFORM_RULES_VERSION,
         input: {
           eventsPaths: args.eventsPaths,
-          excelPath: args.excelPath || null,
+          movimientosRows: preNormalizedMovimientos?.length ?? 0,
           inputHash,
           eventCount: events.length,
         },
@@ -256,7 +238,6 @@ async function main() {
       mergeWindowHours: 4,
       loadedEventFilesCount: args.eventsPaths.length,
       loadedAlertFilesCount: 0,
-      movimientosContratoFiles,
       preNormalizedMovimientos,
     })
 
@@ -311,7 +292,7 @@ async function main() {
           rulesVersion: out.rulesVersion ?? ETL_TRANSFORM_RULES_VERSION,
           input: {
             eventsPaths: args.eventsPaths,
-            excelPath: args.excelPath || null,
+            movimientosRows: preNormalizedMovimientos?.length ?? 0,
             inputHash,
             eventCount: events.length,
           },
@@ -345,7 +326,7 @@ async function main() {
           error: message,
           input: {
             eventsPaths: args.eventsPaths,
-            excelPath: args.excelPath || null,
+            movimientosRows: preNormalizedMovimientos?.length ?? 0,
             inputHash,
             eventCount: events.length,
           },

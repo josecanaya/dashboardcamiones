@@ -14,6 +14,7 @@ import {
   buildSuspiciousDischargeWithoutBalanza,
   buildSuspiciousSlExitRicReturn,
   collectPelletExcludedPlates,
+  stampMissingExcelAnomalies,
   rebuildCircuitClassificationIndex,
   filterEntriesByMinTruckflowCrossings,
   ANOMALY_LIST_MIN_EVENTS,
@@ -39,6 +40,7 @@ import {
 } from '../../../etl-core/reports/transileExternoReclasificacion'
 import { committeePieFromGroup } from '../etlWorkbench/committeeClassification'
 import { MovimientosContratoPanel } from '../components/MovimientosContratoPanel'
+import { MovimientosBackupPanel } from '../components/MovimientosBackupPanel'
 import { ExecutiveSampleProductFilter } from '../components/ExecutiveSampleProductFilter'
 import {
   buildExecutiveProductFilterPlan,
@@ -805,10 +807,6 @@ export function TransformEtlTab() {
   const circuitPieTotal = circuitClassificationPie.reduce((acc, d) => acc + Math.max(0, d.value), 0)
   const circuitBarData = useMemo(() => displayClassIndex.circuitBarSlices, [displayClassIndex.circuitBarSlices])
   const circuitBarTotal = circuitBarData.reduce((acc, d) => acc + d.count, 0)
-  const committeeCrossTab = useMemo(
-    () => buildCommitteeCircuitCrossTab(displayClassIndex.entries),
-    [displayClassIndex.entries]
-  )
   const filteredEntriesForAnomalies = useMemo(
     () => displayClassIndex.entries,
     [displayClassIndex.entries]
@@ -828,21 +826,30 @@ export function TransformEtlTab() {
       tr?.tables?.transile_interno_volcable_sessions,
     ]
   )
-  const anomalyReview = useMemo(
-    () => buildAnomalyReviewSummary(filteredEntriesForAnomalies, anomalyListCtx),
+  const stampedEntries = useMemo(
+    () => stampMissingExcelAnomalies(filteredEntriesForAnomalies, anomalyListCtx),
     [filteredEntriesForAnomalies, anomalyListCtx]
   )
+  const committeeCrossTab = useMemo(
+    () =>
+      buildCommitteeCircuitCrossTab(stampedEntries, {
+        excludeGoldenPlates: anomalyListCtx.deVueltaExcludedPlates,
+      }),
+    [stampedEntries, anomalyListCtx.deVueltaExcludedPlates]
+  )
+  const anomalyReview = useMemo(
+    () => buildAnomalyReviewSummary(stampedEntries, anomalyListCtx),
+    [stampedEntries, anomalyListCtx]
+  )
   const suspiciousExcludedPlates = useMemo(() => {
-    const pellet = collectPelletExcludedPlates(filteredEntriesForAnomalies, anomalyListCtx)
-    const registry = anomalyListCtx.excludedRegistryPlates
-    if (!registry?.size) return pellet
-    const merged = new Set(pellet)
-    for (const p of registry) merged.add(p)
+    const merged = new Set(collectPelletExcludedPlates(stampedEntries, anomalyListCtx))
+    for (const p of anomalyListCtx.excludedRegistryPlates ?? []) merged.add(p)
+    for (const p of anomalyListCtx.deVueltaExcludedPlates ?? []) merged.add(p)
     return merged
-  }, [filteredEntriesForAnomalies, anomalyListCtx])
+  }, [stampedEntries, anomalyListCtx])
   const suspiciousDischargeRows = useMemo(
-    () => buildSuspiciousDischargeWithoutBalanza(filteredEntriesForAnomalies, anomalyListCtx),
-    [filteredEntriesForAnomalies, anomalyListCtx]
+    () => buildSuspiciousDischargeWithoutBalanza(stampedEntries, anomalyListCtx),
+    [stampedEntries, anomalyListCtx]
   )
   const suspiciousSlRicAllowedJourneyIds = useMemo(() => {
     if (!executiveProductFilterActive || !executiveProductFilterPlan) return null
@@ -926,6 +933,7 @@ export function TransformEtlTab() {
 
   return (
     <section className="space-y-6">
+      <MovimientosBackupPanel />
       <div className="rounded-3xl border border-violet-200 bg-gradient-to-br from-violet-50/90 via-white to-white p-6 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900">Transform</h2>
         <p className="mt-2 max-w-3xl text-sm text-slate-600">
