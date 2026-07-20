@@ -1,4 +1,15 @@
-# Result cache por ventana — plan de implementación (single-shot)
+# Result cache por ventana
+
+> **Estado 2026-07-20:** layout estable en producción de código.
+> - Path: `runs/windows/<from>_<to>/` (se **pisa** al reprocesar).
+> - runId = `2026-07-13_2026-07-20` (no timestamp).
+> - Solo tablas núcleo en `tables/*.json` (sin CSV; debug opcional).
+> - Ver [`AGENTES_SKILLS_Y_RUNS.md`](AGENTES_SKILLS_Y_RUNS.md) y `src/etl-core/runs/etlRunsLayout.ts`.
+> - GC legacy: `node scripts/cleanup-runs-orphans.mjs --apply`.
+
+---
+
+# Result cache por ventana — plan de implementación (histórico)
 
 Objetivo: **procesar una vez por ventana `(from, to)` y consultar el resultado sin reprocesar**, tanto desde la UI (KPIs, calibración, anomalías, split producto) como desde el agente MCP. Si cambian reglas, se puede pisar; los runs viejos quedan accesibles por `run_id`.
 

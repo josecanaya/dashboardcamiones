@@ -365,6 +365,8 @@ export const COMMITTEE_CHART_EXPORT_HEADERS = [
   'top_committee_reason',
   'committee_reasons_breakdown',
   'event_count',
+  'anomaly_kind',
+  'anomaly_kind_reason',
   'sample_filter',
 ] as const
 
@@ -2256,7 +2258,28 @@ export function collectNormalizedPlatesFromCsv(csv: string | undefined | null): 
 }
 
 /**
- * Claves `PLATE|YYYY-MM-DD` desde Movimientos normalizados (`source_date` o día de ingreso).
+ * Día operativo de un movimiento Excel para cruce patente+día (G5).
+ * Regla de negocio: el Excel de Movimientos se arma por **horario de salida**.
+ * Un camión que ingresa el día D y sale en la madrugada de D+1 figura en el Excel de D+1.
+ *
+ * Prioridad: `external_salida_at` → `source_date` (día del archivo) → `external_ingreso_at`.
+ */
+export function excelOperativeDayFromMovimientoRow(r: {
+  source_date?: unknown
+  external_salida_at?: unknown
+  external_ingreso_at?: unknown
+}): string {
+  const salida = operationalDayKeyFromIso(String(r.external_salida_at ?? ''))
+  if (salida) return salida
+  const src = String(r.source_date ?? '').trim()
+  const srcDay = src.match(/(\d{4}-\d{2}-\d{2})/)?.[1]
+  if (srcDay) return srcDay
+  return operationalDayKeyFromIso(String(r.external_ingreso_at ?? ''))
+}
+
+/**
+ * Claves `PLATE|YYYY-MM-DD` desde Movimientos (día = salida / archivo Excel).
+ * Si salida y `source_date` difieren, registra ambos para no perder el cruce.
  */
 export function collectExcelPlateDaysFromCsv(csv: string | undefined | null): Set<string> {
   const out = new Set<string>()
@@ -2265,13 +2288,28 @@ export function collectExcelPlateDaysFromCsv(csv: string | undefined | null): Se
   for (const r of rows) {
     const plate = normalizePlate(r.plate_normalized ?? r.plate ?? r.patente ?? '')
     if (!plate) continue
-    const day =
-      String(r.source_date ?? '').trim() ||
-      operationalDayKeyFromIso(String(r.external_ingreso_at ?? r.external_salida_at ?? ''))
-    if (!day) continue
-    out.add(excelPlateDayKey(plate, day))
+    for (const day of excelPlateDaysForMovimientoRow(r)) {
+      out.add(excelPlateDayKey(plate, day))
+    }
   }
   return out
+}
+
+function excelPlateDaysForMovimientoRow(r: {
+  source_date?: unknown
+  external_salida_at?: unknown
+  external_ingreso_at?: unknown
+}): string[] {
+  const days = new Set<string>()
+  const salida = operationalDayKeyFromIso(String(r.external_salida_at ?? ''))
+  if (salida) days.add(salida)
+  const src = String(r.source_date ?? '').trim().match(/(\d{4}-\d{2}-\d{2})/)?.[1]
+  if (src) days.add(src)
+  if (!days.size) {
+    const ing = operationalDayKeyFromIso(String(r.external_ingreso_at ?? ''))
+    if (ing) days.add(ing)
+  }
+  return [...days]
 }
 
 function collectExcelPlateDaysFromExcelOps(source: ExcelOpsSource): Set<string> {
@@ -2279,11 +2317,9 @@ function collectExcelPlateDaysFromExcelOps(source: ExcelOpsSource): Set<string> 
   for (const r of excelOpsRows(source)) {
     const plate = normalizePlate(String(r.plate_normalized ?? r.plate ?? r.patente ?? ''))
     if (!plate) continue
-    const day =
-      String(r.source_date ?? '').trim() ||
-      operationalDayKeyFromIso(String(r.external_ingreso_at ?? r.external_salida_at ?? ''))
-    if (!day) continue
-    out.add(excelPlateDayKey(plate, day))
+    for (const day of excelPlateDaysForMovimientoRow(r)) {
+      out.add(excelPlateDayKey(plate, day))
+    }
   }
   return out
 }
@@ -2297,12 +2333,31 @@ function sequenceLogicalCodes(detectedSequence: string): string[] {
     .filter(Boolean)
 }
 
+/**
+ * Evidencia de que el journey ya está reconciliado con Movimientos Excel
+ * (plataforma/match en committee_reason). Evita G5 falso positivo cuando el
+ * cruce patente+día falla por overnight (ingreso D / Excel por salida D+1)
+ * o por first/last_event_at vacíos.
+ */
+export function entryHasExcelMovementEvidence(entry: CircuitClassificationEntry): boolean {
+  const reason = String(entry.committeeReason ?? '').trim().toUpperCase()
+  if (!reason) return false
+  if (reason.startsWith('EXCEL_')) return true
+  if (reason.includes('EXTERNAL_MATCH_')) return true
+  if (reason.includes('EXCEL_MOVIMIENTOS') || reason.includes('EXCEL_PLATAFORMA')) return true
+  return false
+}
+
+/**
+ * Días del journey a cruzar con Excel: fin (≈ salida) e inicio.
+ * Cubren circuitos que cruzan medianoche (ingreso D, egreso madrugada D+1).
+ */
 function entryOperativeDays(entry: CircuitClassificationEntry): string[] {
   const days = new Set<string>()
-  const a = operationalDayKeyFromIso(entry.firstEventAt)
-  const b = operationalDayKeyFromIso(entry.lastEventAt)
-  if (a) days.add(a)
-  if (b) days.add(b)
+  const end = operationalDayKeyFromIso(entry.lastEventAt)
+  const start = operationalDayKeyFromIso(entry.firstEventAt)
+  if (end) days.add(end)
+  if (start) days.add(start)
   return [...days]
 }
 
@@ -2311,10 +2366,12 @@ function entryInExcelSameDay(
   excelPlateDays: Set<string> | null | undefined
 ): boolean | null {
   if (excelPlateDays == null) return null
+  if (entryHasExcelMovementEvidence(entry)) return true
   const plate = normalizePlate(entry.normalizedPlate || entry.plate)
   if (!plate) return null
   const days = entryOperativeDays(entry)
-  if (!days.length) return false
+  // Sin fechas operativas no se puede afirmar ausencia → no disparar G5.
+  if (!days.length) return null
   return days.some((d) => excelPlateDays.has(excelPlateDayKey(plate, d)))
 }
 
@@ -2558,6 +2615,8 @@ function emptyChartRow(recordType: string): Record<string, string | number> {
     top_committee_reason: '',
     committee_reasons_breakdown: '',
     event_count: '',
+    anomaly_kind: '',
+    anomaly_kind_reason: '',
     sample_filter: '',
   }
 }
@@ -2682,6 +2741,32 @@ export function committeeChartExportCsv(
       top_committee_reason: ar.topCommitteeReason,
       committee_reasons_breakdown: ar.reasonCounts.map((x) => `${x.reason}:${x.count}`).join(' | '),
     })
+    if (includeJourneyRows) {
+      for (const e of ar.trucks) {
+        rows.push({
+          ...emptyChartRow('ANOMALIA_JOURNEY'),
+          executive_circuit_code: e.executiveCircuitCode,
+          executive_circuit_label: e.executiveCircuitLabel,
+          display_label: e.executiveCircuitDisplay,
+          committee_group: e.committeeGroup,
+          committee_category: 'anomalias',
+          journey_id: e.journeyId,
+          plate: e.plate,
+          detected_sequence: e.detectedSequence,
+          count: 1,
+          useful_events_count: e.usefulEventsCount,
+          committee_reason: e.committeeReason,
+          operational_variation_type: e.operationalVariationType,
+          matrix_final_status: e.matrixFinalStatus,
+          executive_status: e.executiveStatus,
+          executive_reason: e.executiveReason,
+          matrix_reason: e.matrixReason,
+          event_count: truckflowCrossingCountFromEntry(e),
+          anomaly_kind: e.anomalyKind ?? '',
+          anomaly_kind_reason: e.anomalyKindReason ?? '',
+        })
+      }
+    }
   }
 
   if (includeJourneyRows) {
@@ -2705,6 +2790,8 @@ export function committeeChartExportCsv(
         executive_reason: e.executiveReason,
         matrix_reason: e.matrixReason,
         event_count: truckflowCrossingCountFromEntry(e),
+        anomaly_kind: e.anomalyKind ?? '',
+        anomaly_kind_reason: e.anomalyKindReason ?? '',
       })
     }
   }

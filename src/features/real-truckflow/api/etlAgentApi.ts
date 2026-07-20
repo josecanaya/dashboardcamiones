@@ -79,3 +79,59 @@ export async function postEtlAgentChat(
   })
   return parseJson<EtlAgentChatResponse>(res)
 }
+
+/**
+ * Igual que postEtlAgentChat pero lee el stream NDJSON del server y reporta
+ * cada acción del agente en vivo vía onProgress(label). Devuelve la respuesta final.
+ */
+export async function streamEtlAgentChat(
+  message: string,
+  history: EtlAgentChatMessage[],
+  onProgress: (label: string) => void
+): Promise<EtlAgentChatResponse> {
+  const res = await fetch(`${etlApiPrefix()}/agent/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message, history }),
+  })
+  if (!res.ok || !res.body) {
+    // Fallback: el server respondió error no-stream (ej. 503 config).
+    return parseJson<EtlAgentChatResponse>(res)
+  }
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  let final: EtlAgentChatResponse | null = null
+  let errored: string | null = null
+
+  const handleLine = (line: string) => {
+    const trimmed = line.trim()
+    if (!trimmed) return
+    let evt: { type?: string; label?: string; error?: string } & EtlAgentChatResponse
+    try {
+      evt = JSON.parse(trimmed)
+    } catch {
+      return
+    }
+    if (evt.type === 'progress' && evt.label) onProgress(evt.label)
+    else if (evt.type === 'done') final = evt
+    else if (evt.type === 'error') errored = evt.error || 'Error del agente'
+  }
+
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    let nl: number
+    while ((nl = buffer.indexOf('\n')) >= 0) {
+      handleLine(buffer.slice(0, nl))
+      buffer = buffer.slice(nl + 1)
+    }
+  }
+  if (buffer.trim()) handleLine(buffer)
+
+  if (errored) throw new Error(errored)
+  if (!final) throw new Error('El agente no devolvió respuesta.')
+  return final
+}

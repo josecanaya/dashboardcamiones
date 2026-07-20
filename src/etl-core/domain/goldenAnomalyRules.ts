@@ -66,7 +66,7 @@ export function hasPlantEntryExitEvidence(logicalCodes: Iterable<string>): boole
 }
 
 /**
- * G5: entrada+salida en Ric o SL y el movimiento no figura en Excel (patente+día).
+ * G5: entrada+salida en Ric o SL y el movimiento no figura en Excel (patente+día de salida).
  * `inExcelSameDay`: null = Excel no cargado (no dispara); true = figura; false = ausente.
  */
 export function detectMissingExcelMovement(input: {
@@ -85,7 +85,7 @@ export function detectMissingExcelMovement(input: {
   return {
     reason: 'SIN_MOVIMIENTO_EXCEL',
     kind: 'BEHAVIORAL',
-    detail: `Entrada+salida en ${where} sin registro en Movimientos por Contrato (patente+día)`,
+    detail: `Entrada+salida en ${where} sin registro en Movimientos por Contrato (patente+día de salida)`,
     circuitCode: input.circuitCode,
   }
 }

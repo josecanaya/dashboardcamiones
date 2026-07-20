@@ -20,6 +20,7 @@ import {
   buildApiJourneyDayStat,
   countUniqueRawJourneyUids,
 } from './truckflow-raw-journey-stats.mjs'
+import { resolveRunDir, runDirExists, stableWindowRunId } from './etl-runs-layout.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = path.resolve(__dirname, '..')
@@ -668,27 +669,6 @@ function annotateRunManifest(manifest) {
   }
 }
 
-function listEtlRunManifests() {
-  if (!existsSync(RUNS_ROOT)) return []
-  const names = readdirSync(RUNS_ROOT, { withFileTypes: true })
-  const out = []
-  for (const ent of names) {
-    if (!ent.isDirectory() || ent.name.startsWith('_')) continue
-    const manifest = readJsonSyncSafe(path.join(RUNS_ROOT, ent.name, 'manifest.json'))
-    if (manifest) out.push(annotateRunManifest(manifest))
-  }
-  out.sort((a, b) => String(b.startedAt || '').localeCompare(String(a.startedAt || '')))
-  return out
-}
-
-function listTruckflowDataDays() {
-  if (!existsSync(DATA_ROOT)) return []
-  return readdirSync(DATA_ROOT, { withFileTypes: true })
-    .filter((ent) => ent.isDirectory() && /^\d{4}-\d{2}-\d{2}$/.test(ent.name))
-    .map((ent) => ent.name)
-    .sort()
-}
-
 /** Índice runs/_index/by-window.json: ventana `<from>..<to>` → último run OK. */
 function readWindowIndex() {
   const p = path.join(RUNS_ROOT, '_index', 'by-window.json')
@@ -699,6 +679,52 @@ function readWindowIndex() {
   } catch {
     return { version: 1, entries: {} }
   }
+}
+
+function listEtlRunManifests() {
+  if (!existsSync(RUNS_ROOT)) return []
+  const out = []
+  const seen = new Set()
+
+  // Fuente de verdad: ventanas indexadas (y carpetas windows/).
+  const idx = readWindowIndex()
+  for (const e of Object.values(idx.entries || {})) {
+    const runId = String(e?.runId ?? '').trim()
+    if (!runId || seen.has(runId)) continue
+    const runDir = resolveRunDir(RUNS_ROOT, runId)
+    if (!runDir || !existsSync(path.join(runDir, 'manifest.json'))) continue
+    const manifest = readJsonSyncSafe(path.join(runDir, 'manifest.json'))
+    if (manifest) {
+      seen.add(runId)
+      out.push(annotateRunManifest(manifest))
+    }
+  }
+
+  // Ventanas en disco aún no indexadas (raro, pero útil post-migración).
+  const windowsRoot = path.join(RUNS_ROOT, 'windows')
+  if (existsSync(windowsRoot)) {
+    for (const ent of readdirSync(windowsRoot, { withFileTypes: true })) {
+      if (!ent.isDirectory() || seen.has(ent.name)) continue
+      const manifest = readJsonSyncSafe(path.join(windowsRoot, ent.name, 'manifest.json'))
+      if (manifest) {
+        seen.add(ent.name)
+        out.push(annotateRunManifest(manifest))
+      }
+    }
+  }
+
+  out.sort((a, b) =>
+    String(b.startedAt || b.finishedAt || '').localeCompare(String(a.startedAt || a.finishedAt || ''))
+  )
+  return out
+}
+
+function listTruckflowDataDays() {
+  if (!existsSync(DATA_ROOT)) return []
+  return readdirSync(DATA_ROOT, { withFileTypes: true })
+    .filter((ent) => ent.isDirectory() && /^\d{4}-\d{2}-\d{2}$/.test(ent.name))
+    .map((ent) => ent.name)
+    .sort()
 }
 
 // Debe coincidir con ETL_TRANSFORM_RULES_VERSION en etlTransformPipeline.ts.
@@ -733,7 +759,7 @@ app.post('/api/etl/runs', async (req, res) => {
     const idxKey = `${String(req.body.from)}..${String(req.body.to)}`
     const idx = readWindowIndex()
     const hit = idx.entries[idxKey]
-    if (hit && existsSync(path.join(RUNS_ROOT, hit.runId))) {
+    if (hit && runDirExists(RUNS_ROOT, hit.runId)) {
       const stale = String(hit.rulesVersion || '') !== CURRENT_RULES_VERSION
       if (!stale) {
         res.json({ runId: hit.runId, cached: true, supabase: null })
@@ -750,6 +776,7 @@ app.post('/api/etl/runs', async (req, res) => {
   }
   if (req.body?.from) args.push('--from-day', String(req.body.from))
   if (req.body?.to) args.push('--to-day', String(req.body.to))
+  if (req.body?.persistDebug === true) args.push('--persist-debug')
 
   const result = spawnSync('npx', ['tsx', ...args], {
     cwd: PROJECT_ROOT,
@@ -781,7 +808,8 @@ app.post('/api/etl/runs', async (req, res) => {
   let supabase = null
   if (!skipUpload) {
     try {
-      supabase = await uploadEtlRunFromDisk(path.join(RUNS_ROOT, runId))
+      const runDir = resolveRunDir(RUNS_ROOT, runId)
+      if (runDir) supabase = await uploadEtlRunFromDisk(runDir)
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e)
       console.warn(`[etl] upload Supabase falló: ${message}`)
@@ -938,13 +966,28 @@ app.get('/api/etl/resolve-window', (req, res) => {
   }
   const key = `${from}..${to}`
   const idx = readWindowIndex()
-  const entry = idx.entries[key]
-  if (!entry) {
+  let entry = idx.entries[key]
+  // Preferir id estable aunque el índice aún apunte a un timestamp legacy.
+  let expectedStable = null
+  try {
+    expectedStable = stableWindowRunId(from, to)
+  } catch {
+    expectedStable = null
+  }
+  if (expectedStable && runDirExists(RUNS_ROOT, expectedStable)) {
+    entry = {
+      ...(entry || {}),
+      runId: expectedStable,
+      rulesVersion: entry?.rulesVersion,
+      createdAt: entry?.createdAt,
+      inputHash: entry?.inputHash,
+    }
+  }
+  if (!entry?.runId) {
     res.status(404).json({ error: 'window_not_cached', from, to })
     return
   }
-  const runDir = path.join(RUNS_ROOT, entry.runId)
-  if (!existsSync(runDir)) {
+  if (!runDirExists(RUNS_ROOT, entry.runId)) {
     res.status(404).json({ error: 'run_missing', from, to, runId: entry.runId })
     return
   }
@@ -967,48 +1010,62 @@ app.get('/api/etl/windows', (_req, res) => {
   const windows = Object.entries(idx.entries || {})
     .map(([key, e]) => {
       const [from, to] = key.split('..')
-      const runDir = path.join(RUNS_ROOT, e.runId)
+      const stableId =
+        /^\d{4}-\d{2}-\d{2}$/.test(from || '') && /^\d{4}-\d{2}-\d{2}$/.test(to || '') ?
+          `${from}_${to}`
+        : e.runId
+      const runId = runDirExists(RUNS_ROOT, stableId) ? stableId : e.runId
       return {
         from,
         to,
-        runId: e.runId,
+        runId,
         rulesVersion: e.rulesVersion,
         createdAt: e.createdAt,
         stale: String(e.rulesVersion || '') !== CURRENT_RULES_VERSION,
-        exists: existsSync(runDir),
+        exists: runDirExists(RUNS_ROOT, runId),
       }
     })
     .filter((w) => w.exists)
-    .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')))
+    // Orden cronológico por ventana de datos (no por hora del Process).
+    .sort((a, b) => String(a.from).localeCompare(String(b.from)) || String(a.to).localeCompare(String(b.to)))
   res.json({ windows, currentRulesVersion: CURRENT_RULES_VERSION })
 })
 
 /** GET /api/etl/runs/:id/summary — stats.json */
 app.get('/api/etl/runs/:id/summary', (req, res) => {
   const runId = String(req.params.id || '').trim()
-  const statsPath = path.join(RUNS_ROOT, runId, 'stats.json')
-  if (!existsSync(statsPath)) {
+  const runDir = resolveRunDir(RUNS_ROOT, runId)
+  const statsPath = runDir ? path.join(runDir, 'stats.json') : ''
+  if (!runDir || !existsSync(statsPath)) {
     res.status(404).json({ error: `Corrida no encontrada: ${runId}` })
     return
   }
   const stats = readJsonSyncSafe(statsPath)
-  const manifest = readJsonSyncSafe(path.join(RUNS_ROOT, runId, 'manifest.json'))
+  const manifest = readJsonSyncSafe(path.join(runDir, 'manifest.json'))
   res.json({ runId, manifest, stats })
 })
 
-/** GET /api/etl/runs/:id/tables — nombres de tablas */
+/** GET /api/etl/runs/:id/tables — nombres de tablas (núcleo; ?debug=1 incluye debug/). */
 app.get('/api/etl/runs/:id/tables', (req, res) => {
   const runId = String(req.params.id || '').trim()
-  const tablesDir = path.join(RUNS_ROOT, runId, 'tables')
-  if (!existsSync(tablesDir)) {
+  const runDir = resolveRunDir(RUNS_ROOT, runId)
+  const tablesDir = runDir ? path.join(runDir, 'tables') : ''
+  if (!runDir || !existsSync(tablesDir)) {
     res.status(404).json({ error: `Corrida no encontrada: ${runId}` })
     return
   }
   const names = readdirSync(tablesDir)
     .filter((n) => n.endsWith('.json'))
     .map((n) => n.replace(/\.json$/i, ''))
-    .sort()
-  res.json({ runId, tables: names })
+  const wantDebug = String(req.query.debug ?? '') === '1' || String(req.query.debug ?? '') === 'true'
+  const debugDir = path.join(runDir, 'debug')
+  if (wantDebug && existsSync(debugDir)) {
+    for (const n of readdirSync(debugDir)) {
+      if (n.endsWith('.json')) names.push(n.replace(/\.json$/i, ''))
+    }
+  }
+  names.sort()
+  res.json({ runId, tables: [...new Set(names)] })
 })
 
 /** GET /api/etl/runs/:id/tables/:name — filas con limit/offset/col/eq */
@@ -1019,7 +1076,15 @@ app.get('/api/etl/runs/:id/tables/:name', (req, res) => {
     res.status(400).json({ error: 'Nombre de tabla inválido' })
     return
   }
-  const tablePath = path.join(RUNS_ROOT, runId, 'tables', `${name}.json`)
+  const runDir = resolveRunDir(RUNS_ROOT, runId)
+  if (!runDir) {
+    res.status(404).json({ error: `Corrida no encontrada: ${runId}` })
+    return
+  }
+  let tablePath = path.join(runDir, 'tables', `${name}.json`)
+  if (!existsSync(tablePath)) {
+    tablePath = path.join(runDir, 'debug', `${name}.json`)
+  }
   if (!existsSync(tablePath)) {
     res.status(404).json({ error: `Tabla no encontrada: ${name}` })
     return
@@ -1109,14 +1174,27 @@ app.post('/api/etl/agent/chat', async (req, res) => {
     return
   }
   const history = Array.isArray(req.body?.history) ? req.body.history : []
+
+  // Stream NDJSON: eventos {type:'progress',label} en vivo y {type:'done',...} al final.
+  res.setHeader('Content-Type', 'application/x-ndjson; charset=utf-8')
+  res.setHeader('Cache-Control', 'no-cache')
+  res.setHeader('X-Accel-Buffering', 'no')
+  if (typeof res.flushHeaders === 'function') res.flushHeaders()
+  const write = (obj) => {
+    res.write(JSON.stringify(obj) + '\n')
+    if (typeof res.flush === 'function') res.flush()
+  }
+
   try {
-    const out = await etlAgent.chat({ message, history })
-    res.json(out)
+    const out = await etlAgent.chatStream({ message, history }, (label) =>
+      write({ type: 'progress', label })
+    )
+    write({ type: 'done', ...out })
   } catch (e) {
     const messageErr = e instanceof Error ? e.message : String(e)
-    const status = e?.code === 'NO_API_KEY' ? 503 : e?.status && e.status < 600 ? e.status : 500
-    res.status(status).json({ error: messageErr })
+    write({ type: 'error', error: messageErr })
   }
+  res.end()
 })
 
 app.listen(PORT, () => {

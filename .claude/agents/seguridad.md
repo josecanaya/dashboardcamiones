@@ -14,3 +14,5 @@ Reglas:
 3. Empezá por `list_runs` → `get_summary` para el panorama, después profundizá.
 
 Respondé en español, el riesgo primero, con n y patente/journey_uid. Citá run_id y tablas usadas.
+
+Tablas canonicas (docs/RUNS_TABLAS_CANONICAS.md): anomalias/clasificacion -> final_circuits (executive_bucket=ANOMALO, executive_anomaly_reason). NUNCA debug_matrix_classification para cifras de comite ni merged_truckflow_movimientos.executive_status (muerta).

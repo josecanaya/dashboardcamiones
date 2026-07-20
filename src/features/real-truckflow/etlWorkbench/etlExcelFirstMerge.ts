@@ -814,8 +814,9 @@ function filterJourneysInWindow(
 
 function sameCalendarDay(journey: TruckflowJourneyForMerge, dayKey: string): boolean {
   if (!dayKey) return false
-  const jDay = dayKeyFromIso(journey.start_time) || dayKeyFromIso(journey.end_time)
-  return Boolean(jDay && jDay === dayKey)
+  const startDay = dayKeyFromIso(journey.start_time)
+  const endDay = dayKeyFromIso(journey.end_time)
+  return Boolean((startDay && startDay === dayKey) || (endDay && endDay === dayKey))
 }
 
 function journeyBoundsMs(j: TruckflowJourneyForMerge): { startMs: number; endMs: number } | null {

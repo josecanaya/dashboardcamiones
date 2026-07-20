@@ -897,10 +897,10 @@ export function TransformEtlTab() {
   }
 
   const downloadCommitteeChartCsv = (includeJourneyRows: boolean) => {
-    if (!displayClassIndex.entries.length) return
+    if (!stampedEntries.length && !displayClassIndex.entries.length) return
     const csv = committeeChartExportCsv(
       {
-        entries: displayClassIndex.entries,
+        entries: stampedEntries.length ? stampedEntries : displayClassIndex.entries,
         crossTab: committeeCrossTab,
         crossTabTotals,
         anomalyReview,

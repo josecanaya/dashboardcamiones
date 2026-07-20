@@ -2,8 +2,8 @@ import type { EtlTransformOutput } from './etlTransformPipeline'
 import { fetchRunTable, getRunSummary, listRunTables } from '../api/etlRunCacheApi'
 
 /**
- * Reconstruye un EtlTransformOutput a partir de runs/<runId>/ (stats.json + tables/*).
- * No corre el pipeline: hidrata la vista con el resultado ya materializado.
+ * Reconstruye un EtlTransformOutput a partir de runs/windows/<runId>/ (o legacy).
+ * No corre el pipeline: hidrata la vista con el resultado ya materializado (tablas núcleo).
  */
 export async function loadTransformOutputFromRun(runId: string): Promise<EtlTransformOutput> {
   const [summary, tableNames] = await Promise.all([getRunSummary(runId), listRunTables(runId)])

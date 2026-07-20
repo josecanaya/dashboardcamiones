@@ -17,7 +17,7 @@ el histórico quede como backup y el agente/ETL lo consulte corriendo cualquier 
 ### Ingesta (una vez por archivo nuevo)
 1. Se sube/deja un `.xlsx` → se guarda crudo en `data/movimientos/_raw/`.
 2. Se **normaliza una vez** (`readMovimientosContratoXlsx` + `normalizeMovimientosContratoBatch`).
-3. Se **particiona por día** según la fecha de cada fila (`external_ingreso_at`, fallback `source_date`).
+3. Se **particiona por día** según la fecha de cada fila (`external_salida_at`, luego `source_date`, fallback `external_ingreso_at` — el Excel operativo es por horario de salida).
 4. Cada partición se **mergea con la existente y deduplica** por `external_operation_id`
    (`dedupeMovimientosByOperationId`) → `data/movimientos/<día>/movimientos.json`.
 

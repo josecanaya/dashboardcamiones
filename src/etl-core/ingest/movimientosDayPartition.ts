@@ -10,7 +10,9 @@ import { dedupeMovimientosByOperationId } from './dedupeMovimientos'
 /** Campos mínimos que la partición necesita (subconjunto de ExternalMovimientoContratoNormalized). */
 export type DatedMovimiento = {
   external_operation_id: string
-  /** ISO local del ingreso (fuente primaria de fecha). */
+  /** ISO local de la salida (fuente primaria: día del Excel = horario de salida). */
+  external_salida_at?: string
+  /** ISO local del ingreso (fallback). */
   external_ingreso_at?: string
   /** Fecha del archivo de origen (fallback). */
   source_date?: string
@@ -18,14 +20,21 @@ export type DatedMovimiento = {
 
 const DAY_RE = /(\d{4}-\d{2}-\d{2})/
 
-/** Día YYYY-MM-DD de un movimiento: external_ingreso_at → source_date → ''. */
+/**
+ * Día YYYY-MM-DD de un movimiento para partición/backup.
+ * Regla Excel: el día del archivo es el de **salida** (ingreso D / salida D+1 → día D+1).
+ * Prioridad: `external_salida_at` → `source_date` → `external_ingreso_at`.
+ */
 export function dayIsoFromMovimiento(row: DatedMovimiento): string {
-  const ing = String(row.external_ingreso_at ?? '').trim()
-  const m1 = ing.match(DAY_RE)
-  if (m1) return m1[1]!
+  const sal = String(row.external_salida_at ?? '').trim()
+  const mSal = sal.match(DAY_RE)
+  if (mSal) return mSal[1]!
   const src = String(row.source_date ?? '').trim()
-  const m2 = src.match(DAY_RE)
-  if (m2) return m2[1]!
+  const mSrc = src.match(DAY_RE)
+  if (mSrc) return mSrc[1]!
+  const ing = String(row.external_ingreso_at ?? '').trim()
+  const mIng = ing.match(DAY_RE)
+  if (mIng) return mIng[1]!
   return ''
 }
 
@@ -36,7 +45,7 @@ export type PartitionResult<T> = {
   undated: T[]
 }
 
-/** Agrupa filas por día de ingreso. Preserva el orden dentro de cada día. */
+/** Agrupa filas por día de salida (día operativo Excel). Preserva el orden dentro de cada día. */
 export function partitionMovimientosByDay<T extends DatedMovimiento>(rows: T[]): PartitionResult<T> {
   const byDay = new Map<string, T[]>()
   const undated: T[] = []

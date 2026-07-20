@@ -19,6 +19,6 @@ La etiqueta "anómalo" se decide en **tres** clasificadores que pueden discrepar
 - G2 `REGRESION_CALADA_PREINGRESO` — Calada→Preingreso <20 min
 - G3 `SKIP_PUNTO_LAPSO_EXTREMO` — falta hito esperado + gap flanqueante >4 h
 - G4 `RIC_SL_DEMORA` — Ric EGRESO→SL_INGRESO >30 min
-- G5 `SIN_MOVIMIENTO_EXCEL` — entrada+salida (Ric o SL) y patente+día ausente de Movimientos; stamped en UI v1 (`stampMissingExcelAnomalies`)
+- G5 `SIN_MOVIMIENTO_EXCEL` — entrada+salida (Ric o SL) y patente+**día de salida** ausente de Movimientos; stamped en UI v1 (`stampMissingExcelAnomalies`). Excel se cruza por horario de salida (ingreso D / fin madrugada D+1 → Excel del día D+1). **No dispara** si ya hay match Excel en `committee_reason` (`EXCEL_PLATAFORMA` / `EXTERNAL_MATCH_*`) ni si faltan `first/last_event_at`.
 
 Excel «De la vuelta»=SI → excluida de anomalías / sospechosos SL→Ric.

@@ -24,6 +24,14 @@ Reglas:
 3. Nunca inventar cifras, patentes ni circuitos. Toda cifra sale de una tool.
 4. Para explicar un R* usá `get_circuit_catalog`; para un journey/patente, `explain_journey`.
 5. Respondé en español, conciso, citando `run_id`, `rulesVersion` y las tablas usadas.
+6. **Tablas canónicas** (obligatorio, ver `docs/RUNS_TABLAS_CANONICAS.md`): conteos de
+   movimientos/producto/plataforma → `excel_operations_with_truckflow`; clasificación
+   ejecutiva/comité → `final_circuits.executive_bucket`; tiempos → `circuit_timing_summary`.
+   PROHIBIDO contar con `merged_truckflow_movimientos` (journeys ≠ movimientos; su
+   `executive_status` está muerta) o `movimientos_without_truckflow_match` (inconsistente).
+   Siempre indicar el denominador ("X movimientos según Excel" ≠ "X recorridos de cámara").
+7. Las ventanas guardadas son **semanas calendario lunes→domingo** (`runs/windows/<from>_<to>/`).
+   No crear ventanas ad-hoc solapadas; para rangos no semanales, usar las semanas que los cubren.
 
 ## Requisito
 

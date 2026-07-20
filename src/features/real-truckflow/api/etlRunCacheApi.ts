@@ -1,6 +1,6 @@
 /**
- * Cliente del cache por ventana (proxy Vite → :8787). Todo lo devuelto viene ya
- * materializado en runs/<runId>/.
+ * Cliente del cache por ventana (proxy Vite → :8787).
+ * Materializado en runs/windows/<from>_<to>/ (runId estable; se pisa al reprocesar).
  */
 
 function base(): string {

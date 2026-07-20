@@ -317,6 +317,76 @@ describe('etlCircuitClassificationIndex anomalías', () => {
       expect(set.has(excelPlateDayKey('ABC123', '2026-07-10'))).toBe(true)
       expect(set.has(excelPlateDayKey('DEF456', '2026-07-11'))).toBe(true)
     })
+
+    it('collectExcelPlateDaysFromCsv prioriza día de salida sobre ingreso (overnight)', () => {
+      const csv =
+        'plate_normalized,external_ingreso_at,external_salida_at,source_date\n' +
+        'R7SOJA,2026-07-18T22:10:00-03:00,2026-07-19T01:40:00-03:00,2026-07-19\n'
+      const set = collectExcelPlateDaysFromCsv(csv)
+      expect(set.has(excelPlateDayKey('R7SOJA', '2026-07-19'))).toBe(true)
+      expect(set.has(excelPlateDayKey('R7SOJA', '2026-07-18'))).toBe(false)
+    })
+
+    it('G5 overnight R7: no marca si Excel es del día de salida (D+1)', () => {
+      const stamped = stampMissingExcelAnomalies(
+        [
+          entry({
+            journeyId: 'r7-overnight',
+            plate: 'R7SOJA',
+            normalizedPlate: 'R7SOJA',
+            anomalyKind: 'NONE',
+            executiveCircuitCode: 'R7',
+            detectedSequence: 'INGRESO>PREINGRESO>EGRESO>SL_INGRESO>SL_EGRESO',
+            firstEventAt: '2026-07-18T22:00:00-03:00',
+            lastEventAt: '2026-07-19T01:30:00-03:00',
+          }),
+        ],
+        {
+          excelPlateDays: new Set([excelPlateDayKey('R7SOJA', '2026-07-19')]),
+        }
+      )
+      expect(stamped[0]?.anomalyKind).toBe('NONE')
+      expect(stamped[0]?.anomalyKindReason).toBeFalsy()
+    })
+
+    it('G5 no marca si ya hay match Excel en committee_reason (aunque el día no cruce)', () => {
+      const stamped = stampMissingExcelAnomalies(
+        [
+          entry({
+            journeyId: 'matched',
+            plate: 'AB123CD',
+            normalizedPlate: 'AB123CD',
+            anomalyKind: 'NONE',
+            detectedSequence: 'INGRESO>PREINGRESO>CALADA>EGRESO',
+            committeeReason: 'EXCEL_PLATAFORMA:SOJA@VOLCABLE_PTO_2:EXTERNAL_MATCH_PROBABLE',
+            firstEventAt: '2026-07-18T22:00:00-03:00',
+            lastEventAt: '2026-07-18T23:50:00-03:00',
+          }),
+        ],
+        {
+          excelPlateDays: new Set([excelPlateDayKey('AB123CD', '2026-07-19')]),
+        }
+      )
+      expect(stamped[0]?.anomalyKind).toBe('NONE')
+    })
+
+    it('G5 no marca si faltan first/last_event_at (no afirmar ausencia)', () => {
+      const stamped = stampMissingExcelAnomalies(
+        [
+          entry({
+            journeyId: 'sin-fechas',
+            plate: 'ZZ9',
+            normalizedPlate: 'ZZ9',
+            anomalyKind: 'NONE',
+            detectedSequence: 'INGRESO>EGRESO',
+            firstEventAt: '',
+            lastEventAt: '',
+          }),
+        ],
+        { excelPlateDays: new Set([excelPlateDayKey('OTRA', '2026-07-19')]) }
+      )
+      expect(stamped[0]?.anomalyKind).toBe('NONE')
+    })
   })
 
   it('collectTransileInternoExcludedPlates toma solo sesiones inferred=true', () => {

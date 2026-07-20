@@ -13,8 +13,9 @@
  * volvé a la API key.
  */
 import { spawn } from 'node:child_process'
-import { existsSync, readdirSync } from 'node:fs'
+import { existsSync, readdirSync, writeFileSync, unlinkSync } from 'node:fs'
 import path from 'node:path'
+import { tmpdir } from 'node:os'
 
 const CHAT_TIMEOUT_MS = Number(process.env.ETL_AGENT_TIMEOUT_MS || 300_000)
 
@@ -31,13 +32,92 @@ const ALLOWED_TOOLS = [
   'mcp__etl__generar_pptx_comite',
 ]
 
-const SYSTEM_APPEND =
-  'Sos el agente de chat de logística ETL embebido en la web (planta Ricardone / ' +
-  'Puerto San Lorenzo, Vicentin). Respondé la consulta consultando SIEMPRE las tools ' +
-  'mcp__etl__* (nunca inventes cifras, patentes ni circuitos) y delegando a los ' +
-  'subagentes con la Task tool cuando el dominio sea claro. Español, conciso, citá ' +
-  'run_id y tablas usadas. Opcional: para una tarjeta estructurada en la UI, incluí ' +
-  'un bloque <<AGENT_UI {json} AGENT_UI>> al final.'
+/**
+ * Nombre técnico de tool + sus argumentos reales → acción en lenguaje claro,
+ * mostrando EXACTAMENTE qué tabla/ventana está mirando (como una IA moderna).
+ */
+function toolLabel(name, input) {
+  const inp = input && typeof input === 'object' ? input : {}
+  switch (name) {
+    case 'ToolSearch':
+      return 'Preparando la consulta…'
+    case 'mcp__etl__resolve_window':
+      return inp.from_day && inp.to_day ?
+          `Buscando datos del ${inp.from_day} al ${inp.to_day}…`
+        : 'Buscando datos de esas fechas…'
+    case 'mcp__etl__run_etl':
+      return inp.from_day && inp.to_day ?
+          `Procesando ${inp.from_day} al ${inp.to_day} (puede tardar)…`
+        : 'Procesando el período (puede tardar)…'
+    case 'mcp__etl__list_runs':
+      return 'Revisando períodos disponibles…'
+    case 'mcp__etl__get_summary':
+      return 'Leyendo el resumen del período…'
+    case 'mcp__etl__list_tables':
+      return 'Viendo qué tablas de datos hay…'
+    case 'mcp__etl__query_table': {
+      const t = inp.table_name
+      if (t && inp.col && inp.eq != null && inp.eq !== '') {
+        return `Leyendo tabla ${t} · filtro ${inp.col}=${inp.eq}…`
+      }
+      return t ? `Leyendo tabla ${t}…` : 'Consultando los movimientos…'
+    }
+    case 'mcp__etl__get_circuit_catalog':
+      return 'Revisando el catálogo de circuitos…'
+    case 'mcp__etl__explain_journey':
+      return inp.plate ? `Analizando el recorrido de ${inp.plate}…` : 'Analizando el recorrido…'
+    case 'mcp__etl__generar_pptx_comite':
+      return 'Armando el material de comité…'
+    case 'Task':
+    case 'Agent':
+      return inp.subagent_type ?
+          `Consultando al especialista (${inp.subagent_type})…`
+        : 'Consultando a un especialista…'
+    default:
+      // Fallback informativo: nunca un genérico opaco.
+      if (typeof name === 'string' && name.startsWith('mcp__etl__')) {
+        return `Consultando datos (${name.replace('mcp__etl__', '').replace(/_/g, ' ')})…`
+      }
+      return name ? `Ejecutando ${name}…` : 'Analizando los datos…'
+  }
+}
+
+const SYSTEM_APPEND = [
+  'Sos un asistente de logística para la DIRECCIÓN de la planta Ricardone / Puerto San Lorenzo',
+  '(Vicentin). Hablás con un usuario de NEGOCIO que NO es programador.',
+  '',
+  'CÓMO OBTENER DATOS (obligatorio):',
+  '1. Si la pregunta menciona fechas/período → llamá mcp__etl__resolve_window(from_day, to_day).',
+  '   Año por defecto si no lo dicen: 2026. Ej: "13 al 20" de julio → 2026-07-13 .. 2026-07-20.',
+  '2. Con run_id vigente (stale=false) → mcp__etl__get_summary y/o mcp__etl__query_table /',
+  '   mcp__etl__list_tables / mcp__etl__explain_journey. NUNCA inventes cifras.',
+  '3. Si resolve_window da 404 o stale=true → podés mcp__etl__run_etl(from_day, to_day) y después',
+  '   volver a resolve_window. Si el usuario no pidió reprocesar y no hay cache, decí:',
+  '   "No tengo esa información procesada para ese período" y ofrecé procesarla.',
+  '4. TABLAS CANÓNICAS (una pregunta = una tabla; ver docs/RUNS_TABLAS_CANONICAS.md). OBLIGATORIO:',
+  '   - Conteos de movimientos/producto/plataforma (Excel contrato) → excel_operations_with_truckflow',
+  '     (product_normalized, platform_normalized). NUNCA merged_truckflow_movimientos para contar.',
+  '   - Movimientos sin evidencia de cámaras → excel_operations_with_truckflow con matched_journey_uids',
+  '     vacío. NUNCA movimientos_without_truckflow_match (números inconsistentes).',
+  '   - Clasificación ejecutiva/comité (completos, anomalías) → final_circuits.executive_bucket.',
+  '     NUNCA debug_matrix_classification ni merged_truckflow_movimientos.executive_status (muerta).',
+  '   - Tiempos → circuit_timing_summary (+circuit_timing_journeys). segment_timing_kpi puede estar vacía.',
+  '   - Transiles → transile_externo_*; aceite/líquidos → liquid_movements_*.',
+  '   Al dar un conteo, decí SIEMPRE el denominador: "X movimientos según Excel" ≠ "X recorridos de cámara".',
+  '5. Las ventanas guardadas son SEMANAS calendario (lunes→domingo). Si piden un rango que no es una',
+  '   semana exacta, usá la(s) semana(s) que lo cubren y aclaralo. No proceses ventanas ad-hoc solapadas.',
+  '6. Delegá con Task a knowledge-contratos (producto/plataforma), knowledge-truckflow (cámaras/tiempos),',
+  '   seguridad (anomalías) o comunicador (resumen comité) cuando el dominio sea claro.',
+  '',
+  'CÓMO HABLAR (al usuario):',
+  '- Español claro y breve, estilo comité: cifra + conclusión corta.',
+  '- NO menciones servidores, puertos, código, git, nombres de tools ni JSON.',
+  '- Podés citar el período y cantidades; evitá jerga de desarrollo (run_id, nombres de tablas).',
+  '- NUNCA digas "usá el dashboard web" si podés consultar vos con las tools.',
+  '',
+  'Opcional: para una tarjeta estructurada en la UI podés terminar con un bloque',
+  '<<AGENT_UI {json} AGENT_UI>>.',
+].join('\n')
 
 /** Ubica el ejecutable de Claude Code: env override → paquete Desktop → PATH. */
 function findClaudeCli() {
@@ -68,7 +148,11 @@ function findClaudeCli() {
 }
 
 function buildPrompt(message, history) {
-  const lines = []
+  const lines = [
+    'Respondé la consulta de logística usando las tools mcp__etl__* (resolve_window primero si hay fechas).',
+    'No remitas al dashboard: consultá las corridas cacheadas y respondé con cifras reales.',
+    '',
+  ]
   const prev = Array.isArray(history) ? history.slice(-12) : []
   if (prev.length) {
     lines.push('Conversación previa:')
@@ -154,7 +238,6 @@ export function createEtlAgentChat({ projectRoot, port }) {
 
       const args = [
         '-p',
-        prompt,
         '--output-format',
         'json',
         '--mcp-config',
@@ -167,12 +250,12 @@ export function createEtlAgentChat({ projectRoot, port }) {
 
       let child
       try {
-        // stdin 'ignore': el prompt va como argumento; evita que claude espere en stdin.
+        // Pasar el prompt por stdin (no como argumento) para evitar issues en Windows.
         child = spawn(cliPath, args, {
           cwd: projectRoot,
           env,
           windowsHide: true,
-          stdio: ['ignore', 'pipe', 'pipe'],
+          stdio: ['pipe', 'pipe', 'pipe'],
         })
       } catch (e) {
         const err = new Error(`No se pudo lanzar Claude Code (${cliPath}): ${e.message}`)
@@ -193,6 +276,10 @@ export function createEtlAgentChat({ projectRoot, port }) {
         err.code = 'TIMEOUT'
         reject(err)
       }, CHAT_TIMEOUT_MS)
+
+      // Enviar el prompt por stdin y cerrarlo.
+      child.stdin.write(prompt)
+      child.stdin.end()
 
       child.stdout.on('data', (d) => (stdout += d))
       child.stderr.on('data', (d) => (stderr += d))
@@ -253,5 +340,159 @@ export function createEtlAgentChat({ projectRoot, port }) {
     }
   }
 
-  return { status, isConfigured, chat }
+  /**
+   * Igual que runClaude pero con --output-format stream-json: emite eventos
+   * NDJSON en vivo. Llama onProgress(label) por cada tool_use y devuelve el
+   * objeto `result` final (mismo shape que el json no-streaming).
+   */
+  function runClaudeStream(prompt, onProgress) {
+    return new Promise((resolve, reject) => {
+      const env = { ...process.env }
+      delete env.ANTHROPIC_API_KEY
+      delete env.ANTHROPIC_AUTH_TOKEN
+      delete env.ANTHROPIC_BASE_URL
+      env.ETL_API_BASE = localBase()
+
+      const args = [
+        '-p',
+        '--output-format',
+        'stream-json',
+        '--verbose',
+        '--mcp-config',
+        mcpConfigPath,
+        '--append-system-prompt',
+        SYSTEM_APPEND,
+        '--allowedTools',
+        ...ALLOWED_TOOLS,
+      ]
+
+      let child
+      try {
+        child = spawn(cliPath, args, {
+          cwd: projectRoot,
+          env,
+          windowsHide: true,
+          stdio: ['pipe', 'pipe', 'pipe'],
+        })
+      } catch (e) {
+        const err = new Error(`No se pudo lanzar Claude Code (${cliPath}): ${e.message}`)
+        err.code = 'NO_CLI'
+        reject(err)
+        return
+      }
+
+      let buffer = ''
+      let stderr = ''
+      let resultObj = null
+
+      const timer = setTimeout(() => {
+        child.kill()
+        const err = new Error(`Timeout (${Math.round(CHAT_TIMEOUT_MS / 1000)}s) esperando a Claude Code.`)
+        err.code = 'TIMEOUT'
+        reject(err)
+      }, CHAT_TIMEOUT_MS)
+
+      function handleEvent(evt) {
+        if (!evt || typeof evt !== 'object') return
+        if (evt.type === 'assistant' && evt.message && Array.isArray(evt.message.content)) {
+          for (const part of evt.message.content) {
+            if (part?.type === 'tool_use' && part.name) {
+              // Log crudo para afinar etiquetas si aparece alguna tool sin mapear.
+              console.error(`[agent tool] ${part.name}`)
+              try {
+                onProgress?.(toolLabel(part.name, part.input))
+              } catch {
+                /* onProgress no debe romper el stream */
+              }
+            }
+          }
+        } else if (evt.type === 'result') {
+          resultObj = evt
+        }
+      }
+
+      child.stdin.write(prompt)
+      child.stdin.end()
+
+      child.stdout.on('data', (d) => {
+        buffer += d
+        let nl
+        while ((nl = buffer.indexOf('\n')) >= 0) {
+          const line = buffer.slice(0, nl).trim()
+          buffer = buffer.slice(nl + 1)
+          if (!line) continue
+          try {
+            handleEvent(JSON.parse(line))
+          } catch {
+            /* línea parcial o no-JSON: ignorar */
+          }
+        }
+      })
+      child.stderr.on('data', (d) => (stderr += d))
+      child.on('error', (e) => {
+        clearTimeout(timer)
+        const err = new Error(
+          e.code === 'ENOENT'
+            ? `Claude Code no encontrado (${cliPath}).`
+            : `Error lanzando Claude Code: ${e.message}`
+        )
+        err.code = 'NO_CLI'
+        reject(err)
+      })
+      child.on('close', () => {
+        clearTimeout(timer)
+        // procesar cualquier resto en el buffer
+        const rest = buffer.trim()
+        if (rest) {
+          try {
+            handleEvent(JSON.parse(rest))
+          } catch {
+            /* ignorar */
+          }
+        }
+        resolve({ resultObj, stderr })
+      })
+    })
+  }
+
+  async function chatStream({ message, history }, onProgress) {
+    if (!existsSync(mcpConfigPath)) {
+      const err = new Error(`Falta .mcp.json en ${projectRoot} (config del servidor MCP etl).`)
+      err.code = 'NO_MCP'
+      throw err
+    }
+
+    const { resultObj, stderr } = await runClaudeStream(buildPrompt(message, history), onProgress)
+    if (!resultObj) {
+      const err = new Error(`Respuesta ilegible de Claude Code. stderr: ${stderr.slice(0, 400)}`)
+      err.status = 502
+      throw err
+    }
+
+    const resultText = String(resultObj.result ?? '')
+    if (resultObj.is_error || resultObj.subtype !== 'success') {
+      if (/not logged in|please run \/login/i.test(resultText)) {
+        const err = new Error(
+          'Claude Code no está logueado. Corré `claude auth login` (suscripción), sin ANTHROPIC_API_KEY.'
+        )
+        err.code = 'NOT_LOGGED_IN'
+        err.status = 503
+        throw err
+      }
+      const err = new Error(`Claude Code error: ${resultText || resultObj.terminal_reason || 'desconocido'}`)
+      err.status = 502
+      throw err
+    }
+
+    const { plain, ui } = parseAgentUiBlock(resultText)
+    return {
+      reply: plain || '(sin texto)',
+      model: 'claude-code (suscripción)',
+      ui,
+      stopReason: resultObj.stop_reason || 'end_turn',
+      sessionId: resultObj.session_id,
+    }
+  }
+
+  return { status, isConfigured, chat, chatStream }
 }

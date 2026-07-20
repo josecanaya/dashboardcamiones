@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from 'react'
 import { AgentInsightPanel } from '../components/AgentInsightPanel'
 import {
   getEtlAgentStatus,
-  postEtlAgentChat,
+  streamEtlAgentChat,
   type EtlAgentChatMessage,
   type EtlAgentChatResponse,
   type EtlAgentStatus,
@@ -53,6 +53,7 @@ export function AgenteChatTab() {
   const [messages, setMessages] = useState<UiMessage[]>(loadStoredMessages)
   const [draft, setDraft] = useState('')
   const [busy, setBusy] = useState(false)
+  const [progress, setProgress] = useState<string[]>([])
   const bottomRef = useRef<HTMLDivElement | null>(null)
 
   // Persistir la conversación entre cambios de pestaña / recargas.
@@ -92,8 +93,11 @@ export function AgenteChatTab() {
       .map(({ role, content }) => ({ role, content }))
     setMessages((prev) => [...prev, { role: 'user', content: message }])
     setBusy(true)
+    setProgress([])
     try {
-      const out = await postEtlAgentChat(message, history)
+      const out = await streamEtlAgentChat(message, history, (label) =>
+        setProgress((prev) => (prev[prev.length - 1] === label ? prev : [...prev, label]))
+      )
       const parsed = out.ui ?? parseUiFromReply(out.reply).ui
       const plain = out.ui ? out.reply : parseUiFromReply(out.reply).plain
       setMessages((prev) => [
@@ -118,6 +122,7 @@ export function AgenteChatTab() {
       ])
     } finally {
       setBusy(false)
+      setProgress([])
     }
   }
 
@@ -185,47 +190,86 @@ export function AgenteChatTab() {
             </div>
           : null}
 
-          {messages.map((m, i) => (
-            <div key={`${m.role}-${i}`} className={m.role === 'user' ? 'flex justify-end' : ''}>
-              {m.role === 'user' ?
-                <div className="max-w-[88%] rounded-2xl rounded-br-md bg-slate-900 px-4 py-2.5 text-[15px] leading-relaxed text-white">
-                  {m.content}
-                </div>
-              : m.error ?
-                <div className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-950 ring-1 ring-rose-100">
-                  {m.content}
-                </div>
-              : m.ui ?
-                <AgentInsightPanel ui={m.ui} agentUsed={m.agentUsed} tools={m.tools} />
-              : <div className="max-w-[95%] space-y-2">
-                  {m.highlights?.length ?
-                    <div className="flex flex-wrap gap-2">
-                      {m.highlights.map((h) => (
-                        <div
-                          key={`${h.label}-${h.value}`}
-                          className="min-w-[9rem] rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm"
-                        >
-                          <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-                            {h.label}
-                          </div>
-                          <div className="mt-0.5 text-xl font-semibold tabular-nums text-slate-900">{h.value}</div>
-                          {h.detail ? <div className="text-[11px] text-slate-500">{h.detail}</div> : null}
-                        </div>
-                      ))}
-                    </div>
-                  : null}
-                  <div className="rounded-2xl rounded-bl-md bg-white px-4 py-3 text-[15px] leading-relaxed text-slate-800 shadow-sm ring-1 ring-slate-200/80">
-                    <p className="whitespace-pre-wrap">{m.content}</p>
+          {messages.map((m, i) => {
+            // La tarjeta estructurada solo se muestra si tiene contenido real.
+            // Un <<AGENT_UI>> con solo título (o vacío) NO debe ocultar el texto.
+            const uiHasContent =
+              !!m.ui &&
+              !!(
+                m.ui.metrics?.length ||
+                m.ui.findings?.length ||
+                m.ui.rankings?.length ||
+                m.ui.verdict
+              )
+            const text = (m.content || '').trim()
+            return (
+              <div key={`${m.role}-${i}`} className={m.role === 'user' ? 'flex justify-end' : ''}>
+                {m.role === 'user' ?
+                  <div className="max-w-[88%] rounded-2xl rounded-br-md bg-slate-900 px-4 py-2.5 text-[15px] leading-relaxed text-white">
+                    {m.content}
                   </div>
-                </div>
-              }
-            </div>
-          ))}
+                : m.error ?
+                  <div className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-950 ring-1 ring-rose-100">
+                    {m.content}
+                  </div>
+                : <div className="max-w-[95%] space-y-2">
+                    {uiHasContent ?
+                      <AgentInsightPanel ui={m.ui!} agentUsed={m.agentUsed} tools={m.tools} />
+                    : null}
+                    {m.highlights?.length ?
+                      <div className="flex flex-wrap gap-2">
+                        {m.highlights.map((h) => (
+                          <div
+                            key={`${h.label}-${h.value}`}
+                            className="min-w-[9rem] rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm"
+                          >
+                            <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                              {h.label}
+                            </div>
+                            <div className="mt-0.5 text-xl font-semibold tabular-nums text-slate-900">{h.value}</div>
+                            {h.detail ? <div className="text-[11px] text-slate-500">{h.detail}</div> : null}
+                          </div>
+                        ))}
+                      </div>
+                    : null}
+                    {/* El texto se muestra SIEMPRE que exista, aunque haya tarjeta. */}
+                    {text ?
+                      <div className="rounded-2xl rounded-bl-md bg-white px-4 py-3 text-[15px] leading-relaxed text-slate-800 shadow-sm ring-1 ring-slate-200/80">
+                        <p className="whitespace-pre-wrap">{text}</p>
+                      </div>
+                    : !uiHasContent ?
+                      <div className="rounded-2xl rounded-bl-md bg-white px-4 py-3 text-[15px] leading-relaxed text-slate-500 shadow-sm ring-1 ring-slate-200/80">
+                        <p>El agente respondió sin contenido. Reintentá la pregunta.</p>
+                      </div>
+                    : null}
+                  </div>
+                }
+              </div>
+            )
+          })}
 
           {busy ?
-            <div className="flex items-center gap-2 text-sm text-slate-500">
-              <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-slate-500" />
-              Razonando con tools y skills…
+            <div className="space-y-1.5">
+              {progress.length === 0 ?
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-slate-500" />
+                  Pensando…
+                </div>
+              : progress.map((label, idx) => {
+                  const last = idx === progress.length - 1
+                  return (
+                    <div
+                      key={`${idx}-${label}`}
+                      className={`flex items-center gap-2 text-sm ${last ? 'text-slate-700' : 'text-slate-400'}`}
+                    >
+                      {last ?
+                        <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+                      : <span className="inline-block text-emerald-500">✓</span>}
+                      {label}
+                    </div>
+                  )
+                })
+              }
             </div>
           : null}
           <div ref={bottomRef} />

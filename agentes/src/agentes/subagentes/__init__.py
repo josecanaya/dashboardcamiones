@@ -40,6 +40,7 @@ KNOWLEDGE_TRUCKFLOW = SubagenteConfig(
         + RESPONSE_HINT
     ),
     tool_names=(
+        "resolve_window",
         "list_runs",
         "list_tables",
         "query_table",
@@ -57,7 +58,7 @@ KNOWLEDGE_CONTRATOS = SubagenteConfig(
         + PLANT_GLOSSARY
         + RESPONSE_HINT
     ),
-    tool_names=("list_runs", "list_tables", "query_table", "get_summary", "run_etl"),
+    tool_names=("resolve_window", "list_runs", "list_tables", "query_table", "get_summary", "run_etl"),
 )
 
 SEGURIDAD = SubagenteConfig(
@@ -67,7 +68,14 @@ SEGURIDAD = SubagenteConfig(
         "Skill Seguridad: anomalías/alertas. Un riesgo claro > listas largas. "
         + RESPONSE_HINT
     ),
-    tool_names=("list_runs", "get_summary", "list_tables", "query_table", "explain_journey"),
+    tool_names=(
+        "resolve_window",
+        "list_runs",
+        "get_summary",
+        "list_tables",
+        "query_table",
+        "explain_journey",
+    ),
 )
 
 COMUNICADOR = SubagenteConfig(
@@ -77,7 +85,14 @@ COMUNICADOR = SubagenteConfig(
         "Skill Comunicador: lenguaje de dirección. 3 métricas, 2 hallazgos. "
         + RESPONSE_HINT
     ),
-    tool_names=("list_runs", "get_summary", "list_tables", "query_table", "generar_pptx_comite"),
+    tool_names=(
+        "resolve_window",
+        "list_runs",
+        "get_summary",
+        "list_tables",
+        "query_table",
+        "generar_pptx_comite",
+    ),
 )
 
 REGISTRY: dict[str, SubagenteConfig] = {
