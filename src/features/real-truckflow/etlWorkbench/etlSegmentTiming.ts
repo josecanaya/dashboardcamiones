@@ -441,6 +441,8 @@ export type SegmentTimingIndex = {
   aggregatesByCircuit: Record<string, SegmentTimingAggregate[]>
   circuitCodes: string[]
   journeyCount: number
+  /** Journeys/operaciones excluidas del KPI por no tener ingreso ni preingreso. */
+  excludedNoEntryAnchor?: number
 }
 
 export type ClassifiedJourneyForTiming = {
@@ -3813,24 +3815,48 @@ export function mergeVolcableReceiptSegmentTiming(index: SegmentTimingIndex): Se
   return rebuildSegmentTimingIndexFromLegs(legs)
 }
 
+/** Cámaras de entrada a planta Ricardone (ingreso / preingreso). */
+export const RICARDONE_ENTRY_CODES = new Set(['INGRESO', 'PREINGRESO'])
+
+/**
+ * ¿El circuito entra por Ricardone? (su template arranca en ingreso o preingreso).
+ * Los circuitos que arrancan en San Lorenzo (SL1, R27, R34…) no aplican esta regla.
+ */
+export function circuitRequiresRicardoneEntry(circuitCode: string): boolean {
+  const tpl = getCircuitSegmentTemplate(circuitCode)
+  return RICARDONE_ENTRY_CODES.has(String(tpl[0] ?? ''))
+}
+
+/** ¿El camión pasó por cámara de ingreso o preingreso? (ancla de entrada real). */
+export function journeyHasRicardoneEntryAnchor(journey: ReconstructedRealJourney): boolean {
+  return collapsedFrontLogicalPoints(journey).some((p) => RICARDONE_ENTRY_CODES.has(p.code))
+}
+
 export function buildSegmentTimingIndex(
   journeys: ClassifiedJourneyForTiming[],
   options?: { committeeGroups?: CommitteeGroup[] }
 ): SegmentTimingIndex {
   const allowedGroups = new Set(options?.committeeGroups ?? ['COMPLETOS'])
   const legs: SegmentLeg[] = []
+  let excludedNoEntryAnchor = 0
 
   for (const row of journeys) {
     if (!allowedGroups.has(row.committeeGroup)) continue
     const circuitCode = String(row.executiveCircuitCode ?? '').trim()
     if (!circuitCode) continue
+    // Regla de negocio: en circuitos que entran por Ricardone, un camión sin paso por
+    // cámara de ingreso NI preingreso tiene tiempos por tramo falsos → no se cuenta en el KPI.
+    if (circuitRequiresRicardoneEntry(circuitCode) && !journeyHasRicardoneEntryAnchor(row.journey)) {
+      excludedNoEntryAnchor++
+      continue
+    }
     for (const leg of extractAllSegmentLegsForCircuit(row.journey, circuitCode)) {
       if (!isExpectedCircuitTransition(circuitCode, leg.fromCode, leg.toCode)) continue
       legs.push(leg)
     }
   }
 
-  return rebuildSegmentTimingIndexFromLegs(legs)
+  return { ...rebuildSegmentTimingIndexFromLegs(legs), excludedNoEntryAnchor }
 }
 
 function resolveExcelFirstSegmentCircuitCode(row: {
@@ -4153,7 +4179,28 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
     )
   }
 
-  return rebuildSegmentTimingIndexFromLegs([...bestByOperationTransition.values()])
+  // Regla de entrada (misma que el path Truckflow): en circuitos Ricardone, descartar
+  // operaciones cuyo camión no tiene NINGÚN tramo que toque ingreso ni preingreso — son
+  // datos falsos que ensucian el KPI por tramo. La señal se toma de los legs finales
+  // (medidos o reconstruidos), no de filas crudas: el ingreso Excel-first se sintetiza.
+  const allLegs = [...bestByOperationTransition.values()]
+  const operationsWithEntry = new Set<string>()
+  for (const leg of allLegs) {
+    if (RICARDONE_ENTRY_CODES.has(leg.fromCode) || RICARDONE_ENTRY_CODES.has(leg.toCode)) {
+      operationsWithEntry.add(leg.journeyId)
+    }
+  }
+  const keptLegs: SegmentLeg[] = []
+  const excludedOps = new Set<string>()
+  for (const leg of allLegs) {
+    if (circuitRequiresRicardoneEntry(leg.executiveCircuitCode) && !operationsWithEntry.has(leg.journeyId)) {
+      excludedOps.add(leg.journeyId)
+      continue
+    }
+    keptLegs.push(leg)
+  }
+
+  return { ...rebuildSegmentTimingIndexFromLegs(keptLegs), excludedNoEntryAnchor: excludedOps.size }
 }
 
 /** Operaciones Excel únicas con al menos un tramo en el circuito (KPI Excel-first). */

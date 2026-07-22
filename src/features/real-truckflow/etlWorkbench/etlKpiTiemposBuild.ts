@@ -84,7 +84,10 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
     committeeGroups: ['COMPLETOS'],
   })
   logs.push(
-    `Truckflow COMPLETOS: ${segmentTiming.legs.length} tramos, ${segmentTiming.journeyCount} journeys`
+    `Truckflow COMPLETOS: ${segmentTiming.legs.length} tramos, ${segmentTiming.journeyCount} journeys` +
+      (segmentTiming.excludedNoEntryAnchor ?
+        ` · ${segmentTiming.excludedNoEntryAnchor} excluidos sin ingreso/preingreso`
+      : '')
   )
 
   const snap = input.movimientosSnapshot
@@ -98,7 +101,10 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
     )
     segmentTiming = fromExcel
     logs.push(
-      `Excel-first: ${fromExcel.legs.length} tramos, ${fromExcel.journeyCount} operaciones (ready_for_scatter)`
+      `Excel-first: ${fromExcel.legs.length} tramos, ${fromExcel.journeyCount} operaciones (ready_for_scatter)` +
+        (fromExcel.excludedNoEntryAnchor ?
+          ` · ${fromExcel.excludedNoEntryAnchor} excluidas sin ingreso/preingreso`
+        : '')
     )
   }
 

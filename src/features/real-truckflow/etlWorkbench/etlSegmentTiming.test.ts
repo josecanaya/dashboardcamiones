@@ -136,6 +136,43 @@ describe('etlSegmentTiming', () => {
     expect(agg!.stats.count).toBe(3)
   })
 
+  it('excluye del KPI camiones sin ingreso ni preingreso (circuito Ricardone)', () => {
+    // Con ingreso+preingreso+calada: se cuenta.
+    const conEntrada: ClassifiedJourneyForTiming = {
+      journey: journey({
+        journeyUid: 'j-ok',
+        events: [
+          ev('RicIngCamFrente', 'RICARDONE_INGRESO_CAMIONES', '2026-05-12T08:00:00'),
+          ev('RicPreIngInFr', 'RICARDONE_PREINGRESO', '2026-05-12T08:15:00'),
+          ev('RicCal01', 'RICARDONE_CALADA', '2026-05-12T09:00:00'),
+        ],
+        eventCount: 3,
+      }),
+      executiveCircuitCode: 'R1',
+      committeeGroup: 'COMPLETOS',
+    }
+    // Sin ingreso ni preingreso (arranca en calada): dato falso → se excluye.
+    const sinEntrada: ClassifiedJourneyForTiming = {
+      journey: journey({
+        journeyUid: 'j-fake',
+        events: [
+          ev('RicCal01', 'RICARDONE_CALADA', '2026-05-12T09:00:00'),
+          ev('RicB1Ingreso', 'RICARDONE_BALANZA_1', '2026-05-12T09:30:00'),
+        ],
+        eventCount: 2,
+      }),
+      executiveCircuitCode: 'R1',
+      committeeGroup: 'COMPLETOS',
+    }
+    const index = buildSegmentTimingIndex([conEntrada, sinEntrada], {
+      committeeGroups: ['COMPLETOS'],
+    })
+    expect(index.excludedNoEntryAnchor).toBe(1)
+    // Ningún leg debe pertenecer al journey sin entrada.
+    expect(index.legs.some((l) => l.journeyId === 'j-fake')).toBe(false)
+    expect(index.legs.some((l) => l.journeyId === 'j-ok')).toBe(true)
+  })
+
   it('solo agrega tramos del template del circuito (sin ingreso→egreso)', () => {
     const j = journey({
       journeyUid: 'j-spurious',
@@ -309,6 +346,21 @@ describe('etlSegmentTiming', () => {
 
   it('rollup balanza entrada→egreso con fin en salida Excel si no hay S7', () => {
     const index = buildSegmentTimingIndexFromExcelFirstSegments([
+      // Entrada por puerta Ricardone: requerida para que el KPI cuente al camión.
+      {
+        analysis_ready_for_scatter: true,
+        external_operation_id: 'op-sl-s5',
+        journey_uid: 'j1',
+        plate_normalized: 'AA111',
+        segment_from: 'INGRESO',
+        segment_to: 'PREINGRESO',
+        segment_start_time: '2026-05-12T06:00:00',
+        segment_end_time: '2026-05-12T06:10:00',
+        segment_duration_min: 10,
+        truckflow_circuit_code: 'R7',
+        resolved_executive_circuit_code: 'R7',
+        external_salida_at: '2026-05-12T09:05:00',
+      },
       {
         analysis_ready_for_scatter: true,
         external_operation_id: 'op-sl-s5',
@@ -961,6 +1013,22 @@ describe('etlSegmentTiming', () => {
 
   it('buildSegmentTimingIndexFromExcelFirstSegments deduce rollup R1 con calado Excel', () => {
     const index = buildSegmentTimingIndexFromExcelFirstSegments([
+      // Entrada por puerta Ricardone: requerida para que el KPI cuente al camión.
+      {
+        analysis_ready_for_scatter: true,
+        external_operation_id: 'op-c16',
+        journey_uid: 'j1',
+        plate_normalized: 'AA111',
+        segment_from: 'INGRESO',
+        segment_to: 'PREINGRESO',
+        segment_start_time: '2026-05-12T07:00:00',
+        segment_end_time: '2026-05-12T07:10:00',
+        segment_duration_min: 10,
+        truckflow_circuit_code: 'R1',
+        resolved_executive_circuit_code: 'R1',
+        external_calado_at: '2026-05-12T09:00:00',
+        external_salida_at: '2026-05-12T09:40:00',
+      },
       {
         analysis_ready_for_scatter: true,
         external_operation_id: 'op-c16',
