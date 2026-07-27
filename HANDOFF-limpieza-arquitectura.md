@@ -1,7 +1,8 @@
 # Handoff — Limpieza y refactor de arquitectura
 
 > Documento de traspaso para continuar en sesión fresca (otra cuenta, mismo repo).
-> Branch de trabajo: **`automatizacion`**. Nada commiteado — todo son cambios sin stage.
+> Branch de trabajo: **`automatizacion`**. Todo lo de las waves 1-4 + Plan A está
+> **commiteado** en `2779525`; el working tree quedó limpio.
 > Última actualización: 2026-07-27.
 
 ---
@@ -79,6 +80,27 @@ Dep `framer-motion` removida.
   `committeeClassification`, `etlCircuitTiming`, `powerBiEtlExport`).
 - **Graph:** 4194→**3805 nodos**, 186→**183 comunidades**. IFC/simulador/estadía/truckflowTransform/LogisticsOps
   ya no aparecen.
+- **Suite completa al commitear:** `check:arch` OK + **590 tests pasan**. Quedan **3 fallos
+  preexistentes** (`etlSegmentTiming` ×2, `etlRicSanLorenzoRoute` R27) en archivos que esta
+  limpieza no tocó — no son regresiones.
+
+### Corrección aplicada antes del commit (LEER)
+`src/services/truckflowTransform/contractFirst/` se había borrado por muerto, pero **está vivo** y
+rompía los golden master. Restaurado completo. Dos consumidores reales:
+- `etlWorkbench/etlTransformContractFirst.ts:3` → `buildCliWorkbenchInputsFromJourneys` (pipeline ETL de la app).
+- `scripts/contract-first-cli-runner.ts` → `contractIntegrationRun` + `contractFirstCliAdapter`; es la
+  **ruta ETL headless** a la que delega `scripts/run-truckflow-transform-local.mjs`.
+
+Lección para las próximas waves: knip mira solo `src/`. **Antes de borrar, grepear también
+`scripts/`, `server/` y `tools/`**, y correr la suite completa (`npm test`), no solo los 85 golden.
+El resto de `truckflowTransform/` (`analytics`, `classify`, `export`, `extract`, `index`, `normalize`,
+`quality`, `reconstruct`, `types`, `diagnostics`) sí quedó borrado: nadie lo importa (verificado).
+
+### Deuda abierta por esta limpieza
+`package.json` sacó `three`, `web-ifc`, `web-ifc-three`, `framer-motion` y `@types/three`, pero
+`package-lock.json` y `pnpm-lock.yaml` **siguen desincronizados** → `npm ci` fallaría en un clone
+limpio o en CI. No se tocó a propósito (resolver dependencias mete diff ruidoso y riesgo en el env
+de dev). Follow-up acotado: `npm install --package-lock-only` en un commit aparte.
 
 ---
 
