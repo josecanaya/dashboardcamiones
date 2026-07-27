@@ -54,27 +54,38 @@ function substitutionCost(ca: string, cb: string): number {
 }
 
 /** Levenshtein con sustitución coste 0 entre pares OCR equivalentes. */
+/**
+ * Distancia de edición con costo de sustitución reducido entre caracteres confundibles por OCR.
+ *
+ * Usa dos filas rodantes en vez de la matriz `(na+1) × (nb+1)` completa. El resultado es idéntico
+ * —misma recurrencia— pero sin allocar `na+1` sub-arrays por llamada: la auditoría de cámaras la
+ * invoca millones de veces y esas allocaciones dominaban el tiempo del botón de calibración.
+ */
 export function weightedOcrLevenshtein(a: string, b: string): number {
   const na = a.length
   const nb = b.length
-  const dp: number[][] = Array.from({ length: na + 1 }, (_, i) =>
-    Array.from({ length: nb + 1 }, (_, j) => (i === 0 ? j : j === 0 ? i : 0))
-  )
-  for (let i = 1; i <= na; i++) dp[i]![0] = i
-  for (let j = 1; j <= nb; j++) dp[0]![j] = j
+  if (na === 0) return nb
+  if (nb === 0) return na
+
+  let prev = new Float64Array(nb + 1)
+  let cur = new Float64Array(nb + 1)
+  for (let j = 0; j <= nb; j++) prev[j] = j
+
   for (let i = 1; i <= na; i++) {
+    cur[0] = i
+    const ca = a[i - 1]!
     for (let j = 1; j <= nb; j++) {
-      const ca = a[i - 1]!
-      const cb = b[j - 1]!
-      const cost = substitutionCost(ca, cb)
-      dp[i]![j] = Math.min(
-        dp[i - 1]![j]! + 1,
-        dp[i]![j - 1]! + 1,
-        dp[i - 1]![j - 1]! + cost
-      )
+      const cost = substitutionCost(ca, b[j - 1]!)
+      const del = prev[j]! + 1
+      const ins = cur[j - 1]! + 1
+      const sub = prev[j - 1]! + cost
+      cur[j] = del < ins ? (del < sub ? del : sub) : ins < sub ? ins : sub
     }
+    const swap = prev
+    prev = cur
+    cur = swap
   }
-  return dp[na]![nb]!
+  return prev[nb]!
 }
 
 /**
@@ -120,6 +131,9 @@ export function isLikelyOcrPlateMatch(aPlate: string, bPlate: string): boolean {
   const b = normalizePlateStrict(bPlate)
   if (a === b) return true
   if (a.length < MIN_PLATE_LEN_FUZZY || b.length < MIN_PLATE_LEN_FUZZY) return false
+  // Cada inserción/borrado cuesta 1 y las sustituciones no cambian la longitud, así que
+  // d >= |na - nb|. Con diferencia >= 3 la distancia ya excede el umbral: se evita la DP.
+  if (Math.abs(a.length - b.length) > 2) return false
 
   const d = weightedOcrLevenshtein(a, b)
   const sim = plateSimilarityScore(a, b)

@@ -4,8 +4,9 @@
  */
 
 import {
-  buildCameraAuditCorpus,
+  cameraAuditIndexFor,
   collectOperationWindowEvents,
+  type CameraAuditIndex,
   countRowCapturePoints,
   dayKeyFromSalida,
   eventMatchesCameraStep,
@@ -107,15 +108,7 @@ function devicesMatchingStep(
   return [...set].sort()
 }
 
-function sectorForDevice(events: RawJourneyEventLike[], deviceCode: string): string {
-  for (const e of events) {
-    const dev = String(e.deviceCode ?? e.device_code ?? '').trim()
-    if (dev !== deviceCode) continue
-    const sec = String(e.sectorCode ?? e.sector_code ?? '').trim()
-    if (sec) return sec
-  }
-  return ''
-}
+
 
 export function buildExcelCameraMatrixDetailed(
   circuitCode: string,
@@ -130,10 +123,10 @@ export function buildExcelCameraMatrixDetailed(
 ): CameraMatrixDetailRow[] {
   const steps = getExcelCameraStepsForCircuit(circuitCode)
   const minRoutePoints = opts?.minRoutePoints ?? 4
-  const corpus = buildCameraAuditCorpus(events, opts?.alerts)
+  const index = cameraAuditIndexFor(events, opts?.alerts)
 
   return movimientos.map((mov) => {
-    const windowEvents = collectOperationWindowEvents(mov, corpus, opts)
+    const windowEvents = collectOperationWindowEvents(mov, index, opts)
     const captures: Record<string, boolean> = {}
     const devicesByStep: Record<string, string[]> = {}
 
@@ -224,7 +217,7 @@ export function summarizeStepByDayNight(
 export function summarizeDeviceByStep(
   circuitCode: string,
   rows: CameraMatrixDetailRow[],
-  corpus: RawJourneyEventLike[]
+  index: CameraAuditIndex
 ): DeviceStepSummary[] {
   const steps = getExcelCameraStepsForCircuit(circuitCode)
   const map = new Map<
@@ -263,7 +256,7 @@ export function summarizeDeviceByStep(
       const devs = r.devicesByStep[step.key] ?? []
       if (devs.length) {
         for (const dev of devs) {
-          const sec = sectorForDevice(corpus, dev)
+          const sec = index.deviceSectors.get(dev) ?? ''
           const b = getOrCreate(dev, sec, step, r.dayNight)
           b.trucksContributingToCapture += 1
           b.trucksWithDeviceHit += 1
@@ -307,7 +300,7 @@ export function buildCameraCalibrationReport(
   }
 ): CameraCalibrationReport {
   const minRoutePoints = opts?.minRoutePoints ?? 4
-  const corpus = buildCameraAuditCorpus(events, opts?.alerts)
+  const index = cameraAuditIndexFor(events, opts?.alerts)
   const detailRows = buildExcelCameraMatrixDetailed(circuitCode, movimientos, events, opts)
   const missedPlatesByCamera = buildMissedPlatesByCamera(
     circuitCode,
@@ -323,7 +316,7 @@ export function buildCameraCalibrationReport(
     detailRows,
     recognitionByDayNight: summarizeRecognitionByDayNight(detailRows),
     stepByDayNight: summarizeStepByDayNight(circuitCode, detailRows),
-    deviceByStep: summarizeDeviceByStep(circuitCode, detailRows, corpus),
+    deviceByStep: summarizeDeviceByStep(circuitCode, detailRows, index),
     missedPlatesByCamera,
   }
 }
@@ -417,8 +410,11 @@ export function listRawReadsInOperationWindow(
   events: RawJourneyEventLike[],
   opts?: { alerts?: CameraAuditAlertLike[] }
 ): Array<{ deviceCode: string; instant: string; plate: string; logicalCode: string }> {
-  const corpus = buildCameraAuditCorpus(events, opts?.alerts)
-  const windowEvents = collectOperationWindowEvents(mov, corpus, opts)
+  const windowEvents = collectOperationWindowEvents(
+    mov,
+    cameraAuditIndexFor(events, opts?.alerts),
+    opts
+  )
   const out: Array<{ deviceCode: string; instant: string; plate: string; logicalCode: string }> = []
   for (const e of windowEvents) {
     const plate = plateFromCameraAuditRow(e)

@@ -152,8 +152,29 @@ function toEventDto(e: RawJourneyEventLike): RealJourneyEventDto {
 const RIC_BALANZA_EGRESO_DEVICE_RE = /^ricb[123]egreso/i
 const RIC_BALANZA_INGRESO_DEVICE_RE = /^ricb[123]ingreso/i
 
+/**
+ * Memo del código lógico por evento.
+ *
+ * `eventLogicalCodeOperational` aloca un DTO y corre `normalizeRealEventPoint`; se lo invocaba
+ * una vez **por evento y por hito** (6 hitos × eventos de ventana × movimientos × circuitos),
+ * el tercer cuello de botella de la calibración. El código lógico depende sólo del evento,
+ * así que se cachea por identidad.
+ */
+const LOGICAL_CODE_MEMO = new WeakMap<object, string>()
+
 /** Mismo criterio lógico que el ETL (`normalizeRealEventPoint`) + alias de dispositivo balanza. */
 export function eventLogicalCodeOperational(e: RawJourneyEventLike): string {
+  const memoKey = typeof e === 'object' && e !== null ? (e as object) : null
+  if (memoKey) {
+    const hit = LOGICAL_CODE_MEMO.get(memoKey)
+    if (hit !== undefined) return hit
+  }
+  const code = computeEventLogicalCodeOperational(e)
+  if (memoKey) LOGICAL_CODE_MEMO.set(memoKey, code)
+  return code
+}
+
+function computeEventLogicalCodeOperational(e: RawJourneyEventLike): string {
   const device = String(e.deviceCode ?? e.device_code ?? '').trim()
   if (RIC_BALANZA_EGRESO_DEVICE_RE.test(device)) return 'BALANZA_EGRESO'
   if (RIC_BALANZA_INGRESO_DEVICE_RE.test(device)) return 'BALANZA_INGRESO'
@@ -343,49 +364,231 @@ export function buildCameraAuditCorpus(
   return out
 }
 
+/**
+ * Índice del corpus para la auditoría de cámaras.
+ *
+ * Existe por performance: la versión anterior recorría los ~24k eventos **tres veces por cada
+ * movimiento** y en cada visita recalculaba patente normalizada, journeyUid y —lo más caro—
+ * `auditEventInstantsMs`, que parsea dos ISO y aloca un Set. Con ~2.5k movimientos × 4 circuitos
+ * × 2 pasadas (matriz + calibración) eso son cientos de millones de iteraciones: el botón de
+ * calibración tardaba más de 15 minutos.
+ *
+ * Acá los valores derivados se calculan **una sola vez por evento**, y `timeline`/`times`
+ * (ordenados) permiten resolver la ventana de cada movimiento por búsqueda binaria, así cada
+ * movimiento sólo toca los eventos de SU ventana en lugar del corpus completo.
+ */
+type CameraAuditIndexEntry = {
+  event: RawJourneyEventLike
+  instants: number[]
+  plateKey: string
+  uid: string
+  isRicBalanzaEgreso: boolean
+}
+
+export type CameraAuditIndex = {
+  /** En orden del corpus: el orden de salida depende de esto. */
+  entries: CameraAuditIndexEntry[]
+  /** El corpus (eventos + alertas de balanza), para consumidores que lo recorren entero. */
+  corpus: RawJourneyEventLike[]
+  /** Instantes ordenados (un evento puede aportar más de uno). */
+  times: number[]
+  /** `owners[i]` = índice en `entries` del evento que aportó `times[i]`. */
+  owners: number[]
+  /**
+   * deviceCode → primer sectorCode no vacío observado.
+   *
+   * Reemplaza a `sectorForDevice(corpus, dev)`, que barría el corpus completo y se llamaba
+   * dentro de un triple loop (filas × hitos × dispositivos) — el segundo cuello de botella
+   * de la calibración después de la ventana por movimiento.
+   */
+  deviceSectors: Map<string, string>
+}
+
+export function buildCameraAuditIndex(
+  events: RawJourneyEventLike[],
+  alerts?: CameraAuditAlertLike[]
+): CameraAuditIndex {
+  const corpus = buildCameraAuditCorpus(events, alerts)
+  const deviceSectors = new Map<string, string>()
+  const entries: CameraAuditIndexEntry[] = corpus.map((event) => {
+    const dev = String(event.deviceCode ?? event.device_code ?? '').trim()
+    if (dev && !deviceSectors.has(dev)) {
+      const sec = String(event.sectorCode ?? event.sector_code ?? '').trim()
+      if (sec) deviceSectors.set(dev, sec)
+    }
+    return {
+      event,
+      instants: auditEventInstantsMs(event),
+      plateKey: plateFromCameraAuditRow(event),
+      uid: journeyUidFromRaw(event),
+      isRicBalanzaEgreso: RIC_BALANZA_EGRESO_DEVICE_RE.test(dev),
+    }
+  })
+
+  const pairs: { t: number; owner: number }[] = []
+  entries.forEach((entry, i) => {
+    for (const t of entry.instants) pairs.push({ t, owner: i })
+  })
+  pairs.sort((a, b) => a.t - b.t)
+
+  return {
+    entries,
+    corpus,
+    times: pairs.map((p) => p.t),
+    owners: pairs.map((p) => p.owner),
+    deviceSectors,
+  }
+}
+
+
+/** Cache por identidad del array de eventos: el índice se reusa entre circuitos y pasadas. */
+const AUDIT_INDEX_CACHE = new WeakMap<
+  RawJourneyEventLike[],
+  { alerts: CameraAuditAlertLike[] | undefined; index: CameraAuditIndex }
+>()
+
+export function cameraAuditIndexFor(
+  events: RawJourneyEventLike[],
+  alerts?: CameraAuditAlertLike[]
+): CameraAuditIndex {
+  const hit = AUDIT_INDEX_CACHE.get(events)
+  if (hit && hit.alerts === alerts) return hit.index
+  const index = buildCameraAuditIndex(events, alerts)
+  AUDIT_INDEX_CACHE.set(events, { alerts, index })
+  return index
+}
+
+
+/**
+ * `platesMatchExcelCameraAudit` memoizado por par de claves ya normalizadas.
+ *
+ * Cada evaluación nueva cuesta un Levenshtein ponderado; el par (patente Excel, patente evento)
+ * se repite mucho entre movimientos y entre los 4 circuitos, así que el costo total queda
+ * proporcional a los pares DISTINTOS.
+ */
+const PLATE_MATCH_MEMO = new Map<string, boolean>()
+
+function platesMatchExcelCameraAuditMemo(excelPlateKey: string, eventPlateKey: string): boolean {
+  if (!excelPlateKey || !eventPlateKey) return false
+  if (excelPlateKey === eventPlateKey) return true
+  const key = `${excelPlateKey}|${eventPlateKey}`
+  const hit = PLATE_MATCH_MEMO.get(key)
+  if (hit !== undefined) return hit
+  const res = platesMatchExcelCameraAudit(excelPlateKey, eventPlateKey)
+  PLATE_MATCH_MEMO.set(key, res)
+  return res
+}
+
+/** Primer i con times[i] >= target. */
+function lowerBound(times: number[], target: number): number {
+  let lo = 0
+  let hi = times.length
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1
+    if (times[mid]! < target) lo = mid + 1
+    else hi = mid
+  }
+  return lo
+}
+
+/** Índices de `entries` con al menos un instante en [fromMs, toMs], en orden de corpus. */
+function entryIdsInWindow(index: CameraAuditIndex, fromMs: number, toMs: number): number[] {
+  // Ventana no finita: `auditEventInOperationWindow` daba true para todo — se preserva.
+  if (!Number.isFinite(fromMs) || !Number.isFinite(toMs)) {
+    return index.entries.map((_, i) => i)
+  }
+  const seen = new Set<number>()
+  for (let i = lowerBound(index.times, fromMs); i < index.times.length; i++) {
+    if (index.times[i]! > toMs) break
+    seen.add(index.owners[i]!)
+  }
+  return [...seen].sort((a, b) => a - b)
+}
+
+/**
+ * Cache de la ventana por (índice, movimiento, padding).
+ *
+ * El mismo movimiento pasa por acá tres veces —`buildExcelCameraMatrix`,
+ * `buildExcelCameraMatrixDetailed` y `buildMissedPlatesByCamera`— y el resultado es idéntico.
+ */
+const WINDOW_EVENTS_CACHE = new WeakMap<CameraAuditIndex, Map<string, RawJourneyEventLike[]>>()
+
 /** Eventos en ventana Excel: patente + mismo journeyUid (egreso balanza sin OCR en patente). */
 export function collectOperationWindowEvents(
   mov: ExcelMovimientoLike,
-  events: RawJourneyEventLike[],
-  opts?: { preferCreatedAt?: boolean; windowPaddingHours?: number }
+  events: RawJourneyEventLike[] | CameraAuditIndex,
+  opts?: { preferCreatedAt?: boolean; windowPaddingHours?: number; alerts?: CameraAuditAlertLike[] }
 ): RawJourneyEventLike[] {
+  const index = Array.isArray(events) ? cameraAuditIndexFor(events, opts?.alerts) : events
   const padding = opts?.windowPaddingHours ?? 6
+
+  let perIndex = WINDOW_EVENTS_CACHE.get(index)
+  if (!perIndex) {
+    perIndex = new Map()
+    WINDOW_EVENTS_CACHE.set(index, perIndex)
+  }
+  // Se identifica el movimiento por lo que define su ventana y su match de patente.
+  const cacheKey = `${padding}|${mov.operationId}|${mov.plate}|${mov.externalIngresoAt ?? ''}|${mov.externalSalidaAt ?? ''}`
+  const cached = perIndex.get(cacheKey)
+  if (cached) return cached
+  const computed = computeOperationWindowEvents(mov, index, padding)
+  perIndex.set(cacheKey, computed)
+  return computed
+}
+
+function computeOperationWindowEvents(
+  mov: ExcelMovimientoLike,
+  index: CameraAuditIndex,
+  padding: number
+): RawJourneyEventLike[] {
   const plateKey = normalizePlateKey(mov.plate)
   const { fromMs, toMs } = operationCaptureWindowMs(mov, padding)
+  const windowIds = entryIdsInWindow(index, fromMs, toMs)
 
-  const byPlate: RawJourneyEventLike[] = []
   const journeyUids = new Set<string>()
+  const taken = new Set<number>()
+  const expanded: RawJourneyEventLike[] = []
 
-  for (const e of events) {
-    const plate = plateFromCameraAuditRow(e)
-    if (!auditEventInOperationWindow(e, fromMs, toMs)) continue
-    if (!plate || !platesMatchExcelCameraAudit(plateKey, plate)) continue
-    byPlate.push(e)
-    const uid = journeyUidFromRaw(e)
-    if (uid) journeyUids.add(uid)
+  // Match fuzzy sólo contra las patentes DISTINTAS de la ventana (cientos), no contra todo el
+  // corpus (miles): probado, restringir al corpus completo era ~2.5x más lento. El memo por par
+  // hace que las combinaciones repetidas entre movimientos y circuitos no se recalculen.
+  const platesInWindow = new Set<string>()
+  for (const id of windowIds) {
+    const pk = index.entries[id]!.plateKey
+    if (pk) platesInWindow.add(pk)
+  }
+  const matchingPlates = new Set<string>()
+  for (const pk of platesInWindow) {
+    if (platesMatchExcelCameraAuditMemo(plateKey, pk)) matchingPlates.add(pk)
   }
 
-  const seen = new Set(byPlate)
-  const expanded = [...byPlate]
-
-  for (const e of events) {
-    const uid = journeyUidFromRaw(e)
-    if (uid && journeyUids.has(uid) && auditEventInOperationWindow(e, fromMs, toMs) && !seen.has(e)) {
-      seen.add(e)
-      expanded.push(e)
-    }
+  // 1) match por patente (incluye fuzzy OCR)
+  for (const id of windowIds) {
+    const en = index.entries[id]!
+    if (!en.plateKey || !matchingPlates.has(en.plateKey)) continue
+    taken.add(id)
+    expanded.push(en.event)
+    if (en.uid) journeyUids.add(en.uid)
   }
 
-  for (const e of events) {
-    if (seen.has(e) || !auditEventInOperationWindow(e, fromMs, toMs)) continue
-    const dev = String(e.deviceCode ?? e.device_code ?? '').trim()
-    if (!RIC_BALANZA_EGRESO_DEVICE_RE.test(dev)) continue
-    const plate = plateFromCameraAuditRow(e)
-    if (!plate || !platesMatchExcelCameraAudit(plateKey, plate)) continue
-    seen.add(e)
-    expanded.push(e)
-    const uid = journeyUidFromRaw(e)
-    if (uid) journeyUids.add(uid)
+  // 2) mismo journeyUid que lo ya tomado
+  for (const id of windowIds) {
+    if (taken.has(id)) continue
+    const en = index.entries[id]!
+    if (!en.uid || !journeyUids.has(en.uid)) continue
+    taken.add(id)
+    expanded.push(en.event)
+  }
+
+  // 3) balanza egreso Ricardone con patente compatible (sin OCR propio)
+  for (const id of windowIds) {
+    if (taken.has(id)) continue
+    const en = index.entries[id]!
+    if (!en.isRicBalanzaEgreso) continue
+    if (!en.plateKey || !matchingPlates.has(en.plateKey)) continue
+    taken.add(id)
+    expanded.push(en.event)
+    if (en.uid) journeyUids.add(en.uid)
   }
 
   return expanded
@@ -447,10 +650,11 @@ export function buildExcelCameraMatrix(
   opts?: { preferCreatedAt?: boolean; windowPaddingHours?: number; alerts?: CameraAuditAlertLike[] }
 ): CameraMatrixRow[] {
   const steps = getExcelCameraStepsForCircuit(circuitCode)
-  const corpus = buildCameraAuditCorpus(events, opts?.alerts)
+  // Índice cacheado por identidad de `events`: se reusa entre circuitos y con la calibración.
+  const index = cameraAuditIndexFor(events, opts?.alerts)
 
   return movimientos.map((mov) => {
-    const windowEvents = collectOperationWindowEvents(mov, corpus, opts)
+    const windowEvents = collectOperationWindowEvents(mov, index, opts)
 
     const captures: Record<string, boolean> = {}
     for (const step of steps) {

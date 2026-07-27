@@ -3,7 +3,7 @@
  */
 
 import {
-  buildCameraAuditCorpus,
+  cameraAuditIndexFor,
   collectOperationWindowEvents,
   eventMatchesCameraStep,
   getExcelCameraStepsForCircuit,
@@ -138,7 +138,8 @@ export function buildMissedPlatesByCamera(
   }
 ): MissedPlateByCameraRow[] {
   const steps = getExcelCameraStepsForCircuit(circuitCode)
-  const corpus = buildCameraAuditCorpus(events, opts?.alerts)
+  const index = cameraAuditIndexFor(events, opts?.alerts)
+  const corpus = index.corpus
   const devicesByStep = indexDevicesByStepKey(corpus, circuitCode)
   const movByKey = new Map(movimientos.map((m) => [`${m.ctg}|${m.plate}`, m]))
 
@@ -146,7 +147,7 @@ export function buildMissedPlatesByCamera(
 
   for (const row of detailRows) {
     const mov = movByKey.get(`${row.ctg}|${row.patente}`)
-    const windowEvents = mov ? collectOperationWindowEvents(mov, corpus, opts) : []
+    const windowEvents = mov ? collectOperationWindowEvents(mov, index, opts) : []
 
     for (const step of steps) {
       if (row.captures[step.key]) continue
@@ -156,7 +157,7 @@ export function buildMissedPlatesByCamera(
 
       for (const deviceCode of deviceList) {
         const sectorCode =
-          deviceCode ? sectorForDevice(corpus, deviceCode) : ''
+          deviceCode ? (index.deviceSectors.get(deviceCode) ?? '') : ''
         const m = deviceCode ?
           motivoForDeviceMiss(windowEvents, deviceCode, step)
         : {
@@ -199,15 +200,6 @@ export function buildMissedPlatesByCamera(
   )
 }
 
-function sectorForDevice(events: RawJourneyEventLike[], deviceCode: string): string {
-  for (const e of events) {
-    const dev = String(e.deviceCode ?? e.device_code ?? '').trim()
-    if (dev !== deviceCode) continue
-    const sec = String(e.sectorCode ?? e.sector_code ?? '').trim()
-    if (sec) return sec
-  }
-  return ''
-}
 
 export function summarizeMissedPlatesByDevice(rows: MissedPlateByCameraRow[]): Array<{
   deviceCode: string
