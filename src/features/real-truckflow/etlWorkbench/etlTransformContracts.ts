@@ -17,7 +17,19 @@ import type { CircuitTimingIndex } from './etlCircuitTiming'
 import type { SegmentTimingIndex } from './etlSegmentTiming'
 import type { KpiTiemposBuildInput } from './etlKpiTiemposBuild'
 
-export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v12'
+/**
+ * Versión de reglas del ETL. Bumpear ante **cualquier** cambio de clasificación: las corridas
+ * cacheadas en `runs/windows/` se marcan `stale` comparando contra esta cadena.
+ *
+ * ⚠️ Está espejada en `server/truckflow-local-server.mjs` (`CURRENT_RULES_VERSION`), que es
+ * `.mjs` y no puede importar TS. **Cambiar las dos juntas.**
+ *
+ * v13: `CIRCUITO_LIQUIDO` pasa a 6 puntos en `DEFAULT_CIRCUIT_MATRIX` (cierra en EGRESO).
+ *      Antes la matriz tenía 5 y el scoring esperaba 6, así que se reportaba "N de 6" sin
+ *      chequear EGRESO nunca. Afecta a journeys líquidos SIN EGRESO: ahora suman un punto
+ *      faltante más (baja reliability, puede mover el estado).
+ */
+export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v13'
 
 export type EtlTransformInput = {
   events: RealJourneyEventDto[]

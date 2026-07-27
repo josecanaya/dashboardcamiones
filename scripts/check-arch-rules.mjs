@@ -122,6 +122,30 @@ walk(path.join(ROOT, 'src'), ['.ts', '.tsx'], (p, src) => {
   }
 })
 
+// Regla 5: la version de reglas del ETL esta espejada en el server .mjs (no puede importar TS).
+// Si se desincronizan, las corridas cacheadas dejan de marcarse stale cuando cambia la logica.
+{
+  const tsPath = path.join(ROOT, 'src/features/real-truckflow/etlWorkbench/etlTransformContracts.ts')
+  const serverPath = path.join(ROOT, 'server/truckflow-local-server.mjs')
+  const grab = (file, re) => {
+    if (!existsSync(file)) return null
+    return readFileSync(file, 'utf8').match(re)?.[1] ?? null
+  }
+  const tsVersion = grab(tsPath, /ETL_TRANSFORM_RULES_VERSION\s*=\s*'([^']+)'/)
+  const serverVersion = grab(serverPath, /CURRENT_RULES_VERSION\s*=\s*'([^']+)'/)
+  if (!tsVersion || !serverVersion) {
+    violations.push(
+      `[rules-version] no se pudo leer la version en ` +
+        `${!tsVersion ? 'etlTransformContracts.ts' : 'truckflow-local-server.mjs'}`
+    )
+  } else if (tsVersion !== serverVersion) {
+    violations.push(
+      `[rules-version] desincronizadas: etlTransformContracts.ts='${tsVersion}' vs ` +
+        `server/truckflow-local-server.mjs='${serverVersion}'. Cambiar las dos juntas.`
+    )
+  }
+}
+
 if (violations.length) {
   console.error('VIOLACIONES DE ARQUITECTURA:')
   for (const v of violations) console.error(' - ' + v)

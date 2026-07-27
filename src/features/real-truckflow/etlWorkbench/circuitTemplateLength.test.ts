@@ -46,15 +46,21 @@ describe('expectedCircuitTemplateLength (derivado de DEFAULT_CIRCUIT_MATRIX)', (
     }
   })
 
-  it('deja documentada la única longitud que NO sale de la matriz', () => {
-    // CIRCUITO_LIQUIDO: la matriz dice 5, el scoring espera 6 (discrepancia preexistente).
-    expect(DEFAULT_CIRCUIT_MATRIX.CIRCUITO_LIQUIDO).toHaveLength(5)
-    expect(expectedCircuitTemplateLength(journey('CIRCUITO_LIQUIDO'))).toBe(6)
-
-    // Todo el resto sí coincide con la matriz.
+  it('TODAS las longitudes salen de la matriz: ya no hay overrides', () => {
     for (const [code, expected] of Object.entries(SWITCH_ORIGINAL)) {
-      if (code === 'CIRCUITO_LIQUIDO') continue
-      expect(DEFAULT_CIRCUIT_MATRIX[code]).toHaveLength(expected)
+      expect(DEFAULT_CIRCUIT_MATRIX[code], code).toHaveLength(expected)
     }
+  })
+
+  it('CIRCUITO_LIQUIDO cierra en EGRESO (6 puntos, unificado con R8 del catálogo)', () => {
+    expect(DEFAULT_CIRCUIT_MATRIX.CIRCUITO_LIQUIDO).toEqual([
+      'INGRESO',
+      'PREINGRESO',
+      'LIQUIDO',
+      'BALANZA_INGRESO',
+      'BALANZA_EGRESO',
+      'EGRESO',
+    ])
+    expect(expectedCircuitTemplateLength(journey('CIRCUITO_LIQUIDO'))).toBe(6)
   })
 })

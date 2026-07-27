@@ -152,7 +152,20 @@ export const DEFAULT_CIRCUIT_MATRIX: JourneyCircuitMatrix = {
     'BALANZA_EGRESO',
     'EGRESO',
   ],
-  CIRCUITO_LIQUIDO: ['INGRESO', 'PREINGRESO', 'LIQUIDO', 'BALANZA_INGRESO', 'BALANZA_EGRESO'],
+  /**
+   * 6 puntos. Antes listaba 5 (sin EGRESO) mientras el scoring esperaba 6: la matriz y el
+   * scoring se contradecían para el mismo circuito. Se unifica en 6 —el valor que ya usaba
+   * el scoring y que coincide con `baseSequence` de R8 en `CIRCUIT_CATALOG` (6 S-codes)—
+   * y la matriz vuelve a ser la autoridad única.
+   */
+  CIRCUITO_LIQUIDO: [
+    'INGRESO',
+    'PREINGRESO',
+    'LIQUIDO',
+    'BALANZA_INGRESO',
+    'BALANZA_EGRESO',
+    'EGRESO',
+  ],
   CIRCUITO_SAN_LORENZO: ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO'],
   ...DEFAULT_CIRCUIT_MATRIX_EXTENSIONS,
   DESPACHO_SIN_PUNTO_INSTRUMENTADO: [
@@ -1062,20 +1075,10 @@ const CIRCUIT_TEMPLATE_LENGTH_CODES: readonly string[] = [
 ]
 
 /**
- * Excepción: `CIRCUITO_LIQUIDO` lista 5 puntos en `DEFAULT_CIRCUIT_MATRIX`
- * (INGRESO, PREINGRESO, LIQUIDO, BALANZA_INGRESO, BALANZA_EGRESO) pero el scoring espera 6.
- * La discrepancia es **preexistente**; se preserva tal cual para no mover el KPI de líquidos
- * al deduplicar. Si se resuelve, borrar esta entrada y la longitud sale de la matriz.
- */
-const CIRCUIT_TEMPLATE_LENGTH_OVERRIDES: Record<string, number> = {
-  CIRCUITO_LIQUIDO: 6,
-}
-
-/**
  * Cantidad de puntos esperados de la plantilla del circuito técnico.
  *
- * Las longitudes se derivan de `DEFAULT_CIRCUIT_MATRIX` (fuente única) en vez de repetirse
- * a mano; solo se declaran aparte qué códigos participan y la excepción de líquidos.
+ * Sale **entera** de `DEFAULT_CIRCUIT_MATRIX`: sin longitudes escritas a mano y sin overrides.
+ * Lo único declarado aparte es qué códigos puntúan por plantilla.
  */
 export function expectedCircuitTemplateLength(j: ReconstructedRealJourney): number {
   const code = j.preliminaryCircuitCode
@@ -1085,7 +1088,7 @@ export function expectedCircuitTemplateLength(j: ReconstructedRealJourney): numb
       'TRANSILE_VOLCABLE_BALANZA'
     : String(code ?? '')
   if (!CIRCUIT_TEMPLATE_LENGTH_CODES.includes(key)) return 0
-  return CIRCUIT_TEMPLATE_LENGTH_OVERRIDES[key] ?? DEFAULT_CIRCUIT_MATRIX[key]?.length ?? 0
+  return DEFAULT_CIRCUIT_MATRIX[key]?.length ?? 0
 }
 
 function labelEs(code: string): string {
