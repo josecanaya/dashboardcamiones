@@ -10,11 +10,16 @@ export function parseCsvToRecords(csvText: string): { headers: string[]; rows: R
   for (let i = 0; i < text.length; i++) {
     const ch = text[i]
     if (ch === '"') {
+      // Este bucle SOLO separa líneas: rastrea comillas para no cortar en un salto de
+      // línea citado, pero las conserva intactas. Si las consumiera, parseCsvLine recibiría
+      // una línea sin comillas y partiría por cada coma interna, corriendo todas las
+      // columnas siguientes (bug histórico: date_min tomaba el valor de la columna previa).
       if (inQuotes && text[i + 1] === '"') {
-        cur += '"'
+        cur += '""'
         i++
       } else {
         inQuotes = !inQuotes
+        cur += '"'
       }
       continue
     }

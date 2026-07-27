@@ -20,6 +20,14 @@ import {
   ETL_TRANSFORM_RULES_VERSION,
 } from '../src/features/real-truckflow/etlWorkbench/etlTransformPipeline.ts'
 import { buildKpiTiemposArtifacts } from '../src/features/real-truckflow/etlWorkbench/etlKpiTiemposBuild.ts'
+import {
+  consolidatePowerBiLoad,
+  loadedDayFromTransformResult,
+  resolveTransformPackSourceDay,
+  transformPeriodFromSummary,
+  POWER_BI_STABLE_FILES,
+} from '../src/features/real-truckflow/etlWorkbench/powerBiLoad.ts'
+import { POWER_BI_PRODUCT_FILES } from '../src/config/committeeEtlLite.ts'
 import { parseCsvToRecords } from '../src/etl-core/csvParse.ts'
 import { CIRCUIT_CATALOG } from '../src/etl-core/domain/circuitCatalog.ts'
 import {
@@ -108,6 +116,77 @@ function readMovimientosRange(
 async function loadEventsFromFile(file: string): Promise<RealJourneyEventDto[]> {
   const raw = JSON.parse(readFileSync(file, 'utf8').replace(/^\uFEFF/, ''))
   return parsePayloadToJourneyEvents(raw)
+}
+
+/**
+ * Genera los pb_*.csv del comité DENTRO de la corrida.
+ *
+ * Antes solo se producían en el navegador (LoadExportTab → powerBiLoad), con lo cual el
+ * comité miraba una proyección construida a mano y los agentes otra construida headless,
+ * sin reconciliación posible. Ahora ambos leen el mismo runId.
+ *
+ * Devuelve los nombres escritos, o null si la corrida no tiene datos suficientes.
+ */
+function persistPowerBiPack(
+  runDir: string,
+  transform: Parameters<typeof loadedDayFromTransformResult>[0],
+  log: (line: string) => void
+): { files: string[]; productFiles: string[]; periodStart: string; periodEnd: string } | null {
+  const sourceDay = resolveTransformPackSourceDay(transform)
+  const period = transformPeriodFromSummary(transform)
+  const periodStart = period?.from || sourceDay
+  const periodEnd = period?.to || sourceDay
+  if (!periodStart || !periodEnd) {
+    log('[etl-headless] sin período resoluble — se omite el pack Power BI')
+    return null
+  }
+
+  const consolidated = consolidatePowerBiLoad({
+    days: [loadedDayFromTransformResult(transform, sourceDay)],
+    periodStart,
+    periodEnd,
+    loadGroupType: 'day',
+  })
+
+  const pbDir = join(runDir, 'pb')
+  mkdirSync(pbDir, { recursive: true })
+
+  const written: string[] = []
+  for (const [key, fileName] of Object.entries(POWER_BI_STABLE_FILES)) {
+    const content = consolidated.files[key as keyof typeof POWER_BI_STABLE_FILES]
+    if (!content?.trim()) continue
+    writeFileSync(join(pbDir, fileName), content, 'utf8')
+    written.push(fileName)
+  }
+
+  // El manifiesto del contrato lo produce consolidatePowerBiLoad y ya se escribió arriba.
+  // Solo si vino vacío se genera uno de respaldo — nunca se pisa el del contrato.
+  const manifestName = POWER_BI_STABLE_FILES.manifest
+  if (!written.includes(manifestName)) {
+    writeFileSync(
+      join(pbDir, manifestName),
+      JSON.stringify(
+        {
+          periodStart: consolidated.periodStart,
+          periodEnd: consolidated.periodEnd,
+          loadGeneratedAt: consolidated.loadGeneratedAt,
+          rulesVersion: consolidated.rulesVersion,
+          sourceDays: consolidated.sourceDays,
+          rowCounts: consolidated.rowCounts,
+          stats: consolidated.stats,
+        },
+        null,
+        2
+      ),
+      'utf8'
+    )
+    written.push(manifestName)
+  }
+
+  const productFiles = written.filter((f) =>
+    (POWER_BI_PRODUCT_FILES as readonly string[]).includes(f)
+  )
+  return { files: written, productFiles, periodStart, periodEnd }
 }
 
 function writeCatalog(outRoot: string) {
@@ -375,6 +454,22 @@ async function main() {
       out.tables,
       args.persistDebug
     )
+
+    // Pack comité/Power BI dentro de la corrida: misma fuente que leen los agentes.
+    let powerBi: ReturnType<typeof persistPowerBiPack> = null
+    try {
+      powerBi = persistPowerBiPack(runDir, out, log)
+      if (powerBi) {
+        log(
+          `[etl-headless] pb: ${powerBi.files.length} archivos ` +
+            `(${powerBi.productFiles.length} productivos) ${powerBi.periodStart}..${powerBi.periodEnd}`
+        )
+      }
+    } catch (pbErr) {
+      // El pack es derivado: si falla, la corrida sigue siendo válida y queda registrado.
+      log(`[etl-headless] WARN pb falló: ${pbErr instanceof Error ? pbErr.message : String(pbErr)}`)
+    }
+
     const finishedAt = new Date().toISOString()
     log(
       `[etl-headless] tablas núcleo=${coreCount}` +
@@ -407,6 +502,16 @@ async function main() {
             coreTableCount: coreCount,
             debugTableCount: debugCount,
             tableKeys: persistedKeys,
+            powerBi:
+              powerBi ?
+                {
+                  dir: 'pb',
+                  periodStart: powerBi.periodStart,
+                  periodEnd: powerBi.periodEnd,
+                  files: powerBi.files.sort(),
+                  productFiles: powerBi.productFiles.sort(),
+                }
+              : null,
           },
         },
         null,

@@ -110,6 +110,16 @@ export type ResolveExecutiveBucketInput = {
   seqPack: { startsAtValidEntry: boolean; endsAtValidExit: boolean }
   hasInvalidRouteOperationalAlert: boolean
   hasInvalidJourneyStartOperationalAlert: boolean
+  /**
+   * Clasificación de matriz YA resuelta por el llamador.
+   *
+   * Debe pasarse siempre. Si se omite, esta función la recalcula con el
+   * preliminaryCircuitCode crudo del journey — sin los overrides (descarga flexible,
+   * ruta técnica RIC↔SL) que el pipeline sí aplica. Eso hacía que `executive_bucket`
+   * se evaluara contra un circuito distinto al de `matrix_final_status` en la MISMA
+   * fila: dos veredictos para un solo viaje. Ver src/etl-core/domain/circuitVerdict.ts.
+   */
+  matrixResult?: JourneyAgainstMatrixResult
 }
 
 const RIC_B2_EGRESO_NORM = 'ricb2egreso'
@@ -1288,7 +1298,8 @@ export function resolveExecutiveBucket(
     hasInvalidRouteOperationalAlert,
     hasInvalidJourneyStartOperationalAlert,
   } = input
-  const matrixResult = classifyJourneyAgainstCircuitMatrix(j, DEFAULT_CIRCUIT_MATRIX)
+  // Se clasifica UNA vez: si el llamador ya evaluó la matriz (con sus overrides), se reusa.
+  const matrixResult = input.matrixResult ?? classifyJourneyAgainstCircuitMatrix(j, DEFAULT_CIRCUIT_MATRIX)
 
   if (finalStatus === 'descartado') {
     return { bucket: 'INCOMPLETO', anomalyReason: null }

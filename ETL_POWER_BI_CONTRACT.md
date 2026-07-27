@@ -96,6 +96,21 @@ Además de estado/score del circuito, incluye cruce operativo:
 | `firstOperationalAlertAt` | Primera alerta operativa asociada |
 | `operationalAlertSectors` | Sectores de alertas asociadas |
 | `possibleSystemCutReason` | `INVALID_JOURNEY_START_AT_NON_ENTRY_SECTOR`, `INVALID_ROUTE_DURING_JOURNEY`, `OPERATIONAL_ALERT_WITHOUT_EVENT_MATCH`, `NONE` |
+| `has_operational_entry` | `true` · `false` · `NO_EVALUABLE` — ver nota de evidencia |
+| `has_operational_exit` | `true` · `false` · `NO_EVALUABLE` — ver nota de evidencia |
+| `entry_source` | `ingreso_frontal` · `preingreso` · `ingreso_y_preingreso` · `sin_ingreso` · `NO_EVALUABLE` |
+| `exit_source` | `egreso` · `balanza_egreso` · `egreso_y_balanza` · `sin_egreso` · `NO_EVALUABLE` |
+
+### Evidencia: ausencia de dato ≠ negativo medido
+
+Las cuatro columnas de arriba distinguen **medido** de **no producido**:
+
+- `false` / `sin_ingreso` / `sin_egreso` → la corrida evaluó el journey y **no encontró** el punto.
+- `NO_EVALUABLE` → la corrida **no produjo** la columna para esa fila; no se midió nada.
+
+Hasta 2026-07-26 ambos casos se escribían como `false` / `sin_ingreso`, lo que afirmaba un
+negativo nunca medido. Los tableros que cuenten "camiones sin ingreso" deben filtrar
+`= 'false'` explícitamente, **no** `<> 'true'`, para no incluir los `NO_EVALUABLE`.
 
 Filtros típicos en Power BI:
 

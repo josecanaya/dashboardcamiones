@@ -47,6 +47,80 @@ function journey(partial: Partial<ReconstructedRealJourney>): ReconstructedRealJ
   }
 }
 
+describe('resolveExecutiveBucket usa UNA sola clasificación de matriz', () => {
+  const baseInput = {
+    finalStatus: 'circuito_probable' as const,
+    frontEventCount: 6,
+    reliabilityScore: 80,
+    sequenceCoherent: true,
+    hasOperationalEntry: true,
+    hasOperationalExit: true,
+    strong: true,
+    missingTemplatePointsCount: 0,
+    expectedTemplatePoints: 6,
+    seqPack: { startsAtValidEntry: true, endsAtValidExit: true },
+    hasInvalidRouteOperationalAlert: false,
+    hasInvalidJourneyStartOperationalAlert: false,
+  }
+
+  /**
+   * El pipeline reclasifica la matriz con overrides (descarga flexible, ruta técnica
+   * RIC↔SL). Antes esta función ignoraba ese resultado y recalculaba con el
+   * preliminaryCircuitCode crudo, evaluando `executive_bucket` contra un circuito
+   * distinto al de `matrix_final_status` en la misma fila.
+   */
+  it('respeta el matrixResult recibido en vez de recalcularlo', () => {
+    const j = journey({
+      eventCount: 6,
+      logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'CALADA', 'VOLCABLE', 'BALANZA_EGRESO', 'EGRESO'],
+      preliminaryCircuitCode: 'CIRCUITO_VOLCABLE_1_2',
+    })
+
+    const recomputado = classifyJourneyAgainstCircuitMatrix(j, DEFAULT_CIRCUIT_MATRIX)
+    const conOverride = classifyJourneyAgainstCircuitMatrix(j, DEFAULT_CIRCUIT_MATRIX, {
+      preliminaryCodeOverride: 'CIRCUITO_CELDA16_DESCARGA',
+    })
+
+    const sinPasar = resolveExecutiveBucket({ ...baseInput, j })
+    const pasando = resolveExecutiveBucket({ ...baseInput, j, matrixResult: conOverride })
+
+    // Si el override cambia el veredicto de matriz, el bucket debe seguir al override.
+    if (conOverride.finalStatus !== recomputado.finalStatus) {
+      expect(pasando.bucket).not.toBe(sinPasar.bucket)
+    }
+    // Y en todo caso, pasar el resultado nunca puede contradecir ese mismo resultado.
+    if (conOverride.finalStatus === 'INCOMPLETO') {
+      expect(pasando.bucket).toBe('INCOMPLETO')
+    }
+  })
+
+  it('un matrixResult INCOMPLETO fuerza bucket INCOMPLETO', () => {
+    const j = journey({
+      eventCount: 8,
+      logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'CALADA', 'VOLCABLE', 'BALANZA_EGRESO', 'EGRESO'],
+    })
+    const incompleto = classifyJourneyAgainstCircuitMatrix(
+      journey({ eventCount: 2, logicalCodeSequence: ['INGRESO', 'EGRESO'] }),
+      DEFAULT_CIRCUIT_MATRIX
+    )
+    expect(incompleto.finalStatus).toBe('INCOMPLETO')
+    expect(resolveExecutiveBucket({ ...baseInput, j, matrixResult: incompleto }).bucket).toBe('INCOMPLETO')
+  })
+
+  it('sin matrixResult mantiene el comportamiento previo (compatibilidad)', () => {
+    const j = journey({
+      eventCount: 6,
+      logicalCodeSequence: ['INGRESO', 'PREINGRESO', 'CALADA', 'VOLCABLE', 'BALANZA_EGRESO', 'EGRESO'],
+    })
+    const explicito = resolveExecutiveBucket({
+      ...baseInput,
+      j,
+      matrixResult: classifyJourneyAgainstCircuitMatrix(j, DEFAULT_CIRCUIT_MATRIX),
+    })
+    expect(resolveExecutiveBucket({ ...baseInput, j })).toEqual(explicito)
+  })
+})
+
 describe('finalCircuitScoring', () => {
   it('classifyJourneyAgainstCircuitMatrix marca INCOMPLETO con <=2 eventos útiles', () => {
     const j = journey({

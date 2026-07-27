@@ -143,6 +143,25 @@ function isReconstructableStatus(st: string): boolean {
   )
 }
 
+/**
+ * Marca explícita: la corrida NO produjo el dato para esta fila.
+ *
+ * Es distinto de un negativo medido. `sin_ingreso` significa "se buscó y no hubo ingreso";
+ * NO_EVALUABLE significa "la columna no vino en la corrida". Colapsar ambos en `false` /
+ * `sin_ingreso` convierte una ausencia de dato en una afirmación negativa, que es
+ * justamente lo que un comité no puede auditar.
+ */
+export const NO_EVALUABLE = 'NO_EVALUABLE' as const
+
+/**
+ * Valor medido de la fila, o NO_EVALUABLE si la columna falta o vino vacía.
+ * (rowGet devuelve '' en ambos casos, por eso no se puede distinguir aguas abajo.)
+ */
+function measuredOrNoEvaluable(row: Record<string, string>, key: string): string {
+  const value = rowGet(row, key)
+  return value === '' ? NO_EVALUABLE : value
+}
+
 /** Proyecta final_circuits con columnas ejecutivas primero (listas para gráficos). */
 export function projectFinalCircuitsForCommittee(rows: Record<string, string>[]): {
   headers: string[]
@@ -154,10 +173,10 @@ export function projectFinalCircuitsForCommittee(rows: Record<string, string>[])
     return {
       ...r,
       final_status_label: label,
-      has_operational_entry: rowGet(r, 'has_operational_entry') || 'false',
-      has_operational_exit: rowGet(r, 'has_operational_exit') || 'false',
-      entry_source: rowGet(r, 'entry_source') || 'sin_ingreso',
-      exit_source: rowGet(r, 'exit_source') || 'sin_egreso',
+      has_operational_entry: measuredOrNoEvaluable(r, 'has_operational_entry'),
+      has_operational_exit: measuredOrNoEvaluable(r, 'has_operational_exit'),
+      entry_source: measuredOrNoEvaluable(r, 'entry_source'),
+      exit_source: measuredOrNoEvaluable(r, 'exit_source'),
       confidence_level: rowGet(r, 'confidence_level') || '',
       reliability_explanation: rowGet(r, 'reliability_explanation') || '',
     }

@@ -10,6 +10,7 @@ import { normalizeRealEventPoint } from '../../../services/realEventNormalizatio
 import { isEtlRearCameraDevice } from './etlRearDevices'
 import { recordsToCsv } from './etlCsv'
 import { makeTable, tableToCsv, type TypedTable } from '../../../etl-core/typedTable'
+import { buildTaxonomyCoherenceReport } from '../../../etl-core/domain/circuitVerdict'
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 import {
   classifyJourneyAgainstCircuitMatrix,
@@ -548,6 +549,11 @@ export type EtlTransformOutput = {
       committeeCompletos: number
       committeeVariaciones: number
       committeeAnomalias: number
+      /**
+       * Filas de final_circuits cuyas taxonomías paralelas se contradicen entre sí.
+       * Debe tender a 0 a medida que todo derive de CircuitVerdict (etl-core/domain).
+       */
+      taxonomyCoherence: import('../../../etl-core/domain/circuitVerdict').TaxonomyCoherenceReport
     }
     segmentTiming?: SegmentTimingIndex | null
     circuitTiming?: CircuitTimingIndex | null
@@ -746,6 +752,8 @@ function buildPartialOutputTramo1(s: Tramo1Serialized): EtlTransformOutput {
         committeeCompletos: 0,
         committeeVariaciones: 0,
         committeeAnomalias: 0,
+        // Tramo 2 aún no produjo final_circuits: no hay filas que verificar.
+        taxonomyCoherence: { rowsChecked: 0, rowsWithContradiction: 0, issueCounts: {} },
       },
       kpiTiemposBuilt: false,
     },
@@ -1987,6 +1995,9 @@ export async function runEtlTransform(
       seqPack,
       hasInvalidRouteOperationalAlert: operationalAlertAgg.hasInvalidRoute,
       hasInvalidJourneyStartOperationalAlert: operationalAlertAgg.hasInvalidJourneyStart,
+      // Misma evaluación que alimenta matrix_final_status (incluye overrides de
+      // descarga flexible y ruta técnica RIC↔SL): un solo circuito por viaje.
+      matrixResult: matrixClassification,
     })
 
     journeyMetaByUid.set(mj.journeyUid, {
@@ -2987,9 +2998,24 @@ export async function runEtlTransform(
     final_circuits_count,
   }
 
+  /**
+   * Coherencia entre las taxonomías paralelas escritas en la misma fila de final_circuits.
+   * Mientras convivan (ver src/etl-core/domain/circuitVerdict.ts) esto expone cuántas filas
+   * se contradicen a sí mismas, en vez de que la discrepancia quede enterrada en el CSV.
+   */
+  const taxonomyCoherence = buildTaxonomyCoherenceReport(
+    finalCsvRows.map((row) => ({
+      finalStatus: String(row.final_status ?? ''),
+      matrixFinalStatus: String(row.matrix_final_status ?? ''),
+      executiveBucket: String(row.executive_bucket ?? ''),
+      executiveStatus: String(row.executive_status ?? ''),
+    }))
+  )
+
   const executiveStat = {
     periodStart: dateMin ?? '',
     periodEnd: dateMax ?? '',
+    taxonomyCoherence,
     eventCount: eventsForEtl.length,
     alertCount: alertsForEtl.length,
     completos: executiveCompletos,

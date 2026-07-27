@@ -24,6 +24,31 @@ describe('powerBiCommitteeExecutive', () => {
     expect(rows[0].entry_source).toBe('preingreso')
   })
 
+  it('no fabrica negativos: columna ausente es NO_EVALUABLE, no false/sin_ingreso', () => {
+    const { rows } = projectFinalCircuitsForCommittee([
+      { journey_uid: 'j-sin-evidencia', final_status: 'incompleto_revision' },
+    ])
+    // Antes estas cuatro columnas se rellenaban con 'false' / 'sin_ingreso', afirmando
+    // un negativo que la corrida nunca midió.
+    expect(rows[0].has_operational_entry).toBe('NO_EVALUABLE')
+    expect(rows[0].has_operational_exit).toBe('NO_EVALUABLE')
+    expect(rows[0].entry_source).toBe('NO_EVALUABLE')
+    expect(rows[0].exit_source).toBe('NO_EVALUABLE')
+  })
+
+  it('conserva el negativo cuando SÍ fue medido', () => {
+    const { rows } = projectFinalCircuitsForCommittee([
+      {
+        journey_uid: 'j-medido',
+        final_status: 'circuito_probable_sin_ingreso',
+        has_operational_entry: 'false',
+        entry_source: 'sin_ingreso',
+      },
+    ])
+    expect(rows[0].has_operational_entry).toBe('false')
+    expect(rows[0].entry_source).toBe('sin_ingreso')
+  })
+
   it('genera pack ejecutivo con committee_summary y dss', () => {
     const pack = buildCommitteeExecutiveCsvPack({
       periodStart: '2026-05-12',

@@ -80,6 +80,48 @@ walk(path.join(ROOT, 'src', 'etl-core'), ['.ts'], (p, src) => {
   }
 })
 
+// Línea base congelada 2026-07-26: archivos que todavía importan masterCircuitCatalog.
+// CIRCUIT_CATALOG (src/etl-core/domain) es la única fuente de verdad de circuitos;
+// masterCircuitCatalog queda relegado a presentación (3D / páginas legacy).
+// NO agregar entradas: si un archivo nuevo necesita circuitos, usa CIRCUIT_CATALOG.
+const MASTER_CATALOG_IMPORT_BASELINE = new Set([
+  'src/components/IfcViewer.tsx',
+  'src/pages/HistoricalOperationalPage.tsx',
+  'src/features/real-truckflow/etlWorkbench/powerBiCommitteeExecutive.ts',
+  'src/lib/kpi5.utils.ts',
+  'src/lib/kpi5Multinivel.utils.ts',
+])
+
+/** Quita comentarios para que las reglas miren código real, no documentación. */
+function stripComments(src) {
+  return src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1')
+}
+
+// Regla 3: masterCircuitCatalog no se importa desde código de clasificación/ETL nuevo
+walk(path.join(ROOT, 'src'), ['.ts', '.tsx'], (p, src) => {
+  const rel = path.relative(ROOT, p).replace(/\\/g, '/')
+  if (rel.endsWith('.test.ts') || rel.endsWith('.test.tsx')) return
+  if (rel === 'src/data/masterCircuitCatalog.ts') return
+  if (!/from ['"][^'"]*masterCircuitCatalog['"]/.test(src)) return
+  if (!MASTER_CATALOG_IMPORT_BASELINE.has(rel)) {
+    violations.push(
+      `[catalogo-unico] ${rel} importa masterCircuitCatalog (usar CIRCUIT_CATALOG de etl-core)`
+    )
+  }
+})
+
+// Regla 4: no reintroducir mapas de equivalencia fabricados entre códigos de circuito
+walk(path.join(ROOT, 'src'), ['.ts', '.tsx'], (p, src) => {
+  const rel = path.relative(ROOT, p).replace(/\\/g, '/')
+  if (rel.endsWith('.test.ts')) return
+  if (/MATRIX_CODE_TO_LEGACY_TRIP_BASES/.test(stripComments(src))) {
+    violations.push(
+      `[catalogo-unico] ${rel} reintroduce MATRIX_CODE_TO_LEGACY_TRIP_BASES ` +
+        `(equivalencias fabricadas: idx%2 -> B1/B2, E{min(idx+1,5)})`
+    )
+  }
+})
+
 if (violations.length) {
   console.error('VIOLACIONES DE ARQUITECTURA:')
   for (const v of violations) console.error(' - ' + v)
