@@ -1,21 +1,30 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRealTruckflowWorkspace } from '../RealTruckflowWorkspaceContext'
+import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
 import { LoadedPeriodSummaryCard } from '../components/LoadedPeriodSummary'
-import { POWER_BI_ETL_DEBUG_FILE_COUNT } from '../../../services/powerBiEtlExport'
-import { POWER_BI_STANDARD_EXPORT_ROWS, usePowerBiExport } from '../hooks/usePowerBiExport'
+import {
+  CANONICAL_CSV_TABLES,
+  availableCanonicalKeys,
+  downloadCanonicalCsv,
+  downloadCanonicalCsvZip,
+} from '../etlWorkbench/etlCanonicalCsvExport'
 
 export function EtlExportTab() {
   const ws = useRealTruckflowWorkspace()
-  const { exportCsvByFilename, exportZip, canExport } = usePowerBiExport(ws)
-  const [bundleError, setBundleError] = useState<string | null>(null)
+  const wb = useEtlWorkbenchOptional()
+  const [exportError, setExportError] = useState<string | null>(null)
+
+  const csv = wb?.transformResult?.csv ?? null
+  const available = useMemo(() => availableCanonicalKeys(csv), [csv])
+  const canExport = available.size > 0
 
   const exec = (fn: () => boolean, label: string) => {
-    setBundleError(null)
+    setExportError(null)
     try {
       const ok = fn()
-      if (!ok) setBundleError(`No se pudo generar ${label}. Volvé a cargar el período.`)
+      if (!ok) setExportError(`No hay datos para ${label}. Procesá el Transform del período primero.`)
     } catch (e) {
-      setBundleError(e instanceof Error ? e.message : String(e))
+      setExportError(e instanceof Error ? e.message : String(e))
     }
   }
 
@@ -32,15 +41,16 @@ export function EtlExportTab() {
   return (
     <section className="space-y-8">
       <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">Export ETL para Power BI</h2>
+        <h2 className="text-lg font-bold text-slate-900">Export CSV — tablas canónicas</h2>
         <p className="mt-2 max-w-3xl text-sm text-slate-600">
-          Los CSV usan el <strong>mismo período de trabajo</strong> cargado arriba. Cada clic arma el bundle en memoria y descarga un archivo (rangos grandes pueden tardar varios segundos).{' '}
-          El ZIP incluye el conjunto debug completo ({POWER_BI_ETL_DEBUG_FILE_COUNT} archivos, incluye capas v2 y auditoría).
+          Descarga las <strong>tablas canónicas del ETL</strong> tal como las produce el Transform, en CSV plano y sin
+          duplicación de datos. Usan el <strong>período cargado</strong> arriba. Cada tabla es la fuente única de su
+          dominio (operaciones, circuitos, tiempos, alertas).
         </p>
       </div>
 
-      {bundleError ? (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">{bundleError}</div>
+      {exportError ? (
+        <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">{exportError}</div>
       ) : null}
 
       {summaryReady ? (
@@ -56,52 +66,42 @@ export function EtlExportTab() {
             circuitsGenerated={circuitsShown}
           />
 
-          {ws.cleanDatasetDeferred ? (
+          {!canExport ? (
             <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-              <strong>Dataset limpio pendiente.</strong> Los exports siguen funcionando (regeneran capas internamente), pero algunos conteos reflejan el pipeline hasta que procesés el dataset en{' '}
-              <strong>Período de trabajo</strong>.
-            </div>
-          ) : null}
-
-          {ws.rawEventsRicardone.length === 0 ? (
-            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-              Aviso: <strong>0 eventos</strong> Ricardone en este rango; las capas de eventos pueden salir vacías.
-            </div>
-          ) : null}
-          {ws.rawAlerts.length === 0 ? (
-            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-              Aviso: <strong>0 alertas</strong> en este rango.
+              <strong>Transform pendiente.</strong> Procesá el Transform del período en{' '}
+              <strong>Período de trabajo</strong> para habilitar la exportación de tablas canónicas.
             </div>
           ) : null}
 
           <div className="rounded-3xl border border-indigo-200 bg-white p-6 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Exportar CSV estándar Power BI</p>
-            <p className="mt-1 text-[11px] text-slate-500">
-              Incluye <span className="font-mono">clean_alerts</span> con alertas operativas del pipeline (con fallback trasero si hace falta filas).
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {POWER_BI_STANDARD_EXPORT_ROWS.map(({ filename, label }) => (
-                <button
-                  key={filename}
-                  type="button"
-                  disabled={!canExport}
-                  title={filename}
-                  onClick={() => exec(() => exportCsvByFilename(filename), filename)}
-                  className="inline-flex flex-col rounded-xl border border-amber-300 bg-white px-3 py-2 text-left shadow-sm transition hover:border-amber-500 hover:bg-amber-50 disabled:opacity-40"
-                >
-                  <span className="text-xs font-black uppercase tracking-wide text-amber-950">{label}</span>
-                  <span className="mt-0.5 font-mono text-[10px] text-slate-600">{filename}</span>
-                </button>
-              ))}
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Tablas canónicas (CSV)</p>
+            <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {CANONICAL_CSV_TABLES.map((t) => {
+                const has = available.has(t.key)
+                return (
+                  <button
+                    key={t.key}
+                    type="button"
+                    disabled={!has}
+                    title={has ? t.filename : 'No disponible en esta corrida'}
+                    onClick={() => exec(() => downloadCanonicalCsv(csv, t.key), t.label)}
+                    className="inline-flex flex-col rounded-xl border border-indigo-200 bg-white px-3 py-2 text-left shadow-sm transition hover:border-indigo-400 hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <span className="text-xs font-black uppercase tracking-wide text-indigo-950">{t.label}</span>
+                    <span className="mt-0.5 text-[11px] leading-snug text-slate-600">{t.hint}</span>
+                    <span className="mt-1 font-mono text-[10px] text-slate-500">{t.filename}</span>
+                  </button>
+                )
+              })}
             </div>
             <div className="mt-6 border-t border-slate-100 pt-4">
               <button
                 type="button"
                 disabled={!canExport}
-                onClick={() => exec(() => exportZip(), 'ZIP Power BI')}
+                onClick={() => exec(() => downloadCanonicalCsvZip(csv), 'ZIP de tablas canónicas')}
                 className="rounded-xl border border-indigo-300 bg-white px-4 py-2 text-xs font-bold uppercase tracking-wide text-indigo-900 shadow-sm hover:bg-indigo-50 disabled:opacity-50"
               >
-                Descargar ZIP Power BI (debug completo)
+                Descargar todo (ZIP)
               </button>
             </div>
           </div>

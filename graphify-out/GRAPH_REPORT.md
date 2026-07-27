@@ -1,221 +1,220 @@
-# Graph Report - .  (2026-07-26)
+# Graph Report - Dashboard_camiones  (2026-07-27)
 
 ## Corpus Check
-- Large corpus: 506 files · ~389,681 words. Semantic extraction will be expensive (many Claude tokens). Consider running on a subfolder.
+- 400 files · ~341,298 words
+- Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4194 nodes · 11170 edges · 186 communities (160 shown, 26 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 157 edges (avg confidence: 0.72)
-- Token cost: 269,742 input · 0 output
+- 3805 nodes · 9973 edges · 183 communities (162 shown, 21 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 232 edges (avg confidence: 0.75)
+- Token cost: 0 input · 0 output
+
+## Graph Freshness
+- Built from commit: `42292ac1`
+- Run `git rev-parse HEAD` and compare to check if the graph is stale.
+- Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- Circuit Scoring & Classification
-- Live Camera Monitor
-- Python Agents (ETL client)
-- Excel-First Merge Contracts
-- Saturation Analytics
-- Segment Timing Templates
-- Liquid Movements Workbench
-- KPI Stats & Flow
-- Transform ETL Tab
-- Logistics Ops Domain
-- Circuit Classification Index
-- Committee Classification
-- Movimientos Contrato Integration
-- Power BI ETL Export
-- Real Journey Event Types
-- Real Journey Diagnostics
-- ETL Transform Pipeline
-- KPI Tiempos Build
-- Legacy Journey Diagnostics
-- San Lorenzo Camera Support
-- SL Balanza Rollup KPIs
-- Transile Externo Reports
-- External Movimientos Contrato
-- Power BI Circuit CSV
-- Transile Interno Volcable
-- Real Truckflow Workspace
-- IFC 3D Viewer
-- Migration Guide (docs)
-- Committee Operational Pipeline
-- Excel Camera Comparativa
-- RIC-San Lorenzo Route
-- Real Alerts Inspector
-- Excel Camera Matrix Audit
-- Sector Occupancy 30min
-- Preliminary Circuit Classify
-- Live Camera Diagnostics
-- KPI5 Multinivel Donut
-- Excel Camera Calibration
-- Contract-First Transform Runner
-- Truckflow-Movimientos Merge
-- Balanza Stay Rollups
-- Estadia Chart Export
-- Segment Timing Tests
-- Local ETL Server
-- Real Journey Quality
-- Truck Fleet Lookup API
-- Data Extraction Tab
-- ETL Product Filter
-- Truck Route Simulator
-- Logistics Data Source
-- Power BI Load Consolidation
-- NPM Dependencies
-- SL Camera Excel-vs-Raw Audit
-- Simulator Live Engine
-- Analysis Tab & Progress
-- Operational Alert Match
-- Real Truckflow API Feed
-- Tiempos Entre Pasos
-- Estadia Forma Distribution
-- Trip Engine Selectors
-- Segment Timing Charts
-- S1 Excel-vs-Raw Audit
-- Analytics Page & KPI Matrix
-- SL Camera Excel Coverage
-- NPM Scripts
-- Excel Movimientos Source Audit
-- Eventos Truckflow Presentation
-- Trip Validation
-- Headless ETL Runner
-- Segment Slow Tail
-- Dev Dependencies
-- KPI5 Circuit Utils
-- TypeScript Config
-- Nearby Alert Research
-- Excel Camera Matrix Script
-- Simulation Service
-- SL/S1 Excel Coverage Audit
-- Plate OCR Matching
-- Committee Executive CSV
-- Simulator State Engine
-- Reconstructed Visit Context
-- Event Stream Trips
-- Camera Power BI Aggregates
-- Platform Circuit Inference
-- Sites & App Context
-- ETL Workbench Context
-- Load/Export Tab
-- Aceite Executive Circuit
-- Anomaly Trucks Script
-- Scenario Builder
-- Truck Catalog & Raw Generator
-- Truck Plate Registry Filter
-- Clean Real Dataset
-- ETL Refactor Notes (docs)
-- Camera Matrix Batch Script
-- Anomaly Period Script
-- Truck Fleet Store (server)
-- Simulator Package Config
-- Agent Chat Tab
-- Segment Tramo Flow
-- Estadia Radar Score
-- R7 Aceite Reclassification
-- Transile Plate Aliases
-- SL Timeline Excel Anchors
-- Migration Env Scripts
-- SL Funnel Audit
-- ETL Profiler
-- Truck Event Types
-- Plate Registry Modal
-- KPI Tiempos Tab
-- Contract-First CLI Runner
-- Simulator TS Config
-- Excel Camera Comparativa Workbench
-- SL Exit RIC Return Script
-- ETL API Smoke Test
-- Ricardone Sector Scatter
-- Plant Visit Sync
-- March Seed Script
-- Simulator Enrichment
-- Anomaly Classifier
-- Raw Journey Stats
-- Calada Variations Audit
-- Transform Local Script
-- ETL Runs Store
-- Simulator Start Script
-- Operational Turno
-- Journey UID Multi-Day Audit
-- Plate Registry Supabase Sync
-- March Duration Diversify
-- Master Circuit Catalog
-- Stable Excel Operation ID
-- Balanza Stay Audit
-- Plate Registry Server
-- R7 Balanza Salida Audit
-- ETL Agent Chat (server)
-- KPI5 Multinivel View
-- Committee ETL Lite Config
-- Build Visits
-- Circuit Timing Tests
-- Simulator Overview (docs)
-- SL Ingreso Balanza Drop
-- ETL Profile Run Script
-- Simulator Stop Script
-- Movimientos Contrato Panel
-- Raw Journey Stats Server
-- Estadia Boxplot
-- Executive Circuit Matrix (docs)
-- Package Manifest
-- Arch Rules Check
-- Estadia KPI Grid
-- KPI5 Summary Card
-- R7 Camera Matrix Script
-- Estadia Distribution Panel
-- Loading Screen
-- CSV Parsing
-- Plate API Fetch
-- ETL Core Purity (docs)
-- Anomalies Types
-- Estadia Hero Card
-- Event Data
-- Python Orchestrator (docs)
-- Agentes Package
-- Recharts Dep
-- web-ifc Dep
-- Vite Env Types
-- Agentes Setup
-- Legacy Preliminary Circuit
-- Match Quality Concept
-- Route Quality Concept
-- Executive Status Concept
-- Platform Quick Report
-- Agentes Pkg
-- TypedTable Concept
-- Dashboard README
-- Truckflow Expansion Summary
-- Committee ETL Lite Tabs
-- R7 Calada Wait Const
-- SL Balanza Time Correction
-- Power BI V1 Headers
+- finalCircuitScoring.ts
+- LiveCameraMonitor.tsx
+- EtlClient
+- etlExcelFirstMerge.ts
+- Result cache por ventana — plan de implementación (histórico)
+- etlSegmentTiming.ts
+- liquidMovementsWorkbench.ts
+- analyticsKpi.ts
+- TransformEtlTab.tsx
+- SiteId
+- etlCircuitClassificationIndex.ts
+- committeeClassification.ts
+- etlMovimientosContratoIntegration.ts
+- powerBiEtlExportBuilder.ts
+- compareRealEvents
+- RealJourneyDiagnosticsView.tsx
+- etlTransformPipeline.ts
+- etlSegmentScatterByDay.ts
+- RealJourneyDiagnosticsPageLegacy.tsx
+- realJourneyEvents.types.ts
+- parseTimestampMs
+- reports/transileExternoCiclo.ts
+- etlExternalMovimientosContrato.ts
+- powerBiCircuitCsvBundle.ts
+- parseCsvToRecords
+- RealTruckflowWorkspaceContext.tsx
+- run-etl-headless.ts
+- Guía de migración (README)
+- rearCameraFilter.ts
+- cameraCalibrationDashboardModel.ts
+- etlRicSanLorenzoRoute.ts
+- realTruckflowApi.ts
+- auditExcelCameraMatrix.ts
+- etlSectorOccupancy30min.ts
+- preliminaryCircuitClassify.ts
+- liveCameraDiagnostics.ts
+- goldenAnomalyRules.ts
+- e
+- etlOperationalSampling.ts
+- etlTruckflowMovimientosMerge.ts
+- collapseTimedPoints
+- ingest-movimientos.ts
+- etlSegmentTiming.test.ts
+- truckflow-local-server.mjs
+- RealJourneyEventDto
+- truckFleetApi.ts
+- ExtraccionDatosTab.tsx
+- etlProductFilter.ts
+- utils/stats.ts
+- etlOperationalAlertMatch.ts
+- powerBiLoad.ts
+- dependencies
+- audit-sl-cameras-excel-vs-raw.mjs
+- etlTransformPhaseRunner.ts
+- AnalisisLocalTab.tsx
+- Catálogo San Lorenzo (12 cámaras, sectores S0–S7)
+- circuitVerdict.ts
+- liveOperationalCatalog.ts
+- distribucionForma.ts
+- eventStream.ts
+- SegmentTimingChartPanel.tsx
+- audit-s1-excel-vs-raw.mjs
+- kpiCircuitMatrix.ts
+- auditSlCameraExcelCoverage.ts
+- scripts
+- auditExcelMovimientosSource.ts
+- EventosTruckflowPresentation.tsx
+- liveTruckflowFeed.ts
+- circuitCatalog.ts
+- etlSegmentSlowTail.ts
+- devDependencies
+- realCommitteePipeline.ts
+- compilerOptions
+- nearbyAlertResearch.ts
+- audit-excel-camera-matrix.mjs
+- truckflowRawJourneyStats.ts
+- auditSlS1ExcelCoverage.ts
+- normalizePlateStrict
+- powerBiCommitteeExecutive.ts
+- EtlExportTab.tsx
+- mcp_server.py
+- isSlLiquidCircuit
+- reports/transileInternoVolcable.ts
+- realJourneyDepurationMap.ts
+- sites.ts
+- EtlWorkbenchContext.tsx
+- LoadExportTab.tsx
+- inferAceiteExecutiveCircuitFromExcel
+- find-anomaly-trucks.mjs
+- slLiquidCameras.ts
+- express
+- TruckPlateRegistryModal.tsx
+- realTruckflowCleanDataset.ts
+- tools.py
+- audit-excel-camera-matrix-batch.mjs
+- find-anomaly-period.mjs
+- truck-fleet-store.mjs
+- Datos de ejemplo (samples CSV de importación)
+- AgenteChatTab.tsx
+- etlSegmentTramoFlow.ts
+- cleanup-runs-orphans.mjs
+- buildCircuitClassificationIndex
+- test_etl_client.py
+- subagentes/__init__.py
+- apply-plate-registry-migration.mjs
+- audit-sl-funnel-from-scatter.mjs
+- etlProfile.ts
+- liveEventTime.ts
+- movimientosBackupApi.ts
+- KpiTiemposTab.tsx
+- contract-first-cli-runner.ts
+- LiquidMovementsPanel.tsx
+- poc-dss-live.mjs
+- find-sl-exit-ric-return.mjs
+- smoke-etl-api.mjs
+- etlRicardoneSectorScatter.ts
+- truckPlantVisitSync.ts
+- enrichSlTimelineWithExcelAnchors
+- etlPlatformCircuitInference.ts
+- anomalyClassifier.ts
+- classifyOperationalSession
+- audit-calada-variations.mjs
+- run-truckflow-transform-local.mjs
+- etl-runs-store.mjs
+- Mapa del backend lógico Transform Truckflow
+- operationalTurno.ts
+- audit-journey-uid-multi-day.mjs
+- sync-plate-registry-to-supabase.mjs
+- excelStableOperationId.ts
+- masterCircuitCatalog.ts
+- etl_client.py
+- audit-balanza-stay.mjs
+- truck-plate-registry.mjs
+- audit-r7-balanza-salida.mjs
+- etl-agent-chat.mjs
+- Movimientos por contrato: backup local particionado por día
+- buildSuspiciousDischargeWithoutBalanza
+- movimientosReconciliation.ts
+- etlCircuitTiming.ts
+- index.html (shell del dashboard)
+- audit-sl-ingreso-balanza-drop.mjs
+- etl-profile-run.mjs
+- parseTruckflowJsonFiles.ts
+- POC — Video en vivo desde DSS Professional V8.7 (sección "en vivo")
+- truckflow-raw-journey-stats.mjs
+- Tablas canónicas por pregunta — runs/windows/<from>_<to>/tables/
+- sectorCapacityByPlant.ts
+- package.json
+- check-arch-rules.mjs
+- Dashboard camiones — capa de agentes (Claude Code + MCP)
+- smoke-live-camera.mjs
+- audit-r7-excel-camera-matrix.mjs
+- fetch-plate-api.mjs
+- src/etl-core: paquete TS puro (cero React/DOM/side-effects)
+- isPelletCircuitCode
+- Orquestador Python (agentes.orquestador, SDK Anthropic)
+- agentes/__init__.py
+- vite-env.d.ts
+- Agentes Truckflow / ETL (setup Python)
+- realPreliminaryCircuit (clasificador legacy)
+- match_quality (cruce Excel ↔ Truckflow)
+- route_quality (diagnóstico ruta Truckflow)
+- Capa ejecutiva executive_status (VALIDO/PROBABLE/INCOMPLETO/ANOMALO/NO_EVALUABLE)
+- Informe rápido: Plataforma Truckflow
+- agentes
+- TypedTable<T> (filas tipadas, CSV solo en el borde)
+- README — Trazabilidad de Camiones Dashboard
+- Resumen de ampliación Truckflow
+- COMMITTEE_ETL_LITE_MAIN_TAB_IDS
+- R7_CALADA_ESPERA_MINUTES
+- SL_BALANZA_TIME_CORRECTION_MINUTES
+- POWER_BI_V1_CSV_HEADERS
 
 ## God Nodes (most connected - your core abstractions)
-1. `runEtlTransform()` - 95 edges
+1. `runEtlTransform()` - 98 edges
 2. `parseTimestampMs()` - 88 edges
-3. `runMovimientosContratoIntegration()` - 78 edges
-4. `SiteId` - 69 edges
-5. `RealJourneyDiagnosticsPageLegacy()` - 65 edges
-6. `recordsToCsv()` - 61 edges
-7. `RealJourneyEventDto` - 56 edges
-8. `normalizeRealEventPoint()` - 55 edges
-9. `normalizePlateStrict()` - 42 edges
-10. `parseCsvToRecords()` - 37 edges
+3. `e()` - 88 edges
+4. `runMovimientosContratoIntegration()` - 78 edges
+5. `RealJourneyDiagnosticsPageLegacy()` - 66 edges
+6. `recordsToCsv()` - 62 edges
+7. `normalizeRealEventPoint()` - 56 edges
+8. `RealJourneyEventDto` - 55 edges
+9. `parseCsvToRecords()` - 38 edges
+10. `normalizePlateStrict()` - 34 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `walk()` --indirect_call--> `e()`  [INFERRED]
+  scripts/check-arch-rules.mjs → src/etl-core/reports/movimientosReconciliation.test.ts
+- `main()` --indirect_call--> `e()`  [INFERRED]
+  scripts/smoke-live-camera.mjs → src/etl-core/reports/movimientosReconciliation.test.ts
 - `Problema raíz: dos motores Transform en paralelo (Workbench vs Comité/v2)` --semantically_similar_to--> `Tres clasificadores de circuitos en paralelo (deuda técnica)`  [INFERRED] [semantically similar]
   ETL_PLAN_UNIFICADO.md → PLAN_REFACTOR_ETL_AGENTES.md
 - `Contract-first CLI (runMovimientosContratoIntegration vía tsx)` --semantically_similar_to--> `run-etl-headless.ts (runner que persiste)`  [INFERRED] [semantically similar]
   scripts/run-truckflow-transform-local.README.md → docs/migracion/FASE_4_SERVICIO_PERSISTENCIA.md
-- `buildExcelFirstReviewSample()` --indirect_call--> `n()`  [INFERRED]
-  src/features/real-truckflow/etlWorkbench/etlExcelFirstMerge.ts → scripts/audit-sl-funnel-from-scatter.mjs
 - `timeBucketFourHoursLabel()` --indirect_call--> `n()`  [INFERRED]
   src/features/real-truckflow/etlWorkbench/etlTransformPipeline.ts → scripts/audit-sl-funnel-from-scatter.mjs
-- `buildCircuitEtlV2CsvBundle()` --indirect_call--> `n()`  [INFERRED]
-  src/features/real-truckflow/etlWorkbench/powerBiCircuitCsvBundle.ts → scripts/audit-sl-funnel-from-scatter.mjs
 
 ## Import Cycles
-- 3-file cycle: `src/features/real-truckflow/etlWorkbench/etlExcelMovimientosStep.ts -> src/features/real-truckflow/etlWorkbench/etlTransformPipeline.ts -> src/features/real-truckflow/etlWorkbench/etlTransformPhaseStore.ts -> src/features/real-truckflow/etlWorkbench/etlExcelMovimientosStep.ts`
 - 3-file cycle: `src/features/real-truckflow/etlWorkbench/etlTransformPhaseStore.ts -> src/features/real-truckflow/etlWorkbench/etlTransformTramo3.ts -> src/features/real-truckflow/etlWorkbench/etlTransformPipeline.ts -> src/features/real-truckflow/etlWorkbench/etlTransformPhaseStore.ts`
+- 3-file cycle: `src/features/real-truckflow/etlWorkbench/etlExcelMovimientosStep.ts -> src/features/real-truckflow/etlWorkbench/etlTransformPipeline.ts -> src/features/real-truckflow/etlWorkbench/etlTransformPhaseStore.ts -> src/features/real-truckflow/etlWorkbench/etlExcelMovimientosStep.ts`
 - 4-file cycle: `src/etl-core/domain/pipelineTypes.ts -> src/features/real-truckflow/etlWorkbench/etlExcelFirstMerge.ts -> src/features/real-truckflow/etlWorkbench/etlPlatformCircuitInference.ts -> src/etl-core/reports/transileExternoCiclo.ts -> src/etl-core/domain/pipelineTypes.ts`
 - 5-file cycle: `src/etl-core/domain/pipelineTypes.ts -> src/features/real-truckflow/etlWorkbench/etlExcelFirstMerge.ts -> src/features/real-truckflow/etlWorkbench/etlCircuitClassificationIndex.ts -> src/features/real-truckflow/etlWorkbench/etlPlatformCircuitInference.ts -> src/etl-core/reports/transileExternoCiclo.ts -> src/etl-core/domain/pipelineTypes.ts`
 
@@ -227,217 +226,217 @@
 - **Tres clasificadores de circuito paralelos** — docs_migracion_fase_3_catalogo_unico_finalcircuitscoring, docs_migracion_fase_3_catalogo_unico_circuitetlv2, docs_migracion_fase_3_catalogo_unico_realpreliminarycircuit [EXTRACTED 0.90]
 - **Flujo de la capa de agentes (chat → tools → etl-api)** — docs_migracion_fase_5_agentes_python_orquestador, docs_migracion_fase_5_agentes_python_subagentes, docs_migracion_fase_5_agentes_python_tools, docs_migracion_fase_5_agentes_python_etl_client, docs_migracion_fase_4_servicio_persistencia_etl_api [EXTRACTED 1.00]
 
-## Communities (186 total, 26 thin omitted)
+## Communities (183 total, 21 thin omitted)
 
-### Community 0 - "Circuit Scoring & Classification"
-Cohesion: 0.06
-Nodes (82): Regla líquido vs sólido (RicCalLiq → R8/R16 vs RS_REC/RS_DESP), hasTransileRicardoneEvidence(), resolveCommitteeClassification(), resolveDeducedEvidence(), resolveStrongPointSource(), DEFAULT_CIRCUIT_MATRIX_EXTENSIONS, balanzasBeforeCaladaOrLiquid(), buildReliabilityExplanation() (+74 more)
-
-### Community 1 - "Live Camera Monitor"
+### Community 0 - "finalCircuitScoring.ts"
 Cohesion: 0.05
-Nodes (71): LiveCameraMonitor, LiveDetailTab, LiveTableColumn, buildLiveCameraRow(), buildLiveDetections(), buildLiveFeedSectorDeviceBreakdown(), buildLiveSectorSummary(), filterLiveAlertsForView() (+63 more)
+Nodes (89): Buckets de clasificación (completos / incompletos ≤2 lecturas / anómalos), Capa comité committee_group v10 (COMPLETOS/VARIACIONES_OPERATIVAS/ANOMALIAS), EXECUTIVE_CIRCUIT_MATRIX (R1..R34, cobertura, punto fuerte), Regla líquido vs sólido (RicCalLiq → R8/R16 vs RS_REC/RS_DESP), Capa técnica matrix_final_status (COMPLETO/DEDUCIDO/INCOMPLETO/ANOMALO), Catálogo de circuitos definido 4 veces → unificar (R* clave única), Audit matriz cámaras R1/R5/R6/R7 (Excel batch), Audit matriz R1 por cámara (+81 more)
 
-### Community 2 - "Python Agents (ETL client)"
+### Community 1 - "LiveCameraMonitor.tsx"
+Cohesion: 0.09
+Nodes (32): LiveCameraMonitor, LiveDetailTab, LiveTableColumn, buildLiveCameraRow(), buildLiveDetections(), buildLiveFeedSectorDeviceBreakdown(), buildLiveSectorSummary(), filterLiveAlertsForView() (+24 more)
+
+### Community 2 - "EtlClient"
+Cohesion: 0.30
+Nodes (4): EtlApiError, EtlClient, Any, RuntimeError
+
+### Community 3 - "etlExcelFirstMerge.ts"
 Cohesion: 0.05
-Nodes (53): create_run(), EtlApiError, EtlClient, get_circuit_catalog(), get_client(), get_summary(), list_runs(), list_tables() (+45 more)
+Nodes (73): aggregateJourneyStats(), argentinaDayBoundsMs(), buildEvidenceFromMatches(), buildExcelPeriodContext(), buildPlateIndex(), buildWindowFromOpts(), CANDIDATE_DIAG_HEADERS, combineRouteQualities() (+65 more)
 
-### Community 3 - "Excel-First Merge Contracts"
-Cohesion: 0.06
-Nodes (72): aggregateJourneyStats(), argentinaDayBoundsMs(), buildEvidenceFromMatches(), buildExcelFirstReviewSample(), buildExcelPeriodContext(), buildPlateIndex(), buildWindowFromOpts(), CANDIDATE_DIAG_HEADERS (+64 more)
+### Community 4 - "Result cache por ventana — plan de implementación (histórico)"
+Cohesion: 0.05
+Nodes (41): 1. Qué son las “4 skills” del chat, 2. Layout de `runs/` (fuente de verdad), 3. Flujo Process → agente, 4. Checklist, Limpieza legacy, Reglas, Subagentes Claude + carpeta `runs/` — fuente única por ventana, Tablas núcleo (las que el agente debe usar) (+33 more)
 
-### Community 4 - "Saturation Analytics"
-Cohesion: 0.06
-Nodes (62): detailWindowMs(), SaturationDetailPanel(), SaturationDetailPanelProps, SaturationEpisodesTimelineProps, SaturationExecutiveHeader(), SaturationExecutiveHeaderProps, SaturationHeatmapProps, SaturationNarrative() (+54 more)
-
-### Community 5 - "Segment Timing Templates"
+### Community 5 - "etlSegmentTiming.ts"
 Cohesion: 0.04
-Nodes (70): Análisis de tiempos por circuito (circuit_timing_summary / segment_timing_kpi), aggregateFromLegs(), BALANZA_STAY_KPI_ROLLUP_RULE, BALANZA_STAY_ROLLUP_TRANSITION, BalanzaStayCandidateDiagnostic, balanzaStayDiagnosticsToCsv(), BalanzaStayTimedSegmentsInput, BalanzaStayTimingDiagnostic (+62 more)
+Nodes (77): Análisis de tiempos por circuito (circuit_timing_summary / segment_timing_kpi), Archivos-dios (etlSegmentTiming 5k, etlTransformPipeline 3k LOC), aggregateFromLegs(), BALANZA_STAY_KPI_ROLLUP_RULE, BALANZA_STAY_ROLLUP_TRANSITION, BalanzaStayCandidateDiagnostic, balanzaStayDiagnosticsToCsv(), BalanzaStayTimedSegmentsInput (+69 more)
 
-### Community 6 - "Liquid Movements Workbench"
-Cohesion: 0.06
-Nodes (68): COHORT_LABELS, isCsvTrue(), LiquidMovementsPanel(), parseSummary(), Props, Row, summaryFromRow(), SlCameraAuditSlot (+60 more)
+### Community 6 - "liquidMovementsWorkbench.ts"
+Cohesion: 0.13
+Nodes (28): AceiteTruckflowExcelCrossRow, anySlLiquidS10(), argentinaDayKeyFromMs(), buildEventsByPlate(), buildExcelFirstGapRows(), buildLiquidMovementsReport(), buildRicCalLiqAuditSlot(), cameraHitsInExcelWindow() (+20 more)
 
-### Community 7 - "KPI Stats & Flow"
+### Community 7 - "analyticsKpi.ts"
+Cohesion: 0.09
+Nodes (35): Entidad HistoricalTrip (viaje histórico), KPIs analíticos ampliados (estadía, variabilidad, flujo, densidad), clampDurationMinutes(), getHourFromIso(), getShiftForHour(), OPERATIONAL_SHIFTS, ShiftConfig, avgDurationByHour() (+27 more)
+
+### Community 8 - "TransformEtlTab.tsx"
 Cohesion: 0.07
-Nodes (61): Entidad HistoricalTrip (viaje histórico), KPIs analíticos ampliados (estadía, variabilidad, flujo, densidad), buildFlowPoints(), FlowPoint, FlowSaturationKpi(), generateFlowInsights(), clampDurationMinutes(), getHourFromIso() (+53 more)
+Nodes (34): TransileExternoReclasificacionRow, committeePieFromGroup(), ANOMALY_SEQUENCE_CSV_HEADERS, AnomalyReviewSummary, AnomalySequenceBreakdownRow, anomalySequenceSummaryCsv(), buildSuspiciousSlExitRicReturn(), CIRCUIT_PIE_COLORS (+26 more)
 
-### Community 8 - "Transform ETL Tab"
+### Community 9 - "SiteId"
+Cohesion: 0.11
+Nodes (23): AlertSeverity, AlertStatus, CameraEventRaw, CameraEventsFile, HistoricalTrip, HistoricalTripsFile, IfcCameraCatalogItem, OperationalAlert (+15 more)
+
+### Community 10 - "etlCircuitClassificationIndex.ts"
+Cohesion: 0.06
+Nodes (58): AnomalyListContext, AnomalyReasonCount, buildExecutiveCircuitBarSlices(), buildExecutiveEntryFromExcelOperationRow(), CAMERA_PRESERVED_OPERATIONAL_VARIATIONS, CircuitPieSlice, classificationOrder(), COMMITTEE_CHART_EXPORT_HEADERS (+50 more)
+
+### Community 11 - "committeeClassification.ts"
+Cohesion: 0.08
+Nodes (59): normalizeRealEventPoint(), AMBIGUOUS_INFERRED_CODES, AnalysisScope, AnomalyLeg, AnomalyOriginPlant, attachSequenceMatchMeta(), buildCaladaTimingVariationClassification(), buildGoldenTimelineFromJourney() (+51 more)
+
+### Community 12 - "etlMovimientosContratoIntegration.ts"
+Cohesion: 0.07
+Nodes (75): csvEscapeCell(), recordsToCsv(), formatTransileExternoLog(), transileExternoOperationsCsv(), transileExternoSessionsCsv(), transileExternoSummaryCsv(), transileExternoTables(), transileExternoReclasificacionCsv() (+67 more)
+
+### Community 13 - "powerBiEtlExportBuilder.ts"
+Cohesion: 0.10
+Nodes (35): downloadPowerBiNamedCsvZipSync(), triggerAnchorDownloadZip(), triggerBrowserDownloadsSequential(), triggerCommitteeCsvDownloadsSync(), triggerPowerBiDebugDownloadsSequential(), TriggerPowerBiZipDownloadOptions, triggerSinglePowerBiCsvDownload(), csvFirstRow() (+27 more)
+
+### Community 14 - "compareRealEvents"
+Cohesion: 0.12
+Nodes (19): Informe journeyUid abierto en API Truckflow, Bug journeyUid abierto (mismo UID = varios viajes multi-día), Merge automático de journeys fragmentados (gap ≤240min, OCR ≥0.92), applyExecutiveJourneyMerges(), ExecutiveJourneyMergeResult, isExecutiveMergeAutoCandidate(), JourneyMergeCandidate, mergeTwoJourneys() (+11 more)
+
+### Community 15 - "RealJourneyDiagnosticsView.tsx"
+Cohesion: 0.07
+Nodes (34): DataDistributionDonut(), Slice, DataQualityFunnel(), Stage, DiagDrawer(), COMMITTEE_ETL_LITE_MODE, ETL_DEV_TAB_IDS, ETL_MAIN_TAB_IDS (+26 more)
+
+### Community 16 - "etlTransformPipeline.ts"
+Cohesion: 0.08
+Nodes (45): Golden master test (fingerprint + hash CSVs), runEtlTransform unificado (orquestador ETL único), buildTaxonomyCoherenceReport(), EXECUTIVE_MERGE_CANDIDATE_MAX_GAP_MINUTES, EtlProfiler, createPhaseStore(), alertOccurredAtIso(), buildPartialOutputTramo1() (+37 more)
+
+### Community 17 - "etlSegmentScatterByDay.ts"
+Cohesion: 0.09
+Nodes (34): ExcelOperationSegmentScatterRow, auditSlBalanzaScatterEligibility(), comiteRejectToAuditReason(), minutesBetweenScatter(), normalizeExcelSegmentForScatterByDay(), normalizeFranjaLabel(), operationTimedSegments(), resolveExcelFirstSegmentCircuitCode() (+26 more)
+
+### Community 18 - "RealJourneyDiagnosticsPageLegacy.tsx"
+Cohesion: 0.09
+Nodes (47): buildPreliminaryCircuitDailySummary(), enrichCaladaSanLorenzoConfidence(), buildAlertsChannelQueryNoTimeFilter(), downloadCsv(), exportSimpleBarPng(), getRecentDefaultRange(), INC_PRELIM_FILTERS, isPreliminaryIncomplete() (+39 more)
+
+### Community 19 - "realJourneyEvents.types.ts"
+Cohesion: 0.06
+Nodes (36): Contrato Power BI / comité — ETL Truckflow, Reglas ETL etl_transform_v9 (+v10/v12), Criterio LPR único (alertCode === 'LPR_MALFUNCTION'), Cámaras traseras excluidas del frente ETL, Apoyo ejecutivo San Lorenzo (refuerza, no reclasifica), Informe ETL Dashboard Truckflow, DEVICE_ALIASES, DEVICE_MAP (+28 more)
+
+### Community 20 - "parseTimestampMs"
+Cohesion: 0.11
+Nodes (45): argentinaLocalMinutesOfDay(), argentinaLocalParts(), ensureArgentinaOffsetIso(), formatArgentinaIsoFromMs(), hasExplicitTimezone(), normalizeTimestampForExport(), pad2(), parseTimestampMs() (+37 more)
+
+### Community 21 - "reports/transileExternoCiclo.ts"
+Cohesion: 0.09
+Nodes (30): buildTransileExternoReport(), classifyTransileExternoProduct(), detectDeVueltaHeader(), fechaFor(), opInstantMs(), resolvePelletCircuitFromPlatform(), TRANSILE_EXTERNO_CIRCUIT_FAMILIES, TRANSILE_EXTERNO_OPERATION_HEADERS (+22 more)
+
+### Community 22 - "etlExternalMovimientosContrato.ts"
 Cohesion: 0.05
-Nodes (64): committeePieFromGroup(), ANOMALY_SEQUENCE_CSV_HEADERS, AnomalyListContext, AnomalyReviewSummary, AnomalySequenceBreakdownRow, anomalySequenceSummaryCsv(), buildAnomalyListContextFromTransformCsv(), buildAnomalyReviewSummary() (+56 more)
+Nodes (77): xlsx, applySourceDateGuard(), combineDateTime(), dateOnlyKey(), daysFromSourceDate(), excelSerialToDate(), formatIsoLocal(), inferSourceDateFromFileName() (+69 more)
 
-### Community 9 - "Logistics Ops Domain"
+### Community 23 - "powerBiCircuitCsvBundle.ts"
+Cohesion: 0.11
+Nodes (31): buildCircuitEtlV2CsvBundle(), buildQualitySummary(), canonicalPlateFromEvents(), CIRCUIT_MATRICES, circuitStatusRankFusion(), CircuitV2NamedCsv, ClassifiedOperationalCircuit, ControlledOcrFusionStats (+23 more)
+
+### Community 24 - "parseCsvToRecords"
+Cohesion: 0.10
+Nodes (39): parseCsvToRecords(), isGoldenAnomalyReason(), normalizeDeVuelta(), buildAnomalyListContextFromTransformCsv(), buildAnomalyReviewSummary(), buildAnomalySequenceBreakdown(), buildCommitteeCircuitCrossTab(), collectDeVueltaPlatesFromCsv() (+31 more)
+
+### Community 25 - "RealTruckflowWorkspaceContext.tsx"
+Cohesion: 0.10
+Nodes (33): postTruckflowLoadLocalPeriod(), GlobalRangeSelector(), STAGE_LABEL, CLASS_BY_STATUS, LABELS, StatusBadge(), TimeInput24(), TimeInput24Props (+25 more)
+
+### Community 26 - "run-etl-headless.ts"
+Cohesion: 0.13
+Nodes (25): Args, loadEventsFromFile(), main(), materializeTableJson(), parseArgs(), persistPowerBiPack(), persistTables(), printHelp() (+17 more)
+
+### Community 27 - "Guía de migración (README)"
 Cohesion: 0.06
-Nodes (53): PlantOperationalSummary(), PlantOperationalSummaryProps, KpiCard(), KpiCardProps, TONE_STYLES, FlowSaturationKpiProps, IfcLoadingOverlay(), IfcLoadingOverlayProps (+45 more)
-
-### Community 10 - "Circuit Classification Index"
-Cohesion: 0.06
-Nodes (66): AnomalyReasonCount, applyExecutiveCircuitCodeToEntry(), BALANZA_LOGICAL_CODES, buildCircuitClassificationIndex(), buildExecutiveCircuitBarSlices(), buildExecutiveEntryFromExcelOperationRow(), CAMERA_PRESERVED_OPERATIONAL_VARIATIONS, CircuitPieSlice (+58 more)
-
-### Community 11 - "Committee Classification"
-Cohesion: 0.07
-Nodes (62): Buckets de clasificación (completos / incompletos ≤2 lecturas / anómalos), Capa comité committee_group v10 (COMPLETOS/VARIACIONES_OPERATIVAS/ANOMALIAS), Capa técnica matrix_final_status (COMPLETO/DEDUCIDO/INCOMPLETO/ANOMALO), AMBIGUOUS_INFERRED_CODES, AnalysisScope, AnomalyLeg, AnomalyOriginPlant, attachSequenceMatchMeta() (+54 more)
-
-### Community 12 - "Movimientos Contrato Integration"
-Cohesion: 0.10
-Nodes (52): csvEscapeCell(), recordsToCsv(), formatTransileExternoLog(), transileExternoTables(), transileExternoReclasificacionCsv(), transileExternoReclasificacionTable(), formatTransileInternoVolcableLog(), transileInternoVolcableTables() (+44 more)
-
-### Community 13 - "Power BI ETL Export"
-Cohesion: 0.07
-Nodes (47): Mapa del backend lógico Transform Truckflow, Uso recomendado — Backend Transform sin UI, Plan de limpieza futura — Transform Truckflow, formatDateTimeShort(), LoadedPeriodSummaryCard(), LoadedPeriodSummaryProps, POWER_BI_STANDARD_EXPORT_ROWS, usePowerBiExport() (+39 more)
-
-### Community 14 - "Real Journey Event Types"
-Cohesion: 0.08
-Nodes (36): Informe journeyUid abierto en API Truckflow, Bug journeyUid abierto (mismo UID = varios viajes multi-día), Merge automático de journeys fragmentados (gap ≤240min, OCR ≥0.92), PreliminaryCircuitClassification, RealJourneyEventDto, ReconstructedRealJourney, ReconstructedRealJourneyCore, ReconstructedRealJourneyWithQuality (+28 more)
-
-### Community 15 - "Real Journey Diagnostics"
-Cohesion: 0.06
-Nodes (45): DataDistributionDonut(), Slice, DataQualityFunnel(), Stage, DiagDrawer(), JourneyQuickFilter, PowerBiExportLoadedSummary, RealDataMainTab (+37 more)
-
-### Community 16 - "ETL Transform Pipeline"
-Cohesion: 0.08
-Nodes (48): Golden master test (fingerprint + hash CSVs), runEtlTransform unificado (orquestador ETL único), Archivos-dios (etlSegmentTiming 5k, etlTransformPipeline 3k LOC), EXECUTIVE_MERGE_CANDIDATE_MAX_GAP_MINUTES, JourneyMetaForAlertMatch, JourneyOperationalAlertSummary, OPERATIONAL_ALERTS_CSV_COLUMNS, EtlProfiler (+40 more)
-
-### Community 17 - "KPI Tiempos Build"
-Cohesion: 0.08
-Nodes (49): aggregateCircuitSummary(), buildCircuitTimingIndex(), CircuitTimingIndex, CircuitTimingJourneyRow, circuitTimingJourneysCsv(), circuitTimingSummaryCsv(), CircuitTimingSummaryRow, dominantExecutiveStatus() (+41 more)
-
-### Community 18 - "Legacy Journey Diagnostics"
-Cohesion: 0.09
-Nodes (50): normalizeRealEventPoint(), buildPreliminaryCircuitDailySummary(), enrichCaladaSanLorenzoConfidence(), buildAlertsChannelQueryNoTimeFilter(), downloadCsv(), exportSimpleBarPng(), getRecentDefaultRange(), INC_PRELIM_FILTERS (+42 more)
-
-### Community 19 - "San Lorenzo Camera Support"
-Cohesion: 0.06
-Nodes (42): Contrato Power BI / comité — ETL Truckflow, Reglas ETL etl_transform_v9 (+v10/v12), Criterio LPR único (alertCode === 'LPR_MALFUNCTION'), Cámaras traseras excluidas del frente ETL, Apoyo ejecutivo San Lorenzo (refuerza, no reclasifica), Informe ETL Dashboard Truckflow, DEVICE_ALIASES, DEVICE_MAP (+34 more)
-
-### Community 20 - "SL Balanza Rollup KPIs"
-Cohesion: 0.10
-Nodes (48): argentinaLocalMinutesOfDay(), argentinaLocalParts(), ensureArgentinaOffsetIso(), formatArgentinaIsoFromMs(), hasExplicitTimezone(), normalizeTimestampForExport(), pad2(), parseTimestampMs() (+40 more)
-
-### Community 21 - "Transile Externo Reports"
-Cohesion: 0.07
-Nodes (39): normalizePlate(), buildTransileExternoReport(), classifyTransileExternoProduct(), detectDeVueltaHeader(), fechaFor(), opInstantMs(), resolvePelletCircuitFromPlatform(), TRANSILE_EXTERNO_CIRCUIT_FAMILIES (+31 more)
-
-### Community 22 - "External Movimientos Contrato"
-Cohesion: 0.09
-Nodes (42): applySourceDateGuard(), combineDateTime(), dateOnlyKey(), daysFromSourceDate(), excelSerialToDate(), formatIsoLocal(), inferSourceDateFromFileName(), isDayFirstDateString() (+34 more)
-
-### Community 23 - "Power BI Circuit CSV"
-Cohesion: 0.09
-Nodes (43): buildCircuitEtlV2CsvBundle(), buildOperationalSessionsPlateSite(), buildQualitySummary(), canonicalPlateFromEvents(), CIRCUIT_ETL_V2_FILENAMES, CIRCUIT_MATRICES, CircuitMatrixRule, circuitStatusRankFusion() (+35 more)
-
-### Community 24 - "Transile Interno Volcable"
-Cohesion: 0.10
-Nodes (35): transileExternoOperationsCsv(), transileExternoSessionsCsv(), transileExternoSummaryCsv(), buildTransileInternoVolcableReport(), clusterVolcableVisits(), evaluateTransileSession(), excelCircuitHintForSession(), fechaArgentina() (+27 more)
-
-### Community 25 - "Real Truckflow Workspace"
-Cohesion: 0.10
-Nodes (31): GlobalRangeSelector(), STAGE_LABEL, CLASS_BY_STATUS, LABELS, StatusBadge(), TruckPlateRegistryLauncher(), isValidTimeHHMM(), normalizeTimeHHMM() (+23 more)
-
-### Community 26 - "IFC 3D Viewer"
-Cohesion: 0.10
-Nodes (40): buildCameraSnapshotDataUrl(), buildCircuitsFromCatalog(), buildExpressPointMap(), buildFallbackFloorMapBySector(), buildFloorMapBySector(), buildIfcTagsMap(), circuitCodes(), CircuitColorBuckets (+32 more)
-
-### Community 27 - "Migration Guide (docs)"
-Cohesion: 0.07
 Nodes (40): Fase 1: Extraer src/etl-core, src/etl-core (núcleo ETL puro), Patrón mover-con-shim (re-export deprecado), Fase 2: TypedTable, TypedTable (intercambio tipado vs CSV strings), Fase 3: Catálogo único de circuitos, CIRCUIT_CATALOG (fuente única de circuitos), circuitEtlV2 (clasificador legacy) (+32 more)
 
-### Community 28 - "Committee Operational Pipeline"
-Cohesion: 0.10
-Nodes (36): alertTimeMs(), alignAlertsToSegments(), applyTemporalSegmentation(), buildCommitteeOperationalPipeline(), buildExecutiveSummary(), classifyCommitteeOperationalCircuit(), cloneAlertWithJourney(), cloneEventWithJourney() (+28 more)
+### Community 28 - "rearCameraFilter.ts"
+Cohesion: 0.20
+Nodes (20): buildRearCameraFilterTrace(), EXCLUDED_INGRESS_ROUTE_ALERT_CODE_SET, EXCLUDED_INGRESS_ROUTE_ALERT_CODES, EXCLUDED_INGRESS_ROUTE_ALERT_DEVICE_CODE_SET, EXCLUDED_INGRESS_ROUTE_ALERT_DEVICE_CODES, EXCLUDED_INGRESS_ROUTE_ALERT_SECTOR_SET, EXCLUDED_INGRESS_ROUTE_ALERT_SECTORS, EXCLUDED_REAR_DEVICE_CODES (+12 more)
 
-### Community 29 - "Excel Camera Comparativa"
-Cohesion: 0.12
-Nodes (32): ExcelCameraComparativaPanel(), Props, cameraCalibrationAggregatesToCsv(), cameraCalibrationDetailToCsv(), missedPlatesByCameraToCsv(), summarizeMissedPlatesByDevice(), AutoCalibrationBrief, buildBrief() (+24 more)
+### Community 29 - "cameraCalibrationDashboardModel.ts"
+Cohesion: 0.11
+Nodes (35): ExcelCameraComparativaPanel(), Props, cameraCalibrationAggregatesToCsv(), PointCaptureDepthSummary, RAW_AUDIT_CIRCUIT_CODES, missedPlatesByCameraToCsv(), summarizeMissedPlatesByDevice(), AutoCalibrationBrief (+27 more)
 
-### Community 30 - "RIC-San Lorenzo Route"
+### Community 30 - "etlRicSanLorenzoRoute.ts"
 Cohesion: 0.14
 Nodes (32): collapseConsecutiveEqual(), computeR7LegDurations(), firstIndexOf(), getCollapsedLogicalCodes(), isRicDevice(), isSlLogicalCode(), journeyBlocksSl1ExecutiveClassification(), journeyFrontEvents() (+24 more)
 
-### Community 31 - "Real Alerts Inspector"
-Cohesion: 0.10
-Nodes (21): isValidArgentinaPlate(), normalizePlate(), ApiRealJourneyEventRow, isValidObservedPlate(), AlertInferenceCategory, AlertsQuickFilter, inferCategory(), normalizeRealAlertForView() (+13 more)
+### Community 31 - "realTruckflowApi.ts"
+Cohesion: 0.16
+Nodes (23): ApiRealJourneyEventRow, runMovimientosContratoTramo3(), annotateRealJourneyEventsWithPlateFields(), annotateRealJourneyEventsWithPlateFieldsChunked(), buildJourneyEventListUrl(), coerceNumber(), coerceString(), extractEventsArray() (+15 more)
 
-### Community 32 - "Excel Camera Matrix Audit"
-Cohesion: 0.12
-Nodes (32): auditEventInOperationWindow(), buildExcelCameraMatrix(), CameraMatrixRow, CameraStepSummary, collectOperationWindowEvents(), countRowCapturePoints(), diagnoseBalanzaEgresoPlateSources(), eventLogicalCodeOperational() (+24 more)
+### Community 32 - "auditExcelCameraMatrix.ts"
+Cohesion: 0.11
+Nodes (32): buildExcelCameraMatrix(), CALIBRATION_GENERAL_EXCLUDED_STEP_KEYS, CameraMatrixRow, CameraStepSummary, countRowCapturePoints(), countRowCapturePointsForCalibration(), DESCARGA_CAMERA_STEP_KEYS, eventLogicalCodeOperational() (+24 more)
 
-### Community 33 - "Sector Occupancy 30min"
-Cohesion: 0.13
-Nodes (30): buildSectorOccupancy30MinSeries(), computeSectorOccupancyFromScatter(), countStockInitialJourneys(), fechaFromMs(), filterScatterRowsForOccupancyDay(), franjaOperativaFromHour(), FranjaOperativaOccupancy, horaFromMs() (+22 more)
+### Community 33 - "etlSectorOccupancy30min.ts"
+Cohesion: 0.19
+Nodes (21): buildAllSectorOccupancy30MinRows(), buildSectorOccupancy30MinSeries(), computeSectorOccupancyFromScatter(), countStockInitialJourneys(), fechaFromMs(), filterScatterRowsForOccupancyDay(), franjaOperativaFromHour(), horaFromMs() (+13 more)
 
-### Community 34 - "Preliminary Circuit Classify"
+### Community 34 - "preliminaryCircuitClassify.ts"
 Cohesion: 0.08
 Nodes (35): classifyOperationalPreliminaryCircuit(), classifyPreliminaryRealCircuit(), collapseConsecutiveEqual(), countCode(), countEvidencePoints(), countExcludedRearLogicalPoints(), DESCARTADO_CODES, deviceRouteHintEgreso() (+27 more)
 
-### Community 35 - "Live Camera Diagnostics"
-Cohesion: 0.11
-Nodes (32): alertInstantMs(), alertIsLpr(), buildCameraDiagnostics(), buildFrontRearRow(), buildOperationalTimeline(), CameraDiagnostics, compareFrontRearCameras(), countInvalidReadings() (+24 more)
+### Community 35 - "liveCameraDiagnostics.ts"
+Cohesion: 0.12
+Nodes (31): alertInstantMs(), alertIsLpr(), buildCameraDiagnostics(), buildFrontRearRow(), buildOperationalTimeline(), CameraDiagnostics, compareFrontRearCameras(), countInvalidReadings() (+23 more)
 
-### Community 36 - "KPI5 Multinivel Donut"
-Cohesion: 0.10
-Nodes (32): fmtEntero(), fmtPct(), Kpi5MultinivelDonut(), Kpi5MultinivelDonutProps, LegendRow(), strokeForRing(), MOCK_KPI5_MULTINIVEL_VIEW, KPI5_SEGURIDAD_CHART_COLORS (+24 more)
-
-### Community 37 - "Excel Camera Calibration"
-Cohesion: 0.13
-Nodes (31): buildCameraCalibrationReport(), buildExcelCameraMatrixDetailed(), CameraMatrixDetailRow, classifyRecognitionSegment(), DayNight, dayNightForMovimiento(), devicesMatchingStep(), DeviceStepSummary (+23 more)
-
-### Community 38 - "Contract-First Transform Runner"
-Cohesion: 0.14
-Nodes (27): ContractFirstProgressCallback, ContractFirstProgressEvent, ContractFirstStageTiming, countUniqueNormalizedPlates(), emitContractFirstProgress(), runContractFirstStage(), buildOutputAfterExcelOnlyStep(), ExcelMovimientosStepResult (+19 more)
-
-### Community 39 - "Truckflow-Movimientos Merge"
+### Community 36 - "goldenAnomalyRules.ts"
 Cohesion: 0.15
-Nodes (33): applyExternalCircuitToJourney(), excelAnchorJourneyPriority(), journeyNeedsCircuitFromExcel(), applyMovimientoToRow(), collectCandidatesForJourney(), collectCandidatesForMovimiento(), compareMergeCandidates(), dayKeyFromIso() (+25 more)
+Nodes (23): collapseConsecutive(), detectCaladaToPreingresoRegression(), detectMissingExcelMovement(), detectRicToSlTravelTooSlow(), detectSkippedPointWithExtremeGap(), detectSlRicQuickReturnNoPellet(), EvaluateGoldenAnomalyInput, evaluateGoldenAnomalyRules() (+15 more)
 
-### Community 40 - "Balanza Stay Rollups"
-Cohesion: 0.17
-Nodes (35): buildBalanzaStayFlags(), buildEnrichedTimelineForBalanzaDiagnosis(), buildSlComiteTruckflowContext(), buildTimedLogicalTimelineFromSegments(), CIRCUITS_WITH_BALANZA_STAY_ROLLUP, CIRCUITS_WITH_DISCHARGE_KPI_ROLLUP, collapseTimedPoints(), diagnoseBalanzaStayFromJourney() (+27 more)
-
-### Community 41 - "Estadia Chart Export"
-Cohesion: 0.12
-Nodes (25): ChartExportButtons(), ChartExportButtonsProps, EstadiaKpiRow(), KpiItemProps, StayStatsForKpi, ChartPoint, EstadiaMetricsAndChart(), EstadiaMetricsAndChartProps (+17 more)
-
-### Community 42 - "Segment Timing Tests"
+### Community 37 - "e"
 Cohesion: 0.11
-Nodes (30): buildSegmentTimingIndex(), buildSegmentTimingIndexFromExcelFirstSegments(), buildSlBalanzaEgresoComiteScatterPayload(), collapsedFrontLogicalPoints(), collapsedLogicalPointsForDischargeRollup(), extractAllSegmentLegsForCircuit(), extractDischargeRollupLegsFromJourney(), extractSegmentLegs() (+22 more)
+Nodes (40): e(), buildCameraCalibrationReport(), buildExcelCameraMatrixDetailed(), cameraCalibrationDetailToCsv(), CameraMatrixDetailRow, classifyRecognitionSegment(), DayNight, dayNightForMovimiento() (+32 more)
 
-### Community 43 - "Local ETL Server"
-Cohesion: 0.08
-Nodes (26): annotateRunManifest(), app, buildListUrl(), DATA_ROOT, daysInclusive(), __dirname, ensureDir(), ETL_HEADLESS_SCRIPT (+18 more)
+### Community 38 - "etlOperationalSampling.ts"
+Cohesion: 0.23
+Nodes (14): buildSegmentScatterAnalysis(), CleanJourneyForAnalysis, SegmentScatterRow, buildByCircuitProduct(), buildSampleSummary(), createOperationalSample(), DEFAULT_SAMPLE_OPTIONS, inPeriod() (+6 more)
 
-### Community 44 - "Real Journey Quality"
+### Community 39 - "etlTruckflowMovimientosMerge.ts"
+Cohesion: 0.16
+Nodes (29): applyMovimientoToRow(), collectCandidatesForJourney(), collectCandidatesForMovimiento(), compareMergeCandidates(), dayKeyFromIso(), DEFAULT_OPTIONS, dischargeInsideJourneyWindow(), emptyExternalFields() (+21 more)
+
+### Community 40 - "collapseTimedPoints"
+Cohesion: 0.14
+Nodes (40): buildBalanzaStayFlags(), buildEnrichedTimelineForBalanzaDiagnosis(), buildTimedLogicalTimelineFromSegments(), CIRCUITS_WITH_BALANZA_STAY_ROLLUP, CIRCUITS_WITH_DISCHARGE_KPI_ROLLUP, CIRCUITS_WITH_TRANSILE_BRIDGE_ROLLUP, collapseTimedPoints(), computeCameraBalanzaStayMinutesFromEvents() (+32 more)
+
+### Community 41 - "ingest-movimientos.ts"
+Cohesion: 0.15
+Nodes (16): Args, dayFile(), ingestMovimientosBuffer(), main(), parseArgs(), readDay(), writeDay(), dedupeMovimientosByOperationId() (+8 more)
+
+### Community 42 - "etlSegmentTiming.test.ts"
+Cohesion: 0.13
+Nodes (19): collapsedFrontLogicalPoints(), collapsedLogicalPointsForDischargeRollup(), enrichSlTimelineWithExcelSalida(), extractAllSegmentLegsForCircuit(), extractDischargeRollupLegsFromJourney(), extractSegmentLegs(), extractSegmentLegsWithTimes(), extractSlBalancaRollupFromTimeline() (+11 more)
+
+### Community 43 - "truckflow-local-server.mjs"
+Cohesion: 0.07
+Nodes (30): annotateRunManifest(), app, buildListUrl(), DATA_ROOT, daysInclusive(), __dirname, dssLive, ensureDir() (+22 more)
+
+### Community 44 - "RealJourneyEventDto"
+Cohesion: 0.07
+Nodes (44): lookupRealSectorCode(), REAL_SECTOR_CODE_MAP, RealSectorMappingEntry, RealSectorMapSiteId, UNMAPPED_LOGICAL_SECTOR_PLACEHOLDER, PreliminaryCircuitClassification, RealJourneyEventDto, ReconstructedRealJourneyCore (+36 more)
+
+### Community 45 - "truckFleetApi.ts"
 Cohesion: 0.10
-Nodes (30): lookupRealSectorCode(), REAL_SECTOR_CODE_MAP, RealSectorMappingEntry, RealSectorMapSiteId, UNMAPPED_LOGICAL_SECTOR_PLACEHOLDER, buildCameraCoverageSummary(), buildEmptyHours(), CameraCoverageArchiveMeta (+22 more)
+Nodes (31): LiveCameraPlayerModal(), LoadState, CamionProfile, FleetPlateLookupResult, PlantVisitProductOrigin, PlantVisitSource, PlantVisitUpsertInput, VisitaPlanta (+23 more)
 
-### Community 45 - "Truck Fleet Lookup API"
+### Community 46 - "ExtraccionDatosTab.tsx"
 Cohesion: 0.12
-Nodes (25): CamionProfile, FleetPlateLookupResult, PlantVisitProductOrigin, PlantVisitSource, PlantVisitUpsertInput, VisitaPlanta, TRUCK_PLATE_REGISTRY_CATEGORY_LABELS, fetchFleetStorageStatus() (+17 more)
-
-### Community 46 - "Data Extraction Tab"
-Cohesion: 0.11
 Nodes (28): getTruckflowListDays(), parseJson(), postTruckflowExportOneDay(), postTruckflowExportPeriod(), postTruckflowExportWindow(), postTruckflowJourneyStatsPeriod(), TruckflowApiJourneyDayStat, TruckflowExportDayResult (+20 more)
 
-### Community 47 - "ETL Product Filter"
-Cohesion: 0.13
-Nodes (30): ExecutiveSampleProductFilter(), Props, appendPermittedAceiteExcelOrphansToEntries(), buildAceiteCircuitResolutionDebugCsv(), enforceLiquidExcelExecutiveCircuits(), EXCEL_FIRST_RECONCILABLE_MATCH, excelOpsHasData(), excelOpsRows() (+22 more)
+### Community 47 - "etlProductFilter.ts"
+Cohesion: 0.17
+Nodes (22): ExecutiveSampleProductFilter(), Props, buildExecutiveProductFilterPlan(), entryBelongsToAceiteExecutiveView(), EXECUTIVE_SAMPLE_PRODUCT_LABELS, EXECUTIVE_SAMPLE_PRODUCTS, ExecutiveProductFilterPlan, ExecutiveSampleProduct (+14 more)
 
-### Community 48 - "Truck Route Simulator"
-Cohesion: 0.10
-Nodes (27): PlantId, TruckIcon(), SPEEDS, STATION_LABELS, StationState, TruckRouteSimulator(), TruckRouteSimulatorProps, useAnimateRoute() (+19 more)
+### Community 48 - "utils/stats.ts"
+Cohesion: 0.19
+Nodes (20): computeStayTimeStats(), computeVariabilityStats(), classifyOutlier(), coefficientOfVariation(), detectOutliersIqr(), detectOutliersZScore(), iqr(), kdeCurvePoints() (+12 more)
 
-### Community 49 - "Logistics Data Source"
-Cohesion: 0.12
-Nodes (30): LogisticsOpsProviderInner(), configureLogisticsDataSource(), DataSourceConfig, EGRESO_SECTORS_BY_SITE, ExternalAlert, ExternalEnrichedEvent, ExternalHistoricalTrip, ExternalTruckInPlant (+22 more)
-
-### Community 50 - "Power BI Load Consolidation"
+### Community 49 - "etlOperationalAlertMatch.ts"
 Cohesion: 0.11
-Nodes (28): Contrato de salida pb_* (comité / Power BI), Cruce alertas operativas (INVALID_ROUTE/INVALID_START_JOURNEY), appendLoadMeta(), buildFolderName(), buildPowerBiZipName(), classifyFileName(), CommitteeGroup, consolidatePowerBiLoad() (+20 more)
+Nodes (31): accumulateOperationalAlertsMatch(), alertTimeMs(), alertWithinJourneyWindow(), attachExecutiveBucketsToOperationalAlertRows(), computeOperationalAlertCrossMetrics(), crossOperationalAlerts(), CrossOperationalAlertsResult, emptyJourneyOperationalAlertSummary() (+23 more)
 
-### Community 51 - "NPM Dependencies"
-Cohesion: 0.07
-Nodes (29): cors, dotenv, express, fflate, framer-motion, html-to-image, jspdf, dependencies (+21 more)
+### Community 50 - "powerBiLoad.ts"
+Cohesion: 0.11
+Nodes (30): Contrato de salida pb_* (comité / Power BI), Cruce alertas operativas (INVALID_ROUTE/INVALID_START_JOURNEY), parseCsvLine(), rowGet(), unionHeaders(), measuredOrNoEvaluable(), projectFinalCircuitsForCommittee(), appendLoadMeta() (+22 more)
 
-### Community 52 - "SL Camera Excel-vs-Raw Audit"
+### Community 51 - "dependencies"
+Cohesion: 0.09
+Nodes (22): cors, fflate, html-to-image, jspdf, dependencies, cors, fflate, html-to-image (+14 more)
+
+### Community 52 - "audit-sl-cameras-excel-vs-raw.mjs"
 Cohesion: 0.09
 Nodes (25): assertReadableFile(), auditRows, csvPath, csvRowToJourneyEvent(), { events, sourceLabel }, eventsPath, flagged, {
   fromDay,
@@ -449,425 +448,417 @@ Nodes (25): assertReadableFile(), auditRows, csvPath, csvRowToJourneyEvent(), { 
   positional,
 } (+17 more)
 
-### Community 53 - "Simulator Live Engine"
+### Community 53 - "etlTransformPhaseRunner.ts"
+Cohesion: 0.19
+Nodes (19): RawJourneyEventLike, buildOutputAfterExcelOnlyStep(), ExcelMovimientosStepResult, KpiTiemposBuildInput, MovimientosContratoIntegrationOutput, attachContractIntegrationToOutput(), buildContractPrepFromTramo1Serialized(), movimientosStatsFromIntegration() (+11 more)
+
+### Community 54 - "AnalisisLocalTab.tsx"
 Cohesion: 0.12
-Nodes (26): CAMERA_BY_PLANT_AND_SECTOR, CIRCUITOS_POR_PLANTA, EGRESO_SECTORS_BY_PLANT, elegirCircuito(), factorHorario(), INGRESOS_POR_HORA, ingresosPorTick(), MOCK_DATA_ROOT (+18 more)
+Nodes (24): cardBorder(), Props, statusLabel(), TRAMO_META, TransformPhaseStepper(), formatElapsed(), Props, TRAMO_LABEL (+16 more)
 
-### Community 54 - "Analysis Tab & Progress"
-Cohesion: 0.12
-Nodes (23): cardBorder(), Props, statusLabel(), TRAMO_META, TransformPhaseStepper(), formatElapsed(), Props, TRAMO_LABEL (+15 more)
+### Community 55 - "Catálogo San Lorenzo (12 cámaras, sectores S0–S7)"
+Cohesion: 0.20
+Nodes (10): Contract-first / Excel-first backend (conciliación Movimientos por Contrato), Análisis Excel-first (Excel=verdad operativa, Truckflow=evidencia física), Secuencia R7 San Lorenzo (S0→S1→S5→S7), Catálogo San Lorenzo (12 cámaras, sectores S0–S7), Escenarios de datos (live / march_full / normal), Plataforma multi-planta (Ricardone, San Lorenzo, Avellaneda), Audit matriz R7 por cámara, Audit matriz R7 por cámara (12–18 jun) (+2 more)
 
-### Community 55 - "Operational Alert Match"
-Cohesion: 0.13
-Nodes (28): accumulateOperationalAlertsMatch(), alertTimeMs(), alertWithinJourneyWindow(), attachExecutiveBucketsToOperationalAlertRows(), computeOperationalAlertCrossMetrics(), crossOperationalAlerts(), CrossOperationalAlertsResult, emptyJourneyOperationalAlertSummary() (+20 more)
+### Community 56 - "circuitVerdict.ts"
+Cohesion: 0.16
+Nodes (16): CircuitEvidence, CircuitStatus, CircuitVerdict, CommitteeGroupView, detectTaxonomyContradictions(), isReconstructable(), isSofterThan(), MatrixFinalStatusView (+8 more)
 
-### Community 56 - "Real Truckflow API Feed"
+### Community 57 - "liveOperationalCatalog.ts"
 Cohesion: 0.15
-Nodes (26): buildFixedHourChunks(), fetchAlertsAdaptive(), fetchAlertsOneChunk(), fetchEventsAdaptive(), fetchEventsOneChunk(), fetchLiveRangeMerged(), LiveChunkFetchStats, LiveTimeChunk (+18 more)
+Nodes (25): entryDevices(), entryKey(), entrySectorCodes(), filterAlertsByMonitorScope(), filterEventsByMonitorScope(), findLiveSectorEntry(), findLiveSectorEntryForScope(), getCatalogSectorCodesForLiveMonitor() (+17 more)
 
-### Community 57 - "Tiempos Entre Pasos"
+### Community 58 - "distribucionForma.ts"
+Cohesion: 0.21
+Nodes (13): ChartPoint, EstadiaHistogramWithRefs(), EstadiaHistogramWithRefsProps, resolveHistogramDomain(), buildIndicadoresForma(), calcCamionesEnColaDerecha(), calcCamionesEnRango(), calcPicoFrecuencia() (+5 more)
+
+### Community 59 - "eventStream.ts"
+Cohesion: 0.05
+Nodes (74): NormalizedCargoForm, NormalizedEvent, ReconstructedVisit, ReconstructedVisitStatus, VisitAlert, VisitMetrics, EventType, LocationKey (+66 more)
+
+### Community 60 - "SegmentTimingChartPanel.tsx"
 Cohesion: 0.13
-Nodes (25): xlsx, buildTiemposEntrePasosIndex(), cellStr(), classifyContratoXlsxFromHeaders(), ContratoXlsxKind, findTepHeaderRow(), headerFieldMap(), isInTiemposEntrePasosOverrideWindow() (+17 more)
+Nodes (24): colorForFranja(), FRANJA_HORARIA_COLORS, FRANJA_HORARIA_ORDER, FRANJA_HORARIA_WINDOWS, FranjaHoraria, isWithinSegmentScatterDisplayMax(), SEGMENT_SCATTER_DISPLAY_MAX_MINUTES, downloadChartVisibleCsv() (+16 more)
 
-### Community 58 - "Estadia Forma Distribution"
-Cohesion: 0.12
-Nodes (22): ChartPoint, EstadiaHistogramWithRefs(), EstadiaHistogramWithRefsProps, resolveHistogramDomain(), EstadiaRadarChartForma(), EstadiaRadarChartFormaProps, ESTADIA_FORMA_RADAR_THRESHOLDS, FormaRadarMetricKey (+14 more)
-
-### Community 59 - "Trip Engine Selectors"
-Cohesion: 0.17
-Nodes (21): buildTripSummaryFromEvents(), VisitKeyResult, BarItem, bucketStatus(), DisplayStatus, filterVisitsByStatus(), getEntryTimeMinutes(), getExitTime() (+13 more)
-
-### Community 60 - "Segment Timing Charts"
-Cohesion: 0.13
-Nodes (23): colorForFranja(), FRANJA_HORARIA_COLORS, FRANJA_HORARIA_ORDER, FRANJA_HORARIA_WINDOWS, FranjaHoraria, isWithinSegmentScatterDisplayMax(), SEGMENT_SCATTER_DISPLAY_MAX_MINUTES, scatterRowsToChartVisibleExport() (+15 more)
-
-### Community 61 - "S1 Excel-vs-Raw Audit"
+### Community 61 - "audit-s1-excel-vs-raw.mjs"
 Cohesion: 0.10
 Nodes (23): assertReadableFile(), auditRows, csvPath, csvRowToJourneyEvent(), { events, sourceLabel }, eventsPath, flagged, { fromDay, toDay, positional } (+15 more)
 
-### Community 62 - "Analytics Page & KPI Matrix"
-Cohesion: 0.17
-Nodes (22): KpiCircuitFilterBar(), KpiCircuitFilterBarProps, circuitsForPlantOperation(), collectLegacyBases(), extraMatrixCodesFromTrips(), filterTripsForKpiContext(), KPI_OPERATION_LABELS, KpiMatrixPlant (+14 more)
+### Community 62 - "kpiCircuitMatrix.ts"
+Cohesion: 0.15
+Nodes (15): extraMatrixCodesFromTrips(), filterTripsForKpiContext(), KPI_OPERATION_LABELS, KpiMatrixPlant, KpiOperationKind, MATRIX_CODES_BY_PLANT_OP, operationsAvailableForPlant(), supportsKpiCircuitMatrix() (+7 more)
 
-### Community 63 - "SL Camera Excel Coverage"
-Cohesion: 0.14
-Nodes (23): listSanLorenzoInstalledCameras(), collectVolcableVisitsFromClassified(), collectVolcableVisitsFromRaw(), isVolcableTransileDevice(), auditEventInstantsMs(), auditExcelOperationsAgainstSlCameraSlots(), buildPerDeviceAuditSlots(), buildSlKpiCameraAuditSlots() (+15 more)
+### Community 63 - "auditSlCameraExcelCoverage.ts"
+Cohesion: 0.15
+Nodes (19): listSanLorenzoInstalledCameras(), lookupSanLorenzoSectorFallback(), platesMatchExcelCameraAudit(), auditExcelOperationsAgainstSlCameraSlots(), buildPerDeviceAuditSlots(), buildSlKpiCameraAuditSlots(), ExcelOperationLike, excelWindowMs() (+11 more)
 
-### Community 64 - "NPM Scripts"
-Cohesion: 0.08
-Nodes (26): scripts, build, check:arch, contract-first:local, db:migrate:etl-runs, db:migrate:plate-registry, db:sync:plate-registry, dev (+18 more)
+### Community 64 - "scripts"
+Cohesion: 0.12
+Nodes (17): scripts, build, check:arch, contract-first:local, db:migrate:etl-runs, db:migrate:plate-registry, db:sync:plate-registry, dev (+9 more)
 
-### Community 65 - "Excel Movimientos Source Audit"
-Cohesion: 0.20
-Nodes (21): dayKeyFromSalida(), assertNotScatterCsvForRawAudit(), buildExcelMovimientosUniverse(), classifyRawAuditCircuit(), computeExcelPeriodTotals(), ctgKeyForMovimiento(), describeExcelUniverse(), ExcelUniverseStats (+13 more)
+### Community 65 - "auditExcelMovimientosSource.ts"
+Cohesion: 0.13
+Nodes (30): CameraCalibrationReport, dayKeyFromSalida(), RouteRecognitionSummary, assertNotScatterCsvForRawAudit(), buildExcelMovimientosUniverse(), classifyRawAuditCircuit(), computeExcelPeriodTotals(), ctgKeyForMovimiento() (+22 more)
 
-### Community 66 - "Eventos Truckflow Presentation"
+### Community 66 - "EventosTruckflowPresentation.tsx"
 Cohesion: 0.17
 Nodes (21): EventosTruckflowPresentation(), formatDateOnly(), formatDt(), Props, ACCENT, ExecCardAccent, ExecutiveMetricCard(), HorizontalBarChart() (+13 more)
 
-### Community 67 - "Trip Validation"
-Cohesion: 0.16
-Nodes (20): TripResult, CaladaResult, CircuitLetter, CircuitStep, EVENT_TO_LETTER, eventsToCircuit(), getCaladaResult(), getCaladaResultFromRaw() (+12 more)
+### Community 67 - "liveTruckflowFeed.ts"
+Cohesion: 0.18
+Nodes (18): buildFixedHourChunks(), fetchAlertsAdaptive(), fetchAlertsOneChunk(), fetchEventsAdaptive(), fetchEventsOneChunk(), fetchLiveRangeMerged(), LiveChunkFetchStats, LiveTimeChunk (+10 more)
 
-### Community 68 - "Headless ETL Runner"
-Cohesion: 0.12
-Nodes (19): Args, loadEventsFromFile(), main(), makeRunId(), parseArgs(), persistTables(), printHelp(), writeCatalog() (+11 more)
+### Community 68 - "circuitCatalog.ts"
+Cohesion: 0.14
+Nodes (12): CIRCUIT_CATALOG, CircuitCatalogEntry, CircuitCatalogKind, CircuitCatalogProduct, KEPLER_ALLOWED_S_SEQUENCES, R19_ALLOWED_SEQUENCES, R5_ALLOWED_SEQUENCES, R7_RIC_ALLOWED_S_SEQUENCES (+4 more)
 
-### Community 69 - "Segment Slow Tail"
-Cohesion: 0.13
-Nodes (20): CHART_VISIBLE_EXPORT_HEADERS, chartVisibleExportCsv(), ChartVisibleExportRow, downloadChartVisibleCsv(), downloadSlowTailCsv(), isStrictTruckflowScatterRow(), legsToChartVisibleExport(), legsToSlowTailExport() (+12 more)
+### Community 69 - "etlSegmentSlowTail.ts"
+Cohesion: 0.15
+Nodes (17): CHART_VISIBLE_EXPORT_HEADERS, chartVisibleExportCsv(), ChartVisibleExportRow, downloadSlowTailCsv(), isStrictTruckflowScatterRow(), legsToSlowTailExport(), pickSlowTailByDuration(), pickSlowTailScatterRows() (+9 more)
 
-### Community 70 - "Dev Dependencies"
+### Community 70 - "devDependencies"
+Cohesion: 0.10
+Nodes (21): autoprefixer, concurrently, devDependencies, autoprefixer, concurrently, postcss, tailwindcss, @types/react (+13 more)
+
+### Community 71 - "realCommitteePipeline.ts"
+Cohesion: 0.19
+Nodes (17): alertTimeMs(), alignAlertsToSegments(), applyTemporalSegmentation(), buildCommitteeOperationalPipeline(), buildExecutiveSummary(), classifyCommitteeOperationalCircuit(), cloneAlertWithJourney(), cloneEventWithJourney() (+9 more)
+
+### Community 72 - "compilerOptions"
 Cohesion: 0.09
-Nodes (23): autoprefixer, concurrently, devDependencies, autoprefixer, concurrently, postcss, tailwindcss, @types/react (+15 more)
+Nodes (21): DOM, DOM.Iterable, ES2020, src, compilerOptions, allowImportingTsExtensions, isolatedModules, jsx (+13 more)
 
-### Community 71 - "KPI5 Circuit Utils"
-Cohesion: 0.12
-Nodes (22): findCircuitByCode(), getCircuitsForSite(), circuitsForKpi5(), COLORS_BINARIO, COLORS_CLASIFICACION, computeKpi5Data(), destinoLabel(), foldDestinoSlices() (+14 more)
-
-### Community 72 - "TypeScript Config"
+### Community 73 - "nearbyAlertResearch.ts"
 Cohesion: 0.09
-Nodes (21): DOM, DOM.Iterable, ES2020, compilerOptions, allowImportingTsExtensions, isolatedModules, jsx, lib (+13 more)
+Nodes (30): isValidArgentinaPlate(), normalizePlate(), isValidObservedPlate(), classifyAlert(), findSimilarPlateReadings(), investigateNearbyAlerts(), levenshtein(), NearbyAlertClassification (+22 more)
 
-### Community 73 - "Nearby Alert Research"
-Cohesion: 0.12
-Nodes (20): classifyAlert(), findSimilarPlateReadings(), investigateNearbyAlerts(), levenshtein(), NearbyAlertClassification, NearbyAlertInvestigation, NearbyAlertMatch, NEXT_BALANZA_DEVICES (+12 more)
-
-### Community 74 - "Excel Camera Matrix Script"
+### Community 74 - "audit-excel-camera-matrix.mjs"
 Cohesion: 0.12
 Nodes (17): circuitCode, eventsPath, excelPath, { fromDay, toDay, minPuntos, positional }, loadEventsFromFile(), loadEventsFromTruckflowDir(), loadJsonEventArray(), loadMovimientosContratoFromPath() (+9 more)
 
-### Community 75 - "Simulation Service"
-Cohesion: 0.19
-Nodes (16): resetLive(), DASHBOARD_MOCK_DATA, writeOutputJson(), getGeneratedAt(), getSharedTruckImageUrl(), runSimulation(), getScenarioArg(), hasResetArg() (+8 more)
-
-### Community 76 - "SL/S1 Excel Coverage Audit"
-Cohesion: 0.20
-Nodes (18): auditExcelOperationsAgainstRawS1(), ExcelOperationLike, excelWindowMs(), findS1InWindow(), indexS1EventsByPlate(), isRawS1Event(), normalizePlateKey(), operationalInstantIso() (+10 more)
-
-### Community 77 - "Plate OCR Matching"
-Cohesion: 0.20
-Nodes (15): createPlateMatchCache(), ensurePlateMatchCacheRoom(), PlateMatchCache, plateMatchCacheSize(), PlateMatchKind, plateMatchKindCached(), prunePlateMatchCache(), bestPlateBetweenSessions() (+7 more)
-
-### Community 78 - "Committee Executive CSV"
-Cohesion: 0.18
-Nodes (19): recommendedActionForCameraStatus(), buildCameraCommitteeStatusRows(), buildCircuitCoverageRows(), buildCommitteeExecutiveCsvPack(), buildCommitteeSummaryRow(), buildDssVsTruckflowRows(), CommitteeExecutiveCsvPack, criticidadFromEstado() (+11 more)
-
-### Community 79 - "Simulator State Engine"
-Cohesion: 0.17
-Nodes (17): CIRCUIT_BY_CODE, CIRCUIT_TEMPLATES, CIRCUITS, PLANTS, SL_AV_CIRCUITS, buildStateAndAlerts(), classifyTrip(), minutesBetween() (+9 more)
-
-### Community 80 - "Reconstructed Visit Context"
-Cohesion: 0.14
-Nodes (15): VisitDetailModal(), VisitDetailModalProps, VisitPickerSimple(), VisitPickerSimpleProps, DataContext, DataContextValue, SimulatorVisitContext, SimulatorVisitContextValue (+7 more)
-
-### Community 81 - "Event Stream Trips"
-Cohesion: 0.21
-Nodes (17): buildStory(), buildTripFromEvents(), buildTripsFromEventStream(), formatTime(), getDateBucket(), getVisitKey(), getVisitKeyWithMeta(), normalizeEventTypeFromRaw() (+9 more)
-
-### Community 82 - "Camera Power BI Aggregates"
-Cohesion: 0.21
-Nodes (18): rowGet(), addMetrics(), BucketBase, buildCameraPowerBiAggregates(), buildCameraSummaryRows(), buildDayNightSummaryRows(), buildSectorCameraSummaryRows(), cameraAggregateStatus() (+10 more)
-
-### Community 83 - "Platform Circuit Inference"
-Cohesion: 0.17
-Nodes (14): normalizePlant(), circuitFromCode(), inferAceiteLiquidExecutiveCircuit(), inferCircuitFromExternalMovimiento(), InferredExecutiveCircuit, isSanLorenzoVolcablePtoPlatform(), journeyNeedsOperationalEnrichmentFromStatus(), EXCEL_RICARDONE() (+6 more)
-
-### Community 84 - "Sites & App Context"
-Cohesion: 0.16
-Nodes (11): DataProvider(), SiteContext, SiteContextValue, SiteProvider(), getSite(), getSiteIdFromStorage(), setSiteIdInStorage(), Site (+3 more)
-
-### Community 85 - "ETL Workbench Context"
-Cohesion: 0.18
-Nodes (16): postTruckflowLoadLocalPeriod(), createTransformPhaseSession(), buildLoadSummary(), Ctx, dedupeKeyAlert(), dedupeKeyEvent(), EtlLoadSummary, EtlWorkbenchContext (+8 more)
-
-### Community 86 - "Load/Export Tab"
-Cohesion: 0.17
-Nodes (15): KEY_ALIASES, normKey(), parseDssReferenceCsv(), DssReferenceMetrics, loadedDayFromTransformResult(), LoadedTransformDay, LoadGroupType, mergeLoadedDays() (+7 more)
-
-### Community 87 - "Aceite Executive Circuit"
-Cohesion: 0.18
-Nodes (19): excelLiteIsLiquidOperational(), GENERIC_INFERRED_CIRCUIT_CODES, inferExecutiveCircuitFromExcelPlatform(), LIQUID_EXECUTIVE_CIRCUITS, normalizeLiquidExecutiveCircuitCode(), pickExecutiveCircuitFromExcelFirst(), resolveExecutiveCircuitForExcelOperation(), resolveExecutiveCircuitFromExcelLite() (+11 more)
-
-### Community 88 - "Anomaly Trucks Script"
-Cohesion: 0.11
-Nodes (12): anomalies, completeAnomalies, debug, events, groupCounts, noRespeta, parsed, plateByJourney (+4 more)
-
-### Community 89 - "Scenario Builder"
-Cohesion: 0.36
-Nodes (17): CIRCUIT_BY_PLANT_AND_CODE, TRUCKS, buildAnomaliesScenario(), buildHighLoadScenario(), buildLiveBatch(), buildMarchFullScenario(), buildNormalScenario(), buildScenario() (+9 more)
-
-### Community 90 - "Truck Catalog & Raw Generator"
-Cohesion: 0.14
-Nodes (16): buildTrucksForPlant(), CARGO_TYPES, CIRCUIT_CODES, DRIVERS, generatePlate(), PLANTS, TRUCK_BY_ID, deterministicPick() (+8 more)
-
-### Community 91 - "Truck Plate Registry Filter"
-Cohesion: 0.23
-Nodes (13): buildRegistryLookup(), normalizeRegistryPlate(), TruckPlateRegistryDocument, TruckPlateRegistryEntry, filterAlertsByPlateRegistry(), filterEventsByPlateRegistry(), filterJourneysByPlateRegistry(), lookupPlateExclusion() (+5 more)
-
-### Community 92 - "Clean Real Dataset"
-Cohesion: 0.20
-Nodes (17): AlertIndex, attachAlertsToEvents(), buildAlertIndex(), BuildCleanDatasetOptions, buildCleanRealDataset(), DEFAULT_OPTIONS, EventWithAlertInfo, isCloseTime() (+9 more)
-
-### Community 93 - "ETL Refactor Notes (docs)"
-Cohesion: 0.13
-Nodes (17): FASE 0 — Red de seguridad (migración), Contract-first / Excel-first backend (conciliación Movimientos por Contrato), Plan ETL unificado — Datos reales Truckflow, Problema raíz: dos motores Transform en paralelo (Workbench vs Comité/v2), Análisis Excel-first (Excel=verdad operativa, Truckflow=evidencia física), Secuencia R7 San Lorenzo (S0→S1→S5→S7), Catálogo San Lorenzo (12 cámaras, sectores S0–S7), Escenarios de datos (live / march_full / normal) (+9 more)
-
-### Community 94 - "Camera Matrix Batch Script"
-Cohesion: 0.15
-Nodes (15): CIRCUITS, eventsPath, excelPath, { fromDay, toDay, minPuntos, outDir, positional }, loadEventsFromFile(), loadEventsFromTruckflowDir(), loadJsonEventArray(), parseCli() (+7 more)
-
-### Community 95 - "Anomaly Period Script"
-Cohesion: 0.12
-Nodes (12): cacheDir, cachePath, candidates, debug, exportPath, exportRows, hasLogical(), missingBalanzaPattern() (+4 more)
-
-### Community 96 - "Truck Fleet Store (server)"
-Cohesion: 0.20
-Nodes (11): supabasePublicHost(), createTruckFleetRouter(), createJsonFleetStore(), createSupabaseFleetStore(), FUENTE_OK, normalizePlate(), passesCamionPlateDbConstraint(), PRODUCTO_ORIGEN_OK (+3 more)
-
-### Community 97 - "Simulator Package Config"
-Cohesion: 0.12
-Nodes (16): description, devDependencies, tsx, @types/node, typescript, typescript, name, private (+8 more)
-
-### Community 98 - "Agent Chat Tab"
-Cohesion: 0.22
-Nodes (13): EtlAgentChatMessage, EtlAgentChatResponse, EtlAgentStatus, EtlAgentUiPayload, etlApiPrefix(), getEtlAgentStatus(), parseJson(), postEtlAgentChat() (+5 more)
-
-### Community 99 - "Segment Tramo Flow"
-Cohesion: 0.30
-Nodes (13): triggerBrowserCsvDownload(), collectRowFechas(), computeSegmentTramoHourlyFlow(), countSegmentTramoFlowPlacement(), fechaFromIso(), hourFromIso(), pad2(), resolveFechaEnCalendario() (+5 more)
-
-### Community 100 - "Estadia Radar Score"
-Cohesion: 0.23
-Nodes (11): EstadiaRadarChart(), EstadiaRadarChartProps, ESTADIA_RADAR_THRESHOLDS, RadarMetricKey, RadarThreshold, buildMergedRadarDataset(), buildRadarDataset(), computeNormalizedScore() (+3 more)
-
-### Community 101 - "R7 Aceite Reclassification"
-Cohesion: 0.23
-Nodes (16): operationalDayKeyFromIso(), aceiteTruckflowHaystackFromEntry(), applyExcelFirstReconciliation(), entryAceiteTruckflowExecutiveCode(), entryChangedByExcelFirst(), entryLooksLikeRicSanLorenzoRouteLabel(), excelFirstMatchRank(), excelLiteMatchesEntrySite() (+8 more)
-
-### Community 102 - "Transile Plate Aliases"
-Cohesion: 0.35
-Nodes (14): parseVariantsLine(), Props, TransilePlateAliasesPanel(), DEFAULT_TRANSILE_PLATE_ALIASES, loadTransilePlateAliases(), loadUserTransilePlateAliasesOnly(), looksLikeVolcablePlateKey(), mergeTransilePlateAliasLists() (+6 more)
-
-### Community 103 - "SL Timeline Excel Anchors"
-Cohesion: 0.17
-Nodes (16): enrichSlTimelineForSalidaEgresoRollup(), enrichSlTimelineWithExcelAnchors(), enrichSlTimelineWithExcelSalida(), inferC16TransitMidpoint(), inferMidpointBetweenMs(), inferSlBalanzaSalidaBeforeExcelSalida(), inferSlBalanzaSalidaFromTransit(), injectSlBalanzaFromTiemposEntrePasos() (+8 more)
-
-### Community 104 - "Migration Env Scripts"
-Cohesion: 0.13
-Nodes (12): client, __dirname, PROJECT_ROOT, SQL_PATH, url, client, __dirname, PROJECT_ROOT (+4 more)
-
-### Community 105 - "SL Funnel Audit"
-Cohesion: 0.15
-Nodes (13): loadMovimientosFromExcelPath(), byOp, hasLeg(), header, lines, n(), ops, R7 (+5 more)
-
-### Community 106 - "ETL Profiler"
-Cohesion: 0.21
-Nodes (11): outArg, payload, profiler, t0, createEtlProfiler(), EtlProfilerSpan, getGlobalEtlProfiler(), heapMb() (+3 more)
-
-### Community 107 - "Truck Event Types"
-Cohesion: 0.16
-Nodes (13): NormalizedEvent, CargoForm, DocRef, DocRefType, EventType, LabResultStatus, LocationKey, ProductType (+5 more)
-
-### Community 108 - "Plate Registry Modal"
-Cohesion: 0.30
-Nodes (13): TruckPlateRegistryCategory, getTruckflowHealth(), localApiPrefix(), createTruckPlateRegistryEntry(), deleteTruckPlateRegistryEntry(), getTruckPlateRegistry(), lookupTruckPlateRegistry(), parseJson() (+5 more)
-
-### Community 109 - "KPI Tiempos Tab"
-Cohesion: 0.22
-Nodes (13): ProductFilterSelect(), Props, JourneyProductLookup, parseSegmentScatterByDayCsv(), legsForAggregate(), countUniqueOperationsForCircuit(), filterSegmentTimingIndex(), kpiCircuitCodesForScatterFilter() (+5 more)
-
-### Community 110 - "Contract-First CLI Runner"
-Cohesion: 0.19
-Nodes (12): ContractFirstCliArgs, dayRange(), __dirname, main(), MIN_OUTPUT_FILES, parseContractFirstCliArgv(), PROJECT_ROOT, runContractFirstCli() (+4 more)
-
-### Community 111 - "Simulator TS Config"
-Cohesion: 0.14
-Nodes (13): compilerOptions, esModuleInterop, forceConsistentCasingInFileNames, module, moduleResolution, outDir, resolveJsonModule, rootDir (+5 more)
-
-### Community 112 - "Excel Camera Comparativa Workbench"
-Cohesion: 0.22
-Nodes (11): CameraCalibrationReport, RAW_AUDIT_CIRCUIT_CODES, realJourneyEventDtoToCameraAuditRow(), RouteRecognitionSummary, ExcelPeriodTotals, MovimientoContratoLike, parseNormalizedMovimientosCsvRow(), buildExcelCameraComparativaReport() (+3 more)
-
-### Community 113 - "SL Exit RIC Return Script"
-Cohesion: 0.15
-Nodes (8): byDay, DEFAULT_JSON, events, hits, outDir, outPath, root, stamp
-
-### Community 114 - "ETL API Smoke Test"
-Cohesion: 0.31
-Nodes (12): DEFAULT_PORT, __dirname, fail(), fetchJson(), getFreePort(), main(), ok(), ping() (+4 more)
-
-### Community 115 - "Ricardone Sector Scatter"
-Cohesion: 0.32
-Nodes (8): CrossCircuitSectorSummary, filterScatterByDayForSector(), legsForCrossCircuitSector(), RICARDONE_CROSS_CIRCUIT_SECTORS, RicardoneCrossCircuitSector, summarizeCrossCircuitSectorFromScatter(), buildChartData(), RicardoneSectorScatterPanel()
-
-### Community 116 - "Plant Visit Sync"
-Cohesion: 0.36
-Nodes (10): buildPlantVisitUpsertsFromTransform(), buildTimesByJourney(), dayKeyFromIso(), fuenteFromMerge(), mapPlanta(), persistPlantVisitsFromTransform(), plateOkForFleet(), productOriginFromMerge() (+2 more)
-
-### Community 117 - "March Seed Script"
-Cohesion: 0.23
-Nodes (11): { execSync }, fs, getISOWeek(), main(), MOCK_ROOT, path, PLANTS, processScenario() (+3 more)
-
-### Community 118 - "Simulator Enrichment"
-Cohesion: 0.21
-Nodes (9): CAMERA_BY_ID, CAMERA_BY_SECTOR, CAMERAS, PLANT_PREFIX, SECTOR_TEMPLATE, TRUCK_BY_PLATE, enrichEvents(), getTruckByPlateMap() (+1 more)
-
-### Community 119 - "Anomaly Classifier"
-Cohesion: 0.23
-Nodes (10): AnomalyKind, AnomalyReason, AnomalyVerdict, classifyAnomaly(), ClassifyAnomalyInput, ExecutiveStatusLike, isBehavioralAnomaly(), MatrixFinalStatusLike (+2 more)
-
-### Community 120 - "Raw Journey Stats"
+### Community 75 - "truckflowRawJourneyStats.ts"
 Cohesion: 0.32
 Nodes (9): ApiJourneyCountByDayTable(), Props, countUniqueRawJourneyUids(), countUniqueRawJourneyUidsByOccurredDay(), enrichApiJourneyStatsFromRawEvents(), normalizeApiJourneyDayStat(), RawJourneyCountByOccurredDay, rawJourneyUidFromRecord() (+1 more)
 
-### Community 121 - "Calada Variations Audit"
+### Community 76 - "auditSlS1ExcelCoverage.ts"
+Cohesion: 0.20
+Nodes (18): auditExcelOperationsAgainstRawS1(), ExcelOperationLike, excelWindowMs(), findS1InWindow(), indexS1EventsByPlate(), isRawS1Event(), normalizePlateKey(), operationalInstantIso() (+10 more)
+
+### Community 77 - "normalizePlateStrict"
+Cohesion: 0.21
+Nodes (18): excelPlateKeysFromMovimientos(), filterJourneysForExcelSearch(), filterRawTruckflowEventsForExcel(), createPlateMatchCache(), ensurePlateMatchCacheRoom(), plateMatchCacheSize(), PlateMatchKind, plateMatchKindCached() (+10 more)
+
+### Community 78 - "powerBiCommitteeExecutive.ts"
+Cohesion: 0.12
+Nodes (33): addMetrics(), BucketBase, buildCameraPowerBiAggregates(), buildCameraSummaryRows(), buildDayNightSummaryRows(), buildSectorCameraSummaryRows(), cameraAggregateStatus(), CameraPowerBiAggregates (+25 more)
+
+### Community 79 - "EtlExportTab.tsx"
+Cohesion: 0.24
+Nodes (14): formatDateTimeShort(), LoadedPeriodSummaryCard(), LoadedPeriodSummaryProps, availableCanonicalKeys(), CANONICAL_CSV_TABLES, CanonicalCsvTable, CanonicalNamedCsv, collectCanonicalCsvBundle() (+6 more)
+
+### Community 80 - "mcp_server.py"
+Cohesion: 0.12
+Nodes (17): call_tool(), list_tools(), main(), Servidor MCP (stdio) que expone las tools del ETL a Claude Code.  Corre en la SU, _serve(), generar_pptx_comite(), Any, Comunicador: PPTX de comité a partir de get_summary (sin reglas de negocio). (+9 more)
+
+### Community 81 - "isSlLiquidCircuit"
+Cohesion: 0.26
+Nodes (14): ExcelOperationWithTruckflowRow, classifyRicCalLiqCohort(), executiveCircuitForExcelOperation(), isLiquidExcelAuditOperation(), isRicardoneLiquidExcelOp(), operationCircuitCodes(), operationIsSlLiquid(), operationOnPermittedAceiteDischargePlatform() (+6 more)
+
+### Community 82 - "reports/transileInternoVolcable.ts"
+Cohesion: 0.13
+Nodes (26): buildTransileInternoVolcableReport(), clusterVolcableVisits(), collectVolcableVisitsFromClassified(), collectVolcableVisitsFromRaw(), evaluateTransileSession(), excelCircuitHintForSession(), fechaArgentina(), INTERNAL_TRANSILE_CIRCUIT_HINTS (+18 more)
+
+### Community 83 - "realJourneyDepurationMap.ts"
+Cohesion: 0.18
+Nodes (16): buildOperationalDepurationSnapshot(), collapseLogicalSignature(), DepurationCategoryRow, DepurationComparator, DepurationSequenceRow, distinctRicLogicalSet(), groupEventsByJourneyUid(), journeyMatchesOperationalScope() (+8 more)
+
+### Community 84 - "sites.ts"
+Cohesion: 0.16
+Nodes (11): SiteContext, SiteContextValue, SiteProvider(), useSite(), getSite(), getSiteIdFromStorage(), setSiteIdInStorage(), Site (+3 more)
+
+### Community 85 - "EtlWorkbenchContext.tsx"
+Cohesion: 0.20
+Nodes (20): base(), fetchRunTable(), getRunSummary(), listRunTables(), listWindows(), parseJson(), requestRunEtl(), resolveWindow() (+12 more)
+
+### Community 86 - "LoadExportTab.tsx"
+Cohesion: 0.13
+Nodes (19): POWER_BI_PRODUCT_FILES, KEY_ALIASES, normKey(), parseDssReferenceCsv(), DssReferenceMetrics, buildPowerBiZipName(), classifyFileName(), inferDayFromPath() (+11 more)
+
+### Community 87 - "inferAceiteExecutiveCircuitFromExcel"
+Cohesion: 0.24
+Nodes (15): excelLiteIsLiquidOperational(), LIQUID_EXECUTIVE_CIRCUITS, slCircuitAllowedForExcelLite(), SOLID_EXECUTIVE_CIRCUITS, excelObservacionesIndicateRenovaAceite(), hasRenovaObservation(), inferAceiteExecutiveCircuitFromExcel(), inferAceiteExecutiveCircuitFromPlatform() (+7 more)
+
+### Community 88 - "find-anomaly-trucks.mjs"
+Cohesion: 0.11
+Nodes (12): anomalies, completeAnomalies, debug, events, groupCounts, noRespeta, parsed, plateByJourney (+4 more)
+
+### Community 89 - "slLiquidCameras.ts"
+Cohesion: 0.18
+Nodes (14): ACEITE_EXECUTIVE_CIRCUIT_CODES, AceiteExecutiveCircuitCode, excelProductLooksLiquid(), haystackHasRicLiquidBalanza(), haystackHasSlS10Camera(), haystackIndicatesAceiteRicardoneDischarge(), inferAceiteExecutiveCircuitFromTruckflowEvidence(), isTransileExternoRicSlCode() (+6 more)
+
+### Community 91 - "TruckPlateRegistryModal.tsx"
+Cohesion: 0.13
+Nodes (28): buildRegistryLookup(), normalizeRegistryPlate(), TRUCK_PLATE_REGISTRY_CATEGORY_LABELS, TruckPlateRegistryCategory, TruckPlateRegistryDocument, TruckPlateRegistryEntry, getTruckflowHealth(), localApiPrefix() (+20 more)
+
+### Community 92 - "realTruckflowCleanDataset.ts"
+Cohesion: 0.20
+Nodes (17): AlertIndex, attachAlertsToEvents(), buildAlertIndex(), BuildCleanDatasetOptions, buildCleanRealDataset(), DEFAULT_OPTIONS, EventWithAlertInfo, isCloseTime() (+9 more)
+
+### Community 93 - "tools.py"
+Cohesion: 0.22
+Nodes (10): dispatch_tool(), _explain_journey(), Any, Tools Anthropic tool-use: solo componen llamadas al etl-api (sin reglas de negoc, Ejecuta una tool por nombre. `delegar` requiere delegate_handler., _tool(), tool_result_content(), _truncate() (+2 more)
+
+### Community 94 - "audit-excel-camera-matrix-batch.mjs"
+Cohesion: 0.15
+Nodes (15): CIRCUITS, eventsPath, excelPath, { fromDay, toDay, minPuntos, outDir, positional }, loadEventsFromFile(), loadEventsFromTruckflowDir(), loadJsonEventArray(), parseCli() (+7 more)
+
+### Community 95 - "find-anomaly-period.mjs"
+Cohesion: 0.12
+Nodes (12): cacheDir, cachePath, candidates, debug, exportPath, exportRows, hasLogical(), missingBalanzaPattern() (+4 more)
+
+### Community 96 - "truck-fleet-store.mjs"
+Cohesion: 0.20
+Nodes (11): supabasePublicHost(), createTruckFleetRouter(), createJsonFleetStore(), createSupabaseFleetStore(), FUENTE_OK, normalizePlate(), passesCamionPlateDbConstraint(), PRODUCTO_ORIGEN_OK (+3 more)
+
+### Community 98 - "AgenteChatTab.tsx"
+Cohesion: 0.20
+Nodes (15): EtlAgentChatMessage, EtlAgentChatResponse, EtlAgentStatus, EtlAgentUiPayload, etlApiPrefix(), getEtlAgentStatus(), parseJson(), postEtlAgentChat() (+7 more)
+
+### Community 99 - "etlSegmentTramoFlow.ts"
+Cohesion: 0.36
+Nodes (11): collectRowFechas(), computeSegmentTramoHourlyFlow(), countSegmentTramoFlowPlacement(), fechaFromIso(), hourFromIso(), pad2(), resolveFechaEnCalendario(), resolveFechasOrdenadas() (+3 more)
+
+### Community 100 - "cleanup-runs-orphans.mjs"
+Cohesion: 0.19
+Nodes (11): apply, __dirname, main(), PROJECT_ROOT, readIndexedRunIds(), RUNS_ROOT, ETL_RUN_CORE_TABLES, isLegacyTimestampRunId() (+3 more)
+
+### Community 101 - "buildCircuitClassificationIndex"
+Cohesion: 0.12
+Nodes (36): operationalDayKeyFromIso(), aceiteTruckflowHaystackFromEntry(), appendPermittedAceiteExcelOrphansToEntries(), applyExcelFirstReconciliation(), applyExecutiveCircuitCodeToEntry(), buildAceiteCircuitResolutionDebugCsv(), buildCircuitClassificationIndex(), debugMatrixHasData() (+28 more)
+
+### Community 102 - "test_etl_client.py"
+Cohesion: 0.21
+Nodes (12): client(), etl_base(), _etl_ready(), _free_port(), Tests del etl_client contra el server local (levanta uno efímero si hace falta)., run_id(), test_bad_run_404(), test_circuit_catalog() (+4 more)
+
+### Community 103 - "subagentes/__init__.py"
+Cohesion: 0.21
+Nodes (8): get_subagente(), Skills descriptivas de subagentes (paridad con server/etl-agent-skills.mjs)., SubagenteConfig, _tools_by_name(), tools_for_subagente(), Re-export de configuración Knowledge Contratos., Re-export de configuración Knowledge Truckflow., Re-export de configuración Seguridad.
+
+### Community 104 - "apply-plate-registry-migration.mjs"
+Cohesion: 0.33
+Nodes (5): client, __dirname, PROJECT_ROOT, SQL_PATH, url
+
+### Community 105 - "audit-sl-funnel-from-scatter.mjs"
+Cohesion: 0.14
+Nodes (14): loadMovimientosFromExcelPath(), byOp, hasLeg(), header, lines, n(), ops, R7 (+6 more)
+
+### Community 106 - "etlProfile.ts"
+Cohesion: 0.21
+Nodes (11): outArg, payload, profiler, t0, createEtlProfiler(), EtlProfilerSpan, getGlobalEtlProfiler(), heapMb() (+3 more)
+
+### Community 107 - "liveEventTime.ts"
+Cohesion: 0.25
+Nodes (13): applyTimeOnDay(), fmtShort(), fmtShort24(), getCalendarDayBounds(), getEventOperationalInstantIso(), getEventOperationalInstantMs(), getRollingLiveWindow(), liveListQueryBounds() (+5 more)
+
+### Community 108 - "movimientosBackupApi.ts"
+Cohesion: 0.27
+Nodes (11): fileToBase64(), getMovimientosBackupCoverage(), getMovimientosRange(), MovimientoNormalized, movimientosApiPrefix(), MovimientosBackupCoverage, MovimientosBackupDay, MovimientosIngestResult (+3 more)
+
+### Community 109 - "KpiTiemposTab.tsx"
+Cohesion: 0.10
+Nodes (25): ProductFilterSelect(), Props, triggerBrowserCsvDownload(), JourneyProductLookup, FranjaOperativaOccupancy, sectorOccupancyMetrics, parseSegmentScatterByDayCsv(), legsForAggregate() (+17 more)
+
+### Community 110 - "contract-first-cli-runner.ts"
+Cohesion: 0.31
+Nodes (8): ContractFirstCliArgs, dayRange(), __dirname, main(), MIN_OUTPUT_FILES, parseContractFirstCliArgv(), PROJECT_ROOT, runContractFirstCli()
+
+### Community 111 - "LiquidMovementsPanel.tsx"
+Cohesion: 0.19
+Nodes (13): COHORT_LABELS, isCsvTrue(), LiquidMovementsPanel(), parseSummary(), Props, Row, summaryFromRow(), ACEITE_TF_EXCEL_HEADERS (+5 more)
+
+### Community 112 - "poc-dss-live.mjs"
+Cohesion: 0.25
+Nodes (8): getRtspUrl(), httpJson(), listChannels(), login(), md5(), PORT, createDssLiveRouter(), DSS_API
+
+### Community 113 - "find-sl-exit-ric-return.mjs"
+Cohesion: 0.15
+Nodes (8): byDay, DEFAULT_JSON, events, hits, outDir, outPath, root, stamp
+
+### Community 114 - "smoke-etl-api.mjs"
+Cohesion: 0.31
+Nodes (12): DEFAULT_PORT, __dirname, fail(), fetchJson(), getFreePort(), main(), ok(), ping() (+4 more)
+
+### Community 115 - "etlRicardoneSectorScatter.ts"
+Cohesion: 0.22
+Nodes (13): CrossCircuitSectorSummary, filterScatterByDayForSector(), legsForCrossCircuitSector(), RICARDONE_CROSS_CIRCUIT_SECTORS, RicardoneCrossCircuitSector, summarizeCrossCircuitSectorFromScatter(), SegmentScatterByDayRow, SegmentLeg (+5 more)
+
+### Community 116 - "truckPlantVisitSync.ts"
+Cohesion: 0.32
+Nodes (11): buildPlantVisitUpsertsFromTransform(), buildTimesByJourney(), dayKeyFromIso(), FleetDatabaseSaveResult, fuenteFromMerge(), mapPlanta(), persistPlantVisitsFromTransform(), plateOkForFleet() (+3 more)
+
+### Community 117 - "enrichSlTimelineWithExcelAnchors"
+Cohesion: 0.20
+Nodes (14): enrichSlTimelineForSalidaEgresoRollup(), enrichSlTimelineWithExcelAnchors(), inferC16TransitMidpoint(), inferMidpointBetweenMs(), inferSlBalanzaSalidaBeforeExcelSalida(), inferSlBalanzaSalidaFromTransit(), injectSlBalanzaFromTiemposEntrePasos(), injectSlBalanzaIngresoFromExcel() (+6 more)
+
+### Community 118 - "etlPlatformCircuitInference.ts"
+Cohesion: 0.30
+Nodes (10): applyExternalCircuitToJourney(), circuitFromCode(), excelAnchorJourneyPriority(), inferAceiteLiquidExecutiveCircuit(), inferCircuitFromExternalMovimiento(), InferredExecutiveCircuit, isSanLorenzoVolcablePtoPlatform(), journeyNeedsCircuitFromExcel() (+2 more)
+
+### Community 119 - "anomalyClassifier.ts"
+Cohesion: 0.22
+Nodes (11): AnomalyKind, AnomalyReason, AnomalyVerdict, applyGoldenAnomalyOverride(), classifyAnomaly(), ClassifyAnomalyInput, ExecutiveStatusLike, isBehavioralAnomaly() (+3 more)
+
+### Community 120 - "classifyOperationalSession"
+Cohesion: 0.22
+Nodes (11): CIRCUIT_ETL_V2_FILENAMES, CircuitMatrixRule, classifyOperationalSession(), collapseGtSequence(), computeSessionScores(), hasCalada(), hasCargoLike(), logicalPointToSToken() (+3 more)
+
+### Community 121 - "audit-calada-variations.mjs"
 Cohesion: 0.18
 Nodes (7): debugRows, finalRows, idx, idxByType, idxCalada, idxVars, root
 
-### Community 122 - "Transform Local Script"
+### Community 122 - "run-truckflow-transform-local.mjs"
 Cohesion: 0.27
 Nodes (10): dayFilesOk(), dayRange(), DEFAULT_DATA_ROOT, DEFAULT_OUT, __dirname, main(), parseArgs(), printHelp() (+2 more)
 
-### Community 123 - "ETL Runs Store"
+### Community 123 - "etl-runs-store.mjs"
 Cohesion: 0.27
 Nodes (8): __dirname, PROJECT_ROOT, RUNS_ROOT, listEtlRunsFromSupabase(), readJson(), uploadEtlRunFromDisk(), uploadObject(), createServerSupabaseClient()
 
-### Community 124 - "Simulator Start Script"
-Cohesion: 0.18
-Nodes (9): child, forwardArgs, fs, path, pidFile, rootDir, runDir, { spawn } (+1 more)
+### Community 124 - "Mapa del backend lógico Transform Truckflow"
+Cohesion: 0.25
+Nodes (10): FASE 0 — Red de seguridad (migración), Mapa del backend lógico Transform Truckflow, Uso recomendado — Backend Transform sin UI, Plan de limpieza futura — Transform Truckflow, Plan ETL unificado — Datos reales Truckflow, Problema raíz: dos motores Transform en paralelo (Workbench vs Comité/v2), Plan de refactor ETL → núcleo puro + agentes, Tres clasificadores de circuitos en paralelo (deuda técnica) (+2 more)
 
-### Community 125 - "Operational Turno"
-Cohesion: 0.27
-Nodes (9): DayNight, dayNightLabelFromIso(), hourArgentina(), Turno, TURNO_SCATTER_COLORS, TURNO_SCATTER_WINDOWS, turnoForMovimiento(), turnoFromIso() (+1 more)
+### Community 125 - "operationalTurno.ts"
+Cohesion: 0.36
+Nodes (7): DayNight, dayNightLabelFromIso(), hourArgentina(), Turno, turnoForMovimiento(), turnoFromIso(), TURNOS_OPERATIVOS
 
-### Community 126 - "Journey UID Multi-Day Audit"
+### Community 126 - "audit-journey-uid-multi-day.mjs"
 Cohesion: 0.18
 Nodes (9): ae785cs, byUid, crossDayPattern, csvPath, __dirname, hdr, lines, multi (+1 more)
 
-### Community 127 - "Plate Registry Supabase Sync"
-Cohesion: 0.20
-Nodes (8): activePlates, __dirname, doc, entries, PROJECT_ROOT, REGISTRY_FILE, supabase, toInsert
+### Community 127 - "sync-plate-registry-to-supabase.mjs"
+Cohesion: 0.11
+Nodes (15): client, __dirname, PROJECT_ROOT, SQL_PATH, url, activePlates, __dirname, doc (+7 more)
 
-### Community 128 - "March Duration Diversify"
-Cohesion: 0.29
-Nodes (9): diversifyTrip(), fs, getISOWeek(), main(), MOCK_ROOT, normalFromUniform(), path, PLANTS (+1 more)
+### Community 128 - "excelStableOperationId.ts"
+Cohesion: 0.42
+Nodes (8): buildStableExcelOperationId(), dayFromIso(), isPlaceholderExcelOperationId(), isValidExcelCtg(), resolveCommitteeExcelOperationId(), sanitizeIdToken(), StableExcelOperationIdInput, timeFromIso()
 
-### Community 129 - "Master Circuit Catalog"
-Cohesion: 0.22
-Nodes (9): classifyCircuitBySequence(), MASTER_CIRCUIT_CATALOG, MasterCircuitGroup, MasterCircuitItem, MasterPlantCatalog, normalizeCameraId(), SL_RECEPCION_BASE, SL_RECEPCION_ESPERA_PLAYA (+1 more)
+### Community 129 - "masterCircuitCatalog.ts"
+Cohesion: 0.18
+Nodes (11): classifyCircuitBySequence(), findCircuitByCode(), getCodigoBase(), MASTER_CIRCUIT_CATALOG, MasterCircuitGroup, MasterCircuitItem, MasterPlantCatalog, normalizeCameraId() (+3 more)
 
-### Community 130 - "Stable Excel Operation ID"
-Cohesion: 0.40
-Nodes (8): stableExternalHash(), buildStableExcelOperationId(), dayFromIso(), isPlaceholderExcelOperationId(), isValidExcelCtg(), sanitizeIdToken(), StableExcelOperationIdInput, timeFromIso()
+### Community 130 - "etl_client.py"
+Cohesion: 0.36
+Nodes (9): create_run(), get_circuit_catalog(), get_client(), get_summary(), list_runs(), list_tables(), query_table(), Cliente HTTP fino del etl-api (Fase 4). Sin lógica de negocio. (+1 more)
 
-### Community 131 - "Balanza Stay Audit"
+### Community 131 - "audit-balanza-stay.mjs"
 Cohesion: 0.22
 Nodes (6): diagnostics, flagged, groups, ready, root, rows
 
-### Community 132 - "Plate Registry Server"
+### Community 132 - "truck-plate-registry.mjs"
 Cohesion: 0.33
 Nodes (4): CATEGORIES, createTruckPlateRegistryRouter(), createJsonPlateRegistryStore(), createSupabasePlateRegistryStore()
 
-### Community 133 - "R7 Balanza Salida Audit"
+### Community 133 - "audit-r7-balanza-salida.mjs"
 Cohesion: 0.25
 Nodes (5): diagnostics, flagged, groups, root, rows
 
-### Community 134 - "ETL Agent Chat (server)"
-Cohesion: 0.29
-Nodes (4): createEtlAgentChat(), SUBAGENTS, TOOLS, SUBAGENT_SKILLS
+### Community 134 - "etl-agent-chat.mjs"
+Cohesion: 0.22
+Nodes (5): ALLOWED_TOOLS, CHAT_TIMEOUT_MS, createEtlAgentChat(), findClaudeCli(), SYSTEM_APPEND
 
-### Community 135 - "KPI5 Multinivel View"
-Cohesion: 0.50
-Nodes (7): fmtEnteroEs(), Kpi5(), productLabel(), buildKpi5ProductFilterOptions(), computeKpi5SecurityView(), getTripProductLabel(), computeKpi5MultinivelView()
+### Community 135 - "Movimientos por contrato: backup local particionado por día"
+Cohesion: 0.20
+Nodes (9): Corrida, Cómo usarlo, Decisiones (2026-07-16), Flujo, Ingesta (una vez por archivo nuevo), Movimientos por contrato: backup local particionado por día, Objetivo, Piezas (+1 more)
 
-### Community 136 - "Committee ETL Lite Config"
-Cohesion: 0.25
-Nodes (7): COMMITTEE_ETL_LITE_MODE, ETL_DEV_TAB_IDS, ETL_MAIN_TAB_IDS, ETL_OPTIONAL_MANIFEST, ETL_PRODUCT_TAB_IDS, POWER_BI_PRODUCT_FILES, REAL_DATA_APP_MODE
-
-### Community 137 - "Build Visits"
-Cohesion: 0.43
-Nodes (7): buildVisits(), computeMetrics(), computeStatus(), EVENT_TYPE_ORDER, eventTypeSortOrder(), getDateBucket(), makeVisitKey()
-
-### Community 138 - "Circuit Timing Tests"
+### Community 136 - "buildSuspiciousDischargeWithoutBalanza"
 Cohesion: 0.32
-Nodes (4): aggregateCircuitTimingSummaries(), circuitTimingJourneysFromCsvRows(), ClassifiedJourneyForCircuitTiming, isValidCircuitTotalDuration()
+Nodes (8): BALANZA_LOGICAL_CODES, buildSuspiciousDischargeWithoutBalanza(), DISCHARGE_LOGICAL_CODES, isExcludedFromSuspiciousList(), journeyHasBalanzaInSequence(), journeyHasInstrumentedDischarge(), parseLogicalSequence(), resolveDischargePointLabel()
 
-### Community 139 - "Simulator Overview (docs)"
-Cohesion: 0.29
-Nodes (7): index.html (shell del dashboard), Estrategia de datos históricos (archivos por planta), Plan simulador en vivo (3 plantas en tiempo real), Simulador logístico mock (independiente), Escenario live (servicio, acumula histórico), Regla RAW vs ENRICHED (eventos cámara ANPR), Datos de ejemplo (samples CSV de importación)
+### Community 137 - "movimientosReconciliation.ts"
+Cohesion: 0.39
+Nodes (6): clean(), MovimientosReconciliation, movimientosReconciliationCsv(), reconcileMovimientos(), ReconEntry, ReconPlateRow
 
-### Community 140 - "SL Ingreso Balanza Drop"
+### Community 138 - "etlCircuitTiming.ts"
+Cohesion: 0.13
+Nodes (21): CommitteeGroup, aggregateCircuitSummary(), aggregateCircuitTimingSummaries(), buildCircuitTimingIndex(), CircuitTimingIndex, CircuitTimingJourneyRow, circuitTimingJourneysCsv(), circuitTimingJourneysFromCsvRows() (+13 more)
+
+### Community 140 - "audit-sl-ingreso-balanza-drop.mjs"
 Cohesion: 0.29
 Nodes (5): byOp, counts, R7, root, rows
 
-### Community 141 - "ETL Profile Run Script"
+### Community 141 - "etl-profile-run.mjs"
 Cohesion: 0.29
 Nodes (6): args, __dirname, env, result, root, tsEntry
 
-### Community 142 - "Simulator Stop Script"
+### Community 142 - "parseTruckflowJsonFiles.ts"
+Cohesion: 0.48
+Nodes (6): detectKindFromDoc(), extractRecordsFromTruckflowJsonRoot(), ParsedTruckflowFile, parseTruckflowJsonFile(), TruckflowJsonKind, extractTruckflowPayloadArray()
+
+### Community 143 - "POC — Video en vivo desde DSS Professional V8.7 (sección "en vivo")"
 Cohesion: 0.29
-Nodes (5): fs, path, pid, pidFile, rootDir
+Nodes (6): Arquitectura, Etapa 1 — POC de la API (script listo), Etapa 2 — go2rtc para verlo en el browser, Etapa 3 — Integración en la sección "en vivo" (IMPLEMENTADA), POC — Video en vivo desde DSS Professional V8.7 (sección "en vivo"), Seguridad
 
-### Community 143 - "Movimientos Contrato Panel"
-Cohesion: 0.33
-Nodes (5): parseCsvToRecords(), MERGE_EXPORTS, MovimientosContratoPanel(), WbSlice, EtlDiskPeriod
-
-### Community 144 - "Raw Journey Stats Server"
+### Community 144 - "truckflow-raw-journey-stats.mjs"
 Cohesion: 0.60
 Nodes (5): buildApiJourneyDayStat(), countUniqueRawJourneyUids(), countUniqueRawJourneyUidsByOccurredDay(), occurredAtLocalDayKey(), rawJourneyUidFromRecord()
 
-### Community 145 - "Estadia Boxplot"
-Cohesion: 0.53
-Nodes (5): assignRows(), BoxplotStats, EstadiaBoxplot(), resolveTimelineScale(), toPct()
+### Community 145 - "Tablas canónicas por pregunta — runs/windows/<from>_<to>/tables/"
+Cohesion: 0.29
+Nodes (6): Contradicciones detectadas (no usar estas fuentes para estas preguntas), Denominadores (por qué "cuántos camiones" tiene 3 respuestas si no se fija tabla), Paridad con el front, Regla de oro, Tablas canónicas por pregunta — runs/windows/<from>_<to>/tables/, Ventanas
 
-### Community 146 - "Executive Circuit Matrix (docs)"
+### Community 146 - "sectorCapacityByPlant.ts"
 Cohesion: 0.40
-Nodes (5): EXECUTIVE_CIRCUIT_MATRIX (R1..R34, cobertura, punto fuerte), Catálogo de circuitos definido 4 veces → unificar (R* clave única), Audit matriz cámaras R1/R5/R6/R7 (Excel batch), Audit matriz R1 por cámara, Audit matriz R5 por cámara
+Nodes (5): getSectorCapacityByPlant(), hasSectorCapacityData(), SECTOR_CAPACITY_RICARDONE, SECTOR_CAPACITY_SAN_LORENZO, SectorCapacityMap
 
-### Community 147 - "Package Manifest"
+### Community 147 - "package.json"
 Cohesion: 0.40
 Nodes (4): name, private, type, version
 
-### Community 148 - "Arch Rules Check"
-Cohesion: 0.40
-Nodes (3): ETLWORKBENCH_IMPORT_BASELINE, ROOT, violations
+### Community 148 - "check-arch-rules.mjs"
+Cohesion: 0.29
+Nodes (5): ETLWORKBENCH_IMPORT_BASELINE, MASTER_CATALOG_IMPORT_BASELINE, ROOT, violations, walk()
 
-### Community 150 - "KPI5 Summary Card"
-Cohesion: 0.60
-Nodes (4): fmtEntero(), Kpi5MultinivelSummaryCard(), Kpi5MultinivelSummaryCardProps, Kpi5MultinivelInsight
+### Community 149 - "Dashboard camiones — capa de agentes (Claude Code + MCP)"
+Cohesion: 0.50
+Nodes (3): Cuando actúes como analista de logística (preguntas de datos), Dashboard camiones — capa de agentes (Claude Code + MCP), Requisito
 
-### Community 151 - "R7 Camera Matrix Script"
+### Community 151 - "audit-r7-excel-camera-matrix.mjs"
 Cohesion: 0.50
 Nodes (3): child, dir, script
 
-### Community 155 - "Plate API Fetch"
+### Community 155 - "fetch-plate-api.mjs"
 Cohesion: 0.50
 Nodes (3): byUid, out, outPath
 
-### Community 156 - "ETL Core Purity (docs)"
+### Community 156 - "src/etl-core: paquete TS puro (cero React/DOM/side-effects)"
 Cohesion: 0.67
 Nodes (3): check-arch-rules.mjs (freeze etlWorkbench + pureza etl-core), Separación browser vs funciones puras (DOM/Vite fuera del core lógico), src/etl-core: paquete TS puro (cero React/DOM/side-effects)
 
+### Community 159 - "isPelletCircuitCode"
+Cohesion: 1.00
+Nodes (3): isPelletCircuitCode(), PELLET_TRANSILE_CIRCUIT_CODES, collectPelletExcludedPlates()
+
 ## Knowledge Gaps
-- **933 isolated node(s):** `agentes`, `name`, `private`, `version`, `type` (+928 more)
+- **875 isolated node(s):** `C:\Users\Usuario\Desktop\Dashboard_camiones\agentes\.venv\Scripts\etl-mcp.exe`, `ETL_API_BASE`, `agentes`, `name`, `private` (+870 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **26 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **21 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `SiteId` connect `Logistics Ops Domain` to `Master Circuit Catalog`, `Live Camera Monitor`, `Saturation Analytics`, `KPI5 Multinivel Donut`, `KPI5 Multinivel View`, `KPI Stats & Flow`, `Build Visits`, `KPI5 Circuit Utils`, `Truck Event Types`, `Reconstructed Visit Context`, `Event Stream Trips`, `Logistics Data Source`, `Sites & App Context`, `Real Truckflow API Feed`, `IFC 3D Viewer`, `Analytics Page & KPI Matrix`?**
-  _High betweenness centrality (0.067) - this node is a cross-community bridge._
-- **Why does `RealJourneyEventDto` connect `Real Journey Event Types` to `Circuit Scoring & Classification`, `Live Camera Monitor`, `Circuit Classification Index`, `Power BI ETL Export`, `Movimientos Contrato Panel`, `ETL Transform Pipeline`, `Real Journey Diagnostics`, `Legacy Journey Diagnostics`, `San Lorenzo Camera Support`, `Power BI Circuit CSV`, `Real Truckflow Workspace`, `Committee Operational Pipeline`, `Excel Camera Comparativa`, `Real Alerts Inspector`, `Excel Camera Matrix Audit`, `Preliminary Circuit Classify`, `Live Camera Diagnostics`, `Contract-First Transform Runner`, `Real Journey Quality`, `Operational Alert Match`, `Real Truckflow API Feed`, `Eventos Truckflow Presentation`, `Headless ETL Runner`, `ETL Workbench Context`, `Truck Plate Registry Filter`, `Clean Real Dataset`, `Excel Camera Comparativa Workbench`?**
-  _High betweenness centrality (0.047) - this node is a cross-community bridge._
-- **Why does `dependencies` connect `NPM Dependencies` to `Tiempos Entre Pasos`, `Package Manifest`, `web-ifc Dep`, `Recharts Dep`?**
-  _High betweenness centrality (0.043) - this node is a cross-community bridge._
-- **Are the 4 inferred relationships involving `runEtlTransform()` (e.g. with `flattenAlertForEtlCsv()` and `getAlertApiCode()`) actually correct?**
-  _`runEtlTransform()` has 4 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 4 inferred relationships involving `RealJourneyDiagnosticsPageLegacy()` (e.g. with `j()` and `missingExpectedPoints()`) actually correct?**
-  _`RealJourneyDiagnosticsPageLegacy()` has 4 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `agentes`, `name`, `private` to the rest of the system?**
-  _933 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Circuit Scoring & Classification` be split into smaller, more focused modules?**
-  _Cohesion score 0.05934242181234964 - nodes in this community are weakly interconnected._
+- **Why does `xlsx` connect `etlExternalMovimientosContrato.ts` to `dependencies`?**
+  _High betweenness centrality (0.073) - this node is a cross-community bridge._
+- **Why does `dependencies` connect `dependencies` to `mcp_server.py`, `express`, `package.json`, `etlExternalMovimientosContrato.ts`?**
+  _High betweenness centrality (0.069) - this node is a cross-community bridge._
+- **Why does `Informe ETL Dashboard Truckflow` connect `realJourneyEvents.types.ts` to `truckflow-local-server.mjs`, `normalizePlateStrict`, `etlTransformPipeline.ts`, `powerBiLoad.ts`, `EtlWorkbenchContext.tsx`?**
+  _High betweenness centrality (0.059) - this node is a cross-community bridge._
+- **Are the 5 inferred relationships involving `runEtlTransform()` (e.g. with `e()` and `flattenAlertForEtlCsv()`) actually correct?**
+  _`runEtlTransform()` has 5 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 87 inferred relationships involving `e()` (e.g. with `walk()` and `main()`) actually correct?**
+  _`e()` has 87 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 5 inferred relationships involving `RealJourneyDiagnosticsPageLegacy()` (e.g. with `e()` and `j()`) actually correct?**
+  _`RealJourneyDiagnosticsPageLegacy()` has 5 INFERRED edges - model-reasoned connections that need verification._
+- **What connects `C:\Users\Usuario\Desktop\Dashboard_camiones\agentes\.venv\Scripts\etl-mcp.exe`, `ETL_API_BASE`, `agentes` to the rest of the system?**
+  _875 weakly-connected nodes found - possible documentation gaps or missing edges._

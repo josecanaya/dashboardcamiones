@@ -2,12 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 
 import { SiteProvider } from './context/SiteContext'
 
-import { DataProvider } from './context/DataContext'
-
-import { SimulatorVisitProvider } from './context/SimulatorVisitContext'
-
-import { LogisticsOpsDeferredProvider } from './context/LogisticsOpsContext'
-
 import { RealJourneyDiagnosticsPage } from './pages/RealJourneyDiagnosticsPage'
 
 
@@ -86,19 +80,7 @@ function AppProviders() {
 
     <SiteProvider>
 
-      <DataProvider>
-
-        <LogisticsOpsDeferredProvider>
-
-          <SimulatorVisitProvider>
-
-            <AppContent />
-
-          </SimulatorVisitProvider>
-
-        </LogisticsOpsDeferredProvider>
-
-      </DataProvider>
+      <AppContent />
 
     </SiteProvider>
 
