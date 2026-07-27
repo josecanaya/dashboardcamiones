@@ -9,8 +9,12 @@
  */
 import { formatArgentinaIsoFromMs, parseTimestampMs } from './etlTimestampNormalize'
 import {
+  BALANZA_STAY_MIN_MINUTES,
+  BALANZA_STAY_ROLLUP_TRANSITION,
   INFERRED_KPI_ROLLUP_MAX_MINUTES,
+  MIN_SEGMENT_DURATION_MINUTES,
   OPERATIONAL_TRIP_GAP_MAX_MINUTES,
+  maxAllowedMinutesForTransition,
 } from './etlSegmentTimingRules'
 export type CollapsedLogicalPoint = { code: string; occurredAt: string }
 
@@ -173,3 +177,61 @@ export function buildTimedLogicalTimelineFromSegments(
 }
 
 /** Quita egresos SL de journeys fragmentados anteriores a balanza salida/ingreso. */
+
+export type SegmentLeg = {
+  journeyId: string
+  plate: string
+  executiveCircuitCode: string
+  fromCode: string
+  toCode: string
+  durationMinutes: number
+}
+
+export function minutesBetweenIso(isoA: string, isoB: string): number {
+  const a = parseTimestampMs(isoA)
+  const b = parseTimestampMs(isoB)
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return Number.NaN
+  return (b - a) / 60000
+}
+
+export function isSlKpiTransition(fromCode?: string, toCode?: string): boolean {
+  return Boolean(
+    fromCode?.startsWith('SL_') || toCode?.startsWith('SL_')
+  )
+}
+
+export function isBalanzaStayKpiTransition(fromCode?: string, toCode?: string): boolean {
+  return (
+    fromCode === BALANZA_STAY_ROLLUP_TRANSITION.from &&
+    toCode === BALANZA_STAY_ROLLUP_TRANSITION.to
+  )
+}
+
+export function isValidSegmentDuration(
+  minutes: number,
+  fromCode?: string,
+  toCode?: string
+): boolean {
+  if (!Number.isFinite(minutes) || minutes <= 0) return false
+  if (
+    fromCode &&
+    toCode &&
+    isBalanzaStayKpiTransition(fromCode, toCode) &&
+    minutes < BALANZA_STAY_MIN_MINUTES
+  ) {
+    return false
+  }
+  if (
+    fromCode &&
+    toCode &&
+    isSlKpiTransition(fromCode, toCode) &&
+    minutes <= MIN_SEGMENT_DURATION_MINUTES
+  ) {
+    return false
+  }
+  const max =
+    fromCode && toCode ?
+      maxAllowedMinutesForTransition(fromCode, toCode)
+    : INFERRED_KPI_ROLLUP_MAX_MINUTES
+  return minutes <= max
+}
