@@ -1,3 +1,17 @@
+/**
+ * Catálogo de circuitos **de negocio** de la planta (A1V0, B1V0, …) con sus grupos,
+ * nombres y colores de presentación.
+ *
+ * NO es un duplicado de `etl-core/domain/circuitCatalog` (`CIRCUIT_CATALOG`): ese está
+ * keyeado por código **ejecutivo** (R*, SL*, RS_*) y no tiene ni los códigos de negocio
+ * (`codigo`, `codigoCircuito`, `codigoVuelta`, `codigosEquivalentes`) ni la agrupación
+ * visual. Son dos taxonomías distintas del mismo dominio.
+ *
+ * Único consumidor: `powerBiCommitteeExecutive`, que arma la cobertura `matriz_negocio`
+ * (cuántos circuitos observados caen en cada circuito oficial de planta). Unificarlo
+ * contra `CIRCUIT_CATALOG` **perdería** esa dimensión del reporte — no hacerlo sin
+ * decidir antes qué pasa con la cobertura de negocio.
+ */
 import type { SiteId } from '../domain/sites'
 
 export interface MasterCircuitItem {

@@ -1046,24 +1046,46 @@ export function journeyHasStrongConfidenceBonus(j: ReconstructedRealJourney): bo
   return logicals.has('BALANZA_INGRESO') && logicals.has('BALANZA_EGRESO')
 }
 
-function expectedCircuitTemplateLength(j: ReconstructedRealJourney): number {
+/**
+ * Códigos técnicos que puntúan por plantilla. Los que no están acá devuelven 0
+ * (aunque tengan fila en `DEFAULT_CIRCUIT_MATRIX`), igual que el switch original:
+ * las extensiones RIC↔SL y Kepler nunca puntuaron por longitud de plantilla.
+ */
+const CIRCUIT_TEMPLATE_LENGTH_CODES: readonly string[] = [
+  'CIRCUITO_CELDA16_DESCARGA',
+  'CIRCUITO_CELDA16_CARGA',
+  'CIRCUITO_VOLCABLE_1_2',
+  'CIRCUITO_LIQUIDO',
+  'CIRCUITO_SAN_LORENZO',
+  'DESPACHO_SIN_PUNTO_INSTRUMENTADO',
+  'TRANSILE_VOLCABLE_BALANZA',
+]
+
+/**
+ * Excepción: `CIRCUITO_LIQUIDO` lista 5 puntos en `DEFAULT_CIRCUIT_MATRIX`
+ * (INGRESO, PREINGRESO, LIQUIDO, BALANZA_INGRESO, BALANZA_EGRESO) pero el scoring espera 6.
+ * La discrepancia es **preexistente**; se preserva tal cual para no mover el KPI de líquidos
+ * al deduplicar. Si se resuelve, borrar esta entrada y la longitud sale de la matriz.
+ */
+const CIRCUIT_TEMPLATE_LENGTH_OVERRIDES: Record<string, number> = {
+  CIRCUITO_LIQUIDO: 6,
+}
+
+/**
+ * Cantidad de puntos esperados de la plantilla del circuito técnico.
+ *
+ * Las longitudes se derivan de `DEFAULT_CIRCUIT_MATRIX` (fuente única) en vez de repetirse
+ * a mano; solo se declaran aparte qué códigos participan y la excepción de líquidos.
+ */
+export function expectedCircuitTemplateLength(j: ReconstructedRealJourney): number {
   const code = j.preliminaryCircuitCode
   const variant = j.preliminaryCircuitVariant ?? ''
-  if (variant === 'TRANSILE_VOLCABLE_BALANZA' || code === 'TRANSILE_VOLCABLE_BALANZA') return 2
-  switch (code) {
-    case 'CIRCUITO_CELDA16_DESCARGA':
-    case 'CIRCUITO_CELDA16_CARGA':
-    case 'CIRCUITO_VOLCABLE_1_2':
-      return 7
-    case 'CIRCUITO_LIQUIDO':
-      return 6
-    case 'CIRCUITO_SAN_LORENZO':
-      return 4
-    case 'DESPACHO_SIN_PUNTO_INSTRUMENTADO':
-      return 6
-    default:
-      return 0
-  }
+  const key =
+    variant === 'TRANSILE_VOLCABLE_BALANZA' || code === 'TRANSILE_VOLCABLE_BALANZA' ?
+      'TRANSILE_VOLCABLE_BALANZA'
+    : String(code ?? '')
+  if (!CIRCUIT_TEMPLATE_LENGTH_CODES.includes(key)) return 0
+  return CIRCUIT_TEMPLATE_LENGTH_OVERRIDES[key] ?? DEFAULT_CIRCUIT_MATRIX[key]?.length ?? 0
 }
 
 function labelEs(code: string): string {
