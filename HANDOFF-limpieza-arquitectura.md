@@ -104,35 +104,77 @@ de dev). Follow-up acotado: `npm install --package-lock-only` en un commit apart
 
 ---
 
-## 3. Pendiente — plan preciso (orden recomendado)
+## 3. Estado del plan B
 
-### B4 — Cortar ciclos de import (EMPEZAR ACÁ: mecánico, bajo riesgo)
-Mover tipos compartidos a `src/etl-core/domain/` (dependencia en una sola dirección). Ciclos:
-- `etlExcelMovimientosStep.ts → etlTransformPipeline.ts → etlTransformPhaseStore.ts → (vuelta)`
-- `etlTransformPhaseStore.ts → etlTransformTramo3.ts → etlTransformPipeline.ts → (vuelta)`
-- `pipelineTypes.ts → etlExcelFirstMerge.ts → etlPlatformCircuitInference.ts → transileExternoCiclo.ts → (vuelta)`
-- `pipelineTypes.ts → etlExcelFirstMerge.ts → etlCircuitClassificationIndex.ts → etlPlatformCircuitInference.ts → transileExternoCiclo.ts → (vuelta)`
-Sin cambio de lógica. Gate: build + 85 tests verdes.
+Baseline sano actual: `check:arch` OK, **601 tests pasan**, **3 fallos preexistentes**
+(`etlSegmentTiming` ×2, `etlRicSanLorenzoRoute` R27), **tsc 173**, **0 ciclos**, `vite build` OK.
 
-### B1 — Catálogo único de circuitos
-`CIRCUIT_CATALOG` como fuente única; **derivar** `DEFAULT_CIRCUIT_MATRIX` y `EXECUTIVE_CIRCUIT_MATRIX`
-desde él (behavior-preserving); migrar `powerBiCommitteeExecutive.ts` para que no dependa de
-`MASTER_CIRCUIT_CATALOG` y luego borrar ese último. **Gate obligatorio:** los 85 tests golden verdes
-(cualquier cambio de comportamiento en la clasificación se ve ahí).
+### B4 — Cortar ciclos de import ✅ HECHO (`9e884db`)
+De **5 SCC / 14 archivos** a **0 ciclos**. El handoff listaba 4 ciclos a ojo; el detector encontró 5,
+incluyendo dos no documentados. Guardá el detector: `scripts/`… no, quedó en scratchpad — recrear con
+Tarjan sobre `src/` si hace falta, **con rutas absolutas** (con relativas da falso negativo).
 
-### B3 — Partir god-files + retirar PowerBI/circuitEtlV2
-- Partir `RealJourneyDiagnosticsView.tsx` (god-file, ~65 edges), `etlTransformPipeline.ts` (~3k LOC),
-  `etlSegmentTiming.ts` (~5k LOC) por responsabilidad.
-- **Al partir View/Legacy, migrar su export committee al nuevo `etlCanonicalCsvExport`** → ahí muere
-  `circuitEtlV2` de una. Contexto: `buildCircuitEtlV2CsvBundle` es el núcleo de
-  `buildCommitteePowerBiEtlExport` (`powerBiEtlExportBuilder.ts:447,687`), y las páginas vivas
-  `RealJourneyDiagnosticsView` (~L1811-1961) y `Legacy` (~L2190-2221) lo usan. NO borrar suelto.
+Patrón usado: en los 5 pares un lado importaba un **tipo** y el otro un **valor**; se extrae lo
+compartido a un módulo leaf y el original re-exporta. Módulos nuevos: `etlTransformContracts.ts`,
+`etl-core/domain/contractMovements.types.ts`, `etlTruckflowMergeTypes.ts`, `config/sanLorenzoFlags.ts`,
+`etlPlantaFromSegment.ts`, `auditCameraCalibrationTypes.ts`.
+
+⚠️ El plan decía "mover tipos a `etl-core/domain/`" — para los contratos del pipeline **eso viola el
+gate de capas** (`check-arch-rules` prohíbe que etl-core importe etlWorkbench). Van en leaf dentro de
+etlWorkbench.
+
+### B1 — Catálogo único ✅ CERRADO (`8200145`) — el plan estaba mal planteado
+1. `EXECUTIVE_CIRCUIT_MATRIX` **ya se derivaba** de `CIRCUIT_CATALOG` (`finalCircuitScoring.ts:181`).
+2. La resolución alias→código ejecutivo **ya sale** de `cfg.aliases` (`finalCircuitScoring.ts:790,817`).
+3. `DEFAULT_CIRCUIT_MATRIX` **NO es derivable**: usa puntos lógicos (INGRESO/PREINGRESO/…) y el
+   catálogo usa S-codes, con granularidad distinta (R1: 9 S-codes vs 7 puntos). No hay mapeo.
+4. `MASTER_CIRCUIT_CATALOG` **NO es duplicado**: es la taxonomía de **negocio** (A1V0/B1V0,
+   codigoCircuito, codigoVuelta, grupos, colores). Borrarlo pierde la cobertura `matriz_negocio` de
+   `powerBiCommitteeExecutive`. Ya está documentado en `src/data/masterCircuitCatalog.ts`.
+
+Deduplicación real aplicada: `expectedCircuitTemplateLength` derivada de `DEFAULT_CIRCUIT_MATRIX`
++ `circuitTemplateLength.test.ts` (11 casos) que fija equivalencia con el switch original.
+
+🔴 **Deuda encontrada, NO resuelta:** `CIRCUITO_LIQUIDO` lista **5** puntos en
+`DEFAULT_CIRCUIT_MATRIX` pero el scoring espera **6**. Se preservó tal cual (para no mover el KPI de
+líquidos) como override documentado. **Decidir cuál es la correcta** — toca el KPI de líquidos.
+
+### B3 — God-files 🟡 PARCIAL
+
+Hecho sobre `etlSegmentTiming.ts`: **5066 → 4661 LOC**, en dos extracciones verificadas.
+- `etlSegmentTimingRules.ts` (354 LOC, `0b2b2e9`) — topes por transición, rollups, cadenas KPI.
+- `etlTimelinePrimitives.ts` (180 LOC, `f2e25a6`) — colapsado de puntos, grupo coherente, timeline.
+
+Pendiente, en orden:
+1. **Bloque San Lorenzo de `etlSegmentTiming.ts`** (~L658-1330: `sanitizeMisplacedSlEgreso` →
+   `resolveSlBalanzaEgresoHorarioForKpi`, ~700 LOC muy cohesivo). Ya está **desbloqueado**: depende de
+   `etlTimelinePrimitives`, así que sale sin ciclo. Es la extracción grande que queda.
+2. `etlTransformPipeline.ts` (2952 LOC) y `RealJourneyDiagnosticsView.tsx` (3030 LOC) — sin tocar.
+
+**Receta para extraer (aprendida a los golpes, 2 bugs atrapados por el gate):**
+- Matchear declaraciones **solo a columna 0** (`^(export )?(const|function|type)`). Con el regex sin
+  anclar se promueven variables locales (`out`, `prev`, `start`…) a export y sale basura.
+- Los god-files tienen **`import` a mitad de archivo**. Si el rango extraído se lleva uno, el archivo
+  original pierde esos símbolos → cientos de errores tsc. Revisar y repartir el import.
+- No confiar en una lista de candidatos hecha a mano para las dependencias: buscar **todos** los
+  símbolos top-level definidos fuera del rango y usados dentro.
+- Gate por extracción: `npm test` (601 + los 3 preexistentes), `tsc` = 173, 0 ciclos, `vite build`.
+
+### 🔴 circuitEtlV2 / PowerBI — NO retirado, requiere decisión de producto
+El plan decía "migrar el export committee a `etlCanonicalCsvExport` y ahí muere circuitEtlV2".
+**No es un refactor**: `buildCommitteePowerBiEtlExport` re-deriva desde eventos crudos y expone un
+panel de UI con ~14 claves CSV + ZIP debug (`RealJourneyDiagnosticsView.tsx:1-9` define las filas,
+`Legacy:2209` llama al builder). `etlCanonicalCsvExport` sirve **otras** tablas (las canónicas ya
+calculadas). Reemplazar uno por otro **cambia lo que el usuario descarga** y rompería
+`powerBiEtlExport.test.ts`. Nota: el archivo ya no se llama `circuitEtlV2` sino
+`etlWorkbench/powerBiCircuitCsvBundle.ts`. **Preguntar antes de tocar.**
 
 ### Auditorías / colas
 - **Auditar `NO_DIFERENCIABLE`**: cuántos journeys quedan sin desambiguar (el solapamiento real).
 - `scripts/` + `tools/`: CLIs de auditoría; knip los marca "unused" pero son manuales — **NO borrar sin decidir**.
 - Revisar `LoadExportTab.tsx` (usa `powerBiLoad`) — ¿tab vivo o huérfano?
-- Los **174 errores tsc preexistentes** — pasada aparte (no bloquean Vite).
+- Los **173 errores tsc preexistentes** — pasada aparte (no bloquean Vite).
+- **Lockfiles desincronizados** (ver sección 2): `npm install --package-lock-only` en commit aparte.
 
 ---
 
