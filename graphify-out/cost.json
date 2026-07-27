@@ -5,6 +5,13 @@
       "input_tokens": 269742,
       "output_tokens": 0,
       "files": 506
+    },
+    {
+      "date": "2026-07-27T18:21:47.121946+00:00",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "files": 192,
+      "note": "AST-only (sin LLM)"
     }
   ],
   "total_input_tokens": 269742,
