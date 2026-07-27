@@ -487,174 +487,32 @@ export function isValidKpiLegDuration(
   return minutes <= max
 }
 
-type CollapsedLogicalPoint = { code: string; occurredAt: string }
-
-export type TimedLogicalPoint = CollapsedLogicalPoint
-
-function collapseTimedPoints(points: TimedLogicalPoint[]): TimedLogicalPoint[] {
-  const out: TimedLogicalPoint[] = []
-  for (const p of points) {
-    const last = out[out.length - 1]
-    if (last?.code === p.code) continue
-    out.push(p)
-  }
-  return out
-}
-
 import {
   ensureArgentinaOffsetIso,
   formatArgentinaIsoFromMs,
   normalizeTimestampForExport,
   parseTimestampMs,
 } from './etlTimestampNormalize'
+// Primitivas de timeline: ver etlTimelinePrimitives.ts (extraído de este archivo).
+import {
+  buildTimedLogicalTimelineFromSegments,
+  collapseTimedPoints,
+  inferMidpointBetweenMs,
+  isoLocalFromMs,
+  selectCoherentSegmentGroup,
+  type CollapsedLogicalPoint,
+  type TimedLogicalPoint,
+  type TimedSegmentInput,
+} from './etlTimelinePrimitives'
 
-function isoLocalFromMs(ms: number): string {
-  return formatArgentinaIsoFromMs(ms)
-}
-
-function inferMidpointBetweenMs(fromMs: number, toMs: number, minOffsetMs = 60_000, maxOffsetMs = 30 * 60_000): string {
-  if (!Number.isFinite(fromMs) || !Number.isFinite(toMs) || toMs <= fromMs) return ''
-  const span = toMs - fromMs
-  const offsetMs = Math.min(Math.max(Math.floor(span / 2), minOffsetMs), maxOffsetMs)
-  return isoLocalFromMs(fromMs + offsetMs)
-}
-
-export type TimedSegmentInput = {
-  segment_from: string
-  segment_to: string
-  segment_start_time: string
-  segment_end_time: string
-}
-
-function segmentTimeBounds(seg: TimedSegmentInput): { startMs: number; endMs: number } | null {
-  const startMs = parseTimestampMs(String(seg.segment_start_time ?? ''))
-  const endMs = parseTimestampMs(String(seg.segment_end_time ?? ''))
-  if (!Number.isFinite(startMs) || !Number.isFinite(endMs)) return null
-  return { startMs, endMs: Math.max(startMs, endMs) }
-}
-
-function scoreOperationalTimeSpan(
-  minMs: number,
-  maxMs: number,
-  externalIngresoAt?: string,
-  externalSalidaAt?: string
-): number {
-  const spanMin = (maxMs - minMs) / 60000
-  let score = 0
-  if (spanMin > INFERRED_KPI_ROLLUP_MAX_MINUTES) score -= 10_000
-  const ingMs = parseTimestampMs(String(externalIngresoAt ?? ''))
-  const salMs = parseTimestampMs(String(externalSalidaAt ?? ''))
-  if (Number.isFinite(ingMs) && Number.isFinite(salMs)) {
-    if (maxMs >= ingMs && minMs <= salMs) score += 1000
-    score -= Math.abs((minMs + maxMs) / 2 - (ingMs + salMs) / 2) / 60000
-  } else if (Number.isFinite(salMs)) {
-    score -= Math.abs(maxMs - salMs) / 60000
-  } else if (Number.isFinite(ingMs)) {
-    score -= Math.abs(minMs - ingMs) / 60000
-  }
-  return score
-}
-
-/**
- * Separa tramos de viajes distintos (misma patente, >6 h de brecha) y conserva el cluster
- * que mejor coincide con ingreso/salida Excel.
- */
-export function selectCoherentSegmentGroup(
-  segments: TimedSegmentInput[],
-  externalIngresoAt?: string,
-  externalSalidaAt?: string,
-  gapMaxMinutes = OPERATIONAL_TRIP_GAP_MAX_MINUTES
-): TimedSegmentInput[] {
-  if (segments.length <= 1) return segments
-
-  const ingMs = parseTimestampMs(String(externalIngresoAt ?? ''))
-  let scoped = segments
-  if (Number.isFinite(ingMs)) {
-    const cutoffMs = ingMs - 30 * 60_000
-    const afterIngreso = segments.filter((seg) => {
-      const bounds = segmentTimeBounds(seg)
-      if (!bounds) return true
-      return bounds.endMs >= cutoffMs
-    })
-    if (afterIngreso.length) scoped = afterIngreso
-  }
-
-  const withBounds = scoped
-    .map((seg) => ({ seg, bounds: segmentTimeBounds(seg) }))
-    .filter(
-      (x): x is { seg: TimedSegmentInput; bounds: { startMs: number; endMs: number } } =>
-        x.bounds !== null
-    )
-    .sort((a, b) => a.bounds.startMs - b.bounds.startMs)
-
-  if (!withBounds.length) return segments
-
-  const gapMs = gapMaxMinutes * 60000
-  const clusters: Array<typeof withBounds> = [[withBounds[0]!]]
-  for (let i = 1; i < withBounds.length; i++) {
-    const item = withBounds[i]!
-    const cluster = clusters[clusters.length - 1]!
-    const prev = cluster[cluster.length - 1]!
-    if (item.bounds.startMs - prev.bounds.endMs > gapMs) {
-      clusters.push([item])
-    } else {
-      cluster.push(item)
-    }
-  }
-
-  if (clusters.length === 1) return clusters[0]!.map((x) => x.seg)
-
-  let bestCluster = clusters[0]!
-  let bestScore = -Infinity
-  for (const cluster of clusters) {
-    const minS = Math.min(...cluster.map((x) => x.bounds.startMs))
-    const maxE = Math.max(...cluster.map((x) => x.bounds.endMs))
-    const score = scoreOperationalTimeSpan(minS, maxE, externalIngresoAt, externalSalidaAt)
-    if (score > bestScore) {
-      bestScore = score
-      bestCluster = cluster
-    }
-  }
-  return bestCluster.map((x) => x.seg)
-}
-
-/** Timeline lógico desde tramos con timestamps (merge Excel-first / fragmentado). */
-export function buildTimedLogicalTimelineFromSegments(
-  segments: TimedSegmentInput[],
-  opts?: { externalIngresoAt?: string; externalSalidaAt?: string }
-): TimedLogicalPoint[] {
-  const coherent = selectCoherentSegmentGroup(
-    segments,
-    opts?.externalIngresoAt,
-    opts?.externalSalidaAt
-  )
-  const pointTimes = new Map<string, string>()
-  for (const seg of coherent) {
-    const from = String(seg.segment_from ?? '').trim()
-    const to = String(seg.segment_to ?? '').trim()
-    const start = String(seg.segment_start_time ?? '').trim()
-    const end = String(seg.segment_end_time ?? '').trim()
-    if (from && start && Number.isFinite(parseTimestampMs(start))) {
-      const prev = pointTimes.get(from)
-      const startMs = parseTimestampMs(start)
-      const prevMs = prev ? parseTimestampMs(prev) : Number.NaN
-      if (!prev || (Number.isFinite(prevMs) && startMs < prevMs)) pointTimes.set(from, start)
-    }
-    if (to && end && Number.isFinite(parseTimestampMs(end))) {
-      const prev = pointTimes.get(to)
-      const endMs = parseTimestampMs(end)
-      const prevMs = prev ? parseTimestampMs(prev) : Number.NaN
-      if (!prev || (Number.isFinite(prevMs) && endMs > prevMs)) pointTimes.set(to, end)
-    }
-  }
-  return collapseTimedPoints(
-    [...pointTimes.entries()]
-      .map(([code, occurredAt]) => ({ code, occurredAt }))
-      .sort((a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt))
-  )
-}
-
-/** Quita egresos SL de journeys fragmentados anteriores a balanza salida/ingreso. */
+export {
+  buildTimedLogicalTimelineFromSegments,
+  selectCoherentSegmentGroup,
+} from './etlTimelinePrimitives'
+export type {
+  TimedLogicalPoint,
+  TimedSegmentInput,
+} from './etlTimelinePrimitives'
 function sanitizeMisplacedSlEgreso(points: TimedLogicalPoint[]): TimedLogicalPoint[] {
   const salidaMs = points
     .filter((p) => p.code === 'SL_BALANZA_SALIDA')
