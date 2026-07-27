@@ -16,7 +16,7 @@
  */
 
 import { makeTable, tableToCsv, type TypedTable } from '../typedTable'
-import type { ExternalMovimientoContratoNormalized } from '../domain/pipelineTypes'
+import type { ExternalMovimientoContratoNormalized } from '../domain/contractMovements.types'
 import { normalizePlate } from '../ingest/externalNormalization'
 import { operationalDayKeyFromIso, parseTimestampMs } from '../domain/timestamps'
 

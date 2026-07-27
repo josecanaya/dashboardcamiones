@@ -6,14 +6,14 @@ import {
 } from '../../../data/sanLorenzoCameraCatalog'
 import { isEtlRearCameraDevice } from './etlRearDevices'
 import type { ExecutiveCircuitDecision } from './finalCircuitScoring'
+import {
+  ETL_SL_EXECUTIVE_SUPPORT_ENABLED,
+  ETL_SL_INTERNAL_CLASSIFICATION_ENABLED,
+} from '../../../config/sanLorenzoFlags'
+
+export { ETL_SL_EXECUTIVE_SUPPORT_ENABLED, ETL_SL_INTERNAL_CLASSIFICATION_ENABLED }
 
 const SL_LOGICAL_CODES = new Set(SAN_LORENZO_CAMERAS.map((c) => c.logicalCode))
-
-/** Activado: refuerzo ejecutivo con evidencia SL en rutas mixtas. */
-export const ETL_SL_EXECUTIVE_SUPPORT_ENABLED = true
-
-/** Activado: clasificación SL1 interna (solo journeys exclusivamente San Lorenzo). */
-export const ETL_SL_INTERNAL_CLASSIFICATION_ENABLED = true
 
 export type SanLorenzoSupportSnapshot = {
   slPointCount: number

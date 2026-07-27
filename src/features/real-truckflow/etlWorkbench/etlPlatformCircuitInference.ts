@@ -1,7 +1,7 @@
 import type { ExternalMovimientoContratoNormalized } from './etlExternalMovimientosContrato'
 import { EXECUTIVE_CIRCUIT_MATRIX } from './finalCircuitScoring'
 import { isSanLorenzoAceiteLiquidPlatform, inferAceiteExecutiveCircuitFromExcel } from './slLiquidCameras'
-import type { TruckflowJourneyForMerge } from './etlTruckflowMovimientosMerge'
+import type { TruckflowJourneyForMerge } from './etlTruckflowMergeTypes'
 import { classifyTransileExternoProduct } from '../../../etl-core/reports/transileExternoCiclo'
 
 export type InferredExecutiveCircuit = {

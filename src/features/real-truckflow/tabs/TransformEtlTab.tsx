@@ -3,7 +3,7 @@ import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { ETL_DEV_MODE } from '../../../config/committeeEtlLite'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
-import type { EtlTransformOutput } from '../etlWorkbench/etlTransformPipeline'
+import type { EtlTransformOutput } from '../etlWorkbench/etlTransformContracts'
 import { triggerBrowserCsvDownload } from '../etlWorkbench/etlCsv'
 import {
   anomalySequenceSummaryCsv,

@@ -1,5 +1,5 @@
-import type { EtlTransformOutput } from './etlTransformPipeline'
-import type { EtlTransformInput } from './etlTransformPipeline'
+import type { EtlTransformOutput } from './etlTransformContracts'
+import type { EtlTransformInput } from './etlTransformContracts'
 import type { ClassifiedJourneyForTiming } from './etlSegmentTiming'
 import type { KpiTiemposBuildInput } from './etlKpiTiemposBuild'
 import { runMovimientosContratoIntegration } from './etlMovimientosContratoIntegration'

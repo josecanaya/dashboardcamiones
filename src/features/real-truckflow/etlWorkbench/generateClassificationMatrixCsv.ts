@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import type { RealJourneyEventDto, ReconstructedRealJourney } from '../../../services/realJourneyEvents.types'
 import { classifyOperationalPreliminaryCircuit } from './preliminaryCircuitClassify'
 import { resolveCommitteeClassification } from './committeeClassification'
-import { ETL_SL_INTERNAL_CLASSIFICATION_ENABLED } from './etlSanLorenzoSupport'
+import { ETL_SL_INTERNAL_CLASSIFICATION_ENABLED } from '../../../config/sanLorenzoFlags'
 import { journeyIsRicSanLorenzoRouteEvidence, journeyHasSlIngresoEvidence } from './etlRicSanLorenzoRoute'
 import {
   DEFAULT_CIRCUIT_MATRIX,

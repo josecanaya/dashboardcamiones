@@ -1,4 +1,4 @@
-import type { EtlTransformOutput } from '../etlWorkbench/etlTransformPipeline'
+import type { EtlTransformOutput } from '../etlWorkbench/etlTransformContracts'
 
 type Props = {
   tramoCompleted: 0 | 1 | 2 | 3

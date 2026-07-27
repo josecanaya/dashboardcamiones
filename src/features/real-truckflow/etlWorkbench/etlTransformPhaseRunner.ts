@@ -1,4 +1,4 @@
-import type { EtlTransformInput, EtlTransformOutput } from './etlTransformPipeline'
+import type { EtlTransformInput, EtlTransformOutput } from './etlTransformContracts'
 import { runEtlTransform } from './etlTransformPipeline'
 import { createPhaseStore, type EtlTransformPhaseStore } from './etlTransformPhaseStore'
 import {

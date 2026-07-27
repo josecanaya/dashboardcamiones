@@ -17,6 +17,11 @@ import {
   type RawJourneyEventLike,
   type CameraAuditAlertLike,
 } from './auditExcelCameraMatrix'
+import type {
+  CameraMatrixDetailRow,
+  DayNight,
+  RecognitionSegment,
+} from './auditCameraCalibrationTypes'
 import type { MissedPlateByCameraRow } from './auditExcelCameraMissedPlates'
 import { buildMissedPlatesByCamera } from './auditExcelCameraMissedPlates'
 import { operationalInstantIso } from './auditSlCameraExcelCoverage'
@@ -28,20 +33,11 @@ import {
 } from './operationalTurno'
 
 export type { Turno }
-export type DayNight = Turno
 export { turnoFromIso, turnoLabel, turnoForMovimiento, TURNOS_OPERATIVOS } from './operationalTurno'
 /** @deprecated use turnoFromIso */
 export { turnoFromIso as dayNightLabelFromIso } from './operationalTurno'
 
-export type RecognitionSegment = 'reconocido' | 'parcial' | 'no_reconocido'
-
-export type CameraMatrixDetailRow = CameraMatrixRow & {
-  pointsCaptured: number
-  recognitionSegment: RecognitionSegment
-  dayNight: Turno
-  /** Por hito: deviceCode que disparó la captura (puede haber varios). */
-  devicesByStep: Record<string, string[]>
-}
+export type { DayNight, RecognitionSegment, CameraMatrixDetailRow }
 
 export type RecognitionDayNightSummary = {
   dayNight: Turno

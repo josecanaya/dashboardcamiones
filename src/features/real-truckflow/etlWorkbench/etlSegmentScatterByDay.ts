@@ -1,6 +1,6 @@
 import { recordsToCsv } from './etlCsv'
 import { parseCsvToRecords } from './etlCsvParse'
-import { inferPlantaFromSegment } from './etlSectorOccupancy30min'
+import { inferPlantaFromSegment } from './etlPlantaFromSegment'
 import {
   formatTransitionLabel,
   INFERRED_KPI_ROLLUP_MAX_MINUTES,

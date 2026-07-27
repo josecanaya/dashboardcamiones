@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { buildPlantVisitUpsertsFromTransform } from './truckPlantVisitSync'
-import type { EtlTransformOutput } from './etlTransformPipeline'
+import type { EtlTransformOutput } from './etlTransformContracts'
 
 function minimalOut(csv: Record<string, string>): EtlTransformOutput {
   return {

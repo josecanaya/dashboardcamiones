@@ -12,7 +12,7 @@ export type EtlTransformPhaseStore = {
   tramo2Prep: Tramo2PrepForMovimientos | null
   /** Merge Excel ↔ Truckflow (Paso UI 2). */
   contractIntegration: MovimientosContratoIntegrationOutput | null
-  tramo2Output: import('./etlTransformPipeline').EtlTransformOutput | null
+  tramo2Output: import('./etlTransformContracts').EtlTransformOutput | null
 }
 
 export function createPhaseStore(): EtlTransformPhaseStore {

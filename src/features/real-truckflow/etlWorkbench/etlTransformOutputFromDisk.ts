@@ -1,4 +1,4 @@
-import type { EtlTransformOutput } from './etlTransformPipeline'
+import type { EtlTransformOutput } from './etlTransformContracts'
 import { fetchRunTable, getRunSummary, listRunTables } from '../api/etlRunCacheApi'
 
 /**

@@ -7,8 +7,8 @@ import {
   projectFinalCircuitsForCommittee,
   type DssReferenceMetrics,
 } from './powerBiCommitteeExecutive'
-import { ETL_TRANSFORM_RULES_VERSION } from './etlTransformPipeline'
-import type { EtlTransformOutput } from './etlTransformPipeline'
+import { ETL_TRANSFORM_RULES_VERSION } from './etlTransformContracts'
+import type { EtlTransformOutput } from './etlTransformContracts'
 import { OPERATIONAL_ALERTS_CSV_COLUMNS } from './etlOperationalAlertMatch'
 import {
   aggregateCircuitTimingSummaries,

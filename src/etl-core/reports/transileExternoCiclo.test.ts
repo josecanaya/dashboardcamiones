@@ -4,7 +4,7 @@ import {
   classifyTransileExternoProduct,
   detectDeVueltaHeader,
 } from './transileExternoCiclo'
-import type { ExternalMovimientoContratoNormalized } from '../domain/pipelineTypes'
+import type { ExternalMovimientoContratoNormalized } from '../domain/contractMovements.types'
 
 function mov(
   partial: Partial<ExternalMovimientoContratoNormalized>

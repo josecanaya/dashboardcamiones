@@ -1,4 +1,4 @@
-import type { EtlTransformOutput } from './etlTransformPipeline'
+import type { EtlTransformOutput } from './etlTransformContracts'
 import { parseCsvToRecords } from './etlCsvParse'
 import type { PlantVisitUpsertInput, PlantVisitProductOrigin, PlantVisitSource } from '../../../domain/truckFleet'
 import { normalizePlate } from './etlExternalNormalization'

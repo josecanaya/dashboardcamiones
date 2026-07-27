@@ -1,7 +1,7 @@
 import type { ReconstructedRealJourney } from '../../../services/realJourneyEvents.types'
 import type { RealJourneyEventDto } from '../../../services/realJourneyEvents.types'
 import { buildCliWorkbenchInputsFromJourneys } from '../../../services/truckflowTransform/contractFirst/contractFirstCliAdapter'
-import type { EtlTransformInput, EtlTransformOutput } from './etlTransformPipeline'
+import type { EtlTransformInput, EtlTransformOutput } from './etlTransformContracts'
 import type { ExternalMovimientoContratoNormalized } from './etlExternalMovimientosContrato'
 import {
   runMovimientosContratoIntegration,

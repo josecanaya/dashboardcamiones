@@ -13,7 +13,7 @@ import {
   type RawJourneyEventLike,
   type CameraAuditAlertLike,
 } from './auditExcelCameraMatrix'
-import type { CameraMatrixDetailRow, DayNight, RecognitionSegment } from './auditExcelCameraCalibration'
+import type { CameraMatrixDetailRow, DayNight, RecognitionSegment } from './auditCameraCalibrationTypes'
 import { turnoLabel } from './operationalTurno'
 import { operationalInstantIso } from './auditSlCameraExcelCoverage'
 

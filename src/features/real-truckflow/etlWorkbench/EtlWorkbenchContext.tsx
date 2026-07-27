@@ -17,7 +17,7 @@ import {
 } from '../../../services/realTruckflowApi'
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 import { parseTruckflowJsonFile, type ParsedTruckflowFile } from './parseTruckflowJsonFiles'
-import type { EtlTransformInput, EtlTransformOutput } from './etlTransformPipeline'
+import type { EtlTransformInput, EtlTransformOutput } from './etlTransformContracts'
 import { buildKpiTiemposArtifacts, type KpiTiemposBuildInput } from './etlKpiTiemposBuild'
 import {
   createTransformPhaseSession,

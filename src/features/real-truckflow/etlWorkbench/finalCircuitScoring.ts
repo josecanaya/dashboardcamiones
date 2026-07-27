@@ -12,7 +12,7 @@ import {
   journeyIsTransileSlToC16,
   resolveTechnicalCircuitCodeForExecutive,
 } from './etlRicSanLorenzoRoute'
-import { ETL_SL_INTERNAL_CLASSIFICATION_ENABLED } from './etlSanLorenzoSupport'
+import { ETL_SL_INTERNAL_CLASSIFICATION_ENABLED } from '../../../config/sanLorenzoFlags'
 import { CIRCUIT_CATALOG, toExecutiveCircuitConfig } from '../../../etl-core/domain/circuitCatalog'
 import { lookupSanLorenzoCameraByDevice } from '../../../data/sanLorenzoCameraCatalog'
 

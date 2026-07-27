@@ -17,14 +17,9 @@ export function franjaOperativaFromHour(h: number): FranjaOperativaOccupancy {
   return 'Noche'
 }
 
-export function inferPlantaFromSegment(circuito: string, segmentFrom: string): string {
-  const from = String(segmentFrom ?? '').trim()
-  if (from.startsWith('SL_')) return 'SAN_LORENZO'
-  if (circuito === 'SL1' || circuito === 'R7') {
-    return from.startsWith('SL_') ? 'SAN_LORENZO' : 'RICARDONE'
-  }
-  return 'RICARDONE'
-}
+import { inferPlantaFromSegment } from './etlPlantaFromSegment'
+
+export { inferPlantaFromSegment }
 
 export const STOCK_INITIAL_MOTIVO = 'egreso_en_ventana_2h_sin_ingreso_en_ventana' as const
 

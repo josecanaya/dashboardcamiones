@@ -1,5 +1,5 @@
-import type { EtlTransformInput, EtlTransformOutput } from './etlTransformPipeline'
-import { ETL_TRANSFORM_RULES_VERSION } from './etlTransformPipeline'
+import type { EtlTransformInput, EtlTransformOutput } from './etlTransformContracts'
+import { ETL_TRANSFORM_RULES_VERSION } from './etlTransformContracts'
 import {
   externalMovimientosNormalizedCsv,
   loadMovimientosContratoFiles,
