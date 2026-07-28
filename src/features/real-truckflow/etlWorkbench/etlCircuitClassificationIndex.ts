@@ -25,7 +25,7 @@ import {
   formatExecutiveCircuitLabel,
 } from './finalCircuitScoring'
 import { ensureArgentinaOffsetIso, operationalDayKeyFromIso } from './etlTimestampNormalize'
-import type { AnomalyKind } from '../../../etl-core/domain/anomalyClassifier'
+import { ANOMALY_MIN_FRONT_EVENTS, type AnomalyKind } from '../../../etl-core/domain/anomalyClassifier'
 import {
   detectMissingExcelMovement,
   GOLDEN_SL_RIC_MAX_MS,
@@ -34,6 +34,11 @@ import {
   PELLET_TRANSILE_CIRCUIT_CODES,
 } from '../../../etl-core/domain/goldenAnomalyRules'
 import { normalizeDeVuelta } from '../../../etl-core/ingest/externalNormalization'
+import { CIRCUIT_CATALOG } from '../../../etl-core/domain/circuitCatalog'
+import {
+  isPelletExcelProduct,
+  resolvePelletCircuit,
+} from '../../../etl-core/reports/transileExternoCiclo'
 
 /** Fuente de matriz de clasificación: CSV legacy o filas TypedTable (Fase 2). */
 export type DebugMatrixSource = string | readonly Record<string, unknown>[] | null | undefined
@@ -168,17 +173,32 @@ export type ExecutiveCircuitBarSlice = {
   count: number
 }
 
+/** Las tres porciones del comité. Universo: journeys evaluables (ver `buildCommitteeEvaluableModel`). */
+export const COMMITTEE_PIE_SLICE_COMPLETOS = 'COMPLETOS'
+export const COMMITTEE_PIE_SLICE_VARIACIONES = 'VARIACIONES OPERATIVAS'
+export const COMMITTEE_PIE_SLICE_ANOMALIAS = 'ANOMALÍAS'
+
+/** True si al abrir esta porción corresponde el panel de anomalías por recorrido. */
+export function isAnomalyPanelPieSlice(sliceName: string): boolean {
+  return String(sliceName ?? '').trim().toUpperCase() === COMMITTEE_PIE_SLICE_ANOMALIAS
+}
+
+export type CircuitPieSliceWithTrucks = CircuitPieSlice & {
+  trucks: CircuitClassificationEntry[]
+}
+
 export type CommitteeCrossTabCategory = 'completos' | 'variaciones' | 'anomalias'
 
 export type CommitteeCircuitCrossTabRow = {
   code: string
   label: string
   displayLabel: string
-  /** Solo completos + variaciones (el total de la fila sigue siendo circuito válido). */
+  /** Universo evaluable del circuito: completos + variaciones + anomalías. */
   total: number
+  /** Netos de anomalías (un journey con anomalía ya no cuenta como completo). */
   completos: number
   variaciones: number
-  /** Anomalías de oro (BEHAVIORAL G*) que mantienen este circuito. */
+  /** Anomalías de comportamiento imputadas a este circuito. Mismo conjunto que la torta y el panel. */
   anomalias: number
   pctCompletos: number
   pctVariaciones: number
@@ -187,6 +207,9 @@ export type CommitteeCircuitCrossTabRow = {
   trucksVariaciones: CircuitClassificationEntry[]
   trucksAnomalias: CircuitClassificationEntry[]
 }
+
+/** Prefijo de `journeyId` de las filas ancladas a una operación del Excel (Excel-first). */
+export const EXCEL_ANCHOR_JOURNEY_PREFIX = 'excel:'
 
 export type AnomalyReasonCount = { reason: string; count: number }
 
@@ -1846,7 +1869,12 @@ function rebuildClassificationIndexFromEntries(
   excelPromotedCount: number,
   excelFirstReconciledCount = excelPromotedCount
 ): CircuitClassificationIndex {
-  const { byJourneyId, byPlate, byPieSlice, sliceCounts } = rebuildIndexMaps(entries)
+  // Clonamos las entries: esta función asigna `e.color` más abajo, y al filtrar por
+  // producto llegan como subconjunto del índice base (read-only). Mutarlas tiraba
+  // "Cannot assign to read only property 'color'" → pantalla en blanco al elegir
+  // soja/girasol/aceite. Trabajar sobre copias deja el índice base intacto.
+  const workEntries = entries.map((e) => ({ ...e }))
+  const { byJourneyId, byPlate, byPieSlice, sliceCounts } = rebuildIndexMaps(workEntries)
 
   const sortedSliceNames = [...sliceCounts.keys()].sort((a, b) => {
     const oa = classificationOrder(a)
@@ -1859,7 +1887,7 @@ function rebuildClassificationIndexFromEntries(
   sortedSliceNames.forEach((name, idx) => {
     colorBySlice.set(name, CIRCUIT_PIE_COLORS[idx % CIRCUIT_PIE_COLORS.length]!)
   })
-  for (const e of entries) {
+  for (const e of workEntries) {
     e.color = colorBySlice.get(e.pieSliceLabel) ?? CIRCUIT_PIE_COLORS[0]!
   }
 
@@ -1870,13 +1898,13 @@ function rebuildClassificationIndexFromEntries(
   }))
 
   return {
-    entries,
+    entries: workEntries,
     byJourneyId,
     byPlate,
     byPieSlice,
     pieSlices,
-    circuitBarSlices: buildExecutiveCircuitBarSlices(entries),
-    total: entries.length,
+    circuitBarSlices: buildExecutiveCircuitBarSlices(workEntries),
+    total: workEntries.length,
     excelFirstReconciledCount,
     excelPromotedCount,
   }
@@ -2210,6 +2238,35 @@ function isHardExcludedFromAnomalyList(
  * - Corridas viejas / tests (sin `anomalyKind`): heurística legacy "Truckflow
  *   ≥ minEvents, patente ausente del Excel". Sin Excel cargado → nunca.
  */
+/**
+ * ¿Hay evidencia suficiente para que este journey entre al análisis del comité?
+ *
+ * Regla: hacen falta más de `ANOMALY_MIN_FRONT_EVENTS` cruces de cámara (mismo
+ * umbral que `classifyAnomaly`) **o** un movimiento del Excel que documente el
+ * viaje. Lo segundo importa: una operación Excel-first (`excel:…`, o con match
+ * `EXCEL_*` / `EXTERNAL_MATCH_*`) tiene el viaje documentado en Movimientos por
+ * Contrato aunque las cámaras lo hayan visto poco — ahí el dato existe, y sacarla
+ * del universo rompería la conciliación Excel-first.
+ */
+export function hasMinimumEvidenceForCommittee(entry: CircuitClassificationEntry): boolean {
+  if (hasCameraEvidenceForBehavior(entry)) return true
+  if (String(entry.journeyId ?? '').startsWith(EXCEL_ANCHOR_JOURNEY_PREFIX)) return true
+  return entryHasExcelMovementEvidence(entry)
+}
+
+/**
+ * ¿Alcanzan las cámaras para afirmar *comportamiento*?
+ *
+ * Más estricto que `hasMinimumEvidenceForCommittee` y a propósito: todas las
+ * reglas de comportamiento (ruta/arranque inválido, retroceso, G1–G5) se leen de
+ * la línea de tiempo de cámaras. Un movimiento del Excel prueba que el viaje
+ * existió — sirve para contarlo como operación completa — pero no puede sostener
+ * un «se salteó un hito» ni un «volvió demasiado rápido».
+ */
+export function hasCameraEvidenceForBehavior(entry: CircuitClassificationEntry): boolean {
+  return entry.usefulEventsCount > ANOMALY_MIN_FRONT_EVENTS
+}
+
 export function isListedAnomalyCandidate(
   entry: CircuitClassificationEntry,
   ctx: AnomalyListContext
@@ -2217,6 +2274,10 @@ export function isListedAnomalyCandidate(
   const plate = normalizePlate(entry.normalizedPlate || entry.plate)
   if (!plate) return false
   if (isHardExcludedFromAnomalyList(entry, ctx, plate)) return false
+  // Evidencia de cámara, también para corridas viejas cuyo `anomaly_kind` se
+  // calculó antes del guardia de `applyGoldenAnomalyOverride`: con ≤2 cruces no se
+  // lista, aunque venga marcado BEHAVIORAL y aunque tenga movimiento en el Excel.
+  if (!hasCameraEvidenceForBehavior(entry)) return false
   if (entry.anomalyKind !== undefined) return entry.anomalyKind === 'BEHAVIORAL'
   // Camino legacy.
   if (ctx.excelPlates == null) return false
@@ -2348,11 +2409,25 @@ export function entryHasExcelMovementEvidence(entry: CircuitClassificationEntry)
   return false
 }
 
+/** `YYYY-MM-DD` + 1 día. Devuelve '' si la clave no es una fecha válida. */
+export function nextDayKey(dayKey: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(dayKey ?? '').trim())
+  if (!m) return ''
+  const d = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])))
+  d.setUTCDate(d.getUTCDate() + 1)
+  return d.toISOString().slice(0, 10)
+}
+
 /**
- * Días del journey a cruzar con Excel: fin (≈ salida) e inicio.
- * Cubren circuitos que cruzan medianoche (ingreso D, egreso madrugada D+1).
+ * Días del journey a cruzar con Excel: inicio, fin (≈ salida) y **el día siguiente
+ * al último evento**.
+ *
+ * Ese tercer día no es paranoia: el Excel de Movimientos se emite con la descarga,
+ * así que un camión que ingresa el día D a las 23:00 descarga el D+1 y su
+ * movimiento figura en el Excel del D+1, no del D.
  */
-function entryOperativeDays(entry: CircuitClassificationEntry): string[] {
+/** Días propios del recorrido (inicio y fin), sin el margen del D+1. */
+export function entryOwnDays(entry: CircuitClassificationEntry): string[] {
   const days = new Set<string>()
   const end = operationalDayKeyFromIso(entry.lastEventAt)
   const start = operationalDayKeyFromIso(entry.firstEventAt)
@@ -2361,17 +2436,55 @@ function entryOperativeDays(entry: CircuitClassificationEntry): string[] {
   return [...days]
 }
 
+export function entryExcelCandidateDays(entry: CircuitClassificationEntry): string[] {
+  const days = new Set<string>()
+  const end = operationalDayKeyFromIso(entry.lastEventAt)
+  const start = operationalDayKeyFromIso(entry.firstEventAt)
+  if (end) days.add(end)
+  if (start) days.add(start)
+  const next = nextDayKey(end || start)
+  if (next) days.add(next)
+  return [...days]
+}
+
+/**
+ * Días `YYYY-MM-DD` que el Excel cargado realmente cubre. Sale de las mismas
+ * claves `PLATE|día`, así no hay un campo extra de contexto que un caller pueda
+ * olvidarse de poblar y quedar desincronizado.
+ */
+export function excelCoveredDaysFromPlateDays(
+  excelPlateDays: Set<string> | null | undefined
+): Set<string> {
+  const days = new Set<string>()
+  for (const key of excelPlateDays ?? []) {
+    const day = String(key).split('|')[1]
+    if (day) days.add(day)
+  }
+  return days
+}
+
 function entryInExcelSameDay(
   entry: CircuitClassificationEntry,
-  excelPlateDays: Set<string> | null | undefined
+  excelPlateDays: Set<string> | null | undefined,
+  excelCoveredDays: Set<string>
 ): boolean | null {
   if (excelPlateDays == null) return null
   if (entryHasExcelMovementEvidence(entry)) return true
   const plate = normalizePlate(entry.normalizedPlate || entry.plate)
   if (!plate) return null
-  const days = entryOperativeDays(entry)
+  const days = entryExcelCandidateDays(entry)
   // Sin fechas operativas no se puede afirmar ausencia → no disparar G5.
   if (!days.length) return null
+  // El Excel se carga por ventana. Para afirmar que un movimiento NO existe hacen
+  // falta cargados TODOS los días donde podría estar registrado — incluido el D+1
+  // de la descarga. Si alguno falta (típico: journey del último día de la ventana,
+  // cuya descarga se registra en el Excel del día siguiente, que no está cargado),
+  // no se puede afirmar ausencia. Ausencia de evidencia no es evidencia de ausencia.
+  //
+  // La cobertura sale de los movimientos reales, así que un día sin ninguna
+  // operación en toda la planta cuenta como no cubierto y G5 se calla. Es a
+  // propósito: preferimos perder una anomalía real antes que acusar a un camión.
+  if (excelCoveredDays.size && !days.every((d) => excelCoveredDays.has(d))) return null
   return days.some((d) => excelPlateDays.has(excelPlateDayKey(plate, d)))
 }
 
@@ -2387,9 +2500,14 @@ export function stampMissingExcelAnomalies(
   const plateDays = ctx.excelPlateDays ?? null
   // Si hay Excel cargado pero aún no hay plateDays (CSV sin fechas), no disparar G5.
   if (plateDays == null) return entries
+  const coveredDays = excelCoveredDaysFromPlateDays(plateDays)
 
   return entries.map((entry) => {
     if (entry.anomalyKind === 'BEHAVIORAL') return entry
+    // Evidencia mínima: con ≤2 eventos frontales no se puede afirmar comportamiento
+    // (mismo umbral que `classifyAnomaly`). Sin este guardia G5 pisaba el veredicto
+    // DATA_COVERAGE y metía journeys de 2 tomas en el panel de anomalías.
+    if (entry.usefulEventsCount <= ANOMALY_MIN_FRONT_EVENTS) return entry
     const plate = normalizePlate(entry.normalizedPlate || entry.plate)
     if (!plate) return entry
     if (ctx.deVueltaExcludedPlates?.has(plate)) return entry
@@ -2399,14 +2517,112 @@ export function stampMissingExcelAnomalies(
 
     const hit = detectMissingExcelMovement({
       logicalCodes: sequenceLogicalCodes(entry.detectedSequence),
-      inExcelSameDay: entryInExcelSameDay(entry, plateDays),
+      inExcelSameDay: entryInExcelSameDay(entry, plateDays, coveredDays),
       circuitCode: entry.executiveCircuitCode,
     })
     if (!hit) return entry
+    // Regla de negocio: si se caló, no fue a San Lorenzo y no completó descarga, la
+    // ausencia del Excel no es una anomalía — es un camión RECHAZADO, y eso es una
+    // variación operativa. Es el mismo patrón que `reclassifyPossibleRejections`,
+    // que solo alcanzaba a los que ya venían como ANOMALIAS; estos llegan acá
+    // etiquetados COMPLETOS y se escapaban.
+    if (sequenceLooksLikePossibleRejection(entry.detectedSequence)) {
+      return reclassifyEntryAsPossibleRejection(entry)
+    }
     return {
       ...entry,
       anomalyKind: 'BEHAVIORAL',
       anomalyKindReason: hit.reason,
+    }
+  })
+}
+
+export type PelletExcelMovement = {
+  esDeVuelta: boolean
+  platform: string
+  product: string
+}
+
+/**
+ * Movimientos de pellet del Excel por `PLATE|día`, para asignarle circuito al recorrido.
+ *
+ * Se lee de Movimientos por Contrato normalizado porque es la única tabla que trae
+ * `es_de_vuelta`, que es el discriminante del circuito (`excel_operations_with_truckflow`
+ * no lo propaga). Mismo patrón que G5: se resuelve acá y funciona sobre ventanas ya
+ * guardadas, sin re-correr el ETL.
+ */
+export function buildPelletExcelMovementsFromCsv(
+  csv: string | undefined | null
+): Map<string, PelletExcelMovement> {
+  const out = new Map<string, PelletExcelMovement>()
+  if (!csv?.trim()) return out
+  const { rows } = parseCsvToRecords(csv)
+  for (const r of rows) {
+    const product = String(r.product_normalized ?? r.producto_original ?? r.resolved_product ?? '')
+    if (!isPelletExcelProduct(product)) continue
+    const plate = normalizePlate(r.plate_normalized ?? r.plate ?? r.patente ?? '')
+    if (!plate) continue
+    const flag = r.es_de_vuelta ?? r.es_de_vuelta_original ?? ''
+    const esDeVuelta =
+      typeof flag === 'boolean' ? flag
+      : normalizeDeVuelta(String(flag)).es_de_vuelta ||
+        ['true', '1', 'yes'].includes(String(flag).trim().toLowerCase())
+    const movement: PelletExcelMovement = {
+      esDeVuelta,
+      platform: String(r.platform_normalized ?? r.plataforma_original ?? ''),
+      product,
+    }
+    // El Excel se emite con la salida; registrar los dos días cubre el overnight.
+    for (const day of excelPlateDaysForMovimientoRow(r)) {
+      out.set(excelPlateDayKey(plate, day), movement)
+    }
+  }
+  return out
+}
+
+/**
+ * Asigna circuito de pellet al recorrido cruzando patente+día con Movimientos.
+ *
+ * Sin esto el pellet caía en **R8 · Recepción Mercadería Líquida**: el camión pasa por
+ * la calada líquida (es un paso de su propio recorrido) y `finalCircuitScoring` asigna
+ * R8 con solo ver `LIQUIDO` en la secuencia. Las tolvas 09–11 no tienen cámara, así que
+ * el circuito de pellet solo puede venir del Excel.
+ */
+export function stampPelletCircuitsFromExcel(
+  entries: CircuitClassificationEntry[],
+  pelletMovements: Map<string, PelletExcelMovement>
+): CircuitClassificationEntry[] {
+  if (!pelletMovements.size) return entries
+  return entries.map((entry) => {
+    const plate = normalizePlate(entry.normalizedPlate || entry.plate)
+    if (!plate) return entry
+    // Solo los días propios del recorrido. El margen del D+1 de
+    // `entryExcelCandidateDays` sirve para NEGAR un movimiento (no afirmar ausencia
+    // sin haberlo buscado en la descarga), pero usarlo para ASIGNAR circuito le
+    // pegaría el pellet a viajes del día anterior de la misma patente.
+    const movement = entryOwnDays(entry)
+      .map((day) => pelletMovements.get(excelPlateDayKey(plate, day)))
+      .find(Boolean)
+    if (!movement) return entry
+
+    const pellet = resolvePelletCircuit({
+      esDeVuelta: movement.esDeVuelta,
+      platformHint: movement.platform,
+    })
+    const label = CIRCUIT_CATALOG[pellet.assigned]?.label ?? pellet.assigned
+    return {
+      ...entry,
+      executiveCircuitCode: pellet.assigned,
+      executiveCircuitLabel: label,
+      executiveCircuitDisplay: `${pellet.assigned} · ${label}`,
+      // Prefijo EXCEL_ para que cuente como evidencia de movimiento (G5 no dispara).
+      committeeReason: `EXCEL_PELLET_${pellet.flow}:${movement.product}@${
+        pellet.celdaResolved ? movement.platform : 'CELDA_SIN_IDENTIFICAR'
+      }`,
+      executiveStatus:
+        entry.executiveStatus === 'ANOMALO' || entry.executiveStatus === 'NO_EVALUABLE' ?
+          'VALIDO'
+        : entry.executiveStatus,
     }
   })
 }
@@ -2575,6 +2791,103 @@ export function buildAnomalyReviewSummary(
   return { incompleteCount, sequenceRows, listedAnomalyCount }
 }
 
+/**
+ * Modelo único del comité: la ÚNICA partición de la que derivan torta, cross-tab
+ * por circuito, panel de anomalías, métricas y CSV de gráficos. Mientras cada
+ * superficie contaba por su cuenta (`committee_group` en la torta, reglas de oro
+ * en el cross-tab, `classifyAnomaly` en el panel, `executive_bucket` en las
+ * métricas) el mismo camión aparecía o no según dónde se clickeara.
+ *
+ * Dos decisiones que hacen que el número sea uno solo:
+ *
+ * 1. **La anomalía de comportamiento gana sobre el circuito.** Un journey con
+ *    regla de oro salía en el cross-tab bajo su R* pero seguía contado como
+ *    COMPLETO en la torta (dual visibilidad). Acá sale de completos/variaciones y
+ *    entra a `anomalias`, así «148 en R7» son parte de las anomalías generales.
+ * 2. **Sin datos = fuera del análisis.** Los journeys que no se pueden juzgar
+ *    (≤2 eventos frontales, cobertura insuficiente, secuencia incompleta sin
+ *    contradicción, o circuito sin punto instrumentado / sin secuencia) no entran
+ *    en ningún gráfico ni en ningún total. Quedan en `excludedNoData` solo para
+ *    poder informar el denominador; no son una categoría del comité.
+ */
+export type CommitteeEvaluableModel = {
+  /** Comportamiento del camión. Mismo predicado que lista el panel. */
+  anomalias: CircuitClassificationEntry[]
+  /** Comité COMPLETOS, ya netos de anomalías. */
+  completos: CircuitClassificationEntry[]
+  /** Comité VARIACIONES_OPERATIVAS, ya netos de anomalías. */
+  variaciones: CircuitClassificationEntry[]
+  /** Sin evidencia para juzgar: excluidos de todo gráfico y de todo total. */
+  excludedNoData: CircuitClassificationEntry[]
+  /** completos + variaciones + anomalias. Denominador único de la torta. */
+  evaluableTotal: number
+}
+
+export function buildCommitteeEvaluableModel(
+  entries: readonly CircuitClassificationEntry[],
+  ctx: AnomalyListContext = { excelPlates: null }
+): CommitteeEvaluableModel {
+  const anomalias: CircuitClassificationEntry[] = []
+  const completos: CircuitClassificationEntry[] = []
+  const variaciones: CircuitClassificationEntry[] = []
+  const excludedNoData: CircuitClassificationEntry[] = []
+
+  for (const entry of entries) {
+    // Evidencia mínima como precondición de ser evaluable: un journey de ≤2 tomas
+    // sin movimiento Excel no es completo ni anómalo, es un hueco de datos. Va
+    // afuera antes que nada, sin importar qué diga `committee_group` (hay 2-tomas
+    // etiquetados COMPLETOS con motivo RUTA_RIC_SAN_LORENZO_COMPLETA).
+    if (!hasMinimumEvidenceForCommittee(entry)) {
+      excludedNoData.push(entry)
+      continue
+    }
+    // El comportamiento se evalúa primero: gana sobre la categoría del circuito.
+    if (isListedAnomalyCandidate(entry, ctx)) {
+      anomalias.push(entry)
+      continue
+    }
+    const category = committeeCategoryFromEntry(entry)
+    if (category === 'completos') completos.push(entry)
+    else if (category === 'variaciones') variaciones.push(entry)
+    else excludedNoData.push(entry)
+  }
+
+  return {
+    anomalias,
+    completos,
+    variaciones,
+    excludedNoData,
+    evaluableTotal: completos.length + variaciones.length + anomalias.length,
+  }
+}
+
+/** Las 3 porciones de la torta comité, derivadas del modelo único. */
+export function committeePieSlicesFromModel(
+  model: CommitteeEvaluableModel
+): CircuitPieSliceWithTrucks[] {
+  const slices: CircuitPieSliceWithTrucks[] = [
+    {
+      name: COMMITTEE_PIE_SLICE_COMPLETOS,
+      value: model.completos.length,
+      color: '#059669',
+      trucks: model.completos,
+    },
+    {
+      name: COMMITTEE_PIE_SLICE_VARIACIONES,
+      value: model.variaciones.length,
+      color: '#0ea5e9',
+      trucks: model.variaciones,
+    },
+    {
+      name: COMMITTEE_PIE_SLICE_ANOMALIAS,
+      value: model.anomalias.length,
+      color: '#e11d48',
+      trucks: model.anomalias,
+    },
+  ]
+  return slices.filter((s) => s.value > 0)
+}
+
 export function anomalySequenceSummaryCsv(rows: AnomalySequenceBreakdownRow[]): string {
   if (!rows.length) return `${ANOMALY_SEQUENCE_CSV_HEADERS.join(',')}\n`
   const csvRows = rows.map((r) => ({
@@ -2624,7 +2937,7 @@ function emptyChartRow(recordType: string): Record<string, string | number> {
 /**
  * CSV único para gráficos de barras / torta / anomalías — mismo contenido que la UI de conciliación.
  * record_type: CIRCUITO_COMITE | CIRCUITO_COMITE_CELDA | TOTAL_VALIDOS | COMITE_RESUMEN |
- * CIRCUITO_BARRA | ANOMALIA_INCOMPLETOS | ANOMALIA_RECORRIDO | JOURNEY
+ * CIRCUITO_BARRA | EXCLUIDOS_SIN_DATOS | ANOMALIA_RECORRIDO | JOURNEY
  */
 export function committeeChartExportCsv(
   input: {
@@ -2633,6 +2946,8 @@ export function committeeChartExportCsv(
     crossTabTotals: { total: number; completos: number; variaciones: number }
     anomalyReview: AnomalyReviewSummary
     circuitBarSlices: ExecutiveCircuitBarSlice[]
+    /** Journeys sin datos, excluidos del análisis (`CommitteeEvaluableModel.excludedNoData`). */
+    excludedNoDataCount: number
   },
   options: CommitteeChartExportOptions = {}
 ): string {
@@ -2641,10 +2956,9 @@ export function committeeChartExportCsv(
   const withSample = (row: Record<string, string | number>) =>
     sampleFilter ? { ...row, sample_filter: sampleFilter } : row
   const rows: Record<string, string | number>[] = []
-  const grandTotal =
-    input.crossTabTotals.total +
-    input.anomalyReview.incompleteCount +
-    input.anomalyReview.listedAnomalyCount
+  // Denominador único: el universo evaluable del cross-tab (ya incluye anomalías).
+  // Los journeys sin datos no entran — se informan aparte como EXCLUIDOS_SIN_DATOS.
+  const grandTotal = input.crossTabTotals.total
 
   for (const r of input.crossTab) {
     rows.push({
@@ -2678,11 +2992,22 @@ export function committeeChartExportCsv(
         pct: r.pctVariaciones,
       })
     }
+    if (r.anomalias > 0) {
+      rows.push({
+        ...emptyChartRow('CIRCUITO_COMITE_CELDA'),
+        executive_circuit_code: r.code,
+        executive_circuit_label: r.label,
+        display_label: r.displayLabel,
+        committee_category: 'anomalias',
+        count: r.anomalias,
+        pct: r.pctAnomalias,
+      })
+    }
   }
 
   rows.push({
     ...emptyChartRow('TOTAL_VALIDOS'),
-    display_label: 'Total válidos (completos + variaciones)',
+    display_label: 'Total evaluable (completos + variaciones + anomalías)',
     count: input.crossTabTotals.total,
     pct_completos:
       input.crossTabTotals.total > 0 ?
@@ -2705,8 +3030,7 @@ export function committeeChartExportCsv(
   }
   pushResumen('completos', input.crossTabTotals.completos)
   pushResumen('variaciones', input.crossTabTotals.variaciones)
-  pushResumen('anomalias_listadas', input.anomalyReview.listedAnomalyCount)
-  pushResumen('anomalias_incompletos', input.anomalyReview.incompleteCount)
+  pushResumen('anomalias', input.anomalyReview.listedAnomalyCount)
 
   for (const slice of input.circuitBarSlices) {
     rows.push({
@@ -2719,15 +3043,12 @@ export function committeeChartExportCsv(
     })
   }
 
-  if (input.anomalyReview.incompleteCount > 0) {
+  // Fuera del análisis, pero informado para que el denominador sea auditable.
+  if (input.excludedNoDataCount > 0) {
     rows.push({
-      ...emptyChartRow('ANOMALIA_INCOMPLETOS'),
-      display_label: `Incompletos (<${ANOMALY_LIST_MIN_EVENTS} eventos)`,
-      count: input.anomalyReview.incompleteCount,
-      pct:
-        grandTotal > 0 ?
-          Math.round((input.anomalyReview.incompleteCount / grandTotal) * 1000) / 10
-        : 0,
+      ...emptyChartRow('EXCLUIDOS_SIN_DATOS'),
+      display_label: 'Excluidos por falta de datos (no entran en ningún total)',
+      count: input.excludedNoDataCount,
     })
   }
 
@@ -2800,12 +3121,15 @@ export function committeeChartExportCsv(
   return recordsToCsv([...COMMITTEE_CHART_EXPORT_HEADERS], stamped)
 }
 
-/** Cruce circuito ejecutivo × categoría comité — reconcilia torta vs barras. */
+/**
+ * Cross-tab circuito × categoría, derivado del modelo único: las mismas tres
+ * listas de `CommitteeEvaluableModel` agrupadas por `executiveCircuitCode`. Por
+ * construcción, la suma de la columna «Anomalías» es igual a la porción ANOMALÍAS
+ * de la torta y al total del panel — no hay forma de que difieran.
+ */
 export function buildCommitteeCircuitCrossTab(
-  entries: CircuitClassificationEntry[],
-  opts?: { excludeGoldenPlates?: Set<string> | null }
+  model: CommitteeEvaluableModel
 ): CommitteeCircuitCrossTabRow[] {
-  const excludeGolden = opts?.excludeGoldenPlates
   const byCode = new Map<
     string,
     {
@@ -2819,7 +3143,7 @@ export function buildCommitteeCircuitCrossTab(
     }
   >()
 
-  for (const entry of entries) {
+  const bucketFor = (entry: CircuitClassificationEntry) => {
     const code = entry.executiveCircuitCode || 'SIN_ASIGNAR'
     const bucket = byCode.get(code) ?? {
       completos: 0,
@@ -2830,26 +3154,26 @@ export function buildCommitteeCircuitCrossTab(
       trucksVariaciones: [],
       trucksAnomalias: [],
     }
-    const category = committeeCategoryFromEntry(entry)
-    if (category === 'completos') {
-      bucket.completos++
-      bucket.trucksCompletos.push(entry)
-    } else if (category === 'variaciones') {
-      bucket.variaciones++
-      bucket.trucksVariaciones.push(entry)
-    }
-    // Reglas de oro: se contabilizan bajo el circuito asignado (dual visibilidad).
-    const plate = normalizePlate(entry.normalizedPlate || entry.plate)
-    const skipGolden = Boolean(plate && excludeGolden?.has(plate))
-    if (
-      !skipGolden &&
-      entry.anomalyKind === 'BEHAVIORAL' &&
-      isGoldenAnomalyReason(entry.anomalyKindReason)
-    ) {
-      bucket.anomalias++
-      bucket.trucksAnomalias.push(entry)
-    }
     byCode.set(code, bucket)
+    return bucket
+  }
+
+  for (const entry of model.completos) {
+    const bucket = bucketFor(entry)
+    bucket.completos++
+    bucket.trucksCompletos.push(entry)
+  }
+  for (const entry of model.variaciones) {
+    const bucket = bucketFor(entry)
+    bucket.variaciones++
+    bucket.trucksVariaciones.push(entry)
+  }
+  // La anomalía se imputa al circuito que el journey tenía asignado: así «148 en
+  // R7» y las anomalías generales son el mismo conjunto, visto por circuito.
+  for (const entry of model.anomalias) {
+    const bucket = bucketFor(entry)
+    bucket.anomalias++
+    bucket.trucksAnomalias.push(entry)
   }
 
   const rows: CommitteeCircuitCrossTabRow[] = []
@@ -2865,8 +3189,9 @@ export function buildCommitteeCircuitCrossTab(
       trucksAnomalias: CircuitClassificationEntry[]
     }
   ) => {
-    const total = data.completos + data.variaciones
-    if (total <= 0 && data.anomalias <= 0) return
+    // El total de la fila es el universo evaluable del circuito: las anomalías
+    // salieron de completos/variaciones, no se suman aparte.
+    const total = data.completos + data.variaciones + data.anomalias
     if (total <= 0) return
     const cfg = EXECUTIVE_CIRCUIT_MATRIX[code]
     const label = cfg?.label ?? data.label ?? code

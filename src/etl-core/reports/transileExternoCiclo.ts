@@ -68,7 +68,7 @@ export function classifyTransileExternoProduct(
   const has = (needle: string) => p.includes(needle)
 
   let family: TransileExternoProductFamily = ''
-  if (has('PELLET') || has('PELLETS') || has('EXPELLER') || has('EXPELER')) family = 'PELLET'
+  if (isPelletExcelProduct(p)) family = 'PELLET'
   else if (has('SOJA') || has('SOYA')) family = 'SOJA'
   else if (has('GIRASOL')) family = 'GIRASOL'
 
@@ -91,10 +91,65 @@ export function resolvePelletCircuitFromPlatform(platform: string): string {
     .toUpperCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
-  if (/CELDA\s*0*9\b|TOLVA.*\b0*9\b|C0*9\b/.test(u)) return 'R30'
-  if (/CELDA\s*10\b|TOLVA.*\b10\b|C10\b/.test(u)) return 'R31'
-  if (/CELDA\s*11\b|TOLVA.*\b11\b|C11\b/.test(u)) return 'R32'
+  // Reconoce también SILO: el Excel escribe «CARGA SILO 11» tanto como «CELDA 11».
+  if (/CELDA\s*0*9\b|TOLVA\D*0*9\b|SILO\D*0*9\b|C0*9\b/.test(u)) return PELLET_TRANSILE_CODES[0]
+  if (/CELDA\s*10\b|TOLVA\D*10\b|SILO\D*10\b|C10\b/.test(u)) return PELLET_TRANSILE_CODES[1]
+  if (/CELDA\s*11\b|TOLVA\D*11\b|SILO\D*11\b|C11\b/.test(u)) return PELLET_TRANSILE_CODES[2]
   return ''
+}
+
+/** Pellet de la vuelta (va a San Lorenzo) — celdas 09/10/11. */
+export const PELLET_TRANSILE_CODES = ['R30', 'R31', 'R32'] as const
+/** Pellet que NO es de la vuelta: despacho a otro destino — celdas 09/10/11. */
+export const PELLET_DESPACHO_CODES = ['R13', 'R14', 'R15'] as const
+
+/** Índice de celda (0=09, 1=10, 2=11) desde la plataforma del Excel; -1 si no se puede. */
+export function resolvePelletCeldaIndexFromPlatform(platform: string): number {
+  const code = resolvePelletCircuitFromPlatform(platform)
+  return code ? PELLET_TRANSILE_CODES.indexOf(code as (typeof PELLET_TRANSILE_CODES)[number]) : -1
+}
+
+export type PelletCircuitResolution = {
+  /** 'TRANSILE_EXTERNO' (de la vuelta → San Lorenzo) o 'DESPACHO' (a otro destino). */
+  flow: 'TRANSILE_EXTERNO' | 'DESPACHO'
+  /** Los tres códigos de la familia, en orden de celda 09/10/11. */
+  candidates: readonly string[]
+  /** Con celda conocida, su código; si no, el primer candidato de la familia. */
+  assigned: string
+  /** True si la celda salió del Excel; false si se cayó al primer candidato. */
+  celdaResolved: boolean
+}
+
+/**
+ * Circuito de un movimiento de pellet.
+ *
+ * Regla de negocio (2026-07-28): el pellet **de la vuelta** es el que va a San Lorenzo,
+ * y corresponde a R30/R31/R32. El que no es de la vuelta va a otro destino y es un
+ * **despacho**: R13/R14/R15. La celda (09/10/11) elige el subcódigo dentro de la
+ * familia; si el Excel no la trae se usa el primer candidato — misma convención que ya
+ * aplica la reclasificación de transile externo cuando el subcódigo es ambiguo.
+ */
+export function resolvePelletCircuit(input: {
+  esDeVuelta: boolean
+  platformHint?: string
+}): PelletCircuitResolution {
+  const candidates = input.esDeVuelta ? PELLET_TRANSILE_CODES : PELLET_DESPACHO_CODES
+  const idx = resolvePelletCeldaIndexFromPlatform(input.platformHint ?? '')
+  return {
+    flow: input.esDeVuelta ? 'TRANSILE_EXTERNO' : 'DESPACHO',
+    candidates,
+    assigned: idx < 0 ? candidates[0] : candidates[idx]!,
+    celdaResolved: idx >= 0,
+  }
+}
+
+/** True si el producto del Excel es pellet: incluye cáscara pelleteada y expeller. */
+export function isPelletExcelProduct(product: string): boolean {
+  const p = String(product ?? '')
+    .toUpperCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+  return /PELLET|PELLETEAD|EXPELLER|EXPELER/.test(p)
 }
 
 export type TransileExternoOperation = {

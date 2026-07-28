@@ -92,6 +92,7 @@ describe('etlProductFilter', () => {
       'j2,SOJA',
       'j3,GIRASOL',
       'j4,ACEITE DE SOJA',
+      'j5,PELLETS GIRASOL',
     ].join('\n')
     const lookup = parseJourneyProductLookup(csv)!
     const entries = [
@@ -100,13 +101,19 @@ describe('etlProductFilter', () => {
       { journeyId: 'j3' },
       { journeyId: 'j4' },
       { journeyId: 'j5' },
+      { journeyId: 'j6' }, // sin producto Excel → fuera del total
     ] as Parameters<typeof buildExecutiveProductFilterPlan>[0]
     const plan = buildExecutiveProductFilterPlan(entries, lookup)
+    // "Todos" = unión de los 4 productos; j6 (sin producto) NO cuenta.
     expect(plan.counts.ALL).toBe(5)
     expect(plan.counts.SOJA).toBe(2)
     expect(plan.counts.GIRASOL).toBe(1)
     expect(plan.counts.ACEITE).toBe(1)
+    expect(plan.counts.PELLET).toBe(1)
+    // "PELLETS GIRASOL" es pellet, no girasol.
+    expect(plan.counts.SOJA + plan.counts.GIRASOL + plan.counts.ACEITE + plan.counts.PELLET).toBe(plan.counts.ALL)
     expect(filterClassificationEntriesByJourneyIds(entries, plan.journeyIdsByProduct.get('SOJA'))).toHaveLength(2)
+    expect(filterClassificationEntriesByJourneyIds(entries, plan.journeyIdsByProduct.get('ALL'))).toHaveLength(5)
   })
 
   it('ACEITE no cuenta journeys matriz R7 aunque el merge traiga producto líquido', () => {

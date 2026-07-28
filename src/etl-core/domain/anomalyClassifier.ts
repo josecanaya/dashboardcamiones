@@ -141,6 +141,12 @@ export function isBehavioralAnomaly(verdict: AnomalyVerdict): boolean {
 /**
  * Las reglas de oro (comportamiento temporal) ganan sobre NONE / DATA_COVERAGE.
  * No pisan alertas duras ya BEHAVIORAL (ruta/arranque inválido).
+ *
+ * Excepción (evidencia mínima): NO pisan `EVENTOS_INSUFICIENTES`. Con ≤2 eventos
+ * frontales no hay con qué afirmar comportamiento — una regla como G3 («faltó un
+ * hito y el lapso entre flanqueantes es extremo») se dispara sola cuando lo único
+ * que pasa es que faltan cámaras. Eso metía journeys de 2 tomas en el panel de
+ * anomalías, que es justo lo que el eje comportamiento/datos vino a separar.
  */
 export function applyGoldenAnomalyOverride(
   base: AnomalyVerdict,
@@ -151,6 +157,9 @@ export function applyGoldenAnomalyOverride(
     base.kind === 'BEHAVIORAL' &&
     (base.reason === 'RUTA_INVALIDA' || base.reason === 'ARRANQUE_INVALIDO')
   ) {
+    return base
+  }
+  if (base.kind === 'DATA_COVERAGE' && base.reason === 'EVENTOS_INSUFICIENTES') {
     return base
   }
   return { kind: 'BEHAVIORAL', reason: goldenReason }

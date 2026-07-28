@@ -3,6 +3,9 @@ import {
   buildTransileExternoReport,
   classifyTransileExternoProduct,
   detectDeVueltaHeader,
+  isPelletExcelProduct,
+  resolvePelletCeldaIndexFromPlatform,
+  resolvePelletCircuit,
 } from './transileExternoCiclo'
 import type { ExternalMovimientoContratoNormalized } from '../domain/contractMovements.types'
 
@@ -140,5 +143,52 @@ describe('buildTransileExternoReport', () => {
     expect(session.return_operations).toBe(2)
     expect(session.circuitos).toBe('R26|R27|R28')
     expect(report.operations.map((o) => o.cycle_index)).toEqual([1, 2])
+  })
+})
+
+describe('resolvePelletCircuit — de la vuelta vs despacho', () => {
+  it('de la vuelta va a San Lorenzo: R30/R31/R32 según celda', () => {
+    expect(resolvePelletCircuit({ esDeVuelta: true, platformHint: 'CELDA 09' }).assigned).toBe('R30')
+    expect(resolvePelletCircuit({ esDeVuelta: true, platformHint: 'CELDA 10' }).assigned).toBe('R31')
+    expect(resolvePelletCircuit({ esDeVuelta: true, platformHint: 'CARGA SILO 11' }).assigned).toBe('R32')
+  })
+
+  it('sin de la vuelta va a otro destino: despacho R13/R14/R15 según celda', () => {
+    expect(resolvePelletCircuit({ esDeVuelta: false, platformHint: 'CELDA 09' }).assigned).toBe('R13')
+    expect(resolvePelletCircuit({ esDeVuelta: false, platformHint: 'TOLVA 10' }).assigned).toBe('R14')
+    expect(resolvePelletCircuit({ esDeVuelta: false, platformHint: 'CARGA SILO 11' }).assigned).toBe('R15')
+  })
+
+  it('sin celda usa el primer candidato de la familia y lo marca como no resuelto', () => {
+    const despacho = resolvePelletCircuit({ esDeVuelta: false, platformHint: '' })
+    expect(despacho.assigned).toBe('R13')
+    expect(despacho.celdaResolved).toBe(false)
+    expect(despacho.candidates).toEqual(['R13', 'R14', 'R15'])
+    expect(despacho.flow).toBe('DESPACHO')
+
+    const vuelta = resolvePelletCircuit({ esDeVuelta: true })
+    expect(vuelta.assigned).toBe('R30')
+    expect(vuelta.celdaResolved).toBe(false)
+    expect(vuelta.flow).toBe('TRANSILE_EXTERNO')
+  })
+
+  it('reconoce SILO además de CELDA y TOLVA (el Excel escribe «CARGA SILO 11»)', () => {
+    expect(resolvePelletCeldaIndexFromPlatform('CARGA SILO 11')).toBe(2)
+    expect(resolvePelletCeldaIndexFromPlatform('CARGA_SILO_11')).toBe(2)
+    expect(resolvePelletCeldaIndexFromPlatform('VOLCABLE 1')).toBe(-1)
+    expect(resolvePelletCeldaIndexFromPlatform('')).toBe(-1)
+  })
+
+  it('cáscara de soja pelleteada y expeller son pellet', () => {
+    expect(isPelletExcelProduct('CASCARA DE SOJA PELLETEADA')).toBe(true)
+    expect(isPelletExcelProduct('PELLETS GIRASOL')).toBe(true)
+    expect(isPelletExcelProduct('EXPELLER DE SOJA')).toBe(true)
+    expect(isPelletExcelProduct('EXPELER GIRASOL')).toBe(true)
+    expect(isPelletExcelProduct('SOJA')).toBe(false)
+    expect(isPelletExcelProduct('GIRASOL')).toBe(false)
+  })
+
+  it('classifyTransileExternoProduct trata la cáscara pelleteada como PELLET, no SOJA', () => {
+    expect(classifyTransileExternoProduct('CASCARA DE SOJA PELLETEADA').family).toBe('PELLET')
   })
 })

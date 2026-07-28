@@ -181,6 +181,50 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
       ['S0', 'S1', 'S2', 'ESPERA', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S1', 'S2', 'S3'],
     ],
   },
+  /**
+   * Despacho de pellet desde tolvas 09–11 (R9–R16 = despacho Ricardone en la matriz KPI).
+   *
+   * Es el destino del pellet que **no** es «de la vuelta»: carga en la celda y sale a
+   * otro destino, no a San Lorenzo. El par de la vuelta es R30/R31/R32.
+   *
+   * Sin `baseSequence` a propósito: las tolvas no tienen cámara Truckflow, así que el
+   * circuito no se puede deducir de la secuencia — lo asigna el Excel de Movimientos
+   * (igual que R34). Inventarle una plantilla haría que la matriz clasifique recorridos
+   * reales contra una secuencia fabricada.
+   */
+  R13: {
+    code: 'R13',
+    label: 'Despacho Pellet (Celda 09)',
+    kind: 'despacho',
+    product: 'PELLET',
+    coveragePercent: 55,
+    hasStrongPoint: false,
+    // No se clasifica por secuencia de cámaras (las tolvas no tienen): lo asigna el Excel.
+    enabledForClassification: false,
+    aliases: ['DESPACHO_PELLET_C09'],
+  },
+  R14: {
+    code: 'R14',
+    label: 'Despacho Pellet (Celda 10)',
+    kind: 'despacho',
+    product: 'PELLET',
+    coveragePercent: 55,
+    hasStrongPoint: false,
+    // No se clasifica por secuencia de cámaras (las tolvas no tienen): lo asigna el Excel.
+    enabledForClassification: false,
+    aliases: ['DESPACHO_PELLET_C10'],
+  },
+  R15: {
+    code: 'R15',
+    label: 'Despacho Pellet (Celda 11)',
+    kind: 'despacho',
+    product: 'PELLET',
+    coveragePercent: 55,
+    hasStrongPoint: false,
+    // No se clasifica por secuencia de cámaras (las tolvas no tienen): lo asigna el Excel.
+    enabledForClassification: false,
+    aliases: ['DESPACHO_PELLET_C11'],
+  },
   R16: {
     code: 'R16',
     label: 'Despacho Mercadería Líquida',

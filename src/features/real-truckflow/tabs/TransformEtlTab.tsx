@@ -17,7 +17,11 @@ import {
   stampMissingExcelAnomalies,
   rebuildCircuitClassificationIndex,
   filterEntriesByMinTruckflowCrossings,
-  ANOMALY_LIST_MIN_EVENTS,
+  buildCommitteeEvaluableModel,
+  buildPelletExcelMovementsFromCsv,
+  committeePieSlicesFromModel,
+  isAnomalyPanelPieSlice,
+  stampPelletCircuitsFromExcel,
   CIRCUIT_PIE_COLORS,
   committeeDrilldownCsv,
   committeeChartExportCsv,
@@ -34,11 +38,15 @@ import {
   type CircuitClassificationIndex,
 } from '../etlWorkbench/etlCircuitClassificationIndex'
 import { EXECUTIVE_CIRCUIT_MATRIX } from '../etlWorkbench/finalCircuitScoring'
+import { ANOMALY_MIN_FRONT_EVENTS } from '../../../etl-core/domain/anomalyClassifier'
+import { GOLDEN_SL_RIC_MAX_MS } from '../../../etl-core/domain/goldenAnomalyRules'
+
+/** Umbral G1 en minutos, para textos de UI (única fuente: reglas de oro). */
+const GOLDEN_SL_RIC_MAX_MINUTES = Math.round(GOLDEN_SL_RIC_MAX_MS / 60000)
 import {
   applyTransileExternoCircuitOverrides,
   type TransileExternoReclasificacionRow,
 } from '../../../etl-core/reports/transileExternoReclasificacion'
-import { committeePieFromGroup } from '../etlWorkbench/committeeClassification'
 import { MovimientosBackupPanel } from '../components/MovimientosBackupPanel'
 import { ExecutiveSampleProductFilter } from '../components/ExecutiveSampleProductFilter'
 import {
@@ -265,7 +273,8 @@ function SuspiciousSlExitRicReturnTable({ rows }: { rows: SuspiciousSlExitRicRet
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-[11px] text-slate-600">
           <strong>{rows.length.toLocaleString()}</strong> casos: salida San Lorenzo (egreso o balanza salida) y vuelta a
-          Ricardone (ingreso, preingreso o calada) en <strong>≤ 30 min</strong> (misma patente; excluye pellet).
+          Ricardone (ingreso, preingreso o calada) en <strong>≤ {GOLDEN_SL_RIC_MAX_MINUTES} min</strong> (misma
+          patente; excluye pellet).
         </p>
         <button
           type="button"
@@ -427,7 +436,8 @@ function AnomalyPanel({
   onToggleSequence: (key: string | null) => void
 }) {
   const [panelTab, setPanelTab] = useState<AnomalyPanelTab>('recorrido')
-  const totalCommitteeAnomalies = summary.incompleteCount + summary.listedAnomalyCount
+  // El badge cuenta solo comportamiento: es lo que el tab efectivamente lista.
+  // Los huecos de datos van aparte, en su propia franja adentro.
   const suspiciousTotal = suspiciousDischargeRows.length + suspiciousSlRicRows.length
 
   return (
@@ -443,7 +453,7 @@ function AnomalyPanel({
           }`}
         >
           Por recorrido
-          {totalCommitteeAnomalies > 0 ? ` (${totalCommitteeAnomalies.toLocaleString()})` : ''}
+          {summary.listedAnomalyCount > 0 ? ` (${summary.listedAnomalyCount.toLocaleString()})` : ''}
         </button>
         <button
           type="button"
@@ -479,10 +489,9 @@ function AnomalySequenceBreakdownPanel({
   expandedSequenceKey: string | null
   onToggleSequence: (key: string | null) => void
 }) {
-  const { incompleteCount, sequenceRows, listedAnomalyCount } = summary
-  const totalCommitteeAnomalies = incompleteCount + listedAnomalyCount
+  const { sequenceRows, listedAnomalyCount } = summary
 
-  if (totalCommitteeAnomalies <= 0) {
+  if (listedAnomalyCount <= 0) {
     return (
       <p className="mt-3 text-xs text-slate-500">No hay anomalías en este período.</p>
     )
@@ -490,28 +499,13 @@ function AnomalySequenceBreakdownPanel({
 
   return (
     <div className="mt-3 space-y-3">
-      {incompleteCount > 0 ?
-        <div className="flex flex-wrap items-center gap-2 rounded-lg border border-amber-200 bg-amber-50/80 px-3 py-2 text-xs text-amber-950">
-          <span className="font-semibold uppercase tracking-wide text-[10px]">Incompletos</span>
-          <span className="font-mono text-lg font-bold tabular-nums">{incompleteCount.toLocaleString()}</span>
-          <span className="text-amber-900/80">
-            journeys con menos de {ANOMALY_LIST_MIN_EVENTS} eventos (Truckflow sin Excel) — no se listan por
-            recorrido.
-          </span>
-        </div>
-      : null}
-
-      {listedAnomalyCount <= 0 ?
-        <p className="text-xs text-slate-500">No hay anomalías con ≥{ANOMALY_LIST_MIN_EVENTS} eventos para desglosar.</p>
-      : <>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-[11px] text-slate-600">
               <strong>{sequenceRows.length.toLocaleString()}</strong> recorridos distintos ·{' '}
-              <strong>{listedAnomalyCount.toLocaleString()}</strong> anomalías (≥{ANOMALY_LIST_MIN_EVENTS}{' '}
-              eventos Truckflow, patente ausente del Excel; sin transile ni flota servicio)
-              {incompleteCount > 0 ?
-                <> · + {incompleteCount.toLocaleString()} incompletos</>
-              : null}
+              <strong>{listedAnomalyCount.toLocaleString()}</strong> anomalías de <strong>comportamiento</strong>{' '}
+              (ruta o arranque inválido, retroceso de secuencia, o reglas de oro G1–G5). Es el mismo total que la
+              porción ANOMALÍAS de la torta y que la columna «Anomalías» de la conciliación por circuito. Excluye
+              transile y flota servicio.
             </p>
             <button
               type="button"
@@ -568,8 +562,6 @@ function AnomalySequenceBreakdownPanel({
               </tbody>
             </table>
           </div>
-        </>
-      }
     </div>
   )
 }
@@ -760,8 +752,12 @@ export function TransformEtlTab() {
 
   const displayClassIndex = useMemo(() => {
     let baseIndex = circuitClassIndex
-    if (deferredProductFilter && deferredProductFilter !== PRODUCT_FILTER_ALL) {
-      const ids = executiveProductFilterPlan?.journeyIdsByProduct.get(deferredProductFilter) ?? new Set<string>()
+    // Filtra al universo del filtro activo, incluido "Todos" = unión de los 4 productos
+    // (el plan expone los ids de la unión bajo PRODUCT_FILTER_ALL). Así torta y barras
+    // cierran con el chip. Sin lookup de producto (plan null → ids undefined) "Todos" no
+    // filtra y muestra todo el índice.
+    const ids = executiveProductFilterPlan?.journeyIdsByProduct.get(deferredProductFilter)
+    if (ids) {
       const filteredEntries = filterClassificationEntriesByJourneyIds(circuitClassIndex.entries, ids)
       baseIndex = rebuildCircuitClassificationIndex(filteredEntries)
     }
@@ -783,27 +779,17 @@ export function TransformEtlTab() {
   const executiveProductFilterActive = deferredProductFilter !== PRODUCT_FILTER_ALL
   const productFilterIsStale = executiveProductFilter !== deferredProductFilter
 
-  const circuitClassificationPie = useMemo(() => {
-    if (displayClassIndex.pieSlices.length) {
-      return displayClassIndex.pieSlices.map((s) => {
-        if (s.name === 'COMPLETOS') return { ...s, color: committeePieFromGroup('COMPLETOS').color }
-        if (s.name === 'VARIACIONES OPERATIVAS') return { ...s, color: committeePieFromGroup('VARIACIONES_OPERATIVAS').color }
-        if (s.name === 'ANOMALÍAS' || s.name === 'ANOMALIAS') return { ...s, color: committeePieFromGroup('ANOMALIAS').color }
-        return s
-      })
-    }
-    if (!exec) return []
-    const completos = exec.committeeCompletos ?? exec.validos ?? 0
-    const variaciones = exec.committeeVariaciones ?? 0
-    const anomalias = exec.committeeAnomalias ?? exec.noEvaluables ?? 0
-    return [
-      { name: 'COMPLETOS', value: completos, color: committeePieFromGroup('COMPLETOS').color },
-      { name: 'VARIACIONES OPERATIVAS', value: variaciones, color: committeePieFromGroup('VARIACIONES_OPERATIVAS').color },
-      { name: 'ANOMALÍAS', value: anomalias, color: committeePieFromGroup('ANOMALIAS').color },
-    ].filter((d) => d.value > 0)
-  }, [displayClassIndex.pieSlices, exec])
+  /**
+   * Cobertura según Excel: cuántos recorridos del período tienen producto de los 4
+   * (soja/girasol/aceite/pellet) = total de «Todos», y cuántos quedan sin producto
+   * asignado (cobertura faltante), sobre el total de recorridos del período.
+   */
+  const productCoverage = useMemo(() => {
+    const total = circuitClassIndex.entries.length
+    const conProducto = executiveProductFilterPlan?.counts[PRODUCT_FILTER_ALL] ?? total
+    return { total, conProducto, sinCobertura: Math.max(0, total - conProducto) }
+  }, [circuitClassIndex.entries.length, executiveProductFilterPlan])
 
-  const circuitPieTotal = circuitClassificationPie.reduce((acc, d) => acc + Math.max(0, d.value), 0)
   const circuitBarData = useMemo(() => displayClassIndex.circuitBarSlices, [displayClassIndex.circuitBarSlices])
   const circuitBarTotal = circuitBarData.reduce((acc, d) => acc + d.count, 0)
   const filteredEntriesForAnomalies = useMemo(
@@ -825,21 +811,45 @@ export function TransformEtlTab() {
       tr?.tables?.transile_interno_volcable_sessions,
     ]
   )
+  /**
+   * Pellet: las tolvas 09–11 no tienen cámara, así que el circuito solo puede venir del
+   * Excel. `es_de_vuelta` decide el flujo: de la vuelta → San Lorenzo (R30/R31/R32);
+   * si no → despacho a otro destino (R13/R14/R15).
+   */
+  const pelletExcelMovements = useMemo(
+    () => buildPelletExcelMovementsFromCsv(tr?.csv?.external_movimientos_contrato_normalized),
+    [tr?.csv?.external_movimientos_contrato_normalized]
+  )
   const stampedEntries = useMemo(
-    () => stampMissingExcelAnomalies(filteredEntriesForAnomalies, anomalyListCtx),
-    [filteredEntriesForAnomalies, anomalyListCtx]
+    () =>
+      stampMissingExcelAnomalies(
+        stampPelletCircuitsFromExcel(filteredEntriesForAnomalies, pelletExcelMovements),
+        anomalyListCtx
+      ),
+    [filteredEntriesForAnomalies, anomalyListCtx, pelletExcelMovements]
+  )
+  /**
+   * FUENTE ÚNICA de esta pantalla. Torta, cross-tab por circuito, panel de
+   * anomalías, métricas del comité y CSV de gráficos derivan todos de acá, así el
+   * mismo camión no puede aparecer en un lugar y faltar en otro.
+   */
+  const committeeModel = useMemo(
+    () => buildCommitteeEvaluableModel(stampedEntries, anomalyListCtx),
+    [stampedEntries, anomalyListCtx]
   )
   const committeeCrossTab = useMemo(
-    () =>
-      buildCommitteeCircuitCrossTab(stampedEntries, {
-        excludeGoldenPlates: anomalyListCtx.deVueltaExcludedPlates,
-      }),
-    [stampedEntries, anomalyListCtx.deVueltaExcludedPlates]
+    () => buildCommitteeCircuitCrossTab(committeeModel),
+    [committeeModel]
   )
   const anomalyReview = useMemo(
     () => buildAnomalyReviewSummary(stampedEntries, anomalyListCtx),
     [stampedEntries, anomalyListCtx]
   )
+  const circuitClassificationPie = useMemo(
+    () => committeePieSlicesFromModel(committeeModel),
+    [committeeModel]
+  )
+  const circuitPieTotal = committeeModel.evaluableTotal
   const suspiciousExcludedPlates = useMemo(() => {
     const merged = new Set(collectPelletExcludedPlates(stampedEntries, anomalyListCtx))
     for (const p of anomalyListCtx.excludedRegistryPlates ?? []) merged.add(p)
@@ -863,19 +873,17 @@ export function TransformEtlTab() {
     [wb?.events, suspiciousSlRicAllowedJourneyIds, suspiciousExcludedPlates]
   )
   const suspiciousTotalCount = suspiciousDischargeRows.length + suspiciousSlRicRows.length
-  const totalAnomalies = useMemo(
-    () => anomalyReview.incompleteCount + anomalyReview.listedAnomalyCount,
-    [anomalyReview]
-  )
+  /** Único número de anomalías de la pantalla. */
+  const totalAnomalies = committeeModel.anomalias.length
   const crossTabTotals = useMemo(() => {
     return committeeCrossTab.reduce(
       (acc, row) => ({
         total: acc.total + row.total,
         completos: acc.completos + row.completos,
         variaciones: acc.variaciones + row.variaciones,
-        anomaliasOro: acc.anomaliasOro + row.anomalias,
+        anomalias: acc.anomalias + row.anomalias,
       }),
-      { total: 0, completos: 0, variaciones: 0, anomaliasOro: 0 }
+      { total: 0, completos: 0, variaciones: 0, anomalias: 0 }
     )
   }, [committeeCrossTab])
   const circuitClassificationRows = useMemo(
@@ -883,9 +891,8 @@ export function TransformEtlTab() {
       circuitClassificationPie.map((d) => ({
         ...d,
         pct: circuitPieTotal > 0 ? Math.round((d.value / circuitPieTotal) * 10000) / 100 : 0,
-        trucks: displayClassIndex.byPieSlice.get(d.name) ?? [],
       })),
-    [circuitClassificationPie, displayClassIndex.byPieSlice, circuitPieTotal]
+    [circuitClassificationPie, circuitPieTotal]
   )
 
   const downloadDevCsvs = () => {
@@ -905,6 +912,7 @@ export function TransformEtlTab() {
         crossTabTotals,
         anomalyReview,
         circuitBarSlices: displayClassIndex.circuitBarSlices,
+        excludedNoDataCount: committeeModel.excludedNoData.length,
       },
       {
         includeJourneyRows,
@@ -1014,6 +1022,27 @@ export function TransformEtlTab() {
             }}
             className="rounded-2xl border border-violet-200 bg-violet-50/50 px-4 py-3"
           />
+          {executiveProductFilterPlan ?
+            <p className="text-xs leading-relaxed text-slate-600">
+              <span className="font-semibold text-slate-700">Cobertura según Excel:</span>{' '}
+              <span className="font-semibold tabular-nums text-slate-800">
+                {productCoverage.conProducto.toLocaleString()}
+              </span>{' '}
+              recorridos con producto (soja/girasol/aceite/pellet) — es el total de{' '}
+              <strong>Todos</strong>.
+              {productCoverage.sinCobertura > 0 ?
+                <>
+                  {' '}Quedan afuera{' '}
+                  <span className="font-semibold tabular-nums text-amber-700">
+                    {productCoverage.sinCobertura.toLocaleString()}
+                  </span>{' '}
+                  recorridos <strong>sin producto Excel</strong> (cobertura faltante), de{' '}
+                  {productCoverage.total.toLocaleString()} del período.
+                </>
+              : <> Los {productCoverage.total.toLocaleString()} recorridos del período tienen producto.</>
+              }
+            </p>
+          : null}
           {deferredProductFilter === PRODUCT_FILTER_ACEITE ?
             <div className="rounded-2xl border border-sky-200 bg-sky-50/60 px-4 py-3 text-sm text-sky-950">
               <label className="flex cursor-pointer items-start gap-2">
@@ -1060,7 +1089,21 @@ export function TransformEtlTab() {
               <span className="font-semibold tabular-nums text-slate-700">
                 {circuitPieTotal.toLocaleString()}
               </span>
-              . La torta responde: <strong>¿comité COMPLETOS o ANOMALÍAS?</strong> Con Movimientos por Contrato
+              . La torta responde: <strong>¿comité COMPLETOS, VARIACIONES o ANOMALÍAS?</strong> sobre el universo{' '}
+              <strong>evaluable</strong>. Una anomalía de comportamiento gana sobre el circuito: sale de COMPLETOS y
+              cuenta como anomalía acá, en la conciliación por circuito y en el panel — siempre el mismo número.
+              {committeeModel.excludedNoData.length > 0 ?
+                <>
+                  {' '}
+                  <strong className="text-amber-700">
+                    {committeeModel.excludedNoData.length.toLocaleString()} journeys quedan fuera de todo el análisis
+                    por falta de datos
+                  </strong>{' '}
+                  (≤{ANOMALY_MIN_FRONT_EVENTS} eventos frontales, cobertura de cámaras insuficiente, secuencia
+                  incompleta sin contradicción, o circuito sin punto instrumentado / sin secuencia configurada).
+                </>
+              : null}{' '}
+              Con Movimientos por Contrato
               cargados, incluye la <strong>conciliación Excel-first</strong> (operaciones con evidencia Truckflow) y{' '}
               <strong>filas Excel aceite (OSL/PTO/ACEITE) sin match en cámaras</strong> como ancla{' '}
               <code className="text-[10px]">excel:…</code>.
@@ -1162,7 +1205,7 @@ export function TransformEtlTab() {
                           {row.value.toLocaleString()} · {row.pct.toFixed(2)}% {open ? '▾' : '▸'}
                         </span>
                       </button>
-                      {open && row.name.includes('ANOMAL') ?
+                      {open && isAnomalyPanelPieSlice(row.name) ?
                         <div className="border-t border-slate-200 bg-white px-2 py-2">
                           <AnomalyPanel
                             summary={anomalyReview}
@@ -1285,10 +1328,10 @@ export function TransformEtlTab() {
                 </button>
               </div>
               <p className="mt-1 text-xs text-slate-600">
-                Completos y variaciones por circuito R*. Las{' '}
-                <strong>reglas de oro</strong> (comportamiento) se cuentan en la columna «Anom. oro» bajo el
-                mismo circuito y también en el panel de anomalías abajo (
-                {totalAnomalies.toLocaleString()} listadas).
+                Universo evaluable por circuito R*: <strong>completos + variaciones + anomalías</strong>. Un journey
+                con anomalía de comportamiento sale de completos y se imputa a la columna «Anomalías» de su circuito,
+                así la suma de esa columna ({totalAnomalies.toLocaleString()}) es exactamente la porción ANOMALÍAS de
+                la torta y el total del panel de abajo.
               </p>
               <div className="mt-3 overflow-x-auto">
                 <table className="min-w-full text-left text-xs">
@@ -1298,7 +1341,7 @@ export function TransformEtlTab() {
                       <th className="py-2 px-2 font-semibold text-right">Total</th>
                       <th className="py-2 px-2 font-semibold text-right text-emerald-700">Completos</th>
                       <th className="py-2 px-2 font-semibold text-right text-sky-700">Variaciones</th>
-                      <th className="py-2 px-2 font-semibold text-right text-rose-700">Anom. oro</th>
+                      <th className="py-2 px-2 font-semibold text-right text-rose-700">Anomalías</th>
                       <th className="py-2 pl-2 font-semibold">Lectura</th>
                     </tr>
                   </thead>
@@ -1353,13 +1396,11 @@ export function TransformEtlTab() {
                             </td>
                             <td className="py-2 pl-2 text-slate-600">
                               {row.anomalias > 0 ?
-                                `${row.anomalias.toLocaleString()} regla(s) de oro en este circuito`
+                                `${row.anomalias.toLocaleString()} anomalía(s) de comportamiento en este circuito`
                               : row.code === 'R7' ?
                                 row.variaciones > 0 ?
                                   'Ruta Ric→SL: espera calado / posible rechazo / recalado (cámaras)'
-                                : row.pctCompletos >= 80 ?
-                                  'Ruta Ric→SL con matriz lógica OK'
-                                : 'Revisar casos incompletos en panel anomalías'
+                                : 'Ruta Ric→SL con matriz lógica OK'
                               : row.code === 'R5' || row.code === 'R6' ?
                                 row.variaciones > 0 ?
                                   'Volcable: espera calado / posible egreso / recalado (cámaras)'
@@ -1367,11 +1408,9 @@ export function TransformEtlTab() {
                               : row.code === 'RS_REC' || row.code === 'RS_DESP' ?
                                 row.pctCompletos >= 80 ?
                                   'Inferido sólido con evidencia → completos'
-                                : 'Revisar incompletos en panel anomalías'
+                                : 'Mixto — revisar variaciones'
                               : row.code === 'SIN_PUNTO' ?
-                                row.pctCompletos > 0 ?
-                                  'Parte con ingreso+egreso+4 evt → completos'
-                                : 'Sin patrón claro — ver anomalías por recorrido'
+                                'Sin punto instrumentado — variaciones por evidencia'
                               : row.variaciones > 0 ?
                                 `Incluye ${row.variaciones.toLocaleString()} variación${row.variaciones === 1 ? '' : 'es'} operativa${row.variaciones === 1 ? '' : 's'}`
                               : row.pctCompletos >= 90 ?
@@ -1394,7 +1433,7 @@ export function TransformEtlTab() {
                       )
                     })}
                     <tr className="border-t border-indigo-200 bg-indigo-50/40 font-semibold text-slate-800">
-                      <td className="py-2 pr-3">Total válidos</td>
+                      <td className="py-2 pr-3">Total evaluable</td>
                       <td className="py-2 px-2 text-right font-mono tabular-nums">{crossTabTotals.total.toLocaleString()}</td>
                       <td className="py-2 px-2 text-right font-mono tabular-nums text-emerald-700">
                         {crossTabTotals.completos.toLocaleString()}
@@ -1403,10 +1442,12 @@ export function TransformEtlTab() {
                         {crossTabTotals.variaciones.toLocaleString()}
                       </td>
                       <td className="py-2 px-2 text-right font-mono tabular-nums text-rose-700">
-                        {crossTabTotals.anomaliasOro.toLocaleString()}
+                        {crossTabTotals.anomalias.toLocaleString()}
                       </td>
                       <td className="py-2 pl-2 text-slate-600">
-                        + {totalAnomalies.toLocaleString()} en panel de anomalías
+                        {committeeModel.excludedNoData.length > 0 ?
+                          `${committeeModel.excludedNoData.length.toLocaleString()} journeys excluidos por falta de datos`
+                        : 'Sin journeys excluidos'}
                       </td>
                     </tr>
                   </tbody>
@@ -1424,9 +1465,10 @@ export function TransformEtlTab() {
                 Anomalías y sospechosos
               </h4>
               <p className="mt-1 text-xs text-slate-600">
-                <strong>Por recorrido:</strong> incompletos (&lt;3 eventos) y anomalías agrupadas por secuencia.{' '}
-                <strong>Sospechosos:</strong> vuelta a Ricardone en &lt;40 min tras salida San Lorenzo; y descarga en C16 /
-                Volcable sin balanza.
+                <strong>Por recorrido:</strong> las mismas {totalAnomalies.toLocaleString()} anomalías de la torta,
+                agrupadas por secuencia observada.{' '}
+                <strong>Sospechosos:</strong> vuelta a Ricardone en ≤{GOLDEN_SL_RIC_MAX_MINUTES} min tras salida San
+                Lorenzo; y descarga en C16 / Volcable sin balanza.
                 {executiveProductFilterActive ?
                   <>
                     {' '}
@@ -1458,9 +1500,11 @@ export function TransformEtlTab() {
               egreso → ingreso SLZ) sí se asigna y clasifica por matriz Ricardone + corroboración SL.
             </p>
             <div className="mt-3 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
-              <Metric label="Completos (comité)" value={(exec.committeeCompletos ?? 0).toLocaleString()} />
-              <Metric label="Variaciones operativas" value={(exec.committeeVariaciones ?? 0).toLocaleString()} />
-              <Metric label="Anomalías (comité)" value={(exec.committeeAnomalias ?? 0).toLocaleString()} />
+              {/* Mismo modelo único que la torta y el panel — no `exec.committee*`, que
+                  cuenta las 17 ramas de committee_group e incluye journeys sin datos. */}
+              <Metric label="Completos (comité)" value={committeeModel.completos.length.toLocaleString()} />
+              <Metric label="Variaciones operativas" value={committeeModel.variaciones.length.toLocaleString()} />
+              <Metric label="Anomalías (comité)" value={totalAnomalies.toLocaleString()} />
               <Metric label="Eventos frontales SL" value={(exec.slFrontEvents ?? 0).toLocaleString()} />
               <Metric
                 label="Journeys con corroboración SL"
@@ -1490,9 +1534,13 @@ export function TransformEtlTab() {
             <Metric label="Merges aplicados" value={(exec.journeysMergedApplied || 0).toLocaleString()} />
             <Metric label="Válidos completos" value={(exec.validComplete || exec.completos).toLocaleString()} />
             <Metric label="Válidos deducidos" value={(exec.validDeduced || exec.deducidos).toLocaleString()} />
-            <Metric label="Incompletos" value={exec.incompletos.toLocaleString()} />
-            <Metric label="Anómalos" value={exec.anomalos.toLocaleString()} />
-            <Metric label="No evaluables" value={(exec.noEvaluables || 0).toLocaleString()} />
+            {/* «Incompletos» / «Anómalos» / «No evaluables» (executive_bucket) salieron de acá:
+                eran un cuarto criterio de anomalía que contradecía a la torta y al panel. El
+                comportamiento se lee en «Anomalías (comité)»; los sin-datos, en esta métrica. */}
+            <Metric
+              label="Excluidos por falta de datos"
+              value={committeeModel.excludedNoData.length.toLocaleString()}
+            />
             <Metric label="Alertas LPR (LPR_MALFUNCTION)" value={exec.lprAlerts.toLocaleString()} />
             <Metric label="Alertas operativas" value={exec.operationalAlerts.toLocaleString()} />
             <Metric

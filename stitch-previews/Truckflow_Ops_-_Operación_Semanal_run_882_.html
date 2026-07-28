@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es-AR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&family=Space+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#f2f1ee",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-tertiary-container": "#ffc9b7",
+                        "surface-dim": "#dbdad7",
+                        "primary-fixed-dim": "#85d5c9",
+                        "secondary-fixed": "#dee4e2",
+                        "tertiary": "#6e341d",
+                        "on-surface": "#1b1c1a",
+                        "on-secondary-container": "#5f6664",
+                        "on-primary-fixed-variant": "#005049",
+                        "on-tertiary-fixed-variant": "#71361f",
+                        "surface": "#faf9f6",
+                        "surface-container-highest": "#e3e2df",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed-dim": "#c2c8c6",
+                        "primary-container": "#00685f",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#00201d",
+                        "primary-fixed": "#a1f1e5",
+                        "on-surface-variant": "#3e4947",
+                        "secondary": "#59605e",
+                        "on-secondary-fixed": "#171d1c",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e3e2df",
+                        "inverse-primary": "#85d5c9",
+                        "on-background": "#1b1c1a",
+                        "background": "#faf9f6",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#93e4d8",
+                        "surface-container": "#efeeeb",
+                        "tertiary-fixed": "#ffdbcf",
+                        "surface-tint": "#066a61",
+                        "on-secondary-fixed-variant": "#424847",
+                        "surface-container-high": "#e9e8e5",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "tertiary-container": "#8b4b32",
+                        "secondary-container": "#dee4e2",
+                        "inverse-surface": "#2f312f",
+                        "primary": "#004e47",
+                        "surface-bright": "#faf9f6",
+                        "outline-variant": "#bec9c6",
+                        "surface-container-low": "#f4f3f0",
+                        "outline": "#6e7977"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "unit": "4px",
+                        "grid-margin": "24px",
+                        "grid-gutter": "1px",
+                        "sm": "8px",
+                        "xl": "48px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Plus Jakarta Sans"],
+                        "data": ["Space Mono"],
+                        "label-caps": ["Space Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #faf9f6; }
+        .font-data { font-family: 'Space Mono', monospace; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d0cd; }
+        .cell-border { border: 1px solid #d1d0cd; }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopAppBar -->
+<header class="bg-background text-primary docked full-width top-0 border-b-4 border-primary flex justify-between items-center w-full px-6 py-4 sticky z-50">
+<div class="flex items-center gap-6">
+<span class="text-2xl font-headline font-black uppercase tracking-tighter text-primary">Truckflow Ops</span>
+<nav class="hidden md:flex gap-4">
+<span class="font-body text-sm text-primary border-b-2 border-primary cursor-pointer">Ricardone</span>
+<span class="font-body text-sm text-on-surface-variant cursor-pointer hover:bg-primary hover:text-surface px-2 transition-colors duration-100">Semana 06–12 jul 2026</span>
+<span class="font-body text-sm text-on-surface-variant cursor-pointer hover:bg-primary hover:text-surface px-2 transition-colors duration-100">run_882</span>
+</nav>
+</div>
+<button class="bg-primary text-on-primary px-4 py-2 font-headline text-sm font-bold uppercase transition-colors duration-100 hover:opacity-90">
+            Cambiar semana
+        </button>
+</header>
+<main class="flex flex-col md:flex-row min-h-[calc(100vh-76px)]">
+<!-- LEFT COLUMN (58%) -->
+<section class="w-full md:w-[58%] border-r border-outline-variant flex flex-col">
+<!-- KPI TIEMPOS Section -->
+<div class="p-md border-b border-outline-variant">
+<div class="flex justify-between items-end mb-sm">
+<div>
+<h2 class="font-label-caps text-xs text-on-surface-variant mb-1 uppercase tracking-widest">Métricas de Flujo</h2>
+<h1 class="font-headline text-headline-md font-bold text-primary">KPI TIEMPOS</h1>
+</div>
+<div class="flex gap-2">
+<select class="bg-surface-container-low border border-outline px-2 py-1 text-xs font-label-caps rounded-sm focus:ring-primary focus:border-primary">
+<option>CIRCUITO R*</option>
+</select>
+<select class="bg-surface-container-low border border-outline px-2 py-1 text-xs font-label-caps rounded-sm focus:ring-primary focus:border-primary">
+<option>PRODUCTO: SOJA</option>
+</select>
+</div>
+</div>
+<!-- Histogram Visualizer -->
+<div class="bg-surface-container-lowest cell-border p-4 mb-4">
+<div class="flex justify-between items-center mb-4">
+<span class="font-label-caps text-[10px] text-outline">DISTRIBUCIÓN PREINGRESO -> CALADA (MINUTOS)</span>
+<div class="flex gap-4">
+<div class="flex items-center gap-1"><div class="w-2 h-2 bg-primary"></div><span class="font-data text-[10px]">MEDIA: 42m</span></div>
+<div class="flex items-center gap-1"><div class="w-2 h-2 bg-error"></div><span class="font-data text-[10px]">P90: 78m</span></div>
+</div>
+</div>
+<div class="h-32 flex items-end gap-1 px-2">
+<!-- Bars Mockup -->
+<div class="flex-1 bg-surface-container-highest hover:bg-primary-fixed-dim transition-colors h-[20%]"></div>
+<div class="flex-1 bg-surface-container-highest hover:bg-primary-fixed-dim transition-colors h-[35%]"></div>
+<div class="flex-1 bg-surface-container-highest hover:bg-primary-fixed-dim transition-colors h-[60%]"></div>
+<div class="flex-1 bg-primary hover:bg-primary-fixed-dim transition-colors h-[85%]"></div>
+<div class="flex-1 bg-primary hover:bg-primary-fixed-dim transition-colors h-[95%]"></div>
+<div class="flex-1 bg-primary hover:bg-primary-fixed-dim transition-colors h-[70%]"></div>
+<div class="flex-1 bg-surface-container-highest hover:bg-primary-fixed-dim transition-colors h-[40%]"></div>
+<div class="flex-1 bg-surface-container-highest hover:bg-primary-fixed-dim transition-colors h-[25%]"></div>
+<div class="flex-1 bg-surface-container-highest hover:bg-primary-fixed-dim transition-colors h-[15%]"></div>
+<div class="flex-1 bg-error hover:bg-primary-fixed-dim transition-colors h-[8%]"></div>
+<div class="flex-1 bg-error-container hover:bg-primary-fixed-dim transition-colors h-[5%]"></div>
+</div>
+</div>
+<!-- Tramos Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high border-b border-outline-variant">
+<th class="p-2 font-label-caps text-[10px] text-on-surface-variant">TRAMO DE CONTROL</th>
+<th class="p-2 font-label-caps text-[10px] text-on-surface-variant text-right">MEDIA</th>
+<th class="p-2 font-label-caps text-[10px] text-on-surface-variant text-right">P90</th>
+<th class="p-2 font-label-caps text-[10px] text-on-surface-variant text-right">TENDENCIA</th>
+</tr>
+</thead>
+<tbody class="font-data text-xs">
+<tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="p-2 font-body text-body-sm">Ingreso -> Preingreso</td>
+<td class="p-2 text-right">14'</td>
+<td class="p-2 text-right">22'</td>
+<td class="p-2 text-right text-primary"><span class="material-symbols-outlined align-middle text-sm">trending_down</span> -2%</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="p-2 font-body text-body-sm">Preingreso -> Calada</td>
+<td class="p-2 text-right">42'</td>
+<td class="p-2 text-right">78'</td>
+<td class="p-2 text-right text-error"><span class="material-symbols-outlined align-middle text-sm">trending_up</span> +12%</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="p-2 font-body text-body-sm">Calada -> Descarga</td>
+<td class="p-2 text-right">115'</td>
+<td class="p-2 text-right">160'</td>
+<td class="p-2 text-right text-on-surface-variant">--</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- ANOMALÍAS Section -->
+<div class="flex-1 p-md flex flex-col min-h-0">
+<div class="flex justify-between items-center mb-sm">
+<h2 class="font-headline text-headline-md font-bold text-primary">ANOMALÍAS</h2>
+<div class="relative w-64">
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="w-full pl-8 pr-2 py-1 text-sm font-body bg-surface-container-low border border-outline rounded-sm focus:ring-primary focus:border-primary" placeholder="Buscar patente..." type="text"/>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar border border-outline-variant rounded-sm">
+<table class="w-full text-left border-collapse">
+<thead class="sticky top-0 bg-surface-container-high z-10">
+<tr class="border-b border-outline">
+<th class="p-2 font-label-caps text-[10px]">PATENTE</th>
+<th class="p-2 font-label-caps text-[10px]">CIRCUITO</th>
+<th class="p-2 font-label-caps text-[10px]">ANOMALÍA</th>
+<th class="p-2 font-label-caps text-[10px]">SEVERIDAD</th>
+</tr>
+</thead>
+<tbody class="font-body text-xs">
+<tr class="border-b border-outline-variant hover:bg-surface-container-high cursor-pointer">
+<td class="p-2 font-data">GZ-112-XF</td>
+<td class="p-2">R-NORMAL</td>
+<td class="p-2">Estadía prolongada en Preingreso</td>
+<td class="p-2"><span class="bg-error/10 text-error px-1.5 py-0.5 font-label-caps text-[9px] rounded-sm">ALTA</span></td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-high cursor-pointer">
+<td class="p-2 font-data">AB-990-CC</td>
+<td class="p-2">R-NORMAL</td>
+<td class="p-2">Salto de etapa: Calada</td>
+<td class="p-2"><span class="bg-error/10 text-error px-1.5 py-0.5 font-label-caps text-[9px] rounded-sm">CRÍTICA</span></td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-high cursor-pointer">
+<td class="p-2 font-data">LT-442-ZZ</td>
+<td class="p-2">R-DESVÍO</td>
+<td class="p-2">Retroceso de GPS detectado</td>
+<td class="p-2"><span class="bg-tertiary/10 text-tertiary px-1.5 py-0.5 font-label-caps text-[9px] rounded-sm">MEDIA</span></td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-high cursor-pointer">
+<td class="p-2 font-data">GH-001-QR</td>
+<td class="p-2">R-NORMAL</td>
+<td class="p-2">Tiempo de calada excedido</td>
+<td class="p-2"><span class="bg-tertiary/10 text-tertiary px-1.5 py-0.5 font-label-caps text-[9px] rounded-sm">MEDIA</span></td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-high cursor-pointer">
+<td class="p-2 font-data">ZX-552-WD</td>
+<td class="p-2">R-NORMAL</td>
+<td class="p-2">Falta registro de pesaje final</td>
+<td class="p-2"><span class="bg-error/10 text-error px-1.5 py-0.5 font-label-caps text-[9px] rounded-sm">ALTA</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- RIGHT COLUMN (42%) -->
+<aside class="w-full md:w-[42%] bg-surface flex flex-col h-[calc(100vh-76px)] overflow-hidden">
+<!-- TABS Header -->
+<div class="flex border-b border-outline-variant bg-surface-container-low">
+<button class="flex-1 py-3 font-label-caps text-xs text-primary border-b-2 border-primary bg-surface transition-all" id="tab-chat" onclick="switchTab('chat')">
+                    CHAT IA
+                </button>
+<button class="flex-1 py-3 font-label-caps text-xs text-on-surface-variant hover:bg-surface-container transition-all" id="tab-recorrido" onclick="switchTab('recorrido')">
+                    RECORRIDO
+                </button>
+</div>
+<!-- CHAT PANEL -->
+<div class="flex-1 flex flex-col min-h-0" id="panel-chat">
+<!-- Chat Messages -->
+<div class="flex-1 p-md overflow-y-auto custom-scrollbar space-y-4">
+<!-- Suggestions -->
+<div class="flex flex-wrap gap-2 mb-4">
+<button class="bg-surface-container border border-outline-variant px-3 py-1.5 rounded-full text-xs font-body hover:border-primary hover:text-primary transition-colors">¿Por qué subió el P90 en Calada?</button>
+<button class="bg-surface-container border border-outline-variant px-3 py-1.5 rounded-full text-xs font-body hover:border-primary hover:text-primary transition-colors">Resumen de anomalías críticas</button>
+<button class="bg-surface-container border border-outline-variant px-3 py-1.5 rounded-full text-xs font-body hover:border-primary hover:text-primary transition-colors">Comparar con semana anterior</button>
+</div>
+<!-- IA Response -->
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-surface text-sm">smart_toy</span>
+</div>
+<div class="space-y-3 max-w-[90%]">
+<p class="font-body text-body-sm text-on-surface">Detecté un cuello de botella en el sector de Calada. El 12% de los camiones de la corrida `run_882` superaron los 60 minutos de espera. Aquí los datos detallados:</p>
+<!-- Mini Table IA -->
+<div class="border border-outline-variant rounded-sm overflow-hidden bg-surface-container-lowest">
+<table class="w-full text-[11px] font-data">
+<tbody><tr class="bg-surface-container-high border-b border-outline-variant">
+<th class="p-1.5">PATENTE</th>
+<th class="p-1.5">CALADA (MIN)</th>
+<th class="p-1.5">ESTADO</th>
+</tr>
+<tr>
+<td class="p-1.5">GZ-112-XF</td>
+<td class="p-1.5">82</td>
+<td class="p-1.5 text-error">ALERTA</td>
+</tr>
+<tr class="border-t border-outline-variant">
+<td class="p-1.5">AB-990-CC</td>
+<td class="p-1.5">74</td>
+<td class="p-1.5 text-tertiary">WARN</td>
+</tr>
+</tbody></table>
+</div>
+<div class="flex gap-2">
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-sm font-data text-[9px]">source: kpi_calada_v2</span>
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-sm font-data text-[9px]">latency: 140ms</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Chat Composer -->
+<div class="p-md bg-surface-container-low border-t border-outline-variant">
+<div class="relative flex items-center">
+<input class="w-full pl-4 pr-12 py-3 bg-surface border border-outline rounded-lg font-body text-sm focus:ring-primary focus:border-primary" placeholder="Consultar sobre la operación..." type="text"/>
+<button class="absolute right-2 p-2 text-primary hover:bg-primary/10 rounded-full transition-colors">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</div>
+<!-- RECORRIDO PANEL (Hidden by default) -->
+<div class="hidden flex-1 flex flex-col p-md overflow-y-auto custom-scrollbar" id="panel-recorrido">
+<div class="mb-lg">
+<h3 class="font-headline text-headline-md font-bold text-primary mb-1">GZ-112-XF</h3>
+<p class="font-body text-xs text-on-surface-variant">Bitácora de viaje · Ricardone 10/07/2026</p>
+</div>
+<!-- Vertical Timeline -->
+<div class="relative pl-8 space-y-8">
+<!-- Vertical Line -->
+<div class="absolute left-[15px] top-2 bottom-2 w-0.5 bg-outline-variant"></div>
+<!-- Step 1 -->
+<div class="relative">
+<div class="absolute -left-8 w-8 h-8 rounded-full border-2 border-primary bg-surface flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-primary text-xs">location_on</span>
+</div>
+<div>
+<div class="flex justify-between items-start">
+<h4 class="font-headline text-sm font-bold">Ingreso Planta</h4>
+<span class="font-data text-xs text-on-surface-variant">08:12 AM</span>
+</div>
+<p class="font-body text-xs text-on-surface-variant mt-1">Check-in automático RFID.</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="relative">
+<div class="absolute -left-8 w-8 h-8 rounded-full border-2 border-primary bg-surface flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-primary text-xs">pending_actions</span>
+</div>
+<div>
+<div class="flex justify-between items-start">
+<h4 class="font-headline text-sm font-bold">Preingreso</h4>
+<span class="font-data text-xs text-on-surface-variant">08:26 AM</span>
+</div>
+<div class="bg-error/5 border border-error/20 p-2 mt-2 rounded-sm">
+<p class="font-body text-[11px] text-error font-bold">ANOMALÍA: Espera extendida</p>
+<p class="font-data text-[10px] text-error mt-0.5">Duración: 82m (Normal: 30m)</p>
+</div>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="relative">
+<div class="absolute -left-8 w-8 h-8 rounded-full border-2 border-outline bg-surface flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-outline text-xs">science</span>
+</div>
+<div>
+<div class="flex justify-between items-start">
+<h4 class="font-headline text-sm font-bold opacity-60">Calada</h4>
+<span class="font-data text-xs text-on-surface-variant">09:48 AM</span>
+</div>
+<p class="font-body text-xs text-on-surface-variant mt-1">Calador automático #3.</p>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="relative">
+<div class="absolute -left-8 w-8 h-8 rounded-full border-2 border-outline-variant bg-surface-container flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-outline-variant text-xs">scale</span>
+</div>
+<div>
+<div class="flex justify-between items-start">
+<h4 class="font-headline text-sm font-bold opacity-40">Descarga / Pesaje</h4>
+<span class="font-data text-xs text-outline-variant">--:--</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<script>
+        function switchTab(tab) {
+            const chatBtn = document.getElementById('tab-chat');
+            const recorridoBtn = document.getElementById('tab-recorrido');
+            const chatPanel = document.getElementById('panel-chat');
+            const recorridoPanel = document.getElementById('panel-recorrido');
+
+            if (tab === 'chat') {
+                chatBtn.classList.add('text-primary', 'border-primary', 'bg-surface');
+                chatBtn.classList.remove('text-on-surface-variant', 'bg-surface-container-low');
+                recorridoBtn.classList.add('text-on-surface-variant', 'bg-surface-container-low');
+                recorridoBtn.classList.remove('text-primary', 'border-primary', 'bg-surface');
+                chatPanel.classList.remove('hidden');
+                recorridoPanel.classList.add('hidden');
+            } else {
+                recorridoBtn.classList.add('text-primary', 'border-primary', 'bg-surface');
+                recorridoBtn.classList.remove('text-on-surface-variant', 'bg-surface-container-low');
+                chatBtn.classList.add('text-on-surface-variant', 'bg-surface-container-low');
+                chatBtn.classList.remove('text-primary', 'border-primary', 'bg-surface');
+                recorridoPanel.classList.remove('hidden');
+                chatPanel.classList.add('hidden');
+            }
+        }
+
+        // Auto-scroll chat to bottom
+        const chatContainer = document.querySelector('#panel-chat .flex-1');
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    </script>
+</body></html>

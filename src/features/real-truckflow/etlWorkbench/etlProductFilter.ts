@@ -7,6 +7,7 @@ import {
 } from './etlCircuitClassificationIndex'
 import { parseCsvToRecords } from './etlCsvParse'
 import { isAceiteExecutiveCircuitCode, isAceiteAnalysisExcludedPlant, isExcelLiquidProductName } from './slLiquidCameras'
+import { isPelletExcelProduct } from '../../../etl-core/reports/transileExternoCiclo'
 
 export type JourneyProductLookup = {
   byJourneyId: Map<string, string>
@@ -20,17 +21,19 @@ export type JourneyProductLookup = {
 export const PRODUCT_FILTER_ALL = 'ALL'
 
 /** Productos de la muestra operativa en Resumen ejecutivo (Excel-first). */
-export const EXECUTIVE_SAMPLE_PRODUCTS = ['SOJA', 'GIRASOL', 'ACEITE'] as const
+export const EXECUTIVE_SAMPLE_PRODUCTS = ['SOJA', 'GIRASOL', 'ACEITE', 'PELLET'] as const
 
 export type ExecutiveSampleProduct = (typeof EXECUTIVE_SAMPLE_PRODUCTS)[number]
 
 export const PRODUCT_FILTER_ACEITE: ExecutiveSampleProduct = 'ACEITE'
+export const PRODUCT_FILTER_PELLET: ExecutiveSampleProduct = 'PELLET'
 
 const EXECUTIVE_SAMPLE_PRODUCT_LABELS: Record<string, string> = {
   [PRODUCT_FILTER_ALL]: 'Todos',
   SOJA: 'Soja',
   GIRASOL: 'Girasol',
   ACEITE: 'Aceite',
+  PELLET: 'Pellet',
 }
 
 export function executiveSampleProductLabel(product: string): string {
@@ -61,6 +64,11 @@ export function productMatchesExecutiveSampleFilter(product: string, filter: str
   const f = String(filter ?? '').trim().toUpperCase()
   if (!f || f === PRODUCT_FILTER_ALL) return true
   if (f === 'ACEITE') return isExcelLiquidProductName(p)
+  // Pellet primero: "PELLETS GIRASOL" es pellet, no girasol. Y no alcanza con
+  // startsWith: "CASCARA DE SOJA PELLETEADA" y "EXPELLER" también son pellet, y con
+  // el prefijo quedaban sin chip (ni Pellet ni Soja) → invisibles hasta en «Todos».
+  if (f === 'PELLET') return isPelletExcelProduct(p)
+  if (isPelletExcelProduct(p)) return false
   if (f === 'GIRASOL') return p === 'GIRASOL' || p.startsWith('GIRASOL ')
   return p === f
 }
@@ -68,7 +76,9 @@ export function productMatchesExecutiveSampleFilter(product: string, filter: str
 /** Producto embebido en motivo comité tras conciliación Excel-first. */
 export function parseExcelProductFromCommitteeReason(committeeReason: string): string {
   const reason = String(committeeReason ?? '').trim()
-  const match = reason.match(/^EXCEL_(?:PLATAFORMA|CONTRATO):([^@]+)@/i)
+  // Acepta cualquier `EXCEL_<TOKEN>:<producto>@…` — se agregó EXCEL_PELLET_* y sin esto
+  // el recorrido quedaba sin producto resuelto y por lo tanto sin chip.
+  const match = reason.match(/^EXCEL_[A-Z_]+:([^@]+)@/i)
   return match?.[1]?.trim() ?? ''
 }
 
@@ -198,10 +208,9 @@ export function buildExecutiveProductFilterPlan(
   entries: CircuitClassificationEntry[],
   lookup: JourneyProductLookup | null
 ): ExecutiveProductFilterPlan {
-  const counts: Record<string, number> = {
-    [PRODUCT_FILTER_ALL]: entries.length,
-  }
+  const counts: Record<string, number> = {}
   const journeyIdsByProduct = new Map<string, Set<string>>()
+  const matchedAnyIds = new Set<string>()
   for (const sample of EXECUTIVE_SAMPLE_PRODUCTS) {
     counts[sample] = 0
     journeyIdsByProduct.set(sample, new Set())
@@ -212,15 +221,18 @@ export function buildExecutiveProductFilterPlan(
     if (!product) continue
     for (const sample of EXECUTIVE_SAMPLE_PRODUCTS) {
       if (!productMatchesExecutiveSampleFilter(product, sample)) continue
-      if (sample === 'ACEITE' && entryBelongsToAceiteExecutiveView(entry, product, lookup)) {
-        counts[sample] = (counts[sample] ?? 0) + 1
-        journeyIdsByProduct.get(sample)!.add(entry.journeyId)
-      } else if (sample !== 'ACEITE') {
-        counts[sample] = (counts[sample] ?? 0) + 1
-        journeyIdsByProduct.get(sample)!.add(entry.journeyId)
-      }
+      // Aceite tiene una vista más restrictiva (no R7/R5/R6 de matriz sólida).
+      if (sample === 'ACEITE' && !entryBelongsToAceiteExecutiveView(entry, product, lookup)) continue
+      counts[sample] = (counts[sample] ?? 0) + 1
+      journeyIdsByProduct.get(sample)!.add(entry.journeyId)
+      matchedAnyIds.add(entry.journeyId)
     }
   }
+  // "Todos" = unión de los 4 productos (Soja/Girasol/Aceite/Pellet), NO entries.length.
+  // Los productos son disjuntos, así que la unión == la suma de los chips. Los recorridos
+  // sin producto Excel resuelto quedan fuera del total (son cobertura faltante, ver UI).
+  counts[PRODUCT_FILTER_ALL] = matchedAnyIds.size
+  journeyIdsByProduct.set(PRODUCT_FILTER_ALL, matchedAnyIds)
   return { counts, journeyIdsByProduct }
 }
 

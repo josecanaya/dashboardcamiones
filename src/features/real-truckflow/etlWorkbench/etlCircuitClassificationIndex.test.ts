@@ -10,7 +10,10 @@ import {
   collectNormalizedPlatesFromCsv,
   collectTransileInternoExcludedPlates,
   collectExcelPlateDaysFromCsv,
+  excelCoveredDaysFromPlateDays,
   excelPlateDayKey,
+  hasMinimumEvidenceForCommittee,
+  nextDayKey,
   stampMissingExcelAnomalies,
   filterEntriesByMinTruckflowCrossings,
   isListedAnomalyCandidate,
@@ -20,6 +23,12 @@ import {
   reclassifyPossibleRejections,
   resolveDischargePointLabel,
   truckflowCrossingCountFromEntry,
+  isAnomalyPanelPieSlice,
+  buildCommitteeEvaluableModel,
+  buildPelletExcelMovementsFromCsv,
+  stampPelletCircuitsFromExcel,
+  committeePieSlicesFromModel,
+  COMMITTEE_PIE_SLICE_ANOMALIAS,
   type AnomalyListContext,
   type CircuitClassificationEntry,
 } from './etlCircuitClassificationIndex'
@@ -57,6 +66,211 @@ function entry(partial: Partial<CircuitClassificationEntry>): CircuitClassificat
     ...partial,
   }
 }
+
+describe('buildCommitteeEvaluableModel — fuente única del comité', () => {
+  /** Golden: journey con regla de oro que mantiene su circuito COMPLETO. */
+  const golden = entry({
+    journeyId: 'g1',
+    plate: 'GGG111',
+    normalizedPlate: 'GGG111',
+    committeeGroup: 'COMPLETOS',
+    pieSliceLabel: 'COMPLETOS',
+    executiveCircuitCode: 'R7',
+    anomalyKind: 'BEHAVIORAL',
+    anomalyKindReason: 'RIC_SL_DEMORA',
+  })
+  const completo = entry({
+    journeyId: 'c1',
+    plate: 'CCC111',
+    normalizedPlate: 'CCC111',
+    committeeGroup: 'COMPLETOS',
+    pieSliceLabel: 'COMPLETOS',
+    executiveCircuitCode: 'R7',
+    anomalyKind: 'NONE',
+  })
+  const variacion = entry({
+    journeyId: 'v1',
+    plate: 'VVV111',
+    normalizedPlate: 'VVV111',
+    committeeGroup: 'VARIACIONES_OPERATIVAS',
+    pieSliceLabel: 'VARIACIONES OPERATIVAS',
+    executiveCircuitCode: 'R5',
+    anomalyKind: 'NONE',
+  })
+  const sinDatos = entry({
+    journeyId: 'd1',
+    plate: 'DDD111',
+    normalizedPlate: 'DDD111',
+    anomalyKind: 'DATA_COVERAGE',
+    anomalyKindReason: 'EVENTOS_INSUFICIENTES',
+  })
+  const sinEvidencia = entry({
+    journeyId: 'n1',
+    plate: 'NNN111',
+    normalizedPlate: 'NNN111',
+    committeeReason: 'FALTA_EVIDENCIA_SUFICIENTE',
+    anomalyKind: 'NONE',
+  })
+  const all = [golden, completo, variacion, sinDatos, sinEvidencia]
+
+  it('la anomalía de comportamiento gana sobre el circuito: sale de completos', () => {
+    const model = buildCommitteeEvaluableModel(all, excelLoadedEmpty)
+    expect(model.anomalias.map((e) => e.journeyId)).toEqual(['g1'])
+    expect(model.completos.map((e) => e.journeyId)).toEqual(['c1'])
+    expect(model.variaciones.map((e) => e.journeyId)).toEqual(['v1'])
+  })
+
+  it('sin datos y sin evidencia quedan fuera del universo evaluable', () => {
+    const model = buildCommitteeEvaluableModel(all, excelLoadedEmpty)
+    expect(model.excludedNoData.map((e) => e.journeyId).sort()).toEqual(['d1', 'n1'])
+    expect(model.evaluableTotal).toBe(3)
+    // Ningún excluido se cuela en una categoría del comité.
+    const inCategories = [...model.completos, ...model.variaciones, ...model.anomalias]
+    expect(inCategories).toHaveLength(model.evaluableTotal)
+  })
+
+  it('torta, cross-tab y panel devuelven EL MISMO número de anomalías', () => {
+    const model = buildCommitteeEvaluableModel(all, excelLoadedEmpty)
+    const pie = committeePieSlicesFromModel(model)
+    const cross = buildCommitteeCircuitCrossTab(model)
+    const review = buildAnomalyReviewSummary(all, excelLoadedEmpty)
+
+    const pieAnomalias = pie.find((s) => s.name === COMMITTEE_PIE_SLICE_ANOMALIAS)?.value ?? 0
+    const crossAnomalias = cross.reduce((acc, r) => acc + r.anomalias, 0)
+
+    expect(pieAnomalias).toBe(model.anomalias.length)
+    expect(crossAnomalias).toBe(model.anomalias.length)
+    expect(review.listedAnomalyCount).toBe(model.anomalias.length)
+  })
+
+  it('la anomalía se imputa al circuito que tenía asignado (R7), y R7 la descuenta de completos', () => {
+    const model = buildCommitteeEvaluableModel(all, excelLoadedEmpty)
+    const r7 = buildCommitteeCircuitCrossTab(model).find((r) => r.code === 'R7')
+    expect(r7?.anomalias).toBe(1)
+    expect(r7?.completos).toBe(1)
+    expect(r7?.total).toBe(2)
+  })
+
+  it('la torta suma exactamente el universo evaluable, sin porción de sin-datos', () => {
+    const model = buildCommitteeEvaluableModel(all, excelLoadedEmpty)
+    const pie = committeePieSlicesFromModel(model)
+    expect(pie.reduce((acc, s) => acc + s.value, 0)).toBe(model.evaluableTotal)
+    expect(pie.map((s) => s.name)).toEqual([
+      'COMPLETOS',
+      'VARIACIONES OPERATIVAS',
+      COMMITTEE_PIE_SLICE_ANOMALIAS,
+    ])
+  })
+
+  it('un journey de 2 tomas no es completo ni anómalo: queda excluido', () => {
+    // Caso real: 2 tomas etiquetadas COMPLETOS con RUTA_RIC_SAN_LORENZO_COMPLETA y
+    // pisadas a BEHAVIORAL por una regla de oro.
+    const dosTomas = entry({
+      journeyId: 'x2',
+      plate: 'XXX222',
+      normalizedPlate: 'XXX222',
+      committeeGroup: 'COMPLETOS',
+      pieSliceLabel: 'COMPLETOS',
+      committeeReason: 'RUTA_RIC_SAN_LORENZO_COMPLETA',
+      detectedSequence: 'INGRESO>EGRESO',
+      usefulEventsCount: 2,
+      anomalyKind: 'BEHAVIORAL',
+      anomalyKindReason: 'SKIP_PUNTO_LAPSO_EXTREMO',
+    })
+    const model = buildCommitteeEvaluableModel([dosTomas, completo], excelLoadedEmpty)
+    expect(model.anomalias).toHaveLength(0)
+    expect(model.completos.map((e) => e.journeyId)).toEqual(['c1'])
+    expect(model.excludedNoData.map((e) => e.journeyId)).toEqual(['x2'])
+    // Y el panel coincide con el modelo (no lo lista).
+    expect(buildAnomalyReviewSummary([dosTomas, completo], excelLoadedEmpty).listedAnomalyCount).toBe(0)
+  })
+
+  it('pellet: el circuito sale del Excel, no de la calada líquida (R8)', () => {
+    // Caso real: el camión pellet pasa por LIQUIDO (es un paso de su recorrido) y
+    // finalCircuitScoring lo mandaba a R8 · Recepción Mercadería Líquida.
+    const csv =
+      'plate_normalized,product_normalized,platform_normalized,es_de_vuelta,source_date,external_salida_at\n' +
+      'DESP111,CASCARA DE SOJA PELLETEADA,,false,2026-07-21,2026-07-21T11:00:00\n' +
+      'VUEL222,PELLETS GIRASOL,CARGA SILO 11,true,2026-07-21,2026-07-21T11:00:00\n'
+    const movements = buildPelletExcelMovementsFromCsv(csv)
+    expect(movements.size).toBeGreaterThan(0)
+
+    const stamped = stampPelletCircuitsFromExcel(
+      [
+        entry({
+          journeyId: 'pellet-despacho',
+          plate: 'DESP111',
+          normalizedPlate: 'DESP111',
+          executiveCircuitCode: 'R8',
+          executiveCircuitLabel: 'Recepción Mercadería Líquida',
+          executiveStatus: 'NO_EVALUABLE',
+          detectedSequence: 'INGRESO>PREINGRESO>LIQUIDO>BALANZA_INGRESO',
+          firstEventAt: '2026-07-21T08:00:00-03:00',
+          lastEventAt: '2026-07-21T11:00:00-03:00',
+        }),
+        entry({
+          journeyId: 'pellet-vuelta',
+          plate: 'VUEL222',
+          normalizedPlate: 'VUEL222',
+          executiveCircuitCode: 'R8',
+          detectedSequence: 'INGRESO>LIQUIDO>EGRESO>SL_INGRESO>SL_EGRESO',
+          firstEventAt: '2026-07-21T08:00:00-03:00',
+          lastEventAt: '2026-07-21T11:00:00-03:00',
+        }),
+        entry({ journeyId: 'no-pellet', plate: 'OTRO999', normalizedPlate: 'OTRO999', executiveCircuitCode: 'R8' }),
+      ],
+      movements
+    )
+
+    const despacho = stamped.find((e) => e.journeyId === 'pellet-despacho')!
+    expect(despacho.executiveCircuitCode).toBe('R13')
+    expect(despacho.executiveCircuitDisplay).toContain('Despacho Pellet')
+    expect(despacho.committeeReason).toContain('EXCEL_PELLET_DESPACHO')
+    expect(despacho.committeeReason).toContain('CELDA_SIN_IDENTIFICAR')
+    expect(despacho.executiveStatus).toBe('VALIDO')
+
+    const vuelta = stamped.find((e) => e.journeyId === 'pellet-vuelta')!
+    expect(vuelta.executiveCircuitCode).toBe('R32')
+    expect(vuelta.committeeReason).toContain('EXCEL_PELLET_TRANSILE_EXTERNO')
+
+    // Un recorrido que no es pellet no se toca.
+    expect(stamped.find((e) => e.journeyId === 'no-pellet')?.executiveCircuitCode).toBe('R8')
+  })
+
+  it('pellet estampado cuenta como evidencia Excel: G5 no lo marca', () => {
+    const csv =
+      'plate_normalized,product_normalized,platform_normalized,es_de_vuelta,source_date,external_salida_at\n' +
+      'DESP111,EXPELLER DE SOJA,,false,2026-07-21,2026-07-21T11:00:00\n'
+    const pelletEntry = entry({
+      journeyId: 'pellet',
+      plate: 'DESP111',
+      normalizedPlate: 'DESP111',
+      anomalyKind: 'NONE',
+      usefulEventsCount: 5,
+      detectedSequence: 'INGRESO>PREINGRESO>LIQUIDO>VOLCABLE>EGRESO',
+      firstEventAt: '2026-07-21T08:00:00-03:00',
+      lastEventAt: '2026-07-21T11:00:00-03:00',
+    })
+    const stamped = stampMissingExcelAnomalies(
+      stampPelletCircuitsFromExcel([pelletEntry], buildPelletExcelMovementsFromCsv(csv)),
+      {
+        excelPlates: new Set(['OTRA']),
+        excelPlateDays: new Set([
+          excelPlateDayKey('OTRA', '2026-07-21'),
+          excelPlateDayKey('OTRA', '2026-07-22'),
+        ]),
+      }
+    )
+    expect(stamped[0]?.anomalyKind).toBe('NONE')
+    expect(stamped[0]?.executiveCircuitCode).toBe('R13')
+  })
+
+  it('el panel de anomalías solo abre en la porción ANOMALÍAS', () => {
+    expect(isAnomalyPanelPieSlice(COMMITTEE_PIE_SLICE_ANOMALIAS)).toBe(true)
+    expect(isAnomalyPanelPieSlice('COMPLETOS')).toBe(false)
+    expect(isAnomalyPanelPieSlice('VARIACIONES OPERATIVAS')).toBe(false)
+  })
+})
 
 describe('filterEntriesByMinTruckflowCrossings', () => {
   it('excluye event_count 0 y 1; incluye 2 y 3', () => {
@@ -114,11 +328,11 @@ describe('etlCircuitClassificationIndex anomalías', () => {
     expect(summary.sequenceRows[0]!.count).toBe(1)
   })
 
-  it('lista ≥2 capturas Truckflow aunque el comité no diga ANOMALIAS', () => {
+  it('NO lista journeys de 2 capturas: no hay evidencia para juzgar comportamiento', () => {
     const summary = buildAnomalyReviewSummary(
       [
         entry({
-          journeyId: 'ok',
+          journeyId: 'dos-tomas',
           committeeGroup: 'COMPLETOS',
           pieSliceLabel: 'COMPLETOS',
           usefulEventsCount: 2,
@@ -127,7 +341,55 @@ describe('etlCircuitClassificationIndex anomalías', () => {
       ],
       excelLoadedEmpty
     )
+    expect(summary.listedAnomalyCount).toBe(0)
+  })
+
+  it('lista ≥3 capturas Truckflow aunque el comité no diga ANOMALIAS', () => {
+    const summary = buildAnomalyReviewSummary(
+      [
+        entry({
+          journeyId: 'ok',
+          committeeGroup: 'COMPLETOS',
+          pieSliceLabel: 'COMPLETOS',
+          usefulEventsCount: 3,
+          detectedSequence: 'INGRESO>CALADA>EGRESO',
+        }),
+      ],
+      excelLoadedEmpty
+    )
     expect(summary.listedAnomalyCount).toBe(1)
+  })
+
+  it('una operación Excel-first con pocas cámaras sigue siendo evaluable (el Excel es el dato)', () => {
+    const excelOp = entry({
+      journeyId: 'excel:op1',
+      committeeGroup: 'COMPLETOS',
+      pieSliceLabel: 'COMPLETOS',
+      usefulEventsCount: 1,
+      detectedSequence: 'INGRESO',
+    })
+    expect(hasMinimumEvidenceForCommittee(excelOp)).toBe(true)
+    const model = buildCommitteeEvaluableModel([excelOp], excelLoadedEmpty)
+    expect(model.excludedNoData).toHaveLength(0)
+    expect(model.completos).toHaveLength(1)
+  })
+
+  it('pero una operación Excel-first con pocas cámaras NO puede ser anomalía de comportamiento', () => {
+    // El Excel prueba que el viaje existió; no que el camión se salteó un hito.
+    const excelOpGolden = entry({
+      journeyId: 'excel:op2',
+      committeeGroup: 'COMPLETOS',
+      pieSliceLabel: 'COMPLETOS',
+      usefulEventsCount: 2,
+      detectedSequence: 'INGRESO>EGRESO',
+      anomalyKind: 'BEHAVIORAL',
+      anomalyKindReason: 'SKIP_PUNTO_LAPSO_EXTREMO',
+    })
+    expect(hasMinimumEvidenceForCommittee(excelOpGolden)).toBe(true)
+    expect(isListedAnomalyCandidate(excelOpGolden, excelLoadedEmpty)).toBe(false)
+    const model = buildCommitteeEvaluableModel([excelOpGolden], excelLoadedEmpty)
+    expect(model.anomalias).toHaveLength(0)
+    expect(model.completos).toHaveLength(1)
   })
 
   it('excluye patente presente en Excel contractual', () => {
@@ -268,7 +530,12 @@ describe('etlCircuitClassificationIndex anomalías', () => {
       const day = '2026-07-10'
       const ctx: AnomalyListContext = {
         excelPlates: new Set(['EN_EXCEL']),
-        excelPlateDays: new Set([excelPlateDayKey('EN_EXCEL', day)]),
+        // Cobertura del día y del siguiente: el Excel se emite con la descarga, así
+        // que para afirmar ausencia hace falta también el D+1 cargado.
+        excelPlateDays: new Set([
+          excelPlateDayKey('EN_EXCEL', day),
+          excelPlateDayKey('EN_EXCEL', '2026-07-11'),
+        ]),
       }
       const stamped = stampMissingExcelAnomalies(
         [
@@ -308,6 +575,204 @@ describe('etlCircuitClassificationIndex anomalías', () => {
       expect(summary.listedAnomalyCount).toBe(1)
     })
 
+    it('sin movimiento Excel + calada sin SL sin descarga = RECHAZADO (variación operativa, no anomalía)', () => {
+      const ctx: AnomalyListContext = {
+        excelPlates: new Set(['OTRA']),
+        excelPlateDays: new Set([
+          excelPlateDayKey('OTRA', '2026-07-21'),
+          excelPlateDayKey('OTRA', '2026-07-22'),
+          excelPlateDayKey('OTRA', '2026-07-23'),
+        ]),
+      }
+      const stamped = stampMissingExcelAnomalies(
+        [
+          entry({
+            journeyId: 'rechazado',
+            plate: 'REC111',
+            normalizedPlate: 'REC111',
+            committeeGroup: 'COMPLETOS',
+            pieSliceLabel: 'COMPLETOS',
+            committeeReason: 'RUTA_RIC_SAN_LORENZO_COMPLETA',
+            executiveCircuitCode: 'R7',
+            anomalyKind: 'NONE',
+            usefulEventsCount: 4,
+            // Los 4 pasos de Ricardone y nada más: no llegó a San Lorenzo.
+            detectedSequence: 'INGRESO>PREINGRESO>CALADA>EGRESO',
+            firstEventAt: '2026-07-21T10:00:00-03:00',
+            lastEventAt: '2026-07-21T18:00:00-03:00',
+          }),
+          entry({
+            journeyId: 'descargo-sin-excel',
+            plate: 'DES222',
+            normalizedPlate: 'DES222',
+            anomalyKind: 'NONE',
+            usefulEventsCount: 5,
+            // Descargó (volcable): la ausencia del Excel acá sí es anomalía.
+            detectedSequence: 'INGRESO>PREINGRESO>CALADA>VOLCABLE>EGRESO',
+            firstEventAt: '2026-07-21T10:00:00-03:00',
+            lastEventAt: '2026-07-21T18:00:00-03:00',
+          }),
+        ],
+        ctx
+      )
+
+      const rechazado = stamped.find((e) => e.journeyId === 'rechazado')!
+      expect(rechazado.anomalyKind).toBe('NONE')
+      expect(rechazado.committeeGroup).toBe('VARIACIONES_OPERATIVAS')
+      expect(rechazado.operationalVariationType).toBe('POSIBLE_RECHAZO')
+      expect(rechazado.pieSliceLabel).toBe('VARIACIONES OPERATIVAS')
+
+      expect(stamped.find((e) => e.journeyId === 'descargo-sin-excel')?.anomalyKindReason).toBe(
+        'SIN_MOVIMIENTO_EXCEL'
+      )
+
+      // Y en el modelo el rechazado cae en variaciones, no en anomalías.
+      const model = buildCommitteeEvaluableModel(stamped, ctx)
+      expect(model.variaciones.map((e) => e.journeyId)).toContain('rechazado')
+      expect(model.anomalias.map((e) => e.journeyId)).toEqual(['descargo-sin-excel'])
+    })
+
+    it('G5 no marca al camión del último día: descarga (y Excel) caen en el día siguiente sin cargar', () => {
+      // Ingresa el 26 a las 23:00 → descarga el 27 → figura en el Excel del 27,
+      // que no está en esta ventana. No se puede afirmar ausencia.
+      const ctx: AnomalyListContext = {
+        excelPlates: new Set(['OTRA']),
+        excelPlateDays: new Set([
+          excelPlateDayKey('OTRA', '2026-07-25'),
+          excelPlateDayKey('OTRA', '2026-07-26'),
+        ]),
+      }
+      const stamped = stampMissingExcelAnomalies(
+        [
+          entry({
+            journeyId: 'ultimo-dia',
+            plate: 'NOC111',
+            normalizedPlate: 'NOC111',
+            anomalyKind: 'NONE',
+            usefulEventsCount: 5,
+            detectedSequence: 'INGRESO>PREINGRESO>CALADA>VOLCABLE>EGRESO',
+            firstEventAt: '2026-07-26T23:00:00-03:00',
+            lastEventAt: '2026-07-26T23:40:00-03:00',
+          }),
+        ],
+        ctx
+      )
+      expect(stamped[0]?.anomalyKind).toBe('NONE')
+    })
+
+    it('G5 cruza también el D+1: movimiento registrado al día siguiente cuenta como presente', () => {
+      const ctx: AnomalyListContext = {
+        excelPlates: new Set(['OVN111']),
+        excelPlateDays: new Set([
+          excelPlateDayKey('OTRA', '2026-07-22'),
+          // El movimiento del camión quedó asentado el 23 (descargó de madrugada).
+          excelPlateDayKey('OVN111', '2026-07-23'),
+        ]),
+      }
+      const stamped = stampMissingExcelAnomalies(
+        [
+          entry({
+            journeyId: 'overnight',
+            plate: 'OVN111',
+            normalizedPlate: 'OVN111',
+            anomalyKind: 'NONE',
+            usefulEventsCount: 5,
+            detectedSequence: 'INGRESO>PREINGRESO>CALADA>VOLCABLE>EGRESO',
+            firstEventAt: '2026-07-22T22:00:00-03:00',
+            lastEventAt: '2026-07-22T23:30:00-03:00',
+          }),
+        ],
+        ctx
+      )
+      expect(stamped[0]?.anomalyKind).toBe('NONE')
+    })
+
+    it('nextDayKey suma un día y tolera basura', () => {
+      expect(nextDayKey('2026-07-26')).toBe('2026-07-27')
+      expect(nextDayKey('2026-02-28')).toBe('2026-03-01')
+      expect(nextDayKey('2026-12-31')).toBe('2027-01-01')
+      expect(nextDayKey('')).toBe('')
+      expect(nextDayKey('no-fecha')).toBe('')
+    })
+
+    it('G5 no marca si el día del journey cae FUERA de la cobertura del Excel cargado', () => {
+      // Caso real GFW767: el Excel cargado cubre la ventana 20→26, pero el journey
+      // (un __cycle_2) tiene sus eventos el 27. Su ausencia del Excel no dice nada.
+      const ctx: AnomalyListContext = {
+        excelPlates: new Set(['OTRA']),
+        excelPlateDays: new Set([
+          excelPlateDayKey('OTRA', '2026-07-24'),
+          excelPlateDayKey('OTRA', '2026-07-25'),
+          excelPlateDayKey('OTRA', '2026-07-26'),
+        ]),
+      }
+      const stamped = stampMissingExcelAnomalies(
+        [
+          entry({
+            journeyId: 'fuera-de-ventana',
+            plate: 'GFW767',
+            normalizedPlate: 'GFW767',
+            anomalyKind: 'NONE',
+            usefulEventsCount: 5,
+            detectedSequence: 'INGRESO>PREINGRESO>CALADA>EGRESO',
+            firstEventAt: '2026-07-27T01:36:00-03:00',
+            lastEventAt: '2026-07-27T02:53:00-03:00',
+          }),
+          entry({
+            journeyId: 'dentro-de-ventana',
+            plate: 'ZZZ999',
+            normalizedPlate: 'ZZZ999',
+            anomalyKind: 'NONE',
+            usefulEventsCount: 5,
+            // Con descarga: no es un rechazo, así que la ausencia del Excel sí pesa.
+            detectedSequence: 'INGRESO>PREINGRESO>CALADA>VOLCABLE>EGRESO',
+            firstEventAt: '2026-07-24T10:00:00-03:00',
+            lastEventAt: '2026-07-24T18:00:00-03:00',
+          }),
+        ],
+        ctx
+      )
+      expect(stamped.find((e) => e.journeyId === 'fuera-de-ventana')?.anomalyKind).toBe('NONE')
+      // Dentro de la cobertura sí se puede afirmar la ausencia.
+      expect(stamped.find((e) => e.journeyId === 'dentro-de-ventana')?.anomalyKindReason).toBe(
+        'SIN_MOVIMIENTO_EXCEL'
+      )
+    })
+
+    it('G5 no marca journeys de ≤2 tomas (sin evidencia mínima no hay comportamiento)', () => {
+      const day = '2026-07-10'
+      const ctx: AnomalyListContext = {
+        excelPlates: new Set(['OTRA']),
+        excelPlateDays: new Set([excelPlateDayKey('OTRA', day)]),
+      }
+      const stamped = stampMissingExcelAnomalies(
+        [
+          entry({
+            journeyId: 'dos-tomas',
+            plate: 'DOS222',
+            normalizedPlate: 'DOS222',
+            anomalyKind: 'DATA_COVERAGE',
+            anomalyKindReason: 'EVENTOS_INSUFICIENTES',
+            usefulEventsCount: 2,
+            detectedSequence: 'INGRESO>EGRESO',
+            firstEventAt: `${day}T10:00:00-03:00`,
+            lastEventAt: `${day}T12:00:00-03:00`,
+          }),
+        ],
+        ctx
+      )
+      expect(stamped[0]?.anomalyKind).toBe('DATA_COVERAGE')
+      expect(stamped[0]?.anomalyKindReason).toBe('EVENTOS_INSUFICIENTES')
+    })
+
+    it('excelCoveredDaysFromPlateDays extrae los días de las claves PLATE|día', () => {
+      const days = excelCoveredDaysFromPlateDays(
+        new Set([excelPlateDayKey('A', '2026-07-20'), excelPlateDayKey('B', '2026-07-20'), excelPlateDayKey('C', '2026-07-22')])
+      )
+      expect([...days].sort()).toEqual(['2026-07-20', '2026-07-22'])
+      expect(excelCoveredDaysFromPlateDays(null).size).toBe(0)
+    })
+
     it('collectExcelPlateDaysFromCsv arma PLATE|día', () => {
       const csv =
         'plate_normalized,source_date\n' +
@@ -342,6 +807,7 @@ describe('etlCircuitClassificationIndex anomalías', () => {
           }),
         ],
         {
+          excelPlates: null,
           excelPlateDays: new Set([excelPlateDayKey('R7SOJA', '2026-07-19')]),
         }
       )
@@ -364,6 +830,7 @@ describe('etlCircuitClassificationIndex anomalías', () => {
           }),
         ],
         {
+          excelPlates: null,
           excelPlateDays: new Set([excelPlateDayKey('AB123CD', '2026-07-19')]),
         }
       )
@@ -383,7 +850,7 @@ describe('etlCircuitClassificationIndex anomalías', () => {
             lastEventAt: '',
           }),
         ],
-        { excelPlateDays: new Set([excelPlateDayKey('OTRA', '2026-07-19')]) }
+        { excelPlates: null, excelPlateDays: new Set([excelPlateDayKey('OTRA', '2026-07-19')]) }
       )
       expect(stamped[0]?.anomalyKind).toBe('NONE')
     })
@@ -427,21 +894,24 @@ describe('etlCircuitClassificationIndex anomalías', () => {
     expect(rows[1]!.count).toBe(1)
   })
 
-  it('no asigna anomalías a filas de circuito en cross-tab', () => {
-    const cross = buildCommitteeCircuitCrossTab([
-      entry({ executiveCircuitCode: 'SIN_PUNTO' }),
-      entry({
-        journeyId: 'ok',
-        committeeGroup: 'COMPLETOS',
-        pieSliceLabel: 'COMPLETOS',
-        executiveCircuitCode: 'R7',
-      }),
-    ])
-    const sinPunto = cross.find((r) => r.code === 'SIN_PUNTO')
-    expect(sinPunto).toBeUndefined()
+  it('un journey sin datos no crea fila de circuito en el cross-tab', () => {
+    const cross = buildCommitteeCircuitCrossTab(
+      buildCommitteeEvaluableModel([
+        // Sin anomaly_kind y sin Excel cargado → no evaluable, fuera de todo total.
+        entry({ executiveCircuitCode: 'SIN_PUNTO' }),
+        entry({
+          journeyId: 'ok',
+          committeeGroup: 'COMPLETOS',
+          pieSliceLabel: 'COMPLETOS',
+          executiveCircuitCode: 'R7',
+        }),
+      ])
+    )
+    expect(cross.find((r) => r.code === 'SIN_PUNTO')).toBeUndefined()
     const r7 = cross.find((r) => r.code === 'R7')
     expect(r7?.completos).toBe(1)
     expect(r7?.anomalias).toBe(0)
+    expect(r7?.total).toBe(1)
   })
 
   it('normaliza claves de secuencia', () => {
@@ -478,21 +948,25 @@ describe('etlCircuitClassificationIndex anomalías', () => {
         executiveCircuitCode: 'R7',
       }),
     ]
-    const crossTab = buildCommitteeCircuitCrossTab(entries)
+    const model = buildCommitteeEvaluableModel(entries, excelLoadedEmpty)
+    const crossTab = buildCommitteeCircuitCrossTab(model)
     const anomalyReview = buildAnomalyReviewSummary(entries, excelLoadedEmpty)
     const csv = committeeChartExportCsv({
       entries,
       crossTab,
-      crossTabTotals: { total: 2, completos: 1, variaciones: 1 },
+      crossTabTotals: { total: model.evaluableTotal, completos: 1, variaciones: 1 },
       anomalyReview,
       circuitBarSlices: [{ code: 'R7', label: 'Ric→SL', displayLabel: 'R7 · Ric→SL', count: 3 }],
+      excludedNoDataCount: model.excludedNoData.length,
     })
     expect(csv).toContain('record_type')
     expect(csv).toContain('CIRCUITO_COMITE')
     expect(csv).toContain('CIRCUITO_COMITE_CELDA')
     expect(csv).toContain('ANOMALIA_RECORRIDO')
     expect(csv).toContain('JOURNEY')
-    expect(csv).toContain('ANOMALIA_INCOMPLETOS')
+    // Los sin-datos ya no son una categoría de anomalía; se informan como excluidos.
+    expect(csv).not.toContain('ANOMALIA_INCOMPLETOS')
+    expect(csv).toContain('EXCLUIDOS_SIN_DATOS')
   })
 
   it('detecta descarga C16/Volcable sin balanza como sospechoso', () => {
@@ -563,7 +1037,7 @@ describe('promoteExcelMovimientosContrato', () => {
     })
     expect(anomalyReview.listedAnomalyCount).toBe(0)
 
-    const cross = buildCommitteeCircuitCrossTab(promoted)
+    const cross = buildCommitteeCircuitCrossTab(buildCommitteeEvaluableModel(promoted))
     const r5 = cross.find((r) => r.code === 'R5')
     expect(r5?.completos).toBe(1)
     expect(r5?.anomalias).toBe(0)
@@ -612,7 +1086,7 @@ describe('promoteExcelMovimientosContrato', () => {
     expect(row.executiveCircuitCode).toBe('R7')
     expect(row.committeeGroup).toBe('VARIACIONES_OPERATIVAS')
     expect(row.operationalVariationType).toBe('ESPERA_EN_CALADA')
-    expect(buildCommitteeCircuitCrossTab(index.entries).find((r) => r.code === 'R7')?.variaciones).toBe(1)
+    expect(buildCommitteeCircuitCrossTab(buildCommitteeEvaluableModel(index.entries)).find((r) => r.code === 'R7')?.variaciones).toBe(1)
   })
 
   it('preserva variaciones de calado por cámara al conciliar Excel-first', () => {
@@ -637,7 +1111,7 @@ describe('promoteExcelMovimientosContrato', () => {
     expect(rech.executiveCircuitCode).toBe('R5')
     expect(rech.committeeReason).toBe('POSIBLE_RECHAZO_CONTEMPLADO')
     expect(rech.committeeReason).not.toContain('EXCEL_PLATAFORMA')
-    const cross = buildCommitteeCircuitCrossTab(index.entries)
+    const cross = buildCommitteeCircuitCrossTab(buildCommitteeEvaluableModel(index.entries))
     expect(cross.find((r) => r.code === 'R7')?.variaciones).toBe(1)
     expect(cross.find((r) => r.code === 'R5')?.variaciones).toBe(1)
   })
@@ -661,7 +1135,7 @@ describe('promoteExcelMovimientosContrato', () => {
     expect(recovered.executiveCircuitCode).toBe('R7')
     const moved = index.entries.find((e) => e.journeyId === 'excel:op2')!
     expect(moved.executiveCircuitCode).toBe('R5')
-    const cross = buildCommitteeCircuitCrossTab(index.entries)
+    const cross = buildCommitteeCircuitCrossTab(buildCommitteeEvaluableModel(index.entries))
     expect(cross.find((r) => r.code === 'R7')?.total).toBe(1)
     expect(cross.find((r) => r.code === 'R5')?.total).toBe(1)
     expect(cross.find((r) => r.code === 'SIN_PUNTO')).toBeUndefined()
@@ -679,7 +1153,7 @@ describe('promoteExcelMovimientosContrato', () => {
     const index = buildCircuitClassificationIndex(debugCsv, undefined, excelCsv)
     const row = index.entries.find((e) => e.journeyId === 'excel:op1')!
     expect(row.executiveCircuitCode).toBe('R7')
-    expect(buildCommitteeCircuitCrossTab(index.entries).find((r) => r.code === 'RS_REC')).toBeUndefined()
+    expect(buildCommitteeCircuitCrossTab(buildCommitteeEvaluableModel(index.entries)).find((r) => r.code === 'RS_REC')).toBeUndefined()
   })
 
   it('gráficos ejecutivos: una entrada por operación Excel con evidencia', () => {
@@ -696,7 +1170,7 @@ describe('promoteExcelMovimientosContrato', () => {
     expect(index.entries.filter((e) => e.journeyId.startsWith('excel:'))).toHaveLength(2)
     expect(index.entries.find((e) => e.journeyId === 'j-a')).toBeUndefined()
     expect(index.excelFirstReconciledCount).toBe(2)
-    expect(buildCommitteeCircuitCrossTab(index.entries).find((r) => r.code === 'R7')?.total).toBe(2)
+    expect(buildCommitteeCircuitCrossTab(buildCommitteeEvaluableModel(index.entries)).find((r) => r.code === 'R7')?.total).toBe(2)
   })
 
   it('RS_REC con VOLCABLE en Excel pasa a R5/R6 según plataforma', () => {
@@ -712,7 +1186,7 @@ describe('promoteExcelMovimientosContrato', () => {
     const row = index.entries.find((e) => e.journeyId === 'excel:op1')!
     expect(row.executiveCircuitCode).toBe('R6')
     expect(row.committeeGroup).toBe('COMPLETOS')
-    expect(buildCommitteeCircuitCrossTab(index.entries).find((r) => r.code === 'RS_REC')).toBeUndefined()
+    expect(buildCommitteeCircuitCrossTab(buildCommitteeEvaluableModel(index.entries)).find((r) => r.code === 'RS_REC')).toBeUndefined()
   })
 
   it('anomalía NO_DIFERENCIABLE con SOJA+CELDA_16 en Excel sale de anomalías a R1', () => {

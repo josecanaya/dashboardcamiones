@@ -108,5 +108,31 @@ describe('classifyAnomaly', () => {
         applyGoldenAnomalyOverride({ kind: 'BEHAVIORAL', reason: 'RUTA_INVALIDA' }, 'RIC_SL_DEMORA')
       ).toEqual({ kind: 'BEHAVIORAL', reason: 'RUTA_INVALIDA' })
     })
+
+    it('no pisa EVENTOS_INSUFICIENTES: sin evidencia mínima no hay comportamiento', () => {
+      // G3 («faltó un hito + lapso extremo») se dispara sola cuando lo único que
+      // pasa es que faltan cámaras. Con ≤2 eventos frontales el veredicto de datos manda.
+      expect(
+        applyGoldenAnomalyOverride(
+          { kind: 'DATA_COVERAGE', reason: 'EVENTOS_INSUFICIENTES' },
+          'SKIP_PUNTO_LAPSO_EXTREMO'
+        )
+      ).toEqual({ kind: 'DATA_COVERAGE', reason: 'EVENTOS_INSUFICIENTES' })
+    })
+
+    it('sí pisa COBERTURA_INSUFICIENTE y SECUENCIA_INCOMPLETA (hay eventos para juzgar)', () => {
+      expect(
+        applyGoldenAnomalyOverride(
+          { kind: 'DATA_COVERAGE', reason: 'COBERTURA_INSUFICIENTE' },
+          'RIC_SL_DEMORA'
+        )
+      ).toEqual({ kind: 'BEHAVIORAL', reason: 'RIC_SL_DEMORA' })
+      expect(
+        applyGoldenAnomalyOverride(
+          { kind: 'DATA_COVERAGE', reason: 'SECUENCIA_INCOMPLETA' },
+          'RIC_SL_DEMORA'
+        )
+      ).toEqual({ kind: 'BEHAVIORAL', reason: 'RIC_SL_DEMORA' })
+    })
   })
 })

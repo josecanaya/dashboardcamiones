@@ -46,6 +46,10 @@ import {
   ETL_DEV_TAB_IDS,
   ETL_PRODUCT_TAB_IDS,
 } from '../config/committeeEtlLite'
+import { SL_EGRESS_RIC_RETURN_WINDOW_MS_DEFAULT } from '../services/realPlateAudit'
+
+/** Ventana SL→Ric en minutos para el texto de la tarjeta (única fuente: realPlateAudit). */
+const SL_EGRESS_RIC_RETURN_WINDOW_MINUTES = Math.round(SL_EGRESS_RIC_RETURN_WINDOW_MS_DEFAULT / 60000)
 const LiveCameraMonitorLazy = lazy(async () => {
   const m = await import('../components/realDiagnostics/LiveCameraMonitor')
   return { default: m.LiveCameraMonitor }
@@ -2636,7 +2640,9 @@ export function RealJourneyDiagnosticsView(p: RealJourneyDiagnosticsViewProps) {
                     key={`${hint.journeyUidAtExit}-${hint.journeyUidAtReturn}-${hi}`}
                     className="rounded-2xl border border-amber-300 bg-amber-50 px-5 py-4 text-sm text-amber-950"
                   >
-                    <div className="font-semibold">Anomalía: salida San Lorenzo y vuelta a Ricardone en &lt; 40 min</div>
+                    <div className="font-semibold">
+                      Anomalía: salida San Lorenzo y vuelta a Ricardone en ≤ {SL_EGRESS_RIC_RETURN_WINDOW_MINUTES} min
+                    </div>
                     <div className="mt-1 font-mono text-xs">
                       {hint.day} · Δ {(hint.deltaMs / 60000).toFixed(1)} min
                     </div>
