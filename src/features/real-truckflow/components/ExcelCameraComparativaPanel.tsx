@@ -185,7 +185,15 @@ export function ExcelCameraComparativaPanel({
             type="button"
             disabled={wb!.busyLoad}
             onClick={() =>
-              void wb!.loadLocalPeriod(diskPeriod!.startDate, diskPeriod!.endDate)
+              void (async () => {
+                const { startDate, endDate } = diskPeriod!
+                // `loadLocalPeriod` hace setTransformResult(null): borra las tablas de la
+                // ventana abierta y con eso el panel pierde el CSV de movimientos (el tablero
+                // quedaba habilitado pero vacío). Hay que re-hidratar la ventana después,
+                // igual que el botón "Cargar período" del paso 0.
+                const ok = await wb!.loadLocalPeriod(startDate, endDate)
+                if (ok) await wb!.loadWindowOrOffer(startDate, endDate)
+              })()
             }
             className="mt-2 rounded-lg bg-amber-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-800 disabled:opacity-50"
           >
