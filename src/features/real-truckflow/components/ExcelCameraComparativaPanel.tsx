@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import type { RealJourneyEventDto } from '../../../services/realJourneyEvents.types'
 import type { RealAlertDto } from '../../../services/realTruckflowApi'
-import type { EtlDiskPeriod } from '../etlWorkbench/EtlWorkbenchContext'
+import { useEtlWorkbenchOptional, type EtlDiskPeriod } from '../etlWorkbench/EtlWorkbenchContext'
 import {
   buildExcelCameraComparativaReport,
   parseMovimientosFromNormalizedCsv,
@@ -56,6 +56,7 @@ export function ExcelCameraComparativaPanel({
   manual = false,
   disabled,
 }: Props) {
+  const wb = useEtlWorkbenchOptional()
   const [circuit, setCircuit] = useState<string>('R7')
   const [missedDeviceFilter, setMissedDeviceFilter] = useState<string>('all')
   const [report, setReport] = useState<ExcelCameraComparativaReport | null>(null)
@@ -160,7 +161,39 @@ export function ExcelCameraComparativaPanel({
   }
 
   if (!events.length) {
-    return <p className="mt-2 text-sm text-amber-800">Cargá eventos Truckflow en memoria (paso 0).</p>
+    /*
+      Abrir un proceso guardado hidrata las tablas del ETL pero NO los eventos crudos, y la
+      calibración los necesita para cruzar lecturas de cámara. Antes esto era un cartel sin
+      salida ("cargá el paso 0") aunque los días del período ya estén en disco: acá se ofrece
+      cargarlos directamente para el período de la ventana abierta.
+    */
+    const canLoad = Boolean(wb && diskPeriod?.startDate && diskPeriod?.endDate)
+    return (
+      <div className="mt-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3">
+        <p className="text-sm text-amber-950">
+          La calibración cruza los movimientos de Excel contra las <strong>lecturas crudas</strong>{' '}
+          de cámara, que no vienen en el proceso guardado.
+          {canLoad ?
+            <>
+              {' '}
+              Los días de {diskPeriod!.startDate} → {diskPeriod!.endDate} están en disco.
+            </>
+          : ' Cargá un período en el paso 0.'}
+        </p>
+        {canLoad ?
+          <button
+            type="button"
+            disabled={wb!.busyLoad}
+            onClick={() =>
+              void wb!.loadLocalPeriod(diskPeriod!.startDate, diskPeriod!.endDate)
+            }
+            className="mt-2 rounded-lg bg-amber-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-800 disabled:opacity-50"
+          >
+            {wb!.busyLoad ? 'Cargando eventos…' : 'Cargar lecturas de cámara del período'}
+          </button>
+        : null}
+      </div>
+    )
   }
 
   if (manual && !effectiveReport) {

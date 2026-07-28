@@ -3,6 +3,7 @@ import { ApiJourneyCountByDayTable } from '../components/ApiJourneyCountByDayTab
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
 import { MovimientosBackupPanel } from '../components/MovimientosBackupPanel'
 import { PostTransformOptionalActions } from '../components/PostTransformOptionalActions'
+import { SavedWindowsPicker } from '../components/SavedWindowsPicker'
 import { TransformPhaseStepper } from '../components/TransformPhaseStepper'
 import { TransformRunProgress } from '../components/TransformRunProgress'
 import { TransformTramoSummary } from '../components/TransformTramoSummary'
@@ -45,6 +46,8 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
   }
 
   const s = wb.loadSummary
+  /** Proceso ya guardado que coincide exactamente con el período elegido, si existe. */
+  const savedForPeriod = wb.savedWindows.find((w) => w.from === periodStart && w.to === periodEnd)
   const dataReady = wb.events.length > 0 || wb.alerts.length > 0
   const transformDisabled = wb.busyLoad || wb.transformBusy || !dataReady
 
@@ -74,46 +77,16 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
           : <span className="text-[11px] text-slate-500">Pendiente: cargar período</span>}
         </div>
 
-        {wb.savedWindows.length ?
-          <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50/60 px-4 py-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[11px] font-bold uppercase tracking-wide text-emerald-900">
-                Procesos guardados
-              </span>
-              <span className="text-[11px] text-emerald-800">
-                (fuente de la verdad · clic = ver sin reprocesar)
-              </span>
-            </div>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {wb.savedWindows.map((w) => {
-                const active = wb.cachedWindow?.runId === w.runId
-                return (
-                  <button
-                    key={w.runId}
-                    type="button"
-                    disabled={wb.busyLoad || wb.transformBusy}
-                    onClick={() => {
-                      setPeriodStart(w.from)
-                      setPeriodEnd(w.to)
-                      void wb.hydrateSavedWindow(w)
-                    }}
-                    title={`run ${w.runId} · ${w.createdAt.slice(0, 10)}${w.stale ? ' · reglas viejas' : ''}`}
-                    className={`rounded-lg border px-3 py-1.5 text-xs font-semibold disabled:opacity-50 ${
-                      active ?
-                        'border-emerald-500 bg-emerald-600 text-white'
-                      : w.stale ?
-                        'border-amber-300 bg-amber-50 text-amber-950 hover:bg-amber-100'
-                      : 'border-emerald-300 bg-white text-emerald-900 hover:bg-emerald-100'
-                    }`}
-                  >
-                    {w.from} → {w.to}
-                    {w.stale ? ' ⚠' : ''}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        : null}
+        <SavedWindowsPicker
+          windows={wb.savedWindows}
+          activeRunId={wb.cachedWindow?.runId ?? null}
+          disabled={wb.busyLoad || wb.transformBusy}
+          onPick={(w) => {
+            setPeriodStart(w.from)
+            setPeriodEnd(w.to)
+            void wb.hydrateSavedWindow(w)
+          }}
+        />
 
         <div className="mt-4 flex flex-wrap gap-2">
           <button
@@ -247,7 +220,44 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
         : null}
       </article>
 
-      {wb.cachedWindow ?
+      {/*
+        Sin proceso guardado para el período elegido: hay que ofrecer explícitamente
+        "Procesar y guardar". Antes el único botón que persiste ("Recalcular") aparecía sólo
+        cuando `cachedWindow` existía, así que una ventana nueva no tenía forma de guardarse:
+        "Procesar todo" (pasos 1–3) corre en el navegador y NO escribe en runs/windows.
+
+        Se compara contra `savedWindows` y NO contra `cachedWindow`: ese último conserva la
+        última ventana abierta y no se limpia al cambiar las fechas, así que con él el aviso
+        no aparecía nunca después de haber abierto cualquier proceso.
+      */}
+      {!savedForPeriod && periodStart && periodEnd ?
+        <div className="rounded-2xl border border-sky-300 bg-sky-50 px-4 py-3 text-sm text-sky-950">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span>
+              <strong>Sin proceso guardado</strong> para {periodStart} → {periodEnd}. Los pasos 1–3
+              procesan en el navegador y <strong>no se guardan</strong>: para que quede
+              preguardado y se pueda reabrir sin reprocesar, usá este botón.
+            </span>
+            <button
+              type="button"
+              disabled={wb.transformBusy || wb.busyLoad}
+              className="rounded-lg bg-sky-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-sky-800 disabled:opacity-50"
+              onClick={() => void wb.recomputeWindow(periodStart, periodEnd)}
+            >
+              {wb.transformBusy ? 'Procesando y guardando…' : 'Procesar y guardar'}
+            </button>
+          </div>
+        </div>
+      : null}
+
+      {/*
+        Solo si el caché corresponde al período elegido: `cachedWindow` conserva la última
+        ventana abierta, y mostrarlo con otras fechas seleccionadas contradecía al aviso de
+        arriba ("sin proceso guardado" junto a "resultado en caché" de otra semana).
+      */}
+      {wb.cachedWindow &&
+      wb.cachedWindow.from === periodStart &&
+      wb.cachedWindow.to === periodEnd ?
         <div
           className={`rounded-2xl border px-4 py-3 text-sm ${
             wb.cachedWindow.stale ?
