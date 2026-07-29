@@ -106,6 +106,8 @@ type Ctx = {
   kpiTiemposBusy: boolean
   kpiTiemposError: string | null
   kpiTiemposBuilt: boolean
+  /** Hay insumo en memoria para (re)calcular KPI de tiempos. False en corridas guardadas. */
+  kpiTiemposPrepared: boolean
   runKpiTiempos: () => Promise<boolean>
   mergeWindowHours: number
   setMergeWindowHours: (h: number) => void
@@ -223,6 +225,15 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
   const [kpiTiemposError, setKpiTiemposError] = useState<string | null>(null)
   const [kpiTiemposBuilt, setKpiTiemposBuilt] = useState(false)
   const kpiTiemposPreparedRef = useRef<KpiTiemposBuildInput | null>(null)
+  /**
+   * ¿Hay insumo en memoria para (re)calcular KPI de tiempos?
+   *
+   * Solo lo produce `runTransform`. Una corrida guardada hidrata tablas y stats pero
+   * NO el insumo (los journeys reconstruidos con sus eventos no se persisten), así que
+   * sin esta bandera el botón «Procesar KPI» quedaba habilitado y fallaba siempre.
+   * Va en estado y no solo en el ref porque la UI necesita re-renderizar con el cambio.
+   */
+  const [kpiTiemposPrepared, setKpiTiemposPrepared] = useState(false)
   const transformPhaseStoreRef = useRef<EtlTransformPhaseStore>(createTransformPhaseSession())
   const [transformTramoStatus, setTransformTramoStatus] = useState<
     Record<TransformTramoId, TransformTramoStatus>
@@ -241,6 +252,7 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
 
   const resetKpiTiemposState = useCallback(() => {
     kpiTiemposPreparedRef.current = null
+    setKpiTiemposPrepared(false)
     setKpiTiemposBuilt(false)
     setKpiTiemposError(null)
   }, [])
@@ -534,6 +546,7 @@ function buildApiJourneyStatsFromParsedFiles(
 
   const commitTransformOutput = useCallback((out: EtlTransformOutput) => {
     kpiTiemposPreparedRef.current = out.kpiTiemposPrepared ?? null
+    setKpiTiemposPrepared(Boolean(out.kpiTiemposPrepared?.classifiedJourneys?.length))
     setKpiTiemposBuilt(false)
     setKpiTiemposError(null)
     const { kpiTiemposPrepared: _drop, ...publicOut } = out
@@ -627,7 +640,11 @@ function buildApiJourneyStatsFromParsedFiles(
     }
     const prepared = kpiTiemposPreparedRef.current
     if (!prepared?.classifiedJourneys?.length) {
-      setKpiTiemposError('No hay datos preparados. Volvé a ejecutar Transform.')
+      setKpiTiemposError(
+        'Esta vista viene de una corrida guardada: trae los KPI ya calculados, pero no el ' +
+          'insumo para recalcularlos (los recorridos reconstruidos no se persisten). Para ' +
+          'recalcular, cargá el período en «Análisis local» y corré Transform.'
+      )
       return false
     }
     setKpiTiemposBusy(true)
@@ -816,6 +833,10 @@ function buildApiJourneyStatsFromParsedFiles(
         startTransition(() => {
           setTransformResult(out)
         })
+        // La corrida guardada trae las tablas de KPI ya materializadas, pero no el
+        // insumo en memoria para recalcularlas: hay que dejarlo explícito para que la
+        // UI no ofrezca «Procesar KPI» sabiendo que va a fallar.
+        resetKpiTiemposState()
         setTransformTramoCompleted(3)
         setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
       } catch (e) {
@@ -874,6 +895,7 @@ function buildApiJourneyStatsFromParsedFiles(
       kpiTiemposBusy,
       kpiTiemposError,
       kpiTiemposBuilt,
+      kpiTiemposPrepared,
       runKpiTiempos,
       mergeWindowHours,
       setMergeWindowHours,
@@ -920,6 +942,7 @@ function buildApiJourneyStatsFromParsedFiles(
       kpiTiemposBusy,
       kpiTiemposError,
       kpiTiemposBuilt,
+      kpiTiemposPrepared,
       runKpiTiempos,
       mergeWindowHours,
       movimientosContratoFiles,

@@ -33,7 +33,7 @@ export const TRANSILE_EXTERNO_ROUTE_STEPS = [
   'EGRESO_SLZ',
 ] as const
 
-export type TransileExternoProductFamily = 'PELLET' | 'SOJA' | 'GIRASOL' | ''
+export type TransileExternoProductFamily = 'PELLET' | 'SOJA' | 'GIRASOL' | 'ACEITE' | ''
 
 /** Familia de producto → códigos de circuito logístico externo candidatos. */
 export const TRANSILE_EXTERNO_CIRCUIT_FAMILIES: Record<
@@ -43,7 +43,15 @@ export const TRANSILE_EXTERNO_CIRCUIT_FAMILIES: Record<
   PELLET: ['R30', 'R31', 'R32'],
   SOJA: ['R26'],
   GIRASOL: ['R27', 'R28'],
+  ACEITE: ['R34'],
 }
+
+/**
+ * Productos que el análisis trabaja. Un movimiento «de la vuelta» de otro producto
+ * (PRODUCTOS VARIOS, MAIZ, leña, residuos…) **no** es transile externo para el comité:
+ * no tiene circuito logístico mapeado y ensuciaba el reporte con operaciones sin familia.
+ */
+export const ANALYZED_PRODUCT_FAMILIES = ['SOJA', 'GIRASOL', 'PELLET', 'ACEITE'] as const
 
 export type TransileExternoProductClassification = {
   family: TransileExternoProductFamily
@@ -68,7 +76,10 @@ export function classifyTransileExternoProduct(
   const has = (needle: string) => p.includes(needle)
 
   let family: TransileExternoProductFamily = ''
+  // Orden importante: PELLET gana («PELLET DE SOJA» es pellet) y ACEITE va antes que
+  // SOJA/GIRASOL («ACEITE DE SOJA» es aceite, no soja).
   if (isPelletExcelProduct(p)) family = 'PELLET'
+  else if (/\bACEITE|^AC\s/.test(p)) family = 'ACEITE'
   else if (has('SOJA') || has('SOYA')) family = 'SOJA'
   else if (has('GIRASOL')) family = 'GIRASOL'
 
@@ -186,6 +197,8 @@ export type TransileExternoSummary = {
   operaciones_pellet: number
   operaciones_soja: number
   operaciones_girasol: number
+  operaciones_aceite: number
+  /** «De la vuelta» descartados por no ser soja/girasol/pellet/aceite. */
   operaciones_sin_familia: number
   /** Diagnóstico: header del Excel mapeado a "es de vuelta", o '' si no se detectó. */
   columna_detectada: string
@@ -239,9 +252,20 @@ export function buildTransileExternoReport(input: {
   detectedHeaders?: string[]
 }): TransileExternoReport {
   const deVuelta = input.movimientos.filter((m) => m.es_de_vuelta)
+  // Solo los 4 productos que trabaja el análisis. Un «de la vuelta» de PRODUCTOS
+  // VARIOS / MAIZ / residuos no tiene circuito logístico y no es transile externo.
+  const familiaDe = (m: ExternalMovimientoContratoNormalized) =>
+    classifyTransileExternoProduct(
+      m.product_normalized || m.producto_original,
+      m.platform_normalized || m.plataforma_original
+    ).family
+  const analizables = deVuelta.filter((m) =>
+    (ANALYZED_PRODUCT_FAMILIES as readonly string[]).includes(familiaDe(m))
+  )
+  const descartadosSinProducto = deVuelta.length - analizables.length
 
   const byPlate = new Map<string, ExternalMovimientoContratoNormalized[]>()
-  for (const m of deVuelta) {
+  for (const m of analizables) {
     const plate = normalizePlate(m.plate_normalized || m.patente_original) ?? ''
     if (!plate) continue
     const arr = byPlate.get(plate) ?? []
@@ -258,7 +282,9 @@ export function buildTransileExternoReport(input: {
     operaciones_pellet: 0,
     operaciones_soja: 0,
     operaciones_girasol: 0,
-    operaciones_sin_familia: 0,
+    operaciones_aceite: 0,
+    // Movimientos «de la vuelta» descartados por no ser uno de los 4 productos.
+    operaciones_sin_familia: descartadosSinProducto,
     columna_detectada: detectDeVueltaHeader(input.detectedHeaders),
     headers_muestra: (input.detectedHeaders ?? []).join(' | '),
   }
@@ -283,7 +309,7 @@ export function buildTransileExternoReport(input: {
       if (cls.family === 'PELLET') summary.operaciones_pellet++
       else if (cls.family === 'SOJA') summary.operaciones_soja++
       else if (cls.family === 'GIRASOL') summary.operaciones_girasol++
-      else summary.operaciones_sin_familia++
+      else if (cls.family === 'ACEITE') summary.operaciones_aceite++
 
       if (m.product_normalized) productos.add(m.product_normalized)
       if (cls.family) familias.add(cls.family)
@@ -433,6 +459,7 @@ export function formatTransileExternoLog(summary: TransileExternoSummary): strin
     `pellet=${summary.operaciones_pellet}`,
     `soja=${summary.operaciones_soja}`,
     `girasol=${summary.operaciones_girasol}`,
-    `sin_familia=${summary.operaciones_sin_familia}`,
+    `aceite=${summary.operaciones_aceite}`,
+    `descartados_otro_producto=${summary.operaciones_sin_familia}`,
   ].join(' · ')
 }

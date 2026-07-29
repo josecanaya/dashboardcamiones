@@ -94,14 +94,14 @@ export function TransileExternoCicloPanel({
           <dd className="font-bold tabular-nums">{summary.patentes_con_vuelta ?? '—'}</dd>
         </div>
         <div className="rounded-lg border border-amber-200 bg-amber-50/80 px-3 py-2">
-          <dt className="text-xs text-amber-800">Pellet / Soja / Girasol</dt>
+          <dt className="text-xs text-amber-800">Pellet / Soja / Girasol / Aceite</dt>
           <dd className="font-bold tabular-nums">
             {summary.operaciones_pellet ?? '—'} / {summary.operaciones_soja ?? '—'} /{' '}
-            {summary.operaciones_girasol ?? '—'}
+            {summary.operaciones_girasol ?? '—'} / {summary.operaciones_aceite ?? '—'}
           </dd>
         </div>
         <div className="rounded-lg border border-amber-200 bg-amber-50/80 px-3 py-2">
-          <dt className="text-xs text-amber-800">Sin familia</dt>
+          <dt className="text-xs text-amber-800">Descartados (otro producto)</dt>
           <dd className="font-bold tabular-nums">{summary.operaciones_sin_familia ?? '—'}</dd>
         </div>
       </dl>

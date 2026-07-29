@@ -192,3 +192,45 @@ describe('resolvePelletCircuit — de la vuelta vs despacho', () => {
     expect(classifyTransileExternoProduct('CASCARA DE SOJA PELLETEADA').family).toBe('PELLET')
   })
 })
+
+describe('transile externo: solo los 4 productos', () => {
+  const base = {
+    external_operation_id: 'op',
+    plate_normalized: 'AAA111',
+    patente_original: 'AAA111',
+    es_de_vuelta: true,
+    external_ingreso_at: '2026-07-20T09:00:00',
+    external_salida_at: '2026-07-20T10:00:00',
+    planta_normalized: 'RICARDONE',
+    platform_normalized: '',
+    plataforma_original: '',
+    producto_original: '',
+    source_date: '2026-07-20',
+  } as unknown as ExternalMovimientoContratoNormalized
+
+  it('descarta «de la vuelta» de productos que no son soja/girasol/pellet/aceite', () => {
+    const report = buildTransileExternoReport({
+      movimientos: [
+        { ...base, external_operation_id: 'gir', product_normalized: 'GIRASOL' },
+        { ...base, external_operation_id: 'var', plate_normalized: 'BBB222', patente_original: 'BBB222', product_normalized: 'PRODUCTOS VARIOS' },
+        { ...base, external_operation_id: 'maiz', plate_normalized: 'CCC333', patente_original: 'CCC333', product_normalized: 'MAIZ' },
+      ] as ExternalMovimientoContratoNormalized[],
+    })
+    expect(report.operations.map((o) => o.external_operation_id)).toEqual(['gir'])
+    expect(report.summary.movimientos_de_vuelta).toBe(3)
+    expect(report.summary.operaciones_girasol).toBe(1)
+    expect(report.summary.operaciones_sin_familia).toBe(2)
+    expect(report.summary.patentes_con_vuelta).toBe(1)
+  })
+
+  it('aceite es familia de transile externo (R34) y gana sobre soja', () => {
+    const cls = classifyTransileExternoProduct('ACEITE DE SOJA')
+    expect(cls.family).toBe('ACEITE')
+    expect(cls.assigned).toBe('R34')
+    const report = buildTransileExternoReport({
+      movimientos: [{ ...base, external_operation_id: 'ac', product_normalized: 'ACEITE DE SOJA' }] as ExternalMovimientoContratoNormalized[],
+    })
+    expect(report.operations).toHaveLength(1)
+    expect(report.summary.operaciones_aceite).toBe(1)
+  })
+})

@@ -489,6 +489,10 @@ export async function runMovimientosContratoIntegration(
 
   const transileVolcableReport = buildTransileInternoVolcableReport({
     classifiedJourneys: input.classifiedJourneys,
+    // Sin `rawEvents` el detector cae al fallback sobre `classifiedJourneys[].journey.events`,
+    // que en la corrida real llega sin eventos: daba `patentes_con_volcable: 0` con 113
+    // patentes pasando por RicVolcable1/2. Mismo insumo que el reporte de líquidos de arriba.
+    rawEvents: rawEventsForMerge,
     operations: excelFirstResult.operations,
   })
   logs.push(formatTransileInternoVolcableLog(transileVolcableReport.summary))

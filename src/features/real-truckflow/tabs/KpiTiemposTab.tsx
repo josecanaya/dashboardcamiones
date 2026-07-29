@@ -43,6 +43,11 @@ export function KpiTiemposTab() {
   const wb = useEtlWorkbenchOptional()
   const tr = wb?.transformResult
   const kpiBuilt = wb?.kpiTiemposBuilt ?? tr?.stats.kpiTiemposBuilt ?? false
+  /**
+   * Recalcular necesita los recorridos reconstruidos, que solo existen en memoria tras
+   * un Transform. Una corrida guardada trae las tablas de KPI pero no ese insumo.
+   */
+  const canRunKpi = wb?.kpiTiemposPrepared ?? false
   const segmentTimingRaw = kpiBuilt ? tr?.stats.segmentTiming : null
 
   const productLookup = useMemo(
@@ -257,7 +262,13 @@ export function KpiTiemposTab() {
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
-              disabled={!tr || wb?.transformBusy || wb?.kpiTiemposBusy}
+              // Sin insumo en memoria el proceso falla siempre (corrida guardada).
+              disabled={!tr || !canRunKpi || wb?.transformBusy || wb?.kpiTiemposBusy}
+              title={
+                !canRunKpi ?
+                  'Los KPI de esta corrida guardada ya están calculados. Para recalcularlos, cargá el período en «Análisis local» y corré Transform.'
+                : undefined
+              }
               onClick={() => void wb?.runKpiTiempos()}
               className="rounded-xl bg-violet-700 px-5 py-2 text-sm font-bold uppercase tracking-wide text-white shadow-sm transition hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
@@ -324,6 +335,13 @@ export function KpiTiemposTab() {
       {!tr ?
         <p className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-700">
           Sin transform. Andá a <strong>Análisis local</strong> → Cargar período → <strong>Procesar Transform</strong>.
+        </p>
+      : !canRunKpi ?
+        <p className="rounded-xl border border-sky-200 bg-sky-50 px-4 py-4 text-sm text-sky-950">
+          Estás viendo una <strong>corrida guardada</strong>: los KPI de tiempos ya están calculados y se muestran
+          abajo. <strong>Reprocesar no está disponible</strong> porque los recorridos reconstruidos (el insumo del
+          cálculo) no se persisten en la corrida. Para recalcular: <strong>Análisis local</strong> → Cargar período →{' '}
+          <strong>Procesar Transform</strong> → volver acá.
         </p>
       : !kpiBuilt ?
         <p className="rounded-xl border border-violet-200 bg-violet-50 px-4 py-4 text-sm text-violet-950">
