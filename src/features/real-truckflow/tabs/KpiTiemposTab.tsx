@@ -5,7 +5,6 @@ import {
   getCircuitSegmentTemplate,
   listCircuitSegmentAggregates,
   logicalPointLabel,
-  filterSegmentTimingIndex,
   mergeVolcableReceiptSegmentTiming,
   countUniqueOperationsForCircuit,
   kpiCircuitCodesForScatterFilter,
@@ -14,18 +13,13 @@ import {
   type SegmentTimingAggregate,
 } from '../etlWorkbench/etlSegmentTiming'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
-import {
-  resolveAnalysisProductLookup,
-  PRODUCT_FILTER_ALL,
-  productMatchesExecutiveSampleFilter,
-  journeyIdsForProduct,
-} from '../etlWorkbench/etlProductFilter'
-import { ProductFilterSelect } from '../components/ProductFilterSelect'
+import { CircuitChecklistFilter } from '../components/CircuitChecklistFilter'
 import { exportChartAsPng, safeExportFilename } from '../../../utils/chartExport'
 import { histogramWithKde } from '../../../utils/stats'
 import { SegmentTimingChartPanel } from './SegmentTimingChartPanel'
 import { RicardoneSectorScatterPanel } from './RicardoneSectorScatterPanel'
 import { SegmentOccupancyChartPanel } from './SegmentOccupancyChartPanel'
+import { CaladaCamerasPanel } from './CaladaCamerasPanel'
 import { parseSegmentScatterByDayCsv } from '../etlWorkbench/etlSegmentScatterByDay'
 import { isWithinSegmentScatterDisplayMax } from '../etlWorkbench/etlSegmentScatterByDay'
 import { legsForAggregate } from '../etlWorkbench/etlSegmentSlowTail'
@@ -50,11 +44,6 @@ export function KpiTiemposTab() {
   const canRunKpi = wb?.kpiTiemposPrepared ?? false
   const segmentTimingRaw = kpiBuilt ? tr?.stats.segmentTiming : null
 
-  const productLookup = useMemo(
-    () => resolveAnalysisProductLookup(tr?.csv),
-    [tr?.csv]
-  )
-
   const analysisSourceLabel = tr?.csv.excel_operations_with_truckflow?.trim() ?
     'Excel-first + Truckflow'
   : 'Truckflow ETL'
@@ -65,25 +54,20 @@ export function KpiTiemposTab() {
     | { funnelLog: string; detailLog: string }
     | undefined
 
-  const [productFilter, setProductFilter] = useState(PRODUCT_FILTER_ALL)
+  // Reemplaza al filtro de producto: el usuario tilda qué circuitos entran. null = aún
+  // sin inicializar → se toman todos (ver efecto más abajo).
+  const [checkedCircuits, setCheckedCircuits] = useState<Set<string> | null>(null)
   const [circuitFilter, setCircuitFilter] = useState('')
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
-  const [chartView, setChartView] = useState<'tiempos' | 'ocupacion' | 'sectores_ric'>('tiempos')
-
-  const segmentTimingFiltered = useMemo(() => {
-    if (!segmentTimingRaw) return null
-    if (productFilter === PRODUCT_FILTER_ALL || !productLookup) return segmentTimingRaw
-    const ids = journeyIdsForProduct(productLookup, productFilter)
-    return filterSegmentTimingIndex(segmentTimingRaw, ids)
-  }, [segmentTimingRaw, productFilter, productLookup])
+  const [chartView, setChartView] = useState<'tiempos' | 'ocupacion' | 'sectores_ric' | 'calada'>('tiempos')
 
   const segmentTiming = useMemo(() => {
-    if (!segmentTimingFiltered) return null
+    if (!segmentTimingRaw) return null
     if (circuitFilter === VOLCABLE_RECEIPT_KPI_UNION_CODE) {
-      return mergeVolcableReceiptSegmentTiming(segmentTimingFiltered)
+      return mergeVolcableReceiptSegmentTiming(segmentTimingRaw)
     }
-    return segmentTimingFiltered
-  }, [segmentTimingFiltered, circuitFilter])
+    return segmentTimingRaw
+  }, [segmentTimingRaw, circuitFilter])
 
   const periodLabel = useMemo(() => {
     if (!wb?.loadSummary?.daysDetected.length) return '—'
@@ -91,25 +75,37 @@ export function KpiTiemposTab() {
     return d.length === 1 ? d[0] : `${d[0]} → ${d[d.length - 1]}`
   }, [wb?.loadSummary])
 
+  /** Circuitos reales presentes (para el checklist). */
+  const checklistOptions = useMemo(
+    () =>
+      (segmentTimingRaw?.circuitCodes ?? []).map((c) => ({
+        id: c,
+        label: `${c} · ${EXECUTIVE_CIRCUIT_MATRIX[c]?.label ?? c}`,
+      })),
+    [segmentTimingRaw?.circuitCodes]
+  )
+
+  // Set efectivo: null (sin inicializar) = todos los circuitos.
+  const effectiveChecked = useMemo(
+    () => checkedCircuits ?? new Set(checklistOptions.map((o) => o.id)),
+    [checkedCircuits, checklistOptions]
+  )
+
+  /** Opciones del drilldown de un circuito (tabla de tramos): solo los tildados + unión R5+R6. */
   const circuitOptions = useMemo(() => {
-    const codes = segmentTimingFiltered?.circuitCodes ?? []
+    const codes = checklistOptions.map((o) => o.id).filter((c) => effectiveChecked.has(c))
     const opts = codes.map((c) => ({
       id: c,
       label: `${c} · ${EXECUTIVE_CIRCUIT_MATRIX[c]?.label ?? c}`,
     }))
-    const hasR5 = codes.includes('R5')
-    const hasR6 = codes.includes('R6')
-    if (hasR5 && hasR6) {
+    if (codes.includes('R5') && codes.includes('R6')) {
       return [
-        {
-          id: VOLCABLE_RECEIPT_KPI_UNION_CODE,
-          label: 'R5+R6 · Volcable 1 + Volcable 2 (unificado)',
-        },
+        { id: VOLCABLE_RECEIPT_KPI_UNION_CODE, label: 'R5+R6 · Volcable 1 + Volcable 2 (unificado)' },
         ...opts,
       ]
     }
     return opts
-  }, [segmentTimingFiltered?.circuitCodes])
+  }, [checklistOptions, effectiveChecked])
 
   const scatterByDayAll = useMemo(
     () => parseSegmentScatterByDayCsv(tr?.csv.segment_scatter_by_day),
@@ -123,8 +119,11 @@ export function KpiTiemposTab() {
   }, [wb?.loadSummary?.daysDetected, scatterByDayAll])
 
   useEffect(() => {
-    if (!circuitFilter && circuitOptions[0]?.id) {
-      setCircuitFilter(circuitOptions[0].id)
+    // Default o resincroniza si el circuito del drilldown quedó fuera de los tildados.
+    const ids = circuitOptions.map((o) => o.id)
+    if (ids.length && (!circuitFilter || !ids.includes(circuitFilter))) {
+      setCircuitFilter(ids[0]!)
+      setSelectedKey(null)
     }
   }, [circuitFilter, circuitOptions])
 
@@ -176,15 +175,12 @@ export function KpiTiemposTab() {
     (tramoLabel: string) => {
       if (!circuitFilter) return []
       const circuitCodes = kpiCircuitCodesForScatterFilter(circuitFilter)
-      let rows = scatterByDayAll.filter(
+      const rows = scatterByDayAll.filter(
         (r) => circuitCodes.includes(r.circuito) && r.tramo_operativo === tramoLabel
       )
-      if (productFilter !== PRODUCT_FILTER_ALL) {
-        rows = rows.filter((r) => productMatchesExecutiveSampleFilter(r.producto, productFilter))
-      }
       return rows.filter((r) => isWithinSegmentScatterDisplayMax(r.duracion_minutos))
     },
-    [scatterByDayAll, circuitFilter, productFilter]
+    [scatterByDayAll, circuitFilter]
   )
 
   const legsForTramo = useCallback(
@@ -252,7 +248,9 @@ export function KpiTiemposTab() {
             </p>
             <p className="mt-2 font-mono text-xs text-slate-500">
               Período: {periodLabel} · Reglas: {tr?.rulesVersion ?? '—'} · Fuente: {analysisSourceLabel}
-              {productFilter !== PRODUCT_FILTER_ALL ? ` · ${productFilter}` : ''}:{' '}
+              {checklistOptions.length && effectiveChecked.size < checklistOptions.length ?
+                ` · ${effectiveChecked.size}/${checklistOptions.length} circuitos`
+              : ''}:{' '}
               {isExcelFirstKpi ?
                 `${segmentTiming?.journeyCount ?? '—'} operaciones Excel (ready_for_scatter: ${excelFirstReadyForScatter || '—'})`
               : `${segmentTiming?.journeyCount ?? '—'} journeys`}{' '}
@@ -386,10 +384,23 @@ export function KpiTiemposTab() {
                 >
                   Sectores Ric (general)
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setChartView('calada')}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
+                    chartView === 'calada' ? 'bg-white text-violet-900 shadow-sm' : 'text-slate-600'
+                  }`}
+                >
+                  Cámaras calada
+                </button>
               </div>
             </div>
-            <ProductFilterSelect lookup={productLookup} value={productFilter} onChange={setProductFilter} />
-            {chartView === 'sectores_ric' ?
+            <CircuitChecklistFilter
+              options={checklistOptions}
+              checked={effectiveChecked}
+              onChange={setCheckedCircuits}
+            />
+            {chartView === 'sectores_ric' || chartView === 'calada' ?
               null
             : <>
             <label className="flex flex-col gap-1 text-sm">
@@ -484,11 +495,17 @@ export function KpiTiemposTab() {
             </>}
           </div>
 
-          {chartView === 'sectores_ric' ?
+          {chartView === 'calada' ?
+            <CaladaCamerasPanel
+              csv={tr?.csv.calada_camera_events}
+              checkedCircuits={effectiveChecked}
+              filterActive={effectiveChecked.size < checklistOptions.length}
+              periodLabel={periodLabel}
+            />
+          : chartView === 'sectores_ric' ?
             <RicardoneSectorScatterPanel
               scatterByDayAll={scatterByDayAll}
-              segmentTiming={segmentTimingFiltered}
-              productFilter={productFilter}
+              segmentTiming={segmentTimingRaw ?? null}
               periodLabel={periodLabel}
             />
           : (

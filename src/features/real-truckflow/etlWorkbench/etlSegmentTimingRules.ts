@@ -52,6 +52,23 @@ export const RECEPTION_BALANZA_KPI_CHAIN = [
   'BALANZA_EGRESO',
 ] as const
 
+/**
+ * KPI de líquidos (R8 recepción / R16 despacho): la calada de líquidos **no** registra
+ * un punto `CALADA` — el muestreo de líquidos entra como `LIQUIDO`.
+ *
+ * Medido en dos ventanas (2026-07-13→19 y 20→26): sobre 138 recorridos R8, `CALADA`
+ * aparece **0 veces** y `LIQUIDO` en el 100%. La cadena tenía un `CALADA` fantasma entre
+ * preingreso y líquido, y eso partía el tramo real (`preingreso → líquido`) en dos tramos
+ * imposibles de medir, los dos siempre vacíos en la tabla del comité.
+ */
+export const LIQUID_KPI_CHAIN = [
+  'INGRESO',
+  'PREINGRESO',
+  'LIQUIDO',
+  'BALANZA_INGRESO',
+  'BALANZA_EGRESO',
+] as const
+
 /** KPI Silos Kepler (R3/R4): ingreso → calada → balanza ingreso → balanza egreso. */
 export const KEPLER_KPI_CHAIN = [
   'INGRESO',

@@ -19,6 +19,7 @@ import {
   INFERRED_KPI_ROLLUP_MAX_MINUTES,
   KEPLER_KPI_CHAIN,
   KEPLER_KPI_CIRCUIT_CODES,
+  LIQUID_KPI_CHAIN,
   OPERATIONAL_TRIP_GAP_MAX_MINUTES,
   RECEPTION_BALANZA_KPI_CHAIN,
   SL_BALANZA_ROLLUP_TRANSITION,
@@ -191,12 +192,12 @@ function buildExecutiveCircuitSegmentTemplate(): Record<string, readonly string[
     const seq = DEFAULT_CIRCUIT_MATRIX[alias as keyof typeof DEFAULT_CIRCUIT_MATRIX]
     if (seq?.length) map[rCode] = templateWithoutEgreso(seq)
   }
-  map.R16 = ['INGRESO', 'PREINGRESO', 'CALADA', 'LIQUIDO', 'BALANZA_INGRESO', 'BALANZA_EGRESO']
+  map.R16 = [...LIQUID_KPI_CHAIN]
   map.R1 = RECEPTION_BALANZA_KPI_CHAIN
   map.R5 = RECEPTION_BALANZA_KPI_CHAIN
   map.R6 = RECEPTION_BALANZA_KPI_CHAIN
   map.R7 = ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO', ...SL_OPERATIONAL_KPI_CHAIN]
-  map.R8 = ['INGRESO', 'PREINGRESO', 'CALADA', 'LIQUIDO', 'BALANZA_INGRESO', 'BALANZA_EGRESO']
+  map.R8 = [...LIQUID_KPI_CHAIN]
   map.R26 = [
     'INGRESO',
     'PREINGRESO',
@@ -2029,6 +2030,44 @@ function rebuildSegmentTimingIndexFromLegs(legs: SegmentLeg[]): SegmentTimingInd
     ),
     journeyCount: journeyIds.size,
   }
+}
+
+/**
+ * Une el KPI por tramo medido con cámaras y el medido con el Excel.
+ *
+ * Por qué existe: el Excel de Movimientos solo trae ingreso, calado y salida — los pasos
+ * intermedios venían del libro «Tiempos entre pasos», que quedó viejo y ya no se usa. Así
+ * que del lado Excel solo se pueden medir tramos que arranquen en INGRESO, y las cadenas
+ * completas (preingreso → calada → egreso → ingreso SL) solo existen en las cámaras.
+ *
+ * Antes el índice Excel-first **reemplazaba** al de cámaras, y bastaba una sola fila Excel
+ * para que el KPI se quedara sin R7, R1, R5, R6 y R8. Acá se unen por recorrido + tramo:
+ * el mismo tramo del mismo recorrido no se cuenta dos veces, y cuando los dos relojes lo
+ * miden gana el del Excel (marca administrativa, más confiable que la cámara para
+ * ingreso/salida).
+ */
+export function mergeSegmentTimingIndexes(
+  cameraIndex: SegmentTimingIndex,
+  excelIndex: SegmentTimingIndex,
+  opts?: {
+    /**
+     * `external_operation_id` → `journey_uid`. Necesario para deduplicar: los tramos del
+     * Excel se identifican por operación y los de cámara por journey, así que sin este
+     * mapa el mismo viaje medido por los dos lados entraría dos veces al promedio.
+     */
+    journeyUidByOperationId?: Map<string, string> | null
+  }
+): SegmentTimingIndex {
+  const alias = opts?.journeyUidByOperationId
+  const legKey = (l: SegmentLeg) => {
+    const journey = alias?.get(l.journeyId) || l.journeyId
+    return `${journey}|${l.executiveCircuitCode}|${l.fromCode}|${l.toCode}`
+  }
+  const merged = new Map<string, SegmentLeg>()
+  for (const leg of cameraIndex.legs) merged.set(legKey(leg), leg)
+  // El Excel se aplica después: sobrescribe el tramo cuando ya venía de cámara.
+  for (const leg of excelIndex.legs) merged.set(legKey(leg), leg)
+  return rebuildSegmentTimingIndexFromLegs([...merged.values()])
 }
 
 /** Filtra KPI de tiempos por journeys (p. ej. por producto del merge). */

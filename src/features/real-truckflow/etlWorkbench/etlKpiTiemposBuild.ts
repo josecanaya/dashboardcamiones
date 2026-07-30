@@ -1,4 +1,5 @@
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
+import { buildCaladaCameraEvents, caladaCameraEventsCsv } from './etlCaladaCameraActivity'
 import type { ExcelOperationSegmentScatterRow } from './etlExcelFirstMerge'
 import { excelOperationSegmentsForScatterCsv } from './etlExcelFirstMerge'
 import {
@@ -34,6 +35,7 @@ import {
 import {
   buildSegmentTimingIndex,
   buildSegmentTimingIndexFromExcelFirstSegments,
+  mergeSegmentTimingIndexes,
   segmentTimingKpiCsv,
   segmentTimingLegsCsv,
   SL_BALANZA_COMITE_PRODUCT_OPTIONS,
@@ -72,6 +74,7 @@ export type KpiTiemposBuildOutput = {
     circuit_timing_journeys: string
     sector_occupancy_30min: string
     sector_occupancy_events: string
+    calada_camera_events: string
   }
   logs: string[]
 }
@@ -99,12 +102,29 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
       excelScatterReady,
       SL_BALANZA_COMITE_PRODUCT_OPTIONS
     )
-    segmentTiming = fromExcel
+    // El Excel de Movimientos solo trae ingreso/calado/salida (el libro «Tiempos entre
+    // pasos» quedó viejo), así que solo mide tramos que arrancan en INGRESO. Reemplazar
+    // el índice de cámaras con él dejaba el KPI por tramo sin R7, R1, R5, R6 ni R8: se
+    // perdían las cadenas completas por una sola fila del Excel. Se unen por
+    // recorrido+tramo, con el Excel ganando donde ambos miden.
+    const journeyUidByOperationId = new Map<string, string>()
+    for (const r of excelScatterReady) {
+      const opId = String(r.external_operation_id ?? '').trim()
+      const uid = String(r.journey_uid ?? '').trim()
+      if (opId && uid && !journeyUidByOperationId.has(opId)) journeyUidByOperationId.set(opId, uid)
+    }
+    const cameraLegs = segmentTiming.legs.length
+    segmentTiming = mergeSegmentTimingIndexes(segmentTiming, fromExcel, { journeyUidByOperationId })
     logs.push(
       `Excel-first: ${fromExcel.legs.length} tramos, ${fromExcel.journeyCount} operaciones (ready_for_scatter)` +
         (fromExcel.excludedNoEntryAnchor ?
           ` · ${fromExcel.excludedNoEntryAnchor} excluidas sin ingreso/preingreso`
         : '')
+    )
+    logs.push(
+      `KPI tramos unificado (cámaras + Excel): ${segmentTiming.legs.length} tramos ` +
+        `(${cameraLegs} de cámara + ${fromExcel.legs.length} de Excel, deduplicados por recorrido+tramo) ` +
+        `· circuitos: ${segmentTiming.circuitCodes.join(', ') || '—'}`
     )
   }
 
@@ -162,6 +182,22 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
     `sector_occupancy_30min: ${occupancy.series.length} intervalos · events: ${occupancy.events.length}`
   )
 
+  // Actividad por cámara de calada (RicCal01–06 + RicCalLiq): la cámara individual solo
+  // vive en el device crudo, así que se arma acá desde los eventos y se persiste.
+  const productByJourneyUid = new Map<string, string>()
+  for (const r of snap?.mergedRows ?? []) {
+    const uid = String(r.journey_uid ?? '').trim()
+    const producto = String(r.product_normalized ?? '').trim()
+    if (uid && producto && !productByJourneyUid.has(uid)) productByJourneyUid.set(uid, producto)
+  }
+  const caladaCameraEvents = buildCaladaCameraEvents({
+    classifiedJourneys: input.classifiedJourneys,
+    productByJourneyUid,
+  })
+  logs.push(
+    `calada_camera_events: ${caladaCameraEvents.length} eventos · ${new Set(caladaCameraEvents.map((r) => r.camara)).size} cámaras`
+  )
+
   return {
     segmentTiming,
     circuitTiming,
@@ -176,6 +212,7 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
       circuit_timing_journeys: circuitTimingJourneysCsv(circuitTiming),
       sector_occupancy_30min: sectorOccupancy30MinCsv(occupancy.series),
       sector_occupancy_events: sectorOccupancyEventsCsv(occupancy.events),
+      calada_camera_events: caladaCameraEventsCsv(caladaCameraEvents),
     },
     logs,
   }

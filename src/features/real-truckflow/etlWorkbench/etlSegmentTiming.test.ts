@@ -12,6 +12,7 @@ import {
   extractSegmentLegsWithTimes,
   extractAllSegmentLegsForCircuit,
   extractDischargeRollupFromTimeline,
+  getCircuitSegmentTemplate,
   getDischargeKpiRollupRules,
   buildTimedLogicalTimelineFromSegments,
   histogramBinMinutesForTransition,
@@ -25,6 +26,7 @@ import {
   diagnoseBalanzaStayFromTimedSegments,
   diagnoseR7SlBalanzaIngresoSalida,
   mergeVolcableReceiptSegmentTiming,
+  mergeSegmentTimingIndexes,
   VOLCABLE_RECEIPT_KPI_UNION_CODE,
   selectCoherentSegmentGroup,
   isValidSegmentDuration,
@@ -1611,5 +1613,93 @@ describe('etlSegmentTiming', () => {
     expect(diag!.flags).toContain('EXCEL_SALIDA_ANTES_QUE_EGRESO_CAMARA')
     expect(diag!.flags).toContain('FIN_CAMARA_EGRESO_S7')
     expect(diag!.comite.reason).toBe('ok')
+  })
+})
+
+describe('mergeSegmentTimingIndexes', () => {
+  const leg = (journeyId: string, circuit: string, from: string, to: string, min: number) => ({
+    journeyId,
+    plate: 'AAA111',
+    executiveCircuitCode: circuit,
+    fromCode: from,
+    toCode: to,
+    transitionLabel: `${from} → ${to}`,
+    durationMinutes: min,
+  })
+  const idx = (legs: ReturnType<typeof leg>[]) =>
+    buildSegmentTimingIndexFromExcelFirstSegments(
+      legs.map((l) => ({
+        analysis_ready_for_scatter: true,
+        external_operation_id: l.journeyId,
+        journey_uid: l.journeyId,
+        plate_normalized: l.plate,
+        segment_from: l.fromCode,
+        segment_to: l.toCode,
+        segment_duration_min: l.durationMinutes,
+        truckflow_circuit_code: l.executiveCircuitCode,
+        resolved_executive_circuit_code: l.executiveCircuitCode,
+      })),
+      SL_BALANZA_COMITE_PRODUCT_OPTIONS
+    )
+
+  it('conserva los tramos de cámara aunque el Excel aporte uno solo', () => {
+    // El bug: el índice Excel-first reemplazaba al de cámaras y el KPI se quedaba sin R7.
+    const camera = idx([
+      leg('j1', 'R7', 'INGRESO', 'PREINGRESO', 12),
+      leg('j1', 'R7', 'PREINGRESO', 'CALADA', 30),
+      leg('j2', 'R1', 'INGRESO', 'CALADA', 40),
+    ])
+    const excel = idx([leg('op-9', 'R3', 'INGRESO', 'CALADA', 55)])
+
+    const merged = mergeSegmentTimingIndexes(camera, excel)
+    expect(merged.legs.length).toBe(4)
+    expect([...new Set(merged.legs.map((l) => l.executiveCircuitCode))].sort()).toEqual([
+      'R1',
+      'R3',
+      'R7',
+    ])
+  })
+
+  it('no cuenta dos veces el mismo tramo del mismo viaje: gana el Excel', () => {
+    const camera = idx([leg('j1', 'R7', 'INGRESO', 'CALADA', 100)])
+    const excel = idx([leg('op-1', 'R7', 'INGRESO', 'CALADA', 90)])
+    const merged = mergeSegmentTimingIndexes(camera, excel, {
+      journeyUidByOperationId: new Map([['op-1', 'j1']]),
+    })
+    expect(merged.legs.length).toBe(1)
+    expect(merged.legs[0]!.durationMinutes).toBe(90)
+  })
+
+  it('sin mapa de operación→journey no puede deduplicar y quedan los dos', () => {
+    const camera = idx([leg('j1', 'R7', 'INGRESO', 'CALADA', 100)])
+    const excel = idx([leg('op-1', 'R7', 'INGRESO', 'CALADA', 90)])
+    expect(mergeSegmentTimingIndexes(camera, excel).legs.length).toBe(2)
+  })
+})
+
+describe('plantilla KPI de líquidos (R8 / R16)', () => {
+  it('no tiene CALADA: en líquidos el muestreo entra como LIQUIDO', () => {
+    // Medido sobre 138 recorridos R8 de dos ventanas: CALADA=0, LIQUIDO=100%.
+    // El CALADA fantasma partía «preingreso → líquido» en dos tramos siempre vacíos.
+    for (const code of ['R8', 'R16']) {
+      const t = getCircuitSegmentTemplate(code)
+      expect(t, `${code} no debe declarar CALADA`).not.toContain('CALADA')
+      expect(t).toEqual(['INGRESO', 'PREINGRESO', 'LIQUIDO', 'BALANZA_INGRESO', 'BALANZA_EGRESO'])
+    }
+  })
+
+  it('el tramo real preingreso → líquido queda medible', () => {
+    const t = getCircuitSegmentTemplate('R8')
+    const tramos: string[] = []
+    for (let i = 0; i < t.length - 1; i++) tramos.push(`${t[i]}→${t[i + 1]}`)
+    expect(tramos).toContain('PREINGRESO→LIQUIDO')
+    expect(tramos).not.toContain('PREINGRESO→CALADA')
+    expect(tramos).not.toContain('CALADA→LIQUIDO')
+  })
+
+  it('los sólidos conservan su calada', () => {
+    expect(getCircuitSegmentTemplate('R1')).toContain('CALADA')
+    expect(getCircuitSegmentTemplate('R5')).toContain('CALADA')
+    expect(getCircuitSegmentTemplate('R7')).toContain('CALADA')
   })
 })

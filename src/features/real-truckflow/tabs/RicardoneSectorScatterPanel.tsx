@@ -50,10 +50,11 @@ export function RicardoneSectorScatterPanel({
 }: {
   scatterByDayAll: SegmentScatterByDayRow[]
   segmentTiming: SegmentTimingIndex | null
-  productFilter: string
+  /** Filtro de producto opcional; KPI Tiempos ya no lo usa (filtra por circuito). */
+  productFilter?: string
   periodLabel: string
 }) {
-  const productArg = productFilter === PRODUCT_FILTER_ALL ? undefined : productFilter
+  const productArg = !productFilter || productFilter === PRODUCT_FILTER_ALL ? undefined : productFilter
 
   const summaries = useMemo(
     () =>
