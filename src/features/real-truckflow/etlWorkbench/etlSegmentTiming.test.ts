@@ -194,7 +194,10 @@ describe('etlSegmentTiming', () => {
       'INGRESO→PREINGRESO',
       'PREINGRESO→CALADA',
       'CALADA→BALANZA_INGRESO',
-      'BALANZA_INGRESO→BALANZA_EGRESO',
+      // R1 mide la descarga real (celda 16) + playa 3, no el rollup balanza→balanza.
+      'BALANZA_INGRESO→CELDA16_DESCARGA',
+      'CELDA16_DESCARGA→PLAYA',
+      'PLAYA→BALANZA_EGRESO',
     ])
   })
 
@@ -908,7 +911,9 @@ describe('etlSegmentTiming', () => {
     expect(SL_BALANZA_STAY_MAX_MINUTES).toBe(180)
   })
 
-  it('R5 Excel-first: rollup balanza ingreso → balanza egreso (sin volcable intermedio)', () => {
+  it('R5: estadía balanza→balanza sale del discharge rollup; el template chain da los tramos finos (playa/volcable)', () => {
+    // La estadía total balanza ingreso → balanza egreso la da el discharge rollup
+    // (Excel-first), independiente del template. Es lo que se conserva como "estadía".
     const dischargeLegs = synthesizeDischargeRollupLegsFromTimedSegments({
       operationId: 'op-r5-volc',
       plate: 'AA111',
@@ -931,6 +936,9 @@ describe('etlSegmentTiming', () => {
       durationMinutes: 105,
     })
 
+    // El template R5 ahora incluye playa/volcable, así que el template chain mide los
+    // tramos finos (balanza ingreso → volcable → balanza egreso) desde cámara, NO el
+    // rollup balanza→balanza (eso lo da el discharge rollup de arriba).
     const templateLegs = synthesizeTemplateChainLegsFromTimedSegments({
       operationId: 'op-r5-volc',
       plate: 'AA111',
@@ -952,12 +960,18 @@ describe('etlSegmentTiming', () => {
       externalCaladoAt: '2026-05-12T09:00:00',
       externalSalidaAt: '2026-05-12T09:45:00',
     })
-    const stay = templateLegs.find(
-      (l) => l.fromCode === 'BALANZA_INGRESO' && l.toCode === 'BALANZA_EGRESO'
-    )
-    expect(stay).toBeDefined()
-    expect(stay!.durationMinutes).toBe(38)
-    expect(templateLegs.find((l) => l.fromCode === 'VOLCABLE')).toBeUndefined()
+    expect(
+      templateLegs.find((l) => l.fromCode === 'BALANZA_INGRESO' && l.toCode === 'VOLCABLE')
+        ?.durationMinutes
+    ).toBe(30)
+    expect(
+      templateLegs.find((l) => l.fromCode === 'VOLCABLE' && l.toCode === 'BALANZA_EGRESO')
+        ?.durationMinutes
+    ).toBe(8)
+    // La estadía balanza→balanza ya NO sale del template chain (viene del discharge rollup).
+    expect(
+      templateLegs.find((l) => l.fromCode === 'BALANZA_INGRESO' && l.toCode === 'BALANZA_EGRESO')
+    ).toBeUndefined()
   })
 
   it('synthesizeDischargeRollupLegs usa calado Excel para R1 sin cámara C16', () => {
@@ -1430,8 +1444,8 @@ describe('etlSegmentTiming', () => {
     expect(stay!.durationMinutes).toBe(240)
   })
 
-  it('balanza ingreso→egreso infiere salida Excel si falta cámara B2', () => {
-    const legs = synthesizeTemplateChainLegsFromTimedSegments({
+  it('balanza ingreso→egreso infiere salida Excel si falta cámara B2 (discharge rollup)', () => {
+    const legs = synthesizeDischargeRollupLegsFromTimedSegments({
       operationId: 'op-r5-vol-far',
       plate: 'CC333',
       executiveCircuitCode: 'R5',
@@ -1581,7 +1595,9 @@ describe('etlSegmentTiming', () => {
     })
     expect(diag).not.toBeNull()
     expect(diag!.cameraBalanzaStayMinutes).toBe(38)
-    expect(diag!.flags).toContain('ROLLUP_VS_TEMPLATE_GAP>=15MIN')
+    // Con el template R5 fino (playa/volcable) el balanza-stay ya no sale del template
+    // chain, así que no hay candidato `excel_template_chain` para comparar (no dispara
+    // ROLLUP_VS_TEMPLATE_GAP). La señal esencial rollup(105') vs cámara(38') se mantiene.
     expect(diag!.flags).toContain('KPI_VS_CAMARA_DELTA>=15MIN')
     expect(diag!.kpiWinnerMinutes).toBe(105)
     expect(['excel_discharge_rollup', 'excel_volcable_merged']).toContain(diag!.kpiWinnerSource)

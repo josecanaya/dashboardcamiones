@@ -26,6 +26,7 @@ import {
   type GoldenTimelinePoint,
 } from '../../../etl-core/domain/goldenAnomalyRules'
 import { getEventOperationalInstantIso } from '../../../services/liveCameraDiagnostics'
+import { occurredAtLocalDayKey } from '../../../services/realJourneyQuality'
 import { CIRCUIT_CATALOG } from '../../../etl-core/domain/circuitCatalog'
 import { DEFAULT_CIRCUIT_MATRIX } from './finalCircuitScoring'
 
@@ -1078,6 +1079,7 @@ export function buildGoldenTimelineFromJourney(j: ReconstructedRealJourney): Gol
       logicalCode: pt.logicalCode,
       siteId: pt.siteId,
       journeyUid: e.journeyUid || j.journeyUid,
+      day: occurredAtLocalDayKey(iso),
     })
   }
   return out.sort((a, b) => a.t - b.t)
@@ -1119,26 +1121,14 @@ export function resolveCommitteeClassification(
   let verdict = classifyAnomaly({
     matrixFinalStatus: input.matrixFinalStatus,
     executiveStatus: result.executive_status,
-    hasInvalidRouteOperationalAlert: input.hasInvalidRouteOperationalAlert ?? false,
-    hasInvalidJourneyStartOperationalAlert: input.hasInvalidJourneyStartOperationalAlert ?? false,
     frontEventCount: input.frontEventCount,
   })
 
   const journeyPoints = buildGoldenTimelineFromJourney(input.journey)
-  const expected =
-    input.expectedLogicalSequence?.length ?
-      input.expectedLogicalSequence
-    : expectedLogicalSequenceForExecutiveCircuit(input.executiveCircuitCode)
-  const missing =
-    input.missingExpectedPoints ??
-    input.journey.missingExpectedPoints ??
-    []
   const goldenHits = evaluateGoldenAnomalyRules({
     points: journeyPoints,
     platePoints: input.plateTimelinePoints?.length ? input.plateTimelinePoints : journeyPoints,
     circuitCode: input.executiveCircuitCode,
-    expectedLogicalSequence: expected,
-    missingExpectedPoints: missing,
     isPelletTransile: resolveIsPelletTransile(input.executiveCircuitCode, input.isPelletTransile),
   })
   const goldenReason = goldenHits[0]?.reason

@@ -28,8 +28,11 @@ import type { KpiTiemposBuildInput } from './etlKpiTiemposBuild'
  *      Antes la matriz tenía 5 y el scoring esperaba 6, así que se reportaba "N de 6" sin
  *      chequear EGRESO nunca. Afecta a journeys líquidos SIN EGRESO: ahora suman un punto
  *      faltante más (baja reliability, puede mover el estado).
+ * v14: Reemplazo total de anomalías de comportamiento — ahora SOLO las 5 reglas R1–R5
+ *      (`goldenAnomalyRules.ts`). `classifyAnomaly` ya no emite BEHAVIORAL por status/alertas.
+ *      Cambia `anomaly_kind` de todas las corridas → obligatorio reprocesar ventanas.
  */
-export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v13'
+export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v14'
 
 export type EtlTransformInput = {
   events: RealJourneyEventDto[]

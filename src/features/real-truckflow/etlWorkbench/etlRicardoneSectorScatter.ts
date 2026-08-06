@@ -40,12 +40,18 @@ export function filterScatterByDayForSector(
   rows: SegmentScatterByDayRow[],
   fromCode: string,
   toCode: string,
-  productFilter?: string
+  productFilter?: string,
+  /**
+   * Circuitos ejecutivos permitidos. `null`/`undefined` = sin filtro (todos los circuitos,
+   * comportamiento clásico). Un Set vacío filtra todo (ningún circuito tildado).
+   */
+  allowedCircuits?: Set<string> | null
 ): SegmentScatterByDayRow[] {
   const from = String(fromCode).trim()
   const to = String(toCode).trim()
   return rows.filter((r) => {
     if (r.segment_from !== from || r.segment_to !== to) return false
+    if (allowedCircuits && !allowedCircuits.has(String(r.circuito ?? '').trim())) return false
     if (productFilter && productFilter !== PRODUCT_FILTER_ALL) {
       if (!productMatchesExecutiveSampleFilter(r.producto, productFilter)) return false
     }
@@ -78,13 +84,15 @@ export type CrossCircuitSectorSummary = {
 export function summarizeCrossCircuitSectorFromScatter(
   allRows: SegmentScatterByDayRow[],
   sector: RicardoneCrossCircuitSector,
-  productFilter?: string
+  productFilter?: string,
+  allowedCircuits?: Set<string> | null
 ): CrossCircuitSectorSummary {
   const rows = filterScatterByDayForSector(
     allRows,
     sector.fromCode,
     sector.toCode,
-    productFilter
+    productFilter,
+    allowedCircuits
   )
   const durationsMinutes = rows.map((r) => r.duracion_minutos)
   const byCircuit = new Map<string, number>()

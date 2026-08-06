@@ -1,5 +1,14 @@
 # Tablas canónicas por pregunta — runs/windows/<from>_<to>/tables/
 
+> ⚠️ **SUPERSEDIDO por [NIVELES_ABCD.md](./NIVELES_ABCD.md) (modelo v14, 2026-08-03).**
+> Las canónicas hoy son las tablas de los niveles C / D / E. Las que este
+> documento nombra pasaron a ser **insumo o derivadas**: se siguen escribiendo,
+> pero ninguna es fuente de verdad para una pregunta de negocio.
+>
+> Se conserva porque documenta **por qué** las tablas viejas se contradicen entre
+> sí — que es la razón de ser del modelo de niveles. Para saber qué tabla usar
+> hoy, ir a NIVELES_ABCD.md.
+
 > Objetivo: **una pregunta = una tabla = una respuesta**, idéntica a lo que muestra el front.
 > Auditoría hecha sobre la semana `2026-07-13_2026-07-19` (2026-07-20).
 

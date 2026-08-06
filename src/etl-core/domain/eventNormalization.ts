@@ -175,6 +175,50 @@ const RIC_DEVICE_POINT_MAP: Record<string, { logicalCode: string; pointLabel: st
     pointType: 'RIC_LIQUIDO',
     operationalPoint: 'LIQUIDO',
   },
+  // —— Grupo nuevo S6/S7/S8 (instalación progresiva 2026) ——
+  // Numeración de la MATRIZ DE CIRCUITO (fuente de verdad operativa). Son puntos
+  // OPCIONALES: quedan reconocidos (dejan de ser UNKNOWN) pero todavía NO se
+  // exigen en las secuencias de circuito ni en `puntosRequeridos`, porque la
+  // cobertura es parcial mientras se instalan. Promover a requerido cuando madure.
+  // S6 = playa (waypoint). S7 = DOS puntos lógicos: DESCARGA_S7 (líneas 1/2) y
+  // CARGA_S7 (carga) — son pasos distintos en los circuitos transile (R21/R23/R24).
+  // S8 = CARGA_S8 (líneas 1/2, un punto). El deviceCode distingue la línea.
+  RicS6Playa3: {
+    logicalCode: 'PLAYA',
+    pointLabel: 'Playa 3 (S6)',
+    pointType: 'RIC_PLAYA',
+    operationalPoint: 'PLAYA',
+  },
+  RicS7DescLinea1: {
+    logicalCode: 'DESCARGA_S7',
+    pointLabel: 'Descarga S7 · línea 1',
+    pointType: 'RIC_DESCARGA_S7',
+    operationalPoint: 'DESCARGA_S7',
+  },
+  RicS7DescLinea2: {
+    logicalCode: 'DESCARGA_S7',
+    pointLabel: 'Descarga S7 · línea 2',
+    pointType: 'RIC_DESCARGA_S7',
+    operationalPoint: 'DESCARGA_S7',
+  },
+  RicS7Carga: {
+    logicalCode: 'CARGA_S7',
+    pointLabel: 'Carga S7',
+    pointType: 'RIC_CARGA_S7',
+    operationalPoint: 'CARGA_S7',
+  },
+  RicS8CargaLinea1: {
+    logicalCode: 'CARGA_S8',
+    pointLabel: 'Carga S8 · línea 1',
+    pointType: 'RIC_CARGA_S8',
+    operationalPoint: 'CARGA_S8',
+  },
+  RicS8CargaLinea2: {
+    logicalCode: 'CARGA_S8',
+    pointLabel: 'Carga S8 · línea 2',
+    pointType: 'RIC_CARGA_S8',
+    operationalPoint: 'CARGA_S8',
+  },
 }
 
 function inferSiteLocal(sectorCode: string): ReconstructedRealSiteId {

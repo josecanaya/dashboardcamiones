@@ -77,17 +77,21 @@ describe('buildCaladaCameraEvents', () => {
     expect(rows).toHaveLength(0)
   })
 
-  it('bucketea en ventanas de 30 min por hora local', () => {
+  it('bucketea por hora local: 08:14 y 08:46 caen en la misma ventana', () => {
     const rows = buildCaladaCameraEvents({
       classifiedJourneys: [
         journey({
           journeyUid: 'j1',
           circuit: 'R1',
-          events: [ev('RicCal01', '2026-07-20T08:14:00-03:00'), ev('RicCal01', '2026-07-20T08:46:00-03:00')],
+          events: [
+            ev('RicCal01', '2026-07-20T08:14:00-03:00'),
+            ev('RicCal01', '2026-07-20T08:46:00-03:00'),
+            ev('RicCal01', '2026-07-20T09:05:00-03:00'),
+          ],
         }),
       ],
     })
-    expect(rows.map((r) => r.intervalo_30min.slice(11))).toEqual(['08:00:00', '08:30:00'])
+    expect(rows.map((r) => r.intervalo_hora.slice(11))).toEqual(['08:00:00', '08:00:00', '09:00:00'])
   })
 
   it('pobla producto desde el mapa por journey', () => {

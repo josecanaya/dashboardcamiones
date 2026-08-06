@@ -398,26 +398,21 @@ describe('etlCircuitClassificationIndex anomalías', () => {
     expect(buildAnomalyReviewSummary([entry({ usefulEventsCount: 4 })], ctx).listedAnomalyCount).toBe(0)
   })
 
-  it('excluye transile externo e interno', () => {
+  it('reemplazo total: YA NO excluye transile del listado de anomalías', () => {
+    // El helper legacy sigue existiendo (lo usan los paneles de sospechosos)…
     expect(isTransileExcludedFromAnomalyList(entry({ executiveCircuitCode: 'R26' }))).toBe(true)
     expect(isTransileExcludedFromAnomalyList(entry({ executiveCircuitCode: 'R19' }))).toBe(true)
-    expect(isTransileExcludedFromAnomalyList(entry({ executiveCircuitCode: 'R7' }))).toBe(false)
+    // …pero ya no filtra el panel de anomalías: R4/R5 tienen que poder disparar
+    // sobre recorridos transile (celda 16, carga→descarga).
     const summary = buildAnomalyReviewSummary(
       [
-        entry({ journeyId: 'ext', executiveCircuitCode: 'R27', usefulEventsCount: 5 }),
-        entry({ journeyId: 'int', executiveCircuitCode: 'R20', usefulEventsCount: 5 }),
-        entry({
-          journeyId: 'ok',
-          executiveCircuitCode: 'R5',
-          usefulEventsCount: 5,
-          plate: 'ZZZ999',
-          normalizedPlate: 'ZZZ999',
-        }),
+        entry({ journeyId: 'ext', executiveCircuitCode: 'R27', usefulEventsCount: 5, plate: 'AAA111', normalizedPlate: 'AAA111' }),
+        entry({ journeyId: 'int', executiveCircuitCode: 'R20', usefulEventsCount: 5, plate: 'BBB222', normalizedPlate: 'BBB222' }),
+        entry({ journeyId: 'ok', executiveCircuitCode: 'R5', usefulEventsCount: 5, plate: 'ZZZ999', normalizedPlate: 'ZZZ999' }),
       ],
       excelLoadedEmpty
     )
-    expect(summary.listedAnomalyCount).toBe(1)
-    expect(summary.sequenceRows[0]!.trucks[0]!.journeyId).toBe('ok')
+    expect(summary.listedAnomalyCount).toBe(3)
   })
 
   it('excluye flota del plate registry', () => {
@@ -470,7 +465,7 @@ describe('etlCircuitClassificationIndex anomalías', () => {
       expect(summary.listedAnomalyCount).toBe(1)
     })
 
-    it('excluye BEHAVIORAL cuya patente es transile interno de sesión', () => {
+    it('reemplazo total: transile de sesión YA NO excluye una anomalía BEHAVIORAL', () => {
       const ctx: AnomalyListContext = {
         excelPlates: null,
         transileExcludedPlates: new Set(['TR1']),
@@ -482,8 +477,7 @@ describe('etlCircuitClassificationIndex anomalías', () => {
         ],
         ctx
       )
-      expect(summary.listedAnomalyCount).toBe(1)
-      expect(summary.sequenceRows[0]!.trucks[0]!.journeyId).toBe('x')
+      expect(summary.listedAnomalyCount).toBe(2)
     })
 
     it('registry excluye BEHAVIORAL también', () => {
@@ -498,7 +492,7 @@ describe('etlCircuitClassificationIndex anomalías', () => {
       expect(summary.listedAnomalyCount).toBe(0)
     })
 
-    it('excluye BEHAVIORAL / reglas de oro si Excel De la vuelta = SI', () => {
+    it('reemplazo total: «De la vuelta» YA NO excluye una anomalía BEHAVIORAL', () => {
       const ctx: AnomalyListContext = {
         excelPlates: new Set(['V1', 'V2']),
         deVueltaExcludedPlates: new Set(['V1']),
@@ -510,23 +504,22 @@ describe('etlCircuitClassificationIndex anomalías', () => {
             plate: 'V1',
             normalizedPlate: 'V1',
             anomalyKind: 'BEHAVIORAL',
-            anomalyKindReason: 'SL_RIC_VUELTA_RAPIDA_NO_PELLET',
+            anomalyKindReason: 'RIC_REINGRESO_RAPIDO_NO_PELLET',
           }),
           entry({
             journeyId: 'otra',
             plate: 'V2',
             normalizedPlate: 'V2',
             anomalyKind: 'BEHAVIORAL',
-            anomalyKindReason: 'RIC_SL_DEMORA',
+            anomalyKindReason: 'RIC_SL_TRAMO_40M_6H',
           }),
         ],
         ctx
       )
-      expect(summary.listedAnomalyCount).toBe(1)
-      expect(summary.sequenceRows[0]!.trucks[0]!.journeyId).toBe('otra')
+      expect(summary.listedAnomalyCount).toBe(2)
     })
 
-    it('G5 stampMissingExcelAnomalies: entrada+salida sin Excel patente+día', () => {
+    it('stampMissingExcelAnomalies es no-op (G5 eliminada en reemplazo total)', () => {
       const day = '2026-07-10'
       const ctx: AnomalyListContext = {
         excelPlates: new Set(['EN_EXCEL']),
@@ -568,68 +561,12 @@ describe('etlCircuitClassificationIndex anomalías', () => {
         ],
         ctx
       )
-      expect(stamped.find((e) => e.journeyId === 'sin')?.anomalyKindReason).toBe('SIN_MOVIMIENTO_EXCEL')
+      // Sin G5, ninguno se marca: la ausencia de Excel ya no genera anomalías.
+      expect(stamped.find((e) => e.journeyId === 'sin')?.anomalyKind).toBe('NONE')
       expect(stamped.find((e) => e.journeyId === 'con')?.anomalyKind).toBe('NONE')
       expect(stamped.find((e) => e.journeyId === 'solo_ing')?.anomalyKind).toBe('NONE')
       const summary = buildAnomalyReviewSummary(stamped, ctx)
-      expect(summary.listedAnomalyCount).toBe(1)
-    })
-
-    it('sin movimiento Excel + calada sin SL sin descarga = RECHAZADO (variación operativa, no anomalía)', () => {
-      const ctx: AnomalyListContext = {
-        excelPlates: new Set(['OTRA']),
-        excelPlateDays: new Set([
-          excelPlateDayKey('OTRA', '2026-07-21'),
-          excelPlateDayKey('OTRA', '2026-07-22'),
-          excelPlateDayKey('OTRA', '2026-07-23'),
-        ]),
-      }
-      const stamped = stampMissingExcelAnomalies(
-        [
-          entry({
-            journeyId: 'rechazado',
-            plate: 'REC111',
-            normalizedPlate: 'REC111',
-            committeeGroup: 'COMPLETOS',
-            pieSliceLabel: 'COMPLETOS',
-            committeeReason: 'RUTA_RIC_SAN_LORENZO_COMPLETA',
-            executiveCircuitCode: 'R7',
-            anomalyKind: 'NONE',
-            usefulEventsCount: 4,
-            // Los 4 pasos de Ricardone y nada más: no llegó a San Lorenzo.
-            detectedSequence: 'INGRESO>PREINGRESO>CALADA>EGRESO',
-            firstEventAt: '2026-07-21T10:00:00-03:00',
-            lastEventAt: '2026-07-21T18:00:00-03:00',
-          }),
-          entry({
-            journeyId: 'descargo-sin-excel',
-            plate: 'DES222',
-            normalizedPlate: 'DES222',
-            anomalyKind: 'NONE',
-            usefulEventsCount: 5,
-            // Descargó (volcable): la ausencia del Excel acá sí es anomalía.
-            detectedSequence: 'INGRESO>PREINGRESO>CALADA>VOLCABLE>EGRESO',
-            firstEventAt: '2026-07-21T10:00:00-03:00',
-            lastEventAt: '2026-07-21T18:00:00-03:00',
-          }),
-        ],
-        ctx
-      )
-
-      const rechazado = stamped.find((e) => e.journeyId === 'rechazado')!
-      expect(rechazado.anomalyKind).toBe('NONE')
-      expect(rechazado.committeeGroup).toBe('VARIACIONES_OPERATIVAS')
-      expect(rechazado.operationalVariationType).toBe('POSIBLE_RECHAZO')
-      expect(rechazado.pieSliceLabel).toBe('VARIACIONES OPERATIVAS')
-
-      expect(stamped.find((e) => e.journeyId === 'descargo-sin-excel')?.anomalyKindReason).toBe(
-        'SIN_MOVIMIENTO_EXCEL'
-      )
-
-      // Y en el modelo el rechazado cae en variaciones, no en anomalías.
-      const model = buildCommitteeEvaluableModel(stamped, ctx)
-      expect(model.variaciones.map((e) => e.journeyId)).toContain('rechazado')
-      expect(model.anomalias.map((e) => e.journeyId)).toEqual(['descargo-sin-excel'])
+      expect(summary.listedAnomalyCount).toBe(0)
     })
 
     it('G5 no marca al camión del último día: descarga (y Excel) caen en el día siguiente sin cargar', () => {
@@ -732,11 +669,9 @@ describe('etlCircuitClassificationIndex anomalías', () => {
         ],
         ctx
       )
+      // Sin G5, ninguno se marca (el no-op no evalúa cobertura).
       expect(stamped.find((e) => e.journeyId === 'fuera-de-ventana')?.anomalyKind).toBe('NONE')
-      // Dentro de la cobertura sí se puede afirmar la ausencia.
-      expect(stamped.find((e) => e.journeyId === 'dentro-de-ventana')?.anomalyKindReason).toBe(
-        'SIN_MOVIMIENTO_EXCEL'
-      )
+      expect(stamped.find((e) => e.journeyId === 'dentro-de-ventana')?.anomalyKind).toBe('NONE')
     })
 
     it('G5 no marca journeys de ≤2 tomas (sin evidencia mínima no hay comportamiento)', () => {

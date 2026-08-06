@@ -66,6 +66,27 @@ export const REAL_SECTOR_CODE_MAP: Record<string, RealSectorMappingEntry> = {
     logicalSector: 'S9',
     label: 'Celda 16 Ricardone',
   },
+  // —— Grupo nuevo S6/S7/S8 (matriz de circuito = fuente de verdad). Las cámaras
+  //    nuevas reportan el sectorCode ya en S-code. Alta aditiva; ver
+  //    docs/NUEVAS_CAMARAS_RICARDONE.md.
+  //    ⚠️ Pendiente de reconciliación: los S-codes viejos de Ricardone acá
+  //    (S3=egreso, Celda16=S9) difieren de la matriz (S3=Salida 2, Celda16=S5).
+  //    No se tocan en este alta para no cambiar coberturas existentes sin gate.
+  S6: {
+    siteId: 'ricardone',
+    logicalSector: 'S6',
+    label: 'Playa 3 Ricardone',
+  },
+  S7: {
+    siteId: 'ricardone',
+    logicalSector: 'S7',
+    label: 'Despacho S7 Ricardone (carga/descarga silos)',
+  },
+  S8: {
+    siteId: 'ricardone',
+    logicalSector: 'S8',
+    label: 'Carga S8 Ricardone (silo Chief)',
+  },
   PUERTO_SAN_LORENZO_INGRESO_CAMIONES: {
     siteId: 'san_lorenzo',
     logicalSector: 'S0',

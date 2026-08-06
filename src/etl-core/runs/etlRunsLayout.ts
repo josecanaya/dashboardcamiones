@@ -3,8 +3,26 @@
  * runId canónico = `<from>_<to>` (ej. 2026-07-13_2026-07-20) bajo runs/windows/.
  */
 
+/**
+ * Modelo de niveles A→B→C→D→E (v14). Son las tablas canónicas: toda pregunta
+ * de negocio se responde con una de estas. Las demás quedan como derivadas o
+ * insumo del propio modelo. Ver docs/NIVELES_ABCD.md.
+ */
+export const ETL_RUN_LEVEL_TABLES = [
+  'C_operaciones_con_camara',
+  'C_operaciones_sin_camara',
+  'D_circuitos_validos',
+  'D_circuitos_anomalos',
+  'D_circuitos_incompletos',
+  'D_camiones_sin_contrato',
+  'D_descartados',
+  'E_kpi_circuito',
+  'E_kpi_operacion',
+] as const
+
 /** Tablas siempre materializadas en tables/ (UI + agente). */
 export const ETL_RUN_CORE_TABLES = [
+  ...ETL_RUN_LEVEL_TABLES,
   'transform_summary',
   'final_circuits',
   'debug_matrix_classification',

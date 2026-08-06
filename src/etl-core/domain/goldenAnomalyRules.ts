@@ -1,16 +1,30 @@
 /**
- * Reglas de oro de anomalías de comportamiento (independientes de cobertura LPR).
- * Un journey puede conservar su circuito R* y a la vez marcar BEHAVIORAL.
+ * Reglas de anomalías de comportamiento (independientes de cobertura LPR).
+ *
+ * REEMPLAZO TOTAL (2026-08-05, pedido del usuario): una anomalía de
+ * comportamiento se define EXCLUSIVAMENTE por estas 5 reglas. Ya no cuentan
+ * ruta/arranque inválido, retroceso de secuencia, ni las viejas reglas de oro
+ * (calada→preingreso, salto de hito, sin movimiento Excel). Ver
+ * [[anomalias-comportamiento-vs-datos]].
+ *
+ *  R1  Salida de Ricardone y reingreso a Ricardone en < 1 h.            (no pellet)
+ *  R2  Mismo día: San Lorenzo primero y luego Ricardone.                (no pellet)
+ *  R3  Egreso Ricardone → ingreso San Lorenzo entre 40 min y 6 h.
+ *  R4  Balanza ingreso → Playa 3 → Celda 16 → (Playa 3) → Balanza.
+ *  R5  Pasa por punto de carga y luego por una plataforma de descarga.
+ *
+ * R1/R2/R3 cruzan journeys de la misma patente (usan `platePoints`).
+ * R4/R5 son de secuencia dentro del journey (usan `points`).
  */
 
 import type { AnomalyReason } from './anomalyClassifier'
 
 export const GOLDEN_ANOMALY_REASONS = [
-  'SL_RIC_VUELTA_RAPIDA_NO_PELLET',
-  'REGRESION_CALADA_PREINGRESO',
-  'SKIP_PUNTO_LAPSO_EXTREMO',
-  'RIC_SL_DEMORA',
-  'SIN_MOVIMIENTO_EXCEL',
+  'RIC_REINGRESO_RAPIDO_NO_PELLET',
+  'SL_LUEGO_RIC_MISMO_DIA_NO_PELLET',
+  'RIC_SL_TRAMO_40M_6H',
+  'RUTA_BALANZA_PLAYA_C16_BALANZA',
+  'CARGA_LUEGO_DESCARGA',
 ] as const
 
 export type GoldenAnomalyReason = (typeof GOLDEN_ANOMALY_REASONS)[number]
@@ -19,82 +33,46 @@ export function isGoldenAnomalyReason(reason: string | null | undefined): reason
   return GOLDEN_ANOMALY_REASONS.includes(String(reason ?? '').trim() as GoldenAnomalyReason)
 }
 
-/** Circuitos pellet / tolvas 09–11: viaje SL→Ric rápido es legítimo. */
+/**
+ * Reglas con condición «NO PELLET». El circuito pellet (tolvas 09–11) no tiene
+ * cámara: solo se conoce tras cruzar patente+día con el Excel, así que la
+ * exclusión se aplica también en el listado (`isHardExcludedFromAnomalyList`),
+ * no solo acá.
+ */
+export const NO_PELLET_ANOMALY_REASONS = new Set<GoldenAnomalyReason>([
+  'RIC_REINGRESO_RAPIDO_NO_PELLET',
+  'SL_LUEGO_RIC_MISMO_DIA_NO_PELLET',
+])
+
+/** Circuitos pellet / tolvas 09–11: SL↔Ric rápido es legítimo. */
 export const PELLET_TRANSILE_CIRCUIT_CODES = new Set(['R30', 'R31', 'R32'])
 
-/** Ventana G1: SL → Ric ≤ 30 min. */
+/** Ventana histórica SL → Ric ≤ 30 min (usada por el panel de sospechosos, no es regla). */
 export const GOLDEN_SL_RIC_MAX_MS = 30 * 60 * 1000
-/** G2: Calada → Preingreso < 20 min. */
-export const GOLDEN_CALADA_PREINGRESO_MAX_MS = 20 * 60 * 1000
-/** G3: gap flanqueante con skip > 4 h. */
-export const GOLDEN_SKIP_GAP_MAX_MS = 240 * 60 * 1000
-/** G4: Ric EGRESO → SL_INGRESO > 30 min. */
-export const GOLDEN_RIC_SL_MIN_MS = 30 * 60 * 1000
+/** R1: salida Ric → reingreso Ric ≤ 1 h. */
+export const RIC_REINGRESO_MAX_MS = 60 * 60 * 1000
+/** R3: egreso Ric → ingreso SL, banda [40 min, 6 h]. */
+export const RIC_SL_MIN_MS = 40 * 60 * 1000
+export const RIC_SL_MAX_MS = 6 * 60 * 60 * 1000
 
-const SL_EXIT_LOGICAL = new Set(['SL_EGRESO', 'SL_BALANZA_SALIDA'])
-const RIC_RETURN_LOGICAL = new Set(['INGRESO', 'PREINGRESO', 'CALADA'])
-const RIC_ENTRY_LOGICAL = new Set(['INGRESO', 'PREINGRESO', 'PREINGRESO_EGRESO'])
+const RIC_ENTRY_LOGICAL = new Set(['INGRESO', 'PREINGRESO'])
 const RIC_EXIT_LOGICAL = new Set(['EGRESO'])
 const SL_ENTRY_LOGICAL = new Set(['SL_INGRESO'])
-
-/** Par Ricardone: ingreso/preingreso + egreso. */
-export function hasRicEntryExitPair(logicalCodes: Iterable<string>): boolean {
-  let entry = false
-  let exit = false
-  for (const raw of logicalCodes) {
-    const c = String(raw ?? '').trim().toUpperCase()
-    if (RIC_ENTRY_LOGICAL.has(c)) entry = true
-    if (RIC_EXIT_LOGICAL.has(c)) exit = true
-  }
-  return entry && exit
-}
-
-/** Par San Lorenzo: SL_INGRESO + SL_EGRESO / balanza salida. */
-export function hasSlEntryExitPair(logicalCodes: Iterable<string>): boolean {
-  let entry = false
-  let exit = false
-  for (const raw of logicalCodes) {
-    const c = String(raw ?? '').trim().toUpperCase()
-    if (SL_ENTRY_LOGICAL.has(c)) entry = true
-    if (SL_EXIT_LOGICAL.has(c)) exit = true
-  }
-  return entry && exit
-}
-
-export function hasPlantEntryExitEvidence(logicalCodes: Iterable<string>): boolean {
-  return hasRicEntryExitPair(logicalCodes) || hasSlEntryExitPair(logicalCodes)
-}
-
-/**
- * G5: entrada+salida en Ric o SL y el movimiento no figura en Excel (patente+día de salida).
- * `inExcelSameDay`: null = Excel no cargado (no dispara); true = figura; false = ausente.
- */
-export function detectMissingExcelMovement(input: {
-  logicalCodes: readonly string[]
-  inExcelSameDay: boolean | null
-  circuitCode?: string
-}): GoldenAnomalyHit | null {
-  if (input.inExcelSameDay !== false) return null
-  if (!hasPlantEntryExitEvidence(input.logicalCodes)) return null
-  const ric = hasRicEntryExitPair(input.logicalCodes)
-  const sl = hasSlEntryExitPair(input.logicalCodes)
-  const where =
-    ric && sl ? 'Ricardone y San Lorenzo'
-    : ric ? 'Ricardone'
-    : 'San Lorenzo'
-  return {
-    reason: 'SIN_MOVIMIENTO_EXCEL',
-    kind: 'BEHAVIORAL',
-    detail: `Entrada+salida en ${where} sin registro en Movimientos por Contrato (patente+día de salida)`,
-    circuitCode: input.circuitCode,
-  }
-}
+/** R5: puntos de carga (silo → camión). */
+const LOAD_LOGICAL = new Set(['CELDA16_CARGA', 'CARGA_S7', 'CARGA_S8'])
+/** R5: plataformas de descarga (camión → silo/plataforma). Incluye San Lorenzo. */
+const DISCHARGE_LOGICAL = new Set(['VOLCABLE', 'CELDA16_DESCARGA', 'DESCARGA_S7', 'SL_DESCARGA'])
+/** R4: paso por Celda 16 (carga o descarga). */
+const CELDA16_LOGICAL = new Set(['CELDA16_CARGA', 'CELDA16_DESCARGA'])
+const BALANZA_CLOSE_LOGICAL = new Set(['BALANZA_EGRESO', 'BALANZA'])
 
 export type GoldenTimelinePoint = {
   t: number
   logicalCode: string
   siteId?: string
   journeyUid?: string
+  /** Día operativo `YYYY-MM-DD` (para R2, mismo día). */
+  day?: string
 }
 
 export type GoldenAnomalyHit = {
@@ -112,13 +90,10 @@ export type EvaluateGoldenAnomalyInput = {
   points: readonly GoldenTimelinePoint[]
   /**
    * Timeline de la misma patente (puede cruzar journeys). Si falta, se usa `points`.
-   * Necesario para G1/G4 interplanta.
+   * Necesario para R1/R2/R3 interplanta.
    */
   platePoints?: readonly GoldenTimelinePoint[]
   circuitCode?: string
-  /** Plantilla lógica esperada del circuito (ej. DEFAULT_CIRCUIT_MATRIX). */
-  expectedLogicalSequence?: readonly string[]
-  missingExpectedPoints?: readonly string[]
   /** True si Excel/circuito indica pellet / R30–R32. */
   isPelletTransile?: boolean
   /** True si Excel «De la vuelta» = SI (transile de vuelta legítimo). */
@@ -147,32 +122,31 @@ function sortedPoints(points: readonly GoldenTimelinePoint[]): GoldenTimelinePoi
     .sort((a, b) => a.t - b.t)
 }
 
-/** G1: salida SL seguida de ingreso Ric ≤ 30 min, y no es pellet ni «De la vuelta». */
-export function detectSlRicQuickReturnNoPellet(
+/** R1: salida de Ricardone (EGRESO) seguida de reingreso a Ricardone (INGRESO/PREINGRESO) ≤ 1 h, no pellet. */
+export function detectRicQuickReEntry(
   platePoints: readonly GoldenTimelinePoint[],
   opts?: { maxMs?: number; isPelletTransile?: boolean; isDeVuelta?: boolean }
 ): GoldenAnomalyHit | null {
   if (opts?.isPelletTransile || opts?.isDeVuelta) return null
-  const maxMs = opts?.maxMs ?? GOLDEN_SL_RIC_MAX_MS
+  const maxMs = opts?.maxMs ?? RIC_REINGRESO_MAX_MS
   const list = sortedPoints(platePoints)
   for (let i = 0; i < list.length; i++) {
-    const row = list[i]!
-    if (row.siteId === 'ricardone') continue
-    if (!SL_EXIT_LOGICAL.has(row.logicalCode)) continue
-    if (row.siteId && row.siteId !== 'san_lorenzo') continue
+    const eg = list[i]!
+    if (!RIC_EXIT_LOGICAL.has(eg.logicalCode)) continue
+    if (eg.siteId && eg.siteId !== 'ricardone') continue
     for (let j = i + 1; j < list.length; j++) {
       const next = list[j]!
-      const delta = next.t - row.t
+      const delta = next.t - eg.t
       if (delta > maxMs) break
       if (delta <= 0) continue
-      const ricSite = !next.siteId || next.siteId === 'ricardone'
-      if (!ricSite || !RIC_RETURN_LOGICAL.has(next.logicalCode)) continue
+      if (next.siteId && next.siteId !== 'ricardone') continue
+      if (!RIC_ENTRY_LOGICAL.has(next.logicalCode)) continue
       return {
-        reason: 'SL_RIC_VUELTA_RAPIDA_NO_PELLET',
+        reason: 'RIC_REINGRESO_RAPIDO_NO_PELLET',
         kind: 'BEHAVIORAL',
-        detail: `Salida SL→Ricardone en ${roundMin(delta)} min (≤${roundMin(maxMs)}) sin pellet`,
+        detail: `Salida Ricardone → reingreso en ${roundMin(delta)} min (≤${roundMin(maxMs)}) sin pellet`,
         deltaMinutes: roundMin(delta),
-        fromLogical: row.logicalCode,
+        fromLogical: eg.logicalCode,
         toLogical: next.logicalCode,
       }
     }
@@ -180,102 +154,128 @@ export function detectSlRicQuickReturnNoPellet(
   return null
 }
 
-/** G2: CALADA seguida de PREINGRESO en < 20 min (regresión de secuencia). */
-export function detectCaladaToPreingresoRegression(
-  points: readonly GoldenTimelinePoint[],
-  opts?: { maxMs?: number }
-): GoldenAnomalyHit | null {
-  const maxMs = opts?.maxMs ?? GOLDEN_CALADA_PREINGRESO_MAX_MS
-  const collapsed = collapseConsecutive(sortedPoints(points))
-  for (let i = 0; i < collapsed.length - 1; i++) {
-    const a = collapsed[i]!
-    const b = collapsed[i + 1]!
-    if (a.logicalCode !== 'CALADA' || b.logicalCode !== 'PREINGRESO') continue
-    const delta = b.t - a.t
-    if (delta <= 0 || delta >= maxMs) continue
-    return {
-      reason: 'REGRESION_CALADA_PREINGRESO',
-      kind: 'BEHAVIORAL',
-      detail: `Calada→Preingreso en ${roundMin(delta)} min (<${roundMin(maxMs)})`,
-      deltaMinutes: roundMin(delta),
-      fromLogical: 'CALADA',
-      toLogical: 'PREINGRESO',
-    }
-  }
-  return null
-}
-
-/**
- * G3: faltó al menos un hito esperado y el gap entre flanqueantes observados supera el umbral.
- */
-export function detectSkippedPointWithExtremeGap(
-  points: readonly GoldenTimelinePoint[],
-  expectedLogicalSequence: readonly string[],
-  missingExpectedPoints: readonly string[],
-  opts?: { maxGapMs?: number }
-): GoldenAnomalyHit | null {
-  if (!expectedLogicalSequence.length || !missingExpectedPoints.length) return null
-  const maxGapMs = opts?.maxGapMs ?? GOLDEN_SKIP_GAP_MAX_MS
-  const missing = new Set(missingExpectedPoints.map((x) => String(x).trim()).filter(Boolean))
-  if (!missing.size) return null
-
-  const tplIndex = new Map<string, number>()
-  expectedLogicalSequence.forEach((code, i) => {
-    const c = String(code).trim()
-    if (c && !tplIndex.has(c)) tplIndex.set(c, i)
-  })
-
-  const observed = collapseConsecutive(sortedPoints(points)).filter((p) => tplIndex.has(p.logicalCode))
-  for (let i = 0; i < observed.length - 1; i++) {
-    const a = observed[i]!
-    const b = observed[i + 1]!
-    const posA = tplIndex.get(a.logicalCode)
-    const posB = tplIndex.get(b.logicalCode)
-    if (posA == null || posB == null || posB <= posA) continue
-    const between = expectedLogicalSequence.slice(posA + 1, posB).map((x) => String(x).trim())
-    const skipped = between.filter((c) => missing.has(c))
-    if (!skipped.length) continue
-    const delta = b.t - a.t
-    if (delta <= maxGapMs) continue
-    return {
-      reason: 'SKIP_PUNTO_LAPSO_EXTREMO',
-      kind: 'BEHAVIORAL',
-      detail: `Faltó ${skipped.join('+')} entre ${a.logicalCode}→${b.logicalCode} (${roundMin(delta)} min > ${roundMin(maxGapMs)})`,
-      deltaMinutes: roundMin(delta),
-      fromLogical: a.logicalCode,
-      toLogical: b.logicalCode,
-    }
-  }
-  return null
-}
-
-/**
- * G4: EGRESO Ricardone → SL_INGRESO con Δt > 30 min (demora excesiva del puente).
- * Busca el primer SL_INGRESO posterior a cada EGRESO Ric.
- */
-export function detectRicToSlTravelTooSlow(
+/** R2: mismo día, San Lorenzo (SL_INGRESO) primero y luego Ricardone (INGRESO/PREINGRESO), no pellet. */
+export function detectSlThenRicSameDay(
   platePoints: readonly GoldenTimelinePoint[],
-  opts?: { minMs?: number }
+  opts?: { isPelletTransile?: boolean; isDeVuelta?: boolean }
 ): GoldenAnomalyHit | null {
-  const minMs = opts?.minMs ?? GOLDEN_RIC_SL_MIN_MS
+  if (opts?.isPelletTransile || opts?.isDeVuelta) return null
+  const list = sortedPoints(platePoints)
+  const firstSlByDay = new Map<string, number>()
+  for (const p of list) {
+    const day = String(p.day ?? '').trim()
+    if (!day) continue
+    const slSite = !p.siteId || p.siteId === 'san_lorenzo'
+    if (slSite && SL_ENTRY_LOGICAL.has(p.logicalCode)) {
+      if (!firstSlByDay.has(day)) firstSlByDay.set(day, p.t)
+      continue
+    }
+    const ricSite = !p.siteId || p.siteId === 'ricardone'
+    if (ricSite && RIC_ENTRY_LOGICAL.has(p.logicalCode)) {
+      const slT = firstSlByDay.get(day)
+      if (slT != null && p.t > slT) {
+        return {
+          reason: 'SL_LUEGO_RIC_MISMO_DIA_NO_PELLET',
+          kind: 'BEHAVIORAL',
+          detail: `San Lorenzo y luego Ricardone el mismo día (${day}) sin pellet`,
+          deltaMinutes: roundMin(p.t - slT),
+          fromLogical: 'SL_INGRESO',
+          toLogical: p.logicalCode,
+        }
+      }
+    }
+  }
+  return null
+}
+
+/** R3: egreso Ricardone (EGRESO) → ingreso San Lorenzo (SL_INGRESO) con Δt en [40 min, 6 h]. */
+export function detectRicToSlBridgeWindow(
+  platePoints: readonly GoldenTimelinePoint[],
+  opts?: { minMs?: number; maxMs?: number }
+): GoldenAnomalyHit | null {
+  const minMs = opts?.minMs ?? RIC_SL_MIN_MS
+  const maxMs = opts?.maxMs ?? RIC_SL_MAX_MS
   const list = sortedPoints(platePoints)
   for (let i = 0; i < list.length; i++) {
     const eg = list[i]!
-    if (eg.logicalCode !== 'EGRESO') continue
+    if (!RIC_EXIT_LOGICAL.has(eg.logicalCode)) continue
     if (eg.siteId && eg.siteId !== 'ricardone') continue
     for (let j = i + 1; j < list.length; j++) {
       const sl = list[j]!
-      if (sl.logicalCode !== 'SL_INGRESO') continue
+      if (!SL_ENTRY_LOGICAL.has(sl.logicalCode)) continue
       if (sl.siteId && sl.siteId !== 'san_lorenzo') continue
       const delta = sl.t - eg.t
-      if (delta <= minMs) break
+      if (delta <= 0) continue
+      if (delta > maxMs) break
+      if (delta < minMs) continue
       return {
-        reason: 'RIC_SL_DEMORA',
+        reason: 'RIC_SL_TRAMO_40M_6H',
         kind: 'BEHAVIORAL',
-        detail: `Ric→SL en ${roundMin(delta)} min (>${roundMin(minMs)})`,
+        detail: `Egreso Ricardone → ingreso San Lorenzo en ${roundMin(delta)} min (40 min–6 h)`,
         deltaMinutes: roundMin(delta),
         fromLogical: 'EGRESO',
         toLogical: 'SL_INGRESO',
+      }
+    }
+  }
+  return null
+}
+
+/** R4: recorrido Balanza ingreso → Playa 3 → Celda 16 → (Playa 3) → Balanza. */
+export function detectBalanzaPlayaCelda16Route(
+  points: readonly GoldenTimelinePoint[]
+): GoldenAnomalyHit | null {
+  const seq = collapseConsecutive(sortedPoints(points)).map((p) => p.logicalCode)
+  const idxBalIng = seq.indexOf('BALANZA_INGRESO')
+  if (idxBalIng < 0) return null
+  const idxPlaya = seq.indexOf('PLAYA', idxBalIng + 1)
+  if (idxPlaya < 0) return null
+  let idxC16 = -1
+  for (let k = idxPlaya + 1; k < seq.length; k++) {
+    if (CELDA16_LOGICAL.has(seq[k]!)) {
+      idxC16 = k
+      break
+    }
+  }
+  if (idxC16 < 0) return null
+  let idxClose = -1
+  for (let k = idxC16 + 1; k < seq.length; k++) {
+    if (BALANZA_CLOSE_LOGICAL.has(seq[k]!)) {
+      idxClose = k
+      break
+    }
+  }
+  if (idxClose < 0) return null
+  return {
+    reason: 'RUTA_BALANZA_PLAYA_C16_BALANZA',
+    kind: 'BEHAVIORAL',
+    detail: 'Balanza ingreso → Playa 3 → Celda 16 → (Playa 3) → Balanza',
+    fromLogical: 'BALANZA_INGRESO',
+    toLogical: seq[idxClose]!,
+  }
+}
+
+/** R5: pasa por un punto de carga y luego por una plataforma de descarga. */
+export function detectLoadThenDischarge(
+  points: readonly GoldenTimelinePoint[]
+): GoldenAnomalyHit | null {
+  const seq = collapseConsecutive(sortedPoints(points)).map((p) => p.logicalCode)
+  let idxLoad = -1
+  for (let k = 0; k < seq.length; k++) {
+    if (LOAD_LOGICAL.has(seq[k]!)) {
+      idxLoad = k
+      break
+    }
+  }
+  if (idxLoad < 0) return null
+  for (let k = idxLoad + 1; k < seq.length; k++) {
+    if (DISCHARGE_LOGICAL.has(seq[k]!)) {
+      return {
+        reason: 'CARGA_LUEGO_DESCARGA',
+        kind: 'BEHAVIORAL',
+        detail: `Carga (${seq[idxLoad]}) y luego descarga (${seq[k]})`,
+        fromLogical: seq[idxLoad]!,
+        toLogical: seq[k]!,
       }
     }
   }
@@ -287,35 +287,30 @@ export function isPelletCircuitCode(circuitCode: string | null | undefined): boo
 }
 
 /**
- * Evalúa G1–G4. Prioridad: G1 → G2 → G3 → G4 (primera hit gana para `anomaly_kind_reason`).
- * G5 (sin Excel) se evalúa en el índice UI con patente+día — ver `stampMissingExcelAnomalies`.
- * Devuelve todas las hits; el cableado usa la primera.
+ * Evalúa R1–R5 en orden. Prioridad: R1 → R2 → R3 → R4 → R5 (la primera hit gana
+ * para `anomaly_kind_reason`). R1/R2/R3 sobre la timeline de la patente; R4/R5
+ * sobre la del journey. Devuelve todas las hits; el cableado usa la primera.
  */
 export function evaluateGoldenAnomalyRules(input: EvaluateGoldenAnomalyInput): GoldenAnomalyHit[] {
   const platePts = input.platePoints?.length ? input.platePoints : input.points
-  const isPellet =
-    input.isPelletTransile === true || isPelletCircuitCode(input.circuitCode)
+  const isPellet = input.isPelletTransile === true || isPelletCircuitCode(input.circuitCode)
   const isDeVuelta = input.isDeVuelta === true
   const hits: GoldenAnomalyHit[] = []
 
-  const g1 = detectSlRicQuickReturnNoPellet(platePts, {
-    isPelletTransile: isPellet,
-    isDeVuelta,
-  })
-  if (g1) hits.push({ ...g1, circuitCode: input.circuitCode })
+  const r1 = detectRicQuickReEntry(platePts, { isPelletTransile: isPellet, isDeVuelta })
+  if (r1) hits.push({ ...r1, circuitCode: input.circuitCode })
 
-  const g2 = detectCaladaToPreingresoRegression(input.points)
-  if (g2) hits.push({ ...g2, circuitCode: input.circuitCode })
+  const r2 = detectSlThenRicSameDay(platePts, { isPelletTransile: isPellet, isDeVuelta })
+  if (r2) hits.push({ ...r2, circuitCode: input.circuitCode })
 
-  const g3 = detectSkippedPointWithExtremeGap(
-    input.points,
-    input.expectedLogicalSequence ?? [],
-    input.missingExpectedPoints ?? []
-  )
-  if (g3) hits.push({ ...g3, circuitCode: input.circuitCode })
+  const r3 = detectRicToSlBridgeWindow(platePts)
+  if (r3) hits.push({ ...r3, circuitCode: input.circuitCode })
 
-  const g4 = detectRicToSlTravelTooSlow(platePts)
-  if (g4) hits.push({ ...g4, circuitCode: input.circuitCode })
+  const r4 = detectBalanzaPlayaCelda16Route(input.points)
+  if (r4) hits.push({ ...r4, circuitCode: input.circuitCode })
+
+  const r5 = detectLoadThenDischarge(input.points)
+  if (r5) hits.push({ ...r5, circuitCode: input.circuitCode })
 
   return hits
 }

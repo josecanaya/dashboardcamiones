@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import {
-  detectMissingExcelMovement,
-  detectCaladaToPreingresoRegression,
-  detectRicToSlTravelTooSlow,
-  detectSkippedPointWithExtremeGap,
-  detectSlRicQuickReturnNoPellet,
+  detectRicQuickReEntry,
+  detectSlThenRicSameDay,
+  detectRicToSlBridgeWindow,
+  detectBalanzaPlayaCelda16Route,
+  detectLoadThenDischarge,
   evaluateGoldenAnomalyRules,
-  GOLDEN_CALADA_PREINGRESO_MAX_MS,
-  GOLDEN_RIC_SL_MIN_MS,
-  GOLDEN_SKIP_GAP_MAX_MS,
   GOLDEN_SL_RIC_MAX_MS,
+  RIC_REINGRESO_MAX_MS,
+  RIC_SL_MIN_MS,
+  RIC_SL_MAX_MS,
   type GoldenTimelinePoint,
 } from './goldenAnomalyRules'
 
@@ -18,111 +18,39 @@ const t0 = Date.parse('2026-07-10T10:00:00-03:00')
 function pt(
   offsetMin: number,
   logicalCode: string,
-  siteId?: string
+  siteId?: string,
+  day = '2026-07-10'
 ): GoldenTimelinePoint {
-  return { t: t0 + offsetMin * 60_000, logicalCode, siteId }
+  return { t: t0 + offsetMin * 60_000, logicalCode, siteId, day }
 }
 
-describe('goldenAnomalyRules', () => {
-  describe('G1 SL→Ric ≤30 sin pellet', () => {
-    it('marca vuelta rápida no pellet', () => {
-      const hit = detectSlRicQuickReturnNoPellet([
-        pt(0, 'SL_EGRESO', 'san_lorenzo'),
-        pt(25, 'INGRESO', 'ricardone'),
-      ])
-      expect(hit?.reason).toBe('SL_RIC_VUELTA_RAPIDA_NO_PELLET')
-      expect(hit?.deltaMinutes).toBe(25)
-    })
-
-    it('no marca si es De la vuelta', () => {
-      const hit = detectSlRicQuickReturnNoPellet(
-        [pt(0, 'SL_EGRESO', 'san_lorenzo'), pt(20, 'PREINGRESO', 'ricardone')],
-        { isDeVuelta: true }
-      )
-      expect(hit).toBeNull()
-    })
-
-    it('no marca si es pellet', () => {
-      const hit = detectSlRicQuickReturnNoPellet(
-        [pt(0, 'SL_EGRESO', 'san_lorenzo'), pt(20, 'PREINGRESO', 'ricardone')],
-        { isPelletTransile: true }
-      )
-      expect(hit).toBeNull()
-    })
-
-    it('no marca si supera 30 min', () => {
-      const hit = detectSlRicQuickReturnNoPellet([
-        pt(0, 'SL_EGRESO', 'san_lorenzo'),
-        pt(31, 'INGRESO', 'ricardone'),
-      ])
-      expect(hit).toBeNull()
-    })
-  })
-
-  describe('G2 Calada→Preingreso <20', () => {
-    it('detecta regresión corta', () => {
-      const hit = detectCaladaToPreingresoRegression([
-        pt(0, 'PREINGRESO'),
-        pt(10, 'CALADA'),
-        pt(25, 'PREINGRESO'),
-      ])
-      expect(hit?.reason).toBe('REGRESION_CALADA_PREINGRESO')
-      expect(hit?.deltaMinutes).toBe(15)
-    })
-
-    it('ignora si ≥20 min', () => {
-      const hit = detectCaladaToPreingresoRegression([
-        pt(0, 'CALADA'),
-        pt(20, 'PREINGRESO'),
-      ])
-      expect(hit).toBeNull()
-    })
-
-    it('no confunde recalado PREINGRESO→CALADA', () => {
-      const hit = detectCaladaToPreingresoRegression([
-        pt(0, 'PREINGRESO'),
-        pt(5, 'CALADA'),
-        pt(40, 'PREINGRESO'),
-        pt(50, 'CALADA'),
-      ])
-      expect(hit).toBeNull()
-    })
-  })
-
-  describe('G3 skip + lapso extremo', () => {
-    const expected = ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO'] as const
-    it('marca gap extremo con punto faltante', () => {
-      const hit = detectSkippedPointWithExtremeGap(
-        [pt(0, 'INGRESO'), pt(300, 'EGRESO')],
-        expected,
-        ['PREINGRESO', 'CALADA']
-      )
-      expect(hit?.reason).toBe('SKIP_PUNTO_LAPSO_EXTREMO')
-      expect(hit!.deltaMinutes!).toBeGreaterThan(roundMin(GOLDEN_SKIP_GAP_MAX_MS))
-    })
-
-    it('no marca gap corto aunque falte punto', () => {
-      const hit = detectSkippedPointWithExtremeGap(
-        [pt(0, 'INGRESO'), pt(60, 'EGRESO')],
-        expected,
-        ['PREINGRESO', 'CALADA']
-      )
-      expect(hit).toBeNull()
-    })
-  })
-
-  describe('G4 Ric→SL >30', () => {
-    it('marca demora', () => {
-      const hit = detectRicToSlTravelTooSlow([
+describe('goldenAnomalyRules — reglas R1–R5', () => {
+  describe('R1 salida Ric → reingreso Ric ≤ 1 h (no pellet)', () => {
+    it('marca reingreso rápido', () => {
+      const hit = detectRicQuickReEntry([
         pt(0, 'EGRESO', 'ricardone'),
-        pt(45, 'SL_INGRESO', 'san_lorenzo'),
+        pt(45, 'INGRESO', 'ricardone'),
       ])
-      expect(hit?.reason).toBe('RIC_SL_DEMORA')
+      expect(hit?.reason).toBe('RIC_REINGRESO_RAPIDO_NO_PELLET')
       expect(hit?.deltaMinutes).toBe(45)
     })
 
-    it('no marca si ≤30', () => {
-      const hit = detectRicToSlTravelTooSlow([
+    it('no marca si pasa más de 1 h', () => {
+      const hit = detectRicQuickReEntry([
+        pt(0, 'EGRESO', 'ricardone'),
+        pt(75, 'INGRESO', 'ricardone'),
+      ])
+      expect(hit).toBeNull()
+    })
+
+    it('no marca si es pellet o de la vuelta', () => {
+      const pts = [pt(0, 'EGRESO', 'ricardone'), pt(20, 'PREINGRESO', 'ricardone')]
+      expect(detectRicQuickReEntry(pts, { isPelletTransile: true })).toBeNull()
+      expect(detectRicQuickReEntry(pts, { isDeVuelta: true })).toBeNull()
+    })
+
+    it('no marca si el reingreso es en otra planta', () => {
+      const hit = detectRicQuickReEntry([
         pt(0, 'EGRESO', 'ricardone'),
         pt(30, 'SL_INGRESO', 'san_lorenzo'),
       ])
@@ -130,83 +58,148 @@ describe('goldenAnomalyRules', () => {
     })
   })
 
-  describe('evaluateGoldenAnomalyRules', () => {
-    it('prioriza G1 cuando hay varias', () => {
-      const hits = evaluateGoldenAnomalyRules({
-        points: [
-          pt(0, 'SL_EGRESO', 'san_lorenzo'),
-          pt(10, 'INGRESO', 'ricardone'),
-          pt(15, 'CALADA', 'ricardone'),
-          pt(20, 'PREINGRESO', 'ricardone'),
-        ],
-        circuitCode: 'R7',
-      })
-      expect(hits[0]?.reason).toBe('SL_RIC_VUELTA_RAPIDA_NO_PELLET')
-      expect(hits.some((h) => h.reason === 'REGRESION_CALADA_PREINGRESO')).toBe(true)
+  describe('R2 mismo día SL primero y luego Ric (no pellet)', () => {
+    it('marca San Lorenzo y luego Ricardone el mismo día', () => {
+      const hit = detectSlThenRicSameDay([
+        pt(0, 'SL_INGRESO', 'san_lorenzo'),
+        pt(180, 'INGRESO', 'ricardone'),
+      ])
+      expect(hit?.reason).toBe('SL_LUEGO_RIC_MISMO_DIA_NO_PELLET')
     })
 
-    it('pellet circuit excluye G1', () => {
-      const hits = evaluateGoldenAnomalyRules({
-        points: [pt(0, 'SL_EGRESO', 'san_lorenzo'), pt(10, 'INGRESO', 'ricardone')],
-        circuitCode: 'R30',
-      })
-      expect(hits.some((h) => h.reason === 'SL_RIC_VUELTA_RAPIDA_NO_PELLET')).toBe(false)
+    it('no marca si Ricardone fue primero', () => {
+      const hit = detectSlThenRicSameDay([
+        pt(0, 'INGRESO', 'ricardone'),
+        pt(180, 'SL_INGRESO', 'san_lorenzo'),
+      ])
+      expect(hit).toBeNull()
+    })
+
+    it('no marca si son días distintos', () => {
+      const hit = detectSlThenRicSameDay([
+        pt(0, 'SL_INGRESO', 'san_lorenzo', '2026-07-10'),
+        pt(60, 'INGRESO', 'ricardone', '2026-07-11'),
+      ])
+      expect(hit).toBeNull()
+    })
+
+    it('no marca si es pellet', () => {
+      const hit = detectSlThenRicSameDay(
+        [pt(0, 'SL_INGRESO', 'san_lorenzo'), pt(120, 'INGRESO', 'ricardone')],
+        { isPelletTransile: true }
+      )
+      expect(hit).toBeNull()
     })
   })
 
-  describe('G5 sin movimiento Excel', () => {
-    it('marca Ric ingreso+egreso ausente Excel', () => {
-      const hit = detectMissingExcelMovement({
-        logicalCodes: ['INGRESO', 'PREINGRESO', 'EGRESO'],
-        inExcelSameDay: false,
+  describe('R3 egreso Ric → ingreso SL en banda [40 min, 6 h]', () => {
+    it('marca dentro de la banda', () => {
+      const hit = detectRicToSlBridgeWindow([
+        pt(0, 'EGRESO', 'ricardone'),
+        pt(120, 'SL_INGRESO', 'san_lorenzo'),
+      ])
+      expect(hit?.reason).toBe('RIC_SL_TRAMO_40M_6H')
+      expect(hit?.deltaMinutes).toBe(120)
+    })
+
+    it('no marca por debajo de 40 min', () => {
+      const hit = detectRicToSlBridgeWindow([
+        pt(0, 'EGRESO', 'ricardone'),
+        pt(30, 'SL_INGRESO', 'san_lorenzo'),
+      ])
+      expect(hit).toBeNull()
+    })
+
+    it('no marca por encima de 6 h', () => {
+      const hit = detectRicToSlBridgeWindow([
+        pt(0, 'EGRESO', 'ricardone'),
+        pt(400, 'SL_INGRESO', 'san_lorenzo'),
+      ])
+      expect(hit).toBeNull()
+    })
+  })
+
+  describe('R4 Balanza ingreso → Playa 3 → Celda 16 → (Playa 3) → Balanza', () => {
+    it('marca con playa de vuelta antes de balanza', () => {
+      const hit = detectBalanzaPlayaCelda16Route([
+        pt(0, 'BALANZA_INGRESO'),
+        pt(5, 'PLAYA'),
+        pt(20, 'CELDA16_DESCARGA'),
+        pt(35, 'PLAYA'),
+        pt(45, 'BALANZA_EGRESO'),
+      ])
+      expect(hit?.reason).toBe('RUTA_BALANZA_PLAYA_C16_BALANZA')
+    })
+
+    it('marca yendo directo a balanza tras celda 16', () => {
+      const hit = detectBalanzaPlayaCelda16Route([
+        pt(0, 'BALANZA_INGRESO'),
+        pt(5, 'PLAYA'),
+        pt(20, 'CELDA16_CARGA'),
+        pt(30, 'BALANZA_EGRESO'),
+      ])
+      expect(hit?.reason).toBe('RUTA_BALANZA_PLAYA_C16_BALANZA')
+    })
+
+    it('no marca sin celda 16', () => {
+      const hit = detectBalanzaPlayaCelda16Route([
+        pt(0, 'BALANZA_INGRESO'),
+        pt(5, 'PLAYA'),
+        pt(20, 'BALANZA_EGRESO'),
+      ])
+      expect(hit).toBeNull()
+    })
+  })
+
+  describe('R5 punto de carga y luego plataforma de descarga', () => {
+    it('marca carga en celda 16 y luego descarga en San Lorenzo', () => {
+      const hit = detectLoadThenDischarge([
+        pt(0, 'CELDA16_CARGA', 'ricardone'),
+        pt(120, 'SL_DESCARGA', 'san_lorenzo'),
+      ])
+      expect(hit?.reason).toBe('CARGA_LUEGO_DESCARGA')
+    })
+
+    it('marca carga S8 y luego volcable', () => {
+      const hit = detectLoadThenDischarge([
+        pt(0, 'CARGA_S8', 'ricardone'),
+        pt(30, 'VOLCABLE', 'ricardone'),
+      ])
+      expect(hit?.reason).toBe('CARGA_LUEGO_DESCARGA')
+    })
+
+    it('no marca descarga sin carga previa', () => {
+      const hit = detectLoadThenDischarge([
+        pt(0, 'VOLCABLE', 'ricardone'),
+        pt(30, 'CELDA16_CARGA', 'ricardone'),
+      ])
+      expect(hit).toBeNull()
+    })
+  })
+
+  describe('evaluateGoldenAnomalyRules', () => {
+    it('prioriza R1 y usa platePoints para reglas de patente', () => {
+      const hits = evaluateGoldenAnomalyRules({
+        points: [pt(0, 'EGRESO', 'ricardone'), pt(30, 'INGRESO', 'ricardone')],
+        circuitCode: 'R7',
       })
-      expect(hit?.reason).toBe('SIN_MOVIMIENTO_EXCEL')
+      expect(hits[0]?.reason).toBe('RIC_REINGRESO_RAPIDO_NO_PELLET')
     })
 
-    it('marca SL ingreso+egreso ausente Excel', () => {
-      const hit = detectMissingExcelMovement({
-        logicalCodes: ['SL_INGRESO', 'SL_EGRESO'],
-        inExcelSameDay: false,
+    it('pellet excluye R1/R2 pero R5 sigue disparando', () => {
+      const hits = evaluateGoldenAnomalyRules({
+        points: [pt(0, 'CELDA16_CARGA', 'ricardone'), pt(60, 'SL_DESCARGA', 'san_lorenzo')],
+        circuitCode: 'R30',
       })
-      expect(hit?.reason).toBe('SIN_MOVIMIENTO_EXCEL')
-    })
-
-    it('no marca si figura en Excel mismo día', () => {
-      expect(
-        detectMissingExcelMovement({
-          logicalCodes: ['INGRESO', 'EGRESO'],
-          inExcelSameDay: true,
-        })
-      ).toBeNull()
-    })
-
-    it('no marca si Excel no está cargado', () => {
-      expect(
-        detectMissingExcelMovement({
-          logicalCodes: ['INGRESO', 'EGRESO'],
-          inExcelSameDay: null,
-        })
-      ).toBeNull()
-    })
-
-    it('no marca sin egreso', () => {
-      expect(
-        detectMissingExcelMovement({
-          logicalCodes: ['INGRESO', 'PREINGRESO'],
-          inExcelSameDay: false,
-        })
-      ).toBeNull()
+      expect(hits.some((h) => h.reason === 'RIC_REINGRESO_RAPIDO_NO_PELLET')).toBe(false)
+      expect(hits.some((h) => h.reason === 'CARGA_LUEGO_DESCARGA')).toBe(true)
     })
   })
 
   it('umbrales documentados', () => {
     expect(GOLDEN_SL_RIC_MAX_MS).toBe(30 * 60_000)
-    expect(GOLDEN_CALADA_PREINGRESO_MAX_MS).toBe(20 * 60_000)
-    expect(GOLDEN_SKIP_GAP_MAX_MS).toBe(240 * 60_000)
-    expect(GOLDEN_RIC_SL_MIN_MS).toBe(30 * 60_000)
+    expect(RIC_REINGRESO_MAX_MS).toBe(60 * 60_000)
+    expect(RIC_SL_MIN_MS).toBe(40 * 60_000)
+    expect(RIC_SL_MAX_MS).toBe(6 * 60 * 60_000)
   })
 })
-
-function roundMin(ms: number): number {
-  return Math.round((ms / 60000) * 10) / 10
-}

@@ -25,25 +25,25 @@ export type AnomalyKind =
   /** No se puede afirmar nada por falta de eventos/cobertura. NO es anomalía del camión. */
   | 'DATA_COVERAGE'
 
-/** Razón canónica y única (reemplaza los enums dispersos por clasificador). */
+/**
+ * Razón canónica y única.
+ *
+ * REEMPLAZO TOTAL (2026-08-05): las anomalías de comportamiento se definen SOLO
+ * por las 5 reglas de `goldenAnomalyRules.ts` (R1–R5). Ya no se emite comportamiento
+ * desde el estado de matriz/ejecutivo ni desde alertas de ruta/arranque.
+ */
 export type AnomalyReason =
-  // --- BEHAVIORAL ---
-  /** Alerta Truckflow INVALID_ROUTE: ruta inválida durante el viaje. */
-  | 'RUTA_INVALIDA'
-  /** Alerta Truckflow INVALID_START_JOURNEY: arranque en sector no habilitado. */
-  | 'ARRANQUE_INVALIDO'
-  /** La secuencia observada retrocede / contradice el circuito esperado. */
-  | 'RETROCESO_SECUENCIA'
-  /** Regla de oro G1: SL→Ric ≤30 min sin pellet. */
-  | 'SL_RIC_VUELTA_RAPIDA_NO_PELLET'
-  /** Regla de oro G2: Calada→Preingreso <20 min. */
-  | 'REGRESION_CALADA_PREINGRESO'
-  /** Regla de oro G3: skip de hito + lapso extremo entre flanqueantes. */
-  | 'SKIP_PUNTO_LAPSO_EXTREMO'
-  /** Regla de oro G4: Ric→SL >30 min. */
-  | 'RIC_SL_DEMORA'
-  /** Regla de oro G5: entrada+salida en planta pero no figura en Movimientos Excel (patente+día). */
-  | 'SIN_MOVIMIENTO_EXCEL'
+  // --- BEHAVIORAL (solo reglas R1–R5, ver GOLDEN_ANOMALY_REASONS) ---
+  /** R1: salida Ricardone → reingreso Ricardone ≤ 1 h, no pellet. */
+  | 'RIC_REINGRESO_RAPIDO_NO_PELLET'
+  /** R2: mismo día San Lorenzo primero y luego Ricardone, no pellet. */
+  | 'SL_LUEGO_RIC_MISMO_DIA_NO_PELLET'
+  /** R3: egreso Ricardone → ingreso San Lorenzo entre 40 min y 6 h. */
+  | 'RIC_SL_TRAMO_40M_6H'
+  /** R4: Balanza ingreso → Playa 3 → Celda 16 → (Playa 3) → Balanza. */
+  | 'RUTA_BALANZA_PLAYA_C16_BALANZA'
+  /** R5: pasa por punto de carga y luego por plataforma de descarga. */
+  | 'CARGA_LUEGO_DESCARGA'
   // --- DATA_COVERAGE ---
   /** Muy pocos eventos útiles para evaluar (ruido / captura parcial). */
   | 'EVENTOS_INSUFICIENTES'
@@ -81,10 +81,6 @@ export type ClassifyAnomalyInput = {
   matrixFinalStatus: MatrixFinalStatusLike
   /** `resolveExecutiveCircuitDecision(...).executiveStatus`. Ya separa NO_EVALUABLE. */
   executiveStatus: ExecutiveStatusLike
-  /** Alerta operativa INVALID_ROUTE presente en el viaje. */
-  hasInvalidRouteOperationalAlert: boolean
-  /** Alerta operativa INVALID_START_JOURNEY presente en el viaje. */
-  hasInvalidJourneyStartOperationalAlert: boolean
   /** Eventos frontales útiles (excluye cámaras traseras). */
   frontEventCount: number
 }
@@ -93,43 +89,33 @@ export type ClassifyAnomalyInput = {
 export const ANOMALY_MIN_FRONT_EVENTS = 2
 
 /**
- * Verdicto único de anomalía. Orden de prioridad pensado para que una causa de
- * comportamiento (ruta/arranque inválido, retroceso) domine sobre un hueco de datos,
- * pero un dato insuficiente NUNCA se reporte como anomalía de comportamiento.
+ * Verdicto base de datos vs. NONE.
+ *
+ * REEMPLAZO TOTAL (2026-08-05): esta función YA NO produce `BEHAVIORAL`. El
+ * comportamiento anómalo lo aportan exclusivamente las reglas R1–R5 vía
+ * `applyGoldenAnomalyOverride`. Acá solo se decide si el journey es un hueco de
+ * datos (`DATA_COVERAGE`) — que lo saca del análisis del comité — o `NONE`.
  */
 export function classifyAnomaly(input: ClassifyAnomalyInput): AnomalyVerdict {
   const matrix = normUpper(input.matrixFinalStatus)
   const executive = normUpper(input.executiveStatus)
 
-  // 1. Alertas operativas duras = comportamiento inequívoco (aunque falten cámaras).
-  if (input.hasInvalidRouteOperationalAlert) {
-    return { kind: 'BEHAVIORAL', reason: 'RUTA_INVALIDA' }
-  }
-  if (input.hasInvalidJourneyStartOperationalAlert) {
-    return { kind: 'BEHAVIORAL', reason: 'ARRANQUE_INVALIDO' }
-  }
-
-  // 2. Sin eventos suficientes: no se puede afirmar comportamiento. Es dato.
+  // 1. Sin eventos suficientes: no se puede afirmar comportamiento. Es dato.
   if (input.frontEventCount <= ANOMALY_MIN_FRONT_EVENTS) {
     return { kind: 'DATA_COVERAGE', reason: 'EVENTOS_INSUFICIENTES' }
   }
 
-  // 3. La decisión ejecutiva ya declaró que no se puede evaluar por cobertura.
+  // 2. La decisión ejecutiva ya declaró que no se puede evaluar por cobertura.
   if (executive === 'NO_EVALUABLE') {
     return { kind: 'DATA_COVERAGE', reason: 'COBERTURA_INSUFICIENTE' }
   }
 
-  // 4. Retroceso / contradicción de secuencia = comportamiento (con cobertura ok).
-  if (matrix === 'ANOMALO' || executive === 'ANOMALO') {
-    return { kind: 'BEHAVIORAL', reason: 'RETROCESO_SECUENCIA' }
-  }
-
-  // 5. Incompleto sin contradicción = hueco de datos, NO anomalía de comportamiento.
+  // 3. Incompleto sin contradicción = hueco de datos, NO anomalía de comportamiento.
   if (matrix === 'INCOMPLETO' || executive === 'INCOMPLETO') {
     return { kind: 'DATA_COVERAGE', reason: 'SECUENCIA_INCOMPLETA' }
   }
 
-  // 6. Válido, probable o deducido.
+  // 4. Válido, probable o deducido. Un ANOMALO de secuencia ya NO es comportamiento.
   return { kind: 'NONE', reason: null }
 }
 
@@ -139,26 +125,19 @@ export function isBehavioralAnomaly(verdict: AnomalyVerdict): boolean {
 }
 
 /**
- * Las reglas de oro (comportamiento temporal) ganan sobre NONE / DATA_COVERAGE.
- * No pisan alertas duras ya BEHAVIORAL (ruta/arranque inválido).
+ * Las reglas R1–R5 son la ÚNICA fuente de comportamiento anómalo: si hay hit,
+ * el verdicto pasa a BEHAVIORAL con esa razón.
  *
  * Excepción (evidencia mínima): NO pisan `EVENTOS_INSUFICIENTES`. Con ≤2 eventos
- * frontales no hay con qué afirmar comportamiento — una regla como G3 («faltó un
- * hito y el lapso entre flanqueantes es extremo») se dispara sola cuando lo único
- * que pasa es que faltan cámaras. Eso metía journeys de 2 tomas en el panel de
- * anomalías, que es justo lo que el eje comportamiento/datos vino a separar.
+ * frontales no hay con qué afirmar comportamiento; sin este guardia un journey de
+ * 2 tomas entraría al panel de anomalías, que es lo que el eje comportamiento/datos
+ * vino a separar.
  */
 export function applyGoldenAnomalyOverride(
   base: AnomalyVerdict,
   goldenReason: AnomalyReason | null | undefined
 ): AnomalyVerdict {
   if (!goldenReason) return base
-  if (
-    base.kind === 'BEHAVIORAL' &&
-    (base.reason === 'RUTA_INVALIDA' || base.reason === 'ARRANQUE_INVALIDO')
-  ) {
-    return base
-  }
   if (base.kind === 'DATA_COVERAGE' && base.reason === 'EVENTOS_INSUFICIENTES') {
     return base
   }

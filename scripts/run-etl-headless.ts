@@ -29,6 +29,8 @@ import {
 } from '../src/features/real-truckflow/etlWorkbench/powerBiLoad.ts'
 import { POWER_BI_PRODUCT_FILES } from '../src/config/committeeEtlLite.ts'
 import { parseCsvToRecords } from '../src/etl-core/csvParse.ts'
+import { recordsToCsv } from '../src/etl-core/csv.ts'
+import { buildLevels } from '../src/etl-core/levels/index.ts'
 import { CIRCUIT_CATALOG } from '../src/etl-core/domain/circuitCatalog.ts'
 import {
   isEtlRunCoreTable,
@@ -301,6 +303,54 @@ function persistTables(
   return { coreCount, debugCount, persistedKeys }
 }
 
+/**
+ * Materializa el modelo de niveles leyendo las tablas recién persistidas.
+ * CSV es el formato canónico; el JSON espejo es el que sirve el endpoint de
+ * tablas y consume el front.
+ */
+function persistLevels(
+  runDir: string,
+  log: (m: string) => void
+): { tablas: number; invariantesRotos: string[] } {
+  const tablesDir = join(runDir, 'tables')
+  const leer = (name: string): Record<string, unknown>[] => {
+    const p = join(tablesDir, `${name}.json`)
+    if (!existsSync(p)) return []
+    const doc = JSON.parse(readFileSync(p, 'utf8'))
+    return Array.isArray(doc) ? doc : (doc?.rows ?? [])
+  }
+
+  const res = buildLevels({
+    excelRows: leer('excel_operations_with_truckflow'),
+    finalCircuits: leer('final_circuits'),
+    cleanJourneys: leer('clean_journeys_for_analysis'),
+    journeyTimeline: leer('journey_timeline'),
+    circuitTimingJourneys: leer('circuit_timing_journeys'),
+  })
+
+  for (const t of Object.values(res.tables)) {
+    const headers = [...t.headers]
+    const rows = t.rows as Record<string, unknown>[]
+    writeFileSync(join(tablesDir, `${t.name}.csv`), recordsToCsv(headers, rows), 'utf8')
+    writeFileSync(
+      join(tablesDir, `${t.name}.json`),
+      JSON.stringify({ name: t.name, headers, rows }, null, 2),
+      'utf8'
+    )
+  }
+
+  const rotos = res.invariantes.filter((i) => !i.ok).map((i) => `${i.nombre} (${i.detalle})`)
+  log(
+    `[etl-headless] niveles: C ${res.stats.c.conCamara}/${res.stats.c.excelTotal} con cámara · ` +
+      `D ${res.stats.d.validos} válidos, ${res.stats.d.anomalos} anómalos, ` +
+      `${res.stats.d.incompletos} incompletos, ${res.stats.d.sinContrato} sin contrato · ` +
+      `E ${res.stats.e.circuitos} circuitos (${res.stats.e.porcentajeCamaraPura}% cámara pura)`
+  )
+  for (const r of rotos) log(`[etl-headless] WARN invariante roto: ${r}`)
+
+  return { tablas: Object.keys(res.tables).length, invariantesRotos: rotos }
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2))
   if (args.help || !args.eventsPaths.length) {
@@ -455,6 +505,20 @@ async function main() {
       args.persistDebug
     )
 
+    // Modelo de niveles A→B→C→D→E: se materializa desde las tablas que la
+    // corrida acaba de escribir, así que es determinístico y reproducible con
+    // `npx tsx scripts/build-levels.ts --run <id>`. Si algún invariante falla la
+    // corrida sigue siendo válida, pero queda registrado: una partición rota es
+    // un defecto de datos que hay que mirar, no un motivo para perder la corrida.
+    let niveles: { tablas: number; invariantesRotos: string[] } | null = null
+    try {
+      niveles = persistLevels(runDir, log)
+    } catch (lvlErr) {
+      log(
+        `[etl-headless] WARN niveles falló: ${lvlErr instanceof Error ? lvlErr.message : String(lvlErr)}`
+      )
+    }
+
     // Pack comité/Power BI dentro de la corrida: misma fuente que leen los agentes.
     let powerBi: ReturnType<typeof persistPowerBiPack> = null
     try {
@@ -502,6 +566,16 @@ async function main() {
             coreTableCount: coreCount,
             debugTableCount: debugCount,
             tableKeys: persistedKeys,
+            // Trazabilidad del modelo de niveles: si un invariante quedó roto,
+            // la corrida lo dice en su propio manifiesto.
+            niveles:
+              niveles ?
+                {
+                  modelo: 'A_B_C_D_E_v14',
+                  tablas: niveles.tablas,
+                  invariantesRotos: niveles.invariantesRotos,
+                }
+              : null,
             powerBi:
               powerBi ?
                 {

@@ -30,6 +30,7 @@ import {
   isRicSanLorenzoRouteCircuit,
   journeyHasLiquidStrongPoint,
   resolveExecutiveBucket,
+  resolveExecutiveCircuitConfig,
   resolveExecutiveCircuitConfigForJourney,
   resolveExecutiveCircuitDecision,
   resolveProbableSolidExecutiveDecision,
@@ -52,6 +53,10 @@ import {
   resolveFlexibleDischargePreliminaryCode,
 } from './finalCircuitScoring'
 import { resolveCommitteeClassification, buildGoldenTimelineFromJourney } from './committeeClassification'
+import {
+  buildS7S8CircuitByPlate,
+  resolveS7S8ExcelFirstCircuitCode,
+} from './etlS7S8ExcelReclassify'
 import { type ClassifiedJourneyForTiming } from './etlSegmentTiming'
 import { lookupSanLorenzoCameraByDevice } from '../../../data/sanLorenzoCameraCatalog'
 import {
@@ -1572,6 +1577,14 @@ export async function runEtlTransform(
     )
   }
 
+  // Reconciliación excel-first de recorridos S7/S8 (cámaras nuevas Ricardone):
+  // los que pasan por DESCARGA_S7/CARGA_S7/CARGA_S8 sin cámara de silo caen a
+  // RS_REC lado-cámara. La plataforma del Excel decide el R-code real (R3/R4/…),
+  // igual que en R7. Sin Excel de la patente, el recorrido queda como estaba.
+  const s7s8CircuitByPlate = buildS7S8CircuitByPlate(
+    phaseStore.excelStep?.normalized ?? inp.preNormalizedMovimientos
+  )
+
   let executiveJourneyPass = 0
   for (const mj of journeysForExecutive) {
     if (++executiveJourneyPass % 40 === 0) await yieldToBrowser()
@@ -1619,7 +1632,26 @@ export async function runEtlTransform(
     })
     let technicalCircuitCode =
       matrixClassification.matchedCircuitCode ?? flexPreliminaryOverride ?? mj.preliminaryCircuitCode
-    const executiveCircuitConfig = resolveExecutiveCircuitConfigForJourney(mj, technicalCircuitCode)
+    let executiveCircuitConfig = resolveExecutiveCircuitConfigForJourney(mj, technicalCircuitCode)
+    // Excel-first S7/S8: un recorrido RS_REC/RS_DESP que pasó por las cámaras nuevas
+    // toma su R-code real de la plataforma del Excel (no de una regla de cámara, que
+    // sin plataforma no distingue R3/R4 y caía al default Volcable). Sin Excel: intacto.
+    const s7s8ExcelCode = resolveS7S8ExcelFirstCircuitCode({
+      currentExecutiveCode: executiveCircuitConfig?.code ?? '',
+      logicalCodes: logicals,
+      plate: String(mj.normalizedPlate || mj.plate || ''),
+      circuitByPlate: s7s8CircuitByPlate,
+    })
+    if (s7s8ExcelCode) {
+      const s7s8Cfg = resolveExecutiveCircuitConfig(s7s8ExcelCode)
+      if (s7s8Cfg) {
+        executiveCircuitConfig = s7s8Cfg
+        technicalCircuitCode = resolveTechnicalCircuitCodeForExecutive(mj, s7s8Cfg.code) ?? technicalCircuitCode
+        matrixClassification = classifyJourneyAgainstCircuitMatrix(mj, DEFAULT_CIRCUIT_MATRIX, {
+          preliminaryCodeOverride: technicalCircuitCode,
+        })
+      }
+    }
     const technicalOverride =
       executiveCircuitConfig ?
         resolveTechnicalCircuitCodeForExecutive(mj, executiveCircuitConfig.code)

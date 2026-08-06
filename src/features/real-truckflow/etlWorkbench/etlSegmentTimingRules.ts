@@ -43,7 +43,11 @@ export const VOLCABLE_RECEIPT_BALANZA_STAY_MIN_MINUTES = 3
 /** Balanza ingreso→egreso Ricardone: < 10 min = lecturas B1/B2 casi simultáneas (error cámara/OCR). */
 export const BALANZA_STAY_MIN_MINUTES = 10
 
-/** Template KPI recepción Ricardone sin punto intermedio de plataforma. */
+/**
+ * Template KPI recepción Ricardone base (fallback). Los circuitos con destino
+ * instrumentado definen su cadena propia en EXECUTIVE_CIRCUIT_SEGMENT_TEMPLATE
+ * (con playa 3 / descarga en el medio).
+ */
 export const RECEPTION_BALANZA_KPI_CHAIN = [
   'INGRESO',
   'PREINGRESO',
@@ -69,7 +73,8 @@ export const LIQUID_KPI_CHAIN = [
   'BALANZA_EGRESO',
 ] as const
 
-/** KPI Silos Kepler (R3/R4): ingreso → calada → balanza ingreso → balanza egreso. */
+/** KPI Silos Kepler base (R3/R4). La cadena con descarga S7 se define por
+ * circuito en EXECUTIVE_CIRCUIT_SEGMENT_TEMPLATE. */
 export const KEPLER_KPI_CHAIN = [
   'INGRESO',
   'CALADA',

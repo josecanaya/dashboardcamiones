@@ -7,12 +7,12 @@
  * donde los eventos siguen disponibles, y se persiste con la corrida (allowlist).
  *
  * Una fila por pasada de camión por cámara de calada. La UI agrega y filtra por circuito
- * (checklist): camiones por cámara, y concurrencia por ventana de 30 min. El conteo por
- * franja de 30 min es la definición de ocupación elegida (no dwell hasta el próximo hito).
+ * (checklist): camiones por cámara, y concurrencia por ventana horaria. El conteo por hora
+ * es la definición de ocupación elegida (no dwell hasta el próximo hito).
  */
 import { recordsToCsv } from './etlCsv'
 import { getExpectedDevicesForLiveSector } from '../../../services/live/liveOperationalCatalog'
-import { OCCUPANCY_INTERVAL_MINUTES, franjaOperativaFromHour } from './etlSectorOccupancy30min'
+import { franjaOperativaFromHour } from './etlSectorOccupancy30min'
 import type { ClassifiedJourneyForTiming } from './etlSegmentTiming'
 
 /**
@@ -21,6 +21,13 @@ import type { ClassifiedJourneyForTiming } from './etlSegmentTiming'
  * reconocerla por device, no por logicalCode.
  */
 const CALADA_CAMERA_DEVICES = new Set(getExpectedDevicesForLiveSector('RICARDONE_CALADA'))
+
+/**
+ * Ventana de agregación de calada: 1 hora. Deliberadamente distinta de la ocupación por
+ * sector (30 min) — en calada la maniobra dura lo suficiente como para que media hora
+ * fragmente el pico; la hora entera es la unidad que se lee en el tablero.
+ */
+export const CALADA_INTERVAL_MINUTES = 60
 
 export type CaladaCameraEventRow = {
   journey_id: string
@@ -32,8 +39,8 @@ export type CaladaCameraEventRow = {
   timestamp: string
   fecha: string
   hora: string
-  /** Inicio de la ventana de 30 min (hora local), clave de concurrencia. */
-  intervalo_30min: string
+  /** Inicio de la ventana horaria (hora local), clave de concurrencia. */
+  intervalo_hora: string
   /** Mañana / Tarde / Noche (misma convención que ocupación por sector). */
   franja_operativa: string
 }
@@ -42,11 +49,14 @@ function pad2(n: number): string {
   return String(n).padStart(2, '0')
 }
 
-/** Inicio de la ventana de 30 min que contiene `ms`, en hora local ISO sin zona. */
+/**
+ * Inicio de la hora local que contiene `ms`, ISO sin zona. Se trunca por componentes
+ * locales (no por aritmética sobre el epoch) para no depender de que el offset de zona
+ * sea múltiplo de la ventana.
+ */
 function intervalStartIso(ms: number): string {
-  const stepMs = OCCUPANCY_INTERVAL_MINUTES * 60 * 1000
-  const d = new Date(Math.floor(ms / stepMs) * stepMs)
-  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}:00`
+  const d = new Date(ms)
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:00:00`
 }
 
 export type BuildCaladaCameraEventsInput = {
@@ -88,7 +98,7 @@ export function buildCaladaCameraEvents(input: BuildCaladaCameraEventsInput): Ca
         timestamp: iso,
         fecha: `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`,
         hora: `${pad2(d.getHours())}:${pad2(d.getMinutes())}`,
-        intervalo_30min: intervalStartIso(ms),
+        intervalo_hora: intervalStartIso(ms),
         franja_operativa: franjaOperativaFromHour(d.getHours()),
       })
     }
@@ -107,7 +117,7 @@ export const CALADA_CAMERA_EVENTS_HEADERS = [
   'timestamp',
   'fecha',
   'hora',
-  'intervalo_30min',
+  'intervalo_hora',
   'franja_operativa',
 ] as const
 

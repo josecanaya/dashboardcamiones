@@ -1,8 +1,8 @@
 {
   ".claude/settings.local.json": {
-    "mtime": 1785165699.2389293,
-    "ast_hash": "36a7f73c0c878a3326b34f737154f280",
-    "semantic_hash": "36a7f73c0c878a3326b34f737154f280"
+    "mtime": 1785269162.894331,
+    "ast_hash": "cd2740109aceed4386f8b67456ea52cc",
+    "semantic_hash": "cd2740109aceed4386f8b67456ea52cc"
   },
   "RUTA/audit-r7-excel-camera-matrix-12-18.cs": {
     "mtime": 1783006621.7620344,
@@ -165,12 +165,12 @@
     "semantic_hash": "b0cd83da851d4cc877b452708aa34c2d"
   },
   "scripts/find-anomaly-period.mjs": {
-    "mtime": 1784832449.8695168,
+    "mtime": 1785763895.618863,
     "ast_hash": "de725b5c172055c0a461c714874aea7d",
     "semantic_hash": "de725b5c172055c0a461c714874aea7d"
   },
   "scripts/find-anomaly-trucks.mjs": {
-    "mtime": 1784832449.8915238,
+    "mtime": 1785763895.6244123,
     "ast_hash": "2a7da5a4ee6e0a2b6de38be689242c9b",
     "semantic_hash": "2a7da5a4ee6e0a2b6de38be689242c9b"
   },
@@ -195,9 +195,9 @@
     "semantic_hash": "d751713988987e9331980363e24189ce"
   },
   "scripts/run-etl-headless.ts": {
-    "mtime": 1785154753.2434802,
-    "ast_hash": "8f4d7fb0ff65232c5ffe50ef9cbb3342",
-    "semantic_hash": "8f4d7fb0ff65232c5ffe50ef9cbb3342"
+    "mtime": 1785787386.3983796,
+    "ast_hash": "d84d6008a913f579fe532324bf94050d",
+    "semantic_hash": "d84d6008a913f579fe532324bf94050d"
   },
   "scripts/run-truckflow-transform-local.mjs": {
     "mtime": 1783006621.9926066,
@@ -220,9 +220,9 @@
     "semantic_hash": "ad5b5d714a622e1610f99fc89bc5f494"
   },
   "server/etl-agent-chat.mjs": {
-    "mtime": 1784656505.0753713,
-    "ast_hash": "b4f6199bb7997dbdc97b2692575a3bc1",
-    "semantic_hash": "b4f6199bb7997dbdc97b2692575a3bc1"
+    "mtime": 1785852270.7577176,
+    "ast_hash": "90e0d24d73baf11a87d234cb3e2264c5",
+    "semantic_hash": "90e0d24d73baf11a87d234cb3e2264c5"
   },
   "server/etl-runs-store.mjs": {
     "mtime": 1783963084.3912325,
@@ -425,14 +425,14 @@
     "semantic_hash": "eef40c4c86766665391cfd1d3e455e6e"
   },
   "src/etl-core/domain/anomalyClassifier.test.ts": {
-    "mtime": 1784048661.2715466,
-    "ast_hash": "6fce71cfc1c654b11cd38d78577c8d8f",
-    "semantic_hash": "6fce71cfc1c654b11cd38d78577c8d8f"
+    "mtime": 1785251635.5024767,
+    "ast_hash": "d855a39012589c27b550c7dcf8234a5d",
+    "semantic_hash": "d855a39012589c27b550c7dcf8234a5d"
   },
   "src/etl-core/domain/anomalyClassifier.ts": {
-    "mtime": 1784556573.115213,
-    "ast_hash": "76e76138c95e1a5da055ba7bf61872d1",
-    "semantic_hash": "76e76138c95e1a5da055ba7bf61872d1"
+    "mtime": 1785251516.7965217,
+    "ast_hash": "743f8f61ab724d97ffb1a1d4cfadbe52",
+    "semantic_hash": "743f8f61ab724d97ffb1a1d4cfadbe52"
   },
   "src/etl-core/domain/argentinaPlate.ts": {
     "mtime": 1783006622.2228355,
@@ -445,9 +445,9 @@
     "semantic_hash": "8b3aa53d73b689a46d05531145dea762"
   },
   "src/etl-core/domain/circuitCatalog.ts": {
-    "mtime": 1783959287.1113212,
-    "ast_hash": "9661886c6ad0ab7822b2d18ed77e7a17",
-    "semantic_hash": "9661886c6ad0ab7822b2d18ed77e7a17"
+    "mtime": 1785263942.5395315,
+    "ast_hash": "3ece336e8a6efd08bae0964ac8c39c82",
+    "semantic_hash": "3ece336e8a6efd08bae0964ac8c39c82"
   },
   "src/etl-core/domain/eventNormalization.ts": {
     "mtime": 1783956810.0441113,
@@ -490,14 +490,14 @@
     "semantic_hash": "c6b0822b683a242f44a0516ec9c69309"
   },
   "src/etl-core/reports/transileExternoCiclo.test.ts": {
-    "mtime": 1785172220.3573215,
-    "ast_hash": "9b2bd912f44e1c8aac76efa48576cb9b",
-    "semantic_hash": "9b2bd912f44e1c8aac76efa48576cb9b"
+    "mtime": 1785332310.201992,
+    "ast_hash": "768a676de4ab84d115a36d130caf2354",
+    "semantic_hash": "768a676de4ab84d115a36d130caf2354"
   },
   "src/etl-core/reports/transileExternoCiclo.ts": {
-    "mtime": 1785172220.358321,
-    "ast_hash": "e597b87b12ae778f8a713f9cb52e4fd3",
-    "semantic_hash": "e597b87b12ae778f8a713f9cb52e4fd3"
+    "mtime": 1785332275.4379375,
+    "ast_hash": "a123261cf5d2779a2cedbfb4d627cc76",
+    "semantic_hash": "a123261cf5d2779a2cedbfb4d627cc76"
   },
   "src/etl-core/reports/transileExternoReclasificacion.test.ts": {
     "mtime": 1783959572.8857732,
@@ -535,7 +535,7 @@
     "semantic_hash": "1ec06745c9af52f40620cc5ffc0560f9"
   },
   "src/features/real-truckflow/RealTruckflowWorkspaceContext.tsx": {
-    "mtime": 1784832449.8560007,
+    "mtime": 1785763895.6097429,
     "ast_hash": "401f5c745ddb95e7bf3540e8c904f513",
     "semantic_hash": "401f5c745ddb95e7bf3540e8c904f513"
   },
@@ -575,9 +575,9 @@
     "semantic_hash": "feb8993d19b4c863633c6ee04067ccb8"
   },
   "src/features/real-truckflow/components/ExcelCameraComparativaPanel.tsx": {
-    "mtime": 1784041902.1855025,
-    "ast_hash": "2331e786f0cf516d38d2132e0c76cf2a",
-    "semantic_hash": "2331e786f0cf516d38d2132e0c76cf2a"
+    "mtime": 1785244262.9655433,
+    "ast_hash": "dea587f5ea2ac5d77d4d77f2a2a0b795",
+    "semantic_hash": "dea587f5ea2ac5d77d4d77f2a2a0b795"
   },
   "src/features/real-truckflow/components/ExecutiveSampleProductFilter.tsx": {
     "mtime": 1783006622.0441935,
@@ -595,7 +595,7 @@
     "semantic_hash": "93d773a6ed17697d563a2594062b2156"
   },
   "src/features/real-truckflow/components/LoadedPeriodSummary.tsx": {
-    "mtime": 1784832449.8950393,
+    "mtime": 1785763895.636171,
     "ast_hash": "510481fe9eae40d41ac1a41aca47926c",
     "semantic_hash": "510481fe9eae40d41ac1a41aca47926c"
   },
@@ -610,7 +610,7 @@
     "semantic_hash": "f62674a67c9d68b7f961f8d2cd383cac"
   },
   "src/features/real-truckflow/components/StatusBadge.tsx": {
-    "mtime": 1784832449.8905232,
+    "mtime": 1785763895.618863,
     "ast_hash": "eb44e7deabf3acaaf8ce36d5c7195fcb",
     "semantic_hash": "eb44e7deabf3acaaf8ce36d5c7195fcb"
   },
@@ -635,9 +635,9 @@
     "semantic_hash": "77661999a3580e63a18f1a6f6d7b224e"
   },
   "src/features/real-truckflow/components/TransileExternoCicloPanel.tsx": {
-    "mtime": 1783957365.0922976,
-    "ast_hash": "a4a71f11f4c70a587edda4c643c9024c",
-    "semantic_hash": "a4a71f11f4c70a587edda4c643c9024c"
+    "mtime": 1785332290.7670186,
+    "ast_hash": "06820658f7a9916a55286eca234ef471",
+    "semantic_hash": "06820658f7a9916a55286eca234ef471"
   },
   "src/features/real-truckflow/components/TransileInternoVolcablePanel.tsx": {
     "mtime": 1783957454.139494,
@@ -670,9 +670,9 @@
     "semantic_hash": "99a9b8b1624e39160eea0ddb5e14664f"
   },
   "src/features/real-truckflow/etlWorkbench/EtlWorkbenchContext.tsx": {
-    "mtime": 1785172220.3603263,
-    "ast_hash": "8b06f5cfaaf6c7eb1685eb1cc1fe2848",
-    "semantic_hash": "8b06f5cfaaf6c7eb1685eb1cc1fe2848"
+    "mtime": 1785346920.1302617,
+    "ast_hash": "568ee0c822720494d502b7a6da6c4c4a",
+    "semantic_hash": "568ee0c822720494d502b7a6da6c4c4a"
   },
   "src/features/real-truckflow/etlWorkbench/auditExcelCameraCalibration.test.ts": {
     "mtime": 1783006622.0690703,
@@ -680,9 +680,9 @@
     "semantic_hash": "cf942c5a2654c063ae4eb68354771676"
   },
   "src/features/real-truckflow/etlWorkbench/auditExcelCameraCalibration.ts": {
-    "mtime": 1785172220.361325,
-    "ast_hash": "62706d842e218e5fdae04a7285643e81",
-    "semantic_hash": "62706d842e218e5fdae04a7285643e81"
+    "mtime": 1785181028.6973236,
+    "ast_hash": "1869f0ee85daefd024ebfb8a903fb345",
+    "semantic_hash": "1869f0ee85daefd024ebfb8a903fb345"
   },
   "src/features/real-truckflow/etlWorkbench/auditExcelCameraMatrix.test.ts": {
     "mtime": 1783006622.071668,
@@ -690,9 +690,9 @@
     "semantic_hash": "978dfec9e931b2e1cf830cf6dbe7c081"
   },
   "src/features/real-truckflow/etlWorkbench/auditExcelCameraMatrix.ts": {
-    "mtime": 1784041757.8696232,
-    "ast_hash": "2e3ac8d26172dbc905087d852556af1a",
-    "semantic_hash": "2e3ac8d26172dbc905087d852556af1a"
+    "mtime": 1785181962.090078,
+    "ast_hash": "130bc864e847eae6998e623cb7f7e175",
+    "semantic_hash": "130bc864e847eae6998e623cb7f7e175"
   },
   "src/features/real-truckflow/etlWorkbench/auditExcelCameraMissedPlates.test.ts": {
     "mtime": 1783006622.07367,
@@ -700,9 +700,9 @@
     "semantic_hash": "ca99b3032d2f10c1cdab8590e197c8ee"
   },
   "src/features/real-truckflow/etlWorkbench/auditExcelCameraMissedPlates.ts": {
-    "mtime": 1785172220.3623242,
-    "ast_hash": "2e3ad72db10d5d6d30f73421cc4b3f62",
-    "semantic_hash": "2e3ad72db10d5d6d30f73421cc4b3f62"
+    "mtime": 1785181028.6994164,
+    "ast_hash": "ad33cfbf9a52db8077b21aff1bdaedf6",
+    "semantic_hash": "ad33cfbf9a52db8077b21aff1bdaedf6"
   },
   "src/features/real-truckflow/etlWorkbench/auditExcelMovimientosSource.test.ts": {
     "mtime": 1783006622.0766675,
@@ -775,14 +775,14 @@
     "semantic_hash": "f089c07da1448245a08782a14a8ce076"
   },
   "src/features/real-truckflow/etlWorkbench/etlCircuitClassificationIndex.test.ts": {
-    "mtime": 1784656505.0753713,
-    "ast_hash": "8c9bfb587ec3c74afc5519f808a9e9a7",
-    "semantic_hash": "8c9bfb587ec3c74afc5519f808a9e9a7"
+    "mtime": 1785263902.2162406,
+    "ast_hash": "7098ff5dc82599cb107b5ebff03db34c",
+    "semantic_hash": "7098ff5dc82599cb107b5ebff03db34c"
   },
   "src/features/real-truckflow/etlWorkbench/etlCircuitClassificationIndex.ts": {
-    "mtime": 1784832449.8615155,
-    "ast_hash": "1c0f69ae617b89eb5d8b904b86d08105",
-    "semantic_hash": "1c0f69ae617b89eb5d8b904b86d08105"
+    "mtime": 1785763895.6176474,
+    "ast_hash": "ea09f969eb6295400d74411c44088ea8",
+    "semantic_hash": "ea09f969eb6295400d74411c44088ea8"
   },
   "src/features/real-truckflow/etlWorkbench/etlCircuitTiming.test.ts": {
     "mtime": 1783006622.0951881,
@@ -810,7 +810,7 @@
     "semantic_hash": "e9b89c49376ba8262d41a431998cf78d"
   },
   "src/features/real-truckflow/etlWorkbench/etlExcelDrivenTruckflow.ts": {
-    "mtime": 1784832449.8930304,
+    "mtime": 1785763895.625134,
     "ast_hash": "60cabb06718173be8c4bc4cacfd387f6",
     "semantic_hash": "60cabb06718173be8c4bc4cacfd387f6"
   },
@@ -820,7 +820,7 @@
     "semantic_hash": "57ddcee9ac8e6ad33f1fb345be1d45f2"
   },
   "src/features/real-truckflow/etlWorkbench/etlExcelFirstMerge.ts": {
-    "mtime": 1784832449.8950393,
+    "mtime": 1785763895.625134,
     "ast_hash": "7ab559094af3ee306384d508015f3791",
     "semantic_hash": "7ab559094af3ee306384d508015f3791"
   },
@@ -845,7 +845,7 @@
     "semantic_hash": "02c841b39c5625d7aec35d652b6b257f"
   },
   "src/features/real-truckflow/etlWorkbench/etlJourneyMerge.test.ts": {
-    "mtime": 1784832449.8615155,
+    "mtime": 1785763895.6176474,
     "ast_hash": "bd96ffbff40d1ab0c1e37042fb446233",
     "semantic_hash": "bd96ffbff40d1ab0c1e37042fb446233"
   },
@@ -855,9 +855,9 @@
     "semantic_hash": "43a8c7addd6f4e35388e604a05e39d7f"
   },
   "src/features/real-truckflow/etlWorkbench/etlKpiTiemposBuild.ts": {
-    "mtime": 1784746078.590841,
-    "ast_hash": "8f3242d6bd9b0b839733a7d8d8d9cf0c",
-    "semantic_hash": "8f3242d6bd9b0b839733a7d8d8d9cf0c"
+    "mtime": 1785437848.5575812,
+    "ast_hash": "0cd694b5f03ae98a5b100ae67c7c127c",
+    "semantic_hash": "0cd694b5f03ae98a5b100ae67c7c127c"
   },
   "src/features/real-truckflow/etlWorkbench/etlMovimientosContrato.test.ts": {
     "mtime": 1783948777.2391155,
@@ -865,9 +865,9 @@
     "semantic_hash": "e5d8ab90f342b379521f9aa65dadcadb"
   },
   "src/features/real-truckflow/etlWorkbench/etlMovimientosContratoIntegration.ts": {
-    "mtime": 1784039600.5428586,
-    "ast_hash": "c731e659b9c247f7b3ad52ea35ccbfe9",
-    "semantic_hash": "c731e659b9c247f7b3ad52ea35ccbfe9"
+    "mtime": 1785332397.5907967,
+    "ast_hash": "ff646d459ec5414369830d25b1d809fe",
+    "semantic_hash": "ff646d459ec5414369830d25b1d809fe"
   },
   "src/features/real-truckflow/etlWorkbench/etlOperationalAlertMatch.ts": {
     "mtime": 1783362414.5325577,
@@ -895,24 +895,24 @@
     "semantic_hash": "dc03c765335f82eac2ccef2164312d4f"
   },
   "src/features/real-truckflow/etlWorkbench/etlPlatformCircuitInference.test.ts": {
-    "mtime": 1784832449.8915238,
+    "mtime": 1785763895.6244123,
     "ast_hash": "6324a0422407d8a60324e4b98ef48d58",
     "semantic_hash": "6324a0422407d8a60324e4b98ef48d58"
   },
   "src/features/real-truckflow/etlWorkbench/etlPlatformCircuitInference.ts": {
-    "mtime": 1785172220.36483,
+    "mtime": 1785763895.636171,
     "ast_hash": "003a8ffb956f1794026f49d1837766b5",
     "semantic_hash": "003a8ffb956f1794026f49d1837766b5"
   },
   "src/features/real-truckflow/etlWorkbench/etlProductFilter.test.ts": {
-    "mtime": 1784556573.0886927,
-    "ast_hash": "87dd9fde2c74ba8b40aed81117e20319",
-    "semantic_hash": "87dd9fde2c74ba8b40aed81117e20319"
+    "mtime": 1785260921.2350702,
+    "ast_hash": "0b250f1b628a862cc2d87a2fab4268be",
+    "semantic_hash": "0b250f1b628a862cc2d87a2fab4268be"
   },
   "src/features/real-truckflow/etlWorkbench/etlProductFilter.ts": {
-    "mtime": 1784556573.0886927,
-    "ast_hash": "32f5721639938c71c91e8dc17b299bcd",
-    "semantic_hash": "32f5721639938c71c91e8dc17b299bcd"
+    "mtime": 1785264276.9474237,
+    "ast_hash": "cc2b7a5f26d6f748d317a0e4d2fa21ab",
+    "semantic_hash": "cc2b7a5f26d6f748d317a0e4d2fa21ab"
   },
   "src/features/real-truckflow/etlWorkbench/etlProfile.test.ts": {
     "mtime": 1783362440.301654,
@@ -970,7 +970,7 @@
     "semantic_hash": "84eb1244c00ecd5505a7dbb330b6b4e0"
   },
   "src/features/real-truckflow/etlWorkbench/etlSegmentScatterByDay.test.ts": {
-    "mtime": 1784832449.8915238,
+    "mtime": 1785763895.6244123,
     "ast_hash": "b5f23155573377d777c857f376e47a07",
     "semantic_hash": "b5f23155573377d777c857f376e47a07"
   },
@@ -990,14 +990,14 @@
     "semantic_hash": "68007165aa8ac345250ffbe7a12cbab3"
   },
   "src/features/real-truckflow/etlWorkbench/etlSegmentTiming.test.ts": {
-    "mtime": 1784746157.1901293,
-    "ast_hash": "ed60279e4f6df177ae2da4d40126caa6",
-    "semantic_hash": "ed60279e4f6df177ae2da4d40126caa6"
+    "mtime": 1785432839.38648,
+    "ast_hash": "69216b79164fc422a8a84eb5ce3d40c8",
+    "semantic_hash": "69216b79164fc422a8a84eb5ce3d40c8"
   },
   "src/features/real-truckflow/etlWorkbench/etlSegmentTiming.ts": {
-    "mtime": 1785176090.08759,
-    "ast_hash": "9d0272093bc5fca7c4f7e1fd5048a2dd",
-    "semantic_hash": "9d0272093bc5fca7c4f7e1fd5048a2dd"
+    "mtime": 1785432819.2265065,
+    "ast_hash": "93cd90acf99792c153b7cf78bdd4e165",
+    "semantic_hash": "93cd90acf99792c153b7cf78bdd4e165"
   },
   "src/features/real-truckflow/etlWorkbench/etlSegmentTramoFlow.test.ts": {
     "mtime": 1783006622.1387384,
@@ -1050,7 +1050,7 @@
     "semantic_hash": "ffee1d04ea1a32a0e90a3fb0cfa13b6a"
   },
   "src/features/real-truckflow/etlWorkbench/etlTruckflowMovimientosMerge.ts": {
-    "mtime": 1785172220.3728375,
+    "mtime": 1785263797.339313,
     "ast_hash": "e16ac58ed864538affaa7cc104007f98",
     "semantic_hash": "e16ac58ed864538affaa7cc104007f98"
   },
@@ -1080,7 +1080,7 @@
     "semantic_hash": "fbb9b7107f235c19530be496f0dc9702"
   },
   "src/features/real-truckflow/etlWorkbench/finalCircuitScoring.ts": {
-    "mtime": 1785175030.4789245,
+    "mtime": 1785763895.635172,
     "ast_hash": "3a5d9b2e59e50f5a82f8a95afa364182",
     "semantic_hash": "3a5d9b2e59e50f5a82f8a95afa364182"
   },
@@ -1115,7 +1115,7 @@
     "semantic_hash": "6a5777cadd381e8dc6d42fabf56d77ae"
   },
   "src/features/real-truckflow/etlWorkbench/parseTruckflowJsonFiles.ts": {
-    "mtime": 1784832449.8915238,
+    "mtime": 1785763895.625134,
     "ast_hash": "5c3482eb417b3eae2ebc11f4ae6031be",
     "semantic_hash": "5c3482eb417b3eae2ebc11f4ae6031be"
   },
@@ -1145,17 +1145,17 @@
     "semantic_hash": "9033cb6780e7df4be2439736a2af4a42"
   },
   "src/features/real-truckflow/etlWorkbench/powerBiCommitteeExecutive.ts": {
-    "mtime": 1785154753.2512608,
+    "mtime": 1785763895.6244123,
     "ast_hash": "7ab2a2c4114d15015bc6f233bfe618dc",
     "semantic_hash": "7ab2a2c4114d15015bc6f233bfe618dc"
   },
   "src/features/real-truckflow/etlWorkbench/powerBiLoad.test.ts": {
-    "mtime": 1784832449.862517,
+    "mtime": 1785763895.6176474,
     "ast_hash": "a3f4a590d52295c9f2c2e2efc46297ee",
     "semantic_hash": "a3f4a590d52295c9f2c2e2efc46297ee"
   },
   "src/features/real-truckflow/etlWorkbench/powerBiLoad.ts": {
-    "mtime": 1785172220.374836,
+    "mtime": 1785763895.6125631,
     "ast_hash": "d86578e7e7e0d90c9944a984ee61aa67",
     "semantic_hash": "d86578e7e7e0d90c9944a984ee61aa67"
   },
@@ -1175,7 +1175,7 @@
     "semantic_hash": "cd89a0c4f292742937bc6e0014171d1e"
   },
   "src/features/real-truckflow/etlWorkbench/slLiquidCameras.ts": {
-    "mtime": 1784832449.8915238,
+    "mtime": 1785763895.6244123,
     "ast_hash": "960e7dafb1df1ec903f77c837249636d",
     "semantic_hash": "960e7dafb1df1ec903f77c837249636d"
   },
@@ -1205,7 +1205,7 @@
     "semantic_hash": "a2778e13c482c3c2be33f7df2b2450d6"
   },
   "src/features/real-truckflow/siteScopeFilters.ts": {
-    "mtime": 1784832449.8560007,
+    "mtime": 1785763895.6077409,
     "ast_hash": "7241019930ab7126ae3d14422da7a66f",
     "semantic_hash": "7241019930ab7126ae3d14422da7a66f"
   },
@@ -1215,14 +1215,14 @@
     "semantic_hash": "20c439fbc7fc0dbe8f3d3fcd3c251cb4"
   },
   "src/features/real-truckflow/tabs/AnalisisLocalTab.tsx": {
-    "mtime": 1784556573.2023342,
-    "ast_hash": "5910639b60e81eea2f016204994c25d9",
-    "semantic_hash": "5910639b60e81eea2f016204994c25d9"
+    "mtime": 1785243318.609465,
+    "ast_hash": "a8b0ead16fd49bde7eb576f9c0485d6c",
+    "semantic_hash": "a8b0ead16fd49bde7eb576f9c0485d6c"
   },
   "src/features/real-truckflow/tabs/EtlExportTab.tsx": {
-    "mtime": 1785167053.5733387,
-    "ast_hash": "85274b2361d33811201e718cdd9244a5",
-    "semantic_hash": "85274b2361d33811201e718cdd9244a5"
+    "mtime": 1785763895.615357,
+    "ast_hash": "757773255b26a4f71efba6750023ad1d",
+    "semantic_hash": "757773255b26a4f71efba6750023ad1d"
   },
   "src/features/real-truckflow/tabs/ExtraccionDatosTab.tsx": {
     "mtime": 1783006622.1917932,
@@ -1235,9 +1235,9 @@
     "semantic_hash": "fe0e78ff8087eb7e80a3ef5ea7db82e0"
   },
   "src/features/real-truckflow/tabs/KpiTiemposTab.tsx": {
-    "mtime": 1783006622.194795,
-    "ast_hash": "d02a4b2fa4f42ce8be7f032f9b1bdc40",
-    "semantic_hash": "d02a4b2fa4f42ce8be7f032f9b1bdc40"
+    "mtime": 1785438553.434053,
+    "ast_hash": "60a02ce5b2250aeaaaf4ec4e0f70f4ee",
+    "semantic_hash": "60a02ce5b2250aeaaaf4ec4e0f70f4ee"
   },
   "src/features/real-truckflow/tabs/LoadExportTab.tsx": {
     "mtime": 1783006622.1957946,
@@ -1245,9 +1245,9 @@
     "semantic_hash": "4ae0fcdefe7470d4c09921419d8aafdc"
   },
   "src/features/real-truckflow/tabs/RicardoneSectorScatterPanel.tsx": {
-    "mtime": 1783006622.197796,
-    "ast_hash": "3a5a2130155c0c8894bc2266b55d7372",
-    "semantic_hash": "3a5a2130155c0c8894bc2266b55d7372"
+    "mtime": 1785438228.0713654,
+    "ast_hash": "a77ba93f3bcbce464baf8c333352fab4",
+    "semantic_hash": "a77ba93f3bcbce464baf8c333352fab4"
   },
   "src/features/real-truckflow/tabs/SegmentOccupancyChartPanel.tsx": {
     "mtime": 1783006622.1983032,
@@ -1275,9 +1275,9 @@
     "semantic_hash": "31ee9469e6150fcc9c0e627f9927fb36"
   },
   "src/features/real-truckflow/tabs/TransformEtlTab.tsx": {
-    "mtime": 1785172220.3778377,
-    "ast_hash": "a56c49a1d9c373b2c202373bb273465c",
-    "semantic_hash": "a56c49a1d9c373b2c202373bb273465c"
+    "mtime": 1785263845.0385318,
+    "ast_hash": "3b5221da42a5daafbfada5ba09574dd2",
+    "semantic_hash": "3b5221da42a5daafbfada5ba09574dd2"
   },
   "src/features/real-truckflow/utils/weekDateRange.test.ts": {
     "mtime": 1783006622.2063198,
@@ -1290,17 +1290,17 @@
     "semantic_hash": "ed50fc6cbf8d9109f8d3de09f859e7c1"
   },
   "src/features/real-truckflow/workspaceConstants.ts": {
-    "mtime": 1784832449.8560007,
+    "mtime": 1785763895.6087391,
     "ast_hash": "d6410b15db7099b5fac8e70f1648e6d9",
     "semantic_hash": "d6410b15db7099b5fac8e70f1648e6d9"
   },
   "src/features/real-truckflow/workspaceTypes.ts": {
-    "mtime": 1784832449.8950393,
+    "mtime": 1785763895.636171,
     "ast_hash": "b14bb6359c00c86b45b6397b803dcf9f",
     "semantic_hash": "b14bb6359c00c86b45b6397b803dcf9f"
   },
   "src/features/real-truckflow/yieldToMain.ts": {
-    "mtime": 1784832449.8695168,
+    "mtime": 1785763895.6176474,
     "ast_hash": "17110571827fc012a744d96e55a316b2",
     "semantic_hash": "17110571827fc012a744d96e55a316b2"
   },
@@ -1330,9 +1330,9 @@
     "semantic_hash": "17eb8d5db20a488677e067ff8c03b254"
   },
   "src/pages/RealJourneyDiagnosticsView.tsx": {
-    "mtime": 1783965585.018211,
-    "ast_hash": "532cf705443f94c04f146c875e61c4d3",
-    "semantic_hash": "532cf705443f94c04f146c875e61c4d3"
+    "mtime": 1785248777.303182,
+    "ast_hash": "0c24b7e0f91980964a05c6bfa8a8e97b",
+    "semantic_hash": "0c24b7e0f91980964a05c6bfa8a8e97b"
   },
   "src/services/analyticsKpi.ts": {
     "mtime": 1783006622.2218325,
@@ -1350,9 +1350,9 @@
     "semantic_hash": "70daaaafcc49f4ccca0cac93eedf7532"
   },
   "src/services/circuitPlateOcr.ts": {
-    "mtime": 1783006622.22734,
-    "ast_hash": "d574340472962c1e9615683d0f7e3028",
-    "semantic_hash": "d574340472962c1e9615683d0f7e3028"
+    "mtime": 1785181792.4622762,
+    "ast_hash": "f41dba4a4dcc33dad96e70484ed85f6f",
+    "semantic_hash": "f41dba4a4dcc33dad96e70484ed85f6f"
   },
   "src/services/liveCameraDiagnostics.ts": {
     "mtime": 1783006622.2383475,
@@ -1555,9 +1555,9 @@
     "semantic_hash": "abb6ef85c942e87854a70d3471193fb1"
   },
   "src/utils/yieldToBrowser.ts": {
-    "mtime": 1783006622.3194313,
-    "ast_hash": "a54070bbb343d84d4bf523397b456b0f",
-    "semantic_hash": "a54070bbb343d84d4bf523397b456b0f"
+    "mtime": 1785244643.5642192,
+    "ast_hash": "d1f7bd7949efb178cc7c0d024cb63981",
+    "semantic_hash": "d1f7bd7949efb178cc7c0d024cb63981"
   },
   "src/validation/circuitMapping.ts": {
     "mtime": 1772730260.8132954,
@@ -1647,10 +1647,10 @@
   "ETL_POWER_BI_CONTRACT.md": {
     "mtime": 1785154753.1835072,
     "ast_hash": "f94c2855f8e538313e18c96be13c93d8",
-    "semantic_hash": ""
+    "semantic_hash": "f94c2855f8e538313e18c96be13c93d8"
   },
   "ETL_TRANSFORM_V9_RULES.md": {
-    "mtime": 1784832449.8585174,
+    "mtime": 1785763895.612056,
     "ast_hash": "d2a119d5a769abe4fde8fc104adbce13",
     "semantic_hash": "d2a119d5a769abe4fde8fc104adbce13"
   },
@@ -1667,7 +1667,7 @@
   "PLAN_REFACTOR_ETL_AGENTES.md": {
     "mtime": 1783955768.7891967,
     "ast_hash": "be26f58a321f620e668738c3265f6e9a",
-    "semantic_hash": ""
+    "semantic_hash": "be26f58a321f620e668738c3265f6e9a"
   },
   "README.md": {
     "mtime": 1772730260.7685118,
@@ -1717,7 +1717,7 @@
   "agentes/README.md": {
     "mtime": 1784228304.4129374,
     "ast_hash": "815795accd2904b92f06fea4bd27cab2",
-    "semantic_hash": ""
+    "semantic_hash": "815795accd2904b92f06fea4bd27cab2"
   },
   "docs/INFORME_TRUCKFLOW_JOURNEY_UID.md": {
     "mtime": 1783006621.8035917,
@@ -1742,47 +1742,47 @@
   "docs/migracion/FASE_0_RED_SEGURIDAD.md": {
     "mtime": 1783955521.9602554,
     "ast_hash": "5efc8a83dc168185ebb258befc6a2dc4",
-    "semantic_hash": ""
+    "semantic_hash": "5efc8a83dc168185ebb258befc6a2dc4"
   },
   "docs/migracion/FASE_1_ETL_CORE.md": {
     "mtime": 1783955568.824101,
     "ast_hash": "b070d470f7f5cd81051cc51d77948bcf",
-    "semantic_hash": ""
+    "semantic_hash": "b070d470f7f5cd81051cc51d77948bcf"
   },
   "docs/migracion/FASE_2_TYPED_TABLE.md": {
     "mtime": 1783955604.7926276,
     "ast_hash": "dc44be0e98577eb01f3ade536b8adc0c",
-    "semantic_hash": ""
+    "semantic_hash": "dc44be0e98577eb01f3ade536b8adc0c"
   },
   "docs/migracion/FASE_3_CATALOGO_UNICO.md": {
     "mtime": 1783955652.4708998,
     "ast_hash": "2bb8c16d739ed1c317676e620bdfc444",
-    "semantic_hash": ""
+    "semantic_hash": "2bb8c16d739ed1c317676e620bdfc444"
   },
   "docs/migracion/FASE_4_SERVICIO_PERSISTENCIA.md": {
     "mtime": 1783955686.3761456,
     "ast_hash": "96524f4c8b6f4dbc894ec813bce4f344",
-    "semantic_hash": ""
+    "semantic_hash": "96524f4c8b6f4dbc894ec813bce4f344"
   },
   "docs/migracion/FASE_5_AGENTES_PYTHON.md": {
     "mtime": 1783955723.1839051,
     "ast_hash": "fb085a9e7b4e0a35132817cbbcd38c94",
-    "semantic_hash": ""
+    "semantic_hash": "fb085a9e7b4e0a35132817cbbcd38c94"
   },
   "docs/migracion/PROGRESO.md": {
     "mtime": 1783965588.5578177,
     "ast_hash": "023da317e47fda18b319ef979d98a838",
-    "semantic_hash": ""
+    "semantic_hash": "023da317e47fda18b319ef979d98a838"
   },
   "docs/migracion/README.md": {
     "mtime": 1783955484.44013,
     "ast_hash": "01a46d0007c74af984bbd761b4f9ad7f",
-    "semantic_hash": ""
+    "semantic_hash": "01a46d0007c74af984bbd761b4f9ad7f"
   },
   "docs/migracion/TSC_BASELINE.md": {
     "mtime": 1783956301.716877,
     "ast_hash": "523b784966859ff9d15dcb6a5f2328ae",
-    "semantic_hash": ""
+    "semantic_hash": "523b784966859ff9d15dcb6a5f2328ae"
   },
   "index.html": {
     "mtime": 1773159775.9117136,
@@ -1792,27 +1792,27 @@
   "memory/MEMORY.md": {
     "mtime": 1784225865.0624561,
     "ast_hash": "05ad66b1fb9d7a0b07cf25f87af77800",
-    "semantic_hash": ""
+    "semantic_hash": "05ad66b1fb9d7a0b07cf25f87af77800"
   },
   "memory/etl-refactor-plan.md": {
     "mtime": 1783955780.2815297,
     "ast_hash": "939c36541a6e8e699df78fa36ed88f41",
-    "semantic_hash": ""
+    "semantic_hash": "939c36541a6e8e699df78fa36ed88f41"
   },
   "memory/transile-externo-feature.md": {
     "mtime": 1783952996.5970984,
     "ast_hash": "de5c2b2f8896aac15b32c7a7572be604",
-    "semantic_hash": ""
+    "semantic_hash": "de5c2b2f8896aac15b32c7a7572be604"
   },
   "powerbi-export/README.md": {
-    "mtime": 1783006621.9472117,
+    "mtime": 1785244920.3017278,
     "ast_hash": "8d5f6bd794d9ef728ee46426424727de",
     "semantic_hash": "8d5f6bd794d9ef728ee46426424727de"
   },
   "scripts/output/ETL_BENCHMARK_NOTES.md": {
     "mtime": 1783362767.311779,
     "ast_hash": "8414c28e94f807403c36b2d0b07104ed",
-    "semantic_hash": ""
+    "semantic_hash": "8414c28e94f807403c36b2d0b07104ed"
   },
   "scripts/run-truckflow-transform-local.README.md": {
     "mtime": 1783006621.9915464,
@@ -1825,9 +1825,9 @@
     "semantic_hash": "4f46a215057d9a66d58b8569cd9a2fe0"
   },
   ".claude/launch.json": {
-    "mtime": 1784314944.9377525,
-    "ast_hash": "d501c27e50483a23edc00df94fd299ed",
-    "semantic_hash": "d501c27e50483a23edc00df94fd299ed"
+    "mtime": 1785787386.2717793,
+    "ast_hash": "3ecd741d55103a96263bbdd199d92b9d",
+    "semantic_hash": "3ecd741d55103a96263bbdd199d92b9d"
   },
   ".mcp.json": {
     "mtime": 1784225556.5545304,
@@ -1865,9 +1865,9 @@
     "semantic_hash": "cb969fedbad0e54da44d35ce08f21613"
   },
   "server/etl-runs-layout.mjs": {
-    "mtime": 1784656505.0778086,
-    "ast_hash": "ae4a1970e573f584458ef6d3eb91c85b",
-    "semantic_hash": "ae4a1970e573f584458ef6d3eb91c85b"
+    "mtime": 1785437770.1314623,
+    "ast_hash": "5b95f6d741dea06b2d05bda6c69c1710",
+    "semantic_hash": "5b95f6d741dea06b2d05bda6c69c1710"
   },
   "src/components/realDiagnostics/LiveCameraPlayerModal.tsx": {
     "mtime": 1784298158.674259,
@@ -1940,9 +1940,9 @@
     "semantic_hash": "ab35697a725bbdf37422c96e5df85d3b"
   },
   "src/etl-core/runs/etlRunsLayout.ts": {
-    "mtime": 1784656505.0753713,
-    "ast_hash": "6fa8ec031a79f1f2f12fe9bd1e30bb30",
-    "semantic_hash": "6fa8ec031a79f1f2f12fe9bd1e30bb30"
+    "mtime": 1785787386.4003804,
+    "ast_hash": "2e49586325b69c9cdc7c529f833765f0",
+    "semantic_hash": "2e49586325b69c9cdc7c529f833765f0"
   },
   "src/features/real-truckflow/api/etlRunCacheApi.ts": {
     "mtime": 1784656505.0768807,
@@ -1972,27 +1972,27 @@
   ".claude/agents/comunicador.md": {
     "mtime": 1784314717.223617,
     "ast_hash": "1376b93c11f370c2a9f188d4a4f19b00",
-    "semantic_hash": ""
+    "semantic_hash": "1376b93c11f370c2a9f188d4a4f19b00"
   },
   ".claude/agents/knowledge-contratos.md": {
     "mtime": 1784656505.0778086,
     "ast_hash": "9e3af0e56f0c09ca7838eaf85b0c7574",
-    "semantic_hash": ""
+    "semantic_hash": "9e3af0e56f0c09ca7838eaf85b0c7574"
   },
   ".claude/agents/knowledge-truckflow.md": {
     "mtime": 1784656504.8478854,
     "ast_hash": "3b275a7fa84362bd554383e93febf391",
-    "semantic_hash": ""
+    "semantic_hash": "3b275a7fa84362bd554383e93febf391"
   },
   ".claude/agents/seguridad.md": {
     "mtime": 1784577892.4813974,
     "ast_hash": "86539ca87c77b4e09dad08323b15341c",
-    "semantic_hash": ""
+    "semantic_hash": "86539ca87c77b4e09dad08323b15341c"
   },
   "CLAUDE.md": {
     "mtime": 1784577876.866052,
     "ast_hash": "7fd60744c017debfe714f94c397be10f",
-    "semantic_hash": ""
+    "semantic_hash": "7fd60744c017debfe714f94c397be10f"
   },
   "debug_err.txt": {
     "mtime": 1784558307.893885,
@@ -2002,42 +2002,42 @@
   "docs/AGENTES_SKILLS_Y_RUNS.md": {
     "mtime": 1784656505.0778086,
     "ast_hash": "c200716351832d36b865d0a1a8f16a98",
-    "semantic_hash": ""
+    "semantic_hash": "c200716351832d36b865d0a1a8f16a98"
   },
   "docs/POC_DSS_LIVE.md": {
     "mtime": 1784298277.4719384,
     "ast_hash": "7147dde534f3d0f83e4a5e7ee7d67f07",
-    "semantic_hash": ""
+    "semantic_hash": "7147dde534f3d0f83e4a5e7ee7d67f07"
   },
   "docs/RESULT_CACHE_BY_WINDOW.md": {
     "mtime": 1784656505.0768807,
     "ast_hash": "f8bd9fc289377743292d94fff17cb39e",
-    "semantic_hash": ""
+    "semantic_hash": "f8bd9fc289377743292d94fff17cb39e"
   },
   "docs/RUNS_TABLAS_CANONICAS.md": {
-    "mtime": 1784577847.9871905,
-    "ast_hash": "44d0233725e6de9e030f83996eb05367",
-    "semantic_hash": ""
+    "mtime": 1785787386.39738,
+    "ast_hash": "970c9bb064700c56bebad709f6b0e824",
+    "semantic_hash": "970c9bb064700c56bebad709f6b0e824"
   },
   "docs/movimientos-backup.md": {
     "mtime": 1784656505.0768807,
     "ast_hash": "e8dc668964b24a640d8fe3bd0bf8e156",
-    "semantic_hash": ""
+    "semantic_hash": "e8dc668964b24a640d8fe3bd0bf8e156"
   },
   "memory/aceite-sin-ctg-dedup.md": {
     "mtime": 1784040131.266735,
     "ast_hash": "b77a1a2d4c380414318424d29f2e60f9",
-    "semantic_hash": ""
+    "semantic_hash": "b77a1a2d4c380414318424d29f2e60f9"
   },
   "memory/agentes-mcp-suscripcion.md": {
     "mtime": 1784228317.0408456,
     "ast_hash": "0e6ed7b07c8d56064cfb688a5657bccb",
-    "semantic_hash": ""
+    "semantic_hash": "0e6ed7b07c8d56064cfb688a5657bccb"
   },
   "memory/anomalias-comportamiento-vs-datos.md": {
     "mtime": 1784656505.0713708,
     "ast_hash": "9aba0ea16aea21370342e221cb8822cc",
-    "semantic_hash": ""
+    "semantic_hash": "9aba0ea16aea21370342e221cb8822cc"
   },
   "src/features/real-truckflow/etlWorkbench/etlCanonicalCsvExport.ts": {
     "mtime": 1785167013.4505384,
@@ -2070,9 +2070,9 @@
     "semantic_hash": "252447fb586912d2adb32a5c00c5689d"
   },
   "src/features/real-truckflow/etlWorkbench/etlSegmentTimingRules.ts": {
-    "mtime": 1785174064.1125338,
-    "ast_hash": "e345ca719723a7dc4ef468bb99c30fb6",
-    "semantic_hash": "e345ca719723a7dc4ef468bb99c30fb6"
+    "mtime": 1785432800.184413,
+    "ast_hash": "a3a4bb667b33d5f9a4d415d5f3ccb3fc",
+    "semantic_hash": "a3a4bb667b33d5f9a4d415d5f3ccb3fc"
   },
   "src/features/real-truckflow/etlWorkbench/etlSegmentTimingSanLorenzo.ts": {
     "mtime": 1785176044.9788327,
@@ -2148,5 +2148,130 @@
     "mtime": 1785168390.3560314,
     "ast_hash": "b1869ef917bcd22ea96d0a31ece950a1",
     "semantic_hash": "b1869ef917bcd22ea96d0a31ece950a1"
+  },
+  "scripts/build-journey-timeline.ts": {
+    "mtime": 1785781186.7734468,
+    "ast_hash": "3819a1bcb11747924f81ef6f9286d33a",
+    "semantic_hash": "3819a1bcb11747924f81ef6f9286d33a"
+  },
+  "scripts/build-levels.ts": {
+    "mtime": 1785786883.3084593,
+    "ast_hash": "7fbaa2df29f23eb999e8ec600c2be2dc",
+    "semantic_hash": "7fbaa2df29f23eb999e8ec600c2be2dc"
+  },
+  "src/etl-core/levels/index.ts": {
+    "mtime": 1785786876.4197757,
+    "ast_hash": "931504cb01ff4dcccff6ab4b1b5ac1e5",
+    "semantic_hash": "931504cb01ff4dcccff6ab4b1b5ac1e5"
+  },
+  "src/etl-core/levels/journeyKey.ts": {
+    "mtime": 1785786523.0035474,
+    "ast_hash": "d23a0771ac3bb87f14429fa97c87b760",
+    "semantic_hash": "d23a0771ac3bb87f14429fa97c87b760"
+  },
+  "src/etl-core/levels/levelC.ts": {
+    "mtime": 1785785990.4229577,
+    "ast_hash": "ae3c5d302de6f080e82119e27be39a38",
+    "semantic_hash": "ae3c5d302de6f080e82119e27be39a38"
+  },
+  "src/etl-core/levels/levelD.ts": {
+    "mtime": 1785786500.6970804,
+    "ast_hash": "d5e3954efad610ddc74fa1142cc0bd51",
+    "semantic_hash": "d5e3954efad610ddc74fa1142cc0bd51"
+  },
+  "src/etl-core/levels/levelE.ts": {
+    "mtime": 1785786862.4455404,
+    "ast_hash": "aad9b6a8eabc60cdbbfeef539cba4f24",
+    "semantic_hash": "aad9b6a8eabc60cdbbfeef539cba4f24"
+  },
+  "src/etl-core/levels/levels.test.ts": {
+    "mtime": 1785786553.595214,
+    "ast_hash": "c5f24112539e3950010a47c20371753d",
+    "semantic_hash": "c5f24112539e3950010a47c20371753d"
+  },
+  "src/features/real-truckflow/components/CircuitChecklistFilter.tsx": {
+    "mtime": 1785437929.2530608,
+    "ast_hash": "d9024dfe3ef0f37af3c9c0a326a03544",
+    "semantic_hash": "d9024dfe3ef0f37af3c9c0a326a03544"
+  },
+  "src/features/real-truckflow/components/SavedWindowsPicker.tsx": {
+    "mtime": 1785243318.6571145,
+    "ast_hash": "08cf00b626be5021b95d5fa1968d4773",
+    "semantic_hash": "08cf00b626be5021b95d5fa1968d4773"
+  },
+  "src/features/real-truckflow/etlWorkbench/etlCaladaCameraActivity.test.ts": {
+    "mtime": 1785437843.793223,
+    "ast_hash": "1f78074f5aa18df0bfed583921d4f4a7",
+    "semantic_hash": "1f78074f5aa18df0bfed583921d4f4a7"
+  },
+  "src/features/real-truckflow/etlWorkbench/etlCaladaCameraActivity.ts": {
+    "mtime": 1785437693.0586624,
+    "ast_hash": "5579b29e65707411c67d004bdfb1af89",
+    "semantic_hash": "5579b29e65707411c67d004bdfb1af89"
+  },
+  "src/features/real-truckflow/tabs/CaladaCamerasPanel.tsx": {
+    "mtime": 1785438547.360937,
+    "ast_hash": "b61b525ba91709abe0b7c0e16a43e8b9",
+    "semantic_hash": "b61b525ba91709abe0b7c0e16a43e8b9"
+  },
+  "stitch-previews/screens.json": {
+    "mtime": 1785267726.1551385,
+    "ast_hash": "c097a0dbc7212074b5c8464bc3e7b7f4",
+    "semantic_hash": "c097a0dbc7212074b5c8464bc3e7b7f4"
+  },
+  "HANDOFF-limpieza-arquitectura.md": {
+    "mtime": 1785174678.0945435,
+    "ast_hash": "5c91814976cc3167f1e805d8e865bc03",
+    "semantic_hash": "5c91814976cc3167f1e805d8e865bc03"
+  },
+  "docs/NIVELES_ABCD.md": {
+    "mtime": 1785787092.0269823,
+    "ast_hash": "8140c3c765c8ddd0cbed8dfc04b15929",
+    "semantic_hash": "8140c3c765c8ddd0cbed8dfc04b15929"
+  },
+  "docs/migracion-v3/PLAN_MIGRACION_V3.md": {
+    "mtime": 1785269436.6016493,
+    "ast_hash": "aa65003225625fd90c084959156509dc",
+    "semantic_hash": "aa65003225625fd90c084959156509dc"
+  },
+  "docs/migracion-v3/SPEC_R7.md": {
+    "mtime": 1785527010.70408,
+    "ast_hash": "994dff9c4bb89a72c8d8c7ec7387e6ca",
+    "semantic_hash": "994dff9c4bb89a72c8d8c7ec7387e6ca"
+  },
+  "stitch-previews/Truckflow_Ops_-_Inicio_Selecci\u00f3n_de_Per\u00edodo_.html": {
+    "mtime": 1785267753.252796,
+    "ast_hash": "f1200dcd1c285e599c0759cf57941b75",
+    "semantic_hash": "f1200dcd1c285e599c0759cf57941b75"
+  },
+  "stitch-previews/Truckflow_Ops_-_Operaci\u00f3n_Semanal_run_882_.html": {
+    "mtime": 1785267751.1648061,
+    "ast_hash": "d933aa18f05c3440fb1ec5031be2d3b1",
+    "semantic_hash": "d933aa18f05c3440fb1ec5031be2d3b1"
+  },
+  "stitch-previews/logistica-v3.html": {
+    "mtime": 1785523688.1833644,
+    "ast_hash": "7fe19b95f6b1faaa9804a0d5b2dd4f51",
+    "semantic_hash": "7fe19b95f6b1faaa9804a0d5b2dd4f51"
+  },
+  "stitch-previews/Truckflow_Ops_-_Inicio_Selecci\u00f3n_de_Per\u00edodo_.png": {
+    "mtime": 1785267752.7522125,
+    "ast_hash": "33b432239c122d7f9dc9e8c61b58102b",
+    "semantic_hash": "33b432239c122d7f9dc9e8c61b58102b"
+  },
+  "stitch-previews/Truckflow_Ops_-_Operaci\u00f3n_Semanal_run_882_.png": {
+    "mtime": 1785267750.5059164,
+    "ast_hash": "a3737677a78f6de623cb85c8e31aa556",
+    "semantic_hash": "a3737677a78f6de623cb85c8e31aa556"
+  },
+  "stitch-previews/chat-inicial-v2.png": {
+    "mtime": 1785266555.934342,
+    "ast_hash": "c35940dd2c42b09498e92b2db2af4d7e",
+    "semantic_hash": "c35940dd2c42b09498e92b2db2af4d7e"
+  },
+  "stitch-previews/logistica-v3.png": {
+    "mtime": 1785523687.7898297,
+    "ast_hash": "8b4ac9026ab8a7cf2d427342b9a1271d",
+    "semantic_hash": "8b4ac9026ab8a7cf2d427342b9a1271d"
   }
 }

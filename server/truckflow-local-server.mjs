@@ -732,7 +732,7 @@ function listTruckflowDataDays() {
 // Espejo de ETL_TRANSFORM_RULES_VERSION en
 // src/features/real-truckflow/etlWorkbench/etlTransformContracts.ts (este archivo es .mjs
 // y no puede importar TS). Cambiar las dos juntas.
-const CURRENT_RULES_VERSION = 'etl_transform_v13'
+const CURRENT_RULES_VERSION = 'etl_transform_v14'
 
 /** POST /api/etl/runs — spawnea runner headless; responde { runId }. */
 app.post('/api/etl/runs', async (req, res) => {
@@ -1155,6 +1155,23 @@ const etlAgent = createEtlAgentChat({
 /** GET /api/etl/agent/status — ¿hay ANTHROPIC_API_KEY? (sin revelar la clave). */
 app.get('/api/etl/agent/status', (_req, res) => {
   res.json(etlAgent.status())
+})
+
+/**
+ * GET /api/etl/agent/usage — cupo restante de la suscripción.
+ * Sale de `claude -p "/usage"` (comando local: US$ 0, 0 tokens). Devuelve
+ * `{ limite: null }` si el CLI no reporta suscripción — no se inventa un número.
+ */
+app.get('/api/etl/agent/usage', async (_req, res) => {
+  if (!etlAgent.isConfigured()) {
+    res.json({ limite: null })
+    return
+  }
+  try {
+    res.json({ limite: await etlAgent.limiteSesion() })
+  } catch {
+    res.json({ limite: null })
+  }
 })
 
 /**

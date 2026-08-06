@@ -97,6 +97,11 @@ const LOGICAL_LABEL_ES: Record<string, string> = {
   CELDA16_CARGA: 'celda16 carga',
   CELDA16_DESCARGA: 'celda16 descarga',
   LIQUIDO: 'líquido',
+  // —— Grupo nuevo S6/S7/S8 (Ricardone) ——
+  PLAYA: 'playa 3',
+  DESCARGA_S7: 'descarga S7',
+  CARGA_S7: 'carga S7',
+  CARGA_S8: 'carga S8',
   SL_INGRESO: 'san lorenzo ingreso',
   SL_PREINGRESO: 'preingreso san lorenzo',
   SL_CALADA: 'calada san lorenzo',
@@ -118,11 +123,15 @@ export const LOGICAL_TRANSITION_ORDER: readonly string[] = [
   'CALADA',
   'LIQUIDO',
   'BALANZA_INGRESO',
+  'PLAYA',
   'BALANZA_EGRESO',
   'BALANZA',
   'VOLCABLE',
   'CELDA16_CARGA',
   'CELDA16_DESCARGA',
+  'DESCARGA_S7',
+  'CARGA_S7',
+  'CARGA_S8',
   'SL_INGRESO',
   'SL_PREINGRESO',
   'SL_PLAYA',
@@ -193,9 +202,31 @@ function buildExecutiveCircuitSegmentTemplate(): Record<string, readonly string[
     if (seq?.length) map[rCode] = templateWithoutEgreso(seq)
   }
   map.R16 = [...LIQUID_KPI_CHAIN]
-  map.R1 = RECEPTION_BALANZA_KPI_CHAIN
-  map.R5 = RECEPTION_BALANZA_KPI_CHAIN
-  map.R6 = RECEPTION_BALANZA_KPI_CHAIN
+  // —— Circuitos Ricardone con destino instrumentado (cámaras nuevas S6/S7/S8) ——
+  // Fuente única: estas cadenas alimentan el KPI de tramos Y las anomalías (misma
+  // secuencia esperada). Entrada = INGRESO→PREINGRESO→CALADA→BALANZA_INGRESO; el
+  // tramo de descarga real va en el medio (no más rollup balanza→balanza).
+  const RIC = ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO'] as const
+  map.R1 = [...RIC, 'CELDA16_DESCARGA', 'PLAYA', 'BALANZA_EGRESO']
+  map.R9 = [...RIC, 'CELDA16_CARGA', 'PLAYA', 'BALANZA_EGRESO']
+  // Silos Kepler (R3/R4): entrada tipo Kepler (sin preingreso) + playa 3 y descarga
+  // S7 en el medio (cámaras nuevas). El tramo de descarga sale de cámara; si falta,
+  // queda vacío (no se fabrica). Reemplaza al rollup balanza→balanza en la tabla.
+  map.R3 = ['INGRESO', 'CALADA', 'BALANZA_INGRESO', 'PLAYA', 'DESCARGA_S7', 'BALANZA_EGRESO']
+  map.R4 = map.R3
+  map.R11 = [...RIC, 'PLAYA', 'DESCARGA_S7', 'BALANZA_EGRESO']
+  // Volcable 1/2 (R5/R6): playa 3 + volcable (descarga) en el medio. El rollup
+  // Excel-first balanza→balanza sigue calculándose (subsistema Volcable) pero la
+  // tabla muestra los tramos finos; si falta la cámara de descarga, queda vacío.
+  map.R5 = [...RIC, 'PLAYA', 'VOLCABLE', 'BALANZA_EGRESO']
+  map.R6 = map.R5
+  map.R12 = [...RIC, 'PLAYA', 'CARGA_S8', 'BALANZA_EGRESO']
+  // Transile (R21/R22/R23/R24): descarga en dos etapas. La 2ª playa de la vuelta
+  // no se modela (el template es lineal, índice único); se mide hasta la descarga.
+  map.R21 = [...RIC, 'PLAYA', 'CARGA_S8', 'CELDA16_DESCARGA', 'BALANZA_EGRESO']
+  map.R22 = [...RIC, 'PLAYA', 'CARGA_S8', 'VOLCABLE', 'BALANZA_EGRESO']
+  map.R23 = [...RIC, 'PLAYA', 'CARGA_S7', 'CELDA16_DESCARGA', 'BALANZA_EGRESO']
+  map.R24 = [...RIC, 'PLAYA', 'CARGA_S7', 'VOLCABLE', 'BALANZA_EGRESO']
   map.R7 = ['INGRESO', 'PREINGRESO', 'CALADA', 'EGRESO', ...SL_OPERATIONAL_KPI_CHAIN]
   map.R8 = [...LIQUID_KPI_CHAIN]
   map.R26 = [
@@ -223,8 +254,6 @@ function buildExecutiveCircuitSegmentTemplate(): Record<string, readonly string[
   map.SL1 = [...SL_OPERATIONAL_KPI_CHAIN]
   map.R19 = ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO', 'CELDA16_CARGA', 'VOLCABLE', 'BALANZA_EGRESO']
   map.R20 = map.R19
-  map.R3 = KEPLER_KPI_CHAIN
-  map.R4 = KEPLER_KPI_CHAIN
   map.RS_REC = ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO']
   map.RS_DESP = ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'CALADA', 'BALANZA_EGRESO']
   map.R34 = ['LIQUIDO', 'BALANZA_EGRESO']

@@ -46,32 +46,51 @@ export function RicardoneSectorScatterPanel({
   scatterByDayAll,
   segmentTiming,
   productFilter,
+  checkedCircuits,
+  filterActive,
   periodLabel,
 }: {
   scatterByDayAll: SegmentScatterByDayRow[]
   segmentTiming: SegmentTimingIndex | null
   /** Filtro de producto opcional; KPI Tiempos ya no lo usa (filtra por circuito). */
   productFilter?: string
+  /** Circuitos ejecutivos tildados en el checklist. Se aplica solo si `filterActive`. */
+  checkedCircuits?: Set<string>
+  /** true cuando el checklist no está en «Todos» (hay un subconjunto elegido). */
+  filterActive?: boolean
   periodLabel: string
 }) {
   const productArg = !productFilter || productFilter === PRODUCT_FILTER_ALL ? undefined : productFilter
 
+  // Clave por contenido: estable entre renders aunque el padre recree el Set.
+  // `null` = sin filtro (todos); Set (posiblemente vacío) = filtro activo por circuito.
+  const circuitsKey = filterActive ? [...(checkedCircuits ?? [])].sort().join('|') : null
+  const allowedCircuits = useMemo(
+    () => (circuitsKey === null ? null : new Set(circuitsKey ? circuitsKey.split('|') : [])),
+    [circuitsKey]
+  )
+
   const summaries = useMemo(
     () =>
       RICARDONE_CROSS_CIRCUIT_SECTORS.map((sector) =>
-        summarizeCrossCircuitSectorFromScatter(scatterByDayAll, sector, productArg)
+        summarizeCrossCircuitSectorFromScatter(scatterByDayAll, sector, productArg, allowedCircuits)
       ),
-    [scatterByDayAll, productArg]
+    [scatterByDayAll, productArg, allowedCircuits]
   )
 
   return (
     <div className="space-y-10">
       <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 px-4 py-3 text-sm text-emerald-950">
-        <p className="font-semibold">Sectores Ricardone (todos los circuitos)</p>
+        <p className="font-semibold">
+          Sectores Ricardone {allowedCircuits ? '(circuitos filtrados)' : '(todos los circuitos)'}
+        </p>
         <p className="mt-1 text-emerald-900">
           Cada punto es una operación Excel-first (o journey Truckflow) con el tramo medido o reconstruido.
-          No se filtra por circuito ejecutivo: se agrupan todos los camiones que pasaron por el mismo sector
-          físico (cámaras Truckflow + anclas Excel cuando el merge las usa).
+          Se agrupan los camiones que pasaron por el mismo sector físico (cámaras Truckflow + anclas Excel
+          cuando el merge las usa).
+          {allowedCircuits ?
+            ` Filtrado a los circuitos tildados: ${[...allowedCircuits].sort().join(', ') || '(ninguno)'}.`
+          : ' Sin filtro de circuito ejecutivo: entran todos.'}
         </p>
       </div>
 
@@ -80,7 +99,8 @@ export function RicardoneSectorScatterPanel({
           scatterByDayAll,
           summary.sector.fromCode,
           summary.sector.toCode,
-          productArg
+          productArg,
+          allowedCircuits
         )
 
         const legs = legsForCrossCircuitSector(

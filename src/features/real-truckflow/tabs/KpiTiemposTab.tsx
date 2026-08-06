@@ -506,6 +506,8 @@ export function KpiTiemposTab() {
             <RicardoneSectorScatterPanel
               scatterByDayAll={scatterByDayAll}
               segmentTiming={segmentTimingRaw ?? null}
+              checkedCircuits={effectiveChecked}
+              filterActive={effectiveChecked.size < checklistOptions.length}
               periodLabel={periodLabel}
             />
           : (

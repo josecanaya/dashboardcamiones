@@ -19,8 +19,16 @@ import { tmpdir } from 'node:os'
 
 const CHAT_TIMEOUT_MS = Number(process.env.ETL_AGENT_TIMEOUT_MS || 300_000)
 
+/**
+ * Sin `Task` a propósito: los subagentes de `.claude/agents/` están escritos
+ * contra el modelo de tablas v13 (`final_circuits`, `circuit_timing_*`,
+ * `excel_operations_with_truckflow`) que este prompt prohíbe. Delegar traía
+ * cifras del mapa viejo que el orquestador después tenía que reconciliar —
+ * era la causa de las consultas de 300s. Además cada subagente arranca en frío,
+ * así que para una pregunta de una o dos tablas la delegación nunca paga.
+ * El orquestador tiene todas las tools MCP que tenían ellos, incluida la de PPTX.
+ */
 const ALLOWED_TOOLS = [
-  'Task',
   'mcp__etl__resolve_window',
   'mcp__etl__run_etl',
   'mcp__etl__list_runs',
@@ -86,28 +94,71 @@ const SYSTEM_APPEND = [
   'Sos un asistente de logística para la DIRECCIÓN de la planta Ricardone / Puerto San Lorenzo',
   '(Vicentin). Hablás con un usuario de NEGOCIO que NO es programador.',
   '',
+  'RUTEO DE TABLAS — esto es el catálogo COMPLETO, con las columnas que vas a necesitar.',
+  'Elegí la fila y andá directo (los nombres de columna son exactos, no los adivines):',
+  '  cuántos movimientos / por producto / por plataforma → C_operaciones_con_camara',
+  '      product_normalized, resolved_product, platform_normalized, plate_normalized,',
+  '      resolved_executive_circuit_code, kgs_neto, total_min, movement_type',
+  '  movimientos SIN evidencia de cámara → C_operaciones_sin_camara (mismas columnas + no_truckflow_reason)',
+  '  recorridos válidos / qué circuito se usó más → D_circuitos_validos',
+  '      circuito_code, circuito_label, plate, total_min, coverage_percent',
+  '  anomalías de comportamiento → D_circuitos_anomalos (+ motivo)',
+  '  recorridos con cobertura insuficiente → D_circuitos_incompletos',
+  '  camión visto por cámara sin movimiento en el Excel → D_camiones_sin_contrato',
+  '  tiempos / demoras / cuello de botella (agregado) → E_kpi_circuito',
+  '      circuito_code, n_operaciones, mediana_min, p90_min, porcentaje_camara_pura,',
+  '      y las PATAS: ric_*, bridge_*, sl_* (cada una con _media_min, _p90_min, _n)',
+  '  tiempos de un recorrido o patente puntual → E_kpi_operacion',
+  '  transiles → transile_externo_*;  aceite / líquidos → liquid_movements_*',
+  '',
+  'PRESUPUESTO DE BÚSQUEDA (obligatorio): UNA tabla por cada cosa que te preguntan, y una sola',
+  'consulta por tabla. Si la pregunta tiene tres partes, son tres tablas — pero ninguna parte',
+  'necesita más de una. Si te tienta consultar la misma tabla dos veces, mirá las columnas de',
+  'arriba: el nombre que buscás está ahí. NO explores: NO llames list_tables salvo que el ruteo no',
+  'cubra la pregunta. Una pregunta simple se responde con UNA tabla y punto.',
+  '',
+  'CÓMO CONSULTAR (query_table):',
+  '- El filtro es igualdad exacta (col + eq) y los VALORES ESTÁN EN MAYÚSCULAS: SOJA, GIRASOL,',
+  '  PELLET, INGRESO, EGRESO, VOLCABLE_1, KEPPLER_1, ACEITE_OSL. Escribilos así la primera vez;',
+  '  no pruebes "Soja" y después "SOJA".',
+  '- La respuesta trae `total` = cantidad de filas que matchean el filtro. Para CONTAR usá ese',
+  '  número con limit=1: no hace falta traer las filas.',
+  '- Para contar valores DISTINTOS (ej. patentes) sí hay que traer filas: limit alto y contás vos.',
+  '',
+  'DOS PRECISIONES QUE SE PIDEN SEGUIDO:',
+  '- "cuántos CAMIONES" ≠ "cuántos movimientos": los movimientos son `total`; los camiones son',
+  '  plate_normalized DISTINTAS (un camión repite viajes en la semana). Si piden camiones, traé',
+  '  las filas y contá patentes únicas — se puede. Dá las dos cifras y aclarás cuál es cuál.',
+  '- "DÓNDE está el cuello de botella" pide la PATA, no el circuito: comparás ric_media_min',
+  '  (adentro de Ricardone), bridge_media_min (viaje Ric→SL) y sl_media_min (adentro de San',
+  '  Lorenzo) en E_kpi_circuito. "Qué circuito es más lento" sí se responde con mediana_min.',
+  '',
+  'TABLAS PROHIBIDAS: excel_operations_with_truckflow, final_circuits, circuit_timing_*,',
+  'segment_timing_*, segment_scatter_analysis, clean_journeys_for_analysis,',
+  'movimientos_reconciliation, merged_truckflow_movimientos y debug_matrix_classification son del',
+  'modelo VIEJO (v13): son insumo o derivadas y dan números que se contradicen entre sí. No las',
+  'consultes ni las cites, aunque parezcan tener lo que buscás. El ruteo de arriba ya lo cubre.',
+  '',
   'CÓMO OBTENER DATOS (obligatorio):',
   '1. Si la pregunta menciona fechas/período → llamá mcp__etl__resolve_window(from_day, to_day).',
   '   Año por defecto si no lo dicen: 2026. Ej: "13 al 20" de julio → 2026-07-13 .. 2026-07-20.',
-  '2. Con run_id vigente (stale=false) → mcp__etl__get_summary y/o mcp__etl__query_table /',
-  '   mcp__etl__list_tables / mcp__etl__explain_journey. NUNCA inventes cifras.',
+  '   "esta semana" = la semana calendario en curso (lunes→domingo).',
+  '2. Con run_id vigente (stale=false) → mcp__etl__query_table sobre la tabla del ruteo.',
+  '   mcp__etl__get_summary sólo si piden un panorama general. NUNCA inventes cifras.',
   '3. Si resolve_window da 404 o stale=true → podés mcp__etl__run_etl(from_day, to_day) y después',
   '   volver a resolve_window. Si el usuario no pidió reprocesar y no hay cache, decí:',
   '   "No tengo esa información procesada para ese período" y ofrecé procesarla.',
-  '4. TABLAS CANÓNICAS (una pregunta = una tabla; ver docs/RUNS_TABLAS_CANONICAS.md). OBLIGATORIO:',
-  '   - Conteos de movimientos/producto/plataforma (Excel contrato) → excel_operations_with_truckflow',
-  '     (product_normalized, platform_normalized). NUNCA merged_truckflow_movimientos para contar.',
-  '   - Movimientos sin evidencia de cámaras → excel_operations_with_truckflow con matched_journey_uids',
-  '     vacío. NUNCA movimientos_without_truckflow_match (números inconsistentes).',
-  '   - Clasificación ejecutiva/comité (completos, anomalías) → final_circuits.executive_bucket.',
-  '     NUNCA debug_matrix_classification ni merged_truckflow_movimientos.executive_status (muerta).',
-  '   - Tiempos → circuit_timing_summary (+circuit_timing_journeys). segment_timing_kpi puede estar vacía.',
-  '   - Transiles → transile_externo_*; aceite/líquidos → liquid_movements_*.',
-  '   Al dar un conteo, decí SIEMPRE el denominador: "X movimientos según Excel" ≠ "X recorridos de cámara".',
+  '4. Notas del modelo de niveles A→B→C→D→E (ver docs/NIVELES_ABCD.md):',
+  '   - C_operaciones_sin_camara es un denominador APARTE: nunca lo sumes a C_operaciones_con_camara.',
+  '     El motivo de cada fila está en no_truckflow_reason.',
+  '   - D_circuitos_anomalos ya viene filtrada (sólo comportamiento afirmable, más de 3 lecturas de',
+  '     cámara). No filtres nada más. D_circuitos_incompletos NO son anomalías.',
+  '   - Los tiempos de E salen de la CÁMARA; el Excel es sólo respaldo. Mirá porcentaje_camara_pura',
+  '     antes de afirmar una mediana: si es bajo, aclaralo.',
+  '   - Al dar un conteo decí SIEMPRE el denominador: "X movimientos según Excel" ≠ "X recorridos',
+  '     de cámara".',
   '5. Las ventanas guardadas son SEMANAS calendario (lunes→domingo). Si piden un rango que no es una',
   '   semana exacta, usá la(s) semana(s) que lo cubren y aclaralo. No proceses ventanas ad-hoc solapadas.',
-  '6. Delegá con Task a knowledge-contratos (producto/plataforma), knowledge-truckflow (cámaras/tiempos),',
-  '   seguridad (anomalías) o comunicador (resumen comité) cuando el dominio sea claro.',
   '',
   'CÓMO HABLAR (al usuario):',
   '- Español claro y breve, estilo comité: cifra + conclusión corta.',
@@ -166,6 +217,110 @@ function buildPrompt(message, history) {
   return lines.join('\n')
 }
 
+/* ------------------------------------------------------------------ tokens */
+
+const numTok = (v) => {
+  const n = Number(v)
+  return Number.isFinite(n) ? n : 0
+}
+
+/** Suma un bloque de usage (camelCase o snake_case) sobre el acumulador. */
+function sumarUso(acc, u) {
+  acc.entrada += numTok(u.input_tokens ?? u.inputTokens)
+  acc.salida += numTok(u.output_tokens ?? u.outputTokens)
+  acc.cacheCreacion += numTok(u.cache_creation_input_tokens ?? u.cacheCreationInputTokens)
+  acc.cacheLectura += numTok(u.cache_read_input_tokens ?? u.cacheReadInputTokens)
+  acc.costoUsd += numTok(u.costUSD ?? u.cost_usd)
+  return acc
+}
+
+/**
+ * Tokens gastados por la consulta, sacados del evento `result` de Claude Code.
+ *
+ * Se prefiere `modelUsage` (desglose por modelo, ACUMULADO de todo el turno:
+ * incluye las llamadas intermedias de tools y los subagentes) sobre `usage`,
+ * que en algunas versiones del CLI trae sólo el último mensaje y subreporta.
+ * Si no hay ninguno de los dos, devuelve ceros — nunca rompe la respuesta.
+ *
+ * `entrada` son tokens de entrada NUEVOS; los de caché van aparte porque se
+ * facturan distinto (escritura ~1.25×, lectura ~0.1×) y sumarlos sin decirlo
+ * confunde el número.
+ */
+export function extraerUso(resultObj) {
+  const acc = {
+    entrada: 0,
+    salida: 0,
+    cacheCreacion: 0,
+    cacheLectura: 0,
+    costoUsd: 0,
+    modelos: [],
+  }
+  if (!resultObj || typeof resultObj !== 'object') return acc
+
+  const porModelo = resultObj.modelUsage
+  if (porModelo && typeof porModelo === 'object' && Object.keys(porModelo).length) {
+    for (const [modelo, u] of Object.entries(porModelo)) {
+      if (!u || typeof u !== 'object') continue
+      acc.modelos.push(modelo)
+      sumarUso(acc, u)
+    }
+  } else if (resultObj.usage && typeof resultObj.usage === 'object') {
+    sumarUso(acc, resultObj.usage)
+  }
+
+  // `total_cost_usd` es el costo del turno completo; se usa si el desglose no lo trae.
+  if (!acc.costoUsd) acc.costoUsd = numTok(resultObj.total_cost_usd)
+  return acc
+}
+
+/* ---------------------------------------------------- límite de suscripción */
+
+/**
+ * Fracción del límite de la CUENTA que este dashboard puede consumir.
+ *
+ * El límite de sesión es de la cuenta (lo comparte con Claude Code interactivo,
+ * claude.ai, etc.). Acá se reserva sólo una parte para el chat, así que el
+ * porcentaje que se muestra está escalado: con share=0.5, gastar el 4% de la
+ * cuenta significa haber usado el 8% de lo que le toca al dashboard.
+ */
+const SHARE = (() => {
+  const v = Number(process.env.ETL_AGENT_SHARE)
+  return Number.isFinite(v) && v > 0 && v <= 1 ? v : 0.5
+})()
+
+/** Ventana de caché del `/usage`. Es gratis, pero spawnear el CLI cuesta ~2s. */
+const USO_TTL_MS = 30_000
+
+/**
+ * Parsea la salida de `/usage`. Formato al 2026-08:
+ *   Current session: 32% used · resets Aug 6, 9:10pm (America/Buenos_Aires)
+ *   Current week (all models): 27% used · resets Aug 10, 12pm (America/Buenos_Aires)
+ * Si el formato cambia devuelve null en el tramo que no pudo leer, nunca inventa.
+ */
+export function parsearLimite(texto, share = SHARE) {
+  const t = String(texto || '')
+  const tramo = (re) => {
+    const m = re.exec(t)
+    if (!m) return null
+    const cuentaPct = Number(m[1])
+    if (!Number.isFinite(cuentaPct)) return null
+    // El % que informa Claude Code es sobre la CUENTA. Escalado a la porción
+    // reservada para el dashboard: 32% de cuenta con share 0.5 → 64% del cupo.
+    const propioPct = Math.min(100, Math.round(cuentaPct / share))
+    return {
+      cuentaPct,
+      propioPct,
+      disponiblePct: Math.max(0, 100 - propioPct),
+      resetAt: (m[2] || '').trim() || null,
+    }
+  }
+  return {
+    share,
+    sesion: tramo(/Current session:\s*(\d+)%\s*used(?:\s*·\s*resets\s*([^(\n]+))?/i),
+    semana: tramo(/Current week[^:]*:\s*(\d+)%\s*used(?:\s*·\s*resets\s*([^(\n]+))?/i),
+  }
+}
+
 function parseAgentUiBlock(reply) {
   const text = String(reply || '')
   const m = text.match(/<<AGENT_UI\s*([\s\S]*?)\s*AGENT_UI>>/)
@@ -205,6 +360,37 @@ export function createEtlAgentChat({ projectRoot, port }) {
   const mcpConfigPath = path.join(projectRoot, '.mcp.json')
   const localBase = () => `http://127.0.0.1:${port}`
 
+  /**
+   * Argumentos del CLI. Uno solo para las dos rutas (json y stream-json): antes
+   * estaban duplicados y se desincronizaban.
+   *
+   * `--allowedTools` va SIEMPRE ÚLTIMO: es variádico y se come cualquier flag
+   * que venga después.
+   */
+  const argsClaude = (formato) => [
+    '-p',
+    '--output-format',
+    formato,
+    ...(formato === 'stream-json' ? ['--verbose'] : []),
+    '--mcp-config',
+    mcpConfigPath,
+    // Sólo el MCP `etl`: cualquier otro server configurado en la máquina
+    // agrandaría la superficie de tools y da más lugar a que se pierda.
+    '--strict-mcp-config',
+    // Estas consultas son lecturas de una o dos tablas, no investigación.
+    // `medium` responde igual de bien y en bastante menos tiempo.
+    '--effort',
+    process.env.ETL_AGENT_EFFORT || 'medium',
+    // Cinturón y tiradores: Task ya no está en ALLOWED_TOOLS (ver arriba), pero
+    // si el CLI algún día lo habilita por defecto, esto lo corta igual.
+    '--disallowedTools',
+    'Task',
+    '--append-system-prompt',
+    SYSTEM_APPEND,
+    '--allowedTools',
+    ...ALLOWED_TOOLS,
+  ]
+
   function cliAvailable() {
     // 'claude'/'claude.exe' sin ruta = confiamos en PATH; rutas absolutas se verifican.
     if (cliPath === 'claude' || cliPath === 'claude.exe') return true
@@ -222,7 +408,11 @@ export function createEtlAgentChat({ projectRoot, port }) {
       mode: 'claude-cli-subscription',
       cliPath,
       hasMcpConfig: existsSync(mcpConfigPath),
-      subagents: ['knowledge-truckflow', 'knowledge-contratos', 'seguridad', 'comunicador'],
+      // Sin subagentes: el chat no delega (ver ALLOWED_TOOLS). Los .md de
+      // `.claude/agents/` siguen ahí para Claude Code interactivo, pero este
+      // endpoint no los usa.
+      subagents: [],
+      effort: process.env.ETL_AGENT_EFFORT || 'medium',
       note: 'Sin ANTHROPIC_API_KEY: corre en la suscripción vía Claude Code. Requiere `claude login`.',
     }
   }
@@ -236,17 +426,7 @@ export function createEtlAgentChat({ projectRoot, port }) {
       delete env.ANTHROPIC_BASE_URL
       env.ETL_API_BASE = localBase()
 
-      const args = [
-        '-p',
-        '--output-format',
-        'json',
-        '--mcp-config',
-        mcpConfigPath,
-        '--append-system-prompt',
-        SYSTEM_APPEND,
-        '--allowedTools',
-        ...ALLOWED_TOOLS,
-      ]
+      const args = argsClaude('json')
 
       let child
       try {
@@ -300,6 +480,70 @@ export function createEtlAgentChat({ projectRoot, port }) {
     })
   }
 
+  /**
+   * Cupo restante de la suscripción, vía `claude -p "/usage"`.
+   *
+   * `/usage` es un comando LOCAL: no llama al modelo, cuesta US$ 0 y 0 tokens
+   * (verificado). Lo único que cuesta es spawnear el CLI (~2s), por eso el
+   * caché. Se invoca sin --mcp-config ni system prompt: no los necesita y así
+   * no levanta el server MCP al pedo.
+   */
+  let cacheLimite = { at: 0, valor: null }
+
+  function limiteSesion() {
+    if (Date.now() - cacheLimite.at < USO_TTL_MS && cacheLimite.valor) {
+      return Promise.resolve(cacheLimite.valor)
+    }
+    return new Promise((resolve) => {
+      const env = { ...process.env }
+      delete env.ANTHROPIC_API_KEY
+      delete env.ANTHROPIC_AUTH_TOKEN
+      delete env.ANTHROPIC_BASE_URL
+
+      let child
+      try {
+        child = spawn(cliPath, ['-p', '--output-format', 'json'], {
+          cwd: projectRoot,
+          env,
+          windowsHide: true,
+          stdio: ['pipe', 'pipe', 'pipe'],
+        })
+      } catch {
+        resolve(null)
+        return
+      }
+
+      let stdout = ''
+      const timer = setTimeout(() => {
+        child.kill()
+        resolve(null)
+      }, 20_000)
+
+      child.stdin.write('/usage')
+      child.stdin.end()
+      child.stdout.on('data', (d) => (stdout += d))
+      child.stderr.on('data', () => {})
+      child.on('error', () => {
+        clearTimeout(timer)
+        resolve(null)
+      })
+      child.on('close', () => {
+        clearTimeout(timer)
+        const parsed = parseClaudeJson(stdout)
+        const texto = String(parsed?.result ?? '')
+        // Con ANTHROPIC_API_KEY el texto no habla de suscripción y no hay cupo
+        // que mostrar: mejor no mostrar nada que mostrar un número inventado.
+        if (!texto || !/Current session:/i.test(texto)) {
+          resolve(null)
+          return
+        }
+        const valor = parsearLimite(texto)
+        cacheLimite = { at: Date.now(), valor }
+        resolve(valor)
+      })
+    })
+  }
+
   async function chat({ message, history }) {
     if (!existsSync(mcpConfigPath)) {
       const err = new Error(`Falta .mcp.json en ${projectRoot} (config del servidor MCP etl).`)
@@ -335,6 +579,7 @@ export function createEtlAgentChat({ projectRoot, port }) {
       reply: plain || '(sin texto)',
       model: 'claude-code (suscripción)',
       ui,
+      uso: extraerUso(parsed),
       stopReason: parsed.stop_reason || 'end_turn',
       sessionId: parsed.session_id,
     }
@@ -353,18 +598,7 @@ export function createEtlAgentChat({ projectRoot, port }) {
       delete env.ANTHROPIC_BASE_URL
       env.ETL_API_BASE = localBase()
 
-      const args = [
-        '-p',
-        '--output-format',
-        'stream-json',
-        '--verbose',
-        '--mcp-config',
-        mcpConfigPath,
-        '--append-system-prompt',
-        SYSTEM_APPEND,
-        '--allowedTools',
-        ...ALLOWED_TOOLS,
-      ]
+      const args = argsClaude('stream-json')
 
       let child
       try {
@@ -489,10 +723,11 @@ export function createEtlAgentChat({ projectRoot, port }) {
       reply: plain || '(sin texto)',
       model: 'claude-code (suscripción)',
       ui,
+      uso: extraerUso(resultObj),
       stopReason: resultObj.stop_reason || 'end_turn',
       sessionId: resultObj.session_id,
     }
   }
 
-  return { status, isConfigured, chat, chatStream }
+  return { status, isConfigured, chat, chatStream, limiteSesion }
 }

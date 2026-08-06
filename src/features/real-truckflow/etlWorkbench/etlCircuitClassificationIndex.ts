@@ -27,10 +27,9 @@ import {
 import { ensureArgentinaOffsetIso, operationalDayKeyFromIso } from './etlTimestampNormalize'
 import { ANOMALY_MIN_FRONT_EVENTS, type AnomalyKind } from '../../../etl-core/domain/anomalyClassifier'
 import {
-  detectMissingExcelMovement,
   GOLDEN_SL_RIC_MAX_MS,
-  isGoldenAnomalyReason,
   isPelletCircuitCode,
+  NO_PELLET_ANOMALY_REASONS,
   PELLET_TRANSILE_CIRCUIT_CODES,
 } from '../../../etl-core/domain/goldenAnomalyRules'
 import { normalizeDeVuelta } from '../../../etl-core/ingest/externalNormalization'
@@ -1517,9 +1516,26 @@ export function reindexExecutiveChartsForExcelFirstOperations(
       supersededUids.add(uid)
     }
 
-    const cameraSeed = uids.map((uid) => matrixByUid.get(uid)).find(Boolean)
+    const matched = uids
+      .map((uid) => matrixByUid.get(uid))
+      .filter((e): e is CircuitClassificationEntry => e != null)
+    const cameraSeed = matched[0]
     const built = buildExecutiveEntryFromExcelOperationRow(r, cameraSeed, rowIndex)
-    if (built) excelEntries.push(built)
+    if (built) {
+      // Propagar la anomalía de comportamiento (reglas R1–R5) del journey a la
+      // operación Excel. El universo op-centric reemplaza los journeys por
+      // operaciones y descartaba su `anomaly_kind`, así que las anomalías
+      // desaparecían del panel cuando el camión tenía movimiento en el Excel
+      // (la gran mayoría). La exclusión «no pellet» de R1/R2 se sigue aplicando
+      // en el listado según el circuito Excel de la operación.
+      const behavioral = matched.find((e) => e.anomalyKind === 'BEHAVIORAL')
+      if (behavioral) {
+        built.anomalyKind = 'BEHAVIORAL'
+        built.anomalyKindReason = behavioral.anomalyKindReason
+        built.usefulEventsCount = Math.max(built.usefulEventsCount, behavioral.usefulEventsCount)
+      }
+      excelEntries.push(built)
+    }
   }
 
   const keptMatrix = matrixEntries.filter((e) => !supersededUids.has(e.journeyId) && !e.journeyId.startsWith('excel:'))
@@ -2208,11 +2224,16 @@ export function isTransileExcludedFromAnomalyList(entry: CircuitClassificationEn
 }
 
 /**
- * Exclusiones duras del listado de anomalías: transile (interno/externo, por
- * código/razón o por patente de sesión inferida) y flota registry con
- * excludeFromAnalytics. Aplican tanto al camino de comportamiento como al legacy.
- * Excepción: reglas de oro (`anomalyKindReason` G*) se listan aunque el circuito
- * sea transile externo no-pellet (p. ej. SL→Ric rápido en soja).
+ * Exclusiones duras del listado de anomalías.
+ *
+ * REEMPLAZO TOTAL (2026-08-05): las anomalías se definen SOLO por las reglas
+ * R1–R5 (`anomalyKind === 'BEHAVIORAL'`). Ya NO se filtra por transile
+ * (interno/externo) ni por «de la vuelta»: eso vaciaba el panel y, además,
+ * R4/R5 tienen que poder disparar sobre recorridos transile (celda 16, carga→
+ * descarga). Quedan solo dos exclusiones:
+ *  - flota de servicio (registry `excludeFromAnalytics`): no es camión a auditar;
+ *  - pellet en R1/R2, que exigen «no pellet». El circuito pellet (tolvas 09–11,
+ *    sin cámara) solo se conoce tras cruzar con Excel, así que se filtra acá.
  */
 function isHardExcludedFromAnomalyList(
   entry: CircuitClassificationEntry,
@@ -2220,14 +2241,11 @@ function isHardExcludedFromAnomalyList(
   plate: string
 ): boolean {
   if (plate && ctx.excludedRegistryPlates?.has(plate)) return true
-  if (plate && ctx.deVueltaExcludedPlates?.has(plate)) return true
-  if (isGoldenAnomalyReason(entry.anomalyKindReason)) {
+  if (NO_PELLET_ANOMALY_REASONS.has(entry.anomalyKindReason as never)) {
     return (
       isPelletCircuitCode(entry.executiveCircuitCode) || isPelletCircuitCode(entry.matchedCircuitCode)
     )
   }
-  if (plate && ctx.transileExcludedPlates?.has(plate)) return true
-  if (isTransileExcludedFromAnomalyList(entry)) return true
   return false
 }
 
@@ -2385,15 +2403,6 @@ function collectExcelPlateDaysFromExcelOps(source: ExcelOpsSource): Set<string> 
   return out
 }
 
-function sequenceLogicalCodes(detectedSequence: string): string[] {
-  const raw = String(detectedSequence ?? '').trim()
-  if (!raw) return []
-  return raw
-    .split(/>|→|,|\|/g)
-    .map((t) => t.trim().toUpperCase())
-    .filter(Boolean)
-}
-
 /**
  * Evidencia de que el journey ya está reconciliado con Movimientos Excel
  * (plataforma/match en committee_reason). Evita G5 falso positivo cuando el
@@ -2463,78 +2472,17 @@ export function excelCoveredDaysFromPlateDays(
   return days
 }
 
-function entryInExcelSameDay(
-  entry: CircuitClassificationEntry,
-  excelPlateDays: Set<string> | null | undefined,
-  excelCoveredDays: Set<string>
-): boolean | null {
-  if (excelPlateDays == null) return null
-  if (entryHasExcelMovementEvidence(entry)) return true
-  const plate = normalizePlate(entry.normalizedPlate || entry.plate)
-  if (!plate) return null
-  const days = entryExcelCandidateDays(entry)
-  // Sin fechas operativas no se puede afirmar ausencia → no disparar G5.
-  if (!days.length) return null
-  // El Excel se carga por ventana. Para afirmar que un movimiento NO existe hacen
-  // falta cargados TODOS los días donde podría estar registrado — incluido el D+1
-  // de la descarga. Si alguno falta (típico: journey del último día de la ventana,
-  // cuya descarga se registra en el Excel del día siguiente, que no está cargado),
-  // no se puede afirmar ausencia. Ausencia de evidencia no es evidencia de ausencia.
-  //
-  // La cobertura sale de los movimientos reales, así que un día sin ninguna
-  // operación en toda la planta cuenta como no cubierto y G5 se calla. Es a
-  // propósito: preferimos perder una anomalía real antes que acusar a un camión.
-  if (excelCoveredDays.size && !days.every((d) => excelCoveredDays.has(d))) return null
-  return days.some((d) => excelPlateDays.has(excelPlateDayKey(plate, d)))
-}
-
 /**
- * G5 v1: marca BEHAVIORAL `SIN_MOVIMIENTO_EXCEL` si hay entrada+salida (Ric o SL)
- * y la patente+día no figura en Movimientos. No pisa un BEHAVIORAL ya existente.
+ * G5 (`SIN_MOVIMIENTO_EXCEL`) ELIMINADA en el reemplazo total 2026-08-05: las
+ * anomalías se definen SOLO por las reglas R1–R5 (`anomaly_kind` que ya trae la
+ * corrida). Se mantiene la firma como no-op para no tocar los call sites de la UI.
  */
 export function stampMissingExcelAnomalies(
   entries: CircuitClassificationEntry[],
-  ctx: AnomalyListContext
+  _ctx: AnomalyListContext
 ): CircuitClassificationEntry[] {
-  if (ctx.excelPlateDays == null && ctx.excelPlates == null) return entries
-  const plateDays = ctx.excelPlateDays ?? null
-  // Si hay Excel cargado pero aún no hay plateDays (CSV sin fechas), no disparar G5.
-  if (plateDays == null) return entries
-  const coveredDays = excelCoveredDaysFromPlateDays(plateDays)
-
-  return entries.map((entry) => {
-    if (entry.anomalyKind === 'BEHAVIORAL') return entry
-    // Evidencia mínima: con ≤2 eventos frontales no se puede afirmar comportamiento
-    // (mismo umbral que `classifyAnomaly`). Sin este guardia G5 pisaba el veredicto
-    // DATA_COVERAGE y metía journeys de 2 tomas en el panel de anomalías.
-    if (entry.usefulEventsCount <= ANOMALY_MIN_FRONT_EVENTS) return entry
-    const plate = normalizePlate(entry.normalizedPlate || entry.plate)
-    if (!plate) return entry
-    if (ctx.deVueltaExcludedPlates?.has(plate)) return entry
-    if (ctx.excludedRegistryPlates?.has(plate)) return entry
-    if (ctx.transileExcludedPlates?.has(plate)) return entry
-    if (isTransileExcludedFromAnomalyList(entry)) return entry
-
-    const hit = detectMissingExcelMovement({
-      logicalCodes: sequenceLogicalCodes(entry.detectedSequence),
-      inExcelSameDay: entryInExcelSameDay(entry, plateDays, coveredDays),
-      circuitCode: entry.executiveCircuitCode,
-    })
-    if (!hit) return entry
-    // Regla de negocio: si se caló, no fue a San Lorenzo y no completó descarga, la
-    // ausencia del Excel no es una anomalía — es un camión RECHAZADO, y eso es una
-    // variación operativa. Es el mismo patrón que `reclassifyPossibleRejections`,
-    // que solo alcanzaba a los que ya venían como ANOMALIAS; estos llegan acá
-    // etiquetados COMPLETOS y se escapaban.
-    if (sequenceLooksLikePossibleRejection(entry.detectedSequence)) {
-      return reclassifyEntryAsPossibleRejection(entry)
-    }
-    return {
-      ...entry,
-      anomalyKind: 'BEHAVIORAL',
-      anomalyKindReason: hit.reason,
-    }
-  })
+  void _ctx
+  return entries
 }
 
 export type PelletExcelMovement = {

@@ -6,6 +6,13 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 5173
+    },
+    {
+      "name": "ops2",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "npm", "--prefix", "C:\\Users\\Usuario\\Desktop\\DASHBO~1.0", "run", "dev"],
+      "port": 5183,
+      "autoPort": true
     }
   ]
 }

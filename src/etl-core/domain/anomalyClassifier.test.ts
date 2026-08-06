@@ -9,42 +9,10 @@ import {
 const base: ClassifyAnomalyInput = {
   matrixFinalStatus: 'COMPLETO',
   executiveStatus: 'VALIDO',
-  hasInvalidRouteOperationalAlert: false,
-  hasInvalidJourneyStartOperationalAlert: false,
   frontEventCount: 6,
 }
 
-describe('classifyAnomaly', () => {
-  describe('BEHAVIORAL (anomalía real del camión)', () => {
-    it('alerta INVALID_ROUTE domina todo → RUTA_INVALIDA', () => {
-      const v = classifyAnomaly({
-        ...base,
-        matrixFinalStatus: 'INCOMPLETO',
-        executiveStatus: 'NO_EVALUABLE',
-        frontEventCount: 1,
-        hasInvalidRouteOperationalAlert: true,
-      })
-      expect(v).toEqual({ kind: 'BEHAVIORAL', reason: 'RUTA_INVALIDA' })
-      expect(isBehavioralAnomaly(v)).toBe(true)
-    })
-
-    it('alerta INVALID_START_JOURNEY → ARRANQUE_INVALIDO', () => {
-      const v = classifyAnomaly({ ...base, hasInvalidJourneyStartOperationalAlert: true })
-      expect(v).toEqual({ kind: 'BEHAVIORAL', reason: 'ARRANQUE_INVALIDO' })
-    })
-
-    it('matriz ANOMALO con cobertura ok → RETROCESO_SECUENCIA', () => {
-      const v = classifyAnomaly({ ...base, matrixFinalStatus: 'ANOMALO', executiveStatus: 'ANOMALO' })
-      expect(v).toEqual({ kind: 'BEHAVIORAL', reason: 'RETROCESO_SECUENCIA' })
-    })
-
-    it('executive ANOMALO alcanza para comportamiento aunque matriz no lo diga', () => {
-      const v = classifyAnomaly({ ...base, matrixFinalStatus: 'DEDUCIDO', executiveStatus: 'ANOMALO' })
-      expect(v.kind).toBe('BEHAVIORAL')
-      expect(v.reason).toBe('RETROCESO_SECUENCIA')
-    })
-  })
-
+describe('classifyAnomaly (reemplazo total: NUNCA emite BEHAVIORAL)', () => {
   describe('DATA_COVERAGE (problema de datos, NO anomalía del camión)', () => {
     it('pocos eventos frontales → EVENTOS_INSUFICIENTES', () => {
       const v = classifyAnomaly({ ...base, frontEventCount: 2, matrixFinalStatus: 'INCOMPLETO' })
@@ -52,7 +20,7 @@ describe('classifyAnomaly', () => {
       expect(isBehavioralAnomaly(v)).toBe(false)
     })
 
-    it('executive NO_EVALUABLE → COBERTURA_INSUFICIENTE (sacado de anómalo)', () => {
+    it('executive NO_EVALUABLE → COBERTURA_INSUFICIENTE', () => {
       const v = classifyAnomaly({
         ...base,
         matrixFinalStatus: 'ANOMALO',
@@ -61,14 +29,20 @@ describe('classifyAnomaly', () => {
       expect(v).toEqual({ kind: 'DATA_COVERAGE', reason: 'COBERTURA_INSUFICIENTE' })
     })
 
-    it('INCOMPLETO sin contradicción → SECUENCIA_INCOMPLETA (no BEHAVIORAL)', () => {
+    it('INCOMPLETO → SECUENCIA_INCOMPLETA', () => {
       const v = classifyAnomaly({ ...base, matrixFinalStatus: 'INCOMPLETO', executiveStatus: 'INCOMPLETO' })
       expect(v).toEqual({ kind: 'DATA_COVERAGE', reason: 'SECUENCIA_INCOMPLETA' })
       expect(isBehavioralAnomaly(v)).toBe(false)
     })
   })
 
-  describe('NONE (recorrido sano)', () => {
+  describe('NONE — un ANOMALO de secuencia YA NO es comportamiento', () => {
+    it('matriz/ejecutivo ANOMALO con cobertura ok → NONE (solo R1–R5 marcan comportamiento)', () => {
+      const v = classifyAnomaly({ ...base, matrixFinalStatus: 'ANOMALO', executiveStatus: 'ANOMALO' })
+      expect(v).toEqual({ kind: 'NONE', reason: null })
+      expect(isBehavioralAnomaly(v)).toBe(false)
+    })
+
     it('completo y válido → NONE', () => {
       expect(classifyAnomaly(base)).toEqual({ kind: 'NONE', reason: null })
     })
@@ -78,61 +52,37 @@ describe('classifyAnomaly', () => {
       expect(v).toEqual({ kind: 'NONE', reason: null })
     })
   })
+})
 
-  describe('prioridad: comportamiento domina sobre huecos de datos', () => {
-    it('ANOMALO de matriz + INCOMPLETO ejecutivo → RETROCESO (no SECUENCIA_INCOMPLETA)', () => {
-      const v = classifyAnomaly({ ...base, matrixFinalStatus: 'ANOMALO', executiveStatus: 'INCOMPLETO' })
-      expect(v.reason).toBe('RETROCESO_SECUENCIA')
-    })
-
-    it('pero cobertura insuficiente frena la anomalía de comportamiento', () => {
-      const v = classifyAnomaly({
-        ...base,
-        matrixFinalStatus: 'ANOMALO',
-        executiveStatus: 'NO_EVALUABLE',
-      })
-      expect(v.kind).toBe('DATA_COVERAGE')
+describe('applyGoldenAnomalyOverride (R1–R5 son la única fuente de comportamiento)', () => {
+  it('promueve NONE a BEHAVIORAL con razón de regla', () => {
+    expect(applyGoldenAnomalyOverride({ kind: 'NONE', reason: null }, 'RIC_SL_TRAMO_40M_6H')).toEqual({
+      kind: 'BEHAVIORAL',
+      reason: 'RIC_SL_TRAMO_40M_6H',
     })
   })
 
-  describe('applyGoldenAnomalyOverride', () => {
-    it('promueve NONE a BEHAVIORAL con razón de oro', () => {
-      expect(applyGoldenAnomalyOverride({ kind: 'NONE', reason: null }, 'RIC_SL_DEMORA')).toEqual({
-        kind: 'BEHAVIORAL',
-        reason: 'RIC_SL_DEMORA',
-      })
-    })
+  it('no pisa EVENTOS_INSUFICIENTES: sin evidencia mínima no hay comportamiento', () => {
+    expect(
+      applyGoldenAnomalyOverride(
+        { kind: 'DATA_COVERAGE', reason: 'EVENTOS_INSUFICIENTES' },
+        'CARGA_LUEGO_DESCARGA'
+      )
+    ).toEqual({ kind: 'DATA_COVERAGE', reason: 'EVENTOS_INSUFICIENTES' })
+  })
 
-    it('no pisa RUTA_INVALIDA', () => {
-      expect(
-        applyGoldenAnomalyOverride({ kind: 'BEHAVIORAL', reason: 'RUTA_INVALIDA' }, 'RIC_SL_DEMORA')
-      ).toEqual({ kind: 'BEHAVIORAL', reason: 'RUTA_INVALIDA' })
-    })
-
-    it('no pisa EVENTOS_INSUFICIENTES: sin evidencia mínima no hay comportamiento', () => {
-      // G3 («faltó un hito + lapso extremo») se dispara sola cuando lo único que
-      // pasa es que faltan cámaras. Con ≤2 eventos frontales el veredicto de datos manda.
-      expect(
-        applyGoldenAnomalyOverride(
-          { kind: 'DATA_COVERAGE', reason: 'EVENTOS_INSUFICIENTES' },
-          'SKIP_PUNTO_LAPSO_EXTREMO'
-        )
-      ).toEqual({ kind: 'DATA_COVERAGE', reason: 'EVENTOS_INSUFICIENTES' })
-    })
-
-    it('sí pisa COBERTURA_INSUFICIENTE y SECUENCIA_INCOMPLETA (hay eventos para juzgar)', () => {
-      expect(
-        applyGoldenAnomalyOverride(
-          { kind: 'DATA_COVERAGE', reason: 'COBERTURA_INSUFICIENTE' },
-          'RIC_SL_DEMORA'
-        )
-      ).toEqual({ kind: 'BEHAVIORAL', reason: 'RIC_SL_DEMORA' })
-      expect(
-        applyGoldenAnomalyOverride(
-          { kind: 'DATA_COVERAGE', reason: 'SECUENCIA_INCOMPLETA' },
-          'RIC_SL_DEMORA'
-        )
-      ).toEqual({ kind: 'BEHAVIORAL', reason: 'RIC_SL_DEMORA' })
-    })
+  it('sí pisa COBERTURA_INSUFICIENTE y SECUENCIA_INCOMPLETA (hay eventos para juzgar)', () => {
+    expect(
+      applyGoldenAnomalyOverride(
+        { kind: 'DATA_COVERAGE', reason: 'COBERTURA_INSUFICIENTE' },
+        'RUTA_BALANZA_PLAYA_C16_BALANZA'
+      )
+    ).toEqual({ kind: 'BEHAVIORAL', reason: 'RUTA_BALANZA_PLAYA_C16_BALANZA' })
+    expect(
+      applyGoldenAnomalyOverride(
+        { kind: 'DATA_COVERAGE', reason: 'SECUENCIA_INCOMPLETA' },
+        'RIC_REINGRESO_RAPIDO_NO_PELLET'
+      )
+    ).toEqual({ kind: 'BEHAVIORAL', reason: 'RIC_REINGRESO_RAPIDO_NO_PELLET' })
   })
 })

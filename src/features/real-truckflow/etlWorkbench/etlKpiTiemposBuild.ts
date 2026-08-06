@@ -184,18 +184,27 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
 
   // Actividad por cámara de calada (RicCal01–06 + RicCalLiq): la cámara individual solo
   // vive en el device crudo, así que se arma acá desde los eventos y se persiste.
+  // El producto NO lo trae el journey (es Truckflow puro, solo cámaras): sale del merge con
+  // el Excel de Movimientos. Si esta corrida no lo integró, no hay producto que asignar y las
+  // calles quedan en «Sin dato». Se leen ambas fuentes del snapshot (merged y clean) porque
+  // según el camino del transform una u otra puede venir más completa.
   const productByJourneyUid = new Map<string, string>()
-  for (const r of snap?.mergedRows ?? []) {
+  for (const r of [...(snap?.mergedRows ?? []), ...(snap?.cleanRows ?? [])]) {
     const uid = String(r.journey_uid ?? '').trim()
-    const producto = String(r.product_normalized ?? '').trim()
+    const producto = String((r as { product_normalized?: unknown }).product_normalized ?? '').trim()
     if (uid && producto && !productByJourneyUid.has(uid)) productByJourneyUid.set(uid, producto)
   }
   const caladaCameraEvents = buildCaladaCameraEvents({
     classifiedJourneys: input.classifiedJourneys,
     productByJourneyUid,
   })
+  const caladaConProducto = caladaCameraEvents.filter((r) => r.producto).length
   logs.push(
-    `calada_camera_events: ${caladaCameraEvents.length} eventos · ${new Set(caladaCameraEvents.map((r) => r.camara)).size} cámaras`
+    `calada_camera_events: ${caladaCameraEvents.length} eventos · ${new Set(caladaCameraEvents.map((r) => r.camara)).size} cámaras · ` +
+      `producto asignado a ${caladaConProducto}/${caladaCameraEvents.length}` +
+      (productByJourneyUid.size === 0 ?
+        ' (sin movimientos en la corrida: producto por calle quedará en «Sin dato»)'
+      : ` (mapa uid→producto: ${productByJourneyUid.size})`)
   )
 
   return {

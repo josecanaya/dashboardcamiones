@@ -503,9 +503,10 @@ function AnomalySequenceBreakdownPanel({
             <p className="text-[11px] text-slate-600">
               <strong>{sequenceRows.length.toLocaleString()}</strong> recorridos distintos ·{' '}
               <strong>{listedAnomalyCount.toLocaleString()}</strong> anomalías de <strong>comportamiento</strong>{' '}
-              (ruta o arranque inválido, retroceso de secuencia, o reglas de oro G1–G5). Es el mismo total que la
-              porción ANOMALÍAS de la torta y que la columna «Anomalías» de la conciliación por circuito. Excluye
-              transile y flota servicio.
+              (reglas R1–R5: reingreso a Ricardone &lt;1 h · San Lorenzo y luego Ricardone el mismo día · egreso
+              Ric→ingreso SLZ 40 min–6 h · Balanza→Playa 3→Celda 16→Balanza · carga y luego descarga). Es el mismo
+              total que la porción ANOMALÍAS de la torta y que la columna «Anomalías» de la conciliación por circuito.
+              Excluye flota de servicio (y pellet en R1/R2).
             </p>
             <button
               type="button"
