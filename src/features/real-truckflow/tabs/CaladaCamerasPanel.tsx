@@ -21,15 +21,15 @@ import { safeExportFilename } from '../../../utils/chartExport'
 const DAY_FILTER_ALL = '__ALL_DIAS__'
 
 /**
- * Cuartos de turno de la operación de calada (hora local Argentina). Arrancan a las 01, no en
- * punto de medianoche: 01–07, 07–13, 13–19, 19–01 (el último cruza medianoche). Son las
- * franjas Q1–Q4 propias del proyecto, distintas de `operationalTurno` (02–08…).
+ * Cuartos de turno de la operación de calada (hora local Argentina). Ventanas de 6 h: Q1 22–04
+ * (cruza medianoche), Q2 04–10, Q3 10–16, Q4 16–22. Definición única del proyecto, compartida
+ * con `operationalTurno` (mismos límites que el filtro de banda horaria del scatter KPI).
  */
 const CUARTOS_TURNO = [
-  { id: 'q1', label: '01–07', start: 1, end: 7 },
-  { id: 'q2', label: '07–13', start: 7, end: 13 },
-  { id: 'q3', label: '13–19', start: 13, end: 19 },
-  { id: 'q4', label: '19–01', start: 19, end: 1 },
+  { id: 'q1', label: '22–04', start: 22, end: 4 },
+  { id: 'q2', label: '04–10', start: 4, end: 10 },
+  { id: 'q3', label: '10–16', start: 10, end: 16 },
+  { id: 'q4', label: '16–22', start: 16, end: 22 },
 ] as const
 
 /** Cuarto de turno para una hora entera (0–23). El último cuarto cruza medianoche. */

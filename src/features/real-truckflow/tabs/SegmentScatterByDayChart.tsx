@@ -6,7 +6,6 @@ import type { FranjaHoraria, SegmentScatterByDayRow } from '../etlWorkbench/etlS
 import {
   FRANJA_HORARIA_COLORS,
   FRANJA_HORARIA_ORDER,
-  FRANJA_HORARIA_WINDOWS,
   SCATTER_DAY_FILTER_ALL,
   colorForFranja,
 } from '../etlWorkbench/etlSegmentScatterByDay'
@@ -46,8 +45,8 @@ function strokeForHorarioFuente(fuente: string): string {
 }
 
 function franjaLegendLabel(f: (typeof FRANJA_HORARIA_ORDER)[number]): string {
-  const w = FRANJA_HORARIA_WINDOWS[f]
-  return `${turnoLabel(f)} (${w.desde}–${w.hasta})`
+  // turnoLabel ya incluye el rango horario (p. ej. "Q1 (22–04)").
+  return turnoLabel(f)
 }
 
 export function SegmentScatterByDayChart({
@@ -64,6 +63,7 @@ export function SegmentScatterByDayChart({
   stats,
   visibleRowCount,
   scatterPoolHint,
+  hideControls = false,
 }: {
   rows: SegmentScatterByDayRow[]
   chartRows: SegmentScatterByDayRow[]
@@ -81,6 +81,8 @@ export function SegmentScatterByDayChart({
     uniqueOpsInCircuit: number
     globalReadyForScatter?: number
   }
+  /** Oculta los controles internos (día/franja): el filtro lo maneja un control general. */
+  hideControls?: boolean
 }) {
   const durations = useMemo(() => chartRows.map((r) => r.duracion_minutos), [chartRows])
 
@@ -116,6 +118,7 @@ export function SegmentScatterByDayChart({
   )
 
   const toggleFranjaFilter = (f: FranjaHoraria) => {
+    if (hideControls) return
     onFranjaFilterChange(franjaFilter === f ? null : f)
   }
 
@@ -146,21 +149,23 @@ export function SegmentScatterByDayChart({
           duración (min)
         </p>
         <div className="flex flex-wrap items-end gap-2">
-          <label className="flex flex-col gap-1 text-sm">
-            <span className="font-semibold text-slate-700">Vista</span>
-            <select
-              value={selectedDay}
-              onChange={(e) => onSelectedDayChange(e.target.value)}
-              className="min-w-[13rem] rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm"
-            >
-              <option value={SCATTER_DAY_FILTER_ALL}>Todos los días (general)</option>
-              {dayOptions.map((d) => (
-                <option key={d} value={d}>
-                  Día {d}
-                </option>
-              ))}
-            </select>
-          </label>
+          {!hideControls ?
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-semibold text-slate-700">Vista</span>
+              <select
+                value={selectedDay}
+                onChange={(e) => onSelectedDayChange(e.target.value)}
+                className="min-w-[13rem] rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm"
+              >
+                <option value={SCATTER_DAY_FILTER_ALL}>Todos los días (general)</option>
+                {dayOptions.map((d) => (
+                  <option key={d} value={d}>
+                    Día {d}
+                  </option>
+                ))}
+              </select>
+            </label>
+          : null}
           <button
             type="button"
             disabled={!chartRows.length}
@@ -208,6 +213,28 @@ export function SegmentScatterByDayChart({
               {FRANJA_HORARIA_ORDER.map((f) => {
                 const active = franjaFilter === f
                 const dimmed = franjaFilter != null && !active
+                const chipBody = (
+                  <>
+                    <span
+                      className="inline-block h-2.5 w-2.5 rounded-full"
+                      style={{ backgroundColor: FRANJA_HORARIA_COLORS[f] }}
+                    />
+                    {franjaLegendLabel(f)}
+                  </>
+                )
+                if (hideControls) {
+                  // Solo leyenda de color: el filtro está en el control general.
+                  return (
+                    <span
+                      key={f}
+                      className={`inline-flex items-center gap-1 rounded-full border border-transparent px-2 py-0.5 ${
+                        dimmed ? 'opacity-40' : active ? 'font-semibold' : ''
+                      }`}
+                    >
+                      {chipBody}
+                    </span>
+                  )
+                }
                 return (
                   <button
                     key={f}
@@ -221,11 +248,7 @@ export function SegmentScatterByDayChart({
                       : 'hover:bg-white'
                     }`}
                   >
-                    <span
-                      className="inline-block h-2.5 w-2.5 rounded-full"
-                      style={{ backgroundColor: FRANJA_HORARIA_COLORS[f] }}
-                    />
-                    {franjaLegendLabel(f)}
+                    {chipBody}
                   </button>
                 )
               })}
@@ -240,50 +263,54 @@ export function SegmentScatterByDayChart({
           binSize={SEGMENT_TIMING_HISTOGRAM_BIN_MIN}
           legendExtra={
             <>
-              <span className="mr-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-                Filtrar:
-              </span>
-              {FRANJA_HORARIA_ORDER.map((f) => {
-                const active = franjaFilter === f
-                const dimmed = franjaFilter != null && !active
-                return (
-                  <button
-                    key={f}
-                    type="button"
-                    title={
-                      active ?
-                        `Quitar filtro ${turnoLabel(f)}`
-                      : `Mostrar solo ${turnoLabel(f)}`
-                    }
-                    onClick={() => toggleFranjaFilter(f)}
-                    className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] transition ${
-                      active ?
-                        'border-violet-400 bg-violet-100 font-semibold text-violet-950 ring-2 ring-violet-300'
-                      : dimmed ?
-                        'border-transparent text-slate-400 opacity-50 hover:opacity-80'
-                      : 'border-transparent text-slate-700 hover:bg-slate-100'
-                    }`}
-                  >
-                    <span
-                      className="inline-block rounded-full"
-                      style={{
-                        width: 10,
-                        height: 10,
-                        backgroundColor: FRANJA_HORARIA_COLORS[f],
-                      }}
-                    />
-                    {franjaLegendLabel(f)}
-                  </button>
-                )
-              })}
-              {franjaFilter ?
-                <button
-                  type="button"
-                  onClick={() => onFranjaFilterChange(null)}
-                  className="rounded-full border border-slate-300 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-600 hover:bg-slate-50"
-                >
-                  Ver todas
-                </button>
+              {!hideControls ?
+                <>
+                  <span className="mr-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                    Filtrar:
+                  </span>
+                  {FRANJA_HORARIA_ORDER.map((f) => {
+                    const active = franjaFilter === f
+                    const dimmed = franjaFilter != null && !active
+                    return (
+                      <button
+                        key={f}
+                        type="button"
+                        title={
+                          active ?
+                            `Quitar filtro ${turnoLabel(f)}`
+                          : `Mostrar solo ${turnoLabel(f)}`
+                        }
+                        onClick={() => toggleFranjaFilter(f)}
+                        className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] transition ${
+                          active ?
+                            'border-violet-400 bg-violet-100 font-semibold text-violet-950 ring-2 ring-violet-300'
+                          : dimmed ?
+                            'border-transparent text-slate-400 opacity-50 hover:opacity-80'
+                          : 'border-transparent text-slate-700 hover:bg-slate-100'
+                        }`}
+                      >
+                        <span
+                          className="inline-block rounded-full"
+                          style={{
+                            width: 10,
+                            height: 10,
+                            backgroundColor: FRANJA_HORARIA_COLORS[f],
+                          }}
+                        />
+                        {franjaLegendLabel(f)}
+                      </button>
+                    )
+                  })}
+                  {franjaFilter ?
+                    <button
+                      type="button"
+                      onClick={() => onFranjaFilterChange(null)}
+                      className="rounded-full border border-slate-300 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-600 hover:bg-slate-50"
+                    >
+                      Ver todas
+                    </button>
+                  : null}
+                </>
               : null}
               <span className="ml-2 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
                 Borde punto:

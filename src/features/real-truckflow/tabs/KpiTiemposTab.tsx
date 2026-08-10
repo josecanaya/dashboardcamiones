@@ -22,6 +22,15 @@ import { SegmentOccupancyChartPanel } from './SegmentOccupancyChartPanel'
 import { CaladaCamerasPanel } from './CaladaCamerasPanel'
 import { parseSegmentScatterByDayCsv } from '../etlWorkbench/etlSegmentScatterByDay'
 import { isWithinSegmentScatterDisplayMax } from '../etlWorkbench/etlSegmentScatterByDay'
+import {
+  FRANJA_HORARIA_COLORS,
+  FRANJA_HORARIA_ORDER,
+  SCATTER_DAY_FILTER_ALL,
+  buildQuarterCircuitSummary,
+  type FranjaHoraria,
+} from '../etlWorkbench/etlSegmentScatterByDay'
+import { turnoLabel } from '../etlWorkbench/operationalTurno'
+import { parseCsvToRecords } from '../etlWorkbench/etlCsvParse'
 import { legsForAggregate } from '../etlWorkbench/etlSegmentSlowTail'
 
 function fmtMin(v: number): string {
@@ -60,6 +69,10 @@ export function KpiTiemposTab() {
   const [circuitFilter, setCircuitFilter] = useState('')
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
   const [chartView, setChartView] = useState<'tiempos' | 'ocupacion' | 'sectores_ric' | 'calada'>('tiempos')
+
+  // Filtro general (día / banda horaria) compartido por TODOS los gráficos de KPI tiempos.
+  const [selectedDay, setSelectedDay] = useState(SCATTER_DAY_FILTER_ALL)
+  const [franjaFilter, setFranjaFilter] = useState<FranjaHoraria | null>(null)
 
   const segmentTiming = useMemo(() => {
     if (!segmentTimingRaw) return null
@@ -117,6 +130,13 @@ export function KpiTiemposTab() {
     const fromScatter = scatterByDayAll.map((r) => r.fecha_tramo).filter(Boolean)
     return [...new Set([...fromDisk, ...fromScatter])].sort()
   }, [wb?.loadSummary?.daysDetected, scatterByDayAll])
+
+  // Si el día elegido en el filtro general ya no existe en el período, volver a "todos".
+  useEffect(() => {
+    if (selectedDay !== SCATTER_DAY_FILTER_ALL && !periodFechas.includes(selectedDay)) {
+      setSelectedDay(SCATTER_DAY_FILTER_ALL)
+    }
+  }, [periodFechas, selectedDay])
 
   useEffect(() => {
     // Default o resincroniza si el circuito del drilldown quedó fuera de los tildados.
@@ -190,6 +210,44 @@ export function KpiTiemposTab() {
     },
     [segmentTiming, circuitFilter]
   )
+
+  /**
+   * Resumen por cuarto del día para el circuito seleccionado:
+   * - camiones = operaciones distintas cuyo tramo de PREINGRESO/INGRESO cae en el cuarto.
+   * - tiempoMedioMin = tiempo medido puerta→última cámara por operación (span del recorrido en
+   *   el scatter; para R7 ya incluye la salida Excel), promediado por cuarto.
+   * El cuarto se asigna por el ingreso/preingreso de cada operación.
+   */
+  /** Operaciones Excel del período (universo canónico de camiones por circuito). */
+  const excelOperationRows = useMemo(() => {
+    const csv = tr?.csv.excel_operations_with_truckflow
+    if (!csv?.trim()) return [] as Record<string, string>[]
+    return parseCsvToRecords(csv).rows
+  }, [tr?.csv.excel_operations_with_truckflow])
+
+  const quarterCircuitSummary = useMemo(() => {
+    if (!circuitFilter) return buildQuarterCircuitSummary([])
+    const codes = new Set(kpiCircuitCodesForScatterFilter(circuitFilter))
+    const seen = new Set<string>()
+    const ops = []
+    for (const r of excelOperationRows) {
+      if (!codes.has(String(r.resolved_executive_circuit_code ?? '').trim())) continue
+      const id = String(r.external_operation_id ?? '').trim()
+      if (id) {
+        if (seen.has(id)) continue
+        seen.add(id)
+      }
+      ops.push({
+        ingresoCameraAt: r.truckflow_first_seen_at,
+        ingresoExcelAt: r.external_ingreso_at,
+        salidaExcelAt: r.external_salida_at,
+      })
+    }
+    return buildQuarterCircuitSummary(ops, {
+      periodStartDay: periodFechas[0],
+      selectedDay,
+    })
+  }, [excelOperationRows, circuitFilter, periodFechas, selectedDay])
 
   const exportCircuitRecorrido = useCallback(async () => {
     if (!aggregatesWithData.length || exportBusy || !circuitExportRef.current) return
@@ -591,6 +649,130 @@ export function KpiTiemposTab() {
                   </p>
                 </div>
               : null}
+              {chartView === 'tiempos' && (circuitScatterUniqueOps > 0 || quarterCircuitSummary.total > 0) ?
+                <div className="sticky top-0 z-10 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-violet-200 bg-violet-50/95 px-5 py-3 shadow-sm backdrop-blur">
+                  <span className="text-xs font-bold uppercase tracking-wide text-violet-800">
+                    Filtro general · todos los gráficos
+                  </span>
+                  <label className="flex items-center gap-2 text-sm">
+                    <span className="font-semibold text-slate-700">Vista</span>
+                    <select
+                      value={selectedDay}
+                      onChange={(e) => setSelectedDay(e.target.value)}
+                      className="min-w-[13rem] rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm"
+                    >
+                      <option value={SCATTER_DAY_FILTER_ALL}>Todos los días (general)</option>
+                      {periodFechas.map((d) => (
+                        <option key={d} value={d}>
+                          Día {d}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                      Banda:
+                    </span>
+                    {FRANJA_HORARIA_ORDER.map((f) => {
+                      const active = franjaFilter === f
+                      const dimmed = franjaFilter != null && !active
+                      return (
+                        <button
+                          key={f}
+                          type="button"
+                          onClick={() => setFranjaFilter(active ? null : f)}
+                          className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] transition ${
+                            active ?
+                              'border-violet-400 bg-violet-100 font-semibold text-violet-950 ring-2 ring-violet-300'
+                            : dimmed ?
+                              'border-transparent text-slate-400 opacity-60 hover:opacity-90'
+                            : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'
+                          }`}
+                        >
+                          <span
+                            className="inline-block rounded-full"
+                            style={{ width: 10, height: 10, backgroundColor: FRANJA_HORARIA_COLORS[f] }}
+                          />
+                          {turnoLabel(f)}
+                        </button>
+                      )
+                    })}
+                    {franjaFilter ?
+                      <button
+                        type="button"
+                        onClick={() => setFranjaFilter(null)}
+                        className="rounded-full border border-slate-300 bg-white px-2.5 py-1 text-[10px] font-semibold text-slate-600 hover:bg-slate-50"
+                      >
+                        Ver todas
+                      </button>
+                    : null}
+                  </div>
+                </div>
+              : null}
+              {chartView === 'tiempos' && quarterCircuitSummary.total > 0 ?
+                <div className="space-y-2">
+                  <p className="text-xs text-slate-600">
+                    Ingresos por cuarto ·{' '}
+                    <span className="font-semibold text-slate-800">
+                      total {quarterCircuitSummary.total.toLocaleString('es-AR')} camiones
+                    </span>{' '}
+                    en {circuitFilter} (la suma de los 4 cuartos = total). Cuarto por ingreso/preingreso de
+                    cámara; si falta, por el ingreso del Excel. Día operativo: un ingreso desde las 22:00
+                    cuenta en el día siguiente (Q1); ingresos con día operativo anterior al período se
+                    descartan.
+                    {quarterCircuitSummary.descartadasPeriodoAnterior > 0 ?
+                      ` · ${quarterCircuitSummary.descartadasPeriodoAnterior.toLocaleString('es-AR')} descartados (ingreso antes del período).`
+                    : null}
+                    {quarterCircuitSummary.sinIngreso > 0 ?
+                      ` · ${quarterCircuitSummary.sinIngreso.toLocaleString('es-AR')} sin hora de ingreso (no ubicables).`
+                    : null}
+                  </p>
+                  <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                    {FRANJA_HORARIA_ORDER.map((q) => {
+                      const s = quarterCircuitSummary.porCuarto[q]
+                      const mean = s.tiempoMedioMin
+                      const active = franjaFilter === q
+                      const dimmed = franjaFilter != null && !active
+                      return (
+                        <button
+                          key={q}
+                          type="button"
+                          onClick={() => setFranjaFilter(active ? null : q)}
+                          className={`rounded-xl border px-4 py-3 text-left transition ${
+                            active ?
+                              'border-violet-400 bg-violet-50 ring-2 ring-violet-300'
+                            : dimmed ?
+                              'border-slate-200 bg-white opacity-60 hover:opacity-100'
+                            : 'border-slate-200 bg-white hover:bg-slate-50'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="inline-block h-2.5 w-2.5 rounded-full"
+                              style={{ backgroundColor: FRANJA_HORARIA_COLORS[q] }}
+                            />
+                            <span className="text-xs font-bold text-slate-700">{turnoLabel(q)}</span>
+                          </div>
+                          <div className="mt-1.5 flex items-baseline gap-1">
+                            <span className="text-xl font-bold tabular-nums text-slate-900">
+                              {s.camiones.toLocaleString('es-AR')}
+                            </span>
+                            <span className="text-[11px] font-semibold text-slate-500">
+                              camiones que ingresaron
+                            </span>
+                          </div>
+                          <div className="mt-0.5 text-[11px] text-slate-600">
+                            Tiempo medio circuito (ingreso→salida):{' '}
+                            <span className="font-semibold tabular-nums text-slate-800">
+                              {mean != null ? `${mean.toFixed(1)} min` : '—'}
+                            </span>
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              : null}
               <div className="space-y-8">
                 {visibleAggregates.map((agg) => (
                   <div
@@ -620,6 +802,11 @@ export function KpiTiemposTab() {
                         scatterByDayRows={scatterByDayForTramo(agg.label)}
                         segmentLegs={legsForTramo(agg)}
                         scatterPoolHint={scatterPoolHint}
+                        selectedDay={selectedDay}
+                        onSelectedDayChange={setSelectedDay}
+                        franjaFilter={franjaFilter}
+                        onFranjaFilterChange={setFranjaFilter}
+                        dayOptions={periodFechas}
                       />
                     }
                   </div>
@@ -696,6 +883,11 @@ export function KpiTiemposTab() {
                     chartData={buildChartDataForAggregate(agg)}
                     scatterByDayRows={scatterByDayForTramo(agg.label)}
                     segmentLegs={legsForTramo(agg)}
+                    selectedDay={selectedDay}
+                    onSelectedDayChange={setSelectedDay}
+                    franjaFilter={franjaFilter}
+                    onFranjaFilterChange={setFranjaFilter}
+                    dayOptions={periodFechas}
                   />
                 ))}
               </div>

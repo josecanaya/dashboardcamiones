@@ -453,7 +453,7 @@ export function ExcelCameraComparativaPanel({
 
       <section>
         <h5 className="text-sm font-bold text-slate-900">Por turno operativo</h5>
-        <p className="mt-1 text-xs text-slate-500">Ventanas hora Argentina: 02–08, 08–14, 14–20, 20–02</p>
+        <p className="mt-1 text-xs text-slate-500">Ventanas hora Argentina: Q1 22–04, Q2 04–10, Q3 10–16, Q4 16–22</p>
         <div className="mt-2 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {dash.turnoCards.map((card, i) => (
             <TurnoCard

@@ -59,6 +59,11 @@ export function SegmentTimingChartPanel({
   segmentLegs,
   panelExportRef,
   scatterPoolHint,
+  selectedDay: externalSelectedDay,
+  onSelectedDayChange,
+  franjaFilter: externalFranjaFilter,
+  onFranjaFilterChange,
+  dayOptions: externalDayOptions,
 }: {
   title: string
   circuitCode: string
@@ -73,26 +78,45 @@ export function SegmentTimingChartPanel({
     uniqueOpsInCircuit: number
     globalReadyForScatter?: number
   }
+  /**
+   * Filtro controlado (día/franja) desde un control general. Si se pasan los callbacks, el
+   * panel oculta sus controles internos y usa el estado externo compartido entre gráficos.
+   */
+  selectedDay?: string
+  onSelectedDayChange?: (day: string) => void
+  franjaFilter?: FranjaHoraria | null
+  onFranjaFilterChange?: (franja: FranjaHoraria | null) => void
+  dayOptions?: string[]
 }) {
   const useDayScatter = Boolean(scatterByDayRows?.length)
 
-  const [selectedDay, setSelectedDay] = useState(SCATTER_DAY_FILTER_ALL)
-  const [franjaFilter, setFranjaFilter] = useState<FranjaHoraria | null>(null)
+  const controlled = Boolean(onSelectedDayChange && onFranjaFilterChange)
 
-  const dayOptions = useMemo(
+  const [localDay, setLocalDay] = useState(SCATTER_DAY_FILTER_ALL)
+  const [localFranja, setLocalFranja] = useState<FranjaHoraria | null>(null)
+
+  const selectedDay = controlled ? externalSelectedDay ?? SCATTER_DAY_FILTER_ALL : localDay
+  const setSelectedDay = controlled ? onSelectedDayChange! : setLocalDay
+  const franjaFilter = controlled ? externalFranjaFilter ?? null : localFranja
+  const setFranjaFilter = controlled ? onFranjaFilterChange! : setLocalFranja
+
+  const localDayOptions = useMemo(
     () => [...new Set(scatterByDayRows?.map((r) => r.fecha_tramo) ?? [])].filter(Boolean).sort(),
     [scatterByDayRows]
   )
+  const dayOptions = controlled && externalDayOptions ? externalDayOptions : localDayOptions
 
   useEffect(() => {
-    if (!dayOptions.length) {
-      setSelectedDay('')
+    // En modo controlado el reseteo lo maneja el control general.
+    if (controlled) return
+    if (!localDayOptions.length) {
+      setLocalDay('')
       return
     }
-    if (selectedDay && selectedDay !== SCATTER_DAY_FILTER_ALL && !dayOptions.includes(selectedDay)) {
-      setSelectedDay(SCATTER_DAY_FILTER_ALL)
+    if (localDay && localDay !== SCATTER_DAY_FILTER_ALL && !localDayOptions.includes(localDay)) {
+      setLocalDay(SCATTER_DAY_FILTER_ALL)
     }
-  }, [dayOptions, selectedDay])
+  }, [localDayOptions, localDay, controlled])
 
   const isAllDays = selectedDay === SCATTER_DAY_FILTER_ALL
 
@@ -184,7 +208,7 @@ export function SegmentTimingChartPanel({
             <p className="mt-0.5 text-sm text-slate-500">
               Circuito {circuitCode} · {periodLabel} · {displayStats.count.toLocaleString('es-AR')} camiones
               {useDayScatter ?
-                ' · general o por día · turnos 02–08 / 08–14 / 14–20 / 20–02 (AR)'
+                ' · general o por día · Q1 22–04 / Q2 04–10 / Q3 10–16 / Q4 16–22 (AR)'
               : ` · bins ${SEGMENT_TIMING_HISTOGRAM_BIN_MIN} min`}
               {' · '}
               máx. {SEGMENT_SCATTER_DISPLAY_MAX_MINUTES} min en gráfico
@@ -254,6 +278,7 @@ export function SegmentTimingChartPanel({
             stats={displayStats}
             visibleRowCount={scatterWithinMax.length}
             scatterPoolHint={scatterPoolHint}
+            hideControls={controlled}
           />
         : <SegmentTimingScatterChart
             coloredScatterPoints={coloredLegPoints ?? undefined}

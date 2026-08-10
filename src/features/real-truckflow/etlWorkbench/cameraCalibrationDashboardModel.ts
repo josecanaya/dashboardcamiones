@@ -220,10 +220,7 @@ function suggestAction(input: {
 }): string {
   if (input.totalExcel < 15) return 'Validar con mayor muestra'
   if (input.pctSinLectura > 50) return 'Revisar instalación / ángulo / OCR'
-  if (
-    (input.turno === '20_02' || input.turno === '02_08') &&
-    input.pctSinLectura >= 35
-  ) {
+  if (input.turno === 'Q1' && input.pctSinLectura >= 35) {
     return 'Revisar iluminación nocturna'
   }
   if (input.devicesEnHito >= 3 && input.pctSinLectura >= 25) return 'Revisar regla de consolidación'
@@ -400,7 +397,7 @@ function buildBrief(
     mejor && peor ?
       `Mejor hito: ${mejor.hitoLabel} (${mejor.porcentajeCaptura}%). Peor: ${peor.hitoLabel} (${peor.porcentajeCaptura}%).`
     : '',
-    concentracionTurno === '20_02' || concentracionTurno === '02_08' ?
+    concentracionTurno === 'Q1' ?
       `Las fallas se concentran en turno ${peorTurnoLabel}: revisar iluminación y exposición LPR.`
     : concentracionTurno === 'equilibrado' ?
       'Turnos similares: priorizar hitos y cámaras del ranking de problemas.'
@@ -444,7 +441,7 @@ function buildUiRows(circuit: CircuitCameraComparativa): CalibrationUiRow[] {
       prioridad: 0,
       accionSugerida: suggestAction({
         pctSinLectura: base.porcentajeSinLectura,
-        turno: '08_14',
+        turno: 'Q3',
         faltantes: base.sinLectura,
         totalExcel: base.totalExcel,
         devicesEnHito: 1,

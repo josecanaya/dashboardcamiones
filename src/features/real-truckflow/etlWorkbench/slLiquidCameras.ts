@@ -142,6 +142,9 @@ export function inferAceiteExecutiveCircuitFromExcel(
   )
   if (fromPlatform) return fromPlatform
   if (isPermittedAceiteLiquidDischargePlatform(platformNormalized, plataformaOriginal)) return null
+  // Glicerina: subproducto líquido que ingresa con plataforma vacía → Recepción Mercadería
+  // Líquida (R8), no el fallback SL3 (que es descarga de aceite en Renova).
+  if (isGlicerinaProduct(String(product ?? ''), String(platformNormalized ?? ''))) return 'R8'
   const looksLikeAceiteMovement =
     excelObservacionesIndicateRenovaAceite(observaciones, observacionCalidad) ||
     isExcelLiquidProductName(String(product ?? ''), String(platformNormalized ?? ''))
@@ -220,12 +223,22 @@ function excelProductLooksLiquid(product: string, platform: string): boolean {
   return isExcelLiquidProductName(product, platform)
 }
 
-/** Producto Excel de aceite / girasol industrial (no solo grano GIRASOL). */
+/**
+ * Glicerina (subproducto líquido de Renova, cod_prod 0883) — mercadería líquida.
+ * Llega con plataforma vacía en el Excel, así que se detecta por nombre de producto.
+ */
+export function isGlicerinaProduct(product: string, platform = ''): boolean {
+  const p = `${product} ${platform}`.toUpperCase()
+  return p.includes('GLICERINA') || p.includes('GLICEROL')
+}
+
+/** Producto Excel de aceite / girasol industrial / glicerina (no solo grano GIRASOL). */
 export function isExcelLiquidProductName(product: string, platform = ''): boolean {
   const p = `${product} ${platform}`.trim().toUpperCase()
   if (!p) return false
   if (p.includes('LIQUIDO') || p.includes('OSL')) return true
   if (p.includes('ACEITE')) return true
+  if (p.includes('GLICERINA') || p.includes('GLICEROL')) return true
   if (p.includes('AC GIRASOL') || p.startsWith('AC GIRASOL')) return true
   if (
     p.includes('GIRASOL') &&

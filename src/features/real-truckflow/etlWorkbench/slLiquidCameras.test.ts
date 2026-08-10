@@ -5,6 +5,8 @@ import {
   inferAceiteExecutiveCircuitFromPlatform,
   isAceiteAnalysisExcludedPlant,
   isExcelLiquidMovementForOrphanCommittee,
+  isExcelLiquidProductName,
+  isGlicerinaProduct,
 } from './slLiquidCameras'
 import { inferCircuitFromExternalMovimiento } from './etlPlatformCircuitInference'
 import { normalizePlatform, normalizePlant } from './etlExternalNormalization'
@@ -125,6 +127,55 @@ describe('inferAceiteExecutiveCircuitFromExcel', () => {
         resolved_circuit_family: 'LIQUIDO',
       })
     ).toBe(false)
+  })
+})
+
+describe('glicerina (subproducto líquido Renova → R8)', () => {
+  it('reconoce GLICERINA como producto líquido', () => {
+    expect(isGlicerinaProduct('GLICERINA')).toBe(true)
+    expect(isGlicerinaProduct('GLICEROL')).toBe(true)
+    expect(isGlicerinaProduct('SOJA')).toBe(false)
+    expect(isExcelLiquidProductName('GLICERINA')).toBe(true)
+    expect(isExcelLiquidProductName('GLICEROL')).toBe(true)
+  })
+
+  it('glicerina con plataforma vacía se clasifica R8 (no SL3)', () => {
+    expect(
+      inferAceiteExecutiveCircuitFromExcel(
+        '',
+        '',
+        EXCEL_TERMINAL(),
+        '',
+        '',
+        'GLICERINA'
+      )
+    ).toBe('R8')
+  })
+
+  it('glicerina ancla al comité aunque no tenga journey Truckflow', () => {
+    expect(
+      isExcelLiquidMovementForOrphanCommittee({
+        platform_normalized: '',
+        plataforma_original: '',
+        planta_normalized: EXCEL_TERMINAL(),
+        resolved_product: 'GLICERINA',
+        product_normalized: 'GLICERINA',
+      })
+    ).toBe(true)
+  })
+
+  it('no toma glicerina de planta excluida (Avellaneda)', () => {
+    expect(
+      inferAceiteExecutiveCircuitFromExcel(
+        '',
+        '',
+        'AVELLANEDA',
+        '',
+        '',
+        'GLICERINA',
+        'Planta AVELLANEDA'
+      )
+    ).toBeNull()
   })
 })
 

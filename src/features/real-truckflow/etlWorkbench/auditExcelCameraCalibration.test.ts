@@ -7,9 +7,9 @@ import {
 } from './auditExcelCameraCalibration'
 
 describe('auditExcelCameraCalibration', () => {
-  it('clasifica turnos en hora Argentina', () => {
-    expect(dayNightLabelFromIso('2026-06-10T10:00:00-03:00')).toBe('08_14')
-    expect(dayNightLabelFromIso('2026-06-10T22:00:00-03:00')).toBe('20_02')
+  it('clasifica cuartos en hora Argentina', () => {
+    expect(dayNightLabelFromIso('2026-06-10T10:00:00-03:00')).toBe('Q3')
+    expect(dayNightLabelFromIso('2026-06-10T22:00:00-03:00')).toBe('Q1')
   })
 
   it('segmenta reconocido / parcial / no', () => {
@@ -44,7 +44,7 @@ describe('auditExcelCameraCalibration', () => {
       },
     ]
     const rows = buildExcelCameraMatrixDetailed('R1', mov, events, { minRoutePoints: 4 })
-    expect(rows[0]!.dayNight).toBe('08_14')
+    expect(rows[0]!.dayNight).toBe('Q3')
     expect(rows[0]!.recognitionSegment).toBe('parcial')
     expect(rows[0]!.devicesByStep.ingreso).toContain('RicIngCamFrente')
     const report = buildCameraCalibrationReport('R1', mov, events, { minRoutePoints: 4 })

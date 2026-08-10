@@ -616,6 +616,8 @@ export function resolveOperationalContextFromExcel(
     const prod = `${product} ${platform}`.toUpperCase()
     if (
       prod.includes('ACEITE') ||
+      prod.includes('GLICERINA') ||
+      prod.includes('GLICEROL') ||
       prod.includes('AC GIRASOL') ||
       (prod.includes('GIRASOL') &&
         (prod.includes('OLEICO') || prod.includes('CRUDO') || prod.includes('REFIN')))

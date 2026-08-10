@@ -34,6 +34,7 @@ import type { SegmentScatterRow } from './etlOperationalAnalysis'
 import { p75, p90 } from '../../../utils/stats'
 import {
   turnoFromIso,
+  turnoFromHour,
   turnoLabel,
   TURNOS_OPERATIVOS,
   TURNO_SCATTER_COLORS,
@@ -59,6 +60,123 @@ export const FRANJA_HORARIA_ORDER: FranjaHoraria[] = [...TURNOS_OPERATIVOS]
 
 /** Valor del selector de día para vista general (todos los días del período). */
 export const SCATTER_DAY_FILTER_ALL = '__ALL_DAYS__'
+
+export type QuarterCircuitSummary = {
+  /** Operaciones ubicadas en algún cuarto del período (== suma de `camiones` de los 4 cuartos). */
+  total: number
+  /** Operaciones sin ninguna hora de ingreso (cámara ni Excel): no ubicables. */
+  sinIngreso: number
+  /** Operaciones cuyo día operativo cae antes del período analizado (descartadas). */
+  descartadasPeriodoAnterior: number
+  porCuarto: Record<FranjaHoraria, { camiones: number; tiempoMedioMin: number | null }>
+}
+
+/** Suma `delta` días a una fecha YYYY-MM-DD (en UTC, sin efectos de DST). */
+function shiftDayIso(day: string, delta: number): string {
+  const m = day.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  if (!m) return day
+  const dt = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]) + delta))
+  return dt.toISOString().slice(0, 10)
+}
+
+export type QuarterCircuitOpInput = {
+  /** Primera cámara de la operación (preingreso/ingreso). `truckflow_first_seen_at`. */
+  ingresoCameraAt?: string
+  /** Ingreso del Excel de Movimientos. `external_ingreso_at`. */
+  ingresoExcelAt?: string
+  /** Salida del Excel de Movimientos. `external_salida_at`. */
+  salidaExcelAt?: string
+}
+
+function looksLikeTimestamp(s: string | undefined): string {
+  const t = String(s ?? '').trim()
+  return /^\d{4}-\d{2}-\d{2}T\d{2}/.test(t) ? t : ''
+}
+
+/** Hora entera local (wall clock) de un ISO; sirve para tz-naive y para offset -03:00. */
+function localHourFromIso(iso: string): number {
+  const m = iso.match(/T(\d{2}):/)
+  return m ? Number(m[1]) : Number.NaN
+}
+
+/**
+ * Resumen por cuarto del día para un circuito, a partir de sus operaciones Excel.
+ * - `camiones`: operaciones distintas cuyo INGRESO cae en el cuarto. El cuarto se asigna por el
+ *   preingreso/ingreso de cámara (`ingresoCameraAt`) y, **si falta, por el ingreso del Excel**.
+ *   La suma de los 4 cuartos = `total` (== total de camiones ubicables del circuito).
+ * - Día operativo: el cuarto Q1 (22–04) pertenece al día que empieza a las 22:00. Un ingreso
+ *   desde las 22:00 se cuenta en el **día siguiente** (ej.: 06 a las 23:00 → día 07, Q1). Los
+ *   ingresos con día operativo **anterior** a `periodStartDay` se **descartan** (no cuentan).
+ * - `tiempoMedioMin`: tiempo puerta a puerta por operación (salida Excel − ingreso), promediado.
+ * - `selectedDay` (opcional, formato YYYY-MM-DD): limita a las operaciones cuyo día operativo
+ *   coincide.
+ */
+export function buildQuarterCircuitSummary(
+  ops: readonly QuarterCircuitOpInput[],
+  opts: { periodStartDay?: string; selectedDay?: string } = {}
+): QuarterCircuitSummary {
+  const periodStartDay = String(opts.periodStartDay ?? '').trim()
+  const selectedDay = String(opts.selectedDay ?? '').trim()
+  const dayFilterActive = Boolean(selectedDay) && selectedDay !== SCATTER_DAY_FILTER_ALL
+
+  const acc = Object.fromEntries(
+    FRANJA_HORARIA_ORDER.map((q) => [q, { camiones: 0, spanSum: 0, spanN: 0 }])
+  ) as Record<FranjaHoraria, { camiones: number; spanSum: number; spanN: number }>
+
+  let total = 0
+  let sinIngreso = 0
+  let descartadasPeriodoAnterior = 0
+
+  for (const op of ops) {
+    const cam = looksLikeTimestamp(op.ingresoCameraAt)
+    const exc = looksLikeTimestamp(op.ingresoExcelAt)
+    const ingresoTs = cam || exc
+    if (!ingresoTs) {
+      sinIngreso += 1
+      continue
+    }
+    const hour = localHourFromIso(ingresoTs)
+    const q = turnoFromHour(hour)
+    if (q === 'unknown' || !(q in acc)) {
+      sinIngreso += 1
+      continue
+    }
+    // Día operativo: un ingreso ≥ 22:00 pertenece al día siguiente (arranque de Q1 22–04).
+    const calDay = ingresoTs.slice(0, 10)
+    const opDay = hour >= 22 ? shiftDayIso(calDay, 1) : calDay
+    // Ingresos con día operativo anterior al período → descartar (no inflar el primer día).
+    if (periodStartDay && opDay < periodStartDay) {
+      descartadasPeriodoAnterior += 1
+      continue
+    }
+    if (dayFilterActive && opDay !== selectedDay) continue
+
+    acc[q as FranjaHoraria].camiones += 1
+    total += 1
+
+    const ini = exc || cam // puerta a puerta: preferí ingreso Excel
+    const fin = looksLikeTimestamp(op.salidaExcelAt)
+    if (ini && fin) {
+      const span = (parseTimestampMs(fin) - parseTimestampMs(ini)) / 60000
+      if (Number.isFinite(span) && span >= 0) {
+        acc[q as FranjaHoraria].spanSum += span
+        acc[q as FranjaHoraria].spanN += 1
+      }
+    }
+  }
+
+  return {
+    total,
+    sinIngreso,
+    descartadasPeriodoAnterior,
+    porCuarto: Object.fromEntries(
+      FRANJA_HORARIA_ORDER.map((q) => [
+        q,
+        { camiones: acc[q].camiones, tiempoMedioMin: acc[q].spanN ? acc[q].spanSum / acc[q].spanN : null },
+      ])
+    ) as QuarterCircuitSummary['porCuarto'],
+  }
+}
 
 export type SegmentScatterByDayRow = {
   journey_id: string
@@ -112,7 +230,7 @@ export function segmentStartLocalParts(iso: string): { fecha_tramo: string; hora
   return argentinaLocalParts(iso)
 }
 
-/** Turnos 02–08 · 08–14 · 14–20 · 20–02 (hora Argentina). */
+/** Cuartos Q1 22–04 · Q2 04–10 · Q3 10–16 · Q4 16–22 (hora Argentina). */
 export function resolveFranjaHoraria(iso: string): FranjaHoraria | '' {
   const t = turnoFromIso(iso)
   return t === 'unknown' ? '' : t
@@ -125,15 +243,8 @@ export function colorForFranja(franja: FranjaHoraria | ''): string {
 
 function normalizeFranjaLabel(raw: string, timestampInicio = ''): FranjaHoraria | '' {
   const u = String(raw ?? '').trim()
-  if (u === '02_08' || u === '08_14' || u === '14_20' || u === '20_02') return u
-  if (u === '02–08') return '02_08'
-  if (u === '08–14') return '08_14'
-  if (u === '14–20') return '14_20'
-  if (u === '20–02') return '20_02'
-  if (u === 'Madrugada' || u === 'Mañana' || u === 'Tarde' || u === 'Noche') {
-    return resolveFranjaHoraria(timestampInicio)
-  }
-  if (u === 'Día') return resolveFranjaHoraria(timestampInicio) || '08_14'
+  if (u === 'Q1' || u === 'Q2' || u === 'Q3' || u === 'Q4') return u
+  // Corridas guardadas con códigos previos (turnos 02–08…): recalcular desde el timestamp.
   return resolveFranjaHoraria(timestampInicio)
 }
 
