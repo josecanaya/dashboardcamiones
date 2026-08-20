@@ -31,8 +31,13 @@ import type { KpiTiemposBuildInput } from './etlKpiTiemposBuild'
  * v14: Reemplazo total de anomalías de comportamiento — ahora SOLO las 5 reglas R1–R5
  *      (`goldenAnomalyRules.ts`). `classifyAnomaly` ya no emite BEHAVIORAL por status/alertas.
  *      Cambia `anomaly_kind` de todas las corridas → obligatorio reprocesar ventanas.
+ * v15: Circuitos de pellet completos y unificados. Los movimientos de pellet (incl. CÁSCARA
+ *      DE SOJA PELLETEADA / EXPELLER) toman circuito por `es_de_vuelta`: despacho R13/14/15
+ *      (unificado) o transile externo R30/31/32 (unificado); el pellet ya no cae en R8
+ *      líquido. `es_de_vuelta` propagado a `excel_operations_with_truckflow`. Templates de
+ *      tramo pellet según cámara real (playa 3, puente Ric→SL directo). → reprocesar ventanas.
  */
-export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v14'
+export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v15'
 
 export type EtlTransformInput = {
   events: RealJourneyEventDto[]

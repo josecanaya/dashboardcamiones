@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { EXECUTIVE_CIRCUIT_MATRIX } from '../etlWorkbench/finalCircuitScoring'
+import { pelletUnifiedCircuitLabel } from '../../../etl-core/reports/transileExternoCiclo'
 import { triggerBrowserCsvDownload } from '../etlWorkbench/etlCsv'
 import {
   getCircuitSegmentTemplate,
@@ -93,7 +94,7 @@ export function KpiTiemposTab() {
     () =>
       (segmentTimingRaw?.circuitCodes ?? []).map((c) => ({
         id: c,
-        label: `${c} · ${EXECUTIVE_CIRCUIT_MATRIX[c]?.label ?? c}`,
+        label: `${c} · ${pelletUnifiedCircuitLabel(c) ?? EXECUTIVE_CIRCUIT_MATRIX[c]?.label ?? c}`,
       })),
     [segmentTimingRaw?.circuitCodes]
   )
@@ -109,7 +110,7 @@ export function KpiTiemposTab() {
     const codes = checklistOptions.map((o) => o.id).filter((c) => effectiveChecked.has(c))
     const opts = codes.map((c) => ({
       id: c,
-      label: `${c} · ${EXECUTIVE_CIRCUIT_MATRIX[c]?.label ?? c}`,
+      label: `${c} · ${pelletUnifiedCircuitLabel(c) ?? EXECUTIVE_CIRCUIT_MATRIX[c]?.label ?? c}`,
     }))
     if (codes.includes('R5') && codes.includes('R6')) {
       return [
@@ -156,7 +157,9 @@ export function KpiTiemposTab() {
   }, [segmentTiming, circuitFilter])
 
   const aggregatesWithData = useMemo(
-    () => visibleAggregates.filter((a) => a.stats.count > 0),
+    // Un tramo cuyos camiones son todos DEMORADOS (stats.count 0) igual debe listarse:
+    // el panel muestra las patentes demoradas aunque no queden datos para el KPI.
+    () => visibleAggregates.filter((a) => a.stats.count > 0 || (a.demorados?.length ?? 0) > 0),
     [visibleAggregates]
   )
 
@@ -801,6 +804,7 @@ export function KpiTiemposTab() {
                         chartData={buildChartDataForAggregate(agg)}
                         scatterByDayRows={scatterByDayForTramo(agg.label)}
                         segmentLegs={legsForTramo(agg)}
+                        demoraThresholdMinutes={agg.demoraThresholdMinutes}
                         scatterPoolHint={scatterPoolHint}
                         selectedDay={selectedDay}
                         onSelectedDayChange={setSelectedDay}
@@ -883,6 +887,7 @@ export function KpiTiemposTab() {
                     chartData={buildChartDataForAggregate(agg)}
                     scatterByDayRows={scatterByDayForTramo(agg.label)}
                     segmentLegs={legsForTramo(agg)}
+                    demoraThresholdMinutes={agg.demoraThresholdMinutes}
                     selectedDay={selectedDay}
                     onSelectedDayChange={setSelectedDay}
                     franjaFilter={franjaFilter}

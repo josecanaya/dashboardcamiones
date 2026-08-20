@@ -13,6 +13,8 @@
 import { recordsToCsv } from './etlCsv'
 import { getExpectedDevicesForLiveSector } from '../../../services/live/liveOperationalCatalog'
 import { franjaOperativaFromHour } from './etlSectorOccupancy30min'
+import { argentinaLocalParts } from '../../../etl-core/domain/timestamps'
+import { getEventOperationalInstantIso } from '../../../services/realEventOperationalTime'
 import type { ClassifiedJourneyForTiming } from './etlSegmentTiming'
 
 /**
@@ -49,16 +51,6 @@ function pad2(n: number): string {
   return String(n).padStart(2, '0')
 }
 
-/**
- * Inicio de la hora local que contiene `ms`, ISO sin zona. Se trunca por componentes
- * locales (no por aritmética sobre el epoch) para no depender de que el offset de zona
- * sea múltiplo de la ventana.
- */
-function intervalStartIso(ms: number): string {
-  const d = new Date(ms)
-  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:00:00`
-}
-
 export type BuildCaladaCameraEventsInput = {
   classifiedJourneys: readonly ClassifiedJourneyForTiming[]
   /** journey_uid → producto (del merge Excel). Opcional: sin merge queda vacío. */
@@ -85,10 +77,20 @@ export function buildCaladaCameraEvents(input: BuildCaladaCameraEventsInput): Ca
       // catálogo es la fuente de verdad (incluye RicCalLiq, que normaliza a LIQUIDO).
       const camara = String(e.deviceCode ?? '').trim()
       if (!CALADA_CAMERA_DEVICES.has(camara)) continue
-      const iso = String(e.occurredAt ?? '').trim()
-      const ms = Date.parse(iso)
-      if (!Number.isFinite(ms)) continue
-      const d = new Date(ms)
+      // Instante operativo Truckflow = `createdAt` (regla de producto en realEventOperationalTime).
+      // NO `occurredAt`: ese campo del evento crudo viene corrido ~3 h respecto de la hora real de
+      // captura del DSS (bug de parseo de zona en origen), así que agruparía la calada en la hora
+      // equivocada. `createdAt` es el sello del microservicio en hora Argentina y coincide con el
+      // "Capture Time" del DSS. Fallback a modifiedAt→recordedAt→occurredAt si falta.
+      const iso = getEventOperationalInstantIso(e)
+      if (!iso) continue
+      // Hora de pared Argentina (−03:00), independiente de la zona del runtime: la calada
+      // se agrupa por la hora en que el camión pasó la cámara, no por la hora UTC ni por la
+      // del proceso. `getHours()` sobre el epoch daría la hora del host (mal si no es UTC−3);
+      // `argentinaLocalParts` deriva las partes desde el offset del ISO (o lo asume −03:00).
+      const parts = argentinaLocalParts(iso)
+      if (!parts) continue
+      const hour = Number(parts.hora_inicio.slice(0, 2))
       rows.push({
         journey_id: journeyUid,
         patente,
@@ -96,10 +98,10 @@ export function buildCaladaCameraEvents(input: BuildCaladaCameraEventsInput): Ca
         circuito,
         camara,
         timestamp: iso,
-        fecha: `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`,
-        hora: `${pad2(d.getHours())}:${pad2(d.getMinutes())}`,
-        intervalo_hora: intervalStartIso(ms),
-        franja_operativa: franjaOperativaFromHour(d.getHours()),
+        fecha: parts.fecha_tramo,
+        hora: parts.hora_inicio,
+        intervalo_hora: `${parts.fecha_tramo}T${pad2(hour)}:00:00`,
+        franja_operativa: franjaOperativaFromHour(hour),
       })
     }
   }

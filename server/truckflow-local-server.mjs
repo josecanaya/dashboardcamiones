@@ -624,6 +624,17 @@ function* etlDayRange(startIso, endIso) {
   }
 }
 
+/** Suma `delta` días a una fecha YYYY-MM-DD (hora local mediodía, sin líos de DST). */
+function etlShiftDay(dayIso, delta) {
+  const d = new Date(`${dayIso}T12:00:00`)
+  if (Number.isNaN(d.getTime())) return dayIso
+  d.setDate(d.getDate() + delta)
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
 function resolveEtlEventsPaths({ eventsPaths, from, to }) {
   const paths = []
   if (Array.isArray(eventsPaths)) {
@@ -635,7 +646,11 @@ function resolveEtlEventsPaths({ eventsPaths, from, to }) {
   const fromDay = String(from ?? '').trim()
   const toDay = String(to ?? '').trim()
   if (fromDay && toDay) {
-    for (const day of etlDayRange(fromDay, toDay)) {
+    // Traer la noche anterior: los camiones que ingresan de tarde/noche y caladan/descargan de
+    // madrugada tienen sus cámaras de entrada el día previo al inicio del período. Se incluye ese
+    // día en los EVENTOS (los movimientos siguen acotados a from..to por --from-day/--to-day).
+    const prevDay = etlShiftDay(fromDay, -1)
+    for (const day of [prevDay, ...etlDayRange(fromDay, toDay)]) {
       const eventPath = path.join(DATA_ROOT, day, 'event-list.json')
       if (existsSync(eventPath)) paths.push(eventPath)
     }

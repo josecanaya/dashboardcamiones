@@ -9,6 +9,7 @@ import { externalDischargeReferenceMs } from './etlTruckflowMovimientosMerge'
 import type { TruckflowSegmentForMerge } from './etlOperationalAnalysis'
 import { inferCircuitFromExternalMovimiento } from './etlPlatformCircuitInference'
 import { resolveExecutiveCircuitForExcelOperation } from './etlCircuitClassificationIndex'
+import { isPelletExcelProduct } from '../../../etl-core/reports/transileExternoCiclo'
 import {
   formatTransitionLabel,
   INFERRED_KPI_ROLLUP_MAX_MINUTES,
@@ -176,6 +177,8 @@ export type ExcelOperationWithTruckflowRow = {
   observaciones: string
   observacion_calidad: string
   ingreso_id: string
+  /** Excel «De la vuelta»: pellet que va a San Lorenzo (R30/31/32) vs despacho (R13/14/15). */
+  es_de_vuelta: boolean
 }
 
 export type ExcelNoTruckflowDiagnosticRow = {
@@ -1406,7 +1409,13 @@ function computeAnalysisFlags(
   analysis_warning: string
 } {
   const hasProduct = Boolean(ctx.resolved_product)
-  const hasPlatformOrCircuit = Boolean(ctx.resolved_platform || ctx.resolved_circuit_family)
+  // Pellet carga en tolvas 09/10/11 sin plataforma en el Excel, pero SÍ tiene circuito
+  // ejecutivo (R13/14/15 despacho o R30/31/32 transile). Sin esto quedaba fuera del KPI de
+  // tramos (hasPlatformOrCircuit=false) → faltaban camiones de pellet vs el Excel.
+  const isPellet = isPelletExcelProduct(ctx.resolved_product)
+  const hasPlatformOrCircuit =
+    Boolean(ctx.resolved_platform || ctx.resolved_circuit_family) ||
+    (isPellet && Boolean(resolvedExecutiveCircuitCode))
   const hasSegments = hasMeasurableSegment(evidence.combined_segments)
   const volcableExcelKpi = isVolcableOneTwoGirasolExcelKpi(mov, resolvedExecutiveCircuitCode)
   const excelTimedKpi = isExcelPlatformTimedKpi(mov, resolvedExecutiveCircuitCode)
@@ -1744,6 +1753,7 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
         truckflow_circuit_codes: agg.circuit_codes,
         observaciones: mov.observaciones,
         observacion_calidad: mov.observacion_calidad,
+        es_de_vuelta: mov.es_de_vuelta === true,
       }) ||
       inferredExecutive?.circuit_code ||
       ''
@@ -1819,6 +1829,7 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
       observaciones: mov.observaciones,
       observacion_calidad: mov.observacion_calidad,
       ingreso_id: mov.ingreso_id,
+      es_de_vuelta: mov.es_de_vuelta === true,
     }
     operations.push(row)
 
@@ -2169,6 +2180,7 @@ export const EXCEL_OPS_HEADERS = [
   'observaciones',
   'observacion_calidad',
   'ingreso_id',
+  'es_de_vuelta',
 ] as const
 
 const NO_EVIDENCE_HEADERS = [

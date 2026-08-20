@@ -1,0 +1,12 @@
+node_modules/
+dist/
+*.log
+.env
+.env.local
+.env.*.local
+coverage/
+*.tsbuildinfo
+
+# Token store cifrado local (NUNCA commitear)
+.tokens/
+tokens.json.enc

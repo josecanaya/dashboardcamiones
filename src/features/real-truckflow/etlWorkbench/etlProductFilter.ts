@@ -110,6 +110,27 @@ export function parseJourneyProductLookup(mergeCsv: string | undefined): Journey
 }
 
 /**
+ * ¿La operación Excel tiene evidencia en Truckflow? (cámara lo vio en algún tramo).
+ * Las tolvas de pellet 09–11 no tienen cámara, pero el recorrido pasa por otras
+ * (preingreso, balanza…): un pellet con `evidence_count > 0` fue visto; con 0 no.
+ */
+function excelOpsRowHasTruckflowEvidence(r: Record<string, unknown>): boolean {
+  const ev = Number(r.evidence_count ?? r.matched_journey_count ?? 0)
+  if (Number.isFinite(ev) && ev > 0) return true
+  return String(r.matched_journey_uids ?? '').trim().length > 0
+}
+
+/**
+ * Regla pellet Excel-first: un movimiento por contrato de pellet solo entra al bucket
+ * de producto PELLET si el camión tiene evidencia en Truckflow. Sin evidencia queda
+ * fuera del bucket (movimiento sin verificar por cámara). Solo aplica a pellet; el
+ * resto de productos entra siempre. [[sl3-camara-slztk400-y-exclusion-patentes]]
+ */
+function pelletExcelProductNeedsEvidence(product: string, hasEvidence: boolean): boolean {
+  return isPelletExcelProduct(product) && !hasEvidence
+}
+
+/**
  * Producto por journey desde operaciones Excel-first.
  * Usa la misma regla de mejor match por journey_uid que la conciliación comité.
  */
@@ -145,6 +166,7 @@ export function parseExcelFirstProductLookup(excelOps: ExcelOpsSource): JourneyP
   for (const [uid, lite] of byJourney) {
     const product = lite.product_normalized
     if (!product) continue
+    if (pelletExcelProductNeedsEvidence(product, lite.evidence_count > 0)) continue
     byJourneyId.set(uid, product)
     productSet.add(product)
     if (isAceiteAnalysisExcludedPlant(lite.planta_normalized)) {
@@ -156,6 +178,7 @@ export function parseExcelFirstProductLookup(excelOps: ExcelOpsSource): JourneyP
     markExcluded(r)
     const product = String(r.resolved_product ?? r.product_normalized ?? '').trim()
     if (!product) continue
+    if (pelletExcelProductNeedsEvidence(product, excelOpsRowHasTruckflowEvidence(r))) continue
     productSet.add(product)
     const operationId = String(r.external_operation_id ?? '').trim()
     if (operationId) {

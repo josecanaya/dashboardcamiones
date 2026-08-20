@@ -27,6 +27,9 @@ import {
   buildCommitteeEvaluableModel,
   buildPelletExcelMovementsFromCsv,
   stampPelletCircuitsFromExcel,
+  appendPelletExcelWithEvidenceToEntries,
+  buildExecutiveCircuitBarSlices,
+  resolveExecutiveCircuitFromExcelLite,
   committeePieSlicesFromModel,
   COMMITTEE_PIE_SLICE_ANOMALIAS,
   type AnomalyListContext,
@@ -265,10 +268,141 @@ describe('buildCommitteeEvaluableModel — fuente única del comité', () => {
     expect(stamped[0]?.executiveCircuitCode).toBe('R13')
   })
 
+  it('inyecta pellet con evidencia Truckflow como ancla Excel (solo con evidencia)', () => {
+    const excelOps = [
+      // De la vuelta (va a SLZ) + celda 11 → R32.
+      {
+        external_operation_id: 'op-vuelta',
+        plate_normalized: 'AAA111',
+        resolved_product: 'PELLETS GIRASOL',
+        platform_normalized: 'CARGA SILO 11',
+        source_date: '2026-08-14',
+        evidence_count: 2,
+        es_de_vuelta: true,
+        matched_journey_uids: 'uid-fuera-1|uid-fuera-2',
+      },
+      // Despacho (NO va a SLZ) + celda 09 → R13.
+      {
+        external_operation_id: 'op-despacho',
+        plate_normalized: 'EEE555',
+        resolved_product: 'PELLETS GIRASOL',
+        platform_normalized: 'CELDA 09',
+        source_date: '2026-08-14',
+        evidence_count: 1,
+        es_de_vuelta: false,
+        matched_journey_uids: 'uid-desp',
+      },
+      // Pellet SIN evidencia → NO se inyecta (regla).
+      {
+        external_operation_id: 'op-sin',
+        plate_normalized: 'BBB222',
+        resolved_product: 'CASCARA DE SOJA PELLETEADA',
+        platform_normalized: '',
+        source_date: '2026-08-14',
+        evidence_count: 0,
+        es_de_vuelta: true,
+        matched_journey_uids: '',
+      },
+      // Pellet con evidencia pero cuyo journey YA está en la matriz → no duplicar.
+      {
+        external_operation_id: 'op-representado',
+        plate_normalized: 'CCC333',
+        resolved_product: 'PELLETS GIRASOL',
+        platform_normalized: 'CELDA 09',
+        source_date: '2026-08-14',
+        evidence_count: 1,
+        es_de_vuelta: true,
+        matched_journey_uids: 'uid-en-matriz',
+      },
+      // No pellet con evidencia → no lo toca.
+      {
+        external_operation_id: 'op-soja',
+        plate_normalized: 'DDD444',
+        resolved_product: 'SOJA',
+        platform_normalized: 'VOLCABLE 2',
+        source_date: '2026-08-14',
+        evidence_count: 1,
+        es_de_vuelta: false,
+        matched_journey_uids: 'uid-soja',
+      },
+    ]
+    const existing = [entry({ journeyId: 'uid-en-matriz', plate: 'CCC333', normalizedPlate: 'CCC333' })]
+    const { entries: out, appendedCount } = appendPelletExcelWithEvidenceToEntries(existing, excelOps)
+    expect(appendedCount).toBe(2)
+
+    // De la vuelta → familia R30/31/32 (celda 11 → R32).
+    const vuelta = out.find((e) => e.journeyId === 'excel:op-vuelta')!
+    expect(vuelta).toBeTruthy()
+    expect(vuelta.executiveCircuitCode).toBe('R32')
+    expect(vuelta.committeeReason).toContain('EXCEL_PELLET_TRANSILE_EXTERNO:PELLETS GIRASOL')
+    expect(vuelta.committeeGroup).toBe('COMPLETOS')
+
+    // Despacho → familia R13/14/15 (celda 09 → R13).
+    const despacho = out.find((e) => e.journeyId === 'excel:op-despacho')!
+    expect(despacho).toBeTruthy()
+    expect(despacho.executiveCircuitCode).toBe('R13')
+    expect(despacho.committeeReason).toContain('EXCEL_PELLET_DESPACHO:PELLETS GIRASOL')
+
+    // No se inyectan el sin-evidencia, el ya-representado ni el de soja.
+    expect(out.find((e) => e.journeyId === 'excel:op-sin')).toBeUndefined()
+    expect(out.find((e) => e.journeyId === 'excel:op-representado')).toBeUndefined()
+    expect(out.find((e) => e.journeyId === 'excel:op-soja')).toBeUndefined()
+  })
+
   it('el panel de anomalías solo abre en la porción ANOMALÍAS', () => {
     expect(isAnomalyPanelPieSlice(COMMITTEE_PIE_SLICE_ANOMALIAS)).toBe(true)
     expect(isAnomalyPanelPieSlice('COMPLETOS')).toBe(false)
     expect(isAnomalyPanelPieSlice('VARIACIONES OPERATIVAS')).toBe(false)
+  })
+
+  it('pellet en Excel resuelve a circuito pellet aunque la cámara pase por líquido (no R8)', () => {
+    const pelletLite = (esDeVuelta: boolean, platform: string) => ({
+      product_normalized: 'PELLETS GIRASOL',
+      platform_normalized: platform,
+      plataforma_original: platform,
+      plate_normalized: 'AAA111',
+      planta_normalized: 'RICARDONE',
+      movement_type: 'EGRESO',
+      mov: 'E',
+      source_date: '2026-08-14',
+      // El recorrido pasó por la calada de líquidos → cámara sugiere R8.
+      truckflow_circuit_codes: 'R8',
+      resolved_circuit_family: '',
+      resolved_executive_circuit_code: '',
+      match_quality: 'EXTERNAL_MATCH_EXACT',
+      route_quality: '',
+      evidence_count: 2,
+      truckflow_observed_sequence_combined: 'INGRESO|LIQUIDO|EGRESO',
+      truckflow_device_sequence_combined: '',
+      observaciones: '',
+      observacion_calidad: '',
+      es_de_vuelta: esDeVuelta,
+    })
+    // De la vuelta (va a SLZ) + celda 11 → R32, NO R8.
+    expect(resolveExecutiveCircuitFromExcelLite(pelletLite(true, 'CELDA 11'))).toBe('R32')
+    // Despacho (no va a SLZ) + celda 09 → R13.
+    expect(resolveExecutiveCircuitFromExcelLite(pelletLite(false, 'CELDA 09'))).toBe('R13')
+  })
+
+  it('el gráfico ejecutivo unifica pellet y no descarta circuitos fuera del orden', () => {
+    const entries = [
+      entry({ journeyId: 'a', executiveCircuitCode: 'R32' }),
+      entry({ journeyId: 'b', executiveCircuitCode: 'R13' }),
+      entry({ journeyId: 'c', executiveCircuitCode: 'R13' }),
+      entry({ journeyId: 'd', executiveCircuitCode: 'R15' }),
+    ]
+    const bars = buildExecutiveCircuitBarSlices(entries)
+    const total = bars.reduce((acc, b) => acc + b.count, 0)
+    // Antes R13/R15 se caían del gráfico → total corto. Ahora entran, UNIFICADOS:
+    // R13+R13+R15 → 'R13/14/15' (3); R32 → 'R30/31/32' (1).
+    expect(total).toBe(4)
+    const despacho = bars.find((b) => b.code === 'R13/14/15')
+    expect(despacho?.count).toBe(3)
+    expect(despacho?.label).toBe('Despacho Pellet')
+    expect(bars.find((b) => b.code === 'R30/31/32')?.count).toBe(1)
+    // No aparecen los subcódigos por celda sueltos.
+    expect(bars.find((b) => b.code === 'R13')).toBeUndefined()
+    expect(bars.find((b) => b.code === 'R32')).toBeUndefined()
   })
 })
 

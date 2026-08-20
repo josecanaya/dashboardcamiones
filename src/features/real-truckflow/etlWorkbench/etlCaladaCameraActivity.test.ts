@@ -11,6 +11,10 @@ function ev(deviceCode: string, occurredAt: string): RealJourneyEventDto {
   return { deviceCode, occurredAt } as RealJourneyEventDto
 }
 
+function evWithCreated(deviceCode: string, occurredAt: string, createdAt: string): RealJourneyEventDto {
+  return { deviceCode, occurredAt, createdAt } as RealJourneyEventDto
+}
+
 function journey(
   partial: {
     journeyUid: string
@@ -92,6 +96,39 @@ describe('buildCaladaCameraEvents', () => {
       ],
     })
     expect(rows.map((r) => r.intervalo_hora.slice(11))).toEqual(['08:00:00', '08:00:00', '09:00:00'])
+  })
+
+  it('bucketea por hora de pared Argentina aunque el evento venga en UTC (Z)', () => {
+    // 11:15Z == 08:15 en Argentina (−03:00). La ventana debe caer en las 08, no en las 11:
+    // así el resultado no depende de la zona horaria del proceso que corre el ETL.
+    const rows = buildCaladaCameraEvents({
+      classifiedJourneys: [
+        journey({ journeyUid: 'j1', circuit: 'R1', events: [ev('RicCal01', '2026-07-20T11:15:00Z')] }),
+      ],
+    })
+    expect(rows[0]!.hora).toBe('08:15')
+    expect(rows[0]!.fecha).toBe('2026-07-20')
+    expect(rows[0]!.intervalo_hora).toBe('2026-07-20T08:00:00')
+  })
+
+  it('bucketea por el instante operativo (createdAt), no por occurredAt', () => {
+    // occurredAt viene corrido ~3 h respecto de la captura real del DSS; createdAt es el sello
+    // en hora Argentina. La calada debe caer en la hora de createdAt (11h), no la de occurredAt (08h).
+    const rows = buildCaladaCameraEvents({
+      classifiedJourneys: [
+        journey({
+          journeyUid: 'j1',
+          circuit: 'R8',
+          events: [
+            evWithCreated('RicCalLiq', '2026-08-11T08:24:05.288-03:00', '2026-08-11T11:49:18.161-03:00'),
+          ],
+        }),
+      ],
+    })
+    expect(rows[0]!.hora).toBe('11:49')
+    expect(rows[0]!.fecha).toBe('2026-08-11')
+    expect(rows[0]!.intervalo_hora).toBe('2026-08-11T11:00:00')
+    expect(rows[0]!.timestamp).toBe('2026-08-11T11:49:18.161-03:00')
   })
 
   it('pobla producto desde el mapa por journey', () => {

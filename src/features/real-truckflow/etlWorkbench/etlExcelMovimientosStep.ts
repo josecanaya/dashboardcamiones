@@ -12,6 +12,7 @@ import {
   loadTiemposEntrePasosFiles,
 } from './etlTiemposEntrePasos'
 import { countUniqueNormalizedPlates } from './etlContractFirstProgress'
+import { isExcludedExcelPlate } from './excludedExcelPlates'
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 
 export type ExcelMovimientosStepResult = {
@@ -74,7 +75,16 @@ export async function runExcelMovimientosNormalizeStep(
       loadTiemposEntrePasosFiles(inp.tiemposEntrePasosFiles)
     : { rows: [], warnings: [] as string[] }
   for (const w of tepLoad.warnings) logs.push(w)
-  const normalized = enrichMovimientosWithTiemposEntrePasos(normalizedBase, tepLoad.rows)
+  const normalizedEnriched = enrichMovimientosWithTiemposEntrePasos(normalizedBase, tepLoad.rows)
+
+  // Exclusión dura por patente: estos camiones no cuentan en ninguna métrica del Excel.
+  const excludedByPlate = normalizedEnriched.filter((m) => isExcludedExcelPlate(m.plate_normalized))
+  const normalized = normalizedEnriched.filter((m) => !isExcludedExcelPlate(m.plate_normalized))
+  if (excludedByPlate.length) {
+    const plates = [...new Set(excludedByPlate.map((m) => m.plate_normalized).filter(Boolean))].join(', ')
+    logs.push(`Patentes excluidas del Excel (lista fija): ${excludedByPlate.length} filas quitadas [${plates}]`)
+  }
+
   const movStats = summarizeMovimientosContratoLoad(filesForStats, normalized, loadWarnings)
   const uniquePlates = countUniqueNormalizedPlates(normalized.map((m) => m.plate_normalized))
 

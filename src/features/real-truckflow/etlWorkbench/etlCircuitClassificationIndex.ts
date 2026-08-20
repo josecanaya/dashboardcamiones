@@ -18,6 +18,7 @@ import {
   isExcelLiquidProductName,
   isPermittedAceiteLiquidDischargePlatform,
   excelObservacionesIndicateRenovaAceite,
+  hasSl3RenovaCameraEvidence,
 } from './slLiquidCameras'
 import {
   EXECUTIVE_CIRCUIT_MATRIX,
@@ -37,7 +38,14 @@ import { CIRCUIT_CATALOG } from '../../../etl-core/domain/circuitCatalog'
 import {
   isPelletExcelProduct,
   resolvePelletCircuit,
+  PELLET_DESPACHO_CODES,
+  PELLET_TRANSILE_CODES,
+  unifyPelletCircuitCode,
+  pelletUnifiedCircuitLabel,
 } from '../../../etl-core/reports/transileExternoCiclo'
+
+/** Todos los circuitos de pellet (despacho R13/14/15 + transile externo R30/31/32). */
+const ALL_PELLET_CIRCUIT_CODES = new Set<string>([...PELLET_DESPACHO_CODES, ...PELLET_TRANSILE_CODES])
 
 /** Fuente de matriz de clasificación: CSV legacy o filas TypedTable (Fase 2). */
 export type DebugMatrixSource = string | readonly Record<string, unknown>[] | null | undefined
@@ -590,21 +598,31 @@ export function buildExecutiveCircuitBarSlices(
 ): ExecutiveCircuitBarSlice[] {
   const counts = new Map<string, number>()
   for (const entry of entries) {
-    const key = entry.executiveCircuitCode || 'SIN_ASIGNAR'
+    // Pellet unificado: R13/14/15 y R30/31/32 cuentan como un solo circuito (no por celda).
+    const key = unifyPelletCircuitCode(entry.executiveCircuitCode) || 'SIN_ASIGNAR'
     counts.set(key, (counts.get(key) ?? 0) + 1)
   }
 
   const slices: ExecutiveCircuitBarSlice[] = []
+  const emitted = new Set<string>()
+  const pushSlice = (code: string, count: number) => {
+    const cfg = EXECUTIVE_CIRCUIT_MATRIX[code]
+    const label = pelletUnifiedCircuitLabel(code) ?? cfg?.label ?? CIRCUIT_CATALOG[code]?.label ?? code
+    slices.push({ code, label, displayLabel: formatExecutiveCircuitLabel(code, label), count })
+    emitted.add(code)
+  }
   for (const code of EXECUTIVE_CIRCUIT_ORDER) {
     const count = counts.get(code) ?? 0
     if (count <= 0) continue
-    const cfg = EXECUTIVE_CIRCUIT_MATRIX[code]
-    slices.push({
-      code,
-      label: cfg?.label ?? code,
-      displayLabel: formatExecutiveCircuitLabel(code, cfg?.label ?? code),
-      count,
-    })
+    pushSlice(code, count)
+  }
+  // Circuitos asignados que no están en EXECUTIVE_CIRCUIT_ORDER (ej. despacho pellet
+  // R13/R14/R15) NO deben desaparecer del gráfico ni del total: se agregan al final,
+  // por cantidad desc. Sin esto el "total de journeys con circuito asignado" quedaba
+  // corto (faltaban las barras de esos circuitos).
+  for (const [code, count] of [...counts.entries()].sort((a, b) => b[1] - a[1])) {
+    if (code === 'SIN_ASIGNAR' || emitted.has(code) || count <= 0) continue
+    pushSlice(code, count)
   }
 
   const unassigned = counts.get('SIN_ASIGNAR') ?? 0
@@ -789,6 +807,8 @@ type ExcelFirstReconcileLite = {
   truckflow_device_sequence_combined: string
   observaciones: string
   observacion_calidad: string
+  /** Excel «De la vuelta»: pellet a SLZ (R30/31/32) vs despacho (R13/14/15). */
+  es_de_vuelta: boolean
 }
 
 const EXCEL_FIRST_MATCH_RANK: Record<string, number> = {
@@ -917,6 +937,15 @@ function slCircuitAllowedForExcelLite(lite: ExcelFirstReconcileLite, code: strin
     if (isPermittedAceiteLiquidDischargePlatform(lite.platform_normalized, lite.plataforma_original)) {
       return false
     }
+    // SL3 exige evidencia de cámara Renova (SLZTK400) en el recorrido del camión.
+    if (
+      !hasSl3RenovaCameraEvidence(
+        lite.truckflow_observed_sequence_combined,
+        lite.truckflow_device_sequence_combined
+      )
+    ) {
+      return false
+    }
     return (
       excelObservacionesIndicateRenovaAceite(lite.observaciones, lite.observacion_calidad) ||
       isExcelLiquidProductName(lite.product_normalized, lite.platform_normalized)
@@ -1001,6 +1030,15 @@ function resolveExcelAceiteLiteForEntry(
 const SOLID_ROUTE_EXECUTIVE_FOR_ACEITE_VIEW = new Set(['R7', 'R5', 'R6'])
 
 function pickExecutiveCircuitFromExcelFirst(lite: ExcelFirstReconcileLite): string {
+  // Pellet gana sobre cualquier evidencia de cámara: el camión de pellet pasa por la
+  // calada de líquidos (que llevaría a R8) pero su circuito real es despacho R13/14/15
+  // (no va a SLZ) o transile externo R30/31/32 (va a SLZ), según `es_de_vuelta`; la
+  // celda 09/10/11 elige el subcódigo. [[glicerina-r8-liquido]]
+  if (isPelletExcelProduct(lite.product_normalized)) {
+    const platform = String(lite.platform_normalized || lite.plataforma_original || '').trim()
+    return resolvePelletCircuit({ esDeVuelta: lite.es_de_vuelta, platformHint: platform }).assigned
+  }
+
   const aceiteExcel = inferAceiteExecutiveCircuitFromExcel(
     lite.platform_normalized,
     lite.plataforma_original,
@@ -1082,6 +1120,7 @@ export type ExcelOperationExecutiveCircuitInput = {
   truckflow_device_sequence_combined?: string
   observaciones?: string
   observacion_calidad?: string
+  es_de_vuelta?: boolean
 }
 
 /** Mismo criterio que comité / gráficos ejecutivos (Excel + Truckflow). */
@@ -1095,7 +1134,18 @@ export function resolveExecutiveCircuitForExcelOperation(
     input.observaciones,
     input.observacion_calidad
   )
-  if (aceite) return aceite
+  // SL3 sólo es válido con evidencia de cámara Renova (SLZTK400); sin ella se descarta
+  // y se continúa con la resolución basada en `lite` (que también aplica el gate).
+  if (aceite && aceite !== 'SL3') return aceite
+  if (
+    aceite === 'SL3' &&
+    hasSl3RenovaCameraEvidence(
+      input.truckflow_observed_sequence_combined,
+      input.truckflow_device_sequence_combined
+    )
+  ) {
+    return aceite
+  }
 
   const lite: ExcelFirstReconcileLite = {
     ...input,
@@ -1103,6 +1153,7 @@ export function resolveExecutiveCircuitForExcelOperation(
     truckflow_device_sequence_combined: input.truckflow_device_sequence_combined ?? '',
     observaciones: String(input.observaciones ?? '').trim(),
     observacion_calidad: String(input.observacion_calidad ?? '').trim(),
+    es_de_vuelta: input.es_de_vuelta ?? false,
   }
   return resolveExecutiveCircuitFromExcelLite(lite)
 }
@@ -1185,6 +1236,7 @@ export function parseExcelFirstByJourneyUid(
       truckflow_device_sequence_combined: truckflowDeviceSequenceFromExcelRow(r),
       observaciones: String(r.observaciones ?? '').trim(),
       observacion_calidad: String(r.observacion_calidad ?? '').trim(),
+      es_de_vuelta: parseExcelDeVueltaFlag(r.es_de_vuelta ?? r.es_de_vuelta_original),
     }
     const uids = String(r.matched_journey_uids ?? '')
       .split('|')
@@ -1229,6 +1281,7 @@ export function parseExcelFirstByPlate(
       truckflow_device_sequence_combined: truckflowDeviceSequenceFromExcelRow(r),
       observaciones: String(r.observaciones ?? '').trim(),
       observacion_calidad: String(r.observacion_calidad ?? '').trim(),
+      es_de_vuelta: parseExcelDeVueltaFlag(r.es_de_vuelta ?? r.es_de_vuelta_original),
     }
     const arr = map.get(plate) ?? []
     arr.push(lite)
@@ -1375,6 +1428,7 @@ function excelFirstLiteFromOperationRow(r: Record<string, unknown>): ExcelFirstR
     truckflow_device_sequence_combined: truckflowDeviceSequenceFromExcelRow(r),
     observaciones: String(r.observaciones ?? '').trim(),
     observacion_calidad: String(r.observacion_calidad ?? '').trim(),
+    es_de_vuelta: parseExcelDeVueltaFlag(r.es_de_vuelta ?? r.es_de_vuelta_original),
   }
 }
 
@@ -1571,7 +1625,8 @@ function reconcileEntryFromExcelFirst(
   const code = pickExecutiveCircuitFromExcelFirst(lite)
   const platform = String(lite.platform_normalized || lite.plataforma_original || '').trim()
   if (!code) return entry
-  if (!platform && code !== 'SL3') return entry
+  // Pellet reconcilia por producto aunque no haya plataforma (celda) en el Excel.
+  if (!platform && code !== 'SL3' && !isPelletExcelProduct(lite.product_normalized)) return entry
   const cfg = EXECUTIVE_CIRCUIT_MATRIX[code as keyof typeof EXECUTIVE_CIRCUIT_MATRIX]
   const label = cfg?.label || code
   const group = committeeGroupFromExcelFirst(entry, lite)
@@ -1627,6 +1682,9 @@ function promoteAceiteRicardoneTruckflowExecutiveCircuits(
 ): CircuitClassificationEntry[] {
   return entries.map((entry) => {
     if (entry.journeyId.startsWith('excel:')) return entry
+    // Pellet ya reconciliado (R13/14/15/R30/31/32) NO vuelve a R8 aunque su recorrido
+    // pase por la calada de líquidos: el circuito real es el del Excel, no el líquido.
+    if (ALL_PELLET_CIRCUIT_CODES.has(entry.executiveCircuitCode)) return entry
     const code = entryAceiteTruckflowExecutiveCode(entry)
     if (code !== 'R8' || entry.executiveCircuitCode === 'R8') return entry
     return applyExecutiveCircuitCodeToEntry(entry, 'R8')
@@ -1831,6 +1889,7 @@ export function appendPermittedAceiteExcelOrphansToEntries(
       truckflow_device_sequence_combined: truckflowDeviceSequenceFromExcelRow(r),
       observaciones: String(r.observaciones ?? '').trim(),
       observacion_calidad: String(r.observacion_calidad ?? '').trim(),
+      es_de_vuelta: parseExcelDeVueltaFlag(r.es_de_vuelta ?? r.es_de_vuelta_original),
     }
     const code = resolveExecutiveCircuitFromExcelLite(lite)
     if (!code) continue
@@ -1864,6 +1923,107 @@ export function appendPermittedAceiteExcelOrphansToEntries(
       eventCount: 0,
       executiveBucket: '',
       matrixReason: String(r.no_truckflow_reason ?? 'NO_TRUCKFLOW_EVIDENCE'),
+      color: CIRCUIT_PIE_COLORS[0]!,
+    })
+    appendedCount++
+  }
+
+  return { entries: out, appendedCount }
+}
+
+/** Flag Excel «De la vuelta» (booleano, "SI"/"true"/"1"…) → booleano. Discrimina pellet
+ * de la vuelta (va a SLZ, R30/31/32) vs despacho (no va a SLZ, R13/14/15). */
+export function parseExcelDeVueltaFlag(flag: unknown): boolean {
+  if (typeof flag === 'boolean') return flag
+  const s = String(flag ?? '').trim()
+  if (!s) return false
+  return normalizeDeVuelta(s).es_de_vuelta || ['true', '1', 'yes'].includes(s.toLowerCase())
+}
+
+/**
+ * Pellet del Excel **con evidencia Truckflow** cuyos journeys no entraron a la matriz.
+ *
+ * Las tolvas 09–11 no tienen cámara, así que el recorrido de pellet se clasifica por
+ * cámaras sueltas (preingreso, balanza…) que quedan fuera del universo de la matriz de
+ * circuitos. Esas operaciones tienen `matched_journey_uids` (el camión fue visto) pero
+ * ninguna entry las representa → el producto Pellet daba 0 en la muestra. Se las inyecta
+ * como ancla Excel para que cuenten en el chip Pellet y en la torta.
+ *
+ * Reglas (pedido operativo):
+ * - **Solo con evidencia** (`evidence_count > 0`); el pellet sin cámara queda afuera.
+ * - **Destino** decide la familia: de la vuelta (va a SLZ, `es_de_vuelta`) → R30/R31/R32;
+ *   despacho (no va a SLZ) → R13/R14/R15. La celda 09/10/11 elige el subcódigo.
+ * [[glicerina-r8-liquido]]
+ */
+export function appendPelletExcelWithEvidenceToEntries(
+  entries: CircuitClassificationEntry[],
+  excelOps: ExcelOpsSource
+): { entries: CircuitClassificationEntry[]; appendedCount: number } {
+  if (!excelOpsHasData(excelOps)) return { entries, appendedCount: 0 }
+  const existingIds = new Set(entries.map((e) => e.journeyId))
+  const rows = excelOpsRows(excelOps)
+  const out = [...entries]
+  let appendedCount = 0
+
+  for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+    const r = rows[rowIndex]!
+    const product = String(r.resolved_product ?? r.product_normalized ?? '').trim()
+    if (!isPelletExcelProduct(product)) continue
+    // Solo con evidencia Truckflow: el pellet sin cámara no entra al bucket.
+    if (Number(r.evidence_count ?? 0) <= 0) continue
+
+    // Si alguno de sus journeys ya está en la matriz, no duplicar (ya lo representa).
+    const matchedUids = String(r.matched_journey_uids ?? '')
+      .split(/[|,]/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+    if (matchedUids.some((uid) => existingIds.has(uid))) continue
+
+    const opId = resolveCommitteeExcelOperationId(r, rowIndex)
+    if (!opId) continue
+    const journeyId = `excel:${opId}`
+    if (existingIds.has(journeyId)) continue
+    existingIds.add(journeyId)
+
+    const plate = String(r.plate_normalized ?? '').trim()
+    const platform = String(r.resolved_platform ?? r.platform_normalized ?? '').trim()
+    // Destino define la familia: **de la vuelta** (la carga va a San Lorenzo y descarga
+    // allá) → R30/R31/R32; **despacho** (carga y NO va a SLZ) → R13/R14/R15. La celda
+    // 09/10/11 elige el subcódigo dentro de la familia. [[glicerina-r8-liquido]]
+    const esDeVuelta = parseExcelDeVueltaFlag(r.es_de_vuelta)
+    const pellet = resolvePelletCircuit({ esDeVuelta, platformHint: platform })
+    const code = pellet.assigned
+    const label = CIRCUIT_CATALOG[code]?.label ?? EXECUTIVE_CIRCUIT_MATRIX[code as keyof typeof EXECUTIVE_CIRCUIT_MATRIX]?.label ?? code
+    const sourceDate = String(r.source_date ?? '').trim()
+    const dayIso = sourceDate && /^\d{4}-\d{2}-\d{2}$/.test(sourceDate) ? `${sourceDate}T12:00:00-03:00` : ''
+
+    out.push({
+      journeyId,
+      plate,
+      normalizedPlate: normalizePlate(plate),
+      site: String(r.planta_normalized ?? '').trim(),
+      matchedCircuitCode: code,
+      executiveCircuitCode: code,
+      executiveCircuitLabel: label,
+      executiveCircuitDisplay: formatExecutiveCircuitLabel(code, label),
+      matrixFinalStatus: 'COMPLETO',
+      executiveStatus: 'VALIDO',
+      validDetail: 'EXCEL_PELLET_CON_TRUCKFLOW',
+      committeeGroup: 'COMPLETOS',
+      // Prefijo EXCEL_PELLET_<flow> para que el producto resuelva a pellet
+      // (parseExcelProductFromCommitteeReason) y quede trazado el flujo (vuelta/despacho).
+      committeeReason: `EXCEL_PELLET_${pellet.flow}:${product}@${platform || 'CELDA_SIN_IDENTIFICAR'}`,
+      operationalVariationType: '',
+      detectedSequence: '',
+      deviceSequence: '',
+      firstEventAt: dayIso,
+      lastEventAt: dayIso,
+      executiveReason: 'EXCEL_PELLET_CON_TRUCKFLOW',
+      pieSliceLabel: 'COMPLETOS',
+      usefulEventsCount: Number(r.evidence_count ?? 0),
+      eventCount: 0,
+      executiveBucket: '',
+      matrixReason: 'EXCEL_PELLET_CON_TRUCKFLOW',
       color: CIRCUIT_PIE_COLORS[0]!,
     })
     appendedCount++
@@ -2510,11 +2670,7 @@ export function buildPelletExcelMovementsFromCsv(
     if (!isPelletExcelProduct(product)) continue
     const plate = normalizePlate(r.plate_normalized ?? r.plate ?? r.patente ?? '')
     if (!plate) continue
-    const flag = r.es_de_vuelta ?? r.es_de_vuelta_original ?? ''
-    const esDeVuelta =
-      typeof flag === 'boolean' ? flag
-      : normalizeDeVuelta(String(flag)).es_de_vuelta ||
-        ['true', '1', 'yes'].includes(String(flag).trim().toLowerCase())
+    const esDeVuelta = parseExcelDeVueltaFlag(r.es_de_vuelta ?? r.es_de_vuelta_original)
     const movement: PelletExcelMovement = {
       esDeVuelta,
       platform: String(r.platform_normalized ?? r.plataforma_original ?? ''),
@@ -2584,11 +2740,7 @@ export function collectDeVueltaPlatesFromCsv(csv: string | undefined | null): Se
   if (!csv?.trim()) return out
   const { rows } = parseCsvToRecords(csv)
   for (const r of rows) {
-    const flag = r.es_de_vuelta ?? r.es_de_vuelta_original ?? ''
-    const truthy =
-      typeof flag === 'boolean' ? flag
-      : normalizeDeVuelta(String(flag)).es_de_vuelta ||
-        ['true', '1', 'yes'].includes(String(flag).trim().toLowerCase())
+    const truthy = parseExcelDeVueltaFlag(r.es_de_vuelta ?? r.es_de_vuelta_original)
     if (!truthy) continue
     const plate = normalizePlate(r.plate_normalized ?? r.plate ?? r.patente ?? '')
     if (plate) out.add(plate)
@@ -2599,11 +2751,7 @@ export function collectDeVueltaPlatesFromCsv(csv: string | undefined | null): Se
 function collectDeVueltaPlatesFromExcelOps(source: ExcelOpsSource): Set<string> {
   const out = new Set<string>()
   for (const r of excelOpsRows(source)) {
-    const flag = r.es_de_vuelta ?? r.es_de_vuelta_original ?? ''
-    const truthy =
-      typeof flag === 'boolean' ? flag
-      : normalizeDeVuelta(String(flag)).es_de_vuelta ||
-        ['true', '1', 'yes'].includes(String(flag).trim().toLowerCase())
+    const truthy = parseExcelDeVueltaFlag(r.es_de_vuelta ?? r.es_de_vuelta_original)
     if (!truthy) continue
     const plate = normalizePlate(String(r.plate_normalized ?? r.plate ?? r.patente ?? ''))
     if (plate) out.add(plate)
@@ -3092,12 +3240,13 @@ export function buildCommitteeCircuitCrossTab(
   >()
 
   const bucketFor = (entry: CircuitClassificationEntry) => {
-    const code = entry.executiveCircuitCode || 'SIN_ASIGNAR'
+    // Pellet unificado: R13/14/15 y R30/31/32 se agrupan en una sola fila (no por celda).
+    const code = unifyPelletCircuitCode(entry.executiveCircuitCode) || 'SIN_ASIGNAR'
     const bucket = byCode.get(code) ?? {
       completos: 0,
       variaciones: 0,
       anomalias: 0,
-      label: entry.executiveCircuitLabel || code,
+      label: pelletUnifiedCircuitLabel(code) ?? (entry.executiveCircuitLabel || code),
       trucksCompletos: [],
       trucksVariaciones: [],
       trucksAnomalias: [],
@@ -3210,13 +3359,15 @@ export function buildCircuitClassificationIndex(
     entries = opCentric.entries
     const orphans = appendPermittedAceiteExcelOrphansToEntries(entries, excelOperationsWithTruckflow)
     entries = orphans.entries
+    const pelletEvidence = appendPelletExcelWithEvidenceToEntries(entries, excelOperationsWithTruckflow)
+    entries = pelletEvidence.entries
     entries = enforceLiquidExcelExecutiveCircuits(entries, excelOperationsWithTruckflow)
     entries = promoteAceiteRicardoneTruckflowExecutiveCircuits(entries)
     entries = reclassifyMislabeledR7AceiteMatrixEntries(entries, excelOperationsWithTruckflow)
     return rebuildClassificationIndexFromEntries(
       entries,
-      excelReco.promotedCount + orphans.appendedCount,
-      opCentric.excelOperationCount + orphans.appendedCount
+      excelReco.promotedCount + orphans.appendedCount + pelletEvidence.appendedCount,
+      opCentric.excelOperationCount + orphans.appendedCount + pelletEvidence.appendedCount
     )
   }
 
@@ -3255,6 +3406,7 @@ export function buildAceiteCircuitResolutionDebugCsv(excelOps: ExcelOpsSource): 
       truckflow_device_sequence_combined: truckflowDeviceSequenceFromExcelRow(r),
       observaciones: obs,
       observacion_calidad: obsCal,
+      es_de_vuelta: parseExcelDeVueltaFlag(r.es_de_vuelta ?? r.es_de_vuelta_original),
     }
     const resolved = String(r.resolved_executive_circuit_code ?? '').trim()
     const finalCode = pickExecutiveCircuitFromExcelFirst(lite)

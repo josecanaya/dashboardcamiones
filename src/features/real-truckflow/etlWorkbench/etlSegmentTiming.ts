@@ -4,6 +4,11 @@ import { normalizeRealEventPoint } from '../../../services/realEventNormalizatio
 import { eventOperationalInstantForTimeline } from '../../../services/realEventOperationalTime'
 import { computeStayTimeStats, type StayTimeStats } from '../../../services/analyticsKpi'
 import { recordsToCsv } from './etlCsv'
+import {
+  PELLET_DESPACHO_UNIFIED_CODE,
+  PELLET_TRANSILE_UNIFIED_CODE,
+  unifyPelletCircuitCode,
+} from '../../../etl-core/reports/transileExternoCiclo'
 import { DEFAULT_CIRCUIT_MATRIX, EXECUTIVE_CIRCUIT_MATRIX, EXECUTIVE_CIRCUIT_ORDER } from './finalCircuitScoring'
 import { isEtlRearCameraDevice } from './etlRearDevices'
 import type { CommitteeGroup } from './committeeClassification'
@@ -30,7 +35,9 @@ import {
   VOLCABLE_RECEIPT_BALANZA_STAY_MIN_MINUTES,
   VOLCABLE_RECEIPT_KPI_MAX_MINUTES,
   VOLCABLE_RECEIPT_KPI_UNION_CODE,
+  demoraThresholdForTransition,
   getDischargeKpiRollupRules,
+  isDemoraLegDuration,
   isShortOperationalTransition,
   isVolcableReceiptCircuit,
   isWithinKpiSegmentDisplayMax,
@@ -63,6 +70,7 @@ export {
   SL_INGRESO_TO_BALANZA_TRANSIT_DEFAULT_MINUTES,
   SL_KPI_SEGMENT_MAX_MINUTES,
   SL_OPERATIONAL_KPI_CHAIN,
+  SEGMENT_DEMORA_THRESHOLD_MINUTES,
   SL_SALIDA_EGRESO_MAX_MINUTES,
   SL_SALIDA_EGRESO_ROLLUP_TRANSITION,
   TRANSILE_BRIDGE_KPI_TRANSITIONS,
@@ -70,8 +78,10 @@ export {
   VOLCABLE_RECEIPT_CIRCUIT_CODES,
   VOLCABLE_RECEIPT_KPI_MAX_MINUTES,
   VOLCABLE_RECEIPT_KPI_UNION_CODE,
+  demoraThresholdForTransition,
   getDischargeKpiRollupRules,
   histogramBinMinutesForTransition,
+  isDemoraLegDuration,
   isShortOperationalTransition,
   isVolcableReceiptCircuit,
   isWithinKpiSegmentDisplayMax,
@@ -153,6 +163,13 @@ export type SegmentLegWithTimes = SegmentLeg & {
   segment_end_time: string
 }
 
+/** Leg excluido del KPI de un tramo por superar el umbral de demora (se lista como DEMORADO). */
+export type SegmentDemoraLeg = {
+  plate: string
+  journeyId: string
+  durationMinutes: number
+}
+
 export type SegmentTimingAggregate = {
   circuitCode: string
   fromCode: string
@@ -165,6 +182,10 @@ export type SegmentTimingAggregate = {
   maxPlate: string
   minJourneyId: string
   maxJourneyId: string
+  /** Umbral de demora (min) del tramo; presente solo en tramos con regla (ej. CALADA→EGRESO). */
+  demoraThresholdMinutes?: number
+  /** Legs excluidos del KPI por superar el umbral, ordenados desc, para listarlos como DEMORADOS. */
+  demorados?: SegmentDemoraLeg[]
 }
 
 export type SegmentTimingIndex = {
@@ -209,10 +230,10 @@ function buildExecutiveCircuitSegmentTemplate(): Record<string, readonly string[
   const RIC = ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO'] as const
   map.R1 = [...RIC, 'CELDA16_DESCARGA', 'PLAYA', 'BALANZA_EGRESO']
   map.R9 = [...RIC, 'CELDA16_CARGA', 'PLAYA', 'BALANZA_EGRESO']
-  // Silos Kepler (R3/R4): entrada tipo Kepler (sin preingreso) + playa 3 y descarga
-  // S7 en el medio (cámaras nuevas). El tramo de descarga sale de cámara; si falta,
-  // queda vacío (no se fabrica). Reemplaza al rollup balanza→balanza en la tabla.
-  map.R3 = ['INGRESO', 'CALADA', 'BALANZA_INGRESO', 'PLAYA', 'DESCARGA_S7', 'BALANZA_EGRESO']
+  // Silos Kepler (R3/R4): entrada estándar Ricardone (ingreso→preingreso→calada→balanza) + playa 3
+  // y descarga S7 en el medio (cámaras nuevas). El primer tramo operativo es PREINGRESO→CALADA
+  // (cola de espera), no INGRESO→CALADA. El tramo de descarga sale de cámara; si falta, queda vacío.
+  map.R3 = [...RIC, 'PLAYA', 'DESCARGA_S7', 'BALANZA_EGRESO']
   map.R4 = map.R3
   map.R11 = [...RIC, 'PLAYA', 'DESCARGA_S7', 'BALANZA_EGRESO']
   // Volcable 1/2 (R5/R6): playa 3 + volcable (descarga) en el medio. El rollup
@@ -257,6 +278,42 @@ function buildExecutiveCircuitSegmentTemplate(): Record<string, readonly string[
   map.RS_REC = ['INGRESO', 'PREINGRESO', 'CALADA', 'BALANZA_INGRESO']
   map.RS_DESP = ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'CALADA', 'BALANZA_EGRESO']
   map.R34 = ['LIQUIDO', 'BALANZA_EGRESO']
+
+  // —— Pellet (tolvas 09/10/11 sin cámara; el recorrido pasa por la calada de líquidos) ——
+  // Carga pasa por PLAYA 3 entre las balanzas. Despacho (carga y NO va a San Lorenzo): R13/R14/R15.
+  const PELLET_DESPACHO_CHAIN = [
+    'INGRESO',
+    'PREINGRESO',
+    'LIQUIDO',
+    'BALANZA_INGRESO',
+    'PLAYA',
+    'BALANZA_EGRESO',
+  ] as const
+  map.R13 = [...PELLET_DESPACHO_CHAIN]
+  map.R14 = [...PELLET_DESPACHO_CHAIN]
+  map.R15 = [...PELLET_DESPACHO_CHAIN]
+  // Código unificado (los tres subcódigos por celda se miden como uno solo).
+  map[PELLET_DESPACHO_UNIFIED_CODE] = [...PELLET_DESPACHO_CHAIN]
+  // Transile externo (la carga va a San Lorenzo y descarga allá): R30/R31/R32. Son 9 tramos:
+  // ingreso→preingreso, preingreso→calada, calada→balanza(tara), balanza→playa3, playa3→balanza(carga),
+  // balanza egreso→SL ingreso (interplanta Ric→SL), SL ingreso→balanza SL, balanza SL→volcable
+  // (descarga), volcable→SL egreso (salida/portería).
+  const PELLET_TRANSILE_CHAIN = [
+    'INGRESO',
+    'PREINGRESO',
+    'LIQUIDO',
+    'BALANZA_INGRESO',
+    'PLAYA',
+    'BALANZA_EGRESO',
+    'SL_INGRESO',
+    'SL_BALANZA_INGRESO',
+    'VOLCABLE',
+    'SL_EGRESO',
+  ] as const
+  map.R30 = [...PELLET_TRANSILE_CHAIN]
+  map.R31 = [...PELLET_TRANSILE_CHAIN]
+  map.R32 = [...PELLET_TRANSILE_CHAIN]
+  map[PELLET_TRANSILE_UNIFIED_CODE] = [...PELLET_TRANSILE_CHAIN]
   return map
 }
 
@@ -1997,13 +2054,32 @@ function aggregateFromLegs(
   toCode: string,
   legs: SegmentLeg[]
 ): SegmentTimingAggregate {
-  const durationsMinutes = legs
+  // Tramos con regla de demora (ej. CALADA→EGRESO): los legs por encima del umbral se
+  // sacan del KPI (media/histograma/extremos) y se listan aparte como DEMORADOS.
+  const demoraThreshold = demoraThresholdForTransition(fromCode, toCode)
+  let kpiLegs = legs
+  let demorados: SegmentDemoraLeg[] | undefined
+  if (demoraThreshold != null) {
+    const kept: SegmentLeg[] = []
+    const slow: SegmentDemoraLeg[] = []
+    for (const l of legs) {
+      if (isDemoraLegDuration(l.durationMinutes, fromCode, toCode)) {
+        slow.push({ plate: l.plate, journeyId: l.journeyId, durationMinutes: l.durationMinutes })
+      } else {
+        kept.push(l)
+      }
+    }
+    kpiLegs = kept
+    demorados = slow.sort((a, b) => b.durationMinutes - a.durationMinutes)
+  }
+
+  const durationsMinutes = kpiLegs
     .map((l) => l.durationMinutes)
     .filter((d) => isWithinKpiSegmentDisplayMax(d))
   const legsForExtremes =
     durationsMinutes.length ?
-      legs.filter((l) => isWithinKpiSegmentDisplayMax(l.durationMinutes))
-    : legs
+      kpiLegs.filter((l) => isWithinKpiSegmentDisplayMax(l.durationMinutes))
+    : kpiLegs
   return {
     circuitCode,
     fromCode,
@@ -2012,17 +2088,20 @@ function aggregateFromLegs(
     transitionKey: `${fromCode}→${toCode}`,
     stats: computeStayTimeStats(durationsMinutes),
     durationsMinutes,
+    ...(demoraThreshold != null ? { demoraThresholdMinutes: demoraThreshold, demorados } : {}),
     ...resolveExtremeLegs(legsForExtremes),
   }
 }
 
-function rebuildSegmentTimingIndexFromLegs(legs: SegmentLeg[]): SegmentTimingIndex {
+export function rebuildSegmentTimingIndexFromLegs(legs: SegmentLeg[]): SegmentTimingIndex {
   const bucketLegs = new Map<string, SegmentLeg[]>()
   const journeyIds = new Set<string>()
 
   for (const leg of legs) {
     journeyIds.add(leg.journeyId)
-    const key = `${leg.executiveCircuitCode}|${leg.fromCode}|${leg.toCode}`
+    // Pellet unificado: R13/14/15 y R30/31/32 se miden como un solo circuito en el KPI.
+    const circuitCode = unifyPelletCircuitCode(leg.executiveCircuitCode)
+    const key = `${circuitCode}|${leg.fromCode}|${leg.toCode}`
     const arr = bucketLegs.get(key) ?? []
     arr.push(leg)
     bucketLegs.set(key, arr)

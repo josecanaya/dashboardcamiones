@@ -114,6 +114,31 @@ export const PELLET_TRANSILE_CODES = ['R30', 'R31', 'R32'] as const
 /** Pellet que NO es de la vuelta: despacho a otro destino — celdas 09/10/11. */
 export const PELLET_DESPACHO_CODES = ['R13', 'R14', 'R15'] as const
 
+/**
+ * Códigos pellet **unificados**: los tres subcódigos por celda se muestran y miden como un
+ * único circuito (pedido operativo — transform y KPI tiempos toman R13/14/15 y R30/31/32
+ * como una sola cosa, no separados por celda 09/10/11).
+ */
+export const PELLET_DESPACHO_UNIFIED_CODE = 'R13/14/15'
+export const PELLET_TRANSILE_UNIFIED_CODE = 'R30/31/32'
+const PELLET_DESPACHO_CODE_SET: ReadonlySet<string> = new Set(PELLET_DESPACHO_CODES)
+const PELLET_TRANSILE_CODE_SET: ReadonlySet<string> = new Set(PELLET_TRANSILE_CODES)
+
+/** Colapsa un subcódigo por celda (R13/R14/R15 o R30/R31/R32) al circuito pellet unificado. */
+export function unifyPelletCircuitCode(code: string | null | undefined): string {
+  const c = String(code ?? '').trim().toUpperCase()
+  if (PELLET_DESPACHO_CODE_SET.has(c)) return PELLET_DESPACHO_UNIFIED_CODE
+  if (PELLET_TRANSILE_CODE_SET.has(c)) return PELLET_TRANSILE_UNIFIED_CODE
+  return String(code ?? '')
+}
+
+/** Etiqueta del circuito pellet unificado (sin celda), o null si el código no es pellet. */
+export function pelletUnifiedCircuitLabel(code: string): string | null {
+  if (code === PELLET_DESPACHO_UNIFIED_CODE) return 'Despacho Pellet'
+  if (code === PELLET_TRANSILE_UNIFIED_CODE) return 'Transile externo Pellet'
+  return null
+}
+
 /** Índice de celda (0=09, 1=10, 2=11) desde la plataforma del Excel; -1 si no se puede. */
 export function resolvePelletCeldaIndexFromPlatform(platform: string): number {
   const code = resolvePelletCircuitFromPlatform(platform)

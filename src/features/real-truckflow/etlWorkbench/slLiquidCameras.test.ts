@@ -1,12 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import {
   hasRenovaObservation,
+  hasSl3RenovaCameraEvidence,
   inferAceiteExecutiveCircuitFromExcel,
   inferAceiteExecutiveCircuitFromPlatform,
   isAceiteAnalysisExcludedPlant,
   isExcelLiquidMovementForOrphanCommittee,
   isExcelLiquidProductName,
   isGlicerinaProduct,
+  SL3_RENOVA_CAMERA_DEVICE,
 } from './slLiquidCameras'
 import { inferCircuitFromExternalMovimiento } from './etlPlatformCircuitInference'
 import { normalizePlatform, normalizePlant } from './etlExternalNormalization'
@@ -47,6 +49,22 @@ describe('inferAceiteExecutiveCircuitFromPlatform', () => {
     expect(inferAceiteExecutiveCircuitFromPlatform('ACEITE_OSL', 'ACEITE OSL', EXCEL_RICARDONE())).toBe('SL1')
     expect(inferAceiteExecutiveCircuitFromPlatform('ACEITEOSL', 'ACEITEOSL', EXCEL_RICARDONE())).toBe('SL1')
     expect(inferAceiteExecutiveCircuitFromPlatform('ACEITE_OSL', 'ACEITE OSL', EXCEL_TERMINAL())).toBe('SL1')
+  })
+})
+
+describe('hasSl3RenovaCameraEvidence (gate cámara SL3)', () => {
+  it('detecta la cámara Renova SLZTK400 en la secuencia de dispositivos', () => {
+    expect(hasSl3RenovaCameraEvidence('SLZIngCamFrente>SLZTK400>SLZBalSC1Fte')).toBe(true)
+    // tolerante a separadores / mayúsculas
+    expect(hasSl3RenovaCameraEvidence('slz_tk_400')).toBe(true)
+    expect(hasSl3RenovaCameraEvidence('', 'RENCARGFTE|SLZTK400')).toBe(true)
+    expect(hasSl3RenovaCameraEvidence(SL3_RENOVA_CAMERA_DEVICE)).toBe(true)
+  })
+
+  it('sin la cámara Renova devuelve false', () => {
+    expect(hasSl3RenovaCameraEvidence('SLZIngCamFrente>SLZBalSC1Fte')).toBe(false)
+    expect(hasSl3RenovaCameraEvidence('')).toBe(false)
+    expect(hasSl3RenovaCameraEvidence(null, undefined)).toBe(false)
   })
 })
 

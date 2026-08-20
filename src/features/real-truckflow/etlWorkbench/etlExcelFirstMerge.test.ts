@@ -418,6 +418,30 @@ describe('mergeExcelOperationsWithTruckflowEvidence', () => {
     expect(res.operations[0]!.analysis_ready_for_full_route_kpi).toBe(true)
   })
 
+  it('pellet con plataforma vacía pero circuito entra al KPI (no faltan camiones)', async () => {
+    const res = await mergeExcelOperationsWithTruckflowEvidence(
+      [
+        mov({
+          product_normalized: 'PELLETS GIRASOL',
+          producto_original: 'PELLETS GIRASOL',
+          platform_normalized: '',
+          plataforma_original: '',
+          es_de_vuelta: false,
+        }),
+      ],
+      [journey({})],
+      [segment({})]
+    )
+    const op = res.operations[0]!
+    // Pellet carga en tolva sin plataforma en el Excel...
+    expect(op.resolved_platform).toBe('')
+    // ...pero tiene circuito ejecutivo (despacho R13)...
+    expect(op.resolved_executive_circuit_code).toBe('R13')
+    // ...así que igual entra al scatter/KPI. Antes quedaba afuera (hasPlatformOrCircuit=false)
+    // y faltaban los camiones de pellet en la tabla de tramos.
+    expect(op.analysis_ready_for_scatter).toBe(true)
+  })
+
   it('summary incluye rangos de fecha', async () => {
     const res = await mergeExcelOperationsWithTruckflowEvidence([mov({})], [journey({})], [])
     expect(res.summary.excel_min_ingreso_at).toBeTruthy()

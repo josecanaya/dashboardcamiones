@@ -8,7 +8,7 @@
  * [[anomalias-comportamiento-vs-datos]].
  *
  *  R1  Salida de Ricardone y reingreso a Ricardone en < 1 h.            (no pellet)
- *  R2  Mismo día: San Lorenzo primero y luego Ricardone.                (no pellet)
+ *  R2  Mismo día: San Lorenzo primero y luego Ricardone en ≤ 6 h.       (no pellet)
  *  R3  Egreso Ricardone → ingreso San Lorenzo entre 40 min y 6 h.
  *  R4  Balanza ingreso → Playa 3 → Celda 16 → (Playa 3) → Balanza.
  *  R5  Pasa por punto de carga y luego por una plataforma de descarga.
@@ -51,6 +51,12 @@ export const PELLET_TRANSILE_CIRCUIT_CODES = new Set(['R30', 'R31', 'R32'])
 export const GOLDEN_SL_RIC_MAX_MS = 30 * 60 * 1000
 /** R1: salida Ric → reingreso Ric ≤ 1 h. */
 export const RIC_REINGRESO_MAX_MS = 60 * 60 * 1000
+/**
+ * R2: tope SL → Ric el mismo día ≤ 6 h. Si el camión descarga en San Lorenzo y
+ * recién reaparece en Ricardone después de 6 h, son dos viajes distintos, no una
+ * anomalía.
+ */
+export const SL_RIC_SAME_DAY_MAX_MS = 6 * 60 * 60 * 1000
 /** R3: egreso Ric → ingreso SL, banda [40 min, 6 h]. */
 export const RIC_SL_MIN_MS = 40 * 60 * 1000
 export const RIC_SL_MAX_MS = 6 * 60 * 60 * 1000
@@ -161,19 +167,22 @@ export function detectSlThenRicSameDay(
 ): GoldenAnomalyHit | null {
   if (opts?.isPelletTransile || opts?.isDeVuelta) return null
   const list = sortedPoints(platePoints)
-  const firstSlByDay = new Map<string, number>()
+  // Última entrada a SL por día: el tope de 6 h se mide contra la descarga en SL
+  // más reciente previa a Ricardone, no contra la primera del día.
+  const lastSlByDay = new Map<string, number>()
   for (const p of list) {
     const day = String(p.day ?? '').trim()
     if (!day) continue
     const slSite = !p.siteId || p.siteId === 'san_lorenzo'
     if (slSite && SL_ENTRY_LOGICAL.has(p.logicalCode)) {
-      if (!firstSlByDay.has(day)) firstSlByDay.set(day, p.t)
+      lastSlByDay.set(day, p.t)
       continue
     }
     const ricSite = !p.siteId || p.siteId === 'ricardone'
     if (ricSite && RIC_ENTRY_LOGICAL.has(p.logicalCode)) {
-      const slT = firstSlByDay.get(day)
-      if (slT != null && p.t > slT) {
+      const slT = lastSlByDay.get(day)
+      // Tope 6 h: más allá son dos viajes distintos, no una anomalía.
+      if (slT != null && p.t > slT && p.t - slT <= SL_RIC_SAME_DAY_MAX_MS) {
         return {
           reason: 'SL_LUEGO_RIC_MISMO_DIA_NO_PELLET',
           kind: 'BEHAVIORAL',

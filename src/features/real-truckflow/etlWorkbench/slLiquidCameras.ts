@@ -29,6 +29,29 @@ export function isSlLiquidCircuit(circuit: string): boolean {
   return c === 'SL1' || c === 'SL2' || c === 'SL5'
 }
 
+/**
+ * Cámara Renova (device Truckflow) que corrobora la descarga de aceite en Renova.
+ * Un camión sólo puede clasificarse SL3 si su journey pasó por esta cámara.
+ */
+export const SL3_RENOVA_CAMERA_DEVICE = 'SLZTK400'
+
+/** Tokens (normalizados) que evidencian el paso por la cámara Renova SL3. */
+const SL3_RENOVA_CAMERA_TOKENS = ['SLZTK400'] as const
+
+/**
+ * true si alguna de las secuencias de cámaras (observada/dispositivos) del journey
+ * contiene la cámara Renova {@link SL3_RENOVA_CAMERA_DEVICE}. Requisito para SL3.
+ */
+export function hasSl3RenovaCameraEvidence(
+  ...cameraSequenceFields: (string | null | undefined)[]
+): boolean {
+  const hay = cameraSequenceFields
+    .map((f) => String(f ?? '').toUpperCase().replace(/[^A-Z0-9]/g, ''))
+    .join('|')
+  if (!hay) return false
+  return SL3_RENOVA_CAMERA_TOKENS.some((t) => hay.includes(t))
+}
+
 /** Circuitos ejecutivos aceite/líquido (comité): SL1 OSL, SL2 PTO, SL3 Renova, R8 genérico. */
 export const ACEITE_EXECUTIVE_CIRCUIT_CODES = ['SL1', 'SL2', 'SL3', 'R8'] as const
 export type AceiteExecutiveCircuitCode = (typeof ACEITE_EXECUTIVE_CIRCUIT_CODES)[number]
@@ -124,6 +147,10 @@ export function inferAceiteExecutiveCircuitFromPlatform(
  * Cualquier otro caso de movimiento aceite/líquido (plataforma vacía o distinta de las
  * tres reconocidas) descarga en Renova aunque no diga "RENOVA" en observaciones: prestamos
  * el servicio pero la descarga física es en la planta de Renova → SL3.
+ *
+ * NOTA: esta función expresa la *intención* del Excel. El código SL3 sólo se confirma
+ * aguas abajo si el journey tiene evidencia de la cámara Renova {@link SL3_RENOVA_CAMERA_DEVICE}
+ * (ver {@link hasSl3RenovaCameraEvidence} en los puntos de asignación ejecutiva/comité).
  */
 export function inferAceiteExecutiveCircuitFromExcel(
   platformNormalized: string | null | undefined,

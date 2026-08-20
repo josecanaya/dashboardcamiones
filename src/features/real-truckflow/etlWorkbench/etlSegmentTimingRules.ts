@@ -8,11 +8,24 @@
  * No importa nada del workbench: es un módulo leaf. `etlSegmentTiming` re-exporta su superficie
  * pública original, así que ningún import existente cambia.
  */
+import {
+  PELLET_DESPACHO_CODES,
+  PELLET_DESPACHO_UNIFIED_CODE,
+  PELLET_TRANSILE_CODES,
+  PELLET_TRANSILE_UNIFIED_CODE,
+} from '../../../etl-core/reports/transileExternoCiclo'
+
 /** Bins del histograma de tramos largos (minutos). */
 export const SEGMENT_TIMING_HISTOGRAM_BIN_MIN = 5
 
 /** Umbral máximo razonable por tramo (8 h). */
 export const MAX_SEGMENT_DURATION_MINUTES = 8 * 60
+
+/**
+ * Kepler (R3/R4): la estadía en silo (playa 3 → descarga S7) es una espera real de hasta ~24 h.
+ * Sin este tope alto se descartaba como "tramo demasiado largo" y esos camiones quedaban sin tiempo.
+ */
+export const KEPLER_LONG_DWELL_MAX_MINUTES = 24 * 60
 
 /** Tramos SL ≤ 3 min se descartan (ruido OCR / fragmentación en puerto). */
 export const MIN_SEGMENT_DURATION_MINUTES = 3
@@ -73,10 +86,11 @@ export const LIQUID_KPI_CHAIN = [
   'BALANZA_EGRESO',
 ] as const
 
-/** KPI Silos Kepler base (R3/R4). La cadena con descarga S7 se define por
- * circuito en EXECUTIVE_CIRCUIT_SEGMENT_TEMPLATE. */
+/** KPI Silos Kepler base (R3/R4): entrada estándar con preingreso. La cadena con descarga S7 se
+ * define por circuito en EXECUTIVE_CIRCUIT_SEGMENT_TEMPLATE. */
 export const KEPLER_KPI_CHAIN = [
   'INGRESO',
+  'PREINGRESO',
   'CALADA',
   'BALANZA_INGRESO',
   'BALANZA_EGRESO',
@@ -107,6 +121,10 @@ export function isVolcableReceiptCircuit(circuitCode: string): boolean {
 
 export function kpiCircuitCodesForScatterFilter(circuitFilter: string): string[] {
   if (circuitFilter === VOLCABLE_RECEIPT_KPI_UNION_CODE) return [...VOLCABLE_RECEIPT_CIRCUIT_CODES]
+  // Pellet unificado: el scatter guarda los subcódigos por celda (R13/R30…); el filtro
+  // unificado los expande para incluirlos todos.
+  if (circuitFilter === PELLET_DESPACHO_UNIFIED_CODE) return [circuitFilter, ...PELLET_DESPACHO_CODES]
+  if (circuitFilter === PELLET_TRANSILE_UNIFIED_CODE) return [circuitFilter, ...PELLET_TRANSILE_CODES]
   const code = String(circuitFilter ?? '').trim()
   return code ? [code] : []
 }
@@ -340,8 +358,35 @@ export function transitionKey(fromCode: string, toCode: string): string {
   return `${fromCode}→${toCode}`
 }
 
+/**
+ * Umbral de "demora" por transición (minutos). Un tramo que supera el umbral se **excluye
+ * del análisis de tiempo** (media/histograma/scatter) y se lista aparte como DEMORADO.
+ *
+ * `CALADA→EGRESO` (R7): terminar la calada y egresar hacia el puerto es un tránsito corto;
+ * más de 30 min es una demora que distorsiona el KPI del tramo. Pedido operativo 2026-08-18.
+ */
+export const SEGMENT_DEMORA_THRESHOLD_MINUTES: Record<string, number> = {
+  'CALADA→EGRESO': 30,
+}
+
+/** Umbral de demora del tramo, o null si el tramo no tiene regla de demora. */
+export function demoraThresholdForTransition(fromCode: string, toCode: string): number | null {
+  return SEGMENT_DEMORA_THRESHOLD_MINUTES[transitionKey(fromCode, toCode)] ?? null
+}
+
+/** True si el leg supera el umbral de demora del tramo (queda fuera del KPI, se lista como DEMORADO). */
+export function isDemoraLegDuration(minutes: number, fromCode: string, toCode: string): boolean {
+  const threshold = demoraThresholdForTransition(fromCode, toCode)
+  return threshold != null && Number.isFinite(minutes) && minutes > threshold
+}
+
 export function maxAllowedMinutesForTransition(fromCode: string, toCode: string): number {
   const key = transitionKey(fromCode, toCode)
+  // Kepler: la estadía en silo (playa 3 → descarga S7) es una espera real de hasta ~24 h.
+  // (Transición exclusiva de R3/R4, no afecta a otros circuitos.)
+  if (key === transitionKey('PLAYA', 'DESCARGA_S7')) {
+    return KEPLER_LONG_DWELL_MAX_MINUTES
+  }
   if (key === transitionKey(SL_BALANZA_ROLLUP_TRANSITION.from, SL_BALANZA_ROLLUP_TRANSITION.to)) {
     return SL_BALANZA_ROLLUP_MAX_MINUTES
   }

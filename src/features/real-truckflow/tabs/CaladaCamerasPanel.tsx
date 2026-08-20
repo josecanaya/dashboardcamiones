@@ -11,6 +11,7 @@ import {
   ReferenceDot,
 } from 'recharts'
 import { parseCsvToRecords } from '../../../etl-core/csvParse'
+import { argentinaLocalParts } from '../../../etl-core/domain/timestamps'
 import { triggerBrowserCsvDownload } from '../etlWorkbench/etlCsv'
 import {
   CALADA_CAMERA_EVENTS_HEADERS,
@@ -61,17 +62,34 @@ function parseCaladaRows(csv: string | undefined): CaladaCameraEventRow[] {
 }
 
 /**
- * Clave de la ventana horaria (`YYYY-MM-DDTHH`). Se prefiere `intervalo_hora`, pero las
- * corridas guardadas antes del cambio traen `intervalo_30min`: en esas se rearma la hora
- * desde `fecha`/`hora`, que siempre estuvieron en la tabla. Así una corrida vieja se lee
- * por hora sin reprocesar.
+ * Clave de la ventana horaria (`YYYY-MM-DDTHH`), en hora de pared Argentina. Se deriva del
+ * `timestamp` crudo (trae el offset −03:00), no de `intervalo_hora`/`fecha`/`hora`: esas
+ * columnas se hornearon con `getHours()` del host y en corridas viejas quedaron corridas si
+ * el proceso no era UTC−3. `argentinaLocalParts` da la hora local correcta sin importar la
+ * zona del runtime, así una corrida guardada se lee bien sin reprocesar. Solo si falta el
+ * timestamp se cae a las columnas horneadas.
  */
 function hourBucketOf(r: CaladaCameraEventRow): string {
+  const parts = localPartsOf(r)
+  if (parts) return `${parts.fecha}T${parts.hh}`
   const iso = String(r.intervalo_hora ?? '').trim()
   if (iso.length >= 13) return iso.slice(0, 13)
   const fecha = String(r.fecha ?? '').trim()
   const hora = String(r.hora ?? '').trim()
   return fecha && hora ? `${fecha}T${hora.slice(0, 2)}` : ''
+}
+
+/** Fecha y hora de pared Argentina desde el `timestamp` crudo, o null si no se puede parsear. */
+function localPartsOf(r: CaladaCameraEventRow): { fecha: string; hh: string } | null {
+  const ts = String(r.timestamp ?? '').trim()
+  if (!ts) return null
+  const p = argentinaLocalParts(ts)
+  return p ? { fecha: p.fecha_tramo, hh: p.hora_inicio.slice(0, 2) } : null
+}
+
+/** Día calendario Argentina de la fila (para el filtro por día), robusto a la zona del host. */
+function localDayOf(r: CaladaCameraEventRow): string {
+  return localPartsOf(r)?.fecha ?? String(r.fecha ?? '').trim()
 }
 
 /** `2026-07-20T08` → `20/07 08h`. */
@@ -98,7 +116,7 @@ export function CaladaCamerasPanel({
   const [selectedDay, setSelectedDay] = useState(DAY_FILTER_ALL)
 
   const dayOptions = useMemo(
-    () => [...new Set(allRows.map((r) => r.fecha))].filter(Boolean).sort(),
+    () => [...new Set(allRows.map((r) => localDayOf(r)))].filter(Boolean).sort(),
     [allRows]
   )
 
@@ -107,7 +125,7 @@ export function CaladaCamerasPanel({
     // Solo filtra por circuito si el usuario acotó; así el default muestra toda la
     // actividad de calada, incluidos journeys sin circuito ejecutivo asignado.
     if (filterActive) out = out.filter((r) => checkedCircuits.has(r.circuito))
-    if (selectedDay !== DAY_FILTER_ALL) out = out.filter((r) => r.fecha === selectedDay)
+    if (selectedDay !== DAY_FILTER_ALL) out = out.filter((r) => localDayOf(r) === selectedDay)
     return out
   }, [allRows, checkedCircuits, filterActive, selectedDay])
 

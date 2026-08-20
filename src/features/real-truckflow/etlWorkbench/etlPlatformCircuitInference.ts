@@ -1,6 +1,10 @@
 import type { ExternalMovimientoContratoNormalized } from './etlExternalMovimientosContrato'
 import { EXECUTIVE_CIRCUIT_MATRIX } from './finalCircuitScoring'
-import { isSanLorenzoAceiteLiquidPlatform, inferAceiteExecutiveCircuitFromExcel } from './slLiquidCameras'
+import {
+  isSanLorenzoAceiteLiquidPlatform,
+  inferAceiteExecutiveCircuitFromExcel,
+  hasSl3RenovaCameraEvidence,
+} from './slLiquidCameras'
 import type { TruckflowJourneyForMerge } from './etlTruckflowMergeTypes'
 import { classifyTransileExternoProduct } from '../../../etl-core/reports/transileExternoCiclo'
 
@@ -164,6 +168,12 @@ export function applyExternalCircuitToJourney(
   const inferred = inferCircuitFromExternalMovimiento(mov)
   const truckflow_circuit_code = journey.circuit_code
   if (!inferred || !mov.platform_normalized) {
+    return { ...journey, circuit_from_excel: false, truckflow_circuit_code }
+  }
+
+  // SL3 (descarga aceite en Renova) exige evidencia de cámara Renova (SLZTK400)
+  // en el recorrido observado del journey; sin ella no se aplica.
+  if (inferred.circuit_code === 'SL3' && !hasSl3RenovaCameraEvidence(journey.observed_sequence)) {
     return { ...journey, circuit_from_excel: false, truckflow_circuit_code }
   }
 

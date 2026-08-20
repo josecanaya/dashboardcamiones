@@ -63,6 +63,40 @@ describe('etlProductFilter', () => {
     expect(lookup?.byJourneyId.get('j3')).toBe('MAIZ')
   })
 
+  it('pellet Excel-first solo entra al bucket PELLET con evidencia Truckflow', () => {
+    const excelCsv = [
+      'external_operation_id,resolved_product,product_normalized,matched_journey_uids,evidence_count,match_quality',
+      // Con evidencia → cuenta como pellet.
+      'op-con,PELLETS GIRASOL,PELLETS GIRASOL,j1,1,EXTERNAL_MATCH_PROBABLE',
+      // Sin evidencia (cámara no lo vio) → fuera del bucket pellet.
+      'op-sin,PELLETS DE GIRASOL,PELLETS DE GIRASOL,,0,NO_TRUCKFLOW_EVIDENCE',
+      // Pellet de soja sin evidencia → también fuera.
+      'op-soja,PELLET DE SOJA,PELLET DE SOJA,,0,NO_TRUCKFLOW_EVIDENCE',
+      // No-pellet sin evidencia → la regla no lo toca, sigue contando.
+      'op-girasol,GIRASOL,GIRASOL,,0,NO_TRUCKFLOW_EVIDENCE',
+    ].join('\n')
+    const lookup = parseExcelFirstProductLookup(excelCsv)!
+    // Solo el pellet con evidencia queda como producto PELLET.
+    expect(lookup.byJourneyId.get('excel:op-con')).toBe('PELLETS GIRASOL')
+    expect(lookup.byJourneyId.has('excel:op-sin')).toBe(false)
+    expect(lookup.byJourneyId.has('excel:op-soja')).toBe(false)
+    // La regla es específica de pellet: girasol sin evidencia sigue en su bucket.
+    expect(lookup.byJourneyId.get('excel:op-girasol')).toBe('GIRASOL')
+    expect(lookup.products).toEqual(['GIRASOL', 'PELLETS GIRASOL'])
+
+    const entries = [
+      { journeyId: 'excel:op-con' },
+      { journeyId: 'excel:op-sin' },
+      { journeyId: 'excel:op-soja' },
+      { journeyId: 'excel:op-girasol' },
+    ] as Parameters<typeof buildExecutiveProductFilterPlan>[0]
+    const plan = buildExecutiveProductFilterPlan(entries, lookup)
+    expect(plan.counts.PELLET).toBe(1)
+    expect(plan.counts.GIRASOL).toBe(1)
+    expect(plan.journeyIdsByProduct.get('PELLET')?.has('excel:op-con')).toBe(true)
+    expect(plan.journeyIdsByProduct.get('PELLET')?.has('excel:op-sin')).toBe(false)
+  })
+
   it('resolveAnalysisProductLookup prefiere Excel-first', () => {
     const excelCsv = [
       'resolved_product,matched_journey_uids,evidence_count,match_quality',

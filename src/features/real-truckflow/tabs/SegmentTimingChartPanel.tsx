@@ -57,6 +57,7 @@ export function SegmentTimingChartPanel({
   chartData,
   scatterByDayRows,
   segmentLegs,
+  demoraThresholdMinutes,
   panelExportRef,
   scatterPoolHint,
   selectedDay: externalSelectedDay,
@@ -73,6 +74,8 @@ export function SegmentTimingChartPanel({
   chartData: ChartPoint[]
   scatterByDayRows?: SegmentScatterByDayRow[]
   segmentLegs?: SegmentLeg[]
+  /** Umbral de demora (min): legs por encima se excluyen del KPI y se listan como DEMORADOS. */
+  demoraThresholdMinutes?: number
   panelExportRef?: (el: HTMLDivElement | null) => void
   scatterPoolHint?: {
     uniqueOpsInCircuit: number
@@ -131,12 +134,53 @@ export function SegmentTimingChartPanel({
     return visibleScatterRows.filter((r) => r.franja_horaria === franjaFilter)
   }, [visibleScatterRows, franjaFilter])
 
-  const scatterWithinMax = useMemo(
-    () => filteredScatterRows.filter((r) => isWithinSegmentScatterDisplayMax(r.duracion_minutos)),
-    [filteredScatterRows]
-  )
+  const demoraThreshold =
+    demoraThresholdMinutes != null && Number.isFinite(demoraThresholdMinutes) ?
+      demoraThresholdMinutes
+    : null
 
-  const scatterRowsForStats = useDayScatter ? scatterWithinMax : []
+  // DEMORADOS: legs/filas por encima del umbral. Se sacan del KPI (media/histograma/scatter)
+  // y se listan aparte con su patente. Se toman del dataset activo (día-scatter o legs).
+  const keptScatterRows = useMemo(
+    () =>
+      demoraThreshold == null ?
+        filteredScatterRows
+      : filteredScatterRows.filter((r) => r.duracion_minutos <= demoraThreshold),
+    [filteredScatterRows, demoraThreshold]
+  )
+  const demoradosScatter = useMemo(
+    () =>
+      demoraThreshold == null ?
+        []
+      : filteredScatterRows.filter((r) => r.duracion_minutos > demoraThreshold),
+    [filteredScatterRows, demoraThreshold]
+  )
+  const keptLegs = useMemo(
+    () =>
+      !segmentLegs ? undefined
+      : demoraThreshold == null ? segmentLegs
+      : segmentLegs.filter((l) => l.durationMinutes <= demoraThreshold),
+    [segmentLegs, demoraThreshold]
+  )
+  const demoradosLegs = useMemo(
+    () =>
+      !segmentLegs || demoraThreshold == null ?
+        []
+      : segmentLegs.filter((l) => l.durationMinutes > demoraThreshold),
+    [segmentLegs, demoraThreshold]
+  )
+  const demorados = useMemo(() => {
+    const items =
+      useDayScatter ?
+        demoradosScatter.map((r) => ({ plate: r.patente, minutes: r.duracion_minutos }))
+      : demoradosLegs.map((l) => ({ plate: l.plate, minutes: l.durationMinutes }))
+    return items.sort((a, b) => b.minutes - a.minutes)
+  }, [useDayScatter, demoradosScatter, demoradosLegs])
+
+  const scatterWithinMax = useMemo(
+    () => keptScatterRows.filter((r) => isWithinSegmentScatterDisplayMax(r.duracion_minutos)),
+    [keptScatterRows]
+  )
 
   const displayDurations = useMemo(() => {
     if (useDayScatter) {
@@ -158,8 +202,8 @@ export function SegmentTimingChartPanel({
   }, [displayDurations, chartData])
 
   const coloredLegPoints = useMemo(() => {
-    if (useDayScatter || !segmentLegs?.length) return null
-    const legs = segmentLegs.filter((leg) => isWithinSegmentScatterDisplayMax(leg.durationMinutes))
+    if (useDayScatter || !keptLegs?.length) return null
+    const legs = keptLegs.filter((leg) => isWithinSegmentScatterDisplayMax(leg.durationMinutes))
     if (!legs.length) return null
     return buildColoredBinStackPoints(
       legs.map((leg) => ({ leg, duracion_minutos: leg.durationMinutes })),
@@ -175,7 +219,7 @@ export function SegmentTimingChartPanel({
         ],
       })
     )
-  }, [segmentLegs, useDayScatter])
+  }, [keptLegs, useDayScatter])
 
   const scatterPoints = buildSegmentTimingBinStackPoints(
     displayDurations,
@@ -183,8 +227,8 @@ export function SegmentTimingChartPanel({
   )
 
   const exportChartVisibleLegs = () => {
-    if (!segmentLegs?.length) return
-    const rows = legsToChartVisibleExport(segmentLegs, CHART_VISIBLE_SLOW_EXPORT_COUNT)
+    if (!keptLegs?.length) return
+    const rows = legsToChartVisibleExport(keptLegs, CHART_VISIBLE_SLOW_EXPORT_COUNT)
     if (!rows.length) return
     const slug = title.replace(/\s*→\s*/g, '_').replace(/[^\w-]+/g, '_')
     downloadChartVisibleCsv(
@@ -217,6 +261,12 @@ export function SegmentTimingChartPanel({
               Pasá el mouse sobre un punto para ver la patente. El botón CSV exporta los{' '}
               {CHART_VISIBLE_SLOW_EXPORT_COUNT} más lentos de la vista actual (patente, día y hora).
             </p>
+            {demoraThreshold != null ?
+              <p className="mt-1 text-xs font-semibold text-amber-700">
+                Excluye del KPI los camiones con más de {demoraThreshold} min en este tramo
+                {demorados.length ? ` (${demorados.length} DEMORADOS, ver abajo)` : ' (ninguno en la vista)'}.
+              </p>
+            : null}
           </div>
           {!useDayScatter && segmentLegs?.length ?
             <button
@@ -251,6 +301,29 @@ export function SegmentTimingChartPanel({
           {' · '}
           {displayStats.count.toLocaleString('es-AR')} camiones
         </p>
+      : null}
+
+      {demoraThreshold != null && demorados.length ?
+        <div className="border-b border-amber-100 bg-amber-50/70 px-6 py-4">
+          <div className="flex items-center justify-between gap-2">
+            <h4 className="text-xs font-bold uppercase tracking-wide text-amber-800">
+              Demorados · más de {demoraThreshold} min ({demorados.length})
+            </h4>
+            <span className="text-[11px] text-amber-700">Excluidos del KPI de este tramo</span>
+          </div>
+          <div className="mt-2 flex max-h-40 flex-wrap gap-1.5 overflow-y-auto">
+            {demorados.map((d, i) => (
+              <span
+                key={`${d.plate}-${i}`}
+                className="inline-flex items-center gap-1 rounded-md border border-amber-300 bg-white px-2 py-0.5 text-xs font-medium text-amber-900"
+                title={`${d.plate || '—'} · ${d.minutes.toFixed(1)} min`}
+              >
+                <span className="font-semibold tabular-nums">{d.plate || '—'}</span>
+                <span className="tabular-nums text-amber-600">{d.minutes.toFixed(0)}′</span>
+              </span>
+            ))}
+          </div>
+        </div>
       : null}
 
       <div className="px-6 py-4">

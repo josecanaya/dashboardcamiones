@@ -75,6 +75,32 @@ describe('goldenAnomalyRules — reglas R1–R5', () => {
       expect(hit).toBeNull()
     })
 
+    it('marca si Ricardone reaparece dentro de las 6 h', () => {
+      const hit = detectSlThenRicSameDay([
+        pt(0, 'SL_INGRESO', 'san_lorenzo'),
+        pt(6 * 60 - 1, 'INGRESO', 'ricardone'),
+      ])
+      expect(hit?.reason).toBe('SL_LUEGO_RIC_MISMO_DIA_NO_PELLET')
+    })
+
+    it('no marca si Ricardone reaparece luego de 6 h (dos viajes distintos)', () => {
+      const hit = detectSlThenRicSameDay([
+        pt(0, 'SL_INGRESO', 'san_lorenzo'),
+        pt(6 * 60 + 1, 'INGRESO', 'ricardone'),
+      ])
+      expect(hit).toBeNull()
+    })
+
+    it('mide el tope contra la descarga en SL más reciente', () => {
+      const hit = detectSlThenRicSameDay([
+        pt(0, 'SL_INGRESO', 'san_lorenzo'),
+        pt(8 * 60, 'SL_INGRESO', 'san_lorenzo'),
+        pt(8 * 60 + 60, 'INGRESO', 'ricardone'),
+      ])
+      expect(hit?.reason).toBe('SL_LUEGO_RIC_MISMO_DIA_NO_PELLET')
+      expect(hit?.deltaMinutes).toBe(60)
+    })
+
     it('no marca si son días distintos', () => {
       const hit = detectSlThenRicSameDay([
         pt(0, 'SL_INGRESO', 'san_lorenzo', '2026-07-10'),

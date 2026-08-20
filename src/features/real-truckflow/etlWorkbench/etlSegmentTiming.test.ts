@@ -6,6 +6,9 @@ import { computeStayTimeStats } from '../../../services/analyticsKpi'
 import {
   buildSegmentTimingIndex,
   buildSegmentTimingIndexFromExcelFirstSegments,
+  demoraThresholdForTransition,
+  isDemoraLegDuration,
+  rebuildSegmentTimingIndexFromLegs,
   extractSegmentLegs,
   extractSlBalancaRollupLeg,
   extractSlSalidaEgresoRollupLeg,
@@ -1326,6 +1329,38 @@ describe('etlSegmentTiming', () => {
     expect(index.legs[0]!.journeyId).toBe('op1')
   })
 
+  it('CALADA→EGRESO: excluye del KPI los >30 min y los lista como DEMORADOS', () => {
+    // Regla de demora: CALADA→EGRESO (R7) por encima de 30 min sale del KPI.
+    expect(demoraThresholdForTransition('CALADA', 'EGRESO')).toBe(30)
+    expect(demoraThresholdForTransition('INGRESO', 'PREINGRESO')).toBeNull()
+    expect(isDemoraLegDuration(45, 'CALADA', 'EGRESO')).toBe(true)
+    expect(isDemoraLegDuration(30, 'CALADA', 'EGRESO')).toBe(false)
+    expect(isDemoraLegDuration(200, 'INGRESO', 'PREINGRESO')).toBe(false)
+
+    const leg = (journeyId: string, plate: string, durationMinutes: number) => ({
+      journeyId,
+      plate,
+      executiveCircuitCode: 'R7',
+      fromCode: 'CALADA',
+      toCode: 'EGRESO',
+      durationMinutes,
+    })
+    const index = rebuildSegmentTimingIndexFromLegs([
+      leg('jr', 'AA111', 10),
+      leg('jd', 'BB222', 45),
+      leg('jd2', 'CC333', 90),
+    ])
+    const agg = index.aggregates.find((a) => a.fromCode === 'CALADA' && a.toCode === 'EGRESO')
+    expect(agg).toBeDefined()
+    expect(agg!.demoraThresholdMinutes).toBe(30)
+    // El KPI solo cuenta el de 10 min; el de 45 queda fuera.
+    expect(agg!.durationsMinutes).toEqual([10])
+    expect(agg!.stats.count).toBe(1)
+    // Los demorados se listan con su patente, ordenados de mayor a menor duración.
+    expect(agg!.demorados?.map((d) => d.plate)).toEqual(['CC333', 'BB222'])
+    expect(agg!.demorados?.[0]?.durationMinutes).toBe(90)
+  })
+
   it('buildSegmentTimingIndexFromExcelFirstSegments deduplica journeys fragmentados por operación', () => {
     const index = buildSegmentTimingIndexFromExcelFirstSegments([
       {
@@ -1702,6 +1737,37 @@ describe('plantilla KPI de líquidos (R8 / R16)', () => {
       expect(t, `${code} no debe declarar CALADA`).not.toContain('CALADA')
       expect(t).toEqual(['INGRESO', 'PREINGRESO', 'LIQUIDO', 'BALANZA_INGRESO', 'BALANZA_EGRESO'])
     }
+  })
+
+  it('pellet declara plantilla de tramos: despacho R13/14/15 y transile R30/31/32', () => {
+    // Pellet carga en tolvas 09/10/11 (sin cámara) pero el recorrido pasa por la calada
+    // de líquidos. Despacho no va a SLZ; transile va a SLZ y descarga allá.
+    // Carga pasa por PLAYA 3 entre balanzas.
+    const despacho = ['INGRESO', 'PREINGRESO', 'LIQUIDO', 'BALANZA_INGRESO', 'PLAYA', 'BALANZA_EGRESO']
+    for (const code of ['R13', 'R14', 'R15']) {
+      expect(getCircuitSegmentTemplate(code), code).toEqual(despacho)
+    }
+    // 9 tramos: puente Ric→SL directo (BALANZA_EGRESO→SL_INGRESO); en SL VOLCABLE→SL_EGRESO.
+    const transile = [
+      'INGRESO', 'PREINGRESO', 'LIQUIDO', 'BALANZA_INGRESO', 'PLAYA', 'BALANZA_EGRESO',
+      'SL_INGRESO', 'SL_BALANZA_INGRESO', 'VOLCABLE', 'SL_EGRESO',
+    ]
+    // 10 puntos = 9 tramos.
+    expect(transile.length - 1).toBe(9)
+    for (const code of ['R30', 'R31', 'R32']) {
+      expect(getCircuitSegmentTemplate(code), code).toEqual(transile)
+    }
+    // Con legs, el pellet se agrupa UNIFICADO: R13/R14/R15 → 'R13/14/15'.
+    const idx = rebuildSegmentTimingIndexFromLegs([
+      { journeyId: 'j1', plate: 'AAA', executiveCircuitCode: 'R13', fromCode: 'PLAYA', toCode: 'BALANZA_EGRESO', durationMinutes: 12 },
+      { journeyId: 'j2', plate: 'BBB', executiveCircuitCode: 'R15', fromCode: 'PLAYA', toCode: 'BALANZA_EGRESO', durationMinutes: 20 },
+    ])
+    expect(idx.circuitCodes).toContain('R13/14/15')
+    expect(idx.circuitCodes).not.toContain('R13')
+    // Los dos subcódigos (R13 celda 09, R15 celda 11) cuentan como un solo circuito.
+    const tramos = listCircuitSegmentAggregates(idx, 'R13/14/15')
+    const stay = tramos.find((a) => a.transitionKey === 'PLAYA→BALANZA_EGRESO')
+    expect(stay?.stats.count).toBe(2)
   })
 
   it('el tramo real preingreso → líquido queda medible', () => {
