@@ -13,7 +13,7 @@ import {
   type CameraMatrixRow,
   type CameraStepSummary,
   type RouteRecognitionSummary,
-  RAW_AUDIT_CIRCUIT_CODES,
+  AUDIT_CIRCUIT_CODES,
   type CameraAuditAlertLike,
 } from './auditExcelCameraMatrix'
 import {
@@ -29,7 +29,7 @@ import {
 } from './auditExcelMovimientosSource'
 
 export type CircuitCameraComparativa = {
-  circuitCode: (typeof RAW_AUDIT_CIRCUIT_CODES)[number]
+  circuitCode: string
   excelCamiones: number
   summaries: CameraStepSummary[]
   routeRecognition: RouteRecognitionSummary
@@ -110,7 +110,7 @@ export function buildExcelCameraComparativaReport(input: {
   }))
   const eventRows = input.events.map(realJourneyEventDtoToCameraAuditRow)
 
-  for (const circuitCode of RAW_AUDIT_CIRCUIT_CODES) {
+  for (const circuitCode of AUDIT_CIRCUIT_CODES) {
     const universe = buildExcelMovimientosUniverse(input.movimientos, circuitCode, {
       fromDay: input.fromDay,
       toDay: input.toDay,

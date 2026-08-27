@@ -69,7 +69,9 @@ export function KpiTiemposTab() {
   const [checkedCircuits, setCheckedCircuits] = useState<Set<string> | null>(null)
   const [circuitFilter, setCircuitFilter] = useState('')
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
-  const [chartView, setChartView] = useState<'tiempos' | 'ocupacion' | 'sectores_ric' | 'calada'>('tiempos')
+  const [chartView, setChartView] = useState<
+    'tiempos' | 'ocupacion' | 'sectores_ric' | 'calada' | 'volcable_sl'
+  >('tiempos')
 
   // Filtro general (día / banda horaria) compartido por TODOS los gráficos de KPI tiempos.
   const [selectedDay, setSelectedDay] = useState(SCATTER_DAY_FILTER_ALL)
@@ -454,6 +456,15 @@ export function KpiTiemposTab() {
                 >
                   Cámaras calada
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setChartView('volcable_sl')}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
+                    chartView === 'volcable_sl' ? 'bg-white text-violet-900 shadow-sm' : 'text-slate-600'
+                  }`}
+                >
+                  Calles volcable SL
+                </button>
               </div>
             </div>
             <CircuitChecklistFilter
@@ -461,7 +472,7 @@ export function KpiTiemposTab() {
               checked={effectiveChecked}
               onChange={setCheckedCircuits}
             />
-            {chartView === 'sectores_ric' || chartView === 'calada' ?
+            {chartView === 'sectores_ric' || chartView === 'calada' || chartView === 'volcable_sl' ?
               null
             : <>
             <label className="flex flex-col gap-1 text-sm">
@@ -562,6 +573,22 @@ export function KpiTiemposTab() {
               checkedCircuits={effectiveChecked}
               filterActive={effectiveChecked.size < checklistOptions.length}
               periodLabel={periodLabel}
+            />
+          : chartView === 'volcable_sl' ?
+            <CaladaCamerasPanel
+              csv={tr?.csv.san_lorenzo_volcable_events}
+              checkedCircuits={effectiveChecked}
+              filterActive={effectiveChecked.size < checklistOptions.length}
+              periodLabel={periodLabel}
+              labels={{
+                entitySingular: 'calle del volcable SL',
+                entityPlural: 'calles del volcable SL',
+                columnHeader: 'Calle volcable SL',
+                trucksMetric: 'Camiones en volcable SL',
+                activityMetric: 'Calles con actividad',
+                exportName: 'volcable_sl_calles',
+                tableName: 'san_lorenzo_volcable_events',
+              }}
             />
           : chartView === 'sectores_ric' ?
             <RicardoneSectorScatterPanel

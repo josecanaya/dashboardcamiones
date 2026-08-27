@@ -5,8 +5,9 @@
 import type { ExternalMovimientoContratoNormalized } from './etlExternalMovimientosContrato'
 import { isSanLorenzoVolcablePtoPlatform } from './etlPlatformCircuitInference'
 import type { ExcelMovimientoLike } from './auditExcelCameraMatrix'
-import { RAW_AUDIT_CIRCUIT_CODES } from './auditExcelCameraMatrix'
+import { RAW_AUDIT_CIRCUIT_CODES, EXTENDED_AUDIT_CIRCUIT_CODES } from './auditExcelCameraMatrix'
 import { extractCtgFromOperationId, dayKeyFromSalida } from './auditExcelCameraMatrix'
+import { inferCircuitFromExternalMovimiento } from './etlPlatformCircuitInference'
 
 export const R7_TERMINAL_PORT_VOLCABLE_PLATFORMS = new Set([
   'VOLCABLE_PTO_1',
@@ -31,6 +32,13 @@ export type MovimientoContratoLike = Pick<
   | 'external_ingreso_at'
   | 'external_salida_at'
   | 'source_date'
+  // Campos extra para clasificar circuitos ampliados (pellet transile, aceite): el
+  // clasificador `inferCircuitFromExternalMovimiento` los necesita.
+  | 'product_normalized'
+  | 'producto_original'
+  | 'observaciones'
+  | 'observacion_calidad'
+  | 'es_de_vuelta'
 >
 
 export function normalizedPlatform(mov: MovimientoContratoLike): string {
@@ -108,6 +116,34 @@ export function classifyRawAuditCircuit(mov: MovimientoContratoLike): string | n
     if (movimientoMatchesExecutiveCircuit(mov, code)) return code
   }
   return null
+}
+
+const EXTENDED_AUDIT_CODE_SET = new Set<string>(EXTENDED_AUDIT_CIRCUIT_CODES)
+
+/**
+ * Circuitos ampliados (pellet transile R30/31/32, aceite R8, …): el universo se arma reusando el
+ * clasificador `inferCircuitFromExternalMovimiento` (plataforma/planta/producto/es_de_vuelta),
+ * en vez de reglas hardcodeadas. Devuelve el código sólo si es uno de los ampliados auditados.
+ */
+export function classifyExtendedAuditCircuit(mov: MovimientoContratoLike): string | null {
+  const inferred = inferCircuitFromExternalMovimiento(mov)
+  const code = inferred?.circuit_code
+  return code && EXTENDED_AUDIT_CODE_SET.has(code) ? code : null
+}
+
+/** Match de un movimiento a cualquier circuito auditado (núcleo R1/R5/R6/R7 + ampliados). */
+export function movimientoMatchesAuditCircuit(
+  mov: MovimientoContratoLike,
+  circuitCode: string
+): boolean {
+  const code = String(circuitCode ?? '').trim().toUpperCase()
+  if ((RAW_AUDIT_CIRCUIT_CODES as readonly string[]).includes(code)) {
+    return movimientoMatchesExecutiveCircuit(mov, code)
+  }
+  if (EXTENDED_AUDIT_CODE_SET.has(code)) {
+    return classifyExtendedAuditCircuit(mov) === code
+  }
+  return false
 }
 
 export function salidaDayKey(mov: MovimientoContratoLike): string {
@@ -216,7 +252,7 @@ export function buildExcelMovimientosUniverse(
   const byKey = new Map<string, ExcelMovimientoLike>()
 
   for (const mov of movimientos) {
-    if (!movimientoMatchesExecutiveCircuit(mov, code)) continue
+    if (!movimientoMatchesAuditCircuit(mov, code)) continue
     if (!movimientoInSalidaDayRange(mov, opts?.fromDay, opts?.toDay)) continue
     const plate = String(mov.plate_normalized ?? '').trim()
     if (!plate) continue
@@ -242,6 +278,17 @@ export function buildExcelMovimientosUniverse(
   })
 }
 
+/** `es_de_vuelta` del CSV: se serializa como boolean ('true'/'false') pero el original puede venir SI/NO. */
+function parseDeVueltaCsv(row: Record<string, string>): boolean {
+  const v = String(row.es_de_vuelta ?? '').trim().toLowerCase()
+  if (v === 'true' || v === '1') return true
+  if (v === 'false' || v === '0' || v === '') {
+    const orig = String(row.es_de_vuelta_original ?? '').trim().toUpperCase()
+    return orig === 'SI' || orig === 'S' || /VUELTA/.test(orig)
+  }
+  return false
+}
+
 export function parseNormalizedMovimientosCsvRow(row: Record<string, string>): MovimientoContratoLike {
   return {
     external_operation_id: row.external_operation_id ?? '',
@@ -257,6 +304,11 @@ export function parseNormalizedMovimientosCsvRow(row: Record<string, string>): M
     external_ingreso_at: row.external_ingreso_at ?? '',
     external_salida_at: row.external_salida_at ?? '',
     source_date: row.source_date ?? '',
+    product_normalized: row.product_normalized ?? '',
+    producto_original: row.producto_original ?? '',
+    observaciones: row.observaciones ?? '',
+    observacion_calidad: row.observacion_calidad ?? '',
+    es_de_vuelta: parseDeVueltaCsv(row),
   }
 }
 

@@ -58,6 +58,10 @@ export const R7_EXCEL_CAMERA_STEPS: readonly ExcelCameraStep[] = [
   { key: 'balanza_ingreso_slz', header: 'balanza_ingreso_slz', logicalCode: 'SL_BALANZA_INGRESO' },
   { key: 'balanza_egreso_slz', header: 'balanza_egreso_slz', logicalCode: 'SL_BALANZA_SALIDA' },
   { key: 'salida_slz', header: 'salida_slz', logicalCode: 'SL_EGRESO' },
+  // Descarga en el volcable de San Lorenzo (5 cámaras de calle SLZVolcableC1…C5 → SL_VOLCABLE).
+  // Es un punto de descarga OPCIONAL (no todos los R7 descargan acá): se trata como descarga
+  // (ver DESCARGA_CAMERA_STEP_KEYS) para no distorsionar la profundidad de ruta.
+  { key: 'volcable_slz', header: 'volcable_slz', logicalCode: 'SL_VOLCABLE' },
 ]
 
 /** Recepción Celda 16 (R1): Ric hasta balanza y descarga Celda 16 (sin cámara egreso Ric). */
@@ -90,14 +94,59 @@ export const R6_EXCEL_CAMERA_STEPS: readonly ExcelCameraStep[] = [
   { key: 'volcable', header: 'volcable', logicalCode: 'VOLCABLE' },
 ]
 
+/**
+ * Recepción Mercadería Líquida Ricardone (R8, aceite): no registra `CALADA` — el muestreo de
+ * líquidos entra como `LIQUIDO` (cámara RicCalLiq). Sin egreso instrumentado (cierra en balanza).
+ */
+export const R8_EXCEL_CAMERA_STEPS: readonly ExcelCameraStep[] = [
+  { key: 'ingreso', header: 'ingreso', logicalCode: 'INGRESO' },
+  { key: 'preingreso', header: 'preingreso', logicalCode: 'PREINGRESO' },
+  { key: 'calada_liq', header: 'calada_liq', logicalCode: 'LIQUIDO' },
+  { key: 'balanza_ingreso', header: 'balanza_ingreso', logicalCode: 'BALANZA_INGRESO' },
+  { key: 'balanza_egreso', header: 'balanza_egreso', logicalCode: 'BALANZA_EGRESO' },
+]
+
+/**
+ * Pellet transile externo (R30/R31/R32, celdas 09/10/11): dos tramos. Cargan en Ricardone
+ * (la tolva de celda NO tiene cámara → no es un hito) y descargan en el volcable San Lorenzo.
+ * El muestreo en Ricardone entra como `LIQUIDO` (cámara RicCalLiq). Las 3 celdas comparten
+ * exactamente la misma cadena de cámaras (sólo difieren en la tolva sin cámara).
+ */
+export const PELLET_TRANSILE_EXCEL_CAMERA_STEPS: readonly ExcelCameraStep[] = [
+  { key: 'ingreso', header: 'ingreso', logicalCode: 'INGRESO' },
+  { key: 'preingreso', header: 'preingreso', logicalCode: 'PREINGRESO' },
+  { key: 'calada_liq', header: 'calada_liq', logicalCode: 'LIQUIDO' },
+  { key: 'balanza_ingreso', header: 'balanza_ingreso', logicalCode: 'BALANZA_INGRESO' },
+  { key: 'balanza_egreso', header: 'balanza_egreso', logicalCode: 'BALANZA_EGRESO' },
+  { key: 'ingreso_slz', header: 'ingreso_slz', logicalCode: 'SL_INGRESO' },
+  { key: 'balanza_ingreso_slz', header: 'balanza_ingreso_slz', logicalCode: 'SL_BALANZA_INGRESO' },
+  { key: 'volcable_slz', header: 'volcable_slz', logicalCode: 'SL_VOLCABLE' },
+  { key: 'balanza_egreso_slz', header: 'balanza_egreso_slz', logicalCode: 'SL_BALANZA_SALIDA' },
+  { key: 'salida_slz', header: 'salida_slz', logicalCode: 'SL_EGRESO' },
+]
+
 export const EXCEL_CAMERA_STEPS_BY_CIRCUIT: Record<string, readonly ExcelCameraStep[]> = {
   R7: R7_EXCEL_CAMERA_STEPS,
   R1: R1_EXCEL_CAMERA_STEPS,
   R5: R5_EXCEL_CAMERA_STEPS,
   R6: R6_EXCEL_CAMERA_STEPS,
+  R8: R8_EXCEL_CAMERA_STEPS,
+  R30: PELLET_TRANSILE_EXCEL_CAMERA_STEPS,
+  R31: PELLET_TRANSILE_EXCEL_CAMERA_STEPS,
+  R32: PELLET_TRANSILE_EXCEL_CAMERA_STEPS,
 }
 
+/** Circuitos núcleo con matriz de cámara hecha a mano desde el inicio. */
 export const RAW_AUDIT_CIRCUIT_CODES = ['R1', 'R5', 'R6', 'R7'] as const
+
+/** Circuitos ampliados (universo por `inferCircuitFromExternalMovimiento`). */
+export const EXTENDED_AUDIT_CIRCUIT_CODES = ['R8', 'R30', 'R31', 'R32'] as const
+
+/** Todos los circuitos que muestra el tablero de calibración. */
+export const AUDIT_CIRCUIT_CODES = [
+  ...RAW_AUDIT_CIRCUIT_CODES,
+  ...EXTENDED_AUDIT_CIRCUIT_CODES,
+] as const
 
 export function getExcelCameraStepsForCircuit(circuitCode: string): readonly ExcelCameraStep[] {
   const code = String(circuitCode ?? '').trim().toUpperCase()
@@ -678,8 +727,8 @@ export function countRowCapturePoints(row: CameraMatrixRow, circuitCode: string)
 /** Hitos que ensucian conclusiones generales del cuadro de calibración (no se usan en KPIs/brief). */
 export const CALIBRATION_GENERAL_EXCLUDED_STEP_KEYS = new Set(['balanza_egreso_slz'])
 
-/** Puntos de “descarga” por circuito (Celda 16 / Volcable). */
-export const DESCARGA_CAMERA_STEP_KEYS = new Set(['celda16_descarga', 'volcable'])
+/** Puntos de “descarga” por circuito (Celda 16 / Volcable Ric / Volcable SL). */
+export const DESCARGA_CAMERA_STEP_KEYS = new Set(['celda16_descarga', 'volcable', 'volcable_slz'])
 
 export function getCalibrationAnalysisSteps(circuitCode: string): readonly ExcelCameraStep[] {
   return getExcelCameraStepsForCircuit(circuitCode).filter(

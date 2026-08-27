@@ -119,6 +119,9 @@ const LOGICAL_LABEL_ES: Record<string, string> = {
   SL_BALANZA_INGRESO: 'balanza de entrada',
   SL_BALANZA_SALIDA: 'balanza egreso SL',
   SL_BALANZA_EGRESO: 'balanza egreso SL',
+  // Descarga en el volcable del PUERTO San Lorenzo (cámara SLZVolcableC{N}). Distinto del
+  // VOLCABLE de Ricardone; por eso su propio código lógico, con la misma etiqueta «volcable».
+  SL_VOLCABLE: 'volcable',
   SL_DESCARGA: 'descarga san lorenzo',
   SL_TRAMO: 'tramo san lorenzo',
   SL_ENLACE_FINAL: 'enlace final SL',
@@ -151,6 +154,7 @@ export const LOGICAL_TRANSITION_ORDER: readonly string[] = [
   'SL_BALANZA_SALIDA',
   'SL_BALANZA_EGRESO',
   'SL_DESCARGA',
+  'SL_VOLCABLE',
   'SL_TRAMO',
   'SL_ENLACE_FINAL',
   'SL_EGRESO',
@@ -307,7 +311,9 @@ function buildExecutiveCircuitSegmentTemplate(): Record<string, readonly string[
     'BALANZA_EGRESO',
     'SL_INGRESO',
     'SL_BALANZA_INGRESO',
-    'VOLCABLE',
+    // Volcable del PUERTO: la cámara SLZVolcableC{N} emite SL_VOLCABLE (no el VOLCABLE de
+    // Ricardone). Con este código, la hora real de la cámara llena el tramo; sin él quedaba vacío.
+    'SL_VOLCABLE',
     'SL_EGRESO',
   ] as const
   map.R30 = [...PELLET_TRANSILE_CHAIN]
@@ -1471,6 +1477,10 @@ export function synthesizeTemplateChainLegsFromTimedSegments(input: {
   platformNormalized?: string
   externalIngresoAt?: string
   externalSlBalanzaEntradaAt?: string
+  /** Descarga en volcable del puerto (pata I de la vuelta): ancla el hito VOLCABLE del pellet. */
+  externalSlVolcableAt?: string
+  /** Salida/portería del puerto (pata I de la vuelta): ancla el hito SL_EGRESO del pellet. */
+  externalSlEgresoAt?: string
 }): SegmentLegWithTimes[] {
   if (!input.operationId) return []
   const template = getCircuitSegmentTemplate(input.executiveCircuitCode)
@@ -1512,14 +1522,63 @@ export function synthesizeTemplateChainLegsFromTimedSegments(input: {
     )
   }
 
-  return extractTemplateChainLegsFromTimeline({
+  // Pellet de la vuelta: los tiempos del puerto salen de las cámaras (SLZBalIngFte / SLZVolcableC{N}
+  // = SL_VOLCABLE / SLZSalidaC1Fte = SL_EGRESO). Solo si un camión NO pasó la cámara del volcable o
+  // de la portería, se completa con la pata I del Excel (llegada/salida) — menos preciso. La cámara
+  // SIEMPRE tiene prioridad (solo se inyecta el hito que falte).
+  const timelineForLegs = injectPelletVolcableExcelAnchors(
     truckflowPoints,
+    template,
+    input.externalSlVolcableAt,
+    input.externalSlEgresoAt
+  )
+
+  return extractTemplateChainLegsFromTimeline({
+    truckflowPoints: timelineForLegs,
     enrichedPoints,
     executiveCircuitCode: input.executiveCircuitCode,
     journeyId: input.operationId,
     plate: input.plate,
     externalSalidaAt: input.externalSalidaAt,
   })
+}
+
+/**
+ * Inyecta los hitos VOLCABLE y SL_EGRESO del pellet de la vuelta desde las horas de la pata I del
+ * Excel, solo si el template los incluye y la cámara no los trajo (no pisa la cámara). El extractor
+ * de tramos lee estos códigos desde la traza Truckflow, así que se agregan ahí.
+ */
+function injectPelletVolcableExcelAnchors(
+  truckflowPoints: TimedLogicalPoint[],
+  template: readonly string[],
+  externalSlVolcableAt?: string,
+  externalSlEgresoAt?: string
+): TimedLogicalPoint[] {
+  const volcableAt = String(externalSlVolcableAt ?? '').trim()
+  const egresoAt = String(externalSlEgresoAt ?? '').trim()
+  if (!volcableAt && !egresoAt) return truckflowPoints
+  const out = [...truckflowPoints]
+  // SL_VOLCABLE (descarga en el volcable del puerto): SOLO si la cámara SLZVolcableC{N} no lo trajo.
+  if (
+    volcableAt &&
+    template.includes('SL_VOLCABLE') &&
+    Number.isFinite(parseTimestampMs(volcableAt)) &&
+    !out.some((p) => p.code === 'SL_VOLCABLE')
+  ) {
+    out.push({ code: 'SL_VOLCABLE', occurredAt: volcableAt })
+  }
+  // SL_EGRESO (salida/portería del puerto): SOLO si la cámara SLZSalidaC1Fte no lo trajo.
+  if (
+    egresoAt &&
+    template.includes('SL_EGRESO') &&
+    Number.isFinite(parseTimestampMs(egresoAt)) &&
+    !out.some((p) => p.code === 'SL_EGRESO')
+  ) {
+    out.push({ code: 'SL_EGRESO', occurredAt: egresoAt })
+  }
+  return collapseTimedPoints(
+    out.sort((a, b) => parseTimestampMs(a.occurredAt) - parseTimestampMs(b.occurredAt))
+  )
 }
 
 /**
@@ -1773,6 +1832,8 @@ export function synthesizeInferredRollupLegsFromTimedSegments(input: {
   externalSlBalanzaEntradaAt?: string
   externalSlBalanzaSalidaAt?: string
   tiemposEntrePasosOverride?: boolean
+  externalSlVolcableAt?: string
+  externalSlEgresoAt?: string
 }): SegmentLegWithTimes[] {
   return [
     ...synthesizeTemplateChainLegsFromTimedSegments({
@@ -1785,6 +1846,8 @@ export function synthesizeInferredRollupLegsFromTimedSegments(input: {
       platformNormalized: input.platformNormalized,
       externalIngresoAt: input.externalIngresoAt,
       externalSlBalanzaEntradaAt: input.externalSlBalanzaEntradaAt,
+      externalSlVolcableAt: input.externalSlVolcableAt,
+      externalSlEgresoAt: input.externalSlEgresoAt,
     }),
     ...synthesizeSlRollupLegsFromTimedSegments({
       operationId: input.operationId,
@@ -2272,6 +2335,8 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
     planta_normalized?: string
     external_sl_balanza_entrada_at?: string
     external_sl_balanza_salida_at?: string
+    external_sl_volcable_at?: string
+    external_sl_egreso_at?: string
   }>,
   comiteOpts?: SlBalanzaComiteOptions
 ): SegmentTimingIndex {
@@ -2294,6 +2359,8 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
       plantaNormalized?: string
       externalSlBalanzaEntradaAt?: string
       externalSlBalanzaSalidaAt?: string
+      externalSlVolcableAt?: string
+      externalSlEgresoAt?: string
     }
   >()
 
@@ -2313,6 +2380,8 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
       planta_normalized?: string
       external_sl_balanza_entrada_at?: string
       external_sl_balanza_salida_at?: string
+      external_sl_volcable_at?: string
+      external_sl_egreso_at?: string
     }
   ) => {
     const start = String(row.segment_start_time ?? '').trim()
@@ -2333,6 +2402,8 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
           String(row.external_sl_balanza_entrada_at ?? '').trim() || undefined,
         externalSlBalanzaSalidaAt:
           String(row.external_sl_balanza_salida_at ?? '').trim() || undefined,
+        externalSlVolcableAt: String(row.external_sl_volcable_at ?? '').trim() || undefined,
+        externalSlEgresoAt: String(row.external_sl_egreso_at ?? '').trim() || undefined,
       }
     bucket.segments.push({
       segment_from: row.segment_from,
@@ -2362,6 +2433,12 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
     if (!bucket.externalSlBalanzaSalidaAt && row.external_sl_balanza_salida_at) {
       bucket.externalSlBalanzaSalidaAt =
         String(row.external_sl_balanza_salida_at).trim() || undefined
+    }
+    if (!bucket.externalSlVolcableAt && row.external_sl_volcable_at) {
+      bucket.externalSlVolcableAt = String(row.external_sl_volcable_at).trim() || undefined
+    }
+    if (!bucket.externalSlEgresoAt && row.external_sl_egreso_at) {
+      bucket.externalSlEgresoAt = String(row.external_sl_egreso_at).trim() || undefined
     }
     timedSegmentsByOperation.set(operationId, bucket)
   }
@@ -2440,6 +2517,8 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
           plantaNormalized: bucket.plantaNormalized,
           externalSlBalanzaEntradaAt: bucket.externalSlBalanzaEntradaAt,
           externalSlBalanzaSalidaAt: bucket.externalSlBalanzaSalidaAt,
+          externalSlVolcableAt: bucket.externalSlVolcableAt,
+          externalSlEgresoAt: bucket.externalSlEgresoAt,
         })
     for (const leg of synthLegs) {
       if (!isExpectedCircuitTransition(leg.executiveCircuitCode, leg.fromCode, leg.toCode)) continue

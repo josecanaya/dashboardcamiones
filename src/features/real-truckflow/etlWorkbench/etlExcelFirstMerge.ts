@@ -274,6 +274,10 @@ export type ExcelOperationSegmentScatterRow = {
   external_sl_balanza_salida_at?: string
   tiempos_entre_pasos_match?: string
   tiempos_entre_pasos_source_file?: string
+  /** Descarga en volcable del puerto (pata I del pellet de la vuelta): ancla el hito VOLCABLE. */
+  external_sl_volcable_at?: string
+  /** Salida/portería del puerto (pata I del pellet de la vuelta): ancla el hito SL_EGRESO. */
+  external_sl_egreso_at?: string
 }
 
 export type ExcelFirstCandidateDiscardCounters = {
@@ -1941,6 +1945,8 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
           planta_normalized: mov.planta_normalized,
           external_sl_balanza_entrada_at: mov.external_sl_balanza_entrada_at,
           external_sl_balanza_salida_at: mov.external_sl_balanza_salida_at,
+          external_sl_volcable_at: mov.external_sl_volcable_at,
+          external_sl_egreso_at: mov.external_sl_egreso_at,
           tiempos_entre_pasos_match: mov.tiempos_entre_pasos_match,
           tiempos_entre_pasos_source_file: mov.tiempos_entre_pasos_source_file,
         })
@@ -1989,6 +1995,9 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
             externalSlBalanzaEntradaAt: mov.external_sl_balanza_entrada_at,
             externalSlBalanzaSalidaAt: mov.external_sl_balanza_salida_at,
             tiemposEntrePasosOverride: tepSl.tiemposEntrePasosOverride,
+            // Horas de la pata I del pellet de la vuelta (VOLCABLE = descarga, SL_EGRESO = salida).
+            externalSlVolcableAt: mov.external_sl_volcable_at,
+            externalSlEgresoAt: mov.external_sl_egreso_at,
           })
       const existingTransitions = new Set(
         segmentRows
@@ -2032,6 +2041,8 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
           planta_normalized: mov.planta_normalized,
           external_sl_balanza_entrada_at: mov.external_sl_balanza_entrada_at,
           external_sl_balanza_salida_at: mov.external_sl_balanza_salida_at,
+          external_sl_volcable_at: mov.external_sl_volcable_at,
+          external_sl_egreso_at: mov.external_sl_egreso_at,
           tiempos_entre_pasos_match: mov.tiempos_entre_pasos_match,
           tiempos_entre_pasos_source_file: mov.tiempos_entre_pasos_source_file,
         })

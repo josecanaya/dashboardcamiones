@@ -204,20 +204,23 @@ describe('etlSegmentTiming', () => {
     ])
   })
 
-  it('R7 incluye cadena operativa SL unificada (ingreso → balanza entrada → egreso)', () => {
+  it('R7 incluye cadena operativa SL con volcable (ingreso → balanza → volcable → egreso)', () => {
     const rows = listCircuitSegmentAggregates(
       buildSegmentTimingIndex([], { committeeGroups: ['COMPLETOS'] }),
       'R7'
     )
+    // La soja descarga en el volcable del puerto (cámara SLZVolcableC{N} = SL_VOLCABLE): el tramo
+    // balanza→egreso se parte en balanza→volcable y volcable→egreso, igual que el pellet.
     expect(rows.map((r) => r.transitionKey)).toEqual([
       'INGRESO→PREINGRESO',
       'PREINGRESO→CALADA',
       'CALADA→EGRESO',
       'EGRESO→SL_INGRESO',
       'SL_INGRESO→SL_BALANZA_INGRESO',
-      'SL_BALANZA_INGRESO→SL_EGRESO',
+      'SL_BALANZA_INGRESO→SL_VOLCABLE',
+      'SL_VOLCABLE→SL_EGRESO',
     ])
-    expect(rows.at(-1)?.label).toBe('balanza de entrada → egreso')
+    expect(rows.at(-1)?.label).toBe('volcable → egreso san lorenzo')
   })
 
   it('rollup balanza SL mide S1→S7 con egreso real', () => {
@@ -1750,7 +1753,7 @@ describe('plantilla KPI de líquidos (R8 / R16)', () => {
     // 9 tramos: puente Ric→SL directo (BALANZA_EGRESO→SL_INGRESO); en SL VOLCABLE→SL_EGRESO.
     const transile = [
       'INGRESO', 'PREINGRESO', 'LIQUIDO', 'BALANZA_INGRESO', 'PLAYA', 'BALANZA_EGRESO',
-      'SL_INGRESO', 'SL_BALANZA_INGRESO', 'VOLCABLE', 'SL_EGRESO',
+      'SL_INGRESO', 'SL_BALANZA_INGRESO', 'SL_VOLCABLE', 'SL_EGRESO',
     ]
     // 10 puntos = 9 tramos.
     expect(transile.length - 1).toBe(9)
@@ -1768,6 +1771,87 @@ describe('plantilla KPI de líquidos (R8 / R16)', () => {
     const tramos = listCircuitSegmentAggregates(idx, 'R13/14/15')
     const stay = tramos.find((a) => a.transitionKey === 'PLAYA→BALANZA_EGRESO')
     expect(stay?.stats.count).toBe(2)
+  })
+
+  it('pellet de la vuelta: VOLCABLE y SL_EGRESO salen de la pata I del Excel (descarga/salida)', () => {
+    // La cámara solo trajo SL_INGRESO y SL_BALANZA_INGRESO; los hitos VOLCABLE (descarga en el
+    // volcable del puerto) y SL_EGRESO (salida/portería) vienen de la pata I del Excel, y así los
+    // dos últimos tramos del transile (balanza de entrada→volcable, volcable→egreso SL) se miden.
+    const legs = synthesizeInferredRollupLegsFromTimedSegments({
+      operationId: 'excel:CTG_1',
+      plate: 'CIE516',
+      executiveCircuitCode: 'R30',
+      segments: [
+        {
+          segment_from: 'SL_INGRESO',
+          segment_to: 'SL_BALANZA_INGRESO',
+          segment_start_time: '2026-08-18T20:10:00',
+          segment_end_time: '2026-08-18T20:15:00',
+        },
+      ],
+      externalIngresoAt: '2026-08-18T17:51:00',
+      externalSalidaAt: '2026-08-18T20:05:00', // salida de Ricardone, NO la del puerto
+      plantaNormalized: 'RICARDONE',
+      externalSlVolcableAt: '2026-08-18T20:23:00',
+      externalSlEgresoAt: '2026-08-18T21:58:00',
+    })
+    const balToVolc = legs.find((l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_VOLCABLE')
+    const volcToEgreso = legs.find((l) => l.fromCode === 'SL_VOLCABLE' && l.toCode === 'SL_EGRESO')
+    expect(balToVolc?.durationMinutes).toBe(8) // 20:15 → 20:23
+    expect(volcToEgreso?.durationMinutes).toBe(95) // 20:23 → 21:58
+    expect(volcToEgreso?.segment_end_time).toBe('2026-08-18T21:58:00')
+  })
+
+  it('KPI Excel-first: el pellet de la vuelta mide balanza→volcable y volcable→egreso con la pata I', () => {
+    // Camino real del KPI por tiempos: cada operación se re-sintetiza desde sus filas de tramo.
+    // La pata I del Excel (volcable/egreso) viaja en las filas y alimenta los dos tramos finales;
+    // la balanza sigue siendo la de la cámara (truckflow), el egreso es autoritativo del Excel.
+    const base = {
+      analysis_ready_for_scatter: true,
+      external_operation_id: 'CTG_1',
+      journey_uid: 'j1',
+      plate_normalized: 'CIE516',
+      segment_duration_min: 5,
+      truckflow_circuit_code: 'R30',
+      resolved_executive_circuit_code: 'R30',
+      external_ingreso_at: '2026-08-18T17:51:00',
+      external_salida_at: '2026-08-18T20:05:00',
+      planta_normalized: 'RICARDONE',
+      external_sl_volcable_at: '2026-08-18T20:23:00',
+      external_sl_egreso_at: '2026-08-18T21:58:00',
+    }
+    const idx = buildSegmentTimingIndexFromExcelFirstSegments([
+      { ...base, segment_from: 'INGRESO', segment_to: 'PREINGRESO', segment_start_time: '2026-08-18T17:51:00', segment_end_time: '2026-08-18T17:58:00' },
+      { ...base, segment_from: 'SL_INGRESO', segment_to: 'SL_BALANZA_INGRESO', segment_start_time: '2026-08-18T20:10:00', segment_end_time: '2026-08-18T20:15:00' },
+    ])
+    expect(idx.circuitCodes).toContain('R30/31/32')
+    const aggs = listCircuitSegmentAggregates(idx, 'R30/31/32')
+    const balToVolc = aggs.find((a) => a.transitionKey === 'SL_BALANZA_INGRESO→SL_VOLCABLE')
+    const volcToEgreso = aggs.find((a) => a.transitionKey === 'SL_VOLCABLE→SL_EGRESO')
+    expect(balToVolc?.stats.count).toBe(1)
+    expect(balToVolc?.stats.mean).toBe(8) // 20:15 (cámara) → 20:23 (Excel)
+    expect(volcToEgreso?.stats.count).toBe(1)
+    expect(volcToEgreso?.stats.mean).toBe(95) // 20:23 → 21:58 (Excel), no la salida de Ricardone
+  })
+
+  it('sin pata I del Excel el pellet no inventa SL_VOLCABLE ni SL_EGRESO', () => {
+    const legs = synthesizeInferredRollupLegsFromTimedSegments({
+      operationId: 'excel:CTG_2',
+      plate: 'CIE516',
+      executiveCircuitCode: 'R30',
+      segments: [
+        {
+          segment_from: 'SL_INGRESO',
+          segment_to: 'SL_BALANZA_INGRESO',
+          segment_start_time: '2026-08-18T20:10:00',
+          segment_end_time: '2026-08-18T20:15:00',
+        },
+      ],
+      externalIngresoAt: '2026-08-18T17:51:00',
+      plantaNormalized: 'RICARDONE',
+    })
+    expect(legs.some((l) => l.toCode === 'SL_VOLCABLE')).toBe(false)
+    expect(legs.some((l) => l.toCode === 'SL_EGRESO')).toBe(false)
   })
 
   it('el tramo real preingreso → líquido queda medible', () => {

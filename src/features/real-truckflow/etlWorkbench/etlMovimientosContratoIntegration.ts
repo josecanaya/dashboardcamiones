@@ -97,6 +97,10 @@ import {
 
 import type { KpiTiemposMovimientosSnapshot } from './etlKpiTiemposBuild'
 import {
+  filterVolcableSlIngresoMovimientos,
+  isSanLorenzoPelletVolcableIngresoLeg,
+} from './etlSanLorenzoVolcableActivity'
+import {
   enrichMovimientosWithTiemposEntrePasos,
   loadTiemposEntrePasosFiles,
 } from './etlTiemposEntrePasos'
@@ -211,6 +215,44 @@ export async function runMovimientosContratoIntegration(
           `(${dedupe.duplicatesRemoved} duplicados en ${dedupe.collapsedGroups} operaciones por solape de archivos)`
       )
     }
+  }
+
+  // Pata INGRESO en volcable del pellet de la vuelta: se preserva con id propio en la
+  // normalización (sobrevive al dedup) pero es sólo un dato de descarga en el puerto, NO una
+  // operación aparte. Se la saca del pipeline acá para que comité/circuitos/merge y la tabla
+  // normalizada queden idénticos, y se la reserva para el insumo del panel de calles volcable
+  // (que la cuenta en su calle VOLCABLE_PTO y la matchea a la cámara SLZVolcableC{N} si la pasó).
+  // En backups viejos (sin re-ingesta) no hay ninguna: quedan igual que hoy hasta re-ingestar.
+  const pelletVolcableIngresoLegs = normalized.filter(isSanLorenzoPelletVolcableIngresoLeg)
+  if (pelletVolcableIngresoLegs.length > 0) {
+    const beforeSplit = normalized.length
+    normalized = normalized.filter((r) => !isSanLorenzoPelletVolcableIngresoLeg(r))
+    // Copiá las horas de la pata I (descarga en volcable = ingreso, salida del puerto = salida) a
+    // su operación EGRESO gemela por CTG. Alimentan los hitos VOLCABLE y SL_EGRESO del KPI por
+    // tiempos del pellet de la vuelta (tramos «balanza de entrada → volcable» y «volcable → egreso
+    // san lorenzo»), que quedaban vacíos porque la traza de cámara no siempre pasa por el volcable.
+    const legTimesByCtg = new Map<string, { volcableAt: string; egresoAt: string }>()
+    for (const leg of pelletVolcableIngresoLegs) {
+      const ctg = String(leg.ctg ?? '').trim()
+      if (!ctg || ctg === '0') continue
+      const volcableAt = String(leg.external_ingreso_at ?? '').trim()
+      const egresoAt = String(leg.external_salida_at ?? '').trim()
+      if (!volcableAt && !egresoAt) continue
+      if (!legTimesByCtg.has(ctg)) legTimesByCtg.set(ctg, { volcableAt, egresoAt })
+    }
+    let enrichedOps = 0
+    for (const row of normalized) {
+      const times = legTimesByCtg.get(String(row.ctg ?? '').trim())
+      if (!times) continue
+      if (times.volcableAt) row.external_sl_volcable_at = times.volcableAt
+      if (times.egresoAt) row.external_sl_egreso_at = times.egresoAt
+      enrichedOps++
+    }
+    logs.push(
+      `Pata I volcable pellet (de la vuelta) reservada para panel: ${pelletVolcableIngresoLegs.length} ` +
+        `(fuera de comité/circuitos; pipeline ${beforeSplit} → ${normalized.length}); ` +
+        `horas VOLCABLE/SL_EGRESO copiadas a ${enrichedOps} operaciones EGRESO por CTG`
+    )
   }
 
   const movStats = summarizeMovimientosContratoLoad(
@@ -539,6 +581,14 @@ export async function runMovimientosContratoIntegration(
     mergedRows: mergeResult.merged,
     cleanRows: clean,
     operationalSampleUids: [...sampleUids],
+    // Filas INGRESO (VOLCABLE_PTO) fuente de verdad del conteo por calle del panel volcable. La
+    // soja del puerto ya está en `normalized`; se le vuelven a sumar las patas I del pellet de la
+    // vuelta reservadas arriba (que se sacaron del pipeline para no duplicar en comité). Se cuenta
+    // cada fila I; la hora fina la aporta la cámara SLZVolcableC{N} por cruce patente+día.
+    volcableSlIngresoMovimientos: filterVolcableSlIngresoMovimientos([
+      ...normalized,
+      ...pelletVolcableIngresoLegs,
+    ]),
   }
 
   let segmentTimingFromExcelFirst: SegmentTimingIndex | null = null

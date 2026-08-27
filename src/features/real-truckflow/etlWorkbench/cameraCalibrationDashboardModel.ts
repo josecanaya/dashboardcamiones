@@ -6,9 +6,10 @@ import type { CircuitCameraComparativa } from './excelCameraComparativaWorkbench
 import type { ExcelCameraComparativaReport } from './excelCameraComparativaWorkbench'
 import type { Turno } from './operationalTurno'
 import { turnoLabel, TURNOS_OPERATIVOS } from './operationalTurno'
-import type { CameraStepSummary } from './auditExcelCameraMatrix'
+import type { CameraStepSummary, ExcelCameraStep } from './auditExcelCameraMatrix'
 import {
   CALIBRATION_GENERAL_EXCLUDED_STEP_KEYS,
+  getCalibrationAnalysisSteps,
   summarizePointCaptureDepth,
   summarizeRouteRecognitionForCalibration,
   type PointCaptureDepthSummary,
@@ -46,6 +47,7 @@ const HITO_LABELS: Record<string, string> = {
   ingreso: 'Ingreso planta',
   preingreso: 'Preingreso',
   calada: 'Calada',
+  calada_liq: 'Calada líquidos',
   egreso: 'Egreso planta',
   balanza_ingreso: 'Balanza ingreso',
   balanza_egreso: 'Balanza egreso',
@@ -55,6 +57,7 @@ const HITO_LABELS: Record<string, string> = {
   balanza_ingreso_slz: 'Balanza ingreso SL',
   balanza_egreso_slz: 'Balanza egreso SL',
   salida_slz: 'Salida San Lorenzo',
+  volcable_slz: 'Descarga volcable SL',
 }
 
 const DEVICE_LABELS: Record<string, string> = {
@@ -86,6 +89,11 @@ const DEVICE_LABELS: Record<string, string> = {
   SLZBalSC2Fte: 'Balanza SC2 SL',
   SLZSalidaC1Fte: 'Salida circuito 1 SL',
   SLZSalidaC2Fte: 'Salida circuito 2 SL',
+  SLZVolcableC1: 'Volcable SL calle 1',
+  SLZVolcableC2: 'Volcable SL calle 2',
+  SLZVolcableC3: 'Volcable SL calle 3',
+  SLZVolcableC4: 'Volcable SL calle 4',
+  SLZVolcableC5: 'Volcable SL calle 5',
 }
 
 export function hitoOperativoLabel(stepKey: string, header?: string): string {
@@ -175,6 +183,32 @@ export type AutoCalibrationBrief = {
   parrafos: string[]
 }
 
+/** Reconocimiento de UN camión contra TODAS las cámaras del circuito. */
+export type TruckRecognitionRow = {
+  ctg: string
+  patente: string
+  turno: Turno
+  turnoLabel: string
+  /** Cámaras del circuito que lo reconocieron. */
+  capturadas: number
+  /** Total de cámaras del circuito. */
+  total: number
+  /** Cuántas cámaras NO lo registraron (0 = TODAS lo reconocieron). */
+  faltan: number
+  camarasOk: string[]
+  /** Hitos sin lectura = las cámaras que NO lo registraron (control de falla). */
+  camarasFaltan: string[]
+}
+
+/** Un grupo del histograma: camiones reconocidos por TODAS / TODAS−1 / TODAS−2 … cámaras. */
+export type RecognitionDepthBucket = {
+  faltan: number
+  label: string
+  camiones: number
+  pct: number
+  trucks: TruckRecognitionRow[]
+}
+
 export type CalibrationDashboardModel = {
   circuito: string
   excelCamiones: number
@@ -182,6 +216,16 @@ export type CalibrationDashboardModel = {
   minRoutePoints: number
   reconocimientoPct: number
   circuitSubtitle: string
+  /** Cantidad de cámaras del circuito (hitos de análisis) = el "TODAS". */
+  circuitCameraCount: number
+  /** Labels de las cámaras del circuito, en orden de recorrido. */
+  circuitCameraLabels: string[]
+  /** Histograma por camión: TODAS, TODAS−1, TODAS−2 … (con drill-down de camiones). */
+  recognitionDepthBuckets: RecognitionDepthBucket[]
+  /** Camiones vistos por TODAS las cámaras del circuito. */
+  vistosPorTodas: number
+  /** Camiones con al menos una cámara que no los registró. */
+  conAlgunaFalla: number
   /** Conteos de profundidad de lectura (sin balanza egreso SL). */
   pointDepth: PointCaptureDepthSummary
   pointDepthLine: string
@@ -491,9 +535,70 @@ function formatPointDepthLine(depth: PointCaptureDepthSummary): string {
   return `${depth.allPoints} en todos los puntos · ${depth.allExceptDescarga} en ${descargaNote} · ${depth.exactly3Points} en 3 puntos`
 }
 
+/**
+ * Reconocimiento por camión contra TODAS las cámaras del circuito (hitos de análisis).
+ * Deriva del detalle ya calculado (`circuit.calibration.detailRows`), no re-audita nada.
+ */
+function buildRecognitionDepth(circuit: CircuitCameraComparativa): {
+  circuitCameraCount: number
+  circuitCameraLabels: string[]
+  buckets: RecognitionDepthBucket[]
+} {
+  const steps: readonly ExcelCameraStep[] = getCalibrationAnalysisSteps(circuit.circuitCode)
+  const total = steps.length
+
+  const rows: TruckRecognitionRow[] = circuit.calibration.detailRows.map((dr) => {
+    const okSteps = steps.filter((s) => dr.captures[s.key])
+    const missSteps = steps.filter((s) => !dr.captures[s.key])
+    return {
+      ctg: dr.ctg,
+      patente: dr.patente,
+      turno: dr.dayNight,
+      turnoLabel: dr.dayNight === 'unknown' ? '—' : turnoLabel(dr.dayNight),
+      capturadas: okSteps.length,
+      total,
+      faltan: total - okSteps.length,
+      camarasOk: okSteps.map((s) => hitoOperativoLabel(s.key, s.header)),
+      camarasFaltan: missSteps.map((s) => hitoOperativoLabel(s.key, s.header)),
+    }
+  })
+
+  const byFaltan = new Map<number, TruckRecognitionRow[]>()
+  for (const r of rows) {
+    const arr = byFaltan.get(r.faltan) ?? []
+    arr.push(r)
+    byFaltan.set(r.faltan, arr)
+  }
+
+  const totalTrucks = rows.length
+  const buckets: RecognitionDepthBucket[] = []
+  for (let faltan = 0; faltan <= total; faltan++) {
+    const trucks = byFaltan.get(faltan) ?? []
+    // El grupo "TODAS" se muestra siempre (aunque sea 0); el resto sólo si tiene camiones.
+    if (!trucks.length && faltan !== 0) continue
+    buckets.push({
+      faltan,
+      label: faltan === 0 ? 'TODAS' : `TODAS −${faltan}`,
+      camiones: trucks.length,
+      pct: pct(trucks.length, totalTrucks),
+      trucks: [...trucks].sort((a, b) => a.patente.localeCompare(b.patente)),
+    })
+  }
+
+  return {
+    circuitCameraCount: total,
+    circuitCameraLabels: steps.map((s) => hitoOperativoLabel(s.key, s.header)),
+    buckets,
+  }
+}
+
 export function buildCalibrationDashboardModel(
   circuit: CircuitCameraComparativa
 ): CalibrationDashboardModel {
+  const recognitionDepth = buildRecognitionDepth(circuit)
+  const vistosPorTodas =
+    recognitionDepth.buckets.find((b) => b.faltan === 0)?.camiones ?? 0
+  const conAlgunaFalla = circuit.calibration.detailRows.length - vistosPorTodas
   const hitoRows = circuit.summaries
     .filter((s) => !isExcludedFromGeneralCalibration(s.key))
     .map(summaryToHitoRow)
@@ -543,6 +648,11 @@ export function buildCalibrationDashboardModel(
     minRoutePoints: rr.minPoints,
     reconocimientoPct: rr.recognizedRatePct,
     circuitSubtitle: `${circuit.circuitCode}: ${circuit.excelCamiones} camiones Excel · ${rr.recognizedCount} reconocidos ≥${rr.minPoints} puntos · ${rr.recognizedRatePct}%`,
+    circuitCameraCount: recognitionDepth.circuitCameraCount,
+    circuitCameraLabels: recognitionDepth.circuitCameraLabels,
+    recognitionDepthBuckets: recognitionDepth.buckets,
+    vistosPorTodas,
+    conAlgunaFalla,
     pointDepth,
     pointDepthLine,
     hitoRows: [...hitoRows].sort((a, b) => b.porcentajeSinLectura - a.porcentajeSinLectura),

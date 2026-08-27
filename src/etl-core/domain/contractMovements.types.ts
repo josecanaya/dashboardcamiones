@@ -59,4 +59,12 @@ export type ExternalMovimientoContratoNormalized = {
   external_sl_balanza_salida_at: string
   tiempos_entre_pasos_source_file: string
   tiempos_entre_pasos_match: string
+  /**
+   * Hora de descarga en el volcable del puerto (pata INGRESO de la vuelta), copiada a la
+   * operación EGRESO por CTG en la integración. Ancla el hito `VOLCABLE` del KPI por tiempos del
+   * pellet de la vuelta, que si no queda vacío (la traza de cámara no siempre pasa por el volcable).
+   */
+  external_sl_volcable_at?: string
+  /** Hora de salida/portería del puerto (pata INGRESO de la vuelta): ancla el hito `SL_EGRESO`. */
+  external_sl_egreso_at?: string
 }

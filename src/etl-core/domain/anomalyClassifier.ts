@@ -29,11 +29,11 @@ export type AnomalyKind =
  * Razón canónica y única.
  *
  * REEMPLAZO TOTAL (2026-08-05): las anomalías de comportamiento se definen SOLO
- * por las 5 reglas de `goldenAnomalyRules.ts` (R1–R5). Ya no se emite comportamiento
+ * por las reglas de `goldenAnomalyRules.ts` (R1–R6). Ya no se emite comportamiento
  * desde el estado de matriz/ejecutivo ni desde alertas de ruta/arranque.
  */
 export type AnomalyReason =
-  // --- BEHAVIORAL (solo reglas R1–R5, ver GOLDEN_ANOMALY_REASONS) ---
+  // --- BEHAVIORAL (solo reglas R1–R6, ver GOLDEN_ANOMALY_REASONS) ---
   /** R1: salida Ricardone → reingreso Ricardone ≤ 1 h, no pellet. */
   | 'RIC_REINGRESO_RAPIDO_NO_PELLET'
   /** R2: mismo día San Lorenzo primero y luego Ricardone, no pellet. */
@@ -44,6 +44,8 @@ export type AnomalyReason =
   | 'RUTA_BALANZA_PLAYA_C16_BALANZA'
   /** R5: pasa por punto de carga y luego por plataforma de descarga. */
   | 'CARGA_LUEGO_DESCARGA'
+  /** R6: egreso Ricardone → ingreso San Lorenzo en > 30 min (≤ 2 h) sin pasar por Calado SL. */
+  | 'RIC_SL_MAS30M_SIN_CALADA_SL'
   // --- DATA_COVERAGE ---
   /** Muy pocos eventos útiles para evaluar (ruido / captura parcial). */
   | 'EVENTOS_INSUFICIENTES'
@@ -125,7 +127,7 @@ export function isBehavioralAnomaly(verdict: AnomalyVerdict): boolean {
 }
 
 /**
- * Las reglas R1–R5 son la ÚNICA fuente de comportamiento anómalo: si hay hit,
+ * Las reglas R1–R6 son la ÚNICA fuente de comportamiento anómalo: si hay hit,
  * el verdicto pasa a BEHAVIORAL con esa razón.
  *
  * Excepción (evidencia mínima): NO pisan `EVENTOS_INSUFICIENTES`. Con ≤2 eventos

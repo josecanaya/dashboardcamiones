@@ -1,5 +1,10 @@
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 import { buildCaladaCameraEvents, caladaCameraEventsCsv } from './etlCaladaCameraActivity'
+import {
+  buildSanLorenzoVolcableEvents,
+  sanLorenzoVolcableEventsCsv,
+  type VolcableIngresoMovimientoLike,
+} from './etlSanLorenzoVolcableActivity'
 import type { ExcelOperationSegmentScatterRow } from './etlExcelFirstMerge'
 import { excelOperationSegmentsForScatterCsv } from './etlExcelFirstMerge'
 import {
@@ -50,6 +55,8 @@ export type KpiTiemposMovimientosSnapshot = {
   cleanRows: CleanJourneyForAnalysis[]
   /** UIDs de muestra operativa (para CSV sample). */
   operationalSampleUids: string[]
+  /** Filas INGRESO (VOLCABLE_PTO) del Excel: fuente de verdad del conteo por calle del panel volcable. */
+  volcableSlIngresoMovimientos?: VolcableIngresoMovimientoLike[]
 }
 
 export type KpiTiemposBuildInput = {
@@ -75,6 +82,7 @@ export type KpiTiemposBuildOutput = {
     sector_occupancy_30min: string
     sector_occupancy_events: string
     calada_camera_events: string
+    san_lorenzo_volcable_events: string
   }
   logs: string[]
 }
@@ -198,6 +206,24 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
     classifiedJourneys: input.classifiedJourneys,
     productByJourneyUid,
   })
+  // Actividad por calle del volcable de San Lorenzo. Fuente de verdad = las filas INGRESO
+  // (VOLCABLE_PTO) del Excel — el usuario: "solo contá las I, esas dicen a qué volcable descargan".
+  // Cada fila INGRESO es un camión en su calle; se enriquece con la hora de la cámara SLZVolcableC{N}
+  // cuando la pasó (cruce por patente+día). Los que la cámara vio pero no están en el Excel se
+  // cuentan aparte (producto del merge / «Sin dato»).
+  const volcableIngresoMovimientos = snap?.volcableSlIngresoMovimientos ?? null
+  const sanLorenzoVolcableEvents = buildSanLorenzoVolcableEvents({
+    classifiedJourneys: input.classifiedJourneys,
+    volcableIngresoMovimientos,
+    productByJourneyUid,
+  })
+  const volcConProducto = sanLorenzoVolcableEvents.filter((r) => r.producto).length
+  logs.push(
+    `san_lorenzo_volcable_events: ${sanLorenzoVolcableEvents.length} camiones · ` +
+      `${new Set(sanLorenzoVolcableEvents.map((r) => r.camara)).size} calles · ` +
+      `producto en ${volcConProducto}/${sanLorenzoVolcableEvents.length} · ` +
+      `filas INGRESO volcable: ${volcableIngresoMovimientos?.length ?? 0}`
+  )
   const caladaConProducto = caladaCameraEvents.filter((r) => r.producto).length
   logs.push(
     `calada_camera_events: ${caladaCameraEvents.length} eventos · ${new Set(caladaCameraEvents.map((r) => r.camara)).size} cámaras · ` +
@@ -222,6 +248,7 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
       sector_occupancy_30min: sectorOccupancy30MinCsv(occupancy.series),
       sector_occupancy_events: sectorOccupancyEventsCsv(occupancy.events),
       calada_camera_events: caladaCameraEventsCsv(caladaCameraEvents),
+      san_lorenzo_volcable_events: sanLorenzoVolcableEventsCsv(sanLorenzoVolcableEvents),
     },
     logs,
   }

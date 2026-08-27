@@ -99,4 +99,85 @@ describe('cameraCalibrationDashboardModel', () => {
     expect(dash.topProblems.some((p) => p.hito === 'balanza_egreso_slz')).toBe(false)
     expect(dash.brief.parrafos.join(' ')).toMatch(/sin balanza egreso SL/i)
   })
+
+  it('incluye la cámara volcable SL como hito de R7 y la reconoce', () => {
+    const mov: MovimientoContratoLike = {
+      external_operation_id: 'CTG_55',
+      ctg: '55',
+      plate_normalized: 'VOL555',
+      platform_normalized: 'VOLCABLE_PTO_2',
+      plataforma_original: 'Volcable PTO 2',
+      planta_normalized: 'TERMINAL_EMBARQUE',
+      planta_original: 'Terminal Embarque',
+      mov: '',
+      movement_type: 'INGRESO',
+      movement_type_detail: '',
+      external_ingreso_at: '2026-06-10T08:00:00-03:00',
+      external_salida_at: '2026-06-10T18:00:00-03:00',
+      source_date: '2026-06-10',
+    }
+    const report = buildExcelCameraComparativaReport({
+      movimientos: [mov],
+      events: [
+        { truckPlate: 'VOL555', deviceCode: 'RicIngCamFrente', createdAt: '2026-06-10T09:00:00-03:00' },
+        { truckPlate: 'VOL555', deviceCode: 'SLZVolcableC2', createdAt: '2026-06-10T15:00:00-03:00' },
+      ] as never,
+      fromDay: '2026-06-10',
+      toDay: '2026-06-10',
+    })
+    const c = report.circuits.find((x) => x.circuitCode === 'R7')!
+    const dash = buildCalibrationDashboardModel(c)
+    // volcable SL es un hito de R7 y cuenta como cámara del circuito.
+    expect(dash.hitoRows.some((h) => h.hito === 'volcable_slz')).toBe(true)
+    expect(dash.circuitCameraLabels).toContain('Descarga volcable SL')
+    // El camión fue reconocido por la cámara de calle SLZVolcableC2.
+    const row = c.calibration.detailRows.find((r) => r.patente === 'VOL555')!
+    expect(row.captures['volcable_slz']).toBe(true)
+  })
+
+  it('agrupa camiones por profundidad de reconocimiento (TODAS / TODAS−k)', () => {
+    const mkMov = (ctg: string, plate: string): MovimientoContratoLike => ({
+      external_operation_id: `CTG_${ctg}`,
+      ctg,
+      plate_normalized: plate,
+      platform_normalized: 'VOLCABLE_PTO_1',
+      plataforma_original: 'Volcable PTO 1',
+      planta_normalized: 'TERMINAL_EMBARQUE',
+      planta_original: 'Terminal Embarque',
+      mov: '',
+      movement_type: 'INGRESO',
+      movement_type_detail: '',
+      external_ingreso_at: '2026-06-10T08:00:00-03:00',
+      external_salida_at: '2026-06-10T18:00:00-03:00',
+      source_date: '2026-06-10',
+    })
+    const report = buildExcelCameraComparativaReport({
+      movimientos: [mkMov('1', 'AAA111'), mkMov('2', 'BBB222')],
+      events: [
+        // AAA111: sólo lo ve el ingreso → muchas cámaras faltan.
+        { truckPlate: 'AAA111', deviceCode: 'RicIngCamFrente', createdAt: '2026-06-10T09:00:00-03:00' },
+        // BBB222: lo ve ingreso + volcable → una cámara menos faltante que AAA111.
+        { truckPlate: 'BBB222', deviceCode: 'RicIngCamFrente', createdAt: '2026-06-10T09:00:00-03:00' },
+        { truckPlate: 'BBB222', deviceCode: 'SLZVolcableC1', createdAt: '2026-06-10T15:00:00-03:00' },
+      ] as never,
+      fromDay: '2026-06-10',
+      toDay: '2026-06-10',
+    })
+    const c = report.circuits.find((x) => x.circuitCode === 'R7')!
+    const dash = buildCalibrationDashboardModel(c)
+
+    // La suma de camiones por bucket = total del circuito.
+    const suma = dash.recognitionDepthBuckets.reduce((a, b) => a + b.camiones, 0)
+    expect(suma).toBe(dash.excelCamiones)
+    // Siempre existe el grupo "TODAS".
+    expect(dash.recognitionDepthBuckets.some((b) => b.label === 'TODAS')).toBe(true)
+    // Cada camión de un bucket tiene exactamente `faltan` cámaras sin registrar.
+    for (const b of dash.recognitionDepthBuckets) {
+      for (const t of b.trucks) {
+        expect(t.camarasFaltan.length).toBe(b.faltan)
+        expect(t.capturadas + t.faltan).toBe(t.total)
+        expect(t.total).toBe(dash.circuitCameraCount)
+      }
+    }
+  })
 })

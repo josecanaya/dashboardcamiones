@@ -3,6 +3,7 @@ import {
   detectRicQuickReEntry,
   detectSlThenRicSameDay,
   detectRicToSlBridgeWindow,
+  detectRicToSlWithoutSlCalada,
   detectBalanzaPlayaCelda16Route,
   detectLoadThenDischarge,
   evaluateGoldenAnomalyRules,
@@ -10,6 +11,8 @@ import {
   RIC_REINGRESO_MAX_MS,
   RIC_SL_MIN_MS,
   RIC_SL_MAX_MS,
+  RIC_SL_NO_CALADA_MIN_MS,
+  RIC_SL_NO_CALADA_MAX_MS,
   type GoldenTimelinePoint,
 } from './goldenAnomalyRules'
 
@@ -24,7 +27,7 @@ function pt(
   return { t: t0 + offsetMin * 60_000, logicalCode, siteId, day }
 }
 
-describe('goldenAnomalyRules — reglas R1–R5', () => {
+describe('goldenAnomalyRules — reglas R1–R6', () => {
   describe('R1 salida Ric → reingreso Ric ≤ 1 h (no pellet)', () => {
     it('marca reingreso rápido', () => {
       const hit = detectRicQuickReEntry([
@@ -145,6 +148,84 @@ describe('goldenAnomalyRules — reglas R1–R5', () => {
     })
   })
 
+  describe('R6 egreso Ric → ingreso SL > 30 min y sin calado SL', () => {
+    it('marca > 30 min sin paso por calado', () => {
+      const hit = detectRicToSlWithoutSlCalada([
+        pt(0, 'EGRESO', 'ricardone'),
+        pt(45, 'SL_INGRESO', 'san_lorenzo'),
+        pt(90, 'SL_EGRESO', 'san_lorenzo'),
+      ])
+      expect(hit?.reason).toBe('RIC_SL_MAS30M_SIN_CALADA_SL')
+      expect(hit?.deltaMinutes).toBe(45)
+    })
+
+    it('no marca si el tramo es ≤ 30 min', () => {
+      const hit = detectRicToSlWithoutSlCalada([
+        pt(0, 'EGRESO', 'ricardone'),
+        pt(30, 'SL_INGRESO', 'san_lorenzo'),
+      ])
+      expect(hit).toBeNull()
+    })
+
+    it('no marca por encima de 2 h', () => {
+      const hit = detectRicToSlWithoutSlCalada([
+        pt(0, 'EGRESO', 'ricardone'),
+        pt(121, 'SL_INGRESO', 'san_lorenzo'),
+      ])
+      expect(hit).toBeNull()
+    })
+
+    it('no marca si pasó por calado San Lorenzo en esa visita', () => {
+      const hit = detectRicToSlWithoutSlCalada([
+        pt(0, 'EGRESO', 'ricardone'),
+        pt(30, 'SL_INGRESO', 'san_lorenzo'),
+        pt(45, 'SL_CALADA', 'san_lorenzo'),
+        pt(90, 'SL_EGRESO', 'san_lorenzo'),
+      ])
+      expect(hit).toBeNull()
+    })
+
+    it('marca si el calado es de otra visita posterior (tras egresar del puerto)', () => {
+      const hit = detectRicToSlWithoutSlCalada([
+        pt(0, 'EGRESO', 'ricardone'),
+        pt(45, 'SL_INGRESO', 'san_lorenzo'),
+        pt(85, 'SL_EGRESO', 'san_lorenzo'),
+        // Segunda visita a SL con calado: no cuenta para la primera.
+        pt(200, 'SL_INGRESO', 'san_lorenzo'),
+        pt(210, 'SL_CALADA', 'san_lorenzo'),
+      ])
+      expect(hit?.reason).toBe('RIC_SL_MAS30M_SIN_CALADA_SL')
+      expect(hit?.deltaMinutes).toBe(45)
+    })
+
+    it('R6 tiene prioridad sobre R3 cuando ambas aplican (banda solapada, sin calado)', () => {
+      const hits = evaluateGoldenAnomalyRules({
+        points: [
+          pt(0, 'EGRESO', 'ricardone'),
+          pt(60, 'SL_INGRESO', 'san_lorenzo'),
+          pt(110, 'SL_EGRESO', 'san_lorenzo'),
+        ],
+        circuitCode: 'R7',
+      })
+      expect(hits[0]?.reason).toBe('RIC_SL_MAS30M_SIN_CALADA_SL')
+      expect(hits.some((h) => h.reason === 'RIC_SL_TRAMO_40M_6H')).toBe(true)
+    })
+
+    it('con calado en banda solapada gana R3 (R6 no dispara)', () => {
+      const hits = evaluateGoldenAnomalyRules({
+        points: [
+          pt(0, 'EGRESO', 'ricardone'),
+          pt(60, 'SL_INGRESO', 'san_lorenzo'),
+          pt(75, 'SL_CALADA', 'san_lorenzo'),
+          pt(120, 'SL_EGRESO', 'san_lorenzo'),
+        ],
+        circuitCode: 'R7',
+      })
+      expect(hits.some((h) => h.reason === 'RIC_SL_MAS30M_SIN_CALADA_SL')).toBe(false)
+      expect(hits[0]?.reason).toBe('RIC_SL_TRAMO_40M_6H')
+    })
+  })
+
   describe('R4 Balanza ingreso → Playa 3 → Celda 16 → (Playa 3) → Balanza', () => {
     it('marca con playa de vuelta antes de balanza', () => {
       const hit = detectBalanzaPlayaCelda16Route([
@@ -227,5 +308,7 @@ describe('goldenAnomalyRules — reglas R1–R5', () => {
     expect(RIC_REINGRESO_MAX_MS).toBe(60 * 60_000)
     expect(RIC_SL_MIN_MS).toBe(40 * 60_000)
     expect(RIC_SL_MAX_MS).toBe(6 * 60 * 60_000)
+    expect(RIC_SL_NO_CALADA_MIN_MS).toBe(30 * 60_000)
+    expect(RIC_SL_NO_CALADA_MAX_MS).toBe(2 * 60 * 60_000)
   })
 })

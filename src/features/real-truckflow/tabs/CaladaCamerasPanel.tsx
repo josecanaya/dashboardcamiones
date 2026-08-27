@@ -99,11 +99,40 @@ function hourBucketLabel(bucket: string): string {
 
 const TOOLTIP_STYLE = { borderRadius: 10, border: '1px solid #e2e8f0', fontSize: 12 } as const
 
+/** Textos configurables: el panel sirve para calada (Ricardone) y volcable SL con la misma lógica. */
+export type CameraActivityLabels = {
+  /** Nombre de la entidad-columna (singular), p.ej. «cámara de calada» / «calle volcable». */
+  entitySingular: string
+  /** Plural para títulos de gráficos, p.ej. «cámaras de calada» / «calles del volcable». */
+  entityPlural: string
+  /** Encabezado de la columna en la tabla, p.ej. «Cámara de calada» / «Calle volcable». */
+  columnHeader: string
+  /** Métrica de camiones, p.ej. «Camiones en calada» / «Camiones en volcable SL». */
+  trucksMetric: string
+  /** Métrica de actividad, p.ej. «Cámaras con actividad» / «Calles con actividad». */
+  activityMetric: string
+  /** Base del nombre de archivo del export. */
+  exportName: string
+  /** Nombre de la tabla ETL (mensaje de estado vacío). */
+  tableName: string
+}
+
+const CALADA_LABELS: CameraActivityLabels = {
+  entitySingular: 'cámara de calada',
+  entityPlural: 'cámaras de calada',
+  columnHeader: 'Cámara de calada',
+  trucksMetric: 'Camiones en calada',
+  activityMetric: 'Cámaras con actividad',
+  exportName: 'calada_camaras',
+  tableName: 'calada_camera_events',
+}
+
 export function CaladaCamerasPanel({
   csv,
   checkedCircuits,
   filterActive,
   periodLabel,
+  labels = CALADA_LABELS,
 }: {
   csv: string | undefined
   /** Circuitos tildados en el checklist. */
@@ -111,6 +140,8 @@ export function CaladaCamerasPanel({
   /** True solo si el usuario acotó (no están todos tildados). Si es false, se muestra todo. */
   filterActive: boolean
   periodLabel: string
+  /** Textos del panel (default: calada). Para volcable SL se pasan los de calle volcable. */
+  labels?: CameraActivityLabels
 }) {
   const allRows = useMemo(() => parseCaladaRows(csv), [csv])
   const [selectedDay, setSelectedDay] = useState(DAY_FILTER_ALL)
@@ -331,9 +362,8 @@ export function CaladaCamerasPanel({
   if (!allRows.length) {
     return (
       <p className="rounded-xl border border-sky-200 bg-sky-50 px-4 py-4 text-sm text-sky-950">
-        No hay datos de cámaras de calada en esta corrida. La tabla <code>calada_camera_events</code> se genera al
-        procesar KPI tiempos; si es una corrida guardada vieja, reprocesá el período (Análisis local → Transform →
-        KPI) para verla.
+        No hay datos en esta corrida. La tabla <code>{labels.tableName}</code> se genera al procesar KPI tiempos; si es
+        una corrida guardada vieja, reprocesá el período (Análisis local → Transform → KPI) para verla.
       </p>
     )
   }
@@ -358,8 +388,8 @@ export function CaladaCamerasPanel({
             </select>
           </label>
           <p className="max-w-xl text-xs text-slate-500">
-            Ocupación por <strong>hora</strong>: cuántos camiones vio cada cámara de calada y cuántas cámaras
-            operaban a la vez. Filtrado por los circuitos tildados. Período: {periodLabel}.
+            Ocupación por <strong>hora</strong>: cuántos camiones pasó cada {labels.entitySingular} y cuántas operaban
+            a la vez. Filtrado por los circuitos tildados. Período: {periodLabel}.
           </p>
         </div>
         <button
@@ -367,7 +397,7 @@ export function CaladaCamerasPanel({
           disabled={!rows.length}
           onClick={() =>
             triggerBrowserCsvDownload(
-              safeExportFilename('calada_camaras', 'csv'),
+              safeExportFilename(labels.exportName, 'csv'),
               `${CALADA_CAMERA_EVENTS_HEADERS.join(',')}\n${rows
                 .map((r) => CALADA_CAMERA_EVENTS_HEADERS.map((h) => r[h] ?? '').join(','))
                 .join('\n')}\n`
@@ -380,13 +410,13 @@ export function CaladaCamerasPanel({
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        <MetricCard label="Camiones en calada" value={totals.trucks.toLocaleString()} />
+        <MetricCard label={labels.trucksMetric} value={totals.trucks.toLocaleString()} />
         <MetricCard
           label="Prom. camiones/hora"
           value={totals.avgTrucksPerHour.toLocaleString('es-AR', { maximumFractionDigits: 1 })}
           hint={periodHours ? `sobre ${periodHours} h con actividad` : undefined}
         />
-        <MetricCard label="Cámaras con actividad" value={String(totals.cams)} />
+        <MetricCard label={labels.activityMetric} value={String(totals.cams)} />
         <MetricCard
           label="Pico cámaras simultáneas"
           value={String(totals.peakCams)}
@@ -403,7 +433,7 @@ export function CaladaCamerasPanel({
         <table className="min-w-full text-sm">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-600">
-              <th className="px-4 py-3">Cámara de calada</th>
+              <th className="px-4 py-3">{labels.columnHeader}</th>
               <th className="px-4 py-3 text-right">Camiones recibidos</th>
               <th className="px-4 py-3 text-right">Prom. camiones/hora</th>
               <th className="px-4 py-3 text-right">Eventos</th>
@@ -431,11 +461,11 @@ export function CaladaCamerasPanel({
       <div className="grid gap-4 xl:grid-cols-2">
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <h4 className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">
-            Cámaras de calada activas en simultáneo, por hora
+            {labels.entityPlural} activas en simultáneo, por hora
           </h4>
           <p className="mt-1 text-xs text-slate-500">
-            Cuántas de las {totals.cams} cámaras registraron al menos un camión en esa hora: mide cuántas calles de
-            calada estuvieron en uso a la vez.
+            Cuántas de las {totals.cams} {labels.entityPlural} registraron al menos un camión en esa hora: mide cuántas
+            estuvieron en uso a la vez.
           </p>
           <div className="mt-3 h-72">
             <ResponsiveContainer width="100%" height="100%">
@@ -491,10 +521,10 @@ export function CaladaCamerasPanel({
 
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <h4 className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">
-            Camiones en calada, por hora
+            {labels.trucksMetric}, por hora
           </h4>
           <p className="mt-1 text-xs text-slate-500">
-            Camiones distintos que pasaron por alguna cámara de calada en esa hora. La{' '}
+            Camiones distintos que pasaron por alguna {labels.entitySingular} en esa hora. La{' '}
             <span className="font-semibold text-emerald-700">hora pico de cada día</span> queda sombreada en verde y
             marcada con un punto.
           </p>

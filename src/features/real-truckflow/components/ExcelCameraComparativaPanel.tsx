@@ -8,7 +8,7 @@ import {
   parseMovimientosFromNormalizedCsv,
   type ExcelCameraComparativaReport,
 } from '../etlWorkbench/excelCameraComparativaWorkbench'
-import { RAW_AUDIT_CIRCUIT_CODES } from '../etlWorkbench/auditExcelCameraMatrix'
+import { AUDIT_CIRCUIT_CODES } from '../etlWorkbench/auditExcelCameraMatrix'
 import {
   cameraCalibrationAggregatesToCsv,
   cameraCalibrationDetailToCsv,
@@ -24,7 +24,13 @@ import {
   hitoOperativoLabel,
   periodLabelFromReport,
   type CaptureEstado,
+  type RecognitionDepthBucket,
+  type TruckRecognitionRow,
 } from '../etlWorkbench/cameraCalibrationDashboardModel'
+import {
+  buildVolcableSlControlModel,
+  type VolcableCalleControl,
+} from '../etlWorkbench/volcableSlControlModel'
 import { triggerBrowserCsvDownload } from '../etlWorkbench/etlCsv'
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 
@@ -59,6 +65,9 @@ export function ExcelCameraComparativaPanel({
   const wb = useEtlWorkbenchOptional()
   const [circuit, setCircuit] = useState<string>('R7')
   const [missedDeviceFilter, setMissedDeviceFilter] = useState<string>('all')
+  const [missedMotivo, setMissedMotivo] = useState<'sin_evento' | 'todos'>('sin_evento')
+  const [expandedBucket, setExpandedBucket] = useState<number | null>(0)
+  const [expandedCalle, setExpandedCalle] = useState<string | null>(null)
   const [report, setReport] = useState<ExcelCameraComparativaReport | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -141,12 +150,32 @@ export function ExcelCameraComparativaPanel({
   }, [effectiveReport])
 
   const missedRows = useMemo(() => {
-    const all = active?.calibration.missedPlatesByCamera ?? []
+    let all = active?.calibration.missedPlatesByCamera ?? []
+    if (missedMotivo === 'sin_evento') {
+      all = all.filter((r) => r.motivo === 'sin_evento_en_ventana')
+    }
     if (missedDeviceFilter === 'all') return all
     return all.filter((r) => r.deviceCode === missedDeviceFilter)
-  }, [active, missedDeviceFilter])
+  }, [active, missedDeviceFilter, missedMotivo])
 
   const missedPreview = useMemo(() => missedRows.slice(0, 100), [missedRows])
+
+  // Movimientos parseados del Excel normalizado (para el control de volcable SL por calle).
+  const parsedMovimientos = useMemo(() => {
+    const csv = normalizedMovimientosCsv?.trim()
+    if (!csv) return []
+    return parseMovimientosFromNormalizedCsv(csv)
+  }, [normalizedMovimientosCsv])
+
+  // Control volcable SL: universo = camiones que el Excel dice que descargaron en volcable.
+  const volcableControl = useMemo(() => {
+    const r7 = effectiveReport?.circuits.find((c) => c.circuitCode === 'R7') ?? null
+    if (!r7 || !parsedMovimientos.length) return null
+    return buildVolcableSlControlModel(r7, parsedMovimientos, {
+      fromDay: effectiveReport?.fromDay,
+      toDay: effectiveReport?.toDay,
+    })
+  }, [effectiveReport, parsedMovimientos])
 
   const periodLabel = effectiveReport ? periodLabelFromReport(effectiveReport) : '—'
 
@@ -296,21 +325,31 @@ export function ExcelCameraComparativaPanel({
         </div>
       </header>
 
-      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-6">
+      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
         <Kpi label="Movimientos Excel" value={excelInPeriod} />
         <Kpi label="CTG únicos Excel" value={excelCtgs} />
         <Kpi label="Eventos TruckFlow" value={effectiveReport.rawEventCount} />
         <Kpi label="Alertas en memoria" value={alertCount} />
         <Kpi label="Camiones circuito" value={dash.excelCamiones} />
         <Kpi
-          label="% reconocimiento"
+          label={`Vistos por todas (${dash.circuitCameraCount} cám.)`}
+          value={dash.vistosPorTodas}
+          accent={captureEstadoFromPct(pctOf(dash.vistosPorTodas, dash.excelCamiones))}
+        />
+        <Kpi
+          label="Con ≥1 cámara sin registrar"
+          value={dash.conAlgunaFalla}
+          accent={dash.conAlgunaFalla > 0 ? 'Revisar' : 'OK'}
+        />
+        <Kpi
+          label="% reconocimiento (≥4 pts)"
           value={`${dash.reconocimientoPct}%`}
           accent={captureEstadoFromPct(dash.reconocimientoPct)}
         />
       </div>
 
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-        {RAW_AUDIT_CIRCUIT_CODES.map((code) => {
+        {AUDIT_CIRCUIT_CODES.map((code) => {
           const c = effectiveReport.circuits.find((x) => x.circuitCode === code)
           const n = c?.excelCamiones ?? 0
           const selected = active.circuitCode === code
@@ -364,6 +403,30 @@ export function ExcelCameraComparativaPanel({
             <li key={p}>{p}</li>
           ))}
         </ul>
+      </Card>
+
+      <Card>
+        <h5 className="text-sm font-bold text-slate-900">Reconocimiento por camión</h5>
+        <p className="mt-0.5 max-w-2xl text-xs text-slate-600">
+          Cada camión de {active.circuitCode} agrupado según a cuántas de las{' '}
+          <strong>{dash.circuitCameraCount} cámaras del circuito</strong> lo reconocieron.
+          Abrí un grupo para ver <strong>qué cámara no lo registró</strong> y controlar la falla.
+        </p>
+        <p className="mt-1 text-[11px] text-slate-400">
+          Cámaras del circuito: {dash.circuitCameraLabels.join(' · ')}
+        </p>
+        <div className="mt-3 space-y-1.5">
+          {dash.recognitionDepthBuckets.map((b) => (
+            <BucketRow
+              key={b.faltan}
+              bucket={b}
+              expanded={expandedBucket === b.faltan}
+              onToggle={() =>
+                setExpandedBucket(expandedBucket === b.faltan ? null : b.faltan)
+              }
+            />
+          ))}
+        </div>
       </Card>
 
       <Card>
@@ -543,26 +606,36 @@ export function ExcelCameraComparativaPanel({
       <Card>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
-            <h5 className="text-sm font-bold text-slate-900">Casos para DSS · patentes no leídas</h5>
+            <h5 className="text-sm font-bold text-slate-900">
+              Casos para DSS · la cámara no registró nada
+            </h5>
             <p className="mt-1 max-w-2xl text-xs text-slate-600">
               Camiones en Excel sin captura en un hito, desglosado por cámara que debería cubrir ese punto.
               Usá CTG, patente y ventana ingreso/egreso para buscar en DSS.{' '}
-              <strong>sin_evento_en_ventana</strong> = la cámara no registró nada;{' '}
-              <strong>lectura_sin_hito</strong> = hubo eventos pero no clasificaron al hito (OCR/ángulo).
+              <strong>Sin evento en ventana</strong> = la cámara no registró nada (el foco del control);{' '}
+              <strong>lectura sin hito</strong> = hubo eventos pero no clasificaron al hito (OCR/ángulo).
             </p>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              <MotivoTab
+                active={missedMotivo === 'sin_evento'}
+                onClick={() => setMissedMotivo('sin_evento')}
+                label="No registró nada"
+              />
+              <MotivoTab
+                active={missedMotivo === 'todos'}
+                onClick={() => setMissedMotivo('todos')}
+                label="Todos los faltantes"
+              />
+            </div>
           </div>
           <button
             type="button"
             className="rounded-lg border bg-white px-3 py-1.5 text-xs font-semibold text-slate-700"
             style={{ borderColor: BORDER }}
             onClick={() => {
-              const rows =
-                missedDeviceFilter === 'all' ?
-                  active.calibration.missedPlatesByCamera
-                : missedRows
               triggerBrowserCsvDownload(
-                `patentes_no_leidas_${active.circuitCode}_${missedDeviceFilter === 'all' ? 'todas' : missedDeviceFilter}.csv`,
-                missedPlatesByCameraToCsv(rows)
+                `patentes_no_leidas_${active.circuitCode}_${missedDeviceFilter === 'all' ? 'todas' : missedDeviceFilter}_${missedMotivo}.csv`,
+                missedPlatesByCameraToCsv(missedRows)
               )
             }}
           >
@@ -650,6 +723,46 @@ export function ExcelCameraComparativaPanel({
           </p>
         : null}
       </Card>
+
+      {volcableControl && volcableControl.totalExcel > 0 ?
+        <Card>
+          <h5 className="text-sm font-bold text-slate-900">Control volcable San Lorenzo</h5>
+          <p className="mt-1 max-w-2xl text-xs text-slate-600">
+            Universo: camiones que el Excel dice que descargaron en el volcable SL (filas INGRESO,
+            plataforma VOLCABLE_PTO). Por cada calle, cuántos leyó su cámara{' '}
+            <code className="rounded bg-slate-100 px-1 text-[10px]">SLZVolcableC1…5</code> y cuáles no.
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2 text-xs">
+            <span className="rounded-full bg-slate-100 px-2.5 py-1 font-semibold text-slate-700">
+              Total volcable Excel: {volcableControl.totalExcel}
+            </span>
+            <span className="rounded-full px-2.5 py-1 font-semibold" style={{ background: GREEN_LIGHT, color: GREEN }}>
+              Leídos por cámara: {volcableControl.leidosCamara}
+            </span>
+            <span className="rounded-full px-2.5 py-1 font-semibold" style={{ background: RED_LIGHT, color: RED }}>
+              No registró: {volcableControl.noLeidos}
+            </span>
+            <span className="rounded-full bg-slate-100 px-2.5 py-1 font-semibold text-slate-700">
+              {volcableControl.pctLeido}% leído
+            </span>
+          </div>
+          <div className="mt-3 space-y-1.5">
+            {volcableControl.calles.map((c) => (
+              <VolcableCalleRow
+                key={c.calle}
+                calle={c}
+                expanded={expandedCalle === c.calle}
+                onToggle={() => setExpandedCalle(expandedCalle === c.calle ? null : c.calle)}
+              />
+            ))}
+          </div>
+          {volcableControl.sinCalle > 0 ?
+            <p className="mt-2 text-[10px] text-slate-500">
+              {volcableControl.sinCalle} filas INGRESO volcable sin calle detectable en la plataforma.
+            </p>
+          : null}
+        </Card>
+      : null}
 
       {excelTotalMovimientos != null ?
         <p className="text-xs text-slate-500">
@@ -761,6 +874,223 @@ function TurnoCard({
           <dd className="font-medium text-slate-800">{data.peorCamara}</dd>
         </div>
       </dl>
+    </div>
+  )
+}
+
+function pctOf(n: number, total: number): number {
+  if (total <= 0) return 0
+  return Math.round((n / total) * 10000) / 100
+}
+
+function bucketAccent(faltan: number): { bg: string; color: string; bar: string } {
+  if (faltan === 0) return { bg: GREEN_LIGHT, color: GREEN, bar: GREEN }
+  if (faltan === 1) return { bg: '#fef3c7', color: AMBER, bar: AMBER }
+  return { bg: RED_LIGHT, color: RED, bar: RED }
+}
+
+function CamChip({ label, tone }: { label: string; tone: 'green' | 'red' }) {
+  const style =
+    tone === 'green' ? { background: GREEN_LIGHT, color: GREEN } : { background: RED_LIGHT, color: RED }
+  return (
+    <span className="rounded px-1.5 py-0.5 text-[10px] font-semibold" style={style}>
+      {label}
+    </span>
+  )
+}
+
+function TruckRecognitionTable({ trucks }: { trucks: TruckRecognitionRow[] }) {
+  const preview = trucks.slice(0, 60)
+  return (
+    <>
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-left text-xs">
+          <thead>
+            <tr className="border-b text-[10px] uppercase text-slate-500" style={{ borderColor: BORDER }}>
+              <th className="py-1.5 pr-2">Patente</th>
+              <th className="py-1.5 pr-2">CTG</th>
+              <th className="py-1.5 pr-2">Turno</th>
+              <th className="py-1.5 pr-2">No registró</th>
+              <th className="py-1.5">Reconocieron</th>
+            </tr>
+          </thead>
+          <tbody>
+            {preview.map((t) => (
+              <tr key={`${t.ctg}-${t.patente}`} className="border-b border-slate-100 align-top">
+                <td className="py-1.5 pr-2 font-mono font-semibold">{t.patente}</td>
+                <td className="py-1.5 pr-2 tabular-nums">{t.ctg}</td>
+                <td className="py-1.5 pr-2 whitespace-nowrap">{t.turnoLabel}</td>
+                <td className="py-1.5 pr-2">
+                  {t.camarasFaltan.length ?
+                    <div className="flex flex-wrap gap-1">
+                      {t.camarasFaltan.map((c) => (
+                        <CamChip key={c} label={c} tone="red" />
+                      ))}
+                    </div>
+                  : <span className="font-semibold text-emerald-700">TODAS ✓</span>}
+                </td>
+                <td className="py-1.5">
+                  <div className="flex flex-wrap gap-1">
+                    {t.camarasOk.map((c) => (
+                      <CamChip key={c} label={c} tone="green" />
+                    ))}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {trucks.length > preview.length ?
+        <p className="mt-1.5 text-[10px] text-slate-500">
+          Mostrando {preview.length} de {trucks.length} camiones del grupo.
+        </p>
+      : null}
+    </>
+  )
+}
+
+function BucketRow({
+  bucket,
+  expanded,
+  onToggle,
+}: {
+  bucket: RecognitionDepthBucket
+  expanded: boolean
+  onToggle: () => void
+}) {
+  const accent = bucketAccent(bucket.faltan)
+  const hasTrucks = bucket.camiones > 0
+  return (
+    <div className="rounded-lg border" style={{ borderColor: BORDER }}>
+      <button
+        type="button"
+        onClick={onToggle}
+        disabled={!hasTrucks}
+        className="flex w-full items-center gap-3 px-3 py-2 text-left disabled:cursor-default"
+      >
+        <span className="w-4 shrink-0 text-xs text-slate-400">
+          {hasTrucks ? (expanded ? '▾' : '▸') : ''}
+        </span>
+        <span
+          className="inline-block w-24 shrink-0 rounded-full px-2 py-0.5 text-center text-xs font-bold"
+          style={{ background: accent.bg, color: accent.color }}
+        >
+          {bucket.label}
+        </span>
+        <div className="relative h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+          <div
+            className="absolute inset-y-0 left-0 rounded-full"
+            style={{ width: `${bucket.pct}%`, background: accent.bar }}
+          />
+        </div>
+        <span className="w-28 shrink-0 text-right text-xs font-semibold tabular-nums text-slate-800">
+          {bucket.camiones} · {bucket.pct}%
+        </span>
+      </button>
+      {expanded && hasTrucks ?
+        <div className="border-t px-3 py-2" style={{ borderColor: BORDER }}>
+          <TruckRecognitionTable trucks={bucket.trucks} />
+        </div>
+      : null}
+    </div>
+  )
+}
+
+function MotivoTab({
+  active,
+  onClick,
+  label,
+}: {
+  active: boolean
+  onClick: () => void
+  label: string
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="rounded-full px-2.5 py-1 text-[11px] font-semibold"
+      style={{
+        background: active ? BLUE : '#fff',
+        color: active ? '#fff' : '#334155',
+        border: `1px solid ${BORDER}`,
+      }}
+    >
+      {label}
+    </button>
+  )
+}
+
+function VolcableCalleRow({
+  calle,
+  expanded,
+  onToggle,
+}: {
+  calle: VolcableCalleControl
+  expanded: boolean
+  onToggle: () => void
+}) {
+  const hasNoLeidos = calle.noLeidos > 0
+  const bar = calle.noLeidos === 0 ? GREEN : calle.pctLeido >= 70 ? AMBER : RED
+  return (
+    <div className="rounded-lg border" style={{ borderColor: BORDER }}>
+      <button
+        type="button"
+        onClick={onToggle}
+        disabled={!hasNoLeidos}
+        className="flex w-full items-center gap-3 px-3 py-2 text-left disabled:cursor-default"
+      >
+        <span className="w-4 shrink-0 text-xs text-slate-400">
+          {hasNoLeidos ? (expanded ? '▾' : '▸') : ''}
+        </span>
+        <span className="w-28 shrink-0 text-xs font-bold text-slate-800" title={calle.device}>
+          {calle.calle}
+        </span>
+        <div className="relative h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+          <div
+            className="absolute inset-y-0 left-0 rounded-full"
+            style={{ width: `${calle.pctLeido}%`, background: bar }}
+          />
+        </div>
+        <span className="w-44 shrink-0 text-right text-xs font-semibold tabular-nums text-slate-800">
+          {calle.leidosCamara}/{calle.totalExcel} leídos · {calle.pctLeido}%
+        </span>
+      </button>
+      {expanded && hasNoLeidos ?
+        <div className="border-t px-3 py-2" style={{ borderColor: BORDER }}>
+          <p className="mb-1.5 text-[11px] font-semibold text-red-700">
+            {calle.noLeidos} camiones sin lectura de la cámara {calle.device}:
+          </p>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-left text-xs">
+              <thead>
+                <tr className="border-b text-[10px] uppercase text-slate-500" style={{ borderColor: BORDER }}>
+                  <th className="py-1.5 pr-2">Patente</th>
+                  <th className="py-1.5 pr-2">CTG</th>
+                  <th className="py-1.5 pr-2">Ingreso Excel</th>
+                  <th className="py-1.5">Salida Excel</th>
+                </tr>
+              </thead>
+              <tbody>
+                {calle.noLeidosSample.map((r) => (
+                  <tr key={`${r.ctg}-${r.patente}`} className="border-b border-slate-100">
+                    <td className="py-1.5 pr-2 font-mono font-semibold">{r.patente}</td>
+                    <td className="py-1.5 pr-2 tabular-nums">{r.ctg}</td>
+                    <td className="py-1.5 pr-2 whitespace-nowrap text-[10px]">{r.ingreso || '—'}</td>
+                    <td className="py-1.5 whitespace-nowrap text-[10px]">{r.salida || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {calle.noLeidos > calle.noLeidosSample.length ?
+            <p className="mt-1.5 text-[10px] text-slate-500">
+              Mostrando {calle.noLeidosSample.length} de {calle.noLeidos}.
+            </p>
+          : null}
+        </div>
+      : null}
     </div>
   )
 }

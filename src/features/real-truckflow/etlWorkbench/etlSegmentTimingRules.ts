@@ -211,10 +211,17 @@ export const SL_KPI_SEGMENT_MAX_MINUTES = 72 * 60
 /** Estadía máxima balanza entrada → egreso SL (comité scatter/CSV): 3 h operativas. */
 export const SL_BALANZA_STAY_MAX_MINUTES = 180
 
-/** Pata SL en KPI: ingreso puerto → balanza entrada → egreso. */
+/**
+ * Pata SL en KPI: ingreso puerto → balanza entrada → **volcable (descarga)** → egreso.
+ * La soja (R7) descarga en los volcables del puerto igual que el pellet: la cámara
+ * `SLZVolcableC{N}` (SL_VOLCABLE) parte el tramo balanza→egreso en balanza→volcable y
+ * volcable→egreso. El camión que NO pasó esa cámara no parte el tramo (el rollup
+ * balanza→egreso lo sigue cubriendo para comité).
+ */
 export const SL_OPERATIONAL_KPI_CHAIN = [
   'SL_INGRESO',
   'SL_BALANZA_INGRESO',
+  'SL_VOLCABLE',
   'SL_EGRESO',
 ] as const
 

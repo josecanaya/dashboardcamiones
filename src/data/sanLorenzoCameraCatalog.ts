@@ -24,6 +24,9 @@ export type SanLorenzoCameraDef = {
 const DEVICE_ALIASES: Record<string, string> = {
   slzbalingfte: 'SLZBalIngFte',
   slzbalingtras: 'SLZBalIngTras',
+  // La calada de puerto llega en datos reales como `SLZCalado` (el catálogo la
+  // tenía solo como `SLZCalCam`). Mismo punto S2 → `SL_CALADA`.
+  slzcalado: 'SLZCalCam',
 }
 
 function normDeviceKey(deviceCode: string): string {
@@ -94,6 +97,47 @@ export const SAN_LORENZO_CAMERAS: readonly SanLorenzoCameraDef[] = [
     logicalSector: 'S4',
     logicalCode: 'SL_DESCARGA',
     label: 'Descarga San Lorenzo',
+    installed: true,
+  },
+  // —— S4 Volcable (una cámara por calle: SLZVolcableC1…C5) ——
+  {
+    deviceCode: 'SLZVolcableC1',
+    sectorCode: 'PUERTO_SAN_LORENZO_VOLCABLE',
+    logicalSector: 'S4',
+    logicalCode: 'SL_VOLCABLE',
+    label: 'Descarga volcable SL — calle 1',
+    installed: true,
+  },
+  {
+    deviceCode: 'SLZVolcableC2',
+    sectorCode: 'PUERTO_SAN_LORENZO_VOLCABLE',
+    logicalSector: 'S4',
+    logicalCode: 'SL_VOLCABLE',
+    label: 'Descarga volcable SL — calle 2',
+    installed: true,
+  },
+  {
+    deviceCode: 'SLZVolcableC3',
+    sectorCode: 'PUERTO_SAN_LORENZO_VOLCABLE',
+    logicalSector: 'S4',
+    logicalCode: 'SL_VOLCABLE',
+    label: 'Descarga volcable SL — calle 3',
+    installed: true,
+  },
+  {
+    deviceCode: 'SLZVolcableC4',
+    sectorCode: 'PUERTO_SAN_LORENZO_VOLCABLE',
+    logicalSector: 'S4',
+    logicalCode: 'SL_VOLCABLE',
+    label: 'Descarga volcable SL — calle 4',
+    installed: true,
+  },
+  {
+    deviceCode: 'SLZVolcableC5',
+    sectorCode: 'PUERTO_SAN_LORENZO_VOLCABLE',
+    logicalSector: 'S4',
+    logicalCode: 'SL_VOLCABLE',
+    label: 'Descarga volcable SL — calle 5',
     installed: true,
   },
   // —— S5 Balanza salida (2 celdas / básculas) ——

@@ -17,6 +17,10 @@ import {
   stableExternalHash,
 } from './etlExternalNormalization'
 import { buildStableExcelOperationId } from './excelStableOperationId'
+import {
+  isSanLorenzoPelletVolcableIngresoLeg,
+  SL_VOLCABLE_PELLET_INGRESO_ID_SUFFIX,
+} from './etlSanLorenzoVolcableActivity'
 
 export { normalizePlate }
 
@@ -186,7 +190,7 @@ export function normalizeMovimientoContrato(
   const comprob = cellStr(row.comprob)
   const cp_remito = cellStr(row.cp_remito)
 
-  const external_operation_id = buildExternalOperationId({
+  let external_operation_id = buildExternalOperationId({
     ctg,
     comprob,
     cp_remito,
@@ -197,6 +201,24 @@ export function normalizeMovimientoContrato(
     platform_normalized: platform.platform_normalized,
     ingreso_id: cellStr(row.ingreso),
   })
+
+  // Pata INGRESO en volcable del pellet de la vuelta: comparte CTG con su pata EGRESO (carga en
+  // Ricardone) y el dedup por operación la colapsaría, perdiendo el único dato del volcable del
+  // puerto donde descargó. Se le da un id propio para que sobreviva; luego la integración la saca
+  // del pipeline (queda fuera de comité/circuitos) y la usa sólo en el panel de calles volcable.
+  if (
+    isSanLorenzoPelletVolcableIngresoLeg({
+      movement_type: movPack.movement_type,
+      platform_normalized: platform.platform_normalized ?? '',
+      plataforma_original: platform.plataforma_original,
+      es_de_vuelta: deVuelta.es_de_vuelta,
+      es_de_vuelta_original: deVuelta.es_de_vuelta_original,
+      product_normalized: product.product_normalized ?? '',
+      producto_original: product.producto_original,
+    })
+  ) {
+    external_operation_id = `${external_operation_id}${SL_VOLCABLE_PELLET_INGRESO_ID_SUFFIX}`
+  }
 
   return {
     external_operation_id,

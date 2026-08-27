@@ -40,6 +40,7 @@ export const ETL_RUN_CORE_TABLES = [
   'sector_occupancy_30min',
   'sector_occupancy_events',
   'calada_camera_events',
+  'san_lorenzo_volcable_events',
   'liquid_movements_summary',
   'liquid_movements_riccalliq_cohort',
   'liquid_movements_sl1_sl5_s10',

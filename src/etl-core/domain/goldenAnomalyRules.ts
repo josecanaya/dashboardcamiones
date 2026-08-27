@@ -2,19 +2,25 @@
  * Reglas de anomalías de comportamiento (independientes de cobertura LPR).
  *
  * REEMPLAZO TOTAL (2026-08-05, pedido del usuario): una anomalía de
- * comportamiento se define EXCLUSIVAMENTE por estas 5 reglas. Ya no cuentan
+ * comportamiento se define EXCLUSIVAMENTE por estas reglas. Ya no cuentan
  * ruta/arranque inválido, retroceso de secuencia, ni las viejas reglas de oro
  * (calada→preingreso, salto de hito, sin movimiento Excel). Ver
- * [[anomalias-comportamiento-vs-datos]].
+ * [[anomalias-comportamiento-vs-datos]]. R6 agregada 2026-08-27.
  *
  *  R1  Salida de Ricardone y reingreso a Ricardone en < 1 h.            (no pellet)
  *  R2  Mismo día: San Lorenzo primero y luego Ricardone en ≤ 6 h.       (no pellet)
  *  R3  Egreso Ricardone → ingreso San Lorenzo entre 40 min y 6 h.
  *  R4  Balanza ingreso → Playa 3 → Celda 16 → (Playa 3) → Balanza.
  *  R5  Pasa por punto de carga y luego por una plataforma de descarga.
+ *  R6  Egreso Ricardone → ingreso San Lorenzo en > 30 min (≤ 2 h) y luego
+ *      NO pasa por Calado San Lorenzo (`SL_CALADA`) en esa visita.       (pedido 2026-08-27)
  *
- * R1/R2/R3 cruzan journeys de la misma patente (usan `platePoints`).
+ * R1/R2/R3/R6 cruzan journeys de la misma patente (usan `platePoints`).
  * R4/R5 son de secuencia dentro del journey (usan `points`).
+ *
+ * R6 es más específica que R3 (agrega la condición «sin calado») y, cuando
+ * ambas aplican, tiene prioridad: se evalúa antes que R3 para que ese sea el
+ * motivo reportado.
  */
 
 import type { AnomalyReason } from './anomalyClassifier'
@@ -25,6 +31,7 @@ export const GOLDEN_ANOMALY_REASONS = [
   'RIC_SL_TRAMO_40M_6H',
   'RUTA_BALANZA_PLAYA_C16_BALANZA',
   'CARGA_LUEGO_DESCARGA',
+  'RIC_SL_MAS30M_SIN_CALADA_SL',
 ] as const
 
 export type GoldenAnomalyReason = (typeof GOLDEN_ANOMALY_REASONS)[number]
@@ -60,10 +67,21 @@ export const SL_RIC_SAME_DAY_MAX_MS = 6 * 60 * 60 * 1000
 /** R3: egreso Ric → ingreso SL, banda [40 min, 6 h]. */
 export const RIC_SL_MIN_MS = 40 * 60 * 1000
 export const RIC_SL_MAX_MS = 6 * 60 * 60 * 1000
+/**
+ * R6: egreso Ric → ingreso SL en banda (30 min, 2 h] y sin pasar por calado SL.
+ * Cota inferior estricta (> 30 min). Cota superior 2 h: más allá son dos viajes
+ * distintos y no se puede afirmar que el tramo pertenezca al mismo recorrido.
+ */
+export const RIC_SL_NO_CALADA_MIN_MS = 30 * 60 * 1000
+export const RIC_SL_NO_CALADA_MAX_MS = 2 * 60 * 60 * 1000
 
 const RIC_ENTRY_LOGICAL = new Set(['INGRESO', 'PREINGRESO'])
 const RIC_EXIT_LOGICAL = new Set(['EGRESO'])
 const SL_ENTRY_LOGICAL = new Set(['SL_INGRESO'])
+/** R6: Calado San Lorenzo (S2; devices SLZCalCam / SLZCalado → SL_CALADA vía catálogo). */
+const SL_CALADA_LOGICAL = new Set(['SL_CALADA'])
+/** R6: cierre de la visita a San Lorenzo (egreso o balanza de salida del puerto). */
+const SL_EXIT_LOGICAL = new Set(['SL_EGRESO', 'SL_BALANZA_SALIDA'])
 /** R5: puntos de carga (silo → camión). */
 const LOAD_LOGICAL = new Set(['CELDA16_CARGA', 'CARGA_S7', 'CARGA_S8'])
 /** R5: plataformas de descarga (camión → silo/plataforma). Incluye San Lorenzo. */
@@ -230,6 +248,63 @@ export function detectRicToSlBridgeWindow(
   return null
 }
 
+/**
+ * ¿La visita a San Lorenzo que arranca en `ingresoIdx` (un `SL_INGRESO`) registra
+ * un paso por calado (`SL_CALADA`)? La visita se cierra en el próximo egreso de
+ * San Lorenzo (`SL_EGRESO` / `SL_BALANZA_SALIDA`) o si el camión vuelve a
+ * Ricardone (nuevo ingreso/preingreso). Un `SL_CALADA` antes de ese cierre = pasó.
+ */
+function slVisitHasCalada(list: readonly GoldenTimelinePoint[], ingresoIdx: number): boolean {
+  for (let k = ingresoIdx + 1; k < list.length; k++) {
+    const p = list[k]!
+    const inSl = !p.siteId || p.siteId === 'san_lorenzo'
+    if (inSl && SL_CALADA_LOGICAL.has(p.logicalCode)) return true
+    if (inSl && SL_EXIT_LOGICAL.has(p.logicalCode)) return false
+    if (p.siteId === 'ricardone' && RIC_ENTRY_LOGICAL.has(p.logicalCode)) return false
+  }
+  return false
+}
+
+/**
+ * R6: egreso Ricardone (EGRESO) → ingreso San Lorenzo (SL_INGRESO) con Δt en
+ * (30 min, 2 h] y SIN paso por calado San Lorenzo en esa visita. Es el caso del
+ * camión que cruza a puerto tomándose su tiempo y descarga sin muestreo de calado.
+ */
+export function detectRicToSlWithoutSlCalada(
+  platePoints: readonly GoldenTimelinePoint[],
+  opts?: { minMs?: number; maxMs?: number }
+): GoldenAnomalyHit | null {
+  const minMs = opts?.minMs ?? RIC_SL_NO_CALADA_MIN_MS
+  const maxMs = opts?.maxMs ?? RIC_SL_NO_CALADA_MAX_MS
+  const list = sortedPoints(platePoints)
+  for (let i = 0; i < list.length; i++) {
+    const eg = list[i]!
+    if (!RIC_EXIT_LOGICAL.has(eg.logicalCode)) continue
+    if (eg.siteId && eg.siteId !== 'ricardone') continue
+    for (let j = i + 1; j < list.length; j++) {
+      const sl = list[j]!
+      if (!SL_ENTRY_LOGICAL.has(sl.logicalCode)) continue
+      if (sl.siteId && sl.siteId !== 'san_lorenzo') continue
+      const delta = sl.t - eg.t
+      if (delta <= 0) continue
+      if (delta > maxMs) break
+      if (delta <= minMs) continue
+      // Primer ingreso a SL dentro de la banda: si pasó por calado, ese viaje es
+      // legítimo; cortamos y seguimos con el próximo egreso Ricardone.
+      if (slVisitHasCalada(list, j)) break
+      return {
+        reason: 'RIC_SL_MAS30M_SIN_CALADA_SL',
+        kind: 'BEHAVIORAL',
+        detail: `Egreso Ricardone → ingreso San Lorenzo en ${roundMin(delta)} min (>30 min) sin pasar por Calado San Lorenzo`,
+        deltaMinutes: roundMin(delta),
+        fromLogical: 'EGRESO',
+        toLogical: 'SL_INGRESO',
+      }
+    }
+  }
+  return null
+}
+
 /** R4: recorrido Balanza ingreso → Playa 3 → Celda 16 → (Playa 3) → Balanza. */
 export function detectBalanzaPlayaCelda16Route(
   points: readonly GoldenTimelinePoint[]
@@ -296,9 +371,10 @@ export function isPelletCircuitCode(circuitCode: string | null | undefined): boo
 }
 
 /**
- * Evalúa R1–R5 en orden. Prioridad: R1 → R2 → R3 → R4 → R5 (la primera hit gana
- * para `anomaly_kind_reason`). R1/R2/R3 sobre la timeline de la patente; R4/R5
- * sobre la del journey. Devuelve todas las hits; el cableado usa la primera.
+ * Evalúa R1–R6 en orden. Prioridad: R1 → R2 → R6 → R3 → R4 → R5 (la primera hit
+ * gana para `anomaly_kind_reason`). R1/R2/R3/R6 sobre la timeline de la patente;
+ * R4/R5 sobre la del journey. R6 va antes que R3 porque es más específica (agrega
+ * «sin calado»). Devuelve todas las hits; el cableado usa la primera.
  */
 export function evaluateGoldenAnomalyRules(input: EvaluateGoldenAnomalyInput): GoldenAnomalyHit[] {
   const platePts = input.platePoints?.length ? input.platePoints : input.points
@@ -311,6 +387,9 @@ export function evaluateGoldenAnomalyRules(input: EvaluateGoldenAnomalyInput): G
 
   const r2 = detectSlThenRicSameDay(platePts, { isPelletTransile: isPellet, isDeVuelta })
   if (r2) hits.push({ ...r2, circuitCode: input.circuitCode })
+
+  const r6 = detectRicToSlWithoutSlCalada(platePts)
+  if (r6) hits.push({ ...r6, circuitCode: input.circuitCode })
 
   const r3 = detectRicToSlBridgeWindow(platePts)
   if (r3) hits.push({ ...r3, circuitCode: input.circuitCode })
