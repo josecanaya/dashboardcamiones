@@ -103,11 +103,14 @@ function buildCameraEventsForDevices(
 }
 
 /**
- * Emite una fila por cada evento de calada observado. La cámara es el `deviceCode` crudo;
- * el circuito es el ejecutivo del journey (para el filtro por circuito de la UI).
+ * Calada Ricardone estándar (RicCal01–06, EXCLUYE RicCalLiq que tiene su propia tabla/pestaña).
+ * La cámara es el `deviceCode` crudo; el circuito es el ejecutivo del journey.
  */
 export function buildCaladaCameraEvents(input: BuildCaladaCameraEventsInput): CaladaCameraEventRow[] {
-  return buildCameraEventsForDevices(input, CALADA_CAMERA_DEVICES)
+  const caladaDevicesExcludingLiquid = new Set(
+    [...CALADA_CAMERA_DEVICES].filter((d) => d !== 'RicCalLiq')
+  )
+  return buildCameraEventsForDevices(input, caladaDevicesExcludingLiquid)
 }
 
 /** Calada SL: solo SLZCalado. */
