@@ -1,0 +1,68 @@
+import { useState } from 'react'
+import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
+import { CaladaCamerasPanel } from './CaladaCamerasPanel'
+
+export function CaladaTab() {
+  const wb = useEtlWorkbenchOptional()
+  const tr = wb?.transformResult
+
+  const [tab, setTab] = useState<'ricardone' | 'san-lorenzo'>('ricardone')
+
+  const periodLabel = wb?.loadSummary?.daysDetected
+    ? wb.loadSummary.daysDetected.length === 1
+      ? wb.loadSummary.daysDetected[0]
+      : `${wb.loadSummary.daysDetected[0]} → ${wb.loadSummary.daysDetected[wb.loadSummary.daysDetected.length - 1]}`
+    : '—'
+
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-2 border-b border-slate-200">
+        <button
+          onClick={() => setTab('ricardone')}
+          className={`px-4 py-2 font-semibold transition ${
+            tab === 'ricardone'
+              ? 'border-b-2 border-violet-600 text-violet-900'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          Ricardone
+        </button>
+        <button
+          onClick={() => setTab('san-lorenzo')}
+          className={`px-4 py-2 font-semibold transition ${
+            tab === 'san-lorenzo'
+              ? 'border-b-2 border-violet-600 text-violet-900'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          San Lorenzo
+        </button>
+      </div>
+
+      {tab === 'ricardone' && (
+        <CaladaCamerasPanel
+          csv={tr?.csv.calada_camera_events}
+          checkedCircuits={new Set()}
+          filterActive={false}
+          periodLabel={periodLabel}
+          labels={{
+            entitySingular: 'cámara de calada',
+            entityPlural: 'cámaras de calada',
+            columnHeader: 'Cámara de calada',
+            trucksMetric: 'Camiones en calada',
+            activityMetric: 'Cámaras con actividad',
+            exportName: 'ricardone_calada',
+            tableName: 'calada_camera_events',
+            hourlyTrucksExcludeCameras: ['RicCalLiq'],
+          }}
+        />
+      )}
+
+      {tab === 'san-lorenzo' && (
+        <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+          Calada San Lorenzo: tabla en construcción (camaras_sl_calada por implementar)
+        </p>
+      )}
+    </div>
+  )
+}
