@@ -89,9 +89,7 @@ export function KpiTiemposTab() {
   const [checkedCircuits, setCheckedCircuits] = useState<Set<string> | null>(null)
   const [circuitFilter, setCircuitFilter] = useState('')
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
-  const [chartView, setChartView] = useState<
-    'tiempos' | 'ocupacion' | 'sectores_ric' | 'calada' | 'volcable_sl'
-  >('tiempos')
+  const [chartView, setChartView] = useState<'tiempos' | 'ocupacion' | 'calada' | 'volcable_sl'>('tiempos')
 
   // Filtro general (día / banda horaria) compartido por TODOS los gráficos de KPI tiempos.
   const [selectedDay, setSelectedDay] = useState(SCATTER_DAY_FILTER_ALL)
@@ -514,15 +512,6 @@ export function KpiTiemposTab() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setChartView('sectores_ric')}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
-                    chartView === 'sectores_ric' ? 'bg-white text-violet-900 shadow-sm' : 'text-slate-600'
-                  }`}
-                >
-                  Sectores Ric (general)
-                </button>
-                <button
-                  type="button"
                   onClick={() => setChartView('calada')}
                   className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
                     chartView === 'calada' ? 'bg-white text-violet-900 shadow-sm' : 'text-slate-600'
@@ -546,7 +535,7 @@ export function KpiTiemposTab() {
               checked={effectiveChecked}
               onChange={setCheckedCircuits}
             />
-            {chartView === 'sectores_ric' || chartView === 'calada' || chartView === 'volcable_sl' ?
+            {chartView === 'calada' || chartView === 'volcable_sl' ?
               null
             : <>
             <label className="flex flex-col gap-1 text-sm">
@@ -668,14 +657,6 @@ export function KpiTiemposTab() {
                 tableName: 'san_lorenzo_volcable_events',
                 splitExcelVsCamera: true,
               }}
-            />
-          : chartView === 'sectores_ric' ?
-            <RicardoneSectorScatterPanel
-              scatterByDayAll={scatterByDayAll}
-              segmentTiming={segmentTimingRaw ?? null}
-              checkedCircuits={effectiveChecked}
-              filterActive={effectiveChecked.size < checklistOptions.length}
-              periodLabel={periodLabel}
             />
           : (
           <>
