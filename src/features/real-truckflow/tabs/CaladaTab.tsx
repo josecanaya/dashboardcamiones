@@ -6,7 +6,7 @@ export function CaladaTab() {
   const wb = useEtlWorkbenchOptional()
   const tr = wb?.transformResult
 
-  const [tab, setTab] = useState<'ricardone' | 'san-lorenzo'>('ricardone')
+  const [tab, setTab] = useState<'ricardone' | 'ricardone-liquid' | 'san-lorenzo'>('ricardone')
 
   const periodLabel = wb?.loadSummary?.daysDetected
     ? wb.loadSummary.daysDetected.length === 1
@@ -26,6 +26,16 @@ export function CaladaTab() {
           }`}
         >
           Ricardone
+        </button>
+        <button
+          onClick={() => setTab('ricardone-liquid')}
+          className={`px-4 py-2 font-semibold transition ${
+            tab === 'ricardone-liquid'
+              ? 'border-b-2 border-violet-600 text-violet-900'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          Líquidos Ric
         </button>
         <button
           onClick={() => setTab('san-lorenzo')}
@@ -54,6 +64,25 @@ export function CaladaTab() {
             exportName: 'ricardone_calada',
             tableName: 'calada_camera_events',
             hourlyTrucksExcludeCameras: ['RicCalLiq'],
+          }}
+        />
+      )}
+
+      {tab === 'ricardone-liquid' && (
+        <CaladaCamerasPanel
+          csv={tr?.csv.calada_ricardone_liquid_events}
+          checkedCircuits={new Set()}
+          filterActive={false}
+          periodLabel={periodLabel}
+          labels={{
+            entitySingular: 'cámara de calada líquida',
+            entityPlural: 'cámaras de calada líquida',
+            columnHeader: 'Cámara',
+            trucksMetric: 'Camiones en calada líquida',
+            activityMetric: 'Cámaras con actividad',
+            exportName: 'ricardone_calada_liquid',
+            tableName: 'calada_ricardone_liquid_events',
+            hourlyTrucksExcludeCameras: [],
           }}
         />
       )}
