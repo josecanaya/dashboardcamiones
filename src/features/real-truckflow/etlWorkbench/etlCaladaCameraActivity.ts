@@ -58,10 +58,13 @@ export type BuildCaladaCameraEventsInput = {
 }
 
 /**
- * Emite una fila por cada evento de calada observado. La cámara es el `deviceCode` crudo;
- * el circuito es el ejecutivo del journey (para el filtro por circuito de la UI).
+ * Constructor genérico de eventos de cámara para cualquier set de dispositivos
+ * (calada Ricardone, calada SL, etc.). Una fila por evento observado.
  */
-export function buildCaladaCameraEvents(input: BuildCaladaCameraEventsInput): CaladaCameraEventRow[] {
+function buildCameraEventsForDevices(
+  input: BuildCaladaCameraEventsInput,
+  deviceSet: Set<string>
+): CaladaCameraEventRow[] {
   const productByUid = input.productByJourneyUid ?? null
   const rows: CaladaCameraEventRow[] = []
 
@@ -73,21 +76,10 @@ export function buildCaladaCameraEvents(input: BuildCaladaCameraEventsInput): Ca
     const producto = (journeyUid && productByUid?.get(journeyUid)) || ''
 
     for (const e of journey.events) {
-      // La cámara individual solo se puede saber por el device crudo, y el set del
-      // catálogo es la fuente de verdad (incluye RicCalLiq, que normaliza a LIQUIDO).
       const camara = String(e.deviceCode ?? '').trim()
-      if (!CALADA_CAMERA_DEVICES.has(camara)) continue
-      // Instante operativo Truckflow = `createdAt` (regla de producto en realEventOperationalTime).
-      // NO `occurredAt`: ese campo del evento crudo viene corrido ~3 h respecto de la hora real de
-      // captura del DSS (bug de parseo de zona en origen), así que agruparía la calada en la hora
-      // equivocada. `createdAt` es el sello del microservicio en hora Argentina y coincide con el
-      // "Capture Time" del DSS. Fallback a modifiedAt→recordedAt→occurredAt si falta.
+      if (!deviceSet.has(camara)) continue
       const iso = getEventOperationalInstantIso(e)
       if (!iso) continue
-      // Hora de pared Argentina (−03:00), independiente de la zona del runtime: la calada
-      // se agrupa por la hora en que el camión pasó la cámara, no por la hora UTC ni por la
-      // del proceso. `getHours()` sobre el epoch daría la hora del host (mal si no es UTC−3);
-      // `argentinaLocalParts` deriva las partes desde el offset del ISO (o lo asume −03:00).
       const parts = argentinaLocalParts(iso)
       if (!parts) continue
       const hour = Number(parts.hora_inicio.slice(0, 2))
@@ -108,6 +100,24 @@ export function buildCaladaCameraEvents(input: BuildCaladaCameraEventsInput): Ca
 
   rows.sort((a, b) => a.timestamp.localeCompare(b.timestamp) || a.camara.localeCompare(b.camara))
   return rows
+}
+
+/**
+ * Emite una fila por cada evento de calada observado. La cámara es el `deviceCode` crudo;
+ * el circuito es el ejecutivo del journey (para el filtro por circuito de la UI).
+ */
+export function buildCaladaCameraEvents(input: BuildCaladaCameraEventsInput): CaladaCameraEventRow[] {
+  return buildCameraEventsForDevices(input, CALADA_CAMERA_DEVICES)
+}
+
+/** Calada SL: solo SLZCalado. */
+export function buildSanLorenzoCaladaCameraEvents(input: BuildCaladaCameraEventsInput): CaladaCameraEventRow[] {
+  return buildCameraEventsForDevices(input, new Set(['SLZCalado']))
+}
+
+/** Calada líquida Ricardone: solo RicCalLiq. */
+export function buildRicardoneCaladaLiquidCameraEvents(input: BuildCaladaCameraEventsInput): CaladaCameraEventRow[] {
+  return buildCameraEventsForDevices(input, new Set(['RicCalLiq']))
 }
 
 export const CALADA_CAMERA_EVENTS_HEADERS = [

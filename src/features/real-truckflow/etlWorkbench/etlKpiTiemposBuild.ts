@@ -1,5 +1,10 @@
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
-import { buildCaladaCameraEvents, caladaCameraEventsCsv } from './etlCaladaCameraActivity'
+import {
+  buildCaladaCameraEvents,
+  buildSanLorenzoCaladaCameraEvents,
+  buildRicardoneCaladaLiquidCameraEvents,
+  caladaCameraEventsCsv,
+} from './etlCaladaCameraActivity'
 import {
   buildSanLorenzoVolcableEvents,
   sanLorenzoVolcableEventsCsv,
@@ -82,6 +87,8 @@ export type KpiTiemposBuildOutput = {
     sector_occupancy_30min: string
     sector_occupancy_events: string
     calada_camera_events: string
+    calada_sl_camera_events: string
+    calada_ricardone_liquid_events: string
     san_lorenzo_volcable_events: string
   }
   logs: string[]
@@ -233,6 +240,28 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
       : ` (mapa uid→producto: ${productByJourneyUid.size})`)
   )
 
+  // Calada San Lorenzo (SLZCalado): misma lógica que Ricardone, solo cámara diferente.
+  const caladaSlEvents = buildSanLorenzoCaladaCameraEvents({
+    classifiedJourneys: input.classifiedJourneys,
+    productByJourneyUid,
+  })
+  const caladaSlConProducto = caladaSlEvents.filter((r) => r.producto).length
+  logs.push(
+    `calada_sl_camera_events: ${caladaSlEvents.length} eventos · ` +
+      `producto asignado a ${caladaSlConProducto}/${caladaSlEvents.length}`
+  )
+
+  // Calada líquida Ricardone (RicCalLiq): misma lógica que Ricardone calada, solo cámara diferente.
+  const caladaLiquidEvents = buildRicardoneCaladaLiquidCameraEvents({
+    classifiedJourneys: input.classifiedJourneys,
+    productByJourneyUid,
+  })
+  const caladaLiquidConProducto = caladaLiquidEvents.filter((r) => r.producto).length
+  logs.push(
+    `calada_ricardone_liquid_events: ${caladaLiquidEvents.length} eventos · ` +
+      `producto asignado a ${caladaLiquidConProducto}/${caladaLiquidEvents.length}`
+  )
+
   return {
     segmentTiming,
     circuitTiming,
@@ -248,6 +277,8 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
       sector_occupancy_30min: sectorOccupancy30MinCsv(occupancy.series),
       sector_occupancy_events: sectorOccupancyEventsCsv(occupancy.events),
       calada_camera_events: caladaCameraEventsCsv(caladaCameraEvents),
+      calada_sl_camera_events: caladaCameraEventsCsv(caladaSlEvents),
+      calada_ricardone_liquid_events: caladaCameraEventsCsv(caladaLiquidEvents),
       san_lorenzo_volcable_events: sanLorenzoVolcableEventsCsv(sanLorenzoVolcableEvents),
     },
     logs,
