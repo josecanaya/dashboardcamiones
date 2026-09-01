@@ -59,9 +59,22 @@ export function CaladaTab() {
       )}
 
       {tab === 'san-lorenzo' && (
-        <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-          Calada San Lorenzo: tabla en construcción (camaras_sl_calada por implementar)
-        </p>
+        <CaladaCamerasPanel
+          csv={tr?.csv.calada_sl_camera_events}
+          checkedCircuits={new Set()}
+          filterActive={false}
+          periodLabel={periodLabel}
+          labels={{
+            entitySingular: 'cámara de calada',
+            entityPlural: 'cámaras de calada',
+            columnHeader: 'Cámara de calada',
+            trucksMetric: 'Camiones en calada',
+            activityMetric: 'Cámaras con actividad',
+            exportName: 'san_lorenzo_calada',
+            tableName: 'calada_sl_camera_events',
+            hourlyTrucksExcludeCameras: [],
+          }}
+        />
       )}
     </div>
   )
