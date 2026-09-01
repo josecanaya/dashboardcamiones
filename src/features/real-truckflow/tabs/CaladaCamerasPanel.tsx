@@ -181,6 +181,7 @@ export function CaladaCamerasPanel({
 }) {
   const allRows = useMemo(() => parseCaladaRows(csv), [csv])
   const [localDay, setLocalDay] = useState(SCATTER_DAY_FILTER_ALL)
+  const [selectedCamaraForModal, setSelectedCamaraForModal] = useState<string | null>(null)
   const selectedDay = selectedDayProp ?? localDay
   const setSelectedDay = onSelectDayProp ?? setLocalDay
 
@@ -476,6 +477,24 @@ export function CaladaCamerasPanel({
     return { columns, camRows, sinProductoTotal: globalTotals.get(SIN_PRODUCTO) ?? 0 }
   }, [baseRows])
 
+  /** Patentes únicas para la cámara seleccionada en el modal. */
+  const selectedCamaraPatentes = useMemo(() => {
+    if (!selectedCamaraForModal) return []
+    const patentes = new Map<string, { count: number; lastTime: string }>()
+    for (const r of baseRows.filter((x) => x.camara === selectedCamaraForModal)) {
+      const p = String(r.patente ?? '').trim()
+      if (!p) continue
+      const existing = patentes.get(p) ?? { count: 0, lastTime: '' }
+      patentes.set(p, {
+        count: existing.count + 1,
+        lastTime: r.timestamp > existing.lastTime ? r.timestamp : existing.lastTime,
+      })
+    }
+    return [...patentes.entries()]
+      .sort((a, b) => b[1].count - a[1].count || b[1].lastTime.localeCompare(a[1].lastTime))
+      .map(([patente, info]) => ({ patente, ...info }))
+  }, [baseRows, selectedCamaraForModal])
+
   if (!allRows.length) {
     return (
       <p className="rounded-xl border border-sky-200 bg-sky-50 px-4 py-4 text-sm text-sky-950">
@@ -609,6 +628,7 @@ export function CaladaCamerasPanel({
                 <th className="px-4 py-3 text-right">Prom. camiones/hora</th>
                 <th className="px-4 py-3 text-right">Eventos</th>
                 <th className="px-4 py-3 text-right">Pico por hora</th>
+                <th className="px-4 py-3 text-center">Patentes</th>
               </tr>
             </thead>
             <tbody>
@@ -623,6 +643,14 @@ export function CaladaCamerasPanel({
                   </td>
                   <td className="px-4 py-2.5 text-right tabular-nums text-slate-600">{c.eventos.toLocaleString()}</td>
                   <td className="px-4 py-2.5 text-right tabular-nums">{c.picoPorHora}</td>
+                  <td className="px-4 py-2.5 text-center">
+                    <button
+                      onClick={() => setSelectedCamaraForModal(c.camara)}
+                      className="rounded px-2 py-1 text-xs font-semibold text-violet-700 hover:bg-violet-100 transition"
+                    >
+                      Ver
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -806,6 +834,47 @@ export function CaladaCamerasPanel({
           </table>
         </div>
       </div>
+
+      {selectedCamaraForModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-2xl rounded-2xl bg-white shadow-lg max-h-[80vh] overflow-y-auto">
+            <div className="sticky top-0 border-b border-slate-200 bg-white px-6 py-4 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-900">Patentes — {selectedCamaraForModal}</h3>
+              <button
+                onClick={() => setSelectedCamaraForModal(null)}
+                className="text-slate-500 hover:text-slate-700 text-xl font-semibold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6">
+              <p className="text-sm text-slate-600 mb-4">
+                {selectedCamaraPatentes.length} patentes únicas, {selectedCamaraPatentes.reduce((sum, p) => sum + p.count, 0)} pasadas totales
+              </p>
+
+              <div className="space-y-2">
+                {selectedCamaraPatentes.map((p) => (
+                  <div
+                    key={p.patente}
+                    className="flex items-center justify-between border border-slate-200 rounded-lg px-4 py-3 hover:bg-slate-50"
+                  >
+                    <span className="font-mono font-semibold text-slate-900">{p.patente}</span>
+                    <div className="flex items-center gap-4">
+                      <span className="text-xs text-slate-500">{p.count} pasadas</span>
+                      <span className="text-xs text-slate-400">{new Date(p.lastTime).toLocaleString('es-AR')}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {selectedCamaraPatentes.length === 0 && (
+                <p className="text-center text-sm text-slate-500 py-8">Sin patentes registradas</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
