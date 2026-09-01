@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { EXECUTIVE_CIRCUIT_MATRIX } from '../etlWorkbench/finalCircuitScoring'
 import { pelletUnifiedCircuitLabel } from '../../../etl-core/reports/transileExternoCiclo'
-import { triggerBrowserCsvDownload } from '../etlWorkbench/etlCsv'
 import {
   getCircuitSegmentTemplate,
   listCircuitSegmentAggregates,
@@ -14,9 +13,11 @@ import {
   type SegmentTimingAggregate,
 } from '../etlWorkbench/etlSegmentTiming'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
+import { CircuitFicha, type FichaTramo, type FichaBand, type FichaDayBar } from './CircuitFicha'
+import { CIRCUIT_CATALOG } from '../../../etl-core/domain/circuitCatalog'
 import { CircuitChecklistFilter } from '../components/CircuitChecklistFilter'
 import { exportChartAsPng, safeExportFilename } from '../../../utils/chartExport'
-import { histogramWithKde } from '../../../utils/stats'
+import { histogramWithKde, mean as meanOf, std as stdOf, min as minOf, max as maxOf } from '../../../utils/stats'
 import { SegmentTimingChartPanel } from './SegmentTimingChartPanel'
 import { RicardoneSectorScatterPanel } from './RicardoneSectorScatterPanel'
 import { SegmentOccupancyChartPanel } from './SegmentOccupancyChartPanel'
@@ -29,6 +30,7 @@ import {
   SCATTER_DAY_FILTER_ALL,
   buildQuarterCircuitSummary,
   type FranjaHoraria,
+  type QuarterCircuitOpInput,
 } from '../etlWorkbench/etlSegmentScatterByDay'
 import { turnoLabel } from '../etlWorkbench/operationalTurno'
 import { parseCsvToRecords } from '../etlWorkbench/etlCsvParse'
@@ -36,6 +38,21 @@ import { legsForAggregate } from '../etlWorkbench/etlSegmentSlowTail'
 
 function fmtMin(v: number): string {
   return v.toFixed(1)
+}
+
+/**
+ * Día operativo (YYYY-MM-DD) de un ISO, con la misma regla que las bandas/conteos:
+ * un inicio ≥ 22:00 pertenece al día siguiente (arranque de Q1 22–04). Devuelve '' si no parsea.
+ */
+function operationalDayOfIso(iso: string): string {
+  const m = String(iso ?? '').match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2})/)
+  if (!m) return ''
+  const hour = Number(m[4])
+  if (hour >= 22) {
+    const d = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]) + 1))
+    return d.toISOString().slice(0, 10)
+  }
+  return `${m[1]}-${m[2]}-${m[3]}`
 }
 
 function buildChartDataForAggregate(agg: SegmentTimingAggregate) {
@@ -48,10 +65,13 @@ export function KpiTiemposTab() {
   const tr = wb?.transformResult
   const kpiBuilt = wb?.kpiTiemposBuilt ?? tr?.stats.kpiTiemposBuilt ?? false
   /**
-   * Recalcular necesita los recorridos reconstruidos, que solo existen en memoria tras
-   * un Transform. Una corrida guardada trae las tablas de KPI pero no ese insumo.
+   * Recalcular funciona con el insumo en memoria (tras un Transform) O re-agregando
+   * desde los `segment_timing_legs` persistidos en la corrida/rango compuesto.
    */
-  const canRunKpi = wb?.kpiTiemposPrepared ?? false
+  const hasPersistedLegs = Boolean(
+    (tr?.tables as Record<string, { rows?: unknown[] }> | undefined)?.segment_timing_legs?.rows?.length
+  )
+  const canRunKpi = (wb?.kpiTiemposPrepared ?? false) || hasPersistedLegs
   const segmentTimingRaw = kpiBuilt ? tr?.stats.segmentTiming : null
 
   const analysisSourceLabel = tr?.csv.excel_operations_with_truckflow?.trim() ?
@@ -127,6 +147,26 @@ export function KpiTiemposTab() {
     () => parseSegmentScatterByDayCsv(tr?.csv.segment_scatter_by_day),
     [tr?.csv.segment_scatter_by_day]
   )
+
+  /**
+   * Mapa journey_id → día operativo, tomado de `circuit_timing_journeys` (start_time). Es la única
+   * fuente con fecha que cubre TODOS los circuitos (los legs no llevan fecha; la dispersión por día
+   * solo trae algunos circuitos en rangos compuestos). Sirve para recalcular la barra de tiempos
+   * medios del día elegido filtrando los legs por el día de su journey.
+   */
+  const journeyDayById = useMemo(() => {
+    const csv = tr?.csv.circuit_timing_journeys
+    const map = new Map<string, string>()
+    if (!csv?.trim()) return map
+    const { rows } = parseCsvToRecords(csv)
+    for (const r of rows) {
+      const id = String(r.journey_id ?? '').trim()
+      if (!id) continue
+      const day = operationalDayOfIso(String(r.start_time ?? ''))
+      if (day) map.set(id, day)
+    }
+    return map
+  }, [tr?.csv.circuit_timing_journeys])
 
   const periodFechas = useMemo(() => {
     const fromDisk = [...(wb?.loadSummary?.daysDetected ?? [])]
@@ -230,11 +270,12 @@ export function KpiTiemposTab() {
     return parseCsvToRecords(csv).rows
   }, [tr?.csv.excel_operations_with_truckflow])
 
-  const quarterCircuitSummary = useMemo(() => {
-    if (!circuitFilter) return buildQuarterCircuitSummary([])
+  /** Operaciones distintas del circuito (insumo compartido: resumen por cuarto + día por día de la ficha). */
+  const circuitOps = useMemo(() => {
+    if (!circuitFilter) return [] as QuarterCircuitOpInput[]
     const codes = new Set(kpiCircuitCodesForScatterFilter(circuitFilter))
     const seen = new Set<string>()
-    const ops = []
+    const ops: QuarterCircuitOpInput[] = []
     for (const r of excelOperationRows) {
       if (!codes.has(String(r.resolved_executive_circuit_code ?? '').trim())) continue
       const id = String(r.external_operation_id ?? '').trim()
@@ -248,11 +289,93 @@ export function KpiTiemposTab() {
         salidaExcelAt: r.external_salida_at,
       })
     }
-    return buildQuarterCircuitSummary(ops, {
-      periodStartDay: periodFechas[0],
-      selectedDay,
+    return ops
+  }, [excelOperationRows, circuitFilter])
+
+  const quarterCircuitSummary = useMemo(
+    () => buildQuarterCircuitSummary(circuitOps, { periodStartDay: periodFechas[0], selectedDay }),
+    [circuitOps, periodFechas, selectedDay]
+  )
+
+  // —— Insumos de la ficha del circuito (CircuitFicha) ——
+  const dayIsAll = selectedDay === SCATTER_DAY_FILTER_ALL
+
+  /**
+   * Tramos de la ficha:
+   * - «General»: medias del período (KPI agregado ya calculado).
+   * - Un día concreto: recalcula media/N/mín/máx/σ de cada tramo filtrando los legs del tramo por el
+   *   día operativo de su journey ({@link journeyDayById}). Así la barra de tiempos medios cambia con
+   *   el día. Si el circuito no tiene cobertura de mapeo (p. ej. la vista unificada R5+R6, cuyos legs
+   *   se reconstruyen con otro id de journey), se mantienen las medias del período para no vaciar la
+   *   barra.
+   */
+  const fichaTramos = useMemo<FichaTramo[]>(() => {
+    const periodTramo = (a: SegmentTimingAggregate): FichaTramo => ({
+      key: a.transitionKey,
+      label: a.label,
+      mean: a.stats.mean,
+      count: a.stats.count,
+      min: a.stats.min,
+      max: a.stats.max,
+      std: a.stats.std,
     })
-  }, [excelOperationRows, circuitFilter, periodFechas, selectedDay])
+    if (dayIsAll || !segmentTiming || journeyDayById.size === 0) {
+      return visibleAggregates.map(periodTramo)
+    }
+    const perTramoLegs = visibleAggregates.map((a) => ({
+      a,
+      legs: legsForAggregate(segmentTiming, circuitFilter, a.fromCode, a.toCode),
+    }))
+    // Cobertura del mapa journey→día para este circuito: si es baja, no se puede filtrar por día.
+    let total = 0
+    let mapped = 0
+    for (const { legs } of perTramoLegs) {
+      for (const lg of legs) {
+        total += 1
+        if (journeyDayById.has(lg.journeyId)) mapped += 1
+      }
+    }
+    if (!total || mapped / total < 0.5) {
+      return visibleAggregates.map(periodTramo)
+    }
+    return perTramoLegs.map(({ a, legs }) => {
+      const durs = legs
+        .filter((lg) => journeyDayById.get(lg.journeyId) === selectedDay)
+        .map((lg) => lg.durationMinutes)
+        .filter((d) => Number.isFinite(d) && d > 0)
+      return {
+        key: a.transitionKey,
+        label: a.label,
+        mean: durs.length ? meanOf(durs) : 0,
+        count: durs.length,
+        min: durs.length ? minOf(durs) : 0,
+        max: durs.length ? maxOf(durs) : 0,
+        std: stdOf(durs),
+      }
+    })
+  }, [visibleAggregates, dayIsAll, selectedDay, segmentTiming, circuitFilter, journeyDayById])
+  const fichaTotalMin = useMemo(
+    () => fichaTramos.reduce((s, t) => s + (t.count > 0 ? t.mean : 0), 0),
+    [fichaTramos]
+  )
+  const fichaBands = useMemo<FichaBand[]>(
+    () =>
+      FRANJA_HORARIA_ORDER.map((q) => ({
+        q,
+        camiones: quarterCircuitSummary.porCuarto[q].camiones,
+        mean: quarterCircuitSummary.porCuarto[q].tiempoMedioMin,
+      })),
+    [quarterCircuitSummary]
+  )
+  const fichaDayBars = useMemo<FichaDayBar[]>(() => {
+    const WD = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá']
+    return periodFechas.map((fecha) => {
+      // Número del día = camiones ubicables en ese día = suma de los 4 cuartos (Q1–Q4).
+      const s = buildQuarterCircuitSummary(circuitOps, { periodStartDay: periodFechas[0], selectedDay: fecha })
+      const wd = WD[new Date(`${fecha}T00:00:00`).getDay()] ?? ''
+      return { fecha, label: fecha.slice(-2), weekday: wd, total: s.total }
+    })
+  }, [circuitOps, periodFechas])
 
   const exportCircuitRecorrido = useCallback(async () => {
     if (!aggregatesWithData.length || exportBusy || !circuitExportRef.current) return
@@ -288,6 +411,32 @@ export function KpiTiemposTab() {
     return countUniqueOperationsForCircuit(segmentTiming, circuitFilter)
   }, [segmentTiming, circuitFilter])
 
+  /**
+   * Clic en un tramo de la ficha: si el tramo toca una cámara de CALADA o de VOLCABLE, abre el panel
+   * de cámaras correspondiente; en cualquier otro sector, lleva a los gráficos de dispersión del tramo.
+   */
+  const handleSelectTramo = useCallback(
+    (tramoKey: string) => {
+      const agg = visibleAggregates.find((a) => a.transitionKey === tramoKey)
+      const codes = [agg?.fromCode, agg?.toCode].map((c) => String(c ?? '').toUpperCase())
+      if (codes.some((c) => c === 'CALADA' || c === 'SL_CALADA')) {
+        setChartView('calada')
+        return
+      }
+      if (codes.some((c) => c === 'VOLCABLE' || c === 'SL_VOLCABLE')) {
+        setChartView('volcable_sl')
+        return
+      }
+      setChartView('tiempos')
+      setSelectedKey(tramoKey)
+      const id = `kpi-tramo-${tramoKey.replace(/→/g, '-')}`
+      requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    },
+    [visibleAggregates]
+  )
+
   if (!wb) {
     return (
       <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
@@ -298,93 +447,25 @@ export function KpiTiemposTab() {
 
   return (
     <section className="space-y-6">
-      <div className="rounded-3xl border border-violet-200 bg-gradient-to-br from-violet-50/90 to-white p-6 shadow-sm">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-bold text-slate-900">KPI tiempos por circuito y tramo</h2>
-            <p className="mt-2 max-w-3xl text-sm text-slate-600">
-              Tramo 4 del flujo: después del Transform, procesá acá los tiempos y la dispersión. Con XLSX cargados,
-              la fuente es <strong>Excel-first</strong>; sin XLSX, Truckflow COMPLETOS. Cada gráfico cuenta solo
-              camiones con <strong>KPI válido en ese tramo</strong> (p. ej. balanza ingreso→egreso exige cámaras,
-              duración mínima y tope); el total <strong>ready_for_scatter</strong> incluye operaciones de otros
-              tramos o aún sin ese KPI.
-            </p>
-            <p className="mt-2 font-mono text-xs text-slate-500">
-              Período: {periodLabel} · Reglas: {tr?.rulesVersion ?? '—'} · Fuente: {analysisSourceLabel}
-              {checklistOptions.length && effectiveChecked.size < checklistOptions.length ?
-                ` · ${effectiveChecked.size}/${checklistOptions.length} circuitos`
-              : ''}:{' '}
-              {isExcelFirstKpi ?
-                `${segmentTiming?.journeyCount ?? '—'} operaciones Excel (ready_for_scatter: ${excelFirstReadyForScatter || '—'})`
-              : `${segmentTiming?.journeyCount ?? '—'} journeys`}{' '}
-              · Unidad: minutos
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              // Sin insumo en memoria el proceso falla siempre (corrida guardada).
-              disabled={!tr || !canRunKpi || wb?.transformBusy || wb?.kpiTiemposBusy}
-              title={
-                !canRunKpi ?
-                  'Los KPI de esta corrida guardada ya están calculados. Para recalcularlos, cargá el período en «Análisis local» y corré Transform.'
-                : undefined
-              }
-              onClick={() => void wb?.runKpiTiempos()}
-              className="rounded-xl bg-violet-700 px-5 py-2 text-sm font-bold uppercase tracking-wide text-white shadow-sm transition hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {wb?.kpiTiemposBusy ?
-                'Procesando KPI tiempos…'
-              : kpiBuilt ?
-                'Reprocesar KPI tiempos'
-              : 'Procesar KPI tiempos (tramo 4)'}
-            </button>
-            <button
-              type="button"
-              disabled={!tr?.csv.segment_timing_kpi}
-              onClick={() => {
-                const csv = tr?.csv.segment_timing_kpi
-                if (csv) triggerBrowserCsvDownload('segment_timing_kpi.csv', csv)
-              }}
-              className="rounded-xl border border-violet-300 bg-white px-4 py-2 text-sm font-semibold text-violet-800 shadow-sm transition hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Export CSV KPI
-            </button>
-            <button
-              type="button"
-              disabled={!tr?.csv.segment_scatter_by_day}
-              onClick={() => {
-                const csv = tr?.csv.segment_scatter_by_day
-                if (csv) triggerBrowserCsvDownload('segment_scatter_by_day.csv', csv)
-              }}
-              className="rounded-xl border border-violet-300 bg-white px-4 py-2 text-sm font-semibold text-violet-800 shadow-sm transition hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Export Power BI (dispersión día)
-            </button>
-            <button
-              type="button"
-              disabled={!tr?.csv.sector_occupancy_30min}
-              onClick={() => {
-                const csv = tr?.csv.sector_occupancy_30min
-                if (csv) triggerBrowserCsvDownload('sector_occupancy_30min.csv', csv)
-              }}
-              className="rounded-xl border border-violet-300 bg-white px-4 py-2 text-sm font-semibold text-violet-800 shadow-sm transition hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Export Power BI (ocupación 30 min)
-            </button>
-            <button
-              type="button"
-              disabled={!tr?.csv.sector_occupancy_events}
-              onClick={() => {
-                const csv = tr?.csv.sector_occupancy_events
-                if (csv) triggerBrowserCsvDownload('sector_occupancy_events.csv', csv)
-              }}
-              className="rounded-xl border border-violet-300 bg-white px-4 py-2 text-sm font-semibold text-violet-800 shadow-sm transition hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Export eventos ocupación
-            </button>
-          </div>
-        </div>
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          // Recalcula desde el insumo en memoria o re-agregando los legs persistidos.
+          disabled={!tr || !canRunKpi || wb?.transformBusy || wb?.kpiTiemposBusy}
+          title={
+            !canRunKpi ?
+              'No hay tramos (segment_timing_legs) para recalcular. Cargá el período en «Análisis local» y corré Transform.'
+            : undefined
+          }
+          onClick={() => void wb?.runKpiTiempos()}
+          className="rounded-xl bg-violet-700 px-5 py-2 text-sm font-bold uppercase tracking-wide text-white shadow-sm transition hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {wb?.kpiTiemposBusy ?
+            'Procesando KPI tiempos…'
+          : kpiBuilt ?
+            'Reprocesar KPI tiempos'
+          : 'Procesar KPI tiempos (tramo 4)'}
+        </button>
       </div>
 
       {wb?.kpiTiemposError ?
@@ -396,13 +477,6 @@ export function KpiTiemposTab() {
       {!tr ?
         <p className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-700">
           Sin transform. Andá a <strong>Análisis local</strong> → Cargar período → <strong>Procesar Transform</strong>.
-        </p>
-      : !canRunKpi ?
-        <p className="rounded-xl border border-sky-200 bg-sky-50 px-4 py-4 text-sm text-sky-950">
-          Estás viendo una <strong>corrida guardada</strong>: los KPI de tiempos ya están calculados y se muestran
-          abajo. <strong>Reprocesar no está disponible</strong> porque los recorridos reconstruidos (el insumo del
-          cálculo) no se persisten en la corrida. Para recalcular: <strong>Análisis local</strong> → Cargar período →{' '}
-          <strong>Procesar Transform</strong> → volver acá.
         </p>
       : !kpiBuilt ?
         <p className="rounded-xl border border-violet-200 bg-violet-50 px-4 py-4 text-sm text-violet-950">
@@ -573,6 +647,8 @@ export function KpiTiemposTab() {
               checkedCircuits={effectiveChecked}
               filterActive={effectiveChecked.size < checklistOptions.length}
               periodLabel={periodLabel}
+              selectedDay={selectedDay}
+              onSelectDay={setSelectedDay}
             />
           : chartView === 'volcable_sl' ?
             <CaladaCamerasPanel
@@ -580,6 +656,8 @@ export function KpiTiemposTab() {
               checkedCircuits={effectiveChecked}
               filterActive={effectiveChecked.size < checklistOptions.length}
               periodLabel={periodLabel}
+              selectedDay={selectedDay}
+              onSelectDay={setSelectedDay}
               labels={{
                 entitySingular: 'calle del volcable SL',
                 entityPlural: 'calles del volcable SL',
@@ -588,6 +666,7 @@ export function KpiTiemposTab() {
                 activityMetric: 'Calles con actividad',
                 exportName: 'volcable_sl_calles',
                 tableName: 'san_lorenzo_volcable_events',
+                splitExcelVsCamera: true,
               }}
             />
           : chartView === 'sectores_ric' ?
@@ -600,6 +679,27 @@ export function KpiTiemposTab() {
             />
           : (
           <>
+          {chartView === 'tiempos' ?
+            <CircuitFicha
+              circuitCode={circuitFilter}
+              circuitLabel={pelletUnifiedCircuitLabel(circuitFilter) ?? EXECUTIVE_CIRCUIT_MATRIX[circuitFilter]?.label ?? circuitFilter}
+              product={CIRCUIT_CATALOG[circuitFilter]?.product}
+              groupLabel={CIRCUIT_CATALOG[circuitFilter]?.kind ?? ''}
+              pathLabel={circuitPathLabel}
+              tramos={fichaTramos}
+              totalMin={fichaTotalMin}
+              totalTrucks={quarterCircuitSummary.total}
+              bands={fichaBands}
+              dayBars={fichaDayBars}
+              selectedDay={selectedDay}
+              onSelectDay={setSelectedDay}
+              franjaFilter={franjaFilter}
+              onFranjaFilter={setFranjaFilter}
+              periodLabel={periodLabel}
+              onSelectTramo={handleSelectTramo}
+            />
+          : null}
+          {chartView !== 'tiempos' ?
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
             <table className="min-w-full text-sm">
               <thead>
@@ -658,6 +758,7 @@ export function KpiTiemposTab() {
               </tbody>
             </table>
           </div>
+          : null}
 
           {visibleAggregates.length === 0 ?
             <p className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-600">
@@ -739,70 +840,7 @@ export function KpiTiemposTab() {
                   </div>
                 </div>
               : null}
-              {chartView === 'tiempos' && quarterCircuitSummary.total > 0 ?
-                <div className="space-y-2">
-                  <p className="text-xs text-slate-600">
-                    Ingresos por cuarto ·{' '}
-                    <span className="font-semibold text-slate-800">
-                      total {quarterCircuitSummary.total.toLocaleString('es-AR')} camiones
-                    </span>{' '}
-                    en {circuitFilter} (la suma de los 4 cuartos = total). Cuarto por ingreso/preingreso de
-                    cámara; si falta, por el ingreso del Excel. Día operativo: un ingreso desde las 22:00
-                    cuenta en el día siguiente (Q1); ingresos con día operativo anterior al período se
-                    descartan.
-                    {quarterCircuitSummary.descartadasPeriodoAnterior > 0 ?
-                      ` · ${quarterCircuitSummary.descartadasPeriodoAnterior.toLocaleString('es-AR')} descartados (ingreso antes del período).`
-                    : null}
-                    {quarterCircuitSummary.sinIngreso > 0 ?
-                      ` · ${quarterCircuitSummary.sinIngreso.toLocaleString('es-AR')} sin hora de ingreso (no ubicables).`
-                    : null}
-                  </p>
-                  <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                    {FRANJA_HORARIA_ORDER.map((q) => {
-                      const s = quarterCircuitSummary.porCuarto[q]
-                      const mean = s.tiempoMedioMin
-                      const active = franjaFilter === q
-                      const dimmed = franjaFilter != null && !active
-                      return (
-                        <button
-                          key={q}
-                          type="button"
-                          onClick={() => setFranjaFilter(active ? null : q)}
-                          className={`rounded-xl border px-4 py-3 text-left transition ${
-                            active ?
-                              'border-violet-400 bg-violet-50 ring-2 ring-violet-300'
-                            : dimmed ?
-                              'border-slate-200 bg-white opacity-60 hover:opacity-100'
-                            : 'border-slate-200 bg-white hover:bg-slate-50'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <span
-                              className="inline-block h-2.5 w-2.5 rounded-full"
-                              style={{ backgroundColor: FRANJA_HORARIA_COLORS[q] }}
-                            />
-                            <span className="text-xs font-bold text-slate-700">{turnoLabel(q)}</span>
-                          </div>
-                          <div className="mt-1.5 flex items-baseline gap-1">
-                            <span className="text-xl font-bold tabular-nums text-slate-900">
-                              {s.camiones.toLocaleString('es-AR')}
-                            </span>
-                            <span className="text-[11px] font-semibold text-slate-500">
-                              camiones que ingresaron
-                            </span>
-                          </div>
-                          <div className="mt-0.5 text-[11px] text-slate-600">
-                            Tiempo medio circuito (ingreso→salida):{' '}
-                            <span className="font-semibold tabular-nums text-slate-800">
-                              {mean != null ? `${mean.toFixed(1)} min` : '—'}
-                            </span>
-                          </div>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              : null}
+              {/* Bandas por cuarto (Q1–Q4): ahora en la ficha del circuito (CircuitFicha). */}
               <div className="space-y-8">
                 {visibleAggregates.map((agg) => (
                   <div

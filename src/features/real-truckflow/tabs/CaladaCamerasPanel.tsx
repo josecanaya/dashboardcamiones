@@ -3,6 +3,9 @@ import {
   ResponsiveContainer,
   AreaChart,
   Area,
+  BarChart,
+  Bar,
+  LabelList,
   XAxis,
   YAxis,
   Tooltip,
@@ -18,8 +21,11 @@ import {
   type CaladaCameraEventRow,
 } from '../etlWorkbench/etlCaladaCameraActivity'
 import { safeExportFilename } from '../../../utils/chartExport'
-
-const DAY_FILTER_ALL = '__ALL_DIAS__'
+import {
+  buildDayBarsFromJourneySets,
+  ComportamientoPorDiaBar,
+} from '../components/ComportamientoPorDiaBar'
+import { SCATTER_DAY_FILTER_ALL } from '../etlWorkbench/etlSegmentScatterByDay'
 
 /**
  * Cuartos de turno de la operación de calada (hora local Argentina). Ventanas de 6 h: Q1 22–04
@@ -92,6 +98,18 @@ function localDayOf(r: CaladaCameraEventRow): string {
   return localPartsOf(r)?.fecha ?? String(r.fecha ?? '').trim()
 }
 
+/**
+ * ¿La fila viene del Excel (INGRESO por plataforma) o solo de la cámara? En volcable SL el
+ * conteo real son las filas Excel: el build les pone un `journey_id` con prefijo `excel:` /
+ * `excel-vol:` (id estable de la operación/CTG), mientras que las filas que solo vio la cámara
+ * llevan el uid crudo del journey. En calada todas las filas son de cámara (nunca hay prefijo),
+ * por eso el split se activa solo cuando `labels.splitExcelVsCamera` es true. Ver
+ * `buildSanLorenzoVolcableEvents` (etlSanLorenzoVolcableActivity.ts).
+ */
+function isExcelSourcedRow(r: CaladaCameraEventRow): boolean {
+  return /^excel(-vol)?:/i.test(String(r.journey_id ?? ''))
+}
+
 /** `2026-07-20T08` → `20/07 08h`. */
 function hourBucketLabel(bucket: string): string {
   return `${bucket.slice(8, 10)}/${bucket.slice(5, 7)} ${bucket.slice(11, 13)}h`
@@ -115,6 +133,18 @@ export type CameraActivityLabels = {
   exportName: string
   /** Nombre de la tabla ETL (mensaje de estado vacío). */
   tableName: string
+  /**
+   * Cámaras a excluir del gráfico «camiones por hora». En calada, la calada líquida
+   * (`RicCalLiq`) no se cuenta ahí: se descartan los camiones que pasaron por ella.
+   */
+  hourlyTrucksExcludeCameras?: string[]
+  /**
+   * Separar «Excel» vs «solo cámara». En volcable SL la verdad del conteo es la fila INGRESO
+   * del Excel (plataforma `VOLCABLE_PTO_N`); los camiones que solo vio la cámara (sin fila
+   * Excel) son un posible error y se muestran aparte, NO se suman a «Camiones recibidos». En
+   * calada no hay filas Excel, así que queda en false y se cuenta todo (comportamiento normal).
+   */
+  splitExcelVsCamera?: boolean
 }
 
 const CALADA_LABELS: CameraActivityLabels = {
@@ -125,6 +155,7 @@ const CALADA_LABELS: CameraActivityLabels = {
   activityMetric: 'Cámaras con actividad',
   exportName: 'calada_camaras',
   tableName: 'calada_camera_events',
+  hourlyTrucksExcludeCameras: ['RicCalLiq'],
 }
 
 export function CaladaCamerasPanel({
@@ -133,6 +164,8 @@ export function CaladaCamerasPanel({
   filterActive,
   periodLabel,
   labels = CALADA_LABELS,
+  selectedDay: selectedDayProp,
+  onSelectDay: onSelectDayProp,
 }: {
   csv: string | undefined
   /** Circuitos tildados en el checklist. */
@@ -142,28 +175,80 @@ export function CaladaCamerasPanel({
   periodLabel: string
   /** Textos del panel (default: calada). Para volcable SL se pasan los de calle volcable. */
   labels?: CameraActivityLabels
+  /** Mismo filtro de día que el resto de KPI tiempos (opcional). */
+  selectedDay?: string
+  onSelectDay?: (day: string) => void
 }) {
   const allRows = useMemo(() => parseCaladaRows(csv), [csv])
-  const [selectedDay, setSelectedDay] = useState(DAY_FILTER_ALL)
+  const [localDay, setLocalDay] = useState(SCATTER_DAY_FILTER_ALL)
+  const selectedDay = selectedDayProp ?? localDay
+  const setSelectedDay = onSelectDayProp ?? setLocalDay
 
-  const dayOptions = useMemo(
-    () => [...new Set(allRows.map((r) => localDayOf(r)))].filter(Boolean).sort(),
-    [allRows]
-  )
+  const rowsBeforeDay = useMemo(() => {
+    let out = allRows
+    if (filterActive) out = out.filter((r) => checkedCircuits.has(r.circuito))
+    return out
+  }, [allRows, checkedCircuits, filterActive])
 
   const rows = useMemo(() => {
-    let out = allRows
-    // Solo filtra por circuito si el usuario acotó; así el default muestra toda la
-    // actividad de calada, incluidos journeys sin circuito ejecutivo asignado.
-    if (filterActive) out = out.filter((r) => checkedCircuits.has(r.circuito))
-    if (selectedDay !== DAY_FILTER_ALL) out = out.filter((r) => localDayOf(r) === selectedDay)
-    return out
-  }, [allRows, checkedCircuits, filterActive, selectedDay])
+    if (selectedDay === SCATTER_DAY_FILTER_ALL) return rowsBeforeDay
+    return rowsBeforeDay.filter((r) => localDayOf(r) === selectedDay)
+  }, [rowsBeforeDay, selectedDay])
+
+  const splitSource = labels.splitExcelVsCamera === true
+
+  const baseRowsBeforeDay = useMemo(
+    () => (splitSource ? rowsBeforeDay.filter(isExcelSourcedRow) : rowsBeforeDay),
+    [rowsBeforeDay, splitSource]
+  )
+
+  const dayBars = useMemo(
+    () =>
+      buildDayBarsFromJourneySets(
+        baseRowsBeforeDay.map((r) => ({ localDay: localDayOf(r), journeyId: r.journey_id }))
+      ),
+    [baseRowsBeforeDay]
+  )
+
+  /**
+   * Filas que alimentan TODOS los conteos principales (tabla, barras, gráfico por hora,
+   * matriz de producto). Con `splitSource` (volcable SL) son solo las filas del Excel —la
+   * verdad del conteo—; los camiones que solo vio la cámara se llevan aparte (`camOnlyByCamera`).
+   * Sin split (calada) es todo, como siempre.
+   */
+  const baseRows = useMemo(
+    () => (splitSource ? rows.filter(isExcelSourcedRow) : rows),
+    [rows, splitSource]
+  )
+
+  /**
+   * Camiones que SOLO vio la cámara (sin fila Excel), por calle. Posible error: se listan aparte
+   * y no se suman a «Camiones recibidos». Vacío cuando no hay split (calada).
+   */
+  const camOnlyByCamera = useMemo(() => {
+    const byCam = new Map<string, Set<string>>()
+    if (!splitSource) return new Map<string, number>()
+    for (const r of rows) {
+      if (isExcelSourcedRow(r)) continue
+      const s = byCam.get(r.camara) ?? new Set<string>()
+      s.add(r.journey_id)
+      byCam.set(r.camara, s)
+    }
+    return new Map([...byCam].map(([k, v]) => [k, v.size]))
+  }, [rows, splitSource])
+
+  /** Total de camiones «solo cámara» del período (para la nota informativa). */
+  const camOnlyTotal = useMemo(() => {
+    if (!splitSource) return 0
+    const ids = new Set<string>()
+    for (const r of rows) if (!isExcelSourcedRow(r)) ids.add(r.journey_id)
+    return ids.size
+  }, [rows, splitSource])
 
   /** Por cámara: camiones distintos, eventos y pico de camiones en una hora. */
   const perCamera = useMemo(() => {
     const byCam = new Map<string, { trucks: Set<string>; events: number; perBucket: Map<string, Set<string>> }>()
-    for (const r of rows) {
+    for (const r of baseRows) {
       const c = byCam.get(r.camara) ?? { trucks: new Set(), events: 0, perBucket: new Map() }
       c.trucks.add(r.journey_id)
       c.events++
@@ -184,12 +269,12 @@ export function CaladaCamerasPanel({
         truckHours: [...c.perBucket.values()].reduce((a, s) => a + s.size, 0),
       }))
       .sort((a, b) => b.camiones - a.camiones || a.camara.localeCompare(b.camara))
-  }, [rows])
+  }, [baseRows])
 
   /** Por hora: cámaras de calada activas en simultáneo y camiones que pasaron por calada. */
   const concurrency = useMemo(() => {
     const byBucket = new Map<string, { cams: Set<string>; trucks: Set<string> }>()
-    for (const r of rows) {
+    for (const r of baseRows) {
       const key = hourBucketOf(r)
       if (!key) continue
       const b = byBucket.get(key) ?? { cams: new Set(), trucks: new Set() }
@@ -205,10 +290,42 @@ export function CaladaCamerasPanel({
         camaras_activas: v.cams.size,
         camiones: v.trucks.size,
       }))
-  }, [rows])
+  }, [baseRows])
 
   /** Horas con actividad en el período (denominador común de los promedios/hora). */
   const periodHours = concurrency.length
+
+  /**
+   * Camiones que pasaron por una cámara excluida del conteo horario (en calada, la calada
+   * líquida `RicCalLiq`). Se excluye el journey completo: si el camión tocó una cámara líquida
+   * no cuenta en «camiones por hora», aunque haya pasado por otra cámara.
+   */
+  const excludedTruckIds = useMemo(() => {
+    const excluded = new Set(labels.hourlyTrucksExcludeCameras ?? [])
+    const ids = new Set<string>()
+    if (!excluded.size) return ids
+    for (const r of baseRows) if (excluded.has(r.camara)) ids.add(r.journey_id)
+    return ids
+  }, [baseRows, labels.hourlyTrucksExcludeCameras])
+
+  /**
+   * Camiones distintos por ventana horaria, excluyendo los que pasaron por una cámara líquida.
+   * Es la serie del gráfico «camiones en calada, por hora» y la base del pico diario resaltado.
+   */
+  const trucksPerHour = useMemo(() => {
+    const byBucket = new Map<string, Set<string>>()
+    for (const r of baseRows) {
+      if (excludedTruckIds.has(r.journey_id)) continue
+      const key = hourBucketOf(r)
+      if (!key) continue
+      const s = byBucket.get(key) ?? new Set<string>()
+      s.add(r.journey_id)
+      byBucket.set(key, s)
+    }
+    return [...byBucket.entries()]
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([bucket, trucks]) => ({ bucket, label: hourBucketLabel(bucket), camiones: trucks.size }))
+  }, [baseRows, excludedTruckIds])
 
   /**
    * Promedio de calles usadas por cuarto de turno (01–07, 07–13, 13–19, 19–01): media de
@@ -245,18 +362,18 @@ export function CaladaCamerasPanel({
    */
   const dayPeaks = useMemo(() => {
     const bestIdxByDay = new Map<string, number>()
-    concurrency.forEach((c, i) => {
+    trucksPerHour.forEach((c, i) => {
       if (c.camiones <= 0) return
       const day = c.bucket.slice(0, 10)
       const cur = bestIdxByDay.get(day)
-      if (cur === undefined || c.camiones > concurrency[cur]!.camiones) bestIdxByDay.set(day, i)
+      if (cur === undefined || c.camiones > trucksPerHour[cur]!.camiones) bestIdxByDay.set(day, i)
     })
     return [...bestIdxByDay.values()]
       .sort((a, b) => a - b)
       .map((i) => {
-        const c = concurrency[i]!
-        const next = concurrency[i + 1]
-        const prev = concurrency[i - 1]
+        const c = trucksPerHour[i]!
+        const next = trucksPerHour[i + 1]
+        const prev = trucksPerHour[i - 1]
         return {
           label: c.label,
           camiones: c.camiones,
@@ -264,11 +381,11 @@ export function CaladaCamerasPanel({
           bandEnd: (next ?? prev ?? c).label,
         }
       })
-  }, [concurrency])
+  }, [trucksPerHour])
 
   const totals = useMemo(() => {
-    const trucks = new Set(rows.map((r) => r.journey_id))
-    const cams = new Set(rows.map((r) => r.camara))
+    const trucks = new Set(baseRows.map((r) => r.journey_id))
+    const cams = new Set(baseRows.map((r) => r.camara))
     const peakCams = concurrency.reduce(
       (best, c) => (c.camaras_activas > best.camaras_activas ? c : best),
       { camaras_activas: 0, camiones: 0, label: '' }
@@ -290,7 +407,7 @@ export function CaladaCamerasPanel({
       peakTrucksLabel: peakTrucks.label,
       avgTrucksPerHour,
     }
-  }, [rows, concurrency, periodHours])
+  }, [baseRows, concurrency, periodHours])
 
   /**
    * Qué producto caló cada calle. El producto no lo dice la cámara: lo trae el camión
@@ -300,7 +417,7 @@ export function CaladaCamerasPanel({
    */
   const productMatrix = useMemo(() => {
     const byCam = new Map<string, Map<string, Set<string>>>()
-    for (const r of rows) {
+    for (const r of baseRows) {
       const producto = String(r.producto ?? '').trim() || SIN_PRODUCTO
       const m = byCam.get(r.camara) ?? new Map<string, Set<string>>()
       const s = m.get(producto) ?? new Set<string>()
@@ -357,7 +474,7 @@ export function CaladaCamerasPanel({
       .sort((a, b) => b.total - a.total || a.camara.localeCompare(b.camara))
 
     return { columns, camRows, sinProductoTotal: globalTotals.get(SIN_PRODUCTO) ?? 0 }
-  }, [rows])
+  }, [baseRows])
 
   if (!allRows.length) {
     return (
@@ -370,26 +487,31 @@ export function CaladaCamerasPanel({
 
   return (
     <div className="space-y-4">
+      <ComportamientoPorDiaBar
+        dayBars={dayBars}
+        selectedDay={selectedDay}
+        onSelectDay={setSelectedDay}
+        hint={`camiones por día · clic para filtrar ${labels.entityPlural}`}
+      />
+
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-wrap items-end gap-3">
-          <label className="flex flex-col gap-1 text-sm">
-            <span className="font-semibold text-slate-700">Día</span>
-            <select
-              value={selectedDay}
-              onChange={(e) => setSelectedDay(e.target.value)}
-              className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"
-            >
-              <option value={DAY_FILTER_ALL}>Todos</option>
-              {dayOptions.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-          </label>
           <p className="max-w-xl text-xs text-slate-500">
-            Ocupación por <strong>hora</strong>: cuántos camiones pasó cada {labels.entitySingular} y cuántas operaban
-            a la vez. Filtrado por los circuitos tildados. Período: {periodLabel}.
+            Camiones por <strong>{labels.entitySingular}</strong>, por hora y por producto. Filtrado por los circuitos
+            tildados. Período: {periodLabel}.
+            {splitSource ? (
+              <>
+                {' '}
+                El conteo es la <strong>descarga registrada en el Excel</strong> (plataforma <code>VOLCABLE_PTO</code>).
+                {camOnlyTotal > 0 ? (
+                  <>
+                    {' '}
+                    Otros <strong className="text-amber-700">{camOnlyTotal.toLocaleString()}</strong> camiones los vio
+                    solo la cámara (sin Excel): posible error, se listan aparte y no se suman.
+                  </>
+                ) : null}
+              </>
+            ) : null}
           </p>
         </div>
         <button
@@ -434,7 +556,8 @@ export function CaladaCamerasPanel({
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-600">
               <th className="px-4 py-3">{labels.columnHeader}</th>
-              <th className="px-4 py-3 text-right">Camiones recibidos</th>
+              <th className="px-4 py-3 text-right">Camiones recibidos{splitSource ? ' (Excel)' : ''}</th>
+              {splitSource && <th className="px-4 py-3 text-right">Solo cámara (posible error)</th>}
               <th className="px-4 py-3 text-right">Prom. camiones/hora</th>
               <th className="px-4 py-3 text-right">Eventos</th>
               <th className="px-4 py-3 text-right">Pico por hora</th>
@@ -445,6 +568,13 @@ export function CaladaCamerasPanel({
               <tr key={c.camara} className="border-b border-slate-100 last:border-0">
                 <td className="px-4 py-2.5 font-mono font-semibold text-slate-900">{c.camara}</td>
                 <td className="px-4 py-2.5 text-right tabular-nums">{c.camiones.toLocaleString()}</td>
+                {splitSource && (
+                  <td className="px-4 py-2.5 text-right tabular-nums text-amber-700">
+                    {(camOnlyByCamera.get(c.camara) ?? 0) > 0
+                      ? `+${(camOnlyByCamera.get(c.camara) ?? 0).toLocaleString()}`
+                      : '—'}
+                  </td>
+                )}
                 <td className="px-4 py-2.5 text-right tabular-nums text-sky-800">
                   {(periodHours ? c.truckHours / periodHours : 0).toLocaleString('es-AR', {
                     maximumFractionDigits: 1,
@@ -461,30 +591,27 @@ export function CaladaCamerasPanel({
       <div className="grid gap-4 xl:grid-cols-2">
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <h4 className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">
-            {labels.entityPlural} activas en simultáneo, por hora
+            Camiones por {labels.entitySingular}
           </h4>
           <p className="mt-1 text-xs text-slate-500">
-            Cuántas de las {totals.cams} {labels.entityPlural} registraron al menos un camión en esa hora: mide cuántas
-            estuvieron en uso a la vez.
+            Camiones distintos que pasó cada {labels.entitySingular} en el período, ordenadas de mayor a menor.
           </p>
           <div className="mt-3 h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={concurrency} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                <XAxis dataKey="label" tick={{ fontSize: 10 }} interval="preserveStartEnd" minTickGap={24} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 11 }} width={32} />
+              <BarChart data={perCamera} layout="vertical" margin={{ top: 8, right: 40, left: 8, bottom: 8 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={false} />
+                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11 }} />
+                <YAxis type="category" dataKey="camara" tick={{ fontSize: 11 }} width={76} />
                 <Tooltip contentStyle={TOOLTIP_STYLE} />
-                <Area
-                  type="monotone"
-                  dataKey="camaras_activas"
-                  name="Cámaras activas"
-                  stroke="#7c3aed"
-                  strokeWidth={2}
-                  fill="#7c3aed"
-                  fillOpacity={0.14}
-                  dot={false}
-                />
-              </AreaChart>
+                <Bar dataKey="camiones" name="Camiones" fill="#7c3aed" radius={[0, 4, 4, 0]} maxBarSize={26}>
+                  <LabelList
+                    dataKey="camiones"
+                    position="right"
+                    formatter={(v) => Number(v).toLocaleString()}
+                    style={{ fontSize: 11, fill: '#475569', fontWeight: 600 }}
+                  />
+                </Bar>
+              </BarChart>
             </ResponsiveContainer>
           </div>
 
@@ -524,13 +651,14 @@ export function CaladaCamerasPanel({
             {labels.trucksMetric}, por hora
           </h4>
           <p className="mt-1 text-xs text-slate-500">
-            Camiones distintos que pasaron por alguna {labels.entitySingular} en esa hora. La{' '}
+            Camiones distintos que pasaron por alguna {labels.entitySingular} en esa hora
+            {labels.hourlyTrucksExcludeCameras?.length ? ' (excluye la calada líquida)' : ''}. La{' '}
             <span className="font-semibold text-emerald-700">hora pico de cada día</span> queda sombreada en verde y
             marcada con un punto.
           </p>
           <div className="mt-3 h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={concurrency} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
+              <AreaChart data={trucksPerHour} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
                 <XAxis dataKey="label" tick={{ fontSize: 10 }} interval="preserveStartEnd" minTickGap={24} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 11 }} width={32} />

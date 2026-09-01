@@ -60,6 +60,7 @@ export type VolcableIngresoMovimientoLike = {
   external_ingreso_at?: string
   external_calado_at?: string
   external_salida_at?: string
+  external_sl_volcable_at?: string
 }
 
 /**
@@ -183,9 +184,12 @@ export function buildSanLorenzoVolcableEvents(
       }
       if (!camCalle) {
         const calle = sanLorenzoVolcableCalleFromDevice(e.deviceCode)
-        if (calle && iso) {
-          camIso = iso
-          camCalle = calle
+        if (calle) {
+          const occurredAtIso = String(e.occurredAt ?? '').trim()
+          if (occurredAtIso) {
+            camIso = occurredAtIso
+            camCalle = calle
+          }
         }
       }
     }
@@ -240,7 +244,16 @@ export function buildSanLorenzoVolcableEvents(
       jrn = jrn ?? journeyByPlateDay.get(key)
       consumed.add(key)
     }
-    const iso = cam?.iso || String(m.external_calado_at || m.external_ingreso_at || m.external_salida_at || '').trim()
+    let iso = cam?.iso || String(m.external_sl_volcable_at || '').trim()
+    if (!iso) {
+      const salida = String(m.external_salida_at || '').trim()
+      if (salida) {
+        const salidaMs = new Date(salida).getTime()
+        if (Number.isFinite(salidaMs)) {
+          iso = new Date(salidaMs - 20 * 60 * 1000).toISOString()
+        }
+      }
+    }
     if (!iso) continue
     // journey_id ÚNICO por viaje (una fila del Excel = un CTG = una descarga). El panel cuenta
     // journey_id distintos, y un MISMO camión (patente) hace varios viajes/descargas el mismo día
