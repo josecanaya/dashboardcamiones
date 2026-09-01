@@ -551,42 +551,84 @@ export function CaladaCamerasPanel({
         />
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <table className="min-w-full text-sm">
-          <thead>
-            <tr className="border-b border-slate-200 bg-slate-50 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-600">
-              <th className="px-4 py-3">{labels.columnHeader}</th>
-              <th className="px-4 py-3 text-right">Camiones recibidos{splitSource ? ' (Excel)' : ''}</th>
-              {splitSource && <th className="px-4 py-3 text-right">Solo cámara (posible error)</th>}
-              <th className="px-4 py-3 text-right">Prom. camiones/hora</th>
-              <th className="px-4 py-3 text-right">Eventos</th>
-              <th className="px-4 py-3 text-right">Pico por hora</th>
-            </tr>
-          </thead>
-          <tbody>
-            {perCamera.map((c) => (
-              <tr key={c.camara} className="border-b border-slate-100 last:border-0">
-                <td className="px-4 py-2.5 font-mono font-semibold text-slate-900">{c.camara}</td>
-                <td className="px-4 py-2.5 text-right tabular-nums">{c.camiones.toLocaleString()}</td>
+      {splitSource ? (
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {perCamera.map((c) => (
+            <div
+              key={c.camara}
+              className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm hover:shadow-md hover:border-violet-300 transition"
+            >
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="font-bold text-slate-900 font-mono text-base">{c.camara}</h3>
+                <div className="h-2 w-2 rounded-full bg-green-500" />
+              </div>
+
+              <div className="mb-4 grid grid-cols-2 gap-2">
+                <div className="rounded-lg bg-violet-50 border border-violet-200 p-2">
+                  <div className="text-[10px] font-semibold uppercase text-slate-600 tracking-wide">Recibidos (Excel)</div>
+                  <div className="text-xl font-bold text-slate-900 tabular-nums">{c.camiones.toLocaleString()}</div>
+                </div>
                 {splitSource && (
-                  <td className="px-4 py-2.5 text-right tabular-nums text-amber-700">
-                    {(camOnlyByCamera.get(c.camara) ?? 0) > 0
-                      ? `+${(camOnlyByCamera.get(c.camara) ?? 0).toLocaleString()}`
-                      : '—'}
-                  </td>
+                  <div className="rounded-lg bg-amber-50 border border-amber-200 p-2">
+                    <div className="text-[10px] font-semibold uppercase text-slate-600 tracking-wide">Solo cámara</div>
+                    <div className="text-xl font-bold text-amber-700 tabular-nums">
+                      {(camOnlyByCamera.get(c.camara) ?? 0) > 0
+                        ? `+${(camOnlyByCamera.get(c.camara) ?? 0)}`
+                        : '—'}
+                    </div>
+                  </div>
                 )}
-                <td className="px-4 py-2.5 text-right tabular-nums text-sky-800">
-                  {(periodHours ? c.truckHours / periodHours : 0).toLocaleString('es-AR', {
-                    maximumFractionDigits: 1,
-                  })}
-                </td>
-                <td className="px-4 py-2.5 text-right tabular-nums text-slate-600">{c.eventos.toLocaleString()}</td>
-                <td className="px-4 py-2.5 text-right tabular-nums">{c.picoPorHora}</td>
+              </div>
+
+              <div className="mb-4 space-y-2">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-slate-600">Prom/24h</span>
+                  <span className="font-bold text-slate-900">
+                    {(periodHours ? c.truckHours / periodHours : 0).toLocaleString('es-AR', {
+                      maximumFractionDigits: 1,
+                    })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-slate-600">Pico/hora</span>
+                  <span className="font-bold text-slate-900">{c.picoPorHora}</span>
+                </div>
+              </div>
+
+              <div className="h-1 bg-gradient-to-r from-violet-400 to-violet-600 rounded-full opacity-50" />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-200 bg-slate-50 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+                <th className="px-4 py-3">{labels.columnHeader}</th>
+                <th className="px-4 py-3 text-right">Camiones recibidos</th>
+                <th className="px-4 py-3 text-right">Prom. camiones/hora</th>
+                <th className="px-4 py-3 text-right">Eventos</th>
+                <th className="px-4 py-3 text-right">Pico por hora</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {perCamera.map((c) => (
+                <tr key={c.camara} className="border-b border-slate-100 last:border-0">
+                  <td className="px-4 py-2.5 font-mono font-semibold text-slate-900">{c.camara}</td>
+                  <td className="px-4 py-2.5 text-right tabular-nums">{c.camiones.toLocaleString()}</td>
+                  <td className="px-4 py-2.5 text-right tabular-nums text-sky-800">
+                    {(periodHours ? c.truckHours / periodHours : 0).toLocaleString('es-AR', {
+                      maximumFractionDigits: 1,
+                    })}
+                  </td>
+                  <td className="px-4 py-2.5 text-right tabular-nums text-slate-600">{c.eventos.toLocaleString()}</td>
+                  <td className="px-4 py-2.5 text-right tabular-nums">{c.picoPorHora}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <div className="grid gap-4 xl:grid-cols-2">
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
