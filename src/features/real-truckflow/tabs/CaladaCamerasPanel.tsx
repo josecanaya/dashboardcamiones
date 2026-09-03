@@ -145,6 +145,12 @@ export type CameraActivityLabels = {
    * calada no hay filas Excel, así que queda en false y se cuenta todo (comportamiento normal).
    */
   splitExcelVsCamera?: boolean
+  /**
+   * Mostrar la columna «Patentes» con el botón «Ver» y el modal de patentes por cámara (auditoría
+   * de seguridad: qué camiones exactos pasaron por ese sector). Se activa solo donde tiene sentido
+   * de control (aceites SL, calada líquida/SL); en el resto queda oculto.
+   */
+  showPatentesModal?: boolean
 }
 
 const CALADA_LABELS: CameraActivityLabels = {
@@ -628,7 +634,7 @@ export function CaladaCamerasPanel({
                 <th className="px-4 py-3 text-right">Prom. camiones/hora</th>
                 <th className="px-4 py-3 text-right">Eventos</th>
                 <th className="px-4 py-3 text-right">Pico por hora</th>
-                <th className="px-4 py-3 text-center">Patentes</th>
+                {labels.showPatentesModal ? <th className="px-4 py-3 text-center">Patentes</th> : null}
               </tr>
             </thead>
             <tbody>
@@ -643,14 +649,16 @@ export function CaladaCamerasPanel({
                   </td>
                   <td className="px-4 py-2.5 text-right tabular-nums text-slate-600">{c.eventos.toLocaleString()}</td>
                   <td className="px-4 py-2.5 text-right tabular-nums">{c.picoPorHora}</td>
-                  <td className="px-4 py-2.5 text-center">
-                    <button
-                      onClick={() => setSelectedCamaraForModal(c.camara)}
-                      className="rounded px-2 py-1 text-xs font-semibold text-violet-700 hover:bg-violet-100 transition"
-                    >
-                      Ver
-                    </button>
-                  </td>
+                  {labels.showPatentesModal ? (
+                    <td className="px-4 py-2.5 text-center">
+                      <button
+                        onClick={() => setSelectedCamaraForModal(c.camara)}
+                        className="rounded px-2 py-1 text-xs font-semibold text-violet-700 hover:bg-violet-100 transition"
+                      >
+                        Ver
+                      </button>
+                    </td>
+                  ) : null}
                 </tr>
               ))}
             </tbody>
@@ -835,7 +843,7 @@ export function CaladaCamerasPanel({
         </div>
       </div>
 
-      {selectedCamaraForModal && (
+      {labels.showPatentesModal && selectedCamaraForModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-2xl rounded-2xl bg-white shadow-lg max-h-[80vh] overflow-y-auto">
             <div className="sticky top-0 border-b border-slate-200 bg-white px-6 py-4 flex items-center justify-between">

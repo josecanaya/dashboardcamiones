@@ -8,14 +8,47 @@ import { TransformPhaseStepper } from '../components/TransformPhaseStepper'
 import { TransformRunProgress } from '../components/TransformRunProgress'
 import { TransformTramoSummary } from '../components/TransformTramoSummary'
 import { previousCalendarWeekRange, thisCalendarWeekRange } from '../utils/weekDateRange'
+import { AgenteChatTab } from './AgenteChatTab'
 
 type Props = {
   /** Solo si el usuario elige abrir el tablero detallado (no automático). */
   onOpenTransformTab?: () => void
 }
 
+type AnalisisSubView = 'analisis' | 'mcp'
+
+function AnalisisSubTabs({
+  subView,
+  setSubView,
+}: {
+  subView: AnalisisSubView
+  setSubView: (v: AnalisisSubView) => void
+}) {
+  const items: { id: AnalisisSubView; label: string }[] = [
+    { id: 'analisis', label: 'Análisis local' },
+    { id: 'mcp', label: 'Crear MCP' },
+  ]
+  return (
+    <nav className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
+      {items.map((t) => (
+        <button
+          key={t.id}
+          type="button"
+          onClick={() => setSubView(t.id)}
+          className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+            subView === t.id ? 'bg-slate-900 text-white shadow' : 'text-slate-600 hover:bg-slate-50'
+          }`}
+        >
+          {t.label}
+        </button>
+      ))}
+    </nav>
+  )
+}
+
 export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
   const wb = useEtlWorkbenchOptional()
+  const [subView, setSubView] = useState<AnalisisSubView>('analisis')
   const weekDefault = thisCalendarWeekRange()
   const [periodStart, setPeriodStart] = useState(weekDefault.startDate)
   const [periodEnd, setPeriodEnd] = useState(weekDefault.endDate)
@@ -36,12 +69,24 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
     setPeriodEnd(wb.diskPeriod.endDate)
   }, [wb?.diskPeriod])
 
+  if (subView === 'mcp') {
+    return (
+      <div className="space-y-4">
+        <AnalisisSubTabs subView={subView} setSubView={setSubView} />
+        <AgenteChatTab />
+      </div>
+    )
+  }
+
   if (!wb) {
     return (
-      <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-        Contexto workbench ausente — verificá que la página datos reales envuelva con{' '}
-        <span className="font-mono">EtlWorkbenchProvider</span>.
-      </p>
+      <div className="space-y-4">
+        <AnalisisSubTabs subView={subView} setSubView={setSubView} />
+        <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+          Contexto workbench ausente — verificá que la página datos reales envuelva con{' '}
+          <span className="font-mono">EtlWorkbenchProvider</span>.
+        </p>
+      </div>
     )
   }
 
@@ -52,6 +97,8 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
   const transformDisabled = wb.busyLoad || wb.transformBusy || !dataReady
 
   return (
+    <div className="space-y-4">
+    <AnalisisSubTabs subView={subView} setSubView={setSubView} />
     <section className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900">Análisis local</h2>
@@ -152,12 +199,41 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
           <button
             type="button"
             disabled={wb.busyLoad || wb.transformBusy}
+            onClick={() => void wb.loadComposedRange(periodStart, periodEnd)}
+            title="Une las corridas guardadas que cubren el rango, sin reprocesar. Incluye el KPI de tiempos."
+            className="rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-800 disabled:opacity-50"
+          >
+            {wb.transformBusy ? 'Componiendo…' : 'Cargar rango (guardado)'}
+          </button>
+          <button
+            type="button"
+            disabled={wb.busyLoad || wb.transformBusy}
             onClick={() => wb.clearLoaded()}
             className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 disabled:opacity-40"
           >
             Limpiar
           </button>
         </div>
+
+        {wb.composedRange ?
+          <div className="mt-4 rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
+            <div className="font-semibold">
+              Rango compuesto {wb.composedRange.from} → {wb.composedRange.to} desde{' '}
+              {wb.composedRange.usedRunIds.length} corrida(s) guardada(s), sin reprocesar.
+            </div>
+            <div className="mt-1 text-xs text-emerald-900">
+              KPI de tiempos re-agregado ({wb.composedRange.legCount.toLocaleString()} tramos ·{' '}
+              {wb.composedRange.kpiRowCount} transiciones). Ya disponible en <strong>KPI tiempos</strong>.
+            </div>
+            {wb.composedRange.missingDays.length ?
+              <div className="mt-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-950">
+                <strong>{wb.composedRange.missingDays.length} día(s) sin corrida guardada</strong> (no incluidos):{' '}
+                <span className="font-mono">{wb.composedRange.missingDays.join(', ')}</span>. Procesalos con «Procesar y
+                guardar» para incluirlos.
+              </div>
+            : null}
+          </div>
+        : null}
 
         <div className="mt-4">
           <MovimientosBackupPanel />
@@ -209,7 +285,7 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
 
         {(wb.loadSummary?.parseErrors?.length ?? 0) > 0 ?
           <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs text-rose-950">
-            {wb.loadSummary.parseErrors.map((ln) => (
+            {wb.loadSummary?.parseErrors?.map((ln) => (
               <div key={ln}>{ln}</div>
             ))}
           </div>
@@ -368,5 +444,6 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
         </div>
       : null}
     </section>
+    </div>
   )
 }

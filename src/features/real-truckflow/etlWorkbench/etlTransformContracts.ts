@@ -36,8 +36,13 @@ import type { KpiTiemposBuildInput } from './etlKpiTiemposBuild'
  *      (unificado) o transile externo R30/31/32 (unificado); el pellet ya no cae en R8
  *      líquido. `es_de_vuelta` propagado a `excel_operations_with_truckflow`. Templates de
  *      tramo pellet según cámara real (playa 3, puente Ric→SL directo). → reprocesar ventanas.
+ * v16: Guarda producto→circuito en el estampado ejecutivo (debug_matrix). Una patente de
+ *      grano puro en la ventana (con movimientos de grano sólido y NINGÚN movimiento líquido)
+ *      corrige un circuito LÍQUIDO erróneo (SL1/R8/…) al circuito SÓLIDO del Excel (R7/R5/R6/…):
+ *      un camión de SOJA/GIRASOL cuyo recorrido rozó cámaras de líquidos ya no queda estampado
+ *      como mercadería líquida. → reprocesar ventanas.
  */
-export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v15'
+export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v16'
 
 export type EtlTransformInput = {
   events: RealJourneyEventDto[]

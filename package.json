@@ -22,19 +22,20 @@
     "contract-first:local": "node scripts/run-truckflow-transform-local.mjs"
   },
   "dependencies": {
-    "fflate": "^0.8.3",
-    "html-to-image": "^1.11.13",
-    "jspdf": "^4.2.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-is": "^18.3.1",
-    "recharts": "^3.7.0",
-    "xlsx": "^0.18.5",
     "@supabase/supabase-js": "^2.49.1",
     "cors": "^2.8.6",
     "dotenv": "^16.4.7",
     "express": "^5.2.1",
-    "pg": "^8.13.3"
+    "fflate": "^0.8.3",
+    "html-to-image": "^1.11.13",
+    "jspdf": "^4.2.1",
+    "pg": "^8.13.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-is": "^18.3.1",
+    "react-router-dom": "^6.30.6",
+    "recharts": "^3.7.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^18.3.12",

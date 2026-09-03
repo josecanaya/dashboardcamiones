@@ -2,6 +2,7 @@ import { percentile } from '../../../utils/stats'
 import { recordsToCsv, triggerBrowserCsvDownload } from './etlCsv'
 import type { SegmentScatterByDayRow } from './etlSegmentScatterByDay'
 import type { SegmentLeg, SegmentTimingIndex } from './etlSegmentTiming'
+import { unifyPelletCircuitCode } from '../../../etl-core/reports/transileExternoCiclo'
 
 /** Fracción más lenta exportada / resaltada (10 % superior en duración). */
 export const SLOW_TAIL_FRACTION = 0.1
@@ -235,8 +236,14 @@ export function legsForAggregate(
   fromCode: string,
   toCode: string
 ): SegmentLeg[] {
+  // El pellet se muestra con código unificado (R30/31/32, R13/14/15) pero sus legs llevan el
+  // subcódigo por celda (R30/R31/R32…). Comparar con `unifyPelletCircuitCode` para que la
+  // vista unificada encuentre sus legs (sin esto la ficha del pellet no filtraba por día).
+  const wanted = unifyPelletCircuitCode(circuitCode)
   return index.legs.filter(
     (l) =>
-      l.executiveCircuitCode === circuitCode && l.fromCode === fromCode && l.toCode === toCode
+      unifyPelletCircuitCode(l.executiveCircuitCode) === wanted &&
+      l.fromCode === fromCode &&
+      l.toCode === toCode
   )
 }

@@ -83,6 +83,7 @@ export function CaladaTab() {
             exportName: 'ricardone_calada_liquid',
             tableName: 'calada_ricardone_liquid_events',
             hourlyTrucksExcludeCameras: [],
+            showPatentesModal: true,
           }}
         />
       )}
@@ -102,6 +103,7 @@ export function CaladaTab() {
             exportName: 'san_lorenzo_calada',
             tableName: 'calada_sl_camera_events',
             hourlyTrucksExcludeCameras: [],
+            showPatentesModal: true,
           }}
         />
       )}

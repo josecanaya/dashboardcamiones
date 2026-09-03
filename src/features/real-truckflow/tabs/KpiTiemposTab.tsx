@@ -35,6 +35,7 @@ import {
 import { turnoLabel } from '../etlWorkbench/operationalTurno'
 import { parseCsvToRecords } from '../etlWorkbench/etlCsvParse'
 import { legsForAggregate } from '../etlWorkbench/etlSegmentSlowTail'
+import { isDemoraLegDuration, isWithinKpiSegmentDisplayMax } from '../etlWorkbench/etlSegmentTimingRules'
 
 function fmtMin(v: number): string {
   return v.toFixed(1)
@@ -153,24 +154,52 @@ export function KpiTiemposTab() {
    * medios del día elegido filtrando los legs por el día de su journey.
    */
   const journeyDayById = useMemo(() => {
-    const csv = tr?.csv.circuit_timing_journeys
     const map = new Map<string, string>()
-    if (!csv?.trim()) return map
-    const { rows } = parseCsvToRecords(csv)
-    for (const r of rows) {
-      const id = String(r.journey_id ?? '').trim()
-      if (!id) continue
-      const day = operationalDayOfIso(String(r.start_time ?? ''))
-      if (day) map.set(id, day)
+    // 1) Journeys Truckflow: journey_id → día operativo (start_time).
+    const ctjCsv = tr?.csv.circuit_timing_journeys
+    if (ctjCsv?.trim()) {
+      const { rows } = parseCsvToRecords(ctjCsv)
+      for (const r of rows) {
+        const id = String(r.journey_id ?? '').trim()
+        if (!id) continue
+        const day = operationalDayOfIso(String(r.start_time ?? ''))
+        if (day) map.set(id, day)
+      }
+    }
+    // 2) Operaciones Excel-first (pellet/tolvas sin cámara, R3/R4…): sus legs se identifican
+    //    por `external_operation_id` (CTG_…/COMPROB_…) o por el journey_uid matcheado, que NO
+    //    están en circuit_timing_journeys. Sin esto, esos circuitos caían al fallback y la
+    //    línea de tramos no cambiaba por día. El día sale del ingreso Excel.
+    const exCsv = tr?.csv.excel_operations_with_truckflow
+    if (exCsv?.trim()) {
+      const { rows } = parseCsvToRecords(exCsv)
+      for (const r of rows) {
+        const day =
+          operationalDayOfIso(String(r.external_ingreso_at ?? '')) || String(r.source_date ?? '').trim()
+        if (!day) continue
+        const opId = String(r.external_operation_id ?? '').trim()
+        if (opId && !map.has(opId)) map.set(opId, day)
+        for (const uid of String(r.matched_journey_uids ?? '')
+          .split(/[|,]/)
+          .map((s) => s.trim())
+          .filter(Boolean)) {
+          if (!map.has(uid)) map.set(uid, day)
+        }
+      }
     }
     return map
-  }, [tr?.csv.circuit_timing_journeys])
+  }, [tr?.csv.circuit_timing_journeys, tr?.csv.excel_operations_with_truckflow])
 
   const periodFechas = useMemo(() => {
     const fromDisk = [...(wb?.loadSummary?.daysDetected ?? [])]
     const fromScatter = scatterByDayAll.map((r) => r.fecha_tramo).filter(Boolean)
-    return [...new Set([...fromDisk, ...fromScatter])].sort()
-  }, [wb?.loadSummary?.daysDetected, scatterByDayAll])
+    // Los días también salen de `circuit_timing_journeys` (journeyDayById): las corridas
+    // guardadas y los rangos compuestos no traen `daysDetected` ni `segment_scatter_by_day`,
+    // pero sí las fechas de arranque de cada journey. Sin esto el selector de día quedaba
+    // vacío (no se podía filtrar por día) aunque el filtro por tramo sí sabe el día.
+    const fromJourneys = [...journeyDayById.values()]
+    return [...new Set([...fromDisk, ...fromScatter, ...fromJourneys])].sort()
+  }, [wb?.loadSummary?.daysDetected, scatterByDayAll, journeyDayById])
 
   // Si el día elegido en el filtro general ya no existe en el período, volver a "todos".
   useEffect(() => {
@@ -337,8 +366,16 @@ export function KpiTiemposTab() {
       return visibleAggregates.map(periodTramo)
     }
     return perTramoLegs.map(({ a, legs }) => {
+      // Misma exclusión que el KPI del período (aggregateFromLegs): sacar los DEMORADOS
+      // (> umbral del tramo, ej. CALADA→EGRESO 30 min) y los que superan el tope de display.
+      // Sin esto la media por día incluía demoras que sí se excluyen en la dispersión.
       const durs = legs
-        .filter((lg) => journeyDayById.get(lg.journeyId) === selectedDay)
+        .filter(
+          (lg) =>
+            journeyDayById.get(lg.journeyId) === selectedDay &&
+            !isDemoraLegDuration(lg.durationMinutes, a.fromCode, a.toCode) &&
+            isWithinKpiSegmentDisplayMax(lg.durationMinutes)
+        )
         .map((lg) => lg.durationMinutes)
         .filter((d) => Number.isFinite(d) && d > 0)
       return {

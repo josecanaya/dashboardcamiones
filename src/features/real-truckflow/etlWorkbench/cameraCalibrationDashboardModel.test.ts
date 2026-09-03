@@ -57,7 +57,7 @@ describe('cameraCalibrationDashboardModel', () => {
     expect(dash.hitoRows.some((h) => h.hito === 'balanza_egreso_slz')).toBe(false)
   })
 
-  it('excluye balanza egreso SL de conclusiones R7', () => {
+  it('incluye balanza egreso SL en conclusiones R7 (cámara reparada)', () => {
     const mov: MovimientoContratoLike = {
       external_operation_id: 'CTG_77',
       ctg: '77',
@@ -94,10 +94,10 @@ describe('cameraCalibrationDashboardModel', () => {
     expect(c).toBeTruthy()
     expect(c!.summaries.some((s) => s.key === 'balanza_egreso_slz')).toBe(true)
     const dash = buildCalibrationDashboardModel(c!)
-    expect(dash.hitoRows.some((h) => h.hito === 'balanza_egreso_slz')).toBe(false)
-    expect(dash.stackedBars.some((h) => h.hito === 'balanza_egreso_slz')).toBe(false)
-    expect(dash.topProblems.some((p) => p.hito === 'balanza_egreso_slz')).toBe(false)
-    expect(dash.brief.parrafos.join(' ')).toMatch(/sin balanza egreso SL/i)
+    expect(dash.hitoRows.some((h) => h.hito === 'balanza_egreso_slz')).toBe(true)
+    expect(dash.stackedBars.some((h) => h.hito === 'balanza_egreso_slz')).toBe(true)
+    // Ya no se excluye del brief: la cámara volvió al informe.
+    expect(dash.brief.parrafos.join(' ')).not.toMatch(/sin balanza egreso SL/i)
   })
 
   it('incluye la cámara volcable SL como hito de R7 y la reconoce', () => {

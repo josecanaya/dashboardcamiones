@@ -724,8 +724,12 @@ export function countRowCapturePoints(row: CameraMatrixRow, circuitCode: string)
   return steps.filter((s) => row.captures[s.key]).length
 }
 
-/** Hitos que ensucian conclusiones generales del cuadro de calibración (no se usan en KPIs/brief). */
-export const CALIBRATION_GENERAL_EXCLUDED_STEP_KEYS = new Set(['balanza_egreso_slz'])
+/**
+ * Hitos que ensucian conclusiones generales del cuadro de calibración (no se usan en KPIs/brief).
+ * `balanza_egreso_slz` (Balanza salida SL) estuvo excluido mientras la cámara estaba rota; ya
+ * reparada, vuelve a contar en el informe de R7, así que el set queda vacío.
+ */
+export const CALIBRATION_GENERAL_EXCLUDED_STEP_KEYS = new Set<string>([])
 
 /** Puntos de “descarga” por circuito (Celda 16 / Volcable Ric / Volcable SL). */
 export const DESCARGA_CAMERA_STEP_KEYS = new Set(['celda16_descarga', 'volcable', 'volcable_slz'])
@@ -755,7 +759,7 @@ export type PointCaptureDepthSummary = {
   descargaStepKeys: string[]
 }
 
-/** Profundidad de lectura por camión (usa hitos de calibración, sin balanza egreso SL). */
+/** Profundidad de lectura por camión (usa los hitos de calibración del circuito). */
 export function summarizePointCaptureDepth(
   circuitCode: string,
   rows: CameraMatrixRow[]

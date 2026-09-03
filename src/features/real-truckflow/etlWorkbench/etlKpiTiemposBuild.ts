@@ -3,6 +3,11 @@ import {
   buildCaladaCameraEvents,
   buildSanLorenzoCaladaCameraEvents,
   buildRicardoneCaladaLiquidCameraEvents,
+  buildRicardoneVolcableCameraEvents,
+  buildRicardoneSiloCameraEvents,
+  buildRicardoneCelda16CameraEvents,
+  buildSanLorenzoAceiteOslCameraEvents,
+  buildSanLorenzoAceitePtoCameraEvents,
   caladaCameraEventsCsv,
 } from './etlCaladaCameraActivity'
 import {
@@ -90,6 +95,11 @@ export type KpiTiemposBuildOutput = {
     calada_sl_camera_events: string
     calada_ricardone_liquid_events: string
     san_lorenzo_volcable_events: string
+    ricardone_volcable_events: string
+    ricardone_silo_events: string
+    ricardone_celda16_events: string
+    san_lorenzo_aceite_pto_events: string
+    san_lorenzo_aceite_osl_events: string
   }
   logs: string[]
 }
@@ -262,6 +272,41 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
       `producto asignado a ${caladaLiquidConProducto}/${caladaLiquidEvents.length}`
   )
 
+  // Descargas Ricardone (volcables, silos, celda 16) y aceites San Lorenzo (Pto, OSL):
+  // misma lógica de eventos por cámara que calada, solo cambia el set de dispositivos.
+  const ricVolcableEvents = buildRicardoneVolcableCameraEvents({
+    classifiedJourneys: input.classifiedJourneys,
+    productByJourneyUid,
+  })
+  const ricSiloEvents = buildRicardoneSiloCameraEvents({
+    classifiedJourneys: input.classifiedJourneys,
+    productByJourneyUid,
+  })
+  const ricCelda16Events = buildRicardoneCelda16CameraEvents({
+    classifiedJourneys: input.classifiedJourneys,
+    productByJourneyUid,
+  })
+  // Aceite SL: actividad de las cámaras físicas (Ren* = OSL, SLZBaiLiq = PTO), descartando las
+  // lecturas con patente inválida (basura del OCR). El Excel de aceite NO sirve de cruce acá
+  // (plataforma ACEITE_OSL contaminada con agua; la lógica canónica usa la cámara S10, no las Ren*).
+  const slAceitePtoEvents = buildSanLorenzoAceitePtoCameraEvents({
+    classifiedJourneys: input.classifiedJourneys,
+    productByJourneyUid,
+  })
+  const slAceiteOslEvents = buildSanLorenzoAceiteOslCameraEvents({
+    classifiedJourneys: input.classifiedJourneys,
+    productByJourneyUid,
+  })
+  const ptoOps = new Set(slAceitePtoEvents.map((r) => r.journey_id)).size
+  const oslOps = new Set(slAceiteOslEvents.map((r) => r.journey_id)).size
+  logs.push(
+    `descargas: ricardone_volcable=${ricVolcableEvents.length} · ` +
+      `ricardone_silo=${ricSiloEvents.length} · ricardone_celda16=${ricCelda16Events.length} · ` +
+      `sl_aceite_pto=${ptoOps} camiones (${slAceitePtoEvents.length} ev) · ` +
+      `sl_aceite_osl=${oslOps} camiones (${slAceiteOslEvents.length} ev) ` +
+      `(aceite: actividad de cámara, solo patentes válidas — sin cruce Excel)`
+  )
+
   return {
     segmentTiming,
     circuitTiming,
@@ -280,6 +325,11 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
       calada_sl_camera_events: caladaCameraEventsCsv(caladaSlEvents),
       calada_ricardone_liquid_events: caladaCameraEventsCsv(caladaLiquidEvents),
       san_lorenzo_volcable_events: sanLorenzoVolcableEventsCsv(sanLorenzoVolcableEvents),
+      ricardone_volcable_events: caladaCameraEventsCsv(ricVolcableEvents),
+      ricardone_silo_events: caladaCameraEventsCsv(ricSiloEvents),
+      ricardone_celda16_events: caladaCameraEventsCsv(ricCelda16Events),
+      san_lorenzo_aceite_pto_events: caladaCameraEventsCsv(slAceitePtoEvents),
+      san_lorenzo_aceite_osl_events: caladaCameraEventsCsv(slAceiteOslEvents),
     },
     logs,
   }

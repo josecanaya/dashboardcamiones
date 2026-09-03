@@ -52,6 +52,17 @@ import {
 } from '../api/etlRunCacheApi'
 import { loadTransformOutputFromRun } from './etlTransformOutputFromDisk'
 import {
+  composeRunsIntoTransformOutput,
+  computeRangeCoverage,
+  persistedLegRowsToSegmentLegs,
+  type RangeCoverage,
+} from './etlComposeRuns'
+import {
+  rebuildSegmentTimingIndexFromLegs,
+  segmentTimingKpiCsv,
+  segmentTimingLegsCsv,
+} from './etlSegmentTiming'
+import {
   buildPlantVisitUpsertsFromTransform,
   type FleetDatabaseSaveResult,
 } from './truckPlantVisitSync'
@@ -74,6 +85,16 @@ export type { TruckflowApiJourneyDayStat }
 
 export type EtlDiskPeriod = { startDate: string; endDate: string }
 
+/** Info del rango compuesto a partir de varias corridas guardadas (sin reprocesar). */
+export type ComposedRangeInfo = {
+  from: string
+  to: string
+  usedRunIds: string[]
+  missingDays: string[]
+  legCount: number
+  kpiRowCount: number
+}
+
 type Ctx = {
   loadSummary: EtlLoadSummary | null
   /** journeyUid distintos por carpeta de extracción (JSON crudo API, pre-ETL). */
@@ -86,6 +107,9 @@ type Ctx = {
   events: RealJourneyEventDto[]
   alerts: RealAlertDto[]
   busyLoad: boolean
+  /** Trae los eventos crudos de la ventana ya hidratada (desde disco no vienen). Idempotente. */
+  windowEventsBusy: boolean
+  ensureWindowEventsLoaded: () => Promise<RealJourneyEventDto[]>
   /** Resultado del último transform (no se recalcula al render). */
   transformResult: EtlTransformOutput | null
   transformBusy: boolean
@@ -102,6 +126,10 @@ type Ctx = {
   refreshSavedWindows: () => Promise<void>
   /** Carga un proceso guardado a memoria desde disco (sin reprocesar). */
   hydrateSavedWindow: (w: SavedWindow) => Promise<void>
+  /** Compone un rango arbitrario uniendo las corridas guardadas que lo cubren (sin reprocesar). */
+  loadComposedRange: (from: string, to: string) => Promise<RangeCoverage | null>
+  /** Info del último rango compuesto (corridas usadas, días faltantes). */
+  composedRange: ComposedRangeInfo | null
   /** Tramo 4: KPI tiempos / dispersión (pestaña KPI Tiempos). */
   kpiTiemposBusy: boolean
   kpiTiemposError: string | null
@@ -207,6 +235,8 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
   const [parsedAlertFiles, setParsedAlertFiles] = useState<ParsedTruckflowFile[]>([])
   const [events, setEvents] = useState<RealJourneyEventDto[]>([])
   const [alerts, setAlerts] = useState<RealAlertDto[]>([])
+  const [windowEventsBusy, setWindowEventsBusy] = useState(false)
+  const windowEventsInflightRef = useRef<Promise<RealJourneyEventDto[]> | null>(null)
   const [loadSummary, setLoadSummary] = useState<EtlLoadSummary | null>(null)
   const [apiJourneyStatsPerDay, setApiJourneyStatsPerDay] = useState<TruckflowApiJourneyDayStat[] | null>(
     null
@@ -216,6 +246,8 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
   const [cachedWindow, setCachedWindow] = useState<ResolveWindowResult | null>(null)
   const [savedWindows, setSavedWindows] = useState<SavedWindow[]>([])
   const [savedWindowsLoading, setSavedWindowsLoading] = useState(false)
+  /** Info del último rango compuesto (varias corridas guardadas unidas sin reprocesar). */
+  const [composedRange, setComposedRange] = useState<ComposedRangeInfo | null>(null)
   const [fleetSaveBusy, setFleetSaveBusy] = useState(false)
   const [fleetSaveError, setFleetSaveError] = useState<string | null>(null)
   const [fleetSaveMessage, setFleetSaveMessage] = useState<string | null>(null)
@@ -481,6 +513,39 @@ function buildApiJourneyStatsFromParsedFiles(
     }
   }, [resetKpiTiemposState])
 
+  /**
+   * Hidrata `events` (eventos crudos) para la ventana ya cargada. Las corridas guardadas
+   * traen las tablas materializadas pero NO el insumo de eventos; los timelines por camión
+   * (Seguridad) los necesitan para el horario por nodo. No toca `transformResult` ni el KPI:
+   * sólo rellena `events` desde el servidor local, una vez, con guarda anti-concurrencia.
+   */
+  const ensureWindowEventsLoaded = useCallback(async (): Promise<RealJourneyEventDto[]> => {
+    if (events.length) return events
+    if (windowEventsInflightRef.current) return windowEventsInflightRef.current
+    const startDate = diskPeriod?.startDate ?? cachedWindow?.from ?? ''
+    const endDate = diskPeriod?.endDate ?? cachedWindow?.to ?? ''
+    if (!startDate || !endDate) return []
+    setWindowEventsBusy(true)
+    const p = (async () => {
+      try {
+        const res = await postTruckflowLoadLocalPeriod({ startDate, endDate })
+        const dtoEv = await journeyDtoListFromRawExtractedRowsChunked(res.events as unknown[])
+        const evMap = new Map<string, RealJourneyEventDto>()
+        for (const e of dtoEv) evMap.set(dedupeKeyEvent(e), e)
+        const evDedup = [...evMap.values()]
+        setEvents(evDedup)
+        return evDedup
+      } catch {
+        return []
+      } finally {
+        setWindowEventsBusy(false)
+        windowEventsInflightRef.current = null
+      }
+    })()
+    windowEventsInflightRef.current = p
+    return p
+  }, [events, diskPeriod, cachedWindow])
+
   const buildTransformInput = useCallback(async (): Promise<EtlTransformInput> => {
     let plateRegistry = null
     try {
@@ -640,12 +705,45 @@ function buildApiJourneyStatsFromParsedFiles(
     }
     const prepared = kpiTiemposPreparedRef.current
     if (!prepared?.classifiedJourneys?.length) {
-      setKpiTiemposError(
-        'Esta vista viene de una corrida guardada: trae los KPI ya calculados, pero no el ' +
-          'insumo para recalcularlos (los recorridos reconstruidos no se persisten). Para ' +
-          'recalcular, cargá el período en «Análisis local» y corré Transform.'
-      )
-      return false
+      // Sin insumo en memoria (corrida guardada o rango compuesto): re-agregamos el KPI
+      // desde los `segment_timing_legs` persistidos, que sí traen todo lo necesario.
+      const legRows = (transformResult.tables as Record<string, { rows?: Record<string, unknown>[] }> | undefined)
+        ?.segment_timing_legs?.rows
+      const legs = legRows ? persistedLegRowsToSegmentLegs(legRows) : []
+      if (!legs.length) {
+        setKpiTiemposError(
+          'Esta vista no tiene tramos (segment_timing_legs) para recalcular el KPI. ' +
+            'Cargá el período en «Análisis local» y corré Transform.'
+        )
+        return false
+      }
+      setKpiTiemposBusy(true)
+      setKpiTiemposError(null)
+      try {
+        const index = rebuildSegmentTimingIndexFromLegs(legs)
+        const kpiCsv = segmentTimingKpiCsv(index)
+        const legsCsv = segmentTimingLegsCsv(index)
+        await yieldToBrowser()
+        startTransition(() => {
+          setTransformResult((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  csv: { ...prev.csv, segment_timing_kpi: kpiCsv, segment_timing_legs: legsCsv },
+                  // Los gráficos del KPI leen stats.segmentTiming, no el CSV.
+                  stats: { ...prev.stats, segmentTiming: index, kpiTiemposBuilt: true },
+                }
+              : prev
+          )
+          setKpiTiemposBuilt(true)
+        })
+        return true
+      } catch (e) {
+        setKpiTiemposError(e instanceof Error ? e.message : String(e))
+        return false
+      } finally {
+        setKpiTiemposBusy(false)
+      }
     }
     setKpiTiemposBusy(true)
     setKpiTiemposError(null)
@@ -846,6 +944,68 @@ function buildApiJourneyStatsFromParsedFiles(
     []
   )
 
+  /**
+   * Compone un rango arbitrario [from,to] uniendo las corridas guardadas que lo
+   * cubren, SIN reprocesar. Re-agrega el KPI de tiempos desde los legs persistidos.
+   * Devuelve la cobertura (días cubiertos / faltantes) para que la UI avise.
+   */
+  const loadComposedRange = useCallback(
+    async (from: string, to: string): Promise<RangeCoverage | null> => {
+      setTransformError(null)
+      let windows: SavedWindow[] = savedWindows
+      if (!windows.length) {
+        try {
+          windows = await listWindows()
+          setSavedWindows(windows)
+        } catch {
+          /* servidor local apagado: seguimos con lo que haya */
+        }
+      }
+      const vigentes = windows.filter((w) => !w.stale)
+      const coverage = computeRangeCoverage(from, to, vigentes)
+      if (!coverage.coveringRuns.length) {
+        setComposedRange(null)
+        setTransformError(
+          `No hay corridas guardadas que cubran ${from} → ${to}. Procesá el período en «Análisis local».`
+        )
+        return coverage
+      }
+      setTransformBusy(true)
+      try {
+        const loaded = await Promise.all(
+          coverage.coveringRuns.map(async (r) => ({
+            runId: r.runId,
+            output: await loadTransformOutputFromRun(r.runId),
+          }))
+        )
+        const composed = composeRunsIntoTransformOutput(loaded, from, to)
+        startTransition(() => {
+          setTransformResult(composed.output)
+        })
+        resetKpiTiemposState()
+        setKpiTiemposBuilt(true)
+        setTransformTramoCompleted(3)
+        setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
+        setDiskPeriod({ startDate: from, endDate: to })
+        setCachedWindow(null)
+        setComposedRange({
+          from,
+          to,
+          usedRunIds: composed.usedRunIds,
+          missingDays: coverage.missingDays,
+          legCount: composed.composedLegCount,
+          kpiRowCount: composed.kpiRowCount,
+        })
+      } catch (e) {
+        setTransformError(e instanceof Error ? e.message : String(e))
+      } finally {
+        setTransformBusy(false)
+      }
+      return coverage
+    },
+    [savedWindows]
+  )
+
   // Al montar: traer los procesos guardados y, si no hay nada cargado, hidratar
   // el más reciente como "fuente de la verdad" por default (sin reprocesar).
   const didAutoHydrateRef = useRef(false)
@@ -882,6 +1042,8 @@ function buildApiJourneyStatsFromParsedFiles(
       events,
       alerts,
       busyLoad,
+      windowEventsBusy,
+      ensureWindowEventsLoaded,
       transformResult,
       transformBusy,
       transformError,
@@ -892,6 +1054,8 @@ function buildApiJourneyStatsFromParsedFiles(
       savedWindowsLoading,
       refreshSavedWindows,
       hydrateSavedWindow,
+      loadComposedRange,
+      composedRange,
       kpiTiemposBusy,
       kpiTiemposError,
       kpiTiemposBuilt,
@@ -929,6 +1093,8 @@ function buildApiJourneyStatsFromParsedFiles(
       events,
       alerts,
       busyLoad,
+      windowEventsBusy,
+      ensureWindowEventsLoaded,
       transformResult,
       transformBusy,
       transformError,
@@ -939,6 +1105,8 @@ function buildApiJourneyStatsFromParsedFiles(
       savedWindowsLoading,
       refreshSavedWindows,
       hydrateSavedWindow,
+      loadComposedRange,
+      composedRange,
       kpiTiemposBusy,
       kpiTiemposError,
       kpiTiemposBuilt,

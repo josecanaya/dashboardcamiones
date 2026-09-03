@@ -371,9 +371,15 @@ export function transitionKey(fromCode: string, toCode: string): string {
  *
  * `CALADA→EGRESO` (R7): terminar la calada y egresar hacia el puerto es un tránsito corto;
  * más de 30 min es una demora que distorsiona el KPI del tramo. Pedido operativo 2026-08-18.
+ *
+ * `EGRESO→SL_INGRESO` (R7): trayecto por ruta Ricardone → San Lorenzo. La mediana real es
+ * ~11 min (p99 ~25); >30 min es un apareo erróneo de cámara/OCR (egreso de Ric matcheado con
+ * un ingreso a SL horas después) que infla la media. Se saca del KPI y se lista como DEMORADO
+ * (con patente). Pedido operativo 2026-09-03.
  */
 export const SEGMENT_DEMORA_THRESHOLD_MINUTES: Record<string, number> = {
   'CALADA→EGRESO': 30,
+  'EGRESO→SL_INGRESO': 30,
 }
 
 /** Umbral de demora del tramo, o null si el tramo no tiene regla de demora. */

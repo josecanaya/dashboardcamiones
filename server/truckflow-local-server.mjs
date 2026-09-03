@@ -747,7 +747,7 @@ function listTruckflowDataDays() {
 // Espejo de ETL_TRANSFORM_RULES_VERSION en
 // src/features/real-truckflow/etlWorkbench/etlTransformContracts.ts (este archivo es .mjs
 // y no puede importar TS). Cambiar las dos juntas.
-const CURRENT_RULES_VERSION = 'etl_transform_v14'
+const CURRENT_RULES_VERSION = 'etl_transform_v16'
 
 /** POST /api/etl/runs — spawnea runner headless; responde { runId }. */
 app.post('/api/etl/runs', async (req, res) => {

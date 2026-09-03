@@ -226,7 +226,7 @@ export type CalibrationDashboardModel = {
   vistosPorTodas: number
   /** Camiones con al menos una cámara que no los registró. */
   conAlgunaFalla: number
-  /** Conteos de profundidad de lectura (sin balanza egreso SL). */
+  /** Conteos de profundidad de lectura (hitos de calibración del circuito). */
   pointDepth: PointCaptureDepthSummary
   pointDepthLine: string
   hitoRows: HitoCaptureRow[]
@@ -436,8 +436,13 @@ function buildBrief(
       }).`
     : 'Sin datos de hitos.'
 
+  const excludedLabels = circuit.summaries
+    .filter((s) => isExcludedFromGeneralCalibration(s.key))
+    .map((s) => hitoOperativoLabel(s.key, s.header))
+  const excludedSuffix = excludedLabels.length ? ` (sin ${excludedLabels.join(', ')})` : ''
+
   const parrafos = [
-    `Reconocimiento general del circuito: ${reconocimientoGeneralPct}% con ≥${recognition.minPoints} puntos (sin balanza egreso SL).`,
+    `Reconocimiento general del circuito: ${reconocimientoGeneralPct}% con ≥${recognition.minPoints} puntos${excludedSuffix}.`,
     mejor && peor ?
       `Mejor hito: ${mejor.hitoLabel} (${mejor.porcentajeCaptura}%). Peor: ${peor.hitoLabel} (${peor.porcentajeCaptura}%).`
     : '',

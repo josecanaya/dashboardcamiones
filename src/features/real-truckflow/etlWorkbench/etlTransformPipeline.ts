@@ -57,6 +57,10 @@ import {
   buildS7S8CircuitByPlate,
   resolveS7S8ExcelFirstCircuitCode,
 } from './etlS7S8ExcelReclassify'
+import {
+  buildSolidExcelCircuitByPlate,
+  resolveSolidExcelFirstCircuitCode,
+} from './etlSolidExcelGuard'
 import { type ClassifiedJourneyForTiming } from './etlSegmentTiming'
 import { lookupSanLorenzoCameraByDevice } from '../../../data/sanLorenzoCameraCatalog'
 import {
@@ -1585,6 +1589,13 @@ export async function runEtlTransform(
     phaseStore.excelStep?.normalized ?? inp.preNormalizedMovimientos
   )
 
+  // Guarda producto→circuito: patente de grano puro (sin movimiento líquido en la
+  // ventana) → circuito sólido del Excel. Corrige el estampado líquido erróneo
+  // (SL1/R8/…) de un journey de SOJA/GIRASOL cuyo recorrido rozó cámaras de líquidos.
+  const solidExcelCircuitByPlate = buildSolidExcelCircuitByPlate(
+    phaseStore.excelStep?.normalized ?? inp.preNormalizedMovimientos
+  )
+
   let executiveJourneyPass = 0
   for (const mj of journeysForExecutive) {
     if (++executiveJourneyPass % 40 === 0) await yieldToBrowser()
@@ -1647,6 +1658,23 @@ export async function runEtlTransform(
       if (s7s8Cfg) {
         executiveCircuitConfig = s7s8Cfg
         technicalCircuitCode = resolveTechnicalCircuitCodeForExecutive(mj, s7s8Cfg.code) ?? technicalCircuitCode
+        matrixClassification = classifyJourneyAgainstCircuitMatrix(mj, DEFAULT_CIRCUIT_MATRIX, {
+          preliminaryCodeOverride: technicalCircuitCode,
+        })
+      }
+    }
+    // Guarda producto→circuito: un journey estampado con circuito LÍQUIDO cuya patente
+    // es de grano puro en la ventana toma el circuito SÓLIDO del Excel (R7/R5/R6/…).
+    const solidExcelCode = resolveSolidExcelFirstCircuitCode({
+      currentExecutiveCode: executiveCircuitConfig?.code ?? '',
+      plate: String(mj.normalizedPlate || mj.plate || ''),
+      circuitByPlate: solidExcelCircuitByPlate,
+    })
+    if (solidExcelCode) {
+      const solidCfg = resolveExecutiveCircuitConfig(solidExcelCode)
+      if (solidCfg) {
+        executiveCircuitConfig = solidCfg
+        technicalCircuitCode = resolveTechnicalCircuitCodeForExecutive(mj, solidCfg.code) ?? technicalCircuitCode
         matrixClassification = classifyJourneyAgainstCircuitMatrix(mj, DEFAULT_CIRCUIT_MATRIX, {
           preliminaryCodeOverride: technicalCircuitCode,
         })

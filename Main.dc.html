@@ -1,0 +1,483 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    }
+    a { color: #7c3aed; }
+    a:hover { color: #6d28d9; }
+
+    .header {
+      padding: 32px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      color: #1e293b;
+      margin: 0 0 24px 0;
+      letter-spacing: -0.5px;
+    }
+
+    .selector-bar {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      overflow-x: auto;
+      padding-bottom: 12px;
+    }
+
+    .day-bar {
+      min-width: 32px;
+      height: 48px;
+      background: #c4b5fd;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      opacity: 0.6;
+    }
+
+    .day-bar:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    .day-bar.active {
+      opacity: 1;
+      height: 64px;
+      background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.2);
+    }
+
+    .day-label {
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      white-space: nowrap;
+    }
+
+    .content {
+      padding: 32px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .chart-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .chart-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #64748b;
+      margin-bottom: 16px;
+    }
+
+    .chart-placeholder {
+      height: 280px;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .street-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .street-card:hover {
+      border-color: #7c3aed;
+      box-shadow: 0 16px 32px rgba(124, 58, 237, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .street-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #7c3aed 0%, #a78bfa 100%);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .street-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+      font-family: monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .performance-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #22c55e;
+    }
+
+    .card-main-metric {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .metric-box {
+      background: rgba(124, 58, 237, 0.05);
+      border: 1px solid rgba(124, 58, 237, 0.15);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .metric-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #64748b;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1e293b;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-value.extra {
+      color: #d97706;
+    }
+
+    .product-section {
+      margin-bottom: 16px;
+    }
+
+    .product-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .product-bar {
+      height: 20px;
+      background: linear-gradient(90deg, #7c3aed 0%, #a78bfa 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+    }
+
+    .product-pct {
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    .sparkline {
+      width: 60px;
+      height: 24px;
+      background: rgba(124, 58, 237, 0.08);
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+      .charts-row {
+        grid-template-columns: 1fr;
+      }
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</helmet>
+
+<div style="min-height: 100vh; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
+  <!-- HEADER -->
+  <div class="header">
+    <h1>{{panelTitle}}</h1>
+    <div class="selector-bar">
+      <div class="day-bar active">
+        <div class="day-label">L 20</div>
+      </div>
+      <div class="day-bar">
+        <div class="day-label">M 21</div>
+      </div>
+      <div class="day-bar">
+        <div class="day-label">X 22</div>
+      </div>
+      <div class="day-bar">
+        <div class="day-label">J 23</div>
+      </div>
+      <div class="day-bar">
+        <div class="day-label">V 24</div>
+      </div>
+      <div class="day-bar">
+        <div class="day-label">S 25</div>
+      </div>
+      <div class="day-bar">
+        <div class="day-label">D 26</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- CHARTS -->
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">Camiones por calle</div>
+        <div class="chart-placeholder">[Gráfico barras horizontales]</div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Camiones por hora</div>
+        <div class="chart-placeholder">[Gráfico área con picos verdes]</div>
+      </div>
+    </div>
+
+    <!-- STREET CARDS (Main content) -->
+    <div class="cards-grid">
+      <!-- Volcable 1 -->
+      <div class="street-card">
+        <div class="card-header">
+          <div class="street-name">Volcable 1</div>
+          <div class="performance-dot"></div>
+        </div>
+
+        <div class="card-main-metric">
+          <div class="metric-box">
+            <div class="metric-label">Recibidos (Excel)</div>
+            <div class="metric-value">362</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Solo cámara</div>
+            <div class="metric-value extra">+145</div>
+          </div>
+        </div>
+
+        <div class="product-section">
+          <div class="product-name">Producto dominante</div>
+          <div class="product-bar" style="width: 92%;">
+            <span class="product-pct">Soja 92%</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <span>Prom/24h: <strong>15.1</strong></span>
+          <div class="sparkline"></div>
+        </div>
+      </div>
+
+      <!-- Volcable 2 -->
+      <div class="street-card">
+        <div class="card-header">
+          <div class="street-name">Volcable 2</div>
+          <div class="performance-dot"></div>
+        </div>
+
+        <div class="card-main-metric">
+          <div class="metric-box">
+            <div class="metric-label">Recibidos (Excel)</div>
+            <div class="metric-value">575</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Solo cámara</div>
+            <div class="metric-value extra">+341</div>
+          </div>
+        </div>
+
+        <div class="product-section">
+          <div class="product-name">Producto dominante</div>
+          <div class="product-bar" style="width: 88%;">
+            <span class="product-pct">Soja 88%</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <span>Prom/24h: <strong>23.9</strong></span>
+          <div class="sparkline"></div>
+        </div>
+      </div>
+
+      <!-- Volcable 3 -->
+      <div class="street-card">
+        <div class="card-header">
+          <div class="street-name">Volcable 3</div>
+          <div class="performance-dot"></div>
+        </div>
+
+        <div class="card-main-metric">
+          <div class="metric-box">
+            <div class="metric-label">Recibidos (Excel)</div>
+            <div class="metric-value">764</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Solo cámara</div>
+            <div class="metric-value extra">+90</div>
+          </div>
+        </div>
+
+        <div class="product-section">
+          <div class="product-name">Producto dominante</div>
+          <div class="product-bar" style="width: 75%; background: linear-gradient(90deg, #8b5cf6 0%, #c4b5fd 100%);">
+            <span class="product-pct">Pellet 75%</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <span>Prom/24h: <strong>31.8</strong></span>
+          <div class="sparkline"></div>
+        </div>
+      </div>
+
+      <!-- Volcable 4 -->
+      <div class="street-card">
+        <div class="card-header">
+          <div class="street-name">Volcable 4</div>
+          <div class="performance-dot"></div>
+        </div>
+
+        <div class="card-main-metric">
+          <div class="metric-box">
+            <div class="metric-label">Recibidos (Excel)</div>
+            <div class="metric-value">666</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Solo cámara</div>
+            <div class="metric-value extra">+73</div>
+          </div>
+        </div>
+
+        <div class="product-section">
+          <div class="product-name">Producto dominante</div>
+          <div class="product-bar" style="width: 91%;">
+            <span class="product-pct">Soja 91%</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <span>Prom/24h: <strong>27.8</strong></span>
+          <div class="sparkline"></div>
+        </div>
+      </div>
+
+      <!-- Volcable 5 -->
+      <div class="street-card">
+        <div class="card-header">
+          <div class="street-name">Volcable 5</div>
+          <div class="performance-dot"></div>
+        </div>
+
+        <div class="card-main-metric">
+          <div class="metric-box">
+            <div class="metric-label">Recibidos (Excel)</div>
+            <div class="metric-value">726</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Solo cámara</div>
+            <div class="metric-value extra">+108</div>
+          </div>
+        </div>
+
+        <div class="product-section">
+          <div class="product-name">Producto dominante</div>
+          <div class="product-bar" style="width: 94%;">
+            <span class="product-pct">Soja 94%</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <span>Prom/24h: <strong>30.3</strong></span>
+          <div class="sparkline"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+
+<script data-dc-script data-props='{
+  "panelTitle": {"editor": "text", "default": "Control de Cámaras: Volcable SL"}
+}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      panelTitle: this.props.panelTitle ?? "Control de Cámaras: Volcable SL"
+    };
+  }
+}
+</script>
+</body>
+</html>

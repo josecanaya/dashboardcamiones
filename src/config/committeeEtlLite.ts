@@ -13,8 +13,6 @@ export const ETL_PRODUCT_TAB_IDS = [
   'analisis_local',
   'transform_etl',
   'kpi_tiempos',
-  'load_export',
-  'agente',
 ] as const
 
 /** Pestañas de diagnóstico técnico — solo visibles en modo DEV. */
@@ -28,7 +26,6 @@ export const ETL_DEV_TAB_IDS = [
   'circuitos',
   'camara_por_camara',
   'buscar',
-  'etl_export',
 ] as const
 
 /** @deprecated Usar ETL_PRODUCT_TAB_IDS + ETL_DEV_TAB_IDS */

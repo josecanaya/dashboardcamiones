@@ -57,19 +57,33 @@ export type BuildCaladaCameraEventsInput = {
   productByJourneyUid?: Map<string, string> | null
 }
 
+/** Opciones del constructor genérico de eventos de cámara. */
+type BuildCameraEventsOptions = {
+  /**
+   * Descartar journeys cuya patente NO es una patente argentina válida (`isValidPlate`). En sectores
+   * con OCR malo (aceite OSL: cámaras Ren*) las lecturas erróneas generan patentes basura
+   * (`DQWO040`, `KWO04`, `GWO0404`…) que inflan el conteo; con esto solo se cuentan las pasadas con
+   * patente legible. Ver [[aceite-descargas-ingreso-excel-first]].
+   */
+  requireValidPlate?: boolean
+}
+
 /**
  * Constructor genérico de eventos de cámara para cualquier set de dispositivos
  * (calada Ricardone, calada SL, etc.). Una fila por evento observado.
  */
 function buildCameraEventsForDevices(
   input: BuildCaladaCameraEventsInput,
-  deviceSet: Set<string>
+  deviceSet: Set<string>,
+  opts: BuildCameraEventsOptions = {}
 ): CaladaCameraEventRow[] {
   const productByUid = input.productByJourneyUid ?? null
   const rows: CaladaCameraEventRow[] = []
 
   for (const cj of input.classifiedJourneys) {
     const journey = cj.journey
+    // Patente basura del OCR: en sectores que lo piden (aceite OSL) no cuenta.
+    if (opts.requireValidPlate && !journey.isValidPlate) continue
     const journeyUid = String(journey.journeyUid ?? '').trim()
     const patente = String(journey.normalizedPlate || journey.plate || '').trim()
     const circuito = String(cj.executiveCircuitCode ?? '').trim()
@@ -121,6 +135,61 @@ export function buildSanLorenzoCaladaCameraEvents(input: BuildCaladaCameraEvents
 /** Calada líquida Ricardone: solo RicCalLiq. */
 export function buildRicardoneCaladaLiquidCameraEvents(input: BuildCaladaCameraEventsInput): CaladaCameraEventRow[] {
   return buildCameraEventsForDevices(input, new Set(['RicCalLiq']))
+}
+
+// ── Descargas Ricardone ──────────────────────────────────────────────────────
+// Mismos eventos de cámara (una fila por pasada), distinto set de dispositivos.
+// El producto sale del merge (`productByJourneyUid`); sin merge queda «Sin dato».
+
+/** Volcables de descarga Ricardone (2 cámaras): RicVolcable1, RicVolcable2. */
+export function buildRicardoneVolcableCameraEvents(input: BuildCaladaCameraEventsInput): CaladaCameraEventRow[] {
+  return buildCameraEventsForDevices(input, new Set(['RicVolcable1', 'RicVolcable2']))
+}
+
+/**
+ * Silos Ricardone (5 cámaras): 3 de CARGA (RicS8CargaLinea1, RicS8CargaLinea2, RicS7Carga)
+ * y 2 de DESCARGA (RicS7DescLinea1, RicS7DescLinea2). La cámara individual dice la línea.
+ */
+export function buildRicardoneSiloCameraEvents(input: BuildCaladaCameraEventsInput): CaladaCameraEventRow[] {
+  return buildCameraEventsForDevices(
+    input,
+    new Set(['RicS8CargaLinea1', 'RicS8CargaLinea2', 'RicS7Carga', 'RicS7DescLinea1', 'RicS7DescLinea2'])
+  )
+}
+
+/**
+ * Celda 16 Ricardone (4 cámaras): 2 de CARGA (RicC16Carga1, RicC16Carga2) y 2 de DESCARGA
+ * (RicC16Descarga1, RicC16Descarga2).
+ */
+export function buildRicardoneCelda16CameraEvents(input: BuildCaladaCameraEventsInput): CaladaCameraEventRow[] {
+  return buildCameraEventsForDevices(
+    input,
+    new Set(['RicC16Carga1', 'RicC16Carga2', 'RicC16Descarga1', 'RicC16Descarga2'])
+  )
+}
+
+// ── Descargas de aceite San Lorenzo (actividad de cámara, patentes válidas) ───
+// El Excel de aceite no sirve de cruce acá: la plataforma ACEITE_OSL está contaminada con agua
+// industrial (SZG666/CMF111) y la lógica canónica usa la cámara S10, no las Ren*. Así que el panel
+// muestra la ACTIVIDAD de estas cámaras físicas, descartando las lecturas con patente inválida
+// (basura del OCR) para no inflar el número. Ver [[aceite-descargas-ingreso-excel-first]].
+
+/** Aceite OSL (Renova) — cámaras RenCargFte/RenDescFte/RenCargTras/RenDescTras, solo patente válida. */
+export function buildSanLorenzoAceiteOslCameraEvents(input: BuildCaladaCameraEventsInput): CaladaCameraEventRow[] {
+  return buildCameraEventsForDevices(
+    input,
+    new Set(['RenCargFte', 'RenDescFte', 'RenCargTras', 'RenDescTras']),
+    { requireValidPlate: true }
+  )
+}
+
+/** Aceite PTO (puerto) — cámaras SLZBaiLiq1a/1b/2a/2b, solo patente válida. */
+export function buildSanLorenzoAceitePtoCameraEvents(input: BuildCaladaCameraEventsInput): CaladaCameraEventRow[] {
+  return buildCameraEventsForDevices(
+    input,
+    new Set(['SLZBaiLiq2a', 'SLZBaiLiq1b', 'SLZBaiLiq2b', 'SLZBaiLiq1a']),
+    { requireValidPlate: true }
+  )
 }
 
 export const CALADA_CAMERA_EVENTS_HEADERS = [
