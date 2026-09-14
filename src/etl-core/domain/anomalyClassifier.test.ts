@@ -54,11 +54,11 @@ describe('classifyAnomaly (reemplazo total: NUNCA emite BEHAVIORAL)', () => {
   })
 })
 
-describe('applyGoldenAnomalyOverride (R1–R5 son la única fuente de comportamiento)', () => {
+describe('applyGoldenAnomalyOverride (las reglas vigentes son la única fuente de comportamiento)', () => {
   it('promueve NONE a BEHAVIORAL con razón de regla', () => {
-    expect(applyGoldenAnomalyOverride({ kind: 'NONE', reason: null }, 'RIC_SL_TRAMO_40M_6H')).toEqual({
+    expect(applyGoldenAnomalyOverride({ kind: 'NONE', reason: null }, 'RIC_SL_MAS30M_SIN_CALADA_SL')).toEqual({
       kind: 'BEHAVIORAL',
-      reason: 'RIC_SL_TRAMO_40M_6H',
+      reason: 'RIC_SL_MAS30M_SIN_CALADA_SL',
     })
   })
 

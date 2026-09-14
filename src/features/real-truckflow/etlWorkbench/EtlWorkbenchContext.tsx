@@ -972,10 +972,15 @@ function buildApiJourneyStatsFromParsedFiles(
       }
       setTransformBusy(true)
       try {
+        // Componer SOLO la cobertura sin solape (tramos disjuntos). `coveringRuns` puede traer
+        // ventanas ad-hoc superpuestas que, concatenadas, contarían días dos veces; `selectedRuns`
+        // asigna cada día a una sola corrida. Ver etlComposeRuns.selectNonOverlappingCover.
         const loaded = await Promise.all(
-          coverage.coveringRuns.map(async (r) => ({
+          coverage.selectedRuns.map(async (r) => ({
             runId: r.runId,
             output: await loadTransformOutputFromRun(r.runId),
+            spanFrom: r.spanFrom,
+            spanTo: r.spanTo,
           }))
         )
         const composed = composeRunsIntoTransformOutput(loaded, from, to)

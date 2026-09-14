@@ -82,15 +82,17 @@ describe('buildCaladaCameraEvents', () => {
   })
 
   it('bucketea por hora local: 08:14 y 08:46 caen en la misma ventana', () => {
+    // `occurredAt` es la hora física del sensor = reloj de pared − 206 min. El instante operativo
+    // suma esos 206 min: 04:48→08:14, 05:20→08:46 (misma ventana 08), 05:39→09:05 (ventana 09).
     const rows = buildCaladaCameraEvents({
       classifiedJourneys: [
         journey({
           journeyUid: 'j1',
           circuit: 'R1',
           events: [
-            ev('RicCal01', '2026-07-20T08:14:00-03:00'),
-            ev('RicCal01', '2026-07-20T08:46:00-03:00'),
-            ev('RicCal01', '2026-07-20T09:05:00-03:00'),
+            ev('RicCal01', '2026-07-20T04:48:00-03:00'),
+            ev('RicCal01', '2026-07-20T05:20:00-03:00'),
+            ev('RicCal01', '2026-07-20T05:39:00-03:00'),
           ],
         }),
       ],
@@ -99,11 +101,11 @@ describe('buildCaladaCameraEvents', () => {
   })
 
   it('bucketea por hora de pared Argentina aunque el evento venga en UTC (Z)', () => {
-    // 11:15Z == 08:15 en Argentina (−03:00). La ventana debe caer en las 08, no en las 11:
-    // así el resultado no depende de la zona horaria del proceso que corre el ETL.
+    // 07:49Z == 04:49 en Argentina (−03:00); + 206 min = 08:15 (reloj de pared). La ventana debe
+    // caer en las 08 sin importar la zona horaria del proceso que corre el ETL ni el skew del sensor.
     const rows = buildCaladaCameraEvents({
       classifiedJourneys: [
-        journey({ journeyUid: 'j1', circuit: 'R1', events: [ev('RicCal01', '2026-07-20T11:15:00Z')] }),
+        journey({ journeyUid: 'j1', circuit: 'R1', events: [ev('RicCal01', '2026-07-20T07:49:00Z')] }),
       ],
     })
     expect(rows[0]!.hora).toBe('08:15')
@@ -111,24 +113,25 @@ describe('buildCaladaCameraEvents', () => {
     expect(rows[0]!.intervalo_hora).toBe('2026-07-20T08:00:00')
   })
 
-  it('bucketea por el instante operativo (createdAt), no por occurredAt', () => {
-    // occurredAt viene corrido ~3 h respecto de la captura real del DSS; createdAt es el sello
-    // en hora Argentina. La calada debe caer en la hora de createdAt (11h), no la de occurredAt (08h).
+  it('usa el instante operativo occurredAt + 206 min (reloj de pared), NO createdAt (subida)', () => {
+    // occurredAt es la hora física del sensor (reloj de pared − 206 min); createdAt es la hora de
+    // SUBIDA a la nube, que con backlogs de subida amontona eventos y genera picos falsos. La
+    // calada debe caer en occurredAt + 206 min = 08:24 + 3h26 = 11:50, ignorando createdAt (11:49).
     const rows = buildCaladaCameraEvents({
       classifiedJourneys: [
         journey({
           journeyUid: 'j1',
           circuit: 'R8',
           events: [
-            evWithCreated('RicCalLiq', '2026-08-11T08:24:05.288-03:00', '2026-08-11T11:49:18.161-03:00'),
+            evWithCreated('RicCal01', '2026-08-11T08:24:05.288-03:00', '2026-08-11T11:49:18.161-03:00'),
           ],
         }),
       ],
     })
-    expect(rows[0]!.hora).toBe('11:49')
+    expect(rows[0]!.hora).toBe('11:50')
     expect(rows[0]!.fecha).toBe('2026-08-11')
     expect(rows[0]!.intervalo_hora).toBe('2026-08-11T11:00:00')
-    expect(rows[0]!.timestamp).toBe('2026-08-11T11:49:18.161-03:00')
+    expect(rows[0]!.timestamp).toBe('2026-08-11T11:50:05.288-03:00')
   })
 
   it('pobla producto desde el mapa por journey', () => {

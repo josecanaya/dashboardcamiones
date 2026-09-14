@@ -37,14 +37,37 @@ export function DescargasTab() {
   const [ricSub, setRicSub] = useState<RicSubTab>('volcables')
   const [slSub, setSlSub] = useState<SlSubTab>('volcables')
 
-  const periodLabel = wb?.loadSummary?.daysDetected
-    ? wb.loadSummary.daysDetected.length === 1
-      ? wb.loadSummary.daysDetected[0]
-      : `${wb.loadSummary.daysDetected[0]} → ${wb.loadSummary.daysDetected[wb.loadSummary.daysDetected.length - 1]}`
-    : '—'
+  const composed = wb?.composedRange ?? null
+  const periodLabel = composed
+    ? `${composed.from} → ${composed.to}`
+    : wb?.loadSummary?.daysDetected
+      ? wb.loadSummary.daysDetected.length === 1
+        ? wb.loadSummary.daysDetected[0]
+        : `${wb.loadSummary.daysDetected[0]} → ${wb.loadSummary.daysDetected[wb.loadSummary.daysDetected.length - 1]}`
+      : '—'
 
   return (
     <div className="space-y-4">
+      {/* Aviso de rango compuesto: de cuántas corridas se armó y qué días faltan (no incluidos
+          por no tener corrida guardada en la versión de reglas vigente). Sin este aviso, un rango
+          como «27/6 → 02/09» muestra en silencio solo los días que sí tienen corrida. */}
+      {composed && (
+        <div className="rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
+          <div className="font-semibold">
+            Rango compuesto {composed.from} → {composed.to} desde {composed.usedRunIds.length} corrida(s)
+            guardada(s), sin reprocesar.
+          </div>
+          {composed.missingDays.length ? (
+            <div className="mt-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-950">
+              <strong>{composed.missingDays.length} día(s) del rango NO están incluidos</strong> (sin corrida
+              guardada en la versión vigente): <span className="font-mono">{composed.missingDays.join(', ')}</span>.
+              Los conteos de abajo son solo de los días cubiertos. Procesá esos días en «Análisis local» para
+              incluirlos.
+            </div>
+          ) : null}
+        </div>
+      )}
+
       {/* Sede: Ricardone / San Lorenzo */}
       <div className="flex gap-2 border-b border-slate-200">
         <button

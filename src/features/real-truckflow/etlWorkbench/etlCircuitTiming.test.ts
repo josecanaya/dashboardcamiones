@@ -70,11 +70,13 @@ describe('etlCircuitTiming', () => {
     })
 
     const total = extractJourneyCircuitTotal(j)
+    // El instante operativo = occurredAt + 206 min (skew fijo del sensor → reloj de pared).
+    // La duración total se conserva (ambos extremos se corren igual): 08:00→11:26, 10:00→13:26.
     expect(total).toMatchObject({
       journeyId: 'j1',
       plate: 'ABC123',
-      startTime: '2026-05-12T08:00:00',
-      endTime: '2026-05-12T10:00:00',
+      startTime: '2026-05-12T11:26:00-03:00',
+      endTime: '2026-05-12T13:26:00-03:00',
       totalDurationMin: 120,
       eventCount: 4,
     })

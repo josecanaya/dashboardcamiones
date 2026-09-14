@@ -645,7 +645,7 @@ describe('etlCircuitClassificationIndex anomalías', () => {
             plate: 'V2',
             normalizedPlate: 'V2',
             anomalyKind: 'BEHAVIORAL',
-            anomalyKindReason: 'RIC_SL_TRAMO_40M_6H',
+            anomalyKindReason: 'RIC_SL_MAS30M_SIN_CALADA_SL',
           }),
         ],
         ctx

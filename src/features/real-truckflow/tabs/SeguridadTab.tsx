@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState, type DragEvent } from 'react'
+import { useEffect, useMemo, useState, type DragEvent, type ReactNode } from 'react'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
+import { parseTimestampMs } from '../../../etl-core/domain/timestamps'
 import { useExecutiveProductBreakdown } from '../etlWorkbench/useExecutiveProductBreakdown'
 import { useAnomalyReview } from '../etlWorkbench/useAnomalyReview'
 import {
@@ -156,7 +157,14 @@ function buildTruckTimeline(events: RealJourneyEventDto[], truck: CircuitClassif
   hasTimes: boolean
 } {
   const plate = truck.normalizedPlate
-  const firstMs = Date.parse(truck.firstEventAt)
+  const firstMs = (() => {
+    // R2 con journey previo absorbido: el rango del recorrido arranca en el journey de ida.
+    // Ver `absorbPriorJourneyIntoR2` en etlCircuitClassificationIndex.
+    const absorbed = Date.parse(truck.absorbedPriorFirstEventAt ?? '')
+    const own = Date.parse(truck.firstEventAt)
+    if (Number.isFinite(absorbed) && Number.isFinite(own)) return Math.min(absorbed, own)
+    return Number.isFinite(absorbed) ? absorbed : own
+  })()
   const lastMs = Date.parse(truck.lastEventAt)
   const tol = 1000
   if (plate && events.length) {
@@ -326,7 +334,10 @@ function TruckJourneyView({
     setLoadingEvents(true)
     setLocalEvents([])
     void (async () => {
-      const first = dayKey(truck.firstEventAt)
+      // R2 absorbido: cargar también el día del journey de ida (puede ser el día anterior).
+      const absorbedFirst = truck.absorbedPriorFirstEventAt ? dayKey(truck.absorbedPriorFirstEventAt) : ''
+      const firstOwn = dayKey(truck.firstEventAt)
+      const first = absorbedFirst && (!firstOwn || absorbedFirst < firstOwn) ? absorbedFirst : firstOwn
       const last = dayKey(truck.lastEventAt) || first
       // -1 día en el arranque: createdAt (instante operativo) puede caer un día después de occurredAt.
       const startDate = first ? shiftDay(first, -1) : last
@@ -599,6 +610,34 @@ function TruckJourneyView({
   )
 }
 
+/**
+ * Una celda de la ficha de regla (Qué mira / Cuándo se incumple / Por qué importa). La celda
+ * «Cuándo se incumple» va resaltada porque es la respuesta directa a la pregunta del panel.
+ */
+function RuleFacet({
+  label,
+  body,
+  icon,
+  emphasis = false,
+}: {
+  label: string
+  body: string
+  icon: ReactNode
+  emphasis?: boolean
+}) {
+  return (
+    <div className={`px-5 py-4 ${emphasis ? 'bg-white' : 'bg-rose-50/60'}`}>
+      <div className={`mb-1.5 flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-[0.08em] ${emphasis ? 'text-rose-600' : 'text-rose-400'}`}>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9">
+          {icon}
+        </svg>
+        {label}
+      </div>
+      <p className={`text-[13px] leading-snug ${emphasis ? 'font-semibold text-slate-800' : 'text-slate-600'}`}>{body}</p>
+    </div>
+  )
+}
+
 function LegendDot({ site }: { site: 'ricardone' | 'san_lorenzo' }) {
   const st = SITE_STYLE[site]
   return (
@@ -610,48 +649,163 @@ function LegendDot({ site }: { site: 'ricardone' | 'san_lorenzo' }) {
 }
 
 /**
- * Reglas de oro (R1–R6, ver `goldenAnomalyRules.ts`): código interno de `anomaly_kind_reason`
- * → etiqueta legible. Son las ÚNICAS que definen anomalía de comportamiento.
+ * Reglas de anomalía vigentes (R1, R2, R4, R5, R6, R9, R11, R12; ver `goldenAnomalyRules.ts`): código interno de
+ * `anomaly_kind_reason` → ficha legible. Son las ÚNICAS que definen anomalía de comportamiento.
+ * R3 fue retirada (2026-09-04) y R2 redefinida (retorno SL→Ric < 2 h): sus tags en corridas
+ * viejas caen al grupo `stale`, que el panel muestra aparte porque NO son incumplimientos.
+ * R9/R11 se agregaron el 2026-09-09 y son las de evidencia más fuerte (ver cabecera de
+ * `goldenAnomalyRules.ts`): visita relámpago al puerto y descarga en una calle distinta a la
+ * declarada en el Excel.
+ *
+ * Cada ficha tiene tres partes para que quede claro CUÁNDO se incumple:
+ *  - `observes`   → qué mira la regla.
+ *  - `breachedWhen` → la condición exacta (umbral) que la considera incumplida.
+ *  - `why`        → por qué ese comportamiento es sospechoso.
+ * `desc` queda como resumen de una línea para las tarjetas de la lista.
  */
-const GOLDEN_RULES: { reason: string; code: string; title: string; desc: string }[] = [
+type GoldenRule = {
+  reason: string
+  code: string
+  title: string
+  desc: string
+  observes: string
+  breachedWhen: string
+  why: string
+}
+const GOLDEN_RULES: GoldenRule[] = [
   {
     reason: 'RIC_REINGRESO_RAPIDO_NO_PELLET',
     code: 'R1',
     title: 'Reingreso rápido a Ricardone',
     desc: 'Salió de Ricardone y volvió a entrar en ≤ 1 h (circuito no pellet).',
+    observes: 'Los egresos y reingresos de la misma patente a la planta de Ricardone.',
+    breachedWhen: 'Vuelve a ingresar a Ricardone en menos de 1 h desde que egresó (circuitos no pellet).',
+    why: 'En menos de una hora no llega a completar un viaje real: sugiere que no descargó/cargó donde debía o dio una vuelta corta sin justificar.',
   },
   {
-    reason: 'SL_LUEGO_RIC_MISMO_DIA_NO_PELLET',
+    reason: 'SL_LUEGO_RIC_RETORNO_2H_NO_PELLET',
     code: 'R2',
-    title: 'San Lorenzo y luego Ricardone el mismo día',
-    desc: 'Pasó por San Lorenzo y después por Ricardone en el mismo día (no pellet).',
-  },
-  {
-    reason: 'RIC_SL_TRAMO_40M_6H',
-    code: 'R3',
-    title: 'Ricardone → San Lorenzo en 40 min – 6 h',
-    desc: 'Egreso de Ricardone e ingreso a San Lorenzo con demora de entre 40 min y 6 h.',
+    title: 'Vuelven a Ricardone desde San Lorenzo',
+    desc: 'Estuvieron en San Lorenzo y volvieron a Ricardone en menos de 2 h (no pellet).',
+    observes: 'El paso de la patente por San Lorenzo y su retorno a Ricardone (cualquier evento de cámara).',
+    breachedWhen: 'Vuelve a Ricardone en menos de 2 h desde su último registro en San Lorenzo. Robusto a fallo de cámara: cuenta cualquier evento en Ricardone (ingreso, preingreso, calada…).',
+    why: 'Ir al puerto y volver a la planta en menos de 2 h no encaja con un viaje normal; suele ser un error de destino o un paso por el puerto sin operar.',
   },
   {
     reason: 'RUTA_BALANZA_PLAYA_C16_BALANZA',
     code: 'R4',
     title: 'Balanza → Playa → Celda 16 → Balanza',
     desc: 'Ruta interna balanza ingreso → playa 3 → celda 16 → balanza.',
+    observes: 'La secuencia de cámaras internas de Ricardone dentro de un mismo recorrido.',
+    breachedWhen: 'Recorre balanza de ingreso → playa 3 → celda 16 → (playa 3) → balanza de salida.',
+    why: 'Es un movimiento de mercadería entre celda y playa sin salir de planta; puede encubrir reprocesos o movimientos no declarados.',
   },
   {
     reason: 'CARGA_LUEGO_DESCARGA',
     code: 'R5',
     title: 'Carga y luego descarga',
     desc: 'Pasó por un punto de carga y luego por una plataforma de descarga.',
+    observes: 'Puntos de carga (celda 16, S7, S8) y de descarga (volcable, celda 16, San Lorenzo) del recorrido.',
+    breachedWhen: 'En el mismo recorrido pasa primero por un punto de carga y después por una plataforma de descarga.',
+    why: 'Cargar y descargar en un mismo viaje no corresponde a un circuito normal; puede indicar mercadería que entra y sale sin control.',
+  },
+  {
+    reason: 'VOLCABLE_SIN_CALADA_RIC',
+    code: 'R12',
+    title: 'Descargó en Ricardone sin calado en cámara ni en Excel',
+    desc: 'Descargó en el volcable de Ricardone y ninguna de las dos fuentes registra la hora de calado.',
+    observes: 'La visita a Ricardone que termina en descarga por VOLCABLE, la cámara `RicCal*` y la hora de calado que el operario de balanza escribe en el Excel de Movimientos por Contrato.',
+    breachedWhen: 'La cámara no registra CALADA en esa visita Y el Excel del movimiento tampoco trae `external_calado_at` dentro de la ventana del viaje.',
+    why: 'La cámara `RicCal*` se equivoca a menudo (verificado 2026-09-10: patente confundida con la marca del camión, caracteres mal leídos, luces altas). Por eso se exige que TAMBIÉN falte el registro del operario en el Excel — dos fuentes independientes callando sobre el mismo camión es lo que sostiene la sospecha.',
+  },
+  {
+    reason: 'OBSERVACION_MANUAL',
+    code: 'M',
+    title: 'Revisión manual',
+    desc: 'Patente marcada manualmente para revisión en el comité. Sin regla automática aplicada.',
+    observes: 'El recorrido completo del camión durante el rango seleccionado.',
+    breachedWhen: 'La patente fue seleccionada manualmente para inspección visual del recorrido, sin evaluación automática.',
+    why: 'Comportamiento notado en revisión ad-hoc que amerita mirarlo con las cámaras del DSS y decidir en el comité.',
+  },
+  {
+    reason: 'PLATAFORMA_MULTIPLE_CALLES',
+    code: 'R11-b',
+    title: 'Descargó en más de una calle del volcable',
+    desc: 'La cámara registró descargas en dos o más calles del volcable de puerto sobre el mismo movimiento.',
+    observes: 'Los eventos de las cámaras SLZVolcableC1–5 dentro de la ventana temporal del movimiento del Excel.',
+    breachedWhen: 'La misma patente activa dos o más cámaras de calles distintas separadas por más de 20 min (para descartar cámaras contiguas leyendo al mismo camión).',
+    why: 'Un movimiento se corresponde con una descarga en una sola calle. Dos calles distintas activadas sobre el mismo contrato son dos detecciones positivas independientes — no puede explicarse por falta de cobertura y sugiere que el camión se movió entre calles.',
+  },
+  {
+    reason: 'PLATAFORMA_DISTINTA_A_DECLARADA',
+    code: 'R11',
+    title: 'Descargó en una calle distinta a la declarada',
+    desc: 'El Excel declara un volcable de puerto y la cámara lo registró en otro.',
+    observes: 'La plataforma declarada en Movimientos por Contrato contra la calle del volcable que registró la cámara (SLZVolcableC1–5).',
+    breachedWhen: 'El movimiento declara VOLCABLE PTO n y ninguna de las calles que registró la cámara dentro de la ventana del movimiento es esa. Los movimientos «de la vuelta» quedan excluidos.',
+    why: 'Son dos fuentes independientes que se contradicen: la mercadería no terminó donde el papel dice que terminó. Una cámara caída produce silencio, nunca una contradicción, así que el caso no se explica por falta de cobertura.',
+  },
+  {
+    reason: 'SL_VISITA_RELAMPAGO_SIN_OPERAR',
+    code: 'R9',
+    title: 'Visita relámpago al puerto',
+    desc: 'Entró y salió de San Lorenzo en menos de 30 min sin registro de operación.',
+    observes: 'El tiempo entre el ingreso y el egreso del puerto, y si en el medio hubo balanza, volcable, descarga o calado.',
+    breachedWhen: 'Sale del puerto en menos de 30 minutos sin ningún registro de operación, cuando la permanencia más corta habitual son 40 minutos.',
+    why: 'En media hora no entra la cola de balanza ni una descarga: el camión pasó por el puerto sin operar. Los dos extremos son detecciones reales, así que no es un problema de cobertura de cámaras.',
   },
   {
     reason: 'RIC_SL_MAS30M_SIN_CALADA_SL',
     code: 'R6',
-    title: 'Ricardone → San Lorenzo sin calado SL',
+    title: 'Ricardone → San Lorenzo sin calado',
     desc: 'Egreso Ricardone → ingreso San Lorenzo > 30 min (≤ 2 h) sin pasar por calado en San Lorenzo.',
+    observes: 'El tramo entre el egreso de Ricardone y el ingreso a San Lorenzo, y si pasa por el calado (muestreo) de SL.',
+    breachedWhen: 'Ingresa a San Lorenzo entre 30 min y 2 h después de egresar de Ricardone y NO pasa por el calado de SL en esa visita.',
+    why: 'Descargar en el puerto sin pasar por el muestreo de calado saltea un control de calidad obligatorio del circuito.',
   },
 ]
 const GOLDEN_BY_REASON = new Map(GOLDEN_RULES.map((r) => [r.reason, r]))
+
+/**
+ * Subgrupos de R2 (dentro de la regla R2, ver `goldenAnomalyRules.ts`): sub-motivo persistido
+ * → etiqueta. La asignación se hace en el pipeline con prioridad b → c → a; acá se muestran
+ * en orden a → b → c. Cada camión de R2 trae EXACTAMENTE uno de estos `anomalyKindReason`.
+ */
+const R2_RULE_REASON = 'SL_LUEGO_RIC_RETORNO_2H_NO_PELLET'
+const R2_SUBGROUPS: { reason: string; code: string; title: string; desc: string }[] = [
+  {
+    reason: 'SL_RIC_2H_ERROR_DESTINO_NO_PELLET',
+    code: 'R2-a',
+    title: 'Error de destino',
+    desc: 'San Lorenzo fue su primer destino: fueron al puerto ANTES de pasar por Ricardone. No había actividad previa en la planta.',
+  },
+  {
+    reason: 'SL_RIC_2H_CICLO_COMPLETO_NO_PELLET',
+    code: 'R2-b',
+    title: 'Volvieron y completaron circuito',
+    desc: 'Volvieron a Ricardone y el viaje de retorno completó un circuito reconocido (R7 u otro). Típicamente shuttle Ric↔SL.',
+  },
+  {
+    reason: 'SL_RIC_2H_SIN_CIRCUITO_NO_PELLET',
+    code: 'R2-c',
+    title: 'Volvieron sin completar circuito',
+    desc: 'Volvieron del puerto a Ricardone en menos de 2 h sin completar un circuito reconocido (paso por el puerto sin operar de verdad).',
+  },
+]
+const R2_SUBGROUP_BY_REASON = new Map(R2_SUBGROUPS.map((s) => [s.reason, s]))
+/** Sub-motivo de R2 → motivo de la regla padre (R2) para agrupar; el resto es identidad. */
+function parentRuleReason(reason: string): string {
+  return R2_SUBGROUP_BY_REASON.has(reason) ? R2_RULE_REASON : reason
+}
+
+/** Subgrupo dentro de una regla (hoy solo R2): etiqueta + sus camiones. */
+type SecuritySubgroup = {
+  key: string
+  code: string
+  title: string
+  desc: string
+  trucks: CircuitClassificationEntry[]
+}
 
 /** Grupo unificado de anomalías: por regla de oro o por secuencia observada. */
 type SecurityGroup = {
@@ -664,18 +818,31 @@ type SecurityGroup = {
   count: number
   pct: number
   trucks: CircuitClassificationEntry[]
+  /** Ficha completa de la regla (solo modo regla de oro): qué mira / cuándo se incumple / por qué. */
+  rule?: GoldenRule
+  /** Subgrupos (hoy solo R2): cuando existe, el detalle muestra los camiones separados por subgrupo. */
+  subgroups?: SecuritySubgroup[]
+  /**
+   * Etiquetas de un set de reglas retirado (corrida vieja sin re-procesar). NO son
+   * incumplimientos: el panel no recalcula, lee el `anomaly_kind_reason` que quedó
+   * guardado, así que una corrida anterior a la curación del set trae razones que ya
+   * no existen. Se muestran aparte y con otro tono para no contarlas como anomalías.
+   */
+  stale?: boolean
   /** Secuencia de referencia (solo modo secuencia): habilita la tira de cámaras del grupo. */
   referenceSequence?: string
 }
 
-/** Agrupa los camiones anómalos por regla de oro (`anomalyKindReason`), orden R1→R6 por volumen. */
+/** Agrupa los camiones anómalos por regla de oro (`anomalyKindReason`), orden por volumen. */
 function buildGoldenGroups(rows: AnomalySequenceBreakdownRow[]): SecurityGroup[] {
   const allTrucks = rows.flatMap((r) => r.trucks)
   const total = allTrucks.length || 1
+  // Agrupamos por la regla PADRE: los 3 sub-motivos de R2 caen todos en el grupo R2.
   const byReason = new Map<string, CircuitClassificationEntry[]>()
   for (const t of allTrucks) {
     const reason = String(t.anomalyKindReason ?? '').trim()
-    const key = GOLDEN_BY_REASON.has(reason) ? reason : 'OTRAS'
+    const parent = parentRuleReason(reason)
+    const key = GOLDEN_BY_REASON.has(parent) ? parent : 'OTRAS'
     const arr = byReason.get(key)
     if (arr) arr.push(t)
     else byReason.set(key, [t])
@@ -684,7 +851,7 @@ function buildGoldenGroups(rows: AnomalySequenceBreakdownRow[]): SecurityGroup[]
   for (const rule of GOLDEN_RULES) {
     const trucks = byReason.get(rule.reason)
     if (!trucks?.length) continue
-    groups.push({
+    const group: SecurityGroup = {
       key: `golden:${rule.reason}`,
       kind: 'golden',
       code: rule.code,
@@ -693,18 +860,32 @@ function buildGoldenGroups(rows: AnomalySequenceBreakdownRow[]): SecurityGroup[]
       count: trucks.length,
       pct: Math.round((trucks.length / total) * 100),
       trucks,
-    })
+      rule,
+    }
+    // R2: separamos sus camiones en los 3 subgrupos (a → b → c) que existan.
+    if (rule.reason === R2_RULE_REASON) {
+      const subgroups: SecuritySubgroup[] = []
+      for (const sg of R2_SUBGROUPS) {
+        const subTrucks = trucks.filter((t) => String(t.anomalyKindReason ?? '').trim() === sg.reason)
+        if (subTrucks.length) {
+          subgroups.push({ key: `golden:${sg.reason}`, code: sg.code, title: sg.title, desc: sg.desc, trucks: subTrucks })
+        }
+      }
+      if (subgroups.length) group.subgroups = subgroups
+    }
+    groups.push(group)
   }
   const otras = byReason.get('OTRAS')
   if (otras?.length) {
     groups.push({
       key: 'golden:OTRAS',
       kind: 'golden',
-      title: 'Otras anomalías de comportamiento',
-      subtitle: 'Sin regla de oro específica asignada en esta corrida.',
+      title: 'Etiquetas de corridas anteriores',
+      subtitle: 'Marcadas por reglas que ya no están vigentes. No son incumplimientos: hay que re-procesar la ventana.',
       count: otras.length,
       pct: Math.round((otras.length / total) * 100),
       trucks: otras,
+      stale: true,
     })
   }
   return groups.sort((a, b) => b.count - a.count)
@@ -902,6 +1083,220 @@ function CameraSlot({
   )
 }
 
+/**
+ * Tarjeta de un camión. Dos modos de contenido:
+ *
+ * - Modo normal: patente + fecha de inicio y fin del journey completo.
+ * - Modo `focusSegment` (para reglas de tramo — R6, R9, R12): patente + día + duración del
+ *   tramo específico que la regla marcó. La regla ya dice qué pasó; lo que interesa mostrar
+ *   para descartar rápido es CUÁNDO y CUÁNTO demoró el tramo, no el recorrido completo.
+ *
+ * El botón «✕ descartar» está SIEMPRE visible en todas las tarjetas (no hace falta entrar en
+ * modo edición): la mayoría de los casos que llegan al panel requieren validación operativa y
+ * hay que poder sacarlos de la lista en un click mientras se revisa con planta.
+ */
+function TruckCard({
+  truck,
+  editMode,
+  hidden,
+  onOpen,
+  onToggle,
+  focusSegment,
+}: {
+  truck: CircuitClassificationEntry
+  editMode: boolean
+  hidden: boolean
+  onOpen: () => void
+  onToggle: () => void
+  focusSegment?: { day: string; minutes: number; label: string } | null
+}) {
+  const dismissButton = (
+    <button
+      type="button"
+      onClick={onToggle}
+      title={hidden ? 'Restaurar camión' : 'Descartar: no es anomalía'}
+      className={`absolute right-2 top-2 z-10 rounded-md px-2 py-0.5 text-[11px] font-bold shadow-sm transition ${
+        hidden
+          ? 'border border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+          : 'border border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100'
+      }`}
+    >
+      {hidden ? '↩ restaurar' : '✕ descartar'}
+    </button>
+  )
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => {
+          if (!editMode) onOpen()
+        }}
+        className={`group w-full rounded-xl border border-slate-200 bg-white p-3.5 text-center shadow-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 ${
+          editMode ? 'cursor-default' : 'hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md'
+        } ${hidden ? 'opacity-35 grayscale' : ''}`}
+      >
+        <div className="rounded-lg border-2 border-slate-700 bg-slate-900 px-1 py-2 font-mono text-sm font-bold tracking-[0.08em] text-slate-50">
+          {truck.plate || '—'}
+        </div>
+        {focusSegment ? (
+          <>
+            <div className="mt-3 text-[9.5px] font-bold uppercase tracking-wider text-slate-400">Día</div>
+            <div className="mt-0.5 rounded-md border border-slate-200 bg-slate-50 px-1 py-1 text-[13px] font-semibold text-slate-900">
+              {focusSegment.day}
+            </div>
+            <div className="mt-2 text-[9.5px] font-bold uppercase tracking-wider text-rose-500">{focusSegment.label}</div>
+            <div className="mt-0.5 rounded-md border border-rose-200 bg-rose-50 px-1 py-1 text-[15px] font-bold text-rose-700">
+              {focusSegment.minutes} min
+            </div>
+            {truck.absorbedPriorFirstEventAt ? (
+              <div className="mt-1.5 text-[10px] font-semibold text-violet-600">↺ incluye viaje de ida</div>
+            ) : null}
+          </>
+        ) : (
+          <>
+            <div className="mt-3 text-[9.5px] font-bold uppercase tracking-wider text-slate-400">Inicio</div>
+            <div className="mt-0.5 rounded-md border border-slate-200 bg-slate-50 px-1 py-1 text-[12px] font-semibold text-slate-900">
+              {fmtDate(truck.firstEventAt)}
+            </div>
+            <div className="mt-2 text-[9.5px] font-bold uppercase tracking-wider text-slate-400">Fin</div>
+            <div className="mt-0.5 rounded-md border border-slate-200 bg-slate-50 px-1 py-1 text-[12px] font-semibold text-slate-900">
+              {fmtDate(truck.lastEventAt)}
+            </div>
+          </>
+        )}
+        {editMode || focusSegment ? null : (
+          <div className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-violet-700 opacity-0 transition group-hover:opacity-100">
+            Ver recorrido
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </div>
+        )}
+      </button>
+      {dismissButton}
+    </div>
+  )
+}
+
+/** Grilla de tarjetas de camión. En modo edición muestra también los ocultos (atenuados). */
+function TruckGrid({
+  trucks,
+  editMode,
+  hiddenTrucks,
+  onOpen,
+  onToggle,
+  focusSegmentByJourney,
+}: {
+  trucks: CircuitClassificationEntry[]
+  editMode: boolean
+  hiddenTrucks: Set<string>
+  onOpen: (journeyId: string) => void
+  onToggle: (journeyId: string) => void
+  focusSegmentByJourney?: Map<string, { day: string; minutes: number; label: string }>
+}) {
+  const visible = editMode ? trucks : trucks.filter((t) => !hiddenTrucks.has(t.journeyId))
+  // Reglas de tramo: primero los de mayor demora. Es el orden en que hay que revisarlos —
+  // sin esto un caso grave queda perdido entre decenas de tarjetas sin jerarquía.
+  const list =
+    focusSegmentByJourney ?
+      [...visible].sort((a, b) => {
+        const ma = focusSegmentByJourney.get(a.journeyId)?.minutes ?? -1
+        const mb = focusSegmentByJourney.get(b.journeyId)?.minutes ?? -1
+        return mb - ma
+      })
+    : visible
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      {list.map((t) => (
+        <TruckCard
+          key={t.journeyId}
+          truck={t}
+          editMode={editMode}
+          hidden={hiddenTrucks.has(t.journeyId)}
+          onOpen={() => onOpen(t.journeyId)}
+          onToggle={() => onToggle(t.journeyId)}
+          focusSegment={focusSegmentByJourney?.get(t.journeyId) ?? null}
+        />
+      ))}
+    </div>
+  )
+}
+
+/**
+ * Reglas de tramo: la tarjeta muestra el tramo específico (día + minutos) en vez del
+ * recorrido completo. Se resuelven desde los eventos del workbench sin recalcular la regla.
+ */
+const FOCUS_SEGMENT_RULES: Record<string, { from: (p: string, site: string) => boolean; to: (p: string, site: string) => boolean; label: string }> = {
+  RIC_SL_MAS30M_SIN_CALADA_SL: {
+    from: (lg, st) => lg === 'EGRESO' && st === 'ricardone',
+    to: (lg, st) => lg === 'SL_INGRESO' && st === 'san_lorenzo',
+    label: 'Ric → SL',
+  },
+  SL_VISITA_RELAMPAGO_SIN_OPERAR: {
+    from: (lg) => lg === 'SL_INGRESO',
+    to: (lg) => lg === 'SL_EGRESO',
+    label: 'Estadía SL',
+  },
+  VOLCABLE_SIN_CALADA_RIC: {
+    from: (lg, st) => (lg === 'INGRESO' || lg === 'PREINGRESO') && st === 'ricardone',
+    to: (lg, st) => lg === 'VOLCABLE' && st === 'ricardone',
+    label: 'Ingreso → Volcable',
+  },
+}
+
+/**
+ * Construye el mapa journeyId → {día, minutos, label} para las reglas de tramo, buscando el
+ * primer par (from, to) que aparece en la timeline del camión. Devuelve `null` para journeys
+ * cuyo par no se puede armar (la tarjeta cae al modo normal).
+ */
+function buildFocusSegmentMap(
+  reason: string,
+  trucks: readonly CircuitClassificationEntry[],
+  events: readonly RealJourneyEventDto[]
+): Map<string, { day: string; minutes: number; label: string }> {
+  const spec = FOCUS_SEGMENT_RULES[reason]
+  const out = new Map<string, { day: string; minutes: number; label: string }>()
+  if (!spec) return out
+  const byJourneyPlate = new Map<string, RealJourneyEventDto[]>()
+  for (const t of trucks) {
+    // Los eventos de la patente ordenados por tiempo operativo (getEventOperationalInstantIso).
+    const plate = String(t.normalizedPlate || t.plate || '').toUpperCase()
+    if (!plate) continue
+    if (byJourneyPlate.has(t.journeyId)) continue
+    const pts = events
+      .filter((e) => String(e.normalizedPlate || '').toUpperCase() === plate)
+      .map((e) => ({ e, t: parseTimestampMs(getEventOperationalInstantIso(e)) }))
+      .filter((x) => Number.isFinite(x.t))
+      .sort((a, b) => a.t - b.t)
+      .map((x) => x.e)
+    byJourneyPlate.set(t.journeyId, pts)
+  }
+  for (const t of trucks) {
+    const pts = byJourneyPlate.get(t.journeyId) ?? []
+    let fromIdx = -1
+    for (let i = 0; i < pts.length; i++) {
+      const pt = normalizeRealEventPoint(pts[i]!)
+      if (pt.logicalCode.includes('TRASERA_EXCLUIDA')) continue
+      if (spec.from(pt.logicalCode, pt.siteId)) { fromIdx = i; break }
+    }
+    if (fromIdx < 0) continue
+    let toIdx = -1
+    for (let j = fromIdx + 1; j < pts.length; j++) {
+      const pt = normalizeRealEventPoint(pts[j]!)
+      if (pt.logicalCode.includes('TRASERA_EXCLUIDA')) continue
+      if (spec.to(pt.logicalCode, pt.siteId)) { toIdx = j; break }
+    }
+    if (toIdx < 0) continue
+    const t0 = parseTimestampMs(getEventOperationalInstantIso(pts[fromIdx]!))
+    const t1 = parseTimestampMs(getEventOperationalInstantIso(pts[toIdx]!))
+    if (!Number.isFinite(t0) || !Number.isFinite(t1) || t1 <= t0) continue
+    const minutes = Math.round((t1 - t0) / 60000)
+    const day = fmtDate(getEventOperationalInstantIso(pts[fromIdx]!))
+    out.set(t.journeyId, { day, minutes, label: spec.label })
+  }
+  return out
+}
+
 export function SeguridadTab() {
   const wb = useEtlWorkbenchOptional()
   const tr = wb?.transformResult
@@ -928,6 +1323,10 @@ export function SeguridadTab() {
   // Eventos ya en memoria (carga fresca): sirven de atajo. Si no están, el detalle del camión
   // trae solo los días de ESE recorrido (ver TruckJourneyView), sin cargar la ventana entera.
   const events = wb?.events ?? []
+  const focusSegmentByJourney = useMemo(() => {
+    if (!selected || selected.kind !== 'golden' || !selected.rule) return undefined
+    return buildFocusSegmentMap(selected.rule.reason, selected.trucks, events)
+  }, [selected, events])
 
   const period = useMemo(() => {
     const days = wb?.loadSummary?.daysDetected ?? []
@@ -1032,19 +1431,65 @@ export function SeguridadTab() {
           </span>
         </div>
 
-        {/* Regla de oro: descripción; o (modo secuencia) recorrido de referencia con cámaras. */}
-        {selected.kind === 'golden' ? (
-          <div className="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e11d48" strokeWidth="1.7" className="mt-0.5 flex-shrink-0">
-              <path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z" />
-              <path d="M12 9v4M12 16v.5" />
-            </svg>
-            <div>
-              <div className="text-[11px] font-bold uppercase tracking-wide text-rose-400">
-                Regla de oro incumplida {selected.code ? `· ${selected.code}` : ''}
+        {/* Regla de oro: ficha «qué mira / cuándo se incumple / por qué»; o (modo secuencia)
+            recorrido de referencia con cámaras. */}
+        {selected.stale ? (
+          <div className="overflow-hidden rounded-2xl border border-amber-300 bg-amber-50">
+            <div className="flex items-start gap-3 px-5 py-4">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="1.7" className="mt-0.5 flex-shrink-0">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v5l3 2" />
+              </svg>
+              <div>
+                <div className="text-[11px] font-bold uppercase tracking-wide text-amber-600">
+                  No son incumplimientos
+                </div>
+                <p className="mt-1 text-sm leading-snug text-amber-900">
+                  Estos recorridos quedaron etiquetados por reglas que ya no están vigentes (el set
+                  se curó y algunas reglas se retiraron o se redefinieron). El panel no recalcula:
+                  muestra la etiqueta que se guardó al procesar la ventana.{' '}
+                  <strong>Volvé a procesar la ventana</strong> para que se evalúen con el set actual;
+                  la mayoría va a dejar de figurar como anomalía.
+                </p>
               </div>
-              <div className="text-sm font-semibold text-rose-900">{selected.subtitle}</div>
             </div>
+          </div>
+        ) : selected.kind === 'golden' ? (
+          <div className="overflow-hidden rounded-2xl border border-rose-200 bg-rose-50">
+            <div className="flex items-start gap-3 border-b border-rose-200/70 px-5 py-4">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e11d48" strokeWidth="1.7" className="mt-0.5 flex-shrink-0">
+                <path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z" />
+                <path d="M12 9v4M12 16v.5" />
+              </svg>
+              <div>
+                <div className="text-[11px] font-bold uppercase tracking-wide text-rose-400">
+                  Regla incumplida {selected.code ? `· ${selected.code}` : ''}
+                </div>
+                <div className="text-sm font-semibold text-rose-900">{selected.rule?.title ?? selected.subtitle}</div>
+              </div>
+            </div>
+            {selected.rule ? (
+              <dl className="grid gap-px bg-rose-200/70 sm:grid-cols-3">
+                <RuleFacet
+                  label="Qué mira"
+                  body={selected.rule.observes}
+                  icon={<><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></>}
+                />
+                <RuleFacet
+                  label="Cuándo se incumple"
+                  body={selected.rule.breachedWhen}
+                  emphasis
+                  icon={<><path d="M12 8v4l3 2" /><circle cx="12" cy="12" r="9" /></>}
+                />
+                <RuleFacet
+                  label="Por qué importa"
+                  body={selected.rule.why}
+                  icon={<><path d="M12 9v4M12 16v.5" /><path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z" /></>}
+                />
+              </dl>
+            ) : (
+              <p className="px-5 py-4 text-sm font-semibold text-rose-900">{selected.subtitle}</p>
+            )}
           </div>
         ) : (
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -1095,17 +1540,20 @@ export function SeguridadTab() {
         {/* Camiones con esta anomalía */}
         <div className="flex flex-wrap items-center gap-3">
           <span className="text-[11.5px] font-bold uppercase tracking-[0.12em] text-slate-600">
-            {selected.kind === 'golden' ? 'Camiones que incumplen la regla' : 'Camiones con esta anomalía'}
+            {selected.stale ? 'Camiones con etiqueta obsoleta'
+            : selected.kind === 'golden' ? 'Camiones que incumplen la regla'
+            : 'Camiones con esta anomalía'}
           </span>
           <span className="h-px flex-1 bg-slate-200" />
           <span className="text-[11px] text-slate-400">{visibleTrucks.length} patentes</span>
-          {editTrucks && hiddenTruckCount > 0 ? (
+          {hiddenTruckCount > 0 ? (
             <button
               type="button"
               onClick={() => restoreTrucks(hiddenTruckIds)}
-              className="rounded-lg border border-slate-200 px-2.5 py-1 text-[11px] font-semibold text-slate-600 transition hover:bg-slate-50"
+              title="Los descartes se guardan en este navegador y siguen aplicando en corridas nuevas. Restaurar los vuelve a mostrar."
+              className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-bold text-amber-800 transition hover:bg-amber-100"
             >
-              Restaurar ocultos
+              {hiddenTruckCount} descartado{hiddenTruckCount > 1 ? 's' : ''} · restaurar
             </button>
           ) : null}
           <button
@@ -1131,58 +1579,42 @@ export function SeguridadTab() {
             {savedTrucksFlash ? '✓ Guardado' : '💾 Guardar'}
           </button>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {(editTrucks ? selected.trucks : visibleTrucks).map((t) => {
-            const isHidden = hiddenTrucks.has(t.journeyId)
-            return (
-              <div key={t.journeyId} className="relative">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (!editTrucks) setSelTruckId(t.journeyId)
-                  }}
-                  className={`group w-full rounded-xl border border-slate-200 bg-white p-3.5 text-center shadow-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 ${
-                    editTrucks ? 'cursor-default' : 'hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md'
-                  } ${isHidden ? 'opacity-35 grayscale' : ''}`}
-                >
-                  <div className="rounded-lg border-2 border-slate-700 bg-slate-900 px-1 py-2 font-mono text-sm font-bold tracking-[0.08em] text-slate-50">
-                    {t.plate || '—'}
+        {selected.subgroups ? (
+          <div className="space-y-5">
+            {selected.subgroups.map((sg) => {
+              const sgVisible = sg.trucks.filter((t) => !hiddenTrucks.has(t.journeyId)).length
+              return (
+                <div key={sg.key} className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+                  <div className="mb-3 flex flex-wrap items-center gap-2.5">
+                    <span className="rounded-md bg-rose-100 px-2 py-0.5 text-[11px] font-bold text-rose-700">{sg.code}</span>
+                    <span className="text-sm font-bold text-slate-800">{sg.title}</span>
+                    <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-slate-500 shadow-sm">
+                      {sgVisible} camion{sgVisible === 1 ? '' : 'es'}
+                    </span>
+                    <span className="w-full text-[12px] leading-snug text-slate-500">{sg.desc}</span>
                   </div>
-                  <div className="mt-3 text-[9.5px] font-bold uppercase tracking-wider text-slate-400">Inicio</div>
-                  <div className="mt-0.5 rounded-md border border-slate-200 bg-slate-50 px-1 py-1 text-[12px] font-semibold text-slate-900">
-                    {fmtDate(t.firstEventAt)}
-                  </div>
-                  <div className="mt-2 text-[9.5px] font-bold uppercase tracking-wider text-slate-400">Fin</div>
-                  <div className="mt-0.5 rounded-md border border-slate-200 bg-slate-50 px-1 py-1 text-[12px] font-semibold text-slate-900">
-                    {fmtDate(t.lastEventAt)}
-                  </div>
-                  {editTrucks ? null : (
-                    <div className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-violet-700 opacity-0 transition group-hover:opacity-100">
-                      Ver recorrido
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                        <path d="M5 12h14M13 6l6 6-6 6" />
-                      </svg>
-                    </div>
-                  )}
-                </button>
-                {editTrucks ? (
-                  <button
-                    type="button"
-                    onClick={() => toggleTruck(t.journeyId)}
-                    title={isHidden ? 'Restaurar camión' : 'Quitar camión (no es anomalía)'}
-                    className={`absolute right-2 top-2 z-10 rounded-md px-2 py-0.5 text-[12px] font-bold shadow-sm transition ${
-                      isHidden
-                        ? 'border border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                        : 'border border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100'
-                    }`}
-                  >
-                    {isHidden ? '↩' : '✕'}
-                  </button>
-                ) : null}
-              </div>
-            )
-          })}
-        </div>
+                  <TruckGrid
+                    trucks={sg.trucks}
+                    editMode={editTrucks}
+                    hiddenTrucks={hiddenTrucks}
+                    onOpen={setSelTruckId}
+                    onToggle={toggleTruck}
+                    focusSegmentByJourney={focusSegmentByJourney}
+                  />
+                </div>
+              )
+            })}
+          </div>
+        ) : (
+          <TruckGrid
+            trucks={selected.trucks}
+            editMode={editTrucks}
+            hiddenTrucks={hiddenTrucks}
+            onOpen={setSelTruckId}
+            onToggle={toggleTruck}
+            focusSegmentByJourney={focusSegmentByJourney}
+          />
+        )}
 
         {/* Motivo (solo modo secuencia; en regla de oro ya está la ficha de la regla arriba). */}
         {selected.kind === 'sequence' ? (

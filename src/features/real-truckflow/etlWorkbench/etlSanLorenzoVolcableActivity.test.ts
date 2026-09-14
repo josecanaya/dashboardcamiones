@@ -137,7 +137,7 @@ describe('buildSanLorenzoVolcableEvents (conteo = filas INGRESO, hora de cámara
     expect(rows).toHaveLength(1)
     expect(rows[0]!.camara).toBe('Volcable 3')
     expect(rows[0]!.producto).toBe('PELLETS GIRASOL')
-    expect(rows[0]!.hora.slice(0, 2)).toBe('10') // hora de la cámara, no del Excel (09)
+    expect(rows[0]!.hora.slice(0, 2)).toBe('13') // cámara 10:15 + 206 min (reloj de pared), no Excel (09)
     expect(rows[0]!.journey_id).toBe('j1')
   })
 
@@ -211,7 +211,7 @@ describe('buildSanLorenzoVolcableEvents (conteo = filas INGRESO, hora de cámara
     })
     expect(rows).toHaveLength(1)
     expect(rows[0]!.camara).toBe('Volcable 1')
-    expect(rows[0]!.hora.slice(0, 2)).toBe('12') // hora de la cámara
+    expect(rows[0]!.hora.slice(0, 2)).toBe('15') // cámara 12:00 + 206 min (reloj de pared)
   })
 
   it('journey sin cámara volcable y sin movimiento INGRESO → no emite', () => {

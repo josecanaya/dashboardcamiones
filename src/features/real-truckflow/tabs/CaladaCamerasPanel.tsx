@@ -12,6 +12,7 @@ import {
   CartesianGrid,
   ReferenceArea,
   ReferenceDot,
+  ReferenceLine,
 } from 'recharts'
 import { parseCsvToRecords } from '../../../etl-core/csvParse'
 import { argentinaLocalParts } from '../../../etl-core/domain/timestamps'
@@ -252,31 +253,58 @@ export function CaladaCamerasPanel({
     return ids.size
   }, [rows, splitSource])
 
-  /** Por cámara: camiones distintos, eventos y pico de camiones en una hora. */
+  /** Por cámara: camiones distintos, eventos, pico de camiones en una hora y hora del pico. */
   const perCamera = useMemo(() => {
     const byCam = new Map<string, { trucks: Set<string>; events: number; perBucket: Map<string, Set<string>> }>()
     for (const r of baseRows) {
       const c = byCam.get(r.camara) ?? { trucks: new Set(), events: 0, perBucket: new Map() }
       c.trucks.add(r.journey_id)
       c.events++
+      byCam.set(r.camara, c)
       const key = hourBucketOf(r)
+      if (!key) continue
       const b = c.perBucket.get(key) ?? new Set<string>()
       b.add(r.journey_id)
       c.perBucket.set(key, b)
-      byCam.set(r.camara, c)
     }
-    return [...byCam.entries()]
-      .map(([camara, c]) => ({
+    const rowsOut = [...byCam.entries()].map(([camara, c]) => {
+      let picoPorHora = 0
+      let picoBucket = ''
+      for (const [bucket, s] of c.perBucket) {
+        if (s.size > picoPorHora) {
+          picoPorHora = s.size
+          picoBucket = bucket
+        }
+      }
+      // Horas propias de la calle: cada calle tiene su horario, se divide por eso, no
+      // por el período completo (una calle con actividad 20h en la semana no debe
+      // dividirse por 169h). Ver [[volcable-sl-calles-panel]].
+      const activeHours = c.perBucket.size
+      return {
         camara,
         camiones: c.trucks.size,
         eventos: c.events,
-        picoPorHora: Math.max(0, ...[...c.perBucket.values()].map((s) => s.size)),
-        // Suma de camiones distintos por hora: numerador del promedio/hora (denominador =
-        // horas del período, común a todas las calles, se divide en el render).
+        picoPorHora,
+        picoLabel: picoBucket ? hourBucketLabel(picoBucket) : '',
+        // Suma de camiones distintos por hora: numerador del promedio/hora (denominador
+        // = horas propias, se divide en el render).
         truckHours: [...c.perBucket.values()].reduce((a, s) => a + s.size, 0),
-      }))
-      .sort((a, b) => b.camiones - a.camiones || a.camara.localeCompare(b.camara))
-  }, [baseRows])
+        activeHours,
+      }
+    })
+    // Volcable SL: orden fijo Volcable 1→5 (no reordenar según cuántos camiones).
+    // Resto (calada, silos, etc.): orden por camiones descendente como siempre.
+    if (splitSource) {
+      const num = (s: string) => {
+        const m = s.match(/(\d+)/)
+        return m ? Number(m[1]) : Number.POSITIVE_INFINITY
+      }
+      rowsOut.sort((a, b) => num(a.camara) - num(b.camara) || a.camara.localeCompare(b.camara))
+    } else {
+      rowsOut.sort((a, b) => b.camiones - a.camiones || a.camara.localeCompare(b.camara))
+    }
+    return rowsOut
+  }, [baseRows, splitSource])
 
   /** Por hora: cámaras de calada activas en simultáneo y camiones que pasaron por calada. */
   const concurrency = useMemo(() => {
@@ -405,6 +433,16 @@ export function CaladaCamerasPanel({
     // sobre las horas con actividad del período.
     const sumTrucksPerHour = concurrency.reduce((a, c) => a + c.camiones, 0)
     const avgTrucksPerHour = periodHours ? sumTrucksPerHour / periodHours : 0
+    // Mediana de camiones/hora: valor central de la serie horaria. Más representativa
+    // que el promedio cuando hay picos aislados (unas pocas horas con muchísima
+    // descarga arrastran la media hacia arriba y la mayoría de las horas queda por
+    // debajo). Se usa como referencia en el gráfico y como card propia.
+    const sortedTrucks = concurrency.map((c) => c.camiones).sort((a, b) => a - b)
+    const medianTrucksPerHour = sortedTrucks.length
+      ? sortedTrucks.length % 2
+        ? sortedTrucks[(sortedTrucks.length - 1) / 2]!
+        : (sortedTrucks[sortedTrucks.length / 2 - 1]! + sortedTrucks[sortedTrucks.length / 2]!) / 2
+      : 0
     return {
       trucks: trucks.size,
       cams: cams.size,
@@ -413,6 +451,7 @@ export function CaladaCamerasPanel({
       peakTrucks: peakTrucks.camiones,
       peakTrucksLabel: peakTrucks.label,
       avgTrucksPerHour,
+      medianTrucksPerHour,
     }
   }, [baseRows, concurrency, periodHours])
 
@@ -556,12 +595,17 @@ export function CaladaCamerasPanel({
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <MetricCard label={labels.trucksMetric} value={totals.trucks.toLocaleString()} />
         <MetricCard
           label="Prom. camiones/hora"
           value={totals.avgTrucksPerHour.toLocaleString('es-AR', { maximumFractionDigits: 1 })}
           hint={periodHours ? `sobre ${periodHours} h con actividad` : undefined}
+        />
+        <MetricCard
+          label="Mediana camiones/hora"
+          value={totals.medianTrucksPerHour.toLocaleString('es-AR', { maximumFractionDigits: 1 })}
+          hint="valor central de la serie horaria"
         />
         <MetricCard label={labels.activityMetric} value={String(totals.cams)} />
         <MetricCard
@@ -607,16 +651,24 @@ export function CaladaCamerasPanel({
 
               <div className="mb-4 space-y-2">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-slate-600">Prom/24h</span>
+                  <span className="text-slate-600">Prom/hora activa</span>
                   <span className="font-bold text-slate-900">
-                    {(periodHours ? c.truckHours / periodHours : 0).toLocaleString('es-AR', {
+                    {(c.activeHours ? c.truckHours / c.activeHours : 0).toLocaleString('es-AR', {
                       maximumFractionDigits: 1,
                     })}
+                    <span className="ml-1 text-[10px] font-normal text-slate-400">
+                      · {c.activeHours} h
+                    </span>
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-xs">
                   <span className="text-slate-600">Pico/hora</span>
-                  <span className="font-bold text-slate-900">{c.picoPorHora}</span>
+                  <span className="font-bold text-slate-900">
+                    {c.picoPorHora}
+                    {c.picoLabel ? (
+                      <span className="ml-1 text-[10px] font-normal text-slate-500">· {c.picoLabel}</span>
+                    ) : null}
+                  </span>
                 </div>
               </div>
 
@@ -643,12 +695,18 @@ export function CaladaCamerasPanel({
                   <td className="px-4 py-2.5 font-mono font-semibold text-slate-900">{c.camara}</td>
                   <td className="px-4 py-2.5 text-right tabular-nums">{c.camiones.toLocaleString()}</td>
                   <td className="px-4 py-2.5 text-right tabular-nums text-sky-800">
-                    {(periodHours ? c.truckHours / periodHours : 0).toLocaleString('es-AR', {
+                    {(c.activeHours ? c.truckHours / c.activeHours : 0).toLocaleString('es-AR', {
                       maximumFractionDigits: 1,
                     })}
+                    <span className="ml-1 text-[10px] font-normal text-slate-400">· {c.activeHours} h</span>
                   </td>
                   <td className="px-4 py-2.5 text-right tabular-nums text-slate-600">{c.eventos.toLocaleString()}</td>
-                  <td className="px-4 py-2.5 text-right tabular-nums">{c.picoPorHora}</td>
+                  <td className="px-4 py-2.5 text-right tabular-nums">
+                    {c.picoPorHora}
+                    {c.picoLabel ? (
+                      <span className="ml-1 text-[10px] font-normal text-slate-500">· {c.picoLabel}</span>
+                    ) : null}
+                  </td>
                   {labels.showPatentesModal ? (
                     <td className="px-4 py-2.5 text-center">
                       <button
@@ -732,7 +790,11 @@ export function CaladaCamerasPanel({
             Camiones distintos que pasaron por alguna {labels.entitySingular} en esa hora
             {labels.hourlyTrucksExcludeCameras?.length ? ' (excluye la calada líquida)' : ''}. La{' '}
             <span className="font-semibold text-emerald-700">hora pico de cada día</span> queda sombreada en verde y
-            marcada con un punto.
+            marcada con un punto. La línea punteada naranja marca la{' '}
+            <span className="font-semibold text-orange-700">
+              mediana ({totals.medianTrucksPerHour.toLocaleString('es-AR', { maximumFractionDigits: 1 })})
+            </span>
+            .
           </p>
           <div className="mt-3 h-72">
             <ResponsiveContainer width="100%" height="100%">
@@ -762,6 +824,25 @@ export function CaladaCamerasPanel({
                   fillOpacity={0.14}
                   dot={false}
                 />
+                {/* Mediana: línea de referencia horizontal (naranja punteada). */}
+                {totals.medianTrucksPerHour > 0 ? (
+                  <ReferenceLine
+                    y={totals.medianTrucksPerHour}
+                    stroke="#ea580c"
+                    strokeWidth={1.5}
+                    strokeDasharray="5 4"
+                    ifOverflow="extendDomain"
+                    label={{
+                      value: `Mediana ${totals.medianTrucksPerHour.toLocaleString('es-AR', {
+                        maximumFractionDigits: 1,
+                      })}`,
+                      position: 'insideTopRight',
+                      fill: '#ea580c',
+                      fontSize: 10,
+                      fontWeight: 600,
+                    }}
+                  />
+                ) : null}
                 {/* Punto verde sobre el máximo de cada día. */}
                 {dayPeaks.map((p) => (
                   <ReferenceDot

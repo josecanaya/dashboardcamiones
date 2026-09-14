@@ -229,10 +229,21 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
   // cuando la pasó (cruce por patente+día). Los que la cámara vio pero no están en el Excel se
   // cuentan aparte (producto del merge / «Sin dato»).
   const volcableIngresoMovimientos = snap?.volcableSlIngresoMovimientos ?? null
+  // Mapa CTG/opId → journey_uid desde el merge Excel↔Truckflow. Sin esto, el volcable SL
+  // matcheaba cámara con Excel por patente|día y los viajes múltiples del mismo día se
+  // pisaban entre sí (caso real: 30 filas con delta >6h, hasta 22h de corrimiento). Ver
+  // `scratchpad/audit_volcable_sl_hora.mjs`.
+  const journeyUidByOpId = new Map<string, string>()
+  for (const r of snap?.mergedRows ?? []) {
+    const uid = String(r.journey_uid ?? '').trim()
+    const opId = String((r as { external_operation_id?: unknown }).external_operation_id ?? '').trim()
+    if (uid && opId && !journeyUidByOpId.has(opId)) journeyUidByOpId.set(opId, uid)
+  }
   const sanLorenzoVolcableEvents = buildSanLorenzoVolcableEvents({
     classifiedJourneys: input.classifiedJourneys,
     volcableIngresoMovimientos,
     productByJourneyUid,
+    journeyUidByOpId,
   })
   const volcConProducto = sanLorenzoVolcableEvents.filter((r) => r.producto).length
   logs.push(

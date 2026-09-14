@@ -1,16 +1,18 @@
 import { describe, expect, it } from 'vitest'
 import {
   detectRicQuickReEntry,
-  detectSlThenRicSameDay,
-  detectRicToSlBridgeWindow,
+  detectSlThenRicReturn,
   detectRicToSlWithoutSlCalada,
   detectBalanzaPlayaCelda16Route,
   detectLoadThenDischarge,
+  detectSlFlashVisit,
+  detectDeclaredPlatformMismatch,
+  detectRicVolcableWithoutCalada,
   evaluateGoldenAnomalyRules,
+  R2_RETURN_SUBGROUP_REASONS,
   GOLDEN_SL_RIC_MAX_MS,
   RIC_REINGRESO_MAX_MS,
-  RIC_SL_MIN_MS,
-  RIC_SL_MAX_MS,
+  SL_RIC_RETURN_MAX_MS,
   RIC_SL_NO_CALADA_MIN_MS,
   RIC_SL_NO_CALADA_MAX_MS,
   type GoldenTimelinePoint,
@@ -27,7 +29,7 @@ function pt(
   return { t: t0 + offsetMin * 60_000, logicalCode, siteId, day }
 }
 
-describe('goldenAnomalyRules — reglas R1–R6', () => {
+describe('goldenAnomalyRules — reglas R1, R2, R4, R5, R6', () => {
   describe('R1 salida Ric → reingreso Ric ≤ 1 h (no pellet)', () => {
     it('marca reingreso rápido', () => {
       const hit = detectRicQuickReEntry([
@@ -61,90 +63,124 @@ describe('goldenAnomalyRules — reglas R1–R6', () => {
     })
   })
 
-  describe('R2 mismo día SL primero y luego Ric (no pellet)', () => {
-    it('marca San Lorenzo y luego Ricardone el mismo día', () => {
-      const hit = detectSlThenRicSameDay([
+  describe('R2 vuelven a Ricardone desde San Lorenzo en < 2 h (no pellet)', () => {
+    it('marca retorno SL → Ric dentro de 2 h (subgrupo, no pellet)', () => {
+      const hit = detectSlThenRicReturn([
         pt(0, 'SL_INGRESO', 'san_lorenzo'),
-        pt(180, 'INGRESO', 'ricardone'),
+        pt(90, 'INGRESO', 'ricardone'),
       ])
-      expect(hit?.reason).toBe('SL_LUEGO_RIC_MISMO_DIA_NO_PELLET')
+      expect(R2_RETURN_SUBGROUP_REASONS).toContain(hit?.reason)
+      expect(hit?.deltaMinutes).toBe(90)
     })
 
-    it('no marca si Ricardone fue primero', () => {
-      const hit = detectSlThenRicSameDay([
+    it('robusto a fallo de cámara: cualquier evento en Ricardone cuenta como retorno', () => {
+      const hit = detectSlThenRicReturn([
+        pt(0, 'SL_EGRESO', 'san_lorenzo'),
+        pt(40, 'CALADA', 'ricardone'),
+      ])
+      expect(R2_RETURN_SUBGROUP_REASONS).toContain(hit?.reason)
+      expect(hit?.deltaMinutes).toBe(40)
+    })
+
+    it('mide desde el ÚLTIMO registro en San Lorenzo', () => {
+      const hit = detectSlThenRicReturn([
+        pt(0, 'SL_INGRESO', 'san_lorenzo'),
+        pt(30, 'SL_EGRESO', 'san_lorenzo'),
+        pt(60, 'PREINGRESO', 'ricardone'),
+      ])
+      // 60 - 30 = 30 min desde el último registro en SL, no desde el ingreso.
+      expect(hit?.deltaMinutes).toBe(30)
+    })
+
+    it('no marca si el retorno tarda 2 h o más', () => {
+      const hit = detectSlThenRicReturn([
+        pt(0, 'SL_INGRESO', 'san_lorenzo'),
+        pt(120, 'INGRESO', 'ricardone'),
+      ])
+      expect(hit).toBeNull()
+    })
+
+    it('no marca si no vuelve a Ricardone', () => {
+      const hit = detectSlThenRicReturn([
+        pt(0, 'SL_INGRESO', 'san_lorenzo'),
+        pt(30, 'SL_EGRESO', 'san_lorenzo'),
+      ])
+      expect(hit).toBeNull()
+    })
+
+    it('no marca si Ricardone fue antes que San Lorenzo (no es retorno)', () => {
+      const hit = detectSlThenRicReturn([
         pt(0, 'INGRESO', 'ricardone'),
-        pt(180, 'SL_INGRESO', 'san_lorenzo'),
-      ])
-      expect(hit).toBeNull()
-    })
-
-    it('marca si Ricardone reaparece dentro de las 6 h', () => {
-      const hit = detectSlThenRicSameDay([
-        pt(0, 'SL_INGRESO', 'san_lorenzo'),
-        pt(6 * 60 - 1, 'INGRESO', 'ricardone'),
-      ])
-      expect(hit?.reason).toBe('SL_LUEGO_RIC_MISMO_DIA_NO_PELLET')
-    })
-
-    it('no marca si Ricardone reaparece luego de 6 h (dos viajes distintos)', () => {
-      const hit = detectSlThenRicSameDay([
-        pt(0, 'SL_INGRESO', 'san_lorenzo'),
-        pt(6 * 60 + 1, 'INGRESO', 'ricardone'),
-      ])
-      expect(hit).toBeNull()
-    })
-
-    it('mide el tope contra la descarga en SL más reciente', () => {
-      const hit = detectSlThenRicSameDay([
-        pt(0, 'SL_INGRESO', 'san_lorenzo'),
-        pt(8 * 60, 'SL_INGRESO', 'san_lorenzo'),
-        pt(8 * 60 + 60, 'INGRESO', 'ricardone'),
-      ])
-      expect(hit?.reason).toBe('SL_LUEGO_RIC_MISMO_DIA_NO_PELLET')
-      expect(hit?.deltaMinutes).toBe(60)
-    })
-
-    it('no marca si son días distintos', () => {
-      const hit = detectSlThenRicSameDay([
-        pt(0, 'SL_INGRESO', 'san_lorenzo', '2026-07-10'),
-        pt(60, 'INGRESO', 'ricardone', '2026-07-11'),
-      ])
-      expect(hit).toBeNull()
-    })
-
-    it('no marca si es pellet', () => {
-      const hit = detectSlThenRicSameDay(
-        [pt(0, 'SL_INGRESO', 'san_lorenzo'), pt(120, 'INGRESO', 'ricardone')],
-        { isPelletTransile: true }
-      )
-      expect(hit).toBeNull()
-    })
-  })
-
-  describe('R3 egreso Ric → ingreso SL en banda [40 min, 6 h]', () => {
-    it('marca dentro de la banda', () => {
-      const hit = detectRicToSlBridgeWindow([
-        pt(0, 'EGRESO', 'ricardone'),
-        pt(120, 'SL_INGRESO', 'san_lorenzo'),
-      ])
-      expect(hit?.reason).toBe('RIC_SL_TRAMO_40M_6H')
-      expect(hit?.deltaMinutes).toBe(120)
-    })
-
-    it('no marca por debajo de 40 min', () => {
-      const hit = detectRicToSlBridgeWindow([
-        pt(0, 'EGRESO', 'ricardone'),
         pt(30, 'SL_INGRESO', 'san_lorenzo'),
       ])
       expect(hit).toBeNull()
     })
 
-    it('no marca por encima de 6 h', () => {
-      const hit = detectRicToSlBridgeWindow([
-        pt(0, 'EGRESO', 'ricardone'),
-        pt(400, 'SL_INGRESO', 'san_lorenzo'),
+    it('no marca si es pellet o de la vuelta', () => {
+      const pts = [pt(0, 'SL_INGRESO', 'san_lorenzo'), pt(60, 'INGRESO', 'ricardone')]
+      expect(detectSlThenRicReturn(pts, { isPelletTransile: true })).toBeNull()
+      expect(detectSlThenRicReturn(pts, { isDeVuelta: true })).toBeNull()
+    })
+
+    it('un retorno tardío no bloquea un retorno rápido posterior', () => {
+      const hit = detectSlThenRicReturn([
+        pt(0, 'SL_INGRESO', 'san_lorenzo'),
+        pt(200, 'INGRESO', 'ricardone'), // 3 h 20: no cuenta
+        pt(260, 'SL_INGRESO', 'san_lorenzo'),
+        pt(300, 'INGRESO', 'ricardone'), // 40 min: sí
       ])
-      expect(hit).toBeNull()
+      expect(R2_RETURN_SUBGROUP_REASONS).toContain(hit?.reason)
+      expect(hit?.deltaMinutes).toBe(40)
+    })
+
+    describe('subgrupos (prioridad a → b → c)', () => {
+      it('R2-a: San Lorenzo fue el primer destino (sin Ric antes) → ERROR_DESTINO, gana sobre b', () => {
+        const hit = detectSlThenRicReturn(
+          [
+            pt(0, 'SL_INGRESO', 'san_lorenzo'),
+            pt(40, 'INGRESO', 'ricardone'),
+          ],
+          { circuitCompleted: true } // aunque complete, si SL fue primero es error de destino
+        )
+        expect(hit?.reason).toBe('SL_RIC_2H_ERROR_DESTINO_NO_PELLET')
+      })
+
+      it('R2-b: hubo Ric antes (shuttle) y el retorno completó circuito → CICLO_COMPLETO', () => {
+        const hit = detectSlThenRicReturn(
+          [
+            pt(0, 'INGRESO', 'ricardone'), // arrancó en Ricardone
+            pt(40, 'SL_INGRESO', 'san_lorenzo'),
+            pt(70, 'INGRESO', 'ricardone'), // retorno
+          ],
+          { circuitCompleted: true }
+        )
+        expect(hit?.reason).toBe('SL_RIC_2H_CICLO_COMPLETO_NO_PELLET')
+      })
+
+      it('R2-c: hubo Ric antes y el retorno NO completó circuito → SIN_CIRCUITO', () => {
+        const hit = detectSlThenRicReturn([
+          pt(0, 'INGRESO', 'ricardone'),
+          pt(40, 'SL_INGRESO', 'san_lorenzo'),
+          pt(70, 'INGRESO', 'ricardone'),
+        ])
+        expect(hit?.reason).toBe('SL_RIC_2H_SIN_CIRCUITO_NO_PELLET')
+      })
+
+      it('adjudica el retorno solo al journey que lo contiene (journeyPoints)', () => {
+        const plate = [
+          pt(0, 'INGRESO', 'ricardone'),
+          pt(40, 'SL_INGRESO', 'san_lorenzo'),
+          pt(70, 'INGRESO', 'ricardone'), // retorno, en el journey 2
+        ]
+        // El journey del viaje de ida (sin el retorno) NO debe disparar R2.
+        const idaOnly = [pt(0, 'INGRESO', 'ricardone'), pt(40, 'SL_INGRESO', 'san_lorenzo')]
+        expect(detectSlThenRicReturn(plate, { journeyPoints: idaOnly })).toBeNull()
+        // El journey de retorno (contiene el evento de las 70') sí dispara.
+        const retorno = [pt(70, 'INGRESO', 'ricardone')]
+        expect(detectSlThenRicReturn(plate, { journeyPoints: retorno })?.reason).toBe(
+          'SL_RIC_2H_SIN_CIRCUITO_NO_PELLET'
+        )
+      })
     })
   })
 
@@ -198,7 +234,7 @@ describe('goldenAnomalyRules — reglas R1–R6', () => {
       expect(hit?.deltaMinutes).toBe(45)
     })
 
-    it('R6 tiene prioridad sobre R3 cuando ambas aplican (banda solapada, sin calado)', () => {
+    it('dispara R6 cuando el tramo Ric→SL va sin calado (R3 retirada, ya no aparece)', () => {
       const hits = evaluateGoldenAnomalyRules({
         points: [
           pt(0, 'EGRESO', 'ricardone'),
@@ -208,10 +244,10 @@ describe('goldenAnomalyRules — reglas R1–R6', () => {
         circuitCode: 'R7',
       })
       expect(hits[0]?.reason).toBe('RIC_SL_MAS30M_SIN_CALADA_SL')
-      expect(hits.some((h) => h.reason === 'RIC_SL_TRAMO_40M_6H')).toBe(true)
+      expect(hits).toHaveLength(1)
     })
 
-    it('con calado en banda solapada gana R3 (R6 no dispara)', () => {
+    it('con calado en la visita no dispara ninguna regla del tramo Ric→SL', () => {
       const hits = evaluateGoldenAnomalyRules({
         points: [
           pt(0, 'EGRESO', 'ricardone'),
@@ -222,7 +258,7 @@ describe('goldenAnomalyRules — reglas R1–R6', () => {
         circuitCode: 'R7',
       })
       expect(hits.some((h) => h.reason === 'RIC_SL_MAS30M_SIN_CALADA_SL')).toBe(false)
-      expect(hits[0]?.reason).toBe('RIC_SL_TRAMO_40M_6H')
+      expect(hits).toHaveLength(0)
     })
   })
 
@@ -293,7 +329,19 @@ describe('goldenAnomalyRules — reglas R1–R6', () => {
       expect(hits[0]?.reason).toBe('RIC_REINGRESO_RAPIDO_NO_PELLET')
     })
 
-    it('pellet excluye R1/R2 pero R5 sigue disparando', () => {
+    it('R2 gana sobre R1 en un Ric → SL → Ric (retorno desde el puerto)', () => {
+      const hits = evaluateGoldenAnomalyRules({
+        points: [
+          pt(0, 'EGRESO', 'ricardone'),
+          pt(20, 'SL_INGRESO', 'san_lorenzo'),
+          pt(50, 'INGRESO', 'ricardone'),
+        ],
+        circuitCode: 'R7',
+      })
+      expect(R2_RETURN_SUBGROUP_REASONS).toContain(hits[0]?.reason)
+    })
+
+    it('pellet excluye R1 pero R5 sigue disparando', () => {
       const hits = evaluateGoldenAnomalyRules({
         points: [pt(0, 'CELDA16_CARGA', 'ricardone'), pt(60, 'SL_DESCARGA', 'san_lorenzo')],
         circuitCode: 'R30',
@@ -306,9 +354,137 @@ describe('goldenAnomalyRules — reglas R1–R6', () => {
   it('umbrales documentados', () => {
     expect(GOLDEN_SL_RIC_MAX_MS).toBe(30 * 60_000)
     expect(RIC_REINGRESO_MAX_MS).toBe(60 * 60_000)
-    expect(RIC_SL_MIN_MS).toBe(40 * 60_000)
-    expect(RIC_SL_MAX_MS).toBe(6 * 60 * 60_000)
+    expect(SL_RIC_RETURN_MAX_MS).toBe(2 * 60 * 60_000)
     expect(RIC_SL_NO_CALADA_MIN_MS).toBe(30 * 60_000)
     expect(RIC_SL_NO_CALADA_MAX_MS).toBe(2 * 60 * 60_000)
+  })
+})
+
+// ————————————————————————————————————————————————————————————————
+// R9 / R11 (2026-09-09): reglas elegidas por tipo de evidencia.
+// ————————————————————————————————————————————————————————————————
+
+describe('R9 · visita relámpago al puerto', () => {
+  it('marca entrada y salida de San Lorenzo en menos de 30 min sin operar', () => {
+    const hit = detectSlFlashVisit([
+      pt(0, 'SL_INGRESO', 'san_lorenzo'),
+      pt(22, 'SL_EGRESO', 'san_lorenzo'),
+    ])
+    expect(hit?.reason).toBe('SL_VISITA_RELAMPAGO_SIN_OPERAR')
+    expect(hit?.deltaMinutes).toBe(22)
+  })
+
+  it('no marca si pasó por volcable: operó de verdad', () => {
+    expect(
+      detectSlFlashVisit([
+        pt(0, 'SL_INGRESO', 'san_lorenzo'),
+        pt(10, 'SL_VOLCABLE', 'san_lorenzo'),
+        pt(20, 'SL_EGRESO', 'san_lorenzo'),
+      ])
+    ).toBeNull()
+  })
+
+  it('no marca si pasó por la balanza de salida', () => {
+    expect(
+      detectSlFlashVisit([
+        pt(0, 'SL_INGRESO', 'san_lorenzo'),
+        pt(15, 'SL_BALANZA_SALIDA', 'san_lorenzo'),
+        pt(20, 'SL_EGRESO', 'san_lorenzo'),
+      ])
+    ).toBeNull()
+  })
+
+  it('no marca una permanencia normal en el puerto', () => {
+    expect(
+      detectSlFlashVisit([
+        pt(0, 'SL_INGRESO', 'san_lorenzo'),
+        pt(120, 'SL_EGRESO', 'san_lorenzo'),
+      ])
+    ).toBeNull()
+  })
+})
+
+describe('R11 · descarga en calle distinta a la declarada', () => {
+  const mov = (platform: string) => ({ platform, fromMs: t0, toMs: t0 + 3 * 3_600_000 })
+  const volcable = (offsetMin: number, deviceCode: string) => ({
+    ...pt(offsetMin, 'SL_VOLCABLE', 'san_lorenzo'),
+    deviceCode,
+  })
+
+  it('marca cuando el Excel declara una calle y la cámara registra otra', () => {
+    const hit = detectDeclaredPlatformMismatch([volcable(60, 'SLZVolcableC2')], [mov('VOLCABLE_PTO_5')])
+    expect(hit?.reason).toBe('PLATAFORMA_DISTINTA_A_DECLARADA')
+    expect(hit?.detail).toContain('volcable 5')
+    expect(hit?.detail).toContain('volcable 2')
+  })
+
+  it('no marca cuando coinciden', () => {
+    expect(
+      detectDeclaredPlatformMismatch([volcable(60, 'SLZVolcableC3')], [mov('VOLCABLE_PTO_3')])
+    ).toBeNull()
+  })
+
+  it('no marca sin movimiento del Excel: una fuente sola no contradice a nadie', () => {
+    expect(detectDeclaredPlatformMismatch([volcable(60, 'SLZVolcableC3')], [])).toBeNull()
+    expect(detectDeclaredPlatformMismatch([volcable(60, 'SLZVolcableC3')], undefined)).toBeNull()
+  })
+
+  it('no marca cuando el evento cae fuera de la ventana del movimiento declarado', () => {
+    expect(
+      detectDeclaredPlatformMismatch([volcable(24 * 60, 'SLZVolcableC2')], [mov('VOLCABLE_PTO_5')])
+    ).toBeNull()
+  })
+
+  it('no marca si alguna de las calles observadas es la declarada (cámaras contiguas)', () => {
+    expect(
+      detectDeclaredPlatformMismatch(
+        [volcable(60, 'SLZVolcableC4'), volcable(64, 'SLZVolcableC5')],
+        [mov('VOLCABLE_PTO_5')]
+      )
+    ).toBeNull()
+  })
+
+  it('marca cuando ninguna de las calles observadas es la declarada', () => {
+    const hit = detectDeclaredPlatformMismatch(
+      [volcable(60, 'SLZVolcableC1'), volcable(64, 'SLZVolcableC2')],
+      [mov('VOLCABLE_PTO_5')]
+    )
+    expect(hit?.reason).toBe('PLATAFORMA_DISTINTA_A_DECLARADA')
+    expect(hit?.detail).toContain('1 y 2')
+  })
+
+  it('ignora plataformas sin cámara por calle: no hay con qué comparar', () => {
+    expect(
+      detectDeclaredPlatformMismatch([volcable(60, 'SLZVolcableC2')], [mov('KEPPLER_1')])
+    ).toBeNull()
+  })
+})
+
+describe('R12 · volcable Ricardone sin calado en cámara ni en Excel', () => {
+  const visita = (conCalada: boolean) => [
+    pt(0, 'INGRESO', 'ricardone'),
+    ...(conCalada ? [pt(20, 'CALADA', 'ricardone')] : []),
+    pt(40, 'BALANZA_INGRESO', 'ricardone'),
+    pt(60, 'VOLCABLE', 'ricardone'),
+    pt(90, 'EGRESO', 'ricardone'),
+  ]
+
+  it('marca cuando no hay calado en la cámara ni hora de calado en el Excel', () => {
+    const hit = detectRicVolcableWithoutCalada(visita(false), [])
+    expect(hit?.reason).toBe('VOLCABLE_SIN_CALADA_RIC')
+  })
+
+  it('no marca si la cámara registró el calado', () => {
+    expect(detectRicVolcableWithoutCalada(visita(true), [])).toBeNull()
+  })
+
+  it('no marca si el Excel trae la hora de calado: la cámara falló, no el camión', () => {
+    const caladoMs = t0 + 25 * 60_000
+    expect(detectRicVolcableWithoutCalada(visita(false), [{ caladoMs }])).toBeNull()
+  })
+
+  it('no marca sin descarga por volcable', () => {
+    const sinVolcable = [pt(0, 'INGRESO', 'ricardone'), pt(90, 'EGRESO', 'ricardone')]
+    expect(detectRicVolcableWithoutCalada(sinVolcable, [])).toBeNull()
   })
 })

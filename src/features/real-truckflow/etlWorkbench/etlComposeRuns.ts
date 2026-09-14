@@ -50,6 +50,25 @@ function filterRowsByDay(table: RunTable, from: string, to: string): Record<stri
   })
 }
 
+/**
+ * Dedup de legs de KPI (`segment_timing_legs`) tras concatenar corridas. La tabla de legs NO
+ * tiene columna de día, así que `filterRowsByDay` no la puede acotar por tramo: si un journey
+ * cae en el día-borde que dos corridas comparten (una corrida trae el día anterior por
+ * arrastre nocturno), su leg aparecería en ambas y el KPI lo contaría dos veces. La clave
+ * journey+from+to identifica el tramo de forma única. Ver [[composicion-rango-y-kpi-persistido]].
+ */
+function dedupeLegRows(rows: Record<string, unknown>[]): Record<string, unknown>[] {
+  const seen = new Set<string>()
+  const out: Record<string, unknown>[] = []
+  for (const r of rows) {
+    const key = `${r.journey_id ?? ''}|${r.from_logical ?? ''}|${r.to_logical ?? ''}`
+    if (seen.has(key)) continue
+    seen.add(key)
+    out.push(r)
+  }
+  return out
+}
+
 /** Parsea las filas persistidas de `segment_timing_legs` de vuelta a `SegmentLeg[]`. */
 export function persistedLegRowsToSegmentLegs(rows: Record<string, unknown>[]): SegmentLeg[] {
   return rows
@@ -102,11 +121,18 @@ export type ComposeRunsResult = {
 
 /**
  * Combina varias corridas materializadas en un único `EtlTransformOutput` para el
- * rango [from,to]. Concatena las filas de cada tabla (filtrando por día donde exista
- * columna) y re-agrega el KPI de tiempos desde los legs.
+ * rango [from,to]. Concatena las filas de cada tabla y re-agrega el KPI de tiempos desde
+ * los legs.
+ *
+ * Cada corrida se filtra a **su tramo asignado** (`spanFrom`/`spanTo`), no al rango global.
+ * Así, cuando el rango se cubre con varias corridas **superpuestas** (típico: ventanas
+ * ad-hoc como `27_02` + `27_01` + `31_01` que comparten días), cada día se cuenta una sola
+ * vez —la corrida dueña de ese día— en lugar de sumarse tantas veces como ventanas lo cubran.
+ * Si no se pasa `spanFrom`/`spanTo`, se cae al rango global (compat: una sola corrida).
+ * `selectNonOverlappingCover` produce tramos disjuntos que tapan este agujero de raíz.
  */
 export function composeRunsIntoTransformOutput(
-  runs: { runId: string; output: EtlTransformOutput }[],
+  runs: { runId: string; output: EtlTransformOutput; spanFrom?: string; spanTo?: string }[],
   from: string,
   to: string
 ): ComposeRunsResult {
@@ -118,14 +144,19 @@ export function composeRunsIntoTransformOutput(
   const mergedTables: Record<string, RunTable> = {}
   for (const name of tableNames) {
     const parts: RunTable[] = []
-    for (const { output } of runs) {
+    for (const { output, spanFrom, spanTo } of runs) {
       const t = (output.tables as Record<string, RunTable> | undefined)?.[name]
-      if (t && Array.isArray(t.rows)) parts.push({ headers: t.headers ?? [], rows: filterRowsByDay(t, from, to) })
+      if (t && Array.isArray(t.rows)) {
+        parts.push({ headers: t.headers ?? [], rows: filterRowsByDay(t, spanFrom ?? from, spanTo ?? to) })
+      }
     }
     if (!parts.length) continue
+    const rows = parts.flatMap((p) => p.rows)
     mergedTables[name] = {
       headers: unionHeaders(parts),
-      rows: parts.flatMap((p) => p.rows),
+      // Los legs no tienen columna de día: el filtro por tramo no los acota, así que se
+      // deduplican por journey+from+to para no contar dos veces el día-borde compartido.
+      rows: name === 'segment_timing_legs' ? dedupeLegRows(rows) : rows,
     }
   }
 
@@ -169,13 +200,66 @@ export function composeRunsIntoTransformOutput(
   }
 }
 
+/** Corrida seleccionada para componer, con el tramo de días que le toca (disjunto). */
+export type SelectedRun = {
+  runId: string
+  /** Rango declarado de la ventana. */
+  from: string
+  to: string
+  /** Tramo asignado dentro del rango pedido (disjunto entre corridas). */
+  spanFrom: string
+  spanTo: string
+}
+
 export type RangeCoverage = {
   /** Días del rango cubiertos por alguna corrida guardada. */
   coveredDays: string[]
   /** Días del rango sin corrida guardada (habría que procesarlos). */
   missingDays: string[]
-  /** Corridas guardadas que solapan el rango, por runId. */
+  /** Corridas guardadas que solapan el rango, por runId (todas, incluidas las redundantes). */
   coveringRuns: { runId: string; from: string; to: string }[]
+  /**
+   * Subconjunto de corridas que **realmente** hay que componer: una cobertura sin solape,
+   * con tramos disjuntos. Descarta ventanas superpuestas redundantes para no contar días
+   * dos veces. Esto es lo que debe cargar y pasar el llamador (no `coveringRuns`).
+   */
+  selectedRuns: SelectedRun[]
+}
+
+/**
+ * Elige una cobertura **sin solape** del rango [from,to] a partir de las ventanas que lo
+ * cubren. Greedy clásico de cobertura por intervalos: avanza un cursor por los días y en cada
+ * paso toma la ventana que, cubriendo el cursor, llega más lejos a la derecha; le asigna el
+ * tramo `[cursor, min(ventana.to, to)]` y salta el cursor al día siguiente. Así cada día queda
+ * en una sola corrida (tramos disjuntos) y se descartan las ventanas ad-hoc superpuestas.
+ */
+export function selectNonOverlappingCover(
+  from: string,
+  to: string,
+  coveringRuns: { runId: string; from: string; to: string }[]
+): SelectedRun[] {
+  const nextDay = (d: string) => new Date(new Date(`${d}T00:00:00Z`).getTime() + 86400000).toISOString().slice(0, 10)
+  const wins = [...coveringRuns].sort((a, b) => a.from.localeCompare(b.from) || b.to.localeCompare(a.to))
+  const selected: SelectedRun[] = []
+  let cursor = from
+  while (cursor <= to) {
+    // Ventanas que cubren el día `cursor`.
+    const covering = wins.filter((w) => w.from <= cursor && w.to >= cursor)
+    if (!covering.length) {
+      // Hueco: saltar al inicio de la próxima ventana disponible (los días saltados quedan
+      // como missingDays en computeRangeCoverage).
+      const next = wins.filter((w) => w.from > cursor).map((w) => w.from).sort()[0]
+      if (!next) break
+      cursor = next
+      continue
+    }
+    // La que llega más a la derecha (desempate: la más larga / la primera por orden).
+    const best = covering.reduce((a, b) => (b.to > a.to ? b : a))
+    const spanTo = best.to < to ? best.to : to
+    selected.push({ runId: best.runId, from: best.from, to: best.to, spanFrom: cursor, spanTo })
+    cursor = nextDay(spanTo)
+  }
+  return selected
 }
 
 /** Enumera los días YYYY-MM-DD entre from y to inclusive. */
@@ -213,5 +297,6 @@ export function computeRangeCoverage(
     coveredDays: days.filter((d) => covered.has(d)),
     missingDays: days.filter((d) => !covered.has(d)),
     coveringRuns,
+    selectedRuns: selectNonOverlappingCover(from, to, coveringRuns),
   }
 }

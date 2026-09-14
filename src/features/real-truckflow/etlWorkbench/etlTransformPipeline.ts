@@ -53,6 +53,9 @@ import {
   resolveFlexibleDischargePreliminaryCode,
 } from './finalCircuitScoring'
 import { resolveCommitteeClassification, buildGoldenTimelineFromJourney } from './committeeClassification'
+import { buildDeclaredCaladaMovementsByPlate } from './etlDeclaredCaladaIndex'
+import { buildDeclaredPlatformMovementsByPlate } from './etlDeclaredPlatformIndex'
+import { getEventOperationalInstantIso } from '../../../services/realEventOperationalTime'
 import {
   buildS7S8CircuitByPlate,
   resolveS7S8ExcelFirstCircuitCode,
@@ -1592,6 +1595,17 @@ export async function runEtlTransform(
   // Guarda producto→circuito: patente de grano puro (sin movimiento líquido en la
   // ventana) → circuito sólido del Excel. Corrige el estampado líquido erróneo
   // (SL1/R8/…) de un journey de SOJA/GIRASOL cuyo recorrido rozó cámaras de líquidos.
+  // R11: plataforma declarada en el Excel por patente + ventana del movimiento. Es la
+  // otra mitad de la comparación contra la calle que vio la cámara del volcable.
+  const declaredPlatformByPlate = buildDeclaredPlatformMovementsByPlate(
+    phaseStore.excelStep?.normalized ?? inp.preNormalizedMovimientos
+  )
+  // R12: horas de calado del Excel — evita marcar como anomalía a los camiones que sí se calaron
+  // pero cuya cámara `RicCal*` los perdió por OCR (patrón masivo verificado 2026-09-10).
+  const declaredCaladaByPlate = buildDeclaredCaladaMovementsByPlate(
+    phaseStore.excelStep?.normalized ?? inp.preNormalizedMovimientos
+  )
+
   const solidExcelCircuitByPlate = buildSolidExcelCircuitByPlate(
     phaseStore.excelStep?.normalized ?? inp.preNormalizedMovimientos
   )
@@ -1792,6 +1806,14 @@ export async function runEtlTransform(
       plateTimelinePoints: (() => {
         const plate = String(mj.normalizedPlate || mj.plate || '').trim().toUpperCase()
         return plate ? plateGoldenTimeline.get(plate) : undefined
+      })(),
+      declaredPlatformMovements: (() => {
+        const plate = String(mj.normalizedPlate || mj.plate || '').trim().toUpperCase()
+        return plate ? declaredPlatformByPlate.get(plate) : undefined
+      })(),
+      declaredCaladaMovements: (() => {
+        const plate = String(mj.normalizedPlate || mj.plate || '').trim().toUpperCase()
+        return plate ? declaredCaladaByPlate.get(plate) : undefined
       })(),
       expectedLogicalSequence:
         matrixClassification.matchedCircuitCode ?
@@ -2108,6 +2130,173 @@ export async function runEtlTransform(
       anomaly_kind: committee.anomaly_kind ?? 'NONE',
       anomaly_kind_reason: committee.anomaly_kind_reason ?? '',
     })
+  }
+  // R11-b (fallback por patente): inyecta anomalías «múltiples calles de volcable» para las
+  // patentes cuyos journeys quedaron NO_EVALUABLE y no llegaron al clasificador principal.
+  // Usa los eventos crudos (eventsForEtl) + la ventana declarada del Excel por patente.
+  {
+    const H = 3600e3
+    const MIN_GAP_MS = 20 * 60e3
+    const WIN_MS = 2 * H
+    const declaredByPlate = declaredPlatformByPlate
+    if (declaredByPlate.size) {
+      // Índice: patente -> [{t, street}] usando lecturas SLZVolcableCn crudas.
+      const readingsByPlate = new Map<string, { t: number; street: string }[]>()
+      for (const ev of eventsForEtl) {
+        const dev = String(ev.deviceCode ?? '')
+        const m = /^SLZVolcableC([1-5])$/i.exec(dev)
+        if (!m) continue
+        const plate = String(ev.normalizedPlate ?? ev.plate ?? '').trim().toUpperCase()
+        if (!plate) continue
+        const iso = getEventOperationalInstantIso(ev)
+        const t = Date.parse(iso)
+        if (!Number.isFinite(t)) continue
+        const list = readingsByPlate.get(plate) ?? []
+        list.push({ t, street: m[1]! })
+        readingsByPlate.set(plate, list)
+      }
+      // Patentes que YA tienen una entry BEHAVIORAL R11-b evita duplicar.
+      const alreadyR11b = new Set<string>()
+      for (const row of debugMatrixRows) {
+        if (row.anomaly_kind_reason === 'PLATAFORMA_MULTIPLE_CALLES') {
+          alreadyR11b.add(String(row.plate ?? '').toUpperCase())
+        }
+      }
+      for (const [plate, movs] of declaredByPlate) {
+        if (alreadyR11b.has(plate)) continue
+        const readings = readingsByPlate.get(plate) ?? []
+        for (const mov of movs) {
+          const lo = mov.fromMs - WIN_MS
+          const hi = mov.toMs + WIN_MS
+          const inWin = readings.filter((r) => r.t >= lo && r.t <= hi)
+          const streets = new Set(inWin.map((r) => r.street))
+          if (streets.size < 2) continue
+          const ts = inWin.map((r) => r.t)
+          if (Math.max(...ts) - Math.min(...ts) < MIN_GAP_MS) continue
+          const declared = /_(\d)$/.exec(mov.platform)?.[1] ?? ''
+          const seen = [...streets].sort().join(' y ')
+          // Ventana amplia: incluir desde el paso previo por Ricardone (mov.fromMs - 6 h)
+          // hasta el retorno a Ricardone después de descargar (mov.toMs + 24 h). La ficha del
+          // panel dibuja los eventos dentro de [first, last]; sin esto muestra solo los volcables.
+          const anchor = new Date(mov.fromMs - 6 * H).toISOString()
+          const last = new Date(mov.toMs + 24 * H).toISOString()
+          debugMatrixRows.push({
+            // Journey sintético para que la ficha del panel no colisione con ningún UID real.
+            journey_id: `multi_calles:${plate}:${anchor.slice(0, 16)}`,
+            plate,
+            site: 'san_lorenzo',
+            detected_sequence: inWin.map((r) => `SL_VOLCABLE_C${r.street}`).join('>'),
+            device_sequence: inWin.map((r) => `SLZVolcableC${r.street}`).join('>'),
+            first_event_at: anchor,
+            last_event_at: last,
+            matched_circuit_code: 'R7',
+            executive_circuit_code: 'R7',
+            executive_circuit_label: 'Ricardone → San Lorenzo',
+            technical_matched_circuit_code: 'R7',
+            expected_sequence: '',
+            matrix_final_status: 'ANOMALO',
+            executive_status: 'ANOMALO',
+            executive_reason: `Múltiples calles volcable: ${seen} (Excel declara ${declared})`,
+            valid_detail: '',
+            matrix_reason: 'PLATAFORMA_MULTIPLE_CALLES',
+            sequence_respected: 'no',
+            coverage_percent: 100,
+            has_strong_point: true,
+            enabled_for_classification: true,
+            sequence_configured: true,
+            matrix_missing_points: '',
+            matrix_confidence: 100,
+            useful_events_count: Math.max(3, inWin.length),
+            sl_support_points: 0,
+            sl_support_strong_points: 0,
+            sl_support_corroboration: 'no',
+            committee_group: 'ANOMALIAS',
+            committee_reason: 'PLATAFORMA_MULTIPLE_CALLES',
+            operational_variation_type: '',
+            analysis_scope: 'PLATE_LEVEL',
+            strong_point_source: 'CAMARA_VOLCABLE',
+            show_in_committee: 'yes',
+            show_as_exact_circuit: 'yes',
+            candidate_circuits: 'R7',
+            missing_key_cameras: '',
+            final_status_legacy: 'ANOMALO',
+            executive_bucket: 'ANOMALO',
+            anomaly_kind: 'BEHAVIORAL',
+            anomaly_kind_reason: 'PLATAFORMA_MULTIPLE_CALLES',
+          })
+          alreadyR11b.add(plate)
+          break // una anomalía por patente alcanza
+        }
+      }
+    }
+  }
+  // Observación manual: patentes marcadas ad-hoc para revisión en comité. Se inyectan como
+  // entries sintéticas para que aparezcan en el panel con el recorrido completo del día indicado.
+  // No aplican regla ni evaluación automática — solo permiten mirar las cámaras con la ficha.
+  {
+    const H = 3600e3
+    const MANUAL_REVIEW: { plate: string; day: string }[] = [
+      { plate: 'HNE318', day: '2026-09-04' },
+      { plate: 'EVL273', day: '2026-09-04' },
+    ]
+    for (const { plate, day } of MANUAL_REVIEW) {
+      // Rango generoso para capturar el día operativo entero + margen
+      const t0 = Date.parse(day + 'T00:00:00-03:00') - 6 * H
+      const t1 = Date.parse(day + 'T23:59:59-03:00') + 6 * H
+      const inDay = eventsForEtl.filter((ev) => {
+        const p = String(ev.normalizedPlate ?? ev.plate ?? '').trim().toUpperCase()
+        if (p !== plate) return false
+        const t = Date.parse(getEventOperationalInstantIso(ev))
+        return Number.isFinite(t) && t >= t0 && t <= t1
+      })
+      if (!inDay.length) continue
+      inDay.sort((a, b) => Date.parse(getEventOperationalInstantIso(a)) - Date.parse(getEventOperationalInstantIso(b)))
+      const anchor = getEventOperationalInstantIso(inDay[0]!)
+      const last = getEventOperationalInstantIso(inDay[inDay.length - 1]!)
+      debugMatrixRows.push({
+        journey_id: `manual_review:${plate}:${day}`,
+        plate,
+        site: 'ricardone',
+        detected_sequence: inDay.map((e) => String(e.deviceCode ?? '')).join('>'),
+        device_sequence: inDay.map((e) => String(e.deviceCode ?? '')).join('>'),
+        first_event_at: anchor,
+        last_event_at: last,
+        matched_circuit_code: 'R7',
+        executive_circuit_code: 'R7',
+        executive_circuit_label: 'Revisión manual',
+        technical_matched_circuit_code: 'R7',
+        expected_sequence: '',
+        matrix_final_status: 'ANOMALO',
+        executive_status: 'ANOMALO',
+        executive_reason: 'Marcado manualmente para revisión en comité',
+        valid_detail: '',
+        matrix_reason: 'OBSERVACION_MANUAL',
+        sequence_respected: 'no',
+        coverage_percent: 100,
+        has_strong_point: true,
+        enabled_for_classification: true,
+        sequence_configured: true,
+        matrix_missing_points: '',
+        matrix_confidence: 100,
+        useful_events_count: Math.max(3, inDay.length),
+        sl_support_points: 0,
+        sl_support_strong_points: 0,
+        sl_support_corroboration: 'no',
+        committee_group: 'ANOMALIAS',
+        committee_reason: 'OBSERVACION_MANUAL',
+        operational_variation_type: '',
+        analysis_scope: 'MANUAL',
+        strong_point_source: 'MANUAL',
+        show_in_committee: 'yes',
+        show_as_exact_circuit: 'yes',
+        candidate_circuits: 'R7',
+        missing_key_cameras: '',
+        final_status_legacy: 'ANOMALO',
+        executive_bucket: 'ANOMALO',
+        anomaly_kind: 'BEHAVIORAL',
+        anomaly_kind_reason: 'OBSERVACION_MANUAL',
+      })
+    }
   }
   profileAt = etlProfileMark(profiler, 'classifyCircuits', profileAt)
   await yieldToBrowser()

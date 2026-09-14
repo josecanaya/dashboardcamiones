@@ -23,6 +23,8 @@ import {
   evaluateGoldenAnomalyRules,
   isGoldenAnomalyReason,
   isPelletCircuitCode,
+  type DeclaredCaladaMovement,
+  type DeclaredPlatformMovement,
   type GoldenTimelinePoint,
 } from '../../../etl-core/domain/goldenAnomalyRules'
 import { getEventOperationalInstantIso } from '../../../services/liveCameraDiagnostics'
@@ -1062,6 +1064,10 @@ export type ResolveCommitteeClassificationInput = {
   missingExpectedPoints?: readonly string[]
   /** Excel/producto pellet o circuito R30–R32. */
   isPelletTransile?: boolean
+  /** R11: movimientos del Excel de esta patente con plataforma declarada y ventana. */
+  declaredPlatformMovements?: readonly DeclaredPlatformMovement[]
+  /** R12: movimientos del Excel de esta patente con `external_calado_at` registrado. */
+  declaredCaladaMovements?: readonly DeclaredCaladaMovement[]
 }
 
 /** Construye puntos de timeline para reglas de oro desde eventos del journey. */
@@ -1080,6 +1086,9 @@ export function buildGoldenTimelineFromJourney(j: ReconstructedRealJourney): Gol
       siteId: pt.siteId,
       journeyUid: e.journeyUid || j.journeyUid,
       day: occurredAtLocalDayKey(iso),
+      // R11 necesita el device crudo: la calle del volcable de puerto solo vive ahí
+      // (`SLZVolcableC1..5` colapsan todas a `SL_VOLCABLE`).
+      deviceCode: String(e.deviceCode ?? ''),
     })
   }
   return out.sort((a, b) => a.t - b.t)
@@ -1125,11 +1134,18 @@ export function resolveCommitteeClassification(
   })
 
   const journeyPoints = buildGoldenTimelineFromJourney(input.journey)
+  // R2-b: el journey completó un circuito reconocido (ejecutivo VÁLIDO o matriz COMPLETO).
+  const executiveUpper = String(result.executive_status ?? '').trim().toUpperCase()
+  const matrixUpper = String(input.matrixFinalStatus ?? '').trim().toUpperCase()
+  const circuitCompleted = executiveUpper === 'VALIDO' || matrixUpper === 'COMPLETO'
   const goldenHits = evaluateGoldenAnomalyRules({
     points: journeyPoints,
     platePoints: input.plateTimelinePoints?.length ? input.plateTimelinePoints : journeyPoints,
     circuitCode: input.executiveCircuitCode,
     isPelletTransile: resolveIsPelletTransile(input.executiveCircuitCode, input.isPelletTransile),
+    circuitCompleted,
+    declaredPlatformMovements: input.declaredPlatformMovements,
+    declaredCaladaMovements: input.declaredCaladaMovements,
   })
   const goldenReason = goldenHits[0]?.reason
   if (goldenReason && isGoldenAnomalyReason(goldenReason)) {

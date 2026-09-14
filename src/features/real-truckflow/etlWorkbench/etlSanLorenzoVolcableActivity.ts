@@ -14,7 +14,7 @@
  */
 import { recordsToCsv } from './etlCsv'
 import { franjaOperativaFromHour } from './etlSectorOccupancy30min'
-import { argentinaLocalParts } from '../../../etl-core/domain/timestamps'
+import { argentinaLocalParts, ensureArgentinaOffsetIso } from '../../../etl-core/domain/timestamps'
 import { getEventOperationalInstantIso } from '../../../services/realEventOperationalTime'
 import { isPelletExcelProduct } from '../../../etl-core/reports/transileExternoCiclo'
 import type { ClassifiedJourneyForTiming } from './etlSegmentTiming'
@@ -140,6 +140,15 @@ export type BuildSanLorenzoVolcableEventsInput = {
   volcableIngresoMovimientos?: readonly VolcableIngresoMovimientoLike[] | null
   /** journey_uid → producto (merge), para el producto de los camiones que solo vio la cámara. */
   productByJourneyUid?: Map<string, string> | null
+  /**
+   * `external_operation_id` (CTG/comprob) → `journey_uid` del match Excel↔Truckflow. Cuando
+   * está, cada fila INGRESO del Excel se resuelve 1:1 contra SU journey (y su cámara volcable),
+   * en vez de compartir la primera cámara del día para todos los viajes de esa patente. El
+   * matching viejo `patente|día` mezclaba los viajes múltiples del mismo día: la fila de las
+   * 22:43 podía quedarle a la del 00:32 (delta de 22 h en el pico horario). Ver auditoría
+   * en `scratchpad/audit_volcable_sl_hora.mjs`.
+   */
+  journeyUidByOpId?: Map<string, string> | null
 }
 
 /**
@@ -154,9 +163,13 @@ export function buildSanLorenzoVolcableEvents(
 ): CaladaCameraEventRow[] {
   const movimientos = input.volcableIngresoMovimientos ?? []
   const productByUid = input.productByJourneyUid ?? null
+  const journeyUidByOpId = input.journeyUidByOpId ?? null
   const rows: CaladaCameraEventRow[] = []
 
-  // Índices patente|día desde los journeys: cámara volcable (calle+hora+uid) y journey (uid+circuito).
+  // Índices desde los journeys:
+  // - por uid (matching 1:1 con el CTG del Excel cuando lo tenemos: es la vía correcta);
+  // - por patente|día (fallback para movimientos sin `external_operation_id` matcheable).
+  const camByJourneyUid = new Map<string, { iso: string; circuito: string; calle: string }>()
   const camByPlateDay = new Map<string, { iso: string; uid: string; circuito: string; calle: string }>()
   const journeyByPlateDay = new Map<string, { uid: string; circuito: string }>()
   const cameraJourneys: {
@@ -184,14 +197,22 @@ export function buildSanLorenzoVolcableEvents(
       }
       if (!camCalle) {
         const calle = sanLorenzoVolcableCalleFromDevice(e.deviceCode)
-        if (calle) {
-          const occurredAtIso = String(e.occurredAt ?? '').trim()
-          if (occurredAtIso) {
-            camIso = occurredAtIso
-            camCalle = calle
-          }
+        if (calle && iso) {
+          // Instante operativo (`createdAt` primero), NO `occurredAt` crudo. En este export
+          // `occurredAt` viene corrido ~3h26 respecto a `createdAt` (offset fijo: p10=p50=p90
+          // =206 min sobre los eventos de volcable). Con `occurredAt` la cámara de la balanza
+          // de salida `SLZBalSC2Fte` daba 206 min de delta contra `external_salida_at` del
+          // Excel siendo el MISMO evento; con `createdAt` da 0. El volcable pasa de 219 min a
+          // 13 min antes de la salida, que es el tiempo real de la operación. Es la misma
+          // regla que ya aplica `buildCaladaCameraEvents`; acá se había colado el campo crudo
+          // y desplazaba todo el panel (picos en horas donde no había descargas).
+          camIso = iso
+          camCalle = calle
         }
       }
+    }
+    if (uid && camCalle && camIso) {
+      camByJourneyUid.set(uid, { iso: camIso, circuito, calle: camCalle })
     }
     for (const day of days) {
       const key = volcablePlateDayKey(patente, day)
@@ -235,22 +256,47 @@ export function buildSanLorenzoVolcableEvents(
     if (!calle) continue
     const plate = String(m.plate_normalized ?? '').trim().toUpperCase()
     if (!plate) continue
+    const opId = String(m.external_operation_id || m.ctg || '').trim()
     const days = movimientoDays(m)
+
+    // Prioridad de matching cámara→movimiento:
+    // (a) por CTG/opId → journey_uid → cámara volcable de ESE journey (1:1);
+    // (b) fallback patente|día si no hay CTG matcheable en el merge.
+    // Salvaguarda: solo aceptamos la cámara si su calle == calle del Excel. Un journey puede
+    // pasar por más de una cámara volcable (lecturas erróneas, backup); usar la hora de OTRA
+    // calle para esta descarga infla horas irrelevantes. Si la calle no coincide, se cae al
+    // fallback `salida − 20 min`, que representa mejor el fin de operación de ESA descarga.
     let cam: { iso: string; uid: string; circuito: string } | undefined
+    const uidFromOp = opId && journeyUidByOpId ? journeyUidByOpId.get(opId) : undefined
+    if (uidFromOp) {
+      const c = camByJourneyUid.get(uidFromOp)
+      if (c && c.calle === calle) cam = { iso: c.iso, uid: uidFromOp, circuito: c.circuito }
+    }
+
     let jrn: { uid: string; circuito: string } | undefined
     for (const day of days) {
       const key = volcablePlateDayKey(plate, day)
-      cam = cam ?? camByPlateDay.get(key)
+      if (!cam) {
+        const c = camByPlateDay.get(key)
+        if (c && c.calle === calle) cam = { iso: c.iso, uid: c.uid, circuito: c.circuito }
+      }
       jrn = jrn ?? journeyByPlateDay.get(key)
       consumed.add(key)
     }
+
+    // Prioridad de hora (decisión del usuario):
+    // (1) cámara del propio journey — matcheada 1:1 por CTG arriba (o patente|día como
+    //     último fallback si el CTG no está en el merge);
+    // (2) si la cámara no leyó al camión, `salida − 13 min` del Excel (siempre disponible:
+    //     el usuario garantiza que TODA descarga tiene salida cargada). 13 min es la mediana
+    //     empírica volcable→balanza de salida medida sobre 982 eventos (p10=8, p90=20).
     let iso = cam?.iso || String(m.external_sl_volcable_at || '').trim()
     if (!iso) {
-      const salida = String(m.external_salida_at || '').trim()
-      if (salida) {
-        const salidaMs = new Date(salida).getTime()
+      const salidaRaw = String(m.external_salida_at || '').trim()
+      if (salidaRaw) {
+        const salidaMs = new Date(ensureArgentinaOffsetIso(salidaRaw)).getTime()
         if (Number.isFinite(salidaMs)) {
-          iso = new Date(salidaMs - 20 * 60 * 1000).toISOString()
+          iso = new Date(salidaMs - 13 * 60 * 1000).toISOString()
         }
       }
     }
@@ -260,7 +306,6 @@ export function buildSanLorenzoVolcableEvents(
     // —cada uno cuenta—. Antes se usaba el uid de la cámara (uno por patente+día) y los viajes
     // repetidos de la misma patente colapsaban a uno (pellet real 530→290). Se usa la id estable de
     // la operación; la cámara sólo aporta la hora fina. Sin CTG (raro) cae al uid o a un id sintético.
-    const opId = String(m.external_operation_id || m.ctg || '').trim()
     const journeyId =
       opId ? `excel:${opId}` : cam?.uid || jrn?.uid || `excel-vol:${plate}:${days[0] ?? excelSeq++}`
     push({
@@ -287,8 +332,22 @@ export function buildSanLorenzoVolcableEvents(
     })
   }
 
-  rows.sort((a, b) => a.timestamp.localeCompare(b.timestamp) || a.camara.localeCompare(b.camara))
-  return rows
+  // Dedupe físico: una descarga = un camión pasa una vez por una calle en un instante. Si
+  // aparecen varias filas con (patente, timestamp, calle) idénticos son el mismo camión con
+  // múltiples CTGs (típico del pellet de la vuelta: un mismo pase de cámara acarrea 2-4
+  // contratos comerciales — TVH101 tenía 4 filas idénticas a las 00:01:37 en V4). Sin este
+  // dedupe el pico horario se infla ×4. El primer CTG gana; el resto se descarta para el
+  // conteo de descargas físicas.
+  const seen = new Set<string>()
+  const deduped: CaladaCameraEventRow[] = []
+  for (const r of rows) {
+    const key = `${r.patente}|${r.timestamp}|${r.camara}`
+    if (seen.has(key)) continue
+    seen.add(key)
+    deduped.push(r)
+  }
+  deduped.sort((a, b) => a.timestamp.localeCompare(b.timestamp) || a.camara.localeCompare(b.camara))
+  return deduped
 }
 
 export function sanLorenzoVolcableEventsCsv(rows: CaladaCameraEventRow[]): string {

@@ -16,6 +16,7 @@
     "test": "node scripts/check-arch-rules.mjs && vitest run",
     "check:arch": "node scripts/check-arch-rules.mjs",
     "etl:run": "npx tsx scripts/run-etl-headless.ts",
+    "mov:resumen": "node scripts/build-movimientos-resumen.mjs",
     "smoke:etl": "node scripts/smoke-etl-api.mjs",
     "smoke:live": "node scripts/smoke-live-camera.mjs",
     "test:watch": "vitest",

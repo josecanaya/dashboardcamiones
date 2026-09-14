@@ -153,6 +153,13 @@ export type CircuitClassificationEntry = {
   executiveReason: string
   pieSliceLabel: string
   usefulEventsCount: number
+  /**
+   * R2 (a/b/c) abarca dos journeys del mismo camión: la ida al puerto y el retorno. Cuando la
+   * absorción se aplica, esta entry es la del retorno y guarda el `firstEventAt` del journey de
+   * ida absorbido. El panel lo usa para extender el rango de carga de eventos y mostrar la
+   * timeline unificada (los dos journeys como una sola ficha).
+   */
+  absorbedPriorFirstEventAt?: string
   /** Cruces Truckflow (columna event_count comité; pasos en detected_sequence). No confundir con usefulEventsCount. */
   eventCount: number
   executiveBucket: string
@@ -698,6 +705,70 @@ function entryHasDischargeClassification(e: CircuitClassificationEntry): boolean
 }
 
 /** Fragmentos UID con pocos eventos heredan COMPLETOS de otro journey misma patente. */
+/**
+ * R2 (a/b/c) es una regla que abarca DOS journeys del mismo camión: el viaje de ida al puerto
+ * y el de retorno a Ricardone. La regla se adjudica al journey de retorno (por diseño en
+ * `detectSlThenRicReturn`), pero el journey previo suele quedar marcado por R6 (ida sin recalar)
+ * o R1 (reingreso). Es el mismo comportamiento contado dos veces: aparece una tarjeta por cada
+ * viaje y el usuario tiene que reconstruir a mano que forman una única anomalía.
+ *
+ * Este paso absorbe el journey de ida en el de retorno: le quita la anomalía (queda NONE con
+ * razón `ABSORBIDO_POR_R2`) y guarda su journeyId en `absorbedPriorJourneyId` del journey R2.
+ * El panel usa esa referencia para dibujar la timeline unificada (los dos journeys una sola
+ * tarjeta), y el conteo de anomalías cae al número correcto.
+ *
+ * Solo se absorbe cuando la ida es de la MISMA patente y termina en las 6 h previas al inicio
+ * del R2, para no unificar viajes que en realidad son distintos.
+ */
+function absorbPriorJourneyIntoR2(entries: CircuitClassificationEntry[]): CircuitClassificationEntry[] {
+  const SIX_HOURS_MS = 6 * 60 * 60 * 1000
+  const R2_REASONS = new Set<string>([
+    'SL_RIC_2H_ERROR_DESTINO_NO_PELLET',
+    'SL_RIC_2H_CICLO_COMPLETO_NO_PELLET',
+    'SL_RIC_2H_SIN_CIRCUITO_NO_PELLET',
+  ])
+  const parse = (iso: string) => {
+    const t = Date.parse(String(iso ?? '').trim())
+    return Number.isFinite(t) ? t : Number.NaN
+  }
+  const byPlate = new Map<string, CircuitClassificationEntry[]>()
+  for (const e of entries) {
+    if (!e.normalizedPlate) continue
+    const list = byPlate.get(e.normalizedPlate) ?? []
+    list.push(e)
+    byPlate.set(e.normalizedPlate, list)
+  }
+  for (const list of byPlate.values()) list.sort((a, b) => parse(a.firstEventAt) - parse(b.firstEventAt))
+  // journey R2 → firstEventAt del journey previo que absorbe
+  const absorbedByR2 = new Map<string, string>()
+  const cleared = new Set<string>()
+  for (const [, list] of byPlate) {
+    for (let i = 0; i < list.length; i++) {
+      const r2 = list[i]!
+      if (!R2_REASONS.has(String(r2.anomalyKindReason ?? ''))) continue
+      const t0 = parse(r2.firstEventAt)
+      if (!Number.isFinite(t0)) continue
+      const prev = list[i - 1]
+      if (!prev) continue
+      const t1 = parse(prev.lastEventAt)
+      if (!Number.isFinite(t1) || t0 - t1 > SIX_HOURS_MS || t0 <= t1) continue
+      if (prev.anomalyKind !== 'BEHAVIORAL') continue
+      absorbedByR2.set(r2.journeyId, prev.firstEventAt)
+      cleared.add(prev.journeyId)
+    }
+  }
+  if (!cleared.size) return entries
+  return entries.map((e) => {
+    const absorbed = absorbedByR2.get(e.journeyId)
+    if (absorbed) return { ...e, absorbedPriorFirstEventAt: absorbed }
+    if (cleared.has(e.journeyId)) {
+      return { ...e, anomalyKind: 'NONE', anomalyKindReason: 'ABSORBIDO_POR_R2' }
+    }
+    return e
+  })
+}
+
+
 function promotePlateDischargeFragments(
   entries: CircuitClassificationEntry[]
 ): CircuitClassificationEntry[] {
@@ -1547,6 +1618,12 @@ export function reindexExecutiveChartsForExcelFirstOperations(
   const supersededUids = new Set<string>()
   const excelEntries: CircuitClassificationEntry[] = []
   const seenOp = new Set<string>()
+  /**
+   * Journeys BEHAVIORAL cuya anomalía SÍ quedó representada en una operación Excel.
+   * Una operación solo puede llevar UNA razón, así que si absorbe varios recorridos
+   * anómalos el resto queda sin representar — ver `behavioralOrphans` más abajo.
+   */
+  const behavioralRepresented = new Set<string>()
 
   for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
     const r = rows[rowIndex]!
@@ -1587,6 +1664,10 @@ export function reindexExecutiveChartsForExcelFirstOperations(
         built.anomalyKind = 'BEHAVIORAL'
         built.anomalyKindReason = behavioral.anomalyKindReason
         built.usefulEventsCount = Math.max(built.usefulEventsCount, behavioral.usefulEventsCount)
+        // Propagar la referencia al journey previo absorbido: sin esto la tarjeta R2 pierde
+        // el enlace y el panel muestra solo el viaje de retorno.
+        if (behavioral.absorbedPriorFirstEventAt) built.absorbedPriorFirstEventAt = behavioral.absorbedPriorFirstEventAt
+        behavioralRepresented.add(behavioral.journeyId)
       }
       excelEntries.push(built)
     }
@@ -1594,8 +1675,31 @@ export function reindexExecutiveChartsForExcelFirstOperations(
 
   const keptMatrix = matrixEntries.filter((e) => !supersededUids.has(e.journeyId) && !e.journeyId.startsWith('excel:'))
 
+  /**
+   * Recorridos anómalos que una operación Excel absorbió pero cuya anomalía NO quedó
+   * representada: la operación lleva una sola razón (la del primer journey del match),
+   * así que el resto desaparecía del panel.
+   *
+   * El caso real que lo destapó (2026-09-10, semana 2026-09-03..09): un camión shuttle
+   * hace varios viajes bajo el MISMO contrato. Sus journeys se agrupan en una operación
+   * Excel, y si el primero es R6 la operación queda etiquetada R6 y los R2 del resto se
+   * pierden. R2-c pasaba de 79 casos reales en la corrida a 4 listados en el panel.
+   *
+   * Se reinyectan como entries propias para que el panel de anomalías los vea. NO alteran
+   * el conteo de operaciones (`excelOperationCount` sigue contando solo `excelEntries`):
+   * son recorridos de cámara, la unidad correcta para medir comportamiento — un camión que
+   * volvió tres veces del puerto sin operar hizo tres desvíos, no uno.
+   */
+  const behavioralOrphans = matrixEntries.filter(
+    (e) =>
+      e.anomalyKind === 'BEHAVIORAL' &&
+      supersededUids.has(e.journeyId) &&
+      !behavioralRepresented.has(e.journeyId) &&
+      !e.journeyId.startsWith('excel:')
+  )
+
   return {
-    entries: [...keptMatrix, ...excelEntries],
+    entries: [...keptMatrix, ...excelEntries, ...behavioralOrphans],
     excelOperationCount: excelEntries.length,
     supersededMatrixJourneyCount: supersededUids.size,
   }
@@ -3351,6 +3455,10 @@ export function buildCircuitClassificationIndex(
   }
 
   let entries = promotePlateDischargeFragments(prelimEntries)
+  // Absorción R2: ANTES del reindex Excel-first, mientras los journeyIds y tiempos
+  // originales están intactos. El reindex después reemplaza IDs por `excel:CTG_...`,
+  // pero preserva el flag `absorbedPriorFirstEventAt` porque se propaga en el spread.
+  entries = absorbPriorJourneyIntoR2(entries)
 
   if (excelOpsHasData(excelOperationsWithTruckflow)) {
     const excelReco = applyExcelFirstReconciliation(entries, excelOperationsWithTruckflow)
@@ -3373,6 +3481,7 @@ export function buildCircuitClassificationIndex(
 
   const excelPromo = promoteExcelMovimientosContrato(entries, mergedTruckflowMovimientosCsv)
   entries = reclassifyPossibleRejections(excelPromo.entries).entries
+  entries = absorbPriorJourneyIntoR2(entries)
 
   return rebuildClassificationIndexFromEntries(entries, excelPromo.promotedCount, excelPromo.promotedCount)
 }

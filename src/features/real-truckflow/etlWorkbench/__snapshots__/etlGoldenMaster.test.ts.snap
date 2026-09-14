@@ -19,9 +19,9 @@ exports[`etlGoldenMaster > congela hash de cada CSV de salida en fixture S 1`] =
 {
   "alerts_operational": "adf3b85e1dc7df24",
   "camera_lpr_status": "1cb0d735dc38c762",
-  "classified_circuits": "a14ba89c47133c02",
-  "clean_journeys": "d4aa260e9e36debd",
-  "debug_matrix_classification": "ea73d68b976c1749",
+  "classified_circuits": "88423231ce344245",
+  "clean_journeys": "8e97563f01910647",
+  "debug_matrix_classification": "673ab849ce0b03ea",
   "final_circuits": "ac0ef525d134a04d",
   "front_alerts": "4074406f458fa402",
   "front_events": "4eb36774ffbe5a77",
@@ -35,6 +35,6 @@ exports[`etlGoldenMaster > congela hash de cada CSV de salida en fixture S 1`] =
   "rear_events": "e7a065dad488384e",
   "rear_only_journeys_debug": "0bb7e7621193b50b",
   "transform_summary": "a71b64efe8d71e6f",
-  "unclassified_journeys": "db251c876ae717ae",
+  "unclassified_journeys": "74c108411ecb35bb",
 }
 `;
