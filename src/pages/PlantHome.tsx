@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { Button, MetricCard as KpiCard } from '../components/ui/Interface'
+import './plantHome.css'
 import { LiveCameraPlayerModal } from '../components/plant/LiveCameraPlayerModal'
 import { PlantMap } from '../components/plant/PlantMap'
 import { SectorPanel } from '../components/plant/SectorPanel'
@@ -51,36 +53,10 @@ function Skeleton({ className }: { className?: string }) {
   return <div className={`animate-pulse rounded bg-slate-200 ${className ?? 'h-8 w-16'}`} />
 }
 
-function KpiCard({
-  label,
-  value,
-  loading,
-  hint,
-}: {
-  label: string
-  value: string | null
-  loading: boolean
-  hint?: string | null
-}) {
-  return (
-    <div className="min-w-[160px] rounded-[14px] border border-slate-200 bg-white px-5 py-3 shadow-sm">
-      {loading ? (
-        <Skeleton className="h-8 w-20" />
-      ) : (
-        <div className="font-mono text-[28px] font-semibold tracking-tight text-slate-900 tabular-nums">
-          {value ?? 'sin dato'}
-        </div>
-      )}
-      <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-        {label}
-      </div>
-      {hint ? <div className="mt-0.5 text-[11px] text-slate-400">{hint}</div> : null}
-    </div>
-  )
-}
-
 export function PlantHome() {
   const { snapshot, status, lastUpdateMs } = useLivePlantState('ricardone')
+  const [view, setView] = useState<'plano' | 'colas' | 'actividad'>('plano')
+  const [layoutError, setLayoutError] = useState(false)
   const [layout, setLayout] = useState<PlantLayout | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const [selectedZoneId, setSelectedZoneId] = useState<string | null>(null)
@@ -95,7 +71,7 @@ export function PlantHome() {
         if (!cancelled) setLayout(data)
       })
       .catch(() => {
-        if (!cancelled) setLayout(null)
+        if (!cancelled) { setLayout(null); setLayoutError(true) }
       })
     return () => {
       cancelled = true
@@ -107,7 +83,7 @@ export function PlantHome() {
     return () => clearInterval(t)
   }, [])
 
-  const loading = snapshot == null
+  const loading = snapshot == null && status === 'connecting'
   const plant = snapshot?.plant
   const sectors: SectorState[] = snapshot?.sectors ?? []
   const dwellP90 = formatMinutes(plant?.dwellP90Min ?? null)
@@ -150,7 +126,7 @@ export function PlantHome() {
   }
 
   return (
-    <section className="space-y-4 pb-4">
+    <section className="tf-ui tf-home space-y-4 pb-4">
       {/* Barra de estado del home */}
       <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 shadow-sm">
         <span className="text-sm font-semibold text-slate-800">En vivo</span>
@@ -239,7 +215,14 @@ export function PlantHome() {
         </div>
       </div>
 
-      {/* Mapa + NVAi */}
+      {status === 'error' ? <p className="ui-message ui-message--error" role="alert">Sin conexión con el estado de planta. {snapshot ? 'Se conserva la última lectura recibida.' : 'Sin dato disponible.'} La reconexión es automática.</p> : null}
+      <nav className="ui-section-nav" aria-label="Vistas de planta">
+        {([{ id: 'plano', label: 'Plano y cámaras' }, { id: 'colas', label: 'Colas por zona' }, { id: 'actividad', label: 'Actividad y grupos de cámaras' }] as const).map(item => (
+          <Button key={item.id} primary={view === item.id} aria-pressed={view === item.id} onClick={() => setView(item.id)}>{item.label}</Button>
+        ))}
+      </nav>
+      {/* Mapa + NVAi: se conserva montado al cambiar de vista. */}
+      <div hidden={view !== 'plano'}>
       <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div>
           {layout ? (
@@ -252,7 +235,7 @@ export function PlantHome() {
             />
           ) : (
             <div className="flex h-[480px] items-center justify-center rounded-[14px] border border-slate-200 bg-slate-100 text-sm text-slate-500">
-              Cargando plano…
+              {layoutError ? 'Plano no disponible. Recargá la página para volver a intentar.' : 'Cargando plano…'}
             </div>
           )}
         </div>
@@ -266,12 +249,14 @@ export function PlantHome() {
         </div>
       </div>
 
+      </div>
+      <div hidden={view !== 'colas'}>
       {/* Backlog por zona: donde el camión espera y cuánto tarda en salir */}
       <div className="overflow-hidden rounded-[14px] border border-slate-200 bg-white shadow-sm">
         <div className="flex flex-wrap items-baseline gap-3 border-b border-slate-200 px-4 py-3">
-          <span className="text-[14px] font-semibold text-slate-800">Backlog por zona</span>
+          <span className="text-[14px] font-semibold text-slate-800">Colas por zona</span>
           <span className="text-[12px] text-slate-400">
-            cada zona se vacía por su punto siguiente — el tiempo es backlog ÷ tasa efectiva
+            Elegí una zona para revisar el punto de salida, los camiones y sus cámaras.
           </span>
         </div>
         <div className="overflow-x-auto">
@@ -311,6 +296,9 @@ export function PlantHome() {
                         <tr
                           key={z.id}
                           onClick={() => pickZone(z.id)}
+                          tabIndex={0}
+                          onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pickZone(z.id) } }}
+                          aria-label={`Ver zona ${z.label}`}
                           className={`cursor-pointer border-b border-slate-100 transition hover:bg-slate-50 ${ZONE_ROW[z.status]} ${
                             selectedZoneId === z.id ? 'ring-1 ring-inset ring-sky-300' : ''
                           }`}
@@ -362,6 +350,7 @@ export function PlantHome() {
         </div>
       </div>
 
+      </div>
       {selected ? (
         <SectorPanel
           site="ricardone"
@@ -372,10 +361,11 @@ export function PlantHome() {
         />
       ) : null}
 
+      <div hidden={view !== 'actividad'}>
       {/* Fila inferior */}
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr_1fr]">
         <div className="rounded-[14px] border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="text-[13px] font-semibold text-slate-800">Actividad de hoy</div>
+          <div className="text-[13px] font-semibold text-slate-800">Actividad de la última hora</div>
           {loading ? (
             <Skeleton className="mt-4 h-28 w-full" />
           ) : plant ? (
@@ -399,7 +389,7 @@ export function PlantHome() {
                 </span>
               </div>
               <p className="text-[11px] text-slate-400">
-                Serie horaria del día aún no disponible en el snapshot.
+                Ingresos, egresos y balance de los últimos 60 minutos.
               </p>
             </div>
           ) : (
@@ -411,7 +401,7 @@ export function PlantHome() {
           <div className="text-[13px] font-semibold text-slate-800">Últimas detecciones</div>
           <p className="mt-4 text-sm text-slate-400">sin dato</p>
           <p className="mt-2 text-[11px] text-slate-400">
-            El feed de detecciones individuales llega en una tarea posterior.
+            Las detecciones individuales no están disponibles en esta vista.
           </p>
         </div>
 
@@ -425,7 +415,7 @@ export function PlantHome() {
               className="flex aspect-video w-full items-center justify-center rounded-[10px] border border-[#16243A] text-[11px] text-slate-400"
               style={{ background: '#0B1220' }}
             >
-              Sin sector
+              Elegí una zona de la tabla
             </div>
           ) : (
             <div className="space-y-2">
@@ -459,11 +449,12 @@ export function PlantHome() {
             </div>
           )}
           <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
-            Seleccioná un sector en el mapa para abrir sus cámaras.
+            Abrí una cámara desde el mapa o elegí una zona de la tabla para ver sus grupos.
           </p>
         </div>
       </div>
 
+      </div>
       <LiveCameraPlayerModal
         open={cameraGroup != null}
         devices={cameraGroup?.devices ?? null}

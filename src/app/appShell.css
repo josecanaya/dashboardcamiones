@@ -1,0 +1,99 @@
+/* Alcance deliberado: marco de navegación. No altera indicadores ni reportes. */
+.tf-shell {
+  --tf-canvas: #f8fafc;
+  --tf-panel: #ffffff;
+  --tf-ink: #0f172a;
+  --tf-muted: #475569;
+  --tf-line: #e2e8f0;
+  --tf-primary: #1d4ed8;
+  --tf-selected: #eff6ff;
+  --tf-selected-line: #bfdbfe;
+  background: var(--tf-canvas);
+}
+
+.tf-sidebar {
+  background: var(--tf-panel);
+  border-right: 1px solid var(--tf-line);
+  color: var(--tf-ink);
+}
+
+.tf-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 80px;
+  margin-bottom: 20px;
+  padding: 8px;
+  border-bottom: 1px solid var(--tf-line);
+}
+
+.tf-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--tf-primary);
+  color: var(--tf-panel);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -2px;
+}
+
+.tf-brand-mark span { font-size: 16px; }
+.tf-brand-name { display: block; font-size: 20px; font-weight: 700; letter-spacing: -0.04em; }
+.tf-brand-caption { display: block; margin-top: 4px; font-size: 12px; color: var(--tf-muted); }
+
+.tf-nav-section {
+  margin: 0 0 8px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--tf-ink);
+}
+
+.tf-nav-group {
+  margin: 12px 0 4px;
+  padding: 0 12px;
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--tf-muted);
+}
+
+.tf-nav-link {
+  display: block;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--tf-muted);
+  transition: background-color 120ms, color 120ms;
+}
+
+.tf-nav-link:hover { color: var(--tf-ink); background: var(--tf-canvas); }
+.tf-nav-link--active, .tf-nav-link--active:hover {
+  color: var(--tf-primary);
+  background: var(--tf-selected);
+  border-color: var(--tf-selected-line);
+  font-weight: 700;
+  box-shadow: inset 3px 0 var(--tf-primary);
+}
+
+.tf-nav-link:focus-visible, .tf-header button:focus-visible {
+  outline: 2px solid var(--tf-primary);
+  outline-offset: 2px;
+}
+
+.tf-header { min-height: 80px; background: var(--tf-panel); border: 1px solid var(--tf-line); }
+.tf-organization { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; }
+.tf-organization-name { font-size: 20px; font-weight: 700; color: var(--tf-ink); letter-spacing: -0.03em; }
+.tf-organization-sites { font-size: 12px; color: var(--tf-muted); }
+.tf-header > button { color: var(--tf-primary); background: var(--tf-selected); border-color: var(--tf-selected-line); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tf-nav-link { transition: none; }
+}

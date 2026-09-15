@@ -2,6 +2,8 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { TruckPlateRegistryLauncher } from '../features/real-truckflow/components/TruckPlateRegistryLauncher'
 import { NvaiBubble } from '../components/nvai/NvaiBubble'
 import { PRODUCT_SECTIONS, type NavGroup, type NavLeaf, type NavSection } from './sectors'
+import './appShell.css'
+import { HistoricalWorkspace } from '../features/real-truckflow/components/HistoricalWorkspace'
 
 function SidebarLink({ to, label }: NavLeaf) {
   return (
@@ -9,11 +11,7 @@ function SidebarLink({ to, label }: NavLeaf) {
       to={to}
       end={to === '/'}
       className={({ isActive }) =>
-        `block rounded-lg px-3 py-2 text-sm font-medium transition ${
-          isActive
-            ? 'bg-violet-100 text-violet-950 shadow-sm'
-            : 'text-violet-200/90 hover:bg-violet-800/40 hover:text-violet-50'
-        }`
+        `tf-nav-link${isActive ? ' tf-nav-link--active' : ''}`
       }
     >
       {label}
@@ -24,7 +22,7 @@ function SidebarLink({ to, label }: NavLeaf) {
 function SidebarGroup({ title, items }: NavGroup) {
   return (
     <div className="mb-2">
-      <p className="mb-0.5 px-3 text-[9px] font-semibold uppercase tracking-wider text-violet-500/90">
+      <p className="tf-nav-group">
         {title}
       </p>
       <div className="space-y-0.5">
@@ -39,7 +37,7 @@ function SidebarGroup({ title, items }: NavGroup) {
 function SidebarSection({ section }: { section: NavSection }) {
   return (
     <div className="mb-4">
-      <p className="mb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-violet-400/80">
+      <p className="tf-nav-section">
         {section.title}
       </p>
       {section.items?.length ? (
@@ -58,31 +56,35 @@ function SidebarSection({ section }: { section: NavSection }) {
 
 export function AppShell() {
   return (
-    <div className="min-h-screen bg-surface-50">
+    <div className="tf-shell min-h-screen bg-surface-50">
       <main className="flex min-h-[calc(100vh-24px)] items-stretch gap-3 pt-3 pr-3 pb-3 pl-0">
-        <aside className="h-[calc(100vh-24px)] w-[248px] shrink-0 overflow-y-auto border-r border-violet-900 bg-[#1a1136] p-3 text-violet-100">
-          <div className="mb-5 flex flex-col items-center gap-2">
-            <img
-              src="/logo_sinfondo.png"
-              alt="Truckflow"
-              className="h-12 w-auto max-w-[200px] object-contain"
-            />
-            <span className="text-lg font-bold tracking-tight text-violet-100">Truckflow</span>
+        <aside className="tf-sidebar h-[calc(100vh-24px)] w-[248px] shrink-0 overflow-y-auto p-3">
+          <div className="tf-brand">
+            <span className="tf-brand-mark" aria-hidden="true">T<span>↗</span></span>
+            <div>
+              <span className="tf-brand-name">Truckflow</span>
+              <span className="tf-brand-caption">Trazabilidad de camiones</span>
+            </div>
           </div>
 
+          <nav aria-label="Navegación principal">
           {PRODUCT_SECTIONS.map((s) => (
             <SidebarSection key={s.title} section={s} />
           ))}
+          </nav>
         </aside>
 
         <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 self-stretch overflow-auto">
-          <section className="flex shrink-0 items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-            <img src="/logo.png" alt="Logo empresa" className="h-14 max-w-[260px] object-contain" />
+          <section className="tf-header flex shrink-0 items-center justify-between gap-3 rounded-2xl px-4 py-3">
+            <div className="tf-organization">
+              <span className="tf-organization-name">Vicentin</span>
+              <span className="tf-organization-sites">Ricardone · San Lorenzo</span>
+            </div>
             <TruckPlateRegistryLauncher />
           </section>
 
           <div className="min-h-0 flex-1">
-            <Outlet />
+            <HistoricalWorkspace><Outlet /></HistoricalWorkspace>
           </div>
         </div>
       </main>
