@@ -39,25 +39,25 @@ function CameraTile({ deviceCode }: { deviceCode: string }) {
   return (
     <figure className="m-0 space-y-1">
       <figcaption className="flex items-center justify-between gap-2 px-0.5">
-        <span className="font-mono text-[11px] font-bold text-cyan-300">{deviceCode}</span>
+        <span className="font-mono text-xs font-bold text-cyan-300">{deviceCode}</span>
         {state.phase === 'ready' ? (
-          <span className="rounded-full bg-rose-500/15 px-1.5 py-0.5 text-[9px] font-bold uppercase text-rose-400 ring-1 ring-rose-500/40">
+          <span className="rounded-full bg-rose-500/15 px-1.5 py-0.5 text-xs font-bold uppercase text-rose-400 ring-1 ring-rose-500/40">
             En vivo
           </span>
         ) : null}
       </figcaption>
       {state.phase === 'loading' && (
-        <div className="flex aspect-video w-full items-center justify-center rounded-xl border border-slate-800 bg-slate-900/60 text-[11px] text-slate-400">
+        <div className="flex aspect-video w-full items-center justify-center rounded-xl border border-slate-800 bg-slate-900/60 text-xs text-slate-400">
           Conectando…
         </div>
       )}
       {state.phase === 'error' && (
         <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 rounded-xl border border-amber-500/30 bg-slate-900/60 px-3 text-center">
-          <p className="text-[11px] leading-snug text-amber-200">{state.message}</p>
+          <p className="text-xs leading-snug text-amber-200">{state.message}</p>
           <button
             type="button"
             onClick={retry}
-            className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-2.5 py-1 text-[10px] font-bold text-cyan-100"
+            className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-2.5 py-1 text-xs font-bold text-cyan-100"
           >
             Reintentar
           </button>
@@ -99,13 +99,16 @@ export function LiveCameraPlayerModal({
     <>
       <div className="fixed inset-0 z-40 bg-black/60" onClick={onClose} aria-hidden />
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={title ?? 'Cámaras en vivo'}
         className={`fixed left-1/2 top-1/2 z-50 max-h-[92vh] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border border-slate-700 bg-slate-950 shadow-2xl ${
           wide ? 'w-[min(96vw,1200px)]' : 'w-[min(92vw,780px)]'
         }`}
       >
         <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-slate-800 bg-slate-950 px-4 py-3">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
               {list.length > 1 ? `Cámaras en vivo · ${list.length}` : 'Cámara en vivo'}
             </p>
             <p className="font-mono text-sm font-bold text-cyan-300">{title ?? list.join(' · ')}</p>
