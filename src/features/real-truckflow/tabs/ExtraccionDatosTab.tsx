@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   getTruckflowHealth,
   getTruckflowListDays,
@@ -106,6 +106,13 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
   const [statusNote, setStatusNote] = useState<string | null>(null)
   const [journeyStats, setJourneyStats] = useState<TruckflowApiJourneyDayStat[] | null>(null)
   const [journeyStatsBusy, setJourneyStatsBusy] = useState(false)
+  useEffect(() => {
+    if (busy) return
+    const requested = wb?.periodInspection?.output === null ? wb.periodInspection.range : null
+    const from = requested?.from ?? wb?.diskPeriod?.startDate
+    const to = requested?.to ?? wb?.diskPeriod?.endDate
+    if (from && to) { setStartDate(from); setEndDate(to) }
+  }, [wb?.diskPeriod?.startDate, wb?.diskPeriod?.endDate, wb?.periodInspection, busy])
 
   const refreshJourneyStatsFromDisk = async (from: string, to: string) => {
     setJourneyStatsBusy(true)

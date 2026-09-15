@@ -1,3 +1,4 @@
+import { Disclosure } from '../../../components/ui/Interface'
 import { useMemo, useState } from 'react'
 import {
   ResponsiveContainer,
@@ -620,6 +621,7 @@ export function CaladaCamerasPanel({
         />
       </div>
 
+      <Disclosure title="Detalle por cámara y patentes">
       {splitSource ? (
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {perCamera.map((c) => (
@@ -724,6 +726,8 @@ export function CaladaCamerasPanel({
         </div>
       )}
 
+      </Disclosure>
+      <Disclosure title="Distribución por cámara, hora y cuarto de día">
       <div className="grid gap-4 xl:grid-cols-2">
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <h4 className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">
@@ -862,6 +866,8 @@ export function CaladaCamerasPanel({
         </div>
       </div>
 
+      </Disclosure>
+      <Disclosure title="Productos por cámara">
       <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <h4 className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">
           Qué producto caló cada calle
@@ -924,6 +930,7 @@ export function CaladaCamerasPanel({
         </div>
       </div>
 
+      </Disclosure>
       {labels.showPatentesModal && selectedCamaraForModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-2xl rounded-2xl bg-white shadow-lg max-h-[80vh] overflow-y-auto">

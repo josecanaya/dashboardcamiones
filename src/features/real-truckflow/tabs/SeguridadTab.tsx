@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type DragEvent, type ReactNode } from 'react'
+import { PagedList } from '../../../components/ui/PagedList'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
 import { parseTimestampMs } from '../../../etl-core/domain/timestamps'
 import { useExecutiveProductBreakdown } from '../etlWorkbench/useExecutiveProductBreakdown'
@@ -1206,8 +1207,7 @@ function TruckGrid({
       })
     : visible
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-      {list.map((t) => (
+    <PagedList items={list} itemKey={t => t.journeyId} searchText={t => `${t.plate} ${t.journeyId}`} label="camiones" pageSize={15} className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5" renderItem={t => (
         <TruckCard
           key={t.journeyId}
           truck={t}
@@ -1217,8 +1217,7 @@ function TruckGrid({
           onToggle={() => onToggle(t.journeyId)}
           focusSegment={focusSegmentByJourney?.get(t.journeyId) ?? null}
         />
-      ))}
-    </div>
+      )} />
   )
 }
 
@@ -1703,11 +1702,9 @@ export function SeguridadTab() {
             : 'Calculando la revisión de anomalías…'}
         </div>
       ) : (
-        <div className="grid gap-3 md:grid-cols-2">
-          {groups.map((g) => (
+        <PagedList items={groups} itemKey={g => g.key} label="patrones" pageSize={8} className="grid gap-3 md:grid-cols-2" renderItem={g => (
             <AnomalyCard key={g.key} group={g} onOpen={() => setSelKey(g.key)} />
-          ))}
-        </div>
+          )} />
       )}
     </section>
   )

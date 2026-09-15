@@ -73,6 +73,12 @@ export function KpiTiemposTab() {
     (tr?.tables as Record<string, { rows?: unknown[] }> | undefined)?.segment_timing_legs?.rows?.length
   )
   const canRunKpi = (wb?.kpiTiemposPrepared ?? false) || hasPersistedLegs
+  const autoKpiRef = useRef<typeof tr>(undefined)
+  useEffect(() => {
+    if (!tr || kpiBuilt || !canRunKpi || wb?.periodBusy || wb?.transformBusy || wb?.kpiTiemposBusy || autoKpiRef.current === tr) return
+    autoKpiRef.current = tr
+    void wb?.runKpiTiempos()
+  }, [tr, kpiBuilt, canRunKpi, wb?.periodBusy, wb?.transformBusy, wb?.kpiTiemposBusy, wb?.runKpiTiempos])
   const segmentTimingRaw = kpiBuilt ? tr?.stats.segmentTiming : null
 
   const analysisSourceLabel = tr?.csv.excel_operations_with_truckflow?.trim() ?
@@ -511,13 +517,11 @@ export function KpiTiemposTab() {
 
       {!tr ?
         <p className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-700">
-          Sin transform. Andá a <strong>Análisis local</strong> → Cargar período → <strong>Procesar Transform</strong>.
+          Elegí un período en el selector compartido de arriba para consultar los tiempos.
         </p>
       : !kpiBuilt ?
         <p className="rounded-xl border border-violet-200 bg-violet-50 px-4 py-4 text-sm text-violet-950">
-          Transform listo. Los KPI de tiempos y dispersión <strong>no se calculan solos</strong>: usá{' '}
-          <strong>Procesar KPI tiempos (tramo 4)</strong> arriba. Así el Transform termina antes y esta pestaña
-          solo trabaja cuando la abrís.
+          {wb.kpiTiemposBusy ? 'Preparando los tiempos del período…' : canRunKpi ? 'Los tiempos se preparan al abrir esta pantalla. Si hubo un error, podés reintentar con el botón de arriba.' : 'Esta corrida no contiene tramos para calcular tiempos. Sin dato: prepará sus fuentes en Análisis local.'}
         </p>
       : circuitOptions.length === 0 ?
         <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-950">

@@ -1,3 +1,4 @@
+import { Disclosure } from '../../../components/ui/Interface'
 import { Fragment, useDeferredValue, useEffect, useMemo, useState, useTransition } from 'react'
 import { yieldToBrowser } from '../../../utils/yieldToBrowser'
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
@@ -941,7 +942,7 @@ export function TransformEtlTab() {
 
   return (
     <section className="space-y-6">
-      <MovimientosBackupPanel />
+      <Disclosure title="Fuentes Excel y backup"><MovimientosBackupPanel /></Disclosure>
       <div className="rounded-3xl border border-violet-200 bg-gradient-to-br from-violet-50/90 via-white to-white p-6 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900">Transform</h2>
         <p className="mt-2 max-w-3xl text-sm text-slate-600">
@@ -1243,7 +1244,8 @@ export function TransformEtlTab() {
             : null}
           </article>
 
-          <article
+          <Disclosure title="Comparar circuitos">
+<article
             aria-label="Gráfico de barras por circuito ejecutivo"
             className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
           >
@@ -1294,8 +1296,10 @@ export function TransformEtlTab() {
               </div>
             }
           </article>
+</Disclosure>
 
-          {committeeCrossTab.length > 0 ?
+          <Disclosure title="Conciliar circuitos por categoría">
+{committeeCrossTab.length > 0 ?
             <article
               aria-label="Conciliación circuito por categoría comité"
               className="rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50/60 via-white to-white p-4 shadow-sm"
@@ -1456,8 +1460,10 @@ export function TransformEtlTab() {
               </div>
             </article>
           : null}
+</Disclosure>
 
-          {(totalAnomalies > 0 || suspiciousTotalCount > 0) ?
+          <Disclosure title="Revisar anomalías y sospechas">
+{(totalAnomalies > 0 || suspiciousTotalCount > 0) ?
             <article
               aria-label="Anomalías por recorrido observado"
               className="rounded-2xl border border-rose-200 bg-gradient-to-br from-rose-50/60 via-white to-white p-4 shadow-sm"
@@ -1487,8 +1493,10 @@ export function TransformEtlTab() {
               />
             </article>
           : null}
+</Disclosure>
 
-          <article
+          <Disclosure title="Apoyo de San Lorenzo">
+<article
             aria-label="Apoyo San Lorenzo en transform"
             className="rounded-2xl border border-teal-200 bg-gradient-to-br from-teal-50/80 via-white to-white p-4 shadow-sm"
           >
@@ -1526,8 +1534,10 @@ export function TransformEtlTab() {
               </p>
             : null}
           </article>
+</Disclosure>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <Disclosure title="Control de cobertura y calidad">
+<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <Metric label="Eventos" value={exec.eventCount.toLocaleString()} />
             <Metric label="Alertas" value={exec.alertCount.toLocaleString()} />
             <Metric label="Circuitos válidos" value={(exec.validos || exec.completos + exec.deducidos).toLocaleString()} />
@@ -1569,6 +1579,7 @@ export function TransformEtlTab() {
               value={exec.exportReady ? 'Listo para Load / Export' : 'Pendiente'}
             />
           </div>
+</Disclosure>
 
           {ETL_DEV_MODE && stats?.validation.lprMalfunctionByCamera.length ?
             <details className="rounded-xl border border-slate-200 bg-white p-3">
@@ -1585,8 +1596,7 @@ export function TransformEtlTab() {
             </details>
           : null}
           <p className="rounded-xl border border-indigo-200 bg-indigo-50/80 px-4 py-3 text-sm text-indigo-950">
-            Continuá en <strong>Load / Export</strong> para generar los archivos <span className="font-mono text-xs">pb_*</span>{' '}
-            del comité.
+            Usá las exportaciones de cada sección para conservar su evidencia. Los informes específicos están en Reportes, en la navegación lateral.
           </p>
         </div>
       : null}
