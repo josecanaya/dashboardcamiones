@@ -45,6 +45,14 @@ const ETLWORKBENCH_IMPORT_BASELINE = new Set([
   'src/services/truckflowTransform/contractFirst/contractFirstCliAdapter.ts',
 ])
 
+// Composición de rutas (15-09-2026): solo provider/hook públicos del contexto.
+// No habilita helpers internos del workbench ni amplía la línea base congelada.
+// Retirar al exponer una fachada pública de la feature. Ver docs/rediseno/ARQUITECTURA.md.
+const ROUTE_CONTEXT_IMPORTS = new Map([
+  ['src/App.tsx', "./features/real-truckflow/etlWorkbench/EtlWorkbenchContext"],
+  ['src/app/postTransformRoutes.tsx', "../features/real-truckflow/etlWorkbench/EtlWorkbenchContext"],
+])
+
 // Regla 1: nadie nuevo importa etlWorkbench desde fuera de features/real-truckflow
 walk(path.join(ROOT, 'src'), ['.ts', '.tsx'], (p, src) => {
   const rel = path.relative(ROOT, p).replace(/\\/g, '/')
@@ -55,6 +63,11 @@ walk(path.join(ROOT, 'src'), ['.ts', '.tsx'], (p, src) => {
   if (rel.startsWith('src/etl-core/reports/')) return
   if (rel === 'src/etl-core/domain/pipelineTypes.ts') return
   if (!/from ['"][^'"]*etlWorkbench\//.test(src)) return
+  const allowedContext = ROUTE_CONTEXT_IMPORTS.get(rel)
+  if (allowedContext) {
+    const imports = [...src.matchAll(/from ['"]([^'"]*etlWorkbench\/[^'"]+)['"]/g)]
+    if (imports.every((match) => match[1] === allowedContext)) return
+  }
   if (!ETLWORKBENCH_IMPORT_BASELINE.has(rel)) {
     violations.push(`[freeze-etlWorkbench] ${rel} importa etlWorkbench (no está en la línea base)`)
   }
