@@ -68,6 +68,7 @@ import {
 } from './truckPlantVisitSync'
 import { syncPlantVisits, FLEET_SYNC_BATCH_SIZE } from '../api/truckFleetApi'
 import type { ContractFirstProgressEvent } from './etlContractFirstProgress'
+import { loadHistoricalPeriod, validHistoricalRange, type HistoricalRange, type HistoricalPeriodResult } from './historicalPeriodLoader'
 
 export type EtlLoadSummary = {
   loadedEventFilesCount: number
@@ -96,6 +97,11 @@ export type ComposedRangeInfo = {
 }
 
 type Ctx = {
+  periodBusy: boolean
+  periodProgress: string
+  periodError: string | null
+  periodInspection: HistoricalPeriodResult | null
+  activateHistoricalPeriod: (range: HistoricalRange, processMissing?: boolean) => Promise<boolean>
   loadSummary: EtlLoadSummary | null
   /** journeyUid distintos por carpeta de extracción (JSON crudo API, pre-ETL). */
   apiJourneyStatsPerDay: TruckflowApiJourneyDayStat[] | null
@@ -230,6 +236,12 @@ function buildLoadSummary(
 }
 
 export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
+  const [periodBusy, setPeriodBusy] = useState(false)
+  const [periodProgress, setPeriodProgress] = useState('')
+  const [periodError, setPeriodError] = useState<string | null>(null)
+  const [periodInspection, setPeriodInspection] = useState<HistoricalPeriodResult | null>(null)
+  const periodLockRef = useRef(false)
+  const dataRevisionRef = useRef(0)
   const [busyLoad, setBusyLoad] = useState(false)
   const [parsedEventFiles, setParsedEventFiles] = useState<ParsedTruckflowFile[]>([])
   const [parsedAlertFiles, setParsedAlertFiles] = useState<ParsedTruckflowFile[]>([])
@@ -338,7 +350,13 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  const clearLoaded = useCallback(() => {
+  /** Limpia insumos/resultados sin bump de revisión (el caller ya invalidó in-flight). */
+  const resetLoadedState = useCallback(() => {
+    windowEventsInflightRef.current = null
+    setComposedRange(null)
+    setPeriodInspection(null)
+    setPeriodError(null)
+    setWindowEventsBusy(false)
     setParsedEventFiles([])
     setParsedAlertFiles([])
     setEvents([])
@@ -356,6 +374,12 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
     setMovimientosContratoFiles([])
     setTiemposEntrePasosFiles([])
   }, [resetKpiTiemposState])
+
+  /** API pública: cancela cargas en vuelo y vacía el período activo. */
+  const clearLoaded = useCallback(() => {
+    dataRevisionRef.current++
+    resetLoadedState()
+  }, [resetLoadedState])
 
 function buildApiJourneyStatsFromParsedFiles(
   evFiles: ParsedTruckflowFile[],
@@ -526,6 +550,7 @@ function buildApiJourneyStatsFromParsedFiles(
     const endDate = diskPeriod?.endDate ?? cachedWindow?.to ?? ''
     if (!startDate || !endDate) return []
     setWindowEventsBusy(true)
+    const revision = dataRevisionRef.current
     const p = (async () => {
       try {
         const res = await postTruckflowLoadLocalPeriod({ startDate, endDate })
@@ -533,13 +558,16 @@ function buildApiJourneyStatsFromParsedFiles(
         const evMap = new Map<string, RealJourneyEventDto>()
         for (const e of dtoEv) evMap.set(dedupeKeyEvent(e), e)
         const evDedup = [...evMap.values()]
+        if (revision !== dataRevisionRef.current) return []
         setEvents(evDedup)
         return evDedup
       } catch {
         return []
       } finally {
-        setWindowEventsBusy(false)
-        windowEventsInflightRef.current = null
+        if (revision === dataRevisionRef.current) {
+          setWindowEventsBusy(false)
+          windowEventsInflightRef.current = null
+        }
       }
     })()
     windowEventsInflightRef.current = p
@@ -845,47 +873,102 @@ function buildApiJourneyStatsFromParsedFiles(
     }
   }, [transformResult])
 
+  const activateHistoricalPeriod = useCallback(async (range: HistoricalRange, processMissing = false) => {
+    if (periodLockRef.current) return false
+    periodLockRef.current = true
+    setPeriodBusy(true)
+    setPeriodError(null)
+    setPeriodProgress('Verificando cobertura y vigencia…')
+    // Revisión solo al publicar éxito: un intento fallido/incompleto no cancela el período activo.
+    const startedAt = dataRevisionRef.current
+    try {
+      const result = await loadHistoricalPeriod(range, { processMissing, onProgress: setPeriodProgress })
+      if (startedAt !== dataRevisionRef.current) return false
+      setPeriodInspection(result)
+      setSavedWindows(result.windows)
+      if (!result.output) return false
+      const revision = ++dataRevisionRef.current
+      // Publicación atómica: tablas, período, eventos y KPI pertenecen a la misma carga.
+      resetLoadedState()
+      if (revision !== dataRevisionRef.current) return false
+      setPeriodInspection(result)
+      setDiskPeriod({ startDate: range.from, endDate: range.to })
+      setTransformResult(result.output)
+      setKpiTiemposBuilt(Boolean(result.output.stats.kpiTiemposBuilt || result.composed))
+      setTransformTramoCompleted(3)
+      setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
+      setWindowEventsBusy(false)
+      const exact = result.windows.find(w => w.runId === result.usedRunIds[0])
+      if (!result.composed && exact) setCachedWindow({ ...exact, inputHash: '', currentRulesVersion: exact.rulesVersion })
+      if (result.compositionCounts) setComposedRange({
+        ...range, usedRunIds: result.usedRunIds, missingDays: [], ...result.compositionCounts,
+      })
+      try { localStorage.setItem('truckflow.historicalPeriod.v1', JSON.stringify(range)) } catch { /* almacenamiento opcional */ }
+      return true
+    } catch (e) {
+      if (startedAt === dataRevisionRef.current) {
+        setPeriodError(e instanceof Error ? e.message : String(e))
+      }
+      return false
+    } finally {
+      periodLockRef.current = false
+      setPeriodBusy(false)
+      setPeriodProgress('')
+    }
+  }, [resetLoadedState])
+
   const loadWindowOrOffer = useCallback(async (from: string, to: string) => {
+    const revision = ++dataRevisionRef.current
     setTransformError(null)
     let hit: ResolveWindowResult | null = null
     try {
       hit = await resolveWindow(from, to)
     } catch (e) {
-      setTransformError(e instanceof Error ? e.message : String(e))
-      setCachedWindow(null)
+      if (revision === dataRevisionRef.current) {
+        setTransformError(e instanceof Error ? e.message : String(e))
+      }
       return null
     }
+    if (revision !== dataRevisionRef.current) return null
     if (!hit) {
-      setCachedWindow(null)
       return { cached: false }
     }
-    setCachedWindow(hit)
     if (hit.stale) return { cached: true, stale: true }
     try {
       const out = await loadTransformOutputFromRun(hit.runId)
-      startTransition(() => {
-        setTransformResult(out)
-      })
+      if (revision !== dataRevisionRef.current) return null
+      resetLoadedState()
+      if (revision !== dataRevisionRef.current) return null
+      setDiskPeriod({ startDate: from, endDate: to })
+      setCachedWindow(hit)
+      setTransformResult(out)
+      setKpiTiemposBuilt(Boolean(out.stats.kpiTiemposBuilt))
       setTransformTramoCompleted(3)
       setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
       return { cached: true, stale: false }
     } catch (e) {
-      setTransformError(e instanceof Error ? e.message : String(e))
-      return { cached: true, stale: false }
+      if (revision === dataRevisionRef.current) {
+        setTransformError(e instanceof Error ? e.message : String(e))
+      }
+      return null
     }
-  }, [])
+  }, [resetLoadedState])
 
   const recomputeWindow = useCallback(async (from: string, to: string) => {
+    const revision = ++dataRevisionRef.current
     setTransformError(null)
     setTransformBusy(true)
     try {
       const { runId } = await requestRunEtl(from, to, { force: true })
       const hit = await resolveWindow(from, to)
-      setCachedWindow(hit)
       const out = await loadTransformOutputFromRun(runId)
-      startTransition(() => {
-        setTransformResult(out)
-      })
+      if (revision !== dataRevisionRef.current) return
+      resetLoadedState()
+      if (revision !== dataRevisionRef.current) return
+      setDiskPeriod({ startDate: from, endDate: to })
+      setCachedWindow(hit)
+      setTransformResult(out)
+      setKpiTiemposBuilt(Boolean(out.stats.kpiTiemposBuilt))
       setTransformTramoCompleted(3)
       setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
       try {
@@ -894,11 +977,13 @@ function buildApiJourneyStatsFromParsedFiles(
         /* servidor local apagado */
       }
     } catch (e) {
-      setTransformError(e instanceof Error ? e.message : String(e))
+      if (revision === dataRevisionRef.current) {
+        setTransformError(e instanceof Error ? e.message : String(e))
+      }
     } finally {
-      setTransformBusy(false)
+      if (revision === dataRevisionRef.current) setTransformBusy(false)
     }
-  }, [])
+  }, [resetLoadedState])
 
   const refreshSavedWindows = useCallback(async () => {
     setSavedWindowsLoading(true)
@@ -912,37 +997,27 @@ function buildApiJourneyStatsFromParsedFiles(
     }
   }, [])
 
-  const hydrateSavedWindow = useCallback(
-    async (w: SavedWindow) => {
-      setTransformError(null)
-      setCachedWindow({
-        from: w.from,
-        to: w.to,
-        runId: w.runId,
-        inputHash: '',
-        rulesVersion: w.rulesVersion,
-        createdAt: w.createdAt,
-        stale: w.stale,
-        currentRulesVersion: w.rulesVersion,
-      })
+  const hydrateSavedWindow = useCallback(async (w: SavedWindow) => {
+    const revision = ++dataRevisionRef.current
+    setTransformError(null)
+    setTransformBusy(true)
+    try {
+      const out = await loadTransformOutputFromRun(w.runId)
+      if (revision !== dataRevisionRef.current) return
+      resetLoadedState()
+      if (revision !== dataRevisionRef.current) return
       setDiskPeriod({ startDate: w.from, endDate: w.to })
-      try {
-        const out = await loadTransformOutputFromRun(w.runId)
-        startTransition(() => {
-          setTransformResult(out)
-        })
-        // La corrida guardada trae las tablas de KPI ya materializadas, pero no el
-        // insumo en memoria para recalcularlas: hay que dejarlo explícito para que la
-        // UI no ofrezca «Procesar KPI» sabiendo que va a fallar.
-        resetKpiTiemposState()
-        setTransformTramoCompleted(3)
-        setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
-      } catch (e) {
-        setTransformError(e instanceof Error ? e.message : String(e))
-      }
-    },
-    []
-  )
+      setCachedWindow({ ...w, inputHash: '', currentRulesVersion: w.rulesVersion })
+      setTransformResult(out)
+      setKpiTiemposBuilt(Boolean(out.stats.kpiTiemposBuilt))
+      setTransformTramoCompleted(3)
+      setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
+    } catch (e) {
+      if (revision === dataRevisionRef.current) setTransformError(e instanceof Error ? e.message : String(e))
+    } finally {
+      if (revision === dataRevisionRef.current) setTransformBusy(false)
+    }
+  }, [resetLoadedState])
 
   /**
    * Compone un rango arbitrario [from,to] uniendo las corridas guardadas que lo
@@ -951,23 +1026,26 @@ function buildApiJourneyStatsFromParsedFiles(
    */
   const loadComposedRange = useCallback(
     async (from: string, to: string): Promise<RangeCoverage | null> => {
+      const revision = ++dataRevisionRef.current
       setTransformError(null)
       let windows: SavedWindow[] = savedWindows
       if (!windows.length) {
         try {
           windows = await listWindows()
-          setSavedWindows(windows)
+          if (revision === dataRevisionRef.current) setSavedWindows(windows)
         } catch {
           /* servidor local apagado: seguimos con lo que haya */
         }
       }
+      if (revision !== dataRevisionRef.current) return null
       const vigentes = windows.filter((w) => !w.stale)
       const coverage = computeRangeCoverage(from, to, vigentes)
       if (!coverage.coveringRuns.length) {
-        setComposedRange(null)
-        setTransformError(
-          `No hay corridas guardadas que cubran ${from} → ${to}. Procesá el período en «Análisis local».`
-        )
+        if (revision === dataRevisionRef.current) {
+          setTransformError(
+            `No hay corridas guardadas que cubran ${from} → ${to}. Procesá el período en «Análisis local».`
+          )
+        }
         return coverage
       }
       setTransformBusy(true)
@@ -983,11 +1061,11 @@ function buildApiJourneyStatsFromParsedFiles(
             spanTo: r.spanTo,
           }))
         )
+        if (revision !== dataRevisionRef.current) return coverage
         const composed = composeRunsIntoTransformOutput(loaded, from, to)
-        startTransition(() => {
-          setTransformResult(composed.output)
-        })
-        resetKpiTiemposState()
+        resetLoadedState()
+        if (revision !== dataRevisionRef.current) return coverage
+        setTransformResult(composed.output)
         setKpiTiemposBuilt(true)
         setTransformTramoCompleted(3)
         setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
@@ -1002,13 +1080,15 @@ function buildApiJourneyStatsFromParsedFiles(
           kpiRowCount: composed.kpiRowCount,
         })
       } catch (e) {
-        setTransformError(e instanceof Error ? e.message : String(e))
+        if (revision === dataRevisionRef.current) {
+          setTransformError(e instanceof Error ? e.message : String(e))
+        }
       } finally {
-        setTransformBusy(false)
+        if (revision === dataRevisionRef.current) setTransformBusy(false)
       }
       return coverage
     },
-    [savedWindows]
+    [savedWindows, resetLoadedState]
   )
 
   // Al montar: traer los procesos guardados y, si no hay nada cargado, hidratar
@@ -1029,8 +1109,17 @@ function buildApiJourneyStatsFromParsedFiles(
         setSavedWindowsLoading(false)
       }
       const latestVigente = ws.find((w) => !w.stale)
+      let restored: HistoricalRange | null = null
+      try {
+        const candidate = JSON.parse(localStorage.getItem('truckflow.historicalPeriod.v1') ?? 'null')
+        if (candidate && validHistoricalRange(candidate)) restored = candidate
+      } catch { /* almacenamiento opcional */ }
+      if (restored && !transformResult) {
+        await activateHistoricalPeriod(restored)
+        return
+      }
       if (latestVigente && !transformResult) {
-        await hydrateSavedWindow(latestVigente)
+        await activateHistoricalPeriod({ from: latestVigente.from, to: latestVigente.to })
       }
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1038,6 +1127,7 @@ function buildApiJourneyStatsFromParsedFiles(
 
   const value = useMemo<Ctx>(
     () => ({
+      periodBusy, periodProgress, periodError, periodInspection, activateHistoricalPeriod,
       loadSummary,
       apiJourneyStatsPerDay,
       diskPeriod,
@@ -1090,6 +1180,7 @@ function buildApiJourneyStatsFromParsedFiles(
       saveFleetDatabase,
     }),
     [
+      periodBusy, periodProgress, periodError, periodInspection, activateHistoricalPeriod,
       loadSummary,
       apiJourneyStatsPerDay,
       diskPeriod,
