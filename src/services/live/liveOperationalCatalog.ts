@@ -49,7 +49,23 @@ const RICARDONE_SECTORS: LiveSectorDef[] = [
   {
     sectorCode: 'RICARDONE_EGRESO_CAMIONES',
     label: 'Egreso camiones',
-    devices: ['RicEgrCamFrente', 'RicEgrCamTrasera'],
+    // Grafía real en eventos: RicEgrCamTraser (sin «a»); el catálogo tenía RicEgrCamTrasera.
+    devices: ['RicEgrCamFrente', 'RicEgrCamTraser'],
+  },
+  {
+    sectorCode: 'S6',
+    label: 'Playa 3',
+    devices: ['RicS6Playa3'],
+  },
+  {
+    sectorCode: 'S7',
+    label: 'Despacho silos',
+    devices: ['RicS7DescLinea1', 'RicS7DescLinea2', 'RicS7Carga'],
+  },
+  {
+    sectorCode: 'S8',
+    label: 'Carga silo Chief',
+    devices: ['RicS8CargaLinea1', 'RicS8CargaLinea2'],
   },
   {
     sectorCode: 'RICARDONE_CELDA_16',

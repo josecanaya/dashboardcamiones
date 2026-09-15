@@ -3,8 +3,10 @@
 Objetivo final: en la sección en vivo del dashboard, poder abrir el video en
 vivo de una cámara (desde el monitor de cámaras por sector, o desde el contexto
 del camión seleccionado). La sección en vivo corre local en una PC con acceso
-VPN al DSS; el video sale del **DSS** (no de las cámaras directo), así las
-credenciales de cámaras nunca se exponen y el DSS audita/limita los streams.
+VPN al DSS. El **catálogo** (qué cámara es cuál y en qué IP está) sale del DSS;
+el **stream** se toma por RTSP directo de la cámara, porque este build del DSS no
+expone URL de video (ver "API real del DSS de planta"). Las credenciales viven
+solo en el server local: el browser nunca ve host, usuario ni RTSP.
 
 (El popup sobre visor IFC es un caso de uso de otra plataforma; comparte las
 etapas 1 y 2 de este runbook.)
@@ -16,23 +18,56 @@ Browser (dashboard / visor IFC)
    │  WebRTC / MSE (http://localhost:1984 de go2rtc)
    ▼
 go2rtc (PC local, misma máquina que el server truckflow)
-   │  RTSP con token temporal
+   │  RTSP :554 (digest auth con CAM_RTSP_USER/PASS)
    ▼
-DSS Media Gateway (puerto ~9320, vía VPN)
+Cámara Dahua (192.168.4.3x / 192.168.3.x, vía VPN)
    ▲
-   │  OpenAPI HTTPS :443 → login + "dame la URL RTSP del canal X"
-   │  (server local Node; credenciales DSS solo en .env del server)
+   │  server local Node ← OpenAPI DSS HTTPS :443 (login + inventario canal→IP)
+   │  credenciales DSS y de cámara solo en .env del server
 ```
 
 Piezas:
 
-1. **OpenAPI del DSS** (`/brms/...` y `/vms/...` en el puerto 443 del server DSS):
-   login en dos pasos con firma MD5 → token de sesión → se pide la URL RTSP en
-   vivo de un canal. La URL sale por el Media Gateway con token temporal.
+1. **OpenAPI del DSS** (`/brms/...` en el puerto 443 del server DSS): login en dos
+   pasos con firma MD5 → token de sesión → inventario de canales (nombre → IP).
 2. **go2rtc** (binario único, sin instalación): consume ese RTSP y lo re-expone
    al browser como WebRTC (latencia <1 s) o MSE. El browser no habla RTSP.
 3. **Frontend**: popup con `<video>` (o el web component `video-stream` de
    go2rtc) apuntando a `http://localhost:1984/...?src=<camara>`.
+
+## API real del DSS de planta (verificado 14/09/2026, DSS Pro V8.007)
+
+Lo que el build instalado **sí** expone (probado contra 192.168.4.2:443):
+
+| Para qué | Endpoint |
+| --- | --- |
+| Login (2 pasos, MD5) | `POST /brms/api/v1.0/accounts/authorize` |
+| Keepalive | `PUT /brms/api/v1.0/accounts/keepalive` |
+| Canales (nombre → channelId) | `GET /brms/api/v1.1/device/channel/page?page=1&pageSize=500` |
+| Dispositivos (deviceCode → IP) | `GET /brms/api/v1.1/device/page?page=1&pageSize=500` |
+
+Detalles que cuestan una tarde si no están escritos:
+
+- El **paso 1 del login responde HTTP 401** con `realm`/`randomKey`: es el challenge, no un error.
+- El token dura **30 segundos** (`duration` del login) → keepalive agresivo, no cada 5 min.
+- Los canales traen `unitType`: **'1' es el canal de video**; 3 y 4 son subcanales del mismo
+  equipo y duplican nombres (224 filas → 60 cámaras reales).
+- Toda ruta desconocida del gateway devuelve **HTTP 503 con una página HTML**, y las rutas
+  desconocidas dentro de `/brms` devuelven `{"code":1010}`. Ninguna de las dos es "servicio caído".
+
+Lo que **no** existe en este build (probado, no supuesto):
+
+- El prefijo `/vms` completo → `POST /vms/api/v1.0/realmonitor/uri` **no existe**. No hay
+  endpoint de "dame la URL RTSP del canal" (se enumeraron ~1000 combinaciones bajo
+  `/brms` y `/obms`; todas 1010).
+- El RTSP server del DSS (`:9320`, "Dahua Rtsp Server/2.0") responde **404** a
+  `dss/monitor/param?cameraid=…` y variantes.
+
+**Consecuencia de diseño**: el DSS queda como *fuente de verdad del inventario*
+(nombre de canal → IP de cámara) y el stream se toma **RTSP directo de la cámara**:
+`rtsp://<CAM_RTSP_USER>:<CAM_RTSP_PASS>@<ip>:554/cam/realmonitor?channel=1&subtype=1`.
+Las cámaras de Ricardone (192.168.4.3x) y San Lorenzo (192.168.3.x) son alcanzables por
+la VPN y piden digest auth. Las credenciales viven solo en el `.env` del server.
 
 ## Etapa 1 — POC de la API (script listo)
 
@@ -92,29 +127,32 @@ Implementado en `server/dss-live.mjs` (cliente OpenAPI + go2rtc) y cableado en
   (`{ name, channelId, source: 'dss'|'override' }`); útil para diagnosticar el
   mapeo y armar overrides.
 - `POST /api/truckflow/live-camera/:deviceCode/stream` — resuelve
-  `deviceCode → channelId` (por nombre de canal, case-insensitive), pide la URL
-  RTSP al DSS, la registra en go2rtc y devuelve `{ playerUrl }`. Errores
-  tipados: `dss_not_configured` (503), `channel_not_found` (404 con
-  `suggestions`), `go2rtc_unreachable` / `dss_error` (502).
+  `deviceCode → cámara` (por nombre de canal, case-insensitive), arma la URL RTSP
+  de la cámara, la registra en go2rtc y devuelve `{ playerUrl }`. Errores tipados:
+  `dss_not_configured` / `cam_credentials_missing` (503), `channel_not_found`
+  (404 con `suggestions`), `go2rtc_unreachable` / `dss_error` (502).
 
 **Mapeo deviceCode → channelId**: automático por nombre de canal DSS (los
 nombres del feed — `RicCal01`, `RicB1Ingreso`, … — deberían coincidir). Para
 excepciones: crear `data/dss/dss-channel-overrides.json` con formato
-`{ "RicCal01": "1000004$1$0$0" }` (prioridad sobre lo automático).
+`{ "RicCal01": "192.168.4.35" }` (IP de la cámara) o directamente una URL
+`rtsp://…` completa (prioridad sobre lo automático).
 
 **Sesión DSS**: token cacheado + keepalive automático + retry único ante token
 vencido. Los paths de la OpenAPI están concentrados en la constante `DSS_API`
 al tope de `server/dss-live.mjs` — si un build del DSS difiere, se ajusta solo
 ahí (usar el POC de la etapa 1 para descubrir los paths correctos).
 
-**UI**: `LiveCameraMonitor.tsx` (monitor en vivo) → elegir sector y cámara →
-botón "● Ver en vivo" en el header del Detalle operativo → modal
-`LiveCameraPlayerModal.tsx` con iframe al player de go2rtc. Si `DSS_*` no está
-en `.env`, el botón queda deshabilitado con tooltip (no rompe nada existente).
+**UI**: en el home de planta, al elegir una zona del mapa aparece un botón por
+**grupo de cámaras** (`cameraGroups` en `public/plant/<sitio>/plantZones.json`);
+en calada son dos: "Calada" (RicCal01–06) y "Calada líquida" (RicCalLiq). El modal
+`LiveCameraPlayerModal.tsx` abre una **grilla**: un iframe de go2rtc por cámara,
+cada uno con su propio loading/error/reintento.
 
 **Env** (`.env` del server, plantilla en `.env.example`): `DSS_HOST`,
-`DSS_PORT` (443), `DSS_USER`, `DSS_PASS`, `GO2RTC_BASE`
-(http://127.0.0.1:1984).
+`DSS_PORT` (443), `DSS_USER`, `DSS_PASS` para el inventario; `CAM_RTSP_USER`,
+`CAM_RTSP_PASS`, `CAM_RTSP_PORT` (554) y `CAM_RTSP_SUBTYPE` (1 = sub-stream, el
+recomendado para grillas de 6) para el video; `GO2RTC_BASE` (http://127.0.0.1:1984).
 
 **Smoke** (sin VPN): con el server arriba, `npm run smoke:live` — valida ruta y
 shape aunque `dssConfigured` sea false.

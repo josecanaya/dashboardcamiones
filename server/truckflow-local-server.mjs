@@ -16,6 +16,9 @@ import { supabasePublicHost } from './supabase-client.mjs'
 import { uploadEtlRunFromDisk, listEtlRunsFromSupabase } from './etl-runs-store.mjs'
 import { createEtlAgentChat } from './etl-agent-chat.mjs'
 import { createDssLiveRouter } from './dss-live.mjs'
+import { getPlantStateService, PlantStateError } from './plantState/service.mjs'
+import { createPlantStateQueries } from './plantState/queries.mjs'
+import { askNvai } from './plantState/nvai.mjs'
 import {
   buildApiJourneyDayStat,
   countUniqueRawJourneyUids,
@@ -204,6 +207,118 @@ const dssLive = createDssLiveRouter({ projectRoot: PROJECT_ROOT })
 app.get('/api/truckflow/live-camera/status', dssLive.status)
 app.get('/api/truckflow/live-camera/channels', dssLive.listChannels)
 app.post('/api/truckflow/live-camera/:deviceCode/stream', dssLive.getStream)
+
+/** Plant State en vivo (buffer 6 h + SSE). */
+const plantState = getPlantStateService()
+const plantQueries = createPlantStateQueries(plantState)
+
+app.get('/api/truckflow/live/plant-state', async (req, res) => {
+  const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
+  try {
+    const snap = await plantState.getSnapshot(site)
+    res.json(snap)
+  } catch (e) {
+    if (e instanceof PlantStateError) {
+      res.status(e.httpStatus).json({ error: e.code })
+      return
+    }
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) })
+  }
+})
+
+app.get('/api/truckflow/live/stream', async (req, res) => {
+  const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
+  try {
+    // Validar site antes de abrir el stream
+    await plantState.getSnapshot(site)
+  } catch (e) {
+    if (e instanceof PlantStateError) {
+      res.status(e.httpStatus).json({ error: e.code })
+      return
+    }
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) })
+    return
+  }
+
+  res.setHeader('Content-Type', 'text/event-stream; charset=utf-8')
+  res.setHeader('Cache-Control', 'no-cache, no-transform')
+  res.setHeader('Connection', 'keep-alive')
+  res.setHeader('X-Accel-Buffering', 'no')
+  if (typeof res.flushHeaders === 'function') res.flushHeaders()
+
+  let closed = false
+  const writeSnap = async () => {
+    if (closed) return
+    try {
+      const snap = await plantState.getSnapshot(site)
+      res.write(`data: ${JSON.stringify(snap)}\n\n`)
+    } catch (e) {
+      const code = e instanceof PlantStateError ? e.code : 'feed_unreachable'
+      res.write(`event: error\ndata: ${JSON.stringify({ error: code })}\n\n`)
+    }
+  }
+
+  await writeSnap()
+  const snapTimer = setInterval(writeSnap, 10_000)
+  const pingTimer = setInterval(() => {
+    if (!closed) res.write(': ping\n\n')
+  }, 20_000)
+
+  req.on('close', () => {
+    closed = true
+    clearInterval(snapTimer)
+    clearInterval(pingTimer)
+  })
+})
+
+/** Detalle de sector + serie presencia + cámaras del Edge. */
+app.get('/api/truckflow/live/sectors/:sectorCode', async (req, res) => {
+  const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
+  const sectorCode = String(req.params.sectorCode ?? '').trim()
+  try {
+    const detail = await plantQueries.getSectorDetail(site, sectorCode)
+    res.json(detail)
+  } catch (e) {
+    if (e instanceof PlantStateError) {
+      res.status(e.httpStatus).json({ error: e.code })
+      return
+    }
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) })
+  }
+})
+
+/** Camiones abiertos (filtro opcional por sector). */
+app.get('/api/truckflow/live/trucks', async (req, res) => {
+  const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
+  const sector = req.query.sector != null ? String(req.query.sector).trim() : ''
+  const order = String(req.query.order ?? 'dwell').trim()
+  try {
+    const list = await plantQueries.listTrucks(site, { sector: sector || undefined, order })
+    res.json(list)
+  } catch (e) {
+    if (e instanceof PlantStateError) {
+      res.status(e.httpStatus).json({ error: e.code })
+      return
+    }
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) })
+  }
+})
+
+/** Journey abierto de una patente. */
+app.get('/api/truckflow/live/trucks/:plate', async (req, res) => {
+  const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
+  const plate = String(req.params.plate ?? '').trim()
+  try {
+    const journey = await plantQueries.getTruckJourney(site, plate)
+    res.json(journey)
+  } catch (e) {
+    if (e instanceof PlantStateError) {
+      res.status(e.httpStatus).json({ error: e.code })
+      return
+    }
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) })
+  }
+})
 
 /** Lista carpetas día existentes (YYYY-MM-DD). */
 app.get('/api/truckflow/list-days', async (_req, res) => {
@@ -1228,6 +1343,63 @@ app.post('/api/etl/agent/chat', async (req, res) => {
   } catch (e) {
     const messageErr = e instanceof Error ? e.message : String(e)
     write({ type: 'error', error: messageErr })
+  }
+  res.end()
+})
+
+/**
+ * POST /api/truckflow/live/nvai/ask
+ * body: { question, site?, focus?, history? }
+ * Stream NDJSON (mismo contrato que /api/etl/agent/chat) con snapshot de Plant State en el prompt.
+ */
+app.post('/api/truckflow/live/nvai/ask', async (req, res) => {
+  const question = String(req.body?.question ?? '').trim()
+  if (!question) {
+    res.status(400).json({ error: 'Falta question' })
+    return
+  }
+  if (!etlAgent.isConfigured()) {
+    res.status(503).json({
+      error:
+        'NVAi no disponible: falta el CLI `claude` o `.mcp.json`. ' +
+        'Instalá Claude Code y corré `claude auth login` (sin ANTHROPIC_API_KEY).',
+      configured: false,
+    })
+    return
+  }
+
+  const site = String(req.body?.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
+  const focus = req.body?.focus ?? null
+  const history = Array.isArray(req.body?.history) ? req.body.history : []
+
+  res.setHeader('Content-Type', 'application/x-ndjson; charset=utf-8')
+  res.setHeader('Cache-Control', 'no-cache')
+  res.setHeader('X-Accel-Buffering', 'no')
+  if (typeof res.flushHeaders === 'function') res.flushHeaders()
+  const write = (obj) => {
+    res.write(JSON.stringify(obj) + '\n')
+    if (typeof res.flush === 'function') res.flush()
+  }
+
+  try {
+    const out = await askNvai({
+      question,
+      site,
+      focus,
+      history,
+      getSnapshot: (s) => plantState.getSnapshot(s),
+      chatStream: (args, onProgress) => etlAgent.chatStream(args, onProgress),
+      onProgress: (label) => write({ type: 'progress', label }),
+    })
+    write({ type: 'done', ...out })
+  } catch (e) {
+    if (e instanceof PlantStateError) {
+      write({ type: 'error', error: e.code })
+    } else if (e && typeof e === 'object' && e.httpStatus === 400) {
+      write({ type: 'error', error: e.message || 'bad_request' })
+    } else {
+      write({ type: 'error', error: e instanceof Error ? e.message : String(e) })
+    }
   }
   res.end()
 })

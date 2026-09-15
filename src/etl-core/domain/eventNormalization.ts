@@ -18,7 +18,8 @@ const RIC_VOLCABLE_2 = 'RICARDONE_VOLCABLE_2'
 const RIC_BALANZA = 'RICARDONE_BALANZA'
 const SL_INGRESO_SECTOR = 'PUERTO_SAN_LORENZO_INGRESO_CAMIONES'
 
-const RIC_DEVICE_POINT_MAP: Record<string, { logicalCode: string; pointLabel: string; pointType: string; operationalPoint: string }> = {
+/** Expuesto para invariantes de catálogo en vivo (Plant State). */
+export const RIC_DEVICE_POINT_MAP: Record<string, { logicalCode: string; pointLabel: string; pointType: string; operationalPoint: string }> = {
   RicIngCamFrente: {
     logicalCode: 'INGRESO',
     pointLabel: 'Ingreso Ricardone',
@@ -164,6 +165,13 @@ const RIC_DEVICE_POINT_MAP: Record<string, { logicalCode: string; pointLabel: st
     operationalPoint: 'CALADA',
   },
   RicCal05: {
+    logicalCode: 'CALADA',
+    pointLabel: 'Calada Ricardone',
+    pointType: 'RIC_CALADA',
+    operationalPoint: 'CALADA',
+  },
+  // Presente en raw_events_api; faltaba en el mapa (el catálogo en vivo ya la listaba).
+  RicCal06: {
     logicalCode: 'CALADA',
     pointLabel: 'Calada Ricardone',
     pointType: 'RIC_CALADA',

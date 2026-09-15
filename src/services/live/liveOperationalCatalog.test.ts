@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
+import { RIC_DEVICE_POINT_MAP } from '../../etl-core/domain/eventNormalization'
 import {
+  entryDevices,
+  getExpectedDevicesForLiveSector,
   getLiveSectorEntries,
   inferLiveMonitorSiteId,
   isCanonicalLiveSectorCode,
@@ -56,5 +59,24 @@ describe('getLiveSectorEntries San Lorenzo líquidos S10', () => {
     if (entry?.kind !== 'sector') return
     expect(entry.devices).toEqual(['RenCargFte', 'RenCargTras', 'RenDescFte', 'RenDescTras'])
     expect(entry.label).toMatch(/líquidos punto 1/i)
+  })
+})
+
+describe('catálogo Ricardone reconciliado con eventNormalization', () => {
+  it('incluye S6 Playa 3', () => {
+    const entry = getLiveSectorEntries('ricardone').find(
+      (e) => e.kind === 'sector' && e.sectorCode === 'S6'
+    )
+    expect(entry).toBeTruthy()
+    expect(getExpectedDevicesForLiveSector('S6')).toEqual(['RicS6Playa3'])
+    expect(lookupCanonicalSectorByDevice('RicS6Playa3')).toBe('S6')
+  })
+
+  it('todo deviceCode de Ricardone existe en RIC_DEVICE_POINT_MAP', () => {
+    for (const entry of getLiveSectorEntries('ricardone')) {
+      for (const device of entryDevices(entry)) {
+        expect(RIC_DEVICE_POINT_MAP[device], `falta en mapa: ${device}`).toBeTruthy()
+      }
+    }
   })
 })

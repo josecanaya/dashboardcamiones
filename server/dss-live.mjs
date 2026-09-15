@@ -1,35 +1,39 @@
-// Video en vivo desde DSS Professional V8.x — cliente OpenAPI + registro en go2rtc.
-// Runbook y arquitectura: docs/POC_DSS_LIVE.md. Espejo de scripts/poc-dss-live.mjs.
+// Video en vivo de las cámaras de planta — catálogo desde DSS Professional V8.x + go2rtc.
+// Runbook y arquitectura: docs/POC_DSS_LIVE.md.
 //
 // Flujo por request de stream:
-//   deviceCode (RicCal01) → channelId DSS (por nombre de canal u override manual)
-//   → POST realmonitor/uri → URL RTSP con token temporal (Media Gateway)
-//   → PUT go2rtc /api/streams → playerUrl local para el browser.
+//   deviceCode (RicCal01) → canal DSS (nombre → channelId + IP de la cámara)
+//   → URL RTSP de la cámara → PUT go2rtc /api/streams → playerUrl local para el browser.
 //
-// Credenciales DSS solo en .env del server; el browser nunca ve host/token del DSS.
+// Por qué RTSP directo a la cámara y no el Media Gateway del DSS: el build instalado
+// (DSS Pro V8.007) NO expone `/vms/api/v1.0/realmonitor/uri` — ese prefijo ni siquiera
+// existe (el gateway responde 503 en toda ruta desconocida) y el RTSP server del DSS
+// (:9320) devuelve 404 a las formas conocidas de `dss/monitor/param`. El DSS sigue
+// siendo la fuente de verdad del inventario: nombre de canal → IP de cámara.
+//
+// Credenciales (DSS y cámaras) solo en .env del server; el browser nunca las ve.
 
-import crypto from 'node:crypto'
 import https from 'node:https'
+import crypto from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 
-/** Paths de la OpenAPI DSS — único lugar a ajustar si un build difiere. */
+/** Paths de la OpenAPI DSS verificados contra el DSS de planta (V8.007). */
 const DSS_API = {
   authorize: '/brms/api/v1.0/accounts/authorize',
   keepalive: '/brms/api/v1.0/accounts/keepalive',
-  rtspUri: '/vms/api/v1.0/realmonitor/uri',
-  channelCandidates: [
-    ['GET', '/brms/api/v1.1/tree/channels?page=1&pageSize=500'],
-    ['GET', '/brms/api/v1.0/tree/channels?page=1&pageSize=500'],
-    ['GET', '/brms/api/v1.0/devices?page=1&pageSize=500'],
-    ['POST', '/brms/api/v1.0/tree/list', {}],
-  ],
+  channelPage: '/brms/api/v1.1/device/channel/page',
+  devicePage: '/brms/api/v1.1/device/page',
 }
+
+/** unitType '1' = «Video Channel» (el canal real); 3 y 4 son subcanales del mismo equipo. */
+const VIDEO_UNIT_TYPE = '1'
 
 const DSS_HTTP_TIMEOUT_MS = 15_000
 const GO2RTC_PUT_TIMEOUT_MS = 3_000
 const GO2RTC_PING_TIMEOUT_MS = 1_500
 const CHANNEL_CACHE_TTL_MS = 10 * 60_000
+const DSS_PAGE_SIZE = 500
 
 const md5 = (s) => crypto.createHash('md5').update(s, 'utf8').digest('hex')
 
@@ -41,12 +45,22 @@ export function createDssLiveRouter({ projectRoot }) {
     port: Number(process.env.DSS_PORT || 443),
     user: process.env.DSS_USER?.trim() || '',
     pass: process.env.DSS_PASS ?? '',
+    camUser: process.env.CAM_RTSP_USER?.trim() || '',
+    camPass: process.env.CAM_RTSP_PASS ?? '',
+    camPort: Number(process.env.CAM_RTSP_PORT || 554),
+    /** subtype 0 = stream principal, 1 = sub-stream (menos ancho de banda). */
+    camSubtype: String(process.env.CAM_RTSP_SUBTYPE ?? '1'),
     go2rtcBase: (process.env.GO2RTC_BASE?.trim() || 'http://127.0.0.1:1984').replace(/\/$/, ''),
   })
 
   const isDssConfigured = () => {
     const c = cfg()
     return Boolean(c.host && c.user && c.pass)
+  }
+
+  const areCamCredentialsConfigured = () => {
+    const c = cfg()
+    return Boolean(c.camUser && c.camPass)
   }
 
   // ── HTTP hacia el DSS (cert autofirmado → node:https con rejectUnauthorized:false) ──
@@ -101,6 +115,7 @@ export function createDssLiveRouter({ projectRoot }) {
 
   async function dssLogin() {
     const c = cfg()
+    // El primer paso responde HTTP 401 con realm/randomKey: es el challenge, no un error.
     const first = await dssHttpJson('POST', DSS_API.authorize, {
       body: { userName: c.user, ipAddress: '', clientType: 'WINPC_V2' },
     })
@@ -136,19 +151,21 @@ export function createDssLiveRouter({ projectRoot }) {
     if (session && Date.now() < session.expiresAt) return session.token
     invalidateDssSession()
     const login = await dssLogin()
+    // Este DSS devuelve duration=30 (segundos): el margen de renovación tiene que ser corto.
     const durationSec = Number(login.duration) > 0 ? Number(login.duration) : 300
-    session = { token: login.token, expiresAt: Date.now() + Math.max(durationSec - 60, 30) * 1000 }
+    const freshMs = () => Math.max(Math.floor(durationSec * 0.6), 10) * 1000
+    session = { token: login.token, expiresAt: Date.now() + freshMs() }
     keepaliveTimer = setInterval(async () => {
       const current = session
       if (!current) return
       try {
         const res = await dssHttpJson('PUT', DSS_API.keepalive, { token: current.token, body: { token: current.token } })
         if (res.status !== 200) throw new Error(`keepalive HTTP ${res.status}`)
-        current.expiresAt = Date.now() + Math.max(durationSec - 60, 30) * 1000
+        current.expiresAt = Date.now() + freshMs()
       } catch {
         invalidateDssSession()
       }
-    }, Math.max(Math.floor(durationSec / 3), 20) * 1000)
+    }, Math.max(Math.floor(durationSec / 3), 5) * 1000)
     keepaliveTimer.unref()
     return session.token
   }
@@ -166,36 +183,26 @@ export function createDssLiveRouter({ projectRoot }) {
     return fn(fresh)
   }
 
-  // ── Canales: mapeo automático nombre→channelId + overrides manuales ──
+  // ── Inventario DSS: canal (nombre) → channelId + IP de la cámara ──
 
-  let channelCache = null // { at, map: Map<lowerName, {channelId, name, source}> }
+  let channelCache = null // { at, map: Map<lowerName, entry> }
 
-  function extractChannels(json) {
-    // Extractor tolerante: busca arrays de objetos con id+nombre en shapes conocidos.
-    const buckets = []
-    const visit = (node, depth) => {
-      if (!node || depth > 4) return
-      if (Array.isArray(node)) {
-        buckets.push(node)
-        return
+  /** Recorre las páginas de un endpoint `…/page` del DSS y junta `data.pageData`. */
+  async function fetchAllPages(apiPath) {
+    const rows = []
+    for (let page = 1; page <= 20; page += 1) {
+      const res = await withDssAuth((token) =>
+        dssHttpJson('GET', `${apiPath}?page=${page}&pageSize=${DSS_PAGE_SIZE}`, { token })
+      )
+      if (res.json?.code !== 1000) {
+        throw new Error(`DSS ${apiPath} respondió code ${res.json?.code ?? res.status}: ${res.json?.desc ?? res.text?.slice(0, 200)}`)
       }
-      if (typeof node === 'object') {
-        for (const v of Object.values(node)) visit(v, depth + 1)
-      }
+      const pageData = res.json?.data?.pageData ?? []
+      rows.push(...pageData)
+      const total = Number(res.json?.data?.totalCount ?? rows.length)
+      if (rows.length >= total || pageData.length === 0) break
     }
-    visit(json, 0)
-    const out = []
-    for (const arr of buckets) {
-      for (const item of arr) {
-        if (!item || typeof item !== 'object') continue
-        const channelId = item.channelId ?? item.id ?? item.channelCode
-        const name = item.channelName ?? item.name ?? item.channelAlias
-        if (typeof channelId === 'string' && typeof name === 'string' && channelId.length > 0 && name.length > 0) {
-          out.push({ channelId, name })
-        }
-      }
-    }
-    return out
+    return rows
   }
 
   function readOverrides() {
@@ -210,34 +217,43 @@ export function createDssLiveRouter({ projectRoot }) {
 
   async function loadChannelMap({ force = false } = {}) {
     if (!force && channelCache && Date.now() - channelCache.at < CHANNEL_CACHE_TTL_MS) return channelCache.map
+    const [channels, devices] = await Promise.all([
+      fetchAllPages(DSS_API.channelPage),
+      fetchAllPages(DSS_API.devicePage),
+    ])
+    const ipByDevice = new Map(devices.map((d) => [d.deviceCode, d.deviceIp]))
     const map = new Map()
-    const res = await withDssAuth(async (token) => {
-      for (const [method, apiPath, body] of DSS_API.channelCandidates) {
-        const r = await dssHttpJson(method, apiPath, { token, ...(body !== undefined ? { body } : {}) })
-        if (isAuthExpired(r)) return r
-        if (r.status === 200 && r.json) {
-          const channels = extractChannels(r.json)
-          if (channels.length > 0) return { status: 200, channels }
-        }
-      }
-      return { status: 200, channels: [] }
-    })
-    for (const ch of res.channels ?? []) {
-      map.set(ch.name.trim().toLowerCase(), { channelId: ch.channelId, name: ch.name, source: 'dss' })
+    for (const ch of channels) {
+      if (ch?.unitType !== VIDEO_UNIT_TYPE) continue
+      const name = String(ch.channelName ?? '').trim()
+      if (!name) continue
+      map.set(name.toLowerCase(), {
+        name,
+        channelId: ch.channelId ?? null,
+        deviceCode: ch.deviceCode ?? null,
+        deviceIp: ipByDevice.get(ch.deviceCode) ?? null,
+        orgName: ch.orgName ?? null,
+        source: 'dss',
+      })
     }
-    for (const [deviceCode, channelId] of Object.entries(readOverrides())) {
-      if (typeof channelId !== 'string') continue
-      map.set(deviceCode.trim().toLowerCase(), { channelId, name: deviceCode, source: 'override' })
+    // Overrides manuales: `{ "RicCal01": "192.168.4.35" }` o una URL rtsp:// completa.
+    for (const [deviceCode, value] of Object.entries(readOverrides())) {
+      if (typeof value !== 'string' || !value.trim()) continue
+      const key = deviceCode.trim().toLowerCase()
+      const base = map.get(key) ?? { name: deviceCode, channelId: null, deviceCode: null, deviceIp: null, orgName: null }
+      map.set(key, value.startsWith('rtsp://')
+        ? { ...base, rtspUrl: value.trim(), source: 'override' }
+        : { ...base, deviceIp: value.trim(), source: 'override' })
     }
     channelCache = { at: Date.now(), map }
     return map
   }
 
-  async function resolveChannelId(deviceCode) {
+  async function resolveCamera(deviceCode) {
     const map = await loadChannelMap()
-    const hit = map.get(deviceCode.trim().toLowerCase())
-    if (hit) return { channelId: hit.channelId }
     const needle = deviceCode.trim().toLowerCase()
+    const hit = map.get(needle)
+    if (hit) return { camera: hit }
     const suggestions = [...map.values()]
       .filter((c) => c.name.toLowerCase().includes(needle) || needle.includes(c.name.toLowerCase()))
       .slice(0, 8)
@@ -245,18 +261,15 @@ export function createDssLiveRouter({ projectRoot }) {
     return { notFound: true, suggestions }
   }
 
-  async function getRtspUrl(channelId) {
-    const res = await withDssAuth((token) =>
-      dssHttpJson('POST', DSS_API.rtspUri, {
-        token,
-        body: { channelId, streamType: '2', type: 'rtsp' },
-      })
-    )
-    const url = res.json?.data?.url ?? res.json?.url ?? null
-    if (res.status !== 200 || !url) {
-      throw new Error(`DSS no devolvió URL RTSP para canal ${channelId} (HTTP ${res.status}): ${res.text?.slice(0, 300)}`)
+  /** URL RTSP de la cámara (Dahua): las credenciales van en la URL, que nunca sale del server. */
+  function buildRtspUrl(camera) {
+    if (camera.rtspUrl) return camera.rtspUrl
+    const c = cfg()
+    if (!camera.deviceIp) {
+      throw new Error(`El DSS no informa IP para ${camera.name}. Agregá un override en data/dss/dss-channel-overrides.json.`)
     }
-    return url
+    const auth = `${encodeURIComponent(c.camUser)}:${encodeURIComponent(c.camPass)}`
+    return `rtsp://${auth}@${camera.deviceIp}:${c.camPort}/cam/realmonitor?channel=1&subtype=${c.camSubtype}`
   }
 
   // ── go2rtc (HTTP plano local) ──
@@ -289,6 +302,7 @@ export function createDssLiveRouter({ projectRoot }) {
         dssConfigured: isDssConfigured(),
         dssHost: c.host || null,
         dssSession: session && Date.now() < session.expiresAt ? 'active' : 'none',
+        camCredentialsConfigured: areCamCredentialsConfigured(),
         go2rtcBase: c.go2rtcBase,
         go2rtcOk: await pingGo2rtc(),
         channelCacheCount: channelCache?.map.size ?? 0,
@@ -321,18 +335,25 @@ export function createDssLiveRouter({ projectRoot }) {
       res.status(503).json({ error: 'DSS no configurado: faltan DSS_HOST/DSS_USER/DSS_PASS en .env del server.', code: 'dss_not_configured' })
       return
     }
+    if (!areCamCredentialsConfigured()) {
+      res.status(503).json({
+        error: 'Faltan credenciales de cámara: definí CAM_RTSP_USER/CAM_RTSP_PASS en el .env del server (usuario de solo-visualización de las Dahua).',
+        code: 'cam_credentials_missing',
+      })
+      return
+    }
     try {
-      const resolved = await resolveChannelId(deviceCode)
+      const resolved = await resolveCamera(deviceCode)
       if (resolved.notFound) {
         const hint = resolved.suggestions.length > 0 ? ` Canales parecidos: ${resolved.suggestions.join(', ')}.` : ''
         res.status(404).json({
-          error: `Canal DSS no encontrado para ${deviceCode}.${hint} Ver GET /api/truckflow/live-camera/channels o agregar override en data/dss/dss-channel-overrides.json.`,
+          error: `Cámara no encontrada en el DSS para ${deviceCode}.${hint} Ver GET /api/truckflow/live-camera/channels o agregar override en data/dss/dss-channel-overrides.json.`,
           code: 'channel_not_found',
           suggestions: resolved.suggestions,
         })
         return
       }
-      const rtspUrl = await getRtspUrl(resolved.channelId)
+      const rtspUrl = buildRtspUrl(resolved.camera)
       const streamName = streamNameFor(deviceCode)
       try {
         await registerGo2rtcStream(streamName, rtspUrl)
@@ -347,7 +368,7 @@ export function createDssLiveRouter({ projectRoot }) {
         deviceCode,
         streamName,
         playerUrl: `${cfg().go2rtcBase}/stream.html?src=${encodeURIComponent(streamName)}`,
-        streamType: 'sub',
+        streamType: cfg().camSubtype === '0' ? 'main' : 'sub',
       })
     } catch (e) {
       res.status(502).json({ error: e instanceof Error ? e.message : String(e), code: 'dss_error' })

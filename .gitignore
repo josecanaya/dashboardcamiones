@@ -49,3 +49,6 @@ simulador/.runtime/
 /agentes/src/*.egg-info/
 /agentes/.env
 /agentes/output/
+
+# scratchpad de diagnóstico (no commitear)
+scratchpad/

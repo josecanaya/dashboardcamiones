@@ -19,6 +19,7 @@
     "mov:resumen": "node scripts/build-movimientos-resumen.mjs",
     "smoke:etl": "node scripts/smoke-etl-api.mjs",
     "smoke:live": "node scripts/smoke-live-camera.mjs",
+    "smoke:plant": "node scripts/smoke-plant-state.mjs",
     "test:watch": "vitest",
     "contract-first:local": "node scripts/run-truckflow-transform-local.mjs"
   },

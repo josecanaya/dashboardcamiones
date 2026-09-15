@@ -1,0 +1,378 @@
+{
+  "rev": "2026-09-14",
+  "viewBox": [
+    0,
+    0,
+    1060,
+    490
+  ],
+  "metersPerUnit": 0.5,
+  "zones": [
+    {
+      "zoneId": "Z0",
+      "label": "Acceso",
+      "x": 12,
+      "y": 334,
+      "w": 124,
+      "h": 84,
+      "cameras": [
+        "RicIngCamFrente",
+        "RicIngCamTrasera"
+      ]
+    },
+    {
+      "zoneId": "Z1",
+      "label": "Ingreso → Preingreso",
+      "x": 12,
+      "y": 222,
+      "w": 124,
+      "h": 96,
+      "cameras": [
+        "RicPreIngInFr",
+        "RicPreIngInTr"
+      ]
+    },
+    {
+      "zoneId": "Z2",
+      "label": "Playa 1",
+      "x": 156,
+      "y": 80,
+      "w": 300,
+      "h": 338,
+      "cameras": [
+        "RicCal01",
+        "RicCal02",
+        "RicCal03",
+        "RicCal04",
+        "RicCal05",
+        "RicCal06"
+      ],
+      "cameraGroups": [
+        {
+          "label": "Calada",
+          "devices": [
+            "RicCal01",
+            "RicCal02",
+            "RicCal03",
+            "RicCal04",
+            "RicCal05",
+            "RicCal06"
+          ]
+        },
+        {
+          "label": "Calada líquida",
+          "devices": [
+            "RicCalLiq"
+          ]
+        }
+      ]
+    },
+    {
+      "zoneId": "Z3",
+      "label": "Calada → Balanza",
+      "x": 480,
+      "y": 80,
+      "w": 224,
+      "h": 150,
+      "cameras": [
+        "RicB1Ingreso",
+        "RicB2Ingreso",
+        "RicB3Ingreso"
+      ]
+    },
+    {
+      "zoneId": "Z4",
+      "label": "Calada → Egreso",
+      "x": 480,
+      "y": 246,
+      "w": 224,
+      "h": 172,
+      "cameras": [
+        "RicEgrCamFrente",
+        "RicEgrCamTraser"
+      ]
+    },
+    {
+      "zoneId": "Z3U",
+      "label": "Calada → destino indeterminado",
+      "x": 480,
+      "y": 430,
+      "w": 224,
+      "h": 52,
+      "cameras": []
+    },
+    {
+      "zoneId": "Z5",
+      "label": "Balanza → descarga",
+      "x": 728,
+      "y": 80,
+      "w": 206,
+      "h": 60,
+      "cameras": [
+        "RicS6Playa3"
+      ]
+    },
+    {
+      "zoneId": "Z6",
+      "label": "Playa 3",
+      "x": 728,
+      "y": 152,
+      "w": 206,
+      "h": 200,
+      "cameras": [
+        "RicVolcable1",
+        "RicVolcable2",
+        "RicC16Descarga1",
+        "RicC16Descarga2"
+      ]
+    },
+    {
+      "zoneId": "Z7",
+      "label": "Descarga → Balanza",
+      "x": 728,
+      "y": 364,
+      "w": 206,
+      "h": 100,
+      "cameras": [
+        "RicB1Egreso",
+        "RicB2Egreso",
+        "RicB3Egreso"
+      ]
+    },
+    {
+      "zoneId": "Z8",
+      "label": "Balanza → Egreso",
+      "x": 950,
+      "y": 364,
+      "w": 100,
+      "h": 100,
+      "cameras": [
+        "RicEgrCamFrente",
+        "RicEgrCamTraser"
+      ]
+    }
+  ],
+  "basePlan": {
+    "image": "ricardone-plano.png",
+    "width": 1335,
+    "height": 1178,
+    "note": "Vista cenital de la planta. Capa fija: no se redibuja ni se recorta. Los puntos se ubican en porcentaje del ancho y alto de esta imagen."
+  },
+  "points": [
+    {
+      "id": "S0",
+      "label": "Ingreso",
+      "sectorCode": "RICARDONE_INGRESO_CAMIONES",
+      "type": "camera",
+      "tone": "acceso",
+      "xPercent": 10.1,
+      "yPercent": 91.2,
+      "cameraGroup": {
+        "label": "Ingreso",
+        "devices": [
+          "RicIngCamFrente",
+          "RicIngCamTrasera"
+        ]
+      }
+    },
+    {
+      "id": "S1",
+      "label": "Preingreso",
+      "sectorCode": "RICARDONE_PREINGRESO",
+      "type": "camera",
+      "tone": "acceso",
+      "xPercent": 13.2,
+      "yPercent": 49.4,
+      "cameraGroup": {
+        "label": "Preingreso",
+        "devices": [
+          "RicPreIngInFr",
+          "RicPreIngInTr",
+          "RicPreIngEgFr",
+          "RicPreIngEgTr"
+        ]
+      }
+    },
+    {
+      "id": "S2",
+      "label": "Calada sólida",
+      "sectorCode": "RICARDONE_CALADA",
+      "type": "camera-group",
+      "tone": "calada",
+      "xPercent": 14.5,
+      "yPercent": 67,
+      "cameraGroup": {
+        "label": "Calada",
+        "devices": [
+          "RicCal01",
+          "RicCal02",
+          "RicCal03",
+          "RicCal04",
+          "RicCal05",
+          "RicCal06"
+        ]
+      }
+    },
+    {
+      "id": "S2-LIQ",
+      "label": "Calada líquida",
+      "sectorCode": "RICARDONE_CALADA",
+      "type": "camera-group",
+      "tone": "calada",
+      "xPercent": 13.7,
+      "yPercent": 71.5,
+      "cameraGroup": {
+        "label": "Calada líquida",
+        "devices": [
+          "RicCalLiq"
+        ]
+      }
+    },
+    {
+      "id": "S4",
+      "label": "Balanzas",
+      "sectorCode": "RICARDONE_BALANZA",
+      "type": "control-point",
+      "tone": "balanza",
+      "xPercent": 29.4,
+      "yPercent": 85.6,
+      "cameraGroup": {
+        "label": "Balanzas",
+        "devices": [
+          "RicB1Ingreso",
+          "RicB1Egreso",
+          "RicB2Ingreso",
+          "RicB2Egreso",
+          "RicB3Ingreso",
+          "RicB3Egreso"
+        ]
+      }
+    },
+    {
+      "id": "S5",
+      "label": "Celda 16 · Carga y descarga",
+      "sectorCode": "RICARDONE_CELDA_16",
+      "type": "operation",
+      "tone": "celda16",
+      "xPercent": 11.7,
+      "yPercent": 34.8,
+      "cameraGroup": {
+        "label": "Celda 16",
+        "devices": [
+          "RicC16Descarga1",
+          "RicC16Descarga2",
+          "RicC16Carga1",
+          "RicC16Carga2"
+        ]
+      }
+    },
+    {
+      "id": "S6",
+      "label": "Acceso a Playa 3",
+      "sectorCode": "S6",
+      "type": "camera",
+      "tone": "playa3",
+      "xPercent": 57.3,
+      "yPercent": 58.2,
+      "cameraGroup": {
+        "label": "Acceso a Playa 3",
+        "devices": [
+          "RicS6Playa3"
+        ]
+      }
+    },
+    {
+      "id": "S9-V1",
+      "label": "Volcable 1",
+      "sectorCode": "RICARDONE_VOLCABLE",
+      "type": "operation",
+      "tone": "volcable",
+      "xPercent": 32.2,
+      "yPercent": 81.3,
+      "cameraGroup": {
+        "label": "Volcable 1",
+        "devices": [
+          "RicVolcable1"
+        ]
+      }
+    },
+    {
+      "id": "S9-V2",
+      "label": "Volcable 2",
+      "sectorCode": "RICARDONE_VOLCABLE",
+      "type": "operation",
+      "tone": "volcable",
+      "xPercent": 37.3,
+      "yPercent": 81.3,
+      "cameraGroup": {
+        "label": "Volcable 2",
+        "devices": [
+          "RicVolcable2"
+        ]
+      }
+    },
+    {
+      "id": "S7-A",
+      "label": "Descarga de silos",
+      "sectorCode": "S7",
+      "type": "operation",
+      "tone": "silos",
+      "xPercent": 61.1,
+      "yPercent": 84.1,
+      "cameraGroup": {
+        "label": "Descarga de silos · línea 1",
+        "devices": [
+          "RicS7DescLinea1"
+        ]
+      }
+    },
+    {
+      "id": "S7-B",
+      "label": "Descarga de silos",
+      "sectorCode": "S7",
+      "type": "operation",
+      "tone": "silos",
+      "xPercent": 60.9,
+      "yPercent": 87.6,
+      "cameraGroup": {
+        "label": "Descarga de silos · línea 2",
+        "devices": [
+          "RicS7DescLinea2"
+        ]
+      }
+    },
+    {
+      "id": "S8",
+      "label": "Carga de silos",
+      "sectorCode": "S8",
+      "type": "operation",
+      "tone": "silos",
+      "xPercent": 78.5,
+      "yPercent": 85.2,
+      "cameraGroup": {
+        "label": "Carga de silos",
+        "devices": [
+          "RicS8CargaLinea1",
+          "RicS8CargaLinea2"
+        ]
+      }
+    }
+  ],
+  "unplacedCameras": [
+    {
+      "device": "RicS7Carga",
+      "sectorCode": "S7",
+      "reason": "sin ubicación confirmada"
+    }
+  ],
+  "unplacedSteps": [
+    {
+      "code": "S10",
+      "label": "Egreso"
+    },
+    {
+      "code": "S3",
+      "label": "Salida a San Lorenzo"
+    }
+  ]
+}

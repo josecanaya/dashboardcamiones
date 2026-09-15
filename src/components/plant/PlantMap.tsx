@@ -1,0 +1,375 @@
+import { useMemo, useState } from 'react'
+import type {
+  PlantCameraGroup,
+  PlantLayout,
+  PlantPoint,
+  PlantPointTone,
+  PlantPointType,
+} from '../../data/plantZones.types'
+import { getRicardoneCircuitRoutes, type PlantCircuitRoute } from '../../data/plantCircuitRoutes'
+import type { SectorStatus, ZoneState } from '../../services/live/plantStateApi'
+
+/**
+ * Plano operativo sobre la vista cenital real de la planta.
+ *
+ * Cinco capas, separadas a propósito:
+ *   1. Fondo físico — la imagen, fija y tenue. No se redibuja ni se recorta.
+ *   2. Recorridos   — la secuencia del circuito elegido, una por vez.
+ *   3. Puntos       — marcadores en porcentaje del ancho y alto de la imagen.
+ *   4. Cámaras      — cada punto abre su propio grupo en el monitor en vivo.
+ *   5. Indicadores  — cola y estado, en chapitas chicas que no tapan el plano.
+ *
+ * Los nombres no se imprimen sobre el plano: aparecen al pasar el cursor.
+ */
+
+/** Color de identidad del punto: dice qué es, no cómo está. */
+const TONE: Record<PlantPointTone, { color: string; label: string }> = {
+  acceso: { color: '#38BDF8', label: 'Ingreso y preingreso' },
+  calada: { color: '#22C55E', label: 'Caladas' },
+  balanza: { color: '#F97316', label: 'Balanzas' },
+  celda16: { color: '#EAB308', label: 'Celda 16' },
+  volcable: { color: '#2563EB', label: 'Volcables 1 y 2' },
+  playa3: { color: '#1E3A8A', label: 'Acceso a Playa 3' },
+  silos: { color: '#7C3AED', label: 'Carga y descarga de silos' },
+}
+
+/** Estado operativo: se muestra en el aro del marcador, nunca pintando el plano. */
+const STATUS: Record<SectorStatus, { ring: string; label: string }> = {
+  normal: { ring: '#16A34A', label: 'Normal' },
+  attention: { ring: '#D97706', label: 'Atención' },
+  critical: { ring: '#DC2626', label: 'Alerta' },
+  no_data: { ring: '#94A3B8', label: 'Sin datos' },
+}
+
+const TYPE_LABEL: Record<PlantPointType, string> = {
+  camera: 'Punto de control con cámara',
+  'camera-group': 'Frente con varias cámaras',
+  'control-point': 'Punto de control',
+  operation: 'Carga o descarga',
+}
+
+const STATUS_RANK: Record<SectorStatus, number> = { no_data: 0, normal: 1, attention: 2, critical: 3 }
+
+type PointState = { queue: number | null; status: SectorStatus; zones: string[] }
+
+/**
+ * Reparte el backlog de cada zona al punto que la drena. Una zona se cuenta una
+ * sola vez, en su primer punto de drenaje, así el mismo camión no aparece dos
+ * veces cuando el sector tiene varias bocas (volcables, calada sólida y líquida).
+ */
+function statePerPoint(points: PlantPoint[], zones: ZoneState[]): Map<string, PointState> {
+  const out = new Map<string, PointState>()
+  for (const p of points) out.set(p.id, { queue: null, status: 'no_data', zones: [] })
+  for (const zone of zones) {
+    const sectorCode = zone.drainPoints?.[0]?.sectorCode
+    if (!sectorCode) continue
+    const target = points.find((p) => p.sectorCode === sectorCode)
+    if (!target) continue
+    const cur = out.get(target.id)!
+    cur.queue = (cur.queue ?? 0) + zone.backlog
+    cur.zones.push(zone.label)
+    if (STATUS_RANK[zone.status] > STATUS_RANK[cur.status]) cur.status = zone.status
+  }
+  return out
+}
+
+export function PlantMap(props: {
+  layout: PlantLayout
+  zones: ZoneState[]
+  onOpenCameras: (group: PlantCameraGroup) => void
+  onSelectSector?: (sectorCode: string) => void
+  selectedSector?: string | null
+}): JSX.Element {
+  const { layout, zones, onOpenCameras, onSelectSector, selectedSector } = props
+  const [hovered, setHovered] = useState<string | null>(null)
+  const [circuit, setCircuit] = useState<string | null>(null)
+  const [legendOpen, setLegendOpen] = useState(false)
+
+  const base = layout.basePlan
+  const points = useMemo(() => layout.points ?? [], [layout.points])
+  const byId = useMemo(() => new Map(points.map((p) => [p.id, p])), [points])
+  const routes = useMemo(() => getRicardoneCircuitRoutes(points.map((p) => p.id)), [points])
+  const active: PlantCircuitRoute | null = routes.find((r) => r.code === circuit) ?? null
+  const inCircuit = useMemo(() => new Set(active?.steps ?? []), [active])
+  const pointState = useMemo(() => statePerPoint(points, zones), [points, zones])
+
+  if (!base) {
+    return (
+      <div className="flex h-full items-center justify-center rounded-[14px] border border-slate-200 bg-slate-50 text-sm text-slate-500">
+        El plano de la planta no está configurado.
+      </div>
+    )
+  }
+
+  const px = (p: PlantPoint): [number, number] => [
+    (p.xPercent / 100) * base.width,
+    (p.yPercent / 100) * base.height,
+  ]
+
+  return (
+    <div className="overflow-hidden rounded-[14px] border border-slate-200 bg-white shadow-sm">
+      {/* Selector de circuito: uno por vez, nunca todos juntos */}
+      <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-200 px-3 py-2">
+        <span className="mr-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+          Circuito
+        </span>
+        <button
+          type="button"
+          onClick={() => setCircuit(null)}
+          className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition ${
+            circuit == null
+              ? 'border-slate-800 bg-slate-800 text-white'
+              : 'border-slate-200 bg-white text-slate-500 hover:border-slate-400'
+          }`}
+        >
+          Ninguno
+        </button>
+        {routes.map((r) => (
+          <button
+            key={r.code}
+            type="button"
+            onClick={() => setCircuit((c) => (c === r.code ? null : r.code))}
+            title={`${r.label} · secuencia ${r.sequence.join(' → ')}`}
+            className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition ${
+              circuit === r.code
+                ? 'border-sky-600 bg-sky-600 text-white'
+                : 'border-slate-200 bg-white text-slate-600 hover:border-sky-400 hover:text-sky-700'
+            }`}
+          >
+            <span className="font-mono">{r.code}</span> <span className="opacity-80">{r.label}</span>
+            {r.missingSteps.length > 0 ? <span className="ml-1 text-amber-500">·</span> : null}
+          </button>
+        ))}
+      </div>
+
+      {active?.missingSteps.length ? (
+        <p className="border-b border-amber-100 bg-amber-50 px-3 py-1.5 text-[11px] text-amber-800">
+          El recorrido se corta en {active.missingSteps.join(' y ')}: ese paso todavía no tiene
+          posición confirmada en el plano, y no se dibuja una inventada.
+        </p>
+      ) : null}
+
+      {/*
+        Capa 1: el plano. Las demás capas van encima, en porcentajes de esta caja.
+        El ancho se topea para que el plano no se coma la pantalla; la relación de
+        aspecto manda el alto, así los puntos nunca se corren.
+      */}
+      <div
+        className="relative mx-auto w-full max-w-[600px]"
+        style={{ aspectRatio: `${base.width} / ${base.height}` }}
+      >
+        <img
+          src={`/plant/ricardone/${base.image}`}
+          alt="Vista cenital de la planta de Ricardone"
+          draggable={false}
+          className="absolute inset-0 h-full w-full select-none"
+        />
+
+        {/* Capa 2: el recorrido del circuito elegido */}
+        <svg
+          viewBox={`0 0 ${base.width} ${base.height}`}
+          className="pointer-events-none absolute inset-0 h-full w-full"
+          aria-hidden
+        >
+          <defs>
+            <marker
+              id="circuitArrow"
+              viewBox="0 0 10 10"
+              refX="8"
+              refY="5"
+              markerWidth="4"
+              markerHeight="4"
+              orient="auto-start-reverse"
+            >
+              <path d="M0,1 L9,5 L0,9 z" fill="#0EA5E9" />
+            </marker>
+          </defs>
+          {active
+            ? active.steps.slice(0, -1).map((from, i) => {
+                const to = active.steps[i + 1]
+                const a = byId.get(from)
+                const b = byId.get(to)
+                if (!a || !b) return null
+                const [x1, y1] = px(a)
+                const [x2, y2] = px(b)
+                return (
+                  <g key={`${from}-${to}-${i}`}>
+                    <line
+                      x1={x1}
+                      y1={y1}
+                      x2={x2}
+                      y2={y2}
+                      stroke="#FFFFFF"
+                      strokeWidth={7}
+                      strokeOpacity={0.75}
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1={x1}
+                      y1={y1}
+                      x2={x2}
+                      y2={y2}
+                      stroke="#0EA5E9"
+                      strokeWidth={3}
+                      strokeLinecap="round"
+                      strokeDasharray="10 8"
+                      markerEnd="url(#circuitArrow)"
+                    >
+                      <animate
+                        attributeName="stroke-dashoffset"
+                        from="18"
+                        to="0"
+                        dur="1.1s"
+                        repeatCount="indefinite"
+                      />
+                    </line>
+                  </g>
+                )
+              })
+            : null}
+        </svg>
+
+        {/* Capas 3 a 5: puntos, cámaras e indicadores */}
+        {points.map((p) => {
+          const tone = TONE[p.tone]
+          const state = pointState.get(p.id) ?? { queue: null, status: 'no_data' as SectorStatus, zones: [] }
+          const status = STATUS[state.status]
+          const dimmed = active != null && !inCircuit.has(p.id)
+          const isHovered = hovered === p.id
+          const isSelected = selectedSector === p.sectorCode
+          const order = active ? active.steps.indexOf(p.id) : -1
+          return (
+            <div
+              key={p.id}
+              className="absolute"
+              style={{
+                left: `${p.xPercent}%`,
+                top: `${p.yPercent}%`,
+                transform: 'translate(-50%, -50%)',
+                opacity: dimmed ? 0.25 : 1,
+                transition: 'opacity .15s',
+                zIndex: isHovered ? 30 : 10,
+              }}
+            >
+              <button
+                type="button"
+                onMouseEnter={() => setHovered(p.id)}
+                onMouseLeave={() => setHovered((h) => (h === p.id ? null : h))}
+                onFocus={() => setHovered(p.id)}
+                onBlur={() => setHovered((h) => (h === p.id ? null : h))}
+                onClick={() => {
+                  onSelectSector?.(p.sectorCode)
+                  onOpenCameras(p.cameraGroup)
+                }}
+                aria-label={`${p.id} ${p.label}. ${TYPE_LABEL[p.type]}. Estado ${status.label}. Abrir ${p.cameraGroup.devices.length} cámaras`}
+                className="relative grid h-[18px] w-[18px] place-items-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-1"
+              >
+                {/* aro de estado */}
+                <span
+                  className="absolute inset-0 rounded-full"
+                  style={{
+                    border: `2px solid ${status.ring}`,
+                    background: '#FFFFFF',
+                    opacity: state.status === 'no_data' ? 0.55 : 0.95,
+                    boxShadow: isHovered || isSelected ? `0 0 0 3px ${tone.color}33` : '0 1px 2px rgba(15,23,42,.25)',
+                  }}
+                />
+                {state.status === 'critical' ? (
+                  <span
+                    className="absolute inset-0 animate-ping rounded-full"
+                    style={{ border: `2px solid ${STATUS.critical.ring}` }}
+                  />
+                ) : null}
+                {/* identidad del punto */}
+                <span
+                  className="relative block rounded-full"
+                  style={{ width: 8, height: 8, background: tone.color }}
+                />
+                {/* orden dentro del circuito activo */}
+                {order >= 0 ? (
+                  <span
+                    className="absolute -left-1.5 -top-1.5 grid h-3 w-3 place-items-center rounded-full bg-sky-600 text-[7px] font-bold text-white"
+                    aria-hidden
+                  >
+                    {order + 1}
+                  </span>
+                ) : null}
+                {/* cola esperando */}
+                {state.queue != null && state.queue > 0 ? (
+                  <span
+                    className="absolute -right-2 -top-1.5 rounded-full px-1 text-[8.5px] font-bold leading-[13px] tabular-nums text-white"
+                    style={{ background: status.ring, minWidth: 13 }}
+                    aria-hidden
+                  >
+                    {state.queue}
+                  </span>
+                ) : null}
+              </button>
+
+              {/* etiqueta flotante: solo al pasar el cursor */}
+              {isHovered ? (
+                <div
+                  className="pointer-events-none absolute left-1/2 z-40 w-[190px] -translate-x-1/2 rounded-lg border border-slate-200 bg-white/97 p-2 shadow-lg"
+                  style={p.yPercent < 22 ? { top: 18 } : { bottom: 18 }}
+                >
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="font-mono text-[10px] font-bold" style={{ color: tone.color }}>
+                      {p.id}
+                    </span>
+                    <span className="text-[12px] font-semibold text-slate-800">{p.label}</span>
+                  </div>
+                  <div className="mt-0.5 text-[10.5px] text-slate-500">{TYPE_LABEL[p.type]}</div>
+                  <div className="mt-1 flex items-center gap-1.5">
+                    <span
+                      className="inline-block h-1.5 w-1.5 rounded-full"
+                      style={{ background: status.ring }}
+                    />
+                    <span className="text-[10.5px] text-slate-600">
+                      {status.label}
+                      {state.queue != null && state.queue > 0 ? ` · ${state.queue} esperando` : ''}
+                    </span>
+                  </div>
+                  <div className="mt-1 text-[10px] text-slate-400">
+                    {p.cameraGroup.devices.length}{' '}
+                    {p.cameraGroup.devices.length === 1 ? 'cámara' : 'cámaras'} · clic para abrir
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          )
+        })}
+
+        {/* Leyenda compacta y plegable */}
+        <div className="absolute bottom-2 left-2 z-20 max-w-[230px] rounded-lg border border-slate-200 bg-white/94 text-[10.5px] shadow-sm backdrop-blur-sm">
+          <button
+            type="button"
+            onClick={() => setLegendOpen((o) => !o)}
+            className="flex w-full items-center gap-1.5 px-2.5 py-1.5 font-semibold text-slate-600"
+            aria-expanded={legendOpen}
+          >
+            <span className="text-slate-400">{legendOpen ? '▾' : '▸'}</span> Referencias
+          </button>
+          {legendOpen ? (
+            <div className="space-y-1.5 border-t border-slate-100 px-2.5 py-2">
+              {Object.entries(TONE).map(([key, t]) => (
+                <div key={key} className="flex items-center gap-1.5 text-slate-600">
+                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: t.color }} />
+                  {t.label}
+                </div>
+              ))}
+              <div className="border-t border-slate-100 pt-1.5 text-slate-500">
+                El aro del punto es el estado: gris sin datos, verde normal, ámbar atención, rojo
+                alerta. El número es la cola esperando.
+              </div>
+              {layout.unplacedCameras?.length ? (
+                <div className="border-t border-slate-100 pt-1.5 text-amber-700">
+                  Sin ubicar: {layout.unplacedCameras.map((c) => c.device).join(', ')}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  )
+}
