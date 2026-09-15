@@ -68,16 +68,16 @@ export function SavedWindowsPicker({
     <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[11px] font-bold uppercase tracking-wide text-slate-700">
+          <span className="text-xs font-bold uppercase tracking-wide text-slate-700">
             Procesos guardados
           </span>
-          <span className="text-[11px] text-slate-500">
+          <span className="text-xs text-slate-500">
             {windows.length} {windows.length === 1 ? 'semana' : 'semanas'} · clic = ver sin
             reprocesar
           </span>
         </div>
         {staleCount > 0 ?
-          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-900">
+          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900">
             {staleCount} con reglas viejas
           </span>
         : null}
@@ -86,7 +86,7 @@ export function SavedWindowsPicker({
       <div className="mt-3 space-y-2.5">
         {months.map((mk) => (
           <div key={mk} className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-            <span className="w-28 shrink-0 text-[11px] font-semibold capitalize text-slate-500">
+            <span className="w-28 shrink-0 text-xs font-semibold capitalize text-slate-500">
               {monthLabel(mk)}
             </span>
             {byMonth.get(mk)!.map((w, i) => {
@@ -107,7 +107,7 @@ export function SavedWindowsPicker({
                   }`}
                 >
                   <span
-                    className={`rounded px-1 text-[10px] font-bold ${
+                    className={`rounded px-1 text-xs font-bold ${
                       active ? 'bg-emerald-800/60 text-white' : 'bg-slate-100 text-slate-600'
                     }`}
                   >
