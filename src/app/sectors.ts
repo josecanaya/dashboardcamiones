@@ -42,10 +42,9 @@ export const PRODUCT_SECTIONS: NavSection[] = [
         ],
       },
       {
-        title: 'Datos y proceso',
+        title: 'Datos',
         items: [
-          { to: '/estadisticas/datos/extraccion', label: 'Extracción' },
-          { to: '/estadisticas/datos/analisis-local', label: 'Análisis local' },
+          { to: '/estadisticas/datos', label: 'Datos' },
         ],
       },
     ],
@@ -64,8 +63,10 @@ export const LEGACY_ROUTE_REDIRECTS: { from: string; to: string }[] = [
   { from: '/transile-interno', to: '/estadisticas/reportes/transile-interno' },
   { from: '/transile-externo', to: '/estadisticas/reportes/transile-externo' },
   { from: '/base-datos', to: '/estadisticas/reportes/base-datos' },
-  { from: '/extraccion', to: '/estadisticas/datos/extraccion' },
-  { from: '/analisis-local', to: '/estadisticas/datos/analisis-local' },
+  { from: '/extraccion', to: '/estadisticas/datos?vista=extraccion-avanzada' },
+  { from: '/analisis-local', to: '/estadisticas/datos?vista=analisis-avanzado' },
+  { from: '/estadisticas/datos/extraccion', to: '/estadisticas/datos?vista=extraccion-avanzada' },
+  { from: '/estadisticas/datos/analisis-local', to: '/estadisticas/datos?vista=analisis-avanzado' },
   { from: '/transform', to: '/estadisticas/reportes/resumen' },
   { from: '/estadisticas/datos/transform', to: '/estadisticas/reportes/resumen' },
 ]

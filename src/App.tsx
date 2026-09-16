@@ -4,7 +4,6 @@ import { SiteProvider } from './context/SiteContext'
 import { EtlWorkbenchProvider } from './features/real-truckflow/etlWorkbench/EtlWorkbenchContext'
 import { AppShell } from './app/AppShell'
 import { LEGACY_ROUTE_REDIRECTS } from './app/sectors'
-import { AnalisisLocalRoute, ExtraccionRoute } from './app/routeElements'
 import {
   BaseDatosVisitasRoute,
   CalibracionCamarasRoute,
@@ -48,8 +47,6 @@ function App() {
             <Route path="estadisticas/reportes/base-datos" element={<BaseDatosVisitasRoute />} />
 
             <Route path="estadisticas/datos" element={<DataWorkspace />} />
-            <Route path="estadisticas/datos/extraccion" element={<ExtraccionRoute />} />
-            <Route path="estadisticas/datos/analisis-local" element={<AnalisisLocalRoute />} />
             <Route path="estadisticas/reportes/resumen" element={<TransformEtlTab />} />
 
             {LEGACY_ROUTE_REDIRECTS.map(({ from, to }) => (

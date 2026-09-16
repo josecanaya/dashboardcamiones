@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 import { useEtlWorkbenchOptional } from '../features/real-truckflow/etlWorkbench/EtlWorkbenchContext'
 import { ExcelCameraComparativaPanel } from '../features/real-truckflow/components/ExcelCameraComparativaPanel'
 import { LiquidMovementsPanel } from '../features/real-truckflow/components/LiquidMovementsPanel'
@@ -28,8 +29,8 @@ function PostTransformRoute({
         <h2 className="text-lg font-bold text-slate-900">{title}</h2>
         {description ? <p className="mt-1 text-sm text-slate-600">{description}</p> : null}
         <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-          Necesitás procesar el Transform (pasos 1–3) del período en <strong>Análisis local</strong> o{' '}
-          <strong>Transform</strong> antes de ver este informe.
+          Todavía no hay datos preparados para este período.{' '}
+          <Link to="/estadisticas/datos" className="font-semibold underline">Preparar datos</Link>.
         </p>
       </section>
     )
