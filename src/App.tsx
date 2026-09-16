@@ -19,6 +19,7 @@ import { DescargasTab } from './features/real-truckflow/tabs/DescargasTab'
 import { ProductoTransformTab } from './features/real-truckflow/tabs/ProductoTransformTab'
 import { SeguridadTab } from './features/real-truckflow/tabs/SeguridadTab'
 import { PlantHome } from './pages/PlantHome'
+import { DataWorkspace } from './features/real-truckflow/dataPreparation/DataWorkspace'
 
 /**
  * Navegación por dominio (URL como fuente de verdad). Los providers envuelven al
@@ -46,6 +47,7 @@ function App() {
             <Route path="estadisticas/reportes/transile-externo" element={<TransileExternoRoute />} />
             <Route path="estadisticas/reportes/base-datos" element={<BaseDatosVisitasRoute />} />
 
+            <Route path="estadisticas/datos" element={<DataWorkspace />} />
             <Route path="estadisticas/datos/extraccion" element={<ExtraccionRoute />} />
             <Route path="estadisticas/datos/analisis-local" element={<AnalisisLocalRoute />} />
             <Route path="estadisticas/reportes/resumen" element={<TransformEtlTab />} />
