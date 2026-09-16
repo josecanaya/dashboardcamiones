@@ -10,7 +10,12 @@ import {
  * Subís el/los Excel (meses enteros); se parten por la fecha de cada fila y
  * quedan como respaldo. Las corridas del ETL/agente los leen por rango.
  */
-export function MovimientosBackupPanel() {
+type Props = {
+  /** Callback tras un ingest exitoso o al terminar un lote de archivos (R07). */
+  onIngested?: () => void
+}
+
+export function MovimientosBackupPanel({ onIngested }: Props = {}) {
   const [coverage, setCoverage] = useState<MovimientosBackupCoverage | null>(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -41,6 +46,7 @@ export function MovimientosBackupPanel() {
         setCoverage(res.coverage)
       }
       setLastSummary(summaries.join('\n'))
+      onIngested?.()
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
     } finally {

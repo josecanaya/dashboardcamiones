@@ -7,7 +7,9 @@ import type { MovimientosBackupDay } from '../api/movimientosBackupApi'
 import { PeriodEditor } from './PeriodEditor'
 import { SourceCoverageCards } from './SourceCoverageCards'
 import { PreparationProgress } from './PreparationProgress'
+import { AdvancedDataTools } from './AdvancedDataTools'
 import type { PreparationInspection } from './preparationRunner'
+import { useLocation } from 'react-router-dom'
 
 /**
  * Pantalla única de preparación de datos (R06). Ensambla:
@@ -24,6 +26,11 @@ export function DataWorkspace(): JSX.Element {
   const wb = useEtlWorkbench()
   const dp = wb.dataPreparation
   const { state } = dp
+  const location = useLocation()
+  const vista = new URLSearchParams(location.search).get('vista')
+  const initialSection: 'extraccion' | 'analisis' | null =
+    vista === 'extraccion-avanzada' ? 'extraccion' :
+    vista === 'analisis-avanzado' ? 'analisis' : null
 
   const [inspection, setInspection] = useState<PreparationInspection | null>(null)
   const [excelDays, setExcelDays] = useState<MovimientosBackupDay[]>([])
@@ -142,6 +149,11 @@ export function DataWorkspace(): JSX.Element {
           </div>
         ) : null}
       </section>
+
+      <AdvancedDataTools
+        initialSection={initialSection}
+        onExcelIngested={() => { void runInspect() }}
+      />
     </div>
   )
 }

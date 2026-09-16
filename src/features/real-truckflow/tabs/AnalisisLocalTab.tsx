@@ -11,6 +11,8 @@ import { previousCalendarWeekRange, thisCalendarWeekRange } from '../utils/weekD
 import { AgenteChatTab } from './AgenteChatTab'
 
 type Props = {
+  /** Modo embebido dentro de la pantalla Datos (R07): oculta el encabezado introductorio duplicado. */
+  embedded?: boolean
   /** Solo si el usuario elige abrir el tablero detallado (no automático). */
   onOpenTransformTab?: () => void
 }
@@ -46,7 +48,7 @@ function AnalisisSubTabs({
   )
 }
 
-export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
+export function AnalisisLocalTab({ onOpenTransformTab, embedded = false }: Props) {
   const wb = useEtlWorkbenchOptional()
   const [subView, setSubView] = useState<AnalisisSubView>('analisis')
   const weekDefault = thisCalendarWeekRange()
@@ -100,13 +102,15 @@ export function AnalisisLocalTab({ onOpenTransformTab }: Props) {
     <div className="space-y-4">
     <AnalisisSubTabs subView={subView} setSubView={setSubView} />
     <section className="space-y-6">
-      <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">Análisis local</h2>
-        <p className="mt-1 text-sm text-slate-600">
-          En esta misma pantalla: <strong>cargar datos</strong> (paso 0), <strong>procesar</strong> (pasos 1–3) y,
-          si hace falta, <strong>KPI / cámaras / base de datos</strong> en la sección manual más abajo.
-        </p>
-      </div>
+      {!embedded ? (
+        <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+          <h2 className="text-lg font-bold text-slate-900">Análisis local</h2>
+          <p className="mt-1 text-sm text-slate-600">
+            En esta misma pantalla: <strong>cargar datos</strong> (paso 0), <strong>procesar</strong> (pasos 1–3) y,
+            si hace falta, <strong>KPI / cámaras / base de datos</strong> en la sección manual más abajo.
+          </p>
+        </div>
+      ) : null}
 
       {/* —— Paso 0 —— */}
       <article className="rounded-3xl border border-sky-200 bg-gradient-to-br from-sky-50/90 via-white to-white p-6 shadow-sm">

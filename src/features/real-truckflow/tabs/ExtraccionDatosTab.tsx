@@ -30,6 +30,8 @@ type RowState = {
 type Props = {
   /** Tras descargar/cargar, ir a Análisis local. */
   onGoToAnalysis?: () => void
+  /** Modo embebido dentro de la pantalla Datos (R07): oculta el encabezado introductorio duplicado. */
+  embedded?: boolean
 }
 
 function pad2(n: number): string {
@@ -91,7 +93,7 @@ export function buildExportWindowChunks(startDate: string, startTime: string, en
   return out
 }
 
-export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
+export function ExtraccionDatosTab({ onGoToAnalysis, embedded = false }: Props) {
   const wb = useEtlWorkbenchOptional()
   const weekDefault = thisCalendarWeekRange()
   const [startDate, setStartDate] = useState(weekDefault.startDate)
@@ -313,13 +315,17 @@ export function ExtraccionDatosTab({ onGoToAnalysis }: Props) {
   return (
     <section className="space-y-6">
       <div className="rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50/90 via-white to-white p-6 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">Extracción de datos</h2>
-        <p className="mt-2 max-w-3xl text-sm text-slate-600">
-          Elegí el rango (semana recomendada con 00:00–23:59) y descargá{' '}
-          <strong>todo el período de una vez</strong>. Los JSON quedan en{' '}
-          <span className="font-mono text-xs">data/truckflow/YYYY-MM-DD/</span>. Requiere{' '}
-          <span className="font-mono text-[11px]">pnpm run server:truckflow</span>.
-        </p>
+        {!embedded ? (
+          <>
+            <h2 className="text-lg font-bold text-slate-900">Extracción de datos</h2>
+            <p className="mt-2 max-w-3xl text-sm text-slate-600">
+              Elegí el rango (semana recomendada con 00:00–23:59) y descargá{' '}
+              <strong>todo el período de una vez</strong>. Los JSON quedan en{' '}
+              <span className="font-mono text-xs">data/truckflow/YYYY-MM-DD/</span>. Requiere{' '}
+              <span className="font-mono text-[11px]">pnpm run server:truckflow</span>.
+            </p>
+          </>
+        ) : null}
 
         <div className="mt-4 flex flex-wrap gap-2">
           <button
