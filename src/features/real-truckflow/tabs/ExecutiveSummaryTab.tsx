@@ -48,7 +48,6 @@ import {
   applyTransileExternoCircuitOverrides,
   type TransileExternoReclasificacionRow,
 } from '../../../etl-core/reports/transileExternoReclasificacion'
-import { MovimientosBackupPanel } from '../components/MovimientosBackupPanel'
 import { ExecutiveSampleProductFilter } from '../components/ExecutiveSampleProductFilter'
 import {
   buildExecutiveProductFilterPlan,
@@ -663,7 +662,7 @@ function CommitteeCrossTabDrilldown({
   )
 }
 
-export function TransformEtlTab() {
+export function ExecutiveSummaryTab() {
   const wb = useEtlWorkbenchOptional()
   const tr = wb?.transformResult ?? null
   const exec = useMemo(() => tr?.stats.executive ?? null, [tr])
@@ -942,7 +941,6 @@ export function TransformEtlTab() {
 
   return (
     <section className="space-y-6">
-      <Disclosure title="Fuentes Excel y backup"><MovimientosBackupPanel /></Disclosure>
       <div className="rounded-3xl border border-violet-200 bg-gradient-to-br from-violet-50/90 via-white to-white p-6 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900">Circuitos y cobertura</h2>
         <p className="mt-2 max-w-3xl text-sm text-slate-600">
@@ -992,7 +990,7 @@ export function TransformEtlTab() {
         : null}
 
         {wb.transformBusy ?
-          <p className="mt-4 text-sm font-semibold text-amber-800">Ejecutando transform…</p>
+          <p className="mt-4 text-sm font-semibold text-amber-800">Preparando datos…</p>
         : null}
       </div>
 

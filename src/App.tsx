@@ -11,7 +11,7 @@ import {
   TransileExternoRoute,
   TransileInternoRoute,
 } from './app/postTransformRoutes'
-import { TransformEtlTab } from './features/real-truckflow/tabs/TransformEtlTab'
+import { ExecutiveSummaryTab } from './features/real-truckflow/tabs/ExecutiveSummaryTab'
 import { KpiTiemposTab } from './features/real-truckflow/tabs/KpiTiemposTab'
 import { CaladaTab } from './features/real-truckflow/tabs/CaladaTab'
 import { DescargasTab } from './features/real-truckflow/tabs/DescargasTab'
@@ -47,7 +47,7 @@ function App() {
             <Route path="estadisticas/reportes/base-datos" element={<BaseDatosVisitasRoute />} />
 
             <Route path="estadisticas/datos" element={<DataWorkspace />} />
-            <Route path="estadisticas/reportes/resumen" element={<TransformEtlTab />} />
+            <Route path="estadisticas/reportes/resumen" element={<ExecutiveSummaryTab />} />
 
             {LEGACY_ROUTE_REDIRECTS.map(({ from, to }) => (
               <Route
