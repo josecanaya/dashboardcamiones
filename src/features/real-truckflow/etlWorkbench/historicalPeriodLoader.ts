@@ -37,22 +37,39 @@ export function historicalWeeks(range: HistoricalRange): HistoricalRange[] {
   return weeks
 }
 
+/**
+ * Verifica vigencia de las corridas guardadas que solapan `range`. `listWindows` puede
+ * conocer versiones desactualizadas; `resolveWindow` confirma también inputs actuales.
+ * Reutilizada por `loadHistoricalPeriod` y por `preparationRunner` (R04) para no duplicar
+ * el criterio de "vigente" entre ambos. No cambia cálculos: mismo comportamiento que antes.
+ */
+export async function inspectSavedWindowsValidity(
+  range: HistoricalRange,
+  deps: { listWindows: typeof listWindows; resolveWindow: typeof resolveWindow } = { listWindows, resolveWindow },
+  options: { concurrency?: number } = {},
+): Promise<SavedWindow[]> {
+  const listed = await deps.listWindows()
+  const overlapping = listed.filter(w => w.from <= range.to && w.to >= range.from)
+  const limit = options.concurrency && options.concurrency > 0 ? options.concurrency : overlapping.length
+  const checked: SavedWindow[] = []
+  for (let i = 0; i < overlapping.length; i += limit) {
+    const batch = overlapping.slice(i, i + limit)
+    const results = await Promise.all(batch.map(async w => {
+      const resolved = await deps.resolveWindow(w.from, w.to)
+      return resolved ? { ...w, ...resolved } : { ...w, stale: true }
+    }))
+    checked.push(...results)
+  }
+  return listed.map(w => checked.find(c => c.from === w.from && c.to === w.to) ?? w)
+}
+
 /** Orquestación del cliente. Usa el compositor y runner existentes sin cambiar sus cálculos. */
 export async function loadHistoricalPeriod(
   range: HistoricalRange,
   options: { processMissing?: boolean; onProgress?: (message: string) => void } = {},
 ): Promise<HistoricalPeriodResult> {
   const weeks = historicalWeeks(range)
-  const inspect = async () => {
-    const listed = await listWindows()
-    // listWindows puede conocer versiones, pero resolve-window verifica también inputs actuales.
-    const overlapping = listed.filter(w => w.from <= range.to && w.to >= range.from)
-    const checked = await Promise.all(overlapping.map(async w => {
-      const resolved = await resolveWindow(w.from, w.to)
-      return resolved ? { ...w, ...resolved } : { ...w, stale: true }
-    }))
-    return listed.map(w => checked.find(c => c.from === w.from && c.to === w.to) ?? w)
-  }
+  const inspect = () => inspectSavedWindowsValidity(range)
   let windows = await inspect()
   let coverage = computeRangeCoverage(range.from, range.to, windows.filter(w => !w.stale))
   if (options.processMissing && coverage.missingDays.length) {
