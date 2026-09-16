@@ -33,6 +33,7 @@ export const PRODUCT_SECTIONS: NavSection[] = [
       {
         title: 'Reportes',
         items: [
+          { to: '/estadisticas/reportes/resumen', label: 'Resumen ejecutivo' },
           { to: '/estadisticas/reportes/calibracion', label: 'Calibración' },
           { to: '/estadisticas/reportes/liquidos', label: 'Líquidos S10' },
           { to: '/estadisticas/reportes/transile-interno', label: 'Transile interno' },
@@ -45,7 +46,6 @@ export const PRODUCT_SECTIONS: NavSection[] = [
         items: [
           { to: '/estadisticas/datos/extraccion', label: 'Extracción' },
           { to: '/estadisticas/datos/analisis-local', label: 'Análisis local' },
-          { to: '/estadisticas/datos/transform', label: 'Transform ETL' },
         ],
       },
     ],
@@ -66,5 +66,6 @@ export const LEGACY_ROUTE_REDIRECTS: { from: string; to: string }[] = [
   { from: '/base-datos', to: '/estadisticas/reportes/base-datos' },
   { from: '/extraccion', to: '/estadisticas/datos/extraccion' },
   { from: '/analisis-local', to: '/estadisticas/datos/analisis-local' },
-  { from: '/transform', to: '/estadisticas/datos/transform' },
+  { from: '/transform', to: '/estadisticas/reportes/resumen' },
+  { from: '/estadisticas/datos/transform', to: '/estadisticas/reportes/resumen' },
 ]

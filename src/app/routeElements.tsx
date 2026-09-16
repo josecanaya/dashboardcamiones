@@ -8,8 +8,8 @@ export function ExtraccionRoute() {
   return <ExtraccionDatosTab onGoToAnalysis={() => navigate('/analisis-local')} />
 }
 
-/** Análisis local (incluye la sub-pestaña "Crear MCP"): abre Transform desde su CTA. */
+/** Análisis local: abre el informe ejecutivo desde su CTA. */
 export function AnalisisLocalRoute() {
   const navigate = useNavigate()
-  return <AnalisisLocalTab onOpenTransformTab={() => navigate('/transform')} />
+  return <AnalisisLocalTab onOpenTransformTab={() => navigate('/estadisticas/reportes/resumen')} />
 }

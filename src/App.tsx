@@ -48,7 +48,7 @@ function App() {
 
             <Route path="estadisticas/datos/extraccion" element={<ExtraccionRoute />} />
             <Route path="estadisticas/datos/analisis-local" element={<AnalisisLocalRoute />} />
-            <Route path="estadisticas/datos/transform" element={<TransformEtlTab />} />
+            <Route path="estadisticas/reportes/resumen" element={<TransformEtlTab />} />
 
             {LEGACY_ROUTE_REDIRECTS.map(({ from, to }) => (
               <Route

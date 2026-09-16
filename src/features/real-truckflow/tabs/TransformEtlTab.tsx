@@ -944,7 +944,7 @@ export function TransformEtlTab() {
     <section className="space-y-6">
       <Disclosure title="Fuentes Excel y backup"><MovimientosBackupPanel /></Disclosure>
       <div className="rounded-3xl border border-violet-200 bg-gradient-to-br from-violet-50/90 via-white to-white p-6 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">Transform</h2>
+        <h2 className="text-lg font-bold text-slate-900">Circuitos y cobertura</h2>
         <p className="mt-2 max-w-3xl text-sm text-slate-600">
           Clasificación única de journeys y alertas para evidencia de comité. Los CSV intermedios solo están disponibles
           en modo diagnóstico DEV.

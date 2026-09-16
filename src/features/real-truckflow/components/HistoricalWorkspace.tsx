@@ -17,7 +17,7 @@ const PAGE_TITLES: Record<string, [string, string]> = {
   'base-datos': ['Base de datos', 'Consultá y guardá las visitas preparadas.'],
   extraccion: ['Extracción', 'Descargá las fuentes que necesita el período.'],
   'analisis-local': ['Preparación de datos', 'Herramientas de carga, procesamiento y diagnóstico.'],
-  transform: ['Resumen ejecutivo', 'Circuitos, cobertura y evidencia para comité.'],
+  resumen: ['Resumen ejecutivo', 'Circuitos, cobertura y evidencia para comité.'],
 }
 
 /** Se monta una sola vez en el shell; el contexto permanece al cambiar de pantalla. */

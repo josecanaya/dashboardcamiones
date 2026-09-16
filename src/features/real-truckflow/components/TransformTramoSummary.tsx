@@ -75,7 +75,7 @@ export function TransformTramoSummary({
           onClick={onOpenTransformTab}
           className="text-xs font-semibold text-sky-800 underline decoration-sky-300 hover:text-sky-950"
         >
-          Ver tablero completo en Transform ETL (opcional)
+          Ver resumen ejecutivo
         </button>
       : null}
     </div>
