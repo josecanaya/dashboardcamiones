@@ -16,6 +16,7 @@ const PAGE_TITLES: Record<string, [string, string]> = {
   extraccion: ['Extracción', 'Descargá las fuentes que necesita el período.'],
   'analisis-local': ['Preparación de datos', 'Herramientas de carga, procesamiento y diagnóstico.'],
   resumen: ['Resumen ejecutivo', 'Circuitos, cobertura y evidencia para comité.'],
+  'resumen-detalle': ['Informe detallado', 'Clasificación completa, conciliación y CSV de comité (diagnóstico).'],
   datos: ['Datos', 'Prepará un período para todos los indicadores y reportes.'],
 }
 

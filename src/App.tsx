@@ -12,6 +12,7 @@ import {
   TransileInternoRoute,
 } from './app/postTransformRoutes'
 import { ExecutiveSummaryTab } from './features/real-truckflow/tabs/ExecutiveSummaryTab'
+import { InicioTab } from './features/real-truckflow/tabs/InicioTab'
 import { KpiTiemposTab } from './features/real-truckflow/tabs/KpiTiemposTab'
 import { CaladaTab } from './features/real-truckflow/tabs/CaladaTab'
 import { DescargasTab } from './features/real-truckflow/tabs/DescargasTab'
@@ -47,7 +48,10 @@ function App() {
             <Route path="estadisticas/reportes/base-datos" element={<BaseDatosVisitasRoute />} />
 
             <Route path="estadisticas/datos" element={<DataWorkspace />} />
-            <Route path="estadisticas/reportes/resumen" element={<ExecutiveSummaryTab />} />
+            <Route path="estadisticas/reportes/resumen" element={<InicioTab />} />
+            {/* Informe detallado del Transform (donuts, conciliación, CSV DEV de comité). */}
+            {/* Sin entrada en el sidebar: acceso directo por URL para diagnóstico/exportes. */}
+            <Route path="estadisticas/reportes/resumen-detalle" element={<ExecutiveSummaryTab />} />
 
             {LEGACY_ROUTE_REDIRECTS.map(({ from, to }) => (
               <Route

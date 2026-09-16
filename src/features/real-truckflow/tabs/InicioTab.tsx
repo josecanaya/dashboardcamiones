@@ -76,21 +76,17 @@ export function InicioTab() {
   if (!tr) {
     return (
       <section className="space-y-4">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-slate-900">Inicio</h2>
-          <p className="mt-1 text-sm text-slate-600">Entrada por producto</p>
-        </div>
         <div className="rounded-3xl border border-violet-200 bg-violet-50 px-6 py-8 text-center">
           <p className="text-sm text-violet-950">
-            Todavía no hay datos cargados. Andá a <strong>Análisis local</strong>, cargá un período y corré{' '}
-            <strong>Transform</strong> para ver el volumen y la muestra por producto.
+            Todavía no hay datos preparados para este período. Prepará un período en{' '}
+            <strong>Datos</strong> para ver el volumen y la muestra por producto.
           </p>
           <button
             type="button"
-            onClick={() => navigate('/analisis-local')}
+            onClick={() => navigate('/estadisticas/datos')}
             className="mt-4 rounded-xl bg-violet-700 px-5 py-2 text-sm font-bold uppercase tracking-wide text-white shadow-sm transition hover:bg-violet-800"
           >
-            Ir a Análisis local
+            Preparar datos
           </button>
         </div>
       </section>
@@ -102,9 +98,9 @@ export function InicioTab() {
       {/* Encabezado + período */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-6 py-4 shadow-sm">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Inicio</h2>
-          <p className="mt-0.5 text-sm text-slate-600">
-            Entrada por producto · elegí un producto para abrir su transform
+          <p className="text-sm font-semibold text-slate-700">Entrada por producto</p>
+          <p className="mt-0.5 text-sm text-slate-500">
+            Elegí un producto para abrir su detalle de comité.
           </p>
         </div>
         <div className="inline-flex items-center gap-2 rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-semibold text-violet-700">
@@ -162,7 +158,7 @@ export function InicioTab() {
         <span className="text-xs font-bold uppercase tracking-[0.12em] text-slate-600">Entrar por producto</span>
         <span className="h-px flex-1 bg-slate-200" />
         <span className="text-[11px] text-slate-400">
-          {breakdown.perProduct.length} productos · clic para abrir el transform
+          {breakdown.perProduct.length} productos · clic para abrir su detalle
         </span>
       </div>
 
@@ -211,7 +207,7 @@ export function InicioTab() {
                 <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
                   <span className="text-[11px] text-slate-400">Producto de la muestra ejecutiva</span>
                   <span className={`inline-flex items-center gap-1.5 text-xs font-bold ${a.text}`}>
-                    Abrir transform
+                    Abrir detalle
                     <svg
                       width="15"
                       height="15"
