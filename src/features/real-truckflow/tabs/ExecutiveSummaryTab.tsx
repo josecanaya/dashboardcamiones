@@ -122,7 +122,7 @@ function formatDateTimeShort(iso: string): string {
 function Metric({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="text-[11px] font-semibold uppercase text-slate-500">{label}</div>
+      <div className="text-xs font-semibold uppercase text-slate-500">{label}</div>
       <div className="mt-1 text-xl font-bold text-slate-900">{value}</div>
     </div>
   )
@@ -200,7 +200,7 @@ function AnomalySequenceDrilldown({
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <p className="font-mono text-xs font-bold text-rose-950">{row.displaySequence}</p>
-          <p className="mt-0.5 text-[11px] text-slate-500">
+          <p className="mt-0.5 text-xs text-slate-500">
             {row.count.toLocaleString()} camiones · {row.pctOfAnomalies}% del total anómalo · motivo principal:{' '}
             <span className="text-slate-700">{row.topCommitteeReason || '—'}</span>
           </p>
@@ -209,21 +209,21 @@ function AnomalySequenceDrilldown({
           <button
             type="button"
             onClick={() => triggerBrowserCsvDownload(filename, committeeDrilldownCsv(row.trucks))}
-            className="rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1 text-[11px] font-semibold text-rose-900 hover:bg-rose-100"
+            className="rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-900 hover:bg-rose-100"
           >
             CSV
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-slate-200 px-2.5 py-1 text-[11px] font-semibold text-slate-600 hover:bg-slate-50"
+            className="rounded-lg border border-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-50"
           >
             Cerrar
           </button>
         </div>
       </div>
       {row.reasonCounts.length > 1 ?
-        <ul className="mt-2 flex flex-wrap gap-2 text-[10px]">
+        <ul className="mt-2 flex flex-wrap gap-2 text-xs">
           {row.reasonCounts.map((r) => (
             <li
               key={r.reason}
@@ -234,7 +234,7 @@ function AnomalySequenceDrilldown({
           ))}
         </ul>
       : null}
-      <ul className="mt-2 max-h-64 overflow-auto rounded border border-slate-100 text-[11px]">
+      <ul className="mt-2 max-h-64 overflow-auto rounded border border-slate-100 text-xs">
         {row.trucks.map((t) => (
           <li
             key={`an-${t.journeyId}-${t.plate}`}
@@ -243,17 +243,17 @@ function AnomalySequenceDrilldown({
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
               <span className="font-mono font-bold text-slate-900">{t.plate || '—'}</span>
               {t.executiveCircuitDisplay ?
-                <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-slate-800">
+                <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-xs font-semibold text-slate-800">
                   {t.executiveCircuitDisplay}
                 </span>
               : null}
               {t.anomalyKindReason ?
-                <span className="rounded bg-rose-100 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-rose-900">
+                <span className="rounded bg-rose-100 px-1.5 py-0.5 font-mono text-xs font-semibold text-rose-900">
                   {t.anomalyKindReason}
                 </span>
               : null}
               <span className="text-slate-600">{t.committeeReason || '—'}</span>
-              <span className="font-mono text-[10px] text-slate-400" title={t.journeyId}>
+              <span className="font-mono text-xs text-slate-400" title={t.journeyId}>
                 {truncateMiddle(t.journeyId, 18)}
               </span>
             </div>
@@ -271,7 +271,7 @@ function SuspiciousSlExitRicReturnTable({ rows }: { rows: SuspiciousSlExitRicRet
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[11px] text-slate-600">
+        <p className="text-xs text-slate-600">
           <strong>{rows.length.toLocaleString()}</strong> casos: salida San Lorenzo (egreso o balanza salida) y vuelta a
           Ricardone (ingreso, preingreso o calada) en <strong>≤ {GOLDEN_SL_RIC_MAX_MINUTES} min</strong> (misma
           patente; excluye pellet).
@@ -281,7 +281,7 @@ function SuspiciousSlExitRicReturnTable({ rows }: { rows: SuspiciousSlExitRicRet
           onClick={() =>
             triggerBrowserCsvDownload('anomalias_sospechosos_sl_salida_vuelta_ric.csv', suspiciousSlExitRicReturnCsv(rows))
           }
-          className="rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-950 hover:bg-amber-100"
+          className="rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-950 hover:bg-amber-100"
         >
           CSV SL → Ric
         </button>
@@ -289,7 +289,7 @@ function SuspiciousSlExitRicReturnTable({ rows }: { rows: SuspiciousSlExitRicRet
       <div className="overflow-x-auto rounded-lg border border-amber-200">
         <table className="min-w-[1000px] w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-amber-100 bg-amber-50/70 text-[10px] uppercase tracking-wide text-slate-500">
+            <tr className="border-b border-amber-100 bg-amber-50/70 text-xs uppercase tracking-wide text-slate-500">
               <th className="py-2 pl-3 pr-2 font-semibold">Día</th>
               <th className="py-2 px-2 font-semibold">Patente</th>
               <th className="py-2 px-2 font-semibold">Salida SL</th>
@@ -304,18 +304,18 @@ function SuspiciousSlExitRicReturnTable({ rows }: { rows: SuspiciousSlExitRicRet
                 key={`slric-${row.plate}-${row.slExitAt}-${i}`}
                 className="border-b border-slate-100 odd:bg-white even:bg-amber-50/20"
               >
-                <td className="whitespace-nowrap py-2 pl-3 pr-2 font-mono text-[11px] text-slate-700">{row.day}</td>
+                <td className="whitespace-nowrap py-2 pl-3 pr-2 font-mono text-xs text-slate-700">{row.day}</td>
                 <td className="py-2 px-2 font-mono font-bold text-slate-900">{row.plate}</td>
-                <td className="py-2 px-2 text-[11px] text-slate-700">
+                <td className="py-2 px-2 text-xs text-slate-700">
                   <span className="block font-mono">{formatDateTimeShort(row.slExitAt)}</span>
-                  <span className="text-[10px] text-slate-500">{row.slExitPoint}</span>
+                  <span className="text-xs text-slate-500">{row.slExitPoint}</span>
                 </td>
-                <td className="py-2 px-2 text-[11px] text-slate-700">
+                <td className="py-2 px-2 text-xs text-slate-700">
                   <span className="block font-mono">{formatDateTimeShort(row.ricReturnAt)}</span>
-                  <span className="text-[10px] text-slate-500">{row.ricReturnPoint}</span>
+                  <span className="text-xs text-slate-500">{row.ricReturnPoint}</span>
                 </td>
                 <td className="py-2 px-2 font-mono font-semibold tabular-nums text-amber-950">{row.deltaMinutes}</td>
-                <td className="py-2 pr-3 font-mono text-[10px] text-slate-400">
+                <td className="py-2 pr-3 font-mono text-xs text-slate-400">
                   <span title={row.journeyUidAtExit}>exit {truncateMiddle(row.journeyUidAtExit, 14)}</span>
                   <br />
                   <span title={row.journeyUidAtReturn}>ret {truncateMiddle(row.journeyUidAtReturn, 14)}</span>
@@ -350,7 +350,7 @@ function SuspiciousDischargePanel({
       {dischargeRows.length > 0 ?
         <div className="space-y-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-[11px] text-slate-600">
+            <p className="text-xs text-slate-600">
               <strong>{dischargeRows.length.toLocaleString()}</strong> camiones con descarga instrumentada (C16, Volcable 1
               o 2) y <strong>sin</strong> balanza ingreso/egreso en el recorrido.
             </p>
@@ -362,7 +362,7 @@ function SuspiciousDischargePanel({
                   suspiciousDischargeCsv(dischargeRows)
                 )
               }
-              className="rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-950 hover:bg-amber-100"
+              className="rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-950 hover:bg-amber-100"
             >
               CSV descarga sin balanza
             </button>
@@ -370,7 +370,7 @@ function SuspiciousDischargePanel({
           <div className="overflow-x-auto rounded-lg border border-amber-200">
             <table className="min-w-[1100px] w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-amber-100 bg-amber-50/70 text-[10px] uppercase tracking-wide text-slate-500">
+                <tr className="border-b border-amber-100 bg-amber-50/70 text-xs uppercase tracking-wide text-slate-500">
                   <th className="py-2 pl-3 pr-2 font-semibold">Inicio</th>
                   <th className="py-2 px-2 font-semibold">Fin</th>
                   <th className="py-2 px-2 font-semibold">Patente</th>
@@ -387,28 +387,28 @@ function SuspiciousDischargePanel({
                     key={`susp-${row.journeyId}-${row.plate}`}
                     className="border-b border-slate-100 odd:bg-white even:bg-amber-50/20"
                   >
-                    <td className="whitespace-nowrap py-2 pl-3 pr-2 font-mono text-[11px] text-slate-700">
+                    <td className="whitespace-nowrap py-2 pl-3 pr-2 font-mono text-xs text-slate-700">
                       {formatDateTimeShort(row.firstEventAt)}
                     </td>
-                    <td className="whitespace-nowrap py-2 px-2 font-mono text-[11px] text-slate-700">
+                    <td className="whitespace-nowrap py-2 px-2 font-mono text-xs text-slate-700">
                       {formatDateTimeShort(row.lastEventAt)}
                     </td>
                     <td className="py-2 px-2 font-mono font-bold text-slate-900">{row.plate || '—'}</td>
                     <td className="py-2 px-2 font-semibold text-amber-950">{row.dischargePoint}</td>
                     <td
-                      className="max-w-[240px] py-2 px-2 font-mono text-[10px] leading-snug text-slate-600"
+                      className="max-w-[240px] py-2 px-2 font-mono text-xs leading-snug text-slate-600"
                       title={row.detectedSequence}
                     >
                       {truncateMiddle(row.detectedSequence, 56)}
                     </td>
                     <td className="py-2 px-2 text-slate-600">{row.executiveCircuitDisplay || '—'}</td>
                     <td className="py-2 px-2">
-                      <span className="block text-[10px] font-semibold uppercase text-slate-500">
+                      <span className="block text-xs font-semibold uppercase text-slate-500">
                         {row.committeeGroup || '—'}
                       </span>
-                      <span className="text-[11px] text-slate-600">{row.committeeReason || '—'}</span>
+                      <span className="text-xs text-slate-600">{row.committeeReason || '—'}</span>
                     </td>
-                    <td className="py-2 pr-3 font-mono text-[10px] text-slate-400" title={row.journeyId}>
+                    <td className="py-2 pr-3 font-mono text-xs text-slate-400" title={row.journeyId}>
                       {truncateMiddle(row.journeyId, 16)}
                     </td>
                   </tr>
@@ -446,7 +446,7 @@ function AnomalyPanel({
         <button
           type="button"
           onClick={() => setPanelTab('recorrido')}
-          className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition ${
+          className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
             panelTab === 'recorrido' ?
               'bg-rose-600 text-white shadow'
             : 'border border-rose-200 bg-white text-rose-900 hover:bg-rose-50'
@@ -458,7 +458,7 @@ function AnomalyPanel({
         <button
           type="button"
           onClick={() => setPanelTab('sospechosos')}
-          className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition ${
+          className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
             panelTab === 'sospechosos' ?
               'bg-amber-600 text-white shadow'
             : 'border border-amber-300 bg-white text-amber-950 hover:bg-amber-50'
@@ -500,7 +500,7 @@ function AnomalySequenceBreakdownPanel({
   return (
     <div className="mt-3 space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-[11px] text-slate-600">
+            <p className="text-xs text-slate-600">
               <strong>{sequenceRows.length.toLocaleString()}</strong> recorridos distintos ·{' '}
               <strong>{listedAnomalyCount.toLocaleString()}</strong> anomalías de <strong>comportamiento</strong>{' '}
               (reglas R1–R5: reingreso a Ricardone &lt;1 h · San Lorenzo y luego Ricardone el mismo día · egreso
@@ -513,7 +513,7 @@ function AnomalySequenceBreakdownPanel({
               onClick={() =>
                 triggerBrowserCsvDownload('anomalias_por_recorrido.csv', anomalySequenceSummaryCsv(sequenceRows))
               }
-              className="rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1 text-[11px] font-semibold text-rose-900 hover:bg-rose-100"
+              className="rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-900 hover:bg-rose-100"
             >
               CSV resumen
             </button>
@@ -521,7 +521,7 @@ function AnomalySequenceBreakdownPanel({
           <div className="overflow-x-auto rounded-lg border border-rose-100">
             <table className="min-w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-rose-100 bg-rose-50/50 text-[10px] uppercase tracking-wide text-slate-500">
+                <tr className="border-b border-rose-100 bg-rose-50/50 text-xs uppercase tracking-wide text-slate-500">
                   <th className="py-2 pl-3 pr-2 font-semibold">Recorrido · cantidad</th>
                   <th className="py-2 px-2 font-semibold text-right">%</th>
                   <th className="py-2 px-2 font-semibold">Motivo principal</th>
@@ -541,7 +541,7 @@ function AnomalySequenceBreakdownPanel({
                               open ? 'rounded bg-rose-50 ring-1 ring-rose-200 px-1 py-0.5' : ''
                             }`}
                           >
-                            <span className="font-mono text-[11px] text-slate-800">{row.displaySequence}</span>
+                            <span className="font-mono text-xs text-slate-800">{row.displaySequence}</span>
                             <span className="shrink-0 rounded-full bg-rose-100 px-2 py-0.5 font-mono text-xs font-bold tabular-nums text-rose-900">
                               {row.count.toLocaleString()}
                             </span>
@@ -587,7 +587,7 @@ function CommitteeCrossTabDrilldown({
           <p className="text-xs font-bold text-indigo-950">
             {row.displayLabel} · {CROSS_TAB_CATEGORY_LABEL[category]} ({trucks.length.toLocaleString()})
           </p>
-          <p className="mt-0.5 text-[11px] text-slate-500">
+          <p className="mt-0.5 text-xs text-slate-500">
             Patente, motivo comité y secuencia detectada — para revisar reglas de clasificación.
           </p>
         </div>
@@ -595,21 +595,21 @@ function CommitteeCrossTabDrilldown({
           <button
             type="button"
             onClick={() => triggerBrowserCsvDownload(filename, committeeDrilldownCsv(trucks))}
-            className="rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 py-1 text-[11px] font-semibold text-indigo-900 hover:bg-indigo-100"
+            className="rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-900 hover:bg-indigo-100"
           >
             CSV
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-slate-200 px-2.5 py-1 text-[11px] font-semibold text-slate-600 hover:bg-slate-50"
+            className="rounded-lg border border-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-50"
           >
             Cerrar
           </button>
         </div>
       </div>
       {variationBreakdown.length ?
-        <ul className="mt-2 flex flex-wrap gap-2 text-[10px]">
+        <ul className="mt-2 flex flex-wrap gap-2 text-xs">
           {variationBreakdown.map((v) => (
             <li
               key={v.type}
@@ -620,7 +620,7 @@ function CommitteeCrossTabDrilldown({
           ))}
         </ul>
       : null}
-      <ul className="mt-2 max-h-64 overflow-auto rounded border border-slate-100 text-[11px]">
+      <ul className="mt-2 max-h-64 overflow-auto rounded border border-slate-100 text-xs">
         {trucks.map((t) => (
           <li
             key={`${category}-${t.journeyId}-${t.plate}`}
@@ -629,29 +629,29 @@ function CommitteeCrossTabDrilldown({
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
               <span className="font-mono font-bold text-slate-900">{t.plate || '—'}</span>
               {t.executiveCircuitDisplay ?
-                <span className="rounded bg-slate-100 px-1 font-mono text-[10px] text-slate-700">
+                <span className="rounded bg-slate-100 px-1 font-mono text-xs text-slate-700">
                   {t.executiveCircuitDisplay}
                 </span>
               : null}
               {t.anomalyKindReason ?
-                <span className="rounded bg-rose-100 px-1 font-mono text-[10px] text-rose-900">
+                <span className="rounded bg-rose-100 px-1 font-mono text-xs text-rose-900">
                   {t.anomalyKindReason}
                 </span>
               : null}
               {t.operationalVariationType ?
-                <span className="rounded bg-sky-100 px-1 font-mono text-[10px] text-sky-800">
+                <span className="rounded bg-sky-100 px-1 font-mono text-xs text-sky-800">
                   {t.operationalVariationType}
                 </span>
               : null}
               <span className="text-slate-600" title={t.committeeReason}>
                 {t.committeeReason || '—'}
               </span>
-              <span className="font-mono text-[10px] text-slate-400" title={t.journeyId}>
+              <span className="font-mono text-xs text-slate-400" title={t.journeyId}>
                 {truncateMiddle(t.journeyId, 18)}
               </span>
             </div>
             {t.detectedSequence ?
-              <p className="mt-0.5 font-mono text-[10px] leading-snug text-slate-500" title={t.detectedSequence}>
+              <p className="mt-0.5 font-mono text-xs leading-snug text-slate-500" title={t.detectedSequence}>
                 {truncateMiddle(t.detectedSequence, 72)}
               </p>
             : null}
@@ -1081,7 +1081,7 @@ export function ExecutiveSummaryTab() {
             aria-label="Gráfico clasificación operativa de circuitos"
             className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
           >
-            <h4 className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+            <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-600">
               Clasificación ejecutiva comité (3 categorías)
             </h4>
             <p className="mt-1 text-xs text-slate-500">
@@ -1106,7 +1106,7 @@ export function ExecutiveSummaryTab() {
               Con Movimientos por Contrato
               cargados, incluye la <strong>conciliación Excel-first</strong> (operaciones con evidencia Truckflow) y{' '}
               <strong>filas Excel aceite (OSL/PTO/ACEITE) sin match en cámaras</strong> como ancla{' '}
-              <code className="text-[10px]">excel:…</code>.
+              <code className="text-xs">excel:…</code>.
               {!executiveProductFilterActive && circuitClassIndex.excelFirstReconciledCount > 0 ?
                 <>
                   {' '}
@@ -1177,7 +1177,7 @@ export function ExecutiveSummaryTab() {
             }
             {circuitClassificationRows.length ?
               <div className="mt-4 space-y-2">
-                <p className="text-[11px] text-slate-500">
+                <p className="text-xs text-slate-500">
                   Expandí cada porción para ver patentes y journeys (útil para merge y limpieza).
                 </p>
                 {circuitClassificationRows.map((row) => {
@@ -1216,7 +1216,7 @@ export function ExecutiveSummaryTab() {
                           />
                         </div>
                       : open && row.trucks.length ?
-                        <ul className="max-h-52 overflow-auto border-t border-slate-200 bg-white px-3 py-2 text-[11px]">
+                        <ul className="max-h-52 overflow-auto border-t border-slate-200 bg-white px-3 py-2 text-xs">
                           {row.trucks.map((t) => (
                             <li
                               key={`${row.name}-${t.journeyId}-${t.plate}`}
@@ -1226,14 +1226,14 @@ export function ExecutiveSummaryTab() {
                               {t.executiveCircuitDisplay ?
                                 <span className="text-slate-600">{t.executiveCircuitDisplay}</span>
                               : null}
-                              <span className="font-mono text-[10px] text-slate-400" title={t.journeyId}>
+                              <span className="font-mono text-xs text-slate-400" title={t.journeyId}>
                                 {truncateMiddle(t.journeyId, 16)}
                               </span>
                             </li>
                           ))}
                         </ul>
                       : open ?
-                        <p className="border-t border-slate-200 px-3 py-2 text-[11px] text-slate-400">Sin camiones en esta porción.</p>
+                        <p className="border-t border-slate-200 px-3 py-2 text-xs text-slate-400">Sin camiones en esta porción.</p>
                       : null}
                     </div>
                   )
@@ -1247,7 +1247,7 @@ export function ExecutiveSummaryTab() {
             aria-label="Gráfico de barras por circuito ejecutivo"
             className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
           >
-            <h4 className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+            <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-600">
               Camiones por circuito (matriz ejecutiva)
             </h4>
             <p className="mt-1 text-xs text-slate-500">
@@ -1256,7 +1256,7 @@ export function ExecutiveSummaryTab() {
                 {circuitBarTotal.toLocaleString()}
               </span>
               . Las barras indican <strong>qué plantilla R* / RS_* se asignó</strong>, no el veredicto del comité.
-              Con Excel cargado, cada movimiento líquido/aceite sin Truckflow entra como fila <code className="text-[10px]">excel:…</code>{' '}
+              Con Excel cargado, cada movimiento líquido/aceite sin Truckflow entra como fila <code className="text-xs">excel:…</code>{' '}
               (los chips de producto arriba cuentan <strong>operaciones Excel</strong>, no siempre 1:1 con journeys).
               Ej.: R7 (ruta Ric→SL) con ingreso/preingreso/calada/egreso → COMPLETOS; RS_REC con evidencia → COMPLETOS.
             </p>
@@ -1302,7 +1302,7 @@ export function ExecutiveSummaryTab() {
               aria-label="Conciliación circuito por categoría comité"
               className="rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50/60 via-white to-white p-4 shadow-sm"
             >
-              <h4 className="text-[11px] font-semibold uppercase tracking-wide text-indigo-900">
+              <h4 className="text-xs font-semibold uppercase tracking-wide text-indigo-900">
                 Conciliación comité — circuito × comité (válidos)
               </h4>
               <p className="mt-1 text-xs text-indigo-800/90">
@@ -1315,7 +1315,7 @@ export function ExecutiveSummaryTab() {
                   type="button"
                   disabled={!displayClassIndex.entries.length}
                   onClick={() => downloadCommitteeChartCsv(false)}
-                  className="rounded-lg border border-indigo-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-indigo-900 shadow-sm hover:bg-indigo-50 disabled:opacity-40"
+                  className="rounded-lg border border-indigo-200 bg-white px-2.5 py-1 text-xs font-semibold text-indigo-900 shadow-sm hover:bg-indigo-50 disabled:opacity-40"
                   title="Resúmenes para barras apiladas, torta y anomalías por recorrido"
                 >
                   CSV gráficos
@@ -1324,7 +1324,7 @@ export function ExecutiveSummaryTab() {
                   type="button"
                   disabled={!displayClassIndex.entries.length}
                   onClick={() => downloadCommitteeChartCsv(true)}
-                  className="rounded-lg border border-indigo-300 bg-indigo-600 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-40"
+                  className="rounded-lg border border-indigo-300 bg-indigo-600 px-2.5 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-40"
                   title="Incluye una fila JOURNEY por camión con secuencia y clasificación"
                 >
                   CSV completo
@@ -1339,7 +1339,7 @@ export function ExecutiveSummaryTab() {
               <div className="mt-3 overflow-x-auto">
                 <table className="min-w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-indigo-100 text-[10px] uppercase tracking-wide text-slate-500">
+                    <tr className="border-b border-indigo-100 text-xs uppercase tracking-wide text-slate-500">
                       <th className="py-2 pr-3 font-semibold">Circuito</th>
                       <th className="py-2 px-2 font-semibold text-right">Total</th>
                       <th className="py-2 px-2 font-semibold text-right text-emerald-700">Completos</th>
@@ -1466,7 +1466,7 @@ export function ExecutiveSummaryTab() {
               aria-label="Anomalías por recorrido observado"
               className="rounded-2xl border border-rose-200 bg-gradient-to-br from-rose-50/60 via-white to-white p-4 shadow-sm"
             >
-              <h4 className="text-[11px] font-semibold uppercase tracking-wide text-rose-900">
+              <h4 className="text-xs font-semibold uppercase tracking-wide text-rose-900">
                 Anomalías y sospechosos
               </h4>
               <p className="mt-1 text-xs text-slate-600">
@@ -1498,7 +1498,7 @@ export function ExecutiveSummaryTab() {
             aria-label="Apoyo San Lorenzo en transform"
             className="rounded-2xl border border-teal-200 bg-gradient-to-br from-teal-50/80 via-white to-white p-4 shadow-sm"
           >
-            <h4 className="text-[11px] font-semibold uppercase tracking-wide text-teal-800">
+            <h4 className="text-xs font-semibold uppercase tracking-wide text-teal-800">
               Apoyo San Lorenzo (etl_transform_v10)
             </h4>
             <p className="mt-1 text-xs text-slate-600">
@@ -1584,7 +1584,7 @@ export function ExecutiveSummaryTab() {
               <summary className="cursor-pointer text-xs font-bold text-slate-700">
                 Alertas LPR por cámara (DEV)
               </summary>
-              <ul className="mt-2 grid gap-1 font-mono text-[11px] text-slate-800 sm:grid-cols-2 lg:grid-cols-3">
+              <ul className="mt-2 grid gap-1 font-mono text-xs text-slate-800 sm:grid-cols-2 lg:grid-cols-3">
                 {stats.validation.lprMalfunctionByCamera.slice(0, 20).map((r) => (
                   <li key={r.deviceCode}>
                     {r.deviceCode}: {r.count.toLocaleString()}
@@ -1617,7 +1617,7 @@ export function ExecutiveSummaryTab() {
                   className="rounded-xl border border-violet-200 bg-white px-3 py-2 text-left text-xs shadow-sm hover:bg-violet-50 disabled:opacity-40"
                 >
                   <div className="font-bold text-violet-950">{d.label}</div>
-                  <div className="mt-0.5 font-mono text-[10px] text-slate-600">{d.filename}</div>
+                  <div className="mt-0.5 font-mono text-xs text-slate-600">{d.filename}</div>
                 </button>
               ))}
               <button
@@ -1657,7 +1657,7 @@ export function ExecutiveSummaryTab() {
             >
               <div className="font-bold">{stats.coherence.coherenceLabel}</div>
               {stats.coherence.coherenceDetail ?
-                <p className="mt-2 text-[13px] leading-relaxed opacity-95">{stats.coherence.coherenceDetail}</p>
+                <p className="mt-2 text-sm leading-relaxed opacity-95">{stats.coherence.coherenceDetail}</p>
               : null}
             </div>
 

@@ -3,7 +3,7 @@
 .tf-home h1 { font-size: 28px; line-height: 1.2; }
 .tf-home .ui-panel { min-width: 150px; padding: 16px; box-shadow: none; }
 .tf-home .ui-metric-value { font-size: 24px; }
-.tf-home [class~="text-slate-400"] { color: #475569; }
+.tf-home [class~="text-slate-400"] { color: var(--ui-muted); }
 .tf-home th { font-size: 12px; padding-top: 12px; }
-.tf-home tr:focus-visible { outline: 2px solid #1d4ed8; outline-offset: -2px; }
+.tf-home tr:focus-visible { outline: 2px solid var(--ui-primary); outline-offset: -2px; }
 .tf-home > [hidden] { display: none; }

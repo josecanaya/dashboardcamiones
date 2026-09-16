@@ -725,7 +725,7 @@ export function KpiTiemposTab() {
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
             <table className="min-w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+                <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">
                   <th className="px-4 py-3">Tramo</th>
                   <th className="px-4 py-3 text-right">N</th>
                   <th className="px-4 py-3 text-right">Media</th>
@@ -823,7 +823,7 @@ export function KpiTiemposTab() {
                     </select>
                   </label>
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                       Banda:
                     </span>
                     {FRANJA_HORARIA_ORDER.map((f) => {
@@ -834,7 +834,7 @@ export function KpiTiemposTab() {
                           key={f}
                           type="button"
                           onClick={() => setFranjaFilter(active ? null : f)}
-                          className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] transition ${
+                          className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition ${
                             active ?
                               'border-violet-400 bg-violet-100 font-semibold text-violet-950 ring-2 ring-violet-300'
                             : dimmed ?
@@ -854,7 +854,7 @@ export function KpiTiemposTab() {
                       <button
                         type="button"
                         onClick={() => setFranjaFilter(null)}
-                        className="rounded-full border border-slate-300 bg-white px-2.5 py-1 text-[10px] font-semibold text-slate-600 hover:bg-slate-50"
+                        className="rounded-full border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-50"
                       >
                         Ver todas
                       </button>
@@ -924,7 +924,7 @@ export function KpiTiemposTab() {
                 <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                   <table className="min-w-full text-sm">
                     <thead>
-                      <tr className="border-b border-slate-200 bg-slate-50 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+                      <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">
                         <th className="px-4 py-3">Tramo</th>
                         <th className="px-4 py-3 text-right">N</th>
                         <th className="px-4 py-3 text-right">Media</th>
