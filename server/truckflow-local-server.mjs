@@ -24,6 +24,7 @@ import {
   countUniqueRawJourneyUids,
 } from './truckflow-raw-journey-stats.mjs'
 import { resolveRunDir, runDirExists, stableWindowRunId } from './etl-runs-layout.mjs'
+import { getSourceAvailability } from './sourceAvailability.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = path.resolve(__dirname, '..')
@@ -723,6 +724,31 @@ app.post('/api/truckflow/journey-stats-period', async (req, res) => {
     endDate,
     perDay,
   })
+})
+
+/**
+ * Body: { startDate, endDate }
+ * Disponibilidad verificable de fuentes crudas (event-list.json / alert-list.json) por día.
+ * Solo lectura; nunca devuelve records, baseUrl ni rutas físicas (ver server/sourceAvailability.mjs).
+ */
+app.post('/api/truckflow/source-availability', async (req, res) => {
+  const startDate = String(req.body?.startDate ?? '').trim()
+  const endDate = String(req.body?.endDate ?? '').trim()
+
+  let days
+  try {
+    days = daysInclusive(startDate, endDate)
+  } catch (e) {
+    res.status(400).json({ error: e instanceof Error ? e.message : String(e) })
+    return
+  }
+
+  try {
+    const rows = await getSourceAvailability(DATA_ROOT, days)
+    res.json({ days: rows })
+  } catch (e) {
+    res.status(500).json({ error: 'No se pudo comprobar disponibilidad de fuentes' })
+  }
 })
 
 // ─── ETL headless / corridas (Fase 4) ───────────────────────────────────────

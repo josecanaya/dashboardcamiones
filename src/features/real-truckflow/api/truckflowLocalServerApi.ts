@@ -196,3 +196,25 @@ export async function postTruckflowJourneyStatsPeriod(body: {
   })
   return parseJson(res)
 }
+
+export type SourceState = 'available' | 'missing' | 'partial' | 'error' | 'unknown'
+
+export type SourceDay = {
+  day: string
+  events: { state: SourceState; count: number | null; fetchedAt: string | null }
+  alerts: { state: SourceState; count: number | null; fetchedAt: string | null }
+}
+
+/** Disponibilidad verificable de fuentes crudas por día (sin cargar eventos/alertas al navegador). */
+export async function postSourceAvailability(body: {
+  startDate: string
+  endDate: string
+}): Promise<{ days: SourceDay[] }> {
+  const prefix = localApiPrefix()
+  const res = await fetch(`${prefix}/source-availability`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify(body),
+  })
+  return parseJson(res)
+}
