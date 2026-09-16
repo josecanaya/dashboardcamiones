@@ -3,7 +3,7 @@
 16-09-2026. Este archivo es el tablero vigente para el cierre; reemplaza los pendientes ambiguos del checkpoint anterior.
 
 - Hecho ahora: retirar entrada Transform, redirigir URLs viejas a Resumen ejecutivo, conservar resultados/exports. Validación y commit se registran en ENTREGA.md.
-- R01: pendiente · agente económico · 3 k.
+- R01: hecho · commit pendiente de asignación en este archivo tras `git commit` · `npx vitest run src/features/real-truckflow/api/etlRunCacheApi.test.ts --maxWorkers=2` (11/11 verdes) + `npm run check:arch` OK. `fetchRunTable` ahora pagina en `limit=10000` desde offset 0 hasta acumular `total`, valida coincidencia de headers/total/offset entre páginas y rechaza páginas vacías antes de completar. Sin cambios en servidor ni en cálculo ETL.
 - R02: pendiente · agente económico · 6 k.
 - R03: pendiente · agente económico · 5 k.
 - R04: pendiente · agente económico · 8 k.
