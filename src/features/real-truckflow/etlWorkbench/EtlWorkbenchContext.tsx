@@ -68,7 +68,8 @@ import {
 } from './truckPlantVisitSync'
 import { syncPlantVisits, FLEET_SYNC_BATCH_SIZE } from '../api/truckFleetApi'
 import type { ContractFirstProgressEvent } from './etlContractFirstProgress'
-import { loadHistoricalPeriod, validHistoricalRange, type HistoricalRange, type HistoricalPeriodResult } from './historicalPeriodLoader'
+import { loadHistoricalPeriod, type HistoricalRange, type HistoricalPeriodResult } from './historicalPeriodLoader'
+import { useDataPreparation, type UseDataPreparationResult } from '../dataPreparation/useDataPreparation'
 
 export type EtlLoadSummary = {
   loadedEventFilesCount: number
@@ -171,6 +172,14 @@ type Ctx = {
   fleetSaveError: string | null
   fleetSaveMessage: string | null
   saveFleetDatabase: () => Promise<FleetDatabaseSaveResult | null>
+  /** Preparación de datos (R04/R05): fuente única de `{state, setDraft, inspect, execute, requestStop, retry}`. */
+  dataPreparation: UseDataPreparationResult
+  /**
+   * Hay alguna mutación de datos en curso (cola del runner nuevo, cargas/transform/KPI
+   * legacy o una carga manual guardada). Gatea `clearLoaded` y las cargas manuales; no es
+   * sólo un flag visual (ver R05 §isDataMutationBusy).
+   */
+  isDataMutationBusy: boolean
 }
 
 const EtlWorkbenchContext = createContext<Ctx | null>(null)
@@ -242,6 +251,16 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
   const [periodInspection, setPeriodInspection] = useState<HistoricalPeriodResult | null>(null)
   const periodLockRef = useRef(false)
   const dataRevisionRef = useRef(0)
+  /**
+   * Refs de `isDataMutationBusy` (R05): declaradas temprano para que las cargas manuales
+   * (definidas antes, en el código, de donde se calcula `isDataMutationBusy`) puedan leerlas
+   * sin depender del orden de declaración ni de un array de deps — siempre frescas, no sólo
+   * un `disabled` visual. `manualLoadBusyRef` cubre operaciones sin booleano de estado propio
+   * (hoy sólo `loadWindowOrOffer`); `isDataMutationBusyRef` espeja el booleano agregado
+   * completo (ver el efecto que lo sincroniza, más abajo).
+   */
+  const manualLoadBusyRef = useRef(false)
+  const isDataMutationBusyRef = useRef(false)
   const [busyLoad, setBusyLoad] = useState(false)
   const [parsedEventFiles, setParsedEventFiles] = useState<ParsedTruckflowFile[]>([])
   const [parsedAlertFiles, setParsedAlertFiles] = useState<ParsedTruckflowFile[]>([])
@@ -323,6 +342,10 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const loadMovimientosContratoXlsx = useCallback(async (list: FileList | File[]) => {
+    if (isDataMutationBusyRef.current) {
+      console.warn('[ETL] Carga de Excel ignorada: hay una mutación de datos en curso.')
+      return
+    }
     const files = [...list].filter((f) => /\.xlsx?$/i.test(f.name))
     const movLoaded: MovimientosContratoFileInput[] = []
     const tepLoaded: TiemposEntrePasosFileInput[] = []
@@ -375,8 +398,87 @@ export function EtlWorkbenchProvider({ children }: { children: ReactNode }) {
     setTiemposEntrePasosFiles([])
   }, [resetKpiTiemposState])
 
+  /**
+   * Publicación atómica compartida (CONTRATO §1, R05): extraída del camino de
+   * `activateHistoricalPeriod` para reusarla también desde el `publish` del runner nuevo
+   * (`dataPreparation`/`preparationRunner`). Nunca llama `clearLoaded` (eso invalidaría la
+   * revisión en pleno commit): bump de revisión + `resetLoadedState()` directos, igual que
+   * antes. Devuelve la revisión publicada (o `null` si una operación más nueva la superó
+   * mientras `resetLoadedState` corría) para que el llamador pueda seguir publicando
+   * metadata adicional (período en disco, ventana cacheada, rango compuesto) bajo la misma
+   * guarda.
+   */
+  const publishTransformOutput = useCallback(
+    (
+      output: EtlTransformOutput,
+      opts?: { range?: EtlDiskPeriod; kpiTiemposBuilt?: boolean }
+    ): number | null => {
+      const revision = ++dataRevisionRef.current
+      resetLoadedState()
+      if (revision !== dataRevisionRef.current) return null
+      if (opts?.range) setDiskPeriod(opts.range)
+      setTransformResult(output)
+      setKpiTiemposBuilt(opts?.kpiTiemposBuilt ?? Boolean(output.stats.kpiTiemposBuilt))
+      setTransformTramoCompleted(3)
+      setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
+      setWindowEventsBusy(false)
+      return revision
+    },
+    [resetLoadedState]
+  )
+
+  /**
+   * Instancia única de `useDataPreparation` (R04) dentro del provider — ninguna otra parte
+   * de la app debe crear otro contexto/resultado ETL paralelo (CONTRATO §1). `publish` es
+   * la única dependencia sobreescrita: conecta el runner nuevo a la misma publicación
+   * atómica que usa `activateHistoricalPeriod`. `useDataPreparation` congela sus deps en el
+   * primer render (`useMemo(..., [])` interno), así que `publishTransformOutput` debe ser
+   * estable — lo es, porque sólo depende de `resetLoadedState` (estable) y de setters de
+   * estado (estables) + refs.
+   */
+  const dataPreparation = useDataPreparation({ publish: publishTransformOutput })
+  /**
+   * Espejo estable de `dataPreparation` para leer sus funciones (`notifyExternalLoad`,
+   * `inspect`, `execute`) desde callbacks legacy sin forzar que esos `useCallback` cambien
+   * de identidad en cada render (el hook devuelve un objeto nuevo por llamada).
+   */
+  const dataPreparationRef = useRef(dataPreparation)
+  dataPreparationRef.current = dataPreparation
+
+  /** `active` del estado nuevo = período de las tablas cargadas; sincroniza el campo legacy. */
+  useEffect(() => {
+    const active = dataPreparation.state.active
+    if (active) setDiskPeriod({ startDate: active.from, endDate: active.to })
+  }, [dataPreparation.state.active])
+
+  const RUNNER_BUSY_PHASES = new Set(['checking', 'downloading', 'processing', 'loading'])
+
+  /**
+   * `isDataMutationBusy` (R05): suma la cola del runner nuevo a los busy legacy existentes
+   * y a `manualLoadBusyRef` (operaciones sin booleano propio). Se recalcula en cada render
+   * (barato: comparaciones de primitivos) para que tanto el valor expuesto en `Ctx` como
+   * las guardas de `clearLoaded`/cargas manuales, más abajo, lean siempre el estado vigente.
+   */
+  const isDataMutationBusy =
+    RUNNER_BUSY_PHASES.has(dataPreparation.state.phase) ||
+    busyLoad ||
+    transformBusy ||
+    kpiTiemposBusy ||
+    periodBusy ||
+    manualLoadBusyRef.current
+
+  // Espeja `isDataMutationBusy` en un ref para que las guardas de cargas manuales
+  // (declaradas antes, en el código, que este cálculo) siempre lean el valor vigente.
+  useEffect(() => {
+    isDataMutationBusyRef.current = isDataMutationBusy
+  })
+
   /** API pública: cancela cargas en vuelo y vacía el período activo. */
   const clearLoaded = useCallback(() => {
+    if (isDataMutationBusyRef.current) {
+      console.warn('[ETL] clearLoaded ignorado: hay una mutación de datos en curso.')
+      return
+    }
     dataRevisionRef.current++
     resetLoadedState()
   }, [resetLoadedState])
@@ -406,6 +508,10 @@ function buildApiJourneyStatsFromParsedFiles(
 }
 
   const loadJsonFiles = useCallback(async (list: FileList | File[]) => {
+    if (isDataMutationBusyRef.current) {
+      console.warn('[ETL] Carga de JSON ignorada: hay una mutación de datos en curso.')
+      return
+    }
     const arr = [...list].filter((f) => f.name.toLowerCase().endsWith('.json'))
     if (!arr.length) {
       setTransformError(null)
@@ -887,22 +993,27 @@ function buildApiJourneyStatsFromParsedFiles(
       setPeriodInspection(result)
       setSavedWindows(result.windows)
       if (!result.output) return false
-      const revision = ++dataRevisionRef.current
-      // Publicación atómica: tablas, período, eventos y KPI pertenecen a la misma carga.
-      resetLoadedState()
-      if (revision !== dataRevisionRef.current) return false
+      // Publicación atómica compartida (tablas, período, eventos y KPI de la misma carga).
+      const revision = publishTransformOutput(result.output, {
+        range: { startDate: range.from, endDate: range.to },
+        kpiTiemposBuilt: Boolean(result.output.stats.kpiTiemposBuilt || result.composed),
+      })
+      if (revision == null) return false
       setPeriodInspection(result)
-      setDiskPeriod({ startDate: range.from, endDate: range.to })
-      setTransformResult(result.output)
-      setKpiTiemposBuilt(Boolean(result.output.stats.kpiTiemposBuilt || result.composed))
-      setTransformTramoCompleted(3)
-      setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
-      setWindowEventsBusy(false)
       const exact = result.windows.find(w => w.runId === result.usedRunIds[0])
       if (!result.composed && exact) setCachedWindow({ ...exact, inputHash: '', currentRulesVersion: exact.rulesVersion })
       if (result.compositionCounts) setComposedRange({
         ...range, usedRunIds: result.usedRunIds, missingDays: [], ...result.compositionCounts,
       })
+      // Notifica al adaptador de preparación (R05 §3): `active` = período de las tablas
+      // cargadas también por este camino legacy, con limitaciones si el rango vino compuesto
+      // o con corridas obsoletas dentro del rango.
+      const limitations: string[] = []
+      if (result.composed) limitations.push('Rango compuesto a partir de corridas guardadas (sin reprocesar).')
+      if (result.staleWindows.length) {
+        limitations.push('Hay corridas obsoletas dentro del rango; pueden no reflejar reglas/datos actuales.')
+      }
+      dataPreparationRef.current.notifyExternalLoad(range, limitations)
       try { localStorage.setItem('truckflow.historicalPeriod.v1', JSON.stringify(range)) } catch { /* almacenamiento opcional */ }
       return true
     } catch (e) {
@@ -915,42 +1026,49 @@ function buildApiJourneyStatsFromParsedFiles(
       setPeriodBusy(false)
       setPeriodProgress('')
     }
-  }, [resetLoadedState])
+  }, [publishTransformOutput])
 
   const loadWindowOrOffer = useCallback(async (from: string, to: string) => {
+    // Sin booleano de estado propio: instrumentado por ref para isDataMutationBusy (R05).
+    manualLoadBusyRef.current = true
     const revision = ++dataRevisionRef.current
     setTransformError(null)
-    let hit: ResolveWindowResult | null = null
     try {
-      hit = await resolveWindow(from, to)
-    } catch (e) {
-      if (revision === dataRevisionRef.current) {
-        setTransformError(e instanceof Error ? e.message : String(e))
+      let hit: ResolveWindowResult | null = null
+      try {
+        hit = await resolveWindow(from, to)
+      } catch (e) {
+        if (revision === dataRevisionRef.current) {
+          setTransformError(e instanceof Error ? e.message : String(e))
+        }
+        return null
       }
-      return null
-    }
-    if (revision !== dataRevisionRef.current) return null
-    if (!hit) {
-      return { cached: false }
-    }
-    if (hit.stale) return { cached: true, stale: true }
-    try {
-      const out = await loadTransformOutputFromRun(hit.runId)
       if (revision !== dataRevisionRef.current) return null
-      resetLoadedState()
-      if (revision !== dataRevisionRef.current) return null
-      setDiskPeriod({ startDate: from, endDate: to })
-      setCachedWindow(hit)
-      setTransformResult(out)
-      setKpiTiemposBuilt(Boolean(out.stats.kpiTiemposBuilt))
-      setTransformTramoCompleted(3)
-      setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
-      return { cached: true, stale: false }
-    } catch (e) {
-      if (revision === dataRevisionRef.current) {
-        setTransformError(e instanceof Error ? e.message : String(e))
+      if (!hit) {
+        return { cached: false }
       }
-      return null
+      if (hit.stale) return { cached: true, stale: true }
+      try {
+        const out = await loadTransformOutputFromRun(hit.runId)
+        if (revision !== dataRevisionRef.current) return null
+        resetLoadedState()
+        if (revision !== dataRevisionRef.current) return null
+        setDiskPeriod({ startDate: from, endDate: to })
+        setCachedWindow(hit)
+        setTransformResult(out)
+        setKpiTiemposBuilt(Boolean(out.stats.kpiTiemposBuilt))
+        setTransformTramoCompleted(3)
+        setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
+        dataPreparationRef.current.notifyExternalLoad({ from, to }, [])
+        return { cached: true, stale: false }
+      } catch (e) {
+        if (revision === dataRevisionRef.current) {
+          setTransformError(e instanceof Error ? e.message : String(e))
+        }
+        return null
+      }
+    } finally {
+      manualLoadBusyRef.current = false
     }
   }, [resetLoadedState])
 
@@ -971,6 +1089,7 @@ function buildApiJourneyStatsFromParsedFiles(
       setKpiTiemposBuilt(Boolean(out.stats.kpiTiemposBuilt))
       setTransformTramoCompleted(3)
       setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
+      dataPreparationRef.current.notifyExternalLoad({ from, to }, [])
       try {
         setSavedWindows(await listWindows())
       } catch {
@@ -998,6 +1117,11 @@ function buildApiJourneyStatsFromParsedFiles(
   }, [])
 
   const hydrateSavedWindow = useCallback(async (w: SavedWindow) => {
+    // Carga manual guardada (SavedWindowsPicker): no muta si hay otra operación en curso.
+    if (isDataMutationBusyRef.current) {
+      console.warn('[ETL] hydrateSavedWindow ignorado: hay una mutación de datos en curso.')
+      return
+    }
     const revision = ++dataRevisionRef.current
     setTransformError(null)
     setTransformBusy(true)
@@ -1012,6 +1136,10 @@ function buildApiJourneyStatsFromParsedFiles(
       setKpiTiemposBuilt(Boolean(out.stats.kpiTiemposBuilt))
       setTransformTramoCompleted(3)
       setTransformTramoStatus({ 1: 'done', 2: 'done', 3: 'done' })
+      dataPreparationRef.current.notifyExternalLoad(
+        { from: w.from, to: w.to },
+        w.stale ? ['Corrida no vigente (stale): puede no reflejar reglas/datos actuales.'] : []
+      )
     } catch (e) {
       if (revision === dataRevisionRef.current) setTransformError(e instanceof Error ? e.message : String(e))
     } finally {
@@ -1079,6 +1207,14 @@ function buildApiJourneyStatsFromParsedFiles(
           legCount: composed.composedLegCount,
           kpiRowCount: composed.kpiRowCount,
         })
+        dataPreparationRef.current.notifyExternalLoad(
+          { from, to },
+          coverage.missingDays.length
+            ? [
+                `Rango compuesto a partir de corridas guardadas (sin reprocesar); faltan ${coverage.missingDays.length} día(s): ${coverage.missingDays.join(', ')}.`,
+              ]
+            : ['Rango compuesto a partir de corridas guardadas (sin reprocesar).']
+        )
       } catch (e) {
         if (revision === dataRevisionRef.current) {
           setTransformError(e instanceof Error ? e.message : String(e))
@@ -1091,39 +1227,50 @@ function buildApiJourneyStatsFromParsedFiles(
     [savedWindows, resetLoadedState]
   )
 
-  // Al montar: traer los procesos guardados y, si no hay nada cargado, hidratar
-  // el más reciente como "fuente de la verdad" por default (sin reprocesar).
-  const didAutoHydrateRef = useRef(false)
+  // Al montar: traer los procesos guardados (los sigue usando la UI legacy de selección,
+  // p. ej. SavedWindowsPicker). Ya no hidrata ningún período acá: eso lo hace la lectura
+  // inicial única de abajo, vía `dataPreparation` (R05).
+  const didListSavedWindowsRef = useRef(false)
   useEffect(() => {
-    if (didAutoHydrateRef.current) return
-    didAutoHydrateRef.current = true
+    if (didListSavedWindowsRef.current) return
+    didListSavedWindowsRef.current = true
     void (async () => {
-      let ws: SavedWindow[] = []
       setSavedWindowsLoading(true)
       try {
-        ws = await listWindows()
-        setSavedWindows(ws)
+        setSavedWindows(await listWindows())
       } catch {
         /* servidor local apagado */
       } finally {
         setSavedWindowsLoading(false)
       }
-      const latestVigente = ws.find((w) => !w.stale)
-      let restored: HistoricalRange | null = null
-      try {
-        const candidate = JSON.parse(localStorage.getItem('truckflow.historicalPeriod.v1') ?? 'null')
-        if (candidate && validHistoricalRange(candidate)) restored = candidate
-      } catch { /* almacenamiento opcional */ }
-      if (restored && !transformResult) {
-        await activateHistoricalPeriod(restored)
-        return
-      }
-      if (latestVigente && !transformResult) {
-        await activateHistoricalPeriod({ from: latestVigente.from, to: latestVigente.to })
+    })()
+  }, [])
+
+  /**
+   * Lectura inicial ÚNICA del último rango persistido (R05, reemplaza la auto-hidratación
+   * duplicada de arriba). `useDataPreparation` ya hidrató `draft`/`requested` desde
+   * `truckflow.dataPreparation.v1` (migrando desde la clave legacy si hace falta) en su
+   * propio efecto de montaje; acá sólo esperamos a que ese `draft` deje de estar vacío
+   * (una sola vez, por `didInitPreparationRef`) para *inspeccionar* — nunca descargar ni
+   * reprocesar al montar. Si la inspección da un plan de sólo `load` (caché vigente),
+   * lo ejecutamos para abrir esos datos (son lecturas). Si faltan fuentes o procesar, el
+   * estado queda explícito (`needs_sources`/`needs_processing`/`failed`) para que el usuario
+   * decida — nunca reintento silencioso.
+   */
+  const didInitPreparationRef = useRef(false)
+  useEffect(() => {
+    if (didInitPreparationRef.current) return
+    const { from, to } = dataPreparation.state.draft
+    if (!from || !to) return // draft aún no restaurado (o no hay rango persistido): nada que abrir.
+    didInitPreparationRef.current = true
+    void (async () => {
+      const plan = await dataPreparationRef.current.inspect()
+      if (!plan || plan.error || plan.requiresExcelDecision) return
+      if (plan.usesFullyCachedCoverage) {
+        await dataPreparationRef.current.execute(plan)
       }
     })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [dataPreparation.state.draft.from, dataPreparation.state.draft.to])
 
   const value = useMemo<Ctx>(
     () => ({
@@ -1178,6 +1325,8 @@ function buildApiJourneyStatsFromParsedFiles(
       fleetSaveError,
       fleetSaveMessage,
       saveFleetDatabase,
+      dataPreparation,
+      isDataMutationBusy,
     }),
     [
       periodBusy, periodProgress, periodError, periodInspection, activateHistoricalPeriod,
@@ -1229,6 +1378,8 @@ function buildApiJourneyStatsFromParsedFiles(
       fleetSaveError,
       fleetSaveMessage,
       saveFleetDatabase,
+      dataPreparation,
+      isDataMutationBusy,
     ]
   )
 

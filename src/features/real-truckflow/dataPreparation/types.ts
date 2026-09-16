@@ -92,3 +92,11 @@ export type PreparationAction =
   | { type: 'LOAD_SUCCEEDED'; operationId: number; range: DateRange }
   | { type: 'STOPPED' }
   | { type: 'RESTORED'; draft: DateRange; requested: DateRange | null; phase: PreparationPhase }
+  /**
+   * Notificación de una API legacy (activateHistoricalPeriod, loadWindowOrOffer,
+   * recomputeWindow, hydrateSavedWindow, loadComposedRange) que hidrató tablas por su
+   * propio camino, fuera del runner. No pertenece a ninguna operación (sin operationId):
+   * sólo actualiza qué período es "el período de las tablas cargadas" y sus limitaciones,
+   * para que `active` nunca quede desincronizado del resultado realmente visible. Ver R05.
+   */
+  | { type: 'EXTERNAL_LOAD'; range: DateRange; limitations: string[] }

@@ -79,6 +79,12 @@ export type UseDataPreparationResult = {
   execute: (plan: PreparationInspection) => Promise<void>
   requestStop: () => void
   retry: () => Promise<void>
+  /**
+   * Notifica que una API legacy (fuera del runner) hidrató tablas para `range`, con sus
+   * `limitations` (p. ej. corrida stale o rango compuesto). Ver R05: mantiene `active`
+   * sincronizado con "el período de las tablas cargadas" también en los caminos viejos.
+   */
+  notifyExternalLoad: (range: DateRange, limitations?: string[]) => void
 }
 
 /**
@@ -175,7 +181,11 @@ export function useDataPreparation(overrides: UseDataPreparationOverrides = {}):
     }
   }
 
-  return { state, setDraft, inspect, execute, requestStop, retry }
+  function notifyExternalLoad(range: DateRange, limitations: string[] = []): void {
+    dispatch({ type: 'EXTERNAL_LOAD', range, limitations })
+  }
+
+  return { state, setDraft, inspect, execute, requestStop, retry, notifyExternalLoad }
 }
 
 export type { PreparationInspection }

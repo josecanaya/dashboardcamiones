@@ -122,6 +122,11 @@ export function preparationReducer(state: PreparationState, action: PreparationA
       // Comando del usuario, no una respuesta de operación: no se filtra por operationId.
       return { ...state, phase: 'interrupted' }
 
+    case 'EXTERNAL_LOAD':
+      // Camino legacy (fuera del runner): actualiza qué período es "el de las tablas
+      // cargadas" sin tocar operationId/phase, que siguen reflejando la cola del runner.
+      return { ...state, active: action.range, limitations: action.limitations, error: null }
+
     case 'RESTORED': {
       const phase: PreparationPhase = LIVE_PHASES.has(action.phase) ? 'interrupted' : action.phase
       return {
