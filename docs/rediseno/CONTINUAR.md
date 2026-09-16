@@ -40,3 +40,6 @@ Repo: `C:/Users/Usuario/Desktop/Dashboard_camiones`, rama `automatizacion`. Prom
 1. Rango incompleto: no publicar parciales en flujo principal.
 2. Marca: Vicentin textual.
 3. Corridas obsoletas: avanzada con señal; principal exige vigencia.
+
+## Actualización 16-09-2026
+El pedido vigente y las tareas restantes están en [cierre/EMPEZAR_AQUI.md](cierre/EMPEZAR_AQUI.md). Usar ese paquete para continuar: sustituye el plan pendiente anterior, conserva lo ya implementado y especifica la pantalla única Datos. No repetir las tareas anteriores completadas.
