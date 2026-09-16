@@ -82,7 +82,7 @@ describe('fetchRunTable', () => {
     const out = await fetchRunTable('R', 't')
     expect(out.rows).toHaveLength(9999)
     expect(out.rows[0]).toEqual({ i: 0 })
-    expect(out.rows.at(-1)).toEqual({ i: 9998 })
+    expect(out.rows[out.rows.length - 1]).toEqual({ i: 9998 })
     expect(calls).toHaveLength(1)
   })
 
