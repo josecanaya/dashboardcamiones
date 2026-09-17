@@ -9,12 +9,16 @@ import { externalDischargeReferenceMs } from './etlTruckflowMovimientosMerge'
 import type { TruckflowSegmentForMerge } from './etlOperationalAnalysis'
 import { inferCircuitFromExternalMovimiento } from './etlPlatformCircuitInference'
 import { resolveExecutiveCircuitForExcelOperation } from './etlCircuitClassificationIndex'
-import { isPelletExcelProduct } from '../../../etl-core/reports/transileExternoCiclo'
+import {
+  isPelletExcelProduct,
+  isPelletCircuitCode,
+} from '../../../etl-core/reports/transileExternoCiclo'
 import {
   formatTransitionLabel,
   INFERRED_KPI_ROLLUP_MAX_MINUTES,
   OPERATIONAL_TRIP_GAP_MAX_MINUTES,
   synthesizeInferredRollupLegsFromTimedSegments,
+  synthesizePelletExcelLegs,
   synthesizeVolcableReceiptKpiLegsForOperation,
   isVolcableReceiptCircuit,
   buildSlBalanzaComiteOptionsFromTiemposEntrePasos,
@@ -1402,6 +1406,25 @@ function isExcelPlatformTimedKpi(
   )
 }
 
+/**
+ * ¿El pellet se puede medir por tiempos desde el Excel? El pellet no tiene cámara en las tolvas
+ * ni plataforma en la fila de Ricardone, así que NO pasa por `isExcelPlatformTimedKpi`. Se mide
+ * con las horas del Excel: ingreso y salida de Ricardone (siempre), y para el transile además la
+ * llegada/salida del puerto (external_sl_volcable_at / external_sl_egreso_at), que la integración
+ * copia por CTG desde la pata I del doble registro. Ver [[pellet-ausente-en-kpi-tiempos]].
+ */
+function isPelletExcelTimedKpi(
+  mov: ExternalMovimientoContratoNormalized,
+  resolvedExecutiveCircuitCode: string
+): boolean {
+  if (!isPelletCircuitCode(resolvedExecutiveCircuitCode)) return false
+  if (!isPelletExcelProduct(String(mov.product_normalized ?? mov.producto_original ?? ''))) return false
+  return (
+    Boolean(String(mov.external_ingreso_at ?? '').trim()) &&
+    Boolean(String(mov.external_salida_at ?? '').trim())
+  )
+}
+
 function computeAnalysisFlags(
   mov: ExternalMovimientoContratoNormalized,
   ctx: OperationalContextFromExcel,
@@ -1423,6 +1446,9 @@ function computeAnalysisFlags(
   const hasSegments = hasMeasurableSegment(evidence.combined_segments)
   const volcableExcelKpi = isVolcableOneTwoGirasolExcelKpi(mov, resolvedExecutiveCircuitCode)
   const excelTimedKpi = isExcelPlatformTimedKpi(mov, resolvedExecutiveCircuitCode)
+  // Pellet: KPI por tiempos 100% desde el Excel (tolvas sin cámara, doble registro por CTG). No
+  // depende de la evidencia de cámara/reconciliación — las horas son administrativas del Excel.
+  const pelletExcelKpi = isPelletExcelTimedKpi(mov, resolvedExecutiveCircuitCode)
   const reconcilableMatch = SCATTER_MATCH_QUALITIES.has(evidence.match_quality)
   const scatterOk =
     (hasProduct &&
@@ -1430,7 +1456,8 @@ function computeAnalysisFlags(
       (hasSegments || excelTimedKpi) &&
       reconcilableMatch) ||
     volcableExcelKpi ||
-    (excelTimedKpi && reconcilableMatch && evidence.evidence_count > 0)
+    (excelTimedKpi && reconcilableMatch && evidence.evidence_count > 0) ||
+    pelletExcelKpi
 
   const kpiOk =
     scatterOk &&
@@ -1440,7 +1467,7 @@ function computeAnalysisFlags(
   const warnings = [...evidence.warnings]
   if (!hasProduct) warnings.push('MISSING_PRODUCT')
   if (!hasPlatformOrCircuit) warnings.push('MISSING_PLATFORM')
-  if (!hasSegments) warnings.push('NO_MEASURABLE_SEGMENTS')
+  if (!hasSegments && !pelletExcelKpi) warnings.push('NO_MEASURABLE_SEGMENTS')
   if (evidence.match_quality === 'NO_TRUCKFLOW_EVIDENCE') {
     warnings.push('NO_CAMERA_EVIDENCE_FOUND')
   }
@@ -1763,6 +1790,7 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
       ''
     const flags = computeAnalysisFlags(mov, ctx, evidence, resolvedExecutiveCircuitCode)
     const volcableExcelKpi = isVolcableOneTwoGirasolExcelKpi(mov, resolvedExecutiveCircuitCode)
+    const pelletExcelKpi = isPelletExcelTimedKpi(mov, resolvedExecutiveCircuitCode)
 
     for (const uid of evidence.matched_journey_uids) {
       journeyAssignmentCount.set(uid, (journeyAssignmentCount.get(uid) ?? 0) + 1)
@@ -1958,6 +1986,7 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
       flags.analysis_ready_for_scatter &&
       (evidence.combined_segments.length > 0 ||
         volcableExcelKpi ||
+        pelletExcelKpi ||
         isExcelPlatformTimedKpi(mov, resolvedExecutiveCircuitCode))
     ) {
       const opTimedSegments = evidence.combined_segments.map((s) => ({
@@ -1967,7 +1996,17 @@ export async function mergeExcelOperationsWithTruckflowEvidence(
         segment_end_time: s.segment_end_time,
       }))
       const synthLegs =
-        volcableExcelKpi ?
+        pelletExcelKpi ?
+          synthesizePelletExcelLegs({
+            operationId: mov.external_operation_id,
+            plate: mov.plate_normalized,
+            executiveCircuitCode: resolvedExecutiveCircuitCode,
+            externalIngresoAt: mov.external_ingreso_at,
+            externalSalidaAt: mov.external_salida_at,
+            externalSlVolcableAt: mov.external_sl_volcable_at,
+            externalSlEgresoAt: mov.external_sl_egreso_at,
+          })
+        : volcableExcelKpi ?
           synthesizeVolcableReceiptKpiLegsForOperation({
             operationId: mov.external_operation_id,
             plate: mov.plate_normalized,

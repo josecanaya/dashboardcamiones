@@ -132,6 +132,23 @@ export function unifyPelletCircuitCode(code: string | null | undefined): string 
   return String(code ?? '')
 }
 
+/** ¿Es un código de transile externo (R30/R31/R32 o el unificado)? */
+export function isPelletTransileCircuitCode(code: string | null | undefined): boolean {
+  const c = String(code ?? '').trim().toUpperCase()
+  return PELLET_TRANSILE_CODE_SET.has(c) || c === PELLET_TRANSILE_UNIFIED_CODE
+}
+
+/** ¿Es un código de despacho pellet (R13/R14/R15 o el unificado)? */
+export function isPelletDespachoCircuitCode(code: string | null | undefined): boolean {
+  const c = String(code ?? '').trim().toUpperCase()
+  return PELLET_DESPACHO_CODE_SET.has(c) || c === PELLET_DESPACHO_UNIFIED_CODE
+}
+
+/** ¿Es cualquier código pellet (despacho o transile, por celda o unificado)? */
+export function isPelletCircuitCode(code: string | null | undefined): boolean {
+  return isPelletTransileCircuitCode(code) || isPelletDespachoCircuitCode(code)
+}
+
 /** Etiqueta del circuito pellet unificado (sin celda), o null si el código no es pellet. */
 export function pelletUnifiedCircuitLabel(code: string): string | null {
   if (code === PELLET_DESPACHO_UNIFIED_CODE) return 'Despacho Pellet'

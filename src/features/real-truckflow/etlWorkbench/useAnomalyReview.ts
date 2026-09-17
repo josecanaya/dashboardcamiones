@@ -8,6 +8,7 @@ import {
   type AnomalyReviewSummary,
   type CircuitClassificationEntry,
 } from './etlCircuitClassificationIndex'
+import { useLiveExcludedRegistryPlates } from './useLiveExcludedRegistryPlates'
 import type { EtlTransformOutput } from './etlTransformContracts'
 
 /**
@@ -20,21 +21,30 @@ export function useAnomalyReview(
   tr: EtlTransformOutput | null | undefined,
   entries: CircuitClassificationEntry[]
 ): AnomalyReviewSummary {
-  const anomalyListCtx = useMemo(
-    () =>
-      buildAnomalyListContextFromTransformCsv(
-        tr?.csv,
-        tr?.tables?.excel_operations_with_truckflow?.rows,
-        tr?.tables?.transile_interno_volcable_sessions?.rows
-      ),
-    [
-      tr?.csv?.external_movimientos_contrato_normalized,
-      tr?.csv?.excel_operations_with_truckflow,
-      tr?.csv?.plate_registry_excluded,
-      tr?.tables?.excel_operations_with_truckflow,
-      tr?.tables?.transile_interno_volcable_sessions,
-    ]
-  )
+  // Refuerzo EN VIVO: patentes de servicio (agua, comida, prestadores) dadas de alta en la base
+  // aunque la ventana cargada se haya procesado antes. Ver useLiveExcludedRegistryPlates.
+  const liveExcludedPlates = useLiveExcludedRegistryPlates()
+
+  const anomalyListCtx = useMemo(() => {
+    const ctx = buildAnomalyListContextFromTransformCsv(
+      tr?.csv,
+      tr?.tables?.excel_operations_with_truckflow?.rows,
+      tr?.tables?.transile_interno_volcable_sessions?.rows
+    )
+    if (liveExcludedPlates.size) {
+      const merged = new Set(ctx.excludedRegistryPlates ?? [])
+      for (const p of liveExcludedPlates) merged.add(p)
+      ctx.excludedRegistryPlates = merged
+    }
+    return ctx
+  }, [
+    tr?.csv?.external_movimientos_contrato_normalized,
+    tr?.csv?.excel_operations_with_truckflow,
+    tr?.csv?.plate_registry_excluded,
+    tr?.tables?.excel_operations_with_truckflow,
+    tr?.tables?.transile_interno_volcable_sessions,
+    liveExcludedPlates,
+  ])
 
   const pelletExcelMovements = useMemo(
     () => buildPelletExcelMovementsFromCsv(tr?.csv?.external_movimientos_contrato_normalized),

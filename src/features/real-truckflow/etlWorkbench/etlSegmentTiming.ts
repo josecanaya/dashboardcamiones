@@ -7,6 +7,9 @@ import { recordsToCsv } from './etlCsv'
 import {
   PELLET_DESPACHO_UNIFIED_CODE,
   PELLET_TRANSILE_UNIFIED_CODE,
+  isPelletCircuitCode,
+  isPelletTransileCircuitCode,
+  isPelletDespachoCircuitCode,
   unifyPelletCircuitCode,
 } from '../../../etl-core/reports/transileExternoCiclo'
 import { DEFAULT_CIRCUIT_MATRIX, EXECUTIVE_CIRCUIT_MATRIX, EXECUTIVE_CIRCUIT_ORDER } from './finalCircuitScoring'
@@ -283,39 +286,25 @@ function buildExecutiveCircuitSegmentTemplate(): Record<string, readonly string[
   map.RS_DESP = ['INGRESO', 'PREINGRESO', 'BALANZA_INGRESO', 'CALADA', 'BALANZA_EGRESO']
   map.R34 = ['LIQUIDO', 'BALANZA_EGRESO']
 
-  // —— Pellet (tolvas 09/10/11 sin cámara; el recorrido pasa por la calada de líquidos) ——
-  // Carga pasa por PLAYA 3 entre las balanzas. Despacho (carga y NO va a San Lorenzo): R13/R14/R15.
-  const PELLET_DESPACHO_CHAIN = [
-    'INGRESO',
-    'PREINGRESO',
-    'LIQUIDO',
-    'BALANZA_INGRESO',
-    'PLAYA',
-    'BALANZA_EGRESO',
-  ] as const
+  // —— Pellet (tolvas 09/10/11 sin cámara propia) ——
+  // El pellet NO se mide por cámara: carga en tolvas sin lector y el «calado líquido» se pasa
+  // una sola vez al arrancar el turno (no en cada viaje), así que no es un tramo por operación.
+  // Los tiempos salen del Excel de Movimientos, que registra ingreso y salida.
+  //
+  // Despacho (R13/14/15): NO va a San Lorenzo. Un solo registro (Ricardone) con ingreso→salida.
+  // Único tramo medible: estadía en Ricardone (ingreso → balanza egreso).
+  const PELLET_DESPACHO_CHAIN = ['INGRESO', 'BALANZA_EGRESO'] as const
   map.R13 = [...PELLET_DESPACHO_CHAIN]
   map.R14 = [...PELLET_DESPACHO_CHAIN]
   map.R15 = [...PELLET_DESPACHO_CHAIN]
   // Código unificado (los tres subcódigos por celda se miden como uno solo).
   map[PELLET_DESPACHO_UNIFIED_CODE] = [...PELLET_DESPACHO_CHAIN]
-  // Transile externo (la carga va a San Lorenzo y descarga allá): R30/R31/R32. Son 9 tramos:
-  // ingreso→preingreso, preingreso→calada, calada→balanza(tara), balanza→playa3, playa3→balanza(carga),
-  // balanza egreso→SL ingreso (interplanta Ric→SL), SL ingreso→balanza SL, balanza SL→volcable
-  // (descarga), volcable→SL egreso (salida/portería).
-  const PELLET_TRANSILE_CHAIN = [
-    'INGRESO',
-    'PREINGRESO',
-    'LIQUIDO',
-    'BALANZA_INGRESO',
-    'PLAYA',
-    'BALANZA_EGRESO',
-    'SL_INGRESO',
-    'SL_BALANZA_INGRESO',
-    // Volcable del PUERTO: la cámara SLZVolcableC{N} emite SL_VOLCABLE (no el VOLCABLE de
-    // Ricardone). Con este código, la hora real de la cámara llena el tramo; sin él quedaba vacío.
-    'SL_VOLCABLE',
-    'SL_EGRESO',
-  ] as const
+  // Transile externo (R30/31/32): carga en Ricardone y descarga en San Lorenzo. Tiene DOBLE
+  // registro en el Excel unido por CTG — la fila EGRESO de Ricardone (ingreso/salida de planta)
+  // y la fila INGRESO del puerto (VOLCABLE_PTO_N: llegada/salida del puerto). Con las 4 horas se
+  // miden 3 tramos: carga en Ricardone (INGRESO→BALANZA_EGRESO), viaje Ricardone→SL
+  // (BALANZA_EGRESO→SL_VOLCABLE) y estadía/descarga en el puerto (SL_VOLCABLE→SL_EGRESO).
+  const PELLET_TRANSILE_CHAIN = ['INGRESO', 'BALANZA_EGRESO', 'SL_VOLCABLE', 'SL_EGRESO'] as const
   map.R30 = [...PELLET_TRANSILE_CHAIN]
   map.R31 = [...PELLET_TRANSILE_CHAIN]
   map.R32 = [...PELLET_TRANSILE_CHAIN]
@@ -332,6 +321,40 @@ export function getCircuitSegmentTemplate(circuitCode: string): readonly string[
   }
   const code = normalizeExecutiveCircuitForKpi(raw)
   return EXECUTIVE_CIRCUIT_SEGMENT_TEMPLATE[code] ?? []
+}
+
+/**
+ * Recorrido físico COMPLETO del pellet, SOLO para el texto «Recorrido: …» de la ficha (no para
+ * medir tramos). El camión pasa por estos puntos aunque el pellet no tenga cámara/hora en cada
+ * uno: por eso el template de tramos (getCircuitSegmentTemplate) es más corto (solo los puntos
+ * con hora del Excel) y estos puntos intermedios se muestran como contexto del recorrido.
+ */
+export const PELLET_TRANSILE_FULL_ROUTE = [
+  'INGRESO',
+  'PREINGRESO',
+  'CALADA',
+  'BALANZA_INGRESO',
+  'PLAYA',
+  'BALANZA_EGRESO',
+  'SL_INGRESO',
+  'SL_BALANZA_INGRESO',
+  'SL_VOLCABLE',
+  'SL_EGRESO',
+] as const
+export const PELLET_DESPACHO_FULL_ROUTE = [
+  'INGRESO',
+  'PREINGRESO',
+  'CALADA',
+  'BALANZA_INGRESO',
+  'PLAYA',
+  'BALANZA_EGRESO',
+] as const
+
+/** Recorrido físico completo del pellet para el texto de recorrido, o null si no es pellet. */
+export function pelletFullRoutePointCodes(circuitCode: string): readonly string[] | null {
+  if (isPelletTransileCircuitCode(circuitCode)) return PELLET_TRANSILE_FULL_ROUTE
+  if (isPelletDespachoCircuitCode(circuitCode)) return PELLET_DESPACHO_FULL_ROUTE
+  return null
 }
 
 /** Máx. puntos template omitidos en un rollup (p. ej. ingreso→balanza sin preingreso/calada). */
@@ -1582,6 +1605,63 @@ function injectPelletVolcableExcelAnchors(
 }
 
 /**
+ * KPI por tiempos del pellet, 100% desde el Excel (no hay cámara en las tolvas 09/10/11 y el
+ * calado líquido se pasa una sola vez por turno, no por viaje). Usa las 4 horas que da el doble
+ * registro del Excel del transile —unido por CTG en la integración— y las 2 del despacho:
+ *   - INGRESO        = external_ingreso_at  (entrada a Ricardone)
+ *   - BALANZA_EGRESO = external_salida_at   (salida de Ricardone)
+ *   - SL_VOLCABLE    = external_sl_volcable_at (llegada al puerto / volcable, pata I del Excel)
+ *   - SL_EGRESO      = external_sl_egreso_at   (salida del puerto, pata I del Excel)
+ * Emite solo tramos entre puntos ADYACENTES del template recortado (todos «esperados»); si falta
+ * un ancla intermedia, ese tramo no se inventa. El despacho (sin puerto) solo mide INGRESO→BALANZA_EGRESO.
+ */
+export function synthesizePelletExcelLegs(input: {
+  operationId: string
+  plate: string
+  executiveCircuitCode: string
+  externalIngresoAt?: string
+  externalSalidaAt?: string
+  externalSlVolcableAt?: string
+  externalSlEgresoAt?: string
+}): SegmentLegWithTimes[] {
+  if (!input.operationId) return []
+  // Se conserva el código crudo (R30/R13…) en los legs: la unificación a R30/31/32 · R13/14/15
+  // la hace `rebuildSegmentTimingIndexFromLegs`. Unificar acá los duplicaba contra el camino de
+  // fila directa (que usa el código crudo del Excel).
+  const code = String(input.executiveCircuitCode ?? '').trim()
+  const template = getCircuitSegmentTemplate(code)
+  if (template.length < 2) return []
+  const anchorByCode: Record<string, string> = {
+    INGRESO: String(input.externalIngresoAt ?? '').trim(),
+    BALANZA_EGRESO: String(input.externalSalidaAt ?? '').trim(),
+    SL_VOLCABLE: String(input.externalSlVolcableAt ?? '').trim(),
+    SL_EGRESO: String(input.externalSlEgresoAt ?? '').trim(),
+  }
+  const legs: SegmentLegWithTimes[] = []
+  for (let i = 0; i < template.length - 1; i++) {
+    const fromCode = template[i]!
+    const toCode = template[i + 1]!
+    const startAt = anchorByCode[fromCode] ?? ''
+    const endAt = anchorByCode[toCode] ?? ''
+    if (!startAt || !endAt) continue
+    if (!Number.isFinite(parseTimestampMs(startAt)) || !Number.isFinite(parseTimestampMs(endAt))) continue
+    const durationMinutes = minutesBetweenIso(startAt, endAt)
+    if (!isValidKpiLegDuration(durationMinutes, code, fromCode, toCode)) continue
+    legs.push({
+      journeyId: input.operationId,
+      plate: input.plate,
+      executiveCircuitCode: code,
+      fromCode,
+      toCode,
+      durationMinutes,
+      segment_start_time: startAt,
+      segment_end_time: endAt,
+    })
+  }
+  return legs
+}
+
+/**
  * Excel-first (patente + producto): Truckflow da el recorrido; ingreso/calado/salida Excel
  * rellenan puntos que falten en cámara.
  */
@@ -2493,7 +2573,17 @@ export function buildSegmentTimingIndexFromExcelFirstSegments(
 
   for (const [operationId, bucket] of timedSegmentsByOperation) {
     const synthLegs =
-      isVolcableReceiptCircuit(bucket.circuitCode) ?
+      isPelletCircuitCode(bucket.circuitCode) ?
+        synthesizePelletExcelLegs({
+          operationId,
+          plate: bucket.plate,
+          executiveCircuitCode: bucket.circuitCode,
+          externalIngresoAt: bucket.externalIngresoAt,
+          externalSalidaAt: bucket.externalSalidaAt,
+          externalSlVolcableAt: bucket.externalSlVolcableAt,
+          externalSlEgresoAt: bucket.externalSlEgresoAt,
+        })
+      : isVolcableReceiptCircuit(bucket.circuitCode) ?
         synthesizeVolcableReceiptKpiLegsForOperation({
           operationId,
           plate: bucket.plate,

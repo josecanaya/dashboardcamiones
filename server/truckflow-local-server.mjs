@@ -16,6 +16,9 @@ import { supabasePublicHost } from './supabase-client.mjs'
 import { uploadEtlRunFromDisk, listEtlRunsFromSupabase } from './etl-runs-store.mjs'
 import { createEtlAgentChat } from './etl-agent-chat.mjs'
 import { createDssLiveRouter } from './dss-live.mjs'
+import { ensureGo2rtc } from './go2rtc-supervisor.mjs'
+import { createDssCaptureImportRouter } from './dssCaptureImport.mjs'
+import { createPlantLayoutEditorRouter } from './plantLayoutEditor.mjs'
 import { getPlantStateService, PlantStateError } from './plantState/service.mjs'
 import { createPlantStateQueries } from './plantState/queries.mjs'
 import { askNvai } from './plantState/nvai.mjs'
@@ -208,6 +211,29 @@ const dssLive = createDssLiveRouter({ projectRoot: PROJECT_ROOT })
 app.get('/api/truckflow/live-camera/status', dssLive.status)
 app.get('/api/truckflow/live-camera/channels', dssLive.listChannels)
 app.post('/api/truckflow/live-camera/:deviceCode/stream', dssLive.getStream)
+
+/**
+ * Capturas de patente ya exportadas a mano desde DSS Client (Vehicle Search →
+ * Export) — ver server/dssCaptureImport.mjs. El export sigue siendo manual;
+ * esto solo evita que después haya que arrastrar cada foto una por una.
+ */
+const dssCaptures = createDssCaptureImportRouter({})
+app.get('/api/truckflow/dss-captures/list', dssCaptures.list)
+app.get('/api/truckflow/dss-captures/image', dssCaptures.image)
+
+/**
+ * Editor del plano (ver server/plantLayoutEditor.mjs y
+ * src/pages/PlantLayoutEditorPage.tsx) — clickear la imagen real para ubicar
+ * un punto, en vez de describir coordenadas por chat.
+ */
+const plantLayoutEditor = createPlantLayoutEditorRouter({ publicDir: path.join(PROJECT_ROOT, 'public') })
+app.get('/api/truckflow/plant-layout/:site', plantLayoutEditor.getLayout)
+app.put('/api/truckflow/plant-layout/:site', plantLayoutEditor.savePoints)
+app.post(
+  '/api/truckflow/plant-layout/:site/image',
+  express.raw({ type: 'image/*', limit: '15mb' }),
+  plantLayoutEditor.uploadImage
+)
 
 /** Plant State en vivo (buffer 6 h + SSE). */
 const plantState = getPlantStateService()
@@ -1430,9 +1456,13 @@ app.post('/api/truckflow/live/nvai/ask', async (req, res) => {
   res.end()
 })
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.info(`[truckflow-local] http://localhost:${PORT}  data→ ${DATA_ROOT}  powerbi→ ${POWERBI_ROOT}`)
   console.info(
     `[truckflow-local] agente ETL: ${etlAgent.isConfigured() ? 'Claude Code (suscripción) listo' : 'falta CLI claude / .mcp.json'}`
   )
+  // El video en vivo necesita go2rtc: lo levantamos acá para que no sea un
+  // segundo proceso que alguien se tenga que acordar de arrancar.
+  const go2rtc = await ensureGo2rtc({ projectRoot: PROJECT_ROOT })
+  console.info(`[truckflow-local] go2rtc: ${go2rtc.started ? 'levantado' : 'no levantado'} — ${go2rtc.reason}`)
 })

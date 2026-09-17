@@ -3,6 +3,7 @@ import { EXECUTIVE_CIRCUIT_MATRIX } from '../etlWorkbench/finalCircuitScoring'
 import { pelletUnifiedCircuitLabel } from '../../../etl-core/reports/transileExternoCiclo'
 import {
   getCircuitSegmentTemplate,
+  pelletFullRoutePointCodes,
   listCircuitSegmentAggregates,
   logicalPointLabel,
   mergeVolcableReceiptSegmentTiming,
@@ -442,6 +443,11 @@ export function KpiTiemposTab() {
   }, [aggregatesWithData.length, analysisSourceLabel, circuitFilter, exportBusy, periodLabel])
 
   const circuitPathLabel = useMemo(() => {
+    // Pellet: el recorrido físico completo (todos los puntos que pasa el camión) es más largo que
+    // el template de tramos, que solo lleva los puntos con hora del Excel. El texto del recorrido
+    // muestra el camino entero; los tramos medibles siguen siendo los del template.
+    const pelletRoute = pelletFullRoutePointCodes(circuitFilter)
+    if (pelletRoute) return pelletRoute.map(logicalPointLabel).join(' → ')
     const template = getCircuitSegmentTemplate(circuitFilter)
     if (!template.length) return '—'
     return template.map(logicalPointLabel).join(' → ')

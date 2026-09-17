@@ -24,6 +24,7 @@ import {
   synthesizeSlRollupLegsFromTimedSegments,
   synthesizeDischargeRollupLegsFromTimedSegments,
   synthesizeInferredRollupLegsFromTimedSegments,
+  synthesizePelletExcelLegs,
   synthesizeTemplateChainLegsFromTimedSegments,
   synthesizeVolcableReceiptKpiLegsForOperation,
   diagnoseBalanzaStayFromTimedSegments,
@@ -1742,76 +1743,64 @@ describe('plantilla KPI de líquidos (R8 / R16)', () => {
     }
   })
 
-  it('pellet declara plantilla de tramos: despacho R13/14/15 y transile R30/31/32', () => {
-    // Pellet carga en tolvas 09/10/11 (sin cámara) pero el recorrido pasa por la calada
-    // de líquidos. Despacho no va a SLZ; transile va a SLZ y descarga allá.
-    // Carga pasa por PLAYA 3 entre balanzas.
-    const despacho = ['INGRESO', 'PREINGRESO', 'LIQUIDO', 'BALANZA_INGRESO', 'PLAYA', 'BALANZA_EGRESO']
+  it('pellet declara plantilla de tramos Excel: despacho R13/14/15 y transile R30/31/32', () => {
+    // El pellet no tiene cámara en las tolvas 09/10/11 y el calado líquido se pasa una sola vez
+    // por turno (no por viaje). Se mide 100% desde el Excel de Movimientos:
+    //  - Despacho (no va a SLZ): un registro (Ricardone) → estadía ingreso→balanza egreso.
+    //  - Transile (va a SLZ y descarga allá): doble registro unido por CTG → carga Ricardone,
+    //    viaje Ric→SL (balanza egreso→volcable) y descarga en el puerto (volcable→egreso SL).
+    const despacho = ['INGRESO', 'BALANZA_EGRESO']
     for (const code of ['R13', 'R14', 'R15']) {
       expect(getCircuitSegmentTemplate(code), code).toEqual(despacho)
     }
-    // 9 tramos: puente Ric→SL directo (BALANZA_EGRESO→SL_INGRESO); en SL VOLCABLE→SL_EGRESO.
-    const transile = [
-      'INGRESO', 'PREINGRESO', 'LIQUIDO', 'BALANZA_INGRESO', 'PLAYA', 'BALANZA_EGRESO',
-      'SL_INGRESO', 'SL_BALANZA_INGRESO', 'SL_VOLCABLE', 'SL_EGRESO',
-    ]
-    // 10 puntos = 9 tramos.
-    expect(transile.length - 1).toBe(9)
+    const transile = ['INGRESO', 'BALANZA_EGRESO', 'SL_VOLCABLE', 'SL_EGRESO']
+    // 4 puntos = 3 tramos.
+    expect(transile.length - 1).toBe(3)
     for (const code of ['R30', 'R31', 'R32']) {
       expect(getCircuitSegmentTemplate(code), code).toEqual(transile)
     }
     // Con legs, el pellet se agrupa UNIFICADO: R13/R14/R15 → 'R13/14/15'.
     const idx = rebuildSegmentTimingIndexFromLegs([
-      { journeyId: 'j1', plate: 'AAA', executiveCircuitCode: 'R13', fromCode: 'PLAYA', toCode: 'BALANZA_EGRESO', durationMinutes: 12 },
-      { journeyId: 'j2', plate: 'BBB', executiveCircuitCode: 'R15', fromCode: 'PLAYA', toCode: 'BALANZA_EGRESO', durationMinutes: 20 },
+      { journeyId: 'j1', plate: 'AAA', executiveCircuitCode: 'R13', fromCode: 'INGRESO', toCode: 'BALANZA_EGRESO', durationMinutes: 42 },
+      { journeyId: 'j2', plate: 'BBB', executiveCircuitCode: 'R15', fromCode: 'INGRESO', toCode: 'BALANZA_EGRESO', durationMinutes: 55 },
     ])
     expect(idx.circuitCodes).toContain('R13/14/15')
     expect(idx.circuitCodes).not.toContain('R13')
     // Los dos subcódigos (R13 celda 09, R15 celda 11) cuentan como un solo circuito.
     const tramos = listCircuitSegmentAggregates(idx, 'R13/14/15')
-    const stay = tramos.find((a) => a.transitionKey === 'PLAYA→BALANZA_EGRESO')
+    const stay = tramos.find((a) => a.transitionKey === 'INGRESO→BALANZA_EGRESO')
     expect(stay?.stats.count).toBe(2)
   })
 
-  it('pellet de la vuelta: VOLCABLE y SL_EGRESO salen de la pata I del Excel (descarga/salida)', () => {
-    // La cámara solo trajo SL_INGRESO y SL_BALANZA_INGRESO; los hitos VOLCABLE (descarga en el
-    // volcable del puerto) y SL_EGRESO (salida/portería) vienen de la pata I del Excel, y así los
-    // dos últimos tramos del transile (balanza de entrada→volcable, volcable→egreso SL) se miden.
-    const legs = synthesizeInferredRollupLegsFromTimedSegments({
-      operationId: 'excel:CTG_1',
+  it('pellet transile: los 3 tramos salen de las 4 horas del Excel (doble registro por CTG)', () => {
+    // Sin cámara: las 4 horas del Excel (ingreso/salida de Ricardone + llegada/salida del puerto,
+    // esta última de la pata I unida por CTG) miden carga en Ricardone, viaje Ric→SL y descarga.
+    const legs = synthesizePelletExcelLegs({
+      operationId: 'CTG_1',
       plate: 'CIE516',
       executiveCircuitCode: 'R30',
-      segments: [
-        {
-          segment_from: 'SL_INGRESO',
-          segment_to: 'SL_BALANZA_INGRESO',
-          segment_start_time: '2026-08-18T20:10:00',
-          segment_end_time: '2026-08-18T20:15:00',
-        },
-      ],
       externalIngresoAt: '2026-08-18T17:51:00',
       externalSalidaAt: '2026-08-18T20:05:00', // salida de Ricardone, NO la del puerto
-      plantaNormalized: 'RICARDONE',
-      externalSlVolcableAt: '2026-08-18T20:23:00',
-      externalSlEgresoAt: '2026-08-18T21:58:00',
+      externalSlVolcableAt: '2026-08-18T20:23:00', // llegada al puerto (pata I)
+      externalSlEgresoAt: '2026-08-18T21:58:00', // salida del puerto (pata I)
     })
-    const balToVolc = legs.find((l) => l.fromCode === 'SL_BALANZA_INGRESO' && l.toCode === 'SL_VOLCABLE')
-    const volcToEgreso = legs.find((l) => l.fromCode === 'SL_VOLCABLE' && l.toCode === 'SL_EGRESO')
-    expect(balToVolc?.durationMinutes).toBe(8) // 20:15 → 20:23
-    expect(volcToEgreso?.durationMinutes).toBe(95) // 20:23 → 21:58
-    expect(volcToEgreso?.segment_end_time).toBe('2026-08-18T21:58:00')
+    const carga = legs.find((l) => l.fromCode === 'INGRESO' && l.toCode === 'BALANZA_EGRESO')
+    const viaje = legs.find((l) => l.fromCode === 'BALANZA_EGRESO' && l.toCode === 'SL_VOLCABLE')
+    const descarga = legs.find((l) => l.fromCode === 'SL_VOLCABLE' && l.toCode === 'SL_EGRESO')
+    expect(carga?.durationMinutes).toBe(134) // 17:51 → 20:05
+    expect(viaje?.durationMinutes).toBe(18) // 20:05 → 20:23
+    expect(descarga?.durationMinutes).toBe(95) // 20:23 → 21:58
+    expect(descarga?.segment_end_time).toBe('2026-08-18T21:58:00')
   })
 
-  it('KPI Excel-first: el pellet de la vuelta mide balanza→volcable y volcable→egreso con la pata I', () => {
-    // Camino real del KPI por tiempos: cada operación se re-sintetiza desde sus filas de tramo.
-    // La pata I del Excel (volcable/egreso) viaja en las filas y alimenta los dos tramos finales;
-    // la balanza sigue siendo la de la cámara (truckflow), el egreso es autoritativo del Excel.
+  it('KPI Excel-first: el pellet transile mide sus 3 tramos desde las filas del Excel', () => {
+    // Camino real del KPI por tiempos: cada operación se re-sintetiza desde sus filas de tramo,
+    // que llevan las 4 horas del Excel. Se agrupa bajo el código unificado R30/31/32.
     const base = {
       analysis_ready_for_scatter: true,
       external_operation_id: 'CTG_1',
       journey_uid: 'j1',
       plate_normalized: 'CIE516',
-      segment_duration_min: 5,
       truckflow_circuit_code: 'R30',
       resolved_executive_circuit_code: 'R30',
       external_ingreso_at: '2026-08-18T17:51:00',
@@ -1821,35 +1810,33 @@ describe('plantilla KPI de líquidos (R8 / R16)', () => {
       external_sl_egreso_at: '2026-08-18T21:58:00',
     }
     const idx = buildSegmentTimingIndexFromExcelFirstSegments([
-      { ...base, segment_from: 'INGRESO', segment_to: 'PREINGRESO', segment_start_time: '2026-08-18T17:51:00', segment_end_time: '2026-08-18T17:58:00' },
-      { ...base, segment_from: 'SL_INGRESO', segment_to: 'SL_BALANZA_INGRESO', segment_start_time: '2026-08-18T20:10:00', segment_end_time: '2026-08-18T20:15:00' },
+      { ...base, segment_from: 'INGRESO', segment_to: 'BALANZA_EGRESO', segment_start_time: '2026-08-18T17:51:00', segment_end_time: '2026-08-18T20:05:00', segment_duration_min: 134 },
+      { ...base, segment_from: 'BALANZA_EGRESO', segment_to: 'SL_VOLCABLE', segment_start_time: '2026-08-18T20:05:00', segment_end_time: '2026-08-18T20:23:00', segment_duration_min: 18 },
+      { ...base, segment_from: 'SL_VOLCABLE', segment_to: 'SL_EGRESO', segment_start_time: '2026-08-18T20:23:00', segment_end_time: '2026-08-18T21:58:00', segment_duration_min: 95 },
     ])
     expect(idx.circuitCodes).toContain('R30/31/32')
     const aggs = listCircuitSegmentAggregates(idx, 'R30/31/32')
-    const balToVolc = aggs.find((a) => a.transitionKey === 'SL_BALANZA_INGRESO→SL_VOLCABLE')
-    const volcToEgreso = aggs.find((a) => a.transitionKey === 'SL_VOLCABLE→SL_EGRESO')
-    expect(balToVolc?.stats.count).toBe(1)
-    expect(balToVolc?.stats.mean).toBe(8) // 20:15 (cámara) → 20:23 (Excel)
-    expect(volcToEgreso?.stats.count).toBe(1)
-    expect(volcToEgreso?.stats.mean).toBe(95) // 20:23 → 21:58 (Excel), no la salida de Ricardone
+    const carga = aggs.find((a) => a.transitionKey === 'INGRESO→BALANZA_EGRESO')
+    const viaje = aggs.find((a) => a.transitionKey === 'BALANZA_EGRESO→SL_VOLCABLE')
+    const descarga = aggs.find((a) => a.transitionKey === 'SL_VOLCABLE→SL_EGRESO')
+    expect(carga?.stats.count).toBe(1)
+    expect(carga?.stats.mean).toBe(134)
+    expect(viaje?.stats.count).toBe(1)
+    expect(viaje?.stats.mean).toBe(18)
+    expect(descarga?.stats.count).toBe(1)
+    expect(descarga?.stats.mean).toBe(95)
   })
 
-  it('sin pata I del Excel el pellet no inventa SL_VOLCABLE ni SL_EGRESO', () => {
-    const legs = synthesizeInferredRollupLegsFromTimedSegments({
-      operationId: 'excel:CTG_2',
+  it('pellet transile sin pata I del Excel: solo mide la estadía en Ricardone', () => {
+    const legs = synthesizePelletExcelLegs({
+      operationId: 'CTG_2',
       plate: 'CIE516',
       executiveCircuitCode: 'R30',
-      segments: [
-        {
-          segment_from: 'SL_INGRESO',
-          segment_to: 'SL_BALANZA_INGRESO',
-          segment_start_time: '2026-08-18T20:10:00',
-          segment_end_time: '2026-08-18T20:15:00',
-        },
-      ],
       externalIngresoAt: '2026-08-18T17:51:00',
-      plantaNormalized: 'RICARDONE',
+      externalSalidaAt: '2026-08-18T20:05:00',
+      // sin externalSlVolcableAt / externalSlEgresoAt: no inventa el tramo del puerto.
     })
+    expect(legs.map((l) => `${l.fromCode}→${l.toCode}`)).toEqual(['INGRESO→BALANZA_EGRESO'])
     expect(legs.some((l) => l.toCode === 'SL_VOLCABLE')).toBe(false)
     expect(legs.some((l) => l.toCode === 'SL_EGRESO')).toBe(false)
   })

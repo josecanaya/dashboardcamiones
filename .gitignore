@@ -52,3 +52,6 @@ simulador/.runtime/
 
 # scratchpad de diagnóstico (no commitear)
 scratchpad/
+
+# go2rtc: binario local para el video en vivo (se baja aparte)
+tools/go2rtc/

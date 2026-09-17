@@ -38,6 +38,7 @@ import {
   type SuspiciousSlExitRicReturnRow,
   type CircuitClassificationIndex,
 } from '../etlWorkbench/etlCircuitClassificationIndex'
+import { useLiveExcludedRegistryPlates } from '../etlWorkbench/useLiveExcludedRegistryPlates'
 import { EXECUTIVE_CIRCUIT_MATRIX } from '../etlWorkbench/finalCircuitScoring'
 import { ANOMALY_MIN_FRONT_EVENTS } from '../../../etl-core/domain/anomalyClassifier'
 import { GOLDEN_SL_RIC_MAX_MS } from '../../../etl-core/domain/goldenAnomalyRules'
@@ -797,19 +798,30 @@ export function ExecutiveSummaryTab() {
     () => displayClassIndex.entries,
     [displayClassIndex.entries]
   )
+  // Refuerzo EN VIVO: los camiones de servicio dados de alta en la base se excluyen del comité
+  // aunque la ventana se haya procesado antes (misma fuente que el panel de anomalías).
+  const liveExcludedPlates = useLiveExcludedRegistryPlates()
   const anomalyListCtx = useMemo(
-    () =>
-      buildAnomalyListContextFromTransformCsv(
+    () => {
+      const ctx = buildAnomalyListContextFromTransformCsv(
         tr?.csv,
         tr?.tables?.excel_operations_with_truckflow?.rows,
         tr?.tables?.transile_interno_volcable_sessions?.rows
-      ),
+      )
+      if (liveExcludedPlates.size) {
+        const merged = new Set(ctx.excludedRegistryPlates ?? [])
+        for (const p of liveExcludedPlates) merged.add(p)
+        ctx.excludedRegistryPlates = merged
+      }
+      return ctx
+    },
     [
       tr?.csv?.external_movimientos_contrato_normalized,
       tr?.csv?.excel_operations_with_truckflow,
       tr?.csv?.plate_registry_excluded,
       tr?.tables?.excel_operations_with_truckflow,
       tr?.tables?.transile_interno_volcable_sessions,
+      liveExcludedPlates,
     ]
   )
   /**

@@ -19,6 +19,7 @@ import { DescargasTab } from './features/real-truckflow/tabs/DescargasTab'
 import { ProductoTransformTab } from './features/real-truckflow/tabs/ProductoTransformTab'
 import { SeguridadTab } from './features/real-truckflow/tabs/SeguridadTab'
 import { PlantHome } from './pages/PlantHome'
+import { PlantLayoutEditorPage } from './pages/PlantLayoutEditorPage'
 import { DataWorkspace } from './features/real-truckflow/dataPreparation/DataWorkspace'
 
 /**
@@ -35,6 +36,8 @@ function App() {
             <Route index element={<PlantHome />} />
             <Route path="en-vivo" element={<PlantHome />} />
             <Route path="producto/:id" element={<ProductoTransformTab />} />
+            {/* Herramienta de configuración del plano (ubicar puntos clickeando la imagen). */}
+            <Route path="herramientas/editor-plano" element={<PlantLayoutEditorPage />} />
 
             <Route path="estadisticas/indicadores/tiempos" element={<KpiTiemposTab />} />
             <Route path="estadisticas/indicadores/calada" element={<CaladaTab />} />

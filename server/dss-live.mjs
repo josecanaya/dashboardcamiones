@@ -170,8 +170,13 @@ export function createDssLiveRouter({ projectRoot }) {
     return session.token
   }
 
+  // 1101/4128: token vencido (los códigos que ya conocíamos). 7000: «Auth failed» —
+  // el DSS lo devuelve también cuando OTRO login del mismo usuario invalida esta
+  // sesión (visto 15-09-2026: la cuenta admite una sola sesión activa por cuenta,
+  // y un login nuevo —desde DSS Client, o desde un script de diagnóstico— tira la
+  // vieja). No es un fallo de credenciales: relogueamos igual que con las otras.
   const isAuthExpired = (res) =>
-    res?.status === 401 || res?.json?.code === 1101 || res?.json?.code === 4128
+    res?.status === 401 || res?.json?.code === 1101 || res?.json?.code === 4128 || res?.json?.code === 7000
 
   /** Ejecuta fn(token); ante token vencido invalida sesión y reintenta 1 vez. */
   async function withDssAuth(fn) {

@@ -18,14 +18,16 @@ import type { RealJourneyEventDto } from '../../../services/realJourneyEvents.ty
 import type { ReconstructedRealSiteId } from '../../../etl-core/domain/journeyEvents.types'
 import { postTruckflowLoadLocalPeriod } from '../api/truckflowLocalServerApi'
 import { journeyDtoListFromRawExtractedRowsChunked } from '../../../services/realTruckflowApi'
+import { normalizePlate } from '../../../etl-core/domain/argentinaPlate'
 
 /**
  * Seguridad · Anomalías: láminas de comité para revisar cada anomalía. Usa la MISMA revisión que el
  * panel de anomalías de Transform ({@link useAnomalyReview}): recorridos anómalos agrupados por
  * secuencia observada, con sus camiones (patente + primer/último evento) y el motivo principal.
- * Las imágenes de cámara se cargan manualmente (persisten por navegador); DSS queda para más
- * adelante. El recorrido muestra la secuencia detectada; los tiempos por cámara se sumarán cuando
- * se exponga el timeline crudo del journey.
+ * Las imágenes de cámara persisten por navegador (IndexedDB) y llegan por dos caminos: arrastrar
+ * un archivo a mano, o importarlas de un export de DSS Client (Vehicle Search → Export) ya hecho
+ * — ver {@link importDssCapturesForTruck}. El paso de buscar+exportar en DSS sigue siendo manual
+ * (no hay API para eso en este build); lo que se evita es pegar cada foto una por una.
  */
 
 function fmtDate(iso: string): string {
@@ -276,15 +278,35 @@ async function idbGetImage(key: string): Promise<string | null> {
     return null
   }
 }
+/**
+ * Avisa a los `CameraSlot` montados que la imagen de `key` cambió, para que se refresquen sin
+ * esperar a un remount. Lo dispara tanto el drag&drop manual como el import de DSS.
+ */
+const imageUpdateListeners = new Map<string, Set<() => void>>()
+function onImageUpdated(key: string, cb: () => void): () => void {
+  let set = imageUpdateListeners.get(key)
+  if (!set) {
+    set = new Set()
+    imageUpdateListeners.set(key, set)
+  }
+  set.add(cb)
+  return () => set!.delete(cb)
+}
+function notifyImageUpdated(key: string): void {
+  for (const cb of imageUpdateListeners.get(key) ?? []) cb()
+}
+
 async function idbSetImage(key: string, value: string): Promise<boolean> {
   try {
     const db = await openImageDb()
-    return await new Promise((resolve) => {
+    const ok = await new Promise<boolean>((resolve) => {
       const tx = db.transaction(IDB_STORE, 'readwrite')
       tx.objectStore(IDB_STORE).put(value, key)
       tx.oncomplete = () => resolve(true)
       tx.onerror = () => resolve(false)
     })
+    if (ok) notifyImageUpdated(key)
+    return ok
   } catch {
     return false
   }
@@ -301,6 +323,97 @@ async function idbDeleteImage(key: string): Promise<void> {
   } catch {
     /* noop */
   }
+}
+
+/** Una fila del manifiesto de un export de DSS Client (server/dssCaptureImport.mjs). */
+type DssCaptureRow = {
+  zip: string
+  deviceName: string
+  plate: string
+  captureTimeIso: string
+  plateImage: string
+  sceneImage: string
+}
+
+/**
+ * Ventana de tolerancia contra `Capture Time` de DSS. Calibrado 15-09-2026 contra un caso real
+ * (patente AC108SZ, `RicIngCamFrente` y `SLZBalIngFte`): el instante operativo de la app
+ * (`occurredAt` + 206 min, el mismo que ya usa todo el timeline) quedó ~4 minutos por encima del
+ * reloj propio de DSS en los dos puntos verificados. La ventana es generosa a propósito porque
+ * lo que evita el error no es la ventana, es que ya filtramos por patente + `deviceCode` exactos:
+ * dentro de esos dos, es rarísimo que haya dos pasadas en 20 minutos.
+ */
+const DSS_CAPTURE_MATCH_TOLERANCE_MS = 20 * 60_000
+
+/** dataURL de un Blob (misma técnica que `onPick` en `CameraSlot`, para no duplicar comportamiento). */
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result ?? ''))
+    reader.onerror = () => reject(reader.error)
+    reader.readAsDataURL(blob)
+  })
+}
+
+/**
+ * Cruza el recorrido de un camión contra las capturas que DSS ya exportó a disco (el paso de
+ * buscar+exportar en DSS Client sigue siendo manual — ver server/dssCaptureImport.mjs) y escribe
+ * las fotos encontradas en el mismo IndexedDB que usa la carga manual. `CameraSlot` no se entera
+ * de la diferencia: lee por su `storageKey` de siempre.
+ *
+ * Por nodo, guarda dos imágenes: la escena completa en la clave que ya muestra el recorrido, y el
+ * primer plano de patente en una clave `:plate` aparte (todavía sin UI que la muestre — queda
+ * lista para un botón «ver primer plano» sin tener que reimportar).
+ */
+async function importDssCapturesForTruck(
+  journeyId: string,
+  plate: string,
+  nodes: TimelineNode[],
+  deviceByEventId: Map<string, string>
+): Promise<{ matched: number; candidatos: number }> {
+  const normPlate = normalizePlate(plate)
+  if (!normPlate) return { matched: 0, candidatos: 0 }
+
+  const res = await fetch('/api/truckflow/dss-captures/list')
+  if (!res.ok) throw new Error(`el server no respondió (HTTP ${res.status})`)
+  const data: { rows?: DssCaptureRow[] } = await res.json()
+  const rows = (data.rows ?? []).filter((r) => normalizePlate(r.plate) === normPlate)
+
+  let matched = 0
+  for (const n of nodes) {
+    if (!Number.isFinite(n.ms)) continue // fallback sin horario: nada para cruzar
+    const deviceCode = deviceByEventId.get(n.key)
+    if (!deviceCode) continue
+
+    let best: DssCaptureRow | null = null
+    let bestDelta = Infinity
+    for (const r of rows) {
+      if (r.deviceName !== deviceCode) continue
+      const t = Date.parse(r.captureTimeIso)
+      if (!Number.isFinite(t)) continue
+      const delta = Math.abs(t - n.ms)
+      if (delta < bestDelta) {
+        bestDelta = delta
+        best = r
+      }
+    }
+    if (!best || bestDelta > DSS_CAPTURE_MATCH_TOLERANCE_MS) continue
+
+    const sceneKey = `seg-cam:truck:${journeyId}:${n.key}`
+    const plateKey = `${sceneKey}:plate`
+    const fetchImage = async (file: string) => {
+      if (!file) return null
+      const r = await fetch(
+        `/api/truckflow/dss-captures/image?zip=${encodeURIComponent(best!.zip)}&file=${encodeURIComponent(file)}`
+      )
+      if (!r.ok) return null
+      return blobToDataUrl(await r.blob())
+    }
+    const [sceneUrl, plateUrl] = await Promise.all([fetchImage(best.sceneImage), fetchImage(best.plateImage)])
+    if (sceneUrl && (await idbSetImage(sceneKey, sceneUrl))) matched += 1
+    if (plateUrl) await idbSetImage(plateKey, plateUrl)
+  }
+  return { matched, candidatos: rows.length }
 }
 
 /**
@@ -367,6 +480,24 @@ function TruckJourneyView({
     const days = new Set(nodes.filter((n) => n.iso).map((n) => fmtDay(n.iso)))
     return days.size > 1
   }, [nodes])
+
+  // ---- Importar fotos ya exportadas de DSS Client (ver importDssCapturesForTruck) ----
+  const deviceByEventId = useMemo(
+    () => new Map(effectiveEvents.map((e) => [String(e.id), e.deviceCode])),
+    [effectiveEvents]
+  )
+  const [dssImport, setDssImport] = useState<
+    { phase: 'idle' } | { phase: 'busy' } | { phase: 'done'; matched: number; total: number } | { phase: 'error'; message: string }
+  >({ phase: 'idle' })
+  const runDssImport = async () => {
+    setDssImport({ phase: 'busy' })
+    try {
+      const { matched } = await importDssCapturesForTruck(truck.journeyId, truck.plate, nodes, deviceByEventId)
+      setDssImport({ phase: 'done', matched, total: nodes.filter((n) => Number.isFinite(n.ms)).length })
+    } catch (e) {
+      setDssImport({ phase: 'error', message: e instanceof Error ? e.message : String(e) })
+    }
+  }
 
   // ---- Edición del recorrido: ocultar cuadraditos (cámaras duplicadas o erróneas) ----
   const [editMode, setEditMode] = useState(false)
@@ -472,6 +603,27 @@ function TruckJourneyView({
                 Restaurar todo
               </button>
             ) : null}
+            {hasTimes ? (
+              <button
+                type="button"
+                onClick={runDssImport}
+                disabled={dssImport.phase === 'busy'}
+                title="Cruza este recorrido contra los .zip que DSS Client ya exportó (Vehicle Search → Export) y completa las fotos que coincidan por cámara y hora. El export en DSS sigue siendo manual."
+                className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-bold transition disabled:opacity-60 ${
+                  dssImport.phase === 'done' && dssImport.matched > 0
+                    ? 'border-sky-600 bg-sky-600 text-white'
+                    : 'border-sky-300 bg-sky-50 text-sky-700 hover:bg-sky-100'
+                }`}
+              >
+                {dssImport.phase === 'busy'
+                  ? '⏳ Buscando en DSS…'
+                  : dssImport.phase === 'done'
+                    ? `📷 ${dssImport.matched}/${dssImport.total} fotos importadas`
+                    : dssImport.phase === 'error'
+                      ? '⚠️ Reintentar importar de DSS'
+                      : '📷 Importar fotos de DSS'}
+              </button>
+            ) : null}
             <button
               type="button"
               onClick={() => setEditMode((v) => !v)}
@@ -496,6 +648,17 @@ function TruckJourneyView({
             </button>
           </div>
         </div>
+
+        {dssImport.phase === 'error' ? (
+          <p className="mb-3 rounded-lg bg-rose-50 px-3 py-2 text-[11.5px] text-rose-700">
+            No se pudo importar de DSS: {dssImport.message}
+          </p>
+        ) : dssImport.phase === 'done' && dssImport.matched === 0 ? (
+          <p className="mb-3 rounded-lg bg-amber-50 px-3 py-2 text-[11.5px] text-amber-800">
+            No se encontró ninguna foto para esta patente en los .zip exportados. Exportá el
+            recorrido de {truck.plate} desde DSS Client (Vehicle Search → Export) y reintentá.
+          </p>
+        ) : null}
 
         {loadingEvents && !hasTimes ? (
           <div className="flex items-center gap-3 py-8 text-sm text-slate-500">
@@ -927,7 +1090,7 @@ function CameraSlot({
   const [img, setImg] = useState<string | null>(null)
   useEffect(() => {
     let alive = true
-    void (async () => {
+    const load = async () => {
       const fromIdb = await idbGetImage(storageKey)
       if (!alive) return
       if (fromIdb) {
@@ -954,9 +1117,14 @@ function CameraSlot({
       } else {
         setImg(null)
       }
-    })()
+    }
+    void load()
+    // Se re-carga sola si algo (drag&drop en otra instancia, import de DSS) escribe esta misma
+    // clave — sin esto, importar de DSS no se vería hasta recargar la página.
+    const unsubscribe = onImageUpdated(storageKey, () => void load())
     return () => {
       alive = false
+      unsubscribe()
     }
   }, [storageKey])
 
