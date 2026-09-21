@@ -79,12 +79,14 @@ export function PlantMap(props: {
   site?: 'ricardone' | 'san_lorenzo'
   compact?: boolean
   showCircuitControls?: boolean
+  align?: 'left' | 'center'
   zones: ZoneState[]
   onOpenCameras: (group: PlantCameraGroup) => void
   onSelectSector?: (sectorCode: string) => void
+  onSelectZone?: (zoneId: string) => void
   selectedSector?: string | null
 }): JSX.Element {
-  const { layout, site = 'ricardone', compact = false, showCircuitControls = true, zones, onOpenCameras, onSelectSector, selectedSector } = props
+  const { layout, site = 'ricardone', compact = false, showCircuitControls = true, align = 'center', zones, onOpenCameras, onSelectSector, onSelectZone, selectedSector } = props
   const [hovered, setHovered] = useState<string | null>(null)
   const [hoveredZone, setHoveredZone] = useState<string | null>(null)
   const [circuit, setCircuit] = useState<string | null>(null)
@@ -177,10 +179,10 @@ export function PlantMap(props: {
         aspecto manda el alto, así los puntos nunca se corren.
       */}
       <div
-        className="relative mx-auto max-w-full overflow-hidden rounded-2xl bg-slate-900 shadow-[0_18px_45px_rgba(15,23,42,.18)]"
+        className={`relative max-w-full overflow-hidden rounded-2xl bg-slate-900 shadow-[0_18px_45px_rgba(15,23,42,.18)] ${align === 'left' ? 'mr-auto' : 'mx-auto'}`}
         style={{
           aspectRatio: compact ? '16 / 10' : `${base.width} / ${base.height}`,
-          width: compact ? '100%' : `min(100%, calc(62vh * ${base.width / base.height}))`,
+          width: compact ? '100%' : `min(100%, calc(68vh * ${base.width / base.height}))`,
         }}
       >
         <div
@@ -245,10 +247,11 @@ export function PlantMap(props: {
                 onMouseLeave={() => setHoveredZone((current) => current === zone.zoneId ? null : current)}
                 onFocus={() => setHoveredZone(zone.zoneId)}
                 onBlur={() => setHoveredZone((current) => current === zone.zoneId ? null : current)}
-                onClick={() => sectorCode && onSelectSector?.(sectorCode)}
+                onClick={() => { onSelectZone?.(zone.zoneId); if (sectorCode) onSelectSector?.(sectorCode) }}
                 onKeyDown={(event) => {
                   if (sectorCode && (event.key === 'Enter' || event.key === ' ')) {
                     event.preventDefault()
+                    onSelectZone?.(zone.zoneId)
                     onSelectSector?.(sectorCode)
                   }
                 }}
@@ -343,6 +346,7 @@ export function PlantMap(props: {
                 onFocus={() => setHovered(p.id)}
                 onBlur={() => setHovered((h) => (h === p.id ? null : h))}
                 onClick={() => {
+                  onSelectZone?.('')
                   onSelectSector?.(p.sectorCode)
                   onOpenCameras(p.cameraGroup)
                 }}
