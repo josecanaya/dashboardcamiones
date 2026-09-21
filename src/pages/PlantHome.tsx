@@ -144,6 +144,7 @@ export function PlantHome() {
 
   return (
     <section className="tf-ui tf-home space-y-2 pb-6">
+      <div className="tf-overview">
       {/* Encabezado operativo: identidad, estado y tiempo en una sola lectura. */}
       <header className="tf-home-hero">
         <div className="tf-home-hero__identity">
@@ -187,6 +188,7 @@ export function PlantHome() {
             hint={plant?.bottleneck ? `${plant.bottleneck.backlog} esperando · ${formatDrainMinutes(plant.bottleneck.drainMinutes) ?? 'sin tiempo estimado'}` : null}
           />
           <KpiCard label="Estadía P90" loading={loading} value={dwellP90} hint={dwellAvg ? `Media ${dwellAvg}` : null} />
+      </div>
       </div>
 
       {status === 'stale' ? (
