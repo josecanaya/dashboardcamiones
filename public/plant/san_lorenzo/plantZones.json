@@ -1,0 +1,170 @@
+{
+  "rev": "2026-09-21",
+  "zones": [
+    {
+      "zoneId": "Z0",
+      "label": "Playa OSL",
+      "sectorCode": "Playa_OSL",
+      "color": "#2563EB",
+      "polygonPercent": [
+        {
+          "xPercent": 12.9,
+          "yPercent": 13.7
+        },
+        {
+          "xPercent": 7.6,
+          "yPercent": 26.6
+        },
+        {
+          "xPercent": 27.1,
+          "yPercent": 37.1
+        },
+        {
+          "xPercent": 30.4,
+          "yPercent": 28
+        },
+        {
+          "xPercent": 32.1,
+          "yPercent": 21.7
+        }
+      ],
+      "cameras": []
+    },
+    {
+      "zoneId": "Z1",
+      "label": "Balanza-Volcable",
+      "sectorCode": "Espera_Volcable",
+      "color": "#16A34A",
+      "polygonPercent": [
+        {
+          "xPercent": 36.6,
+          "yPercent": 20.6
+        },
+        {
+          "xPercent": 60.9,
+          "yPercent": 31.3
+        },
+        {
+          "xPercent": 63.5,
+          "yPercent": 35.8
+        },
+        {
+          "xPercent": 64.3,
+          "yPercent": 45
+        },
+        {
+          "xPercent": 65.8,
+          "yPercent": 44.6
+        },
+        {
+          "xPercent": 64.8,
+          "yPercent": 33.8
+        },
+        {
+          "xPercent": 62.5,
+          "yPercent": 28.4
+        },
+        {
+          "xPercent": 36.9,
+          "yPercent": 18.6
+        }
+      ],
+      "cameras": []
+    }
+  ],
+  "points": [
+    {
+      "id": "S0",
+      "label": "Ingreso",
+      "sectorCode": "PUERTO_SAN_LORENZO_INGRESO_CAMIONES",
+      "type": "camera",
+      "tone": "acceso",
+      "xPercent": 5.9,
+      "yPercent": 25.8,
+      "cameraGroup": {
+        "label": "Ingreso",
+        "devices": [
+          "SLZIngCamFrente",
+          "SLZIngCamTrasera"
+        ]
+      }
+    },
+    {
+      "id": "S1",
+      "label": "Balanza ingreso",
+      "sectorCode": "PUERTO_SAN_LORENZO_BALANZA_INGRESO",
+      "type": "camera",
+      "tone": "acceso",
+      "xPercent": 32.4,
+      "yPercent": 19.5,
+      "cameraGroup": {
+        "label": "Balanza ingreso",
+        "devices": [
+          "SLZBalIngFte",
+          "SLZBalIngTras"
+        ]
+      }
+    },
+    {
+      "id": "S2",
+      "label": "Calada",
+      "sectorCode": "PUERTO_SAN_LORENZO_CALADA",
+      "type": "camera",
+      "tone": "acceso",
+      "xPercent": 20.7,
+      "yPercent": 13.7,
+      "cameraGroup": {
+        "label": "Calada",
+        "devices": [
+          "SLZCalCam"
+        ]
+      }
+    }
+  ],
+  "unplacedSteps": [
+    {
+      "code": "S0",
+      "label": "Ingreso"
+    },
+    {
+      "code": "S1",
+      "label": "Balanza ingreso"
+    },
+    {
+      "code": "S2",
+      "label": "Calada"
+    },
+    {
+      "code": "S3",
+      "label": "Enlace S1–S3"
+    },
+    {
+      "code": "S4",
+      "label": "Descarga / volcable"
+    },
+    {
+      "code": "S5",
+      "label": "Balanza salida"
+    },
+    {
+      "code": "S6",
+      "label": "Espera en Playa OSL"
+    },
+    {
+      "code": "S7",
+      "label": "Egreso"
+    },
+    {
+      "code": "S10",
+      "label": "Líquidos punto 1"
+    }
+  ],
+  "tramos": [],
+  "circuitCompositions": [],
+  "basePlan": {
+    "image": "san_lorenzo-plano.png",
+    "width": 1891,
+    "height": 831,
+    "note": "Vista cenital de la planta. Capa fija: no se redibuja ni se recorta."
+  }
+}

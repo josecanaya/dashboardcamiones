@@ -4,7 +4,6 @@ import './plantHome.css'
 import { LiveCameraPlayerModal } from '../components/plant/LiveCameraPlayerModal'
 import { PlantMap } from '../components/plant/PlantMap'
 import { SectorPanel } from '../components/plant/SectorPanel'
-import { NvaiPanel } from '../components/nvai/NvaiPanel'
 import type { PlantLayout } from '../data/plantZones.types'
 import type { ZoneState } from '../services/live/plantStateApi'
 import { formatDrainMinutes } from '../services/live/plantStateApi'
@@ -54,25 +53,26 @@ function Skeleton({ className }: { className?: string }) {
 }
 
 export function PlantHome() {
-  const { snapshot, status, lastUpdateMs } = useLivePlantState('ricardone')
+  const ricLive = useLivePlantState('ricardone')
+  const slLive = useLivePlantState('san_lorenzo')
+  const [scope, setScope] = useState<'ricardone' | 'san_lorenzo' | 'both'>('ricardone')
   const [view, setView] = useState<'plano' | 'colas' | 'actividad'>('plano')
   const [layoutError, setLayoutError] = useState(false)
-  const [layout, setLayout] = useState<PlantLayout | null>(null)
+  const [layouts, setLayouts] = useState<Record<'ricardone' | 'san_lorenzo', PlantLayout | null>>({ ricardone: null, san_lorenzo: null })
   const [selected, setSelected] = useState<string | null>(null)
+  const [selectedMapSite, setSelectedMapSite] = useState<'ricardone' | 'san_lorenzo'>('ricardone')
   const [selectedZoneId, setSelectedZoneId] = useState<string | null>(null)
   const [cameraGroup, setCameraGroup] = useState<{ label: string; devices: string[] } | null>(null)
   const [nowTick, setNowTick] = useState(() => Date.now())
 
   useEffect(() => {
     let cancelled = false
-    fetch('/plant/ricardone/plantZones.json')
-      .then((r) => r.json())
-      .then((data: PlantLayout) => {
-        if (!cancelled) setLayout(data)
-      })
-      .catch(() => {
-        if (!cancelled) { setLayout(null); setLayoutError(true) }
-      })
+    Promise.all((['ricardone', 'san_lorenzo'] as const).map(async site => {
+      const response = await fetch(`/plant/${site}/plantZones.json`)
+      if (!response.ok) throw new Error(String(response.status))
+      return [site, await response.json() as PlantLayout] as const
+    })).then(entries => { if (!cancelled) setLayouts(Object.fromEntries(entries) as Record<'ricardone' | 'san_lorenzo', PlantLayout>) })
+      .catch(() => { if (!cancelled) setLayoutError(true) })
     return () => {
       cancelled = true
     }
@@ -83,9 +83,24 @@ export function PlantHome() {
     return () => clearInterval(t)
   }, [])
 
-  const loading = snapshot == null && status === 'connecting'
-  const plant = snapshot?.plant
-  const sectors: SectorState[] = snapshot?.sectors ?? []
+  const selectedLive = scope === 'san_lorenzo' ? slLive : ricLive
+  const status = scope === 'both'
+    ? (ricLive.status === 'error' && slLive.status === 'error' ? 'error' : ricLive.status === 'live' && slLive.status === 'live' ? 'live' : ricLive.snapshot || slLive.snapshot ? 'stale' : 'connecting')
+    : selectedLive.status
+  const combinedUpdates = [ricLive.lastUpdateMs, slLive.lastUpdateMs].filter((value): value is number => value != null)
+  const lastUpdateMs = scope === 'both' ? (combinedUpdates.length ? Math.min(...combinedUpdates) : null) : selectedLive.lastUpdateMs
+  const loading = scope === 'both' ? !ricLive.snapshot && !slLive.snapshot : selectedLive.snapshot == null && status === 'connecting'
+  const selectedPlant = selectedLive.snapshot?.plant
+  const plant = scope === 'both' ? {
+    trucksInPlant: (ricLive.snapshot?.plant.trucksInPlant ?? 0) + (slLive.snapshot?.plant.trucksInPlant ?? 0),
+    inflow60: (ricLive.snapshot?.plant.inflow60 ?? 0) + (slLive.snapshot?.plant.inflow60 ?? 0),
+    outflow60: (ricLive.snapshot?.plant.outflow60 ?? 0) + (slLive.snapshot?.plant.outflow60 ?? 0),
+    balance60: (ricLive.snapshot?.plant.balance60 ?? 0) + (slLive.snapshot?.plant.balance60 ?? 0),
+    dwellP90Min: Math.max(ricLive.snapshot?.plant.dwellP90Min ?? 0, slLive.snapshot?.plant.dwellP90Min ?? 0),
+    dwellAvgMin: Math.max(ricLive.snapshot?.plant.dwellAvgMin ?? 0, slLive.snapshot?.plant.dwellAvgMin ?? 0),
+    bottleneck: [ricLive.snapshot?.plant.bottleneck, slLive.snapshot?.plant.bottleneck].filter(Boolean).sort((a, b) => (b?.drainMinutes ?? 0) - (a?.drainMinutes ?? 0))[0] ?? null,
+  } : selectedPlant
+  const sectors: SectorState[] = scope === 'both' ? [...(ricLive.snapshot?.sectors ?? []), ...(slLive.snapshot?.sectors ?? [])] : selectedLive.snapshot?.sectors ?? []
   const dwellP90 = formatMinutes(plant?.dwellP90Min ?? null)
   const dwellAvg = formatMinutes(plant?.dwellAvgMin ?? null)
 
@@ -101,7 +116,9 @@ export function PlantHome() {
     month: 'short',
   })
 
-  const zones: ZoneState[] = snapshot?.zones ?? []
+  const zones: ZoneState[] = scope === 'both' ? [...(ricLive.snapshot?.zones ?? []), ...(slLive.snapshot?.zones ?? [])] : selectedLive.snapshot?.zones ?? []
+  const layout = layouts[selectedMapSite]
+  const visibleSites: ('ricardone' | 'san_lorenzo')[] = scope === 'both' ? ['ricardone', 'san_lorenzo'] : [scope]
   const selectedZone = layout?.zones.find((z) => z.zoneId === selectedZoneId)
   /** Una zona sin `cameraGroups` se comporta como un único grupo con todas sus cámaras. */
   const cameraGroups =
@@ -126,111 +143,85 @@ export function PlantHome() {
   }
 
   return (
-    <section className="tf-ui tf-home space-y-4 pb-4">
-      {/* Barra de estado del home */}
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 shadow-sm">
-        <span className="text-sm font-semibold text-slate-800">En vivo</span>
-        <span className="h-5 w-px bg-slate-200" />
-        <span className="inline-flex items-center gap-2 text-xs text-slate-500">
-          <span
-            className="inline-block h-2 w-2 rounded-full"
-            style={{
-              background:
-                status === 'live' ? '#22C55E' : status === 'stale' ? '#F59E0B' : status === 'error' ? '#DC2626' : '#94A3B8',
-            }}
-          />
-          {status === 'live'
-            ? 'Planta en vivo'
-            : status === 'stale'
-              ? 'Dato demorado'
-              : status === 'error'
-                ? 'Sin conexión'
-                : 'Conectando…'}
-        </span>
-        {status === 'stale' ? (
-          <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[11px] font-medium text-amber-800">
-            Última actualización {formatAge(lastUpdateMs)}
-          </span>
-        ) : null}
-        <div className="flex-1" />
-        <span className="font-mono text-base font-semibold tabular-nums text-slate-800">{clockTime}</span>
-        <span className="text-[11.5px] text-slate-400">{clockDate}</span>
-      </div>
-
-      {/* Título + KPI */}
-      <div className="flex flex-wrap items-end gap-4">
-        <div>
+    <section className="tf-ui tf-home space-y-4 pb-6">
+      {/* Encabezado operativo: identidad, estado y tiempo en una sola lectura. */}
+      <header className="tf-home-hero">
+        <div className="tf-home-hero__identity">
+          <p className="tf-home-eyebrow">Centro de control operativo</p>
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-[34px] font-extrabold tracking-tight text-slate-900">Ricardone</h1>
-            <span
-              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
-                status === 'live'
-                  ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
-                  : status === 'stale'
-                    ? 'border-amber-200 bg-amber-50 text-amber-800'
-                    : 'border-slate-200 bg-slate-50 text-slate-500'
-              }`}
-            >
-              {status === 'live' ? 'En vivo' : status === 'stale' ? 'Demorado' : status === 'error' ? 'Error' : 'Conectando'}
+            <h1>{scope === 'ricardone' ? 'Ricardone' : scope === 'san_lorenzo' ? 'San Lorenzo' : 'Vista combinada'}</h1>
+            <span className={`tf-live-badge tf-live-badge--${status}`}>
+              <span
+                className="inline-block h-2 w-2 rounded-full"
+                style={{
+                  background:
+                    status === 'live' ? '#16A34A' : status === 'stale' ? '#D97706' : status === 'error' ? '#DC2626' : '#94A3B8',
+                }}
+              />
+              {status === 'live' ? 'Operando en vivo' : status === 'stale' ? 'Datos demorados' : status === 'error' ? 'Sin conexión' : 'Conectando…'}
             </span>
           </div>
-          <p className="mt-1 text-[12.5px] text-slate-400">
-            Operación en tiempo real
-            {lastUpdateMs != null ? ` · datos ${formatAge(lastUpdateMs)}` : ''}
+          <p className="tf-home-subtitle">
+            Estado de planta, colas y evidencia de cámaras
+            {lastUpdateMs != null ? ` · actualizado ${formatAge(lastUpdateMs)}` : ''}
           </p>
         </div>
-        <div className="flex-1" />
-        <div className="flex flex-wrap gap-3">
-          <KpiCard
-            label="Camiones en planta"
-            loading={loading}
-            value={plant ? String(plant.trucksInPlant) : null}
-          />
-          <KpiCard
-            label="Ingresos / h"
-            loading={loading}
-            value={plant ? String(plant.inflow60) : null}
-          />
-          <KpiCard
-            label="Egresos / h"
-            loading={loading}
-            value={plant ? String(plant.outflow60) : null}
-          />
+        <div className="tf-site-switcher" role="group" aria-label="Planta visible">
+          {([['ricardone', 'Ricardone'], ['san_lorenzo', 'San Lorenzo'], ['both', 'Ambas']] as const).map(([id, label]) => <button key={id} type="button" aria-pressed={scope === id} onClick={() => { setScope(id); if (id !== 'both') setSelectedMapSite(id); setSelected(null); setSelectedZoneId(null) }} className={scope === id ? 'is-active' : ''}>{label}</button>)}
+        </div>
+        <div className="tf-home-clock" aria-label={`Hora local ${clockTime}, ${clockDate}`}>
+          <span>{clockTime}</span>
+          <small>{clockDate}</small>
+        </div>
+      </header>
+
+      {/* Resumen de decisión */}
+      <div className="tf-kpi-grid">
+          <KpiCard label="Camiones en planta" loading={loading} value={plant ? String(plant.trucksInPlant) : null} />
+          <KpiCard label="Ingresos / h" loading={loading} value={plant ? String(plant.inflow60) : null} />
+          <KpiCard label="Egresos / h" loading={loading} value={plant ? String(plant.outflow60) : null} />
           <KpiCard
             label="Cuello de botella"
             loading={loading}
-            value={plant?.bottleneck ? plant.bottleneck.label : plant ? 'sin cola' : null}
-            hint={
-              plant?.bottleneck
-                ? `${plant.bottleneck.backlog} esperando · ${formatDrainMinutes(plant.bottleneck.drainMinutes) ?? ''}`
-                : null
-            }
+            value={plant?.bottleneck ? plant.bottleneck.label : plant ? 'Sin cola' : null}
+            hint={plant?.bottleneck ? `${plant.bottleneck.backlog} esperando · ${formatDrainMinutes(plant.bottleneck.drainMinutes) ?? 'sin tiempo estimado'}` : null}
           />
-          <KpiCard
-            label="Estadía P90"
-            loading={loading}
-            value={dwellP90}
-            hint={dwellAvg ? `media ${dwellAvg}` : null}
-          />
-        </div>
+          <KpiCard label="Estadía P90" loading={loading} value={dwellP90} hint={dwellAvg ? `Media ${dwellAvg}` : null} />
       </div>
 
-      {status === 'error' ? <p className="ui-message ui-message--error" role="alert">Sin conexión con el estado de planta. {snapshot ? 'Se conserva la última lectura recibida.' : 'Sin dato disponible.'} La reconexión es automática.</p> : null}
-      <nav className="ui-section-nav" aria-label="Vistas de planta">
+      {status === 'stale' ? (
+        <div className="tf-freshness-warning" role="status">
+          <span className="inline-flex items-center gap-2">
+          <span
+            className="inline-block h-2 w-2 rounded-full"
+            style={{ background: '#D97706' }}
+          />
+          La lectura puede no reflejar la operación actual.
+        </span>
+        </div>
+      ) : null}
+
+      {status === 'error' ? <p className="ui-message ui-message--error" role="alert">Sin conexión con el estado de planta. {selectedLive.snapshot ? 'Se conserva la última lectura recibida.' : 'Sin dato disponible.'} La reconexión es automática.</p> : null}
+      <nav className="ui-section-nav tf-view-switcher" aria-label="Vistas de planta">
         {([{ id: 'plano', label: 'Plano y cámaras' }, { id: 'colas', label: 'Colas por zona' }, { id: 'actividad', label: 'Actividad y grupos de cámaras' }] as const).map(item => (
           <Button key={item.id} primary={view === item.id} aria-pressed={view === item.id} onClick={() => setView(item.id)}>{item.label}</Button>
         ))}
       </nav>
       {/* Mapa + NVAi: se conserva montado al cambiar de vista. */}
       <div hidden={view !== 'plano'}>
-      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <div>
-          {layout ? (
+      <div className={scope === 'both' ? 'grid gap-3 2xl:grid-cols-2' : ''}>
+        {visibleSites.map(site => {
+          const siteLayout = layouts[site]
+          const siteLive = site === 'ricardone' ? ricLive : slLive
+          return <div key={site} className="min-w-0">
+          {scope === 'both' ? <div className="tf-map-site-label">{site === 'ricardone' ? 'Ricardone' : 'San Lorenzo'}</div> : null}
+          {siteLayout ? (
             <PlantMap
-              layout={layout}
-              zones={zones}
+              layout={siteLayout}
+              site={site}
+              zones={siteLive.snapshot?.zones ?? []}
               selectedSector={selected}
-              onSelectSector={setSelected}
+              onSelectSector={(sectorCode) => { setSelectedMapSite(site); setSelected(sectorCode) }}
               onOpenCameras={(group) => setCameraGroup(group)}
             />
           ) : (
@@ -238,15 +229,7 @@ export function PlantHome() {
               {layoutError ? 'Plano no disponible. Recargá la página para volver a intentar.' : 'Cargando plano…'}
             </div>
           )}
-        </div>
-
-        <div className="flex h-[560px] min-h-[320px] flex-col overflow-hidden rounded-[14px] border border-slate-200 bg-white shadow-sm lg:sticky lg:top-4">
-          <NvaiPanel
-            embedded
-            site="ricardone"
-            focus={selected ? { sector: selected } : null}
-          />
-        </div>
+        </div>})}
       </div>
 
       </div>

@@ -76,12 +76,13 @@ function statePerPoint(points: PlantPoint[], zones: ZoneState[]): Map<string, Po
 
 export function PlantMap(props: {
   layout: PlantLayout
+  site?: 'ricardone' | 'san_lorenzo'
   zones: ZoneState[]
   onOpenCameras: (group: PlantCameraGroup) => void
   onSelectSector?: (sectorCode: string) => void
   selectedSector?: string | null
 }): JSX.Element {
-  const { layout, zones, onOpenCameras, onSelectSector, selectedSector } = props
+  const { layout, site = 'ricardone', zones, onOpenCameras, onSelectSector, selectedSector } = props
   const [hovered, setHovered] = useState<string | null>(null)
   const [hoveredZone, setHoveredZone] = useState<string | null>(null)
   const [circuit, setCircuit] = useState<string | null>(null)
@@ -174,12 +175,15 @@ export function PlantMap(props: {
         aspecto manda el alto, así los puntos nunca se corren.
       */}
       <div
-        className="relative mx-auto w-full max-w-[600px]"
-        style={{ aspectRatio: `${base.width} / ${base.height}` }}
+        className="relative mx-auto max-w-full"
+        style={{
+          aspectRatio: `${base.width} / ${base.height}`,
+          width: `min(100%, calc(48vh * ${base.width / base.height}))`,
+        }}
       >
         <img
-          src={`/plant/ricardone/${base.image}`}
-          alt="Vista cenital de la planta de Ricardone"
+          src={`/plant/${site}/${base.image}`}
+          alt={`Vista cenital de la planta de ${site === 'ricardone' ? 'Ricardone' : 'San Lorenzo'}`}
           draggable={false}
           className="absolute inset-0 h-full w-full select-none"
         />
@@ -219,7 +223,8 @@ export function PlantMap(props: {
                 fill={zone.color ?? '#2563EB'}
                 fillOpacity={hoveredNow || selected ? 0.24 : 0.1}
                 stroke={selected || hoveredNow ? status.ring : (zone.color ?? '#2563EB')}
-                strokeWidth={selected || hoveredNow ? 5 : 2.5}
+                strokeWidth={selected || hoveredNow ? 2.5 : 1.25}
+                strokeOpacity={selected || hoveredNow ? 0.95 : 0.72}
                 strokeLinejoin="round"
                 vectorEffect="non-scaling-stroke"
                 className={sectorCode ? 'pointer-events-auto cursor-pointer' : 'pointer-events-auto'}
@@ -332,28 +337,28 @@ export function PlantMap(props: {
                   onOpenCameras(p.cameraGroup)
                 }}
                 aria-label={`${p.id} ${p.label}. ${TYPE_LABEL[p.type]}. Estado ${status.label}. Abrir ${p.cameraGroup.devices.length} cámaras`}
-                className="relative grid h-[18px] w-[18px] place-items-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-1"
+                className="relative grid h-10 w-10 place-items-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-1"
               >
                 {/* aro de estado */}
                 <span
-                  className="absolute inset-0 rounded-full"
+                  className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full"
                   style={{
-                    border: `2px solid ${status.ring}`,
+                    border: `3px solid ${status.ring}`,
                     background: '#FFFFFF',
-                    opacity: state.status === 'no_data' ? 0.55 : 0.95,
+                    opacity: state.status === 'no_data' ? 0.7 : 0.98,
                     boxShadow: isHovered || isSelected ? `0 0 0 3px ${tone.color}33` : '0 1px 2px rgba(15,23,42,.25)',
                   }}
                 />
                 {state.status === 'critical' ? (
                   <span
-                    className="absolute inset-0 animate-ping rounded-full"
+                    className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full"
                     style={{ border: `2px solid ${STATUS.critical.ring}` }}
                   />
                 ) : null}
                 {/* identidad del punto */}
                 <span
                   className="relative block rounded-full"
-                  style={{ width: 8, height: 8, background: tone.color }}
+                  style={{ width: 14, height: 14, background: tone.color }}
                 />
                 {/* orden dentro del circuito activo */}
                 {order >= 0 ? (
