@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import type {
   PlantBasePlan,
+  PlantCircuitComposition,
   PlantPoint,
   PlantPointTone,
   PlantPointType,
@@ -60,17 +61,22 @@ function pointInPolygon(point: PercentPoint, vertices: PercentPoint[]): boolean 
   return inside
 }
 
-export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones, initialTramos, onSave }: {
+export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones, initialTramos, initialCircuitCompositions, onSave }: {
   site: string
   basePlan: PlantBasePlan
   initialPoints: PlantPoint[]
   initialZones: PlantZoneShape[]
   initialTramos: PlantTramo[]
-  onSave: (points: PlantPoint[], zones: PlantZoneShape[], tramos: PlantTramo[]) => Promise<void>
+  initialCircuitCompositions: PlantCircuitComposition[]
+  onSave: (points: PlantPoint[], zones: PlantZoneShape[], tramos: PlantTramo[], circuitCompositions: PlantCircuitComposition[]) => Promise<void>
 }) {
   const [points, setPoints] = useState(initialPoints)
   const [zones, setZones] = useState(initialZones)
   const [tramos, setTramos] = useState(initialTramos)
+  const [circuitCompositions, setCircuitCompositions] = useState(initialCircuitCompositions)
+  const [newTramoFrom, setNewTramoFrom] = useState('')
+  const [newTramoTo, setNewTramoTo] = useState('')
+  const [tramoToAdd, setTramoToAdd] = useState('')
   const [tool, setTool] = useState<Tool>('select')
   const [selectedPointId, setSelectedPointId] = useState<string | null>(null)
   const [selectedZoneId, setSelectedZoneId] = useState<string | null>(initialZones[0]?.zoneId ?? null)
@@ -92,8 +98,14 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
   const selectedPoint = draftPoint ?? points.find((p) => p.id === selectedPointId) ?? null
   const selectedZone = zones.find((z) => z.zoneId === selectedZoneId) ?? null
   const routes = useMemo(() => getRicardoneCircuitRoutes(points.map((p) => p.id)), [points])
-  const activeRoute = routes.find((route) => route.code === circuit) ?? null
+  const selectedCatalogRoute = routes.find((route) => route.code === circuit) ?? null
   const selectedTramo = tramos.find((tramo) => tramo.id === selectedTramoId) ?? null
+  const activeComposition = circuitCompositions.find((item) => item.circuitCode === circuit)
+  const compositionRefs = activeComposition?.tramos ?? (selectedCatalogRoute?.steps.slice(0, -1).flatMap((from, index) => {
+    const id = plantTramoId(from, selectedCatalogRoute.steps[index + 1]!)
+    const tramo = tramos.find((item) => item.id === id)
+    return tramo ? [{ tramoId: id, reverse: tramo.fromPointId !== from }] : []
+  }) ?? [])
   const isNewPoint = draftPoint != null
   const pointIdClash = Boolean(selectedPoint?.id.trim())
     && points.some((p) => p.id === selectedPoint!.id && (isNewPoint || p.id !== selectedPointId))
@@ -180,6 +192,19 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
   const finishDrawingTramo = () => {
     setDrawingTramoOriginal(undefined); markDirty()
   }
+  const createTramo = () => {
+    if (!newTramoFrom || !newTramoTo || newTramoFrom === newTramoTo) return
+    const id = plantTramoId(newTramoFrom, newTramoTo)
+    if (!tramos.some((item) => item.id === id)) setTramos((current) => [...current, { id, fromPointId: newTramoFrom, toPointId: newTramoTo, viaPercent: [] }])
+    selectTramo(newTramoFrom, newTramoTo); setNewTramoFrom(''); setNewTramoTo(''); markDirty()
+  }
+  const updateComposition = (next: PlantCircuitComposition['tramos']) => {
+    if (!circuit) return
+    setCircuitCompositions((current) => current.some((item) => item.circuitCode === circuit)
+      ? current.map((item) => item.circuitCode === circuit ? { ...item, tramos: next } : item)
+      : [...current, { circuitCode: circuit, tramos: next }])
+    markDirty()
+  }
 
   const onCanvasClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if ((event.target as Element).closest('[data-map-control]')) return
@@ -206,7 +231,7 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
   }
   const save = async () => {
     setSaveState('busy')
-    try { await onSave(points, zones, tramos); setSaveState('done'); setDirty(false) }
+    try { await onSave(points, zones, tramos, circuitCompositions); setSaveState('done'); setDirty(false) }
     catch (error) { setSaveState('error'); setSaveError(error instanceof Error ? error.message : String(error)) }
   }
 
@@ -287,13 +312,13 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
                   {selected && tool === 'select' ? vertices.map((vertex, index) => <circle key={index} cx={vertex.xPercent} cy={vertex.yPercent} r={0.9} fill="white" stroke={zone.color ?? '#2563EB'} strokeWidth={0.45} vectorEffect="non-scaling-stroke" className="cursor-move" onPointerDown={(e) => { e.stopPropagation(); e.currentTarget.setPointerCapture(e.pointerId); setDraggingVertex(index) }} />) : null}
                 </g>
               })}
-              {activeRoute ? activeRoute.steps.slice(0, -1).map((fromId, index) => {
-                const toId = activeRoute.steps[index + 1]!, from = points.find((p) => p.id === fromId), to = points.find((p) => p.id === toId)
+              {tool === 'tramo' ? tramos.map((tramo) => {
+                const from = points.find((p) => p.id === tramo.fromPointId), to = points.find((p) => p.id === tramo.toPointId)
                 if (!from || !to) return null
-                const id = plantTramoId(fromId, toId), path = tramoPath(from, to, tramos)
-                return <g key={`${fromId}-${toId}`} data-map-control className="cursor-pointer" onClick={(e) => { e.stopPropagation(); selectTramo(fromId, toId) }}>
+                const path = tramoPath(from, to, tramos)
+                return <g key={tramo.id} data-map-control className="cursor-pointer" onClick={(e) => { e.stopPropagation(); selectTramo(tramo.fromPointId, tramo.toPointId) }}>
                   <polyline points={path.map((p) => `${p.xPercent},${p.yPercent}`).join(' ')} fill="none" stroke="white" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
-                  <polyline points={path.map((p) => `${p.xPercent},${p.yPercent}`).join(' ')} fill="none" stroke={selectedTramoId === id ? '#0369a1' : '#0ea5e9'} strokeWidth={selectedTramoId === id ? 0.9 : 0.55} strokeDasharray="2 1.4" markerMid="url(#editorTramoArrow)" markerEnd="url(#editorTramoArrow)" vectorEffect="non-scaling-stroke" />
+                  <polyline points={path.map((p) => `${p.xPercent},${p.yPercent}`).join(' ')} fill="none" stroke={selectedTramoId === tramo.id ? '#0369a1' : '#0ea5e9'} strokeWidth={selectedTramoId === tramo.id ? 0.9 : 0.55} strokeDasharray="2 1.4" markerMid="url(#editorTramoArrow)" markerEnd="url(#editorTramoArrow)" vectorEffect="non-scaling-stroke" />
                 </g>
               }) : null}
               {selectedTramo ? selectedTramo.viaPercent.map((vertex, index) => <circle key={index} data-map-control cx={vertex.xPercent} cy={vertex.yPercent} r={1.05} fill="white" stroke="#0369a1" strokeWidth={0.5} vectorEffect="non-scaling-stroke" className="cursor-move" onPointerDown={(e) => { e.stopPropagation(); e.currentTarget.setPointerCapture(e.pointerId); setDraggingTramoVertex(index) }} />) : null}
@@ -311,10 +336,19 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
       <aside className="space-y-3">
         <section className="ui-panel p-4">
           <h2 className="text-base font-bold">Tramos físicos</h2>
-          <p className="mt-1 text-xs text-slate-500">Cada tramo se dibuja una sola vez. Los circuitos se componen reutilizando estos mismos tramos, incluso en sentido contrario.</p>
-          <label className="mt-3 block text-xs font-medium text-slate-600">Circuito<select className="ui-input mt-1 w-full" value={circuit} onChange={(e) => { setCircuit(e.target.value); setSelectedTramoId(null); setTool('tramo') }}><option value="">Elegir circuito…</option>{routes.map((route) => <option key={route.code} value={route.code}>{route.code} · {route.label}</option>)}</select></label>
-          {activeRoute ? <div className="mt-3 max-h-40 space-y-1 overflow-auto">{activeRoute.steps.slice(0, -1).map((from, index) => { const to = activeRoute.steps[index + 1]!, id = plantTramoId(from, to); return <button key={`${from}-${to}`} type="button" onClick={() => selectTramo(from, to)} className={`flex w-full items-center justify-between rounded-lg border px-2.5 py-2 text-left text-xs ${selectedTramoId === id ? 'border-blue-400 bg-blue-50' : 'border-slate-200'}`}><span className="font-mono">{from} ↔ {to}</span><span>{tramos.find((item) => item.id === id)?.viaPercent.length ?? 0} quiebres</span></button> })}</div> : null}
-          {selectedTramoEnds ? <div className="mt-3 flex flex-wrap gap-2 border-t border-slate-200 pt-3"><span className="w-full text-xs text-slate-600">El tramo une {selectedTramoEnds.from} con {selectedTramoEnds.to}. Sus extremos quedan anclados a esos puntos.</span>{drawingTramoOriginal === undefined ? <button type="button" className="ui-button ui-button--primary" onClick={startDrawingTramo}>{selectedTramo ? 'Redibujar tramo' : 'Dibujar tramo'}</button> : null}{selectedTramo && drawingTramoOriginal === undefined ? <button type="button" className="ui-button" onClick={() => { setTramos((current) => current.filter((item) => item.id !== selectedTramo.id)); markDirty() }}>Volver a línea recta</button> : null}</div> : null}
+          <p className="mt-1 text-xs text-slate-500">Crealos primero, sin depender de ningún circuito.</p>
+          <div className="mt-3 grid grid-cols-2 gap-2"><select aria-label="Inicio del tramo" className="ui-input" value={newTramoFrom} onChange={(e) => setNewTramoFrom(e.target.value)}><option value="">Desde…</option>{points.map((point) => <option key={point.id} value={point.id}>{point.id}</option>)}</select><select aria-label="Fin del tramo" className="ui-input" value={newTramoTo} onChange={(e) => setNewTramoTo(e.target.value)}><option value="">Hasta…</option>{points.map((point) => <option key={point.id} value={point.id}>{point.id}</option>)}</select></div>
+          <button type="button" className="ui-button mt-2" disabled={!newTramoFrom || !newTramoTo || newTramoFrom === newTramoTo} onClick={createTramo}>Crear tramo</button>
+          <div className="mt-3 max-h-40 space-y-1 overflow-auto">{tramos.map((tramo) => <button key={tramo.id} type="button" onClick={() => selectTramo(tramo.fromPointId, tramo.toPointId)} className={`flex w-full items-center justify-between rounded-lg border px-2.5 py-2 text-left text-xs ${selectedTramoId === tramo.id ? 'border-blue-400 bg-blue-50' : 'border-slate-200'}`}><span className="font-mono">{tramo.fromPointId} ↔ {tramo.toPointId}</span><span>{tramo.viaPercent.length} quiebres</span></button>)}</div>
+          {selectedTramoEnds ? <div className="mt-3 flex flex-wrap gap-2 border-t border-slate-200 pt-3"><span className="w-full text-xs text-slate-600">Une {selectedTramoEnds.from} con {selectedTramoEnds.to}.</span>{drawingTramoOriginal === undefined ? <button type="button" className="ui-button ui-button--primary" onClick={startDrawingTramo}>{selectedTramo?.viaPercent.length ? 'Redibujar tramo' : 'Dibujar tramo'}</button> : null}{selectedTramo && drawingTramoOriginal === undefined ? <button type="button" className="ui-button text-red-700" onClick={() => { setTramos((current) => current.filter((item) => item.id !== selectedTramo.id)); setCircuitCompositions((current) => current.map((composition) => ({ ...composition, tramos: composition.tramos.filter((ref) => ref.tramoId !== selectedTramo.id) }))); setSelectedTramoId(null); markDirty() }}>Eliminar tramo</button> : null}</div> : null}
+        </section>
+        <section className="ui-panel p-4">
+          <h2 className="text-base font-bold">Composición de circuitos</h2>
+          <p className="mt-1 text-xs text-slate-500">Agregá y ordená los tramos que forman cada circuito.</p>
+          <label className="mt-3 block text-xs font-medium text-slate-600">Circuito<select className="ui-input mt-1 w-full" value={circuit} onChange={(e) => { setCircuit(e.target.value); setTramoToAdd(''); setTool('tramo') }}><option value="">Elegir circuito…</option>{routes.map((route) => <option key={route.code} value={route.code}>{route.code} · {route.label}</option>)}</select></label>
+          {circuit ? <><div className="mt-3 flex gap-2"><select aria-label="Tramo para agregar" className="ui-input min-w-0 flex-1" value={tramoToAdd} onChange={(e) => setTramoToAdd(e.target.value)}><option value="">Elegir tramo…</option>{tramos.map((tramo) => <option key={tramo.id} value={tramo.id}>{tramo.fromPointId} ↔ {tramo.toPointId}</option>)}</select><button type="button" className="ui-button" disabled={!tramoToAdd} onClick={() => { updateComposition([...compositionRefs, { tramoId: tramoToAdd }]); setTramoToAdd('') }}>Agregar</button></div>
+          {!activeComposition && compositionRefs.length ? <p className="mt-2 text-xs text-amber-700">Composición inicial tomada del catálogo. La primera edición la guarda como composición visual propia.</p> : null}
+          <div className="mt-3 space-y-1">{compositionRefs.map((ref, index, all) => { const tramo = tramos.find((item) => item.id === ref.tramoId); if (!tramo) return null; const label = ref.reverse ? `${tramo.toPointId} → ${tramo.fromPointId}` : `${tramo.fromPointId} → ${tramo.toPointId}`; return <div key={`${ref.tramoId}-${index}`} className="flex items-center gap-1 rounded-lg border border-slate-200 p-1.5 text-xs"><span className="min-w-0 flex-1 truncate font-mono">{index + 1}. {label}</span><button type="button" className="ui-button" onClick={() => updateComposition(all.map((item, i) => i === index ? { ...item, reverse: !item.reverse } : item))}>Invertir</button><button type="button" className="ui-button" disabled={index === 0} onClick={() => { const next = [...all]; [next[index - 1], next[index]] = [next[index]!, next[index - 1]!]; updateComposition(next) }}>↑</button><button type="button" className="ui-button" disabled={index === all.length - 1} onClick={() => { const next = [...all]; [next[index], next[index + 1]] = [next[index + 1]!, next[index]!]; updateComposition(next) }}>↓</button><button type="button" className="ui-button text-red-700" onClick={() => updateComposition(all.filter((_item, i) => i !== index))}>Quitar</button></div> })}</div></> : null}
         </section>
         <section className="ui-panel p-4">
           <div className="mb-3 flex items-center justify-between gap-2"><h2 className="text-base font-bold">Sectores</h2><button type="button" className="ui-button" onClick={addZone}>Nuevo</button></div>

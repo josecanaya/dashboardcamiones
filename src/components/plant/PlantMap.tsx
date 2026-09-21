@@ -94,7 +94,16 @@ export function PlantMap(props: {
   const byId = useMemo(() => new Map(points.map((p) => [p.id, p])), [points])
   const routes = useMemo(() => getRicardoneCircuitRoutes(points.map((p) => p.id)), [points])
   const active: PlantCircuitRoute | null = routes.find((r) => r.code === circuit) ?? null
-  const inCircuit = useMemo(() => new Set(active?.steps ?? []), [active])
+  const activeComposition = layout.circuitCompositions?.find((item) => item.circuitCode === circuit)
+  const activeSegments = useMemo(() => {
+    if (activeComposition) return activeComposition.tramos.flatMap((ref, index) => {
+      const tramo = (layout.tramos ?? []).find((item) => item.id === ref.tramoId)
+      if (!tramo) return []
+      return [{ key: `${ref.tramoId}-${index}`, from: ref.reverse ? tramo.toPointId : tramo.fromPointId, to: ref.reverse ? tramo.fromPointId : tramo.toPointId }]
+    })
+    return active ? active.steps.slice(0, -1).map((from, index) => ({ key: `${from}-${active.steps[index + 1]}-${index}`, from, to: active.steps[index + 1]! })) : []
+  }, [active, activeComposition, layout.tramos])
+  const inCircuit = useMemo(() => new Set(activeSegments.flatMap((segment) => [segment.from, segment.to])), [activeSegments])
   const pointState = useMemo(() => statePerPoint(points, zones), [points, zones])
   const liveZoneById = useMemo(() => new Map(zones.map((zone) => [zone.id, zone])), [zones])
 
@@ -152,7 +161,7 @@ export function PlantMap(props: {
         <button type="button" onClick={() => setShowPoints((value) => !value)} className={`rounded-full border px-2.5 py-1 text-[11px] font-medium ${showPoints ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500'}`} aria-pressed={showPoints}>Cámaras</button>
       </div>
 
-      {active?.missingSteps.length ? (
+      {!activeComposition && active?.missingSteps.length ? (
         <p className="border-b border-amber-100 bg-amber-50 px-3 py-1.5 text-[11px] text-amber-800">
           El recorrido se corta en {active.missingSteps.join(' y ')}: ese paso todavía no tiene
           posición confirmada en el plano, y no se dibuja una inventada.
@@ -232,15 +241,14 @@ export function PlantMap(props: {
             )
           }) : null}
           {active
-            ? active.steps.slice(0, -1).map((from, i) => {
-                const to = active.steps[i + 1]
+            ? activeSegments.map(({ key, from, to }) => {
                 const a = byId.get(from)
                 const b = byId.get(to)
                 if (!a || !b) return null
                 const routePoints = tramoPath(a, b, layout.tramos ?? []).map((point) =>
                   `${(point.xPercent / 100) * base.width},${(point.yPercent / 100) * base.height}`).join(' ')
                 return (
-                  <g key={`${from}-${to}-${i}`}>
+                  <g key={key}>
                     <polyline
                       points={routePoints}
                       fill="none"
@@ -298,7 +306,8 @@ export function PlantMap(props: {
           const dimmed = active != null && !inCircuit.has(p.id)
           const isHovered = hovered === p.id
           const isSelected = selectedSector === p.sectorCode
-          const order = active ? active.steps.indexOf(p.id) : -1
+          const orderedPoints = activeSegments.flatMap((segment, index) => index === 0 ? [segment.from, segment.to] : [segment.to])
+          const order = active ? orderedPoints.indexOf(p.id) : -1
           return (
             <div
               key={p.id}

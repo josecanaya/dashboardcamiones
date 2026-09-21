@@ -89,6 +89,12 @@ export type PlantTramo = {
   viaPercent: { xPercent: number; yPercent: number }[]
 }
 
+export type PlantCircuitTramoRef = { tramoId: string; reverse?: boolean }
+export type PlantCircuitComposition = {
+  circuitCode: string
+  tramos: PlantCircuitTramoRef[]
+}
+
 export type PlantLayout = {
   rev: string
   viewBox: [number, number, number, number]
@@ -98,6 +104,8 @@ export type PlantLayout = {
   basePlan?: PlantBasePlan
   points?: PlantPoint[]
   tramos?: PlantTramo[]
+  /** Composición visual editable; no altera el catálogo ni la clasificación ETL. */
+  circuitCompositions?: PlantCircuitComposition[]
   /** Cámaras del catálogo que todavía no tienen posición confirmada en el plano. */
   unplacedCameras?: { device: string; sectorCode: string; reason: string }[]
   /** Pasos que aparecen en las secuencias de circuito y todavía no tienen posición. */

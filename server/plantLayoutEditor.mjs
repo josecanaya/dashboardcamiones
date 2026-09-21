@@ -57,7 +57,7 @@ export function createPlantLayoutEditorRouter({ publicDir }) {
   function savePoints(req, res) {
     const { site } = req.params
     if (!isValidSite(site)) return res.status(400).json({ error: 'sitio inválido' })
-    const { points, zones, tramos } = req.body ?? {}
+    const { points, zones, tramos, circuitCompositions } = req.body ?? {}
     if (!Array.isArray(points)) return res.status(400).json({ error: 'falta `points` (array)' })
     for (const p of points) {
       if (!p || typeof p.id !== 'string' || !p.id.trim()) {
@@ -116,6 +116,14 @@ export function createPlantLayoutEditorRouter({ publicDir }) {
         }
       }
     }
+    if (circuitCompositions != null && !Array.isArray(circuitCompositions)) return res.status(400).json({ error: '`circuitCompositions` tiene que ser un array' })
+    if (Array.isArray(circuitCompositions)) {
+      const validTramos = new Set((tramos ?? []).map((item) => item.id))
+      for (const composition of circuitCompositions) {
+        if (!composition || typeof composition.circuitCode !== 'string' || !Array.isArray(composition.tramos)) return res.status(400).json({ error: 'composición de circuito inválida' })
+        if (composition.tramos.some((ref) => !ref || typeof ref.tramoId !== 'string' || !validTramos.has(ref.tramoId))) return res.status(400).json({ error: `circuito ${composition.circuitCode}: referencia un tramo inexistente` })
+      }
+    }
 
     if (!fs.existsSync(layoutPath(site))) return res.status(404).json({ error: `${site} no tiene plano cargado todavía` })
     let current
@@ -127,6 +135,7 @@ export function createPlantLayoutEditorRouter({ publicDir }) {
     current.points = points
     if (Array.isArray(zones)) current.zones = zones
     if (Array.isArray(tramos)) current.tramos = tramos
+    if (Array.isArray(circuitCompositions)) current.circuitCompositions = circuitCompositions
     current.rev = new Date().toISOString().slice(0, 10)
     try {
       writeJsonAtomic(layoutPath(site), current)
@@ -167,7 +176,7 @@ export function createPlantLayoutEditorRouter({ publicDir }) {
 
     const isNewSite = !fs.existsSync(layoutPath(site))
     const existing = isNewSite
-      ? { rev: new Date().toISOString().slice(0, 10), zones: [], points: [], tramos: [] }
+      ? { rev: new Date().toISOString().slice(0, 10), zones: [], points: [], tramos: [], circuitCompositions: [] }
       : JSON.parse(fs.readFileSync(layoutPath(site), 'utf8'))
     existing.basePlan = {
       image: fileName,

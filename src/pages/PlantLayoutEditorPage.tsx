@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { PlantLayoutEditor } from '../components/plant/PlantLayoutEditor'
-import type { PlantBasePlan, PlantPoint, PlantTramo, PlantZoneShape } from '../data/plantZones.types'
+import type { PlantBasePlan, PlantCircuitComposition, PlantPoint, PlantTramo, PlantZoneShape } from '../data/plantZones.types'
 
 /**
  * Herramienta de configuración: ubicar los puntos del plano clickeando la
@@ -19,7 +19,7 @@ const SITES: { id: string; label: string }[] = [
 type LoadState =
   | { phase: 'loading' }
   | { phase: 'missing' }
-  | { phase: 'ready'; basePlan: PlantBasePlan; points: PlantPoint[]; zones: PlantZoneShape[]; tramos: PlantTramo[] }
+  | { phase: 'ready'; basePlan: PlantBasePlan; points: PlantPoint[]; zones: PlantZoneShape[]; tramos: PlantTramo[]; circuitCompositions: PlantCircuitComposition[] }
   | { phase: 'error'; message: string }
 
 export function PlantLayoutEditorPage() {
@@ -42,17 +42,18 @@ export function PlantLayoutEditorPage() {
           points: data.layout.points ?? [],
           zones: data.layout.zones ?? [],
           tramos: data.layout.tramos ?? [],
+          circuitCompositions: data.layout.circuitCompositions ?? [],
         })
       })
       .catch((e) => setState({ phase: 'error', message: e instanceof Error ? e.message : String(e) }))
   }
   useEffect(load, [site])
 
-  const save = async (points: PlantPoint[], zones: PlantZoneShape[], tramos: PlantTramo[]) => {
+  const save = async (points: PlantPoint[], zones: PlantZoneShape[], tramos: PlantTramo[], circuitCompositions: PlantCircuitComposition[]) => {
     const r = await fetch(`/api/truckflow/plant-layout/${site}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ points, zones, tramos }),
+      body: JSON.stringify({ points, zones, tramos, circuitCompositions }),
     })
     const data = await r.json()
     if (!r.ok) throw new Error(data.error ?? `HTTP ${r.status}`)
@@ -151,6 +152,7 @@ export function PlantLayoutEditorPage() {
           initialPoints={state.points}
           initialZones={state.zones}
           initialTramos={state.tramos}
+          initialCircuitCompositions={state.circuitCompositions}
           onSave={save}
         />
       )}
