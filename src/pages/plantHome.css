@@ -32,6 +32,8 @@
 .tf-view-switcher .ui-button { min-height: 34px; border-color: transparent; border-radius: 8px; color: #475569; }
 .tf-view-switcher .ui-button--primary { background: #1d4ed8; color: #fff; box-shadow: none; }
 .tf-map-site-label { margin: 0 0 6px; color: #475569; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; }
+.tf-map-toolbar { scrollbar-width: none; }
+.tf-map-toolbar::-webkit-scrollbar { display: none; }
 .tf-home [class~="text-slate-400"] { color: var(--ui-muted); }
 .tf-home th { font-size: 12px; padding-top: 12px; }
 .tf-home tr:focus-visible { outline: 2px solid var(--ui-primary); outline-offset: -2px; }

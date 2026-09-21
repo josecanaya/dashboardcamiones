@@ -26,6 +26,8 @@
   padding: 8px;
   border-bottom: 1px solid var(--tf-line);
 }
+.tf-sidebar-toggle { color: var(--tf-muted); background: var(--tf-panel); transition: color 120ms, background-color 120ms; }
+.tf-sidebar-toggle:hover { color: var(--tf-primary); background: var(--tf-selected); }
 
 .tf-brand-mark {
   display: inline-flex;

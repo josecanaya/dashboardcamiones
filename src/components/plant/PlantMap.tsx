@@ -77,12 +77,13 @@ function statePerPoint(points: PlantPoint[], zones: ZoneState[]): Map<string, Po
 export function PlantMap(props: {
   layout: PlantLayout
   site?: 'ricardone' | 'san_lorenzo'
+  compact?: boolean
   zones: ZoneState[]
   onOpenCameras: (group: PlantCameraGroup) => void
   onSelectSector?: (sectorCode: string) => void
   selectedSector?: string | null
 }): JSX.Element {
-  const { layout, site = 'ricardone', zones, onOpenCameras, onSelectSector, selectedSector } = props
+  const { layout, site = 'ricardone', compact = false, zones, onOpenCameras, onSelectSector, selectedSector } = props
   const [hovered, setHovered] = useState<string | null>(null)
   const [hoveredZone, setHoveredZone] = useState<string | null>(null)
   const [circuit, setCircuit] = useState<string | null>(null)
@@ -124,16 +125,16 @@ export function PlantMap(props: {
   })
 
   return (
-    <div className="overflow-hidden rounded-[14px] border border-slate-200 bg-white shadow-sm">
+    <div className="space-y-2">
       {/* Selector de circuito: uno por vez, nunca todos juntos */}
-      <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-200 px-3 py-2">
+      <div className="tf-map-toolbar flex items-center gap-1.5 overflow-x-auto rounded-xl border border-slate-200 bg-white/90 px-3 py-2 shadow-sm backdrop-blur-sm">
         <span className="mr-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
           Circuito
         </span>
         <button
           type="button"
           onClick={() => setCircuit(null)}
-          className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition ${
+          className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium transition ${
             circuit == null
               ? 'border-slate-800 bg-slate-800 text-white'
               : 'border-slate-200 bg-white text-slate-500 hover:border-slate-400'
@@ -147,7 +148,7 @@ export function PlantMap(props: {
             type="button"
             onClick={() => setCircuit((c) => (c === r.code ? null : r.code))}
             title={`${r.label} · secuencia ${r.sequence.join(' → ')}`}
-            className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition ${
+            className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium transition ${
               circuit === r.code
                 ? 'border-sky-600 bg-sky-600 text-white'
                 : 'border-slate-200 bg-white text-slate-600 hover:border-sky-400 hover:text-sky-700'
@@ -157,9 +158,9 @@ export function PlantMap(props: {
             {r.missingSteps.length > 0 ? <span className="ml-1 text-amber-500">·</span> : null}
           </button>
         ))}
-        <span className="ml-auto mr-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Capas</span>
-        <button type="button" onClick={() => setShowSectors((value) => !value)} className={`rounded-full border px-2.5 py-1 text-[11px] font-medium ${showSectors ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500'}`} aria-pressed={showSectors}>Sectores</button>
-        <button type="button" onClick={() => setShowPoints((value) => !value)} className={`rounded-full border px-2.5 py-1 text-[11px] font-medium ${showPoints ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500'}`} aria-pressed={showPoints}>Cámaras</button>
+        <span className="ml-auto mr-1 shrink-0 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Capas</span>
+        <button type="button" onClick={() => setShowSectors((value) => !value)} className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium ${showSectors ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500'}`} aria-pressed={showSectors}>Sectores</button>
+        <button type="button" onClick={() => setShowPoints((value) => !value)} className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium ${showPoints ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500'}`} aria-pressed={showPoints}>Cámaras</button>
       </div>
 
       {!activeComposition && active?.missingSteps.length ? (
@@ -175,10 +176,10 @@ export function PlantMap(props: {
         aspecto manda el alto, así los puntos nunca se corren.
       */}
       <div
-        className="relative mx-auto max-w-full"
+        className="relative mx-auto max-w-full overflow-hidden rounded-2xl bg-slate-900 shadow-[0_18px_45px_rgba(15,23,42,.18)]"
         style={{
           aspectRatio: `${base.width} / ${base.height}`,
-          width: `min(100%, calc(48vh * ${base.width / base.height}))`,
+          width: compact ? '100%' : `min(100%, calc(90vh * ${base.width / base.height}))`,
         }}
       >
         <img

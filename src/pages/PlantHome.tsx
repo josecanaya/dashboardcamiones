@@ -219,6 +219,7 @@ export function PlantHome() {
             <PlantMap
               layout={siteLayout}
               site={site}
+              compact={scope === 'both'}
               zones={siteLive.snapshot?.zones ?? []}
               selectedSector={selected}
               onSelectSector={(sectorCode) => { setSelectedMapSite(site); setSelected(sectorCode) }}
