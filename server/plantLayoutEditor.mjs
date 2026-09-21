@@ -57,7 +57,7 @@ export function createPlantLayoutEditorRouter({ publicDir }) {
   function savePoints(req, res) {
     const { site } = req.params
     if (!isValidSite(site)) return res.status(400).json({ error: 'sitio inválido' })
-    const { points } = req.body ?? {}
+    const { points, zones } = req.body ?? {}
     if (!Array.isArray(points)) return res.status(400).json({ error: 'falta `points` (array)' })
     for (const p of points) {
       if (!p || typeof p.id !== 'string' || !p.id.trim()) {
@@ -66,10 +66,42 @@ export function createPlantLayoutEditorRouter({ publicDir }) {
       if (typeof p.xPercent !== 'number' || typeof p.yPercent !== 'number') {
         return res.status(400).json({ error: `punto ${p.id}: xPercent/yPercent tienen que ser números` })
       }
+      if (p.xPercent < 0 || p.xPercent > 100 || p.yPercent < 0 || p.yPercent > 100) {
+        return res.status(400).json({ error: `punto ${p.id}: coordenadas fuera del plano` })
+      }
     }
     const ids = points.map((p) => p.id)
     const dupe = ids.find((id, i) => ids.indexOf(id) !== i)
     if (dupe) return res.status(400).json({ error: `id de punto repetido: ${dupe}` })
+
+    if (zones != null && !Array.isArray(zones)) {
+      return res.status(400).json({ error: '`zones` tiene que ser un array' })
+    }
+    if (Array.isArray(zones)) {
+      const zoneIds = zones.map((z) => z?.zoneId)
+      const duplicateZone = zoneIds.find((id, i) => typeof id === 'string' && zoneIds.indexOf(id) !== i)
+      if (duplicateZone) return res.status(400).json({ error: `zoneId repetido: ${duplicateZone}` })
+      for (const zone of zones) {
+        if (!zone || typeof zone.zoneId !== 'string' || !zone.zoneId.trim()) {
+          return res.status(400).json({ error: 'cada sector necesita `zoneId`' })
+        }
+        if (typeof zone.label !== 'string' || !zone.label.trim()) {
+          return res.status(400).json({ error: `sector ${zone.zoneId}: falta nombre` })
+        }
+        if (zone.polygonPercent != null) {
+          if (!Array.isArray(zone.polygonPercent) || (zone.polygonPercent.length > 0 && zone.polygonPercent.length < 3)) {
+            return res.status(400).json({ error: `sector ${zone.zoneId}: el polígono necesita al menos 3 vértices` })
+          }
+          for (const vertex of zone.polygonPercent) {
+            const x = vertex?.xPercent
+            const y = vertex?.yPercent
+            if (!Number.isFinite(x) || !Number.isFinite(y) || x < 0 || x > 100 || y < 0 || y > 100) {
+              return res.status(400).json({ error: `sector ${zone.zoneId}: vértice fuera del plano` })
+            }
+          }
+        }
+      }
+    }
 
     if (!fs.existsSync(layoutPath(site))) return res.status(404).json({ error: `${site} no tiene plano cargado todavía` })
     let current
@@ -79,13 +111,14 @@ export function createPlantLayoutEditorRouter({ publicDir }) {
       return res.status(500).json({ error: `plantZones.json de ${site} no se pudo leer: ${e.message}` })
     }
     current.points = points
+    if (Array.isArray(zones)) current.zones = zones
     current.rev = new Date().toISOString().slice(0, 10)
     try {
       writeJsonAtomic(layoutPath(site), current)
     } catch (e) {
       return res.status(500).json({ error: `no se pudo guardar: ${e.message}` })
     }
-    res.json({ ok: true, count: points.length })
+    res.json({ ok: true, pointCount: points.length, zoneCount: current.zones?.length ?? 0 })
   }
 
   /**

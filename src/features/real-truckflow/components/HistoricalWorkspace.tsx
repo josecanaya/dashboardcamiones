@@ -18,6 +18,7 @@ const PAGE_TITLES: Record<string, [string, string]> = {
   resumen: ['Resumen ejecutivo', 'Circuitos, cobertura y evidencia para comité.'],
   'resumen-detalle': ['Informe detallado', 'Clasificación completa, conciliación y CSV de comité (diagnóstico).'],
   datos: ['Datos', 'Prepará un período para todos los indicadores y reportes.'],
+  'editor-plano': ['Editor del plano', 'Definí sectores y cámaras sobre la vista cenital de la planta.'],
 }
 
 /**

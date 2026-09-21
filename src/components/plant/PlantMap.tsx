@@ -82,8 +82,11 @@ export function PlantMap(props: {
 }): JSX.Element {
   const { layout, zones, onOpenCameras, onSelectSector, selectedSector } = props
   const [hovered, setHovered] = useState<string | null>(null)
+  const [hoveredZone, setHoveredZone] = useState<string | null>(null)
   const [circuit, setCircuit] = useState<string | null>(null)
   const [legendOpen, setLegendOpen] = useState(false)
+  const [showSectors, setShowSectors] = useState(true)
+  const [showPoints, setShowPoints] = useState(true)
 
   const base = layout.basePlan
   const points = useMemo(() => layout.points ?? [], [layout.points])
@@ -92,6 +95,7 @@ export function PlantMap(props: {
   const active: PlantCircuitRoute | null = routes.find((r) => r.code === circuit) ?? null
   const inCircuit = useMemo(() => new Set(active?.steps ?? []), [active])
   const pointState = useMemo(() => statePerPoint(points, zones), [points, zones])
+  const liveZoneById = useMemo(() => new Map(zones.map((zone) => [zone.id, zone])), [zones])
 
   if (!base) {
     return (
@@ -105,6 +109,12 @@ export function PlantMap(props: {
     (p.xPercent / 100) * base.width,
     (p.yPercent / 100) * base.height,
   ]
+  const polygonPoints = (vertices: NonNullable<PlantLayout['zones'][number]['polygonPercent']>) =>
+    vertices.map((vertex) => `${(vertex.xPercent / 100) * base.width},${(vertex.yPercent / 100) * base.height}`).join(' ')
+  const polygonCenter = (vertices: NonNullable<PlantLayout['zones'][number]['polygonPercent']>) => ({
+    x: vertices.reduce((sum, vertex) => sum + vertex.xPercent, 0) / vertices.length,
+    y: vertices.reduce((sum, vertex) => sum + vertex.yPercent, 0) / vertices.length,
+  })
 
   return (
     <div className="overflow-hidden rounded-[14px] border border-slate-200 bg-white shadow-sm">
@@ -140,6 +150,9 @@ export function PlantMap(props: {
             {r.missingSteps.length > 0 ? <span className="ml-1 text-amber-500">·</span> : null}
           </button>
         ))}
+        <span className="ml-auto mr-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Capas</span>
+        <button type="button" onClick={() => setShowSectors((value) => !value)} className={`rounded-full border px-2.5 py-1 text-[11px] font-medium ${showSectors ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500'}`} aria-pressed={showSectors}>Sectores</button>
+        <button type="button" onClick={() => setShowPoints((value) => !value)} className={`rounded-full border px-2.5 py-1 text-[11px] font-medium ${showPoints ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500'}`} aria-pressed={showPoints}>Cámaras</button>
       </div>
 
       {active?.missingSteps.length ? (
@@ -169,7 +182,7 @@ export function PlantMap(props: {
         <svg
           viewBox={`0 0 ${base.width} ${base.height}`}
           className="pointer-events-none absolute inset-0 h-full w-full"
-          aria-hidden
+          aria-label="Sectores operativos y recorridos sobre el plano"
         >
           <defs>
             <marker
@@ -184,6 +197,43 @@ export function PlantMap(props: {
               <path d="M0,1 L9,5 L0,9 z" fill="#0EA5E9" />
             </marker>
           </defs>
+          {/* Capa de sectores: límites configurados por el editor del plano. */}
+          {showSectors ? layout.zones.map((zone) => {
+            const vertices = zone.polygonPercent ?? []
+            if (vertices.length < 3) return null
+            const live = liveZoneById.get(zone.zoneId)
+            const status = STATUS[live?.status ?? 'no_data']
+            const sectorCode = zone.sectorCode || live?.drainPoints?.[0]?.sectorCode || ''
+            const selected = Boolean(sectorCode && selectedSector === sectorCode)
+            const hoveredNow = hoveredZone === zone.zoneId
+            return (
+              <polygon
+                key={zone.zoneId}
+                points={polygonPoints(vertices)}
+                fill={zone.color ?? '#2563EB'}
+                fillOpacity={hoveredNow || selected ? 0.24 : 0.1}
+                stroke={selected || hoveredNow ? status.ring : (zone.color ?? '#2563EB')}
+                strokeWidth={selected || hoveredNow ? 5 : 2.5}
+                strokeLinejoin="round"
+                vectorEffect="non-scaling-stroke"
+                className={sectorCode ? 'pointer-events-auto cursor-pointer' : 'pointer-events-auto'}
+                tabIndex={sectorCode ? 0 : undefined}
+                role={sectorCode ? 'button' : undefined}
+                aria-label={`${zone.label}. Estado ${status.label}${live ? `, ${live.backlog} esperando` : ''}`}
+                onMouseEnter={() => setHoveredZone(zone.zoneId)}
+                onMouseLeave={() => setHoveredZone((current) => current === zone.zoneId ? null : current)}
+                onFocus={() => setHoveredZone(zone.zoneId)}
+                onBlur={() => setHoveredZone((current) => current === zone.zoneId ? null : current)}
+                onClick={() => sectorCode && onSelectSector?.(sectorCode)}
+                onKeyDown={(event) => {
+                  if (sectorCode && (event.key === 'Enter' || event.key === ' ')) {
+                    event.preventDefault()
+                    onSelectSector?.(sectorCode)
+                  }
+                }}
+              />
+            )
+          }) : null}
           {active
             ? active.steps.slice(0, -1).map((from, i) => {
                 const to = active.steps[i + 1]
@@ -229,8 +279,25 @@ export function PlantMap(props: {
             : null}
         </svg>
 
+        {showSectors ? layout.zones.map((zone) => {
+          const vertices = zone.polygonPercent ?? []
+          if (vertices.length < 3) return null
+          const center = polygonCenter(vertices)
+          const live = liveZoneById.get(zone.zoneId)
+          const status = STATUS[live?.status ?? 'no_data']
+          const sectorCode = zone.sectorCode || live?.drainPoints?.[0]?.sectorCode || ''
+          const visible = hoveredZone === zone.zoneId || Boolean(sectorCode && selectedSector === sectorCode)
+          if (!visible) return null
+          return (
+            <div key={`zone-label-${zone.zoneId}`} className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-1/2 rounded-lg border border-slate-200 bg-white/95 px-2 py-1 shadow-md" style={{ left: `${center.x}%`, top: `${center.y}%` }}>
+              <div className="whitespace-nowrap text-[11px] font-bold text-slate-800">{zone.label}</div>
+              <div className="mt-0.5 flex items-center gap-1 text-[9.5px] text-slate-500"><span className="h-1.5 w-1.5 rounded-full" style={{ background: status.ring }} />{status.label}{live ? ` · ${live.backlog} esperando` : ''}</div>
+            </div>
+          )
+        }) : null}
+
         {/* Capas 3 a 5: puntos, cámaras e indicadores */}
-        {points.map((p) => {
+        {showPoints ? points.map((p) => {
           const tone = TONE[p.tone]
           const state = pointState.get(p.id) ?? { queue: null, status: 'no_data' as SectorStatus, zones: [] }
           const status = STATUS[state.status]
@@ -337,7 +404,7 @@ export function PlantMap(props: {
               ) : null}
             </div>
           )
-        })}
+        }) : null}
 
         {/* Leyenda compacta y plegable */}
         <div className="absolute bottom-2 left-2 z-20 max-w-[230px] rounded-lg border border-slate-200 bg-white/94 text-[10.5px] shadow-sm backdrop-blur-sm">

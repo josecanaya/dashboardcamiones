@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { PlantLayoutEditor } from '../components/plant/PlantLayoutEditor'
-import type { PlantBasePlan, PlantPoint } from '../data/plantZones.types'
+import type { PlantBasePlan, PlantPoint, PlantZoneShape } from '../data/plantZones.types'
 
 /**
  * Herramienta de configuración: ubicar los puntos del plano clickeando la
@@ -19,7 +19,7 @@ const SITES: { id: string; label: string }[] = [
 type LoadState =
   | { phase: 'loading' }
   | { phase: 'missing' }
-  | { phase: 'ready'; basePlan: PlantBasePlan; points: PlantPoint[] }
+  | { phase: 'ready'; basePlan: PlantBasePlan; points: PlantPoint[]; zones: PlantZoneShape[] }
   | { phase: 'error'; message: string }
 
 export function PlantLayoutEditorPage() {
@@ -36,17 +36,22 @@ export function PlantLayoutEditorPage() {
         if (r.status === 404) return setState({ phase: 'missing' })
         const data = await r.json()
         if (!r.ok) throw new Error(data.error ?? `HTTP ${r.status}`)
-        setState({ phase: 'ready', basePlan: data.layout.basePlan, points: data.layout.points ?? [] })
+        setState({
+          phase: 'ready',
+          basePlan: data.layout.basePlan,
+          points: data.layout.points ?? [],
+          zones: data.layout.zones ?? [],
+        })
       })
       .catch((e) => setState({ phase: 'error', message: e instanceof Error ? e.message : String(e) }))
   }
   useEffect(load, [site])
 
-  const save = async (points: PlantPoint[]) => {
+  const save = async (points: PlantPoint[], zones: PlantZoneShape[]) => {
     const r = await fetch(`/api/truckflow/plant-layout/${site}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ points }),
+      body: JSON.stringify({ points, zones }),
     })
     const data = await r.json()
     if (!r.ok) throw new Error(data.error ?? `HTTP ${r.status}`)
@@ -81,9 +86,9 @@ export function PlantLayoutEditorPage() {
   return (
     <section className="space-y-4 pb-4">
       <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-        <h1 className="text-[20px] font-bold text-slate-900">Editor del plano</h1>
+        <h2 className="text-base font-bold text-slate-900">Configuración por capas</h2>
         <p className="mt-0.5 text-[12.5px] text-slate-500">
-          Clic en el plano para ubicar un punto y ponerle nombre. Se guarda en{' '}
+          Dibujá sectores como polígonos y ubicá cámaras sobre la imagen. Se guarda en{' '}
           <code className="font-mono text-[11.5px]">public/plant/{site}/plantZones.json</code>.
         </p>
         <div className="mt-3 flex gap-2">
@@ -114,7 +119,7 @@ export function PlantLayoutEditorPage() {
             {SITES.find((s) => s.id === site)?.label} todavía no tiene plano cargado.
           </p>
           <p className="mt-1 text-[12px] text-slate-500">
-            Subí la vista cenital (PNG o JPG) — después se ubican los puntos clickeando encima.
+            Subí la vista cenital (PNG o JPG) — después se dibujan sectores y cámaras encima.
           </p>
           <button
             type="button"
@@ -138,7 +143,14 @@ export function PlantLayoutEditorPage() {
           {uploadError ? <p className="mt-3 text-[12px] text-rose-600">{uploadError}</p> : null}
         </div>
       ) : (
-        <PlantLayoutEditor site={site} basePlan={state.basePlan} initialPoints={state.points} onSave={save} />
+        <PlantLayoutEditor
+          key={site}
+          site={site}
+          basePlan={state.basePlan}
+          initialPoints={state.points}
+          initialZones={state.zones}
+          onSave={save}
+        />
       )}
     </section>
   )

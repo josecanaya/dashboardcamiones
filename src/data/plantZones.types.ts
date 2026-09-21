@@ -12,10 +12,20 @@ export type PlantZoneShape = {
   /** Id de zona del grafo: Z0, Z1, Z2… */
   zoneId: string
   label: string
-  x: number
-  y: number
-  w: number
-  h: number
+  /** Rectángulo legado del diagrama anterior. Se conserva para compatibilidad. */
+  x?: number
+  y?: number
+  w?: number
+  h?: number
+  /**
+   * Límite real dibujado sobre la imagen cenital. Las coordenadas son porcentajes
+   * de `basePlan`, igual que los puntos, para que no se desalineen al redimensionar.
+   */
+  polygonPercent?: { xPercent: number; yPercent: number }[]
+  /** sectorCode del catálogo vivo. Se mantiene separado del nombre visible. */
+  sectorCode?: string
+  /** Color de identidad del sector; el estado operativo se muestra aparte. */
+  color?: string
   labelAnchor?: [number, number]
   /** Cámaras del punto que drena la zona — las que sirven para verificar. */
   cameras: string[]
@@ -61,6 +71,8 @@ export type PlantPoint = {
   label: string
   /** sectorCode del catálogo en vivo — abre el panel de sector. */
   sectorCode: string
+  /** Zona visual que contiene al punto. Es una asociación explícita y editable. */
+  zoneId?: string
   type: PlantPointType
   tone: PlantPointTone
   xPercent: number
