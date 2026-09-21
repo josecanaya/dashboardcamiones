@@ -63,7 +63,7 @@ export function AppShell() {
   return (
     <div className="tf-shell min-h-screen bg-surface-50">
       <main className="flex min-h-[calc(100vh-24px)] items-stretch gap-3 pt-3 pr-3 pb-3 pl-0">
-        <aside className={`tf-sidebar h-[calc(100vh-24px)] shrink-0 overflow-y-auto p-3 transition-[width] ${!navOpen ? 'w-[68px]' : 'w-[248px]'}`}>
+        <aside className={`tf-sidebar h-[calc(100vh-24px)] shrink-0 overflow-y-auto p-3 transition-[width] ${!navOpen ? 'w-[104px]' : 'w-[248px]'}`}>
           <div className="tf-brand">
             <img className="tf-brand-logo" src="/branding/nueva-vicentin-argentina.jfif" alt="Nueva Vicentin Argentina" />
             <div className={!navOpen ? 'hidden' : ''}>

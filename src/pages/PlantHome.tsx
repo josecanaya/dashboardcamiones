@@ -222,6 +222,7 @@ export function PlantHome() {
               layout={siteLayout}
               site={site}
               compact={scope === 'both'}
+              showCircuitControls={false}
               zones={siteLive.snapshot?.zones ?? []}
               selectedSector={selected}
               onSelectSector={(sectorCode) => { setSelectedMapSite(site); setSelected(sectorCode) }}

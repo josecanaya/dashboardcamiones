@@ -78,12 +78,13 @@ export function PlantMap(props: {
   layout: PlantLayout
   site?: 'ricardone' | 'san_lorenzo'
   compact?: boolean
+  showCircuitControls?: boolean
   zones: ZoneState[]
   onOpenCameras: (group: PlantCameraGroup) => void
   onSelectSector?: (sectorCode: string) => void
   selectedSector?: string | null
 }): JSX.Element {
-  const { layout, site = 'ricardone', compact = false, zones, onOpenCameras, onSelectSector, selectedSector } = props
+  const { layout, site = 'ricardone', compact = false, showCircuitControls = true, zones, onOpenCameras, onSelectSector, selectedSector } = props
   const [hovered, setHovered] = useState<string | null>(null)
   const [hoveredZone, setHoveredZone] = useState<string | null>(null)
   const [circuit, setCircuit] = useState<string | null>(null)
@@ -127,7 +128,7 @@ export function PlantMap(props: {
   return (
     <div className="space-y-2">
       {/* Selector de circuito: uno por vez, nunca todos juntos */}
-      <div className="tf-map-toolbar flex items-center gap-1.5 overflow-x-auto rounded-xl border border-slate-200 bg-white/90 px-3 py-2 shadow-sm backdrop-blur-sm">
+      {showCircuitControls ? <div className="tf-map-toolbar flex items-center gap-1.5 overflow-x-auto rounded-xl border border-slate-200 bg-white/90 px-3 py-2 shadow-sm backdrop-blur-sm">
         <span className="mr-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
           Circuito
         </span>
@@ -161,7 +162,7 @@ export function PlantMap(props: {
         <span className="ml-auto mr-1 shrink-0 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Capas</span>
         <button type="button" onClick={() => setShowSectors((value) => !value)} className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium ${showSectors ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500'}`} aria-pressed={showSectors}>Sectores</button>
         <button type="button" onClick={() => setShowPoints((value) => !value)} className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium ${showPoints ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500'}`} aria-pressed={showPoints}>Cámaras</button>
-      </div>
+      </div> : null}
 
       {!activeComposition && active?.missingSteps.length ? (
         <p className="border-b border-amber-100 bg-amber-50 px-3 py-1.5 text-[11px] text-amber-800">
@@ -178,10 +179,18 @@ export function PlantMap(props: {
       <div
         className="relative mx-auto max-w-full overflow-hidden rounded-2xl bg-slate-900 shadow-[0_18px_45px_rgba(15,23,42,.18)]"
         style={{
-          aspectRatio: `${base.width} / ${base.height}`,
-          width: compact ? '100%' : `min(100%, calc(90vh * ${base.width / base.height}))`,
+          aspectRatio: compact ? '16 / 10' : `${base.width} / ${base.height}`,
+          width: compact ? '100%' : `min(100%, calc(62vh * ${base.width / base.height}))`,
         }}
       >
+        <div
+          className="absolute"
+          style={compact
+            ? base.width / base.height > 1.6
+              ? { height: '100%', width: `${(base.width / base.height) / 1.6 * 100}%`, left: `${(1 - (base.width / base.height) / 1.6) * 50}%`, top: 0 }
+              : { width: '100%', height: `${1.6 / (base.width / base.height) * 100}%`, top: `${(1 - 1.6 / (base.width / base.height)) * 50}%`, left: 0 }
+            : { inset: 0 }}
+        >
         <img
           src={`/plant/${site}/${base.image}`}
           alt={`Vista cenital de la planta de ${site === 'ricardone' ? 'Ricardone' : 'San Lorenzo'}`}
@@ -444,6 +453,7 @@ export function PlantMap(props: {
               ) : null}
             </div>
           ) : null}
+        </div>
         </div>
       </div>
     </div>
