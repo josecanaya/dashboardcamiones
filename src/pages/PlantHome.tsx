@@ -143,7 +143,7 @@ export function PlantHome() {
   }
 
   return (
-    <section className="tf-ui tf-home space-y-4 pb-6">
+    <section className="tf-ui tf-home space-y-2 pb-6">
       {/* Encabezado operativo: identidad, estado y tiempo en una sola lectura. */}
       <header className="tf-home-hero">
         <div className="tf-home-hero__identity">
