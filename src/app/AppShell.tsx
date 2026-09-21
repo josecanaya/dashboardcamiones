@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { TruckPlateRegistryLauncher } from '../features/real-truckflow/components/TruckPlateRegistryLauncher'
 import { NvaiBubble } from '../components/nvai/NvaiBubble'
 import { PRODUCT_SECTIONS, type NavGroup, type NavLeaf, type NavSection } from './sectors'
@@ -55,6 +55,8 @@ function SidebarSection({ section }: { section: NavSection }) {
 }
 
 export function AppShell() {
+  const location = useLocation()
+  const isHomePrototype = location.pathname === '/herramientas/prototipo-home'
   return (
     <div className="tf-shell min-h-screen bg-surface-50">
       <main className="flex min-h-[calc(100vh-24px)] items-stretch gap-3 pt-3 pr-3 pb-3 pl-0">
@@ -84,12 +86,12 @@ export function AppShell() {
           </section>
 
           <div className="min-h-0 flex-1">
-            <HistoricalWorkspace><Outlet /></HistoricalWorkspace>
+            {isHomePrototype ? <Outlet /> : <HistoricalWorkspace><Outlet /></HistoricalWorkspace>}
           </div>
         </div>
       </main>
 
-      <NvaiBubble site="ricardone" />
+      {isHomePrototype ? null : <NvaiBubble site="ricardone" />}
     </div>
   )
 }
