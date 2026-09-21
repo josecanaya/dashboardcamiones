@@ -8,7 +8,7 @@ import type {
   PlantZoneShape,
 } from '../../data/plantZones.types'
 import { getRicardoneCircuitRoutes } from '../../data/plantCircuitRoutes'
-import { nearestInsertionIndex, plantTramoId, tramoPath } from '../../data/plantRouteGeometry'
+import { plantTramoId, tramoPath } from '../../data/plantRouteGeometry'
 
 type Tool = 'select' | 'sector' | 'point' | 'tramo'
 type PercentPoint = { xPercent: number; yPercent: number }
@@ -80,6 +80,8 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
   const [draggingPointId, setDraggingPointId] = useState<string | null>(null)
   const [circuit, setCircuit] = useState<string>('')
   const [selectedTramoId, setSelectedTramoId] = useState<string | null>(null)
+  const [selectedTramoEnds, setSelectedTramoEnds] = useState<{ from: string; to: string } | null>(null)
+  const [drawingTramoOriginal, setDrawingTramoOriginal] = useState<PlantTramo | null | undefined>(undefined)
   const [draggingTramoVertex, setDraggingTramoVertex] = useState<number | null>(null)
   const [zoom, setZoom] = useState(1)
   const [dirty, setDirty] = useState(false)
@@ -158,23 +160,25 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
 
   const selectTramo = (from: string, to: string) => {
     const id = plantTramoId(from, to)
-    setSelectedTramoId(id); setSelectedPointId(null); setSelectedZoneId(null); setDraftPoint(null); setTool('tramo')
+    setSelectedTramoId(id); setSelectedTramoEnds({ from, to }); setSelectedPointId(null); setSelectedZoneId(null); setDraftPoint(null); setTool('tramo')
   }
-  const addTramoVertex = (fromId: string, toId: string, position: PercentPoint) => {
-    const from = points.find((point) => point.id === fromId), to = points.find((point) => point.id === toId)
-    if (!from || !to) return
-    const id = plantTramoId(fromId, toId)
-    setTramos((current) => {
-      const existing = current.find((item) => item.id === id)
-      const canonical = existing ?? { id, fromPointId: fromId, toPointId: toId, viaPercent: [] }
-      const orientedPath = tramoPath(from, to, current)
-      const orientedIndex = nearestInsertionIndex(orientedPath, position)
-      const canonicalIndex = canonical.fromPointId === fromId ? orientedIndex : canonical.viaPercent.length - orientedIndex
-      const next = [...canonical.viaPercent]; next.splice(canonicalIndex, 0, position)
-      const changed = { ...canonical, viaPercent: next }
-      return existing ? current.map((item) => item.id === id ? changed : item) : [...current, changed]
-    })
-    markDirty()
+  const startDrawingTramo = () => {
+    if (!selectedTramoId || !selectedTramoEnds) return
+    setDrawingTramoOriginal(tramos.find((item) => item.id === selectedTramoId) ?? null)
+    const blank = { id: selectedTramoId, fromPointId: selectedTramoEnds.from, toPointId: selectedTramoEnds.to, viaPercent: [] }
+    setTramos((current) => current.some((item) => item.id === selectedTramoId)
+      ? current.map((item) => item.id === selectedTramoId ? blank : item) : [...current, blank])
+    setTool('tramo')
+  }
+  const cancelDrawingTramo = () => {
+    if (!selectedTramoId || drawingTramoOriginal === undefined) return
+    setTramos((current) => drawingTramoOriginal
+      ? current.map((item) => item.id === selectedTramoId ? drawingTramoOriginal : item)
+      : current.filter((item) => item.id !== selectedTramoId))
+    setDrawingTramoOriginal(undefined)
+  }
+  const finishDrawingTramo = () => {
+    setDrawingTramoOriginal(undefined); markDirty()
   }
 
   const onCanvasClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -190,7 +194,10 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
       setDraftPoint(emptyPoint(position.xPercent, position.yPercent, containing?.zoneId))
       setSelectedPointId(null); setSelectedZoneId(containing?.zoneId ?? null)
     }
-    if (tool === 'tramo' && selectedTramo) addTramoVertex(selectedTramo.fromPointId, selectedTramo.toPointId, position)
+    if (tool === 'tramo' && selectedTramo && drawingTramoOriginal !== undefined) {
+      setTramos((current) => current.map((item) => item.id === selectedTramo.id
+        ? { ...item, viaPercent: [...item.viaPercent, position] } : item))
+    }
   }
   const commitPoint = () => {
     if (!draftPoint || !draftPoint.id.trim() || !draftPoint.label.trim() || pointIdClash) return
@@ -233,7 +240,8 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
             </span>
           </div>
         ) : tool === 'point' ? <div className="ui-message">Hacé clic sobre la imagen para colocar una cámara o punto de control.</div>
-          : tool === 'tramo' ? <div className="ui-message">Elegí un circuito y un tramo. Cada clic agrega una curva; arrastrá sus nodos para ajustar el camino.</div>
+          : tool === 'tramo' && drawingTramoOriginal !== undefined ? <div className="ui-message ui-message--warning flex flex-wrap items-center justify-between gap-2"><span>Clic para agregar quiebres a la línea del tramo.</span><span className="flex gap-2"><button type="button" className="ui-button" onClick={() => setTramos((current) => current.map((item) => item.id === selectedTramoId ? { ...item, viaPercent: item.viaPercent.slice(0, -1) } : item))}>Deshacer punto</button><button type="button" className="ui-button" onClick={cancelDrawingTramo}>Cancelar</button><button type="button" className="ui-button ui-button--primary" onClick={finishDrawingTramo}>Terminar tramo</button></span></div>
+          : tool === 'tramo' ? <div className="ui-message">Elegí un tramo físico y presioná “Dibujar tramo”.</div>
           : <div className="ui-message">Seleccioná un sector, una cámara o arrastrá los vértices de un polígono.</div>}
         {saveState === 'error' ? <div className="ui-message ui-message--error" role="alert">No se pudo guardar: {saveError}</div> : null}
 
@@ -302,11 +310,11 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
 
       <aside className="space-y-3">
         <section className="ui-panel p-4">
-          <h2 className="text-base font-bold">Tramos de circuitos</h2>
-          <p className="mt-1 text-xs text-slate-500">Las flechas muestran el sentido. La misma curva se reutiliza cuando otro circuito recorre el tramo al revés.</p>
+          <h2 className="text-base font-bold">Tramos físicos</h2>
+          <p className="mt-1 text-xs text-slate-500">Cada tramo se dibuja una sola vez. Los circuitos se componen reutilizando estos mismos tramos, incluso en sentido contrario.</p>
           <label className="mt-3 block text-xs font-medium text-slate-600">Circuito<select className="ui-input mt-1 w-full" value={circuit} onChange={(e) => { setCircuit(e.target.value); setSelectedTramoId(null); setTool('tramo') }}><option value="">Elegir circuito…</option>{routes.map((route) => <option key={route.code} value={route.code}>{route.code} · {route.label}</option>)}</select></label>
-          {activeRoute ? <div className="mt-3 max-h-40 space-y-1 overflow-auto">{activeRoute.steps.slice(0, -1).map((from, index) => { const to = activeRoute.steps[index + 1]!, id = plantTramoId(from, to); return <button key={`${from}-${to}`} type="button" onClick={() => selectTramo(from, to)} className={`flex w-full items-center justify-between rounded-lg border px-2.5 py-2 text-left text-xs ${selectedTramoId === id ? 'border-blue-400 bg-blue-50' : 'border-slate-200'}`}><span className="font-mono">{from} → {to}</span><span>{tramos.find((item) => item.id === id)?.viaPercent.length ?? 0} curvas</span></button> })}</div> : null}
-          {selectedTramo ? <div className="mt-3 flex flex-wrap gap-2 border-t border-slate-200 pt-3"><span className="w-full text-xs text-slate-600">Clic en el mapa agrega un nodo al tramo seleccionado.</span>{selectedTramo.viaPercent.map((_, index) => <button key={index} type="button" className="ui-button" onClick={() => { setTramos((current) => current.map((item) => item.id === selectedTramo.id ? { ...item, viaPercent: item.viaPercent.filter((_vertex, i) => i !== index) } : item)); markDirty() }}>Quitar nodo {index + 1}</button>)}<button type="button" className="ui-button" onClick={() => { setTramos((current) => current.filter((item) => item.id !== selectedTramo.id)); markDirty() }}>Volver a línea recta</button></div> : null}
+          {activeRoute ? <div className="mt-3 max-h-40 space-y-1 overflow-auto">{activeRoute.steps.slice(0, -1).map((from, index) => { const to = activeRoute.steps[index + 1]!, id = plantTramoId(from, to); return <button key={`${from}-${to}`} type="button" onClick={() => selectTramo(from, to)} className={`flex w-full items-center justify-between rounded-lg border px-2.5 py-2 text-left text-xs ${selectedTramoId === id ? 'border-blue-400 bg-blue-50' : 'border-slate-200'}`}><span className="font-mono">{from} ↔ {to}</span><span>{tramos.find((item) => item.id === id)?.viaPercent.length ?? 0} quiebres</span></button> })}</div> : null}
+          {selectedTramoEnds ? <div className="mt-3 flex flex-wrap gap-2 border-t border-slate-200 pt-3"><span className="w-full text-xs text-slate-600">El tramo une {selectedTramoEnds.from} con {selectedTramoEnds.to}. Sus extremos quedan anclados a esos puntos.</span>{drawingTramoOriginal === undefined ? <button type="button" className="ui-button ui-button--primary" onClick={startDrawingTramo}>{selectedTramo ? 'Redibujar tramo' : 'Dibujar tramo'}</button> : null}{selectedTramo && drawingTramoOriginal === undefined ? <button type="button" className="ui-button" onClick={() => { setTramos((current) => current.filter((item) => item.id !== selectedTramo.id)); markDirty() }}>Volver a línea recta</button> : null}</div> : null}
         </section>
         <section className="ui-panel p-4">
           <div className="mb-3 flex items-center justify-between gap-2"><h2 className="text-base font-bold">Sectores</h2><button type="button" className="ui-button" onClick={addZone}>Nuevo</button></div>
