@@ -80,6 +80,15 @@ export type PlantPoint = {
   cameraGroup: PlantCameraGroup
 }
 
+/** Geometría editable del camino físico entre dos puntos del circuito. */
+export type PlantTramo = {
+  id: string
+  fromPointId: string
+  toPointId: string
+  /** Puntos intermedios; los extremos siguen siendo las cámaras/puntos. */
+  viaPercent: { xPercent: number; yPercent: number }[]
+}
+
 export type PlantLayout = {
   rev: string
   viewBox: [number, number, number, number]
@@ -88,6 +97,7 @@ export type PlantLayout = {
   baseImage?: string
   basePlan?: PlantBasePlan
   points?: PlantPoint[]
+  tramos?: PlantTramo[]
   /** Cámaras del catálogo que todavía no tienen posición confirmada en el plano. */
   unplacedCameras?: { device: string; sectorCode: string; reason: string }[]
   /** Pasos que aparecen en las secuencias de circuito y todavía no tienen posición. */

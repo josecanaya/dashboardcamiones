@@ -16,7 +16,10 @@ export type NavSection = {
 export const PRODUCT_SECTIONS: NavSection[] = [
   {
     title: 'Principal',
-    items: [{ to: '/', label: 'En vivo' }],
+    items: [
+      { to: '/', label: 'En vivo' },
+      { to: '/herramientas/editor-plano', label: 'Editar plano' },
+    ],
   },
   {
     title: 'Estadísticas',

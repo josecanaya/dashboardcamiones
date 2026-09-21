@@ -57,7 +57,7 @@ export function createPlantLayoutEditorRouter({ publicDir }) {
   function savePoints(req, res) {
     const { site } = req.params
     if (!isValidSite(site)) return res.status(400).json({ error: 'sitio inválido' })
-    const { points, zones } = req.body ?? {}
+    const { points, zones, tramos } = req.body ?? {}
     if (!Array.isArray(points)) return res.status(400).json({ error: 'falta `points` (array)' })
     for (const p of points) {
       if (!p || typeof p.id !== 'string' || !p.id.trim()) {
@@ -102,6 +102,20 @@ export function createPlantLayoutEditorRouter({ publicDir }) {
         }
       }
     }
+    if (tramos != null && !Array.isArray(tramos)) return res.status(400).json({ error: '`tramos` tiene que ser un array' })
+    if (Array.isArray(tramos)) {
+      const tramoIds = new Set()
+      for (const tramo of tramos) {
+        if (!tramo || typeof tramo.id !== 'string' || tramoIds.has(tramo.id)) return res.status(400).json({ error: 'tramo inválido o repetido' })
+        tramoIds.add(tramo.id)
+        if (typeof tramo.fromPointId !== 'string' || typeof tramo.toPointId !== 'string' || tramo.fromPointId === tramo.toPointId) return res.status(400).json({ error: `tramo ${tramo.id}: extremos inválidos` })
+        if (!ids.includes(tramo.fromPointId) || !ids.includes(tramo.toPointId)) return res.status(400).json({ error: `tramo ${tramo.id}: referencia un punto inexistente` })
+        if (!Array.isArray(tramo.viaPercent)) return res.status(400).json({ error: `tramo ${tramo.id}: falta viaPercent` })
+        for (const vertex of tramo.viaPercent) {
+          if (!Number.isFinite(vertex?.xPercent) || !Number.isFinite(vertex?.yPercent) || vertex.xPercent < 0 || vertex.xPercent > 100 || vertex.yPercent < 0 || vertex.yPercent > 100) return res.status(400).json({ error: `tramo ${tramo.id}: vértice fuera del plano` })
+        }
+      }
+    }
 
     if (!fs.existsSync(layoutPath(site))) return res.status(404).json({ error: `${site} no tiene plano cargado todavía` })
     let current
@@ -112,13 +126,14 @@ export function createPlantLayoutEditorRouter({ publicDir }) {
     }
     current.points = points
     if (Array.isArray(zones)) current.zones = zones
+    if (Array.isArray(tramos)) current.tramos = tramos
     current.rev = new Date().toISOString().slice(0, 10)
     try {
       writeJsonAtomic(layoutPath(site), current)
     } catch (e) {
       return res.status(500).json({ error: `no se pudo guardar: ${e.message}` })
     }
-    res.json({ ok: true, pointCount: points.length, zoneCount: current.zones?.length ?? 0 })
+    res.json({ ok: true, pointCount: points.length, zoneCount: current.zones?.length ?? 0, tramoCount: current.tramos?.length ?? 0 })
   }
 
   /**
@@ -152,7 +167,7 @@ export function createPlantLayoutEditorRouter({ publicDir }) {
 
     const isNewSite = !fs.existsSync(layoutPath(site))
     const existing = isNewSite
-      ? { rev: new Date().toISOString().slice(0, 10), zones: [], points: [] }
+      ? { rev: new Date().toISOString().slice(0, 10), zones: [], points: [], tramos: [] }
       : JSON.parse(fs.readFileSync(layoutPath(site), 'utf8'))
     existing.basePlan = {
       image: fileName,

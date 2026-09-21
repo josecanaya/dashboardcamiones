@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { PlantLayoutEditor } from '../components/plant/PlantLayoutEditor'
-import type { PlantBasePlan, PlantPoint, PlantZoneShape } from '../data/plantZones.types'
+import type { PlantBasePlan, PlantPoint, PlantTramo, PlantZoneShape } from '../data/plantZones.types'
 
 /**
  * Herramienta de configuración: ubicar los puntos del plano clickeando la
@@ -19,7 +19,7 @@ const SITES: { id: string; label: string }[] = [
 type LoadState =
   | { phase: 'loading' }
   | { phase: 'missing' }
-  | { phase: 'ready'; basePlan: PlantBasePlan; points: PlantPoint[]; zones: PlantZoneShape[] }
+  | { phase: 'ready'; basePlan: PlantBasePlan; points: PlantPoint[]; zones: PlantZoneShape[]; tramos: PlantTramo[] }
   | { phase: 'error'; message: string }
 
 export function PlantLayoutEditorPage() {
@@ -41,17 +41,18 @@ export function PlantLayoutEditorPage() {
           basePlan: data.layout.basePlan,
           points: data.layout.points ?? [],
           zones: data.layout.zones ?? [],
+          tramos: data.layout.tramos ?? [],
         })
       })
       .catch((e) => setState({ phase: 'error', message: e instanceof Error ? e.message : String(e) }))
   }
   useEffect(load, [site])
 
-  const save = async (points: PlantPoint[], zones: PlantZoneShape[]) => {
+  const save = async (points: PlantPoint[], zones: PlantZoneShape[], tramos: PlantTramo[]) => {
     const r = await fetch(`/api/truckflow/plant-layout/${site}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ points, zones }),
+      body: JSON.stringify({ points, zones, tramos }),
     })
     const data = await r.json()
     if (!r.ok) throw new Error(data.error ?? `HTTP ${r.status}`)
@@ -88,7 +89,7 @@ export function PlantLayoutEditorPage() {
       <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
         <h2 className="text-base font-bold text-slate-900">Configuración por capas</h2>
         <p className="mt-0.5 text-[12.5px] text-slate-500">
-          Dibujá sectores como polígonos y ubicá cámaras sobre la imagen. Se guarda en{' '}
+          Dibujá sectores, ubicá cámaras y corregí los tramos de cada circuito sobre la imagen. Se guarda en{' '}
           <code className="font-mono text-[11.5px]">public/plant/{site}/plantZones.json</code>.
         </p>
         <div className="mt-3 flex gap-2">
@@ -149,6 +150,7 @@ export function PlantLayoutEditorPage() {
           basePlan={state.basePlan}
           initialPoints={state.points}
           initialZones={state.zones}
+          initialTramos={state.tramos}
           onSave={save}
         />
       )}

@@ -44,3 +44,12 @@ describe('flujo Datos único (R08)', () => {
     expect(redirectMap.get('/estadisticas/datos/analisis-local')).toBe('/estadisticas/datos?vista=analisis-avanzado')
   })
 })
+
+describe('editor del plano', () => {
+  it('queda accesible desde la navegación principal', () => {
+    const links = PRODUCT_SECTIONS.flatMap(section => [
+      ...(section.items ?? []), ...(section.groups ?? []).flatMap(group => group.items),
+    ])
+    expect(links).toContainEqual({ to: '/herramientas/editor-plano', label: 'Editar plano' })
+  })
+})

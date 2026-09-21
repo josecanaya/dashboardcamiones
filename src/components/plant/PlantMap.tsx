@@ -7,6 +7,7 @@ import type {
   PlantPointType,
 } from '../../data/plantZones.types'
 import { getRicardoneCircuitRoutes, type PlantCircuitRoute } from '../../data/plantCircuitRoutes'
+import { tramoPath } from '../../data/plantRouteGeometry'
 import type { SectorStatus, ZoneState } from '../../services/live/plantStateApi'
 
 /**
@@ -105,10 +106,6 @@ export function PlantMap(props: {
     )
   }
 
-  const px = (p: PlantPoint): [number, number] => [
-    (p.xPercent / 100) * base.width,
-    (p.yPercent / 100) * base.height,
-  ]
   const polygonPoints = (vertices: NonNullable<PlantLayout['zones'][number]['polygonPercent']>) =>
     vertices.map((vertex) => `${(vertex.xPercent / 100) * base.width},${(vertex.yPercent / 100) * base.height}`).join(' ')
   const polygonCenter = (vertices: NonNullable<PlantLayout['zones'][number]['polygonPercent']>) => ({
@@ -240,29 +237,26 @@ export function PlantMap(props: {
                 const a = byId.get(from)
                 const b = byId.get(to)
                 if (!a || !b) return null
-                const [x1, y1] = px(a)
-                const [x2, y2] = px(b)
+                const routePoints = tramoPath(a, b, layout.tramos ?? []).map((point) =>
+                  `${(point.xPercent / 100) * base.width},${(point.yPercent / 100) * base.height}`).join(' ')
                 return (
                   <g key={`${from}-${to}-${i}`}>
-                    <line
-                      x1={x1}
-                      y1={y1}
-                      x2={x2}
-                      y2={y2}
+                    <polyline
+                      points={routePoints}
+                      fill="none"
                       stroke="#FFFFFF"
                       strokeWidth={7}
                       strokeOpacity={0.75}
                       strokeLinecap="round"
                     />
-                    <line
-                      x1={x1}
-                      y1={y1}
-                      x2={x2}
-                      y2={y2}
+                    <polyline
+                      points={routePoints}
+                      fill="none"
                       stroke="#0EA5E9"
                       strokeWidth={3}
                       strokeLinecap="round"
                       strokeDasharray="10 8"
+                      markerMid="url(#circuitArrow)"
                       markerEnd="url(#circuitArrow)"
                     >
                       <animate
@@ -272,7 +266,7 @@ export function PlantMap(props: {
                         dur="1.1s"
                         repeatCount="indefinite"
                       />
-                    </line>
+                    </polyline>
                   </g>
                 )
               })
