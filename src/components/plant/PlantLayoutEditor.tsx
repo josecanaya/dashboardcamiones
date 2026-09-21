@@ -61,13 +61,14 @@ function pointInPolygon(point: PercentPoint, vertices: PercentPoint[]): boolean 
   return inside
 }
 
-export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones, initialTramos, initialCircuitCompositions, onSave }: {
+export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones, initialTramos, initialCircuitCompositions, initialUnplacedSteps, onSave }: {
   site: string
   basePlan: PlantBasePlan
   initialPoints: PlantPoint[]
   initialZones: PlantZoneShape[]
   initialTramos: PlantTramo[]
   initialCircuitCompositions: PlantCircuitComposition[]
+  initialUnplacedSteps: { code: string; label: string }[]
   onSave: (points: PlantPoint[], zones: PlantZoneShape[], tramos: PlantTramo[], circuitCompositions: PlantCircuitComposition[]) => Promise<void>
 }) {
   const [points, setPoints] = useState(initialPoints)
@@ -77,6 +78,7 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
   const [newTramoFrom, setNewTramoFrom] = useState('')
   const [newTramoTo, setNewTramoTo] = useState('')
   const [tramoToAdd, setTramoToAdd] = useState('')
+  const [pendingPointCode, setPendingPointCode] = useState<string | null>(null)
   const [tool, setTool] = useState<Tool>('select')
   const [selectedPointId, setSelectedPointId] = useState<string | null>(null)
   const [selectedZoneId, setSelectedZoneId] = useState<string | null>(initialZones[0]?.zoneId ?? null)
@@ -115,6 +117,12 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
     while (used.has(`Z${i}`)) i += 1
     return i
   }, [zones])
+  const pendingSteps = initialUnplacedSteps.filter((step) => !points.some((point) => point.id === step.code))
+  const pendingDefinition = (code: string) => code === 'S3'
+    ? { label: 'Egreso', sectorCode: 'RICARDONE_EGRESO_CAMIONES', devices: ['RicEgrCamFrente', 'RicEgrCamTraser'] }
+    : code === 'S10'
+      ? { label: 'Salida', sectorCode: 'RICARDONE_EGRESO_CAMIONES', devices: ['RicEgrCamFrente', 'RicEgrCamTraser'] }
+      : { label: initialUnplacedSteps.find((step) => step.code === code)?.label ?? code, sectorCode: '', devices: [] }
 
   const markDirty = () => { setDirty(true); setSaveState('idle') }
   const eventPoint = (clientX: number, clientY: number): PercentPoint => {
@@ -216,7 +224,11 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
     }
     if (tool === 'point') {
       const containing = zones.find((z) => (z.polygonPercent?.length ?? 0) >= 3 && pointInPolygon(position, z.polygonPercent!))
-      setDraftPoint(emptyPoint(position.xPercent, position.yPercent, containing?.zoneId))
+      const base = emptyPoint(position.xPercent, position.yPercent, containing?.zoneId)
+      if (pendingPointCode) {
+        const definition = pendingDefinition(pendingPointCode)
+        setDraftPoint({ ...base, id: pendingPointCode, label: definition.label, sectorCode: definition.sectorCode, cameraGroup: { label: definition.label, devices: definition.devices } })
+      } else setDraftPoint(base)
       setSelectedPointId(null); setSelectedZoneId(containing?.zoneId ?? null)
     }
     if (tool === 'tramo' && selectedTramo && drawingTramoOriginal !== undefined) {
@@ -227,7 +239,7 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
   const commitPoint = () => {
     if (!draftPoint || !draftPoint.id.trim() || !draftPoint.label.trim() || pointIdClash) return
     setPoints((current) => [...current, draftPoint]); setSelectedPointId(draftPoint.id)
-    setDraftPoint(null); setTool('select'); markDirty()
+    setDraftPoint(null); setPendingPointCode(null); setTool('select'); markDirty()
   }
   const save = async () => {
     setSaveState('busy')
@@ -242,7 +254,7 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
           <div className="flex flex-wrap gap-1.5" role="toolbar" aria-label="Herramientas del plano">
             <button type="button" onClick={() => setTool('select')} className={`ui-button ${tool === 'select' ? 'ui-button--primary' : ''}`}>Seleccionar</button>
             <button type="button" onClick={addZone} className="ui-button">Dibujar sector</button>
-            <button type="button" onClick={() => { setTool('point'); setDraftPoint(null) }} className={`ui-button ${tool === 'point' ? 'ui-button--primary' : ''}`}>Agregar cámara</button>
+            <button type="button" onClick={() => { setTool('point'); setDraftPoint(null); setPendingPointCode(null) }} className={`ui-button ${tool === 'point' ? 'ui-button--primary' : ''}`}>Agregar cámara</button>
             <button type="button" onClick={() => setTool('tramo')} className={`ui-button ${tool === 'tramo' ? 'ui-button--primary' : ''}`}>Editar tramos</button>
           </div>
           <div className="flex items-center gap-2">
@@ -264,7 +276,7 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
               <button type="button" className="ui-button ui-button--primary" disabled={(selectedZone?.polygonPercent?.length ?? 0) < 3} onClick={finishDrawing}>Cerrar polígono</button>
             </span>
           </div>
-        ) : tool === 'point' ? <div className="ui-message">Hacé clic sobre la imagen para colocar una cámara o punto de control.</div>
+        ) : tool === 'point' ? <div className="ui-message">{pendingPointCode ? `Hacé clic sobre la ubicación real de ${pendingPointCode} en el plano.` : 'Hacé clic sobre la imagen para colocar una cámara o punto de control.'}</div>
           : tool === 'tramo' && drawingTramoOriginal !== undefined ? <div className="ui-message ui-message--warning flex flex-wrap items-center justify-between gap-2"><span>Clic para agregar quiebres a la línea del tramo.</span><span className="flex gap-2"><button type="button" className="ui-button" onClick={() => setTramos((current) => current.map((item) => item.id === selectedTramoId ? { ...item, viaPercent: item.viaPercent.slice(0, -1) } : item))}>Deshacer punto</button><button type="button" className="ui-button" onClick={cancelDrawingTramo}>Cancelar</button><button type="button" className="ui-button ui-button--primary" onClick={finishDrawingTramo}>Terminar tramo</button></span></div>
           : tool === 'tramo' ? <div className="ui-message">Elegí un tramo físico y presioná “Dibujar tramo”.</div>
           : <div className="ui-message">Seleccioná un sector, una cámara o arrastrá los vértices de un polígono.</div>}
@@ -334,6 +346,10 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
       </div>
 
       <aside className="space-y-3">
+        <section className="ui-panel p-4">
+          <div className="mb-3 flex items-center justify-between"><h2 className="text-base font-bold">Puntos pendientes</h2><span className="ui-badge">{pendingSteps.length}</span></div>
+          {pendingSteps.length ? <><p className="text-xs text-slate-500">Elegí uno y después hacé clic en su ubicación real sobre el plano.</p><div className="mt-3 space-y-1">{pendingSteps.map((step) => { const definition = pendingDefinition(step.code); return <button key={step.code} type="button" className={`flex w-full items-center justify-between rounded-lg border px-2.5 py-2 text-left text-sm ${pendingPointCode === step.code ? 'border-blue-400 bg-blue-50' : 'border-slate-200'}`} onClick={() => { setPendingPointCode(step.code); setDraftPoint(null); setTool('point') }}><span>{definition.label}</span><span className="font-mono text-xs text-slate-500">{step.code}</span></button> })}</div></> : <p className="text-xs text-green-700">Todos los puntos están ubicados.</p>}
+        </section>
         <section className="ui-panel p-4">
           <h2 className="text-base font-bold">Tramos físicos</h2>
           <p className="mt-1 text-xs text-slate-500">Crealos primero, sin depender de ningún circuito.</p>

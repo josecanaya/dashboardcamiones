@@ -19,7 +19,7 @@ const SITES: { id: string; label: string }[] = [
 type LoadState =
   | { phase: 'loading' }
   | { phase: 'missing' }
-  | { phase: 'ready'; basePlan: PlantBasePlan; points: PlantPoint[]; zones: PlantZoneShape[]; tramos: PlantTramo[]; circuitCompositions: PlantCircuitComposition[] }
+  | { phase: 'ready'; basePlan: PlantBasePlan; points: PlantPoint[]; zones: PlantZoneShape[]; tramos: PlantTramo[]; circuitCompositions: PlantCircuitComposition[]; unplacedSteps: { code: string; label: string }[] }
   | { phase: 'error'; message: string }
 
 export function PlantLayoutEditorPage() {
@@ -43,6 +43,7 @@ export function PlantLayoutEditorPage() {
           zones: data.layout.zones ?? [],
           tramos: data.layout.tramos ?? [],
           circuitCompositions: data.layout.circuitCompositions ?? [],
+          unplacedSteps: data.layout.unplacedSteps ?? [],
         })
       })
       .catch((e) => setState({ phase: 'error', message: e instanceof Error ? e.message : String(e) }))
@@ -90,7 +91,7 @@ export function PlantLayoutEditorPage() {
       <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
         <h2 className="text-base font-bold text-slate-900">Configuración por capas</h2>
         <p className="mt-0.5 text-[12.5px] text-slate-500">
-          Dibujá sectores, ubicá cámaras y corregí los tramos de cada circuito sobre la imagen. Se guarda en{' '}
+          Ubicá cámaras, dibujá tramos físicos y componé los circuitos sobre la imagen. Se guarda en{' '}
           <code className="font-mono text-[11.5px]">public/plant/{site}/plantZones.json</code>.
         </p>
         <div className="mt-3 flex gap-2">
@@ -153,6 +154,7 @@ export function PlantLayoutEditorPage() {
           initialZones={state.zones}
           initialTramos={state.tramos}
           initialCircuitCompositions={state.circuitCompositions}
+          initialUnplacedSteps={state.unplacedSteps}
           onSave={save}
         />
       )}
