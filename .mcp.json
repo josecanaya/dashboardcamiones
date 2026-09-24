@@ -6,6 +6,10 @@
       "env": {
         "ETL_API_BASE": "http://127.0.0.1:8787"
       }
+    },
+    "google-slides": {
+      "type": "http",
+      "url": "http://127.0.0.1:8790/mcp"
     }
   }
 }

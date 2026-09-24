@@ -178,3 +178,157 @@ export const exportPresentationShape = {
   format: z.enum(["pdf", "pptx"]).describe("Formato de exportación."),
   userId,
 };
+
+// —— Google Sheets / Drive genérico ————————————————————————————————————————
+// El informe de logística sale de un Excel que la automatización deja en Drive:
+// primero se ubica el archivo, después se leen sus rangos.
+
+const spreadsheet = z
+  .string()
+  .min(1)
+  .describe("URL de Google Sheets o ID pelado de la hoja de cálculo.");
+
+export const searchDriveFilesShape = {
+  nameContains: z.string().optional().describe("Filtra por nombre que contenga este texto."),
+  folderId: z
+    .string()
+    .optional()
+    .describe("ID de la carpeta de Drive (el tramo final de la URL de la carpeta)."),
+  mimeType: z
+    .string()
+    .optional()
+    .describe(
+      "Filtra por tipo exacto. Atajos útiles: 'application/vnd.google-apps.spreadsheet' (hoja de Google), " +
+        "'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' (.xlsx).",
+    ),
+  modifiedAfter: z.string().optional().describe("RFC3339. Modificados después de esta fecha."),
+  pageSize: z.number().int().min(1).max(100).optional().describe("Tamaño de página (1-100, default 25)."),
+  pageToken: z.string().optional().describe("Token de la página siguiente."),
+  userId,
+};
+
+export const getSpreadsheetMetadataShape = {
+  spreadsheet,
+  userId,
+};
+
+export const getSheetValuesShape = {
+  spreadsheet,
+  ranges: z
+    .array(z.string().min(1))
+    .min(1)
+    .describe(
+      "Rangos A1 a leer, p.ej. ['Soja!A7:C11', 'Textos!C7:C9']. Las pestañas con espacios se citan " +
+        "con comillas simples: \"'Textos PPTX'!A1:D10\". Se leen todos en una sola llamada.",
+    ),
+  formatted: z
+    .boolean()
+    .optional()
+    .describe(
+      "false (default) devuelve el número crudo; true devuelve el texto formateado de la celda.",
+    ),
+  pad: z
+    .boolean()
+    .optional()
+    .describe(
+      "true (default) rellena con null las celdas vacías del final de cada fila para que todas " +
+        "tengan el mismo ancho. false devuelve las filas tal cual las manda Google.",
+    ),
+  userId,
+};
+
+export const importXlsxShape = {
+  file: z.string().min(1).describe("URL o ID del archivo .xlsx en Drive."),
+  name: z.string().optional().describe("Nombre de la hoja de cálculo resultante (opcional)."),
+  folderId: z.string().optional().describe("Carpeta destino de la copia (opcional)."),
+  userId,
+};
+
+export const uploadFileShape = {
+  localPath: z
+    .string()
+    .min(1)
+    .describe(
+      "Ruta absoluta de un .pptx o .xlsx en la máquina donde corre este servidor.",
+    ),
+  name: z.string().optional().describe("Nombre en Drive (default: el del archivo, sin extensión)."),
+  folderId: z.string().optional().describe("Carpeta de Drive destino."),
+  convert: z
+    .boolean()
+    .optional()
+    .describe(
+      "true (default) convierte al formato nativo de Google al subir: .pptx → Google Slides, " +
+        ".xlsx → Google Sheets. false lo deja como archivo adjunto sin convertir.",
+    ),
+  userId,
+};
+
+export const addChartShape = {
+  spreadsheet,
+  chartType: z
+    .enum(["COLUMN", "BAR", "LINE", "AREA", "SCATTER", "PIE"])
+    .describe("Tipo de gráfico."),
+  domain: z
+    .string()
+    .min(1)
+    .describe("Rango A1 de las categorías (eje X), p.ej. 'Calada!A7:A12'."),
+  series: z
+    .array(z.string().min(1))
+    .min(1)
+    .describe("Rangos A1 de los valores, uno por serie, p.ej. ['Calada!C7:C12']."),
+  title: z.string().optional().describe("Título del gráfico."),
+  axisTitle: z.string().optional().describe("Título del eje de valores (p.ej. 'min')."),
+  legendPosition: z
+    .enum(["BOTTOM_LEGEND", "RIGHT_LEGEND", "NO_LEGEND"])
+    .optional()
+    .describe("Ubicación de la leyenda."),
+  anchorSheetTitle: z
+    .string()
+    .optional()
+    .describe("Pestaña donde queda anclado el gráfico (default: la primera)."),
+  userId,
+};
+
+export const writeSheetShape = {
+  spreadsheet,
+  sheetTitle: z
+    .string()
+    .min(1)
+    .describe("Pestaña destino. Se crea si no existe; si existe, se limpia antes de escribir."),
+  values: z
+    .array(z.array(z.union([z.string(), z.number(), z.boolean(), z.null()])))
+    .min(1)
+    .describe("Matriz [fila][columna] a escribir desde A1."),
+  userId,
+};
+
+export const updateValuesShape = {
+  spreadsheet,
+  ranges: z
+    .array(
+      z.object({
+        range: z.string().min(1).describe("Rango A1 destino, p.ej. \"'Calada'!C7:C12\"."),
+        values: z
+          .array(z.array(z.union([z.string(), z.number(), z.boolean(), z.null()])))
+          .describe("Matriz [fila][columna] con el mismo tamaño que el rango."),
+      }),
+    )
+    .min(1)
+    .describe("Rangos a escribir. Solo se pisan esas celdas: el resto de la hoja queda igual."),
+  userId,
+};
+
+export const trashFileShape = {
+  file: z.string().min(1).describe("URL o ID del archivo de Drive a mandar a la papelera."),
+  confirm: z
+    .boolean()
+    .describe("Obligatorio (true). Sin esto no se manda nada a la papelera."),
+  userId,
+};
+
+export const deleteChartsShape = {
+  spreadsheet,
+  chartIds: z.array(z.number().int()).min(1).describe("chartId de los gráficos a borrar de la hoja."),
+  confirm: z.boolean().describe("Obligatorio (true): borrar un gráfico no se deshace desde la API."),
+  userId,
+};

@@ -1,4 +1,4 @@
-import { google, type slides_v1, type drive_v3 } from "googleapis";
+import { google, type slides_v1, type drive_v3, type sheets_v4 } from "googleapis";
 import type { OAuth2Client } from "google-auth-library";
 import type { AppConfig } from "../config.js";
 import { createOAuthClient } from "../auth/oauthClient.js";
@@ -10,6 +10,7 @@ export interface GoogleClients {
   auth: OAuth2Client;
   slides: slides_v1.Slides;
   drive: drive_v3.Drive;
+  sheets: sheets_v4.Sheets;
 }
 
 /**
@@ -59,6 +60,7 @@ export async function getGoogleClients(
 
   const slides = google.slides({ version: "v1", auth, timeout: cfg.GOOGLE_HTTP_TIMEOUT_MS });
   const drive = google.drive({ version: "v3", auth, timeout: cfg.GOOGLE_HTTP_TIMEOUT_MS });
+  const sheets = google.sheets({ version: "v4", auth, timeout: cfg.GOOGLE_HTTP_TIMEOUT_MS });
 
-  return { auth, slides, drive };
+  return { auth, slides, drive, sheets };
 }

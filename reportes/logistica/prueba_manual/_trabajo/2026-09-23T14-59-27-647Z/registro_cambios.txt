@@ -1,0 +1,40 @@
+CAMBIOS
+D05_G1 D5: gráfico editable desde Soja!C7:C11
+D05_G2 D5: gráfico editable desde Soja!C16:C16
+D17_G1 D17: gráfico editable desde Soja!C82:C123
+D17_G2 D17: gráfico editable desde Soja!C128:C141
+D28_G1 D28: gráfico editable desde Girasol!C7:C10
+D28_G2 D28: gráfico editable desde Girasol!C15:C17
+D31_G1 D31: gráfico editable desde Girasol!C22:C49
+D31_G2 D31: gráfico editable desde Girasol!C54:C67
+D35_G1 D35: gráfico editable desde Calada!C7:C12
+D50_G1 D50: gráfico editable desde Calada!C87:C93
+D51_G1 D51: gráfico editable desde Calada!C98:C104
+D53_G1 D53: gráfico editable desde Descargas!C7:C8
+D53_G2 D53: gráfico editable desde Descargas!C13:C26
+D55_G1 D55: gráfico editable desde Descargas!C31:C37
+D57_G1 D57: gráfico editable desde Descargas!C42:C48
+D58_G1 D58: gráfico editable desde Descargas!C53:C57
+
+PENDIENTES
+D15_G1 D15: se conserva grafico base; faltan 14 valores en Soja
+D16_G1 D16: se conserva grafico base; faltan 28 valores en Soja
+D16_G2 D16: se conserva grafico base; faltan 7 valores en Soja
+D20_G1 D20: se conserva grafico base; faltan 2 valores en Pellet
+D25_G1 D25: se conserva grafico base; faltan 4 valores en Pellet
+D36_G1 D36: se conserva grafico base; faltan 6 valores en Calada
+D38_G1 D38: se conserva grafico base; faltan 6 valores en Calada
+D40_G1 D40: se conserva grafico base; faltan 6 valores en Calada
+D42_G1 D42: se conserva grafico base; faltan 6 valores en Calada
+D44_G1 D44: se conserva grafico base; faltan 6 valores en Calada
+D46_G1 D46: se conserva grafico base; faltan 6 valores en Calada
+D48_G1 D48: se conserva grafico base; faltan 6 valores en Calada
+D59_G1 D59: se conserva grafico base; faltan 5 valores en Descargas
+D61_G1 D61: se conserva grafico base; faltan 5 valores en Descargas
+D63_G1 D63: se conserva grafico base; faltan 5 valores en Descargas
+D65_G1 D65: se conserva grafico base; faltan 5 valores en Descargas
+D67_G1 D67: se conserva grafico base; faltan 5 valores en Descargas
+D69_G1 D69: se conserva grafico base; faltan 5 valores en Descargas
+D71_G1 D71: se conserva grafico base; faltan 5 valores en Descargas
+
+Capturas de actividad vacias. Tarjetas, totales y conclusiones requieren revision manual.

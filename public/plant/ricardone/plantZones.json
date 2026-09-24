@@ -1,5 +1,5 @@
 {
-  "rev": "2026-09-15",
+  "rev": "2026-09-21",
   "viewBox": [
     0,
     0,
@@ -8,18 +8,6 @@
   ],
   "metersPerUnit": 0.5,
   "zones": [
-    {
-      "zoneId": "Z0",
-      "label": "Acceso",
-      "x": 12,
-      "y": 334,
-      "w": 124,
-      "h": 84,
-      "cameras": [
-        "RicIngCamFrente",
-        "RicIngCamTrasera"
-      ]
-    },
     {
       "zoneId": "Z1",
       "label": "Ingreso → Preingreso",
@@ -65,7 +53,42 @@
             "RicCalLiq"
           ]
         }
-      ]
+      ],
+      "polygonPercent": [
+        {
+          "xPercent": 17.8,
+          "yPercent": 52.7
+        },
+        {
+          "xPercent": 21.1,
+          "yPercent": 53.9
+        },
+        {
+          "xPercent": 26.8,
+          "yPercent": 49.3
+        },
+        {
+          "xPercent": 32.1,
+          "yPercent": 20.7
+        },
+        {
+          "xPercent": 23.6,
+          "yPercent": 19
+        },
+        {
+          "xPercent": 22.6,
+          "yPercent": 33.7
+        },
+        {
+          "xPercent": 19.1,
+          "yPercent": 36.7
+        },
+        {
+          "xPercent": 18.5,
+          "yPercent": 43.6
+        }
+      ],
+      "color": "#eb247a"
     },
     {
       "zoneId": "Z3",
@@ -124,7 +147,58 @@
         "RicVolcable2",
         "RicC16Descarga1",
         "RicC16Descarga2"
-      ]
+      ],
+      "polygonPercent": [
+        {
+          "xPercent": 59.6,
+          "yPercent": 51.4
+        },
+        {
+          "xPercent": 59.3,
+          "yPercent": 55.9
+        },
+        {
+          "xPercent": 62.9,
+          "yPercent": 56.8
+        },
+        {
+          "xPercent": 62.9,
+          "yPercent": 60
+        },
+        {
+          "xPercent": 62.5,
+          "yPercent": 63.6
+        },
+        {
+          "xPercent": 62.3,
+          "yPercent": 68.9
+        },
+        {
+          "xPercent": 61.7,
+          "yPercent": 74.2
+        },
+        {
+          "xPercent": 61.8,
+          "yPercent": 76
+        },
+        {
+          "xPercent": 61.6,
+          "yPercent": 80.1
+        },
+        {
+          "xPercent": 66.1,
+          "yPercent": 80.6
+        },
+        {
+          "xPercent": 67.5,
+          "yPercent": 55.3
+        },
+        {
+          "xPercent": 67,
+          "yPercent": 52.4
+        }
+      ],
+      "color": "#ddeb24"
     },
     {
       "zoneId": "Z7",
@@ -150,6 +224,39 @@
         "RicEgrCamFrente",
         "RicEgrCamTraser"
       ]
+    },
+    {
+      "zoneId": "Z0",
+      "label": "Espera C16",
+      "sectorCode": "ESPERA_C16",
+      "color": "#5fe3e0",
+      "polygonPercent": [
+        {
+          "xPercent": 22.2,
+          "yPercent": 7.8
+        },
+        {
+          "xPercent": 16.6,
+          "yPercent": 5.4
+        },
+        {
+          "xPercent": 14.6,
+          "yPercent": 28.3
+        },
+        {
+          "xPercent": 12.9,
+          "yPercent": 28.2
+        },
+        {
+          "xPercent": 15.6,
+          "yPercent": 2.5
+        },
+        {
+          "xPercent": 22.5,
+          "yPercent": 5.4
+        }
+      ],
+      "cameras": []
     }
   ],
   "basePlan": {
@@ -165,8 +272,8 @@
       "sectorCode": "RICARDONE_INGRESO_CAMIONES",
       "type": "camera",
       "tone": "acceso",
-      "xPercent": 10.1,
-      "yPercent": 91.2,
+      "xPercent": 13.8,
+      "yPercent": 78.4,
       "cameraGroup": {
         "label": "Ingreso",
         "devices": [
@@ -181,8 +288,8 @@
       "sectorCode": "RICARDONE_PREINGRESO",
       "type": "camera",
       "tone": "acceso",
-      "xPercent": 13.2,
-      "yPercent": 49.4,
+      "xPercent": 17.4,
+      "yPercent": 46.8,
       "cameraGroup": {
         "label": "Preingreso",
         "devices": [
@@ -199,8 +306,8 @@
       "sectorCode": "RICARDONE_CALADA",
       "type": "camera-group",
       "tone": "calada",
-      "xPercent": 14.5,
-      "yPercent": 67,
+      "xPercent": 19.3,
+      "yPercent": 56.6,
       "cameraGroup": {
         "label": "Calada",
         "devices": [
@@ -219,8 +326,8 @@
       "sectorCode": "RICARDONE_CALADA",
       "type": "camera-group",
       "tone": "calada",
-      "xPercent": 13.7,
-      "yPercent": 71.5,
+      "xPercent": 16.6,
+      "yPercent": 69.7,
       "cameraGroup": {
         "label": "Calada líquida",
         "devices": [
@@ -234,8 +341,8 @@
       "sectorCode": "RICARDONE_BALANZA",
       "type": "control-point",
       "tone": "balanza",
-      "xPercent": 29.4,
-      "yPercent": 85.6,
+      "xPercent": 33,
+      "yPercent": 75.7,
       "cameraGroup": {
         "label": "Balanzas",
         "devices": [
@@ -254,8 +361,8 @@
       "sectorCode": "RICARDONE_CELDA_16",
       "type": "operation",
       "tone": "celda16",
-      "xPercent": 11.7,
-      "yPercent": 34.8,
+      "xPercent": 18.4,
+      "yPercent": 31.6,
       "cameraGroup": {
         "label": "Celda 16",
         "devices": [
@@ -272,8 +379,8 @@
       "sectorCode": "S6",
       "type": "camera",
       "tone": "playa3",
-      "xPercent": 57.3,
-      "yPercent": 58.2,
+      "xPercent": 63.2,
+      "yPercent": 52.6,
       "cameraGroup": {
         "label": "Acceso a Playa 3",
         "devices": [
@@ -287,8 +394,8 @@
       "sectorCode": "RICARDONE_VOLCABLE",
       "type": "operation",
       "tone": "volcable",
-      "xPercent": 32.2,
-      "yPercent": 81.3,
+      "xPercent": 37.1,
+      "yPercent": 72.9,
       "cameraGroup": {
         "label": "Volcable 1",
         "devices": [
@@ -302,8 +409,8 @@
       "sectorCode": "RICARDONE_VOLCABLE",
       "type": "operation",
       "tone": "volcable",
-      "xPercent": 37.3,
-      "yPercent": 81.3,
+      "xPercent": 40.4,
+      "yPercent": 73.3,
       "cameraGroup": {
         "label": "Volcable 2",
         "devices": [
@@ -317,8 +424,8 @@
       "sectorCode": "S7",
       "type": "operation",
       "tone": "silos",
-      "xPercent": 61.1,
-      "yPercent": 84.1,
+      "xPercent": 68.2,
+      "yPercent": 85.4,
       "cameraGroup": {
         "label": "Descarga de silos · línea 1",
         "devices": [
@@ -332,8 +439,8 @@
       "sectorCode": "S7",
       "type": "operation",
       "tone": "silos",
-      "xPercent": 60.9,
-      "yPercent": 87.6,
+      "xPercent": 66.6,
+      "yPercent": 83.7,
       "cameraGroup": {
         "label": "Descarga de silos · línea 2",
         "devices": [
@@ -347,14 +454,43 @@
       "sectorCode": "S8",
       "type": "operation",
       "tone": "silos",
-      "xPercent": 78.5,
-      "yPercent": 85.2,
+      "xPercent": 83,
+      "yPercent": 85.8,
       "cameraGroup": {
         "label": "Carga de silos",
         "devices": [
           "RicS8CargaLinea1",
           "RicS8CargaLinea2"
         ]
+      }
+    },
+    {
+      "id": "S3",
+      "label": "Egreso",
+      "sectorCode": "RICARDONE_EGRESO_CAMIONES",
+      "type": "camera",
+      "tone": "acceso",
+      "xPercent": 16.2,
+      "yPercent": 82.4,
+      "cameraGroup": {
+        "label": "Egreso",
+        "devices": [
+          "RicEgrCamFrente",
+          "RicEgrCamTraser"
+        ]
+      }
+    },
+    {
+      "id": "S10",
+      "label": "Salida",
+      "sectorCode": "RICARDONE_EGRESO_CAMIONES",
+      "type": "camera",
+      "tone": "acceso",
+      "xPercent": 47.3,
+      "yPercent": 87.8,
+      "cameraGroup": {
+        "label": "Salida",
+        "devices": []
       }
     }
   ],
@@ -373,6 +509,301 @@
     {
       "code": "S3",
       "label": "Salida a San Lorenzo"
+    }
+  ],
+  "tramos": [
+    {
+      "id": "S0::S1",
+      "fromPointId": "S0",
+      "toPointId": "S1",
+      "viaPercent": [
+        {
+          "xPercent": 13.4,
+          "yPercent": 77.3
+        },
+        {
+          "xPercent": 14,
+          "yPercent": 66
+        },
+        {
+          "xPercent": 15,
+          "yPercent": 53.9
+        },
+        {
+          "xPercent": 15.7,
+          "yPercent": 48.4
+        }
+      ]
+    },
+    {
+      "id": "S1::S2",
+      "fromPointId": "S1",
+      "toPointId": "S2",
+      "viaPercent": [
+        {
+          "xPercent": 21.2,
+          "yPercent": 46.9
+        }
+      ]
+    },
+    {
+      "id": "S2::S4",
+      "fromPointId": "S2",
+      "toPointId": "S4",
+      "viaPercent": [
+        {
+          "xPercent": 18,
+          "yPercent": 68.5
+        },
+        {
+          "xPercent": 18.2,
+          "yPercent": 76.3
+        },
+        {
+          "xPercent": 21.5,
+          "yPercent": 80
+        },
+        {
+          "xPercent": 32.3,
+          "yPercent": 82.7
+        }
+      ]
+    },
+    {
+      "id": "S4::S5",
+      "fromPointId": "S4",
+      "toPointId": "S5",
+      "viaPercent": [
+        {
+          "xPercent": 25.1,
+          "yPercent": 73
+        },
+        {
+          "xPercent": 20.5,
+          "yPercent": 72.2
+        },
+        {
+          "xPercent": 21.9,
+          "yPercent": 56.1
+        },
+        {
+          "xPercent": 29.9,
+          "yPercent": 47.2
+        },
+        {
+          "xPercent": 33.9,
+          "yPercent": 26.1
+        },
+        {
+          "xPercent": 33.9,
+          "yPercent": 19.4
+        },
+        {
+          "xPercent": 27.5,
+          "yPercent": 18.1
+        },
+        {
+          "xPercent": 22.3,
+          "yPercent": 16.8
+        },
+        {
+          "xPercent": 22.6,
+          "yPercent": 6.6
+        },
+        {
+          "xPercent": 16.4,
+          "yPercent": 4.6
+        },
+        {
+          "xPercent": 15,
+          "yPercent": 11.3
+        },
+        {
+          "xPercent": 14.4,
+          "yPercent": 23.3
+        },
+        {
+          "xPercent": 13.6,
+          "yPercent": 30.1
+        }
+      ]
+    },
+    {
+      "id": "S5::S6",
+      "fromPointId": "S5",
+      "toPointId": "S6",
+      "viaPercent": [
+        {
+          "xPercent": 21.5,
+          "yPercent": 27
+        },
+        {
+          "xPercent": 21.8,
+          "yPercent": 18.4
+        },
+        {
+          "xPercent": 32.3,
+          "yPercent": 19.8
+        },
+        {
+          "xPercent": 32.8,
+          "yPercent": 23.3
+        },
+        {
+          "xPercent": 31.7,
+          "yPercent": 32.8
+        },
+        {
+          "xPercent": 29.6,
+          "yPercent": 43.2
+        },
+        {
+          "xPercent": 31.6,
+          "yPercent": 46.6
+        },
+        {
+          "xPercent": 50.4,
+          "yPercent": 48.5
+        },
+        {
+          "xPercent": 61.2,
+          "yPercent": 50.2
+        }
+      ]
+    },
+    {
+      "id": "S6::S7-A",
+      "fromPointId": "S6",
+      "toPointId": "S7-A",
+      "viaPercent": [
+        {
+          "xPercent": 64.9,
+          "yPercent": 76.6
+        },
+        {
+          "xPercent": 67.4,
+          "yPercent": 78
+        }
+      ]
+    },
+    {
+      "id": "S4::S6",
+      "fromPointId": "S6",
+      "toPointId": "S4",
+      "viaPercent": [
+        {
+          "xPercent": 63.5,
+          "yPercent": 77.7
+        },
+        {
+          "xPercent": 43.6,
+          "yPercent": 74
+        },
+        {
+          "xPercent": 33.8,
+          "yPercent": 73
+        }
+      ]
+    },
+    {
+      "id": "S6::S7-B",
+      "fromPointId": "S6",
+      "toPointId": "S7-B",
+      "viaPercent": []
+    },
+    {
+      "id": "S6::S9-V1",
+      "fromPointId": "S6",
+      "toPointId": "S9-V1",
+      "viaPercent": [
+        {
+          "xPercent": 63.7,
+          "yPercent": 77
+        },
+        {
+          "xPercent": 46.1,
+          "yPercent": 75.1
+        }
+      ]
+    },
+    {
+      "id": "S6::S9-V2",
+      "fromPointId": "S6",
+      "toPointId": "S9-V2",
+      "viaPercent": [
+        {
+          "xPercent": 63.7,
+          "yPercent": 77
+        },
+        {
+          "xPercent": 48.1,
+          "yPercent": 75.4
+        }
+      ]
+    },
+    {
+      "id": "S6::S8",
+      "fromPointId": "S6",
+      "toPointId": "S8",
+      "viaPercent": [
+        {
+          "xPercent": 64.1,
+          "yPercent": 77.3
+        },
+        {
+          "xPercent": 68.3,
+          "yPercent": 79.1
+        },
+        {
+          "xPercent": 79.7,
+          "yPercent": 81.6
+        }
+      ]
+    },
+    {
+      "id": "S1::S2-LIQ",
+      "fromPointId": "S1",
+      "toPointId": "S2-LIQ",
+      "viaPercent": [
+        {
+          "xPercent": 20.7,
+          "yPercent": 47.3
+        },
+        {
+          "xPercent": 17.4,
+          "yPercent": 56.7
+        }
+      ]
+    }
+  ],
+  "circuitCompositions": [
+    {
+      "circuitCode": "R1",
+      "tramos": [
+        {
+          "tramoId": "S0::S1",
+          "reverse": false
+        },
+        {
+          "tramoId": "S1::S2",
+          "reverse": false
+        },
+        {
+          "tramoId": "S2::S4",
+          "reverse": false
+        },
+        {
+          "tramoId": "S4::S5",
+          "reverse": false
+        },
+        {
+          "tramoId": "S5::S6",
+          "reverse": false
+        },
+        {
+          "tramoId": "S4::S6"
+        }
+      ]
     }
   ]
 }

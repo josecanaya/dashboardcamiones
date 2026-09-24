@@ -17,7 +17,7 @@ import { MATRIX_CODES_BY_PLANT_OP } from '../../config/kpiCircuitMatrix'
  */
 const KNOWN_UNDEFINED_MATRIX_CODES = new Set([
   'R2', 'R10', 'R11', 'R12', 'R13', 'R14', 'R15', 'R17', 'R18',
-  'R21', 'R22', 'R23', 'R24', 'R25', 'R29', 'R33',
+  'R21', 'R22', 'R23', 'R24', 'R25', 'R33',
   'SL4', 'SL5', 'SL6', 'SL7', 'SL8', 'SL9',
   'SL10', 'SL11', 'SL12', 'SL13', 'SL14', 'SL15',
 ])

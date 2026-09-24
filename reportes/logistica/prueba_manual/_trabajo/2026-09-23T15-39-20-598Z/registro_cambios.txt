@@ -1,0 +1,823 @@
+CAMBIOS
+D1 objeto 57: Comite de Logistica -> 100
+D1 objeto 58: Nueva Vicentin Argentina -> 200
+D1 objeto 64: 18-09-2026 -> 100
+D2 objeto 20001: Período analizado: 10/09 al 16/09/2026 -> 200
+D2 objeto 20002: 1 -> 100
+D2 objeto 20003: Tamaño de la muestra y período -> 200
+D2 objeto 20004: Pág. 3 -> 100
+D2 objeto 20005: 2 -> 200
+D2 objeto 20006: Operación de soja -> 100
+D2 objeto 20007: Pág. 4–18 -> 200
+D2 objeto 20008: 3 -> 100
+D2 objeto 20009: Operativo de pellet de girasol -> 200
+D2 objeto 20010: Pág. 19–26 -> 100
+D2 objeto 20011: 4 -> 200
+D2 objeto 20012: Operación de semilla de girasol -> 100
+D2 objeto 20013: Pág. 27–32 -> 200
+D2 objeto 20014: 5 -> 100
+D2 objeto 20015: Actividad de calada -> 200
+D2 objeto 20016: Pág. 33–51 -> 100
+D2 objeto 20017: 6 -> 200
+D2 objeto 20018: Actividad de volcables -> 100
+D2 objeto 20019: Pág. 52–72 -> 200
+D3 objeto 20001: PERÍODO DE ANÁLISIS -> 100
+D3 objeto 20002: Inicio -> 200
+D3 objeto 20003: 10/09 -> 100
+D3 objeto 20004: Fin -> 200
+D3 objeto 20005: 16/09 -> 100
+D3 objeto 20006: Días -> 200
+D3 objeto 20007: 7 -> 100
+D3 objeto 20008: VOLUMEN TOTAL REGISTRADO -> 200
+D3 objeto 20009: 3.423 -> 100
+D3 objeto 20010: camiones · valor reportado -> 200
+D3 objeto 20011: SOJA -> 100
+D3 objeto 20012: 2.557 -> 200
+D3 objeto 20013: GIRASOL -> 100
+D3 objeto 20014: 523 -> 200
+D3 objeto 20015: LÍQUIDOS -> 100
+D3 objeto 20016: 155 -> 200
+D3 objeto 20017: PELLET -> 100
+D3 objeto 20018: 188 -> 200
+D3 objeto 20019: Totales por producto del informe de referencia -> 100
+D4 objeto 125: Contenido del análisis Calidad de lectura de cámaras Descripción del circuito R7 Tiempos medios por tramo Evolución diaria del operativo Comparativo semanal e histórico Conclusiones -> 200
+D5 objeto 132: Calidad de lectura de Cámaras LPR -> 100
+D5 objeto 135: Falla de Lectura más frecuente -> 200
+D5 objeto 136: Balanza Egreso   (1604  patentes no leídas) -> 100
+D5 objeto 146: Todas las Cámaras -> 200
+D5 objeto 147: 849 -> 100
+D5 objeto 150: 7 Cámaras -> 200
+D5 objeto 151: 721 -> 100
+D5 objeto 152: 6 Cámaras -> 200
+D5 objeto 153: 462 -> 100
+D5 objeto 154: 5 Cámaras -> 200
+D5 objeto 155: 306 -> 100
+D5 objeto 156: ≤  4 Cámaras -> 200
+D5 objeto 157: 219 -> 100
+D6 objeto 173: 1 -> 200
+D6 objeto 174: 2 -> 100
+D6 objeto 175: 3 -> 200
+D6 objeto 176: 4 -> 100
+D6 objeto 177: 5 -> 200
+D6 objeto 178: 6 -> 100
+D6 objeto 179: 7 -> 200
+D6 objeto 193: Circuito R7 | Producto:Soja -> 100
+D6 objeto 199: Tramo 1 : Ingreso -> 200
+D6 objeto 200: ingreso → Preingreso -> 100
+D6 objeto 203: Tramo 2 : Playa 1 -> 200
+D6 objeto 204: Preingreso→ Calada -> 100
+D6 objeto 207: Tramo 3 : Egreso -> 200
+D6 objeto 208: Calada → Egreso -> 100
+D6 objeto 211: Tramo 5 : Playa OSL -> 200
+D6 objeto 212: Ingreso → Balanza -> 100
+D6 objeto 215: Tramo 4: Interplanta -> 200
+D6 objeto 216: Ricardone → San Lorenzo -> 100
+D6 objeto 219: Tramo 6: Descarga -> 200
+D6 objeto 220: Balanza Osl →  Balanza Pto -> 100
+D6 objeto 221: → -> 200
+D6 objeto 222: → -> 100
+D6 objeto 223: → -> 200
+D6 objeto 224: → -> 100
+D6 objeto 225: → -> 200
+D6 objeto 228: Tramo 6: Salida -> 100
+D6 objeto 229: Balanza Pto  →  Portería -> 200
+D6 objeto 230: → -> 100
+D7 objeto 238: Tiempos medios por tramo -> 200
+D7 objeto 239: 126 -> 100
+D7 objeto 240: 11 -> 200
+D7 objeto 241: 12 -> 100
+D7 objeto 242: 119 -> 200
+D7 objeto 243: 42 -> 100
+D7 objeto 244: 19 -> 200
+D7 objeto 261: Ingreso -> 100
+D7 objeto 266: Pre-ingr -> 200
+D7 objeto 267: ingreso -> 100
+D7 objeto 268: Salida Ric -> 200
+D7 objeto 269: Calada -> 100
+D7 objeto 270: Balanza  OSL -> 200
+D7 objeto 271: ingreso SLZ -> 100
+D7 objeto 272: Salida SLZ -> 200
+D7 objeto 273: Volcable PTO -> 100
+D7 objeto 276: Playa 1 -> 200
+D7 objeto 277: Salida -> 100
+D7 objeto 278: Interplanta -> 200
+D7 objeto 279: 334  Min -> 100
+D7 objeto 280: Playa OSL -> 200
+D7 objeto 281: Descarga -> 100
+D7 objeto 282: Egreso -> 200
+D7 objeto 283: 5 -> 100
+D7 objeto 284: Tiempo Total -> 200
+D7 objeto 285: Comparativo  Semana anterior -> 100
+D7 objeto 286: Min -> 200
+D7 objeto 289: Total de camiones -> 100
+D7 objeto 290: 2557 -> 200
+D7 objeto 291: +58 -> 100
+D7 objeto 292: Ricardone -> 200
+D7 objeto 293: San Lorenzo -> 100
+D7 objeto 294: 142   min -> 200
+D7 objeto 295: 180  min -> 100
+D7 objeto 296: (2 hs 22 m) -> 200
+D7 objeto 297: (3 hs) -> 100
+D7 objeto 298: (5 hs 34 m) -> 200
+D8 objeto 303: 164 -> 100
+D8 objeto 304: 12 -> 200
+D8 objeto 305: 13 -> 100
+D8 objeto 306: 122 -> 200
+D8 objeto 307: 26 -> 100
+D8 objeto 308: 20 -> 200
+D8 objeto 316: 363  Min -> 100
+D8 objeto 317: 6 -> 200
+D8 objeto 318: Tiempo Total -> 100
+D8 objeto 322: Circuito R7 | Jueves 10/09 -> 200
+D8 objeto 331: Q1 -> 100
+D8 objeto 332: Q2 -> 200
+D8 objeto 333: Q3 -> 100
+D8 objeto 334: Q4 -> 200
+D8 objeto 335: 22 :00 -04:00 -> 100
+D8 objeto 336: 04:00  -  10:00 -> 200
+D8 objeto 337: 10:00 - 16:00 -> 100
+D8 objeto 338: 16:00 - 22:00 -> 200
+D8 objeto 339: 151  camiones -> 100
+D8 objeto 340: 118  camiones -> 200
+D8 objeto 341: 104  camiones -> 100
+D8 objeto 342: 138  camiones -> 200
+D8 objeto 346: Total de camiones -> 100
+D8 objeto 347: 511 -> 200
+D8 objeto 348: 10/09 -> 100
+D8 objeto 349: (6 hs 3 m) -> 200
+D8 objeto 350: Ricardone -> 100
+D8 objeto 351: San Lorenzo -> 200
+D8 objeto 352: 182  min -> 100
+D8 objeto 353: 168  min -> 200
+D8 objeto 354: (3 hs 2 m) -> 100
+D8 objeto 355: (2 hs 48 m) -> 200
+D9 objeto 360: 168 -> 100
+D9 objeto 361: 11 -> 200
+D9 objeto 362: 13 -> 100
+D9 objeto 363: 91 -> 200
+D9 objeto 364: 39 -> 100
+D9 objeto 365: 20 -> 200
+D9 objeto 373: 347  Min -> 100
+D9 objeto 374: 4 -> 200
+D9 objeto 375: Tiempo Total -> 100
+D9 objeto 376: 11/09 -> 200
+D9 objeto 385: Q1 -> 100
+D9 objeto 386: Q2 -> 200
+D9 objeto 387: Q3 -> 100
+D9 objeto 388: Q4 -> 200
+D9 objeto 389: 22 :00 -04:00 -> 100
+D9 objeto 390: 04:00  -  10:00 -> 200
+D9 objeto 391: 10:00 - 16:00 -> 100
+D9 objeto 392: 16:00 - 22:00 -> 200
+D9 objeto 393: 178  camiones -> 100
+D9 objeto 394: 78  camiones -> 200
+D9 objeto 395: 139  camiones -> 100
+D9 objeto 396: 87  camiones -> 200
+D9 objeto 400: Circuito R7 | Viernes 11/09 -> 100
+D9 objeto 403: Total de camiones -> 200
+D9 objeto 404: 482 -> 100
+D9 objeto 405: (5 hs 47 m) -> 200
+D9 objeto 406: Ricardone -> 100
+D9 objeto 407: San Lorenzo -> 200
+D9 objeto 408: 183  min -> 100
+D9 objeto 409: 150  min -> 200
+D9 objeto 410: (3 hs  3 m) -> 100
+D9 objeto 411: (2 hs 30 m) -> 200
+D10 objeto 416: 157 -> 100
+D10 objeto 417: 12 -> 200
+D10 objeto 418: 12 -> 100
+D10 objeto 419: 132 -> 200
+D10 objeto 420: 53 -> 100
+D10 objeto 421: 18 -> 200
+D10 objeto 429: 390  Min -> 100
+D10 objeto 430: 5 -> 200
+D10 objeto 431: Tiempo Total -> 100
+D10 objeto 432: 12/09 -> 200
+D10 objeto 436: Circuito R7 | Sábado 12/09 -> 100
+D10 objeto 445: Q1 -> 200
+D10 objeto 446: Q2 -> 100
+D10 objeto 447: Q3 -> 200
+D10 objeto 448: Q4 -> 100
+D10 objeto 449: 22 :00 -04:00 -> 200
+D10 objeto 450: 04:00  -  10:00 -> 100
+D10 objeto 451: 10:00 - 16:00 -> 200
+D10 objeto 452: 16:00 - 22:00 -> 100
+D10 objeto 453: 195  camiones -> 200
+D10 objeto 454: 103  camiones -> 100
+D10 objeto 455: 81  camiones -> 200
+D10 objeto 456: 40  camiones -> 100
+D10 objeto 459: Total de camiones -> 200
+D10 objeto 460: 419 -> 100
+D10 objeto 461: Ricardone -> 200
+D10 objeto 462: San Lorenzo -> 100
+D10 objeto 463: 175  min -> 200
+D10 objeto 464: 203   min -> 100
+D10 objeto 465: (2 hs 55 m) -> 200
+D10 objeto 466: (3 hs 23 m) -> 100
+D10 objeto 467: (6 hs 30 m) -> 200
+D11 objeto 472: 169 -> 100
+D11 objeto 473: 13 -> 200
+D11 objeto 474: 11 -> 100
+D11 objeto 475: 29 -> 200
+D11 objeto 476: 12 -> 100
+D11 objeto 477: 33 -> 200
+D11 objeto 485: 272  Min -> 100
+D11 objeto 486: 5 -> 200
+D11 objeto 487: Tiempo Total -> 100
+D11 objeto 488: 13/09 -> 200
+D11 objeto 492: Circuito R7 | Domingo 13/09 -> 100
+D11 objeto 501: Q1 -> 200
+D11 objeto 502: Q2 -> 100
+D11 objeto 503: Q3 -> 200
+D11 objeto 504: Q4 -> 100
+D11 objeto 505: 22 :00 -04:00 -> 200
+D11 objeto 506: 04:00  -  10:00 -> 100
+D11 objeto 507: 10:00 - 16:00 -> 200
+D11 objeto 508: 16:00 - 22:00 -> 100
+D11 objeto 509: 6  camiones -> 200
+D11 objeto 510: 5  camiones -> 100
+D11 objeto 511: 9  camiones -> 200
+D11 objeto 512: 19  camiones -> 100
+D11 objeto 515: Total de camiones -> 200
+D11 objeto 516: 39 -> 100
+D11 objeto 517: Ricardone -> 200
+D11 objeto 518: San Lorenzo -> 100
+D11 objeto 519: 187  min -> 200
+D11 objeto 520: 74   min -> 100
+D11 objeto 521: (3 hs 7 m) -> 200
+D11 objeto 522: (1 hs 14  m) -> 100
+D11 objeto 523: (4 hs 32 m) -> 200
+D12 objeto 531: Circuito R7 | Lunes 14/09 -> 100
+D12 objeto 532: 63 -> 200
+D12 objeto 533: 11 -> 100
+D12 objeto 534: 12 -> 200
+D12 objeto 535: 81 -> 100
+D12 objeto 536: 40 -> 200
+D12 objeto 537: 18 -> 100
+D12 objeto 545: 229  Min -> 200
+D12 objeto 546: 4 -> 100
+D12 objeto 547: Tiempo Total -> 200
+D12 objeto 556: Q1 -> 100
+D12 objeto 557: Q2 -> 200
+D12 objeto 558: Q3 -> 100
+D12 objeto 559: Q4 -> 200
+D12 objeto 560: 22 :00 -04:00 -> 100
+D12 objeto 561: 04:00  -  10:00 -> 200
+D12 objeto 562: 10:00 - 16:00 -> 100
+D12 objeto 563: 16:00 - 22:00 -> 200
+D12 objeto 564: 66  camiones -> 100
+D12 objeto 565: 36   camiones -> 200
+D12 objeto 566: 92   camiones -> 100
+D12 objeto 567: 98  camiones -> 200
+D12 objeto 571: Total de camiones -> 100
+D12 objeto 572: 292 -> 200
+D12 objeto 573: 14/09 -> 100
+D12 objeto 574: Ricardone -> 200
+D12 objeto 575: San Lorenzo -> 100
+D12 objeto 576: 78  min -> 200
+D12 objeto 577: 139  min -> 100
+D12 objeto 578: (1 hs 18m) -> 200
+D12 objeto 579: (2 hs 19 m) -> 100
+D12 objeto 580: (3 hs 49 m) -> 200
+D13 objeto 585: 83 -> 100
+D13 objeto 586: 11 -> 200
+D13 objeto 587: 12 -> 100
+D13 objeto 588: 217 -> 200
+D13 objeto 589: 48 -> 100
+D13 objeto 590: 19 -> 200
+D13 objeto 598: 396  Min -> 100
+D13 objeto 599: 6 -> 200
+D13 objeto 600: Tiempo Total -> 100
+D13 objeto 601: 15/09 -> 200
+D13 objeto 605: Circuito R7 | Martes 15/09 -> 100
+D13 objeto 614: Q1 -> 200
+D13 objeto 615: Q2 -> 100
+D13 objeto 616: Q3 -> 200
+D13 objeto 617: Q4 -> 100
+D13 objeto 618: 22 :00 -04:00 -> 200
+D13 objeto 619: 04:00  -  10:00 -> 100
+D13 objeto 620: 10:00 - 16:00 -> 200
+D13 objeto 621: 16:00 - 22:00 -> 100
+D13 objeto 622: 110  camiones -> 200
+D13 objeto 623: 83  camiones -> 100
+D13 objeto 624: 115  camiones -> 200
+D13 objeto 625: 87  camiones -> 100
+D13 objeto 628: Total de camiones -> 200
+D13 objeto 629: 395 -> 100
+D13 objeto 630: Ricardone -> 200
+D13 objeto 631: San Lorenzo -> 100
+D13 objeto 632: 100  min -> 200
+D13 objeto 633: 284  min -> 100
+D13 objeto 634: (1 hs 40 m) -> 200
+D13 objeto 635: (4 h 48 m) -> 100
+D13 objeto 636: (6 hs 36 m) -> 200
+D14 objeto 641: 119 -> 100
+D14 objeto 642: 11 -> 200
+D14 objeto 643: 11 -> 100
+D14 objeto 644: 179 -> 200
+D14 objeto 645: 44 -> 100
+D14 objeto 646: 19 -> 200
+D14 objeto 654: 387  Min -> 100
+D14 objeto 655: 5 -> 200
+D14 objeto 656: Tiempo Total -> 100
+D14 objeto 657: 16 /09 -> 200
+D14 objeto 661: Circuito R7 | Miércoles 16 /09 -> 100
+D14 objeto 670: Q1 -> 200
+D14 objeto 671: Q2 -> 100
+D14 objeto 672: Q3 -> 200
+D14 objeto 673: Q4 -> 100
+D14 objeto 674: 22 :00 -04:00 -> 200
+D14 objeto 675: 04:00  -  10:00 -> 100
+D14 objeto 676: 10:00 - 16:00 -> 200
+D14 objeto 677: 16:00 - 22:00 -> 100
+D14 objeto 678: 127 camiones -> 200
+D14 objeto 679: 88  camiones -> 100
+D14 objeto 680: 98  camiones -> 200
+D14 objeto 681: 39  camiones -> 100
+D14 objeto 684: Total de camiones -> 200
+D14 objeto 685: 352 -> 100
+D14 objeto 686: San Lorenzo -> 200
+D14 objeto 687: 242  min -> 100
+D14 objeto 688: (4 hs 2 m) -> 200
+D14 objeto 689: Ricardone -> 100
+D14 objeto 690: 135   min -> 200
+D14 objeto 691: (2 hs 15 m) -> 100
+D14 objeto 692: (6 hs 27 m) -> 200
+D15 objeto 700: Comparativo semanal e histórico -> 100
+D16 objeto 712: Comparativo semanal e histórico -> 200
+D17 objeto 721: Comparativo semanal e histórico -> 100
+D18 objeto 729: Conclusiones -> 200
+D18 objeto 732: El resumen del circuito R7 informa un tiempo medio de  334 minutos (5 h 34 min) , frente a 276 minutos en la semana anterior. Esto representa un incremento de  58 minutos (+21%) , sujeto a la conciliación del promedio semanal con el detalle diario. La mayor parte del tiempo se concentra en  Playa 1 de Ricardone, con 126 minutos, y Playa OSL, con 119 minutos . En conjunto representan aproximadamente el  73% del ciclo informado , por lo que ambas esperas constituyen los principales focos de revisión. El lunes 14/09 presentó el menor tiempo, con  229 minutos . El martes 15/09 registró el mayor, con  396 minutos , seguido por el sábado, con 390, y el miércoles, con 387. El martes y el miércoles se destaca la permanencia en Playa OSL, de  217 y 179 minutos , respectivamente. El domingo tuvo actividad reducida, con  39 camiones , pero no una interrupción total. Corresponde revisar la programación de arribos y las condiciones operativas de las jornadas con mayores esperas, sin atribuir todavía las demoras a una causa específica. -> 100
+D19 objeto 740: Descripción general del operativo Patentes registradas y volcables utilizadas Circuito R30/31/32 Tiempos medios por tramo Evolución diaria del operativo Conclusiones -> 200
+D20 objeto 749: Operativo de Pellet de Girasol -> 100
+D20 objeto 753: Toneladas -> 200
+D20 objeto 754: 5.550 -> 100
+D20 objeto 755: 15 /09 -> 200
+D20 objeto 756: Total volumen    188 camiones -> 100
+D20 objeto 757: 14 /09 -> 200
+D20 objeto 758: Inicio -> 100
+D20 objeto 759: Fin -> 200
+D21 objeto 773: 6 -> 100
+D21 objeto 774: 7 -> 200
+D21 objeto 775: 8 -> 100
+D21 objeto 776: 9 -> 200
+D21 objeto 787: Circuito R30/31/32/ | Producto:Pellets -> 100
+D21 objeto 793: Tramo 1 : Ingreso -> 200
+D21 objeto 794: ingreso → Preingreso -> 100
+D21 objeto 797: Tramo 2 : Playa 1 -> 200
+D21 objeto 798: Preingreso→ Calada -> 100
+D21 objeto 801: Tramo 3 : P.Tara -> 200
+D21 objeto 802: Calada → Balanza -> 100
+D21 objeto 805: Tramo 5 : Carga -> 200
+D21 objeto 806: Playa 3  → Balanza -> 100
+D21 objeto 809: Tramo 4: Playa 3 -> 200
+D21 objeto 810: Balanza → Playa 3 -> 100
+D21 objeto 811: → -> 200
+D21 objeto 812: → -> 100
+D21 objeto 813: → -> 200
+D21 objeto 814: → -> 100
+D21 objeto 815: → -> 200
+D21 objeto 828: Tramo 7 : Playa OSL -> 100
+D21 objeto 829: Ingreso → Balanza -> 200
+D21 objeto 832: Tramo 6 : Interplanta -> 100
+D21 objeto 833: Ricardone → San Lorenzo -> 200
+D21 objeto 836: Tramo 8:  Descarga -> 100
+D21 objeto 837: Balanza Osl →  Volcable -> 200
+D21 objeto 838: → -> 100
+D21 objeto 839: → -> 200
+D21 objeto 840: → -> 100
+D21 objeto 843: Tramo 9 : Salida -> 200
+D21 objeto 844: Volcable →  Portería -> 100
+D21 objeto 845: → -> 200
+D21 objeto 850: 1 -> 100
+D21 objeto 851: 4 -> 200
+D21 objeto 852: 5 -> 100
+D21 objeto 853: 2 -> 200
+D21 objeto 855: 3 -> 100
+D22 objeto 863: Circuito R30/31/32 | Producto:Pellet -> 200
+D22 objeto 864: 11 -> 100
+D22 objeto 873: Ingreso -> 200
+D22 objeto 874: Playa 1 -> 100
+D22 objeto 875: 263  Min -> 200
+D22 objeto 876: 10 -> 100
+D22 objeto 877: Tiempo Total -> 200
+D22 objeto 886: P. Tara -> 100
+D22 objeto 887: Playa 3 -> 200
+D22 objeto 888: Acceso P3 -> 100
+D22 objeto 889: Interplanta -> 200
+D22 objeto 890: 7 -> 100
+D22 objeto 891: 6 -> 200
+D22 objeto 892: 128 -> 100
+D22 objeto 893: 24 -> 200
+D22 objeto 900: Total de camiones -> 100
+D22 objeto 901: 185 -> 200
+D22 objeto 908: Playa OSL -> 100
+D22 objeto 909: Descarga -> 200
+D22 objeto 910: Salida SLZ -> 100
+D22 objeto 914: 17 -> 200
+D22 objeto 915: 38 -> 100
+D22 objeto 916: 22 -> 200
+D22 objeto 917: Pre-ingr -> 100
+D22 objeto 918: ingreso -> 200
+D22 objeto 919: Balanza Ing -> 100
+D22 objeto 920: Calada -> 200
+D22 objeto 921: Ingreso SLZ -> 100
+D22 objeto 922: Balanza Salida -> 200
+D22 objeto 923: Volcable -> 100
+D22 objeto 924: Balanza  Ing -> 200
+D22 objeto 925: Playa 3 -> 100
+D22 objeto 926: Salida -> 200
+D22 objeto 927: Ricardone -> 100
+D22 objeto 928: San Lorenzo -> 200
+D22 objeto 929: 162  min -> 100
+D22 objeto 930: 77  min -> 200
+D22 objeto 931: (4 hs 23 min) -> 100
+D22 objeto 932: (2 hs 42 min) -> 200
+D22 objeto 933: (1 hs 17 m) -> 100
+D23 objeto 941: Circuito R30/31/32 | Lunes 14/09 -> 200
+D23 objeto 942: 11 -> 100
+D23 objeto 946: 210  Min -> 200
+D23 objeto 947: 10 -> 100
+D23 objeto 948: Tiempo Total -> 200
+D23 objeto 949: 6 -> 100
+D23 objeto 950: 4 -> 200
+D23 objeto 951: 72 -> 100
+D23 objeto 952: 36 -> 200
+D23 objeto 960: 20 -> 100
+D23 objeto 961: 32 -> 200
+D23 objeto 962: 19 -> 100
+D23 objeto 971: Q1 -> 200
+D23 objeto 972: Q2 -> 100
+D23 objeto 973: Q3 -> 200
+D23 objeto 974: Q4 -> 100
+D23 objeto 975: 22 :00 -04:00 -> 200
+D23 objeto 976: 04:00  -  10:00 -> 100
+D23 objeto 977: 10:00 - 16:00 -> 200
+D23 objeto 978: 16:00 - 22:00 -> 100
+D23 objeto 980: 0  camiones -> 200
+D23 objeto 981: 0   camiones -> 100
+D23 objeto 982: 36  camiones -> 200
+D23 objeto 983: 102  camiones -> 100
+D23 objeto 986: Total de camiones -> 200
+D23 objeto 987: 138 -> 100
+D23 objeto 988: Ricardone -> 200
+D23 objeto 989: San Lorenzo -> 100
+D23 objeto 990: 103   min -> 200
+D23 objeto 991: 71   min -> 100
+D23 objeto 992: (1 hs 43 m) -> 200
+D23 objeto 993: (1 hs 11 m) -> 100
+D23 objeto 994: (3 hs 30 m) -> 200
+D24 objeto 1002: Circuito R 30/31/32 | Martes 15/09 -> 100
+D24 objeto 1003: 9 -> 200
+D24 objeto 1007: 268   Min -> 100
+D24 objeto 1008: 19 -> 200
+D24 objeto 1009: Tiempo Total -> 100
+D24 objeto 1010: 4 -> 200
+D24 objeto 1011: 6 -> 100
+D24 objeto 1012: 130 -> 200
+D24 objeto 1013: 24 -> 100
+D24 objeto 1021: 16 -> 200
+D24 objeto 1022: 38 -> 100
+D24 objeto 1023: 22 -> 200
+D24 objeto 1032: Q1 -> 100
+D24 objeto 1033: Q2 -> 200
+D24 objeto 1034: Q3 -> 100
+D24 objeto 1035: Q4 -> 200
+D24 objeto 1036: 22 :00 -04:00 -> 100
+D24 objeto 1037: 04:00  -  10:00 -> 200
+D24 objeto 1038: 10:00 - 16:00 -> 100
+D24 objeto 1039: 16:00 - 22:00 -> 200
+D24 objeto 1041: 27  camiones -> 100
+D24 objeto 1042: 23  camiones -> 200
+D24 objeto 1043: 0  camiones -> 100
+D24 objeto 1044: 0  camiones -> 200
+D24 objeto 1047: Total de camiones -> 100
+D24 objeto 1048: 50 -> 200
+D24 objeto 1049: Ricardone -> 100
+D24 objeto 1050: San Lorenzo -> 200
+D24 objeto 1051: 168  min -> 100
+D24 objeto 1052: 76  min -> 200
+D24 objeto 1053: (2 hs 48 m) -> 100
+D24 objeto 1054: (1 hs 16 m) -> 200
+D24 objeto 1055: (4 hs 28 m) -> 100
+D25 objeto 1063: Comparativo semanal e histórico -> 200
+D26 objeto 1071: Conclusiones -> 100
+D26 objeto 1074: El operativo de pellet de girasol se desarrolló entre el  14 y el 15 de septiembre , con un  flujo bajo de camiones . El tiempo medio informado fue de  263 minutos , frente a los  392 minutos de la semana anterior , una reducción de  129 minutos, equivalente al 33% . La principal mejora se registró en la  espera en San Lorenzo , que disminuyó de  126 a 20 minutos . Esta reducción de  106 minutos  explica la mayor parte de la mejora del tiempo total del operativo. El resultado muestra una menor permanencia en el circuito, especialmente en San Lorenzo. Sin embargo, el  bajo flujo de esta semana  debe considerarse al comparar el desempeño y evaluar si estos tiempos se sostienen con una mayor actividad. -> 200
+D27 objeto 1080: Descripción general del operativo Patentes registradas y volcables utilizadas Descripción de los circuitos R5+ R6 y R3  Tiempos medios por tramo Evolución diaria del operativo Conclusiones -> 100
+D28 objeto 1089: Circuitos  | Producto:Girasol -> 200
+D28 objeto 1090: Falla de Lectura más frecuente -> 100
+D28 objeto 1091: Ingreso a Planta -> 200
+D28 objeto 1099: Todas las Cámaras -> 100
+D28 objeto 1100: 296 -> 200
+D28 objeto 1103: 6 Cámaras -> 100
+D28 objeto 1104: 99 -> 200
+D28 objeto 1105: 5 Cámaras -> 100
+D28 objeto 1106: 47 -> 200
+D28 objeto 1107: ≤  4 Cámaras -> 100
+D28 objeto 1108: 51 -> 200
+D29 objeto 1118: 1 -> 100
+D29 objeto 1119: 2 -> 200
+D29 objeto 1120: 3 -> 100
+D29 objeto 1121: 4 -> 200
+D29 objeto 1131: Circuito R5 y R6 | Producto:Girasol -> 100
+D29 objeto 1137: 5 -> 200
+D29 objeto 1139: 6 -> 100
+D29 objeto 1143: Tramo 1 : Ingreso -> 200
+D29 objeto 1144: ingreso → Preingreso -> 100
+D29 objeto 1147: Tramo 2 :Espera -> 200
+D29 objeto 1148: Preingreso→ Calada -> 100
+D29 objeto 1151: Tramo 3 : P.Bruto -> 200
+D29 objeto 1152: Calada → Balanza -> 100
+D29 objeto 1155: Tramo 4 : Playa 3 -> 200
+D29 objeto 1156: Balanza → Playa 3 -> 100
+D29 objeto 1159: Tramo 5: Descarga -> 200
+D29 objeto 1160: Playa 3 → Volcable -> 100
+D29 objeto 1163: Tramo 6: P. Tara -> 200
+D29 objeto 1164: Volcable → Balanza -> 100
+D29 objeto 1165: → -> 200
+D29 objeto 1166: → -> 100
+D29 objeto 1167: → -> 200
+D29 objeto 1168: → -> 100
+D29 objeto 1169: → -> 200
+D30 objeto 1177: Circuito R5+R6 | Producto:Girasol -> 100
+D30 objeto 1178: 133 -> 200
+D30 objeto 1187: Ingreso -> 100
+D30 objeto 1188: Pre-ingr -> 200
+D30 objeto 1189: ingreso -> 100
+D30 objeto 1190: Calada -> 200
+D30 objeto 1191: Playa 1 -> 100
+D30 objeto 1192: 382  Min -> 200
+D30 objeto 1193: 4 -> 100
+D30 objeto 1194: Tiempo Total -> 200
+D30 objeto 1203: Balanza -> 100
+D30 objeto 1204: Playa 3 -> 200
+D30 objeto 1205: Volcable -> 100
+D30 objeto 1206: Balanza -> 200
+D30 objeto 1207: P.Bruto -> 100
+D30 objeto 1208: Descarga -> 200
+D30 objeto 1209: Playa 3 -> 100
+D30 objeto 1210: 29 -> 200
+D30 objeto 1211: 8 -> 100
+D30 objeto 1212: 191 -> 200
+D30 objeto 1213: 17 -> 100
+D30 objeto 1220: Total de camiones -> 200
+D30 objeto 1221: 488 -> 100
+D30 objeto 1222: ingreso P3 -> 200
+D31 objeto 1229: Circuito R5+R6| Producto:Girasol -> 100
+D32 objeto 1239: Conclusiones -> 200
+D32 objeto 1242: El circuito  R5+R6 informa un tiempo medio de 382 minutos (6 h 22 min) , frente a 319 minutos en la semana anterior: un aumento de  63 minutos (+19,7%) . R3 registra  403 minutos (6 h 43 min) , con una diferencia actual de  21 minutos  respecto de R5+R6. En R5+R6, la espera previa a la calada alcanza  133 minutos  y el tramo de Playa 3 a Volcable,  191 minutos . Ambos suman  324 minutos , aproximadamente el  85% del ciclo . En R3, esos mismos tramos representan  166 y 180 minutos , respectivamente, y concentran aproximadamente el  86% del tiempo total . R3 presenta mayor espera previa a la calada, mientras que el tramo de Playa 3 a Volcable es menor que en R5+R6. La prioridad es revisar la espera previa a la calada y la permanencia entre Playa 3 y el volcable. Este último tramo incluye espera y descarga, por lo que sus tiempos no permiten atribuir toda la demora al vuelco físico. Los volúmenes por circuito requieren conciliación antes de incorporarlos a la conclusión definitiva. -> 100
+D33 objeto 1248: CALADO -> 200
+D34 objeto 20001: Actividad semanal por sede y tipo de calada -> 100
+D34 objeto 20002: Sede -> 200
+D34 objeto 20003: Tipo -> 100
+D34 objeto 20004: Horas activas -> 200
+D34 objeto 20005: Camiones/h -> 100
+D34 objeto 20006: Camiones -> 200
+D34 objeto 20007: Ricardone -> 100
+D34 objeto 20008: Sólida -> 200
+D34 objeto 20009: 148 -> 100
+D34 objeto 20010: 20 -> 200
+D34 objeto 20011: 2.908 -> 100
+D34 objeto 20012: Ricardone -> 200
+D34 objeto 20013: Líquida -> 100
+D34 objeto 20014: 49 -> 200
+D34 objeto 20015: 3,6 -> 100
+D34 objeto 20016: 152 -> 200
+D34 objeto 20017: San Lorenzo -> 100
+D34 objeto 20018: Calada -> 200
+D34 objeto 20019: 90 -> 100
+D34 objeto 20020: 3,3 -> 200
+D34 objeto 20021: 237 -> 100
+D34 objeto 20022: Cada calada responde a una operación y una demanda diferentes. -> 200
+D35 objeto 1271: Pico de camiones -> 100
+D35 objeto 1272: Ventana máximo -> 200
+D35 objeto 1273: Promedio x hora -> 100
+D35 objeto 1274: Total de camiones -> 200
+D35 objeto 1275: 50 -> 100
+D35 objeto 1276: 10/9 08 hs -> 200
+D35 objeto 1277: 2908 -> 100
+D35 objeto 1278: 20 sobre 148  horas totales -> 200
+D35 objeto 1282: Resumen Semanal Calada Ricardone -> 100
+D36 objeto 1291: Actividad Calada | Jueves 10/09 -> 200
+D37 objeto 1299: Actividad Calada | Jueves 10/09 -> 100
+D37 objeto 1308: Pico de camiones -> 200
+D37 objeto 1309: Ventana máximo -> 100
+D37 objeto 1310: Promedio x hora -> 200
+D37 objeto 1311: Total de camiones -> 100
+D37 objeto 1312: 58 -> 200
+D37 objeto 1313: 08-09 -> 100
+D37 objeto 1314: 26 -> 200
+D37 objeto 1315: 586 -> 100
+D38 objeto 1324: Actividad Calada | Viernes 11/09 -> 200
+D39 objeto 1333: Actividad Calada | Viernes 11 /09 -> 100
+D39 objeto 1342: Pico de camiones -> 200
+D39 objeto 1343: Ventana máximo -> 100
+D39 objeto 1344: Promedio x hora -> 200
+D39 objeto 1345: Total de camiones -> 100
+D39 objeto 1346: 51 -> 200
+D39 objeto 1347: 23-24 -> 100
+D39 objeto 1348: 24.5 -> 200
+D39 objeto 1349: 579 -> 100
+D40 objeto 1358: Actividad Calada | Sábado 12/09 -> 200
+D41 objeto 1367: Actividad Calada | Sábado 12/09 -> 100
+D41 objeto 1376: Pico de camiones -> 200
+D41 objeto 1377: Ventana máximo -> 100
+D41 objeto 1378: Promedio x hora -> 200
+D41 objeto 1379: Total de camiones -> 100
+D41 objeto 1380: 46 -> 200
+D41 objeto 1381: 08-09 -> 100
+D41 objeto 1382: 20 -> 200
+D41 objeto 1383: 460 -> 100
+D42 objeto 1392: Actividad Calada | Domingo 13/09 -> 200
+D43 objeto 1401: Actividad Calada | Domingo 13 /09 -> 100
+D43 objeto 1410: Pico de camiones -> 200
+D43 objeto 1411: Ventana máximo -> 100
+D43 objeto 1412: Promedio x hora -> 200
+D43 objeto 1413: Total de camiones -> 100
+D43 objeto 1414: 22 -> 200
+D43 objeto 1415: 23-24 -> 100
+D43 objeto 1416: 4 -> 200
+D43 objeto 1417: 57 -> 100
+D44 objeto 1426: Actividad Calada | Lunes 14/09 -> 200
+D45 objeto 1435: Actividad Calada | Lunes 14/09 -> 100
+D45 objeto 1444: Pico de camiones -> 200
+D45 objeto 1445: Ventana máximo -> 100
+D45 objeto 1446: Promedio x hora -> 200
+D45 objeto 1447: Total de camiones -> 100
+D45 objeto 1448: 37 -> 200
+D45 objeto 1449: 17-18 -> 100
+D45 objeto 1450: 14 -> 200
+D45 objeto 1451: 354 -> 100
+D46 objeto 1460: Actividad Calada | Martes 15/09 -> 200
+D47 objeto 1469: Actividad Calada | Martes 15/09 -> 100
+D47 objeto 1478: Pico de camiones -> 200
+D47 objeto 1479: Ventana máximo -> 100
+D47 objeto 1480: Promedio x hora -> 200
+D47 objeto 1481: Total de camiones -> 100
+D47 objeto 1482: 31 -> 200
+D47 objeto 1483: 23-24 -> 100
+D47 objeto 1484: 21 -> 200
+D47 objeto 1485: 439 -> 100
+D48 objeto 1494: Actividad Calada | Miércoles 16/09 -> 200
+D49 objeto 1503: Actividad Calada | Miércoles 16/09 -> 100
+D49 objeto 1512: Pico de camiones -> 200
+D49 objeto 1513: Ventana máximo -> 100
+D49 objeto 1514: Promedio x hora -> 200
+D49 objeto 1515: Total de camiones -> 100
+D49 objeto 1516: 46 -> 200
+D49 objeto 1517: 01-02 -> 100
+D49 objeto 1518: 21.5 -> 200
+D49 objeto 1519: 450 -> 100
+D50 objeto 1530: Resumen Semanal Calada Líquido Ricardone -> 200
+D50 objeto 1539: Pico de camiones -> 100
+D50 objeto 1540: Ventana máximo -> 200
+D50 objeto 1541: Promedio x hora -> 100
+D50 objeto 1542: Total de camiones -> 200
+D50 objeto 1543: 16 -> 100
+D50 objeto 1544: 14/9 20 hs -> 200
+D50 objeto 1545: 157 -> 100
+D50 objeto 1546: 2 sobre 49 horas totales -> 200
+D51 objeto 1560: Pico de camiones -> 100
+D51 objeto 1561: Ventana máximo -> 200
+D51 objeto 1562: Promedio x hora -> 100
+D51 objeto 1563: Total de camiones -> 200
+D51 objeto 1564: 11 -> 100
+D51 objeto 1565: 15/9 08 hs -> 200
+D51 objeto 1566: 242 -> 100
+D51 objeto 1567: 3 sobre 85  horas totales -> 200
+D51 objeto 1571: Resumen Semanal Calada San Lorenzo -> 100
+D53 objeto 1586: Actividad Volcable 1/2 -> 200
+D54 objeto 1596: Actividad Volcable 1/2 -> 100
+D54 objeto 1603: Pico de camiones -> 200
+D54 objeto 1604: Promedio x hora -> 100
+D54 objeto 1605: Total de camiones -> 200
+D54 objeto 1606: 8 -> 100
+D54 objeto 1607: 3 -> 200
+D54 objeto 1608: 446 -> 100
+D55 objeto 1617: Actividad Volcable Silos -> 200
+D56 objeto 1629: Pico de camiones -> 100
+D56 objeto 1630: Promedio x hora -> 200
+D56 objeto 1631: Total de camiones -> 100
+D56 objeto 1632: 5 -> 200
+D56 objeto 1633: 2 -> 100
+D56 objeto 1634: 40 -> 200
+D56 objeto 1638: Actividad Volcable Silos -> 100
+D57 objeto 1648: Actividad Volcables Puerto Semanal -> 200
+D57 objeto 1655: Promedio diario -> 100
+D57 objeto 1656: Camiones x hora operativa -> 200
+D57 objeto 1657: Total de camiones -> 100
+D57 objeto 1658: 384 -> 200
+D57 objeto 1659: 16 -> 100
+D57 objeto 1660: 2688 -> 200
+D58 objeto 1668: Actividad Volcables Semanal -> 100
+D58 objeto 1671: Las volcables  5, 3 y 2 concentraron el 73% de los camiones registrados , con la volcable 5 como la de mayor actividad. La volcable  4 presentó el menor volumen, con 226 camiones -> 200
+D59 objeto 1679: Actividad Volcables | Jueves 10/09 -> 100
+D60 objeto 1688: Actividad Volcables  | Jueves 10/09 -> 200
+D60 objeto 1697: Pico de camiones -> 100
+D60 objeto 1698: Ventana máximo -> 200
+D60 objeto 1699: Promedio x hora -> 100
+D60 objeto 1700: Total de camiones -> 200
+D60 objeto 1701: 33 -> 100
+D60 objeto 1702: 21/22 -> 200
+D60 objeto 1703: 23 -> 100
+D60 objeto 1704: 523 -> 200
+D61 objeto 1713: Actividad Volcables  | Viernes 11/09 -> 100
+D62 objeto 1722: Actividad Volcables  | Viernes 11 /09 -> 200
+D62 objeto 1731: Pico de camiones -> 100
+D62 objeto 1732: Ventana máximo -> 200
+D62 objeto 1733: Promedio x hora -> 100
+D62 objeto 1734: Total de camiones -> 200
+D62 objeto 1735: 34 -> 100
+D62 objeto 1736: 05-06 -> 200
+D62 objeto 1737: 21 -> 100
+D62 objeto 1738: 488 -> 200
+D63 objeto 1747: Actividad Volcables | Sábado 12/09 -> 100
+D64 objeto 1756: Actividad Volcables | Sábado 12/09 -> 200
+D64 objeto 1765: Pico de camiones -> 100
+D64 objeto 1766: Ventana máximo -> 200
+D64 objeto 1767: Promedio x hora -> 100
+D64 objeto 1768: Total de camiones -> 200
+D64 objeto 1769: 34 -> 100
+D64 objeto 1770: 01-02 -> 200
+D64 objeto 1771: 15.5 -> 100
+D64 objeto 1772: 444 -> 200
+D65 objeto 1781: Actividad Volcables | Domingo 13/09 -> 100
+D66 objeto 1790: Actividad Volcables | Domingo 13 /09 -> 200
+D66 objeto 1799: Pico de camiones -> 100
+D66 objeto 1800: Ventana máximo -> 200
+D66 objeto 1801: Promedio x hora -> 100
+D66 objeto 1802: Total de camiones -> 200
+D66 objeto 1803: 14 -> 100
+D66 objeto 1804: 00-01 -> 200
+D66 objeto 1805: 6 -> 100
+D66 objeto 1806: 54 -> 200
+D67 objeto 1815: Actividad Volcables | Lunes 14/09 -> 100
+D68 objeto 1824: Actividad Volcables | Lunes 14 /09 -> 200
+D68 objeto 1833: Pico de camiones -> 100
+D68 objeto 1834: Ventana máximo -> 200
+D68 objeto 1835: Promedio x hora -> 100
+D68 objeto 1836: Total de camiones -> 200
+D68 objeto 1837: 34 -> 100
+D68 objeto 1838: 23-24 -> 200
+D68 objeto 1839: 9 -> 100
+D68 objeto 1840: 295 -> 200
+D69 objeto 1849: Actividad Volcables | Martes 15/09 -> 100
+D70 objeto 1858: Actividad Volcables | Martes 15/09 -> 200
+D70 objeto 1867: Pico de camiones -> 100
+D70 objeto 1868: Ventana máximo -> 200
+D70 objeto 1869: Promedio x hora -> 100
+D70 objeto 1870: Total de camiones -> 200
+D70 objeto 1871: 31 -> 100
+D70 objeto 1872: 02-03 -> 200
+D70 objeto 1873: 20 -> 100
+D70 objeto 1874: 481 -> 200
+D71 objeto 1884: Actividad Volcables | Miércoles 16/09 -> 100
+D72 objeto 1892: Actividad Volcables | Miércoles 16/09 -> 200
+D72 objeto 1901: Pico de camiones -> 100
+D72 objeto 1902: Ventana máximo -> 200
+D72 objeto 1903: Promedio x hora -> 100
+D72 objeto 1904: Total de camiones -> 200
+D72 objeto 1905: 22 -> 100
+D72 objeto 1906: 10-11 -> 200
+D72 objeto 1907: 19 -> 100
+D72 objeto 1908: 409 -> 200
+D05_G1 D5: gráfico editable desde Soja!C7:C11
+D05_G2 D5: gráfico editable desde Soja!C16:C16
+D15_G1 D15: gráfico editable desde Soja!C21:C34
+D16_G1 D16: gráfico editable desde Soja!C39:C66
+D16_G2 D16: gráfico editable desde Soja!C71:C77
+D17_G1 D17: gráfico editable desde Soja!C82:C123
+D17_G2 D17: gráfico editable desde Soja!C128:C141
+D20_G1 D20: gráfico editable desde Pellet!C7:C8
+D25_G1 D25: gráfico editable desde Pellet!C13:C16
+D28_G1 D28: gráfico editable desde Girasol!C7:C10
+D28_G2 D28: gráfico editable desde Girasol!C15:C17
+D31_G1 D31: gráfico editable desde Girasol!C22:C49
+D31_G2 D31: gráfico editable desde Girasol!C54:C67
+D35_G1 D35: gráfico editable desde Calada!C7:C12
+D36_G1 D36: gráfico editable desde Calada!C17:C22
+D38_G1 D38: gráfico editable desde Calada!C27:C32
+D40_G1 D40: gráfico editable desde Calada!C37:C42
+D42_G1 D42: gráfico editable desde Calada!C47:C52
+D44_G1 D44: gráfico editable desde Calada!C57:C62
+D46_G1 D46: gráfico editable desde Calada!C67:C72
+D48_G1 D48: gráfico editable desde Calada!C77:C82
+D50_G1 D50: gráfico editable desde Calada!C87:C93
+D51_G1 D51: gráfico editable desde Calada!C98:C104
+D53_G1 D53: gráfico editable desde Descargas!C7:C8
+D53_G2 D53: gráfico editable desde Descargas!C13:C26
+D55_G1 D55: gráfico editable desde Descargas!C31:C37
+D57_G1 D57: gráfico editable desde Descargas!C42:C48
+D58_G1 D58: gráfico editable desde Descargas!C53:C57
+D59_G1 D59: gráfico editable desde Descargas!C62:C66
+D61_G1 D61: gráfico editable desde Descargas!C71:C75
+D63_G1 D63: gráfico editable desde Descargas!C80:C84
+D65_G1 D65: gráfico editable desde Descargas!C89:C93
+D67_G1 D67: gráfico editable desde Descargas!C98:C102
+D69_G1 D69: gráfico editable desde Descargas!C107:C111
+D71_G1 D71: gráfico editable desde Descargas!C116:C120
+
+PENDIENTES
+
+
+Capturas de actividad vacias. Tarjetas, totales y conclusiones requieren revision manual.

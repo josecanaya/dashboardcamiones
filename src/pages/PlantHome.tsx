@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Button, MetricCard as KpiCard } from '../components/ui/Interface'
 import './plantHome.css'
 import { LiveCameraPlayerModal } from '../components/plant/LiveCameraPlayerModal'
 import { PlantMap } from '../components/plant/PlantMap'
 import type { PlantLayout } from '../data/plantZones.types'
 import type { TruckRow, ZoneState } from '../services/live/plantStateApi'
-import { formatDrainMinutes, getSectorTrucks } from '../services/live/plantStateApi'
+import { correctTruckLocation, formatDrainMinutes, getSectorTrucks, getZoneTrucks } from '../services/live/plantStateApi'
 
 const ZONE_ROW: Record<string, string> = {
   normal: '',
@@ -28,12 +28,28 @@ type RecentTruck = TruckRow & { siteLabel: string }
 function MapContextPanel(props: {
   selectedZone: ZoneState | null
   selectedSector: SectorState | null
-  recent: RecentTruck[]
+  recentEntries: RecentTruck[]
+  recentExits: RecentTruck[]
   loading: boolean
+  zoneTrucks: TruckRow[]
+  zoneTrucksLoading: boolean
+  zoneTrucksError: string | null
+  availableZones: ZoneState[]
+  busyPlate: string | null
+  onRemoveTruck: (plate: string) => void
+  onMoveTruck: (plate: string, zoneId: string) => void
   onClear: () => void
 }) {
-  const { selectedZone, selectedSector, recent, loading, onClear } = props
+  const { selectedZone, selectedSector, recentEntries, recentExits, loading, zoneTrucks, zoneTrucksLoading, zoneTrucksError, availableZones, busyPlate, onRemoveTruck, onMoveTruck, onClear } = props
   const selected = selectedZone ?? selectedSector
+  const renderMovements = (title: string, rows: RecentTruck[], direction: 'in' | 'out') => <div className="tf-movement-group">
+    <h3><span className={direction === 'in' ? 'is-in' : 'is-out'}>{direction === 'in' ? '↓' : '↑'}</span>{title}</h3>
+    {rows.length ? <ol className="tf-recent-trucks">{rows.slice(0, selected ? 3 : 6).map((truck, index) => <li key={`${direction}-${truck.siteLabel}-${truck.plate}`} style={{ animationDelay: `${index * 90}ms` }}>
+      <span className={`tf-recent-trucks__dot ${direction === 'out' ? 'is-out' : ''}`} />
+      <div><strong>{truck.plate}</strong><small>{truck.siteLabel} · {truck.circuitLabel ?? truck.circuit ?? 'circuito sin confirmar'}</small></div>
+      <time>{truck.minutesSinceLastDetection == null ? 'ahora' : truck.minutesSinceLastDetection < 1 ? 'ahora' : `${Math.round(truck.minutesSinceLastDetection)} min`}</time>
+    </li>)}</ol> : <p className="tf-map-context__empty">Sin detecciones recientes.</p>}
+  </div>
   return (
     <aside className="tf-map-context" aria-live="polite">
       {selected ? <>
@@ -47,10 +63,10 @@ function MapContextPanel(props: {
         <div className="tf-map-context__status"><span style={{ background: STATUS_DOT[selected.status] }} />{ZONE_STATUS_LABEL[selected.status]}</div>
         <dl className="tf-map-context__metrics">
           {selectedZone ? <>
-            <div><dt>Esperando</dt><dd>{selectedZone.backlog}</dd></div>
+            <div><dt>Esperando</dt><dd>{selectedZone.entryBlind ? 'sin dato' : `${selectedZone.backlogInferred ? '≈' : ''}${selectedZone.backlog}`}</dd></div>
             <div><dt>Tiempo estimado</dt><dd>{formatDrainMinutes(selectedZone.drainMinutes) ?? 'sin dato'}</dd></div>
             <div><dt>Tasa efectiva</dt><dd>{selectedZone.drainRatePerHour == null ? 'sin dato' : `${selectedZone.drainRatePerHour}/h`}</dd></div>
-            <div><dt>Capacidad</dt><dd>{selectedZone.capacityOperational == null ? 'sin dato' : `${selectedZone.backlog}/${selectedZone.capacityOperational}`}</dd></div>
+            <div><dt>Capacidad</dt><dd>{selectedZone.entryBlind || selectedZone.capacityOperational == null ? 'sin dato' : `${selectedZone.backlog}/${selectedZone.capacityOperational}`}</dd></div>
           </> : selectedSector ? <>
             <div><dt>Presentes</dt><dd>{selectedSector.present}</dd></div>
             <div><dt>Ingresos / h</dt><dd>{selectedSector.in60}</dd></div>
@@ -58,7 +74,31 @@ function MapContextPanel(props: {
             <div><dt>Estadía P90</dt><dd>{formatMinutes(selectedSector.dwellP90Min)}</dd></div>
           </> : null}
         </dl>
-        <p className="tf-map-context__note">Seleccioná una cámara del mapa para abrir la transmisión en vivo.</p>
+        {selectedZone ? <section className="tf-zone-trucks" aria-label={`Camiones en ${selectedZone.label}`}>
+          <div className="tf-zone-trucks__title">
+            <h3>Patentes en esta playa</h3>
+            <span>{zoneTrucksLoading ? 'actualizando…' : `${zoneTrucks.length} ${zoneTrucks.length === 1 ? 'camión' : 'camiones'}`}</span>
+          </div>
+          {zoneTrucksError ? <p className="tf-zone-trucks__error">{zoneTrucksError}</p> : null}
+          {!zoneTrucksLoading && !zoneTrucks.length && !zoneTrucksError ? <p className="tf-map-context__empty">No hay camiones asignados a esta zona.</p> : null}
+          {zoneTrucks.length ? <ol className="tf-zone-trucks__list">{zoneTrucks.map(truck => <li key={truck.plate}>
+            <div className="tf-zone-trucks__identity">
+              <strong>{truck.plate}</strong>
+              <small>{truck.dwellSectorMin == null ? 'sin tiempo' : `${Math.round(truck.dwellSectorMin)} min en zona`}</small>
+            </div>
+            <label>
+              <span className="sr-only">Reubicar {truck.plate}</span>
+              <select value={selectedZone.id} disabled={busyPlate === truck.plate} onChange={event => onMoveTruck(truck.plate, event.target.value)} aria-label={`Reubicar ${truck.plate}`}>
+                {availableZones.map(zone => <option key={zone.id} value={zone.id}>{zone.label}</option>)}
+              </select>
+            </label>
+            <button type="button" disabled={busyPlate === truck.plate} onClick={() => onRemoveTruck(truck.plate)} title={`Sacar ${truck.plate} del sistema`} aria-label={`Sacar ${truck.plate} del sistema`}>×</button>
+          </li>)}</ol> : null}
+          <p className="tf-map-context__note">La cruz quita el camión del estado de planta. El selector lo mueve a otra zona.</p>
+        </section> : <div className="tf-map-context__movements">
+          {renderMovements('Últimos ingresos', recentEntries, 'in')}
+          {renderMovements('Últimos egresos', recentExits, 'out')}
+        </div>}
       </> : <>
         <div className="tf-map-context__head">
           <div>
@@ -67,15 +107,7 @@ function MapContextPanel(props: {
           </div>
           <span className="tf-map-context__live">En vivo</span>
         </div>
-        {loading ? <p className="tf-map-context__empty">Actualizando ingresos…</p> : recent.length ? (
-          <ol className="tf-recent-trucks">
-            {recent.map((truck, index) => <li key={`${truck.siteLabel}-${truck.plate}`} style={{ animationDelay: `${index * 90}ms` }}>
-              <span className="tf-recent-trucks__dot" />
-              <div><strong>{truck.plate}</strong><small>{truck.siteLabel} · {truck.circuitLabel ?? truck.circuit ?? 'circuito sin confirmar'}</small></div>
-              <time>{truck.minutesSinceLastDetection == null ? 'ahora' : truck.minutesSinceLastDetection < 1 ? 'ahora' : `${Math.round(truck.minutesSinceLastDetection)} min`}</time>
-            </li>)}
-          </ol>
-        ) : <p className="tf-map-context__empty">No hay ingresos recientes disponibles.</p>}
+        {loading ? <p className="tf-map-context__empty">Actualizando ingresos…</p> : renderMovements('Últimos ingresos', recentEntries, 'in')}
         <p className="tf-map-context__note">Al seleccionar un sector, este panel muestra su estado operativo.</p>
       </>}
     </aside>
@@ -121,8 +153,16 @@ export function PlantHome() {
   const [selectedMapSite, setSelectedMapSite] = useState<'ricardone' | 'san_lorenzo'>('ricardone')
   const [selectedZoneId, setSelectedZoneId] = useState<string | null>(null)
   const [cameraGroup, setCameraGroup] = useState<{ label: string; devices: string[] } | null>(null)
-  const [recentTrucks, setRecentTrucks] = useState<RecentTruck[]>([])
+  const [recentEntries, setRecentEntries] = useState<RecentTruck[]>([])
+  const [recentExits, setRecentExits] = useState<RecentTruck[]>([])
   const [recentLoading, setRecentLoading] = useState(true)
+  const [zoneTrucks, setZoneTrucks] = useState<TruckRow[]>([])
+  const [zoneTrucksLoading, setZoneTrucksLoading] = useState(false)
+  const [zoneTrucksError, setZoneTrucksError] = useState<string | null>(null)
+  const [busyPlate, setBusyPlate] = useState<string | null>(null)
+  const [zoneRefreshKey, setZoneRefreshKey] = useState(0)
+  const [flowPulse, setFlowPulse] = useState({ ingress: 0, egress: 0 })
+  const previousFlow = useRef<{ scope: string; ingress: number; egress: number } | null>(null)
   const [nowTick, setNowTick] = useState(() => Date.now())
 
   useEffect(() => {
@@ -143,17 +183,23 @@ export function PlantHome() {
     let timer: ReturnType<typeof setInterval> | undefined
     const load = async () => {
       const sites = (scope === 'both' ? ['ricardone', 'san_lorenzo'] : [scope]) as ('ricardone' | 'san_lorenzo')[]
-      const lists = await Promise.allSettled(sites.map(async site => {
-        const ingress = layouts[site]?.points?.find((point) => point.id === 'S0')?.sectorCode
-        if (!ingress) return []
-        const result = await getSectorTrucks(site, ingress, 'dwell')
-        return result.trucks.map(truck => ({ ...truck, siteLabel: site === 'ricardone' ? 'Ricardone' : 'San Lorenzo' }))
+      const lists = await Promise.allSettled(sites.flatMap(site => {
+        const points = layouts[site]?.points ?? []
+        const ingress = points.find(point => point.id === 'S0')?.sectorCode
+        const exits = [...new Set(points.filter(point => point.id === 'S3' || point.id === 'S10').map(point => point.sectorCode).filter(Boolean))]
+        const siteLabel = site === 'ricardone' ? 'Ricardone' : 'San Lorenzo'
+        return [
+          ingress ? getSectorTrucks(site, ingress, 'dwell').then(result => ({ kind: 'in' as const, rows: result.trucks.map(truck => ({ ...truck, siteLabel })) })) : Promise.resolve({ kind: 'in' as const, rows: [] as RecentTruck[] }),
+          ...exits.map(exit => getSectorTrucks(site, exit, 'dwell').then(result => ({ kind: 'out' as const, rows: result.trucks.map(truck => ({ ...truck, siteLabel })) }))),
+        ]
       }))
       if (cancelled) return
-      const rows = lists.flatMap(result => result.status === 'fulfilled' ? result.value : [])
+      const groups = lists.flatMap(result => result.status === 'fulfilled' ? [result.value] : [])
+      const sortRecent = (rows: RecentTruck[]) => rows
         .sort((a, b) => (a.minutesSinceLastDetection ?? Number.MAX_SAFE_INTEGER) - (b.minutesSinceLastDetection ?? Number.MAX_SAFE_INTEGER))
         .slice(0, 6)
-      setRecentTrucks(rows)
+      setRecentEntries(sortRecent(groups.filter(group => group.kind === 'in').flatMap(group => group.rows)))
+      setRecentExits(sortRecent(groups.filter(group => group.kind === 'out').flatMap(group => group.rows)))
       setRecentLoading(false)
     }
     setRecentLoading(true)
@@ -161,6 +207,22 @@ export function PlantHome() {
     timer = setInterval(() => { void load() }, 15_000)
     return () => { cancelled = true; if (timer) clearInterval(timer) }
   }, [scope, layouts])
+
+  useEffect(() => {
+    let cancelled = false
+    if (!selectedZoneId) {
+      setZoneTrucks([])
+      setZoneTrucksError(null)
+      return
+    }
+    setZoneTrucksLoading(true)
+    setZoneTrucksError(null)
+    getZoneTrucks(selectedMapSite, selectedZoneId)
+      .then(result => { if (!cancelled) setZoneTrucks(result.trucks) })
+      .catch(error => { if (!cancelled) setZoneTrucksError(error instanceof Error ? error.message : String(error)) })
+      .finally(() => { if (!cancelled) setZoneTrucksLoading(false) })
+    return () => { cancelled = true }
+  }, [selectedMapSite, selectedZoneId, zoneRefreshKey])
 
   useEffect(() => {
     const t = setInterval(() => setNowTick(Date.now()), 1_000)
@@ -184,6 +246,17 @@ export function PlantHome() {
     dwellAvgMin: Math.max(ricLive.snapshot?.plant.dwellAvgMin ?? 0, slLive.snapshot?.plant.dwellAvgMin ?? 0),
     bottleneck: [ricLive.snapshot?.plant.bottleneck, slLive.snapshot?.plant.bottleneck].filter(Boolean).sort((a, b) => (b?.drainMinutes ?? 0) - (a?.drainMinutes ?? 0))[0] ?? null,
   } : selectedPlant
+  useEffect(() => {
+    if (!plant || scope === 'both') return
+    const previous = previousFlow.current
+    if (previous?.scope === scope) {
+      setFlowPulse(current => ({
+        ingress: plant.inflow60 > previous.ingress ? current.ingress + 1 : current.ingress,
+        egress: plant.outflow60 > previous.egress ? current.egress + 1 : current.egress,
+      }))
+    }
+    previousFlow.current = { scope, ingress: plant.inflow60, egress: plant.outflow60 }
+  }, [scope, plant?.inflow60, plant?.outflow60])
   const dwellP90 = formatMinutes(plant?.dwellP90Min ?? null)
   const dwellAvg = formatMinutes(plant?.dwellAvgMin ?? null)
 
@@ -205,6 +278,21 @@ export function PlantHome() {
   const selectedSector = (selectedMapSite === 'ricardone' ? ricLive.snapshot : slLive.snapshot)?.sectors.find(item => item.sectorCode === selected) ?? null
   const selectedLiveZone = (selectedMapSite === 'ricardone' ? ricLive.snapshot : slLive.snapshot)?.zones.find(item => item.id === selectedZoneId) ?? null
   const selectedZone = layout?.zones.find((z) => z.zoneId === selectedZoneId)
+  const availableZones = (selectedMapSite === 'ricardone' ? ricLive.snapshot : slLive.snapshot)?.zones ?? []
+
+  const applyTruckCorrection = async (plate: string, correction: { action: 'remove' } | { action: 'move'; zoneId: string }) => {
+    setBusyPlate(plate)
+    setZoneTrucksError(null)
+    try {
+      await correctTruckLocation(selectedMapSite, plate, correction)
+      setZoneTrucks(current => current.filter(truck => truck.plate !== plate))
+      setZoneRefreshKey(key => key + 1)
+    } catch (error) {
+      setZoneTrucksError(error instanceof Error ? error.message : String(error))
+    } finally {
+      setBusyPlate(null)
+    }
+  }
   /** Una zona sin `cameraGroups` se comporta como un único grupo con todas sus cámaras. */
   const cameraGroups =
     selectedZone?.cameraGroups?.filter((g) => g.devices.length > 0) ??
@@ -310,6 +398,7 @@ export function PlantHome() {
               compact={scope === 'both'}
               showCircuitControls={false}
               align="left"
+              flowPulse={scope === 'both' ? { ingress: 0, egress: 0 } : flowPulse}
               zones={siteLive.snapshot?.zones ?? []}
               selectedSector={selected}
               onSelectSector={(sectorCode) => { setSelectedMapSite(site); setSelected(sectorCode) }}
@@ -323,7 +412,7 @@ export function PlantHome() {
           )}
         </div>})}
       </div>
-      <MapContextPanel selectedZone={selectedLiveZone} selectedSector={selectedSector} recent={recentTrucks} loading={recentLoading} onClear={() => { setSelected(null); setSelectedZoneId(null) }} />
+      <MapContextPanel selectedZone={selectedLiveZone} selectedSector={selectedSector} recentEntries={recentEntries} recentExits={recentExits} loading={recentLoading} zoneTrucks={zoneTrucks} zoneTrucksLoading={zoneTrucksLoading} zoneTrucksError={zoneTrucksError} availableZones={availableZones} busyPlate={busyPlate} onRemoveTruck={(plate) => void applyTruckCorrection(plate, { action: 'remove' })} onMoveTruck={(plate, zoneId) => void applyTruckCorrection(plate, { action: 'move', zoneId })} onClear={() => { setSelected(null); setSelectedZoneId(null) }} />
       </div>
 
       </div>
@@ -384,7 +473,16 @@ export function PlantHome() {
                             <span className="font-semibold text-slate-900">{z.label}</span>
                           </td>
                           <td className="px-3 py-2 font-mono text-[15px] font-semibold tabular-nums text-slate-900">
-                            {z.backlog}
+                            {z.entryBlind ? (
+                              <span className="text-[12px] font-normal text-amber-700">sin dato</span>
+                            ) : z.backlogInferred ? (
+                              <span title="Estimado desde el egreso de Ricardone + 15 min: la cámara de ingreso del puerto no está emitiendo.">
+                                ≈{z.backlog}{' '}
+                                <span className="text-[10px] font-normal text-amber-700">estimado</span>
+                              </span>
+                            ) : (
+                              z.backlog
+                            )}
                           </td>
                           <td className="px-3 py-2 font-mono text-[12px] text-slate-600">{targets}</td>
                           <td className="px-3 py-2 font-mono text-[12px] text-slate-600">
@@ -406,7 +504,7 @@ export function PlantHome() {
                             {drain ?? <span className="text-slate-400">sin referencia</span>}
                           </td>
                           <td className="px-3 py-2 font-mono text-[12px] text-slate-500">
-                            {z.capacityOperational == null
+                            {z.entryBlind || z.capacityOperational == null
                               ? '—'
                               : `${z.backlog} / ${z.capacityOperational}`}
                           </td>

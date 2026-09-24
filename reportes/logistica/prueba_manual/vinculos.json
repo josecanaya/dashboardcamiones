@@ -1,0 +1,7989 @@
+{
+  "version": 1,
+  "texts": [
+    {
+      "slide": 1,
+      "object": "57",
+      "sheet": "Textos",
+      "cell": "C7",
+      "original": "Comite de Logistica",
+      "label": "Objeto 57"
+    },
+    {
+      "slide": 1,
+      "object": "58",
+      "sheet": "Textos",
+      "cell": "C8",
+      "original": "Nueva Vicentin Argentina",
+      "label": "Objeto 58"
+    },
+    {
+      "slide": 1,
+      "object": "64",
+      "sheet": "Textos",
+      "cell": "C9",
+      "original": "18-09-2026",
+      "label": "Objeto 64"
+    },
+    {
+      "slide": 2,
+      "object": "20001",
+      "sheet": "Textos",
+      "cell": "C14",
+      "original": "Período analizado: 10/09 al 16/09/2026",
+      "label": "period.label"
+    },
+    {
+      "slide": 2,
+      "object": "20002",
+      "sheet": "Textos",
+      "cell": "C15",
+      "original": "1",
+      "label": "index.0.number"
+    },
+    {
+      "slide": 2,
+      "object": "20003",
+      "sheet": "Textos",
+      "cell": "C16",
+      "original": "Tamaño de la muestra y período",
+      "label": "index.0.title"
+    },
+    {
+      "slide": 2,
+      "object": "20004",
+      "sheet": "Textos",
+      "cell": "C17",
+      "original": "Pág. 3",
+      "label": "index.0.pages"
+    },
+    {
+      "slide": 2,
+      "object": "20005",
+      "sheet": "Textos",
+      "cell": "C18",
+      "original": "2",
+      "label": "index.1.number"
+    },
+    {
+      "slide": 2,
+      "object": "20006",
+      "sheet": "Textos",
+      "cell": "C19",
+      "original": "Operación de soja",
+      "label": "index.1.title"
+    },
+    {
+      "slide": 2,
+      "object": "20007",
+      "sheet": "Textos",
+      "cell": "C20",
+      "original": "Pág. 4–18",
+      "label": "index.1.pages"
+    },
+    {
+      "slide": 2,
+      "object": "20008",
+      "sheet": "Textos",
+      "cell": "C21",
+      "original": "3",
+      "label": "index.2.number"
+    },
+    {
+      "slide": 2,
+      "object": "20009",
+      "sheet": "Textos",
+      "cell": "C22",
+      "original": "Operativo de pellet de girasol",
+      "label": "index.2.title"
+    },
+    {
+      "slide": 2,
+      "object": "20010",
+      "sheet": "Textos",
+      "cell": "C23",
+      "original": "Pág. 19–26",
+      "label": "index.2.pages"
+    },
+    {
+      "slide": 2,
+      "object": "20011",
+      "sheet": "Textos",
+      "cell": "C24",
+      "original": "4",
+      "label": "index.3.number"
+    },
+    {
+      "slide": 2,
+      "object": "20012",
+      "sheet": "Textos",
+      "cell": "C25",
+      "original": "Operación de semilla de girasol",
+      "label": "index.3.title"
+    },
+    {
+      "slide": 2,
+      "object": "20013",
+      "sheet": "Textos",
+      "cell": "C26",
+      "original": "Pág. 27–32",
+      "label": "index.3.pages"
+    },
+    {
+      "slide": 2,
+      "object": "20014",
+      "sheet": "Textos",
+      "cell": "C27",
+      "original": "5",
+      "label": "index.4.number"
+    },
+    {
+      "slide": 2,
+      "object": "20015",
+      "sheet": "Textos",
+      "cell": "C28",
+      "original": "Actividad de calada",
+      "label": "index.4.title"
+    },
+    {
+      "slide": 2,
+      "object": "20016",
+      "sheet": "Textos",
+      "cell": "C29",
+      "original": "Pág. 33–51",
+      "label": "index.4.pages"
+    },
+    {
+      "slide": 2,
+      "object": "20017",
+      "sheet": "Textos",
+      "cell": "C30",
+      "original": "6",
+      "label": "index.5.number"
+    },
+    {
+      "slide": 2,
+      "object": "20018",
+      "sheet": "Textos",
+      "cell": "C31",
+      "original": "Actividad de volcables",
+      "label": "index.5.title"
+    },
+    {
+      "slide": 2,
+      "object": "20019",
+      "sheet": "Textos",
+      "cell": "C32",
+      "original": "Pág. 52–72",
+      "label": "index.5.pages"
+    },
+    {
+      "slide": 3,
+      "object": "20001",
+      "sheet": "Textos",
+      "cell": "C37",
+      "original": "PERÍODO DE ANÁLISIS",
+      "label": "period.heading"
+    },
+    {
+      "slide": 3,
+      "object": "20002",
+      "sheet": "Textos",
+      "cell": "C38",
+      "original": "Inicio",
+      "label": "period.start.label"
+    },
+    {
+      "slide": 3,
+      "object": "20003",
+      "sheet": "Textos",
+      "cell": "C39",
+      "original": "10/09",
+      "label": "period.start"
+    },
+    {
+      "slide": 3,
+      "object": "20004",
+      "sheet": "Textos",
+      "cell": "C40",
+      "original": "Fin",
+      "label": "period.end.label"
+    },
+    {
+      "slide": 3,
+      "object": "20005",
+      "sheet": "Textos",
+      "cell": "C41",
+      "original": "16/09",
+      "label": "period.end"
+    },
+    {
+      "slide": 3,
+      "object": "20006",
+      "sheet": "Textos",
+      "cell": "C42",
+      "original": "Días",
+      "label": "period.days.label"
+    },
+    {
+      "slide": 3,
+      "object": "20007",
+      "sheet": "Textos",
+      "cell": "C43",
+      "original": "7",
+      "label": "period.days"
+    },
+    {
+      "slide": 3,
+      "object": "20008",
+      "sheet": "Textos",
+      "cell": "C44",
+      "original": "VOLUMEN TOTAL REGISTRADO",
+      "label": "sample.total.label"
+    },
+    {
+      "slide": 3,
+      "object": "20009",
+      "sheet": "Textos",
+      "cell": "C45",
+      "original": "3.423",
+      "label": "sample.total"
+    },
+    {
+      "slide": 3,
+      "object": "20010",
+      "sheet": "Textos",
+      "cell": "C46",
+      "original": "camiones · valor reportado",
+      "label": "sample.unit"
+    },
+    {
+      "slide": 3,
+      "object": "20011",
+      "sheet": "Textos",
+      "cell": "C47",
+      "original": "SOJA",
+      "label": "products.soja.label"
+    },
+    {
+      "slide": 3,
+      "object": "20012",
+      "sheet": "Textos",
+      "cell": "C48",
+      "original": "2.557",
+      "label": "products.soja.count"
+    },
+    {
+      "slide": 3,
+      "object": "20013",
+      "sheet": "Textos",
+      "cell": "C49",
+      "original": "GIRASOL",
+      "label": "products.girasol.label"
+    },
+    {
+      "slide": 3,
+      "object": "20014",
+      "sheet": "Textos",
+      "cell": "C50",
+      "original": "523",
+      "label": "products.girasol.count"
+    },
+    {
+      "slide": 3,
+      "object": "20015",
+      "sheet": "Textos",
+      "cell": "C51",
+      "original": "LÍQUIDOS",
+      "label": "products.liquidos.label"
+    },
+    {
+      "slide": 3,
+      "object": "20016",
+      "sheet": "Textos",
+      "cell": "C52",
+      "original": "155",
+      "label": "products.liquidos.count"
+    },
+    {
+      "slide": 3,
+      "object": "20017",
+      "sheet": "Textos",
+      "cell": "C53",
+      "original": "PELLET",
+      "label": "products.pellet.label"
+    },
+    {
+      "slide": 3,
+      "object": "20018",
+      "sheet": "Textos",
+      "cell": "C54",
+      "original": "188",
+      "label": "products.pellet.count"
+    },
+    {
+      "slide": 3,
+      "object": "20019",
+      "sheet": "Textos",
+      "cell": "C55",
+      "original": "Totales por producto del informe de referencia",
+      "label": "sample.caption"
+    },
+    {
+      "slide": 4,
+      "object": "125",
+      "sheet": "Textos",
+      "cell": "C60",
+      "original": "Contenido del análisis Calidad de lectura de cámaras Descripción del circuito R7 Tiempos medios por tramo Evolución diaria del operativo Comparativo semanal e histórico Conclusiones",
+      "label": "Objeto 125"
+    },
+    {
+      "slide": 5,
+      "object": "132",
+      "sheet": "Textos",
+      "cell": "C65",
+      "original": "Calidad de lectura de Cámaras LPR",
+      "label": "Objeto 132"
+    },
+    {
+      "slide": 5,
+      "object": "135",
+      "sheet": "Textos",
+      "cell": "C66",
+      "original": "Falla de Lectura más frecuente",
+      "label": "Objeto 135"
+    },
+    {
+      "slide": 5,
+      "object": "136",
+      "sheet": "Textos",
+      "cell": "C67",
+      "original": "Balanza Egreso   (1604  patentes no leídas)",
+      "label": "Objeto 136"
+    },
+    {
+      "slide": 5,
+      "object": "146",
+      "sheet": "Textos",
+      "cell": "C68",
+      "original": "Todas las Cámaras",
+      "label": "Objeto 146"
+    },
+    {
+      "slide": 5,
+      "object": "147",
+      "sheet": "Textos",
+      "cell": "C69",
+      "original": "849",
+      "label": "Objeto 147"
+    },
+    {
+      "slide": 5,
+      "object": "150",
+      "sheet": "Textos",
+      "cell": "C70",
+      "original": "7 Cámaras",
+      "label": "Objeto 150"
+    },
+    {
+      "slide": 5,
+      "object": "151",
+      "sheet": "Textos",
+      "cell": "C71",
+      "original": "721",
+      "label": "Objeto 151"
+    },
+    {
+      "slide": 5,
+      "object": "152",
+      "sheet": "Textos",
+      "cell": "C72",
+      "original": "6 Cámaras",
+      "label": "Objeto 152"
+    },
+    {
+      "slide": 5,
+      "object": "153",
+      "sheet": "Textos",
+      "cell": "C73",
+      "original": "462",
+      "label": "Objeto 153"
+    },
+    {
+      "slide": 5,
+      "object": "154",
+      "sheet": "Textos",
+      "cell": "C74",
+      "original": "5 Cámaras",
+      "label": "Objeto 154"
+    },
+    {
+      "slide": 5,
+      "object": "155",
+      "sheet": "Textos",
+      "cell": "C75",
+      "original": "306",
+      "label": "Objeto 155"
+    },
+    {
+      "slide": 5,
+      "object": "156",
+      "sheet": "Textos",
+      "cell": "C76",
+      "original": "≤  4 Cámaras",
+      "label": "Objeto 156"
+    },
+    {
+      "slide": 5,
+      "object": "157",
+      "sheet": "Textos",
+      "cell": "C77",
+      "original": "219",
+      "label": "Objeto 157"
+    },
+    {
+      "slide": 6,
+      "object": "173",
+      "sheet": "Textos",
+      "cell": "C82",
+      "original": "1",
+      "label": "Objeto 173"
+    },
+    {
+      "slide": 6,
+      "object": "174",
+      "sheet": "Textos",
+      "cell": "C83",
+      "original": "2",
+      "label": "Objeto 174"
+    },
+    {
+      "slide": 6,
+      "object": "175",
+      "sheet": "Textos",
+      "cell": "C84",
+      "original": "3",
+      "label": "Objeto 175"
+    },
+    {
+      "slide": 6,
+      "object": "176",
+      "sheet": "Textos",
+      "cell": "C85",
+      "original": "4",
+      "label": "Objeto 176"
+    },
+    {
+      "slide": 6,
+      "object": "177",
+      "sheet": "Textos",
+      "cell": "C86",
+      "original": "5",
+      "label": "Objeto 177"
+    },
+    {
+      "slide": 6,
+      "object": "178",
+      "sheet": "Textos",
+      "cell": "C87",
+      "original": "6",
+      "label": "Objeto 178"
+    },
+    {
+      "slide": 6,
+      "object": "179",
+      "sheet": "Textos",
+      "cell": "C88",
+      "original": "7",
+      "label": "Objeto 179"
+    },
+    {
+      "slide": 6,
+      "object": "193",
+      "sheet": "Textos",
+      "cell": "C89",
+      "original": "Circuito R7 | Producto:Soja",
+      "label": "Objeto 193"
+    },
+    {
+      "slide": 6,
+      "object": "199",
+      "sheet": "Textos",
+      "cell": "C90",
+      "original": "Tramo 1 : Ingreso",
+      "label": "Objeto 199"
+    },
+    {
+      "slide": 6,
+      "object": "200",
+      "sheet": "Textos",
+      "cell": "C91",
+      "original": "ingreso → Preingreso",
+      "label": "Objeto 200"
+    },
+    {
+      "slide": 6,
+      "object": "203",
+      "sheet": "Textos",
+      "cell": "C92",
+      "original": "Tramo 2 : Playa 1",
+      "label": "Objeto 203"
+    },
+    {
+      "slide": 6,
+      "object": "204",
+      "sheet": "Textos",
+      "cell": "C93",
+      "original": "Preingreso→ Calada",
+      "label": "Objeto 204"
+    },
+    {
+      "slide": 6,
+      "object": "207",
+      "sheet": "Textos",
+      "cell": "C94",
+      "original": "Tramo 3 : Egreso",
+      "label": "Objeto 207"
+    },
+    {
+      "slide": 6,
+      "object": "208",
+      "sheet": "Textos",
+      "cell": "C95",
+      "original": "Calada → Egreso",
+      "label": "Objeto 208"
+    },
+    {
+      "slide": 6,
+      "object": "211",
+      "sheet": "Textos",
+      "cell": "C96",
+      "original": "Tramo 5 : Playa OSL",
+      "label": "Objeto 211"
+    },
+    {
+      "slide": 6,
+      "object": "212",
+      "sheet": "Textos",
+      "cell": "C97",
+      "original": "Ingreso → Balanza",
+      "label": "Objeto 212"
+    },
+    {
+      "slide": 6,
+      "object": "215",
+      "sheet": "Textos",
+      "cell": "C98",
+      "original": "Tramo 4: Interplanta",
+      "label": "Objeto 215"
+    },
+    {
+      "slide": 6,
+      "object": "216",
+      "sheet": "Textos",
+      "cell": "C99",
+      "original": "Ricardone → San Lorenzo",
+      "label": "Objeto 216"
+    },
+    {
+      "slide": 6,
+      "object": "219",
+      "sheet": "Textos",
+      "cell": "C100",
+      "original": "Tramo 6: Descarga",
+      "label": "Objeto 219"
+    },
+    {
+      "slide": 6,
+      "object": "220",
+      "sheet": "Textos",
+      "cell": "C101",
+      "original": "Balanza Osl →  Balanza Pto",
+      "label": "Objeto 220"
+    },
+    {
+      "slide": 6,
+      "object": "221",
+      "sheet": "Textos",
+      "cell": "C102",
+      "original": "→",
+      "label": "Objeto 221"
+    },
+    {
+      "slide": 6,
+      "object": "222",
+      "sheet": "Textos",
+      "cell": "C103",
+      "original": "→",
+      "label": "Objeto 222"
+    },
+    {
+      "slide": 6,
+      "object": "223",
+      "sheet": "Textos",
+      "cell": "C104",
+      "original": "→",
+      "label": "Objeto 223"
+    },
+    {
+      "slide": 6,
+      "object": "224",
+      "sheet": "Textos",
+      "cell": "C105",
+      "original": "→",
+      "label": "Objeto 224"
+    },
+    {
+      "slide": 6,
+      "object": "225",
+      "sheet": "Textos",
+      "cell": "C106",
+      "original": "→",
+      "label": "Objeto 225"
+    },
+    {
+      "slide": 6,
+      "object": "228",
+      "sheet": "Textos",
+      "cell": "C107",
+      "original": "Tramo 6: Salida",
+      "label": "Objeto 228"
+    },
+    {
+      "slide": 6,
+      "object": "229",
+      "sheet": "Textos",
+      "cell": "C108",
+      "original": "Balanza Pto  →  Portería",
+      "label": "Objeto 229"
+    },
+    {
+      "slide": 6,
+      "object": "230",
+      "sheet": "Textos",
+      "cell": "C109",
+      "original": "→",
+      "label": "Objeto 230"
+    },
+    {
+      "slide": 7,
+      "object": "238",
+      "sheet": "Textos",
+      "cell": "C114",
+      "original": "Tiempos medios por tramo",
+      "label": "Objeto 238"
+    },
+    {
+      "slide": 7,
+      "object": "239",
+      "sheet": "Textos",
+      "cell": "C115",
+      "original": "126",
+      "label": "semana.soja.tramo.2"
+    },
+    {
+      "slide": 7,
+      "object": "240",
+      "sheet": "Textos",
+      "cell": "C116",
+      "original": "11",
+      "label": "semana.soja.tramo.3"
+    },
+    {
+      "slide": 7,
+      "object": "241",
+      "sheet": "Textos",
+      "cell": "C117",
+      "original": "12",
+      "label": "semana.soja.tramo.4"
+    },
+    {
+      "slide": 7,
+      "object": "242",
+      "sheet": "Textos",
+      "cell": "C118",
+      "original": "119",
+      "label": "semana.soja.tramo.5"
+    },
+    {
+      "slide": 7,
+      "object": "243",
+      "sheet": "Textos",
+      "cell": "C119",
+      "original": "42",
+      "label": "semana.soja.tramo.6"
+    },
+    {
+      "slide": 7,
+      "object": "244",
+      "sheet": "Textos",
+      "cell": "C120",
+      "original": "19",
+      "label": "semana.soja.tramo.7"
+    },
+    {
+      "slide": 7,
+      "object": "261",
+      "sheet": "Textos",
+      "cell": "C121",
+      "original": "Ingreso",
+      "label": "Objeto 261"
+    },
+    {
+      "slide": 7,
+      "object": "266",
+      "sheet": "Textos",
+      "cell": "C122",
+      "original": "Pre-ingr",
+      "label": "Objeto 266"
+    },
+    {
+      "slide": 7,
+      "object": "267",
+      "sheet": "Textos",
+      "cell": "C123",
+      "original": "ingreso",
+      "label": "Objeto 267"
+    },
+    {
+      "slide": 7,
+      "object": "268",
+      "sheet": "Textos",
+      "cell": "C124",
+      "original": "Salida Ric",
+      "label": "Objeto 268"
+    },
+    {
+      "slide": 7,
+      "object": "269",
+      "sheet": "Textos",
+      "cell": "C125",
+      "original": "Calada",
+      "label": "Objeto 269"
+    },
+    {
+      "slide": 7,
+      "object": "270",
+      "sheet": "Textos",
+      "cell": "C126",
+      "original": "Balanza  OSL",
+      "label": "Objeto 270"
+    },
+    {
+      "slide": 7,
+      "object": "271",
+      "sheet": "Textos",
+      "cell": "C127",
+      "original": "ingreso SLZ",
+      "label": "Objeto 271"
+    },
+    {
+      "slide": 7,
+      "object": "272",
+      "sheet": "Textos",
+      "cell": "C128",
+      "original": "Salida SLZ",
+      "label": "Objeto 272"
+    },
+    {
+      "slide": 7,
+      "object": "273",
+      "sheet": "Textos",
+      "cell": "C129",
+      "original": "Volcable PTO",
+      "label": "Objeto 273"
+    },
+    {
+      "slide": 7,
+      "object": "276",
+      "sheet": "Textos",
+      "cell": "C130",
+      "original": "Playa 1",
+      "label": "Objeto 276"
+    },
+    {
+      "slide": 7,
+      "object": "277",
+      "sheet": "Textos",
+      "cell": "C131",
+      "original": "Salida",
+      "label": "Objeto 277"
+    },
+    {
+      "slide": 7,
+      "object": "278",
+      "sheet": "Textos",
+      "cell": "C132",
+      "original": "Interplanta",
+      "label": "Objeto 278"
+    },
+    {
+      "slide": 7,
+      "object": "279",
+      "sheet": "Textos",
+      "cell": "C133",
+      "original": "334  Min",
+      "label": "semana.soja.total_min"
+    },
+    {
+      "slide": 7,
+      "object": "280",
+      "sheet": "Textos",
+      "cell": "C134",
+      "original": "Playa OSL",
+      "label": "Objeto 280"
+    },
+    {
+      "slide": 7,
+      "object": "281",
+      "sheet": "Textos",
+      "cell": "C135",
+      "original": "Descarga",
+      "label": "Objeto 281"
+    },
+    {
+      "slide": 7,
+      "object": "282",
+      "sheet": "Textos",
+      "cell": "C136",
+      "original": "Egreso",
+      "label": "Objeto 282"
+    },
+    {
+      "slide": 7,
+      "object": "283",
+      "sheet": "Textos",
+      "cell": "C137",
+      "original": "5",
+      "label": "semana.soja.tramo.1"
+    },
+    {
+      "slide": 7,
+      "object": "284",
+      "sheet": "Textos",
+      "cell": "C138",
+      "original": "Tiempo Total",
+      "label": "Objeto 284"
+    },
+    {
+      "slide": 7,
+      "object": "285",
+      "sheet": "Textos",
+      "cell": "C139",
+      "original": "Comparativo  Semana anterior",
+      "label": "Objeto 285"
+    },
+    {
+      "slide": 7,
+      "object": "286",
+      "sheet": "Textos",
+      "cell": "C140",
+      "original": "Min",
+      "label": "Objeto 286"
+    },
+    {
+      "slide": 7,
+      "object": "289",
+      "sheet": "Textos",
+      "cell": "C141",
+      "original": "Total de camiones",
+      "label": "Objeto 289"
+    },
+    {
+      "slide": 7,
+      "object": "290",
+      "sheet": "Textos",
+      "cell": "C142",
+      "original": "2557",
+      "label": "semana.soja.camiones"
+    },
+    {
+      "slide": 7,
+      "object": "291",
+      "sheet": "Textos",
+      "cell": "C143",
+      "original": "+58",
+      "label": "comparativo.soja"
+    },
+    {
+      "slide": 7,
+      "object": "292",
+      "sheet": "Textos",
+      "cell": "C144",
+      "original": "Ricardone",
+      "label": "Objeto 292"
+    },
+    {
+      "slide": 7,
+      "object": "293",
+      "sheet": "Textos",
+      "cell": "C145",
+      "original": "San Lorenzo",
+      "label": "Objeto 293"
+    },
+    {
+      "slide": 7,
+      "object": "294",
+      "sheet": "Textos",
+      "cell": "C146",
+      "original": "142   min",
+      "label": "semana.soja.ricardone_min"
+    },
+    {
+      "slide": 7,
+      "object": "295",
+      "sheet": "Textos",
+      "cell": "C147",
+      "original": "180  min",
+      "label": "semana.soja.san_lorenzo_min"
+    },
+    {
+      "slide": 7,
+      "object": "296",
+      "sheet": "Textos",
+      "cell": "C148",
+      "original": "(2 hs 22 m)",
+      "label": "semana.soja.ricardone_hs"
+    },
+    {
+      "slide": 7,
+      "object": "297",
+      "sheet": "Textos",
+      "cell": "C149",
+      "original": "(3 hs)",
+      "label": "semana.soja.san_lorenzo_hs"
+    },
+    {
+      "slide": 7,
+      "object": "298",
+      "sheet": "Textos",
+      "cell": "C150",
+      "original": "(5 hs 34 m)",
+      "label": "semana.soja.total_hs"
+    },
+    {
+      "slide": 8,
+      "object": "303",
+      "sheet": "Textos",
+      "cell": "C155",
+      "original": "164",
+      "label": "dia.Jueves.tramo.2"
+    },
+    {
+      "slide": 8,
+      "object": "304",
+      "sheet": "Textos",
+      "cell": "C156",
+      "original": "12",
+      "label": "dia.Jueves.tramo.3"
+    },
+    {
+      "slide": 8,
+      "object": "305",
+      "sheet": "Textos",
+      "cell": "C157",
+      "original": "13",
+      "label": "dia.Jueves.tramo.4"
+    },
+    {
+      "slide": 8,
+      "object": "306",
+      "sheet": "Textos",
+      "cell": "C158",
+      "original": "122",
+      "label": "dia.Jueves.tramo.5"
+    },
+    {
+      "slide": 8,
+      "object": "307",
+      "sheet": "Textos",
+      "cell": "C159",
+      "original": "26",
+      "label": "dia.Jueves.tramo.6"
+    },
+    {
+      "slide": 8,
+      "object": "308",
+      "sheet": "Textos",
+      "cell": "C160",
+      "original": "20",
+      "label": "dia.Jueves.tramo.7"
+    },
+    {
+      "slide": 8,
+      "object": "316",
+      "sheet": "Textos",
+      "cell": "C161",
+      "original": "363  Min",
+      "label": "dia.Jueves.total_min"
+    },
+    {
+      "slide": 8,
+      "object": "317",
+      "sheet": "Textos",
+      "cell": "C162",
+      "original": "6",
+      "label": "dia.Jueves.tramo.1"
+    },
+    {
+      "slide": 8,
+      "object": "318",
+      "sheet": "Textos",
+      "cell": "C163",
+      "original": "Tiempo Total",
+      "label": "Objeto 318"
+    },
+    {
+      "slide": 8,
+      "object": "322",
+      "sheet": "Textos",
+      "cell": "C164",
+      "original": "Circuito R7 | Jueves 10/09",
+      "label": "dia.Jueves.titulo"
+    },
+    {
+      "slide": 8,
+      "object": "331",
+      "sheet": "Textos",
+      "cell": "C165",
+      "original": "Q1",
+      "label": "Objeto 331"
+    },
+    {
+      "slide": 8,
+      "object": "332",
+      "sheet": "Textos",
+      "cell": "C166",
+      "original": "Q2",
+      "label": "Objeto 332"
+    },
+    {
+      "slide": 8,
+      "object": "333",
+      "sheet": "Textos",
+      "cell": "C167",
+      "original": "Q3",
+      "label": "Objeto 333"
+    },
+    {
+      "slide": 8,
+      "object": "334",
+      "sheet": "Textos",
+      "cell": "C168",
+      "original": "Q4",
+      "label": "Objeto 334"
+    },
+    {
+      "slide": 8,
+      "object": "335",
+      "sheet": "Textos",
+      "cell": "C169",
+      "original": "22 :00 -04:00",
+      "label": "Objeto 335"
+    },
+    {
+      "slide": 8,
+      "object": "336",
+      "sheet": "Textos",
+      "cell": "C170",
+      "original": "04:00  -  10:00",
+      "label": "Objeto 336"
+    },
+    {
+      "slide": 8,
+      "object": "337",
+      "sheet": "Textos",
+      "cell": "C171",
+      "original": "10:00 - 16:00",
+      "label": "Objeto 337"
+    },
+    {
+      "slide": 8,
+      "object": "338",
+      "sheet": "Textos",
+      "cell": "C172",
+      "original": "16:00 - 22:00",
+      "label": "Objeto 338"
+    },
+    {
+      "slide": 8,
+      "object": "339",
+      "sheet": "Textos",
+      "cell": "C173",
+      "original": "151  camiones",
+      "label": "dia.Jueves.cuarto.Q1"
+    },
+    {
+      "slide": 8,
+      "object": "340",
+      "sheet": "Textos",
+      "cell": "C174",
+      "original": "118  camiones",
+      "label": "dia.Jueves.cuarto.Q2"
+    },
+    {
+      "slide": 8,
+      "object": "341",
+      "sheet": "Textos",
+      "cell": "C175",
+      "original": "104  camiones",
+      "label": "dia.Jueves.cuarto.Q3"
+    },
+    {
+      "slide": 8,
+      "object": "342",
+      "sheet": "Textos",
+      "cell": "C176",
+      "original": "138  camiones",
+      "label": "dia.Jueves.cuarto.Q4"
+    },
+    {
+      "slide": 8,
+      "object": "346",
+      "sheet": "Textos",
+      "cell": "C177",
+      "original": "Total de camiones",
+      "label": "Objeto 346"
+    },
+    {
+      "slide": 8,
+      "object": "347",
+      "sheet": "Textos",
+      "cell": "C178",
+      "original": "511",
+      "label": "dia.Jueves.camiones"
+    },
+    {
+      "slide": 8,
+      "object": "348",
+      "sheet": "Textos",
+      "cell": "C179",
+      "original": "10/09",
+      "label": "dia.Jueves.fecha"
+    },
+    {
+      "slide": 8,
+      "object": "349",
+      "sheet": "Textos",
+      "cell": "C180",
+      "original": "(6 hs 3 m)",
+      "label": "dia.Jueves.total_hs"
+    },
+    {
+      "slide": 8,
+      "object": "350",
+      "sheet": "Textos",
+      "cell": "C181",
+      "original": "Ricardone",
+      "label": "Objeto 350"
+    },
+    {
+      "slide": 8,
+      "object": "351",
+      "sheet": "Textos",
+      "cell": "C182",
+      "original": "San Lorenzo",
+      "label": "Objeto 351"
+    },
+    {
+      "slide": 8,
+      "object": "352",
+      "sheet": "Textos",
+      "cell": "C183",
+      "original": "182  min",
+      "label": "dia.Jueves.ricardone_min"
+    },
+    {
+      "slide": 8,
+      "object": "353",
+      "sheet": "Textos",
+      "cell": "C184",
+      "original": "168  min",
+      "label": "dia.Jueves.san_lorenzo_min"
+    },
+    {
+      "slide": 8,
+      "object": "354",
+      "sheet": "Textos",
+      "cell": "C185",
+      "original": "(3 hs 2 m)",
+      "label": "dia.Jueves.ricardone_hs"
+    },
+    {
+      "slide": 8,
+      "object": "355",
+      "sheet": "Textos",
+      "cell": "C186",
+      "original": "(2 hs 48 m)",
+      "label": "dia.Jueves.san_lorenzo_hs"
+    },
+    {
+      "slide": 9,
+      "object": "360",
+      "sheet": "Textos",
+      "cell": "C191",
+      "original": "168",
+      "label": "dia.Viernes.tramo.2"
+    },
+    {
+      "slide": 9,
+      "object": "361",
+      "sheet": "Textos",
+      "cell": "C192",
+      "original": "11",
+      "label": "dia.Viernes.tramo.3"
+    },
+    {
+      "slide": 9,
+      "object": "362",
+      "sheet": "Textos",
+      "cell": "C193",
+      "original": "13",
+      "label": "dia.Viernes.tramo.4"
+    },
+    {
+      "slide": 9,
+      "object": "363",
+      "sheet": "Textos",
+      "cell": "C194",
+      "original": "91",
+      "label": "dia.Viernes.tramo.5"
+    },
+    {
+      "slide": 9,
+      "object": "364",
+      "sheet": "Textos",
+      "cell": "C195",
+      "original": "39",
+      "label": "dia.Viernes.tramo.6"
+    },
+    {
+      "slide": 9,
+      "object": "365",
+      "sheet": "Textos",
+      "cell": "C196",
+      "original": "20",
+      "label": "dia.Viernes.tramo.7"
+    },
+    {
+      "slide": 9,
+      "object": "373",
+      "sheet": "Textos",
+      "cell": "C197",
+      "original": "347  Min",
+      "label": "dia.Viernes.total_min"
+    },
+    {
+      "slide": 9,
+      "object": "374",
+      "sheet": "Textos",
+      "cell": "C198",
+      "original": "4",
+      "label": "dia.Viernes.tramo.1"
+    },
+    {
+      "slide": 9,
+      "object": "375",
+      "sheet": "Textos",
+      "cell": "C199",
+      "original": "Tiempo Total",
+      "label": "Objeto 375"
+    },
+    {
+      "slide": 9,
+      "object": "376",
+      "sheet": "Textos",
+      "cell": "C200",
+      "original": "11/09",
+      "label": "dia.Viernes.fecha"
+    },
+    {
+      "slide": 9,
+      "object": "385",
+      "sheet": "Textos",
+      "cell": "C201",
+      "original": "Q1",
+      "label": "Objeto 385"
+    },
+    {
+      "slide": 9,
+      "object": "386",
+      "sheet": "Textos",
+      "cell": "C202",
+      "original": "Q2",
+      "label": "Objeto 386"
+    },
+    {
+      "slide": 9,
+      "object": "387",
+      "sheet": "Textos",
+      "cell": "C203",
+      "original": "Q3",
+      "label": "Objeto 387"
+    },
+    {
+      "slide": 9,
+      "object": "388",
+      "sheet": "Textos",
+      "cell": "C204",
+      "original": "Q4",
+      "label": "Objeto 388"
+    },
+    {
+      "slide": 9,
+      "object": "389",
+      "sheet": "Textos",
+      "cell": "C205",
+      "original": "22 :00 -04:00",
+      "label": "Objeto 389"
+    },
+    {
+      "slide": 9,
+      "object": "390",
+      "sheet": "Textos",
+      "cell": "C206",
+      "original": "04:00  -  10:00",
+      "label": "Objeto 390"
+    },
+    {
+      "slide": 9,
+      "object": "391",
+      "sheet": "Textos",
+      "cell": "C207",
+      "original": "10:00 - 16:00",
+      "label": "Objeto 391"
+    },
+    {
+      "slide": 9,
+      "object": "392",
+      "sheet": "Textos",
+      "cell": "C208",
+      "original": "16:00 - 22:00",
+      "label": "Objeto 392"
+    },
+    {
+      "slide": 9,
+      "object": "393",
+      "sheet": "Textos",
+      "cell": "C209",
+      "original": "178  camiones",
+      "label": "dia.Viernes.cuarto.Q1"
+    },
+    {
+      "slide": 9,
+      "object": "394",
+      "sheet": "Textos",
+      "cell": "C210",
+      "original": "78  camiones",
+      "label": "dia.Viernes.cuarto.Q2"
+    },
+    {
+      "slide": 9,
+      "object": "395",
+      "sheet": "Textos",
+      "cell": "C211",
+      "original": "139  camiones",
+      "label": "dia.Viernes.cuarto.Q3"
+    },
+    {
+      "slide": 9,
+      "object": "396",
+      "sheet": "Textos",
+      "cell": "C212",
+      "original": "87  camiones",
+      "label": "dia.Viernes.cuarto.Q4"
+    },
+    {
+      "slide": 9,
+      "object": "400",
+      "sheet": "Textos",
+      "cell": "C213",
+      "original": "Circuito R7 | Viernes 11/09",
+      "label": "dia.Viernes.titulo"
+    },
+    {
+      "slide": 9,
+      "object": "403",
+      "sheet": "Textos",
+      "cell": "C214",
+      "original": "Total de camiones",
+      "label": "Objeto 403"
+    },
+    {
+      "slide": 9,
+      "object": "404",
+      "sheet": "Textos",
+      "cell": "C215",
+      "original": "482",
+      "label": "dia.Viernes.camiones"
+    },
+    {
+      "slide": 9,
+      "object": "405",
+      "sheet": "Textos",
+      "cell": "C216",
+      "original": "(5 hs 47 m)",
+      "label": "dia.Viernes.total_hs"
+    },
+    {
+      "slide": 9,
+      "object": "406",
+      "sheet": "Textos",
+      "cell": "C217",
+      "original": "Ricardone",
+      "label": "Objeto 406"
+    },
+    {
+      "slide": 9,
+      "object": "407",
+      "sheet": "Textos",
+      "cell": "C218",
+      "original": "San Lorenzo",
+      "label": "Objeto 407"
+    },
+    {
+      "slide": 9,
+      "object": "408",
+      "sheet": "Textos",
+      "cell": "C219",
+      "original": "183  min",
+      "label": "dia.Viernes.ricardone_min"
+    },
+    {
+      "slide": 9,
+      "object": "409",
+      "sheet": "Textos",
+      "cell": "C220",
+      "original": "150  min",
+      "label": "dia.Viernes.san_lorenzo_min"
+    },
+    {
+      "slide": 9,
+      "object": "410",
+      "sheet": "Textos",
+      "cell": "C221",
+      "original": "(3 hs  3 m)",
+      "label": "dia.Viernes.ricardone_hs"
+    },
+    {
+      "slide": 9,
+      "object": "411",
+      "sheet": "Textos",
+      "cell": "C222",
+      "original": "(2 hs 30 m)",
+      "label": "dia.Viernes.san_lorenzo_hs"
+    },
+    {
+      "slide": 10,
+      "object": "416",
+      "sheet": "Textos",
+      "cell": "C227",
+      "original": "157",
+      "label": "dia.Sábado.tramo.2"
+    },
+    {
+      "slide": 10,
+      "object": "417",
+      "sheet": "Textos",
+      "cell": "C228",
+      "original": "12",
+      "label": "dia.Sábado.tramo.3"
+    },
+    {
+      "slide": 10,
+      "object": "418",
+      "sheet": "Textos",
+      "cell": "C229",
+      "original": "12",
+      "label": "dia.Sábado.tramo.4"
+    },
+    {
+      "slide": 10,
+      "object": "419",
+      "sheet": "Textos",
+      "cell": "C230",
+      "original": "132",
+      "label": "dia.Sábado.tramo.5"
+    },
+    {
+      "slide": 10,
+      "object": "420",
+      "sheet": "Textos",
+      "cell": "C231",
+      "original": "53",
+      "label": "dia.Sábado.tramo.6"
+    },
+    {
+      "slide": 10,
+      "object": "421",
+      "sheet": "Textos",
+      "cell": "C232",
+      "original": "18",
+      "label": "dia.Sábado.tramo.7"
+    },
+    {
+      "slide": 10,
+      "object": "429",
+      "sheet": "Textos",
+      "cell": "C233",
+      "original": "390  Min",
+      "label": "dia.Sábado.total_min"
+    },
+    {
+      "slide": 10,
+      "object": "430",
+      "sheet": "Textos",
+      "cell": "C234",
+      "original": "5",
+      "label": "dia.Sábado.tramo.1"
+    },
+    {
+      "slide": 10,
+      "object": "431",
+      "sheet": "Textos",
+      "cell": "C235",
+      "original": "Tiempo Total",
+      "label": "Objeto 431"
+    },
+    {
+      "slide": 10,
+      "object": "432",
+      "sheet": "Textos",
+      "cell": "C236",
+      "original": "12/09",
+      "label": "dia.Sábado.fecha"
+    },
+    {
+      "slide": 10,
+      "object": "436",
+      "sheet": "Textos",
+      "cell": "C237",
+      "original": "Circuito R7 | Sábado 12/09",
+      "label": "dia.Sábado.titulo"
+    },
+    {
+      "slide": 10,
+      "object": "445",
+      "sheet": "Textos",
+      "cell": "C238",
+      "original": "Q1",
+      "label": "Objeto 445"
+    },
+    {
+      "slide": 10,
+      "object": "446",
+      "sheet": "Textos",
+      "cell": "C239",
+      "original": "Q2",
+      "label": "Objeto 446"
+    },
+    {
+      "slide": 10,
+      "object": "447",
+      "sheet": "Textos",
+      "cell": "C240",
+      "original": "Q3",
+      "label": "Objeto 447"
+    },
+    {
+      "slide": 10,
+      "object": "448",
+      "sheet": "Textos",
+      "cell": "C241",
+      "original": "Q4",
+      "label": "Objeto 448"
+    },
+    {
+      "slide": 10,
+      "object": "449",
+      "sheet": "Textos",
+      "cell": "C242",
+      "original": "22 :00 -04:00",
+      "label": "Objeto 449"
+    },
+    {
+      "slide": 10,
+      "object": "450",
+      "sheet": "Textos",
+      "cell": "C243",
+      "original": "04:00  -  10:00",
+      "label": "Objeto 450"
+    },
+    {
+      "slide": 10,
+      "object": "451",
+      "sheet": "Textos",
+      "cell": "C244",
+      "original": "10:00 - 16:00",
+      "label": "Objeto 451"
+    },
+    {
+      "slide": 10,
+      "object": "452",
+      "sheet": "Textos",
+      "cell": "C245",
+      "original": "16:00 - 22:00",
+      "label": "Objeto 452"
+    },
+    {
+      "slide": 10,
+      "object": "453",
+      "sheet": "Textos",
+      "cell": "C246",
+      "original": "195  camiones",
+      "label": "dia.Sábado.cuarto.Q1"
+    },
+    {
+      "slide": 10,
+      "object": "454",
+      "sheet": "Textos",
+      "cell": "C247",
+      "original": "103  camiones",
+      "label": "dia.Sábado.cuarto.Q2"
+    },
+    {
+      "slide": 10,
+      "object": "455",
+      "sheet": "Textos",
+      "cell": "C248",
+      "original": "81  camiones",
+      "label": "dia.Sábado.cuarto.Q3"
+    },
+    {
+      "slide": 10,
+      "object": "456",
+      "sheet": "Textos",
+      "cell": "C249",
+      "original": "40  camiones",
+      "label": "dia.Sábado.cuarto.Q4"
+    },
+    {
+      "slide": 10,
+      "object": "459",
+      "sheet": "Textos",
+      "cell": "C250",
+      "original": "Total de camiones",
+      "label": "Objeto 459"
+    },
+    {
+      "slide": 10,
+      "object": "460",
+      "sheet": "Textos",
+      "cell": "C251",
+      "original": "419",
+      "label": "dia.Sábado.camiones"
+    },
+    {
+      "slide": 10,
+      "object": "461",
+      "sheet": "Textos",
+      "cell": "C252",
+      "original": "Ricardone",
+      "label": "Objeto 461"
+    },
+    {
+      "slide": 10,
+      "object": "462",
+      "sheet": "Textos",
+      "cell": "C253",
+      "original": "San Lorenzo",
+      "label": "Objeto 462"
+    },
+    {
+      "slide": 10,
+      "object": "463",
+      "sheet": "Textos",
+      "cell": "C254",
+      "original": "175  min",
+      "label": "dia.Sábado.ricardone_min"
+    },
+    {
+      "slide": 10,
+      "object": "464",
+      "sheet": "Textos",
+      "cell": "C255",
+      "original": "203   min",
+      "label": "dia.Sábado.san_lorenzo_min"
+    },
+    {
+      "slide": 10,
+      "object": "465",
+      "sheet": "Textos",
+      "cell": "C256",
+      "original": "(2 hs 55 m)",
+      "label": "dia.Sábado.ricardone_hs"
+    },
+    {
+      "slide": 10,
+      "object": "466",
+      "sheet": "Textos",
+      "cell": "C257",
+      "original": "(3 hs 23 m)",
+      "label": "dia.Sábado.san_lorenzo_hs"
+    },
+    {
+      "slide": 10,
+      "object": "467",
+      "sheet": "Textos",
+      "cell": "C258",
+      "original": "(6 hs 30 m)",
+      "label": "dia.Sábado.total_hs"
+    },
+    {
+      "slide": 11,
+      "object": "472",
+      "sheet": "Textos",
+      "cell": "C263",
+      "original": "169",
+      "label": "dia.Domingo.tramo.2"
+    },
+    {
+      "slide": 11,
+      "object": "473",
+      "sheet": "Textos",
+      "cell": "C264",
+      "original": "13",
+      "label": "dia.Domingo.tramo.3"
+    },
+    {
+      "slide": 11,
+      "object": "474",
+      "sheet": "Textos",
+      "cell": "C265",
+      "original": "11",
+      "label": "dia.Domingo.tramo.4"
+    },
+    {
+      "slide": 11,
+      "object": "475",
+      "sheet": "Textos",
+      "cell": "C266",
+      "original": "29",
+      "label": "dia.Domingo.tramo.5"
+    },
+    {
+      "slide": 11,
+      "object": "476",
+      "sheet": "Textos",
+      "cell": "C267",
+      "original": "12",
+      "label": "dia.Domingo.tramo.6"
+    },
+    {
+      "slide": 11,
+      "object": "477",
+      "sheet": "Textos",
+      "cell": "C268",
+      "original": "33",
+      "label": "dia.Domingo.tramo.7"
+    },
+    {
+      "slide": 11,
+      "object": "485",
+      "sheet": "Textos",
+      "cell": "C269",
+      "original": "272  Min",
+      "label": "dia.Domingo.total_min"
+    },
+    {
+      "slide": 11,
+      "object": "486",
+      "sheet": "Textos",
+      "cell": "C270",
+      "original": "5",
+      "label": "dia.Domingo.tramo.1"
+    },
+    {
+      "slide": 11,
+      "object": "487",
+      "sheet": "Textos",
+      "cell": "C271",
+      "original": "Tiempo Total",
+      "label": "Objeto 487"
+    },
+    {
+      "slide": 11,
+      "object": "488",
+      "sheet": "Textos",
+      "cell": "C272",
+      "original": "13/09",
+      "label": "dia.Domingo.fecha"
+    },
+    {
+      "slide": 11,
+      "object": "492",
+      "sheet": "Textos",
+      "cell": "C273",
+      "original": "Circuito R7 | Domingo 13/09",
+      "label": "dia.Domingo.titulo"
+    },
+    {
+      "slide": 11,
+      "object": "501",
+      "sheet": "Textos",
+      "cell": "C274",
+      "original": "Q1",
+      "label": "Objeto 501"
+    },
+    {
+      "slide": 11,
+      "object": "502",
+      "sheet": "Textos",
+      "cell": "C275",
+      "original": "Q2",
+      "label": "Objeto 502"
+    },
+    {
+      "slide": 11,
+      "object": "503",
+      "sheet": "Textos",
+      "cell": "C276",
+      "original": "Q3",
+      "label": "Objeto 503"
+    },
+    {
+      "slide": 11,
+      "object": "504",
+      "sheet": "Textos",
+      "cell": "C277",
+      "original": "Q4",
+      "label": "Objeto 504"
+    },
+    {
+      "slide": 11,
+      "object": "505",
+      "sheet": "Textos",
+      "cell": "C278",
+      "original": "22 :00 -04:00",
+      "label": "Objeto 505"
+    },
+    {
+      "slide": 11,
+      "object": "506",
+      "sheet": "Textos",
+      "cell": "C279",
+      "original": "04:00  -  10:00",
+      "label": "Objeto 506"
+    },
+    {
+      "slide": 11,
+      "object": "507",
+      "sheet": "Textos",
+      "cell": "C280",
+      "original": "10:00 - 16:00",
+      "label": "Objeto 507"
+    },
+    {
+      "slide": 11,
+      "object": "508",
+      "sheet": "Textos",
+      "cell": "C281",
+      "original": "16:00 - 22:00",
+      "label": "Objeto 508"
+    },
+    {
+      "slide": 11,
+      "object": "509",
+      "sheet": "Textos",
+      "cell": "C282",
+      "original": "6  camiones",
+      "label": "dia.Domingo.cuarto.Q1"
+    },
+    {
+      "slide": 11,
+      "object": "510",
+      "sheet": "Textos",
+      "cell": "C283",
+      "original": "5  camiones",
+      "label": "dia.Domingo.cuarto.Q2"
+    },
+    {
+      "slide": 11,
+      "object": "511",
+      "sheet": "Textos",
+      "cell": "C284",
+      "original": "9  camiones",
+      "label": "dia.Domingo.cuarto.Q3"
+    },
+    {
+      "slide": 11,
+      "object": "512",
+      "sheet": "Textos",
+      "cell": "C285",
+      "original": "19  camiones",
+      "label": "dia.Domingo.cuarto.Q4"
+    },
+    {
+      "slide": 11,
+      "object": "515",
+      "sheet": "Textos",
+      "cell": "C286",
+      "original": "Total de camiones",
+      "label": "Objeto 515"
+    },
+    {
+      "slide": 11,
+      "object": "516",
+      "sheet": "Textos",
+      "cell": "C287",
+      "original": "39",
+      "label": "dia.Domingo.camiones"
+    },
+    {
+      "slide": 11,
+      "object": "517",
+      "sheet": "Textos",
+      "cell": "C288",
+      "original": "Ricardone",
+      "label": "Objeto 517"
+    },
+    {
+      "slide": 11,
+      "object": "518",
+      "sheet": "Textos",
+      "cell": "C289",
+      "original": "San Lorenzo",
+      "label": "Objeto 518"
+    },
+    {
+      "slide": 11,
+      "object": "519",
+      "sheet": "Textos",
+      "cell": "C290",
+      "original": "187  min",
+      "label": "dia.Domingo.ricardone_min"
+    },
+    {
+      "slide": 11,
+      "object": "520",
+      "sheet": "Textos",
+      "cell": "C291",
+      "original": "74   min",
+      "label": "dia.Domingo.san_lorenzo_min"
+    },
+    {
+      "slide": 11,
+      "object": "521",
+      "sheet": "Textos",
+      "cell": "C292",
+      "original": "(3 hs 7 m)",
+      "label": "dia.Domingo.ricardone_hs"
+    },
+    {
+      "slide": 11,
+      "object": "522",
+      "sheet": "Textos",
+      "cell": "C293",
+      "original": "(1 hs 14  m)",
+      "label": "dia.Domingo.san_lorenzo_hs"
+    },
+    {
+      "slide": 11,
+      "object": "523",
+      "sheet": "Textos",
+      "cell": "C294",
+      "original": "(4 hs 32 m)",
+      "label": "dia.Domingo.total_hs"
+    },
+    {
+      "slide": 12,
+      "object": "531",
+      "sheet": "Textos",
+      "cell": "C299",
+      "original": "Circuito R7 | Lunes 14/09",
+      "label": "dia.Lunes.titulo"
+    },
+    {
+      "slide": 12,
+      "object": "532",
+      "sheet": "Textos",
+      "cell": "C300",
+      "original": "63",
+      "label": "dia.Lunes.tramo.2"
+    },
+    {
+      "slide": 12,
+      "object": "533",
+      "sheet": "Textos",
+      "cell": "C301",
+      "original": "11",
+      "label": "dia.Lunes.tramo.3"
+    },
+    {
+      "slide": 12,
+      "object": "534",
+      "sheet": "Textos",
+      "cell": "C302",
+      "original": "12",
+      "label": "dia.Lunes.tramo.4"
+    },
+    {
+      "slide": 12,
+      "object": "535",
+      "sheet": "Textos",
+      "cell": "C303",
+      "original": "81",
+      "label": "dia.Lunes.tramo.5"
+    },
+    {
+      "slide": 12,
+      "object": "536",
+      "sheet": "Textos",
+      "cell": "C304",
+      "original": "40",
+      "label": "dia.Lunes.tramo.6"
+    },
+    {
+      "slide": 12,
+      "object": "537",
+      "sheet": "Textos",
+      "cell": "C305",
+      "original": "18",
+      "label": "dia.Lunes.tramo.7"
+    },
+    {
+      "slide": 12,
+      "object": "545",
+      "sheet": "Textos",
+      "cell": "C306",
+      "original": "229  Min",
+      "label": "dia.Lunes.total_min"
+    },
+    {
+      "slide": 12,
+      "object": "546",
+      "sheet": "Textos",
+      "cell": "C307",
+      "original": "4",
+      "label": "dia.Lunes.tramo.1"
+    },
+    {
+      "slide": 12,
+      "object": "547",
+      "sheet": "Textos",
+      "cell": "C308",
+      "original": "Tiempo Total",
+      "label": "Objeto 547"
+    },
+    {
+      "slide": 12,
+      "object": "556",
+      "sheet": "Textos",
+      "cell": "C309",
+      "original": "Q1",
+      "label": "Objeto 556"
+    },
+    {
+      "slide": 12,
+      "object": "557",
+      "sheet": "Textos",
+      "cell": "C310",
+      "original": "Q2",
+      "label": "Objeto 557"
+    },
+    {
+      "slide": 12,
+      "object": "558",
+      "sheet": "Textos",
+      "cell": "C311",
+      "original": "Q3",
+      "label": "Objeto 558"
+    },
+    {
+      "slide": 12,
+      "object": "559",
+      "sheet": "Textos",
+      "cell": "C312",
+      "original": "Q4",
+      "label": "Objeto 559"
+    },
+    {
+      "slide": 12,
+      "object": "560",
+      "sheet": "Textos",
+      "cell": "C313",
+      "original": "22 :00 -04:00",
+      "label": "Objeto 560"
+    },
+    {
+      "slide": 12,
+      "object": "561",
+      "sheet": "Textos",
+      "cell": "C314",
+      "original": "04:00  -  10:00",
+      "label": "Objeto 561"
+    },
+    {
+      "slide": 12,
+      "object": "562",
+      "sheet": "Textos",
+      "cell": "C315",
+      "original": "10:00 - 16:00",
+      "label": "Objeto 562"
+    },
+    {
+      "slide": 12,
+      "object": "563",
+      "sheet": "Textos",
+      "cell": "C316",
+      "original": "16:00 - 22:00",
+      "label": "Objeto 563"
+    },
+    {
+      "slide": 12,
+      "object": "564",
+      "sheet": "Textos",
+      "cell": "C317",
+      "original": "66  camiones",
+      "label": "dia.Lunes.cuarto.Q1"
+    },
+    {
+      "slide": 12,
+      "object": "565",
+      "sheet": "Textos",
+      "cell": "C318",
+      "original": "36   camiones",
+      "label": "dia.Lunes.cuarto.Q2"
+    },
+    {
+      "slide": 12,
+      "object": "566",
+      "sheet": "Textos",
+      "cell": "C319",
+      "original": "92   camiones",
+      "label": "dia.Lunes.cuarto.Q3"
+    },
+    {
+      "slide": 12,
+      "object": "567",
+      "sheet": "Textos",
+      "cell": "C320",
+      "original": "98  camiones",
+      "label": "dia.Lunes.cuarto.Q4"
+    },
+    {
+      "slide": 12,
+      "object": "571",
+      "sheet": "Textos",
+      "cell": "C321",
+      "original": "Total de camiones",
+      "label": "Objeto 571"
+    },
+    {
+      "slide": 12,
+      "object": "572",
+      "sheet": "Textos",
+      "cell": "C322",
+      "original": "292",
+      "label": "dia.Lunes.camiones"
+    },
+    {
+      "slide": 12,
+      "object": "573",
+      "sheet": "Textos",
+      "cell": "C323",
+      "original": "14/09",
+      "label": "dia.Lunes.fecha"
+    },
+    {
+      "slide": 12,
+      "object": "574",
+      "sheet": "Textos",
+      "cell": "C324",
+      "original": "Ricardone",
+      "label": "Objeto 574"
+    },
+    {
+      "slide": 12,
+      "object": "575",
+      "sheet": "Textos",
+      "cell": "C325",
+      "original": "San Lorenzo",
+      "label": "Objeto 575"
+    },
+    {
+      "slide": 12,
+      "object": "576",
+      "sheet": "Textos",
+      "cell": "C326",
+      "original": "78  min",
+      "label": "dia.Lunes.ricardone_min"
+    },
+    {
+      "slide": 12,
+      "object": "577",
+      "sheet": "Textos",
+      "cell": "C327",
+      "original": "139  min",
+      "label": "dia.Lunes.san_lorenzo_min"
+    },
+    {
+      "slide": 12,
+      "object": "578",
+      "sheet": "Textos",
+      "cell": "C328",
+      "original": "(1 hs 18m)",
+      "label": "dia.Lunes.ricardone_hs"
+    },
+    {
+      "slide": 12,
+      "object": "579",
+      "sheet": "Textos",
+      "cell": "C329",
+      "original": "(2 hs 19 m)",
+      "label": "dia.Lunes.san_lorenzo_hs"
+    },
+    {
+      "slide": 12,
+      "object": "580",
+      "sheet": "Textos",
+      "cell": "C330",
+      "original": "(3 hs 49 m)",
+      "label": "dia.Lunes.total_hs"
+    },
+    {
+      "slide": 13,
+      "object": "585",
+      "sheet": "Textos",
+      "cell": "C335",
+      "original": "83",
+      "label": "dia.Martes.tramo.2"
+    },
+    {
+      "slide": 13,
+      "object": "586",
+      "sheet": "Textos",
+      "cell": "C336",
+      "original": "11",
+      "label": "dia.Martes.tramo.3"
+    },
+    {
+      "slide": 13,
+      "object": "587",
+      "sheet": "Textos",
+      "cell": "C337",
+      "original": "12",
+      "label": "dia.Martes.tramo.4"
+    },
+    {
+      "slide": 13,
+      "object": "588",
+      "sheet": "Textos",
+      "cell": "C338",
+      "original": "217",
+      "label": "dia.Martes.tramo.5"
+    },
+    {
+      "slide": 13,
+      "object": "589",
+      "sheet": "Textos",
+      "cell": "C339",
+      "original": "48",
+      "label": "dia.Martes.tramo.6"
+    },
+    {
+      "slide": 13,
+      "object": "590",
+      "sheet": "Textos",
+      "cell": "C340",
+      "original": "19",
+      "label": "dia.Martes.tramo.7"
+    },
+    {
+      "slide": 13,
+      "object": "598",
+      "sheet": "Textos",
+      "cell": "C341",
+      "original": "396  Min",
+      "label": "dia.Martes.total_min"
+    },
+    {
+      "slide": 13,
+      "object": "599",
+      "sheet": "Textos",
+      "cell": "C342",
+      "original": "6",
+      "label": "dia.Martes.tramo.1"
+    },
+    {
+      "slide": 13,
+      "object": "600",
+      "sheet": "Textos",
+      "cell": "C343",
+      "original": "Tiempo Total",
+      "label": "Objeto 600"
+    },
+    {
+      "slide": 13,
+      "object": "601",
+      "sheet": "Textos",
+      "cell": "C344",
+      "original": "15/09",
+      "label": "dia.Martes.fecha"
+    },
+    {
+      "slide": 13,
+      "object": "605",
+      "sheet": "Textos",
+      "cell": "C345",
+      "original": "Circuito R7 | Martes 15/09",
+      "label": "dia.Martes.titulo"
+    },
+    {
+      "slide": 13,
+      "object": "614",
+      "sheet": "Textos",
+      "cell": "C346",
+      "original": "Q1",
+      "label": "Objeto 614"
+    },
+    {
+      "slide": 13,
+      "object": "615",
+      "sheet": "Textos",
+      "cell": "C347",
+      "original": "Q2",
+      "label": "Objeto 615"
+    },
+    {
+      "slide": 13,
+      "object": "616",
+      "sheet": "Textos",
+      "cell": "C348",
+      "original": "Q3",
+      "label": "Objeto 616"
+    },
+    {
+      "slide": 13,
+      "object": "617",
+      "sheet": "Textos",
+      "cell": "C349",
+      "original": "Q4",
+      "label": "Objeto 617"
+    },
+    {
+      "slide": 13,
+      "object": "618",
+      "sheet": "Textos",
+      "cell": "C350",
+      "original": "22 :00 -04:00",
+      "label": "Objeto 618"
+    },
+    {
+      "slide": 13,
+      "object": "619",
+      "sheet": "Textos",
+      "cell": "C351",
+      "original": "04:00  -  10:00",
+      "label": "Objeto 619"
+    },
+    {
+      "slide": 13,
+      "object": "620",
+      "sheet": "Textos",
+      "cell": "C352",
+      "original": "10:00 - 16:00",
+      "label": "Objeto 620"
+    },
+    {
+      "slide": 13,
+      "object": "621",
+      "sheet": "Textos",
+      "cell": "C353",
+      "original": "16:00 - 22:00",
+      "label": "Objeto 621"
+    },
+    {
+      "slide": 13,
+      "object": "622",
+      "sheet": "Textos",
+      "cell": "C354",
+      "original": "110  camiones",
+      "label": "dia.Martes.cuarto.Q1"
+    },
+    {
+      "slide": 13,
+      "object": "623",
+      "sheet": "Textos",
+      "cell": "C355",
+      "original": "83  camiones",
+      "label": "dia.Martes.cuarto.Q2"
+    },
+    {
+      "slide": 13,
+      "object": "624",
+      "sheet": "Textos",
+      "cell": "C356",
+      "original": "115  camiones",
+      "label": "dia.Martes.cuarto.Q3"
+    },
+    {
+      "slide": 13,
+      "object": "625",
+      "sheet": "Textos",
+      "cell": "C357",
+      "original": "87  camiones",
+      "label": "dia.Martes.cuarto.Q4"
+    },
+    {
+      "slide": 13,
+      "object": "628",
+      "sheet": "Textos",
+      "cell": "C358",
+      "original": "Total de camiones",
+      "label": "Objeto 628"
+    },
+    {
+      "slide": 13,
+      "object": "629",
+      "sheet": "Textos",
+      "cell": "C359",
+      "original": "395",
+      "label": "dia.Martes.camiones"
+    },
+    {
+      "slide": 13,
+      "object": "630",
+      "sheet": "Textos",
+      "cell": "C360",
+      "original": "Ricardone",
+      "label": "Objeto 630"
+    },
+    {
+      "slide": 13,
+      "object": "631",
+      "sheet": "Textos",
+      "cell": "C361",
+      "original": "San Lorenzo",
+      "label": "Objeto 631"
+    },
+    {
+      "slide": 13,
+      "object": "632",
+      "sheet": "Textos",
+      "cell": "C362",
+      "original": "100  min",
+      "label": "dia.Martes.ricardone_min"
+    },
+    {
+      "slide": 13,
+      "object": "633",
+      "sheet": "Textos",
+      "cell": "C363",
+      "original": "284  min",
+      "label": "dia.Martes.san_lorenzo_min"
+    },
+    {
+      "slide": 13,
+      "object": "634",
+      "sheet": "Textos",
+      "cell": "C364",
+      "original": "(1 hs 40 m)",
+      "label": "dia.Martes.ricardone_hs"
+    },
+    {
+      "slide": 13,
+      "object": "635",
+      "sheet": "Textos",
+      "cell": "C365",
+      "original": "(4 h 48 m)",
+      "label": "dia.Martes.san_lorenzo_hs"
+    },
+    {
+      "slide": 13,
+      "object": "636",
+      "sheet": "Textos",
+      "cell": "C366",
+      "original": "(6 hs 36 m)",
+      "label": "dia.Martes.total_hs"
+    },
+    {
+      "slide": 14,
+      "object": "641",
+      "sheet": "Textos",
+      "cell": "C371",
+      "original": "119",
+      "label": "dia.Miércoles.tramo.2"
+    },
+    {
+      "slide": 14,
+      "object": "642",
+      "sheet": "Textos",
+      "cell": "C372",
+      "original": "11",
+      "label": "dia.Miércoles.tramo.3"
+    },
+    {
+      "slide": 14,
+      "object": "643",
+      "sheet": "Textos",
+      "cell": "C373",
+      "original": "11",
+      "label": "dia.Miércoles.tramo.4"
+    },
+    {
+      "slide": 14,
+      "object": "644",
+      "sheet": "Textos",
+      "cell": "C374",
+      "original": "179",
+      "label": "dia.Miércoles.tramo.5"
+    },
+    {
+      "slide": 14,
+      "object": "645",
+      "sheet": "Textos",
+      "cell": "C375",
+      "original": "44",
+      "label": "dia.Miércoles.tramo.6"
+    },
+    {
+      "slide": 14,
+      "object": "646",
+      "sheet": "Textos",
+      "cell": "C376",
+      "original": "19",
+      "label": "dia.Miércoles.tramo.7"
+    },
+    {
+      "slide": 14,
+      "object": "654",
+      "sheet": "Textos",
+      "cell": "C377",
+      "original": "387  Min",
+      "label": "dia.Miércoles.total_min"
+    },
+    {
+      "slide": 14,
+      "object": "655",
+      "sheet": "Textos",
+      "cell": "C378",
+      "original": "5",
+      "label": "dia.Miércoles.tramo.1"
+    },
+    {
+      "slide": 14,
+      "object": "656",
+      "sheet": "Textos",
+      "cell": "C379",
+      "original": "Tiempo Total",
+      "label": "Objeto 656"
+    },
+    {
+      "slide": 14,
+      "object": "657",
+      "sheet": "Textos",
+      "cell": "C380",
+      "original": "16 /09",
+      "label": "dia.Miércoles.fecha"
+    },
+    {
+      "slide": 14,
+      "object": "661",
+      "sheet": "Textos",
+      "cell": "C381",
+      "original": "Circuito R7 | Miércoles 16 /09",
+      "label": "dia.Miércoles.titulo"
+    },
+    {
+      "slide": 14,
+      "object": "670",
+      "sheet": "Textos",
+      "cell": "C382",
+      "original": "Q1",
+      "label": "Objeto 670"
+    },
+    {
+      "slide": 14,
+      "object": "671",
+      "sheet": "Textos",
+      "cell": "C383",
+      "original": "Q2",
+      "label": "Objeto 671"
+    },
+    {
+      "slide": 14,
+      "object": "672",
+      "sheet": "Textos",
+      "cell": "C384",
+      "original": "Q3",
+      "label": "Objeto 672"
+    },
+    {
+      "slide": 14,
+      "object": "673",
+      "sheet": "Textos",
+      "cell": "C385",
+      "original": "Q4",
+      "label": "Objeto 673"
+    },
+    {
+      "slide": 14,
+      "object": "674",
+      "sheet": "Textos",
+      "cell": "C386",
+      "original": "22 :00 -04:00",
+      "label": "Objeto 674"
+    },
+    {
+      "slide": 14,
+      "object": "675",
+      "sheet": "Textos",
+      "cell": "C387",
+      "original": "04:00  -  10:00",
+      "label": "Objeto 675"
+    },
+    {
+      "slide": 14,
+      "object": "676",
+      "sheet": "Textos",
+      "cell": "C388",
+      "original": "10:00 - 16:00",
+      "label": "Objeto 676"
+    },
+    {
+      "slide": 14,
+      "object": "677",
+      "sheet": "Textos",
+      "cell": "C389",
+      "original": "16:00 - 22:00",
+      "label": "Objeto 677"
+    },
+    {
+      "slide": 14,
+      "object": "678",
+      "sheet": "Textos",
+      "cell": "C390",
+      "original": "127 camiones",
+      "label": "dia.Miércoles.cuarto.Q1"
+    },
+    {
+      "slide": 14,
+      "object": "679",
+      "sheet": "Textos",
+      "cell": "C391",
+      "original": "88  camiones",
+      "label": "dia.Miércoles.cuarto.Q2"
+    },
+    {
+      "slide": 14,
+      "object": "680",
+      "sheet": "Textos",
+      "cell": "C392",
+      "original": "98  camiones",
+      "label": "dia.Miércoles.cuarto.Q3"
+    },
+    {
+      "slide": 14,
+      "object": "681",
+      "sheet": "Textos",
+      "cell": "C393",
+      "original": "39  camiones",
+      "label": "dia.Miércoles.cuarto.Q4"
+    },
+    {
+      "slide": 14,
+      "object": "684",
+      "sheet": "Textos",
+      "cell": "C394",
+      "original": "Total de camiones",
+      "label": "Objeto 684"
+    },
+    {
+      "slide": 14,
+      "object": "685",
+      "sheet": "Textos",
+      "cell": "C395",
+      "original": "352",
+      "label": "dia.Miércoles.camiones"
+    },
+    {
+      "slide": 14,
+      "object": "686",
+      "sheet": "Textos",
+      "cell": "C396",
+      "original": "San Lorenzo",
+      "label": "Objeto 686"
+    },
+    {
+      "slide": 14,
+      "object": "687",
+      "sheet": "Textos",
+      "cell": "C397",
+      "original": "242  min",
+      "label": "dia.Miércoles.san_lorenzo_min"
+    },
+    {
+      "slide": 14,
+      "object": "688",
+      "sheet": "Textos",
+      "cell": "C398",
+      "original": "(4 hs 2 m)",
+      "label": "dia.Miércoles.san_lorenzo_hs"
+    },
+    {
+      "slide": 14,
+      "object": "689",
+      "sheet": "Textos",
+      "cell": "C399",
+      "original": "Ricardone",
+      "label": "Objeto 689"
+    },
+    {
+      "slide": 14,
+      "object": "690",
+      "sheet": "Textos",
+      "cell": "C400",
+      "original": "135   min",
+      "label": "dia.Miércoles.ricardone_min"
+    },
+    {
+      "slide": 14,
+      "object": "691",
+      "sheet": "Textos",
+      "cell": "C401",
+      "original": "(2 hs 15 m)",
+      "label": "dia.Miércoles.ricardone_hs"
+    },
+    {
+      "slide": 14,
+      "object": "692",
+      "sheet": "Textos",
+      "cell": "C402",
+      "original": "(6 hs 27 m)",
+      "label": "dia.Miércoles.total_hs"
+    },
+    {
+      "slide": 15,
+      "object": "700",
+      "sheet": "Textos",
+      "cell": "C407",
+      "original": "Comparativo semanal e histórico",
+      "label": "Objeto 700"
+    },
+    {
+      "slide": 16,
+      "object": "712",
+      "sheet": "Textos",
+      "cell": "C412",
+      "original": "Comparativo semanal e histórico",
+      "label": "Objeto 712"
+    },
+    {
+      "slide": 17,
+      "object": "721",
+      "sheet": "Textos",
+      "cell": "C417",
+      "original": "Comparativo semanal e histórico",
+      "label": "Objeto 721"
+    },
+    {
+      "slide": 18,
+      "object": "729",
+      "sheet": "Textos",
+      "cell": "C422",
+      "original": "Conclusiones",
+      "label": "Objeto 729"
+    },
+    {
+      "slide": 18,
+      "object": "732",
+      "sheet": "Textos",
+      "cell": "C423",
+      "original": "El resumen del circuito R7 informa un tiempo medio de  334 minutos (5 h 34 min) , frente a 276 minutos en la semana anterior. Esto representa un incremento de  58 minutos (+21%) , sujeto a la conciliación del promedio semanal con el detalle diario. La mayor parte del tiempo se concentra en  Playa 1 de Ricardone, con 126 minutos, y Playa OSL, con 119 minutos . En conjunto representan aproximadamente el  73% del ciclo informado , por lo que ambas esperas constituyen los principales focos de revisión. El lunes 14/09 presentó el menor tiempo, con  229 minutos . El martes 15/09 registró el mayor, con  396 minutos , seguido por el sábado, con 390, y el miércoles, con 387. El martes y el miércoles se destaca la permanencia en Playa OSL, de  217 y 179 minutos , respectivamente. El domingo tuvo actividad reducida, con  39 camiones , pero no una interrupción total. Corresponde revisar la programación de arribos y las condiciones operativas de las jornadas con mayores esperas, sin atribuir todavía las demoras a una causa específica.",
+      "label": "Objeto 732"
+    },
+    {
+      "slide": 19,
+      "object": "740",
+      "sheet": "Textos",
+      "cell": "C428",
+      "original": "Descripción general del operativo Patentes registradas y volcables utilizadas Circuito R30/31/32 Tiempos medios por tramo Evolución diaria del operativo Conclusiones",
+      "label": "Objeto 740"
+    },
+    {
+      "slide": 20,
+      "object": "749",
+      "sheet": "Textos",
+      "cell": "C433",
+      "original": "Operativo de Pellet de Girasol",
+      "label": "Objeto 749"
+    },
+    {
+      "slide": 20,
+      "object": "753",
+      "sheet": "Textos",
+      "cell": "C434",
+      "original": "Toneladas",
+      "label": "Objeto 753"
+    },
+    {
+      "slide": 20,
+      "object": "754",
+      "sheet": "Textos",
+      "cell": "C435",
+      "original": "5.550",
+      "label": "pellet.operativo.toneladas"
+    },
+    {
+      "slide": 20,
+      "object": "755",
+      "sheet": "Textos",
+      "cell": "C436",
+      "original": "15 /09",
+      "label": "pellet.operativo.fin"
+    },
+    {
+      "slide": 20,
+      "object": "756",
+      "sheet": "Textos",
+      "cell": "C437",
+      "original": "Total volumen    188 camiones",
+      "label": "pellet.operativo.camiones"
+    },
+    {
+      "slide": 20,
+      "object": "757",
+      "sheet": "Textos",
+      "cell": "C438",
+      "original": "14 /09",
+      "label": "pellet.operativo.inicio"
+    },
+    {
+      "slide": 20,
+      "object": "758",
+      "sheet": "Textos",
+      "cell": "C439",
+      "original": "Inicio",
+      "label": "Objeto 758"
+    },
+    {
+      "slide": 20,
+      "object": "759",
+      "sheet": "Textos",
+      "cell": "C440",
+      "original": "Fin",
+      "label": "Objeto 759"
+    },
+    {
+      "slide": 21,
+      "object": "773",
+      "sheet": "Textos",
+      "cell": "C445",
+      "original": "6",
+      "label": "Objeto 773"
+    },
+    {
+      "slide": 21,
+      "object": "774",
+      "sheet": "Textos",
+      "cell": "C446",
+      "original": "7",
+      "label": "Objeto 774"
+    },
+    {
+      "slide": 21,
+      "object": "775",
+      "sheet": "Textos",
+      "cell": "C447",
+      "original": "8",
+      "label": "Objeto 775"
+    },
+    {
+      "slide": 21,
+      "object": "776",
+      "sheet": "Textos",
+      "cell": "C448",
+      "original": "9",
+      "label": "Objeto 776"
+    },
+    {
+      "slide": 21,
+      "object": "787",
+      "sheet": "Textos",
+      "cell": "C449",
+      "original": "Circuito R30/31/32/ | Producto:Pellets",
+      "label": "Objeto 787"
+    },
+    {
+      "slide": 21,
+      "object": "793",
+      "sheet": "Textos",
+      "cell": "C450",
+      "original": "Tramo 1 : Ingreso",
+      "label": "Objeto 793"
+    },
+    {
+      "slide": 21,
+      "object": "794",
+      "sheet": "Textos",
+      "cell": "C451",
+      "original": "ingreso → Preingreso",
+      "label": "Objeto 794"
+    },
+    {
+      "slide": 21,
+      "object": "797",
+      "sheet": "Textos",
+      "cell": "C452",
+      "original": "Tramo 2 : Playa 1",
+      "label": "Objeto 797"
+    },
+    {
+      "slide": 21,
+      "object": "798",
+      "sheet": "Textos",
+      "cell": "C453",
+      "original": "Preingreso→ Calada",
+      "label": "Objeto 798"
+    },
+    {
+      "slide": 21,
+      "object": "801",
+      "sheet": "Textos",
+      "cell": "C454",
+      "original": "Tramo 3 : P.Tara",
+      "label": "Objeto 801"
+    },
+    {
+      "slide": 21,
+      "object": "802",
+      "sheet": "Textos",
+      "cell": "C455",
+      "original": "Calada → Balanza",
+      "label": "Objeto 802"
+    },
+    {
+      "slide": 21,
+      "object": "805",
+      "sheet": "Textos",
+      "cell": "C456",
+      "original": "Tramo 5 : Carga",
+      "label": "Objeto 805"
+    },
+    {
+      "slide": 21,
+      "object": "806",
+      "sheet": "Textos",
+      "cell": "C457",
+      "original": "Playa 3  → Balanza",
+      "label": "Objeto 806"
+    },
+    {
+      "slide": 21,
+      "object": "809",
+      "sheet": "Textos",
+      "cell": "C458",
+      "original": "Tramo 4: Playa 3",
+      "label": "Objeto 809"
+    },
+    {
+      "slide": 21,
+      "object": "810",
+      "sheet": "Textos",
+      "cell": "C459",
+      "original": "Balanza → Playa 3",
+      "label": "Objeto 810"
+    },
+    {
+      "slide": 21,
+      "object": "811",
+      "sheet": "Textos",
+      "cell": "C460",
+      "original": "→",
+      "label": "Objeto 811"
+    },
+    {
+      "slide": 21,
+      "object": "812",
+      "sheet": "Textos",
+      "cell": "C461",
+      "original": "→",
+      "label": "Objeto 812"
+    },
+    {
+      "slide": 21,
+      "object": "813",
+      "sheet": "Textos",
+      "cell": "C462",
+      "original": "→",
+      "label": "Objeto 813"
+    },
+    {
+      "slide": 21,
+      "object": "814",
+      "sheet": "Textos",
+      "cell": "C463",
+      "original": "→",
+      "label": "Objeto 814"
+    },
+    {
+      "slide": 21,
+      "object": "815",
+      "sheet": "Textos",
+      "cell": "C464",
+      "original": "→",
+      "label": "Objeto 815"
+    },
+    {
+      "slide": 21,
+      "object": "828",
+      "sheet": "Textos",
+      "cell": "C465",
+      "original": "Tramo 7 : Playa OSL",
+      "label": "Objeto 828"
+    },
+    {
+      "slide": 21,
+      "object": "829",
+      "sheet": "Textos",
+      "cell": "C466",
+      "original": "Ingreso → Balanza",
+      "label": "Objeto 829"
+    },
+    {
+      "slide": 21,
+      "object": "832",
+      "sheet": "Textos",
+      "cell": "C467",
+      "original": "Tramo 6 : Interplanta",
+      "label": "Objeto 832"
+    },
+    {
+      "slide": 21,
+      "object": "833",
+      "sheet": "Textos",
+      "cell": "C468",
+      "original": "Ricardone → San Lorenzo",
+      "label": "Objeto 833"
+    },
+    {
+      "slide": 21,
+      "object": "836",
+      "sheet": "Textos",
+      "cell": "C469",
+      "original": "Tramo 8:  Descarga",
+      "label": "Objeto 836"
+    },
+    {
+      "slide": 21,
+      "object": "837",
+      "sheet": "Textos",
+      "cell": "C470",
+      "original": "Balanza Osl →  Volcable",
+      "label": "Objeto 837"
+    },
+    {
+      "slide": 21,
+      "object": "838",
+      "sheet": "Textos",
+      "cell": "C471",
+      "original": "→",
+      "label": "Objeto 838"
+    },
+    {
+      "slide": 21,
+      "object": "839",
+      "sheet": "Textos",
+      "cell": "C472",
+      "original": "→",
+      "label": "Objeto 839"
+    },
+    {
+      "slide": 21,
+      "object": "840",
+      "sheet": "Textos",
+      "cell": "C473",
+      "original": "→",
+      "label": "Objeto 840"
+    },
+    {
+      "slide": 21,
+      "object": "843",
+      "sheet": "Textos",
+      "cell": "C474",
+      "original": "Tramo 9 : Salida",
+      "label": "Objeto 843"
+    },
+    {
+      "slide": 21,
+      "object": "844",
+      "sheet": "Textos",
+      "cell": "C475",
+      "original": "Volcable →  Portería",
+      "label": "Objeto 844"
+    },
+    {
+      "slide": 21,
+      "object": "845",
+      "sheet": "Textos",
+      "cell": "C476",
+      "original": "→",
+      "label": "Objeto 845"
+    },
+    {
+      "slide": 21,
+      "object": "850",
+      "sheet": "Textos",
+      "cell": "C477",
+      "original": "1",
+      "label": "Objeto 850"
+    },
+    {
+      "slide": 21,
+      "object": "851",
+      "sheet": "Textos",
+      "cell": "C478",
+      "original": "4",
+      "label": "Objeto 851"
+    },
+    {
+      "slide": 21,
+      "object": "852",
+      "sheet": "Textos",
+      "cell": "C479",
+      "original": "5",
+      "label": "Objeto 852"
+    },
+    {
+      "slide": 21,
+      "object": "853",
+      "sheet": "Textos",
+      "cell": "C480",
+      "original": "2",
+      "label": "Objeto 853"
+    },
+    {
+      "slide": 21,
+      "object": "855",
+      "sheet": "Textos",
+      "cell": "C481",
+      "original": "3",
+      "label": "Objeto 855"
+    },
+    {
+      "slide": 22,
+      "object": "863",
+      "sheet": "Textos",
+      "cell": "C486",
+      "original": "Circuito R30/31/32 | Producto:Pellet",
+      "label": "Objeto 863"
+    },
+    {
+      "slide": 22,
+      "object": "864",
+      "sheet": "Textos",
+      "cell": "C487",
+      "original": "11",
+      "label": "semana.pellet.tramo.2"
+    },
+    {
+      "slide": 22,
+      "object": "873",
+      "sheet": "Textos",
+      "cell": "C488",
+      "original": "Ingreso",
+      "label": "Objeto 873"
+    },
+    {
+      "slide": 22,
+      "object": "874",
+      "sheet": "Textos",
+      "cell": "C489",
+      "original": "Playa 1",
+      "label": "Objeto 874"
+    },
+    {
+      "slide": 22,
+      "object": "875",
+      "sheet": "Textos",
+      "cell": "C490",
+      "original": "263  Min",
+      "label": "semana.pellet.total_min"
+    },
+    {
+      "slide": 22,
+      "object": "876",
+      "sheet": "Textos",
+      "cell": "C491",
+      "original": "10",
+      "label": "semana.pellet.tramo.1"
+    },
+    {
+      "slide": 22,
+      "object": "877",
+      "sheet": "Textos",
+      "cell": "C492",
+      "original": "Tiempo Total",
+      "label": "Objeto 877"
+    },
+    {
+      "slide": 22,
+      "object": "886",
+      "sheet": "Textos",
+      "cell": "C493",
+      "original": "P. Tara",
+      "label": "Objeto 886"
+    },
+    {
+      "slide": 22,
+      "object": "887",
+      "sheet": "Textos",
+      "cell": "C494",
+      "original": "Playa 3",
+      "label": "Objeto 887"
+    },
+    {
+      "slide": 22,
+      "object": "888",
+      "sheet": "Textos",
+      "cell": "C495",
+      "original": "Acceso P3",
+      "label": "Objeto 888"
+    },
+    {
+      "slide": 22,
+      "object": "889",
+      "sheet": "Textos",
+      "cell": "C496",
+      "original": "Interplanta",
+      "label": "Objeto 889"
+    },
+    {
+      "slide": 22,
+      "object": "890",
+      "sheet": "Textos",
+      "cell": "C497",
+      "original": "7",
+      "label": "semana.pellet.tramo.3"
+    },
+    {
+      "slide": 22,
+      "object": "891",
+      "sheet": "Textos",
+      "cell": "C498",
+      "original": "6",
+      "label": "semana.pellet.tramo.4"
+    },
+    {
+      "slide": 22,
+      "object": "892",
+      "sheet": "Textos",
+      "cell": "C499",
+      "original": "128",
+      "label": "semana.pellet.tramo.5"
+    },
+    {
+      "slide": 22,
+      "object": "893",
+      "sheet": "Textos",
+      "cell": "C500",
+      "original": "24",
+      "label": "semana.pellet.tramo.6"
+    },
+    {
+      "slide": 22,
+      "object": "900",
+      "sheet": "Textos",
+      "cell": "C501",
+      "original": "Total de camiones",
+      "label": "Objeto 900"
+    },
+    {
+      "slide": 22,
+      "object": "901",
+      "sheet": "Textos",
+      "cell": "C502",
+      "original": "185",
+      "label": "semana.pellet.camiones"
+    },
+    {
+      "slide": 22,
+      "object": "908",
+      "sheet": "Textos",
+      "cell": "C503",
+      "original": "Playa OSL",
+      "label": "Objeto 908"
+    },
+    {
+      "slide": 22,
+      "object": "909",
+      "sheet": "Textos",
+      "cell": "C504",
+      "original": "Descarga",
+      "label": "Objeto 909"
+    },
+    {
+      "slide": 22,
+      "object": "910",
+      "sheet": "Textos",
+      "cell": "C505",
+      "original": "Salida SLZ",
+      "label": "Objeto 910"
+    },
+    {
+      "slide": 22,
+      "object": "914",
+      "sheet": "Textos",
+      "cell": "C506",
+      "original": "17",
+      "label": "semana.pellet.tramo.7"
+    },
+    {
+      "slide": 22,
+      "object": "915",
+      "sheet": "Textos",
+      "cell": "C507",
+      "original": "38",
+      "label": "semana.pellet.tramo.8"
+    },
+    {
+      "slide": 22,
+      "object": "916",
+      "sheet": "Textos",
+      "cell": "C508",
+      "original": "22",
+      "label": "semana.pellet.tramo.9"
+    },
+    {
+      "slide": 22,
+      "object": "917",
+      "sheet": "Textos",
+      "cell": "C509",
+      "original": "Pre-ingr",
+      "label": "Objeto 917"
+    },
+    {
+      "slide": 22,
+      "object": "918",
+      "sheet": "Textos",
+      "cell": "C510",
+      "original": "ingreso",
+      "label": "Objeto 918"
+    },
+    {
+      "slide": 22,
+      "object": "919",
+      "sheet": "Textos",
+      "cell": "C511",
+      "original": "Balanza Ing",
+      "label": "Objeto 919"
+    },
+    {
+      "slide": 22,
+      "object": "920",
+      "sheet": "Textos",
+      "cell": "C512",
+      "original": "Calada",
+      "label": "Objeto 920"
+    },
+    {
+      "slide": 22,
+      "object": "921",
+      "sheet": "Textos",
+      "cell": "C513",
+      "original": "Ingreso SLZ",
+      "label": "Objeto 921"
+    },
+    {
+      "slide": 22,
+      "object": "922",
+      "sheet": "Textos",
+      "cell": "C514",
+      "original": "Balanza Salida",
+      "label": "Objeto 922"
+    },
+    {
+      "slide": 22,
+      "object": "923",
+      "sheet": "Textos",
+      "cell": "C515",
+      "original": "Volcable",
+      "label": "Objeto 923"
+    },
+    {
+      "slide": 22,
+      "object": "924",
+      "sheet": "Textos",
+      "cell": "C516",
+      "original": "Balanza  Ing",
+      "label": "Objeto 924"
+    },
+    {
+      "slide": 22,
+      "object": "925",
+      "sheet": "Textos",
+      "cell": "C517",
+      "original": "Playa 3",
+      "label": "Objeto 925"
+    },
+    {
+      "slide": 22,
+      "object": "926",
+      "sheet": "Textos",
+      "cell": "C518",
+      "original": "Salida",
+      "label": "Objeto 926"
+    },
+    {
+      "slide": 22,
+      "object": "927",
+      "sheet": "Textos",
+      "cell": "C519",
+      "original": "Ricardone",
+      "label": "Objeto 927"
+    },
+    {
+      "slide": 22,
+      "object": "928",
+      "sheet": "Textos",
+      "cell": "C520",
+      "original": "San Lorenzo",
+      "label": "Objeto 928"
+    },
+    {
+      "slide": 22,
+      "object": "929",
+      "sheet": "Textos",
+      "cell": "C521",
+      "original": "162  min",
+      "label": "semana.pellet.ricardone_min"
+    },
+    {
+      "slide": 22,
+      "object": "930",
+      "sheet": "Textos",
+      "cell": "C522",
+      "original": "77  min",
+      "label": "semana.pellet.san_lorenzo_min"
+    },
+    {
+      "slide": 22,
+      "object": "931",
+      "sheet": "Textos",
+      "cell": "C523",
+      "original": "(4 hs 23 min)",
+      "label": "semana.pellet.total_hs"
+    },
+    {
+      "slide": 22,
+      "object": "932",
+      "sheet": "Textos",
+      "cell": "C524",
+      "original": "(2 hs 42 min)",
+      "label": "semana.pellet.ricardone_hs"
+    },
+    {
+      "slide": 22,
+      "object": "933",
+      "sheet": "Textos",
+      "cell": "C525",
+      "original": "(1 hs 17 m)",
+      "label": "semana.pellet.san_lorenzo_hs"
+    },
+    {
+      "slide": 23,
+      "object": "941",
+      "sheet": "Textos",
+      "cell": "C530",
+      "original": "Circuito R30/31/32 | Lunes 14/09",
+      "label": "dia.pellet.Lunes.titulo"
+    },
+    {
+      "slide": 23,
+      "object": "942",
+      "sheet": "Textos",
+      "cell": "C531",
+      "original": "11",
+      "label": "dia.pellet.Lunes.tramo.2"
+    },
+    {
+      "slide": 23,
+      "object": "946",
+      "sheet": "Textos",
+      "cell": "C532",
+      "original": "210  Min",
+      "label": "dia.pellet.Lunes.total_min"
+    },
+    {
+      "slide": 23,
+      "object": "947",
+      "sheet": "Textos",
+      "cell": "C533",
+      "original": "10",
+      "label": "dia.pellet.Lunes.tramo.1"
+    },
+    {
+      "slide": 23,
+      "object": "948",
+      "sheet": "Textos",
+      "cell": "C534",
+      "original": "Tiempo Total",
+      "label": "Objeto 948"
+    },
+    {
+      "slide": 23,
+      "object": "949",
+      "sheet": "Textos",
+      "cell": "C535",
+      "original": "6",
+      "label": "dia.pellet.Lunes.tramo.3"
+    },
+    {
+      "slide": 23,
+      "object": "950",
+      "sheet": "Textos",
+      "cell": "C536",
+      "original": "4",
+      "label": "dia.pellet.Lunes.tramo.4"
+    },
+    {
+      "slide": 23,
+      "object": "951",
+      "sheet": "Textos",
+      "cell": "C537",
+      "original": "72",
+      "label": "dia.pellet.Lunes.tramo.5"
+    },
+    {
+      "slide": 23,
+      "object": "952",
+      "sheet": "Textos",
+      "cell": "C538",
+      "original": "36",
+      "label": "dia.pellet.Lunes.tramo.6"
+    },
+    {
+      "slide": 23,
+      "object": "960",
+      "sheet": "Textos",
+      "cell": "C539",
+      "original": "20",
+      "label": "dia.pellet.Lunes.tramo.7"
+    },
+    {
+      "slide": 23,
+      "object": "961",
+      "sheet": "Textos",
+      "cell": "C540",
+      "original": "32",
+      "label": "dia.pellet.Lunes.tramo.8"
+    },
+    {
+      "slide": 23,
+      "object": "962",
+      "sheet": "Textos",
+      "cell": "C541",
+      "original": "19",
+      "label": "dia.pellet.Lunes.tramo.9"
+    },
+    {
+      "slide": 23,
+      "object": "971",
+      "sheet": "Textos",
+      "cell": "C542",
+      "original": "Q1",
+      "label": "Objeto 971"
+    },
+    {
+      "slide": 23,
+      "object": "972",
+      "sheet": "Textos",
+      "cell": "C543",
+      "original": "Q2",
+      "label": "Objeto 972"
+    },
+    {
+      "slide": 23,
+      "object": "973",
+      "sheet": "Textos",
+      "cell": "C544",
+      "original": "Q3",
+      "label": "Objeto 973"
+    },
+    {
+      "slide": 23,
+      "object": "974",
+      "sheet": "Textos",
+      "cell": "C545",
+      "original": "Q4",
+      "label": "Objeto 974"
+    },
+    {
+      "slide": 23,
+      "object": "975",
+      "sheet": "Textos",
+      "cell": "C546",
+      "original": "22 :00 -04:00",
+      "label": "Objeto 975"
+    },
+    {
+      "slide": 23,
+      "object": "976",
+      "sheet": "Textos",
+      "cell": "C547",
+      "original": "04:00  -  10:00",
+      "label": "Objeto 976"
+    },
+    {
+      "slide": 23,
+      "object": "977",
+      "sheet": "Textos",
+      "cell": "C548",
+      "original": "10:00 - 16:00",
+      "label": "Objeto 977"
+    },
+    {
+      "slide": 23,
+      "object": "978",
+      "sheet": "Textos",
+      "cell": "C549",
+      "original": "16:00 - 22:00",
+      "label": "Objeto 978"
+    },
+    {
+      "slide": 23,
+      "object": "980",
+      "sheet": "Textos",
+      "cell": "C550",
+      "original": "0  camiones",
+      "label": "Objeto 980"
+    },
+    {
+      "slide": 23,
+      "object": "981",
+      "sheet": "Textos",
+      "cell": "C551",
+      "original": "0   camiones",
+      "label": "Objeto 981"
+    },
+    {
+      "slide": 23,
+      "object": "982",
+      "sheet": "Textos",
+      "cell": "C552",
+      "original": "36  camiones",
+      "label": "Objeto 982"
+    },
+    {
+      "slide": 23,
+      "object": "983",
+      "sheet": "Textos",
+      "cell": "C553",
+      "original": "102  camiones",
+      "label": "Objeto 983"
+    },
+    {
+      "slide": 23,
+      "object": "986",
+      "sheet": "Textos",
+      "cell": "C554",
+      "original": "Total de camiones",
+      "label": "Objeto 986"
+    },
+    {
+      "slide": 23,
+      "object": "987",
+      "sheet": "Textos",
+      "cell": "C555",
+      "original": "138",
+      "label": "dia.pellet.Lunes.camiones"
+    },
+    {
+      "slide": 23,
+      "object": "988",
+      "sheet": "Textos",
+      "cell": "C556",
+      "original": "Ricardone",
+      "label": "Objeto 988"
+    },
+    {
+      "slide": 23,
+      "object": "989",
+      "sheet": "Textos",
+      "cell": "C557",
+      "original": "San Lorenzo",
+      "label": "Objeto 989"
+    },
+    {
+      "slide": 23,
+      "object": "990",
+      "sheet": "Textos",
+      "cell": "C558",
+      "original": "103   min",
+      "label": "dia.pellet.Lunes.ricardone_min"
+    },
+    {
+      "slide": 23,
+      "object": "991",
+      "sheet": "Textos",
+      "cell": "C559",
+      "original": "71   min",
+      "label": "dia.pellet.Lunes.san_lorenzo_min"
+    },
+    {
+      "slide": 23,
+      "object": "992",
+      "sheet": "Textos",
+      "cell": "C560",
+      "original": "(1 hs 43 m)",
+      "label": "dia.pellet.Lunes.ricardone_hs"
+    },
+    {
+      "slide": 23,
+      "object": "993",
+      "sheet": "Textos",
+      "cell": "C561",
+      "original": "(1 hs 11 m)",
+      "label": "dia.pellet.Lunes.san_lorenzo_hs"
+    },
+    {
+      "slide": 23,
+      "object": "994",
+      "sheet": "Textos",
+      "cell": "C562",
+      "original": "(3 hs 30 m)",
+      "label": "dia.pellet.Lunes.total_hs"
+    },
+    {
+      "slide": 24,
+      "object": "1002",
+      "sheet": "Textos",
+      "cell": "C567",
+      "original": "Circuito R 30/31/32 | Martes 15/09",
+      "label": "dia.pellet.Martes.titulo"
+    },
+    {
+      "slide": 24,
+      "object": "1003",
+      "sheet": "Textos",
+      "cell": "C568",
+      "original": "9",
+      "label": "dia.pellet.Martes.tramo.2"
+    },
+    {
+      "slide": 24,
+      "object": "1007",
+      "sheet": "Textos",
+      "cell": "C569",
+      "original": "268   Min",
+      "label": "dia.pellet.Martes.total_min"
+    },
+    {
+      "slide": 24,
+      "object": "1008",
+      "sheet": "Textos",
+      "cell": "C570",
+      "original": "19",
+      "label": "dia.pellet.Martes.tramo.1"
+    },
+    {
+      "slide": 24,
+      "object": "1009",
+      "sheet": "Textos",
+      "cell": "C571",
+      "original": "Tiempo Total",
+      "label": "Objeto 1009"
+    },
+    {
+      "slide": 24,
+      "object": "1010",
+      "sheet": "Textos",
+      "cell": "C572",
+      "original": "4",
+      "label": "dia.pellet.Martes.tramo.3"
+    },
+    {
+      "slide": 24,
+      "object": "1011",
+      "sheet": "Textos",
+      "cell": "C573",
+      "original": "6",
+      "label": "dia.pellet.Martes.tramo.4"
+    },
+    {
+      "slide": 24,
+      "object": "1012",
+      "sheet": "Textos",
+      "cell": "C574",
+      "original": "130",
+      "label": "dia.pellet.Martes.tramo.5"
+    },
+    {
+      "slide": 24,
+      "object": "1013",
+      "sheet": "Textos",
+      "cell": "C575",
+      "original": "24",
+      "label": "dia.pellet.Martes.tramo.6"
+    },
+    {
+      "slide": 24,
+      "object": "1021",
+      "sheet": "Textos",
+      "cell": "C576",
+      "original": "16",
+      "label": "dia.pellet.Martes.tramo.7"
+    },
+    {
+      "slide": 24,
+      "object": "1022",
+      "sheet": "Textos",
+      "cell": "C577",
+      "original": "38",
+      "label": "dia.pellet.Martes.tramo.8"
+    },
+    {
+      "slide": 24,
+      "object": "1023",
+      "sheet": "Textos",
+      "cell": "C578",
+      "original": "22",
+      "label": "dia.pellet.Martes.tramo.9"
+    },
+    {
+      "slide": 24,
+      "object": "1032",
+      "sheet": "Textos",
+      "cell": "C579",
+      "original": "Q1",
+      "label": "Objeto 1032"
+    },
+    {
+      "slide": 24,
+      "object": "1033",
+      "sheet": "Textos",
+      "cell": "C580",
+      "original": "Q2",
+      "label": "Objeto 1033"
+    },
+    {
+      "slide": 24,
+      "object": "1034",
+      "sheet": "Textos",
+      "cell": "C581",
+      "original": "Q3",
+      "label": "Objeto 1034"
+    },
+    {
+      "slide": 24,
+      "object": "1035",
+      "sheet": "Textos",
+      "cell": "C582",
+      "original": "Q4",
+      "label": "Objeto 1035"
+    },
+    {
+      "slide": 24,
+      "object": "1036",
+      "sheet": "Textos",
+      "cell": "C583",
+      "original": "22 :00 -04:00",
+      "label": "Objeto 1036"
+    },
+    {
+      "slide": 24,
+      "object": "1037",
+      "sheet": "Textos",
+      "cell": "C584",
+      "original": "04:00  -  10:00",
+      "label": "Objeto 1037"
+    },
+    {
+      "slide": 24,
+      "object": "1038",
+      "sheet": "Textos",
+      "cell": "C585",
+      "original": "10:00 - 16:00",
+      "label": "Objeto 1038"
+    },
+    {
+      "slide": 24,
+      "object": "1039",
+      "sheet": "Textos",
+      "cell": "C586",
+      "original": "16:00 - 22:00",
+      "label": "Objeto 1039"
+    },
+    {
+      "slide": 24,
+      "object": "1041",
+      "sheet": "Textos",
+      "cell": "C587",
+      "original": "27  camiones",
+      "label": "Objeto 1041"
+    },
+    {
+      "slide": 24,
+      "object": "1042",
+      "sheet": "Textos",
+      "cell": "C588",
+      "original": "23  camiones",
+      "label": "Objeto 1042"
+    },
+    {
+      "slide": 24,
+      "object": "1043",
+      "sheet": "Textos",
+      "cell": "C589",
+      "original": "0  camiones",
+      "label": "Objeto 1043"
+    },
+    {
+      "slide": 24,
+      "object": "1044",
+      "sheet": "Textos",
+      "cell": "C590",
+      "original": "0  camiones",
+      "label": "Objeto 1044"
+    },
+    {
+      "slide": 24,
+      "object": "1047",
+      "sheet": "Textos",
+      "cell": "C591",
+      "original": "Total de camiones",
+      "label": "Objeto 1047"
+    },
+    {
+      "slide": 24,
+      "object": "1048",
+      "sheet": "Textos",
+      "cell": "C592",
+      "original": "50",
+      "label": "dia.pellet.Martes.camiones"
+    },
+    {
+      "slide": 24,
+      "object": "1049",
+      "sheet": "Textos",
+      "cell": "C593",
+      "original": "Ricardone",
+      "label": "Objeto 1049"
+    },
+    {
+      "slide": 24,
+      "object": "1050",
+      "sheet": "Textos",
+      "cell": "C594",
+      "original": "San Lorenzo",
+      "label": "Objeto 1050"
+    },
+    {
+      "slide": 24,
+      "object": "1051",
+      "sheet": "Textos",
+      "cell": "C595",
+      "original": "168  min",
+      "label": "dia.pellet.Martes.ricardone_min"
+    },
+    {
+      "slide": 24,
+      "object": "1052",
+      "sheet": "Textos",
+      "cell": "C596",
+      "original": "76  min",
+      "label": "dia.pellet.Martes.san_lorenzo_min"
+    },
+    {
+      "slide": 24,
+      "object": "1053",
+      "sheet": "Textos",
+      "cell": "C597",
+      "original": "(2 hs 48 m)",
+      "label": "dia.pellet.Martes.ricardone_hs"
+    },
+    {
+      "slide": 24,
+      "object": "1054",
+      "sheet": "Textos",
+      "cell": "C598",
+      "original": "(1 hs 16 m)",
+      "label": "dia.pellet.Martes.san_lorenzo_hs"
+    },
+    {
+      "slide": 24,
+      "object": "1055",
+      "sheet": "Textos",
+      "cell": "C599",
+      "original": "(4 hs 28 m)",
+      "label": "dia.pellet.Martes.total_hs"
+    },
+    {
+      "slide": 25,
+      "object": "1063",
+      "sheet": "Textos",
+      "cell": "C604",
+      "original": "Comparativo semanal e histórico",
+      "label": "Objeto 1063"
+    },
+    {
+      "slide": 26,
+      "object": "1071",
+      "sheet": "Textos",
+      "cell": "C609",
+      "original": "Conclusiones",
+      "label": "Objeto 1071"
+    },
+    {
+      "slide": 26,
+      "object": "1074",
+      "sheet": "Textos",
+      "cell": "C610",
+      "original": "El operativo de pellet de girasol se desarrolló entre el  14 y el 15 de septiembre , con un  flujo bajo de camiones . El tiempo medio informado fue de  263 minutos , frente a los  392 minutos de la semana anterior , una reducción de  129 minutos, equivalente al 33% . La principal mejora se registró en la  espera en San Lorenzo , que disminuyó de  126 a 20 minutos . Esta reducción de  106 minutos  explica la mayor parte de la mejora del tiempo total del operativo. El resultado muestra una menor permanencia en el circuito, especialmente en San Lorenzo. Sin embargo, el  bajo flujo de esta semana  debe considerarse al comparar el desempeño y evaluar si estos tiempos se sostienen con una mayor actividad.",
+      "label": "Objeto 1074"
+    },
+    {
+      "slide": 27,
+      "object": "1080",
+      "sheet": "Textos",
+      "cell": "C615",
+      "original": "Descripción general del operativo Patentes registradas y volcables utilizadas Descripción de los circuitos R5+ R6 y R3  Tiempos medios por tramo Evolución diaria del operativo Conclusiones",
+      "label": "Objeto 1080"
+    },
+    {
+      "slide": 28,
+      "object": "1089",
+      "sheet": "Textos",
+      "cell": "C620",
+      "original": "Circuitos  | Producto:Girasol",
+      "label": "Objeto 1089"
+    },
+    {
+      "slide": 28,
+      "object": "1090",
+      "sheet": "Textos",
+      "cell": "C621",
+      "original": "Falla de Lectura más frecuente",
+      "label": "Objeto 1090"
+    },
+    {
+      "slide": 28,
+      "object": "1091",
+      "sheet": "Textos",
+      "cell": "C622",
+      "original": "Ingreso a Planta",
+      "label": "Objeto 1091"
+    },
+    {
+      "slide": 28,
+      "object": "1099",
+      "sheet": "Textos",
+      "cell": "C623",
+      "original": "Todas las Cámaras",
+      "label": "Objeto 1099"
+    },
+    {
+      "slide": 28,
+      "object": "1100",
+      "sheet": "Textos",
+      "cell": "C624",
+      "original": "296",
+      "label": "Objeto 1100"
+    },
+    {
+      "slide": 28,
+      "object": "1103",
+      "sheet": "Textos",
+      "cell": "C625",
+      "original": "6 Cámaras",
+      "label": "Objeto 1103"
+    },
+    {
+      "slide": 28,
+      "object": "1104",
+      "sheet": "Textos",
+      "cell": "C626",
+      "original": "99",
+      "label": "Objeto 1104"
+    },
+    {
+      "slide": 28,
+      "object": "1105",
+      "sheet": "Textos",
+      "cell": "C627",
+      "original": "5 Cámaras",
+      "label": "Objeto 1105"
+    },
+    {
+      "slide": 28,
+      "object": "1106",
+      "sheet": "Textos",
+      "cell": "C628",
+      "original": "47",
+      "label": "Objeto 1106"
+    },
+    {
+      "slide": 28,
+      "object": "1107",
+      "sheet": "Textos",
+      "cell": "C629",
+      "original": "≤  4 Cámaras",
+      "label": "Objeto 1107"
+    },
+    {
+      "slide": 28,
+      "object": "1108",
+      "sheet": "Textos",
+      "cell": "C630",
+      "original": "51",
+      "label": "Objeto 1108"
+    },
+    {
+      "slide": 29,
+      "object": "1118",
+      "sheet": "Textos",
+      "cell": "C635",
+      "original": "1",
+      "label": "Objeto 1118"
+    },
+    {
+      "slide": 29,
+      "object": "1119",
+      "sheet": "Textos",
+      "cell": "C636",
+      "original": "2",
+      "label": "Objeto 1119"
+    },
+    {
+      "slide": 29,
+      "object": "1120",
+      "sheet": "Textos",
+      "cell": "C637",
+      "original": "3",
+      "label": "Objeto 1120"
+    },
+    {
+      "slide": 29,
+      "object": "1121",
+      "sheet": "Textos",
+      "cell": "C638",
+      "original": "4",
+      "label": "Objeto 1121"
+    },
+    {
+      "slide": 29,
+      "object": "1131",
+      "sheet": "Textos",
+      "cell": "C639",
+      "original": "Circuito R5 y R6 | Producto:Girasol",
+      "label": "Objeto 1131"
+    },
+    {
+      "slide": 29,
+      "object": "1137",
+      "sheet": "Textos",
+      "cell": "C640",
+      "original": "5",
+      "label": "Objeto 1137"
+    },
+    {
+      "slide": 29,
+      "object": "1139",
+      "sheet": "Textos",
+      "cell": "C641",
+      "original": "6",
+      "label": "Objeto 1139"
+    },
+    {
+      "slide": 29,
+      "object": "1143",
+      "sheet": "Textos",
+      "cell": "C642",
+      "original": "Tramo 1 : Ingreso",
+      "label": "Objeto 1143"
+    },
+    {
+      "slide": 29,
+      "object": "1144",
+      "sheet": "Textos",
+      "cell": "C643",
+      "original": "ingreso → Preingreso",
+      "label": "Objeto 1144"
+    },
+    {
+      "slide": 29,
+      "object": "1147",
+      "sheet": "Textos",
+      "cell": "C644",
+      "original": "Tramo 2 :Espera",
+      "label": "Objeto 1147"
+    },
+    {
+      "slide": 29,
+      "object": "1148",
+      "sheet": "Textos",
+      "cell": "C645",
+      "original": "Preingreso→ Calada",
+      "label": "Objeto 1148"
+    },
+    {
+      "slide": 29,
+      "object": "1151",
+      "sheet": "Textos",
+      "cell": "C646",
+      "original": "Tramo 3 : P.Bruto",
+      "label": "Objeto 1151"
+    },
+    {
+      "slide": 29,
+      "object": "1152",
+      "sheet": "Textos",
+      "cell": "C647",
+      "original": "Calada → Balanza",
+      "label": "Objeto 1152"
+    },
+    {
+      "slide": 29,
+      "object": "1155",
+      "sheet": "Textos",
+      "cell": "C648",
+      "original": "Tramo 4 : Playa 3",
+      "label": "Objeto 1155"
+    },
+    {
+      "slide": 29,
+      "object": "1156",
+      "sheet": "Textos",
+      "cell": "C649",
+      "original": "Balanza → Playa 3",
+      "label": "Objeto 1156"
+    },
+    {
+      "slide": 29,
+      "object": "1159",
+      "sheet": "Textos",
+      "cell": "C650",
+      "original": "Tramo 5: Descarga",
+      "label": "Objeto 1159"
+    },
+    {
+      "slide": 29,
+      "object": "1160",
+      "sheet": "Textos",
+      "cell": "C651",
+      "original": "Playa 3 → Volcable",
+      "label": "Objeto 1160"
+    },
+    {
+      "slide": 29,
+      "object": "1163",
+      "sheet": "Textos",
+      "cell": "C652",
+      "original": "Tramo 6: P. Tara",
+      "label": "Objeto 1163"
+    },
+    {
+      "slide": 29,
+      "object": "1164",
+      "sheet": "Textos",
+      "cell": "C653",
+      "original": "Volcable → Balanza",
+      "label": "Objeto 1164"
+    },
+    {
+      "slide": 29,
+      "object": "1165",
+      "sheet": "Textos",
+      "cell": "C654",
+      "original": "→",
+      "label": "Objeto 1165"
+    },
+    {
+      "slide": 29,
+      "object": "1166",
+      "sheet": "Textos",
+      "cell": "C655",
+      "original": "→",
+      "label": "Objeto 1166"
+    },
+    {
+      "slide": 29,
+      "object": "1167",
+      "sheet": "Textos",
+      "cell": "C656",
+      "original": "→",
+      "label": "Objeto 1167"
+    },
+    {
+      "slide": 29,
+      "object": "1168",
+      "sheet": "Textos",
+      "cell": "C657",
+      "original": "→",
+      "label": "Objeto 1168"
+    },
+    {
+      "slide": 29,
+      "object": "1169",
+      "sheet": "Textos",
+      "cell": "C658",
+      "original": "→",
+      "label": "Objeto 1169"
+    },
+    {
+      "slide": 30,
+      "object": "1177",
+      "sheet": "Textos",
+      "cell": "C663",
+      "original": "Circuito R5+R6 | Producto:Girasol",
+      "label": "Objeto 1177"
+    },
+    {
+      "slide": 30,
+      "object": "1178",
+      "sheet": "Textos",
+      "cell": "C664",
+      "original": "133",
+      "label": "semana.girasol.tramo.2"
+    },
+    {
+      "slide": 30,
+      "object": "1187",
+      "sheet": "Textos",
+      "cell": "C665",
+      "original": "Ingreso",
+      "label": "Objeto 1187"
+    },
+    {
+      "slide": 30,
+      "object": "1188",
+      "sheet": "Textos",
+      "cell": "C666",
+      "original": "Pre-ingr",
+      "label": "Objeto 1188"
+    },
+    {
+      "slide": 30,
+      "object": "1189",
+      "sheet": "Textos",
+      "cell": "C667",
+      "original": "ingreso",
+      "label": "Objeto 1189"
+    },
+    {
+      "slide": 30,
+      "object": "1190",
+      "sheet": "Textos",
+      "cell": "C668",
+      "original": "Calada",
+      "label": "Objeto 1190"
+    },
+    {
+      "slide": 30,
+      "object": "1191",
+      "sheet": "Textos",
+      "cell": "C669",
+      "original": "Playa 1",
+      "label": "Objeto 1191"
+    },
+    {
+      "slide": 30,
+      "object": "1192",
+      "sheet": "Textos",
+      "cell": "C670",
+      "original": "382  Min",
+      "label": "semana.girasol.total_min"
+    },
+    {
+      "slide": 30,
+      "object": "1193",
+      "sheet": "Textos",
+      "cell": "C671",
+      "original": "4",
+      "label": "semana.girasol.tramo.1"
+    },
+    {
+      "slide": 30,
+      "object": "1194",
+      "sheet": "Textos",
+      "cell": "C672",
+      "original": "Tiempo Total",
+      "label": "Objeto 1194"
+    },
+    {
+      "slide": 30,
+      "object": "1203",
+      "sheet": "Textos",
+      "cell": "C673",
+      "original": "Balanza",
+      "label": "Objeto 1203"
+    },
+    {
+      "slide": 30,
+      "object": "1204",
+      "sheet": "Textos",
+      "cell": "C674",
+      "original": "Playa 3",
+      "label": "Objeto 1204"
+    },
+    {
+      "slide": 30,
+      "object": "1205",
+      "sheet": "Textos",
+      "cell": "C675",
+      "original": "Volcable",
+      "label": "Objeto 1205"
+    },
+    {
+      "slide": 30,
+      "object": "1206",
+      "sheet": "Textos",
+      "cell": "C676",
+      "original": "Balanza",
+      "label": "Objeto 1206"
+    },
+    {
+      "slide": 30,
+      "object": "1207",
+      "sheet": "Textos",
+      "cell": "C677",
+      "original": "P.Bruto",
+      "label": "Objeto 1207"
+    },
+    {
+      "slide": 30,
+      "object": "1208",
+      "sheet": "Textos",
+      "cell": "C678",
+      "original": "Descarga",
+      "label": "Objeto 1208"
+    },
+    {
+      "slide": 30,
+      "object": "1209",
+      "sheet": "Textos",
+      "cell": "C679",
+      "original": "Playa 3",
+      "label": "Objeto 1209"
+    },
+    {
+      "slide": 30,
+      "object": "1210",
+      "sheet": "Textos",
+      "cell": "C680",
+      "original": "29",
+      "label": "semana.girasol.tramo.3"
+    },
+    {
+      "slide": 30,
+      "object": "1211",
+      "sheet": "Textos",
+      "cell": "C681",
+      "original": "8",
+      "label": "semana.girasol.tramo.4"
+    },
+    {
+      "slide": 30,
+      "object": "1212",
+      "sheet": "Textos",
+      "cell": "C682",
+      "original": "191",
+      "label": "semana.girasol.tramo.5"
+    },
+    {
+      "slide": 30,
+      "object": "1213",
+      "sheet": "Textos",
+      "cell": "C683",
+      "original": "17",
+      "label": "semana.girasol.tramo.6"
+    },
+    {
+      "slide": 30,
+      "object": "1220",
+      "sheet": "Textos",
+      "cell": "C684",
+      "original": "Total de camiones",
+      "label": "Objeto 1220"
+    },
+    {
+      "slide": 30,
+      "object": "1221",
+      "sheet": "Textos",
+      "cell": "C685",
+      "original": "488",
+      "label": "semana.girasol.camiones"
+    },
+    {
+      "slide": 30,
+      "object": "1222",
+      "sheet": "Textos",
+      "cell": "C686",
+      "original": "ingreso P3",
+      "label": "Objeto 1222"
+    },
+    {
+      "slide": 31,
+      "object": "1229",
+      "sheet": "Textos",
+      "cell": "C691",
+      "original": "Circuito R5+R6| Producto:Girasol",
+      "label": "Objeto 1229"
+    },
+    {
+      "slide": 32,
+      "object": "1239",
+      "sheet": "Textos",
+      "cell": "C696",
+      "original": "Conclusiones",
+      "label": "Objeto 1239"
+    },
+    {
+      "slide": 32,
+      "object": "1242",
+      "sheet": "Textos",
+      "cell": "C697",
+      "original": "El circuito  R5+R6 informa un tiempo medio de 382 minutos (6 h 22 min) , frente a 319 minutos en la semana anterior: un aumento de  63 minutos (+19,7%) . R3 registra  403 minutos (6 h 43 min) , con una diferencia actual de  21 minutos  respecto de R5+R6. En R5+R6, la espera previa a la calada alcanza  133 minutos  y el tramo de Playa 3 a Volcable,  191 minutos . Ambos suman  324 minutos , aproximadamente el  85% del ciclo . En R3, esos mismos tramos representan  166 y 180 minutos , respectivamente, y concentran aproximadamente el  86% del tiempo total . R3 presenta mayor espera previa a la calada, mientras que el tramo de Playa 3 a Volcable es menor que en R5+R6. La prioridad es revisar la espera previa a la calada y la permanencia entre Playa 3 y el volcable. Este último tramo incluye espera y descarga, por lo que sus tiempos no permiten atribuir toda la demora al vuelco físico. Los volúmenes por circuito requieren conciliación antes de incorporarlos a la conclusión definitiva.",
+      "label": "Objeto 1242"
+    },
+    {
+      "slide": 33,
+      "object": "1248",
+      "sheet": "Textos",
+      "cell": "C702",
+      "original": "CALADO",
+      "label": "Objeto 1248"
+    },
+    {
+      "slide": 34,
+      "object": "20001",
+      "sheet": "Textos",
+      "cell": "C707",
+      "original": "Actividad semanal por sede y tipo de calada",
+      "label": "calada.subtitle"
+    },
+    {
+      "slide": 34,
+      "object": "20002",
+      "sheet": "Textos",
+      "cell": "C708",
+      "original": "Sede",
+      "label": "calada.header.Sede"
+    },
+    {
+      "slide": 34,
+      "object": "20003",
+      "sheet": "Textos",
+      "cell": "C709",
+      "original": "Tipo",
+      "label": "calada.header.Tipo"
+    },
+    {
+      "slide": 34,
+      "object": "20004",
+      "sheet": "Textos",
+      "cell": "C710",
+      "original": "Horas activas",
+      "label": "calada.header.Horas activas"
+    },
+    {
+      "slide": 34,
+      "object": "20005",
+      "sheet": "Textos",
+      "cell": "C711",
+      "original": "Camiones/h",
+      "label": "calada.header.Camiones/h"
+    },
+    {
+      "slide": 34,
+      "object": "20006",
+      "sheet": "Textos",
+      "cell": "C712",
+      "original": "Camiones",
+      "label": "calada.header.Camiones"
+    },
+    {
+      "slide": 34,
+      "object": "20007",
+      "sheet": "Textos",
+      "cell": "C713",
+      "original": "Ricardone",
+      "label": "calada.ric_solida.sede"
+    },
+    {
+      "slide": 34,
+      "object": "20008",
+      "sheet": "Textos",
+      "cell": "C714",
+      "original": "Sólida",
+      "label": "calada.ric_solida.tipo"
+    },
+    {
+      "slide": 34,
+      "object": "20009",
+      "sheet": "Textos",
+      "cell": "C715",
+      "original": "148",
+      "label": "calada.ric_solida.horas"
+    },
+    {
+      "slide": 34,
+      "object": "20010",
+      "sheet": "Textos",
+      "cell": "C716",
+      "original": "20",
+      "label": "calada.ric_solida.camiones_h"
+    },
+    {
+      "slide": 34,
+      "object": "20011",
+      "sheet": "Textos",
+      "cell": "C717",
+      "original": "2.908",
+      "label": "calada.ric_solida.camiones"
+    },
+    {
+      "slide": 34,
+      "object": "20012",
+      "sheet": "Textos",
+      "cell": "C718",
+      "original": "Ricardone",
+      "label": "calada.ric_liquida.sede"
+    },
+    {
+      "slide": 34,
+      "object": "20013",
+      "sheet": "Textos",
+      "cell": "C719",
+      "original": "Líquida",
+      "label": "calada.ric_liquida.tipo"
+    },
+    {
+      "slide": 34,
+      "object": "20014",
+      "sheet": "Textos",
+      "cell": "C720",
+      "original": "49",
+      "label": "calada.ric_liquida.horas"
+    },
+    {
+      "slide": 34,
+      "object": "20015",
+      "sheet": "Textos",
+      "cell": "C721",
+      "original": "3,6",
+      "label": "calada.ric_liquida.camiones_h"
+    },
+    {
+      "slide": 34,
+      "object": "20016",
+      "sheet": "Textos",
+      "cell": "C722",
+      "original": "152",
+      "label": "calada.ric_liquida.camiones"
+    },
+    {
+      "slide": 34,
+      "object": "20017",
+      "sheet": "Textos",
+      "cell": "C723",
+      "original": "San Lorenzo",
+      "label": "calada.sl.sede"
+    },
+    {
+      "slide": 34,
+      "object": "20018",
+      "sheet": "Textos",
+      "cell": "C724",
+      "original": "Calada",
+      "label": "calada.sl.tipo"
+    },
+    {
+      "slide": 34,
+      "object": "20019",
+      "sheet": "Textos",
+      "cell": "C725",
+      "original": "90",
+      "label": "calada.sl.horas"
+    },
+    {
+      "slide": 34,
+      "object": "20020",
+      "sheet": "Textos",
+      "cell": "C726",
+      "original": "3,3",
+      "label": "calada.sl.camiones_h"
+    },
+    {
+      "slide": 34,
+      "object": "20021",
+      "sheet": "Textos",
+      "cell": "C727",
+      "original": "237",
+      "label": "calada.sl.camiones"
+    },
+    {
+      "slide": 34,
+      "object": "20022",
+      "sheet": "Textos",
+      "cell": "C728",
+      "original": "Cada calada responde a una operación y una demanda diferentes.",
+      "label": "calada.caption"
+    },
+    {
+      "slide": 35,
+      "object": "1271",
+      "sheet": "Textos",
+      "cell": "C733",
+      "original": "Pico de camiones",
+      "label": "Objeto 1271"
+    },
+    {
+      "slide": 35,
+      "object": "1272",
+      "sheet": "Textos",
+      "cell": "C734",
+      "original": "Ventana máximo",
+      "label": "Objeto 1272"
+    },
+    {
+      "slide": 35,
+      "object": "1273",
+      "sheet": "Textos",
+      "cell": "C735",
+      "original": "Promedio x hora",
+      "label": "Objeto 1273"
+    },
+    {
+      "slide": 35,
+      "object": "1274",
+      "sheet": "Textos",
+      "cell": "C736",
+      "original": "Total de camiones",
+      "label": "Objeto 1274"
+    },
+    {
+      "slide": 35,
+      "object": "1275",
+      "sheet": "Textos",
+      "cell": "C737",
+      "original": "50",
+      "label": "kpi.calada_ricardone.pico"
+    },
+    {
+      "slide": 35,
+      "object": "1276",
+      "sheet": "Textos",
+      "cell": "C738",
+      "original": "10/9 08 hs",
+      "label": "kpi.calada_ricardone.ventana"
+    },
+    {
+      "slide": 35,
+      "object": "1277",
+      "sheet": "Textos",
+      "cell": "C739",
+      "original": "2908",
+      "label": "kpi.calada_ricardone.total"
+    },
+    {
+      "slide": 35,
+      "object": "1278",
+      "sheet": "Textos",
+      "cell": "C740",
+      "original": "20 sobre 148  horas totales",
+      "label": "kpi.calada_ricardone.promedio"
+    },
+    {
+      "slide": 35,
+      "object": "1282",
+      "sheet": "Textos",
+      "cell": "C741",
+      "original": "Resumen Semanal Calada Ricardone",
+      "label": "Objeto 1282"
+    },
+    {
+      "slide": 36,
+      "object": "1291",
+      "sheet": "Textos",
+      "cell": "C746",
+      "original": "Actividad Calada | Jueves 10/09",
+      "label": "titulo.calada.Jueves"
+    },
+    {
+      "slide": 37,
+      "object": "1299",
+      "sheet": "Textos",
+      "cell": "C751",
+      "original": "Actividad Calada | Jueves 10/09",
+      "label": "titulo.calada.Jueves"
+    },
+    {
+      "slide": 37,
+      "object": "1308",
+      "sheet": "Textos",
+      "cell": "C752",
+      "original": "Pico de camiones",
+      "label": "Objeto 1308"
+    },
+    {
+      "slide": 37,
+      "object": "1309",
+      "sheet": "Textos",
+      "cell": "C753",
+      "original": "Ventana máximo",
+      "label": "Objeto 1309"
+    },
+    {
+      "slide": 37,
+      "object": "1310",
+      "sheet": "Textos",
+      "cell": "C754",
+      "original": "Promedio x hora",
+      "label": "Objeto 1310"
+    },
+    {
+      "slide": 37,
+      "object": "1311",
+      "sheet": "Textos",
+      "cell": "C755",
+      "original": "Total de camiones",
+      "label": "Objeto 1311"
+    },
+    {
+      "slide": 37,
+      "object": "1312",
+      "sheet": "Textos",
+      "cell": "C756",
+      "original": "58",
+      "label": "kpi.calada_ricardone.Jueves.pico"
+    },
+    {
+      "slide": 37,
+      "object": "1313",
+      "sheet": "Textos",
+      "cell": "C757",
+      "original": "08-09",
+      "label": "kpi.calada_ricardone.Jueves.ventana"
+    },
+    {
+      "slide": 37,
+      "object": "1314",
+      "sheet": "Textos",
+      "cell": "C758",
+      "original": "26",
+      "label": "kpi.calada_ricardone.Jueves.promedio"
+    },
+    {
+      "slide": 37,
+      "object": "1315",
+      "sheet": "Textos",
+      "cell": "C759",
+      "original": "586",
+      "label": "kpi.calada_ricardone.Jueves.total"
+    },
+    {
+      "slide": 38,
+      "object": "1324",
+      "sheet": "Textos",
+      "cell": "C764",
+      "original": "Actividad Calada | Viernes 11/09",
+      "label": "titulo.calada.Viernes"
+    },
+    {
+      "slide": 39,
+      "object": "1333",
+      "sheet": "Textos",
+      "cell": "C769",
+      "original": "Actividad Calada | Viernes 11 /09",
+      "label": "titulo.calada.Viernes"
+    },
+    {
+      "slide": 39,
+      "object": "1342",
+      "sheet": "Textos",
+      "cell": "C770",
+      "original": "Pico de camiones",
+      "label": "Objeto 1342"
+    },
+    {
+      "slide": 39,
+      "object": "1343",
+      "sheet": "Textos",
+      "cell": "C771",
+      "original": "Ventana máximo",
+      "label": "Objeto 1343"
+    },
+    {
+      "slide": 39,
+      "object": "1344",
+      "sheet": "Textos",
+      "cell": "C772",
+      "original": "Promedio x hora",
+      "label": "Objeto 1344"
+    },
+    {
+      "slide": 39,
+      "object": "1345",
+      "sheet": "Textos",
+      "cell": "C773",
+      "original": "Total de camiones",
+      "label": "Objeto 1345"
+    },
+    {
+      "slide": 39,
+      "object": "1346",
+      "sheet": "Textos",
+      "cell": "C774",
+      "original": "51",
+      "label": "kpi.calada_ricardone.Viernes.pico"
+    },
+    {
+      "slide": 39,
+      "object": "1347",
+      "sheet": "Textos",
+      "cell": "C775",
+      "original": "23-24",
+      "label": "kpi.calada_ricardone.Viernes.ventana"
+    },
+    {
+      "slide": 39,
+      "object": "1348",
+      "sheet": "Textos",
+      "cell": "C776",
+      "original": "24.5",
+      "label": "kpi.calada_ricardone.Viernes.promedio"
+    },
+    {
+      "slide": 39,
+      "object": "1349",
+      "sheet": "Textos",
+      "cell": "C777",
+      "original": "579",
+      "label": "kpi.calada_ricardone.Viernes.total"
+    },
+    {
+      "slide": 40,
+      "object": "1358",
+      "sheet": "Textos",
+      "cell": "C782",
+      "original": "Actividad Calada | Sábado 12/09",
+      "label": "titulo.calada.Sábado"
+    },
+    {
+      "slide": 41,
+      "object": "1367",
+      "sheet": "Textos",
+      "cell": "C787",
+      "original": "Actividad Calada | Sábado 12/09",
+      "label": "titulo.calada.Sábado"
+    },
+    {
+      "slide": 41,
+      "object": "1376",
+      "sheet": "Textos",
+      "cell": "C788",
+      "original": "Pico de camiones",
+      "label": "Objeto 1376"
+    },
+    {
+      "slide": 41,
+      "object": "1377",
+      "sheet": "Textos",
+      "cell": "C789",
+      "original": "Ventana máximo",
+      "label": "Objeto 1377"
+    },
+    {
+      "slide": 41,
+      "object": "1378",
+      "sheet": "Textos",
+      "cell": "C790",
+      "original": "Promedio x hora",
+      "label": "Objeto 1378"
+    },
+    {
+      "slide": 41,
+      "object": "1379",
+      "sheet": "Textos",
+      "cell": "C791",
+      "original": "Total de camiones",
+      "label": "Objeto 1379"
+    },
+    {
+      "slide": 41,
+      "object": "1380",
+      "sheet": "Textos",
+      "cell": "C792",
+      "original": "46",
+      "label": "kpi.calada_ricardone.Sábado.pico"
+    },
+    {
+      "slide": 41,
+      "object": "1381",
+      "sheet": "Textos",
+      "cell": "C793",
+      "original": "08-09",
+      "label": "kpi.calada_ricardone.Sábado.ventana"
+    },
+    {
+      "slide": 41,
+      "object": "1382",
+      "sheet": "Textos",
+      "cell": "C794",
+      "original": "20",
+      "label": "kpi.calada_ricardone.Sábado.promedio"
+    },
+    {
+      "slide": 41,
+      "object": "1383",
+      "sheet": "Textos",
+      "cell": "C795",
+      "original": "460",
+      "label": "kpi.calada_ricardone.Sábado.total"
+    },
+    {
+      "slide": 42,
+      "object": "1392",
+      "sheet": "Textos",
+      "cell": "C800",
+      "original": "Actividad Calada | Domingo 13/09",
+      "label": "titulo.calada.Domingo"
+    },
+    {
+      "slide": 43,
+      "object": "1401",
+      "sheet": "Textos",
+      "cell": "C805",
+      "original": "Actividad Calada | Domingo 13 /09",
+      "label": "titulo.calada.Domingo"
+    },
+    {
+      "slide": 43,
+      "object": "1410",
+      "sheet": "Textos",
+      "cell": "C806",
+      "original": "Pico de camiones",
+      "label": "Objeto 1410"
+    },
+    {
+      "slide": 43,
+      "object": "1411",
+      "sheet": "Textos",
+      "cell": "C807",
+      "original": "Ventana máximo",
+      "label": "Objeto 1411"
+    },
+    {
+      "slide": 43,
+      "object": "1412",
+      "sheet": "Textos",
+      "cell": "C808",
+      "original": "Promedio x hora",
+      "label": "Objeto 1412"
+    },
+    {
+      "slide": 43,
+      "object": "1413",
+      "sheet": "Textos",
+      "cell": "C809",
+      "original": "Total de camiones",
+      "label": "Objeto 1413"
+    },
+    {
+      "slide": 43,
+      "object": "1414",
+      "sheet": "Textos",
+      "cell": "C810",
+      "original": "22",
+      "label": "kpi.calada_ricardone.Domingo.pico"
+    },
+    {
+      "slide": 43,
+      "object": "1415",
+      "sheet": "Textos",
+      "cell": "C811",
+      "original": "23-24",
+      "label": "kpi.calada_ricardone.Domingo.ventana"
+    },
+    {
+      "slide": 43,
+      "object": "1416",
+      "sheet": "Textos",
+      "cell": "C812",
+      "original": "4",
+      "label": "kpi.calada_ricardone.Domingo.promedio"
+    },
+    {
+      "slide": 43,
+      "object": "1417",
+      "sheet": "Textos",
+      "cell": "C813",
+      "original": "57",
+      "label": "kpi.calada_ricardone.Domingo.total"
+    },
+    {
+      "slide": 44,
+      "object": "1426",
+      "sheet": "Textos",
+      "cell": "C818",
+      "original": "Actividad Calada | Lunes 14/09",
+      "label": "titulo.calada.Lunes"
+    },
+    {
+      "slide": 45,
+      "object": "1435",
+      "sheet": "Textos",
+      "cell": "C823",
+      "original": "Actividad Calada | Lunes 14/09",
+      "label": "titulo.calada.Lunes"
+    },
+    {
+      "slide": 45,
+      "object": "1444",
+      "sheet": "Textos",
+      "cell": "C824",
+      "original": "Pico de camiones",
+      "label": "Objeto 1444"
+    },
+    {
+      "slide": 45,
+      "object": "1445",
+      "sheet": "Textos",
+      "cell": "C825",
+      "original": "Ventana máximo",
+      "label": "Objeto 1445"
+    },
+    {
+      "slide": 45,
+      "object": "1446",
+      "sheet": "Textos",
+      "cell": "C826",
+      "original": "Promedio x hora",
+      "label": "Objeto 1446"
+    },
+    {
+      "slide": 45,
+      "object": "1447",
+      "sheet": "Textos",
+      "cell": "C827",
+      "original": "Total de camiones",
+      "label": "Objeto 1447"
+    },
+    {
+      "slide": 45,
+      "object": "1448",
+      "sheet": "Textos",
+      "cell": "C828",
+      "original": "37",
+      "label": "kpi.calada_ricardone.Lunes.pico"
+    },
+    {
+      "slide": 45,
+      "object": "1449",
+      "sheet": "Textos",
+      "cell": "C829",
+      "original": "17-18",
+      "label": "kpi.calada_ricardone.Lunes.ventana"
+    },
+    {
+      "slide": 45,
+      "object": "1450",
+      "sheet": "Textos",
+      "cell": "C830",
+      "original": "14",
+      "label": "kpi.calada_ricardone.Lunes.promedio"
+    },
+    {
+      "slide": 45,
+      "object": "1451",
+      "sheet": "Textos",
+      "cell": "C831",
+      "original": "354",
+      "label": "kpi.calada_ricardone.Lunes.total"
+    },
+    {
+      "slide": 46,
+      "object": "1460",
+      "sheet": "Textos",
+      "cell": "C836",
+      "original": "Actividad Calada | Martes 15/09",
+      "label": "titulo.calada.Martes"
+    },
+    {
+      "slide": 47,
+      "object": "1469",
+      "sheet": "Textos",
+      "cell": "C841",
+      "original": "Actividad Calada | Martes 15/09",
+      "label": "titulo.calada.Martes"
+    },
+    {
+      "slide": 47,
+      "object": "1478",
+      "sheet": "Textos",
+      "cell": "C842",
+      "original": "Pico de camiones",
+      "label": "Objeto 1478"
+    },
+    {
+      "slide": 47,
+      "object": "1479",
+      "sheet": "Textos",
+      "cell": "C843",
+      "original": "Ventana máximo",
+      "label": "Objeto 1479"
+    },
+    {
+      "slide": 47,
+      "object": "1480",
+      "sheet": "Textos",
+      "cell": "C844",
+      "original": "Promedio x hora",
+      "label": "Objeto 1480"
+    },
+    {
+      "slide": 47,
+      "object": "1481",
+      "sheet": "Textos",
+      "cell": "C845",
+      "original": "Total de camiones",
+      "label": "Objeto 1481"
+    },
+    {
+      "slide": 47,
+      "object": "1482",
+      "sheet": "Textos",
+      "cell": "C846",
+      "original": "31",
+      "label": "kpi.calada_ricardone.Martes.pico"
+    },
+    {
+      "slide": 47,
+      "object": "1483",
+      "sheet": "Textos",
+      "cell": "C847",
+      "original": "23-24",
+      "label": "kpi.calada_ricardone.Martes.ventana"
+    },
+    {
+      "slide": 47,
+      "object": "1484",
+      "sheet": "Textos",
+      "cell": "C848",
+      "original": "21",
+      "label": "kpi.calada_ricardone.Martes.promedio"
+    },
+    {
+      "slide": 47,
+      "object": "1485",
+      "sheet": "Textos",
+      "cell": "C849",
+      "original": "439",
+      "label": "kpi.calada_ricardone.Martes.total"
+    },
+    {
+      "slide": 48,
+      "object": "1494",
+      "sheet": "Textos",
+      "cell": "C854",
+      "original": "Actividad Calada | Miércoles 16/09",
+      "label": "titulo.calada.Miércoles"
+    },
+    {
+      "slide": 49,
+      "object": "1503",
+      "sheet": "Textos",
+      "cell": "C859",
+      "original": "Actividad Calada | Miércoles 16/09",
+      "label": "titulo.calada.Miércoles"
+    },
+    {
+      "slide": 49,
+      "object": "1512",
+      "sheet": "Textos",
+      "cell": "C860",
+      "original": "Pico de camiones",
+      "label": "Objeto 1512"
+    },
+    {
+      "slide": 49,
+      "object": "1513",
+      "sheet": "Textos",
+      "cell": "C861",
+      "original": "Ventana máximo",
+      "label": "Objeto 1513"
+    },
+    {
+      "slide": 49,
+      "object": "1514",
+      "sheet": "Textos",
+      "cell": "C862",
+      "original": "Promedio x hora",
+      "label": "Objeto 1514"
+    },
+    {
+      "slide": 49,
+      "object": "1515",
+      "sheet": "Textos",
+      "cell": "C863",
+      "original": "Total de camiones",
+      "label": "Objeto 1515"
+    },
+    {
+      "slide": 49,
+      "object": "1516",
+      "sheet": "Textos",
+      "cell": "C864",
+      "original": "46",
+      "label": "kpi.calada_ricardone.Miércoles.pico"
+    },
+    {
+      "slide": 49,
+      "object": "1517",
+      "sheet": "Textos",
+      "cell": "C865",
+      "original": "01-02",
+      "label": "kpi.calada_ricardone.Miércoles.ventana"
+    },
+    {
+      "slide": 49,
+      "object": "1518",
+      "sheet": "Textos",
+      "cell": "C866",
+      "original": "21.5",
+      "label": "kpi.calada_ricardone.Miércoles.promedio"
+    },
+    {
+      "slide": 49,
+      "object": "1519",
+      "sheet": "Textos",
+      "cell": "C867",
+      "original": "450",
+      "label": "kpi.calada_ricardone.Miércoles.total"
+    },
+    {
+      "slide": 50,
+      "object": "1530",
+      "sheet": "Textos",
+      "cell": "C872",
+      "original": "Resumen Semanal Calada Líquido Ricardone",
+      "label": "Objeto 1530"
+    },
+    {
+      "slide": 50,
+      "object": "1539",
+      "sheet": "Textos",
+      "cell": "C873",
+      "original": "Pico de camiones",
+      "label": "Objeto 1539"
+    },
+    {
+      "slide": 50,
+      "object": "1540",
+      "sheet": "Textos",
+      "cell": "C874",
+      "original": "Ventana máximo",
+      "label": "Objeto 1540"
+    },
+    {
+      "slide": 50,
+      "object": "1541",
+      "sheet": "Textos",
+      "cell": "C875",
+      "original": "Promedio x hora",
+      "label": "Objeto 1541"
+    },
+    {
+      "slide": 50,
+      "object": "1542",
+      "sheet": "Textos",
+      "cell": "C876",
+      "original": "Total de camiones",
+      "label": "Objeto 1542"
+    },
+    {
+      "slide": 50,
+      "object": "1543",
+      "sheet": "Textos",
+      "cell": "C877",
+      "original": "16",
+      "label": "kpi.calada_ricardone_liquidos.pico"
+    },
+    {
+      "slide": 50,
+      "object": "1544",
+      "sheet": "Textos",
+      "cell": "C878",
+      "original": "14/9 20 hs",
+      "label": "kpi.calada_ricardone_liquidos.ventana"
+    },
+    {
+      "slide": 50,
+      "object": "1545",
+      "sheet": "Textos",
+      "cell": "C879",
+      "original": "157",
+      "label": "kpi.calada_ricardone_liquidos.total"
+    },
+    {
+      "slide": 50,
+      "object": "1546",
+      "sheet": "Textos",
+      "cell": "C880",
+      "original": "2 sobre 49 horas totales",
+      "label": "kpi.calada_ricardone_liquidos.promedio"
+    },
+    {
+      "slide": 51,
+      "object": "1560",
+      "sheet": "Textos",
+      "cell": "C885",
+      "original": "Pico de camiones",
+      "label": "Objeto 1560"
+    },
+    {
+      "slide": 51,
+      "object": "1561",
+      "sheet": "Textos",
+      "cell": "C886",
+      "original": "Ventana máximo",
+      "label": "Objeto 1561"
+    },
+    {
+      "slide": 51,
+      "object": "1562",
+      "sheet": "Textos",
+      "cell": "C887",
+      "original": "Promedio x hora",
+      "label": "Objeto 1562"
+    },
+    {
+      "slide": 51,
+      "object": "1563",
+      "sheet": "Textos",
+      "cell": "C888",
+      "original": "Total de camiones",
+      "label": "Objeto 1563"
+    },
+    {
+      "slide": 51,
+      "object": "1564",
+      "sheet": "Textos",
+      "cell": "C889",
+      "original": "11",
+      "label": "kpi.calada_san_lorenzo.pico"
+    },
+    {
+      "slide": 51,
+      "object": "1565",
+      "sheet": "Textos",
+      "cell": "C890",
+      "original": "15/9 08 hs",
+      "label": "kpi.calada_san_lorenzo.ventana"
+    },
+    {
+      "slide": 51,
+      "object": "1566",
+      "sheet": "Textos",
+      "cell": "C891",
+      "original": "242",
+      "label": "kpi.calada_san_lorenzo.total"
+    },
+    {
+      "slide": 51,
+      "object": "1567",
+      "sheet": "Textos",
+      "cell": "C892",
+      "original": "3 sobre 85  horas totales",
+      "label": "kpi.calada_san_lorenzo.promedio"
+    },
+    {
+      "slide": 51,
+      "object": "1571",
+      "sheet": "Textos",
+      "cell": "C893",
+      "original": "Resumen Semanal Calada San Lorenzo",
+      "label": "Objeto 1571"
+    },
+    {
+      "slide": 53,
+      "object": "1586",
+      "sheet": "Textos",
+      "cell": "C902",
+      "original": "Actividad Volcable 1/2",
+      "label": "Objeto 1586"
+    },
+    {
+      "slide": 54,
+      "object": "1596",
+      "sheet": "Textos",
+      "cell": "C907",
+      "original": "Actividad Volcable 1/2",
+      "label": "Objeto 1596"
+    },
+    {
+      "slide": 54,
+      "object": "1603",
+      "sheet": "Textos",
+      "cell": "C908",
+      "original": "Pico de camiones",
+      "label": "Objeto 1603"
+    },
+    {
+      "slide": 54,
+      "object": "1604",
+      "sheet": "Textos",
+      "cell": "C909",
+      "original": "Promedio x hora",
+      "label": "Objeto 1604"
+    },
+    {
+      "slide": 54,
+      "object": "1605",
+      "sheet": "Textos",
+      "cell": "C910",
+      "original": "Total de camiones",
+      "label": "Objeto 1605"
+    },
+    {
+      "slide": 54,
+      "object": "1606",
+      "sheet": "Textos",
+      "cell": "C911",
+      "original": "8",
+      "label": "kpi.volcable_ricardone.pico"
+    },
+    {
+      "slide": 54,
+      "object": "1607",
+      "sheet": "Textos",
+      "cell": "C912",
+      "original": "3",
+      "label": "kpi.volcable_ricardone.promedio"
+    },
+    {
+      "slide": 54,
+      "object": "1608",
+      "sheet": "Textos",
+      "cell": "C913",
+      "original": "446",
+      "label": "kpi.volcable_ricardone.total"
+    },
+    {
+      "slide": 55,
+      "object": "1617",
+      "sheet": "Textos",
+      "cell": "C918",
+      "original": "Actividad Volcable Silos",
+      "label": "Objeto 1617"
+    },
+    {
+      "slide": 56,
+      "object": "1629",
+      "sheet": "Textos",
+      "cell": "C923",
+      "original": "Pico de camiones",
+      "label": "Objeto 1629"
+    },
+    {
+      "slide": 56,
+      "object": "1630",
+      "sheet": "Textos",
+      "cell": "C924",
+      "original": "Promedio x hora",
+      "label": "Objeto 1630"
+    },
+    {
+      "slide": 56,
+      "object": "1631",
+      "sheet": "Textos",
+      "cell": "C925",
+      "original": "Total de camiones",
+      "label": "Objeto 1631"
+    },
+    {
+      "slide": 56,
+      "object": "1632",
+      "sheet": "Textos",
+      "cell": "C926",
+      "original": "5",
+      "label": "kpi.silos_ricardone.pico"
+    },
+    {
+      "slide": 56,
+      "object": "1633",
+      "sheet": "Textos",
+      "cell": "C927",
+      "original": "2",
+      "label": "kpi.silos_ricardone.promedio"
+    },
+    {
+      "slide": 56,
+      "object": "1634",
+      "sheet": "Textos",
+      "cell": "C928",
+      "original": "40",
+      "label": "kpi.silos_ricardone.total"
+    },
+    {
+      "slide": 56,
+      "object": "1638",
+      "sheet": "Textos",
+      "cell": "C929",
+      "original": "Actividad Volcable Silos",
+      "label": "Objeto 1638"
+    },
+    {
+      "slide": 57,
+      "object": "1648",
+      "sheet": "Textos",
+      "cell": "C934",
+      "original": "Actividad Volcables Puerto Semanal",
+      "label": "Objeto 1648"
+    },
+    {
+      "slide": 57,
+      "object": "1655",
+      "sheet": "Textos",
+      "cell": "C935",
+      "original": "Promedio diario",
+      "label": "Objeto 1655"
+    },
+    {
+      "slide": 57,
+      "object": "1656",
+      "sheet": "Textos",
+      "cell": "C936",
+      "original": "Camiones x hora operativa",
+      "label": "Objeto 1656"
+    },
+    {
+      "slide": 57,
+      "object": "1657",
+      "sheet": "Textos",
+      "cell": "C937",
+      "original": "Total de camiones",
+      "label": "Objeto 1657"
+    },
+    {
+      "slide": 57,
+      "object": "1658",
+      "sheet": "Textos",
+      "cell": "C938",
+      "original": "384",
+      "label": "kpi.volcable_san_lorenzo.promedio_diario"
+    },
+    {
+      "slide": 57,
+      "object": "1659",
+      "sheet": "Textos",
+      "cell": "C939",
+      "original": "16",
+      "label": "kpi.volcable_san_lorenzo.promedio"
+    },
+    {
+      "slide": 57,
+      "object": "1660",
+      "sheet": "Textos",
+      "cell": "C940",
+      "original": "2688",
+      "label": "kpi.volcable_san_lorenzo.total"
+    },
+    {
+      "slide": 58,
+      "object": "1668",
+      "sheet": "Textos",
+      "cell": "C945",
+      "original": "Actividad Volcables Semanal",
+      "label": "Objeto 1668"
+    },
+    {
+      "slide": 58,
+      "object": "1671",
+      "sheet": "Textos",
+      "cell": "C946",
+      "original": "Las volcables  5, 3 y 2 concentraron el 73% de los camiones registrados , con la volcable 5 como la de mayor actividad. La volcable  4 presentó el menor volumen, con 226 camiones",
+      "label": "Objeto 1671"
+    },
+    {
+      "slide": 59,
+      "object": "1679",
+      "sheet": "Textos",
+      "cell": "C951",
+      "original": "Actividad Volcables | Jueves 10/09",
+      "label": "titulo.volcables.Jueves"
+    },
+    {
+      "slide": 60,
+      "object": "1688",
+      "sheet": "Textos",
+      "cell": "C956",
+      "original": "Actividad Volcables  | Jueves 10/09",
+      "label": "titulo.volcables.Jueves"
+    },
+    {
+      "slide": 60,
+      "object": "1697",
+      "sheet": "Textos",
+      "cell": "C957",
+      "original": "Pico de camiones",
+      "label": "Objeto 1697"
+    },
+    {
+      "slide": 60,
+      "object": "1698",
+      "sheet": "Textos",
+      "cell": "C958",
+      "original": "Ventana máximo",
+      "label": "Objeto 1698"
+    },
+    {
+      "slide": 60,
+      "object": "1699",
+      "sheet": "Textos",
+      "cell": "C959",
+      "original": "Promedio x hora",
+      "label": "Objeto 1699"
+    },
+    {
+      "slide": 60,
+      "object": "1700",
+      "sheet": "Textos",
+      "cell": "C960",
+      "original": "Total de camiones",
+      "label": "Objeto 1700"
+    },
+    {
+      "slide": 60,
+      "object": "1701",
+      "sheet": "Textos",
+      "cell": "C961",
+      "original": "33",
+      "label": "kpi.volcable_san_lorenzo.Jueves.pico"
+    },
+    {
+      "slide": 60,
+      "object": "1702",
+      "sheet": "Textos",
+      "cell": "C962",
+      "original": "21/22",
+      "label": "kpi.volcable_san_lorenzo.Jueves.ventana"
+    },
+    {
+      "slide": 60,
+      "object": "1703",
+      "sheet": "Textos",
+      "cell": "C963",
+      "original": "23",
+      "label": "kpi.volcable_san_lorenzo.Jueves.promedio"
+    },
+    {
+      "slide": 60,
+      "object": "1704",
+      "sheet": "Textos",
+      "cell": "C964",
+      "original": "523",
+      "label": "kpi.volcable_san_lorenzo.Jueves.total"
+    },
+    {
+      "slide": 61,
+      "object": "1713",
+      "sheet": "Textos",
+      "cell": "C969",
+      "original": "Actividad Volcables  | Viernes 11/09",
+      "label": "titulo.volcables.Viernes"
+    },
+    {
+      "slide": 62,
+      "object": "1722",
+      "sheet": "Textos",
+      "cell": "C974",
+      "original": "Actividad Volcables  | Viernes 11 /09",
+      "label": "titulo.volcables.Viernes"
+    },
+    {
+      "slide": 62,
+      "object": "1731",
+      "sheet": "Textos",
+      "cell": "C975",
+      "original": "Pico de camiones",
+      "label": "Objeto 1731"
+    },
+    {
+      "slide": 62,
+      "object": "1732",
+      "sheet": "Textos",
+      "cell": "C976",
+      "original": "Ventana máximo",
+      "label": "Objeto 1732"
+    },
+    {
+      "slide": 62,
+      "object": "1733",
+      "sheet": "Textos",
+      "cell": "C977",
+      "original": "Promedio x hora",
+      "label": "Objeto 1733"
+    },
+    {
+      "slide": 62,
+      "object": "1734",
+      "sheet": "Textos",
+      "cell": "C978",
+      "original": "Total de camiones",
+      "label": "Objeto 1734"
+    },
+    {
+      "slide": 62,
+      "object": "1735",
+      "sheet": "Textos",
+      "cell": "C979",
+      "original": "34",
+      "label": "kpi.volcable_san_lorenzo.Viernes.pico"
+    },
+    {
+      "slide": 62,
+      "object": "1736",
+      "sheet": "Textos",
+      "cell": "C980",
+      "original": "05-06",
+      "label": "kpi.volcable_san_lorenzo.Viernes.ventana"
+    },
+    {
+      "slide": 62,
+      "object": "1737",
+      "sheet": "Textos",
+      "cell": "C981",
+      "original": "21",
+      "label": "kpi.volcable_san_lorenzo.Viernes.promedio"
+    },
+    {
+      "slide": 62,
+      "object": "1738",
+      "sheet": "Textos",
+      "cell": "C982",
+      "original": "488",
+      "label": "kpi.volcable_san_lorenzo.Viernes.total"
+    },
+    {
+      "slide": 63,
+      "object": "1747",
+      "sheet": "Textos",
+      "cell": "C987",
+      "original": "Actividad Volcables | Sábado 12/09",
+      "label": "titulo.volcables.Sábado"
+    },
+    {
+      "slide": 64,
+      "object": "1756",
+      "sheet": "Textos",
+      "cell": "C992",
+      "original": "Actividad Volcables | Sábado 12/09",
+      "label": "titulo.volcables.Sábado"
+    },
+    {
+      "slide": 64,
+      "object": "1765",
+      "sheet": "Textos",
+      "cell": "C993",
+      "original": "Pico de camiones",
+      "label": "Objeto 1765"
+    },
+    {
+      "slide": 64,
+      "object": "1766",
+      "sheet": "Textos",
+      "cell": "C994",
+      "original": "Ventana máximo",
+      "label": "Objeto 1766"
+    },
+    {
+      "slide": 64,
+      "object": "1767",
+      "sheet": "Textos",
+      "cell": "C995",
+      "original": "Promedio x hora",
+      "label": "Objeto 1767"
+    },
+    {
+      "slide": 64,
+      "object": "1768",
+      "sheet": "Textos",
+      "cell": "C996",
+      "original": "Total de camiones",
+      "label": "Objeto 1768"
+    },
+    {
+      "slide": 64,
+      "object": "1769",
+      "sheet": "Textos",
+      "cell": "C997",
+      "original": "34",
+      "label": "kpi.volcable_san_lorenzo.Sábado.pico"
+    },
+    {
+      "slide": 64,
+      "object": "1770",
+      "sheet": "Textos",
+      "cell": "C998",
+      "original": "01-02",
+      "label": "kpi.volcable_san_lorenzo.Sábado.ventana"
+    },
+    {
+      "slide": 64,
+      "object": "1771",
+      "sheet": "Textos",
+      "cell": "C999",
+      "original": "15.5",
+      "label": "kpi.volcable_san_lorenzo.Sábado.promedio"
+    },
+    {
+      "slide": 64,
+      "object": "1772",
+      "sheet": "Textos",
+      "cell": "C1000",
+      "original": "444",
+      "label": "kpi.volcable_san_lorenzo.Sábado.total"
+    },
+    {
+      "slide": 65,
+      "object": "1781",
+      "sheet": "Textos",
+      "cell": "C1005",
+      "original": "Actividad Volcables | Domingo 13/09",
+      "label": "titulo.volcables.Domingo"
+    },
+    {
+      "slide": 66,
+      "object": "1790",
+      "sheet": "Textos",
+      "cell": "C1010",
+      "original": "Actividad Volcables | Domingo 13 /09",
+      "label": "titulo.volcables.Domingo"
+    },
+    {
+      "slide": 66,
+      "object": "1799",
+      "sheet": "Textos",
+      "cell": "C1011",
+      "original": "Pico de camiones",
+      "label": "Objeto 1799"
+    },
+    {
+      "slide": 66,
+      "object": "1800",
+      "sheet": "Textos",
+      "cell": "C1012",
+      "original": "Ventana máximo",
+      "label": "Objeto 1800"
+    },
+    {
+      "slide": 66,
+      "object": "1801",
+      "sheet": "Textos",
+      "cell": "C1013",
+      "original": "Promedio x hora",
+      "label": "Objeto 1801"
+    },
+    {
+      "slide": 66,
+      "object": "1802",
+      "sheet": "Textos",
+      "cell": "C1014",
+      "original": "Total de camiones",
+      "label": "Objeto 1802"
+    },
+    {
+      "slide": 66,
+      "object": "1803",
+      "sheet": "Textos",
+      "cell": "C1015",
+      "original": "14",
+      "label": "kpi.volcable_san_lorenzo.Domingo.pico"
+    },
+    {
+      "slide": 66,
+      "object": "1804",
+      "sheet": "Textos",
+      "cell": "C1016",
+      "original": "00-01",
+      "label": "kpi.volcable_san_lorenzo.Domingo.ventana"
+    },
+    {
+      "slide": 66,
+      "object": "1805",
+      "sheet": "Textos",
+      "cell": "C1017",
+      "original": "6",
+      "label": "kpi.volcable_san_lorenzo.Domingo.promedio"
+    },
+    {
+      "slide": 66,
+      "object": "1806",
+      "sheet": "Textos",
+      "cell": "C1018",
+      "original": "54",
+      "label": "kpi.volcable_san_lorenzo.Domingo.total"
+    },
+    {
+      "slide": 67,
+      "object": "1815",
+      "sheet": "Textos",
+      "cell": "C1023",
+      "original": "Actividad Volcables | Lunes 14/09",
+      "label": "titulo.volcables.Lunes"
+    },
+    {
+      "slide": 68,
+      "object": "1824",
+      "sheet": "Textos",
+      "cell": "C1028",
+      "original": "Actividad Volcables | Lunes 14 /09",
+      "label": "titulo.volcables.Lunes"
+    },
+    {
+      "slide": 68,
+      "object": "1833",
+      "sheet": "Textos",
+      "cell": "C1029",
+      "original": "Pico de camiones",
+      "label": "Objeto 1833"
+    },
+    {
+      "slide": 68,
+      "object": "1834",
+      "sheet": "Textos",
+      "cell": "C1030",
+      "original": "Ventana máximo",
+      "label": "Objeto 1834"
+    },
+    {
+      "slide": 68,
+      "object": "1835",
+      "sheet": "Textos",
+      "cell": "C1031",
+      "original": "Promedio x hora",
+      "label": "Objeto 1835"
+    },
+    {
+      "slide": 68,
+      "object": "1836",
+      "sheet": "Textos",
+      "cell": "C1032",
+      "original": "Total de camiones",
+      "label": "Objeto 1836"
+    },
+    {
+      "slide": 68,
+      "object": "1837",
+      "sheet": "Textos",
+      "cell": "C1033",
+      "original": "34",
+      "label": "kpi.volcable_san_lorenzo.Lunes.pico"
+    },
+    {
+      "slide": 68,
+      "object": "1838",
+      "sheet": "Textos",
+      "cell": "C1034",
+      "original": "23-24",
+      "label": "kpi.volcable_san_lorenzo.Lunes.ventana"
+    },
+    {
+      "slide": 68,
+      "object": "1839",
+      "sheet": "Textos",
+      "cell": "C1035",
+      "original": "9",
+      "label": "kpi.volcable_san_lorenzo.Lunes.promedio"
+    },
+    {
+      "slide": 68,
+      "object": "1840",
+      "sheet": "Textos",
+      "cell": "C1036",
+      "original": "295",
+      "label": "kpi.volcable_san_lorenzo.Lunes.total"
+    },
+    {
+      "slide": 69,
+      "object": "1849",
+      "sheet": "Textos",
+      "cell": "C1041",
+      "original": "Actividad Volcables | Martes 15/09",
+      "label": "titulo.volcables.Martes"
+    },
+    {
+      "slide": 70,
+      "object": "1858",
+      "sheet": "Textos",
+      "cell": "C1046",
+      "original": "Actividad Volcables | Martes 15/09",
+      "label": "titulo.volcables.Martes"
+    },
+    {
+      "slide": 70,
+      "object": "1867",
+      "sheet": "Textos",
+      "cell": "C1047",
+      "original": "Pico de camiones",
+      "label": "Objeto 1867"
+    },
+    {
+      "slide": 70,
+      "object": "1868",
+      "sheet": "Textos",
+      "cell": "C1048",
+      "original": "Ventana máximo",
+      "label": "Objeto 1868"
+    },
+    {
+      "slide": 70,
+      "object": "1869",
+      "sheet": "Textos",
+      "cell": "C1049",
+      "original": "Promedio x hora",
+      "label": "Objeto 1869"
+    },
+    {
+      "slide": 70,
+      "object": "1870",
+      "sheet": "Textos",
+      "cell": "C1050",
+      "original": "Total de camiones",
+      "label": "Objeto 1870"
+    },
+    {
+      "slide": 70,
+      "object": "1871",
+      "sheet": "Textos",
+      "cell": "C1051",
+      "original": "31",
+      "label": "kpi.volcable_san_lorenzo.Martes.pico"
+    },
+    {
+      "slide": 70,
+      "object": "1872",
+      "sheet": "Textos",
+      "cell": "C1052",
+      "original": "02-03",
+      "label": "kpi.volcable_san_lorenzo.Martes.ventana"
+    },
+    {
+      "slide": 70,
+      "object": "1873",
+      "sheet": "Textos",
+      "cell": "C1053",
+      "original": "20",
+      "label": "kpi.volcable_san_lorenzo.Martes.promedio"
+    },
+    {
+      "slide": 70,
+      "object": "1874",
+      "sheet": "Textos",
+      "cell": "C1054",
+      "original": "481",
+      "label": "kpi.volcable_san_lorenzo.Martes.total"
+    },
+    {
+      "slide": 71,
+      "object": "1884",
+      "sheet": "Textos",
+      "cell": "C1059",
+      "original": "Actividad Volcables | Miércoles 16/09",
+      "label": "titulo.volcables.Miércoles"
+    },
+    {
+      "slide": 72,
+      "object": "1892",
+      "sheet": "Textos",
+      "cell": "C1064",
+      "original": "Actividad Volcables | Miércoles 16/09",
+      "label": "titulo.volcables.Miércoles"
+    },
+    {
+      "slide": 72,
+      "object": "1901",
+      "sheet": "Textos",
+      "cell": "C1065",
+      "original": "Pico de camiones",
+      "label": "Objeto 1901"
+    },
+    {
+      "slide": 72,
+      "object": "1902",
+      "sheet": "Textos",
+      "cell": "C1066",
+      "original": "Ventana máximo",
+      "label": "Objeto 1902"
+    },
+    {
+      "slide": 72,
+      "object": "1903",
+      "sheet": "Textos",
+      "cell": "C1067",
+      "original": "Promedio x hora",
+      "label": "Objeto 1903"
+    },
+    {
+      "slide": 72,
+      "object": "1904",
+      "sheet": "Textos",
+      "cell": "C1068",
+      "original": "Total de camiones",
+      "label": "Objeto 1904"
+    },
+    {
+      "slide": 72,
+      "object": "1905",
+      "sheet": "Textos",
+      "cell": "C1069",
+      "original": "22",
+      "label": "kpi.volcable_san_lorenzo.Miércoles.pico"
+    },
+    {
+      "slide": 72,
+      "object": "1906",
+      "sheet": "Textos",
+      "cell": "C1070",
+      "original": "10-11",
+      "label": "kpi.volcable_san_lorenzo.Miércoles.ventana"
+    },
+    {
+      "slide": 72,
+      "object": "1907",
+      "sheet": "Textos",
+      "cell": "C1071",
+      "original": "19",
+      "label": "kpi.volcable_san_lorenzo.Miércoles.promedio"
+    },
+    {
+      "slide": 72,
+      "object": "1908",
+      "sheet": "Textos",
+      "cell": "C1072",
+      "original": "409",
+      "label": "kpi.volcable_san_lorenzo.Miércoles.total"
+    }
+  ],
+  "charts": [
+    {
+      "id": "D05_G1",
+      "slide": 5,
+      "object": "130",
+      "sheet": "Soja",
+      "start": 7,
+      "end": 11,
+      "title": "Cobertura de lecturas",
+      "type": "pie",
+      "unit": "%",
+      "rows": [
+        [
+          "8 lecturas",
+          "Porcentaje"
+        ],
+        [
+          "7 lecturas",
+          "Porcentaje"
+        ],
+        [
+          "6 lecturas",
+          "Porcentaje"
+        ],
+        [
+          "5 lecturas",
+          "Porcentaje"
+        ],
+        [
+          "≤4 lecturas",
+          "Porcentaje"
+        ]
+      ]
+    },
+    {
+      "id": "D05_G2",
+      "slide": 5,
+      "object": "137",
+      "sheet": "Soja",
+      "start": 16,
+      "end": 16,
+      "title": "Distribución por circuito",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "R7 Terminal de embarque",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D15_G1",
+      "slide": 15,
+      "object": "701",
+      "sheet": "Soja",
+      "start": 21,
+      "end": 34,
+      "title": "Tiempos por planta",
+      "type": "bar",
+      "unit": "min",
+      "rows": [
+        [
+          "Jueves",
+          "Ricardone"
+        ],
+        [
+          "Jueves",
+          "San Lorenzo"
+        ],
+        [
+          "Viernes",
+          "Ricardone"
+        ],
+        [
+          "Viernes",
+          "San Lorenzo"
+        ],
+        [
+          "Sábado",
+          "Ricardone"
+        ],
+        [
+          "Sábado",
+          "San Lorenzo"
+        ],
+        [
+          "Domingo",
+          "Ricardone"
+        ],
+        [
+          "Domingo",
+          "San Lorenzo"
+        ],
+        [
+          "Lunes",
+          "Ricardone"
+        ],
+        [
+          "Lunes",
+          "San Lorenzo"
+        ],
+        [
+          "Martes",
+          "Ricardone"
+        ],
+        [
+          "Martes",
+          "San Lorenzo"
+        ],
+        [
+          "Miércoles",
+          "Ricardone"
+        ],
+        [
+          "Miércoles",
+          "San Lorenzo"
+        ]
+      ]
+    },
+    {
+      "id": "D16_G1",
+      "slide": 16,
+      "object": "707",
+      "sheet": "Soja",
+      "start": 39,
+      "end": 66,
+      "title": "Volumen por cuarto de turno",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Jueves",
+          "Q1"
+        ],
+        [
+          "Jueves",
+          "Q2"
+        ],
+        [
+          "Jueves",
+          "Q3"
+        ],
+        [
+          "Jueves",
+          "Q4"
+        ],
+        [
+          "Viernes",
+          "Q1"
+        ],
+        [
+          "Viernes",
+          "Q2"
+        ],
+        [
+          "Viernes",
+          "Q3"
+        ],
+        [
+          "Viernes",
+          "Q4"
+        ],
+        [
+          "Sábado",
+          "Q1"
+        ],
+        [
+          "Sábado",
+          "Q2"
+        ],
+        [
+          "Sábado",
+          "Q3"
+        ],
+        [
+          "Sábado",
+          "Q4"
+        ],
+        [
+          "Domingo",
+          "Q1"
+        ],
+        [
+          "Domingo",
+          "Q2"
+        ],
+        [
+          "Domingo",
+          "Q3"
+        ],
+        [
+          "Domingo",
+          "Q4"
+        ],
+        [
+          "Lunes",
+          "Q1"
+        ],
+        [
+          "Lunes",
+          "Q2"
+        ],
+        [
+          "Lunes",
+          "Q3"
+        ],
+        [
+          "Lunes",
+          "Q4"
+        ],
+        [
+          "Martes",
+          "Q1"
+        ],
+        [
+          "Martes",
+          "Q2"
+        ],
+        [
+          "Martes",
+          "Q3"
+        ],
+        [
+          "Martes",
+          "Q4"
+        ],
+        [
+          "Miércoles",
+          "Q1"
+        ],
+        [
+          "Miércoles",
+          "Q2"
+        ],
+        [
+          "Miércoles",
+          "Q3"
+        ],
+        [
+          "Miércoles",
+          "Q4"
+        ]
+      ]
+    },
+    {
+      "id": "D16_G2",
+      "slide": 16,
+      "object": "708",
+      "sheet": "Soja",
+      "start": 71,
+      "end": 77,
+      "title": "Tiempo medio diario",
+      "type": "line",
+      "unit": "min",
+      "rows": [
+        [
+          "Jueves",
+          "Tiempo medio"
+        ],
+        [
+          "Viernes",
+          "Tiempo medio"
+        ],
+        [
+          "Sábado",
+          "Tiempo medio"
+        ],
+        [
+          "Domingo",
+          "Tiempo medio"
+        ],
+        [
+          "Lunes",
+          "Tiempo medio"
+        ],
+        [
+          "Martes",
+          "Tiempo medio"
+        ],
+        [
+          "Miércoles",
+          "Tiempo medio"
+        ]
+      ]
+    },
+    {
+      "id": "D17_G1",
+      "slide": 17,
+      "object": "717",
+      "sheet": "Soja",
+      "start": 82,
+      "end": 123,
+      "title": "Histórico por tramo",
+      "type": "line",
+      "unit": "min",
+      "rows": [
+        [
+          "10/6",
+          "Playa 1"
+        ],
+        [
+          "10/6",
+          "Playa OSL"
+        ],
+        [
+          "10/6",
+          "Descarga"
+        ],
+        [
+          "17/6",
+          "Playa 1"
+        ],
+        [
+          "17/6",
+          "Playa OSL"
+        ],
+        [
+          "17/6",
+          "Descarga"
+        ],
+        [
+          "24/6",
+          "Playa 1"
+        ],
+        [
+          "24/6",
+          "Playa OSL"
+        ],
+        [
+          "24/6",
+          "Descarga"
+        ],
+        [
+          "8/7",
+          "Playa 1"
+        ],
+        [
+          "8/7",
+          "Playa OSL"
+        ],
+        [
+          "8/7",
+          "Descarga"
+        ],
+        [
+          "15/7",
+          "Playa 1"
+        ],
+        [
+          "15/7",
+          "Playa OSL"
+        ],
+        [
+          "15/7",
+          "Descarga"
+        ],
+        [
+          "24/7",
+          "Playa 1"
+        ],
+        [
+          "24/7",
+          "Playa OSL"
+        ],
+        [
+          "24/7",
+          "Descarga"
+        ],
+        [
+          "30/7",
+          "Playa 1"
+        ],
+        [
+          "30/7",
+          "Playa OSL"
+        ],
+        [
+          "30/7",
+          "Descarga"
+        ],
+        [
+          "7/8",
+          "Playa 1"
+        ],
+        [
+          "7/8",
+          "Playa OSL"
+        ],
+        [
+          "7/8",
+          "Descarga"
+        ],
+        [
+          "13/8",
+          "Playa 1"
+        ],
+        [
+          "13/8",
+          "Playa OSL"
+        ],
+        [
+          "13/8",
+          "Descarga"
+        ],
+        [
+          "21/8",
+          "Playa 1"
+        ],
+        [
+          "21/8",
+          "Playa OSL"
+        ],
+        [
+          "21/8",
+          "Descarga"
+        ],
+        [
+          "28/8",
+          "Playa 1"
+        ],
+        [
+          "28/8",
+          "Playa OSL"
+        ],
+        [
+          "28/8",
+          "Descarga"
+        ],
+        [
+          "04/09",
+          "Playa 1"
+        ],
+        [
+          "04/09",
+          "Playa OSL"
+        ],
+        [
+          "04/09",
+          "Descarga"
+        ],
+        [
+          "11/09",
+          "Playa 1"
+        ],
+        [
+          "11/09",
+          "Playa OSL"
+        ],
+        [
+          "11/09",
+          "Descarga"
+        ],
+        [
+          "18/09",
+          "Playa 1"
+        ],
+        [
+          "18/09",
+          "Playa OSL"
+        ],
+        [
+          "18/09",
+          "Descarga"
+        ]
+      ]
+    },
+    {
+      "id": "D17_G2",
+      "slide": 17,
+      "object": "722",
+      "sheet": "Soja",
+      "start": 128,
+      "end": 141,
+      "title": "Histórico total",
+      "type": "line",
+      "unit": "min",
+      "rows": [
+        [
+          "10/6",
+          "Tiempo medio"
+        ],
+        [
+          "17/6",
+          "Tiempo medio"
+        ],
+        [
+          "24/6",
+          "Tiempo medio"
+        ],
+        [
+          "8/7",
+          "Tiempo medio"
+        ],
+        [
+          "15/7",
+          "Tiempo medio"
+        ],
+        [
+          "24/7",
+          "Tiempo medio"
+        ],
+        [
+          "30/7",
+          "Tiempo medio"
+        ],
+        [
+          "7/8",
+          "Tiempo medio"
+        ],
+        [
+          "13/8",
+          "Tiempo medio"
+        ],
+        [
+          "21/8",
+          "Tiempo medio"
+        ],
+        [
+          "28/8",
+          "Tiempo medio"
+        ],
+        [
+          "04/09",
+          "Tiempo medio"
+        ],
+        [
+          "11/09",
+          "Tiempo medio"
+        ],
+        [
+          "18/09",
+          "Tiempo medio"
+        ]
+      ]
+    },
+    {
+      "id": "D20_G1",
+      "slide": 20,
+      "object": "760",
+      "sheet": "Pellet",
+      "start": 7,
+      "end": 8,
+      "title": "Camiones por día del operativo",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Lunes",
+          "Cantidad"
+        ],
+        [
+          "Martes",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D25_G1",
+      "slide": 25,
+      "object": "1064",
+      "sheet": "Pellet",
+      "start": 13,
+      "end": 16,
+      "title": "Tiempos por planta",
+      "type": "bar",
+      "unit": "min",
+      "rows": [
+        [
+          "Lunes",
+          "Ricardone"
+        ],
+        [
+          "Lunes",
+          "San Lorenzo"
+        ],
+        [
+          "Martes",
+          "Ricardone"
+        ],
+        [
+          "Martes",
+          "San Lorenzo"
+        ]
+      ]
+    },
+    {
+      "id": "D28_G1",
+      "slide": 28,
+      "object": "1085",
+      "sheet": "Girasol",
+      "start": 7,
+      "end": 10,
+      "title": "Cobertura de lecturas",
+      "type": "pie",
+      "unit": "%",
+      "rows": [
+        [
+          "7 lecturas",
+          "Porcentaje"
+        ],
+        [
+          "6 lecturas",
+          "Porcentaje"
+        ],
+        [
+          "5 lecturas",
+          "Porcentaje"
+        ],
+        [
+          "≤4 lecturas",
+          "Porcentaje"
+        ]
+      ]
+    },
+    {
+      "id": "D28_G2",
+      "slide": 28,
+      "object": "1092",
+      "sheet": "Girasol",
+      "start": 15,
+      "end": 17,
+      "title": "Distribución por circuito",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "R5 Volcable 1",
+          "Cantidad"
+        ],
+        [
+          "R6 Volcable 2",
+          "Cantidad"
+        ],
+        [
+          "R4 Silos Kepler",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D31_G1",
+      "slide": 31,
+      "object": "1231",
+      "sheet": "Girasol",
+      "start": 22,
+      "end": 49,
+      "title": "Histórico por tramo",
+      "type": "line",
+      "unit": "min",
+      "rows": [
+        [
+          "10/6",
+          "Playa 1"
+        ],
+        [
+          "10/6",
+          "Descarga"
+        ],
+        [
+          "17/6",
+          "Playa 1"
+        ],
+        [
+          "17/6",
+          "Descarga"
+        ],
+        [
+          "24/6",
+          "Playa 1"
+        ],
+        [
+          "24/6",
+          "Descarga"
+        ],
+        [
+          "8/7",
+          "Playa 1"
+        ],
+        [
+          "8/7",
+          "Descarga"
+        ],
+        [
+          "15/7",
+          "Playa 1"
+        ],
+        [
+          "15/7",
+          "Descarga"
+        ],
+        [
+          "24/7",
+          "Playa 1"
+        ],
+        [
+          "24/7",
+          "Descarga"
+        ],
+        [
+          "30/7",
+          "Playa 1"
+        ],
+        [
+          "30/7",
+          "Descarga"
+        ],
+        [
+          "7/8",
+          "Playa 1"
+        ],
+        [
+          "7/8",
+          "Descarga"
+        ],
+        [
+          "13/8",
+          "Playa 1"
+        ],
+        [
+          "13/8",
+          "Descarga"
+        ],
+        [
+          "21/8",
+          "Playa 1"
+        ],
+        [
+          "21/8",
+          "Descarga"
+        ],
+        [
+          "28/8",
+          "Playa 1"
+        ],
+        [
+          "28/8",
+          "Descarga"
+        ],
+        [
+          "04/09",
+          "Playa 1"
+        ],
+        [
+          "04/09",
+          "Descarga"
+        ],
+        [
+          "11/09",
+          "Playa 1"
+        ],
+        [
+          "11/09",
+          "Descarga"
+        ],
+        [
+          "18/09",
+          "Playa 1"
+        ],
+        [
+          "18/09",
+          "Descarga"
+        ]
+      ]
+    },
+    {
+      "id": "D31_G2",
+      "slide": 31,
+      "object": "1232",
+      "sheet": "Girasol",
+      "start": 54,
+      "end": 67,
+      "title": "Histórico total",
+      "type": "line",
+      "unit": "min",
+      "rows": [
+        [
+          "10/6",
+          "Girasol"
+        ],
+        [
+          "17/6",
+          "Girasol"
+        ],
+        [
+          "24/6",
+          "Girasol"
+        ],
+        [
+          "8/7",
+          "Girasol"
+        ],
+        [
+          "15/7",
+          "Girasol"
+        ],
+        [
+          "24/7",
+          "Girasol"
+        ],
+        [
+          "30/7",
+          "Girasol"
+        ],
+        [
+          "7/8",
+          "Girasol"
+        ],
+        [
+          "13/8",
+          "Girasol"
+        ],
+        [
+          "21/8",
+          "Girasol"
+        ],
+        [
+          "28/8",
+          "Girasol"
+        ],
+        [
+          "04/09",
+          "Girasol"
+        ],
+        [
+          "11/09",
+          "Girasol"
+        ],
+        [
+          "18/09",
+          "Girasol"
+        ]
+      ]
+    },
+    {
+      "id": "D35_G1",
+      "slide": 35,
+      "object": "1262",
+      "sheet": "Calada",
+      "start": 7,
+      "end": 12,
+      "title": "Calada semanal por calle",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Calle 1",
+          "Cantidad"
+        ],
+        [
+          "Calle 2",
+          "Cantidad"
+        ],
+        [
+          "Calle 3",
+          "Cantidad"
+        ],
+        [
+          "Calle 4",
+          "Cantidad"
+        ],
+        [
+          "Calle 5",
+          "Cantidad"
+        ],
+        [
+          "Calle 6",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D36_G1",
+      "slide": 36,
+      "object": "1287",
+      "sheet": "Calada",
+      "start": 17,
+      "end": 22,
+      "title": "Calada por calle · Jueves",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Calle 1",
+          "Cantidad"
+        ],
+        [
+          "Calle 2",
+          "Cantidad"
+        ],
+        [
+          "Calle 3",
+          "Cantidad"
+        ],
+        [
+          "Calle 4",
+          "Cantidad"
+        ],
+        [
+          "Calle 5",
+          "Cantidad"
+        ],
+        [
+          "Calle 6",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D38_G1",
+      "slide": 38,
+      "object": "1325",
+      "sheet": "Calada",
+      "start": 27,
+      "end": 32,
+      "title": "Calada por calle · Viernes",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Calle 1",
+          "Cantidad"
+        ],
+        [
+          "Calle 2",
+          "Cantidad"
+        ],
+        [
+          "Calle 3",
+          "Cantidad"
+        ],
+        [
+          "Calle 4",
+          "Cantidad"
+        ],
+        [
+          "Calle 5",
+          "Cantidad"
+        ],
+        [
+          "Calle 6",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D40_G1",
+      "slide": 40,
+      "object": "1359",
+      "sheet": "Calada",
+      "start": 37,
+      "end": 42,
+      "title": "Calada por calle · Sábado",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Calle 1",
+          "Cantidad"
+        ],
+        [
+          "Calle 2",
+          "Cantidad"
+        ],
+        [
+          "Calle 3",
+          "Cantidad"
+        ],
+        [
+          "Calle 4",
+          "Cantidad"
+        ],
+        [
+          "Calle 5",
+          "Cantidad"
+        ],
+        [
+          "Calle 6",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D42_G1",
+      "slide": 42,
+      "object": "1393",
+      "sheet": "Calada",
+      "start": 47,
+      "end": 52,
+      "title": "Calada por calle · Domingo",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Calle 1",
+          "Cantidad"
+        ],
+        [
+          "Calle 2",
+          "Cantidad"
+        ],
+        [
+          "Calle 3",
+          "Cantidad"
+        ],
+        [
+          "Calle 4",
+          "Cantidad"
+        ],
+        [
+          "Calle 5",
+          "Cantidad"
+        ],
+        [
+          "Calle 6",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D44_G1",
+      "slide": 44,
+      "object": "1427",
+      "sheet": "Calada",
+      "start": 57,
+      "end": 62,
+      "title": "Calada por calle · Lunes",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Calle 1",
+          "Cantidad"
+        ],
+        [
+          "Calle 2",
+          "Cantidad"
+        ],
+        [
+          "Calle 3",
+          "Cantidad"
+        ],
+        [
+          "Calle 4",
+          "Cantidad"
+        ],
+        [
+          "Calle 5",
+          "Cantidad"
+        ],
+        [
+          "Calle 6",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D46_G1",
+      "slide": 46,
+      "object": "1461",
+      "sheet": "Calada",
+      "start": 67,
+      "end": 72,
+      "title": "Calada por calle · Martes",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Calle 1",
+          "Cantidad"
+        ],
+        [
+          "Calle 2",
+          "Cantidad"
+        ],
+        [
+          "Calle 3",
+          "Cantidad"
+        ],
+        [
+          "Calle 4",
+          "Cantidad"
+        ],
+        [
+          "Calle 5",
+          "Cantidad"
+        ],
+        [
+          "Calle 6",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D48_G1",
+      "slide": 48,
+      "object": "1495",
+      "sheet": "Calada",
+      "start": 77,
+      "end": 82,
+      "title": "Calada por calle · Miércoles",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Calle 1",
+          "Cantidad"
+        ],
+        [
+          "Calle 2",
+          "Cantidad"
+        ],
+        [
+          "Calle 3",
+          "Cantidad"
+        ],
+        [
+          "Calle 4",
+          "Cantidad"
+        ],
+        [
+          "Calle 5",
+          "Cantidad"
+        ],
+        [
+          "Calle 6",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D50_G1",
+      "slide": 50,
+      "object": "1526",
+      "sheet": "Calada",
+      "start": 87,
+      "end": 93,
+      "title": "Calada líquidos por día",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Jueves",
+          "Cantidad"
+        ],
+        [
+          "Viernes",
+          "Cantidad"
+        ],
+        [
+          "Sábado",
+          "Cantidad"
+        ],
+        [
+          "Domingo",
+          "Cantidad"
+        ],
+        [
+          "Lunes",
+          "Cantidad"
+        ],
+        [
+          "Martes",
+          "Cantidad"
+        ],
+        [
+          "Miércoles",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D51_G1",
+      "slide": 51,
+      "object": "1572",
+      "sheet": "Calada",
+      "start": 98,
+      "end": 104,
+      "title": "Calada San Lorenzo por día",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Jueves",
+          "Cantidad"
+        ],
+        [
+          "Viernes",
+          "Cantidad"
+        ],
+        [
+          "Sábado",
+          "Cantidad"
+        ],
+        [
+          "Domingo",
+          "Cantidad"
+        ],
+        [
+          "Lunes",
+          "Cantidad"
+        ],
+        [
+          "Martes",
+          "Cantidad"
+        ],
+        [
+          "Miércoles",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D53_G1",
+      "slide": 53,
+      "object": "1587",
+      "sheet": "Descargas",
+      "start": 7,
+      "end": 8,
+      "title": "Descargas semanales por equipo",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Volcable 1",
+          "Cantidad"
+        ],
+        [
+          "Volcable 2",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D53_G2",
+      "slide": 53,
+      "object": "1588",
+      "sheet": "Descargas",
+      "start": 13,
+      "end": 26,
+      "title": "Descargas diarias por equipo",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Jueves",
+          "Volcable 1"
+        ],
+        [
+          "Jueves",
+          "Volcable 2"
+        ],
+        [
+          "Viernes",
+          "Volcable 1"
+        ],
+        [
+          "Viernes",
+          "Volcable 2"
+        ],
+        [
+          "Sábado",
+          "Volcable 1"
+        ],
+        [
+          "Sábado",
+          "Volcable 2"
+        ],
+        [
+          "Domingo",
+          "Volcable 1"
+        ],
+        [
+          "Domingo",
+          "Volcable 2"
+        ],
+        [
+          "Lunes",
+          "Volcable 1"
+        ],
+        [
+          "Lunes",
+          "Volcable 2"
+        ],
+        [
+          "Martes",
+          "Volcable 1"
+        ],
+        [
+          "Martes",
+          "Volcable 2"
+        ],
+        [
+          "Miércoles",
+          "Volcable 1"
+        ],
+        [
+          "Miércoles",
+          "Volcable 2"
+        ]
+      ]
+    },
+    {
+      "id": "D55_G1",
+      "slide": 55,
+      "object": "1618",
+      "sheet": "Descargas",
+      "start": 31,
+      "end": 37,
+      "title": "Silos por día",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Jueves",
+          "Cantidad"
+        ],
+        [
+          "Viernes",
+          "Cantidad"
+        ],
+        [
+          "Sábado",
+          "Cantidad"
+        ],
+        [
+          "Domingo",
+          "Cantidad"
+        ],
+        [
+          "Lunes",
+          "Cantidad"
+        ],
+        [
+          "Martes",
+          "Cantidad"
+        ],
+        [
+          "Miércoles",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D57_G1",
+      "slide": 57,
+      "object": "1644",
+      "sheet": "Descargas",
+      "start": 42,
+      "end": 48,
+      "title": "Puerto por día",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Jueves",
+          "Cantidad"
+        ],
+        [
+          "Viernes",
+          "Cantidad"
+        ],
+        [
+          "Sábado",
+          "Cantidad"
+        ],
+        [
+          "Domingo",
+          "Cantidad"
+        ],
+        [
+          "Lunes",
+          "Cantidad"
+        ],
+        [
+          "Martes",
+          "Cantidad"
+        ],
+        [
+          "Miércoles",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D58_G1",
+      "slide": 58,
+      "object": "1669",
+      "sheet": "Descargas",
+      "start": 53,
+      "end": 57,
+      "title": "Puerto semanal por equipo",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Volcable 1",
+          "Cantidad"
+        ],
+        [
+          "Volcable 2",
+          "Cantidad"
+        ],
+        [
+          "Volcable 3",
+          "Cantidad"
+        ],
+        [
+          "Volcable 4",
+          "Cantidad"
+        ],
+        [
+          "Volcable 5",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D59_G1",
+      "slide": 59,
+      "object": "1680",
+      "sheet": "Descargas",
+      "start": 62,
+      "end": 66,
+      "title": "Puerto por equipo · Jueves",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Volcable 1",
+          "Cantidad"
+        ],
+        [
+          "Volcable 2",
+          "Cantidad"
+        ],
+        [
+          "Volcable 3",
+          "Cantidad"
+        ],
+        [
+          "Volcable 4",
+          "Cantidad"
+        ],
+        [
+          "Volcable 5",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D61_G1",
+      "slide": 61,
+      "object": "1714",
+      "sheet": "Descargas",
+      "start": 71,
+      "end": 75,
+      "title": "Puerto por equipo · Viernes",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Volcable 1",
+          "Cantidad"
+        ],
+        [
+          "Volcable 2",
+          "Cantidad"
+        ],
+        [
+          "Volcable 3",
+          "Cantidad"
+        ],
+        [
+          "Volcable 4",
+          "Cantidad"
+        ],
+        [
+          "Volcable 5",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D63_G1",
+      "slide": 63,
+      "object": "1748",
+      "sheet": "Descargas",
+      "start": 80,
+      "end": 84,
+      "title": "Puerto por equipo · Sábado",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Volcable 1",
+          "Cantidad"
+        ],
+        [
+          "Volcable 2",
+          "Cantidad"
+        ],
+        [
+          "Volcable 3",
+          "Cantidad"
+        ],
+        [
+          "Volcable 4",
+          "Cantidad"
+        ],
+        [
+          "Volcable 5",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D65_G1",
+      "slide": 65,
+      "object": "1782",
+      "sheet": "Descargas",
+      "start": 89,
+      "end": 93,
+      "title": "Puerto por equipo · Domingo",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Volcable 1",
+          "Cantidad"
+        ],
+        [
+          "Volcable 2",
+          "Cantidad"
+        ],
+        [
+          "Volcable 3",
+          "Cantidad"
+        ],
+        [
+          "Volcable 4",
+          "Cantidad"
+        ],
+        [
+          "Volcable 5",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D67_G1",
+      "slide": 67,
+      "object": "1816",
+      "sheet": "Descargas",
+      "start": 98,
+      "end": 102,
+      "title": "Puerto por equipo · Lunes",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Volcable 1",
+          "Cantidad"
+        ],
+        [
+          "Volcable 2",
+          "Cantidad"
+        ],
+        [
+          "Volcable 3",
+          "Cantidad"
+        ],
+        [
+          "Volcable 4",
+          "Cantidad"
+        ],
+        [
+          "Volcable 5",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D69_G1",
+      "slide": 69,
+      "object": "1850",
+      "sheet": "Descargas",
+      "start": 107,
+      "end": 111,
+      "title": "Puerto por equipo · Martes",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Volcable 1",
+          "Cantidad"
+        ],
+        [
+          "Volcable 2",
+          "Cantidad"
+        ],
+        [
+          "Volcable 3",
+          "Cantidad"
+        ],
+        [
+          "Volcable 4",
+          "Cantidad"
+        ],
+        [
+          "Volcable 5",
+          "Cantidad"
+        ]
+      ]
+    },
+    {
+      "id": "D71_G1",
+      "slide": 71,
+      "object": "1880",
+      "sheet": "Descargas",
+      "start": 116,
+      "end": 120,
+      "title": "Puerto por equipo · Miércoles",
+      "type": "bar",
+      "unit": "conteo",
+      "rows": [
+        [
+          "Volcable 1",
+          "Cantidad"
+        ],
+        [
+          "Volcable 2",
+          "Cantidad"
+        ],
+        [
+          "Volcable 3",
+          "Cantidad"
+        ],
+        [
+          "Volcable 4",
+          "Cantidad"
+        ],
+        [
+          "Volcable 5",
+          "Cantidad"
+        ]
+      ]
+    }
+  ],
+  "captures": [
+    {
+      "slide": 37,
+      "object": "1316"
+    },
+    {
+      "slide": 39,
+      "object": "1350"
+    },
+    {
+      "slide": 41,
+      "object": "1384"
+    },
+    {
+      "slide": 43,
+      "object": "1418"
+    },
+    {
+      "slide": 45,
+      "object": "1452"
+    },
+    {
+      "slide": 47,
+      "object": "1486"
+    },
+    {
+      "slide": 49,
+      "object": "1520"
+    },
+    {
+      "slide": 49,
+      "object": "1521"
+    },
+    {
+      "slide": 50,
+      "object": "1547"
+    },
+    {
+      "slide": 51,
+      "object": "1573"
+    },
+    {
+      "slide": 54,
+      "object": "1609"
+    },
+    {
+      "slide": 56,
+      "object": "1639"
+    },
+    {
+      "slide": 60,
+      "object": "1705"
+    },
+    {
+      "slide": 62,
+      "object": "1739"
+    },
+    {
+      "slide": 64,
+      "object": "1773"
+    },
+    {
+      "slide": 66,
+      "object": "1807"
+    },
+    {
+      "slide": 68,
+      "object": "1841"
+    },
+    {
+      "slide": 70,
+      "object": "1875"
+    },
+    {
+      "slide": 72,
+      "object": "1909"
+    }
+  ],
+  "slides": 72
+}

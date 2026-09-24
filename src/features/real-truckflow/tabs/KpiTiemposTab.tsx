@@ -3,7 +3,6 @@ import { EXECUTIVE_CIRCUIT_MATRIX } from '../etlWorkbench/finalCircuitScoring'
 import { pelletUnifiedCircuitLabel } from '../../../etl-core/reports/transileExternoCiclo'
 import {
   getCircuitSegmentTemplate,
-  pelletFullRoutePointCodes,
   listCircuitSegmentAggregates,
   logicalPointLabel,
   mergeVolcableReceiptSegmentTiming,
@@ -37,24 +36,10 @@ import { turnoLabel } from '../etlWorkbench/operationalTurno'
 import { parseCsvToRecords } from '../etlWorkbench/etlCsvParse'
 import { legsForAggregate } from '../etlWorkbench/etlSegmentSlowTail'
 import { isDemoraLegDuration, isWithinKpiSegmentDisplayMax } from '../etlWorkbench/etlSegmentTimingRules'
+import { buildJourneyOperationalDayMap } from '../etlWorkbench/etlOperationalDay'
 
 function fmtMin(v: number): string {
   return v.toFixed(1)
-}
-
-/**
- * Día operativo (YYYY-MM-DD) de un ISO, con la misma regla que las bandas/conteos:
- * un inicio ≥ 22:00 pertenece al día siguiente (arranque de Q1 22–04). Devuelve '' si no parsea.
- */
-function operationalDayOfIso(iso: string): string {
-  const m = String(iso ?? '').match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2})/)
-  if (!m) return ''
-  const hour = Number(m[4])
-  if (hour >= 22) {
-    const d = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]) + 1))
-    return d.toISOString().slice(0, 10)
-  }
-  return `${m[1]}-${m[2]}-${m[3]}`
 }
 
 function buildChartDataForAggregate(agg: SegmentTimingAggregate) {
@@ -160,42 +145,14 @@ export function KpiTiemposTab() {
    * solo trae algunos circuitos en rangos compuestos). Sirve para recalcular la barra de tiempos
    * medios del día elegido filtrando los legs por el día de su journey.
    */
-  const journeyDayById = useMemo(() => {
-    const map = new Map<string, string>()
-    // 1) Journeys Truckflow: journey_id → día operativo (start_time).
-    const ctjCsv = tr?.csv.circuit_timing_journeys
-    if (ctjCsv?.trim()) {
-      const { rows } = parseCsvToRecords(ctjCsv)
-      for (const r of rows) {
-        const id = String(r.journey_id ?? '').trim()
-        if (!id) continue
-        const day = operationalDayOfIso(String(r.start_time ?? ''))
-        if (day) map.set(id, day)
-      }
-    }
-    // 2) Operaciones Excel-first (pellet/tolvas sin cámara, R3/R4…): sus legs se identifican
-    //    por `external_operation_id` (CTG_…/COMPROB_…) o por el journey_uid matcheado, que NO
-    //    están en circuit_timing_journeys. Sin esto, esos circuitos caían al fallback y la
-    //    línea de tramos no cambiaba por día. El día sale del ingreso Excel.
-    const exCsv = tr?.csv.excel_operations_with_truckflow
-    if (exCsv?.trim()) {
-      const { rows } = parseCsvToRecords(exCsv)
-      for (const r of rows) {
-        const day =
-          operationalDayOfIso(String(r.external_ingreso_at ?? '')) || String(r.source_date ?? '').trim()
-        if (!day) continue
-        const opId = String(r.external_operation_id ?? '').trim()
-        if (opId && !map.has(opId)) map.set(opId, day)
-        for (const uid of String(r.matched_journey_uids ?? '')
-          .split(/[|,]/)
-          .map((s) => s.trim())
-          .filter(Boolean)) {
-          if (!map.has(uid)) map.set(uid, day)
-        }
-      }
-    }
-    return map
-  }, [tr?.csv.circuit_timing_journeys, tr?.csv.excel_operations_with_truckflow])
+  const journeyDayById = useMemo(
+    () =>
+      buildJourneyOperationalDayMap({
+        circuitTimingJourneysCsv: tr?.csv.circuit_timing_journeys,
+        excelOperationsCsv: tr?.csv.excel_operations_with_truckflow,
+      }),
+    [tr?.csv.circuit_timing_journeys, tr?.csv.excel_operations_with_truckflow]
+  )
 
   const periodFechas = useMemo(() => {
     const fromDisk = [...(wb?.loadSummary?.daysDetected ?? [])]
@@ -443,11 +400,6 @@ export function KpiTiemposTab() {
   }, [aggregatesWithData.length, analysisSourceLabel, circuitFilter, exportBusy, periodLabel])
 
   const circuitPathLabel = useMemo(() => {
-    // Pellet: el recorrido físico completo (todos los puntos que pasa el camión) es más largo que
-    // el template de tramos, que solo lleva los puntos con hora del Excel. El texto del recorrido
-    // muestra el camino entero; los tramos medibles siguen siendo los del template.
-    const pelletRoute = pelletFullRoutePointCodes(circuitFilter)
-    if (pelletRoute) return pelletRoute.map(logicalPointLabel).join(' → ')
     const template = getCircuitSegmentTemplate(circuitFilter)
     if (!template.length) return '—'
     return template.map(logicalPointLabel).join(' → ')

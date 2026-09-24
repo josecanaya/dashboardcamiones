@@ -7,7 +7,8 @@
  * camión más. Por eso se suman solo los puntos que están recibiendo ahora.
  */
 
-import { POINTS, LOAD_DEVICES, devicesOfPoint } from './plantGraph.mjs'
+import { POINTS, LOAD_DEVICES, devicesOfPoint, pointIdsOfSite } from './plantGraph.mjs'
+import { DEFAULT_SITE } from './sectorProfiles.mjs'
 
 /** Ventana para considerar que un punto está operando. */
 export const ACTIVITY_WINDOW_MS = 20 * 60 * 1000
@@ -21,14 +22,17 @@ export const ACTIVITY_WINDOW_MS = 20 * 60 * 1000
  * Construye la actividad por punto a partir de los eventos normalizados.
  * @param {{ t: number, device: string }[]} normalized
  * @param {number} nowMs
+ * @param {string} [site]
  * @returns {PointActivityMap}
  */
-export function buildPointActivity(normalized, nowMs) {
+export function buildPointActivity(normalized, nowMs, site = DEFAULT_SITE) {
   const since = nowMs - ACTIVITY_WINDOW_MS
   /** @type {PointActivityMap} */
   const out = {}
 
-  for (const pointId of Object.keys(POINTS)) {
+  // Solo los puntos de esta planta: recorrer los de la otra es trabajo perdido
+  // y deja en el mapa puntos que nunca van a tener eventos.
+  for (const pointId of pointIdsOfSite(site)) {
     const devices = new Set(devicesOfPoint(pointId))
     const loadSet = new Set(LOAD_DEVICES.get(pointId) ?? [])
     let lastT = Number.NaN
@@ -53,6 +57,7 @@ export function buildPointActivity(normalized, nowMs) {
   // Exclusiones declaradas: si el par está cargando, el de recepción no recibe.
   for (const p of Object.values(POINTS)) {
     if (!p.exclusiveWith) continue
+    if (!out[p.id]) continue
     const other = out[p.exclusiveWith]
     if (other?.loading) out[p.id].receiving = false
   }

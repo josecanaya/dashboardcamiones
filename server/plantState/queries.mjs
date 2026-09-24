@@ -12,6 +12,7 @@ import {
   SECTOR_PROFILES,
   getSectorProfile,
   resolveCanonicalSectorForLiveFeed,
+  sectorCodesOfSite,
 } from './sectorProfiles.mjs'
 import {
   buildLogicalSequence,
@@ -21,6 +22,7 @@ import {
   sectorToLogical,
 } from './circuitPrefix.mjs'
 import { PlantStateError } from './service.mjs'
+import { pointOfSector, pointOfLogical, resolveZone, zonesOfSite } from './plantGraph.mjs'
 
 const TWELVE_H_MS = 12 * 60 * 60 * 1000
 const HOUR_MS = 60 * 60 * 1000
@@ -96,6 +98,24 @@ function collectOpenJourneys(events, nowMs) {
     const logicalSeq = buildLogicalSequence(sectorSeq)
     const match = matchCircuitByPrefix(logicalSeq)
 
+    const siteZones = zonesOfSite(lastProfile?.site)
+    const matchedSequence = Array.isArray(match?.matchedSequence) ? match.matchedSequence : []
+    let sequencePosition = 0
+    let zone = null
+    for (const row of withSector) {
+      const logical = sectorToLogical(row.sector)
+      while (sequencePosition < matchedSequence.length && matchedSequence[sequencePosition] !== logical) {
+        sequencePosition += 1
+      }
+      const nextLogical = sequencePosition < matchedSequence.length
+        ? matchedSequence[sequencePosition + 1] ?? null
+        : null
+      if (sequencePosition < matchedSequence.length) sequencePosition += 1
+      zone = row.e.manualZoneId
+        ? siteZones.find((item) => item.id === row.e.manualZoneId) || resolveZone(pointOfSector(row.sector), pointOfLogical(nextLogical), lastProfile?.site)
+        : resolveZone(pointOfSector(row.sector), pointOfLogical(nextLogical), lastProfile?.site)
+    }
+
     open.push({
       journeyKey,
       plate: plate || 'SIN_PATENTE',
@@ -109,6 +129,7 @@ function collectOpenJourneys(events, nowMs) {
       events: withSector,
       logicalSeq,
       match,
+      zoneId: zone?.id ?? null,
       dwellSectorMin: (nowMs - enteredAt) / 60000,
       dwellPlantMin: (nowMs - withSector[0].t) / 60000,
       minutesSinceLastDetection: (nowMs - last.t) / 60000,
@@ -179,7 +200,7 @@ export function createPlantStateQueries(service) {
 
     /** Cámaras del Edge con salud. */
     const edgeDevices = new Set()
-    for (const [sc, p] of Object.entries(SECTOR_PROFILES)) {
+    for (const [sc, p] of sectorCodesOfSite(site).map((code) => [code, SECTOR_PROFILES[code]])) {
       if (p.edgeId !== profile.edgeId) continue
       for (const d of SECTOR_DEVICES[sc] || []) edgeDevices.add(d)
     }
@@ -240,9 +261,13 @@ export function createPlantStateQueries(service) {
    */
   async function listTrucks(site, opts = {}) {
     const sectorFilter = opts.sector ? String(opts.sector).trim() : ''
+    const zoneFilter = opts.zone ? String(opts.zone).trim() : ''
     const order = opts.order === 'plate' ? 'plate' : 'dwell'
     if (sectorFilter && !getSectorProfile(sectorFilter)) {
       throw new PlantStateError('sector_unknown', 404, `sector desconocido: ${sectorFilter}`)
+    }
+    if (zoneFilter && !zonesOfSite(site).some((zone) => zone.id === zoneFilter)) {
+      throw new PlantStateError('zone_unknown', 404, `zona desconocida: ${zoneFilter}`)
     }
 
     const events = await service.getEvents(site)
@@ -253,6 +278,7 @@ export function createPlantStateQueries(service) {
 
     let rows = open
     if (sectorFilter) rows = rows.filter((t) => t.sectorCode === sectorFilter)
+    if (zoneFilter) rows = rows.filter((t) => t.zoneId === zoneFilter)
 
     const trucks = rows.map((t) => {
       const bl =
@@ -263,6 +289,7 @@ export function createPlantStateQueries(service) {
         circuitLabel: t.match.circuitLabel,
         provisional: true,
         sectorCode: t.sectorCode,
+        zoneId: t.zoneId,
         dwellSectorMin: round1(t.dwellSectorMin),
         dwellPlantMin: round1(t.dwellPlantMin),
         nextExpectedPoint: t.match.nextExpectedPoint,
@@ -283,6 +310,7 @@ export function createPlantStateQueries(service) {
       site: String(site || 'ricardone').toLowerCase(),
       at: formatArgentinaIsoFromMs(nowMs),
       sector: sectorFilter || null,
+      zone: zoneFilter || null,
       order,
       count: trucks.length,
       trucks,

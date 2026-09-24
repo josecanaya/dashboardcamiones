@@ -362,6 +362,28 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     ],
     allowedSequences: [],
   },
+  /**
+   * Soja «de la vuelta» cargada en los silos de Ricardone (Silo Chief) y descargada en las
+   * volcables del puerto. Aparece en el Excel desde el 21-09-2026 (plataforma SILO_CHIEF_2).
+   *
+   * Antes caía en R26 porque toda soja «de la vuelta» iba ahí sin mirar la plataforma, y R26
+   * es de Celda 16: 182 recorridos rotulados «Celda 16» que nunca pasaron por Celda 16 (la
+   * cámara de la celda vio 2 camiones en la semana). Se resuelve desde el Excel, por eso no
+   * tiene punto fuerte de cámara propio.
+   */
+  R29: {
+    code: 'R29',
+    label: 'Transile externo Soja (Silos → Volcables puerto)',
+    kind: 'transile_externo',
+    product: 'SOJA',
+    coveragePercent: 55,
+    hasStrongPoint: false,
+    // Como R13–R15: lo asigna el Excel (plataforma de carga), no la secuencia de cámaras.
+    // La carga en silo y la descarga en volcable recorren las mismas cámaras que R30, así que
+    // una plantilla de secuencia lo haría indistinguible del transile de pellet.
+    enabledForClassification: false,
+    aliases: ['TRANSILE_EXTERNO_SOJA_SILOS'],
+  },
   /** Pellet: Tolva Celda 09 — sin cámara Truckflow en destino (matriz Excel 2026-07-13). */
   R30: {
     code: 'R30',

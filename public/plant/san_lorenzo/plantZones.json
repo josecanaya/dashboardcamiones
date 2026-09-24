@@ -116,7 +116,113 @@
       "cameraGroup": {
         "label": "Calada",
         "devices": [
-          "SLZCalCam"
+          "SLZCalado"
+        ]
+      }
+    },
+    {
+      "id": "S4",
+      "label": "Descarga / volcable",
+      "sectorCode": "PUERTO_SAN_LORENZO_VOLCABLE",
+      "type": "camera",
+      "tone": "acceso",
+      "xPercent": 67.8,
+      "yPercent": 67.6,
+      "cameraGroup": {
+        "label": "Descarga / volcable",
+        "devices": [
+          "SLZVolcableC1",
+          "SLZVolcableC2",
+          "SLZVolcableC3",
+          "SLZVolcableC4",
+          "SLZVolcableC5"
+        ]
+      }
+    },
+    {
+      "id": "S5",
+      "label": "Balanza salida",
+      "sectorCode": "PUERTO_SAN_LORENZO_BALANZA_SALIDA",
+      "type": "camera",
+      "tone": "acceso",
+      "xPercent": 60,
+      "yPercent": 84.6,
+      "cameraGroup": {
+        "label": "Balanza salida",
+        "devices": [
+          "SLZBalSC1Fte",
+          "SLZBalSC1Tras",
+          "SLZBalSC2Fte",
+          "SLZBalSC2Tras"
+        ]
+      }
+    },
+    {
+      "id": "S7",
+      "label": "Egreso",
+      "sectorCode": "PUERTO_SAN_LORENZO_EGRESO_CAMIONES",
+      "type": "camera",
+      "tone": "acceso",
+      "xPercent": 43.6,
+      "yPercent": 79,
+      "cameraGroup": {
+        "label": "Egreso",
+        "devices": [
+          "SLZSalidaC1Fte",
+          "SLZSalidaC1Tras",
+          "SLZSalidaC2Fte",
+          "SLZSalidaC2Tras"
+        ]
+      }
+    },
+    {
+      "id": "S8",
+      "label": "Ingreso Renova",
+      "sectorCode": "INGRESO_RENOVA",
+      "type": "camera",
+      "tone": "acceso",
+      "xPercent": 25.1,
+      "yPercent": 60,
+      "cameraGroup": {
+        "label": "Enlace S1–S3",
+        "devices": [
+          "SLZTK400"
+        ]
+      }
+    },
+    {
+      "id": "S10",
+      "label": "Líquidos punto 1",
+      "sectorCode": "PUERTO_SAN_LORENZO_LIQUIDOS_PUNTO_1",
+      "type": "camera",
+      "tone": "acceso",
+      "xPercent": 38.4,
+      "yPercent": 38.7,
+      "cameraGroup": {
+        "label": "Líquidos punto 1",
+        "devices": [
+          "RenCargFte",
+          "RenCargTras",
+          "RenDescFte",
+          "RenDescTras"
+        ]
+      }
+    },
+    {
+      "id": "S6",
+      "label": "Liquido_Punto_2",
+      "sectorCode": "Liquido_2",
+      "type": "camera",
+      "tone": "acceso",
+      "xPercent": 82.3,
+      "yPercent": 85.3,
+      "cameraGroup": {
+        "label": "Espera en Playa OSL",
+        "devices": [
+          "SLZBalLiq1a",
+          "SLZBalLiq1b",
+          "SLZBalLiq2a",
+          "SLZBalLiq2b"
         ]
       }
     }
@@ -159,7 +265,19 @@
       "label": "Líquidos punto 1"
     }
   ],
-  "tramos": [],
+  "tramos": [
+    {
+      "id": "S0::S1",
+      "fromPointId": "S0",
+      "toPointId": "S1",
+      "viaPercent": [
+        {
+          "xPercent": 21.9,
+          "yPercent": 28.9
+        }
+      ]
+    }
+  ],
   "circuitCompositions": [],
   "basePlan": {
     "image": "san_lorenzo-plano.png",

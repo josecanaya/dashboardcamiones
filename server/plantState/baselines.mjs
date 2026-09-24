@@ -9,7 +9,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseLiveMillis, formatArgentinaIsoFromMs } from './liveEventTime.mjs'
 import { reducePlantState } from './reducer.mjs'
-import { SECTOR_PROFILES } from './sectorProfiles.mjs'
+import { SECTOR_PROFILES, sectorCodesOfSite } from './sectorProfiles.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '../..')
@@ -206,7 +206,7 @@ export async function buildBaselines({ site = 'ricardone', days = 14, force = fa
 
   /** @type {Record<string, Record<string, { rates: number[], dwells: number[] }>>} */
   const accum = {}
-  for (const code of Object.keys(SECTOR_PROFILES)) {
+  for (const code of sectorCodesOfSite(site)) {
     accum[code] = { Q1: { rates: [], dwells: [] }, Q2: { rates: [], dwells: [] }, Q3: { rates: [], dwells: [] }, Q4: { rates: [], dwells: [] } }
   }
 

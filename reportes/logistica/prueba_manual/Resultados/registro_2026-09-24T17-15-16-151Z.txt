@@ -1,0 +1,77 @@
+CAMBIOS
+D2 objeto 20001: Período analizado: 10/09 al 16/09/2026 -> Período analizado: 17/09 al 22/09/2026
+D3 objeto 20003: 10/09 -> 17/09
+D3 objeto 20005: 16/09 -> 22/09
+D3 objeto 20007: 7 -> 6
+D3 objeto 20009: 3.423 -> 1.721
+D3 objeto 20010: camiones · valor reportado -> camiones · recorridos de cámara clasificados
+D3 objeto 20012: 2.557 -> 1.304
+D3 objeto 20014: 523 -> 234
+D3 objeto 20016: 155 -> 159
+D3 objeto 20018: 188 -> 24
+D35 objeto 1275: 50 -> 36
+D35 objeto 1276: 10/9 08 hs -> 17/09 14h
+D35 objeto 1277: 2908 -> 1615
+D35 objeto 1278: 20 sobre 148  horas totales -> 14.1
+sobre 116 horas con actividad
+D50 objeto 1543: 16 -> 21
+D50 objeto 1544: 14/9 20 hs -> 21/09 08h
+D50 objeto 1545: 157 -> 263
+D50 objeto 1546: 2 sobre 49 horas totales -> 5.1
+sobre 56 horas con actividad
+D51 objeto 1564: 11 -> 10
+D51 objeto 1565: 15/9 08 hs -> 21/09 10h
+D51 objeto 1566: 242 -> 204
+D51 objeto 1567: 3 sobre 85  horas totales -> 2.9
+sobre 86 horas con actividad
+D54 objeto 1606: 8 -> 7
+D54 objeto 1607: 3 -> 4
+sobre 138 horas con actividad
+D54 objeto 1608: 446 -> 298
+D56 objeto 1632: 5 -> 14
+D56 objeto 1633: 2 -> 3.8
+sobre 131 horas con actividad
+D56 objeto 1634: 40 -> 215
+D57 objeto 1658: 384 -> 207
+D57 objeto 1659: 16 -> 9.8
+sobre 127 horas con actividad
+D57 objeto 1660: 2688 -> 1242
+D05_G2 D5: gráfico editable desde Soja!C16:C16
+D15_G1 D15: gráfico editable desde Soja!C21:C34
+D16_G1 D16: gráfico editable desde Soja!C39:C66
+D16_G2 D16: gráfico editable desde Soja!C71:C77
+D17_G1 D17: gráfico editable desde Soja!C82:C123
+D17_G2 D17: gráfico editable desde Soja!C128:C141
+D20_G1 D20: gráfico editable desde Pellet!C7:C8
+D28_G2 D28: gráfico editable desde Girasol!C15:C17
+D31_G1 D31: gráfico editable desde Girasol!C22:C49
+D31_G2 D31: gráfico editable desde Girasol!C54:C67
+D35_G1 D35: gráfico editable desde Calada!C7:C12
+D36_G1 D36: gráfico editable desde Calada!C17:C22
+D38_G1 D38: gráfico editable desde Calada!C27:C32
+D40_G1 D40: gráfico editable desde Calada!C37:C42
+D42_G1 D42: gráfico editable desde Calada!C47:C52
+D44_G1 D44: gráfico editable desde Calada!C57:C62
+D46_G1 D46: gráfico editable desde Calada!C67:C72
+D48_G1 D48: gráfico editable desde Calada!C77:C82
+D50_G1 D50: gráfico editable desde Calada!C87:C93
+D51_G1 D51: gráfico editable desde Calada!C98:C104
+D53_G1 D53: gráfico editable desde Descargas!C7:C8
+D53_G2 D53: gráfico editable desde Descargas!C13:C26
+D55_G1 D55: gráfico editable desde Descargas!C31:C37
+D57_G1 D57: gráfico editable desde Descargas!C42:C48
+D58_G1 D58: gráfico editable desde Descargas!C53:C57
+D59_G1 D59: gráfico editable desde Descargas!C62:C66
+D61_G1 D61: gráfico editable desde Descargas!C71:C75
+D63_G1 D63: gráfico editable desde Descargas!C80:C84
+D65_G1 D65: gráfico editable desde Descargas!C89:C93
+D67_G1 D67: gráfico editable desde Descargas!C98:C102
+D69_G1 D69: gráfico editable desde Descargas!C107:C111
+D71_G1 D71: gráfico editable desde Descargas!C116:C120
+
+PENDIENTES
+D05_G1 D5: se conserva grafico base; faltan 5 valores en Soja
+D25_G1 D25: se conserva grafico base; faltan 4 valores en Pellet
+D28_G1 D28: se conserva grafico base; faltan 4 valores en Girasol
+
+Capturas de actividad vacias. Tarjetas, totales y conclusiones requieren revision manual.

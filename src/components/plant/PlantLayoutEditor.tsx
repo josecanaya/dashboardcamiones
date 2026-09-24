@@ -10,6 +10,7 @@ import type {
 } from '../../data/plantZones.types'
 import { getRicardoneCircuitRoutes } from '../../data/plantCircuitRoutes'
 import { plantTramoId, tramoPath } from '../../data/plantRouteGeometry'
+import { SAN_LORENZO_CAMERAS } from '../../data/sanLorenzoCameraCatalog'
 
 type Tool = 'select' | 'sector' | 'point' | 'tramo'
 type PercentPoint = { xPercent: number; yPercent: number }
@@ -25,6 +26,28 @@ const TYPE_LABEL: Record<PlantPointType, string> = {
   'control-point': 'Punto de control', operation: 'Carga o descarga',
 }
 const ZONE_COLORS = ['#2563EB', '#16A34A', '#D97706', '#7C3AED', '#DB2777', '#0891B2', '#475569']
+
+const SAN_LORENZO_POINT_LABELS: Record<string, string> = {
+  S0: 'Ingreso',
+  S1: 'Balanza ingreso',
+  S2: 'Calada',
+  S3: 'Enlace S1–S3',
+  S4: 'Descarga / volcable',
+  S5: 'Balanza salida',
+  S6: 'Espera en Playa OSL',
+  S7: 'Egreso',
+  S10: 'Líquidos punto 1',
+}
+
+function sanLorenzoPointDefinition(code: string) {
+  const cameras = SAN_LORENZO_CAMERAS.filter((camera) => camera.logicalSector === code)
+  const preferred = cameras.find((camera) => camera.sectorCode.includes('VOLCABLE')) ?? cameras[0]
+  return {
+    label: SAN_LORENZO_POINT_LABELS[code] ?? code,
+    sectorCode: preferred?.sectorCode ?? (code === 'S6' ? 'Playa_OSL' : ''),
+    devices: cameras.map((camera) => camera.deviceCode),
+  }
+}
 
 function emptyPoint(xPercent: number, yPercent: number, zoneId?: string): PlantPoint {
   return {
@@ -118,7 +141,9 @@ export function PlantLayoutEditor({ site, basePlan, initialPoints, initialZones,
     return i
   }, [zones])
   const pendingSteps = initialUnplacedSteps.filter((step) => !points.some((point) => point.id === step.code))
-  const pendingDefinition = (code: string) => code === 'S3'
+  const pendingDefinition = (code: string) => site === 'san_lorenzo'
+    ? sanLorenzoPointDefinition(code)
+    : code === 'S3'
     ? { label: 'Egreso', sectorCode: 'RICARDONE_EGRESO_CAMIONES', devices: ['RicEgrCamFrente', 'RicEgrCamTraser'] }
     : code === 'S10'
       ? { label: 'Salida', sectorCode: 'RICARDONE_EGRESO_CAMIONES', devices: ['RicEgrCamFrente', 'RicEgrCamTraser'] }

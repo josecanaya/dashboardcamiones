@@ -2,11 +2,12 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { AppConfig } from "../config.js";
 import { AppError, toToolError } from "../lib/errors.js";
-import { extractPresentationId, presentationUrl } from "../lib/urls.js";
+import { extractPresentationId, extractDriveFileId, presentationUrl } from "../lib/urls.js";
 import { logger } from "../lib/logging.js";
 import { getGoogleClients } from "../google/googleClient.js";
 import { SlidesService } from "../google/slidesService.js";
 import { DriveService } from "../google/driveService.js";
+import { SheetsService, spreadsheetUrl } from "../google/sheetsService.js";
 import * as S from "./schemas.js";
 
 /** Operaciones de batchUpdate consideradas destructivas / reemplazo masivo. */
@@ -49,8 +50,12 @@ export function registerTools(server: McpServer, cfg: AppConfig): void {
   const uid = (u?: string) => u ?? cfg.DEFAULT_USER_ID;
 
   async function services(userId: string) {
-    const { slides, drive } = await getGoogleClients(cfg, userId);
-    return { slides: new SlidesService(slides, cfg), drive: new DriveService(drive, cfg) };
+    const { slides, drive, sheets } = await getGoogleClients(cfg, userId);
+    return {
+      slides: new SlidesService(slides, cfg),
+      drive: new DriveService(drive, cfg),
+      sheets: new SheetsService(sheets, drive, cfg),
+    };
   }
 
   // 1. GET PRESENTATION -------------------------------------------------------
@@ -445,5 +450,274 @@ export function registerTools(server: McpServer, cfg: AppConfig): void {
     }),
   );
 
-  logger.info("Tools MCP registradas", { count: 14 });
+  // 15. DRIVE SEARCH FILES ----------------------------------------------------
+  server.registerTool(
+    "google_drive_search_files",
+    {
+      title: "Buscar archivos (Drive)",
+      description:
+        "Busca cualquier archivo de Drive por nombre, carpeta o tipo. Usalo para ubicar el Excel de datos " +
+        "que deja la automatización en la carpeta del informe, antes de leer sus rangos.",
+      inputSchema: S.searchDriveFilesShape,
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
+    guard(
+      async (a: {
+        nameContains?: string;
+        folderId?: string;
+        mimeType?: string;
+        modifiedAfter?: string;
+        pageSize?: number;
+        pageToken?: string;
+        userId?: string;
+      }) => {
+        const { sheets } = await services(uid(a.userId));
+        return ok(await sheets.searchFiles(a));
+      },
+    ),
+  );
+
+  // 16. SHEETS METADATA -------------------------------------------------------
+  server.registerTool(
+    "google_sheets_get_metadata",
+    {
+      title: "Leer pestañas de una hoja de cálculo",
+      description:
+        "Devuelve las pestañas de una hoja de cálculo con su título, índice y dimensiones, sin traer los " +
+        "valores. Sirve para confirmar los nombres de hoja antes de pedir rangos.",
+      inputSchema: S.getSpreadsheetMetadataShape,
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
+    guard(async (a: { spreadsheet: string; userId?: string }) => {
+      const { sheets } = await services(uid(a.userId));
+      const id = extractDriveFileId(a.spreadsheet);
+      return ok(await sheets.getMetadata(id));
+    }),
+  );
+
+  // 17. SHEETS GET VALUES -----------------------------------------------------
+  server.registerTool(
+    "google_sheets_get_values",
+    {
+      title: "Leer rangos de una hoja de cálculo",
+      description:
+        "Lee uno o varios rangos A1 en una sola llamada. Devuelve los valores crudos (números sin formato) " +
+        "por filas. Solo funciona sobre hojas nativas de Google: si el archivo es un .xlsx, convertilo " +
+        "antes con google_drive_import_xlsx_as_sheet.",
+      inputSchema: S.getSheetValuesShape,
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
+    guard(
+      async (a: {
+        spreadsheet: string;
+        ranges: string[];
+        formatted?: boolean;
+        pad?: boolean;
+        userId?: string;
+      }) => {
+        const { sheets } = await services(uid(a.userId));
+        const id = extractDriveFileId(a.spreadsheet);
+        const valueRanges = await sheets.getValues(id, a.ranges, {
+          formatted: a.formatted,
+          pad: a.pad,
+        });
+        return ok({ spreadsheetId: id, url: spreadsheetUrl(id), valueRanges });
+      },
+    ),
+  );
+
+  // 18. IMPORT XLSX AS SHEET --------------------------------------------------
+  server.registerTool(
+    "google_drive_import_xlsx_as_sheet",
+    {
+      title: "Convertir un .xlsx en hoja de Google",
+      description:
+        "Crea una copia de un .xlsx de Drive como hoja de cálculo nativa, para poder leerla con " +
+        "google_sheets_get_values. El archivo original no se modifica ni se reemplaza.",
+      inputSchema: S.importXlsxShape,
+      annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: true },
+    },
+    guard(
+      async (a: { file: string; name?: string; folderId?: string; userId?: string }) => {
+        const { sheets } = await services(uid(a.userId));
+        const id = extractDriveFileId(a.file);
+        const copy = await sheets.importXlsxAsSpreadsheet(id, {
+          name: a.name,
+          folderId: a.folderId,
+        });
+        return ok({ ...copy, url: spreadsheetUrl(copy.id), sourceFileId: id });
+      },
+    ),
+  );
+
+  // 19. UPLOAD FILE -----------------------------------------------------------
+  server.registerTool(
+    "google_drive_upload_file",
+    {
+      title: "Subir un .pptx o .xlsx a Drive",
+      description:
+        "Sube un .pptx o .xlsx local a una carpeta de Drive, convertido al formato nativo de Google " +
+        "en el mismo paso (.pptx → Slides, .xlsx → Sheets). Es la forma de llevar una presentación ya " +
+        "armada a Google Slides conservando sus gráficos como objetos editables. Crea un archivo " +
+        "nuevo: no sobrescribe ninguno existente.",
+      inputSchema: S.uploadFileShape,
+      annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: true },
+    },
+    guard(
+      async (a: {
+        localPath: string;
+        name?: string;
+        folderId?: string;
+        convert?: boolean;
+        userId?: string;
+      }) => {
+        const { sheets } = await services(uid(a.userId));
+        const f = await sheets.uploadFile(a.localPath, {
+          name: a.name,
+          folderId: a.folderId,
+          convert: a.convert,
+        });
+        const url =
+          f.mimeType === "application/vnd.google-apps.spreadsheet"
+            ? spreadsheetUrl(f.id)
+            : f.mimeType === "application/vnd.google-apps.presentation"
+              ? presentationUrl(f.id)
+              : f.webViewLink;
+        return ok({ ...f, url });
+      },
+    ),
+  );
+
+  // 20. SHEETS ADD CHART ------------------------------------------------------
+  server.registerTool(
+    "google_sheets_add_chart",
+    {
+      title: "Crear un gráfico en la hoja de cálculo",
+      description:
+        "Crea un gráfico dentro de la hoja y devuelve su chartId. Es el paso previo para incrustarlo " +
+        "en una slide con la operación createSheetsChart de google_slides_batch_update: así el gráfico " +
+        "de la presentación queda vinculado al rango y se actualiza cuando cambian los datos.",
+      inputSchema: S.addChartShape,
+      annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: true },
+    },
+    guard(
+      async (a: {
+        spreadsheet: string;
+        chartType: "COLUMN" | "BAR" | "LINE" | "AREA" | "SCATTER" | "PIE";
+        domain: string;
+        series: string[];
+        title?: string;
+        axisTitle?: string;
+        legendPosition?: "BOTTOM_LEGEND" | "RIGHT_LEGEND" | "NO_LEGEND";
+        anchorSheetTitle?: string;
+        userId?: string;
+      }) => {
+        const { sheets } = await services(uid(a.userId));
+        const id = extractDriveFileId(a.spreadsheet);
+        const r = await sheets.addChart({ ...a, spreadsheetId: id });
+        return ok({ ...r, url: spreadsheetUrl(id) });
+      },
+    ),
+  );
+
+  // 21. SHEETS WRITE SHEET ----------------------------------------------------
+  server.registerTool(
+    "google_sheets_write_sheet",
+    {
+      title: "Escribir una pestaña de la hoja de cálculo",
+      description:
+        "Crea o reemplaza el contenido de una pestaña con una matriz de valores. Pensada para " +
+        "pestañas de apoyo (p.ej. datos pivoteados para un gráfico), no para alterar las hojas " +
+        "de origen del informe.",
+      inputSchema: S.writeSheetShape,
+      annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: true },
+    },
+    guard(
+      async (a: {
+        spreadsheet: string;
+        sheetTitle: string;
+        values: unknown[][];
+        userId?: string;
+      }) => {
+        const { sheets } = await services(uid(a.userId));
+        const id = extractDriveFileId(a.spreadsheet);
+        const r = await sheets.writeSheet(id, a.sheetTitle, a.values);
+        return ok({ ...r, spreadsheetId: id, sheetTitle: a.sheetTitle, url: spreadsheetUrl(id) });
+      },
+    ),
+  );
+
+  // 22. SHEETS UPDATE VALUES --------------------------------------------------
+  server.registerTool(
+    "google_sheets_update_values",
+    {
+      title: "Escribir rangos puntuales de la hoja",
+      description:
+        "Escribe uno o varios rangos A1 sin limpiar la pestaña: el formato, los gráficos y las " +
+        "celdas no indicadas quedan intactos. Es la forma de actualizar un informe existente en " +
+        "vez de rehacerlo.",
+      inputSchema: S.updateValuesShape,
+      annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: true },
+    },
+    guard(
+      async (a: {
+        spreadsheet: string;
+        ranges: { range: string; values: unknown[][] }[];
+        userId?: string;
+      }) => {
+        const { sheets } = await services(uid(a.userId));
+        const id = extractDriveFileId(a.spreadsheet);
+        const r = await sheets.updateValues(id, a.ranges);
+        return ok({ ...r, spreadsheetId: id, url: spreadsheetUrl(id) });
+      },
+    ),
+  );
+
+  // 23. TRASH FILE ------------------------------------------------------------
+  server.registerTool(
+    "google_drive_trash_file",
+    {
+      title: "Mandar un archivo a la papelera",
+      description:
+        "Manda un archivo de Drive a la papelera, de donde se puede restaurar durante 30 días. " +
+        "No es un borrado definitivo. Requiere confirm=true.",
+      inputSchema: S.trashFileShape,
+      annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: true },
+    },
+    guard(async (a: { file: string; confirm: boolean; userId?: string }) => {
+      if (a.confirm !== true) {
+        throw new AppError(
+          "INVALID_ARGUMENT",
+          "Mandar un archivo a la papelera requiere confirm=true.",
+        );
+      }
+      const { sheets } = await services(uid(a.userId));
+      const id = extractDriveFileId(a.file);
+      const f = await sheets.trashFile(id);
+      return ok({ ...f, trashed: true });
+    }),
+  );
+
+  // 24. SHEETS DELETE CHARTS --------------------------------------------------
+  server.registerTool(
+    "google_sheets_delete_charts",
+    {
+      title: "Borrar gráficos de la hoja de cálculo",
+      description:
+        "Borra gráficos de una hoja por chartId. Pensada para limpiar gráficos huérfanos que " +
+        "quedan al reemplazar un gráfico vinculado. Requiere confirm=true.",
+      inputSchema: S.deleteChartsShape,
+      annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: true },
+    },
+    guard(async (a: { spreadsheet: string; chartIds: number[]; confirm: boolean; userId?: string }) => {
+      if (a.confirm !== true) {
+        throw new AppError("INVALID_ARGUMENT", "Borrar gráficos requiere confirm=true.");
+      }
+      const { sheets } = await services(uid(a.userId));
+      const id = extractDriveFileId(a.spreadsheet);
+      return ok({ ...(await sheets.deleteCharts(id, a.chartIds)), spreadsheetId: id });
+    }),
+  );
+
+  logger.info("Tools MCP registradas", { count: 24 });
 }

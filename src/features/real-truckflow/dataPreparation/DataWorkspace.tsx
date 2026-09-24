@@ -8,6 +8,7 @@ import { PeriodEditor } from './PeriodEditor'
 import { SourceCoverageCards } from './SourceCoverageCards'
 import { PreparationProgress } from './PreparationProgress'
 import { AdvancedDataTools } from './AdvancedDataTools'
+import { LogisticsReportPanel } from '../logisticsReport/LogisticsReportPanel'
 import type { PreparationInspection } from './preparationRunner'
 import { useLocation } from 'react-router-dom'
 
@@ -149,6 +150,14 @@ export function DataWorkspace(): JSX.Element {
           </div>
         ) : null}
       </section>
+
+      {/*
+        Informe de logística: al quedar el período cargado se genera solo el Excel que
+        alimenta el PPTX del comité. El panel muestra dónde quedó y qué no se pudo conectar.
+        Va acá —y no dentro de AdvancedDataTools— porque este es el flujo que usa el usuario
+        para elegir período y procesar.
+      */}
+      <LogisticsReportPanel />
 
       <AdvancedDataTools
         initialSection={initialSection}

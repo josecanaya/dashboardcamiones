@@ -1,0 +1,2638 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-23T19:49:23.013Z",
+  "periodo": {
+    "from": "2026-09-10",
+    "to": "2026-09-16",
+    "days": [
+      "2026-09-10",
+      "2026-09-11",
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16"
+    ],
+    "dayCount": 7,
+    "atipico": false,
+    "semanaEnCurso": false,
+    "diasFaltantes": [],
+    "label": "10/09 al 16/09/2026"
+  },
+  "fuentes": {
+    "rulesVersion": "etl_transform_v16",
+    "runIds": [
+      "2026-09-07_2026-09-13",
+      "2026-09-14_2026-09-20"
+    ],
+    "composedRange": "2026-09-10..2026-09-16",
+    "kpiTiemposBuilt": true,
+    "tablesUsed": [
+      "calada_camera_events",
+      "calada_ricardone_liquid_events",
+      "calada_sl_camera_events",
+      "ricardone_volcable_events",
+      "ricardone_silo_events",
+      "san_lorenzo_volcable_events",
+      "excel_operations_with_truckflow",
+      "circuit_timing_journeys",
+      "segment_timing_legs",
+      "debug_matrix_classification",
+      "merged_truckflow_movimientos"
+    ]
+  },
+  "actividad": {
+    "calada_ricardone": {
+      "id": "calada_ricardone",
+      "label": "Calada Ricardone (sólidos)",
+      "table": "calada_camera_events",
+      "dayRule": "calendar",
+      "missing": false,
+      "rowsTotal": 5630,
+      "rowsOutsidePeriod": 2537,
+      "duplicateRowsDropped": 64,
+      "periodo": {
+        "camiones": 2949,
+        "camaras": 6,
+        "picoCamiones": 58,
+        "picoLabel": "10/09 08h",
+        "promedioPorHora": 20.523809523809526,
+        "medianaPorHora": 21,
+        "horasConActividad": 147,
+        "porCalle": [
+          {
+            "camara": "RicCal02",
+            "camiones": 838
+          },
+          {
+            "camara": "RicCal01",
+            "camiones": 834
+          },
+          {
+            "camara": "RicCal04",
+            "camiones": 652
+          },
+          {
+            "camara": "RicCal03",
+            "camiones": 638
+          },
+          {
+            "camara": "RicCal06",
+            "camiones": 38
+          },
+          {
+            "camara": "RicCal05",
+            "camiones": 3
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-10": {
+          "camiones": 586,
+          "porCalle": [
+            {
+              "camara": "RicCal03",
+              "camiones": 188
+            },
+            {
+              "camara": "RicCal04",
+              "camiones": 184
+            },
+            {
+              "camara": "RicCal02",
+              "camiones": 105
+            },
+            {
+              "camara": "RicCal01",
+              "camiones": 102
+            },
+            {
+              "camara": "RicCal06",
+              "camiones": 10
+            }
+          ]
+        },
+        "2026-09-11": {
+          "camiones": 579,
+          "porCalle": [
+            {
+              "camara": "RicCal04",
+              "camiones": 184
+            },
+            {
+              "camara": "RicCal03",
+              "camiones": 182
+            },
+            {
+              "camara": "RicCal02",
+              "camiones": 112
+            },
+            {
+              "camara": "RicCal01",
+              "camiones": 102
+            },
+            {
+              "camara": "RicCal06",
+              "camiones": 6
+            },
+            {
+              "camara": "RicCal05",
+              "camiones": 1
+            }
+          ]
+        },
+        "2026-09-12": {
+          "camiones": 460,
+          "porCalle": [
+            {
+              "camara": "RicCal04",
+              "camiones": 139
+            },
+            {
+              "camara": "RicCal03",
+              "camiones": 136
+            },
+            {
+              "camara": "RicCal01",
+              "camiones": 95
+            },
+            {
+              "camara": "RicCal02",
+              "camiones": 92
+            }
+          ]
+        },
+        "2026-09-13": {
+          "camiones": 79,
+          "porCalle": [
+            {
+              "camara": "RicCal04",
+              "camiones": 39
+            },
+            {
+              "camara": "RicCal03",
+              "camiones": 35
+            },
+            {
+              "camara": "RicCal01",
+              "camiones": 3
+            },
+            {
+              "camara": "RicCal02",
+              "camiones": 2
+            }
+          ]
+        },
+        "2026-09-14": {
+          "camiones": 371,
+          "porCalle": [
+            {
+              "camara": "RicCal01",
+              "camiones": 141
+            },
+            {
+              "camara": "RicCal02",
+              "camiones": 139
+            },
+            {
+              "camara": "RicCal04",
+              "camiones": 52
+            },
+            {
+              "camara": "RicCal03",
+              "camiones": 43
+            },
+            {
+              "camara": "RicCal06",
+              "camiones": 10
+            }
+          ]
+        },
+        "2026-09-15": {
+          "camiones": 439,
+          "porCalle": [
+            {
+              "camara": "RicCal02",
+              "camiones": 220
+            },
+            {
+              "camara": "RicCal01",
+              "camiones": 215
+            },
+            {
+              "camara": "RicCal06",
+              "camiones": 11
+            },
+            {
+              "camara": "RicCal05",
+              "camiones": 1
+            }
+          ]
+        },
+        "2026-09-16": {
+          "camiones": 450,
+          "porCalle": [
+            {
+              "camara": "RicCal01",
+              "camiones": 176
+            },
+            {
+              "camara": "RicCal02",
+              "camiones": 169
+            },
+            {
+              "camara": "RicCal03",
+              "camiones": 54
+            },
+            {
+              "camara": "RicCal04",
+              "camiones": 54
+            },
+            {
+              "camara": "RicCal05",
+              "camiones": 1
+            },
+            {
+              "camara": "RicCal06",
+              "camiones": 1
+            }
+          ]
+        }
+      }
+    },
+    "calada_ricardone_liquidos": {
+      "id": "calada_ricardone_liquidos",
+      "label": "Calada Ricardone (líquidos)",
+      "table": "calada_ricardone_liquid_events",
+      "dayRule": "calendar",
+      "missing": false,
+      "rowsTotal": 310,
+      "rowsOutsidePeriod": 132,
+      "duplicateRowsDropped": 0,
+      "periodo": {
+        "camiones": 139,
+        "camaras": 1,
+        "picoCamiones": 16,
+        "picoLabel": "14/09 20h",
+        "promedioPorHora": 3.63265306122449,
+        "medianaPorHora": 2,
+        "horasConActividad": 49,
+        "porCalle": [
+          {
+            "camara": "RicCalLiq",
+            "camiones": 139
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-10": {
+          "camiones": 1,
+          "porCalle": [
+            {
+              "camara": "RicCalLiq",
+              "camiones": 1
+            }
+          ]
+        },
+        "2026-09-11": {
+          "camiones": 4,
+          "porCalle": [
+            {
+              "camara": "RicCalLiq",
+              "camiones": 4
+            }
+          ]
+        },
+        "2026-09-12": {
+          "camiones": 2,
+          "porCalle": [
+            {
+              "camara": "RicCalLiq",
+              "camiones": 2
+            }
+          ]
+        },
+        "2026-09-13": {
+          "camiones": 0,
+          "porCalle": []
+        },
+        "2026-09-14": {
+          "camiones": 77,
+          "porCalle": [
+            {
+              "camara": "RicCalLiq",
+              "camiones": 77
+            }
+          ]
+        },
+        "2026-09-15": {
+          "camiones": 27,
+          "porCalle": [
+            {
+              "camara": "RicCalLiq",
+              "camiones": 27
+            }
+          ]
+        },
+        "2026-09-16": {
+          "camiones": 31,
+          "porCalle": [
+            {
+              "camara": "RicCalLiq",
+              "camiones": 31
+            }
+          ]
+        }
+      }
+    },
+    "calada_san_lorenzo": {
+      "id": "calada_san_lorenzo",
+      "label": "Calada San Lorenzo",
+      "table": "calada_sl_camera_events",
+      "dayRule": "calendar",
+      "missing": false,
+      "rowsTotal": 598,
+      "rowsOutsidePeriod": 295,
+      "duplicateRowsDropped": 1,
+      "periodo": {
+        "camiones": 243,
+        "camaras": 1,
+        "picoCamiones": 11,
+        "picoLabel": "15/09 08h",
+        "promedioPorHora": 3.3820224719101124,
+        "medianaPorHora": 3,
+        "horasConActividad": 89,
+        "porCalle": [
+          {
+            "camara": "SLZCalado",
+            "camiones": 243
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-10": {
+          "camiones": 55,
+          "porCalle": [
+            {
+              "camara": "SLZCalado",
+              "camiones": 55
+            }
+          ]
+        },
+        "2026-09-11": {
+          "camiones": 47,
+          "porCalle": [
+            {
+              "camara": "SLZCalado",
+              "camiones": 47
+            }
+          ]
+        },
+        "2026-09-12": {
+          "camiones": 7,
+          "porCalle": [
+            {
+              "camara": "SLZCalado",
+              "camiones": 7
+            }
+          ]
+        },
+        "2026-09-13": {
+          "camiones": 3,
+          "porCalle": [
+            {
+              "camara": "SLZCalado",
+              "camiones": 3
+            }
+          ]
+        },
+        "2026-09-14": {
+          "camiones": 41,
+          "porCalle": [
+            {
+              "camara": "SLZCalado",
+              "camiones": 41
+            }
+          ]
+        },
+        "2026-09-15": {
+          "camiones": 51,
+          "porCalle": [
+            {
+              "camara": "SLZCalado",
+              "camiones": 51
+            }
+          ]
+        },
+        "2026-09-16": {
+          "camiones": 40,
+          "porCalle": [
+            {
+              "camara": "SLZCalado",
+              "camiones": 40
+            }
+          ]
+        }
+      }
+    },
+    "volcable_ricardone": {
+      "id": "volcable_ricardone",
+      "label": "Volcables Ricardone",
+      "table": "ricardone_volcable_events",
+      "dayRule": "calendar",
+      "missing": false,
+      "rowsTotal": 1274,
+      "rowsOutsidePeriod": 653,
+      "duplicateRowsDropped": 17,
+      "periodo": {
+        "camiones": 461,
+        "camaras": 2,
+        "picoCamiones": 8,
+        "picoLabel": "14/09 01h",
+        "promedioPorHora": 3.6341463414634148,
+        "medianaPorHora": 4,
+        "horasConActividad": 164,
+        "porCalle": [
+          {
+            "camara": "RicVolcable1",
+            "camiones": 371
+          },
+          {
+            "camara": "RicVolcable2",
+            "camiones": 97
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-10": {
+          "camiones": 76,
+          "porCalle": [
+            {
+              "camara": "RicVolcable1",
+              "camiones": 55
+            },
+            {
+              "camara": "RicVolcable2",
+              "camiones": 21
+            }
+          ]
+        },
+        "2026-09-11": {
+          "camiones": 86,
+          "porCalle": [
+            {
+              "camara": "RicVolcable1",
+              "camiones": 70
+            },
+            {
+              "camara": "RicVolcable2",
+              "camiones": 16
+            }
+          ]
+        },
+        "2026-09-12": {
+          "camiones": 87,
+          "porCalle": [
+            {
+              "camara": "RicVolcable1",
+              "camiones": 70
+            },
+            {
+              "camara": "RicVolcable2",
+              "camiones": 17
+            }
+          ]
+        },
+        "2026-09-13": {
+          "camiones": 20,
+          "porCalle": [
+            {
+              "camara": "RicVolcable1",
+              "camiones": 15
+            },
+            {
+              "camara": "RicVolcable2",
+              "camiones": 10
+            }
+          ]
+        },
+        "2026-09-14": {
+          "camiones": 54,
+          "porCalle": [
+            {
+              "camara": "RicVolcable1",
+              "camiones": 41
+            },
+            {
+              "camara": "RicVolcable2",
+              "camiones": 18
+            }
+          ]
+        },
+        "2026-09-15": {
+          "camiones": 74,
+          "porCalle": [
+            {
+              "camara": "RicVolcable1",
+              "camiones": 63
+            },
+            {
+              "camara": "RicVolcable2",
+              "camiones": 12
+            }
+          ]
+        },
+        "2026-09-16": {
+          "camiones": 83,
+          "porCalle": [
+            {
+              "camara": "RicVolcable1",
+              "camiones": 74
+            },
+            {
+              "camara": "RicVolcable2",
+              "camiones": 9
+            }
+          ]
+        }
+      }
+    },
+    "silos_ricardone": {
+      "id": "silos_ricardone",
+      "label": "Silos Ricardone",
+      "table": "ricardone_silo_events",
+      "dayRule": "calendar",
+      "missing": false,
+      "rowsTotal": 502,
+      "rowsOutsidePeriod": 270,
+      "duplicateRowsDropped": 17,
+      "periodo": {
+        "camiones": 53,
+        "camaras": 2,
+        "picoCamiones": 5,
+        "picoLabel": "11/09 16h",
+        "promedioPorHora": 1.9611650485436893,
+        "medianaPorHora": 1,
+        "horasConActividad": 103,
+        "porCalle": [
+          {
+            "camara": "RicS7DescLinea1",
+            "camiones": 41
+          },
+          {
+            "camara": "RicS7Carga",
+            "camiones": 12
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-10": {
+          "camiones": 1,
+          "porCalle": [
+            {
+              "camara": "RicS7Carga",
+              "camiones": 1
+            }
+          ]
+        },
+        "2026-09-11": {
+          "camiones": 31,
+          "porCalle": [
+            {
+              "camara": "RicS7DescLinea1",
+              "camiones": 30
+            },
+            {
+              "camara": "RicS7Carga",
+              "camiones": 1
+            }
+          ]
+        },
+        "2026-09-12": {
+          "camiones": 13,
+          "porCalle": [
+            {
+              "camara": "RicS7DescLinea1",
+              "camiones": 10
+            },
+            {
+              "camara": "RicS7Carga",
+              "camiones": 3
+            }
+          ]
+        },
+        "2026-09-13": {
+          "camiones": 6,
+          "porCalle": [
+            {
+              "camara": "RicS7Carga",
+              "camiones": 6
+            }
+          ]
+        },
+        "2026-09-14": {
+          "camiones": 7,
+          "porCalle": [
+            {
+              "camara": "RicS7Carga",
+              "camiones": 6
+            },
+            {
+              "camara": "RicS7DescLinea1",
+              "camiones": 1
+            }
+          ]
+        },
+        "2026-09-15": {
+          "camiones": 1,
+          "porCalle": [
+            {
+              "camara": "RicS7Carga",
+              "camiones": 1
+            }
+          ]
+        },
+        "2026-09-16": {
+          "camiones": 4,
+          "porCalle": [
+            {
+              "camara": "RicS7Carga",
+              "camiones": 4
+            }
+          ]
+        }
+      }
+    },
+    "volcable_san_lorenzo": {
+      "id": "volcable_san_lorenzo",
+      "label": "Volcables Puerto San Lorenzo",
+      "table": "san_lorenzo_volcable_events",
+      "dayRule": "calendar",
+      "missing": false,
+      "rowsTotal": 5517,
+      "rowsOutsidePeriod": 2425,
+      "duplicateRowsDropped": 9,
+      "periodo": {
+        "camiones": 2697,
+        "camaras": 5,
+        "picoCamiones": 34,
+        "picoLabel": "11/09 05h",
+        "promedioPorHora": 17.86092715231788,
+        "medianaPorHora": 19,
+        "horasConActividad": 151,
+        "porCalle": [
+          {
+            "camara": "Volcable 1",
+            "camiones": 504
+          },
+          {
+            "camara": "Volcable 2",
+            "camiones": 628
+          },
+          {
+            "camara": "Volcable 3",
+            "camiones": 641
+          },
+          {
+            "camara": "Volcable 4",
+            "camiones": 228
+          },
+          {
+            "camara": "Volcable 5",
+            "camiones": 696
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-10": {
+          "camiones": 523,
+          "porCalle": [
+            {
+              "camara": "Volcable 1",
+              "camiones": 150
+            },
+            {
+              "camara": "Volcable 2",
+              "camiones": 167
+            },
+            {
+              "camara": "Volcable 3",
+              "camiones": 138
+            },
+            {
+              "camara": "Volcable 4",
+              "camiones": 28
+            },
+            {
+              "camara": "Volcable 5",
+              "camiones": 40
+            }
+          ]
+        },
+        "2026-09-11": {
+          "camiones": 488,
+          "porCalle": [
+            {
+              "camara": "Volcable 1",
+              "camiones": 150
+            },
+            {
+              "camara": "Volcable 2",
+              "camiones": 112
+            },
+            {
+              "camara": "Volcable 3",
+              "camiones": 107
+            },
+            {
+              "camara": "Volcable 5",
+              "camiones": 119
+            }
+          ]
+        },
+        "2026-09-12": {
+          "camiones": 444,
+          "porCalle": [
+            {
+              "camara": "Volcable 1",
+              "camiones": 44
+            },
+            {
+              "camara": "Volcable 2",
+              "camiones": 128
+            },
+            {
+              "camara": "Volcable 3",
+              "camiones": 142
+            },
+            {
+              "camara": "Volcable 5",
+              "camiones": 130
+            }
+          ]
+        },
+        "2026-09-13": {
+          "camiones": 54,
+          "porCalle": [
+            {
+              "camara": "Volcable 3",
+              "camiones": 18
+            },
+            {
+              "camara": "Volcable 5",
+              "camiones": 36
+            }
+          ]
+        },
+        "2026-09-14": {
+          "camiones": 295,
+          "porCalle": [
+            {
+              "camara": "Volcable 1",
+              "camiones": 30
+            },
+            {
+              "camara": "Volcable 2",
+              "camiones": 100
+            },
+            {
+              "camara": "Volcable 3",
+              "camiones": 28
+            },
+            {
+              "camara": "Volcable 4",
+              "camiones": 26
+            },
+            {
+              "camara": "Volcable 5",
+              "camiones": 111
+            }
+          ]
+        },
+        "2026-09-15": {
+          "camiones": 479,
+          "porCalle": [
+            {
+              "camara": "Volcable 1",
+              "camiones": 130
+            },
+            {
+              "camara": "Volcable 2",
+              "camiones": 121
+            },
+            {
+              "camara": "Volcable 3",
+              "camiones": 57
+            },
+            {
+              "camara": "Volcable 4",
+              "camiones": 47
+            },
+            {
+              "camara": "Volcable 5",
+              "camiones": 124
+            }
+          ]
+        },
+        "2026-09-16": {
+          "camiones": 414,
+          "porCalle": [
+            {
+              "camara": "Volcable 3",
+              "camiones": 151
+            },
+            {
+              "camara": "Volcable 4",
+              "camiones": 127
+            },
+            {
+              "camara": "Volcable 5",
+              "camiones": 136
+            }
+          ]
+        }
+      }
+    }
+  },
+  "tiempos": {
+    "soja": {
+      "label": "Soja · R7",
+      "circuitCodes": [
+        "R7"
+      ],
+      "plantsPublishable": true,
+      "doorToDoorPublishable": true,
+      "reasons": [],
+      "operaciones": 2514,
+      "recorridosCamara": 2104,
+      "periodo": {
+        "camiones": 2514,
+        "tiempoMedioMin": 385.50198886237075,
+        "tiempoMedioN": 2514,
+        "porCuarto": {
+          "Q1": 832,
+          "Q2": 511,
+          "Q3": 633,
+          "Q4": 538
+        },
+        "ricMediaMin": 144.5941077369668,
+        "ricTramos": 3,
+        "ricN": 1336,
+        "slMediaMin": 198.98906240823115,
+        "slTramos": 3,
+        "slN": 434,
+        "bridgeMediaMin": 12.370826612903208,
+        "bridgeN": 992,
+        "tramos": [
+          {
+            "key": "INGRESO→PREINGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": 4.845808695652177,
+            "n": 1725
+          },
+          {
+            "key": "PREINGRESO→CALADA",
+            "planta": "RICARDONE",
+            "mediaMin": 128.44883047844039,
+            "n": 1693
+          },
+          {
+            "key": "CALADA→EGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": 11.299468562874248,
+            "n": 1336
+          },
+          {
+            "key": "EGRESO→SL_INGRESO",
+            "planta": "INTERPLANTA",
+            "mediaMin": 12.370826612903208,
+            "n": 992
+          },
+          {
+            "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+            "planta": "SAN_LORENZO",
+            "mediaMin": 137.44998996990978,
+            "n": 997
+          },
+          {
+            "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+            "planta": "SAN_LORENZO",
+            "mediaMin": 42.71126137841354,
+            "n": 769
+          },
+          {
+            "key": "SL_VOLCABLE→SL_EGRESO",
+            "planta": "SAN_LORENZO",
+            "mediaMin": 18.827811059907827,
+            "n": 434
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-10": {
+          "camiones": 511,
+          "tiempoMedioMin": 416.1389432485323,
+          "tiempoMedioN": 511,
+          "porCuarto": {
+            "Q1": 151,
+            "Q2": 118,
+            "Q3": 104,
+            "Q4": 138
+          },
+          "ricMediaMin": 182.10056951877624,
+          "ricTramos": 3,
+          "ricN": 240,
+          "slMediaMin": 169.07122784659776,
+          "slTramos": 3,
+          "slN": 37,
+          "bridgeMediaMin": 13.33475308641975,
+          "bridgeN": 162,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 5.8315841584158425,
+              "n": 303
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": 164.39952702702706,
+              "n": 296
+            },
+            {
+              "key": "CALADA→EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 11.869458333333332,
+              "n": 240
+            },
+            {
+              "key": "EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": 13.33475308641975,
+              "n": 162
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 122.89872093023257,
+              "n": 172
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 26.213858267716542,
+              "n": 127
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 19.958648648648648,
+              "n": 37
+            }
+          ]
+        },
+        "2026-09-11": {
+          "camiones": 482,
+          "tiempoMedioMin": 339.3589211618257,
+          "tiempoMedioN": 482,
+          "porCuarto": {
+            "Q1": 178,
+            "Q2": 78,
+            "Q3": 139,
+            "Q4": 87
+          },
+          "ricMediaMin": 183.80953990704495,
+          "ricTramos": 3,
+          "ricN": 268,
+          "slMediaMin": 150.94014604834143,
+          "slTramos": 3,
+          "slN": 37,
+          "bridgeMediaMin": 13.437500000000004,
+          "bridgeN": 132,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 4.237981927710842,
+              "n": 332
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": 168.2696923076923,
+              "n": 325
+            },
+            {
+              "key": "CALADA→EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 11.301865671641803,
+              "n": 268
+            },
+            {
+              "key": "EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": 13.437500000000004,
+              "n": 132
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 91.8341176470588,
+              "n": 153
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 38.744406779661006,
+              "n": 118
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 20.36162162162162,
+              "n": 37
+            }
+          ]
+        },
+        "2026-09-12": {
+          "camiones": 419,
+          "tiempoMedioMin": 400.32458233890213,
+          "tiempoMedioN": 419,
+          "porCuarto": {
+            "Q1": 195,
+            "Q2": 103,
+            "Q3": 81,
+            "Q4": 40
+          },
+          "ricMediaMin": 173.8683730449656,
+          "ricTramos": 3,
+          "ricN": 208,
+          "slMediaMin": 203.64195055539832,
+          "slTramos": 3,
+          "slN": 62,
+          "bridgeMediaMin": 12.303759999999997,
+          "bridgeN": 125,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 4.9130303030303075,
+              "n": 231
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": 157.24346774193532,
+              "n": 248
+            },
+            {
+              "key": "CALADA→EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 11.711875,
+              "n": 208
+            },
+            {
+              "key": "EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": 12.303759999999997,
+              "n": 125
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 132.2972483221477,
+              "n": 149
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 53.491153846153864,
+              "n": 104
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 17.853548387096776,
+              "n": 62
+            }
+          ]
+        },
+        "2026-09-13": {
+          "camiones": 39,
+          "tiempoMedioMin": 437.79487179487177,
+          "tiempoMedioN": 39,
+          "porCuarto": {
+            "Q1": 6,
+            "Q2": 5,
+            "Q3": 9,
+            "Q4": 19
+          },
+          "ricMediaMin": 184.5104761904761,
+          "ricTramos": 3,
+          "ricN": 21,
+          "slMediaMin": 61.71,
+          "slTramos": 2,
+          "slN": 1,
+          "bridgeMediaMin": 11.109375,
+          "bridgeN": 16,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 5.846296296296295,
+              "n": 27
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": 165.53370370370362,
+              "n": 27
+            },
+            {
+              "key": "CALADA→EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 13.130476190476191,
+              "n": 21
+            },
+            {
+              "key": "EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": 11.109375,
+              "n": 16
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 29.07,
+              "n": 9
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 32.64,
+              "n": 1
+            }
+          ]
+        },
+        "2026-09-14": {
+          "camiones": 292,
+          "tiempoMedioMin": 286.38698630136986,
+          "tiempoMedioN": 292,
+          "porCuarto": {
+            "Q1": 66,
+            "Q2": 36,
+            "Q3": 92,
+            "Q4": 98
+          },
+          "ricMediaMin": 78.53603516174401,
+          "ricTramos": 3,
+          "ricN": 158,
+          "slMediaMin": 141.77845947830733,
+          "slTramos": 3,
+          "slN": 83,
+          "bridgeMediaMin": 12.50303921568628,
+          "bridgeN": 204,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 4.012622222222223,
+              "n": 225
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": 63.71448888888887,
+              "n": 225
+            },
+            {
+              "key": "CALADA→EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 10.808924050632914,
+              "n": 158
+            },
+            {
+              "key": "EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": 12.50303921568628,
+              "n": 204
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 84.0805357142857,
+              "n": 168
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 39.98370689655174,
+              "n": 116
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 17.71421686746988,
+              "n": 83
+            }
+          ]
+        },
+        "2026-09-15": {
+          "camiones": 393,
+          "tiempoMedioMin": 405.78880407124683,
+          "tiempoMedioN": 393,
+          "porCuarto": {
+            "Q1": 108,
+            "Q2": 83,
+            "Q3": 115,
+            "Q4": 87
+          },
+          "ricMediaMin": 97.90536251689693,
+          "ricTramos": 3,
+          "ricN": 225,
+          "slMediaMin": 289.80261671539955,
+          "slTramos": 3,
+          "slN": 108,
+          "bridgeMediaMin": 11.714968553459125,
+          "bridgeN": 159,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 5.5184164222873875,
+              "n": 341
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": 81.35316831683176,
+              "n": 303
+            },
+            {
+              "key": "CALADA→EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 11.033777777777786,
+              "n": 225
+            },
+            {
+              "key": "EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": 11.714968553459125,
+              "n": 159
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 221.61631578947365,
+              "n": 171
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 49.26787499999999,
+              "n": 160
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 18.918425925925924,
+              "n": 108
+            }
+          ]
+        },
+        "2026-09-16": {
+          "camiones": 378,
+          "tiempoMedioMin": 436.57142857142856,
+          "tiempoMedioN": 378,
+          "porCuarto": {
+            "Q1": 128,
+            "Q2": 88,
+            "Q3": 93,
+            "Q4": 69
+          },
+          "ricMediaMin": 132.5918356687878,
+          "ricTramos": 3,
+          "ricN": 216,
+          "slMediaMin": 237.3414363956274,
+          "slTramos": 3,
+          "slN": 106,
+          "bridgeMediaMin": 11.385876288659796,
+          "bridgeN": 194,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 4.164135338345863,
+              "n": 266
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": 117.70408921933083,
+              "n": 269
+            },
+            {
+              "key": "CALADA→EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 10.723611111111113,
+              "n": 216
+            },
+            {
+              "key": "EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": 11.385876288659796,
+              "n": 194
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 170.58628571428568,
+              "n": 175
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 47.63826388888889,
+              "n": 144
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 19.116886792452828,
+              "n": 106
+            }
+          ]
+        }
+      }
+    },
+    "girasol": {
+      "label": "Girasol · R5+R6",
+      "circuitCodes": [
+        "R5",
+        "R6"
+      ],
+      "plantsPublishable": true,
+      "doorToDoorPublishable": false,
+      "reasons": [
+        "tiempo medio puerta a puerta de 864 min supera el umbral de verosimilitud (720 min): no se publica el puerta a puerta"
+      ],
+      "operaciones": 445,
+      "recorridosCamara": 152,
+      "periodo": {
+        "camiones": 445,
+        "tiempoMedioMin": 864.2426966292135,
+        "tiempoMedioN": 445,
+        "porCuarto": {
+          "Q1": 136,
+          "Q2": 97,
+          "Q3": 96,
+          "Q4": 116
+        },
+        "ricMediaMin": 278.7241501238176,
+        "ricTramos": 6,
+        "ricN": 14,
+        "slMediaMin": null,
+        "slTramos": 0,
+        "slN": 0,
+        "bridgeMediaMin": null,
+        "bridgeN": 0,
+        "tramos": [
+          {
+            "key": "INGRESO→PREINGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": 3.202857142857144,
+            "n": 49
+          },
+          {
+            "key": "PREINGRESO→CALADA",
+            "planta": "RICARDONE",
+            "mediaMin": 88.34888888888888,
+            "n": 45
+          },
+          {
+            "key": "CALADA→BALANZA_INGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": 8.304999999999998,
+            "n": 14
+          },
+          {
+            "key": "BALANZA_INGRESO→PLAYA",
+            "planta": "RICARDONE",
+            "mediaMin": 9.315882352941179,
+            "n": 17
+          },
+          {
+            "key": "PLAYA→VOLCABLE",
+            "planta": "RICARDONE",
+            "mediaMin": 153.28152173913043,
+            "n": 46
+          },
+          {
+            "key": "VOLCABLE→BALANZA_EGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": 16.27,
+            "n": 30
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-10": {
+          "camiones": 89,
+          "tiempoMedioMin": 1378.438202247191,
+          "tiempoMedioN": 89,
+          "porCuarto": {
+            "Q1": 36,
+            "Q2": 23,
+            "Q3": 20,
+            "Q4": 10
+          },
+          "ricMediaMin": null,
+          "ricTramos": 0,
+          "ricN": 0,
+          "slMediaMin": null,
+          "slTramos": 0,
+          "slN": 0,
+          "bridgeMediaMin": null,
+          "bridgeN": 0,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "CALADA→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PLAYA→VOLCABLE",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "VOLCABLE→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            }
+          ]
+        },
+        "2026-09-11": {
+          "camiones": 83,
+          "tiempoMedioMin": 1229.012048192771,
+          "tiempoMedioN": 83,
+          "porCuarto": {
+            "Q1": 20,
+            "Q2": 19,
+            "Q3": 20,
+            "Q4": 24
+          },
+          "ricMediaMin": 233.45999999999998,
+          "ricTramos": 3,
+          "ricN": 1,
+          "slMediaMin": null,
+          "slTramos": 0,
+          "slN": 0,
+          "bridgeMediaMin": null,
+          "bridgeN": 0,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "CALADA→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": 6.68,
+              "n": 2
+            },
+            {
+              "key": "PLAYA→VOLCABLE",
+              "planta": "RICARDONE",
+              "mediaMin": 218.07999999999998,
+              "n": 2
+            },
+            {
+              "key": "VOLCABLE→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 8.7,
+              "n": 1
+            }
+          ]
+        },
+        "2026-09-12": {
+          "camiones": 41,
+          "tiempoMedioMin": 650.560975609756,
+          "tiempoMedioN": 41,
+          "porCuarto": {
+            "Q1": 11,
+            "Q2": 11,
+            "Q3": 15,
+            "Q4": 4
+          },
+          "ricMediaMin": 316.4895,
+          "ricTramos": 6,
+          "ricN": 4,
+          "slMediaMin": null,
+          "slTramos": 0,
+          "slN": 0,
+          "bridgeMediaMin": null,
+          "bridgeN": 0,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 2.692,
+              "n": 5
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": 125.95250000000001,
+              "n": 4
+            },
+            {
+              "key": "CALADA→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 9.307500000000001,
+              "n": 4
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": 7.504,
+              "n": 5
+            },
+            {
+              "key": "PLAYA→VOLCABLE",
+              "planta": "RICARDONE",
+              "mediaMin": 155.206,
+              "n": 5
+            },
+            {
+              "key": "VOLCABLE→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 15.8275,
+              "n": 4
+            }
+          ]
+        },
+        "2026-09-13": {
+          "camiones": 13,
+          "tiempoMedioMin": 375.6923076923077,
+          "tiempoMedioN": 13,
+          "porCuarto": {
+            "Q1": 5,
+            "Q2": 4,
+            "Q3": 0,
+            "Q4": 4
+          },
+          "ricMediaMin": 219.534,
+          "ricTramos": 5,
+          "ricN": 5,
+          "slMediaMin": null,
+          "slTramos": 0,
+          "slN": 0,
+          "bridgeMediaMin": null,
+          "bridgeN": 0,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 4.344285714285713,
+              "n": 7
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": 98.888,
+              "n": 5
+            },
+            {
+              "key": "CALADA→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 7.675999999999999,
+              "n": 5
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": 7.934285714285714,
+              "n": 7
+            },
+            {
+              "key": "PLAYA→VOLCABLE",
+              "planta": "RICARDONE",
+              "mediaMin": 100.69142857142856,
+              "n": 7
+            },
+            {
+              "key": "VOLCABLE→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            }
+          ]
+        },
+        "2026-09-14": {
+          "camiones": 62,
+          "tiempoMedioMin": 670.7258064516129,
+          "tiempoMedioN": 62,
+          "porCuarto": {
+            "Q1": 24,
+            "Q2": 10,
+            "Q3": 9,
+            "Q4": 19
+          },
+          "ricMediaMin": 353.3858333333333,
+          "ricTramos": 6,
+          "ricN": 2,
+          "slMediaMin": null,
+          "slTramos": 0,
+          "slN": 0,
+          "bridgeMediaMin": null,
+          "bridgeN": 0,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 2.705,
+              "n": 4
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": 89.07499999999999,
+              "n": 6
+            },
+            {
+              "key": "CALADA→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 8.3625,
+              "n": 4
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": 21.75,
+              "n": 2
+            },
+            {
+              "key": "PLAYA→VOLCABLE",
+              "planta": "RICARDONE",
+              "mediaMin": 211.6933333333333,
+              "n": 3
+            },
+            {
+              "key": "VOLCABLE→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 19.8,
+              "n": 3
+            }
+          ]
+        },
+        "2026-09-15": {
+          "camiones": 85,
+          "tiempoMedioMin": 684.9058823529411,
+          "tiempoMedioN": 85,
+          "porCuarto": {
+            "Q1": 29,
+            "Q2": 16,
+            "Q3": 15,
+            "Q4": 25
+          },
+          "ricMediaMin": 336.24,
+          "ricTramos": 3,
+          "ricN": 1,
+          "slMediaMin": null,
+          "slTramos": 0,
+          "slN": 0,
+          "bridgeMediaMin": null,
+          "bridgeN": 0,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 2.06,
+              "n": 1
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "CALADA→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PLAYA→VOLCABLE",
+              "planta": "RICARDONE",
+              "mediaMin": 316.88,
+              "n": 1
+            },
+            {
+              "key": "VOLCABLE→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 17.3,
+              "n": 1
+            }
+          ]
+        },
+        "2026-09-16": {
+          "camiones": 72,
+          "tiempoMedioMin": 396.3888888888889,
+          "tiempoMedioN": 72,
+          "porCuarto": {
+            "Q1": 11,
+            "Q2": 14,
+            "Q3": 17,
+            "Q4": 30
+          },
+          "ricMediaMin": 265.7414136904761,
+          "ricTramos": 6,
+          "ricN": 1,
+          "slMediaMin": null,
+          "slTramos": 0,
+          "slN": 0,
+          "bridgeMediaMin": null,
+          "bridgeN": 0,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 3.1309375000000004,
+              "n": 32
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": 81.43333333333332,
+              "n": 30
+            },
+            {
+              "key": "CALADA→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 7.21,
+              "n": 1
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": 8.45,
+              "n": 1
+            },
+            {
+              "key": "PLAYA→VOLCABLE",
+              "planta": "RICARDONE",
+              "mediaMin": 149.35571428571424,
+              "n": 28
+            },
+            {
+              "key": "VOLCABLE→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 16.16142857142857,
+              "n": 21
+            }
+          ]
+        }
+      }
+    },
+    "pellet": {
+      "label": "Pellet",
+      "circuitCodes": [
+        "R30",
+        "R31",
+        "R32",
+        "R13",
+        "R14",
+        "R15"
+      ],
+      "plantsPublishable": true,
+      "doorToDoorPublishable": true,
+      "reasons": [],
+      "operaciones": 225,
+      "recorridosCamara": 0,
+      "periodo": {
+        "camiones": 225,
+        "tiempoMedioMin": 184.0088888888889,
+        "tiempoMedioN": 225,
+        "porCuarto": {
+          "Q1": 29,
+          "Q2": 37,
+          "Q3": 46,
+          "Q4": 113
+        },
+        "ricMediaMin": 131.08835465116272,
+        "ricTramos": 3,
+        "ricN": 40,
+        "slMediaMin": 77.70518978405315,
+        "slTramos": 3,
+        "slN": 70,
+        "bridgeMediaMin": 22.602800000000002,
+        "bridgeN": 75,
+        "tramos": [
+          {
+            "key": "INGRESO→PREINGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": 9.64175,
+            "n": 40
+          },
+          {
+            "key": "PREINGRESO→LIQUIDO",
+            "planta": "RICARDONE",
+            "mediaMin": 14.898604651162788,
+            "n": 43
+          },
+          {
+            "key": "LIQUIDO→BALANZA_INGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": null,
+            "n": 0
+          },
+          {
+            "key": "BALANZA_INGRESO→PLAYA",
+            "planta": "RICARDONE",
+            "mediaMin": null,
+            "n": 0
+          },
+          {
+            "key": "PLAYA→BALANZA_EGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": 106.54799999999993,
+            "n": 60
+          },
+          {
+            "key": "BALANZA_EGRESO→SL_INGRESO",
+            "planta": "INTERPLANTA",
+            "mediaMin": 22.602800000000002,
+            "n": 75
+          },
+          {
+            "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+            "planta": "SAN_LORENZO",
+            "mediaMin": 16.507285714285715,
+            "n": 70
+          },
+          {
+            "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+            "planta": "SAN_LORENZO",
+            "mediaMin": 38.416624999999996,
+            "n": 80
+          },
+          {
+            "key": "SL_VOLCABLE→SL_EGRESO",
+            "planta": "SAN_LORENZO",
+            "mediaMin": 22.781279069767443,
+            "n": 86
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-10": {
+          "camiones": 3,
+          "tiempoMedioMin": 271.3333333333333,
+          "tiempoMedioN": 3,
+          "porCuarto": {
+            "Q1": 0,
+            "Q2": 1,
+            "Q3": 2,
+            "Q4": 0
+          },
+          "ricMediaMin": null,
+          "ricTramos": 0,
+          "ricN": 0,
+          "slMediaMin": null,
+          "slTramos": 0,
+          "slN": 0,
+          "bridgeMediaMin": null,
+          "bridgeN": 0,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PREINGRESO→LIQUIDO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "LIQUIDO→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PLAYA→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            }
+          ]
+        },
+        "2026-09-11": {
+          "camiones": 5,
+          "tiempoMedioMin": 464.6,
+          "tiempoMedioN": 5,
+          "porCuarto": {
+            "Q1": 0,
+            "Q2": 2,
+            "Q3": 2,
+            "Q4": 1
+          },
+          "ricMediaMin": null,
+          "ricTramos": 0,
+          "ricN": 0,
+          "slMediaMin": null,
+          "slTramos": 0,
+          "slN": 0,
+          "bridgeMediaMin": null,
+          "bridgeN": 0,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PREINGRESO→LIQUIDO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "LIQUIDO→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PLAYA→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            }
+          ]
+        },
+        "2026-09-12": {
+          "camiones": 0,
+          "tiempoMedioMin": null,
+          "tiempoMedioN": 0,
+          "porCuarto": {
+            "Q1": 0,
+            "Q2": 0,
+            "Q3": 0,
+            "Q4": 0
+          },
+          "ricMediaMin": null,
+          "ricTramos": 0,
+          "ricN": 0,
+          "slMediaMin": null,
+          "slTramos": 0,
+          "slN": 0,
+          "bridgeMediaMin": null,
+          "bridgeN": 0,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PREINGRESO→LIQUIDO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "LIQUIDO→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PLAYA→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            }
+          ]
+        },
+        "2026-09-13": {
+          "camiones": 1,
+          "tiempoMedioMin": 85,
+          "tiempoMedioN": 1,
+          "porCuarto": {
+            "Q1": 0,
+            "Q2": 1,
+            "Q3": 0,
+            "Q4": 0
+          },
+          "ricMediaMin": null,
+          "ricTramos": 0,
+          "ricN": 0,
+          "slMediaMin": null,
+          "slTramos": 0,
+          "slN": 0,
+          "bridgeMediaMin": null,
+          "bridgeN": 0,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PREINGRESO→LIQUIDO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "LIQUIDO→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PLAYA→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            }
+          ]
+        },
+        "2026-09-14": {
+          "camiones": 144,
+          "tiempoMedioMin": 147.71527777777777,
+          "tiempoMedioN": 144,
+          "porCuarto": {
+            "Q1": 0,
+            "Q2": 0,
+            "Q3": 39,
+            "Q4": 105
+          },
+          "ricMediaMin": 127.00056944444444,
+          "ricTramos": 3,
+          "ricN": 9,
+          "slMediaMin": 83.19153872053872,
+          "slTramos": 3,
+          "slN": 20,
+          "bridgeMediaMin": 30.15111111111111,
+          "bridgeN": 27,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 7.924444444444445,
+              "n": 9
+            },
+            {
+              "key": "PREINGRESO→LIQUIDO",
+              "planta": "RICARDONE",
+              "mediaMin": 13.0855,
+              "n": 20
+            },
+            {
+              "key": "LIQUIDO→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PLAYA→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 105.990625,
+              "n": 16
+            },
+            {
+              "key": "BALANZA_EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": 30.15111111111111,
+              "n": 27
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 15.360909090909093,
+              "n": 22
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 45.851,
+              "n": 20
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 21.97962962962963,
+              "n": 27
+            }
+          ]
+        },
+        "2026-09-15": {
+          "camiones": 63,
+          "tiempoMedioMin": 189.88888888888889,
+          "tiempoMedioN": 63,
+          "porCuarto": {
+            "Q1": 28,
+            "Q2": 29,
+            "Q3": 2,
+            "Q4": 4
+          },
+          "ricMediaMin": 147.27541666666664,
+          "ricTramos": 3,
+          "ricN": 16,
+          "slMediaMin": 76.11934392655367,
+          "slTramos": 3,
+          "slN": 48,
+          "bridgeMediaMin": 18.356875,
+          "bridgeN": 48,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 12.453750000000001,
+              "n": 24
+            },
+            {
+              "key": "PREINGRESO→LIQUIDO",
+              "planta": "RICARDONE",
+              "mediaMin": 14.785000000000002,
+              "n": 16
+            },
+            {
+              "key": "LIQUIDO→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PLAYA→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 120.03666666666663,
+              "n": 36
+            },
+            {
+              "key": "BALANZA_EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": 18.356875,
+              "n": 48
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 17.032708333333332,
+              "n": 48
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 35.938500000000005,
+              "n": 60
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 23.148135593220335,
+              "n": 59
+            }
+          ]
+        },
+        "2026-09-16": {
+          "camiones": 9,
+          "tiempoMedioMin": 549.5555555555555,
+          "tiempoMedioN": 9,
+          "porCuarto": {
+            "Q1": 1,
+            "Q2": 4,
+            "Q3": 1,
+            "Q4": 3
+          },
+          "ricMediaMin": 69.51089285714286,
+          "ricTramos": 3,
+          "ricN": 7,
+          "slMediaMin": null,
+          "slTramos": 0,
+          "slN": 0,
+          "bridgeMediaMin": null,
+          "bridgeN": 0,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 2.2085714285714286,
+              "n": 7
+            },
+            {
+              "key": "PREINGRESO→LIQUIDO",
+              "planta": "RICARDONE",
+              "mediaMin": 20.33857142857143,
+              "n": 7
+            },
+            {
+              "key": "LIQUIDO→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PLAYA→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 46.963750000000005,
+              "n": 8
+            },
+            {
+              "key": "BALANZA_EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            }
+          ]
+        }
+      }
+    }
+  },
+  "ejecutivo": {
+    "recorridosEnPeriodo": 3579,
+    "porProducto": {
+      "SOJA": 2323,
+      "GIRASOL": 464,
+      "ACEITE": 146,
+      "PELLET": 211
+    },
+    "circuitosPorProducto": {
+      "SOJA": [
+        {
+          "code": "R7",
+          "label": "R7 · Ricardone → San Lorenzo",
+          "count": 2323
+        }
+      ],
+      "GIRASOL": [
+        {
+          "code": "R5",
+          "label": "R5 · Recepción Volcable 1",
+          "count": 349
+        },
+        {
+          "code": "R6",
+          "label": "R6 · Recepción Volcable 2",
+          "count": 77
+        },
+        {
+          "code": "R8",
+          "label": "R8 · Recepción Mercadería Líquida",
+          "count": 6
+        },
+        {
+          "code": "R3",
+          "label": "R3 · Recepción Silos Kepler 1",
+          "count": 32
+        }
+      ],
+      "ACEITE": [
+        {
+          "code": "R8",
+          "label": "R8 · Recepción Mercadería Líquida",
+          "count": 12
+        },
+        {
+          "code": "SL1",
+          "label": "SL1 · Recepción interna San Lorenzo",
+          "count": 124
+        },
+        {
+          "code": "SL2",
+          "label": "SL2 · Aceite PTO San Lorenzo (sin S10)",
+          "count": 10
+        }
+      ],
+      "PELLET": [
+        {
+          "code": "R30/31/32",
+          "label": "R30/31/32 · Transile externo Pellet",
+          "count": 176
+        },
+        {
+          "code": "R13/14/15",
+          "label": "R13/14/15 · Despacho Pellet",
+          "count": 35
+        }
+      ]
+    },
+    "circuitosTotales": [
+      {
+        "code": "R5",
+        "label": "R5 · Recepción Volcable 1",
+        "count": 388
+      },
+      {
+        "code": "R6",
+        "label": "R6 · Recepción Volcable 2",
+        "count": 92
+      },
+      {
+        "code": "R7",
+        "label": "R7 · Ricardone → San Lorenzo",
+        "count": 2474
+      },
+      {
+        "code": "R8",
+        "label": "R8 · Recepción Mercadería Líquida",
+        "count": 53
+      },
+      {
+        "code": "R9",
+        "label": "R9 · Despacho Celda 16",
+        "count": 5
+      },
+      {
+        "code": "R3",
+        "label": "R3 · Recepción Silos Kepler 1",
+        "count": 32
+      },
+      {
+        "code": "SL1",
+        "label": "SL1 · Recepción interna San Lorenzo",
+        "count": 141
+      },
+      {
+        "code": "SL2",
+        "label": "SL2 · Aceite PTO San Lorenzo (sin S10)",
+        "count": 20
+      },
+      {
+        "code": "RS_REC",
+        "label": "RS_REC · Recepción sólida inferida (sin cámara destino)",
+        "count": 4
+      },
+      {
+        "code": "SIN_PUNTO",
+        "label": "SIN_PUNTO · Sin punto instrumentado (sólidos)",
+        "count": 158
+      },
+      {
+        "code": "R30/31/32",
+        "label": "R30/31/32 · Transile externo Pellet",
+        "count": 177
+      },
+      {
+        "code": "R13/14/15",
+        "label": "R13/14/15 · Despacho Pellet",
+        "count": 35
+      }
+    ],
+    "missing": false
+  },
+  "controles": {
+    "sinDatos": false,
+    "pendientes": [
+      {
+        "id": "tiempos.girasol",
+        "reason": "tiempo medio puerta a puerta de 864 min supera el umbral de verosimilitud (720 min): no se publica el puerta a puerta"
+      }
+    ],
+    "advertencias": [
+      {
+        "id": "actividad.calada_ricardone",
+        "detail": "2537 eventos quedaron fuera del período exacto y 64 eran repetidos del día de borde entre corridas."
+      },
+      {
+        "id": "actividad.calada_ricardone_liquidos",
+        "detail": "132 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+      },
+      {
+        "id": "actividad.calada_san_lorenzo",
+        "detail": "295 eventos quedaron fuera del período exacto y 1 eran repetidos del día de borde entre corridas."
+      },
+      {
+        "id": "actividad.volcable_ricardone",
+        "detail": "653 eventos quedaron fuera del período exacto y 17 eran repetidos del día de borde entre corridas."
+      },
+      {
+        "id": "actividad.silos_ricardone",
+        "detail": "270 eventos quedaron fuera del período exacto y 17 eran repetidos del día de borde entre corridas."
+      },
+      {
+        "id": "actividad.volcable_san_lorenzo",
+        "detail": "2425 eventos quedaron fuera del período exacto y 9 eran repetidos del día de borde entre corridas."
+      }
+    ],
+    "politicaDia": {
+      "actividad": "dia_calendario_argentina",
+      "tiempos": "dia_operativo_22h",
+      "nota": "Calada y descargas agrupan por día calendario (regla vigente de esos paneles); KPI tiempos usa el día operativo con arranque 22:00. Se conserva la regla de cada bloque para que el informe coincida con el dashboard; no comparar rótulos de día entre bloques."
+    }
+  }
+}

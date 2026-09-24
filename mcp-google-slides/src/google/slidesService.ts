@@ -35,6 +35,9 @@ export const ALLOWED_BATCH_REQUESTS = new Set<string>([
   "replaceImage",
   "updateSlidesPosition",
   "updatePageProperties",
+  // Ocultar/mostrar una lámina en la presentación (`isSkipped`). No borra nada: la lámina
+  // sigue en el archivo y se vuelve a mostrar con la misma operación.
+  "updateSlideProperties",
   "updateShapeProperties",
   "updateImageProperties",
   "updateVideoProperties",

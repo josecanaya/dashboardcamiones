@@ -80,13 +80,14 @@ export function PlantMap(props: {
   compact?: boolean
   showCircuitControls?: boolean
   align?: 'left' | 'center'
+  flowPulse?: { ingress: number; egress: number }
   zones: ZoneState[]
   onOpenCameras: (group: PlantCameraGroup) => void
   onSelectSector?: (sectorCode: string) => void
   onSelectZone?: (zoneId: string) => void
   selectedSector?: string | null
 }): JSX.Element {
-  const { layout, site = 'ricardone', compact = false, showCircuitControls = true, align = 'center', zones, onOpenCameras, onSelectSector, onSelectZone, selectedSector } = props
+  const { layout, site = 'ricardone', compact = false, showCircuitControls = true, align = 'center', flowPulse = { ingress: 0, egress: 0 }, zones, onOpenCameras, onSelectSector, onSelectZone, selectedSector } = props
   const [hovered, setHovered] = useState<string | null>(null)
   const [hoveredZone, setHoveredZone] = useState<string | null>(null)
   const [circuit, setCircuit] = useState<string | null>(null)
@@ -180,10 +181,12 @@ export function PlantMap(props: {
       */}
       <div
         className={`relative max-w-full overflow-hidden rounded-2xl bg-slate-900 shadow-[0_18px_45px_rgba(15,23,42,.18)] ${align === 'left' ? 'mr-auto' : 'mx-auto'}`}
-        style={{
-          aspectRatio: compact ? '16 / 10' : `${base.width} / ${base.height}`,
-          width: compact ? '100%' : `min(100%, calc(68vh * ${base.width / base.height}))`,
-        }}
+        style={compact
+          ? { aspectRatio: '16 / 10', width: '100%' }
+          // Relación real de la imagen: si se deforma, los puntos y los polígonos
+          // dejan de caer donde los puso el editor. El alto se topea contra la
+          // ventana y el ancho lo deduce el navegador, nunca al revés.
+          : { aspectRatio: `${base.width} / ${base.height}`, height: 'min(62vh, 620px)', width: 'auto', maxWidth: '100%' }}
       >
         <div
           className="absolute"
@@ -199,6 +202,13 @@ export function PlantMap(props: {
           draggable={false}
           className="absolute inset-0 h-full w-full select-none"
         />
+
+        {flowPulse.ingress > 0 ? points.filter(point => point.id === 'S0').map(point => (
+          <div key={`ingress-${flowPulse.ingress}-${point.id}`} className="tf-flow-pulse tf-flow-pulse--in" style={{ left: `${point.xPercent}%`, top: `${point.yPercent}%` }}><b>↓</b><span>Ingreso</span></div>
+        )) : null}
+        {flowPulse.egress > 0 ? points.filter(point => point.id === 'S3' || point.id === 'S10').map(point => (
+          <div key={`egress-${flowPulse.egress}-${point.id}`} className="tf-flow-pulse tf-flow-pulse--out" style={{ left: `${point.xPercent}%`, top: `${point.yPercent}%` }}><b>↑</b><span>Egreso</span></div>
+        )) : null}
 
         {/* Capa 2: el recorrido del circuito elegido */}
         <svg
@@ -258,6 +268,27 @@ export function PlantMap(props: {
               />
             )
           }) : null}
+          {showSectors ? layout.zones.map((zone) => {
+            const vertices = zone.polygonPercent ?? []
+            const live = liveZoneById.get(zone.zoneId)
+            if (vertices.length < 3 || !live) return null
+            const center = polygonCenter(vertices)
+            return <g key={`capacity-${zone.zoneId}`} transform={`translate(${center.x / 100 * base.width} ${center.y / 100 * base.height})`} className="pointer-events-none">
+              <text textAnchor="middle" y="-8" fontSize="18" fontWeight="800" fill="#fff" stroke="rgba(15,23,42,.9)" strokeWidth="5" paintOrder="stroke">OCUPACIÓN</text>
+              {/* Zona ciega: sin lecturas en la entrada, "0" mentiría diciendo que está vacía. */}
+              {live.entryBlind ? (
+                <text textAnchor="middle" y="30" fontSize="30" fontWeight="900" fill="#fff" stroke="rgba(15,23,42,.92)" strokeWidth="7" paintOrder="stroke">SIN DATO</text>
+              ) : (
+                <>
+                  <text textAnchor="middle" y="35" fontSize="44" fontWeight="900" fill="#fff" stroke="rgba(15,23,42,.92)" strokeWidth="8" paintOrder="stroke">{live.backlogInferred ? '≈' : ''}{live.backlog}{live.capacityOperational != null ? `/${live.capacityOperational}` : ''}</text>
+                  {/* El simbolo solo no alcanza: hay que decir por que es estimado. */}
+                  {live.backlogInferred ? (
+                    <text textAnchor="middle" y="58" fontSize="15" fontWeight="800" fill="#FCD34D" stroke="rgba(15,23,42,.92)" strokeWidth="4" paintOrder="stroke">ESTIMADO · CÁMARA DE INGRESO CAÍDA</text>
+                  ) : null}
+                </>
+              )}
+            </g>
+          }) : null}
           {active
             ? activeSegments.map(({ key, from, to }) => {
                 const a = byId.get(from)
@@ -311,7 +342,7 @@ export function PlantMap(props: {
           return (
             <div key={`zone-label-${zone.zoneId}`} className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-1/2 rounded-lg border border-slate-200 bg-white/95 px-2 py-1 shadow-md" style={{ left: `${center.x}%`, top: `${center.y}%` }}>
               <div className="whitespace-nowrap text-[11px] font-bold text-slate-800">{zone.label}</div>
-              <div className="mt-0.5 flex items-center gap-1 text-[9.5px] text-slate-500"><span className="h-1.5 w-1.5 rounded-full" style={{ background: status.ring }} />{status.label}{live ? ` · ${live.backlog} esperando` : ''}</div>
+              <div className="mt-0.5 flex items-center gap-1 text-[9.5px] text-slate-500"><span className="h-1.5 w-1.5 rounded-full" style={{ background: status.ring }} />{status.label}{live ? (live.entryBlind ? ' · sin lectura en la entrada' : live.backlogInferred ? ` · ~${live.backlog} esperando (estimado)` : ` · ${live.backlog} esperando`) : ''}</div>
             </div>
           )
         }) : null}

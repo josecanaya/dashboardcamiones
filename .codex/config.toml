@@ -3,3 +3,6 @@ command = 'C:\Users\Usuario\Desktop\Dashboard_camiones\agentes\.venv\Scripts\etl
 
 [mcp_servers.etl.env]
 ETL_API_BASE = "http://127.0.0.1:8787"
+
+[mcp_servers.google-slides]
+url = "http://127.0.0.1:8790/mcp"

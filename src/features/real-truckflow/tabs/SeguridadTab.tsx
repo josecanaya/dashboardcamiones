@@ -19,6 +19,13 @@ import type { ReconstructedRealSiteId } from '../../../etl-core/domain/journeyEv
 import { postTruckflowLoadLocalPeriod } from '../api/truckflowLocalServerApi'
 import { journeyDtoListFromRawExtractedRowsChunked } from '../../../services/realTruckflowApi'
 import { normalizePlate } from '../../../etl-core/domain/argentinaPlate'
+import {
+  detectRicToSlWithoutSlCalada,
+  detectSlFlashVisit,
+  RIC_SL_NO_CALADA_MIN_MS,
+  RIC_SL_NO_CALADA_MAX_MS,
+  type GoldenTimelinePoint,
+} from '../../../etl-core/domain/goldenAnomalyRules'
 
 /**
  * Seguridad · Anomalías: láminas de comité para revisar cada anomalía. Usa la MISMA revisión que el
@@ -101,6 +108,19 @@ type TimelineNode = {
   ms: number
 }
 
+type ManualStep = { key: string; site: TimelineNode['site']; label: string; iso: string }
+const manualStepsKey = (journeyId: string) => `seg-manual-steps:${journeyId}`
+const nodeOrderKey = (journeyId: string) => `seg-node-order:${journeyId}`
+function readStoredArray<T>(key: string): T[] {
+  try {
+    const value = JSON.parse(localStorage.getItem(key) || '[]')
+    return Array.isArray(value) ? value : []
+  } catch { return [] }
+}
+function writeStoredArray(key: string, value: unknown[]): void {
+  try { localStorage.setItem(key, JSON.stringify(value)) } catch { /* storage unavailable */ }
+}
+
 /** HH:MM:SS del instante operativo. */
 function fmtClock(iso: string): string {
   const m = String(iso ?? '').match(/[T ](\d{2}:\d{2}:\d{2})/)
@@ -155,31 +175,34 @@ function prettyLogical(code: string): { label: string; site: 'ricardone' | 'san_
  * {@link normalizeRealEventPoint}; se descartan las cámaras traseras excluidas. Si no hay eventos
  * cargados, cae al `detectedSequence` del recorrido (nodos + planta, sin horario).
  */
-function buildTruckTimeline(events: RealJourneyEventDto[], truck: CircuitClassificationEntry): {
+function buildTruckTimeline(events: RealJourneyEventDto[], truck: CircuitClassificationEntry, relatedTrucks: CircuitClassificationEntry[] = [truck]): {
   nodes: TimelineNode[]
   hasTimes: boolean
 } {
   const plate = truck.normalizedPlate
-  const firstMs = (() => {
+  const firstMs = Math.min(...relatedTrucks.map((entry) => {
     // R2 con journey previo absorbido: el rango del recorrido arranca en el journey de ida.
     // Ver `absorbPriorJourneyIntoR2` en etlCircuitClassificationIndex.
-    const absorbed = Date.parse(truck.absorbedPriorFirstEventAt ?? '')
-    const own = Date.parse(truck.firstEventAt)
+    const absorbed = Date.parse(entry.absorbedPriorFirstEventAt ?? '')
+    const own = Date.parse(entry.firstEventAt)
     if (Number.isFinite(absorbed) && Number.isFinite(own)) return Math.min(absorbed, own)
     return Number.isFinite(absorbed) ? absorbed : own
-  })()
-  const lastMs = Date.parse(truck.lastEventAt)
+  }))
+  const lastMs = Math.max(...relatedTrucks.map((entry) => Date.parse(entry.lastEventAt)).filter(Number.isFinite))
   const tol = 1000
   if (plate && events.length) {
     const nodes: TimelineNode[] = []
+    const seen = new Set<string>()
     for (const e of events) {
       if (e.normalizedPlate !== plate) continue
+      if (seen.has(String(e.id))) continue
       const ms = getEventOperationalInstantMs(e)
       if (!Number.isFinite(ms)) continue
       if (Number.isFinite(firstMs) && ms < firstMs - tol) continue
       if (Number.isFinite(lastMs) && ms > lastMs + tol) continue
       const p = normalizeRealEventPoint(e)
       if (/EXCLUIDA|TRASERA/.test(p.logicalCode)) continue
+      seen.add(String(e.id))
       nodes.push({
         key: `${e.id}`,
         site: siteBucket(p.siteId),
@@ -380,6 +403,7 @@ async function importDssCapturesForTruck(
   const rows = (data.rows ?? []).filter((r) => normalizePlate(r.plate) === normPlate)
 
   let matched = 0
+  const usedCaptures = new Set<string>()
   for (const n of nodes) {
     if (!Number.isFinite(n.ms)) continue // fallback sin horario: nada para cruzar
     const deviceCode = deviceByEventId.get(n.key)
@@ -389,6 +413,8 @@ async function importDssCapturesForTruck(
     let bestDelta = Infinity
     for (const r of rows) {
       if (r.deviceName !== deviceCode) continue
+      const captureId = `${r.zip}:${r.sceneImage}:${r.plateImage}`
+      if (usedCaptures.has(captureId)) continue
       const t = Date.parse(r.captureTimeIso)
       if (!Number.isFinite(t)) continue
       const delta = Math.abs(t - n.ms)
@@ -398,6 +424,7 @@ async function importDssCapturesForTruck(
       }
     }
     if (!best || bestDelta > DSS_CAPTURE_MATCH_TOLERANCE_MS) continue
+    usedCaptures.add(`${best.zip}:${best.sceneImage}:${best.plateImage}`)
 
     const sceneKey = `seg-cam:truck:${journeyId}:${n.key}`
     const plateKey = `${sceneKey}:plate`
@@ -410,7 +437,8 @@ async function importDssCapturesForTruck(
       return blobToDataUrl(await r.blob())
     }
     const [sceneUrl, plateUrl] = await Promise.all([fetchImage(best.sceneImage), fetchImage(best.plateImage)])
-    if (sceneUrl && (await idbSetImage(sceneKey, sceneUrl))) matched += 1
+    // Una foto elegida a mano no debe desaparecer al volver a importar.
+    if (sceneUrl && ((await idbGetImage(sceneKey)) || (await idbSetImage(sceneKey, sceneUrl)))) matched += 1
     if (plateUrl) await idbSetImage(plateKey, plateUrl)
   }
   return { matched, candidatos: rows.length }
@@ -424,10 +452,12 @@ async function importDssCapturesForTruck(
  */
 function TruckJourneyView({
   truck,
+  relatedTrucks,
   wbEvents,
   onBack,
 }: {
   truck: CircuitClassificationEntry
+  relatedTrucks: CircuitClassificationEntry[]
   wbEvents: RealJourneyEventDto[]
   onBack: () => void
 }) {
@@ -449,10 +479,9 @@ function TruckJourneyView({
     setLocalEvents([])
     void (async () => {
       // R2 absorbido: cargar también el día del journey de ida (puede ser el día anterior).
-      const absorbedFirst = truck.absorbedPriorFirstEventAt ? dayKey(truck.absorbedPriorFirstEventAt) : ''
-      const firstOwn = dayKey(truck.firstEventAt)
-      const first = absorbedFirst && (!firstOwn || absorbedFirst < firstOwn) ? absorbedFirst : firstOwn
-      const last = dayKey(truck.lastEventAt) || first
+      const first = relatedTrucks.flatMap((entry) => [dayKey(entry.firstEventAt), dayKey(entry.absorbedPriorFirstEventAt ?? '')]).filter(Boolean).sort()[0] ?? ''
+      const lastDays = relatedTrucks.map((entry) => dayKey(entry.lastEventAt)).filter(Boolean).sort()
+      const last = lastDays[lastDays.length - 1] ?? first
       // -1 día en el arranque: createdAt (instante operativo) puede caer un día después de occurredAt.
       const startDate = first ? shiftDay(first, -1) : last
       const endDate = last || first
@@ -469,12 +498,12 @@ function TruckJourneyView({
     return () => {
       alive = false
     }
-  }, [truck.journeyId, truck.firstEventAt, truck.lastEventAt, plateInWb])
+  }, [relatedTrucks, plateInWb])
 
   const effectiveEvents = plateInWb ? wbEvents : localEvents
   const { nodes, hasTimes } = useMemo(
-    () => buildTruckTimeline(effectiveEvents, truck),
-    [effectiveEvents, truck]
+    () => buildTruckTimeline(effectiveEvents, truck, relatedTrucks),
+    [effectiveEvents, truck, relatedTrucks]
   )
   const spansDays = useMemo(() => {
     const days = new Set(nodes.filter((n) => n.iso).map((n) => fmtDay(n.iso)))
@@ -502,10 +531,57 @@ function TruckJourneyView({
   // ---- Edición del recorrido: ocultar cuadraditos (cámaras duplicadas o erróneas) ----
   const [editMode, setEditMode] = useState(false)
   const hKey = hiddenNodesKey(truck.journeyId)
+  const [manualSteps, setManualSteps] = useState<ManualStep[]>([])
+  const [nodeOrder, setNodeOrder] = useState<string[]>([])
+  const [newLabel, setNewLabel] = useState('')
+  const [newTime, setNewTime] = useState('')
+  const [newSite, setNewSite] = useState<TimelineNode['site']>('ricardone')
   const [hiddenNodes, setHiddenNodes] = useState<Set<string>>(() => new Set())
   useEffect(() => {
     setHiddenNodes(loadHiddenSet(hKey))
+    setManualSteps(readStoredArray<ManualStep>(manualStepsKey(truck.journeyId)))
+    setNodeOrder(readStoredArray<string>(nodeOrderKey(truck.journeyId)))
   }, [hKey])
+  const allNodes = useMemo(() => {
+    const extra: TimelineNode[] = manualSteps.map((step) => ({
+      ...step, logicalCode: step.label, ms: Date.parse(step.iso),
+    }))
+    const combined = [...nodes, ...extra]
+    const positions = new Map(nodeOrder.map((key, index) => [key, index]))
+    return combined.sort((a, b) => {
+      const aPos = positions.get(a.key)
+      const bPos = positions.get(b.key)
+      if (aPos != null && bPos != null) return aPos - bPos
+      if (aPos != null) return -1
+      if (bPos != null) return 1
+      return (Number.isFinite(a.ms) ? a.ms : Infinity) - (Number.isFinite(b.ms) ? b.ms : Infinity)
+    })
+  }, [nodes, manualSteps, nodeOrder])
+  const addStep = () => {
+    const label = newLabel.trim()
+    if (!label) return
+    const step: ManualStep = { key: `manual-${crypto.randomUUID()}`, label, site: newSite, iso: newTime ? `${newTime}:00-03:00` : '' }
+    const next = [...manualSteps, step]
+    setManualSteps(next)
+    writeStoredArray(manualStepsKey(truck.journeyId), next)
+    setNewLabel('')
+    setNewTime('')
+  }
+  const removeStep = (key: string) => {
+    const next = manualSteps.filter((step) => step.key !== key)
+    setManualSteps(next)
+    writeStoredArray(manualStepsKey(truck.journeyId), next)
+    void idbDeleteImage(`seg-cam:truck:${truck.journeyId}:${key}`)
+  }
+  const moveStep = (key: string, direction: number) => {
+    const order = allNodes.map((node) => node.key)
+    const index = order.indexOf(key)
+    const target = index + direction
+    if (target < 0 || target >= order.length) return
+    ;[order[index], order[target]] = [order[target]!, order[index]!]
+    setNodeOrder(order)
+    writeStoredArray(nodeOrderKey(truck.journeyId), order)
+  }
   const toggleNode = (key: string) => {
     setHiddenNodes((prev) => {
       const next = new Set(prev)
@@ -527,14 +603,14 @@ function TruckJourneyView({
     setSavedFlash(true)
     window.setTimeout(() => setSavedFlash(false), 1800)
   }
-  const visibleNodes = useMemo(() => nodes.filter((n) => !hiddenNodes.has(n.key)), [nodes, hiddenNodes])
-  const hiddenCount = nodes.length - visibleNodes.length
+  const visibleNodes = useMemo(() => allNodes.filter((n) => !hiddenNodes.has(n.key)), [allNodes, hiddenNodes])
+  const hiddenCount = allNodes.length - visibleNodes.length
   /** Numeración + tiempo desde el paso anterior VISIBLE (se recalcula al ocultar cuadraditos). */
   const nodeMeta = useMemo(() => {
     const m = new Map<string, { elapsed: string; vIdx: number }>()
     let prev: TimelineNode | null = null
     let idx = 0
-    for (const n of nodes) {
+    for (const n of allNodes) {
       if (hiddenNodes.has(n.key)) continue
       const elapsed =
         prev && hasTimes && Number.isFinite(prev.ms) && Number.isFinite(n.ms)
@@ -545,7 +621,7 @@ function TruckJourneyView({
       idx += 1
     }
     return m
-  }, [nodes, hiddenNodes, hasTimes])
+  }, [allNodes, hiddenNodes, hasTimes])
 
   return (
     <section className="space-y-4">
@@ -660,6 +736,24 @@ function TruckJourneyView({
           </p>
         ) : null}
 
+        {editMode ? (
+          <div className="mb-4 flex flex-wrap items-end gap-2 rounded-xl border border-violet-200 bg-violet-50 p-3 text-xs">
+            <label className="flex flex-col gap-1 font-semibold text-slate-700">Paso o sector
+              <input value={newLabel} onChange={(e) => setNewLabel(e.target.value)} placeholder="Ej. Balanza salida" className="rounded border border-slate-300 bg-white px-2 py-1.5" />
+            </label>
+            <label className="flex flex-col gap-1 font-semibold text-slate-700">Planta
+              <select value={newSite} onChange={(e) => setNewSite(e.target.value as TimelineNode['site'])} className="rounded border border-slate-300 bg-white px-2 py-1.5">
+                <option value="ricardone">Ricardone</option><option value="san_lorenzo">San Lorenzo</option><option value="other">Otra</option>
+              </select>
+            </label>
+            <label className="flex flex-col gap-1 font-semibold text-slate-700">Fecha y hora (opcional)
+              <input type="datetime-local" value={newTime} onChange={(e) => setNewTime(e.target.value)} className="rounded border border-slate-300 bg-white px-2 py-1.5" />
+            </label>
+            <button type="button" onClick={addStep} disabled={!newLabel.trim()} className="rounded bg-violet-600 px-3 py-1.5 font-bold text-white disabled:opacity-40">+ Agregar paso</button>
+            <span className="text-slate-500">Después podés cargar su imagen y moverlo con las flechas.</span>
+          </div>
+        ) : null}
+
         {loadingEvents && !hasTimes ? (
           <div className="flex items-center gap-3 py-8 text-sm text-slate-500">
             <svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2">
@@ -667,7 +761,7 @@ function TruckJourneyView({
             </svg>
             Cargando eventos crudos para los horarios…
           </div>
-        ) : nodes.length === 0 ? (
+        ) : allNodes.length === 0 ? (
           <p className="py-6 text-sm text-slate-500">Sin recorrido reconstruible para este camión.</p>
         ) : (
           <>
@@ -676,7 +770,7 @@ function TruckJourneyView({
                 autocontenido: cámara (con foto) → hora → sector debajo de la hora → tiempo desde el
                 paso anterior. Color por planta (azul Ricardone / naranja San Lorenzo). */}
             <div className="flex flex-wrap gap-x-4 gap-y-6">
-              {(editMode ? nodes : visibleNodes).map((n) => {
+              {(editMode ? allNodes : visibleNodes).map((n) => {
                 const st = SITE_STYLE[n.site]
                 const info = nodeMeta.get(n.key)
                 const isHidden = hiddenNodes.has(n.key)
@@ -687,7 +781,10 @@ function TruckJourneyView({
                     {/* Franja superior: en edición, botón quitar/restaurar; si no, tiempo desde el
                         paso anterior visible (queda alineado al hacer wrap). */}
                     {editMode ? (
-                      <div className="mb-1 flex h-5 items-center justify-center">
+                      <div className="mb-1 flex h-5 items-center justify-center gap-1">
+                        <button type="button" onClick={() => moveStep(n.key, -1)} title="Mover antes" className="rounded border border-slate-300 bg-white px-1">←</button>
+                        <button type="button" onClick={() => moveStep(n.key, 1)} title="Mover después" className="rounded border border-slate-300 bg-white px-1">→</button>
+                        {n.key.startsWith('manual-') ? <button type="button" onClick={() => removeStep(n.key)} title="Eliminar paso agregado" className="rounded border border-rose-300 bg-white px-1 text-rose-700">✕</button> : null}
                         {isHidden ? (
                           <button
                             type="button"
@@ -735,9 +832,10 @@ function TruckJourneyView({
                         width={190}
                         height={124}
                         hideLabel
+                        editable={editMode}
                       />
                       {/* Hora del paso por el nodo (pill grande por planta) */}
-                      {hasTimes && n.iso ? (
+                      {n.iso ? (
                         <span
                           className={`mt-2 rounded-lg px-3 py-1.5 text-center font-mono text-lg font-bold tabular-nums shadow-sm ${st.badge}`}
                         >
@@ -750,7 +848,7 @@ function TruckJourneyView({
                       )}
                       {/* Sector de la cámara, DEBAJO de la hora (INGRESO, EGRESO, CALADA…) */}
                       <span className={`mt-1 text-center text-[12.5px] font-bold ${st.time}`} title={n.label}>
-                        {humanizeSector(n.logicalCode)}
+                        {n.key.startsWith('manual-') ? n.label : humanizeSector(n.logicalCode)}
                       </span>
                       {hasTimes && n.iso && spansDays ? (
                         <span className="text-[11px] font-semibold text-slate-400">{fmtDay(n.iso)}</span>
@@ -997,10 +1095,40 @@ type SecurityGroup = {
   referenceSequence?: string
 }
 
+/**
+ * Circuitos permitidos por regla: si está definido, SOLO esos circuitos figuran en el grupo.
+ * R6 (Ric → SL sin calado) es un control de GRANO: el calado (muestreo) solo aplica al circuito de
+ * grano a puerto (R7). Aceite (R8), pellet u otros no pasan por ese calado, así que R6 no debe
+ * listarlos (pedido del usuario: «solo camiones de R7 deben figurar»).
+ */
+const RULE_ALLOWED_CIRCUITS: Record<string, Set<string>> = {
+  RIC_SL_MAS30M_SIN_CALADA_SL: new Set(['R7']),
+}
+
+/**
+ * Una tarjeta por patente: varios journeys o ciclos (`__cycle_n`) del mismo camión con la misma
+ * regla colapsan en una sola tarjeta. Sin esto queda una «gemela» al descartar (se borra un journey
+ * y el otro del mismo camión sigue visible). Se conserva el primero (orden estable del listado).
+ */
+function dedupeTrucksByPlate(trucks: CircuitClassificationEntry[]): CircuitClassificationEntry[] {
+  const seen = new Set<string>()
+  const out: CircuitClassificationEntry[] = []
+  for (const t of trucks) {
+    const plate = t.normalizedPlate || t.plate
+    if (!plate) {
+      out.push(t)
+      continue
+    }
+    if (seen.has(plate)) continue
+    seen.add(plate)
+    out.push(t)
+  }
+  return out
+}
+
 /** Agrupa los camiones anómalos por regla de oro (`anomalyKindReason`), orden por volumen. */
 function buildGoldenGroups(rows: AnomalySequenceBreakdownRow[]): SecurityGroup[] {
   const allTrucks = rows.flatMap((r) => r.trucks)
-  const total = allTrucks.length || 1
   // Agrupamos por la regla PADRE: los 3 sub-motivos de R2 caen todos en el grupo R2.
   const byReason = new Map<string, CircuitClassificationEntry[]>()
   for (const t of allTrucks) {
@@ -1011,9 +1139,17 @@ function buildGoldenGroups(rows: AnomalySequenceBreakdownRow[]): SecurityGroup[]
     if (arr) arr.push(t)
     else byReason.set(key, [t])
   }
+  // Por regla: filtrar por circuito permitido (R6→R7) y dejar una tarjeta por patente.
+  const cleanedByReason = new Map<string, CircuitClassificationEntry[]>()
+  for (const [key, trucks] of byReason) {
+    const allowed = RULE_ALLOWED_CIRCUITS[key]
+    const filtered = allowed ? trucks.filter((t) => allowed.has(t.executiveCircuitCode)) : trucks
+    cleanedByReason.set(key, dedupeTrucksByPlate(filtered))
+  }
+  const total = [...cleanedByReason.values()].reduce((n, l) => n + l.length, 0) || 1
   const groups: SecurityGroup[] = []
   for (const rule of GOLDEN_RULES) {
-    const trucks = byReason.get(rule.reason)
+    const trucks = cleanedByReason.get(rule.reason)
     if (!trucks?.length) continue
     const group: SecurityGroup = {
       key: `golden:${rule.reason}`,
@@ -1039,7 +1175,7 @@ function buildGoldenGroups(rows: AnomalySequenceBreakdownRow[]): SecurityGroup[]
     }
     groups.push(group)
   }
-  const otras = byReason.get('OTRAS')
+  const otras = cleanedByReason.get('OTRAS')
   if (otras?.length) {
     groups.push({
       key: 'golden:OTRAS',
@@ -1077,6 +1213,7 @@ function CameraSlot({
   width = 132,
   height = 84,
   hideLabel = false,
+  editable = false,
 }: {
   storageKey: string
   label: string
@@ -1086,8 +1223,15 @@ function CameraSlot({
   height?: number
   /** Oculta la etiqueta bajo la tarjeta (cuando el sector ya se muestra debajo de la hora). */
   hideLabel?: boolean
+  editable?: boolean
 }) {
   const [img, setImg] = useState<string | null>(null)
+  const [showWholeImage, setShowWholeImage] = useState(() => {
+    try { return localStorage.getItem(`${storageKey}:fit`) === 'contain' } catch { return false }
+  })
+  useEffect(() => {
+    try { setShowWholeImage(localStorage.getItem(`${storageKey}:fit`) === 'contain') } catch { setShowWholeImage(false) }
+  }, [storageKey])
   useEffect(() => {
     let alive = true
     const load = async () => {
@@ -1190,7 +1334,7 @@ function CameraSlot({
         style={{ height }}
       >
         {img ? (
-          <img src={img} alt={label} className="h-full w-full object-cover" />
+          <img src={img} alt={label} className={`h-full w-full ${showWholeImage ? 'object-contain' : 'object-cover'}`} />
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-1 px-2">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="1.4">
@@ -1239,6 +1383,15 @@ function CameraSlot({
             DSS
           </span>
         )}
+        {img && editable ? (
+          <button type="button" onClick={() => {
+            const next = !showWholeImage
+            setShowWholeImage(next)
+            try { localStorage.setItem(`${storageKey}:fit`, next ? 'contain' : 'cover') } catch { /* storage unavailable */ }
+          }} className="absolute left-1.5 top-1.5 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-bold text-white">
+            {showWholeImage ? 'Llenar' : 'Ver completa'}
+          </button>
+        ) : null}
       </div>
       {hideLabel ? null : (
         <div
@@ -1390,20 +1543,90 @@ function TruckGrid({
 }
 
 /**
- * Reglas de tramo: la tarjeta muestra el tramo específico (día + minutos) en vez del
- * recorrido completo. Se resuelven desde los eventos del workbench sin recalcular la regla.
+ * Reglas de tramo: la tarjeta muestra el tramo específico (día + minutos) en vez del recorrido
+ * completo. Para R6/R9 el minutaje sale del DETECTOR REAL de la regla (misma banda y salteo de
+ * calado), así nunca muestra un número que contradiga la regla; para el resto (R12) se busca el
+ * primer par (from → to) en la timeline.
  */
+
+/** Minutos con 1 decimal (misma fórmula que `roundMin` en goldenAnomalyRules). */
+function roundMin1(ms: number): number {
+  return Math.round((ms / 60000) * 10) / 10
+}
+
+/** Punto de timeline (GoldenTimelinePoint + ISO operativo para mostrar el día). */
+type FrontTimelinePoint = GoldenTimelinePoint & { iso: string }
+
+/** Puntos de UNA patente, ordenados por tiempo operativo (getEventOperationalInstantIso). */
+function platePointsFromEvents(
+  events: readonly RealJourneyEventDto[],
+  plate: string
+): FrontTimelinePoint[] {
+  return events
+    .filter((e) => String(e.normalizedPlate || '').toUpperCase() === plate)
+    .map((e) => {
+      const pt = normalizeRealEventPoint(e)
+      const iso = getEventOperationalInstantIso(e)
+      return { t: parseTimestampMs(iso), logicalCode: pt.logicalCode, siteId: pt.siteId, iso }
+    })
+    .filter((p) => Number.isFinite(p.t) && !p.logicalCode.includes('TRASERA_EXCLUIDA'))
+    .sort((a, b) => a.t - b.t)
+}
+
+/**
+ * R6: reusa `detectRicToSlWithoutSlCalada` (banda 30 min–2 h + salteo de calado, idéntico a la
+ * regla) para el minutaje; localiza el egreso de Ricardone del tramo para el día.
+ */
+function r6FocusSegment(points: FrontTimelinePoint[]): { minutes: number; fromIso: string } | null {
+  const hit = detectRicToSlWithoutSlCalada(points)
+  if (!hit || hit.deltaMinutes == null) return null
+  for (let i = 0; i < points.length; i++) {
+    const eg = points[i]!
+    if (eg.logicalCode !== 'EGRESO' || (eg.siteId && eg.siteId !== 'ricardone')) continue
+    for (let j = i + 1; j < points.length; j++) {
+      const sl = points[j]!
+      if (sl.logicalCode !== 'SL_INGRESO' || (sl.siteId && sl.siteId !== 'san_lorenzo')) continue
+      const d = sl.t - eg.t
+      if (d <= 0) continue
+      if (d > RIC_SL_NO_CALADA_MAX_MS) break
+      if (d <= RIC_SL_NO_CALADA_MIN_MS) continue
+      if (roundMin1(d) === hit.deltaMinutes) return { minutes: hit.deltaMinutes, fromIso: eg.iso }
+      break
+    }
+  }
+  return { minutes: hit.deltaMinutes, fromIso: points[0]?.iso ?? '' }
+}
+
+/** R9: reusa `detectSlFlashVisit` para el minutaje; localiza el SL_INGRESO del tramo. */
+function r9FocusSegment(points: FrontTimelinePoint[]): { minutes: number; fromIso: string } | null {
+  const hit = detectSlFlashVisit(points)
+  if (!hit || hit.deltaMinutes == null) return null
+  for (let i = 0; i < points.length; i++) {
+    const ing = points[i]!
+    if (ing.logicalCode !== 'SL_INGRESO' || (ing.siteId && ing.siteId !== 'san_lorenzo')) continue
+    for (let j = i + 1; j < points.length; j++) {
+      const p = points[j]!
+      if (p.siteId === 'ricardone') break
+      if (p.logicalCode === 'SL_EGRESO' || p.logicalCode === 'SL_BALANZA_SALIDA') {
+        if (roundMin1(p.t - ing.t) === hit.deltaMinutes) return { minutes: hit.deltaMinutes, fromIso: ing.iso }
+        break
+      }
+    }
+  }
+  return { minutes: hit.deltaMinutes, fromIso: points[0]?.iso ?? '' }
+}
+
+/** Reglas de tramo con detector propio: el minutaje mostrado es el mismo que evalúa la regla. */
+const FOCUS_SEGMENT_DETECTORS: Record<string, {
+  label: string
+  detect: (points: FrontTimelinePoint[]) => { minutes: number; fromIso: string } | null
+}> = {
+  RIC_SL_MAS30M_SIN_CALADA_SL: { label: 'Ric → SL', detect: r6FocusSegment },
+  SL_VISITA_RELAMPAGO_SIN_OPERAR: { label: 'Estadía SL', detect: r9FocusSegment },
+}
+
+/** Reglas de tramo por par (from → to) simple, sin banda: R12. */
 const FOCUS_SEGMENT_RULES: Record<string, { from: (p: string, site: string) => boolean; to: (p: string, site: string) => boolean; label: string }> = {
-  RIC_SL_MAS30M_SIN_CALADA_SL: {
-    from: (lg, st) => lg === 'EGRESO' && st === 'ricardone',
-    to: (lg, st) => lg === 'SL_INGRESO' && st === 'san_lorenzo',
-    label: 'Ric → SL',
-  },
-  SL_VISITA_RELAMPAGO_SIN_OPERAR: {
-    from: (lg) => lg === 'SL_INGRESO',
-    to: (lg) => lg === 'SL_EGRESO',
-    label: 'Estadía SL',
-  },
   VOLCABLE_SIN_CALADA_RIC: {
     from: (lg, st) => (lg === 'INGRESO' || lg === 'PREINGRESO') && st === 'ricardone',
     to: (lg, st) => lg === 'VOLCABLE' && st === 'ricardone',
@@ -1411,18 +1634,43 @@ const FOCUS_SEGMENT_RULES: Record<string, { from: (p: string, site: string) => b
   },
 }
 
+/** ¿La regla muestra un tramo (día + minutos) en la tarjeta? */
+function ruleHasFocusSegment(reason: string): boolean {
+  return reason in FOCUS_SEGMENT_DETECTORS || reason in FOCUS_SEGMENT_RULES
+}
+
 /**
- * Construye el mapa journeyId → {día, minutos, label} para las reglas de tramo, buscando el
- * primer par (from, to) que aparece en la timeline del camión. Devuelve `null` para journeys
- * cuyo par no se puede armar (la tarjeta cae al modo normal).
+ * Construye el mapa journeyId → {día, minutos, label} para las reglas de tramo. R6/R9 usan su
+ * detector (minutaje idéntico a la regla); R12 busca el primer par (from → to). Journeys sin tramo
+ * armable caen al modo normal (Inicio/Fin).
  */
 function buildFocusSegmentMap(
   reason: string,
   trucks: readonly CircuitClassificationEntry[],
   events: readonly RealJourneyEventDto[]
 ): Map<string, { day: string; minutes: number; label: string }> {
-  const spec = FOCUS_SEGMENT_RULES[reason]
   const out = new Map<string, { day: string; minutes: number; label: string }>()
+
+  // R6/R9: minutaje del detector real, cacheado por patente (el detector corre sobre toda la
+  // timeline de la patente, igual que en el pipeline).
+  const detector = FOCUS_SEGMENT_DETECTORS[reason]
+  if (detector) {
+    const byPlate = new Map<string, { minutes: number; fromIso: string } | null>()
+    for (const t of trucks) {
+      const plate = String(t.normalizedPlate || t.plate || '').toUpperCase()
+      if (!plate || out.has(t.journeyId)) continue
+      let seg = byPlate.get(plate)
+      if (seg === undefined) {
+        seg = detector.detect(platePointsFromEvents(events, plate))
+        byPlate.set(plate, seg)
+      }
+      if (!seg || !seg.fromIso) continue
+      out.set(t.journeyId, { day: fmtDate(seg.fromIso), minutes: Math.round(seg.minutes), label: detector.label })
+    }
+    return out
+  }
+
+  const spec = FOCUS_SEGMENT_RULES[reason]
   if (!spec) return out
   const byJourneyPlate = new Map<string, RealJourneyEventDto[]>()
   for (const t of trucks) {
@@ -1486,10 +1734,35 @@ export function SeguridadTab() {
     () => selected?.trucks.find((t) => t.journeyId === selTruckId) ?? null,
     [selected, selTruckId]
   )
+  const relatedTrucks = useMemo(() => {
+    if (!selTruck || !selected) return []
+    const source = selected.kind === 'golden'
+      ? review.sequenceRows.flatMap((row) => row.trucks).filter((entry) =>
+          parentRuleReason(String(entry.anomalyKindReason ?? '').trim()) === parentRuleReason(String(selTruck.anomalyKindReason ?? '').trim()))
+      : selected.trucks
+    return source.filter((entry) => entry.normalizedPlate === selTruck.normalizedPlate)
+  }, [selTruck, selected, review.sequenceRows])
 
   // Eventos ya en memoria (carga fresca): sirven de atajo. Si no están, el detalle del camión
   // trae solo los días de ESE recorrido (ver TruckJourneyView), sin cargar la ventana entera.
   const events = wb?.events ?? []
+  const ensureWindowEventsLoaded = wb?.ensureWindowEventsLoaded
+  const windowEventsBusy = wb?.windowEventsBusy ?? false
+
+  // Reglas de tramo (R6/R9/R12): la tarjeta muestra la DEMORA del tramo (p. ej. egreso Ric →
+  // ingreso SL en R6), y esa demora se mide sobre eventos crudos. Las ventanas guardadas traen las
+  // tablas materializadas pero NO los eventos, así que al abrir un grupo de estas reglas los
+  // pedimos una vez para la ventana entera. `ensureWindowEventsLoaded` es idempotente (no recarga
+  // si ya están) y no toca el transform ni el KPI.
+  const selectedFocusReason =
+    selected && selected.kind === 'golden' && selected.rule && ruleHasFocusSegment(selected.rule.reason)
+      ? selected.rule.reason
+      : null
+  useEffect(() => {
+    if (!selectedFocusReason || events.length || !ensureWindowEventsLoaded) return
+    void ensureWindowEventsLoaded()
+  }, [selectedFocusReason, events.length, ensureWindowEventsLoaded])
+
   const focusSegmentByJourney = useMemo(() => {
     if (!selected || selected.kind !== 'golden' || !selected.rule) return undefined
     return buildFocusSegmentMap(selected.rule.reason, selected.trucks, events)
@@ -1549,7 +1822,7 @@ export function SeguridadTab() {
 
   // ---------- CAMIÓN (recorrido individual con horario por nodo) ----------
   if (selected && selTruck) {
-    return <TruckJourneyView truck={selTruck} wbEvents={events} onBack={() => setSelTruckId(null)} />
+    return <TruckJourneyView truck={selTruck} relatedTrucks={relatedTrucks.length ? relatedTrucks : [selTruck]} wbEvents={events} onBack={() => setSelTruckId(null)} />
   }
 
   // ---------- DETALLE ----------
@@ -1746,6 +2019,14 @@ export function SeguridadTab() {
             {savedTrucksFlash ? '✓ Guardado' : '💾 Guardar'}
           </button>
         </div>
+        {selectedFocusReason && !events.length ? (
+          <div className="flex items-center gap-2.5 rounded-xl border border-sky-200 bg-sky-50 px-4 py-2.5 text-[12px] text-sky-800">
+            <svg className={windowEventsBusy ? 'animate-spin' : ''} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0284c7" strokeWidth="2">
+              <path d="M21 12a9 9 0 1 1-6.2-8.6" />
+            </svg>
+            Cargando las demoras del tramo desde los eventos de la ventana…
+          </div>
+        ) : null}
         {selected.subgroups ? (
           <div className="space-y-5">
             {selected.subgroups.map((sg) => {

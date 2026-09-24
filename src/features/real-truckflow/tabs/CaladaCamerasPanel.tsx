@@ -16,39 +16,21 @@ import {
   ReferenceLine,
 } from 'recharts'
 import { parseCsvToRecords } from '../../../etl-core/csvParse'
-import { argentinaLocalParts } from '../../../etl-core/domain/timestamps'
 import { triggerBrowserCsvDownload } from '../etlWorkbench/etlCsv'
 import {
   CALADA_CAMERA_EVENTS_HEADERS,
   type CaladaCameraEventRow,
 } from '../etlWorkbench/etlCaladaCameraActivity'
 import { safeExportFilename } from '../../../utils/chartExport'
-import {
-  buildDayBarsFromJourneySets,
-  ComportamientoPorDiaBar,
-} from '../components/ComportamientoPorDiaBar'
+import { ComportamientoPorDiaBar } from '../components/ComportamientoPorDiaBar'
 import { SCATTER_DAY_FILTER_ALL } from '../etlWorkbench/etlSegmentScatterByDay'
+import {
+  buildActivityDayBars,
+  buildCameraActivityModel,
+  isExcelSourcedRow,
+  localDayOf,
+} from '../etlWorkbench/etlCameraActivityModel'
 
-/**
- * Cuartos de turno de la operación de calada (hora local Argentina). Ventanas de 6 h: Q1 22–04
- * (cruza medianoche), Q2 04–10, Q3 10–16, Q4 16–22. Definición única del proyecto, compartida
- * con `operationalTurno` (mismos límites que el filtro de banda horaria del scatter KPI).
- */
-const CUARTOS_TURNO = [
-  { id: 'q1', label: '22–04', start: 22, end: 4 },
-  { id: 'q2', label: '04–10', start: 4, end: 10 },
-  { id: 'q3', label: '10–16', start: 10, end: 16 },
-  { id: 'q4', label: '16–22', start: 16, end: 22 },
-] as const
-
-/** Cuarto de turno para una hora entera (0–23). El último cuarto cruza medianoche. */
-function cuartoFromHour(h: number): (typeof CUARTOS_TURNO)[number]['id'] {
-  for (const c of CUARTOS_TURNO) {
-    const dentro = c.start <= c.end ? h >= c.start && h < c.end : h >= c.start || h < c.end
-    if (dentro) return c.id
-  }
-  return CUARTOS_TURNO[0].id
-}
 const SIN_PRODUCTO = 'Sin dato'
 /** Productos con columna propia en la matriz por calle; el resto se pliega en "Otros". */
 const MAX_PRODUCT_COLUMNS = 6
@@ -67,54 +49,6 @@ function parseCaladaRows(csv: string | undefined): CaladaCameraEventRow[] {
   if (!csv?.trim()) return []
   const { rows } = parseCsvToRecords(csv)
   return rows as unknown as CaladaCameraEventRow[]
-}
-
-/**
- * Clave de la ventana horaria (`YYYY-MM-DDTHH`), en hora de pared Argentina. Se deriva del
- * `timestamp` crudo (trae el offset −03:00), no de `intervalo_hora`/`fecha`/`hora`: esas
- * columnas se hornearon con `getHours()` del host y en corridas viejas quedaron corridas si
- * el proceso no era UTC−3. `argentinaLocalParts` da la hora local correcta sin importar la
- * zona del runtime, así una corrida guardada se lee bien sin reprocesar. Solo si falta el
- * timestamp se cae a las columnas horneadas.
- */
-function hourBucketOf(r: CaladaCameraEventRow): string {
-  const parts = localPartsOf(r)
-  if (parts) return `${parts.fecha}T${parts.hh}`
-  const iso = String(r.intervalo_hora ?? '').trim()
-  if (iso.length >= 13) return iso.slice(0, 13)
-  const fecha = String(r.fecha ?? '').trim()
-  const hora = String(r.hora ?? '').trim()
-  return fecha && hora ? `${fecha}T${hora.slice(0, 2)}` : ''
-}
-
-/** Fecha y hora de pared Argentina desde el `timestamp` crudo, o null si no se puede parsear. */
-function localPartsOf(r: CaladaCameraEventRow): { fecha: string; hh: string } | null {
-  const ts = String(r.timestamp ?? '').trim()
-  if (!ts) return null
-  const p = argentinaLocalParts(ts)
-  return p ? { fecha: p.fecha_tramo, hh: p.hora_inicio.slice(0, 2) } : null
-}
-
-/** Día calendario Argentina de la fila (para el filtro por día), robusto a la zona del host. */
-function localDayOf(r: CaladaCameraEventRow): string {
-  return localPartsOf(r)?.fecha ?? String(r.fecha ?? '').trim()
-}
-
-/**
- * ¿La fila viene del Excel (INGRESO por plataforma) o solo de la cámara? En volcable SL el
- * conteo real son las filas Excel: el build les pone un `journey_id` con prefijo `excel:` /
- * `excel-vol:` (id estable de la operación/CTG), mientras que las filas que solo vio la cámara
- * llevan el uid crudo del journey. En calada todas las filas son de cámara (nunca hay prefijo),
- * por eso el split se activa solo cuando `labels.splitExcelVsCamera` es true. Ver
- * `buildSanLorenzoVolcableEvents` (etlSanLorenzoVolcableActivity.ts).
- */
-function isExcelSourcedRow(r: CaladaCameraEventRow): boolean {
-  return /^excel(-vol)?:/i.test(String(r.journey_id ?? ''))
-}
-
-/** `2026-07-20T08` → `20/07 08h`. */
-function hourBucketLabel(bucket: string): string {
-  return `${bucket.slice(8, 10)}/${bucket.slice(5, 7)} ${bucket.slice(11, 13)}h`
 }
 
 const TOOLTIP_STYLE = { borderRadius: 10, border: '1px solid #e2e8f0', fontSize: 12 } as const
@@ -211,182 +145,31 @@ export function CaladaCamerasPanel({
     [rowsBeforeDay, splitSource]
   )
 
-  const dayBars = useMemo(
+  const dayBars = useMemo(() => buildActivityDayBars(baseRowsBeforeDay), [baseRowsBeforeDay])
+
+  /**
+   * Todos los agregados del panel salen de `buildCameraActivityModel` (módulo puro
+   * `etlCameraActivityModel`), la ÚNICA implementación: el exportador del informe de
+   * logística reusa exactamente estos números.
+   */
+  const activity = useMemo(
     () =>
-      buildDayBarsFromJourneySets(
-        baseRowsBeforeDay.map((r) => ({ localDay: localDayOf(r), journeyId: r.journey_id }))
-      ),
-    [baseRowsBeforeDay]
+      buildCameraActivityModel(rows, {
+        splitExcelVsCamera: splitSource,
+        hourlyTrucksExcludeCameras: labels.hourlyTrucksExcludeCameras,
+      }),
+    [rows, splitSource, labels.hourlyTrucksExcludeCameras]
   )
-
-  /**
-   * Filas que alimentan TODOS los conteos principales (tabla, barras, gráfico por hora,
-   * matriz de producto). Con `splitSource` (volcable SL) son solo las filas del Excel —la
-   * verdad del conteo—; los camiones que solo vio la cámara se llevan aparte (`camOnlyByCamera`).
-   * Sin split (calada) es todo, como siempre.
-   */
-  const baseRows = useMemo(
-    () => (splitSource ? rows.filter(isExcelSourcedRow) : rows),
-    [rows, splitSource]
-  )
-
-  /**
-   * Camiones que SOLO vio la cámara (sin fila Excel), por calle. Posible error: se listan aparte
-   * y no se suman a «Camiones recibidos». Vacío cuando no hay split (calada).
-   */
-  const camOnlyByCamera = useMemo(() => {
-    const byCam = new Map<string, Set<string>>()
-    if (!splitSource) return new Map<string, number>()
-    for (const r of rows) {
-      if (isExcelSourcedRow(r)) continue
-      const s = byCam.get(r.camara) ?? new Set<string>()
-      s.add(r.journey_id)
-      byCam.set(r.camara, s)
-    }
-    return new Map([...byCam].map(([k, v]) => [k, v.size]))
-  }, [rows, splitSource])
-
-  /** Total de camiones «solo cámara» del período (para la nota informativa). */
-  const camOnlyTotal = useMemo(() => {
-    if (!splitSource) return 0
-    const ids = new Set<string>()
-    for (const r of rows) if (!isExcelSourcedRow(r)) ids.add(r.journey_id)
-    return ids.size
-  }, [rows, splitSource])
-
-  /** Por cámara: camiones distintos, eventos, pico de camiones en una hora y hora del pico. */
-  const perCamera = useMemo(() => {
-    const byCam = new Map<string, { trucks: Set<string>; events: number; perBucket: Map<string, Set<string>> }>()
-    for (const r of baseRows) {
-      const c = byCam.get(r.camara) ?? { trucks: new Set(), events: 0, perBucket: new Map() }
-      c.trucks.add(r.journey_id)
-      c.events++
-      byCam.set(r.camara, c)
-      const key = hourBucketOf(r)
-      if (!key) continue
-      const b = c.perBucket.get(key) ?? new Set<string>()
-      b.add(r.journey_id)
-      c.perBucket.set(key, b)
-    }
-    const rowsOut = [...byCam.entries()].map(([camara, c]) => {
-      let picoPorHora = 0
-      let picoBucket = ''
-      for (const [bucket, s] of c.perBucket) {
-        if (s.size > picoPorHora) {
-          picoPorHora = s.size
-          picoBucket = bucket
-        }
-      }
-      // Horas propias de la calle: cada calle tiene su horario, se divide por eso, no
-      // por el período completo (una calle con actividad 20h en la semana no debe
-      // dividirse por 169h). Ver [[volcable-sl-calles-panel]].
-      const activeHours = c.perBucket.size
-      return {
-        camara,
-        camiones: c.trucks.size,
-        eventos: c.events,
-        picoPorHora,
-        picoLabel: picoBucket ? hourBucketLabel(picoBucket) : '',
-        // Suma de camiones distintos por hora: numerador del promedio/hora (denominador
-        // = horas propias, se divide en el render).
-        truckHours: [...c.perBucket.values()].reduce((a, s) => a + s.size, 0),
-        activeHours,
-      }
-    })
-    // Volcable SL: orden fijo Volcable 1→5 (no reordenar según cuántos camiones).
-    // Resto (calada, silos, etc.): orden por camiones descendente como siempre.
-    if (splitSource) {
-      const num = (s: string) => {
-        const m = s.match(/(\d+)/)
-        return m ? Number(m[1]) : Number.POSITIVE_INFINITY
-      }
-      rowsOut.sort((a, b) => num(a.camara) - num(b.camara) || a.camara.localeCompare(b.camara))
-    } else {
-      rowsOut.sort((a, b) => b.camiones - a.camiones || a.camara.localeCompare(b.camara))
-    }
-    return rowsOut
-  }, [baseRows, splitSource])
-
-  /** Por hora: cámaras de calada activas en simultáneo y camiones que pasaron por calada. */
-  const concurrency = useMemo(() => {
-    const byBucket = new Map<string, { cams: Set<string>; trucks: Set<string> }>()
-    for (const r of baseRows) {
-      const key = hourBucketOf(r)
-      if (!key) continue
-      const b = byBucket.get(key) ?? { cams: new Set(), trucks: new Set() }
-      b.cams.add(r.camara)
-      b.trucks.add(r.journey_id)
-      byBucket.set(key, b)
-    }
-    return [...byBucket.entries()]
-      .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(([bucket, v]) => ({
-        bucket,
-        label: hourBucketLabel(bucket),
-        camaras_activas: v.cams.size,
-        camiones: v.trucks.size,
-      }))
-  }, [baseRows])
-
-  /** Horas con actividad en el período (denominador común de los promedios/hora). */
-  const periodHours = concurrency.length
-
-  /**
-   * Camiones que pasaron por una cámara excluida del conteo horario (en calada, la calada
-   * líquida `RicCalLiq`). Se excluye el journey completo: si el camión tocó una cámara líquida
-   * no cuenta en «camiones por hora», aunque haya pasado por otra cámara.
-   */
-  const excludedTruckIds = useMemo(() => {
-    const excluded = new Set(labels.hourlyTrucksExcludeCameras ?? [])
-    const ids = new Set<string>()
-    if (!excluded.size) return ids
-    for (const r of baseRows) if (excluded.has(r.camara)) ids.add(r.journey_id)
-    return ids
-  }, [baseRows, labels.hourlyTrucksExcludeCameras])
-
-  /**
-   * Camiones distintos por ventana horaria, excluyendo los que pasaron por una cámara líquida.
-   * Es la serie del gráfico «camiones en calada, por hora» y la base del pico diario resaltado.
-   */
-  const trucksPerHour = useMemo(() => {
-    const byBucket = new Map<string, Set<string>>()
-    for (const r of baseRows) {
-      if (excludedTruckIds.has(r.journey_id)) continue
-      const key = hourBucketOf(r)
-      if (!key) continue
-      const s = byBucket.get(key) ?? new Set<string>()
-      s.add(r.journey_id)
-      byBucket.set(key, s)
-    }
-    return [...byBucket.entries()]
-      .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(([bucket, trucks]) => ({ bucket, label: hourBucketLabel(bucket), camiones: trucks.size }))
-  }, [baseRows, excludedTruckIds])
-
-  /**
-   * Promedio de calles usadas por cuarto de turno (01–07, 07–13, 13–19, 19–01): media de
-   * cámaras activas simultáneas sobre las horas de ese cuarto. Es el agregado del gráfico de
-   * calles disponibles: dice cuántas de las N calles se usan en promedio en cada franja.
-   */
-  const turnoUsage = useMemo(() => {
-    const acc = new Map<string, { sumCalles: number; horas: number }>()
-    for (const c of concurrency) {
-      const id = cuartoFromHour(Number(c.bucket.slice(11, 13)))
-      const a = acc.get(id) ?? { sumCalles: 0, horas: 0 }
-      a.sumCalles += c.camaras_activas
-      a.horas += 1
-      acc.set(id, a)
-    }
-    return CUARTOS_TURNO.map((cuarto) => {
-      const a = acc.get(cuarto.id)
-      return {
-        id: cuarto.id,
-        label: cuarto.label,
-        promedioCalles: a && a.horas ? a.sumCalles / a.horas : 0,
-        horas: a?.horas ?? 0,
-      }
-    })
-  }, [concurrency])
+  const {
+    baseRows,
+    perCamera,
+    periodHours,
+    trucksPerHour,
+    turnoUsage,
+    totals,
+    camOnlyByCamera,
+    camOnlyTotal,
+  } = activity
 
   /**
    * Hora pico de camiones de cada día (el máximo de la serie por jornada). Se resalta en el
@@ -419,42 +202,6 @@ export function CaladaCamerasPanel({
       })
   }, [trucksPerHour])
 
-  const totals = useMemo(() => {
-    const trucks = new Set(baseRows.map((r) => r.journey_id))
-    const cams = new Set(baseRows.map((r) => r.camara))
-    const peakCams = concurrency.reduce(
-      (best, c) => (c.camaras_activas > best.camaras_activas ? c : best),
-      { camaras_activas: 0, camiones: 0, label: '' }
-    )
-    const peakTrucks = concurrency.reduce(
-      (best, c) => (c.camiones > best.camiones ? c : best),
-      { camaras_activas: 0, camiones: 0, label: '' }
-    )
-    // Promedio de camiones/hora: media de la serie horaria (altura media de la curva azul),
-    // sobre las horas con actividad del período.
-    const sumTrucksPerHour = concurrency.reduce((a, c) => a + c.camiones, 0)
-    const avgTrucksPerHour = periodHours ? sumTrucksPerHour / periodHours : 0
-    // Mediana de camiones/hora: valor central de la serie horaria. Más representativa
-    // que el promedio cuando hay picos aislados (unas pocas horas con muchísima
-    // descarga arrastran la media hacia arriba y la mayoría de las horas queda por
-    // debajo). Se usa como referencia en el gráfico y como card propia.
-    const sortedTrucks = concurrency.map((c) => c.camiones).sort((a, b) => a - b)
-    const medianTrucksPerHour = sortedTrucks.length
-      ? sortedTrucks.length % 2
-        ? sortedTrucks[(sortedTrucks.length - 1) / 2]!
-        : (sortedTrucks[sortedTrucks.length / 2 - 1]! + sortedTrucks[sortedTrucks.length / 2]!) / 2
-      : 0
-    return {
-      trucks: trucks.size,
-      cams: cams.size,
-      peakCams: peakCams.camaras_activas,
-      peakCamsLabel: peakCams.label,
-      peakTrucks: peakTrucks.camiones,
-      peakTrucksLabel: peakTrucks.label,
-      avgTrucksPerHour,
-      medianTrucksPerHour,
-    }
-  }, [baseRows, concurrency, periodHours])
 
   /**
    * Qué producto caló cada calle. El producto no lo dice la cámara: lo trae el camión

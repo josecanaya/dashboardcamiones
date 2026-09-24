@@ -1,12 +1,13 @@
 import { useMemo } from 'react'
 import { SCATTER_DAY_FILTER_ALL } from '../etlWorkbench/etlSegmentScatterByDay'
 
-export type DayBarItem = {
-  fecha: string
-  label: string
-  weekday: string
-  total: number
-}
+// La implementación vive en el módulo puro `etlCameraActivityModel` para que el exportador
+// del informe de logística la reuse sin arrastrar React. Se re-exporta por compatibilidad.
+export {
+  buildDayBarsFromJourneySets,
+  type DayBarItem,
+} from '../etlWorkbench/etlCameraActivityModel'
+import type { DayBarItem } from '../etlWorkbench/etlCameraActivityModel'
 
 /**
  * Selector visual por día (barras + «Todos los días»), compartido por la ficha de circuito
@@ -72,27 +73,4 @@ export function ComportamientoPorDiaBar({
       </div>
     </div>
   )
-}
-
-const WD = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá']
-
-/** Camiones distintos (`journey_id`) por día calendario, a partir de filas con `localDay` + `journeyId`. */
-export function buildDayBarsFromJourneySets(
-  entries: { localDay: string; journeyId: string }[]
-): DayBarItem[] {
-  const byDay = new Map<string, Set<string>>()
-  for (const { localDay, journeyId } of entries) {
-    if (!localDay || !journeyId) continue
-    const s = byDay.get(localDay) ?? new Set<string>()
-    s.add(journeyId)
-    byDay.set(localDay, s)
-  }
-  return [...byDay.keys()]
-    .sort()
-    .map((fecha) => ({
-      fecha,
-      label: fecha.slice(-2),
-      weekday: WD[new Date(`${fecha}T00:00:00`).getDay()] ?? '',
-      total: byDay.get(fecha)!.size,
-    }))
 }

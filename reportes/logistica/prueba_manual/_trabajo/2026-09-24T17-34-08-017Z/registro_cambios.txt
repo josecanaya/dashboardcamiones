@@ -1,0 +1,217 @@
+CAMBIOS
+D2 objeto 20001: Período analizado: 10/09 al 16/09/2026 -> Período analizado: 17/09 al 22/09/2026
+D3 objeto 20003: 10/09 -> 17/09
+D3 objeto 20005: 16/09 -> 22/09
+D3 objeto 20007: 7 -> 6
+D3 objeto 20009: 3.423 -> 1.721
+D3 objeto 20010: camiones · valor reportado -> camiones · recorridos de cámara clasificados
+D3 objeto 20012: 2.557 -> 1.304
+D3 objeto 20014: 523 -> 234
+D3 objeto 20016: 155 -> 159
+D3 objeto 20018: 188 -> 24
+D8 objeto 303: 164 -> 123
+D8 objeto 304: 12 -> 12
+D8 objeto 305: 13 -> 14
+D8 objeto 306: 122 -> 131
+D8 objeto 307: 26 -> 43
+D8 objeto 308: 20 -> 18
+D8 objeto 316: 363  Min -> 372 Min
+D8 objeto 317: 6 -> 4
+D8 objeto 322: Circuito R7 | Jueves 10/09 -> Circuito R7 | Jueves 17/09
+D8 objeto 339: 151  camiones -> 131 camiones
+D8 objeto 340: 118  camiones -> 91 camiones
+D8 objeto 341: 104  camiones -> 92 camiones
+D8 objeto 342: 138  camiones -> 62 camiones
+D8 objeto 347: 511 -> 376
+D8 objeto 348: 10/09 -> 17/09
+D8 objeto 349: (6 hs 3 m) -> (6 hs 12 m)
+D8 objeto 352: 182  min -> 139 min
+D8 objeto 353: 168  min -> 192 min
+D8 objeto 354: (3 hs 2 m) -> (2 hs 19 m)
+D8 objeto 355: (2 hs 48 m) -> (3 hs 12 m)
+D9 objeto 360: 168 -> 77
+D9 objeto 361: 11 -> 11
+D9 objeto 362: 13 -> 18
+D9 objeto 363: 91 -> s/d
+D9 objeto 364: 39 -> 48
+D9 objeto 365: 20 -> 18
+D9 objeto 373: 347  Min -> 360 Min
+D9 objeto 374: 4 -> 5
+D9 objeto 376: 11/09 -> 18/09
+D9 objeto 393: 178  camiones -> 129 camiones
+D9 objeto 394: 78  camiones -> 65 camiones
+D9 objeto 395: 139  camiones -> 86 camiones
+D9 objeto 396: 87  camiones -> 63 camiones
+D9 objeto 400: Circuito R7 | Viernes 11/09 -> Circuito R7 | Viernes 18/09
+D9 objeto 404: 482 -> 343
+D9 objeto 405: (5 hs 47 m) -> (6 hs)
+D9 objeto 408: 183  min -> 93 min
+D9 objeto 409: 150  min -> 66 min
+D9 objeto 410: (3 hs  3 m) -> (1 hs 33 m)
+D9 objeto 411: (2 hs 30 m) -> (1 hs 6 m)
+D10 objeto 416: 157 -> 72
+D10 objeto 417: 12 -> 12
+D10 objeto 418: 12 -> 15
+D10 objeto 419: 132 -> s/d
+D10 objeto 420: 53 -> 77
+D10 objeto 421: 18 -> 17
+D10 objeto 429: 390  Min -> 226 Min
+D10 objeto 430: 5 -> 3
+D10 objeto 432: 12/09 -> 19/09
+D10 objeto 436: Circuito R7 | Sábado 12/09 -> Circuito R7 | Sábado 19/09
+D10 objeto 453: 195  camiones -> 83 camiones
+D10 objeto 454: 103  camiones -> 27 camiones
+D10 objeto 455: 81  camiones -> 32 camiones
+D10 objeto 456: 40  camiones -> 32 camiones
+D10 objeto 460: 419 -> 174
+D10 objeto 463: 175  min -> 87 min
+D10 objeto 464: 203   min -> 94 min
+D10 objeto 465: (2 hs 55 m) -> (1 hs 27 m)
+D10 objeto 466: (3 hs 23 m) -> (1 hs 34 m)
+D10 objeto 467: (6 hs 30 m) -> (3 hs 46 m)
+D11 objeto 472: 169 -> 55
+D11 objeto 473: 13 -> 11
+D11 objeto 474: 11 -> 15
+D11 objeto 475: 29 -> s/d
+D11 objeto 476: 12 -> 63
+D11 objeto 477: 33 -> 17
+D11 objeto 485: 272  Min -> 232 Min
+D11 objeto 486: 5 -> 3
+D11 objeto 488: 13/09 -> 20/09
+D11 objeto 492: Circuito R7 | Domingo 13/09 -> Circuito R7 | Domingo 20/09
+D11 objeto 509: 6  camiones -> 28 camiones
+D11 objeto 510: 5  camiones -> 17 camiones
+D11 objeto 511: 9  camiones -> 23 camiones
+D11 objeto 512: 19  camiones -> 35 camiones
+D11 objeto 516: 39 -> 103
+D11 objeto 519: 187  min -> 70 min
+D11 objeto 520: 74   min -> 80 min
+D11 objeto 521: (3 hs 7 m) -> (1 hs 10 m)
+D11 objeto 522: (1 hs 14  m) -> (1 hs 20 m)
+D11 objeto 523: (4 hs 32 m) -> (3 hs 52 m)
+D12 objeto 531: Circuito R7 | Lunes 14/09 -> Circuito R7 | Lunes 21/09
+D12 objeto 532: 63 -> 70
+D12 objeto 533: 11 -> 12
+D12 objeto 534: 12 -> 18
+D12 objeto 535: 81 -> s/d
+D12 objeto 536: 40 -> 29
+D12 objeto 537: 18 -> 16
+D12 objeto 545: 229  Min -> 226 Min
+D12 objeto 546: 4 -> 3
+D12 objeto 564: 66  camiones -> 31 camiones
+D12 objeto 565: 36   camiones -> 39 camiones
+D12 objeto 566: 92   camiones -> 26 camiones
+D12 objeto 567: 98  camiones -> 34 camiones
+D12 objeto 572: 292 -> 130
+D12 objeto 573: 14/09 -> 21/09
+D12 objeto 576: 78  min -> 84 min
+D12 objeto 577: 139  min -> 45 min
+D12 objeto 578: (1 hs 18m) -> (1 hs 24 m)
+D12 objeto 579: (2 hs 19 m) -> (0 hs 45 m)
+D12 objeto 580: (3 hs 49 m) -> (3 hs 46 m)
+D13 objeto 585: 83 -> 61
+D13 objeto 586: 11 -> 11
+D13 objeto 587: 12 -> 16
+D13 objeto 588: 217 -> s/d
+D13 objeto 589: 48 -> 36
+D13 objeto 590: 19 -> 17
+D13 objeto 598: 396  Min -> 261 Min
+D13 objeto 599: 6 -> 3
+D13 objeto 601: 15/09 -> 22/09
+D13 objeto 605: Circuito R7 | Martes 15/09 -> Circuito R7 | Martes 22/09
+D13 objeto 622: 110  camiones -> 38 camiones
+D13 objeto 623: 83  camiones -> 20 camiones
+D13 objeto 624: 115  camiones -> 14 camiones
+D13 objeto 625: 87  camiones -> 20 camiones
+D13 objeto 629: 395 -> 92
+D13 objeto 632: 100  min -> 75 min
+D13 objeto 633: 284  min -> 54 min
+D13 objeto 634: (1 hs 40 m) -> (1 hs 15 m)
+D13 objeto 635: (4 h 48 m) -> (0 hs 54 m)
+D13 objeto 636: (6 hs 36 m) -> (4 hs 21 m)
+D14 objeto 641: 119 -> s/d
+D14 objeto 642: 11 -> s/d
+D14 objeto 643: 11 -> s/d
+D14 objeto 644: 179 -> s/d
+D14 objeto 645: 44 -> s/d
+D14 objeto 646: 19 -> s/d
+D14 objeto 654: 387  Min -> s/d
+D14 objeto 655: 5 -> s/d
+D14 objeto 657: 16 /09 -> s/d
+D14 objeto 661: Circuito R7 | Miércoles 16 /09 -> s/d
+D14 objeto 678: 127 camiones -> s/d
+D14 objeto 679: 88  camiones -> s/d
+D14 objeto 680: 98  camiones -> s/d
+D14 objeto 681: 39  camiones -> s/d
+D14 objeto 685: 352 -> s/d
+D14 objeto 687: 242  min -> s/d
+D14 objeto 688: (4 hs 2 m) -> s/d
+D14 objeto 690: 135   min -> s/d
+D14 objeto 691: (2 hs 15 m) -> s/d
+D14 objeto 692: (6 hs 27 m) -> s/d
+D35 objeto 1275: 50 -> 36
+D35 objeto 1276: 10/9 08 hs -> 17/09 14h
+D35 objeto 1277: 2908 -> 1615
+D35 objeto 1278: 20 sobre 148  horas totales -> 14.1
+sobre 116 horas con actividad
+D50 objeto 1543: 16 -> 21
+D50 objeto 1544: 14/9 20 hs -> 21/09 08h
+D50 objeto 1545: 157 -> 263
+D50 objeto 1546: 2 sobre 49 horas totales -> 5.1
+sobre 56 horas con actividad
+D51 objeto 1564: 11 -> 10
+D51 objeto 1565: 15/9 08 hs -> 21/09 10h
+D51 objeto 1566: 242 -> 204
+D51 objeto 1567: 3 sobre 85  horas totales -> 2.9
+sobre 86 horas con actividad
+D54 objeto 1606: 8 -> 7
+D54 objeto 1607: 3 -> 4
+sobre 138 horas con actividad
+D54 objeto 1608: 446 -> 298
+D56 objeto 1632: 5 -> 14
+D56 objeto 1633: 2 -> 3.8
+sobre 131 horas con actividad
+D56 objeto 1634: 40 -> 215
+D57 objeto 1658: 384 -> 207
+D57 objeto 1659: 16 -> 9.8
+sobre 127 horas con actividad
+D57 objeto 1660: 2688 -> 1242
+D05_G2 D5: gráfico editable desde Soja!C16:C16
+D15_G1 D15: gráfico editable desde Soja!C21:C34
+D16_G1 D16: gráfico editable desde Soja!C39:C66
+D16_G2 D16: gráfico editable desde Soja!C71:C77
+D17_G1 D17: gráfico editable desde Soja!C82:C123
+D17_G2 D17: gráfico editable desde Soja!C128:C141
+D20_G1 D20: gráfico editable desde Pellet!C7:C8
+D28_G2 D28: gráfico editable desde Girasol!C15:C17
+D31_G1 D31: gráfico editable desde Girasol!C22:C49
+D31_G2 D31: gráfico editable desde Girasol!C54:C67
+D35_G1 D35: gráfico editable desde Calada!C7:C12
+D36_G1 D36: gráfico editable desde Calada!C17:C22
+D38_G1 D38: gráfico editable desde Calada!C27:C32
+D40_G1 D40: gráfico editable desde Calada!C37:C42
+D42_G1 D42: gráfico editable desde Calada!C47:C52
+D44_G1 D44: gráfico editable desde Calada!C57:C62
+D46_G1 D46: gráfico editable desde Calada!C67:C72
+D48_G1 D48: gráfico editable desde Calada!C77:C82
+D50_G1 D50: gráfico editable desde Calada!C87:C93
+D51_G1 D51: gráfico editable desde Calada!C98:C104
+D53_G1 D53: gráfico editable desde Descargas!C7:C8
+D53_G2 D53: gráfico editable desde Descargas!C13:C26
+D55_G1 D55: gráfico editable desde Descargas!C31:C37
+D57_G1 D57: gráfico editable desde Descargas!C42:C48
+D58_G1 D58: gráfico editable desde Descargas!C53:C57
+D59_G1 D59: gráfico editable desde Descargas!C62:C66
+D61_G1 D61: gráfico editable desde Descargas!C71:C75
+D63_G1 D63: gráfico editable desde Descargas!C80:C84
+D65_G1 D65: gráfico editable desde Descargas!C89:C93
+D67_G1 D67: gráfico editable desde Descargas!C98:C102
+D69_G1 D69: gráfico editable desde Descargas!C107:C111
+D71_G1 D71: gráfico editable desde Descargas!C116:C120
+
+PENDIENTES
+D05_G1 D5: se conserva grafico base; faltan 5 valores en Soja
+D25_G1 D25: se conserva grafico base; faltan 4 valores en Pellet
+D28_G1 D28: se conserva grafico base; faltan 4 valores en Girasol
+
+Capturas de actividad vacias. Tarjetas, totales y conclusiones requieren revision manual.

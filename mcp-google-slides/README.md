@@ -48,10 +48,11 @@ mcp-google-slides/
 │  │  ├─ googleClient.ts       # clientes autorizados Slides+Drive por usuario
 │  │  ├─ slidesService.ts      # operaciones Slides + allowlist de batchUpdate
 │  │  ├─ slidesTransform.ts    # respuestas de Google -> resúmenes estables
-│  │  └─ driveService.ts       # búsqueda/paginación/duplicado/export
+│  │  ├─ driveService.ts       # búsqueda/paginación/duplicado/export
+│  │  └─ sheetsService.ts      # Sheets: metadata/valores + Drive: buscar/subir/convertir
 │  ├─ tools/
 │  │  ├─ schemas.ts            # esquemas Zod de cada tool
-│  │  └─ registerTools.ts      # registro de las 14 tools MCP
+│  │  └─ registerTools.ts      # registro de las 21 tools MCP
 │  ├─ lib/                     # urls, placeholders, retry/timeout, errores, logging
 │  └─ scripts/authorize.ts     # helper CLI para iniciar OAuth
 ├─ test/                       # pruebas con mocks (Vitest)
@@ -90,6 +91,13 @@ El servidor **no duplica reglas de negocio**: compone llamadas a las APIs de Goo
 | 12 | `google_slides_batch_update` | escritura/**destructiva** | `presentations.batchUpdate` validado contra allowlist. **`confirm=true`** si hay operaciones destructivas / reemplazo masivo. |
 | 13 | `google_drive_search_presentations` | lectura | Busca por nombre/carpeta/fecha con **paginación** (`nextPageToken`). |
 | 14 | `google_drive_export_presentation` | lectura | Exporta a **PDF** o **PPTX** (base64). |
+| 15 | `google_drive_search_files` | lectura | Busca **cualquier** archivo de Drive por nombre, carpeta y tipo (no solo presentaciones). |
+| 16 | `google_sheets_get_metadata` | lectura | Pestañas de una hoja de cálculo con título, índice y dimensiones. |
+| 17 | `google_sheets_get_values` | lectura | Lee varios rangos A1 en una sola llamada (`batchGet`), con valores crudos. |
+| 18 | `google_drive_import_xlsx_as_sheet` | escritura | Copia un `.xlsx` de Drive como hoja nativa (la API de Sheets no lee `.xlsx`). |
+| 19 | `google_drive_upload_file` | escritura | Sube un `.pptx` o `.xlsx` local a Drive, convertido a Slides/Sheets (así se importa una presentación ya armada). |
+| 20 | `google_sheets_add_chart` | escritura | Crea un gráfico en la hoja y devuelve su `chartId`, para incrustarlo vinculado con `createSheetsChart`. |
+| 21 | `google_sheets_write_sheet` | escritura | Crea o reemplaza una pestaña con una matriz de valores (pestañas de apoyo, p.ej. datos pivoteados). |
 
 Las unidades de posición/tamaño son **EMU** por defecto (1 pulgada = 914400 EMU) o **PT**
 si se indica `unit: "PT"`.

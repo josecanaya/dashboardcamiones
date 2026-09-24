@@ -50,3 +50,17 @@ export function assertObjectId(objectId: string, field = "objectId"): string {
   }
   return objectId.trim();
 }
+
+/**
+ * Extrae el ID de cualquier archivo de Drive (hoja de cálculo, xlsx, carpeta) desde
+ * una URL o un ID pelado. Comparte la lógica de `extractPresentationId`: los enlaces
+ * de Google usan el mismo formato `/d/<ID>` para todos los tipos.
+ */
+export function extractDriveFileId(input: string): string {
+  return extractPresentationId(input);
+}
+
+/** URL canónica de una carpeta de Drive. */
+export function folderUrl(id: string): string {
+  return `https://drive.google.com/drive/folders/${id}`;
+}

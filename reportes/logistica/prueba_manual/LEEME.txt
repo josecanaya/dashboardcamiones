@@ -1,0 +1,18 @@
+PRUEBA MANUAL
+
+1. Abrir Datos_MANUAL.xlsx.
+2. Cambiar celdas amarillas y guardar.
+3. Doble clic en ACTUALIZAR_PRESENTACION.cmd.
+4. Abrir el archivo nuevo dentro de Resultados.
+
+PRUEBA RAPIDA
+En Textos!C48, escribir 2600: cambia la cifra de soja en diapositiva 3.
+En Calada!C7, cambiar 831 por 900: cambia Calle 1 en diapositiva 35.
+Son valores de prueba, no resultados operativos.
+
+Cada grafico debe estar completo. Vacio conserva el contenido base; cero es un dato valido.
+Tarjetas, totales y conclusiones se editan por separado en Textos.
+Las capturas de actividad quedan vacias para insertarlas al final.
+No mover filas ni cambiar nombres de hojas.
+No editar Plantilla_BASE.pptx ni vinculos.json.
+Cada ejecucion usa la base: los cambios hechos directamente en el PPTX anterior no se trasladan.

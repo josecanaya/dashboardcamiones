@@ -67,11 +67,21 @@ function mov(
 }
 
 describe('classifyTransileExternoProduct', () => {
-  it('SOJA → R26 (asignado unívoco)', () => {
-    const c = classifyTransileExternoProduct('SOJA')
-    expect(c.family).toBe('SOJA')
-    expect(c.candidates).toEqual(['R26'])
-    expect(c.assigned).toBe('R26')
+  it('SOJA: el origen de la carga decide R26 (Celda 16) o R29 (silos)', () => {
+    const celda = classifyTransileExternoProduct('SOJA', 'CELDA 16')
+    expect(celda.family).toBe('SOJA')
+    expect(celda.candidates).toEqual(['R26', 'R29'])
+    expect(celda.assigned).toBe('R26')
+    // Desde el 21-09 el Excel trae soja «de la vuelta» cargada en SILO CHIEF 2: va a las
+    // volcables del puerto. Antes caía en R26 y se rotulaba «Celda 16» sin pasar por ahí.
+    expect(classifyTransileExternoProduct('SOJA', 'SILO_CHIEF_2').assigned).toBe('R29')
+    expect(classifyTransileExternoProduct('SOJA', 'SILO CHIEF 2').assigned).toBe('R29')
+  })
+
+  it('SOJA sin plataforma reconocible queda sin asignar, no cae en R26 por defecto', () => {
+    const c = classifyTransileExternoProduct('SOJA', '')
+    expect(c.assigned).toBe('')
+    expect(c.candidates).toEqual(['R26', 'R29'])
   })
 
   it('GIRASOL → R27/R28 (candidatos, sin asignar)', () => {
@@ -141,7 +151,8 @@ describe('buildTransileExternoReport', () => {
     expect(report.summary.operaciones_girasol).toBe(1)
     const session = report.sessions[0]!
     expect(session.return_operations).toBe(2)
-    expect(session.circuitos).toBe('R26|R27|R28')
+    // Soja sin plataforma: R26 o R29 según de dónde se cargó; los dos quedan como candidatos.
+    expect(session.circuitos).toBe('R26|R27|R28|R29')
     expect(report.operations.map((o) => o.cycle_index)).toEqual([1, 2])
   })
 })

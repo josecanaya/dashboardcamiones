@@ -1,0 +1,830 @@
+{
+  "generado": "2026-09-23",
+  "archivo": "plantilla_comite_logistica_editada.pptx",
+  "descripcion": "Conversion de imagenes de graficos a objetos nativos editables (barras/tablas nativas y graficos de linea con datos incorporados). Curvas de actividad dejadas como espacios vacios para completar. No se recalculan datos.",
+  "dimensiones_emu": [
+    9144000,
+    5448300
+  ],
+  "diapositivas_totales": 72,
+  "operaciones": [
+    {
+      "diapositiva": 5,
+      "objeto_sustituido": "image1.png",
+      "tipo": "distribucion_barras",
+      "valores": {
+        "cats": [
+          "8/Todas",
+          "7",
+          "6",
+          "5",
+          "<=4"
+        ],
+        "conteos": [
+          849,
+          721,
+          462,
+          306,
+          219
+        ],
+        "pct": [
+          33.0,
+          28.2,
+          18.1,
+          12.0,
+          8.6
+        ]
+      },
+      "fuente": "imagen extraida + tarjetas + doc",
+      "nota": "suman 99,9% por redondeo"
+    },
+    {
+      "diapositiva": 5,
+      "objeto_sustituido": "image9.png",
+      "tipo": "stat",
+      "valores": {
+        "R7 Terminal de embarque": 2557
+      },
+      "fuente": "doc",
+      "nota": ""
+    },
+    {
+      "diapositiva": 15,
+      "objeto_sustituido": "image29.png",
+      "tipo": "barras_apiladas",
+      "valores": {
+        "Ricardone": [
+          182,
+          183,
+          175,
+          187,
+          78,
+          100,
+          135
+        ],
+        "San Lorenzo": [
+          168,
+          150,
+          203,
+          74,
+          139,
+          284,
+          242
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 16,
+      "objeto_sustituido": "image23.png",
+      "tipo": "CONSERVADO",
+      "valores": null,
+      "fuente": "imagen extraida",
+      "nota": "Barras Q1-Q4 por dia sin etiquetas numericas: no se estiman alturas"
+    },
+    {
+      "diapositiva": 16,
+      "objeto_sustituido": "image52.png",
+      "tipo": "CONSERVADO",
+      "valores": null,
+      "fuente": "imagen extraida",
+      "nota": "Linea 'Tiempo medio semanal' sin valores exactos: conservada por indicacion"
+    },
+    {
+      "diapositiva": 17,
+      "objeto_sustituido": "image55.png",
+      "tipo": "grafico_linea_nativo",
+      "valores": {
+        "Tiempo Medio": [
+          376,
+          338,
+          316,
+          383,
+          304,
+          445,
+          389,
+          421,
+          346,
+          368,
+          296,
+          379,
+          276,
+          334
+        ]
+      },
+      "fuente": "Excel hoja Line col B",
+      "nota": "etiquetas normalizadas por secuencia, cotejar antes de publicar"
+    },
+    {
+      "diapositiva": 17,
+      "objeto_sustituido": "image33.png",
+      "tipo": "grafico_linea_nativo",
+      "valores": {
+        "Playa 1": [
+          121,
+          94,
+          113,
+          145,
+          114,
+          171,
+          181,
+          120,
+          101,
+          130,
+          112,
+          140,
+          97,
+          126
+        ],
+        "Playa OSL": [
+          135,
+          104,
+          86,
+          105,
+          65,
+          140,
+          85,
+          145,
+          113,
+          127,
+          89,
+          137,
+          87,
+          119
+        ],
+        "Descarga": [
+          79,
+          92,
+          64,
+          70,
+          60,
+          59,
+          58,
+          68,
+          63,
+          71,
+          64,
+          62,
+          63,
+          61
+        ]
+      },
+      "fuente": "Excel hoja Line cols C/D/E",
+      "nota": "etiquetas normalizadas por secuencia"
+    },
+    {
+      "diapositiva": 20,
+      "objeto_sustituido": "image84.png",
+      "tipo": "barras",
+      "valores": {
+        "Lunes": 135,
+        "Martes": 50
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 25,
+      "objeto_sustituido": "image39.png",
+      "tipo": "barras_apiladas",
+      "valores": {
+        "Ricardone": [
+          103,
+          168
+        ],
+        "San Lorenzo": [
+          71,
+          76
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 28,
+      "objeto_sustituido": "image32.png",
+      "tipo": "distribucion_barras",
+      "valores": {
+        "conteos": [
+          296,
+          99,
+          47,
+          51
+        ],
+        "pct": [
+          60.0,
+          20.0,
+          9.1,
+          10.9
+        ]
+      },
+      "fuente": "tarjetas + doc",
+      "nota": ""
+    },
+    {
+      "diapositiva": 28,
+      "objeto_sustituido": "image54.png",
+      "tipo": "barras",
+      "valores": {
+        "R5 Volcable 1": 361,
+        "R6 Volcable 2": 92,
+        "R4 Silos Kepler": 40
+      },
+      "fuente": "doc",
+      "nota": ""
+    },
+    {
+      "diapositiva": 31,
+      "objeto_sustituido": "image90.png",
+      "tipo": "grafico_linea_nativo",
+      "valores": {
+        "Tiempo Medio": [
+          326,
+          315,
+          287,
+          317,
+          306,
+          351,
+          361,
+          347,
+          241,
+          289,
+          353,
+          430,
+          319,
+          382
+        ]
+      },
+      "fuente": "Excel hoja Line col F",
+      "nota": "etiquetas normalizadas por secuencia"
+    },
+    {
+      "diapositiva": 31,
+      "objeto_sustituido": "image36.png",
+      "tipo": "grafico_linea_nativo",
+      "valores": {
+        "Playa 1": [
+          120,
+          107,
+          105,
+          122,
+          117,
+          140,
+          137,
+          138,
+          80,
+          99,
+          163,
+          190,
+          116,
+          133
+        ],
+        "Descarga": [
+          184,
+          180,
+          159,
+          170,
+          166,
+          188,
+          208,
+          186,
+          110,
+          146,
+          152,
+          215,
+          155,
+          208
+        ]
+      },
+      "fuente": "Excel hoja Line cols G/H",
+      "nota": "etiquetas normalizadas por secuencia"
+    },
+    {
+      "diapositiva": 35,
+      "objeto_sustituido": "image35.png",
+      "tipo": "barras",
+      "valores": {
+        "Calles": [
+          831,
+          837,
+          626,
+          625,
+          3,
+          38
+        ]
+      },
+      "fuente": "doc",
+      "nota": ""
+    },
+    {
+      "diapositiva": 36,
+      "objeto_sustituido": "image38.png",
+      "tipo": "barras",
+      "valores": {
+        "Calles": [
+          102,
+          105,
+          188,
+          184,
+          0,
+          10
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 38,
+      "objeto_sustituido": "image44.png",
+      "tipo": "barras",
+      "valores": {
+        "Calles": [
+          102,
+          112,
+          184,
+          182,
+          1,
+          6
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 40,
+      "objeto_sustituido": "image48.png",
+      "tipo": "barras",
+      "valores": {
+        "Calles": [
+          95,
+          92,
+          136,
+          139,
+          0,
+          0
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 42,
+      "objeto_sustituido": "image71.png",
+      "tipo": "barras",
+      "valores": {
+        "Calles": [
+          0,
+          0,
+          27,
+          27,
+          0,
+          0
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 44,
+      "objeto_sustituido": "image46.png",
+      "tipo": "barras",
+      "valores": {
+        "Calles": [
+          141,
+          139,
+          37,
+          39,
+          0,
+          10
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 46,
+      "objeto_sustituido": "image45.png",
+      "tipo": "barras",
+      "valores": {
+        "Calles": [
+          215,
+          220,
+          "s/d",
+          "s/d",
+          1,
+          11
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": "Calle 3 y Calle 4 sin etiqueta legible en la imagen (s/d)"
+    },
+    {
+      "diapositiva": 48,
+      "objeto_sustituido": "image50.png",
+      "tipo": "barras",
+      "valores": {
+        "Calles": [
+          176,
+          169,
+          54,
+          54,
+          1,
+          1
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 59,
+      "objeto_sustituido": "image85.png",
+      "tipo": "barras",
+      "valores": {
+        "Volcables": [
+          150,
+          167,
+          138,
+          28,
+          40
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 61,
+      "objeto_sustituido": "image79.png",
+      "tipo": "barras",
+      "valores": {
+        "Volcables": [
+          150,
+          112,
+          107,
+          0,
+          119
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 63,
+      "objeto_sustituido": "image77.png",
+      "tipo": "barras",
+      "valores": {
+        "Volcables": [
+          44,
+          128,
+          142,
+          0,
+          130
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 65,
+      "objeto_sustituido": "image83.png",
+      "tipo": "barras",
+      "valores": {
+        "Volcables": [
+          0,
+          0,
+          18,
+          0,
+          36
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 67,
+      "objeto_sustituido": "image72.png",
+      "tipo": "barras",
+      "valores": {
+        "Volcables": [
+          30,
+          100,
+          27,
+          27,
+          111
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 69,
+      "objeto_sustituido": "image80.png",
+      "tipo": "barras",
+      "valores": {
+        "Volcables": [
+          130,
+          121,
+          59,
+          47,
+          124
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 71,
+      "objeto_sustituido": "image86.png",
+      "tipo": "barras",
+      "valores": {
+        "Volcables": [
+          0,
+          0,
+          150,
+          125,
+          134
+        ]
+      },
+      "fuente": "imagen extraida",
+      "nota": ""
+    },
+    {
+      "diapositiva": 50,
+      "objeto_sustituido": "image64.png",
+      "tipo": "barras",
+      "valores": {
+        "dias": [
+          1,
+          4,
+          2,
+          0,
+          91,
+          27,
+          30
+        ]
+      },
+      "fuente": "doc",
+      "nota": ""
+    },
+    {
+      "diapositiva": 50,
+      "objeto_sustituido": "image56.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 51,
+      "objeto_sustituido": "image60.png",
+      "tipo": "barras",
+      "valores": {
+        "dias": [
+          55,
+          47,
+          7,
+          2,
+          40,
+          51,
+          40
+        ]
+      },
+      "fuente": "doc",
+      "nota": ""
+    },
+    {
+      "diapositiva": 51,
+      "objeto_sustituido": "image67.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 53,
+      "objeto_sustituido": "image59.png",
+      "tipo": "barras_agrupadas",
+      "valores": {
+        "Volcable 1": [
+          55,
+          70,
+          70,
+          10,
+          36,
+          63,
+          74
+        ],
+        "Volcable 2": [
+          21,
+          16,
+          17,
+          6,
+          15,
+          12,
+          9
+        ]
+      },
+      "fuente": "doc",
+      "nota": ""
+    },
+    {
+      "diapositiva": 53,
+      "objeto_sustituido": "image61.png",
+      "tipo": "barras",
+      "valores": {
+        "Volcable 1": 361,
+        "Volcable 2": 92
+      },
+      "fuente": "doc",
+      "nota": "difiere de la suma diaria (378 / 96): se mantiene el valor de cada grafico"
+    },
+    {
+      "diapositiva": 55,
+      "objeto_sustituido": "image68.png",
+      "tipo": "barras",
+      "valores": {
+        "dias": [
+          0,
+          30,
+          10,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "fuente": "doc",
+      "nota": ""
+    },
+    {
+      "diapositiva": 57,
+      "objeto_sustituido": "image76.png",
+      "tipo": "barras",
+      "valores": {
+        "dias": [
+          523,
+          488,
+          444,
+          54,
+          291,
+          479,
+          409
+        ]
+      },
+      "fuente": "doc",
+      "nota": ""
+    },
+    {
+      "diapositiva": 58,
+      "objeto_sustituido": "image69.png",
+      "tipo": "barras",
+      "valores": {
+        "Volcables": [
+          502,
+          627,
+          641,
+          226,
+          692
+        ]
+      },
+      "fuente": "doc",
+      "nota": ""
+    },
+    {
+      "diapositiva": 37,
+      "objeto_sustituido": "image41.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 39,
+      "objeto_sustituido": "image47.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 41,
+      "objeto_sustituido": "image42.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 43,
+      "objeto_sustituido": "image57.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 45,
+      "objeto_sustituido": "image51.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 47,
+      "objeto_sustituido": "image62.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 49,
+      "objeto_sustituido": "image82.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 54,
+      "objeto_sustituido": "image65.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 56,
+      "objeto_sustituido": "image66.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 60,
+      "objeto_sustituido": "image70.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 62,
+      "objeto_sustituido": "image75.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 64,
+      "objeto_sustituido": "image78.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 66,
+      "objeto_sustituido": "image81.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 68,
+      "objeto_sustituido": "image89.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 70,
+      "objeto_sustituido": "image74.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 72,
+      "objeto_sustituido": "image88.png",
+      "tipo": "PLACEHOLDER_VACIO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "curva de actividad para completar"
+    },
+    {
+      "diapositiva": 49,
+      "objeto_sustituido": "image53.png",
+      "tipo": "ELIMINADO",
+      "valores": null,
+      "fuente": "-",
+      "nota": "fragmento fuera de lienzo asociado a la captura"
+    }
+  ]
+}

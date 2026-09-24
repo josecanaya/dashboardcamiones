@@ -1,0 +1,501 @@
+{
+  "generadoEl": "2026-09-24T19:28:13.503Z",
+  "revision": 1,
+  "periodo": {
+    "from": "2026-09-23",
+    "to": "2026-09-23",
+    "days": [
+      "2026-09-23"
+    ],
+    "dayCount": 1,
+    "atipico": true,
+    "semanaEnCurso": false,
+    "diasFaltantes": [
+      "Jueves",
+      "Viernes",
+      "Sábado",
+      "Domingo",
+      "Lunes",
+      "Martes",
+      "Miércoles"
+    ],
+    "label": "23/09 al 23/09/2026"
+  },
+  "fuentes": {
+    "rulesVersion": "etl_transform_v16",
+    "runIds": [],
+    "composedRange": null,
+    "kpiTiemposBuilt": false,
+    "tablesUsed": [
+      "calada_camera_events",
+      "calada_ricardone_liquid_events",
+      "calada_sl_camera_events",
+      "ricardone_volcable_events",
+      "ricardone_silo_events",
+      "san_lorenzo_volcable_events",
+      "excel_operations_with_truckflow",
+      "circuit_timing_journeys",
+      "segment_timing_legs",
+      "debug_matrix_classification",
+      "merged_truckflow_movimientos"
+    ]
+  },
+  "politicaDia": {
+    "actividad": "dia_calendario_argentina",
+    "tiempos": "dia_operativo_22h",
+    "nota": "Calada y descargas agrupan por día calendario (regla vigente de esos paneles); KPI tiempos usa el día operativo con arranque 22:00. Se conserva la regla de cada bloque para que el informe coincida con el dashboard; no comparar rótulos de día entre bloques."
+  },
+  "cobertura": {
+    "graficos": {
+      "total": 35,
+      "completados": 0,
+      "pendientes": 36,
+      "conservadosHistoricos": 4
+    },
+    "textos": {
+      "conectados": 5,
+      "sinDato": 5,
+      "faltanDatos": 11,
+      "estaticos": 761,
+      "total": 782
+    }
+  },
+  "pendientes": [
+    {
+      "id": "actividad.calada_ricardone",
+      "reason": "la tabla calada_camera_events no está en la corrida cargada o vino vacía"
+    },
+    {
+      "id": "actividad.calada_ricardone_liquidos",
+      "reason": "la tabla calada_ricardone_liquid_events no está en la corrida cargada o vino vacía"
+    },
+    {
+      "id": "actividad.calada_san_lorenzo",
+      "reason": "la tabla calada_sl_camera_events no está en la corrida cargada o vino vacía"
+    },
+    {
+      "id": "actividad.volcable_ricardone",
+      "reason": "la tabla ricardone_volcable_events no está en la corrida cargada o vino vacía"
+    },
+    {
+      "id": "actividad.silos_ricardone",
+      "reason": "la tabla ricardone_silo_events no está en la corrida cargada o vino vacía"
+    },
+    {
+      "id": "actividad.volcable_san_lorenzo",
+      "reason": "la tabla san_lorenzo_volcable_events no está en la corrida cargada o vino vacía"
+    },
+    {
+      "id": "tiempos.soja",
+      "reason": "ningún tramo del circuito tiene muestra: la cobertura de cámara no sostiene el tiempo por planta"
+    },
+    {
+      "id": "tiempos.girasol",
+      "reason": "ningún tramo del circuito tiene muestra: la cobertura de cámara no sostiene el tiempo por planta; tiempo medio puerta a puerta de 1034 min supera el umbral de verosimilitud (720 min): no se publica el puerta a puerta"
+    },
+    {
+      "id": "tiempos.pellet",
+      "reason": "ningún tramo del circuito tiene muestra: la cobertura de cámara no sostiene el tiempo por planta; tiempo medio puerta a puerta de 799 min supera el umbral de verosimilitud (720 min): no se publica el puerta a puerta"
+    },
+    {
+      "id": "ejecutivo",
+      "reason": "sin debug_matrix_classification en la corrida: no hay clasificación por circuito"
+    },
+    {
+      "id": "D05_G1",
+      "reason": "cobertura LPR: requiere los eventos crudos (calibración de cámaras), no disponibles en las tablas de la corrida",
+      "slide": 5
+    },
+    {
+      "id": "D05_G2",
+      "reason": "sin dato para \"R7 Terminal de embarque\" / \"Cantidad\" (fuente ejecutivo.circuitosPorProducto.SOJA)",
+      "slide": 5
+    },
+    {
+      "id": "D15_G1",
+      "reason": "sin dato para \"Jueves\" / \"Ricardone\" (fuente tiempos.soja)",
+      "slide": 15
+    },
+    {
+      "id": "D16_G1",
+      "reason": "sin dato para \"Jueves\" / \"Q1\" (fuente tiempos.soja)",
+      "slide": 16
+    },
+    {
+      "id": "D16_G2",
+      "reason": "sin dato para \"Jueves\" / \"Tiempo medio\" (fuente tiempos.soja)",
+      "slide": 16
+    },
+    {
+      "id": "D20_G1",
+      "reason": "sin dato para \"Lunes\" / \"Cantidad\" (fuente tiempos.pellet)",
+      "slide": 20
+    },
+    {
+      "id": "D25_G1",
+      "reason": "sin dato para \"Lunes\" / \"Ricardone\" (fuente tiempos.pellet)",
+      "slide": 25
+    },
+    {
+      "id": "D28_G1",
+      "reason": "cobertura LPR girasol: requiere los eventos crudos (calibración de cámaras), no disponibles en las tablas de la corrida",
+      "slide": 28
+    },
+    {
+      "id": "D28_G2",
+      "reason": "sin dato para \"R5 Volcable 1\" / \"Cantidad\" (fuente ejecutivo.circuitosPorProducto.GIRASOL)",
+      "slide": 28
+    },
+    {
+      "id": "D35_G1",
+      "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)",
+      "slide": 35
+    },
+    {
+      "id": "D36_G1",
+      "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)",
+      "slide": 36
+    },
+    {
+      "id": "D38_G1",
+      "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)",
+      "slide": 38
+    },
+    {
+      "id": "D40_G1",
+      "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)",
+      "slide": 40
+    },
+    {
+      "id": "D42_G1",
+      "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)",
+      "slide": 42
+    },
+    {
+      "id": "D44_G1",
+      "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)",
+      "slide": 44
+    },
+    {
+      "id": "D46_G1",
+      "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)",
+      "slide": 46
+    },
+    {
+      "id": "D48_G1",
+      "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)",
+      "slide": 48
+    },
+    {
+      "id": "D50_G1",
+      "reason": "sin dato para \"Jueves\" / \"Cantidad\" (fuente actividad.calada_ricardone_liquidos)",
+      "slide": 50
+    },
+    {
+      "id": "D51_G1",
+      "reason": "sin dato para \"Jueves\" / \"Cantidad\" (fuente actividad.calada_san_lorenzo)",
+      "slide": 51
+    },
+    {
+      "id": "D53_G1",
+      "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_ricardone)",
+      "slide": 53
+    },
+    {
+      "id": "D53_G2",
+      "reason": "sin dato para \"Jueves\" / \"Volcable 1\" (fuente actividad.volcable_ricardone)",
+      "slide": 53
+    },
+    {
+      "id": "D55_G1",
+      "reason": "sin dato para \"Jueves\" / \"Cantidad\" (fuente actividad.silos_ricardone)",
+      "slide": 55
+    },
+    {
+      "id": "D57_G1",
+      "reason": "sin dato para \"Jueves\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)",
+      "slide": 57
+    },
+    {
+      "id": "D58_G1",
+      "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)",
+      "slide": 58
+    },
+    {
+      "id": "D59_G1",
+      "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)",
+      "slide": 59
+    },
+    {
+      "id": "D61_G1",
+      "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)",
+      "slide": 61
+    },
+    {
+      "id": "D63_G1",
+      "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)",
+      "slide": 63
+    },
+    {
+      "id": "D65_G1",
+      "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)",
+      "slide": 65
+    },
+    {
+      "id": "D67_G1",
+      "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)",
+      "slide": 67
+    },
+    {
+      "id": "D69_G1",
+      "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)",
+      "slide": 69
+    },
+    {
+      "id": "D71_G1",
+      "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)",
+      "slide": 71
+    },
+    {
+      "id": "texto.sample.total",
+      "reason": "indicador sin dato en el período",
+      "slide": 3
+    },
+    {
+      "id": "texto.products.soja.count",
+      "reason": "indicador sin dato en el período",
+      "slide": 3
+    },
+    {
+      "id": "texto.products.girasol.count",
+      "reason": "indicador sin dato en el período",
+      "slide": 3
+    },
+    {
+      "id": "texto.products.liquidos.count",
+      "reason": "indicador sin dato en el período",
+      "slide": 3
+    },
+    {
+      "id": "texto.products.pellet.count",
+      "reason": "indicador sin dato en el período",
+      "slide": 3
+    }
+  ],
+  "advertencias": [
+    {
+      "id": "periodo.atipico",
+      "detail": "El período 2026-09-23 → 2026-09-23 (1 días) no arranca jueves ni es la semana estándar jueves→miércoles. Los gráficos de la plantilla rotulan días por nombre y no admiten este período: quedan pendientes."
+    }
+  ],
+  "graficos": {
+    "completados": [],
+    "pendientes": [
+      {
+        "id": "D05_G1",
+        "slide": 5,
+        "reason": "cobertura LPR: requiere los eventos crudos (calibración de cámaras), no disponibles en las tablas de la corrida"
+      },
+      {
+        "id": "D05_G2",
+        "slide": 5,
+        "reason": "sin dato para \"R7 Terminal de embarque\" / \"Cantidad\" (fuente ejecutivo.circuitosPorProducto.SOJA)"
+      },
+      {
+        "id": "D15_G1",
+        "slide": 15,
+        "reason": "sin dato para \"Jueves\" / \"Ricardone\" (fuente tiempos.soja)"
+      },
+      {
+        "id": "D16_G1",
+        "slide": 16,
+        "reason": "sin dato para \"Jueves\" / \"Q1\" (fuente tiempos.soja)"
+      },
+      {
+        "id": "D16_G2",
+        "slide": 16,
+        "reason": "sin dato para \"Jueves\" / \"Tiempo medio\" (fuente tiempos.soja)"
+      },
+      {
+        "id": "D20_G1",
+        "slide": 20,
+        "reason": "sin dato para \"Lunes\" / \"Cantidad\" (fuente tiempos.pellet)"
+      },
+      {
+        "id": "D25_G1",
+        "slide": 25,
+        "reason": "sin dato para \"Lunes\" / \"Ricardone\" (fuente tiempos.pellet)"
+      },
+      {
+        "id": "D28_G1",
+        "slide": 28,
+        "reason": "cobertura LPR girasol: requiere los eventos crudos (calibración de cámaras), no disponibles en las tablas de la corrida"
+      },
+      {
+        "id": "D28_G2",
+        "slide": 28,
+        "reason": "sin dato para \"R5 Volcable 1\" / \"Cantidad\" (fuente ejecutivo.circuitosPorProducto.GIRASOL)"
+      },
+      {
+        "id": "D35_G1",
+        "slide": 35,
+        "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)"
+      },
+      {
+        "id": "D36_G1",
+        "slide": 36,
+        "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)"
+      },
+      {
+        "id": "D38_G1",
+        "slide": 38,
+        "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)"
+      },
+      {
+        "id": "D40_G1",
+        "slide": 40,
+        "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)"
+      },
+      {
+        "id": "D42_G1",
+        "slide": 42,
+        "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)"
+      },
+      {
+        "id": "D44_G1",
+        "slide": 44,
+        "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)"
+      },
+      {
+        "id": "D46_G1",
+        "slide": 46,
+        "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)"
+      },
+      {
+        "id": "D48_G1",
+        "slide": 48,
+        "reason": "sin dato para \"Calle 1\" / \"Cantidad\" (fuente actividad.calada_ricardone)"
+      },
+      {
+        "id": "D50_G1",
+        "slide": 50,
+        "reason": "sin dato para \"Jueves\" / \"Cantidad\" (fuente actividad.calada_ricardone_liquidos)"
+      },
+      {
+        "id": "D51_G1",
+        "slide": 51,
+        "reason": "sin dato para \"Jueves\" / \"Cantidad\" (fuente actividad.calada_san_lorenzo)"
+      },
+      {
+        "id": "D53_G1",
+        "slide": 53,
+        "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_ricardone)"
+      },
+      {
+        "id": "D53_G2",
+        "slide": 53,
+        "reason": "sin dato para \"Jueves\" / \"Volcable 1\" (fuente actividad.volcable_ricardone)"
+      },
+      {
+        "id": "D55_G1",
+        "slide": 55,
+        "reason": "sin dato para \"Jueves\" / \"Cantidad\" (fuente actividad.silos_ricardone)"
+      },
+      {
+        "id": "D57_G1",
+        "slide": 57,
+        "reason": "sin dato para \"Jueves\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)"
+      },
+      {
+        "id": "D58_G1",
+        "slide": 58,
+        "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)"
+      },
+      {
+        "id": "D59_G1",
+        "slide": 59,
+        "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)"
+      },
+      {
+        "id": "D61_G1",
+        "slide": 61,
+        "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)"
+      },
+      {
+        "id": "D63_G1",
+        "slide": 63,
+        "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)"
+      },
+      {
+        "id": "D65_G1",
+        "slide": 65,
+        "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)"
+      },
+      {
+        "id": "D67_G1",
+        "slide": 67,
+        "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)"
+      },
+      {
+        "id": "D69_G1",
+        "slide": 69,
+        "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)"
+      },
+      {
+        "id": "D71_G1",
+        "slide": 71,
+        "reason": "sin dato para \"Volcable 1\" / \"Cantidad\" (fuente actividad.volcable_san_lorenzo)"
+      },
+      {
+        "id": "texto.sample.total",
+        "slide": 3,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.products.soja.count",
+        "slide": 3,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.products.girasol.count",
+        "slide": 3,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.products.liquidos.count",
+        "slide": 3,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.products.pellet.count",
+        "slide": 3,
+        "reason": "indicador sin dato en el período"
+      }
+    ],
+    "conservados": [
+      {
+        "id": "D17_G1",
+        "slide": 17,
+        "reason": "histórico por tramo soja (informes ya presentados)"
+      },
+      {
+        "id": "D17_G2",
+        "slide": 17,
+        "reason": "histórico total soja (informes ya presentados)"
+      },
+      {
+        "id": "D31_G1",
+        "slide": 31,
+        "reason": "histórico por tramo girasol (informes ya presentados)"
+      },
+      {
+        "id": "D31_G2",
+        "slide": 31,
+        "reason": "histórico total girasol (informes ya presentados)"
+      }
+    ],
+    "total": 35
+  },
+  "capturasManuales": "Las curvas de actividad de calada y volcables siguen como espacios vacíos para carga manual.",
+  "estado": "para_revision_del_usuario"
+}

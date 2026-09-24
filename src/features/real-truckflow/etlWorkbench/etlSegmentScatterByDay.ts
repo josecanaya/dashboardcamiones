@@ -69,6 +69,14 @@ export type QuarterCircuitSummary = {
   /** Operaciones cuyo día operativo cae antes del período analizado (descartadas). */
   descartadasPeriodoAnterior: number
   porCuarto: Record<FranjaHoraria, { camiones: number; tiempoMedioMin: number | null }>
+  /**
+   * Tiempo medio puerta a puerta del conjunto (no de un cuarto), con la misma regla que
+   * `porCuarto.tiempoMedioMin`. NO es el promedio de los 4 cuartos: se promedia sobre las
+   * operaciones que tienen ingreso y salida, que son menos que `total`.
+   */
+  tiempoMedioMin: number | null
+  /** Operaciones que aportaron al tiempo medio (denominador real). */
+  tiempoMedioN: number
 }
 
 /** Suma `delta` días a una fecha YYYY-MM-DD (en UTC, sin efectos de DST). */
@@ -165,10 +173,15 @@ export function buildQuarterCircuitSummary(
     }
   }
 
+  const spanSumTotal = FRANJA_HORARIA_ORDER.reduce((s, q) => s + acc[q].spanSum, 0)
+  const spanNTotal = FRANJA_HORARIA_ORDER.reduce((s, q) => s + acc[q].spanN, 0)
+
   return {
     total,
     sinIngreso,
     descartadasPeriodoAnterior,
+    tiempoMedioMin: spanNTotal ? spanSumTotal / spanNTotal : null,
+    tiempoMedioN: spanNTotal,
     porCuarto: Object.fromEntries(
       FRANJA_HORARIA_ORDER.map((q) => [
         q,

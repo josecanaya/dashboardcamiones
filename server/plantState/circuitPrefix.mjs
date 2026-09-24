@@ -29,6 +29,22 @@ const SECTOR_TO_LOGICAL = {
   S6: 'S6',
   S7: 'S7',
   S8: 'S8',
+
+  /*
+   * San Lorenzo. El catalogo de circuitos (R*) describe recorridos de Ricardone,
+   * asi que el matching por prefijo no va a encontrar circuito para el puerto y
+   * devuelve null: es correcto, no es una falla. Mapear igual los logicos deja
+   * legible la secuencia observada en la ficha del camion.
+   */
+  PUERTO_SAN_LORENZO_INGRESO_CAMIONES: 'SL_S0',
+  PUERTO_SAN_LORENZO_BALANZA_INGRESO: 'SL_S1',
+  PUERTO_SAN_LORENZO_CALADA: 'SL_S2',
+  PUERTO_SAN_LORENZO_VOLCABLE: 'SL_S4',
+  PUERTO_SAN_LORENZO_BALANZA_SALIDA: 'SL_S5',
+  Liquido_2: 'SL_S6',
+  PUERTO_SAN_LORENZO_EGRESO_CAMIONES: 'SL_S7',
+  INGRESO_RENOVA: 'SL_S8',
+  PUERTO_SAN_LORENZO_LIQUIDOS_PUNTO_1: 'SL_S10',
 }
 
 const LOGICAL_LABELS = {
@@ -43,6 +59,15 @@ const LOGICAL_LABELS = {
   S8: 'Carga silo Chief',
   S9: 'Volcable',
   S10: 'Egreso',
+  SL_S0: 'Ingreso SL',
+  SL_S1: 'Balanza ingreso SL',
+  SL_S2: 'Calada SL',
+  SL_S4: 'Volcable SL',
+  SL_S5: 'Balanza salida SL',
+  SL_S6: 'Balanza liquidos SL',
+  SL_S7: 'Egreso SL',
+  SL_S8: 'Ingreso Renova',
+  SL_S10: 'Liquidos punto 1',
   ESPERA: 'Espera',
 }
 
@@ -135,7 +160,7 @@ export function sectorToLogical(sectorCode) {
   const key = String(sectorCode ?? '').trim()
   if (!key) return null
   if (SECTOR_TO_LOGICAL[key]) return SECTOR_TO_LOGICAL[key]
-  if (/^S\d+$/i.test(key)) return key.toUpperCase()
+  if (/^(SL_)?S\d+$/i.test(key)) return key.toUpperCase()
   return null
 }
 

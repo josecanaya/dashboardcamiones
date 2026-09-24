@@ -24,9 +24,9 @@ import {
   synthesizeSlRollupLegsFromTimedSegments,
   synthesizeDischargeRollupLegsFromTimedSegments,
   synthesizeInferredRollupLegsFromTimedSegments,
-  synthesizePelletExcelLegs,
   synthesizeTemplateChainLegsFromTimedSegments,
   synthesizeVolcableReceiptKpiLegsForOperation,
+  journeyHasSanLorenzoAnchor,
   diagnoseBalanzaStayFromTimedSegments,
   diagnoseR7SlBalanzaIngresoSalida,
   mergeVolcableReceiptSegmentTiming,
@@ -1743,102 +1743,77 @@ describe('plantilla KPI de líquidos (R8 / R16)', () => {
     }
   })
 
-  it('pellet declara plantilla de tramos Excel: despacho R13/14/15 y transile R30/31/32', () => {
-    // El pellet no tiene cámara en las tolvas 09/10/11 y el calado líquido se pasa una sola vez
-    // por turno (no por viaje). Se mide 100% desde el Excel de Movimientos:
-    //  - Despacho (no va a SLZ): un registro (Ricardone) → estadía ingreso→balanza egreso.
-    //  - Transile (va a SLZ y descarga allá): doble registro unido por CTG → carga Ricardone,
-    //    viaje Ric→SL (balanza egreso→volcable) y descarga en el puerto (volcable→egreso SL).
-    const despacho = ['INGRESO', 'BALANZA_EGRESO']
-    for (const code of ['R13', 'R14', 'R15']) {
-      expect(getCircuitSegmentTemplate(code), code).toEqual(despacho)
-    }
-    const transile = ['INGRESO', 'BALANZA_EGRESO', 'SL_VOLCABLE', 'SL_EGRESO']
-    // 4 puntos = 3 tramos.
-    expect(transile.length - 1).toBe(3)
+  it('pellet declara el recorrido completo de 9 tramos: transile R30/31/32 y despacho R13/14/15', () => {
+    // El pellet se mide tomando los tiempos de las cámaras por las que pasa el camión y
+    // ubicándolos en el recorrido. El transile tiene 9 tramos (Ricardone + viaje + puerto);
+    // el despacho se queda en Ricardone.
+    const transile = [
+      'INGRESO', 'PREINGRESO', 'LIQUIDO', 'BALANZA_INGRESO', 'PLAYA', 'BALANZA_EGRESO',
+      'SL_INGRESO', 'SL_BALANZA_INGRESO', 'SL_VOLCABLE', 'SL_EGRESO',
+    ]
+    // 10 puntos = 9 tramos.
+    expect(transile.length - 1).toBe(9)
     for (const code of ['R30', 'R31', 'R32']) {
       expect(getCircuitSegmentTemplate(code), code).toEqual(transile)
     }
-    // Con legs, el pellet se agrupa UNIFICADO: R13/R14/R15 → 'R13/14/15'.
-    const idx = rebuildSegmentTimingIndexFromLegs([
-      { journeyId: 'j1', plate: 'AAA', executiveCircuitCode: 'R13', fromCode: 'INGRESO', toCode: 'BALANZA_EGRESO', durationMinutes: 42 },
-      { journeyId: 'j2', plate: 'BBB', executiveCircuitCode: 'R15', fromCode: 'INGRESO', toCode: 'BALANZA_EGRESO', durationMinutes: 55 },
-    ])
-    expect(idx.circuitCodes).toContain('R13/14/15')
-    expect(idx.circuitCodes).not.toContain('R13')
-    // Los dos subcódigos (R13 celda 09, R15 celda 11) cuentan como un solo circuito.
-    const tramos = listCircuitSegmentAggregates(idx, 'R13/14/15')
-    const stay = tramos.find((a) => a.transitionKey === 'INGRESO→BALANZA_EGRESO')
-    expect(stay?.stats.count).toBe(2)
-  })
-
-  it('pellet transile: los 3 tramos salen de las 4 horas del Excel (doble registro por CTG)', () => {
-    // Sin cámara: las 4 horas del Excel (ingreso/salida de Ricardone + llegada/salida del puerto,
-    // esta última de la pata I unida por CTG) miden carga en Ricardone, viaje Ric→SL y descarga.
-    const legs = synthesizePelletExcelLegs({
-      operationId: 'CTG_1',
-      plate: 'CIE516',
-      executiveCircuitCode: 'R30',
-      externalIngresoAt: '2026-08-18T17:51:00',
-      externalSalidaAt: '2026-08-18T20:05:00', // salida de Ricardone, NO la del puerto
-      externalSlVolcableAt: '2026-08-18T20:23:00', // llegada al puerto (pata I)
-      externalSlEgresoAt: '2026-08-18T21:58:00', // salida del puerto (pata I)
-    })
-    const carga = legs.find((l) => l.fromCode === 'INGRESO' && l.toCode === 'BALANZA_EGRESO')
-    const viaje = legs.find((l) => l.fromCode === 'BALANZA_EGRESO' && l.toCode === 'SL_VOLCABLE')
-    const descarga = legs.find((l) => l.fromCode === 'SL_VOLCABLE' && l.toCode === 'SL_EGRESO')
-    expect(carga?.durationMinutes).toBe(134) // 17:51 → 20:05
-    expect(viaje?.durationMinutes).toBe(18) // 20:05 → 20:23
-    expect(descarga?.durationMinutes).toBe(95) // 20:23 → 21:58
-    expect(descarga?.segment_end_time).toBe('2026-08-18T21:58:00')
-  })
-
-  it('KPI Excel-first: el pellet transile mide sus 3 tramos desde las filas del Excel', () => {
-    // Camino real del KPI por tiempos: cada operación se re-sintetiza desde sus filas de tramo,
-    // que llevan las 4 horas del Excel. Se agrupa bajo el código unificado R30/31/32.
-    const base = {
-      analysis_ready_for_scatter: true,
-      external_operation_id: 'CTG_1',
-      journey_uid: 'j1',
-      plate_normalized: 'CIE516',
-      truckflow_circuit_code: 'R30',
-      resolved_executive_circuit_code: 'R30',
-      external_ingreso_at: '2026-08-18T17:51:00',
-      external_salida_at: '2026-08-18T20:05:00',
-      planta_normalized: 'RICARDONE',
-      external_sl_volcable_at: '2026-08-18T20:23:00',
-      external_sl_egreso_at: '2026-08-18T21:58:00',
+    const despacho = ['INGRESO', 'PREINGRESO', 'LIQUIDO', 'BALANZA_INGRESO', 'PLAYA', 'BALANZA_EGRESO']
+    for (const code of ['R13', 'R14', 'R15']) {
+      expect(getCircuitSegmentTemplate(code), code).toEqual(despacho)
     }
-    const idx = buildSegmentTimingIndexFromExcelFirstSegments([
-      { ...base, segment_from: 'INGRESO', segment_to: 'BALANZA_EGRESO', segment_start_time: '2026-08-18T17:51:00', segment_end_time: '2026-08-18T20:05:00', segment_duration_min: 134 },
-      { ...base, segment_from: 'BALANZA_EGRESO', segment_to: 'SL_VOLCABLE', segment_start_time: '2026-08-18T20:05:00', segment_end_time: '2026-08-18T20:23:00', segment_duration_min: 18 },
-      { ...base, segment_from: 'SL_VOLCABLE', segment_to: 'SL_EGRESO', segment_start_time: '2026-08-18T20:23:00', segment_end_time: '2026-08-18T21:58:00', segment_duration_min: 95 },
+    // Con legs, el pellet se agrupa UNIFICADO: R30/R31/R32 → 'R30/31/32'.
+    const idx = rebuildSegmentTimingIndexFromLegs([
+      { journeyId: 'j1', plate: 'AAA', executiveCircuitCode: 'R30', fromCode: 'SL_VOLCABLE', toCode: 'SL_EGRESO', durationMinutes: 22 },
+      { journeyId: 'j2', plate: 'BBB', executiveCircuitCode: 'R32', fromCode: 'SL_VOLCABLE', toCode: 'SL_EGRESO', durationMinutes: 30 },
     ])
     expect(idx.circuitCodes).toContain('R30/31/32')
-    const aggs = listCircuitSegmentAggregates(idx, 'R30/31/32')
-    const carga = aggs.find((a) => a.transitionKey === 'INGRESO→BALANZA_EGRESO')
-    const viaje = aggs.find((a) => a.transitionKey === 'BALANZA_EGRESO→SL_VOLCABLE')
-    const descarga = aggs.find((a) => a.transitionKey === 'SL_VOLCABLE→SL_EGRESO')
-    expect(carga?.stats.count).toBe(1)
-    expect(carga?.stats.mean).toBe(134)
-    expect(viaje?.stats.count).toBe(1)
-    expect(viaje?.stats.mean).toBe(18)
-    expect(descarga?.stats.count).toBe(1)
-    expect(descarga?.stats.mean).toBe(95)
+    expect(idx.circuitCodes).not.toContain('R30')
+    const tramos = listCircuitSegmentAggregates(idx, 'R30/31/32')
+    const descarga = tramos.find((a) => a.transitionKey === 'SL_VOLCABLE→SL_EGRESO')
+    expect(descarga?.stats.count).toBe(2)
   })
 
-  it('pellet transile sin pata I del Excel: solo mide la estadía en Ricardone', () => {
-    const legs = synthesizePelletExcelLegs({
-      operationId: 'CTG_2',
-      plate: 'CIE516',
-      executiveCircuitCode: 'R30',
-      externalIngresoAt: '2026-08-18T17:51:00',
-      externalSalidaAt: '2026-08-18T20:05:00',
-      // sin externalSlVolcableAt / externalSlEgresoAt: no inventa el tramo del puerto.
+  it('pellet: journeyHasSanLorenzoAnchor distingue transile (pasó por SL) de despacho', () => {
+    const transile = journey({
+      journeyUid: 'j-transile',
+      events: [
+        ev('RicIngCamFrente', 'RICARDONE_INGRESO_CAMIONES', '2026-05-12T08:00:00'),
+        ev('SLZIngCamFrente', 'PUERTO_SAN_LORENZO_INGRESO_CAMIONES', '2026-05-12T09:30:00'),
+      ],
+      eventCount: 2,
     })
-    expect(legs.map((l) => `${l.fromCode}→${l.toCode}`)).toEqual(['INGRESO→BALANZA_EGRESO'])
-    expect(legs.some((l) => l.toCode === 'SL_VOLCABLE')).toBe(false)
-    expect(legs.some((l) => l.toCode === 'SL_EGRESO')).toBe(false)
+    const despacho = journey({
+      journeyUid: 'j-despacho',
+      events: [
+        ev('RicIngCamFrente', 'RICARDONE_INGRESO_CAMIONES', '2026-05-12T08:00:00'),
+        ev('RicPreIngInFr', 'RICARDONE_PREINGRESO', '2026-05-12T08:20:00'),
+      ],
+      eventCount: 2,
+    })
+    expect(journeyHasSanLorenzoAnchor(transile)).toBe(true)
+    expect(journeyHasSanLorenzoAnchor(despacho)).toBe(false)
+  })
+
+  it('pellet transile: los tramos de cámara se miden atribuyendo el viaje a R30 (unificado)', () => {
+    // Un viaje de pellet que la cámara vio (ingreso→preingreso en Ricardone) se atribuye a R30 y
+    // sus tramos se miden como cualquier circuito; se agrupa bajo R30/31/32.
+    const j: ClassifiedJourneyForTiming = {
+      journey: journey({
+        journeyUid: 'j-pellet',
+        events: [
+          ev('RicIngCamFrente', 'RICARDONE_INGRESO_CAMIONES', '2026-05-12T08:00:00'),
+          ev('RicPreIngInFr', 'RICARDONE_PREINGRESO', '2026-05-12T08:12:00'),
+        ],
+        eventCount: 2,
+      }),
+      executiveCircuitCode: 'R30',
+      committeeGroup: 'COMPLETOS',
+    }
+    const idx = buildSegmentTimingIndex([j], { committeeGroups: ['COMPLETOS'] })
+    expect(idx.circuitCodes).toContain('R30/31/32')
+    const aggs = listCircuitSegmentAggregates(idx, 'R30/31/32')
+    const carga = aggs.find((a) => a.transitionKey === 'INGRESO→PREINGRESO')
+    expect(carga?.stats.count).toBe(1)
+    expect(carga?.stats.mean).toBe(12)
   })
 
   it('el tramo real preingreso → líquido queda medible', () => {

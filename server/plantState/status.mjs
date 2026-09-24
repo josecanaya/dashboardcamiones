@@ -11,12 +11,14 @@
  * Playa 3 es el caso: entran 141, pero el límite operativo es 30 porque a partir de
  * ahí los camiones estacionados bloquean la circulación.
  *
- * @param {{ backlog?: number, capacityOperational?: number|null, drainMinutes?: number|null, drainRatePerHour?: number|null }} zone
+ * @param {{ backlog?: number, entryBlind?: boolean, capacityOperational?: number|null, drainMinutes?: number|null, drainRatePerHour?: number|null }} zone
  * @param {{ drainMinutes?: number, samples?: number }|null|undefined} baseline
  * @param {{ status?: string, lastEventAgeS?: number|null }|null|undefined} drainEdge  Edge del punto que drena
  * @returns {'normal'|'attention'|'critical'|'no_data'}
  */
 export function resolveZoneStatus(zone, baseline, drainEdge) {
+  // Sin lecturas en la entrada, el backlog no se midio: no se puede dar estado.
+  if (zone?.entryBlind) return 'no_data'
   if (drainEdge) {
     if (drainEdge.status === 'offline') return 'no_data'
     if (

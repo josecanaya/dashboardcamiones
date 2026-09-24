@@ -79,14 +79,24 @@ beforeEach(() => {
 });
 
 describe("MCP tools (in-memory client <-> server)", () => {
-  it("expone las 14 tools esperadas", async () => {
+  it("expone las 24 tools esperadas", async () => {
     const client = await makeClient();
     const { tools } = await client.listTools();
     const names = tools.map((t) => t.name).sort();
     expect(names).toEqual(
       [
         "google_drive_export_presentation",
+        "google_drive_import_xlsx_as_sheet",
+        "google_drive_search_files",
         "google_drive_search_presentations",
+        "google_drive_trash_file",
+        "google_drive_upload_file",
+        "google_sheets_add_chart",
+        "google_sheets_delete_charts",
+        "google_sheets_get_metadata",
+        "google_sheets_get_values",
+        "google_sheets_update_values",
+        "google_sheets_write_sheet",
         "google_slides_add_slide",
         "google_slides_add_table",
         "google_slides_batch_update",
@@ -109,6 +119,9 @@ describe("MCP tools (in-memory client <-> server)", () => {
     const byName = Object.fromEntries(tools.map((t) => [t.name, t]));
     expect(byName["google_slides_get_presentation"].annotations?.readOnlyHint).toBe(true);
     expect(byName["google_slides_delete_slide"].annotations?.destructiveHint).toBe(true);
+    expect(byName["google_sheets_get_values"].annotations?.readOnlyHint).toBe(true);
+    expect(byName["google_drive_import_xlsx_as_sheet"].annotations?.readOnlyHint).toBe(false);
+    expect(byName["google_drive_import_xlsx_as_sheet"].annotations?.destructiveHint).toBe(false);
   });
 
   it("get_presentation acepta URL y devuelve resumen", async () => {

@@ -8,10 +8,12 @@ import {
   EDGE_LABELS,
   SECTOR_DEVICES,
   SECTOR_PROFILES,
+  normalizeSiteKey,
+  sectorCodesOfSite,
   getSectorProfile,
   resolveCanonicalSectorForLiveFeed,
 } from './sectorProfiles.mjs'
-import { ZONES, POINTS, pointOfSector, pointOfLogical, resolveZone } from './plantGraph.mjs'
+import { POINTS, pointOfSector, pointOfLogical, resolveZone, zonesOfSite } from './plantGraph.mjs'
 import { buildPointActivity, effectiveDrainRate, drainMinutes } from './drain.mjs'
 import { buildLogicalSequence, matchCircuitByPrefix, sectorToLogical } from './circuitPrefix.mjs'
 
@@ -20,7 +22,16 @@ const OPEN_MAX_IDLE_MS = 180 * 60 * 1000
 /** En báscula la presencia física es breve; 3 h inflaba “last LPR” vs capacidad del tramo. */
 const SCALE_MAX_IDLE_MS = 30 * 60 * 1000
 /** Tras egreso de báscula el camión ya no está en la balanza; no anclar presencia ahí. */
-const SCALE_EGRESO_DEVICES = new Set(['RicB1Egreso', 'RicB2Egreso', 'RicB3Egreso'])
+const SCALE_EGRESO_DEVICES = new Set([
+  'RicB1Egreso',
+  'RicB2Egreso',
+  'RicB3Egreso',
+  // San Lorenzo: las camaras traseras de balanza marcan que el camion ya salio
+  // del puente, igual que los *Egreso de Ricardone.
+  'SLZBalIngTras',
+  'SLZBalSC1Tras',
+  'SLZBalSC2Tras',
+])
 const DELTA_LOOKBACK_MS = 40 * 60 * 1000
 const TWELVE_H_MS = 12 * HOUR_MS
 
@@ -71,7 +82,15 @@ function round1(n) {
  */
 export function reducePlantState(events, nowMs, options = {}) {
   const t0 = performance.now()
-  const site = options.site || 'ricardone'
+  const site = normalizeSiteKey(options.site)
+  /*
+   * Enumerar SOLO lo de esta planta. Antes se recorrian las tablas completas, que
+   * eran de Ricardone: un snapshot de San Lorenzo habria listado los sectores y
+   * zonas de Ricardone en cero, indistinguibles de un sector real sin camiones.
+   */
+  const siteSectorCodes = sectorCodesOfSite(site)
+  const siteZones = zonesOfSite(site)
+  const siteProfiles = siteSectorCodes.map((code) => [code, SECTOR_PROFILES[code]])
   const skipDelta = Boolean(options.skipDelta)
   const alerts = Array.isArray(options.alerts) ? options.alerts : []
 
@@ -86,7 +105,10 @@ export function reducePlantState(events, nowMs, options = {}) {
     normalized.push({
       e,
       t,
-      sector: profile ? sector : null,
+      // Un sector de OTRA planta no cuenta en este snapshot: los acumuladores
+      // estan acotados a esta, y ademas una lectura de Ricardone no dice nada
+      // del estado del puerto. Los archivos locales de eventos traen las dos.
+      sector: profile && profile.site === site ? sector : null,
       device,
       rawSector: sector,
     })
@@ -113,13 +135,13 @@ export function reducePlantState(events, nowMs, options = {}) {
   }
 
   /** @type {Record<string, number>} */
-  const present = Object.fromEntries(Object.keys(SECTOR_PROFILES).map((k) => [k, 0]))
+  const present = Object.fromEntries(siteSectorCodes.map((k) => [k, 0]))
   /** @type {Record<string, number>} */
-  const in60 = Object.fromEntries(Object.keys(SECTOR_PROFILES).map((k) => [k, 0]))
+  const in60 = Object.fromEntries(siteSectorCodes.map((k) => [k, 0]))
   /** @type {Record<string, number>} */
-  const out60 = Object.fromEntries(Object.keys(SECTOR_PROFILES).map((k) => [k, 0]))
+  const out60 = Object.fromEntries(siteSectorCodes.map((k) => [k, 0]))
   /** @type {Record<string, number[]>} */
-  const dwells = Object.fromEntries(Object.keys(SECTOR_PROFILES).map((k) => [k, []]))
+  const dwells = Object.fromEntries(siteSectorCodes.map((k) => [k, []]))
   /** @type {number[]} */
   const plantDwells = []
 
@@ -128,13 +150,13 @@ export function reducePlantState(events, nowMs, options = {}) {
 
   // —— Zonas: el camión espera en el espacio DESPUÉS del punto que lo leyó.
   /** @type {Record<string, number>} */
-  const backlog = Object.fromEntries(ZONES.map((z) => [z.id, 0]))
+  const backlog = Object.fromEntries(siteZones.map((z) => [z.id, 0]))
   /** @type {Record<string, number>} */
-  const zoneIn60 = Object.fromEntries(ZONES.map((z) => [z.id, 0]))
+  const zoneIn60 = Object.fromEntries(siteZones.map((z) => [z.id, 0]))
   /** @type {Record<string, number>} */
-  const zoneOut60 = Object.fromEntries(ZONES.map((z) => [z.id, 0]))
+  const zoneOut60 = Object.fromEntries(siteZones.map((z) => [z.id, 0]))
   /** @type {Record<string, number[]>} */
-  const zoneDwells = Object.fromEntries(ZONES.map((z) => [z.id, []]))
+  const zoneDwells = Object.fromEntries(siteZones.map((z) => [z.id, []]))
 
   for (const list of byJourney.values()) {
     const withSector = list.filter((r) => r.sector)
@@ -169,7 +191,9 @@ export function reducePlantState(events, nowMs, options = {}) {
       const nextLogical = seqPos < seq.length ? seq[seqPos + 1] ?? null : null
       if (seqPos < seq.length) seqPos += 1
 
-      const zone = resolveZone(pointOfSector(row.sector), pointOfLogical(nextLogical))
+      const zone = row.e.manualZoneId
+        ? siteZones.find((item) => item.id === row.e.manualZoneId) || resolveZone(pointOfSector(row.sector), pointOfLogical(nextLogical), site)
+        : resolveZone(pointOfSector(row.sector), pointOfLogical(nextLogical), site)
       if (zone.id !== prevZoneId) {
         if (row.t > windowStart) {
           zoneIn60[zone.id] = (zoneIn60[zone.id] || 0) + 1
@@ -215,13 +239,13 @@ export function reducePlantState(events, nowMs, options = {}) {
       skipDelta: true,
     })
     delta40 = {}
-    for (const code of Object.keys(SECTOR_PROFILES)) {
+    for (const code of siteSectorCodes) {
       const cur = present[code] || 0
       const prev = before.sectors.find((s) => s.sectorCode === code)?.present ?? 0
       delta40[code] = cur - prev
     }
     zoneDelta40 = {}
-    for (const z of ZONES) {
+    for (const z of siteZones) {
       const prev = before.zones?.find((x) => x.id === z.id)?.backlog ?? 0
       zoneDelta40[z.id] = (backlog[z.id] || 0) - prev
     }
@@ -230,7 +254,7 @@ export function reducePlantState(events, nowMs, options = {}) {
   // Salud de Edge
   /** @type {Map<string, { devices: Set<string>, sectorCodes: string[] }>} */
   const edgeMeta = new Map()
-  for (const [sectorCode, profile] of Object.entries(SECTOR_PROFILES)) {
+  for (const [sectorCode, profile] of siteProfiles) {
     const edgeId = profile.edgeId
     let meta = edgeMeta.get(edgeId)
     if (!meta) {
@@ -283,7 +307,7 @@ export function reducePlantState(events, nowMs, options = {}) {
     })
   }
 
-  const sectors = Object.entries(SECTOR_PROFILES).map(([sectorCode, profile]) => {
+  const sectors = siteProfiles.map(([sectorCode, profile]) => {
     const p = present[sectorCode] || 0
     const o60 = out60[sectorCode] || 0
     const i60 = in60[sectorCode] || 0
@@ -305,10 +329,10 @@ export function reducePlantState(events, nowMs, options = {}) {
     }
   })
 
-  const gateCodes = Object.entries(SECTOR_PROFILES)
+  const gateCodes = siteProfiles
     .filter(([, p]) => p.type === 'gate')
     .map(([c]) => c)
-  const exitCodes = Object.entries(SECTOR_PROFILES)
+  const exitCodes = siteProfiles
     .filter(([, p]) => p.type === 'exit')
     .map(([c]) => c)
   // Ingresos a planta = entradas al gate; egresos = llegadas al sector exit (no salidas desde él).
@@ -316,9 +340,18 @@ export function reducePlantState(events, nowMs, options = {}) {
   const outflow60 = exitCodes.reduce((s, c) => s + (in60[c] || 0), 0)
 
   // —— Zonas con tasa efectiva y tiempo de drenaje
-  const pointActivity = buildPointActivity(normalized, nowMs)
-  const zones = ZONES.map((z) => {
+  const pointActivity = buildPointActivity(normalized, nowMs, site)
+  const zones = siteZones.map((z) => {
     const n = backlog[z.id] || 0
+    /*
+     * Sin una sola lectura en el punto de entrada, el backlog de la zona no es
+     * cero: es desconocido. La diferencia importa porque "0/150" se lee como
+     * playa vacia. Caso real: la camara de ingreso de San Lorenzo dejo de
+     * emitir el 17-09-2026 y Playa OSL quedo informando 0 con la playa llena.
+     */
+    const entryBlind = Boolean(
+      z.from && !z.from.startsWith('*') && pointActivity[z.from]?.lastEventAgeMs == null
+    )
     const { rate, nominal, activePoints, idlePoints } = effectiveDrainRate(z, pointActivity)
     const zd = zoneDwells[z.id] || []
     return {
@@ -334,6 +367,7 @@ export function reducePlantState(events, nowMs, options = {}) {
         ratePerHour: POINTS[p]?.ratePerHour ?? null,
       })),
       backlog: n,
+      entryBlind,
       capacityPhysical: z.capacityPhysical,
       capacityOperational: z.capacityOperational,
       in60: zoneIn60[z.id] || 0,

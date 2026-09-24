@@ -7,7 +7,7 @@
  *    ingreso SLZ → balanza ingreso/egreso SLZ → egreso SLZ y VUELVE a Ricardone a hacer otro ciclo.
  *  - El circuito logístico depende del producto trasladado:
  *      PELLET (de cualquier tipo) → R30 / R31 / R32
- *      SOJA                       → R26
+ *      SOJA                       → R26 (Celda 16) / R29 (silos → volcables puerto)
  *      GIRASOL                    → R27 / R28
  *    (dentro de PELLET y GIRASOL el sub-código exacto corresponde a un circuito
  *     logístico ya mapeado; hasta desambiguar se emite el set de candidatos.)
@@ -41,7 +41,7 @@ export const TRANSILE_EXTERNO_CIRCUIT_FAMILIES: Record<
   string[]
 > = {
   PELLET: ['R30', 'R31', 'R32'],
-  SOJA: ['R26'],
+  SOJA: ['R26', 'R29'],
   GIRASOL: ['R27', 'R28'],
   ACEITE: ['R34'],
 }
@@ -91,8 +91,28 @@ export function classifyTransileExternoProduct(
     const pelletCode = resolvePelletCircuitFromPlatform(platformHint)
     if (pelletCode) assigned = pelletCode
   }
+  if (family === 'SOJA') assigned = resolveSojaTransileFromPlatform(platformHint)
 
   return { family, candidates, assigned }
+}
+
+/**
+ * Soja «de la vuelta»: el origen de la carga decide el circuito.
+ *
+ * - Silos de Ricardone (Silo Chief) → R29, descarga en volcables del puerto.
+ * - Celda 16 → R26.
+ * - Plataforma desconocida → sin código: que decida la inferencia por plataforma. Antes la
+ *   soja iba siempre a R26 y así se rotularon como «Celda 16» cargas que nunca pasaron por
+ *   la celda.
+ */
+export function resolveSojaTransileFromPlatform(platform: string): string {
+  const u = String(platform ?? '')
+    .toUpperCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+  if (/SILO/.test(u)) return 'R29'
+  if (/CELDA\D*16\b|\bC16\b/.test(u)) return 'R26'
+  return ''
 }
 
 /** Celda 09/10/11 (Excel) → R30/R31/R32. Sin evidencia cámara TF en esas tolvas. */

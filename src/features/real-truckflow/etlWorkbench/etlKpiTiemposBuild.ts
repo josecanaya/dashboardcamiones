@@ -51,12 +51,15 @@ import {
   buildSegmentTimingIndex,
   buildSegmentTimingIndexFromExcelFirstSegments,
   mergeSegmentTimingIndexes,
+  journeyHasSanLorenzoAnchor,
   segmentTimingKpiCsv,
   segmentTimingLegsCsv,
   SL_BALANZA_COMITE_PRODUCT_OPTIONS,
   type ClassifiedJourneyForTiming,
   type SegmentTimingIndex,
 } from './etlSegmentTiming'
+import { isPelletExcelProduct } from '../../../etl-core/reports/transileExternoCiclo'
+import type { CommitteeGroup } from './committeeClassification'
 
 export type KpiTiemposMovimientosSnapshot = {
   excelSegmentRows: ExcelOperationSegmentScatterRow[]
@@ -108,17 +111,40 @@ export async function buildKpiTiemposArtifacts(input: KpiTiemposBuildInput): Pro
   const logs: string[] = []
   await yieldToBrowser()
 
-  let segmentTiming = buildSegmentTimingIndex(input.classifiedJourneys, {
+  const snap = input.movimientosSnapshot
+
+  // —— Pellet: tomar los tiempos de las cámaras por las que pasa el camión y ubicarlos ——
+  // El pellet carga en tolvas sin cámara, así que la cámara rotula esos viajes como R8/R7 y
+  // muchos no quedan COMPLETOS → se perdían. Acá se reetiquetan los viajes de pellet (por el
+  // producto del Excel: [[pellet-ausente-en-kpi-tiempos]]) a R30 (transile, pasó por San Lorenzo)
+  // o R13 (despacho, se quedó en Ricardone) y se los fuerza a COMPLETOS para que sus tramos de
+  // cámara entren al KPI. Se unifican después (R30/31/32 · R13/14/15). Los tramos que la cámara
+  // no captó ese viaje quedan «sin dato».
+  const pelletProductByUid = new Map<string, string>()
+  for (const r of [...(snap?.mergedRows ?? []), ...(snap?.cleanRows ?? [])]) {
+    const uid = String(r.journey_uid ?? '').trim()
+    const producto = String((r as { product_normalized?: unknown }).product_normalized ?? '').trim()
+    if (uid && producto && !pelletProductByUid.has(uid)) pelletProductByUid.set(uid, producto)
+  }
+  let pelletRelabeled = 0
+  const journeysForTiming = input.classifiedJourneys.map((cj) => {
+    if (!isPelletExcelProduct(pelletProductByUid.get(cj.journey.journeyUid) ?? '')) return cj
+    const code = journeyHasSanLorenzoAnchor(cj.journey) ? 'R30' : 'R13'
+    pelletRelabeled++
+    return { ...cj, executiveCircuitCode: code, committeeGroup: 'COMPLETOS' as CommitteeGroup }
+  })
+
+  let segmentTiming = buildSegmentTimingIndex(journeysForTiming, {
     committeeGroups: ['COMPLETOS'],
   })
   logs.push(
     `Truckflow COMPLETOS: ${segmentTiming.legs.length} tramos, ${segmentTiming.journeyCount} journeys` +
+      (pelletRelabeled ? ` · ${pelletRelabeled} viajes de pellet atribuidos a R30/R13 por cámara` : '') +
       (segmentTiming.excludedNoEntryAnchor ?
         ` · ${segmentTiming.excludedNoEntryAnchor} excluidos sin ingreso/preingreso`
       : '')
   )
 
-  const snap = input.movimientosSnapshot
   const excelScatterReady = snap?.excelSegmentRows.filter((r) => r.analysis_ready_for_scatter) ?? []
 
   if (excelScatterReady.length) {

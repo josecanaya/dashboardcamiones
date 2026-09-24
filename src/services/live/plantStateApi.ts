@@ -63,6 +63,19 @@ export type ZoneState = {
   to: string[]
   drainPoints: DrainPoint[]
   backlog: number
+  /**
+   * El punto de entrada de la zona no tiene ni una lectura en el buffer, asi que
+   * `backlog` no es un cero medido sino la ausencia de medicion. La pantalla debe
+   * mostrar "sin dato", nunca 0.
+   */
+  entryBlind?: boolean
+  /**
+   * `backlog` no se conto: se dedujo. Pasa en Playa OSL mientras la camara de
+   * ingreso del puerto este caida — las llegadas se infieren del egreso de
+   * Ricardone + 15 min. Es un orden de magnitud, no un conteo: mostrarlo
+   * siempre como estimacion.
+   */
+  backlogInferred?: boolean
   /** Cuántos entran (densidad). */
   capacityPhysical: number | null
   /** Cuántos puede haber sin romper la operación. Contra esta se evalúa el estado. */
@@ -148,6 +161,7 @@ export type TruckRow = {
   circuitLabel: string | null
   provisional: boolean
   sectorCode: string
+  zoneId: string | null
   dwellSectorMin: number | null
   dwellPlantMin: number | null
   nextExpectedPoint: string | null
@@ -241,6 +255,28 @@ export async function getSectorTrucks(
   const body = (await res.json()) as Partial<TrucksList> & { error?: string }
   if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
   return body as TrucksList
+}
+
+export async function getZoneTrucks(site: string, zoneId: string): Promise<TrucksList> {
+  const q = new URLSearchParams({ site, zone: zoneId, order: 'dwell' })
+  const res = await fetchLocalTruckflow(`/live/trucks?${q}`, { headers: { Accept: 'application/json' } })
+  const body = (await res.json()) as Partial<TrucksList> & { error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return body as TrucksList
+}
+
+export async function correctTruckLocation(
+  site: string,
+  plate: string,
+  correction: { action: 'remove' } | { action: 'move'; zoneId: string }
+): Promise<void> {
+  const res = await fetchLocalTruckflow(`/live/trucks/${encodeURIComponent(plate)}/location?site=${encodeURIComponent(site)}`, {
+    method: 'PATCH',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(correction),
+  })
+  const body = (await res.json()) as { error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
 }
 
 export async function getTruckJourney(site: string, plate: string): Promise<TruckJourney> {

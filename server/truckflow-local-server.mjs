@@ -19,6 +19,7 @@ import { createDssLiveRouter } from './dss-live.mjs'
 import { ensureGo2rtc } from './go2rtc-supervisor.mjs'
 import { createDssCaptureImportRouter } from './dssCaptureImport.mjs'
 import { createPlantLayoutEditorRouter } from './plantLayoutEditor.mjs'
+import { createLogisticsReportRouter } from './logisticsReport/router.mjs'
 import { getPlantStateService, PlantStateError } from './plantState/service.mjs'
 import { createPlantStateQueries } from './plantState/queries.mjs'
 import { askNvai } from './plantState/nvai.mjs'
@@ -235,6 +236,12 @@ app.post(
   plantLayoutEditor.uploadImage
 )
 
+/**
+ * Informe de logística: el dashboard manda el paquete del período y acá se escribe el Excel
+ * que consume `reportes/logistica/prueba_manual/actualizar.py`, con su control de cobertura.
+ */
+app.use(createLogisticsReportRouter({ projectRoot: PROJECT_ROOT }))
+
 /** Plant State en vivo (buffer 6 h + SSE). */
 const plantState = getPlantStateService()
 const plantQueries = createPlantStateQueries(plantState)
@@ -318,10 +325,26 @@ app.get('/api/truckflow/live/sectors/:sectorCode', async (req, res) => {
 app.get('/api/truckflow/live/trucks', async (req, res) => {
   const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
   const sector = req.query.sector != null ? String(req.query.sector).trim() : ''
+  const zone = req.query.zone != null ? String(req.query.zone).trim() : ''
   const order = String(req.query.order ?? 'dwell').trim()
   try {
-    const list = await plantQueries.listTrucks(site, { sector: sector || undefined, order })
+    const list = await plantQueries.listTrucks(site, { sector: sector || undefined, zone: zone || undefined, order })
     res.json(list)
+  } catch (e) {
+    if (e instanceof PlantStateError) {
+      res.status(e.httpStatus).json({ error: e.code })
+      return
+    }
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) })
+  }
+})
+
+/** Corrección operativa: sacar un camión colgado o reubicarlo en otra zona. */
+app.patch('/api/truckflow/live/trucks/:plate/location', express.json(), async (req, res) => {
+  const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
+  const plate = String(req.params.plate ?? '').trim()
+  try {
+    res.json(plantState.correctTruck(site, plate, req.body))
   } catch (e) {
     if (e instanceof PlantStateError) {
       res.status(e.httpStatus).json({ error: e.code })

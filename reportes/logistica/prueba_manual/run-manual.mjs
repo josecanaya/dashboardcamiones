@@ -1,0 +1,27 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {pathToFileURL} from 'node:url';
+import {FileBlob,PresentationFile} from '@oai/artifact-tool';
+const root='C:/Users/Usuario/Desktop/Dashboard_camiones';
+const dir=root+'/reportes/logistica/prueba_manual';
+const skill='C:/Users/Usuario/.codex/plugins/cache/openai-primary-runtime/presentations/26.905.11957/skills/presentations';
+const py='C:/Users/Usuario/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe';
+const stamp=new Date().toISOString().replace(/[:.]/g,'-');
+const work=dir+'/_trabajo/'+stamp;
+const custom=process.argv.indexOf('--excel');
+const demo=process.argv.includes('--demo');
+const args=[dir+'/actualizar.py','--work',work,...(demo?['--demo']:[]),...(custom>=0?['--excel',process.argv[custom+1]]:[])];
+const r=spawnSync(py,args,{encoding:'utf8',env:{...process.env,PYTHONUTF8:'1'}});
+if(r.status!==0)throw new Error(r.stderr||r.stdout);
+console.log(r.stdout.trim());
+await fs.mkdir(dir+'/Resultados',{recursive:true});
+process.env.RUNTIME_NODE_MODULES='C:/Users/Usuario/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules';
+const {finalizePresentation}=await import(pathToFileURL(skill+'/container_tools/artifact_tool_utils.mjs'));
+const final=dir+'/Resultados/'+(demo?'PRUEBA_100_200_':'Informe_MANUAL_')+stamp+'.pptx';
+const result=await finalizePresentation({workspaceDir:root,candidatePath:work+'/candidate.pptx',finalPath:final,pythonExecutable:py,integrityValidatorPath:skill+'/container_tools/inspect_presentation_package_integrity.py',layoutValidatorPath:skill+'/container_tools/inspect_presentation_layout_geometry.py',layoutArgs:['--expected-slide-size-emu','9144000,5448300','--expected-slide-count','72'],explicitTotalSlideCount:72,materializeLiteralChartWorkbooks:true,verifyArtifactToolImport:true,receiptPath:work+'/validation.json'});
+await fs.copyFile(work+'/registro_cambios.txt',dir+'/Resultados/registro_'+stamp+'.txt');
+await fs.writeFile(dir+'/Resultados/ULTIMO.txt',final+'\n');
+if(process.argv.includes('--preview')){const p=await PresentationFile.importPptx(await FileBlob.load(final));for(const n of [3,5,17,35,37]){const b=await p.export({slide:p.slides.items[n-1],format:'png',scale:1});await fs.writeFile(work+`/slide-${n}.png`,new Uint8Array(await b.arrayBuffer()));}}
+console.log('PRESENTACION LISTA: '+final);
+console.log('Revisar el registro para graficos incompletos.');

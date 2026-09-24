@@ -39,7 +39,7 @@
 .tf-map-site-label { margin: 0 0 6px; color: #475569; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; }
 .tf-map-toolbar { scrollbar-width: none; }
 .tf-map-toolbar::-webkit-scrollbar { display: none; }
-.tf-map-layout { display: grid; grid-template-columns: minmax(0, 760px) 300px; align-items: start; justify-content: space-between; gap: 18px; }
+.tf-map-layout { display: grid; grid-template-columns: minmax(0, max-content) 320px; align-items: start; justify-content: start; gap: 18px; }
 .tf-map-context { position: sticky; top: 8px; min-height: 280px; padding: 16px; border: 1px solid var(--tf-brand-line); border-top: 3px solid var(--tf-brand); border-radius: 12px; background: rgba(255,255,255,.97); box-shadow: 0 12px 34px rgba(15,23,42,.1); }
 .tf-map-context__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; }
 .tf-map-context__eyebrow { display: block; margin-bottom: 3px; color: #64748b; font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
@@ -54,13 +54,39 @@
 .tf-map-context__metrics dd { margin: 3px 0 0; color: #0f172a; font-size: 15px; font-weight: 750; }
 .tf-map-context__note { margin: 12px 0 0; color: #64748b; font-size: 10px; line-height: 1.45; }
 .tf-map-context__empty { margin: 16px 0; color: #64748b; font-size: 12px; }
+.tf-map-context__movements { display: grid; gap: 12px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #e2e8f0; }
+.tf-movement-group h3 { display: flex; align-items: center; gap: 7px; margin: 0; color: #334155; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.tf-movement-group h3 span { display: grid; width: 18px; height: 18px; place-items: center; border-radius: 50%; color: #fff; font-size: 12px; }
+.tf-movement-group h3 .is-in { background: #16a34a; }
+.tf-movement-group h3 .is-out { background: #ea580c; }
 .tf-recent-trucks { margin: 4px 0 0; padding: 0; list-style: none; }
 .tf-recent-trucks li { display: grid; grid-template-columns: 8px minmax(0,1fr) auto; align-items: center; gap: 9px; padding: 11px 0; border-bottom: 1px solid #eef2f6; animation: tf-recent-in .35s ease both; }
 .tf-recent-trucks__dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 3px #dcfce7; }
+.tf-recent-trucks__dot.is-out { background: #f97316; box-shadow: 0 0 0 3px #ffedd5; }
 .tf-recent-trucks strong { display: block; color: #0f172a; font: 700 12px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; }
 .tf-recent-trucks small { display: block; overflow: hidden; margin-top: 3px; color: #64748b; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
 .tf-recent-trucks time { color: #64748b; font: 600 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.tf-zone-trucks { margin-top: 14px; padding-top: 12px; border-top: 1px solid #e2e8f0; }
+.tf-zone-trucks__title { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.tf-zone-trucks__title h3 { margin: 0; color: #334155; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.tf-zone-trucks__title span { color: #64748b; font-size: 10px; }
+.tf-zone-trucks__list { max-height: 260px; margin: 7px 0 0; padding: 0; overflow-y: auto; list-style: none; }
+.tf-zone-trucks__list li { display: grid; grid-template-columns: minmax(78px,1fr) minmax(105px,1.35fr) 30px; align-items: center; gap: 7px; padding: 9px 0; border-bottom: 1px solid #eef2f6; }
+.tf-zone-trucks__identity { min-width: 0; }
+.tf-zone-trucks__identity strong { display: block; color: #0f172a; font: 750 12px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.tf-zone-trucks__identity small { display: block; margin-top: 3px; color: #64748b; font-size: 9px; }
+.tf-zone-trucks select { width: 100%; min-width: 0; border: 1px solid #cbd5e1; border-radius: 7px; background: #fff; padding: 6px 24px 6px 7px; color: #334155; font-size: 10px; }
+.tf-zone-trucks__list button { display: grid; width: 28px; height: 28px; place-items: center; border: 1px solid #fecaca; border-radius: 7px; background: #fff1f2; color: #be123c; font-size: 18px; line-height: 1; }
+.tf-zone-trucks__list button:hover { background: #ffe4e6; }
+.tf-zone-trucks__list button:disabled, .tf-zone-trucks select:disabled { cursor: wait; opacity: .55; }
+.tf-zone-trucks__error { margin: 9px 0 0; border-radius: 7px; background: #fff1f2; padding: 8px; color: #be123c; font-size: 10px; }
 @keyframes tf-recent-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+.tf-flow-pulse { position: absolute; z-index: 35; display: grid; min-width: 72px; justify-items: center; transform: translate(-50%,-50%); pointer-events: none; animation: tf-flow-pop 2.8s ease-out both; }
+.tf-flow-pulse b { display: grid; width: 34px; height: 34px; place-items: center; border: 3px solid #fff; border-radius: 50%; color: #fff; font-size: 22px; line-height: 1; box-shadow: 0 5px 16px rgba(15,23,42,.3); }
+.tf-flow-pulse span { margin-top: 3px; padding: 2px 6px; border-radius: 999px; color: #fff; font-size: 8px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.tf-flow-pulse--in b, .tf-flow-pulse--in span { background: #16a34a; }
+.tf-flow-pulse--out b, .tf-flow-pulse--out span { background: #ea580c; }
+@keyframes tf-flow-pop { 0% { opacity: 0; transform: translate(-50%,-35%) scale(.65); } 18%,70% { opacity: 1; transform: translate(-50%,-50%) scale(1); } 100% { opacity: 0; transform: translate(-50%,-68%) scale(.9); } }
 .tf-home [class~="text-slate-400"] { color: var(--ui-muted); }
 .tf-home th { font-size: 12px; padding-top: 12px; }
 .tf-home tr:focus-visible { outline: 2px solid var(--ui-primary); outline-offset: -2px; }
@@ -74,7 +100,7 @@
   .tf-map-layout { grid-template-columns: 1fr; }
   .tf-map-context { position: static; min-height: 0; }
 }
-@media (prefers-reduced-motion: reduce) { .tf-recent-trucks li { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .tf-recent-trucks li, .tf-flow-pulse { animation: none; } }
 @media (max-width: 760px) {
   .tf-home-hero { align-items: flex-start; padding: 18px; }
   .tf-site-switcher { order: 3; width: 100%; }
