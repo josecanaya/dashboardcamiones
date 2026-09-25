@@ -47,6 +47,8 @@ import {
   TRAMO_PLAYA_OSL,
 } from '../server/logisticsReport/reportWorkbook.mjs'
 import XLSX from 'xlsx'
+import { disenoLaminas, estiloGraficosHoja, indiceDelMaximo, techoEje } from './informe-diseno.mjs'
+import { conclusionesSoja, pedidosConclusiones } from './informe-conclusiones.mjs'
 
 /** El informe vivo. Estos dos IDs no deben cambiar: son LA versión. */
 const DESTINO = {
@@ -242,7 +244,8 @@ function filasHorarias(def, paquete, fechaDe) {
     const fecha = fechaDe.get(dia)
     for (let h = 0; h < 24; h++) {
       if (!fecha) {
-        filas.push([`${dia.slice(0, 3)} ${HH(h)}h`, null])
+        // '' y no null: Sheets saltea los null y dejaría el valor de la corrida anterior.
+        filas.push([`${dia.slice(0, 3)} ${HH(h)}h`, ''])
         continue
       }
       const rotulo = `${fecha.slice(8, 10)}/${fecha.slice(5, 7)} ${HH(h)}h`
@@ -396,7 +399,12 @@ const bloquesHorarios = []
 {
   let fila = 3
   for (const def of HORARIOS) {
-    const filas = filasHorarias(def, paquete, fechaDe)
+    // Columna C «Máximo»: el valor solo en la PRIMERA hora con el máximo, vacío en el resto.
+    // El gráfico la dibuja como un punto rojo sobre el área (Sheets no dibuja el resaltado de
+    // un punto suelto en un gráfico de área, pero sí una serie de un solo punto).
+    const base = filasHorarias(def, paquete, fechaDe)
+    const iMax = indiceDelMaximo(base.map((f) => f[1]))
+    const filas = base.map((f, i) => [...f, i === iMax ? f[1] : ''])
     bloquesHorarios.push({ def, encabezado: fila, primera: fila + 1, ultima: fila + filas.length, filas })
     fila += filas.length + 2
   }
@@ -408,10 +416,10 @@ const rangosHorarios = [
   },
   ...bloquesHorarios.flatMap((b) => [
     {
-      range: rangoA1(PESTANA_HORARIOS, `A${b.encabezado}:B${b.encabezado}`),
-      values: [[`${b.def.id} · ${b.def.titulo}`, 'Camiones']],
+      range: rangoA1(PESTANA_HORARIOS, `A${b.encabezado}:C${b.encabezado}`),
+      values: [[`${b.def.id} · ${b.def.titulo}`, 'Camiones', 'Máximo']],
     },
-    { range: rangoA1(PESTANA_HORARIOS, `A${b.primera}:B${b.ultima}`), values: b.filas },
+    { range: rangoA1(PESTANA_HORARIOS, `A${b.primera}:C${b.ultima}`), values: b.filas },
   ]),
 ]
 
@@ -497,6 +505,87 @@ function valorHistorico(producto, def) {
 }
 
 let comparativoSoja = null
+const historicoPorTramo = []
+
+/**
+ * Histórico por tramo (láminas 17 y 31): solo el MÁXIMO histórico de cada tramo lleva cifra,
+ * resaltado en rojo. Con las cifras en todos los puntos las tres series se cruzaban y no se
+ * leía ninguna (pedido del comité, 25/09).
+ *
+ * Una etiqueta de Sheets vale para la serie entera, así que el máximo va como series aparte
+ * en la pestaña «Graficos maximos»: una por tramo, con valor solo en la semana del máximo (la
+ * primera si hay empate). Las series originales quedan sin etiqueta.
+ */
+async function maximosHistoricos(bloques) {
+  if (!bloques.length) return
+  const PESTANA = 'Graficos maximos'
+  const meta = await tool('google_sheets_get_metadata', { spreadsheet: DESTINO.hoja })
+  if (!meta.sheets.some((sh) => sh.title === PESTANA)) {
+    await tool('google_sheets_write_sheet', {
+      spreadsheet: DESTINO.hoja,
+      sheetTitle: PESTANA,
+      values: [['Máximo histórico por tramo (láminas 17 y 31), desde el histórico de la pestaña de pivote.']],
+    })
+  }
+  const tabId = (await tool('google_sheets_get_metadata', { spreadsheet: DESTINO.hoja })).sheets.find((sh) => sh.title === PESTANA).sheetId
+  const { charts } = await tool('google_sheets_get_charts', { spreadsheet: DESTINO.hoja })
+  const rangos = []
+  const pedidos = []
+  let fila = 3
+  for (const { id, bloque, serie } of bloques) {
+    const n = bloque.series.length
+    const idx = bloque.series.map((_, k) => indiceDelMaximo(serie.map((pt) => pt.valores[k])))
+    // Encabezado: «Máximo histórico» en la primera serie, vacío en las otras (una sola entrada
+    // útil en la leyenda). Debajo, las mismas semanas que el gráfico.
+    rangos.push({
+      range: rangoA1(PESTANA, `A${fila}:${String.fromCharCode(65 + n)}${fila + serie.length}`),
+      values: [
+        [`${id} · máximos`, 'Máximo histórico', ...Array(n - 1).fill(' ')],
+        ...serie.map((pt, i) => [pt.rotulo, ...bloque.series.map((_, k) => (idx[k] === i ? pt.valores[k] : ''))]),
+      ],
+    })
+    const g = charts.find((c) => {
+      const src = c.spec?.basicChart?.series?.[0]?.series?.sourceRange?.sources?.[0]
+      return c.spec?.title === 'Histórico por tramo' && src && src.startRowIndex === bloque.categorias[0].fila - 2
+    })
+    // Techo del eje con aire sobre el máximo: si no, la cifra del pico queda cortada arriba.
+    const maximo = Math.max(0, ...serie.flatMap((pt) => pt.valores.filter((v) => typeof v === 'number')))
+    const techo = techoEje(maximo)
+    const ejeActual = g?.spec?.basicChart?.axis?.find((x) => x.position === 'LEFT_AXIS')?.viewWindowOptions?.viewWindowMax
+    if (g && (g.spec.basicChart.series.length === n || ejeActual !== techo)) {
+      const spec = structuredClone(g.spec)
+      const bc = spec.basicChart
+      bc.axis = bc.axis ?? []
+      let eje = bc.axis.find((x) => x.position === 'LEFT_AXIS')
+      if (!eje) bc.axis.push((eje = { position: 'LEFT_AXIS' }))
+      eje.viewWindowOptions = { viewWindowMode: 'EXPLICIT', viewWindowMin: 0, viewWindowMax: techo }
+      pedidos.push({ updateChartSpec: { chartId: g.chartId, spec } })
+    }
+    if (g && g.spec.basicChart.series.length === n) {
+      const spec = pedidos.at(-1)?.updateChartSpec?.chartId === g.chartId ? pedidos.pop().updateChartSpec.spec : structuredClone(g.spec)
+      const rojo = { rgbColor: { red: 0.827, green: 0.184, blue: 0.184 } }
+      spec.basicChart.series = [
+        ...spec.basicChart.series.map((x) => ({ ...x, dataLabel: { type: 'NONE' } })),
+        ...bloque.series.map((_, k) => ({
+          series: {
+            sourceRange: {
+              sources: [{ sheetId: tabId, startRowIndex: fila - 1, endRowIndex: fila + serie.length, startColumnIndex: k + 1, endColumnIndex: k + 2 }],
+            },
+          },
+          targetAxis: 'LEFT_AXIS',
+          colorStyle: rojo,
+          pointStyle: { shape: 'CIRCLE', size: 9 },
+          dataLabel: { type: 'DATA', placement: 'ABOVE', textFormat: { fontSize: 12, bold: true, foregroundColorStyle: rojo } },
+        })),
+      ]
+      pedidos.push({ updateChartSpec: { chartId: g.chartId, spec } })
+    }
+    fila += serie.length + 3
+  }
+  await tool('google_sheets_update_values', { spreadsheet: DESTINO.hoja, ranges: rangos })
+  if (pedidos.length) await tool('google_sheets_batch_update', { spreadsheet: DESTINO.hoja, requests: pedidos })
+  console.log(`Histórico por tramo: máximos marcados (${bloques.map((b) => b.id).join(', ')}).`)
+}
 if (!fechaComite) {
   console.log('Histórico: sin --comite no se suma la semana (hace falta su fecha como rótulo).')
 } else {
@@ -534,9 +623,11 @@ if (!fechaComite) {
         comparativoSoja = { diferencia: ahora - antes, antes, ahora, contra: serie[serie.length - 2].rotulo }
       }
     }
+    if (id === 'D17_G1' || id === 'D31_G1') historicoPorTramo.push({ id, bloque, serie })
     console.log(`Histórico ${id}: ${rotulo} = ${nuevo.valores.map((v) => v ?? 's/d').join(' / ')}`)
   }
   await tool('google_sheets_update_values', { spreadsheet: DESTINO.hoja, ranges: rangosHistorico })
+  await maximosHistoricos(historicoPorTramo)
 }
 
 // La pestaña horaria se crea una sola vez; después solo se pisan sus valores.
@@ -826,11 +917,16 @@ const vecinosDe = new Map()
   const nuevos = []
   DISTRIBUCIONES.forEach((d, i) => {
     const encabezado = 3 + i * (FILAS + 2)
+    // SIN_PUNTO («sin punto instrumentado») no es un circuito: es un recorrido que el
+    // clasificador no supo ubicar (bug a corregir en el ETL). Nunca se muestra en el informe.
     const circuitos = [...(paquete.ejecutivo?.circuitosPorProducto?.[d.producto] ?? [])]
+      .filter((c) => String(c.code).toUpperCase() !== 'SIN_PUNTO')
       .sort((a, b) => b.count - a.count)
       .slice(0, FILAS)
+    // Las filas sobrantes van con '' y no con null: la API de Sheets saltea los null, así
+    // que un circuito que salió del gráfico (SIN_PUNTO) seguía en la hoja.
     const filas = Array.from({ length: FILAS }, (_, k) =>
-      circuitos[k] ? [circuitos[k].label, circuitos[k].count] : [null, null],
+      circuitos[k] ? [circuitos[k].label, circuitos[k].count] : ['', ''],
     )
     const cabecera = `${d.id} · ${d.titulo}`
     rangos.push({ range: rangoA1(PESTANA, `A${encabezado}:B${encabezado}`), values: [[cabecera, 'Recorridos']] })
@@ -881,6 +977,53 @@ const vecinosDe = new Map()
       console.log(`Circuitos: lámina ${d.slide} con ${d.usadas} circuitos (antes 1).`)
     }
   }
+}
+
+// —— Camiones por día del operativo de pellet (lámina 20) ——
+//
+// Solo los días CON movimiento: el bloque de la plantilla tenía fijas dos filas (lunes y
+// martes) y el operativo real puede ocupar cualquier día. Pestaña propia con 7 filas fijas:
+// los días con camiones arriba y el resto vacío. El gráfico sigue siendo el vinculado de
+// siempre (su formato se ajusta a mano en Sheets); la primera vez se lo apunta a esta pestaña.
+{
+  const PESTANA = 'Graficos pellet'
+  const TITULO = 'Camiones por día del operativo'
+  const DIA_CORTO = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+  const dias = Object.entries(paquete.tiempos?.pellet?.porDia ?? {})
+    .filter(([, d]) => (d?.camiones ?? 0) > 0)
+    .sort(([a], [b]) => a.localeCompare(b))
+  const filas = Array.from({ length: 7 }, (_, k) => {
+    const [f, d] = dias[k] ?? []
+    if (!f) return ['', '']
+    return [`${DIA_CORTO[new Date(`${f}T00:00:00Z`).getUTCDay()]} ${f.slice(8, 10)}/${f.slice(5, 7)}`, d.camiones]
+  })
+  const meta = await tool('google_sheets_get_metadata', { spreadsheet: DESTINO.hoja })
+  if (!meta.sheets.some((sh) => sh.title === PESTANA)) {
+    await tool('google_sheets_write_sheet', {
+      spreadsheet: DESTINO.hoja,
+      sheetTitle: PESTANA,
+      values: [['Pellet: camiones por día, solo días con movimiento (desde el paquete).']],
+    })
+  }
+  await tool('google_sheets_update_values', {
+    spreadsheet: DESTINO.hoja,
+    ranges: [
+      { range: rangoA1(PESTANA, 'A2:B2'), values: [['Día', 'Camiones']] },
+      { range: rangoA1(PESTANA, 'A3:B9'), values: filas },
+    ],
+  })
+  const tabId = (await tool('google_sheets_get_metadata', { spreadsheet: DESTINO.hoja })).sheets.find((sh) => sh.title === PESTANA).sheetId
+  const { charts } = await tool('google_sheets_get_charts', { spreadsheet: DESTINO.hoja })
+  const g = charts.find((c) => c.spec?.title === TITULO)
+  const rango = (col) => ({ sourceRange: { sources: [{ sheetId: tabId, startRowIndex: 2, endRowIndex: 9, startColumnIndex: col, endColumnIndex: col + 1 }] } })
+  if (g && g.spec.basicChart?.domains?.[0]?.domain?.sourceRange?.sources?.[0]?.sheetId !== tabId) {
+    const spec = structuredClone(g.spec)
+    spec.basicChart.domains = [{ domain: rango(0) }]
+    spec.basicChart.series = [{ ...spec.basicChart.series[0], series: rango(1) }]
+    await tool('google_sheets_batch_update', { spreadsheet: DESTINO.hoja, requests: [{ updateChartSpec: { chartId: g.chartId, spec } }] })
+    console.log(`Pellet: gráfico «${TITULO}» apuntado a la pestaña «${PESTANA}».`)
+  }
+  console.log(`Pellet: ${dias.length} días con movimiento.`)
 }
 
 // Los textos van de a tandas: un batchUpdate por cada 40 para no armar un pedido gigante.
@@ -954,6 +1097,37 @@ if (fechaComite) {
     ],
   })
   console.log(`Portada: comité del ${d}-${m}-${a}.`)
+}
+
+// 4b. Conclusiones de soja (lámina 18): salen del paquete, no quedan con cifras viejas.
+{
+  const parrafos = conclusionesSoja(paquete, comparativoSoja)
+  if (parrafos.length) {
+    await tool('google_slides_batch_update', {
+      presentation: DESTINO.presentacion,
+      confirm: true,
+      requests: pedidosConclusiones('p18_i732', parrafos),
+    })
+    console.log(`Conclusiones soja: ${parrafos.length} párrafos.`)
+  }
+}
+
+// 4c. Diseño: láminas puntuales y estilo de las curvas horarias (área, máximo en rojo).
+{
+  // Láminas de días fuera del período (quedan ocultas en el paso 5): no van en las guías.
+  const diasDelPeriodo = new Set(paquete.periodo.days.map((dia) => NOMBRES_DIA[new Date(`${dia}T00:00:00Z`).getUTCDay()]))
+  const ocultas = new Set(
+    Object.entries(LAMINAS_POR_DIA)
+      .filter(([dia]) => !diasDelPeriodo.has(dia))
+      .flatMap(([, laminas]) => laminas),
+  )
+  const d = await disenoLaminas({ tool, presentacion: DESTINO.presentacion, hoja: DESTINO.hoja, vinculos, ocultas })
+  console.log(`Diseño de láminas: ${d.pedidos} pedidos.`)
+  const maximos = Object.fromEntries(
+    bloquesHorarios.map((b) => [b.def.titulo, Math.max(0, ...b.filas.map((f) => (typeof f[1] === 'number' ? f[1] : 0)))]),
+  )
+  const h = await estiloGraficosHoja({ tool, hoja: DESTINO.hoja, maximos })
+  console.log(`Estilo de gráficos de la hoja: ${h.actualizados} actualizados.`)
 }
 
 // 5. Mostrar solo las láminas de los días que ocurrieron.

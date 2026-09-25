@@ -332,3 +332,17 @@ export const deleteChartsShape = {
   confirm: z.boolean().describe("Obligatorio (true): borrar un gráfico no se deshace desde la API."),
   userId,
 };
+
+export const getChartsShape = {
+  spreadsheet,
+  userId,
+};
+
+export const sheetsBatchUpdateShape = {
+  spreadsheet,
+  requests: z
+    .array(z.record(z.unknown()))
+    .min(1)
+    .describe("Requests de spreadsheets.batchUpdate (p.ej. updateChartSpec, repeatCell)."),
+  userId,
+};

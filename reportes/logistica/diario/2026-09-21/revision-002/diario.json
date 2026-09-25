@@ -1,0 +1,404 @@
+{
+  "dia": "2026-09-21",
+  "movimientos": {
+    "total": 431,
+    "ingresos": 255,
+    "egresos": 174,
+    "kgNetos": 13329637,
+    "porProducto": {
+      "ACEITE": 56,
+      "GIRASOL": 52,
+      "SOJA": 192,
+      "OTROS": 94,
+      "MAIZ": 29,
+      "PELLET": 8
+    },
+    "kgPorProducto": {
+      "ACEITE": 1549620,
+      "GIRASOL": 1622520,
+      "SOJA": 5941540,
+      "OTROS": 3085857,
+      "MAIZ": 917980,
+      "PELLET": 212120
+    },
+    "porPlanta": {
+      "TERMINAL_EMBARQUE": 191,
+      "RICARDONE": 139,
+      "AVELLANEDA": 75,
+      "RENOPACK": 23,
+      "LOS_CORRALES_DE_NICANOR": 3
+    },
+    "porPlataforma": {
+      "ACEITE_OSL": 25,
+      "VOLCABLE_1": 52,
+      "VOLCABLE_PTO_5": 81,
+      "VOLCABLE_PTO_2": 44,
+      "CELDA_171_-_CENTRO": 29,
+      "T1002": 2,
+      "DEPOSITO_BURLANDAS": 11,
+      "VARIOS": 8,
+      "PLAYA_LEÑA_Y_CHIP": 10,
+      "SILO_CHIEF_2": 67,
+      "T1005": 1,
+      "ACEITE": 1
+    },
+    "ingresosPorHora": [
+      14,
+      8,
+      8,
+      12,
+      15,
+      3,
+      23,
+      38,
+      18,
+      29,
+      29,
+      28,
+      19,
+      27,
+      25,
+      21,
+      17,
+      16,
+      14,
+      2,
+      2,
+      2,
+      1,
+      0
+    ],
+    "salidasPorHora": [
+      8,
+      16,
+      11,
+      8,
+      9,
+      11,
+      12,
+      8,
+      24,
+      24,
+      26,
+      27,
+      29,
+      16,
+      32,
+      25,
+      24,
+      22,
+      19,
+      10,
+      18,
+      14,
+      22,
+      16
+    ],
+    "missing": false
+  },
+  "anomalias": {
+    "total": 7,
+    "porRegla": [
+      {
+        "code": "R1",
+        "title": "Reingreso rápido a Ricardone",
+        "count": 2
+      },
+      {
+        "code": "R12",
+        "title": "Descargó en Ricardone sin calado en cámara ni en Excel",
+        "count": 2
+      },
+      {
+        "code": "R2",
+        "title": "Vuelven a Ricardone desde San Lorenzo",
+        "count": 2
+      },
+      {
+        "code": "R11",
+        "title": "Descargó en más de una calle del volcable",
+        "count": 1
+      }
+    ],
+    "casos": [
+      {
+        "plate": "OTY765",
+        "code": "R1",
+        "title": "Reingreso rápido a Ricardone",
+        "reason": "RIC_REINGRESO_RAPIDO_NO_PELLET",
+        "circuito": "SIN_PUNTO",
+        "inicio": "2026-09-21T09:35:14.893-03:00",
+        "secuencia": "INGRESO>EGRESO>BALANZA_EGRESO>INGRESO"
+      },
+      {
+        "plate": "EVW965",
+        "code": "R1",
+        "title": "Reingreso rápido a Ricardone",
+        "reason": "RIC_REINGRESO_RAPIDO_NO_PELLET",
+        "circuito": "R5",
+        "inicio": "2026-09-21T13:25:20.736-03:00",
+        "secuencia": "INGRESO>PREINGRESO>CALADA>EGRESO>PLAYA>VOLCABLE>BALANZA_EGRESO>INGRESO>PREINGRESO>BALANZA_EGRESO>PLAYA>BALANZA_EGRESO>PREINGRESO"
+      },
+      {
+        "plate": "ROL445",
+        "code": "R2-a",
+        "title": "Vuelven a Ricardone desde San Lorenzo · Error de destino",
+        "reason": "SL_RIC_2H_ERROR_DESTINO_NO_PELLET",
+        "circuito": "R8",
+        "inicio": "2026-09-21T11:58:01.767-03:00",
+        "secuencia": "SL_CALADA>SL_BALANZA_INGRESO>SL_VOLCABLE>INGRESO>LIQUIDO>PREINGRESO"
+      },
+      {
+        "plate": "TDQ017",
+        "code": "R2-b",
+        "title": "Vuelven a Ricardone desde San Lorenzo · Volvieron y completaron circuito",
+        "reason": "SL_RIC_2H_CICLO_COMPLETO_NO_PELLET",
+        "circuito": "R8",
+        "inicio": "2026-09-21T16:05:33.239-03:00",
+        "secuencia": "INGRESO>PREINGRESO>LIQUIDO>SL_BALANZA_INGRESO>SL_EGRESO>INGRESO>PREINGRESO>EGRESO"
+      },
+      {
+        "plate": "AE326RU",
+        "code": "R11-b",
+        "title": "Descargó en más de una calle del volcable",
+        "reason": "PLATAFORMA_MULTIPLE_CALLES",
+        "circuito": "R7",
+        "inicio": "2026-09-21T01:02:27.083-03:00",
+        "secuencia": "INGRESO>PREINGRESO>CALADA>EGRESO>SL_BALANZA_INGRESO>SL_VOLCABLE>SL_EGRESO"
+      },
+      {
+        "plate": "UUO981",
+        "code": "R12",
+        "title": "Descargó en Ricardone sin calado en cámara ni en Excel",
+        "reason": "VOLCABLE_SIN_CALADA_RIC",
+        "circuito": "R6",
+        "inicio": "2026-09-21T06:04:40.540-03:00",
+        "secuencia": "INGRESO>VOLCABLE>CARGA_S7>VOLCABLE>BALANZA_EGRESO"
+      },
+      {
+        "plate": "CFQ560",
+        "code": "R12",
+        "title": "Descargó en Ricardone sin calado en cámara ni en Excel",
+        "reason": "VOLCABLE_SIN_CALADA_RIC",
+        "circuito": "R5",
+        "inicio": "2026-09-21T18:38:18.173-03:00",
+        "secuencia": "INGRESO>PLAYA>CARGA_S7>VOLCABLE>CARGA_S7>VOLCABLE>CARGA_S7>VOLCABLE"
+      }
+    ],
+    "excluidasRegistro": 0
+  },
+  "demorados": [
+    {
+      "tramo": "CALADA→EGRESO",
+      "umbralMin": 30,
+      "casos": [
+        {
+          "plate": "PKT966",
+          "circuito": "R7",
+          "minutos": 328
+        },
+        {
+          "plate": "AD863BH",
+          "circuito": "R7",
+          "minutos": 167
+        },
+        {
+          "plate": "AG584BW",
+          "circuito": "R7",
+          "minutos": 105
+        },
+        {
+          "plate": "NBZ105",
+          "circuito": "R7",
+          "minutos": 103
+        },
+        {
+          "plate": "HGH695",
+          "circuito": "R7",
+          "minutos": 103
+        },
+        {
+          "plate": "AI467SL",
+          "circuito": "R7",
+          "minutos": 97
+        },
+        {
+          "plate": "AH001FI",
+          "circuito": "R7",
+          "minutos": 86
+        },
+        {
+          "plate": "OTK570",
+          "circuito": "R7",
+          "minutos": 31
+        }
+      ]
+    },
+    {
+      "tramo": "EGRESO→SL_INGRESO",
+      "umbralMin": 30,
+      "casos": [
+        {
+          "plate": "ECX249",
+          "circuito": "R7",
+          "minutos": 257
+        },
+        {
+          "plate": "AH001FI",
+          "circuito": "R7",
+          "minutos": 246
+        },
+        {
+          "plate": "HOZ919",
+          "circuito": "R7",
+          "minutos": 188
+        },
+        {
+          "plate": "HGH695",
+          "circuito": "R7",
+          "minutos": 186
+        },
+        {
+          "plate": "AG584BW",
+          "circuito": "R7",
+          "minutos": 182
+        },
+        {
+          "plate": "FLN609",
+          "circuito": "R7",
+          "minutos": 171
+        },
+        {
+          "plate": "EFW422",
+          "circuito": "R7",
+          "minutos": 155
+        },
+        {
+          "plate": "AI432JA",
+          "circuito": "R7",
+          "minutos": 145
+        },
+        {
+          "plate": "LEN619",
+          "circuito": "R7",
+          "minutos": 123
+        },
+        {
+          "plate": "AD058YI",
+          "circuito": "R7",
+          "minutos": 90
+        },
+        {
+          "plate": "GPU828",
+          "circuito": "R7",
+          "minutos": 89
+        },
+        {
+          "plate": "HJJ559",
+          "circuito": "R7",
+          "minutos": 88
+        },
+        {
+          "plate": "AG741EE",
+          "circuito": "R7",
+          "minutos": 70
+        },
+        {
+          "plate": "KVB632",
+          "circuito": "R7",
+          "minutos": 69
+        },
+        {
+          "plate": "AVO155",
+          "circuito": "R7",
+          "minutos": 67
+        },
+        {
+          "plate": "AG795PP",
+          "circuito": "R7",
+          "minutos": 67
+        },
+        {
+          "plate": "MGS466",
+          "circuito": "R7",
+          "minutos": 67
+        },
+        {
+          "plate": "LBJ405",
+          "circuito": "R7",
+          "minutos": 63
+        },
+        {
+          "plate": "AE326RU",
+          "circuito": "R7",
+          "minutos": 61
+        },
+        {
+          "plate": "NGJ813",
+          "circuito": "R7",
+          "minutos": 57
+        },
+        {
+          "plate": "JZT607",
+          "circuito": "R7",
+          "minutos": 52
+        },
+        {
+          "plate": "ATP2518",
+          "circuito": "R7",
+          "minutos": 47
+        },
+        {
+          "plate": "HRC448",
+          "circuito": "R7",
+          "minutos": 46
+        },
+        {
+          "plate": "AA698OB",
+          "circuito": "R7",
+          "minutos": 44
+        },
+        {
+          "plate": "AG662JM",
+          "circuito": "R7",
+          "minutos": 43
+        },
+        {
+          "plate": "PMV179",
+          "circuito": "R7",
+          "minutos": 41
+        },
+        {
+          "plate": "LQJ786",
+          "circuito": "R7",
+          "minutos": 37
+        },
+        {
+          "plate": "OTK570",
+          "circuito": "R7",
+          "minutos": 37
+        },
+        {
+          "plate": "OZH665",
+          "circuito": "R7",
+          "minutos": 34
+        },
+        {
+          "plate": "ENA722",
+          "circuito": "R7",
+          "minutos": 33
+        },
+        {
+          "plate": "MIT413",
+          "circuito": "R7",
+          "minutos": 32
+        },
+        {
+          "plate": "AF354AQ",
+          "circuito": "R7",
+          "minutos": 32
+        }
+      ]
+    }
+  ]
+}

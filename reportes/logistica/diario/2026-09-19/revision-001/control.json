@@ -1,0 +1,67 @@
+{
+  "generadoEl": "2026-09-25T18:18:03.142Z",
+  "tipo": "diario",
+  "revision": 1,
+  "dia": "2026-09-19",
+  "corrida": {
+    "runId": "2026-09-14_2026-09-20",
+    "rulesVersion": "etl_transform_v16",
+    "finishedAt": "2026-09-21T12:33:48.875Z",
+    "inputHash": "365897ba7cc2"
+  },
+  "tablas": [
+    "calada_camera_events",
+    "calada_ricardone_liquid_events",
+    "calada_sl_camera_events",
+    "ricardone_volcable_events",
+    "ricardone_silo_events",
+    "san_lorenzo_volcable_events",
+    "excel_operations_with_truckflow",
+    "circuit_timing_journeys",
+    "segment_timing_legs",
+    "debug_matrix_classification",
+    "merged_truckflow_movimientos",
+    "excel_operations_with_truckflow (movimientos por source_date)",
+    "debug_matrix_classification (anomalías BEHAVIORAL)",
+    "segment_timing_legs (demorados)"
+  ],
+  "politicaDia": {
+    "actividad": "dia_calendario_argentina",
+    "tiempos": "dia_operativo_22h",
+    "nota": "Calada y descargas agrupan por día calendario (regla vigente de esos paneles); KPI tiempos usa el día operativo con arranque 22:00. Se conserva la regla de cada bloque para que el informe coincida con el dashboard; no comparar rótulos de día entre bloques."
+  },
+  "pendientes": [
+    {
+      "id": "tiempos.pellet",
+      "reason": "sin operaciones ni recorridos en el período"
+    }
+  ],
+  "advertencias": [
+    {
+      "id": "actividad.calada_ricardone",
+      "detail": "2319 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    },
+    {
+      "id": "actividad.calada_ricardone_liquidos",
+      "detail": "222 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    },
+    {
+      "id": "actividad.calada_san_lorenzo",
+      "detail": "288 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    },
+    {
+      "id": "actividad.volcable_ricardone",
+      "detail": "640 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    },
+    {
+      "id": "actividad.silos_ricardone",
+      "detail": "312 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    },
+    {
+      "id": "actividad.volcable_san_lorenzo",
+      "detail": "2319 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    }
+  ],
+  "exclusiones": [],
+  "estado": "para_revision_del_usuario"
+}

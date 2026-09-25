@@ -460,8 +460,8 @@ describe('tiempos por planta: suma de medias por tramo', () => {
     const { buffer, detalle } = await build(pkg)
     expect(detalle.graficos.completados.map((x) => x.id)).toContain('D15_G1')
     const ws = sheetOf(buffer, g.sheet)
-    // Filas alternadas Ricardone / San Lorenzo.
-    expect(ws[`C${g.start}`]?.v).toBe(144.6)
+    // Filas alternadas Ricardone / San Lorenzo, en minutos enteros (144,6 → 145).
+    expect(ws[`C${g.start}`]?.v).toBe(145)
     expect(ws[`C${g.start + 1}`]?.v).toBe(199)
   })
 
@@ -495,8 +495,9 @@ describe('KPI de actividad conectados al período', () => {
     expect(ws[cellOf('kpi.calada_ricardone.total')]?.v).toBe(210)
     expect(ws[cellOf('kpi.calada_ricardone.pico')]?.v).toBe(10)
     expect(ws[cellOf('kpi.calada_ricardone.ventana')]?.v).toBe('10/09 08h')
-    // El promedio declara su denominador: sin eso «promedio por hora» es ambiguo.
-    expect(String(ws[cellOf('kpi.calada_ricardone.promedio')]?.v)).toMatch(/h activas/)
+    // Solo la cifra, alineada con los otros tres recuadros: el denominador (horas con
+    // actividad) lo dice el rótulo «Promedio x hora activa».
+    expect(String(ws[cellOf('kpi.calada_ricardone.promedio')]?.v)).toBe('5')
   })
 
   it('el promedio diario del puerto divide por los días del período', async () => {

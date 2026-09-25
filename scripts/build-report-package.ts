@@ -15,53 +15,11 @@
  *
  * Sin `desde`/`hasta` usa el rango de la corrida (`2026-09-17_2026-09-22` → 17 al 22).
  */
-import fs from 'node:fs/promises'
-import path from 'node:path'
 import process from 'node:process'
 import { buildLogisticsReportPackage } from '../src/features/real-truckflow/logisticsReport/logisticsReportPackage'
-import type { EtlTransformOutput } from '../src/features/real-truckflow/etlWorkbench/etlTransformContracts'
+import { cargarCorrida, RAIZ } from './lib/loadRunHeadless'
 // @ts-expect-error módulo .mjs del servidor, sin tipos
 import { writeReportRevision } from '../server/logisticsReport/reportRevision.mjs'
-
-const RAIZ = path.resolve(import.meta.dirname, '..')
-
-/** Misma serialización que `loadTransformOutputFromRun`: el builder recibe CSV. */
-function serializeCsv(headers: string[], rows: Record<string, unknown>[]): string {
-  if (!headers.length) return ''
-  const esc = (v: unknown) => {
-    const s = v == null ? '' : String(v)
-    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
-  }
-  const lines = [headers.join(',')]
-  for (const r of rows) lines.push(headers.map((h) => esc(r[h])).join(','))
-  return lines.join('\n')
-}
-
-async function cargarCorrida(runId: string): Promise<EtlTransformOutput> {
-  const dir = path.join(RAIZ, 'runs', 'windows', runId)
-  const nombres = (await fs.readdir(path.join(dir, 'tables'))).filter((f) => f.endsWith('.json'))
-  const tables: Record<string, { headers: string[]; rows: Record<string, unknown>[] }> = {}
-  const csv: Record<string, string> = {}
-  for (const archivo of nombres) {
-    const t = JSON.parse(await fs.readFile(path.join(dir, 'tables', archivo), 'utf8'))
-    const nombre = archivo.replace(/\.json$/, '')
-    tables[nombre] = { headers: t.headers ?? [], rows: t.rows ?? [] }
-    csv[nombre] = serializeCsv(t.headers ?? [], t.rows ?? [])
-  }
-  const manifest = JSON.parse(await fs.readFile(path.join(dir, 'manifest.json'), 'utf8'))
-  let stats: unknown = {}
-  try {
-    stats = JSON.parse(await fs.readFile(path.join(dir, 'stats.json'), 'utf8'))
-  } catch {
-    stats = {}
-  }
-  return {
-    csv,
-    tables: tables as unknown as EtlTransformOutput['tables'],
-    stats: stats as EtlTransformOutput['stats'],
-    rulesVersion: String(manifest.rulesVersion ?? '') as EtlTransformOutput['rulesVersion'],
-  }
-}
 
 const [runId, desdeArg, hastaArg] = process.argv.slice(2)
 if (!runId) {

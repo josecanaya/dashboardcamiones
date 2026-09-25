@@ -719,5 +719,41 @@ export function registerTools(server: McpServer, cfg: AppConfig): void {
     }),
   );
 
-  logger.info("Tools MCP registradas", { count: 24 });
+  // 25. SHEETS GET CHARTS -----------------------------------------------------
+  server.registerTool(
+    "google_sheets_get_charts",
+    {
+      title: "Leer los gráficos de la hoja con su spec completo",
+      description:
+        "Devuelve cada gráfico (chartId, pestaña) con su spec entero. Necesario antes de " +
+        "updateChartSpec, que reemplaza el spec completo.",
+      inputSchema: S.getChartsShape,
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
+    },
+    guard(async (a: { spreadsheet: string; userId?: string }) => {
+      const { sheets } = await services(uid(a.userId));
+      const id = extractDriveFileId(a.spreadsheet);
+      return ok({ spreadsheetId: id, charts: await sheets.getCharts(id) });
+    }),
+  );
+
+  // 26. SHEETS BATCH UPDATE ---------------------------------------------------
+  server.registerTool(
+    "google_sheets_batch_update",
+    {
+      title: "Aplicar pedidos crudos de batchUpdate a la hoja",
+      description:
+        "spreadsheets.batchUpdate: formato de celdas, estilo y tipo de gráficos (updateChartSpec). " +
+        "No borra pestañas ni gráficos por sí mismo salvo que el pedido lo diga.",
+      inputSchema: S.sheetsBatchUpdateShape,
+      annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: true },
+    },
+    guard(async (a: { spreadsheet: string; requests: Record<string, unknown>[]; userId?: string }) => {
+      const { sheets } = await services(uid(a.userId));
+      const id = extractDriveFileId(a.spreadsheet);
+      return ok({ ...(await sheets.batchUpdate(id, a.requests as never)), spreadsheetId: id });
+    }),
+  );
+
+  logger.info("Tools MCP registradas", { count: 26 });
 }

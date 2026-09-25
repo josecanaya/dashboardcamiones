@@ -1,0 +1,1802 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-25T18:23:52.358Z",
+  "periodo": {
+    "from": "2026-09-24",
+    "to": "2026-09-24",
+    "days": [
+      "2026-09-24"
+    ],
+    "dayCount": 1,
+    "atipico": false,
+    "semanaEnCurso": true,
+    "diasFaltantes": [
+      "Viernes",
+      "Sábado",
+      "Domingo",
+      "Lunes",
+      "Martes",
+      "Miércoles"
+    ],
+    "label": "24/09 al 24/09/2026"
+  },
+  "fuentes": {
+    "rulesVersion": "etl_transform_v16",
+    "runIds": [
+      "2026-09-21_2026-09-27"
+    ],
+    "composedRange": null,
+    "kpiTiemposBuilt": true,
+    "tablesUsed": [
+      "calada_camera_events",
+      "calada_ricardone_liquid_events",
+      "calada_sl_camera_events",
+      "ricardone_volcable_events",
+      "ricardone_silo_events",
+      "san_lorenzo_volcable_events",
+      "excel_operations_with_truckflow",
+      "circuit_timing_journeys",
+      "segment_timing_legs",
+      "debug_matrix_classification",
+      "merged_truckflow_movimientos"
+    ]
+  },
+  "actividad": {
+    "calada_ricardone": {
+      "id": "calada_ricardone",
+      "label": "Calada Ricardone (sólidos)",
+      "table": "calada_camera_events",
+      "dayRule": "calendar",
+      "missing": false,
+      "rowsTotal": 1212,
+      "rowsOutsidePeriod": 930,
+      "duplicateRowsDropped": 0,
+      "periodo": {
+        "camiones": 279,
+        "camaras": 2,
+        "picoCamiones": 30,
+        "picoLabel": "24/09 09h",
+        "promedioPorHora": 12.26086956521739,
+        "medianaPorHora": 9,
+        "horasConActividad": 23,
+        "porCalle": [
+          {
+            "camara": "RicCal04",
+            "camiones": 161
+          },
+          {
+            "camara": "RicCal03",
+            "camiones": 120
+          }
+        ],
+        "porHora": [
+          {
+            "bucket": "2026-09-24T00",
+            "label": "24/09 00h",
+            "camiones": 25
+          },
+          {
+            "bucket": "2026-09-24T01",
+            "label": "24/09 01h",
+            "camiones": 3
+          },
+          {
+            "bucket": "2026-09-24T02",
+            "label": "24/09 02h",
+            "camiones": 11
+          },
+          {
+            "bucket": "2026-09-24T03",
+            "label": "24/09 03h",
+            "camiones": 6
+          },
+          {
+            "bucket": "2026-09-24T04",
+            "label": "24/09 04h",
+            "camiones": 9
+          },
+          {
+            "bucket": "2026-09-24T05",
+            "label": "24/09 05h",
+            "camiones": 8
+          },
+          {
+            "bucket": "2026-09-24T06",
+            "label": "24/09 06h",
+            "camiones": 9
+          },
+          {
+            "bucket": "2026-09-24T07",
+            "label": "24/09 07h",
+            "camiones": 6
+          },
+          {
+            "bucket": "2026-09-24T08",
+            "label": "24/09 08h",
+            "camiones": 9
+          },
+          {
+            "bucket": "2026-09-24T09",
+            "label": "24/09 09h",
+            "camiones": 30
+          },
+          {
+            "bucket": "2026-09-24T10",
+            "label": "24/09 10h",
+            "camiones": 16
+          },
+          {
+            "bucket": "2026-09-24T11",
+            "label": "24/09 11h",
+            "camiones": 6
+          },
+          {
+            "bucket": "2026-09-24T12",
+            "label": "24/09 12h",
+            "camiones": 11
+          },
+          {
+            "bucket": "2026-09-24T13",
+            "label": "24/09 13h",
+            "camiones": 17
+          },
+          {
+            "bucket": "2026-09-24T14",
+            "label": "24/09 14h",
+            "camiones": 4
+          },
+          {
+            "bucket": "2026-09-24T15",
+            "label": "24/09 15h",
+            "camiones": 22
+          },
+          {
+            "bucket": "2026-09-24T16",
+            "label": "24/09 16h",
+            "camiones": 11
+          },
+          {
+            "bucket": "2026-09-24T17",
+            "label": "24/09 17h",
+            "camiones": 24
+          },
+          {
+            "bucket": "2026-09-24T18",
+            "label": "24/09 18h",
+            "camiones": 2
+          },
+          {
+            "bucket": "2026-09-24T20",
+            "label": "24/09 20h",
+            "camiones": 12
+          },
+          {
+            "bucket": "2026-09-24T21",
+            "label": "24/09 21h",
+            "camiones": 4
+          },
+          {
+            "bucket": "2026-09-24T22",
+            "label": "24/09 22h",
+            "camiones": 9
+          },
+          {
+            "bucket": "2026-09-24T23",
+            "label": "24/09 23h",
+            "camiones": 28
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-24": {
+          "camiones": 279,
+          "porCalle": [
+            {
+              "camara": "RicCal04",
+              "camiones": 161
+            },
+            {
+              "camara": "RicCal03",
+              "camiones": 120
+            }
+          ],
+          "picoCamiones": 30,
+          "picoLabel": "24/09 09h",
+          "promedioPorHora": 12.26086956521739,
+          "horasConActividad": 23,
+          "porHora": [
+            {
+              "bucket": "2026-09-24T00",
+              "label": "24/09 00h",
+              "camiones": 25
+            },
+            {
+              "bucket": "2026-09-24T01",
+              "label": "24/09 01h",
+              "camiones": 3
+            },
+            {
+              "bucket": "2026-09-24T02",
+              "label": "24/09 02h",
+              "camiones": 11
+            },
+            {
+              "bucket": "2026-09-24T03",
+              "label": "24/09 03h",
+              "camiones": 6
+            },
+            {
+              "bucket": "2026-09-24T04",
+              "label": "24/09 04h",
+              "camiones": 9
+            },
+            {
+              "bucket": "2026-09-24T05",
+              "label": "24/09 05h",
+              "camiones": 8
+            },
+            {
+              "bucket": "2026-09-24T06",
+              "label": "24/09 06h",
+              "camiones": 9
+            },
+            {
+              "bucket": "2026-09-24T07",
+              "label": "24/09 07h",
+              "camiones": 6
+            },
+            {
+              "bucket": "2026-09-24T08",
+              "label": "24/09 08h",
+              "camiones": 9
+            },
+            {
+              "bucket": "2026-09-24T09",
+              "label": "24/09 09h",
+              "camiones": 30
+            },
+            {
+              "bucket": "2026-09-24T10",
+              "label": "24/09 10h",
+              "camiones": 16
+            },
+            {
+              "bucket": "2026-09-24T11",
+              "label": "24/09 11h",
+              "camiones": 6
+            },
+            {
+              "bucket": "2026-09-24T12",
+              "label": "24/09 12h",
+              "camiones": 11
+            },
+            {
+              "bucket": "2026-09-24T13",
+              "label": "24/09 13h",
+              "camiones": 17
+            },
+            {
+              "bucket": "2026-09-24T14",
+              "label": "24/09 14h",
+              "camiones": 4
+            },
+            {
+              "bucket": "2026-09-24T15",
+              "label": "24/09 15h",
+              "camiones": 22
+            },
+            {
+              "bucket": "2026-09-24T16",
+              "label": "24/09 16h",
+              "camiones": 11
+            },
+            {
+              "bucket": "2026-09-24T17",
+              "label": "24/09 17h",
+              "camiones": 24
+            },
+            {
+              "bucket": "2026-09-24T18",
+              "label": "24/09 18h",
+              "camiones": 2
+            },
+            {
+              "bucket": "2026-09-24T20",
+              "label": "24/09 20h",
+              "camiones": 12
+            },
+            {
+              "bucket": "2026-09-24T21",
+              "label": "24/09 21h",
+              "camiones": 4
+            },
+            {
+              "bucket": "2026-09-24T22",
+              "label": "24/09 22h",
+              "camiones": 9
+            },
+            {
+              "bucket": "2026-09-24T23",
+              "label": "24/09 23h",
+              "camiones": 28
+            }
+          ]
+        }
+      }
+    },
+    "calada_ricardone_liquidos": {
+      "id": "calada_ricardone_liquidos",
+      "label": "Calada Ricardone (líquidos)",
+      "table": "calada_ricardone_liquid_events",
+      "dayRule": "calendar",
+      "missing": false,
+      "rowsTotal": 318,
+      "rowsOutsidePeriod": 270,
+      "duplicateRowsDropped": 0,
+      "periodo": {
+        "camiones": 46,
+        "camaras": 1,
+        "picoCamiones": 18,
+        "picoLabel": "24/09 20h",
+        "promedioPorHora": 4.2727272727272725,
+        "medianaPorHora": 3,
+        "horasConActividad": 11,
+        "porCalle": [
+          {
+            "camara": "RicCalLiq",
+            "camiones": 46
+          }
+        ],
+        "porHora": [
+          {
+            "bucket": "2026-09-24T08",
+            "label": "24/09 08h",
+            "camiones": 1
+          },
+          {
+            "bucket": "2026-09-24T09",
+            "label": "24/09 09h",
+            "camiones": 2
+          },
+          {
+            "bucket": "2026-09-24T14",
+            "label": "24/09 14h",
+            "camiones": 1
+          },
+          {
+            "bucket": "2026-09-24T15",
+            "label": "24/09 15h",
+            "camiones": 3
+          },
+          {
+            "bucket": "2026-09-24T16",
+            "label": "24/09 16h",
+            "camiones": 1
+          },
+          {
+            "bucket": "2026-09-24T17",
+            "label": "24/09 17h",
+            "camiones": 1
+          },
+          {
+            "bucket": "2026-09-24T18",
+            "label": "24/09 18h",
+            "camiones": 8
+          },
+          {
+            "bucket": "2026-09-24T20",
+            "label": "24/09 20h",
+            "camiones": 18
+          },
+          {
+            "bucket": "2026-09-24T21",
+            "label": "24/09 21h",
+            "camiones": 4
+          },
+          {
+            "bucket": "2026-09-24T22",
+            "label": "24/09 22h",
+            "camiones": 4
+          },
+          {
+            "bucket": "2026-09-24T23",
+            "label": "24/09 23h",
+            "camiones": 4
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-24": {
+          "camiones": 46,
+          "porCalle": [
+            {
+              "camara": "RicCalLiq",
+              "camiones": 46
+            }
+          ],
+          "picoCamiones": 18,
+          "picoLabel": "24/09 20h",
+          "promedioPorHora": 4.2727272727272725,
+          "horasConActividad": 11,
+          "porHora": [
+            {
+              "bucket": "2026-09-24T08",
+              "label": "24/09 08h",
+              "camiones": 1
+            },
+            {
+              "bucket": "2026-09-24T09",
+              "label": "24/09 09h",
+              "camiones": 2
+            },
+            {
+              "bucket": "2026-09-24T14",
+              "label": "24/09 14h",
+              "camiones": 1
+            },
+            {
+              "bucket": "2026-09-24T15",
+              "label": "24/09 15h",
+              "camiones": 3
+            },
+            {
+              "bucket": "2026-09-24T16",
+              "label": "24/09 16h",
+              "camiones": 1
+            },
+            {
+              "bucket": "2026-09-24T17",
+              "label": "24/09 17h",
+              "camiones": 1
+            },
+            {
+              "bucket": "2026-09-24T18",
+              "label": "24/09 18h",
+              "camiones": 8
+            },
+            {
+              "bucket": "2026-09-24T20",
+              "label": "24/09 20h",
+              "camiones": 18
+            },
+            {
+              "bucket": "2026-09-24T21",
+              "label": "24/09 21h",
+              "camiones": 4
+            },
+            {
+              "bucket": "2026-09-24T22",
+              "label": "24/09 22h",
+              "camiones": 4
+            },
+            {
+              "bucket": "2026-09-24T23",
+              "label": "24/09 23h",
+              "camiones": 4
+            }
+          ]
+        }
+      }
+    },
+    "calada_san_lorenzo": {
+      "id": "calada_san_lorenzo",
+      "label": "Calada San Lorenzo",
+      "table": "calada_sl_camera_events",
+      "dayRule": "calendar",
+      "missing": false,
+      "rowsTotal": 229,
+      "rowsOutsidePeriod": 180,
+      "duplicateRowsDropped": 0,
+      "periodo": {
+        "camiones": 45,
+        "camaras": 1,
+        "picoCamiones": 7,
+        "picoLabel": "24/09 08h",
+        "promedioPorHora": 3.2666666666666666,
+        "medianaPorHora": 3,
+        "horasConActividad": 15,
+        "porCalle": [
+          {
+            "camara": "SLZCalado",
+            "camiones": 45
+          }
+        ],
+        "porHora": [
+          {
+            "bucket": "2026-09-24T07",
+            "label": "24/09 07h",
+            "camiones": 5
+          },
+          {
+            "bucket": "2026-09-24T08",
+            "label": "24/09 08h",
+            "camiones": 7
+          },
+          {
+            "bucket": "2026-09-24T09",
+            "label": "24/09 09h",
+            "camiones": 3
+          },
+          {
+            "bucket": "2026-09-24T10",
+            "label": "24/09 10h",
+            "camiones": 4
+          },
+          {
+            "bucket": "2026-09-24T11",
+            "label": "24/09 11h",
+            "camiones": 4
+          },
+          {
+            "bucket": "2026-09-24T12",
+            "label": "24/09 12h",
+            "camiones": 1
+          },
+          {
+            "bucket": "2026-09-24T13",
+            "label": "24/09 13h",
+            "camiones": 4
+          },
+          {
+            "bucket": "2026-09-24T14",
+            "label": "24/09 14h",
+            "camiones": 7
+          },
+          {
+            "bucket": "2026-09-24T15",
+            "label": "24/09 15h",
+            "camiones": 1
+          },
+          {
+            "bucket": "2026-09-24T16",
+            "label": "24/09 16h",
+            "camiones": 2
+          },
+          {
+            "bucket": "2026-09-24T17",
+            "label": "24/09 17h",
+            "camiones": 4
+          },
+          {
+            "bucket": "2026-09-24T18",
+            "label": "24/09 18h",
+            "camiones": 2
+          },
+          {
+            "bucket": "2026-09-24T19",
+            "label": "24/09 19h",
+            "camiones": 1
+          },
+          {
+            "bucket": "2026-09-24T20",
+            "label": "24/09 20h",
+            "camiones": 2
+          },
+          {
+            "bucket": "2026-09-24T22",
+            "label": "24/09 22h",
+            "camiones": 2
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-24": {
+          "camiones": 45,
+          "porCalle": [
+            {
+              "camara": "SLZCalado",
+              "camiones": 45
+            }
+          ],
+          "picoCamiones": 7,
+          "picoLabel": "24/09 08h",
+          "promedioPorHora": 3.2666666666666666,
+          "horasConActividad": 15,
+          "porHora": [
+            {
+              "bucket": "2026-09-24T07",
+              "label": "24/09 07h",
+              "camiones": 5
+            },
+            {
+              "bucket": "2026-09-24T08",
+              "label": "24/09 08h",
+              "camiones": 7
+            },
+            {
+              "bucket": "2026-09-24T09",
+              "label": "24/09 09h",
+              "camiones": 3
+            },
+            {
+              "bucket": "2026-09-24T10",
+              "label": "24/09 10h",
+              "camiones": 4
+            },
+            {
+              "bucket": "2026-09-24T11",
+              "label": "24/09 11h",
+              "camiones": 4
+            },
+            {
+              "bucket": "2026-09-24T12",
+              "label": "24/09 12h",
+              "camiones": 1
+            },
+            {
+              "bucket": "2026-09-24T13",
+              "label": "24/09 13h",
+              "camiones": 4
+            },
+            {
+              "bucket": "2026-09-24T14",
+              "label": "24/09 14h",
+              "camiones": 7
+            },
+            {
+              "bucket": "2026-09-24T15",
+              "label": "24/09 15h",
+              "camiones": 1
+            },
+            {
+              "bucket": "2026-09-24T16",
+              "label": "24/09 16h",
+              "camiones": 2
+            },
+            {
+              "bucket": "2026-09-24T17",
+              "label": "24/09 17h",
+              "camiones": 4
+            },
+            {
+              "bucket": "2026-09-24T18",
+              "label": "24/09 18h",
+              "camiones": 2
+            },
+            {
+              "bucket": "2026-09-24T19",
+              "label": "24/09 19h",
+              "camiones": 1
+            },
+            {
+              "bucket": "2026-09-24T20",
+              "label": "24/09 20h",
+              "camiones": 2
+            },
+            {
+              "bucket": "2026-09-24T22",
+              "label": "24/09 22h",
+              "camiones": 2
+            }
+          ]
+        }
+      }
+    },
+    "volcable_ricardone": {
+      "id": "volcable_ricardone",
+      "label": "Volcables Ricardone",
+      "table": "ricardone_volcable_events",
+      "dayRule": "calendar",
+      "missing": false,
+      "rowsTotal": 464,
+      "rowsOutsidePeriod": 353,
+      "duplicateRowsDropped": 0,
+      "periodo": {
+        "camiones": 76,
+        "camaras": 2,
+        "picoCamiones": 7,
+        "picoLabel": "24/09 04h",
+        "promedioPorHora": 4.458333333333333,
+        "medianaPorHora": 4,
+        "horasConActividad": 24,
+        "porCalle": [
+          {
+            "camara": "RicVolcable1",
+            "camiones": 58
+          },
+          {
+            "camara": "RicVolcable2",
+            "camiones": 18
+          }
+        ],
+        "porHora": [
+          {
+            "bucket": "2026-09-24T00",
+            "label": "24/09 00h",
+            "camiones": 3
+          },
+          {
+            "bucket": "2026-09-24T01",
+            "label": "24/09 01h",
+            "camiones": 3
+          },
+          {
+            "bucket": "2026-09-24T02",
+            "label": "24/09 02h",
+            "camiones": 6
+          },
+          {
+            "bucket": "2026-09-24T03",
+            "label": "24/09 03h",
+            "camiones": 4
+          },
+          {
+            "bucket": "2026-09-24T04",
+            "label": "24/09 04h",
+            "camiones": 7
+          },
+          {
+            "bucket": "2026-09-24T05",
+            "label": "24/09 05h",
+            "camiones": 5
+          },
+          {
+            "bucket": "2026-09-24T06",
+            "label": "24/09 06h",
+            "camiones": 2
+          },
+          {
+            "bucket": "2026-09-24T07",
+            "label": "24/09 07h",
+            "camiones": 6
+          },
+          {
+            "bucket": "2026-09-24T08",
+            "label": "24/09 08h",
+            "camiones": 6
+          },
+          {
+            "bucket": "2026-09-24T09",
+            "label": "24/09 09h",
+            "camiones": 6
+          },
+          {
+            "bucket": "2026-09-24T10",
+            "label": "24/09 10h",
+            "camiones": 7
+          },
+          {
+            "bucket": "2026-09-24T11",
+            "label": "24/09 11h",
+            "camiones": 6
+          },
+          {
+            "bucket": "2026-09-24T12",
+            "label": "24/09 12h",
+            "camiones": 4
+          },
+          {
+            "bucket": "2026-09-24T13",
+            "label": "24/09 13h",
+            "camiones": 5
+          },
+          {
+            "bucket": "2026-09-24T14",
+            "label": "24/09 14h",
+            "camiones": 6
+          },
+          {
+            "bucket": "2026-09-24T15",
+            "label": "24/09 15h",
+            "camiones": 6
+          },
+          {
+            "bucket": "2026-09-24T16",
+            "label": "24/09 16h",
+            "camiones": 4
+          },
+          {
+            "bucket": "2026-09-24T17",
+            "label": "24/09 17h",
+            "camiones": 3
+          },
+          {
+            "bucket": "2026-09-24T18",
+            "label": "24/09 18h",
+            "camiones": 3
+          },
+          {
+            "bucket": "2026-09-24T19",
+            "label": "24/09 19h",
+            "camiones": 3
+          },
+          {
+            "bucket": "2026-09-24T20",
+            "label": "24/09 20h",
+            "camiones": 3
+          },
+          {
+            "bucket": "2026-09-24T21",
+            "label": "24/09 21h",
+            "camiones": 2
+          },
+          {
+            "bucket": "2026-09-24T22",
+            "label": "24/09 22h",
+            "camiones": 3
+          },
+          {
+            "bucket": "2026-09-24T23",
+            "label": "24/09 23h",
+            "camiones": 4
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-24": {
+          "camiones": 76,
+          "porCalle": [
+            {
+              "camara": "RicVolcable1",
+              "camiones": 58
+            },
+            {
+              "camara": "RicVolcable2",
+              "camiones": 18
+            }
+          ],
+          "picoCamiones": 7,
+          "picoLabel": "24/09 04h",
+          "promedioPorHora": 4.458333333333333,
+          "horasConActividad": 24,
+          "porHora": [
+            {
+              "bucket": "2026-09-24T00",
+              "label": "24/09 00h",
+              "camiones": 3
+            },
+            {
+              "bucket": "2026-09-24T01",
+              "label": "24/09 01h",
+              "camiones": 3
+            },
+            {
+              "bucket": "2026-09-24T02",
+              "label": "24/09 02h",
+              "camiones": 6
+            },
+            {
+              "bucket": "2026-09-24T03",
+              "label": "24/09 03h",
+              "camiones": 4
+            },
+            {
+              "bucket": "2026-09-24T04",
+              "label": "24/09 04h",
+              "camiones": 7
+            },
+            {
+              "bucket": "2026-09-24T05",
+              "label": "24/09 05h",
+              "camiones": 5
+            },
+            {
+              "bucket": "2026-09-24T06",
+              "label": "24/09 06h",
+              "camiones": 2
+            },
+            {
+              "bucket": "2026-09-24T07",
+              "label": "24/09 07h",
+              "camiones": 6
+            },
+            {
+              "bucket": "2026-09-24T08",
+              "label": "24/09 08h",
+              "camiones": 6
+            },
+            {
+              "bucket": "2026-09-24T09",
+              "label": "24/09 09h",
+              "camiones": 6
+            },
+            {
+              "bucket": "2026-09-24T10",
+              "label": "24/09 10h",
+              "camiones": 7
+            },
+            {
+              "bucket": "2026-09-24T11",
+              "label": "24/09 11h",
+              "camiones": 6
+            },
+            {
+              "bucket": "2026-09-24T12",
+              "label": "24/09 12h",
+              "camiones": 4
+            },
+            {
+              "bucket": "2026-09-24T13",
+              "label": "24/09 13h",
+              "camiones": 5
+            },
+            {
+              "bucket": "2026-09-24T14",
+              "label": "24/09 14h",
+              "camiones": 6
+            },
+            {
+              "bucket": "2026-09-24T15",
+              "label": "24/09 15h",
+              "camiones": 6
+            },
+            {
+              "bucket": "2026-09-24T16",
+              "label": "24/09 16h",
+              "camiones": 4
+            },
+            {
+              "bucket": "2026-09-24T17",
+              "label": "24/09 17h",
+              "camiones": 3
+            },
+            {
+              "bucket": "2026-09-24T18",
+              "label": "24/09 18h",
+              "camiones": 3
+            },
+            {
+              "bucket": "2026-09-24T19",
+              "label": "24/09 19h",
+              "camiones": 3
+            },
+            {
+              "bucket": "2026-09-24T20",
+              "label": "24/09 20h",
+              "camiones": 3
+            },
+            {
+              "bucket": "2026-09-24T21",
+              "label": "24/09 21h",
+              "camiones": 2
+            },
+            {
+              "bucket": "2026-09-24T22",
+              "label": "24/09 22h",
+              "camiones": 3
+            },
+            {
+              "bucket": "2026-09-24T23",
+              "label": "24/09 23h",
+              "camiones": 4
+            }
+          ]
+        }
+      }
+    },
+    "silos_ricardone": {
+      "id": "silos_ricardone",
+      "label": "Silos Ricardone",
+      "table": "ricardone_silo_events",
+      "dayRule": "calendar",
+      "missing": false,
+      "rowsTotal": 656,
+      "rowsOutsidePeriod": 513,
+      "duplicateRowsDropped": 0,
+      "periodo": {
+        "camiones": 87,
+        "camaras": 4,
+        "picoCamiones": 13,
+        "picoLabel": "24/09 09h",
+        "promedioPorHora": 7.105263157894737,
+        "medianaPorHora": 7,
+        "horasConActividad": 19,
+        "porCalle": [
+          {
+            "camara": "RicS8CargaLinea2",
+            "camiones": 74
+          },
+          {
+            "camara": "RicS7DescLinea2",
+            "camiones": 12
+          },
+          {
+            "camara": "RicS7Carga",
+            "camiones": 4
+          },
+          {
+            "camara": "RicS8CargaLinea1",
+            "camiones": 3
+          }
+        ],
+        "porHora": [
+          {
+            "bucket": "2026-09-24T00",
+            "label": "24/09 00h",
+            "camiones": 4
+          },
+          {
+            "bucket": "2026-09-24T01",
+            "label": "24/09 01h",
+            "camiones": 4
+          },
+          {
+            "bucket": "2026-09-24T02",
+            "label": "24/09 02h",
+            "camiones": 9
+          },
+          {
+            "bucket": "2026-09-24T03",
+            "label": "24/09 03h",
+            "camiones": 8
+          },
+          {
+            "bucket": "2026-09-24T04",
+            "label": "24/09 04h",
+            "camiones": 7
+          },
+          {
+            "bucket": "2026-09-24T05",
+            "label": "24/09 05h",
+            "camiones": 5
+          },
+          {
+            "bucket": "2026-09-24T06",
+            "label": "24/09 06h",
+            "camiones": 4
+          },
+          {
+            "bucket": "2026-09-24T07",
+            "label": "24/09 07h",
+            "camiones": 8
+          },
+          {
+            "bucket": "2026-09-24T08",
+            "label": "24/09 08h",
+            "camiones": 8
+          },
+          {
+            "bucket": "2026-09-24T09",
+            "label": "24/09 09h",
+            "camiones": 13
+          },
+          {
+            "bucket": "2026-09-24T10",
+            "label": "24/09 10h",
+            "camiones": 9
+          },
+          {
+            "bucket": "2026-09-24T11",
+            "label": "24/09 11h",
+            "camiones": 12
+          },
+          {
+            "bucket": "2026-09-24T12",
+            "label": "24/09 12h",
+            "camiones": 11
+          },
+          {
+            "bucket": "2026-09-24T13",
+            "label": "24/09 13h",
+            "camiones": 6
+          },
+          {
+            "bucket": "2026-09-24T14",
+            "label": "24/09 14h",
+            "camiones": 7
+          },
+          {
+            "bucket": "2026-09-24T15",
+            "label": "24/09 15h",
+            "camiones": 12
+          },
+          {
+            "bucket": "2026-09-24T16",
+            "label": "24/09 16h",
+            "camiones": 4
+          },
+          {
+            "bucket": "2026-09-24T17",
+            "label": "24/09 17h",
+            "camiones": 3
+          },
+          {
+            "bucket": "2026-09-24T18",
+            "label": "24/09 18h",
+            "camiones": 1
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-24": {
+          "camiones": 87,
+          "porCalle": [
+            {
+              "camara": "RicS8CargaLinea2",
+              "camiones": 74
+            },
+            {
+              "camara": "RicS7DescLinea2",
+              "camiones": 12
+            },
+            {
+              "camara": "RicS7Carga",
+              "camiones": 4
+            },
+            {
+              "camara": "RicS8CargaLinea1",
+              "camiones": 3
+            }
+          ],
+          "picoCamiones": 13,
+          "picoLabel": "24/09 09h",
+          "promedioPorHora": 7.105263157894737,
+          "horasConActividad": 19,
+          "porHora": [
+            {
+              "bucket": "2026-09-24T00",
+              "label": "24/09 00h",
+              "camiones": 4
+            },
+            {
+              "bucket": "2026-09-24T01",
+              "label": "24/09 01h",
+              "camiones": 4
+            },
+            {
+              "bucket": "2026-09-24T02",
+              "label": "24/09 02h",
+              "camiones": 9
+            },
+            {
+              "bucket": "2026-09-24T03",
+              "label": "24/09 03h",
+              "camiones": 8
+            },
+            {
+              "bucket": "2026-09-24T04",
+              "label": "24/09 04h",
+              "camiones": 7
+            },
+            {
+              "bucket": "2026-09-24T05",
+              "label": "24/09 05h",
+              "camiones": 5
+            },
+            {
+              "bucket": "2026-09-24T06",
+              "label": "24/09 06h",
+              "camiones": 4
+            },
+            {
+              "bucket": "2026-09-24T07",
+              "label": "24/09 07h",
+              "camiones": 8
+            },
+            {
+              "bucket": "2026-09-24T08",
+              "label": "24/09 08h",
+              "camiones": 8
+            },
+            {
+              "bucket": "2026-09-24T09",
+              "label": "24/09 09h",
+              "camiones": 13
+            },
+            {
+              "bucket": "2026-09-24T10",
+              "label": "24/09 10h",
+              "camiones": 9
+            },
+            {
+              "bucket": "2026-09-24T11",
+              "label": "24/09 11h",
+              "camiones": 12
+            },
+            {
+              "bucket": "2026-09-24T12",
+              "label": "24/09 12h",
+              "camiones": 11
+            },
+            {
+              "bucket": "2026-09-24T13",
+              "label": "24/09 13h",
+              "camiones": 6
+            },
+            {
+              "bucket": "2026-09-24T14",
+              "label": "24/09 14h",
+              "camiones": 7
+            },
+            {
+              "bucket": "2026-09-24T15",
+              "label": "24/09 15h",
+              "camiones": 12
+            },
+            {
+              "bucket": "2026-09-24T16",
+              "label": "24/09 16h",
+              "camiones": 4
+            },
+            {
+              "bucket": "2026-09-24T17",
+              "label": "24/09 17h",
+              "camiones": 3
+            },
+            {
+              "bucket": "2026-09-24T18",
+              "label": "24/09 18h",
+              "camiones": 1
+            }
+          ]
+        }
+      }
+    },
+    "volcable_san_lorenzo": {
+      "id": "volcable_san_lorenzo",
+      "label": "Volcables Puerto San Lorenzo",
+      "table": "san_lorenzo_volcable_events",
+      "dayRule": "calendar",
+      "missing": false,
+      "rowsTotal": 941,
+      "rowsOutsidePeriod": 751,
+      "duplicateRowsDropped": 0,
+      "periodo": {
+        "camiones": 0,
+        "camaras": 0,
+        "picoCamiones": 0,
+        "picoLabel": "",
+        "promedioPorHora": 0,
+        "medianaPorHora": 0,
+        "horasConActividad": 0,
+        "porCalle": [],
+        "porHora": []
+      },
+      "porDia": {
+        "2026-09-24": {
+          "camiones": 0,
+          "porCalle": [],
+          "picoCamiones": 0,
+          "picoLabel": "",
+          "promedioPorHora": 0,
+          "horasConActividad": 0,
+          "porHora": []
+        }
+      }
+    }
+  },
+  "tiempos": {
+    "soja": {
+      "label": "Soja · R7",
+      "circuitCodes": [
+        "R7"
+      ],
+      "plantsPublishable": true,
+      "doorToDoorPublishable": true,
+      "reasons": [],
+      "operaciones": 7,
+      "recorridosCamara": 99,
+      "periodo": {
+        "camiones": 7,
+        "tiempoMedioMin": 81.28571428571429,
+        "tiempoMedioN": 7,
+        "porCuarto": {
+          "Q1": 7,
+          "Q2": 0,
+          "Q3": 0,
+          "Q4": 0
+        },
+        "ricMediaMin": 93.32819532428356,
+        "ricTramos": 3,
+        "ricN": 26,
+        "slMediaMin": 65.17233516483516,
+        "slTramos": 3,
+        "slN": 4,
+        "bridgeMediaMin": 14.291428571428572,
+        "bridgeN": 7,
+        "tramos": [
+          {
+            "key": "INGRESO→PREINGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": 4.996538461538462,
+            "n": 26
+          },
+          {
+            "key": "PREINGRESO→CALADA",
+            "planta": "RICARDONE",
+            "mediaMin": 77.42616666666666,
+            "n": 60
+          },
+          {
+            "key": "CALADA→EGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": 10.90549019607843,
+            "n": 51
+          },
+          {
+            "key": "EGRESO→SL_INGRESO",
+            "planta": "INTERPLANTA",
+            "mediaMin": 14.291428571428572,
+            "n": 7
+          },
+          {
+            "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+            "planta": "SAN_LORENZO",
+            "mediaMin": 6.987500000000001,
+            "n": 4
+          },
+          {
+            "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+            "planta": "SAN_LORENZO",
+            "mediaMin": 40.20769230769231,
+            "n": 13
+          },
+          {
+            "key": "SL_VOLCABLE→SL_EGRESO",
+            "planta": "SAN_LORENZO",
+            "mediaMin": 17.977142857142855,
+            "n": 14
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-24": {
+          "camiones": 7,
+          "tiempoMedioMin": 81.28571428571429,
+          "tiempoMedioN": 7,
+          "porCuarto": {
+            "Q1": 7,
+            "Q2": 0,
+            "Q3": 0,
+            "Q4": 0
+          },
+          "ricMediaMin": 93.32819532428356,
+          "ricTramos": 3,
+          "ricN": 26,
+          "slMediaMin": 65.17233516483516,
+          "slTramos": 3,
+          "slN": 4,
+          "bridgeMediaMin": 14.291428571428572,
+          "bridgeN": 7,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 4.996538461538462,
+              "n": 26
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": 77.42616666666666,
+              "n": 60
+            },
+            {
+              "key": "CALADA→EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": 10.90549019607843,
+              "n": 51
+            },
+            {
+              "key": "EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": 14.291428571428572,
+              "n": 7
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 6.987500000000001,
+              "n": 4
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 40.20769230769231,
+              "n": 13
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": 17.977142857142855,
+              "n": 14
+            }
+          ]
+        }
+      }
+    },
+    "girasol": {
+      "label": "Girasol · R5+R6",
+      "circuitCodes": [
+        "R5",
+        "R6"
+      ],
+      "plantsPublishable": false,
+      "doorToDoorPublishable": false,
+      "reasons": [
+        "ningún tramo del circuito tiene muestra: la cobertura de cámara no sostiene el tiempo por planta",
+        "tiempo medio puerta a puerta de 1343 min supera el umbral de verosimilitud (720 min): no se publica el puerta a puerta"
+      ],
+      "operaciones": 1,
+      "recorridosCamara": 20,
+      "periodo": {
+        "camiones": 1,
+        "tiempoMedioMin": 1343,
+        "tiempoMedioN": 1,
+        "porCuarto": {
+          "Q1": 1,
+          "Q2": 0,
+          "Q3": 0,
+          "Q4": 0
+        },
+        "ricMediaMin": null,
+        "ricTramos": 0,
+        "ricN": 0,
+        "slMediaMin": null,
+        "slTramos": 0,
+        "slN": 0,
+        "bridgeMediaMin": null,
+        "bridgeN": 0,
+        "tramos": [
+          {
+            "key": "INGRESO→PREINGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": null,
+            "n": 0
+          },
+          {
+            "key": "PREINGRESO→CALADA",
+            "planta": "RICARDONE",
+            "mediaMin": null,
+            "n": 0
+          },
+          {
+            "key": "CALADA→BALANZA_INGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": null,
+            "n": 0
+          },
+          {
+            "key": "BALANZA_INGRESO→PLAYA",
+            "planta": "RICARDONE",
+            "mediaMin": null,
+            "n": 0
+          },
+          {
+            "key": "PLAYA→VOLCABLE",
+            "planta": "RICARDONE",
+            "mediaMin": null,
+            "n": 0
+          },
+          {
+            "key": "VOLCABLE→BALANZA_EGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": null,
+            "n": 0
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-24": {
+          "camiones": 1,
+          "tiempoMedioMin": 1343,
+          "tiempoMedioN": 1,
+          "porCuarto": {
+            "Q1": 1,
+            "Q2": 0,
+            "Q3": 0,
+            "Q4": 0
+          },
+          "ricMediaMin": null,
+          "ricTramos": 0,
+          "ricN": 0,
+          "slMediaMin": null,
+          "slTramos": 0,
+          "slN": 0,
+          "bridgeMediaMin": null,
+          "bridgeN": 0,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PREINGRESO→CALADA",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "CALADA→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PLAYA→VOLCABLE",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "VOLCABLE→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            }
+          ]
+        }
+      }
+    },
+    "pellet": {
+      "label": "Pellet",
+      "circuitCodes": [
+        "R30",
+        "R31",
+        "R32",
+        "R13",
+        "R14",
+        "R15"
+      ],
+      "plantsPublishable": false,
+      "doorToDoorPublishable": false,
+      "reasons": [
+        "sin operaciones ni recorridos en el período"
+      ],
+      "operaciones": 0,
+      "recorridosCamara": 0,
+      "periodo": {
+        "camiones": 0,
+        "tiempoMedioMin": null,
+        "tiempoMedioN": 0,
+        "porCuarto": {
+          "Q1": 0,
+          "Q2": 0,
+          "Q3": 0,
+          "Q4": 0
+        },
+        "ricMediaMin": null,
+        "ricTramos": 0,
+        "ricN": 0,
+        "slMediaMin": null,
+        "slTramos": 0,
+        "slN": 0,
+        "bridgeMediaMin": null,
+        "bridgeN": 0,
+        "tramos": [
+          {
+            "key": "INGRESO→PREINGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": null,
+            "n": 0
+          },
+          {
+            "key": "PREINGRESO→LIQUIDO",
+            "planta": "RICARDONE",
+            "mediaMin": null,
+            "n": 0
+          },
+          {
+            "key": "LIQUIDO→BALANZA_INGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": null,
+            "n": 0
+          },
+          {
+            "key": "BALANZA_INGRESO→PLAYA",
+            "planta": "RICARDONE",
+            "mediaMin": null,
+            "n": 0
+          },
+          {
+            "key": "PLAYA→BALANZA_EGRESO",
+            "planta": "RICARDONE",
+            "mediaMin": null,
+            "n": 0
+          },
+          {
+            "key": "BALANZA_EGRESO→SL_INGRESO",
+            "planta": "INTERPLANTA",
+            "mediaMin": null,
+            "n": 0
+          },
+          {
+            "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+            "planta": "SAN_LORENZO",
+            "mediaMin": null,
+            "n": 0
+          },
+          {
+            "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+            "planta": "SAN_LORENZO",
+            "mediaMin": null,
+            "n": 0
+          },
+          {
+            "key": "SL_VOLCABLE→SL_EGRESO",
+            "planta": "SAN_LORENZO",
+            "mediaMin": null,
+            "n": 0
+          }
+        ]
+      },
+      "porDia": {
+        "2026-09-24": {
+          "camiones": 0,
+          "tiempoMedioMin": null,
+          "tiempoMedioN": 0,
+          "porCuarto": {
+            "Q1": 0,
+            "Q2": 0,
+            "Q3": 0,
+            "Q4": 0
+          },
+          "ricMediaMin": null,
+          "ricTramos": 0,
+          "ricN": 0,
+          "slMediaMin": null,
+          "slTramos": 0,
+          "slN": 0,
+          "bridgeMediaMin": null,
+          "bridgeN": 0,
+          "tramos": [
+            {
+              "key": "INGRESO→PREINGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PREINGRESO→LIQUIDO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "LIQUIDO→BALANZA_INGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_INGRESO→PLAYA",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "PLAYA→BALANZA_EGRESO",
+              "planta": "RICARDONE",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "BALANZA_EGRESO→SL_INGRESO",
+              "planta": "INTERPLANTA",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_INGRESO→SL_BALANZA_INGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_BALANZA_INGRESO→SL_VOLCABLE",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            },
+            {
+              "key": "SL_VOLCABLE→SL_EGRESO",
+              "planta": "SAN_LORENZO",
+              "mediaMin": null,
+              "n": 0
+            }
+          ]
+        }
+      }
+    }
+  },
+  "ejecutivo": {
+    "recorridosEnPeriodo": 218,
+    "porProducto": {
+      "SOJA": 10,
+      "GIRASOL": 0,
+      "ACEITE": 0,
+      "PELLET": 0
+    },
+    "circuitosPorProducto": {
+      "SOJA": [
+        {
+          "code": "R7",
+          "label": "R7 · Ricardone → San Lorenzo",
+          "count": 10
+        }
+      ],
+      "GIRASOL": [],
+      "ACEITE": [],
+      "PELLET": []
+    },
+    "circuitosTotales": [
+      {
+        "code": "R5",
+        "label": "R5 · Recepción Volcable 1",
+        "count": 49
+      },
+      {
+        "code": "R6",
+        "label": "R6 · Recepción Volcable 2",
+        "count": 8
+      },
+      {
+        "code": "R7",
+        "label": "R7 · Ricardone → San Lorenzo",
+        "count": 83
+      },
+      {
+        "code": "R8",
+        "label": "R8 · Recepción Mercadería Líquida",
+        "count": 10
+      },
+      {
+        "code": "R9",
+        "label": "R9 · Despacho Celda 16",
+        "count": 1
+      },
+      {
+        "code": "SIN_PUNTO",
+        "label": "SIN_PUNTO · Sin punto instrumentado (sólidos)",
+        "count": 67
+      }
+    ],
+    "missing": false
+  },
+  "controles": {
+    "sinDatos": false,
+    "pendientes": [
+      {
+        "id": "tiempos.girasol",
+        "reason": "ningún tramo del circuito tiene muestra: la cobertura de cámara no sostiene el tiempo por planta; tiempo medio puerta a puerta de 1343 min supera el umbral de verosimilitud (720 min): no se publica el puerta a puerta"
+      },
+      {
+        "id": "tiempos.pellet",
+        "reason": "sin operaciones ni recorridos en el período"
+      }
+    ],
+    "advertencias": [
+      {
+        "id": "periodo.semana_en_curso",
+        "detail": "Semana en curso: 1 de 7 días (faltan Viernes, Sábado, Domingo, Lunes, Martes, Miércoles). Los días cargados se ubican en su lugar de la plantilla; los gráficos que necesitan la semana completa quedan pendientes y NO se rellenan con cero."
+      },
+      {
+        "id": "actividad.calada_ricardone",
+        "detail": "930 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+      },
+      {
+        "id": "actividad.calada_ricardone_liquidos",
+        "detail": "270 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+      },
+      {
+        "id": "actividad.calada_san_lorenzo",
+        "detail": "180 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+      },
+      {
+        "id": "actividad.volcable_ricardone",
+        "detail": "353 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+      },
+      {
+        "id": "actividad.silos_ricardone",
+        "detail": "513 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+      },
+      {
+        "id": "actividad.volcable_san_lorenzo",
+        "detail": "751 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+      }
+    ],
+    "politicaDia": {
+      "actividad": "dia_calendario_argentina",
+      "tiempos": "dia_operativo_22h",
+      "nota": "Calada y descargas agrupan por día calendario (regla vigente de esos paneles); KPI tiempos usa el día operativo con arranque 22:00. Se conserva la regla de cada bloque para que el informe coincida con el dashboard; no comparar rótulos de día entre bloques."
+    }
+  }
+}

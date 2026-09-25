@@ -92,6 +92,11 @@ function circuitCount(pkg, product, categoria) {
   return hit ? hit.count : 0
 }
 
+/** Minutos enteros para los gráficos, o null si no hay valor. */
+function redondo(v) {
+  return typeof v === 'number' && Number.isFinite(v) ? Math.round(v) : null
+}
+
 /** Camiones del día en una sección de actividad (null solo si la sección falta). */
 function activityDayTotal(section, day) {
   if (!section || section.missing) return null
@@ -141,10 +146,11 @@ export const CHART_CATALOG = {
       const day = dayByWeekday.get(categoria)
       const d = day ? t.porDia?.[day] : null
       if (!d) return null
-      if (serie === 'Ricardone') return d.ricMediaMin
+      // Minutos enteros: el comité pidió números naturales en las etiquetas (138,8 → 139).
+      if (serie === 'Ricardone') return redondo(d.ricMediaMin)
       // Con la espera en playa deducida donde la cámara de ingreso SL no midió: sin eso la
       // barra de San Lorenzo salía corta justo los días en que la cámara estaba caída.
-      if (serie === 'San Lorenzo') return slCorregido(d)?.min ?? null
+      if (serie === 'San Lorenzo') return redondo(slCorregido(d)?.min)
       return null
     },
   },
@@ -170,7 +176,7 @@ export const CHART_CATALOG = {
       if (!t?.doorToDoorPublishable) return null
       const day = dayByWeekday.get(categoria)
       const d = day ? t.porDia?.[day] : null
-      return d ? d.tiempoMedioMin : null
+      return d ? redondo(d.tiempoMedioMin) : null
     },
   },
   D20_G1: {
@@ -199,10 +205,11 @@ export const CHART_CATALOG = {
       const day = dayByWeekday.get(categoria)
       const d = day ? t.porDia?.[day] : null
       if (!d) return null
-      if (serie === 'Ricardone') return d.ricMediaMin
+      // Minutos enteros: el comité pidió números naturales en las etiquetas (138,8 → 139).
+      if (serie === 'Ricardone') return redondo(d.ricMediaMin)
       // Con la espera en playa deducida donde la cámara de ingreso SL no midió: sin eso la
       // barra de San Lorenzo salía corta justo los días en que la cámara estaba caída.
-      if (serie === 'San Lorenzo') return slCorregido(d)?.min ?? null
+      if (serie === 'San Lorenzo') return redondo(slCorregido(d)?.min)
       return null
     },
   },
@@ -339,9 +346,9 @@ for (const [id, weekday] of Object.entries(PUERTO_DAY_CHARTS)) {
  * así que una semana nueva mostraba el pico y el total de la semana anterior junto a un
  * gráfico ya actualizado.
  *
- * `promedio` se acompaña de su denominador explícito (`horasConActividad`) porque «promedio
- * por hora» es ambiguo: no es lo mismo dividir por las 168 horas de la semana que por las
- * horas en que hubo actividad. El informe usa la segunda y ahora lo dice.
+ * `promedio` es por hora CON actividad (no sobre las 168 horas de la semana). El denominador
+ * ya no va en la cifra —«14,1 (139 h activas)» desalineaba el recuadro respecto de los otros
+ * tres—. Las horas con actividad están en la tabla de la lámina 34.
  */
 function kpiFields(seccion) {
   const periodOf = (pkg) => pkg.actividad?.[seccion]?.periodo
@@ -352,11 +359,7 @@ function kpiFields(seccion) {
     [`kpi.${seccion}.promedio`]: (pkg) => {
       const p = periodOf(pkg)
       if (p?.promedioPorHora === undefined || p?.promedioPorHora === null) return null
-      const horas = p.horasConActividad
-      // El denominador se declara porque «promedio por hora» es ambiguo (¿168 horas o las
-      // horas con actividad?), pero corto: el recuadro es chico.
-      return horas ? `${decimalEs(p.promedioPorHora)}
-(${horas} h activas)` : decimalEs(p.promedioPorHora)
+      return decimalEs(p.promedioPorHora)
     },
   }
 }
@@ -567,8 +570,11 @@ export function slCorregido(slice) {
   return { min, estimado: true }
 }
 
-/** Marca de valor estimado: «≈183». Se usa en los textos; los gráficos llevan el número. */
-const marca = (estimado) => (estimado ? '≈' : '')
+/**
+ * Marca de valor estimado. Se retiró por pedido del comité (25/09): el «≈» ensuciaba las
+ * láminas 7–14. Queda la función para no perder el punto donde se decide, pero no marca nada.
+ */
+const marca = () => ''
 
 function diaSojaFields(dia) {
   const diaDe = (pkg, ctx) => {
@@ -621,7 +627,7 @@ function diaSojaFields(dia) {
       const d = diaDe(pkg, ctx).d
       if (key === TRAMO_PLAYA_OSL) {
         const v = playaOsl(d)
-        return v ? (v.estimado ? `≈${Math.round(v.min)}` : Math.round(v.min)) : null
+        return v ? Math.round(v.min) : null
       }
       const tramo = (d?.tramos ?? []).find((t) => t.key === key)
       return tramo && typeof tramo.mediaMin === 'number' ? Math.round(tramo.mediaMin) : null
@@ -629,6 +635,9 @@ function diaSojaFields(dia) {
   })
   return campos
 }
+
+/** Carga estándar de un camión de pellet: toneladas = camiones × 30. */
+export const TONELADAS_POR_CAMION_PELLET = 30
 
 /** Tramos de pellet (R30/31/32) en el orden del diagrama de las láminas 22–24. */
 export const TRAMOS_PELLET = [
@@ -683,7 +692,7 @@ function diagramaFields(prefijo, tramos, bloque) {
     campos[`${prefijo}.tramo.${i + 1}`] = (pkg, ctx) => {
       if (key === TRAMO_PLAYA_OSL) {
         const v = playaOsl(bloque(pkg, ctx))
-        return v ? (v.estimado ? `≈${Math.round(v.min)}` : Math.round(v.min)) : null
+        return v ? Math.round(v.min) : null
       }
       const t = (bloque(pkg, ctx)?.tramos ?? []).find((x) => x.key === key)
       // Un tramo sin muestra (n = 0) llega con media 0: no es «0 minutos», es «no se midió».
@@ -733,7 +742,13 @@ function operativoPellet(pkg) {
 function filaCalada(prefijo, seccion) {
   const p = (pkg) => pkg.actividad?.[seccion]?.periodo
   return {
-    [`calada.${prefijo}.horas`]: (pkg) => numberOrNull(p(pkg)?.horasConActividad),
+    // Ocupación de la calada: horas con actividad sobre las horas del período, «83% (139 hs)».
+    [`calada.${prefijo}.horas`]: (pkg) => {
+      const horas = p(pkg)?.horasConActividad
+      const total = (pkg.periodo?.dayCount ?? 0) * 24
+      if (typeof horas !== 'number') return null
+      return total > 0 ? `${Math.round((horas / total) * 100)}% (${horas} hs)` : `${horas} hs`
+    },
     [`calada.${prefijo}.camiones_h`]: (pkg) =>
       typeof p(pkg)?.promedioPorHora === 'number' ? decimalEs(p(pkg).promedioPorHora) : null,
     [`calada.${prefijo}.camiones`]: (pkg) => numberOrNull(p(pkg)?.camiones),
@@ -761,13 +776,14 @@ export const TEXT_FIELD_CATALOG = {
     return o ? shortDate(o.fin) : null
   },
   'pellet.operativo.camiones': (pkg) => {
-    const n = pkg.tiempos?.pellet?.periodo?.camiones
-    return typeof n === 'number' ? `Total volumen  
-${n}
-camiones` : null
+    // Solo la cifra: el rótulo «Total volumen · camiones» es fijo en la lámina.
+    return numberOrNull(pkg.tiempos?.pellet?.periodo?.camiones)
   },
-  // El paquete no trae toneladas: `s/d` antes que dejar las del informe de referencia.
-  'pellet.operativo.toneladas': () => null,
+  // El paquete no trae toneladas: se estiman a 30 t por camión (criterio del comité, 25/09).
+  'pellet.operativo.toneladas': (pkg) => {
+    const n = pkg.tiempos?.pellet?.periodo?.camiones
+    return typeof n === 'number' ? n * TONELADAS_POR_CAMION_PELLET : null
+  },
 
   // —— Día a día de pellet (láminas 23 y 24) ——
   ...diagramaFields('dia.pellet.Lunes', TRAMOS_PELLET, diaDe('pellet', 'Lunes')),

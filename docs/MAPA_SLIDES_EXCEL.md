@@ -54,7 +54,11 @@ revisión → `scripts/sync-informe-slides.mjs` → la hoja y la presentación e
 | 37–49 (impares) | Graficos horarios | Calada Ricardone por hora, un día | `actividad.calada_ricardone.porDia[día].porHora` |
 | 50, 51, 54, 56 | Graficos horarios | Curva horaria de la semana | `actividad.<sección>.periodo.porHora` |
 | 60–72 (pares) | Graficos horarios | Volcables puerto por hora, un día | `actividad.volcable_san_lorenzo.porDia[día].porHora` |
-| 5, 28 | Graficos circuitos | Distribución por circuito (todos los circuitos) | `ejecutivo.circuitosPorProducto` |
+| 5, 28 | Graficos circuitos | Distribución por circuito (sin SIN_PUNTO) | `ejecutivo.circuitosPorProducto` |
+
+### Formato automático
+
+Curvas horarias (37–51, 54, 56, 60–72): combinado área + serie «Máximo» (columna C de `Graficos horarios`) que marca en rojo la primera hora pico. Lámina 20: pestaña `Graficos pellet`, solo días con camiones. Los gráficos de barras NO se tocan por API: su formato (borde, opacidad) se ajusta a mano en Sheets y se conserva.
 
 ## Textos conectados
 
@@ -64,8 +68,9 @@ revisión → `scripts/sync-informe-slides.mjs` → la hoja y la presentación e
 | 2 | 18 | 0 | `—` | Índice fijo de la plantilla |
 | 3 | 12 | 6 | `ejecutivo.porProducto` | final_circuits → resumen ejecutivo |
 | 7 | 14 | 14 | `tiempos.soja.periodo` | circuit_timing_journeys (R7) → tramos |
+| 7 | 1 | 0 | `?` | ? |
 | 8–14 (7) | 140 | 140 | `tiempos.soja.porDia` | circuit_timing_journeys (R7), día operativo 22:00 |
-| 20 | 4 | 4 | `tiempos.pellet.porDia` | Días con camiones de pellet; toneladas: s/d (no está en el paquete) |
+| 20 | 4 | 4 | `tiempos.pellet.porDia` | Días con camiones de pellet; toneladas = camiones × 30 |
 | 22 | 16 | 16 | `tiempos.pellet.periodo` | circuit_timing_journeys (R30/31/32) + Excel pellet |
 | 23, 24 | 34 | 34 | `tiempos.pellet.porDia` | circuit_timing_journeys, día operativo 22:00 |
 | 30 | 8 | 8 | `tiempos.girasol.periodo` | circuit_timing_journeys (R5+R6) |
@@ -74,9 +79,10 @@ revisión → `scripts/sync-informe-slides.mjs` → la hoja y la presentación e
 | 36–72 (28) | 28 | 28 | `periodo.days` | Día y fecha real de la lámina |
 | 37–72 (14) | 56 | 56 | `actividad.<sección>.porDia` | Modelo de actividad de cámaras del día (mismo que el panel) |
 
-## Lo que sigue siendo manual o sin fuente
+## Lo que sigue siendo manual o estimado
 
-- **Conclusiones** (láminas 18, 26, 32): texto escrito a mano; el sync no las toca.
-- **Comparativo semana anterior** (lámina 7, "+58 Min"): requiere el paquete de la semana previa.
-- **Toneladas de pellet** (lámina 20): el paquete no trae toneladas → `s/d`.
+- **Conclusiones de soja** (lámina 18): las escribe el sync desde el paquete (`scripts/informe-conclusiones.mjs`).
+- **Conclusiones** (láminas 26 y 32): texto escrito a mano; el sync no las toca.
+- **Comparativo semana anterior** (lámina 7): sale del histórico de la hoja (`--comite`).
+- **Toneladas de pellet** (lámina 20): estimadas a 30 t por camión.
 - **Históricos** (láminas 17 y 31): series ya presentadas, se conservan sin recalcular.

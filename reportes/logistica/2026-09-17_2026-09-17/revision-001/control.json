@@ -1,0 +1,2649 @@
+{
+  "generadoEl": "2026-09-25T15:17:13.424Z",
+  "revision": 1,
+  "periodo": {
+    "from": "2026-09-17",
+    "to": "2026-09-17",
+    "days": [
+      "2026-09-17"
+    ],
+    "dayCount": 1,
+    "atipico": false,
+    "semanaEnCurso": true,
+    "diasFaltantes": [
+      "Viernes",
+      "Sábado",
+      "Domingo",
+      "Lunes",
+      "Martes",
+      "Miércoles"
+    ],
+    "label": "17/09 al 17/09/2026"
+  },
+  "fuentes": {
+    "rulesVersion": "etl_transform_v16",
+    "runIds": [],
+    "composedRange": null,
+    "kpiTiemposBuilt": true,
+    "tablesUsed": [
+      "calada_camera_events",
+      "calada_ricardone_liquid_events",
+      "calada_sl_camera_events",
+      "ricardone_volcable_events",
+      "ricardone_silo_events",
+      "san_lorenzo_volcable_events",
+      "excel_operations_with_truckflow",
+      "circuit_timing_journeys",
+      "segment_timing_legs",
+      "debug_matrix_classification",
+      "merged_truckflow_movimientos"
+    ]
+  },
+  "politicaDia": {
+    "actividad": "dia_calendario_argentina",
+    "tiempos": "dia_operativo_22h",
+    "nota": "Calada y descargas agrupan por día calendario (regla vigente de esos paneles); KPI tiempos usa el día operativo con arranque 22:00. Se conserva la regla de cada bloque para que el informe coincida con el dashboard; no comparar rótulos de día entre bloques."
+  },
+  "cobertura": {
+    "graficos": {
+      "total": 35,
+      "completados": 29,
+      "pendientes": 234,
+      "conservadosHistoricos": 4
+    },
+    "textos": {
+      "conectados": 106,
+      "sinDato": 234,
+      "faltanDatos": 0,
+      "estaticos": 442,
+      "total": 782
+    }
+  },
+  "pendientes": [
+    {
+      "id": "texto.dia.Viernes.tramo.2",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.tramo.3",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.tramo.4",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.tramo.5",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.tramo.6",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.tramo.7",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.total_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.tramo.1",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.fecha",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.cuarto.Q1",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.cuarto.Q2",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.cuarto.Q3",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.cuarto.Q4",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.titulo",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.camiones",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.total_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.ricardone_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.san_lorenzo_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.ricardone_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Viernes.san_lorenzo_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 9
+    },
+    {
+      "id": "texto.dia.Sábado.tramo.2",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.tramo.3",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.tramo.4",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.tramo.5",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.tramo.6",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.tramo.7",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.total_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.tramo.1",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.fecha",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.titulo",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.cuarto.Q1",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.cuarto.Q2",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.cuarto.Q3",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.cuarto.Q4",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.camiones",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.ricardone_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.san_lorenzo_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.ricardone_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.san_lorenzo_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Sábado.total_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 10
+    },
+    {
+      "id": "texto.dia.Domingo.tramo.2",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.tramo.3",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.tramo.4",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.tramo.5",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.tramo.6",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.tramo.7",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.total_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.tramo.1",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.fecha",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.titulo",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.cuarto.Q1",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.cuarto.Q2",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.cuarto.Q3",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.cuarto.Q4",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.camiones",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.ricardone_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.san_lorenzo_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.ricardone_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.san_lorenzo_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Domingo.total_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 11
+    },
+    {
+      "id": "texto.dia.Lunes.titulo",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.tramo.2",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.tramo.3",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.tramo.4",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.tramo.5",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.tramo.6",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.tramo.7",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.total_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.tramo.1",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.cuarto.Q1",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.cuarto.Q2",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.cuarto.Q3",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.cuarto.Q4",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.camiones",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.fecha",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.ricardone_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.san_lorenzo_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.ricardone_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.san_lorenzo_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Lunes.total_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 12
+    },
+    {
+      "id": "texto.dia.Martes.tramo.2",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.tramo.3",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.tramo.4",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.tramo.5",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.tramo.6",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.tramo.7",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.total_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.tramo.1",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.fecha",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.titulo",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.cuarto.Q1",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.cuarto.Q2",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.cuarto.Q3",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.cuarto.Q4",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.camiones",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.ricardone_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.san_lorenzo_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.ricardone_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.san_lorenzo_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Martes.total_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 13
+    },
+    {
+      "id": "texto.dia.Miércoles.tramo.2",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.tramo.3",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.tramo.4",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.tramo.5",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.tramo.6",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.tramo.7",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.total_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.tramo.1",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.fecha",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.titulo",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.cuarto.Q1",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.cuarto.Q2",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.cuarto.Q3",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.cuarto.Q4",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.camiones",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.san_lorenzo_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.san_lorenzo_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.ricardone_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.ricardone_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.dia.Miércoles.total_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 14
+    },
+    {
+      "id": "texto.pellet.operativo.toneladas",
+      "reason": "indicador sin dato en el período",
+      "slide": 20
+    },
+    {
+      "id": "texto.semana.pellet.tramo.3",
+      "reason": "indicador sin dato en el período",
+      "slide": 22
+    },
+    {
+      "id": "texto.semana.pellet.tramo.4",
+      "reason": "indicador sin dato en el período",
+      "slide": 22
+    },
+    {
+      "id": "texto.semana.pellet.tramo.6",
+      "reason": "indicador sin dato en el período",
+      "slide": 22
+    },
+    {
+      "id": "texto.semana.pellet.tramo.7",
+      "reason": "indicador sin dato en el período",
+      "slide": 22
+    },
+    {
+      "id": "texto.semana.pellet.tramo.9",
+      "reason": "indicador sin dato en el período",
+      "slide": 22
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.titulo",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.tramo.2",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.total_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.tramo.1",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.tramo.3",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.tramo.4",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.tramo.5",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.tramo.6",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.tramo.7",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.tramo.8",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.tramo.9",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.camiones",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.ricardone_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.san_lorenzo_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.ricardone_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.san_lorenzo_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.total_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Martes.titulo",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.2",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.total_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.1",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.3",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.4",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.5",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.6",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.7",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.8",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.9",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.camiones",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.ricardone_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.san_lorenzo_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.ricardone_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.san_lorenzo_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.total_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.semana.girasol.tramo.3",
+      "reason": "indicador sin dato en el período",
+      "slide": 30
+    },
+    {
+      "id": "texto.semana.girasol.tramo.4",
+      "reason": "indicador sin dato en el período",
+      "slide": 30
+    },
+    {
+      "id": "texto.titulo.calada.Viernes",
+      "reason": "indicador sin dato en el período",
+      "slide": 38
+    },
+    {
+      "id": "texto.titulo.calada.Viernes",
+      "reason": "indicador sin dato en el período",
+      "slide": 39
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Viernes.pico",
+      "reason": "indicador sin dato en el período",
+      "slide": 39
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Viernes.ventana",
+      "reason": "indicador sin dato en el período",
+      "slide": 39
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Viernes.promedio",
+      "reason": "indicador sin dato en el período",
+      "slide": 39
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Viernes.total",
+      "reason": "indicador sin dato en el período",
+      "slide": 39
+    },
+    {
+      "id": "texto.titulo.calada.Sábado",
+      "reason": "indicador sin dato en el período",
+      "slide": 40
+    },
+    {
+      "id": "texto.titulo.calada.Sábado",
+      "reason": "indicador sin dato en el período",
+      "slide": 41
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Sábado.pico",
+      "reason": "indicador sin dato en el período",
+      "slide": 41
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Sábado.ventana",
+      "reason": "indicador sin dato en el período",
+      "slide": 41
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Sábado.promedio",
+      "reason": "indicador sin dato en el período",
+      "slide": 41
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Sábado.total",
+      "reason": "indicador sin dato en el período",
+      "slide": 41
+    },
+    {
+      "id": "texto.titulo.calada.Domingo",
+      "reason": "indicador sin dato en el período",
+      "slide": 42
+    },
+    {
+      "id": "texto.titulo.calada.Domingo",
+      "reason": "indicador sin dato en el período",
+      "slide": 43
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Domingo.pico",
+      "reason": "indicador sin dato en el período",
+      "slide": 43
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Domingo.ventana",
+      "reason": "indicador sin dato en el período",
+      "slide": 43
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Domingo.promedio",
+      "reason": "indicador sin dato en el período",
+      "slide": 43
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Domingo.total",
+      "reason": "indicador sin dato en el período",
+      "slide": 43
+    },
+    {
+      "id": "texto.titulo.calada.Lunes",
+      "reason": "indicador sin dato en el período",
+      "slide": 44
+    },
+    {
+      "id": "texto.titulo.calada.Lunes",
+      "reason": "indicador sin dato en el período",
+      "slide": 45
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Lunes.pico",
+      "reason": "indicador sin dato en el período",
+      "slide": 45
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Lunes.ventana",
+      "reason": "indicador sin dato en el período",
+      "slide": 45
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Lunes.promedio",
+      "reason": "indicador sin dato en el período",
+      "slide": 45
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Lunes.total",
+      "reason": "indicador sin dato en el período",
+      "slide": 45
+    },
+    {
+      "id": "texto.titulo.calada.Martes",
+      "reason": "indicador sin dato en el período",
+      "slide": 46
+    },
+    {
+      "id": "texto.titulo.calada.Martes",
+      "reason": "indicador sin dato en el período",
+      "slide": 47
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Martes.pico",
+      "reason": "indicador sin dato en el período",
+      "slide": 47
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Martes.ventana",
+      "reason": "indicador sin dato en el período",
+      "slide": 47
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Martes.promedio",
+      "reason": "indicador sin dato en el período",
+      "slide": 47
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Martes.total",
+      "reason": "indicador sin dato en el período",
+      "slide": 47
+    },
+    {
+      "id": "texto.titulo.calada.Miércoles",
+      "reason": "indicador sin dato en el período",
+      "slide": 48
+    },
+    {
+      "id": "texto.titulo.calada.Miércoles",
+      "reason": "indicador sin dato en el período",
+      "slide": 49
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Miércoles.pico",
+      "reason": "indicador sin dato en el período",
+      "slide": 49
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Miércoles.ventana",
+      "reason": "indicador sin dato en el período",
+      "slide": 49
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Miércoles.promedio",
+      "reason": "indicador sin dato en el período",
+      "slide": 49
+    },
+    {
+      "id": "texto.kpi.calada_ricardone.Miércoles.total",
+      "reason": "indicador sin dato en el período",
+      "slide": 49
+    },
+    {
+      "id": "texto.titulo.volcables.Viernes",
+      "reason": "indicador sin dato en el período",
+      "slide": 61
+    },
+    {
+      "id": "texto.titulo.volcables.Viernes",
+      "reason": "indicador sin dato en el período",
+      "slide": 62
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Viernes.pico",
+      "reason": "indicador sin dato en el período",
+      "slide": 62
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Viernes.ventana",
+      "reason": "indicador sin dato en el período",
+      "slide": 62
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Viernes.promedio",
+      "reason": "indicador sin dato en el período",
+      "slide": 62
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Viernes.total",
+      "reason": "indicador sin dato en el período",
+      "slide": 62
+    },
+    {
+      "id": "texto.titulo.volcables.Sábado",
+      "reason": "indicador sin dato en el período",
+      "slide": 63
+    },
+    {
+      "id": "texto.titulo.volcables.Sábado",
+      "reason": "indicador sin dato en el período",
+      "slide": 64
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Sábado.pico",
+      "reason": "indicador sin dato en el período",
+      "slide": 64
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Sábado.ventana",
+      "reason": "indicador sin dato en el período",
+      "slide": 64
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Sábado.promedio",
+      "reason": "indicador sin dato en el período",
+      "slide": 64
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Sábado.total",
+      "reason": "indicador sin dato en el período",
+      "slide": 64
+    },
+    {
+      "id": "texto.titulo.volcables.Domingo",
+      "reason": "indicador sin dato en el período",
+      "slide": 65
+    },
+    {
+      "id": "texto.titulo.volcables.Domingo",
+      "reason": "indicador sin dato en el período",
+      "slide": 66
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Domingo.pico",
+      "reason": "indicador sin dato en el período",
+      "slide": 66
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Domingo.ventana",
+      "reason": "indicador sin dato en el período",
+      "slide": 66
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Domingo.promedio",
+      "reason": "indicador sin dato en el período",
+      "slide": 66
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Domingo.total",
+      "reason": "indicador sin dato en el período",
+      "slide": 66
+    },
+    {
+      "id": "texto.titulo.volcables.Lunes",
+      "reason": "indicador sin dato en el período",
+      "slide": 67
+    },
+    {
+      "id": "texto.titulo.volcables.Lunes",
+      "reason": "indicador sin dato en el período",
+      "slide": 68
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Lunes.pico",
+      "reason": "indicador sin dato en el período",
+      "slide": 68
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Lunes.ventana",
+      "reason": "indicador sin dato en el período",
+      "slide": 68
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Lunes.promedio",
+      "reason": "indicador sin dato en el período",
+      "slide": 68
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Lunes.total",
+      "reason": "indicador sin dato en el período",
+      "slide": 68
+    },
+    {
+      "id": "texto.titulo.volcables.Martes",
+      "reason": "indicador sin dato en el período",
+      "slide": 69
+    },
+    {
+      "id": "texto.titulo.volcables.Martes",
+      "reason": "indicador sin dato en el período",
+      "slide": 70
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Martes.pico",
+      "reason": "indicador sin dato en el período",
+      "slide": 70
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Martes.ventana",
+      "reason": "indicador sin dato en el período",
+      "slide": 70
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Martes.promedio",
+      "reason": "indicador sin dato en el período",
+      "slide": 70
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Martes.total",
+      "reason": "indicador sin dato en el período",
+      "slide": 70
+    },
+    {
+      "id": "texto.titulo.volcables.Miércoles",
+      "reason": "indicador sin dato en el período",
+      "slide": 71
+    },
+    {
+      "id": "texto.titulo.volcables.Miércoles",
+      "reason": "indicador sin dato en el período",
+      "slide": 72
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Miércoles.pico",
+      "reason": "indicador sin dato en el período",
+      "slide": 72
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Miércoles.ventana",
+      "reason": "indicador sin dato en el período",
+      "slide": 72
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Miércoles.promedio",
+      "reason": "indicador sin dato en el período",
+      "slide": 72
+    },
+    {
+      "id": "texto.kpi.volcable_san_lorenzo.Miércoles.total",
+      "reason": "indicador sin dato en el período",
+      "slide": 72
+    }
+  ],
+  "advertencias": [
+    {
+      "id": "periodo.semana_en_curso",
+      "detail": "Semana en curso: 1 de 7 días (faltan Viernes, Sábado, Domingo, Lunes, Martes, Miércoles). Los días cargados se ubican en su lugar de la plantilla; los gráficos que necesitan la semana completa quedan pendientes y NO se rellenan con cero."
+    }
+  ],
+  "exclusiones": [],
+  "graficos": {
+    "completados": [
+      {
+        "id": "D05_G2",
+        "slide": 5,
+        "values": 1,
+        "source": "ejecutivo.circuitosPorProducto.SOJA"
+      },
+      {
+        "id": "D15_G1",
+        "slide": 15,
+        "values": 14,
+        "source": "tiempos.soja",
+        "diasFueraDelPeriodoEnCero": 12
+      },
+      {
+        "id": "D16_G1",
+        "slide": 16,
+        "values": 28,
+        "source": "tiempos.soja",
+        "diasFueraDelPeriodoEnCero": 24
+      },
+      {
+        "id": "D16_G2",
+        "slide": 16,
+        "values": 7,
+        "source": "tiempos.soja",
+        "diasFueraDelPeriodoEnCero": 6
+      },
+      {
+        "id": "D20_G1",
+        "slide": 20,
+        "values": 2,
+        "source": "tiempos.pellet",
+        "diasFueraDelPeriodoEnCero": 2
+      },
+      {
+        "id": "D25_G1",
+        "slide": 25,
+        "values": 4,
+        "source": "tiempos.pellet",
+        "diasFueraDelPeriodoEnCero": 4
+      },
+      {
+        "id": "D28_G2",
+        "slide": 28,
+        "values": 3,
+        "source": "ejecutivo.circuitosPorProducto.GIRASOL"
+      },
+      {
+        "id": "D35_G1",
+        "slide": 35,
+        "values": 6,
+        "source": "actividad.calada_ricardone"
+      },
+      {
+        "id": "D36_G1",
+        "slide": 36,
+        "values": 6,
+        "source": "actividad.calada_ricardone"
+      },
+      {
+        "id": "D38_G1",
+        "slide": 38,
+        "values": 6,
+        "source": "actividad.calada_ricardone",
+        "diasFueraDelPeriodoEnCero": 6
+      },
+      {
+        "id": "D40_G1",
+        "slide": 40,
+        "values": 6,
+        "source": "actividad.calada_ricardone",
+        "diasFueraDelPeriodoEnCero": 6
+      },
+      {
+        "id": "D42_G1",
+        "slide": 42,
+        "values": 6,
+        "source": "actividad.calada_ricardone",
+        "diasFueraDelPeriodoEnCero": 6
+      },
+      {
+        "id": "D44_G1",
+        "slide": 44,
+        "values": 6,
+        "source": "actividad.calada_ricardone",
+        "diasFueraDelPeriodoEnCero": 6
+      },
+      {
+        "id": "D46_G1",
+        "slide": 46,
+        "values": 6,
+        "source": "actividad.calada_ricardone",
+        "diasFueraDelPeriodoEnCero": 6
+      },
+      {
+        "id": "D48_G1",
+        "slide": 48,
+        "values": 6,
+        "source": "actividad.calada_ricardone",
+        "diasFueraDelPeriodoEnCero": 6
+      },
+      {
+        "id": "D50_G1",
+        "slide": 50,
+        "values": 7,
+        "source": "actividad.calada_ricardone_liquidos",
+        "diasFueraDelPeriodoEnCero": 6
+      },
+      {
+        "id": "D51_G1",
+        "slide": 51,
+        "values": 7,
+        "source": "actividad.calada_san_lorenzo",
+        "diasFueraDelPeriodoEnCero": 6
+      },
+      {
+        "id": "D53_G1",
+        "slide": 53,
+        "values": 2,
+        "source": "actividad.volcable_ricardone"
+      },
+      {
+        "id": "D53_G2",
+        "slide": 53,
+        "values": 14,
+        "source": "actividad.volcable_ricardone",
+        "diasFueraDelPeriodoEnCero": 12
+      },
+      {
+        "id": "D55_G1",
+        "slide": 55,
+        "values": 7,
+        "source": "actividad.silos_ricardone",
+        "diasFueraDelPeriodoEnCero": 6
+      },
+      {
+        "id": "D57_G1",
+        "slide": 57,
+        "values": 7,
+        "source": "actividad.volcable_san_lorenzo",
+        "diasFueraDelPeriodoEnCero": 6
+      },
+      {
+        "id": "D58_G1",
+        "slide": 58,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo"
+      },
+      {
+        "id": "D59_G1",
+        "slide": 59,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo"
+      },
+      {
+        "id": "D61_G1",
+        "slide": 61,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo",
+        "diasFueraDelPeriodoEnCero": 5
+      },
+      {
+        "id": "D63_G1",
+        "slide": 63,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo",
+        "diasFueraDelPeriodoEnCero": 5
+      },
+      {
+        "id": "D65_G1",
+        "slide": 65,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo",
+        "diasFueraDelPeriodoEnCero": 5
+      },
+      {
+        "id": "D67_G1",
+        "slide": 67,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo",
+        "diasFueraDelPeriodoEnCero": 5
+      },
+      {
+        "id": "D69_G1",
+        "slide": 69,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo",
+        "diasFueraDelPeriodoEnCero": 5
+      },
+      {
+        "id": "D71_G1",
+        "slide": 71,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo",
+        "diasFueraDelPeriodoEnCero": 5
+      }
+    ],
+    "pendientes": [
+      {
+        "id": "texto.dia.Viernes.tramo.2",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.tramo.3",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.tramo.4",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.tramo.5",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.tramo.6",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.tramo.7",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.total_min",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.tramo.1",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.fecha",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.cuarto.Q1",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.cuarto.Q2",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.cuarto.Q3",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.cuarto.Q4",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.titulo",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.camiones",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.total_hs",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.ricardone_min",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.san_lorenzo_min",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.ricardone_hs",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Viernes.san_lorenzo_hs",
+        "slide": 9,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.tramo.2",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.tramo.3",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.tramo.4",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.tramo.5",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.tramo.6",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.tramo.7",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.total_min",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.tramo.1",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.fecha",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.titulo",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.cuarto.Q1",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.cuarto.Q2",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.cuarto.Q3",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.cuarto.Q4",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.camiones",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.ricardone_min",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.san_lorenzo_min",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.ricardone_hs",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.san_lorenzo_hs",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Sábado.total_hs",
+        "slide": 10,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.tramo.2",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.tramo.3",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.tramo.4",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.tramo.5",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.tramo.6",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.tramo.7",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.total_min",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.tramo.1",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.fecha",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.titulo",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.cuarto.Q1",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.cuarto.Q2",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.cuarto.Q3",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.cuarto.Q4",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.camiones",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.ricardone_min",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.san_lorenzo_min",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.ricardone_hs",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.san_lorenzo_hs",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Domingo.total_hs",
+        "slide": 11,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.titulo",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.tramo.2",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.tramo.3",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.tramo.4",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.tramo.5",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.tramo.6",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.tramo.7",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.total_min",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.tramo.1",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.cuarto.Q1",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.cuarto.Q2",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.cuarto.Q3",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.cuarto.Q4",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.camiones",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.fecha",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.ricardone_min",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.san_lorenzo_min",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.ricardone_hs",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.san_lorenzo_hs",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Lunes.total_hs",
+        "slide": 12,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.tramo.2",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.tramo.3",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.tramo.4",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.tramo.5",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.tramo.6",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.tramo.7",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.total_min",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.tramo.1",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.fecha",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.titulo",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.cuarto.Q1",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.cuarto.Q2",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.cuarto.Q3",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.cuarto.Q4",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.camiones",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.ricardone_min",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.san_lorenzo_min",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.ricardone_hs",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.san_lorenzo_hs",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Martes.total_hs",
+        "slide": 13,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.tramo.2",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.tramo.3",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.tramo.4",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.tramo.5",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.tramo.6",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.tramo.7",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.total_min",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.tramo.1",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.fecha",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.titulo",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.cuarto.Q1",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.cuarto.Q2",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.cuarto.Q3",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.cuarto.Q4",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.camiones",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.san_lorenzo_min",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.san_lorenzo_hs",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.ricardone_min",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.ricardone_hs",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.Miércoles.total_hs",
+        "slide": 14,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.pellet.operativo.toneladas",
+        "slide": 20,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.semana.pellet.tramo.3",
+        "slide": 22,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.semana.pellet.tramo.4",
+        "slide": 22,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.semana.pellet.tramo.6",
+        "slide": 22,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.semana.pellet.tramo.7",
+        "slide": 22,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.semana.pellet.tramo.9",
+        "slide": 22,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.titulo",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.tramo.2",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.total_min",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.tramo.1",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.tramo.3",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.tramo.4",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.tramo.5",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.tramo.6",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.tramo.7",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.tramo.8",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.tramo.9",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.camiones",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.ricardone_min",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.san_lorenzo_min",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.ricardone_hs",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.san_lorenzo_hs",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.total_hs",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.titulo",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.2",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.total_min",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.1",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.3",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.4",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.5",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.6",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.7",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.8",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.9",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.camiones",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.ricardone_min",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.san_lorenzo_min",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.ricardone_hs",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.san_lorenzo_hs",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.total_hs",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.semana.girasol.tramo.3",
+        "slide": 30,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.semana.girasol.tramo.4",
+        "slide": 30,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.calada.Viernes",
+        "slide": 38,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.calada.Viernes",
+        "slide": 39,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Viernes.pico",
+        "slide": 39,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Viernes.ventana",
+        "slide": 39,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Viernes.promedio",
+        "slide": 39,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Viernes.total",
+        "slide": 39,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.calada.Sábado",
+        "slide": 40,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.calada.Sábado",
+        "slide": 41,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Sábado.pico",
+        "slide": 41,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Sábado.ventana",
+        "slide": 41,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Sábado.promedio",
+        "slide": 41,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Sábado.total",
+        "slide": 41,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.calada.Domingo",
+        "slide": 42,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.calada.Domingo",
+        "slide": 43,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Domingo.pico",
+        "slide": 43,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Domingo.ventana",
+        "slide": 43,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Domingo.promedio",
+        "slide": 43,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Domingo.total",
+        "slide": 43,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.calada.Lunes",
+        "slide": 44,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.calada.Lunes",
+        "slide": 45,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Lunes.pico",
+        "slide": 45,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Lunes.ventana",
+        "slide": 45,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Lunes.promedio",
+        "slide": 45,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Lunes.total",
+        "slide": 45,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.calada.Martes",
+        "slide": 46,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.calada.Martes",
+        "slide": 47,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Martes.pico",
+        "slide": 47,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Martes.ventana",
+        "slide": 47,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Martes.promedio",
+        "slide": 47,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Martes.total",
+        "slide": 47,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.calada.Miércoles",
+        "slide": 48,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.calada.Miércoles",
+        "slide": 49,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Miércoles.pico",
+        "slide": 49,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Miércoles.ventana",
+        "slide": 49,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Miércoles.promedio",
+        "slide": 49,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.calada_ricardone.Miércoles.total",
+        "slide": 49,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.volcables.Viernes",
+        "slide": 61,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.volcables.Viernes",
+        "slide": 62,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Viernes.pico",
+        "slide": 62,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Viernes.ventana",
+        "slide": 62,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Viernes.promedio",
+        "slide": 62,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Viernes.total",
+        "slide": 62,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.volcables.Sábado",
+        "slide": 63,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.volcables.Sábado",
+        "slide": 64,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Sábado.pico",
+        "slide": 64,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Sábado.ventana",
+        "slide": 64,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Sábado.promedio",
+        "slide": 64,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Sábado.total",
+        "slide": 64,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.volcables.Domingo",
+        "slide": 65,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.volcables.Domingo",
+        "slide": 66,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Domingo.pico",
+        "slide": 66,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Domingo.ventana",
+        "slide": 66,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Domingo.promedio",
+        "slide": 66,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Domingo.total",
+        "slide": 66,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.volcables.Lunes",
+        "slide": 67,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.volcables.Lunes",
+        "slide": 68,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Lunes.pico",
+        "slide": 68,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Lunes.ventana",
+        "slide": 68,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Lunes.promedio",
+        "slide": 68,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Lunes.total",
+        "slide": 68,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.volcables.Martes",
+        "slide": 69,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.volcables.Martes",
+        "slide": 70,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Martes.pico",
+        "slide": 70,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Martes.ventana",
+        "slide": 70,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Martes.promedio",
+        "slide": 70,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Martes.total",
+        "slide": 70,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.volcables.Miércoles",
+        "slide": 71,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.titulo.volcables.Miércoles",
+        "slide": 72,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Miércoles.pico",
+        "slide": 72,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Miércoles.ventana",
+        "slide": 72,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Miércoles.promedio",
+        "slide": 72,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.kpi.volcable_san_lorenzo.Miércoles.total",
+        "slide": 72,
+        "reason": "indicador sin dato en el período"
+      }
+    ],
+    "conservados": [
+      {
+        "id": "D17_G1",
+        "slide": 17,
+        "reason": "histórico por tramo soja (informes ya presentados)"
+      },
+      {
+        "id": "D17_G2",
+        "slide": 17,
+        "reason": "histórico total soja (informes ya presentados)"
+      },
+      {
+        "id": "D31_G1",
+        "slide": 31,
+        "reason": "histórico por tramo girasol (informes ya presentados)"
+      },
+      {
+        "id": "D31_G2",
+        "slide": 31,
+        "reason": "histórico total girasol (informes ya presentados)"
+      }
+    ],
+    "retirados": [
+      {
+        "id": "D05_G1",
+        "slide": 5,
+        "reason": "retirado del informe: no se usa"
+      },
+      {
+        "id": "D28_G1",
+        "slide": 28,
+        "reason": "retirado del informe: no se usa"
+      }
+    ],
+    "total": 35
+  },
+  "estado": "para_revision_del_usuario"
+}

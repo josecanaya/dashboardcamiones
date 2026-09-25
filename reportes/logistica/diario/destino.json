@@ -1,0 +1,72 @@
+{
+  "hoja": "1sX922yi2QlWoWLcuA_v70eYXjaicvGVrjdjcL1_8fxM",
+  "presentacion": "1ZPG8dkwo1sX2CgdYZYJy1zERPdi--DXsDz-0TJ22XtQ",
+  "graficos": {
+    "ingresos_hora": 43444226,
+    "salidas_hora": 124843294,
+    "calada_ricardone": 1413596306,
+    "descarga_puerto": 1509305154,
+    "productos": 1064426915,
+    "plantas": 529042025,
+    "plataformas": 1614394753,
+    "tramos_soja": 1638809837
+  },
+  "creado": "2026-09-25T18:18:00.000Z",
+  "layout": 2,
+  "presentacionAnterior": "17vX_AS542Tu12wr0dSl89JEqzKAJXZ18PkdLOLQnVDI",
+  "plantilla": {
+    "portada": "p1",
+    "portadaTextos": {
+      "rotulo": "p1_i57",
+      "fecha": "p1_i64"
+    },
+    "laminas": [
+      "p2",
+      "p3",
+      "p7",
+      "p8",
+      "p9",
+      "p10"
+    ],
+    "conservar": {
+      "p2": [
+        "p2_i72",
+        "p2_i73",
+        "p2_i71"
+      ],
+      "p3": [
+        "p3_i96",
+        "p3_i97",
+        "p3_i95"
+      ],
+      "p7": [
+        "p7_i235",
+        "p7_i236",
+        "p7_i238"
+      ],
+      "p8": [
+        "p8_i319",
+        "p8_i320",
+        "p8_i322"
+      ],
+      "p9": [
+        "p9_i397",
+        "p9_i398",
+        "p9_i400"
+      ],
+      "p10": [
+        "p10_i433",
+        "p10_i434",
+        "p10_i436"
+      ]
+    },
+    "titulos": {
+      "p2": "p2_i71",
+      "p3": "p3_i95",
+      "p7": "p7_i238",
+      "p8": "p8_i322",
+      "p9": "p9_i400",
+      "p10": "p10_i436"
+    }
+  }
+}

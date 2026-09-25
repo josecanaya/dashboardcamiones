@@ -547,6 +547,45 @@ export class SheetsService {
   }
 
   /**
+   * Specs completas de los gráficos (tipo, series, colores, etiquetas) de toda la hoja.
+   *
+   * `getMetadata` resume; esto trae el `spec` entero porque `updateChartSpec` REEMPLAZA el
+   * spec: para cambiar solo el estilo hay que partir del spec actual y devolverlo modificado.
+   */
+  async getCharts(spreadsheetId: string): Promise<{ sheetId: number; sheetTitle: string; chartId: number; spec: sheets_v4.Schema$ChartSpec }[]> {
+    return withRetry(async () => {
+      try {
+        const res = await this.sheets.spreadsheets.get({
+          spreadsheetId,
+          fields: "sheets.properties(sheetId,title),sheets.charts(chartId,spec)",
+        });
+        return (res.data.sheets ?? []).flatMap((sh) =>
+          (sh.charts ?? []).map((c) => ({
+            sheetId: sh.properties?.sheetId ?? 0,
+            sheetTitle: sh.properties?.title ?? "",
+            chartId: c.chartId ?? 0,
+            spec: c.spec ?? {},
+          })),
+        );
+      } catch (err) {
+        throw normalizeError(err, "sheets.getCharts");
+      }
+    }, this.retryOpts("sheets.getCharts"));
+  }
+
+  /** `spreadsheets.batchUpdate` crudo: formato de celdas, specs de gráficos, etc. */
+  async batchUpdate(spreadsheetId: string, requests: sheets_v4.Schema$Request[]): Promise<{ replies: number }> {
+    return withRetry(async () => {
+      try {
+        const res = await this.sheets.spreadsheets.batchUpdate({ spreadsheetId, requestBody: { requests } });
+        return { replies: res.data.replies?.length ?? 0 };
+      } catch (err) {
+        throw normalizeError(err, "sheets.batchUpdate");
+      }
+    }, this.retryOpts("sheets.batchUpdate"));
+  }
+
+  /**
    * Crea un gráfico dentro de la hoja de cálculo y devuelve su `chartId`.
    *
    * Es el paso previo obligatorio para tener un gráfico **vinculado** en Slides: la API de

@@ -1,0 +1,543 @@
+{
+  "generadoEl": "2026-09-25T15:17:26.153Z",
+  "revision": 4,
+  "periodo": {
+    "from": "2026-09-17",
+    "to": "2026-09-23",
+    "days": [
+      "2026-09-17",
+      "2026-09-18",
+      "2026-09-19",
+      "2026-09-20",
+      "2026-09-21",
+      "2026-09-22",
+      "2026-09-23"
+    ],
+    "dayCount": 7,
+    "atipico": false,
+    "semanaEnCurso": false,
+    "diasFaltantes": [],
+    "label": "17/09 al 23/09/2026"
+  },
+  "fuentes": {
+    "rulesVersion": "etl_transform_v16",
+    "runIds": [],
+    "composedRange": null,
+    "kpiTiemposBuilt": true,
+    "tablesUsed": [
+      "calada_camera_events",
+      "calada_ricardone_liquid_events",
+      "calada_sl_camera_events",
+      "ricardone_volcable_events",
+      "ricardone_silo_events",
+      "san_lorenzo_volcable_events",
+      "excel_operations_with_truckflow",
+      "circuit_timing_journeys",
+      "segment_timing_legs",
+      "debug_matrix_classification",
+      "merged_truckflow_movimientos"
+    ]
+  },
+  "politicaDia": {
+    "actividad": "dia_calendario_argentina",
+    "tiempos": "dia_operativo_22h",
+    "nota": "Calada y descargas agrupan por día calendario (regla vigente de esos paneles); KPI tiempos usa el día operativo con arranque 22:00. Se conserva la regla de cada bloque para que el informe coincida con el dashboard; no comparar rótulos de día entre bloques."
+  },
+  "cobertura": {
+    "graficos": {
+      "total": 35,
+      "completados": 29,
+      "pendientes": 23,
+      "conservadosHistoricos": 4
+    },
+    "textos": {
+      "conectados": 317,
+      "sinDato": 23,
+      "faltanDatos": 0,
+      "estaticos": 442,
+      "total": 782
+    }
+  },
+  "pendientes": [
+    {
+      "id": "texto.pellet.operativo.toneladas",
+      "reason": "indicador sin dato en el período",
+      "slide": 20
+    },
+    {
+      "id": "texto.semana.pellet.tramo.3",
+      "reason": "indicador sin dato en el período",
+      "slide": 22
+    },
+    {
+      "id": "texto.semana.pellet.tramo.4",
+      "reason": "indicador sin dato en el período",
+      "slide": 22
+    },
+    {
+      "id": "texto.semana.pellet.tramo.6",
+      "reason": "indicador sin dato en el período",
+      "slide": 22
+    },
+    {
+      "id": "texto.semana.pellet.tramo.7",
+      "reason": "indicador sin dato en el período",
+      "slide": 22
+    },
+    {
+      "id": "texto.semana.pellet.tramo.9",
+      "reason": "indicador sin dato en el período",
+      "slide": 22
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.tramo.3",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.tramo.4",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.tramo.6",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.tramo.7",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.tramo.8",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.tramo.9",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.san_lorenzo_min",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Lunes.san_lorenzo_hs",
+      "reason": "indicador sin dato en el período",
+      "slide": 23
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.2",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.1",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.3",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.4",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.6",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.7",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.dia.pellet.Martes.tramo.9",
+      "reason": "indicador sin dato en el período",
+      "slide": 24
+    },
+    {
+      "id": "texto.semana.girasol.tramo.3",
+      "reason": "indicador sin dato en el período",
+      "slide": 30
+    },
+    {
+      "id": "texto.semana.girasol.tramo.4",
+      "reason": "indicador sin dato en el período",
+      "slide": 30
+    }
+  ],
+  "advertencias": [
+    {
+      "id": "actividad.calada_ricardone",
+      "detail": "372 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    },
+    {
+      "id": "actividad.calada_ricardone_liquidos",
+      "detail": "37 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    },
+    {
+      "id": "actividad.calada_san_lorenzo",
+      "detail": "47 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    },
+    {
+      "id": "actividad.volcable_ricardone",
+      "detail": "115 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    },
+    {
+      "id": "actividad.silos_ricardone",
+      "detail": "62 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    },
+    {
+      "id": "actividad.volcable_san_lorenzo",
+      "detail": "352 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    }
+  ],
+  "exclusiones": [
+    {
+      "producto": "girasol",
+      "dia": "2026-09-23",
+      "motivo": "Fallas de cámaras en Ricardone el miércoles 23/09: el tiempo medio de girasol dio 1.136 min (19 h) con 27 camiones. Se desestima por decisión operativa; los volúmenes del día se conservan."
+    }
+  ],
+  "graficos": {
+    "completados": [
+      {
+        "id": "D05_G2",
+        "slide": 5,
+        "values": 1,
+        "source": "ejecutivo.circuitosPorProducto.SOJA"
+      },
+      {
+        "id": "D15_G1",
+        "slide": 15,
+        "values": 14,
+        "source": "tiempos.soja"
+      },
+      {
+        "id": "D16_G1",
+        "slide": 16,
+        "values": 28,
+        "source": "tiempos.soja"
+      },
+      {
+        "id": "D16_G2",
+        "slide": 16,
+        "values": 7,
+        "source": "tiempos.soja"
+      },
+      {
+        "id": "D20_G1",
+        "slide": 20,
+        "values": 2,
+        "source": "tiempos.pellet"
+      },
+      {
+        "id": "D25_G1",
+        "slide": 25,
+        "values": 3,
+        "source": "tiempos.pellet",
+        "celdasSinMedicion": 1
+      },
+      {
+        "id": "D28_G2",
+        "slide": 28,
+        "values": 3,
+        "source": "ejecutivo.circuitosPorProducto.GIRASOL"
+      },
+      {
+        "id": "D35_G1",
+        "slide": 35,
+        "values": 6,
+        "source": "actividad.calada_ricardone"
+      },
+      {
+        "id": "D36_G1",
+        "slide": 36,
+        "values": 6,
+        "source": "actividad.calada_ricardone"
+      },
+      {
+        "id": "D38_G1",
+        "slide": 38,
+        "values": 6,
+        "source": "actividad.calada_ricardone"
+      },
+      {
+        "id": "D40_G1",
+        "slide": 40,
+        "values": 6,
+        "source": "actividad.calada_ricardone"
+      },
+      {
+        "id": "D42_G1",
+        "slide": 42,
+        "values": 6,
+        "source": "actividad.calada_ricardone"
+      },
+      {
+        "id": "D44_G1",
+        "slide": 44,
+        "values": 6,
+        "source": "actividad.calada_ricardone"
+      },
+      {
+        "id": "D46_G1",
+        "slide": 46,
+        "values": 6,
+        "source": "actividad.calada_ricardone"
+      },
+      {
+        "id": "D48_G1",
+        "slide": 48,
+        "values": 6,
+        "source": "actividad.calada_ricardone"
+      },
+      {
+        "id": "D50_G1",
+        "slide": 50,
+        "values": 7,
+        "source": "actividad.calada_ricardone_liquidos"
+      },
+      {
+        "id": "D51_G1",
+        "slide": 51,
+        "values": 7,
+        "source": "actividad.calada_san_lorenzo"
+      },
+      {
+        "id": "D53_G1",
+        "slide": 53,
+        "values": 2,
+        "source": "actividad.volcable_ricardone"
+      },
+      {
+        "id": "D53_G2",
+        "slide": 53,
+        "values": 14,
+        "source": "actividad.volcable_ricardone"
+      },
+      {
+        "id": "D55_G1",
+        "slide": 55,
+        "values": 7,
+        "source": "actividad.silos_ricardone"
+      },
+      {
+        "id": "D57_G1",
+        "slide": 57,
+        "values": 7,
+        "source": "actividad.volcable_san_lorenzo"
+      },
+      {
+        "id": "D58_G1",
+        "slide": 58,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo"
+      },
+      {
+        "id": "D59_G1",
+        "slide": 59,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo"
+      },
+      {
+        "id": "D61_G1",
+        "slide": 61,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo"
+      },
+      {
+        "id": "D63_G1",
+        "slide": 63,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo"
+      },
+      {
+        "id": "D65_G1",
+        "slide": 65,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo"
+      },
+      {
+        "id": "D67_G1",
+        "slide": 67,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo"
+      },
+      {
+        "id": "D69_G1",
+        "slide": 69,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo"
+      },
+      {
+        "id": "D71_G1",
+        "slide": 71,
+        "values": 5,
+        "source": "actividad.volcable_san_lorenzo"
+      }
+    ],
+    "pendientes": [
+      {
+        "id": "texto.pellet.operativo.toneladas",
+        "slide": 20,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.semana.pellet.tramo.3",
+        "slide": 22,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.semana.pellet.tramo.4",
+        "slide": 22,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.semana.pellet.tramo.6",
+        "slide": 22,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.semana.pellet.tramo.7",
+        "slide": 22,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.semana.pellet.tramo.9",
+        "slide": 22,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.tramo.3",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.tramo.4",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.tramo.6",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.tramo.7",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.tramo.8",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.tramo.9",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.san_lorenzo_min",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Lunes.san_lorenzo_hs",
+        "slide": 23,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.2",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.1",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.3",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.4",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.6",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.7",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.dia.pellet.Martes.tramo.9",
+        "slide": 24,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.semana.girasol.tramo.3",
+        "slide": 30,
+        "reason": "indicador sin dato en el período"
+      },
+      {
+        "id": "texto.semana.girasol.tramo.4",
+        "slide": 30,
+        "reason": "indicador sin dato en el período"
+      }
+    ],
+    "conservados": [
+      {
+        "id": "D17_G1",
+        "slide": 17,
+        "reason": "histórico por tramo soja (informes ya presentados)"
+      },
+      {
+        "id": "D17_G2",
+        "slide": 17,
+        "reason": "histórico total soja (informes ya presentados)"
+      },
+      {
+        "id": "D31_G1",
+        "slide": 31,
+        "reason": "histórico por tramo girasol (informes ya presentados)"
+      },
+      {
+        "id": "D31_G2",
+        "slide": 31,
+        "reason": "histórico total girasol (informes ya presentados)"
+      }
+    ],
+    "retirados": [
+      {
+        "id": "D05_G1",
+        "slide": 5,
+        "reason": "retirado del informe: no se usa"
+      },
+      {
+        "id": "D28_G1",
+        "slide": 28,
+        "reason": "retirado del informe: no se usa"
+      }
+    ],
+    "total": 35
+  },
+  "estado": "para_revision_del_usuario"
+}

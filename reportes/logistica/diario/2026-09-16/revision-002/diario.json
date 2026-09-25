@@ -1,0 +1,314 @@
+{
+  "dia": "2026-09-16",
+  "movimientos": {
+    "total": 703,
+    "ingresos": 602,
+    "egresos": 101,
+    "kgNetos": 21382973,
+    "porProducto": {
+      "SOJA": 418,
+      "GIRASOL": 83,
+      "OTROS": 78,
+      "MAIZ": 45,
+      "ACEITE": 70,
+      "PELLET": 9
+    },
+    "kgPorProducto": {
+      "SOJA": 13356940,
+      "GIRASOL": 2526360,
+      "OTROS": 1878093,
+      "MAIZ": 1455820,
+      "ACEITE": 1902720,
+      "PELLET": 263040
+    },
+    "porPlanta": {
+      "TERMINAL_EMBARQUE": 485,
+      "RICARDONE": 103,
+      "AVELLANEDA": 75,
+      "RENOPACK": 29,
+      "LOS_CORRALES_DE_NICANOR": 11
+    },
+    "porPlataforma": {
+      "VOLCABLE_PTO_4": 128,
+      "VOLCABLE_PTO_3": 153,
+      "VOLCABLE_PTO_5": 137,
+      "VOLCABLE_1": 79,
+      "VOLCABLE_2": 4,
+      "PLAYA_LEÑA_Y_CHIP": 20,
+      "CELDA_171_-_CENTRO": 36,
+      "DEPOSITO_BURLANDAS": 9,
+      "ACEITE_OSL": 22,
+      "T1002": 4,
+      "VARIOS": 5,
+      "SILO_AEREO": 1,
+      "PLATAFORMA1": 8,
+      "ACEITE": 3,
+      "ACEITE_PTO": 11
+    },
+    "ingresosPorHora": [
+      32,
+      22,
+      20,
+      18,
+      17,
+      17,
+      37,
+      31,
+      24,
+      33,
+      27,
+      22,
+      39,
+      23,
+      36,
+      22,
+      26,
+      21,
+      13,
+      14,
+      5,
+      2,
+      0,
+      0
+    ],
+    "salidasPorHora": [
+      25,
+      22,
+      21,
+      25,
+      17,
+      26,
+      10,
+      13,
+      27,
+      36,
+      40,
+      40,
+      37,
+      42,
+      41,
+      37,
+      35,
+      35,
+      31,
+      18,
+      27,
+      33,
+      34,
+      31
+    ],
+    "missing": false
+  },
+  "anomalias": {
+    "total": 4,
+    "porRegla": [
+      {
+        "code": "R1",
+        "title": "Reingreso rápido a Ricardone",
+        "count": 3
+      },
+      {
+        "code": "R6",
+        "title": "Ricardone → San Lorenzo sin calado",
+        "count": 1
+      }
+    ],
+    "casos": [
+      {
+        "plate": "AA160DQ",
+        "code": "R1",
+        "title": "Reingreso rápido a Ricardone",
+        "reason": "RIC_REINGRESO_RAPIDO_NO_PELLET",
+        "circuito": "SIN_PUNTO",
+        "inicio": "2026-09-16T08:13:17.402-03:00",
+        "secuencia": "BALANZA_INGRESO>BALANZA_EGRESO>EGRESO"
+      },
+      {
+        "plate": "AG323NY",
+        "code": "R1",
+        "title": "Reingreso rápido a Ricardone",
+        "reason": "RIC_REINGRESO_RAPIDO_NO_PELLET",
+        "circuito": "R8",
+        "inicio": "2026-09-16T09:29:23.090-03:00",
+        "secuencia": "INGRESO>PREINGRESO>LIQUIDO>EGRESO>PLAYA>BALANZA_EGRESO>INGRESO>LIQUIDO>EGRESO"
+      },
+      {
+        "plate": "LPM079",
+        "code": "R1",
+        "title": "Reingreso rápido a Ricardone",
+        "reason": "RIC_REINGRESO_RAPIDO_NO_PELLET",
+        "circuito": "R7",
+        "inicio": "2026-09-16T19:16:22.386-03:00",
+        "secuencia": "INGRESO>PREINGRESO>CALADA>EGRESO>INGRESO>EGRESO"
+      },
+      {
+        "plate": "BVS300",
+        "code": "R6",
+        "title": "Ricardone → San Lorenzo sin calado",
+        "reason": "RIC_SL_MAS30M_SIN_CALADA_SL",
+        "circuito": "R7",
+        "inicio": "2026-09-16T11:18:03.311-03:00",
+        "secuencia": "INGRESO>PREINGRESO>CALADA>EGRESO>SL_INGRESO>SL_BALANZA_INGRESO>SL_VOLCABLE>SL_BALANZA_SALIDA>SL_EGRESO"
+      }
+    ],
+    "excluidasRegistro": 0
+  },
+  "demorados": [
+    {
+      "tramo": "CALADA→EGRESO",
+      "umbralMin": 30,
+      "casos": [
+        {
+          "plate": "AH456LI",
+          "circuito": "R7",
+          "minutos": 242
+        },
+        {
+          "plate": "AG538FV",
+          "circuito": "R7",
+          "minutos": 202
+        },
+        {
+          "plate": "AB140UH",
+          "circuito": "R7",
+          "minutos": 196
+        },
+        {
+          "plate": "EJR918",
+          "circuito": "R7",
+          "minutos": 193
+        },
+        {
+          "plate": "AVC938",
+          "circuito": "R7",
+          "minutos": 182
+        },
+        {
+          "plate": "AI308RB",
+          "circuito": "R7",
+          "minutos": 181
+        },
+        {
+          "plate": "AA757AC",
+          "circuito": "R7",
+          "minutos": 148
+        },
+        {
+          "plate": "TCV156",
+          "circuito": "R7",
+          "minutos": 130
+        },
+        {
+          "plate": "MMN862",
+          "circuito": "R7",
+          "minutos": 129
+        },
+        {
+          "plate": "LRY080",
+          "circuito": "R7",
+          "minutos": 128
+        },
+        {
+          "plate": "DFJ467",
+          "circuito": "R7",
+          "minutos": 126
+        },
+        {
+          "plate": "WAG314",
+          "circuito": "R7",
+          "minutos": 120
+        },
+        {
+          "plate": "AH786DH",
+          "circuito": "R7",
+          "minutos": 116
+        },
+        {
+          "plate": "AH180VR",
+          "circuito": "R7",
+          "minutos": 104
+        },
+        {
+          "plate": "LYM225",
+          "circuito": "R7",
+          "minutos": 101
+        },
+        {
+          "plate": "AE279XI",
+          "circuito": "R7",
+          "minutos": 91
+        },
+        {
+          "plate": "TMD384",
+          "circuito": "R7",
+          "minutos": 91
+        },
+        {
+          "plate": "KSC633",
+          "circuito": "R7",
+          "minutos": 87
+        },
+        {
+          "plate": "AA875QL",
+          "circuito": "R7",
+          "minutos": 81
+        },
+        {
+          "plate": "FNO644",
+          "circuito": "R7",
+          "minutos": 77
+        },
+        {
+          "plate": "AD389AD",
+          "circuito": "R7",
+          "minutos": 74
+        },
+        {
+          "plate": "NTM504",
+          "circuito": "R7",
+          "minutos": 68
+        },
+        {
+          "plate": "JDZ994",
+          "circuito": "R7",
+          "minutos": 50
+        },
+        {
+          "plate": "LPM079",
+          "circuito": "R7",
+          "minutos": 49
+        },
+        {
+          "plate": "FGF394",
+          "circuito": "R7",
+          "minutos": 48
+        },
+        {
+          "plate": "AF955AA",
+          "circuito": "R7",
+          "minutos": 43
+        },
+        {
+          "plate": "AB971KC",
+          "circuito": "R7",
+          "minutos": 38
+        },
+        {
+          "plate": "GVE143",
+          "circuito": "R7",
+          "minutos": 37
+        },
+        {
+          "plate": "KNX080",
+          "circuito": "R7",
+          "minutos": 30
+        }
+      ]
+    },
+    {
+      "tramo": "EGRESO→SL_INGRESO",
+      "umbralMin": 30,
+      "casos": []
+    }
+  ]
+}

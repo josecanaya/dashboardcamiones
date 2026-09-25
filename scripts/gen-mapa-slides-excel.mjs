@@ -23,7 +23,7 @@ const FUENTES = [
   [/^semana\.girasol\./, 'tiempos.girasol.periodo', 'circuit_timing_journeys (R5+R6)'],
   [/^dia\.pellet\./, 'tiempos.pellet.porDia', 'circuit_timing_journeys, día operativo 22:00'],
   [/^dia\./, 'tiempos.soja.porDia', 'circuit_timing_journeys (R7), día operativo 22:00'],
-  [/^pellet\.operativo\./, 'tiempos.pellet.porDia', 'Días con camiones de pellet; toneladas: s/d (no está en el paquete)'],
+  [/^pellet\.operativo\./, 'tiempos.pellet.porDia', 'Días con camiones de pellet; toneladas = camiones × 30'],
   [/^kpi\.[a-z_]+\.(Jueves|Viernes|Sábado|Domingo|Lunes|Martes|Miércoles)\./, 'actividad.<sección>.porDia', 'Modelo de actividad de cámaras del día (mismo que el panel)'],
   [/^kpi\./, 'actividad.<sección>.periodo', 'Modelo de actividad de cámaras (calada/volcables)'],
   [/^titulo\./, 'periodo.days', 'Día y fecha real de la lámina'],
@@ -58,7 +58,11 @@ L.push('|---|---|---|---|')
 L.push('| 37–49 (impares) | Graficos horarios | Calada Ricardone por hora, un día | `actividad.calada_ricardone.porDia[día].porHora` |')
 L.push('| 50, 51, 54, 56 | Graficos horarios | Curva horaria de la semana | `actividad.<sección>.periodo.porHora` |')
 L.push('| 60–72 (pares) | Graficos horarios | Volcables puerto por hora, un día | `actividad.volcable_san_lorenzo.porDia[día].porHora` |')
-L.push('| 5, 28 | Graficos circuitos | Distribución por circuito (todos los circuitos) | `ejecutivo.circuitosPorProducto` |')
+L.push('| 5, 28 | Graficos circuitos | Distribución por circuito (sin SIN_PUNTO) | `ejecutivo.circuitosPorProducto` |')
+L.push('')
+L.push('### Formato automático')
+L.push('')
+L.push('Curvas horarias (37–51, 54, 56, 60–72): combinado área + serie «Máximo» (columna C de `Graficos horarios`) que marca en rojo la primera hora pico. Lámina 20: pestaña `Graficos pellet`, solo días con camiones. Los gráficos de barras NO se tocan por API: su formato (borde, opacidad) se ajusta a mano en Sheets y se conserva.')
 L.push('')
 L.push('## Textos conectados')
 L.push('')
@@ -79,11 +83,12 @@ for (const g of [...grupos.values()].sort((a, b) => Math.min(...a.laminas) - Mat
   L.push(`| ${rango(g.laminas)} | ${g.n} | ${g.conectados} | \`${g.campo}\` | ${g.desc} |`)
 }
 L.push('')
-L.push('## Lo que sigue siendo manual o sin fuente')
+L.push('## Lo que sigue siendo manual o estimado')
 L.push('')
-L.push('- **Conclusiones** (láminas 18, 26, 32): texto escrito a mano; el sync no las toca.')
-L.push('- **Comparativo semana anterior** (lámina 7, "+58 Min"): requiere el paquete de la semana previa.')
-L.push('- **Toneladas de pellet** (lámina 20): el paquete no trae toneladas → `s/d`.')
+L.push('- **Conclusiones de soja** (lámina 18): las escribe el sync desde el paquete (`scripts/informe-conclusiones.mjs`).')
+L.push('- **Conclusiones** (láminas 26 y 32): texto escrito a mano; el sync no las toca.')
+L.push('- **Comparativo semana anterior** (lámina 7): sale del histórico de la hoja (`--comite`).')
+L.push('- **Toneladas de pellet** (lámina 20): estimadas a 30 t por camión.')
 L.push('- **Históricos** (láminas 17 y 31): series ya presentadas, se conservan sin recalcular.')
 fs.writeFileSync(R + 'docs/MAPA_SLIDES_EXCEL.md', L.join('\n') + '\n')
 console.log('ok', L.length, 'líneas')

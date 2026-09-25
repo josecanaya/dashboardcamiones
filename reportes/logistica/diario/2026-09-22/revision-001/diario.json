@@ -1,0 +1,246 @@
+{
+  "dia": "2026-09-22",
+  "movimientos": {
+    "total": 479,
+    "ingresos": 275,
+    "egresos": 202,
+    "porProducto": {
+      "SOJA": 254,
+      "OTROS": 119,
+      "GIRASOL": 25,
+      "ACEITE": 79,
+      "PELLET": 2
+    },
+    "missing": false
+  },
+  "anomalias": {
+    "total": 7,
+    "porRegla": [
+      {
+        "code": "R1",
+        "title": "Reingreso rápido a Ricardone",
+        "count": 2
+      },
+      {
+        "code": "R12",
+        "title": "Descargó en Ricardone sin calado en cámara ni en Excel",
+        "count": 2
+      },
+      {
+        "code": "R5",
+        "title": "Carga y luego descarga",
+        "count": 2
+      },
+      {
+        "code": "R2",
+        "title": "Vuelven a Ricardone desde San Lorenzo",
+        "count": 1
+      }
+    ],
+    "casos": [
+      {
+        "plate": "BFL279",
+        "code": "R1",
+        "title": "Reingreso rápido a Ricardone",
+        "reason": "RIC_REINGRESO_RAPIDO_NO_PELLET",
+        "circuito": "R7",
+        "inicio": "2026-09-21T22:09:40.460-03:00",
+        "secuencia": "PREINGRESO>CALADA>EGRESO>INGRESO>EGRESO"
+      },
+      {
+        "plate": "GFL789",
+        "code": "R1",
+        "title": "Reingreso rápido a Ricardone",
+        "reason": "RIC_REINGRESO_RAPIDO_NO_PELLET",
+        "circuito": "R8",
+        "inicio": "2026-09-21T22:29:16.141-03:00",
+        "secuencia": "LIQUIDO>BALANZA_EGRESO>PREINGRESO>SL_BALANZA_INGRESO>SL_EGRESO"
+      },
+      {
+        "plate": "ROL445",
+        "code": "R2-c",
+        "title": "Vuelven a Ricardone desde San Lorenzo · Volvieron sin completar circuito",
+        "reason": "SL_RIC_2H_SIN_CIRCUITO_NO_PELLET",
+        "circuito": "R8",
+        "inicio": "2026-09-22T06:15:41.799-03:00",
+        "secuencia": "BALANZA_EGRESO>SL_VOLCABLE>LIQUIDO>SL_VOLCABLE"
+      },
+      {
+        "plate": "AYM824",
+        "code": "R5",
+        "title": "Carga y luego descarga",
+        "reason": "CARGA_LUEGO_DESCARGA",
+        "circuito": "R6",
+        "inicio": "2026-09-22T07:13:11.264-03:00",
+        "secuencia": "CARGA_S7>VOLCABLE>CARGA_S7>VOLCABLE>CARGA_S7>VOLCABLE>CARGA_S7"
+      },
+      {
+        "plate": "NLR442",
+        "code": "R5",
+        "title": "Carga y luego descarga",
+        "reason": "CARGA_LUEGO_DESCARGA",
+        "circuito": "R6",
+        "inicio": "2026-09-22T19:50:50.588-03:00",
+        "secuencia": "VOLCABLE>CARGA_S7>VOLCABLE>CARGA_S7>VOLCABLE>CARGA_S7>VOLCABLE>CARGA_S7"
+      },
+      {
+        "plate": "UUO981",
+        "code": "R12",
+        "title": "Descargó en Ricardone sin calado en cámara ni en Excel",
+        "reason": "VOLCABLE_SIN_CALADA_RIC",
+        "circuito": "R6",
+        "inicio": "2026-09-22T06:01:59.896-03:00",
+        "secuencia": "INGRESO>CARGA_S7>VOLCABLE>CARGA_S7>VOLCABLE"
+      },
+      {
+        "plate": "CFQ560",
+        "code": "R12",
+        "title": "Descargó en Ricardone sin calado en cámara ni en Excel",
+        "reason": "VOLCABLE_SIN_CALADA_RIC",
+        "circuito": "R5",
+        "inicio": "2026-09-22T18:28:31.496-03:00",
+        "secuencia": "INGRESO>CARGA_S7>VOLCABLE>CARGA_S7"
+      }
+    ],
+    "excluidasRegistro": 0
+  },
+  "demorados": [
+    {
+      "tramo": "CALADA→EGRESO",
+      "umbralMin": 30,
+      "casos": [
+        {
+          "plate": "LTE173",
+          "circuito": "R7",
+          "minutos": 120
+        },
+        {
+          "plate": "OKH237",
+          "circuito": "R7",
+          "minutos": 113
+        }
+      ]
+    },
+    {
+      "tramo": "EGRESO→SL_INGRESO",
+      "umbralMin": 30,
+      "casos": [
+        {
+          "plate": "FEX102",
+          "circuito": "R7",
+          "minutos": 212
+        },
+        {
+          "plate": "AE129JR",
+          "circuito": "R7",
+          "minutos": 198
+        },
+        {
+          "plate": "AH271PO",
+          "circuito": "R7",
+          "minutos": 136
+        },
+        {
+          "plate": "NCP590",
+          "circuito": "R7",
+          "minutos": 133
+        },
+        {
+          "plate": "DGY116",
+          "circuito": "R7",
+          "minutos": 130
+        },
+        {
+          "plate": "AB935EM",
+          "circuito": "R7",
+          "minutos": 123
+        },
+        {
+          "plate": "MVY131",
+          "circuito": "R7",
+          "minutos": 107
+        },
+        {
+          "plate": "AC713NV",
+          "circuito": "R7",
+          "minutos": 107
+        },
+        {
+          "plate": "CRK690",
+          "circuito": "R7",
+          "minutos": 96
+        },
+        {
+          "plate": "AE879OO",
+          "circuito": "R7",
+          "minutos": 83
+        },
+        {
+          "plate": "AF549QX",
+          "circuito": "R7",
+          "minutos": 81
+        },
+        {
+          "plate": "OAT016",
+          "circuito": "R7",
+          "minutos": 81
+        },
+        {
+          "plate": "AH237ML",
+          "circuito": "R7",
+          "minutos": 81
+        },
+        {
+          "plate": "CIZ820",
+          "circuito": "R7",
+          "minutos": 70
+        },
+        {
+          "plate": "AA779RJ",
+          "circuito": "R7",
+          "minutos": 70
+        },
+        {
+          "plate": "AI217CL",
+          "circuito": "R7",
+          "minutos": 66
+        },
+        {
+          "plate": "AI195ZP",
+          "circuito": "R7",
+          "minutos": 49
+        },
+        {
+          "plate": "AB964JF",
+          "circuito": "R7",
+          "minutos": 47
+        },
+        {
+          "plate": "AB284PL",
+          "circuito": "R7",
+          "minutos": 46
+        },
+        {
+          "plate": "AC502GS",
+          "circuito": "R7",
+          "minutos": 42
+        },
+        {
+          "plate": "AD593QU",
+          "circuito": "R7",
+          "minutos": 42
+        },
+        {
+          "plate": "AE669LO",
+          "circuito": "R7",
+          "minutos": 41
+        },
+        {
+          "plate": "AD635UP",
+          "circuito": "R7",
+          "minutos": 32
+        }
+      ]
+    }
+  ]
+}

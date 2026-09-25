@@ -1,0 +1,79 @@
+{
+  "generadoEl": "2026-09-25T18:23:52.791Z",
+  "tipo": "diario",
+  "revision": 1,
+  "dia": "2026-09-24",
+  "corrida": {
+    "runId": "2026-09-21_2026-09-27",
+    "rulesVersion": "etl_transform_v16",
+    "finishedAt": "2026-09-25T18:23:46.753Z",
+    "inputHash": "6f7651d43866"
+  },
+  "tablas": [
+    "calada_camera_events",
+    "calada_ricardone_liquid_events",
+    "calada_sl_camera_events",
+    "ricardone_volcable_events",
+    "ricardone_silo_events",
+    "san_lorenzo_volcable_events",
+    "excel_operations_with_truckflow",
+    "circuit_timing_journeys",
+    "segment_timing_legs",
+    "debug_matrix_classification",
+    "merged_truckflow_movimientos",
+    "excel_operations_with_truckflow (movimientos por source_date)",
+    "debug_matrix_classification (anomalías BEHAVIORAL)",
+    "segment_timing_legs (demorados)"
+  ],
+  "politicaDia": {
+    "actividad": "dia_calendario_argentina",
+    "tiempos": "dia_operativo_22h",
+    "nota": "Calada y descargas agrupan por día calendario (regla vigente de esos paneles); KPI tiempos usa el día operativo con arranque 22:00. Se conserva la regla de cada bloque para que el informe coincida con el dashboard; no comparar rótulos de día entre bloques."
+  },
+  "pendientes": [
+    {
+      "id": "tiempos.girasol",
+      "reason": "ningún tramo del circuito tiene muestra: la cobertura de cámara no sostiene el tiempo por planta; tiempo medio puerta a puerta de 1343 min supera el umbral de verosimilitud (720 min): no se publica el puerta a puerta"
+    },
+    {
+      "id": "tiempos.pellet",
+      "reason": "sin operaciones ni recorridos en el período"
+    }
+  ],
+  "advertencias": [
+    {
+      "id": "movimientos.falta_excel",
+      "detail": "No está cargado el Excel de movimientos del 2026-09-24: productos, circuitos y tiempos puerta a puerta quedan sin dato."
+    },
+    {
+      "id": "periodo.semana_en_curso",
+      "detail": "Semana en curso: 1 de 7 días (faltan Viernes, Sábado, Domingo, Lunes, Martes, Miércoles). Los días cargados se ubican en su lugar de la plantilla; los gráficos que necesitan la semana completa quedan pendientes y NO se rellenan con cero."
+    },
+    {
+      "id": "actividad.calada_ricardone",
+      "detail": "930 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    },
+    {
+      "id": "actividad.calada_ricardone_liquidos",
+      "detail": "270 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    },
+    {
+      "id": "actividad.calada_san_lorenzo",
+      "detail": "180 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    },
+    {
+      "id": "actividad.volcable_ricardone",
+      "detail": "353 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    },
+    {
+      "id": "actividad.silos_ricardone",
+      "detail": "513 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    },
+    {
+      "id": "actividad.volcable_san_lorenzo",
+      "detail": "751 eventos quedaron fuera del período exacto y 0 eran repetidos del día de borde entre corridas."
+    }
+  ],
+  "exclusiones": [],
+  "estado": "borrador_con_advertencias"
+}
