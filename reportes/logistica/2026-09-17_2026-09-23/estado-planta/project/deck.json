@@ -1,0 +1,58 @@
+{
+ "v": 4,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-09-25T18:31:33Z"
+ },
+ "title": "Estado de planta · Semana 17–23 sep",
+ "order": [
+  "portada",
+  "resumen-soja",
+  "resumen-planta",
+  "div-soja",
+  "hallazgo",
+  "plantas",
+  "cuartos",
+  "historico",
+  "div-girasol",
+  "girasol",
+  "div-sectores",
+  "calada",
+  "volcables",
+  "silos",
+  "div-analisis",
+  "mapa",
+  "cruces",
+  "cierre"
+ ],
+ "sections": {
+  "s1": {
+   "description": "Portada y resumen de la semana",
+   "start": "portada"
+  },
+  "s2": {
+   "description": "Soja R7: la semana día por día, por planta, por horario y en contexto",
+   "start": "div-soja"
+  },
+  "s3": {
+   "description": "Girasol R5+R6: la semana",
+   "start": "div-girasol"
+  },
+  "s4": {
+   "description": "Sectores: calada, volcables y silos",
+   "start": "div-sectores"
+  },
+  "s5": {
+   "description": "Análisis general cruzado y cierre",
+   "start": "div-analisis"
+  }
+ },
+ "cover": "portada",
+ "faces": {
+  "ibm-plex-sans": {
+   "family": "IBM Plex Sans",
+   "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap"
+  }
+ },
+ "designSystems": []
+}
