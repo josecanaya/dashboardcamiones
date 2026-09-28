@@ -1,4 +1,4 @@
-# Estado general de la planta · semana 17–23/09/2026
+# Comité de Logística Nodo Sur · semana 17–23/09/2026
 
 Presentación semanal de logística (18 láminas) armada como Slides artifact de claude.ai.
 

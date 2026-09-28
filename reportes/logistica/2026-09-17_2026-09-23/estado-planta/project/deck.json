@@ -4,12 +4,14 @@
   "v": 1,
   "at": "2026-09-25T18:31:33Z"
  },
- "title": "Estado de planta · Semana 17–23 sep",
+ "title": "Comité de Logística Nodo Sur · Semana 17–23 sep",
  "order": [
   "portada",
-  "resumen-soja",
   "resumen-planta",
+  "dia-a-dia",
+  "cruce-tiempos",
   "div-soja",
+  "resumen-soja",
   "hallazgo",
   "plantas",
   "cuartos",
@@ -27,11 +29,11 @@
  ],
  "sections": {
   "s1": {
-   "description": "Portada y resumen de la semana",
+   "description": "Portada, resumen de la planta, la semana día por día y su cruce con los tiempos",
    "start": "portada"
   },
   "s2": {
-   "description": "Soja R7: la semana día por día, por planta, por horario y en contexto",
+   "description": "Soja R7: resumen, la semana día por día, por planta, por horario y en contexto",
    "start": "div-soja"
   },
   "s3": {
