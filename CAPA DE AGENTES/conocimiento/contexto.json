@@ -1,0 +1,489 @@
+{
+  "schemaVersion": "1.0",
+  "updated": "2026-10-02",
+  "shared": {
+    "activity_states": [
+      "con_actividad_confirmada",
+      "sin_actividad_confirmada",
+      "actividad_pendiente_de_identificar",
+      "datos_insuficientes"
+    ],
+    "rules": [
+      {
+        "text": "Nodo Sur incluye únicamente RICARDONE y TERMINAL_EMBARQUE; excluir RENOPACK antes de todo cálculo y revisión de seguridad.",
+        "source": "instruccion_usuario_2026-10-02",
+        "anchor": "Perímetro operativo del informe",
+        "status": "confirmada_por_usuario"
+      },
+      {
+        "text": "Movimiento Excel, patente única, evento y recorrido son unidades diferentes; cada resultado declara denominador",
+        "source": "docs/RUNS_TABLAS_CANONICAS.md",
+        "anchor": "Tablas canónicas",
+        "status": "observada_en_codigo"
+      },
+      {
+        "text": "Mapa histórico del informe: excel_operations_with_truckflow/final_circuits/circuit_timing_summary. RUNS_TABLAS_CANONICAS.md se declara supersedido por NIVELES_ABCD.md (C/D/E). Instrucciones existentes todavía citan tablas históricas; conciliación con implementación y dashboard pendiente. No promoverlas como verdad vigente ni cambiar de universo silenciosamente.",
+        "source": "docs/NIVELES_ABCD.md",
+        "anchor": "Modelo A → B → C → D → E; contrastar docs/RUNS_TABLAS_CANONICAS.md encabezado",
+        "status": "pendiente"
+      },
+      {
+        "text": "Scripts históricos aplican +206 minutos a occurredAt, hora AR UTC-3 y día operativo desde 22:00; vigencia requiere validación",
+        "source": "scripts/estado-planta/metricas-camaras.cjs",
+        "anchor": "SKEW, AR, opDay",
+        "status": "observada_en_codigo"
+      },
+      {
+        "text": "Modelo físico es consultable; hay observaciones R26, R33/34, salidas invertidas y cámara volcable2",
+        "source": "docs/propuesta-en-vivo/modelo-nodos-nodo-sur/LEEME.txt",
+        "anchor": "PARA REVISAR EN LA MATRIZ",
+        "status": "observada_en_codigo"
+      },
+      {
+        "text": "Seguridad histórica contiene cifras/casos hardcodeados; no extrapolar ni ejecutarlo como detector para otro período",
+        "source": "scripts/estado-planta/gen_comite_seguridad.py",
+        "anchor": "LBL y section numeros",
+        "status": "observada_en_codigo"
+      }
+    ],
+    "report_reference": "artifacts/claude_import/Comité de Logística Nodo Sur · Semana 24–30 sep.pptx",
+    "report_generator": "scripts/estado-planta/gen_comite_logistica.py",
+    "security_generator": "scripts/estado-planta/gen_comite_seguridad.py",
+    "node_model": "docs/propuesta-en-vivo/modelo-nodos-nodo-sur/datos/modelo_nodo_sur.json",
+    "camera_mapping": "docs/propuesta-en-vivo/modelo-nodos-nodo-sur/fuente/camaras_por_nodo.json",
+    "gaps": [
+      "Productor y filtros de excel_extra.json pendientes",
+      "Capturas /_blob de DSS requieren archivos locales/verificación",
+      "Ajustes históricos de girasol y series publicadas requieren validar fuente primaria",
+      "Cobertura de extracción no se deduce sólo de existencia del archivo",
+      "Conciliar instrucciones históricas de tablas con modelo C/D/E vigente declarado en docs/NIVELES_ABCD.md; mantener dos rutas explícitas: reproducir informe histórico y consulta de negocio actual"
+    ],
+    "plant_scope": {
+      "name": "Nodo Sur",
+      "included": [
+        "RICARDONE",
+        "TERMINAL_EMBARQUE"
+      ],
+      "excluded": [
+        "RENOPACK"
+      ],
+      "source": "instruccion_usuario_2026-10-02",
+      "status": "confirmada_por_usuario",
+      "appliesTo": [
+        "movimientos",
+        "toneladas",
+        "patentes",
+        "tiempos",
+        "circuitos",
+        "seguridad",
+        "informes"
+      ],
+      "note": "La existencia de nodos físicos Renopack en el grafo no implica inclusión en el perímetro."
+    }
+  },
+  "products": {
+    "soja": {
+      "label": "Soja",
+      "circuits": [
+        "R7",
+        "R29"
+      ],
+      "knowledge": [
+        {
+          "text": "R7 cámara: calada→volcable puerto sin carga silo previa; producto se confirma con Excel",
+          "source": "scripts/estado-planta/metricas-camaras.cjs",
+          "anchor": "trips.r7",
+          "status": "observada_en_codigo"
+        },
+        {
+          "text": "R29: carga silo→calada→egreso→volcable puerto; generador lo presenta como transile soja",
+          "source": "scripts/estado-planta/gen_comite_logistica.py",
+          "anchor": "tramos-r29",
+          "status": "observada_en_codigo"
+        }
+      ],
+      "sections": [
+        "tramos-r7",
+        "tramos-r29",
+        "resumen-soja",
+        "hallazgo",
+        "plantas",
+        "cuartos",
+        "historico"
+      ],
+      "security_focus": [
+        "retornos puerto→Ricardone",
+        "descargas Excel sin lectura volcable",
+        "calada repetida",
+        "equipo declarado vs observado"
+      ],
+      "recipes": [
+        "soja.operaciones",
+        "soja.tramos",
+        "soja.r29",
+        "soja.historico"
+      ],
+      "related_agents": [
+        "comunicador",
+        "coordinador",
+        "seguridad"
+      ],
+      "pending_validation": true
+    },
+    "girasol": {
+      "label": "Girasol",
+      "circuits": [
+        "R4",
+        "R5",
+        "R6"
+      ],
+      "knowledge": [
+        {
+          "text": "R5/R6: calada→volcable1/2 Ricardone observado por script; corroborar producto Excel",
+          "source": "scripts/estado-planta/metricas-camaras.cjs",
+          "anchor": "trips.gir",
+          "status": "observada_en_codigo"
+        },
+        {
+          "text": "Generador mantiene tiempos ajustados incluso con Excel por muestra pequeña",
+          "source": "scripts/estado-planta/gen_comite_logistica.py",
+          "anchor": "girasol notas",
+          "status": "observada_en_codigo"
+        }
+      ],
+      "sections": [
+        "girasol",
+        "girasol-hist"
+      ],
+      "security_focus": [
+        "equipo declarado vs observado",
+        "cobertura de volcable2",
+        "demora vs evidencia mantenimiento"
+      ],
+      "recipes": [
+        "girasol.operaciones",
+        "girasol.tramos",
+        "girasol.mediana"
+      ],
+      "related_agents": [
+        "comunicador",
+        "coordinador",
+        "seguridad"
+      ],
+      "pending_validation": true
+    },
+    "pellet": {
+      "label": "Pellet",
+      "circuits": [
+        "R30",
+        "R31",
+        "R32"
+      ],
+      "knowledge": [
+        {
+          "text": "Transile pellet de girasol al puerto separado de despachos en camión",
+          "source": "scripts/estado-planta/gen_comite_logistica.py",
+          "anchor": "pellet-operativo",
+          "status": "observada_en_codigo"
+        },
+        {
+          "text": "Tandas corte >4h; neto real separado de viajes ×30t",
+          "source": "scripts/estado-planta/pellet-operativo.cjs",
+          "anchor": "marks, kgReal",
+          "status": "observada_en_codigo"
+        }
+      ],
+      "sections": [
+        "pellet-operativo",
+        "pellet-tramos",
+        "pellet-camiones",
+        "pellet-dias",
+        "pellet-hist",
+        "pellet-flota",
+        "pellet-tarifa"
+      ],
+      "security_focus": [
+        "múltiples vueltas no son anomalía por sí mismas",
+        "operación sin vínculo",
+        "recorrido transile incompatible",
+        "operativo abierto fuera período"
+      ],
+      "recipes": [
+        "pellet.viajes",
+        "pellet.toneladas",
+        "pellet.tandas",
+        "pellet.tramos",
+        "pellet.historico",
+        "pellet.escenarios"
+      ],
+      "related_agents": [
+        "comunicador",
+        "coordinador",
+        "seguridad"
+      ],
+      "pending_validation": true
+    },
+    "liquidos": {
+      "label": "Líquidos",
+      "circuits": [],
+      "knowledge": [
+        {
+          "text": "Calada líquida incluye camiones de transile; no sumar como producto líquido",
+          "source": "scripts/estado-planta/gen_comite_logistica.py",
+          "anchor": "calada notas",
+          "status": "observada_en_codigo"
+        },
+        {
+          "text": "Separación de líquidos en excel_extra existe; clasificación exacta debe reconstruirse",
+          "source": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/excel_extra.json",
+          "anchor": "liquidos",
+          "status": "pendiente"
+        }
+      ],
+      "sections": [
+        "resumen-planta",
+        "calada"
+      ],
+      "security_focus": [
+        "producto líquido vs paso transile",
+        "faltante cobertura balanzas",
+        "equipo declarado vs observado"
+      ],
+      "recipes": [
+        "liquidos.actividad",
+        "liquidos.camaras"
+      ],
+      "related_agents": [
+        "comunicador",
+        "coordinador",
+        "seguridad"
+      ],
+      "pending_validation": true
+    },
+    "seguridad": {
+      "label": "Seguridad transversal",
+      "circuits": [],
+      "knowledge": [
+        {
+          "text": "Casos históricos cruzan Excel, cámaras y horas DSS",
+          "source": "scripts/estado-planta/gen_comite_seguridad.py",
+          "anchor": "docstring",
+          "status": "observada_en_codigo"
+        },
+        {
+          "text": "Ausencia lectura volcable no prueba ausencia descarga: consultar operación y captura",
+          "source": "scripts/estado-planta/gen_comite_seguridad.py",
+          "anchor": "casos HGC160/AC293WB",
+          "status": "observada_en_codigo"
+        }
+      ],
+      "sections": [
+        "numeros",
+        "div-vuelta",
+        "casos"
+      ],
+      "security_focus": [
+        "confirmada",
+        "explicada",
+        "pendiente",
+        "evidencia_insuficiente"
+      ],
+      "recipes": [
+        "seguridad.calles",
+        "seguridad.retornos",
+        "seguridad.demoras"
+      ],
+      "related_agents": [
+        "comunicador",
+        "coordinador",
+        "soja",
+        "girasol",
+        "pellet",
+        "liquidos"
+      ],
+      "pending_validation": true
+    }
+  },
+  "indicators": [
+    {
+      "id": "soja.operaciones",
+      "label": "Operaciones R7",
+      "product": "soja",
+      "source": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/paquete_excel.json",
+      "selector": "tiempos.soja.periodo.camiones",
+      "method": "Rama EXCEL del generador; confirmar denominador del paquete antes de llamar movimientos a camiones",
+      "unit": "unidad del paquete, requiere validación",
+      "status": "observada_en_codigo"
+    },
+    {
+      "id": "soja.tramos",
+      "label": "Tiempos por tramo R7",
+      "product": "soja",
+      "source": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/paquete_excel.json",
+      "selector": "tiempos.soja.periodo.tramos",
+      "method": "mediaMin por key; total tiempoMedioMin independiente de suma de medias",
+      "unit": "minutos y n por tramo",
+      "status": "observada_en_codigo"
+    },
+    {
+      "id": "soja.r29",
+      "label": "Transile desde silos",
+      "product": "soja",
+      "source": "scripts/estado-planta/metricas-camaras.cjs",
+      "selector": "trips.r29 y CAPS",
+      "method": "Tramos medidos por cámaras; cantidad EXCEL ejecutivo.circuitosTotales R29 y excel_extra.r29_dia",
+      "unit": "operaciones vs recorridos de cámara",
+      "status": "observada_en_codigo"
+    },
+    {
+      "id": "soja.historico",
+      "label": "Serie publicada R7",
+      "product": "soja",
+      "source": "scripts/estado-planta/gen_comite_logistica.py",
+      "selector": "TOT, P1, SLZ, PUB",
+      "method": "Serie embebida reportada; no volver a calcular historia sin fuentes originales",
+      "unit": "minutos publicados",
+      "status": "historico_reportado"
+    },
+    {
+      "id": "girasol.operaciones",
+      "label": "Operaciones por circuito",
+      "product": "girasol",
+      "source": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/paquete_excel.json",
+      "selector": "tiempos.girasol.operaciones y ejecutivo.circuitosPorProducto.GIRASOL",
+      "method": "Separar R4/R5/R6; rama EXCEL conserva tramos ajustados por cámara",
+      "unit": "operaciones",
+      "status": "observada_en_codigo"
+    },
+    {
+      "id": "girasol.tramos",
+      "label": "Tramos publicados de girasol",
+      "product": "girasol",
+      "source": "scripts/estado-planta/gen_comite_logistica.py",
+      "selector": "GI y seccion girasol",
+      "method": "Publicado previo + variación de cámara para p1/descarga/tara; ing/pb constantes y ap3 ajuste fijo; NO media directa validada",
+      "unit": "minutos ajustados",
+      "status": "historico_reportado"
+    },
+    {
+      "id": "girasol.mediana",
+      "label": "Puerta a puerta Excel",
+      "product": "girasol",
+      "source": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/excel_extra.json",
+      "selector": "girasol_p2p_excel_mediana",
+      "method": "Valor complementario; productor/filtros pendientes de reconstruir",
+      "unit": "minutos",
+      "status": "pendiente"
+    },
+    {
+      "id": "pellet.viajes",
+      "label": "Viajes y patentes del operativo",
+      "product": "pellet",
+      "source": "scripts/estado-planta/pellet-operativo.cjs",
+      "selector": "X, viajesDia, viajesPorCamion",
+      "method": "excel_operations_with_truckflow; producto PELLET, circuito R30/31/32, source_date rango; dedup external_operation_id; excluir patente ficticia",
+      "unit": "operaciones de transile y patentes únicas",
+      "status": "observada_en_codigo"
+    },
+    {
+      "id": "pellet.toneladas",
+      "label": "Toneladas reales y estimadas",
+      "product": "pellet",
+      "source": "scripts/estado-planta/pellet-operativo.cjs",
+      "selector": "kgReal y toneladas",
+      "method": "Neto suma kgs_neto/1000; estimación viajes ×30 separada de pesaje; campo ausente no implica neto cero confirmado",
+      "unit": "toneladas",
+      "status": "observada_en_codigo"
+    },
+    {
+      "id": "pellet.tandas",
+      "label": "Duración del operativo",
+      "product": "pellet",
+      "source": "scripts/estado-planta/pellet-operativo.cjs",
+      "selector": "marks, bloques",
+      "method": "Primer ingreso a última salida por tanda; cortar con más de 4h sin marcas; es criterio del informe",
+      "unit": "horas por tanda",
+      "status": "observada_en_codigo"
+    },
+    {
+      "id": "pellet.tramos",
+      "label": "Tiempos del viaje",
+      "product": "pellet",
+      "source": "scripts/estado-planta/pellet-operativo.cjs",
+      "selector": "trips y is",
+      "method": "Cámaras de patentes Excel: pre→playa3→balanza egreso→SL ingreso→balanza→volcable→salida, sin silo/calada sólida; n y caps por tramo",
+      "unit": "minutos, muestra de recorridos",
+      "status": "observada_en_codigo"
+    },
+    {
+      "id": "pellet.historico",
+      "label": "Operativos históricos",
+      "product": "pellet",
+      "source": "scripts/estado-planta/pellet-historico.cjs",
+      "selector": "archivo completo",
+      "method": "Reglas del script; períodos operativos pueden cruzar semanas",
+      "unit": "operativos, viajes, patentes",
+      "status": "observada_en_codigo"
+    },
+    {
+      "id": "pellet.escenarios",
+      "label": "Comparación flota y tarifa",
+      "product": "pellet",
+      "source": "scripts/estado-planta/gen_comite_logistica.py",
+      "selector": "pellet-flota y pellet-tarifa",
+      "method": "Anexo de escenario; filtros leidos>=25 y viajes>=50; hipótesis tarifaria y causalidad no confirmada",
+      "unit": "escenario",
+      "status": "historico_reportado"
+    },
+    {
+      "id": "liquidos.actividad",
+      "label": "Ingresos y egresos de líquidos",
+      "product": "liquidos",
+      "source": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/excel_extra.json",
+      "selector": "liquidos",
+      "method": "LIQX.camiones/ingresos/egresos/media/mediana; productor y criterio exacto pendientes",
+      "unit": "operaciones/vehículos por confirmar",
+      "status": "pendiente"
+    },
+    {
+      "id": "liquidos.camaras",
+      "label": "Paso por calada líquida",
+      "product": "liquidos",
+      "source": "scripts/estado-planta/metricas-camaras.cjs",
+      "selector": "is.liq y trips.liq",
+      "method": "RicCalLiq; rama trips excluye carga silo en 8h; sector incluye transile; cámara sola no identifica aceite",
+      "unit": "recorridos o patentes según agregación",
+      "status": "observada_en_codigo"
+    },
+    {
+      "id": "seguridad.calles",
+      "label": "Calle declarada vs observada",
+      "product": "seguridad",
+      "source": "scripts/estado-planta/gen_comite_seguridad.py",
+      "selector": "section numeros y notas",
+      "method": "Cruzar ingreso Excel con volcable declarado y lectura de calle; cifra embebida sólo 24–30/09, detector nuevo requiere conciliación",
+      "unit": "operaciones controladas",
+      "status": "historico_reportado"
+    },
+    {
+      "id": "seguridad.retornos",
+      "label": "Retorno sin descarga observada",
+      "product": "seguridad",
+      "source": "scripts/estado-planta/gen_comite_seguridad.py",
+      "selector": "div-vuelta y case",
+      "method": "Ingreso/salida puerto, falta lectura volcable, posterior ingreso Ricardone; contrastar Excel y DSS; no lectura no prueba no descarga",
+      "unit": "casos de revisión",
+      "status": "historico_reportado"
+    },
+    {
+      "id": "seguridad.demoras",
+      "label": "Demoras entre plantas",
+      "product": "seguridad",
+      "source": "scripts/estado-planta/gen_comite_seguridad.py",
+      "selector": "section numeros",
+      "method": "Criterio del informe >30min sin calado puerto; umbral histórico, no regla universal de riesgo",
+      "unit": "casos de revisión",
+      "status": "historico_reportado"
+    }
+  ]
+}

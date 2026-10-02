@@ -82,3 +82,26 @@ rehace el día, la nueva lleva «(rev. N)»).
 La corrida diaria queda en un solo comando: `npm run informe:diario:procesar` a las 07:00.
 Necesita el ETL API (8787) y el MCP de Google Slides (8790) arriba en la máquina, y el Excel
 de movimientos del día anterior cargado antes de esa hora.
+
+## Formato vigente: presentación de Claude «Estado de planta · Nodo Sur»
+
+Desde el 25/09 el diario se entrega como presentación de Claude (tipo Slides) con la estética de
+«Estado de planta · Semana 17–23 sep»: IBM Plex Sans, verdes y violetas, píldoras de sección,
+cifras grandes, logos de NVA y Bimtrazer. **Solo Nodo Sur**: Excel filtrado a Ricardone y
+Terminal San Lorenzo (`movimientosNodoSur`, `NODO_SUR_PLANTAS`) más los circuitos y sectores de
+esas plantas.
+
+Cuatro láminas, en tono de relato (del semanal se toma la estética y la forma de narrar, no la
+estructura): portada · cómo fue el día · el viaje de la soja · dónde se trabajó. Una lámina
+sin dato publicable no se genera.
+
+Pasos por día:
+1. `npm run informe:diario:procesar -- <día>` (o `-- <día> --sin-slides` si solo hace falta la revisión).
+2. Crear el artefacto del día (tipo Slides) y copiarle los 4 logos desde
+   `https://claude.ai/artifact/PyJ6srzJtdg8eJH4BbHmip`; guardar sus urls en
+   `reportes/logistica/diario/<día>/deck-assets.json`.
+3. `node scripts/informe-diario-deck.mjs <revisión> <carpeta> reportes/logistica/diario/<día>/deck-assets.json`
+4. Publicar la carpeta en el artefacto del día (Claude, herramienta de artefactos).
+
+Los pasos 2 y 4 los hace Claude: por eso la emisión automática será una tarea programada de
+Claude, no un cron del sistema.

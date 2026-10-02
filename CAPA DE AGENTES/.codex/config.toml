@@ -1,0 +1,34 @@
+[mcp_servers.capa-agentes]
+command = "node"
+args = ["C:/Users/Usuario/Desktop/Dashboard_camiones/CAPA DE AGENTES/mcp-launch.mjs"]
+
+[agents]
+enabled = true
+
+[agents.comunicador_operativo]
+description = "Consolida logística y seguridad con formato de referencia y evidencia"
+config_file = "roles/comunicador-operativo.toml"
+
+[agents.coordinador_logistica]
+description = "Coordina productos, seguridad e informes usando la capa aislada"
+config_file = "roles/coordinador-logistica.toml"
+
+[agents.especialista_girasol]
+description = "Contexto y consultas de Girasol con evidencia compartida"
+config_file = "roles/especialista-girasol.toml"
+
+[agents.especialista_liquidos]
+description = "Contexto y consultas de Líquidos con evidencia compartida"
+config_file = "roles/especialista-liquidos.toml"
+
+[agents.especialista_pellet]
+description = "Contexto y consultas de Pellet con evidencia compartida"
+config_file = "roles/especialista-pellet.toml"
+
+[agents.especialista_seguridad]
+description = "Contexto y consultas de Seguridad transversal con evidencia compartida"
+config_file = "roles/especialista-seguridad.toml"
+
+[agents.especialista_soja]
+description = "Contexto y consultas de Soja con evidencia compartida"
+config_file = "roles/especialista-soja.toml"

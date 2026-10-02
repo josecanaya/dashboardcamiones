@@ -111,12 +111,12 @@ describe('reducePlantState contra 2026-09-08', () => {
     // En horario de recepción, el grueso espera calada en Playa 1.
     const z2 = snap.zones.find((z) => z.id === 'Z2')
     expect(z2?.backlog ?? 0).toBeGreaterThan(0)
-    expect(z2?.capacityOperational).toBe(450)
+    expect(z2?.capacityOperational).toBe(300)
 
-    // Playa 3 se mide contra el límite operativo (30), no contra el físico (141).
+    // Playa 3 se mide contra el límite operativo (30), no contra el físico (100).
     const z6 = snap.zones.find((z) => z.id === 'Z6')
     expect(z6?.capacityOperational).toBe(30)
-    expect(z6?.capacityPhysical).toBe(141)
+    expect(z6?.capacityPhysical).toBe(100)
 
     // Toda zona con tasa relevada tiene tiempo estimado; las demás, null y no cero.
     for (const z of snap.zones) {

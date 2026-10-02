@@ -7,6 +7,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import { CIRCUIT_CATALOG } from './circuitCatalog'
+import { NODO_SUR_CIRCUITS, nodoSurCameraSequence } from './nodoSur'
 import { MATRIX_CODES_BY_PLANT_OP } from '../../config/kpiCircuitMatrix'
 
 /**
@@ -36,11 +37,13 @@ const ACCEPTED_SAME_KIND_COLLISIONS = new Set([
 ])
 
 /**
- * Colisiones de secuencia ENTRE kind distintos: por secuencia de cámaras es imposible
- * distinguir una recepción de una operación de líquido en San Lorenzo. Riesgo real de
- * clasificación cruzada; requiere un punto discriminante fuera de la secuencia.
+ * Colisiones de secuencia ENTRE kind distintos. SL1|SL2|SL3 compartían la secuencia de
+ * volcables copiada; el modelo de nodos los separa (Carga OSL S10 / Carga y descarga S6 /
+ * Renova S8), así que la lista quedó vacía.
  */
-const ACCEPTED_CROSS_KIND_COLLISIONS = new Set(['SL1|SL2|SL3'])
+const ACCEPTED_CROSS_KIND_COLLISIONS = new Set<string>()
+
+const MODEL_CODES = new Set(NODO_SUR_CIRCUITS.map((c) => c.id))
 
 /** Alias que resuelven a más de un código (ambigüedad heredada de los códigos legacy). */
 const ACCEPTED_AMBIGUOUS_ALIASES = new Set([
@@ -91,18 +94,36 @@ describe('CIRCUIT_CATALOG — invariantes de fuente única', () => {
     expect(stillUndefined.length).toBeLessThanOrEqual(KNOWN_UNDEFINED_MATRIX_CODES.size)
   })
 
-  it('no hay colisiones de baseSequence fuera de la línea base', () => {
+  it('todo circuito del modelo de nodos está en el catálogo con la baseSequence del modelo', () => {
+    const wrong: string[] = []
+    for (const c of NODO_SUR_CIRCUITS) {
+      const entry = CIRCUIT_CATALOG[c.id]
+      const expected = nodoSurCameraSequence(c.id).join('>')
+      if (!entry) wrong.push(`${c.id}: falta en el catálogo`)
+      else if ((entry.baseSequence ?? []).join('>') !== expected) {
+        wrong.push(`${c.id}: ${(entry.baseSequence ?? []).join('>')} ≠ modelo ${expected}`)
+      }
+    }
+    expect(wrong, wrong.join(' ; ')).toEqual([])
+  })
+
+  it('las colisiones de baseSequence las explica el modelo (nodos sin cámara); fuera del modelo no hay', () => {
     const unexpected: string[] = []
     for (const [seq, group] of sequenceGroups()) {
       if (group.length < 2) continue
-      const key = group.map((g) => g.code).sort().join('|')
-      const crossKind = new Set(group.map((g) => g.kind)).size > 1
-      const accepted = crossKind
-        ? ACCEPTED_CROSS_KIND_COLLISIONS.has(key)
-        : ACCEPTED_SAME_KIND_COLLISIONS.has(key)
-      if (!accepted) unexpected.push(`${crossKind ? 'CROSS-KIND' : 'mismo-kind'} ${key} (${seq})`)
+      const outsideModel = group.filter((g) => !MODEL_CODES.has(g.code))
+      if (outsideModel.length) unexpected.push(`${group.map((g) => g.code).join('|')} (${seq})`)
     }
-    expect(unexpected, `colisiones de secuencia nuevas: ${unexpected.join(' ; ')}`).toEqual([])
+    expect(unexpected, `colisiones fuera del modelo: ${unexpected.join(' ; ')}`).toEqual([])
+  })
+
+  it('línea base heredada de colisiones del mismo tipo sigue colisionando (NO_DIFERENCIABLE)', () => {
+    for (const key of ACCEPTED_SAME_KIND_COLLISIONS) {
+      const seqs = new Set(key.split('|').map((code) => CIRCUIT_CATALOG[code]?.baseSequence?.join('>')))
+      if (key === 'R3|R4' || key === 'R27|R28') continue // el modelo los separa: Keppler (S7) vs Silo Chief / Australiano
+      expect(seqs.size, key).toBe(1)
+    }
+    expect(ACCEPTED_CROSS_KIND_COLLISIONS.size).toBe(0)
   })
 
   it('no hay alias ambiguos fuera de la línea base', () => {

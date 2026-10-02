@@ -301,8 +301,9 @@ describe('finalCircuitScoring', () => {
       expect(r.executiveReason).toBe('CIRCUITO_NO_EVALUABLE_POR_COBERTURA')
     })
 
-    it('R34 sin secuencia configurada => NO_EVALUABLE / CONFIG_ERROR_MISSING_SEQUENCE', () => {
-      const cfg = resolveExecutiveCircuitConfig('R34')
+    it('sin secuencia configurada => NO_EVALUABLE / CONFIG_ERROR_MISSING_SEQUENCE', () => {
+      // R34 ya tiene la secuencia del modelo de nodos; el caso se prueba con una config sin secuencia.
+      const cfg = { ...resolveExecutiveCircuitConfig('R34')!, baseSequence: undefined, allowedSequences: undefined }
       expect(cfg).toBeTruthy()
       const r = resolveExecutiveCircuitDecision({
         matrixFinalStatus: 'ANOMALO',

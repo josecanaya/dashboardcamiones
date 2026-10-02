@@ -1,0 +1,229 @@
+{
+  "_nota": "Cámaras TruckFlow por nodo (feed real 20-27/09/2026: sectorCode <planta>-S<n>, 2- Ricardone, 1- San Lorenzo). devices = frontales que cuentan; rear = traseras excluidas del ETL. Nodo sin devices = sin cámara. Un mismo sector puede cubrir dos nodos (S8: Silo Chief y Tolva silo Chief); el circuito decide cuál.",
+  "ricardone:Ingreso": {
+    "devices": [
+      "RicIngCamFrente"
+    ],
+    "rear": [
+      "RicIngCamTrasera"
+    ]
+  },
+  "ricardone:Pre ingreso": {
+    "devices": [
+      "RicPreIngInFr",
+      "RicPreIngEgFr"
+    ],
+    "rear": [
+      "RicPreIngInTr",
+      "RicPreIngEgTr"
+    ]
+  },
+  "ricardone:Calada": {
+    "devices": [
+      "RicCal01",
+      "RicCal02",
+      "RicCal03",
+      "RicCal04",
+      "RicCal05",
+      "RicCal06",
+      "RicCalLiq"
+    ],
+    "rear": []
+  },
+  "ricardone:Balanza Ingreso": {
+    "devices": [
+      "RicB1Ingreso",
+      "RicB2Ingreso",
+      "RicB3Ingreso"
+    ],
+    "rear": []
+  },
+  "ricardone:Balanza Egreso": {
+    "devices": [
+      "RicB1Egreso",
+      "RicB2Egreso",
+      "RicB3Egreso"
+    ],
+    "rear": []
+  },
+  "ricardone:Celda 16": {
+    "devices": [
+      "RicC16Carga1",
+      "RicC16Carga2",
+      "RicC16Descarga1",
+      "RicC16Descarga2"
+    ],
+    "rear": []
+  },
+  "ricardone:Playa 3": {
+    "devices": [
+      "RicS6Playa3"
+    ],
+    "rear": []
+  },
+  "ricardone:Volcable Silo Keppler": {
+    "devices": [
+      "RicS7DescLinea1",
+      "RicS7DescLinea2",
+      "RicS7Carga"
+    ],
+    "rear": []
+  },
+  "ricardone:Tolva de carga silo Chief": {
+    "devices": [
+      "RicS8CargaLinea1",
+      "RicS8CargaLinea2"
+    ],
+    "rear": []
+  },
+  "ricardone:Volcable 1": {
+    "devices": [
+      "RicVolcable1"
+    ],
+    "rear": []
+  },
+  "ricardone:Volcable 2": {
+    "devices": [
+      "RicVolcable2"
+    ],
+    "rear": []
+  },
+  "ricardone:Salida 2": {
+    "devices": [
+      "RicEgrCamFrente"
+    ],
+    "rear": [
+      "RicEgrCamTraser"
+    ]
+  },
+  "ricardone:Salida 1": {
+    "devices": [],
+    "rear": []
+  },
+  "ricardone:Silo Australiano": {
+    "devices": [],
+    "rear": []
+  },
+  "ricardone:Volcable Silo Chief": {
+    "devices": [
+      "RicS8CargaLinea1",
+      "RicS8CargaLinea2"
+    ],
+    "rear": []
+  },
+  "ricardone:Tolva de carga Celda 09": {
+    "devices": [],
+    "rear": []
+  },
+  "ricardone:Tolva de carga Celda 10": {
+    "devices": [],
+    "rear": []
+  },
+  "ricardone:Tolva de carga Celda 11": {
+    "devices": [],
+    "rear": []
+  },
+  "ricardone:Liquidos Carga/Descarga": {
+    "devices": [],
+    "rear": []
+  },
+  "ricardone:Playa de egreso": {
+    "devices": [],
+    "rear": []
+  },
+  "san_lorenzo:Ingreso": {
+    "devices": [
+      "SLZIngCamFrente"
+    ],
+    "rear": [
+      "SLZIngCamTrasera"
+    ]
+  },
+  "san_lorenzo:Balanza Ingreso": {
+    "devices": [
+      "SLZBalIngFte"
+    ],
+    "rear": [
+      "SLZBalIngTras"
+    ]
+  },
+  "san_lorenzo:Calada": {
+    "devices": [
+      "SLZCalado",
+      "SLZCalCam"
+    ],
+    "rear": []
+  },
+  "san_lorenzo:Plataformas Volcables": {
+    "devices": [
+      "SLZVolcableC1",
+      "SLZVolcableC2",
+      "SLZVolcableC3",
+      "SLZVolcableC4",
+      "SLZVolcableC5",
+      "SLZDescCam"
+    ],
+    "rear": []
+  },
+  "san_lorenzo:Balanza Egreso": {
+    "devices": [
+      "SLZBalSC1Fte",
+      "SLZBalSC2Fte"
+    ],
+    "rear": [
+      "SLZBalSC1Tras",
+      "SLZBalSC2Tras"
+    ]
+  },
+  "san_lorenzo:Egreso": {
+    "devices": [
+      "SLZSalidaC1Fte",
+      "SLZSalidaC2Fte"
+    ],
+    "rear": [
+      "SLZSalidaC1Tras",
+      "SLZSalidaC2Tras"
+    ]
+  },
+  "san_lorenzo:Carga/descarga": {
+    "devices": [
+      "SLZBalLiq1a",
+      "SLZBalLiq1b",
+      "SLZBalLiq2a",
+      "SLZBalLiq2b"
+    ],
+    "rear": []
+  },
+  "san_lorenzo:Carga/Descarga Renova": {
+    "devices": [
+      "SLZTK400"
+    ],
+    "rear": []
+  },
+  "san_lorenzo:Carga / Descarga OSL": {
+    "devices": [
+      "RenCargFte",
+      "RenDescFte"
+    ],
+    "rear": [
+      "RenCargTras",
+      "RenDescTras"
+    ]
+  },
+  "san_lorenzo:Cargadero": {
+    "devices": [],
+    "rear": []
+  },
+  "san_lorenzo:Playa OSL": {
+    "devices": [],
+    "rear": []
+  },
+  "ricardone:Playa 1": {
+    "devices": [],
+    "rear": []
+  },
+  "ricardone:Playa demorado": {
+    "devices": [],
+    "rear": []
+  }
+}

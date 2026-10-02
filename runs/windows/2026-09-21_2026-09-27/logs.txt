@@ -1,0 +1,17 @@
+[etl-headless] runId=2026-09-21_2026-09-27 (ventana 2026-09-21..2026-09-27, pisado)
+[etl-headless] path=windows/2026-09-21_2026-09-27
+[etl-headless] events=C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-20\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-21\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-22\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-23\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-24\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-25\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-26\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-27\event-list.json
+[etl-headless] movimientos backup: 3743 filas (2026-09-21→2026-09-27)
+[etl-headless] construyendo KPI tiempos…
+[etl-headless] Truckflow COMPLETOS: 4116 tramos, 1219 journeys · 203 viajes de pellet atribuidos a R30/R13 por cámara · 71 excluidos sin ingreso/preingreso
+[etl-headless] segment_scatter_analysis: 0 filas
+[etl-headless] segment_scatter_by_day: 0 filas
+[etl-headless] sector_occupancy_30min: 0 intervalos · events: 0
+[etl-headless] san_lorenzo_volcable_events: 1544 camiones · 5 calles · producto en 1174/1544 · filas INGRESO volcable: 1312
+[etl-headless] calada_camera_events: 1821 eventos · 6 cámaras · producto asignado a 856/1821 (mapa uid→producto: 2681)
+[etl-headless] calada_sl_camera_events: 272 eventos · producto asignado a 188/272
+[etl-headless] calada_ricardone_liquid_events: 665 eventos · producto asignado a 460/665
+[etl-headless] descargas: ricardone_volcable=762 · ricardone_silo=1045 · ricardone_celda16=3 · sl_aceite_pto=0 camiones (0 ev) · sl_aceite_osl=120 camiones (120 ev) (aceite: actividad de cámara, solo patentes válidas — sin cruce Excel)
+[etl-headless] niveles: C 2729/3544 con cámara · D 450 válidos, 69 anómalos, 603 incompletos, 107 sin contrato · E 6 circuitos (100% cámara pura)
+[etl-headless] pb: 21 archivos (8 productivos) 2026-09-20..2026-09-27
+[etl-headless] tablas núcleo=37 (sin debug) rules=etl_transform_v17

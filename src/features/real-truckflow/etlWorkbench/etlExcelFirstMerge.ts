@@ -602,7 +602,9 @@ export function resolveOperationalContextFromExcel(
   const product = mov.product_normalized ?? ''
   let family = ''
 
-  if (platform === 'CELDA_16' || platform.startsWith('CELDA_16') || platform.includes('CELDA')) {
+  // Solo Celda 16 de Ricardone. Antes `includes('CELDA')` mandaba a Celda 16 cualquier celda
+  // (Celda 171 de Avellaneda → R1: 75 movimientos por semana; Celda 09/10/11 del pellet).
+  if (platform === 'CELDA_16' || /^CELDA_16(?!\d)/.test(platform)) {
     family = 'CELDA16'
   } else if (platform.startsWith('VOLCABLE_PTO_')) {
     family = 'SAN_LORENZO_VOLCABLE'

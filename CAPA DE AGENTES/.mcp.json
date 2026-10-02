@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "capa-agentes": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\CAPA DE AGENTES\\mcp-launch.mjs"
+      ]
+    }
+  }
+}

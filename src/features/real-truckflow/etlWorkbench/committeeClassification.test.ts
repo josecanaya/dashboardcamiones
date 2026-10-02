@@ -45,7 +45,8 @@ function baseInput(
     frontEventCount: 6,
     hasOperationalEntry: true,
     hasOperationalExit: true,
-    observedSectorSequence: ['S0', 'S1', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
+    // R5 limpio según el modelo de nodos (Salida 1 no tiene cámara).
+    observedSectorSequence: ['S0', 'S1', 'S2', 'S4', 'S6', 'S9', 'S4'],
     ...partial,
   }
 }

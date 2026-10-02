@@ -34,7 +34,7 @@ exports[`etlGoldenMaster > congela hash de cada CSV de salida en fixture S 1`] =
   "rear_alerts": "4074406f458fa402",
   "rear_events": "e7a065dad488384e",
   "rear_only_journeys_debug": "0bb7e7621193b50b",
-  "transform_summary": "a71b64efe8d71e6f",
+  "transform_summary": "847c86912f927508",
   "unclassified_journeys": "74c108411ecb35bb",
 }
 `;

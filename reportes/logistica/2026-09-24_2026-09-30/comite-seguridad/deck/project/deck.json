@@ -1,0 +1,67 @@
+{
+ "v": 4,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-10-01T18:24:07Z"
+ },
+ "lists": "css",
+ "title": "Comité de Seguridad · Semana 24–30 sep",
+ "order": [
+  "cover",
+  "numeros",
+  "div-vuelta",
+  "hgc160",
+  "ac293wb",
+  "ai082ap",
+  "oko733",
+  "ag847tb",
+  "knp563",
+  "div-calles",
+  "calles",
+  "keb002",
+  "eew075",
+  "div-interplanta",
+  "interplanta",
+  "div-grafo",
+  "grafo",
+  "historico"
+ ],
+ "cover": "cover",
+ "sections": {
+  "s1": {
+   "description": "Portada y números de la semana",
+   "start": "cover"
+  },
+  "s2": {
+   "description": "Camiones que fueron al puerto y volvieron a Ricardone antes de descargar",
+   "start": "div-vuelta"
+  },
+  "s3": {
+   "description": "Calles del puerto: otra calle y dos calles en la misma visita",
+   "start": "div-calles"
+  },
+  "s4": {
+   "description": "Demoras entre plantas sin calado en el puerto",
+   "start": "div-interplanta"
+  },
+  "s5": {
+   "description": "Caminos fuera del modelo de nodos e histórico de anomalías",
+   "start": "div-grafo"
+  }
+ },
+ "faces": {
+  "domine": {
+   "family": "Domine",
+   "href": "https://fonts.googleapis.com/css2?family=Domine:wght@400..700&display=swap"
+  },
+  "public-sans": {
+   "family": "Public Sans",
+   "href": "https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap"
+  },
+  "ibm-plex-sans": {
+   "family": "IBM Plex Sans",
+   "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap"
+  }
+ },
+ "designSystems": []
+}

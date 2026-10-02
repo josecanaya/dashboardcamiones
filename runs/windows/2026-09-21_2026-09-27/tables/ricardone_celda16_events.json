@@ -1,0 +1,53 @@
+{
+  "name": "ricardone_celda16_events",
+  "headers": [
+    "journey_id",
+    "patente",
+    "producto",
+    "circuito",
+    "camara",
+    "timestamp",
+    "fecha",
+    "hora",
+    "intervalo_hora",
+    "franja_operativa"
+  ],
+  "rows": [
+    {
+      "journey_id": "1f29921c-bfd8-4501-9fd1-7009120b5329__cycle_1",
+      "patente": "AD001TD",
+      "producto": "",
+      "circuito": "R9",
+      "camara": "RicC16Carga1",
+      "timestamp": "2026-09-24T14:29:04.720-03:00",
+      "fecha": "2026-09-24",
+      "hora": "14:29",
+      "intervalo_hora": "2026-09-24T14:00:00",
+      "franja_operativa": "Tarde"
+    },
+    {
+      "journey_id": "bbb0f50d-fc40-4df8-8bcf-b8bfaab11903",
+      "patente": "AB388RF",
+      "producto": "",
+      "circuito": "R9",
+      "camara": "RicC16Carga2",
+      "timestamp": "2026-09-26T11:05:11.712-03:00",
+      "fecha": "2026-09-26",
+      "hora": "11:05",
+      "intervalo_hora": "2026-09-26T11:00:00",
+      "franja_operativa": "Mañana"
+    },
+    {
+      "journey_id": "0d4be573-d438-47a2-bf0f-89068e3cd008",
+      "patente": "AG388RH",
+      "producto": "",
+      "circuito": "R9",
+      "camara": "RicC16Carga1",
+      "timestamp": "2026-09-27T10:31:38.517-03:00",
+      "fecha": "2026-09-27",
+      "hora": "10:31",
+      "intervalo_hora": "2026-09-27T10:00:00",
+      "franja_operativa": "Mañana"
+    }
+  ]
+}

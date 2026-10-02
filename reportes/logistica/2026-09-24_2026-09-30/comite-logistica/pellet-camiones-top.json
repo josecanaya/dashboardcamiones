@@ -1,0 +1,560 @@
+[
+ {
+  "p": "UWX998",
+  "viajes": 12,
+  "vuelta": 257,
+  "horas": 42.9,
+  "viajesPrueba": 13,
+  "hoy": 2160000,
+  "prueba": 1950000
+ },
+ {
+  "p": "RAW481",
+  "viajes": 11,
+  "vuelta": 274,
+  "horas": 41.1,
+  "viajesPrueba": 11,
+  "hoy": 1980000,
+  "prueba": 1650000
+ },
+ {
+  "p": "VAJ028",
+  "viajes": 11,
+  "vuelta": 268,
+  "horas": 40.2,
+  "viajesPrueba": 11,
+  "hoy": 1980000,
+  "prueba": 1650000
+ },
+ {
+  "p": "BVS300",
+  "viajes": 11,
+  "vuelta": 247,
+  "horas": 37,
+  "viajesPrueba": 12,
+  "hoy": 1980000,
+  "prueba": 1800000
+ },
+ {
+  "p": "FDH917",
+  "viajes": 10,
+  "vuelta": 290,
+  "horas": 38.7,
+  "viajesPrueba": 10,
+  "hoy": 1800000,
+  "prueba": 1500000
+ },
+ {
+  "p": "EYH843",
+  "viajes": 9,
+  "vuelta": 270,
+  "horas": 31.4,
+  "viajesPrueba": 9,
+  "hoy": 1620000,
+  "prueba": 1350000
+ },
+ {
+  "p": "UKL882",
+  "viajes": 9,
+  "vuelta": 241,
+  "horas": 28.2,
+  "viajesPrueba": 9,
+  "hoy": 1620000,
+  "prueba": 1350000
+ },
+ {
+  "p": "EEW075",
+  "viajes": 8,
+  "vuelta": 270,
+  "horas": 27,
+  "viajesPrueba": 8,
+  "hoy": 1440000,
+  "prueba": 1200000
+ },
+ {
+  "p": "VJG112",
+  "viajes": 8,
+  "vuelta": 261,
+  "horas": 26.1,
+  "viajesPrueba": 8,
+  "hoy": 1440000,
+  "prueba": 1200000
+ },
+ {
+  "p": "CKQ212",
+  "viajes": 8,
+  "vuelta": 253,
+  "horas": 25.3,
+  "viajesPrueba": 8,
+  "hoy": 1440000,
+  "prueba": 1200000
+ },
+ {
+  "p": "UUL425",
+  "viajes": 7,
+  "vuelta": 274,
+  "horas": 27.4,
+  "viajesPrueba": 7,
+  "hoy": 1260000,
+  "prueba": 1050000
+ },
+ {
+  "p": "AZG422",
+  "viajes": 7,
+  "vuelta": 284,
+  "horas": 23.6,
+  "viajesPrueba": 7,
+  "hoy": 1260000,
+  "prueba": 1050000
+ },
+ {
+  "p": "UUO981",
+  "viajes": 7,
+  "vuelta": 255,
+  "horas": 21.3,
+  "viajesPrueba": 7,
+  "hoy": 1260000,
+  "prueba": 1050000
+ },
+ {
+  "p": "TAC436",
+  "viajes": 7,
+  "vuelta": 246,
+  "horas": 20.5,
+  "viajesPrueba": 7,
+  "hoy": 1260000,
+  "prueba": 1050000
+ },
+ {
+  "p": "CGV979",
+  "viajes": 7,
+  "vuelta": 241,
+  "horas": 20.1,
+  "viajesPrueba": 7,
+  "hoy": 1260000,
+  "prueba": 1050000
+ },
+ {
+  "p": "GES056",
+  "viajes": 6,
+  "vuelta": 281,
+  "horas": 23.4,
+  "viajesPrueba": 6,
+  "hoy": 1080000,
+  "prueba": 900000
+ },
+ {
+  "p": "RXV065",
+  "viajes": 6,
+  "vuelta": 275,
+  "horas": 22.9,
+  "viajesPrueba": 6,
+  "hoy": 1080000,
+  "prueba": 900000
+ },
+ {
+  "p": "CRJ139",
+  "viajes": 6,
+  "vuelta": 252,
+  "horas": 21,
+  "viajesPrueba": 6,
+  "hoy": 1080000,
+  "prueba": 900000
+ },
+ {
+  "p": "RGV982",
+  "viajes": 6,
+  "vuelta": 249,
+  "horas": 20.8,
+  "viajesPrueba": 6,
+  "hoy": 1080000,
+  "prueba": 900000
+ },
+ {
+  "p": "BHL749",
+  "viajes": 6,
+  "vuelta": 312,
+  "horas": 20.8,
+  "viajesPrueba": 6,
+  "hoy": 1080000,
+  "prueba": 900000
+ },
+ {
+  "p": "VRA989",
+  "viajes": 6,
+  "vuelta": 242,
+  "horas": 20.1,
+  "viajesPrueba": 6,
+  "hoy": 1080000,
+  "prueba": 900000
+ },
+ {
+  "p": "TVH101",
+  "viajes": 6,
+  "vuelta": 295,
+  "horas": 19.7,
+  "viajesPrueba": 6,
+  "hoy": 1080000,
+  "prueba": 900000
+ },
+ {
+  "p": "DGR440",
+  "viajes": 6,
+  "vuelta": 296,
+  "horas": 19.7,
+  "viajesPrueba": 6,
+  "hoy": 1080000,
+  "prueba": 900000
+ },
+ {
+  "p": "RDL445",
+  "viajes": 6,
+  "vuelta": 231,
+  "horas": 15.4,
+  "viajesPrueba": 6,
+  "hoy": 1080000,
+  "prueba": 900000
+ },
+ {
+  "p": "RLP943",
+  "viajes": 5,
+  "vuelta": 310,
+  "horas": 20.6,
+  "viajesPrueba": 5,
+  "hoy": 900000,
+  "prueba": 750000
+ },
+ {
+  "p": "ROS380",
+  "viajes": 5,
+  "vuelta": 283,
+  "horas": 18.9,
+  "viajesPrueba": 5,
+  "hoy": 900000,
+  "prueba": 750000
+ },
+ {
+  "p": "DFP716",
+  "viajes": 5,
+  "vuelta": 265,
+  "horas": 17.7,
+  "viajesPrueba": 5,
+  "hoy": 900000,
+  "prueba": 750000
+ },
+ {
+  "p": "UPW705",
+  "viajes": 5,
+  "vuelta": 265,
+  "horas": 17.7,
+  "viajesPrueba": 5,
+  "hoy": 900000,
+  "prueba": 750000
+ },
+ {
+  "p": "VHL423",
+  "viajes": 5,
+  "vuelta": 243,
+  "horas": 16.2,
+  "viajesPrueba": 5,
+  "hoy": 900000,
+  "prueba": 750000
+ },
+ {
+  "p": "OHI283",
+  "viajes": 5,
+  "vuelta": 233,
+  "horas": 15.6,
+  "viajesPrueba": 5,
+  "hoy": 900000,
+  "prueba": 750000
+ },
+ {
+  "p": "UYM942",
+  "viajes": 5,
+  "vuelta": 294,
+  "horas": 14.7,
+  "viajesPrueba": 5,
+  "hoy": 900000,
+  "prueba": 750000
+ },
+ {
+  "p": "RNM392",
+  "viajes": 5,
+  "vuelta": 228,
+  "horas": 11.4,
+  "viajesPrueba": 5,
+  "hoy": 900000,
+  "prueba": 750000
+ },
+ {
+  "p": "CGS172",
+  "viajes": 5,
+  "vuelta": 213,
+  "horas": 10.6,
+  "viajesPrueba": 5,
+  "hoy": 900000,
+  "prueba": 750000
+ },
+ {
+  "p": "GFL789",
+  "viajes": 4,
+  "vuelta": 276,
+  "horas": 18.4,
+  "viajesPrueba": 5,
+  "hoy": 720000,
+  "prueba": 750000
+ },
+ {
+  "p": "EDQ876",
+  "viajes": 4,
+  "vuelta": 273,
+  "horas": 18.2,
+  "viajesPrueba": 5,
+  "hoy": 720000,
+  "prueba": 750000
+ },
+ {
+  "p": "WIU141",
+  "viajes": 4,
+  "vuelta": 263,
+  "horas": 17.5,
+  "viajesPrueba": 5,
+  "hoy": 720000,
+  "prueba": 750000
+ },
+ {
+  "p": "GLK802",
+  "viajes": 4,
+  "vuelta": 233,
+  "horas": 15.6,
+  "viajesPrueba": 5,
+  "hoy": 720000,
+  "prueba": 750000
+ },
+ {
+  "p": "DIH255",
+  "viajes": 4,
+  "vuelta": 233,
+  "horas": 15.5,
+  "viajesPrueba": 5,
+  "hoy": 720000,
+  "prueba": 750000
+ },
+ {
+  "p": "CIE516",
+  "viajes": 4,
+  "vuelta": 289,
+  "horas": 14.4,
+  "viajesPrueba": 4,
+  "hoy": 720000,
+  "prueba": 600000
+ },
+ {
+  "p": "RYJ562",
+  "viajes": 4,
+  "vuelta": 238,
+  "horas": 11.9,
+  "viajesPrueba": 4,
+  "hoy": 720000,
+  "prueba": 600000
+ },
+ {
+  "p": "EBO971",
+  "viajes": 3,
+  "vuelta": 356,
+  "horas": 17.8,
+  "viajesPrueba": 3,
+  "hoy": 540000,
+  "prueba": 450000
+ },
+ {
+  "p": "RRE349",
+  "viajes": 3,
+  "vuelta": 352,
+  "horas": 17.6,
+  "viajesPrueba": 3,
+  "hoy": 540000,
+  "prueba": 450000
+ },
+ {
+  "p": "SAT582",
+  "viajes": 3,
+  "vuelta": 333,
+  "horas": 16.6,
+  "viajesPrueba": 3,
+  "hoy": 540000,
+  "prueba": 450000
+ },
+ {
+  "p": "WHR567",
+  "viajes": 3,
+  "vuelta": 241,
+  "horas": 12.1,
+  "viajesPrueba": 4,
+  "hoy": 540000,
+  "prueba": 600000
+ },
+ {
+  "p": "EVL273",
+  "viajes": 3,
+  "vuelta": 233,
+  "horas": 11.7,
+  "viajesPrueba": 4,
+  "hoy": 540000,
+  "prueba": 600000
+ },
+ {
+  "p": "AYM824",
+  "viajes": 3,
+  "vuelta": 228,
+  "horas": 11.4,
+  "viajesPrueba": 4,
+  "hoy": 540000,
+  "prueba": 600000
+ },
+ {
+  "p": "AAE877",
+  "viajes": 3,
+  "vuelta": 221,
+  "horas": 11,
+  "viajesPrueba": 4,
+  "hoy": 540000,
+  "prueba": 600000
+ },
+ {
+  "p": "ECX249",
+  "viajes": 3,
+  "vuelta": 226,
+  "horas": 7.5,
+  "viajesPrueba": 3,
+  "hoy": 540000,
+  "prueba": 450000
+ },
+ {
+  "p": "AYB759",
+  "viajes": 3,
+  "vuelta": 226,
+  "horas": 7.5,
+  "viajesPrueba": 3,
+  "hoy": 540000,
+  "prueba": 450000
+ },
+ {
+  "p": "DTG181",
+  "viajes": 2,
+  "vuelta": 421,
+  "horas": 14,
+  "viajesPrueba": 2,
+  "hoy": 360000,
+  "prueba": 300000
+ },
+ {
+  "p": "EHS233",
+  "viajes": 2,
+  "vuelta": 392,
+  "horas": 13.1,
+  "viajesPrueba": 2,
+  "hoy": 360000,
+  "prueba": 300000
+ },
+ {
+  "p": "TAO150",
+  "viajes": 2,
+  "vuelta": 391,
+  "horas": 13,
+  "viajesPrueba": 2,
+  "hoy": 360000,
+  "prueba": 300000
+ },
+ {
+  "p": "BWV144",
+  "viajes": 2,
+  "vuelta": 338,
+  "horas": 11.3,
+  "viajesPrueba": 2,
+  "hoy": 360000,
+  "prueba": 300000
+ },
+ {
+  "p": "CFQ560",
+  "viajes": 2,
+  "vuelta": 323,
+  "horas": 10.8,
+  "viajesPrueba": 2,
+  "hoy": 360000,
+  "prueba": 300000
+ },
+ {
+  "p": "UER485",
+  "viajes": 2,
+  "vuelta": 325,
+  "horas": 10.8,
+  "viajesPrueba": 2,
+  "hoy": 360000,
+  "prueba": 300000
+ },
+ {
+  "p": "CTA045",
+  "viajes": 2,
+  "vuelta": 252,
+  "horas": 8.4,
+  "viajesPrueba": 2,
+  "hoy": 360000,
+  "prueba": 300000
+ },
+ {
+  "p": "KDE342",
+  "viajes": 2,
+  "vuelta": 241,
+  "horas": 8,
+  "viajesPrueba": 2,
+  "hoy": 360000,
+  "prueba": 300000
+ },
+ {
+  "p": "AA087XZ",
+  "viajes": 1,
+  "vuelta": null,
+  "horas": 0,
+  "viajesPrueba": 1,
+  "hoy": 180000,
+  "prueba": 150000
+ },
+ {
+  "p": "RQC013",
+  "viajes": 1,
+  "vuelta": null,
+  "horas": 0,
+  "viajesPrueba": 1,
+  "hoy": 180000,
+  "prueba": 150000
+ },
+ {
+  "p": "OYX549",
+  "viajes": 1,
+  "vuelta": null,
+  "horas": 0,
+  "viajesPrueba": 1,
+  "hoy": 180000,
+  "prueba": 150000
+ },
+ {
+  "p": "RKS646",
+  "viajes": 1,
+  "vuelta": null,
+  "horas": 0,
+  "viajesPrueba": 1,
+  "hoy": 180000,
+  "prueba": 150000
+ },
+ {
+  "p": "JPZ027",
+  "viajes": 1,
+  "vuelta": null,
+  "horas": 0,
+  "viajesPrueba": 1,
+  "hoy": 180000,
+  "prueba": 150000
+ }
+]

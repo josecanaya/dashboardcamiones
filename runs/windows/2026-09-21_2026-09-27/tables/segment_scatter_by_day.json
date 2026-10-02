@@ -1,0 +1,29 @@
+{
+  "name": "segment_scatter_by_day",
+  "headers": [
+    "journey_id",
+    "patente",
+    "producto",
+    "circuito",
+    "tramo_operativo",
+    "sector",
+    "planta",
+    "segment_from",
+    "segment_to",
+    "timestamp_inicio",
+    "timestamp_fin",
+    "fecha_tramo",
+    "hora_inicio",
+    "franja_horaria",
+    "color_franja",
+    "duracion_minutos",
+    "estado_ejecutivo",
+    "es_ultimo_cuarto",
+    "p75_tramo",
+    "p90_tramo",
+    "horario_fuente",
+    "horario_fuente_inicio",
+    "horario_fuente_fin"
+  ],
+  "rows": []
+}

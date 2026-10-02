@@ -42,7 +42,7 @@ import type { KpiTiemposBuildInput } from './etlKpiTiemposBuild'
  *      un camión de SOJA/GIRASOL cuyo recorrido rozó cámaras de líquidos ya no queda estampado
  *      como mercadería líquida. → reprocesar ventanas.
  */
-export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v16'
+export const ETL_TRANSFORM_RULES_VERSION = 'etl_transform_v17'
 
 export type EtlTransformInput = {
   events: RealJourneyEventDto[]

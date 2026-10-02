@@ -1101,6 +1101,8 @@ function resolveExcelAceiteLiteForEntry(
 const SOLID_ROUTE_EXECUTIVE_FOR_ACEITE_VIEW = new Set(['R7', 'R5', 'R6'])
 
 function pickExecutiveCircuitFromExcelFirst(lite: ExcelFirstReconcileLite): string {
+  // Avellaneda no es Nodo Sur: sus circuitos (Av1–Av8) no existen en el modelo de nodos.
+  if (String(lite.planta_normalized ?? '').trim().toUpperCase() === 'AVELLANEDA') return ''
   // Pellet gana sobre cualquier evidencia de cámara: el camión de pellet pasa por la
   // calada de líquidos (que llevaría a R8) pero su circuito real es despacho R13/14/15
   // (no va a SLZ) o transile externo R30/31/32 (va a SLZ), según `es_de_vuelta`; la

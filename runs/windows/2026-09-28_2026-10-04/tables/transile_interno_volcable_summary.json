@@ -1,0 +1,17 @@
+{
+  "name": "transile_interno_volcable_summary",
+  "headers": [
+    "patentes_con_volcable",
+    "sesiones_detectadas",
+    "sesiones_transile_interno",
+    "visitas_volcable_total"
+  ],
+  "rows": [
+    {
+      "patentes_con_volcable": 34,
+      "sesiones_detectadas": 51,
+      "sesiones_transile_interno": 5,
+      "visitas_volcable_total": 126
+    }
+  ]
+}

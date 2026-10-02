@@ -1,0 +1,39 @@
+MODELO DE NODOS · NODO SUR (Ricardone + San Lorenzo)
+Fuente: Matriz de circuitos de Vicentin (R1-R34, SL1-SL15)
+31 nodos · 49 circuitos · 70 conexiones · 18 circuitos cruzan de planta · 8 puntos sin cámara
+
+QUÉ HAY EN LA CARPETA
+
+modelo-nodos-nodo-sur.html
+  El explorador navegable. Doble clic y se abre en el navegador (Chrome, Edge).
+  No necesita instalar nada ni servidor; funciona sin internet (con internet usa
+  las tipografías IBM Plex, sin internet usa la del sistema).
+  - Tocá un nodo: de dónde llegan y a dónde siguen los camiones.
+  - Elegí un circuito: se marca su recorrido paso a paso con el color de su tipo.
+  - Filtros por planta y tipo de movimiento; tabla con los 31 nodos abajo.
+
+imagenes/
+  red-nodo-sur.png  la red completa (misma que la lámina del deck), 1920x1080
+  explorador.png    captura del explorador
+
+datos/
+  Matriz de circuitos.xlsx         la matriz original
+  matriz_circuitos_parseada.json   la matriz leída: nodos, circuitos y pasos
+  modelo_nodo_sur.json             el modelo final: nodos (posición, cámara,
+                                   circuitos que pasan), conexiones (circuitos
+                                   que la usan) y circuitos (secuencia de nodos)
+
+fuente/  (para regenerar, requiere Python 3)
+  1. Copiar datos/matriz_circuitos_parseada.json a fuente/modelo_nodos_raw.json
+  2. python sur_model.py      -> geometría y sur_data.json
+  3. python sur_explorer.py   -> modelo-nodos-vicentin.html (explorador)
+  Las posiciones de los nodos están en PLACE, dentro de sur_model.py.
+
+PARA REVISAR EN LA MATRIZ
+  - R26 tiene dos pasos 8 (Calada y Playa de egreso).
+  - R33 y R34 saltan del paso 8 al 10.
+  - Salidas de Ricardone invertidas: la matriz llama Salida 2 a S3 y Salida 1 a S10;
+    el informe de instalación (15/09) las nombra al revés.
+  - Volcable 2 tiene cámara (S9) pero la matriz no le carga el código.
+
+La presentación completa se descarga desde el deck: Compartir > Exportar (PPTX o PDF).

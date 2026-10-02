@@ -92,7 +92,7 @@
     },
     {
       "zoneId": "Z3",
-      "label": "Calada → Balanza",
+      "label": "Playa demorado → Balanza",
       "x": 480,
       "y": 80,
       "w": 224,
@@ -105,7 +105,7 @@
     },
     {
       "zoneId": "Z4",
-      "label": "Calada → Egreso",
+      "label": "Playa demorado → Salida 2",
       "x": 480,
       "y": 246,
       "w": 224,
@@ -215,7 +215,7 @@
     },
     {
       "zoneId": "Z8",
-      "label": "Balanza → Egreso",
+      "label": "Playa de salida",
       "x": 950,
       "y": 364,
       "w": 100,

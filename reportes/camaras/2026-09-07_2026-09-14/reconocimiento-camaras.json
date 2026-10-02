@@ -1,0 +1,5210 @@
+{
+  "generadoEn": "2026-09-30T14:25:15.989Z",
+  "rango": {
+    "from": "2026-09-07",
+    "to": "2026-09-14"
+  },
+  "runIds": [
+    "2026-09-07_2026-09-13",
+    "2026-09-14_2026-09-20"
+  ],
+  "rulesVersions": [
+    "etl_transform_v16"
+  ],
+  "criterio": {
+    "universo": "Movimientos Excel (excel_operations_with_truckflow) con salida en el rango y circuito ejecutivo",
+    "esperado": "Nodos con cámara del circuito según modelo Nodo Sur",
+    "leido": "Evento de cámara frontal del nodo con la patente (exacta u OCR) en [ingreso−45min, salida+45min]",
+    "franja": "Día 6:00–18:00 · Noche 18:00–6:00 (hora Argentina)"
+  },
+  "universo": {
+    "movimientosEvaluados": 3892,
+    "movimientosSinCircuito": 296,
+    "patentesFicticiasExcluidas": 17,
+    "otraPlantaExcluidos": {
+      "AVELLANEDA": 481,
+      "LOS_CORRALES_DE_NICANOR": 30,
+      "RENOPACK": 170
+    },
+    "circuitosSinModelo": {},
+    "porCircuito": {
+      "SL2": 66,
+      "R5": 390,
+      "R7": 2865,
+      "R6": 143,
+      "SL1": 238,
+      "R8": 56,
+      "R13": 21,
+      "R30": 71,
+      "SL3": 7,
+      "R3": 35
+    },
+    "eventosCrudos": 85878
+  },
+  "camionesLeidos": {
+    "total": 3892,
+    "algunPunto": 3827,
+    "alMenos3Puntos": 3653,
+    "algunaCamara": 3827,
+    "alMenos3Camaras": 3654,
+    "todosLosPuntos": 1372,
+    "distribucionPuntos": {
+      "0": 65,
+      "1": 72,
+      "2": 102,
+      "3": 140,
+      "4": 219,
+      "5": 323,
+      "6": 436,
+      "7": 766,
+      "8": 790,
+      "9": 975,
+      "10": 4
+    },
+    "porCircuito": {
+      "SL2": {
+        "total": 66,
+        "algunPunto": 66,
+        "alMenos3Puntos": 61,
+        "algunaCamara": 66,
+        "alMenos3Camaras": 61,
+        "todosLosPuntos": 0,
+        "distribucionPuntos": {
+          "2": 5,
+          "3": 11,
+          "4": 24,
+          "5": 26
+        }
+      },
+      "R5": {
+        "total": 390,
+        "algunPunto": 389,
+        "alMenos3Puntos": 378,
+        "algunaCamara": 389,
+        "alMenos3Camaras": 378,
+        "todosLosPuntos": 209,
+        "distribucionPuntos": {
+          "0": 1,
+          "1": 7,
+          "2": 4,
+          "3": 17,
+          "4": 26,
+          "5": 41,
+          "6": 85,
+          "7": 209
+        }
+      },
+      "R7": {
+        "total": 2865,
+        "algunPunto": 2827,
+        "alMenos3Puntos": 2706,
+        "algunaCamara": 2827,
+        "alMenos3Camaras": 2707,
+        "todosLosPuntos": 962,
+        "distribucionPuntos": {
+          "0": 38,
+          "1": 57,
+          "2": 64,
+          "3": 77,
+          "4": 98,
+          "5": 136,
+          "6": 220,
+          "7": 441,
+          "8": 772,
+          "9": 962
+        }
+      },
+      "R6": {
+        "total": 143,
+        "algunPunto": 142,
+        "alMenos3Puntos": 139,
+        "algunaCamara": 142,
+        "alMenos3Camaras": 139,
+        "todosLosPuntos": 73,
+        "distribucionPuntos": {
+          "0": 1,
+          "1": 2,
+          "2": 1,
+          "3": 9,
+          "4": 10,
+          "5": 21,
+          "6": 26,
+          "7": 73
+        }
+      },
+      "SL1": {
+        "total": 238,
+        "algunPunto": 235,
+        "alMenos3Puntos": 225,
+        "algunaCamara": 235,
+        "alMenos3Camaras": 225,
+        "todosLosPuntos": 84,
+        "distribucionPuntos": {
+          "0": 3,
+          "1": 3,
+          "2": 7,
+          "3": 16,
+          "4": 49,
+          "5": 76,
+          "6": 84
+        }
+      },
+      "R8": {
+        "total": 56,
+        "algunPunto": 37,
+        "alMenos3Puntos": 18,
+        "algunaCamara": 37,
+        "alMenos3Camaras": 18,
+        "todosLosPuntos": 13,
+        "distribucionPuntos": {
+          "0": 19,
+          "1": 3,
+          "2": 16,
+          "3": 3,
+          "4": 2,
+          "5": 13
+        }
+      },
+      "R13": {
+        "total": 21,
+        "algunPunto": 21,
+        "alMenos3Puntos": 21,
+        "algunaCamara": 21,
+        "alMenos3Camaras": 21,
+        "todosLosPuntos": 5,
+        "distribucionPuntos": {
+          "3": 5,
+          "5": 2,
+          "6": 9,
+          "7": 5
+        }
+      },
+      "R30": {
+        "total": 71,
+        "algunPunto": 71,
+        "alMenos3Puntos": 67,
+        "algunaCamara": 71,
+        "alMenos3Camaras": 67,
+        "todosLosPuntos": 0,
+        "distribucionPuntos": {
+          "2": 4,
+          "3": 2,
+          "4": 5,
+          "5": 4,
+          "6": 7,
+          "7": 14,
+          "8": 18,
+          "9": 13,
+          "10": 4
+        }
+      },
+      "SL3": {
+        "total": 7,
+        "algunPunto": 5,
+        "alMenos3Puntos": 5,
+        "algunaCamara": 5,
+        "alMenos3Camaras": 5,
+        "todosLosPuntos": 2,
+        "distribucionPuntos": {
+          "0": 2,
+          "4": 2,
+          "5": 1,
+          "6": 2
+        }
+      },
+      "R3": {
+        "total": 35,
+        "algunPunto": 34,
+        "alMenos3Puntos": 33,
+        "algunaCamara": 34,
+        "alMenos3Camaras": 33,
+        "todosLosPuntos": 24,
+        "distribucionPuntos": {
+          "0": 1,
+          "2": 1,
+          "4": 3,
+          "5": 3,
+          "6": 3,
+          "7": 24
+        }
+      }
+    }
+  },
+  "puntos": [
+    {
+      "nodeId": "ricardone:Ingreso",
+      "planta": "ricardone",
+      "punto": "Ingreso",
+      "codigo": "S0",
+      "camarasFrontales": [
+        "RicIngCamFrente"
+      ],
+      "camarasTraseras": [
+        "RicIngCamTrasera"
+      ],
+      "total": {
+        "esperados": 3581,
+        "leidos": 2818,
+        "exactos": 2523,
+        "soloTrasera": 7,
+        "soloAlerta": 47,
+        "pct": 78.7
+      },
+      "dia": {
+        "esperados": 1677,
+        "leidos": 1554,
+        "exactos": 1479,
+        "soloTrasera": 5,
+        "soloAlerta": 15,
+        "pct": 92.7
+      },
+      "noche": {
+        "esperados": 1904,
+        "leidos": 1264,
+        "exactos": 1044,
+        "soloTrasera": 2,
+        "soloAlerta": 32,
+        "pct": 66.4
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 202,
+            "leidos": 192,
+            "exactos": 188,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 95
+          },
+          "noche": {
+            "esperados": 232,
+            "leidos": 160,
+            "exactos": 129,
+            "soloTrasera": 0,
+            "soloAlerta": 4,
+            "pct": 69
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 194,
+            "leidos": 179,
+            "exactos": 169,
+            "soloTrasera": 1,
+            "soloAlerta": 3,
+            "pct": 92.3
+          },
+          "noche": {
+            "esperados": 274,
+            "leidos": 183,
+            "exactos": 152,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 66.8
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 304,
+            "leidos": 279,
+            "exactos": 267,
+            "soloTrasera": 1,
+            "soloAlerta": 2,
+            "pct": 91.8
+          },
+          "noche": {
+            "esperados": 316,
+            "leidos": 217,
+            "exactos": 188,
+            "soloTrasera": 0,
+            "soloAlerta": 5,
+            "pct": 68.7
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 273,
+            "leidos": 254,
+            "exactos": 235,
+            "soloTrasera": 0,
+            "soloAlerta": 4,
+            "pct": 93
+          },
+          "noche": {
+            "esperados": 365,
+            "leidos": 246,
+            "exactos": 205,
+            "soloTrasera": 0,
+            "soloAlerta": 5,
+            "pct": 67.4
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 286,
+            "leidos": 261,
+            "exactos": 245,
+            "soloTrasera": 1,
+            "soloAlerta": 0,
+            "pct": 91.3
+          },
+          "noche": {
+            "esperados": 324,
+            "leidos": 221,
+            "exactos": 188,
+            "soloTrasera": 1,
+            "soloAlerta": 7,
+            "pct": 68.2
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 184,
+            "leidos": 166,
+            "exactos": 161,
+            "soloTrasera": 2,
+            "soloAlerta": 1,
+            "pct": 90.2
+          },
+          "noche": {
+            "esperados": 166,
+            "leidos": 108,
+            "exactos": 83,
+            "soloTrasera": 1,
+            "soloAlerta": 4,
+            "pct": 65.1
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 23,
+            "leidos": 21,
+            "exactos": 20,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 91.3
+          },
+          "noche": {
+            "esperados": 62,
+            "leidos": 37,
+            "exactos": 27,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 59.7
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 211,
+            "leidos": 202,
+            "exactos": 194,
+            "soloTrasera": 0,
+            "soloAlerta": 4,
+            "pct": 95.7
+          },
+          "noche": {
+            "esperados": 103,
+            "leidos": 51,
+            "exactos": 39,
+            "soloTrasera": 0,
+            "soloAlerta": 3,
+            "pct": 49.5
+          }
+        }
+      },
+      "circuitos": {
+        "R5": 390,
+        "R7": 2865,
+        "R6": 143,
+        "R8": 56,
+        "R13": 21,
+        "R30": 71,
+        "R3": 35
+      },
+      "lecturasPorCamara": {
+        "RicIngCamFrente": 2818,
+        "RicIngCamTrasera": 47
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "RicIngCamFrente": {
+          "2026-09-07": 475,
+          "2026-09-08": 501,
+          "2026-09-09": 655,
+          "2026-09-10": 692,
+          "2026-09-11": 618,
+          "2026-09-12": 333,
+          "2026-09-13": 93,
+          "2026-09-14": 545
+        },
+        "RicIngCamTrasera": {
+          "2026-09-07": 330,
+          "2026-09-08": 354,
+          "2026-09-09": 492,
+          "2026-09-10": 526,
+          "2026-09-11": 503,
+          "2026-09-12": 254,
+          "2026-09-13": 59,
+          "2026-09-14": 349
+        }
+      },
+      "fallasLprPorCamara": {
+        "RicIngCamFrente": {
+          "dia": 79,
+          "noche": 569
+        },
+        "RicIngCamTrasera": {
+          "dia": 1017,
+          "noche": 1084
+        }
+      }
+    },
+    {
+      "nodeId": "ricardone:Pre ingreso",
+      "planta": "ricardone",
+      "punto": "Preingreso",
+      "codigo": "S1",
+      "camarasFrontales": [
+        "RicPreIngInFr",
+        "RicPreIngEgFr"
+      ],
+      "camarasTraseras": [
+        "RicPreIngInTr",
+        "RicPreIngEgTr"
+      ],
+      "total": {
+        "esperados": 3581,
+        "leidos": 3268,
+        "exactos": 3011,
+        "soloTrasera": 6,
+        "soloAlerta": 45,
+        "pct": 91.3
+      },
+      "dia": {
+        "esperados": 1679,
+        "leidos": 1580,
+        "exactos": 1511,
+        "soloTrasera": 4,
+        "soloAlerta": 15,
+        "pct": 94.1
+      },
+      "noche": {
+        "esperados": 1902,
+        "leidos": 1688,
+        "exactos": 1500,
+        "soloTrasera": 2,
+        "soloAlerta": 30,
+        "pct": 88.7
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 202,
+            "leidos": 199,
+            "exactos": 192,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 98.5
+          },
+          "noche": {
+            "esperados": 233,
+            "leidos": 210,
+            "exactos": 181,
+            "soloTrasera": 0,
+            "soloAlerta": 3,
+            "pct": 90.1
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 192,
+            "leidos": 182,
+            "exactos": 174,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 94.8
+          },
+          "noche": {
+            "esperados": 271,
+            "leidos": 240,
+            "exactos": 213,
+            "soloTrasera": 0,
+            "soloAlerta": 4,
+            "pct": 88.6
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 304,
+            "leidos": 286,
+            "exactos": 271,
+            "soloTrasera": 2,
+            "soloAlerta": 5,
+            "pct": 94.1
+          },
+          "noche": {
+            "esperados": 310,
+            "leidos": 278,
+            "exactos": 258,
+            "soloTrasera": 0,
+            "soloAlerta": 5,
+            "pct": 89.7
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 277,
+            "leidos": 253,
+            "exactos": 240,
+            "soloTrasera": 2,
+            "soloAlerta": 3,
+            "pct": 91.3
+          },
+          "noche": {
+            "esperados": 372,
+            "leidos": 336,
+            "exactos": 297,
+            "soloTrasera": 1,
+            "soloAlerta": 4,
+            "pct": 90.3
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 287,
+            "leidos": 266,
+            "exactos": 254,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 92.7
+          },
+          "noche": {
+            "esperados": 315,
+            "leidos": 281,
+            "exactos": 251,
+            "soloTrasera": 1,
+            "soloAlerta": 6,
+            "pct": 89.2
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 184,
+            "leidos": 168,
+            "exactos": 163,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 91.3
+          },
+          "noche": {
+            "esperados": 174,
+            "leidos": 142,
+            "exactos": 128,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 81.6
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 23,
+            "leidos": 23,
+            "exactos": 20,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 100
+          },
+          "noche": {
+            "esperados": 61,
+            "leidos": 53,
+            "exactos": 46,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 86.9
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 210,
+            "leidos": 203,
+            "exactos": 197,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 96.7
+          },
+          "noche": {
+            "esperados": 105,
+            "leidos": 90,
+            "exactos": 78,
+            "soloTrasera": 0,
+            "soloAlerta": 4,
+            "pct": 85.7
+          }
+        }
+      },
+      "circuitos": {
+        "R5": 390,
+        "R7": 2865,
+        "R6": 143,
+        "R8": 56,
+        "R13": 21,
+        "R30": 71,
+        "R3": 35
+      },
+      "lecturasPorCamara": {
+        "RicPreIngInFr": 3266,
+        "RicPreIngInTr": 116,
+        "RicPreIngEgFr": 35
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "RicPreIngInFr": {
+          "2026-09-07": 635,
+          "2026-09-08": 688,
+          "2026-09-09": 873,
+          "2026-09-10": 953,
+          "2026-09-11": 824,
+          "2026-09-12": 443,
+          "2026-09-13": 132,
+          "2026-09-14": 729
+        },
+        "RicPreIngEgFr": {
+          "2026-09-07": 36,
+          "2026-09-08": 43,
+          "2026-09-09": 82,
+          "2026-09-10": 87,
+          "2026-09-11": 94,
+          "2026-09-12": 47,
+          "2026-09-13": 14,
+          "2026-09-14": 36
+        },
+        "RicPreIngInTr": {
+          "2026-09-07": 347,
+          "2026-09-08": 416,
+          "2026-09-09": 560,
+          "2026-09-10": 594,
+          "2026-09-11": 530,
+          "2026-09-12": 283,
+          "2026-09-13": 77,
+          "2026-09-14": 290
+        },
+        "RicPreIngEgTr": {
+          "2026-09-07": 1,
+          "2026-09-08": 0,
+          "2026-09-09": 1,
+          "2026-09-10": 1,
+          "2026-09-11": 2,
+          "2026-09-12": 1,
+          "2026-09-13": 0,
+          "2026-09-14": 1
+        }
+      },
+      "fallasLprPorCamara": {
+        "RicPreIngInFr": {
+          "dia": 66,
+          "noche": 245
+        },
+        "RicPreIngEgFr": {
+          "dia": 108,
+          "noche": 162
+        },
+        "RicPreIngInTr": {
+          "dia": 580,
+          "noche": 1043
+        },
+        "RicPreIngEgTr": {
+          "dia": 1,
+          "noche": 0
+        }
+      }
+    },
+    {
+      "nodeId": "ricardone:Calada",
+      "planta": "ricardone",
+      "punto": "Calada",
+      "codigo": "S2",
+      "camarasFrontales": [
+        "RicCal01",
+        "RicCal02",
+        "RicCal03",
+        "RicCal04",
+        "RicCal05",
+        "RicCal06",
+        "RicCalLiq"
+      ],
+      "camarasTraseras": [],
+      "total": {
+        "esperados": 3581,
+        "leidos": 3160,
+        "exactos": 2827,
+        "soloTrasera": 0,
+        "soloAlerta": 45,
+        "pct": 88.2
+      },
+      "dia": {
+        "esperados": 1710,
+        "leidos": 1556,
+        "exactos": 1446,
+        "soloTrasera": 0,
+        "soloAlerta": 17,
+        "pct": 91
+      },
+      "noche": {
+        "esperados": 1871,
+        "leidos": 1604,
+        "exactos": 1381,
+        "soloTrasera": 0,
+        "soloAlerta": 28,
+        "pct": 85.7
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 179,
+            "leidos": 159,
+            "exactos": 149,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 88.8
+          },
+          "noche": {
+            "esperados": 240,
+            "leidos": 197,
+            "exactos": 169,
+            "soloTrasera": 0,
+            "soloAlerta": 6,
+            "pct": 82.1
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 184,
+            "leidos": 172,
+            "exactos": 160,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 93.5
+          },
+          "noche": {
+            "esperados": 278,
+            "leidos": 247,
+            "exactos": 204,
+            "soloTrasera": 0,
+            "soloAlerta": 5,
+            "pct": 88.8
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 262,
+            "leidos": 236,
+            "exactos": 225,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 90.1
+          },
+          "noche": {
+            "esperados": 275,
+            "leidos": 243,
+            "exactos": 210,
+            "soloTrasera": 0,
+            "soloAlerta": 4,
+            "pct": 88.4
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 291,
+            "leidos": 267,
+            "exactos": 245,
+            "soloTrasera": 0,
+            "soloAlerta": 5,
+            "pct": 91.8
+          },
+          "noche": {
+            "esperados": 318,
+            "leidos": 270,
+            "exactos": 228,
+            "soloTrasera": 0,
+            "soloAlerta": 3,
+            "pct": 84.9
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 316,
+            "leidos": 282,
+            "exactos": 250,
+            "soloTrasera": 0,
+            "soloAlerta": 7,
+            "pct": 89.2
+          },
+          "noche": {
+            "esperados": 319,
+            "leidos": 279,
+            "exactos": 248,
+            "soloTrasera": 0,
+            "soloAlerta": 6,
+            "pct": 87.5
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 274,
+            "leidos": 258,
+            "exactos": 243,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 94.2
+          },
+          "noche": {
+            "esperados": 201,
+            "leidos": 170,
+            "exactos": 153,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 84.6
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 6,
+            "leidos": 3,
+            "exactos": 3,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 50
+          },
+          "noche": {
+            "esperados": 65,
+            "leidos": 51,
+            "exactos": 41,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 78.5
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 198,
+            "leidos": 179,
+            "exactos": 171,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 90.4
+          },
+          "noche": {
+            "esperados": 136,
+            "leidos": 112,
+            "exactos": 97,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 82.4
+          }
+        }
+      },
+      "circuitos": {
+        "R5": 390,
+        "R7": 2865,
+        "R6": 143,
+        "R8": 56,
+        "R13": 21,
+        "R30": 71,
+        "R3": 35
+      },
+      "lecturasPorCamara": {
+        "RicCal03": 884,
+        "RicCal04": 946,
+        "RicCalLiq": 93,
+        "RicCal02": 695,
+        "RicCal01": 680,
+        "RicCal06": 14
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "RicCal01": {
+          "2026-09-07": 71,
+          "2026-09-08": 114,
+          "2026-09-09": 291,
+          "2026-09-10": 218,
+          "2026-09-11": 150,
+          "2026-09-12": 128,
+          "2026-09-13": 2,
+          "2026-09-14": 177
+        },
+        "RicCal02": {
+          "2026-09-07": 54,
+          "2026-09-08": 102,
+          "2026-09-09": 290,
+          "2026-09-10": 190,
+          "2026-09-11": 161,
+          "2026-09-12": 128,
+          "2026-09-13": 2,
+          "2026-09-14": 184
+        },
+        "RicCal03": {
+          "2026-09-07": 223,
+          "2026-09-08": 208,
+          "2026-09-09": 73,
+          "2026-09-10": 289,
+          "2026-09-11": 342,
+          "2026-09-12": 240,
+          "2026-09-13": 45,
+          "2026-09-14": 81
+        },
+        "RicCal04": {
+          "2026-09-07": 206,
+          "2026-09-08": 211,
+          "2026-09-09": 74,
+          "2026-09-10": 279,
+          "2026-09-11": 312,
+          "2026-09-12": 227,
+          "2026-09-13": 54,
+          "2026-09-14": 60
+        },
+        "RicCal05": {
+          "2026-09-07": 0,
+          "2026-09-08": 0,
+          "2026-09-09": 0,
+          "2026-09-10": 0,
+          "2026-09-11": 2,
+          "2026-09-12": 0,
+          "2026-09-13": 0,
+          "2026-09-14": 0
+        },
+        "RicCal06": {
+          "2026-09-07": 0,
+          "2026-09-08": 0,
+          "2026-09-09": 0,
+          "2026-09-10": 21,
+          "2026-09-11": 7,
+          "2026-09-12": 0,
+          "2026-09-13": 1,
+          "2026-09-14": 19
+        },
+        "RicCalLiq": {
+          "2026-09-07": 33,
+          "2026-09-08": 36,
+          "2026-09-09": 18,
+          "2026-09-10": 2,
+          "2026-09-11": 5,
+          "2026-09-12": 4,
+          "2026-09-13": 0,
+          "2026-09-14": 125
+        }
+      },
+      "fallasLprPorCamara": {
+        "RicCal01": {
+          "dia": 21,
+          "noche": 65
+        },
+        "RicCal02": {
+          "dia": 35,
+          "noche": 55
+        },
+        "RicCal03": {
+          "dia": 59,
+          "noche": 127
+        },
+        "RicCal04": {
+          "dia": 49,
+          "noche": 82
+        },
+        "RicCal05": {
+          "dia": 0,
+          "noche": 0
+        },
+        "RicCal06": {
+          "dia": 3,
+          "noche": 3
+        },
+        "RicCalLiq": {
+          "dia": 1,
+          "noche": 10
+        }
+      }
+    },
+    {
+      "nodeId": "ricardone:Balanza Ingreso",
+      "planta": "ricardone",
+      "punto": "Balanza ingreso",
+      "codigo": "S4",
+      "camarasFrontales": [
+        "RicB1Ingreso",
+        "RicB2Ingreso",
+        "RicB3Ingreso"
+      ],
+      "camarasTraseras": [],
+      "total": {
+        "esperados": 716,
+        "leidos": 582,
+        "exactos": 530,
+        "soloTrasera": 0,
+        "soloAlerta": 69,
+        "pct": 81.3
+      },
+      "dia": {
+        "esperados": 334,
+        "leidos": 262,
+        "exactos": 245,
+        "soloTrasera": 0,
+        "soloAlerta": 34,
+        "pct": 78.4
+      },
+      "noche": {
+        "esperados": 382,
+        "leidos": 320,
+        "exactos": 285,
+        "soloTrasera": 0,
+        "soloAlerta": 35,
+        "pct": 83.8
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 43,
+            "leidos": 35,
+            "exactos": 35,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 81.4
+          },
+          "noche": {
+            "esperados": 23,
+            "leidos": 19,
+            "exactos": 17,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 82.6
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 39,
+            "leidos": 38,
+            "exactos": 33,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 97.4
+          },
+          "noche": {
+            "esperados": 49,
+            "leidos": 41,
+            "exactos": 36,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 83.7
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 50,
+            "leidos": 36,
+            "exactos": 34,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 72
+          },
+          "noche": {
+            "esperados": 75,
+            "leidos": 66,
+            "exactos": 60,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 88
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 14,
+            "leidos": 6,
+            "exactos": 5,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 42.9
+          },
+          "noche": {
+            "esperados": 66,
+            "leidos": 56,
+            "exactos": 52,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 84.8
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 82,
+            "leidos": 71,
+            "exactos": 66,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 86.6
+          },
+          "noche": {
+            "esperados": 43,
+            "leidos": 37,
+            "exactos": 35,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 86
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 41,
+            "leidos": 36,
+            "exactos": 35,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 87.8
+          },
+          "noche": {
+            "esperados": 38,
+            "leidos": 35,
+            "exactos": 32,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 92.1
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 6,
+            "leidos": 5,
+            "exactos": 3,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 83.3
+          },
+          "noche": {
+            "esperados": 5,
+            "leidos": 4,
+            "exactos": 3,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 80
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 59,
+            "leidos": 35,
+            "exactos": 34,
+            "soloTrasera": 0,
+            "soloAlerta": 27,
+            "pct": 59.3
+          },
+          "noche": {
+            "esperados": 72,
+            "leidos": 53,
+            "exactos": 41,
+            "soloTrasera": 0,
+            "soloAlerta": 33,
+            "pct": 73.6
+          }
+        }
+      },
+      "circuitos": {
+        "R5": 390,
+        "R6": 143,
+        "R8": 56,
+        "R13": 21,
+        "R30": 71,
+        "R3": 35
+      },
+      "lecturasPorCamara": {
+        "RicB1Ingreso": 578,
+        "RicB2Ingreso": 2,
+        "RicB3Ingreso": 7
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "RicB1Ingreso": {
+          "2026-09-07": 100,
+          "2026-09-08": 157,
+          "2026-09-09": 213,
+          "2026-09-10": 155,
+          "2026-09-11": 188,
+          "2026-09-12": 121,
+          "2026-09-13": 28,
+          "2026-09-14": 181
+        },
+        "RicB2Ingreso": {
+          "2026-09-07": 4,
+          "2026-09-08": 2,
+          "2026-09-09": 3,
+          "2026-09-10": 0,
+          "2026-09-11": 4,
+          "2026-09-12": 5,
+          "2026-09-13": 1,
+          "2026-09-14": 4
+        },
+        "RicB3Ingreso": {
+          "2026-09-07": 74,
+          "2026-09-08": 76,
+          "2026-09-09": 71,
+          "2026-09-10": 101,
+          "2026-09-11": 74,
+          "2026-09-12": 3,
+          "2026-09-13": 0,
+          "2026-09-14": 99
+        }
+      },
+      "fallasLprPorCamara": {
+        "RicB1Ingreso": {
+          "dia": 31,
+          "noche": 79
+        },
+        "RicB2Ingreso": {
+          "dia": 8,
+          "noche": 6
+        },
+        "RicB3Ingreso": {
+          "dia": 30,
+          "noche": 0
+        }
+      }
+    },
+    {
+      "nodeId": "ricardone:Playa 3",
+      "planta": "ricardone",
+      "punto": "Playa 3",
+      "codigo": "S6",
+      "camarasFrontales": [
+        "RicS6Playa3"
+      ],
+      "camarasTraseras": [],
+      "total": {
+        "esperados": 660,
+        "leidos": 483,
+        "exactos": 427,
+        "soloTrasera": 0,
+        "soloAlerta": 9,
+        "pct": 73.2
+      },
+      "dia": {
+        "esperados": 325,
+        "leidos": 261,
+        "exactos": 241,
+        "soloTrasera": 0,
+        "soloAlerta": 2,
+        "pct": 80.3
+      },
+      "noche": {
+        "esperados": 335,
+        "leidos": 222,
+        "exactos": 186,
+        "soloTrasera": 0,
+        "soloAlerta": 7,
+        "pct": 66.3
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 38,
+            "leidos": 32,
+            "exactos": 32,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 84.2
+          },
+          "noche": {
+            "esperados": 21,
+            "leidos": 12,
+            "exactos": 11,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 57.1
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 40,
+            "leidos": 31,
+            "exactos": 29,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 77.5
+          },
+          "noche": {
+            "esperados": 42,
+            "leidos": 25,
+            "exactos": 22,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 59.5
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 51,
+            "leidos": 37,
+            "exactos": 32,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 72.5
+          },
+          "noche": {
+            "esperados": 59,
+            "leidos": 51,
+            "exactos": 42,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 86.4
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 29,
+            "leidos": 10,
+            "exactos": 7,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 34.5
+          },
+          "noche": {
+            "esperados": 45,
+            "leidos": 36,
+            "exactos": 30,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 80
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 71,
+            "leidos": 69,
+            "exactos": 63,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 97.2
+          },
+          "noche": {
+            "esperados": 52,
+            "leidos": 26,
+            "exactos": 23,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 50
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 39,
+            "leidos": 35,
+            "exactos": 32,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 89.7
+          },
+          "noche": {
+            "esperados": 39,
+            "leidos": 29,
+            "exactos": 25,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 74.4
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 5,
+            "leidos": 4,
+            "exactos": 3,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 80
+          },
+          "noche": {
+            "esperados": 4,
+            "leidos": 3,
+            "exactos": 3,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 75
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 52,
+            "leidos": 43,
+            "exactos": 43,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 82.7
+          },
+          "noche": {
+            "esperados": 64,
+            "leidos": 32,
+            "exactos": 24,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 50
+          }
+        }
+      },
+      "circuitos": {
+        "R5": 390,
+        "R6": 143,
+        "R13": 21,
+        "R30": 71,
+        "R3": 35
+      },
+      "lecturasPorCamara": {
+        "RicS6Playa3": 483
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "RicS6Playa3": {
+          "2026-09-07": 86,
+          "2026-09-08": 115,
+          "2026-09-09": 167,
+          "2026-09-10": 128,
+          "2026-09-11": 148,
+          "2026-09-12": 101,
+          "2026-09-13": 20,
+          "2026-09-14": 238
+        }
+      },
+      "fallasLprPorCamara": {
+        "RicS6Playa3": {
+          "dia": 30,
+          "noche": 146
+        }
+      }
+    },
+    {
+      "nodeId": "ricardone:Volcable Silo Keppler",
+      "planta": "ricardone",
+      "punto": "Silo Keppler",
+      "codigo": "S7",
+      "camarasFrontales": [
+        "RicS7DescLinea1",
+        "RicS7DescLinea2",
+        "RicS7Carga"
+      ],
+      "camarasTraseras": [],
+      "total": {
+        "esperados": 35,
+        "leidos": 29,
+        "exactos": 27,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 82.9
+      },
+      "dia": {
+        "esperados": 15,
+        "leidos": 13,
+        "exactos": 12,
+        "soloTrasera": 0,
+        "soloAlerta": 0,
+        "pct": 86.7
+      },
+      "noche": {
+        "esperados": 20,
+        "leidos": 16,
+        "exactos": 15,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 80
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 15,
+            "leidos": 13,
+            "exactos": 12,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 86.7
+          },
+          "noche": {
+            "esperados": 12,
+            "leidos": 9,
+            "exactos": 8,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 75
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 8,
+            "leidos": 7,
+            "exactos": 7,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 87.5
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        }
+      },
+      "circuitos": {
+        "R3": 35
+      },
+      "lecturasPorCamara": {
+        "RicS7DescLinea1": 29
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "RicS7DescLinea1": {
+          "2026-09-07": 1,
+          "2026-09-08": 0,
+          "2026-09-09": 0,
+          "2026-09-10": 0,
+          "2026-09-11": 71,
+          "2026-09-12": 21,
+          "2026-09-13": 0,
+          "2026-09-14": 3
+        },
+        "RicS7DescLinea2": {
+          "2026-09-07": 0,
+          "2026-09-08": 0,
+          "2026-09-09": 0,
+          "2026-09-10": 0,
+          "2026-09-11": 0,
+          "2026-09-12": 0,
+          "2026-09-13": 0,
+          "2026-09-14": 0
+        },
+        "RicS7Carga": {
+          "2026-09-07": 1,
+          "2026-09-08": 10,
+          "2026-09-09": 3,
+          "2026-09-10": 2,
+          "2026-09-11": 3,
+          "2026-09-12": 21,
+          "2026-09-13": 55,
+          "2026-09-14": 43
+        }
+      },
+      "fallasLprPorCamara": {
+        "RicS7DescLinea1": {
+          "dia": 9,
+          "noche": 22
+        },
+        "RicS7DescLinea2": {
+          "dia": 0,
+          "noche": 0
+        },
+        "RicS7Carga": {
+          "dia": 13,
+          "noche": 41
+        }
+      }
+    },
+    {
+      "nodeId": "ricardone:Volcable 1",
+      "planta": "ricardone",
+      "punto": "Volcable 1",
+      "codigo": "S9",
+      "camarasFrontales": [
+        "RicVolcable1"
+      ],
+      "camarasTraseras": [],
+      "total": {
+        "esperados": 390,
+        "leidos": 368,
+        "exactos": 333,
+        "soloTrasera": 0,
+        "soloAlerta": 5,
+        "pct": 94.4
+      },
+      "dia": {
+        "esperados": 178,
+        "leidos": 169,
+        "exactos": 150,
+        "soloTrasera": 0,
+        "soloAlerta": 3,
+        "pct": 94.9
+      },
+      "noche": {
+        "esperados": 212,
+        "leidos": 199,
+        "exactos": 183,
+        "soloTrasera": 0,
+        "soloAlerta": 2,
+        "pct": 93.9
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 18,
+            "leidos": 17,
+            "exactos": 17,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 94.4
+          },
+          "noche": {
+            "esperados": 29,
+            "leidos": 28,
+            "exactos": 26,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 96.6
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 20,
+            "leidos": 19,
+            "exactos": 15,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 95
+          },
+          "noche": {
+            "esperados": 25,
+            "leidos": 23,
+            "exactos": 22,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 92
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 22,
+            "leidos": 21,
+            "exactos": 16,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 95.5
+          },
+          "noche": {
+            "esperados": 35,
+            "leidos": 33,
+            "exactos": 31,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 94.3
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 27,
+            "leidos": 26,
+            "exactos": 25,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 96.3
+          },
+          "noche": {
+            "esperados": 28,
+            "leidos": 28,
+            "exactos": 25,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 100
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 34,
+            "leidos": 34,
+            "exactos": 31,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 100
+          },
+          "noche": {
+            "esperados": 41,
+            "leidos": 36,
+            "exactos": 32,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 87.8
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 35,
+            "leidos": 34,
+            "exactos": 31,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 97.1
+          },
+          "noche": {
+            "esperados": 33,
+            "leidos": 31,
+            "exactos": 29,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 93.9
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 5,
+            "leidos": 4,
+            "exactos": 2,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 80
+          },
+          "noche": {
+            "esperados": 4,
+            "leidos": 4,
+            "exactos": 2,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 100
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 17,
+            "leidos": 14,
+            "exactos": 13,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 82.4
+          },
+          "noche": {
+            "esperados": 16,
+            "leidos": 15,
+            "exactos": 15,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 93.8
+          }
+        }
+      },
+      "circuitos": {
+        "R5": 390
+      },
+      "lecturasPorCamara": {
+        "RicVolcable1": 368
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "RicVolcable1": {
+          "2026-09-07": 53,
+          "2026-09-08": 47,
+          "2026-09-09": 73,
+          "2026-09-10": 63,
+          "2026-09-11": 85,
+          "2026-09-12": 84,
+          "2026-09-13": 37,
+          "2026-09-14": 42
+        }
+      },
+      "fallasLprPorCamara": {
+        "RicVolcable1": {
+          "dia": 7,
+          "noche": 15
+        }
+      }
+    },
+    {
+      "nodeId": "ricardone:Volcable 2",
+      "planta": "ricardone",
+      "punto": "Volcable 2",
+      "codigo": "S9",
+      "camarasFrontales": [
+        "RicVolcable2"
+      ],
+      "camarasTraseras": [],
+      "total": {
+        "esperados": 143,
+        "leidos": 110,
+        "exactos": 96,
+        "soloTrasera": 0,
+        "soloAlerta": 2,
+        "pct": 76.9
+      },
+      "dia": {
+        "esperados": 75,
+        "leidos": 60,
+        "exactos": 55,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 80
+      },
+      "noche": {
+        "esperados": 68,
+        "leidos": 50,
+        "exactos": 41,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 73.5
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 1,
+            "leidos": 1,
+            "exactos": 1,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 100
+          },
+          "noche": {
+            "esperados": 8,
+            "leidos": 5,
+            "exactos": 5,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 62.5
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 11,
+            "leidos": 8,
+            "exactos": 8,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 72.7
+          },
+          "noche": {
+            "esperados": 13,
+            "leidos": 11,
+            "exactos": 9,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 84.6
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 17,
+            "leidos": 14,
+            "exactos": 13,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 82.4
+          },
+          "noche": {
+            "esperados": 12,
+            "leidos": 11,
+            "exactos": 11,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 91.7
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 16,
+            "leidos": 13,
+            "exactos": 11,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 81.3
+          },
+          "noche": {
+            "esperados": 12,
+            "leidos": 10,
+            "exactos": 6,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 83.3
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 9,
+            "leidos": 8,
+            "exactos": 7,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 88.9
+          },
+          "noche": {
+            "esperados": 13,
+            "leidos": 7,
+            "exactos": 5,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 53.8
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 13,
+            "leidos": 10,
+            "exactos": 10,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 76.9
+          },
+          "noche": {
+            "esperados": 7,
+            "leidos": 5,
+            "exactos": 4,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 71.4
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 8,
+            "leidos": 6,
+            "exactos": 5,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 75
+          },
+          "noche": {
+            "esperados": 3,
+            "leidos": 1,
+            "exactos": 1,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 33.3
+          }
+        }
+      },
+      "circuitos": {
+        "R6": 143
+      },
+      "lecturasPorCamara": {
+        "RicVolcable2": 110
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "RicVolcable2": {
+          "2026-09-07": 8,
+          "2026-09-08": 46,
+          "2026-09-09": 33,
+          "2026-09-10": 34,
+          "2026-09-11": 31,
+          "2026-09-12": 28,
+          "2026-09-13": 28,
+          "2026-09-14": 43
+        }
+      },
+      "fallasLprPorCamara": {
+        "RicVolcable2": {
+          "dia": 35,
+          "noche": 32
+        }
+      }
+    },
+    {
+      "nodeId": "ricardone:Balanza Egreso",
+      "planta": "ricardone",
+      "punto": "Balanza egreso",
+      "codigo": "S4",
+      "camarasFrontales": [
+        "RicB1Egreso",
+        "RicB2Egreso",
+        "RicB3Egreso"
+      ],
+      "camarasTraseras": [],
+      "total": {
+        "esperados": 716,
+        "leidos": 582,
+        "exactos": 519,
+        "soloTrasera": 0,
+        "soloAlerta": 5,
+        "pct": 81.3
+      },
+      "dia": {
+        "esperados": 346,
+        "leidos": 289,
+        "exactos": 262,
+        "soloTrasera": 0,
+        "soloAlerta": 4,
+        "pct": 83.5
+      },
+      "noche": {
+        "esperados": 370,
+        "leidos": 293,
+        "exactos": 257,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 79.2
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 29,
+            "leidos": 20,
+            "exactos": 19,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 69
+          },
+          "noche": {
+            "esperados": 41,
+            "leidos": 34,
+            "exactos": 28,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 82.9
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 39,
+            "leidos": 38,
+            "exactos": 34,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 97.4
+          },
+          "noche": {
+            "esperados": 39,
+            "leidos": 35,
+            "exactos": 32,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 89.7
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 44,
+            "leidos": 40,
+            "exactos": 34,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 90.9
+          },
+          "noche": {
+            "esperados": 52,
+            "leidos": 42,
+            "exactos": 40,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 80.8
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 49,
+            "leidos": 44,
+            "exactos": 42,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 89.8
+          },
+          "noche": {
+            "esperados": 40,
+            "leidos": 30,
+            "exactos": 25,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 75
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 71,
+            "leidos": 58,
+            "exactos": 54,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 81.7
+          },
+          "noche": {
+            "esperados": 67,
+            "leidos": 51,
+            "exactos": 42,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 76.1
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 52,
+            "leidos": 44,
+            "exactos": 40,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 84.6
+          },
+          "noche": {
+            "esperados": 50,
+            "leidos": 37,
+            "exactos": 34,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 74
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 7,
+            "leidos": 7,
+            "exactos": 4,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 100
+          },
+          "noche": {
+            "esperados": 5,
+            "leidos": 2,
+            "exactos": 1,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 40
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 55,
+            "leidos": 38,
+            "exactos": 35,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 69.1
+          },
+          "noche": {
+            "esperados": 76,
+            "leidos": 62,
+            "exactos": 55,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 81.6
+          }
+        }
+      },
+      "circuitos": {
+        "R5": 390,
+        "R6": 143,
+        "R8": 56,
+        "R13": 21,
+        "R30": 71,
+        "R3": 35
+      },
+      "lecturasPorCamara": {
+        "RicB2Egreso": 580,
+        "RicB3Egreso": 10
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "RicB1Egreso": {
+          "2026-09-07": 2,
+          "2026-09-08": 1,
+          "2026-09-09": 1,
+          "2026-09-10": 2,
+          "2026-09-11": 4,
+          "2026-09-12": 5,
+          "2026-09-13": 0,
+          "2026-09-14": 7
+        },
+        "RicB2Egreso": {
+          "2026-09-07": 98,
+          "2026-09-08": 122,
+          "2026-09-09": 155,
+          "2026-09-10": 146,
+          "2026-09-11": 193,
+          "2026-09-12": 132,
+          "2026-09-13": 20,
+          "2026-09-14": 217
+        },
+        "RicB3Egreso": {
+          "2026-09-07": 40,
+          "2026-09-08": 49,
+          "2026-09-09": 46,
+          "2026-09-10": 68,
+          "2026-09-11": 43,
+          "2026-09-12": 2,
+          "2026-09-13": 0,
+          "2026-09-14": 56
+        }
+      },
+      "fallasLprPorCamara": {
+        "RicB1Egreso": {
+          "dia": 9,
+          "noche": 1
+        },
+        "RicB2Egreso": {
+          "dia": 55,
+          "noche": 51
+        },
+        "RicB3Egreso": {
+          "dia": 35,
+          "noche": 3
+        }
+      }
+    },
+    {
+      "nodeId": "ricardone:Salida 2",
+      "planta": "ricardone",
+      "punto": "Salida 2",
+      "codigo": "S3",
+      "camarasFrontales": [
+        "RicEgrCamFrente"
+      ],
+      "camarasTraseras": [
+        "RicEgrCamTraser"
+      ],
+      "total": {
+        "esperados": 2957,
+        "leidos": 2408,
+        "exactos": 2169,
+        "soloTrasera": 11,
+        "soloAlerta": 34,
+        "pct": 81.4
+      },
+      "dia": {
+        "esperados": 1377,
+        "leidos": 1297,
+        "exactos": 1239,
+        "soloTrasera": 1,
+        "soloAlerta": 6,
+        "pct": 94.2
+      },
+      "noche": {
+        "esperados": 1580,
+        "leidos": 1111,
+        "exactos": 930,
+        "soloTrasera": 10,
+        "soloAlerta": 28,
+        "pct": 70.3
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 133,
+            "leidos": 125,
+            "exactos": 121,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 94
+          },
+          "noche": {
+            "esperados": 210,
+            "leidos": 155,
+            "exactos": 126,
+            "soloTrasera": 2,
+            "soloAlerta": 4,
+            "pct": 73.8
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 151,
+            "leidos": 139,
+            "exactos": 136,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 92.1
+          },
+          "noche": {
+            "esperados": 231,
+            "leidos": 168,
+            "exactos": 134,
+            "soloTrasera": 0,
+            "soloAlerta": 6,
+            "pct": 72.7
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 196,
+            "leidos": 186,
+            "exactos": 175,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 94.9
+          },
+          "noche": {
+            "esperados": 224,
+            "leidos": 156,
+            "exactos": 130,
+            "soloTrasera": 2,
+            "soloAlerta": 6,
+            "pct": 69.6
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 272,
+            "leidos": 257,
+            "exactos": 240,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 94.5
+          },
+          "noche": {
+            "esperados": 261,
+            "leidos": 174,
+            "exactos": 155,
+            "soloTrasera": 1,
+            "soloAlerta": 2,
+            "pct": 66.7
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 231,
+            "leidos": 218,
+            "exactos": 209,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 94.4
+          },
+          "noche": {
+            "esperados": 264,
+            "leidos": 194,
+            "exactos": 160,
+            "soloTrasera": 3,
+            "soloAlerta": 4,
+            "pct": 73.5
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 241,
+            "leidos": 226,
+            "exactos": 220,
+            "soloTrasera": 1,
+            "soloAlerta": 1,
+            "pct": 93.8
+          },
+          "noche": {
+            "esperados": 185,
+            "leidos": 134,
+            "exactos": 111,
+            "soloTrasera": 2,
+            "soloAlerta": 5,
+            "pct": 72.4
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 1,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 0
+          },
+          "noche": {
+            "esperados": 50,
+            "leidos": 34,
+            "exactos": 30,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 68
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 152,
+            "leidos": 146,
+            "exactos": 138,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 96.1
+          },
+          "noche": {
+            "esperados": 133,
+            "leidos": 81,
+            "exactos": 73,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 60.9
+          }
+        }
+      },
+      "circuitos": {
+        "R7": 2865,
+        "R13": 21,
+        "R30": 71
+      },
+      "lecturasPorCamara": {
+        "RicEgrCamFrente": 2408,
+        "RicEgrCamTraser": 76
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "RicEgrCamFrente": {
+          "2026-09-07": 496,
+          "2026-09-08": 530,
+          "2026-09-09": 550,
+          "2026-09-10": 726,
+          "2026-09-11": 654,
+          "2026-09-12": 513,
+          "2026-09-13": 71,
+          "2026-09-14": 583
+        },
+        "RicEgrCamTraser": {
+          "2026-09-07": 272,
+          "2026-09-08": 310,
+          "2026-09-09": 328,
+          "2026-09-10": 451,
+          "2026-09-11": 411,
+          "2026-09-12": 339,
+          "2026-09-13": 41,
+          "2026-09-14": 233
+        }
+      },
+      "fallasLprPorCamara": {
+        "RicEgrCamFrente": {
+          "dia": 73,
+          "noche": 446
+        },
+        "RicEgrCamTraser": {
+          "dia": 418,
+          "noche": 608
+        }
+      }
+    },
+    {
+      "nodeId": "san_lorenzo:Ingreso",
+      "planta": "san_lorenzo",
+      "punto": "Ingreso",
+      "codigo": "S0",
+      "camarasFrontales": [
+        "SLZIngCamFrente"
+      ],
+      "camarasTraseras": [
+        "SLZIngCamTrasera"
+      ],
+      "total": {
+        "esperados": 3247,
+        "leidos": 2898,
+        "exactos": 2609,
+        "soloTrasera": 7,
+        "soloAlerta": 44,
+        "pct": 89.3
+      },
+      "dia": {
+        "esperados": 1549,
+        "leidos": 1465,
+        "exactos": 1403,
+        "soloTrasera": 3,
+        "soloAlerta": 8,
+        "pct": 94.6
+      },
+      "noche": {
+        "esperados": 1698,
+        "leidos": 1433,
+        "exactos": 1206,
+        "soloTrasera": 4,
+        "soloAlerta": 36,
+        "pct": 84.4
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 160,
+            "leidos": 146,
+            "exactos": 141,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 91.3
+          },
+          "noche": {
+            "esperados": 224,
+            "leidos": 192,
+            "exactos": 158,
+            "soloTrasera": 0,
+            "soloAlerta": 6,
+            "pct": 85.7
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 195,
+            "leidos": 181,
+            "exactos": 175,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 92.8
+          },
+          "noche": {
+            "esperados": 249,
+            "leidos": 214,
+            "exactos": 173,
+            "soloTrasera": 0,
+            "soloAlerta": 5,
+            "pct": 85.9
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 235,
+            "leidos": 224,
+            "exactos": 215,
+            "soloTrasera": 1,
+            "soloAlerta": 0,
+            "pct": 95.3
+          },
+          "noche": {
+            "esperados": 247,
+            "leidos": 204,
+            "exactos": 178,
+            "soloTrasera": 0,
+            "soloAlerta": 5,
+            "pct": 82.6
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 283,
+            "leidos": 269,
+            "exactos": 258,
+            "soloTrasera": 1,
+            "soloAlerta": 3,
+            "pct": 95.1
+          },
+          "noche": {
+            "esperados": 303,
+            "leidos": 251,
+            "exactos": 216,
+            "soloTrasera": 1,
+            "soloAlerta": 8,
+            "pct": 82.8
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 260,
+            "leidos": 252,
+            "exactos": 238,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 96.9
+          },
+          "noche": {
+            "esperados": 249,
+            "leidos": 214,
+            "exactos": 187,
+            "soloTrasera": 1,
+            "soloAlerta": 2,
+            "pct": 85.9
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 251,
+            "leidos": 236,
+            "exactos": 227,
+            "soloTrasera": 1,
+            "soloAlerta": 1,
+            "pct": 94
+          },
+          "noche": {
+            "esperados": 199,
+            "leidos": 168,
+            "exactos": 137,
+            "soloTrasera": 1,
+            "soloAlerta": 6,
+            "pct": 84.4
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 47,
+            "leidos": 37,
+            "exactos": 33,
+            "soloTrasera": 1,
+            "soloAlerta": 0,
+            "pct": 78.7
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 165,
+            "leidos": 157,
+            "exactos": 149,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 95.2
+          },
+          "noche": {
+            "esperados": 164,
+            "leidos": 139,
+            "exactos": 113,
+            "soloTrasera": 0,
+            "soloAlerta": 3,
+            "pct": 84.8
+          }
+        }
+      },
+      "circuitos": {
+        "SL2": 66,
+        "R7": 2865,
+        "SL1": 238,
+        "R30": 71,
+        "SL3": 7
+      },
+      "lecturasPorCamara": {
+        "SLZIngCamFrente": 2898,
+        "SLZIngCamTrasera": 70
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "SLZIngCamFrente": {
+          "2026-09-07": 457,
+          "2026-09-08": 488,
+          "2026-09-09": 523,
+          "2026-09-10": 645,
+          "2026-09-11": 561,
+          "2026-09-12": 477,
+          "2026-09-13": 51,
+          "2026-09-14": 461
+        },
+        "SLZIngCamTrasera": {
+          "2026-09-07": 468,
+          "2026-09-08": 514,
+          "2026-09-09": 585,
+          "2026-09-10": 729,
+          "2026-09-11": 653,
+          "2026-09-12": 555,
+          "2026-09-13": 64,
+          "2026-09-14": 440
+        }
+      },
+      "fallasLprPorCamara": {
+        "SLZIngCamFrente": {
+          "dia": 69,
+          "noche": 286
+        },
+        "SLZIngCamTrasera": {
+          "dia": 1102,
+          "noche": 1690
+        }
+      }
+    },
+    {
+      "nodeId": "san_lorenzo:Calada",
+      "planta": "san_lorenzo",
+      "punto": "Calada",
+      "codigo": "S2",
+      "camarasFrontales": [
+        "SLZCalado",
+        "SLZCalCam"
+      ],
+      "camarasTraseras": [],
+      "total": {
+        "esperados": 311,
+        "leidos": 195,
+        "exactos": 182,
+        "soloTrasera": 0,
+        "soloAlerta": 3,
+        "pct": 62.7
+      },
+      "dia": {
+        "esperados": 227,
+        "leidos": 162,
+        "exactos": 150,
+        "soloTrasera": 0,
+        "soloAlerta": 2,
+        "pct": 71.4
+      },
+      "noche": {
+        "esperados": 84,
+        "leidos": 33,
+        "exactos": 32,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 39.3
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 40,
+            "leidos": 28,
+            "exactos": 26,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 70
+          },
+          "noche": {
+            "esperados": 10,
+            "leidos": 1,
+            "exactos": 1,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 10
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 41,
+            "leidos": 21,
+            "exactos": 18,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 51.2
+          },
+          "noche": {
+            "esperados": 22,
+            "leidos": 3,
+            "exactos": 3,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 13.6
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 45,
+            "leidos": 34,
+            "exactos": 33,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 75.6
+          },
+          "noche": {
+            "esperados": 13,
+            "leidos": 7,
+            "exactos": 7,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 53.8
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 32,
+            "leidos": 26,
+            "exactos": 26,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 81.3
+          },
+          "noche": {
+            "esperados": 21,
+            "leidos": 15,
+            "exactos": 14,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 71.4
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 31,
+            "leidos": 22,
+            "exactos": 20,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 71
+          },
+          "noche": {
+            "esperados": 4,
+            "leidos": 1,
+            "exactos": 1,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 25
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 6,
+            "leidos": 2,
+            "exactos": 2,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 33.3
+          },
+          "noche": {
+            "esperados": 3,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 0
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 1,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 0
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 32,
+            "leidos": 29,
+            "exactos": 25,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 90.6
+          },
+          "noche": {
+            "esperados": 8,
+            "leidos": 6,
+            "exactos": 6,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 75
+          }
+        }
+      },
+      "circuitos": {
+        "SL2": 66,
+        "SL1": 238,
+        "SL3": 7
+      },
+      "lecturasPorCamara": {
+        "SLZCalado": 195
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "SLZCalado": {
+          "2026-09-07": 101,
+          "2026-09-08": 78,
+          "2026-09-09": 116,
+          "2026-09-10": 119,
+          "2026-09-11": 106,
+          "2026-09-12": 13,
+          "2026-09-13": 4,
+          "2026-09-14": 72
+        },
+        "SLZCalCam": {
+          "2026-09-07": 0,
+          "2026-09-08": 0,
+          "2026-09-09": 0,
+          "2026-09-10": 0,
+          "2026-09-11": 0,
+          "2026-09-12": 0,
+          "2026-09-13": 0,
+          "2026-09-14": 0
+        }
+      },
+      "fallasLprPorCamara": {
+        "SLZCalado": {
+          "dia": 8,
+          "noche": 12
+        },
+        "SLZCalCam": {
+          "dia": 0,
+          "noche": 0
+        }
+      }
+    },
+    {
+      "nodeId": "san_lorenzo:Balanza Ingreso",
+      "planta": "san_lorenzo",
+      "punto": "Balanza ingreso",
+      "codigo": "S1",
+      "camarasFrontales": [
+        "SLZBalIngFte"
+      ],
+      "camarasTraseras": [
+        "SLZBalIngTras"
+      ],
+      "total": {
+        "esperados": 3247,
+        "leidos": 2736,
+        "exactos": 2483,
+        "soloTrasera": 133,
+        "soloAlerta": 35,
+        "pct": 84.3
+      },
+      "dia": {
+        "esperados": 1510,
+        "leidos": 1434,
+        "exactos": 1371,
+        "soloTrasera": 14,
+        "soloAlerta": 11,
+        "pct": 95
+      },
+      "noche": {
+        "esperados": 1737,
+        "leidos": 1302,
+        "exactos": 1112,
+        "soloTrasera": 119,
+        "soloAlerta": 24,
+        "pct": 75
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 160,
+            "leidos": 157,
+            "exactos": 154,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 98.1
+          },
+          "noche": {
+            "esperados": 174,
+            "leidos": 125,
+            "exactos": 103,
+            "soloTrasera": 11,
+            "soloAlerta": 2,
+            "pct": 71.8
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 223,
+            "leidos": 214,
+            "exactos": 201,
+            "soloTrasera": 2,
+            "soloAlerta": 2,
+            "pct": 96
+          },
+          "noche": {
+            "esperados": 250,
+            "leidos": 198,
+            "exactos": 171,
+            "soloTrasera": 15,
+            "soloAlerta": 4,
+            "pct": 79.2
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 225,
+            "leidos": 213,
+            "exactos": 201,
+            "soloTrasera": 2,
+            "soloAlerta": 1,
+            "pct": 94.7
+          },
+          "noche": {
+            "esperados": 270,
+            "leidos": 206,
+            "exactos": 179,
+            "soloTrasera": 17,
+            "soloAlerta": 3,
+            "pct": 76.3
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 276,
+            "leidos": 261,
+            "exactos": 255,
+            "soloTrasera": 5,
+            "soloAlerta": 2,
+            "pct": 94.6
+          },
+          "noche": {
+            "esperados": 302,
+            "leidos": 219,
+            "exactos": 188,
+            "soloTrasera": 22,
+            "soloAlerta": 3,
+            "pct": 72.5
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 257,
+            "leidos": 245,
+            "exactos": 233,
+            "soloTrasera": 1,
+            "soloAlerta": 2,
+            "pct": 95.3
+          },
+          "noche": {
+            "esperados": 265,
+            "leidos": 207,
+            "exactos": 179,
+            "soloTrasera": 20,
+            "soloAlerta": 3,
+            "pct": 78.1
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 225,
+            "leidos": 216,
+            "exactos": 207,
+            "soloTrasera": 3,
+            "soloAlerta": 2,
+            "pct": 96
+          },
+          "noche": {
+            "esperados": 233,
+            "leidos": 176,
+            "exactos": 154,
+            "soloTrasera": 16,
+            "soloAlerta": 4,
+            "pct": 75.5
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 41,
+            "leidos": 29,
+            "exactos": 22,
+            "soloTrasera": 4,
+            "soloAlerta": 1,
+            "pct": 70.7
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 144,
+            "leidos": 128,
+            "exactos": 120,
+            "soloTrasera": 1,
+            "soloAlerta": 2,
+            "pct": 88.9
+          },
+          "noche": {
+            "esperados": 197,
+            "leidos": 138,
+            "exactos": 113,
+            "soloTrasera": 13,
+            "soloAlerta": 4,
+            "pct": 70.1
+          }
+        }
+      },
+      "circuitos": {
+        "SL2": 66,
+        "R7": 2865,
+        "SL1": 238,
+        "R30": 71,
+        "SL3": 7
+      },
+      "lecturasPorCamara": {
+        "SLZBalIngFte": 2736,
+        "SLZBalIngTras": 852
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "SLZBalIngFte": {
+          "2026-09-07": 463,
+          "2026-09-08": 680,
+          "2026-09-09": 687,
+          "2026-09-10": 842,
+          "2026-09-11": 747,
+          "2026-09-12": 613,
+          "2026-09-13": 56,
+          "2026-09-14": 566
+        },
+        "SLZBalIngTras": {
+          "2026-09-07": 461,
+          "2026-09-08": 668,
+          "2026-09-09": 676,
+          "2026-09-10": 736,
+          "2026-09-11": 689,
+          "2026-09-12": 644,
+          "2026-09-13": 44,
+          "2026-09-14": 406
+        }
+      },
+      "fallasLprPorCamara": {
+        "SLZBalIngFte": {
+          "dia": 70,
+          "noche": 305
+        },
+        "SLZBalIngTras": {
+          "dia": 662,
+          "noche": 935
+        }
+      }
+    },
+    {
+      "nodeId": "san_lorenzo:Carga / Descarga OSL",
+      "planta": "san_lorenzo",
+      "punto": "Carga OSL",
+      "codigo": "S10",
+      "camarasFrontales": [
+        "RenCargFte",
+        "RenDescFte"
+      ],
+      "camarasTraseras": [
+        "RenCargTras",
+        "RenDescTras"
+      ],
+      "total": {
+        "esperados": 238,
+        "leidos": 170,
+        "exactos": 159,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 71.4
+      },
+      "dia": {
+        "esperados": 169,
+        "leidos": 130,
+        "exactos": 122,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 76.9
+      },
+      "noche": {
+        "esperados": 69,
+        "leidos": 40,
+        "exactos": 37,
+        "soloTrasera": 0,
+        "soloAlerta": 0,
+        "pct": 58
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 30,
+            "leidos": 23,
+            "exactos": 21,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 76.7
+          },
+          "noche": {
+            "esperados": 7,
+            "leidos": 4,
+            "exactos": 3,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 57.1
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 24,
+            "leidos": 20,
+            "exactos": 19,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 83.3
+          },
+          "noche": {
+            "esperados": 7,
+            "leidos": 3,
+            "exactos": 3,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 42.9
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 30,
+            "leidos": 22,
+            "exactos": 20,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 73.3
+          },
+          "noche": {
+            "esperados": 14,
+            "leidos": 7,
+            "exactos": 6,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 50
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 33,
+            "leidos": 27,
+            "exactos": 26,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 81.8
+          },
+          "noche": {
+            "esperados": 18,
+            "leidos": 11,
+            "exactos": 10,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 61.1
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 22,
+            "leidos": 14,
+            "exactos": 13,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 63.6
+          },
+          "noche": {
+            "esperados": 14,
+            "leidos": 10,
+            "exactos": 10,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 71.4
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 5,
+            "leidos": 1,
+            "exactos": 1,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 20
+          },
+          "noche": {
+            "esperados": 3,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 0
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 25,
+            "leidos": 23,
+            "exactos": 22,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 92
+          },
+          "noche": {
+            "esperados": 6,
+            "leidos": 5,
+            "exactos": 5,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 83.3
+          }
+        }
+      },
+      "circuitos": {
+        "SL1": 238
+      },
+      "lecturasPorCamara": {
+        "RenCargFte": 132,
+        "RenDescFte": 38,
+        "RenCargTras": 4
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "RenCargFte": {
+          "2026-09-07": 26,
+          "2026-09-08": 21,
+          "2026-09-09": 28,
+          "2026-09-10": 41,
+          "2026-09-11": 29,
+          "2026-09-12": 2,
+          "2026-09-13": 0,
+          "2026-09-14": 24
+        },
+        "RenDescFte": {
+          "2026-09-07": 6,
+          "2026-09-08": 2,
+          "2026-09-09": 11,
+          "2026-09-10": 14,
+          "2026-09-11": 12,
+          "2026-09-12": 0,
+          "2026-09-13": 0,
+          "2026-09-14": 15
+        },
+        "RenCargTras": {
+          "2026-09-07": 34,
+          "2026-09-08": 31,
+          "2026-09-09": 28,
+          "2026-09-10": 41,
+          "2026-09-11": 28,
+          "2026-09-12": 3,
+          "2026-09-13": 0,
+          "2026-09-14": 19
+        },
+        "RenDescTras": {
+          "2026-09-07": 1,
+          "2026-09-08": 2,
+          "2026-09-09": 8,
+          "2026-09-10": 10,
+          "2026-09-11": 8,
+          "2026-09-12": 0,
+          "2026-09-13": 0,
+          "2026-09-14": 6
+        }
+      },
+      "fallasLprPorCamara": {
+        "RenCargFte": {
+          "dia": 7,
+          "noche": 17
+        },
+        "RenDescFte": {
+          "dia": 1,
+          "noche": 0
+        },
+        "RenCargTras": {
+          "dia": 110,
+          "noche": 44
+        },
+        "RenDescTras": {
+          "dia": 8,
+          "noche": 1
+        }
+      }
+    },
+    {
+      "nodeId": "san_lorenzo:Plataformas Volcables",
+      "planta": "san_lorenzo",
+      "punto": "Volcables",
+      "codigo": "S4",
+      "camarasFrontales": [
+        "SLZVolcableC1",
+        "SLZVolcableC2",
+        "SLZVolcableC3",
+        "SLZVolcableC4",
+        "SLZVolcableC5",
+        "SLZDescCam"
+      ],
+      "camarasTraseras": [],
+      "total": {
+        "esperados": 2865,
+        "leidos": 1998,
+        "exactos": 1698,
+        "soloTrasera": 0,
+        "soloAlerta": 47,
+        "pct": 69.7
+      },
+      "dia": {
+        "esperados": 1204,
+        "leidos": 1118,
+        "exactos": 1057,
+        "soloTrasera": 0,
+        "soloAlerta": 9,
+        "pct": 92.9
+      },
+      "noche": {
+        "esperados": 1661,
+        "leidos": 880,
+        "exactos": 641,
+        "soloTrasera": 0,
+        "soloAlerta": 38,
+        "pct": 53
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 108,
+            "leidos": 103,
+            "exactos": 99,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 95.4
+          },
+          "noche": {
+            "esperados": 164,
+            "leidos": 79,
+            "exactos": 59,
+            "soloTrasera": 0,
+            "soloAlerta": 3,
+            "pct": 48.2
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 164,
+            "leidos": 155,
+            "exactos": 148,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 94.5
+          },
+          "noche": {
+            "esperados": 253,
+            "leidos": 154,
+            "exactos": 106,
+            "soloTrasera": 0,
+            "soloAlerta": 5,
+            "pct": 60.9
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 174,
+            "leidos": 157,
+            "exactos": 148,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 90.2
+          },
+          "noche": {
+            "esperados": 265,
+            "leidos": 158,
+            "exactos": 124,
+            "soloTrasera": 0,
+            "soloAlerta": 8,
+            "pct": 59.6
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 235,
+            "leidos": 214,
+            "exactos": 206,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 91.1
+          },
+          "noche": {
+            "esperados": 290,
+            "leidos": 155,
+            "exactos": 120,
+            "soloTrasera": 0,
+            "soloAlerta": 3,
+            "pct": 53.4
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 220,
+            "leidos": 207,
+            "exactos": 194,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 94.1
+          },
+          "noche": {
+            "esperados": 263,
+            "leidos": 136,
+            "exactos": 94,
+            "soloTrasera": 0,
+            "soloAlerta": 3,
+            "pct": 51.7
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 211,
+            "leidos": 200,
+            "exactos": 186,
+            "soloTrasera": 0,
+            "soloAlerta": 4,
+            "pct": 94.8
+          },
+          "noche": {
+            "esperados": 237,
+            "leidos": 119,
+            "exactos": 85,
+            "soloTrasera": 0,
+            "soloAlerta": 8,
+            "pct": 50.2
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 46,
+            "leidos": 15,
+            "exactos": 10,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 32.6
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 92,
+            "leidos": 82,
+            "exactos": 76,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 89.1
+          },
+          "noche": {
+            "esperados": 143,
+            "leidos": 64,
+            "exactos": 43,
+            "soloTrasera": 0,
+            "soloAlerta": 6,
+            "pct": 44.8
+          }
+        }
+      },
+      "circuitos": {
+        "R7": 2865
+      },
+      "lecturasPorCamara": {
+        "SLZVolcableC2": 632,
+        "SLZVolcableC3": 605,
+        "SLZVolcableC5": 393,
+        "SLZVolcableC1": 394,
+        "SLZVolcableC4": 29
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "SLZVolcableC1": {
+          "2026-09-07": 8,
+          "2026-09-08": 1,
+          "2026-09-09": 256,
+          "2026-09-10": 245,
+          "2026-09-11": 258,
+          "2026-09-12": 65,
+          "2026-09-13": 0,
+          "2026-09-14": 46
+        },
+        "SLZVolcableC2": {
+          "2026-09-07": 186,
+          "2026-09-08": 238,
+          "2026-09-09": 217,
+          "2026-09-10": 310,
+          "2026-09-11": 202,
+          "2026-09-12": 203,
+          "2026-09-13": 1,
+          "2026-09-14": 144
+        },
+        "SLZVolcableC3": {
+          "2026-09-07": 180,
+          "2026-09-08": 231,
+          "2026-09-09": 115,
+          "2026-09-10": 269,
+          "2026-09-11": 231,
+          "2026-09-12": 254,
+          "2026-09-13": 34,
+          "2026-09-14": 58
+        },
+        "SLZVolcableC4": {
+          "2026-09-07": 3,
+          "2026-09-08": 0,
+          "2026-09-09": 0,
+          "2026-09-10": 29,
+          "2026-09-11": 2,
+          "2026-09-12": 0,
+          "2026-09-13": 1,
+          "2026-09-14": 32
+        },
+        "SLZVolcableC5": {
+          "2026-09-07": 64,
+          "2026-09-08": 196,
+          "2026-09-09": 136,
+          "2026-09-10": 46,
+          "2026-09-11": 151,
+          "2026-09-12": 197,
+          "2026-09-13": 24,
+          "2026-09-14": 129
+        },
+        "SLZDescCam": {
+          "2026-09-07": 0,
+          "2026-09-08": 0,
+          "2026-09-09": 0,
+          "2026-09-10": 0,
+          "2026-09-11": 0,
+          "2026-09-12": 0,
+          "2026-09-13": 0,
+          "2026-09-14": 0
+        }
+      },
+      "fallasLprPorCamara": {
+        "SLZVolcableC1": {
+          "dia": 23,
+          "noche": 118
+        },
+        "SLZVolcableC2": {
+          "dia": 85,
+          "noche": 315
+        },
+        "SLZVolcableC3": {
+          "dia": 18,
+          "noche": 94
+        },
+        "SLZVolcableC4": {
+          "dia": 4,
+          "noche": 5
+        },
+        "SLZVolcableC5": {
+          "dia": 9,
+          "noche": 167
+        },
+        "SLZDescCam": {
+          "dia": 0,
+          "noche": 0
+        }
+      }
+    },
+    {
+      "nodeId": "san_lorenzo:Carga/descarga",
+      "planta": "san_lorenzo",
+      "punto": "Carga y descarga",
+      "codigo": "S6",
+      "camarasFrontales": [
+        "SLZBalLiq1a",
+        "SLZBalLiq1b",
+        "SLZBalLiq2a",
+        "SLZBalLiq2b"
+      ],
+      "camarasTraseras": [],
+      "total": {
+        "esperados": 66,
+        "leidos": 47,
+        "exactos": 45,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 71.2
+      },
+      "dia": {
+        "esperados": 47,
+        "leidos": 37,
+        "exactos": 35,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 78.7
+      },
+      "noche": {
+        "esperados": 19,
+        "leidos": 10,
+        "exactos": 10,
+        "soloTrasera": 0,
+        "soloAlerta": 0,
+        "pct": 52.6
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 7,
+            "leidos": 6,
+            "exactos": 6,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 85.7
+          },
+          "noche": {
+            "esperados": 5,
+            "leidos": 3,
+            "exactos": 3,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 60
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 26,
+            "leidos": 24,
+            "exactos": 23,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 92.3
+          },
+          "noche": {
+            "esperados": 7,
+            "leidos": 7,
+            "exactos": 7,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 100
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 1,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 0
+          },
+          "noche": {
+            "esperados": 2,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 0
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 2,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 0
+          },
+          "noche": {
+            "esperados": 1,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 0
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 5,
+            "leidos": 3,
+            "exactos": 3,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 60
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 1,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 0
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 1,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 0
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 5,
+            "leidos": 4,
+            "exactos": 3,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 80
+          },
+          "noche": {
+            "esperados": 2,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 0
+          }
+        }
+      },
+      "circuitos": {
+        "SL2": 66
+      },
+      "lecturasPorCamara": {
+        "SLZBalLiq2a": 19,
+        "SLZBalLiq1b": 28
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "SLZBalLiq1a": {
+          "2026-09-07": 7,
+          "2026-09-08": 0,
+          "2026-09-09": 1,
+          "2026-09-10": 0,
+          "2026-09-11": 4,
+          "2026-09-12": 2,
+          "2026-09-13": 4,
+          "2026-09-14": 7
+        },
+        "SLZBalLiq1b": {
+          "2026-09-07": 13,
+          "2026-09-08": 27,
+          "2026-09-09": 13,
+          "2026-09-10": 6,
+          "2026-09-11": 11,
+          "2026-09-12": 5,
+          "2026-09-13": 1,
+          "2026-09-14": 6
+        },
+        "SLZBalLiq2a": {
+          "2026-09-07": 11,
+          "2026-09-08": 27,
+          "2026-09-09": 3,
+          "2026-09-10": 1,
+          "2026-09-11": 3,
+          "2026-09-12": 0,
+          "2026-09-13": 0,
+          "2026-09-14": 5
+        },
+        "SLZBalLiq2b": {
+          "2026-09-07": 7,
+          "2026-09-08": 4,
+          "2026-09-09": 5,
+          "2026-09-10": 5,
+          "2026-09-11": 5,
+          "2026-09-12": 1,
+          "2026-09-13": 1,
+          "2026-09-14": 16
+        }
+      },
+      "fallasLprPorCamara": {
+        "SLZBalLiq1a": {
+          "dia": 5,
+          "noche": 4
+        },
+        "SLZBalLiq1b": {
+          "dia": 9,
+          "noche": 7
+        },
+        "SLZBalLiq2a": {
+          "dia": 5,
+          "noche": 3
+        },
+        "SLZBalLiq2b": {
+          "dia": 10,
+          "noche": 2
+        }
+      }
+    },
+    {
+      "nodeId": "san_lorenzo:Balanza Egreso",
+      "planta": "san_lorenzo",
+      "punto": "Balanza egreso",
+      "codigo": "S5",
+      "camarasFrontales": [
+        "SLZBalSC1Fte",
+        "SLZBalSC2Fte"
+      ],
+      "camarasTraseras": [
+        "SLZBalSC1Tras",
+        "SLZBalSC2Tras"
+      ],
+      "total": {
+        "esperados": 3247,
+        "leidos": 1538,
+        "exactos": 1280,
+        "soloTrasera": 7,
+        "soloAlerta": 36,
+        "pct": 47.4
+      },
+      "dia": {
+        "esperados": 1424,
+        "leidos": 1041,
+        "exactos": 866,
+        "soloTrasera": 1,
+        "soloAlerta": 25,
+        "pct": 73.1
+      },
+      "noche": {
+        "esperados": 1823,
+        "leidos": 497,
+        "exactos": 414,
+        "soloTrasera": 6,
+        "soloAlerta": 11,
+        "pct": 27.3
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 138,
+            "leidos": 113,
+            "exactos": 101,
+            "soloTrasera": 1,
+            "soloAlerta": 2,
+            "pct": 81.9
+          },
+          "noche": {
+            "esperados": 180,
+            "leidos": 51,
+            "exactos": 40,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 28.3
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 210,
+            "leidos": 155,
+            "exactos": 129,
+            "soloTrasera": 0,
+            "soloAlerta": 5,
+            "pct": 73.8
+          },
+          "noche": {
+            "esperados": 268,
+            "leidos": 87,
+            "exactos": 75,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 32.5
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 214,
+            "leidos": 184,
+            "exactos": 158,
+            "soloTrasera": 0,
+            "soloAlerta": 5,
+            "pct": 86
+          },
+          "noche": {
+            "esperados": 274,
+            "leidos": 92,
+            "exactos": 74,
+            "soloTrasera": 2,
+            "soloAlerta": 3,
+            "pct": 33.6
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 266,
+            "leidos": 219,
+            "exactos": 199,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 82.3
+          },
+          "noche": {
+            "esperados": 314,
+            "leidos": 91,
+            "exactos": 74,
+            "soloTrasera": 2,
+            "soloAlerta": 3,
+            "pct": 29
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 247,
+            "leidos": 175,
+            "exactos": 145,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 70.9
+          },
+          "noche": {
+            "esperados": 281,
+            "leidos": 91,
+            "exactos": 77,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 32.4
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 218,
+            "leidos": 137,
+            "exactos": 94,
+            "soloTrasera": 0,
+            "soloAlerta": 8,
+            "pct": 62.8
+          },
+          "noche": {
+            "esperados": 236,
+            "leidos": 58,
+            "exactos": 52,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 24.6
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 53,
+            "leidos": 9,
+            "exactos": 6,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 17
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 131,
+            "leidos": 58,
+            "exactos": 40,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 44.3
+          },
+          "noche": {
+            "esperados": 216,
+            "leidos": 18,
+            "exactos": 16,
+            "soloTrasera": 2,
+            "soloAlerta": 0,
+            "pct": 8.3
+          }
+        }
+      },
+      "circuitos": {
+        "SL2": 66,
+        "R7": 2865,
+        "SL1": 238,
+        "R30": 71,
+        "SL3": 7
+      },
+      "lecturasPorCamara": {
+        "SLZBalSC2Fte": 1538,
+        "SLZBalSC2Tras": 5,
+        "SLZBalSC1Tras": 3,
+        "SLZBalSC1Fte": 1
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "SLZBalSC1Fte": {
+          "2026-09-07": 3,
+          "2026-09-08": 1,
+          "2026-09-09": 6,
+          "2026-09-10": 7,
+          "2026-09-11": 16,
+          "2026-09-12": 6,
+          "2026-09-13": 3,
+          "2026-09-14": 65
+        },
+        "SLZBalSC2Fte": {
+          "2026-09-07": 316,
+          "2026-09-08": 475,
+          "2026-09-09": 482,
+          "2026-09-10": 573,
+          "2026-09-11": 592,
+          "2026-09-12": 476,
+          "2026-09-13": 17,
+          "2026-09-14": 208
+        },
+        "SLZBalSC1Tras": {
+          "2026-09-07": 31,
+          "2026-09-08": 35,
+          "2026-09-09": 24,
+          "2026-09-10": 27,
+          "2026-09-11": 22,
+          "2026-09-12": 12,
+          "2026-09-13": 4,
+          "2026-09-14": 27
+        },
+        "SLZBalSC2Tras": {
+          "2026-09-07": 5,
+          "2026-09-08": 11,
+          "2026-09-09": 16,
+          "2026-09-10": 18,
+          "2026-09-11": 6,
+          "2026-09-12": 1,
+          "2026-09-13": 0,
+          "2026-09-14": 9
+        }
+      },
+      "fallasLprPorCamara": {
+        "SLZBalSC1Fte": {
+          "dia": 12,
+          "noche": 3
+        },
+        "SLZBalSC2Fte": {
+          "dia": 319,
+          "noche": 206
+        },
+        "SLZBalSC1Tras": {
+          "dia": 30,
+          "noche": 6
+        },
+        "SLZBalSC2Tras": {
+          "dia": 7,
+          "noche": 12
+        }
+      }
+    },
+    {
+      "nodeId": "san_lorenzo:Carga/Descarga Renova",
+      "planta": "san_lorenzo",
+      "punto": "Renova",
+      "codigo": "S8",
+      "camarasFrontales": [
+        "SLZTK400"
+      ],
+      "camarasTraseras": [],
+      "total": {
+        "esperados": 7,
+        "leidos": 2,
+        "exactos": 1,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 28.6
+      },
+      "dia": {
+        "esperados": 7,
+        "leidos": 2,
+        "exactos": 1,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 28.6
+      },
+      "noche": {
+        "esperados": 0,
+        "leidos": 0,
+        "exactos": 0,
+        "soloTrasera": 0,
+        "soloAlerta": 0,
+        "pct": null
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 3,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 0
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 2,
+            "leidos": 1,
+            "exactos": 1,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 50
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 2,
+            "leidos": 1,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 50
+          },
+          "noche": {
+            "esperados": 0,
+            "leidos": 0,
+            "exactos": 0,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": null
+          }
+        }
+      },
+      "circuitos": {
+        "SL3": 7
+      },
+      "lecturasPorCamara": {
+        "SLZTK400": 2
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "SLZTK400": {
+          "2026-09-07": 249,
+          "2026-09-08": 172,
+          "2026-09-09": 289,
+          "2026-09-10": 227,
+          "2026-09-11": 227,
+          "2026-09-12": 52,
+          "2026-09-13": 135,
+          "2026-09-14": 201
+        }
+      },
+      "fallasLprPorCamara": {
+        "SLZTK400": {
+          "dia": 241,
+          "noche": 142
+        }
+      }
+    },
+    {
+      "nodeId": "san_lorenzo:Egreso",
+      "planta": "san_lorenzo",
+      "punto": "Egreso",
+      "codigo": "S7",
+      "camarasFrontales": [
+        "SLZSalidaC1Fte",
+        "SLZSalidaC2Fte"
+      ],
+      "camarasTraseras": [
+        "SLZSalidaC1Tras",
+        "SLZSalidaC2Tras"
+      ],
+      "total": {
+        "esperados": 3247,
+        "leidos": 2908,
+        "exactos": 2592,
+        "soloTrasera": 10,
+        "soloAlerta": 38,
+        "pct": 89.6
+      },
+      "dia": {
+        "esperados": 1439,
+        "leidos": 1349,
+        "exactos": 1259,
+        "soloTrasera": 0,
+        "soloAlerta": 12,
+        "pct": 93.7
+      },
+      "noche": {
+        "esperados": 1808,
+        "leidos": 1559,
+        "exactos": 1333,
+        "soloTrasera": 10,
+        "soloAlerta": 26,
+        "pct": 86.2
+      },
+      "porDia": {
+        "2026-09-07": {
+          "dia": {
+            "esperados": 139,
+            "leidos": 133,
+            "exactos": 128,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 95.7
+          },
+          "noche": {
+            "esperados": 175,
+            "leidos": 153,
+            "exactos": 124,
+            "soloTrasera": 1,
+            "soloAlerta": 5,
+            "pct": 87.4
+          }
+        },
+        "2026-09-08": {
+          "dia": {
+            "esperados": 212,
+            "leidos": 203,
+            "exactos": 187,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 95.8
+          },
+          "noche": {
+            "esperados": 268,
+            "leidos": 243,
+            "exactos": 214,
+            "soloTrasera": 1,
+            "soloAlerta": 3,
+            "pct": 90.7
+          }
+        },
+        "2026-09-09": {
+          "dia": {
+            "esperados": 218,
+            "leidos": 200,
+            "exactos": 182,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 91.7
+          },
+          "noche": {
+            "esperados": 269,
+            "leidos": 233,
+            "exactos": 209,
+            "soloTrasera": 1,
+            "soloAlerta": 2,
+            "pct": 86.6
+          }
+        },
+        "2026-09-10": {
+          "dia": {
+            "esperados": 265,
+            "leidos": 249,
+            "exactos": 237,
+            "soloTrasera": 0,
+            "soloAlerta": 1,
+            "pct": 94
+          },
+          "noche": {
+            "esperados": 313,
+            "leidos": 267,
+            "exactos": 228,
+            "soloTrasera": 2,
+            "soloAlerta": 4,
+            "pct": 85.3
+          }
+        },
+        "2026-09-11": {
+          "dia": {
+            "esperados": 250,
+            "leidos": 238,
+            "exactos": 219,
+            "soloTrasera": 0,
+            "soloAlerta": 3,
+            "pct": 95.2
+          },
+          "noche": {
+            "esperados": 284,
+            "leidos": 248,
+            "exactos": 215,
+            "soloTrasera": 2,
+            "soloAlerta": 5,
+            "pct": 87.3
+          }
+        },
+        "2026-09-12": {
+          "dia": {
+            "esperados": 219,
+            "leidos": 211,
+            "exactos": 199,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 96.3
+          },
+          "noche": {
+            "esperados": 234,
+            "leidos": 204,
+            "exactos": 171,
+            "soloTrasera": 2,
+            "soloAlerta": 3,
+            "pct": 87.2
+          }
+        },
+        "2026-09-13": {
+          "dia": {
+            "esperados": 1,
+            "leidos": 1,
+            "exactos": 1,
+            "soloTrasera": 0,
+            "soloAlerta": 0,
+            "pct": 100
+          },
+          "noche": {
+            "esperados": 51,
+            "leidos": 45,
+            "exactos": 34,
+            "soloTrasera": 1,
+            "soloAlerta": 0,
+            "pct": 88.2
+          }
+        },
+        "2026-09-14": {
+          "dia": {
+            "esperados": 135,
+            "leidos": 114,
+            "exactos": 106,
+            "soloTrasera": 0,
+            "soloAlerta": 2,
+            "pct": 84.4
+          },
+          "noche": {
+            "esperados": 214,
+            "leidos": 166,
+            "exactos": 138,
+            "soloTrasera": 0,
+            "soloAlerta": 4,
+            "pct": 77.6
+          }
+        }
+      },
+      "circuitos": {
+        "SL2": 66,
+        "R7": 2865,
+        "SL1": 238,
+        "R30": 71,
+        "SL3": 7
+      },
+      "lecturasPorCamara": {
+        "SLZSalidaC1Fte": 2908,
+        "SLZSalidaC1Tras": 148,
+        "SLZSalidaC2Fte": 75,
+        "SLZSalidaC2Tras": 9
+      },
+      "lecturasCrudasPorCamaraDia": {
+        "SLZSalidaC1Fte": {
+          "2026-09-07": 769,
+          "2026-09-08": 974,
+          "2026-09-09": 934,
+          "2026-09-10": 1081,
+          "2026-09-11": 1098,
+          "2026-09-12": 740,
+          "2026-09-13": 156,
+          "2026-09-14": 872
+        },
+        "SLZSalidaC2Fte": {
+          "2026-09-07": 277,
+          "2026-09-08": 308,
+          "2026-09-09": 276,
+          "2026-09-10": 303,
+          "2026-09-11": 349,
+          "2026-09-12": 146,
+          "2026-09-13": 63,
+          "2026-09-14": 359
+        },
+        "SLZSalidaC1Tras": {
+          "2026-09-07": 305,
+          "2026-09-08": 479,
+          "2026-09-09": 548,
+          "2026-09-10": 568,
+          "2026-09-11": 645,
+          "2026-09-12": 403,
+          "2026-09-13": 88,
+          "2026-09-14": 355
+        },
+        "SLZSalidaC2Tras": {
+          "2026-09-07": 88,
+          "2026-09-08": 98,
+          "2026-09-09": 69,
+          "2026-09-10": 74,
+          "2026-09-11": 78,
+          "2026-09-12": 28,
+          "2026-09-13": 17,
+          "2026-09-14": 79
+        }
+      },
+      "fallasLprPorCamara": {
+        "SLZSalidaC1Fte": {
+          "dia": 113,
+          "noche": 196
+        },
+        "SLZSalidaC2Fte": {
+          "dia": 69,
+          "noche": 22
+        },
+        "SLZSalidaC1Tras": {
+          "dia": 703,
+          "noche": 279
+        },
+        "SLZSalidaC2Tras": {
+          "dia": 83,
+          "noche": 140
+        }
+      }
+    }
+  ],
+  "camaras": [
+    {
+      "camara": "RicIngCamFrente",
+      "tipo": "frontal",
+      "nodeId": "ricardone:Ingreso",
+      "punto": "Ingreso",
+      "planta": "ricardone",
+      "total": {
+        "esperados": 3581,
+        "leidos": 2818,
+        "exactos": 2523,
+        "soloTrasera": 0,
+        "soloAlerta": 47,
+        "pct": 78.7
+      },
+      "dia": {
+        "esperados": 1677,
+        "leidos": 1554,
+        "exactos": 1479,
+        "soloTrasera": 0,
+        "soloAlerta": 15,
+        "pct": 92.7
+      },
+      "noche": {
+        "esperados": 1904,
+        "leidos": 1264,
+        "exactos": 1044,
+        "soloTrasera": 0,
+        "soloAlerta": 32,
+        "pct": 66.4
+      },
+      "fallasLpr": {
+        "dia": 79,
+        "noche": 569
+      }
+    },
+    {
+      "camara": "RicS6Playa3",
+      "tipo": "frontal",
+      "nodeId": "ricardone:Playa 3",
+      "punto": "Playa 3",
+      "planta": "ricardone",
+      "total": {
+        "esperados": 660,
+        "leidos": 483,
+        "exactos": 427,
+        "soloTrasera": 0,
+        "soloAlerta": 9,
+        "pct": 73.2
+      },
+      "dia": {
+        "esperados": 325,
+        "leidos": 261,
+        "exactos": 241,
+        "soloTrasera": 0,
+        "soloAlerta": 2,
+        "pct": 80.3
+      },
+      "noche": {
+        "esperados": 335,
+        "leidos": 222,
+        "exactos": 186,
+        "soloTrasera": 0,
+        "soloAlerta": 7,
+        "pct": 66.3
+      },
+      "fallasLpr": {
+        "dia": 30,
+        "noche": 146
+      }
+    },
+    {
+      "camara": "RicVolcable1",
+      "tipo": "frontal",
+      "nodeId": "ricardone:Volcable 1",
+      "punto": "Volcable 1",
+      "planta": "ricardone",
+      "total": {
+        "esperados": 390,
+        "leidos": 368,
+        "exactos": 333,
+        "soloTrasera": 0,
+        "soloAlerta": 5,
+        "pct": 94.4
+      },
+      "dia": {
+        "esperados": 178,
+        "leidos": 169,
+        "exactos": 150,
+        "soloTrasera": 0,
+        "soloAlerta": 3,
+        "pct": 94.9
+      },
+      "noche": {
+        "esperados": 212,
+        "leidos": 199,
+        "exactos": 183,
+        "soloTrasera": 0,
+        "soloAlerta": 2,
+        "pct": 93.9
+      },
+      "fallasLpr": {
+        "dia": 7,
+        "noche": 15
+      }
+    },
+    {
+      "camara": "RicVolcable2",
+      "tipo": "frontal",
+      "nodeId": "ricardone:Volcable 2",
+      "punto": "Volcable 2",
+      "planta": "ricardone",
+      "total": {
+        "esperados": 143,
+        "leidos": 110,
+        "exactos": 96,
+        "soloTrasera": 0,
+        "soloAlerta": 2,
+        "pct": 76.9
+      },
+      "dia": {
+        "esperados": 75,
+        "leidos": 60,
+        "exactos": 55,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 80
+      },
+      "noche": {
+        "esperados": 68,
+        "leidos": 50,
+        "exactos": 41,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 73.5
+      },
+      "fallasLpr": {
+        "dia": 35,
+        "noche": 32
+      }
+    },
+    {
+      "camara": "RicEgrCamFrente",
+      "tipo": "frontal",
+      "nodeId": "ricardone:Salida 2",
+      "punto": "Salida 2",
+      "planta": "ricardone",
+      "total": {
+        "esperados": 2957,
+        "leidos": 2408,
+        "exactos": 2169,
+        "soloTrasera": 0,
+        "soloAlerta": 34,
+        "pct": 81.4
+      },
+      "dia": {
+        "esperados": 1377,
+        "leidos": 1297,
+        "exactos": 1239,
+        "soloTrasera": 0,
+        "soloAlerta": 6,
+        "pct": 94.2
+      },
+      "noche": {
+        "esperados": 1580,
+        "leidos": 1111,
+        "exactos": 930,
+        "soloTrasera": 0,
+        "soloAlerta": 28,
+        "pct": 70.3
+      },
+      "fallasLpr": {
+        "dia": 73,
+        "noche": 446
+      }
+    },
+    {
+      "camara": "SLZIngCamFrente",
+      "tipo": "frontal",
+      "nodeId": "san_lorenzo:Ingreso",
+      "punto": "Ingreso",
+      "planta": "san_lorenzo",
+      "total": {
+        "esperados": 3247,
+        "leidos": 2898,
+        "exactos": 2609,
+        "soloTrasera": 0,
+        "soloAlerta": 44,
+        "pct": 89.3
+      },
+      "dia": {
+        "esperados": 1549,
+        "leidos": 1465,
+        "exactos": 1403,
+        "soloTrasera": 0,
+        "soloAlerta": 8,
+        "pct": 94.6
+      },
+      "noche": {
+        "esperados": 1698,
+        "leidos": 1433,
+        "exactos": 1206,
+        "soloTrasera": 0,
+        "soloAlerta": 36,
+        "pct": 84.4
+      },
+      "fallasLpr": {
+        "dia": 69,
+        "noche": 286
+      }
+    },
+    {
+      "camara": "SLZBalIngFte",
+      "tipo": "frontal",
+      "nodeId": "san_lorenzo:Balanza Ingreso",
+      "punto": "Balanza ingreso",
+      "planta": "san_lorenzo",
+      "total": {
+        "esperados": 3247,
+        "leidos": 2736,
+        "exactos": 2483,
+        "soloTrasera": 0,
+        "soloAlerta": 35,
+        "pct": 84.3
+      },
+      "dia": {
+        "esperados": 1510,
+        "leidos": 1434,
+        "exactos": 1371,
+        "soloTrasera": 0,
+        "soloAlerta": 11,
+        "pct": 95
+      },
+      "noche": {
+        "esperados": 1737,
+        "leidos": 1302,
+        "exactos": 1112,
+        "soloTrasera": 0,
+        "soloAlerta": 24,
+        "pct": 75
+      },
+      "fallasLpr": {
+        "dia": 70,
+        "noche": 305
+      }
+    },
+    {
+      "camara": "SLZVolcableC1",
+      "tipo": "frontal",
+      "nodeId": "san_lorenzo:Plataformas Volcables",
+      "punto": "Volcables",
+      "planta": "san_lorenzo",
+      "total": {
+        "esperados": 521,
+        "leidos": 378,
+        "exactos": 333,
+        "soloTrasera": 0,
+        "soloAlerta": 6,
+        "pct": 72.6
+      },
+      "dia": {
+        "esperados": 202,
+        "leidos": 186,
+        "exactos": 173,
+        "soloTrasera": 0,
+        "soloAlerta": 2,
+        "pct": 92.1
+      },
+      "noche": {
+        "esperados": 319,
+        "leidos": 192,
+        "exactos": 160,
+        "soloTrasera": 0,
+        "soloAlerta": 4,
+        "pct": 60.2
+      },
+      "fallasLpr": {
+        "dia": 23,
+        "noche": 118
+      }
+    },
+    {
+      "camara": "SLZVolcableC2",
+      "tipo": "frontal",
+      "nodeId": "san_lorenzo:Plataformas Volcables",
+      "punto": "Volcables",
+      "planta": "san_lorenzo",
+      "total": {
+        "esperados": 913,
+        "leidos": 610,
+        "exactos": 528,
+        "soloTrasera": 0,
+        "soloAlerta": 17,
+        "pct": 66.8
+      },
+      "dia": {
+        "esperados": 417,
+        "leidos": 372,
+        "exactos": 351,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 89.2
+      },
+      "noche": {
+        "esperados": 496,
+        "leidos": 238,
+        "exactos": 177,
+        "soloTrasera": 0,
+        "soloAlerta": 16,
+        "pct": 48
+      },
+      "fallasLpr": {
+        "dia": 85,
+        "noche": 315
+      }
+    },
+    {
+      "camara": "SLZVolcableC3",
+      "tipo": "frontal",
+      "nodeId": "san_lorenzo:Plataformas Volcables",
+      "punto": "Volcables",
+      "planta": "san_lorenzo",
+      "total": {
+        "esperados": 699,
+        "leidos": 581,
+        "exactos": 475,
+        "soloTrasera": 0,
+        "soloAlerta": 11,
+        "pct": 83.1
+      },
+      "dia": {
+        "esperados": 240,
+        "leidos": 231,
+        "exactos": 215,
+        "soloTrasera": 0,
+        "soloAlerta": 4,
+        "pct": 96.3
+      },
+      "noche": {
+        "esperados": 459,
+        "leidos": 350,
+        "exactos": 260,
+        "soloTrasera": 0,
+        "soloAlerta": 7,
+        "pct": 76.3
+      },
+      "fallasLpr": {
+        "dia": 18,
+        "noche": 94
+      }
+    },
+    {
+      "camara": "SLZVolcableC4",
+      "tipo": "frontal",
+      "nodeId": "san_lorenzo:Plataformas Volcables",
+      "punto": "Volcables",
+      "planta": "san_lorenzo",
+      "total": {
+        "esperados": 28,
+        "leidos": 27,
+        "exactos": 27,
+        "soloTrasera": 0,
+        "soloAlerta": 0,
+        "pct": 96.4
+      },
+      "dia": {
+        "esperados": 28,
+        "leidos": 27,
+        "exactos": 27,
+        "soloTrasera": 0,
+        "soloAlerta": 0,
+        "pct": 96.4
+      },
+      "noche": {
+        "esperados": 0,
+        "leidos": 0,
+        "exactos": 0,
+        "soloTrasera": 0,
+        "soloAlerta": 0,
+        "pct": null
+      },
+      "fallasLpr": {
+        "dia": 4,
+        "noche": 5
+      }
+    },
+    {
+      "camara": "SLZVolcableC5",
+      "tipo": "frontal",
+      "nodeId": "san_lorenzo:Plataformas Volcables",
+      "punto": "Volcables",
+      "planta": "san_lorenzo",
+      "total": {
+        "esperados": 704,
+        "leidos": 384,
+        "exactos": 330,
+        "soloTrasera": 0,
+        "soloAlerta": 13,
+        "pct": 54.5
+      },
+      "dia": {
+        "esperados": 317,
+        "leidos": 298,
+        "exactos": 287,
+        "soloTrasera": 0,
+        "soloAlerta": 2,
+        "pct": 94
+      },
+      "noche": {
+        "esperados": 387,
+        "leidos": 86,
+        "exactos": 43,
+        "soloTrasera": 0,
+        "soloAlerta": 11,
+        "pct": 22.2
+      },
+      "fallasLpr": {
+        "dia": 9,
+        "noche": 167
+      }
+    },
+    {
+      "camara": "SLZTK400",
+      "tipo": "frontal",
+      "nodeId": "san_lorenzo:Carga/Descarga Renova",
+      "punto": "Renova",
+      "planta": "san_lorenzo",
+      "total": {
+        "esperados": 7,
+        "leidos": 2,
+        "exactos": 1,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 28.6
+      },
+      "dia": {
+        "esperados": 7,
+        "leidos": 2,
+        "exactos": 1,
+        "soloTrasera": 0,
+        "soloAlerta": 1,
+        "pct": 28.6
+      },
+      "noche": {
+        "esperados": 0,
+        "leidos": 0,
+        "exactos": 0,
+        "soloTrasera": 0,
+        "soloAlerta": 0,
+        "pct": null
+      },
+      "fallasLpr": {
+        "dia": 241,
+        "noche": 142
+      }
+    }
+  ]
+}

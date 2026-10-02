@@ -1,0 +1,606 @@
+{
+  "blind_test": {
+    "n": 4777,
+    "with_candidate": 4053,
+    "unique": 2010,
+    "strict": 405,
+    "correct_top": 703,
+    "correct_unique": 475,
+    "correct_strict": 150
+  },
+  "nonstandard": {
+    "n": 6928,
+    "with_candidate": 3289,
+    "unique": 1611,
+    "strict": 101,
+    "correct_top": null,
+    "correct_unique": null,
+    "correct_strict": null
+  },
+  "training": "2026-09-24/2026-09-26",
+  "evaluation": "2026-09-27/2026-09-30",
+  "learned_transitions": 99,
+  "per_camera": [
+    {
+      "camera": "RenCargFte",
+      "all_captures": 154,
+      "test_n": 37,
+      "strict_n": 3,
+      "strict_correct": 2,
+      "nonstandard_test_period": 14,
+      "nonstandard_no_candidate": 3,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RenCargTras",
+      "all_captures": 255,
+      "test_n": 4,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 79,
+      "nonstandard_no_candidate": 79,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RenDescFte",
+      "all_captures": 8,
+      "test_n": 0,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 0,
+      "nonstandard_no_candidate": 0,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RenDescTras",
+      "all_captures": 7,
+      "test_n": 0,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 0,
+      "nonstandard_no_candidate": 0,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicB1Egreso",
+      "all_captures": 29,
+      "test_n": 0,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 2,
+      "nonstandard_no_candidate": 2,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicB1Ingreso",
+      "all_captures": 1410,
+      "test_n": 88,
+      "strict_n": 4,
+      "strict_correct": 0,
+      "nonstandard_test_period": 147,
+      "nonstandard_no_candidate": 16,
+      "nonstandard_strict": 14
+    },
+    {
+      "camera": "RicB2Egreso",
+      "all_captures": 1396,
+      "test_n": 9,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 52,
+      "nonstandard_no_candidate": 52,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicB2Ingreso",
+      "all_captures": 125,
+      "test_n": 0,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 15,
+      "nonstandard_no_candidate": 15,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicB3Egreso",
+      "all_captures": 242,
+      "test_n": 34,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 37,
+      "nonstandard_no_candidate": 37,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicB3Ingreso",
+      "all_captures": 261,
+      "test_n": 41,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 39,
+      "nonstandard_no_candidate": 39,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicC16Carga1",
+      "all_captures": 4,
+      "test_n": 0,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 0,
+      "nonstandard_no_candidate": 0,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicC16Carga2",
+      "all_captures": 3,
+      "test_n": 0,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 0,
+      "nonstandard_no_candidate": 0,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicCal01",
+      "all_captures": 90,
+      "test_n": 31,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 13,
+      "nonstandard_no_candidate": 13,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicCal02",
+      "all_captures": 141,
+      "test_n": 47,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 26,
+      "nonstandard_no_candidate": 26,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicCal03",
+      "all_captures": 767,
+      "test_n": 129,
+      "strict_n": 4,
+      "strict_correct": 3,
+      "nonstandard_test_period": 68,
+      "nonstandard_no_candidate": 7,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicCal04",
+      "all_captures": 925,
+      "test_n": 192,
+      "strict_n": 32,
+      "strict_correct": 6,
+      "nonstandard_test_period": 101,
+      "nonstandard_no_candidate": 12,
+      "nonstandard_strict": 1
+    },
+    {
+      "camera": "RicCal05",
+      "all_captures": 1,
+      "test_n": 0,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 1,
+      "nonstandard_no_candidate": 1,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicCal06",
+      "all_captures": 5,
+      "test_n": 0,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 3,
+      "nonstandard_no_candidate": 3,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicCalLiq",
+      "all_captures": 626,
+      "test_n": 113,
+      "strict_n": 20,
+      "strict_correct": 5,
+      "nonstandard_test_period": 19,
+      "nonstandard_no_candidate": 2,
+      "nonstandard_strict": 2
+    },
+    {
+      "camera": "RicEgrCamFrente",
+      "all_captures": 1808,
+      "test_n": 343,
+      "strict_n": 58,
+      "strict_correct": 26,
+      "nonstandard_test_period": 207,
+      "nonstandard_no_candidate": 20,
+      "nonstandard_strict": 12
+    },
+    {
+      "camera": "RicEgrCamTraser",
+      "all_captures": 1574,
+      "test_n": 33,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 322,
+      "nonstandard_no_candidate": 322,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicIngCamFrente",
+      "all_captures": 88,
+      "test_n": 0,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 0,
+      "nonstandard_no_candidate": 0,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicIngCamTrasera",
+      "all_captures": 1853,
+      "test_n": 2,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 678,
+      "nonstandard_no_candidate": 678,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicPreIngEgFr",
+      "all_captures": 55,
+      "test_n": 1,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 18,
+      "nonstandard_no_candidate": 18,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicPreIngEgTr",
+      "all_captures": 5,
+      "test_n": 0,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 0,
+      "nonstandard_no_candidate": 0,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicPreIngInFr",
+      "all_captures": 2225,
+      "test_n": 288,
+      "strict_n": 8,
+      "strict_correct": 1,
+      "nonstandard_test_period": 94,
+      "nonstandard_no_candidate": 10,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicPreIngInTr",
+      "all_captures": 2145,
+      "test_n": 25,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 455,
+      "nonstandard_no_candidate": 318,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicS6Playa3",
+      "all_captures": 1102,
+      "test_n": 91,
+      "strict_n": 13,
+      "strict_correct": 2,
+      "nonstandard_test_period": 109,
+      "nonstandard_no_candidate": 36,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicS7Carga",
+      "all_captures": 518,
+      "test_n": 15,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 93,
+      "nonstandard_no_candidate": 93,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicS7DescLinea1",
+      "all_captures": 2,
+      "test_n": 0,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 0,
+      "nonstandard_no_candidate": 0,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicS7DescLinea2",
+      "all_captures": 140,
+      "test_n": 17,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 31,
+      "nonstandard_no_candidate": 31,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicS8CargaLinea1",
+      "all_captures": 14,
+      "test_n": 1,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 1,
+      "nonstandard_no_candidate": 1,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicS8CargaLinea2",
+      "all_captures": 803,
+      "test_n": 32,
+      "strict_n": 1,
+      "strict_correct": 1,
+      "nonstandard_test_period": 190,
+      "nonstandard_no_candidate": 148,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicVolcable1",
+      "all_captures": 304,
+      "test_n": 3,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 10,
+      "nonstandard_no_candidate": 10,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "RicVolcable2",
+      "all_captures": 355,
+      "test_n": 0,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 58,
+      "nonstandard_no_candidate": 58,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "SLZBalIngFte",
+      "all_captures": 2487,
+      "test_n": 549,
+      "strict_n": 53,
+      "strict_correct": 26,
+      "nonstandard_test_period": 144,
+      "nonstandard_no_candidate": 7,
+      "nonstandard_strict": 5
+    },
+    {
+      "camera": "SLZBalIngTras",
+      "all_captures": 4268,
+      "test_n": 295,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 493,
+      "nonstandard_no_candidate": 114,
+      "nonstandard_strict": 2
+    },
+    {
+      "camera": "SLZBalLiq1a",
+      "all_captures": 35,
+      "test_n": 8,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 3,
+      "nonstandard_no_candidate": 3,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "SLZBalLiq1b",
+      "all_captures": 60,
+      "test_n": 15,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 10,
+      "nonstandard_no_candidate": 10,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "SLZBalLiq2a",
+      "all_captures": 71,
+      "test_n": 8,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 18,
+      "nonstandard_no_candidate": 18,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "SLZBalLiq2b",
+      "all_captures": 38,
+      "test_n": 3,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 13,
+      "nonstandard_no_candidate": 13,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "SLZBalSC1Fte",
+      "all_captures": 239,
+      "test_n": 36,
+      "strict_n": 2,
+      "strict_correct": 2,
+      "nonstandard_test_period": 29,
+      "nonstandard_no_candidate": 13,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "SLZBalSC1Tras",
+      "all_captures": 410,
+      "test_n": 70,
+      "strict_n": 9,
+      "strict_correct": 7,
+      "nonstandard_test_period": 24,
+      "nonstandard_no_candidate": 6,
+      "nonstandard_strict": 1
+    },
+    {
+      "camera": "SLZBalSC2Fte",
+      "all_captures": 417,
+      "test_n": 18,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 210,
+      "nonstandard_no_candidate": 210,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "SLZBalSC2Tras",
+      "all_captures": 84,
+      "test_n": 2,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 14,
+      "nonstandard_no_candidate": 14,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "SLZCalado",
+      "all_captures": 246,
+      "test_n": 77,
+      "strict_n": 17,
+      "strict_correct": 4,
+      "nonstandard_test_period": 7,
+      "nonstandard_no_candidate": 0,
+      "nonstandard_strict": 1
+    },
+    {
+      "camera": "SLZIngCamFrente",
+      "all_captures": 1958,
+      "test_n": 504,
+      "strict_n": 94,
+      "strict_correct": 26,
+      "nonstandard_test_period": 163,
+      "nonstandard_no_candidate": 14,
+      "nonstandard_strict": 11
+    },
+    {
+      "camera": "SLZIngCamTrasera",
+      "all_captures": 1766,
+      "test_n": 87,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 474,
+      "nonstandard_no_candidate": 179,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "SLZSalidaC1Fte",
+      "all_captures": 3078,
+      "test_n": 513,
+      "strict_n": 44,
+      "strict_correct": 11,
+      "nonstandard_test_period": 181,
+      "nonstandard_no_candidate": 5,
+      "nonstandard_strict": 11
+    },
+    {
+      "camera": "SLZSalidaC1Tras",
+      "all_captures": 3490,
+      "test_n": 360,
+      "strict_n": 4,
+      "strict_correct": 3,
+      "nonstandard_test_period": 512,
+      "nonstandard_no_candidate": 190,
+      "nonstandard_strict": 3
+    },
+    {
+      "camera": "SLZSalidaC2Fte",
+      "all_captures": 848,
+      "test_n": 148,
+      "strict_n": 8,
+      "strict_correct": 7,
+      "nonstandard_test_period": 54,
+      "nonstandard_no_candidate": 12,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "SLZSalidaC2Tras",
+      "all_captures": 1375,
+      "test_n": 180,
+      "strict_n": 8,
+      "strict_correct": 4,
+      "nonstandard_test_period": 252,
+      "nonstandard_no_candidate": 75,
+      "nonstandard_strict": 5
+    },
+    {
+      "camera": "SLZTK400",
+      "all_captures": 3086,
+      "test_n": 132,
+      "strict_n": 10,
+      "strict_correct": 5,
+      "nonstandard_test_period": 1225,
+      "nonstandard_no_candidate": 610,
+      "nonstandard_strict": 25
+    },
+    {
+      "camera": "SLZVolcableC1",
+      "all_captures": 25,
+      "test_n": 0,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 8,
+      "nonstandard_no_candidate": 8,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "SLZVolcableC2",
+      "all_captures": 132,
+      "test_n": 13,
+      "strict_n": 0,
+      "strict_correct": 0,
+      "nonstandard_test_period": 35,
+      "nonstandard_no_candidate": 35,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "SLZVolcableC3",
+      "all_captures": 457,
+      "test_n": 77,
+      "strict_n": 1,
+      "strict_correct": 0,
+      "nonstandard_test_period": 37,
+      "nonstandard_no_candidate": 22,
+      "nonstandard_strict": 0
+    },
+    {
+      "camera": "SLZVolcableC4",
+      "all_captures": 416,
+      "test_n": 51,
+      "strict_n": 5,
+      "strict_correct": 3,
+      "nonstandard_test_period": 28,
+      "nonstandard_no_candidate": 8,
+      "nonstandard_strict": 3
+    },
+    {
+      "camera": "SLZVolcableC5",
+      "all_captures": 541,
+      "test_n": 55,
+      "strict_n": 7,
+      "strict_correct": 6,
+      "nonstandard_test_period": 112,
+      "nonstandard_no_candidate": 23,
+      "nonstandard_strict": 5
+    }
+  ],
+  "method": "Transiciones consecutivas con OCR>=80, minimo 5 ejemplos; compatibles con alguna secuencia del catalogo de circuitos (no circuito individual confirmado); ventana p05–p95 ±30s, máximo 6h; ranking por evidencia anterior y posterior, luego atributos. Puntajes heurísticos, no probabilidades calibradas. Etiqueta de referencia OCR, no identidad auditada."
+}

@@ -20,10 +20,11 @@
 /** @type {Record<string, SectorProfile>} */
 export const SECTOR_PROFILES = {
   RICARDONE_INGRESO_CAMIONES: { site: 'ricardone', type: 'gate', label: 'Ingreso', capacity: 28, edgeId: 'EDGE_INGRESO' },
-  RICARDONE_PREINGRESO: { site: 'ricardone', type: 'queue', label: 'Preingreso', capacity: 263, edgeId: 'EDGE_PREINGRESO' },
+  // Quien pasó preingreso espera en Playa 1 (300 camiones, dato de planta 29-09-2026).
+  RICARDONE_PREINGRESO: { site: 'ricardone', type: 'queue', label: 'Preingreso', capacity: 300, edgeId: 'EDGE_PREINGRESO' },
   RICARDONE_CALADA: { site: 'ricardone', type: 'process', label: 'Calada', capacity: 39, edgeId: 'EDGE_CALADA' },
   RICARDONE_BALANZA: { site: 'ricardone', type: 'scale', label: 'Balanza', capacity: 14, edgeId: 'EDGE_BALANZA' },
-  S6: { site: 'ricardone', type: 'buffer', label: 'Playa 3', capacity: 141, edgeId: 'EDGE_PLAYA' },
+  S6: { site: 'ricardone', type: 'buffer', label: 'Playa 3', capacity: 100, edgeId: 'EDGE_PLAYA' },
   RICARDONE_VOLCABLE: { site: 'ricardone', type: 'discharge', label: 'Volcables', capacity: 44, edgeId: 'EDGE_DESCARGA' },
   RICARDONE_CELDA_16: { site: 'ricardone', type: 'discharge', label: 'Celda 16', capacity: 44, edgeId: 'EDGE_DESCARGA' },
   S7: { site: 'ricardone', type: 'load', label: 'Despacho silos', capacity: 44, edgeId: 'EDGE_SILOS' },

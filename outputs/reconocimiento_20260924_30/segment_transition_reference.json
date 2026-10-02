@@ -1,0 +1,285 @@
+{
+  "scope": "full cached calendar weeks; logical transitions not camera pairs; not target-date filtered; no circuit conditioning",
+  "transitions": [
+    {
+      "from_logical": "INGRESO",
+      "to_logical": "PREINGRESO",
+      "n": 440,
+      "median_min": 2.245,
+      "p05_min": 1.44,
+      "p95_min": 8.095999999999995
+    },
+    {
+      "from_logical": "PREINGRESO",
+      "to_logical": "CALADA",
+      "n": 894,
+      "median_min": 55.12,
+      "p05_min": 12.0665,
+      "p95_min": 192.90699999999998
+    },
+    {
+      "from_logical": "CALADA",
+      "to_logical": "EGRESO",
+      "n": 970,
+      "median_min": 11.34,
+      "p05_min": 5.99,
+      "p95_min": 144.015
+    },
+    {
+      "from_logical": "EGRESO",
+      "to_logical": "SL_BALANZA_INGRESO",
+      "n": 226,
+      "median_min": 22.450000000000003,
+      "p05_min": 10.817499999999999,
+      "p95_min": 151.005
+    },
+    {
+      "from_logical": "SL_BALANZA_INGRESO",
+      "to_logical": "SL_EGRESO",
+      "n": 423,
+      "median_min": 58.5,
+      "p05_min": 19.78,
+      "p95_min": 146.89000000000001
+    },
+    {
+      "from_logical": "EGRESO",
+      "to_logical": "SL_INGRESO",
+      "n": 384,
+      "median_min": 15.02,
+      "p05_min": 8.9915,
+      "p95_min": 143.911
+    },
+    {
+      "from_logical": "SL_BALANZA_INGRESO",
+      "to_logical": "SL_VOLCABLE",
+      "n": 460,
+      "median_min": 50.59,
+      "p05_min": 8.446,
+      "p95_min": 137.25649999999996
+    },
+    {
+      "from_logical": "SL_VOLCABLE",
+      "to_logical": "SL_EGRESO",
+      "n": 446,
+      "median_min": 16.43,
+      "p05_min": 10.7225,
+      "p95_min": 30.9275
+    },
+    {
+      "from_logical": "INGRESO",
+      "to_logical": "EGRESO",
+      "n": 26,
+      "median_min": 14.510000000000002,
+      "p05_min": 2.56,
+      "p95_min": 200.66750000000002
+    },
+    {
+      "from_logical": "PREINGRESO",
+      "to_logical": "LIQUIDO",
+      "n": 223,
+      "median_min": 8.68,
+      "p05_min": 2.125,
+      "p95_min": 114.47599999999996
+    },
+    {
+      "from_logical": "PREINGRESO",
+      "to_logical": "EGRESO",
+      "n": 298,
+      "median_min": 10.665,
+      "p05_min": 2.25,
+      "p95_min": 192.74299999999994
+    },
+    {
+      "from_logical": "INGRESO",
+      "to_logical": "CALADA",
+      "n": 57,
+      "median_min": 32.65,
+      "p05_min": 2.088,
+      "p95_min": 189.75199999999995
+    },
+    {
+      "from_logical": "PLAYA",
+      "to_logical": "VOLCABLE",
+      "n": 39,
+      "median_min": 83.45,
+      "p05_min": 13.719999999999999,
+      "p95_min": 179.76400000000007
+    },
+    {
+      "from_logical": "VOLCABLE",
+      "to_logical": "BALANZA_EGRESO",
+      "n": 47,
+      "median_min": 17.16,
+      "p05_min": 9.612,
+      "p95_min": 25.337
+    },
+    {
+      "from_logical": "EGRESO",
+      "to_logical": "SL_VOLCABLE",
+      "n": 10,
+      "median_min": 127.535,
+      "p05_min": 19.798499999999997,
+      "p95_min": 172.8455
+    },
+    {
+      "from_logical": "CALADA",
+      "to_logical": "VOLCABLE",
+      "n": 17,
+      "median_min": 113.91,
+      "p05_min": 49.974,
+      "p95_min": 205.076
+    },
+    {
+      "from_logical": "CALADA",
+      "to_logical": "PLAYA",
+      "n": 24,
+      "median_min": 15.57,
+      "p05_min": 11.366,
+      "p95_min": 65.25699999999992
+    },
+    {
+      "from_logical": "PLAYA",
+      "to_logical": "BALANZA_EGRESO",
+      "n": 180,
+      "median_min": 53.9,
+      "p05_min": 22.4045,
+      "p95_min": 115.16749999999999
+    },
+    {
+      "from_logical": "INGRESO",
+      "to_logical": "LIQUIDO",
+      "n": 6,
+      "median_min": 3.8049999999999997,
+      "p05_min": 2.495,
+      "p95_min": 12.607499999999998
+    },
+    {
+      "from_logical": "LIQUIDO",
+      "to_logical": "PLAYA",
+      "n": 121,
+      "median_min": 9.34,
+      "p05_min": 6.69,
+      "p95_min": 43.07
+    },
+    {
+      "from_logical": "PREINGRESO",
+      "to_logical": "PLAYA",
+      "n": 17,
+      "median_min": 20.1,
+      "p05_min": 7.488,
+      "p95_min": 92.66399999999996
+    },
+    {
+      "from_logical": "PREINGRESO",
+      "to_logical": "BALANZA_EGRESO",
+      "n": 3,
+      "median_min": 114.1,
+      "p05_min": 22.939,
+      "p95_min": 214.05399999999997
+    },
+    {
+      "from_logical": "LIQUIDO",
+      "to_logical": "BALANZA_EGRESO",
+      "n": 54,
+      "median_min": 66.375,
+      "p05_min": 30.825499999999998,
+      "p95_min": 164.0709999999998
+    },
+    {
+      "from_logical": "CALADA",
+      "to_logical": "SL_BALANZA_INGRESO",
+      "n": 10,
+      "median_min": 23.0,
+      "p05_min": 20.264499999999998,
+      "p95_min": 29.883999999999993
+    },
+    {
+      "from_logical": "CALADA",
+      "to_logical": "SL_INGRESO",
+      "n": 53,
+      "median_min": 22.51,
+      "p05_min": 17.706,
+      "p95_min": 38.402
+    },
+    {
+      "from_logical": "SL_INGRESO",
+      "to_logical": "SL_BALANZA_INGRESO",
+      "n": 324,
+      "median_min": 96.645,
+      "p05_min": 3.5375,
+      "p95_min": 253.70199999999994
+    },
+    {
+      "from_logical": "BALANZA_EGRESO",
+      "to_logical": "SL_INGRESO",
+      "n": 217,
+      "median_min": 15.86,
+      "p05_min": 12.98,
+      "p95_min": 23.259999999999998
+    },
+    {
+      "from_logical": "BALANZA_EGRESO",
+      "to_logical": "SL_VOLCABLE",
+      "n": 10,
+      "median_min": 182.91500000000002,
+      "p05_min": 91.4905,
+      "p95_min": 189.67299999999997
+    },
+    {
+      "from_logical": "SL_INGRESO",
+      "to_logical": "SL_VOLCABLE",
+      "n": 19,
+      "median_min": 170.65,
+      "p05_min": 56.044,
+      "p95_min": 305.8849999999995
+    },
+    {
+      "from_logical": "BALANZA_EGRESO",
+      "to_logical": "SL_BALANZA_INGRESO",
+      "n": 17,
+      "median_min": 115.21,
+      "p05_min": 17.066,
+      "p95_min": 261.99799999999993
+    },
+    {
+      "from_logical": "SL_INGRESO",
+      "to_logical": "SL_EGRESO",
+      "n": 22,
+      "median_min": 114.42,
+      "p05_min": 40.536,
+      "p95_min": 240.18049999999997
+    },
+    {
+      "from_logical": "PREINGRESO",
+      "to_logical": "SL_INGRESO",
+      "n": 11,
+      "median_min": 63.13,
+      "p05_min": 45.59,
+      "p95_min": 245.63
+    },
+    {
+      "from_logical": "PLAYA",
+      "to_logical": "SL_INGRESO",
+      "n": 12,
+      "median_min": 51.11,
+      "p05_min": 25.4585,
+      "p95_min": 86.377
+    },
+    {
+      "from_logical": "PLAYA",
+      "to_logical": "SL_BALANZA_INGRESO",
+      "n": 2,
+      "median_min": 167.75,
+      "p05_min": 102.878,
+      "p95_min": 232.622
+    },
+    {
+      "from_logical": "BALANZA_INGRESO",
+      "to_logical": "PLAYA",
+      "n": 1,
+      "median_min": 4.57,
+      "p05_min": 4.57,
+      "p95_min": 4.57
+    }
+  ]
+}

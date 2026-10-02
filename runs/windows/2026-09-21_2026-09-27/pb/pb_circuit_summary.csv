@@ -1,0 +1,2 @@
+total_journeys,committee_completos,committee_variaciones_operativas,committee_anomalias,valid_journeys,probable_journeys,incomplete_journeys,anomalous_journeys,non_evaluable_journeys,valid_complete,valid_deduced,probable_inferred,non_evaluable_by_coverage,non_evaluable_missing_sequence,anomalous_no_respeta_secuencia
+1418,812,76,530,862,3,545,6,2,20,718,0,0,0,0

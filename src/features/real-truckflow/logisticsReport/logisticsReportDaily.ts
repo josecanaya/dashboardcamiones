@@ -85,6 +85,8 @@ export type DailyDemoraTramo = {
 export type DailyExtras = {
   dia: string
   movimientos: DailyMovimientos
+  /** Solo Ricardone y San Lorenzo (`NODO_SUR_PLANTAS`). */
+  movimientosNodoSur: DailyMovimientos
   anomalias: DailyAnomalias
   demorados: DailyDemoraTramo[]
 }
@@ -104,7 +106,14 @@ function horaEnDia(iso: string, dia: string): number | null {
   return m && m[1] === dia ? Number(m[2]) : null
 }
 
-export function buildDailyMovimientos(rows: Row[] | undefined, dia: string): DailyMovimientos {
+/** Nodo Sur: las dos plantas que evalúa el informe diario (Ricardone y el puerto de San Lorenzo). */
+export const NODO_SUR_PLANTAS: readonly string[] = ['RICARDONE', 'TERMINAL_EMBARQUE']
+
+export function buildDailyMovimientos(
+  rows: Row[] | undefined,
+  dia: string,
+  { plantas }: { plantas?: readonly string[] } = {}
+): DailyMovimientos {
   const out: DailyMovimientos = {
     total: 0,
     ingresos: 0,
@@ -124,6 +133,7 @@ export function buildDailyMovimientos(rows: Row[] | undefined, dia: string): Dai
   for (const r of rows ?? []) {
     if (str(r.source_date) !== dia) continue
     if (isExcludedExcelPlate(str(r.plate_normalized))) continue
+    if (plantas && !plantas.includes(str(r.planta_normalized))) continue
     out.total++
     const tipo = str(r.movement_type).toUpperCase()
     if (tipo === 'INGRESO') out.ingresos++
@@ -229,6 +239,7 @@ export function buildDailyExtras(input: DailyInput, dia: string): DailyExtras {
   return {
     dia,
     movimientos: buildDailyMovimientos(input.tables.excel_operations_with_truckflow?.rows, dia),
+    movimientosNodoSur: buildDailyMovimientos(input.tables.excel_operations_with_truckflow?.rows, dia, { plantas: NODO_SUR_PLANTAS }),
     anomalias: buildDailyAnomalias(input.tables.debug_matrix_classification?.rows, dia, input.excludedPlates),
     demorados: buildDailyDemorados(input.tables.segment_timing_legs?.rows, dayOf, dia),
   }

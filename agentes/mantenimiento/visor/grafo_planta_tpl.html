@@ -1,0 +1,384 @@
+<title>Grafo de descarga Nodo Sur</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dagre/0.8.5/dagre.min.js"></script>
+<style>
+/* Layout: barra de control arriba (planta, simulación, estado de plataformas), flujo del grano izquierda→derecha con dagre, ficha del equipo a la derecha. */
+:root {
+  --bg: #f2f4f5; --panel: #ffffff; --ink: #15202a; --muted: #5a6773; --line: #d2d9dd; --soft: #e7ecef;
+  --accent: #1f5f8b; --accent-soft: #dce9f3;
+  --ok: #1d7a4e; --ok-soft: #dcefe4; --warn: #a86a00; --warn-soft: #f6ead2; --bad: #b3261e; --bad-soft: #f7dcda;
+  --node: #ffffff; --edge: #7d8a95;
+  --display: "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10161b; --panel: #172028; --ink: #e5ebef; --muted: #97a5b1; --line: #2d3943; --soft: #1d2831;
+    --accent: #6fb3e0; --accent-soft: #1b3244; --ok: #5cc58f; --ok-soft: #1a3327; --warn: #e0a53c; --warn-soft: #3a2e17;
+    --bad: #f08a80; --bad-soft: #3d201e; --node: #1e2932; --edge: #7a8894; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10161b; --panel: #172028; --ink: #e5ebef; --muted: #97a5b1; --line: #2d3943; --soft: #1d2831;
+  --accent: #6fb3e0; --accent-soft: #1b3244; --ok: #5cc58f; --ok-soft: #1a3327; --warn: #e0a53c; --warn-soft: #3a2e17;
+  --bad: #f08a80; --bad-soft: #3d201e; --node: #1e2932; --edge: #7a8894; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 14px; line-height: 1.5; }
+.wrap { padding-inline: 20px; padding-block: 18px 40px; max-width: 1600px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 10px 24px; }
+h1 { font-family: var(--display); font-size: 26px; font-weight: 700; margin: 0; text-wrap: balance; }
+.lede { margin: 2px 0 0; color: var(--muted); max-width: 78ch; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 26px; border-top: 2px solid var(--edge); display: inline-block; }
+.sw.baja { border-top-style: dashed; }
+.sw.alt { border-top-style: dotted; border-top-width: 3px; }
+.dot { width: 11px; height: 11px; border-radius: 3px; display: inline-block; border: 1.5px solid var(--edge); }
+.dot.hot { background: var(--warn); border-color: var(--warn); }
+.dot.off { background: var(--bad); border-color: var(--bad); }
+
+.bar { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.tabs { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.tabs button { border: 0; border-radius: 0; background: transparent; color: var(--ink); padding: 7px 14px; font: 600 13px var(--body); cursor: pointer; }
+.tabs button[aria-pressed="true"] { background: var(--accent); color: var(--panel); }
+label.small { font-size: 12.5px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+select, input[type="date"] { font: 13px var(--body); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 7px; padding: 5px 8px; max-width: 100%; }
+button.b { font: 600 13px var(--body); border-radius: 7px; padding: 6px 12px; border: 1px solid var(--accent); background: var(--accent); color: var(--panel); cursor: pointer; }
+button.g { background: transparent; color: var(--accent); }
+button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.plats { display: flex; flex-wrap: wrap; gap: 6px; }
+.pc { font: 600 12px var(--display); letter-spacing: .02em; padding: 3px 10px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); border: 1px solid transparent; cursor: pointer; }
+.pc.red { background: var(--warn-soft); color: var(--warn); }
+.pc.det { background: var(--bad-soft); color: var(--bad); }
+.simtxt { font-size: 12.5px; color: var(--muted); }
+.simtxt b { color: var(--ink); }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 390px; gap: 14px; align-items: start; }
+@media (max-width: 1150px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.canvas { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: auto; max-height: 78vh; position: relative; }
+.zoom { position: sticky; top: 8px; left: 8px; z-index: 2; display: inline-flex; gap: 4px; margin: 8px; }
+.zoom button { font: 600 13px var(--mono); width: 30px; height: 28px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+svg { display: block; font-family: var(--display); }
+.n rect { fill: var(--node); stroke: var(--edge); stroke-width: 1.2; }
+.n.src rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.8; }
+.n.sink rect { stroke-dasharray: 0; stroke-width: 1.6; }
+.n.hot rect { stroke: var(--warn); stroke-width: 2; }
+.n.off rect { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 2.4; }
+.n.lost { opacity: .32; }
+.n.sel rect { stroke: var(--ink); stroke-width: 2.8; }
+.n.fade { opacity: .28; }
+.n { cursor: pointer; }
+.n text { fill: var(--ink); pointer-events: none; }
+.n .l1 { font-size: 12px; font-weight: 600; }
+.n .l2 { font-size: 10px; fill: var(--muted); font-family: var(--mono); }
+.n .bd { font-size: 10px; font-family: var(--mono); fill: var(--warn); font-weight: 600; }
+.e { fill: none; stroke: var(--edge); stroke-width: 1.3; }
+.e.baja { stroke-dasharray: 5 4; }
+.e.alt { stroke-dasharray: 1.5 3.5; stroke-width: 1.8; }
+.e.hi { stroke: var(--accent); stroke-width: 2.4; }
+.e.fade { opacity: .15; }
+.e.lost { opacity: .18; }
+.arrow { fill: var(--edge); }
+
+aside { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); max-height: calc(100vh - 24px); overflow-y: auto; }
+@media (max-width: 1150px) { aside { position: static; max-height: none; } }
+aside h2 { font-family: var(--display); font-size: 20px; margin: 4px 0 0; line-height: 1.2; text-wrap: balance; }
+aside h3 { font-family: var(--display); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+aside p { margin: 0; }
+.kv { font-family: var(--mono); font-size: 12px; color: var(--muted); word-break: break-word; }
+.chip { display: inline-block; font: 600 11px var(--body); padding: 1px 8px; border-radius: 999px; background: var(--soft); color: var(--muted); }
+.chip.detiene { background: var(--bad-soft); color: var(--bad); }
+.chip.reduce_capacidad { background: var(--warn-soft); color: var(--warn); }
+.chip.demora { background: var(--accent-soft); color: var(--accent); }
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+table.t { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+table.t td, table.t th { text-align: left; padding: 4px 6px 4px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.t th { font: 600 11px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+ul.l { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+.ot { font-size: 12.5px; border-left: 3px solid var(--line); padding: 2px 0 2px 8px; }
+.ot.f { border-left-color: var(--warn); }
+.ot.d { border-left-color: var(--bad); }
+.ot .m { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.ots { display: flex; flex-direction: column; gap: 6px; }
+.caso { font-size: 12.5px; display: flex; flex-direction: column; gap: 2px; padding-bottom: 8px; border-bottom: 1px dashed var(--line); }
+textarea { width: 100%; min-height: 76px; resize: vertical; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.status { font-size: 12.5px; color: var(--muted); }
+footer { color: var(--muted); font-size: 12.5px; max-width: 95ch; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Grafo de descarga Nodo Sur</h1>
+      <p class="lede">Por dónde pasa el grano desde cada plataforma de descarga hasta su destino, según el mapa de planta armado con el maestro de activos y las OT. Tocá un equipo para ver su ficha, sacalo de servicio y mirá qué plataformas se frenan.</p>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--accent-soft);border-color:var(--accent)"></i>Plataforma de descarga</span>
+      <span><i class="dot hot"></i>Con OT fuertes 10/06–29/09</span>
+      <span><i class="dot off"></i>Fuera de servicio (simulado)</span>
+      <span><i class="sw"></i>Confianza media</span>
+      <span><i class="sw baja"></i>Baja</span>
+      <span><i class="sw alt"></i>Camino alternativo</span>
+    </div>
+  </header>
+
+  <section class="bar" aria-label="Controles">
+    <div class="row">
+      <div class="tabs" role="group" aria-label="Planta">
+        <button type="button" id="tabR" aria-pressed="true">Ricardone</button>
+        <button type="button" id="tabP" aria-pressed="false">Puerto San Lorenzo</button>
+      </div>
+      <label class="small" for="prov">Cae un servicio
+        <select id="prov"><option value="">— ninguno —</option></select>
+      </label>
+      <label class="small" for="dia">Simular las OT que paran equipo del día
+        <input type="date" id="dia" min="2026-06-10" max="2026-09-29" value="2026-09-09">
+      </label>
+      <button type="button" class="b g" id="simDia">Simular día</button>
+      <button type="button" class="b g" id="reset">Todo en servicio</button>
+    </div>
+    <div class="row">
+      <div class="plats" id="plats" aria-live="polite"></div>
+      <span class="simtxt" id="simtxt"></span>
+    </div>
+  </section>
+
+  <div class="grid">
+    <div class="canvas" id="canvas">
+      <div class="zoom"><button type="button" id="zin" aria-label="Acercar">+</button><button type="button" id="zout" aria-label="Alejar">−</button><button type="button" id="zfit" aria-label="Ajustar">⤢</button></div>
+      <svg id="g" role="img" aria-label="Flujo del grano"></svg>
+    </div>
+    <aside id="panel" aria-live="polite"></aside>
+  </div>
+
+  <footer>Fuente: <code>mapa_planta_mantenimiento.json</code> (1.077 activos, 141 vínculos de flujo, 400 dependencias de servicio, 1.283 impactos). Los IFC solo tienen volúmenes de edificio, así que ningún vínculo es de confianza alta: salen de la descripción de los activos (sobre todo las válvulas «descarga desde X a Y») y del texto de las OT. OT fuertes = paran el equipo según su texto, emergencias, correctivas o urgentes. Fecha de OT = programada.</footer>
+</div>
+
+<script id="datos" type="application/json">__DATOS__</script>
+<script>
+const D = JSON.parse(document.getElementById('datos').textContent);
+const byId = Object.fromEntries(D.nodes.map(n => [n.id, n]));
+const ESTADO_TXT = { detiene: 'Detiene', reduce_capacidad: 'Reduce capacidad', demora: 'Demora' };
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const NS = 'http://www.w3.org/2000/svg';
+const svg = document.getElementById('g');
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); (parent || svg).appendChild(e); return e; };
+
+let planta = 'R', sel = null, fuera = new Set(), escala = 1, simLabel = '';
+
+function corto(s, n) { s = s.replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+function partir(nombre) {
+  const s = nombre.replace(/\s+/g, ' ').trim();
+  if (s.length <= 24) return [s];
+  let cut = s.lastIndexOf(' ', 24); if (cut < 12) cut = 24;
+  return [s.slice(0, cut), corto(s.slice(cut).trim(), 26)];
+}
+
+// Grafo por planta
+function grafoDe(p) {
+  const nodes = D.nodes.filter(n => n.planta === p);
+  const ids = new Set(nodes.map(n => n.id));
+  const edges = D.edges.filter(e => ids.has(e.a) && ids.has(e.b));
+  const out = {}; nodes.forEach(n => out[n.id] = []); edges.forEach(e => out[e.a].push(e.b));
+  const sinks = nodes.filter(n => !out[n.id].length).map(n => n.id);
+  const srcs = nodes.filter(n => n.plat.length).map(n => n.id);
+  return { nodes, edges, out, sinks: new Set(sinks), srcs };
+}
+
+function alcanzables(G, desde, bloq) {
+  if (bloq.has(desde)) return new Set();
+  const vis = new Set([desde]), pila = [desde];
+  while (pila.length) { const x = pila.pop(); for (const y of G.out[x]) if (!bloq.has(y) && !vis.has(y)) { vis.add(y); pila.push(y); } }
+  return vis;
+}
+
+function estadoPlataformas(G) {
+  const base = {}, ahora = {}, vivos = new Set();
+  const res = {};
+  G.srcs.forEach(s => {
+    const b = alcanzables(G, s, new Set()), a = alcanzables(G, s, fuera);
+    a.forEach(x => vivos.add(x));
+    const sb = [...b].filter(x => G.sinks.has(x)).length, sa = [...a].filter(x => G.sinks.has(x)).length;
+    byId[s].plat.forEach(p => {
+      const st = (!a.size || (sb > 0 && sa === 0)) ? 'det' : (sa < sb ? 'red' : 'ok');
+      const prev = res[p];
+      const rank = { ok: 0, red: 1, det: 2 };
+      // Una plataforma con varias rampas: queda detenida solo si todas lo están
+      if (!prev) res[p] = { st, dest: sa, base: sb, srcs: [s] };
+      else { prev.srcs.push(s); prev.dest += sa; prev.base += sb; prev.st = rank[st] < rank[prev.st] ? st : prev.st; }
+    });
+  });
+  return { res, vivos };
+}
+
+function dibujar() {
+  const G = grafoDe(planta);
+  const g = new dagre.graphlib.Graph();
+  g.setGraph({ rankdir: 'LR', nodesep: 12, ranksep: 54, marginx: 20, marginy: 50 });
+  g.setDefaultEdgeLabel(() => ({}));
+  G.nodes.forEach(n => g.setNode(n.id, { width: 178, height: 44 }));
+  G.edges.forEach(e => g.setEdge(e.a, e.b));
+  dagre.layout(g);
+  const W = g.graph().width, H = g.graph().height;
+  svg.innerHTML = '';
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('width', W * escala); svg.setAttribute('height', H * escala);
+  const defs = el('defs', {});
+  const mk = el('marker', { id: 'ar', viewBox: '0 0 8 8', refX: 7, refY: 4, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, defs);
+  el('path', { d: 'M0,0 L8,4 L0,8 z', class: 'arrow' }, mk);
+
+  const { res, vivos } = estadoPlataformas(G);
+  const hayFuera = fuera.size > 0;
+  const vecinos = new Set(); if (sel) { vecinos.add(sel); G.edges.forEach(e => { if (e.a === sel) vecinos.add(e.b); if (e.b === sel) vecinos.add(e.a); }); }
+
+  const ge = el('g', {});
+  G.edges.forEach(e => {
+    const pts = g.edge(e.a, e.b).points;
+    let d = `M${pts[0].x},${pts[0].y}`;
+    for (let i = 1; i < pts.length - 1; i++) { const m = { x: (pts[i].x + pts[i + 1].x) / 2, y: (pts[i].y + pts[i + 1].y) / 2 }; d += ` Q${pts[i].x},${pts[i].y} ${m.x},${m.y}`; }
+    d += ` L${pts[pts.length - 1].x},${pts[pts.length - 1].y}`;
+    let cls = 'e' + (e.c === 'baja' ? ' baja' : '') + (e.alt ? ' alt' : '');
+    if (sel) cls += (e.a === sel || e.b === sel) ? ' hi' : ' fade';
+    else if (hayFuera && (!vivos.has(e.a) || !vivos.has(e.b) || fuera.has(e.b))) cls += ' lost';
+    el('path', { d, class: cls, 'marker-end': 'url(#ar)' }, ge);
+  });
+  const gn = el('g', {});
+  G.nodes.forEach(n => {
+    const p = g.node(n.id), x = p.x - 89, y = p.y - 22;
+    let cls = 'n';
+    if (n.plat.length) cls += ' src';
+    if (G.sinks.has(n.id)) cls += ' sink';
+    if (n.fuertes >= 2) cls += ' hot';
+    if (fuera.has(n.id)) cls += ' off';
+    else if (hayFuera && !vivos.has(n.id)) cls += ' lost';
+    if (sel === n.id) cls += ' sel'; else if (sel && !vecinos.has(n.id)) cls += ' fade';
+    const gg = el('g', { class: cls, tabindex: 0, role: 'button', 'aria-label': n.nombre }, gn);
+    el('rect', { x, y, width: 178, height: 44, rx: n.plat.length ? 20 : 6 }, gg);
+    const lines = partir(n.nombre);
+    const tx = x + (n.plat.length ? 14 : 8);
+    lines.forEach((s, i) => { const t = el('text', { x: tx, y: y + (lines.length === 1 ? 20 : 17) + i * 13, class: 'l1' }, gg); t.textContent = s; });
+    const t2 = el('text', { x: tx, y: y + 39, class: 'l2' }, gg);
+    t2.textContent = n.plat.length ? '▶ ' + n.plat.join(', ') : n.tipo.replace('_', ' ');
+    if (n.fuertes) { const b = el('text', { x: x + 172, y: y + 12, 'text-anchor': 'end', class: 'bd' }, gg); b.textContent = n.fuertes + ' OT'; }
+    gg.addEventListener('click', () => seleccionar(n.id));
+    gg.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); seleccionar(n.id); } });
+  });
+
+  // Chips de plataformas
+  const cont = document.getElementById('plats');
+  const orden = Object.keys(res).sort();
+  cont.innerHTML = orden.map(p => {
+    const r = res[p]; const c = r.st === 'det' ? 'det' : r.st === 'red' ? 'red' : '';
+    const tip = r.st === 'det' ? 'detenida' : r.st === 'red' ? `reducida: llega a ${r.dest} de ${r.base} destinos` : 'normal';
+    return `<button type="button" class="pc ${c}" data-src="${esc(r.srcs[0])}" title="${esc(tip)}">${esc(p)}${r.st === 'det' ? ' · detenida' : r.st === 'red' ? ' · reducida' : ''}</button>`;
+  }).join('');
+  cont.querySelectorAll('.pc').forEach(b => b.addEventListener('click', () => seleccionar(b.dataset.src)));
+  const nd = orden.filter(p => res[p].st === 'det').length, nr = orden.filter(p => res[p].st === 'red').length;
+  document.getElementById('simtxt').innerHTML = hayFuera
+    ? `${simLabel ? esc(simLabel) + ': ' : ''}<b>${fuera.size}</b> equipo${fuera.size > 1 ? 's' : ''} fuera · <b>${nd}</b> plataforma${nd !== 1 ? 's' : ''} detenida${nd !== 1 ? 's' : ''}, <b>${nr}</b> reducida${nr !== 1 ? 's' : ''}`
+    : 'Todo en servicio. Tocá un equipo y usá «Sacar de servicio», elegí un servicio o simulá un día.';
+}
+
+function seleccionar(id) { sel = id; dibujar(); ficha(id); }
+
+function ficha(id) {
+  const n = byId[id];
+  const G = grafoDe(n.planta);
+  const entra = G.edges.filter(e => e.b === id), sale = G.edges.filter(e => e.a === id);
+  const imp = [...n.imp].sort((a, b) => ({ detiene: 0, reduce_capacidad: 1, demora: 2 }[a.e] - ({ detiene: 0, reduce_capacidad: 1, demora: 2 }[b.e])));
+  const provs = D.prov.filter(p => p.alimenta.includes(id));
+  const ots = [...n.ots].reverse();
+  const panel = document.getElementById('panel');
+  panel.innerHTML = `
+    <div><span class="chip">${esc(n.tipo.replace('_', ' '))}</span>${n.plat.length ? ` <span class="chip demora">plataforma ${esc(n.plat.join(', '))}</span>` : ''}
+      <h2>${esc(n.nombre)}</h2>
+      <p class="kv">${esc(n.id)}${n.sector ? ' · ' + esc(n.sector) : ''}</p></div>
+    ${n.funcion && n.funcion !== n.nombre ? `<p>${esc(n.funcion)}</p>` : ''}
+    <div class="row"><button type="button" class="b" id="tog">${fuera.has(id) ? 'Volver a servicio' : 'Sacar de servicio'}</button><button type="button" class="b g" id="ver">Ver todo el grafo</button></div>
+    ${imp.length ? `<div><h3>Efecto sobre la descarga</h3><table class="t"><tr><th>Plataforma</th><th>Efecto</th><th>Relación</th></tr>
+      ${imp.map(i => `<tr><td>${esc(i.p)}</td><td><span class="chip ${i.e}">${ESTADO_TXT[i.e] || i.e}</span></td><td class="kv">${esc(i.r)} · ${esc(i.c)}</td></tr>`).join('')}</table></div>` : ''}
+    ${entra.length ? `<div><h3>Recibe de</h3><ul class="l">${entra.map(e => `<li><a href="#" data-go="${esc(e.a)}">${esc(byId[e.a].nombre)}</a>${e.via.length ? ` <span class="kv">vía ${esc(e.via.join(', '))}</span>` : ''}<br><span class="kv">${esc(e.c)}${e.alt ? ' · alternativo' : ''} · ${esc(e.ev)}</span></li>`).join('')}</ul></div>` : ''}
+    ${sale.length ? `<div><h3>Entrega a</h3><ul class="l">${sale.map(e => `<li><a href="#" data-go="${esc(e.b)}">${esc(byId[e.b].nombre)}</a>${e.via.length ? ` <span class="kv">vía ${esc(e.via.join(', '))}</span>` : ''}<br><span class="kv">${esc(e.c)}${e.alt ? ' · alternativo' : ''} · ${esc(e.ev)}</span></li>`).join('')}</ul></div>` : ''}
+    ${n.serv.length || provs.length ? `<div><h3>Depende de</h3><ul class="l">${n.serv.map(s => `<li>${esc(s.de)} <span class="kv">${esc(s.t)}${s.b ? ' · bloqueante' : ''} · ${esc(s.c)}</span></li>`).join('')}
+      ${provs.filter(p => !n.serv.some(s => s.de === p.id)).map(p => `<li>${esc(p.nombre)} <span class="kv">aguas arriba en la alimentación</span></li>`).join('')}</ul></div>` : ''}
+    <div><h3>OT 10/06–29/09 (${n.ots.length})</h3>${ots.length ? `<div class="ots">${ots.slice(0, 25).map(o => `<div class="ot ${o.det ? 'd' : ''} ${!o.det && /EMERGEN|Correctivo|Urgente|Diferido/.test(o.tipo + o.pr) ? 'f' : ''}">${esc(o.t)}<br><span class="m">${esc(o.f)} · OT ${esc(o.ot)} · ${esc(o.tipo)} ${esc(o.pr)} · ${esc(o.res)}${o.det ? ' · para el equipo' : ''}</span></div>`).join('')}</div>${ots.length > 25 ? `<p class="kv">y ${ots.length - 25} más</p>` : ''}` : '<p class="kv">Sin OT que paren equipo en el período.</p>'}</div>
+    ${notaHtml(id)}`;
+  document.getElementById('tog').addEventListener('click', () => { fuera.has(id) ? fuera.delete(id) : fuera.add(id); simLabel = 'Manual'; dibujar(); ficha(id); });
+  document.getElementById('ver').addEventListener('click', () => { sel = null; dibujar(); resumen(); });
+  panel.querySelectorAll('[data-go]').forEach(a => a.addEventListener('click', ev => { ev.preventDefault(); seleccionar(a.dataset.go); }));
+  enlazarNota(id);
+}
+
+// Notas del visitante (solo en este navegador)
+const KEY = 'grafo-descarga-notas-v2';
+let notas = {}; try { notas = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (_) { notas = {}; }
+const guardar = () => { try { localStorage.setItem(KEY, JSON.stringify(notas)); } catch (_) {} };
+function notaHtml(id) {
+  return `<div style="display:flex;flex-direction:column;gap:6px"><h3><label for="nota">${id ? 'Tu nota sobre este equipo' : 'Nota general'}</label></h3>
+    <textarea id="nota" placeholder="${id ? 'Ej.: el EL1 descarga a la cinta C05' : 'Ej.: en septiembre la CT2 estaba llena'}">${esc(notas[id || '_'] || '')}</textarea>
+    <div class="row"><button type="button" class="b" id="copiar">Copiar todas las notas</button><span class="status" id="cnt"></span></div>
+    <p class="status" id="est">Pegá lo copiado en el chat y actualizo el mapa.</p></div>`;
+}
+function enlazarNota(id) {
+  const k = id || '_', ta = document.getElementById('nota');
+  ta.addEventListener('input', () => { if (ta.value.trim()) notas[k] = ta.value; else delete notas[k]; guardar(); contar(); });
+  document.getElementById('copiar').addEventListener('click', copiar);
+  contar();
+}
+function contar() { const c = document.getElementById('cnt'); if (c) { const k = Object.keys(notas).length; c.textContent = k ? `${k} nota${k > 1 ? 's' : ''}` : ''; } }
+function copiar() {
+  const ks = Object.keys(notas).filter(k => notas[k].trim()), st = document.getElementById('est');
+  if (!ks.length) { st.textContent = 'Todavía no hay notas.'; return; }
+  const s = 'Correcciones al mapa de planta:\n' + ks.map(k => `- ${k === '_' ? 'General' : byId[k].nombre + ' (' + k + ')'}: ${notas[k].trim()}`).join('\n');
+  const fb = () => { st.textContent = 'No pude copiar solo. Seleccioná el texto de abajo.'; const t = document.createElement('textarea'); t.value = s; t.readOnly = true; st.after(t); t.select(); };
+  try { navigator.clipboard.writeText(s).then(() => { st.textContent = 'Notas copiadas. Pegalas en el chat.'; }, fb); } catch (_) { fb(); }
+}
+
+function resumen() {
+  const panel = document.getElementById('panel');
+  const casos = D.casos.map(c => `<div class="caso"><div><span class="chip ${c.confirma ? (c.grado === 'total' ? 'ok' : 'reduce_capacidad') : 'detiene'}">${c.confirma ? (c.grado === 'total' ? 'lo explica' : 'lo explica en parte') : 'no lo explica'}</span> <b>${esc(c.caso)}</b></div><span>${esc(c.explicacion)}</span></div>`).join('');
+  const pregs = D.preguntas.map(q => `<li><b>${esc(q.tema)}</b><br><span class="kv">${esc(q.por_que_importa)} · preguntar a ${esc(q.a_quien_preguntar)}</span></li>`).join('');
+  panel.innerHTML = `
+    <div><h2>Qué dice el mapa</h2><p class="kv">${D.resumen.activos} activos · ${D.resumen.flujo} vínculos de flujo · ${D.resumen.serv} dependencias de servicio</p></div>
+    <p>Cada flecha es un paso del grano entre dos equipos. Si sacás un equipo de servicio, las plataformas que ya no llegan a ningún destino quedan <b>detenidas</b> y las que pierden algún destino, <b>reducidas</b>.</p>
+    <div><h3>Casos del cruce contra el mapa</h3>${casos}</div>
+    <div><h3>Preguntas abiertas (${D.preguntas.length})</h3><ul class="l">${pregs}</ul></div>
+    ${notaHtml(null)}`;
+  enlazarNota(null);
+}
+
+// Controles
+function cambiarPlanta(p) {
+  planta = p; sel = null; fuera = new Set(); simLabel = '';
+  document.getElementById('tabR').setAttribute('aria-pressed', p === 'R');
+  document.getElementById('tabP').setAttribute('aria-pressed', p === 'P');
+  const s = document.getElementById('prov');
+  s.innerHTML = '<option value="">— ninguno —</option>' + D.prov.filter(x => x.planta === p && x.alimenta.length).map(x => `<option value="${esc(x.id)}">${esc(corto(x.nombre, 40))} (${x.alimenta.length})</option>`).join('');
+  escala = 1; dibujar(); resumen();
+}
+document.getElementById('tabR').addEventListener('click', () => cambiarPlanta('R'));
+document.getElementById('tabP').addEventListener('click', () => cambiarPlanta('P'));
+document.getElementById('prov').addEventListener('change', ev => {
+  const p = D.prov.find(x => x.id === ev.target.value);
+  fuera = new Set(p ? p.alimenta : []); simLabel = p ? 'Cae ' + corto(p.nombre, 40) : ''; sel = null; dibujar();
+});
+document.getElementById('simDia').addEventListener('click', () => {
+  const v = document.getElementById('dia').value; if (!v) return;
+  const d = new Date(v + 'T00:00:00'), lo = new Date(d); lo.setDate(lo.getDate() - 2);
+  const iso = x => x.toISOString().slice(0, 10), a = iso(lo), b = v;
+  fuera = new Set(D.nodes.filter(n => n.planta === planta && n.ots.some(o => o.iso >= a && o.iso <= b && (o.det || /EMERGEN/i.test(o.tipo + o.pr)))).map(n => n.id));
+  simLabel = `OT que paran equipo del ${a.slice(8)}/${a.slice(5, 7)} al ${b.slice(8)}/${b.slice(5, 7)}`;
+  document.getElementById('prov').value = ''; sel = null; dibujar();
+});
+document.getElementById('reset').addEventListener('click', () => { fuera = new Set(); simLabel = ''; document.getElementById('prov').value = ''; sel = null; dibujar(); resumen(); });
+const zoom = f => { escala = Math.max(.4, Math.min(2, escala * f)); const vb = svg.viewBox.baseVal; svg.setAttribute('width', vb.width * escala); svg.setAttribute('height', vb.height * escala); };
+document.getElementById('zin').addEventListener('click', () => zoom(1.2));
+document.getElementById('zout').addEventListener('click', () => zoom(1 / 1.2));
+document.getElementById('zfit').addEventListener('click', () => { const vb = svg.viewBox.baseVal, w = document.getElementById('canvas').clientWidth - 20; escala = Math.min(1.4, w / vb.width); zoom(1); });
+
+cambiarPlanta('R');
+</script>

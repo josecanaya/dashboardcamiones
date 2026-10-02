@@ -1,0 +1,44 @@
+{
+ "liquidos": {
+  "camiones": 383,
+  "media": 328,
+  "mediana": 249,
+  "ingresos": 150,
+  "egresos": 233,
+  "dia": [
+   71,
+   52,
+   17,
+   9,
+   79,
+   81,
+   74
+  ],
+  "prev_mismo_criterio": 282
+ },
+ "pellet": {
+  "egresos": 348,
+  "media": 104,
+  "transile": 307,
+  "despachos": 43,
+  "dia": [
+   41,
+   70,
+   90,
+   0,
+   0,
+   0,
+   106
+  ]
+ },
+ "girasol_p2p_excel_mediana": 861,
+ "r29_dia": [
+  112,
+  64,
+  42,
+  116,
+  118,
+  64,
+  0
+ ]
+}

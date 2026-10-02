@@ -61,17 +61,16 @@ export const REAL_SECTOR_CODE_MAP: Record<string, RealSectorMappingEntry> = {
     logicalSector: 'S9',
     label: 'Volcable Ricardone',
   },
+  // Modelo de nodos: Celda 16 = S5 (antes S9, chocaba con Volcable). El egreso S3 coincide
+  // con el modelo: la única cámara de salida (RicEgrCamFrente) es Salida 2 = S3.
   RICARDONE_CELDA_16: {
     siteId: 'ricardone',
-    logicalSector: 'S9',
+    logicalSector: 'S5',
     label: 'Celda 16 Ricardone',
   },
-  // —— Grupo nuevo S6/S7/S8 (matriz de circuito = fuente de verdad). Las cámaras
-  //    nuevas reportan el sectorCode ya en S-code. Alta aditiva; ver
-  //    docs/NUEVAS_CAMARAS_RICARDONE.md.
-  //    ⚠️ Pendiente de reconciliación: los S-codes viejos de Ricardone acá
-  //    (S3=egreso, Celda16=S9) difieren de la matriz (S3=Salida 2, Celda16=S5).
-  //    No se tocan en este alta para no cambiar coberturas existentes sin gate.
+  // —— Grupo S6/S7/S8. El feed actual manda `2-S6`… y se resuelve con
+  //    src/etl-core/domain/nodoSur.ts (modelo de nodos = fuente de verdad); este mapa
+  //    queda para los sectorCode legacy (`RICARDONE_*`, `S6`).
   S6: {
     siteId: 'ricardone',
     logicalSector: 'S6',

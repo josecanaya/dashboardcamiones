@@ -1,0 +1,48 @@
+{
+  "v": 4,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-09-30T15:30:00Z"
+  },
+  "lists": "css",
+  "title": "Reconocimiento de cámaras · Septiembre",
+  "order": [
+    "portada",
+    "resumen",
+    "semanas",
+    "ricardone",
+    "san-lorenzo",
+    "meta",
+    "cien",
+    "ruta-sl",
+    "ruta-ric",
+    "monitoreo",
+    "objetivos"
+  ],
+  "sections": {
+    "s1": {
+      "description": "Portada y resultado del mes",
+      "start": "portada"
+    },
+    "s2": {
+      "description": "Evolución semana a semana y detalle cámara por cámara de cada planta",
+      "start": "semanas"
+    },
+    "s3": {
+      "description": "Hasta dónde ya se llegó: turnos de 98–99 % y momentos al 100 %",
+      "start": "meta"
+    },
+    "s4": {
+      "description": "Propuesta: ruta de calibración por planta, monitoreo y objetivos finales",
+      "start": "ruta-sl"
+    }
+  },
+  "cover": "portada",
+  "faces": {
+    "ibm-plex-sans": {
+      "family": "IBM Plex Sans",
+      "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap"
+    }
+  },
+  "designSystems": []
+}

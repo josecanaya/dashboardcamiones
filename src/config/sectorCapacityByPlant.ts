@@ -18,7 +18,7 @@ export type SectorCapacityMap = Record<string, number>
  * S4-S5: 20 | S5-S7: 14 | S5-S8: 24 | S8-S2 o S1: 11 | S10: 11
  */
 export const SECTOR_CAPACITY_SAN_LORENZO: SectorCapacityMap = {
-  S0: 92,   // S0-S1 u S2 (playa compartida)
+  S0: 150,  // S0-S1 u S2 = Playa OSL (dato de planta 29-09-2026; densidad daba 92)
   S1: 2,    // S1 (camino)
   S2: 2,    // S2 (camino)
   S3: 13,   // S1-S3 (más restrictivo que S3-S4)
@@ -37,12 +37,12 @@ export const SECTOR_CAPACITY_SAN_LORENZO: SectorCapacityMap = {
  */
 export const SECTOR_CAPACITY_RICARDONE: SectorCapacityMap = {
   S0: 28,   // S0-S1
-  S1: 263,  // S1-S2 (playa)
+  S1: 300,  // S1-S2 = Playa 1 (dato de planta 29-09-2026; densidad daba 263)
   S2: 39,   // S2-S3 (más restrictivo que S2-S4)
   S3: 39,   // S2-S3
   S4: 14,   // S4-S5
   S5: 14,   // S4-S5
-  S6: 141,  // S6 (playa)
+  S6: 100,  // S6 = Playa 3 (dato de planta 29-09-2026; densidad daba 141)
   S7: 44,   // Pulmon (fallback)
   S8: 44,   // Pulmon (fallback)
   S9: 44,   // Pulmon (fallback)

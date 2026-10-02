@@ -1,0 +1,24 @@
+{
+  "ricardone": {
+    "EEW075": {
+      "action": "remove",
+      "journeyUid": "7e284d6e-4910-413c-ad82-71cd2405e595",
+      "updatedAt": "2026-09-30T12:52:02.221Z"
+    },
+    "ROL445": {
+      "action": "remove",
+      "journeyUid": "d23809fa-23c3-4396-be1f-7e2638a14e83",
+      "updatedAt": "2026-09-30T12:53:54.676Z"
+    },
+    "924KHA": {
+      "action": "remove",
+      "journeyUid": "76bb2914-7570-4db3-af9c-ef411b0903a2",
+      "updatedAt": "2026-09-30T19:15:15.593Z"
+    },
+    "DJG36": {
+      "action": "remove",
+      "journeyUid": "5129c72c-8d69-4b17-8703-15af5e004b25",
+      "updatedAt": "2026-09-30T19:15:26.922Z"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+executive_circuit_code,circuit_name,executive_status,n_journeys,mean_total_min,std_total_min,median_total_min,p90_total_min,min_total_min,max_total_min,q1_total_min,q3_total_min,iqr_total_min,min_plate,max_plate
+R5,Recepción Volcable 1,VALIDO,106,259.92,98.76,257.28,370.35,79.27,682.14,178.70,329.74,151.03,AE845AO,UUO981
+R6,Recepción Volcable 2,VALIDO,14,367.00,244.25,339.33,757.68,19.09,775.33,275.99,396.59,120.59,AA874CB,UUO981
+R7,Ricardone → San Lorenzo,VALIDO,1049,150.85,113.06,138.97,298.88,3.19,877.35,56.63,228.49,171.86,RQC013,UWX998
+R8,Recepción Mercadería Líquida,VALIDO,41,199.59,157.81,165.31,456.27,20.84,612.87,71.92,252.44,180.52,DOE150,LNP788
+R9,Despacho Celda 16,VALIDO,1,451.35,0.00,451.35,451.35,451.35,451.35,451.35,451.35,0.00,AD001TD,AD001TD
+SL1,Recepción Carga OSL San Lorenzo,VALIDO,6,221.78,92.44,220.89,317.43,126.81,351.55,139.28,279.08,139.80,AB608FB,AA875OG
+RS_REC,Recepción sólida inferida (sin cámara destino),VALIDO,1,123.43,0.00,123.43,123.43,123.43,123.43,123.43,123.43,0.00,JHE408,JHE408

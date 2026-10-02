@@ -53,5 +53,9 @@ simulador/.runtime/
 # scratchpad de diagnóstico (no commitear)
 scratchpad/
 
+# Temporales locales de generación y validación de presentaciones
+.codex-build/
+.chart-data-*/
+
 # go2rtc: binario local para el video en vivo (se baja aparte)
 tools/go2rtc/

@@ -13,14 +13,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '../..')
 
 /**
- * sectorCode del feed / perfil → código lógico de la matriz de circuitos.
- * Nota: Celda 16 → S5 (matriz); Volcable → S9; Egreso → S10 (salida tras 2ª balanza).
+ * sectorCode del feed / perfil → código del nodo (modelo de nodos del Nodo Sur,
+ * src/etl-core/domain/nodoSur.ts). Celda 16 → S5; Volcable 1/2 → S9. El egreso es S3:
+ * la única cámara de salida (RicEgrCamFrente) es Salida 2 y la reporta como `2-S3`;
+ * Salida 1 (S10) no tiene cámara.
  */
 const SECTOR_TO_LOGICAL = {
   RICARDONE_INGRESO_CAMIONES: 'S0',
   RICARDONE_PREINGRESO: 'S1',
   RICARDONE_CALADA: 'S2',
-  RICARDONE_EGRESO_CAMIONES: 'S10',
+  RICARDONE_EGRESO_CAMIONES: 'S3',
   RICARDONE_BALANZA: 'S4',
   RICARDONE_CELDA_16: 'S5',
   RICARDONE_VOLCABLE: 'S9',
@@ -47,54 +49,53 @@ const SECTOR_TO_LOGICAL = {
   PUERTO_SAN_LORENZO_LIQUIDOS_PUNTO_1: 'SL_S10',
 }
 
+/** Etiquetas de nodo del modelo de nodos (nombres cortos del explorador). */
 const LOGICAL_LABELS = {
   S0: 'Ingreso',
   S1: 'Preingreso',
   S2: 'Calada',
-  S3: 'Egreso / Salida 2',
+  S3: 'Salida 2',
   S4: 'Balanza',
   S5: 'Celda 16',
   S6: 'Playa 3',
-  S7: 'Despacho silos',
-  S8: 'Carga silo Chief',
+  S7: 'Silo Keppler',
+  S8: 'Tolva silo Chief',
   S9: 'Volcable',
-  S10: 'Egreso',
+  S10: 'Salida 1',
   SL_S0: 'Ingreso SL',
   SL_S1: 'Balanza ingreso SL',
   SL_S2: 'Calada SL',
-  SL_S4: 'Volcable SL',
-  SL_S5: 'Balanza salida SL',
-  SL_S6: 'Balanza liquidos SL',
+  SL_S3: 'Playa volcables SL',
+  SL_S4: 'Volcables SL',
+  SL_S5: 'Balanza egreso SL',
+  SL_S6: 'Carga y descarga SL',
   SL_S7: 'Egreso SL',
-  SL_S8: 'Ingreso Renova',
-  SL_S10: 'Liquidos punto 1',
+  SL_S8: 'Renova',
+  SL_S10: 'Carga OSL',
   ESPERA: 'Espera',
 }
 
-/** Fallback si tsx no puede cargar el catálogo (mismas baseSequence de circuitos Ricardone comunes). */
+/** Fallback si tsx no puede cargar el catálogo (baseSequence del modelo de nodos, circuitos comunes). */
 const FALLBACK_ENTRIES = [
   {
     code: 'R1',
     label: 'Recepción Celda 16',
-    sequences: [
-      ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S10'],
-      ['S0', 'S1', 'ESPERA', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S10'],
-    ],
+    sequences: [['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S4']],
   },
   {
     code: 'R5',
     label: 'Recepción Volcable 1',
     sequences: [
-      ['S0', 'S1', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
-      ['S0', 'S1', 'ESPERA', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
+      ['S0', 'S1', 'S2', 'S4', 'S6', 'S9', 'S4'],
+      ['S0', 'S1', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4'],
     ],
   },
   {
     code: 'R6',
     label: 'Recepción Volcable 2',
     sequences: [
-      ['S0', 'S1', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
-      ['S0', 'S1', 'ESPERA', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
+      ['S0', 'S1', 'S2', 'S4', 'S6', 'S9', 'S4'],
+      ['S0', 'S1', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4'],
     ],
   },
   {
@@ -160,6 +161,9 @@ export function sectorToLogical(sectorCode) {
   const key = String(sectorCode ?? '').trim()
   if (!key) return null
   if (SECTOR_TO_LOGICAL[key]) return SECTOR_TO_LOGICAL[key]
+  // Feed TruckFlow: `2-S6` = Ricardone S6, `1-S1` = San Lorenzo S1.
+  const feed = /^([12])-(S\d+)$/i.exec(key)
+  if (feed) return feed[1] === '2' ? feed[2].toUpperCase() : `SL_${feed[2].toUpperCase()}`
   if (/^(SL_)?S\d+$/i.test(key)) return key.toUpperCase()
   return null
 }

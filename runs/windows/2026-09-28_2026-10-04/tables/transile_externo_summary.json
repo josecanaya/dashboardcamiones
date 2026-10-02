@@ -1,0 +1,29 @@
+{
+  "name": "transile_externo_summary",
+  "headers": [
+    "total_movimientos",
+    "movimientos_de_vuelta",
+    "patentes_con_vuelta",
+    "operaciones_pellet",
+    "operaciones_soja",
+    "operaciones_girasol",
+    "operaciones_aceite",
+    "operaciones_sin_familia",
+    "columna_detectada",
+    "headers_muestra"
+  ],
+  "rows": [
+    {
+      "total_movimientos": 1442,
+      "movimientos_de_vuelta": 320,
+      "patentes_con_vuelta": 52,
+      "operaciones_pellet": 106,
+      "operaciones_soja": 202,
+      "operaciones_girasol": 0,
+      "operaciones_aceite": 0,
+      "operaciones_sin_familia": 12,
+      "columna_detectada": "",
+      "headers_muestra": ""
+    }
+  ]
+}

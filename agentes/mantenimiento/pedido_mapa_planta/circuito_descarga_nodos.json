@@ -1,0 +1,2546 @@
+{
+ "_doc": "Circuito de camiones del Nodo Sur (Ricardone + Puerto San Lorenzo / Terminal Embarque). Fuente: modelo_nodo_sur.json del dashboard. nodes = puntos por donde pasa el camión (con cámara LPR o sin ella); edges = tramos posibles; circuits = recorridos R*/SL* como secuencia de nodos. plataformas_excel = cómo el Excel de movimientos nombra el punto de descarga de cada camión y a qué nodo corresponde.",
+ "nodes": [
+  {
+   "id": "ricardone:Ingreso",
+   "plant": "ricardone",
+   "label": "Ingreso",
+   "code": "S0",
+   "hasCamera": true,
+   "devices": [
+    "RicIngCamFrente"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Pre ingreso",
+   "plant": "ricardone",
+   "label": "Preingreso",
+   "code": "S1",
+   "hasCamera": true,
+   "devices": [
+    "RicPreIngInFr",
+    "RicPreIngEgFr"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Calada",
+   "plant": "ricardone",
+   "label": "Calada",
+   "code": "S2",
+   "hasCamera": true,
+   "devices": [
+    "RicCal01",
+    "RicCal02",
+    "RicCal03",
+    "RicCal04",
+    "RicCal05",
+    "RicCal06",
+    "RicCalLiq"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Balanza Ingreso",
+   "plant": "ricardone",
+   "label": "Balanza ingreso",
+   "code": "S4",
+   "hasCamera": true,
+   "devices": [
+    "RicB1Ingreso",
+    "RicB2Ingreso",
+    "RicB3Ingreso"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Playa 3",
+   "plant": "ricardone",
+   "label": "Playa 3",
+   "code": "S6",
+   "hasCamera": true,
+   "devices": [
+    "RicS6Playa3"
+   ],
+   "area": true,
+   "capacity": 100,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Celda 16",
+   "plant": "ricardone",
+   "label": "Celda 16",
+   "code": "S5",
+   "hasCamera": true,
+   "devices": [
+    "RicC16Carga1",
+    "RicC16Carga2",
+    "RicC16Descarga1",
+    "RicC16Descarga2"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Silo Australiano",
+   "plant": "ricardone",
+   "label": "Silo Australiano",
+   "code": "",
+   "hasCamera": false,
+   "devices": [],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Volcable Silo Keppler",
+   "plant": "ricardone",
+   "label": "Silo Keppler",
+   "code": "S7",
+   "hasCamera": true,
+   "devices": [
+    "RicS7DescLinea1",
+    "RicS7DescLinea2",
+    "RicS7Carga"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Volcable Silo Chief",
+   "plant": "ricardone",
+   "label": "Silo Chief",
+   "code": "S8",
+   "hasCamera": true,
+   "devices": [
+    "RicS8CargaLinea1",
+    "RicS8CargaLinea2"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Tolva de carga Celda 09",
+   "plant": "ricardone",
+   "label": "Tolva Celda 09",
+   "code": "",
+   "hasCamera": false,
+   "devices": [],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Tolva de carga Celda 10",
+   "plant": "ricardone",
+   "label": "Tolva Celda 10",
+   "code": "",
+   "hasCamera": false,
+   "devices": [],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Tolva de carga Celda 11",
+   "plant": "ricardone",
+   "label": "Tolva Celda 11",
+   "code": "",
+   "hasCamera": false,
+   "devices": [],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Tolva de carga silo Chief",
+   "plant": "ricardone",
+   "label": "Tolva silo Chief",
+   "code": "S8",
+   "hasCamera": true,
+   "devices": [
+    "RicS8CargaLinea1",
+    "RicS8CargaLinea2"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Volcable 1",
+   "plant": "ricardone",
+   "label": "Volcable 1",
+   "code": "S9",
+   "hasCamera": true,
+   "devices": [
+    "RicVolcable1"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Volcable 2",
+   "plant": "ricardone",
+   "label": "Volcable 2",
+   "code": "S9",
+   "hasCamera": true,
+   "devices": [
+    "RicVolcable2"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Liquidos Carga/Descarga",
+   "plant": "ricardone",
+   "label": "Líquidos",
+   "code": "",
+   "hasCamera": false,
+   "devices": [],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Balanza Egreso",
+   "plant": "ricardone",
+   "label": "Balanza egreso",
+   "code": "S4",
+   "hasCamera": true,
+   "devices": [
+    "RicB1Egreso",
+    "RicB2Egreso",
+    "RicB3Egreso"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Playa de egreso",
+   "plant": "ricardone",
+   "label": "Playa de salida",
+   "code": "",
+   "hasCamera": false,
+   "devices": [],
+   "area": true,
+   "capacity": 4,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Salida 1",
+   "plant": "ricardone",
+   "label": "Salida 1",
+   "code": "S10",
+   "hasCamera": false,
+   "devices": [],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Salida 2",
+   "plant": "ricardone",
+   "label": "Salida 2",
+   "code": "S3",
+   "hasCamera": true,
+   "devices": [
+    "RicEgrCamFrente"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "san_lorenzo:Ingreso",
+   "plant": "san_lorenzo",
+   "label": "Ingreso",
+   "code": "S0",
+   "hasCamera": true,
+   "devices": [
+    "SLZIngCamFrente"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "san_lorenzo:Calada",
+   "plant": "san_lorenzo",
+   "label": "Calada",
+   "code": "S2",
+   "hasCamera": true,
+   "devices": [
+    "SLZCalado",
+    "SLZCalCam"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "san_lorenzo:Balanza Ingreso",
+   "plant": "san_lorenzo",
+   "label": "Balanza ingreso",
+   "code": "S1",
+   "hasCamera": true,
+   "devices": [
+    "SLZBalIngFte"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "san_lorenzo:Carga / Descarga OSL",
+   "plant": "san_lorenzo",
+   "label": "Carga OSL",
+   "code": "S10",
+   "hasCamera": true,
+   "devices": [
+    "RenCargFte",
+    "RenDescFte"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "san_lorenzo:Playa OSL",
+   "plant": "san_lorenzo",
+   "label": "Playa OSL",
+   "code": "S3",
+   "hasCamera": false,
+   "devices": [],
+   "area": true,
+   "capacity": 150,
+   "optional": false
+  },
+  {
+   "id": "san_lorenzo:Plataformas Volcables",
+   "plant": "san_lorenzo",
+   "label": "Volcables",
+   "code": "S4",
+   "hasCamera": true,
+   "devices": [
+    "SLZVolcableC1",
+    "SLZVolcableC2",
+    "SLZVolcableC3",
+    "SLZVolcableC4",
+    "SLZVolcableC5",
+    "SLZDescCam"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "san_lorenzo:Cargadero",
+   "plant": "san_lorenzo",
+   "label": "Cargadero",
+   "code": "",
+   "hasCamera": false,
+   "devices": [],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "san_lorenzo:Carga/descarga",
+   "plant": "san_lorenzo",
+   "label": "Carga y descarga",
+   "code": "S6",
+   "hasCamera": true,
+   "devices": [
+    "SLZBalLiq1a",
+    "SLZBalLiq1b",
+    "SLZBalLiq2a",
+    "SLZBalLiq2b"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "san_lorenzo:Balanza Egreso",
+   "plant": "san_lorenzo",
+   "label": "Balanza egreso",
+   "code": "S5",
+   "hasCamera": true,
+   "devices": [
+    "SLZBalSC1Fte",
+    "SLZBalSC2Fte"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "san_lorenzo:Carga/Descarga Renova",
+   "plant": "san_lorenzo",
+   "label": "Renova",
+   "code": "S8",
+   "hasCamera": true,
+   "devices": [
+    "SLZTK400"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "san_lorenzo:Egreso",
+   "plant": "san_lorenzo",
+   "label": "Egreso",
+   "code": "S7",
+   "hasCamera": true,
+   "devices": [
+    "SLZSalidaC1Fte",
+    "SLZSalidaC2Fte"
+   ],
+   "area": false,
+   "capacity": null,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Playa 1",
+   "plant": "ricardone",
+   "label": "Playa 1",
+   "code": "",
+   "hasCamera": false,
+   "devices": [],
+   "area": true,
+   "capacity": 300,
+   "optional": false
+  },
+  {
+   "id": "ricardone:Playa demorado",
+   "plant": "ricardone",
+   "label": "Playa demorado",
+   "code": "",
+   "hasCamera": false,
+   "devices": [],
+   "area": true,
+   "capacity": 20,
+   "optional": true
+  }
+ ],
+ "edges": [
+  {
+   "from": "ricardone:Ingreso",
+   "to": "ricardone:Pre ingreso",
+   "interplanta": false,
+   "circuitos": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R7",
+    "R8",
+    "R35",
+    "R9",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19",
+    "R20",
+    "R21",
+    "R22",
+    "R23",
+    "R24",
+    "R25",
+    "R26",
+    "R27",
+    "R28",
+    "R29",
+    "R30",
+    "R31",
+    "R32",
+    "R33",
+    "R34",
+    "SL8",
+    "SL9",
+    "SL10",
+    "SL11",
+    "SL12",
+    "SL13",
+    "SL14",
+    "SL15"
+   ]
+  },
+  {
+   "from": "ricardone:Pre ingreso",
+   "to": "ricardone:Playa 1",
+   "interplanta": false,
+   "circuitos": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R7",
+    "R8",
+    "R35",
+    "R9",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19",
+    "R20",
+    "R21",
+    "R22",
+    "R23",
+    "R24",
+    "R25",
+    "R26",
+    "R27",
+    "R28",
+    "R29",
+    "R30",
+    "R31",
+    "R32",
+    "R33",
+    "R34",
+    "SL8",
+    "SL9",
+    "SL10",
+    "SL11",
+    "SL12",
+    "SL13",
+    "SL14",
+    "SL15"
+   ]
+  },
+  {
+   "from": "ricardone:Playa 1",
+   "to": "ricardone:Calada",
+   "interplanta": false,
+   "circuitos": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R7",
+    "R8",
+    "R35",
+    "R9",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19",
+    "R20",
+    "R21",
+    "R22",
+    "R23",
+    "R24",
+    "R25",
+    "R26",
+    "R27",
+    "R28",
+    "R29",
+    "R30",
+    "R31",
+    "R32",
+    "R33",
+    "R34",
+    "SL8",
+    "SL9",
+    "SL10",
+    "SL11",
+    "SL12",
+    "SL13",
+    "SL14",
+    "SL15"
+   ]
+  },
+  {
+   "from": "ricardone:Calada",
+   "to": "ricardone:Balanza Ingreso",
+   "interplanta": false,
+   "circuitos": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R8",
+    "R9",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19",
+    "R20",
+    "R21",
+    "R22",
+    "R23",
+    "R24",
+    "R25",
+    "R26",
+    "R27",
+    "R28",
+    "R29",
+    "R30",
+    "R31",
+    "R32",
+    "R33",
+    "R34",
+    "SL8",
+    "SL9",
+    "SL10",
+    "SL11",
+    "SL12",
+    "SL13",
+    "SL14",
+    "SL15"
+   ]
+  },
+  {
+   "from": "ricardone:Balanza Ingreso",
+   "to": "ricardone:Celda 16",
+   "interplanta": false,
+   "circuitos": [
+    "R1",
+    "R9",
+    "R17",
+    "R18",
+    "R19",
+    "R20",
+    "R26",
+    "SL8"
+   ]
+  },
+  {
+   "from": "ricardone:Celda 16",
+   "to": "ricardone:Playa 3",
+   "interplanta": false,
+   "circuitos": [
+    "R1",
+    "R9",
+    "R21",
+    "R23",
+    "R26",
+    "SL8"
+   ]
+  },
+  {
+   "from": "ricardone:Playa 3",
+   "to": "ricardone:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "R1",
+    "R9",
+    "R21",
+    "R23",
+    "R26",
+    "SL8"
+   ]
+  },
+  {
+   "from": "ricardone:Balanza Egreso",
+   "to": "ricardone:Playa de egreso",
+   "interplanta": false,
+   "circuitos": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R8",
+    "R17",
+    "R18",
+    "R19",
+    "R20",
+    "R21",
+    "R22",
+    "R23",
+    "R24",
+    "R25",
+    "SL8",
+    "SL9",
+    "SL10",
+    "SL11",
+    "SL12",
+    "SL13",
+    "SL14",
+    "SL15"
+   ]
+  },
+  {
+   "from": "ricardone:Playa de egreso",
+   "to": "ricardone:Salida 1",
+   "interplanta": false,
+   "circuitos": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R8",
+    "R17",
+    "R18",
+    "R19",
+    "R20",
+    "R21",
+    "R22",
+    "R23",
+    "R24",
+    "R25",
+    "SL8",
+    "SL9",
+    "SL10",
+    "SL11",
+    "SL12",
+    "SL13",
+    "SL14",
+    "SL15"
+   ]
+  },
+  {
+   "from": "ricardone:Balanza Ingreso",
+   "to": "ricardone:Playa 3",
+   "interplanta": false,
+   "circuitos": [
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R21",
+    "R22",
+    "R23",
+    "R24",
+    "R25",
+    "R27",
+    "R28",
+    "R29",
+    "R30",
+    "R31",
+    "R32",
+    "SL9",
+    "SL10",
+    "SL11",
+    "SL12",
+    "SL13"
+   ]
+  },
+  {
+   "from": "ricardone:Playa 3",
+   "to": "ricardone:Silo Australiano",
+   "interplanta": false,
+   "circuitos": [
+    "R2",
+    "R10",
+    "R27",
+    "SL9"
+   ]
+  },
+  {
+   "from": "ricardone:Silo Australiano",
+   "to": "ricardone:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "R2",
+    "R10",
+    "R27",
+    "SL9"
+   ]
+  },
+  {
+   "from": "ricardone:Playa 3",
+   "to": "ricardone:Volcable Silo Keppler",
+   "interplanta": false,
+   "circuitos": [
+    "R3",
+    "R11",
+    "R23",
+    "R24",
+    "R25",
+    "R28",
+    "SL10"
+   ]
+  },
+  {
+   "from": "ricardone:Volcable Silo Keppler",
+   "to": "ricardone:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "R3",
+    "R11",
+    "R18",
+    "R28",
+    "SL10"
+   ]
+  },
+  {
+   "from": "ricardone:Playa 3",
+   "to": "ricardone:Volcable Silo Chief",
+   "interplanta": false,
+   "circuitos": [
+    "R4",
+    "SL11"
+   ]
+  },
+  {
+   "from": "ricardone:Volcable Silo Chief",
+   "to": "ricardone:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "R4",
+    "R17",
+    "SL11"
+   ]
+  },
+  {
+   "from": "ricardone:Playa 3",
+   "to": "ricardone:Volcable 1",
+   "interplanta": false,
+   "circuitos": [
+    "R5",
+    "SL12"
+   ]
+  },
+  {
+   "from": "ricardone:Volcable 1",
+   "to": "ricardone:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "R5",
+    "R19",
+    "R22",
+    "R24",
+    "SL12"
+   ]
+  },
+  {
+   "from": "ricardone:Playa 3",
+   "to": "ricardone:Volcable 2",
+   "interplanta": false,
+   "circuitos": [
+    "R6",
+    "SL13"
+   ]
+  },
+  {
+   "from": "ricardone:Volcable 2",
+   "to": "ricardone:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "R6",
+    "R20",
+    "R25",
+    "SL13"
+   ]
+  },
+  {
+   "from": "ricardone:Calada",
+   "to": "ricardone:Salida 2",
+   "interplanta": false,
+   "circuitos": [
+    "R7",
+    "R35",
+    "R9",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R26",
+    "R27",
+    "R28",
+    "R29",
+    "R30",
+    "R31",
+    "R32",
+    "R33",
+    "R34"
+   ]
+  },
+  {
+   "from": "ricardone:Salida 2",
+   "to": "san_lorenzo:Ingreso",
+   "interplanta": true,
+   "circuitos": [
+    "R7",
+    "R35",
+    "R26",
+    "R27",
+    "R28",
+    "R29",
+    "R30",
+    "R31",
+    "R32",
+    "R33",
+    "R34"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Ingreso",
+   "to": "san_lorenzo:Playa OSL",
+   "interplanta": false,
+   "circuitos": [
+    "R7",
+    "SL2",
+    "SL3",
+    "R26",
+    "R27",
+    "R28",
+    "R29",
+    "R30",
+    "R31",
+    "R32",
+    "R34"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Playa OSL",
+   "to": "san_lorenzo:Balanza Ingreso",
+   "interplanta": false,
+   "circuitos": [
+    "R7",
+    "R26",
+    "R27",
+    "R28",
+    "R29",
+    "R30",
+    "R31",
+    "R32"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Balanza Ingreso",
+   "to": "san_lorenzo:Plataformas Volcables",
+   "interplanta": false,
+   "circuitos": [
+    "R7",
+    "R26",
+    "R27",
+    "R28",
+    "R29",
+    "R30",
+    "R31",
+    "R32",
+    "SL8",
+    "SL9",
+    "SL10",
+    "SL11",
+    "SL12",
+    "SL13"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Plataformas Volcables",
+   "to": "san_lorenzo:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "R7",
+    "R26",
+    "R27",
+    "R28",
+    "R29",
+    "R30",
+    "R31",
+    "R32"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Balanza Egreso",
+   "to": "san_lorenzo:Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "R7",
+    "R35",
+    "SL1",
+    "SL2",
+    "SL3",
+    "SL4",
+    "SL5",
+    "SL6",
+    "SL7",
+    "R26",
+    "R27",
+    "R28",
+    "R29",
+    "R30",
+    "R31",
+    "R32",
+    "R33",
+    "R34",
+    "SL8",
+    "SL9",
+    "SL10",
+    "SL11",
+    "SL12",
+    "SL13",
+    "SL14",
+    "SL15"
+   ]
+  },
+  {
+   "from": "ricardone:Balanza Ingreso",
+   "to": "ricardone:Liquidos Carga/Descarga",
+   "interplanta": false,
+   "circuitos": [
+    "R8",
+    "R16",
+    "R33",
+    "R34",
+    "SL14",
+    "SL15"
+   ]
+  },
+  {
+   "from": "ricardone:Liquidos Carga/Descarga",
+   "to": "ricardone:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "R8",
+    "R16",
+    "R33",
+    "R34",
+    "SL14",
+    "SL15"
+   ]
+  },
+  {
+   "from": "ricardone:Balanza Egreso",
+   "to": "ricardone:Calada",
+   "interplanta": false,
+   "circuitos": [
+    "R9",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R26",
+    "R27",
+    "R28",
+    "R29",
+    "R30",
+    "R31",
+    "R32",
+    "R33",
+    "R34"
+   ]
+  },
+  {
+   "from": "ricardone:Playa 3",
+   "to": "ricardone:Tolva de carga silo Chief",
+   "interplanta": false,
+   "circuitos": [
+    "R12",
+    "R21",
+    "R22",
+    "R29"
+   ]
+  },
+  {
+   "from": "ricardone:Tolva de carga silo Chief",
+   "to": "ricardone:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "R12",
+    "R29"
+   ]
+  },
+  {
+   "from": "ricardone:Playa 3",
+   "to": "ricardone:Tolva de carga Celda 09",
+   "interplanta": false,
+   "circuitos": [
+    "R13",
+    "R30"
+   ]
+  },
+  {
+   "from": "ricardone:Tolva de carga Celda 09",
+   "to": "ricardone:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "R13",
+    "R30"
+   ]
+  },
+  {
+   "from": "ricardone:Playa 3",
+   "to": "ricardone:Tolva de carga Celda 10",
+   "interplanta": false,
+   "circuitos": [
+    "R14",
+    "R31"
+   ]
+  },
+  {
+   "from": "ricardone:Tolva de carga Celda 10",
+   "to": "ricardone:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "R14",
+    "R31"
+   ]
+  },
+  {
+   "from": "ricardone:Playa 3",
+   "to": "ricardone:Tolva de carga Celda 11",
+   "interplanta": false,
+   "circuitos": [
+    "R15",
+    "R32"
+   ]
+  },
+  {
+   "from": "ricardone:Tolva de carga Celda 11",
+   "to": "ricardone:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "R15",
+    "R32"
+   ]
+  },
+  {
+   "from": "ricardone:Celda 16",
+   "to": "ricardone:Volcable Silo Chief",
+   "interplanta": false,
+   "circuitos": [
+    "R17"
+   ]
+  },
+  {
+   "from": "ricardone:Celda 16",
+   "to": "ricardone:Volcable Silo Keppler",
+   "interplanta": false,
+   "circuitos": [
+    "R18"
+   ]
+  },
+  {
+   "from": "ricardone:Celda 16",
+   "to": "ricardone:Volcable 1",
+   "interplanta": false,
+   "circuitos": [
+    "R19"
+   ]
+  },
+  {
+   "from": "ricardone:Celda 16",
+   "to": "ricardone:Volcable 2",
+   "interplanta": false,
+   "circuitos": [
+    "R20"
+   ]
+  },
+  {
+   "from": "ricardone:Tolva de carga silo Chief",
+   "to": "ricardone:Celda 16",
+   "interplanta": false,
+   "circuitos": [
+    "R21"
+   ]
+  },
+  {
+   "from": "ricardone:Tolva de carga silo Chief",
+   "to": "ricardone:Volcable 1",
+   "interplanta": false,
+   "circuitos": [
+    "R22"
+   ]
+  },
+  {
+   "from": "ricardone:Volcable Silo Keppler",
+   "to": "ricardone:Celda 16",
+   "interplanta": false,
+   "circuitos": [
+    "R23"
+   ]
+  },
+  {
+   "from": "ricardone:Volcable Silo Keppler",
+   "to": "ricardone:Volcable 1",
+   "interplanta": false,
+   "circuitos": [
+    "R24"
+   ]
+  },
+  {
+   "from": "ricardone:Volcable Silo Keppler",
+   "to": "ricardone:Volcable 2",
+   "interplanta": false,
+   "circuitos": [
+    "R25"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Ingreso",
+   "to": "san_lorenzo:Calada",
+   "interplanta": false,
+   "circuitos": [
+    "SL1",
+    "SL4",
+    "SL5",
+    "SL6",
+    "SL7",
+    "R33",
+    "SL8",
+    "SL9",
+    "SL10",
+    "SL11",
+    "SL12",
+    "SL13",
+    "SL14",
+    "SL15"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Calada",
+   "to": "san_lorenzo:Balanza Ingreso",
+   "interplanta": false,
+   "circuitos": [
+    "SL1",
+    "SL2",
+    "SL3",
+    "SL4",
+    "SL5",
+    "SL6",
+    "SL7",
+    "R33",
+    "R34",
+    "SL8",
+    "SL9",
+    "SL10",
+    "SL11",
+    "SL12",
+    "SL13",
+    "SL14",
+    "SL15"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Balanza Ingreso",
+   "to": "san_lorenzo:Carga / Descarga OSL",
+   "interplanta": false,
+   "circuitos": [
+    "SL1",
+    "SL5",
+    "R33",
+    "SL14"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Carga / Descarga OSL",
+   "to": "san_lorenzo:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "SL1",
+    "R33"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Playa OSL",
+   "to": "san_lorenzo:Calada",
+   "interplanta": false,
+   "circuitos": [
+    "SL2",
+    "SL3",
+    "R34"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Balanza Ingreso",
+   "to": "san_lorenzo:Carga/descarga",
+   "interplanta": false,
+   "circuitos": [
+    "R35",
+    "SL2",
+    "SL7",
+    "R34",
+    "SL15"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Carga/descarga",
+   "to": "san_lorenzo:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "R35",
+    "SL2",
+    "R34"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Ingreso",
+   "to": "san_lorenzo:Balanza Ingreso",
+   "interplanta": false,
+   "circuitos": [
+    "R35"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Balanza Ingreso",
+   "to": "san_lorenzo:Carga/Descarga Renova",
+   "interplanta": false,
+   "circuitos": [
+    "SL3",
+    "SL6"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Carga/Descarga Renova",
+   "to": "san_lorenzo:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "SL3"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Balanza Ingreso",
+   "to": "san_lorenzo:Cargadero",
+   "interplanta": false,
+   "circuitos": [
+    "SL4"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Cargadero",
+   "to": "san_lorenzo:Calada",
+   "interplanta": false,
+   "circuitos": [
+    "SL4"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Calada",
+   "to": "san_lorenzo:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "SL4",
+    "SL5",
+    "SL6",
+    "SL7",
+    "SL14",
+    "SL15"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Carga / Descarga OSL",
+   "to": "san_lorenzo:Calada",
+   "interplanta": false,
+   "circuitos": [
+    "SL5",
+    "SL14"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Carga/Descarga Renova",
+   "to": "san_lorenzo:Calada",
+   "interplanta": false,
+   "circuitos": [
+    "SL6"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Carga/descarga",
+   "to": "san_lorenzo:Calada",
+   "interplanta": false,
+   "circuitos": [
+    "SL7",
+    "SL15"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Plataformas Volcables",
+   "to": "san_lorenzo:Cargadero",
+   "interplanta": false,
+   "circuitos": [
+    "SL8",
+    "SL9",
+    "SL10",
+    "SL11",
+    "SL12",
+    "SL13"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Cargadero",
+   "to": "san_lorenzo:Balanza Egreso",
+   "interplanta": false,
+   "circuitos": [
+    "SL8",
+    "SL9",
+    "SL10",
+    "SL11",
+    "SL12",
+    "SL13"
+   ]
+  },
+  {
+   "from": "san_lorenzo:Egreso",
+   "to": "ricardone:Ingreso",
+   "interplanta": true,
+   "circuitos": [
+    "SL8",
+    "SL9",
+    "SL10",
+    "SL11",
+    "SL12",
+    "SL13",
+    "SL14",
+    "SL15"
+   ]
+  }
+ ],
+ "edges_opcionales": [
+  {
+   "from": "ricardone:Calada",
+   "to": "ricardone:Playa demorado"
+  },
+  {
+   "from": "ricardone:Playa demorado",
+   "to": "ricardone:Balanza Ingreso"
+  },
+  {
+   "from": "ricardone:Playa demorado",
+   "to": "ricardone:Salida 2"
+  }
+ ],
+ "circuits": [
+  {
+   "id": "R1",
+   "categoria": "Recepción",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Celda 16",
+    "ricardone:Playa 3",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R2",
+   "categoria": "Recepción",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Silo Australiano",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R3",
+   "categoria": "Recepción",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Volcable Silo Keppler",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R4",
+   "categoria": "Recepción",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Volcable Silo Chief",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R5",
+   "categoria": "Recepción",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Volcable 1",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R6",
+   "categoria": "Recepción",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Volcable 2",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R7",
+   "categoria": "Recepción",
+   "plantas": [
+    "ricardone",
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Salida 2",
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Playa OSL",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Plataformas Volcables",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "R8",
+   "categoria": "Recepción",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Liquidos Carga/Descarga",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R9",
+   "categoria": "Despacho",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Celda 16",
+    "ricardone:Playa 3",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2"
+   ]
+  },
+  {
+   "id": "R10",
+   "categoria": "Despacho",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Silo Australiano",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2"
+   ]
+  },
+  {
+   "id": "R11",
+   "categoria": "Despacho",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Volcable Silo Keppler",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2"
+   ]
+  },
+  {
+   "id": "R12",
+   "categoria": "Despacho",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Tolva de carga silo Chief",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2"
+   ]
+  },
+  {
+   "id": "R13",
+   "categoria": "Despacho",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Tolva de carga Celda 09",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2"
+   ]
+  },
+  {
+   "id": "R14",
+   "categoria": "Despacho",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Tolva de carga Celda 10",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2"
+   ]
+  },
+  {
+   "id": "R15",
+   "categoria": "Despacho",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Tolva de carga Celda 11",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2"
+   ]
+  },
+  {
+   "id": "R16",
+   "categoria": "Despacho",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Liquidos Carga/Descarga",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2"
+   ]
+  },
+  {
+   "id": "R17",
+   "categoria": "Transile interno",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Celda 16",
+    "ricardone:Volcable Silo Chief",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R18",
+   "categoria": "Transile interno",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Celda 16",
+    "ricardone:Volcable Silo Keppler",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R19",
+   "categoria": "Transile interno",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Celda 16",
+    "ricardone:Volcable 1",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R20",
+   "categoria": "Transile interno",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Celda 16",
+    "ricardone:Volcable 2",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R21",
+   "categoria": "Transile interno",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Tolva de carga silo Chief",
+    "ricardone:Celda 16",
+    "ricardone:Playa 3",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R22",
+   "categoria": "Transile interno",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Tolva de carga silo Chief",
+    "ricardone:Volcable 1",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R23",
+   "categoria": "Transile interno",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Volcable Silo Keppler",
+    "ricardone:Celda 16",
+    "ricardone:Playa 3",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R24",
+   "categoria": "Transile interno",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Volcable Silo Keppler",
+    "ricardone:Volcable 1",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R25",
+   "categoria": "Transile interno",
+   "plantas": [
+    "ricardone"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Volcable Silo Keppler",
+    "ricardone:Volcable 2",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "R26",
+   "categoria": "Transile externo",
+   "plantas": [
+    "ricardone",
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Celda 16",
+    "ricardone:Playa 3",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2",
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Playa OSL",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Plataformas Volcables",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "R27",
+   "categoria": "Transile externo",
+   "plantas": [
+    "ricardone",
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Silo Australiano",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2",
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Playa OSL",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Plataformas Volcables",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "R28",
+   "categoria": "Transile externo",
+   "plantas": [
+    "ricardone",
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Volcable Silo Keppler",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2",
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Playa OSL",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Plataformas Volcables",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "R29",
+   "categoria": "Transile externo",
+   "plantas": [
+    "ricardone",
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Tolva de carga silo Chief",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2",
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Playa OSL",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Plataformas Volcables",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "R30",
+   "categoria": "Transile externo",
+   "plantas": [
+    "ricardone",
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Tolva de carga Celda 09",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2",
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Playa OSL",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Plataformas Volcables",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "R31",
+   "categoria": "Transile externo",
+   "plantas": [
+    "ricardone",
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Tolva de carga Celda 10",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2",
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Playa OSL",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Plataformas Volcables",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "R32",
+   "categoria": "Transile externo",
+   "plantas": [
+    "ricardone",
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Tolva de carga Celda 11",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2",
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Playa OSL",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Plataformas Volcables",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "R33",
+   "categoria": "Transile externo",
+   "plantas": [
+    "ricardone",
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Liquidos Carga/Descarga",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2",
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Carga / Descarga OSL",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "R34",
+   "categoria": "Transile externo",
+   "plantas": [
+    "ricardone",
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Liquidos Carga/Descarga",
+    "ricardone:Balanza Egreso",
+    "ricardone:Calada",
+    "ricardone:Salida 2",
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Playa OSL",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Carga/descarga",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "R35",
+   "categoria": "Recepción",
+   "plantas": [
+    "ricardone",
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Salida 2",
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Carga/descarga",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "SL1",
+   "categoria": "Recepción",
+   "plantas": [
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Carga / Descarga OSL",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "SL2",
+   "categoria": "Recepción",
+   "plantas": [
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Playa OSL",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Carga/descarga",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "SL3",
+   "categoria": "Recepción",
+   "plantas": [
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Playa OSL",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Carga/Descarga Renova",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "SL4",
+   "categoria": "Despacho",
+   "plantas": [
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Cargadero",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "SL5",
+   "categoria": "Despacho",
+   "plantas": [
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Carga / Descarga OSL",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "SL6",
+   "categoria": "Despacho",
+   "plantas": [
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Carga/Descarga Renova",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "SL7",
+   "categoria": "Despacho",
+   "plantas": [
+    "san_lorenzo"
+   ],
+   "secuencia": [
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Carga/descarga",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso"
+   ]
+  },
+  {
+   "id": "SL8",
+   "categoria": "Transile externo",
+   "plantas": [
+    "san_lorenzo",
+    "ricardone"
+   ],
+   "secuencia": [
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Plataformas Volcables",
+    "san_lorenzo:Cargadero",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso",
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Celda 16",
+    "ricardone:Playa 3",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "SL9",
+   "categoria": "Transile externo",
+   "plantas": [
+    "san_lorenzo",
+    "ricardone"
+   ],
+   "secuencia": [
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Plataformas Volcables",
+    "san_lorenzo:Cargadero",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso",
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Silo Australiano",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "SL10",
+   "categoria": "Transile externo",
+   "plantas": [
+    "san_lorenzo",
+    "ricardone"
+   ],
+   "secuencia": [
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Plataformas Volcables",
+    "san_lorenzo:Cargadero",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso",
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Volcable Silo Keppler",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "SL11",
+   "categoria": "Transile externo",
+   "plantas": [
+    "san_lorenzo",
+    "ricardone"
+   ],
+   "secuencia": [
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Plataformas Volcables",
+    "san_lorenzo:Cargadero",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso",
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Volcable Silo Chief",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "SL12",
+   "categoria": "Transile externo",
+   "plantas": [
+    "san_lorenzo",
+    "ricardone"
+   ],
+   "secuencia": [
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Plataformas Volcables",
+    "san_lorenzo:Cargadero",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso",
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Volcable 1",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "SL13",
+   "categoria": "Transile externo",
+   "plantas": [
+    "san_lorenzo",
+    "ricardone"
+   ],
+   "secuencia": [
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Plataformas Volcables",
+    "san_lorenzo:Cargadero",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso",
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Playa 3",
+    "ricardone:Volcable 2",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "SL14",
+   "categoria": "Transile externo",
+   "plantas": [
+    "san_lorenzo",
+    "ricardone"
+   ],
+   "secuencia": [
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Carga / Descarga OSL",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso",
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Liquidos Carga/Descarga",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  },
+  {
+   "id": "SL15",
+   "categoria": "Transile externo",
+   "plantas": [
+    "san_lorenzo",
+    "ricardone"
+   ],
+   "secuencia": [
+    "san_lorenzo:Ingreso",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Ingreso",
+    "san_lorenzo:Carga/descarga",
+    "san_lorenzo:Calada",
+    "san_lorenzo:Balanza Egreso",
+    "san_lorenzo:Egreso",
+    "ricardone:Ingreso",
+    "ricardone:Pre ingreso",
+    "ricardone:Playa 1",
+    "ricardone:Calada",
+    "ricardone:Balanza Ingreso",
+    "ricardone:Liquidos Carga/Descarga",
+    "ricardone:Balanza Egreso",
+    "ricardone:Playa de egreso",
+    "ricardone:Salida 1"
+   ]
+  }
+ ],
+ "plataformas_excel": {
+  "VOLCABLE_PTO_1": "san_lorenzo:Plataformas Volcables",
+  "VOLCABLE_PTO_2": "san_lorenzo:Plataformas Volcables",
+  "VOLCABLE_PTO_3": "san_lorenzo:Plataformas Volcables",
+  "VOLCABLE_PTO_4": "san_lorenzo:Plataformas Volcables",
+  "VOLCABLE_PTO_5": "san_lorenzo:Plataformas Volcables",
+  "VOLCABLE_1": "ricardone:Volcable 1",
+  "VOLCABLE_2": "ricardone:Volcable 2",
+  "CELDA_16": "ricardone:Celda 16",
+  "KEPPLER_1": "ricardone:Volcable Silo Keppler",
+  "KEPPLER_2": "ricardone:Volcable Silo Keppler",
+  "SILO_CHIEF_2": "ricardone:Tolva de carga silo Chief",
+  "CARGA_SILO_11": "ricardone:Tolva de carga Celda 11",
+  "CARGA_SILO_10": "ricardone:Tolva de carga Celda 10",
+  "ACEITE": "ricardone:Liquidos Carga/Descarga",
+  "ACEITE_OSL": "san_lorenzo:Carga / Descarga OSL",
+  "ACEITE_PTO": "san_lorenzo:Carga/descarga"
+ },
+ "notas": [
+  "VOLCABLE_PTO_1..5 son 5 plataformas físicas distintas (PV1..PV5 en el EAM, cámaras SLZVolcableC1..C5) que el modelo agrupa en un solo nodo.",
+  "La soja R7 se cala en ricardone:Calada y viaja al puerto: ese nodo condiciona también las plataformas del puerto.",
+  "ricardone:Playa 3 es zona de espera (cámara RicS6Playa3), no tránsito."
+ ]
+}

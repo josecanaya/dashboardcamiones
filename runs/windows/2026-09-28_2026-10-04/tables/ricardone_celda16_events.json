@@ -1,0 +1,41 @@
+{
+  "name": "ricardone_celda16_events",
+  "headers": [
+    "journey_id",
+    "patente",
+    "producto",
+    "circuito",
+    "camara",
+    "timestamp",
+    "fecha",
+    "hora",
+    "intervalo_hora",
+    "franja_operativa"
+  ],
+  "rows": [
+    {
+      "journey_id": "0d4be573-d438-47a2-bf0f-89068e3cd008",
+      "patente": "AG388RH",
+      "producto": "",
+      "circuito": "R9",
+      "camara": "RicC16Carga1",
+      "timestamp": "2026-09-27T10:31:38.517-03:00",
+      "fecha": "2026-09-27",
+      "hora": "10:31",
+      "intervalo_hora": "2026-09-27T10:00:00",
+      "franja_operativa": "Mañana"
+    },
+    {
+      "journey_id": "12d7ec80-d937-4d8e-9940-ef92fbeb449a",
+      "patente": "AC081DU",
+      "producto": "",
+      "circuito": "R9",
+      "camara": "RicC16Carga1",
+      "timestamp": "2026-09-28T11:01:08.610-03:00",
+      "fecha": "2026-09-28",
+      "hora": "11:01",
+      "intervalo_hora": "2026-09-28T11:00:00",
+      "franja_operativa": "Mañana"
+    }
+  ]
+}

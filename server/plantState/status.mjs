@@ -8,7 +8,7 @@
  *
  * A diferencia del sector, la zona se evalúa contra la capacidad OPERATIVA (cuántos
  * camiones puede haber sin romper la operación), no contra la física (cuántos entran).
- * Playa 3 es el caso: entran 141, pero el límite operativo es 30 porque a partir de
+ * Playa 3 es el caso: entran 100, pero el límite operativo es 30 porque a partir de
  * ahí los camiones estacionados bloquean la circulación.
  *
  * @param {{ backlog?: number, entryBlind?: boolean, capacityOperational?: number|null, drainMinutes?: number|null, drainRatePerHour?: number|null }} zone

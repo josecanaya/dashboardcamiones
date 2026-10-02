@@ -1,0 +1,15 @@
+{
+  "name": "transile_externo_reclasificacion",
+  "headers": [
+    "journey_uid",
+    "patente",
+    "estado_original",
+    "circuito_original",
+    "circuito_propuesto",
+    "producto_excel",
+    "product_family",
+    "external_operation_id",
+    "evidencia"
+  ],
+  "rows": []
+}

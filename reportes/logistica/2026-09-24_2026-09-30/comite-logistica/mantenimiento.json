@@ -1,0 +1,12 @@
+{
+ "fuente": "agentes/mantenimiento/cruce_mantenimiento.py sobre OT_detalle_fechas_10jun_29sep.csv (EAM, fecha programada) y el Excel de movimientos; detalle en cruce_mantenimiento_24-30.md",
+ "episodios": [
+  {"cifra": "0–4", "titulo": "Volcable 1 Ricardone, parada lunes y martes", "texto": "Descargó 4 y 0 camiones (mediana 46–48). OT en la balanza 1 (celda 6 girada, chapón de junta) y en la válvula de la celda 5. El girasol pasó a la volcable 2 el lunes y a silos Kepler 2 el martes (23).", "tono": "gir"},
+  {"cifra": "970 min", "titulo": "Volcable 1, demorada el jueves 24", "texto": "Puerta a puerta de 970 min contra 571 habitual. Ese día había OT en la aspiración de polvillo de la PTV-1 y en el calador Nº 1.", "tono": "gir"},
+  {"cifra": "PV2", "titulo": "Puerto: PV2 sin descargar el lunes 28", "texto": "0 descargas (mediana 22); la PV4 la cubrió (29 contra 4). OT preventiva de 8.000 h en el compresor Atlas que la alimenta. Es el día más lento de San Lorenzo (248 min).", "tono": "sl"},
+  {"cifra": "PV3", "titulo": "Puerto: PV3 sin descargar el miércoles 30", "texto": "0 descargas (mediana 28). Coincide con la parada anual de la cinta C01 de la Terminal, programada para el 29/09.", "tono": "sl"},
+  {"cifra": "Urgente", "titulo": "Calador Nº 3 de Ricardone", "texto": "Correctiva urgente el 25/09 (cambio de reductor). La calada siguió en las calles 3 y 4 y Playa 1 marcó su mínimo: no se ve efecto en el tiempo.", "tono": "ric"},
+  {"cifra": "294", "titulo": "Parada anual de septiembre", "texto": "Planta P10 (250 OT entre el 27/08 y el 28/09) y Terminal de Embarque (celda 4 y cintas). Es el contexto de toda la semana.", "tono": "ric"}
+ ],
+ "nota": "Las fechas de las OT son las programadas (el EAM copia la fecha real en el 92 % de los casos) y no traen horas de parada: cada coincidencia es una pista para validar con planta, no una causa probada. Las OT del período figuran como NO REALIZADAS en el EAM (sin cierre cargado)."
+}

@@ -1,0 +1,19 @@
+planta,punto,codigo,esperados,leidos,pct,esperados_dia,leidos_dia,pct_dia,esperados_noche,leidos_noche,pct_noche,solo_trasera
+ricardone,Ingreso,S0,9558,7403,77.5,4497,4162,92.6,5061,3241,64,11
+ricardone,Preingreso,S1,11087,9995,90.2,5339,4995,93.6,5748,5000,87,13
+ricardone,Calada,S2,11090,9094,82,5355,4528,84.6,5735,4566,79.6,0
+ricardone,Balanza ingreso,S4,3624,2525,69.7,2002,1422,71,1622,1103,68,0
+ricardone,Playa 3,S6,3319,2231,67.2,1836,1458,79.4,1483,773,52.1,0
+ricardone,Silo Keppler,S7,252,209,82.9,128,121,94.5,124,88,71,0
+ricardone,Tolva silo Chief,S8,605,367,60.7,301,230,76.4,304,137,45.1,0
+ricardone,Volcable 1,S9,997,924,92.7,464,436,94,533,488,91.6,0
+ricardone,Volcable 2,S9,385,279,72.5,196,152,77.6,189,127,67.2,0
+ricardone,Balanza egreso,S4,3624,3005,82.9,1966,1700,86.5,1658,1305,78.7,0
+ricardone,Salida 2,S3,9151,6741,73.7,4228,3544,83.8,4923,3197,64.9,21
+san_lorenzo,Ingreso,S0,8322,6739,81,3989,3373,84.6,4333,3366,77.7,9
+san_lorenzo,Balanza ingreso,S1,10116,7877,77.9,4951,4245,85.7,5165,3632,70.3,303
+san_lorenzo,Carga OSL,S10,763,488,64,533,372,69.8,230,116,50.4,0
+san_lorenzo,Volcables,S4,7466,5265,70.5,3253,3043,93.5,4213,2222,52.7,0
+san_lorenzo,Carga y descarga,S6,273,187,68.5,158,111,70.3,115,76,66.1,0
+san_lorenzo,Balanza egreso,S5,10116,3122,30.9,4833,2218,45.9,5283,904,17.1,28
+san_lorenzo,Egreso,S7,10113,8730,86.3,4828,4311,89.3,5285,4419,83.6,46

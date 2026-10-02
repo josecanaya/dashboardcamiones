@@ -1,5 +1,6 @@
 import type { ReconstructedRealJourney } from '../../../services/realJourneyEvents.types'
 import { lookupRealSectorCode } from '../../../data/realSectorCodeMap'
+import { feedSectorToLogicalCode, nodoSurCodeForEvent } from '../../../etl-core/domain/nodoSur'
 import { compareRealEvents } from '../../../services/realJourneyEventsMapper'
 import { normalizeRealEventPoint } from '../../../services/realEventNormalization'
 import { isEtlRearCameraDevice } from './etlRearDevices'
@@ -120,6 +121,13 @@ export function journeyExecutiveSectorSequence(j: ReconstructedRealJourney): str
   const sorted = j.events.filter((e) => !isEtlRearCameraDevice(e.deviceCode)).sort(compareRealEvents)
   const sectors: string[] = []
   for (const e of sorted) {
+    // Feed actual (`2-S3`, `1-S10`): el código del nodo viene en el sectorCode. Antes solo se
+    // leían los nombres legacy (`RICARDONE_*`) y la secuencia quedaba vacía.
+    const fromFeed = feedSectorToLogicalCode(e.sectorCode) ?? nodoSurCodeForEvent(e)
+    if (fromFeed) {
+      sectors.push(fromFeed)
+      continue
+    }
     const mapped = lookupRealSectorCode(String(e.sectorCode ?? '').trim())
     const fromMap = mapped?.logicalSector?.trim()
     if (fromMap && /^S\d+$/i.test(fromMap)) {

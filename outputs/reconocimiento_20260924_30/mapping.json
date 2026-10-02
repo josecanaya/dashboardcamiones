@@ -1,0 +1,1035 @@
+{
+  "source": [
+    "src/etl-core/domain/nodoSur.generated.ts",
+    "src/etl-core/domain/eventNormalization.ts",
+    "src/data/sanLorenzoCameraCatalog.ts"
+  ],
+  "devices": {
+    "RicIngCamFrente": {
+      "site": "ricardone",
+      "node_id": "ricardone:Ingreso",
+      "label": "Ingreso",
+      "sector": "2-S0",
+      "rear": false,
+      "logical": "INGRESO"
+    },
+    "RicIngCamTrasera": {
+      "site": "ricardone",
+      "node_id": "ricardone:Ingreso",
+      "label": "Ingreso",
+      "sector": "2-S0",
+      "rear": true,
+      "logical": "INGRESO_TRASERA_EXCLUIDA"
+    },
+    "RicPreIngInFr": {
+      "site": "ricardone",
+      "node_id": "ricardone:Pre ingreso",
+      "label": "Preingreso",
+      "sector": "2-S1",
+      "rear": false,
+      "logical": "PREINGRESO"
+    },
+    "RicPreIngEgFr": {
+      "site": "ricardone",
+      "node_id": "ricardone:Pre ingreso",
+      "label": "Preingreso",
+      "sector": "2-S1",
+      "rear": false,
+      "logical": "PREINGRESO_EGRESO"
+    },
+    "RicPreIngInTr": {
+      "site": "ricardone",
+      "node_id": "ricardone:Pre ingreso",
+      "label": "Preingreso",
+      "sector": "2-S1",
+      "rear": true,
+      "logical": "PREINGRESO_TRASERA_EXCLUIDA"
+    },
+    "RicPreIngEgTr": {
+      "site": "ricardone",
+      "node_id": "ricardone:Pre ingreso",
+      "label": "Preingreso",
+      "sector": "2-S1",
+      "rear": true,
+      "logical": "PREINGRESO_EGRESO_TRASERA"
+    },
+    "RicCal01": {
+      "site": "ricardone",
+      "node_id": "ricardone:Calada",
+      "label": "Calada",
+      "sector": "2-S2",
+      "rear": false,
+      "logical": "CALADA"
+    },
+    "RicCal02": {
+      "site": "ricardone",
+      "node_id": "ricardone:Calada",
+      "label": "Calada",
+      "sector": "2-S2",
+      "rear": false,
+      "logical": "CALADA"
+    },
+    "RicCal03": {
+      "site": "ricardone",
+      "node_id": "ricardone:Calada",
+      "label": "Calada",
+      "sector": "2-S2",
+      "rear": false,
+      "logical": "CALADA"
+    },
+    "RicCal04": {
+      "site": "ricardone",
+      "node_id": "ricardone:Calada",
+      "label": "Calada",
+      "sector": "2-S2",
+      "rear": false,
+      "logical": "CALADA"
+    },
+    "RicCal05": {
+      "site": "ricardone",
+      "node_id": "ricardone:Calada",
+      "label": "Calada",
+      "sector": "2-S2",
+      "rear": false,
+      "logical": "CALADA"
+    },
+    "RicCal06": {
+      "site": "ricardone",
+      "node_id": "ricardone:Calada",
+      "label": "Calada",
+      "sector": "2-S2",
+      "rear": false,
+      "logical": "CALADA"
+    },
+    "RicCalLiq": {
+      "site": "ricardone",
+      "node_id": "ricardone:Calada",
+      "label": "Calada",
+      "sector": "2-S2",
+      "rear": false,
+      "logical": "LIQUIDO"
+    },
+    "RicB1Ingreso": {
+      "site": "ricardone",
+      "node_id": "ricardone:Balanza Ingreso",
+      "label": "Balanza ingreso",
+      "sector": "2-S4",
+      "rear": false,
+      "logical": "BALANZA_INGRESO"
+    },
+    "RicB2Ingreso": {
+      "site": "ricardone",
+      "node_id": "ricardone:Balanza Ingreso",
+      "label": "Balanza ingreso",
+      "sector": "2-S4",
+      "rear": false,
+      "logical": "BALANZA_INGRESO"
+    },
+    "RicB3Ingreso": {
+      "site": "ricardone",
+      "node_id": "ricardone:Balanza Ingreso",
+      "label": "Balanza ingreso",
+      "sector": "2-S4",
+      "rear": false,
+      "logical": "BALANZA_INGRESO"
+    },
+    "RicS6Playa3": {
+      "site": "ricardone",
+      "node_id": "ricardone:Playa 3",
+      "label": "Playa 3",
+      "sector": "2-S6",
+      "rear": false,
+      "logical": "PLAYA"
+    },
+    "RicC16Carga1": {
+      "site": "ricardone",
+      "node_id": "ricardone:Celda 16",
+      "label": "Celda 16",
+      "sector": "2-S5",
+      "rear": false,
+      "logical": "CELDA16_CARGA"
+    },
+    "RicC16Carga2": {
+      "site": "ricardone",
+      "node_id": "ricardone:Celda 16",
+      "label": "Celda 16",
+      "sector": "2-S5",
+      "rear": false,
+      "logical": "CELDA16_CARGA"
+    },
+    "RicC16Descarga1": {
+      "site": "ricardone",
+      "node_id": "ricardone:Celda 16",
+      "label": "Celda 16",
+      "sector": "2-S5",
+      "rear": false,
+      "logical": "CELDA16_DESCARGA"
+    },
+    "RicC16Descarga2": {
+      "site": "ricardone",
+      "node_id": "ricardone:Celda 16",
+      "label": "Celda 16",
+      "sector": "2-S5",
+      "rear": false,
+      "logical": "CELDA16_DESCARGA"
+    },
+    "RicS7DescLinea1": {
+      "site": "ricardone",
+      "node_id": "ricardone:Volcable Silo Keppler",
+      "label": "Silo Keppler",
+      "sector": "2-S7",
+      "rear": false,
+      "logical": "DESCARGA_S7"
+    },
+    "RicS7DescLinea2": {
+      "site": "ricardone",
+      "node_id": "ricardone:Volcable Silo Keppler",
+      "label": "Silo Keppler",
+      "sector": "2-S7",
+      "rear": false,
+      "logical": "DESCARGA_S7"
+    },
+    "RicS7Carga": {
+      "site": "ricardone",
+      "node_id": "ricardone:Volcable Silo Keppler",
+      "label": "Silo Keppler",
+      "sector": "2-S7",
+      "rear": false,
+      "logical": "CARGA_S7"
+    },
+    "RicS8CargaLinea1": {
+      "site": "ricardone",
+      "node_id": "ricardone:Tolva de carga silo Chief",
+      "label": "Tolva silo Chief",
+      "sector": "2-S8",
+      "rear": false,
+      "logical": "CARGA_S8"
+    },
+    "RicS8CargaLinea2": {
+      "site": "ricardone",
+      "node_id": "ricardone:Tolva de carga silo Chief",
+      "label": "Tolva silo Chief",
+      "sector": "2-S8",
+      "rear": false,
+      "logical": "CARGA_S8"
+    },
+    "RicVolcable1": {
+      "site": "ricardone",
+      "node_id": "ricardone:Volcable 1",
+      "label": "Volcable 1",
+      "sector": "2-S9",
+      "rear": false,
+      "logical": "VOLCABLE"
+    },
+    "RicVolcable2": {
+      "site": "ricardone",
+      "node_id": "ricardone:Volcable 2",
+      "label": "Volcable 2",
+      "sector": "2-S9",
+      "rear": false,
+      "logical": "VOLCABLE"
+    },
+    "RicB1Egreso": {
+      "site": "ricardone",
+      "node_id": "ricardone:Balanza Egreso",
+      "label": "Balanza egreso",
+      "sector": "2-S4",
+      "rear": false,
+      "logical": "BALANZA_EGRESO"
+    },
+    "RicB2Egreso": {
+      "site": "ricardone",
+      "node_id": "ricardone:Balanza Egreso",
+      "label": "Balanza egreso",
+      "sector": "2-S4",
+      "rear": false,
+      "logical": "BALANZA_EGRESO"
+    },
+    "RicB3Egreso": {
+      "site": "ricardone",
+      "node_id": "ricardone:Balanza Egreso",
+      "label": "Balanza egreso",
+      "sector": "2-S4",
+      "rear": false,
+      "logical": "BALANZA_EGRESO"
+    },
+    "RicEgrCamFrente": {
+      "site": "ricardone",
+      "node_id": "ricardone:Salida 2",
+      "label": "Salida 2",
+      "sector": "2-S3",
+      "rear": false,
+      "logical": "EGRESO"
+    },
+    "RicEgrCamTraser": {
+      "site": "ricardone",
+      "node_id": "ricardone:Salida 2",
+      "label": "Salida 2",
+      "sector": "2-S3",
+      "rear": true,
+      "logical": "EGRESO_TRASERA_EXCLUIDA"
+    },
+    "SLZIngCamFrente": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Ingreso",
+      "label": "Ingreso",
+      "sector": "1-S0",
+      "rear": false,
+      "logical": "SL_INGRESO"
+    },
+    "SLZIngCamTrasera": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Ingreso",
+      "label": "Ingreso",
+      "sector": "1-S0",
+      "rear": true,
+      "logical": "SL_INGRESO_TRASERA_EXCLUIDA"
+    },
+    "SLZCalado": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Calada",
+      "label": "Calada",
+      "sector": "1-S2",
+      "rear": false,
+      "logical": "SL_CALADA"
+    },
+    "SLZCalCam": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Calada",
+      "label": "Calada",
+      "sector": "1-S2",
+      "rear": false,
+      "logical": "SL_CALADA"
+    },
+    "SLZBalIngFte": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Balanza Ingreso",
+      "label": "Balanza ingreso",
+      "sector": "1-S1",
+      "rear": false,
+      "logical": "SL_BALANZA_INGRESO"
+    },
+    "SLZBalIngTras": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Balanza Ingreso",
+      "label": "Balanza ingreso",
+      "sector": "1-S1",
+      "rear": true,
+      "logical": "SL_BALANZA_INGRESO_TRASERA_EXCLUIDA"
+    },
+    "RenCargFte": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Carga / Descarga OSL",
+      "label": "Carga OSL",
+      "sector": "1-S10",
+      "rear": false,
+      "logical": "SL_LIQUIDO_CARGA"
+    },
+    "RenDescFte": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Carga / Descarga OSL",
+      "label": "Carga OSL",
+      "sector": "1-S10",
+      "rear": false,
+      "logical": "SL_LIQUIDO_DESCARGA"
+    },
+    "RenCargTras": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Carga / Descarga OSL",
+      "label": "Carga OSL",
+      "sector": "1-S10",
+      "rear": true,
+      "logical": "SL_LIQUIDO_CARGA_TRASERA_EXCLUIDA"
+    },
+    "RenDescTras": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Carga / Descarga OSL",
+      "label": "Carga OSL",
+      "sector": "1-S10",
+      "rear": true,
+      "logical": "SL_LIQUIDO_DESCARGA_TRASERA_EXCLUIDA"
+    },
+    "SLZVolcableC1": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Plataformas Volcables",
+      "label": "Volcables",
+      "sector": "1-S4",
+      "rear": false,
+      "logical": "SL_VOLCABLE"
+    },
+    "SLZVolcableC2": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Plataformas Volcables",
+      "label": "Volcables",
+      "sector": "1-S4",
+      "rear": false,
+      "logical": "SL_VOLCABLE"
+    },
+    "SLZVolcableC3": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Plataformas Volcables",
+      "label": "Volcables",
+      "sector": "1-S4",
+      "rear": false,
+      "logical": "SL_VOLCABLE"
+    },
+    "SLZVolcableC4": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Plataformas Volcables",
+      "label": "Volcables",
+      "sector": "1-S4",
+      "rear": false,
+      "logical": "SL_VOLCABLE"
+    },
+    "SLZVolcableC5": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Plataformas Volcables",
+      "label": "Volcables",
+      "sector": "1-S4",
+      "rear": false,
+      "logical": "SL_VOLCABLE"
+    },
+    "SLZDescCam": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Plataformas Volcables",
+      "label": "Volcables",
+      "sector": "1-S4",
+      "rear": false,
+      "logical": "SL_DESCARGA"
+    },
+    "SLZBalLiq1a": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Carga/descarga",
+      "label": "Carga y descarga",
+      "sector": "1-S6",
+      "rear": false,
+      "logical": null
+    },
+    "SLZBalLiq1b": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Carga/descarga",
+      "label": "Carga y descarga",
+      "sector": "1-S6",
+      "rear": false,
+      "logical": null
+    },
+    "SLZBalLiq2a": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Carga/descarga",
+      "label": "Carga y descarga",
+      "sector": "1-S6",
+      "rear": false,
+      "logical": null
+    },
+    "SLZBalLiq2b": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Carga/descarga",
+      "label": "Carga y descarga",
+      "sector": "1-S6",
+      "rear": false,
+      "logical": null
+    },
+    "SLZBalSC1Fte": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Balanza Egreso",
+      "label": "Balanza egreso",
+      "sector": "1-S5",
+      "rear": false,
+      "logical": "SL_BALANZA_SALIDA"
+    },
+    "SLZBalSC2Fte": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Balanza Egreso",
+      "label": "Balanza egreso",
+      "sector": "1-S5",
+      "rear": false,
+      "logical": "SL_BALANZA_SALIDA"
+    },
+    "SLZBalSC1Tras": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Balanza Egreso",
+      "label": "Balanza egreso",
+      "sector": "1-S5",
+      "rear": true,
+      "logical": "SL_BALANZA_SALIDA_TRASERA_EXCLUIDA"
+    },
+    "SLZBalSC2Tras": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Balanza Egreso",
+      "label": "Balanza egreso",
+      "sector": "1-S5",
+      "rear": true,
+      "logical": "SL_BALANZA_SALIDA_TRASERA_EXCLUIDA"
+    },
+    "SLZTK400": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Carga/Descarga Renova",
+      "label": "Renova",
+      "sector": "1-S8",
+      "rear": false,
+      "logical": null
+    },
+    "SLZSalidaC1Fte": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Egreso",
+      "label": "Egreso",
+      "sector": "1-S7",
+      "rear": false,
+      "logical": "SL_EGRESO"
+    },
+    "SLZSalidaC2Fte": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Egreso",
+      "label": "Egreso",
+      "sector": "1-S7",
+      "rear": false,
+      "logical": "SL_EGRESO"
+    },
+    "SLZSalidaC1Tras": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Egreso",
+      "label": "Egreso",
+      "sector": "1-S7",
+      "rear": true,
+      "logical": "SL_EGRESO_TRASERA_EXCLUIDA"
+    },
+    "SLZSalidaC2Tras": {
+      "site": "san_lorenzo",
+      "node_id": "san_lorenzo:Egreso",
+      "label": "Egreso",
+      "sector": "1-S7",
+      "rear": true,
+      "logical": "SL_EGRESO_TRASERA_EXCLUIDA"
+    },
+    "SLZEnlace31Cam": {
+      "site": "san_lorenzo",
+      "logical": "SL_ENLACE",
+      "rear": false
+    }
+  },
+  "nodes": [
+    {
+      "id": "ricardone:Ingreso",
+      "plant": "ricardone",
+      "label": "Ingreso",
+      "code": "S0",
+      "feedCode": "2-S0",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "RicIngCamFrente"
+      ],
+      "rearDevices": [
+        "RicIngCamTrasera"
+      ]
+    },
+    {
+      "id": "ricardone:Pre ingreso",
+      "plant": "ricardone",
+      "label": "Preingreso",
+      "code": "S1",
+      "feedCode": "2-S1",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "RicPreIngInFr",
+        "RicPreIngEgFr"
+      ],
+      "rearDevices": [
+        "RicPreIngInTr",
+        "RicPreIngEgTr"
+      ]
+    },
+    {
+      "id": "ricardone:Calada",
+      "plant": "ricardone",
+      "label": "Calada",
+      "code": "S2",
+      "feedCode": "2-S2",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "RicCal01",
+        "RicCal02",
+        "RicCal03",
+        "RicCal04",
+        "RicCal05",
+        "RicCal06",
+        "RicCalLiq"
+      ],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Balanza Ingreso",
+      "plant": "ricardone",
+      "label": "Balanza ingreso",
+      "code": "S4",
+      "feedCode": "2-S4",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "RicB1Ingreso",
+        "RicB2Ingreso",
+        "RicB3Ingreso"
+      ],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Playa 3",
+      "plant": "ricardone",
+      "label": "Playa 3",
+      "code": "S6",
+      "feedCode": "2-S6",
+      "hasCamera": true,
+      "area": true,
+      "capacity": 100,
+      "optional": false,
+      "devices": [
+        "RicS6Playa3"
+      ],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Celda 16",
+      "plant": "ricardone",
+      "label": "Celda 16",
+      "code": "S5",
+      "feedCode": "2-S5",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "RicC16Carga1",
+        "RicC16Carga2",
+        "RicC16Descarga1",
+        "RicC16Descarga2"
+      ],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Silo Australiano",
+      "plant": "ricardone",
+      "label": "Silo Australiano",
+      "code": null,
+      "feedCode": null,
+      "hasCamera": false,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Volcable Silo Keppler",
+      "plant": "ricardone",
+      "label": "Silo Keppler",
+      "code": "S7",
+      "feedCode": "2-S7",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "RicS7DescLinea1",
+        "RicS7DescLinea2",
+        "RicS7Carga"
+      ],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Volcable Silo Chief",
+      "plant": "ricardone",
+      "label": "Silo Chief",
+      "code": "S8",
+      "feedCode": "2-S8",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "RicS8CargaLinea1",
+        "RicS8CargaLinea2"
+      ],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Tolva de carga Celda 09",
+      "plant": "ricardone",
+      "label": "Tolva Celda 09",
+      "code": null,
+      "feedCode": null,
+      "hasCamera": false,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Tolva de carga Celda 10",
+      "plant": "ricardone",
+      "label": "Tolva Celda 10",
+      "code": null,
+      "feedCode": null,
+      "hasCamera": false,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Tolva de carga Celda 11",
+      "plant": "ricardone",
+      "label": "Tolva Celda 11",
+      "code": null,
+      "feedCode": null,
+      "hasCamera": false,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Tolva de carga silo Chief",
+      "plant": "ricardone",
+      "label": "Tolva silo Chief",
+      "code": "S8",
+      "feedCode": "2-S8",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "RicS8CargaLinea1",
+        "RicS8CargaLinea2"
+      ],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Volcable 1",
+      "plant": "ricardone",
+      "label": "Volcable 1",
+      "code": "S9",
+      "feedCode": "2-S9",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "RicVolcable1"
+      ],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Volcable 2",
+      "plant": "ricardone",
+      "label": "Volcable 2",
+      "code": "S9",
+      "feedCode": "2-S9",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "RicVolcable2"
+      ],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Liquidos Carga/Descarga",
+      "plant": "ricardone",
+      "label": "Líquidos",
+      "code": null,
+      "feedCode": null,
+      "hasCamera": false,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Balanza Egreso",
+      "plant": "ricardone",
+      "label": "Balanza egreso",
+      "code": "S4",
+      "feedCode": "2-S4",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "RicB1Egreso",
+        "RicB2Egreso",
+        "RicB3Egreso"
+      ],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Playa de egreso",
+      "plant": "ricardone",
+      "label": "Playa de salida",
+      "code": null,
+      "feedCode": null,
+      "hasCamera": false,
+      "area": true,
+      "capacity": 4,
+      "optional": false,
+      "devices": [],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Salida 1",
+      "plant": "ricardone",
+      "label": "Salida 1",
+      "code": "S10",
+      "feedCode": "2-S10",
+      "hasCamera": false,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Salida 2",
+      "plant": "ricardone",
+      "label": "Salida 2",
+      "code": "S3",
+      "feedCode": "2-S3",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "RicEgrCamFrente"
+      ],
+      "rearDevices": [
+        "RicEgrCamTraser"
+      ]
+    },
+    {
+      "id": "san_lorenzo:Ingreso",
+      "plant": "san_lorenzo",
+      "label": "Ingreso",
+      "code": "S0",
+      "feedCode": "1-S0",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "SLZIngCamFrente"
+      ],
+      "rearDevices": [
+        "SLZIngCamTrasera"
+      ]
+    },
+    {
+      "id": "san_lorenzo:Calada",
+      "plant": "san_lorenzo",
+      "label": "Calada",
+      "code": "S2",
+      "feedCode": "1-S2",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "SLZCalado",
+        "SLZCalCam"
+      ],
+      "rearDevices": []
+    },
+    {
+      "id": "san_lorenzo:Balanza Ingreso",
+      "plant": "san_lorenzo",
+      "label": "Balanza ingreso",
+      "code": "S1",
+      "feedCode": "1-S1",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "SLZBalIngFte"
+      ],
+      "rearDevices": [
+        "SLZBalIngTras"
+      ]
+    },
+    {
+      "id": "san_lorenzo:Carga / Descarga OSL",
+      "plant": "san_lorenzo",
+      "label": "Carga OSL",
+      "code": "S10",
+      "feedCode": "1-S10",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "RenCargFte",
+        "RenDescFte"
+      ],
+      "rearDevices": [
+        "RenCargTras",
+        "RenDescTras"
+      ]
+    },
+    {
+      "id": "san_lorenzo:Playa OSL",
+      "plant": "san_lorenzo",
+      "label": "Playa OSL",
+      "code": "S3",
+      "feedCode": "1-S3",
+      "hasCamera": false,
+      "area": true,
+      "capacity": 150,
+      "optional": false,
+      "devices": [],
+      "rearDevices": []
+    },
+    {
+      "id": "san_lorenzo:Plataformas Volcables",
+      "plant": "san_lorenzo",
+      "label": "Volcables",
+      "code": "S4",
+      "feedCode": "1-S4",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "SLZVolcableC1",
+        "SLZVolcableC2",
+        "SLZVolcableC3",
+        "SLZVolcableC4",
+        "SLZVolcableC5",
+        "SLZDescCam"
+      ],
+      "rearDevices": []
+    },
+    {
+      "id": "san_lorenzo:Cargadero",
+      "plant": "san_lorenzo",
+      "label": "Cargadero",
+      "code": null,
+      "feedCode": null,
+      "hasCamera": false,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [],
+      "rearDevices": []
+    },
+    {
+      "id": "san_lorenzo:Carga/descarga",
+      "plant": "san_lorenzo",
+      "label": "Carga y descarga",
+      "code": "S6",
+      "feedCode": "1-S6",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "SLZBalLiq1a",
+        "SLZBalLiq1b",
+        "SLZBalLiq2a",
+        "SLZBalLiq2b"
+      ],
+      "rearDevices": []
+    },
+    {
+      "id": "san_lorenzo:Balanza Egreso",
+      "plant": "san_lorenzo",
+      "label": "Balanza egreso",
+      "code": "S5",
+      "feedCode": "1-S5",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "SLZBalSC1Fte",
+        "SLZBalSC2Fte"
+      ],
+      "rearDevices": [
+        "SLZBalSC1Tras",
+        "SLZBalSC2Tras"
+      ]
+    },
+    {
+      "id": "san_lorenzo:Carga/Descarga Renova",
+      "plant": "san_lorenzo",
+      "label": "Renova",
+      "code": "S8",
+      "feedCode": "1-S8",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "SLZTK400"
+      ],
+      "rearDevices": []
+    },
+    {
+      "id": "san_lorenzo:Egreso",
+      "plant": "san_lorenzo",
+      "label": "Egreso",
+      "code": "S7",
+      "feedCode": "1-S7",
+      "hasCamera": true,
+      "area": false,
+      "capacity": null,
+      "optional": false,
+      "devices": [
+        "SLZSalidaC1Fte",
+        "SLZSalidaC2Fte"
+      ],
+      "rearDevices": [
+        "SLZSalidaC1Tras",
+        "SLZSalidaC2Tras"
+      ]
+    },
+    {
+      "id": "ricardone:Playa 1",
+      "plant": "ricardone",
+      "label": "Playa 1",
+      "code": null,
+      "feedCode": null,
+      "hasCamera": false,
+      "area": true,
+      "capacity": 300,
+      "optional": false,
+      "devices": [],
+      "rearDevices": []
+    },
+    {
+      "id": "ricardone:Playa demorado",
+      "plant": "ricardone",
+      "label": "Playa demorado",
+      "code": null,
+      "feedCode": null,
+      "hasCamera": false,
+      "area": true,
+      "capacity": 20,
+      "optional": true,
+      "devices": [],
+      "rearDevices": []
+    }
+  ]
+}

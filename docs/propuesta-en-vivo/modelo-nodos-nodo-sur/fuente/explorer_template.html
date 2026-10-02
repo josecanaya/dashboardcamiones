@@ -1,0 +1,425 @@
+<title>Modelo de nodos Vicentin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;600&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* Layout: cabecera con cifras; red (misma geometría que la lámina) a la izquierda y ficha del nodo o circuito a la derecha; tabla de todos los nodos y observaciones de la matriz debajo */
+:root {
+  --bg: #F5F6F2; --surface: #FCFDFB; --ink: #13202E; --muted: #4E5C6B; --line: #D6DCD5; --line-2: #E6EAE4; --chip: #EAEEE8;
+  --ric: #D9542B; --slz: #1A8FD0; --ave: #7A5BB5; --ric-ink: #A63A17; --slz-ink: #0F6FA8; --ave-ink: #5E4396;
+  --inter: #0E1A2B; --hi: #0E1A2B; --on-hi: #F5F6F2; --focus: #1A8FD0; --warn-bg: #F8E7C8; --warn-ink: #7A4700;
+  --f-display: 'Space Grotesk', 'IBM Plex Sans', system-ui, sans-serif;
+  --f-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0E1A2B; --surface: #132238; --ink: #EEF2F4; --muted: #AAB7C4; --line: #2B3C53; --line-2: #1E2E45; --chip: #1B2B42;
+  --ric: #F07A52; --slz: #4FB3EA; --ave: #A68BE0; --ric-ink: #F59A7A; --slz-ink: #7CC7F0; --ave-ink: #BCA6EA;
+  --inter: #D3DCE5; --hi: #F2F5F7; --on-hi: #0E1A2B; --focus: #6CC1F2; --warn-bg: #3A2A10; --warn-ink: #F2C66D; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0E1A2B; --surface: #132238; --ink: #EEF2F4; --muted: #AAB7C4; --line: #2B3C53; --line-2: #1E2E45; --chip: #1B2B42;
+  --ric: #F07A52; --slz: #4FB3EA; --ave: #A68BE0; --ric-ink: #F59A7A; --slz-ink: #7CC7F0; --ave-ink: #BCA6EA;
+  --inter: #D3DCE5; --hi: #F2F5F7; --on-hi: #0E1A2B; --focus: #6CC1F2; --warn-bg: #3A2A10; --warn-ink: #F2C66D; color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.5 var(--f-body); }
+.wrap { max-width: 1480px; margin: 0 auto; padding-inline: 24px; padding-block: 28px 48px; display: flex; flex-direction: column; gap: 22px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+code, .mono { font-family: var(--f-mono); font-weight: 500; font-size: .86em; }
+.eyebrow { font-size: 12.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+.top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px 40px; align-items: end; }
+.top h1 { font-size: clamp(30px, 4vw, 44px); line-height: 1.05; letter-spacing: -.02em; margin-top: 6px; }
+.lede { max-width: 64ch; color: var(--muted); margin-top: 10px; }
+.stats { display: flex; flex-wrap: wrap; gap: 8px 26px; margin: 0; }
+.stats div { display: flex; flex-direction: column; }
+.stats dt { order: 2; font-size: 13px; color: var(--muted); }
+.stats dd { order: 1; margin: 0; font: 600 28px/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: center; padding-block: 12px; border-block: 1px solid var(--line); }
+.group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.group > span { font-size: 13px; color: var(--muted); margin-right: 4px; }
+.pill { font: 500 14px var(--f-body); color: var(--ink); background: var(--chip); border: 1px solid transparent; border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.pill:hover { border-color: var(--line); }
+.pill[aria-pressed="true"] { background: var(--hi); color: var(--on-hi); }
+.pill .sw { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+.sel-wrap { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.sel-wrap label { font-size: 13px; color: var(--muted); }
+select { font: 14px var(--f-body); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; max-width: min(460px, 100%); }
+button:focus-visible, select:focus-visible, .node:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+.main { display: flex; gap: 20px; align-items: flex-start; }
+.col { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.col-l { flex: 1; } .col-r { width: 360px; flex: none; }
+.netbox { background: var(--surface); border: 1px solid var(--line-2); border-radius: 14px; padding: 14px 14px 16px; overflow-x: auto; display: flex; flex-direction: column; gap: 12px; }
+#net { display: block; width: 100%; min-width: 900px; height: auto; }
+.edge { fill: none; stroke-linecap: round; stroke-opacity: .5; transition: opacity .18s, stroke-opacity .18s; }
+.edge.ric { stroke: var(--ric); } .edge.slz { stroke: var(--slz); } .edge.ave { stroke: var(--ave); }
+.edge.inter { stroke: var(--inter); stroke-opacity: .6; stroke-dasharray: 12 10; }
+.edge.on { stroke-opacity: .95; }
+.edge.faint { opacity: .34; }
+.edge.dim { opacity: .08; }
+.node { cursor: pointer; transition: opacity .18s; }
+.node .ring { fill: var(--surface); }
+.node.ric .core { fill: var(--ric); } .node.slz .core { fill: var(--slz); } .node.ave .core { fill: var(--ave); }
+.node.hollow .core { fill: var(--surface); stroke-width: 4; }
+.node.hollow.ric .core { stroke: var(--ric); } .node.hollow.slz .core { stroke: var(--slz); } .node.hollow.ave .core { stroke: var(--ave); }
+.node.sel .ring { stroke: var(--hi); stroke-width: 3; }
+.node.faint { opacity: .55; }
+.node.dim { opacity: .18; }
+.node:focus { outline: none; }
+.node:focus-visible .ring { stroke: var(--focus); stroke-width: 4; }
+.label { font: 24px var(--f-body); fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 7px; stroke-linejoin: round; pointer-events: none; transition: opacity .18s; }
+.label.faint { opacity: .6; } .label.dim { opacity: .2; }
+.label.float { font-weight: 600; }
+.ptitle { font: 600 24px var(--f-body); letter-spacing: 2px; }
+.ptitle.ric { fill: var(--ric-ink); } .ptitle.slz { fill: var(--slz-ink); } .ptitle.ave { fill: var(--ave-ink); }
+.badge rect { fill: var(--hi); } .badge text { fill: var(--on-hi); font: 600 17px var(--f-mono); }
+
+.panel { background: var(--surface); border: 1px solid var(--line-2); border-radius: 14px; padding: 20px 20px 22px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.panel h2 { font-size: 28px; line-height: 1.1; }
+.panel h3 { font: 600 12.5px var(--f-body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; border-top: 1px solid var(--line-2); padding-top: 12px; }
+.panel .meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 14px; color: var(--muted); }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.dot.ric { background: var(--ric); } .dot.slz { background: var(--slz); } .dot.ave { background: var(--ave); }
+.tag { font: 500 13px var(--f-mono); background: var(--chip); border-radius: 6px; padding: 1px 7px; color: var(--ink); }
+.tag.none { font-family: var(--f-body); font-style: italic; }
+.kpi { font-size: 15px; } .kpi b { font: 600 26px var(--f-display); margin-right: 6px; font-variant-numeric: tabular-nums; }
+.cats { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13.5px; color: var(--muted); }
+.cats b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.flows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.flows li { display: grid; grid-template-columns: minmax(0, 1fr) 72px 26px; gap: 10px; align-items: center; }
+.flows li small { grid-column: 1 / -1; color: var(--muted); font-size: 12.5px; margin-top: -3px; }
+.linkbtn { font: 15px var(--f-body); color: var(--ink); background: none; border: 0; padding: 0; text-align: left; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.linkbtn:hover { text-decoration: underline; text-underline-offset: 3px; }
+.linkbtn .pl { color: var(--muted); font-size: 12.5px; }
+.bar { height: 6px; border-radius: 3px; background: var(--line-2); overflow: hidden; }
+.bar i { display: block; height: 100%; border-radius: 3px; }
+.bar i.ric { background: var(--ric); } .bar i.slz { background: var(--slz); } .bar i.ave { background: var(--ave); } .bar i.inter { background: var(--inter); }
+.flows b { text-align: right; font-variant-numeric: tabular-nums; font-size: 15px; }
+.empty { color: var(--muted); font-size: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chips button { font: 500 13px var(--f-mono); color: var(--ink); background: var(--chip); border: 0; border-radius: 6px; padding: 3px 8px; cursor: pointer; }
+.chips button:hover { background: var(--hi); color: var(--on-hi); }
+.steps { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.steps li.cross { font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 6px 0 2px 34px; }
+.steps button { width: 100%; display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 8px; align-items: center; background: none; border: 0; border-radius: 6px; padding: 4px 4px; cursor: pointer; font: 15px var(--f-body); color: var(--ink); text-align: left; }
+.steps button:hover { background: var(--chip); }
+.steps .n { font: 600 12px var(--f-mono); background: var(--hi); color: var(--on-hi); border-radius: 999px; height: 22px; display: grid; place-items: center; }
+.warn { background: var(--warn-bg); color: var(--warn-ink); border-radius: 8px; padding: 8px 10px; font-size: 13.5px; }
+.ghost { align-self: start; font: 500 14px var(--f-body); color: var(--ink); background: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.ghost:hover { background: var(--chip); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 13px; color: var(--muted); align-items: center; padding: 10px 4px 0; border-top: 1px solid var(--line-2); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend svg { flex: none; }
+
+.card { background: var(--surface); border: 1px solid var(--line-2); border-radius: 14px; padding: 18px 20px; min-width: 0; }
+.card h2 { font-size: 20px; margin-bottom: 10px; }
+.tablebox { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th { text-align: left; font: 600 12px var(--f-body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 5px 8px; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+tr.is-sel td { background: var(--chip); }
+tbody tr:hover td { background: var(--chip); }
+.notes { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 10px; font-size: 14.5px; }
+.notes b { font-weight: 600; }
+.foot { font-size: 13px; color: var(--muted); max-width: 90ch; }
+
+@media (max-width: 1100px) {
+  .top { grid-template-columns: minmax(0, 1fr); }
+  .main { flex-direction: column; align-items: stretch; }
+  .col { display: contents; }
+  .netbox { order: 1; } .panel { order: 2; } .tablecard { order: 3; } .notescard { order: 4; }
+}
+@media (max-width: 560px) { .wrap { padding-inline: 16px; } .stats dd { font-size: 23px; } .panel h2 { font-size: 24px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Truckflow · Matriz de circuitos · Nodo Sur</p>
+      <h1>Modelo de nodos</h1>
+      <p class="lede">Cada punto de la matriz es un nodo y cada par de pasos seguidos de un circuito es una conexión posible. Tocá un nodo para ver de dónde llegan y a dónde siguen los camiones, o elegí un circuito para ver su recorrido.</p>
+    </div>
+    <dl class="stats" id="stats"></dl>
+  </header>
+
+  <section class="controls" aria-label="Filtros">
+    <div class="group" role="group" aria-label="Planta" id="f-plant"><span>Planta</span></div>
+    <div class="group" role="group" aria-label="Movimiento" id="f-cat"><span>Movimiento</span></div>
+    <div class="sel-wrap"><label for="circuito">Circuito</label><select id="circuito"></select></div>
+  </section>
+
+  <div class="main">
+    <div class="col col-l">
+      <div class="netbox">
+        <svg id="net" viewBox="0 0 1664 620" role="group" aria-label="Red de nodos de la matriz de circuitos: Ricardone, San Lorenzo y Avellaneda; las líneas punteadas son transiles entre plantas"></svg>
+      <div class="legend" aria-label="Cómo leer la red">
+        <span><svg width="44" height="20" viewBox="0 0 44 20" aria-hidden="true"><circle cx="10" cy="10" r="8" style="fill:var(--ric)"/><circle cx="32" cy="10" r="7" stroke-width="3" style="fill:var(--surface); stroke:var(--ric)"/></svg>con / sin cámara en la matriz</span>
+        <span><svg width="44" height="24" viewBox="0 0 44 24" aria-hidden="true"><circle cx="8" cy="12" r="5" style="fill:var(--muted)"/><circle cx="30" cy="12" r="11" style="fill:var(--muted)"/></svg>tamaño: circuitos que pasan por el nodo</span>
+        <span><svg width="44" height="12" viewBox="0 0 44 12" aria-hidden="true"><path d="M3 6H41" stroke-width="8" stroke-linecap="round" style="stroke:var(--muted)"/></svg>grosor: circuitos que usan la conexión</span>
+        <span><svg width="44" height="12" viewBox="0 0 44 12" aria-hidden="true"><path d="M3 6H41" stroke-width="3" stroke-dasharray="9 6" stroke-linecap="round" style="stroke:var(--inter)"/></svg>transile entre plantas</span>
+      </div>
+
+      </div>
+    <section class="card tablecard">
+      <h2>Todos los nodos</h2>
+      <div class="tablebox">
+        <table>
+          <thead><tr><th>Nodo</th><th>Planta</th><th>Cámara</th><th class="num">Circuitos</th><th class="num">Entradas</th><th class="num">Salidas</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </section>
+    </div>
+    <div class="col col-r">
+      <aside class="panel" id="panel" aria-live="polite"></aside>
+    <section class="card notescard">
+      <h2>Para revisar en la matriz</h2>
+      <ol class="notes">
+        <li><b>R26 tiene dos pasos 8</b> (Calada y Playa de egreso). El modelo los tomó en ese orden y eso crea la conexión Calada → Playa de egreso, que solo usa R26.</li>
+        <li><b>R33 y R34 saltan del paso 8 al 10.</b> El recorrido no pierde nodos, pero conviene confirmar que no falta un paso.</li>
+        <li><b>Salidas de Ricardone invertidas.</b> La matriz llama Salida 2 a S3 y Salida 1 a S10; el informe de instalación del 15/09 las nombra al revés (S3 Salida 1, instalada; S10 Salida 2, pendiente).</li>
+        <li><b>Volcable 2 sin código.</b> La matriz no le asigna cámara; en el informe de instalación S9 cubre Volcable 1 y Volcable 2.</li>
+      </ol>
+    </section>
+    </div>
+  </div>
+
+  <p class="foot">Fuente: Matriz de circuitos de Vicentin (Ricardone R1–R34, San Lorenzo SL1–SL15, Avellaneda Av1–Av8). La red se dibuja para leer el flujo de izquierda a derecha, con la vuelta a Calada abajo y los transiles como puentes entre plantas. Avellaneda está en la matriz pero fuera de la instalación actual.</p>
+</div>
+
+<script>
+const D = /*__DATA__*/null;
+const NS = 'http://www.w3.org/2000/svg';
+const PL = { ricardone: { name: 'Ricardone', cls: 'ric' }, san_lorenzo: { name: 'San Lorenzo', cls: 'slz' }, avellaneda: { name: 'Avellaneda', cls: 'ave' } };
+const CATS = ['Recepción', 'Despacho', 'Transile interno', 'Transile externo'];
+const byId = Object.fromEntries(D.nodes.map(n => [n.id, n]));
+const circById = Object.fromEntries(D.circuits.map(c => [c.id, c]));
+const inL = {}, outL = {}, linkKey = {};
+D.links.forEach((l, i) => {
+  l.i = i;
+  (outL[l.from] = outL[l.from] || []).push(l);
+  (inL[l.to] = inL[l.to] || []).push(l);
+  linkKey[l.from + '>' + l.to] = l;
+});
+const maxN = Math.max(...D.links.map(l => l.n));
+const ew = n => 1.5 + 8.5 * Math.pow(n / maxN, 0.8);
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+const plural = (n, a, b) => n + ' ' + (n === 1 ? a : b);
+const state = { plant: 'all', cat: 'all', node: 'ricardone:Balanza Egreso', circuit: '', hover: null };
+
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs || {}) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+
+// ---------- cifras ----------
+const cross = D.circuits.filter(c => c.plants.length > 1).length;
+const noCam = D.nodes.filter(n => !n.code).length;
+document.getElementById('stats').innerHTML = [
+  [D.nodes.length, 'nodos'], [D.circuits.length, 'circuitos'], [D.links.length, 'conexiones'],
+  [cross, 'cruzan de planta'], [noCam, 'sin cámara en la matriz'],
+].map(([v, t]) => `<div><dt>${t}</dt><dd>${v}</dd></div>`).join('');
+
+// ---------- red ----------
+const svg = document.getElementById('net');
+const gE = el('g', {}, svg), gN = el('g', {}, svg), gL = el('g', { 'aria-hidden': 'true' }, svg), gB = el('g', { 'aria-hidden': 'true' }, svg);
+D.links.forEach(l => {
+  const p = el('path', { d: l.d, 'stroke-width': ew(l.n).toFixed(1) }, gE);
+  el('title', {}, p).textContent = `${byId[l.from].label} → ${byId[l.to].label} · ${plural(l.n, 'circuito', 'circuitos')}`;
+  l.el = p;
+});
+D.nodes.forEach(n => {
+  const g = el('g', { tabindex: '0', role: 'button', 'aria-label': `${n.label}, ${PL[n.plant].name}, ${plural(n.circuits.length, 'circuito', 'circuitos')}` }, gN);
+  el('circle', { cx: n.x, cy: n.y, r: n.r + 3.5, class: 'ring' }, g);
+  el('circle', { cx: n.x, cy: n.y, r: n.code ? n.r : n.r - 2, class: 'core' }, g);
+  el('title', {}, g).textContent = `${n.label} · ${PL[n.plant].name}${n.code ? ' · ' + n.code : ''}`;
+  g.addEventListener('click', () => selectNode(n.id));
+  g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectNode(n.id); } });
+  g.addEventListener('mouseenter', () => { state.hover = n.id; apply(); });
+  g.addEventListener('mouseleave', () => { state.hover = null; apply(); });
+  n.el = g;
+  if (n.lab) {
+    const t = el('text', { x: n.lab.x, y: n.lab.y, 'text-anchor': 'middle', class: 'label' }, gL);
+    t.textContent = n.label;
+    n.labEl = t;
+  }
+});
+[['RICARDONE', 0, 23, 'start', 'ric'], ['SAN LORENZO', 1664, 23, 'end', 'slz'], ['AVELLANEDA', 1136, 485, 'start', 'ave']].forEach(([t, x, y, a, c]) => {
+  el('text', { x, y, 'text-anchor': a, class: 'ptitle ' + c }, gL).textContent = t;
+});
+const floatT = el('text', { class: 'label float' }, gL);
+
+// ---------- filtros ----------
+function pillGroup(id, items, key) {
+  const box = document.getElementById(id);
+  items.forEach(([val, text, sw]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'pill'; b.dataset.val = val;
+    b.innerHTML = (sw ? `<span class="sw" style="background:var(--${sw})"></span>` : '') + esc(text);
+    b.addEventListener('click', () => { state[key] = val; syncPills(); fillSelect(); apply(); renderTable(); });
+    box.appendChild(b);
+  });
+}
+pillGroup('f-plant', [['all', 'Todas'], ['ricardone', 'Ricardone', 'ric'], ['san_lorenzo', 'San Lorenzo', 'slz'], ['avellaneda', 'Avellaneda', 'ave']], 'plant');
+pillGroup('f-cat', [['all', 'Todos'], ...CATS.map(c => [c, c])], 'cat');
+function syncPills() {
+  document.querySelectorAll('#f-plant .pill').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.val === state.plant)));
+  document.querySelectorAll('#f-cat .pill').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.val === state.cat)));
+}
+const circOk = c => (state.plant === 'all' || c.plants.includes(state.plant)) && (state.cat === 'all' || c.cat === state.cat);
+const edgeOk = l => (state.plant === 'all' || byId[l.from].plant === state.plant || byId[l.to].plant === state.plant) && l.circuits.some(id => circOk(circById[id]));
+const nodeOk = n => (state.plant === 'all' || n.plant === state.plant) && n.circuits.some(id => circOk(circById[id]));
+
+const sel = document.getElementById('circuito');
+function fillSelect() {
+  const groups = {};
+  D.circuits.filter(circOk).forEach(c => { (groups[c.plants[0]] = groups[c.plants[0]] || []).push(c); });
+  let html = '<option value="">Ninguno: ver la red completa</option>';
+  for (const p of Object.keys(PL)) {
+    if (!groups[p]) continue;
+    html += `<optgroup label="Empiezan en ${PL[p].name}">` + groups[p].map(c => `<option value="${c.id}">${c.id} · ${esc(c.cat)} · ${esc(c.desc)}</option>`).join('') + '</optgroup>';
+  }
+  sel.innerHTML = html;
+  if (state.circuit && !circOk(circById[state.circuit])) state.circuit = '';
+  sel.value = state.circuit;
+}
+sel.addEventListener('change', () => { state.circuit = sel.value; apply(); renderPanel(); });
+
+// ---------- vista ----------
+function apply() {
+  const c = state.circuit ? circById[state.circuit] : null;
+  const focus = c ? null : (state.hover || state.node);
+  const onPath = new Set(), onNodes = new Set();
+  if (c) c.seq.forEach((id, i) => { onNodes.add(id); if (i) { const l = linkKey[c.seq[i - 1] + '>' + id]; if (l) onPath.add(l.i); } });
+  const near = new Set();
+  if (focus) { near.add(focus); (outL[focus] || []).forEach(l => near.add(l.to)); (inL[focus] || []).forEach(l => near.add(l.from)); }
+  D.links.forEach(l => {
+    let cls = 'edge ' + (l.inter ? 'inter' : PL[l.plant].cls);
+    if (c) cls += onPath.has(l.i) ? ' on' : ' dim';
+    else if (!edgeOk(l)) cls += ' dim';
+    else if (focus) cls += (l.from === focus || l.to === focus) ? ' on' : ' faint';
+    l.el.setAttribute('class', cls);
+  });
+  D.nodes.forEach(n => {
+    let st = '';
+    if (c) st = onNodes.has(n.id) ? '' : ' dim';
+    else if (!nodeOk(n)) st = ' dim';
+    else if (focus && !near.has(n.id)) st = ' faint';
+    n.el.setAttribute('class', 'node ' + PL[n.plant].cls + (n.code ? '' : ' hollow') + st + (!c && n.id === state.node ? ' sel' : ''));
+    if (n.labEl) n.labEl.setAttribute('class', 'label' + st);
+  });
+  // etiqueta flotante para nodos sin etiqueta fija (Avellaneda)
+  const fid = state.hover || (!c ? state.node : null);
+  const fn = fid && byId[fid];
+  if (fn && !fn.lab) {
+    const right = fn.x > 1300;
+    floatT.setAttribute('x', right ? fn.x - fn.r - 8 : fn.x + fn.r + 8);
+    floatT.setAttribute('y', fn.y + 8);
+    floatT.setAttribute('text-anchor', right ? 'end' : 'start');
+    floatT.textContent = fn.label;
+  } else floatT.textContent = '';
+  drawBadges(c);
+}
+
+function drawBadges(c) {
+  gB.replaceChildren();
+  if (!c) return;
+  const idx = {};
+  c.seq.forEach((id, i) => (idx[id] = idx[id] || []).push(i + 1));
+  for (const id in idx) {
+    const n = byId[id], txt = idx[id].join('·');
+    const w = 12 + 10.5 * txt.length, x = n.x + n.r * 0.55, y = n.y - n.r - 20;
+    const g = el('g', { class: 'badge' }, gB);
+    el('rect', { x: x, y: y, width: w, height: 24, rx: 12 }, g);
+    el('text', { x: x + w / 2, y: y + 17, 'text-anchor': 'middle' }, g).textContent = txt;
+  }
+}
+
+// ---------- ficha ----------
+const panel = document.getElementById('panel');
+function catCounts(ids) {
+  const k = {};
+  ids.forEach(id => { const c = circById[id].cat; k[c] = (k[c] || 0) + 1; });
+  return CATS.filter(c => k[c]).map(c => [c, k[c]]);
+}
+function flowList(list, dir) {
+  if (!list.length) return `<p class="empty">${dir === 'in' ? 'Es el primer paso de sus circuitos.' : 'Es el último paso de sus circuitos.'}</p>`;
+  const max = Math.max(...list.map(l => l.n));
+  return '<ul class="flows">' + list.slice().sort((a, b) => b.n - a.n).map(l => {
+    const other = byId[dir === 'in' ? l.from : l.to];
+    const plantTxt = other.plant !== byId[dir === 'in' ? l.to : l.from].plant ? ` <span class="pl">· ${PL[other.plant].name}</span>` : '';
+    const barCls = l.inter ? 'inter' : PL[l.plant].cls;
+    const why = dir === 'out' ? `<small>${catCounts(l.circuits).map(([c, k]) => `${esc(c.toLowerCase())} ${k}`).join(' · ')}</small>` : '';
+    return `<li><button type="button" class="linkbtn" data-node="${esc(other.id)}">${esc(other.label)}${plantTxt}</button>`
+      + `<span class="bar" aria-hidden="true"><i class="${barCls}" style="width:${Math.max(8, 100 * l.n / max).toFixed(0)}%"></i></span><b>${l.n}</b>${why}</li>`;
+  }).join('') + '</ul>';
+}
+function nodeCard(id) {
+  const n = byId[id], ins = inL[id] || [], outs = outL[id] || [];
+  return `<p class="meta"><span class="dot ${PL[n.plant].cls}"></span>${PL[n.plant].name}`
+    + (n.code ? ` <span class="tag">${esc(n.code)}</span>` : ' <span class="tag none">sin cámara en la matriz</span>') + '</p>'
+    + `<h2>${esc(n.label)}</h2>`
+    + `<p class="kpi"><b>${n.circuits.length}</b>de ${D.circuits.length} circuitos pasan por acá</p>`
+    + `<div class="cats">${catCounts(n.circuits).map(([c, k]) => `<span>${esc(c)} <b>${k}</b></span>`).join('')}</div>`
+    + `<h3><span>De dónde llega</span><span>${ins.length}</span></h3>` + flowList(ins, 'in')
+    + `<h3><span>A dónde sigue</span><span>${outs.length}</span></h3>` + flowList(outs, 'out')
+    + `<h3><span>Circuitos</span><span>${n.circuits.length}</span></h3>`
+    + `<div class="chips">${n.circuits.map(c => `<button type="button" data-circ="${c}" title="${esc(circById[c].cat + ' · ' + circById[c].desc)}">${c}</button>`).join('')}</div>`;
+}
+const ISSUES = {
+  R26: 'La matriz repite el paso 8 (Calada y Playa de egreso); el orden entre esos dos es una suposición del modelo.',
+  R33: 'La matriz salta del paso 8 al 10.', R34: 'La matriz salta del paso 8 al 10.',
+};
+function circuitCard(cid) {
+  const c = circById[cid];
+  let html = `<p class="meta">${esc(c.cat)} · ${c.plants.map(p => `<span class="dot ${PL[p].cls}"></span>${PL[p].name}`).join(' → ')}</p>`
+    + `<h2>${esc(c.id)}</h2><p class="kpi"><b>${c.seq.length}</b>pasos</p>`;
+  if (ISSUES[cid]) html += `<p class="warn">${esc(ISSUES[cid])}</p>`;
+  html += '<h3><span>Recorrido</span><span>paso</span></h3><ol class="steps">';
+  let last = null;
+  c.seq.forEach((id, i) => {
+    const n = byId[id];
+    if (last && n.plant !== last) html += `<li class="cross">Cruza a ${PL[n.plant].name}</li>`;
+    last = n.plant;
+    html += `<li><button type="button" data-node="${esc(id)}"><span class="n">${i + 1}</span><span>${esc(n.label)}</span>`
+      + (n.code ? `<span class="tag">${esc(n.code)}</span>` : '<span class="tag none">sin cámara</span>') + '</button></li>';
+  });
+  return html + '</ol><button type="button" class="ghost" data-clear="1">Volver a la red completa</button>';
+}
+function renderPanel() { panel.innerHTML = state.circuit ? circuitCard(state.circuit) : nodeCard(state.node); }
+panel.addEventListener('click', e => {
+  const t = e.target.closest('[data-node],[data-circ],[data-clear]');
+  if (!t) return;
+  if (t.dataset.node) selectNode(t.dataset.node);
+  else if (t.dataset.circ) { state.circuit = t.dataset.circ; if (!circOk(circById[state.circuit])) { state.plant = 'all'; state.cat = 'all'; syncPills(); } fillSelect(); apply(); renderPanel(); renderTable(); }
+  else { state.circuit = ''; sel.value = ''; apply(); renderPanel(); }
+});
+function selectNode(id) {
+  state.node = id; state.circuit = ''; sel.value = '';
+  apply(); renderPanel(); renderTable();
+}
+
+// ---------- tabla ----------
+const tbody = document.getElementById('tbody');
+function renderTable() {
+  const order = Object.keys(PL);
+  const rows = D.nodes.filter(n => state.plant === 'all' || n.plant === state.plant)
+    .sort((a, b) => order.indexOf(a.plant) - order.indexOf(b.plant) || b.circuits.length - a.circuits.length || a.label.localeCompare(b.label));
+  tbody.innerHTML = rows.map(n => `<tr class="${n.id === state.node ? 'is-sel' : ''}">`
+    + `<td><button type="button" class="linkbtn" data-node="${esc(n.id)}">${esc(n.label)}</button></td>`
+    + `<td><span class="dot ${PL[n.plant].cls}"></span> ${PL[n.plant].name}</td>`
+    + `<td>${n.code ? `<span class="tag">${esc(n.code)}</span>` : '<span class="tag none">sin cámara</span>'}</td>`
+    + `<td class="num">${n.circuits.length}</td><td class="num">${(inL[n.id] || []).length}</td><td class="num">${(outL[n.id] || []).length}</td></tr>`).join('');
+}
+tbody.addEventListener('click', e => { const t = e.target.closest('[data-node]'); if (t) selectNode(t.dataset.node); });
+
+syncPills(); fillSelect(); apply(); renderPanel(); renderTable();
+</script>

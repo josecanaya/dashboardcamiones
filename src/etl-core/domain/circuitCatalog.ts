@@ -1,7 +1,15 @@
 /**
- * Fuente unica de verdad de circuitos logisticos (clave: codigo ejecutivo R*, SL*, RS_*).
- * Fase 3.1: copia fiel de EXECUTIVE_CIRCUIT_MATRIX (+ kind/product). En 3.2 se redefinen R26-R32.
+ * Catálogo de circuitos logísticos (clave: codigo ejecutivo R*, SL*, RS_*).
+ *
+ * La topología NO se define acá: el recorrido de cada circuito sale del modelo de nodos del
+ * Nodo Sur (`nodoSur.ts`, fuente única de verdad). `baseSequence` es la proyección del
+ * recorrido a las cámaras (nodos con cámara, sin repetir consecutivos). Este archivo solo
+ * agrega lo que no es topología: etiqueta, tipo, producto, cobertura, punto fuerte, si se
+ * clasifica por secuencia, alias legacy y variantes observadas (`allowedSequences`).
+ *
+ * Los baldes de inferencia (RS_REC, RS_DESP, SIN_PUNTO) no son circuitos del modelo.
  */
+import { nodoSurCameraSequence } from './nodoSur'
 
 export type CircuitCatalogKind =
   | 'recepcion'
@@ -26,32 +34,38 @@ export type CircuitCatalogEntry = {
   allowedSequences?: readonly (readonly string[])[]
 }
 
-const R5_ALLOWED_SEQUENCES: readonly (readonly string[])[] = [
-  ['S0', 'S1', 'ESPERA', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
-  ['S0', 'S1', 'S2', 'ESPERA', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
-  ['S0', 'S1', 'S2', 'ESPERA', 'S1', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
-  ['S0', 'S1', 'S2', 'S4', 'ESPERA', 'S6', 'S7', 'S9', 'S4', 'S10'],
-  ['S0', 'S1', 'S2', 'S4', 'S6', 'S7', 'S9', 'ESPERA', 'S4', 'S10'],
-  ['S0', 'S1', 'S2', 'S4', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
-  ['S0', 'S1', 'S2', 'S4', 'S4', 'S10'],
-  ['S0', 'S1', 'S2', 'S4', 'S6', 'S7', 'S6', 'S7', 'S9', 'S4', 'S10'],
-]
+/** Recorrido del modelo proyectado a cámaras. */
+const seq = (code: string): readonly string[] => {
+  const s = nodoSurCameraSequence(code)
+  if (!s.length) throw new Error(`circuitCatalog: ${code} no está en el modelo de nodos`)
+  return s
+}
 
-const R19_ALLOWED_SEQUENCES: readonly (readonly string[])[] = [
-  ['S0', 'S1', 'ESPERA', 'S2', 'S4', 'S5', 'S6', 'S7', 'S9', 'S4', 'S10'],
-  ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S9', 'S5', 'S6', 'S7', 'S9', 'S4', 'S10'],
-]
+/**
+ * Variantes contempladas sobre la base del modelo: espera antes de calada (cualquier paso de
+ * más sobre la base) y recalado (vuelve a Preingreso→Calada). `extra` = variantes observadas.
+ */
+function variants(base: readonly string[], extra: readonly (readonly string[])[] = []): readonly (readonly string[])[] {
+  const iCal = base.indexOf('S2')
+  if (iCal < 0) return extra
+  const espera = [...base.slice(0, iCal), 'ESPERA', ...base.slice(iCal)]
+  const recalado = [...base.slice(0, iCal + 1), 'S1', ...base.slice(iCal)]
+  return [espera, recalado, ...extra]
+}
 
-const KEPLER_ALLOWED_S_SEQUENCES: readonly (readonly string[])[] = [['S0', 'S1', 'S2', 'S4', 'S4']]
+const R5_BASE = seq('R5')
+/**
+ * Observadas: 14 de 179 camiones de volcable (21–27/09) pasan también por la cámara S7 antes
+ * del volcable; y doble paso por balanza sin lectura del volcable.
+ */
+const R5_VARIANTS = variants(R5_BASE, [
+  ['S0', 'S1', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4'],
+  ['S0', 'S1', 'S2', 'S4', 'S4'],
+])
 
-const SL1_ALLOWED_S_SEQUENCES: readonly (readonly string[])[] = [
-  ['S0', 'S1', 'S3', 'S4', 'S5', 'S7'],
-  ['S0', 'S2', 'S1', 'S3', 'S4', 'S5', 'S7'],
-  ['S0', 'ESPERA', 'S1', 'S3', 'S4', 'S5', 'S7'],
-  ['S0', 'S2', 'S1', 'S3', 'S5', 'S7'],
-  ['S0', 'S1', 'S3', 'S4', 'ESPERA', 'S5', 'S7'],
-]
+const R19_BASE = seq('R19')
 
+/** R7 visto solo en Ricardone (la pata del puerto llega en otro journey o no se lee). */
 const R7_RIC_ALLOWED_S_SEQUENCES: readonly (readonly string[])[] = [
   ['S0', 'S1', 'S2', 'S3'],
   ['S0', 'S1', 'S3'],
@@ -59,7 +73,26 @@ const R7_RIC_ALLOWED_S_SEQUENCES: readonly (readonly string[])[] = [
   ['S0', 'S2', 'S1', 'S3'],
 ]
 
-/** Catálogo unificado (paridad con EXECUTIVE_CIRCUIT_MATRIX al cierre de 3.1). */
+/** Circuito del modelo que todavía no se clasifica por secuencia (lo asigna el Excel o queda a futuro). */
+function modelOnly(
+  code: string,
+  label: string,
+  kind: CircuitCatalogKind,
+  coveragePercent: number,
+  product?: CircuitCatalogProduct
+): CircuitCatalogEntry {
+  return {
+    code,
+    label,
+    kind,
+    ...(product ? { product } : {}),
+    coveragePercent,
+    hasStrongPoint: false,
+    enabledForClassification: false,
+    baseSequence: seq(code),
+  }
+}
+
 export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
   R1: {
     code: 'R1',
@@ -70,15 +103,10 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: true,
     enabledForClassification: true,
     aliases: ['CIRCUITO_CELDA16_DESCARGA'],
-    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S10'],
-    allowedSequences: [
-      ['S0', 'S1', 'ESPERA', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S10'],
-      ['S0', 'S1', 'S2', 'ESPERA', 'S4', 'S5', 'S6', 'S7', 'S4', 'S10'],
-      ['S0', 'S1', 'S2', 'ESPERA', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S10'],
-      ['S0', 'S1', 'S2', 'S4', 'ESPERA', 'S5', 'S6', 'S7', 'S4', 'S10'],
-      ['S0', 'S1', 'S2', 'S4', 'S5', 'ESPERA', 'S6', 'S7', 'S4', 'S10'],
-    ],
+    baseSequence: seq('R1'),
+    allowedSequences: variants(seq('R1')),
   },
+  R2: modelOnly('R2', 'Recepción Silo Australiano', 'recepcion', 67),
   R5: {
     code: 'R5',
     label: 'Recepción Volcable 1',
@@ -87,8 +115,8 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: true,
     enabledForClassification: true,
     aliases: ['CIRCUITO_VOLCABLE_1_2'],
-    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
-    allowedSequences: R5_ALLOWED_SEQUENCES,
+    baseSequence: R5_BASE,
+    allowedSequences: R5_VARIANTS,
   },
   R6: {
     code: 'R6',
@@ -98,8 +126,8 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: true,
     enabledForClassification: true,
     aliases: ['CIRCUITO_VOLCABLE_1_2'],
-    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S6', 'S7', 'S9', 'S4', 'S10'],
-    allowedSequences: R5_ALLOWED_SEQUENCES,
+    baseSequence: seq('R6'),
+    allowedSequences: R5_VARIANTS,
   },
   R7: {
     code: 'R7',
@@ -109,10 +137,9 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: true,
     enabledForClassification: true,
     aliases: ['CIRCUITO_SAN_LORENZO', 'CIRCUITO_R7_MIXTO'],
-    baseSequence: ['S0', 'S1', 'S2', 'S3'],
+    baseSequence: seq('R7'),
     allowedSequences: [
       ...R7_RIC_ALLOWED_S_SEQUENCES,
-      ['S0', 'S1', 'S3'],
       ['S0', 'S1', 'ESPERA', 'S5', 'S7'],
       ['S0', 'S2', 'S1', 'S5', 'S7'],
       ['S0', 'S1', 'S2', 'S3', 'S0', 'S1', 'S3', 'S4', 'S5', 'S7'],
@@ -120,14 +147,14 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
   },
   SL1: {
     code: 'SL1',
-    label: 'Recepción interna San Lorenzo',
+    label: 'Recepción Carga OSL San Lorenzo',
     kind: 'recepcion',
     coveragePercent: 75,
     hasStrongPoint: true,
     enabledForClassification: true,
     aliases: ['CIRCUITO_SL_RECEPCION'],
-    baseSequence: SL1_ALLOWED_S_SEQUENCES[0]!,
-    allowedSequences: SL1_ALLOWED_S_SEQUENCES.slice(1),
+    baseSequence: seq('SL1'),
+    allowedSequences: variants(seq('SL1')),
   },
   SL2: {
     code: 'SL2',
@@ -138,8 +165,8 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: true,
     enabledForClassification: true,
     aliases: ['CIRCUITO_SL_ACEITE_PTO'],
-    baseSequence: SL1_ALLOWED_S_SEQUENCES[0]!,
-    allowedSequences: SL1_ALLOWED_S_SEQUENCES.slice(1),
+    baseSequence: seq('SL2'),
+    allowedSequences: variants(seq('SL2')),
   },
   SL3: {
     code: 'SL3',
@@ -150,9 +177,21 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: false,
     enabledForClassification: true,
     aliases: ['CIRCUITO_SL_RENOVA'],
-    baseSequence: SL1_ALLOWED_S_SEQUENCES[0]!,
-    allowedSequences: SL1_ALLOWED_S_SEQUENCES.slice(1),
+    baseSequence: seq('SL3'),
+    allowedSequences: variants(seq('SL3')),
   },
+  SL4: modelOnly('SL4', 'Despacho Cargadero San Lorenzo', 'despacho', 86),
+  SL5: modelOnly('SL5', 'Despacho Carga OSL San Lorenzo', 'despacho', 100, 'ACEITE'),
+  SL6: modelOnly('SL6', 'Despacho Renova', 'despacho', 100, 'ACEITE'),
+  SL7: modelOnly('SL7', 'Despacho Carga y descarga San Lorenzo', 'despacho', 100, 'ACEITE'),
+  SL8: modelOnly('SL8', 'Transile San Lorenzo → Celda 16', 'transile_externo', 81),
+  SL9: modelOnly('SL9', 'Transile San Lorenzo → Silo Australiano', 'transile_externo', 75),
+  SL10: modelOnly('SL10', 'Transile San Lorenzo → Silo Keppler', 'transile_externo', 81),
+  SL11: modelOnly('SL11', 'Transile San Lorenzo → Silo Chief', 'transile_externo', 75),
+  SL12: modelOnly('SL12', 'Transile San Lorenzo → Volcable 1', 'transile_externo', 81),
+  SL13: modelOnly('SL13', 'Transile San Lorenzo → Volcable 2', 'transile_externo', 81),
+  SL14: modelOnly('SL14', 'Transile líquidos Carga OSL → Ricardone', 'transile_externo', 80, 'ACEITE'),
+  SL15: modelOnly('SL15', 'Transile líquidos Carga y descarga → Ricardone', 'transile_externo', 80, 'ACEITE'),
   R8: {
     code: 'R8',
     label: 'Recepción Mercadería Líquida',
@@ -162,8 +201,8 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: true,
     enabledForClassification: true,
     aliases: ['CIRCUITO_LIQUIDO'],
-    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S4', 'S3'],
-    allowedSequences: [['S0', 'S1', 'ESPERA', 'S1', 'S2', 'S4', 'S4', 'S3']],
+    baseSequence: seq('R8'),
+    allowedSequences: variants(seq('R8')),
   },
   R9: {
     code: 'R9',
@@ -174,23 +213,20 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: true,
     enabledForClassification: true,
     aliases: ['CIRCUITO_CELDA16_CARGA'],
-    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S1', 'S2', 'S3'],
-    allowedSequences: [
-      ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S5', 'S6', 'S7', 'S1', 'S2', 'S3'],
-      ['S0', 'S1', 'ESPERA', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S1', 'ESPERA', 'S2', 'S3'],
-      ['S0', 'S1', 'S2', 'ESPERA', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S4', 'S1', 'S2', 'S3'],
-    ],
+    baseSequence: seq('R9'),
+    allowedSequences: variants(seq('R9')),
   },
+  R10: modelOnly('R10', 'Despacho Silo Australiano', 'despacho', 89),
+  R11: modelOnly('R11', 'Despacho Silo Keppler', 'despacho', 100),
+  R12: modelOnly('R12', 'Despacho Tolva silo Chief', 'despacho', 100),
   /**
    * Despacho de pellet desde tolvas 09–11 (R9–R16 = despacho Ricardone en la matriz KPI).
    *
    * Es el destino del pellet que **no** es «de la vuelta»: carga en la celda y sale a
    * otro destino, no a San Lorenzo. El par de la vuelta es R30/R31/R32.
    *
-   * Sin `baseSequence` a propósito: las tolvas no tienen cámara Truckflow, así que el
-   * circuito no se puede deducir de la secuencia — lo asigna el Excel de Movimientos
-   * (igual que R34). Inventarle una plantilla haría que la matriz clasifique recorridos
-   * reales contra una secuencia fabricada.
+   * Las tolvas no tienen cámara: por secuencia R13/R14/R15 son indistinguibles entre sí (y de
+   * R10), por eso no se clasifican por secuencia — lo asigna el Excel de Movimientos.
    */
   R13: {
     code: 'R13',
@@ -199,9 +235,9 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     product: 'PELLET',
     coveragePercent: 55,
     hasStrongPoint: false,
-    // No se clasifica por secuencia de cámaras (las tolvas no tienen): lo asigna el Excel.
     enabledForClassification: false,
     aliases: ['DESPACHO_PELLET_C09'],
+    baseSequence: seq('R13'),
   },
   R14: {
     code: 'R14',
@@ -210,9 +246,9 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     product: 'PELLET',
     coveragePercent: 55,
     hasStrongPoint: false,
-    // No se clasifica por secuencia de cámaras (las tolvas no tienen): lo asigna el Excel.
     enabledForClassification: false,
     aliases: ['DESPACHO_PELLET_C10'],
+    baseSequence: seq('R14'),
   },
   R15: {
     code: 'R15',
@@ -221,9 +257,9 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     product: 'PELLET',
     coveragePercent: 55,
     hasStrongPoint: false,
-    // No se clasifica por secuencia de cámaras (las tolvas no tienen): lo asigna el Excel.
     enabledForClassification: false,
     aliases: ['DESPACHO_PELLET_C11'],
+    baseSequence: seq('R15'),
   },
   R16: {
     code: 'R16',
@@ -233,9 +269,11 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     coveragePercent: 75,
     hasStrongPoint: true,
     enabledForClassification: true,
-    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S4', 'S1', 'S2', 'S3'],
-    allowedSequences: [['S0', 'S1', 'ESPERA', 'S2', 'S4', 'S4', 'S1', 'ESPERA', 'S2', 'S3']],
+    baseSequence: seq('R16'),
+    allowedSequences: variants(seq('R16')),
   },
+  R17: modelOnly('R17', 'Transile Celda 16 → Silo Chief', 'transile_interno', 67),
+  R18: modelOnly('R18', 'Transile Celda 16 → Silo Keppler', 'transile_interno', 78),
   R19: {
     code: 'R19',
     label: 'Transile C16 Volcable 1',
@@ -244,8 +282,8 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: true,
     enabledForClassification: true,
     aliases: ['TRANSILE_VOLCABLE_BALANZA'],
-    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S9', 'S4', 'S10'],
-    allowedSequences: R19_ALLOWED_SEQUENCES,
+    baseSequence: R19_BASE,
+    allowedSequences: variants(R19_BASE),
   },
   R20: {
     code: 'R20',
@@ -255,9 +293,14 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: true,
     enabledForClassification: true,
     aliases: ['TRANSILE_VOLCABLE_BALANZA'],
-    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S5', 'S6', 'S7', 'S9', 'S4', 'S10'],
-    allowedSequences: R19_ALLOWED_SEQUENCES,
+    baseSequence: seq('R20'),
+    allowedSequences: variants(R19_BASE),
   },
+  R21: modelOnly('R21', 'Transile Tolva silo Chief → Celda 16', 'transile_interno', 82),
+  R22: modelOnly('R22', 'Transile Tolva silo Chief → Volcable 1', 'transile_interno', 80),
+  R23: modelOnly('R23', 'Transile Silo Keppler → Celda 16', 'transile_interno', 82),
+  R24: modelOnly('R24', 'Transile Silo Keppler → Volcable 1', 'transile_interno', 80),
+  R25: modelOnly('R25', 'Transile Silo Keppler → Volcable 2', 'transile_interno', 80),
   R3: {
     code: 'R3',
     label: 'Recepción Silos Kepler 1',
@@ -266,8 +309,8 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: true,
     enabledForClassification: true,
     aliases: ['CIRCUITO_KEPLER_SILOS', 'KEPPLER_SILO_1'],
-    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S4'],
-    allowedSequences: KEPLER_ALLOWED_S_SEQUENCES,
+    baseSequence: seq('R3'),
+    allowedSequences: variants(seq('R3')),
   },
   R4: {
     code: 'R4',
@@ -277,8 +320,8 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: true,
     enabledForClassification: true,
     aliases: ['CIRCUITO_KEPLER_SILOS', 'KEPPLER_SILO_2'],
-    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S4'],
-    allowedSequences: KEPLER_ALLOWED_S_SEQUENCES,
+    baseSequence: seq('R4'),
+    allowedSequences: variants(seq('R4')),
   },
   R26: {
     code: 'R26',
@@ -295,23 +338,7 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
       'TRANSILE_SL_A_C16',
       'TRANSILE_SL_A_C16_DESCARGA',
     ],
-    baseSequence: [
-      'S0',
-      'S1',
-      'S2',
-      'S4',
-      'S5',
-      'S6',
-      'S7',
-      'S4',
-      'S10',
-      'S0',
-      'S1',
-      'S3',
-      'S4',
-      'S5',
-      'S7',
-    ],
+    baseSequence: seq('R26'),
     allowedSequences: [],
   },
   R27: {
@@ -323,19 +350,7 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: true,
     enabledForClassification: true,
     aliases: ['TRANSILE_EXTERNO_GIRASOL'],
-    baseSequence: [
-      'S0',
-      'S1',
-      'S2',
-      'S4',
-      'S10',
-      'S0',
-      'S1',
-      'S3',
-      'S4',
-      'S5',
-      'S7',
-    ],
+    baseSequence: seq('R27'),
     allowedSequences: [],
   },
   R28: {
@@ -347,19 +362,7 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: true,
     enabledForClassification: true,
     aliases: ['TRANSILE_EXTERNO_GIRASOL_R28'],
-    baseSequence: [
-      'S0',
-      'S1',
-      'S2',
-      'S4',
-      'S10',
-      'S0',
-      'S1',
-      'S3',
-      'S4',
-      'S5',
-      'S7',
-    ],
+    baseSequence: seq('R28'),
     allowedSequences: [],
   },
   /**
@@ -379,10 +382,9 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     coveragePercent: 55,
     hasStrongPoint: false,
     // Como R13–R15: lo asigna el Excel (plataforma de carga), no la secuencia de cámaras.
-    // La carga en silo y la descarga en volcable recorren las mismas cámaras que R30, así que
-    // una plantilla de secuencia lo haría indistinguible del transile de pellet.
     enabledForClassification: false,
     aliases: ['TRANSILE_EXTERNO_SOJA_SILOS'],
+    baseSequence: seq('R29'),
   },
   /** Pellet: Tolva Celda 09 — sin cámara Truckflow en destino (matriz Excel 2026-07-13). */
   R30: {
@@ -394,7 +396,7 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: false,
     enabledForClassification: true,
     aliases: ['TRANSILE_EXTERNO_PELLET_C09'],
-    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S4', 'S10', 'S0', 'S1', 'S3', 'S4', 'S5', 'S7'],
+    baseSequence: seq('R30'),
     allowedSequences: [],
   },
   R31: {
@@ -406,7 +408,7 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: false,
     enabledForClassification: true,
     aliases: ['TRANSILE_EXTERNO_PELLET_C10'],
-    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S4', 'S10', 'S0', 'S1', 'S3', 'S4', 'S5', 'S7'],
+    baseSequence: seq('R31'),
     allowedSequences: [],
   },
   R32: {
@@ -418,9 +420,10 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     hasStrongPoint: false,
     enabledForClassification: true,
     aliases: ['TRANSILE_EXTERNO_PELLET_C11'],
-    baseSequence: ['S0', 'S1', 'S2', 'S4', 'S4', 'S10', 'S0', 'S1', 'S3', 'S4', 'S5', 'S7'],
+    baseSequence: seq('R32'),
     allowedSequences: [],
   },
+  R33: modelOnly('R33', 'Transile externo Líquidos (Carga OSL)', 'transile_externo', 93, 'ACEITE'),
   R34: {
     code: 'R34',
     label: 'Transile externo Líquidos SLZ 2',
@@ -429,7 +432,10 @@ export const CIRCUIT_CATALOG: Record<string, CircuitCatalogEntry> = {
     coveragePercent: 64,
     hasStrongPoint: true,
     enabledForClassification: true,
+    baseSequence: seq('R34'),
   },
+  /** Circuito nuevo del modelo (29-09-2026): cala en Ricardone y descarga líquido en el puerto. */
+  R35: modelOnly('R35', 'Calada Ricardone → descarga líquidos puerto', 'liquido', 100, 'ACEITE'),
   RS_REC: {
     code: 'RS_REC',
     label: 'Recepción sólida inferida (sin cámara destino)',

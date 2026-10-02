@@ -1,0 +1,653 @@
+{
+  "schemaVersion": "1.0",
+  "nodes": [
+    {
+      "id": "product:soja",
+      "type": "specialist",
+      "label": "Soja",
+      "source": "CAPA DE AGENTES/conocimiento/soja.md"
+    },
+    {
+      "id": "product:girasol",
+      "type": "specialist",
+      "label": "Girasol",
+      "source": "CAPA DE AGENTES/conocimiento/girasol.md"
+    },
+    {
+      "id": "product:pellet",
+      "type": "specialist",
+      "label": "Pellet",
+      "source": "CAPA DE AGENTES/conocimiento/pellet.md"
+    },
+    {
+      "id": "product:liquidos",
+      "type": "specialist",
+      "label": "Líquidos",
+      "source": "CAPA DE AGENTES/conocimiento/liquidos.md"
+    },
+    {
+      "id": "product:seguridad",
+      "type": "specialist",
+      "label": "Seguridad transversal",
+      "source": "CAPA DE AGENTES/conocimiento/seguridad.md"
+    },
+    {
+      "id": "soja.operaciones",
+      "type": "indicator",
+      "label": "Operaciones R7",
+      "source": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/paquete_excel.json",
+      "status": "observada_en_codigo",
+      "selector": "tiempos.soja.periodo.camiones"
+    },
+    {
+      "id": "source:reportes/logistica/2026-09-24_2026-09-30/comite-logistica/paquete_excel.json",
+      "type": "source",
+      "label": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/paquete_excel.json",
+      "source": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/paquete_excel.json"
+    },
+    {
+      "id": "soja.tramos",
+      "type": "indicator",
+      "label": "Tiempos por tramo R7",
+      "source": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/paquete_excel.json",
+      "status": "observada_en_codigo",
+      "selector": "tiempos.soja.periodo.tramos"
+    },
+    {
+      "id": "soja.r29",
+      "type": "indicator",
+      "label": "Transile desde silos",
+      "source": "scripts/estado-planta/metricas-camaras.cjs",
+      "status": "observada_en_codigo",
+      "selector": "trips.r29 y CAPS"
+    },
+    {
+      "id": "source:scripts/estado-planta/metricas-camaras.cjs",
+      "type": "source",
+      "label": "scripts/estado-planta/metricas-camaras.cjs",
+      "source": "scripts/estado-planta/metricas-camaras.cjs"
+    },
+    {
+      "id": "soja.historico",
+      "type": "indicator",
+      "label": "Serie publicada R7",
+      "source": "scripts/estado-planta/gen_comite_logistica.py",
+      "status": "historico_reportado",
+      "selector": "TOT, P1, SLZ, PUB"
+    },
+    {
+      "id": "source:scripts/estado-planta/gen_comite_logistica.py",
+      "type": "source",
+      "label": "scripts/estado-planta/gen_comite_logistica.py",
+      "source": "scripts/estado-planta/gen_comite_logistica.py"
+    },
+    {
+      "id": "girasol.operaciones",
+      "type": "indicator",
+      "label": "Operaciones por circuito",
+      "source": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/paquete_excel.json",
+      "status": "observada_en_codigo",
+      "selector": "tiempos.girasol.operaciones y ejecutivo.circuitosPorProducto.GIRASOL"
+    },
+    {
+      "id": "girasol.tramos",
+      "type": "indicator",
+      "label": "Tramos publicados de girasol",
+      "source": "scripts/estado-planta/gen_comite_logistica.py",
+      "status": "historico_reportado",
+      "selector": "GI y seccion girasol"
+    },
+    {
+      "id": "girasol.mediana",
+      "type": "indicator",
+      "label": "Puerta a puerta Excel",
+      "source": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/excel_extra.json",
+      "status": "pendiente",
+      "selector": "girasol_p2p_excel_mediana"
+    },
+    {
+      "id": "source:reportes/logistica/2026-09-24_2026-09-30/comite-logistica/excel_extra.json",
+      "type": "source",
+      "label": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/excel_extra.json",
+      "source": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/excel_extra.json"
+    },
+    {
+      "id": "pellet.viajes",
+      "type": "indicator",
+      "label": "Viajes y patentes del operativo",
+      "source": "scripts/estado-planta/pellet-operativo.cjs",
+      "status": "observada_en_codigo",
+      "selector": "X, viajesDia, viajesPorCamion"
+    },
+    {
+      "id": "source:scripts/estado-planta/pellet-operativo.cjs",
+      "type": "source",
+      "label": "scripts/estado-planta/pellet-operativo.cjs",
+      "source": "scripts/estado-planta/pellet-operativo.cjs"
+    },
+    {
+      "id": "pellet.toneladas",
+      "type": "indicator",
+      "label": "Toneladas reales y estimadas",
+      "source": "scripts/estado-planta/pellet-operativo.cjs",
+      "status": "observada_en_codigo",
+      "selector": "kgReal y toneladas"
+    },
+    {
+      "id": "pellet.tandas",
+      "type": "indicator",
+      "label": "Duración del operativo",
+      "source": "scripts/estado-planta/pellet-operativo.cjs",
+      "status": "observada_en_codigo",
+      "selector": "marks, bloques"
+    },
+    {
+      "id": "pellet.tramos",
+      "type": "indicator",
+      "label": "Tiempos del viaje",
+      "source": "scripts/estado-planta/pellet-operativo.cjs",
+      "status": "observada_en_codigo",
+      "selector": "trips y is"
+    },
+    {
+      "id": "pellet.historico",
+      "type": "indicator",
+      "label": "Operativos históricos",
+      "source": "scripts/estado-planta/pellet-historico.cjs",
+      "status": "observada_en_codigo",
+      "selector": "archivo completo"
+    },
+    {
+      "id": "source:scripts/estado-planta/pellet-historico.cjs",
+      "type": "source",
+      "label": "scripts/estado-planta/pellet-historico.cjs",
+      "source": "scripts/estado-planta/pellet-historico.cjs"
+    },
+    {
+      "id": "pellet.escenarios",
+      "type": "indicator",
+      "label": "Comparación flota y tarifa",
+      "source": "scripts/estado-planta/gen_comite_logistica.py",
+      "status": "historico_reportado",
+      "selector": "pellet-flota y pellet-tarifa"
+    },
+    {
+      "id": "liquidos.actividad",
+      "type": "indicator",
+      "label": "Ingresos y egresos de líquidos",
+      "source": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/excel_extra.json",
+      "status": "pendiente",
+      "selector": "liquidos"
+    },
+    {
+      "id": "liquidos.camaras",
+      "type": "indicator",
+      "label": "Paso por calada líquida",
+      "source": "scripts/estado-planta/metricas-camaras.cjs",
+      "status": "observada_en_codigo",
+      "selector": "is.liq y trips.liq"
+    },
+    {
+      "id": "seguridad.calles",
+      "type": "indicator",
+      "label": "Calle declarada vs observada",
+      "source": "scripts/estado-planta/gen_comite_seguridad.py",
+      "status": "historico_reportado",
+      "selector": "section numeros y notas"
+    },
+    {
+      "id": "source:scripts/estado-planta/gen_comite_seguridad.py",
+      "type": "source",
+      "label": "scripts/estado-planta/gen_comite_seguridad.py",
+      "source": "scripts/estado-planta/gen_comite_seguridad.py"
+    },
+    {
+      "id": "seguridad.retornos",
+      "type": "indicator",
+      "label": "Retorno sin descarga observada",
+      "source": "scripts/estado-planta/gen_comite_seguridad.py",
+      "status": "historico_reportado",
+      "selector": "div-vuelta y case"
+    },
+    {
+      "id": "seguridad.demoras",
+      "type": "indicator",
+      "label": "Demoras entre plantas",
+      "source": "scripts/estado-planta/gen_comite_seguridad.py",
+      "status": "historico_reportado",
+      "selector": "section numeros"
+    },
+    {
+      "id": "node_model",
+      "type": "physical_graph",
+      "label": "Circuitos y nodos Nodo Sur",
+      "source": "docs/propuesta-en-vivo/modelo-nodos-nodo-sur/datos/modelo_nodo_sur.json"
+    },
+    {
+      "id": "camera_mapping",
+      "type": "source",
+      "label": "Correspondencia cámaras y nodos",
+      "source": "docs/propuesta-en-vivo/modelo-nodos-nodo-sur/fuente/camaras_por_nodo.json"
+    },
+    {
+      "id": "coverage",
+      "type": "control",
+      "label": "Cobertura y completitud de fuentes",
+      "source": "CAPA DE AGENTES/conocimiento/README.md"
+    },
+    {
+      "id": "comunicador",
+      "type": "agent",
+      "label": "Informes de logística y seguridad",
+      "source": "CAPA DE AGENTES/agentes/comunicador-operativo.toml"
+    },
+    {
+      "id": "scope:nodo-sur",
+      "type": "report_scope",
+      "label": "Nodo Sur: Ricardone y Terminal de Embarque",
+      "source": "instruccion_usuario_2026-10-02",
+      "status": "confirmada_por_usuario",
+      "includedPlants": [
+        "RICARDONE",
+        "TERMINAL_EMBARQUE"
+      ],
+      "excludedPlants": [
+        "RENOPACK"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "product:soja",
+      "target": "soja.operaciones",
+      "relation": "consulta",
+      "evidence": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/paquete_excel.json#tiempos.soja.periodo.camiones",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "soja.operaciones",
+      "target": "source:reportes/logistica/2026-09-24_2026-09-30/comite-logistica/paquete_excel.json",
+      "relation": "se_obtiene_de",
+      "evidence": "tiempos.soja.periodo.camiones",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "product:soja",
+      "target": "soja.tramos",
+      "relation": "consulta",
+      "evidence": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/paquete_excel.json#tiempos.soja.periodo.tramos",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "soja.tramos",
+      "target": "source:reportes/logistica/2026-09-24_2026-09-30/comite-logistica/paquete_excel.json",
+      "relation": "se_obtiene_de",
+      "evidence": "tiempos.soja.periodo.tramos",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "product:soja",
+      "target": "soja.r29",
+      "relation": "consulta",
+      "evidence": "scripts/estado-planta/metricas-camaras.cjs#trips.r29 y CAPS",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "soja.r29",
+      "target": "source:scripts/estado-planta/metricas-camaras.cjs",
+      "relation": "se_obtiene_de",
+      "evidence": "trips.r29 y CAPS",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "product:soja",
+      "target": "soja.historico",
+      "relation": "consulta",
+      "evidence": "scripts/estado-planta/gen_comite_logistica.py#TOT, P1, SLZ, PUB",
+      "status": "historico_reportado"
+    },
+    {
+      "source": "soja.historico",
+      "target": "source:scripts/estado-planta/gen_comite_logistica.py",
+      "relation": "se_obtiene_de",
+      "evidence": "TOT, P1, SLZ, PUB",
+      "status": "historico_reportado"
+    },
+    {
+      "source": "product:girasol",
+      "target": "girasol.operaciones",
+      "relation": "consulta",
+      "evidence": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/paquete_excel.json#tiempos.girasol.operaciones y ejecutivo.circuitosPorProducto.GIRASOL",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "girasol.operaciones",
+      "target": "source:reportes/logistica/2026-09-24_2026-09-30/comite-logistica/paquete_excel.json",
+      "relation": "se_obtiene_de",
+      "evidence": "tiempos.girasol.operaciones y ejecutivo.circuitosPorProducto.GIRASOL",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "product:girasol",
+      "target": "girasol.tramos",
+      "relation": "consulta",
+      "evidence": "scripts/estado-planta/gen_comite_logistica.py#GI y seccion girasol",
+      "status": "historico_reportado"
+    },
+    {
+      "source": "girasol.tramos",
+      "target": "source:scripts/estado-planta/gen_comite_logistica.py",
+      "relation": "se_obtiene_de",
+      "evidence": "GI y seccion girasol",
+      "status": "historico_reportado"
+    },
+    {
+      "source": "product:girasol",
+      "target": "girasol.mediana",
+      "relation": "consulta",
+      "evidence": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/excel_extra.json#girasol_p2p_excel_mediana",
+      "status": "pendiente"
+    },
+    {
+      "source": "girasol.mediana",
+      "target": "source:reportes/logistica/2026-09-24_2026-09-30/comite-logistica/excel_extra.json",
+      "relation": "se_obtiene_de",
+      "evidence": "girasol_p2p_excel_mediana",
+      "status": "pendiente"
+    },
+    {
+      "source": "product:pellet",
+      "target": "pellet.viajes",
+      "relation": "consulta",
+      "evidence": "scripts/estado-planta/pellet-operativo.cjs#X, viajesDia, viajesPorCamion",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "pellet.viajes",
+      "target": "source:scripts/estado-planta/pellet-operativo.cjs",
+      "relation": "se_obtiene_de",
+      "evidence": "X, viajesDia, viajesPorCamion",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "product:pellet",
+      "target": "pellet.toneladas",
+      "relation": "consulta",
+      "evidence": "scripts/estado-planta/pellet-operativo.cjs#kgReal y toneladas",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "pellet.toneladas",
+      "target": "source:scripts/estado-planta/pellet-operativo.cjs",
+      "relation": "se_obtiene_de",
+      "evidence": "kgReal y toneladas",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "product:pellet",
+      "target": "pellet.tandas",
+      "relation": "consulta",
+      "evidence": "scripts/estado-planta/pellet-operativo.cjs#marks, bloques",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "pellet.tandas",
+      "target": "source:scripts/estado-planta/pellet-operativo.cjs",
+      "relation": "se_obtiene_de",
+      "evidence": "marks, bloques",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "product:pellet",
+      "target": "pellet.tramos",
+      "relation": "consulta",
+      "evidence": "scripts/estado-planta/pellet-operativo.cjs#trips y is",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "pellet.tramos",
+      "target": "source:scripts/estado-planta/pellet-operativo.cjs",
+      "relation": "se_obtiene_de",
+      "evidence": "trips y is",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "product:pellet",
+      "target": "pellet.historico",
+      "relation": "consulta",
+      "evidence": "scripts/estado-planta/pellet-historico.cjs#archivo completo",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "pellet.historico",
+      "target": "source:scripts/estado-planta/pellet-historico.cjs",
+      "relation": "se_obtiene_de",
+      "evidence": "archivo completo",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "product:pellet",
+      "target": "pellet.escenarios",
+      "relation": "consulta",
+      "evidence": "scripts/estado-planta/gen_comite_logistica.py#pellet-flota y pellet-tarifa",
+      "status": "historico_reportado"
+    },
+    {
+      "source": "pellet.escenarios",
+      "target": "source:scripts/estado-planta/gen_comite_logistica.py",
+      "relation": "se_obtiene_de",
+      "evidence": "pellet-flota y pellet-tarifa",
+      "status": "historico_reportado"
+    },
+    {
+      "source": "product:liquidos",
+      "target": "liquidos.actividad",
+      "relation": "consulta",
+      "evidence": "reportes/logistica/2026-09-24_2026-09-30/comite-logistica/excel_extra.json#liquidos",
+      "status": "pendiente"
+    },
+    {
+      "source": "liquidos.actividad",
+      "target": "source:reportes/logistica/2026-09-24_2026-09-30/comite-logistica/excel_extra.json",
+      "relation": "se_obtiene_de",
+      "evidence": "liquidos",
+      "status": "pendiente"
+    },
+    {
+      "source": "product:liquidos",
+      "target": "liquidos.camaras",
+      "relation": "consulta",
+      "evidence": "scripts/estado-planta/metricas-camaras.cjs#is.liq y trips.liq",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "liquidos.camaras",
+      "target": "source:scripts/estado-planta/metricas-camaras.cjs",
+      "relation": "se_obtiene_de",
+      "evidence": "is.liq y trips.liq",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "product:seguridad",
+      "target": "seguridad.calles",
+      "relation": "consulta",
+      "evidence": "scripts/estado-planta/gen_comite_seguridad.py#section numeros y notas",
+      "status": "historico_reportado"
+    },
+    {
+      "source": "seguridad.calles",
+      "target": "source:scripts/estado-planta/gen_comite_seguridad.py",
+      "relation": "se_obtiene_de",
+      "evidence": "section numeros y notas",
+      "status": "historico_reportado"
+    },
+    {
+      "source": "product:seguridad",
+      "target": "seguridad.retornos",
+      "relation": "consulta",
+      "evidence": "scripts/estado-planta/gen_comite_seguridad.py#div-vuelta y case",
+      "status": "historico_reportado"
+    },
+    {
+      "source": "seguridad.retornos",
+      "target": "source:scripts/estado-planta/gen_comite_seguridad.py",
+      "relation": "se_obtiene_de",
+      "evidence": "div-vuelta y case",
+      "status": "historico_reportado"
+    },
+    {
+      "source": "product:seguridad",
+      "target": "seguridad.demoras",
+      "relation": "consulta",
+      "evidence": "scripts/estado-planta/gen_comite_seguridad.py#section numeros",
+      "status": "historico_reportado"
+    },
+    {
+      "source": "seguridad.demoras",
+      "target": "source:scripts/estado-planta/gen_comite_seguridad.py",
+      "relation": "se_obtiene_de",
+      "evidence": "section numeros",
+      "status": "historico_reportado"
+    },
+    {
+      "source": "product:soja",
+      "target": "product:seguridad",
+      "relation": "comparte_operaciones_y_casos",
+      "evidence": "CAPA DE AGENTES/conocimiento/README.md",
+      "status": "contrato_nuevo"
+    },
+    {
+      "source": "product:girasol",
+      "target": "product:seguridad",
+      "relation": "comparte_operaciones_y_casos",
+      "evidence": "CAPA DE AGENTES/conocimiento/README.md",
+      "status": "contrato_nuevo"
+    },
+    {
+      "source": "product:pellet",
+      "target": "product:seguridad",
+      "relation": "comparte_operaciones_y_casos",
+      "evidence": "CAPA DE AGENTES/conocimiento/README.md",
+      "status": "contrato_nuevo"
+    },
+    {
+      "source": "product:liquidos",
+      "target": "product:seguridad",
+      "relation": "comparte_operaciones_y_casos",
+      "evidence": "CAPA DE AGENTES/conocimiento/README.md",
+      "status": "contrato_nuevo"
+    },
+    {
+      "source": "product:soja",
+      "target": "node_model",
+      "relation": "consulta_recorrido",
+      "evidence": "docs/propuesta-en-vivo/modelo-nodos-nodo-sur/datos/modelo_nodo_sur.json",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "product:girasol",
+      "target": "node_model",
+      "relation": "consulta_recorrido",
+      "evidence": "docs/propuesta-en-vivo/modelo-nodos-nodo-sur/datos/modelo_nodo_sur.json",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "product:pellet",
+      "target": "node_model",
+      "relation": "consulta_recorrido",
+      "evidence": "docs/propuesta-en-vivo/modelo-nodos-nodo-sur/datos/modelo_nodo_sur.json",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "product:liquidos",
+      "target": "node_model",
+      "relation": "consulta_recorrido",
+      "evidence": "docs/propuesta-en-vivo/modelo-nodos-nodo-sur/datos/modelo_nodo_sur.json",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "product:seguridad",
+      "target": "node_model",
+      "relation": "consulta_recorrido",
+      "evidence": "docs/propuesta-en-vivo/modelo-nodos-nodo-sur/datos/modelo_nodo_sur.json",
+      "status": "observada_en_codigo"
+    },
+    {
+      "source": "node_model",
+      "target": "camera_mapping",
+      "relation": "se_observa_con",
+      "evidence": "docs/propuesta-en-vivo/modelo-nodos-nodo-sur/fuente/camaras_por_nodo.json",
+      "status": "observada_en_archivo"
+    },
+    {
+      "source": "product:soja",
+      "target": "coverage",
+      "relation": "verifica_cobertura",
+      "evidence": "CAPA DE AGENTES/conocimiento/README.md",
+      "status": "contrato_nuevo"
+    },
+    {
+      "source": "product:soja",
+      "target": "comunicador",
+      "relation": "entrega_evidencia",
+      "evidence": "CAPA DE AGENTES/conocimiento/README.md",
+      "status": "contrato_nuevo"
+    },
+    {
+      "source": "product:girasol",
+      "target": "coverage",
+      "relation": "verifica_cobertura",
+      "evidence": "CAPA DE AGENTES/conocimiento/README.md",
+      "status": "contrato_nuevo"
+    },
+    {
+      "source": "product:girasol",
+      "target": "comunicador",
+      "relation": "entrega_evidencia",
+      "evidence": "CAPA DE AGENTES/conocimiento/README.md",
+      "status": "contrato_nuevo"
+    },
+    {
+      "source": "product:pellet",
+      "target": "coverage",
+      "relation": "verifica_cobertura",
+      "evidence": "CAPA DE AGENTES/conocimiento/README.md",
+      "status": "contrato_nuevo"
+    },
+    {
+      "source": "product:pellet",
+      "target": "comunicador",
+      "relation": "entrega_evidencia",
+      "evidence": "CAPA DE AGENTES/conocimiento/README.md",
+      "status": "contrato_nuevo"
+    },
+    {
+      "source": "product:liquidos",
+      "target": "coverage",
+      "relation": "verifica_cobertura",
+      "evidence": "CAPA DE AGENTES/conocimiento/README.md",
+      "status": "contrato_nuevo"
+    },
+    {
+      "source": "product:liquidos",
+      "target": "comunicador",
+      "relation": "entrega_evidencia",
+      "evidence": "CAPA DE AGENTES/conocimiento/README.md",
+      "status": "contrato_nuevo"
+    },
+    {
+      "source": "product:seguridad",
+      "target": "coverage",
+      "relation": "verifica_cobertura",
+      "evidence": "CAPA DE AGENTES/conocimiento/README.md",
+      "status": "contrato_nuevo"
+    },
+    {
+      "source": "product:seguridad",
+      "target": "comunicador",
+      "relation": "entrega_evidencia",
+      "evidence": "CAPA DE AGENTES/conocimiento/README.md",
+      "status": "contrato_nuevo"
+    }
+  ]
+}

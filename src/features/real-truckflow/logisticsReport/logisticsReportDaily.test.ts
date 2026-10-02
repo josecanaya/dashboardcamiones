@@ -32,6 +32,12 @@ describe('buildDailyMovimientos', () => {
     expect(m.missing).toBe(false)
   })
 
+  it('filtra por planta (Nodo Sur)', () => {
+    const m = buildDailyMovimientos(rows, '2026-09-23', { plantas: ['RICARDONE'] })
+    expect(m.total).toBe(1)
+    expect(m.porPlanta).toEqual({ RICARDONE: 1 })
+  })
+
   it('sin tabla es faltante, no cero', () => {
     expect(buildDailyMovimientos(undefined, '2026-09-23').missing).toBe(true)
   })

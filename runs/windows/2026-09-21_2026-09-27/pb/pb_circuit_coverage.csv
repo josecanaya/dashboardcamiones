@@ -1,0 +1,38 @@
+coverage_type,matrix_code,matrix_name,circuit_group,en_matriz_operativa,circuitos_observados,reconstruccion_posible,cobertura_sobre_circuitos_pct,reconstruccion_sobre_observados_pct
+punto_operativo,INGRESO,ingreso,Secuencia lógica Ricardone,si,494,168,34.8,34
+punto_operativo,PREINGRESO,preingreso,Secuencia lógica Ricardone,si,1025,437,72.3,42.6
+punto_operativo,CALADA,calada,Secuencia lógica Ricardone,si,889,398,62.7,44.8
+punto_operativo,BALANZA_INGRESO,balanza ingreso,Secuencia lógica Ricardone,si,102,4,7.2,3.9
+punto_operativo,BALANZA_EGRESO,balanza egreso,Secuencia lógica Ricardone,si,444,154,31.3,34.7
+punto_operativo,EGRESO,egreso,Secuencia lógica Ricardone,si,765,389,53.9,50.8
+punto_operativo,VOLCABLE,volcable,Secuencia lógica Ricardone,si,272,130,19.2,47.8
+punto_operativo,CELDA16_DESCARGA,celda16 descarga,Secuencia lógica Ricardone,si,0,0,0,
+punto_operativo,CELDA16_CARGA,celda16 carga,Secuencia lógica Ricardone,si,1,1,0.1,100
+punto_operativo,LIQUIDO,liquido,Secuencia lógica Ricardone,si,133,53,9.4,39.8
+punto_operativo,SL_INGRESO,sl ingreso,Secuencia lógica Ricardone,si,53,4,3.7,7.5
+circuito_preliminar,CIRCUITO_SAN_LORENZO,CIRCUITO_SAN_LORENZO,Clasificación ETL,si,668,323,47.1,48.4
+circuito_preliminar,DESPACHO_SIN_PUNTO_INSTRUMENTADO,DESPACHO_SIN_PUNTO_INSTRUMENTADO,Clasificación ETL,parcial,345,12,24.3,3.5
+circuito_preliminar,CIRCUITO_VOLCABLE_1_2,CIRCUITO_VOLCABLE_1_2,Clasificación ETL,si,272,130,19.2,47.8
+circuito_preliminar,CIRCUITO_LIQUIDO,CIRCUITO_LIQUIDO,Clasificación ETL,si,132,52,9.3,39.4
+circuito_preliminar,CIRCUITO_CELDA16_CARGA,CIRCUITO_CELDA16_CARGA,Clasificación ETL,si,1,1,0.1,100
+matriz_negocio,A1V0,Celda 16,Recepción / Descarga sólido,si,0,0,0,
+matriz_negocio,A2V0,Silo Australiano,Recepción / Descarga sólido,si,0,0,0,
+matriz_negocio,A3V0,Silos Kepler,Recepción / Descarga sólido,si,0,0,0,
+matriz_negocio,A4V0,Silos CHIEF,Recepción / Descarga sólido,si,0,0,0,
+matriz_negocio,A5V0,Volcable 1,Recepción / Descarga sólido,si,0,0,0,
+matriz_negocio,A6V0,Volcable 2,Recepción / Descarga sólido,si,0,0,0,
+matriz_negocio,A7V0,San Lorenzo,Recepción / Descarga sólido,si,0,0,0,
+matriz_negocio,B1V0,Celda 16,Despacho / Carga sólido,si,0,0,0,
+matriz_negocio,B2V0,Silo Australiano,Despacho / Carga sólido,si,0,0,0,
+matriz_negocio,B3V0,Silos Kepler,Despacho / Carga sólido,si,0,0,0,
+matriz_negocio,B4V0,Silos CHIEF,Despacho / Carga sólido,si,0,0,0,
+matriz_negocio,B5V0,Celda 9,Despacho / Carga sólido,si,0,0,0,
+matriz_negocio,B6V0,Celda 10,Despacho / Carga sólido,si,0,0,0,
+matriz_negocio,B7V0,Celda 11,Despacho / Carga sólido,si,0,0,0,
+matriz_negocio,B8V0,San Lorenzo,Despacho / Carga sólido,si,0,0,0,
+matriz_negocio,C1V0,Líquidos completo,Recepción y Despacho líquido,si,0,0,0,
+matriz_negocio,E1V0,Celda 16 -> Silo Australiano,Transile / Movimientos internos,si,0,0,0,
+matriz_negocio,E2V0,Silo Australiano -> Silos Kepler,Transile / Movimientos internos,si,0,0,0,
+matriz_negocio,E3V0,Silos Kepler -> Celda 16,Transile / Movimientos internos,si,0,0,0,
+matriz_negocio,E4V0,Mov. interno Celda 16 -> Silos Kepler,Transile / Movimientos internos,si,0,0,0,
+matriz_negocio,E5V0,Carga Silo Australiano,Transile / Movimientos internos,si,0,0,0,
