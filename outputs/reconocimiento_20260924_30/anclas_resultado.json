@@ -1,26 +1,26 @@
 {
   "training": "24–26 septiembre 2026",
   "evaluation": "27–30 septiembre 2026",
-  "graph_edges": 100,
+  "graph_edges": 84,
   "test_intervals": 2016,
   "test_reasons": {
     "atributos_anclas_incompletos_o_distintos": 1734,
     "evaluado": 275,
     "vistas_incompatibles": 7
   },
-  "test_unique_chains": 50,
-  "test_hidden_recovered": 15,
-  "test_all_middle_correct": 28,
+  "test_unique_chains": 27,
+  "test_hidden_recovered": 20,
+  "test_all_middle_correct": 17,
   "real_intervals": 2354,
-  "real_unique_chains": 37,
-  "real_deduced_captures": 38,
-  "real_changed_plate_captures": 24,
+  "real_unique_chains": 33,
+  "real_deduced_captures": 39,
+  "real_changed_plate_captures": 26,
   "conflicted_captures": 0,
   "per_camera": [
     {
       "camera": "RenCargFte",
       "captures": 154,
-      "deduced_captures": 1
+      "deduced_captures": 2
     },
     {
       "camera": "RenCargTras",
@@ -45,7 +45,7 @@
     {
       "camera": "RicB1Ingreso",
       "captures": 1410,
-      "deduced_captures": 6
+      "deduced_captures": 7
     },
     {
       "camera": "RicB2Egreso",
@@ -115,7 +115,7 @@
     {
       "camera": "RicEgrCamFrente",
       "captures": 1808,
-      "deduced_captures": 5
+      "deduced_captures": 2
     },
     {
       "camera": "RicEgrCamTraser",
@@ -195,7 +195,7 @@
     {
       "camera": "SLZBalIngFte",
       "captures": 2487,
-      "deduced_captures": 0
+      "deduced_captures": 1
     },
     {
       "camera": "SLZBalIngTras",
@@ -235,7 +235,7 @@
     {
       "camera": "SLZBalSC2Fte",
       "captures": 417,
-      "deduced_captures": 6
+      "deduced_captures": 8
     },
     {
       "camera": "SLZBalSC2Tras",
@@ -245,7 +245,7 @@
     {
       "camera": "SLZCalado",
       "captures": 246,
-      "deduced_captures": 5
+      "deduced_captures": 6
     },
     {
       "camera": "SLZIngCamFrente",
@@ -260,7 +260,7 @@
     {
       "camera": "SLZSalidaC1Fte",
       "captures": 3078,
-      "deduced_captures": 4
+      "deduced_captures": 1
     },
     {
       "camera": "SLZSalidaC1Tras",
@@ -295,7 +295,7 @@
     {
       "camera": "SLZVolcableC3",
       "captures": 457,
-      "deduced_captures": 1
+      "deduced_captures": 2
     },
     {
       "camera": "SLZVolcableC4",
@@ -308,5 +308,6 @@
       "deduced_captures": 2
     }
   ],
+  "strong_ocr_contradictions": 4,
   "caveat": "Prueba condicional a extremos OCR correctos, no identidad auditada. Igualdad estricta de color/marca/categoria conocidos. Grafo empirico dirigido, tiempos p01–p99 ±60s, rutas del catalogo compatibles; no probabilidades calibradas ni asignacion global uno a uno. No se considera camino directo sin capturas intermedias: unicidad condicionada a existencia de una cadena observada intermedia. Datos traseros separados de delanteros."
 }

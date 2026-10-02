@@ -1,0 +1,783 @@
+{
+  "captures": 44967,
+  "training": "24–25/9/2026",
+  "calibration": "26/9/2026",
+  "test": "27–30/9/2026",
+  "signals": 46,
+  "feature_names": [
+    "color_left",
+    "color_right",
+    "color_anchor_agree",
+    "color_known",
+    "color_camera_reliability",
+    "brand_left",
+    "brand_right",
+    "brand_anchor_agree",
+    "brand_known",
+    "brand_camera_reliability",
+    "category_left",
+    "category_right",
+    "category_anchor_agree",
+    "category_known",
+    "category_camera_reliability",
+    "time_left_log",
+    "time_right_log",
+    "interval_log",
+    "time_fraction",
+    "graph_left_reachable",
+    "time_left_fit",
+    "time_left_direct_range",
+    "time_left_feasible",
+    "graph_left_frequency",
+    "graph_right_reachable",
+    "time_right_fit",
+    "time_right_direct_range",
+    "time_right_feasible",
+    "graph_right_frequency",
+    "speed_left_similarity",
+    "speed_right_similarity",
+    "speed_stationary",
+    "lane_left_equal",
+    "lane_right_equal",
+    "country_left_equal",
+    "country_right_equal",
+    "same_site_left",
+    "same_site_right",
+    "route_options_inverse",
+    "ocr_confidence",
+    "plate_similarity",
+    "plate_same_length",
+    "plate_prefix_similarity",
+    "plate_suffix_similarity",
+    "plate_confusion_similarity",
+    "partial_plate_substring"
+  ],
+  "graph_edges": 92,
+  "training_labelled_comparisons": 36201,
+  "training_queries": 1277,
+  "comparisons": [
+    {
+      "method": "atributos",
+      "test_queries": 2688,
+      "with_candidates": 2028,
+      "exact_recovery": 670,
+      "ocr_identity_agrees": 686,
+      "top1_ocr_precision": 0.33826429980276135,
+      "calibration_threshold": null,
+      "accepted_test": 0,
+      "accepted_correct_ocr": 0
+    },
+    {
+      "method": "atributos_grafo_tiempos",
+      "test_queries": 2688,
+      "with_candidates": 2028,
+      "exact_recovery": 971,
+      "ocr_identity_agrees": 992,
+      "top1_ocr_precision": 0.4891518737672584,
+      "calibration_threshold": [
+        31,
+        0.95,
+        0.2
+      ],
+      "accepted_test": 146,
+      "accepted_correct_ocr": 141,
+      "accepted_exact_recovery": 139,
+      "accepted_holdout_ocr_precision": 0.9657534246575342,
+      "accepted_capture_precision": 0.952054794520548
+    },
+    {
+      "method": "multisenal_sin_patente",
+      "test_queries": 2688,
+      "with_candidates": 2028,
+      "exact_recovery": 1006,
+      "ocr_identity_agrees": 1028,
+      "top1_ocr_precision": 0.5069033530571992,
+      "calibration_threshold": [
+        27,
+        0.5,
+        0.5
+      ],
+      "accepted_test": 133,
+      "accepted_correct_ocr": 131,
+      "accepted_exact_recovery": 131,
+      "accepted_holdout_ocr_precision": 0.9849624060150376,
+      "accepted_capture_precision": 0.9849624060150376
+    },
+    {
+      "method": "multisenal_ocr_danado",
+      "test_queries": 2688,
+      "with_candidates": 2028,
+      "exact_recovery": 1927,
+      "ocr_identity_agrees": 1989,
+      "top1_ocr_precision": 0.9807692307692307,
+      "calibration_threshold": [
+        327,
+        0.5,
+        0.05
+      ],
+      "accepted_test": 1789,
+      "accepted_correct_ocr": 1771,
+      "accepted_exact_recovery": 1763,
+      "accepted_holdout_ocr_precision": 0.98993851313583,
+      "accepted_capture_precision": 0.985466741196199
+    },
+    {
+      "method": "multisenal_ocr_parcial",
+      "test_queries": 2688,
+      "with_candidates": 2028,
+      "exact_recovery": 1950,
+      "ocr_identity_agrees": 2018,
+      "top1_ocr_precision": 0.995069033530572,
+      "calibration_threshold": [
+        319,
+        0.9,
+        0.05
+      ],
+      "accepted_test": 1809,
+      "accepted_correct_ocr": 1809,
+      "accepted_exact_recovery": 1809,
+      "accepted_holdout_ocr_precision": 1.0,
+      "accepted_capture_precision": 1.0
+    }
+  ],
+  "real_candidate_captures": 2304,
+  "real_anchor_conflict_captures": 928,
+  "real_strong_ocr_conflicts": 237,
+  "real_status_rows": {
+    "AMBIGUO_ENTRE_IDENTIDADES": 2697,
+    "CANDIDATO_PENDIENTE": 1010,
+    "SUPERA_FILTRO_VALIDADO_CON_OCR": 205,
+    "CONTRADICCION_OCR_FUERTE": 386
+  },
+  "per_camera": [
+    {
+      "camera": "RenCargFte",
+      "captures": 154,
+      "test_queries": 16,
+      "exact_recovery": 11,
+      "ocr_identity_agrees": 12,
+      "real_candidate_captures": 67,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 31
+    },
+    {
+      "camera": "RenCargTras",
+      "captures": 255,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 20,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 3
+    },
+    {
+      "camera": "RenDescFte",
+      "captures": 8,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 1,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "RenDescTras",
+      "captures": 7,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 0,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "RicB1Egreso",
+      "captures": 29,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 1,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 1
+    },
+    {
+      "camera": "RicB1Ingreso",
+      "captures": 1410,
+      "test_queries": 90,
+      "exact_recovery": 56,
+      "ocr_identity_agrees": 56,
+      "real_candidate_captures": 185,
+      "coherent_candidate_captures": 4,
+      "ambiguous_captures": 73
+    },
+    {
+      "camera": "RicB2Egreso",
+      "captures": 1396,
+      "test_queries": 3,
+      "exact_recovery": 3,
+      "ocr_identity_agrees": 3,
+      "real_candidate_captures": 281,
+      "coherent_candidate_captures": 1,
+      "ambiguous_captures": 130
+    },
+    {
+      "camera": "RicB2Ingreso",
+      "captures": 125,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 25,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 10
+    },
+    {
+      "camera": "RicB3Egreso",
+      "captures": 242,
+      "test_queries": 4,
+      "exact_recovery": 2,
+      "ocr_identity_agrees": 2,
+      "real_candidate_captures": 26,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 6
+    },
+    {
+      "camera": "RicB3Ingreso",
+      "captures": 261,
+      "test_queries": 1,
+      "exact_recovery": 1,
+      "ocr_identity_agrees": 1,
+      "real_candidate_captures": 45,
+      "coherent_candidate_captures": 4,
+      "ambiguous_captures": 23
+    },
+    {
+      "camera": "RicC16Carga1",
+      "captures": 4,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 2,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 2
+    },
+    {
+      "camera": "RicC16Carga2",
+      "captures": 3,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 0,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "RicCal01",
+      "captures": 90,
+      "test_queries": 18,
+      "exact_recovery": 12,
+      "ocr_identity_agrees": 12,
+      "real_candidate_captures": 5,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 2
+    },
+    {
+      "camera": "RicCal02",
+      "captures": 141,
+      "test_queries": 28,
+      "exact_recovery": 22,
+      "ocr_identity_agrees": 24,
+      "real_candidate_captures": 11,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "RicCal03",
+      "captures": 767,
+      "test_queries": 59,
+      "exact_recovery": 54,
+      "ocr_identity_agrees": 56,
+      "real_candidate_captures": 25,
+      "coherent_candidate_captures": 2,
+      "ambiguous_captures": 6
+    },
+    {
+      "camera": "RicCal04",
+      "captures": 925,
+      "test_queries": 116,
+      "exact_recovery": 83,
+      "ocr_identity_agrees": 91,
+      "real_candidate_captures": 23,
+      "coherent_candidate_captures": 2,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "RicCal05",
+      "captures": 1,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 0,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "RicCal06",
+      "captures": 5,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 0,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "RicCalLiq",
+      "captures": 626,
+      "test_queries": 93,
+      "exact_recovery": 41,
+      "ocr_identity_agrees": 46,
+      "real_candidate_captures": 26,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 4
+    },
+    {
+      "camera": "RicEgrCamFrente",
+      "captures": 1808,
+      "test_queries": 433,
+      "exact_recovery": 352,
+      "ocr_identity_agrees": 360,
+      "real_candidate_captures": 68,
+      "coherent_candidate_captures": 10,
+      "ambiguous_captures": 11
+    },
+    {
+      "camera": "RicEgrCamTraser",
+      "captures": 1574,
+      "test_queries": 4,
+      "exact_recovery": 3,
+      "ocr_identity_agrees": 3,
+      "real_candidate_captures": 1,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "RicIngCamFrente",
+      "captures": 88,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 0,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "RicIngCamTrasera",
+      "captures": 1853,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 1,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "RicPreIngEgFr",
+      "captures": 55,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 9,
+      "coherent_candidate_captures": 3,
+      "ambiguous_captures": 1
+    },
+    {
+      "camera": "RicPreIngEgTr",
+      "captures": 5,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 0,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "RicPreIngInFr",
+      "captures": 2225,
+      "test_queries": 127,
+      "exact_recovery": 70,
+      "ocr_identity_agrees": 70,
+      "real_candidate_captures": 145,
+      "coherent_candidate_captures": 1,
+      "ambiguous_captures": 20
+    },
+    {
+      "camera": "RicPreIngInTr",
+      "captures": 2145,
+      "test_queries": 2,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 0,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "RicS6Playa3",
+      "captures": 1102,
+      "test_queries": 105,
+      "exact_recovery": 60,
+      "ocr_identity_agrees": 62,
+      "real_candidate_captures": 212,
+      "coherent_candidate_captures": 3,
+      "ambiguous_captures": 97
+    },
+    {
+      "camera": "RicS7Carga",
+      "captures": 518,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 157,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 86
+    },
+    {
+      "camera": "RicS7DescLinea1",
+      "captures": 2,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 0,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "RicS7DescLinea2",
+      "captures": 140,
+      "test_queries": 3,
+      "exact_recovery": 1,
+      "ocr_identity_agrees": 1,
+      "real_candidate_captures": 52,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 28
+    },
+    {
+      "camera": "RicS8CargaLinea1",
+      "captures": 14,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 4,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 1
+    },
+    {
+      "camera": "RicS8CargaLinea2",
+      "captures": 803,
+      "test_queries": 42,
+      "exact_recovery": 27,
+      "ocr_identity_agrees": 27,
+      "real_candidate_captures": 161,
+      "coherent_candidate_captures": 3,
+      "ambiguous_captures": 83
+    },
+    {
+      "camera": "RicVolcable1",
+      "captures": 304,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 11,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 2
+    },
+    {
+      "camera": "RicVolcable2",
+      "captures": 355,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 31,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 7
+    },
+    {
+      "camera": "SLZBalIngFte",
+      "captures": 2487,
+      "test_queries": 471,
+      "exact_recovery": 362,
+      "ocr_identity_agrees": 389,
+      "real_candidate_captures": 50,
+      "coherent_candidate_captures": 2,
+      "ambiguous_captures": 3
+    },
+    {
+      "camera": "SLZBalIngTras",
+      "captures": 4268,
+      "test_queries": 7,
+      "exact_recovery": 5,
+      "ocr_identity_agrees": 6,
+      "real_candidate_captures": 3,
+      "coherent_candidate_captures": 2,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "SLZBalLiq1a",
+      "captures": 35,
+      "test_queries": 4,
+      "exact_recovery": 2,
+      "ocr_identity_agrees": 2,
+      "real_candidate_captures": 7,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 6
+    },
+    {
+      "camera": "SLZBalLiq1b",
+      "captures": 60,
+      "test_queries": 2,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 8,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 6
+    },
+    {
+      "camera": "SLZBalLiq2a",
+      "captures": 71,
+      "test_queries": 3,
+      "exact_recovery": 3,
+      "ocr_identity_agrees": 3,
+      "real_candidate_captures": 36,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 21
+    },
+    {
+      "camera": "SLZBalLiq2b",
+      "captures": 38,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 18,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 14
+    },
+    {
+      "camera": "SLZBalSC1Fte",
+      "captures": 239,
+      "test_queries": 6,
+      "exact_recovery": 2,
+      "ocr_identity_agrees": 2,
+      "real_candidate_captures": 39,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 14
+    },
+    {
+      "camera": "SLZBalSC1Tras",
+      "captures": 410,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 25,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 4
+    },
+    {
+      "camera": "SLZBalSC2Fte",
+      "captures": 417,
+      "test_queries": 13,
+      "exact_recovery": 12,
+      "ocr_identity_agrees": 12,
+      "real_candidate_captures": 125,
+      "coherent_candidate_captures": 29,
+      "ambiguous_captures": 54
+    },
+    {
+      "camera": "SLZBalSC2Tras",
+      "captures": 84,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 6,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 2
+    },
+    {
+      "camera": "SLZCalado",
+      "captures": 246,
+      "test_queries": 66,
+      "exact_recovery": 56,
+      "ocr_identity_agrees": 58,
+      "real_candidate_captures": 128,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 51
+    },
+    {
+      "camera": "SLZIngCamFrente",
+      "captures": 1958,
+      "test_queries": 566,
+      "exact_recovery": 444,
+      "ocr_identity_agrees": 444,
+      "real_candidate_captures": 32,
+      "coherent_candidate_captures": 4,
+      "ambiguous_captures": 1
+    },
+    {
+      "camera": "SLZIngCamTrasera",
+      "captures": 1766,
+      "test_queries": 9,
+      "exact_recovery": 6,
+      "ocr_identity_agrees": 6,
+      "real_candidate_captures": 6,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "SLZSalidaC1Fte",
+      "captures": 3078,
+      "test_queries": 161,
+      "exact_recovery": 74,
+      "ocr_identity_agrees": 74,
+      "real_candidate_captures": 2,
+      "coherent_candidate_captures": 1,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "SLZSalidaC1Tras",
+      "captures": 3490,
+      "test_queries": 8,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 0,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "SLZSalidaC2Fte",
+      "captures": 848,
+      "test_queries": 2,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 0,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "SLZSalidaC2Tras",
+      "captures": 1375,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 0,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "SLZTK400",
+      "captures": 3086,
+      "test_queries": 36,
+      "exact_recovery": 18,
+      "ocr_identity_agrees": 21,
+      "real_candidate_captures": 119,
+      "coherent_candidate_captures": 14,
+      "ambiguous_captures": 32
+    },
+    {
+      "camera": "SLZVolcableC1",
+      "captures": 25,
+      "test_queries": 0,
+      "exact_recovery": 0,
+      "ocr_identity_agrees": 0,
+      "real_candidate_captures": 0,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 0
+    },
+    {
+      "camera": "SLZVolcableC2",
+      "captures": 132,
+      "test_queries": 10,
+      "exact_recovery": 6,
+      "ocr_identity_agrees": 6,
+      "real_candidate_captures": 10,
+      "coherent_candidate_captures": 5,
+      "ambiguous_captures": 1
+    },
+    {
+      "camera": "SLZVolcableC3",
+      "captures": 457,
+      "test_queries": 71,
+      "exact_recovery": 51,
+      "ocr_identity_agrees": 51,
+      "real_candidate_captures": 21,
+      "coherent_candidate_captures": 2,
+      "ambiguous_captures": 6
+    },
+    {
+      "camera": "SLZVolcableC4",
+      "captures": 416,
+      "test_queries": 55,
+      "exact_recovery": 45,
+      "ocr_identity_agrees": 46,
+      "real_candidate_captures": 18,
+      "coherent_candidate_captures": 0,
+      "ambiguous_captures": 1
+    },
+    {
+      "camera": "SLZVolcableC5",
+      "captures": 541,
+      "test_queries": 54,
+      "exact_recovery": 43,
+      "ocr_identity_agrees": 43,
+      "real_candidate_captures": 56,
+      "coherent_candidate_captures": 13,
+      "ambiguous_captures": 9
+    }
+  ],
+  "limitations": [
+    "Verdad de referencia OCR, no imagen auditada.",
+    "Puntajes logísticos de ranking, no certeza calibrada de identidad.",
+    "Patentes de todas las capturas candidatas se eliminan, se corrompen 1–2 caracteres o se truncan en prueba; no se usan las ocultadas como features.",
+    "Confianza simulada: cero para patente ausente; muestra determinista de confianzas<80 de la cámara para OCR dañado/parcial. Esta distribución usa contexto de toda la semana sin etiquetas de identidad; no constituye generalización a semanas futuras.",
+    "Anclas condicionadas a OCR>=80 y formato habitual: no demuestra cobertura global.",
+    "Grafo y consistencia de cámaras aprendidos sólo 24–25; contrato/circuito del camión no se usa para entrenar ni evaluar.",
+    "Se clasifican puntos entre anclas: propuestas de diferentes puntos requieren revisión de la cadena completa, no se implementa asignación global de rutas.",
+    "Las cámaras traseras se tratan por separado para evitar asumir unión tractor/remolque.",
+    "Modelo de vehículo, dirección explícita e imágenes no disponibles; marca/categoría son etiquetas de cámara.",
+    "Los intervalos de evaluación tienen anclas en el mismo día y distancia máxima 6h; no se extrapolan a cruces nocturnos ni huecos mayores.",
+    "El contexto de contrato se incorpora sólo a propuestas reales; sus coincidencias de horarios/producto/plataforma no validan identidad.",
+    "El filtro elegido en calibración no garantiza el mismo rendimiento en la semana completa; se informa su resultado holdout."
+  ],
+  "context_sources": [
+    {
+      "from": "2026-09-21",
+      "to": "2026-09-27",
+      "runId": "2026-09-21_2026-09-27",
+      "inputHash": "df075d0a8006",
+      "rulesVersion": "etl_transform_v17",
+      "createdAt": "2026-10-01T18:12:55.283Z",
+      "stale": false,
+      "currentRulesVersion": "etl_transform_v17"
+    },
+    {
+      "from": "2026-09-28",
+      "to": "2026-10-04",
+      "runId": "2026-09-28_2026-10-04",
+      "inputHash": "41bdef0c424c",
+      "rulesVersion": "etl_transform_v17",
+      "createdAt": "2026-10-01T18:13:10.048Z",
+      "stale": false,
+      "currentRulesVersion": "etl_transform_v17"
+    }
+  ],
+  "operational_context_attached": true,
+  "real_enriched_status_rows": {
+    "AMBIGUO_ENTRE_IDENTIDADES": 2697,
+    "CANDIDATO_PENDIENTE": 1010,
+    "CANDIDATO_MULTISENAL_RUTA_COHERENTE": 105,
+    "PUNTOS_COMPATIBLES_RUTA_COMPLETA_INCOMPATIBLE": 100,
+    "CONTRADICCION_OCR_FUERTE": 386
+  },
+  "real_coherent_unique_candidate_captures": 105,
+  "real_coherent_with_excel_route_support": 44,
+  "real_candidates_with_operation_in_time": 1866,
+  "no_ocr_selected_method": "atributos_grafo_tiempos",
+  "real_full_route_with_excel_support": 43
+}
