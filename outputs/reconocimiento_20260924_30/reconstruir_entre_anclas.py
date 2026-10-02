@@ -1,13 +1,16 @@
 """Prueba condicional: extremos de igual patente; reconstrucción de cadenas interiores.
 No usa patentes interiores para generar ni puntuar caminos. OCR es referencia provisional.
 """
-import json,bisect
+import argparse,json,bisect
 from collections import defaultdict,Counter
 from pathlib import Path
 import pandas as pd
 import numpy as np
 P=Path(__file__).parent
-d=pd.read_excel(r'C:/Users/Usuario/AppData/Local/Temp/VehicleCaptureRecord202610021644394118890.xlsx').fillna('')
+parser=argparse.ArgumentParser(description='Reconstruye cadenas entre capturas ancla.')
+parser.add_argument('capturas_xlsx',type=Path,help='Excel exportado de VehicleCaptureRecord')
+args=parser.parse_args()
+d=pd.read_excel(args.capturas_xlsx).fillna('')
 d['excel_row']=range(2,len(d)+2)
 d['t']=pd.to_datetime(d['Capture Time']);d=d.sort_values('t').reset_index(drop=True)
 d['p']=d['Plate No.'].astype(str).str.upper().str.replace(r'[^A-Z0-9]','',regex=True)
