@@ -1,0 +1,312 @@
+{
+  "training": "24–26 septiembre 2026",
+  "evaluation": "27–30 septiembre 2026",
+  "graph_edges": 100,
+  "test_intervals": 2016,
+  "test_reasons": {
+    "atributos_anclas_incompletos_o_distintos": 1734,
+    "evaluado": 275,
+    "vistas_incompatibles": 7
+  },
+  "test_unique_chains": 50,
+  "test_hidden_recovered": 15,
+  "test_all_middle_correct": 28,
+  "real_intervals": 2354,
+  "real_unique_chains": 37,
+  "real_deduced_captures": 38,
+  "real_changed_plate_captures": 24,
+  "conflicted_captures": 0,
+  "per_camera": [
+    {
+      "camera": "RenCargFte",
+      "captures": 154,
+      "deduced_captures": 1
+    },
+    {
+      "camera": "RenCargTras",
+      "captures": 255,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RenDescFte",
+      "captures": 8,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RenDescTras",
+      "captures": 7,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicB1Egreso",
+      "captures": 29,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicB1Ingreso",
+      "captures": 1410,
+      "deduced_captures": 6
+    },
+    {
+      "camera": "RicB2Egreso",
+      "captures": 1396,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicB2Ingreso",
+      "captures": 125,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicB3Egreso",
+      "captures": 242,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicB3Ingreso",
+      "captures": 261,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicC16Carga1",
+      "captures": 4,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicC16Carga2",
+      "captures": 3,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicCal01",
+      "captures": 90,
+      "deduced_captures": 1
+    },
+    {
+      "camera": "RicCal02",
+      "captures": 141,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicCal03",
+      "captures": 767,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicCal04",
+      "captures": 925,
+      "deduced_captures": 1
+    },
+    {
+      "camera": "RicCal05",
+      "captures": 1,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicCal06",
+      "captures": 5,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicCalLiq",
+      "captures": 626,
+      "deduced_captures": 1
+    },
+    {
+      "camera": "RicEgrCamFrente",
+      "captures": 1808,
+      "deduced_captures": 5
+    },
+    {
+      "camera": "RicEgrCamTraser",
+      "captures": 1574,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicIngCamFrente",
+      "captures": 88,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicIngCamTrasera",
+      "captures": 1853,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicPreIngEgFr",
+      "captures": 55,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicPreIngEgTr",
+      "captures": 5,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicPreIngInFr",
+      "captures": 2225,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicPreIngInTr",
+      "captures": 2145,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicS6Playa3",
+      "captures": 1102,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicS7Carga",
+      "captures": 518,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicS7DescLinea1",
+      "captures": 2,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicS7DescLinea2",
+      "captures": 140,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicS8CargaLinea1",
+      "captures": 14,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicS8CargaLinea2",
+      "captures": 803,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicVolcable1",
+      "captures": 304,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "RicVolcable2",
+      "captures": 355,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZBalIngFte",
+      "captures": 2487,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZBalIngTras",
+      "captures": 4268,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZBalLiq1a",
+      "captures": 35,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZBalLiq1b",
+      "captures": 60,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZBalLiq2a",
+      "captures": 71,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZBalLiq2b",
+      "captures": 38,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZBalSC1Fte",
+      "captures": 239,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZBalSC1Tras",
+      "captures": 410,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZBalSC2Fte",
+      "captures": 417,
+      "deduced_captures": 6
+    },
+    {
+      "camera": "SLZBalSC2Tras",
+      "captures": 84,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZCalado",
+      "captures": 246,
+      "deduced_captures": 5
+    },
+    {
+      "camera": "SLZIngCamFrente",
+      "captures": 1958,
+      "deduced_captures": 3
+    },
+    {
+      "camera": "SLZIngCamTrasera",
+      "captures": 1766,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZSalidaC1Fte",
+      "captures": 3078,
+      "deduced_captures": 4
+    },
+    {
+      "camera": "SLZSalidaC1Tras",
+      "captures": 3490,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZSalidaC2Fte",
+      "captures": 848,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZSalidaC2Tras",
+      "captures": 1375,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZTK400",
+      "captures": 3086,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZVolcableC1",
+      "captures": 25,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZVolcableC2",
+      "captures": 132,
+      "deduced_captures": 2
+    },
+    {
+      "camera": "SLZVolcableC3",
+      "captures": 457,
+      "deduced_captures": 1
+    },
+    {
+      "camera": "SLZVolcableC4",
+      "captures": 416,
+      "deduced_captures": 0
+    },
+    {
+      "camera": "SLZVolcableC5",
+      "captures": 541,
+      "deduced_captures": 2
+    }
+  ],
+  "caveat": "Prueba condicional a extremos OCR correctos, no identidad auditada. Igualdad estricta de color/marca/categoria conocidos. Grafo empirico dirigido, tiempos p01–p99 ±60s, rutas del catalogo compatibles; no probabilidades calibradas ni asignacion global uno a uno. No se considera camino directo sin capturas intermedias: unicidad condicionada a existencia de una cadena observada intermedia. Datos traseros separados de delanteros."
+}
