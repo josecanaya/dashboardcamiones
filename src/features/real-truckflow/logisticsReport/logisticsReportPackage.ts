@@ -41,6 +41,7 @@ export type TiemposGroupSpec = {
 export const TIEMPOS_GROUPS: TiemposGroupSpec[] = [
   { key: 'soja', label: 'Soja · R7', circuitCodes: ['R7'] },
   { key: 'girasol', label: 'Girasol · R5+R6', circuitCodes: ['R5', 'R6'] },
+  { key: 'liquidos', label: 'Líquidos · R8', circuitCodes: ['R8'] },
   {
     key: 'pellet',
     label: 'Pellet',
@@ -385,17 +386,17 @@ export function buildLogisticsReportPackage(
   // —— Resumen ejecutivo: producto y distribución por circuito ——
   const ejecutivo = buildEjecutivoSection(
     {
+      finalCircuitsCsv: tr.csv.final_circuits,
       debugMatrixCsv: tr.csv.debug_matrix_classification,
-      mergedTruckflowCsv: tr.csv.merged_truckflow_movimientos,
       excelOperationsCsv: tr.csv.excel_operations_with_truckflow,
     },
     period
   )
-  tablesUsed.push('debug_matrix_classification', 'merged_truckflow_movimientos')
+  tablesUsed.push('final_circuits')
   if (ejecutivo.missing) {
     pendientes.push({
       id: 'ejecutivo',
-      reason: 'sin debug_matrix_classification en la corrida: no hay clasificación por circuito',
+      reason: 'sin final_circuits ni excel_operations_with_truckflow en la corrida',
     })
   }
 

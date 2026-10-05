@@ -1,0 +1,81 @@
+{
+ "v": 4,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-10-01T17:33:20Z"
+ },
+ "lists": "css",
+ "title": "Comité de Logística Nodo Sur · 24 sep – 4 oct",
+ "order": [
+  "portada",
+  "resumen-planta",
+  "dia-a-dia",
+  "div-soja",
+  "tramos-r7",
+  "tramos-r29",
+  "resumen-soja",
+  "hallazgo",
+  "plantas",
+  "cuartos",
+  "historico",
+  "div-pellet",
+  "pellet-operativo",
+  "pellet-tramos",
+  "pellet-camiones",
+  "pellet-dias",
+  "pellet-hist",
+  "pellet-flota",
+  "pellet-tarifa",
+  "div-girasol",
+  "girasol",
+  "girasol-hist",
+  "div-liquidos",
+  "liq-resumen",
+  "liq-dias",
+  "liq-circuitos",
+  "liq-tramos",
+  "div-sectores",
+  "calada",
+  "volcables",
+  "silos",
+  "cruces"
+ ],
+ "sections": {
+  "s1": {
+   "description": "Portada, resumen de la planta y el período día por día",
+   "start": "portada"
+  },
+  "s2": {
+   "description": "Soja: tiempos por tramo de R7 y del transile desde silos, resumen, día por día, por planta, por horario y en contexto",
+   "start": "div-soja"
+  },
+  "s2b": {
+   "description": "Pellet: operativo de transile R30/31/32, tramos, viajes por camión y comparativo",
+   "start": "div-pellet"
+  },
+  "s3": {
+   "description": "Girasol R5+R6: tiempos por tramo y evolución desde junio",
+   "start": "div-girasol"
+  },
+  "s3b": {
+   "description": "Líquidos: movimientos, días, circuitos y tiempos por tramo de R8 y SL1",
+   "start": "div-liquidos"
+  },
+  "s4": {
+   "description": "Sectores: calada, volcables y silos",
+   "start": "div-sectores"
+  },
+  "s5": {
+   "description": "Cierre: el período en seis lecturas",
+   "start": "cruces"
+  }
+ },
+ "cover": "portada",
+ "faces": {
+  "ibm-plex-sans": {
+   "family": "IBM Plex Sans",
+   "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap"
+  }
+ },
+ "designSystems": []
+}

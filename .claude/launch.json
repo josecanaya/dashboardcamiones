@@ -8,6 +8,12 @@
       "port": 5173
     },
     {
+      "name": "truckflow-server",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server/truckflow-local-server.mjs"],
+      "port": 8787
+    },
+    {
       "name": "ops2",
       "runtimeExecutable": "cmd",
       "runtimeArgs": ["/c", "npm", "--prefix", "C:\\Users\\Usuario\\Desktop\\DASHBO~1.0", "run", "dev"],

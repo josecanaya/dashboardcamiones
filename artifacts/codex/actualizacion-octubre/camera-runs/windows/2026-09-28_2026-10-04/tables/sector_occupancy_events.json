@@ -1,0 +1,23 @@
+{
+  "name": "sector_occupancy_events",
+  "headers": [
+    "journey_id",
+    "patente",
+    "producto",
+    "circuito",
+    "tramo_operativo",
+    "sector",
+    "timestamp_inicio",
+    "timestamp_fin",
+    "duracion_minutos",
+    "es_stock_inicial",
+    "motivo_stock_inicial",
+    "fecha_inicio",
+    "hora_inicio",
+    "fecha_fin",
+    "hora_fin",
+    "estado_ejecutivo",
+    "planta"
+  ],
+  "rows": []
+}

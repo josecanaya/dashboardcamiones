@@ -1,0 +1,4 @@
+circuito_code,n_operaciones,mediana_min,p90_min,media_min,min_min,max_min,n_camara,n_camara_parcial,n_excel_respaldo,porcentaje_camara_pura,ric_media_min,ric_p90_min,ric_n,bridge_media_min,bridge_p90_min,bridge_n,sl_media_min,sl_p90_min,sl_n
+R6,15,157,276,168,60,303,15,0,0,100,,,0,,,0,,,0
+R7,209,239,430,264,30,883,209,0,0,100,111,232,194,,,0,118,118,1
+R8,3,161,476,252,119,476,3,0,0,100,,,0,,,0,,,0

@@ -833,8 +833,8 @@ export const TEXT_FIELD_CATALOG = {
   'period.end': (pkg) => shortDate(pkg.periodo.to),
   'period.days': (pkg) => String(pkg.periodo.dayCount),
 
-  // Muestra por producto (D3). Denominador: **recorridos de cámara clasificados**, no
-  // movimientos del Excel. «Líquidos» es el bucket ACEITE del resumen ejecutivo.
+  // Muestra por producto (D3). Denominador: movimientos del Excel.
+  // «Líquidos» es el bucket ACEITE del resumen ejecutivo.
   'products.soja.count': (pkg) => productCount(pkg, 'SOJA'),
   'products.girasol.count': (pkg) => productCount(pkg, 'GIRASOL'),
   'products.liquidos.count': (pkg) => productCount(pkg, 'ACEITE'),
@@ -848,7 +848,7 @@ export const TEXT_FIELD_CATALOG = {
     )
     return miles(total)
   },
-  'sample.unit': () => 'camiones · recorridos de cámara clasificados',
+  'sample.unit': () => 'movimientos según Excel',
 }
 
 function productCount(pkg, product) {

@@ -1,60 +1,41 @@
 /**
- * Sección ejecutiva del informe: muestra por producto y distribución por circuito.
+ * Sección ejecutiva del informe: movimientos por producto y circuitos de cámara.
  *
- * Reusa la MISMA cadena que arma el Resumen ejecutivo del dashboard —
- * `buildCircuitClassificationIndex` → `buildExecutiveProductFilterPlan` →
- * `buildExecutiveCircuitBarSlices`— y solo agrega el recorte al período exacto.
- *
- * ## Denominador
- *
- * Esto cuenta **recorridos de cámara clasificados**, no movimientos del Excel. Son
- * poblaciones distintas y el informe lo declara: «X recorridos de cámara» ≠ «X movimientos
- * según Excel». La distribución por circuito de la plantilla vive dentro de la sección de
- * cada producto, así que se calcula por producto.
- *
- * ## Recorte al período
- *
- * `debug_matrix_classification` trae `first_event_at`, así que el día operativo sale de la
- * propia fila y no hace falta joinear contra otra tabla.
+ * Los productos se cuentan sobre `excel_operations_with_truckflow` (movimientos
+ * del Excel). La clasificación y el total de recorridos salen de `final_circuits`.
+ * Ambas poblaciones se conservan separadas para no presentar journeys como movimientos.
  */
 import { parseCsvToRecords } from '../../../etl-core/csvParse'
-import { recordsToCsv } from '../../../etl-core/csv'
 import {
-  buildCircuitClassificationIndex,
-  buildExecutiveCircuitBarSlices,
-  type CircuitClassificationEntry,
-  type ExecutiveCircuitBarSlice,
-} from '../etlWorkbench/etlCircuitClassificationIndex'
-import {
-  buildExecutiveProductFilterPlan,
   EXECUTIVE_SAMPLE_PRODUCTS,
-  resolveAnalysisProductLookup,
+  productMatchesExecutiveSampleFilter,
 } from '../etlWorkbench/etlProductFilter'
 import { operationalDayOfIso } from '../etlWorkbench/etlOperationalDay'
 import type { ReportPeriod } from './logisticsReportPeriod'
 
 export type EjecutivoInput = {
-  debugMatrixCsv?: string
-  mergedTruckflowCsv?: string
+  finalCircuitsCsv?: string
   excelOperationsCsv?: string
+  /** Solo aporta la fecha de corte de corridas históricas sin timestamp en final_circuits. */
+  debugMatrixCsv?: string
 }
 
 export type CircuitCount = { code: string; label: string; count: number }
 
 export type EjecutivoSection = {
-  /** Recorridos clasificados dentro del período exacto. */
+  /** Recorridos de cámara clasificados en `final_circuits`. */
   recorridosEnPeriodo: number
-  /** Recorridos por producto (SOJA / GIRASOL / ACEITE / PELLET). */
+  /** Movimientos Excel por producto (SOJA / GIRASOL / ACEITE / PELLET). */
   porProducto: Record<string, number>
-  /** Distribución por circuito dentro de cada producto. */
+  /** Movimientos Excel por producto y circuito resuelto. */
   circuitosPorProducto: Record<string, CircuitCount[]>
-  /** Distribución por circuito de todo el período, sin filtrar por producto. */
+  /** Recorridos de cámara clasificados por circuito. */
   circuitosTotales: CircuitCount[]
-  /** `true` si no hay insumo para calcular nada. */
+  /** `true` si faltan ambas fuentes canónicas. */
   missing: boolean
 }
 
-const EMPTY: EjecutivoSection = {
+export const EMPTY: EjecutivoSection = {
   recorridosEnPeriodo: 0,
   porProducto: {},
   circuitosPorProducto: {},
@@ -62,75 +43,70 @@ const EMPTY: EjecutivoSection = {
   missing: true,
 }
 
-function toCounts(slices: ExecutiveCircuitBarSlice[]): CircuitCount[] {
-  return slices.map((s) => ({ code: s.code, label: s.displayLabel || s.label, count: s.count }))
+function dayOf(row: Record<string, string>): string {
+  const sourceDay = String(row.source_date ?? '').trim()
+  return /^\d{4}-\d{2}-\d{2}$/.test(sourceDay)
+    ? sourceDay
+    : operationalDayOfIso(String(row.external_ingreso_at ?? ''))
 }
 
-/**
- * Recorta un CSV a las filas cuyo día operativo (22:00) cae dentro del período.
- *
- * El recorte se hace **sobre el CSV, antes** de construir el índice, y no filtrando las
- * entries después. Motivo: `buildCircuitClassificationIndex` canonicaliza el uid del journey
- * (los tres formatos de NIVELES_ABCD — crudo, fusionado y de ciclo — se normalizan y las
- * partes de un fusionado se ordenan), así que `entry.journeyId` ya no coincide con el
- * `journey_id` crudo de la tabla. Filtrando después se perdían 2.600 de 3.056 recorridos en
- * silencio.
- */
-function filterCsvToPeriod(
-  csv: string,
-  period: ReportPeriod,
-  dateColumn: string
-): { csv: string; rowsIn: number; rowsTotal: number } {
-  const days = new Set(period.days)
-  const { headers, rows } = parseCsvToRecords(csv)
-  const kept = rows.filter((r) => days.has(operationalDayOfIso(String(r[dateColumn] ?? ''))))
-  return { csv: recordsToCsv(headers, kept), rowsIn: kept.length, rowsTotal: rows.length }
-}
-
-export function buildEjecutivoSection(
-  input: EjecutivoInput,
-  period: ReportPeriod
-): EjecutivoSection {
-  if (!input.debugMatrixCsv?.trim()) return { ...EMPTY }
-
-  // Recorte al período ANTES de clasificar (ver `filterCsvToPeriod`).
-  const debugMatrix = filterCsvToPeriod(input.debugMatrixCsv, period, 'first_event_at')
-  // Las operaciones Excel también se recortan: promueven entries propias al índice.
-  const excelInPeriod = input.excelOperationsCsv?.trim()
-    ? filterCsvToPeriod(input.excelOperationsCsv, period, 'external_ingreso_at').csv
-    : undefined
-
-  const index = buildCircuitClassificationIndex(
-    debugMatrix.csv,
-    // El merge va entero: acá solo se usa como fallback de producto, no para contar.
-    input.mergedTruckflowCsv,
-    excelInPeriod
-  )
-  const entries: CircuitClassificationEntry[] = index.entries
-  if (!entries.length) {
-    return { ...EMPTY, missing: debugMatrix.rowsTotal === 0 }
+function countCircuits(rows: Record<string, string>[], codeKey: string, labelKey: string): CircuitCount[] {
+  const counts = new Map<string, CircuitCount>()
+  for (const row of rows) {
+    const code = String(row[codeKey] ?? '').trim()
+    if (!code || code === 'SIN_PUNTO') continue
+    const current = counts.get(code)
+    if (current) current.count += 1
+    else counts.set(code, { code, label: String(row[labelKey] ?? code).trim() || code, count: 1 })
   }
+  return [...counts.values()].sort((a, b) => b.count - a.count || a.code.localeCompare(b.code))
+}
 
-  const lookup = resolveAnalysisProductLookup({
-    excel_operations_with_truckflow: excelInPeriod,
-    merged_truckflow_movimientos: input.mergedTruckflowCsv,
+function finalCircuitDays(debugMatrixCsv: string | undefined): Map<string, string> {
+  const days = new Map<string, string>()
+  if (!debugMatrixCsv?.trim()) return days
+  for (const row of parseCsvToRecords(debugMatrixCsv).rows) {
+    const id = String(row.journey_id ?? row.journey_uid ?? '').trim()
+    const day = operationalDayOfIso(String(row.first_event_at ?? ''))
+    if (id && day) days.set(id, day)
+  }
+  return days
+}
+
+export function buildEjecutivoSection(input: EjecutivoInput, period: ReportPeriod): EjecutivoSection {
+  const periodDays = new Set(period.days)
+  const finalRows = input.finalCircuitsCsv?.trim() ? parseCsvToRecords(input.finalCircuitsCsv).rows : []
+  const daysByJourney = finalCircuitDays(input.debugMatrixCsv)
+  const finalInPeriod = finalRows.filter((row) => {
+    const id = String(row.journey_uid ?? '').trim()
+    const day = daysByJourney.get(id)
+    // `final_circuits` antiguo no llevaba timestamp: sin fecha no se lo usa para cortes parciales.
+    return Boolean(day && periodDays.has(day))
   })
-  const plan = buildExecutiveProductFilterPlan(entries, lookup)
 
+  const excelRows = input.excelOperationsCsv?.trim() ? parseCsvToRecords(input.excelOperationsCsv).rows : []
+  const excelInPeriod = excelRows.filter((row) => periodDays.has(dayOf(row)))
   const porProducto: Record<string, number> = {}
   const circuitosPorProducto: Record<string, CircuitCount[]> = {}
   for (const product of EXECUTIVE_SAMPLE_PRODUCTS) {
-    porProducto[product] = plan.counts[product] ?? 0
-    const ids = plan.journeyIdsByProduct.get(product)
-    const productEntries = ids ? entries.filter((e) => ids.has(e.journeyId)) : []
-    circuitosPorProducto[product] = toCounts(buildExecutiveCircuitBarSlices(productEntries))
+    const rows = excelInPeriod.filter((row) =>
+      productMatchesExecutiveSampleFilter(String(row.resolved_product ?? row.product_normalized ?? ''), product)
+    )
+    const unique = new Map(rows.map((row) => [String(row.external_operation_id ?? '').trim() || JSON.stringify(row), row]))
+    const movements = [...unique.values()]
+    porProducto[product] = movements.length
+    circuitosPorProducto[product] = countCircuits(
+      movements,
+      'resolved_executive_circuit_code',
+      'resolved_circuit_family'
+    )
   }
 
   return {
-    recorridosEnPeriodo: entries.length,
+    recorridosEnPeriodo: new Set(finalInPeriod.map((row) => String(row.journey_uid ?? '').trim())).size,
     porProducto,
     circuitosPorProducto,
-    circuitosTotales: toCounts(buildExecutiveCircuitBarSlices(entries)),
-    missing: false,
+    circuitosTotales: countCircuits(finalInPeriod, 'executive_circuit_code', 'executive_circuit_label'),
+    missing: finalRows.length === 0 && excelRows.length === 0,
   }
 }

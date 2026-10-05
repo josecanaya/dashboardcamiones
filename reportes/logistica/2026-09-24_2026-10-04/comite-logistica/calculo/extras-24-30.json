@@ -1,0 +1,126 @@
+{
+ "days": [
+  "2026-09-24",
+  "2026-09-25",
+  "2026-09-26",
+  "2026-09-27",
+  "2026-09-28",
+  "2026-09-29",
+  "2026-09-30"
+ ],
+ "r7": {
+  "ops": 786,
+  "dia": [
+   109,
+   131,
+   92,
+   107,
+   135,
+   96,
+   116
+  ],
+  "n": 786,
+  "media": 266,
+  "mediana": 243
+ },
+ "girasol": {
+  "ops": 208,
+  "dia": [
+   42,
+   67,
+   36,
+   0,
+   37,
+   26,
+   0
+  ],
+  "R5": 136,
+  "R6": 72,
+  "n": 208,
+  "media": 843,
+  "mediana": 814
+ },
+ "r4": 38,
+ "liquidos": {
+  "camiones": 390,
+  "ingresos": 151,
+  "egresos": 239,
+  "dia": [
+   71,
+   52,
+   17,
+   9,
+   79,
+   82,
+   80
+  ],
+  "n": 390,
+  "media": 329,
+  "mediana": 241,
+  "porCircuito": {
+   "SL3": 13,
+   "SL1": 166,
+   "sin circuito": 70,
+   "R8": 88,
+   "SL2": 53
+  },
+  "porProducto": {
+   "BORRA DE ACSOJA REFINADO": 13,
+   "ACEITE GIRASOL CRUDO": 16,
+   "ACEITE GIRASOL REFINADO": 177,
+   "GLICERINA REFINADA": 38,
+   "ACEITE SOJA CRUDO DESGOMADO": 7,
+   "GLICERINA": 37,
+   "ACEITE SOJA REFINADO": 14,
+   "METANOL": 20,
+   "BORRA ACEITE GIRASOL": 7,
+   "ACEITE GIRASOL PARA REFINAR": 44,
+   "LECITINA DE SOJA": 2,
+   "BORRA ACEITE GIRASOL REFINADO": 11,
+   "METILATO DE SODIO": 4
+  },
+  "sinCircuito": {
+   "RENOPACK": 44,
+   "TERMINAL_EMBARQUE": 26
+  }
+ },
+ "pelletTransile": {
+  "viajes": 307,
+  "dia": [
+   41,
+   70,
+   90,
+   0,
+   0,
+   0,
+   106
+  ],
+  "camiones": 62,
+  "kgs": 8369140,
+  "paresCamionDia": 148
+ },
+ "pelletEgresos": {
+  "n": 365,
+  "dia": [
+   88,
+   28,
+   89,
+   0,
+   2,
+   3,
+   155
+  ]
+ },
+ "r29": {
+  "ops": 515,
+  "dia": [
+   112,
+   64,
+   42,
+   116,
+   117,
+   64,
+   0
+  ]
+ }
+}

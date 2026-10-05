@@ -1,0 +1,24 @@
+{
+  "name": "sector_occupancy_30min",
+  "headers": [
+    "planta",
+    "producto",
+    "circuito",
+    "tramo_operativo",
+    "sector",
+    "intervalo_inicio",
+    "intervalo_fin",
+    "stock_inicial",
+    "ocupacion_inicial",
+    "ingresos_intervalo",
+    "egresos_intervalo",
+    "ingresos_acumulados",
+    "egresos_acumulados",
+    "ocupacion_estimada",
+    "umbral_operativo",
+    "sobre_umbral",
+    "fecha",
+    "franja_horaria"
+  ],
+  "rows": []
+}

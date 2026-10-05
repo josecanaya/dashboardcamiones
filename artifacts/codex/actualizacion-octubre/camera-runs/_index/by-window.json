@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "entries": {
+    "2026-09-28..2026-10-04": {
+      "runId": "2026-09-28_2026-10-04",
+      "inputHash": "1d542f7c2a6b",
+      "rulesVersion": "etl_transform_v17",
+      "createdAt": "2026-10-04T23:48:46.425Z",
+      "path": "windows/2026-09-28_2026-10-04"
+    }
+  }
+}

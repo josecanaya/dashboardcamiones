@@ -1,0 +1,461 @@
+{
+  "method": "Razón de movimientos Excel por registro de actividad ETL, calibrada 24–30/09. Validación dejando un día afuera. Rango de sensibilidad con mínimo y máximo de las razones diarias, no intervalo de confianza.",
+  "runId": "2026-09-28_2026-10-04",
+  "rulesVersion": "etl_transform_v17",
+  "groups": [
+    {
+      "name": "Soja",
+      "table": "calada_camera_events",
+      "base": 1223,
+      "reportBase": 1267,
+      "training": [
+        {
+          "day": "2026-09-24",
+          "x": 282,
+          "y": 208
+        },
+        {
+          "day": "2026-09-25",
+          "x": 252,
+          "y": 210
+        },
+        {
+          "day": "2026-09-26",
+          "x": 162,
+          "y": 136
+        },
+        {
+          "day": "2026-09-27",
+          "x": 191,
+          "y": 173
+        },
+        {
+          "day": "2026-09-28",
+          "x": 261,
+          "y": 266
+        },
+        {
+          "day": "2026-09-29",
+          "x": 198,
+          "y": 146
+        },
+        {
+          "day": "2026-09-30",
+          "x": 145,
+          "y": 84
+        }
+      ],
+      "daily": [
+        {
+          "day": "2026-10-01",
+          "activity": 114,
+          "estimate": 94
+        },
+        {
+          "day": "2026-10-02",
+          "activity": 128,
+          "estimate": 104
+        },
+        {
+          "day": "2026-10-03",
+          "activity": 96,
+          "estimate": 79
+        }
+      ],
+      "estimate": 277,
+      "cumulative": 1500,
+      "deltaPct": 23,
+      "low": 195,
+      "high": 345,
+      "looWapePct": 14,
+      "holdoutWapePct": 21
+    },
+    {
+      "name": "Pellet",
+      "table": "san_lorenzo_volcable_events",
+      "base": 350,
+      "reportBase": 350,
+      "training": [
+        {
+          "day": "2026-09-24",
+          "x": 186,
+          "y": 48
+        },
+        {
+          "day": "2026-09-25",
+          "x": 216,
+          "y": 70
+        },
+        {
+          "day": "2026-09-26",
+          "x": 178,
+          "y": 90
+        },
+        {
+          "day": "2026-09-27",
+          "x": 142,
+          "y": 2
+        },
+        {
+          "day": "2026-09-28",
+          "x": 211,
+          "y": 13
+        },
+        {
+          "day": "2026-09-29",
+          "x": 159,
+          "y": 5
+        },
+        {
+          "day": "2026-09-30",
+          "x": 205,
+          "y": 122
+        }
+      ],
+      "daily": [
+        {
+          "day": "2026-10-01",
+          "activity": 183,
+          "estimate": 49
+        },
+        {
+          "day": "2026-10-02",
+          "activity": 80,
+          "estimate": 22
+        },
+        {
+          "day": "2026-10-03",
+          "activity": 55,
+          "estimate": 15
+        }
+      ],
+      "estimate": 86,
+      "cumulative": 436,
+      "deltaPct": 25,
+      "low": 4,
+      "high": 190,
+      "looWapePct": 80,
+      "holdoutWapePct": 109
+    },
+    {
+      "name": "Girasol",
+      "table": "ricardone_volcable_events",
+      "base": 230,
+      "reportBase": 306,
+      "training": [
+        {
+          "day": "2026-09-24",
+          "x": 111,
+          "y": 56
+        },
+        {
+          "day": "2026-09-25",
+          "x": 92,
+          "y": 54
+        },
+        {
+          "day": "2026-09-26",
+          "x": 112,
+          "y": 20
+        },
+        {
+          "day": "2026-09-27",
+          "x": 93,
+          "y": 8
+        },
+        {
+          "day": "2026-09-28",
+          "x": 54,
+          "y": 35
+        },
+        {
+          "day": "2026-09-29",
+          "x": 34,
+          "y": 43
+        },
+        {
+          "day": "2026-09-30",
+          "x": 36,
+          "y": 14
+        }
+      ],
+      "daily": [
+        {
+          "day": "2026-10-01",
+          "activity": 36,
+          "estimate": 16
+        },
+        {
+          "day": "2026-10-02",
+          "activity": 19,
+          "estimate": 8
+        },
+        {
+          "day": "2026-10-03",
+          "activity": 11,
+          "estimate": 5
+        }
+      ],
+      "estimate": 29,
+      "cumulative": 259,
+      "deltaPct": 12,
+      "low": 5,
+      "high": 84,
+      "looWapePct": 64,
+      "holdoutWapePct": 54
+    },
+    {
+      "name": "Líquidos",
+      "table": "calada_ricardone_liquid_events",
+      "base": 392,
+      "reportBase": 398,
+      "training": [
+        {
+          "day": "2026-09-24",
+          "x": 48,
+          "y": 75
+        },
+        {
+          "day": "2026-09-25",
+          "x": 105,
+          "y": 48
+        },
+        {
+          "day": "2026-09-26",
+          "x": 134,
+          "y": 9
+        },
+        {
+          "day": "2026-09-27",
+          "x": 92,
+          "y": 4
+        },
+        {
+          "day": "2026-09-28",
+          "x": 64,
+          "y": 88
+        },
+        {
+          "day": "2026-09-29",
+          "x": 27,
+          "y": 87
+        },
+        {
+          "day": "2026-09-30",
+          "x": 122,
+          "y": 81
+        }
+      ],
+      "daily": [
+        {
+          "day": "2026-10-01",
+          "activity": 134,
+          "estimate": 88
+        },
+        {
+          "day": "2026-10-02",
+          "activity": 27,
+          "estimate": 18
+        },
+        {
+          "day": "2026-10-03",
+          "activity": 7,
+          "estimate": 5
+        }
+      ],
+      "estimate": 111,
+      "cumulative": 503,
+      "deltaPct": 28,
+      "low": 7,
+      "high": 542,
+      "looWapePct": 94,
+      "holdoutWapePct": 70
+    }
+  ],
+  "activity": [
+    {
+      "table": "calada_camera_events",
+      "days": [
+        {
+          "day": "2026-10-01",
+          "records": 114
+        },
+        {
+          "day": "2026-10-02",
+          "records": 128
+        },
+        {
+          "day": "2026-10-03",
+          "records": 96
+        }
+      ]
+    },
+    {
+      "table": "ricardone_volcable_events",
+      "days": [
+        {
+          "day": "2026-10-01",
+          "records": 36
+        },
+        {
+          "day": "2026-10-02",
+          "records": 19
+        },
+        {
+          "day": "2026-10-03",
+          "records": 11
+        }
+      ]
+    },
+    {
+      "table": "san_lorenzo_volcable_events",
+      "days": [
+        {
+          "day": "2026-10-01",
+          "records": 183
+        },
+        {
+          "day": "2026-10-02",
+          "records": 80
+        },
+        {
+          "day": "2026-10-03",
+          "records": 55
+        }
+      ]
+    },
+    {
+      "table": "calada_ricardone_liquid_events",
+      "days": [
+        {
+          "day": "2026-10-01",
+          "records": 134
+        },
+        {
+          "day": "2026-10-02",
+          "records": 27
+        },
+        {
+          "day": "2026-10-03",
+          "records": 7
+        }
+      ]
+    }
+  ],
+  "liquidLegs": [
+    {
+      "key": "PREINGRESO → LIQUIDO",
+      "n": 10,
+      "mean": 7
+    },
+    {
+      "key": "LIQUIDO → BALANZA_EGRESO",
+      "n": 2,
+      "mean": 40.6
+    }
+  ],
+  "timingSummary": [
+    {
+      "executive_circuit_code": "R6",
+      "circuit_name": "Recepción Volcable 2",
+      "executive_status": "VALIDO",
+      "n_journeys": "18",
+      "mean_total_min": "198.80",
+      "std_total_min": "118.23",
+      "median_total_min": "162.48",
+      "p90_total_min": "352.23",
+      "min_total_min": "60.14",
+      "max_total_min": "471.37",
+      "q1_total_min": "125.58",
+      "q3_total_min": "256.39",
+      "iqr_total_min": "130.81"
+    },
+    {
+      "executive_circuit_code": "R7",
+      "circuit_name": "Ricardone → San Lorenzo",
+      "executive_status": "VALIDO",
+      "n_journeys": "379",
+      "mean_total_min": "158.84",
+      "std_total_min": "113.63",
+      "median_total_min": "147.88",
+      "p90_total_min": "299.22",
+      "min_total_min": "3.99",
+      "max_total_min": "661.64",
+      "q1_total_min": "53.54",
+      "q3_total_min": "226.47",
+      "iqr_total_min": "172.93"
+    },
+    {
+      "executive_circuit_code": "R8",
+      "circuit_name": "Recepción Mercadería Líquida",
+      "executive_status": "VALIDO",
+      "n_journeys": "48",
+      "mean_total_min": "312.13",
+      "std_total_min": "184.18",
+      "median_total_min": "313.39",
+      "p90_total_min": "372.67",
+      "min_total_min": "19.22",
+      "max_total_min": "1344.36",
+      "q1_total_min": "280.72",
+      "q3_total_min": "344.37",
+      "iqr_total_min": "63.66"
+    },
+    {
+      "executive_circuit_code": "R9",
+      "circuit_name": "Despacho Celda 16",
+      "executive_status": "VALIDO",
+      "n_journeys": "1",
+      "mean_total_min": "357.66",
+      "std_total_min": "0.00",
+      "median_total_min": "357.66",
+      "p90_total_min": "357.66",
+      "min_total_min": "357.66",
+      "max_total_min": "357.66",
+      "q1_total_min": "357.66",
+      "q3_total_min": "357.66",
+      "iqr_total_min": "0.00"
+    },
+    {
+      "executive_circuit_code": "SL1",
+      "circuit_name": "Recepción Carga OSL San Lorenzo",
+      "executive_status": "VALIDO",
+      "n_journeys": "7",
+      "mean_total_min": "223.98",
+      "std_total_min": "98.88",
+      "median_total_min": "209.28",
+      "p90_total_min": "325.09",
+      "min_total_min": "82.42",
+      "max_total_min": "383.73",
+      "q1_total_min": "168.91",
+      "q3_total_min": "277.30",
+      "iqr_total_min": "108.39"
+    }
+  ],
+  "periodTiming": [
+    {
+      "code": "R8",
+      "n": 10,
+      "mean": 286.684
+    },
+    {
+      "code": "R7",
+      "n": 266,
+      "mean": 132.65699248120305
+    },
+    {
+      "code": "SL1",
+      "n": 5,
+      "mean": 233.484
+    },
+    {
+      "code": "R6",
+      "n": 18,
+      "mean": 198.79888888888888
+    },
+    {
+      "code": "R9",
+      "n": 1,
+      "mean": 357.66
+    }
+  ]
+}

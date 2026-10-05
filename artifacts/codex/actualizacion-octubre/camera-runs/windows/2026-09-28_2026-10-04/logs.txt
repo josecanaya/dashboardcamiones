@@ -1,0 +1,16 @@
+[etl-headless] runId=2026-09-28_2026-10-04 (ventana 2026-09-28..2026-10-04, pisado)
+[etl-headless] path=windows/2026-09-28_2026-10-04
+[etl-headless] events=C:\Users\Pc\Desktop\JOSE\Programacion\Vicentin\rutas\dashboard\data\truckflow\2026-09-30\event-list.json, C:\Users\Pc\Desktop\JOSE\Programacion\Vicentin\rutas\dashboard\data\truckflow\2026-10-01\event-list.json, C:\Users\Pc\Desktop\JOSE\Programacion\Vicentin\rutas\dashboard\data\truckflow\2026-10-02\event-list.json, C:\Users\Pc\Desktop\JOSE\Programacion\Vicentin\rutas\dashboard\data\truckflow\2026-10-03\event-list.json
+[etl-headless] construyendo KPI tiempos…
+[etl-headless] Truckflow COMPLETOS: 1279 tramos, 445 journeys · 10 excluidos sin ingreso/preingreso
+[etl-headless] segment_scatter_analysis: 0 filas
+[etl-headless] segment_scatter_by_day: 0 filas
+[etl-headless] sector_occupancy_30min: 0 intervalos · events: 0
+[etl-headless] san_lorenzo_volcable_events: 482 camiones · 5 calles · producto en 0/482 · filas INGRESO volcable: 0
+[etl-headless] calada_camera_events: 493 eventos · 2 cámaras · producto asignado a 0/493 (sin movimientos en la corrida: producto por calle quedará en «Sin dato»)
+[etl-headless] calada_sl_camera_events: 110 eventos · producto asignado a 0/110
+[etl-headless] calada_ricardone_liquid_events: 286 eventos · producto asignado a 0/286
+[etl-headless] descargas: ricardone_volcable=98 · ricardone_silo=114 · ricardone_celda16=1 · sl_aceite_pto=0 camiones (0 ev) · sl_aceite_osl=63 camiones (64 ev) (aceite: actividad de cámara, solo patentes válidas — sin cruce Excel)
+[etl-headless] niveles: C 0/0 con cámara · D 0 válidos, 0 anómalos, 0 incompletos, 258 sin contrato · E 0 circuitos (0% cámara pura)
+[etl-headless] pb: 21 archivos (8 productivos) 2026-09-30..2026-10-03
+[etl-headless] tablas núcleo=21 (sin debug) rules=etl_transform_v17

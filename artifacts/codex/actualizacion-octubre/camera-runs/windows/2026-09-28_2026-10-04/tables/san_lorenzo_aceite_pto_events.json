@@ -1,0 +1,16 @@
+{
+  "name": "san_lorenzo_aceite_pto_events",
+  "headers": [
+    "journey_id",
+    "patente",
+    "producto",
+    "circuito",
+    "camara",
+    "timestamp",
+    "fecha",
+    "hora",
+    "intervalo_hora",
+    "franja_operativa"
+  ],
+  "rows": []
+}

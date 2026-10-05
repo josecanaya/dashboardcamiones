@@ -1,0 +1,7 @@
+metric_key,metric_label,truckflow_count,dss_count,diferencia,porcentaje_diferencia,nota
+ingreso_frontal,Ingresos frontales (RicIngCamFrente),0,,,,cargar_dss_manual
+ingreso_operativo,Ingresos operativos (INGRESO/PREINGRESO),900,,,,cargar_dss_manual
+journeys,Journeys Truckflow (post filtro),3999,,,,cargar_dss_manual
+circuitos_finales,Circuitos finales ETL,672,,,,cargar_dss_manual
+circuitos_completos,Circuitos completos,3,,,,cargar_dss_manual
+circuitos_probables,Circuitos probables,281,,,,cargar_dss_manual

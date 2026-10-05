@@ -1,0 +1,23 @@
+{
+  "name": "D_circuitos_incompletos",
+  "headers": [
+    "journey_key",
+    "journey_parts",
+    "nivel",
+    "origen",
+    "plate",
+    "circuito_code",
+    "circuito_label",
+    "clasificacion",
+    "motivo",
+    "eventos",
+    "inicio_at",
+    "fin_at",
+    "total_min",
+    "coverage_percent",
+    "secuencia_observada",
+    "planta_origen",
+    "tiene_contrato"
+  ],
+  "rows": []
+}

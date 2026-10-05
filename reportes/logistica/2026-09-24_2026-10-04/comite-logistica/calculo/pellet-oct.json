@@ -1,0 +1,205 @@
+{
+ "periodo": {
+  "from": "2026-10-01",
+  "to": "2026-10-04",
+  "dias": [
+   "2026-10-01"
+  ]
+ },
+ "planilla": {
+  "viajes": 136,
+  "patentes": 47,
+  "toneladas30": 4080,
+  "toneladasReales": 3666,
+  "viajesDia": {
+   "2026-10-01": 136
+  },
+  "patentesDia": {
+   "2026-10-01": 47
+  },
+  "viajesPorCamionDia": {
+   "2026-10-01": {
+    "prom": 2.9,
+    "max": 4
+   }
+  },
+  "topCamiones": [
+   [
+    "RKS646",
+    4
+   ],
+   [
+    "UER485",
+    4
+   ],
+   [
+    "CIE516",
+    4
+   ],
+   [
+    "JPZ027",
+    4
+   ],
+   [
+    "VJG112",
+    4
+   ],
+   [
+    "RLP943",
+    4
+   ],
+   [
+    "EYH843",
+    4
+   ],
+   [
+    "RAW481",
+    4
+   ],
+   [
+    "FDH917",
+    4
+   ],
+   [
+    "GES056",
+    4
+   ]
+  ],
+  "bloques": [
+   {
+    "inicio": "2026-09-30 23:06",
+    "fin": "2026-10-01 21:32",
+    "horas": 22.4
+   }
+  ],
+  "horasOperativo": 22.4
+ },
+ "camaras": {
+  "viajes": 111,
+  "conCalleLiquida": 94,
+  "porVolcable": {
+   "V4": 93
+  },
+  "periodo": {
+   "ingreso": {
+    "mean": null,
+    "n": 0
+   },
+   "playa1": {
+    "mean": 9,
+    "n": 84
+   },
+   "ptara": {
+    "mean": 13,
+    "n": 73
+   },
+   "carga": {
+    "mean": 53,
+    "n": 105
+   },
+   "interplanta": {
+    "mean": 16,
+    "n": 96
+   },
+   "playaOsl": {
+    "mean": 171,
+    "n": 84
+   },
+   "descarga": {
+    "mean": 105,
+    "n": 84
+   },
+   "salida": {
+    "mean": 19,
+    "n": 81
+   },
+   "ric": {
+    "mean": 78,
+    "n": 96
+   },
+   "sl": {
+    "mean": 281,
+    "n": 99
+   },
+   "ciclo": {
+    "mean": 376,
+    "n": 87
+   },
+   "vuelta": {
+    "mean": 21,
+    "n": 69
+   }
+  },
+  "porDia": {
+   "2026-10-01": {
+    "viajes": 111,
+    "cuartos": {
+     "Q1": 19,
+     "Q2": 34,
+     "Q3": 33,
+     "Q4": 25
+    },
+    "tramos": {
+     "ingreso": {
+      "mean": null,
+      "n": 0
+     },
+     "playa1": {
+      "mean": 9,
+      "n": 84
+     },
+     "ptara": {
+      "mean": 13,
+      "n": 73
+     },
+     "carga": {
+      "mean": 53,
+      "n": 105
+     },
+     "interplanta": {
+      "mean": 16,
+      "n": 96
+     },
+     "playaOsl": {
+      "mean": 171,
+      "n": 84
+     },
+     "descarga": {
+      "mean": 105,
+      "n": 84
+     },
+     "salida": {
+      "mean": 19,
+      "n": 81
+     },
+     "ric": {
+      "mean": 78,
+      "n": 96
+     },
+     "sl": {
+      "mean": 281,
+      "n": 99
+     },
+     "ciclo": {
+      "mean": 376,
+      "n": 87
+     },
+     "vuelta": {
+      "mean": 21,
+      "n": 69
+     }
+    }
+   }
+  },
+  "calleLiquidaPorOrden": {
+   "primero": [
+    44,
+    35
+   ],
+   "siguientes": [
+    67,
+    59
+   ]
+  }
+ }
+}

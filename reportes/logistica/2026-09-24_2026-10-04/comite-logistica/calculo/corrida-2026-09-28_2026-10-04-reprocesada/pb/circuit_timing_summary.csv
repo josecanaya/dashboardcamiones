@@ -1,0 +1,7 @@
+executive_circuit_code,circuit_name,executive_status,n_journeys,mean_total_min,std_total_min,median_total_min,p90_total_min,min_total_min,max_total_min,q1_total_min,q3_total_min,iqr_total_min,min_plate,max_plate
+R6,Recepción Volcable 2,VALIDO,19,195.53,115.77,157.40,335.86,60.14,471.37,126.54,238.68,112.13,LLA258,LFT141
+R7,Ricardone → San Lorenzo,VALIDO,505,161.45,126.66,142.50,335.26,3.99,957.64,49.27,233.25,183.98,EYH843,UUL425
+R8,Recepción Mercadería Líquida,VALIDO,29,320.16,229.59,303.06,383.78,19.22,1344.36,277.45,343.74,66.29,LZP121,EHS233
+R9,Despacho Celda 16,VALIDO,1,357.66,0.00,357.66,357.66,357.66,357.66,357.66,357.66,0.00,AD001TD,AD001TD
+R4,Recepción Silos Kepler 2,VALIDO,3,290.65,12.08,289.52,300.51,279.17,303.26,284.35,296.39,12.04,AE762DG,AG991NU
+SL1,Recepción Carga OSL San Lorenzo,VALIDO,8,212.70,96.94,200.21,315.31,82.42,383.73,143.46,272.95,129.49,KOE138,FEA810

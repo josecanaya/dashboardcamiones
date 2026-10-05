@@ -1,0 +1,93 @@
+{
+  "runId": "2026-09-28_2026-10-04",
+  "status": "ok",
+  "startedAt": "2026-10-04T23:48:38.443Z",
+  "finishedAt": "2026-10-04T23:48:46.422Z",
+  "fromDay": "2026-09-28",
+  "toDay": "2026-10-04",
+  "rulesVersion": "etl_transform_v17",
+  "layout": "windows_stable_v1",
+  "persistDebug": false,
+  "input": {
+    "eventsPaths": [
+      "C:\\Users\\Pc\\Desktop\\JOSE\\Programacion\\Vicentin\\rutas\\dashboard\\data\\truckflow\\2026-09-30\\event-list.json",
+      "C:\\Users\\Pc\\Desktop\\JOSE\\Programacion\\Vicentin\\rutas\\dashboard\\data\\truckflow\\2026-10-01\\event-list.json",
+      "C:\\Users\\Pc\\Desktop\\JOSE\\Programacion\\Vicentin\\rutas\\dashboard\\data\\truckflow\\2026-10-02\\event-list.json",
+      "C:\\Users\\Pc\\Desktop\\JOSE\\Programacion\\Vicentin\\rutas\\dashboard\\data\\truckflow\\2026-10-03\\event-list.json"
+    ],
+    "movimientosRows": 0,
+    "inputHash": "1d542f7c2a6b",
+    "eventCount": 8536
+  },
+  "output": {
+    "tableCount": 21,
+    "coreTableCount": 21,
+    "debugTableCount": 0,
+    "tableKeys": [
+      "calada_camera_events",
+      "calada_ricardone_liquid_events",
+      "calada_sl_camera_events",
+      "circuit_timing_journeys",
+      "circuit_timing_summary",
+      "debug_matrix_classification",
+      "final_circuits",
+      "plate_registry_excluded",
+      "ricardone_celda16_events",
+      "ricardone_silo_events",
+      "ricardone_volcable_events",
+      "san_lorenzo_aceite_osl_events",
+      "san_lorenzo_aceite_pto_events",
+      "san_lorenzo_volcable_events",
+      "sector_occupancy_30min",
+      "sector_occupancy_events",
+      "segment_scatter_analysis",
+      "segment_scatter_by_day",
+      "segment_timing_kpi",
+      "segment_timing_legs",
+      "transform_summary"
+    ],
+    "niveles": {
+      "modelo": "A_B_C_D_E_v14",
+      "tablas": 9,
+      "invariantesRotos": []
+    },
+    "powerBi": {
+      "dir": "pb",
+      "periodStart": "2026-09-30",
+      "periodEnd": "2026-10-03",
+      "files": [
+        "circuit_timing_journeys.csv",
+        "circuit_timing_summary.csv",
+        "pb_alerts_operational.csv",
+        "pb_anomalies.csv",
+        "pb_camera_committee_status.csv",
+        "pb_camera_daynight_summary.csv",
+        "pb_camera_lpr_analysis.csv",
+        "pb_camera_status_general.csv",
+        "pb_camera_summary.csv",
+        "pb_circuit_coverage.csv",
+        "pb_circuit_summary.csv",
+        "pb_committee_summary.csv",
+        "pb_dss_vs_truckflow.csv",
+        "pb_final_circuits.csv",
+        "pb_front_alerts.csv",
+        "pb_front_events.csv",
+        "pb_load_manifest.json",
+        "pb_rear_alerts.csv",
+        "pb_rear_events.csv",
+        "pb_sector_camera_summary.csv",
+        "pb_transform_summary.csv"
+      ],
+      "productFiles": [
+        "pb_alerts_operational.csv",
+        "pb_anomalies.csv",
+        "pb_camera_committee_status.csv",
+        "pb_camera_lpr_analysis.csv",
+        "pb_circuit_summary.csv",
+        "pb_committee_summary.csv",
+        "pb_final_circuits.csv",
+        "pb_load_manifest.json"
+      ]
+    }
+  }
+}

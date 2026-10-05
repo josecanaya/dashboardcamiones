@@ -1,0 +1,1176 @@
+{
+ "days": [
+  "2026-09-24",
+  "2026-09-25",
+  "2026-09-26",
+  "2026-09-27",
+  "2026-09-28",
+  "2026-09-29",
+  "2026-09-30",
+  "2026-10-01",
+  "2026-10-02",
+  "2026-10-03",
+  "2026-10-04"
+ ],
+ "paquete": "reportes/logistica/2026-09-24_2026-10-04/revision-001/paquete.json",
+ "fuentes": {
+  "rulesVersion": "etl_transform_v17",
+  "runIds": [
+   "2026-09-21_2026-09-27",
+   "2026-09-28_2026-10-04",
+   "2026-09-28_2026-10-04"
+  ],
+  "composedRange": "2026-09-24..2026-10-04 = 2026-09-21_2026-09-27:2026-09-24:2026-09-27 + 2026-09-28_2026-10-04:2026-09-28:2026-09-30 + 2026-09-28_2026-10-04(reproc. 05/10, cámaras 30/09–04/10):2026-10-01:2026-10-04",
+  "kpiTiemposBuilt": true,
+  "tablesUsed": [
+   "calada_camera_events",
+   "calada_ricardone_liquid_events",
+   "calada_sl_camera_events",
+   "ricardone_volcable_events",
+   "ricardone_silo_events",
+   "san_lorenzo_volcable_events",
+   "excel_operations_with_truckflow",
+   "circuit_timing_journeys",
+   "segment_timing_legs",
+   "final_circuits"
+  ]
+ },
+ "extras": {
+  "days": [
+   "2026-09-24",
+   "2026-09-25",
+   "2026-09-26",
+   "2026-09-27",
+   "2026-09-28",
+   "2026-09-29",
+   "2026-09-30",
+   "2026-10-01",
+   "2026-10-02",
+   "2026-10-03",
+   "2026-10-04"
+  ],
+  "r7": {
+   "ops": 1201,
+   "dia": [
+    109,
+    131,
+    92,
+    107,
+    135,
+    96,
+    116,
+    132,
+    98,
+    106,
+    79
+   ],
+   "n": 1201,
+   "media": 267,
+   "mediana": 242
+  },
+  "girasol": {
+   "ops": 250,
+   "dia": [
+    42,
+    67,
+    36,
+    0,
+    37,
+    26,
+    0,
+    1,
+    18,
+    22,
+    1
+   ],
+   "R5": 136,
+   "R6": 114,
+   "n": 250,
+   "media": 734,
+   "mediana": 783
+  },
+  "r4": 42,
+  "liquidos": {
+   "camiones": 537,
+   "ingresos": 205,
+   "egresos": 332,
+   "dia": [
+    71,
+    52,
+    17,
+    9,
+    79,
+    82,
+    80,
+    56,
+    50,
+    20,
+    21
+   ],
+   "n": 537,
+   "media": 315,
+   "mediana": 228,
+   "porCircuito": {
+    "SL3": 18,
+    "SL1": 218,
+    "sin circuito": 103,
+    "R8": 137,
+    "SL2": 61
+   },
+   "porProducto": {
+    "BORRA DE ACSOJA REFINADO": 22,
+    "ACEITE GIRASOL CRUDO": 17,
+    "ACEITE GIRASOL REFINADO": 219,
+    "GLICERINA REFINADA": 54,
+    "ACEITE SOJA CRUDO DESGOMADO": 7,
+    "GLICERINA": 63,
+    "ACEITE SOJA REFINADO": 31,
+    "METANOL": 33,
+    "BORRA ACEITE GIRASOL": 9,
+    "ACEITE GIRASOL PARA REFINAR": 47,
+    "LECITINA DE SOJA": 2,
+    "BORRA ACEITE GIRASOL REFINADO": 21,
+    "METILATO DE SODIO": 7,
+    "ACEITE SOJA NEUTRO": 1,
+    "GLICERINA SUBSTANDARD": 4
+   },
+   "sinCircuito": {
+    "RENOPACK": 61,
+    "TERMINAL_EMBARQUE": 42
+   }
+  },
+  "pelletTransile": {
+   "viajes": 443,
+   "dia": [
+    41,
+    70,
+    90,
+    0,
+    0,
+    0,
+    106,
+    136,
+    0,
+    0,
+    0
+   ],
+   "camiones": 64,
+   "kgs": 12034640,
+   "paresCamionDia": 195
+  },
+  "pelletEgresos": {
+   "n": 458,
+   "dia": [
+    88,
+    28,
+    89,
+    0,
+    2,
+    3,
+    155,
+    91,
+    1,
+    1,
+    0
+   ]
+  },
+  "r29": {
+   "ops": 515,
+   "dia": [
+    112,
+    64,
+    42,
+    116,
+    117,
+    64,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  }
+ },
+ "extras2430": {
+  "days": [
+   "2026-09-24",
+   "2026-09-25",
+   "2026-09-26",
+   "2026-09-27",
+   "2026-09-28",
+   "2026-09-29",
+   "2026-09-30"
+  ],
+  "r7": {
+   "ops": 786,
+   "dia": [
+    109,
+    131,
+    92,
+    107,
+    135,
+    96,
+    116
+   ],
+   "n": 786,
+   "media": 266,
+   "mediana": 243
+  },
+  "girasol": {
+   "ops": 208,
+   "dia": [
+    42,
+    67,
+    36,
+    0,
+    37,
+    26,
+    0
+   ],
+   "R5": 136,
+   "R6": 72,
+   "n": 208,
+   "media": 843,
+   "mediana": 814
+  },
+  "r4": 38,
+  "liquidos": {
+   "camiones": 390,
+   "ingresos": 151,
+   "egresos": 239,
+   "dia": [
+    71,
+    52,
+    17,
+    9,
+    79,
+    82,
+    80
+   ],
+   "n": 390,
+   "media": 329,
+   "mediana": 241,
+   "porCircuito": {
+    "SL3": 13,
+    "SL1": 166,
+    "sin circuito": 70,
+    "R8": 88,
+    "SL2": 53
+   },
+   "porProducto": {
+    "BORRA DE ACSOJA REFINADO": 13,
+    "ACEITE GIRASOL CRUDO": 16,
+    "ACEITE GIRASOL REFINADO": 177,
+    "GLICERINA REFINADA": 38,
+    "ACEITE SOJA CRUDO DESGOMADO": 7,
+    "GLICERINA": 37,
+    "ACEITE SOJA REFINADO": 14,
+    "METANOL": 20,
+    "BORRA ACEITE GIRASOL": 7,
+    "ACEITE GIRASOL PARA REFINAR": 44,
+    "LECITINA DE SOJA": 2,
+    "BORRA ACEITE GIRASOL REFINADO": 11,
+    "METILATO DE SODIO": 4
+   },
+   "sinCircuito": {
+    "RENOPACK": 44,
+    "TERMINAL_EMBARQUE": 26
+   }
+  },
+  "pelletTransile": {
+   "viajes": 307,
+   "dia": [
+    41,
+    70,
+    90,
+    0,
+    0,
+    0,
+    106
+   ],
+   "camiones": 62,
+   "kgs": 8369140,
+   "paresCamionDia": 148
+  },
+  "pelletEgresos": {
+   "n": 365,
+   "dia": [
+    88,
+    28,
+    89,
+    0,
+    2,
+    3,
+    155
+   ]
+  },
+  "r29": {
+   "ops": 515,
+   "dia": [
+    112,
+    64,
+    42,
+    116,
+    117,
+    64,
+    0
+   ]
+  }
+ },
+ "liquidosTiempos": {
+  "R8": {
+   "n": 42,
+   "media": 245.3,
+   "mediana": 206.2,
+   "tramos": {
+    "PREINGRESO→BALANZA_EGRESO": {
+     "n": 2,
+     "media": 63.5
+    },
+    "PREINGRESO→LIQUIDO": {
+     "n": 35,
+     "media": 10.9
+    },
+    "LIQUIDO→BALANZA_EGRESO": {
+     "n": 3,
+     "media": 184.8
+    }
+   }
+  },
+  "SL1": {
+   "n": 16,
+   "media": 250,
+   "mediana": 237.8,
+   "tramos": {
+    "SL_BALANZA_INGRESO→SL_EGRESO": {
+     "n": 12,
+     "media": 76.4
+    },
+    "SL_INGRESO→SL_BALANZA_INGRESO": {
+     "n": 5,
+     "media": 19
+    },
+    "SL_BALANZA_INGRESO→SL_VOLCABLE": {
+     "n": 1,
+     "media": 5.7
+    }
+   }
+  },
+  "SL2": {
+   "n": 0,
+   "media": null,
+   "mediana": null,
+   "tramos": {}
+  },
+  "SL3": {
+   "n": 0,
+   "media": null,
+   "mediana": null,
+   "tramos": {}
+  }
+ },
+ "girasol": {
+  "ing": 3,
+  "p1": 154,
+  "pb": 13,
+  "ap3": 12,
+  "desc": 206,
+  "tara": 24,
+  "total": 412,
+  "cam": {
+   "c2430": {
+    "p1": {
+     "mean": 231,
+     "n": 57
+    },
+    "descarga": {
+     "mean": 374,
+     "n": 81
+    },
+    "tara": {
+     "mean": 27,
+     "n": 89
+    }
+   },
+   "c0104": {
+    "p1": {
+     "mean": 106,
+     "n": 13
+    },
+    "descarga": {
+     "mean": 38,
+     "n": 12
+    },
+    "tara": {
+     "mean": 31,
+     "n": 16
+    }
+   },
+   "pooled": {
+    "p1": {
+     "mean": 208,
+     "n": 70
+    },
+    "descarga": {
+     "mean": 331,
+     "n": 93
+    },
+    "tara": {
+     "mean": 28,
+     "n": 105
+    }
+   }
+  }
+ },
+ "pelletOperativo": {
+  "periodo": {
+   "from": "2026-09-24",
+   "to": "2026-10-04",
+   "dias": [
+    "2026-09-24",
+    "2026-09-25",
+    "2026-09-26",
+    "2026-09-30",
+    "2026-10-01"
+   ]
+  },
+  "planilla": {
+   "viajes": 443,
+   "patentes": 64,
+   "toneladas30": 13290,
+   "toneladasReales": 12035,
+   "viajesDia": {
+    "2026-09-24": 41,
+    "2026-09-25": 70,
+    "2026-09-26": 90,
+    "2026-09-30": 106,
+    "2026-10-01": 136
+   },
+   "patentesDia": {
+    "2026-09-24": 32,
+    "2026-09-25": 38,
+    "2026-09-26": 35,
+    "2026-09-30": 43,
+    "2026-10-01": 47
+   },
+   "viajesPorCamionDia": {
+    "2026-09-24": {
+     "prom": 1.3,
+     "max": 2
+    },
+    "2026-09-25": {
+     "prom": 1.8,
+     "max": 3
+    },
+    "2026-09-26": {
+     "prom": 2.6,
+     "max": 4
+    },
+    "2026-09-30": {
+     "prom": 2.5,
+     "max": 4
+    },
+    "2026-10-01": {
+     "prom": 2.9,
+     "max": 4
+    }
+   },
+   "topCamiones": [
+    [
+     "UWX998",
+     15
+    ],
+    [
+     "RAW481",
+     15
+    ],
+    [
+     "VAJ028",
+     14
+    ],
+    [
+     "FDH917",
+     14
+    ],
+    [
+     "BVS300",
+     14
+    ],
+    [
+     "EYH843",
+     13
+    ],
+    [
+     "UKL882",
+     12
+    ],
+    [
+     "VJG112",
+     12
+    ],
+    [
+     "CKQ212",
+     11
+    ],
+    [
+     "EEW075",
+     11
+    ]
+   ],
+   "bloques": [
+    {
+     "inicio": "2026-09-24 18:05",
+     "fin": "2026-09-25 11:34",
+     "horas": 17.5
+    },
+    {
+     "inicio": "2026-09-26 06:11",
+     "fin": "2026-09-26 20:53",
+     "horas": 14.7
+    },
+    {
+     "inicio": "2026-09-30 07:35",
+     "fin": "2026-10-01 21:32",
+     "horas": 38
+    }
+   ],
+   "horasOperativo": 70.1
+  },
+  "camaras": {
+   "viajes": 395,
+   "conCalleLiquida": 303,
+   "porVolcable": {
+    "V4": 306,
+    "V3": 5,
+    "V2": 1,
+    "V5": 2
+   },
+   "periodo": {
+    "ingreso": {
+     "mean": 2,
+     "n": 2
+    },
+    "playa1": {
+     "mean": 17,
+     "n": 278
+    },
+    "ptara": {
+     "mean": 14,
+     "n": 241
+    },
+    "carga": {
+     "mean": 62,
+     "n": 375
+    },
+    "interplanta": {
+     "mean": 17,
+     "n": 332
+    },
+    "playaOsl": {
+     "mean": 107,
+     "n": 296
+    },
+    "descarga": {
+     "mean": 88,
+     "n": 288
+    },
+    "salida": {
+     "mean": 18,
+     "n": 280
+    },
+    "ric": {
+     "mean": 87,
+     "n": 346
+    },
+    "sl": {
+     "mean": 208,
+     "n": 350
+    },
+    "ciclo": {
+     "mean": 308,
+     "n": 309
+    },
+    "vuelta": {
+     "mean": 22,
+     "n": 278
+    }
+   },
+   "porDia": {
+    "2026-09-24": {
+     "viajes": 36,
+     "cuartos": {
+      "Q1": 8,
+      "Q2": 2,
+      "Q3": 0,
+      "Q4": 26
+     },
+     "tramos": {
+      "ingreso": {
+       "mean": 2,
+       "n": 2
+      },
+      "playa1": {
+       "mean": 55,
+       "n": 24
+      },
+      "ptara": {
+       "mean": 10,
+       "n": 11
+      },
+      "carga": {
+       "mean": 95,
+       "n": 33
+      },
+      "interplanta": {
+       "mean": 17,
+       "n": 18
+      },
+      "playaOsl": {
+       "mean": 44,
+       "n": 12
+      },
+      "descarga": {
+       "mean": 80,
+       "n": 22
+      },
+      "salida": {
+       "mean": 21,
+       "n": 24
+      },
+      "ric": {
+       "mean": 145,
+       "n": 31
+      },
+      "sl": {
+       "mean": 151,
+       "n": 28
+      },
+      "ciclo": {
+       "mean": 289,
+       "n": 26
+      },
+      "vuelta": {
+       "mean": 19,
+       "n": 25
+      }
+     }
+    },
+    "2026-09-25": {
+     "viajes": 56,
+     "cuartos": {
+      "Q1": 21,
+      "Q2": 30,
+      "Q3": 2,
+      "Q4": 3
+     },
+     "tramos": {
+      "ingreso": {
+       "mean": null,
+       "n": 0
+      },
+      "playa1": {
+       "mean": 6,
+       "n": 15
+      },
+      "ptara": {
+       "mean": 20,
+       "n": 17
+      },
+      "carga": {
+       "mean": 52,
+       "n": 48
+      },
+      "interplanta": {
+       "mean": 18,
+       "n": 45
+      },
+      "playaOsl": {
+       "mean": 173,
+       "n": 39
+      },
+      "descarga": {
+       "mean": 73,
+       "n": 41
+      },
+      "salida": {
+       "mean": 18,
+       "n": 42
+      },
+      "ric": {
+       "mean": 62,
+       "n": 46
+      },
+      "sl": {
+       "mean": 245,
+       "n": 55
+      },
+      "ciclo": {
+       "mean": 312,
+       "n": 45
+      },
+      "vuelta": {
+       "mean": 30,
+       "n": 49
+      }
+     }
+    },
+    "2026-09-26": {
+     "viajes": 84,
+     "cuartos": {
+      "Q1": 2,
+      "Q2": 33,
+      "Q3": 36,
+      "Q4": 13
+     },
+     "tramos": {
+      "ingreso": {
+       "mean": null,
+       "n": 0
+      },
+      "playa1": {
+       "mean": 24,
+       "n": 70
+      },
+      "ptara": {
+       "mean": 13,
+       "n": 67
+      },
+      "carga": {
+       "mean": 61,
+       "n": 84
+      },
+      "interplanta": {
+       "mean": 16,
+       "n": 79
+      },
+      "playaOsl": {
+       "mean": 20,
+       "n": 75
+      },
+      "descarga": {
+       "mean": 82,
+       "n": 74
+      },
+      "salida": {
+       "mean": 18,
+       "n": 69
+      },
+      "ric": {
+       "mean": 93,
+       "n": 76
+      },
+      "sl": {
+       "mean": 122,
+       "n": 75
+      },
+      "ciclo": {
+       "mean": 232,
+       "n": 68
+      },
+      "vuelta": {
+       "mean": 22,
+       "n": 57
+      }
+     }
+    },
+    "2026-09-30": {
+     "viajes": 90,
+     "cuartos": {
+      "Q1": 7,
+      "Q2": 20,
+      "Q3": 30,
+      "Q4": 33
+     },
+     "tramos": {
+      "ingreso": {
+       "mean": null,
+       "n": 0
+      },
+      "playa1": {
+       "mean": 11,
+       "n": 75
+      },
+      "ptara": {
+       "mean": 17,
+       "n": 68
+      },
+      "carga": {
+       "mean": 62,
+       "n": 90
+      },
+      "interplanta": {
+       "mean": 17,
+       "n": 82
+      },
+      "playaOsl": {
+       "mean": 106,
+       "n": 76
+      },
+      "descarga": {
+       "mean": 86,
+       "n": 63
+      },
+      "salida": {
+       "mean": 17,
+       "n": 59
+      },
+      "ric": {
+       "mean": 86,
+       "n": 84
+      },
+      "sl": {
+       "mean": 208,
+       "n": 80
+      },
+      "ciclo": {
+       "mean": 311,
+       "n": 74
+      },
+      "vuelta": {
+       "mean": 18,
+       "n": 69
+      }
+     }
+    },
+    "2026-10-01": {
+     "viajes": 111,
+     "cuartos": {
+      "Q1": 19,
+      "Q2": 34,
+      "Q3": 33,
+      "Q4": 25
+     },
+     "tramos": {
+      "ingreso": {
+       "mean": null,
+       "n": 0
+      },
+      "playa1": {
+       "mean": 9,
+       "n": 84
+      },
+      "ptara": {
+       "mean": 13,
+       "n": 73
+      },
+      "carga": {
+       "mean": 53,
+       "n": 105
+      },
+      "interplanta": {
+       "mean": 16,
+       "n": 96
+      },
+      "playaOsl": {
+       "mean": 171,
+       "n": 84
+      },
+      "descarga": {
+       "mean": 105,
+       "n": 84
+      },
+      "salida": {
+       "mean": 19,
+       "n": 81
+      },
+      "ric": {
+       "mean": 78,
+       "n": 96
+      },
+      "sl": {
+       "mean": 281,
+       "n": 99
+      },
+      "ciclo": {
+       "mean": 376,
+       "n": 87
+      },
+      "vuelta": {
+       "mean": 21,
+       "n": 69
+      }
+     }
+    }
+   },
+   "calleLiquidaPorOrden": {
+    "primero": [
+     195,
+     141
+    ],
+    "siguientes": [
+     200,
+     162
+    ]
+   }
+  }
+ },
+ "pelletHistorico": [
+  {
+   "id": "jun-jul",
+   "desde": "2026-06-30",
+   "hasta": "2026-07-04",
+   "comite": null,
+   "ciclo": null,
+   "viajes": 337,
+   "camiones": 49,
+   "dias": 5,
+   "toneladas30": 10110,
+   "toneladasNetas": 9019,
+   "horas": 62.7,
+   "tandas": 4,
+   "viajesPorCamion": 6.9,
+   "viajesPorCamionDia": 2.2,
+   "maxViajesCamionDia": 5,
+   "toneladasPorHora": 161
+  },
+  {
+   "id": "jul",
+   "desde": "2026-07-08",
+   "hasta": "2026-07-15",
+   "comite": null,
+   "ciclo": null,
+   "viajes": 768,
+   "camiones": 74,
+   "dias": 7,
+   "toneladas30": 23040,
+   "toneladasNetas": 20310,
+   "horas": 126.2,
+   "tandas": 3,
+   "viajesPorCamion": 10.4,
+   "viajesPorCamionDia": 2.5,
+   "maxViajesCamionDia": 6,
+   "toneladasPorHora": 183
+  },
+  {
+   "id": "28/8",
+   "desde": "2026-08-18",
+   "hasta": "2026-08-22",
+   "comite": "28/8",
+   "ciclo": 396,
+   "viajes": 532,
+   "camiones": 60,
+   "dias": 5,
+   "toneladas30": 15960,
+   "toneladasNetas": 14317,
+   "horas": 89.2,
+   "tandas": 1,
+   "viajesPorCamion": 8.9,
+   "viajesPorCamionDia": 2.4,
+   "maxViajesCamionDia": 4,
+   "toneladasPorHora": 179
+  },
+  {
+   "id": "4/9",
+   "desde": "2026-08-28",
+   "hasta": "2026-09-02",
+   "comite": "4/9",
+   "ciclo": 381,
+   "viajes": 723,
+   "camiones": 63,
+   "dias": 6,
+   "toneladas30": 21690,
+   "toneladasNetas": 18966,
+   "horas": 121.6,
+   "tandas": 2,
+   "viajesPorCamion": 11.5,
+   "viajesPorCamionDia": 2.7,
+   "maxViajesCamionDia": 5,
+   "toneladasPorHora": 178
+  },
+  {
+   "id": "11/9",
+   "desde": "2026-09-03",
+   "hasta": "2026-09-05",
+   "comite": "11/9",
+   "ciclo": 392,
+   "viajes": 383,
+   "camiones": 65,
+   "dias": 3,
+   "toneladas30": 11490,
+   "toneladasNetas": 10432,
+   "horas": 60.1,
+   "tandas": 1,
+   "viajesPorCamion": 5.9,
+   "viajesPorCamionDia": 2.4,
+   "maxViajesCamionDia": 4,
+   "toneladasPorHora": 191
+  },
+  {
+   "id": "18/9",
+   "desde": "2026-09-14",
+   "hasta": "2026-09-15",
+   "comite": "18/9",
+   "ciclo": 263,
+   "viajes": 189,
+   "camiones": 48,
+   "dias": 2,
+   "toneladas30": 5670,
+   "toneladasNetas": 5093,
+   "horas": 27.3,
+   "tandas": 1,
+   "viajesPorCamion": 3.9,
+   "viajesPorCamionDia": 2.1,
+   "maxViajesCamionDia": 5,
+   "toneladasPorHora": 208
+  },
+  {
+   "id": "actual",
+   "desde": "2026-09-24",
+   "hasta": "2026-10-01",
+   "comite": "Actual",
+   "ciclo": 308,
+   "viajes": 443,
+   "camiones": 64,
+   "dias": 5,
+   "toneladas30": 13290,
+   "toneladasNetas": 12035,
+   "horas": 70.1,
+   "tandas": 3,
+   "viajesPorCamion": 6.9,
+   "viajesPorCamionDia": 2.27,
+   "maxViajesCamionDia": 4,
+   "toneladasPorHora": 190
+  }
+ ],
+ "r29": {
+  "tramos": {
+   "calEgr": {
+    "mean": 15,
+    "n": 177
+   },
+   "puente": {
+    "mean": 11,
+    "n": 155
+   },
+   "osl": {
+    "mean": 27,
+    "n": 151
+   },
+   "balVolc": {
+    "mean": 51,
+    "n": 165
+   },
+   "volcSal": {
+    "mean": 15,
+    "n": 190
+   },
+   "egrVolc": {
+    "mean": 91,
+    "n": 171
+   },
+   "ric": {
+    "mean": 184,
+    "n": 163
+   },
+   "preLiq": {
+    "mean": 9,
+    "n": 88
+   },
+   "liqP3": {
+    "mean": 11,
+    "n": 58
+   },
+   "p3Silo": {
+    "mean": 131,
+    "n": 143
+   },
+   "siloBal": {
+    "mean": 20,
+    "n": 184
+   },
+   "balCal": {
+    "mean": 10,
+    "n": 182
+   },
+   "siloCal": {
+    "mean": 36,
+    "n": 197
+   },
+   "ciclo": {
+    "mean": 285,
+    "n": 175
+   }
+  },
+  "nota": "Sin transile R29 del 01 al 04/10 (planilla): tramos de la corrida 24–30."
+ },
+ "camarasOct": {
+  "r7": {
+   "p1": {
+    "mean": 88,
+    "n": 139
+   },
+   "calEgr": {
+    "mean": 14,
+    "n": 113
+   },
+   "puente": {
+    "mean": 12,
+    "n": 133
+   },
+   "osl": {
+    "mean": 52,
+    "n": 120
+   },
+   "balVolc": {
+    "mean": 69,
+    "n": 131
+   },
+   "volcSal": {
+    "mean": 18,
+    "n": 143
+   },
+   "egrVolc": {
+    "mean": 134,
+    "n": 134
+   },
+   "total": {
+    "mean": 292,
+    "n": 135
+   },
+   "ric": {
+    "mean": 133,
+    "n": 128
+   },
+   "sl": {
+    "mean": 139,
+    "n": 129
+   }
+  },
+  "gir": {
+   "p1": {
+    "mean": 106,
+    "n": 13
+   },
+   "total": {
+    "mean": 177,
+    "n": 13
+   },
+   "pbruto": {
+    "mean": null,
+    "n": 0
+   },
+   "accP3": {
+    "mean": null,
+    "n": 0
+   },
+   "descarga": {
+    "mean": 38,
+    "n": 12
+   },
+   "tara": {
+    "mean": 31,
+    "n": 16
+   },
+   "calVolc": {
+    "mean": 48,
+    "n": 16
+   }
+  },
+  "liq": {
+   "total": {
+    "mean": 140,
+    "n": 61
+   }
+  }
+ }
+}

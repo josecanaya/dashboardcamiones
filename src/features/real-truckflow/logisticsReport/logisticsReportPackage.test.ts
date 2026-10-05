@@ -6,7 +6,7 @@
  * vez de completarse sola.
  */
 import { describe, expect, it } from 'vitest'
-import { buildLogisticsReportPackage } from './logisticsReportPackage'
+import { buildLogisticsReportPackage, TIEMPOS_GROUPS } from './logisticsReportPackage'
 import { buildReportPeriod, weekdayNameOf } from './logisticsReportPeriod'
 import { buildActivitySection, ACTIVITY_SOURCES } from './logisticsReportActivity'
 import { buildTiemposSection, plantOfTramo } from './logisticsReportTiempos'
@@ -245,6 +245,20 @@ describe('sección ejecutiva', () => {
     }
   }
 
+  const FINAL_HEADERS = ['journey_uid', 'executive_circuit_code', 'executive_circuit_label', 'executive_bucket']
+
+  function finalRows(ids: string[]): string {
+    return csvOf(
+      FINAL_HEADERS,
+      ids.map((journey_uid) => ({
+        journey_uid,
+        executive_circuit_code: 'R7',
+        executive_circuit_label: 'Terminal de embarque',
+        executive_bucket: 'COMPLETO',
+      }))
+    )
+  }
+
   it('recorta por período ANTES de clasificar (el índice canonicaliza el uid)', () => {
     // Un uid fusionado se normaliza dentro del índice, así que filtrar las entries por el
     // journey_id crudo después perdía la mayoría de los recorridos.
@@ -254,7 +268,11 @@ describe('sección ejecutiva', () => {
       // fuera del período: la corrida lo trae, el informe no
       dmRow({ journey_id: 'merged_eeeeeeeeeee__fffffffffff', first_event_at: '2026-09-08T08:00:00-03:00' }),
     ])
-    const s = buildEjecutivoSection({ debugMatrixCsv: csv }, period)
+    const s = buildEjecutivoSection({ finalCircuitsCsv: finalRows([
+      'merged_aaaaaaaaaaa__bbbbbbbbbbb',
+      'merged_ccccccccccc__ddddddddddd',
+      'merged_eeeeeeeeeee__fffffffffff',
+    ]), debugMatrixCsv: csv }, period)
     expect(s.missing).toBe(false)
     expect(s.recorridosEnPeriodo).toBe(2)
   })
@@ -266,7 +284,7 @@ describe('sección ejecutiva', () => {
       // 09/09 a las 21:00 → día operativo 09/09: queda fuera
       dmRow({ journey_id: 'b', first_event_at: '2026-09-09T21:00:00-03:00' }),
     ])
-    const s = buildEjecutivoSection({ debugMatrixCsv: csv }, period)
+    const s = buildEjecutivoSection({ finalCircuitsCsv: finalRows(['a', 'b']), debugMatrixCsv: csv }, period)
     expect(s.recorridosEnPeriodo).toBe(1)
   })
 
@@ -380,5 +398,10 @@ describe('tiempos por planta: suma de medias por tramo', () => {
     const tramo = s.period.plants.tramos.find((t) => t.key === 'INGRESO→PREINGRESO')!
     expect(tramo.n).toBe(1)
     expect(tramo.mediaMin).toBe(10)
+  })
+
+  it('incluye Líquidos como R8 para exponer sus tiempos por tramo', () => {
+    const liquidos = TIEMPOS_GROUPS.find((group) => group.key === 'liquidos')
+    expect(liquidos).toMatchObject({ label: 'Líquidos · R8', circuitCodes: ['R8'] })
   })
 })
