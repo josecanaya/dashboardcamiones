@@ -118,8 +118,10 @@ export function PlantMap(props: {
   followNext?: string | null
   /** Oculta los rótulos grandes de ocupación (el monitoreo los muestra en el panel). */
   quietZones?: boolean
+  /** Si está, el clic en un punto lo entrega entero (en vez de abrir directo sus cámaras). */
+  onSelectPoint?: (point: PlantPoint) => void
 }): JSX.Element {
-  const { layout, site = 'ricardone', compact = false, showCircuitControls = true, align = 'center', flowPulse = { ingress: 0, egress: 0 }, zones, onOpenCameras, onSelectSector, onSelectZone, selectedSector, fill = false, trucks = [], followedPlate = null, onSelectTruck, followPath = [], followNext = null, quietZones = false } = props
+  const { layout, site = 'ricardone', compact = false, showCircuitControls = true, align = 'center', flowPulse = { ingress: 0, egress: 0 }, zones, onOpenCameras, onSelectSector, onSelectZone, selectedSector, fill = false, trucks = [], followedPlate = null, onSelectTruck, followPath = [], followNext = null, quietZones = false, onSelectPoint } = props
   const [hovered, setHovered] = useState<string | null>(null)
   const [hoveredZone, setHoveredZone] = useState<string | null>(null)
   const [circuit, setCircuit] = useState<string | null>(null)
@@ -445,6 +447,7 @@ export function PlantMap(props: {
                 onFocus={() => setHovered(p.id)}
                 onBlur={() => setHovered((h) => (h === p.id ? null : h))}
                 onClick={() => {
+                  if (onSelectPoint) return onSelectPoint(p)
                   onSelectZone?.('')
                   onSelectSector?.(p.sectorCode)
                   onOpenCameras(p.cameraGroup)

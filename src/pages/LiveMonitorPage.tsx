@@ -6,6 +6,8 @@ import { LiveActivityFeed } from '../components/plant/LiveActivityFeed'
 import { IdentificationPanel } from '../components/plant/IdentificationPanel'
 import { VerificationPhoto, type PhotoState } from '../components/plant/PlateVerification'
 import { createPortal } from 'react-dom'
+import { PointHistoryModal } from '../components/plant/PointHistoryModal'
+import type { PlantPoint } from '../data/plantZones.types'
 import { useLivePlantState } from '../hooks/useLivePlantState'
 import type { PlantLayout, PlantCameraGroup } from '../data/plantZones.types'
 import type { PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow } from '../services/live/plantStateApi'
@@ -47,6 +49,7 @@ export function LiveMonitorPage() {
   const [search, setSearch] = useState('')
   const [zoneFilter, setZoneFilter] = useState<string | null>(null)
   const [camera, setCamera] = useState<{ title: string; devices: string[] } | null>(null)
+  const [pointOpen, setPointOpen] = useState<PlantPoint | null>(null)
   const [pending, setPending] = useState<number | null>(null)
   const [now, setNow] = useState(Date.now())
 
@@ -157,13 +160,14 @@ export function LiveMonitorPage() {
               followPath={journey?.timeline.map(r => r.logicalSector ?? '').filter(Boolean) ?? []}
               followNext={journey?.nextExpectedPoint ?? null}
               onOpenCameras={openPoint}
+              onSelectPoint={setPointOpen}
               onSelectZone={id => { if (id) { setZoneFilter(id); setPanel('camiones'); setFollowed(null) } }}
             /> : <div className="lm-map__empty">Cargando plano…</div>}
             <div className="lm-legend" aria-hidden>
               <span><i style={{ background: '#16A34A' }} />En tiempo</span>
               <span><i style={{ background: '#F59E0B' }} />Demorado</span>
               <span><i style={{ background: '#DC2626' }} />Muy demorado</span>
-              <span>Clic en un camión para seguirlo · clic en un punto para ver sus cámaras</span>
+              <span>Clic en un camión para seguirlo · clic en un punto para ver cámaras, actividad de hoy y últimos 7 días</span>
             </div>
           </div>
 
@@ -214,7 +218,7 @@ export function LiveMonitorPage() {
                 {panel === 'camaras' ? <div className="lm-panel">
                   <ul className="lm-cams">
                     {points.filter(p => p.cameraGroup.devices.length).map(p => <li key={p.id}>
-                      <button type="button" onClick={() => openPoint(p.cameraGroup)}>
+                      <button type="button" onClick={() => setPointOpen(p)}>
                         <span className="lm-cams__icon" aria-hidden>▶</span>
                         <strong>{p.label}</strong>
                         <small>{p.cameraGroup.devices.length} {p.cameraGroup.devices.length === 1 ? 'cámara' : 'cámaras'}</small>
@@ -228,6 +232,7 @@ export function LiveMonitorPage() {
           </aside>
         </div>
       )}
+      {pointOpen ? <PointHistoryModal site={site} point={pointOpen} onClose={() => setPointOpen(null)} onOpenCameras={() => openPoint(pointOpen.cameraGroup)} /> : null}
       <LiveCameraPlayerModal open={camera != null} devices={camera?.devices ?? null} title={camera?.title} onClose={() => setCamera(null)} />
     </section>
   )
