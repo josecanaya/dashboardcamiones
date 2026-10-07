@@ -3,6 +3,9 @@ import { Button, MetricCard as KpiCard } from '../components/ui/Interface'
 import './plantHome.css'
 import { LiveCameraPlayerModal } from '../components/plant/LiveCameraPlayerModal'
 import { PlantMap } from '../components/plant/PlantMap'
+import { IdentificationPanel } from '../components/plant/IdentificationPanel'
+import { TruckSteps } from '../components/plant/TruckSteps'
+import { LiveActivityFeed } from '../components/plant/LiveActivityFeed'
 import type { PlantLayout } from '../data/plantZones.types'
 import type { TruckRow, ZoneState } from '../services/live/plantStateApi'
 import { correctTruckLocation, formatDrainMinutes, getSectorTrucks, getZoneTrucks } from '../services/live/plantStateApi'
@@ -39,9 +42,15 @@ function MapContextPanel(props: {
   onRemoveTruck: (plate: string) => void
   onMoveTruck: (plate: string, zoneId: string) => void
   onClear: () => void
+  site: 'ricardone' | 'san_lorenzo'
 }) {
-  const { selectedZone, selectedSector, recentEntries, recentExits, loading, zoneTrucks, zoneTrucksLoading, zoneTrucksError, availableZones, busyPlate, onRemoveTruck, onMoveTruck, onClear } = props
+  const { site, selectedZone, selectedSector, recentEntries, recentExits, loading, zoneTrucks, zoneTrucksLoading, zoneTrucksError, availableZones, busyPlate, onRemoveTruck, onMoveTruck, onClear } = props
   const selected = selectedZone ?? selectedSector
+  const [openPlate, setOpenPlate] = useState<string | null>(null)
+  /** Acción preparada sobre un camión: nada se aplica hasta confirmar (EV-07). */
+  const [pending, setPending] = useState<{ plate: string; action: 'move' | 'remove'; zoneId?: string } | null>(null)
+  const siteLabel = site === 'ricardone' ? 'Ricardone' : 'San Lorenzo'
+  const zoneLabel = (id?: string) => availableZones.find(z => z.id === id)?.label ?? id ?? ''
   const renderMovements = (title: string, rows: RecentTruck[], direction: 'in' | 'out') => <div className="tf-movement-group">
     <h3><span className={direction === 'in' ? 'is-in' : 'is-out'}>{direction === 'in' ? '↓' : '↑'}</span>{title}</h3>
     {rows.length ? <ol className="tf-recent-trucks">{rows.slice(0, selected ? 3 : 6).map((truck, index) => <li key={`${direction}-${truck.siteLabel}-${truck.plate}`} style={{ animationDelay: `${index * 90}ms` }}>
@@ -55,7 +64,7 @@ function MapContextPanel(props: {
       {selected ? <>
         <div className="tf-map-context__head">
           <div>
-            <span className="tf-map-context__eyebrow">Sector seleccionado</span>
+            <span className="tf-map-context__eyebrow">{site === 'ricardone' ? 'Ricardone' : 'San Lorenzo'} · sector seleccionado</span>
             <h2>{selected.label}</h2>
           </div>
           <button type="button" onClick={onClear} aria-label="Cerrar detalle">×</button>
@@ -77,24 +86,32 @@ function MapContextPanel(props: {
         {selectedZone ? <section className="tf-zone-trucks" aria-label={`Camiones en ${selectedZone.label}`}>
           <div className="tf-zone-trucks__title">
             <h3>Patentes en esta playa</h3>
-            <span>{zoneTrucksLoading ? 'actualizando…' : `${zoneTrucks.length} ${zoneTrucks.length === 1 ? 'camión' : 'camiones'}`}</span>
+            <span>{zoneTrucksLoading ? 'actualizando…' : `${zoneTrucks.length} ${zoneTrucks.length === 1 ? 'camión' : 'camiones'}${zoneTrucks.length !== selectedZone.backlog && !selectedZone.entryBlind ? ` (el conteo de la zona dice ${selectedZone.backlog}; se actualizan por separado)` : ''}`}</span>
           </div>
           {zoneTrucksError ? <p className="tf-zone-trucks__error">{zoneTrucksError}</p> : null}
           {!zoneTrucksLoading && !zoneTrucks.length && !zoneTrucksError ? <p className="tf-map-context__empty">No hay camiones asignados a esta zona.</p> : null}
-          {zoneTrucks.length ? <ol className="tf-zone-trucks__list">{zoneTrucks.map(truck => <li key={truck.plate}>
+          {zoneTrucks.length ? <ol className={`tf-zone-trucks__list${zoneTrucksLoading ? ' is-loading' : ''}`}>{zoneTrucks.map(truck => <li key={truck.plate}>
             <div className="tf-zone-trucks__identity">
-              <strong>{truck.plate}</strong>
+              <button type="button" className="font-mono font-bold underline decoration-dotted underline-offset-2" onClick={() => setOpenPlate(openPlate === truck.plate ? null : truck.plate)} title="Ver sus últimos pasos y fotos">
+                {truck.plate} {openPlate === truck.plate ? '▾' : '▸'}
+              </button>
               <small>{truck.dwellSectorMin == null ? 'sin tiempo' : `${Math.round(truck.dwellSectorMin)} min en zona`}</small>
             </div>
             <label>
-              <span className="sr-only">Reubicar {truck.plate}</span>
-              <select value={selectedZone.id} disabled={busyPlate === truck.plate} onChange={event => onMoveTruck(truck.plate, event.target.value)} aria-label={`Reubicar ${truck.plate}`}>
+              <span className="sr-only">Destino para reubicar {truck.plate}</span>
+              <select value={pending?.plate === truck.plate && pending.action === 'move' ? pending.zoneId : selectedZone.id} disabled={busyPlate === truck.plate || zoneTrucksLoading} onChange={event => setPending(event.target.value === selectedZone.id ? null : { plate: truck.plate, action: 'move', zoneId: event.target.value })} aria-label={`Destino para reubicar ${truck.plate}`}>
                 {availableZones.map(zone => <option key={zone.id} value={zone.id}>{zone.label}</option>)}
               </select>
             </label>
-            <button type="button" disabled={busyPlate === truck.plate} onClick={() => onRemoveTruck(truck.plate)} title={`Sacar ${truck.plate} del sistema`} aria-label={`Sacar ${truck.plate} del sistema`}>×</button>
+            <button type="button" className="tf-zone-trucks__remove" disabled={busyPlate === truck.plate || zoneTrucksLoading} onClick={() => setPending({ plate: truck.plate, action: 'remove' })}>Quitar…</button>
+            {pending?.plate === truck.plate ? <div className="tf-zone-trucks__confirm" role="group" aria-label="Confirmar cambio">
+              <span>{pending.action === 'move' ? `Reubicar ${truck.plate} (${siteLabel}): ${selectedZone.label} → ${zoneLabel(pending.zoneId)}` : `Quitar ${truck.plate} del estado de planta de ${siteLabel} (${selectedZone.label}). No borra registros de cámara.`}</span>
+              <button type="button" disabled={busyPlate === truck.plate} onClick={() => { if (pending.action === 'move' && pending.zoneId) onMoveTruck(truck.plate, pending.zoneId); else onRemoveTruck(truck.plate); setPending(null) }}>{pending.action === 'move' ? 'Reubicar' : 'Quitar del estado de planta'}</button>
+              <button type="button" onClick={() => setPending(null)}>Cancelar</button>
+            </div> : null}
+            {openPlate === truck.plate ? <div className="tf-zone-trucks__steps"><TruckSteps site={site} plate={truck.plate} /></div> : null}
           </li>)}</ol> : null}
-          <p className="tf-map-context__note">La cruz quita el camión del estado de planta. El selector lo mueve a otra zona.</p>
+          <p className="tf-map-context__note">Tocá la patente para ver sus últimos pasos y fotos. Elegir otra zona o «Quitar…» prepara el cambio; se aplica recién al confirmarlo.</p>
         </section> : <div className="tf-map-context__movements">
           {renderMovements('Últimos ingresos', recentEntries, 'in')}
           {renderMovements('Últimos egresos', recentExits, 'out')}
@@ -146,7 +163,7 @@ export function PlantHome() {
   const ricLive = useLivePlantState('ricardone')
   const slLive = useLivePlantState('san_lorenzo')
   const [scope, setScope] = useState<'ricardone' | 'san_lorenzo' | 'both'>('ricardone')
-  const [view, setView] = useState<'plano' | 'colas' | 'actividad'>('plano')
+  const [view, setView] = useState<'plano' | 'colas' | 'actividad' | 'identificacion'>('plano')
   const [layoutError, setLayoutError] = useState(false)
   const [layouts, setLayouts] = useState<Record<'ricardone' | 'san_lorenzo', PlantLayout | null>>({ ricardone: null, san_lorenzo: null })
   const [selected, setSelected] = useState<string | null>(null)
@@ -164,6 +181,9 @@ export function PlantHome() {
   const [flowPulse, setFlowPulse] = useState({ ingress: 0, egress: 0 })
   const previousFlow = useRef<{ scope: string; ingress: number; egress: number } | null>(null)
   const [nowTick, setNowTick] = useState(() => Date.now())
+  const zoneTrucksFor = useRef<string | null>(null)
+  // La lista de camiones de la zona se vuelve a pedir con cada estado nuevo de su planta (EV-27).
+  const selectedSiteUpdate = (selectedMapSite === 'ricardone' ? ricLive : slLive).lastUpdateMs
 
   useEffect(() => {
     let cancelled = false
@@ -217,12 +237,14 @@ export function PlantHome() {
     }
     setZoneTrucksLoading(true)
     setZoneTrucksError(null)
+    if (zoneTrucksFor.current !== `${selectedMapSite}:${selectedZoneId}`) setZoneTrucks([])
+    zoneTrucksFor.current = `${selectedMapSite}:${selectedZoneId}`
     getZoneTrucks(selectedMapSite, selectedZoneId)
       .then(result => { if (!cancelled) setZoneTrucks(result.trucks) })
       .catch(error => { if (!cancelled) setZoneTrucksError(error instanceof Error ? error.message : String(error)) })
       .finally(() => { if (!cancelled) setZoneTrucksLoading(false) })
     return () => { cancelled = true }
-  }, [selectedMapSite, selectedZoneId, zoneRefreshKey])
+  }, [selectedMapSite, selectedZoneId, zoneRefreshKey, selectedSiteUpdate])
 
   useEffect(() => {
     const t = setInterval(() => setNowTick(Date.now()), 1_000)
@@ -272,7 +294,10 @@ export function PlantHome() {
     month: 'short',
   })
 
-  const zones: ZoneState[] = scope === 'both' ? [...(ricLive.snapshot?.zones ?? []), ...(slLive.snapshot?.zones ?? [])] : selectedLive.snapshot?.zones ?? []
+  // Cada zona lleva su planta: los identificadores pueden repetirse entre Ricardone y San Lorenzo (EV-03).
+  type SiteZone = ZoneState & { site: 'ricardone' | 'san_lorenzo' }
+  const tag = (site: 'ricardone' | 'san_lorenzo', list?: ZoneState[]): SiteZone[] => (list ?? []).map(z => ({ ...z, site }))
+  const zones: SiteZone[] = scope === 'both' ? [...tag('ricardone', ricLive.snapshot?.zones), ...tag('san_lorenzo', slLive.snapshot?.zones)] : tag(scope, selectedLive.snapshot?.zones)
   const layout = layouts[selectedMapSite]
   const visibleSites: ('ricardone' | 'san_lorenzo')[] = scope === 'both' ? ['ricardone', 'san_lorenzo'] : [scope]
   const selectedSector = (selectedMapSite === 'ricardone' ? ricLive.snapshot : slLive.snapshot)?.sectors.find(item => item.sectorCode === selected) ?? null
@@ -305,11 +330,15 @@ export function PlantHome() {
     : 'Elegí una zona'
 
   /** Al elegir una zona se abre el detalle del punto que la drena: ahí está el problema. */
-  const pickZone = (zoneId: string) => {
+  const pickZone = (site: 'ricardone' | 'san_lorenzo', zoneId: string) => {
+    setSelectedMapSite(site)
     setSelectedZoneId(zoneId)
-    const zone = zones.find((z) => z.id === zoneId)
+    const zone = zones.find((z) => z.site === site && z.id === zoneId)
     setSelected(zone?.drainPoints?.[0]?.sectorCode ?? null)
   }
+  const siteName = (site: 'ricardone' | 'san_lorenzo') => site === 'ricardone' ? 'Ricardone' : 'San Lorenzo'
+  const contextPanel = <MapContextPanel selectedZone={selectedLiveZone} selectedSector={selectedSector} recentEntries={recentEntries} recentExits={recentExits} loading={recentLoading} zoneTrucks={zoneTrucks} zoneTrucksLoading={zoneTrucksLoading} zoneTrucksError={zoneTrucksError} availableZones={availableZones} busyPlate={busyPlate} onRemoveTruck={(plate) => void applyTruckCorrection(plate, { action: 'remove' })} onMoveTruck={(plate, zoneId) => void applyTruckCorrection(plate, { action: 'move', zoneId })} onClear={() => { setSelected(null); setSelectedZoneId(null) }} site={selectedMapSite} />
+  const alertZones = zones.filter(z => z.status === 'critical' || z.status === 'attention')
 
   const openCameraGroup = (group: { label: string; devices: string[] }) => {
     if (group.devices.length > 0) setCameraGroup(group)
@@ -378,10 +407,11 @@ export function PlantHome() {
 
       {status === 'error' ? <p className="ui-message ui-message--error" role="alert">Sin conexión con el estado de planta. {selectedLive.snapshot ? 'Se conserva la última lectura recibida.' : 'Sin dato disponible.'} La reconexión es automática.</p> : null}
       <nav className="ui-section-nav tf-view-switcher" aria-label="Vistas de planta">
-        {([{ id: 'plano', label: 'Plano y cámaras' }, { id: 'colas', label: 'Colas por zona' }, { id: 'actividad', label: 'Actividad y grupos de cámaras' }] as const).map(item => (
+        {([{ id: 'plano', label: 'Monitoreo en vivo' }, { id: 'colas', label: 'Colas por zona' }, { id: 'actividad', label: 'Actividad y cámaras' }, { id: 'identificacion', label: 'Bandeja de patentes' }] as const).map(item => (
           <Button key={item.id} primary={view === item.id} aria-pressed={view === item.id} onClick={() => setView(item.id)}>{item.label}</Button>
         ))}
       </nav>
+      {view !== 'identificacion' ? <IdentificationPanel sites={visibleSites} mode="monitor" onOpen={() => setView('identificacion')} /> : null}
       {/* Mapa + NVAi: se conserva montado al cambiar de vista. */}
       <div hidden={view !== 'plano'}>
       <div className="tf-map-layout">
@@ -412,7 +442,8 @@ export function PlantHome() {
           )}
         </div>})}
       </div>
-      <MapContextPanel selectedZone={selectedLiveZone} selectedSector={selectedSector} recentEntries={recentEntries} recentExits={recentExits} loading={recentLoading} zoneTrucks={zoneTrucks} zoneTrucksLoading={zoneTrucksLoading} zoneTrucksError={zoneTrucksError} availableZones={availableZones} busyPlate={busyPlate} onRemoveTruck={(plate) => void applyTruckCorrection(plate, { action: 'remove' })} onMoveTruck={(plate, zoneId) => void applyTruckCorrection(plate, { action: 'move', zoneId })} onClear={() => { setSelected(null); setSelectedZoneId(null) }} />
+      {view === 'plano' ? contextPanel : null}
+      <LiveActivityFeed sites={visibleSites} onOpenCase={() => setView('identificacion')} />
       </div>
 
       </div>
@@ -429,7 +460,7 @@ export function PlantHome() {
           <table className="w-full min-w-[900px] border-collapse">
             <thead>
               <tr>
-                {['Zona', 'Esperando', 'Drena por', 'Tasa efectiva', 'Tiempo estimado', 'Espacio', 'Estado'].map(
+                {[...(scope === 'both' ? ['Planta'] : []), 'Zona', 'Esperando', 'Drena por', 'Tasa efectiva', 'Tiempo estimado', 'Espacio', 'Estado'].map(
                   (h) => (
                     <th
                       key={h}
@@ -445,7 +476,7 @@ export function PlantHome() {
               {loading
                 ? Array.from({ length: 6 }).map((_, i) => (
                     <tr key={i}>
-                      <td className="px-3 py-2" colSpan={7}>
+                      <td className="px-3 py-2" colSpan={8}>
                         <Skeleton className="h-4 w-full" />
                       </td>
                     </tr>
@@ -460,15 +491,17 @@ export function PlantHome() {
                           : (z.drainPoints[0]?.label ?? '—')
                       return (
                         <tr
-                          key={z.id}
-                          onClick={() => pickZone(z.id)}
+                          key={`${z.site}:${z.id}`}
+                          onClick={() => pickZone(z.site, z.id)}
                           tabIndex={0}
-                          onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pickZone(z.id) } }}
-                          aria-label={`Ver zona ${z.label}`}
+                          onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pickZone(z.site, z.id) } }}
+                          aria-label={`Ver zona ${z.label} de ${siteName(z.site)}`}
+                          aria-selected={selectedMapSite === z.site && selectedZoneId === z.id}
                           className={`cursor-pointer border-b border-slate-100 transition hover:bg-slate-50 ${ZONE_ROW[z.status]} ${
-                            selectedZoneId === z.id ? 'ring-1 ring-inset ring-sky-300' : ''
+                            selectedMapSite === z.site && selectedZoneId === z.id ? 'ring-1 ring-inset ring-sky-300' : ''
                           }`}
                         >
+                          {scope === 'both' ? <td className="px-3 py-2 text-[12px] text-slate-600">{siteName(z.site)}</td> : null}
                           <td className="px-3 py-2 text-[12.5px] text-slate-700">
                             <span className="font-semibold text-slate-900">{z.label}</span>
                           </td>
@@ -509,7 +542,7 @@ export function PlantHome() {
                               : `${z.backlog} / ${z.capacityOperational}`}
                           </td>
                           <td className="px-3 py-2 text-[12px]">
-                            <span style={{ color: STATUS_DOT[z.status] }}>
+                            <span style={{ color: STATUS_DOT[z.status] }} title={z.status === 'no_data' ? 'Sin dato suficiente para evaluar la cola (ocupación o tasa). No implica cámara caída.' : undefined}>
                               {ZONE_STATUS_LABEL[z.status]}
                             </span>
                           </td>
@@ -525,6 +558,10 @@ export function PlantHome() {
         </div>
       </div>
 
+      {view === 'colas' ? <div className="tf-colas-detail">{selectedZoneId ? <>
+        {contextPanel}
+        {cameraGroups.length ? <div className="tf-colas-cameras">{cameraGroups.map(group => <button key={group.label} type="button" className="tf-activity-feed__btn" onClick={() => openCameraGroup(group)}>Ver cámaras · {group.label} ({group.devices.length})</button>)}</div> : <p className="text-[12px] text-slate-500">Esta zona no tiene cámaras asociadas.</p>}
+      </> : <p className="text-[12px] text-slate-500">Elegí una fila para ver acá su detalle, camiones y cámaras.</p>}</div> : null}
       </div>
       <div hidden={view !== 'actividad'}>
       {/* Fila inferior */}
@@ -563,11 +600,12 @@ export function PlantHome() {
         </div>
 
         <div className="rounded-[14px] border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="text-[13px] font-semibold text-slate-800">Últimas detecciones</div>
-          <p className="mt-4 text-sm text-slate-400">sin dato</p>
-          <p className="mt-2 text-[11px] text-slate-400">
-            Las detecciones individuales no están disponibles en esta vista.
-          </p>
+          <div className="text-[13px] font-semibold text-slate-800">Punto a observar</div>
+          <select className="mt-3 w-full rounded-md border border-slate-300 px-2 py-1.5 text-[13px]" aria-label="Elegir planta y zona" value={selectedZoneId ? `${selectedMapSite}|${selectedZoneId}` : ''} onChange={e => { const [site, id] = e.target.value.split('|'); if (id) pickZone(site as 'ricardone' | 'san_lorenzo', id) }}>
+            <option value="">Elegí planta y zona…</option>
+            {zones.map(z => <option key={`${z.site}:${z.id}`} value={`${z.site}|${z.id}`}>{siteName(z.site)} · {z.label}</option>)}
+          </select>
+          <p className="mt-2 text-[11px] text-slate-400">Las capturas individuales están en «Monitoreo en vivo» (columna de capturas).</p>
         </div>
 
         <div className="rounded-[14px] border border-slate-200 bg-white p-4 shadow-sm">
@@ -580,7 +618,7 @@ export function PlantHome() {
               className="flex aspect-video w-full items-center justify-center rounded-[10px] border border-[#16243A] text-[11px] text-slate-400"
               style={{ background: '#0B1220' }}
             >
-              Elegí una zona de la tabla
+              Elegí planta y zona
             </div>
           ) : (
             <div className="space-y-2">
@@ -614,16 +652,22 @@ export function PlantHome() {
             </div>
           )}
           <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
-            Abrí una cámara desde el mapa o elegí una zona de la tabla para ver sus grupos.
+            Abrí una cámara desde el mapa o elegí planta y zona para ver sus grupos.
           </p>
         </div>
       </div>
 
       </div>
+      {view === 'identificacion' ? <p className={`tf-watch-strip${alertZones.length ? ' has-alerts' : ''}`} role="status">
+        {alertZones.length ? <>Atención en {alertZones.slice(0, 4).map(z => `${siteName(z.site)} · ${z.label} (${ZONE_STATUS_LABEL[z.status]})`).join(' · ')}{alertZones.length > 4 ? ` y ${alertZones.length - 4} más` : ''} <button type="button" onClick={() => setView('plano')}>Ver monitoreo</button></> : `Supervisión: sin zonas en atención · estado de planta ${formatAge(lastUpdateMs)}`}
+      </p> : null}
+      <div hidden={view !== 'identificacion'}>
+        {view === 'identificacion' ? <IdentificationPanel sites={visibleSites} /> : null}
+      </div>
       <LiveCameraPlayerModal
         open={cameraGroup != null}
         devices={cameraGroup?.devices ?? null}
-        title={cameraGroup ? `${selectedZone?.label ?? ''} · ${cameraGroup.label}` : undefined}
+        title={cameraGroup ? `${siteName(selectedMapSite)} · ${selectedZone?.label ?? ''} · ${cameraGroup.label}` : undefined}
         onClose={() => setCameraGroup(null)}
       />
     </section>

@@ -39,7 +39,16 @@
 .tf-map-site-label { margin: 0 0 6px; color: #475569; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; }
 .tf-map-toolbar { scrollbar-width: none; }
 .tf-map-toolbar::-webkit-scrollbar { display: none; }
-.tf-map-layout { display: grid; grid-template-columns: minmax(0, max-content) 320px; align-items: start; justify-content: start; gap: 18px; }
+.tf-map-layout { display: grid; grid-template-columns: minmax(0, max-content) 320px 340px; align-items: start; justify-content: start; gap: 18px; }
+.tf-activity-feed { position: sticky; top: 8px; display: flex; flex-direction: column; max-height: 660px; padding: 16px; border: 1px solid var(--tf-brand-line); border-top: 3px solid var(--tf-brand); border-radius: 12px; background: rgba(255,255,255,.97); box-shadow: 0 12px 34px rgba(15,23,42,.1); }
+.tf-activity-feed__list { margin: 10px 0 0; padding: 0; list-style: none; overflow-y: auto; }
+.tf-activity-feed__item { padding: 9px 2px; border-bottom: 1px solid #eef2f6; }
+.tf-activity-feed__item.is-new { animation: tf-activity-in 1.6s ease-out; }
+@keyframes tf-activity-in { from { background: #e7f5ec; } to { background: transparent; } }
+.tf-activity-feed__review { margin-top: 8px; padding: 8px 10px; border-radius: 8px; background: #fffbeb; border: 1px solid #fde68a; }
+.tf-activity-feed__btn { padding: 3px 9px; border: 1px solid #cbd5e1; border-radius: 7px; color: #334155; background: #fff; font-size: 11px; font-weight: 600; }
+.tf-activity-feed__btn.is-primary { border-color: var(--tf-brand); color: #fff; background: var(--tf-brand); }
+.tf-activity-feed__btn:disabled { opacity: .5; }
 .tf-map-context { position: sticky; top: 8px; min-height: 280px; padding: 16px; border: 1px solid var(--tf-brand-line); border-top: 3px solid var(--tf-brand); border-radius: 12px; background: rgba(255,255,255,.97); box-shadow: 0 12px 34px rgba(15,23,42,.1); }
 .tf-map-context__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; }
 .tf-map-context__eyebrow { display: block; margin-bottom: 3px; color: #64748b; font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
@@ -72,6 +81,7 @@
 .tf-zone-trucks__title span { color: #64748b; font-size: 10px; }
 .tf-zone-trucks__list { max-height: 260px; margin: 7px 0 0; padding: 0; overflow-y: auto; list-style: none; }
 .tf-zone-trucks__list li { display: grid; grid-template-columns: minmax(78px,1fr) minmax(105px,1.35fr) 30px; align-items: center; gap: 7px; padding: 9px 0; border-bottom: 1px solid #eef2f6; }
+.tf-zone-trucks__steps { grid-column: 1 / -1; }
 .tf-zone-trucks__identity { min-width: 0; }
 .tf-zone-trucks__identity strong { display: block; color: #0f172a; font: 750 12px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; }
 .tf-zone-trucks__identity small { display: block; margin-top: 3px; color: #64748b; font-size: 9px; }
@@ -92,6 +102,10 @@
 .tf-home tr:focus-visible { outline: 2px solid var(--ui-primary); outline-offset: -2px; }
 .tf-home > [hidden] { display: none; }
 
+@media (max-width: 1400px) {
+  .tf-map-layout { grid-template-columns: minmax(0, max-content) 320px; }
+  .tf-activity-feed { grid-column: 1 / -1; position: static; max-height: 420px; }
+}
 @media (max-width: 1180px) {
   .tf-kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .tf-kpi-grid .ui-panel:nth-child(4), .tf-kpi-grid .ui-panel:nth-child(5) { grid-column: span 1; }
@@ -100,7 +114,7 @@
   .tf-map-layout { grid-template-columns: 1fr; }
   .tf-map-context { position: static; min-height: 0; }
 }
-@media (prefers-reduced-motion: reduce) { .tf-recent-trucks li, .tf-flow-pulse { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .tf-recent-trucks li, .tf-flow-pulse, .tf-activity-feed__item.is-new { animation: none; } }
 @media (max-width: 760px) {
   .tf-home-hero { align-items: flex-start; padding: 18px; }
   .tf-site-switcher { order: 3; width: 100%; }
@@ -112,3 +126,9 @@
   .tf-view-switcher { overflow-x: auto; flex-wrap: nowrap; }
   .tf-view-switcher .ui-button { flex: 0 0 auto; }
 }
+.tf-zone-trucks__confirm { grid-column:1 / -1; display:flex; flex-wrap:wrap; gap:6px; align-items:center; padding:6px 8px; margin-top:4px; border-radius:6px; background:#fff7ea; font-size:12px; }
+.tf-zone-trucks__confirm button,.tf-zone-trucks__remove { border:1px solid #c9d3cd; border-radius:6px; padding:2px 8px; font-size:12px; background:#fff; }
+.tf-zone-trucks__confirm button:first-of-type { background:#17623e; color:#fff; border-color:#17623e; }
+.tf-zone-trucks__list.is-loading { opacity:.5; pointer-events:none; }
+.tf-colas-detail { margin-top:12px; display:grid; gap:8px; }.tf-colas-cameras { display:flex; flex-wrap:wrap; gap:6px; }
+.tf-watch-strip { margin:4px 0; padding:6px 12px; border-radius:8px; background:#f1f6f3; font-size:12px; color:#3d5a4a; }.tf-watch-strip.has-alerts { background:#fff4e5; color:#8a5419; }.tf-watch-strip button { margin-left:8px; text-decoration:underline; }

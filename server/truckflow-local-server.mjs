@@ -16,6 +16,7 @@ import { supabasePublicHost } from './supabase-client.mjs'
 import { uploadEtlRunFromDisk, listEtlRunsFromSupabase } from './etl-runs-store.mjs'
 import { createEtlAgentChat } from './etl-agent-chat.mjs'
 import { createDssLiveRouter } from './dss-live.mjs'
+import { createDssPhotoLookup } from './dssPhotoLookup.mjs'
 import { ensureGo2rtc } from './go2rtc-supervisor.mjs'
 import { createDssCaptureImportRouter } from './dssCaptureImport.mjs'
 import { createPlantLayoutEditorRouter } from './plantLayoutEditor.mjs'
@@ -222,6 +223,12 @@ const dssCaptures = createDssCaptureImportRouter({})
 app.get('/api/truckflow/dss-captures/list', dssCaptures.list)
 app.get('/api/truckflow/dss-captures/image', dssCaptures.image)
 
+/** Foto de una lectura: se pide al DSS bajo demanda (el DSS ya guarda todas las lecturas). */
+// plantState se crea más abajo: se pasa por getter.
+const dssPhotos = createDssPhotoLookup({ dss: dssLive, getPlantState: () => plantState })
+app.get('/api/truckflow/camera-captures/find', dssPhotos.find)
+app.get('/api/truckflow/camera-captures/image', dssPhotos.image)
+
 /**
  * Editor del plano (ver server/plantLayoutEditor.mjs y
  * src/pages/PlantLayoutEditorPage.tsx) — clickear la imagen real para ubicar
@@ -345,6 +352,58 @@ app.patch('/api/truckflow/live/trucks/:plate/location', express.json(), async (r
   const plate = String(req.params.plate ?? '').trim()
   try {
     res.json(plantState.correctTruck(site, plate, req.body))
+  } catch (e) {
+    if (e instanceof PlantStateError) {
+      res.status(e.httpStatus).json({ error: e.code })
+      return
+    }
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) })
+  }
+})
+
+/** Identificación de patentes en vivo: lecturas sueltas asignadas a camiones en planta. */
+app.get('/api/truckflow/live/identifications', async (req, res) => {
+  const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
+  try {
+    res.json(await plantState.getIdentifications(site))
+  } catch (e) {
+    if (e instanceof PlantStateError) {
+      res.status(e.httpStatus).json({ error: e.code })
+      return
+    }
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) })
+  }
+})
+
+/** Últimas capturas de cámara con su identificación (actividad en vivo del home). */
+app.get('/api/truckflow/live/captures', async (req, res) => {
+  const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
+  try {
+    res.json(await plantState.getRecentCaptures(site, req.query.limit))
+  } catch (e) {
+    if (e instanceof PlantStateError) {
+      res.status(e.httpStatus).json({ error: e.code })
+      return
+    }
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) })
+  }
+})
+
+/** Evidencia por candidato (patente, color, marca, tipo, recorrido) con probabilidad, atributos del DSS. */
+app.get('/api/truckflow/live/identifications/:fragmentKey/evidence', dssPhotos.evidence)
+
+/** Resultado de una decisión enviada (por opId), para reconciliar un envío sin respuesta. */
+app.get('/api/truckflow/live/identification-ops/:opId', (req, res) => {
+  const op = plantState.getIdentificationOp(req.params.opId)
+  if (!op) return res.status(404).json({ error: 'op_not_found' })
+  res.json(op)
+})
+
+/** Decisión de operaciones sobre una lectura: confirm {plate} · reject {reason} · defer {reason} · review. */
+app.post('/api/truckflow/live/identifications/:fragmentKey', express.json(), async (req, res) => {
+  const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
+  try {
+    res.json(plantState.decideIdentification(site, req.params.fragmentKey, req.body))
   } catch (e) {
     if (e instanceof PlantStateError) {
       res.status(e.httpStatus).json({ error: e.code })

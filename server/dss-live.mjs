@@ -24,6 +24,8 @@ const DSS_API = {
   keepalive: '/brms/api/v1.0/accounts/keepalive',
   channelPage: '/brms/api/v1.1/device/channel/page',
   devicePage: '/brms/api/v1.1/device/page',
+  /** Registros de lectura de patentes (verificado 06-10-2026 en V8.007). Pide currentPage, page, pageSize, startTime, endTime (epoch s). */
+  vehicleCaptureRecords: '/ipms/api/v1.1/fusion/vehicle-capture/record/fetch/page',
 }
 
 /** unitType '1' = «Video Channel» (el canal real); 3 y 4 son subcanales del mismo equipo. */
@@ -147,14 +149,31 @@ export function createDssLiveRouter({ projectRoot }) {
     return second.json // { token, duration, ... }
   }
 
+  /** Login en curso: pedidos simultáneos esperan el mismo (un segundo login tiraría la sesión del primero). */
+  let loginInFlight = null
+
   async function getDssToken() {
     if (session && Date.now() < session.expiresAt) return session.token
+    if (loginInFlight) {
+      await loginInFlight
+      if (session) return session.token
+    }
     invalidateDssSession()
+    loginInFlight = openSession()
+    try {
+      return await loginInFlight
+    } finally {
+      loginInFlight = null
+    }
+  }
+
+  async function openSession() {
     const login = await dssLogin()
     // Este DSS devuelve duration=30 (segundos): el margen de renovación tiene que ser corto.
     const durationSec = Number(login.duration) > 0 ? Number(login.duration) : 300
     const freshMs = () => Math.max(Math.floor(durationSec * 0.6), 10) * 1000
-    session = { token: login.token, expiresAt: Date.now() + freshMs() }
+    // `credential` (no el token) es lo que acepta el servidor de fotos del DSS en X-Subject-Token.
+    session = { token: login.token, credential: login.credential ?? null, expiresAt: Date.now() + freshMs() }
     keepaliveTimer = setInterval(async () => {
       const current = session
       if (!current) return
@@ -380,5 +399,120 @@ export function createDssLiveRouter({ projectRoot }) {
     }
   }
 
-  return { status, getStream, listChannels, isDssConfigured }
+  /**
+   * Lectura registrada por el DSS en una cámara a una hora real (±5 s: el DSS guarda segundos enteros; prioriza la misma patente).
+   * Respaldo del colector cuando no tiene la foto (antes de que arrancara, cortes, reinicios).
+   */
+  /** Las consultas de lecturas y fotos van de a una: el DSS admite una sola sesión por cuenta. */
+  let dssQueue = Promise.resolve()
+  /*
+   * El DSS limita consultas por ventana de tiempo (HTTP 429 «fix_window_limit», 07/10 al abrir
+   * la pestaña de identificación con muchas tarjetas). Las consultas van de a una, separadas por
+   * DSS_MIN_GAP_MS, y un 429 se reintenta con espera creciente.
+   */
+  const DSS_MIN_GAP_MS = Number(process.env.DSS_MIN_GAP_MS || 400)
+  const DSS_RETRY_WAITS_MS = [2_000, 5_000, 10_000]
+  let lastDssCallAt = 0
+  const isRateLimited = (e) => e?.rateLimited === true || /429|fix_window_limit/i.test(String(e?.message ?? ''))
+  async function paced(fn) {
+    for (let attempt = 0; ; attempt++) {
+      const wait = lastDssCallAt + DSS_MIN_GAP_MS - Date.now()
+      if (wait > 0) await new Promise((r) => setTimeout(r, wait))
+      lastDssCallAt = Date.now()
+      try {
+        return await fn()
+      } catch (e) {
+        if (!isRateLimited(e) || attempt >= DSS_RETRY_WAITS_MS.length) throw e
+        await new Promise((r) => setTimeout(r, DSS_RETRY_WAITS_MS[attempt]))
+      }
+    }
+  }
+  function serialized(fn) {
+    const run = dssQueue.then(() => paced(fn), () => paced(fn))
+    dssQueue = run.catch(() => {})
+    return run
+  }
+
+  function findVehicleCapture(deviceName, realAtMs, plate) {
+    return serialized(() => findVehicleCaptureNow(deviceName, realAtMs, plate))
+  }
+
+  async function findVehicleCaptureNow(deviceName, realAtMs, plate) {
+    if (!isDssConfigured()) return null
+    const cam = (await loadChannelMap()).get(String(deviceName).trim().toLowerCase())
+    if (!cam?.channelId) return null
+    const t = Math.floor(realAtMs / 1000)
+    const body = { currentPage: 1, page: 1, pageSize: 20, startTime: String(t - 5), endTime: String(t + 5), channelIds: [cam.channelId] }
+    const res = await withDssAuth((token) => dssHttpJson('POST', DSS_API.vehicleCaptureRecords, { token, body }))
+    // Sesión rechazada u otro error: se informa, no se confunde con «no hay lectura».
+    if (res.status !== 200 || res.json?.code !== 1000) {
+      if (res.status === 429) throw Object.assign(new Error('DSS: límite de consultas (429)'), { rateLimited: true })
+      throw new Error(`DSS respondió ${res.json?.code ?? `HTTP ${res.status}`}: ${res.json?.desc ?? res.text?.slice(0, 120) ?? ''}`)
+    }
+    const rows = res.json?.data?.pageData ?? []
+    let best = null
+    let bestScore = Infinity
+    for (const r of rows) {
+      const d = Math.abs(Number(r.captureTime) * 1000 - realAtMs)
+      if (d > 5_000) continue
+      const score = d - (plate && r.plateNo === plate ? 5_000 : 0)
+      if (score < bestScore) {
+        best = r
+        bestScore = score
+      }
+    }
+    if (!best) return null
+    const known = (v) => (v && v !== 'Unrecognized' && v !== 'Unknown' ? v : null)
+    return {
+      device: best.channelName,
+      plate: best.plateNo || '',
+      confidence: Number(best.confidence) || null,
+      vehicleBrand: known(best.vehicleBrandName),
+      vehicleColor: known(best.vehicleColorName),
+      vehicleCategory: known(best.vehicleModelName),
+      at: new Date(Number(best.captureTime) * 1000).toISOString(),
+      scenePicture: best.capturePicture || null,
+      platePicture: best.plateNoPicture || null,
+    }
+  }
+
+  /** Baja una foto del DSS (solo URLs del propio DSS) con la credencial de la sesión. */
+  function fetchPicture(url) {
+    return serialized(() => fetchPictureNow(url))
+  }
+
+  async function fetchPictureNow(url) {
+    const c = cfg()
+    const u = new URL(url)
+    if (u.hostname !== c.host) throw new Error('la foto no es del DSS configurado')
+    await getDssToken()
+    const credential = session?.credential
+    if (!credential) throw new Error('el DSS no devolvió credencial para fotos')
+    return new Promise((resolve, reject) => {
+      const req = https.request(
+        { host: u.hostname, port: Number(u.port || 443), path: u.pathname, method: 'GET', rejectUnauthorized: false, headers: { 'X-Subject-Token': credential } },
+        (res) => {
+          const chunks = []
+          res.on('data', (ch) => chunks.push(ch))
+          res.on('end', () => {
+            const buf = Buffer.concat(chunks)
+            if (res.statusCode === 429) reject(Object.assign(new Error('DSS: límite de consultas (429)'), { rateLimited: true }))
+            else if (!buf.length) reject(new Error(`DSS sin foto: ${res.headers['x-subject-errmsg'] ?? `HTTP ${res.statusCode}`}`))
+            else resolve({ type: String(res.headers['content-type'] || 'image/jpeg'), buf })
+          })
+        }
+      )
+      req.setTimeout(DSS_HTTP_TIMEOUT_MS, () => req.destroy(new Error('Timeout bajando foto del DSS')))
+      req.on('error', reject)
+      req.end()
+    })
+  }
+
+  /** Inventario de cámaras (nombre de canal → IP) para el colector de capturas. */
+  async function listCameras() {
+    if (!isDssConfigured()) return []
+    return [...(await loadChannelMap()).values()]
+  }
+
+  return { status, getStream, listChannels, isDssConfigured, listCameras, findVehicleCapture, fetchPicture }
 }

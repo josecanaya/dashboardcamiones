@@ -293,3 +293,8 @@ export function circuitCatalogSource() {
   ensureCatalog()
   return _loadSource
 }
+
+/** Catálogo de circuitos (código + secuencias lógicas) para la identificación en vivo. */
+export function circuitCatalogEntries() {
+  return ensureCatalog()
+}

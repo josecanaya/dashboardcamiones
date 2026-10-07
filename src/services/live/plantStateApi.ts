@@ -313,3 +313,243 @@ export function openPlantStateStream(
     },
   }
 }
+
+/* ---------- Identificación de patentes en vivo ---------- */
+
+export type IdentificationLevel = 'confirmado' | 'casi_seguro' | 'provisorio' | 'pendiente' | 'rechazado'
+
+export interface IdentificationCandidate {
+  plate: string
+  journeyKey: string
+  journeyUid: string | null
+  similarity: number
+  nodeProbability: number
+  nextProbability: number
+  expectedNext: string | null
+  circuit: string | null
+  circuitProbability: number
+  lastNode: string | null
+  lastNodeLabel?: string | null
+  lastSeenAt?: string
+  sameNode?: boolean
+  /** Lectura buena del candidato para ver su foto (cámara + hora del feed). */
+  photoDevice?: string
+  photoAt?: string
+  /** en_planta = visto antes en esta planta · leido_despues = su primera lectura buena llegó después · otra_planta */
+  where?: 'en_planta' | 'leido_despues' | 'otra_planta'
+  seenAfter?: boolean
+  reads?: number
+  /** Circuito que venía haciendo antes de esta lectura (el `circuit` ya incluye el nodo de la lectura). */
+  circuitBefore?: string | null
+  /** Últimas lecturas del candidato, de la más nueva a la más vieja. */
+  recentReads?: { at: string; node: string; nodeLabel: string; device: string; otherSite?: boolean }[]
+  score: number
+}
+
+export interface IdentificationItem {
+  fragmentKey: string
+  readPlate: string
+  validFormat: boolean
+  node: string
+  nodeLabel: string
+  sectorCode: string
+  deviceCode: string
+  at: string
+  events: number
+  level: IdentificationLevel
+  reason: string
+  assignedPlate: string | null
+  assignedJourneyUid: string | null
+  candidates: IdentificationCandidate[]
+  decision: { action: string; plate?: string; reason?: string; attempts?: number; sameAs?: string; updatedAt?: string } | null
+}
+
+export interface IdentificationsResponse {
+  site: string
+  at: string
+  counts: Partial<Record<IdentificationLevel, number>>
+  recentCounts: Record<string, number>
+  items: IdentificationItem[]
+}
+
+export async function getIdentifications(site: string): Promise<IdentificationsResponse> {
+  const res = await fetchLocalTruckflow(`/live/identifications?site=${encodeURIComponent(site)}`, {
+    headers: { Accept: 'application/json' },
+  })
+  const body = (await res.json()) as Partial<IdentificationsResponse> & { error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return body as IdentificationsResponse
+}
+
+export type IdentificationDecision =
+  | { action: 'confirm'; plate: string; journeyUid?: string | null; reason?: string }
+  | { action: 'reject'; reason: string }
+  | { action: 'defer'; reason: string }
+  | { action: 'clear'; reason?: string }
+
+export type DecisionOptions = {
+  /** Versión de la decisión que vio el operador (updatedAt o null). Si cambió, el servidor responde conflicto. */
+  expectedVersion?: string | null
+  /** Lecturas gemelas que el operador eligió explícitamente para recibir la misma decisión. */
+  applyTo?: string[]
+}
+
+export type DecisionResult = { siblings: string[]; version: string | null; replayed?: boolean; logged?: boolean }
+
+/** Error de guardado: conflicto o rechazo (no se aplicó) o resultado desconocido (sin respuesta). */
+export class DecisionError extends Error {
+  constructor(message: string, readonly kind: 'conflict' | 'rejected' | 'unknown', readonly opId: string) {
+    super(message)
+  }
+}
+
+export function newOpId() {
+  return typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `op-${Date.now()}-${Math.random().toString(36).slice(2)}`
+}
+
+/** Consulta si una operación enviada se aplicó (null = el servidor no la registró). */
+export async function getDecisionOp(opId: string): Promise<DecisionResult | null> {
+  const res = await fetchLocalTruckflow(`/live/identification-ops/${encodeURIComponent(opId)}`, { headers: { Accept: 'application/json' } })
+  if (res.status === 404) return null
+  const body = (await res.json()) as { siblings?: string[]; version?: string | null; error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return { siblings: body.siblings ?? [], version: body.version ?? null }
+}
+
+/**
+ * Envía una decisión con opId propio: reintentar con el mismo opId no duplica la operación.
+ * Sin respuesta, consulta el resultado por opId antes de afirmar que no se guardó.
+ */
+export async function decideIdentification(
+  site: string,
+  fragmentKey: string,
+  decision: IdentificationDecision,
+  options: DecisionOptions = {},
+  opId: string = newOpId()
+): Promise<DecisionResult> {
+  let res: Response
+  try {
+    res = await fetchLocalTruckflow(`/live/identifications/${encodeURIComponent(fragmentKey)}?site=${encodeURIComponent(site)}`, {
+      method: 'POST',
+      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...decision, ...options, opId }),
+    })
+  } catch (e) {
+    const known = await getDecisionOp(opId).catch(() => undefined)
+    if (known) return { ...known, replayed: true }
+    if (known === null) throw new DecisionError('No se guardó: el servidor no registró la decisión. Podés reintentar.', 'rejected', opId)
+    throw new DecisionError(`Resultado por verificar: ${e instanceof Error ? e.message : String(e)}`, 'unknown', opId)
+  }
+  const body = (await res.json().catch(() => ({}))) as { error?: string; siblings?: string[]; version?: string | null; replayed?: boolean; logged?: boolean }
+  if (res.status === 409) throw new DecisionError('El caso cambió desde que lo abriste (otro operador o el sistema). Revisá la evidencia actual.', 'conflict', opId)
+  if (!res.ok) throw new DecisionError(body.error ?? `HTTP ${res.status}`, res.status >= 500 ? 'unknown' : 'rejected', opId)
+  return { siblings: body.siblings ?? [], version: body.version ?? null, replayed: body.replayed, logged: body.logged }
+}
+
+export interface LiveCapture {
+  at: string
+  /** Hora del reloj de la cámara (sin corregir), para ubicarla en DSS. */
+  cameraTime: string | null
+  /** Timestamp crudo de la cámara (para buscar la foto exportada del DSS). */
+  cameraAt: string | null
+  deviceCode: string
+  node: string | null
+  nodeLabel: string
+  readPlate: string
+  validFormat: boolean
+  /** leida = patente válida propia; el resto, nivel de identificación. */
+  level: IdentificationLevel | 'leida'
+  identifiedPlate: string | null
+  fragmentKey: string | null
+  candidates: IdentificationCandidate[]
+}
+
+export async function getRecentCaptures(site: string, limit = 60): Promise<{ site: string; at: string; captures: LiveCapture[] }> {
+  const res = await fetchLocalTruckflow(`/live/captures?site=${encodeURIComponent(site)}&limit=${limit}`, {
+    headers: { Accept: 'application/json' },
+  })
+  const body = (await res.json()) as { site: string; at: string; captures: LiveCapture[]; error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return body
+}
+
+export interface CameraCapture {
+  device: string
+  plate: string
+  confidence: number | null
+  vehicleColor: string | null
+  vehicleBrand: string | null
+  vehicleCategory: string | null
+  at: string
+  plateFile: string | null
+  sceneFile: string | null
+  diffMs: number
+}
+
+export interface CameraCaptureLookup {
+  capture: CameraCapture | null
+  /** Hora real buscada (hora del feed − 240 s). */
+  realAt: string
+  error: string | null
+}
+
+/** Lectura registrada por el DSS en esa cámara y hora (foto, confianza, marca, color, tipo). */
+export async function findCameraCapture(device: string, at: string, plate?: string): Promise<CameraCaptureLookup> {
+  const q = new URLSearchParams({ device, at, ...(plate ? { plate } : {}) })
+  const res = await fetchLocalTruckflow(`/camera-captures/find?${q}`, { headers: { Accept: 'application/json' } })
+  const body = (await res.json()) as { found?: boolean; capture?: CameraCapture; realAt?: string; error?: string | null }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return { capture: body.found && body.capture ? body.capture : null, realAt: body.realAt ?? at, error: body.error ?? null }
+}
+
+export function cameraCaptureImageUrl(file: string): string {
+  return `${localApiPrefix()}/camera-captures/image?file=${encodeURIComponent(file)}`
+}
+
+export interface AttributeComparison {
+  kind: 'color' | 'marca' | 'tipo'
+  read: string | null
+  candidate: string | null
+  result: 'coincide' | 'distinto' | 'sin_dato'
+  lr: number
+}
+
+export interface VehicleAttrs {
+  plate?: string
+  confidence?: number | null
+  vehicleColor: string | null
+  vehicleBrand: string | null
+  vehicleCategory: string | null
+}
+
+export interface CandidateEvidence extends IdentificationCandidate {
+  /** Color, marca y tipo de una lectura buena del candidato, según el DSS. */
+  attrs: VehicleAttrs | null
+  comparisons: AttributeComparison[]
+  plateLikelihood: number
+  route: number
+  attrLr: number
+  probability: number
+}
+
+export interface IdentificationEvidence {
+  fragmentKey: string
+  read: { plate: string; validFormat: boolean; attrs: VehicleAttrs | null }
+  candidates: CandidateEvidence[]
+  /** Probabilidad de que sea otro camión (o que la lectura esté bien, si es una patente válida). */
+  otherProbability: number
+  dss: boolean
+  /** Error al consultar el DSS (los atributos faltantes no son «sin dato»). */
+  dssError?: string | null
+}
+
+/** Patente, color, marca, tipo y recorrido de cada candidato, con su probabilidad (atributos del DSS). */
+export async function getIdentificationEvidence(site: string, fragmentKey: string): Promise<IdentificationEvidence> {
+  const res = await fetchLocalTruckflow(
+    `/live/identifications/${encodeURIComponent(fragmentKey)}/evidence?site=${encodeURIComponent(site)}`,
+    { headers: { Accept: 'application/json' } }
+  )
+  const body = (await res.json()) as IdentificationEvidence & { error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return body
+}

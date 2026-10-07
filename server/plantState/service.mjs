@@ -13,11 +13,15 @@ import { buildBaselines, quarterOf } from './baselines.mjs'
 import { resolveSectorStatus, resolveZoneStatus, resolveBottleneck } from './status.mjs'
 import { POINTS, zonesOfSite } from './plantGraph.mjs'
 import { SECTOR_DEVICES } from './sectorProfiles.mjs'
+import { applyIdentifications, identifyFragments, nodeModelCatalog, recentCaptures, updateRecentCircuits } from './plateIdentification.mjs'
+import { createIdentificationArchive } from './identificationArchive.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '../..')
 
 const BUFFER_MS = 6 * 60 * 60 * 1000
+/** Historia para identificar patentes: 24 h, así entran las lecturas de la noche (cuando más se equivocan las cámaras). */
+const HISTORY_MS = 24 * 60 * 60 * 1000
 const REFRESH_MS = 10_000
 const RECONCILE_MS = 5 * 60 * 1000
 const FETCH_TIMEOUT_MS = Number(process.env.TRUCKFLOW_FETCH_TIMEOUT_MS || 30_000)
@@ -28,6 +32,8 @@ const KNOWN_SITES = new Set(['ricardone', 'san_lorenzo'])
 const MANUAL_OVERRIDES_PATH = path.join(ROOT, 'data', 'plant-state-manual-overrides.json')
 const SENSOR_CLOCK_SKEW_MS = 206 * 60_000
 const MANUAL_OVERRIDE_TTL_MS = 12 * 60 * 60 * 1000
+const IDENTIFICATION_DECISIONS_PATH = path.join(ROOT, 'data', 'plate-identification-decisions.json')
+const IDENTIFICATION_CACHE_MS = 10_000
 
 function normalizePlate(value) {
   return String(value ?? '').replace(/[^A-Za-z0-9]/g, '').toUpperCase()
@@ -280,6 +286,192 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     saveManualOverrides()
     return { ok: true, site: key, plate, correction: manualOverrides[key][plate] }
   }
+  /*
+   * Identificación de patentes en vivo: lecturas sueltas → camión en planta.
+   * casi_seguro se aplica sola; provisorio y pendiente esperan la decisión de operaciones.
+   */
+  const decisionsPath = path.join(projectRoot, path.relative(ROOT, IDENTIFICATION_DECISIONS_PATH))
+  const decisionsLogPath = path.join(path.dirname(decisionsPath), 'plate-identification-log.jsonl')
+  const identificationArchive = createIdentificationArchive(path.join(path.dirname(decisionsPath), 'plate-identification-archive.json'))
+  let identificationDecisions = {}
+  try {
+    identificationDecisions = JSON.parse(fs.readFileSync(decisionsPath, 'utf8'))
+  } catch {
+    identificationDecisions = {}
+  }
+  /** @type {Map<string, Map<string, { code: string, t: number }>>} */
+  const recentCircuitsBySite = new Map()
+  /** @type {Map<string, { at: number, result: object }>} */
+  const identificationCache = new Map()
+
+  function identifyRaw(site, rawEvents, nowMs = Date.now()) {
+    const cached = identificationCache.get(site)
+    if (cached && nowMs - cached.at < IDENTIFICATION_CACHE_MS) return cached.result
+    const catalog = nodeModelCatalog()
+    if (!recentCircuitsBySite.has(site)) recentCircuitsBySite.set(site, new Map())
+    const recentCounts = updateRecentCircuits(recentCircuitsBySite.get(site), rawEvents, nowMs, catalog)
+    const result = {
+      site,
+      ...identifyFragments(rawEvents, nowMs, {
+        catalog,
+        recentCounts,
+        decisions: identificationDecisions[site] || {},
+        otherSiteEvents: [...(bySite.get(site === 'ricardone' ? 'san_lorenzo' : 'ricardone')?.history.values() ?? [])],
+      }),
+      recentCounts,
+    }
+    result.items = identificationArchive.merge(site, result.items, identificationDecisions[site] || {})
+    result.counts = result.items.reduce((counts, item) => ({ ...counts, [item.level]: (counts[item.level] || 0) + 1 }), {})
+    identificationCache.set(site, { at: nowMs, result })
+    return result
+  }
+
+  /** Aplica las identificaciones (calculadas sobre la historia de 24 h) a los eventos del buffer. */
+  function withIdentifications(site, rawEvents, nowMs = Date.now(), st = null) {
+    try {
+      const source = st ? [...st.history.values()] : rawEvents
+      return applyIdentifications(rawEvents, identifyRaw(site, source, nowMs).items.filter(item => !item.archived))
+    } catch (e) {
+      console.warn('[plant-state] identificación de patentes falló:', e instanceof Error ? e.message : e)
+      return rawEvents
+    }
+  }
+
+  /** La otra planta aporta candidatos: se arranca su carga también. */
+  const otherSite = (key) => (key === 'ricardone' ? 'san_lorenzo' : 'ricardone')
+
+  async function getIdentifications(site) {
+    const { key, st } = ensureSite(site)
+    startBackground(key)
+    startBackground(otherSite(key))
+    if (st.events.size === 0) await refresh(key, { fullHour: true })
+    return identifyRaw(key, [...st.history.values()])
+  }
+
+  async function getRecentCaptures(site, limit = 60) {
+    const { key, st } = ensureSite(site)
+    startBackground(key)
+    startBackground(otherSite(key))
+    if (st.events.size === 0) await refresh(key, { fullHour: true })
+    const raw = [...st.history.values()]
+    const nowMs = Date.now()
+    return {
+      site: key,
+      at: new Date(nowMs).toISOString(),
+      captures: recentCaptures(raw, identifyRaw(key, raw, nowMs), nowMs, Math.min(200, Math.max(1, Number(limit) || 60))),
+    }
+  }
+
+  /** Resultados por opId: reintentar la misma operación devuelve lo ya aplicado (EV-05). */
+  const appliedOps = new Map()
+  const PENDING_LEVELS = new Set(['provisorio', 'pendiente'])
+
+  /** Lecturas pendientes con la misma patente leída en ±3 h: candidatas a recibir la misma decisión. */
+  function identificationSiblings(key, fk) {
+    const items = identificationCache.get(key)?.result?.items ?? []
+    const me = items.find((it) => it.fragmentKey === fk)
+    if (!me) return []
+    const meT = Date.parse(me.at)
+    return items.filter((it) => it.fragmentKey !== fk && it.readPlate === me.readPlate && PENDING_LEVELS.has(it.level) && Math.abs(Date.parse(it.at) - meT) <= 3 * 60 * 60 * 1000)
+  }
+
+  function decideIdentification(site, fragmentKey, body) {
+    const { key } = ensureSite(site)
+    const fk = String(fragmentKey || '').trim()
+    if (!fk) throw new PlantStateError('fragment_required', 400, 'lectura requerida')
+    const opId = body?.opId ? String(body.opId) : null
+    if (opId && appliedOps.has(opId)) return { ...appliedOps.get(opId), replayed: true }
+    const action = String(body?.action || '')
+    identificationDecisions[key] ||= {}
+    // EV-06: la decisión viaja con la versión que vio el operador; si cambió, conflicto.
+    if (body && 'expectedVersion' in body) {
+      const current = identificationDecisions[key][fk]?.updatedAt ?? null
+      if ((body.expectedVersion ?? null) !== current) throw new PlantStateError('version_conflict', 409, 'el caso cambió desde que se abrió')
+    }
+    const now = new Date().toISOString()
+    const reason = body?.reason ? String(body.reason).slice(0, 300) : null
+    const operator = body?.operator ? String(body.operator).slice(0, 80) : null
+    const previous = identificationDecisions[key][fk] ?? null
+    if (action === 'confirm') {
+      const plate = normalizePlate(body?.plate)
+      if (!plate) throw new PlantStateError('plate_required', 400, 'patente requerida')
+      identificationDecisions[key][fk] = { action, plate, journeyUid: body?.journeyUid ? String(body.journeyUid) : null, reason, operator, updatedAt: now }
+    } else if (action === 'reject') {
+      if (!reason) throw new PlantStateError('reason_required', 400, 'motivo requerido para descartar')
+      identificationDecisions[key][fk] = { action, reason, operator, updatedAt: now }
+    } else if (action === 'defer') {
+      // EV-08: "no puedo determinar" — sigue pendiente, con motivo y próximo paso.
+      if (!reason) throw new PlantStateError('reason_required', 400, 'motivo requerido')
+      identificationDecisions[key][fk] = { action, reason, operator, attempts: (previous?.attempts ?? 0) + 1, updatedAt: now }
+    } else if (action === 'clear' || action === 'review') {
+      // EV-23: reabrir deja "revisión humana solicitada": la asignación automática no la vuelve a resolver sola.
+      identificationDecisions[key][fk] = { action: 'review', reason, operator, previous, updatedAt: now }
+    } else {
+      throw new PlantStateError('decision_invalid', 400, 'acción inválida')
+    }
+    // EV-01: solo las gemelas que el operador eligió explícitamente (y que siguen siendo elegibles).
+    const siblings = []
+    if ((action === 'confirm' || action === 'reject') && Array.isArray(body?.applyTo) && body.applyTo.length) {
+      const wanted = new Set(body.applyTo.map(String))
+      for (const it of identificationSiblings(key, fk)) {
+        if (!wanted.has(it.fragmentKey)) continue
+        identificationDecisions[key][it.fragmentKey] = { ...identificationDecisions[key][fk], sameAs: fk }
+        siblings.push(it.fragmentKey)
+      }
+    }
+    fs.mkdirSync(path.dirname(decisionsPath), { recursive: true })
+    const tmp = `${decisionsPath}.tmp`
+    fs.writeFileSync(tmp, `${JSON.stringify(identificationDecisions, null, 2)}\n`, 'utf8')
+    fs.renameSync(tmp, decisionsPath)
+    // Registro permanente con candidatos: sirve para auditar y para aprender cómo se equivoca cada cámara.
+    // La decisión ya quedó escrita: un fallo del log no debe hacer creer que no se guardó (EV-05).
+    const item = identificationCache.get(key)?.result?.items?.find((it) => it.fragmentKey === fk) ?? null
+    let logged = true
+    try {
+      fs.appendFileSync(
+        decisionsLogPath,
+        `${JSON.stringify({
+          decidedAt: now,
+          opId,
+          site: key,
+          fragmentKey: fk,
+          action: identificationDecisions[key][fk]?.action ?? action,
+          plate: identificationDecisions[key][fk]?.plate ?? null,
+          journeyUid: identificationDecisions[key][fk]?.journeyUid ?? null,
+          reason,
+          operator,
+          previousVersion: previous?.updatedAt ?? null,
+          previousAction: previous?.action ?? null,
+          readPlate: item?.readPlate ?? null,
+          deviceCode: item?.deviceCode ?? null,
+          node: item?.node ?? null,
+          captureAt: item?.at ?? null,
+          levelBefore: item?.level ?? null,
+          suggested: item?.candidates?.[0]?.plate ?? null,
+          candidates: item?.candidates ?? [],
+          siblings,
+        })}\n`,
+        'utf8'
+      )
+    } catch (e) {
+      logged = false
+      console.warn('[plant-state] log de identificación falló:', e instanceof Error ? e.message : e)
+    }
+    identificationCache.delete(key)
+    const decision = identificationDecisions[key][fk] ?? null
+    const result = { ok: true, site: key, fragmentKey: fk, decision, version: decision?.updatedAt ?? null, siblings, logged }
+    if (opId) {
+      appliedOps.set(opId, result)
+      if (appliedOps.size > 500) appliedOps.delete(appliedOps.keys().next().value)
+    }
+    return result
+  }
+
+  /** Resultado de una operación (EV-05): permite saber si un envío sin respuesta se aplicó. */
+  function getIdentificationOp(opId) {
+    return appliedOps.get(String(opId)) ?? null
+  }
+
   const localDataRoot = path.join(projectRoot, 'data', 'truckflow')
 
   /** @type {Map<string, { events: Map<string, object>, lastOccurredAt: string|null, lastRefreshMs: number, lastReconcileMs: number, lastError: string|null, baselines: object|null, timer: NodeJS.Timeout|null, reconcileTimer: NodeJS.Timeout|null, started: boolean }>} */
@@ -315,6 +507,9 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     if (!st) {
       st = {
         events: new Map(),
+        /** Eventos de las últimas 24 h (solo para identificación de patentes). */
+        history: new Map(),
+        historyLoaded: false,
         lastOccurredAt: null,
         lastRefreshMs: 0,
         lastReconcileMs: 0,
@@ -331,17 +526,25 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
 
   function pruneBuffer(st, nowMs) {
     const cut = nowMs - BUFFER_MS
-    for (const [k, e] of st.events) {
+    const histCut = nowMs - HISTORY_MS
+    const keepT = (e) => {
       const t = getEventLiveInstantMs(e)
-      const raw = parseLiveMillis(String(e.occurredAt ?? e.recordedAt ?? ''))
-      const keepT = Number.isFinite(t) ? t : raw
-      if (!Number.isFinite(keepT) || keepT < cut) st.events.delete(k)
+      return Number.isFinite(t) ? t : parseLiveMillis(String(e.occurredAt ?? e.recordedAt ?? ''))
+    }
+    for (const [k, e] of st.events) {
+      const t = keepT(e)
+      if (!Number.isFinite(t) || t < cut) st.events.delete(k)
+    }
+    for (const [k, e] of st.history) {
+      const t = keepT(e)
+      if (!Number.isFinite(t) || t < histCut) st.history.delete(k)
     }
   }
 
   function mergeEvents(st, rows) {
     for (const e of rows) {
       st.events.set(eventKey(e), e)
+      st.history.set(eventKey(e), e)
       const occ = String(e.occurredAt ?? '').trim()
       if (occ && (!st.lastOccurredAt || occ > st.lastOccurredAt)) st.lastOccurredAt = occ
     }
@@ -377,7 +580,10 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     // Preferir ISO con reloj de pared ART para la API
     endIso = formatArgentinaIsoFromMs(nowMs).slice(0, 19)
 
-    if (opts.fullHour || !st.lastOccurredAt) {
+    if (!st.historyLoaded) {
+      // Primera carga: 24 h completas (antes solo entraba la última hora y se perdía la noche).
+      startIso = formatArgentinaIsoFromMs(nowMs - HISTORY_MS).slice(0, 19)
+    } else if (opts.fullHour || !st.lastOccurredAt) {
       startIso = formatArgentinaIsoFromMs(opts.fullHour ? nowMs - 60 * 60 * 1000 : bufferStart).slice(0, 19)
     } else {
       startIso = String(st.lastOccurredAt).slice(0, 19)
@@ -388,12 +594,13 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     try {
       rows = await fetchRemoteEvents(base, startIso, endIso, siteQ)
       usedRemote = true
+      st.historyLoaded = true
       st.lastError = null
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e)
       st.lastError = msg
       // Fallback local (desarrollo)
-      const local = loadLocalEventsFor(bufferStart, nowMs)
+      const local = loadLocalEventsFor(st.historyLoaded ? bufferStart : nowMs - HISTORY_MS, nowMs)
       if (!local.length && st.events.size === 0) {
         throw new PlantStateError('feed_unreachable', 502, msg)
       }
@@ -410,11 +617,16 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
         const raw = parseLiveMillis(String(e.occurredAt ?? ''))
         if (Number.isFinite(raw) && raw >= hourCut) st.events.delete(k)
       }
+      for (const [k, e] of st.history) {
+        const raw = parseLiveMillis(String(e.occurredAt ?? ''))
+        if (Number.isFinite(raw) && raw >= hourCut) st.history.delete(k)
+      }
     }
 
     if (!usedRemote && (!st.lastOccurredAt || opts.fullHour)) {
       // Carga completa local del buffer
       st.events.clear()
+      st.history.clear()
       mergeEvents(st, rows)
     } else {
       mergeEvents(st, rows)
@@ -471,7 +683,7 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
 
     const baselines = await loadBaselines(key)
     const nowMs = Date.now()
-    let events = [...st.events.values()]
+    let events = withIdentifications(key, [...st.events.values()], nowMs, st)
 
     /*
      * Si el ingreso del puerto no emitio NADA en el buffer, reponerlo con las
@@ -556,7 +768,7 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     if (st.events.size === 0 && st.lastError) {
       throw new PlantStateError('feed_unreachable', 502, st.lastError)
     }
-    return applyManualOverrides(key, [...st.events.values()])
+    return applyManualOverrides(key, withIdentifications(key, [...st.events.values()], Date.now(), st))
   }
 
   return {
@@ -566,6 +778,10 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     startBackground,
     refresh,
     correctTruck,
+    getIdentifications,
+    getRecentCaptures,
+    decideIdentification,
+    getIdentificationOp,
     PlantStateError,
   }
 }
