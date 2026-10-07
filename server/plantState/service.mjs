@@ -13,7 +13,7 @@ import { buildBaselines, quarterOf } from './baselines.mjs'
 import { resolveSectorStatus, resolveZoneStatus, resolveBottleneck } from './status.mjs'
 import { POINTS, zonesOfSite } from './plantGraph.mjs'
 import { SECTOR_DEVICES } from './sectorProfiles.mjs'
-import { applyIdentifications, identifyFragments, nodeModelCatalog, recentCaptures, updateRecentCircuits } from './plateIdentification.mjs'
+import { applyIdentifications, applyLinks, findPredecessors, identifyFragments, nodeModelCatalog, recentCaptures, updateRecentCircuits } from './plateIdentification.mjs'
 import { createIdentificationArchive } from './identificationArchive.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -330,11 +330,69 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
   function withIdentifications(site, rawEvents, nowMs = Date.now(), st = null) {
     try {
       const source = st ? [...st.history.values()] : rawEvents
-      return applyIdentifications(rawEvents, identifyRaw(site, source, nowMs).items.filter(item => !item.archived))
+      // Vínculos de lecturas anteriores (sobre claves crudas) y después las identificaciones de fragmentos.
+      return applyIdentifications(applyLinks(rawEvents, linksOf(site)), identifyRaw(site, source, nowMs).items.filter(item => !item.archived))
     } catch (e) {
       console.warn('[plant-state] identificación de patentes falló:', e instanceof Error ? e.message : e)
       return rawEvents
     }
+  }
+
+  /** Vínculos confirmados (viaje mal leído → camión), guardados junto a las decisiones con clave `link:<journeyKey>`. */
+  function linksOf(site) {
+    return Object.entries(identificationDecisions[site] || {})
+      .filter(([k, d]) => k.startsWith('link:') && d?.action === 'link')
+      .map(([k, d]) => ({ journeyKey: k.slice(5), plate: d.plate, journeyUid: d.journeyUid ?? null }))
+  }
+
+  /** Lecturas anteriores candidatas para un camión que arranca a mitad de circuito. */
+  async function getPredecessors(site, plate, windowHours = 6) {
+    const { key, st } = ensureSite(site)
+    startBackground(key)
+    startBackground(otherSite(key))
+    if (st.events.size === 0) await refresh(key, { fullHour: true })
+    const want = normalizePlate(plate)
+    if (!want) throw new PlantStateError('plate_required', 400, 'patente requerida')
+    const nowMs = Date.now()
+    const catalog = nodeModelCatalog()
+    const links = linksOf(key)
+    const result = findPredecessors([...st.history.values()], nowMs, want, {
+      catalog,
+      recentCounts: identificationCache.get(key)?.result?.recentCounts ?? {},
+      otherSiteEvents: [...(bySite.get(otherSite(key))?.history.values() ?? [])],
+      linkedKeys: links.map((l) => l.journeyKey),
+      windowMs: Math.min(24, Math.max(1, Number(windowHours) || 6)) * 60 * 60 * 1000,
+    })
+    return { site: key, ...result, linked: links.filter((l) => l.plate === want) }
+  }
+
+  /** Vincula (o desvincula) un viaje mal leído a un camión. Mismo registro y opId que las decisiones. */
+  function linkJourney(site, plate, body) {
+    const { key } = ensureSite(site)
+    const want = normalizePlate(plate)
+    const journeyKey = String(body?.journeyKey || '').trim()
+    if (!want || !journeyKey) throw new PlantStateError('link_invalid', 400, 'patente y viaje requeridos')
+    const opId = body?.opId ? String(body.opId) : null
+    if (opId && appliedOps.has(opId)) return { ...appliedOps.get(opId), replayed: true }
+    identificationDecisions[key] ||= {}
+    const k = `link:${journeyKey}`
+    const now = new Date().toISOString()
+    const operator = body?.operator ? String(body.operator).slice(0, 80) : null
+    if (body?.unlink) delete identificationDecisions[key][k]
+    else identificationDecisions[key][k] = { action: 'link', plate: want, journeyUid: body?.journeyUid ? String(body.journeyUid) : null, readPlate: body?.readPlate ? String(body.readPlate) : null, operator, updatedAt: now }
+    fs.mkdirSync(path.dirname(decisionsPath), { recursive: true })
+    const tmp = `${decisionsPath}.tmp`
+    fs.writeFileSync(tmp, `${JSON.stringify(identificationDecisions, null, 2)}\n`, 'utf8')
+    fs.renameSync(tmp, decisionsPath)
+    try {
+      fs.appendFileSync(decisionsLogPath, `${JSON.stringify({ decidedAt: now, opId, site: key, action: body?.unlink ? 'unlink' : 'link', journeyKey, plate: want, readPlate: body?.readPlate ?? null, operator })}\n`, 'utf8')
+    } catch (e) {
+      console.warn('[plant-state] log de vínculo falló:', e instanceof Error ? e.message : e)
+    }
+    identificationCache.delete(key)
+    const result = { ok: true, site: key, journeyKey, plate: want, linked: !body?.unlink }
+    if (opId) appliedOps.set(opId, result)
+    return result
   }
 
   /** La otra planta aporta candidatos: se arranca su carga también. */
@@ -831,6 +889,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     decideIdentification,
     getIdentificationOp,
     claimIdentification,
+    getPredecessors,
+    linkJourney,
     PlantStateError,
   }
 }

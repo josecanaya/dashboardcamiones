@@ -269,6 +269,55 @@ export async function getPlantTrucks(site: string): Promise<TrucksList> {
   return body as TrucksList
 }
 
+export type PredecessorCandidate = {
+  journeyKey: string
+  journeyUid: string | null
+  readPlate: string
+  /** Viaje anterior con la misma patente (recorrido partido en dos por la nube). */
+  samePlate?: boolean
+  validFormat: boolean
+  otherSite: boolean
+  similarity: number
+  circuit: string
+  circuitProbability: number
+  gapMin: number
+  score: number
+  reads: { at: string; node: string; nodeLabel: string; device: string }[]
+}
+export type PredecessorsResponse = {
+  site: string
+  plate: string
+  firstAt: string | null
+  firstNode: string | null
+  firstNodeLabel: string | null
+  startsAtEntry: boolean
+  targetJourneyUid?: string | null
+  windowMs: number
+  candidates: PredecessorCandidate[]
+  /** Viajes anteriores de la misma patente (otra vuelta): contexto, no se vinculan. */
+  previousTrips?: { journeyKey: string; startAt: string; endAt: string; gapMin: number; reads: { at: string; node: string; nodeLabel: string; device: string }[] }[]
+  linked: { journeyKey: string; plate: string; journeyUid: string | null }[]
+}
+
+/** Lecturas anteriores candidatas de un camión que arranca a mitad de circuito. */
+export async function getTruckPredecessors(site: string, plate: string, hours = 6): Promise<PredecessorsResponse> {
+  const res = await fetchLocalTruckflow(`/live/trucks/${encodeURIComponent(plate)}/predecessors?${new URLSearchParams({ site, hours: String(hours) })}`, { headers: { Accept: 'application/json' } })
+  const body = (await res.json().catch(() => ({}))) as Partial<PredecessorsResponse> & { error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return body as PredecessorsResponse
+}
+
+/** Vincula (o desvincula) un viaje mal leído al camión. */
+export async function linkTruckJourney(site: string, plate: string, body: { journeyKey: string; journeyUid?: string | null; readPlate?: string; operator?: string | null; unlink?: boolean }): Promise<void> {
+  const res = await fetchLocalTruckflow(`/live/trucks/${encodeURIComponent(plate)}/link?site=${encodeURIComponent(site)}`, {
+    method: 'POST',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...body, opId: newOpId() }),
+  })
+  const r = (await res.json().catch(() => ({}))) as { error?: string }
+  if (!res.ok) throw new Error(r.error ?? `HTTP ${res.status}`)
+}
+
 export async function getZoneTrucks(site: string, zoneId: string): Promise<TrucksList> {
   const q = new URLSearchParams({ site, zone: zoneId, order: 'dwell' })
   const res = await fetchLocalTruckflow(`/live/trucks?${q}`, { headers: { Accept: 'application/json' } })

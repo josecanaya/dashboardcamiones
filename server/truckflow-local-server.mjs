@@ -432,6 +432,28 @@ app.post('/api/truckflow/live/identifications/:fragmentKey', express.json(), asy
 })
 
 /** Journey abierto de una patente. */
+app.get('/api/truckflow/live/trucks/:plate/predecessors', async (req, res) => {
+  // Lecturas anteriores candidatas de un camión que arranca a mitad de circuito (?hours=6).
+  const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
+  try {
+    res.json(await plantState.getPredecessors(site, req.params.plate, req.query.hours))
+  } catch (e) {
+    if (e instanceof PlantStateError) return res.status(e.httpStatus).json({ error: e.code })
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) })
+  }
+})
+
+/** Vincular (o desvincular) un viaje mal leído a este camión. */
+app.post('/api/truckflow/live/trucks/:plate/link', express.json(), (req, res) => {
+  const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
+  try {
+    res.json(plantState.linkJourney(site, req.params.plate, req.body))
+  } catch (e) {
+    if (e instanceof PlantStateError) return res.status(e.httpStatus).json({ error: e.code })
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) })
+  }
+})
+
 app.get('/api/truckflow/live/trucks/:plate', async (req, res) => {
   const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
   const plate = String(req.params.plate ?? '').trim()

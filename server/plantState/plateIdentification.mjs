@@ -557,3 +557,104 @@ export function recentCaptures(events, identification, nowMs, limit = 60) {
   rows.sort((a, b) => b.t - a.t)
   return rows.slice(0, limit).map(({ t, ...r }) => r)
 }
+
+/*
+ * Lecturas anteriores perdidas de un camión (caso inverso a los fragmentos): el camión se lee bien
+ * desde un punto intermedio (ej. Playa 3) y sus pasos previos quedaron bajo otra patente mal leída,
+ * como un viaje propio. Se buscan viajes que terminan antes de la primera lectura buena, cuyos nodos
+ * encajan ANTES en algún circuito, y se ordenan por parecido de patente + circuito + cercanía.
+ */
+const PREDECESSOR_SLACK_MS = 10 * 60 * 1000
+const MIN_PREDECESSOR_SIMILARITY = 0.5
+
+/**
+ * @param {object[]} events historia cruda (sin identificaciones aplicadas)
+ * @param {number} nowMs
+ * @param {string} plate camión bien leído
+ * @param {{ catalog: { code: string, sequences: string[][] }[], recentCounts?: Record<string, number>, otherSiteEvents?: object[], linkedKeys?: string[], windowMs?: number }} ctx
+ */
+export function findPredecessors(events, nowMs, plate, ctx) {
+  const windowMs = ctx.windowMs ?? 6 * 60 * 60 * 1000
+  const journeys = buildJourneys(events, nowMs)
+  const others = (ctx.otherSiteEvents?.length ? buildJourneys(ctx.otherSiteEvents, nowMs) : []).map((j) => ({ ...j, otherSite: true }))
+  const all = [...journeys, ...others]
+  // El viaje actual del camión es el último de su patente; la nube a veces parte un recorrido en dos
+  // viajes (BXN336 07/10: Ingreso 06:50 en un viaje y Playa 3 en otro), así que los viajes anteriores
+  // de la misma patente también son candidatos.
+  const mine = all.filter((j) => j.plate === plate).sort((a, b) => b.rows[b.rows.length - 1].t - a.rows[a.rows.length - 1].t)
+  if (!mine.length) return { plate, firstAt: null, firstNode: null, firstNodeLabel: null, startsAtEntry: false, windowMs, candidates: [] }
+  const target = mine[0]
+  const rows = target.rows
+  const first = rows[0]
+  const mineSeq = collapse(rows.map((r) => r.logical))
+  const weights = circuitWeights(ctx.recentCounts || {}, historicalPrior(), ctx.catalog.map((c) => c.code))
+  const linked = new Set(ctx.linkedKeys || [])
+  const candidates = []
+  for (const j of all) {
+    if (j.key === target.key || linked.has(j.key)) continue
+    // Si el viaje siguió leyéndose después de la primera lectura buena, es otro camión.
+    if (j.rows.some((r) => r.t > first.t + PREDECESSOR_SLACK_MS)) continue
+    const before = j.rows.filter((r) => r.t <= first.t + PREDECESSOR_SLACK_MS && first.t - r.t <= windowMs)
+    if (!before.length) continue
+    const fit = bestCircuit(collapse([...before.map((r) => r.logical), ...mineSeq]), ctx.catalog, weights)
+    if (!fit) continue
+    const similarity = j.plate === plate ? 1 : plateSimilarity(j.plate, plate)
+    // Patente legible pero poco parecida: es otro camión. Las ilegibles quedan (pueden ser él).
+    if (similarity < MIN_PREDECESSOR_SIMILARITY && isValidPlate(j.plate)) continue
+    // Ilegibles: solo si conservan algo de la patente (o no se leyó nada); un «CAT» de una pala no es candidato.
+    if (!isValidPlate(j.plate) && j.plate && j.plate.length >= MIN_READ_LENGTH && similarity < 0.35) continue
+    const gapMs = Math.max(0, first.t - before[before.length - 1].t)
+    const score = 0.6 * similarity + 0.3 * fit.p + 0.1 * (1 - gapMs / windowMs)
+    candidates.push({
+      journeyKey: j.key,
+      journeyUid: j.journeyUid,
+      readPlate: j.plate || 'SIN_PATENTE',
+      samePlate: j.plate === plate,
+      validFormat: isValidPlate(j.plate),
+      otherSite: Boolean(j.otherSite),
+      similarity: Math.round(similarity * 1000) / 1000,
+      circuit: fit.code,
+      circuitProbability: Math.round(fit.p * 1000) / 1000,
+      gapMin: Math.round(gapMs / 60000),
+      score: Math.round(score * 1000) / 1000,
+      reads: before.map((r) => ({ at: new Date(r.t).toISOString(), node: r.logical, nodeLabel: logicalLabel(r.logical), device: r.device })),
+    })
+  }
+  candidates.sort((a, b) => b.score - a.score)
+  // Viajes anteriores de la misma patente (otra vuelta o recorrido cerrado): se muestran como contexto.
+  const previousTrips = mine
+    .filter((j) => j.key !== target.key && j.rows[0].t < first.t && first.t - j.rows[0].t <= windowMs)
+    .map((j) => ({
+      journeyKey: j.key,
+      startAt: new Date(j.rows[0].t).toISOString(),
+      endAt: new Date(j.rows[j.rows.length - 1].t).toISOString(),
+      gapMin: Math.round(Math.max(0, first.t - j.rows[j.rows.length - 1].t) / 60000),
+      reads: j.rows.map((r) => ({ at: new Date(r.t).toISOString(), node: r.logical, nodeLabel: logicalLabel(r.logical), device: r.device })),
+    }))
+  return {
+    previousTrips,
+    plate,
+    firstAt: new Date(first.t).toISOString(),
+    firstNode: first.logical,
+    firstNodeLabel: logicalLabel(first.logical),
+    startsAtEntry: ENTRY_NODES.has(first.logical),
+    targetJourneyUid: target.journeyUid,
+    windowMs,
+    candidates: candidates.slice(0, 15),
+  }
+}
+
+/**
+ * Aplica los vínculos confirmados por operaciones: los eventos del viaje mal leído pasan a ser del camión.
+ * @param {object[]} events
+ * @param {{ journeyKey: string, plate: string, journeyUid?: string|null }[]} links
+ */
+export function applyLinks(events, links) {
+  if (!links.length) return events
+  const byKey = new Map(links.map((l) => [l.journeyKey, l]))
+  return events.map((e) => {
+    const l = byKey.get(journeyKeyOf(e, getEventLiveInstantMs(e)))
+    if (!l) return e
+    return { ...e, normalizedPlate: l.plate, truckPlate: l.plate, journeyUid: l.journeyUid || e.journeyUid, identifiedFromPlate: plateOf(e), identificationLevel: 'confirmado' }
+  })
+}

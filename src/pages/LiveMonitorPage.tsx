@@ -6,8 +6,8 @@ import { LiveActivityFeed } from '../components/plant/LiveActivityFeed'
 import { IdentificationPanel } from '../components/plant/IdentificationPanel'
 import { useLivePlantState } from '../hooks/useLivePlantState'
 import type { PlantLayout, PlantCameraGroup } from '../data/plantZones.types'
-import type { TruckJourney, TruckRow } from '../services/live/plantStateApi'
-import { formatDrainMinutes, getIdentifications, getPlantTrucks, getTruckJourney } from '../services/live/plantStateApi'
+import type { PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow } from '../services/live/plantStateApi'
+import { cameraCaptureImageUrl, findCameraCapture, formatDrainMinutes, getIdentifications, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
 import './liveMonitor.css'
 
 type Site = 'ricardone' | 'san_lorenzo'
@@ -40,6 +40,7 @@ export function LiveMonitorPage() {
   const [trucksError, setTrucksError] = useState<string | null>(null)
   const [followed, setFollowed] = useState<string | null>(null)
   const [journey, setJourney] = useState<TruckJourney | null>(null)
+  const [journeyTick, setJourneyTick] = useState(0)
   const [panel, setPanel] = useState<Panel>('camiones')
   const [search, setSearch] = useState('')
   const [zoneFilter, setZoneFilter] = useState<string | null>(null)
@@ -73,7 +74,7 @@ export function LiveMonitorPage() {
     void load()
     const t = setInterval(load, 10_000)
     return () => { alive = false; clearInterval(t) }
-  }, [site, followed])
+  }, [site, followed, journeyTick])
 
   // Patentes por confirmar (solo el número; la bandeja completa vive en su pestaña).
   useEffect(() => {
@@ -171,8 +172,9 @@ export function LiveMonitorPage() {
                 row={followedRow}
                 journey={journey}
                 pointLabel={pointLabel}
+                site={site}
                 onClose={() => setFollowed(null)}
-                onCamera={device => setCamera({ title: `${followed} · ${device}`, devices: [device] })}
+                onChanged={() => setJourneyTick(t => t + 1)}
               />
             ) : (
               <>
@@ -229,15 +231,20 @@ export function LiveMonitorPage() {
 }
 
 /** Ficha del camión seguido: dónde está, cuánto lleva, por dónde pasó y qué sigue. */
-function TruckCard({ plate, row, journey, pointLabel, onClose, onCamera }: {
+/** Ficha del camión seguido: última captura (foto), pasos con su foto y recuperación de lecturas anteriores. */
+function TruckCard({ site, plate, row, journey, pointLabel, onClose, onChanged }: {
+  site: Site
   plate: string
   row: TruckRow | null
   journey: TruckJourney | null
   pointLabel: Map<string, string>
   onClose: () => void
-  onCamera: (device: string) => void
+  onChanged: () => void
 }) {
   const status = (journey?.status ?? row?.status ?? 'normal') as TruckRow['status']
+  const steps = journey?.timeline ?? []
+  const last = steps[steps.length - 1]
+  const startsMidway = steps.length > 0 && !ENTRY_POINTS.has(steps[0].logicalSector ?? '')
   return (
     <div className="lm-card">
       <header>
@@ -261,19 +268,153 @@ function TruckCard({ plate, row, journey, pointLabel, onClose, onCamera }: {
         <div><dt>Última lectura</dt><dd>hace {minutes(journey?.minutesSinceLastDetection ?? row?.minutesSinceLastDetection)}</dd></div>
       </dl>
       {journey?.anomaly ? <p className="lm-card__alert">{journey.anomaly.rule}</p> : null}
-      {(journey?.lastDevice ?? row?.lastDevice) ? <button type="button" className="lm-card__cam" onClick={() => onCamera((journey?.lastDevice ?? row?.lastDevice)!)}>▶ Ver cámara donde se lo vio por última vez</button> : null}
+
+      <h3>Última captura</h3>
+      {last?.deviceCode ? <CaptureShot key={`${last.deviceCode}-${last.at}`} device={last.deviceCode} at={last.at} plate={plate} caption={`${pointLabel.get(last.logicalSector ?? '') ?? last.label} · ${hhmm(last.at)}`} /> : <p className="lm-empty">{journey ? 'Sin cámara registrada en el último paso.' : 'Cargando…'}</p>}
+
       <h3>Recorrido</h3>
       {journey ? <ol className="lm-steps">
-        {journey.timeline.map((r, i) => <li key={`${r.at}-${i}`} className={i === journey.timeline.length - 1 ? 'is-current' : ''}>
-          <time>{hhmm(r.at)}</time>
-          <div>
-            <strong>{pointLabel.get(r.logicalSector ?? '') ?? r.label}</strong>
-            {r.legFromPreviousMin != null ? <span>{minutes(r.legFromPreviousMin)} desde el paso anterior</span> : <span>Primera lectura</span>}
-          </div>
-          {r.deviceCode ? <button type="button" onClick={() => onCamera(r.deviceCode!)} aria-label={`Ver cámara ${r.deviceCode}`}>▶</button> : null}
-        </li>)}
+        {steps.map((r, i) => <StepRow key={`${r.at}-${i}`} step={r} plate={plate} label={pointLabel.get(r.logicalSector ?? '') ?? r.label} current={i === steps.length - 1} />)}
         {journey.nextExpectedLabel ? <li className="is-next"><time>…</time><div><strong>{journey.nextExpectedLabel}</strong><span>Próximo punto esperado</span></div></li> : null}
       </ol> : <p className="lm-empty">Cargando recorrido…</p>}
+
+      {journey ? <Predecessors key={plate} site={site} plate={plate} autoOpen={startsMidway} firstLabel={steps[0] ? (pointLabel.get(steps[0].logicalSector ?? '') ?? steps[0].label) : null} onChanged={onChanged} /> : null}
     </div>
+  )
+}
+
+const ENTRY_POINTS = new Set(['S0', 'S1', 'SL_S0', 'SL_S1'])
+
+/** Foto de una captura (escena + recorte de patente) pedida al DSS; avisa si leyó otra patente. */
+function CaptureShot({ device, at, plate, caption }: { device: string; at: string; plate: string; caption: string }) {
+  const [state, setState] = useState<{ phase: 'loading' } | { phase: 'ok'; scene: string | null; crop: string | null; read: string; conf: number | null } | { phase: 'none'; msg: string }>({ phase: 'loading' })
+  const [attempt, setAttempt] = useState(0)
+  const [zoom, setZoom] = useState(false)
+  useEffect(() => {
+    let alive = true
+    setState({ phase: 'loading' })
+    findCameraCapture(device, at, plate).then(r => {
+      if (!alive) return
+      const c = r.capture
+      if (c && (c.sceneFile || c.plateFile)) setState({ phase: 'ok', scene: c.sceneFile ? cameraCaptureImageUrl(c.sceneFile) : null, crop: c.plateFile ? cameraCaptureImageUrl(c.plateFile) : null, read: c.plate, conf: c.confidence })
+      else setState({ phase: 'none', msg: r.error ? `No se pudo consultar el DSS: ${r.error}` : 'El DSS no tiene la foto de esta captura.' })
+    }).catch(e => { if (alive) setState({ phase: 'none', msg: e instanceof Error ? e.message : String(e) }) })
+    return () => { alive = false }
+  }, [device, at, plate, attempt])
+  return (
+    <figure className="lm-shot">
+      {state.phase === 'loading' ? <div className="lm-shot__wait">Buscando la foto…</div> : null}
+      {state.phase === 'none' ? <div className="lm-shot__wait">{state.msg} <button type="button" onClick={() => setAttempt(n => n + 1)}>Reintentar</button></div> : null}
+      {state.phase === 'ok' ? <>
+        {state.scene ? <button type="button" className={`lm-shot__scene${zoom ? ' is-zoomed' : ''}`} onClick={() => setZoom(z => !z)} aria-label={zoom ? 'Achicar foto' : 'Ampliar foto'}><img src={state.scene} alt={`Captura de ${plate}`} /></button> : null}
+        <figcaption>
+          {state.crop ? <img className="lm-shot__crop" src={state.crop} alt={`Recorte de patente leída ${state.read}`} /> : null}
+          <span>Leyó <b className={state.read && state.read !== plate ? 'is-diff' : ''}>{state.read || '—'}</b>{state.conf != null ? ` · confianza ${state.conf}` : ''}</span>
+          <small>{caption} · {device}</small>
+        </figcaption>
+        {state.read && state.read !== plate ? <p className="lm-shot__warn">La cámara leyó {state.read}; este camión figura como {plate}. Compará el recorte.</p> : null}
+      </> : null}
+    </figure>
+  )
+}
+
+/** Paso del recorrido con su foto a pedido. */
+function StepRow({ step, plate, label, current }: { step: TruckJourney['timeline'][number]; plate: string; label: string; current: boolean }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <li className={current ? 'is-current' : ''}>
+      <time>{hhmm(step.at)}</time>
+      <div>
+        <strong>{label}</strong>
+        {step.legFromPreviousMin != null ? <span>{minutes(step.legFromPreviousMin)} desde el paso anterior</span> : <span>Primera lectura</span>}
+        {open && step.deviceCode ? <CaptureShot device={step.deviceCode} at={step.at} plate={plate} caption={`${label} · ${hhmm(step.at)}`} /> : null}
+      </div>
+      {step.deviceCode ? <button type="button" aria-pressed={open} onClick={() => setOpen(o => !o)} aria-label={open ? 'Ocultar foto' : `Ver foto en ${label}`}>{open ? '×' : '📷'}</button> : null}
+    </li>
+  )
+}
+
+/** Lectura de un viaje anterior, con su foto a pedido. */
+function ReadRow({ read, plate }: { read: { at: string; nodeLabel: string; device: string }; plate: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <li>
+      <time>{hhmm(read.at)}</time>
+      <div>
+        <strong>{read.nodeLabel}</strong>
+        {open ? <CaptureShot device={read.device} at={read.at} plate={plate} caption={`${read.nodeLabel} · ${hhmm(read.at)}`} /> : null}
+      </div>
+      <button type="button" aria-pressed={open} onClick={() => setOpen(o => !o)} aria-label={open ? 'Ocultar foto' : `Ver foto en ${read.nodeLabel}`}>{open ? '×' : '📷'}</button>
+    </li>
+  )
+}
+
+/**
+ * Lecturas anteriores perdidas: el algoritmo propone viajes mal leídos que encajan antes del primer
+ * paso de este camión; el operador compara la foto y los vincula. Se puede ir más atrás en el tiempo.
+ */
+function Predecessors({ site, plate, autoOpen, firstLabel, onChanged }: { site: Site; plate: string; autoOpen: boolean; firstLabel: string | null; onChanged: () => void }) {
+  const [open, setOpen] = useState(autoOpen)
+  const [hours, setHours] = useState(6)
+  const [data, setData] = useState<PredecessorsResponse | null>(null)
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState<string | null>(null)
+  const [confirming, setConfirming] = useState<string | null>(null)
+  const [tick, setTick] = useState(0)
+  useEffect(() => {
+    if (!open) return
+    let alive = true
+    setError('')
+    getTruckPredecessors(site, plate, hours).then(r => { if (alive) setData(r) }).catch(e => { if (alive) setError(e instanceof Error ? e.message : String(e)) })
+    return () => { alive = false }
+  }, [open, site, plate, hours, tick])
+  const operator = (() => { try { return localStorage.getItem('id-operator') || null } catch { return null } })()
+  async function link(c: PredecessorCandidate | { journeyKey: string; journeyUid: string | null; readPlate?: string }, unlink = false) {
+    setBusy(c.journeyKey); setError('')
+    try {
+      await linkTruckJourney(site, plate, { journeyKey: c.journeyKey, journeyUid: unlink ? null : data?.targetJourneyUid ?? null, readPlate: 'readPlate' in c ? c.readPlate : undefined, operator, unlink })
+      setConfirming(null); setTick(t => t + 1); onChanged()
+    } catch (e) { setError(e instanceof Error ? e.message : String(e)) } finally { setBusy(null) }
+  }
+  if (!open) return <button type="button" className="lm-recover__open" onClick={() => setOpen(true)}>Buscar lecturas anteriores perdidas</button>
+  return (
+    <section className="lm-recover">
+      <h3>Lecturas anteriores</h3>
+      <p className="lm-recover__intro">{autoOpen && firstLabel ? `El recorrido arranca en ${firstLabel}: faltan los pasos previos. ` : ''}Lecturas de otros viajes que encajan antes de este camión, ordenadas por el algoritmo (parecido de patente, circuito y tiempo).</p>
+      <div className="lm-recover__hours" role="group" aria-label="Buscar hacia atrás">
+        {[3, 6, 12, 24].map(h => <button key={h} type="button" aria-pressed={hours === h} onClick={() => setHours(h)}>{h} h</button>)}
+      </div>
+      {error ? <p className="lm-error">{error === 'HTTP 404' ? 'El servidor todavía no tiene esta función: reiniciá truckflow-local-server.' : `Error: ${error}`}</p> : null}
+      {data?.previousTrips?.length ? <div className="lm-recover__prev">
+        <h4>Viajes anteriores de {plate}</h4>
+        {data.previousTrips.map(t => <div key={t.journeyKey} className="lm-recover__trip">
+          <span>{hhmm(t.startAt)} – {hhmm(t.endAt)} · terminó {t.gapMin} min antes de {firstLabel ?? 'este viaje'}</span>
+          <ol className="lm-steps">{t.reads.map((r, i) => <ReadRow key={`${r.at}-${i}`} read={r} plate={plate} />)}</ol>
+        </div>)}
+      </div> : null}
+      {data?.linked.length ? <ul className="lm-recover__linked">{data.linked.map(l => <li key={l.journeyKey}>Vinculado: viaje {l.journeyKey.slice(0, 8)}… <button type="button" disabled={busy === l.journeyKey} onClick={() => void link({ journeyKey: l.journeyKey, journeyUid: null }, true)}>Desvincular</button></li>)}</ul> : null}
+      {!data && !error ? <p className="lm-empty">Buscando…</p> : null}
+      {data && !data.candidates.length ? <p className="lm-empty">Ninguna lectura de otra patente encaja antes en las últimas {hours} h. Probá ir más atrás.</p> : null}
+      <ol className="lm-recover__list">
+        {data?.candidates.map(c => {
+          const lastRead = c.reads[c.reads.length - 1]
+          return <li key={c.journeyKey}>
+            <div className="lm-recover__head">
+              <strong className={c.validFormat ? '' : 'is-bad'}>{c.readPlate === 'SIN_PATENTE' ? 'Sin lectura' : c.readPlate}</strong>
+              <span>{c.samePlate ? 'misma patente, viaje partido ·' : `${Math.round(c.similarity * 100)}% parecida ·`} {c.circuit} · {c.gapMin} min antes{c.otherSite ? ' · otra planta' : ''}</span>
+            </div>
+            {/* Fotos a pedido: pedirlas todas juntas supera el límite de consultas del DSS. */}
+            {lastRead ? <ol className="lm-steps">{c.reads.map((r, i) => <ReadRow key={`${r.at}-${i}`} read={r} plate={c.readPlate} />)}</ol> : null}
+            {confirming === c.journeyKey
+              ? <div className="lm-recover__confirm">
+                  <span>¿Las fotos muestran el mismo camión? {c.reads.length} lectura(s) pasan a {plate}.</span>
+                  <button type="button" className="is-primary" disabled={busy === c.journeyKey} onClick={() => void link(c)}>Sí, vincular a {plate}</button>
+                  <button type="button" onClick={() => setConfirming(null)}>Cancelar</button>
+                </div>
+              : <button type="button" className="lm-recover__link" onClick={() => setConfirming(c.journeyKey)}>Es {plate}: vincular</button>}
+          </li>
+        })}
+      </ol>
+    </section>
   )
 }
