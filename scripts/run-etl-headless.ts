@@ -38,6 +38,7 @@ import {
   windowKeyFromDays,
 } from '../src/etl-core/runs/etlRunsLayout.ts'
 import type { RealJourneyEventDto } from '../src/services/realJourneyEvents.types.ts'
+import type { LiveCorrectionsDocument } from '../src/services/liveCorrections.ts'
 
 type Args = {
   eventsPaths: string[]
@@ -418,6 +419,18 @@ async function main() {
     }
   }
 
+  // Correcciones de operaciones en «En vivo» (patentes confirmadas, vínculos, descartes): el informe
+  // usa las mismas patentes que se corrigieron en planta. Sin servidor, se procesa sin ellas.
+  let liveCorrections: LiveCorrectionsDocument | null = null
+  try {
+    const port = process.env.TRUCKFLOW_LOCAL_SERVER_PORT || '8787'
+    const res = await fetch(`http://127.0.0.1:${port}/api/truckflow/live/corrections`)
+    if (res.ok) liveCorrections = (await res.json()) as LiveCorrectionsDocument
+  } catch {
+    /* servidor apagado */
+  }
+  log(`[etl-headless] correcciones de En vivo: ${liveCorrections?.corrections.length ?? 0}`)
+
   const inputHash = createHash('sha256')
     .update(
       JSON.stringify({
@@ -446,6 +459,7 @@ async function main() {
           movimientosRows: preNormalizedMovimientos?.length ?? 0,
           inputHash,
           eventCount: events.length,
+          liveCorrections: { count: liveCorrections?.corrections.length ?? 0, generatedAt: liveCorrections?.generatedAt ?? null },
         },
       },
       null,
@@ -462,7 +476,9 @@ async function main() {
       loadedEventFilesCount: args.eventsPaths.length,
       loadedAlertFilesCount: 0,
       preNormalizedMovimientos,
+      liveCorrections,
     })
+    log(`[etl-headless] correcciones aplicadas: ${out.stats.plateRegistry?.liveCorrectionsRenamed ?? 0} eventos renombrados, ${out.stats.plateRegistry?.liveCorrectionsDropped ?? 0} descartados`)
 
     if (out.kpiTiemposPrepared) {
       log('[etl-headless] construyendo KPI tiempos…')

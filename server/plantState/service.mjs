@@ -370,6 +370,37 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     return { site: key, ...result, linked: links.filter((l) => l.plate === want) }
   }
 
+  /*
+   * Correcciones de operaciones para el ETL (análisis e informe semanal): patentes confirmadas,
+   * vínculos de lecturas anteriores y descartes de lecturas que no son camiones. Clave = journeyKey
+   * del reconocedor (journeyUid o PATENTE#bloque de 12 h). Se aplican en runEtlTransform.
+   */
+  const ANALYTICS_DROP_REASONS = /tractor|maquinaria|auto particular|camioneta|servicio|duplicada|fantasma/i
+  function exportCorrections() {
+    const corrections = []
+    for (const [site, entries] of Object.entries(identificationDecisions)) {
+      for (const [k, d] of Object.entries(entries || {})) {
+        if (!d || k.startsWith('nolink:')) continue
+        const base = { site, source: d.action, decidedAt: d.updatedAt ?? null }
+        if (k.startsWith('link:') && d.action === 'link') corrections.push({ ...base, key: k.slice(5), kind: 'rename', plate: d.plate, journeyUid: d.journeyUid ?? null })
+        else if (d.action === 'confirm' && d.plate) {
+          corrections.push({ ...base, key: k, kind: 'rename', plate: d.plate, journeyUid: d.journeyUid ?? null })
+          // «La lectura era correcta y el viaje del candidato es el mismo camión»: ese viaje se renombra.
+          if (d.journeyUid) corrections.push({ ...base, key: d.journeyUid, kind: 'rename', plate: d.plate, journeyUid: null })
+        } else if (d.action === 'reject') corrections.push({ ...base, key: k, kind: 'drop' })
+      }
+    }
+    for (const [site, entries] of Object.entries(manualOverrides)) {
+      for (const [plate, o] of Object.entries(entries || {})) {
+        // Solo «no es un camión»: «ya salió de planta» no borra datos del análisis.
+        if (o?.action === 'remove' && o.journeyUid && ANALYTICS_DROP_REASONS.test(String(o.reason || ''))) {
+          corrections.push({ site, key: o.journeyUid, kind: 'drop', plate, source: 'discard', decidedAt: o.updatedAt ?? null })
+        }
+      }
+    }
+    return { generatedAt: new Date().toISOString(), corrections }
+  }
+
   /** Viajes que el operador marcó «no es» para este camión (clave `nolink:<patente>:<journeyKey>`). */
   function dismissedFor(site, plate) {
     const prefix = `nolink:${plate}:`
@@ -902,6 +933,7 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     getIdentificationOp,
     claimIdentification,
     getPredecessors,
+    exportCorrections,
     linkJourney,
     PlantStateError,
   }

@@ -1,3 +1,4 @@
+import { applyLiveCorrections } from '../../../services/liveCorrections'
 import type { RealJourneyEventDto, ReconstructedRealJourney } from '../../../services/realJourneyEvents.types'
 import type { RealAlertDto } from '../../../services/realTruckflowApi'
 import { occurredAtLocalDayKey } from '../../../services/realJourneyQuality'
@@ -629,7 +630,9 @@ export async function runEtlTransform(
   await yieldToBrowser()
 
   if (!skipTramo1) {
-  const evFiltered = filterEventsByPlateRegistry(inp.events, inp.plateRegistry)
+  // Correcciones de «En vivo» primero: la patente corregida es la que después mira el catálogo.
+  const live = applyLiveCorrections(inp.events, inp.liveCorrections)
+  const evFiltered = filterEventsByPlateRegistry(live.events, inp.plateRegistry)
   const alFiltered = filterAlertsByPlateRegistry(inp.alerts, inp.plateRegistry)
   const eventsForEtl = evFiltered.kept
   const alertsForEtl = alFiltered.kept
@@ -639,6 +642,8 @@ export async function runEtlTransform(
     eventsExcluded: evFiltered.excluded.length,
     alertsExcluded: alFiltered.excluded.length,
     uniquePlatesExcluded: evFiltered.byPlate.size,
+    liveCorrectionsRenamed: live.renamed,
+    liveCorrectionsDropped: live.dropped,
   }
 
   const registryLookup = buildRegistryLookup(inp.plateRegistry)

@@ -443,6 +443,15 @@ app.get('/api/truckflow/live/trucks/:plate/predecessors', async (req, res) => {
   }
 })
 
+/** Correcciones de operaciones en vivo para el ETL (patentes, vínculos, descartes). */
+app.get('/api/truckflow/live/corrections', (_req, res) => {
+  try {
+    res.json(plantState.exportCorrections())
+  } catch (e) {
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) })
+  }
+})
+
 /** Vincular (o desvincular) un viaje mal leído a este camión. */
 app.post('/api/truckflow/live/trucks/:plate/link', express.json(), (req, res) => {
   const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'

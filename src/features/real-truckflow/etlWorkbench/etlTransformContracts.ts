@@ -52,6 +52,8 @@ export type EtlTransformInput = {
   loadedAlertFilesCount: number
   /** Catálogo manual (servicios, asociados, particulares). Si hay entradas activas, se excluyen de métricas. */
   plateRegistry?: TruckPlateRegistryDocument | null
+  /** Correcciones de operaciones en vivo (patentes, vínculos, descartes); se aplican antes de clasificar. */
+  liveCorrections?: import('../../../services/liveCorrections').LiveCorrectionsDocument | null
   /** Archivos XLSX Movimientos por Contrato (opcional). */
   movimientosContratoFiles?: MovimientosContratoFileInput[]
   /** Movimientos ya normalizados (backup por día leído por rango; evita re-parsear XLSX). */
@@ -80,6 +82,9 @@ export type EtlTransformOutput = {
       eventsExcluded: number
       alertsExcluded: number
       uniquePlatesExcluded: number
+      /** Eventos corregidos/descartados por decisiones de «En vivo». */
+      liveCorrectionsRenamed?: number
+      liveCorrectionsDropped?: number
     }
     step2: {
       rows: number

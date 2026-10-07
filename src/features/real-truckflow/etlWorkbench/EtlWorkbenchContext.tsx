@@ -1,3 +1,4 @@
+import { fetchLocalTruckflow } from '../api/truckflowLocalFetch'
 import {
   createContext,
   useCallback,
@@ -687,6 +688,14 @@ function buildApiJourneyStatsFromParsedFiles(
     } catch {
       /* servidor local apagado */
     }
+    // Correcciones de operaciones en «En vivo»: el análisis usa las mismas patentes corregidas.
+    let liveCorrections: EtlTransformInput['liveCorrections'] = null
+    try {
+      const res = await fetchLocalTruckflow('/live/corrections', { headers: { Accept: 'application/json' } })
+      if (res.ok) liveCorrections = await res.json()
+    } catch {
+      /* servidor local apagado: se procesa sin correcciones */
+    }
 
     // Movimientos: SOLO del backup local (data/movimientos) por rango de eventos.
     // Si el endpoint falla, abortamos: sin productos el Transform se ve "roto"
@@ -728,6 +737,7 @@ function buildApiJourneyStatsFromParsedFiles(
       loadedEventFilesCount: parsedEventFiles.length,
       loadedAlertFilesCount: parsedAlertFiles.length,
       plateRegistry,
+      liveCorrections,
       preNormalizedMovimientos,
       tiemposEntrePasosFiles:
         tiemposEntrePasosFiles.length ? tiemposEntrePasosFiles : undefined,
