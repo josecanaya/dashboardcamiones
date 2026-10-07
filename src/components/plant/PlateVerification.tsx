@@ -46,7 +46,7 @@ function ZoomImage({ src, alt, shared }: { src: string; alt: string; shared?: Sh
   }}><img src={src} alt={alt} style={zoom ? { transform: 'scale(2.5)', transformOrigin: `${zoom.x}% ${zoom.y}%` } : undefined} onError={() => setBroken(true)} /></button>
 }
 
-function VerificationPhoto({ label, device, at, plate, relation, onState, onCapture, shared }: { label: string; device?: string; at?: string; plate: string; relation?: string; onState: (s: PhotoState) => void; onCapture?: (c: CameraCaptureLookup['capture']) => void; shared?: SharedZoom }) {
+export function VerificationPhoto({ label, device, at, plate, relation, onState, onCapture, shared }: { label: string; device?: string; at?: string; plate: string; relation?: string; onState: (s: PhotoState) => void; onCapture?: (c: CameraCaptureLookup['capture']) => void; shared?: SharedZoom }) {
   const [lookup, setLookup] = useState<CameraCaptureLookup | null>(null)
   const [error, setError] = useState('')
   const [attempt, setAttempt] = useState(0)

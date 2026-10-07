@@ -147,3 +147,11 @@
 .lm-recover__prev { margin-bottom: 10px; }.lm-recover__prev h4 { font-size: 12px; margin: 0 0 4px; }
 .lm-recover__trip { padding: 8px 10px; border-radius: 10px; background: #f4f0fd; margin-bottom: 6px; }
 .lm-recover__trip > span { display: block; font-size: 11px; color: var(--lm-muted); margin-bottom: 4px; }
+
+.lm-recover__actions { display: grid; grid-template-columns: 1fr auto; gap: 6px; }
+.lm-recover__no { padding: 8px 14px; border-radius: 8px; border: 1px solid #e3b4b0; color: #9a2a22; background: #fff; font-weight: 700; font-size: 13px; }
+.pv-footer .pv-no { border-color: #e3b4b0; color: #9a2a22; background: #fff; }
+
+/* Pasos del camión seguido sobre el plano */
+.tf-map-step { position: absolute; z-index: 32; width: 20px; height: 20px; margin: -32px 0 0 4px; display: grid; place-items: center; border-radius: 50%; background: #7c3aed; color: #fff; font: 800 11px system-ui, sans-serif; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.35); pointer-events: none; }
+.tf-map-step--next { background: #f0fdf4; color: #15803d; border: 2px dashed #86efac; }

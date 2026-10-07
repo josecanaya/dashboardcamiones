@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PlantMap, type MapTruck } from '../components/plant/PlantMap'
 import { LiveCameraPlayerModal } from '../components/plant/LiveCameraPlayerModal'
 import { LiveActivityFeed } from '../components/plant/LiveActivityFeed'
 import { IdentificationPanel } from '../components/plant/IdentificationPanel'
+import { VerificationPhoto, type PhotoState } from '../components/plant/PlateVerification'
+import { createPortal } from 'react-dom'
 import { useLivePlantState } from '../hooks/useLivePlantState'
 import type { PlantLayout, PlantCameraGroup } from '../data/plantZones.types'
 import type { PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow } from '../services/live/plantStateApi'
@@ -278,7 +280,7 @@ function TruckCard({ site, plate, row, journey, pointLabel, onClose, onChanged }
         {journey.nextExpectedLabel ? <li className="is-next"><time>…</time><div><strong>{journey.nextExpectedLabel}</strong><span>Próximo punto esperado</span></div></li> : null}
       </ol> : <p className="lm-empty">Cargando recorrido…</p>}
 
-      {journey ? <Predecessors key={plate} site={site} plate={plate} autoOpen={startsMidway} firstLabel={steps[0] ? (pointLabel.get(steps[0].logicalSector ?? '') ?? steps[0].label) : null} onChanged={onChanged} /> : null}
+      {journey ? <Predecessors key={plate} site={site} plate={plate} autoOpen={startsMidway} firstLabel={steps[0] ? (pointLabel.get(steps[0].logicalSector ?? '') ?? steps[0].label) : null} reference={steps[0]?.deviceCode ? { device: steps[0].deviceCode, at: steps[0].at, label: pointLabel.get(steps[0].logicalSector ?? '') ?? steps[0].label } : null} onChanged={onChanged} /> : null}
     </div>
   )
 }
@@ -353,13 +355,13 @@ function ReadRow({ read, plate }: { read: { at: string; nodeLabel: string; devic
  * Lecturas anteriores perdidas: el algoritmo propone viajes mal leídos que encajan antes del primer
  * paso de este camión; el operador compara la foto y los vincula. Se puede ir más atrás en el tiempo.
  */
-function Predecessors({ site, plate, autoOpen, firstLabel, onChanged }: { site: Site; plate: string; autoOpen: boolean; firstLabel: string | null; onChanged: () => void }) {
+function Predecessors({ site, plate, autoOpen, firstLabel, reference, onChanged }: { site: Site; plate: string; autoOpen: boolean; firstLabel: string | null; reference: { device: string; at: string; label: string } | null; onChanged: () => void }) {
   const [open, setOpen] = useState(autoOpen)
   const [hours, setHours] = useState(6)
   const [data, setData] = useState<PredecessorsResponse | null>(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState<string | null>(null)
-  const [confirming, setConfirming] = useState<string | null>(null)
+  const [comparing, setComparing] = useState<PredecessorCandidate | null>(null)
   const [tick, setTick] = useState(0)
   useEffect(() => {
     if (!open) return
@@ -369,12 +371,12 @@ function Predecessors({ site, plate, autoOpen, firstLabel, onChanged }: { site: 
     return () => { alive = false }
   }, [open, site, plate, hours, tick])
   const operator = (() => { try { return localStorage.getItem('id-operator') || null } catch { return null } })()
-  async function link(c: PredecessorCandidate | { journeyKey: string; journeyUid: string | null; readPlate?: string }, unlink = false) {
+  async function link(c: PredecessorCandidate | { journeyKey: string; journeyUid: string | null; readPlate?: string }, mode: 'link' | 'unlink' | 'dismiss' = 'link') {
     setBusy(c.journeyKey); setError('')
     try {
-      await linkTruckJourney(site, plate, { journeyKey: c.journeyKey, journeyUid: unlink ? null : data?.targetJourneyUid ?? null, readPlate: 'readPlate' in c ? c.readPlate : undefined, operator, unlink })
-      setConfirming(null); setTick(t => t + 1); onChanged()
-    } catch (e) { setError(e instanceof Error ? e.message : String(e)) } finally { setBusy(null) }
+      await linkTruckJourney(site, plate, { journeyKey: c.journeyKey, journeyUid: mode === 'link' ? data?.targetJourneyUid ?? null : null, readPlate: 'readPlate' in c ? c.readPlate : undefined, operator, unlink: mode === 'unlink', dismiss: mode === 'dismiss' })
+      setComparing(null); setTick(t => t + 1); if (mode !== 'dismiss') onChanged()
+    } catch (e) { setError(e instanceof Error ? e.message : String(e)); throw e } finally { setBusy(null) }
   }
   if (!open) return <button type="button" className="lm-recover__open" onClick={() => setOpen(true)}>Buscar lecturas anteriores perdidas</button>
   return (
@@ -392,7 +394,7 @@ function Predecessors({ site, plate, autoOpen, firstLabel, onChanged }: { site: 
           <ol className="lm-steps">{t.reads.map((r, i) => <ReadRow key={`${r.at}-${i}`} read={r} plate={plate} />)}</ol>
         </div>)}
       </div> : null}
-      {data?.linked.length ? <ul className="lm-recover__linked">{data.linked.map(l => <li key={l.journeyKey}>Vinculado: viaje {l.journeyKey.slice(0, 8)}… <button type="button" disabled={busy === l.journeyKey} onClick={() => void link({ journeyKey: l.journeyKey, journeyUid: null }, true)}>Desvincular</button></li>)}</ul> : null}
+      {data?.linked.length ? <ul className="lm-recover__linked">{data.linked.map(l => <li key={l.journeyKey}>Vinculado: viaje {l.journeyKey.slice(0, 8)}… <button type="button" disabled={busy === l.journeyKey} onClick={() => void link({ journeyKey: l.journeyKey, journeyUid: null }, 'unlink').catch(() => undefined)}>Desvincular</button></li>)}</ul> : null}
       {!data && !error ? <p className="lm-empty">Buscando…</p> : null}
       {data && !data.candidates.length ? <p className="lm-empty">Ninguna lectura de otra patente encaja antes en las últimas {hours} h. Probá ir más atrás.</p> : null}
       <ol className="lm-recover__list">
@@ -405,16 +407,78 @@ function Predecessors({ site, plate, autoOpen, firstLabel, onChanged }: { site: 
             </div>
             {/* Fotos a pedido: pedirlas todas juntas supera el límite de consultas del DSS. */}
             {lastRead ? <ol className="lm-steps">{c.reads.map((r, i) => <ReadRow key={`${r.at}-${i}`} read={r} plate={c.readPlate} />)}</ol> : null}
-            {confirming === c.journeyKey
-              ? <div className="lm-recover__confirm">
-                  <span>¿Las fotos muestran el mismo camión? {c.reads.length} lectura(s) pasan a {plate}.</span>
-                  <button type="button" className="is-primary" disabled={busy === c.journeyKey} onClick={() => void link(c)}>Sí, vincular a {plate}</button>
-                  <button type="button" onClick={() => setConfirming(null)}>Cancelar</button>
-                </div>
-              : <button type="button" className="lm-recover__link" onClick={() => setConfirming(c.journeyKey)}>Es {plate}: vincular</button>}
+            <div className="lm-recover__actions">
+              <button type="button" className="lm-recover__link" onClick={() => setComparing(c)}>Comparar fotos y decidir</button>
+              <button type="button" className="lm-recover__no" disabled={busy === c.journeyKey} onClick={() => void link(c, 'dismiss').catch(() => undefined)} title={`No es ${plate}: no se vuelve a proponer`}>No es</button>
+            </div>
           </li>
         })}
       </ol>
+      {comparing ? <LinkCompare candidate={comparing} plate={plate} reference={reference} onCancel={() => setComparing(null)} onDecide={mode => link(comparing, mode)} /> : null}
     </section>
+  )
+}
+
+/**
+ * Comparativo para vincular: la lectura candidata frente a la primera captura del camión, en grande.
+ * Mismo diálogo que la bandeja de patentes; el operador decide «es» o «no es».
+ */
+function LinkCompare({ candidate, plate, reference, onCancel, onDecide }: {
+  candidate: PredecessorCandidate
+  plate: string
+  reference: { device: string; at: string; label: string } | null
+  onCancel: () => void
+  onDecide: (mode: 'link' | 'dismiss') => Promise<void>
+}) {
+  const dialog = useRef<HTMLDialogElement>(null)
+  useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null
+    const el = dialog.current
+    el?.showModal()
+    return () => { el?.close(); opener?.focus?.() }
+  }, [])
+  const [photos, setPhotos] = useState<{ a: PhotoState; b: PhotoState }>({ a: 'loading', b: reference ? 'loading' : 'missing' })
+  const [saving, setSaving] = useState<null | 'link' | 'dismiss'>(null)
+  const [error, setError] = useState('')
+  const read = candidate.reads[candidate.reads.length - 1]
+  const loading = photos.a === 'loading' || photos.b === 'loading'
+  const readName = candidate.readPlate === 'SIN_PATENTE' ? 'Sin lectura' : candidate.readPlate
+  async function decide(mode: 'link' | 'dismiss') {
+    setSaving(mode); setError('')
+    try { await onDecide(mode) } catch (e) { setError(e instanceof Error ? e.message : String(e)); setSaving(null) }
+  }
+  return createPortal(
+    <dialog ref={dialog} className="pv-dialog" aria-labelledby="lc-title" onCancel={e => { e.preventDefault(); if (!saving) onCancel() }}>
+      <header className="pv-header">
+        <div>
+          <span>Recuperar lectura anterior</span>
+          <h2 id="lc-title">¿Es el mismo camión?</h2>
+          <p><b className="pv-change">{readName} → {plate}</b> · {candidate.reads.map(r => `${r.nodeLabel} ${hhmm(r.at)}`).join(' → ')} · {candidate.gapMin} min antes de su primera lectura</p>
+        </div>
+        <button type="button" aria-label="Cerrar sin decidir" disabled={Boolean(saving)} onClick={onCancel}>×</button>
+      </header>
+      <div className="pv-body">
+        <div className="pv-photos">
+          <VerificationPhoto label={`Lectura candidata · ${read.nodeLabel}`} device={read.device} at={read.at} plate={readName} onState={st => setPhotos(p => ({ ...p, a: st }))} />
+          {reference
+            ? <VerificationPhoto label={`Primera captura de ${plate} · ${reference.label}`} device={reference.device} at={reference.at} plate={plate} relation={`${candidate.gapMin} min después`} onState={st => setPhotos(p => ({ ...p, b: st }))} />
+            : <section className="pv-photo"><header><span>Referencia</span><strong>{plate}</strong></header><div className="pv-photo__scene"><p>El camión no tiene una captura con cámara para comparar.</p></div></section>}
+        </div>
+        <div className="pv-scores">
+          <div><span>Parecido de patente</span><strong>{candidate.samePlate ? 'Misma patente' : `${Math.round(candidate.similarity * 100)}%`}</strong><small>Cuánto se parecen los caracteres leídos.</small></div>
+          <div><span>Circuito si es él</span><strong>{candidate.circuit} · {Math.round(candidate.circuitProbability * 100)}%</strong></div>
+          <div><span>Tiempo hasta su primera lectura</span><strong>{candidate.gapMin} min</strong></div>
+          <div><span>Lecturas que pasan a {plate}</span><strong>{candidate.reads.length}</strong></div>
+        </div>
+        <p className="pv-note">Compará el vehículo (color, cabina, carga) y el recorte de patente. «No es» lo saca de la lista de este camión.</p>
+      </div>
+      <footer className="pv-footer">
+        <span role="status" className={error ? 'pv-error' : ''}>{error ? `No se guardó: ${error}` : saving ? 'Guardando…' : loading ? 'Cargando las fotos…' : 'Todavía no se guardó nada.'}</span>
+        <button type="button" disabled={Boolean(saving)} onClick={onCancel}>Cancelar</button>
+        <button type="button" className="pv-no" disabled={Boolean(saving)} onClick={() => void decide('dismiss')}>{saving === 'dismiss' ? 'Guardando…' : `No es ${plate}`}</button>
+        <button type="button" className="pv-confirm" disabled={Boolean(saving) || loading} onClick={() => void decide('link')}>{saving === 'link' ? 'Guardando…' : `Sí, es ${plate}: vincular`}</button>
+      </footer>
+    </dialog>,
+    document.body,
   )
 }

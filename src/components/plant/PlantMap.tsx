@@ -352,8 +352,9 @@ export function PlantMap(props: {
             const a = byId.get(followLast)!
             const b = byId.get(followNext)!
             const pts = tramoPath(a, b, layout.tramos ?? []).map((pt) => `${(pt.xPercent / 100) * base.width},${(pt.yPercent / 100) * base.height}`).join(' ')
-            return <polyline points={pts} fill="none" stroke="#7C3AED" strokeWidth={4} strokeDasharray="12 10" strokeLinecap="round">
-              <animate attributeName="stroke-dashoffset" from="22" to="0" dur="1s" repeatCount="indefinite" />
+            // Próximo nodo: punteado verde claro y suave, distinto del recorrido ya hecho.
+            return <polyline points={pts} fill="none" stroke="#86EFAC" strokeOpacity={0.9} strokeWidth={4} strokeDasharray="4 12" strokeLinecap="round">
+              <animate attributeName="stroke-dashoffset" from="16" to="0" dur="1.2s" repeatCount="indefinite" />
             </polyline>
           })() : null}
           {active
@@ -525,6 +526,13 @@ export function PlantMap(props: {
             </div>
           )
         }) : null}
+
+        {/* Puntos por los que pasó el camión seguido, numerados en orden; el próximo con aro verde. */}
+        {followKnown.filter((id, i) => followKnown[i - 1] !== id).map((id, i) => {
+          const p = byId.get(id)!
+          return <span key={`fstep-${id}-${i}`} className="tf-map-step" style={{ left: `${p.xPercent}%`, top: `${p.yPercent}%` }} aria-hidden>{i + 1}</span>
+        })}
+        {followNext && byId.get(followNext) ? <span className="tf-map-step tf-map-step--next" style={{ left: `${byId.get(followNext)!.xPercent}%`, top: `${byId.get(followNext)!.yPercent}%` }} aria-hidden>→</span> : null}
 
         {/* Capa de flujo: cada camión en su punto actual. */}
         {[...trucksByPoint.entries()].map(([pointId, list]) => {

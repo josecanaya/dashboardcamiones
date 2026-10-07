@@ -360,10 +360,17 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       catalog,
       recentCounts: identificationCache.get(key)?.result?.recentCounts ?? {},
       otherSiteEvents: [...(bySite.get(otherSite(key))?.history.values() ?? [])],
-      linkedKeys: links.map((l) => l.journeyKey),
+      // Ya vinculados (a cualquier camión) o descartados por el operador para ESTE camión.
+      linkedKeys: [...links.map((l) => l.journeyKey), ...dismissedFor(key, want)],
       windowMs: Math.min(24, Math.max(1, Number(windowHours) || 6)) * 60 * 60 * 1000,
     })
     return { site: key, ...result, linked: links.filter((l) => l.plate === want) }
+  }
+
+  /** Viajes que el operador marcó «no es» para este camión (clave `nolink:<patente>:<journeyKey>`). */
+  function dismissedFor(site, plate) {
+    const prefix = `nolink:${plate}:`
+    return Object.keys(identificationDecisions[site] || {}).filter((k) => k.startsWith(prefix)).map((k) => k.slice(prefix.length))
   }
 
   /** Vincula (o desvincula) un viaje mal leído a un camión. Mismo registro y opId que las decisiones. */
@@ -378,19 +385,20 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     const k = `link:${journeyKey}`
     const now = new Date().toISOString()
     const operator = body?.operator ? String(body.operator).slice(0, 80) : null
-    if (body?.unlink) delete identificationDecisions[key][k]
+    if (body?.dismiss) identificationDecisions[key][`nolink:${want}:${journeyKey}`] = { action: 'nolink', plate: want, readPlate: body?.readPlate ? String(body.readPlate) : null, operator, updatedAt: now }
+    else if (body?.unlink) delete identificationDecisions[key][k]
     else identificationDecisions[key][k] = { action: 'link', plate: want, journeyUid: body?.journeyUid ? String(body.journeyUid) : null, readPlate: body?.readPlate ? String(body.readPlate) : null, operator, updatedAt: now }
     fs.mkdirSync(path.dirname(decisionsPath), { recursive: true })
     const tmp = `${decisionsPath}.tmp`
     fs.writeFileSync(tmp, `${JSON.stringify(identificationDecisions, null, 2)}\n`, 'utf8')
     fs.renameSync(tmp, decisionsPath)
     try {
-      fs.appendFileSync(decisionsLogPath, `${JSON.stringify({ decidedAt: now, opId, site: key, action: body?.unlink ? 'unlink' : 'link', journeyKey, plate: want, readPlate: body?.readPlate ?? null, operator })}\n`, 'utf8')
+      fs.appendFileSync(decisionsLogPath, `${JSON.stringify({ decidedAt: now, opId, site: key, action: body?.dismiss ? 'nolink' : body?.unlink ? 'unlink' : 'link', journeyKey, plate: want, readPlate: body?.readPlate ?? null, operator })}\n`, 'utf8')
     } catch (e) {
       console.warn('[plant-state] log de vínculo falló:', e instanceof Error ? e.message : e)
     }
     identificationCache.delete(key)
-    const result = { ok: true, site: key, journeyKey, plate: want, linked: !body?.unlink }
+    const result = { ok: true, site: key, journeyKey, plate: want, linked: !body?.unlink && !body?.dismiss, dismissed: Boolean(body?.dismiss) }
     if (opId) appliedOps.set(opId, result)
     return result
   }

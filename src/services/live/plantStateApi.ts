@@ -308,7 +308,7 @@ export async function getTruckPredecessors(site: string, plate: string, hours = 
 }
 
 /** Vincula (o desvincula) un viaje mal leído al camión. */
-export async function linkTruckJourney(site: string, plate: string, body: { journeyKey: string; journeyUid?: string | null; readPlate?: string; operator?: string | null; unlink?: boolean }): Promise<void> {
+export async function linkTruckJourney(site: string, plate: string, body: { journeyKey: string; journeyUid?: string | null; readPlate?: string; operator?: string | null; unlink?: boolean; dismiss?: boolean }): Promise<void> {
   const res = await fetchLocalTruckflow(`/live/trucks/${encodeURIComponent(plate)}/link?site=${encodeURIComponent(site)}`, {
     method: 'POST',
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
