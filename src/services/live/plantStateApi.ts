@@ -259,6 +259,16 @@ export async function getSectorTrucks(
   return body as TrucksList
 }
 
+/** Todos los camiones abiertos de la planta, con su sector actual (capa de flujo del monitoreo). */
+export async function getPlantTrucks(site: string): Promise<TrucksList> {
+  const res = await fetchLocalTruckflow(`/live/trucks?${new URLSearchParams({ site, order: 'dwell' })}`, {
+    headers: { Accept: 'application/json' },
+  })
+  const body = (await res.json()) as Partial<TrucksList> & { error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return body as TrucksList
+}
+
 export async function getZoneTrucks(site: string, zoneId: string): Promise<TrucksList> {
   const q = new URLSearchParams({ site, zone: zoneId, order: 'dwell' })
   const res = await fetchLocalTruckflow(`/live/trucks?${q}`, { headers: { Accept: 'application/json' } })

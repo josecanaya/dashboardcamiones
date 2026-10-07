@@ -49,6 +49,27 @@ const TYPE_LABEL: Record<PlantPointType, string> = {
   operation: 'Carga o descarga',
 }
 
+/** Camión ubicado en un punto del plano (capa de flujo del monitoreo). */
+export type MapTruck = { plate: string; pointId: string; status: 'normal' | 'attention' | 'critical'; label?: string }
+const TRUCK_COLOR: Record<MapTruck['status'], string> = { normal: '#16A34A', attention: '#F59E0B', critical: '#DC2626' }
+
+/** Reparte los camiones de un mismo punto en anillos alrededor del marcador, para que no se tapen. */
+function truckOffsets(count: number): { dx: number; dy: number }[] {
+  const out: { dx: number; dy: number }[] = []
+  let ring = 0
+  while (out.length < count) {
+    const capacity = 8 + ring * 6
+    const radius = 26 + ring * 15
+    const n = Math.min(capacity, count - out.length)
+    for (let i = 0; i < n; i++) {
+      const a = -Math.PI / 2 + (i / capacity) * Math.PI * 2
+      out.push({ dx: Math.cos(a) * radius, dy: Math.sin(a) * radius })
+    }
+    ring++
+  }
+  return out
+}
+
 const STATUS_RANK: Record<SectorStatus, number> = { no_data: 0, normal: 1, attention: 2, critical: 3 }
 
 type PointState = { queue: number | null; status: SectorStatus; zones: string[] }
@@ -86,8 +107,19 @@ export function PlantMap(props: {
   onSelectSector?: (sectorCode: string) => void
   onSelectZone?: (zoneId: string) => void
   selectedSector?: string | null
+  /** Ocupa todo el alto del contenedor (pantalla de monitoreo). */
+  fill?: boolean
+  /** Camiones en planta dibujados en su punto actual. */
+  trucks?: MapTruck[]
+  followedPlate?: string | null
+  onSelectTruck?: (plate: string) => void
+  /** Recorrido del camión seguido (ids de punto en orden) y su próximo punto esperado. */
+  followPath?: string[]
+  followNext?: string | null
+  /** Oculta los rótulos grandes de ocupación (el monitoreo los muestra en el panel). */
+  quietZones?: boolean
 }): JSX.Element {
-  const { layout, site = 'ricardone', compact = false, showCircuitControls = true, align = 'center', flowPulse = { ingress: 0, egress: 0 }, zones, onOpenCameras, onSelectSector, onSelectZone, selectedSector } = props
+  const { layout, site = 'ricardone', compact = false, showCircuitControls = true, align = 'center', flowPulse = { ingress: 0, egress: 0 }, zones, onOpenCameras, onSelectSector, onSelectZone, selectedSector, fill = false, trucks = [], followedPlate = null, onSelectTruck, followPath = [], followNext = null, quietZones = false } = props
   const [hovered, setHovered] = useState<string | null>(null)
   const [hoveredZone, setHoveredZone] = useState<string | null>(null)
   const [circuit, setCircuit] = useState<string | null>(null)
@@ -112,6 +144,20 @@ export function PlantMap(props: {
   const inCircuit = useMemo(() => new Set(activeSegments.flatMap((segment) => [segment.from, segment.to])), [activeSegments])
   const pointState = useMemo(() => statePerPoint(points, zones), [points, zones])
   const liveZoneById = useMemo(() => new Map(zones.map((zone) => [zone.id, zone])), [zones])
+  const trucksByPoint = useMemo(() => {
+    const m = new Map<string, MapTruck[]>()
+    for (const t of trucks) {
+      if (!byId.has(t.pointId)) continue
+      m.set(t.pointId, [...(m.get(t.pointId) ?? []), t])
+    }
+    return m
+  }, [trucks, byId])
+  const followSegments = useMemo(() => {
+    const steps = followPath.filter((id, i) => byId.has(id) && followPath[i - 1] !== id)
+    return steps.slice(0, -1).map((from, i) => ({ key: `f-${from}-${steps[i + 1]}-${i}`, from, to: steps[i + 1]! }))
+  }, [followPath, byId])
+  const followKnown = followPath.filter((id) => byId.has(id))
+  const followLast = followKnown[followKnown.length - 1] ?? null
 
   if (!base) {
     return (
@@ -181,7 +227,9 @@ export function PlantMap(props: {
       */}
       <div
         className={`relative max-w-full overflow-hidden rounded-2xl bg-slate-900 shadow-[0_18px_45px_rgba(15,23,42,.18)] ${align === 'left' ? 'mr-auto' : 'mx-auto'}`}
-        style={compact
+        style={fill
+          ? { aspectRatio: `${base.width} / ${base.height}`, height: '100%', width: 'auto', maxWidth: '100%', marginInline: 'auto' }
+          : compact
           ? { aspectRatio: '16 / 10', width: '100%' }
           // Relación real de la imagen: si se deforma, los puntos y los polígonos
           // dejan de caer donde los puso el editor. El alto se topea contra la
@@ -268,7 +316,7 @@ export function PlantMap(props: {
               />
             )
           }) : null}
-          {showSectors ? layout.zones.map((zone) => {
+          {showSectors && !quietZones ? layout.zones.map((zone) => {
             const vertices = zone.polygonPercent ?? []
             const live = liveZoneById.get(zone.zoneId)
             if (vertices.length < 3 || !live) return null
@@ -289,6 +337,25 @@ export function PlantMap(props: {
               )}
             </g>
           }) : null}
+          {/* Recorrido del camión seguido: lo hecho en sólido, lo próximo punteado. */}
+          {followSegments.map(({ key, from, to }) => {
+            const a = byId.get(from)
+            const b = byId.get(to)
+            if (!a || !b) return null
+            const pts = tramoPath(a, b, layout.tramos ?? []).map((pt) => `${(pt.xPercent / 100) * base.width},${(pt.yPercent / 100) * base.height}`).join(' ')
+            return <g key={key}>
+              <polyline points={pts} fill="none" stroke="#FFFFFF" strokeWidth={10} strokeOpacity={0.85} strokeLinecap="round" strokeLinejoin="round" />
+              <polyline points={pts} fill="none" stroke="#7C3AED" strokeWidth={5} strokeLinecap="round" strokeLinejoin="round" />
+            </g>
+          })}
+          {followLast && followNext && byId.get(followNext) ? (() => {
+            const a = byId.get(followLast)!
+            const b = byId.get(followNext)!
+            const pts = tramoPath(a, b, layout.tramos ?? []).map((pt) => `${(pt.xPercent / 100) * base.width},${(pt.yPercent / 100) * base.height}`).join(' ')
+            return <polyline points={pts} fill="none" stroke="#7C3AED" strokeWidth={4} strokeDasharray="12 10" strokeLinecap="round">
+              <animate attributeName="stroke-dashoffset" from="22" to="0" dur="1s" repeatCount="indefinite" />
+            </polyline>
+          })() : null}
           {active
             ? activeSegments.map(({ key, from, to }) => {
                 const a = byId.get(from)
@@ -458,6 +525,29 @@ export function PlantMap(props: {
             </div>
           )
         }) : null}
+
+        {/* Capa de flujo: cada camión en su punto actual. */}
+        {[...trucksByPoint.entries()].map(([pointId, list]) => {
+          const p = byId.get(pointId)!
+          const offsets = truckOffsets(list.length)
+          return list.map((t, i) => {
+            const followed = t.plate === followedPlate
+            return (
+              <button
+                key={`truck-${t.plate}`}
+                type="button"
+                className={`tf-map-truck${followed ? ' is-followed' : ''}${followedPlate && !followed ? ' is-dimmed' : ''}`}
+                style={{ left: `calc(${p.xPercent}% + ${offsets[i].dx}px)`, top: `calc(${p.yPercent}% + ${offsets[i].dy}px)`, ['--truck' as string]: TRUCK_COLOR[t.status] }}
+                onClick={() => onSelectTruck?.(t.plate)}
+                aria-label={`Camión ${t.plate}${t.label ? `, ${t.label}` : ''}. Seguir`}
+                aria-pressed={followed}
+                title={`${t.plate}${t.label ? ` · ${t.label}` : ''}`}
+              >
+                {followed ? <span className="tf-map-truck__plate">{t.plate}</span> : null}
+              </button>
+            )
+          })
+        })}
 
         {/* Leyenda compacta y plegable */}
         <div className="absolute bottom-2 left-2 z-20 max-w-[230px] rounded-lg border border-slate-200 bg-white/94 text-[10.5px] shadow-sm backdrop-blur-sm">

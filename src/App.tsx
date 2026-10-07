@@ -19,6 +19,7 @@ import { DescargasTab } from './features/real-truckflow/tabs/DescargasTab'
 import { ProductoTransformTab } from './features/real-truckflow/tabs/ProductoTransformTab'
 import { SeguridadTab } from './features/real-truckflow/tabs/SeguridadTab'
 import { PlantHome } from './pages/PlantHome'
+import { LiveMonitorPage } from './pages/LiveMonitorPage'
 import { PlantLayoutEditorPage } from './pages/PlantLayoutEditorPage'
 import { HomeUxPrototype } from './pages/HomeUxPrototype'
 import { DataWorkspace } from './features/real-truckflow/dataPreparation/DataWorkspace'
@@ -34,8 +35,10 @@ function App() {
       <EtlWorkbenchProvider>
         <Routes>
           <Route element={<AppShell />}>
-            <Route index element={<PlantHome />} />
-            <Route path="en-vivo" element={<PlantHome />} />
+            {/* Monitoreo de cámaras y flujo de camiones; la vista anterior queda como detalle. */}
+            <Route index element={<LiveMonitorPage />} />
+            <Route path="en-vivo" element={<LiveMonitorPage />} />
+            <Route path="en-vivo/detalle" element={<PlantHome />} />
             <Route path="producto/:id" element={<ProductoTransformTab />} />
             {/* Herramienta de configuración del plano (ubicar puntos clickeando la imagen). */}
             <Route path="herramientas/editor-plano" element={<PlantLayoutEditorPage />} />
