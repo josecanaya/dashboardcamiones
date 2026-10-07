@@ -9,7 +9,7 @@ import { createPortal } from 'react-dom'
 import { useLivePlantState } from '../hooks/useLivePlantState'
 import type { PlantLayout, PlantCameraGroup } from '../data/plantZones.types'
 import type { PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow } from '../services/live/plantStateApi'
-import { cameraCaptureImageUrl, findCameraCapture, formatDrainMinutes, getIdentifications, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
+import { cameraCaptureImageUrl, correctTruckLocation, findCameraCapture, formatDrainMinutes, getIdentifications, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
 import './liveMonitor.css'
 
 type Site = 'ricardone' | 'san_lorenzo'
@@ -177,6 +177,7 @@ export function LiveMonitorPage() {
                 site={site}
                 onClose={() => setFollowed(null)}
                 onChanged={() => setJourneyTick(t => t + 1)}
+                onDiscarded={() => { setFollowed(null); setTrucks(list => list.filter(t => t.plate !== followed)) }}
               />
             ) : (
               <>
@@ -234,7 +235,7 @@ export function LiveMonitorPage() {
 
 /** Ficha del camión seguido: dónde está, cuánto lleva, por dónde pasó y qué sigue. */
 /** Ficha del camión seguido: última captura (foto), pasos con su foto y recuperación de lecturas anteriores. */
-function TruckCard({ site, plate, row, journey, pointLabel, onClose, onChanged }: {
+function TruckCard({ site, plate, row, journey, pointLabel, onClose, onChanged, onDiscarded }: {
   site: Site
   plate: string
   row: TruckRow | null
@@ -242,6 +243,7 @@ function TruckCard({ site, plate, row, journey, pointLabel, onClose, onChanged }
   pointLabel: Map<string, string>
   onClose: () => void
   onChanged: () => void
+  onDiscarded: () => void
 }) {
   const status = (journey?.status ?? row?.status ?? 'normal') as TruckRow['status']
   const steps = journey?.timeline ?? []
@@ -270,11 +272,14 @@ function TruckCard({ site, plate, row, journey, pointLabel, onClose, onChanged }
         <div><dt>Última lectura</dt><dd>hace {minutes(journey?.minutesSinceLastDetection ?? row?.minutesSinceLastDetection)}</dd></div>
       </dl>
       {journey?.anomaly ? <p className="lm-card__alert">{journey.anomaly.rule}</p> : null}
+      <DiscardTruck site={site} plate={plate} onDone={onDiscarded} />
 
       <h3>Última captura</h3>
       {last?.deviceCode ? <CaptureShot key={`${last.deviceCode}-${last.at}`} device={last.deviceCode} at={last.at} plate={plate} caption={`${pointLabel.get(last.logicalSector ?? '') ?? last.label} · ${hhmm(last.at)}`} /> : <p className="lm-empty">{journey ? 'Sin cámara registrada en el último paso.' : 'Cargando…'}</p>}
 
-      <h3>Recorrido</h3>
+      <CrossPlant key={`cross-${plate}`} site={site} plate={plate} />
+
+      <h3>Recorrido en {SITE_NAME[site]}</h3>
       {journey ? <ol className="lm-steps">
         {steps.map((r, i) => <StepRow key={`${r.at}-${i}`} step={r} plate={plate} label={pointLabel.get(r.logicalSector ?? '') ?? r.label} current={i === steps.length - 1} />)}
         {journey.nextExpectedLabel ? <li className="is-next"><time>…</time><div><strong>{journey.nextExpectedLabel}</strong><span>Próximo punto esperado</span></div></li> : null}
@@ -286,6 +291,62 @@ function TruckCard({ site, plate, row, journey, pointLabel, onClose, onChanged }
 }
 
 const ENTRY_POINTS = new Set(['S0', 'S1', 'SL_S0', 'SL_S1'])
+const OTHER_SITE: Record<Site, Site> = { ricardone: 'san_lorenzo', san_lorenzo: 'ricardone' }
+
+/**
+ * Descartar una lectura que no es un camión (tractor, auto particular…): sale del estado de planta
+ * con el motivo registrado. No borra lecturas de cámara.
+ */
+function DiscardTruck({ site, plate, onDone }: { site: Site; plate: string; onDone: () => void }) {
+  const [open, setOpen] = useState(false)
+  const [reason, setReason] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  const reasons = ['Tractor o maquinaria', 'Auto particular / camioneta', 'Vehículo de servicio (agua, comida, prestadores)', 'Lectura duplicada o fantasma', 'Ya salió de planta']
+  async function discard() {
+    setBusy(true); setError('')
+    try {
+      const operator = (() => { try { return localStorage.getItem('id-operator') || null } catch { return null } })()
+      await correctTruckLocation(site, plate, { action: 'remove', reason, operator })
+      onDone()
+    } catch (e) { setError(e instanceof Error ? e.message : String(e)); setBusy(false) }
+  }
+  if (!open) return <button type="button" className="lm-discard__open" onClick={() => setOpen(true)}>Descartar: no es un camión / no está en planta</button>
+  return (
+    <div className="lm-discard" role="group" aria-label={`Descartar ${plate}`}>
+      <strong>¿Por qué descartás {plate}?</strong>
+      {reasons.map(r => <label key={r}><input type="radio" name={`discard-${plate}`} checked={reason === r} onChange={() => setReason(r)} disabled={busy} /> {r}</label>)}
+      <p>Sale del estado de planta de {SITE_NAME[site]} (deja de figurar esperando). Las lecturas de cámara no se borran.</p>
+      {error ? <p className="lm-error">No se descartó: {error}</p> : null}
+      <div className="lm-discard__actions">
+        <button type="button" onClick={() => setOpen(false)} disabled={busy}>Cancelar</button>
+        <button type="button" className="is-danger" disabled={!reason || busy} onClick={() => void discard()}>{busy ? 'Descartando…' : `Descartar ${plate}`}</button>
+      </div>
+    </div>
+  )
+}
+
+/** Recorrido de la misma patente en la otra planta (ej. Ricardone → volcable de San Lorenzo), con fotos. */
+function CrossPlant({ site, plate }: { site: Site; plate: string }) {
+  const [trips, setTrips] = useState<NonNullable<PredecessorsResponse['otherPlantTrips']> | null>(null)
+  useEffect(() => {
+    let alive = true
+    getTruckPredecessors(site, plate, 12).then(r => { if (alive) setTrips(r.otherPlantTrips ?? []) }).catch(() => { if (alive) setTrips([]) })
+    return () => { alive = false }
+  }, [site, plate])
+  if (!trips?.length) return null
+  const other = SITE_NAME[OTHER_SITE[site]]
+  return (
+    <section className="lm-cross">
+      <h3>{trips.some(t => t.gapMin >= 0) ? `Viene de ${other}` : `También en ${other}`}</h3>
+      {trips.map(t => <div key={t.journeyKey} className="lm-cross__trip">
+        <span>{hhmm(t.startAt)} – {hhmm(t.endAt)} · {t.gapMin >= 0 ? `salió ${minutes(t.gapMin)} antes de llegar acá` : 'después de este viaje'}</span>
+        <ol className="lm-steps">{t.reads.map((r, i) => <ReadRow key={`${r.at}-${i}`} read={r} plate={plate} />)}</ol>
+      </div>)}
+      <p className="lm-cross__hint">Si falta un paso en {other}, buscalo abajo en «Lecturas anteriores»: también propone lecturas mal leídas de {other}.</p>
+    </section>
+  )
+}
 
 /** Foto de una captura (escena + recorte de patente) pedida al DSS; avisa si leyó otra patente. */
 function CaptureShot({ device, at, plate, caption }: { device: string; at: string; plate: string; caption: string }) {
@@ -374,7 +435,9 @@ function Predecessors({ site, plate, autoOpen, firstLabel, reference, onChanged 
   async function link(c: PredecessorCandidate | { journeyKey: string; journeyUid: string | null; readPlate?: string }, mode: 'link' | 'unlink' | 'dismiss' = 'link') {
     setBusy(c.journeyKey); setError('')
     try {
-      await linkTruckJourney(site, plate, { journeyKey: c.journeyKey, journeyUid: mode === 'link' ? data?.targetJourneyUid ?? null : null, readPlate: 'readPlate' in c ? c.readPlate : undefined, operator, unlink: mode === 'unlink', dismiss: mode === 'dismiss' })
+      // Lectura de la otra planta: se corrige allá y sin unir viajes entre plantas.
+      const fromOther = 'otherSite' in c && c.otherSite
+      await linkTruckJourney(site, plate, { journeyKey: c.journeyKey, journeyUid: mode === 'link' && !fromOther ? data?.targetJourneyUid ?? null : null, readPlate: 'readPlate' in c ? c.readPlate : undefined, operator, unlink: mode === 'unlink', dismiss: mode === 'dismiss', sourceSite: fromOther && mode === 'link' ? OTHER_SITE[site] : undefined })
       setComparing(null); setTick(t => t + 1); if (mode !== 'dismiss') onChanged()
     } catch (e) { setError(e instanceof Error ? e.message : String(e)); throw e } finally { setBusy(null) }
   }

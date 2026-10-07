@@ -581,8 +581,11 @@ export function findPredecessors(events, nowMs, plate, ctx) {
   // El viaje actual del camión es el último de su patente; la nube a veces parte un recorrido en dos
   // viajes (BXN336 07/10: Ingreso 06:50 en un viaje y Playa 3 en otro), así que los viajes anteriores
   // de la misma patente también son candidatos.
-  const mine = all.filter((j) => j.plate === plate).sort((a, b) => b.rows[b.rows.length - 1].t - a.rows[a.rows.length - 1].t)
-  if (!mine.length) return { plate, firstAt: null, firstNode: null, firstNodeLabel: null, startsAtEntry: false, windowMs, candidates: [] }
+  // El viaje actual es de ESTA planta; los de la otra planta con la misma patente son su recorrido allá (R7, transiles).
+  const byLast = (a, b) => b.rows[b.rows.length - 1].t - a.rows[a.rows.length - 1].t
+  const mine = journeys.filter((j) => j.plate === plate).sort(byLast)
+  const otherMine = others.filter((j) => j.plate === plate).sort(byLast)
+  if (!mine.length) return { plate, firstAt: null, firstNode: null, firstNodeLabel: null, startsAtEntry: false, windowMs, candidates: [], previousTrips: [], otherPlantTrips: [] }
   const target = mine[0]
   const rows = target.rows
   const first = rows[0]
@@ -592,6 +595,8 @@ export function findPredecessors(events, nowMs, plate, ctx) {
   const candidates = []
   for (const j of all) {
     if (j.key === target.key || linked.has(j.key)) continue
+    // Mismo camión en la otra planta: no es una lectura perdida, va en otherPlantTrips.
+    if (j.otherSite && j.plate === plate) continue
     // Si el viaje siguió leyéndose después de la primera lectura buena, es otro camión.
     if (j.rows.some((r) => r.t > first.t + PREDECESSOR_SLACK_MS)) continue
     const before = j.rows.filter((r) => r.t <= first.t + PREDECESSOR_SLACK_MS && first.t - r.t <= windowMs)
@@ -631,8 +636,20 @@ export function findPredecessors(events, nowMs, plate, ctx) {
       gapMin: Math.round(Math.max(0, first.t - j.rows[j.rows.length - 1].t) / 60000),
       reads: j.rows.map((r) => ({ at: new Date(r.t).toISOString(), node: r.logical, nodeLabel: logicalLabel(r.logical), device: r.device })),
     }))
+  // Recorrido de la misma patente en la otra planta, en la ventana previa (y hasta ahora, por si va y vuelve).
+  const otherPlantTrips = otherMine
+    .filter((j) => first.t - j.rows[0].t <= windowMs)
+    .map((j) => ({
+      journeyKey: j.key,
+      startAt: new Date(j.rows[0].t).toISOString(),
+      endAt: new Date(j.rows[j.rows.length - 1].t).toISOString(),
+      gapMin: Math.round((first.t - j.rows[j.rows.length - 1].t) / 60000),
+      reads: j.rows.map((r) => ({ at: new Date(r.t).toISOString(), node: r.logical, nodeLabel: logicalLabel(r.logical), device: r.device })),
+    }))
+    .sort((a, b) => a.startAt.localeCompare(b.startAt))
   return {
     previousTrips,
+    otherPlantTrips,
     plate,
     firstAt: new Date(first.t).toISOString(),
     firstNode: first.logical,

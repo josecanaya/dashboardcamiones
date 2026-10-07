@@ -273,7 +273,10 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     const action = String(correction?.action || '')
     manualOverrides[key] ||= {}
     if (action === 'remove') {
-      manualOverrides[key][plate] = { action, journeyUid, updatedAt: new Date().toISOString() }
+      // Motivo opcional: «no es un camión» (tractor, auto particular…) queda registrado con la quita.
+      const reason = correction?.reason ? String(correction.reason).slice(0, 120) : null
+      const operator = correction?.operator ? String(correction.operator).slice(0, 80) : null
+      manualOverrides[key][plate] = { action, journeyUid, reason, operator, updatedAt: new Date().toISOString() }
     } else if (action === 'move') {
       const zoneId = String(correction?.zoneId || '').trim()
       const zone = zonesOfSite(key).find((item) => item.id === zoneId)
@@ -375,7 +378,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
 
   /** Vincula (o desvincula) un viaje mal leído a un camión. Mismo registro y opId que las decisiones. */
   function linkJourney(site, plate, body) {
-    const { key } = ensureSite(site)
+    // Una lectura de la otra planta se corrige en ESA planta (sus eventos son los que cambian de patente).
+    const { key } = ensureSite(body?.sourceSite ? String(body.sourceSite) : site)
     const want = normalizePlate(plate)
     const journeyKey = String(body?.journeyKey || '').trim()
     if (!want || !journeyKey) throw new PlantStateError('link_invalid', 400, 'patente y viaje requeridos')

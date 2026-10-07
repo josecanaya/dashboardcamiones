@@ -54,6 +54,19 @@ describe('findPredecessors', () => {
     expect(r.candidates.some((c) => c.journeyKey === 'v1')).toBe(false)
   })
 
+  it('en San Lorenzo devuelve su recorrido en Ricardone y no lo propone como lectura perdida', () => {
+    const ric = [
+      ev('AB675DP', 'r1', '2-S1', 'RicPreIngInFr', '2026-09-08T08:00:00-03:00'),
+      ev('AB675DP', 'r1', '2-S2', 'RicCal03', '2026-09-08T08:30:00-03:00'),
+      ev('AB675DP', 'r1', '2-S3', 'RicEgrCamFrente', '2026-09-08T08:50:00-03:00'),
+    ]
+    const sl = [ev('AB675DP', 's1', 'SL_VOLCABLE', 'SLZVolcableC1', '2026-09-08T09:40:00-03:00')]
+    const r = findPredecessors(sl, now, 'AB675DP', { catalog, otherSiteEvents: ric })
+    expect(r.otherPlantTrips.map((t) => t.journeyKey)).toEqual(['r1'])
+    expect(r.otherPlantTrips[0].reads.map((x) => x.node)).toEqual(['S1', 'S2', 'S3'])
+    expect(r.candidates.some((c) => c.journeyKey === 'r1')).toBe(false)
+  })
+
   it('un viaje ya vinculado no se vuelve a proponer y el vínculo reescribe sus eventos', () => {
     const r = findPredecessors(events, now, 'AB123CD', { catalog, linkedKeys: ['jBad'] })
     expect(r.candidates.some((c) => c.journeyKey === 'jBad')).toBe(false)

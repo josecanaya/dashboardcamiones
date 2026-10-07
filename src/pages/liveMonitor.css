@@ -155,3 +155,13 @@
 /* Pasos del camión seguido sobre el plano */
 .tf-map-step { position: absolute; z-index: 32; width: 20px; height: 20px; margin: -32px 0 0 4px; display: grid; place-items: center; border-radius: 50%; background: #7c3aed; color: #fff; font: 800 11px system-ui, sans-serif; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.35); pointer-events: none; }
 .tf-map-step--next { background: #f0fdf4; color: #15803d; border: 2px dashed #86efac; }
+
+.lm-discard__open { width: 100%; margin: 0 0 10px; padding: 7px; border-radius: 8px; border: 1px solid #e3b4b0; color: #9a2a22; background: #fff; font-size: 12px; font-weight: 700; }
+.lm-discard { margin: 0 0 12px; padding: 10px; border-radius: 10px; background: #fdecec; display: grid; gap: 4px; font-size: 13px; }
+.lm-discard label { display: flex; gap: 6px; align-items: center; }.lm-discard p { margin: 4px 0 0; font-size: 11px; color: #7a3a33; }
+.lm-discard__actions { display: flex; gap: 6px; justify-content: flex-end; margin-top: 4px; }
+.lm-discard__actions button { padding: 6px 12px; border-radius: 8px; border: 1px solid #e3b4b0; background: #fff; font-weight: 700; font-size: 12px; }
+.lm-discard__actions .is-danger { background: #b4352d; border-color: #b4352d; color: #fff; }
+.lm-cross { margin: 0 0 12px; padding: 10px; border-radius: 10px; background: #eef6ff; }
+.lm-cross h3 { color: #1d4ed8; }.lm-cross__trip > span { display: block; font-size: 11px; color: var(--lm-muted); margin-bottom: 4px; }
+.lm-cross__hint { margin: 4px 0 0; font-size: 11px; color: var(--lm-muted); }

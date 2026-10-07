@@ -296,6 +296,8 @@ export type PredecessorsResponse = {
   candidates: PredecessorCandidate[]
   /** Viajes anteriores de la misma patente (otra vuelta): contexto, no se vinculan. */
   previousTrips?: { journeyKey: string; startAt: string; endAt: string; gapMin: number; reads: { at: string; node: string; nodeLabel: string; device: string }[] }[]
+  /** Recorrido de la misma patente en la otra planta (Ricardone ↔ San Lorenzo). */
+  otherPlantTrips?: { journeyKey: string; startAt: string; endAt: string; gapMin: number; reads: { at: string; node: string; nodeLabel: string; device: string }[] }[]
   linked: { journeyKey: string; plate: string; journeyUid: string | null }[]
 }
 
@@ -308,7 +310,7 @@ export async function getTruckPredecessors(site: string, plate: string, hours = 
 }
 
 /** Vincula (o desvincula) un viaje mal leído al camión. */
-export async function linkTruckJourney(site: string, plate: string, body: { journeyKey: string; journeyUid?: string | null; readPlate?: string; operator?: string | null; unlink?: boolean; dismiss?: boolean }): Promise<void> {
+export async function linkTruckJourney(site: string, plate: string, body: { journeyKey: string; journeyUid?: string | null; readPlate?: string; operator?: string | null; unlink?: boolean; dismiss?: boolean; sourceSite?: string }): Promise<void> {
   const res = await fetchLocalTruckflow(`/live/trucks/${encodeURIComponent(plate)}/link?site=${encodeURIComponent(site)}`, {
     method: 'POST',
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
@@ -329,7 +331,7 @@ export async function getZoneTrucks(site: string, zoneId: string): Promise<Truck
 export async function correctTruckLocation(
   site: string,
   plate: string,
-  correction: { action: 'remove' } | { action: 'move'; zoneId: string }
+  correction: { action: 'remove'; reason?: string; operator?: string | null } | { action: 'move'; zoneId: string }
 ): Promise<void> {
   const res = await fetchLocalTruckflow(`/live/trucks/${encodeURIComponent(plate)}/location?site=${encodeURIComponent(site)}`, {
     method: 'PATCH',
