@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { IdentificationItem, IdentificationLevel, IdentificationsResponse } from '../../services/live/plantStateApi'
-import { decideIdentification, getIdentifications } from '../../services/live/plantStateApi'
+import { claimIdentification, decideIdentification, getIdentifications, newOpId } from '../../services/live/plantStateApi'
 import { CapturePhoto } from './CapturePhoto'
 import { ReviewCandidates, type ReviewDecision, type SiblingRead } from './ReviewCandidates'
 import type { DecisionOptions } from '../../services/live/plantStateApi'
@@ -49,6 +49,18 @@ export function openIdentificationCase(site: Site, fragmentKey: string) {
   try { sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ...loadSession(), search: '', point: '', selected: `${site}:${fragmentKey}`, locate: true })) } catch { /* sin storage */ }
 }
 
+/** Identidad del puesto: id por pestaña (para reservas) y nombre elegido por el operador (para el registro). */
+const SEAT_ID = (() => {
+  try {
+    const v = sessionStorage.getItem('id-seat') ?? newOpId()
+    sessionStorage.setItem('id-seat', v)
+    return v
+  } catch { return newOpId() }
+})()
+function loadOperator() {
+  try { return localStorage.getItem('id-operator') ?? '' } catch { return '' }
+}
+
 type SiteState ={ data?: IdentificationsResponse; error?: string; fetchedAt?: number }
 
 export function IdentificationPanel({ sites, mode = 'desk', onOpen }: { sites: Site[]; mode?: 'desk' | 'monitor'; onOpen?: () => void }) {
@@ -61,6 +73,8 @@ export function IdentificationPanel({ sites, mode = 'desk', onOpen }: { sites: S
   const [loaded, setLoaded] = useState(false)
   const [receipt, setReceipt] = useState('')
   const [now, setNow] = useState(Date.now())
+  const [operator, setOperatorState] = useState(loadOperator)
+  const setOperator = (v: string) => { setOperatorState(v); try { localStorage.setItem('id-operator', v) } catch { /* sin storage */ } }
   const sitesKey = sites.join(',')
   const generation = useRef(0)
   // EV-34: cada planta se carga sola; una falla no descarta la otra, y respuestas de un alcance viejo se ignoran.
@@ -109,15 +123,30 @@ export function IdentificationPanel({ sites, mode = 'desk', onOpen }: { sites: S
   async function decide(row: Row, decision: ReviewDecision | { action: 'clear'; reason?: string }, options: DecisionOptions = {}, opId?: string) {
     setBusy(true)
     try {
-      const result = await decideIdentification(row.site, row.item.fragmentKey, decision, { ...options, expectedVersion: row.item.decision?.updatedAt ?? null }, opId)
+      const { stay, ...sendOptions } = options
+      const isNote = decision.action === 'note'
+      const result = await decideIdentification(row.site, row.item.fragmentKey, decision, { ...sendOptions, operator: operator || null, ...(isNote ? {} : { expectedVersion: row.item.decision?.updatedAt ?? null }) }, opId)
       const idx = visible.findIndex(r => r.key === row.key)
       const next = visible.filter(r => r.key !== row.key && !(options.applyTo ?? []).includes(r.item.fragmentKey))[Math.max(0, idx)] ?? null
-      const what = decision.action === 'confirm' ? `${row.item.readPlate} → ${decision.plate}` : decision.action === 'reject' ? `${row.item.readPlate} descartada (${decision.reason})` : decision.action === 'defer' ? `${row.item.readPlate} pospuesta (${decision.reason})` : `${row.item.readPlate} reabierta para revisión humana`
-      setReceipt(`Guardado: ${what} · ${siteName(row.site)} · ${row.item.nodeLabel} · ${stamp(row.item.at)}${result.siblings.length ? ` · también ${result.siblings.length} lectura(s) marcada(s)` : ''}${result.replayed ? ' · (ya estaba aplicado)' : ''}${next && decision.action !== 'clear' ? `. Abierto ahora: ${next.item.readPlate} (${next.item.nodeLabel}).` : '.'}`)
-      patch({ selected: decision.action === 'clear' ? row.key : next?.key ?? null })
+      const what = decision.action === 'note' ? `nota en ${row.item.readPlate}` : decision.action === 'confirm' ? `${row.item.readPlate} → ${decision.plate}` : decision.action === 'reject' ? `${row.item.readPlate} descartada (${decision.reason})` : decision.action === 'defer' ? `${row.item.readPlate} pospuesta (${decision.reason})` : `${row.item.readPlate} reabierta para revisión humana`
+      setReceipt(`Guardado: ${what} · ${siteName(row.site)} · ${row.item.nodeLabel} · ${stamp(row.item.at)}${result.siblings.length ? ` · también ${result.siblings.length} lectura(s) marcada(s)` : ''}${result.replayed ? ' · (ya estaba aplicado)' : ''}${next && !stay && !isNote && decision.action !== 'clear' ? `. Abierto ahora: ${next.item.readPlate} (${next.item.nodeLabel}).` : '.'}`)
+      patch({ selected: stay || isNote || decision.action === 'clear' ? row.key : next?.key ?? null })
       await load()
     } finally { setBusy(false) }
   }
+
+  // EV-06: reserva blanda del caso abierto, renovada cada minuto y liberada al salir.
+  const activeKey = mode === 'desk' && active && isPending(active.item) ? active.key : null
+  useEffect(() => {
+    if (!activeKey) return
+    const [site, ...rest] = activeKey.split(':')
+    const fk = rest.join(':')
+    const claim = () => claimIdentification(site, fk, SEAT_ID, operator || null).catch(() => undefined)
+    void claim()
+    const t = setInterval(() => void claim(), 60_000)
+    return () => { clearInterval(t); void claimIdentification(site, fk, SEAT_ID, null, true).catch(() => undefined) }
+  }, [activeKey, operator])
+  const otherSeat = (item: IdentificationItem) => item.claim && item.claim.by !== SEAT_ID ? item.claim : null
 
   if (mode === 'monitor') return <section className="id-monitor" aria-label="Alertas de patentes">
     <div className="id-monitor__icon" aria-hidden="true">{current.length + previous.length ? '!' : '✓'}</div>
@@ -131,7 +160,8 @@ export function IdentificationPanel({ sites, mode = 'desk', onOpen }: { sites: S
 
   return <section className="id-desk" aria-label="Bandeja de confirmación de patentes">
     <header className="id-desk__header"><div><span className="id-eyebrow">Supervisión de reconocimiento</span><h2>Bandeja de patentes</h2><p>El sistema reconoce. Vos resolvés los casos que necesitan una decisión.</p></div>
-      <div className="id-auto">{sites.map(s => <div key={s}><span className={state[s]?.error ? 'is-down' : stale.includes(s) ? 'is-stale' : ''} /> {siteName(s)}: {state[s]?.error ? 'sin respuesta' : state[s]?.fetchedAt ? `actualizado ${new Date(state[s]!.fetchedAt!).toLocaleTimeString('es-AR', { timeZone: TZ, hour12: false })}` : 'consultando…'}</div>)}<small>Indica la última respuesta de la bandeja, no que las cámaras estén leyendo.</small></div></header>
+      <div className="id-auto">{sites.map(s => <div key={s}><span className={state[s]?.error ? 'is-down' : stale.includes(s) ? 'is-stale' : ''} /> {siteName(s)}: {state[s]?.error ? 'sin respuesta' : state[s]?.fetchedAt ? `actualizado ${new Date(state[s]!.fetchedAt!).toLocaleTimeString('es-AR', { timeZone: TZ, hour12: false })}` : 'consultando…'}</div>)}<small>Indica la última respuesta de la bandeja, no que las cámaras estén leyendo.</small>
+        <label className="id-operator">Operador <input value={operator} onChange={e => setOperator(e.target.value)} placeholder="Tu nombre o puesto" aria-label="Nombre del operador o puesto" /></label></div></header>
     <div className="id-summary"><div><strong>{loaded ? current.length : '—'}</strong><span>Casos por confirmar · turno actual</span></div><div><strong>{loaded ? previous.length : '—'}</strong><span>Casos pendientes anteriores</span></div><div><strong>{resolved.filter(r => r.item.level === 'casi_seguro').length}</strong><span>Aplicadas automáticamente · archivo</span></div><div><strong>{resolved.filter(r => r.item.level === 'confirmado').length}</strong><span>Confirmadas por operador · archivo</span></div></div>
     <div className="id-toolbar"><div role="group" aria-label="Cola de revisión">{([['actual', 'Turno actual', current.length], ['anteriores', 'Turnos anteriores', previous.length], ['resueltas', 'Resueltas', resolved.length]] as const).map(([id, label, count]) => <button type="button" key={id} aria-pressed={queue === id} onClick={() => patch({ queue: id, selected: null })}>{label} <b>{count}</b></button>)}</div>
       <input aria-label="Buscar patente o candidato" placeholder="Buscar patente o candidato" value={search} onChange={e => patch({ search: e.target.value })} />
@@ -146,11 +176,15 @@ export function IdentificationPanel({ sites, mode = 'desk', onOpen }: { sites: S
         <span className={`id-level id-level--${row.item.level}`}>{row.item.decision?.action === 'defer' ? 'Pospuesta' : row.item.decision?.action === 'review' ? 'Revisión solicitada' : LABEL[row.item.level]}</span>
         <strong>{row.item.readPlate === 'SIN_PATENTE' ? 'Sin lectura' : row.item.readPlate}</strong><span>{siteName(row.site)} · {row.item.nodeLabel}</span>
         <small>{stamp(row.item.at)}{queue !== 'resueltas' ? ` · hace ${age(row.item.at, now)}` : ''} · {row.item.candidates.length} candidatos{row.item.events > 1 ? ` · ${row.item.events} capturas` : ''}</small>
+        {otherSeat(row.item) ? <small className="id-claim">En revisión en otro puesto{otherSeat(row.item)!.label ? ` (${otherSeat(row.item)!.label})` : ''}</small> : null}
+        {row.item.decision?.notes?.length ? <small className="id-note-count">{row.item.decision.notes.length} nota(s) de relevo</small> : null}
         {row.item.decision?.action === 'defer' ? <small className="id-defer">Motivo: {row.item.decision.reason}{row.item.decision.attempts ? ` · ${row.item.decision.attempts} intento(s)` : ''}</small> : null}
       </button>)}
       {!visible.length ? <p className="id-empty">{emptyMessage}{filtered && queueRows.length ? <button type="button" onClick={() => patch({ search: '', point: '' })}>Limpiar filtros</button> : null}</p> : null}</aside>
-    <main className="id-case">{active ? <><header className="id-case__header"><div><span className="id-eyebrow">{siteName(active.site)} · {active.item.nodeLabel}</span><h3>{isPending(active.item) ? 'Confirmar identidad del camión' : 'Identificación resuelta'}</h3><p>{stamp(active.item.at)} · {active.item.deviceCode}</p></div><span className={`id-level id-level--${active.item.level}`}>{LABEL[active.item.level]}</span></header>
+    <main className="id-case">{active ? <><header className="id-case__header"><div><span className="id-eyebrow">{siteName(active.site)} · {active.item.nodeLabel}</span><h3>{isPending(active.item) ? 'Confirmar identidad del camión' : 'Identificación resuelta'}</h3><p>{stamp(active.item.at)} · <span title="Código de cámara">{active.item.deviceCode}</span></p></div><span className={`id-level id-level--${active.item.level}`}>{LABEL[active.item.level]}</span></header>
       <p className="id-reason">{active.item.reason}</p>
+      {otherSeat(active.item) ? <p className="id-claim" role="status">Este caso está abierto en otro puesto{otherSeat(active.item)!.label ? ` (${otherSeat(active.item)!.label})` : ''}. Si guardás y el otro ya decidió, el sistema te avisará del conflicto.</p> : null}
+      <CaseNotes key={`notes-${active.key}`} notes={active.item.decision?.notes ?? []} busy={busy} onAdd={text => decide(active, { action: 'note', text })} />
       {isPending(active.item)
         ? <ReviewCandidates key={active.key} site={active.site} fragmentKey={active.item.fragmentKey} readPlate={active.item.readPlate} validFormat={active.item.validFormat} deviceCode={active.item.deviceCode} at={active.item.at} nodeLabel={active.item.nodeLabel} candidates={active.item.candidates} busy={busy} siblings={siblingsOf(active)} onDecide={(d, o, id) => decide(active, d, o, id)} />
         : <ResolvedView key={active.key} row={active} busy={busy} onReopen={reason => decide(active, { action: 'clear', reason })} />}</>
@@ -161,6 +195,20 @@ export function IdentificationPanel({ sites, mode = 'desk', onOpen }: { sites: S
         {queue === 'actual' && previous.length ? <button type="button" onClick={() => patch({ queue: 'anteriores', selected: null })}>Revisar {previous.length} pendientes anteriores</button> : null}</div>}</main></div>
     <footer className="id-footer">Cada decisión registra lectura, cámara, candidatos, motivo y versión para auditoría y futura calibración. El entrenamiento automático del modelo todavía no está conectado.</footer>
   </section>
+}
+
+/** EV-21: notas de relevo por caso; no cambian el estado ni la decisión. */
+function CaseNotes({ notes, busy, onAdd }: { notes: { text: string; operator: string | null; at: string }[]; busy: boolean; onAdd: (text: string) => Promise<void> }) {
+  const [text, setText] = useState('')
+  const [error, setError] = useState('')
+  return <div className="id-notes">
+    {notes.length ? <ul>{notes.map(n => <li key={n.at}><b>{stamp(n.at)}{n.operator ? ` · ${n.operator}` : ''}:</b> {n.text}</li>)}</ul> : null}
+    <form onSubmit={e => { e.preventDefault(); const t = text.trim(); if (!t) return; setError(''); onAdd(t).then(() => setText('')).catch(err => setError(err instanceof Error ? err.message : String(err))) }}>
+      <input aria-label="Nota de relevo" placeholder="Nota para el próximo turno (qué se intentó, qué falta)" value={text} onChange={e => setText(e.target.value)} />
+      <button type="submit" disabled={busy || !text.trim()}>Agregar nota</button>
+      {error ? <span role="alert">No se guardó: {error}</span> : null}
+    </form>
+  </div>
 }
 
 /** EV-22: ver una decisión no la reabre; reabrir pide motivo. */

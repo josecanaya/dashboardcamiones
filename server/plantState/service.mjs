@@ -345,7 +345,41 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     startBackground(key)
     startBackground(otherSite(key))
     if (st.events.size === 0) await refresh(key, { fullHour: true })
-    return identifyRaw(key, [...st.history.values()])
+    return withClaims(key, identifyRaw(key, [...st.history.values()]))
+  }
+
+  /*
+   * Reserva blanda de un caso (EV-06): el puesto que lo tiene abierto la renueva cada minuto.
+   * No bloquea guardar (la versión ya evita sobrescrituras); avisa a los demás que alguien lo atiende.
+   */
+  const CLAIM_TTL_MS = 2 * 60_000
+  /** @type {Map<string, { by: string, label: string|null, at: number }>} */
+  const claims = new Map()
+  function claimIdentification(site, fragmentKey, body) {
+    const { key } = ensureSite(site)
+    const id = `${key}:${String(fragmentKey || '').trim()}`
+    const by = String(body?.by || '').slice(0, 80)
+    if (!by) throw new PlantStateError('claimant_required', 400, 'puesto requerido')
+    const nowMs = Date.now()
+    const held = claims.get(id)
+    if (body?.release) {
+      if (held?.by === by) claims.delete(id)
+      return { ok: true, claim: null }
+    }
+    if (held && held.by !== by && nowMs - held.at < CLAIM_TTL_MS) return { ok: false, claim: { by: held.by, label: held.label, at: new Date(held.at).toISOString() } }
+    claims.set(id, { by, label: body?.label ? String(body.label).slice(0, 80) : null, at: nowMs })
+    return { ok: true, claim: { by, label: body?.label ?? null, at: new Date(nowMs).toISOString() } }
+  }
+  function withClaims(key, result) {
+    const nowMs = Date.now()
+    if (!claims.size) return result
+    return {
+      ...result,
+      items: result.items.map((it) => {
+        const c = claims.get(`${key}:${it.fragmentKey}`)
+        return c && nowMs - c.at < CLAIM_TTL_MS ? { ...it, claim: { by: c.by, label: c.label, at: new Date(c.at).toISOString() } } : it
+      }),
+    }
   }
 
   async function getRecentCaptures(site, limit = 60) {
@@ -392,20 +426,28 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     const reason = body?.reason ? String(body.reason).slice(0, 300) : null
     const operator = body?.operator ? String(body.operator).slice(0, 80) : null
     const previous = identificationDecisions[key][fk] ?? null
-    if (action === 'confirm') {
+    // Notas de relevo (EV-21): se conservan a través de cualquier decisión.
+    const notes = Array.isArray(previous?.notes) ? previous.notes : undefined
+    if (action === 'note') {
+      const text = String(body?.text || '').trim().slice(0, 500)
+      if (!text) throw new PlantStateError('note_required', 400, 'nota vacía')
+      identificationDecisions[key][fk] = { ...(previous ?? { action: 'note' }), notes: [...(notes ?? []), { text, operator, at: now }].slice(-20), updatedAt: now }
+    } else if (action === 'confirm') {
       const plate = normalizePlate(body?.plate)
       if (!plate) throw new PlantStateError('plate_required', 400, 'patente requerida')
-      identificationDecisions[key][fk] = { action, plate, journeyUid: body?.journeyUid ? String(body.journeyUid) : null, reason, operator, updatedAt: now }
+      // EV-15: atributos del DSS que el operador marcó como mal detectados (no se editan los originales).
+      const attrFlags = Array.isArray(body?.attrFlags) ? body.attrFlags.map(String).filter((k) => ['color', 'marca', 'tipo'].includes(k)) : undefined
+      identificationDecisions[key][fk] = { action, plate, journeyUid: body?.journeyUid ? String(body.journeyUid) : null, reason, operator, attrFlags, notes, updatedAt: now }
     } else if (action === 'reject') {
       if (!reason) throw new PlantStateError('reason_required', 400, 'motivo requerido para descartar')
-      identificationDecisions[key][fk] = { action, reason, operator, updatedAt: now }
+      identificationDecisions[key][fk] = { action, reason, operator, notes, updatedAt: now }
     } else if (action === 'defer') {
       // EV-08: "no puedo determinar" — sigue pendiente, con motivo y próximo paso.
       if (!reason) throw new PlantStateError('reason_required', 400, 'motivo requerido')
-      identificationDecisions[key][fk] = { action, reason, operator, attempts: (previous?.attempts ?? 0) + 1, updatedAt: now }
+      identificationDecisions[key][fk] = { action, reason, operator, attempts: (previous?.attempts ?? 0) + 1, notes, updatedAt: now }
     } else if (action === 'clear' || action === 'review') {
       // EV-23: reabrir deja "revisión humana solicitada": la asignación automática no la vuelve a resolver sola.
-      identificationDecisions[key][fk] = { action: 'review', reason, operator, previous, updatedAt: now }
+      identificationDecisions[key][fk] = { action: 'review', reason, operator, previous: previous ? { ...previous, notes: undefined } : null, notes, updatedAt: now }
     } else {
       throw new PlantStateError('decision_invalid', 400, 'acción inválida')
     }
@@ -440,6 +482,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
           journeyUid: identificationDecisions[key][fk]?.journeyUid ?? null,
           reason,
           operator,
+          attrFlags: identificationDecisions[key][fk]?.attrFlags ?? null,
+          note: action === 'note' ? identificationDecisions[key][fk]?.notes?.at(-1)?.text ?? null : null,
           previousVersion: previous?.updatedAt ?? null,
           previousAction: previous?.action ?? null,
           readPlate: item?.readPlate ?? null,
@@ -746,6 +790,10 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       return { ...zone, status: resolveZoneStatus(zone, bl, drainEdge) }
     })
     snap.plant = { ...snap.plant, bottleneck: resolveBottleneck(snap.zones) }
+    // Frescura de la fuente (EV-35): último evento de cámara recibido y último error de consulta,
+    // distintos de la hora en que el navegador recibió este snapshot.
+    const lastEventMs = st.lastOccurredAt ? getEventLiveInstantMs({ occurredAt: st.lastOccurredAt }) : NaN
+    snap.source = { lastEventAt: Number.isFinite(lastEventMs) ? new Date(lastEventMs).toISOString() : null, lastRefreshAt: st.lastRefreshMs ? new Date(st.lastRefreshMs).toISOString() : null, lastError: st.lastError ?? null }
 
     return snap
   }
@@ -782,6 +830,7 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     getRecentCaptures,
     decideIdentification,
     getIdentificationOp,
+    claimIdentification,
     PlantStateError,
   }
 }

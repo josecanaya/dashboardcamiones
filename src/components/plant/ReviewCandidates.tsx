@@ -53,7 +53,7 @@ export function ReviewCandidates({
   deviceCode,
   at,
   nodeLabel,
-  candidates,
+  candidates: liveCandidates,
   busy,
   onDecide,
   siblings = [],
@@ -72,7 +72,19 @@ export function ReviewCandidates({
   siblings?: SiblingRead[]
   compact?: boolean
 }) {
-  const [typed, setTyped] = useState('')
+  // EV-36: lo que se está inspeccionando queda fijo; si llegan candidatos nuevos se avisa y se actualiza a pedido.
+  const signature = (list: IdentificationCandidate[]) => list.map((c) => `${c.plate}:${c.score}`).join('|')
+  const [candidates, setCandidates] = useState(liveCandidates)
+  const changed = signature(liveCandidates) !== signature(candidates)
+  // EV-19: el borrador de patente escrita sobrevive al cambio de vista.
+  const draftKey = `id-draft:${site}:${fragmentKey}`
+  const [typed, setTypedState] = useState(() => {
+    try { return sessionStorage.getItem(draftKey) ?? '' } catch { return '' }
+  })
+  const setTyped = (v: string) => {
+    setTypedState(v)
+    try { if (v) sessionStorage.setItem(draftKey, v); else sessionStorage.removeItem(draftKey) } catch { /* sin storage */ }
+  }
   const [openReads, setOpenReads] = useState<string | null>(null)
   const [ev, setEv] = useState<IdentificationEvidence | null>(null)
   const [evError, setEvError] = useState<string | null>(null)
@@ -132,11 +144,17 @@ export function ReviewCandidates({
 
   return (
     <div ref={rootRef} className="space-y-3">
+      {changed && !verification ? (
+        <div className="flex flex-wrap items-center gap-2 rounded-md border border-sky-200 bg-sky-50 px-2 py-1 text-[12px] text-sky-900" role="status">
+          Llegaron candidatos o puntajes nuevos para esta lectura.
+          <button type="button" className="underline" onClick={() => { setCandidates(liveCandidates); setEvAttempt((n) => n + 1) }}>Actualizar</button>
+        </div>
+      ) : null}
       <div className={compact ? 'space-y-1' : 'flex flex-wrap items-start gap-4'}>
         <div>
-          <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">La cámara leyó</div>
+          <div className="text-[12px] font-semibold uppercase tracking-wide text-slate-500">La cámara leyó</div>
           <div className="font-mono text-[18px] font-bold text-slate-900">{readPlate}</div>
-          <div className="text-[11px] text-slate-500">
+          <div className="text-[12px] text-slate-500">
             {deviceCode} · {nodeLabel} · {hhmm(at)}
           </div>
           <div className="mt-1 text-[12px] text-slate-700">
@@ -164,7 +182,7 @@ export function ReviewCandidates({
       {ranked.length ? (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-[12px]">
-            <thead className="text-[11px] text-slate-500">
+            <thead className="text-[12px] text-slate-500">
               <tr>
                 <th className="py-1 pr-2">Candidato</th>
                 <th className="py-1 pr-2">Patente</th>
@@ -193,7 +211,7 @@ export function ReviewCandidates({
                       </button>
                       <button type="button" className="ml-2 text-xs text-slate-500" onClick={() => setOpenReads(openReads === c.plate ? null : c.plate)} aria-label={`Ver últimas lecturas de ${c.plate}`}>{openReads === c.plate ? '▾' : '▸'}</button>
                       {c.photoDevice && c.photoAt ? (
-                        <CapturePhoto deviceCode={c.photoDevice} at={c.photoAt} readPlate={c.plate} buttonClassName="mt-1 rounded border border-slate-300 px-1.5 py-0.5 text-[11px]" />
+                        <CapturePhoto deviceCode={c.photoDevice} at={c.photoAt} readPlate={c.plate} buttonClassName="mt-1 rounded border border-slate-300 px-1.5 py-0.5 text-[12px]" />
                       ) : null}
                     </td>
                     <td className="py-1.5 pr-2">{pct(c.similarity)} parecida</td>
@@ -222,7 +240,7 @@ export function ReviewCandidates({
                   {openReads === c.plate ? (
                     <tr>
                       <td colSpan={8} className="bg-slate-50 px-3 py-2">
-                        <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">Últimas lecturas de {c.plate}</div>
+                        <div className="mb-1 text-[12px] font-semibold uppercase tracking-wide text-slate-500">Últimas lecturas de {c.plate}</div>
                         {c.recentReads?.length ? (
                           <ul className="space-y-1">
                             {c.recentReads.map((x) => (
@@ -230,7 +248,7 @@ export function ReviewCandidates({
                                 <span className="w-12 font-mono tabular-nums text-slate-600">{hhmm(x.at)}</span>
                                 <span className="w-40 text-slate-800">{x.nodeLabel}{x.otherSite ? ' (otra planta)' : ''}</span>
                                 <span className="w-36 text-slate-500">{x.device}</span>
-                                <CapturePhoto deviceCode={x.device} at={x.at} readPlate={c.plate} buttonClassName="rounded border border-slate-300 px-1.5 py-0.5 text-[11px]" />
+                                <CapturePhoto deviceCode={x.device} at={x.at} readPlate={c.plate} buttonClassName="rounded border border-slate-300 px-1.5 py-0.5 text-[12px]" />
                               </li>
                             ))}
                           </ul>
@@ -266,14 +284,14 @@ export function ReviewCandidates({
               ) : null}
             </tbody>
           </table>
-          {evError ? <p className="mt-1 text-[11px] text-rose-700">No se pudo calcular la evidencia: {evError}</p> : null}
+          {evError ? <p className="mt-1 text-[12px] text-rose-700">No se pudo calcular la evidencia: {evError}</p> : null}
           {evError || ev?.dssError ? (
-            <p className="mt-1 text-[11px] text-rose-700">
+            <p className="mt-1 text-[12px] text-rose-700">
               {ev?.dssError ? `El DSS no respondió (${ev.dssError}): color, marca y tipo quedaron sin dato y la probabilidad no los considera. ` : ''}
               <button type="button" className="underline" onClick={() => setEvAttempt((n) => n + 1)}>Reintentar evidencia</button>
             </p>
           ) : null}
-          {ev && !ev.dss ? <p className="mt-1 text-[11px] text-slate-500">Sin DSS configurado: color, marca y tipo no entran en la probabilidad.</p> : null}
+          {ev && !ev.dss ? <p className="mt-1 text-[12px] text-slate-500">Sin DSS configurado: color, marca y tipo no entran en la probabilidad.</p> : null}
         </div>
       ) : (
         <div className="text-[12px] text-slate-500">Ningún camión en planta se parece a esta lectura.</div>

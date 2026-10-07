@@ -132,3 +132,4 @@
 .tf-zone-trucks__list.is-loading { opacity:.5; pointer-events:none; }
 .tf-colas-detail { margin-top:12px; display:grid; gap:8px; }.tf-colas-cameras { display:flex; flex-wrap:wrap; gap:6px; }
 .tf-watch-strip { margin:4px 0; padding:6px 12px; border-radius:8px; background:#f1f6f3; font-size:12px; color:#3d5a4a; }.tf-watch-strip.has-alerts { background:#fff4e5; color:#8a5419; }.tf-watch-strip button { margin-left:8px; text-decoration:underline; }
+.tf-source-freshness { display:flex; flex-wrap:wrap; gap:12px; font-size:11px; }.tf-source-freshness .is-stale { color:#b26b12; }.tf-source-freshness .is-down { color:#b4352d; font-weight:600; }

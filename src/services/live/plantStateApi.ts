@@ -120,6 +120,8 @@ export type PlantSnapshot = {
   edges: EdgeState[]
   trucksOpen: number
   generatedInMs: number
+  /** Frescura de la fuente de cámaras (no del navegador). Ausente en servidores viejos. */
+  source?: { lastEventAt: string | null; lastRefreshAt: string | null; lastError: string | null }
 }
 
 /** "2 h 48" · "9 min" · null si no hay tasa relevada. */
@@ -361,7 +363,31 @@ export interface IdentificationItem {
   assignedPlate: string | null
   assignedJourneyUid: string | null
   candidates: IdentificationCandidate[]
-  decision: { action: string; plate?: string; reason?: string; attempts?: number; sameAs?: string; updatedAt?: string } | null
+  decision: {
+    action: string
+    plate?: string
+    reason?: string
+    operator?: string | null
+    attempts?: number
+    sameAs?: string
+    attrFlags?: string[]
+    notes?: { text: string; operator: string | null; at: string }[]
+    updatedAt?: string
+  } | null
+  /** Puesto que tiene el caso abierto ahora (reserva blanda, 2 min). */
+  claim?: { by: string; label: string | null; at: string }
+}
+
+/** Reserva blanda: avisa a otros puestos que este caso está en revisión. */
+export async function claimIdentification(site: string, fragmentKey: string, by: string, label: string | null, release = false): Promise<{ ok: boolean; claim: IdentificationItem['claim'] | null }> {
+  const res = await fetchLocalTruckflow(`/live/identifications/${encodeURIComponent(fragmentKey)}/claim?site=${encodeURIComponent(site)}`, {
+    method: 'POST',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ by, label, release }),
+  })
+  const body = (await res.json().catch(() => ({}))) as { ok?: boolean; claim?: IdentificationItem['claim'] | null; error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return { ok: Boolean(body.ok), claim: body.claim ?? null }
 }
 
 export interface IdentificationsResponse {
@@ -382,7 +408,8 @@ export async function getIdentifications(site: string): Promise<IdentificationsR
 }
 
 export type IdentificationDecision =
-  | { action: 'confirm'; plate: string; journeyUid?: string | null; reason?: string }
+  | { action: 'confirm'; plate: string; journeyUid?: string | null; reason?: string; attrFlags?: string[] }
+  | { action: 'note'; text: string }
   | { action: 'reject'; reason: string }
   | { action: 'defer'; reason: string }
   | { action: 'clear'; reason?: string }
@@ -392,6 +419,10 @@ export type DecisionOptions = {
   expectedVersion?: string | null
   /** Lecturas gemelas que el operador eligió explícitamente para recibir la misma decisión. */
   applyTo?: string[]
+  /** Quién decide (nombre del puesto/operador, sin autenticación). */
+  operator?: string | null
+  /** Solo para la pantalla: tras guardar, quedarse en el caso en vez de pasar al siguiente. */
+  stay?: boolean
 }
 
 export type DecisionResult = { siblings: string[]; version: string | null; replayed?: boolean; logged?: boolean }

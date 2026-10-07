@@ -34,6 +34,7 @@ export function createIdentificationArchive(file) {
       if (decision?.action === 'confirm') return { ...item, decision, level: 'confirmado', assignedPlate: decision.plate }
       if (decision?.action === 'reject') return { ...item, decision, level: 'rechazado', assignedPlate: null }
       if (decision?.action === 'review' || decision?.action === 'defer') return { ...item, decision, level: item.originalLevel === 'casi_seguro' ? (item.candidates.length ? 'provisorio' : 'pendiente') : item.originalLevel, assignedPlate: null }
+      if (decision?.action === 'note') return { ...item, decision, level: item.originalLevel, assignedPlate: item.originalLevel === 'casi_seguro' ? item.assignedPlate : null }
       return { ...item, decision: null, level: item.originalLevel, assignedPlate: item.originalLevel === 'casi_seguro' ? item.assignedPlate : null }
     }).sort((a, b) => b.at.localeCompare(a.at))
   }

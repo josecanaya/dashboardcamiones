@@ -366,7 +366,19 @@ export function PlantHome() {
           </div>
           <p className="tf-home-subtitle">
             Estado de planta, colas y evidencia de cámaras
-            {lastUpdateMs != null ? ` · actualizado ${formatAge(lastUpdateMs)}` : ''}
+            {lastUpdateMs != null ? ` · pantalla actualizada ${formatAge(lastUpdateMs)}` : ''}
+          </p>
+          {/* EV-35: la frescura de cada fuente de cámaras, separada de la conexión de la pantalla. */}
+          <p className="tf-home-subtitle tf-source-freshness">
+            {visibleSites.map(site => {
+              const src = (site === 'ricardone' ? ricLive : slLive).snapshot?.source
+              if (!src) return null
+              const last = src.lastEventAt ? Date.parse(src.lastEventAt) : null
+              const lag = last == null ? null : Math.round((nowTick - last) / 60000)
+              return <span key={site} className={src.lastError ? 'is-down' : lag != null && lag > 15 ? 'is-stale' : ''}>
+                {siteName(site)}: {src.lastError ? 'la fuente de cámaras no responde' : last == null ? 'sin eventos de cámara' : `último evento de cámara ${lag != null && lag < 1 ? 'hace menos de 1 min' : `hace ${lag} min`}`}
+              </span>
+            })}
           </p>
         </div>
         <div className="tf-site-switcher" role="group" aria-label="Planta visible">

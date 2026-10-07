@@ -392,6 +392,17 @@ app.get('/api/truckflow/live/captures', async (req, res) => {
 /** Evidencia por candidato (patente, color, marca, tipo, recorrido) con probabilidad, atributos del DSS. */
 app.get('/api/truckflow/live/identifications/:fragmentKey/evidence', dssPhotos.evidence)
 
+/** Reserva blanda de un caso por un puesto (aviso a otros operadores). */
+app.post('/api/truckflow/live/identifications/:fragmentKey/claim', express.json(), (req, res) => {
+  const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
+  try {
+    res.json(plantState.claimIdentification(site, req.params.fragmentKey, req.body))
+  } catch (e) {
+    if (e instanceof PlantStateError) return res.status(e.httpStatus).json({ error: e.code })
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) })
+  }
+})
+
 /** Resultado de una decisión enviada (por opId), para reconciliar un envío sin respuesta. */
 app.get('/api/truckflow/live/identification-ops/:opId', (req, res) => {
   const op = plantState.getIdentificationOp(req.params.opId)

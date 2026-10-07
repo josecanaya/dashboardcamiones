@@ -16,9 +16,13 @@ const ES: Record<string, string> = { white: 'blanco', black: 'negro', red: 'rojo
 const es = (v?: string | null) => v ? (ES[v.toLowerCase()] ?? v) : v
 export type PhotoState = 'loading' | 'ready' | 'missing' | 'error'
 
-/** Foto con zoom dentro del diálogo (EV-11): clic amplía en el punto, otro clic restablece. */
-function ZoomImage({ src, alt }: { src: string; alt: string }) {
-  const [zoom, setZoom] = useState<{ x: number; y: number } | null>(null)
+type Zoom = { x: number; y: number } | null
+type SharedZoom = { zoom: Zoom; setZoom: (z: Zoom) => void }
+/** Foto con zoom dentro del diálogo (EV-11): clic amplía en el punto, otro clic restablece. Con `shared`, ambas fotos se amplían juntas. */
+function ZoomImage({ src, alt, shared }: { src: string; alt: string; shared?: SharedZoom }) {
+  const [ownZoom, setOwnZoom] = useState<Zoom>(null)
+  const zoom = shared ? shared.zoom : ownZoom
+  const setZoom = shared ? shared.setZoom : setOwnZoom
   const [broken, setBroken] = useState(false)
   if (broken) return <p>La imagen no se pudo descargar.</p>
   return <button type="button" className={`pv-zoom${zoom ? ' is-zoomed' : ''}`} aria-label={zoom ? 'Restablecer escala' : 'Ampliar imagen'} onClick={e => {
@@ -28,7 +32,7 @@ function ZoomImage({ src, alt }: { src: string; alt: string }) {
   }}><img src={src} alt={alt} style={zoom ? { transform: 'scale(2.5)', transformOrigin: `${zoom.x}% ${zoom.y}%` } : undefined} onError={() => setBroken(true)} /></button>
 }
 
-function VerificationPhoto({ label, device, at, plate, relation, onState }: { label: string; device?: string; at?: string; plate: string; relation?: string; onState: (s: PhotoState) => void }) {
+function VerificationPhoto({ label, device, at, plate, relation, onState, shared }: { label: string; device?: string; at?: string; plate: string; relation?: string; onState: (s: PhotoState) => void; shared?: SharedZoom }) {
   const [lookup, setLookup] = useState<CameraCaptureLookup | null>(null)
   const [error, setError] = useState('')
   const [attempt, setAttempt] = useState(0)
@@ -52,7 +56,7 @@ function VerificationPhoto({ label, device, at, plate, relation, onState }: { la
       {capture ? <small className={diffS != null && Math.abs(diffS) > 30 ? 'pv-warn' : ''}>Hora cámara {date(capture.at)} · {diffS != null && Math.abs(diffS) <= 30 ? 'coincide con el evento' : `captura aproximada (${diffS} s de diferencia)`}</small> : null}
       {otherPlate ? <small className="pv-warn">El DSS devolvió la patente {otherPlate} para esta foto.</small> : null}
     </header>
-    <div className="pv-photo__scene">{capture?.sceneFile ? <ZoomImage src={cameraCaptureImageUrl(capture.sceneFile)} alt={`${label}: camión ${plate}`} /> : <p>{!device || !at ? 'No hay una captura de referencia registrada para esta patente.' : error ? `No se pudo consultar la foto: ${error}` : lookup?.error ? `No se pudo consultar la foto: ${lookup.error}` : lookup ? 'El DSS no tiene la foto de esta captura.' : 'Buscando foto en DSS…'}</p>}</div>
+    <div className="pv-photo__scene">{capture?.sceneFile ? <ZoomImage src={cameraCaptureImageUrl(capture.sceneFile)} alt={`${label}: camión ${plate}`} shared={shared} /> : <p>{!device || !at ? 'No hay una captura de referencia registrada para esta patente.' : error ? `No se pudo consultar la foto: ${error}` : lookup?.error ? `No se pudo consultar la foto: ${lookup.error}` : lookup ? 'El DSS no tiene la foto de esta captura.' : 'Buscando foto en DSS…'}</p>}</div>
     {capture?.plateFile ? <div className="pv-photo__plate"><ZoomImage src={cameraCaptureImageUrl(capture.plateFile)} alt={`Recorte de patente ${plate}`} /></div> : null}
     <p className="pv-photo__attrs">{capture ? <>Detectado por cámara (puede equivocarse): {[es(capture.vehicleColor), es(capture.vehicleBrand), es(capture.vehicleCategory)].filter(Boolean).join(' · ') || 'sin atributos'}</> : 'Compará el vehículo y la patente antes de confirmar.'}</p>
     {device && at && (error || (lookup && !capture?.sceneFile)) ? <button type="button" onClick={() => setAttempt(n => n + 1)}>Reintentar foto</button> : null}
@@ -80,6 +84,10 @@ export function PlateVerification({ choice, evidence, readPlate, device, at, sib
   const [noPhotoOk, setNoPhotoOk] = useState(false)
   const [photos, setPhotos] = useState<{ query: PhotoState; ref: PhotoState }>({ query: 'loading', ref: 'loading' })
   const [save, setSave] = useState<SaveState>({ kind: 'idle' })
+  const [syncZoom, setSyncZoom] = useState(false)
+  const [sharedZoomValue, setSharedZoomValue] = useState<Zoom>(null)
+  const shared: SharedZoom | undefined = syncZoom ? { zoom: sharedZoomValue, setZoom: setSharedZoomValue } : undefined
+  const [attrFlags, setAttrFlags] = useState<string[]>([])
   // El mismo opId en cada reintento: el servidor no duplica una operación ya aplicada (EV-05).
   const opId = useRef(newOpId())
   const plate = choice.decision.action === 'confirm' ? choice.decision.plate : readPlate
@@ -100,14 +108,15 @@ export function PlateVerification({ choice, evidence, readPlate, device, at, sib
   const conflict = save.kind === 'error' && save.error instanceof DecisionError && save.error.kind === 'conflict'
   const canConfirm = !saving && !conflict && evidenceOk && (!isReject || Boolean(finalReason))
 
-  async function submit() {
+  async function submit(stay = false) {
     if (saving) return
     setSave({ kind: 'saving' })
     let decision: ReviewDecision = choice.decision
     if (decision.action === 'confirm' && choice.ownRead) decision = { ...decision, journeyUid: renameTrip ? candidate?.journeyUid ?? null : null }
     if (decision.action === 'reject') decision = { action: 'reject', reason: finalReason }
     if (decision.action === 'confirm' && noPhotoOk && !(queryReady && refReady)) decision = { ...decision, reason: 'confirmado sin foto de referencia' }
-    try { await onConfirm(decision, { applyTo }, opId.current) }
+    if (decision.action === 'confirm' && attrFlags.length) decision = { ...decision, attrFlags }
+    try { await onConfirm(decision, { applyTo, stay }, opId.current) }
     catch (e) { setSave({ kind: 'error', error: e instanceof Error ? e : new Error(String(e)) }) }
   }
 
@@ -121,9 +130,10 @@ export function PlateVerification({ choice, evidence, readPlate, device, at, sib
       <button type="button" aria-label="Cancelar verificación" disabled={saving} onClick={onCancel}>×</button></header>
     <div className="pv-body">
       <div className="pv-photos">
-        <VerificationPhoto label="Captura a identificar" device={device} at={at} plate={readPlate} onState={s => setPhotos(p => ({ ...p, query: s }))} />
-        {isReject || (choice.ownRead && !renameTrip) ? null : <VerificationPhoto label={refLabel} device={referenceDevice} at={referenceAt} plate={candidate?.plate ?? plate} relation={refRelation} onState={s => setPhotos(p => ({ ...p, ref: s }))} />}
+        <VerificationPhoto label="Captura a identificar" device={device} at={at} plate={readPlate} shared={shared} onState={s => setPhotos(p => ({ ...p, query: s }))} />
+        {isReject || (choice.ownRead && !renameTrip) ? null : <VerificationPhoto label={refLabel} device={referenceDevice} at={referenceAt} plate={candidate?.plate ?? plate} relation={refRelation} shared={shared} onState={s => setPhotos(p => ({ ...p, ref: s }))} />}
       </div>
+      <label className="pv-sync"><input type="checkbox" checked={syncZoom} onChange={e => { setSyncZoom(e.target.checked); setSharedZoomValue(null) }} /> Ampliar las dos fotos juntas (clic en la imagen amplía ese punto; otro clic restablece)</label>
       {!isReject && candidate && !choice.ownRead ? <div className="pv-scores">
         <div><span>Apoyo del modelo a este candidato</span><strong>{pct(candidate.probability)}</strong><small>Estimación relativa entre los candidatos listados; no es una certeza calibrada.</small></div>
         <div><span>Factor: parecido de patente</span><strong>{pct(candidate.similarity)}</strong><small>Cuánto se parecen los caracteres, nada más.</small></div>
@@ -131,7 +141,8 @@ export function PlateVerification({ choice, evidence, readPlate, device, at, sib
         <div><span>Factor: circuito compatible</span><strong>{candidate.circuit ? `${candidate.circuit} · ${pct(candidate.circuitProbability)}` : 'Sin circuito confirmado'}</strong></div>
       </div> : null}
       {!isReject && candidate && !choice.ownRead && (candidate.similarity ?? 0) - (candidate.probability ?? 0) > 0.4 ? <p className="pv-note">La patente se parece, pero el modelo le da poco apoyo: hay otros candidatos o el recorrido no cierra. Los porcentajes no se suman ni se reemplazan entre sí.</p> : null}
-      {!isReject && candidate?.comparisons?.length && !choice.ownRead ? <div className="pv-comparisons"><b>Detectado por cámara</b>{candidate.comparisons.map(c => <span key={c.kind} className={c.result === 'distinto' ? 'is-different' : ''}>{ATTR[c.kind] ?? c.kind}: {es(c.read) ?? 'sin dato'} → {es(c.candidate) ?? 'sin dato'} · {c.result === 'coincide' ? 'coincide' : c.result === 'distinto' ? 'difiere' : 'sin dato'}</span>)}</div> : null}
+      {!isReject && candidate?.comparisons?.length && !choice.ownRead ? <div className="pv-comparisons"><b>Detectado por cámara</b>{candidate.comparisons.map(c => <span key={c.kind} className={`${c.result === 'distinto' ? 'is-different' : ''}${attrFlags.includes(c.kind) ? ' is-flagged' : ''}`}>{ATTR[c.kind] ?? c.kind}: {es(c.read) ?? 'sin dato'} → {es(c.candidate) ?? 'sin dato'} · {c.result === 'coincide' ? 'coincide' : c.result === 'distinto' ? 'difiere' : 'sin dato'}
+        <button type="button" disabled={saving} aria-pressed={attrFlags.includes(c.kind)} title="Marcar que la cámara detectó mal este atributo (queda registrado con la decisión)" onClick={() => setAttrFlags(f => f.includes(c.kind) ? f.filter(k => k !== c.kind) : [...f, c.kind])}>{attrFlags.includes(c.kind) ? 'marcado mal detectado' : 'mal detectado?'}</button></span>)}</div> : null}
       {choice.ownRead && candidate ? <fieldset className="pv-scope"><legend>¿Qué afirmás?</legend>
         <label><input type="radio" name="own" checked={!renameTrip} onChange={() => setRenameTrip(false)} disabled={saving} /> La lectura {readPlate} es correcta; es otro vehículo (no se toca ningún viaje).</label>
         <label><input type="radio" name="own" checked={renameTrip} onChange={() => setRenameTrip(true)} disabled={saving} /> Es el mismo vehículo que figura como {candidate.plate}: corregir la patente de ese viaje a {readPlate}.</label>
@@ -151,7 +162,8 @@ export function PlateVerification({ choice, evidence, readPlate, device, at, sib
     </div>
     <footer className="pv-footer"><span role="status" className={err ? 'pv-error' : ''}>{status}</span>
       <button type="button" disabled={saving} onClick={onCancel}>{errKind === 'conflict' && err ? 'Cerrar y revisar' : 'Cancelar'}</button>
-      {errKind === 'conflict' && err ? null : <button type="button" className="pv-confirm" disabled={!canConfirm || saving} onClick={() => void submit()}>{saving ? 'Guardando…' : err ? 'Reintentar' : isReject ? 'Descartar detección' : `Confirmar ${plate}`}</button>}
+      {errKind === 'conflict' && err || isReject ? null : <button type="button" disabled={!canConfirm || saving} onClick={() => void submit(true)} title="Guarda y deja este caso abierto en lugar de pasar al siguiente">Confirmar y quedarme</button>}
+      {errKind === 'conflict' && err ? null : <button type="button" className="pv-confirm" disabled={!canConfirm || saving} onClick={() => void submit()}>{saving ? 'Guardando…' : err ? 'Reintentar' : isReject ? 'Descartar detección' : `Confirmar ${plate} y seguir`}</button>}
     </footer>
   </dialog>, document.body)
 }
