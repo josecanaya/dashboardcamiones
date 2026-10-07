@@ -17,3 +17,6 @@
 
 .pv-sync { display:flex; gap:6px; align-items:center; font-size:12px; color:#5d6c62; margin-top:8px; }
 .pv-comparisons span button { margin-left:6px; font-size:11px; text-decoration:underline; color:inherit; }.pv-comparisons span.is-flagged { outline:1px dashed #a2322a; }
+
+.pv-switch { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-top:8px; }.pv-switch button { border:1px solid #c6d6cb; border-radius:6px; padding:3px 9px; font:600 12px ui-monospace,monospace; background:#fff; }.pv-switch button[aria-pressed=true] { background:#17623e; color:#fff; border-color:#17623e; }.pv-switch small { font-size:11px; color:#738176; }
+.pv-zoom.is-zoomed { touch-action:none; }

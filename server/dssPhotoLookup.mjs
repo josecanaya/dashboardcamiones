@@ -1,5 +1,7 @@
 // Foto de una lectura de patente, pedida al DSS bajo demanda (no se guarda nada en disco).
 //
+import fs from 'node:fs/promises'
+import path from 'node:path'
 import { scoreCandidates } from './plantState/identificationEvidence.mjs'
 
 // El DSS registra todas las lecturas con foto, confianza, marca, color y tipo. El dashboard
@@ -117,5 +119,34 @@ export function createDssPhotoLookup({ dss, getPlantState = () => null }) {
     }
   }
 
-  return { find, image, evidence }
+  /**
+   * EV-40: copia en disco las fotos que el operador vio al decidir, para reconstruir la decisión
+   * aunque el DSS deje de servirlas. data/identification-evidence/<site>/<fragmentKey>/<opId>/
+   * @param {string} root carpeta base
+   * @param {{ site: string, fragmentKey: string, opId: string|null, decision: object|null, photos: Record<string, { device?: string, at?: string, plate?: string, sceneFile?: string|null, plateFile?: string|null }> }} rec
+   */
+  async function archiveEvidence(root, rec) {
+    const safe = (v) => String(v || 'sin-id').replace(/[^A-Za-z0-9_.-]/g, '_').slice(0, 120)
+    const dir = path.join(root, safe(rec.site), safe(rec.fragmentKey), safe(rec.opId || Date.now()))
+    await fs.mkdir(dir, { recursive: true })
+    const saved = {}
+    for (const [role, photo] of Object.entries(rec.photos || {})) {
+      for (const kind of ['sceneFile', 'plateFile']) {
+        const file = photo?.[kind]
+        if (!file || !/^[A-Za-z0-9_-]+$/.test(file)) continue
+        try {
+          const { type, buf } = await dss.fetchPicture(Buffer.from(file, 'base64url').toString('utf8'))
+          const name = `${safe(role)}-${kind === 'sceneFile' ? 'escena' : 'patente'}.${String(type).includes('png') ? 'png' : 'jpg'}`
+          await fs.writeFile(path.join(dir, name), buf)
+          ;(saved[role] ||= {})[kind] = name
+        } catch (e) {
+          ;(saved[role] ||= {})[`${kind}Error`] = e instanceof Error ? e.message : String(e)
+        }
+      }
+    }
+    await fs.writeFile(path.join(dir, 'manifest.json'), JSON.stringify({ ...rec, savedAt: new Date().toISOString(), saved }, null, 2))
+    return { dir, saved }
+  }
+
+  return { find, image, evidence, archiveEvidence }
 }

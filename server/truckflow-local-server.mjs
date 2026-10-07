@@ -414,7 +414,14 @@ app.get('/api/truckflow/live/identification-ops/:opId', (req, res) => {
 app.post('/api/truckflow/live/identifications/:fragmentKey', express.json(), async (req, res) => {
   const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
   try {
-    res.json(plantState.decideIdentification(site, req.params.fragmentKey, req.body))
+    const result = plantState.decideIdentification(site, req.params.fragmentKey, req.body)
+    res.json(result)
+    // EV-40: fotos vistas al decidir, copiadas en segundo plano (no demora ni condiciona la respuesta).
+    if (!result.replayed && req.body?.photos && ['confirm', 'reject'].includes(req.body.action)) {
+      dssPhotos
+        .archiveEvidence(path.join(PROJECT_ROOT, 'data', 'identification-evidence'), { site: result.site, fragmentKey: result.fragmentKey, opId: req.body.opId ?? null, decision: result.decision, photos: req.body.photos })
+        .catch((e) => console.warn('[plant-state] no se pudo archivar la evidencia:', e instanceof Error ? e.message : e))
+    }
   } catch (e) {
     if (e instanceof PlantStateError) {
       res.status(e.httpStatus).json({ error: e.code })

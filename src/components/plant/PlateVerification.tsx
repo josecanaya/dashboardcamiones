@@ -23,27 +23,42 @@ function ZoomImage({ src, alt, shared }: { src: string; alt: string; shared?: Sh
   const [ownZoom, setOwnZoom] = useState<Zoom>(null)
   const zoom = shared ? shared.zoom : ownZoom
   const setZoom = shared ? shared.setZoom : setOwnZoom
+  const drag = useRef<{ x: number; y: number; moved: boolean } | null>(null)
   const [broken, setBroken] = useState(false)
   if (broken) return <p>La imagen no se pudo descargar.</p>
-  return <button type="button" className={`pv-zoom${zoom ? ' is-zoomed' : ''}`} aria-label={zoom ? 'Restablecer escala' : 'Ampliar imagen'} onClick={e => {
-    if (zoom) return setZoom(null)
+  return <button type="button" className={`pv-zoom${zoom ? ' is-zoomed' : ''}`} aria-label={zoom ? 'Restablecer escala (arrastrá para mover)' : 'Ampliar imagen'}
+    onPointerDown={e => { if (zoom) drag.current = { x: e.clientX, y: e.clientY, moved: false } }}
+    onPointerMove={e => {
+      const d = drag.current
+      if (!d || !zoom) return
+      const r = e.currentTarget.getBoundingClientRect()
+      const dx = ((e.clientX - d.x) / r.width) * 100, dy = ((e.clientY - d.y) / r.height) * 100
+      if (Math.abs(dx) + Math.abs(dy) < 1) return
+      d.moved = true; d.x = e.clientX; d.y = e.clientY
+      setZoom({ x: Math.min(100, Math.max(0, zoom.x - dx / 1.5)), y: Math.min(100, Math.max(0, zoom.y - dy / 1.5)) })
+    }}
+    onPointerUp={() => { setTimeout(() => { drag.current = null }, 0) }}
+    onClick={e => {
+      if (drag.current?.moved) return
+      if (zoom) return setZoom(null)
     const r = e.currentTarget.getBoundingClientRect()
     setZoom({ x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100 })
   }}><img src={src} alt={alt} style={zoom ? { transform: 'scale(2.5)', transformOrigin: `${zoom.x}% ${zoom.y}%` } : undefined} onError={() => setBroken(true)} /></button>
 }
 
-function VerificationPhoto({ label, device, at, plate, relation, onState, shared }: { label: string; device?: string; at?: string; plate: string; relation?: string; onState: (s: PhotoState) => void; shared?: SharedZoom }) {
+function VerificationPhoto({ label, device, at, plate, relation, onState, onCapture, shared }: { label: string; device?: string; at?: string; plate: string; relation?: string; onState: (s: PhotoState) => void; onCapture?: (c: CameraCaptureLookup['capture']) => void; shared?: SharedZoom }) {
   const [lookup, setLookup] = useState<CameraCaptureLookup | null>(null)
   const [error, setError] = useState('')
   const [attempt, setAttempt] = useState(0)
   const report = useRef(onState); report.current = onState
+  const reportCapture = useRef(onCapture); reportCapture.current = onCapture
   useEffect(() => {
     let alive = true
     setLookup(null); setError('')
     if (!device || !at) { report.current('missing'); return }
     report.current('loading')
     findCameraCapture(device, at, plate)
-      .then(result => { if (!alive) return; setLookup(result); report.current(result.capture?.sceneFile ? 'ready' : result.error ? 'error' : 'missing') })
+      .then(result => { if (!alive) return; setLookup(result); reportCapture.current?.(result.capture); report.current(result.capture?.sceneFile ? 'ready' : result.error ? 'error' : 'missing') })
       .catch(e => { if (!alive) return; setError(e instanceof Error ? e.message : String(e)); report.current('error') })
     return () => { alive = false }
   }, [device, at, plate, attempt])
@@ -67,8 +82,9 @@ const REJECT_REASONS = ['No es un vehículo (falsa detección)', 'Vehículo de s
 type SaveState = { kind: 'idle' } | { kind: 'saving' } | { kind: 'error'; error: DecisionError | Error }
 
 export type VerificationChoice = { decision: ReviewDecision; candidate?: IdentificationCandidate & Partial<CandidateEvidence>; ownRead?: boolean }
-export function PlateVerification({ choice, evidence, readPlate, device, at, siblings, onCancel, onConfirm }: { choice: VerificationChoice; evidence: IdentificationEvidence | null; readPlate: string; device: string; at: string; siblings: SiblingRead[]; onCancel: () => void; onConfirm: DecideFn }) {
+export function PlateVerification({ choice: initialChoice, evidence, alternatives = [], readPlate, device, at, siblings, onCancel, onConfirm }: { choice: VerificationChoice; evidence: IdentificationEvidence | null; alternatives?: (IdentificationCandidate & Partial<CandidateEvidence>)[]; readPlate: string; device: string; at: string; siblings: SiblingRead[]; onCancel: () => void; onConfirm: DecideFn }) {
   const dialog = useRef<HTMLDialogElement>(null)
+  const [choice, setChoice] = useState(initialChoice)
   const opener = useRef<Element | null>(null)
   useEffect(() => {
     opener.current = document.activeElement
@@ -88,8 +104,20 @@ export function PlateVerification({ choice, evidence, readPlate, device, at, sib
   const [sharedZoomValue, setSharedZoomValue] = useState<Zoom>(null)
   const shared: SharedZoom | undefined = syncZoom ? { zoom: sharedZoomValue, setZoom: setSharedZoomValue } : undefined
   const [attrFlags, setAttrFlags] = useState<string[]>([])
+  const seen = useRef<Record<string, CameraCaptureLookup['capture']>>({})
   // El mismo opId en cada reintento: el servidor no duplica una operación ya aplicada (EV-05).
   const opId = useRef(newOpId())
+  const options = alternatives.length ? alternatives : [...(evidence?.candidates ?? [])].sort((a, b) => (b.probability ?? 0) - (a.probability ?? 0))
+  const switchable = !choice.ownRead && choice.decision.action === 'confirm' && options.length > 1 && options.some(c => c.plate === choice.candidate?.plate)
+  function switchTo(step: number) {
+    if (!switchable || save.kind === 'saving') return
+    const i = options.findIndex(c => c.plate === choice.candidate?.plate)
+    const next = options[(i + step + options.length) % options.length]
+    if (!next || next.plate === choice.candidate?.plate) return
+    setChoice({ decision: { action: 'confirm', plate: next.plate, journeyUid: next.journeyUid }, candidate: next })
+    setPhotos(p => ({ ...p, ref: 'loading' })); seen.current.referencia = null; setAttrFlags([]); setNoPhotoOk(false); setSave({ kind: 'idle' })
+    opId.current = newOpId()
+  }
   const plate = choice.decision.action === 'confirm' ? choice.decision.plate : readPlate
   const last = candidate?.recentReads?.[0]
   const referenceDevice = candidate?.photoDevice ?? last?.device
@@ -116,7 +144,8 @@ export function PlateVerification({ choice, evidence, readPlate, device, at, sib
     if (decision.action === 'reject') decision = { action: 'reject', reason: finalReason }
     if (decision.action === 'confirm' && noPhotoOk && !(queryReady && refReady)) decision = { ...decision, reason: 'confirmado sin foto de referencia' }
     if (decision.action === 'confirm' && attrFlags.length) decision = { ...decision, attrFlags }
-    try { await onConfirm(decision, { applyTo, stay }, opId.current) }
+    const photos = Object.fromEntries(Object.entries(seen.current).filter(([, c]) => c).map(([role, c]) => [role, { device: c!.device, at: c!.at, plate: c!.plate, sceneFile: c!.sceneFile, plateFile: c!.plateFile }]))
+    try { await onConfirm(decision, { applyTo, stay, photos }, opId.current) }
     catch (e) { setSave({ kind: 'error', error: e instanceof Error ? e : new Error(String(e)) }) }
   }
 
@@ -124,14 +153,27 @@ export function PlateVerification({ choice, evidence, readPlate, device, at, sib
   const errKind = err instanceof DecisionError ? err.kind : 'unknown'
   const status = saving ? 'Guardando decisión…' : err ? (errKind === 'conflict' ? `Conflicto: ${err.message}` : errKind === 'rejected' ? `No se guardó: ${err.message}` : `Resultado por verificar: ${err.message}. Reintentar no duplica la decisión.`) : photosLoading ? 'Esperando las fotos para habilitar la confirmación.' : 'Todavía no se guardó ninguna decisión.'
 
-  return createPortal(<dialog ref={dialog} className="pv-dialog" aria-labelledby="pv-title" onCancel={event => { event.preventDefault(); if (!saving) onCancel() }}>
+  const confirmRef = useRef<HTMLButtonElement>(null)
+  return createPortal(<dialog ref={dialog} className="pv-dialog" aria-labelledby="pv-title" onKeyDown={e => {
+    const t = e.target as HTMLElement
+    if (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA') return
+    if (e.key === 'ArrowRight') { e.preventDefault(); switchTo(1) }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); switchTo(-1) }
+    if (e.key === 'Enter' && t.tagName !== 'BUTTON' && canConfirm) { e.preventDefault(); confirmRef.current?.focus() }
+  }} onCancel={event => { event.preventDefault(); if (!saving) onCancel() }}>
     <header className="pv-header"><div><span>Doble verificación</span><h2 id="pv-title">{isReject ? 'Descartar detección' : 'Comparar antes de confirmar'}</h2>
-      <p>{isReject ? `La lectura ${readPlate} se retira por no ser un caso válido. Si solo no podés identificarla, cancelá y usá «No puedo determinar».` : <><b className="pv-change">{readPlate} → {plate}</b>{choice.ownRead ? ' · la cámara leyó bien' : ''}</>}</p></div>
+      <p>{isReject ? `La lectura ${readPlate} se retira por no ser un caso válido. Si solo no podés identificarla, cancelá y usá «No puedo determinar».` : <><b className="pv-change">{readPlate} → {plate}</b>{choice.ownRead ? ' · la cámara leyó bien' : ''}</>}</p>
+      {switchable ? <div className="pv-switch" role="group" aria-label="Alternar candidato">
+        <button type="button" onClick={() => switchTo(-1)} aria-label="Candidato anterior">←</button>
+        {options.map(c => <button key={c.plate} type="button" aria-pressed={c.plate === choice.candidate?.plate} onClick={() => switchTo(options.indexOf(c) - options.findIndex(o => o.plate === choice.candidate?.plate))}>{c.plate}</button>)}
+        <button type="button" onClick={() => switchTo(1)} aria-label="Candidato siguiente">→</button>
+        <small>La captura a identificar queda fija. Teclas ← →.</small>
+      </div> : null}</div>
       <button type="button" aria-label="Cancelar verificación" disabled={saving} onClick={onCancel}>×</button></header>
     <div className="pv-body">
       <div className="pv-photos">
-        <VerificationPhoto label="Captura a identificar" device={device} at={at} plate={readPlate} shared={shared} onState={s => setPhotos(p => ({ ...p, query: s }))} />
-        {isReject || (choice.ownRead && !renameTrip) ? null : <VerificationPhoto label={refLabel} device={referenceDevice} at={referenceAt} plate={candidate?.plate ?? plate} relation={refRelation} shared={shared} onState={s => setPhotos(p => ({ ...p, ref: s }))} />}
+        <VerificationPhoto label="Captura a identificar" device={device} at={at} plate={readPlate} shared={shared} onState={s => setPhotos(p => ({ ...p, query: s }))} onCapture={c => { seen.current.captura = c }} />
+        {isReject || (choice.ownRead && !renameTrip) ? null : <VerificationPhoto key={candidate?.plate ?? 'ref'} label={refLabel} device={referenceDevice} at={referenceAt} plate={candidate?.plate ?? plate} relation={refRelation} shared={shared} onState={s => setPhotos(p => ({ ...p, ref: s }))} onCapture={c => { seen.current.referencia = c }} />}
       </div>
       <label className="pv-sync"><input type="checkbox" checked={syncZoom} onChange={e => { setSyncZoom(e.target.checked); setSharedZoomValue(null) }} /> Ampliar las dos fotos juntas (clic en la imagen amplía ese punto; otro clic restablece)</label>
       {!isReject && candidate && !choice.ownRead ? <div className="pv-scores">
@@ -163,7 +205,7 @@ export function PlateVerification({ choice, evidence, readPlate, device, at, sib
     <footer className="pv-footer"><span role="status" className={err ? 'pv-error' : ''}>{status}</span>
       <button type="button" disabled={saving} onClick={onCancel}>{errKind === 'conflict' && err ? 'Cerrar y revisar' : 'Cancelar'}</button>
       {errKind === 'conflict' && err || isReject ? null : <button type="button" disabled={!canConfirm || saving} onClick={() => void submit(true)} title="Guarda y deja este caso abierto en lugar de pasar al siguiente">Confirmar y quedarme</button>}
-      {errKind === 'conflict' && err ? null : <button type="button" className="pv-confirm" disabled={!canConfirm || saving} onClick={() => void submit()}>{saving ? 'Guardando…' : err ? 'Reintentar' : isReject ? 'Descartar detección' : `Confirmar ${plate} y seguir`}</button>}
+      {errKind === 'conflict' && err ? null : <button ref={confirmRef} type="button" className="pv-confirm" disabled={!canConfirm || saving} onClick={() => void submit()}>{saving ? 'Guardando…' : err ? 'Reintentar' : isReject ? 'Descartar detección' : `Confirmar ${plate} y seguir`}</button>}
     </footer>
   </dialog>, document.body)
 }

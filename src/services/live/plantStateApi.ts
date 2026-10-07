@@ -421,6 +421,8 @@ export type DecisionOptions = {
   applyTo?: string[]
   /** Quién decide (nombre del puesto/operador, sin autenticación). */
   operator?: string | null
+  /** EV-40: fotos que el operador vio al decidir (el servidor guarda una copia). */
+  photos?: Record<string, { device?: string; at?: string; plate?: string; sceneFile?: string | null; plateFile?: string | null }>
   /** Solo para la pantalla: tras guardar, quedarse en el caso en vez de pasar al siguiente. */
   stay?: boolean
 }

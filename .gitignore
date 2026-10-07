@@ -59,3 +59,6 @@ scratchpad/
 
 # go2rtc: binario local para el video en vivo (se baja aparte)
 tools/go2rtc/
+
+# Fotos archivadas de decisiones de patentes (EV-40): datos operativos, no van al repo
+data/identification-evidence/

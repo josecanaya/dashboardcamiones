@@ -20,7 +20,7 @@ Con el servidor viejo, el front sigue funcionando pero ignora versión/alcance.
 | 08 no puedo determinar | ✅ `defer` con motivo; descarte exige motivo | ReviewCandidates, service.mjs |
 | 09 «última foto» | ✅ «anterior/posterior» + diferencia temporal | PlateVerification |
 | 10 hora operativa vs cámara | ✅ ambas + `diffMs` + aviso si DSS devolvió otra patente | PlateVerification |
-| 11 zoom | ✅ zoom por clic + opción «ampliar las dos juntas». **Falta (opcional):** arrastre | PlateVerification |
+| 11 zoom | ✅ zoom por clic, arrastre mientras está ampliada y «ampliar las dos juntas» | PlateVerification |
 | 12 porcentajes | ✅ «Apoyo del modelo» + factores + frase si discrepan | PlateVerification |
 | 13 «otro camión» | ✅ «Ningún candidato listado» | ReviewCandidates |
 | 14 5 vs 3 candidatos | ✅ «N sugeridos de M evaluados» + Ver todos | ReviewCandidates |
@@ -41,34 +41,32 @@ Con el servidor viejo, el front sigue funcionando pero ignora versión/alcance.
 | 29 «En vivo» falso | 🟡 «Reproductor abierto» + Reconectar. **Falta:** detección real de cuadros (necesita API del reproductor go2rtc) | LiveCameraPlayerModal |
 | 30 errores técnicos | ✅ mensaje operativo + detalle plegado | LiveCameraPlayerModal |
 | 31 modales/teclado | ✅ `<dialog>` nativo en cámaras y verificación, retorno de foco | |
-| 32 supervisión durante revisión | 🟡 franja de zonas en atención en la bandeja. **Falta:** cámaras fijadas | PlantHome |
+| 32 supervisión durante revisión | ✅ franja de zonas en atención + cámaras fijadas («Fijar» en el modal → accesos en la franja de la bandeja) | LiveCameraPlayerModal `PinnedCameras`, PlantHome |
 | 33 polling por reloj | ✅ dependencias por contenido (`sitesKey`), `seen` acotado | LiveActivityFeed |
 | 34 una planta bloquea | ✅ carga por planta, descarte de respuestas viejas, estado por planta | IdentificationPanel, LiveActivityFeed |
 | 35 frescura percibida | ✅ bandeja por planta + hero con «último evento de cámara» por planta (`snapshot.source`, requiere servidor reiniciado) | service.mjs, PlantHome |
 | 36 versión evidencia | ✅ candidatos congelados mientras se inspecciona; aviso «llegaron candidatos nuevos · Actualizar» | ReviewCandidates |
 | 37 feed compacto | ✅ resumen + «Abrir caso» (abre la bandeja en ese caso) | LiveActivityFeed |
 | 38 vocabulario | 🟡 feed/bandeja unificados. **Falta:** nombres humanos de cámara en todas las vistas (hace falta catálogo device→nombre) | |
-| 39 densidad/atajos | 🟡 textos chicos subidos 1px. **Falta:** atajos de teclado y alternar candidatos sin cerrar el diálogo | |
-| 40 aprendizaje | 🟡 log con opId, operador, motivo, versión previa, attrFlags, notas. **Falta:** congelar fotos usadas al decidir, separar pruebas | |
+| 39 densidad/atajos | ✅ textos +1px; alternar candidatos dentro del diálogo (botones y ←/→) con la captura fija; Enter lleva el foco a Confirmar (nunca envía) | PlateVerification |
+| 40 aprendizaje | ✅ log con opId, operador, motivo, versión previa, attrFlags, notas + copia de las fotos vistas en `data/identification-evidence/<planta>/<caso>/<opId>/` con manifest (ignorada en git). **Falta (negocio):** retención y circuito de entrenamiento | dssPhotoLookup `archiveEvidence` |
 
-## Tareas restantes (orden sugerido)
+## Tareas restantes
 
-### Fáciles — aptas para un agente más barato (Sonnet/Haiku)
-1. **EV-39 alternar candidatos dentro del diálogo**: en `PlateVerification`, flechas ←/→ (o botones) que cambian `choice.candidate`
-   entre los `evidence.candidates`, manteniendo fija la captura dudosa. Reiniciar `photos.ref` a `'loading'` al cambiar.
-2. **EV-39 atajos**: documentar y agregar Enter = foco en «Confirmar» solo cuando `canConfirm` (nunca envío directo), Esc ya cancela.
-3. **EV-38 nombres de cámara**: si existe catálogo device→nombre (ver `src/components/plant/liveOperationalCatalog.ts` o el modelo de nodos),
-   mostrar nombre humano y dejar el código en `title`.
-4. **EV-11 arrastre**: en `ZoomImage`, mover `transformOrigin` con pointermove mientras está ampliado.
-
-### Medias
-5. **EV-40 evidencia congelada**: al confirmar, copiar `sceneFile`/`plateFile` consultados a `data/identification-evidence/<fragmentKey>/`
-   y registrar las rutas en el log (dssPhotoLookup ya descarga los archivos).
-6. **EV-32 cámaras fijadas**: lista de cámaras favoritas (localStorage) en la franja de supervisión de la bandeja.
+### Fácil (agente barato)
+1. **EV-38 nombres de cámara**: no hay un catálogo device→nombre para todas las cámaras (solo `src/data/sanLorenzoCameraCatalog.ts`).
+   Hoy se muestra `nodeLabel` (punto) y el código de cámara como dato secundario. Si se arma el catálogo, usarlo en
+   `IdentificationPanel` (header del caso), `ReviewCandidates` y `PlateVerification` (cabecera de cada foto), con el código en `title`.
 
 ### Requieren definición de negocio (no implementar sin respuesta)
-- EV-18 reglas de prioridad · EV-28 estados de zona · EV-29 detección real de cuadros (depende de go2rtc) · EV-40 retención de fotos
-  y circuito de entrenamiento · turnos reales · quién puede descartar/confirmar sin foto.
+- EV-18 reglas de prioridad · EV-28 estados de zona («Sin datos» → sin capturas / cámara caída / ocupación estimada)
+- EV-29 detección real de cuadros (depende de exponer estado del reproductor go2rtc al dashboard)
+- EV-40 retención de fotos archivadas y cómo entran al entrenamiento · turnos reales (`VITE_SHIFT_HOURS`)
+- quién puede descartar, reabrir o confirmar sin foto (hoy cualquiera, con registro de operador y motivo)
+
+### Antes de dar por cerrado
+- Reiniciar `node server/truckflow-local-server.mjs` y correr con datos de prueba A11–A17, A23 del análisis
+  (gemelas, «leyó bien», patente escrita, posponer, doble clic, corte de red, dos puestos, reapertura).
 
 ## Verificación hecha (7/10)
 - `tsc` sin errores en archivos tocados; `node --test server/plantState/identificationArchive.test.mjs` 2/2.
@@ -77,5 +75,7 @@ Con el servidor viejo, el front sigue funcionando pero ignora versión/alcance.
 - Parte 2: `node --test server/plantState/identificationDecisions.test.mjs server/plantState/identificationArchive.test.mjs` 5/5
   (opId idempotente, conflicto de versión, motivo obligatorio, defer, notas, attrFlags, review, reserva) sobre un directorio temporal;
   vitest `plateIdentification` + `identificationEvidence` 17/17.
+- Parte 3: `node --test server/dssPhotoLookup.test.mjs …` 6/6; navegador: «Abrir caso» desde el feed abre el caso;
+  en el diálogo ← → cambia de AE264XY a AH274MW manteniendo fija la captura y recargando la referencia.
 - **No probado**: guardar decisiones contra el servidor nuevo (no se reinició el servidor del usuario ni se guardaron decisiones reales).
   Pruebas A11–A17, A23 pendientes con datos de prueba tras reiniciar.

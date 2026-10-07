@@ -1,4 +1,41 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+
+/** EV-32: grupos de cámaras fijados por el operador (por navegador). */
+type PinnedGroup = { title: string; devices: string[] }
+const PIN_KEY = 'pinned-camera-groups'
+const PIN_EVENT = 'pinned-camera-groups-changed'
+function readPins(): PinnedGroup[] {
+  try { return JSON.parse(localStorage.getItem(PIN_KEY) ?? '[]') as PinnedGroup[] } catch { return [] }
+}
+function writePins(pins: PinnedGroup[]) {
+  try { localStorage.setItem(PIN_KEY, JSON.stringify(pins.slice(0, 8))) } catch { /* sin storage */ }
+  window.dispatchEvent(new Event(PIN_EVENT))
+}
+function usePins() {
+  const [pins, setPins] = useState(readPins)
+  useEffect(() => {
+    const sync = () => setPins(readPins())
+    window.addEventListener(PIN_EVENT, sync)
+    return () => window.removeEventListener(PIN_EVENT, sync)
+  }, [])
+  return pins
+}
+
+/** Accesos a las cámaras fijadas, para usar en franjas de supervisión. Abre su propio modal. */
+export function PinnedCameras() {
+  const pins = usePins()
+  const [open, setOpen] = useState<PinnedGroup | null>(null)
+  if (!pins.length) return null
+  return (
+    <span className="tf-pinned-cameras">
+      Cámaras fijadas:
+      {pins.map((p) => (
+        <button key={p.title} type="button" onClick={() => setOpen(p)}>{p.title}</button>
+      ))}
+      <LiveCameraPlayerModal open={open != null} devices={open?.devices ?? null} title={open?.title} onClose={() => setOpen(null)} />
+    </span>
+  )
+}
 import { requestLiveCameraStream } from '../../services/live/liveCameraStreamApi'
 
 type LoadState =
@@ -116,6 +153,9 @@ function CameraDialog({ list, title, onClose }: { list: string[]; title?: string
     }
   }, [])
   const wide = list.length > 1
+  const pins = usePins()
+  const pinTitle = title ?? list.join(' · ')
+  const pinned = pins.some((p) => p.title === pinTitle)
   return (
     <dialog
       ref={ref}
@@ -136,6 +176,15 @@ function CameraDialog({ list, title, onClose }: { list: string[]; title?: string
           <p className="text-xs font-bold uppercase tracking-wider text-slate-500">{list.length > 1 ? `Cámaras en vivo · ${list.length}` : 'Cámara en vivo'}</p>
           <p className="font-mono text-sm font-bold text-cyan-300">{title ?? list.join(' · ')}</p>
         </div>
+        <button
+          type="button"
+          aria-pressed={pinned}
+          onClick={() => writePins(pinned ? pins.filter((p) => p.title !== pinTitle) : [...pins, { title: pinTitle, devices: list }])}
+          className="ml-auto rounded-lg border border-slate-700 bg-slate-900 px-2.5 py-1 text-xs font-bold text-slate-300 hover:border-slate-500"
+          title="Acceso rápido desde la bandeja de patentes"
+        >
+          {pinned ? 'Fijada ✓' : 'Fijar'}
+        </button>
         <button
           type="button"
           autoFocus

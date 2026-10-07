@@ -344,7 +344,7 @@ export function ReviewCandidates({
         </form>
       ) : null}
       {typed && !typedValid ? <p className="text-xs text-amber-700">Usá el formato ABC123 o AB123CD.</p> : null}
-      {verification ? <PlateVerification choice={verification} evidence={ev} readPlate={readPlate} device={deviceCode} at={at} siblings={siblings} onCancel={() => setVerification(null)} onConfirm={onDecide} /> : null}
+      {verification ? <PlateVerification choice={verification} evidence={ev} alternatives={ranked} readPlate={readPlate} device={deviceCode} at={at} siblings={siblings} onCancel={() => setVerification(null)} onConfirm={onDecide} /> : null}
     </div>
   )
 }
