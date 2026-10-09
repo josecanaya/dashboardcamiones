@@ -18,6 +18,8 @@
  * La reconstrucción al cierre del viaje queda como última instancia (fuera de este módulo).
  */
 
+import { visitRowsAt, assessVisitCandidate } from './visitInventory.mjs'
+import { arrivalWeight } from './nodeModelScore.mjs'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -40,6 +42,20 @@ export const MIN_READ_LENGTH = 4
 const RIVAL_MARGIN = 0.15
 /** Probabilidad mínima de que el nodo sea esperado para el camión (debajo: solo el piso ε del modelo). */
 export const MIN_NODE_PROBABILITY = 0.05
+/**
+ * Universo de candidatos: camiones en planta para los que el nodo de la lectura es altamente
+ * probable (o que ya estaban en ese nodo). Los de afuera solo se muestran si la patente es casi igual.
+ */
+export const UNIVERSE_NODE_PROBABILITY = 0.2
+const OUTSIDE_UNIVERSE_SIMILARITY = 0.85
+/** Una lectura con formato válido nunca se corrige sola (ver el nivel `provisorio`); >1 la desactiva. */
+export const VALID_AUTO_SIMILARITY = 1.01
+/** Lectura ilegible y el camión del universo con una sola lectura: se aplica sola si la patente es casi igual. */
+const ONE_READ_SIMILARITY = 0.85
+/** Doble lectura: el mismo camión leído bien en el mismo nodo (otra cámara o la misma) a pocos minutos. */
+export const TWIN_MS = 3 * 60 * 1000
+/** 0,5 unió JAC7110 con JAU7D16 (otro vehículo, descartado por operaciones el 07/10). */
+const TWIN_MIN_SIMILARITY = 0.6
 const ENTRY_NODES = new Set(['S0', 'S1', 'SL_S0', 'SL_S1'])
 /** Salidas de planta: un camión visto ahí hace más de EXIT_GRACE_MS ya se fue (90 min cubre relecturas tardías en egreso). */
 const EXIT_NODES = new Set(['SL_S7', 'S10'])
@@ -220,6 +236,61 @@ export function expectedNodes(seen, catalog, weights) {
   return { circuit: norm(circuit), next: norm(next), reachable: norm(reachable), total }
 }
 
+/**
+ * Tiempos de tránsito habituales entre nodos, medidos en los viajes bien leídos del buffer (24 h):
+ * para cada par A → B (B después de A en el mismo viaje), los minutos entre la última lectura en A
+ * y la primera en B. Sirve para saber qué camiones pueden estar llegando a un nodo en este momento.
+ * @param {{ plate: string, rows: { t: number, logical: string }[] }[]} journeys
+ */
+export function transitTimes(journeys) {
+  /** @type {Map<string, number[]>} */
+  const gaps = new Map()
+  for (const j of journeys) {
+    if (!isValidPlate(j.plate)) continue
+    // Visitas: primera y última lectura de cada pasada por un nodo.
+    const visits = []
+    for (const r of j.rows) {
+      const v = visits[visits.length - 1]
+      if (v && v.logical === r.logical) v.last = r.t
+      else visits.push({ logical: r.logical, first: r.t, last: r.t })
+    }
+    for (let a = 0; a < visits.length; a++) {
+      for (let b = a + 1; b < visits.length; b++) {
+        if (visits[b].logical === visits[a].logical) break
+        const k = `${visits[a].logical}>${visits[b].logical}`
+        const list = gaps.get(k) ?? []
+        list.push(visits[b].first - visits[a].last)
+        gaps.set(k, list)
+      }
+    }
+  }
+  /** @type {Map<string, { n: number, p50: number, p95: number }>} */
+  const out = new Map()
+  for (const [k, list] of gaps) {
+    list.sort((x, y) => x - y)
+    const q = (p) => list[Math.min(list.length - 1, Math.floor(p * list.length))]
+    out.set(k, { n: list.length, p50: q(0.5), p95: q(0.95) })
+  }
+  return out
+}
+
+/** Con pocos viajes medidos para ese tramo no se descarta por tiempo (alcanza el tope general de 8 h). */
+const MIN_TRANSIT_SAMPLES = 5
+/** Margen sobre el p95 del tramo: cubre colas puntuales sin aceptar camiones que ya deberían estar en otro lado. */
+const TRANSIT_SLACK = 1.5
+const TRANSIT_MIN_ALLOWANCE_MS = 20 * 60 * 1000
+
+/**
+ * ¿Es razonable llegar de A a B en `gapMs`? Devuelve también el tiempo habitual para mostrarlo.
+ * @param {Map<string, { n: number, p50: number, p95: number }>} transit
+ */
+export function transitFit(transit, from, to, gapMs) {
+  const s = transit.get(`${from}>${to}`)
+  if (!s || s.n < MIN_TRANSIT_SAMPLES) return { onTime: true, typicalMinutes: s ? Math.round(s.p50 / 60000) : null, maxMinutes: null }
+  const max = Math.max(s.p95 * TRANSIT_SLACK, TRANSIT_MIN_ALLOWANCE_MS)
+  return { onTime: gapMs <= max, typicalMinutes: Math.round(s.p50 / 60000), maxMinutes: Math.round(max / 60000) }
+}
+
 /** Circuito más probable de un journey completo (para el conteo de 24 h). */
 export function bestCircuit(seen, catalog, weights) {
   const { circuit } = expectedNodes(seen, catalog, weights)
@@ -238,11 +309,18 @@ export function identifyFragments(events, nowMs, ctx) {
   // San Lorenzo, o al revés); las lecturas a revisar son solo las de esta planta.
   const journeys = buildJourneys(events, nowMs)
   const otherJourneys = (ctx.otherSiteEvents?.length ? buildJourneys(ctx.otherSiteEvents, nowMs) : []).map((j) => ({ ...j, otherSite: true }))
-  const weights = circuitWeights(ctx.recentCounts || {}, historicalPrior(), ctx.catalog.map((c) => c.code))
+  let weights = circuitWeights({}, historicalPrior(), ctx.catalog.map((c) => c.code))
+  let activeAt = nowMs
+  const causalWeights = new Map()
   const decisions = ctx.decisions || {}
 
+  const opt = { universe: true, universeNodeProbability: UNIVERSE_NODE_PROBABILITY, validAutoSimilarity: VALID_AUTO_SIMILARITY, minReads: 2, validSameNode: true, validSameNodeSimilarity: 0.8, ...ctx.options }
   const parents = [...journeys, ...otherJourneys].filter((j) => isValidPlate(j.plate))
+  // Una lectura con decisión de operaciones sigue siendo un caso aunque después deje de parecer un
+  // fragmento (se volvió a leer en otro nodo, el candidato salió de planta): la decisión no se pierde.
+  const decided = (j) => ['confirm', 'reject'].includes(decisions[j.key]?.action)
   const fragments = journeys.filter((j) => {
+    if (decided(j)) return true
     const first = j.rows[0].logical
     if (!isValidPlate(j.plate)) return true
     // Patente válida que arranca a mitad de circuito: puede ser una lectura cambiada (KMO254 por KWO254).
@@ -251,10 +329,12 @@ export function identifyFragments(events, nowMs, ctx) {
     return !ENTRY_NODES.has(first)
   })
 
+  const causalTransit = new Map()
+
   /** @type {Map<string, ReturnType<typeof expectedNodes>>} */
   const memo = new Map()
   const expectedFor = (seen) => {
-    const k = seen.join('>')
+    const k = `${activeAt}|${seen.join('>')}`
     let v = memo.get(k)
     if (!v) {
       v = expectedNodes(seen, ctx.catalog, weights)
@@ -274,9 +354,9 @@ export function identifyFragments(events, nowMs, ctx) {
     for (const r of j.rows) list.push({ ...r, otherSite: Boolean(j.otherSite) })
     readsByPlate.set(j.plate, list)
   }
-  const recentReadsOf = (p) =>
-    (readsByPlate.get(p.plate) ?? [])
-      .filter((r) => r.t <= nowMs)
+  const recentReadsOf = (p, at, rows = p.rows) =>
+    rows
+      .filter((r) => r.t <= at)
       .sort((a, b) => b.t - a.t)
       .slice(0, 10)
       .map((r) => ({ at: new Date(r.t).toISOString(), node: r.logical, nodeLabel: logicalLabel(r.logical), device: r.device, otherSite: r.otherSite }))
@@ -287,14 +367,47 @@ export function identifyFragments(events, nowMs, ctx) {
     return { circuit: code ?? null, circuitProbability: Math.round((prob ?? 0) * 1000) / 1000 }
   }
 
+  /** Tiempo entre la lectura del candidato y esta, contra lo habitual para ese tramo. */
+  const timing = (fit, gapMs) => ({
+    onTime: fit ? fit.onTime : true,
+    gapMinutes: Math.round(Math.abs(gapMs) / 60000),
+    typicalMinutes: fit ? fit.typicalMinutes : null,
+    maxMinutes: fit ? fit.maxMinutes : null,
+  })
+
   /** @type {object[]} */
   const items = []
   for (const f of fragments) {
     const head = f.rows[0]
+    activeAt=head.t
+    const causalJourneys=[...journeys,...otherJourneys].map(j=>({...j,rows:visitRowsAt(j.rows,head.t)})).filter(j=>j.rows.length)
+    weights=causalWeights.get(head.t)
+    if (!weights) {
+      const counts={}
+      const prior=historicalPrior()
+      const base=circuitWeights({},prior,ctx.catalog.map(c=>c.code))
+      for (const j of causalJourneys) {
+        if (!isValidPlate(j.plate) || !ENTRY_NODES.has(j.rows[0].logical) || head.t-j.rows[0].t>DAY_MS) continue
+        const seen=collapse(j.rows.map(r=>r.logical));if(seen.length<2)continue
+        const fit=bestCircuit(seen,ctx.catalog,base)
+        if(fit && fit.p>=0.5)counts[fit.code]=(counts[fit.code]??0)+1
+      }
+      weights=circuitWeights(counts,prior,ctx.catalog.map(c=>c.code));causalWeights.set(head.t,weights)
+    }
+    let transit=ctx.transit??causalTransit.get(head.t)
+    if (!transit) { transit=transitTimes(causalJourneys); causalTransit.set(head.t,transit) }
     const candidates = []
+    /** Camiones conocidos que esperan este paso, se parezcan o no (denominador del modelo por nodos). */
+    let expectedAtNode = 0
     for (const p of parents) {
       if (p.key === f.key || p.plate === f.plate) continue
-      const before = p.rows.filter((r) => r.t <= head.t)
+      // Doble lectura: el camión se leyó bien en este mismo nodo (otra cámara o la misma) a pocos
+      // minutos, antes o después. Es la evidencia más fuerte de que la lectura mala es suya.
+      let twinMs = Infinity
+      for (const r of p.rows) if (r.logical === head.logical) twinMs = Math.min(twinMs, Math.abs(r.t - head.t))
+      const twin = twinMs <= TWIN_MS
+      const twinSeconds = twin ? Math.round(twinMs / 1000) : null
+      const before = visitRowsAt(p.rows, head.t)
       if (!before.length) {
         // El camión todavía no se había leído bien: su primera lectura buena llega DESPUÉS.
         // Ej. OQT40 (Ingreso SL 11:12) → OQT140 leído bien recién en Carga OSL. Solo por patente
@@ -302,8 +415,8 @@ export function identifyFragments(events, nowMs, ctx) {
         const first = p.rows[0]
         if (first.t - head.t > MAX_AFTER_MS) continue
         const sim = plateSimilarity(f.plate, p.plate)
-        if (sim < MIN_SIMILARITY) continue
-        const ahead = first.logical === head.logical ? 1 : expectedFor([head.logical]).reachable[first.logical] || 0
+        if (sim < (twin ? TWIN_MIN_SIMILARITY : MIN_SIMILARITY)) continue
+        const ahead = twin || first.logical === head.logical ? 1 : expectedFor([head.logical]).reachable[first.logical] || 0
         candidates.push({
           plate: p.plate,
           journeyKey: p.key,
@@ -313,7 +426,7 @@ export function identifyFragments(events, nowMs, ctx) {
           nextProbability: 0,
           expectedNext: null,
           ...circuitIfMatch([head.logical, ...p.rows.map((r) => r.logical)]),
-          recentReads: recentReadsOf(p),
+          recentReads: recentReadsOf(p, first.t, [first]),
           lastNode: first.logical,
           lastNodeLabel: logicalLabel(first.logical),
           lastSeenAt: new Date(first.t).toISOString(),
@@ -322,24 +435,32 @@ export function identifyFragments(events, nowMs, ctx) {
           photoAt: new Date(first.t).toISOString(),
           where: p.otherSite ? 'otra_planta' : 'leido_despues',
           seenAfter: true,
-          sameNode: false,
-          reads: p.rows.length,
+          sameNode: twin,
+          twin,
+          twinSeconds,
+          ...timing(twin ? null : transitFit(transit, head.logical, first.logical, first.t - head.t), first.t - head.t),
+          reads: 0,
+          automaticEligible: false,
           score: 4 * sim + Math.log(ahead + 0.01),
         })
         continue
       }
       if (head.t - before[before.length - 1].t > MAX_GAP_MS) continue
       const lastSeenRow = before[before.length - 1]
-      if (EXIT_NODES.has(lastSeenRow.logical) && head.t - lastSeenRow.t > EXIT_GRACE_MS) continue
+      // Los egresos previos se conservan como excepciones; no prueban presencia actual.
       const sim = plateSimilarity(f.plate, p.plate)
       const seen = collapse(before.map((r) => r.logical))
       const exp = expectedFor(seen)
       // Otra cámara del mismo nodo donde ya está el camión (frente/trasera, doble lectura): es esperado.
       const lastBefore = before[before.length - 1]
-      const sameNode = lastBefore.logical === head.logical && head.t - lastBefore.t <= SAME_NODE_MS
+      const sameNode = before.some(r=>r.logical===head.logical && head.t-r.t<=TWIN_MS) || (lastBefore.logical === head.logical && head.t - lastBefore.t <= SAME_NODE_MS)
       const pNext = sameNode ? 1 : exp.next[head.logical] || 0
       const pReach = exp.reachable[head.logical] || 0
-      if (sim < MIN_SIMILARITY && pNext < 0.5) continue
+      if (pNext > 0 || pReach > 0) {
+        const onTime = sameNode || transitFit(transit, lastBefore.logical, head.logical, head.t - lastBefore.t).onTime
+        expectedAtNode += arrivalWeight({ sameNode, nextProbability: pNext, nodeProbability: Math.max(pNext, pReach), onTime })
+      }
+      if (sim < (twin ? TWIN_MIN_SIMILARITY : MIN_SIMILARITY) && pNext < 0.5) continue
       candidates.push({
         plate: p.plate,
         journeyKey: p.key,
@@ -351,7 +472,7 @@ export function identifyFragments(events, nowMs, ctx) {
         // Antes mostraba el circuito previo (R7) aunque la lectura fuera en Playa 3, donde R7 no pasa.
         ...circuitIfMatch([...seen, head.logical]),
         circuitBefore: Object.keys(exp.circuit)[0] ?? null,
-        recentReads: recentReadsOf(p),
+        recentReads: recentReadsOf(p, head.t, before),
         lastNode: seen[seen.length - 1] ?? null,
         lastNodeLabel: seen.length ? logicalLabel(seen[seen.length - 1]) : null,
         lastSeenAt: new Date(lastBefore.t).toISOString(),
@@ -359,46 +480,109 @@ export function identifyFragments(events, nowMs, ctx) {
         photoAt: new Date(lastBefore.t).toISOString(),
         where: p.otherSite ? 'otra_planta' : 'en_planta',
         sameNode,
-        reads: p.rows.length,
+        twin,
+        twinSeconds,
+        ...timing(sameNode ? null : transitFit(transit, lastBefore.logical, head.logical, head.t - lastBefore.t), head.t - lastBefore.t),
+        // Solo cuentan las lecturas conocidas cuando ocurrió el evento.
+        reads: before.length,
+        automaticEligible: !twin || before.some((r) => r.logical === head.logical && head.t - r.t <= TWIN_MS),
         score: 4 * sim + Math.log(Math.max(pNext, pReach) + 0.01),
       })
     }
-    // Primero los que se parecen por patente; dentro de cada grupo, por puntaje.
-    candidates.sort((a, b) => (b.similarity >= MIN_SIMILARITY) - (a.similarity >= MIN_SIMILARITY) || b.score - a.score)
-    // Un mismo camión puede tener dos journeys en el buffer: queda el mejor.
+    // Evalúa la visita ANTES de deduplicar: una visita futura no oculta la referencia causal.
+    for (const c of candidates) {
+      const parent=parents.find(p=>p.key===c.journeyKey && p.plate===c.plate)
+      c.inventory=assessVisitCandidate(c,head,visitRowsAt(parent?.rows??[],head.t))
+      c.inUniverse = (c.inventory.status==='expected' || (opt.allowInventoryReasons ?? []).some(r=>c.inventory.reason.startsWith(r))) && !c.seenAfter && c.automaticEligible!==false && (c.sameNode || (c.nodeProbability>=opt.universeNodeProbability && (c.onTime || opt.ignoreTransit)))
+      if (!c.inUniverse) c.automaticEligible=false
+    }
+    candidates.sort((a,b)=>Number(b.inUniverse)-Number(a.inUniverse) || (b.similarity>=MIN_SIMILARITY)-(a.similarity>=MIN_SIMILARITY) || b.score-a.score)
     const seenPlates = new Set()
-    const unique = candidates.filter((c) => (seenPlates.has(c.plate) ? false : seenPlates.add(c.plate)))
+    const unique = candidates.filter(c=>seenPlates.has(c.plate) ? false : seenPlates.add(c.plate))
+    const isMatch = (c) => c.similarity >= MIN_SIMILARITY || (c.twin && c.similarity >= TWIN_MIN_SIMILARITY)
+    const ordered = opt.universe
+      ? [...unique.filter((c) => isMatch(c) && c.inUniverse), ...unique.filter((c) => isMatch(c) && !c.inUniverse), ...unique.filter((c) => !isMatch(c))]
+      : unique
     candidates.length = 0
-    candidates.push(...unique)
-    const plateMatches = candidates.filter((c) => c.similarity >= MIN_SIMILARITY)
-    const best = plateMatches[0] || null
-    const rival = plateMatches[1] || null
+    candidates.push(...ordered)
+    const plateMatches = candidates.filter(isMatch)
+    const inside = plateMatches.filter((c) => c.inUniverse)
+    const best = (opt.universe ? inside[0] : null) || plateMatches[0] || null
+    // Rival: otro camión parecido dentro del universo, o uno de afuera con patente casi igual.
+    const rival = plateMatches.find((c) => c !== best && (c.inUniverse || c.similarity >= OUTSIDE_UNIVERSE_SIMILARITY)) || null
+    const twins = plateMatches.filter((c) => c.twin && c.automaticEligible !== false)
+    const valid = isValidPlate(f.plate)
+    const clearOfRival = (b) => !rival || b.similarity - rival.similarity >= RIVAL_MARGIN
 
     let level
     let reason
-    if (best && isValidPlate(f.plate)) {
-      // La lectura es una patente válida: puede ser otro camión real (06/10: KGX035, AF114VE,
-      // FFR877, AB912RO estaban bien leídas y se habían unido solas a KGL025, AF211ER…). Nunca se
-      // aplica sola: decide operaciones.
-      level = 'provisorio'
-      reason = `patente válida parecida a ${best.plate}: elegir la correcta`
-    } else if (best && best.reads >= 2 && best.nodeProbability >= MIN_NODE_PROBABILITY && (!rival || best.similarity - rival.similarity >= RIVAL_MARGIN || rival.nodeProbability < MIN_NODE_PROBABILITY)) {
+    const nonTwin = plateMatches.find((c) => !twins.includes(c))
+    const twin = twins.length === 1 && (!nonTwin || twins[0].similarity >= nonTwin.similarity) ? twins[0] : null
+    if (twin) {
+      candidates.splice(candidates.indexOf(twin), 1)
+      candidates.unshift(twin)
+    }
+    const twinText = twin ? `${twin.plate} se leyó en este mismo nodo ${twin.twinSeconds < 60 ? `a ${twin.twinSeconds} s` : `a ${Math.round(twin.twinSeconds / 60)} min`}` : ''
+    // Una patente válida se corrige sola solo si la buena se leyó en este mismo nodo hace poco
+    // (misma cámara o la de al lado: AC297UX → AC297HX en Balanza B3, 15 min antes) y el camión
+    // tiene al menos dos lecturas. Sin eso fallaba 1 de cada 3 (MFY738/MFY788, OJD501/OJO501).
+    const validOk = (b) => b.similarity >= opt.validAutoSimilarity || (opt.validSameNode && b.sameNode && !b.twin && b.similarity >= opt.validSameNodeSimilarity) || (opt.validNextNode && !b.sameNode && b.onTime && (b.nextProbability ?? 0) >= opt.validNextProbability && b.similarity >= opt.validSameNodeSimilarity)
+    const autoOk = (b) =>
+      b && b.inUniverse && clearOfRival(b) &&
+      (b.reads >= opt.minReads || b.twin || (!valid && b.similarity >= ONE_READ_SIMILARITY)) &&
+      (!valid || validOk(b))
+    // Caso que se puede decidir con color/marca/tipo del DSS (lo calcula el servidor en segundo plano):
+    // único camión del universo y, si la patente es válida, leído en este mismo nodo.
+    const evidenceEligible = Boolean(best && !twin && best.inUniverse && clearOfRival(best) && (!valid || best.sameNode))
+    const verdict = ctx.evidenceVerdicts?.[f.key]
+    /** @type {typeof best} */
+    let chosen = null
+    if (twin && !valid) {
+      // Lectura ilegible y el camión leído bien en el mismo nodo a segundos/minutos: es él.
       level = 'casi_seguro'
-      reason = 'patente reparable y nodo esperado de su circuito'
+      reason = twinText
+      chosen = twin
+    } else if (twin) {
+      // Dos patentes válidas en el mismo nodo a segundos: es el mismo camión pero no se sabe cuál leyó
+      // mal (MML273 en Egreso C1 y HHL273 en C2: la correcta era HHL273). Decide operaciones.
+      level = 'provisorio'
+      reason = `${twinText}: mismo camión, elegir qué patente es la correcta`
+    } else if (autoOk(best)) {
+      level = 'casi_seguro'
+      chosen = best
+      reason = valid
+        ? `${best.plate} se leyó en este mismo nodo hace ${best.gapMinutes} min y es el único camión del universo`
+        : `patente reparable y ${best.plate} es el único camión del universo esperado en este nodo`
+    } else if (verdict && best && verdict.plate === best.plate && evidenceEligible) {
+      // Patente + recorrido + color/marca/tipo del DSS por encima del umbral calibrado.
+      level = 'casi_seguro'
+      chosen = best
+      reason = `patente, recorrido y color/marca/tipo coinciden con ${chosen.plate} (${Math.round(verdict.probability * 100)}%)`
+    } else if (best && valid) {
+      level = 'provisorio'
+      reason = `patente válida parecida a ${best.plate}${best.inUniverse ? ' (en el universo de este nodo)' : ''}: elegir la correcta`
     } else if (best) {
       level = 'provisorio'
-      reason = best.nodeProbability < MIN_NODE_PROBABILITY ? 'patente parecida pero el nodo no es esperado' : 'dos camiones con patente parecida'
-    } else if (!isValidPlate(f.plate)) {
+      reason = !best.inUniverse
+        ? 'patente parecida pero el nodo no es un paso probable de ese camión'
+        : !clearOfRival(best)
+          ? 'dos camiones del universo con patente parecida'
+          : 'patente parecida pero el camión tiene una sola lectura'
+    } else if (!valid) {
       level = 'pendiente'
       reason = candidates.length ? 'lectura ilegible: varios camiones esperados en ese nodo' : 'lectura ilegible sin candidato'
+    } else if (decided(f)) {
+      // Sin candidatos hoy (salieron de planta), pero operaciones ya decidió: se respeta.
+      level = 'provisorio'
+      reason = 'decisión de operaciones'
     } else {
       // Patente válida sin parecido con nadie: camión real al que no se le leyó el ingreso.
       continue
     }
 
     const decision = decisions[f.key] || null
-    let assignedPlate = level === 'casi_seguro' ? best.plate : null
-    let assignedJourneyUid = level === 'casi_seguro' ? best.journeyUid : null
+    let assignedPlate = level === 'casi_seguro' ? chosen.plate : null
+    let assignedJourneyUid = level === 'casi_seguro' ? chosen.journeyUid : null
     /** Journey del candidato que también se corrige cuando la patente buena es la leída (o una escrita a mano). */
     let renameJourneyUid = null
     if (decision?.action === 'confirm' && decision.plate) {
@@ -437,21 +621,27 @@ export function identifyFragments(events, nowMs, ctx) {
       deviceCode: head.device,
       at: new Date(head.t).toISOString(),
       events: f.rows.length,
+      expectedAtNode: Math.round(expectedAtNode * 10) / 10,
       level,
       reason,
       assignedPlate,
       assignedJourneyUid,
       renameJourneyUid,
-      candidates: candidates.slice(0, 5).map(({ score, ...c }) => ({ ...c, score: Math.round(score * 100) / 100 })),
+      /** El servidor puede decidirlo con color/marca/tipo del DSS (umbral en identificationEvidence). */
+      evidenceEligible: evidenceEligible && level !== 'casi_seguro' && !decision,
+      candidates: candidates.slice(0, opt.maxCandidates ?? 5).map(({ score, ...c }) => ({ ...c, score: Math.round(score * 100) / 100 })),
       decision,
     })
   }
 
   // Decisiones cruzadas (TGL378 → TGT378 y TGT378 → TGL378, 07/10): se queda la más reciente y la
   // otra vuelve a revisión, para no renombrar dos viajes uno con la patente del otro.
-  const byRead = new Map(items.filter((it) => it.assignedPlate).map((it) => [it.readPlate, it]))
-  for (const a of items) {
-    const b = a.assignedPlate ? byRead.get(a.assignedPlate) : null
+  // «La cámara leyó bien» (X → X) no contradice nada: antes dos lecturas gemelas confirmadas así
+  // se anulaban entre sí (AH763WD, AG688FB, AB349QJ el 07–08/10) y volvían a la bandeja.
+  const renames = items.filter((it) => it.assignedPlate && it.assignedPlate !== it.readPlate)
+  const byRead = new Map(renames.map((it) => [it.readPlate, it]))
+  for (const a of renames) {
+    const b = byRead.get(a.assignedPlate)
     if (!b || b === a || b.assignedPlate !== a.readPlate) continue
     const ta = Date.parse(a.decision?.updatedAt ?? '') || 0
     const tb = Date.parse(b.decision?.updatedAt ?? '') || 0

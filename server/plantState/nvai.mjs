@@ -25,6 +25,9 @@ export function serializeSnapshotForPrompt(snapshot) {
       site: snapshot.site ?? null,
       at: snapshot.at ?? null,
       plant,
+      plants: snapshot.plants ?? null,
+      zones: snapshot.zones ?? [],
+      source: snapshot.source ?? null,
       trucksOpen: snapshot.trucksOpen ?? null,
       generatedInMs: snapshot.generatedInMs ?? null,
     },
@@ -63,7 +66,7 @@ export function serializeSnapshotForPrompt(snapshot) {
  * Arma el mensaje completo para el agente (pregunta + snapshot + foco + reglas duras).
  * @param {{ question: string, site: string, focus?: NvaiFocus, snapshot: object }} args
  */
-export function buildNvaiPrompt({ question, site, focus, snapshot }) {
+export function buildNvaiPrompt({ question, site, focus, snapshot, context, metrics }) {
   const sources = serializeSnapshotForPrompt(snapshot)
   const focusBlock =
     focus == null || focus === ''
@@ -75,12 +78,14 @@ export function buildNvaiPrompt({ question, site, focus, snapshot }) {
   return [
     'Sos NVAi, el asistente operacional de Truckflow (planta en vivo + ventanas ETL históricas).',
     `Sitio consultado: ${site}.`,
+    `CONTEXTO DE ESTA CONSULTA (prevalece sobre el historial): ${JSON.stringify(context ?? { mode: 'live', site })}`,
+    `KPIS CERTIFICADOS POR EL SERVICIO COMPARTIDO: ${JSON.stringify(metrics ?? [])}`,
     '',
     'REGLAS DURAS (no negociables):',
     '1. NO calculés ningún número. No sumes, no restes, no estimés, no interpolés, no redondeés a ojo.',
     '2. Cada hecho numérico o de estado que cites DEBE llevar la clave de fuente exacta del snapshot',
     '   (ej. plant-state, sectors/S6, baseline/S6, edges/<id>).',
-    '3. Si el dato no está en el bloque SNAPSHOT de abajo, respondé explícitamente que no se sabe.',
+    '3. Citá cifras del SNAPSHOT, los KPIS CERTIFICADOS o las tools ETL. Si faltan, decí que no se sabe. Para KPIs usá get_metric; citá evidenceId, runIds, rulesVersion, n y unidad. No promedies medianas ni percentiles.',
     '4. Podés usar tools ETL solo para ventanas históricas guardadas; para el «ahora» usá SOLO el snapshot.',
     '5. Respondé en español, conciso.',
     '',
@@ -118,6 +123,8 @@ export async function askNvai({
   site = 'ricardone',
   focus,
   history = [],
+  context,
+  metrics,
   getSnapshot,
   chatStream,
   onProgress,
@@ -130,8 +137,8 @@ export async function askNvai({
     throw err
   }
   const siteKey = String(site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
-  const snapshot = await getSnapshot(siteKey)
-  const message = buildNvaiPrompt({ question: q, site: siteKey, focus, snapshot })
+  const snapshot = context?.mode === 'historical' ? null : siteKey === 'both' ? { site: 'both', sectors: [], plants: await Promise.all(['ricardone', 'san_lorenzo'].map(getSnapshot)) } : await getSnapshot(siteKey)
+  const message = buildNvaiPrompt({ question: q, site: siteKey, focus, snapshot, context, metrics })
   const out = await chatStream({ message, history: Array.isArray(history) ? history : [] }, (label) => {
     if (typeof onProgress === 'function') onProgress(label)
   })

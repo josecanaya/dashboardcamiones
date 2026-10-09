@@ -1,0 +1,2115 @@
+{
+  "casos": 114,
+  "decidiblesEnVivo": 45,
+  "correctaEraNuncaVisto": 27,
+  "nuevo": {
+    "aciertoGanador": 82,
+    "≥90%": {
+      "n": 66,
+      "ok": 54,
+      "corrige": 10,
+      "corrigeBien": 8
+    },
+    "≥95%": {
+      "n": 61,
+      "ok": 52,
+      "corrige": 7,
+      "corrigeBien": 6
+    },
+    "≥98%": {
+      "n": 59,
+      "ok": 50,
+      "corrige": 6,
+      "corrigeBien": 5
+    }
+  },
+  "actual": {
+    "aciertoGanador": 68,
+    "≥90%": {
+      "n": 3,
+      "ok": 2,
+      "corrige": 2,
+      "corrigeBien": 1
+    },
+    "≥95%": {
+      "n": 1,
+      "ok": 1,
+      "corrige": 0,
+      "corrigeBien": 0
+    },
+    "≥98%": {
+      "n": 1,
+      "ok": 1,
+      "corrige": 0,
+      "corrigeBien": 0
+    }
+  },
+  "erroresNuevoConAltaProbabilidad": [
+    "RCD350→RCD350 100% (en vivo RNA350, humano RNA350, S2 noche)",
+    "KGL025→KGL025 99% (en vivo KGX035, humano KGX035, SL_S5 dia)",
+    "MSE338→MSE338 100% (en vivo MSE380, humano MSE380, SL_S7 noche)",
+    "AB772BA→AB772BA 95% (en vivo AB772DA, humano AB772DA, SL_S7 noche)",
+    "FMI166→EMI166 98% (en vivo FMT166, humano FMT166, SL_S4 dia)",
+    "AF778ZI→AF778ZI 100% (en vivo AF183OR, humano AF183OR, S4 dia)",
+    "LPI849→LPI849 100% (en vivo GPX849, humano GPX849, S6 dia)",
+    "FNT719→FMT719 94% (en vivo FNT719, humano FNT719, S3 noche)",
+    "AA358JD→AA358JD 99% (en vivo AA358JP, humano AA358JP, SL_S5 dia)",
+    "AE305ZA→AE305ZA 92% (en vivo AB305ZA, humano AB305ZA, S6 dia)",
+    "MJG611→MJG611 100% (en vivo MGG011, humano MGG011, SL_S7 noche)",
+    "MFY738→MFY738 100% (en vivo MFY788, humano MFY788, S4 dia)"
+  ],
+  "cases": [
+    {
+      "read": "NLH953",
+      "human": "NAH953",
+      "liveTruth": "NLH953",
+      "decidibleEnVivo": false,
+      "node": "SL_S5",
+      "franja": "dia",
+      "valid": true,
+      "expected": 67.2,
+      "nuevo": {
+        "plate": "NLH953",
+        "p": 0.9969014283511801
+      },
+      "actual": {
+        "plate": "NLH953",
+        "p": 0.6959390194677585
+      }
+    },
+    {
+      "read": "FITL417",
+      "human": "SOL603",
+      "liveTruth": "FITL417",
+      "decidibleEnVivo": false,
+      "node": "SL_S0",
+      "franja": "dia",
+      "valid": false,
+      "expected": 17.7,
+      "nuevo": {
+        "plate": "FITL417",
+        "p": 0.49365519903339417
+      },
+      "actual": {
+        "plate": "FITL417",
+        "p": 0.7783614896702665
+      }
+    },
+    {
+      "read": "AJ7141",
+      "human": "AD714BI",
+      "liveTruth": "AD714BI",
+      "decidibleEnVivo": true,
+      "node": "SL_S5",
+      "franja": "dia",
+      "valid": false,
+      "expected": 69,
+      "nuevo": {
+        "plate": "AJ7141",
+        "p": 0.20902867555341478
+      },
+      "actual": {
+        "plate": "AD714BI",
+        "p": 0.680120964772555
+      }
+    },
+    {
+      "read": "AF114VE",
+      "human": "AF114VE",
+      "liveTruth": "AF114VE",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 43.3,
+      "nuevo": {
+        "plate": "AF114VE",
+        "p": 0.9999368248938317
+      },
+      "actual": {
+        "plate": "AF114VE",
+        "p": 0.6152986774519154
+      }
+    },
+    {
+      "read": "AF114VE",
+      "human": "AF114VE",
+      "liveTruth": "AF114VE",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 47.6,
+      "nuevo": {
+        "plate": "AF114VE",
+        "p": 0.9999080536675988
+      },
+      "actual": {
+        "plate": "AF114VE",
+        "p": 0.621070845693117
+      }
+    },
+    {
+      "read": "NZE66",
+      "human": "NZE366",
+      "liveTruth": "NZE366",
+      "decidibleEnVivo": true,
+      "node": "SL_S1",
+      "franja": "dia",
+      "valid": false,
+      "expected": 33.3,
+      "nuevo": {
+        "plate": "NZE366",
+        "p": 0.7757163511743176
+      },
+      "actual": {
+        "plate": "NZE366",
+        "p": 0.3262891606254627
+      }
+    },
+    {
+      "read": "NWZJ836",
+      "human": "NWZ336",
+      "liveTruth": "NWZ336",
+      "decidibleEnVivo": true,
+      "node": "SL_S5",
+      "franja": "dia",
+      "valid": false,
+      "expected": 61.1,
+      "nuevo": {
+        "plate": "AA208QN",
+        "p": 0.19062186512952548
+      },
+      "actual": {
+        "plate": "NWZ336",
+        "p": 0.7739207485338928
+      }
+    },
+    {
+      "read": "MWC720",
+      "human": "MWG720",
+      "liveTruth": "MWG720",
+      "decidibleEnVivo": true,
+      "node": "S6",
+      "franja": "noche",
+      "valid": true,
+      "expected": 20.4,
+      "nuevo": {
+        "plate": "MWG720",
+        "p": 0.8485148834550201
+      },
+      "actual": {
+        "plate": "MWG720",
+        "p": 0.6938844104121595
+      }
+    },
+    {
+      "read": "HUO780",
+      "human": "RUO784",
+      "liveTruth": "HUO780",
+      "decidibleEnVivo": false,
+      "node": "S2",
+      "franja": "noche",
+      "valid": true,
+      "expected": 19.8,
+      "nuevo": {
+        "plate": "HUO780",
+        "p": 0.999339957757869
+      },
+      "actual": {
+        "plate": "HUO780",
+        "p": 0.567154740951896
+      }
+    },
+    {
+      "read": "LOL832",
+      "human": "LQL832",
+      "liveTruth": "LQL832",
+      "decidibleEnVivo": true,
+      "node": "S2",
+      "franja": "noche",
+      "valid": true,
+      "expected": 19.5,
+      "nuevo": {
+        "plate": "LQL832",
+        "p": 0.8141376686982489
+      },
+      "actual": {
+        "plate": "LQL832",
+        "p": 0.4924757089747411
+      }
+    },
+    {
+      "read": "BTB128",
+      "human": "KDB128",
+      "liveTruth": "BTB128",
+      "decidibleEnVivo": false,
+      "node": "S6",
+      "franja": "noche",
+      "valid": true,
+      "expected": 15.8,
+      "nuevo": {
+        "plate": "BTB128",
+        "p": 0.9935249461601519
+      },
+      "actual": {
+        "plate": "BTB128",
+        "p": 0.7863770540872347
+      }
+    },
+    {
+      "read": "UNI79",
+      "human": "RNI799",
+      "liveTruth": "RNI799",
+      "decidibleEnVivo": true,
+      "node": "S2",
+      "franja": "noche",
+      "valid": false,
+      "expected": 20.4,
+      "nuevo": {
+        "plate": "RNI799",
+        "p": 0.9402528201925864
+      },
+      "actual": {
+        "plate": "RNI799",
+        "p": 0.5577685787993969
+      }
+    },
+    {
+      "read": "RCD350",
+      "human": "RNA350",
+      "liveTruth": "RNA350",
+      "decidibleEnVivo": true,
+      "node": "S2",
+      "franja": "noche",
+      "valid": true,
+      "expected": 30,
+      "nuevo": {
+        "plate": "RCD350",
+        "p": 0.998026055133601
+      },
+      "actual": {
+        "plate": "RCD350",
+        "p": 0.7128850847888847
+      }
+    },
+    {
+      "read": "RKU605",
+      "human": "RKU605",
+      "liveTruth": "RKU605",
+      "decidibleEnVivo": false,
+      "node": "S2",
+      "franja": "dia",
+      "valid": true,
+      "expected": 34,
+      "nuevo": {
+        "plate": "RKU685",
+        "p": 0.7202017220561748
+      },
+      "actual": {
+        "plate": "RKU685",
+        "p": 0.5555373143851838
+      }
+    },
+    {
+      "read": "AB276IK",
+      "human": "AB226IK",
+      "liveTruth": "AB276IK",
+      "decidibleEnVivo": false,
+      "node": "S3",
+      "franja": "dia",
+      "valid": true,
+      "expected": 28.6,
+      "nuevo": {
+        "plate": "AB276IK",
+        "p": 0.999366018328355
+      },
+      "actual": {
+        "plate": "AB226IK",
+        "p": 0.6022142267292514
+      }
+    },
+    {
+      "read": "NZE566",
+      "human": "NZE366",
+      "liveTruth": "NZE566",
+      "decidibleEnVivo": false,
+      "node": "S3",
+      "franja": "dia",
+      "valid": true,
+      "expected": 27.6,
+      "nuevo": {
+        "plate": "NZE566",
+        "p": 0.9995038657626393
+      },
+      "actual": {
+        "plate": "NZE866",
+        "p": 0.35736994365437974
+      }
+    },
+    {
+      "read": "HHL273",
+      "human": "HHL273",
+      "liveTruth": "HHL273",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 46.6,
+      "nuevo": {
+        "plate": "HHL273",
+        "p": 0.9998753446311067
+      },
+      "actual": {
+        "plate": "MML273",
+        "p": 0.5361022438419187
+      }
+    },
+    {
+      "read": "AG622BE",
+      "human": "AG622BE",
+      "liveTruth": "AG622BE",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 45.4,
+      "nuevo": {
+        "plate": "AG622BE",
+        "p": 0.999903598547973
+      },
+      "actual": {
+        "plate": "AG622BE",
+        "p": 0.6543847352793741
+      }
+    },
+    {
+      "read": "AG622BE",
+      "human": "AG622BE",
+      "liveTruth": "AG622BE",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 45.9,
+      "nuevo": {
+        "plate": "AG622BE",
+        "p": 0.9999046485725919
+      },
+      "actual": {
+        "plate": "AG622BE",
+        "p": 0.6295599825021594
+      }
+    },
+    {
+      "read": "AD790SU",
+      "human": "AD790SU",
+      "liveTruth": "AD790SU",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 56.4,
+      "nuevo": {
+        "plate": "AD790SU",
+        "p": 0.9999788282196284
+      },
+      "actual": {
+        "plate": "AD799SU",
+        "p": 0.608245460856674
+      }
+    },
+    {
+      "read": "AE772KD",
+      "human": "AE772KD",
+      "liveTruth": "AE772KD",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 58.6,
+      "nuevo": {
+        "plate": "AE772KD",
+        "p": 0.9999394971361613
+      },
+      "actual": {
+        "plate": "AE772KD",
+        "p": 0.6006722124565194
+      }
+    },
+    {
+      "read": "AE772KD",
+      "human": "AE772KD",
+      "liveTruth": "AE772KD",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 58.3,
+      "nuevo": {
+        "plate": "AE772KD",
+        "p": 0.9999391858196033
+      },
+      "actual": {
+        "plate": "AE772KD",
+        "p": 0.5973312487706187
+      }
+    },
+    {
+      "read": "AE264XY",
+      "human": "AE264XY",
+      "liveTruth": "AE264XY",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 64.9,
+      "nuevo": {
+        "plate": "AE264XY",
+        "p": 0.9999325615917618
+      },
+      "actual": {
+        "plate": "AE264XY",
+        "p": 0.5950350237163473
+      }
+    },
+    {
+      "read": "MSE380",
+      "human": "MSE380",
+      "liveTruth": "MSE380",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 54,
+      "nuevo": {
+        "plate": "MSE380",
+        "p": 0.999986179430658
+      },
+      "actual": {
+        "plate": "MSE338",
+        "p": 0.46851529141300313
+      }
+    },
+    {
+      "read": "IR22411",
+      "human": "AB226IK",
+      "liveTruth": "IR22411",
+      "decidibleEnVivo": false,
+      "node": "SL_S4",
+      "franja": "dia",
+      "valid": false,
+      "expected": 27.8,
+      "nuevo": {
+        "plate": "AE341FF",
+        "p": 0.1997987004962569
+      },
+      "actual": {
+        "plate": "IR22411",
+        "p": 0.8562625260362376
+      }
+    },
+    {
+      "read": "AD82921",
+      "human": "AD829PY",
+      "liveTruth": "AD82921",
+      "decidibleEnVivo": false,
+      "node": "SL_S2",
+      "franja": "dia",
+      "valid": false,
+      "expected": 3.1,
+      "nuevo": {
+        "plate": "WXW827",
+        "p": 0.4272801972062448
+      },
+      "actual": {
+        "plate": "AD829RV",
+        "p": 0.7608349811285078
+      }
+    },
+    {
+      "read": "KGL025",
+      "human": "KGX035",
+      "liveTruth": "KGX035",
+      "decidibleEnVivo": true,
+      "node": "SL_S5",
+      "franja": "dia",
+      "valid": true,
+      "expected": 68.2,
+      "nuevo": {
+        "plate": "KGL025",
+        "p": 0.9896899681662998
+      },
+      "actual": {
+        "plate": "KGL025",
+        "p": 0.6724648858248906
+      }
+    },
+    {
+      "read": "AB226IK",
+      "human": "AB276IK",
+      "liveTruth": "AB276IK",
+      "decidibleEnVivo": true,
+      "node": "SL_S5",
+      "franja": "dia",
+      "valid": true,
+      "expected": 52.3,
+      "nuevo": {
+        "plate": "AB276IK",
+        "p": 0.8295697063148926
+      },
+      "actual": {
+        "plate": "AB276IK",
+        "p": 0.592538904707053
+      }
+    },
+    {
+      "read": "AG688FB",
+      "human": "AG688FB",
+      "liveTruth": "AG688FB",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 54.7,
+      "nuevo": {
+        "plate": "AG688FB",
+        "p": 0.9998958605759145
+      },
+      "actual": {
+        "plate": "AG688FB",
+        "p": 0.7246541750137961
+      }
+    },
+    {
+      "read": "AG688FB",
+      "human": "AG688FB",
+      "liveTruth": "AG688FB",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 54.7,
+      "nuevo": {
+        "plate": "AG688FB",
+        "p": 0.9998958605759145
+      },
+      "actual": {
+        "plate": "AG688FB",
+        "p": 0.6724210090114122
+      }
+    },
+    {
+      "read": "LS2380",
+      "human": "MSE380",
+      "liveTruth": "MSE380",
+      "decidibleEnVivo": true,
+      "node": "SL_S8",
+      "franja": "noche",
+      "valid": false,
+      "expected": 6.3,
+      "nuevo": {
+        "plate": "LS2380",
+        "p": 0.6367311579555298
+      },
+      "actual": {
+        "plate": "LS2380",
+        "p": 0.5379848108858027
+      }
+    },
+    {
+      "read": "MSE338",
+      "human": "MSE380",
+      "liveTruth": "MSE380",
+      "decidibleEnVivo": true,
+      "node": "SL_S7",
+      "franja": "noche",
+      "valid": true,
+      "expected": 50.9,
+      "nuevo": {
+        "plate": "MSE338",
+        "p": 0.9998256345970726
+      },
+      "actual": {
+        "plate": "MSE338",
+        "p": 0.5704404718286338
+      }
+    },
+    {
+      "read": "AE264XY",
+      "human": "AE264XY",
+      "liveTruth": "AE264XY",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "noche",
+      "valid": true,
+      "expected": 48.5,
+      "nuevo": {
+        "plate": "AE264XY",
+        "p": 0.8166737098086133
+      },
+      "actual": {
+        "plate": "AE264AY",
+        "p": 0.6017116917054535
+      }
+    },
+    {
+      "read": "AF529RF",
+      "human": "AF529RF",
+      "liveTruth": "AF529RF",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "noche",
+      "valid": true,
+      "expected": 55.4,
+      "nuevo": {
+        "plate": "AF529RF",
+        "p": 0.999839795582807
+      },
+      "actual": {
+        "plate": "AC529RF",
+        "p": 0.5963761941156402
+      }
+    },
+    {
+      "read": "AF529RF",
+      "human": "AF529RF",
+      "liveTruth": "AF529RF",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "noche",
+      "valid": true,
+      "expected": 55.4,
+      "nuevo": {
+        "plate": "AF529RF",
+        "p": 0.999839795582807
+      },
+      "actual": {
+        "plate": "AC529RF",
+        "p": 0.5930221716342271
+      }
+    },
+    {
+      "read": "FLN56",
+      "human": "SMN846",
+      "liveTruth": "FLN56",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "noche",
+      "valid": false,
+      "expected": 59.4,
+      "nuevo": {
+        "plate": "FLN56",
+        "p": 0.7013430676263736
+      },
+      "actual": {
+        "plate": "FLN56",
+        "p": 0.5080996992264135
+      }
+    },
+    {
+      "read": "AC529RF",
+      "human": "AC529RF",
+      "liveTruth": "AC529RF",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "noche",
+      "valid": true,
+      "expected": 57.7,
+      "nuevo": {
+        "plate": "AC529RF",
+        "p": 0.5700322592192153
+      },
+      "actual": {
+        "plate": "AF529RF",
+        "p": 0.6054959619405492
+      }
+    },
+    {
+      "read": "AYP824",
+      "human": "AYM824",
+      "liveTruth": "AYM824",
+      "decidibleEnVivo": true,
+      "node": "SL_S7",
+      "franja": "noche",
+      "valid": true,
+      "expected": 53.2,
+      "nuevo": {
+        "plate": "AYP824",
+        "p": 0.8175378216359792
+      },
+      "actual": {
+        "plate": "AYM824",
+        "p": 0.5507775848354283
+      }
+    },
+    {
+      "read": "AB772BA",
+      "human": "AB772DA",
+      "liveTruth": "AB772DA",
+      "decidibleEnVivo": true,
+      "node": "SL_S7",
+      "franja": "noche",
+      "valid": true,
+      "expected": 47.5,
+      "nuevo": {
+        "plate": "AB772BA",
+        "p": 0.9456788473617257
+      },
+      "actual": {
+        "plate": "AB772DA",
+        "p": 0.5930221716342271
+      }
+    },
+    {
+      "read": "RDG4085",
+      "human": "ROU086",
+      "liveTruth": "RDG4085",
+      "decidibleEnVivo": false,
+      "node": "SL_S10",
+      "franja": "noche",
+      "valid": false,
+      "expected": 1,
+      "nuevo": {
+        "plate": "RDG4085",
+        "p": 1
+      },
+      "actual": {
+        "plate": "RDG4085",
+        "p": 1
+      }
+    },
+    {
+      "read": "RCG15",
+      "human": "ROU086",
+      "liveTruth": "RCG15",
+      "decidibleEnVivo": false,
+      "node": "SL_S2",
+      "franja": "noche",
+      "valid": false,
+      "expected": 2.3,
+      "nuevo": {
+        "plate": "SMA331",
+        "p": 0.600361663652803
+      },
+      "actual": {
+        "plate": "RCG15",
+        "p": 0.8976003392263491
+      }
+    },
+    {
+      "read": "AD82971",
+      "human": "AD829RV",
+      "liveTruth": "AD82971",
+      "decidibleEnVivo": false,
+      "node": "SL_S5",
+      "franja": "dia",
+      "valid": false,
+      "expected": 52.6,
+      "nuevo": {
+        "plate": "WXW827",
+        "p": 0.20621598693630103
+      },
+      "actual": {
+        "plate": "AD829RV",
+        "p": 0.6517570520114608
+      }
+    },
+    {
+      "read": "FFR877",
+      "human": "FFR877",
+      "liveTruth": "FFR877",
+      "decidibleEnVivo": false,
+      "node": "S3",
+      "franja": "dia",
+      "valid": true,
+      "expected": 17.5,
+      "nuevo": {
+        "plate": "FFL877",
+        "p": 0.5686342504514985
+      },
+      "actual": {
+        "plate": "FFL877",
+        "p": 0.5422136486984113
+      }
+    },
+    {
+      "read": "EFA3233",
+      "human": "EFA323",
+      "liveTruth": "EFA323",
+      "decidibleEnVivo": true,
+      "node": "S3",
+      "franja": "dia",
+      "valid": false,
+      "expected": 14.8,
+      "nuevo": {
+        "plate": "EFA323",
+        "p": 0.9892181187564568
+      },
+      "actual": {
+        "plate": "EFA323",
+        "p": 0.9127594308754629
+      }
+    },
+    {
+      "read": "NWZ3336",
+      "human": "NWZ336",
+      "liveTruth": "NWZ3336",
+      "decidibleEnVivo": false,
+      "node": "SL_S1",
+      "franja": "dia",
+      "valid": false,
+      "expected": 19.9,
+      "nuevo": {
+        "plate": "FMT166",
+        "p": 0.21927687359906442
+      },
+      "actual": {
+        "plate": "NWZ336",
+        "p": 0.933076286310902
+      }
+    },
+    {
+      "read": "OQT40",
+      "human": "OQT140",
+      "liveTruth": "OQT140",
+      "decidibleEnVivo": true,
+      "node": "SL_S0",
+      "franja": "dia",
+      "valid": false,
+      "expected": 35.1,
+      "nuevo": {
+        "plate": "OQT140",
+        "p": 0.9999500236329101
+      },
+      "actual": {
+        "plate": "OQT140",
+        "p": 0.7141213009252544
+      }
+    },
+    {
+      "read": "OQT90",
+      "human": "OQT140",
+      "liveTruth": "OQT90",
+      "decidibleEnVivo": false,
+      "node": "SL_S2",
+      "franja": "dia",
+      "valid": false,
+      "expected": 2,
+      "nuevo": {
+        "plate": "PLV786",
+        "p": 0.6842105263157895
+      },
+      "actual": {
+        "plate": "OQT180",
+        "p": 0.6415112974223283
+      }
+    },
+    {
+      "read": "HBB25",
+      "human": "HBQ125",
+      "liveTruth": "HBQ125",
+      "decidibleEnVivo": true,
+      "node": "SL_S0",
+      "franja": "dia",
+      "valid": false,
+      "expected": 38.6,
+      "nuevo": {
+        "plate": "HBQ125",
+        "p": 0.8922978738758091
+      },
+      "actual": {
+        "plate": "HBQ125",
+        "p": 0.7293419746826676
+      }
+    },
+    {
+      "read": "MFY788",
+      "human": "MFY738",
+      "liveTruth": "MFY738",
+      "decidibleEnVivo": true,
+      "node": "SL_S5",
+      "franja": "dia",
+      "valid": true,
+      "expected": 28.2,
+      "nuevo": {
+        "plate": "MFY738",
+        "p": 0.973050645364059
+      },
+      "actual": {
+        "plate": "MFY738",
+        "p": 0.5414365300528078
+      }
+    },
+    {
+      "read": "OQT10",
+      "human": "OQT140",
+      "liveTruth": "OQT140",
+      "decidibleEnVivo": true,
+      "node": "SL_S10",
+      "franja": "dia",
+      "valid": false,
+      "expected": 1,
+      "nuevo": {
+        "plate": "OQT140",
+        "p": 0.9997990094774761
+      },
+      "actual": {
+        "plate": "OQT180",
+        "p": 0.566005838369579
+      }
+    },
+    {
+      "read": "AF566LP",
+      "human": "AF566OP",
+      "liveTruth": "AF566OP",
+      "decidibleEnVivo": true,
+      "node": "SL_S8",
+      "franja": "dia",
+      "valid": true,
+      "expected": 8.5,
+      "nuevo": {
+        "plate": "AF566OP",
+        "p": 0.56297867281388
+      },
+      "actual": {
+        "plate": "AF566OP",
+        "p": 0.37790385058269915
+      }
+    },
+    {
+      "read": "AF566DP",
+      "human": "AF566OP",
+      "liveTruth": "AF566OP",
+      "decidibleEnVivo": true,
+      "node": "SL_S8",
+      "franja": "dia",
+      "valid": true,
+      "expected": 9.5,
+      "nuevo": {
+        "plate": "AF566OP",
+        "p": 0.34872684032685
+      },
+      "actual": {
+        "plate": "AF566OP",
+        "p": 0.37790385058269915
+      }
+    },
+    {
+      "read": "AH763WD",
+      "human": "AH763WD",
+      "liveTruth": "AH763WD",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 46.5,
+      "nuevo": {
+        "plate": "AH763WD",
+        "p": 0.8640269024865578
+      },
+      "actual": {
+        "plate": "AH763FD",
+        "p": 0.3793497411205547
+      }
+    },
+    {
+      "read": "OQT180",
+      "human": "OQT140",
+      "liveTruth": "OQT140",
+      "decidibleEnVivo": true,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 45.5,
+      "nuevo": {
+        "plate": "OQT180",
+        "p": 0.8947478732917105
+      },
+      "actual": {
+        "plate": "OQT140",
+        "p": 0.5569393280413907
+      }
+    },
+    {
+      "read": "AH763WD",
+      "human": "AH763WD",
+      "liveTruth": "AH763WD",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 45.5,
+      "nuevo": {
+        "plate": "AH763WD",
+        "p": 0.8614525207808144
+      },
+      "actual": {
+        "plate": "AH763FD",
+        "p": 0.3768329513477798
+      }
+    },
+    {
+      "read": "AB912RO",
+      "human": "AB912RO",
+      "liveTruth": "AB912RO",
+      "decidibleEnVivo": false,
+      "node": "S4",
+      "franja": "dia",
+      "valid": true,
+      "expected": 18.2,
+      "nuevo": {
+        "plate": "AB912PO",
+        "p": 0.5703930861040792
+      },
+      "actual": {
+        "plate": "AB912PO",
+        "p": 0.569934513397793
+      }
+    },
+    {
+      "read": "IP6991",
+      "human": "GFP699",
+      "liveTruth": "IP6991",
+      "decidibleEnVivo": false,
+      "node": "SL_S1",
+      "franja": "dia",
+      "valid": false,
+      "expected": 23.5,
+      "nuevo": {
+        "plate": "IGP699",
+        "p": 0.6138713383113154
+      },
+      "actual": {
+        "plate": "IGP699",
+        "p": 0.8040118493525523
+      }
+    },
+    {
+      "read": "FMI166",
+      "human": "FMT166",
+      "liveTruth": "FMT166",
+      "decidibleEnVivo": true,
+      "node": "SL_S4",
+      "franja": "dia",
+      "valid": true,
+      "expected": 26.6,
+      "nuevo": {
+        "plate": "EMI166",
+        "p": 0.9849722927360824
+      },
+      "actual": {
+        "plate": "EMI166",
+        "p": 0.6058197445930863
+      }
+    },
+    {
+      "read": "AB912PO",
+      "human": "AB912RO",
+      "liveTruth": "AB912PO",
+      "decidibleEnVivo": false,
+      "node": "S4",
+      "franja": "dia",
+      "valid": true,
+      "expected": 18.3,
+      "nuevo": {
+        "plate": "AB912PO",
+        "p": 0.9988034351402376
+      },
+      "actual": {
+        "plate": "AB912RO",
+        "p": 0.609909943942219
+      }
+    },
+    {
+      "read": "GIH043",
+      "human": "GIH043",
+      "liveTruth": "GIH043",
+      "decidibleEnVivo": false,
+      "node": "S2",
+      "franja": "dia",
+      "valid": true,
+      "expected": 10.3,
+      "nuevo": {
+        "plate": "GIH043",
+        "p": 0.9995265334862502
+      },
+      "actual": {
+        "plate": "GIH043",
+        "p": 0.7773594141630553
+      }
+    },
+    {
+      "read": "AF778ZI",
+      "human": "AF183OR",
+      "liveTruth": "AF183OR",
+      "decidibleEnVivo": true,
+      "node": "S4",
+      "franja": "dia",
+      "valid": true,
+      "expected": 20.2,
+      "nuevo": {
+        "plate": "AF778ZI",
+        "p": 0.9997036237547821
+      },
+      "actual": {
+        "plate": "AF778ZI",
+        "p": 0.7054804097954872
+      }
+    },
+    {
+      "read": "FFL877",
+      "human": "FFR877",
+      "liveTruth": "FFL877",
+      "decidibleEnVivo": false,
+      "node": "S2",
+      "franja": "dia",
+      "valid": true,
+      "expected": 15.8,
+      "nuevo": {
+        "plate": "FFL877",
+        "p": 0.9988707281338913
+      },
+      "actual": {
+        "plate": "FFR877",
+        "p": 0.5415797817415691
+      }
+    },
+    {
+      "read": "TGL378",
+      "human": "TGT378",
+      "liveTruth": "TGT378",
+      "decidibleEnVivo": true,
+      "node": "S6",
+      "franja": "dia",
+      "valid": true,
+      "expected": 21.3,
+      "nuevo": {
+        "plate": "TGL378",
+        "p": 0.8152704869859352
+      },
+      "actual": {
+        "plate": "TGL378",
+        "p": 0.5109570503563442
+      }
+    },
+    {
+      "read": "LPI849",
+      "human": "GPX849",
+      "liveTruth": "GPX849",
+      "decidibleEnVivo": true,
+      "node": "S6",
+      "franja": "dia",
+      "valid": true,
+      "expected": 20.3,
+      "nuevo": {
+        "plate": "LPI849",
+        "p": 0.9971913030487718
+      },
+      "actual": {
+        "plate": "LPI849",
+        "p": 0.7657915023290695
+      }
+    },
+    {
+      "read": "VJB780",
+      "human": "VJB780",
+      "liveTruth": "VJB780",
+      "decidibleEnVivo": false,
+      "node": "S6",
+      "franja": "dia",
+      "valid": true,
+      "expected": 15.4,
+      "nuevo": {
+        "plate": "VJB780",
+        "p": 0.620135143011164
+      },
+      "actual": {
+        "plate": "VJB780",
+        "p": 0.3136161815314751
+      }
+    },
+    {
+      "read": "VDB789",
+      "human": "VDB780",
+      "liveTruth": "VDB780",
+      "decidibleEnVivo": true,
+      "node": "S6",
+      "franja": "dia",
+      "valid": true,
+      "expected": 14.4,
+      "nuevo": {
+        "plate": "VDB789",
+        "p": 0.7552416517574913
+      },
+      "actual": {
+        "plate": "VDB789",
+        "p": 0.3980385589174432
+      }
+    },
+    {
+      "read": "AD114CN",
+      "human": "AB114CN",
+      "liveTruth": "AB114CN",
+      "decidibleEnVivo": true,
+      "node": "S6",
+      "franja": "dia",
+      "valid": true,
+      "expected": 8.5,
+      "nuevo": {
+        "plate": "AD114CN",
+        "p": 0.6446648397156055
+      },
+      "actual": {
+        "plate": "AB114CN",
+        "p": 0.5234810831109344
+      }
+    },
+    {
+      "read": "TGT378",
+      "human": "TGT378",
+      "liveTruth": "TGT378",
+      "decidibleEnVivo": false,
+      "node": "S2",
+      "franja": "dia",
+      "valid": true,
+      "expected": 29.2,
+      "nuevo": {
+        "plate": "TGT378",
+        "p": 0.9998331387983325
+      },
+      "actual": {
+        "plate": "TGT378",
+        "p": 0.5089345950409326
+      }
+    },
+    {
+      "read": "CS5111",
+      "human": "AF611LQ",
+      "liveTruth": "AF611LQ",
+      "decidibleEnVivo": true,
+      "node": "S2",
+      "franja": "noche",
+      "valid": false,
+      "expected": 29.2,
+      "nuevo": {
+        "plate": "CS5111",
+        "p": 0.43620835505692024
+      },
+      "actual": {
+        "plate": "CMF111",
+        "p": 0.512314539107487
+      }
+    },
+    {
+      "read": "FNT719",
+      "human": "FNT719",
+      "liveTruth": "FNT719",
+      "decidibleEnVivo": false,
+      "node": "S3",
+      "franja": "noche",
+      "valid": true,
+      "expected": 24,
+      "nuevo": {
+        "plate": "FMT719",
+        "p": 0.9402166130788039
+      },
+      "actual": {
+        "plate": "FMT719",
+        "p": 0.6264328295834887
+      }
+    },
+    {
+      "read": "ITP00",
+      "human": "EFR877",
+      "liveTruth": "ITP00",
+      "decidibleEnVivo": false,
+      "node": "S1",
+      "franja": "noche",
+      "valid": false,
+      "expected": 1.3,
+      "nuevo": {
+        "plate": "ITP00",
+        "p": 0.36390361166623225
+      },
+      "actual": {
+        "plate": "ITP00",
+        "p": 0.686508887270736
+      }
+    },
+    {
+      "read": "FFW301",
+      "human": "FFM301",
+      "liveTruth": "FFM301",
+      "decidibleEnVivo": true,
+      "node": "S2",
+      "franja": "noche",
+      "valid": true,
+      "expected": 29.6,
+      "nuevo": {
+        "plate": "FFM301",
+        "p": 0.7426608947515604
+      },
+      "actual": {
+        "plate": "FFM301",
+        "p": 0.5077908596531872
+      }
+    },
+    {
+      "read": "AA110YK",
+      "human": "AA118YK",
+      "liveTruth": "AA118YK",
+      "decidibleEnVivo": true,
+      "node": "S2",
+      "franja": "noche",
+      "valid": true,
+      "expected": 31.1,
+      "nuevo": {
+        "plate": "AA118YK",
+        "p": 0.7331062075300301
+      },
+      "actual": {
+        "plate": "AA118YK",
+        "p": 0.522177498223635
+      }
+    },
+    {
+      "read": "RNI79",
+      "human": "RNI799",
+      "liveTruth": "RNI799",
+      "decidibleEnVivo": true,
+      "node": "S3",
+      "franja": "noche",
+      "valid": false,
+      "expected": 24.8,
+      "nuevo": {
+        "plate": "RNI799",
+        "p": 0.999785725297182
+      },
+      "actual": {
+        "plate": "RNI799",
+        "p": 0.7676576570763691
+      }
+    },
+    {
+      "read": "TNI78",
+      "human": "RNI799",
+      "liveTruth": "RNI799",
+      "decidibleEnVivo": true,
+      "node": "S2",
+      "franja": "noche",
+      "valid": false,
+      "expected": 19.7,
+      "nuevo": {
+        "plate": "TNI78",
+        "p": 0.2948263310660713
+      },
+      "actual": {
+        "plate": "RNI799",
+        "p": 0.3352235034840807
+      }
+    },
+    {
+      "read": "MS7705",
+      "human": "RNZ709",
+      "liveTruth": "MS7705",
+      "decidibleEnVivo": false,
+      "node": "S9",
+      "franja": "noche",
+      "valid": false,
+      "expected": 16.4,
+      "nuevo": {
+        "plate": "MS7705",
+        "p": 0.35871327827431454
+      },
+      "actual": {
+        "plate": "MS7705",
+        "p": 0.5396041730856835
+      }
+    },
+    {
+      "read": "AF566OP",
+      "human": "AF566LP",
+      "liveTruth": "AF566OP",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 49.1,
+      "nuevo": {
+        "plate": "AF566OP",
+        "p": 0.9999331452864126
+      },
+      "actual": {
+        "plate": "AF566OP",
+        "p": 0.5008073921962237
+      }
+    },
+    {
+      "read": "JLO557",
+      "human": "JLQ557",
+      "liveTruth": "JLO557",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 47.8,
+      "nuevo": {
+        "plate": "JLO557",
+        "p": 0.9999084383450616
+      },
+      "actual": {
+        "plate": "JLO557",
+        "p": 0.6996810854338845
+      }
+    },
+    {
+      "read": "JLQ557",
+      "human": "JLO557",
+      "liveTruth": "JLQ557",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 48.8,
+      "nuevo": {
+        "plate": "JLQ557",
+        "p": 0.9999103144402087
+      },
+      "actual": {
+        "plate": "JLO557",
+        "p": 0.5647236366408469
+      }
+    },
+    {
+      "read": "JLQ557",
+      "human": "JLO557",
+      "liveTruth": "JLQ557",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 51.3,
+      "nuevo": {
+        "plate": "JLQ557",
+        "p": 0.9999146847086416
+      },
+      "actual": {
+        "plate": "JLO557",
+        "p": 0.5600271377771413
+      }
+    },
+    {
+      "read": "ROO784",
+      "human": "ROO784",
+      "liveTruth": "ROO784",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "noche",
+      "valid": true,
+      "expected": 26.3,
+      "nuevo": {
+        "plate": "ROO784",
+        "p": 0.5471585867113323
+      },
+      "actual": {
+        "plate": "RUO784",
+        "p": 0.3304947891919393
+      }
+    },
+    {
+      "read": "CAN14",
+      "human": "PQD849",
+      "liveTruth": "CAN14",
+      "decidibleEnVivo": false,
+      "node": "SL_S0",
+      "franja": "noche",
+      "valid": false,
+      "expected": 34.2,
+      "nuevo": {
+        "plate": "CAN14",
+        "p": 0.5800241630897403
+      },
+      "actual": {
+        "plate": "CAN14",
+        "p": 0.5880912247294283
+      }
+    },
+    {
+      "read": "MDG01",
+      "human": "MGG011",
+      "liveTruth": "MGG011",
+      "decidibleEnVivo": true,
+      "node": "SL_S1",
+      "franja": "noche",
+      "valid": false,
+      "expected": 28.7,
+      "nuevo": {
+        "plate": "MGG011",
+        "p": 0.803832161044108
+      },
+      "actual": {
+        "plate": "MGG011",
+        "p": 0.6146537756578074
+      }
+    },
+    {
+      "read": "AC89799",
+      "human": "AC889HD",
+      "liveTruth": "AC889HD",
+      "decidibleEnVivo": true,
+      "node": "SL_S4",
+      "franja": "noche",
+      "valid": false,
+      "expected": 23.2,
+      "nuevo": {
+        "plate": "AC889HD",
+        "p": 0.19472789250402917
+      },
+      "actual": {
+        "plate": "AC89799",
+        "p": 0.4933735349748681
+      }
+    },
+    {
+      "read": "AF060AZ",
+      "human": "AF060AZ",
+      "liveTruth": "AF060AZ",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "noche",
+      "valid": true,
+      "expected": 19.6,
+      "nuevo": {
+        "plate": "AF060AZ",
+        "p": 0.8684025919766004
+      },
+      "actual": {
+        "plate": "AF068AZ",
+        "p": 0.5849587290214281
+      }
+    },
+    {
+      "read": "CCA14",
+      "human": "FYC813",
+      "liveTruth": "FYC813",
+      "decidibleEnVivo": true,
+      "node": "SL_S4",
+      "franja": "noche",
+      "valid": false,
+      "expected": 16.2,
+      "nuevo": {
+        "plate": "FYC813",
+        "p": 0.23553462374495396
+      },
+      "actual": {
+        "plate": "CCA14",
+        "p": 0.645079782708445
+      }
+    },
+    {
+      "read": "MFY738",
+      "human": "MFY738",
+      "liveTruth": "MFY738",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 34.3,
+      "nuevo": {
+        "plate": "MFY738",
+        "p": 0.9999651874016244
+      },
+      "actual": {
+        "plate": "MFY738",
+        "p": 0.7046318658013039
+      }
+    },
+    {
+      "read": "AF778YL",
+      "human": "AF778YL",
+      "liveTruth": "AF778YL",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 31.2,
+      "nuevo": {
+        "plate": "AF778YL",
+        "p": 0.9998947935725426
+      },
+      "actual": {
+        "plate": "AF778YL",
+        "p": 0.6753185818576235
+      }
+    },
+    {
+      "read": "AE036AM",
+      "human": "AE036AM",
+      "liveTruth": "AE036AM",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 34.1,
+      "nuevo": {
+        "plate": "AE036AM",
+        "p": 0.99987165729872
+      },
+      "actual": {
+        "plate": "AE036AM",
+        "p": 0.6721212458269008
+      }
+    },
+    {
+      "read": "AF211ER",
+      "human": "AF211ER",
+      "liveTruth": "AF211ER",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 33.1,
+      "nuevo": {
+        "plate": "AF211ER",
+        "p": 0.9999639253589955
+      },
+      "actual": {
+        "plate": "AF211ER",
+        "p": 0.6618685654384242
+      }
+    },
+    {
+      "read": "AF566OP",
+      "human": "AF566OP",
+      "liveTruth": "AF566OP",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 48.1,
+      "nuevo": {
+        "plate": "AF566OP",
+        "p": 0.9999317554703812
+      },
+      "actual": {
+        "plate": "AF566OP",
+        "p": 0.4981269469262119
+      }
+    },
+    {
+      "read": "OJO501",
+      "human": "OJD501",
+      "liveTruth": "OJD501",
+      "decidibleEnVivo": true,
+      "node": "S4",
+      "franja": "dia",
+      "valid": true,
+      "expected": 21.1,
+      "nuevo": {
+        "plate": "OJD501",
+        "p": 0.5502503682820332
+      },
+      "actual": {
+        "plate": "OJD501",
+        "p": 0.5412431107917177
+      }
+    },
+    {
+      "read": "AA358JD",
+      "human": "AA358JP",
+      "liveTruth": "AA358JP",
+      "decidibleEnVivo": true,
+      "node": "SL_S5",
+      "franja": "dia",
+      "valid": true,
+      "expected": 37.6,
+      "nuevo": {
+        "plate": "AA358JD",
+        "p": 0.9947120140569473
+      },
+      "actual": {
+        "plate": "AA358JD",
+        "p": 0.6365957230339603
+      }
+    },
+    {
+      "read": "AA358JP",
+      "human": "AA358JD",
+      "liveTruth": "AA358JP",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 52.8,
+      "nuevo": {
+        "plate": "AA358JP",
+        "p": 0.9999171082376026
+      },
+      "actual": {
+        "plate": "AA358JP",
+        "p": 0.6365957230339603
+      }
+    },
+    {
+      "read": "AE305ZA",
+      "human": "AB305ZA",
+      "liveTruth": "AB305ZA",
+      "decidibleEnVivo": true,
+      "node": "S6",
+      "franja": "dia",
+      "valid": true,
+      "expected": 33.9,
+      "nuevo": {
+        "plate": "AE305ZA",
+        "p": 0.9237432783074863
+      },
+      "actual": {
+        "plate": "AB305ZA",
+        "p": 0.5104971650091501
+      }
+    },
+    {
+      "read": "AB449JK",
+      "human": "AB449JK",
+      "liveTruth": "AB449JK",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 42.4,
+      "nuevo": {
+        "plate": "AB449JK",
+        "p": 0.9999718377343035
+      },
+      "actual": {
+        "plate": "AB449JK",
+        "p": 0.6834296793497551
+      }
+    },
+    {
+      "read": "AF211EN",
+      "human": "AF211ER",
+      "liveTruth": "AF211EN",
+      "decidibleEnVivo": false,
+      "node": "SL_S5",
+      "franja": "dia",
+      "valid": true,
+      "expected": 35.8,
+      "nuevo": {
+        "plate": "AF211EN",
+        "p": 0.9945168907607257
+      },
+      "actual": {
+        "plate": "AF211ER",
+        "p": 0.5770493030815177
+      }
+    },
+    {
+      "read": "REL85",
+      "human": "REL854",
+      "liveTruth": "REL854",
+      "decidibleEnVivo": true,
+      "node": "S9",
+      "franja": "noche",
+      "valid": false,
+      "expected": 14.3,
+      "nuevo": {
+        "plate": "REL854",
+        "p": 0.9974078899492443
+      },
+      "actual": {
+        "plate": "REL854",
+        "p": 0.8065357708259016
+      }
+    },
+    {
+      "read": "IMH787",
+      "human": "IMH787",
+      "liveTruth": "IMH787",
+      "decidibleEnVivo": false,
+      "node": "S4",
+      "franja": "dia",
+      "valid": true,
+      "expected": 11.3,
+      "nuevo": {
+        "plate": "IMH787",
+        "p": 0.999719358516698
+      },
+      "actual": {
+        "plate": "IMH787",
+        "p": 0.7984983432305148
+      }
+    },
+    {
+      "read": "AA528MD",
+      "human": "AA528MD",
+      "liveTruth": "AA528MD",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 39,
+      "nuevo": {
+        "plate": "AA528MD",
+        "p": 0.9998807677214152
+      },
+      "actual": {
+        "plate": "AA528MD",
+        "p": 0.6881411795724599
+      }
+    },
+    {
+      "read": "MFY738",
+      "human": "MFY738",
+      "liveTruth": "MFY738",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 32.4,
+      "nuevo": {
+        "plate": "MFY738",
+        "p": 0.9567521810020692
+      },
+      "actual": {
+        "plate": "MFY788",
+        "p": 0.5337293851155308
+      }
+    },
+    {
+      "read": "AE26417",
+      "human": "AE264XY",
+      "liveTruth": "AE264XY",
+      "decidibleEnVivo": true,
+      "node": "S3",
+      "franja": "dia",
+      "valid": false,
+      "expected": 13.2,
+      "nuevo": {
+        "plate": "AE264XY",
+        "p": 0.314965656563737
+      },
+      "actual": {
+        "plate": "AE264XY",
+        "p": 0.6689452419461532
+      }
+    },
+    {
+      "read": "AF211ER",
+      "human": "AF211ER",
+      "liveTruth": "AF211ER",
+      "decidibleEnVivo": false,
+      "node": "SL_S8",
+      "franja": "dia",
+      "valid": true,
+      "expected": 3.1,
+      "nuevo": {
+        "plate": "AF211ER",
+        "p": 0.9998558990825039
+      },
+      "actual": {
+        "plate": "AF221ER",
+        "p": 0.5036873968851575
+      }
+    },
+    {
+      "read": "AG688FB",
+      "human": "AG688FB",
+      "liveTruth": "AG688FB",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 36.4,
+      "nuevo": {
+        "plate": "AG688FB",
+        "p": 0.9998075514945609
+      },
+      "actual": {
+        "plate": "AG688FB",
+        "p": 0.5547126384022977
+      }
+    },
+    {
+      "read": "AG688FB",
+      "human": "AG688FB",
+      "liveTruth": "AG688FB",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 36.4,
+      "nuevo": {
+        "plate": "AG688FB",
+        "p": 0.9998075514945609
+      },
+      "actual": {
+        "plate": "AG688FB",
+        "p": 0.5547126384022977
+      }
+    },
+    {
+      "read": "MJG611",
+      "human": "MGG011",
+      "liveTruth": "MGG011",
+      "decidibleEnVivo": true,
+      "node": "SL_S7",
+      "franja": "noche",
+      "valid": true,
+      "expected": 17.1,
+      "nuevo": {
+        "plate": "MJG611",
+        "p": 0.9994155220456653
+      },
+      "actual": {
+        "plate": "MJG611",
+        "p": 0.607287343876866
+      }
+    },
+    {
+      "read": "AG688FB",
+      "human": "AG688FB",
+      "liveTruth": "AG688FB",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 23.4,
+      "nuevo": {
+        "plate": "AG688FB",
+        "p": 0.9998129816543783
+      },
+      "actual": {
+        "plate": "AG688FB",
+        "p": 0.8199720775148244
+      }
+    },
+    {
+      "read": "AE827VZ",
+      "human": "AE827VZ",
+      "liveTruth": "AE827VZ",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 26.6,
+      "nuevo": {
+        "plate": "AE827VZ",
+        "p": 0.9998354764004462
+      },
+      "actual": {
+        "plate": "AE827VZ",
+        "p": 0.7435909528848843
+      }
+    },
+    {
+      "read": "MFY738",
+      "human": "MFY788",
+      "liveTruth": "MFY788",
+      "decidibleEnVivo": true,
+      "node": "S4",
+      "franja": "dia",
+      "valid": true,
+      "expected": 12.9,
+      "nuevo": {
+        "plate": "MFY738",
+        "p": 0.9977108561991757
+      },
+      "actual": {
+        "plate": "MFY738",
+        "p": 0.5112412677474049
+      }
+    },
+    {
+      "read": "AF416TN",
+      "human": "AF446TN",
+      "liveTruth": "AF416TN",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 16.9,
+      "nuevo": {
+        "plate": "AF416TN",
+        "p": 0.9999352549632592
+      },
+      "actual": {
+        "plate": "AF446TN",
+        "p": 0.6047061573021079
+      }
+    },
+    {
+      "read": "AF446TN",
+      "human": "AF416TN",
+      "liveTruth": "AF416TN",
+      "decidibleEnVivo": true,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 17.7,
+      "nuevo": {
+        "plate": "AF416TN",
+        "p": 0.5479480362822844
+      },
+      "actual": {
+        "plate": "AF416TN",
+        "p": 0.6047061573021079
+      }
+    },
+    {
+      "read": "AG688FB",
+      "human": "AG688FB",
+      "liveTruth": "AG688FB",
+      "decidibleEnVivo": false,
+      "node": "SL_S7",
+      "franja": "dia",
+      "valid": true,
+      "expected": 21.4,
+      "nuevo": {
+        "plate": "AG688FB",
+        "p": 0.9997955068785226
+      },
+      "actual": {
+        "plate": "AG688FB",
+        "p": 0.8124675404137448
+      }
+    },
+    {
+      "read": "GNG637",
+      "human": "HNG637",
+      "liveTruth": "HNG637",
+      "decidibleEnVivo": true,
+      "node": "S3",
+      "franja": "dia",
+      "valid": true,
+      "expected": 9.4,
+      "nuevo": {
+        "plate": "HNG637",
+        "p": 0.9025392250612172
+      },
+      "actual": {
+        "plate": "HNG637",
+        "p": 0.5540884556530902
+      }
+    },
+    {
+      "read": "OER232",
+      "human": "BER232",
+      "liveTruth": "BER232",
+      "decidibleEnVivo": true,
+      "node": "S2",
+      "franja": "noche",
+      "valid": true,
+      "expected": 11.6,
+      "nuevo": {
+        "plate": "BER232",
+        "p": 0.880384496792899
+      },
+      "actual": {
+        "plate": "BER232",
+        "p": 0.41316446107617094
+      }
+    }
+  ]
+}

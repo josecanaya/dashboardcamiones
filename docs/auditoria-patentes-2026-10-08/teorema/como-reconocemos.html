@@ -1,0 +1,481 @@
+<title>Cómo reconocemos una patente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: una sola columna de lectura (≈ 68 caracteres) con pasos numerados; los gráficos y la calculadora se abren a todo el ancho. Paleta de la planta: verde NVA para camiones, violeta para lo que no es un camión conocido. */
+:root {
+  --bg: #f4f6f2;
+  --card: #ffffff;
+  --ink: #18241d;
+  --muted: #5a685f;
+  --rule: #dde5dd;
+  --accent: #14532d;
+  --accent-soft: #e2eee5;
+  --truck: #1f7a4a;
+  --other: #7a5cc9;
+  --other-soft: #eeeafb;
+  --track: #e8ece7;
+  --warn: #9a3412;
+  --display: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --math: "Newsreader", "Cambria Math", Georgia, serif;
+  --mono: "JetBrains Mono", Consolas, ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1612; --card: #17211b; --ink: #e4ebe6; --muted: #9db0a4; --rule: #2a3a31;
+    --accent: #7ccf9a; --accent-soft: #1e3427; --truck: #3fa86d; --other: #9277e3; --other-soft: #272240;
+    --track: #24312a; --warn: #f0a37a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1612; --card: #17211b; --ink: #e4ebe6; --muted: #9db0a4; --rule: #2a3a31;
+  --accent: #7ccf9a; --accent-soft: #1e3427; --truck: #3fa86d; --other: #9277e3; --other-soft: #272240;
+  --track: #24312a; --warn: #f0a37a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; }
+.page { max-width: 980px; margin: 0 auto; padding-inline: 16px; padding-block: 40px 80px; display: grid; gap: 56px; }
+.text { max-width: 68ch; display: grid; gap: 14px; }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+h1 { font-size: clamp(34px, 5.5vw, 54px); line-height: 1.05; }
+h2 { font-size: clamp(24px, 3.2vw, 32px); line-height: 1.15; }
+h3 { font-size: 17px; }
+p { margin: 0; }
+.kicker { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+.lead { font-size: 20px; color: var(--muted); }
+.small { font-size: 14px; color: var(--muted); }
+.plate { font-family: var(--mono); font-weight: 600; letter-spacing: .05em; padding: 1px 7px; border-radius: 3px; background: var(--accent-soft); white-space: nowrap; }
+.m { font-family: var(--math); font-style: italic; font-size: 1.1em; }
+.step { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 18px; align-items: start; }
+.num { font-family: var(--display); font-weight: 700; font-size: 40px; line-height: 1; color: var(--accent); }
+.card { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: clamp(16px, 3vw, 28px); display: grid; gap: 16px; min-width: 0; }
+.plates { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.bigplate { font-family: var(--mono); font-weight: 600; font-size: clamp(26px, 5vw, 40px); letter-spacing: .08em; border: 2px solid var(--ink); border-radius: 6px; padding: 6px 16px; background: var(--card); }
+.bigplate.read { border-style: dashed; color: var(--muted); }
+.arrow { font-size: 28px; color: var(--muted); }
+.qs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.q { border-top: 3px solid var(--accent); padding-top: 10px; display: grid; gap: 4px; }
+.q b { font-size: 18px; }
+.eq { font-family: var(--math); font-size: clamp(19px, 2.6vw, 26px); background: var(--accent-soft); border-radius: 6px; padding: 14px 18px; overflow-x: auto; }
+.read-as { border-left: 3px solid var(--accent); padding-left: 14px; color: var(--ink); }
+/* Gráfico de escalones */
+.legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
+.sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 6px; }
+.rows { display: grid; gap: 8px; }
+.row { display: grid; grid-template-columns: minmax(120px, 190px) minmax(0, 1fr) 64px 70px; gap: 12px; align-items: center; font-size: 15px; }
+.row .lab { min-width: 0; }
+.row .lab small { display: block; color: var(--muted); font-size: 12px; line-height: 1.2; }
+.track { height: 16px; background: var(--track); border-radius: 4px; display: flex; overflow: hidden; gap: 2px; }
+.seg { height: 100%; }
+.seg.t { background: var(--truck); }
+.seg.o { background: var(--other); }
+.val { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+.mod { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; color: var(--muted); font-size: 13px; }
+.rowhead { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.row.sep { border-top: 1px dashed var(--rule); padding-top: 8px; }
+.row:hover .track { outline: 2px solid var(--rule); outline-offset: 2px; }
+/* Escalera de lecturas */
+.ladder { display: grid; gap: 10px; }
+.rung { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) 120px; gap: 12px; align-items: center; border-bottom: 1px solid var(--rule); padding-bottom: 10px; }
+.rung .odds { font-family: var(--mono); text-align: right; font-variant-numeric: tabular-nums; }
+.dots { display: flex; gap: 3px; flex-wrap: wrap; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--truck); }
+/* Calculadora */
+.calc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+.ctrl { display: grid; gap: 14px; }
+.field { display: grid; gap: 6px; }
+.field label, .field .lbl { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+select, input[type="range"] { width: 100%; font: inherit; font-size: 15px; }
+select { padding: 8px 10px; border: 1px solid var(--rule); border-radius: 6px; background: var(--card); color: var(--ink); }
+.seg-ctrl { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg-ctrl button { font: inherit; font-size: 14px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.seg-ctrl button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--card); }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--other); outline-offset: 2px; }
+.out { display: grid; gap: 16px; align-content: start; }
+.result { display: grid; gap: 10px; }
+.rbar { display: grid; grid-template-columns: 120px minmax(0, 1fr) 70px; gap: 10px; align-items: center; font-size: 15px; }
+.rbar .track { height: 26px; }
+.verdict { padding: 12px 14px; border-radius: 6px; background: var(--accent-soft); font-size: 15px; }
+.verdict.mid { background: var(--other-soft); }
+.mult { font-family: var(--mono); font-size: 13px; color: var(--muted); display: grid; gap: 4px; overflow-x: auto; }
+.mult span { white-space: nowrap; }
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.kpi { display: grid; gap: 4px; }
+.kpi .n { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 5vw, 44px); line-height: 1; }
+.kpi .n.bad { color: var(--warn); }
+.kpi .n.good { color: var(--accent); }
+ul.plain { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+.scroll { overflow-x: auto; }
+@media (max-width: 760px) {
+  .qs, .calc, .kpis { grid-template-columns: minmax(0, 1fr); }
+  .step { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .row { grid-template-columns: minmax(0, 1fr) 54px; }
+  .row .track { grid-column: 1 / -1; grid-row: 2; }
+  .row .mod { display: none; }
+  .rung { grid-template-columns: minmax(0, 1fr) 100px; }
+  .rung .dots { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) { .seg { transition: width .25s ease; } }
+
+/* Modo presentación: una lámina por pantalla. El modo lectura muestra todas seguidas. */
+.slide { display: grid; gap: 24px; min-width: 0; }
+.deckbar { position: fixed; left: 0; right: 0; bottom: 0; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; background: var(--card); border-top: 1px solid var(--rule); z-index: 10; }
+.deckbar button { font: inherit; font-size: 14px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.deckbar button.primary { background: var(--accent); border-color: var(--accent); color: var(--card); }
+.deckbar button:disabled { opacity: .4; cursor: default; }
+.deckbar .count { font-family: var(--mono); font-size: 14px; color: var(--muted); min-width: 64px; text-align: center; font-variant-numeric: tabular-nums; }
+.deckbar .progress { flex-basis: 100%; height: 3px; background: var(--track); border-radius: 2px; overflow: hidden; order: -1; }
+.deckbar .progress span { display: block; height: 100%; background: var(--accent); }
+.reading .deckbar .nav, .reading .deckbar .progress { display: none; }
+.reading .page { padding-block-end: 120px; }
+.presenting .page { max-width: 1180px; min-height: 100%; padding-block: 32px 110px; display: block; }
+.presenting .slide { display: none; }
+.presenting .slide.on { display: grid; align-content: center; min-height: calc(100dvh - 160px); }
+.presenting body, body.presenting { font-size: 19px; }
+.presenting h1 { font-size: clamp(40px, 6.5vw, 72px); }
+.presenting h2 { font-size: clamp(28px, 4vw, 44px); }
+.presenting .text { max-width: 76ch; }
+@media (prefers-reduced-motion: no-preference) { .presenting .slide.on { animation: in .25s ease; } @keyframes in { from { opacity: .4; transform: translateY(6px); } } }
+</style>
+
+<main class="page">
+
+<div class="slide">
+<header class="text">
+  <span class="kicker">Reconocimiento de patentes · Nodo Sur</span>
+  <h1>Cómo reconocemos una patente mal leída</h1>
+  <p class="lead">Cuando una cámara lee mal una patente, el sistema tiene que decidir de qué camión era. Esta página explica cómo lo hace, paso a paso, con un caso real y una calculadora para probarlo.</p>
+</header>
+</div>
+
+<div class="slide">
+<section class="card">
+  <p class="small">El caso que vamos a seguir · 08/10, 11:07 · Calada de Ricardone</p>
+  <div class="plates">
+    <span class="bigplate read" title="Lo que leyó la cámara">CFK008</span>
+    <span class="arrow" aria-hidden="true">→ ¿es</span>
+    <span class="bigplate" title="Camión que venía de Preingreso">CFK006</span>
+    <span class="arrow" aria-hidden="true">?</span>
+  </div>
+  <p>La cámara de Calada leyó <span class="plate">CFK008</span>. Nueve minutos antes, <span class="plate">CFK006</span> había pasado por Ingreso y Preingreso, y su próximo paso era justamente Calada. A simple vista es obvio que es el mismo camión. El sistema tiene que llegar a esa misma conclusión con números, y también saber cuándo no es obvio.</p>
+</section>
+</div>
+
+<div class="slide">
+<section class="text">
+  <h2>La idea: tres preguntas a cada candidato</h2>
+  <p>Para cada camión que podría ser, el sistema se hace tres preguntas. Cada respuesta es un número entre 0 y 1, y se multiplican. Gana el que mejor explica la lectura.</p>
+</section>
+<div class="qs">
+  <div class="q"><b>1. ¿Podía estar ahí?</b><p class="small">Según su recorrido, ¿este punto era lo que le tocaba ahora?</p></div>
+  <div class="q"><b>2. ¿La cámara leería eso?</b><p class="small">Si fuera ese camión, ¿qué tan seguido la cámara se equivoca así?</p></div>
+  <div class="q"><b>3. ¿Se ve igual?</b><p class="small">Color, marca y tipo en las dos fotos del DSS.</p></div>
+</div>
+<section class="text">
+  <p>Siempre hay un candidato más, que compite con las mismas tres preguntas: <b>«nunca visto»</b>. Es la opción de que la lectura sea de un vehículo que todavía no habíamos leído: un camión nuevo, o un auto o una camioneta que no es un camión. Si «nunca visto» gana, el sistema no corrige nada.</p>
+</section>
+</div>
+
+<div class="slide">
+<section class="step">
+  <span class="num">1</span>
+  <div class="text">
+    <h2>¿Podía estar ahí? Depende del punto</h2>
+    <p>Pensalo como un colectivo con recorrido fijo. En la primera parada sube gente que nunca viste. En la quinta parada, casi todos los que van arriba ya los viste subir antes. Una cara nueva ahí es rara.</p>
+    <p>Con los camiones pasa lo mismo. En Ingreso, casi todo es nuevo. Después de Ingreso y Preingreso, el sistema ya vio a casi todos. Una patente nueva en Calada es, la mayoría de las veces, un camión conocido mal leído.</p>
+    <p>A ese número lo llamamos <b>p<sub>inicio</sub></b>: de cada 100 vehículos que pasan por ese punto, cuántos no habíamos visto antes.</p>
+  </div>
+</section>
+</div>
+
+<div class="slide">
+<section class="card">
+  <h3>De cada 100 vehículos que pasan, cuántos son «nunca vistos» · recorrido R7, de día</h3>
+  <div class="legend">
+    <span><span class="sw" style="background:var(--truck)"></span>Camión que aparece por primera vez</span>
+    <span><span class="sw" style="background:var(--other)"></span>No es camión (auto, camioneta, servicio)</span>
+    <span>Columna gris: lo que da el modelo de nodos solo</span>
+  </div>
+  <div class="rows" id="steps" role="table" aria-label="Probabilidad de nunca visto por punto"></div>
+  <p class="small">Medido con las cámaras de septiembre: una patente cuenta como camión nuevo si es su primera lectura en 8 h y se vuelve a leer después en otro punto. «No es camión» = vehículos que nunca pasaron por calada, balanza ni descarga.</p>
+</section>
+</div>
+
+<div class="slide">
+<section class="text">
+  <p><b>Qué muestra el gráfico.</b> La cantidad de nuevos baja rápido: 84 de cada 100 en Ingreso, 18 en Preingreso, 8 en Calada. Ingreso San Lorenzo no es un punto de partida: casi todo lo que llega ahí viene de Ricardone.</p>
+  <p><b>Lo que rompía la cuenta.</b> En San Lorenzo entran autos y camionetas por Egreso y por Renova, que para un camión son el final del recorrido. En Egreso, 21 de cada 100 lecturas son de vehículos que no son camiones. En Renova, 40. Sin separar eso, cualquier patente rara en Egreso parecía un camión mal leído.</p>
+  <p><b>El modelo solo se queda corto.</b> Supone que cada cámara falla por separado. En la realidad, una patente sucia o dañada falla en todas, así que aparecen más «nuevos» en los puntos profundos de lo que predice el modelo. Por eso el sistema usa el valor medido.</p>
+  <p>Entre los camiones que sí conocemos, pesan más los que tienen este punto como próximo paso. Si un camión tuvo que saltearse una cámara para llegar acá, pesa la cuarta parte.</p>
+</section>
+</div>
+
+<div class="slide">
+<section class="step">
+  <span class="num">2</span>
+  <div class="text">
+    <h2>¿La cámara leería eso? Hay errores frecuentes y errores raros</h2>
+    <p>La cámara confunde seguido letras que se parecen (0 y O, 8 y B) y a veces se come una letra. Cambiar una letra por otra cualquiera es mucho más raro. Y que la lectura sea, por casualidad, la patente exacta de un camión que nunca vino es rarísimo.</p>
+  </div>
+</section>
+
+<section class="card">
+  <h3>Qué tan seguido la cámara produce cada tipo de lectura</h3>
+  <div class="ladder" id="ladder"></div>
+  <p class="small">«1 en N» es la chance de una variante concreta. Ejemplo: una letra cualquiera cambiada pasa en 5 de cada 100 lecturas, pero hay 102 formas distintas de hacerlo, así que cada una tiene 1 chance en 2.000. Patentes válidas distintas vistas en septiembre: 12.789.</p>
+</section>
+</div>
+
+<div class="slide">
+<section class="step">
+  <span class="num">3</span>
+  <div class="text">
+    <h2>¿Se ve igual? Color, marca y tipo ayudan, sin decidir solos</h2>
+    <p>El DSS informa color, marca y tipo en cada foto. Si la marca coincide, el puntaje se multiplica casi por 5; si no coincide, se divide por 5. El color pesa menos, porque de noche todo se ve oscuro y la mayoría de los camiones son blancos. El tipo pesa poco, porque la cámara confunde camión grande con mediano.</p>
+  </div>
+</section>
+</div>
+
+<div class="slide">
+<section class="step">
+  <span class="num">4</span>
+  <div class="text">
+    <h2>Juntar todo y repartir el 100 %</h2>
+    <div class="eq">P(CFK006) = puntaje de CFK006 ÷ (puntaje de CFK006 + puntaje de los demás + puntaje de «nunca visto»)</div>
+    <p class="read-as">El puntaje de cada opción es el producto de las tres respuestas. Dividir por la suma hace que todo sume 100 %. Como «nunca visto» pasa por las mismas preguntas, la comparación es pareja.</p>
+  </div>
+</section>
+</div>
+
+<div class="slide">
+<section class="card" aria-labelledby="calc-title">
+  <h3 id="calc-title">Probalo: cambiá el caso y mirá cómo se mueve la probabilidad</h3>
+  <div class="calc">
+    <div class="ctrl">
+      <div class="field"><label for="node">Punto donde se leyó</label><select id="node"></select></div>
+      <div class="field"><span class="lbl">Momento</span><div class="seg-ctrl" id="franja"></div></div>
+      <div class="field"><label for="diff">Cómo se parece la lectura al candidato</label><select id="diff"></select></div>
+      <div class="field"><span class="lbl">La lectura, ¿es una patente válida?</span><div class="seg-ctrl" id="valid"></div></div>
+      <div class="field"><span class="lbl">El candidato</span><div class="seg-ctrl" id="route"></div></div>
+      <div class="field"><label for="expected">Camiones conocidos que esperan este paso: <b id="expectedOut"></b></label><input id="expected" type="range" min="1" max="60" step="1"></div>
+      <div class="field"><span class="lbl">Color, marca y tipo</span><div class="seg-ctrl" id="attrs"></div></div>
+    </div>
+    <div class="out">
+      <div class="result" id="bars"></div>
+      <div class="verdict" id="verdict"></div>
+      <div class="mult" id="mult"></div>
+      <button type="button" class="seg-ctrl-reset" id="reset" style="justify-self:start;font:inherit;font-size:14px;padding:6px 12px;border-radius:999px;border:1px solid var(--rule);background:var(--card);color:var(--ink);cursor:pointer">Volver al caso CFK008</button>
+    </div>
+  </div>
+  <p class="small">Es la misma cuenta que corre en el sistema (server/plantState/nodeModelScore.mjs), con valores de ejemplo para los atributos. Probá: llevá el caso a Ingreso, o a Egreso SL de noche, o subí los camiones esperados a 40.</p>
+</section>
+</div>
+
+<div class="slide">
+<section class="text">
+  <h2>Qué pasó al probarlo con decisiones reales</h2>
+  <p>Repetimos la cuenta sobre 114 lecturas del 06 y 07/10 que operaciones ya había resuelto, usando solo lo que el sistema sabía en el momento de cada lectura. Todavía sin color ni marca.</p>
+</section>
+<div class="kpis">
+  <div class="kpi"><span class="n good">82 de 114</span><span class="small">El modelo nuevo elige la respuesta correcta. El de hoy: 68.</span></div>
+  <div class="kpi"><span class="n">27</span><span class="small">casos donde la respuesta correcta en ese momento era «nunca visto»: el camión recién se leyó bien después.</span></div>
+  <div class="kpi"><span class="n bad">5 de 6</span><span class="small">correcciones con 98 % o más fueron correctas. Falta llegar a 98 de 100.</span></div>
+</div>
+<section class="text">
+  <p><b>El error que queda.</b> La cámara leyó <span class="plate">FMI166</span>. El modelo eligió <span class="plate">EMI166</span>, porque E y F se confunden seguido. Era <span class="plate">FMT166</span>. Cuando dos camiones reales difieren en una confusión típica, la patente sola no alcanza: ahí tienen que decidir el color y la marca, o una persona.</p>
+  <p><b>Qué no se puede decidir en vivo.</b> De los 114 casos, en 42 la cámara había leído bien y en 45 el camión correcto ya era conocido. En los otros 27, el camión correcto todavía no había sido leído en ningún punto cuando ocurrió la lectura: operaciones los resolvió mirando hacia atrás. En vivo, lo honesto es decir «nunca visto» y esperar.</p>
+</section>
+</div>
+
+<div class="slide">
+<section class="card">
+  <h3>Estado y próximos pasos</h3>
+  <ul class="plain">
+    <li><b>Ya está en el sistema, en evaluación.</b> Cada caso de la bandeja muestra la probabilidad del modelo por nodos y la de «nunca visto» en ese punto. No cambia ninguna decisión automática.</li>
+    <li><b>Sumar color y marca a la prueba.</b> Consultar el DSS para estos 114 casos y repetir la cuenta. Es lo que debería separar FMT166 de EMI166.</li>
+    <li><b>Medir los errores de cada cámara.</b> Las chances de la escalera son estimadas. Se miden con dobles lecturas del mismo camión, por cámara y de día o de noche.</li>
+    <li><b>Demostrar con septiembre.</b> Repetir la prueba contra el Excel de movimientos hasta juntar 149 correcciones seguidas sin error, que es lo que pide el 98 %.</li>
+  </ul>
+</section>
+</div>
+
+</main>
+
+<script>
+(function () {
+  // Valores de server/plantState/data/pInicioNodos.json (septiembre). p = nunca visto; o = parte que no es camión.
+  var NODES = [
+    { id: 'S0', label: 'Ingreso Ricardone', p: { dia: 0.836, noche: 0.913 }, o: { dia: 0.040, noche: 0.129 }, r: { dia: 0.889, noche: 0.535 }, model: 1 },
+    { id: 'S1', label: 'Preingreso', p: { dia: 0.176, noche: 0.355 }, o: { dia: 0.035, noche: 0.104 }, r: { dia: 0.895, noche: 0.777 }, model: 0.111 },
+    { id: 'S2', label: 'Calada', p: { dia: 0.083, noche: 0.096 }, o: { dia: 0, noche: 0 }, r: { dia: 0.791, noche: 0.691 }, model: 0.012 },
+    { id: 'S3', label: 'Salida 2', p: { dia: 0.080, noche: 0.137 }, o: { dia: 0.046, noche: 0.117 }, r: { dia: 0.797, noche: 0.542 }, model: 0.002 },
+    { id: 'SL_S0', label: 'Ingreso SL', p: { dia: 0.131, noche: 0.168 }, o: { dia: 0.022, noche: 0.130 }, r: { dia: 0.813, noche: 0.656 }, model: 0.0005 },
+    { id: 'SL_S1', label: 'Balanza ingreso SL', p: { dia: 0.043, noche: 0.028 }, o: { dia: 0, noche: 0 }, r: { dia: 0.821, noche: 0.610 }, model: 0 },
+    { id: 'SL_S4', label: 'Volcables SL', p: { dia: 0.016, noche: 0.016 }, o: { dia: 0, noche: 0 }, r: { dia: 0.875, noche: 0.392 }, model: 0 },
+    { id: 'SL_S5', label: 'Balanza egreso SL', p: { dia: 0.016, noche: 0.016 }, o: { dia: 0, noche: 0 }, r: { dia: 0.376, noche: 0.140 }, model: 0 },
+    { id: 'SL_S7', label: 'Egreso SL', p: { dia: 0.257, noche: 0.165 }, o: { dia: 0.207, noche: 0.151 }, r: { dia: 0.845, noche: 0.729 }, model: 0 },
+    { id: 'SL_S8', label: 'Renova (acceso)', p: { dia: 0.433, noche: 0.521 }, o: { dia: 0.404, noche: 0.508 }, r: { dia: 0.8, noche: 0.6 }, model: null, extra: true }
+  ];
+  var FLEET = 12789;
+  var DAMAGED = 2.5e-8;
+  var DIFFS = [
+    { id: 'same', label: 'Igual (la cámara leyó bien)', ex: 'CFK006 → CFK006', lik: function (r) { return r; } },
+    { id: 'conf', label: 'Una confusión típica (0/O, 8/B…)', ex: 'OJ0501 → OJO501', lik: function () { return 0.011; } },
+    { id: 'del', label: 'Una letra de menos', ex: 'EIY162 → EIY16', lik: function () { return 0.025 / 6; } },
+    { id: 'sub', label: 'Una letra cualquiera cambiada', ex: 'CFK006 → CFK008', lik: function () { return 0.05 / 102; } },
+    { id: 'two', label: 'Dos letras cualquiera cambiadas', ex: 'KGX035 → KGL025', lik: function () { return Math.pow(0.05 / 102, 2); } },
+    { id: 'bad', label: 'Muy dañada, casi no se parece', ex: 'CS5111 → AF611LQ', lik: function () { return DAMAGED; } }
+  ];
+  var ATTRS = [
+    { id: 'none', label: 'Sin dato', lr: 1 },
+    { id: 'cfk', label: 'Como CFK008: color y tipo distintos', lr: 0.728 * 0.759 },
+    { id: 'brand', label: 'Misma marca', lr: 4.75 },
+    { id: 'diff', label: 'Otra marca', lr: 0.197 }
+  ];
+  var DEFAULT = { node: 'S2', franja: 'dia', diff: 'sub', valid: 'si', route: 'next', expected: 5, attrs: 'cfk' };
+  var state = Object.assign({}, DEFAULT);
+
+  var pct = function (x) { return x >= 0.995 && x < 1 ? '> 99 %' : x < 0.005 && x > 0 ? '< 1 %' : Math.round(x * 100) + ' %'; };
+  var sci = function (x) { if (x >= 0.01) return x.toFixed(3).replace('.', ','); var e = Math.floor(Math.log10(x)); return (x / Math.pow(10, e)).toFixed(1).replace('.', ',') + '·10^' + e; };
+  var oneIn = function (x) { var n = 1 / x; return n < 1.5 ? 'casi siempre' : '1 en ' + (n >= 1e6 ? (n / 1e6).toFixed(0) + ' millones' : Math.round(n).toLocaleString('es-AR')); };
+
+  // Gráfico de escalones (día)
+  var steps = document.getElementById('steps');
+  var head = document.createElement('div');
+  head.className = 'row rowhead';
+  head.innerHTML = '<span>Punto</span><span>de cada 100 vehículos</span><span class="val">medido</span><span class="mod">modelo</span>';
+  steps.appendChild(head);
+  NODES.forEach(function (n) {
+    var row = document.createElement('div');
+    row.className = 'row' + (n.extra ? ' sep' : '');
+    row.setAttribute('role', 'row');
+    var total = n.p.dia, other = n.o.dia, truck = total - other;
+    row.title = n.label + ': ' + Math.round(total * 100) + ' de cada 100 son nunca vistos (' + Math.round(other * 100) + ' no son camiones)';
+    row.innerHTML = '<span class="lab">' + n.label + (n.extra ? '<small>acceso compartido, no es paso de R7</small>' : '') + '</span>' +
+      '<span class="track" aria-hidden="true"><span class="seg t" style="width:' + (truck * 100) + '%"></span><span class="seg o" style="width:' + (other * 100) + '%"></span></span>' +
+      '<span class="val">' + Math.round(total * 100) + '</span>' +
+      '<span class="mod">' + (n.model == null ? '—' : n.model >= 0.01 ? Math.round(n.model * 100) : n.model > 0 ? '< 1' : '≈ 0') + '</span>';
+    steps.appendChild(row);
+  });
+
+  // Escalera de lecturas (Calada de día)
+  var ladder = document.getElementById('ladder');
+  var rungs = DIFFS.slice(0, 5).map(function (d) { return { label: d.label, ex: d.ex, p: d.lik(0.79) }; });
+  rungs.push({ label: 'Patente exacta de un camión que nunca vino', ex: 'CFK008 existe y se leyó bien', p: 0.79 / FLEET });
+  rungs.forEach(function (g) {
+    var dots = Math.max(1, Math.round(Math.log10(g.p * 1e9)));
+    var el = document.createElement('div');
+    el.className = 'rung';
+    var d = '';
+    for (var i = 0; i < Math.min(9, dots); i++) d += '<span class="dot"></span>';
+    el.innerHTML = '<div><b>' + g.label + '</b><br><span class="small"><span class="plate">' + g.ex + '</span></span></div><div class="dots" title="Cada punto = 10 veces más probable">' + d + '</div><div class="odds">' + oneIn(g.p) + '</div>';
+    ladder.appendChild(el);
+  });
+
+  // Calculadora
+  var nodeSel = document.getElementById('node');
+  NODES.forEach(function (n) { var o = document.createElement('option'); o.value = n.id; o.textContent = n.label; nodeSel.appendChild(o); });
+  var diffSel = document.getElementById('diff');
+  DIFFS.forEach(function (d) { var o = document.createElement('option'); o.value = d.id; o.textContent = d.label + ' · ' + d.ex; diffSel.appendChild(o); });
+  function seg(id, key, opts) {
+    var box = document.getElementById(id);
+    opts.forEach(function (o) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.textContent = o[1]; b.dataset.v = o[0];
+      b.addEventListener('click', function () { state[key] = o[0]; render(); });
+      box.appendChild(b);
+    });
+  }
+  seg('franja', 'franja', [['dia', 'De día'], ['noche', 'De noche']]);
+  seg('valid', 'valid', [['si', 'Sí, formato válido'], ['no', 'No, incompleta o rara']]);
+  seg('route', 'route', [['next', 'Este punto era su próximo paso'], ['skip', 'Le faltó una cámara antes']]);
+  seg('attrs', 'attrs', ATTRS.map(function (a) { return [a.id, a.label]; }));
+  nodeSel.addEventListener('change', function () { state.node = nodeSel.value; render(); });
+  diffSel.addEventListener('change', function () { state.diff = diffSel.value; render(); });
+  var exp = document.getElementById('expected');
+  exp.addEventListener('input', function () { state.expected = Number(exp.value); render(); });
+  document.getElementById('reset').addEventListener('click', function () { state = Object.assign({}, DEFAULT); render(); });
+
+  function render() {
+    var n = NODES.filter(function (x) { return x.id === state.node; })[0];
+    var p0 = n.p[state.franja], r = n.r[state.franja];
+    var d = DIFFS.filter(function (x) { return x.id === state.diff; })[0];
+    var a = ATTRS.filter(function (x) { return x.id === state.attrs; })[0];
+    var w = state.route === 'next' ? 1 : 0.25;
+    var expected = Math.max(state.expected, w);
+    var prior = (1 - p0) * w / expected;
+    var lik = Math.max(d.id === 'same' ? 0 : DAMAGED, d.lik(r));
+    var cand = prior * lik * a.lr;
+    var nsLik = state.valid === 'si' ? r / FLEET : DAMAGED;
+    var never = p0 * nsLik;
+    var P = cand / (cand + never);
+
+    nodeSel.value = state.node; diffSel.value = state.diff; exp.value = state.expected;
+    document.getElementById('expectedOut').textContent = state.expected;
+    ['franja', 'valid', 'route', 'attrs'].forEach(function (k) {
+      Array.prototype.forEach.call(document.getElementById(k).children, function (b) { b.setAttribute('aria-pressed', String(b.dataset.v === state[k])); });
+    });
+    document.getElementById('bars').innerHTML =
+      '<div class="rbar"><b>Es el candidato</b><span class="track"><span class="seg t" style="width:' + (P * 100) + '%"></span></span><span class="val">' + pct(P) + '</span></div>' +
+      '<div class="rbar"><b>Nunca visto</b><span class="track"><span class="seg o" style="width:' + ((1 - P) * 100) + '%"></span></span><span class="val">' + pct(1 - P) + '</span></div>';
+    var v = document.getElementById('verdict');
+    v.className = 'verdict' + (P >= 0.98 ? '' : ' mid');
+    v.textContent = P >= 0.98 ? 'Muy claro: este es el tipo de caso que se podría corregir solo, cuando la tesis del 98 % esté demostrada.'
+      : P >= 0.5 ? 'Probable, pero no alcanza: se le sugiere a operaciones, que decide mirando las fotos.'
+      : 'Gana «nunca visto»: el sistema no corrige la patente. Puede ser un camión nuevo o un vehículo que no es camión.';
+    document.getElementById('mult').innerHTML =
+      '<span>candidato = ' + sci(prior) + ' (podía estar) × ' + sci(lik) + ' (leería eso) × ' + sci(a.lr) + ' (se ve igual) = ' + sci(cand) + '</span>' +
+      '<span>nunca visto = ' + sci(p0) + ' (p_inicio de ' + n.label + ') × ' + sci(nsLik) + ' (leería eso) = ' + sci(never) + '</span>';
+  }
+  render();
+})();
+</script>
+<nav class="deckbar" aria-label="Navegación de la presentación">
+  <div class="progress" aria-hidden="true"><span id="prog"></span></div>
+  <button type="button" class="nav" id="prev" aria-label="Lámina anterior">← Anterior</button>
+  <span class="count nav" id="count" aria-live="polite"></span>
+  <button type="button" class="nav primary" id="next" aria-label="Lámina siguiente">Siguiente →</button>
+  <button type="button" id="mode"></button>
+  <button type="button" class="nav" id="full">Pantalla completa</button>
+</nav>
+<script>
+(function () {
+  var root = document.body, slides = [].slice.call(document.querySelectorAll('.slide')), i = 0;
+  var mode = 'presentando';
+  try { mode = localStorage.getItem('modo') || mode } catch (e) {}
+  var m = /^#l(\d+)$/.exec(location.hash); if (m) i = Math.min(slides.length - 1, Math.max(0, Number(m[1]) - 1));
+  function show() {
+    root.classList.toggle('presenting', mode === 'presentando');
+    root.classList.toggle('reading', mode !== 'presentando');
+    slides.forEach(function (el, k) { el.classList.toggle('on', k === i) });
+    document.getElementById('count').textContent = (i + 1) + ' / ' + slides.length;
+    document.getElementById('prog').style.width = ((i + 1) / slides.length * 100) + '%';
+    document.getElementById('prev').disabled = i === 0;
+    document.getElementById('next').disabled = i === slides.length - 1;
+    document.getElementById('mode').textContent = mode === 'presentando' ? 'Ver como página' : 'Modo presentación';
+    try { history.replaceState(null, '', '#l' + (i + 1)) } catch (e) {}
+  }
+  function go(d) { var j = Math.min(slides.length - 1, Math.max(0, i + d)); if (j !== i) { i = j; show(); window.scrollTo(0, 0) } }
+  document.getElementById('prev').addEventListener('click', function () { go(-1) });
+  document.getElementById('next').addEventListener('click', function () { go(1) });
+  document.getElementById('mode').addEventListener('click', function () {
+    mode = mode === 'presentando' ? 'lectura' : 'presentando';
+    try { localStorage.setItem('modo', mode) } catch (e) {}
+    show();
+    if (mode === 'lectura') slides[i].scrollIntoView({ block: 'start' }); else window.scrollTo(0, 0);
+  });
+  document.getElementById('full').addEventListener('click', function () {
+    var el = document.documentElement;
+    if (document.fullscreenElement) document.exitFullscreen && document.exitFullscreen().catch(function () {});
+    else if (el.requestFullscreen) el.requestFullscreen().catch(function () {});
+  });
+  document.addEventListener('keydown', function (e) {
+    if (mode !== 'presentando' || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+    if (['ArrowRight', 'PageDown', ' '].indexOf(e.key) >= 0) { e.preventDefault(); go(1) }
+    else if (['ArrowLeft', 'PageUp'].indexOf(e.key) >= 0) { e.preventDefault(); go(-1) }
+    else if (e.key === 'Home') { i = 0; show() } else if (e.key === 'End') { i = slides.length - 1; show() }
+  });
+  show();
+})();
+</script>

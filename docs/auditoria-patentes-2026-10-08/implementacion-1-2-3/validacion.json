@@ -1,0 +1,1249 @@
+{
+  "generatedAt": "2026-10-08T17:08:59.538Z",
+  "learning": {
+    "version": "camera-learning-shadow-v1",
+    "mode": "shadow",
+    "autoPromotion": false,
+    "logRows": 337,
+    "finalHumanConfirmations": 184,
+    "verifiedComparisons": 0,
+    "positiveComparisons": 0,
+    "negativeComparisons": 0,
+    "legacyExploratoryCorrections": 103,
+    "legacyByCamera": {
+      "SLZBalSC1Fte": 5,
+      "SLZIngCamFrente": 4,
+      "RicCalLiq": 1,
+      "SLZBalSC2Fte": 5,
+      "SLZBalIngFte": 4,
+      "RicB2Egreso": 5,
+      "RicEgrCamFrente": 9,
+      "SLZCalado": 3,
+      "RenDescFte": 3,
+      "SLZTK400": 6,
+      "SLZSalidaC1Fte": 11,
+      "SLZVolcableC5": 4,
+      "RicB3Ingreso": 4,
+      "RicCal04": 7,
+      "RicS6Playa3": 8,
+      "RicCal03": 8,
+      "RicPreIngInFr": 1,
+      "RicVolcable2": 4,
+      "SLZSalidaC2Fte": 10,
+      "SLZBalLiq2a": 1
+    },
+    "exploratoryProposals": [
+      {
+        "key": "SLZBalSC1Fte|LLLNNN|1|L>A",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZIngCamFrente|LLLNNN|0|F>",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZIngCamFrente|LLLNNN|0|I>S",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZIngCamFrente|LLLNNN|1|T>O",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZIngCamFrente|LLLNNN|3|4>6",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZIngCamFrente|LLLNNN|4|1>0",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZIngCamFrente|LLLNNN|5|7>3",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCalLiq|LLLNNN|1|O>D",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalSC2Fte|LLNNNLL|1|J>D",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalSC2Fte|LLNNNLL|5|>B",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalSC2Fte|LLNNNLL|6|1>I",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalIngFte|LLLNNN|3|>3",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB2Egreso|LLLNNN|5|1>",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalSC2Fte|LLLNNN|3|J>",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalSC2Fte|LLLNNN|3|8>3",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicEgrCamFrente|LLLNNN|5|3>",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalIngFte|LLLNNN|3|3>",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZIngCamFrente|LLLNNN|3|>1",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZCalado|LLLNNN|3|>1",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZCalado|LLLNNN|4|9>4",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZIngCamFrente|LLLNNN|2|>Q",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZIngCamFrente|LLLNNN|3|B>1",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalSC1Fte|LLLNNN|4|8>3",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RenDescFte|LLLNNN|4|>4",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZTK400|LLNNNLL|5|L>O",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZTK400|LLNNNLL|5|D>O",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLLNNN|4|8>4",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalIngFte|LLLNNN|0|>G",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalIngFte|LLLNNN|1|I>F",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalIngFte|LLLNNN|6|1>",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZVolcableC5|LLLNNN|2|I>T",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB3Ingreso|LLLNNN|0|D>F",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB3Ingreso|LLLNNN|1|D>Q",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB3Ingreso|LLLNNN|2|N>I",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB3Ingreso|LLLNNN|3|0>7",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB3Ingreso|LLLNNN|5|>6",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB3Ingreso|LLNNNLL|5|P>R",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB2Egreso|LLNNNLL|2|7>1",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB2Egreso|LLNNNLL|3|7>8",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB2Egreso|LLNNNLL|4|8>3",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB2Egreso|LLNNNLL|5|Z>O",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB2Egreso|LLNNNLL|6|I>R",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal04|LLLNNN|2|L>R",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicS6Playa3|LLLNNN|2|L>T",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicS6Playa3|LLLNNN|0|L>G",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicS6Playa3|LLLNNN|2|I>X",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicS6Playa3|LLLNNN|5|9>0",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicS6Playa3|LLNNNLL|1|D>B",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal04|LLNNNLL|0|C>A",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal04|LLNNNLL|1|S>F",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal04|LLNNNLL|2|5>6",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal04|LLNNNLL|5|>L",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal04|LLNNNLL|6|1>Q",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal03|LLLNNN|5|9>8",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicPreIngInFr|LLLNNN|0|>E",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicPreIngInFr|LLLNNN|1|I>F",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicPreIngInFr|LLLNNN|2|T>R",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicPreIngInFr|LLLNNN|3|P>8",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicPreIngInFr|LLLNNN|4|0>7",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicPreIngInFr|LLLNNN|5|0>7",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal03|LLNNNLL|4|8>0",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal04|LLLNNN|2|W>M",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal03|LLNNNLL|4|0>8",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicEgrCamFrente|LLLNNN|4|>9",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal04|LLLNNN|0|T>R",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal04|LLLNNN|4|>9",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal04|LLLNNN|5|8>9",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicVolcable2|LLLNNN|0|M>R",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicVolcable2|LLLNNN|1|S>N",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicVolcable2|LLLNNN|2|7>Z",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicVolcable2|LLLNNN|5|5>9",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicS6Playa3|LLLNNN|2|C>G",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal04|LLLNNN|0|H>R",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal04|LLLNNN|5|0>4",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal03|LLLNNN|1|O>Q",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicS6Playa3|LLLNNN|0|B>K",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicS6Playa3|LLLNNN|1|T>D",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal03|LLLNNN|0|U>R",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal03|LLLNNN|4|>9",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal03|LLLNNN|1|C>N",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal03|LLLNNN|2|D>A",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicS6Playa3|LLLNNN|2|D>O",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicEgrCamFrente|LLNNNLL|3|7>2",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicEgrCamFrente|LLLNNN|3|5>3",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC2Fte|LLNNNLL|5|O>L",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC2Fte|LLLNNN|2|O>Q",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLLNNN|2|Q>O",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC2Fte|LLLNNN|2|Q>O",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZVolcableC5|LLNNNLL|0|I>A",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZVolcableC5|LLNNNLL|1|R>B",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZVolcableC5|LLNNNLL|4|4>6",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZVolcableC5|LLNNNLL|5|1>I",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZVolcableC5|LLNNNLL|6|1>K",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZCalado|LLNNNLL|5|2>P",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZCalado|LLNNNLL|6|1>Y",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalSC2Fte|LLLNNN|2|L>X",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalSC2Fte|LLLNNN|4|2>3",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalSC2Fte|LLNNNLL|3|2>7",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZTK400|LLLNNN|0|L>M",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZTK400|LLLNNN|2|2>E",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLLNNN|4|3>8",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLLNNN|5|8>0",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLLNNN|0|F>S",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLLNNN|1|L>M",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLLNNN|3|>8",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLLNNN|4|5>4",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLLNNN|2|P>M",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLNNNLL|5|B>D",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RenDescFte|LLLNNN|1|D>",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RenDescFte|LLLNNN|1|G>O",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RenDescFte|LLLNNN|2|4>U",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RenDescFte|LLLNNN|5|5>6",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZCalado|LLLNNN|1|>O",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZCalado|LLLNNN|2|C>U",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZCalado|LLLNNN|3|G>0",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZCalado|LLLNNN|4|1>8",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZCalado|LLLNNN|5|5>6",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalSC2Fte|LLNNNLL|5|7>R",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalSC2Fte|LLNNNLL|6|1>V",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZIngCamFrente|LLLNNN|0|C>P",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZIngCamFrente|LLLNNN|1|A>Q",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZIngCamFrente|LLLNNN|2|N>D",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZIngCamFrente|LLLNNN|3|1>8",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZIngCamFrente|LLLNNN|5|>9",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalIngFte|LLLNNN|1|D>G",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalIngFte|LLLNNN|4|>1",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZVolcableC5|LLNNNLL|3|9>8",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZVolcableC5|LLNNNLL|4|7>9",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZVolcableC5|LLNNNLL|5|9>H",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZVolcableC5|LLNNNLL|6|9>D",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZVolcableC5|LLLNNN|0|>F",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZVolcableC5|LLLNNN|1|C>Y",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZVolcableC5|LLLNNN|3|A>8",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZVolcableC5|LLLNNN|5|4>3",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB2Egreso|LLLNNN|2|O>D",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalSC1Fte|LLNNNLL|6|D>P",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC2Fte|LLNNNLL|6|P>D",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicS6Playa3|LLNNNLL|1|E>B",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalSC1Fte|LLNNNLL|6|N>R",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicVolcable2|LLLNNN|5|>4",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB2Egreso|LLLNNN|1|I>L",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicEgrCamFrente|LLLNNN|1|T>I",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicEgrCamFrente|LLNNNLL|5|1>X",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicEgrCamFrente|LLNNNLL|6|7>Y",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLLNNN|2|O>Q",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLNNNLL|5|X>A",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLLNNN|1|J>G",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLLNNN|3|6>0",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB2Egreso|LLLNNN|4|3>8",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC2Fte|LLNNNLL|3|1>4",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLNNNLL|3|4>1",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal03|LLLNNN|1|T>I",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicEgrCamFrente|LLLNNN|0|G>H",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicVolcable2|LLLNNN|2|T>I",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal04|LLLNNN|0|O>B",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal04|LLLNNN|5|0>6",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicEgrCamFrente|LLLNNN|5|>4",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicEgrCamFrente|LLLNNN|1|C>O",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicEgrCamFrente|LLLNNN|2|T>I",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicVolcable2|LLLNNN|0|L>",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicVolcable2|LLLNNN|1|M>C",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicVolcable2|LLLNNN|2|0>E",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalLiq2a|LLLNNN|1|O>Q",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalLiq2a|LLLNNN|2|W>K",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC2Fte|LLLNNN|1|>B",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC2Fte|LLLNNN|3|F>8",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC2Fte|LLLNNN|4|6>4",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC2Fte|LLLNNN|5|3>8",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC2Fte|LLNNNLL|4|7>9",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB3Ingreso|LLNNNLL|5|H>U",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal03|LLLNNN|0|I>",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal03|LLLNNN|0|L>C",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal03|LLLNNN|1|D>O",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal03|LLLNNN|2|C>I",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicCal03|LLLNNN|4|5>9",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZTK400|LLLNNN|5|4>0",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RenDescFte|LLNNNLL|6|O>Q",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZBalSC1Fte|LLNNNLL|1|B>D",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC2Fte|LLNNNLL|4|9>7",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZTK400|LLLNNN|0|Z>L",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZTK400|LLNNNLL|2|9>2",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZTK400|LLNNNLL|3|6>1",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZTK400|LLNNNLL|4|9>1",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZTK400|LLNNNLL|5|B>E",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZTK400|LLNNNLL|6|J>R",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC1Fte|LLLNNN|1|Q>O",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC2Fte|LLNNNLL|1|B>D",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "RicB3Ingreso|LLNNNLL|5|U>H",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      },
+      {
+        "key": "SLZSalidaC2Fte|LLNNNLL|6|D>O",
+        "n": 1,
+        "status": "legacy_without_verified_comparison"
+      }
+    ],
+    "proposals": [],
+    "negativePairs": {},
+    "attributeErrorsByCamera": {},
+    "validation": {
+      "status": "insufficient_independent_labels",
+      "policy": "Separar temporalmente y por visita; excluir referencias futuras, casos reabiertos y decisiones automáticas; no activar propuestas con esta muestra."
+    },
+    "generatedAt": "2026-10-08T17:08:41.860Z",
+    "source": {
+      "path": "data/plate-identification-log.jsonl",
+      "sha256": "04e4bf6a5b17b9a29f97b7c5811049026e1b7474f4e61ad255bd66d0e4443859"
+    }
+  },
+  "history": {
+    "source": "historical_nodes_evidence.json",
+    "physicalEvents": 490471,
+    "sourceDays": 149,
+    "journeyUidCount": 130346,
+    "runs": [
+      {
+        "run_id": "2026-05-18_2026-05-24",
+        "rulesVersion": "etl_transform_v13",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-05-25_2026-05-31",
+        "rulesVersion": "etl_transform_v13",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-06-01_2026-06-07",
+        "rulesVersion": "etl_transform_v13",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-06-08_2026-06-14",
+        "rulesVersion": "etl_transform_v13",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-06-15_2026-06-21",
+        "rulesVersion": "etl_transform_v13",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-06-22_2026-06-28",
+        "rulesVersion": "etl_transform_v13",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-06-29_2026-07-05",
+        "rulesVersion": "etl_transform_v13",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-07-06_2026-07-12",
+        "rulesVersion": "etl_transform_v13",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-07-13_2026-07-19",
+        "rulesVersion": "etl_transform_v13",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-07-20_2026-07-26",
+        "rulesVersion": "etl_transform_v13",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-07-27_2026-08-02",
+        "rulesVersion": "etl_transform_v14",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-08-03_2026-08-09",
+        "rulesVersion": "etl_transform_v14",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-08-17_2026-08-23",
+        "rulesVersion": "etl_transform_v16",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-08-24_2026-08-30",
+        "rulesVersion": "etl_transform_v16",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-08-31_2026-09-06",
+        "rulesVersion": "etl_transform_v16",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-09-07_2026-09-13",
+        "rulesVersion": "etl_transform_v16",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-09-14_2026-09-20",
+        "rulesVersion": "etl_transform_v17",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-09-21_2026-09-27",
+        "rulesVersion": "etl_transform_v17",
+        "table": "final_circuits"
+      },
+      {
+        "run_id": "2026-09-28_2026-10-04",
+        "rulesVersion": "etl_transform_v17",
+        "table": "final_circuits"
+      }
+    ],
+    "versions": {
+      "etl_transform_v13": 10,
+      "etl_transform_v14": 2,
+      "etl_transform_v16": 4,
+      "etl_transform_v17": 3
+    }
+  },
+  "currentVersionPrior": {
+    "mode": "shadow",
+    "rulesVersion": "etl_transform_v17",
+    "denominator": "recorridos de cámara con executive_circuit_code; no movimientos de Excel",
+    "sources": [
+      {
+        "run_id": "2026-09-14_2026-09-20",
+        "rulesVersion": "etl_transform_v17",
+        "table": "final_circuits",
+        "sha256": "0c9da44f71a43c8619f6a18e515fe94bb1735bc443f25e1b9c92dc96dfb307ac",
+        "rows": 2612
+      },
+      {
+        "run_id": "2026-09-21_2026-09-27",
+        "rulesVersion": "etl_transform_v17",
+        "table": "final_circuits",
+        "sha256": "b05b257993fc896e81428888df452e119367211a239e2064dc5ac2ae7e011cb6",
+        "rows": 1418
+      },
+      {
+        "run_id": "2026-09-28_2026-10-04",
+        "rulesVersion": "etl_transform_v17",
+        "table": "final_circuits",
+        "sha256": "0cf8e40e9b09e3d4e76e6c780025e52ca52a3dced5dbb6da5b5bc0b9fcd06dbf",
+        "rows": 1112
+      }
+    ],
+    "counts": {
+      "SIN_PUNTO": 1041,
+      "R7": 3149,
+      "R8": 266,
+      "R5": 549,
+      "R6": 109,
+      "R16": 1,
+      "RS_REC": 17,
+      "R9": 4,
+      "R4": 6
+    },
+    "prior": {
+      "SIN_PUNTO": 0.20245040840140024,
+      "R7": 0.6124076234928043,
+      "R8": 0.051730844029560484,
+      "R5": 0.10676779463243874,
+      "R6": 0.021197977440684558,
+      "R16": 0.00019447685725398678,
+      "RS_REC": 0.0033061065733177753,
+      "R9": 0.0007779074290159471,
+      "R4": 0.0011668611435239206
+    }
+  },
+  "replay": [
+    {
+      "day": "2026-10-06",
+      "sourceFiles": [
+        {
+          "path": "data/truckflow/2026-10-05/event-list.json",
+          "sha256": "114c1d5aa2a38e76b5d6ecee080f1f19621e8372e45ff01e8f96f9dacc5f0a5f"
+        },
+        {
+          "path": "data/truckflow/2026-10-06/event-list.json",
+          "sha256": "fce7fbee970eb5005633963b4572ccd1640657075272d8a61871fc2249577d12"
+        },
+        {
+          "path": "data/truckflow/2026-10-07/event-list.json",
+          "sha256": "380ffb0f10d1de89d842c4ffb6016e1bf1f5bbed2b962060e3ec0bafd45bafac"
+        }
+      ],
+      "physicalEventsInInput": 5712,
+      "humanLabels": 62,
+      "matchedExactCase": 42,
+      "suggestedTopCorrect": 17,
+      "correctExpectedCandidatePresent": 9,
+      "correctExceptionPresent": 9,
+      "automaticAssignments": 2,
+      "automaticAgreements": 2,
+      "disagreements": [],
+      "elapsedMs": 9767,
+      "limitations": "Feedback humano seleccionado, legado sin verificación estructurada; no certifica precisión general ni ajuste de umbrales."
+    },
+    {
+      "day": "2026-10-07",
+      "sourceFiles": [
+        {
+          "path": "data/truckflow/2026-10-06/event-list.json",
+          "sha256": "fce7fbee970eb5005633963b4572ccd1640657075272d8a61871fc2249577d12"
+        },
+        {
+          "path": "data/truckflow/2026-10-07/event-list.json",
+          "sha256": "380ffb0f10d1de89d842c4ffb6016e1bf1f5bbed2b962060e3ec0bafd45bafac"
+        }
+      ],
+      "physicalEventsInInput": 3555,
+      "humanLabels": 86,
+      "matchedExactCase": 72,
+      "suggestedTopCorrect": 36,
+      "correctExpectedCandidatePresent": 18,
+      "correctExceptionPresent": 25,
+      "automaticAssignments": 4,
+      "automaticAgreements": 4,
+      "disagreements": [],
+      "elapsedMs": 7696,
+      "limitations": "Feedback humano seleccionado, legado sin verificación estructurada; no certifica precisión general ni ajuste de umbrales."
+    }
+  ],
+  "historicalAttributes": {
+    "path": "outputs/reconocimiento_20260924_30/atributos_entre_camaras.json",
+    "sha256": "a5d31e162e669f9bf0c30642d1d4210d3966d21997b33f2a23babbb107103c34",
+    "data": {
+      "color": {
+        "disponible": 0.976,
+        "coincide_mismo": 0.577,
+        "coincide_otro": 0.419,
+        "LR_si_coincide": 1.38,
+        "LR_si_no": 0.728,
+        "info": 0.05
+      },
+      "marca": {
+        "disponible": 0.604,
+        "coincide_mismo": 0.838,
+        "coincide_otro": 0.177,
+        "LR_si_coincide": 4.75,
+        "LR_si_no": 0.197,
+        "info": 1.042
+      },
+      "tipo": {
+        "disponible": 0.893,
+        "coincide_mismo": 0.787,
+        "coincide_otro": 0.72,
+        "LR_si_coincide": 1.09,
+        "LR_si_no": 0.759,
+        "info": 0.012
+      }
+    },
+    "interpretation": "Acuerdo entre capturas supuestamente del mismo recorrido, no exactitud visual certificada; no aplicado como regla nueva."
+  },
+  "committee": {
+    "control": "reportes/logistica/2026-09-24_2026-09-30/revision-003/control.json",
+    "independentIdentityLabels": false
+  },
+  "clock": {
+    "operationalSource": "getEventLiveInstantMs",
+    "sourceOffsetMinutes": 206,
+    "photoLookupSeparate": true
+  },
+  "scope": "149 fuentes históricas, corridas semanales, comités y feedback humano; no se ejecutó ETL ni se borró el historial"
+}

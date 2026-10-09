@@ -1,0 +1,497 @@
+<title>Hipótesis y tesis de patentes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: láminas 16:9 apiladas; todo el tamaño se mide en cqw (ancho de la lámina) para que en pantalla y en el PDF (13,33 × 7,5 in) se vea igual. Franja izquierda con la parte del ejercicio. */
+:root {
+  --bg: #eef1ec;
+  --sheet: #ffffff;
+  --ink: #17241d;
+  --muted: #5a685f;
+  --rule: #dde5dd;
+  --accent: #14532d;
+  --accent-soft: #e2eee5;
+  --truck: #1f7a4a;
+  --other: #7a5cc9;
+  --other-soft: #eeeafb;
+  --track: #e8ece7;
+  --warn: #9a3412;
+  --display: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --math: "Newsreader", "Cambria Math", Georgia, serif;
+  --mono: "JetBrains Mono", Consolas, ui-monospace, monospace;
+}
+@media screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1410; --sheet: #16201a; --ink: #e4ebe6; --muted: #9db0a4; --rule: #2a3a31;
+    --accent: #7ccf9a; --accent-soft: #1e3427; --truck: #3fa86d; --other: #9277e3; --other-soft: #272240;
+    --track: #24312a; --warn: #f0a37a; color-scheme: dark;
+  }
+}
+@media screen { :root[data-theme="dark"] {
+  --bg: #0d1410; --sheet: #16201a; --ink: #e4ebe6; --muted: #9db0a4; --rule: #2a3a31;
+  --accent: #7ccf9a; --accent-soft: #1e3427; --truck: #3fa86d; --other: #9277e3; --other-soft: #272240;
+  --track: #24312a; --warn: #f0a37a; color-scheme: dark;
+} }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--display); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.deck { max-width: 1280px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 48px; display: grid; gap: 24px; }
+.slide { container-type: inline-size; aspect-ratio: 16 / 9; width: 100%; background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; position: relative; }
+.in { position: absolute; inset: 0; display: grid; grid-template-columns: 15cqw minmax(0, 1fr); }
+.side { background: var(--accent-soft); padding: 4cqw 1.8cqw; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--rule); }
+.side b { font-size: 1.35cqw; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); line-height: 1.3; }
+.side.h { background: var(--other-soft); }
+.side.h b { color: var(--other); }
+.side.t { background: var(--accent); }
+.side.t b, .side.t span { color: var(--sheet); }
+.side span { font-family: var(--mono); font-size: 1.05cqw; color: var(--muted); }
+.main { padding: 3.4cqw 4.2cqw; display: flex; flex-direction: column; gap: 1.5cqw; min-width: 0; }
+h1, h2 { margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+h1 { font-size: 4.8cqw; line-height: 1.05; }
+h2 { font-size: 2.6cqw; line-height: 1.15; }
+h3 { margin: 0; font-size: 1.45cqw; }
+p { margin: 0; font-size: 1.45cqw; line-height: 1.5; max-width: 70ch; }
+.lead { font-size: 1.8cqw; color: var(--muted); }
+.small { font-size: 1.1cqw; color: var(--muted); }
+.plate { font-family: var(--mono); font-weight: 600; letter-spacing: .05em; padding: .05cqw .5cqw; border-radius: .3cqw; background: var(--accent-soft); white-space: nowrap; }
+.statement { border-left: .35cqw solid var(--other); background: var(--other-soft); padding: 1.1cqw 1.6cqw; font-size: 1.65cqw; line-height: 1.45; }
+.statement.t { border-color: var(--accent); background: var(--accent-soft); }
+.statement b.k { display: block; font-size: 1.1cqw; letter-spacing: .12em; text-transform: uppercase; color: var(--other); margin-bottom: .4cqw; }
+.statement.t b.k { color: var(--accent); }
+.eq { font-family: var(--math); font-size: 2cqw; background: var(--accent-soft); border-radius: .5cqw; padding: 1.1cqw 1.5cqw; }
+.cols2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.6cqw; }
+.cols3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.6cqw; }
+.box { border: 1px solid var(--rule); border-radius: .5cqw; padding: 1.3cqw; display: flex; flex-direction: column; gap: .6cqw; min-width: 0; }
+.box.warn { border-left: .3cqw solid var(--warn); }
+.q { border-top: .3cqw solid var(--accent); padding-top: .9cqw; display: grid; gap: .4cqw; }
+.q b { font-size: 1.8cqw; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: .6cqw .9cqw; border-bottom: 1px solid var(--rule); font-size: 1.3cqw; vertical-align: top; }
+th { font-size: 1cqw; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+td.n, th.n { text-align: right; font-family: var(--mono); }
+tr.hl td { background: var(--accent-soft); font-weight: 600; }
+table.tight th, table.tight td { padding: .45cqw .8cqw; }
+table.tight td { font-size: 1.15cqw; line-height: 1.35; }
+.bigplates { display: flex; align-items: center; gap: 2cqw; }
+.bp { font-family: var(--mono); font-weight: 600; font-size: 4.2cqw; letter-spacing: .08em; border: .25cqw solid var(--ink); border-radius: .6cqw; padding: .6cqw 1.8cqw; }
+.bp.read { border-style: dashed; color: var(--muted); }
+.arrow { font-size: 2.4cqw; color: var(--muted); }
+.legend { display: flex; gap: 2cqw; font-size: 1.1cqw; color: var(--muted); }
+.sw { display: inline-block; width: 1cqw; height: 1cqw; border-radius: .2cqw; margin-right: .5cqw; vertical-align: -.1cqw; }
+.bars { display: grid; gap: .7cqw; }
+.bar { display: grid; grid-template-columns: 17cqw minmax(0, 1fr) 4.5cqw 5.5cqw; gap: 1cqw; align-items: center; font-size: 1.25cqw; }
+.bar.head { font-size: .95cqw; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.track { height: 1.5cqw; background: var(--track); border-radius: .3cqw; display: flex; gap: .15cqw; overflow: hidden; }
+.seg.t { background: var(--truck); }
+.seg.o { background: var(--other); }
+.val { font-family: var(--mono); text-align: right; font-weight: 600; }
+.mod { font-family: var(--mono); text-align: right; color: var(--muted); font-size: 1.1cqw; }
+.bar.sep { border-top: 1px dashed var(--rule); padding-top: .7cqw; }
+.big { font-size: 4.6cqw; font-weight: 700; line-height: 1; color: var(--accent); }
+.big.warn { color: var(--warn); }
+.kpi { display: grid; gap: .5cqw; align-content: start; }
+ol { margin: 0; padding-left: 2.2cqw; display: grid; gap: .9cqw; font-size: 1.45cqw; line-height: 1.45; }
+.chain { display: flex; gap: .8cqw; flex-wrap: wrap; }
+.chain span { border: 1px solid var(--rule); border-radius: 99px; padding: .4cqw 1.2cqw; font-size: 1.25cqw; }
+.chain span.on { background: var(--accent); color: var(--sheet); border-color: var(--accent); }
+@page { size: 13.333in 7.5in; margin: 0; }
+@media print {
+  body { background: #ffffff; }
+  .deck { max-width: none; padding: 0; gap: 0; display: block; }
+  .slide { width: 13.333in; height: 7.5in; aspect-ratio: auto; border: 0; border-radius: 0; break-after: page; page-break-after: always; }
+}
+@media screen and (max-width: 560px) { .deck { padding-inline: 8px; } }
+
+/* Barra superior con Presentar; modo presentación a pantalla completa con fondo negro. */
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 16px; background: var(--bg); border-bottom: 1px solid var(--rule); font-family: var(--display); }
+.topbar b { font-size: 16px; }
+.topbar span { font-size: 13px; color: var(--muted); }
+.play { font: inherit; font-size: 15px; font-weight: 600; padding: 9px 18px; border-radius: 999px; border: 0; background: var(--accent); color: var(--sheet); cursor: pointer; }
+.play:focus-visible, .ctl button:focus-visible { outline: 3px solid var(--other); outline-offset: 2px; }
+.slide { cursor: pointer; }
+.ctl { display: none; }
+body.playing { background: #000000; overflow: hidden; }
+body.playing .topbar { display: none; }
+body.playing .deck { position: fixed; inset: 0; max-width: none; padding: 0; display: flex; align-items: center; justify-content: center; background: #000000; }
+body.playing .slide { display: none; width: min(100vw, calc(100dvh * 16 / 9)); border: 0; border-radius: 0; cursor: default; }
+body.playing .slide.on { display: block; }
+body.playing .ctl { position: fixed; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); display: flex; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 999px; background: rgba(0, 0, 0, .55); color: #ffffff; font-family: var(--display); font-size: 14px; opacity: 0; transition: opacity .2s; z-index: 20; }
+body.playing.mouse .ctl, body.playing .ctl:focus-within { opacity: 1; }
+.ctl button { font: inherit; font-size: 14px; color: #ffffff; background: transparent; border: 1px solid rgba(255, 255, 255, .35); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.ctl .count { font-family: var(--mono); min-width: 60px; text-align: center; }
+@media print { .topbar, .ctl { display: none !important; } .slide { cursor: default; } }
+</style>
+
+<div class="topbar"><div><b>Hipótesis y tesis de patentes</b><br><span>21 diapositivas · versión del 09/10 · clic en una para empezar desde ahí</span></div><button type="button" class="play" id="play">▶ Presentar</button></div>
+<main class="deck">
+
+<section class="slide"><div class="in">
+  <div class="side t"><b>Nodo Sur</b><span>09/10/2026</span></div>
+  <div class="main" style="justify-content:center">
+    <h1>Reconocimiento de patentes, planteado como un teorema</h1>
+    <p class="lead">Queremos tener todos los pasos de cada camión solo con las cámaras. Lo planteamos como un ejercicio de matemática: problema, hipótesis, tesis y demostración. Se demostró con dos semanas: 24–30/09, la de más volumen, y 01–07/10. El Excel de movimientos solo se usa para comprobar.</p>
+    <div class="chain"><span class="on">Problema</span><span class="on">Hipótesis</span><span class="on">Tesis</span><span class="on">Demostración</span><span class="on">Límites</span></div>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side"><b>Problema</b><span>2 / 21</span></div>
+  <div class="main">
+    <h2>De cada 100 pasos de un camión, la cámara lee bien la patente en unos 70</h2>
+    <p>Semana 24–30/09: 2.218 camiones, 18.018 pasos esperados, 12.558 con la patente exacta. En el resto pasó una de dos cosas:</p>
+    <div class="cols2">
+      <div class="box"><h3>La cámara capturó, pero leyó mal</h3><p><span class="plate">RW481</span> por RAW481, o algo sin relación como <span class="plate">A26027</span> o el logo <span class="plate">AVEC0</span> (IVECO). Hay que decidir de qué camión es esa captura.</p></div>
+      <div class="box"><h3>La cámara no capturó nada</h3><p>No hay lectura que reconocer. Si el camión se leyó antes y después en su circuito, pasó por ahí.</p></div>
+    </div>
+    <div class="statement"><b class="k">La pregunta</b>¿Se pueden reconstruir todos los pasos de cada camión solo con las cámaras, sabiendo cuándo hay certeza y cuándo no?</div>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side"><b>Los casos</b><span>3 / 21</span></div>
+  <div class="main">
+    <h2>Dos lecturas malas del 01/10</h2>
+    <div class="cols2">
+      <div class="box"><h3>La patente se parece</h3>
+        <div class="bigplates" style="gap:1cqw"><span class="bp read" style="font-size:3cqw">CFK008</span><span class="arrow">→</span><span class="bp" style="font-size:3cqw">CFK006</span></div>
+        <p>Calada, de día. CFK006 venía de Preingreso y su próximo paso era Calada. La patente y el recorrido coinciden.</p>
+      </div>
+      <div class="box"><h3>La patente no se parece en nada</h3>
+        <div class="bigplates" style="gap:1cqw"><span class="bp read" style="font-size:3cqw">A26027</span><span class="arrow">→</span><span class="bp" style="font-size:3cqw">UUL425</span></div>
+        <p>Egreso SL, 05:39. UUL425 se había leído bien en la volcable C4 a las 05:22 y era el único camión que esperaba ese paso. Confirmado con la foto.</p>
+      </div>
+    </div>
+    <p class="small">El segundo caso es la idea central: si se sabe con precisión quién puede estar en ese punto en ese momento, la patente pasa a ser solo una ayuda.</p>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side"><b>El algoritmo</b><span>4 / 21</span></div>
+  <div class="main">
+    <h2>El paso fundamental es el universo conocido. Lo demás desempata</h2>
+    <ol>
+      <li><b>Entra un camión y se reconoce:</b> abre una visita en el punto de entrada.</li>
+      <li><b>En cada punto solo pueden pasar los camiones esperados:</b> los que tienen ese paso pendiente en su circuito.</li>
+      <li><b>Captura con la patente de un esperado:</b> avanza ese camión.</li>
+      <li><b>Captura que no es de un esperado:</b> o es un camión nuevo, o es un esperado leído mal. Ahí se comparan patente, tiempo, marca y color, solo entre los esperados.</li>
+      <li><b>Nunca capturado:</b> sigue esperado hasta que un punto posterior lo lea. Entonces el paso del medio queda deducido.</li>
+    </ol>
+    <p class="small">Antes de deducir, se buscan las capturas sin dueño entre las dos lecturas del camión. Así no se cae en la tentación de deducir todo.</p>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side h"><b>Hipótesis 1</b><span>5 / 21</span></div>
+  <div class="main">
+    <h2>El universo conocido, punto por punto</h2>
+    <div class="statement"><b class="k">Hipótesis 1</b>En cada punto, los candidatos son los camiones en planta cuyo último punto es el anterior en su circuito y que todavía no pasaron por este. Si saltearon un punto con cámara, pesan un cuarto.</div>
+    <table>
+      <tr><th>Punto</th><th>Quiénes pueden pasar</th></tr>
+      <tr><td>Pre ingreso Ricardone</td><td>Nadie esperado: todo camión es nuevo. La cámara de Ingreso está caída, así que Pre ingreso es la entrada.</td></tr>
+      <tr><td>Calada</td><td>Los que pasaron Pre ingreso y no Calada. Pueden esperar horas en Playa 1.</td></tr>
+      <tr><td>Playa 3, volcables, Balanza egreso, Salida 2</td><td>Los que pasaron Calada, según su circuito.</td></tr>
+      <tr><td>Ingreso San Lorenzo</td><td>Los que salieron de Ricardone rumbo al puerto (R7, transile, líquidos), más los nuevos.</td></tr>
+      <tr><td>Volcables SL</td><td>Solo R7 y transile que pasaron la Balanza ingreso SL.</td></tr>
+    </table>
+    <p class="small">Pasar de una planta a la otra exige ser leído en el primer punto con cámara: no se saltea. Antes, CMF111, un camión interno de San Lorenzo, terminaba «llegando» a la Calada de Ricardone.</p>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side h"><b>Hipótesis 1</b><span>6 / 21</span></div>
+  <div class="main">
+    <h2>El tiempo es un peso, no un filtro, y solo en las playas se espera horas</h2>
+    <div class="cols2">
+      <div class="box"><h3>Peso por tiempo de tramo</h3><p>Con las lecturas buenas se mide cuánto tarda cada tramo. Un camión que llegó hace 2 minutos todavía no; uno que lleva el tiempo habitual, sí. Nunca se descarta una captura por la hora.</p></div>
+      <div class="box"><h3>Playas de espera: hasta 20 horas</h3><p>Solo en Playa 1 (Pre ingreso → Calada), Calada → balanza, Playa 3 y SL Ingreso → Balanza ingreso se espera horas o se pasa la noche. Ahí la visita sigue abierta hasta 20 h. En el resto vence a las 12 h.</p></div>
+      <div class="box"><h3>Playa 3 no informa la hora</h3><p>Es zona de espera: lo que lleva ahí no dice cuándo sale. Hasta 12 h el tiempo no desempata. Antes, RKU685 tenía peso 0 después de 275 minutos esperando.</p></div>
+      <div class="box warn"><h3>Fantasmas</h3><p>Si un camión lleva mucho más que el tiempo normal del tramo, ya pasó sin ser leído. Sigue abierto para su lectura exacta, pero no se le asigna una lectura mal hecha. Al sacar este corte, FKZ258 se robaba capturas.</p></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side h"><b>Hipótesis 1</b><span>7 / 21</span></div>
+  <div class="main">
+    <h2>La visita la arman las cámaras, no el Excel</h2>
+    <div class="cols2">
+      <div class="box"><h3>Viaje nuevo</h3><p>Si la patente vuelve a una entrada después de haber salido o de haber pasado por ese punto, empieza otro viaje. Los camiones de líquidos hacen 2 o 3 por día (EAR164, UUU110).</p></div>
+      <div class="box"><h3>El nombre es el más leído</h3><p>La visita se llama como la patente que más leyeron las cámaras, no como la primera: Calada leyó <span class="plate">RKU605</span> y el resto <span class="plate">RKU685</span>.</p></div>
+      <div class="box"><h3>Lecturas mal hechas pero estables</h3><p>Si la misma lectura se repite igual en dos puntos, es la patente de ese camión leída siempre igual de mal: <span class="plate">AC57SJ</span> por AC577SJ en 6 cámaras. Exige 3 números: <span class="plate">SCAN14</span> es el logo de Scania.</p></div>
+      <div class="box"><h3>Traseras: leen el acoplado</h3><p>En los pares frontal–trasera la lectura no coincide en casi todos los casos: la trasera lee el acoplado o su marca (<span class="plate">BONAN0</span>, <span class="plate">VULCAN0</span>). Solo la de Balanza ingreso SL suma, y de forma pasiva.</p></div>
+    </div>
+    <p class="small">El circuito de cada visita sale de las cámaras: el del Excel se mantiene salvo que las cámaras lo contradigan, como los egresos de glicerina que van de Ricardone a SL por Renova.</p>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side h"><b>Hipótesis 2</b><span>8 / 21</span></div>
+  <div class="main">
+    <h2>¿La cámara leería eso? Errores medidos, no supuestos</h2>
+    <div class="statement"><b class="k">Hipótesis 2</b>La cámara se equivoca de forma medible. De cada 100 lecturas, 55 son exactas. De las 45 malas, la gran mayoría son fragmentos que no informan de qué patente eran; una con 2 cambios es casi tan común como una con 1.</div>
+    <table>
+      <tr><th>Qué le pasó a la lectura</th><th>Ejemplo</th><th class="n">De cada 100 lecturas</th><th class="n">Chance de esa variante exacta</th></tr>
+      <tr><td>Exacta</td><td><span class="plate">CFK006 → CFK006</span></td><td class="n">55</td><td class="n">—</td></tr>
+      <tr class="hl"><td>Un carácter cambiado, de más o de menos</td><td><span class="plate">CFK006 → CFK008</span></td><td class="n">3,6</td><td class="n">1 en 3.300</td></tr>
+      <tr><td>Dos cambios</td><td><span class="plate">TPF310 → FPF313</span></td><td class="n">2,3</td><td class="n">1 en 270.000</td></tr>
+      <tr><td>Tres cambios</td><td><span class="plate">RKU685 → AJ685</span></td><td class="n">1,4</td><td class="n">1 en 12 millones</td></tr>
+      <tr><td>Fragmento: 4 cambios o más</td><td><span class="plate">UUL425 → A26027</span></td><td class="n">37</td><td class="n">igual para todos</td></tr>
+    </table>
+    <p class="small">Un fragmento suma solo si comparte 3 caracteres o más, en orden: <span class="plate">AC89799</span> comparte AC89 con AC889HD. «A71» no premia a toda patente que empiece con A.</p>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side h"><b>Hipótesis 3</b><span>9 / 21</span></div>
+  <div class="main">
+    <h2>¿Se ve igual? Solo la marca distingue</h2>
+    <div class="statement"><b class="k">Hipótesis 3</b>Color, marca y tipo del DSS aportan evidencia con un peso medido: la misma patente en dos cámaras el mismo día, contra camiones distintos. Semanas 24/09 a 07/10.</div>
+    <table>
+      <tr><th>Atributo</th><th class="n">Coincide</th><th class="n">No coincide</th><th>Lectura</th></tr>
+      <tr class="hl"><td>Marca</td><td class="n">× 5,5</td><td class="n">× 0,25</td><td>Lo que más distingue, pero el DSS no la reconoce en muchas capturas.</td></tr>
+      <tr><td>Color</td><td class="n">× 1,4</td><td class="n">× 0,74</td><td>La misma unidad sale blanca en una cámara y plateada en otra; de noche cambia.</td></tr>
+      <tr><td>Tipo</td><td class="n">× 1,3</td><td class="n">× 0,86</td><td>Ruido.</td></tr>
+      <tr><td>Camión leído como colectivo o camioneta</td><td class="n">—</td><td class="n">× 0,86</td><td>Pasa igual de seguido en el mismo camión que en otro distinto. Antes se castigaba × 0,3.</td></tr>
+    </table>
+    <p class="small">Cuatro Mercedes blancos son indistinguibles para el DSS. Esos empates los resolvés vos mirando la cabina y el acoplado.</p>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side h"><b>Hipótesis 4</b><span>10 / 21</span></div>
+  <div class="main">
+    <h2>«Otro vehículo» compite con la misma regla</h2>
+    <div class="statement"><b class="k">Hipótesis 4</b>Una captura puede no ser de ninguno de los esperados. Esa opción pesa según cuántos vehículos aparecen por primera vez en ese punto y según si la patente leída existe en la flota.</div>
+    <div class="legend"><span><span class="sw" style="background:var(--truck)"></span>Camión que aparece por primera vez</span><span><span class="sw" style="background:var(--other)"></span>No es camión (auto, camioneta, servicio)</span></div>
+    <div class="bars">
+      <div class="bar head"><span>Punto (de día)</span><span>de cada 100 vehículos que pasan</span><span class="val">total</span><span class="mod"></span></div>
+      <div class="bar"><span>Preingreso</span><span class="track"><span class="seg t" style="width:14.2%"></span><span class="seg o" style="width:3.5%"></span></span><span class="val">18</span><span class="mod"></span></div>
+      <div class="bar"><span>Calada</span><span class="track"><span class="seg t" style="width:8.3%"></span></span><span class="val">8</span><span class="mod"></span></div>
+      <div class="bar"><span>Ingreso SL</span><span class="track"><span class="seg t" style="width:10.9%"></span><span class="seg o" style="width:2.2%"></span></span><span class="val">13</span><span class="mod"></span></div>
+      <div class="bar"><span>Egreso SL</span><span class="track"><span class="seg t" style="width:5%"></span><span class="seg o" style="width:20.7%"></span></span><span class="val">26</span><span class="mod"></span></div>
+      <div class="bar"><span>Renova (acceso)</span><span class="track"><span class="seg t" style="width:2.9%"></span><span class="seg o" style="width:40.4%"></span></span><span class="val">43</span><span class="mod"></span></div>
+    </div>
+    <p class="small">Una patente válida que nunca se vio es casi siempre un esperado leído mal: <span class="plate">IGP699</span> era GFP699, salido de Ricardone 9 minutos antes. Un vehículo conocido que nadie esperaba solo cuenta en los accesos.</p>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side h"><b>Hipótesis 5</b><span>11 / 21</span></div>
+  <div class="main">
+    <h2>Sin captura, el paso se deduce del recorrido</h2>
+    <div class="statement"><b class="k">Hipótesis 5</b>Si un camión se identificó en un punto anterior y en uno posterior de su circuito, pasó por los puntos del medio aunque ninguna cámara lo haya capturado.</div>
+    <div class="cols2">
+      <div class="box"><h3>Deducido · certeza</h3><p>Se leyó antes y después. En la semana 24–30/09: 3.522 pasos (19,5 %). Casi la mitad está en Balanza egreso SL, cuya cámara lee bien solo el 5 % de los camiones.</p></div>
+      <div class="box"><h3>Fin de proceso · suposición</h3><p>Después de su último punto leído, se supone que salió por el único camino de su circuito. En la semana: 875 pasos (4,9 %). Se informa aparte.</p></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side"><b>Deducción</b><span>12 / 21</span></div>
+  <div class="main">
+    <h2>Juntamos las respuestas y repartimos el 100 %</h2>
+    <div class="eq">P(candidato) = puntaje del candidato ÷ (puntaje de todos los esperados + puntaje de «otro vehículo»)</div>
+    <p>Cada puntaje es el producto de sus respuestas: ¿podía estar ahí?, ¿la cámara leería eso?, ¿se ve igual? Se asigna si P ≥ <b>60 %</b>. Si no, la captura queda sin dueño y el paso se resuelve por deducción.</p>
+    <table>
+      <tr><th>CFK008 en Calada, de día</th><th>Es CFK006</th><th>Es otro vehículo</th></tr>
+      <tr><td>¿Podía estar ahí?</td><td>Calada era su próximo paso; peso por tiempo <b>0,18</b> entre 5 esperados</td><td>Calada de día: <b>0,083</b></td></tr>
+      <tr><td>¿La cámara leería eso?</td><td>Un carácter cambiado: <b>1 en 3.300</b></td><td>Que exista un CFK008 nunca visto: <b>1 en 3,4 millones</b></td></tr>
+      <tr><td>¿Se ve igual?</td><td>Color y tipo distintos: <b>× 0,64</b></td><td>Sin comparación: <b>× 1</b></td></tr>
+      <tr class="hl"><td>Resultado</td><td class="n">99,9 %</td><td class="n">0,1 %</td></tr>
+    </table>
+    <p class="small">Si CFK008 fuera una patente de la flota, «otro vehículo» sube y CFK006 queda en 84 %: igual se asigna.</p>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side"><b>Desempates</b><span>13 / 21</span></div>
+  <div class="main">
+    <h2>Lo que aprendimos de tus ojos, convertido en reglas</h2>
+    <table class="tight">
+      <tr><th>Regla</th><th>De qué caso salió</th></tr>
+      <tr><td><b>Captura doble:</b> lectura inválida que no se parece a ningún esperado, en la misma cámara, a 60 s o menos de un camión ya identificado. Se descarta.</td><td>Techos de camión: <span class="plate">BCSI60</span>, <span class="plate">OO8000</span></td></tr>
+      <tr><td><b>Relectura:</b> el mismo punto leyó hace 10 min o menos una patente a un carácter. Es el mismo camión.</td><td><span class="plate">ENW930</span> / <span class="plate">FNW930</span></td></tr>
+      <tr><td><b>Contenida literal:</b> si la lectura está entera dentro de la patente (4 caracteres seguidos), le gana al tiempo.</td><td><span class="plate">H043</span> → GIH043</td></tr>
+      <tr><td><b>Fragmento:</b> solo en cámaras de proceso con pocos autos, con la misma marca, y tiempo claro o marca única con 2 caracteres en común.</td><td><span class="plate">A005</span> → BTB128 sí · <span class="plate">KINV0</span>, <span class="plate">CCA14</span> no</td></tr>
+      <tr><td><b>«Sedan» de tarde:</b> de 15 a 18 h el DSS ve autos a los camiones de frente en Pre ingreso. No descarta patentes de la flota.</td><td>SFN197, TSX149, BBU070</td></tr>
+      <tr><td><b>Entrada sin identificar:</b> captura de camión sin dueño en la entrada. Es un camión que entró aunque la patente sea ilegible; no compite por capturas.</td><td><span class="plate">E18</span>, <span class="plate">AVEC0</span></td></tr>
+    </table>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side t"><b>Tesis</b><span>14 / 21</span></div>
+  <div class="main">
+    <h2>Lo que queremos demostrar</h2>
+    <div class="statement t"><b class="k">Tesis 1 · Exactitud</b>Si se cumplen las hipótesis 1 a 5, cuando el algoritmo asigna una captura mal leída a un camión (P ≥ 60 %), es el camión real en al menos el <b>98 %</b> de los casos.</div>
+    <div class="statement t"><b class="k">Tesis 2 · Cobertura</b>Con capturas, asignaciones y deducción se completa el <b>99 %</b> de los pasos de cada camión, solo con las cámaras.</div>
+    <div class="cols2">
+      <div class="box"><h3>Cómo se mide la exactitud</h3><p>Con tus ojos: simuladores con la foto de la captura y la última foto buena de cada camión esperado. Y con la calle del Excel en las volcables.</p></div>
+      <div class="box"><h3>Cómo se mide la cobertura</h3><p>Con el Excel: qué camiones ingresaron, por qué circuito, y cuántos de sus pasos quedaron cubiertos.</p></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side"><b>Demostración</b><span>15 / 21</span></div>
+  <div class="main">
+    <h2>Cómo se hizo la demostración</h2>
+    <ol>
+      <li><b>Capturas:</b> todas las del DSS del 24/09 al 07/10 (74.684), con color, marca y tipo, unidas al feed de TruckFlow.</li>
+      <li><b>Inventario único:</b> todos los camiones en planta, en orden de hora, avanzando punto por punto. Cada día corre hasta el mediodía siguiente, porque los que entran de noche siguen después de las 0 h.</li>
+      <li><b>Excel solo para comprobar:</b> qué camiones ingresaron cada día y por qué circuito.</li>
+      <li><b>Revisión a ojo:</b> cinco simuladores con la foto de cada captura, una revisión de 22 corregidos y una página con los 23 camiones que faltaban.</li>
+      <li><b>Dos semanas:</b> las reglas se ajustaron con el 07/10 y se controlaron en los otros días y en la semana de más volumen.</li>
+    </ol>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side"><b>Demostración</b><span>16 / 21</span></div>
+  <div class="main">
+    <h2>Tesis 1: cuando asigna, coincide con lo que ves en la foto</h2>
+    <div class="cols3">
+      <div class="kpi"><span class="big">0</span><p>errores confirmados en 59 capturas revisadas a ojo en los últimos 3 simuladores. Una está en discusión: el Excel muestra que GPX849 seguía en planta.</p></div>
+      <div class="kpi"><span class="big">98 %</span><p>de las capturas corregidas por patente en las volcables caen en la calle que dice el Excel (132 de 135 en 24–30/09).</p></div>
+      <div class="kpi"><span class="big warn">18</span><p>capturas de los simuladores que vos asignaste y el algoritmo no. Son fragmentos sin nada de la patente: los resolvés por la cabina.</p></div>
+    </div>
+    <p class="small">Los primeros simuladores sirvieron para corregir: el simulador 1 tenía cámaras mal apuntadas, colectivos y capturas al azar. Cada error se convirtió en una regla de la diapositiva 13.</p>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side"><b>Demostración</b><span>17 / 21</span></div>
+  <div class="main">
+    <h2>Tesis 2: 99,1 % de los pasos en la semana de más volumen</h2>
+    <table>
+      <tr><th>Cómo se cubrió cada paso</th><th class="n">24–30/09</th><th class="n">%</th><th class="n">01–07/10</th><th class="n">%</th></tr>
+      <tr><td>Cámara: patente exacta</td><td class="n">12.558</td><td class="n">69,7</td><td class="n">6.577</td><td class="n">67,4</td></tr>
+      <tr><td>Algoritmo: captura mal leída asignada</td><td class="n">892</td><td class="n">5,0</td><td class="n">566</td><td class="n">5,8</td></tr>
+      <tr><td>Deducido: se leyó antes y después</td><td class="n">3.522</td><td class="n">19,5</td><td class="n">2.057</td><td class="n">21,1</td></tr>
+      <tr><td>Fin de proceso (suposición)</td><td class="n">875</td><td class="n">4,9</td><td class="n">400</td><td class="n">4,1</td></tr>
+      <tr><td>Falta</td><td class="n">171</td><td class="n">0,9</td><td class="n">160</td><td class="n">1,6</td></tr>
+      <tr class="hl"><td>Completo</td><td class="n">17.847 de 18.018</td><td class="n">99,1</td><td class="n">9.600 de 9.760</td><td class="n">98,4</td></tr>
+      <tr><td>Camiones con todos sus pasos</td><td class="n">2.191 de 2.218</td><td class="n">98,8</td><td class="n">1.288 de 1.311</td><td class="n">98,2</td></tr>
+    </table>
+    <p class="small">Con más volumen sube: las cámaras leen mejor y hay proporcionalmente menos camiones que entran de noche con la patente ilegible.</p>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side"><b>Demostración</b><span>18 / 21</span></div>
+  <div class="main">
+    <h2>Nodo por nodo, semana 24–30/09</h2>
+    <table class="tight">
+      <tr><th>Punto</th><th class="n">Pasos</th><th class="n">Cámara</th><th class="n">Algoritmo</th><th class="n">Deducido</th><th class="n">Fin proc.</th><th class="n">Falta</th></tr>
+      <tr><td>Pre ingreso Ric</td><td class="n">1.984</td><td class="n">89,4 %</td><td class="n">0,1 %</td><td class="n">9,5 %</td><td class="n">0,0 %</td><td class="n">1,1 %</td></tr>
+      <tr><td>Calada</td><td class="n">1.984</td><td class="n">80,3 %</td><td class="n">5,9 %</td><td class="n">11,3 %</td><td class="n">1,3 %</td><td class="n">1,1 %</td></tr>
+      <tr><td>Playa 3</td><td class="n">1.073</td><td class="n">65,3 %</td><td class="n">8,5 %</td><td class="n">24,2 %</td><td class="n">1,6 %</td><td class="n">0,4 %</td></tr>
+      <tr><td>Balanza egreso Ric</td><td class="n">1.128</td><td class="n">87,2 %</td><td class="n">3,6 %</td><td class="n">2,6 %</td><td class="n">5,9 %</td><td class="n">0,6 %</td></tr>
+      <tr><td>Salida 2 Ric</td><td class="n">1.494</td><td class="n">68,9 %</td><td class="n">5,0 %</td><td class="n">21,1 %</td><td class="n">4,1 %</td><td class="n">0,9 %</td></tr>
+      <tr><td>Ingreso SL</td><td class="n">1.930</td><td class="n">75,0 %</td><td class="n">1,8 %</td><td class="n">18,5 %</td><td class="n">3,7 %</td><td class="n">1,0 %</td></tr>
+      <tr><td>Balanza ingreso SL</td><td class="n">1.930</td><td class="n">86,0 %</td><td class="n">3,3 %</td><td class="n">5,2 %</td><td class="n">4,6 %</td><td class="n">1,0 %</td></tr>
+      <tr><td>Volcables SL</td><td class="n">1.643</td><td class="n">62,4 %</td><td class="n">14,2 %</td><td class="n">14,5 %</td><td class="n">8,0 %</td><td class="n">0,9 %</td></tr>
+      <tr class="hl"><td>Balanza egreso SL</td><td class="n">1.930</td><td class="n">4,7 %</td><td class="n">5,1 %</td><td class="n">79,2 %</td><td class="n">9,9 %</td><td class="n">1,0 %</td></tr>
+      <tr><td>Egreso SL</td><td class="n">1.930</td><td class="n">85,9 %</td><td class="n">2,8 %</td><td class="n">0,2 %</td><td class="n">10,1 %</td><td class="n">1,0 %</td></tr>
+    </table>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side"><b>Demostración</b><span>19 / 21</span></div>
+  <div class="main">
+    <h2>Lo que probamos y no sirvió</h2>
+    <div class="cols2">
+      <div class="box warn"><h3>Asignar volcables por eliminación</h3><p>«El único camión que podía estar descargando». Con poco volumen acertaba la calle del Excel 49 de 49; con la semana grande, 47 de 66. Había camiones descargando sin identificar. Quedó apagado.</p></div>
+      <div class="box warn"><h3>Emparejar sin identificar por la hora</h3><p>Elegir, entre las capturas sin dueño de la entrada, la más cercana a la hora del Excel coincidió con tu elección solo en 5 de 17. No se cuenta como recuperado.</p></div>
+      <div class="box warn"><h3>Bajar el peso del tiempo para todos</h3><p>Arreglaba 2 casos del simulador 5 y rompía 3 de los simuladores 3 y 4. El tiempo sí informa: solo se le gana con la lectura contenida literal.</p></div>
+      <div class="box warn"><h3>Prueba de la patente borrada y lotes por cuarto</h3><p>Borrar patentes buenas para ver si volvían desinflaba el conteo de cámara. Partir el día en lotes empeoraba: los camiones de otros lotes siguen en planta.</p></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side"><b>Límites</b><span>20 / 21</span></div>
+  <div class="main">
+    <h2>El 1 % que falta: camiones que entran de noche con la patente ilegible</h2>
+    <div class="cols3">
+      <div class="kpi"><span class="big">27</span><p>camiones enteros faltan en 24–30/09. 17 no los leyó ninguna cámara en toda la semana.</p></div>
+      <div class="kpi"><span class="big">16 de 23</span><p>de los que faltaban en 01–07/10 los encontraste a ojo: todos en Pre ingreso o Calada, entre las 18:51 y las 02:17.</p></div>
+      <div class="kpi"><span class="big warn">0</span><p>se pueden identificar por la patente: ni en la foto grande se lee (E18 encandilada; AVEC0 es el logo IVECO).</p></div>
+    </div>
+    <p>Los encontraste por descarte: un camión pasó a esa hora y nadie lo reclamó. El algoritmo hace lo mismo y lo registra como camión sin identificar, pero no puede saber cuál es. La trasera tampoco ayuda: en esos momentos leyó la marca del acoplado.</p>
+    <div class="statement t"><b class="k">Para pasar el 99 % siempre</b>Iluminación infrarroja o ajuste de exposición nocturna en Pre ingreso y Calada de Ricardone. El algoritmo no puede compensar una patente que no está en la imagen.</div>
+  </div>
+</div></section>
+
+<section class="slide"><div class="in">
+  <div class="side t"><b>Conclusión</b><span>21 / 21</span></div>
+  <div class="main">
+    <h2>Queda demostrado, con un límite físico claro</h2>
+    <div class="cols2">
+      <div class="box"><h3>Tesis 1 · Exactitud</h3><p><b>Se cumple</b> en lo revisado: cuando el algoritmo asigna, coincide con lo que se ve en la foto. 0 errores confirmados en 59 capturas; 98 % de calles correctas en las volcables.</p></div>
+      <div class="box"><h3>Tesis 2 · Cobertura</h3><p><b>Se cumple con volumen alto:</b> 99,1 % de los pasos en 24–30/09. Con poco volumen queda en 98,4 %, porque pesan más los camiones nocturnos sin patente legible.</p></div>
+      <div class="box"><h3>Lo que más pesa</h3><p>El universo chico y preciso vale más que la patente. 7 de cada 10 pasos los lee la cámara; el algoritmo suma 5; la deducción cubre casi todo lo demás.</p></div>
+      <div class="box"><h3>Lo que sigue</h3><p>Lecturas parecidas que se escapan en Salida 2, Playa 3 e Ingreso SL. Simulador con fotos para los fragmentos de las volcables. Revisar la cámara de Balanza egreso SL.</p></div>
+    </div>
+  </div>
+</div></section>
+
+</main>
+<div class="ctl" role="toolbar" aria-label="Controles de la presentación">
+  <button type="button" id="prev" aria-label="Anterior">←</button>
+  <span class="count" id="count" aria-live="polite"></span>
+  <button type="button" id="next" aria-label="Siguiente">→</button>
+  <button type="button" id="exit">Salir (Esc)</button>
+</div>
+<script>
+(function () {
+  var body = document.body, slides = [].slice.call(document.querySelectorAll('.slide')), i = 0, timer = null;
+  function paint() {
+    slides.forEach(function (el, k) { el.classList.toggle('on', k === i) });
+    document.getElementById('count').textContent = (i + 1) + ' / ' + slides.length;
+  }
+  function start(at) {
+    i = at || 0; body.classList.add('playing'); paint();
+    var el = document.documentElement;
+    if (el.requestFullscreen && !document.fullscreenElement) el.requestFullscreen().catch(function () {});
+  }
+  function stop() {
+    if (!body.classList.contains('playing')) return;
+    body.classList.remove('playing');
+    if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function () {});
+    slides[i].scrollIntoView({ block: 'center' });
+  }
+  function go(d) { i = Math.min(slides.length - 1, Math.max(0, i + d)); paint() }
+  document.getElementById('play').addEventListener('click', function () { start(0) });
+  slides.forEach(function (el, k) {
+    el.addEventListener('click', function (e) {
+      if (!body.classList.contains('playing')) return start(k);
+      var r = el.getBoundingClientRect();
+      go(e.clientX - r.left < r.width / 3 ? -1 : 1);
+    });
+  });
+  document.getElementById('prev').addEventListener('click', function () { go(-1) });
+  document.getElementById('next').addEventListener('click', function () { go(1) });
+  document.getElementById('exit').addEventListener('click', stop);
+  document.addEventListener('fullscreenchange', function () { if (!document.fullscreenElement) stop() });
+  document.addEventListener('keydown', function (e) {
+    if (!body.classList.contains('playing')) return;
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].indexOf(e.key) >= 0) { e.preventDefault(); go(1) }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].indexOf(e.key) >= 0) { e.preventDefault(); go(-1) }
+    else if (e.key === 'Home') { i = 0; paint() } else if (e.key === 'End') { i = slides.length - 1; paint() }
+    else if (e.key === 'Escape') stop();
+  });
+  document.addEventListener('mousemove', function () {
+    if (!body.classList.contains('playing')) return;
+    body.classList.add('mouse'); clearTimeout(timer);
+    timer = setTimeout(function () { body.classList.remove('mouse') }, 1800);
+  });
+  var t0 = null;
+  document.addEventListener('touchstart', function (e) { t0 = e.touches[0].clientX }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (!body.classList.contains('playing') || t0 == null) return;
+    var dx = e.changedTouches[0].clientX - t0; if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1); t0 = null;
+  }, { passive: true });
+})();
+</script>

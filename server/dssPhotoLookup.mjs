@@ -2,7 +2,8 @@
 //
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import { scoreCandidates } from './plantState/identificationEvidence.mjs'
+import { AUTO_EVIDENCE_PROBABILITY, AUTO_EVIDENCE_SAME_NODE_PROBABILITY, scoreCandidates } from './plantState/identificationEvidence.mjs'
+import { scoreWithNodeModel } from './plantState/nodeModelScore.mjs'
 
 // El DSS registra todas las lecturas con foto, confianza, marca, color y tipo. El dashboard
 // le pide la lectura de una cámara a una hora y baja la foto solo cuando alguien la mira.
@@ -39,45 +40,105 @@ export function createDssPhotoLookup({ dss, getPlantState = () => null }) {
     return value
   }
 
+  /** Patente, color, marca, tipo y recorrido de cada candidato de una lectura, con la probabilidad combinada. */
+  async function computeEvidence(item) {
+    const shown = item.candidates.filter((c) => c.similarity >= 0.4 || c.nodeProbability >= 0.5).slice(0, 3)
+    const dssOk = dss.isDssConfigured()
+    // Un error del DSS no se oculta como «sin dato»: se informa y el resultado no se guarda en caché.
+    let dssError = null
+    const safe = (p) =>
+      p.catch((e) => {
+        dssError = e instanceof Error ? e.message : String(e)
+        return null
+      })
+    const readAttrs = dssOk ? await safe(attrsAt(item.deviceCode, item.at, item.readPlate)) : null
+    const withAttrs = []
+    for (const c of shown) withAttrs.push({ ...c, attrs: dssOk ? await safe(attrsAt(c.photoDevice, c.photoAt, c.plate)) : null })
+    const scored = scoreCandidates({ readPlate: item.readPlate, validFormat: item.validFormat, readAttrs }, withAttrs)
+    // Modelo por nodos, en evaluación: todos los candidatos (no solo los 3 con fotos) y «nunca visto»
+    // según el nodo. No interviene en la aplicación automática.
+    const attrLrOf = new Map(withAttrs.map((c, i) => [c.plate, scored.candidates[i].attrLr]))
+    const nodeModel = scoreWithNodeModel(item, item.candidates.map((c) => ({ ...c, attrLr: attrLrOf.get(c.plate) ?? 1 })))
+    return {
+      nodeModel,
+      fragmentKey: item.fragmentKey,
+      read: { plate: item.readPlate, validFormat: item.validFormat, attrs: readAttrs },
+      candidates: withAttrs.map((c, i) => ({ ...c, ...scored.candidates[i] })),
+      otherProbability: scored.otherProbability,
+      dss: dssOk,
+      dssError,
+    }
+  }
+
   /**
    * GET /api/truckflow/live/identifications/:fragmentKey/evidence?site=
    * Por candidato: patente, color, marca, tipo y recorrido, con la probabilidad combinada.
    */
+  const signatureOf = item => JSON.stringify(item.candidates.map(c=>[c.plate,c.journeyKey,c.photoAt,c.inUniverse,c.inventory?.visitId,c.score]))
   async function evidence(req, res) {
     const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
     const key = String(req.params.fragmentKey ?? '')
     const cached = evidenceCache.get(`${site}|${key}`)
-    if (cached && Date.now() - cached.at < EVIDENCE_CACHE_MS) return res.json(cached.body)
+
     try {
       const ids = await getPlantState().getIdentifications(site)
       const item = ids.items.find((it) => it.fragmentKey === key)
       if (!item) return res.status(404).json({ error: 'lectura no encontrada' })
-      const shown = item.candidates.filter((c) => c.similarity >= 0.4 || c.nodeProbability >= 0.5).slice(0, 3)
-      const dssOk = dss.isDssConfigured()
-      // Un error del DSS no se oculta como «sin dato»: se informa y el resultado no se guarda en caché.
-      let dssError = null
-      const safe = (p) =>
-        p.catch((e) => {
-          dssError = e instanceof Error ? e.message : String(e)
-          return null
-        })
-      const readAttrs = dssOk ? await safe(attrsAt(item.deviceCode, item.at, item.readPlate)) : null
-      const withAttrs = []
-      for (const c of shown) withAttrs.push({ ...c, attrs: dssOk ? await safe(attrsAt(c.photoDevice, c.photoAt, c.plate)) : null })
-      const scored = scoreCandidates({ readPlate: item.readPlate, validFormat: item.validFormat, readAttrs }, withAttrs)
-      const body = {
-        fragmentKey: key,
-        read: { plate: item.readPlate, validFormat: item.validFormat, attrs: readAttrs },
-        candidates: withAttrs.map((c, i) => ({ ...c, ...scored.candidates[i] })),
-        otherProbability: scored.otherProbability,
-        dss: dssOk,
-        dssError,
-      }
-      if (!dssError) evidenceCache.set(`${site}|${key}`, { at: Date.now(), body })
+      const signature=signatureOf(item)
+      if (cached && cached.signature===signature && Date.now()-cached.at<EVIDENCE_CACHE_MS) return res.json(cached.body)
+      const body = await computeEvidence(item)
+      if (!body.dssError) evidenceCache.set(`${site}|${key}`, { at: Date.now(), signature, body })
       res.json(body)
     } catch (e) {
       res.status(500).json({ error: e instanceof Error ? e.message : String(e) })
     }
+  }
+
+  /*
+   * Aplicación automática con atributos: en segundo plano se pide al DSS la evidencia de las lecturas
+   * que el algoritmo marcó `evidenceEligible` (único camión del universo; si la patente es válida,
+   * leído en este mismo nodo). Si el candidato supera el umbral calibrado, el servicio la aplica sola.
+   * Se procesan pocas por vuelta y en serie: el DSS limita las consultas (HTTP 429).
+   */
+  /** @type {Set<string>} lecturas ya evaluadas (fragmento + candidato) */
+  const autoTried = new Set()
+  let autoTimer = null
+  let autoRunning = false
+  async function autoEvidenceTick(sites, perTick) {
+    if (autoRunning || !dss.isDssConfigured()) return
+    autoRunning = true
+    try {
+      for (const site of sites) {
+        const ps = getPlantState()
+        if (!ps?.setEvidenceVerdict) return
+        const ids = await ps.getIdentifications(site)
+        const queue = ids.items.filter((it) => it.evidenceEligible && it.candidates[0] && !autoTried.has(`${site}|${it.fragmentKey}|${it.candidates[0].plate}`))
+        for (const item of queue.slice(0, perTick)) {
+          const best = item.candidates[0]
+          const tag = `${site}|${item.fragmentKey}|${best.plate}`
+          const ev = await computeEvidence(item)
+          if (ev.dssError) continue // se reintenta en la próxima vuelta
+          autoTried.add(tag)
+          evidenceCache.set(`${site}|${item.fragmentKey}`, { at: Date.now(), signature:signatureOf(item), body: ev })
+          const top = [...ev.candidates].sort((a, b) => b.probability - a.probability)[0]
+          const threshold = item.validFormat ? AUTO_EVIDENCE_SAME_NODE_PROBABILITY : AUTO_EVIDENCE_PROBABILITY
+          if (top && top.plate === best.plate && top.probability >= threshold) {
+            ps.setEvidenceVerdict(site, item.fragmentKey, { plate: top.plate, probability: Math.round(top.probability * 1000) / 1000, at: new Date().toISOString() })
+            console.log(`[identificación] ${site} ${item.readPlate} → ${top.plate} aplicada con DSS (${Math.round(top.probability * 100)}%)`)
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('[identificación] evidencia automática falló:', e instanceof Error ? e.message : e)
+    } finally {
+      autoRunning = false
+      if (autoTried.size > 20000) autoTried.clear()
+    }
+  }
+  function startAutoEvidence({ sites = ['ricardone', 'san_lorenzo'], intervalMs = 30_000, perTick = 3 } = {}) {
+    if (autoTimer) return
+    autoTimer = setInterval(() => void autoEvidenceTick(sites, perTick), intervalMs)
+    autoTimer.unref?.()
   }
 
   /** GET /api/truckflow/camera-captures/find?device=&at=<hora operativa del feed>&plate= */
@@ -148,5 +209,5 @@ export function createDssPhotoLookup({ dss, getPlantState = () => null }) {
     return { dir, saved }
   }
 
-  return { find, image, evidence, archiveEvidence }
+  return { find, image, evidence, archiveEvidence, startAutoEvidence, autoEvidenceTick }
 }

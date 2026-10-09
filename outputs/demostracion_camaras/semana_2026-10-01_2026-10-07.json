@@ -1,0 +1,205 @@
+{
+ "porDia": [
+  {
+   "dia": "2026-10-01",
+   "camiones": 345,
+   "total": 2799,
+   "camara": 1966,
+   "corregido": 163,
+   "deducido": 519,
+   "final": 119,
+   "falta": 32,
+   "completos": 341
+  },
+  {
+   "dia": "2026-10-02",
+   "camiones": 169,
+   "total": 1141,
+   "camara": 726,
+   "corregido": 70,
+   "deducido": 258,
+   "final": 60,
+   "falta": 27,
+   "completos": 164
+  },
+  {
+   "dia": "2026-10-03",
+   "camiones": 146,
+   "total": 1051,
+   "camara": 682,
+   "corregido": 73,
+   "deducido": 227,
+   "final": 37,
+   "falta": 32,
+   "completos": 142
+  },
+  {
+   "dia": "2026-10-04",
+   "camiones": 111,
+   "total": 847,
+   "camara": 547,
+   "corregido": 49,
+   "deducido": 201,
+   "final": 34,
+   "falta": 16,
+   "completos": 109
+  },
+  {
+   "dia": "2026-10-05",
+   "camiones": 215,
+   "total": 1659,
+   "camara": 1102,
+   "corregido": 82,
+   "deducido": 386,
+   "final": 65,
+   "falta": 24,
+   "completos": 211
+  },
+  {
+   "dia": "2026-10-06",
+   "camiones": 217,
+   "total": 1529,
+   "camara": 1024,
+   "corregido": 93,
+   "deducido": 319,
+   "final": 72,
+   "falta": 21,
+   "completos": 214
+  },
+  {
+   "dia": "2026-10-07",
+   "camiones": 108,
+   "total": 734,
+   "camara": 530,
+   "corregido": 36,
+   "deducido": 147,
+   "final": 13,
+   "falta": 8,
+   "completos": 107
+  }
+ ],
+ "porPunto": {
+  "ricardone:Pre ingreso": {
+   "total": 1122,
+   "camara": 937,
+   "corregido": 2,
+   "deducido": 165,
+   "final": 0,
+   "falta": 18
+  },
+  "ricardone:Calada": {
+   "total": 1122,
+   "camara": 794,
+   "corregido": 89,
+   "deducido": 207,
+   "final": 14,
+   "falta": 18
+  },
+  "ricardone:Playa 3": {
+   "total": 324,
+   "camara": 218,
+   "corregido": 24,
+   "deducido": 76,
+   "final": 5,
+   "falta": 1
+  },
+  "ricardone:Balanza Egreso": {
+   "total": 407,
+   "camara": 325,
+   "corregido": 27,
+   "deducido": 25,
+   "final": 28,
+   "falta": 2
+  },
+  "ricardone:Salida 2": {
+   "total": 890,
+   "camara": 621,
+   "corregido": 43,
+   "deducido": 181,
+   "final": 29,
+   "falta": 16
+  },
+  "san_lorenzo:Ingreso": {
+   "total": 1159,
+   "camara": 961,
+   "corregido": 28,
+   "deducido": 120,
+   "final": 29,
+   "falta": 21
+  },
+  "san_lorenzo:Balanza Ingreso": {
+   "total": 1159,
+   "camara": 966,
+   "corregido": 53,
+   "deducido": 81,
+   "final": 38,
+   "falta": 21
+  },
+  "san_lorenzo:Plataformas Volcables": {
+   "total": 915,
+   "camara": 459,
+   "corregido": 110,
+   "deducido": 263,
+   "final": 67,
+   "falta": 16
+  },
+  "san_lorenzo:Balanza Egreso": {
+   "total": 1159,
+   "camara": 164,
+   "corregido": 103,
+   "deducido": 784,
+   "final": 87,
+   "falta": 21
+  },
+  "san_lorenzo:Egreso": {
+   "total": 1159,
+   "camara": 983,
+   "corregido": 51,
+   "deducido": 9,
+   "final": 95,
+   "falta": 21
+  },
+  "san_lorenzo:Carga / Descarga OSL": {
+   "total": 210,
+   "camara": 98,
+   "corregido": 8,
+   "deducido": 99,
+   "final": 1,
+   "falta": 4
+  },
+  "ricardone:Volcable Silo Keppler": {
+   "total": 5,
+   "camara": 3,
+   "corregido": 0,
+   "deducido": 1,
+   "final": 1,
+   "falta": 0
+  },
+  "san_lorenzo:Carga/descarga": {
+   "total": 15,
+   "camara": 0,
+   "corregido": 0,
+   "deducido": 15,
+   "final": 0,
+   "falta": 0
+  },
+  "ricardone:Volcable 2": {
+   "total": 114,
+   "camara": 48,
+   "corregido": 28,
+   "deducido": 31,
+   "final": 6,
+   "falta": 1
+  }
+ },
+ "total": {
+  "total": 9760,
+  "camiones": 1311,
+  "completos": 1288,
+  "camara": 6577,
+  "corregido": 566,
+  "deducido": 2057,
+  "final": 400,
+  "falta": 160
+ }
+}

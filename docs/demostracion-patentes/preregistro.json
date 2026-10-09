@@ -1,0 +1,16 @@
+{
+  "fecha": "2026-10-08T20:15:22.401Z",
+  "theta": 0.95,
+  "motivo": "Calibración 25–30/09: ningún θ alcanzó 98 % verificable; 0,95 fue el máximo (96,8 %, 330 confirmadas, 11 contradichas, 100 sin verificar).",
+  "verdad": "Confirmada = el Excel confirma el paso faltante o la relectura (≤30 min) del camión asignado, o el camión vuelve a leerse bien después (≤8 h) en un punto que sigue en su recorrido. Contradicha = la lectura es la patente de otro camión del Excel, o la lectura posterior está fuera de orden. Sin verificar = no hay lectura posterior o es en un acceso compartido.",
+  "prueba": "2026-10-01 y 2026-10-02 (pedido del usuario: dos días para ver si funciona)",
+  "hashes": {
+    "server/plantState/nodeModelScore.mjs": "07e8da558ac8970fccc025693b37f8447631919b7be90729a42adda0dc2986b3",
+    "server/plantState/data/pInicioNodos.json": "073c16ab037766a7784388f392df8d4ee47126ceeaed5dfaf734a1af74d9d38f",
+    "server/plantState/data/flotaPatentes.json": "c6f9bc730de72d51edede25a1d74c96c9702707e90408dcf55a10e7b46073995",
+    "server/plantState/identificationEvidence.mjs": "da7b080a62a1479633cdc212fd16cc10a0cc9c337db6f9bb76ebcf3199b91c4a",
+    "server/plantState/plateIdentification.mjs": "ae258f4c55125ceea602521b486e63b86da4425f446e2b2557bfddf623ebfe24",
+    "scripts/demostracion/demostracion.mjs": "37686b9a43cb728cf923fe54b25828425498373ee352c9f1efec95b98986da1c",
+    "scripts/demostracion/contar.mjs": "b9c5fecdf2c28652fc905bf09eebaba9f9fdf77d9d2d7bf414a6a8b82c5dab6a"
+  }
+}

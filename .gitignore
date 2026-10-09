@@ -62,3 +62,9 @@ tools/go2rtc/
 
 # Fotos archivadas de decisiones de patentes (EV-40): datos operativos, no van al repo
 data/identification-evidence/
+
+# Demostración de patentes: fotos de cámara y corridas diarias (se regeneran con scripts/demostracion/*)
+outputs/demostracion_camaras/**/*.jpg
+outputs/demostracion_camaras/**/*.png
+outputs/demostracion_camaras/*_Q*.json
+docs/demostracion-patentes/dudas1-full/

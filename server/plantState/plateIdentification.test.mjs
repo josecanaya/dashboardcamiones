@@ -169,3 +169,125 @@ describe('circuito del candidato si la lectura es suya', () => {
     expect(c.recentReads[0].nodeLabel).toBe('Calada')
   })
 })
+
+describe('universo conocido y doble lectura (08/10)', () => {
+  const now = Date.parse('2026-10-08T12:00:00-03:00')
+
+  it('lectura ilegible cercana en otro carril: requiere comparación humana', () => {
+    const events = [
+      ev('AF566LP', 'l1', '1-S1', 'SLZBalIngFte', '2026-10-08T09:00:00-03:00'),
+      ev('AF566LP', 'l1', '1-S7', 'SLZSalidaC2Fte', '2026-10-08T11:00:00-03:00'),
+      ev('AF566L', 'l2', '1-S7', 'SLZSalidaC1Fte', '2026-10-08T11:00:30-03:00'),
+    ]
+    const it0 = identifyFragments(events, now, { catalog }).items.find((i) => i.readPlate === 'AF566L')
+    expect(it0.level).toBe('provisorio')
+    expect(it0.assignedPlate).toBeNull()
+    expect(it0.candidates[0].inventory.reason).toContain('Otro carril')
+    expect(it0.candidates[0].twinSeconds).toBe(30)
+  })
+
+  it('ilegible casi igual a un camión del universo con una sola lectura: se aplica sola (NWZ3336 → NWZ336)', () => {
+    const events = [
+      ev('NWZ336', 'n1', '2-S1', 'RicPreIngInFr', '2026-10-08T10:00:00-03:00'),
+      ev('NWZ3336', 'n2', '2-S2', 'RicCal03', '2026-10-08T10:20:00-03:00'),
+    ]
+    const it0 = identifyFragments(events, now, { catalog }).items.find((i) => i.readPlate === 'NWZ3336')
+    expect(it0.level).toBe('casi_seguro')
+    expect(it0.assignedPlate).toBe('NWZ336')
+  })
+
+  it('una patente válida casi igual a un camión del universo no se corrige sola (MFY738 / MFY788)', () => {
+    const events = [
+      ev('MFY788', 'm1', '2-S1', 'RicPreIngInFr', '2026-10-08T10:00:00-03:00'),
+      ev('MFY788', 'm1', '2-S2', 'RicCal03', '2026-10-08T10:20:00-03:00'),
+      ev('MFY738', 'm2', '2-S3', 'RicEgrCamFrente', '2026-10-08T10:50:00-03:00'),
+    ]
+    const it0 = identifyFragments(events, now, { catalog }).items.find((i) => i.readPlate === 'MFY738')
+    expect(it0.level).toBe('provisorio')
+    expect(it0.candidates[0].inUniverse).toBe(true)
+  })
+
+  it('los camiones del universo van primero; los de afuera siguen visibles', () => {
+    const events = [
+      // R7 en Calada: Salida 2 es su paso esperado.
+      ev('ABC123', 'a1', '2-S1', 'RicPreIngInFr', '2026-10-08T10:00:00-03:00'),
+      ev('ABC123', 'a1', '2-S2', 'RicCal03', '2026-10-08T10:20:00-03:00'),
+      // Ya pasó por Salida 2 y la balanza de egreso: volver a Salida 2 no es un paso probable.
+      ev('ABC128', 'a2', '2-S1', 'RicPreIngInFr', '2026-10-08T09:00:00-03:00'),
+      ev('ABC128', 'a2', '2-S3', 'RicEgrCamFrente', '2026-10-08T09:40:00-03:00'),
+      ev('ABC12', 'a3', '2-S3', 'RicEgrCamFrente', '2026-10-08T10:45:00-03:00'),
+    ]
+    const it0 = identifyFragments(events, now, { catalog }).items.find((i) => i.readPlate === 'ABC12')
+    expect(it0.candidates.map((c) => c.plate)).toEqual(expect.arrayContaining(['ABC123', 'ABC128']))
+    expect(it0.candidates[0].plate).toBe('ABC123')
+    expect(it0.candidates[0].inUniverse).toBe(true)
+  })
+})
+
+describe('decisiones que no se pierden (bug 07–08/10)', () => {
+  const now = Date.parse('2026-10-08T12:00:00-03:00')
+
+  it('«la cámara leyó bien» en dos lecturas gemelas no se anulan entre sí (AG688FB)', () => {
+    const events = [
+      ev('AG688FD', 'g1', '1-S1', 'SLZBalIngFte', '2026-10-08T10:00:00-03:00'),
+      ev('AG688FD', 'g1', '1-S2', 'SLZCalado', '2026-10-08T10:20:00-03:00'),
+      ev('AG688FB', 'g2', '1-S5', 'SLZBalSC1Fte', '2026-10-08T10:50:00-03:00'),
+      ev('AG688FB', 'g3', '1-S5', 'SLZBalSC2Fte', '2026-10-08T10:51:00-03:00'),
+    ]
+    const keys = identifyFragments(events, now, { catalog }).items.filter((i) => i.readPlate === 'AG688FB').map((i) => i.fragmentKey)
+    expect(keys.length).toBe(2)
+    const decisions = Object.fromEntries(keys.map((k, n) => [k, { action: 'confirm', plate: 'AG688FB', journeyUid: null, updatedAt: `2026-10-08T11:0${n}:00Z` }]))
+    const items = identifyFragments(events, now, { catalog, decisions }).items.filter((i) => i.readPlate === 'AG688FB')
+    expect(items.every((i) => i.level === 'confirmado' && i.assignedPlate === 'AG688FB')).toBe(true)
+  })
+
+  it('una corrección confirmada se sigue aplicando aunque el camión ya no esté en planta', () => {
+    const events = [ev('ROL445', 'r2', '2-S3', 'RicEgrCamFrente', '2026-10-08T10:50:00-03:00')]
+    const key = 'r2'
+    const r = identifyFragments(events, now, { catalog, decisions: { [key]: { action: 'confirm', plate: 'RDL445', journeyUid: 'r1' } } })
+    const it0 = r.items.find((i) => i.fragmentKey === key)
+    expect(it0.level).toBe('confirmado')
+    expect(applyIdentifications(events, r.items)[0].truckPlate).toBe('RDL445')
+  })
+})
+
+describe('patente válida leída en el mismo nodo (08/10)', () => {
+  const now = Date.parse('2026-10-08T12:00:00-03:00')
+
+  it('AC297UX → AC297HX: misma balanza 15 min antes y el camión con dos lecturas se aplica sola', () => {
+    const events = [
+      ev('AC297HX', 'h1', '2-S1', 'RicPreIngInFr', '2026-10-08T09:50:00-03:00'),
+      ev('AC297HX', 'h1', '2-S4', 'RicB3Ingreso', '2026-10-08T10:04:20-03:00'),
+      ev('AC297UX', 'h2', '2-S4', 'RicB3Ingreso', '2026-10-08T10:19:16-03:00'),
+    ]
+    const it0 = identifyFragments(events, now, { catalog }).items.find((i) => i.readPlate === 'AC297UX')
+    expect(it0.level).toBe('casi_seguro')
+    expect(it0.assignedPlate).toBe('AC297HX')
+  })
+
+  it('AH861QO → AH861QQ: con una sola lectura espera el veredicto del DSS y con él se aplica', () => {
+    const events = [
+      ev('AH861QQ', 'q1', '1-S10', 'RenDescFte', '2026-10-08T09:47:51-03:00'),
+      ev('AH861QO', 'q2', '1-S10', 'RenDescFte', '2026-10-08T09:54:24-03:00'),
+    ]
+    const it0 = identifyFragments(events, now, { catalog }).items.find((i) => i.readPlate === 'AH861QO')
+    expect(it0.level).toBe('provisorio')
+    expect(it0.evidenceEligible).toBe(true)
+    const r = identifyFragments(events, now, { catalog, evidenceVerdicts: { [it0.fragmentKey]: { plate: 'AH861QQ', probability: 0.87 } } })
+    const it1 = r.items.find((i) => i.readPlate === 'AH861QO')
+    expect(it1.level).toBe('casi_seguro')
+    expect(it1.assignedPlate).toBe('AH861QQ')
+  })
+
+  it('dos patentes válidas a segundos en el mismo nodo no se aplican ni con veredicto (no se sabe cuál es la buena)', () => {
+    const events = [
+      ev('MML273', 'k1', '1-S5', 'SLZBalSalFte', '2026-10-08T11:30:00-03:00'),
+      ev('MML273', 'k1', '1-S7', 'SLZSalidaC1Fte', '2026-10-08T11:45:00-03:00'),
+      ev('HHL273', 'k2', '1-S7', 'SLZSalidaC2Fte', '2026-10-08T11:45:40-03:00'),
+    ]
+    const it0 = identifyFragments(events, now, { catalog }).items.find((i) => i.readPlate === 'HHL273')
+    expect(it0.evidenceEligible).toBe(false)
+    const r = identifyFragments(events, now, { catalog, evidenceVerdicts: { [it0.fragmentKey]: { plate: 'MML273', probability: 0.95 } } })
+    expect(r.items.find((i) => i.readPlate === 'HHL273').level).toBe('provisorio')
+  })
+})

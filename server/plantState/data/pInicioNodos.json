@@ -1,0 +1,474 @@
+{
+  "generatedAt": "2026-10-08T18:26:28.543Z",
+  "source": "scripts/p-inicio-nodos.mjs + scripts/p-inicio-camaras.mjs",
+  "floor": 0.016,
+  "fleetPlates": 12789,
+  "nodes": {
+    "S0": {
+      "label": "Ingreso",
+      "start": true,
+      "pInicio": {
+        "dia": 0.8362088796871406,
+        "noche": 0.9131521399562637
+      },
+      "read": {
+        "dia": 0.8885923949299533,
+        "noche": 0.5352697095435685
+      },
+      "pInicioModelo": {
+        "dia": 1,
+        "noche": 1
+      },
+      "camionNuevo": {
+        "dia": 0.8292975305682091,
+        "noche": 0.900286944045911
+      },
+      "noCamion": {
+        "dia": 0.040487692661605706,
+        "noche": 0.12902218056857231
+      },
+      "fuente": "camaras"
+    },
+    "S1": {
+      "label": "Preingreso",
+      "start": false,
+      "pInicio": {
+        "dia": 0.17618960132279993,
+        "noche": 0.35487424270240503
+      },
+      "read": {
+        "dia": 0.8949241430979584,
+        "noche": 0.7769659011830202
+      },
+      "pInicioModelo": {
+        "dia": 0.11140760507004663,
+        "noche": 0.4647302904564315
+      },
+      "camionNuevo": {
+        "dia": 0.1465550057099353,
+        "noche": 0.2797704447632712
+      },
+      "noCamion": {
+        "dia": 0.03472349807091677,
+        "noche": 0.1042775839911878
+      },
+      "fuente": "camaras"
+    },
+    "S2": {
+      "label": "Calada",
+      "start": false,
+      "pInicio": {
+        "dia": 0.08296146044624747,
+        "noche": 0.09593430803124374
+      },
+      "read": {
+        "dia": 0.7914098972922502,
+        "noche": 0.6911944202266783
+      },
+      "pInicioModelo": {
+        "dia": 0.016,
+        "noche": 0.1034294427104674
+      },
+      "camionNuevo": {
+        "dia": 0.08296146044624747,
+        "noche": 0.09593430803124374
+      },
+      "noCamion": {
+        "dia": 0,
+        "noche": 0
+      },
+      "fuente": "camaras"
+    },
+    "S4": {
+      "label": "Balanza ingreso / Balanza egreso",
+      "start": false,
+      "pInicio": {
+        "dia": 0.06325446644133269,
+        "noche": 0.02365491651205937
+      },
+      "read": {
+        "dia": 0.8163784333672431,
+        "noche": 0.7141133896260555
+      },
+      "pInicioModelo": {
+        "dia": 0.016,
+        "noche": 0.032007914978309335
+      },
+      "camionNuevo": {
+        "dia": 0.06325446644133269,
+        "noche": 0.02365491651205937
+      },
+      "noCamion": {
+        "dia": 0,
+        "noche": 0
+      },
+      "fuente": "camaras"
+    },
+    "S6": {
+      "label": "Playa 3",
+      "start": false,
+      "pInicio": {
+        "dia": 0.030501089324618737,
+        "noche": 0.0262582056892779
+      },
+      "read": {
+        "dia": 0.7412854030501089,
+        "noche": 0.4200944032366824
+      },
+      "pInicioModelo": {
+        "dia": 0.016,
+        "noche": 0.016
+      },
+      "camionNuevo": {
+        "dia": 0.030501089324618737,
+        "noche": 0.0262582056892779
+      },
+      "noCamion": {
+        "dia": 0,
+        "noche": 0
+      },
+      "fuente": "camaras"
+    },
+    "S5": {
+      "label": "Celda 16",
+      "start": false,
+      "pInicio": {
+        "dia": 0.016,
+        "noche": 0.016
+      },
+      "read": null,
+      "pInicioModelo": {
+        "dia": 0.016,
+        "noche": 0.016
+      },
+      "camionNuevo": {
+        "dia": 0.016,
+        "noche": 0.016
+      },
+      "noCamion": {
+        "dia": 0,
+        "noche": 0
+      },
+      "fuente": "camaras"
+    },
+    "S7": {
+      "label": "Silo Keppler",
+      "start": false,
+      "pInicio": {
+        "dia": 0.016,
+        "noche": 0.017452006980802792
+      },
+      "read": {
+        "dia": 0.8515625,
+        "noche": 0.6370967741935484
+      },
+      "pInicioModelo": {
+        "dia": 0.016,
+        "noche": 0.016
+      },
+      "camionNuevo": {
+        "dia": 0.016,
+        "noche": 0.017452006980802792
+      },
+      "noCamion": {
+        "dia": 0,
+        "noche": 0
+      },
+      "fuente": "camaras"
+    },
+    "S8": {
+      "label": "Silo Chief / Tolva silo Chief",
+      "start": false,
+      "pInicio": {
+        "dia": 0.016,
+        "noche": 0.06787330316742081
+      },
+      "read": {
+        "dia": 0.7242524916943521,
+        "noche": 0.375
+      },
+      "pInicioModelo": {
+        "dia": 0.016,
+        "noche": 0.016
+      },
+      "camionNuevo": {
+        "dia": 0.016,
+        "noche": 0.06787330316742081
+      },
+      "noCamion": {
+        "dia": 0,
+        "noche": 0
+      },
+      "fuente": "camaras"
+    },
+    "S9": {
+      "label": "Volcable 1 / Volcable 2",
+      "start": false,
+      "pInicio": {
+        "dia": 0.17186024551463644,
+        "noche": 0.11473788328387735
+      },
+      "read": {
+        "dia": 0.6836734693877551,
+        "noche": 0.5555555555555556
+      },
+      "pInicioModelo": {
+        "dia": 0.016,
+        "noche": 0.016
+      },
+      "camionNuevo": {
+        "dia": 0.17186024551463644,
+        "noche": 0.11473788328387735
+      },
+      "noCamion": {
+        "dia": 0,
+        "noche": 0
+      },
+      "fuente": "camaras"
+    },
+    "S3": {
+      "label": "Salida 2",
+      "start": false,
+      "pInicio": {
+        "dia": 0.07979775774895581,
+        "noche": 0.13675724096745298
+      },
+      "read": {
+        "dia": 0.7965941343424787,
+        "noche": 0.5419459679057486
+      },
+      "pInicioModelo": {
+        "dia": 0.016,
+        "noche": 0.031920705979808915
+      },
+      "camionNuevo": {
+        "dia": 0.03592814371257485,
+        "noche": 0.022319918836658775
+      },
+      "noCamion": {
+        "dia": 0.04550450648494175,
+        "noche": 0.1170498656315318
+      },
+      "fuente": "camaras"
+    },
+    "SL_S0": {
+      "label": "Ingreso",
+      "start": true,
+      "pInicio": {
+        "dia": 0.1314852492370295,
+        "noche": 0.1676578872840555
+      },
+      "read": {
+        "dia": 0.8127350213085986,
+        "noche": 0.656127394414955
+      },
+      "pInicioModelo": {
+        "dia": 1,
+        "noche": 1
+      },
+      "camionNuevo": {
+        "dia": 0.11160249739854318,
+        "noche": 0.0429827417779225
+      },
+      "noCamion": {
+        "dia": 0.022380467955239063,
+        "noche": 0.13027470971396204
+      },
+      "fuente": "camaras"
+    },
+    "SL_S2": {
+      "label": "Calada",
+      "start": false,
+      "pInicio": {
+        "dia": 0.1875,
+        "noche": 0.08287292817679558
+      },
+      "read": null,
+      "pInicioModelo": {
+        "dia": 0.2688055755827926,
+        "noche": 0.2688055755827926
+      },
+      "camionNuevo": {
+        "dia": 0.1875,
+        "noche": 0.08287292817679558
+      },
+      "noCamion": {
+        "dia": 0,
+        "noche": 0
+      },
+      "fuente": "camaras"
+    },
+    "SL_S1": {
+      "label": "Balanza ingreso",
+      "start": false,
+      "pInicio": {
+        "dia": 0.0425531914893617,
+        "noche": 0.027921917469730665
+      },
+      "read": {
+        "dia": 0.8210462532821652,
+        "noche": 0.6102613746369797
+      },
+      "pInicioModelo": {
+        "dia": 0.2688055755827926,
+        "noche": 0.2688055755827926
+      },
+      "camionNuevo": {
+        "dia": 0.0425531914893617,
+        "noche": 0.027921917469730665
+      },
+      "noCamion": {
+        "dia": 0,
+        "noche": 0
+      },
+      "fuente": "camaras"
+    },
+    "SL_S10": {
+      "label": "Carga OSL",
+      "start": false,
+      "pInicio": {
+        "dia": 0.032418952618453865,
+        "noche": 0.031496062992125984
+      },
+      "read": {
+        "dia": 0.6641651031894934,
+        "noche": 0.4434782608695652
+      },
+      "pInicioModelo": {
+        "dia": 0.07703315180056501,
+        "noche": 0.07703315180056501
+      },
+      "camionNuevo": {
+        "dia": 0.032418952618453865,
+        "noche": 0.031496062992125984
+      },
+      "noCamion": {
+        "dia": 0,
+        "noche": 0
+      },
+      "fuente": "camaras"
+    },
+    "SL_S4": {
+      "label": "Volcables",
+      "start": false,
+      "pInicio": {
+        "dia": 0.016,
+        "noche": 0.016
+      },
+      "read": {
+        "dia": 0.875499538887181,
+        "noche": 0.3923569902682174
+      },
+      "pInicioModelo": {
+        "dia": 0.07703315180056501,
+        "noche": 0.07703315180056501
+      },
+      "camionNuevo": {
+        "dia": 0.016,
+        "noche": 0.016
+      },
+      "noCamion": {
+        "dia": 0,
+        "noche": 0
+      },
+      "fuente": "camaras"
+    },
+    "SL_S6": {
+      "label": "Carga y descarga",
+      "start": false,
+      "pInicio": {
+        "dia": 0.06611570247933884,
+        "noche": 0.056
+      },
+      "read": {
+        "dia": 0.6772151898734177,
+        "noche": 0.5826086956521739
+      },
+      "pInicioModelo": {
+        "dia": 0.07703315180056501,
+        "noche": 0.07703315180056501
+      },
+      "camionNuevo": {
+        "dia": 0.06611570247933884,
+        "noche": 0.056
+      },
+      "noCamion": {
+        "dia": 0,
+        "noche": 0
+      },
+      "fuente": "camaras"
+    },
+    "SL_S5": {
+      "label": "Balanza egreso",
+      "start": false,
+      "pInicio": {
+        "dia": 0.016,
+        "noche": 0.016
+      },
+      "read": {
+        "dia": 0.37637078419201325,
+        "noche": 0.13988264243800871
+      },
+      "pInicioModelo": {
+        "dia": 0.07703315180056501,
+        "noche": 0.07703315180056501
+      },
+      "camionNuevo": {
+        "dia": 0.016,
+        "noche": 0.016
+      },
+      "noCamion": {
+        "dia": 0,
+        "noche": 0
+      },
+      "fuente": "camaras"
+    },
+    "SL_S8": {
+      "label": "Renova",
+      "start": false,
+      "pInicio": {
+        "dia": 0.4328574437985446,
+        "noche": 0.5210355987055015
+      },
+      "read": null,
+      "pInicioModelo": {
+        "dia": 0.07703315180056501,
+        "noche": 0.07703315180056501
+      },
+      "camionNuevo": {
+        "dia": 0.04799301919720768,
+        "noche": 0.02631578947368421
+      },
+      "noCamion": {
+        "dia": 0.40426638917793967,
+        "noche": 0.5080906148867314
+      },
+      "fuente": "camaras"
+    },
+    "SL_S7": {
+      "label": "Egreso",
+      "start": false,
+      "pInicio": {
+        "dia": 0.25696682175344254,
+        "noche": 0.16504568720379148
+      },
+      "read": {
+        "dia": 0.8448632974316487,
+        "noche": 0.7288552507095554
+      },
+      "pInicioModelo": {
+        "dia": 0.05755402938994369,
+        "noche": 0.05755402938994369
+      },
+      "camionNuevo": {
+        "dia": 0.06251874062968515,
+        "noche": 0.016
+      },
+      "noCamion": {
+        "dia": 0.20741543276754545,
+        "noche": 0.1514691943127962
+      },
+      "fuente": "camaras"
+    }
+  }
+}

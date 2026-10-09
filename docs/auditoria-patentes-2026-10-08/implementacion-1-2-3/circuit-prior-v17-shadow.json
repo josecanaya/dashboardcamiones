@@ -1,0 +1,50 @@
+{
+  "mode": "shadow",
+  "rulesVersion": "etl_transform_v17",
+  "denominator": "recorridos de cámara con executive_circuit_code; no movimientos de Excel",
+  "sources": [
+    {
+      "run_id": "2026-09-14_2026-09-20",
+      "rulesVersion": "etl_transform_v17",
+      "table": "final_circuits",
+      "sha256": "0c9da44f71a43c8619f6a18e515fe94bb1735bc443f25e1b9c92dc96dfb307ac",
+      "rows": 2612
+    },
+    {
+      "run_id": "2026-09-21_2026-09-27",
+      "rulesVersion": "etl_transform_v17",
+      "table": "final_circuits",
+      "sha256": "b05b257993fc896e81428888df452e119367211a239e2064dc5ac2ae7e011cb6",
+      "rows": 1418
+    },
+    {
+      "run_id": "2026-09-28_2026-10-04",
+      "rulesVersion": "etl_transform_v17",
+      "table": "final_circuits",
+      "sha256": "0cf8e40e9b09e3d4e76e6c780025e52ca52a3dced5dbb6da5b5bc0b9fcd06dbf",
+      "rows": 1112
+    }
+  ],
+  "counts": {
+    "SIN_PUNTO": 1041,
+    "R7": 3149,
+    "R8": 266,
+    "R5": 549,
+    "R6": 109,
+    "R16": 1,
+    "RS_REC": 17,
+    "R9": 4,
+    "R4": 6
+  },
+  "prior": {
+    "SIN_PUNTO": 0.20245040840140024,
+    "R7": 0.6124076234928043,
+    "R8": 0.051730844029560484,
+    "R5": 0.10676779463243874,
+    "R6": 0.021197977440684558,
+    "R16": 0.00019447685725398678,
+    "RS_REC": 0.0033061065733177753,
+    "R9": 0.0007779074290159471,
+    "R4": 0.0011668611435239206
+  }
+}

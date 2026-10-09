@@ -1,0 +1,5389 @@
+{
+  "weekly_runs": [
+    {
+      "run_id": "2026-05-18_2026-05-24",
+      "rulesVersion": "etl_transform_v13",
+      "rows": 3222,
+      "circuits": {
+        "RS_REC": 912,
+        "R1": 145,
+        "R7": 1024,
+        "R8": 65,
+        "SIN_PUNTO": 932,
+        "R5": 74,
+        "R6": 58,
+        "R9": 7,
+        "R16": 4,
+        "R20": 1
+      }
+    },
+    {
+      "run_id": "2026-05-25_2026-05-31",
+      "rulesVersion": "etl_transform_v13",
+      "rows": 2796,
+      "circuits": {
+        "R7": 1240,
+        "RS_REC": 820,
+        "R1": 54,
+        "SIN_PUNTO": 574,
+        "R16": 3,
+        "R5": 68,
+        "R9": 4,
+        "R8": 4,
+        "R6": 29
+      }
+    },
+    {
+      "run_id": "2026-06-01_2026-06-07",
+      "rulesVersion": "etl_transform_v13",
+      "rows": 3337,
+      "circuits": {
+        "RS_REC": 501,
+        "R7": 2133,
+        "R1": 26,
+        "SIN_PUNTO": 537,
+        "R5": 53,
+        "R8": 37,
+        "R9": 10,
+        "R6": 34,
+        "R16": 5,
+        "RS_DESP": 1
+      }
+    },
+    {
+      "run_id": "2026-06-08_2026-06-14",
+      "rulesVersion": "etl_transform_v13",
+      "rows": 2132,
+      "circuits": {
+        "R7": 1503,
+        "SIN_PUNTO": 412,
+        "R8": 59,
+        "R9": 5,
+        "R5": 34,
+        "RS_REC": 87,
+        "R6": 21,
+        "R1": 11
+      }
+    },
+    {
+      "run_id": "2026-06-15_2026-06-21",
+      "rulesVersion": "etl_transform_v13",
+      "rows": 2131,
+      "circuits": {
+        "SIN_PUNTO": 201,
+        "R7": 1628,
+        "R8": 57,
+        "R6": 47,
+        "R5": 57,
+        "RS_REC": 133,
+        "R9": 4,
+        "R1": 4
+      }
+    },
+    {
+      "run_id": "2026-06-22_2026-06-28",
+      "rulesVersion": "etl_transform_v13",
+      "rows": 1550,
+      "circuits": {
+        "SIN_PUNTO": 540,
+        "R7": 790,
+        "R8": 97,
+        "R6": 32,
+        "RS_REC": 45,
+        "R5": 44,
+        "R9": 2
+      }
+    },
+    {
+      "run_id": "2026-06-29_2026-07-05",
+      "rulesVersion": "etl_transform_v13",
+      "rows": 2474,
+      "circuits": {
+        "SIN_PUNTO": 354,
+        "RS_REC": 150,
+        "R7": 1630,
+        "R8": 168,
+        "R6": 42,
+        "R5": 63,
+        "R1": 67
+      }
+    },
+    {
+      "run_id": "2026-07-06_2026-07-12",
+      "rulesVersion": "etl_transform_v13",
+      "rows": 2434,
+      "circuits": {
+        "R8": 78,
+        "R1": 26,
+        "R7": 1691,
+        "SIN_PUNTO": 383,
+        "R6": 28,
+        "R5": 104,
+        "RS_REC": 123,
+        "R9": 1
+      }
+    },
+    {
+      "run_id": "2026-07-13_2026-07-19",
+      "rulesVersion": "etl_transform_v13",
+      "rows": 2384,
+      "circuits": {
+        "SIN_PUNTO": 478,
+        "R7": 1544,
+        "R8": 36,
+        "R1": 29,
+        "R6": 40,
+        "R5": 101,
+        "RS_REC": 155,
+        "R9": 1
+      }
+    },
+    {
+      "run_id": "2026-07-20_2026-07-26",
+      "rulesVersion": "etl_transform_v13",
+      "rows": 2570,
+      "circuits": {
+        "SIN_PUNTO": 372,
+        "R7": 1556,
+        "R5": 100,
+        "RS_REC": 357,
+        "R9": 1,
+        "R8": 102,
+        "R1": 41,
+        "R6": 41
+      }
+    },
+    {
+      "run_id": "2026-07-27_2026-08-02",
+      "rulesVersion": "etl_transform_v14",
+      "rows": 3382,
+      "circuits": {
+        "RS_REC": 411,
+        "R7": 1817,
+        "SIN_PUNTO": 521,
+        "R6": 74,
+        "R5": 181,
+        "R8": 44,
+        "R1": 136,
+        "R9": 6,
+        "R3": 167,
+        "R4": 24,
+        "R16": 1
+      }
+    },
+    {
+      "run_id": "2026-08-03_2026-08-09",
+      "rulesVersion": "etl_transform_v14",
+      "rows": 2719,
+      "circuits": {
+        "R3": 132,
+        "R7": 1757,
+        "SIN_PUNTO": 518,
+        "RS_REC": 87,
+        "R5": 77,
+        "R6": 80,
+        "R16": 5,
+        "R8": 61,
+        "R9": 2
+      }
+    },
+    {
+      "run_id": "2026-08-17_2026-08-23",
+      "rulesVersion": "etl_transform_v16",
+      "rows": 2825,
+      "circuits": {
+        "R7": 1848,
+        "SIN_PUNTO": 527,
+        "R8": 118,
+        "R6": 152,
+        "R5": 105,
+        "RS_REC": 62,
+        "R16": 12,
+        "R9": 1
+      }
+    },
+    {
+      "run_id": "2026-08-24_2026-08-30",
+      "rulesVersion": "etl_transform_v16",
+      "rows": 2846,
+      "circuits": {
+        "SIN_PUNTO": 529,
+        "R7": 1889,
+        "R6": 112,
+        "RS_REC": 93,
+        "R5": 100,
+        "R8": 62,
+        "R16": 2,
+        "R9": 3,
+        "R3": 56
+      }
+    },
+    {
+      "run_id": "2026-08-31_2026-09-06",
+      "rulesVersion": "etl_transform_v16",
+      "rows": 2030,
+      "circuits": {
+        "R7": 1145,
+        "SIN_PUNTO": 480,
+        "R8": 87,
+        "R6": 76,
+        "R3": 94,
+        "R5": 106,
+        "RS_REC": 36,
+        "R9": 2,
+        "R16": 4
+      }
+    },
+    {
+      "run_id": "2026-09-07_2026-09-13",
+      "rulesVersion": "etl_transform_v16",
+      "rows": 3215,
+      "circuits": {
+        "R7": 2107,
+        "SIN_PUNTO": 452,
+        "R8": 55,
+        "R5": 292,
+        "R16": 5,
+        "RS_REC": 182,
+        "R6": 90,
+        "RS_DESP": 4,
+        "R9": 2,
+        "R3": 26
+      }
+    },
+    {
+      "run_id": "2026-09-14_2026-09-20",
+      "rulesVersion": "etl_transform_v17",
+      "rows": 2612,
+      "circuits": {
+        "SIN_PUNTO": 416,
+        "R7": 1745,
+        "R8": 106,
+        "R5": 298,
+        "R6": 28,
+        "R16": 1,
+        "RS_REC": 16,
+        "R9": 2
+      }
+    },
+    {
+      "run_id": "2026-09-21_2026-09-27",
+      "rulesVersion": "etl_transform_v17",
+      "rows": 1418,
+      "circuits": {
+        "R7": 718,
+        "SIN_PUNTO": 344,
+        "R8": 83,
+        "R5": 238,
+        "R6": 33,
+        "RS_REC": 1,
+        "R9": 1
+      }
+    },
+    {
+      "run_id": "2026-09-28_2026-10-04",
+      "rulesVersion": "etl_transform_v17",
+      "rows": 1112,
+      "circuits": {
+        "R6": 48,
+        "SIN_PUNTO": 281,
+        "R7": 686,
+        "R8": 77,
+        "R5": 13,
+        "R4": 6,
+        "R9": 1
+      }
+    }
+  ],
+  "executive_bucket_counts": {
+    "DEDUCIDO": 13756,
+    "COMPLETO": 5908,
+    "INCOMPLETO": 27260,
+    "ANOMALO": 265
+  },
+  "executive_circuits": {
+    "RS_REC": 4171,
+    "R1": 539,
+    "R7": 28451,
+    "R8": 1396,
+    "SIN_PUNTO": 8851,
+    "R5": 2108,
+    "R6": 1065,
+    "R9": 55,
+    "R16": 42,
+    "R20": 1,
+    "RS_DESP": 5,
+    "R3": 475,
+    "R4": 30
+  },
+  "source_days": [
+    {
+      "day": "2026-05-12",
+      "rows": 2070,
+      "fetchedAt": "2026-05-19T17:27:34.595Z"
+    },
+    {
+      "day": "2026-05-13",
+      "rows": 2666,
+      "fetchedAt": "2026-05-19T17:27:34.742Z"
+    },
+    {
+      "day": "2026-05-14",
+      "rows": 4008,
+      "fetchedAt": "2026-05-19T17:27:34.920Z"
+    },
+    {
+      "day": "2026-05-15",
+      "rows": 3892,
+      "fetchedAt": "2026-05-19T17:27:35.112Z"
+    },
+    {
+      "day": "2026-05-16",
+      "rows": 3502,
+      "fetchedAt": "2026-05-19T17:27:35.295Z"
+    },
+    {
+      "day": "2026-05-17",
+      "rows": 3060,
+      "fetchedAt": "2026-05-19T17:27:35.482Z"
+    },
+    {
+      "day": "2026-05-18",
+      "rows": 1889,
+      "fetchedAt": "2026-05-21T19:48:38.929Z"
+    },
+    {
+      "day": "2026-05-19",
+      "rows": 2017,
+      "fetchedAt": "2026-05-27T16:05:42.852Z"
+    },
+    {
+      "day": "2026-05-20",
+      "rows": 2897,
+      "fetchedAt": "2026-05-27T16:05:42.840Z"
+    },
+    {
+      "day": "2026-05-21",
+      "rows": 3781,
+      "fetchedAt": "2026-05-27T16:05:42.887Z"
+    },
+    {
+      "day": "2026-05-22",
+      "rows": 3866,
+      "fetchedAt": "2026-05-27T16:05:43.115Z"
+    },
+    {
+      "day": "2026-05-23",
+      "rows": 3503,
+      "fetchedAt": "2026-05-27T16:05:43.130Z"
+    },
+    {
+      "day": "2026-05-24",
+      "rows": 2277,
+      "fetchedAt": "2026-05-27T16:05:43.080Z"
+    },
+    {
+      "day": "2026-05-25",
+      "rows": 2017,
+      "fetchedAt": "2026-05-27T16:05:43.263Z"
+    },
+    {
+      "day": "2026-05-26",
+      "rows": 3094,
+      "fetchedAt": "2026-05-27T16:05:43.296Z"
+    },
+    {
+      "day": "2026-05-27",
+      "rows": 2729,
+      "fetchedAt": "2026-05-28T12:27:28.364Z"
+    },
+    {
+      "day": "2026-05-28",
+      "rows": 0,
+      "fetchedAt": "2026-05-26T19:48:10.338Z"
+    },
+    {
+      "day": "2026-05-29",
+      "rows": 5349,
+      "fetchedAt": "2026-06-03T15:44:47.265Z"
+    },
+    {
+      "day": "2026-05-30",
+      "rows": 3797,
+      "fetchedAt": "2026-06-03T15:44:47.013Z"
+    },
+    {
+      "day": "2026-05-31",
+      "rows": 2517,
+      "fetchedAt": "2026-06-03T15:44:46.742Z"
+    },
+    {
+      "day": "2026-06-01",
+      "rows": 4569,
+      "fetchedAt": "2026-06-04T12:35:42.488Z"
+    },
+    {
+      "day": "2026-06-02",
+      "rows": 5317,
+      "fetchedAt": "2026-06-04T12:35:42.751Z"
+    },
+    {
+      "day": "2026-06-03",
+      "rows": 4966,
+      "fetchedAt": "2026-06-04T12:35:42.589Z"
+    },
+    {
+      "day": "2026-06-04",
+      "rows": 5887,
+      "fetchedAt": "2026-06-11T15:36:27.429Z"
+    },
+    {
+      "day": "2026-06-05",
+      "rows": 4657,
+      "fetchedAt": "2026-06-11T15:36:27.541Z"
+    },
+    {
+      "day": "2026-06-06",
+      "rows": 2812,
+      "fetchedAt": "2026-06-11T15:36:27.173Z"
+    },
+    {
+      "day": "2026-06-07",
+      "rows": 1375,
+      "fetchedAt": "2026-06-11T15:36:27.683Z"
+    },
+    {
+      "day": "2026-06-08",
+      "rows": 2877,
+      "fetchedAt": "2026-06-12T12:26:03.723Z"
+    },
+    {
+      "day": "2026-06-09",
+      "rows": 2866,
+      "fetchedAt": "2026-06-12T12:26:03.949Z"
+    },
+    {
+      "day": "2026-06-10",
+      "rows": 2980,
+      "fetchedAt": "2026-06-12T12:26:03.829Z"
+    },
+    {
+      "day": "2026-06-11",
+      "rows": 4005,
+      "fetchedAt": "2026-06-12T12:26:04.440Z"
+    },
+    {
+      "day": "2026-06-12",
+      "rows": 4166,
+      "fetchedAt": "2026-06-18T15:59:14.146Z"
+    },
+    {
+      "day": "2026-06-13",
+      "rows": 2705,
+      "fetchedAt": "2026-06-18T15:59:13.990Z"
+    },
+    {
+      "day": "2026-06-14",
+      "rows": 1054,
+      "fetchedAt": "2026-06-18T15:59:13.665Z"
+    },
+    {
+      "day": "2026-06-15",
+      "rows": 1545,
+      "fetchedAt": "2026-06-18T15:59:14.085Z"
+    },
+    {
+      "day": "2026-06-16",
+      "rows": 2698,
+      "fetchedAt": "2026-06-18T15:59:14.398Z"
+    },
+    {
+      "day": "2026-06-17",
+      "rows": 2870,
+      "fetchedAt": "2026-06-18T15:59:14.755Z"
+    },
+    {
+      "day": "2026-06-18",
+      "rows": 3226,
+      "fetchedAt": "2026-06-22T13:24:55.003Z"
+    },
+    {
+      "day": "2026-06-19",
+      "rows": 3347,
+      "fetchedAt": "2026-06-22T13:24:55.141Z"
+    },
+    {
+      "day": "2026-06-20",
+      "rows": 1877,
+      "fetchedAt": "2026-06-22T13:24:54.775Z"
+    },
+    {
+      "day": "2026-06-21",
+      "rows": 933,
+      "fetchedAt": "2026-06-22T13:24:55.068Z"
+    },
+    {
+      "day": "2026-06-22",
+      "rows": 2903,
+      "fetchedAt": "2026-06-26T19:00:12.992Z"
+    },
+    {
+      "day": "2026-06-23",
+      "rows": 3256,
+      "fetchedAt": "2026-06-26T19:00:13.566Z"
+    },
+    {
+      "day": "2026-06-24",
+      "rows": 3763,
+      "fetchedAt": "2026-06-26T19:00:13.339Z"
+    },
+    {
+      "day": "2026-06-25",
+      "rows": 3974,
+      "fetchedAt": "2026-06-26T19:00:13.667Z"
+    },
+    {
+      "day": "2026-06-26",
+      "rows": 1618,
+      "fetchedAt": "2026-06-26T19:00:13.733Z"
+    },
+    {
+      "day": "2026-06-27",
+      "rows": 0,
+      "fetchedAt": "2026-06-26T19:00:13.668Z"
+    },
+    {
+      "day": "2026-06-28",
+      "rows": 1389,
+      "fetchedAt": "2026-07-06T14:17:35.343Z"
+    },
+    {
+      "day": "2026-06-29",
+      "rows": 2965,
+      "fetchedAt": "2026-07-06T14:17:35.526Z"
+    },
+    {
+      "day": "2026-06-30",
+      "rows": 4067,
+      "fetchedAt": "2026-07-06T14:17:35.680Z"
+    },
+    {
+      "day": "2026-07-01",
+      "rows": 4935,
+      "fetchedAt": "2026-07-06T14:17:36.058Z"
+    },
+    {
+      "day": "2026-07-02",
+      "rows": 4782,
+      "fetchedAt": "2026-07-06T14:17:36.530Z"
+    },
+    {
+      "day": "2026-07-03",
+      "rows": 4420,
+      "fetchedAt": "2026-07-06T14:17:36.478Z"
+    },
+    {
+      "day": "2026-07-04",
+      "rows": 3423,
+      "fetchedAt": "2026-07-06T14:17:36.661Z"
+    },
+    {
+      "day": "2026-07-05",
+      "rows": 2127,
+      "fetchedAt": "2026-07-13T12:28:40.883Z"
+    },
+    {
+      "day": "2026-07-06",
+      "rows": 3094,
+      "fetchedAt": "2026-07-13T12:28:40.830Z"
+    },
+    {
+      "day": "2026-07-07",
+      "rows": 3503,
+      "fetchedAt": "2026-07-13T12:28:41.182Z"
+    },
+    {
+      "day": "2026-07-08",
+      "rows": 3631,
+      "fetchedAt": "2026-07-13T12:28:41.763Z"
+    },
+    {
+      "day": "2026-07-09",
+      "rows": 3565,
+      "fetchedAt": "2026-07-13T12:28:41.547Z"
+    },
+    {
+      "day": "2026-07-10",
+      "rows": 4045,
+      "fetchedAt": "2026-07-13T12:28:41.902Z"
+    },
+    {
+      "day": "2026-07-11",
+      "rows": 2348,
+      "fetchedAt": "2026-07-13T12:28:42.027Z"
+    },
+    {
+      "day": "2026-07-12",
+      "rows": 2054,
+      "fetchedAt": "2026-07-13T12:28:42.088Z"
+    },
+    {
+      "day": "2026-07-13",
+      "rows": 2927,
+      "fetchedAt": "2026-07-17T12:27:14.684Z"
+    },
+    {
+      "day": "2026-07-14",
+      "rows": 4009,
+      "fetchedAt": "2026-07-17T12:27:14.601Z"
+    },
+    {
+      "day": "2026-07-15",
+      "rows": 4000,
+      "fetchedAt": "2026-07-17T12:27:14.961Z"
+    },
+    {
+      "day": "2026-07-16",
+      "rows": 4069,
+      "fetchedAt": "2026-07-17T12:27:15.363Z"
+    },
+    {
+      "day": "2026-07-17",
+      "rows": 4181,
+      "fetchedAt": "2026-07-20T12:25:47.681Z"
+    },
+    {
+      "day": "2026-07-18",
+      "rows": 3307,
+      "fetchedAt": "2026-07-20T12:25:47.711Z"
+    },
+    {
+      "day": "2026-07-19",
+      "rows": 1584,
+      "fetchedAt": "2026-07-21T19:31:04.133Z"
+    },
+    {
+      "day": "2026-07-20",
+      "rows": 3210,
+      "fetchedAt": "2026-07-27T12:26:31.130Z"
+    },
+    {
+      "day": "2026-07-21",
+      "rows": 3692,
+      "fetchedAt": "2026-07-27T12:26:31.202Z"
+    },
+    {
+      "day": "2026-07-22",
+      "rows": 4155,
+      "fetchedAt": "2026-07-27T12:26:32.705Z"
+    },
+    {
+      "day": "2026-07-23",
+      "rows": 4596,
+      "fetchedAt": "2026-07-27T12:26:32.397Z"
+    },
+    {
+      "day": "2026-07-24",
+      "rows": 4483,
+      "fetchedAt": "2026-07-27T12:26:31.982Z"
+    },
+    {
+      "day": "2026-07-25",
+      "rows": 2944,
+      "fetchedAt": "2026-07-27T12:26:32.524Z"
+    },
+    {
+      "day": "2026-07-26",
+      "rows": 2071,
+      "fetchedAt": "2026-07-27T12:26:32.784Z"
+    },
+    {
+      "day": "2026-07-27",
+      "rows": 3352,
+      "fetchedAt": "2026-08-03T13:56:58.918Z"
+    },
+    {
+      "day": "2026-07-28",
+      "rows": 4347,
+      "fetchedAt": "2026-08-03T13:56:59.101Z"
+    },
+    {
+      "day": "2026-07-29",
+      "rows": 4585,
+      "fetchedAt": "2026-08-03T13:56:59.177Z"
+    },
+    {
+      "day": "2026-07-30",
+      "rows": 4477,
+      "fetchedAt": "2026-08-03T13:56:59.791Z"
+    },
+    {
+      "day": "2026-07-31",
+      "rows": 4050,
+      "fetchedAt": "2026-08-03T13:57:00.249Z"
+    },
+    {
+      "day": "2026-08-01",
+      "rows": 2706,
+      "fetchedAt": "2026-08-03T13:57:00.099Z"
+    },
+    {
+      "day": "2026-08-02",
+      "rows": 1785,
+      "fetchedAt": "2026-08-03T13:57:00.523Z"
+    },
+    {
+      "day": "2026-08-03",
+      "rows": 3785,
+      "fetchedAt": "2026-08-07T12:43:10.475Z"
+    },
+    {
+      "day": "2026-08-04",
+      "rows": 3865,
+      "fetchedAt": "2026-08-07T12:43:10.670Z"
+    },
+    {
+      "day": "2026-08-05",
+      "rows": 3669,
+      "fetchedAt": "2026-08-10T12:56:19.177Z"
+    },
+    {
+      "day": "2026-08-06",
+      "rows": 3148,
+      "fetchedAt": "2026-08-10T12:56:18.622Z"
+    },
+    {
+      "day": "2026-08-07",
+      "rows": 3675,
+      "fetchedAt": null
+    },
+    {
+      "day": "2026-08-08",
+      "rows": 2122,
+      "fetchedAt": null
+    },
+    {
+      "day": "2026-08-09",
+      "rows": 661,
+      "fetchedAt": null
+    },
+    {
+      "day": "2026-08-10",
+      "rows": 3016,
+      "fetchedAt": "2026-08-12T13:38:56.822Z"
+    },
+    {
+      "day": "2026-08-11",
+      "rows": 4175,
+      "fetchedAt": "2026-08-12T13:38:56.995Z"
+    },
+    {
+      "day": "2026-08-12",
+      "rows": 4677,
+      "fetchedAt": "2026-08-18T12:32:10.590Z"
+    },
+    {
+      "day": "2026-08-13",
+      "rows": 4969,
+      "fetchedAt": "2026-08-18T12:32:10.392Z"
+    },
+    {
+      "day": "2026-08-14",
+      "rows": 4674,
+      "fetchedAt": "2026-08-18T12:32:09.719Z"
+    },
+    {
+      "day": "2026-08-15",
+      "rows": 1928,
+      "fetchedAt": "2026-08-18T12:32:10.772Z"
+    },
+    {
+      "day": "2026-08-16",
+      "rows": 1253,
+      "fetchedAt": "2026-08-18T12:32:10.844Z"
+    },
+    {
+      "day": "2026-08-17",
+      "rows": 2320,
+      "fetchedAt": "2026-08-18T12:32:11.241Z"
+    },
+    {
+      "day": "2026-08-18",
+      "rows": 3487,
+      "fetchedAt": "2026-08-19T12:23:26.583Z"
+    },
+    {
+      "day": "2026-08-19",
+      "rows": 5064,
+      "fetchedAt": "2026-08-20T12:22:37.881Z"
+    },
+    {
+      "day": "2026-08-20",
+      "rows": 5473,
+      "fetchedAt": "2026-08-27T19:59:21.712Z"
+    },
+    {
+      "day": "2026-08-21",
+      "rows": 6626,
+      "fetchedAt": "2026-08-27T19:59:22.113Z"
+    },
+    {
+      "day": "2026-08-22",
+      "rows": 3668,
+      "fetchedAt": "2026-08-27T19:59:22.317Z"
+    },
+    {
+      "day": "2026-08-23",
+      "rows": 2266,
+      "fetchedAt": "2026-08-27T19:59:24.865Z"
+    },
+    {
+      "day": "2026-08-24",
+      "rows": 3998,
+      "fetchedAt": "2026-08-27T19:59:23.966Z"
+    },
+    {
+      "day": "2026-08-25",
+      "rows": 4516,
+      "fetchedAt": "2026-08-27T19:59:23.515Z"
+    },
+    {
+      "day": "2026-08-26",
+      "rows": 4565,
+      "fetchedAt": "2026-08-27T19:59:24.778Z"
+    },
+    {
+      "day": "2026-08-27",
+      "rows": 5868,
+      "fetchedAt": "2026-09-07T13:15:04.620Z"
+    },
+    {
+      "day": "2026-08-28",
+      "rows": 6504,
+      "fetchedAt": "2026-09-07T13:15:04.396Z"
+    },
+    {
+      "day": "2026-08-29",
+      "rows": 5865,
+      "fetchedAt": "2026-09-07T13:15:04.829Z"
+    },
+    {
+      "day": "2026-08-30",
+      "rows": 1523,
+      "fetchedAt": "2026-09-07T13:15:04.729Z"
+    },
+    {
+      "day": "2026-08-31",
+      "rows": 4693,
+      "fetchedAt": "2026-09-07T13:15:04.914Z"
+    },
+    {
+      "day": "2026-09-01",
+      "rows": 373,
+      "fetchedAt": "2026-09-07T13:15:04.847Z"
+    },
+    {
+      "day": "2026-09-02",
+      "rows": 1821,
+      "fetchedAt": "2026-09-07T15:45:16.424Z"
+    },
+    {
+      "day": "2026-09-03",
+      "rows": 6880,
+      "fetchedAt": "2026-09-07T15:45:18.863Z"
+    },
+    {
+      "day": "2026-09-04",
+      "rows": 5300,
+      "fetchedAt": "2026-09-07T15:45:17.217Z"
+    },
+    {
+      "day": "2026-09-05",
+      "rows": 1489,
+      "fetchedAt": "2026-09-07T15:45:16.839Z"
+    },
+    {
+      "day": "2026-09-06",
+      "rows": 780,
+      "fetchedAt": "2026-09-07T15:45:16.990Z"
+    },
+    {
+      "day": "2026-09-07",
+      "rows": 4120,
+      "fetchedAt": "2026-09-08T12:34:43.614Z"
+    },
+    {
+      "day": "2026-09-08",
+      "rows": 4706,
+      "fetchedAt": "2026-09-09T12:56:12.261Z"
+    },
+    {
+      "day": "2026-09-09",
+      "rows": 5074,
+      "fetchedAt": "2026-09-10T12:36:04.413Z"
+    },
+    {
+      "day": "2026-09-10",
+      "rows": 5693,
+      "fetchedAt": "2026-09-16T18:49:18.653Z"
+    },
+    {
+      "day": "2026-09-11",
+      "rows": 5605,
+      "fetchedAt": "2026-09-16T18:49:19.079Z"
+    },
+    {
+      "day": "2026-09-12",
+      "rows": 3135,
+      "fetchedAt": "2026-09-16T18:49:18.899Z"
+    },
+    {
+      "day": "2026-09-13",
+      "rows": 862,
+      "fetchedAt": "2026-09-16T18:49:19.185Z"
+    },
+    {
+      "day": "2026-09-14",
+      "rows": 4716,
+      "fetchedAt": "2026-09-16T18:49:20.284Z"
+    },
+    {
+      "day": "2026-09-15",
+      "rows": 5182,
+      "fetchedAt": "2026-09-16T18:49:19.967Z"
+    },
+    {
+      "day": "2026-09-16",
+      "rows": 4463,
+      "fetchedAt": "2026-09-17T12:22:14.084Z"
+    },
+    {
+      "day": "2026-09-17",
+      "rows": 4433,
+      "fetchedAt": "2026-09-23T12:56:10.524Z"
+    },
+    {
+      "day": "2026-09-18",
+      "rows": 3351,
+      "fetchedAt": "2026-09-23T12:56:10.941Z"
+    },
+    {
+      "day": "2026-09-19",
+      "rows": 1405,
+      "fetchedAt": "2026-09-23T12:56:07.771Z"
+    },
+    {
+      "day": "2026-09-20",
+      "rows": 1057,
+      "fetchedAt": "2026-09-23T12:56:08.307Z"
+    },
+    {
+      "day": "2026-09-21",
+      "rows": 3404,
+      "fetchedAt": "2026-09-23T12:56:09.627Z"
+    },
+    {
+      "day": "2026-09-22",
+      "rows": 3170,
+      "fetchedAt": "2026-09-23T12:56:10.289Z"
+    },
+    {
+      "day": "2026-09-23",
+      "rows": 3779,
+      "fetchedAt": "2026-10-01T12:49:25.700Z"
+    },
+    {
+      "day": "2026-09-24",
+      "rows": 3250,
+      "fetchedAt": "2026-10-05T12:29:42.870Z"
+    },
+    {
+      "day": "2026-09-25",
+      "rows": 3331,
+      "fetchedAt": "2026-10-05T12:29:42.990Z"
+    },
+    {
+      "day": "2026-09-26",
+      "rows": 2248,
+      "fetchedAt": "2026-10-05T12:29:42.661Z"
+    },
+    {
+      "day": "2026-09-27",
+      "rows": 1913,
+      "fetchedAt": "2026-10-05T12:29:43.813Z"
+    },
+    {
+      "day": "2026-09-28",
+      "rows": 3241,
+      "fetchedAt": "2026-10-05T12:29:45.133Z"
+    },
+    {
+      "day": "2026-09-29",
+      "rows": 2494,
+      "fetchedAt": "2026-10-05T12:29:44.911Z"
+    },
+    {
+      "day": "2026-09-30",
+      "rows": 3073,
+      "fetchedAt": "2026-10-05T12:29:44.336Z"
+    },
+    {
+      "day": "2026-10-01",
+      "rows": 2663,
+      "fetchedAt": "2026-10-05T12:29:45.447Z"
+    },
+    {
+      "day": "2026-10-02",
+      "rows": 1834,
+      "fetchedAt": "2026-10-05T12:29:46.142Z"
+    },
+    {
+      "day": "2026-10-03",
+      "rows": 966,
+      "fetchedAt": "2026-10-08T12:47:34.032Z"
+    },
+    {
+      "day": "2026-10-04",
+      "rows": 840,
+      "fetchedAt": "2026-10-08T12:47:33.876Z"
+    },
+    {
+      "day": "2026-10-05",
+      "rows": 2157,
+      "fetchedAt": "2026-10-08T12:47:34.381Z"
+    },
+    {
+      "day": "2026-10-06",
+      "rows": 2046,
+      "fetchedAt": "2026-10-08T12:47:35.434Z"
+    },
+    {
+      "day": "2026-10-07",
+      "rows": 1509,
+      "fetchedAt": "2026-10-08T12:47:34.614Z"
+    }
+  ],
+  "physical_events_deduplicated": 490471,
+  "journey_uid_count": 130346,
+  "device_counts": {
+    "RicB3Ingreso": 4003,
+    "RicB3Egreso": 2439,
+    "RicB2Egreso": 15250,
+    "SLZIngCamFrente": 50064,
+    "RicPreIngInTr": 1206,
+    "RicPreIngInFr": 56873,
+    "RicB1Ingreso": 15409,
+    "RicIngCamFrente": 55021,
+    "RicEgrCamFrente": 43841,
+    "RicEgrCamTraser": 789,
+    "RicIngCamTrasera": 184,
+    "RicB1Egreso": 111,
+    "RicPreIngEgFr": 893,
+    "RicVolcable2": 2886,
+    "RicC16Descarga1": 459,
+    "RicC16Descarga2": 2430,
+    "RicVolcable1": 3848,
+    "RicC16Carga1": 93,
+    "RicC16Carga2": 79,
+    "RicPreIngEgTr": 5,
+    "RicCal04": 13365,
+    "RicCal02": 11559,
+    "RicCal01": 11878,
+    "RicCal03": 14001,
+    "RicCalLiq": 3776,
+    "RicCal06": 3457,
+    "RicCal05": 4205,
+    "SLZSalidaC1Fte": 62890,
+    "SLZBalIngFte": 45054,
+    "SLZBalSC2Tras": 2304,
+    "SLZSalidaC1Tras": 2331,
+    "SLZBalIngTras": 647,
+    "SLZSalidaC2Fte": 16926,
+    "SLZSalidaC2Tras": 587,
+    "SLZBalSC2Fte": 5262,
+    "SLZBalSC1Tras": 4,
+    "SLZBalSC1Fte": 2039,
+    "RenCargFte": 4957,
+    "RenDescFte": 1920,
+    "SLZVolcableC1": 1697,
+    "RicB2Ingreso": 1,
+    "RicS7DescLinea1": 1045,
+    "RicS6Playa3": 5851,
+    "RicS7DescLinea2": 257,
+    "RicS8CargaLinea2": 650,
+    "RicS7Carga": 1131,
+    "SLZTK400": 4793,
+    "RicS8CargaLinea1": 18,
+    "SLZVolcableC2": 2278,
+    "SLZVolcableC3": 2791,
+    "SLZVolcableC5": 2672,
+    "SLZVolcableC4": 2077,
+    "SLZCalado": 1640,
+    "SLZBalLiq1b": 177,
+    "SLZBalLiq2b": 91,
+    "SLZBalLiq1a": 73,
+    "SLZBalLiq2a": 184
+  },
+  "scale_journeys": {
+    "with_both": 7772,
+    "only_egreso": 4435,
+    "only_ingreso": 3458
+  },
+  "consecutive_scale_direction": {
+    "IN>OUT;intermediate_process=False": 7349,
+    "OUT>IN;intermediate_process=False": 1251,
+    "IN>OUT;intermediate_process=True": 2864,
+    "OUT>OUT;intermediate_process=False": 123,
+    "IN>IN;intermediate_process=False": 65,
+    "OUT>IN;intermediate_process=True": 2,
+    "OUT>OUT;intermediate_process=True": 3
+  },
+  "scale_adjacent_transitions": [
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicB2Egreso",
+      "n": 5259,
+      "median_minutes": 83.669,
+      "examples": [
+        {
+          "journey_uid": "1adc0686-8185-4eb0-8924-679061b40b11",
+          "plate": "NAH953",
+          "from_time": "2026-05-12T09:48:50.362000-03:00",
+          "to_time": "2026-05-12T10:49:41.834000-03:00"
+        },
+        {
+          "journey_uid": "1adc0686-8185-4eb0-8924-679061b40b11",
+          "plate": "NAH953",
+          "from_time": "2026-05-13T04:55:03.312000-03:00",
+          "to_time": "2026-05-13T05:12:09.292000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicPreIngInFr",
+      "to_device": "RicB1Ingreso",
+      "n": 2669,
+      "median_minutes": 12.088,
+      "examples": [
+        {
+          "journey_uid": "de0d37e2-7a0d-4b3f-b2de-4a3a28fabf83",
+          "plate": "BUK110",
+          "from_time": "2026-05-12T16:46:51.578000-03:00",
+          "to_time": "2026-05-12T17:53:59.118000-03:00"
+        },
+        {
+          "journey_uid": "8559acad-24ab-47aa-966f-ceb26dc46bd3",
+          "plate": "GRO497",
+          "from_time": "2026-05-12T16:49:59.510000-03:00",
+          "to_time": "2026-05-12T18:29:39.154000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicS6Playa3",
+      "n": 2265,
+      "median_minutes": 6.063,
+      "examples": [
+        {
+          "journey_uid": "07459e1a-d81e-42dd-af0e-34c5c442c42d",
+          "plate": "AB011PS",
+          "from_time": "2026-09-12T16:27:15.081000-03:00",
+          "to_time": "2026-09-12T16:36:53.552000-03:00"
+        },
+        {
+          "journey_uid": "e89644b4-f61a-44d0-ac9e-5a919661fa36",
+          "plate": "AG707QI",
+          "from_time": "2026-07-29T17:27:26.083000-03:00",
+          "to_time": "2026-07-29T17:32:44.407000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZIngCamFrente",
+      "n": 1808,
+      "median_minutes": 17.047,
+      "examples": [
+        {
+          "journey_uid": "c69642bb-f1d2-42da-8b3e-125f599cd325",
+          "plate": "EKR074",
+          "from_time": "2026-05-12T20:34:03.322000-03:00",
+          "to_time": "2026-05-12T21:04:57.153000-03:00"
+        },
+        {
+          "journey_uid": "8559acad-24ab-47aa-966f-ceb26dc46bd3",
+          "plate": "GRO497",
+          "from_time": "2026-05-12T20:38:36.217000-03:00",
+          "to_time": "2026-05-12T21:00:26.656000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicS6Playa3",
+      "to_device": "RicB2Egreso",
+      "n": 1804,
+      "median_minutes": 67.401,
+      "examples": [
+        {
+          "journey_uid": "bb723e52-fbaf-421b-b8c8-194713378cdf",
+          "plate": "LFT141",
+          "from_time": "2026-07-31T11:05:39.468000-03:00",
+          "to_time": "2026-07-31T12:21:02.113000-03:00"
+        },
+        {
+          "journey_uid": "f22795d4-4f77-4fdf-9f3b-33eb61cc87c4",
+          "plate": "UPJ028",
+          "from_time": "2026-08-28T15:02:37.972000-03:00",
+          "to_time": "2026-08-28T19:58:39.233000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicB3Egreso",
+      "n": 1743,
+      "median_minutes": 22.979,
+      "examples": [
+        {
+          "journey_uid": "ad5d287b-c66d-46cf-bc18-8dc9b68af522",
+          "plate": "OSH572",
+          "from_time": "2026-05-12T23:47:30.728000-03:00",
+          "to_time": "2026-05-13T00:38:17.150000-03:00"
+        },
+        {
+          "journey_uid": "09c50e6b-6d83-4827-b696-7013b9ffd668",
+          "plate": "OAV421",
+          "from_time": "2026-05-12T19:01:54.664000-03:00",
+          "to_time": "2026-05-12T22:46:12.676000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal04",
+      "to_device": "RicB1Ingreso",
+      "n": 1725,
+      "median_minutes": 9.02,
+      "examples": [
+        {
+          "journey_uid": "275b23b9-22c2-4fe1-b872-631abf2b812d",
+          "plate": "TRJ739",
+          "from_time": "2026-05-16T23:44:43.714000-03:00",
+          "to_time": "2026-05-16T23:57:18.349000-03:00"
+        },
+        {
+          "journey_uid": "b85a57f1-9c0e-44fb-9f91-8947b960c9b0",
+          "plate": "AA546BQ",
+          "from_time": "2026-05-17T16:47:55.498000-03:00",
+          "to_time": "2026-05-17T16:57:51.718000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal03",
+      "to_device": "RicB1Ingreso",
+      "n": 1662,
+      "median_minutes": 8.607,
+      "examples": [
+        {
+          "journey_uid": "323ba0ca-7079-4b19-a00d-56e7a39e7b15",
+          "plate": "DIG810",
+          "from_time": "2026-05-16T10:19:32.276000-03:00",
+          "to_time": "2026-05-16T10:29:33.254000-03:00"
+        },
+        {
+          "journey_uid": "54ccb3c6-8ab7-4115-bece-09efd06ec706",
+          "plate": "DNP094",
+          "from_time": "2026-05-26T23:19:50.656000-03:00",
+          "to_time": "2026-05-26T23:27:32.662000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal01",
+      "to_device": "RicB1Ingreso",
+      "n": 1450,
+      "median_minutes": 9.187,
+      "examples": [
+        {
+          "journey_uid": "54a58ec7-e80f-4e29-af71-ef92d76fc47f",
+          "plate": "RKU546",
+          "from_time": "2026-05-15T04:43:56.150000-03:00",
+          "to_time": "2026-05-15T04:56:27.623000-03:00"
+        },
+        {
+          "journey_uid": "3a8e2520-4d2c-4b3e-bc98-50e6ee8578da",
+          "plate": "MDV127",
+          "from_time": "2026-05-19T11:52:42.661000-03:00",
+          "to_time": "2026-05-19T12:02:56.780000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal02",
+      "to_device": "RicB1Ingreso",
+      "n": 1448,
+      "median_minutes": 9.245,
+      "examples": [
+        {
+          "journey_uid": "1944fceb-280b-4927-8bf9-d9238dad1117",
+          "plate": "AE318UK",
+          "from_time": "2026-05-15T14:45:06.827000-03:00",
+          "to_time": "2026-05-15T14:59:54.413000-03:00"
+        },
+        {
+          "journey_uid": "1944fceb-280b-4927-8bf9-d9238dad1117",
+          "plate": "AE318UK",
+          "from_time": "2026-05-19T18:52:08.953000-03:00",
+          "to_time": "2026-05-19T18:59:37.995000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicVolcable1",
+      "to_device": "RicB2Egreso",
+      "n": 1436,
+      "median_minutes": 24.041,
+      "examples": [
+        {
+          "journey_uid": "896b12a2-f14e-4487-9e77-b132ba99a94a",
+          "plate": "KXT209",
+          "from_time": "2026-05-13T09:28:27.219000-03:00",
+          "to_time": "2026-05-13T09:52:23.153000-03:00"
+        },
+        {
+          "journey_uid": "27a656d6-2e27-4d0c-bfff-1c6e298da8a1",
+          "plate": "AF775JA",
+          "from_time": "2026-05-14T17:01:46.624000-03:00",
+          "to_time": "2026-05-14T17:40:23.414000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "SLZIngCamFrente",
+      "n": 856,
+      "median_minutes": 70.051,
+      "examples": [
+        {
+          "journey_uid": "7ded4ccf-57a1-41ed-a1fb-e05150ffb676",
+          "plate": "ETP895",
+          "from_time": "2026-05-12T18:32:40.126000-03:00",
+          "to_time": "2026-05-13T00:10:19.904000-03:00"
+        },
+        {
+          "journey_uid": "65d85415-e982-41b0-a0aa-d2199fd2423b",
+          "plate": "AH288FC",
+          "from_time": "2026-05-12T18:23:48.738000-03:00",
+          "to_time": "2026-05-13T00:11:21.108000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicVolcable1",
+      "n": 798,
+      "median_minutes": 161.828,
+      "examples": [
+        {
+          "journey_uid": "896b12a2-f14e-4487-9e77-b132ba99a94a",
+          "plate": "KXT209",
+          "from_time": "2026-05-13T08:53:47.198000-03:00",
+          "to_time": "2026-05-13T09:28:27.219000-03:00"
+        },
+        {
+          "journey_uid": "27a656d6-2e27-4d0c-bfff-1c6e298da8a1",
+          "plate": "AF775JA",
+          "from_time": "2026-05-14T13:42:40.689000-03:00",
+          "to_time": "2026-05-14T17:01:46.624000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicVolcable2",
+      "to_device": "RicB2Egreso",
+      "n": 775,
+      "median_minutes": 36.205,
+      "examples": [
+        {
+          "journey_uid": "d727b6a8-5996-44c5-b482-9bc2b5674bc8",
+          "plate": "AG565JL",
+          "from_time": "2026-05-13T21:46:33.522000-03:00",
+          "to_time": "2026-05-13T22:15:12.452000-03:00"
+        },
+        {
+          "journey_uid": "3a8e2520-4d2c-4b3e-bc98-50e6ee8578da",
+          "plate": "MDV127",
+          "from_time": "2026-05-23T08:09:43.895000-03:00",
+          "to_time": "2026-05-23T09:09:03.315000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCalLiq",
+      "to_device": "RicB1Ingreso",
+      "n": 716,
+      "median_minutes": 8.308,
+      "examples": [
+        {
+          "journey_uid": "268e494a-3ebf-4c41-abaa-f47ad8009098",
+          "plate": "TAO150",
+          "from_time": "2026-05-21T14:21:24.154000-03:00",
+          "to_time": "2026-05-21T14:35:16.343000-03:00"
+        },
+        {
+          "journey_uid": "c8ea5dde-d2e5-4124-ba40-4f5e94791575",
+          "plate": "UPW705",
+          "from_time": "2026-05-21T10:11:00.259000-03:00",
+          "to_time": "2026-05-21T10:28:13.384000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicC16Descarga2",
+      "n": 588,
+      "median_minutes": 67.365,
+      "examples": [
+        {
+          "journey_uid": "1944fceb-280b-4927-8bf9-d9238dad1117",
+          "plate": "AE318UK",
+          "from_time": "2026-05-13T11:24:26.663000-03:00",
+          "to_time": "2026-05-13T13:06:53.479000-03:00"
+        },
+        {
+          "journey_uid": "3929becf-1818-43d9-9007-7a490879f28b",
+          "plate": "FKR074",
+          "from_time": "2026-05-14T08:36:48.292000-03:00",
+          "to_time": "2026-05-14T10:48:20.294000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicIngCamFrente",
+      "to_device": "RicB1Ingreso",
+      "n": 560,
+      "median_minutes": 36.359,
+      "examples": [
+        {
+          "journey_uid": "c69642bb-f1d2-42da-8b3e-125f599cd325",
+          "plate": "EKR074",
+          "from_time": "2026-05-12T15:40:48.452000-03:00",
+          "to_time": "2026-05-12T18:22:38.571000-03:00"
+        },
+        {
+          "journey_uid": "cc2dc155-36ad-4bc7-a1d6-8b2fabde4685",
+          "plate": "CRE110",
+          "from_time": "2026-05-12T14:37:43.351000-03:00",
+          "to_time": "2026-05-12T14:50:19.794000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal06",
+      "to_device": "RicB1Ingreso",
+      "n": 559,
+      "median_minutes": 8.962,
+      "examples": [
+        {
+          "journey_uid": "84a00d45-158f-4ebe-844c-b14997d488a1",
+          "plate": "AE762FC",
+          "from_time": "2026-05-17T12:23:17.418000-03:00",
+          "to_time": "2026-05-17T12:34:29.917000-03:00"
+        },
+        {
+          "journey_uid": "c2804fff-7638-4582-9188-b6d4f7ce2514",
+          "plate": "AB092TC",
+          "from_time": "2026-05-17T13:15:01.985000-03:00",
+          "to_time": "2026-05-17T13:20:32.385000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal05",
+      "to_device": "RicB1Ingreso",
+      "n": 535,
+      "median_minutes": 8.973,
+      "examples": [
+        {
+          "journey_uid": "65d85415-e982-41b0-a0aa-d2199fd2423b",
+          "plate": "AH288FC",
+          "from_time": "2026-05-21T12:27:05.374000-03:00",
+          "to_time": "2026-05-21T13:17:44.894000-03:00"
+        },
+        {
+          "journey_uid": "bb8c8013-885e-4465-8fa5-4caaf5b63ca4",
+          "plate": "AB646GL",
+          "from_time": "2026-05-18T05:03:53.458000-03:00",
+          "to_time": "2026-05-18T05:13:54.394000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicS7DescLinea1",
+      "to_device": "RicB2Egreso",
+      "n": 489,
+      "median_minutes": 18.995,
+      "examples": [
+        {
+          "journey_uid": "309a88b8-521d-484e-9d5d-b04082675570",
+          "plate": "AG503QC",
+          "from_time": "2026-08-04T23:24:06.227000-03:00",
+          "to_time": "2026-08-04T23:41:32.470000-03:00"
+        },
+        {
+          "journey_uid": "e4aff0a3-f89d-4e30-b3f2-c52baba28465",
+          "plate": "AF401CA",
+          "from_time": "2026-07-31T09:34:48.299000-03:00",
+          "to_time": "2026-07-31T09:52:17.910000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicPreIngInFr",
+      "to_device": "RicB2Egreso",
+      "n": 478,
+      "median_minutes": 92.918,
+      "examples": [
+        {
+          "journey_uid": "a1e16032-0147-4d95-86c8-0f1876839afe",
+          "plate": "LQF701",
+          "from_time": "2026-05-12T13:37:33.931000-03:00",
+          "to_time": "2026-05-12T20:49:12.655000-03:00"
+        },
+        {
+          "journey_uid": "8a12b343-6dbb-46f4-85f3-e7e957600d02",
+          "plate": "DFH600",
+          "from_time": "2026-05-12T14:20:37.466000-03:00",
+          "to_time": "2026-05-12T20:40:17.344000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicS8CargaLinea2",
+      "to_device": "RicB2Egreso",
+      "n": 425,
+      "median_minutes": 16.896,
+      "examples": [
+        {
+          "journey_uid": "2f338b0d-ccbb-4794-ba63-3e4a7ca4686f",
+          "plate": "AA087XZ",
+          "from_time": "2026-09-21T08:30:26.550000-03:00",
+          "to_time": "2026-09-21T08:48:16.075000-03:00"
+        },
+        {
+          "journey_uid": "43469d3b-fd43-40fa-ac4e-3af1a94e6fab",
+          "plate": "CIE516",
+          "from_time": "2026-09-21T05:45:30.190000-03:00",
+          "to_time": "2026-09-21T06:08:38.556000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "RicB3Ingreso",
+      "n": 390,
+      "median_minutes": 42.221,
+      "examples": [
+        {
+          "journey_uid": "09c50e6b-6d83-4827-b696-7013b9ffd668",
+          "plate": "OAV421",
+          "from_time": "2026-05-12T22:46:12.676000-03:00",
+          "to_time": "2026-05-12T23:30:02.504000-03:00"
+        },
+        {
+          "journey_uid": "1adc0686-8185-4eb0-8924-679061b40b11",
+          "plate": "NAH953",
+          "from_time": "2026-05-22T07:12:42.858000-03:00",
+          "to_time": "2026-05-22T08:42:45.788000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicVolcable2",
+      "n": 374,
+      "median_minutes": 144.56,
+      "examples": [
+        {
+          "journey_uid": "3a8e2520-4d2c-4b3e-bc98-50e6ee8578da",
+          "plate": "MDV127",
+          "from_time": "2026-05-23T06:28:08.892000-03:00",
+          "to_time": "2026-05-23T08:09:43.895000-03:00"
+        },
+        {
+          "journey_uid": "67fe55f2-a312-4e23-bcb9-9df1f82617ee",
+          "plate": "HCG811",
+          "from_time": "2026-05-16T00:54:08.828000-03:00",
+          "to_time": "2026-05-16T01:34:21.810000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicC16Descarga2",
+      "to_device": "RicB2Egreso",
+      "n": 364,
+      "median_minutes": 16.372,
+      "examples": [
+        {
+          "journey_uid": "1944fceb-280b-4927-8bf9-d9238dad1117",
+          "plate": "AE318UK",
+          "from_time": "2026-05-13T13:10:41.255000-03:00",
+          "to_time": "2026-05-13T13:24:15.577000-03:00"
+        },
+        {
+          "journey_uid": "3929becf-1818-43d9-9007-7a490879f28b",
+          "plate": "FKR074",
+          "from_time": "2026-05-14T10:48:20.294000-03:00",
+          "to_time": "2026-05-14T11:03:11.540000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicIngCamFrente",
+      "n": 348,
+      "median_minutes": 14.66,
+      "examples": [
+        {
+          "journey_uid": "621a9369-adb2-41ab-a1a2-134588c0d910",
+          "plate": "IFM515",
+          "from_time": "2026-05-14T02:42:10.106000-03:00",
+          "to_time": "2026-05-14T02:46:08.849000-03:00"
+        },
+        {
+          "journey_uid": "20a6a24d-10c5-4b6f-a183-3c537184bb52",
+          "plate": "JAG615",
+          "from_time": "2026-05-14T00:38:49.198000-03:00",
+          "to_time": "2026-05-14T08:16:17.062000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicB1Ingreso",
+      "n": 317,
+      "median_minutes": 41.247,
+      "examples": [
+        {
+          "journey_uid": "1adc0686-8185-4eb0-8924-679061b40b11",
+          "plate": "NAH953",
+          "from_time": "2026-05-12T21:07:29.597000-03:00",
+          "to_time": "2026-05-13T04:55:03.312000-03:00"
+        },
+        {
+          "journey_uid": "a278cabc-923b-48a4-a7e0-a149ff853089",
+          "plate": "IMH787",
+          "from_time": "2026-05-15T04:19:21.864000-03:00",
+          "to_time": "2026-05-15T12:05:52.949000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCalLiq",
+      "to_device": "RicB2Egreso",
+      "n": 296,
+      "median_minutes": 100.626,
+      "examples": [
+        {
+          "journey_uid": "3b3098de-41c1-478a-a7c4-7d6f06344f54",
+          "plate": "LFT141",
+          "from_time": "2026-05-15T06:04:54.872000-03:00",
+          "to_time": "2026-05-15T07:12:55.914000-03:00"
+        },
+        {
+          "journey_uid": "863e6217-6722-481a-9b77-5862443bbb9e",
+          "plate": "ANR494",
+          "from_time": "2026-05-21T15:08:41.769000-03:00",
+          "to_time": "2026-05-21T18:24:08.462000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "SLZSalidaC2Fte",
+      "n": 296,
+      "median_minutes": 17.881,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-06-03T12:14:31.394000-03:00",
+          "to_time": "2026-06-03T15:49:00.991000-03:00"
+        },
+        {
+          "journey_uid": "dab348bc-6c4f-41a5-9e06-c18d6bd23c5b",
+          "plate": "AD344IM",
+          "from_time": "2026-06-04T08:11:40.310000-03:00",
+          "to_time": "2026-06-04T08:25:39.886000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicPreIngInFr",
+      "n": 283,
+      "median_minutes": 7.391,
+      "examples": [
+        {
+          "journey_uid": "d727b6a8-5996-44c5-b482-9bc2b5674bc8",
+          "plate": "AG565JL",
+          "from_time": "2026-05-13T11:45:37.470000-03:00",
+          "to_time": "2026-05-13T11:53:17.531000-03:00"
+        },
+        {
+          "journey_uid": "f90f5f5e-ce3a-42b1-a499-256564b36b41",
+          "plate": "AB220CN",
+          "from_time": "2026-05-15T08:31:59.711000-03:00",
+          "to_time": "2026-05-15T08:46:49.483000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZSalidaC1Fte",
+      "to_device": "RicB1Ingreso",
+      "n": 275,
+      "median_minutes": 12.48,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-05-27T15:51:57.958000-03:00",
+          "to_time": "2026-05-27T16:04:01.296000-03:00"
+        },
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-05-27T19:48:47.801000-03:00",
+          "to_time": "2026-05-27T20:02:06.149000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "SLZSalidaC2Fte",
+      "n": 256,
+      "median_minutes": 42.841,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-06-16T12:11:52.106000-03:00",
+          "to_time": "2026-06-16T12:33:37.887000-03:00"
+        },
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-07-06T12:00:22.909000-03:00",
+          "to_time": "2026-07-06T12:08:53.634000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicCalLiq",
+      "n": 247,
+      "median_minutes": 8.528,
+      "examples": [
+        {
+          "journey_uid": "350d1943-ebd9-427e-82c2-7fcf87cd533e",
+          "plate": "FEA810",
+          "from_time": "2026-05-14T10:15:09.454000-03:00",
+          "to_time": "2026-05-14T10:20:48.222000-03:00"
+        },
+        {
+          "journey_uid": "50bbcbb4-6e3b-46e0-b09c-88ef0b06cb3b",
+          "plate": "AE808WD",
+          "from_time": "2026-05-20T12:20:24.117000-03:00",
+          "to_time": "2026-05-20T12:27:23.767000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicCal04",
+      "n": 246,
+      "median_minutes": 5.734,
+      "examples": [
+        {
+          "journey_uid": "5891b963-dd01-4d59-8444-2f7a47dea953",
+          "plate": "BTS626",
+          "from_time": "2026-05-15T07:50:24.445000-03:00",
+          "to_time": "2026-05-15T08:50:51.251000-03:00"
+        },
+        {
+          "journey_uid": "6955a419-8116-406f-be92-b95a412a0118",
+          "plate": "GFG620",
+          "from_time": "2026-08-31T06:57:02.017000-03:00",
+          "to_time": "2026-08-31T13:54:51.667000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZSalidaC1Fte",
+      "to_device": "RicB3Ingreso",
+      "n": 205,
+      "median_minutes": 13.509,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-06-16T12:00:28.202000-03:00",
+          "to_time": "2026-06-16T12:11:52.106000-03:00"
+        },
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-06-22T11:39:01.066000-03:00",
+          "to_time": "2026-06-22T11:46:57.420000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZSalidaC2Fte",
+      "n": 183,
+      "median_minutes": 154.53,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-05-29T16:06:38.387000-03:00",
+          "to_time": "2026-05-29T19:46:58.942000-03:00"
+        },
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-05-30T20:04:37.759000-03:00",
+          "to_time": "2026-05-30T23:45:12.477000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicEgrCamFrente",
+      "n": 175,
+      "median_minutes": 16.102,
+      "examples": [
+        {
+          "journey_uid": "6efcc444-a6f1-45a9-bf39-d0d471361ecc",
+          "plate": "BTS626",
+          "from_time": "2026-05-13T08:20:38.914000-03:00",
+          "to_time": "2026-05-13T08:30:21.280000-03:00"
+        },
+        {
+          "journey_uid": "c5389c3e-7ce0-48d1-905b-f31003561baf",
+          "plate": "BTS626",
+          "from_time": "2026-05-12T08:37:24.893000-03:00",
+          "to_time": "2026-05-12T10:01:08.438000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicB3Egreso",
+      "n": 162,
+      "median_minutes": 51.071,
+      "examples": [
+        {
+          "journey_uid": "f90f5f5e-ce3a-42b1-a499-256564b36b41",
+          "plate": "AB220CN",
+          "from_time": "2026-05-15T08:29:32.143000-03:00",
+          "to_time": "2026-05-15T08:31:50.240000-03:00"
+        },
+        {
+          "journey_uid": "a278cabc-923b-48a4-a7e0-a149ff853089",
+          "plate": "IMH787",
+          "from_time": "2026-05-23T12:03:40.315000-03:00",
+          "to_time": "2026-05-23T12:08:34.571000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicB2Egreso",
+      "n": 159,
+      "median_minutes": 147.623,
+      "examples": [
+        {
+          "journey_uid": "0c6455e7-a756-4a7a-a6db-9580d98d180c",
+          "plate": "AH693PV",
+          "from_time": "2026-05-12T20:35:28.856000-03:00",
+          "to_time": "2026-05-12T23:10:56.109000-03:00"
+        },
+        {
+          "journey_uid": "48bb4a7d-46ee-4ebb-bd87-64cb468ab805",
+          "plate": "AH841PS",
+          "from_time": "2026-05-12T20:31:25.959000-03:00",
+          "to_time": "2026-05-12T21:56:37.048000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicC16Descarga1",
+      "n": 154,
+      "median_minutes": 86.733,
+      "examples": [
+        {
+          "journey_uid": "42cb5c07-9caa-4006-bb1f-fa6875d895d9",
+          "plate": "UHC095",
+          "from_time": "2026-05-13T11:50:21.393000-03:00",
+          "to_time": "2026-05-13T13:28:53.849000-03:00"
+        },
+        {
+          "journey_uid": "9007dd1d-4dc2-4f5f-96b2-6d726f37438d",
+          "plate": "EOT198",
+          "from_time": "2026-05-15T08:51:41.736000-03:00",
+          "to_time": "2026-05-15T11:46:59.367000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicC16Descarga1",
+      "to_device": "RicB2Egreso",
+      "n": 144,
+      "median_minutes": 19.964,
+      "examples": [
+        {
+          "journey_uid": "ea531500-e127-4e36-aa32-7e1ab3ada36d",
+          "plate": "CMT571",
+          "from_time": "2026-05-13T20:00:12.172000-03:00",
+          "to_time": "2026-05-13T20:19:41.511000-03:00"
+        },
+        {
+          "journey_uid": "42cb5c07-9caa-4006-bb1f-fa6875d895d9",
+          "plate": "UHC095",
+          "from_time": "2026-05-13T13:28:53.849000-03:00",
+          "to_time": "2026-05-13T13:44:06.765000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal03",
+      "to_device": "RicB2Egreso",
+      "n": 141,
+      "median_minutes": 123.113,
+      "examples": [
+        {
+          "journey_uid": "2bcba683-a78b-4069-a416-cdcc85fb210f",
+          "plate": "GEA177",
+          "from_time": "2026-05-23T17:43:48.408000-03:00",
+          "to_time": "2026-05-23T20:55:57.622000-03:00"
+        },
+        {
+          "journey_uid": "080bb67a-81e1-4a6b-b1bf-e463aa511f67",
+          "plate": "LKJ116",
+          "from_time": "2026-05-14T17:11:16.489000-03:00",
+          "to_time": "2026-05-14T18:00:29.001000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZBalIngFte",
+      "n": 137,
+      "median_minutes": 99.76,
+      "examples": [
+        {
+          "journey_uid": "447f5945-d4ad-44d5-8d66-8b88d989cf69",
+          "plate": "HWU967",
+          "from_time": "2026-07-31T09:03:22.221000-03:00",
+          "to_time": "2026-07-31T10:45:30.326000-03:00"
+        },
+        {
+          "journey_uid": "f602167e-4331-49d8-bd23-afc60d1bacdc",
+          "plate": "MTT517",
+          "from_time": "2026-06-06T06:57:48.321000-03:00",
+          "to_time": "2026-06-06T07:18:01.051000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZSalidaC1Fte",
+      "n": 136,
+      "median_minutes": 222.494,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-05-27T16:05:40.163000-03:00",
+          "to_time": "2026-05-27T19:48:47.801000-03:00"
+        },
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-05-29T20:05:01.221000-03:00",
+          "to_time": "2026-05-30T00:00:18.546000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal04",
+      "to_device": "RicB2Egreso",
+      "n": 131,
+      "median_minutes": 142.889,
+      "examples": [
+        {
+          "journey_uid": "765e2b6a-398a-4a0a-a300-793b5fab523a",
+          "plate": "VCY966",
+          "from_time": "2026-05-15T01:52:24.344000-03:00",
+          "to_time": "2026-05-15T04:37:53.693000-03:00"
+        },
+        {
+          "journey_uid": "a62a0e35-031e-4689-a724-49bc75bfeb5e",
+          "plate": "MMN828",
+          "from_time": "2026-05-15T16:39:45.513000-03:00",
+          "to_time": "2026-05-15T22:51:08.075000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal02",
+      "to_device": "RicB2Egreso",
+      "n": 113,
+      "median_minutes": 145.561,
+      "examples": [
+        {
+          "journey_uid": "540620f0-3eef-4b90-9809-bd9cc215c356",
+          "plate": "OFJ502",
+          "from_time": "2026-05-16T23:11:47.877000-03:00",
+          "to_time": "2026-05-17T01:09:06.694000-03:00"
+        },
+        {
+          "journey_uid": "31b87fce-4383-4641-8c5f-0bfbeae40bdd",
+          "plate": "KOU526",
+          "from_time": "2026-05-16T01:58:54.190000-03:00",
+          "to_time": "2026-05-16T06:05:09.837000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicCalLiq",
+      "n": 103,
+      "median_minutes": 62.363,
+      "examples": [
+        {
+          "journey_uid": "3b3098de-41c1-478a-a7c4-7d6f06344f54",
+          "plate": "LFT141",
+          "from_time": "2026-05-14T08:10:48.204000-03:00",
+          "to_time": "2026-05-14T09:52:47.871000-03:00"
+        },
+        {
+          "journey_uid": "0db30e36-e323-4e78-a4c0-c0822bf2c99d",
+          "plate": "AYM824",
+          "from_time": "2026-05-21T13:47:53.070000-03:00",
+          "to_time": "2026-05-21T17:22:41.772000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "SLZSalidaC1Fte",
+      "n": 98,
+      "median_minutes": 223.861,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-05-27T20:02:06.149000-03:00",
+          "to_time": "2026-05-27T23:54:17.977000-03:00"
+        },
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-06-08T20:07:53.523000-03:00",
+          "to_time": "2026-06-08T23:51:18.018000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "RicB2Egreso",
+      "n": 96,
+      "median_minutes": 0.132,
+      "examples": [
+        {
+          "journey_uid": "f90f5f5e-ce3a-42b1-a499-256564b36b41",
+          "plate": "AB220CN",
+          "from_time": "2026-05-15T08:31:50.240000-03:00",
+          "to_time": "2026-05-15T08:31:59.711000-03:00"
+        },
+        {
+          "journey_uid": "113d4b5a-fba1-4c9f-aa71-87923abdf507",
+          "plate": "AE264XY",
+          "from_time": "2026-05-20T10:23:58.900000-03:00",
+          "to_time": "2026-05-20T17:39:28.752000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicS6Playa3",
+      "to_device": "RicB3Egreso",
+      "n": 95,
+      "median_minutes": 43.571,
+      "examples": [
+        {
+          "journey_uid": "bd58b90f-c311-47e7-af29-6e7ee6cada7b",
+          "plate": "AC656IE",
+          "from_time": "2026-08-04T09:18:27.870000-03:00",
+          "to_time": "2026-08-04T12:18:39.769000-03:00"
+        },
+        {
+          "journey_uid": "4d98ee58-1bc5-4bfa-97e1-688f247139a5",
+          "plate": "AH785SE",
+          "from_time": "2026-09-03T05:19:25.963000-03:00",
+          "to_time": "2026-09-03T05:23:02.976000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicS6Playa3",
+      "n": 95,
+      "median_minutes": 10.966,
+      "examples": [
+        {
+          "journey_uid": "2d6c0458-d2a1-4552-a584-6c147d971c49",
+          "plate": "RHI120",
+          "from_time": "2026-09-23T11:01:15.889000-03:00",
+          "to_time": "2026-09-23T11:14:55.892000-03:00"
+        },
+        {
+          "journey_uid": "2d6c0458-d2a1-4552-a584-6c147d971c49",
+          "plate": "RHI120",
+          "from_time": "2026-09-23T11:41:49.631000-03:00",
+          "to_time": "2026-09-23T11:50:54.582000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "SLZSalidaC2Fte",
+      "n": 91,
+      "median_minutes": 213.62,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-06-01T20:03:44.472000-03:00",
+          "to_time": "2026-06-01T23:48:40.685000-03:00"
+        },
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-06-02T16:05:25.217000-03:00",
+          "to_time": "2026-06-02T19:44:48.099000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicCal03",
+      "n": 91,
+      "median_minutes": 5.153,
+      "examples": [
+        {
+          "journey_uid": "cb637794-d42a-4fa9-9070-9626f3ba1a9e",
+          "plate": "UUO981",
+          "from_time": "2026-09-24T09:04:14.337000-03:00",
+          "to_time": "2026-09-24T09:09:42.819000-03:00"
+        },
+        {
+          "journey_uid": "f0879b56-89b8-4e32-be38-12626d666f8a",
+          "plate": "OYX549",
+          "from_time": "2026-09-21T13:51:16.335000-03:00",
+          "to_time": "2026-09-21T13:58:19.806000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicS7DescLinea2",
+      "to_device": "RicB2Egreso",
+      "n": 86,
+      "median_minutes": 25.615,
+      "examples": [
+        {
+          "journey_uid": "67aa2674-dca8-4d82-bfad-0207706d4a87",
+          "plate": "RTW199",
+          "from_time": "2026-09-30T00:18:30.958000-03:00",
+          "to_time": "2026-09-30T00:46:47.739000-03:00"
+        },
+        {
+          "journey_uid": "428e60be-7182-4653-8540-ec8a11166535",
+          "plate": "UXG866",
+          "from_time": "2026-09-30T04:47:37.340000-03:00",
+          "to_time": "2026-09-30T05:11:53.147000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal01",
+      "to_device": "RicB2Egreso",
+      "n": 85,
+      "median_minutes": 149.643,
+      "examples": [
+        {
+          "journey_uid": "af3125fb-5048-4a27-9be0-b638255436f1",
+          "plate": "EKH246",
+          "from_time": "2026-05-20T22:04:26.858000-03:00",
+          "to_time": "2026-05-21T00:04:02.876000-03:00"
+        },
+        {
+          "journey_uid": "6b66bab7-fc7c-4934-a34b-d8060f786dd3",
+          "plate": "WQJ248",
+          "from_time": "2026-05-22T21:31:32.668000-03:00",
+          "to_time": "2026-05-22T23:07:39.231000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicIngCamFrente",
+      "to_device": "RicB2Egreso",
+      "n": 81,
+      "median_minutes": 181.346,
+      "examples": [
+        {
+          "journey_uid": "597bfc17-315f-4e2d-a53b-0d64658fb743",
+          "plate": "AA616BK",
+          "from_time": "2026-05-12T10:58:16.403000-03:00",
+          "to_time": "2026-05-12T14:12:54.945000-03:00"
+        },
+        {
+          "journey_uid": "91686b63-fe93-45a8-abfe-bf5ff4d979c4",
+          "plate": "MWA280",
+          "from_time": "2026-05-12T10:41:11.143000-03:00",
+          "to_time": "2026-05-12T14:05:57.321000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicIngCamFrente",
+      "n": 74,
+      "median_minutes": 170.454,
+      "examples": [
+        {
+          "journey_uid": "4227bffe-3a6b-4ca0-90b7-e6c643641cb1",
+          "plate": "AH301IS",
+          "from_time": "2026-05-24T19:52:13.440000-03:00",
+          "to_time": "2026-05-24T21:13:52.439000-03:00"
+        },
+        {
+          "journey_uid": "bc0d7548-07ef-4967-aa2f-003b910b98e4",
+          "plate": "AC901DJ",
+          "from_time": "2026-05-15T06:18:01.077000-03:00",
+          "to_time": "2026-05-15T06:47:22.559000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicEgrCamFrente",
+      "to_device": "RicB1Ingreso",
+      "n": 71,
+      "median_minutes": 3.543,
+      "examples": [
+        {
+          "journey_uid": "0799c58f-3133-456d-9154-72bf5efc1c19",
+          "plate": "JPT441",
+          "from_time": "2026-05-12T14:10:35.730000-03:00",
+          "to_time": "2026-05-12T14:21:43.218000-03:00"
+        },
+        {
+          "journey_uid": "b1cdbac2-d23a-4d24-859c-e4099daf8472",
+          "plate": "AE370YU",
+          "from_time": "2026-05-12T12:37:31.967000-03:00",
+          "to_time": "2026-05-12T13:02:44.147000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZVolcableC4",
+      "n": 68,
+      "median_minutes": 181.667,
+      "examples": [
+        {
+          "journey_uid": "b3fb98ea-d32e-46ce-8580-b9aa3bf32400",
+          "plate": "ROS380",
+          "from_time": "2026-08-18T20:28:14.167000-03:00",
+          "to_time": "2026-08-18T21:32:30.791000-03:00"
+        },
+        {
+          "journey_uid": "3890f6cd-fc3d-42f9-b35e-f1e172cdbc2e",
+          "plate": "LZB017",
+          "from_time": "2026-08-18T20:54:51.141000-03:00",
+          "to_time": "2026-08-18T21:43:20.620000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicS7DescLinea1",
+      "n": 64,
+      "median_minutes": 143.223,
+      "examples": [
+        {
+          "journey_uid": "b67b5c47-8e06-4eb5-b024-2433d4b42c30",
+          "plate": "AB806ZX",
+          "from_time": "2026-09-02T19:49:45.114000-03:00",
+          "to_time": "2026-09-02T20:11:26.927000-03:00"
+        },
+        {
+          "journey_uid": "19753535-6a20-4750-97a2-c1522372ad38",
+          "plate": "RGU834",
+          "from_time": "2026-07-31T00:46:00.154000-03:00",
+          "to_time": "2026-07-31T06:04:22.624000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicPreIngInFr",
+      "n": 62,
+      "median_minutes": 70.886,
+      "examples": [
+        {
+          "journey_uid": "efb9c2de-5f64-4ea5-bc67-5be87bb8d176",
+          "plate": "ROC013",
+          "from_time": "2026-05-23T11:49:38.030000-03:00",
+          "to_time": "2026-05-23T19:39:20.445000-03:00"
+        },
+        {
+          "journey_uid": "bcdbe0e8-a88d-40eb-8fbc-f5760d8cf059",
+          "plate": "BQL376",
+          "from_time": "2026-05-22T12:12:01.264000-03:00",
+          "to_time": "2026-05-22T17:49:04.773000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicS6Playa3",
+      "n": 62,
+      "median_minutes": 44.566,
+      "examples": [
+        {
+          "journey_uid": "bd58b90f-c311-47e7-af29-6e7ee6cada7b",
+          "plate": "AC656IE",
+          "from_time": "2026-08-04T07:29:58.174000-03:00",
+          "to_time": "2026-08-04T08:36:27.234000-03:00"
+        },
+        {
+          "journey_uid": "4d98ee58-1bc5-4bfa-97e1-688f247139a5",
+          "plate": "AH785SE",
+          "from_time": "2026-08-03T03:59:59.529000-03:00",
+          "to_time": "2026-08-03T05:39:12.928000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "SLZSalidaC1Fte",
+      "n": 55,
+      "median_minutes": 78.315,
+      "examples": [
+        {
+          "journey_uid": "bd58b90f-c311-47e7-af29-6e7ee6cada7b",
+          "plate": "AC656IE",
+          "from_time": "2026-06-08T08:02:32.616000-03:00",
+          "to_time": "2026-06-08T10:51:08.034000-03:00"
+        },
+        {
+          "journey_uid": "f153f114-f2fa-4aa4-963e-99311ebb3602",
+          "plate": "KGY149",
+          "from_time": "2026-08-04T07:23:31.436000-03:00",
+          "to_time": "2026-08-04T07:46:03.676000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "SLZSalidaC1Fte",
+      "n": 54,
+      "median_minutes": 142.304,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-06-22T11:46:57.420000-03:00",
+          "to_time": "2026-06-22T15:57:56.193000-03:00"
+        },
+        {
+          "journey_uid": "83c6d19a-e938-42f4-a40f-5a30b7c47e99",
+          "plate": "NAH953",
+          "from_time": "2026-07-17T05:43:08.193000-03:00",
+          "to_time": "2026-07-17T06:20:37.061000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicEgrCamFrente",
+      "n": 51,
+      "median_minutes": 83.047,
+      "examples": [
+        {
+          "journey_uid": "2ffb3c6e-3b4c-41be-93c4-6fad2eb38b62",
+          "plate": "FEM824",
+          "from_time": "2026-05-12T12:34:16.687000-03:00",
+          "to_time": "2026-05-12T13:12:42.171000-03:00"
+        },
+        {
+          "journey_uid": "f740b49a-e781-4d79-9b55-6b7b58494588",
+          "plate": "SUQ689",
+          "from_time": "2026-05-16T02:05:32.339000-03:00",
+          "to_time": "2026-05-16T04:21:14.402000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicCal02",
+      "n": 50,
+      "median_minutes": 7.831,
+      "examples": [
+        {
+          "journey_uid": "ceae82b0-577d-41ff-9327-db32ad3b37d9",
+          "plate": "BDH961",
+          "from_time": "2026-08-14T10:44:22.790000-03:00",
+          "to_time": "2026-08-14T17:32:28.897000-03:00"
+        },
+        {
+          "journey_uid": "c23b78a9-fbac-429a-a623-c5970818d42f",
+          "plate": "EEW075",
+          "from_time": "2026-09-28T23:31:35.474000-03:00",
+          "to_time": "2026-09-28T23:34:43.521000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicB3Ingreso",
+      "n": 48,
+      "median_minutes": 16.035,
+      "examples": [
+        {
+          "journey_uid": "a278cabc-923b-48a4-a7e0-a149ff853089",
+          "plate": "IMH787",
+          "from_time": "2026-05-13T04:25:46.653000-03:00",
+          "to_time": "2026-05-13T08:22:05.809000-03:00"
+        },
+        {
+          "journey_uid": "a278cabc-923b-48a4-a7e0-a149ff853089",
+          "plate": "IMH787",
+          "from_time": "2026-05-23T04:15:43.989000-03:00",
+          "to_time": "2026-05-23T08:15:51.696000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "SLZIngCamFrente",
+      "n": 44,
+      "median_minutes": 19.249,
+      "examples": [
+        {
+          "journey_uid": "00008a18-98f9-4630-ac31-7dea9e153e27",
+          "plate": "AAE877",
+          "from_time": "2026-05-23T11:10:58.211000-03:00",
+          "to_time": "2026-05-23T11:25:08.591000-03:00"
+        },
+        {
+          "journey_uid": "3da2b03c-b4a3-4c0b-8929-7dc7589a46de",
+          "plate": "TAC436",
+          "from_time": "2026-05-23T12:08:58.173000-03:00",
+          "to_time": "2026-05-23T12:28:29.535000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicS6Playa3",
+      "to_device": "RicB1Ingreso",
+      "n": 44,
+      "median_minutes": 194.568,
+      "examples": [
+        {
+          "journey_uid": "a4264757-a7eb-4d7b-bb93-8cd5e1f37f58",
+          "plate": "AG929CD",
+          "from_time": "2026-08-07T21:54:37.400000-03:00",
+          "to_time": "2026-08-08T01:09:13-03:00"
+        },
+        {
+          "journey_uid": "f6740872-cfa2-406c-aae4-dfb06f5c9b78",
+          "plate": "FKU586",
+          "from_time": "2026-08-07T04:40:22.693000-03:00",
+          "to_time": "2026-08-07T07:54:12-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "SLZBalIngFte",
+      "n": 43,
+      "median_minutes": 239.249,
+      "examples": [
+        {
+          "journey_uid": "5ded56bc-f6bb-4851-b2b5-3ef810ba862f",
+          "plate": "UCK07",
+          "from_time": "2026-07-10T19:24:04.260000-03:00",
+          "to_time": "2026-07-10T22:42:47.320000-03:00"
+        },
+        {
+          "journey_uid": "cd9c7c06-a44a-41f8-a9b5-8b4e2bc4a08a",
+          "plate": "UAJ766",
+          "from_time": "2026-06-23T05:42:24.097000-03:00",
+          "to_time": "2026-06-23T07:07:09.495000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicB3Ingreso",
+      "n": 35,
+      "median_minutes": 39.992,
+      "examples": [
+        {
+          "journey_uid": "83455190-b3b5-4555-8654-95bbf511c50f",
+          "plate": "LKD091",
+          "from_time": "2026-05-15T03:04:52.314000-03:00",
+          "to_time": "2026-05-15T09:05:57.442000-03:00"
+        },
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-07-06T11:58:20.535000-03:00",
+          "to_time": "2026-07-06T12:00:22.909000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZIngCamFrente",
+      "to_device": "RicB2Egreso",
+      "n": 32,
+      "median_minutes": 197.076,
+      "examples": [
+        {
+          "journey_uid": "268e494a-3ebf-4c41-abaa-f47ad8009098",
+          "plate": "TAO150",
+          "from_time": "2026-05-22T01:01:48.759000-03:00",
+          "to_time": "2026-05-22T04:39:15.234000-03:00"
+        },
+        {
+          "journey_uid": "dea0a044-3156-4498-87e5-de919eba9ed2",
+          "plate": "UAJ766",
+          "from_time": "2026-05-14T08:33:55.164000-03:00",
+          "to_time": "2026-05-14T10:46:06.681000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicC16Carga1",
+      "n": 31,
+      "median_minutes": 102.446,
+      "examples": [
+        {
+          "journey_uid": "d5c031fe-bb80-43c3-91c5-d8bbd0f8fc4a",
+          "plate": "KGY149",
+          "from_time": "2026-05-20T04:31:52.091000-03:00",
+          "to_time": "2026-05-20T07:18:53.553000-03:00"
+        },
+        {
+          "journey_uid": "d5c031fe-bb80-43c3-91c5-d8bbd0f8fc4a",
+          "plate": "KGY149",
+          "from_time": "2026-05-21T06:06:24.201000-03:00",
+          "to_time": "2026-05-21T09:02:28.430000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "RicIngCamFrente",
+      "n": 28,
+      "median_minutes": 4.131,
+      "examples": [
+        {
+          "journey_uid": "e20db85a-df02-475c-a018-302e9393b28a",
+          "plate": "AG692JX",
+          "from_time": "2026-09-14T07:48:21.745000-03:00",
+          "to_time": "2026-09-14T07:49:59.513000-03:00"
+        },
+        {
+          "journey_uid": "76580d55-a794-4436-9536-c99ac6005d37",
+          "plate": "JGJ834",
+          "from_time": "2026-08-20T06:46:50.960000-03:00",
+          "to_time": "2026-08-20T13:43:09.436000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "RicB1Ingreso",
+      "n": 27,
+      "median_minutes": 60.767,
+      "examples": [
+        {
+          "journey_uid": "1adc0686-8185-4eb0-8924-679061b40b11",
+          "plate": "NAH953",
+          "from_time": "2026-05-12T09:14:10.908000-03:00",
+          "to_time": "2026-05-12T09:48:50.362000-03:00"
+        },
+        {
+          "journey_uid": "a278cabc-923b-48a4-a7e0-a149ff853089",
+          "plate": "IMH787",
+          "from_time": "2026-05-23T08:18:59.847000-03:00",
+          "to_time": "2026-05-23T12:03:40.315000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZSalidaC1Fte",
+      "to_device": "RicB2Egreso",
+      "n": 26,
+      "median_minutes": 14.535,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-05-29T19:51:45.664000-03:00",
+          "to_time": "2026-05-29T20:05:01.221000-03:00"
+        },
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-05-30T00:00:18.546000-03:00",
+          "to_time": "2026-05-30T00:13:04.647000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal06",
+      "to_device": "RicB2Egreso",
+      "n": 24,
+      "median_minutes": 108.329,
+      "examples": [
+        {
+          "journey_uid": "a2d1e91b-f64b-4902-a5c3-8db0d468e6d2",
+          "plate": "EUJ592",
+          "from_time": "2026-05-17T16:53:48.009000-03:00",
+          "to_time": "2026-05-17T18:26:49.325000-03:00"
+        },
+        {
+          "journey_uid": "ba354015-675e-42a4-a31e-b3819a127884",
+          "plate": "NQA511",
+          "from_time": "2026-05-17T07:45:16.778000-03:00",
+          "to_time": "2026-05-17T09:44:25.120000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicS7DescLinea2",
+      "n": 24,
+      "median_minutes": 86.95,
+      "examples": [
+        {
+          "journey_uid": "bb723e52-fbaf-421b-b8c8-194713378cdf",
+          "plate": "LFT141",
+          "from_time": "2026-08-07T07:28:35-03:00",
+          "to_time": "2026-08-07T08:08:23.380000-03:00"
+        },
+        {
+          "journey_uid": "025b05d2-f8cc-4d0e-bf27-9c2696f6142a",
+          "plate": "OKI311",
+          "from_time": "2026-08-02T04:33:07.632000-03:00",
+          "to_time": "2026-08-02T05:18:01.334000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZSalidaC1Tras",
+      "to_device": "RicB1Ingreso",
+      "n": 22,
+      "median_minutes": 11.965,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-05-31T19:50:53.413000-03:00",
+          "to_time": "2026-05-31T20:00:25.492000-03:00"
+        },
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-05-31T23:52:00.038000-03:00",
+          "to_time": "2026-06-01T00:02:37.642000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZSalidaC2Fte",
+      "to_device": "RicB3Ingreso",
+      "n": 22,
+      "median_minutes": 154.852,
+      "examples": [
+        {
+          "journey_uid": "a694ed3e-d3e2-430e-8e0d-adb1a2ac1d32",
+          "plate": "OIB580",
+          "from_time": "2026-06-22T03:51:09.142000-03:00",
+          "to_time": "2026-06-22T06:49:43.180000-03:00"
+        },
+        {
+          "journey_uid": "a694ed3e-d3e2-430e-8e0d-adb1a2ac1d32",
+          "plate": "OIB580",
+          "from_time": "2026-06-29T03:51:41.095000-03:00",
+          "to_time": "2026-06-29T06:30:40.518000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZSalidaC1Tras",
+      "to_device": "RicB3Ingreso",
+      "n": 20,
+      "median_minutes": 14.078,
+      "examples": [
+        {
+          "journey_uid": "dab348bc-6c4f-41a5-9e06-c18d6bd23c5b",
+          "plate": "AD344IM",
+          "from_time": "2026-06-03T07:57:21.601000-03:00",
+          "to_time": "2026-06-03T08:39:47.986000-03:00"
+        },
+        {
+          "journey_uid": "83c6d19a-e938-42f4-a40f-5a30b7c47e99",
+          "plate": "NAH953",
+          "from_time": "2026-06-01T06:10:01.894000-03:00",
+          "to_time": "2026-06-01T07:36:29.137000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicCal01",
+      "n": 18,
+      "median_minutes": 14.645,
+      "examples": [
+        {
+          "journey_uid": "c80f84a2-8255-4000-9130-f07c1637a5b2",
+          "plate": "LVU824",
+          "from_time": "2026-06-04T09:44:48.826000-03:00",
+          "to_time": "2026-06-04T10:11:54.906000-03:00"
+        },
+        {
+          "journey_uid": "285b26bc-afad-462a-aa89-5b0474fe2dff",
+          "plate": "ITH990",
+          "from_time": "2026-06-04T10:00:10.799000-03:00",
+          "to_time": "2026-06-04T10:08:36.417000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZVolcableC3",
+      "n": 18,
+      "median_minutes": 124.683,
+      "examples": [
+        {
+          "journey_uid": "fc7df2d8-2d4d-424d-a44a-e8f624b7abbe",
+          "plate": "IUN228",
+          "from_time": "2026-08-21T04:42:17.990000-03:00",
+          "to_time": "2026-08-21T09:27:10.109000-03:00"
+        },
+        {
+          "journey_uid": "2845fd7b-5000-448e-a4e2-c32fb6635ffb",
+          "plate": "ROS380",
+          "from_time": "2026-08-21T23:54:43.018000-03:00",
+          "to_time": "2026-08-22T02:37:23.584000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZIngCamFrente",
+      "to_device": "RicB1Ingreso",
+      "n": 17,
+      "median_minutes": 139.453,
+      "examples": [
+        {
+          "journey_uid": "6efcc444-a6f1-45a9-bf39-d0d471361ecc",
+          "plate": "BTS626",
+          "from_time": "2026-05-13T03:32:53.998000-03:00",
+          "to_time": "2026-05-13T08:03:44.471000-03:00"
+        },
+        {
+          "journey_uid": "dea0a044-3156-4498-87e5-de919eba9ed2",
+          "plate": "UAJ766",
+          "from_time": "2026-05-12T07:13:20.547000-03:00",
+          "to_time": "2026-05-12T08:25:38.886000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicC16Carga2",
+      "n": 17,
+      "median_minutes": 29.902,
+      "examples": [
+        {
+          "journey_uid": "b2235664-4d5b-448f-acc2-f3160b458467",
+          "plate": "NLR442",
+          "from_time": "2026-05-15T09:34:40.359000-03:00",
+          "to_time": "2026-05-15T10:13:47.210000-03:00"
+        },
+        {
+          "journey_uid": "3a773099-bf24-4f72-b9ba-e97049ee0985",
+          "plate": "AE349KD",
+          "from_time": "2026-05-20T08:27:03.640000-03:00",
+          "to_time": "2026-05-20T08:36:30.707000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal05",
+      "to_device": "RicB2Egreso",
+      "n": 17,
+      "median_minutes": 128.535,
+      "examples": [
+        {
+          "journey_uid": "b6143e84-cdb3-49a1-9eed-d5b22145032d",
+          "plate": "AWG771",
+          "from_time": "2026-05-17T00:21:48.356000-03:00",
+          "to_time": "2026-05-17T05:51:54.383000-03:00"
+        },
+        {
+          "journey_uid": "151e84a1-c1fe-4f5b-9a05-0a09f38afcba",
+          "plate": "AI106QB",
+          "from_time": "2026-05-17T22:10:09.865000-03:00",
+          "to_time": "2026-05-17T23:14:59.833000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "RicEgrCamFrente",
+      "n": 17,
+      "median_minutes": 29.761,
+      "examples": [
+        {
+          "journey_uid": "781d9608-2299-498d-9589-3bf728cd2ed8",
+          "plate": "HGF568",
+          "from_time": "2026-05-23T11:17:55.593000-03:00",
+          "to_time": "2026-05-23T11:47:41.238000-03:00"
+        },
+        {
+          "journey_uid": "30e94d45-fd84-4df6-852a-af879eae5fad",
+          "plate": "DDN01",
+          "from_time": "2026-10-05T10:40:01.587000-03:00",
+          "to_time": "2026-10-05T11:49:52.674000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZSalidaC2Fte",
+      "to_device": "RicB1Ingreso",
+      "n": 17,
+      "median_minutes": 113.845,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-07-09T00:11:54.011000-03:00",
+          "to_time": "2026-07-09T00:25:39.416000-03:00"
+        },
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-07-21T23:55:23.911000-03:00",
+          "to_time": "2026-07-22T00:09:16.732000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicEgrCamFrente",
+      "to_device": "RicB2Egreso",
+      "n": 17,
+      "median_minutes": 99.55,
+      "examples": [
+        {
+          "journey_uid": "cee85967-3564-4a0c-a69a-ab3c22724864",
+          "plate": "PML805",
+          "from_time": "2026-09-23T11:03:16.755000-03:00",
+          "to_time": "2026-09-23T11:10:37.602000-03:00"
+        },
+        {
+          "journey_uid": "3eaeb2df-227d-4ed2-aee8-4989c12ba4cf",
+          "plate": "UXH812",
+          "from_time": "2026-09-23T07:13:22.414000-03:00",
+          "to_time": "2026-09-23T08:32:17.606000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicPreIngInFr",
+      "to_device": "RicB3Ingreso",
+      "n": 16,
+      "median_minutes": 14.694,
+      "examples": [
+        {
+          "journey_uid": "8000ad69-1174-4463-9915-1c253d1a89aa",
+          "plate": "AE264XY",
+          "from_time": "2026-06-09T06:30:32.762000-03:00",
+          "to_time": "2026-06-09T06:47:50.373000-03:00"
+        },
+        {
+          "journey_uid": "bd58b90f-c311-47e7-af29-6e7ee6cada7b",
+          "plate": "AC656IE",
+          "from_time": "2026-07-16T08:49:40.491000-03:00",
+          "to_time": "2026-07-16T09:03:30.986000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicC16Carga1",
+      "to_device": "RicB3Egreso",
+      "n": 15,
+      "median_minutes": 70.815,
+      "examples": [
+        {
+          "journey_uid": "d5c031fe-bb80-43c3-91c5-d8bbd0f8fc4a",
+          "plate": "KGY149",
+          "from_time": "2026-05-20T07:18:53.553000-03:00",
+          "to_time": "2026-05-20T12:24:16.041000-03:00"
+        },
+        {
+          "journey_uid": "d5c031fe-bb80-43c3-91c5-d8bbd0f8fc4a",
+          "plate": "KGY149",
+          "from_time": "2026-05-22T07:09:07.388000-03:00",
+          "to_time": "2026-05-22T10:29:43.465000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicC16Carga2",
+      "to_device": "RicB2Egreso",
+      "n": 15,
+      "median_minutes": 40.31,
+      "examples": [
+        {
+          "journey_uid": "f288f920-e75f-499a-a56e-5e6c31272655",
+          "plate": "HCY279",
+          "from_time": "2026-05-16T08:43:23.987000-03:00",
+          "to_time": "2026-05-16T08:51:45.596000-03:00"
+        },
+        {
+          "journey_uid": "45b491a5-52e3-4db5-aa0a-e2913d63fad4",
+          "plate": "KDO548",
+          "from_time": "2026-05-18T06:05:58.679000-03:00",
+          "to_time": "2026-05-18T06:14:30.080000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicPreIngInTr",
+      "to_device": "RicB1Ingreso",
+      "n": 14,
+      "median_minutes": 67.548,
+      "examples": [
+        {
+          "journey_uid": "ff7fdcd6-9c8d-4f37-b0cb-cb647cbd9b66",
+          "plate": "AG858IA",
+          "from_time": "2026-05-12T12:29:08.122000-03:00",
+          "to_time": "2026-05-12T14:16:27.439000-03:00"
+        },
+        {
+          "journey_uid": "02748c4c-d51e-4aac-ba66-5b9a6e8f3578",
+          "plate": "CIV354",
+          "from_time": "2026-05-12T14:14:15.448000-03:00",
+          "to_time": "2026-05-12T14:51:12.917000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicC16Carga1",
+      "n": 14,
+      "median_minutes": 27.778,
+      "examples": [
+        {
+          "journey_uid": "3b3098de-41c1-478a-a7c4-7d6f06344f54",
+          "plate": "LFT141",
+          "from_time": "2026-05-22T04:35:37.309000-03:00",
+          "to_time": "2026-05-22T04:50:13.280000-03:00"
+        },
+        {
+          "journey_uid": "3b3098de-41c1-478a-a7c4-7d6f06344f54",
+          "plate": "LFT141",
+          "from_time": "2026-05-23T05:34:39.767000-03:00",
+          "to_time": "2026-05-23T05:54:32.870000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicC16Descarga2",
+      "to_device": "RicB3Egreso",
+      "n": 14,
+      "median_minutes": 23.299,
+      "examples": [
+        {
+          "journey_uid": "ef529c60-10e8-4e72-a3b9-2051e8066786",
+          "plate": "AC613IL",
+          "from_time": "2026-05-24T09:02:15.989000-03:00",
+          "to_time": "2026-05-24T09:19:39.515000-03:00"
+        },
+        {
+          "journey_uid": "77a85bcc-fd81-4df3-8419-367d419a6a3a",
+          "plate": "NYM332",
+          "from_time": "2026-05-15T10:48:04.471000-03:00",
+          "to_time": "2026-05-15T11:03:05.091000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicVolcable1",
+      "to_device": "RicB3Egreso",
+      "n": 14,
+      "median_minutes": 36.237,
+      "examples": [
+        {
+          "journey_uid": "47775c87-5c32-49f8-985f-3573fa38461d",
+          "plate": "HXQ735",
+          "from_time": "2026-05-23T10:53:15.332000-03:00",
+          "to_time": "2026-05-23T11:31:46.522000-03:00"
+        },
+        {
+          "journey_uid": "e5c0c498-7e81-4b27-8428-d7c84c2302e2",
+          "plate": "AE717CM",
+          "from_time": "2026-05-23T11:36:30.361000-03:00",
+          "to_time": "2026-05-23T12:24:08.468000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "SLZSalidaC2Tras",
+      "n": 14,
+      "median_minutes": 11.714,
+      "examples": [
+        {
+          "journey_uid": "08b02f24-2a75-420b-b0b7-4bc40e7b8279",
+          "plate": "AC245KA",
+          "from_time": "2026-06-02T04:52:26.878000-03:00",
+          "to_time": "2026-06-02T05:02:50.707000-03:00"
+        },
+        {
+          "journey_uid": "83c6d19a-e938-42f4-a40f-5a30b7c47e99",
+          "plate": "NAH953",
+          "from_time": "2026-06-01T07:43:03.414000-03:00",
+          "to_time": "2026-06-01T07:51:49.183000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "SLZTK400",
+      "n": 14,
+      "median_minutes": 124.637,
+      "examples": [
+        {
+          "journey_uid": "75ff8248-7117-4035-8665-03116dbb210a",
+          "plate": "JAE278",
+          "from_time": "2026-08-10T09:55:08.482000-03:00",
+          "to_time": "2026-08-10T10:32:03.718000-03:00"
+        },
+        {
+          "journey_uid": "d3b948fc-55d7-4d33-ae4b-a84831b0d5da",
+          "plate": "JZW724",
+          "from_time": "2026-08-31T06:21:44.997000-03:00",
+          "to_time": "2026-08-31T11:17:03.032000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicC16Carga2",
+      "to_device": "RicB3Egreso",
+      "n": 13,
+      "median_minutes": 52.015,
+      "examples": [
+        {
+          "journey_uid": "d5c031fe-bb80-43c3-91c5-d8bbd0f8fc4a",
+          "plate": "KGY149",
+          "from_time": "2026-05-21T09:02:28.675000-03:00",
+          "to_time": "2026-05-21T09:22:10.486000-03:00"
+        },
+        {
+          "journey_uid": "d5c031fe-bb80-43c3-91c5-d8bbd0f8fc4a",
+          "plate": "KGY149",
+          "from_time": "2026-05-26T09:11:27.931000-03:00",
+          "to_time": "2026-05-26T09:24:20.850000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicB1Ingreso",
+      "n": 13,
+      "median_minutes": 75.454,
+      "examples": [
+        {
+          "journey_uid": "81c39b2f-4484-4870-b333-311058033ce5",
+          "plate": "AA689GK",
+          "from_time": "2026-07-10T10:46:57.705000-03:00",
+          "to_time": "2026-07-10T12:05:10.457000-03:00"
+        },
+        {
+          "journey_uid": "32b79d99-b238-4918-97b7-48ba0bec3aa8",
+          "plate": "JZW724",
+          "from_time": "2026-08-04T04:31:48.429000-03:00",
+          "to_time": "2026-08-04T05:40:46.860000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZBalIngFte",
+      "to_device": "RicB2Egreso",
+      "n": 13,
+      "median_minutes": 204.621,
+      "examples": [
+        {
+          "journey_uid": "0f307751-8978-44b1-9eea-0d70caf9a5df",
+          "plate": "AD278IZ",
+          "from_time": "2026-08-26T06:03:10.078000-03:00",
+          "to_time": "2026-08-26T13:04:22.843000-03:00"
+        },
+        {
+          "journey_uid": "830ccc94-6d3d-41ef-b5f8-085493c8cd03",
+          "plate": "IUN228",
+          "from_time": "2026-08-19T21:25:18.663000-03:00",
+          "to_time": "2026-08-20T01:06:42.457000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZVolcableC4",
+      "to_device": "RicB2Egreso",
+      "n": 13,
+      "median_minutes": 102.373,
+      "examples": [
+        {
+          "journey_uid": "aca77827-ef39-4fc8-9f30-e8c3448ce114",
+          "plate": "CTB166",
+          "from_time": "2026-08-30T18:34:02.242000-03:00",
+          "to_time": "2026-08-30T20:00:45.958000-03:00"
+        },
+        {
+          "journey_uid": "2a9fb7eb-d66a-48c5-90b3-20996c8a4ca6",
+          "plate": "TZQ583",
+          "from_time": "2026-08-28T20:21:03.439000-03:00",
+          "to_time": "2026-08-28T22:11:37.778000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Egreso",
+      "to_device": "RicB2Egreso",
+      "n": 12,
+      "median_minutes": 17.886,
+      "examples": [
+        {
+          "journey_uid": "113d4b5a-fba1-4c9f-aa71-87923abdf507",
+          "plate": "AE264XY",
+          "from_time": "2026-05-12T17:19:58.141000-03:00",
+          "to_time": "2026-05-12T17:41:16.317000-03:00"
+        },
+        {
+          "journey_uid": "113d4b5a-fba1-4c9f-aa71-87923abdf507",
+          "plate": "AE264XY",
+          "from_time": "2026-05-17T16:52:37.798000-03:00",
+          "to_time": "2026-05-17T17:18:19.008000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicIngCamFrente",
+      "to_device": "RicB3Ingreso",
+      "n": 12,
+      "median_minutes": 49.877,
+      "examples": [
+        {
+          "journey_uid": "07db6c87-785c-43b4-b362-b353f6830b38",
+          "plate": "NFN510",
+          "from_time": "2026-07-03T08:35:13.415000-03:00",
+          "to_time": "2026-07-03T08:51:55.497000-03:00"
+        },
+        {
+          "journey_uid": "ffc35767-f648-4730-a375-ca010f291268",
+          "plate": "TCC706",
+          "from_time": "2026-07-03T07:26:47.896000-03:00",
+          "to_time": "2026-07-03T07:39:52.864000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicPreIngEgFr",
+      "to_device": "RicB1Ingreso",
+      "n": 11,
+      "median_minutes": 87.878,
+      "examples": [
+        {
+          "journey_uid": "540baff3-5f8d-496d-ae35-0c6840760f86",
+          "plate": "PNV036",
+          "from_time": "2026-05-13T12:14:55.873000-03:00",
+          "to_time": "2026-05-13T19:12:22.512000-03:00"
+        },
+        {
+          "journey_uid": "395e6525-c487-4b2c-b095-44ed1927302d",
+          "plate": "IER992",
+          "from_time": "2026-05-13T18:40:52.764000-03:00",
+          "to_time": "2026-05-14T00:12:08.992000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZSalidaC2Tras",
+      "n": 11,
+      "median_minutes": 43.843,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-05-31T16:10:42.458000-03:00",
+          "to_time": "2026-05-31T19:45:10.745000-03:00"
+        },
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-05-31T20:02:26.789000-03:00",
+          "to_time": "2026-05-31T23:45:20.106000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicCal06",
+      "n": 10,
+      "median_minutes": 11.095,
+      "examples": [
+        {
+          "journey_uid": "3abddbfc-1e64-48e6-a194-48b2366df492",
+          "plate": "FEA810",
+          "from_time": "2026-06-01T04:22:42.060000-03:00",
+          "to_time": "2026-06-01T05:44:34.035000-03:00"
+        },
+        {
+          "journey_uid": "9e091829-7ec5-4fa8-a691-06e9214b29c0",
+          "plate": "LTC421",
+          "from_time": "2026-09-10T10:24:31.890000-03:00",
+          "to_time": "2026-09-10T10:33:54.546000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicPreIngInFr",
+      "to_device": "RicB3Egreso",
+      "n": 10,
+      "median_minutes": 85.88,
+      "examples": [
+        {
+          "journey_uid": "7448c1b8-e5b5-443f-bea6-4c166d21b125",
+          "plate": "FJC556",
+          "from_time": "2026-06-02T08:00:21.496000-03:00",
+          "to_time": "2026-06-02T08:37:42.547000-03:00"
+        },
+        {
+          "journey_uid": "20ef2742-0d3a-4ac9-8835-81b15033b165",
+          "plate": "GMI001",
+          "from_time": "2026-06-04T22:06:39.122000-03:00",
+          "to_time": "2026-06-05T05:18:01.388000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicS7DescLinea2",
+      "n": 9,
+      "median_minutes": 10.831,
+      "examples": [
+        {
+          "journey_uid": "357b6f99-9071-4119-8553-f6f4ef05549b",
+          "plate": "MHR567",
+          "from_time": "2026-09-21T15:02:19.142000-03:00",
+          "to_time": "2026-09-21T15:15:22.386000-03:00"
+        },
+        {
+          "journey_uid": "323c200d-a2ee-4906-a93f-11352db420ef",
+          "plate": "BVS300",
+          "from_time": "2026-09-21T20:38:30.401000-03:00",
+          "to_time": "2026-09-21T23:19:03.467000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicVolcable2",
+      "to_device": "RicB3Egreso",
+      "n": 8,
+      "median_minutes": 43.041,
+      "examples": [
+        {
+          "journey_uid": "c571d4bd-cb33-4fdb-9a64-f5a44e242da3",
+          "plate": "BLN597",
+          "from_time": "2026-05-14T02:52:38.214000-03:00",
+          "to_time": "2026-05-14T04:05:55.461000-03:00"
+        },
+        {
+          "journey_uid": "ba4cec58-815f-481c-bd2a-b6445855c4e8",
+          "plate": "AE174UO",
+          "from_time": "2026-05-24T08:33:15.939000-03:00",
+          "to_time": "2026-05-24T09:21:59.686000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicPreIngEgFr",
+      "to_device": "RicB3Ingreso",
+      "n": 8,
+      "median_minutes": 8.874,
+      "examples": [
+        {
+          "journey_uid": "25a5ff85-967a-4560-98c3-b826dc5bd307",
+          "plate": "OIB580",
+          "from_time": "2026-05-23T13:34:22.876000-03:00",
+          "to_time": "2026-05-23T13:41:46.841000-03:00"
+        },
+        {
+          "journey_uid": "a694ed3e-d3e2-430e-8e0d-adb1a2ac1d32",
+          "plate": "OIB580",
+          "from_time": "2026-05-29T06:21:58.833000-03:00",
+          "to_time": "2026-05-29T06:34:52.197000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicB3Egreso",
+      "n": 8,
+      "median_minutes": 7.728,
+      "examples": [
+        {
+          "journey_uid": "50a34ed6-17da-4d90-b274-d262118518d6",
+          "plate": "KSB500",
+          "from_time": "2026-05-24T10:01:30.192000-03:00",
+          "to_time": "2026-05-24T10:06:27.202000-03:00"
+        },
+        {
+          "journey_uid": "04cfe024-5481-4c31-814d-237efc43a207",
+          "plate": "NZJ1437",
+          "from_time": "2026-06-05T08:00:06.457000-03:00",
+          "to_time": "2026-06-05T08:47:57.403000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicS7Carga",
+      "to_device": "RicB2Egreso",
+      "n": 8,
+      "median_minutes": 53.951,
+      "examples": [
+        {
+          "journey_uid": "bb723e52-fbaf-421b-b8c8-194713378cdf",
+          "plate": "LFT141",
+          "from_time": "2026-08-05T11:50:24.245000-03:00",
+          "to_time": "2026-08-05T13:06:41.449000-03:00"
+        },
+        {
+          "journey_uid": "bb723e52-fbaf-421b-b8c8-194713378cdf",
+          "plate": "LFT141",
+          "from_time": "2026-08-06T10:19:45.983000-03:00",
+          "to_time": "2026-08-06T13:09:11.435000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicS7Carga",
+      "n": 8,
+      "median_minutes": 33.975,
+      "examples": [
+        {
+          "journey_uid": "3fc84d9d-4bc1-4e0c-b2e9-8ab8a2d4b4ad",
+          "plate": "AD049SR",
+          "from_time": "2026-08-21T06:36:13.779000-03:00",
+          "to_time": "2026-08-21T07:14:16.559000-03:00"
+        },
+        {
+          "journey_uid": "ee1b480f-845b-424f-8ed9-39856c37b602",
+          "plate": "AC656IE",
+          "from_time": "2026-08-11T05:29:35.135000-03:00",
+          "to_time": "2026-08-11T06:20:03.754000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicS7Carga",
+      "to_device": "RicB3Egreso",
+      "n": 8,
+      "median_minutes": 28.956,
+      "examples": [
+        {
+          "journey_uid": "3fc84d9d-4bc1-4e0c-b2e9-8ab8a2d4b4ad",
+          "plate": "AD049SR",
+          "from_time": "2026-08-21T07:14:16.559000-03:00",
+          "to_time": "2026-08-21T08:55:05.636000-03:00"
+        },
+        {
+          "journey_uid": "d306e040-e766-49bd-bcb2-be5dc2d85426",
+          "plate": "AI070AV",
+          "from_time": "2026-08-12T10:03:55.389000-03:00",
+          "to_time": "2026-08-12T10:33:01.575000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicS8CargaLinea2",
+      "to_device": "RicB3Egreso",
+      "n": 8,
+      "median_minutes": 21.769,
+      "examples": [
+        {
+          "journey_uid": "8c05f83d-5be4-4769-adc4-a3244ab54137",
+          "plate": "KGY149",
+          "from_time": "2026-08-21T09:19:42.449000-03:00",
+          "to_time": "2026-08-21T10:26:48.040000-03:00"
+        },
+        {
+          "journey_uid": "8c05f83d-5be4-4769-adc4-a3244ab54137",
+          "plate": "KGY149",
+          "from_time": "2026-08-26T08:53:48.373000-03:00",
+          "to_time": "2026-08-26T09:40:43.292000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicS8CargaLinea1",
+      "to_device": "RicB2Egreso",
+      "n": 8,
+      "median_minutes": 5.878,
+      "examples": [
+        {
+          "journey_uid": "03202b58-da4b-432d-8add-398a4b901223",
+          "plate": "CGS172",
+          "from_time": "2026-09-22T16:33:28.147000-03:00",
+          "to_time": "2026-09-22T16:43:23.908000-03:00"
+        },
+        {
+          "journey_uid": "00e15bbd-7d79-4b40-82ae-83672e490a47",
+          "plate": "ROS380",
+          "from_time": "2026-09-22T04:47:18.787000-03:00",
+          "to_time": "2026-09-22T04:51:26.121000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicB1Egreso",
+      "n": 7,
+      "median_minutes": 0.168,
+      "examples": [
+        {
+          "journey_uid": "113d4b5a-fba1-4c9f-aa71-87923abdf507",
+          "plate": "AE264XY",
+          "from_time": "2026-05-17T16:52:28.818000-03:00",
+          "to_time": "2026-05-17T16:52:37.798000-03:00"
+        },
+        {
+          "journey_uid": "a278cabc-923b-48a4-a7e0-a149ff853089",
+          "plate": "IMH787",
+          "from_time": "2026-05-23T04:13:01.273000-03:00",
+          "to_time": "2026-05-23T04:13:05.975000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "RicPreIngInFr",
+      "n": 7,
+      "median_minutes": 7.829,
+      "examples": [
+        {
+          "journey_uid": "43fa0b66-d568-478d-b0e4-4c8868209ba2",
+          "plate": "AI034VM",
+          "from_time": "2026-05-23T11:03:12.504000-03:00",
+          "to_time": "2026-05-23T13:28:28.324000-03:00"
+        },
+        {
+          "journey_uid": "04993ff2-e91b-453a-aad0-15fdc374c041",
+          "plate": "VNA879",
+          "from_time": "2026-08-20T06:53:39.547000-03:00",
+          "to_time": "2026-08-20T06:56:54.078000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZTK400",
+      "to_device": "RicB2Egreso",
+      "n": 7,
+      "median_minutes": 182.543,
+      "examples": [
+        {
+          "journey_uid": "36709bee-a5f3-432f-b4ac-c579b6b7ad6b",
+          "plate": "OTY765",
+          "from_time": "2026-08-20T11:22:14.297000-03:00",
+          "to_time": "2026-08-20T17:28:50.432000-03:00"
+        },
+        {
+          "journey_uid": "e2733be3-ecb8-48e8-b367-fad9a1237144",
+          "plate": "OIY765",
+          "from_time": "2026-08-08T05:23:58.343000-03:00",
+          "to_time": "2026-08-08T08:09:11.152000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZSalidaC1Tras",
+      "to_device": "RicB2Egreso",
+      "n": 6,
+      "median_minutes": 13.5,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-05-29T15:52:41.948000-03:00",
+          "to_time": "2026-05-29T16:06:38.387000-03:00"
+        },
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-05-30T15:57:43.356000-03:00",
+          "to_time": "2026-05-30T16:11:05.020000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicC16Carga1",
+      "to_device": "RicB3Ingreso",
+      "n": 6,
+      "median_minutes": 185.686,
+      "examples": [
+        {
+          "journey_uid": "5d768908-3094-41cc-87ea-99b463da911a",
+          "plate": "LKD091",
+          "from_time": "2026-06-17T06:00:59.509000-03:00",
+          "to_time": "2026-06-17T09:03:05.122000-03:00"
+        },
+        {
+          "journey_uid": "5d768908-3094-41cc-87ea-99b463da911a",
+          "plate": "LKD091",
+          "from_time": "2026-06-19T05:58:37.739000-03:00",
+          "to_time": "2026-06-19T09:07:54.443000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicS8CargaLinea2",
+      "n": 6,
+      "median_minutes": 40.167,
+      "examples": [
+        {
+          "journey_uid": "f153f114-f2fa-4aa4-963e-99311ebb3602",
+          "plate": "KGY149",
+          "from_time": "2026-07-30T04:24:41.757000-03:00",
+          "to_time": "2026-07-30T04:58:47.911000-03:00"
+        },
+        {
+          "journey_uid": "30e94d45-fd84-4df6-852a-af879eae5fad",
+          "plate": "DDN01",
+          "from_time": "2026-08-25T07:39:24.121000-03:00",
+          "to_time": "2026-08-25T08:00:15.051000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicS7Carga",
+      "n": 6,
+      "median_minutes": 91.822,
+      "examples": [
+        {
+          "journey_uid": "16a33a85-61fd-42e9-846b-d567c5c50a50",
+          "plate": "NLR442",
+          "from_time": "2026-07-31T04:10:55.618000-03:00",
+          "to_time": "2026-07-31T06:09:23.842000-03:00"
+        },
+        {
+          "journey_uid": "d306e040-e766-49bd-bcb2-be5dc2d85426",
+          "plate": "AI070AV",
+          "from_time": "2026-08-14T05:24:35.988000-03:00",
+          "to_time": "2026-08-14T06:56:04.010000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZVolcableC4",
+      "to_device": "RicB1Ingreso",
+      "n": 6,
+      "median_minutes": 119.406,
+      "examples": [
+        {
+          "journey_uid": "45f03a84-630d-41bd-ab52-f19a772a7687",
+          "plate": "CKQ212",
+          "from_time": "2026-08-19T18:30:19.890000-03:00",
+          "to_time": "2026-08-19T19:12:43.628000-03:00"
+        },
+        {
+          "journey_uid": "e792c743-58f9-4a8f-b4b9-fd430ff384cb",
+          "plate": "TAC436",
+          "from_time": "2026-08-28T19:37:54.228000-03:00",
+          "to_time": "2026-08-28T20:33:06.080000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZTK400",
+      "n": 6,
+      "median_minutes": 57.226,
+      "examples": [
+        {
+          "journey_uid": "e2a1391f-76b2-4b6f-bf81-142923dab620",
+          "plate": "AA689GI",
+          "from_time": "2026-08-24T06:44:18.204000-03:00",
+          "to_time": "2026-08-24T07:25:24.845000-03:00"
+        },
+        {
+          "journey_uid": "75235f5a-a799-473b-bbc0-c5a2cb094e8b",
+          "plate": "OIY765",
+          "from_time": "2026-08-24T07:09:12.451000-03:00",
+          "to_time": "2026-08-24T07:29:46.111000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZBalSC2Fte",
+      "to_device": "RicB2Egreso",
+      "n": 6,
+      "median_minutes": 217.371,
+      "examples": [
+        {
+          "journey_uid": "7622912b-9766-41cb-912a-ffb39c660704",
+          "plate": "CIB166",
+          "from_time": "2026-08-31T05:53:14.949000-03:00",
+          "to_time": "2026-08-31T08:59:10.282000-03:00"
+        },
+        {
+          "journey_uid": "8cb5916a-fcfe-427a-80e4-77d3fb47b8e7",
+          "plate": "NLR442",
+          "from_time": "2026-08-31T08:59:38.952000-03:00",
+          "to_time": "2026-08-31T11:22:57.347000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicS7Carga",
+      "n": 6,
+      "median_minutes": 40.107,
+      "examples": [
+        {
+          "journey_uid": "b7fbfb5a-155c-46df-8d7b-1a666da21db2",
+          "plate": "LFT141",
+          "from_time": "2026-09-27T14:25:30.773000-03:00",
+          "to_time": "2026-09-27T14:53:34.281000-03:00"
+        },
+        {
+          "journey_uid": "e7b52679-b255-434f-b523-02739ef8fe95",
+          "plate": "NLR442",
+          "from_time": "2026-09-21T15:32:00.528000-03:00",
+          "to_time": "2026-09-21T16:24:09.823000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicC16Carga2",
+      "n": 5,
+      "median_minutes": 185.346,
+      "examples": [
+        {
+          "journey_uid": "d5c031fe-bb80-43c3-91c5-d8bbd0f8fc4a",
+          "plate": "KGY149",
+          "from_time": "2026-05-22T04:38:07.494000-03:00",
+          "to_time": "2026-05-22T06:40:18.999000-03:00"
+        },
+        {
+          "journey_uid": "f153f114-f2fa-4aa4-963e-99311ebb3602",
+          "plate": "KGY149",
+          "from_time": "2026-06-02T05:27:14.891000-03:00",
+          "to_time": "2026-06-02T08:20:05.603000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "SLZIngCamFrente",
+      "n": 5,
+      "median_minutes": 239.55,
+      "examples": [
+        {
+          "journey_uid": "6528ac0c-fd39-4652-8b4f-062ecbc43713",
+          "plate": "MSE565",
+          "from_time": "2026-05-12T05:10:17.353000-03:00",
+          "to_time": "2026-05-12T11:40:16.223000-03:00"
+        },
+        {
+          "journey_uid": "cd9c7c06-a44a-41f8-a9b5-8b4e2bc4a08a",
+          "plate": "UAJ766",
+          "from_time": "2026-06-11T05:45:34.677000-03:00",
+          "to_time": "2026-06-11T06:38:04.707000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicVolcable1",
+      "to_device": "RicB1Ingreso",
+      "n": 5,
+      "median_minutes": 19.703,
+      "examples": [
+        {
+          "journey_uid": "e5ab11a3-6ca1-434f-b739-da9847fea08a",
+          "plate": "BBU070",
+          "from_time": "2026-06-12T10:16:25.333000-03:00",
+          "to_time": "2026-06-12T10:47:32.362000-03:00"
+        },
+        {
+          "journey_uid": "0df04280-c5e9-4dfc-85d9-c1ec722f24cf",
+          "plate": "AB175BZ",
+          "from_time": "2026-06-19T09:10:55.894000-03:00",
+          "to_time": "2026-06-19T09:28:40.424000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicIngCamFrente",
+      "n": 5,
+      "median_minutes": 30.67,
+      "examples": [
+        {
+          "journey_uid": "7762dcb3-d39a-4e85-92f9-99cf5d738e7c",
+          "plate": "OIY765",
+          "from_time": "2026-09-15T06:48:55.560000-03:00",
+          "to_time": "2026-09-15T07:19:49.685000-03:00"
+        },
+        {
+          "journey_uid": "ddf87929-f6ed-412a-a83d-6b929fe18037",
+          "plate": "VJG112",
+          "from_time": "2026-09-21T04:26:15.677000-03:00",
+          "to_time": "2026-09-21T04:50:16.854000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicC16Carga1",
+      "to_device": "RicB2Egreso",
+      "n": 4,
+      "median_minutes": 66.555,
+      "examples": [
+        {
+          "journey_uid": "3b3098de-41c1-478a-a7c4-7d6f06344f54",
+          "plate": "LFT141",
+          "from_time": "2026-05-22T04:50:13.280000-03:00",
+          "to_time": "2026-05-22T06:04:09.908000-03:00"
+        },
+        {
+          "journey_uid": "3b3098de-41c1-478a-a7c4-7d6f06344f54",
+          "plate": "LFT141",
+          "from_time": "2026-05-23T05:54:32.870000-03:00",
+          "to_time": "2026-05-23T06:26:10.586000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal03",
+      "to_device": "RicB3Egreso",
+      "n": 4,
+      "median_minutes": 157.844,
+      "examples": [
+        {
+          "journey_uid": "a5c9bd14-e10b-411a-b519-2181ecedb599",
+          "plate": "BOI813",
+          "from_time": "2026-05-15T07:27:26.554000-03:00",
+          "to_time": "2026-05-15T10:47:38.395000-03:00"
+        },
+        {
+          "journey_uid": "85b9170b-e49f-42b1-a4cf-53cd6f56190f",
+          "plate": "SDG641",
+          "from_time": "2026-05-26T11:41:11.753000-03:00",
+          "to_time": "2026-05-26T12:31:55.451000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZSalidaC2Tras",
+      "to_device": "RicB1Ingreso",
+      "n": 4,
+      "median_minutes": 14.515,
+      "examples": [
+        {
+          "journey_uid": "8d22105c-299b-4389-ae7a-a90af32cb846",
+          "plate": "DCB815",
+          "from_time": "2026-05-29T19:46:51.158000-03:00",
+          "to_time": "2026-05-29T20:03:02.294000-03:00"
+        },
+        {
+          "journey_uid": "c2e40c8e-1a20-4d62-ae9a-45b7a1136cc9",
+          "plate": "IMH787",
+          "from_time": "2026-05-30T11:54:37.376000-03:00",
+          "to_time": "2026-05-30T12:07:28.039000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal06",
+      "to_device": "RicB3Ingreso",
+      "n": 4,
+      "median_minutes": 6.978,
+      "examples": [
+        {
+          "journey_uid": "3abddbfc-1e64-48e6-a194-48b2366df492",
+          "plate": "FEA810",
+          "from_time": "2026-06-01T05:44:34.035000-03:00",
+          "to_time": "2026-06-01T05:58:23.593000-03:00"
+        },
+        {
+          "journey_uid": "bbdcb641-f6f8-479d-a7b9-4433b08ebb04",
+          "plate": "EBI40",
+          "from_time": "2026-08-03T06:18:14.976000-03:00",
+          "to_time": "2026-08-03T06:23:27.011000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "SLZVolcableC4",
+      "n": 4,
+      "median_minutes": 239.149,
+      "examples": [
+        {
+          "journey_uid": "40f84b81-73f8-44b4-b7d0-cd321dbf2ebf",
+          "plate": "RGV982",
+          "from_time": "2026-08-28T23:48:20.056000-03:00",
+          "to_time": "2026-08-29T05:08:27.933000-03:00"
+        },
+        {
+          "journey_uid": "f58e5595-10a7-4249-ab23-21f701742303",
+          "plate": "LAE877",
+          "from_time": "2026-08-20T07:21:27.661000-03:00",
+          "to_time": "2026-08-20T15:12:10.761000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZBalIngFte",
+      "to_device": "RicB1Ingreso",
+      "n": 4,
+      "median_minutes": 132.492,
+      "examples": [
+        {
+          "journey_uid": "c29bb8cf-9f7b-4141-83a1-0c0679417934",
+          "plate": "AYM824",
+          "from_time": "2026-07-09T01:17:28.030000-03:00",
+          "to_time": "2026-07-09T03:24:34.868000-03:00"
+        },
+        {
+          "journey_uid": "88d0ead3-b6ad-4c12-a9ab-43d9818fd1bc",
+          "plate": "VCK738",
+          "from_time": "2026-08-07T07:40:18.433000-03:00",
+          "to_time": "2026-08-07T07:59:12-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicCalLiq",
+      "n": 4,
+      "median_minutes": 115.294,
+      "examples": [
+        {
+          "journey_uid": "065407b3-38b2-4ee1-af1a-6867eff1a415",
+          "plate": "AG124ZF",
+          "from_time": "2026-06-11T05:06:55.262000-03:00",
+          "to_time": "2026-06-11T07:44:58.854000-03:00"
+        },
+        {
+          "journey_uid": "766dc2d4-8537-4c60-8bbe-b713da89980b",
+          "plate": "MLH899",
+          "from_time": "2026-06-11T05:05:07.173000-03:00",
+          "to_time": "2026-06-11T07:13:17.677000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicC16Descarga2",
+      "n": 4,
+      "median_minutes": 85.981,
+      "examples": [
+        {
+          "journey_uid": "0a5fb49b-6a4d-4e2e-9cc9-811fb0ccfb91",
+          "plate": "AF652EC",
+          "from_time": "2026-07-29T13:35:45.129000-03:00",
+          "to_time": "2026-07-29T13:45:18.273000-03:00"
+        },
+        {
+          "journey_uid": "575ffc8b-a73b-485c-a989-b76246b4cc3d",
+          "plate": "EFH147",
+          "from_time": "2026-07-31T11:24:52.175000-03:00",
+          "to_time": "2026-07-31T12:49:44.138000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZTK400",
+      "to_device": "RicB3Ingreso",
+      "n": 4,
+      "median_minutes": 134.385,
+      "examples": [
+        {
+          "journey_uid": "b25490e0-6ea3-4b03-b61b-0633e2c840f6",
+          "plate": "OIY765",
+          "from_time": "2026-08-10T07:11:45.474000-03:00",
+          "to_time": "2026-08-10T09:15:37.730000-03:00"
+        },
+        {
+          "journey_uid": "2ee73177-2ced-48d2-bd3d-b98d2a8beed7",
+          "plate": "OIY765",
+          "from_time": "2026-08-18T06:56:28.292000-03:00",
+          "to_time": "2026-08-18T09:21:22.179000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "SLZBalSC1Fte",
+      "n": 4,
+      "median_minutes": 47.406,
+      "examples": [
+        {
+          "journey_uid": "1ca8cad5-3abd-4494-9d34-4b593c48032f",
+          "plate": "JZW724",
+          "from_time": "2026-08-13T04:54:29.291000-03:00",
+          "to_time": "2026-08-13T05:28:34.675000-03:00"
+        },
+        {
+          "journey_uid": "85a6b4b7-a43c-4eda-8c3a-519abc11b28a",
+          "plate": "AG245PO",
+          "from_time": "2026-08-26T12:18:32.323000-03:00",
+          "to_time": "2026-08-26T12:35:41.055000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZVolcableC5",
+      "n": 4,
+      "median_minutes": 165.727,
+      "examples": [
+        {
+          "journey_uid": "84e5b26d-8d68-4965-9a1c-d02d7da3648f",
+          "plate": "TZQ583",
+          "from_time": "2026-09-22T01:51:32.076000-03:00",
+          "to_time": "2026-09-22T04:34:23.270000-03:00"
+        },
+        {
+          "journey_uid": "c52d2fc5-a838-4631-8719-3f34d6abff2d",
+          "plate": "UWX998",
+          "from_time": "2026-09-23T21:45:09.903000-03:00",
+          "to_time": "2026-09-24T04:22:36.284000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal01",
+      "to_device": "RicB3Egreso",
+      "n": 3,
+      "median_minutes": 153.718,
+      "examples": [
+        {
+          "journey_uid": "61cb2509-4b1b-491b-943f-52aa3d2320f8",
+          "plate": "FAW710",
+          "from_time": "2026-05-23T06:23:27.250000-03:00",
+          "to_time": "2026-05-23T10:53:28.230000-03:00"
+        },
+        {
+          "journey_uid": "d63c8770-9d1e-4e61-a9c6-8352b7ae1b53",
+          "plate": "FGX290",
+          "from_time": "2026-06-02T08:21:03.082000-03:00",
+          "to_time": "2026-06-02T10:54:46.169000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZSalidaC1Tras",
+      "to_device": "RicB3Egreso",
+      "n": 3,
+      "median_minutes": 18.461,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-06-03T11:59:41.177000-03:00",
+          "to_time": "2026-06-03T12:14:31.394000-03:00"
+        },
+        {
+          "journey_uid": "c2e40c8e-1a20-4d62-ae9a-45b7a1136cc9",
+          "plate": "IMH787",
+          "from_time": "2026-05-29T08:03:18.195000-03:00",
+          "to_time": "2026-05-29T08:21:45.873000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicVolcable2",
+      "to_device": "RicB1Ingreso",
+      "n": 3,
+      "median_minutes": 254.229,
+      "examples": [
+        {
+          "journey_uid": "bb723e52-fbaf-421b-b8c8-194713378cdf",
+          "plate": "LFT141",
+          "from_time": "2026-07-11T17:31:27.961000-03:00",
+          "to_time": "2026-07-11T21:45:41.697000-03:00"
+        },
+        {
+          "journey_uid": "16a33a85-61fd-42e9-846b-d567c5c50a50",
+          "plate": "NLR442",
+          "from_time": "2026-07-11T17:43:25.845000-03:00",
+          "to_time": "2026-07-11T22:33:21.365000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "SLZBalSC1Fte",
+      "n": 3,
+      "median_minutes": 94.216,
+      "examples": [
+        {
+          "journey_uid": "857b132f-700b-4f20-ba0f-b7cf908580f8",
+          "plate": "OTB580",
+          "from_time": "2026-07-25T07:38:23.876000-03:00",
+          "to_time": "2026-07-25T09:12:36.826000-03:00"
+        },
+        {
+          "journey_uid": "857b132f-700b-4f20-ba0f-b7cf908580f8",
+          "plate": "OTB580",
+          "from_time": "2026-07-26T06:58:27.990000-03:00",
+          "to_time": "2026-07-26T08:23:16.740000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "SLZBalSC1Fte",
+      "n": 3,
+      "median_minutes": 42.618,
+      "examples": [
+        {
+          "journey_uid": "81c39b2f-4484-4870-b333-311058033ce5",
+          "plate": "AA689GK",
+          "from_time": "2026-07-01T05:03:07.378000-03:00",
+          "to_time": "2026-07-01T06:37:18.790000-03:00"
+        },
+        {
+          "journey_uid": "32b79d99-b238-4918-97b7-48ba0bec3aa8",
+          "plate": "JZW724",
+          "from_time": "2026-08-11T05:00:09.991000-03:00",
+          "to_time": "2026-08-11T05:34:14.314000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicPreIngInFr",
+      "n": 3,
+      "median_minutes": 34.525,
+      "examples": [
+        {
+          "journey_uid": "f153f114-f2fa-4aa4-963e-99311ebb3602",
+          "plate": "KGY149",
+          "from_time": "2026-06-10T09:30:12.481000-03:00",
+          "to_time": "2026-06-10T11:10:50.916000-03:00"
+        },
+        {
+          "journey_uid": "1440ca50-a5cd-41f3-8aa8-a9848640ade3",
+          "plate": "AA358UP",
+          "from_time": "2026-08-20T10:11:05.391000-03:00",
+          "to_time": "2026-08-20T10:32:57.420000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicVolcable2",
+      "n": 3,
+      "median_minutes": 13.496,
+      "examples": [
+        {
+          "journey_uid": "30e94d45-fd84-4df6-852a-af879eae5fad",
+          "plate": "DDN01",
+          "from_time": "2026-08-26T05:12:03.946000-03:00",
+          "to_time": "2026-08-26T05:25:33.684000-03:00"
+        },
+        {
+          "journey_uid": "84d4d20e-5e80-4f0d-b0dc-09a6a98bce26",
+          "plate": "BJL896",
+          "from_time": "2026-06-19T10:23:42.065000-03:00",
+          "to_time": "2026-06-19T16:05:59.869000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Egreso",
+      "to_device": "RicB3Ingreso",
+      "n": 3,
+      "median_minutes": 4.392,
+      "examples": [
+        {
+          "journey_uid": "30e94d45-fd84-4df6-852a-af879eae5fad",
+          "plate": "DDN01",
+          "from_time": "2026-09-22T11:01:33.455000-03:00",
+          "to_time": "2026-09-22T11:05:56.974000-03:00"
+        },
+        {
+          "journey_uid": "8c05f83d-5be4-4769-adc4-a3244ab54137",
+          "plate": "KGY149",
+          "from_time": "2026-09-16T09:17:06.629000-03:00",
+          "to_time": "2026-09-16T09:19:08.432000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCalLiq",
+      "to_device": "RicB3Ingreso",
+      "n": 3,
+      "median_minutes": 28.792,
+      "examples": [
+        {
+          "journey_uid": "065407b3-38b2-4ee1-af1a-6867eff1a415",
+          "plate": "AG124ZF",
+          "from_time": "2026-06-11T04:38:07.742000-03:00",
+          "to_time": "2026-06-11T05:06:55.262000-03:00"
+        },
+        {
+          "journey_uid": "e7182925-ffb3-4755-9227-3c81eaf8b723",
+          "plate": "NMU382",
+          "from_time": "2026-06-11T04:29:39.378000-03:00",
+          "to_time": "2026-06-11T05:00:01.798000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZVolcableC2",
+      "to_device": "RicB2Egreso",
+      "n": 3,
+      "median_minutes": 177.197,
+      "examples": [
+        {
+          "journey_uid": "f8bb2ed6-d349-42ec-99b7-c2b69af8364c",
+          "plate": "IZQ583",
+          "from_time": "2026-09-21T11:13:51.475000-03:00",
+          "to_time": "2026-09-21T11:50:08.231000-03:00"
+        },
+        {
+          "journey_uid": "357b6f99-9071-4119-8553-f6f4ef05549b",
+          "plate": "MHR567",
+          "from_time": "2026-09-21T10:31:44.038000-03:00",
+          "to_time": "2026-09-21T15:02:19.142000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZTK400",
+      "to_device": "RicB1Ingreso",
+      "n": 3,
+      "median_minutes": 184.775,
+      "examples": [
+        {
+          "journey_uid": "36709bee-a5f3-432f-b4ac-c579b6b7ad6b",
+          "plate": "OTY765",
+          "from_time": "2026-08-08T08:18:29.611000-03:00",
+          "to_time": "2026-08-08T10:57:51-03:00"
+        },
+        {
+          "journey_uid": "be45973c-6b6f-4342-af0f-24dc9fcf03ab",
+          "plate": "TEK486",
+          "from_time": "2026-08-16T14:14:44.848000-03:00",
+          "to_time": "2026-08-16T17:19:31.366000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "RicCalLiq",
+      "n": 3,
+      "median_minutes": 6.583,
+      "examples": [
+        {
+          "journey_uid": "95590154-e8b4-429e-aa03-f4b70039249e",
+          "plate": "NLZ782",
+          "from_time": "2026-08-24T09:37:46.781000-03:00",
+          "to_time": "2026-08-24T09:51:56.923000-03:00"
+        },
+        {
+          "journey_uid": "840d7f79-a4fc-4212-a9a0-70586023ac09",
+          "plate": "KWN857",
+          "from_time": "2026-08-19T08:45:14.690000-03:00",
+          "to_time": "2026-08-19T08:50:02.369000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "RicS6Playa3",
+      "n": 3,
+      "median_minutes": 34.239,
+      "examples": [
+        {
+          "journey_uid": "cc0262c2-b2f7-47cf-9d5f-2dd45793abb6",
+          "plate": "KGY149",
+          "from_time": "2026-08-13T04:20:55.174000-03:00",
+          "to_time": "2026-08-13T07:50:44.787000-03:00"
+        },
+        {
+          "journey_uid": "86039feb-20f7-4a07-8748-216be4d6ea5d",
+          "plate": "MXL787",
+          "from_time": "2026-08-18T07:20:52.919000-03:00",
+          "to_time": "2026-08-18T07:49:08.529000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZBalSC2Fte",
+      "to_device": "RicB1Ingreso",
+      "n": 3,
+      "median_minutes": 25.231,
+      "examples": [
+        {
+          "journey_uid": "357b6f99-9071-4119-8553-f6f4ef05549b",
+          "plate": "MHR567",
+          "from_time": "2026-09-03T13:28:24.282000-03:00",
+          "to_time": "2026-09-03T13:53:38.139000-03:00"
+        },
+        {
+          "journey_uid": "0c5f70df-d94f-4579-ac52-975efa94d53f",
+          "plate": "UAJ766",
+          "from_time": "2026-08-28T08:05:46.632000-03:00",
+          "to_time": "2026-08-28T08:24:25.790000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZBalSC2Fte",
+      "n": 3,
+      "median_minutes": 167.789,
+      "examples": [
+        {
+          "journey_uid": "6a726c03-ffcc-4eb6-bcab-5042a38be427",
+          "plate": "JPZ027",
+          "from_time": "2026-08-31T04:02:35.644000-03:00",
+          "to_time": "2026-08-31T06:42:55.751000-03:00"
+        },
+        {
+          "journey_uid": "60df223c-39bb-4d75-a135-d8562673b89e",
+          "plate": "UYM942",
+          "from_time": "2026-08-31T08:41:26.300000-03:00",
+          "to_time": "2026-08-31T11:29:13.659000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZCalado",
+      "n": 3,
+      "median_minutes": 19.175,
+      "examples": [
+        {
+          "journey_uid": "7051e2af-869b-41d7-af0a-be2bbeae71ca",
+          "plate": "RUK692",
+          "from_time": "2026-09-19T21:25:50.567000-03:00",
+          "to_time": "2026-09-19T21:55:52.133000-03:00"
+        },
+        {
+          "journey_uid": "14204ee6-3130-4d1e-9ac2-ebce1092fb7f",
+          "plate": "RUK692",
+          "from_time": "2026-09-20T01:30:30.860000-03:00",
+          "to_time": "2026-09-20T01:47:47.688000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Egreso",
+      "to_device": "RicB3Egreso",
+      "n": 2,
+      "median_minutes": 235.835,
+      "examples": [
+        {
+          "journey_uid": "83455190-b3b5-4555-8654-95bbf511c50f",
+          "plate": "LKD091",
+          "from_time": "2026-05-20T03:07:36.791000-03:00",
+          "to_time": "2026-05-20T04:08:42.526000-03:00"
+        },
+        {
+          "journey_uid": "48f7fac6-363d-498a-97e2-552a65b6d32e",
+          "plate": "GWL035",
+          "from_time": "2026-05-22T04:02:19.414000-03:00",
+          "to_time": "2026-05-22T10:52:53.865000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicPreIngEgFr",
+      "to_device": "RicB2Egreso",
+      "n": 2,
+      "median_minutes": 386.915,
+      "examples": [
+        {
+          "journey_uid": "6b6ee894-bcf9-4637-af29-d46afb48c7b0",
+          "plate": "SMW973",
+          "from_time": "2026-05-19T21:26:31.537000-03:00",
+          "to_time": "2026-05-20T04:38:52.420000-03:00"
+        },
+        {
+          "journey_uid": "68bb629d-24b6-469d-b881-adae877961cf",
+          "plate": "MRL490",
+          "from_time": "2026-08-31T03:57:12.257000-03:00",
+          "to_time": "2026-08-31T09:38:41.142000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicC16Descarga1",
+      "to_device": "RicB3Egreso",
+      "n": 2,
+      "median_minutes": 17.756,
+      "examples": [
+        {
+          "journey_uid": "de347602-3755-4e3a-85b9-519990c7bd45",
+          "plate": "AD609AL",
+          "from_time": "2026-05-15T09:50:01.981000-03:00",
+          "to_time": "2026-05-15T10:03:26.804000-03:00"
+        },
+        {
+          "journey_uid": "9ee34015-a784-4294-9559-286f5612438a",
+          "plate": "AH019OB",
+          "from_time": "2026-05-24T10:55:12.577000-03:00",
+          "to_time": "2026-05-24T11:17:18.490000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal02",
+      "to_device": "RicB3Egreso",
+      "n": 2,
+      "median_minutes": 208.132,
+      "examples": [
+        {
+          "journey_uid": "83ac0e1d-fe9e-4128-a576-f1329007b42f",
+          "plate": "KFV571",
+          "from_time": "2026-05-21T02:20:29.390000-03:00",
+          "to_time": "2026-05-21T07:04:28.784000-03:00"
+        },
+        {
+          "journey_uid": "5b2cb60c-8931-4474-9333-cbef80093ce9",
+          "plate": "FUF085",
+          "from_time": "2026-06-02T08:12:43.042000-03:00",
+          "to_time": "2026-06-02T10:24:59.480000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicIngCamFrente",
+      "to_device": "RicB3Egreso",
+      "n": 2,
+      "median_minutes": 57.643,
+      "examples": [
+        {
+          "journey_uid": "f55c26ae-f0f8-4935-8d00-5451413fe61a",
+          "plate": "LFT1411",
+          "from_time": "2026-05-24T08:50:02.532000-03:00",
+          "to_time": "2026-05-24T09:38:30.781000-03:00"
+        },
+        {
+          "journey_uid": "7a597926-1490-456a-93f7-cb866db5a37a",
+          "plate": "BTS626",
+          "from_time": "2026-08-24T11:03:21.592000-03:00",
+          "to_time": "2026-08-24T12:10:10.536000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicS7Carga",
+      "to_device": "RicB1Ingreso",
+      "n": 2,
+      "median_minutes": 8.464,
+      "examples": [
+        {
+          "journey_uid": "bb723e52-fbaf-421b-b8c8-194713378cdf",
+          "plate": "LFT141",
+          "from_time": "2026-08-07T07:27:07.248000-03:00",
+          "to_time": "2026-08-07T07:28:35-03:00"
+        },
+        {
+          "journey_uid": "16a33a85-61fd-42e9-846b-d567c5c50a50",
+          "plate": "NLR442",
+          "from_time": "2026-08-07T07:09:13.111000-03:00",
+          "to_time": "2026-08-07T07:24:41-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZBalSC1Fte",
+      "to_device": "RicB2Egreso",
+      "n": 2,
+      "median_minutes": 290.149,
+      "examples": [
+        {
+          "journey_uid": "857b132f-700b-4f20-ba0f-b7cf908580f8",
+          "plate": "OTB580",
+          "from_time": "2026-07-30T09:54:00.366000-03:00",
+          "to_time": "2026-07-30T17:49:38.383000-03:00"
+        },
+        {
+          "journey_uid": "a694ed3e-d3e2-430e-8e0d-adb1a2ac1d32",
+          "plate": "OIB580",
+          "from_time": "2026-08-01T07:41:08.454000-03:00",
+          "to_time": "2026-08-01T09:25:48.377000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZSalidaC2Fte",
+      "to_device": "RicB2Egreso",
+      "n": 2,
+      "median_minutes": 57.189,
+      "examples": [
+        {
+          "journey_uid": "8000ad69-1174-4463-9915-1c253d1a89aa",
+          "plate": "AE264XY",
+          "from_time": "2026-05-30T14:38:50.161000-03:00",
+          "to_time": "2026-05-30T16:13:12.548000-03:00"
+        },
+        {
+          "journey_uid": "c2e40c8e-1a20-4d62-ae9a-45b7a1136cc9",
+          "plate": "IMH787",
+          "from_time": "2026-05-30T03:56:01.410000-03:00",
+          "to_time": "2026-05-30T04:16:01.739000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZBalSC1Fte",
+      "to_device": "RicB3Ingreso",
+      "n": 2,
+      "median_minutes": 76.296,
+      "examples": [
+        {
+          "journey_uid": "aa7dced9-e80c-4f29-989d-2d08f9e6e250",
+          "plate": "AA317IV",
+          "from_time": "2026-07-21T09:06:29.706000-03:00",
+          "to_time": "2026-07-21T09:40:34.735000-03:00"
+        },
+        {
+          "journey_uid": "942fe9a1-fbfe-4463-b7b2-32a8668af157",
+          "plate": "FIU583",
+          "from_time": "2026-07-21T08:10:52.527000-03:00",
+          "to_time": "2026-07-21T10:09:23.077000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "SLZSalidaC2Tras",
+      "n": 2,
+      "median_minutes": 21.295,
+      "examples": [
+        {
+          "journey_uid": "c2e40c8e-1a20-4d62-ae9a-45b7a1136cc9",
+          "plate": "IMH787",
+          "from_time": "2026-06-02T04:13:46.076000-03:00",
+          "to_time": "2026-06-02T04:32:55.570000-03:00"
+        },
+        {
+          "journey_uid": "8d53e40d-289f-48d4-b10b-88198171ecba",
+          "plate": "AD829RU",
+          "from_time": "2026-06-01T10:07:22.303000-03:00",
+          "to_time": "2026-06-01T10:30:48.180000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "RicC16Carga1",
+      "n": 2,
+      "median_minutes": 89.892,
+      "examples": [
+        {
+          "journey_uid": "5d768908-3094-41cc-87ea-99b463da911a",
+          "plate": "LKD091",
+          "from_time": "2026-06-01T05:02:46.691000-03:00",
+          "to_time": "2026-06-01T07:03:24.317000-03:00"
+        },
+        {
+          "journey_uid": "5d768908-3094-41cc-87ea-99b463da911a",
+          "plate": "LKD091",
+          "from_time": "2026-06-02T07:23:03.964000-03:00",
+          "to_time": "2026-06-02T08:22:13.426000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicC16Carga2",
+      "to_device": "RicB3Ingreso",
+      "n": 2,
+      "median_minutes": 69.499,
+      "examples": [
+        {
+          "journey_uid": "f153f114-f2fa-4aa4-963e-99311ebb3602",
+          "plate": "KGY149",
+          "from_time": "2026-06-16T07:53:09.486000-03:00",
+          "to_time": "2026-06-16T08:50:02.999000-03:00"
+        },
+        {
+          "journey_uid": "f1dc5243-fd50-4115-8340-e16bdd892b1b",
+          "plate": "AA101HW",
+          "from_time": "2026-09-10T07:27:14.718000-03:00",
+          "to_time": "2026-09-10T08:49:21.033000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal01",
+      "to_device": "RicB3Ingreso",
+      "n": 2,
+      "median_minutes": 72.128,
+      "examples": [
+        {
+          "journey_uid": "2044633f-9d1d-40c7-b50b-e30aca0cffeb",
+          "plate": "AA101HW",
+          "from_time": "2026-07-24T05:05:54.494000-03:00",
+          "to_time": "2026-07-24T07:17:06.816000-03:00"
+        },
+        {
+          "journey_uid": "03c1bcf5-ca1b-4b0e-b7e0-cd52bf382900",
+          "plate": "DIG565",
+          "from_time": "2026-07-13T07:00:14.581000-03:00",
+          "to_time": "2026-07-13T07:13:17.677000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicCal06",
+      "n": 2,
+      "median_minutes": 23.971,
+      "examples": [
+        {
+          "journey_uid": "bbdcb641-f6f8-479d-a7b9-4433b08ebb04",
+          "plate": "EBI40",
+          "from_time": "2026-08-03T05:43:15.028000-03:00",
+          "to_time": "2026-08-03T06:18:14.976000-03:00"
+        },
+        {
+          "journey_uid": "7f38e3c5-1827-440b-af3a-7381e8b6bef1",
+          "plate": "RVX215",
+          "from_time": "2026-06-05T00:12:24.152000-03:00",
+          "to_time": "2026-06-05T00:25:20.759000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicB1Egreso",
+      "n": 2,
+      "median_minutes": 32.967,
+      "examples": [
+        {
+          "journey_uid": "33cef869-5dce-4dd6-8db4-41909b84ecfc",
+          "plate": "EQG465",
+          "from_time": "2026-08-06T07:36:11.813000-03:00",
+          "to_time": "2026-08-06T08:19:52.913000-03:00"
+        },
+        {
+          "journey_uid": "74dbacbc-a198-438f-9efb-79567320d80a",
+          "plate": "AH426HM",
+          "from_time": "2026-09-22T09:13:34.878000-03:00",
+          "to_time": "2026-09-22T09:35:49.875000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicB1Egreso",
+      "n": 2,
+      "median_minutes": 100.469,
+      "examples": [
+        {
+          "journey_uid": "8c05f83d-5be4-4769-adc4-a3244ab54137",
+          "plate": "KGY149",
+          "from_time": "2026-09-16T06:15:17.630000-03:00",
+          "to_time": "2026-09-16T09:17:06.629000-03:00"
+        },
+        {
+          "journey_uid": "fbf39324-038a-43bb-8974-d5b6a56ffb79",
+          "plate": "AB271DR",
+          "from_time": "2026-09-16T08:46:51.681000-03:00",
+          "to_time": "2026-09-16T09:05:58.911000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZBalLiq2b",
+      "to_device": "RicB2Egreso",
+      "n": 2,
+      "median_minutes": 72.773,
+      "examples": [
+        {
+          "journey_uid": "2a790970-da72-4e8a-a344-1c3884805853",
+          "plate": "OTV755",
+          "from_time": "2026-09-24T16:03:59.924000-03:00",
+          "to_time": "2026-09-24T17:12:12.207000-03:00"
+        },
+        {
+          "journey_uid": "b12e2a9a-3661-45d9-a2b5-24338260cc17",
+          "plate": "OTV765",
+          "from_time": "2026-09-27T15:39:15.334000-03:00",
+          "to_time": "2026-09-27T16:56:35.862000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicVolcable1",
+      "to_device": "RicB1Egreso",
+      "n": 2,
+      "median_minutes": 18.339,
+      "examples": [
+        {
+          "journey_uid": "8004ee12-a9dc-4749-a2f4-d2d4d7198441",
+          "plate": "ENQ213",
+          "from_time": "2026-09-16T08:36:25.049000-03:00",
+          "to_time": "2026-09-16T08:54:57.993000-03:00"
+        },
+        {
+          "journey_uid": "31ef8089-b113-45ec-b30a-3ac45c589d92",
+          "plate": "AH518WJ",
+          "from_time": "2026-09-16T08:51:00.618000-03:00",
+          "to_time": "2026-09-16T09:09:08.360000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZVolcableC2",
+      "n": 2,
+      "median_minutes": 128.218,
+      "examples": [
+        {
+          "journey_uid": "ec181f2f-3086-48a9-a28a-5f129f632f0f",
+          "plate": "UWX998",
+          "from_time": "2026-09-21T18:25:08.414000-03:00",
+          "to_time": "2026-09-21T20:23:23.666000-03:00"
+        },
+        {
+          "journey_uid": "9bdff683-2876-4311-aafa-e3fa3f234918",
+          "plate": "ROL445",
+          "from_time": "2026-09-22T02:49:41.799000-03:00",
+          "to_time": "2026-09-22T05:07:52.723000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicIngCamTrasera",
+      "to_device": "RicB1Egreso",
+      "n": 1,
+      "median_minutes": 245.151,
+      "examples": [
+        {
+          "journey_uid": "58cedb2e-0ec6-4b92-a011-f10d24d3f208",
+          "plate": "AA568HS",
+          "from_time": "2026-05-15T19:28:18.426000-03:00",
+          "to_time": "2026-05-15T23:33:27.511000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicPreIngInTr",
+      "to_device": "RicB1Egreso",
+      "n": 1,
+      "median_minutes": 244.093,
+      "examples": [
+        {
+          "journey_uid": "0cab2f62-fd77-46aa-ac9a-27057c755950",
+          "plate": "AF756AP",
+          "from_time": "2026-05-15T20:15:33.395000-03:00",
+          "to_time": "2026-05-16T00:19:38.953000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZSalidaC1Tras",
+      "n": 1,
+      "median_minutes": 239.278,
+      "examples": [
+        {
+          "journey_uid": "9685a9bb-6273-4088-8514-a98778c3605d",
+          "plate": "OCB815",
+          "from_time": "2026-06-07T19:58:57.318000-03:00",
+          "to_time": "2026-06-07T23:58:13.991000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "SLZSalidaC1Tras",
+      "n": 1,
+      "median_minutes": 154.145,
+      "examples": [
+        {
+          "journey_uid": "857b132f-700b-4f20-ba0f-b7cf908580f8",
+          "plate": "OTB580",
+          "from_time": "2026-05-29T07:12:15.150000-03:00",
+          "to_time": "2026-05-29T09:46:23.870000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZSalidaC2Fte",
+      "to_device": "RicB1Egreso",
+      "n": 1,
+      "median_minutes": 93.171,
+      "examples": [
+        {
+          "journey_uid": "a694ed3e-d3e2-430e-8e0d-adb1a2ac1d32",
+          "plate": "OIB580",
+          "from_time": "2026-05-27T14:59:57.110000-03:00",
+          "to_time": "2026-05-27T16:33:07.371000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal03",
+      "to_device": "RicB3Ingreso",
+      "n": 1,
+      "median_minutes": 35.889,
+      "examples": [
+        {
+          "journey_uid": "f9086b17-7389-47c9-b945-c45acec4e0d2",
+          "plate": "AG194VO",
+          "from_time": "2026-06-17T07:14:11.206000-03:00",
+          "to_time": "2026-06-17T07:50:04.547000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "RicPreIngEgFr",
+      "n": 1,
+      "median_minutes": 103.537,
+      "examples": [
+        {
+          "journey_uid": "5d768908-3094-41cc-87ea-99b463da911a",
+          "plate": "LKD091",
+          "from_time": "2026-05-29T08:48:16.687000-03:00",
+          "to_time": "2026-05-29T10:31:48.908000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicB2Ingreso",
+      "n": 1,
+      "median_minutes": 196.616,
+      "examples": [
+        {
+          "journey_uid": "32b79d99-b238-4918-97b7-48ba0bec3aa8",
+          "plate": "JZW724",
+          "from_time": "2026-07-27T09:54:24.143000-03:00",
+          "to_time": "2026-07-27T13:11:01.079000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZSalidaC1Fte",
+      "to_device": "RicB3Egreso",
+      "n": 1,
+      "median_minutes": 44.126,
+      "examples": [
+        {
+          "journey_uid": "cd9c7c06-a44a-41f8-a9b5-8b4e2bc4a08a",
+          "plate": "UAJ766",
+          "from_time": "2026-06-02T08:07:52.540000-03:00",
+          "to_time": "2026-06-02T08:52:00.117000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicCal02",
+      "n": 1,
+      "median_minutes": 127.982,
+      "examples": [
+        {
+          "journey_uid": "4d98ee58-1bc5-4bfa-97e1-688f247139a5",
+          "plate": "AH785SE",
+          "from_time": "2026-07-08T04:01:52.164000-03:00",
+          "to_time": "2026-07-08T06:09:51.111000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "RicC16Carga2",
+      "n": 1,
+      "median_minutes": 75.41,
+      "examples": [
+        {
+          "journey_uid": "f153f114-f2fa-4aa4-963e-99311ebb3602",
+          "plate": "KGY149",
+          "from_time": "2026-06-02T09:33:50.184000-03:00",
+          "to_time": "2026-06-02T10:49:14.787000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicS8CargaLinea2",
+      "to_device": "RicB3Ingreso",
+      "n": 1,
+      "median_minutes": 183.995,
+      "examples": [
+        {
+          "journey_uid": "f153f114-f2fa-4aa4-963e-99311ebb3602",
+          "plate": "KGY149",
+          "from_time": "2026-07-30T04:58:47.911000-03:00",
+          "to_time": "2026-07-30T08:02:47.641000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZSalidaC1Tras",
+      "to_device": "RicB1Egreso",
+      "n": 1,
+      "median_minutes": 364.69,
+      "examples": [
+        {
+          "journey_uid": "a3db0254-a806-4992-9bee-b41a0a6459e0",
+          "plate": "NEO527",
+          "from_time": "2026-06-01T04:14:42.620000-03:00",
+          "to_time": "2026-06-01T10:19:24.034000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicVolcable2",
+      "to_device": "RicB3Ingreso",
+      "n": 1,
+      "median_minutes": 53.68,
+      "examples": [
+        {
+          "journey_uid": "30e94d45-fd84-4df6-852a-af879eae5fad",
+          "plate": "DDN01",
+          "from_time": "2026-08-26T05:25:33.684000-03:00",
+          "to_time": "2026-08-26T06:19:14.498000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicCal04",
+      "to_device": "RicB3Egreso",
+      "n": 1,
+      "median_minutes": 35.716,
+      "examples": [
+        {
+          "journey_uid": "fbcf64b2-7f84-4cbd-9326-4279629dea0e",
+          "plate": "AG896KK",
+          "from_time": "2026-06-02T07:49:42.154000-03:00",
+          "to_time": "2026-06-02T08:25:25.144000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicCal01",
+      "n": 1,
+      "median_minutes": 44.153,
+      "examples": [
+        {
+          "journey_uid": "2044633f-9d1d-40c7-b50b-e30aca0cffeb",
+          "plate": "AA101HW",
+          "from_time": "2026-07-24T04:21:45.319000-03:00",
+          "to_time": "2026-07-24T05:05:54.494000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicVolcable1",
+      "to_device": "RicB3Ingreso",
+      "n": 1,
+      "median_minutes": 10.717,
+      "examples": [
+        {
+          "journey_uid": "296b3cde-dcbf-43c8-a627-cc57e519df02",
+          "plate": "HFN074",
+          "from_time": "2026-06-22T09:43:40.255000-03:00",
+          "to_time": "2026-06-22T09:54:23.265000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "RicVolcable1",
+      "n": 1,
+      "median_minutes": 153.48,
+      "examples": [
+        {
+          "journey_uid": "f1d46342-f77d-4b5e-8329-b9887f09ba58",
+          "plate": "TRJ428",
+          "from_time": "2026-07-30T06:51:02.032000-03:00",
+          "to_time": "2026-07-30T09:24:30.826000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicC16Descarga2",
+      "to_device": "RicB1Ingreso",
+      "n": 1,
+      "median_minutes": 12.634,
+      "examples": [
+        {
+          "journey_uid": "e865e46d-becf-47df-ab6c-402296637645",
+          "plate": "PHR776",
+          "from_time": "2026-07-14T06:03:27.226000-03:00",
+          "to_time": "2026-07-14T06:16:05.282000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicEgrCamFrente",
+      "to_device": "RicB3Ingreso",
+      "n": 1,
+      "median_minutes": 4.975,
+      "examples": [
+        {
+          "journey_uid": "5730ed39-238d-496a-a6e2-4e56e82c7686",
+          "plate": "JHE408",
+          "from_time": "2026-09-22T09:29:18.472000-03:00",
+          "to_time": "2026-09-22T09:34:16.974000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicCal04",
+      "n": 1,
+      "median_minutes": 22.674,
+      "examples": [
+        {
+          "journey_uid": "ad2fc420-602e-4ac3-a2d7-8e9f9c63f5cd",
+          "plate": "AD835KG",
+          "from_time": "2026-07-31T04:08:42.652000-03:00",
+          "to_time": "2026-07-31T04:31:23.114000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicC16Descarga2",
+      "n": 1,
+      "median_minutes": 73.614,
+      "examples": [
+        {
+          "journey_uid": "ab91264b-0cf3-49f2-84df-5f996eeb7bc8",
+          "plate": "FTF912",
+          "from_time": "2026-07-31T12:16:37.215000-03:00",
+          "to_time": "2026-07-31T13:30:14.040000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "RicCal06",
+      "n": 1,
+      "median_minutes": 18.054,
+      "examples": [
+        {
+          "journey_uid": "2a41ba7a-dd0d-41cd-9c30-1472463a2284",
+          "plate": "AD001TD",
+          "from_time": "2026-08-07T10:13:17.265000-03:00",
+          "to_time": "2026-08-07T10:31:20.534000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZBalSC1Fte",
+      "to_device": "RicB3Egreso",
+      "n": 1,
+      "median_minutes": 179.482,
+      "examples": [
+        {
+          "journey_uid": "f4f82f6e-94b8-4e62-86c7-f1f4ba8c16cb",
+          "plate": "HLT270",
+          "from_time": "2026-08-14T08:08:15.614000-03:00",
+          "to_time": "2026-08-14T11:07:44.560000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicS8CargaLinea2",
+      "n": 1,
+      "median_minutes": 3.871,
+      "examples": [
+        {
+          "journey_uid": "59777c35-9af5-496e-bd05-6a05f97ec63a",
+          "plate": "AG725WA",
+          "from_time": "2026-08-16T13:19:25.476000-03:00",
+          "to_time": "2026-08-16T13:23:17.711000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "SLZTK400",
+      "n": 1,
+      "median_minutes": 89.715,
+      "examples": [
+        {
+          "journey_uid": "5409950f-fe32-4ec5-8d17-f5438f1f478c",
+          "plate": "TEK486",
+          "from_time": "2026-08-17T18:16:19.925000-03:00",
+          "to_time": "2026-08-17T19:46:02.801000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZBalSC1Fte",
+      "to_device": "RicB1Ingreso",
+      "n": 1,
+      "median_minutes": 88.588,
+      "examples": [
+        {
+          "journey_uid": "efc6789a-a8c2-4452-9704-5b2e459db433",
+          "plate": "HLT270",
+          "from_time": "2026-08-18T08:39:19.480000-03:00",
+          "to_time": "2026-08-18T10:07:54.750000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "RicS7Carga",
+      "n": 1,
+      "median_minutes": 6.313,
+      "examples": [
+        {
+          "journey_uid": "46fb6bab-7888-4a3b-ba41-aecc9df80e73",
+          "plate": "AH061PA",
+          "from_time": "2026-08-20T08:30:48.524000-03:00",
+          "to_time": "2026-08-20T08:37:07.279000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZVolcableC3",
+      "to_device": "RicB1Ingreso",
+      "n": 1,
+      "median_minutes": 456.542,
+      "examples": [
+        {
+          "journey_uid": "5258bb58-ff24-4ec6-b9b8-363292334d72",
+          "plate": "CIE516",
+          "from_time": "2026-08-21T15:16:31.205000-03:00",
+          "to_time": "2026-08-21T22:53:03.726000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Ingreso",
+      "to_device": "RicCal03",
+      "n": 1,
+      "median_minutes": 29.501,
+      "examples": [
+        {
+          "journey_uid": "b4314adb-1b6b-4292-a735-5c0d80f04c33",
+          "plate": "AMO974",
+          "from_time": "2026-08-24T18:45:02.679000-03:00",
+          "to_time": "2026-08-24T19:14:32.719000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "SLZBalLiq1b",
+      "n": 1,
+      "median_minutes": 26.405,
+      "examples": [
+        {
+          "journey_uid": "fb3d2e35-ba18-4381-927f-f130570f5eef",
+          "plate": "AH733KN",
+          "from_time": "2026-08-28T07:29:20.881000-03:00",
+          "to_time": "2026-08-28T07:55:45.184000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "SLZVolcableC2",
+      "n": 1,
+      "median_minutes": 172.948,
+      "examples": [
+        {
+          "journey_uid": "357b6f99-9071-4119-8553-f6f4ef05549b",
+          "plate": "MHR567",
+          "from_time": "2026-09-22T04:52:44.788000-03:00",
+          "to_time": "2026-09-22T07:45:41.662000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Ingreso",
+      "to_device": "SLZTK400",
+      "n": 1,
+      "median_minutes": 41.531,
+      "examples": [
+        {
+          "journey_uid": "71031a78-5c7e-4677-b89b-7e100ba4f14b",
+          "plate": "OIY765",
+          "from_time": "2026-08-28T07:08:31.935000-03:00",
+          "to_time": "2026-08-28T07:50:03.792000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZVolcableC3",
+      "to_device": "RicB2Egreso",
+      "n": 1,
+      "median_minutes": 322.065,
+      "examples": [
+        {
+          "journey_uid": "12301d90-31c6-43b7-8d18-662261ee4396",
+          "plate": "XHM893",
+          "from_time": "2026-09-03T12:31:32-03:00",
+          "to_time": "2026-09-03T17:53:35.905000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZVolcableC1",
+      "to_device": "RicB1Ingreso",
+      "n": 1,
+      "median_minutes": 427.241,
+      "examples": [
+        {
+          "journey_uid": "c92906c3-986f-4dbb-b0a3-1fb5059d8114",
+          "plate": "OYX549",
+          "from_time": "2026-09-03T04:57:35.947000-03:00",
+          "to_time": "2026-09-03T12:04:50.416000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZBalLiq1a",
+      "n": 1,
+      "median_minutes": 80.297,
+      "examples": [
+        {
+          "journey_uid": "08b8ff9c-3c51-4fe5-9470-ba2bb4acab78",
+          "plate": "OTY765",
+          "from_time": "2026-09-05T07:43:56.946000-03:00",
+          "to_time": "2026-09-05T09:04:14.744000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "SLZBalLiq2b",
+      "to_device": "RicB1Ingreso",
+      "n": 1,
+      "median_minutes": 471.616,
+      "examples": [
+        {
+          "journey_uid": "de3c72be-6770-4e36-a9b4-19399a8df6e3",
+          "plate": "OTV765",
+          "from_time": "2026-09-04T09:27:36.904000-03:00",
+          "to_time": "2026-09-04T17:19:13.875000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicVolcable2",
+      "n": 1,
+      "median_minutes": 213.792,
+      "examples": [
+        {
+          "journey_uid": "b1f426c3-84ea-416f-ab21-491ff73a9f34",
+          "plate": "AA610EI",
+          "from_time": "2026-09-06T21:46:57.353000-03:00",
+          "to_time": "2026-09-07T01:20:44.855000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicS8CargaLinea1",
+      "to_device": "RicB3Egreso",
+      "n": 1,
+      "median_minutes": 226.94,
+      "examples": [
+        {
+          "journey_uid": "08a1ea5f-d26c-4d63-9f54-693d4d189283",
+          "plate": "AD001TD",
+          "from_time": "2026-09-08T02:59:15.759000-03:00",
+          "to_time": "2026-09-08T06:46:12.179000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "SLZBalIngFte",
+      "n": 1,
+      "median_minutes": 17.358,
+      "examples": [
+        {
+          "journey_uid": "454edee3-0c57-44a3-9e67-294f0e825cf0",
+          "plate": "GES056",
+          "from_time": "2026-09-15T07:54:07.883000-03:00",
+          "to_time": "2026-09-15T08:11:29.360000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "RicB1Egreso",
+      "n": 1,
+      "median_minutes": 36.258,
+      "examples": [
+        {
+          "journey_uid": "63eead56-96b9-4957-85dc-76564a839735",
+          "plate": "JZW724",
+          "from_time": "2026-09-16T08:34:41.797000-03:00",
+          "to_time": "2026-09-16T09:10:57.248000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB1Egreso",
+      "to_device": "SLZSalidaC2Fte",
+      "n": 1,
+      "median_minutes": 221.024,
+      "examples": [
+        {
+          "journey_uid": "dfcac47f-5b58-4eda-8ed3-9ada945fb3b5",
+          "plate": "OCB815",
+          "from_time": "2026-09-26T19:56:08.547000-03:00",
+          "to_time": "2026-09-26T23:37:09.979000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicS8CargaLinea1",
+      "n": 1,
+      "median_minutes": 24.752,
+      "examples": [
+        {
+          "journey_uid": "3ae10c32-91fc-43ca-83c9-c1e155530aac",
+          "plate": "UUL425",
+          "from_time": "2026-09-27T17:46:36.595000-03:00",
+          "to_time": "2026-09-27T18:11:21.691000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "RicS8CargaLinea2",
+      "n": 1,
+      "median_minutes": 85.293,
+      "examples": [
+        {
+          "journey_uid": "11f8ebbc-d627-4ce2-8d3b-82a2a3bf82da",
+          "plate": "OYX549",
+          "from_time": "2026-09-27T18:31:37.635000-03:00",
+          "to_time": "2026-09-27T19:56:55.238000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB3Egreso",
+      "to_device": "RicCal02",
+      "n": 1,
+      "median_minutes": 5.303,
+      "examples": [
+        {
+          "journey_uid": "608ec2b4-1855-476b-8e0c-73f1e9336bd0",
+          "plate": "RAW481",
+          "from_time": "2026-09-29T06:07:52.583000-03:00",
+          "to_time": "2026-09-29T06:13:10.744000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZBalSC1Fte",
+      "n": 1,
+      "median_minutes": 112.211,
+      "examples": [
+        {
+          "journey_uid": "fcd8b548-79bd-4e90-a988-075bc4f8badd",
+          "plate": "OTY765",
+          "from_time": "2026-10-03T07:14:30.212000-03:00",
+          "to_time": "2026-10-03T09:06:42.886000-03:00"
+        }
+      ]
+    },
+    {
+      "from_device": "RicB2Egreso",
+      "to_device": "SLZVolcableC1",
+      "n": 1,
+      "median_minutes": 75.599,
+      "examples": [
+        {
+          "journey_uid": "dccd1231-a45a-48bb-b0cd-9ed801f121c9",
+          "plate": "AA317IV",
+          "from_time": "2026-10-06T10:26:13.420000-03:00",
+          "to_time": "2026-10-06T11:41:49.330000-03:00"
+        }
+      ]
+    }
+  ],
+  "after_ric_exit_same_uid": {
+    "RicIngCamFrente": 117,
+    "SLZIngCamFrente": 13148,
+    "RicB1Ingreso": 71,
+    "RicEgrCamTraser": 1,
+    "RicPreIngInFr": 9,
+    "RicCalLiq": 3,
+    "RicCal03": 2,
+    "SLZSalidaC1Fte": 85,
+    "SLZBalIngFte": 764,
+    "RicS6Playa3": 167,
+    "SLZVolcableC4": 13,
+    "SLZVolcableC2": 7,
+    "RicB2Egreso": 17,
+    "RicCal06": 1,
+    "RicCal04": 1,
+    "SLZVolcableC3": 8,
+    "SLZVolcableC5": 7,
+    "RicB3Ingreso": 1,
+    "SLZCalado": 5,
+    "SLZVolcableC1": 4,
+    "RicVolcable2": 1,
+    "SLZBalLiq1b": 2,
+    "RicVolcable1": 2,
+    "SLZBalSC2Fte": 1,
+    "SLZSalidaC2Fte": 1,
+    "RicS8CargaLinea2": 1
+  }
+}

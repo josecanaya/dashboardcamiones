@@ -1,0 +1,926 @@
+[
+ {
+  "id": "c01",
+  "camion": "AH763FD",
+  "circuito": "R7",
+  "punto": "san_lorenzo:Ingreso",
+  "hora": "2026-10-07T11:05:42.128Z",
+  "camara": "SLZIngCamFrente",
+  "leyo": "AH763ED",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c01_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c01_captura_patente.jpg",
+   "dss": {
+    "leyo": "AH763ED",
+    "confianza": 78,
+    "color": "Blue",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c01_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c01_referencia_patente.jpg",
+   "dss": {
+    "leyo": "AH763FD",
+    "confianza": 78,
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "tipo": "Large Truck"
+   },
+   "paso": {
+    "node": "ricardone:Salida 2",
+    "estado": "camara",
+    "t": "2026-10-07T10:57:12.949Z",
+    "tFeed": "2026-10-07T11:01:12.949Z",
+    "device": "RicEgrCamFrente",
+    "leyo": "AH763FD"
+   }
+  }
+ },
+ {
+  "id": "c02",
+  "camion": "OQT140",
+  "circuito": "R33 (Excel SL1)",
+  "punto": "san_lorenzo:Ingreso",
+  "hora": "2026-10-07T11:08:56.939Z",
+  "camara": "SLZIngCamFrente",
+  "leyo": "OQT40",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c02_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c02_captura_patente.jpg",
+   "dss": {
+    "leyo": "OQT40",
+    "confianza": 78,
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c02_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c02_referencia_patente.jpg",
+   "dss": {
+    "leyo": "OQT140",
+    "confianza": 78,
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck"
+   },
+   "paso": {
+    "node": "ricardone:Salida 2",
+    "estado": "camara",
+    "t": "2026-10-07T11:01:21.123Z",
+    "tFeed": "2026-10-07T11:05:21.123Z",
+    "device": "RicEgrCamFrente",
+    "leyo": "OQT140"
+   }
+  }
+ },
+ {
+  "id": "c03",
+  "camion": "OQT140",
+  "circuito": "R33 (Excel SL1)",
+  "punto": "san_lorenzo:Carga / Descarga OSL",
+  "hora": "2026-10-07T11:58:42.995Z",
+  "camara": "RenDescFte",
+  "leyo": "OQT10",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c03_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c03_captura_patente.jpg",
+   "dss": {
+    "leyo": "OQT10",
+    "confianza": 86,
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c03_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c03_referencia_patente.jpg",
+   "dss": {
+    "leyo": "OQT140",
+    "confianza": 74,
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "tipo": "Sedan"
+   },
+   "paso": {
+    "node": "san_lorenzo:Balanza Ingreso",
+    "estado": "camara",
+    "t": "2026-10-07T11:25:01.907Z",
+    "tFeed": "2026-10-07T11:29:01.907Z",
+    "device": "SLZBalIngFte",
+    "leyo": "OQT140"
+   }
+  }
+ },
+ {
+  "id": "c04",
+  "camion": "OQT140",
+  "circuito": "R33 (Excel SL1)",
+  "punto": "san_lorenzo:Egreso",
+  "hora": "2026-10-07T13:04:14.206Z",
+  "camara": "SLZSalidaC1Fte",
+  "leyo": "OQT180",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c04_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c04_captura_patente.jpg",
+   "dss": {
+    "leyo": "OQT180",
+    "confianza": 78,
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c04_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c04_referencia_patente.jpg",
+   "dss": {
+    "leyo": "OQT140",
+    "confianza": 70,
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck"
+   },
+   "paso": {
+    "node": "san_lorenzo:Balanza Egreso",
+    "estado": "camara",
+    "t": "2026-10-07T13:00:39.861Z",
+    "tFeed": "2026-10-07T13:04:39.861Z",
+    "device": "SLZBalSC2Fte",
+    "leyo": "OQT140"
+   }
+  }
+ },
+ {
+  "id": "c05",
+  "camion": "FFR877",
+  "circuito": "R7",
+  "punto": "san_lorenzo:Ingreso",
+  "hora": "2026-10-07T11:20:45.000Z",
+  "camara": "SLZIngCamFrente",
+  "leyo": "I51",
+  "metodo": "buscado antes de deducir",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c05_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c05_captura_patente.jpg",
+   "dss": {
+    "leyo": "I51",
+    "confianza": 66,
+    "color": "White",
+    "marca": null,
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c05_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c05_referencia_patente.jpg",
+   "dss": {
+    "leyo": "FFR877",
+    "confianza": 74,
+    "color": "Silver",
+    "marca": "Forland",
+    "tipo": "Medium Truck"
+   },
+   "paso": {
+    "node": "ricardone:Salida 2",
+    "estado": "camara",
+    "t": "2026-10-07T11:08:52.670Z",
+    "tFeed": "2026-10-07T11:12:52.670Z",
+    "device": "RicEgrCamFrente",
+    "leyo": "FFR877"
+   }
+  }
+ },
+ {
+  "id": "c06",
+  "camion": "FFR877",
+  "circuito": "R7",
+  "punto": "san_lorenzo:Egreso",
+  "hora": "2026-10-07T13:05:37.919Z",
+  "camara": "SLZSalidaC1Fte",
+  "leyo": "FFR4877",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c06_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c06_captura_patente.jpg",
+   "dss": {
+    "leyo": "FFR4877",
+    "confianza": 46,
+    "color": "White",
+    "marca": null,
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c06_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c06_referencia_patente.jpg",
+   "dss": {
+    "leyo": "FFR877",
+    "confianza": 82,
+    "color": "White",
+    "marca": "Kia",
+    "tipo": "Medium Truck"
+   },
+   "paso": {
+    "node": "san_lorenzo:Balanza Egreso",
+    "estado": "camara",
+    "t": "2026-10-07T13:02:52.900Z",
+    "tFeed": "2026-10-07T13:06:52.900Z",
+    "device": "SLZBalSC2Fte",
+    "leyo": "FFR877"
+   }
+  }
+ },
+ {
+  "id": "c07",
+  "camion": "HBQ125",
+  "circuito": "R7",
+  "punto": "ricardone:Calada",
+  "hora": "2026-10-07T10:59:27.295Z",
+  "camara": "RicCal03",
+  "leyo": "HBL25",
+  "metodo": "buscado antes de deducir",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c07_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c07_captura_patente.jpg",
+   "dss": {
+    "leyo": "HBL25",
+    "confianza": 78,
+    "color": "White",
+    "marca": null,
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c07_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c07_referencia_patente.jpg",
+   "dss": {
+    "leyo": "HBQ125",
+    "confianza": 82,
+    "color": "Gray",
+    "marca": null,
+    "tipo": null
+   },
+   "paso": {
+    "node": "ricardone:Pre ingreso",
+    "estado": "camara",
+    "t": "2026-10-07T10:43:13.619Z",
+    "tFeed": "2026-10-07T10:47:13.619Z",
+    "device": "RicPreIngInFr",
+    "leyo": "HBQ125"
+   }
+  }
+ },
+ {
+  "id": "c08",
+  "camion": "HBQ125",
+  "circuito": "R7",
+  "punto": "san_lorenzo:Ingreso",
+  "hora": "2026-10-07T11:29:26.211Z",
+  "camara": "SLZIngCamFrente",
+  "leyo": "HBB25",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c08_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c08_captura_patente.jpg",
+   "dss": {
+    "leyo": "HBB25",
+    "confianza": 86,
+    "color": "Blue",
+    "marca": "Ford",
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c08_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c08_referencia_patente.jpg",
+   "dss": {
+    "leyo": "HBQ125",
+    "confianza": 74,
+    "color": "Blue",
+    "marca": "Ford",
+    "tipo": "Medium Truck"
+   },
+   "paso": {
+    "node": "ricardone:Salida 2",
+    "estado": "camara",
+    "t": "2026-10-07T11:20:21.748Z",
+    "tFeed": "2026-10-07T11:24:21.748Z",
+    "device": "RicEgrCamFrente",
+    "leyo": "HBQ125"
+   }
+  }
+ },
+ {
+  "id": "c09",
+  "camion": "HBQ125",
+  "circuito": "R7",
+  "punto": "san_lorenzo:Plataformas Volcables",
+  "hora": "2026-10-07T13:07:04.000Z",
+  "camara": "SLZVolcableC5",
+  "leyo": "HB125",
+  "metodo": "buscado antes de deducir",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c09_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c09_captura_patente.jpg",
+   "dss": {
+    "leyo": "HB125",
+    "confianza": 58,
+    "color": "White",
+    "marca": null,
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c09_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c09_referencia_patente.jpg",
+   "dss": {
+    "leyo": "HBQ125",
+    "confianza": 86,
+    "color": "Blue",
+    "marca": "Ford",
+    "tipo": "Medium Truck"
+   },
+   "paso": {
+    "node": "san_lorenzo:Balanza Egreso",
+    "estado": "camara",
+    "t": "2026-10-07T13:17:57.543Z",
+    "tFeed": "2026-10-07T13:21:57.543Z",
+    "device": "SLZBalSC2Fte",
+    "leyo": "HBQ125"
+   }
+  }
+ },
+ {
+  "id": "c10",
+  "camion": "HBQ125",
+  "circuito": "R7",
+  "punto": "san_lorenzo:Egreso",
+  "hora": "2026-10-07T13:22:30.000Z",
+  "camara": "SLZSalidaC1Fte",
+  "leyo": "HBAA25",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c10_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c10_captura_patente.jpg",
+   "dss": {
+    "leyo": "HBAA25",
+    "confianza": 66,
+    "color": "White",
+    "marca": "Hyundai",
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c10_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c10_referencia_patente.jpg",
+   "dss": {
+    "leyo": "HBQ125",
+    "confianza": 86,
+    "color": "Blue",
+    "marca": "Ford",
+    "tipo": "Medium Truck"
+   },
+   "paso": {
+    "node": "san_lorenzo:Balanza Egreso",
+    "estado": "camara",
+    "t": "2026-10-07T13:17:57.543Z",
+    "tFeed": "2026-10-07T13:21:57.543Z",
+    "device": "SLZBalSC2Fte",
+    "leyo": "HBQ125"
+   }
+  }
+ },
+ {
+  "id": "c11",
+  "camion": "GKC728",
+  "circuito": "R33 (Excel SL2)",
+  "punto": "ricardone:Salida 2",
+  "hora": "2026-10-07T12:17:31.000Z",
+  "camara": "RicEgrCamFrente",
+  "leyo": "IGKC7280",
+  "metodo": "buscado antes de deducir",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c11_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c11_captura_patente.jpg",
+   "dss": {
+    "leyo": "IGKC7280",
+    "confianza": 86,
+    "color": "Red",
+    "marca": "Mercedes-Benz",
+    "tipo": "Large Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c11_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c11_referencia_patente.jpg",
+   "dss": {
+    "leyo": "GKC728",
+    "confianza": 86,
+    "color": "Red",
+    "marca": "Mercedes-Benz",
+    "tipo": "Large Truck"
+   },
+   "paso": {
+    "node": "san_lorenzo:Ingreso",
+    "estado": "camara",
+    "t": "2026-10-07T12:25:14.507Z",
+    "tFeed": "2026-10-07T12:29:14.507Z",
+    "device": "SLZIngCamFrente",
+    "leyo": "GKC728"
+   }
+  }
+ },
+ {
+  "id": "c12",
+  "camion": "GKC728",
+  "circuito": "R33 (Excel SL2)",
+  "punto": "san_lorenzo:Carga / Descarga OSL",
+  "hora": "2026-10-07T12:55:03.000Z",
+  "camara": "RenDescFte",
+  "leyo": "V47",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c12_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c12_captura_patente.jpg",
+   "dss": {
+    "leyo": "V47",
+    "confianza": 42,
+    "color": "Gray",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c12_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c12_referencia_patente.jpg",
+   "dss": {
+    "leyo": "GKC728",
+    "confianza": 86,
+    "color": "Red",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck"
+   },
+   "paso": {
+    "node": "san_lorenzo:Balanza Ingreso",
+    "estado": "camara",
+    "t": "2026-10-07T12:37:42.600Z",
+    "tFeed": "2026-10-07T12:41:42.600Z",
+    "device": "SLZBalIngFte",
+    "leyo": "GKC728"
+   }
+  }
+ },
+ {
+  "id": "c13",
+  "camion": "JFV670",
+  "circuito": "R7",
+  "punto": "ricardone:Salida 2",
+  "hora": "2026-10-07T13:04:35.000Z",
+  "camara": "RicEgrCamFrente",
+  "leyo": "FV670",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c13_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c13_captura_patente.jpg",
+   "dss": {
+    "leyo": "FV670",
+    "confianza": 82,
+    "color": "White",
+    "marca": "Iveco",
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c13_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c13_referencia_patente.jpg",
+   "dss": {
+    "leyo": "JFV670",
+    "confianza": 66,
+    "color": "White",
+    "marca": "Iveco",
+    "tipo": "Medium Truck"
+   },
+   "paso": {
+    "node": "ricardone:Calada",
+    "estado": "camara",
+    "t": "2026-10-07T12:54:22.526Z",
+    "tFeed": "2026-10-07T12:58:22.526Z",
+    "device": "RicCal04",
+    "leyo": "JFV670"
+   }
+  }
+ },
+ {
+  "id": "c14",
+  "camion": "GFP699",
+  "circuito": "R7 (Excel R8)",
+  "punto": "san_lorenzo:Balanza Egreso",
+  "hora": "2026-10-07T11:15:43.000Z",
+  "camara": "SLZBalSC1Fte",
+  "leyo": "AA358D",
+  "metodo": "buscado antes de deducir",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c14_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c14_captura_patente.jpg",
+   "dss": {
+    "leyo": "AA358D",
+    "confianza": 74,
+    "color": "White",
+    "marca": null,
+    "tipo": "Van"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c14_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c14_referencia_patente.jpg",
+   "dss": {
+    "leyo": "GFP699",
+    "confianza": 66,
+    "color": "Brown",
+    "marca": null,
+    "tipo": "Medium Truck"
+   },
+   "paso": {
+    "node": "ricardone:Salida 2",
+    "estado": "camara",
+    "t": "2026-10-07T11:13:10.205Z",
+    "tFeed": "2026-10-07T11:17:10.205Z",
+    "device": "RicEgrCamFrente",
+    "leyo": "GFP699"
+   }
+  }
+ },
+ {
+  "id": "c15",
+  "camion": "AF411UI",
+  "circuito": "SL2 (Excel SL1)",
+  "punto": "san_lorenzo:Carga/descarga",
+  "hora": "2026-10-07T20:17:30.000Z",
+  "camara": "SLZBalLiq2a",
+  "leyo": "H043",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c15_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c15_captura_patente.jpg",
+   "dss": {
+    "leyo": "H043",
+    "confianza": 60,
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c15_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c15_referencia_patente.jpg",
+   "dss": {
+    "leyo": "AF411UI",
+    "confianza": 78,
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "tipo": "Large Truck"
+   },
+   "paso": {
+    "node": "san_lorenzo:Balanza Ingreso",
+    "estado": "camara",
+    "t": "2026-10-07T16:36:34.715Z",
+    "tFeed": "2026-10-07T16:40:34.715Z",
+    "device": "SLZBalIngFte",
+    "leyo": "AF411UI"
+   }
+  }
+ },
+ {
+  "id": "c16",
+  "camion": "EFA323",
+  "circuito": "R7 (Excel R8)",
+  "punto": "ricardone:Salida 2",
+  "hora": "2026-10-07T10:20:52.582Z",
+  "camara": "RicEgrCamFrente",
+  "leyo": "EFA3233",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c16_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c16_captura_patente.jpg",
+   "dss": {
+    "leyo": "EFA3233",
+    "confianza": 62,
+    "color": "White",
+    "marca": "Iveco",
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c16_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c16_referencia_patente.jpg",
+   "dss": {
+    "leyo": "EFA323",
+    "confianza": 50,
+    "color": "White",
+    "marca": null,
+    "tipo": null
+   },
+   "paso": {
+    "node": "ricardone:Pre ingreso",
+    "estado": "camara",
+    "t": "2026-10-07T10:14:20.504Z",
+    "tFeed": "2026-10-07T10:18:20.504Z",
+    "device": "RicPreIngInFr",
+    "leyo": "EFA323"
+   }
+  }
+ },
+ {
+  "id": "c17",
+  "camion": "GXT382",
+  "circuito": "R33 (Excel R8)",
+  "punto": "san_lorenzo:Carga / Descarga OSL",
+  "hora": "2026-10-07T13:04:29.000Z",
+  "camara": "RenDescFte",
+  "leyo": "TV4",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c17_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c17_captura_patente.jpg",
+   "dss": {
+    "leyo": "TV4",
+    "confianza": 82,
+    "color": "Silver",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c17_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c17_referencia_patente.jpg",
+   "dss": {
+    "leyo": "GXT382",
+    "confianza": 78,
+    "color": "Silver",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck"
+   },
+   "paso": {
+    "node": "san_lorenzo:Balanza Ingreso",
+    "estado": "camara",
+    "t": "2026-10-07T12:58:49.095Z",
+    "tFeed": "2026-10-07T13:02:49.095Z",
+    "device": "SLZBalIngFte",
+    "leyo": "GXT382"
+   }
+  }
+ },
+ {
+  "id": "c18",
+  "camion": "TGT378",
+  "circuito": "R6",
+  "punto": "ricardone:Playa 3",
+  "hora": "2026-10-07T09:16:10.635Z",
+  "camara": "RicS6Playa3",
+  "leyo": "TGL378",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c18_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c18_captura_patente.jpg",
+   "dss": {
+    "leyo": "TGL378",
+    "confianza": 34,
+    "color": "White",
+    "marca": null,
+    "tipo": "Large Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c18_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c18_referencia_patente.jpg",
+   "dss": {
+    "leyo": "TGT378",
+    "confianza": 66,
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck"
+   },
+   "paso": {
+    "node": "ricardone:Calada",
+    "estado": "camara",
+    "t": "2026-10-07T08:57:50.339Z",
+    "tFeed": "2026-10-07T09:01:50.339Z",
+    "device": "RicCal04",
+    "leyo": "TGT378"
+   }
+  }
+ },
+ {
+  "id": "c19",
+  "camion": "MOF325",
+  "circuito": "R7",
+  "punto": "ricardone:Salida 2",
+  "hora": "2026-10-07T18:19:28.784Z",
+  "camara": "RicEgrCamFrente",
+  "leyo": "CAS21",
+  "metodo": "buscado antes de deducir",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c19_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c19_captura_patente.jpg",
+   "dss": {
+    "leyo": "CAS21",
+    "confianza": 22,
+    "color": "Black",
+    "marca": null,
+    "tipo": null
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c19_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c19_referencia_patente.jpg",
+   "dss": {
+    "leyo": "MOF325",
+    "confianza": 86,
+    "color": "White",
+    "marca": "Iveco",
+    "tipo": "Large Truck"
+   },
+   "paso": {
+    "node": "ricardone:Calada",
+    "estado": "camara",
+    "t": "2026-10-07T18:07:02.814Z",
+    "tFeed": "2026-10-07T18:11:02.814Z",
+    "device": "RicCal04",
+    "leyo": "MOF325"
+   }
+  }
+ },
+ {
+  "id": "c20",
+  "camion": "FJV994",
+  "circuito": "R6",
+  "punto": "ricardone:Balanza Egreso",
+  "hora": "2026-10-08T00:36:54.000Z",
+  "camara": "RicB2Egreso",
+  "leyo": "V994",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c20_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c20_captura_patente.jpg",
+   "dss": {
+    "leyo": "V994",
+    "confianza": 42,
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c20_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c20_referencia_patente.jpg",
+   "dss": {
+    "leyo": "FJV994",
+    "confianza": 62,
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "tipo": "Large Truck"
+   },
+   "paso": {
+    "node": "ricardone:Playa 3",
+    "estado": "camara",
+    "t": "2026-10-07T16:52:58.979Z",
+    "tFeed": "2026-10-07T16:56:58.979Z",
+    "device": "RicS6Playa3",
+    "leyo": "FJV994"
+   }
+  }
+ },
+ {
+  "id": "c21",
+  "camion": "KNH067",
+  "circuito": "R6",
+  "punto": "ricardone:Balanza Egreso",
+  "hora": "2026-10-08T01:07:48.000Z",
+  "camara": "RicB2Egreso",
+  "leyo": "NH057",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c21_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c21_captura_patente.jpg",
+   "dss": {
+    "leyo": "NH057",
+    "confianza": 62,
+    "color": "Red",
+    "marca": "Renault",
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c21_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c21_referencia_patente.jpg",
+   "dss": {
+    "leyo": "KNH067",
+    "confianza": 62,
+    "color": "Silver",
+    "marca": "Renault",
+    "tipo": "Medium Truck"
+   },
+   "paso": {
+    "node": "ricardone:Volcable 2",
+    "estado": "camara",
+    "t": "2026-10-08T00:36:49.347Z",
+    "tFeed": "2026-10-08T00:40:49.347Z",
+    "device": "RicVolcable2",
+    "leyo": "KNH067"
+   }
+  }
+ },
+ {
+  "id": "c22",
+  "camion": "BHO070",
+  "circuito": "R6",
+  "punto": "ricardone:Volcable 2",
+  "hora": "2026-10-08T01:41:28.000Z",
+  "camara": "RicVolcable2",
+  "leyo": "FMOW",
+  "metodo": "al pasar",
+  "captura": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c22_captura.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c22_captura_patente.jpg",
+   "dss": {
+    "leyo": "FMOW",
+    "confianza": 22,
+    "color": "Gray",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck"
+   }
+  },
+  "referencia": {
+   "ok": true,
+   "file": "outputs\\demostracion_camaras\\fotos\\c22_referencia.jpg",
+   "plateFile": "outputs\\demostracion_camaras\\fotos\\c22_referencia_patente.jpg",
+   "dss": {
+    "leyo": "BHO070",
+    "confianza": 30,
+    "color": "Red",
+    "marca": null,
+    "tipo": "Medium Truck"
+   },
+   "paso": {
+    "node": "ricardone:Balanza Egreso",
+    "estado": "camara",
+    "t": "2026-10-08T02:19:00.076Z",
+    "tFeed": "2026-10-08T02:23:00.076Z",
+    "device": "RicB2Egreso",
+    "leyo": "BHO070"
+   }
+  }
+ }
+]

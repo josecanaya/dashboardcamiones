@@ -296,7 +296,7 @@ export type PredecessorsResponse = {
   candidates: PredecessorCandidate[]
   /** Viajes anteriores de la misma patente (otra vuelta): contexto, no se vinculan. */
   previousTrips?: { journeyKey: string; startAt: string; endAt: string; gapMin: number; reads: { at: string; node: string; nodeLabel: string; device: string }[] }[]
-  /** Recorrido de la misma patente en la otra planta (Ricardone ↔ San Lorenzo). */
+  /** Recorrido de la misma patente en la otra planta (Ricardone â†” San Lorenzo). */
   otherPlantTrips?: { journeyKey: string; startAt: string; endAt: string; gapMin: number; reads: { at: string; node: string; nodeLabel: string; device: string }[] }[]
   linked: { journeyKey: string; plate: string; journeyUid: string | null }[]
 }
@@ -382,6 +382,8 @@ export function openPlantStateStream(
 export type IdentificationLevel = 'confirmado' | 'casi_seguro' | 'provisorio' | 'pendiente' | 'rechazado'
 
 export interface IdentificationCandidate {
+  inventory?: { version: string; visitId: string; nodeId: string; phase: string | null; lane: string | null; fromNode: string | null; visitStartedAt: string | null; status: 'expected' | 'exception'; reason: string; shadow?: { mode: 'evaluacion'; reason: string } }
+
   plate: string
   journeyKey: string
   journeyUid: string | null
@@ -395,6 +397,16 @@ export interface IdentificationCandidate {
   lastNodeLabel?: string | null
   lastSeenAt?: string
   sameNode?: boolean
+  /** Doble lectura: el camión se leyó en este mismo nodo a pocos minutos (otra cámara o la misma). */
+  twin?: boolean
+  twinSeconds?: number | null
+  /** Universo conocido: en planta y con este nodo como paso altamente probable (solo ellos se aplican solos). */
+  inUniverse?: boolean
+  /** Minutos entre su lectura y esta, contra lo habitual para ese tramo (universo: a tiempo de estar llegando). */
+  onTime?: boolean
+  gapMinutes?: number
+  typicalMinutes?: number | null
+  maxMinutes?: number | null
   /** Lectura buena del candidato para ver su foto (cámara + hora del feed). */
   photoDevice?: string
   photoAt?: string
@@ -429,6 +441,8 @@ export interface IdentificationItem {
     plate?: string
     reason?: string
     operator?: string | null
+    source?: 'operator' | 'automatic_relevance'
+    relevance?: { ruleVersion: string; capture: { vehicleCategory?: string; at?: string }; checkedAt: string }
     attempts?: number
     sameAs?: string
     attrFlags?: string[]
@@ -476,6 +490,8 @@ export type IdentificationDecision =
   | { action: 'clear'; reason?: string }
 
 export type DecisionOptions = {
+  learning?: { version: string; identity: 'same_vehicle' | 'different_vehicle' | 'unknown'; referencePlate: string | null; referenceDevice: string | null; referenceAt: string | null; visualVerified: boolean; attributeErrors: { kind: string; side: 'capture' | 'reference' | 'both' | 'unknown' }[] }
+
   /** Versión de la decisión que vio el operador (updatedAt o null). Si cambió, el servidor responde conflicto. */
   expectedVersion?: string | null
   /** Lecturas gemelas que el operador eligió explícitamente para recibir la misma decisión. */
@@ -582,7 +598,7 @@ export interface CameraCapture {
 
 export interface CameraCaptureLookup {
   capture: CameraCapture | null
-  /** Hora real buscada (hora del feed − 240 s). */
+  /** Hora real buscada (hora del feed âˆ’ 240 s). */
   realAt: string
   error: string | null
 }
@@ -635,6 +651,15 @@ export interface IdentificationEvidence {
   dss: boolean
   /** Error al consultar el DSS (los atributos faltantes no son «sin dato»). */
   dssError?: string | null
+  /** Modelo por nodos (en evaluación): «nunca visto» según el nodo; no decide asignaciones. */
+  nodeModel?: {
+    version: string
+    franja: 'dia' | 'noche'
+    pInicio: number
+    expectedAtNode: number
+    candidates: { plate: string; prior: number; readLikelihood: number; attrLr: number; probability: number }[]
+    neverSeen: { prior: number; readLikelihood: number; probability: number }
+  }
 }
 
 /** Patente, color, marca, tipo y recorrido de cada candidato, con su probabilidad (atributos del DSS). */

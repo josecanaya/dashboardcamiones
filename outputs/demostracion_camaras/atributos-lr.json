@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-10-09T17:29:41.667Z",
+  "files": [
+    "data/dss-export/2026-09-24_30/capturas.csv",
+    "data/dss-export/2026-10-01_07/capturas.csv"
+  ],
+  "criterio": "mismo = misma patente válida, mismo día, cámaras distintas; distinto = patentes distintas mismo día",
+  "color": {
+    "paresMismo": 56640,
+    "coincideMismo": 0.539,
+    "coincideDistinto": 0.379,
+    "lrCoincide": 1.42,
+    "lrDistinto": 0.74
+  },
+  "marca": {
+    "paresMismo": 26072,
+    "coincideMismo": 0.789,
+    "coincideDistinto": 0.144,
+    "lrCoincide": 5.48,
+    "lrDistinto": 0.25
+  },
+  "tipo": {
+    "paresMismo": 48263,
+    "coincideMismo": 0.404,
+    "coincideDistinto": 0.308,
+    "lrCoincide": 1.31,
+    "lrDistinto": 0.86
+  },
+  "tipoCruzado": {
+    "paresMismo": 13622,
+    "coincideMismo": 0.282,
+    "coincideDistinto": 0.256,
+    "lrCoincide": null,
+    "lrDistinto": 1.1
+  }
+}

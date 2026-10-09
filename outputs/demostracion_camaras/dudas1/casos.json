@@ -1,0 +1,2400 @@
+[
+ {
+  "id": "f01",
+  "dia": "2026-10-01",
+  "plate": "AA338BT",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-01T01:45:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-01T01:31:30.000Z",
+    "leyo": "AB308BJ",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 3,
+    "foto": "f01_c1.jpg",
+    "recorte": "f01_c1_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-01T01:41:04.000Z",
+    "leyo": "AWQ503",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f01_c2.jpg",
+    "recorte": "f01_c2_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-01T01:47:12.000Z",
+    "leyo": "AA969XN",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f01_c3.jpg",
+    "recorte": "f01_c3_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-01T01:47:46.000Z",
+    "leyo": "AA969XN",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f01_c4.jpg",
+    "recorte": "f01_c4_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-01T01:48:57.000Z",
+    "leyo": "AG534QA",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 5,
+    "foto": "f01_c5.jpg",
+    "recorte": "f01_c5_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-01T01:57:54.000Z",
+    "leyo": "NAZ841",
+    "attrs": [
+     "Blue",
+     "Volkswagen",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f01_c6.jpg",
+    "recorte": "f01_c6_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-01T02:07:07.000Z",
+    "leyo": "AC926ZT",
+    "attrs": [
+     "White",
+     "Volvo",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f01_c7.jpg",
+    "recorte": "f01_c7_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-01T02:10:02.000Z",
+    "leyo": "AA53601",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Large Truck"
+    ],
+    "parecido": 4,
+    "foto": "f01_c8.jpg",
+    "recorte": "f01_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f02",
+  "dia": "2026-10-01",
+  "plate": "JJM618",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-01T02:38:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-01T02:11:39.000Z",
+    "leyo": "CLG518",
+    "attrs": [
+     "White",
+     "Ford",
+     "Medium Truck"
+    ],
+    "parecido": 4,
+    "foto": "f02_c1.jpg",
+    "recorte": "f02_c1_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-01T02:26:33.000Z",
+    "leyo": "ONM2159",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f02_c2.jpg",
+    "recorte": "f02_c2_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-01T02:32:17.000Z",
+    "leyo": "OAT016",
+    "attrs": [
+     "Gray",
+     "Volvo",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f02_c3.jpg",
+    "recorte": "f02_c3_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-01T02:32:48.000Z",
+    "leyo": "E18",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 4,
+    "foto": "f02_c4.jpg",
+    "recorte": "f02_c4_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-01T02:34:51.000Z",
+    "leyo": "JPZ027",
+    "attrs": [
+     "Silver",
+     "Ford",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f02_c5.jpg",
+    "recorte": "f02_c5_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-01T02:49:43.000Z",
+    "leyo": "VJC12",
+    "attrs": [
+     "Red",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 4,
+    "foto": "f02_c6.jpg",
+    "recorte": "f02_c6_pl.jpg"
+   },
+   {
+    "dev": "RicCalLiq",
+    "t": "2026-10-01T02:52:30.000Z",
+    "leyo": "VJG112",
+    "attrs": [
+     "Gray",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 4,
+    "foto": "f02_c7.jpg",
+    "recorte": "f02_c7_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-01T02:59:42.000Z",
+    "leyo": "MMS635",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 5,
+    "foto": "f02_c8.jpg",
+    "recorte": "f02_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f03",
+  "dia": "2026-10-01",
+  "plate": "SLU489",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-01T03:39:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-01T03:04:30.000Z",
+    "leyo": "SWE419",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 3,
+    "foto": "f03_c1.jpg",
+    "recorte": "f03_c1_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-01T03:27:39.000Z",
+    "leyo": "DTG181",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 5,
+    "foto": "f03_c2.jpg",
+    "recorte": "f03_c2_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-01T03:28:38.000Z",
+    "leyo": "GP639",
+    "attrs": [
+     "Blue",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f03_c3.jpg",
+    "recorte": "f03_c3_pl.jpg"
+   },
+   {
+    "dev": "RicCalLiq",
+    "t": "2026-10-01T03:36:23.000Z",
+    "leyo": "RLP943",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f03_c4.jpg",
+    "recorte": "f03_c4_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-01T03:50:54.000Z",
+    "leyo": "RAW481",
+    "attrs": [
+     "Red",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 4,
+    "foto": "f03_c5.jpg",
+    "recorte": "f03_c5_pl.jpg"
+   },
+   {
+    "dev": "RicCalLiq",
+    "t": "2026-10-01T03:57:31.000Z",
+    "leyo": "RAW481",
+    "attrs": [
+     "Gray",
+     "Unrecognized",
+     "Large Truck"
+    ],
+    "parecido": 4,
+    "foto": "f03_c6.jpg",
+    "recorte": "f03_c6_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-01T04:11:11.000Z",
+    "leyo": "LL4",
+    "attrs": [
+     "Red",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 4,
+    "foto": "f03_c7.jpg",
+    "recorte": "f03_c7_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-01T04:14:35.000Z",
+    "leyo": "FLU40",
+    "attrs": [
+     "White",
+     "Scania",
+     "Large Truck"
+    ],
+    "parecido": 3,
+    "foto": "f03_c8.jpg",
+    "recorte": "f03_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f04",
+  "dia": "2026-10-01",
+  "plate": "SIM565",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-01T23:25:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicCalLiq",
+    "t": "2026-10-01T22:53:56.000Z",
+    "leyo": "RXV065",
+    "attrs": [
+     "Silver",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 4,
+    "foto": "f04_c1.jpg",
+    "recorte": "f04_c1_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-01T22:57:26.000Z",
+    "leyo": "BWJ665",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 4,
+    "foto": "f04_c2.jpg",
+    "recorte": "f04_c2_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-01T23:02:21.000Z",
+    "leyo": "FIQ779",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f04_c3.jpg",
+    "recorte": "f04_c3_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-01T23:04:14.000Z",
+    "leyo": "DDD815",
+    "attrs": [
+     "White",
+     "Scania",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f04_c4.jpg",
+    "recorte": "f04_c4_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-01T23:05:30.000Z",
+    "leyo": "ITI285",
+    "attrs": [
+     "White",
+     "Renault",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f04_c5.jpg",
+    "recorte": "f04_c5_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-01T23:20:24.000Z",
+    "leyo": "SL32",
+    "attrs": [
+     "Black",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f04_c6.jpg",
+    "recorte": "f04_c6_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-01T23:25:06.000Z",
+    "leyo": "OIU170",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f04_c7.jpg",
+    "recorte": "f04_c7_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-01T23:47:08.000Z",
+    "leyo": "IGR160",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f04_c8.jpg",
+    "recorte": "f04_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f05",
+  "dia": "2026-10-02",
+  "plate": "AB544TA",
+  "circuito": "R6",
+  "ingresoExcel": "2026-10-02T01:12:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-02T00:40:29.000Z",
+    "leyo": "AG053KG",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f05_c1.jpg",
+    "recorte": "f05_c1_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-02T00:57:39.000Z",
+    "leyo": "AC310RN",
+    "attrs": [
+     "Gray",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 6,
+    "foto": "f05_c2.jpg",
+    "recorte": "f05_c2_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-02T01:01:26.000Z",
+    "leyo": "AC357TD",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 5,
+    "foto": "f05_c3.jpg",
+    "recorte": "f05_c3_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-02T01:06:41.000Z",
+    "leyo": "AA961",
+    "attrs": [
+     "Blue",
+     "Volvo",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f05_c4.jpg",
+    "recorte": "f05_c4_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-02T01:19:35.000Z",
+    "leyo": "AA957UO",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f05_c5.jpg",
+    "recorte": "f05_c5_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-02T01:34:26.000Z",
+    "leyo": "F555",
+    "attrs": [
+     "Silver",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f05_c6.jpg",
+    "recorte": "f05_c6_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-02T01:42:22.000Z",
+    "leyo": "AI229VD",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f05_c7.jpg",
+    "recorte": "f05_c7_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-02T01:44:06.000Z",
+    "leyo": "B9SLC0",
+    "attrs": [
+     "Gray",
+     "Unrecognized",
+     "Large Truck"
+    ],
+    "parecido": 6,
+    "foto": "f05_c8.jpg",
+    "recorte": "f05_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f06",
+  "dia": "2026-10-02",
+  "plate": "MGQ641",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-02T03:27:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-02T03:14:21.000Z",
+    "leyo": "CGV979",
+    "attrs": [
+     "Red",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f06_c1.jpg",
+    "recorte": "f06_c1_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-02T03:21:49.000Z",
+    "leyo": "MCU841",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 3,
+    "foto": "f06_c2.jpg",
+    "recorte": "f06_c2_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-02T03:22:52.000Z",
+    "leyo": "AA168AF",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 6,
+    "foto": "f06_c3.jpg",
+    "recorte": "f06_c3_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-02T03:30:57.000Z",
+    "leyo": "NLC566",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Large Truck"
+    ],
+    "parecido": 6,
+    "foto": "f06_c4.jpg",
+    "recorte": "f06_c4_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-02T03:31:41.000Z",
+    "leyo": "LLA258",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f06_c5.jpg",
+    "recorte": "f06_c5_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-02T03:40:41.000Z",
+    "leyo": "CDF628",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 5,
+    "foto": "f06_c6.jpg",
+    "recorte": "f06_c6_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-02T03:46:31.000Z",
+    "leyo": "TG720",
+    "attrs": [
+     "Black",
+     "Mercedes-Benz",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f06_c7.jpg",
+    "recorte": "f06_c7_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-02T03:57:42.000Z",
+    "leyo": "I101",
+    "attrs": [
+     "Silver",
+     "Mercedes-Benz",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f06_c8.jpg",
+    "recorte": "f06_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f07",
+  "dia": "2026-10-02",
+  "plate": "MRM512",
+  "circuito": "SL3",
+  "ingresoExcel": "2026-10-02T12:43:00.000Z",
+  "referencia": {
+   "dev": "SLZSalidaC1Fte",
+   "t": "2026-10-02T00:13:48.000Z",
+   "leyo": "MRM512",
+   "attrs": [
+    "White",
+    "Iveco",
+    "Large Truck"
+   ],
+   "foto": "f07_ref.jpg",
+   "recorte": "f07_ref_pl.jpg"
+  },
+  "candidatos": [
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-02T12:39:10.000Z",
+    "leyo": "PAR121",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f07_c1.jpg",
+    "recorte": "f07_c1_pl.jpg"
+   },
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-02T12:40:15.000Z",
+    "leyo": "CMF111",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f07_c2.jpg",
+    "recorte": "f07_c2_pl.jpg"
+   },
+   {
+    "dev": "SLZBalIngFte",
+    "t": "2026-10-02T12:41:31.000Z",
+    "leyo": "PAR121",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f07_c3.jpg",
+    "recorte": "f07_c3_pl.jpg"
+   },
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-02T12:42:56.000Z",
+    "leyo": "RUK692",
+    "attrs": [
+     "Black",
+     "Mercedes-Benz",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f07_c4.jpg",
+    "recorte": "f07_c4_pl.jpg"
+   },
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-02T12:45:04.000Z",
+    "leyo": "SH048",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f07_c5.jpg",
+    "recorte": "f07_c5_pl.jpg"
+   },
+   {
+    "dev": "SLZBalIngFte",
+    "t": "2026-10-02T12:48:28.000Z",
+    "leyo": "CMF111",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f07_c6.jpg",
+    "recorte": "f07_c6_pl.jpg"
+   },
+   {
+    "dev": "SLZBalIngFte",
+    "t": "2026-10-02T12:56:43.000Z",
+    "leyo": "GUH043",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f07_c7.jpg",
+    "recorte": "f07_c7_pl.jpg"
+   },
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-02T13:01:34.000Z",
+    "leyo": "KWN857",
+    "attrs": [
+     "White",
+     "Scania",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f07_c8.jpg",
+    "recorte": "f07_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f08",
+  "dia": "2026-10-02",
+  "plate": "IFK980",
+  "circuito": "SL1",
+  "ingresoExcel": "2026-10-02T04:35:00.000Z",
+  "referencia": {
+   "dev": "RenCargFte",
+   "t": "2026-09-28T22:39:02.000Z",
+   "leyo": "IFK980",
+   "attrs": [
+    "Silver",
+    "Mercedes-Benz",
+    "Medium Truck"
+   ],
+   "foto": "f08_ref.jpg",
+   "recorte": "f08_ref_pl.jpg"
+  },
+  "candidatos": [
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-02T03:56:01.000Z",
+    "leyo": "OOY184",
+    "attrs": [
+     "Green",
+     "Dongfeng",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f08_c1.jpg",
+    "recorte": "f08_c1_pl.jpg"
+   },
+   {
+    "dev": "SLZBalIngFte",
+    "t": "2026-10-02T04:11:47.000Z",
+    "leyo": "UUO981",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 4,
+    "foto": "f08_c2.jpg",
+    "recorte": "f08_c2_pl.jpg"
+   },
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-02T04:12:13.000Z",
+    "leyo": "GTZ627",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f08_c3.jpg",
+    "recorte": "f08_c3_pl.jpg"
+   },
+   {
+    "dev": "SLZBalIngFte",
+    "t": "2026-10-02T04:14:16.000Z",
+    "leyo": "LOC120",
+    "attrs": [
+     "Black",
+     "Mercedes-Benz",
+     "Small Truck"
+    ],
+    "parecido": 5,
+    "foto": "f08_c4.jpg",
+    "recorte": "f08_c4_pl.jpg"
+   },
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-02T04:22:04.000Z",
+    "leyo": "PAS288",
+    "attrs": [
+     "Black",
+     "Mercedes-Benz",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f08_c5.jpg",
+    "recorte": "f08_c5_pl.jpg"
+   },
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-02T04:24:39.000Z",
+    "leyo": "COW52",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 6,
+    "foto": "f08_c6.jpg",
+    "recorte": "f08_c6_pl.jpg"
+   },
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-02T04:25:41.000Z",
+    "leyo": "014",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f08_c7.jpg",
+    "recorte": "f08_c7_pl.jpg"
+   },
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-02T04:27:48.000Z",
+    "leyo": "AI168AF",
+    "attrs": [
+     "Blue",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 6,
+    "foto": "f08_c8.jpg",
+    "recorte": "f08_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f09",
+  "dia": "2026-10-02",
+  "plate": "GZI868",
+  "circuito": "SL1",
+  "ingresoExcel": "2026-10-02T21:58:00.000Z",
+  "referencia": {
+   "dev": "SLZBalIngFte",
+   "t": "2026-10-01T18:23:13.000Z",
+   "leyo": "GZI868",
+   "attrs": [
+    "Blue",
+    "Chevrolet",
+    "Pickup"
+   ],
+   "foto": "f09_ref.jpg",
+   "recorte": "f09_ref_pl.jpg"
+  },
+  "candidatos": [
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-02T21:51:38.000Z",
+    "leyo": "LCJ2888",
+    "attrs": [
+     "Blue",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f09_c1.jpg",
+    "recorte": "f09_c1_pl.jpg"
+   },
+   {
+    "dev": "SLZBalIngFte",
+    "t": "2026-10-02T22:02:50.000Z",
+    "leyo": "AF615IJ",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 7,
+    "foto": "f09_c2.jpg",
+    "recorte": "f09_c2_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f10",
+  "dia": "2026-10-03",
+  "plate": "TFN865",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-03T02:15:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-03T01:39:32.000Z",
+    "leyo": "LKN268",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 4,
+    "foto": "f10_c1.jpg",
+    "recorte": "f10_c1_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-03T01:53:03.000Z",
+    "leyo": "LKN268",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Large Truck"
+    ],
+    "parecido": 4,
+    "foto": "f10_c2.jpg",
+    "recorte": "f10_c2_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-03T02:07:49.000Z",
+    "leyo": "TCZ675",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Large Truck"
+    ],
+    "parecido": 4,
+    "foto": "f10_c3.jpg",
+    "recorte": "f10_c3_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-03T02:08:40.000Z",
+    "leyo": "SUI675",
+    "attrs": [
+     "Gray",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f10_c4.jpg",
+    "recorte": "f10_c4_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-03T02:08:44.000Z",
+    "leyo": "ICZ675",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f10_c5.jpg",
+    "recorte": "f10_c5_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-03T02:08:53.000Z",
+    "leyo": "ICZ675",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f10_c6.jpg",
+    "recorte": "f10_c6_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-03T02:10:51.000Z",
+    "leyo": "OCK385",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f10_c7.jpg",
+    "recorte": "f10_c7_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-03T02:12:06.000Z",
+    "leyo": "FKX890",
+    "attrs": [
+     "White",
+     "Volkswagen",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f10_c8.jpg",
+    "recorte": "f10_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f11",
+  "dia": "2026-10-03",
+  "plate": "AE949OO",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-03T05:22:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-03T04:51:13.000Z",
+    "leyo": "AE656OF",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 4,
+    "foto": "f11_c1.jpg",
+    "recorte": "f11_c1_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-03T04:52:10.000Z",
+    "leyo": "AE229IC",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 4,
+    "foto": "f11_c2.jpg",
+    "recorte": "f11_c2_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-03T04:53:41.000Z",
+    "leyo": "AE308PZ",
+    "attrs": [
+     "Red",
+     "Scania",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f11_c3.jpg",
+    "recorte": "f11_c3_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-03T05:16:30.000Z",
+    "leyo": "AE322PY",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f11_c4.jpg",
+    "recorte": "f11_c4_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-03T05:17:21.000Z",
+    "leyo": "AE94800",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 3,
+    "foto": "f11_c5.jpg",
+    "recorte": "f11_c5_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-03T05:26:02.000Z",
+    "leyo": "GTO498",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f11_c6.jpg",
+    "recorte": "f11_c6_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-03T05:27:59.000Z",
+    "leyo": "EMA564",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 6,
+    "foto": "f11_c7.jpg",
+    "recorte": "f11_c7_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-03T05:29:30.000Z",
+    "leyo": "AH597II",
+    "attrs": [
+     "Silver",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f11_c8.jpg",
+    "recorte": "f11_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f12",
+  "dia": "2026-10-03",
+  "plate": "AB750EL",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-03T23:08:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-03T23:04:03.000Z",
+    "leyo": "AE458GA",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 5,
+    "foto": "f12_c1.jpg",
+    "recorte": "f12_c1_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-03T23:16:14.000Z",
+    "leyo": "SHS882",
+    "attrs": [
+     "Black",
+     "Mercedes-Benz",
+     "Large Truck"
+    ],
+    "parecido": 7,
+    "foto": "f12_c2.jpg",
+    "recorte": "f12_c2_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-03T23:19:18.000Z",
+    "leyo": "AB0C",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Large Truck"
+    ],
+    "parecido": 4,
+    "foto": "f12_c3.jpg",
+    "recorte": "f12_c3_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-03T23:19:45.000Z",
+    "leyo": "AB0EL",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Large Truck"
+    ],
+    "parecido": 2,
+    "foto": "f12_c4.jpg",
+    "recorte": "f12_c4_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-03T23:20:56.000Z",
+    "leyo": "AB0EL",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Large Truck"
+    ],
+    "parecido": 2,
+    "foto": "f12_c5.jpg",
+    "recorte": "f12_c5_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-03T23:21:08.000Z",
+    "leyo": "AB0EL",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Large Truck"
+    ],
+    "parecido": 2,
+    "foto": "f12_c6.jpg",
+    "recorte": "f12_c6_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-03T23:21:22.000Z",
+    "leyo": "AE458GA",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f12_c7.jpg",
+    "recorte": "f12_c7_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-03T23:23:08.000Z",
+    "leyo": "AI203AF",
+    "attrs": [
+     "White",
+     "Foton",
+     "Large Truck"
+    ],
+    "parecido": 6,
+    "foto": "f12_c8.jpg",
+    "recorte": "f12_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f13",
+  "dia": "2026-10-03",
+  "plate": "FEQ415",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-04T00:53:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-04T00:47:00.000Z",
+    "leyo": "FD415",
+    "attrs": [
+     "White",
+     "Volkswagen",
+     "Medium Truck"
+    ],
+    "parecido": 2,
+    "foto": "f13_c1.jpg",
+    "recorte": "f13_c1_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-04T00:56:31.000Z",
+    "leyo": "EMA564",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f13_c2.jpg",
+    "recorte": "f13_c2_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-04T00:59:13.000Z",
+    "leyo": "ADG781",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f13_c3.jpg",
+    "recorte": "f13_c3_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-04T00:59:54.000Z",
+    "leyo": "LTM404",
+    "attrs": [
+     "Black",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f13_c4.jpg",
+    "recorte": "f13_c4_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-04T01:01:02.000Z",
+    "leyo": "UJF597",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 6,
+    "foto": "f13_c5.jpg",
+    "recorte": "f13_c5_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-04T01:02:16.000Z",
+    "leyo": "ERT433",
+    "attrs": [
+     "Red",
+     "Volkswagen",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f13_c6.jpg",
+    "recorte": "f13_c6_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-04T01:02:54.000Z",
+    "leyo": "AA323QQ",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 7,
+    "foto": "f13_c7.jpg",
+    "recorte": "f13_c7_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-04T01:15:08.000Z",
+    "leyo": "AG818PJ",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 7,
+    "foto": "f13_c8.jpg",
+    "recorte": "f13_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f14",
+  "dia": "2026-10-04",
+  "plate": "STI174",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-04T01:48:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-04T01:15:08.000Z",
+    "leyo": "AG818PJ",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f14_c1.jpg",
+    "recorte": "f14_c1_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-04T01:43:35.000Z",
+    "leyo": "I3J64",
+    "attrs": [
+     "Brown",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 5,
+    "foto": "f14_c2.jpg",
+    "recorte": "f14_c2_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-04T01:53:37.000Z",
+    "leyo": "AB651EW",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f14_c3.jpg",
+    "recorte": "f14_c3_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-04T01:54:43.000Z",
+    "leyo": "AI523IB",
+    "attrs": [
+     "Black",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 7,
+    "foto": "f14_c4.jpg",
+    "recorte": "f14_c4_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f15",
+  "dia": "2026-10-04",
+  "plate": "HDI137",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-04T03:07:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-04T02:58:09.000Z",
+    "leyo": "MUA915",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 6,
+    "foto": "f15_c1.jpg",
+    "recorte": "f15_c1_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-04T03:01:32.000Z",
+    "leyo": "LC617",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 4,
+    "foto": "f15_c2.jpg",
+    "recorte": "f15_c2_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-04T03:05:58.000Z",
+    "leyo": "AA323QQ",
+    "attrs": [
+     "Silver",
+     "Ford",
+     "Large Truck"
+    ],
+    "parecido": 6,
+    "foto": "f15_c3.jpg",
+    "recorte": "f15_c3_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-04T03:06:13.000Z",
+    "leyo": "1S6",
+    "attrs": [
+     "White",
+     "Renault",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f15_c4.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-04T03:07:37.000Z",
+    "leyo": "ERT433",
+    "attrs": [
+     "White",
+     "Volkswagen",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f15_c5.jpg",
+    "recorte": "f15_c5_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-04T03:13:12.000Z",
+    "leyo": "DBV61",
+    "attrs": [
+     "White",
+     "Volkswagen",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f15_c6.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-04T03:15:00.000Z",
+    "leyo": "VEC0",
+    "attrs": [
+     "Black",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f15_c7.jpg",
+    "recorte": "f15_c7_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-04T03:25:28.000Z",
+    "leyo": "END934",
+    "attrs": [
+     "Silver",
+     "Mercedes-Benz",
+     "Small Truck"
+    ],
+    "parecido": 5,
+    "foto": "f15_c8.jpg",
+    "recorte": "f15_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f16",
+  "dia": "2026-10-05",
+  "plate": "AYJ768",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-05T01:40:00.000Z",
+  "referencia": {
+   "dev": "SLZSalidaC1Fte",
+   "t": "2026-10-02T19:20:49.000Z",
+   "leyo": "AYJ768",
+   "attrs": [
+    "White",
+    "Iveco",
+    "Medium Truck"
+   ],
+   "foto": "f16_ref.jpg",
+   "recorte": "f16_ref_pl.jpg"
+  },
+  "candidatos": [
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T01:07:50.000Z",
+    "leyo": "AEE773",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 4,
+    "foto": "f16_c1.jpg",
+    "recorte": "f16_c1_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T01:10:20.000Z",
+    "leyo": "AH772MA",
+    "attrs": [
+     "Silver",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 5,
+    "foto": "f16_c2.jpg",
+    "recorte": "f16_c2_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T01:22:26.000Z",
+    "leyo": "AVI",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 5,
+    "foto": "f16_c3.jpg",
+    "recorte": "f16_c3_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T01:30:10.000Z",
+    "leyo": "AVEC0",
+    "attrs": [
+     "Black",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f16_c4.jpg",
+    "recorte": "f16_c4_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T01:36:32.000Z",
+    "leyo": "AG790WY",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f16_c5.jpg",
+    "recorte": "f16_c5_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-05T01:36:41.000Z",
+    "leyo": "AE003HC",
+    "attrs": [
+     "White",
+     "Volkswagen",
+     "Large Truck"
+    ],
+    "parecido": 6,
+    "foto": "f16_c6.jpg",
+    "recorte": "f16_c6_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-05T01:50:35.000Z",
+    "leyo": "AD074JB",
+    "attrs": [
+     "White",
+     "Ford",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f16_c7.jpg",
+    "recorte": "f16_c7_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T02:11:59.000Z",
+    "leyo": "MTM756",
+    "attrs": [
+     "White",
+     "Volvo",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f16_c8.jpg",
+    "recorte": "f16_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f17",
+  "dia": "2026-10-05",
+  "plate": "DDY229",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-05T04:43:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T04:04:33.000Z",
+    "leyo": "AG834TM",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 7,
+    "foto": "f17_c1.jpg",
+    "recorte": "f17_c1_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T04:13:50.000Z",
+    "leyo": "HAP522",
+    "attrs": [
+     "Blue",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f17_c2.jpg",
+    "recorte": "f17_c2_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T04:28:20.000Z",
+    "leyo": "AA756JI",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 7,
+    "foto": "f17_c3.jpg",
+    "recorte": "f17_c3_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T04:30:43.000Z",
+    "leyo": "GKC7280",
+    "attrs": [
+     "Red",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f17_c4.jpg",
+    "recorte": "f17_c4_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T04:47:07.000Z",
+    "leyo": "AD489PM",
+    "attrs": [
+     "White",
+     "Scania",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f17_c5.jpg",
+    "recorte": "f17_c5_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T04:47:53.000Z",
+    "leyo": "OJW902",
+    "attrs": [
+     "Red",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f17_c6.jpg",
+    "recorte": "f17_c6_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f18",
+  "dia": "2026-10-05",
+  "plate": "GFP699",
+  "circuito": "R8",
+  "ingresoExcel": "2026-10-05T11:07:00.000Z",
+  "referencia": {
+   "dev": "RicPreIngInFr",
+   "t": "2026-10-07T11:09:27.000Z",
+   "leyo": "GFP699",
+   "attrs": [
+    "White",
+    "Unrecognized",
+    "Sedan"
+   ],
+   "foto": "f18_ref.jpg",
+   "recorte": "f18_ref_pl.jpg"
+  },
+  "candidatos": [
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T10:32:14.000Z",
+    "leyo": "GXT382",
+    "attrs": [
+     "Silver",
+     "Volvo",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f18_c1.jpg",
+    "recorte": "f18_c1_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T10:36:56.000Z",
+    "leyo": "EFA323",
+    "attrs": [
+     "Silver",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f18_c2.jpg",
+    "recorte": "f18_c2_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T10:44:29.000Z",
+    "leyo": "NPF900",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f18_c3.jpg",
+    "recorte": "f18_c3_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T10:57:10.000Z",
+    "leyo": "VQD079",
+    "attrs": [
+     "Yellow",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 5,
+    "foto": "f18_c4.jpg",
+    "recorte": "f18_c4_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T11:06:21.000Z",
+    "leyo": "PMK919",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f18_c5.jpg",
+    "recorte": "f18_c5_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T11:16:49.000Z",
+    "leyo": "SPM669",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 4,
+    "foto": "f18_c6.jpg",
+    "recorte": "f18_c6_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-05T11:17:37.000Z",
+    "leyo": "FC91",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 4,
+    "foto": "f18_c7.jpg",
+    "recorte": "f18_c7_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-05T11:27:52.000Z",
+    "leyo": "SQL603",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f18_c8.jpg",
+    "recorte": "f18_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f19",
+  "dia": "2026-10-05",
+  "plate": "IFK980",
+  "circuito": "SL1",
+  "ingresoExcel": "2026-10-05T12:36:00.000Z",
+  "referencia": {
+   "dev": "SLZSalidaC1Fte",
+   "t": "2026-10-07T21:10:42.000Z",
+   "leyo": "IFK980",
+   "attrs": [
+    "White",
+    "Mercedes-Benz",
+    "Large Truck"
+   ],
+   "foto": "f19_ref.jpg",
+   "recorte": "f19_ref_pl.jpg"
+  },
+  "candidatos": [
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-05T12:13:06.000Z",
+    "leyo": "AF829YZ",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f19_c1.jpg",
+    "recorte": "f19_c1_pl.jpg"
+   },
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-05T12:16:54.000Z",
+    "leyo": "KWO040",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f19_c2.jpg",
+    "recorte": "f19_c2_pl.jpg"
+   },
+   {
+    "dev": "SLZBalIngFte",
+    "t": "2026-10-05T12:17:11.000Z",
+    "leyo": "AF829YZ",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f19_c3.jpg",
+    "recorte": "f19_c3_pl.jpg"
+   },
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-05T12:22:16.000Z",
+    "leyo": "JLI914",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f19_c4.jpg",
+    "recorte": "f19_c4_pl.jpg"
+   },
+   {
+    "dev": "SLZBalIngFte",
+    "t": "2026-10-05T12:27:35.000Z",
+    "leyo": "JLI914",
+    "attrs": [
+     "Green",
+     "Kia",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f19_c5.jpg",
+    "recorte": "f19_c5_pl.jpg"
+   },
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-05T12:35:02.000Z",
+    "leyo": "NWZ336",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f19_c6.jpg",
+    "recorte": "f19_c6_pl.jpg"
+   },
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-05T12:36:27.000Z",
+    "leyo": "GZI868",
+    "attrs": [
+     "Blue",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f19_c7.jpg",
+    "recorte": "f19_c7_pl.jpg"
+   },
+   {
+    "dev": "SLZIngCamFrente",
+    "t": "2026-10-05T12:59:04.000Z",
+    "leyo": "IUE642",
+    "attrs": [
+     "Blue",
+     "Iveco",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f19_c8.jpg",
+    "recorte": "f19_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f20",
+  "dia": "2026-10-06",
+  "plate": "AC744ZO",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-06T03:20:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-06T02:57:05.000Z",
+    "leyo": "FZS649",
+    "attrs": [
+     "Black",
+     "Volkswagen",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f20_c1.jpg",
+    "recorte": "f20_c1_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-06T03:13:07.000Z",
+    "leyo": "AG085YQ",
+    "attrs": [
+     "White",
+     "Iveco",
+     "Large Truck"
+    ],
+    "parecido": 6,
+    "foto": "f20_c2.jpg",
+    "recorte": "f20_c2_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-06T03:13:53.000Z",
+    "leyo": "AG554DA",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Small Truck"
+    ],
+    "parecido": 5,
+    "foto": "f20_c3.jpg",
+    "recorte": "f20_c3_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-06T03:15:05.000Z",
+    "leyo": "AC74420",
+    "attrs": [
+     "Black",
+     "Volkswagen",
+     "Medium Truck"
+    ],
+    "parecido": 2,
+    "foto": "f20_c4.jpg",
+    "recorte": "f20_c4_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-06T03:19:45.000Z",
+    "leyo": "FZS649",
+    "attrs": [
+     "Silver",
+     "Volkswagen",
+     "Large Truck"
+    ],
+    "parecido": 6,
+    "foto": "f20_c5.jpg",
+    "recorte": "f20_c5_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-06T03:23:26.000Z",
+    "leyo": "AF52310",
+    "attrs": [
+     "White",
+     "Scania",
+     "Large Truck"
+    ],
+    "parecido": 6,
+    "foto": "f20_c6.jpg",
+    "recorte": "f20_c6_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-06T03:26:11.000Z",
+    "leyo": "AC744Z0",
+    "attrs": [
+     "White",
+     "Volkswagen",
+     "Medium Truck"
+    ],
+    "parecido": 1,
+    "foto": "f20_c7.jpg",
+    "recorte": "f20_c7_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-06T03:36:41.000Z",
+    "leyo": "AR8386",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 6,
+    "foto": "f20_c8.jpg",
+    "recorte": "f20_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f21",
+  "dia": "2026-10-06",
+  "plate": "ARV336",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-06T03:42:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-06T03:17:54.000Z",
+    "leyo": "HEA334",
+    "attrs": [
+     "White",
+     "Mercedes-Benz",
+     "Large Truck"
+    ],
+    "parecido": 4,
+    "foto": "f21_c1.jpg",
+    "recorte": "f21_c1_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-06T03:19:45.000Z",
+    "leyo": "FZS649",
+    "attrs": [
+     "Silver",
+     "Volkswagen",
+     "Large Truck"
+    ],
+    "parecido": 6,
+    "foto": "f21_c2.jpg",
+    "recorte": "f21_c2_pl.jpg"
+   },
+   {
+    "dev": "RicCal04",
+    "t": "2026-10-06T03:23:26.000Z",
+    "leyo": "AF52310",
+    "attrs": [
+     "White",
+     "Scania",
+     "Large Truck"
+    ],
+    "parecido": 5,
+    "foto": "f21_c3.jpg",
+    "recorte": "f21_c3_pl.jpg"
+   },
+   {
+    "dev": "RicCal03",
+    "t": "2026-10-06T03:26:11.000Z",
+    "leyo": "AC744Z0",
+    "attrs": [
+     "White",
+     "Volkswagen",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f21_c4.jpg",
+    "recorte": "f21_c4_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-06T03:36:41.000Z",
+    "leyo": "AR8386",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 2,
+    "foto": "f21_c5.jpg",
+    "recorte": "f21_c5_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-06T03:42:23.000Z",
+    "leyo": "SAT582",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Unrecognized"
+    ],
+    "parecido": 6,
+    "foto": "f21_c6.jpg",
+    "recorte": "f21_c6_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-06T03:49:50.000Z",
+    "leyo": "ECT980",
+    "attrs": [
+     "Black",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f21_c7.jpg",
+    "recorte": "f21_c7_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-06T04:08:50.000Z",
+    "leyo": "IKP586",
+    "attrs": [
+     "Blue",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f21_c8.jpg",
+    "recorte": "f21_c8_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f22",
+  "dia": "2026-10-06",
+  "plate": "IFK980",
+  "circuito": "SL1",
+  "ingresoExcel": "2026-10-06T04:34:00.000Z",
+  "referencia": {
+   "dev": "SLZSalidaC1Fte",
+   "t": "2026-10-07T21:10:42.000Z",
+   "leyo": "IFK980",
+   "attrs": [
+    "White",
+    "Mercedes-Benz",
+    "Large Truck"
+   ],
+   "foto": "f22_ref.jpg",
+   "recorte": "f22_ref_pl.jpg"
+  },
+  "candidatos": [
+   {
+    "dev": "SLZBalIngFte",
+    "t": "2026-10-06T04:25:25.000Z",
+    "leyo": "AC94420",
+    "attrs": [
+     "White",
+     "Unrecognized",
+     "Small Truck"
+    ],
+    "parecido": 6,
+    "foto": "f22_c1.jpg",
+    "recorte": "f22_c1_pl.jpg"
+   }
+  ]
+ },
+ {
+  "id": "f23",
+  "dia": "2026-10-07",
+  "plate": "MQQ861",
+  "circuito": "R7",
+  "ingresoExcel": "2026-10-07T01:27:00.000Z",
+  "referencia": null,
+  "candidatos": [
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-07T00:56:48.000Z",
+    "leyo": "FVJ129",
+    "attrs": [
+     "Brown",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 6,
+    "foto": "f23_c1.jpg",
+    "recorte": "f23_c1_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-07T01:00:03.000Z",
+    "leyo": "FFM301",
+    "attrs": [
+     "Red",
+     "Mitsubishi",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f23_c2.jpg",
+    "recorte": "f23_c2_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-07T01:22:20.000Z",
+    "leyo": "MIG0",
+    "attrs": [
+     "White",
+     "Hino",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f23_c3.jpg",
+    "recorte": "f23_c3_pl.jpg"
+   },
+   {
+    "dev": "RicPreIngInFr",
+    "t": "2026-10-07T01:34:36.000Z",
+    "leyo": "PQD489",
+    "attrs": [
+     "Red",
+     "Unrecognized",
+     "Medium Truck"
+    ],
+    "parecido": 5,
+    "foto": "f23_c4.jpg",
+    "recorte": "f23_c4_pl.jpg"
+   }
+  ]
+ }
+]

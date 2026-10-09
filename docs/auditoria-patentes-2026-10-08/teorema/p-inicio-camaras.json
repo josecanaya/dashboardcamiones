@@ -1,0 +1,540 @@
+{
+  "generatedAt": "2026-10-08T18:26:14.756Z",
+  "lecturasValidas": 96290,
+  "lecturasDeCamiones": 89391,
+  "patentesCamion": 9740,
+  "nodos": {
+    "SL_S1": {
+      "dia": {
+        "pasos": 5405,
+        "primera": 336,
+        "confirmada": 230,
+        "p": 0.06216466234967623,
+        "pConfirmada": 0.0425531914893617
+      },
+      "noche": {
+        "pasos": 4047,
+        "primera": 528,
+        "confirmada": 113,
+        "p": 0.13046701260192736,
+        "pConfirmada": 0.027921917469730665
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 5405,
+          "otros": 0,
+          "p": 0
+        },
+        "noche": {
+          "pasos": 4047,
+          "otros": 0,
+          "p": 0
+        }
+      }
+    },
+    "SL_S4": {
+      "dia": {
+        "pasos": 3563,
+        "primera": 140,
+        "confirmada": 37,
+        "p": 0.03929273084479371,
+        "pConfirmada": 0.010384507437552624
+      },
+      "noche": {
+        "pasos": 2482,
+        "primera": 537,
+        "confirmada": 33,
+        "p": 0.21635777598710718,
+        "pConfirmada": 0.01329572925060435
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 3562,
+          "otros": 0,
+          "p": 0
+        },
+        "noche": {
+          "pasos": 2482,
+          "otros": 0,
+          "p": 0
+        }
+      }
+    },
+    "SL_S7": {
+      "dia": {
+        "pasos": 6670,
+        "primera": 847,
+        "confirmada": 417,
+        "p": 0.12698650674662668,
+        "pConfirmada": 0.06251874062968515
+      },
+      "noche": {
+        "pasos": 4499,
+        "primera": 195,
+        "confirmada": 68,
+        "p": 0.0433429651033563,
+        "pConfirmada": 0.015114469882196044
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 8307,
+          "otros": 1723,
+          "p": 0.20741543276754545
+        },
+        "noche": {
+          "pasos": 5275,
+          "otros": 799,
+          "p": 0.1514691943127962
+        }
+      }
+    },
+    "SL_S0": {
+      "dia": {
+        "pasos": 3844,
+        "primera": 443,
+        "confirmada": 429,
+        "p": 0.11524453694068679,
+        "pConfirmada": 0.11160249739854318
+      },
+      "noche": {
+        "pasos": 3071,
+        "primera": 174,
+        "confirmada": 132,
+        "p": 0.05665906870726148,
+        "pConfirmada": 0.0429827417779225
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 3932,
+          "otros": 88,
+          "p": 0.022380467955239063
+        },
+        "noche": {
+          "pasos": 3531,
+          "otros": 460,
+          "p": 0.13027470971396204
+        }
+      }
+    },
+    "S0": {
+      "dia": {
+        "pasos": 4171,
+        "primera": 3486,
+        "confirmada": 3459,
+        "p": 0.8357707983696955,
+        "pConfirmada": 0.8292975305682091
+      },
+      "noche": {
+        "pasos": 2788,
+        "primera": 2539,
+        "confirmada": 2510,
+        "p": 0.9106886657101865,
+        "pConfirmada": 0.900286944045911
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 4347,
+          "otros": 176,
+          "p": 0.040487692661605706
+        },
+        "noche": {
+          "pasos": 3201,
+          "otros": 413,
+          "p": 0.12902218056857231
+        }
+      }
+    },
+    "S1": {
+      "dia": {
+        "pasos": 5254,
+        "primera": 823,
+        "confirmada": 770,
+        "p": 0.15664255805100877,
+        "pConfirmada": 0.1465550057099353
+      },
+      "noche": {
+        "pasos": 4879,
+        "primera": 1554,
+        "confirmada": 1365,
+        "p": 0.31850789096126253,
+        "pConfirmada": 0.2797704447632712
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 5443,
+          "otros": 189,
+          "p": 0.03472349807091677
+        },
+        "noche": {
+          "pasos": 5447,
+          "otros": 568,
+          "p": 0.1042775839911878
+        }
+      }
+    },
+    "S2": {
+      "dia": {
+        "pasos": 4930,
+        "primera": 610,
+        "confirmada": 409,
+        "p": 0.12373225152129817,
+        "pConfirmada": 0.08296146044624747
+      },
+      "noche": {
+        "pasos": 4993,
+        "primera": 1037,
+        "confirmada": 479,
+        "p": 0.20769076707390347,
+        "pConfirmada": 0.09593430803124374
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 4927,
+          "otros": 0,
+          "p": 0
+        },
+        "noche": {
+          "pasos": 4989,
+          "otros": 0,
+          "p": 0
+        }
+      }
+    },
+    "S3": {
+      "dia": {
+        "pasos": 4342,
+        "primera": 249,
+        "confirmada": 156,
+        "p": 0.05734684477199447,
+        "pConfirmada": 0.03592814371257485
+      },
+      "noche": {
+        "pasos": 2957,
+        "primera": 92,
+        "confirmada": 66,
+        "p": 0.031112614135948596,
+        "pConfirmada": 0.022319918836658775
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 4549,
+          "otros": 207,
+          "p": 0.04550450648494175
+        },
+        "noche": {
+          "pasos": 3349,
+          "otros": 392,
+          "p": 0.1170498656315318
+        }
+      }
+    },
+    "SL_S5": {
+      "dia": {
+        "pasos": 2574,
+        "primera": 387,
+        "confirmada": 38,
+        "p": 0.15034965034965034,
+        "pConfirmada": 0.014763014763014764
+      },
+      "noche": {
+        "pasos": 949,
+        "primera": 150,
+        "confirmada": 10,
+        "p": 0.15806111696522657,
+        "pConfirmada": 0.01053740779768177
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 2574,
+          "otros": 0,
+          "p": 0
+        },
+        "noche": {
+          "pasos": 949,
+          "otros": 0,
+          "p": 0
+        }
+      }
+    },
+    "S9": {
+      "dia": {
+        "pasos": 1059,
+        "primera": 275,
+        "confirmada": 182,
+        "p": 0.25967894239848915,
+        "pConfirmada": 0.17186024551463644
+      },
+      "noche": {
+        "pasos": 1011,
+        "primera": 253,
+        "confirmada": 116,
+        "p": 0.2502472799208704,
+        "pConfirmada": 0.11473788328387735
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 1058,
+          "otros": 0,
+          "p": 0
+        },
+        "noche": {
+          "pasos": 1011,
+          "otros": 0,
+          "p": 0
+        }
+      }
+    },
+    "S4": {
+      "dia": {
+        "pasos": 4142,
+        "primera": 946,
+        "confirmada": 262,
+        "p": 0.22839208112023177,
+        "pConfirmada": 0.06325446644133269
+      },
+      "noche": {
+        "pasos": 2156,
+        "primera": 290,
+        "confirmada": 51,
+        "p": 0.1345083487940631,
+        "pConfirmada": 0.02365491651205937
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 4107,
+          "otros": 0,
+          "p": 0
+        },
+        "noche": {
+          "pasos": 2147,
+          "otros": 0,
+          "p": 0
+        }
+      }
+    },
+    "S7": {
+      "dia": {
+        "pasos": 560,
+        "primera": 43,
+        "confirmada": 8,
+        "p": 0.07678571428571429,
+        "pConfirmada": 0.014285714285714285
+      },
+      "noche": {
+        "pasos": 573,
+        "primera": 48,
+        "confirmada": 10,
+        "p": 0.08376963350785341,
+        "pConfirmada": 0.017452006980802792
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 560,
+          "otros": 0,
+          "p": 0
+        },
+        "noche": {
+          "pasos": 572,
+          "otros": 0,
+          "p": 0
+        }
+      }
+    },
+    "SL_S2": {
+      "dia": {
+        "pasos": 864,
+        "primera": 176,
+        "confirmada": 162,
+        "p": 0.2037037037037037,
+        "pConfirmada": 0.1875
+      },
+      "noche": {
+        "pasos": 181,
+        "primera": 31,
+        "confirmada": 15,
+        "p": 0.1712707182320442,
+        "pConfirmada": 0.08287292817679558
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 864,
+          "otros": 0,
+          "p": 0
+        },
+        "noche": {
+          "pasos": 181,
+          "otros": 0,
+          "p": 0
+        }
+      }
+    },
+    "SL_S6": {
+      "dia": {
+        "pasos": 242,
+        "primera": 56,
+        "confirmada": 16,
+        "p": 0.23140495867768596,
+        "pConfirmada": 0.06611570247933884
+      },
+      "noche": {
+        "pasos": 125,
+        "primera": 31,
+        "confirmada": 7,
+        "p": 0.248,
+        "pConfirmada": 0.056
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 242,
+          "otros": 0,
+          "p": 0
+        },
+        "noche": {
+          "pasos": 125,
+          "otros": 0,
+          "p": 0
+        }
+      }
+    },
+    "SL_S8": {
+      "dia": {
+        "pasos": 1146,
+        "primera": 84,
+        "confirmada": 55,
+        "p": 0.07329842931937172,
+        "pConfirmada": 0.04799301919720768
+      },
+      "noche": {
+        "pasos": 152,
+        "primera": 10,
+        "confirmada": 4,
+        "p": 0.06578947368421052,
+        "pConfirmada": 0.02631578947368421
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 1922,
+          "otros": 777,
+          "p": 0.40426638917793967
+        },
+        "noche": {
+          "pasos": 309,
+          "otros": 157,
+          "p": 0.5080906148867314
+        }
+      }
+    },
+    "S6": {
+      "dia": {
+        "pasos": 1836,
+        "primera": 126,
+        "confirmada": 56,
+        "p": 0.06862745098039216,
+        "pConfirmada": 0.030501089324618737
+      },
+      "noche": {
+        "pasos": 914,
+        "primera": 169,
+        "confirmada": 24,
+        "p": 0.18490153172866522,
+        "pConfirmada": 0.0262582056892779
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 1835,
+          "otros": 0,
+          "p": 0
+        },
+        "noche": {
+          "pasos": 913,
+          "otros": 0,
+          "p": 0
+        }
+      }
+    },
+    "SL_S10": {
+      "dia": {
+        "pasos": 401,
+        "primera": 30,
+        "confirmada": 13,
+        "p": 0.07481296758104738,
+        "pConfirmada": 0.032418952618453865
+      },
+      "noche": {
+        "pasos": 127,
+        "primera": 15,
+        "confirmada": 4,
+        "p": 0.11811023622047244,
+        "pConfirmada": 0.031496062992125984
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 401,
+          "otros": 0,
+          "p": 0
+        },
+        "noche": {
+          "pasos": 127,
+          "otros": 0,
+          "p": 0
+        }
+      }
+    },
+    "S5": {
+      "dia": {
+        "pasos": 15,
+        "primera": 6,
+        "confirmada": 0,
+        "p": 0.4,
+        "pConfirmada": 0
+      },
+      "noche": {
+        "pasos": 0,
+        "primera": 0,
+        "confirmada": 0,
+        "p": null,
+        "pConfirmada": null
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 15,
+          "otros": 0,
+          "p": 0
+        },
+        "noche": {
+          "pasos": 0,
+          "otros": 0,
+          "p": null
+        }
+      }
+    },
+    "S8": {
+      "dia": {
+        "pasos": 376,
+        "primera": 35,
+        "confirmada": 6,
+        "p": 0.09308510638297872,
+        "pConfirmada": 0.015957446808510637
+      },
+      "noche": {
+        "pasos": 221,
+        "primera": 65,
+        "confirmada": 15,
+        "p": 0.29411764705882354,
+        "pConfirmada": 0.06787330316742081
+      },
+      "noCamion": {
+        "dia": {
+          "pasos": 376,
+          "otros": 0,
+          "p": 0
+        },
+        "noche": {
+          "pasos": 221,
+          "otros": 0,
+          "p": 0
+        }
+      }
+    }
+  }
+}

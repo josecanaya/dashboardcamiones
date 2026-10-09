@@ -4,6 +4,7 @@
  * Fuente preferida: API Truckflow; fallback: data/truckflow/<día>/event-list.json.
  */
 
+import { sanitizeLearning } from './cameraLearning.mjs'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -13,8 +14,9 @@ import { buildBaselines, quarterOf } from './baselines.mjs'
 import { resolveSectorStatus, resolveZoneStatus, resolveBottleneck } from './status.mjs'
 import { POINTS, zonesOfSite } from './plantGraph.mjs'
 import { SECTOR_DEVICES } from './sectorProfiles.mjs'
-import { applyIdentifications, applyLinks, findPredecessors, identifyFragments, nodeModelCatalog, recentCaptures, updateRecentCircuits } from './plateIdentification.mjs'
+import { applyIdentifications, applyLinks, findPredecessors, identifyFragments, journeyKeyOf, nodeModelCatalog, recentCaptures, updateRecentCircuits } from './plateIdentification.mjs'
 import { createIdentificationArchive } from './identificationArchive.mjs'
+import { assessVehicleRelevance, excludeIrrelevantEvents } from './vehicleRelevance.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '../..')
@@ -306,6 +308,18 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
   const recentCircuitsBySite = new Map()
   /** @type {Map<string, { at: number, result: object }>} */
   const identificationCache = new Map()
+  /**
+   * Veredictos con color/marca/tipo del DSS (los calcula dssPhotoLookup en segundo plano): fragmento →
+   * candidato que superó el umbral. Solo en memoria: tras un reinicio se recalculan.
+   * @type {Map<string, Record<string, { plate: string, probability: number, at: string }>>}
+   */
+  const evidenceVerdicts = new Map()
+  function setEvidenceVerdict(site, fragmentKey, verdict) {
+    const key = String(site || '').trim().toLowerCase()
+    if (!evidenceVerdicts.has(key)) evidenceVerdicts.set(key, {})
+    evidenceVerdicts.get(key)[fragmentKey] = verdict
+    identificationCache.delete(key)
+  }
 
   function identifyRaw(site, rawEvents, nowMs = Date.now()) {
     const cached = identificationCache.get(site)
@@ -319,6 +333,7 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
         catalog,
         recentCounts,
         decisions: identificationDecisions[site] || {},
+        evidenceVerdicts: evidenceVerdicts.get(site) || {},
         otherSiteEvents: [...(bySite.get(site === 'ricardone' ? 'san_lorenzo' : 'ricardone')?.history.values() ?? [])],
       }),
       recentCounts,
@@ -334,7 +349,9 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     try {
       const source = st ? [...st.history.values()] : rawEvents
       // Vínculos de lecturas anteriores (sobre claves crudas) y después las identificaciones de fragmentos.
-      return applyIdentifications(applyLinks(rawEvents, linksOf(site)), identifyRaw(site, source, nowMs).items.filter(item => !item.archived))
+      const items = identifyRaw(site, source, nowMs).items
+      const operational = excludeIrrelevantEvents(rawEvents, items, e => journeyKeyOf(e, getEventLiveInstantMs(e)))
+      return applyIdentifications(applyLinks(operational, linksOf(site)), items.filter(item => !item.archived))
     } catch (e) {
       console.warn('[plant-state] identificación de patentes falló:', e instanceof Error ? e.message : e)
       return rawEvents
@@ -510,6 +527,42 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     return items.filter((it) => it.fragmentKey !== fk && it.readPlate === me.readPlate && PENDING_LEVELS.has(it.level) && Math.abs(Date.parse(it.at) - meT) <= 3 * 60 * 60 * 1000)
   }
 
+  // Contexto de la visita para descartar ruido, nunca de un candidato de otra patente.
+  const relevanceLocalCache = new Map()
+  function getIdentificationRelevanceContext(site, fragmentKey) {
+    const { key, st } = ensureSite(site)
+    const result = withClaims(key, identifyRaw(key, [...st.history.values()]))
+    const item = result.items.find(i => i.fragmentKey === fragmentKey)
+    if (!item) return null
+    const at = Date.parse(item.at)
+    const from = at - 8 * 3600000, to = at + 8 * 3600000
+    const day = dayIsoFromMs(at)
+    let local = relevanceLocalCache.get(day)
+    if (!local || Date.now() - local.loadedAt > 60000) {
+      local = { loadedAt: Date.now(), rows: loadLocalEventsFor(from, to) }
+      relevanceLocalCache.set(day, local)
+      if (relevanceLocalCache.size > 8) relevanceLocalCache.delete(relevanceLocalCache.keys().next().value)
+    }
+    const reads = [...st.history.values(), ...local.rows].filter(e => {
+      const t = getEventLiveInstantMs(e)
+      return !e.inferred && !e.manualCorrection && eventPlate(e) === normalizePlate(item.readPlate) && t >= from && t <= to
+    })
+    const historyAvailable = reads.some(e => e.deviceCode === item.deviceCode && Math.abs(getEventLiveInstantMs(e) - at) <= 2000)
+    return { site: key, item, reads, historyAvailable }
+  }
+  function rejectIdentificationByRelevance(site, fragmentKey, capture) {
+    const context = getIdentificationRelevanceContext(site, fragmentKey)
+    if (!context) return { applied: false, reason: 'caso_no_disponible' }
+    const assessment = assessVehicleRelevance({ ...context, capture })
+    if (!assessment.reject) return { applied: false, assessment }
+    const result = decideIdentification(site, fragmentKey, {
+      action: 'reject', reason: assessment.reason, operator: 'Sistema · relevancia',
+      expectedVersion: context.item.decision?.updatedAt ?? null,
+      relevance: { ruleVersion: assessment.ruleVersion, capture, historyAvailable: true, checkedAt: new Date().toISOString() },
+    })
+    return { applied: true, assessment, result }
+  }
+
   function decideIdentification(site, fragmentKey, body) {
     const { key } = ensureSite(site)
     const fk = String(fragmentKey || '').trim()
@@ -527,6 +580,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     const reason = body?.reason ? String(body.reason).slice(0, 300) : null
     const operator = body?.operator ? String(body.operator).slice(0, 80) : null
     const previous = identificationDecisions[key][fk] ?? null
+    const learningItem=identificationCache.get(key)?.result?.items?.find(it=>it.fragmentKey===fk)??null
+    const learning=sanitizeLearning(body?.learning,body,learningItem)
     // Notas de relevo (EV-21): se conservan a través de cualquier decisión.
     const notes = Array.isArray(previous?.notes) ? previous.notes : undefined
     if (action === 'note') {
@@ -538,10 +593,10 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       if (!plate) throw new PlantStateError('plate_required', 400, 'patente requerida')
       // EV-15: atributos del DSS que el operador marcó como mal detectados (no se editan los originales).
       const attrFlags = Array.isArray(body?.attrFlags) ? body.attrFlags.map(String).filter((k) => ['color', 'marca', 'tipo'].includes(k)) : undefined
-      identificationDecisions[key][fk] = { action, plate, journeyUid: body?.journeyUid ? String(body.journeyUid) : null, reason, operator, attrFlags, notes, updatedAt: now }
+      identificationDecisions[key][fk] = { action, plate, journeyUid: body?.journeyUid ? String(body.journeyUid) : null, reason, operator, attrFlags, learning, notes, updatedAt: now }
     } else if (action === 'reject') {
       if (!reason) throw new PlantStateError('reason_required', 400, 'motivo requerido para descartar')
-      identificationDecisions[key][fk] = { action, reason, operator, notes, updatedAt: now }
+      identificationDecisions[key][fk] = { action, reason, operator, notes, updatedAt: now, ...(body?.relevance ? { source: 'automatic_relevance', relevance: body.relevance } : {}) }
     } else if (action === 'defer') {
       // EV-08: "no puedo determinar" — sigue pendiente, con motivo y próximo paso.
       if (!reason) throw new PlantStateError('reason_required', 400, 'motivo requerido')
@@ -584,7 +639,10 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
           reason,
           operator,
           attrFlags: identificationDecisions[key][fk]?.attrFlags ?? null,
+          learning: identificationDecisions[key][fk]?.learning ?? null,
           note: action === 'note' ? identificationDecisions[key][fk]?.notes?.at(-1)?.text ?? null : null,
+          relevance: identificationDecisions[key][fk]?.relevance ?? null,
+          source: identificationDecisions[key][fk]?.source ?? 'operator',
           previousVersion: previous?.updatedAt ?? null,
           previousAction: previous?.action ?? null,
           readPlate: item?.readPlate ?? null,
@@ -928,8 +986,11 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     refresh,
     correctTruck,
     getIdentifications,
+    setEvidenceVerdict,
     getRecentCaptures,
     decideIdentification,
+    getIdentificationRelevanceContext,
+    rejectIdentificationByRelevance,
     getIdentificationOp,
     claimIdentification,
     getPredecessors,

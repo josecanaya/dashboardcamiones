@@ -1,0 +1,104 @@
+{
+  "generatedAt": "2026-10-08T15:30:45.017Z",
+  "source": "data/plate-identification-log.jsonl",
+  "interpretation": "Resultados descriptivos de decisiones humanas seleccionadas, no validación de precisión automática ni prevalencia de particulares en el feed.",
+  "logRows": 286,
+  "latestCases": 226,
+  "actions": {
+    "confirm": 194,
+    "reject": 31,
+    "defer": 1
+  },
+  "confirmedWithContext": 183,
+  "renamed": 102,
+  "retainedRead": 81,
+  "suggestedAmongRenames": {
+    "n": 101,
+    "hits": 76
+  },
+  "listedTop3AmongRenames": {
+    "n": 44,
+    "hits": 44
+  },
+  "listedTop5AmongRenames": {
+    "n": 44,
+    "hits": 44
+  },
+  "referenceTimingAmongMatchedRenames": {
+    "n": 44,
+    "after": 15
+  },
+  "confirmedByDevice": {
+    "SLZBalSC1Fte": 9,
+    "SLZIngCamFrente": 4,
+    "RicCalLiq": 2,
+    "SLZBalSC2Fte": 8,
+    "SLZSalidaC1Fte": 36,
+    "SLZSalidaC2Fte": 36,
+    "SLZBalIngFte": 4,
+    "RicB2Egreso": 13,
+    "RicEgrCamFrente": 13,
+    "SLZCalado": 3,
+    "RenDescFte": 3,
+    "SLZTK400": 7,
+    "RicB3Egreso": 1,
+    "SLZVolcableC5": 4,
+    "RicB3Ingreso": 7,
+    "RicCal04": 9,
+    "RicS6Playa3": 10,
+    "RicCal03": 8,
+    "RicPreIngInFr": 1,
+    "RicVolcable2": 4,
+    "SLZBalLiq2a": 1
+  },
+  "rejectionReasons": {
+    "sin_motivo": 22,
+    "No es un vehículo (falsa detección)": 5,
+    "Vehículo de servicio / fuera del circuito": 1,
+    "ilegible": 1,
+    "Lectura duplicada de otra captura": 1,
+    "PAtente de otro pais": 1
+  },
+  "exampleCFK008": {
+    "candidates": [
+      {
+        "plate": "CFK006",
+        "plateLikelihood": 0.2635971381157268,
+        "route": 1,
+        "attrLr": 0.552552,
+        "comparisons": [
+          {
+            "kind": "color",
+            "read": "White",
+            "candidate": "Black",
+            "result": "distinto",
+            "lr": 0.728
+          },
+          {
+            "kind": "marca",
+            "read": "Scania",
+            "candidate": null,
+            "result": "sin_dato",
+            "lr": 1
+          },
+          {
+            "kind": "tipo",
+            "read": "Large Truck",
+            "candidate": "Medium Truck",
+            "result": "distinto",
+            "lr": 0.759
+          }
+        ],
+        "score": 0.1456511258601211,
+        "probability": 0.42138189336916415
+      }
+    ],
+    "otherProbability": 0.5786181066308358
+  },
+  "allSuccessOneSided95LowerBound": {
+    "sevenOfSeven": 0.6518363448688391,
+    "fiveOfFive": 0.5492802716530588,
+    "successesNeededFor98Percent": 149,
+    "assumption": "Ensayos independientes representativos sin selección; ejemplos repetidos del mismo viaje no cuentan como independientes."
+  }
+}

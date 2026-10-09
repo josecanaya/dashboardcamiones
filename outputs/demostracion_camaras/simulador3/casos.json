@@ -1,0 +1,2308 @@
+[
+ {
+  "id": "s01",
+  "t": 1791344563000,
+  "tFeed": "2026-10-07T03:42:43.000Z",
+  "node": "ricardone:Volcable 2",
+  "device": "RicVolcable2",
+  "leyo": "AJ685",
+  "attrs": {
+   "color": "Red",
+   "marca": "Unrecognized",
+   "tipo": "Large Truck"
+  },
+  "otro": 0.04788192236254901,
+  "elegido": null,
+  "proceso": true,
+  "noCamionCamara": 0.014492753623188406,
+  "candidatos": [
+   {
+    "plate": "EIY162",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-06T18:07:12.396Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 576,
+    "pesoTiempo": 0.9430351897575845,
+    "p": 0.948130545402544,
+    "foto": {
+     "file": "s01_cand1.jpg",
+     "dss": {
+      "color": "Red",
+      "marca": "Hyundai",
+      "tipo": "Small Truck",
+      "leyo": "EIY162"
+     }
+    }
+   },
+   {
+    "plate": "RDB282",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-06T23:28:47.876Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 254,
+    "pesoTiempo": 0.03632406093970952,
+    "p": 0.0024617404326176934,
+    "foto": {
+     "file": "s01_cand2.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": "Volvo",
+      "tipo": "Large Truck",
+      "leyo": "RDB282"
+     }
+    }
+   },
+   {
+    "plate": "EVL273",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-06T20:48:18.353Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 414,
+    "pesoTiempo": 0.0025742543851373896,
+    "p": 0.00017446138839637097,
+    "foto": {
+     "file": "s01_cand3.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Mercedes-Benz",
+      "tipo": "Large Truck",
+      "leyo": "EVL273"
+     }
+    }
+   },
+   {
+    "plate": "BTB128",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-06T22:56:22.395Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 286,
+    "pesoTiempo": 0.0016730370013400284,
+    "p": 0.0001628313903755342,
+    "foto": {
+     "file": "s01_cand4.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": "Mercedes-Benz",
+      "tipo": "Large Truck",
+      "leyo": "BTB128"
+     }
+    }
+   },
+   {
+    "plate": "MWG720",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-06T23:15:18.020Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 267,
+    "pesoTiempo": 0.0016438730791783777,
+    "p": 0.0001599929582365069,
+    "foto": {
+     "file": "s01_cand5.jpg",
+     "dss": {
+      "color": "Gray",
+      "marca": null,
+      "tipo": "Large Truck",
+      "leyo": "MWC720"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s01_captura.jpg",
+   "dss": {
+    "color": "Red",
+    "marca": null,
+    "tipo": "Large Truck",
+    "leyo": "AJ685"
+   }
+  }
+ },
+ {
+  "id": "s02",
+  "t": 1791346424000,
+  "tFeed": "2026-10-07T04:13:44.000Z",
+  "node": "ricardone:Balanza Egreso",
+  "device": "RicB2Egreso",
+  "leyo": "KU685",
+  "attrs": {
+   "color": "Red",
+   "marca": "Unrecognized",
+   "tipo": "Unrecognized"
+  },
+  "otro": 0.008646458874206944,
+  "elegido": "RKU685",
+  "proceso": false,
+  "noCamionCamara": 0.48392857142857143,
+  "candidatos": [
+   {
+    "plate": "RKU685",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-06T23:07:55.141Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 306,
+    "pesoTiempo": 0.012266104334589953,
+    "p": 0.8498200440711482,
+    "foto": {
+     "file": "s02_cand1.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": "Lexus",
+      "tipo": "Pickup",
+      "leyo": "RKU685"
+     }
+    }
+   },
+   {
+    "plate": "RKU605",
+    "ultimo": "ricardone:Calada",
+    "ultimoT": "2026-10-06T20:38:25.885Z",
+    "ultimoDevice": "RicCal04",
+    "esperaMin": 455,
+    "pesoTiempo": 0.04434668490198932,
+    "p": 0.05275457268511361,
+    "foto": {
+     "file": "s02_cand2.jpg",
+     "dss": {
+      "color": null,
+      "marca": "Mercedes-Benz",
+      "tipo": "Medium Truck",
+      "leyo": "RKU605"
+     }
+    }
+   },
+   {
+    "plate": "ELU844",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-06T23:23:19.978Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 290,
+    "pesoTiempo": 0.1784225745837281,
+    "p": 0.015390030093883914,
+    "foto": {
+     "file": "s02_cand3.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": "Mercedes-Benz",
+      "tipo": "Medium Truck",
+      "leyo": "ELU844"
+     }
+    }
+   },
+   {
+    "plate": "BZT609",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-06T23:24:56.144Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 289,
+    "pesoTiempo": 0.16560902925454418,
+    "p": 0.014284784030230988,
+    "foto": {
+     "file": "s02_cand4.jpg",
+     "dss": {
+      "color": "Gray",
+      "marca": null,
+      "tipo": "Large Truck",
+      "leyo": "BZT609"
+     }
+    }
+   },
+   {
+    "plate": "MQV609",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-06T23:24:25.276Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 289,
+    "pesoTiempo": 0.16560902925454418,
+    "p": 0.014284784030230988,
+    "foto": {
+     "file": "s02_cand5.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Iveco",
+      "tipo": "Large Truck",
+      "leyo": "MQV609"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s02_captura.jpg",
+   "dss": {
+    "color": "Red",
+    "marca": null,
+    "tipo": null,
+    "leyo": "KU685"
+   }
+  }
+ },
+ {
+  "id": "s03",
+  "t": 1791346762000,
+  "tFeed": "2026-10-07T04:19:22.000Z",
+  "node": "san_lorenzo:Plataformas Volcables",
+  "device": "SLZVolcableC5",
+  "leyo": "KINV0",
+  "attrs": {
+   "color": "White",
+   "marca": "Toyota",
+   "tipo": "Medium Truck"
+  },
+  "otro": 0.03254291603966617,
+  "elegido": "JWP895",
+  "proceso": true,
+  "noCamionCamara": 0.05656108597285068,
+  "candidatos": [
+   {
+    "plate": "JWP895",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:17:29.154Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 2,
+    "pesoTiempo": 0.0733398005990513,
+    "p": 0.6403126210367945,
+    "foto": {
+     "file": "s03_cand1.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Dodge Caliber",
+      "tipo": "Large Truck",
+      "leyo": "JWP895"
+     }
+    }
+   },
+   {
+    "plate": "FYP435",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:15:52.795Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 3,
+    "pesoTiempo": 0.21321572610219028,
+    "p": 0.06670753897181857,
+    "foto": {
+     "file": "s03_cand2.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": null,
+      "tipo": "Large Truck",
+      "leyo": "FYP435"
+     }
+    }
+   },
+   {
+    "plate": "AC889HD",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:10:43.314Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 9,
+    "pesoTiempo": 0.13653984146940748,
+    "p": 0.04944067007333322,
+    "foto": {
+     "file": "s03_cand3.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Pickup",
+      "leyo": "AC889HD"
+     }
+    }
+   },
+   {
+    "plate": "IQL832",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-06T23:28:55.000Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 290,
+    "pesoTiempo": 0.061788718814972346,
+    "p": 0.03213060226452404,
+    "foto": {
+     "file": "s03_cand4.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "QL332"
+     }
+    }
+   },
+   {
+    "plate": "HLD270",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:09:33.566Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 10,
+    "pesoTiempo": 0.13653984146940748,
+    "p": 0.029746122159823626,
+    "foto": {
+     "file": "s03_cand5.jpg",
+     "dss": {
+      "color": "Gray",
+      "marca": null,
+      "tipo": "Bus",
+      "leyo": "HLD270"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s03_captura.jpg",
+   "dss": {
+    "color": "White",
+    "marca": "Toyota",
+    "tipo": "Medium Truck",
+    "leyo": "KINV0"
+   }
+  }
+ },
+ {
+  "id": "s04",
+  "t": 1791347149809,
+  "tFeed": "2026-10-07T04:25:49.809Z",
+  "node": "san_lorenzo:Plataformas Volcables",
+  "device": "SLZVolcableC5",
+  "leyo": "AC89799",
+  "attrs": {
+   "color": "White",
+   "marca": "Unrecognized",
+   "tipo": "Large Truck"
+  },
+  "otro": 0.020123169675146452,
+  "elegido": null,
+  "proceso": true,
+  "noCamionCamara": 0.05656108597285068,
+  "candidatos": [
+   {
+    "plate": "AFO050",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:21:24.928Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 4,
+    "pesoTiempo": 0.16370060912532525,
+    "p": 0.186058256294326,
+    "foto": {
+     "file": "s04_cand1.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "AFO050"
+     }
+    }
+   },
+   {
+    "plate": "FFM301",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:19:32.363Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 6,
+    "pesoTiempo": 0.14095361175844276,
+    "p": 0.16020455490233143,
+    "foto": {
+     "file": "s04_cand2.jpg",
+     "dss": {
+      "color": "Gray",
+      "marca": null,
+      "tipo": "Van",
+      "leyo": "FFM301"
+     }
+    }
+   },
+   {
+    "plate": "AI392QN",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:22:35.436Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 3,
+    "pesoTiempo": 0.1296016057047927,
+    "p": 0.14730213222308675,
+    "foto": {
+     "file": "s04_cand3.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Mercedes-Benz",
+      "tipo": "Medium Truck",
+      "leyo": "AI392QN"
+     }
+    }
+   },
+   {
+    "plate": "AC889HD",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:10:43.314Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 15,
+    "pesoTiempo": 0.07140024467524501,
+    "p": 0.11654216270864062,
+    "foto": {
+     "file": "s04_cand4.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Pickup",
+      "leyo": "AC889HD"
+     }
+    }
+   },
+   {
+    "plate": "HLD270",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:09:33.566Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 16,
+    "pesoTiempo": 0.07285823417816095,
+    "p": 0.07154973398475666,
+    "foto": {
+     "file": "s04_cand5.jpg",
+     "dss": {
+      "color": "Gray",
+      "marca": null,
+      "tipo": "Bus",
+      "leyo": "HLD270"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s04_captura.jpg",
+   "dss": {
+    "color": "White",
+    "marca": null,
+    "tipo": "Large Truck",
+    "leyo": "AC89799"
+   }
+  }
+ },
+ {
+  "id": "s05",
+  "t": 1791351174509,
+  "tFeed": "2026-10-07T05:32:54.509Z",
+  "node": "san_lorenzo:Balanza Egreso",
+  "device": "SLZBalSC2Fte",
+  "leyo": "AI39208",
+  "attrs": {
+   "color": "Blue",
+   "marca": "Mercedes-Benz",
+   "tipo": "Medium Truck"
+  },
+  "otro": 0.00892422986954801,
+  "elegido": null,
+  "proceso": false,
+  "noCamionCamara": 0.12171052631578948,
+  "candidatos": [
+   {
+    "plate": "FYC813",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:29:35.759Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 63,
+    "pesoTiempo": 0.22096728469655938,
+    "p": 0.2124669821590303,
+    "foto": {
+     "file": "s05_cand1.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Small Truck",
+      "leyo": "FYC813"
+     }
+    }
+   },
+   {
+    "plate": "RNI799",
+    "ultimo": "san_lorenzo:Ingreso",
+    "ultimoT": "2026-10-07T01:54:22.837Z",
+    "ultimoDevice": "SLZIngCamFrente",
+    "esperaMin": 219,
+    "pesoTiempo": 0.05274262502250879,
+    "p": 0.21177145262318303,
+    "foto": {
+     "file": "s05_cand2.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": "Mercedes-Benz",
+      "tipo": "Bus",
+      "leyo": "RNI799"
+     }
+    }
+   },
+   {
+    "plate": "AI217CL",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:37:41.947Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 55,
+    "pesoTiempo": 0.20388370962236144,
+    "p": 0.1960405883356799,
+    "foto": {
+     "file": "s05_cand3.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "AI217CL"
+     }
+    }
+   },
+   {
+    "plate": "AI392QN",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:22:35.436Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 70,
+    "pesoTiempo": 0.028113449118888512,
+    "p": 0.19386090098200254,
+    "foto": {
+     "file": "s05_cand4.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Mercedes-Benz",
+      "tipo": "Medium Truck",
+      "leyo": "AI392QN"
+     }
+    }
+   },
+   {
+    "plate": "OUO981",
+    "ultimo": "san_lorenzo:Ingreso",
+    "ultimoT": "2026-10-06T18:54:56.272Z",
+    "ultimoDevice": "SLZIngCamFrente",
+    "esperaMin": 638,
+    "pesoTiempo": 0.05274262502250879,
+    "p": 0.05071368997028856,
+    "foto": {
+     "file": "s05_cand5.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Mercedes-Benz",
+      "tipo": "Medium Truck",
+      "leyo": "OUO981"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s05_captura.jpg",
+   "dss": {
+    "color": "Blue",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck",
+    "leyo": "AI39208"
+   }
+  }
+ },
+ {
+  "id": "s06",
+  "t": 1791352629120,
+  "tFeed": "2026-10-07T05:57:09.120Z",
+  "node": "san_lorenzo:Plataformas Volcables",
+  "device": "SLZVolcableC5",
+  "leyo": "CCA14",
+  "attrs": {
+   "color": "Blue",
+   "marca": "Scania",
+   "tipo": "Medium Truck"
+  },
+  "otro": 0.017737631342648538,
+  "elegido": "AF068AZ",
+  "proceso": true,
+  "noCamionCamara": 0.05656108597285068,
+  "candidatos": [
+   {
+    "plate": "AF068AZ",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:24:16.237Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 93,
+    "pesoTiempo": 0.2940780357200437,
+    "p": 0.8419767394482389,
+    "foto": {
+     "file": "s06_cand1.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Scania",
+      "tipo": "Medium Truck",
+      "leyo": "AF068AZ"
+     }
+    }
+   },
+   {
+    "plate": "FYC813",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:29:35.759Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 88,
+    "pesoTiempo": 0.21226345235169433,
+    "p": 0.03619679073718793,
+    "foto": {
+     "file": "s06_cand2.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Small Truck",
+      "leyo": "FYC813"
+     }
+    }
+   },
+   {
+    "plate": "LZA376",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:30:44.307Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 86,
+    "pesoTiempo": 0.21226345235169433,
+    "p": 0.03619679073718793,
+    "foto": {
+     "file": "s06_cand3.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Bus",
+      "leyo": "LZA376"
+     }
+    }
+   },
+   {
+    "plate": "RNI799",
+    "ultimo": "san_lorenzo:Ingreso",
+    "ultimoT": "2026-10-07T01:54:22.837Z",
+    "ultimoDevice": "SLZIngCamFrente",
+    "esperaMin": 243,
+    "pesoTiempo": 0.03500626087669178,
+    "p": 0.02492773233702093,
+    "foto": {
+     "file": "s06_cand4.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": "Mercedes-Benz",
+      "tipo": "Bus",
+      "leyo": "RNI799"
+     }
+    }
+   },
+   {
+    "plate": "AI217CL",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T04:37:41.947Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 79,
+    "pesoTiempo": 0.1270631094507028,
+    "p": 0.02166777526817504,
+    "foto": {
+     "file": "s06_cand5.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "AI217CL"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s06_captura.jpg",
+   "dss": {
+    "color": "Blue",
+    "marca": "Scania",
+    "tipo": "Medium Truck",
+    "leyo": "CCA14"
+   }
+  }
+ },
+ {
+  "id": "s07",
+  "t": 1791360696000,
+  "tFeed": "2026-10-07T08:11:36.000Z",
+  "node": "ricardone:Volcable 2",
+  "device": "RicVolcable2",
+  "leyo": "R106",
+  "attrs": {
+   "color": "Gray",
+   "marca": "Mercedes-Benz",
+   "tipo": "Medium Truck"
+  },
+  "otro": 0.07820772655719911,
+  "elegido": null,
+  "proceso": true,
+  "noCamionCamara": 0.014492753623188406,
+  "candidatos": [
+   {
+    "plate": "EVL273",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-06T20:48:18.353Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 683,
+    "pesoTiempo": 0.14285714285714285,
+    "p": 0.32491379772052187,
+    "foto": {
+     "file": "s07_cand1.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Mercedes-Benz",
+      "tipo": "Large Truck",
+      "leyo": "EVL273"
+     }
+    }
+   },
+   {
+    "plate": "ELU844",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-06T23:23:19.978Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 528,
+    "pesoTiempo": 0.14285714285714285,
+    "p": 0.32491379772052187,
+    "foto": {
+     "file": "s07_cand2.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": "Mercedes-Benz",
+      "tipo": "Medium Truck",
+      "leyo": "ELU844"
+     }
+    }
+   },
+   {
+    "plate": "BTB128",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-06T22:56:22.395Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 555,
+    "pesoTiempo": 0.14285714285714285,
+    "p": 0.22624731419254693,
+    "foto": {
+     "file": "s07_cand3.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": "Mercedes-Benz",
+      "tipo": "Large Truck",
+      "leyo": "BTB128"
+     }
+    }
+   },
+   {
+    "plate": "BZT609",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-06T23:24:56.144Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 527,
+    "pesoTiempo": 0.14285714285714285,
+    "p": 0.013475372242303753,
+    "foto": {
+     "file": "s07_cand4.jpg",
+     "dss": {
+      "color": "Gray",
+      "marca": null,
+      "tipo": "Large Truck",
+      "leyo": "BZT609"
+     }
+    }
+   },
+   {
+    "plate": "RDB282",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-06T23:28:47.876Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 523,
+    "pesoTiempo": 0.14285714285714285,
+    "p": 0.013475372242303753,
+    "foto": {
+     "file": "s07_cand5.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": "Volvo",
+      "tipo": "Large Truck",
+      "leyo": "RDB282"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s07_captura.jpg",
+   "dss": {
+    "color": "Gray",
+    "marca": "Mercedes-Benz",
+    "tipo": "Medium Truck",
+    "leyo": "R106"
+   }
+  }
+ },
+ {
+  "id": "s08",
+  "t": 1791362192000,
+  "tFeed": "2026-10-07T08:36:32.000Z",
+  "node": "ricardone:Calada",
+  "device": "RicCal03",
+  "leyo": "F258",
+  "attrs": {
+   "color": "Black",
+   "marca": "Chevrolet",
+   "tipo": "Medium Truck"
+  },
+  "otro": 0.21139771040919147,
+  "elegido": null,
+  "proceso": true,
+  "noCamionCamara": 0.03559322033898305,
+  "candidatos": [
+   {
+    "plate": "UDC759",
+    "ultimo": "ricardone:Pre ingreso",
+    "ultimoT": "2026-10-06T23:57:04.391Z",
+    "ultimoDevice": "RicPreIngInFr",
+    "esperaMin": 519,
+    "pesoTiempo": 0.2635622593394683,
+    "p": 0.41664619466136044,
+    "foto": {
+     "file": "s08_cand1.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "UDC759"
+     }
+    }
+   },
+   {
+    "plate": "HLO270",
+    "ultimo": "ricardone:Pre ingreso",
+    "ultimoT": "2026-10-06T23:34:27.112Z",
+    "ultimoDevice": "RicPreIngInFr",
+    "esperaMin": 542,
+    "pesoTiempo": 0.2635622593394683,
+    "p": 0.08207930034828803,
+    "foto": {
+     "file": "s08_cand2.jpg",
+     "dss": {
+      "color": "Red",
+      "marca": "Renault",
+      "tipo": "Medium Truck",
+      "leyo": "HLO270"
+     }
+    }
+   },
+   {
+    "plate": "GMJ861",
+    "ultimo": "ricardone:Pre ingreso",
+    "ultimoT": "2026-10-07T00:36:09.086Z",
+    "ultimoDevice": "RicPreIngInFr",
+    "esperaMin": 480,
+    "pesoTiempo": 0.2635622593394683,
+    "p": 0.08207930034828803,
+    "foto": {
+     "file": "s08_cand3.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Ford",
+      "tipo": "Medium Truck",
+      "leyo": "GMJ861"
+     }
+    }
+   },
+   {
+    "plate": "AC896RU",
+    "ultimo": "ricardone:Pre ingreso",
+    "ultimoT": "2026-10-07T01:06:42.000Z",
+    "ultimoDevice": "RicPreIngEgFr",
+    "esperaMin": 450,
+    "pesoTiempo": 0.011650439449769312,
+    "p": 0.05616271576506308,
+    "foto": {
+     "file": "s08_cand4.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "AC896RU"
+     }
+    }
+   },
+   {
+    "plate": "FPF313",
+    "ultimo": "ricardone:Pre ingreso",
+    "ultimoT": "2026-10-07T00:39:14.059Z",
+    "ultimoDevice": "RicPreIngInFr",
+    "esperaMin": 477,
+    "pesoTiempo": 0.1317811296699979,
+    "p": 0.041039650174226144,
+    "foto": {
+     "file": "s08_cand5.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Mercedes-Benz",
+      "tipo": "Medium Truck",
+      "leyo": "FPF313"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s08_captura.jpg",
+   "dss": {
+    "color": "Black",
+    "marca": "Chevrolet",
+    "tipo": "Medium Truck",
+    "leyo": "F258"
+   }
+  }
+ },
+ {
+  "id": "s09",
+  "t": 1791362621468,
+  "tFeed": "2026-10-07T08:43:41.468Z",
+  "node": "ricardone:Calada",
+  "device": "RicCal04",
+  "leyo": "DCT17",
+  "attrs": {
+   "color": "White",
+   "marca": "Unrecognized",
+   "tipo": "Small Truck"
+  },
+  "otro": 0.11596703288857262,
+  "elegido": null,
+  "proceso": true,
+  "noCamionCamara": 0.038202247191011236,
+  "candidatos": [
+   {
+    "plate": "UDC759",
+    "ultimo": "ricardone:Pre ingreso",
+    "ultimoT": "2026-10-06T23:57:04.391Z",
+    "ultimoDevice": "RicPreIngInFr",
+    "esperaMin": 527,
+    "pesoTiempo": 0.2272911640434255,
+    "p": 0.2281236364339454,
+    "foto": {
+     "file": "s09_cand1.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "UDC759"
+     }
+    }
+   },
+   {
+    "plate": "GMJ861",
+    "ultimo": "ricardone:Pre ingreso",
+    "ultimoT": "2026-10-07T00:36:09.086Z",
+    "ultimoDevice": "RicPreIngInFr",
+    "esperaMin": 488,
+    "pesoTiempo": 0.2272911640434255,
+    "p": 0.2281236364339454,
+    "foto": {
+     "file": "s09_cand2.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Ford",
+      "tipo": "Medium Truck",
+      "leyo": "GMJ861"
+     }
+    }
+   },
+   {
+    "plate": "FPF313",
+    "ultimo": "ricardone:Pre ingreso",
+    "ultimoT": "2026-10-07T00:39:14.059Z",
+    "ultimoDevice": "RicPreIngInFr",
+    "esperaMin": 484,
+    "pesoTiempo": 0.2272911640434255,
+    "p": 0.2281236364339454,
+    "foto": {
+     "file": "s09_cand3.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Mercedes-Benz",
+      "tipo": "Medium Truck",
+      "leyo": "FPF313"
+     }
+    }
+   },
+   {
+    "plate": "HLO270",
+    "ultimo": "ricardone:Pre ingreso",
+    "ultimoT": "2026-10-06T23:34:27.112Z",
+    "ultimoDevice": "RicPreIngInFr",
+    "esperaMin": 549,
+    "pesoTiempo": 0.2272911640434255,
+    "p": 0.13725124572224154,
+    "foto": {
+     "file": "s09_cand4.jpg",
+     "dss": {
+      "color": "Red",
+      "marca": "Renault",
+      "tipo": "Medium Truck",
+      "leyo": "HLO270"
+     }
+    }
+   },
+   {
+    "plate": "FVJ129",
+    "ultimo": "ricardone:Pre ingreso",
+    "ultimoT": "2026-10-07T01:00:48.614Z",
+    "ultimoDevice": "RicPreIngInFr",
+    "esperaMin": 463,
+    "pesoTiempo": 0.01454894691423732,
+    "p": 0.008785476093317559,
+    "foto": {
+     "file": "s09_cand5.jpg",
+     "dss": {
+      "color": "Brown",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "FVJ129"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s09_captura.jpg",
+   "dss": {
+    "color": "White",
+    "marca": null,
+    "tipo": "Small Truck",
+    "leyo": "DCT17"
+   }
+  }
+ },
+ {
+  "id": "s10",
+  "t": 1791364368000,
+  "tFeed": "2026-10-07T09:12:48.000Z",
+  "node": "ricardone:Playa 3",
+  "device": "RicS6Playa3",
+  "leyo": "PF313",
+  "attrs": {
+   "color": "Black",
+   "marca": "Chevrolet",
+   "tipo": "Large Truck"
+  },
+  "otro": 0.9406329904116508,
+  "elegido": null,
+  "proceso": false,
+  "noCamionCamara": 0.26717557251908397,
+  "candidatos": [
+   {
+    "plate": "TPF310",
+    "ultimo": "ricardone:Calada",
+    "ultimoT": "2026-10-07T08:46:51.951Z",
+    "ultimoDevice": "RicCal03",
+    "esperaMin": 26,
+    "pesoTiempo": 0.10645948423566393,
+    "p": 0.02073239150370604,
+    "foto": {
+     "file": "s10_cand1.jpg",
+     "dss": {
+      "color": "Silver",
+      "marca": "Mercedes-Benz",
+      "tipo": "Large Truck",
+      "leyo": "TPF310"
+     }
+    }
+   },
+   {
+    "plate": "HUO780",
+    "ultimo": "ricardone:Calada",
+    "ultimoT": "2026-10-06T23:05:34.525Z",
+    "ultimoDevice": "RicCal04",
+    "esperaMin": 607,
+    "pesoTiempo": 0.030071363657049977,
+    "p": 0.00979309947631142,
+    "foto": {
+     "file": "s10_cand2.jpg",
+     "dss": {
+      "color": "Silver",
+      "marca": "Chevrolet",
+      "tipo": "Medium Truck",
+      "leyo": "HUO780"
+     }
+    }
+   },
+   {
+    "plate": "WKB259",
+    "ultimo": "ricardone:Calada",
+    "ultimoT": "2026-10-07T08:25:08.961Z",
+    "ultimoDevice": "RicCal03",
+    "esperaMin": 48,
+    "pesoTiempo": 0.030071363657049977,
+    "p": 0.009028859055810086,
+    "foto": {
+     "file": "s10_cand3.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": null,
+      "tipo": "Large Truck",
+      "leyo": "WKB259"
+     }
+    }
+   },
+   {
+    "plate": "ROR161",
+    "ultimo": "ricardone:Calada",
+    "ultimoT": "2026-10-07T09:04:44.116Z",
+    "ultimoDevice": "RicCal04",
+    "esperaMin": 8,
+    "pesoTiempo": 0.057265022672502566,
+    "p": 0.007371162053366675,
+    "foto": {
+     "file": "s10_cand4.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Chevrolet",
+      "tipo": "Pickup",
+      "leyo": "ROR161"
+     }
+    }
+   },
+   {
+    "plate": "DFI809",
+    "ultimo": "ricardone:Calada",
+    "ultimoT": "2026-10-07T08:59:50.098Z",
+    "ultimoDevice": "RicCal03",
+    "esperaMin": 13,
+    "pesoTiempo": 0.09998394355450077,
+    "p": 0.0019393430765065496,
+    "foto": {
+     "file": "s10_cand5.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Mercedes-Benz",
+      "tipo": "Large Truck",
+      "leyo": "DFI809"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s10_captura.jpg",
+   "dss": {
+    "color": "Black",
+    "marca": "Chevrolet",
+    "tipo": "Large Truck",
+    "leyo": "PF313"
+   }
+  }
+ },
+ {
+  "id": "s11",
+  "t": 1791370495000,
+  "tFeed": "2026-10-07T10:54:55.000Z",
+  "node": "san_lorenzo:Egreso",
+  "device": "SLZSalidaC2Fte",
+  "leyo": "NV59",
+  "attrs": {
+   "color": "White",
+   "marca": "Unrecognized",
+   "tipo": "Small Truck"
+  },
+  "otro": 0.12600998232109958,
+  "elegido": "NRV595",
+  "proceso": false,
+  "noCamionCamara": 0.8613217768147345,
+  "candidatos": [
+   {
+    "plate": "NRV595",
+    "ultimo": "san_lorenzo:Balanza Egreso",
+    "ultimoT": "2026-10-07T10:51:08.792Z",
+    "ultimoDevice": "SLZBalSC2Fte",
+    "esperaMin": 4,
+    "pesoTiempo": 0.3811207580783478,
+    "p": 0.7703933485606711,
+    "foto": {
+     "file": "s11_cand1.jpg",
+     "dss": {
+      "color": "Yellow",
+      "marca": "Scania",
+      "tipo": "Large Truck",
+      "leyo": "NRV595"
+     }
+    }
+   },
+   {
+    "plate": "NAH953",
+    "ultimo": "san_lorenzo:Balanza Egreso",
+    "ultimoT": "2026-10-07T10:52:21.837Z",
+    "ultimoDevice": "SLZBalSC1Fte",
+    "esperaMin": 3,
+    "pesoTiempo": 0.3811207580783478,
+    "p": 0.05040868088169321,
+    "foto": {
+     "file": "s11_cand2.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Pickup",
+      "leyo": "NAH953"
+     }
+    }
+   },
+   {
+    "plate": "EPK546",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T08:51:33.635Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 123,
+    "pesoTiempo": 0.017742674630259116,
+    "p": 0.005937209021815287,
+    "foto": {
+     "file": "s11_cand3.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": "Scania",
+      "tipo": "Medium Truck",
+      "leyo": "EPK546"
+     }
+    }
+   },
+   {
+    "plate": "AI357FC",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T10:42:58.835Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 12,
+    "pesoTiempo": 0.012198475140149769,
+    "p": 0.004081960480240684,
+    "foto": {
+     "file": "s11_cand4.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Mercedes-Benz",
+      "tipo": "Bus",
+      "leyo": "AI357FC"
+     }
+    }
+   },
+   {
+    "plate": "KUJ709",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T08:53:00.000Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 122,
+    "pesoTiempo": 0.011746652076112876,
+    "p": 0.003930767493390263,
+    "foto": {
+     "file": "s11_cand5.jpg",
+     "dss": {
+      "color": "Gray",
+      "marca": "Mercedes-Benz",
+      "tipo": "Bus",
+      "leyo": "KU70"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s11_captura.jpg",
+   "dss": {
+    "color": "White",
+    "marca": null,
+    "tipo": "Small Truck",
+    "leyo": "NV59"
+   }
+  }
+ },
+ {
+  "id": "s12",
+  "t": 1791372637666,
+  "tFeed": "2026-10-07T11:30:37.666Z",
+  "node": "san_lorenzo:Balanza Ingreso",
+  "device": "SLZBalIngFte",
+  "leyo": "IP6991",
+  "attrs": {
+   "color": "White",
+   "marca": "Unrecognized",
+   "tipo": "Large Truck"
+  },
+  "otro": 0.015543088028359265,
+  "elegido": "IGP699",
+  "proceso": false,
+  "noCamionCamara": 0.4336075205640423,
+  "candidatos": [
+   {
+    "plate": "IGP699",
+    "ultimo": "san_lorenzo:Ingreso",
+    "ultimoT": "2026-10-07T11:25:41.864Z",
+    "ultimoDevice": "SLZIngCamFrente",
+    "esperaMin": 5,
+    "pesoTiempo": 0.4184092519441024,
+    "p": 0.8117735950501027,
+    "foto": {
+     "file": "s12_cand1.jpg",
+     "dss": {
+      "color": "Blue",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "IGP699"
+     }
+    }
+   },
+   {
+    "plate": "OHS545",
+    "ultimo": "san_lorenzo:Ingreso",
+    "ultimoT": "2026-10-07T11:27:11.388Z",
+    "ultimoDevice": "SLZIngCamFrente",
+    "esperaMin": 3,
+    "pesoTiempo": 0.2956873935900562,
+    "p": 0.09496854407697435,
+    "foto": {
+     "file": "s12_cand2.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Mercedes-Benz",
+      "tipo": "Medium Truck",
+      "leyo": "OHS545"
+     }
+    }
+   },
+   {
+    "plate": "AH763FD",
+    "ultimo": "san_lorenzo:Ingreso",
+    "ultimoT": "2026-10-07T11:09:42.128Z",
+    "ultimoDevice": "SLZIngCamFrente",
+    "esperaMin": 21,
+    "pesoTiempo": 0.05271520771073113,
+    "p": 0.024314627193701213,
+    "foto": {
+     "file": "s12_cand3.jpg",
+     "dss": {
+      "color": "Blue",
+      "marca": "Mercedes-Benz",
+      "tipo": "Medium Truck",
+      "leyo": "AH763ED"
+     }
+    }
+   },
+   {
+    "plate": "FFR877",
+    "ultimo": "ricardone:Salida 2",
+    "ultimoT": "2026-10-07T11:12:52.670Z",
+    "ultimoDevice": "RicEgrCamFrente",
+    "esperaMin": 18,
+    "pesoTiempo": 0.07256766020035209,
+    "p": 0.014022843923975093,
+    "foto": {
+     "file": "s12_cand4.jpg",
+     "dss": {
+      "color": "Silver",
+      "marca": "Forland",
+      "tipo": "Medium Truck",
+      "leyo": "FFR877"
+     }
+    }
+   },
+   {
+    "plate": "BYK469",
+    "ultimo": "san_lorenzo:Ingreso",
+    "ultimoT": "2026-10-07T08:57:55.028Z",
+    "ultimoDevice": "SLZIngCamFrente",
+    "esperaMin": 153,
+    "pesoTiempo": 0.024702068167158923,
+    "p": 0.007933782435032255,
+    "foto": {
+     "file": "s12_cand5.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "BYK469"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s12_captura.jpg",
+   "dss": {
+    "color": "White",
+    "marca": null,
+    "tipo": "Large Truck",
+    "leyo": "IP6991"
+   }
+  }
+ },
+ {
+  "id": "s13",
+  "t": 1791381327121,
+  "tFeed": "2026-10-07T13:55:27.121Z",
+  "node": "san_lorenzo:Plataformas Volcables",
+  "device": "SLZVolcableC4",
+  "leyo": "HC9591",
+  "attrs": {
+   "color": "White",
+   "marca": "Unrecognized",
+   "tipo": "Small Truck"
+  },
+  "otro": 0.020983249315495577,
+  "elegido": null,
+  "proceso": true,
+  "noCamionCamara": 0.06329113924050633,
+  "candidatos": [
+   {
+    "plate": "EFA323",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T12:20:03.333Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 95,
+    "pesoTiempo": 0.17911991441374248,
+    "p": 0.2122847886991529,
+    "foto": {
+     "file": "s13_cand1.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Iveco",
+      "tipo": "Medium Truck",
+      "leyo": "EFA323"
+     }
+    }
+   },
+   {
+    "plate": "HWD100",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T13:51:19.467Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 4,
+    "pesoTiempo": 0.15143705384327535,
+    "p": 0.17947631943416953,
+    "foto": {
+     "file": "s13_cand2.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Scania",
+      "tipo": "Large Truck",
+      "leyo": "HWD100"
+     }
+    }
+   },
+   {
+    "plate": "FEQ886",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T13:48:25.237Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 7,
+    "pesoTiempo": 0.130394137244326,
+    "p": 0.15453721024330927,
+    "foto": {
+     "file": "s13_cand3.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Ford",
+      "tipo": "Medium Truck",
+      "leyo": "FEQ886"
+     }
+    }
+   },
+   {
+    "plate": "AE808WG",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T12:01:24.064Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 114,
+    "pesoTiempo": 0.09728289772878113,
+    "p": 0.11529527275617749,
+    "foto": {
+     "file": "s13_cand4.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Mercedes-Benz",
+      "tipo": "Medium Truck",
+      "leyo": "AE808WG"
+     }
+    }
+   },
+   {
+    "plate": "GYW157",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T12:21:51.056Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 94,
+    "pesoTiempo": 0.13864131499116364,
+    "p": 0.09885842355762679,
+    "foto": {
+     "file": "s13_cand5.jpg",
+     "dss": {
+      "color": "Blue",
+      "marca": null,
+      "tipo": "Large Truck",
+      "leyo": "GYW157"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s13_captura.jpg",
+   "dss": {
+    "color": "White",
+    "marca": null,
+    "tipo": "Small Truck",
+    "leyo": "HC9591"
+   }
+  }
+ },
+ {
+  "id": "s14",
+  "t": 1791384911000,
+  "tFeed": "2026-10-07T14:55:11.000Z",
+  "node": "ricardone:Volcable 2",
+  "device": "RicVolcable2",
+  "leyo": "AA786",
+  "attrs": {
+   "color": "Green",
+   "marca": "MINI",
+   "tipo": "Medium Truck"
+  },
+  "otro": 0.012330602306495443,
+  "elegido": "AYA786",
+  "proceso": true,
+  "noCamionCamara": 0.014492753623188406,
+  "candidatos": [
+   {
+    "plate": "AYA786",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T09:09:32.228Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 346,
+    "pesoTiempo": 0.02580984802373521,
+    "p": 0.9774318112597544,
+    "foto": {
+     "file": "s14_cand1.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Large Truck",
+      "leyo": "AYA786"
+     }
+    }
+   },
+   {
+    "plate": "AA614HL",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T14:10:24.345Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 45,
+    "pesoTiempo": 0.6160295953612391,
+    "p": 0.003984313057566024,
+    "foto": {
+     "file": "s14_cand2.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Iveco",
+      "tipo": "Large Truck",
+      "leyo": "AA614HL"
+     }
+    }
+   },
+   {
+    "plate": "CQF701",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T09:08:31.964Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 347,
+    "pesoTiempo": 0.025858211261755953,
+    "p": 0.0012191828722357928,
+    "foto": {
+     "file": "s14_cand3.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Small Truck",
+      "leyo": "CQF701"
+     }
+    }
+   },
+   {
+    "plate": "VDB789",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T09:14:11.031Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 341,
+    "pesoTiempo": 0.025713662254702657,
+    "p": 0.0012123675642543505,
+    "foto": {
+     "file": "s14_cand4.jpg",
+     "dss": {
+      "color": "Gray",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "VDB789"
+     }
+    }
+   },
+   {
+    "plate": "VJB780",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T09:14:12.472Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 341,
+    "pesoTiempo": 0.025713662254702657,
+    "p": 0.0012123675642543505,
+    "foto": {
+     "file": "s14_cand5.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "VJB780"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s14_captura.jpg",
+   "dss": {
+    "color": "Green",
+    "marca": "MINI",
+    "tipo": "Medium Truck",
+    "leyo": "AA786"
+   }
+  }
+ },
+ {
+  "id": "s15",
+  "t": 1791388306000,
+  "tFeed": "2026-10-07T15:51:46.000Z",
+  "node": "san_lorenzo:Egreso",
+  "device": "SLZSalidaC2Fte",
+  "leyo": "RS471",
+  "attrs": {
+   "color": "Blue",
+   "marca": "Unrecognized",
+   "tipo": "Large Truck"
+  },
+  "otro": 0.0014619432623366629,
+  "elegido": "RSO471",
+  "proceso": false,
+  "noCamionCamara": 0.8613217768147345,
+  "candidatos": [
+   {
+    "plate": "RSO471",
+    "ultimo": "san_lorenzo:Balanza Egreso",
+    "ultimoT": "2026-10-07T11:57:21.657Z",
+    "ultimoDevice": "SLZBalSC2Fte",
+    "esperaMin": 234,
+    "pesoTiempo": 0.12716015608484627,
+    "p": 0.9962279726336596,
+    "foto": {
+     "file": "s15_cand1.jpg",
+     "dss": {
+      "color": "Blue",
+      "marca": "Mercedes-Benz",
+      "tipo": "Large Truck",
+      "leyo": "RSO471"
+     }
+    }
+   },
+   {
+    "plate": "HBQ125",
+    "ultimo": "san_lorenzo:Balanza Egreso",
+    "ultimoT": "2026-10-07T13:21:57.543Z",
+    "ultimoDevice": "SLZBalSC2Fte",
+    "esperaMin": 150,
+    "pesoTiempo": 0.04740430345831514,
+    "p": 0.00046237548580557204,
+    "foto": {
+     "file": "s15_cand2.jpg",
+     "dss": {
+      "color": "Blue",
+      "marca": "Ford",
+      "tipo": "Medium Truck",
+      "leyo": "HBQ125"
+     }
+    }
+   },
+   {
+    "plate": "DBC119",
+    "ultimo": "san_lorenzo:Carga / Descarga OSL",
+    "ultimoT": "2026-10-07T15:01:45.503Z",
+    "ultimoDevice": "RenDescFte",
+    "esperaMin": 50,
+    "pesoTiempo": 0.017699060107242197,
+    "p": 0.0001726343584519572,
+    "foto": {
+     "file": "s15_cand3.jpg",
+     "dss": {
+      "color": "Gray",
+      "marca": "Mercedes-Benz",
+      "tipo": "Medium Truck",
+      "leyo": "DBC119"
+     }
+    }
+   },
+   {
+    "plate": "GYW157",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T12:21:51.056Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 210,
+    "pesoTiempo": 0.017699060107242197,
+    "p": 0.0001726343584519572,
+    "foto": {
+     "file": "s15_cand4.jpg",
+     "dss": {
+      "color": "Blue",
+      "marca": null,
+      "tipo": "Large Truck",
+      "leyo": "GYW157"
+     }
+    }
+   },
+   {
+    "plate": "IGP699",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T11:30:37.666Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 261,
+    "pesoTiempo": 0.017699060107242197,
+    "p": 0.0001726343584519572,
+    "foto": {
+     "file": "s15_cand5.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Large Truck",
+      "leyo": "IP6991"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s15_captura.jpg",
+   "dss": {
+    "color": "Blue",
+    "marca": null,
+    "tipo": "Large Truck",
+    "leyo": "RS471"
+   }
+  }
+ },
+ {
+  "id": "s16",
+  "t": 1791400310982,
+  "tFeed": "2026-10-07T19:11:50.982Z",
+  "node": "san_lorenzo:Carga / Descarga OSL",
+  "device": "RenDescFte",
+  "leyo": "ROJ4085",
+  "attrs": {
+   "color": "Black",
+   "marca": "Unrecognized",
+   "tipo": "Unrecognized"
+  },
+  "otro": 0.0333150408443493,
+  "elegido": null,
+  "proceso": true,
+  "noCamionCamara": 0.014492753623188406,
+  "candidatos": [
+   {
+    "plate": "IGP699",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T11:30:37.666Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 461,
+    "pesoTiempo": 0.5696944246944682,
+    "p": 0.41238425170139587,
+    "foto": {
+     "file": "s16_cand1.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Large Truck",
+      "leyo": "IP6991"
+     }
+    }
+   },
+   {
+    "plate": "ROO085",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T17:15:30.056Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 116,
+    "pesoTiempo": 0.008655464418021733,
+    "p": 0.19182832503258515,
+    "foto": {
+     "file": "s16_cand2.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": null,
+      "tipo": "Pickup",
+      "leyo": "ROO085"
+     }
+    }
+   },
+   {
+    "plate": "DPH172",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T12:13:49.793Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 418,
+    "pesoTiempo": 0.18377239506279316,
+    "p": 0.13302717796823674,
+    "foto": {
+     "file": "s16_cand3.jpg",
+     "dss": {
+      "color": "Yellow",
+      "marca": null,
+      "tipo": "Van",
+      "leyo": "DPH172"
+     }
+    }
+   },
+   {
+    "plate": "DYH142",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T12:13:54.875Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 418,
+    "pesoTiempo": 0.17802950771708176,
+    "p": 0.12887007865672997,
+    "foto": {
+     "file": "s16_cand4.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Iveco",
+      "tipo": "Sedan",
+      "leyo": "DYH142"
+     }
+    }
+   },
+   {
+    "plate": "PMV179",
+    "ultimo": "san_lorenzo:Balanza Ingreso",
+    "ultimoT": "2026-10-07T14:31:01.476Z",
+    "ultimoDevice": "SLZBalIngFte",
+    "esperaMin": 281,
+    "pesoTiempo": 0.038592202963191304,
+    "p": 0.08518855819890053,
+    "foto": {
+     "file": "s16_cand5.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Mercedes-Benz",
+      "tipo": "Medium Truck",
+      "leyo": "PMV179"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s16_captura.jpg",
+   "dss": {
+    "color": "Black",
+    "marca": null,
+    "tipo": null,
+    "leyo": "ROJ4085"
+   }
+  }
+ },
+ {
+  "id": "s17",
+  "t": 1791401250000,
+  "tFeed": "2026-10-07T19:27:30.000Z",
+  "node": "ricardone:Volcable 2",
+  "device": "RicVolcable2",
+  "leyo": "W729",
+  "attrs": {
+   "color": "Silver",
+   "marca": "Scania",
+   "tipo": "Medium Truck"
+  },
+  "otro": 0.044486982381460524,
+  "elegido": "AJW729",
+  "proceso": true,
+  "noCamionCamara": 0.014492753623188406,
+  "candidatos": [
+   {
+    "plate": "AJW729",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T09:15:54.884Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 612,
+    "pesoTiempo": 0.10994794570608997,
+    "p": 0.8919498176560979,
+    "foto": {
+     "file": "s17_cand1.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Scania",
+      "tipo": "Medium Truck",
+      "leyo": "AJW729"
+     }
+    }
+   },
+   {
+    "plate": "VDB789",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T09:14:11.031Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 613,
+    "pesoTiempo": 0.10994794570608997,
+    "p": 0.01870277933443102,
+    "foto": {
+     "file": "s17_cand2.jpg",
+     "dss": {
+      "color": "Gray",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "VDB789"
+     }
+    }
+   },
+   {
+    "plate": "VJB780",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T09:14:12.472Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 613,
+    "pesoTiempo": 0.10994794570608997,
+    "p": 0.01870277933443102,
+    "foto": {
+     "file": "s17_cand3.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "VJB780"
+     }
+    }
+   },
+   {
+    "plate": "LPI849",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T09:19:09.530Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 608,
+    "pesoTiempo": 0.10994794570608997,
+    "p": 0.013023311481498299,
+    "foto": {
+     "file": "s17_cand4.jpg",
+     "dss": {
+      "color": "Gray",
+      "marca": null,
+      "tipo": "Large Truck",
+      "leyo": "LPI849"
+     }
+    }
+   },
+   {
+    "plate": "TGT378",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T09:20:10.635Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 607,
+    "pesoTiempo": 0.10994794570608997,
+    "p": 0.0036844475288829123,
+    "foto": {
+     "file": "s17_cand5.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "DAF",
+      "tipo": "Medium Truck",
+      "leyo": ""
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s17_captura.jpg",
+   "dss": {
+    "color": "Silver",
+    "marca": "Scania",
+    "tipo": "Medium Truck",
+    "leyo": "W729"
+   }
+  }
+ },
+ {
+  "id": "s18",
+  "t": 1791414371000,
+  "tFeed": "2026-10-07T23:06:11.000Z",
+  "node": "ricardone:Volcable 2",
+  "device": "RicVolcable2",
+  "leyo": "B674",
+  "attrs": {
+   "color": "Black",
+   "marca": "Unrecognized",
+   "tipo": "Medium Truck"
+  },
+  "otro": 0.14815006798711503,
+  "elegido": null,
+  "proceso": true,
+  "noCamionCamara": 0.014492753623188406,
+  "candidatos": [
+   {
+    "plate": "BXN336",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T16:54:09.614Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 372,
+    "pesoTiempo": 0.20189755103335663,
+    "p": 0.18312845421701446,
+    "foto": {
+     "file": "s18_cand1.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Scania",
+      "tipo": "Medium Truck",
+      "leyo": "BXN336"
+     }
+    }
+   },
+   {
+    "plate": "FJV994",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T16:56:58.979Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 369,
+    "pesoTiempo": 0.20112498387379024,
+    "p": 0.18242770758097995,
+    "foto": {
+     "file": "s18_cand2.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Mercedes-Benz",
+      "tipo": "Large Truck",
+      "leyo": "FJV994"
+     }
+    }
+   },
+   {
+    "plate": "KNH067",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T16:58:16.410Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 368,
+    "pesoTiempo": 0.20074091324895169,
+    "p": 0.182079341493938,
+    "foto": {
+     "file": "s18_cand3.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Renault",
+      "tipo": "Large Truck",
+      "leyo": "KNH067"
+     }
+    }
+   },
+   {
+    "plate": "BHO070",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T17:25:07.023Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 341,
+    "pesoTiempo": 0.1958782451640392,
+    "p": 0.17766872390495442,
+    "foto": {
+     "file": "s18_cand4.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Mercedes-Benz",
+      "tipo": "Medium Truck",
+      "leyo": "BHO070"
+     }
+    }
+   },
+   {
+    "plate": "AE305ZA",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T17:00:59.505Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 365,
+    "pesoTiempo": 0.2003583066798622,
+    "p": 0.12654570481599808,
+    "foto": {
+     "file": "s18_cand5.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Volvo",
+      "tipo": "Large Truck",
+      "leyo": "AE305ZA"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s18_captura.jpg",
+   "dss": {
+    "color": "Black",
+    "marca": null,
+    "tipo": "Medium Truck",
+    "leyo": "B674"
+   }
+  }
+ },
+ {
+  "id": "s19",
+  "t": 1791421966000,
+  "tFeed": "2026-10-08T01:12:46.000Z",
+  "node": "ricardone:Volcable 2",
+  "device": "RicVolcable2",
+  "leyo": "L30524",
+  "attrs": {
+   "color": "White",
+   "marca": "Volvo",
+   "tipo": "Large Truck"
+  },
+  "otro": 0.023042024696162355,
+  "elegido": "AE305ZA",
+  "proceso": true,
+  "noCamionCamara": 0.014492753623188406,
+  "candidatos": [
+   {
+    "plate": "AE305ZA",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T17:00:59.505Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 492,
+    "pesoTiempo": 0.8750000000002248,
+    "p": 0.9745389797048483,
+    "foto": {
+     "file": "s19_cand1.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Volvo",
+      "tipo": "Large Truck",
+      "leyo": "AE305ZA"
+     }
+    }
+   },
+   {
+    "plate": "BHO070",
+    "ultimo": "ricardone:Playa 3",
+    "ultimoT": "2026-10-07T17:25:07.023Z",
+    "ultimoDevice": "RicS6Playa3",
+    "esperaMin": 468,
+    "pesoTiempo": 0.12499999999977526,
+    "p": 0.002418995598989476,
+    "foto": {
+     "file": "s19_cand2.jpg",
+     "dss": {
+      "color": "White",
+      "marca": "Mercedes-Benz",
+      "tipo": "Medium Truck",
+      "leyo": "BHO070"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s19_captura.jpg",
+   "dss": {
+    "color": "White",
+    "marca": "Volvo",
+    "tipo": "Large Truck",
+    "leyo": "L30524"
+   }
+  }
+ },
+ {
+  "id": "s20",
+  "t": 1791424550000,
+  "tFeed": "2026-10-08T01:55:50.000Z",
+  "node": "ricardone:Calada",
+  "device": "RicCal04",
+  "leyo": "VIS6",
+  "attrs": {
+   "color": "Black",
+   "marca": "Mitsubishi",
+   "tipo": "Small Truck"
+  },
+  "otro": 0.1364392875206846,
+  "elegido": null,
+  "proceso": true,
+  "noCamionCamara": 0.038202247191011236,
+  "candidatos": [
+   {
+    "plate": "OFG116",
+    "ultimo": "ricardone:Pre ingreso",
+    "ultimoT": "2026-10-08T01:05:14.310Z",
+    "ultimoDevice": "RicPreIngInFr",
+    "esperaMin": 51,
+    "pesoTiempo": 0.08876835564613277,
+    "p": 0.19231732498206108,
+    "foto": {
+     "file": "s20_cand1.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "OFG116"
+     }
+    }
+   },
+   {
+    "plate": "JBQ794",
+    "ultimo": "ricardone:Pre ingreso",
+    "ultimoT": "2026-10-07T19:00:10.510Z",
+    "ultimoDevice": "RicPreIngInFr",
+    "esperaMin": 416,
+    "pesoTiempo": 0.15258669783299258,
+    "p": 0.14282806021382669,
+    "foto": {
+     "file": "s20_cand2.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": null,
+      "leyo": "JBQ794"
+     }
+    }
+   },
+   {
+    "plate": "AB107AB",
+    "ultimo": "ricardone:Pre ingreso",
+    "ultimoT": "2026-10-07T20:14:56.950Z",
+    "ultimoDevice": "RicPreIngInFr",
+    "esperaMin": 341,
+    "pesoTiempo": 0.058633668152527456,
+    "p": 0.12703029284367734,
+    "foto": {
+     "file": "s20_cand3.jpg",
+     "dss": {
+      "color": "Black",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "AB107AB"
+     }
+    }
+   },
+   {
+    "plate": "EUX026",
+    "ultimo": "ricardone:Pre ingreso",
+    "ultimoT": "2026-10-08T01:54:44.083Z",
+    "ultimoDevice": "RicPreIngInFr",
+    "esperaMin": 1,
+    "pesoTiempo": 0.13403333720234767,
+    "p": 0.09522510721976869,
+    "foto": {
+     "file": "s20_cand4.jpg",
+     "dss": {
+      "color": "White",
+      "marca": null,
+      "tipo": "Large Truck",
+      "leyo": "EUX026"
+     }
+    }
+   },
+   {
+    "plate": "AI526KD",
+    "ultimo": "ricardone:Pre ingreso",
+    "ultimoT": "2026-10-08T01:00:34.532Z",
+    "ultimoDevice": "RicPreIngInFr",
+    "esperaMin": 55,
+    "pesoTiempo": 0.07489034291462966,
+    "p": 0.05320647148406556,
+    "foto": {
+     "file": "s20_cand5.jpg",
+     "dss": {
+      "color": "Red",
+      "marca": null,
+      "tipo": "Medium Truck",
+      "leyo": "AI526KD"
+     }
+    }
+   }
+  ],
+  "captura": {
+   "file": "s20_captura.jpg",
+   "dss": {
+    "color": "Black",
+    "marca": "Mitsubishi",
+    "tipo": "Small Truck",
+    "leyo": "VIS6"
+   }
+  }
+ }
+]

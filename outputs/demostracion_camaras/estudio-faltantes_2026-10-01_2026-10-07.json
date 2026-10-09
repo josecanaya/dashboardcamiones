@@ -1,0 +1,137 @@
+{
+ "falta": {
+  "total": 23,
+  "pasos": 160,
+  "tipos": {
+   "ninguna cámara la leyó": 14,
+   "leída en la entrada pero sin visita": 2,
+   "una sola lectura en un punto interno": 4,
+   "varias lecturas internas, sin entrada": 3
+  },
+  "ejemplos": {
+   "ninguna cámara la leyó": [
+    "2026-10-01 AA338BT R7: ",
+    "2026-10-01 JJM618 R7: ",
+    "2026-10-01 SLU489 R7: ",
+    "2026-10-01 SIM565 R7: ",
+    "2026-10-02 AB544TA R6: ",
+    "2026-10-02 MGQ641 R7: "
+   ],
+   "leída en la entrada pero sin visita": [
+    "2026-10-02 MRM512 SL3: RicPreIngInFr MRM512, RicEgrCamFrente MRM512, SLZIngCamFrente MRM512, SLZCalado MRM512",
+    "2026-10-02 GZI868 SL1: SLZIngCamFrente GZI868, SLZCalado GZT868, SLZBalIngFte GZI868, SLZTK400 GZT868"
+   ],
+   "una sola lectura en un punto interno": [
+    "2026-10-02 IFK980 SL1: SLZCalado IFK980",
+    "2026-10-03 AB750EL R7: SLZBalIngFte AB750SL",
+    "2026-10-05 GFP699 R8: RicEgrCamFrente IGFP699",
+    "2026-10-06 IFK980 SL1: SLZCalado IFK980"
+   ],
+   "varias lecturas internas, sin entrada": [
+    "2026-10-03 AE949OO R7: SLZVolcableC2 AE949O0, SLZSalidaC1Fte AE949O0",
+    "2026-10-05 IFK980 SL1: SLZCalado IFK980, SLZCalado IFK980",
+    "2026-10-06 AC744ZO R7: RicCal03 AC744Z0, SLZSalidaC1Fte AC744Z0"
+   ]
+  }
+ },
+ "ded": {
+  "total": 1662,
+  "sinCaptura": 430,
+  "conParecida": 174,
+  "soloMalas": 816,
+  "soloValidasAjenas": 242,
+  "porNodo": {
+   "ricardone:Salida 2": {
+    "total": 140,
+    "sinCaptura": 45,
+    "conParecida": 23,
+    "soloMalas": 52,
+    "soloValidasAjenas": 20
+   },
+   "san_lorenzo:Balanza Egreso": {
+    "total": 774,
+    "sinCaptura": 271,
+    "conParecida": 45,
+    "soloMalas": 339,
+    "soloValidasAjenas": 119
+   },
+   "ricardone:Playa 3": {
+    "total": 65,
+    "sinCaptura": 12,
+    "conParecida": 12,
+    "soloMalas": 36,
+    "soloValidasAjenas": 5
+   },
+   "san_lorenzo:Carga / Descarga OSL": {
+    "total": 96,
+    "sinCaptura": 47,
+    "conParecida": 2,
+    "soloMalas": 14,
+    "soloValidasAjenas": 33
+   },
+   "ricardone:Calada": {
+    "total": 133,
+    "sinCaptura": 30,
+    "conParecida": 16,
+    "soloMalas": 46,
+    "soloValidasAjenas": 41
+   },
+   "san_lorenzo:Plataformas Volcables": {
+    "total": 257,
+    "sinCaptura": 1,
+    "conParecida": 19,
+    "soloMalas": 231,
+    "soloValidasAjenas": 6
+   },
+   "san_lorenzo:Ingreso": {
+    "total": 64,
+    "sinCaptura": 4,
+    "conParecida": 35,
+    "soloMalas": 25,
+    "soloValidasAjenas": 0
+   },
+   "san_lorenzo:Balanza Ingreso": {
+    "total": 58,
+    "sinCaptura": 3,
+    "conParecida": 5,
+    "soloMalas": 43,
+    "soloValidasAjenas": 7
+   },
+   "ricardone:Pre ingreso": {
+    "total": 7,
+    "sinCaptura": 0,
+    "conParecida": 3,
+    "soloMalas": 2,
+    "soloValidasAjenas": 2
+   },
+   "san_lorenzo:Egreso": {
+    "total": 9,
+    "sinCaptura": 0,
+    "conParecida": 6,
+    "soloMalas": 3,
+    "soloValidasAjenas": 0
+   },
+   "san_lorenzo:Carga/descarga": {
+    "total": 14,
+    "sinCaptura": 7,
+    "conParecida": 0,
+    "soloMalas": 3,
+    "soloValidasAjenas": 4
+   },
+   "ricardone:Balanza Egreso": {
+    "total": 20,
+    "sinCaptura": 10,
+    "conParecida": 1,
+    "soloMalas": 4,
+    "soloValidasAjenas": 5
+   },
+   "ricardone:Volcable 2": {
+    "total": 25,
+    "sinCaptura": 0,
+    "conParecida": 7,
+    "soloMalas": 18,
+    "soloValidasAjenas": 0
+   }
+  }
+ }
+}

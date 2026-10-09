@@ -1,0 +1,59 @@
+{
+  "sinInventario": {
+    "matched": 114,
+    "top1": 53,
+    "autos": 6,
+    "ok": 6,
+    "bad": []
+  },
+  "conInventario": {
+    "matched": 114,
+    "top1": 53,
+    "autos": 6,
+    "ok": 6,
+    "bad": []
+  },
+  "perdidasPorMotivo": [],
+  "excepcionesPorMotivo": {
+    "Referencia posterior a la captura: solo revisión humana": {
+      "correct": 16,
+      "wrong": 32
+    },
+    "Fuera de la ventana temporal del tramo": {
+      "correct": 1,
+      "wrong": 20
+    },
+    "[evaluación] Recorrido incompleto: faltan pasos previos a este nodo": {
+      "correct": 7,
+      "wrong": 4
+    },
+    "Egreso de balanza sin proceso previo conocido: verificar fase": {
+      "correct": 3,
+      "wrong": 19
+    },
+    "Otro carril de egreso: verificar que sea el mismo vehículo": {
+      "correct": 2,
+      "wrong": 12
+    },
+    "El vehículo no está esperando este paso": {
+      "correct": 0,
+      "wrong": 2
+    },
+    "[evaluación] Paso ya consumido o recorrido incompatible": {
+      "correct": 11,
+      "wrong": 9
+    },
+    "La coincidencia cercana ocurre después de la captura": {
+      "correct": 1,
+      "wrong": 2
+    },
+    "Balanza de egreso ya registrada: este paso de proceso no está pendiente": {
+      "correct": 0,
+      "wrong": 4
+    },
+    "Otra fase de balanza: falta un paso intermedio compatible": {
+      "correct": 0,
+      "wrong": 1
+    }
+  }
+}

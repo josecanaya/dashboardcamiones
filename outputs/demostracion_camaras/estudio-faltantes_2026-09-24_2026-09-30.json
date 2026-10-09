@@ -1,0 +1,159 @@
+{
+ "falta": {
+  "total": 27,
+  "pasos": 171,
+  "tipos": {
+   "ninguna cámara la leyó": 17,
+   "varias lecturas internas, sin entrada": 4,
+   "una sola lectura en un punto interno": 5,
+   "leída en la entrada pero sin visita": 1
+  },
+  "ejemplos": {
+   "ninguna cámara la leyó": [
+    "2026-09-24 CTD505 R7: ",
+    "2026-09-25 UVO902 R7: ",
+    "2026-09-25 VCR776 R8: ",
+    "2026-09-25 DDD727 R5: ",
+    "2026-09-26 DBN909 R7: ",
+    "2026-09-26 VCR776 R8: "
+   ],
+   "varias lecturas internas, sin entrada": [
+    "2026-09-24 AD829RY SL1: SLZCalado AD829RW, SLZSalidaC1Fte AD829RV, SLZCalado AD829RY, SLZBalIngFte AD829RY",
+    "2026-09-29 IFK980 SL1: RenCargFte IFK980, SLZCalado IFK980, RenCargFte AFK980",
+    "2026-09-30 AA528CG R7: RicCal03 AA528C0, RicEgrCamFrente AA528CG",
+    "2026-09-30 IFK980 SL1: SLZCalado IFK980, RenCargFte AFK980, SLZCalado IFK980"
+   ],
+   "una sola lectura en un punto interno": [
+    "2026-09-24 IFK980 SL1: SLZCalado IF1980",
+    "2026-09-27 AB109MT R7: SLZSalidaC1Fte AB09MT",
+    "2026-09-28 RNZ709 R6: RicB2Egreso RZ709",
+    "2026-09-29 FFR877 R7: SLZBalIngFte FFR87",
+    "2026-09-30 KUS055 R7: RicEgrCamFrente KUS1055"
+   ],
+   "leída en la entrada pero sin visita": [
+    "2026-09-24 AC356UD R5: RicPreIngInFr AC356U2, RicB2Egreso AC356U1"
+   ]
+  }
+ },
+ "ded": {
+  "total": 3054,
+  "sinCaptura": 1120,
+  "conParecida": 332,
+  "soloMalas": 1194,
+  "soloValidasAjenas": 408,
+  "porNodo": {
+   "ricardone:Salida 2": {
+    "total": 273,
+    "sinCaptura": 78,
+    "conParecida": 50,
+    "soloMalas": 108,
+    "soloValidasAjenas": 37
+   },
+   "san_lorenzo:Ingreso": {
+    "total": 273,
+    "sinCaptura": 148,
+    "conParecida": 102,
+    "soloMalas": 21,
+    "soloValidasAjenas": 2
+   },
+   "san_lorenzo:Balanza Ingreso": {
+    "total": 78,
+    "sinCaptura": 5,
+    "conParecida": 21,
+    "soloMalas": 48,
+    "soloValidasAjenas": 4
+   },
+   "san_lorenzo:Balanza Egreso": {
+    "total": 1519,
+    "sinCaptura": 686,
+    "conParecida": 32,
+    "soloMalas": 522,
+    "soloValidasAjenas": 279
+   },
+   "ricardone:Playa 3": {
+    "total": 237,
+    "sinCaptura": 57,
+    "conParecida": 39,
+    "soloMalas": 135,
+    "soloValidasAjenas": 6
+   },
+   "ricardone:Balanza Egreso": {
+    "total": 25,
+    "sinCaptura": 7,
+    "conParecida": 3,
+    "soloMalas": 12,
+    "soloValidasAjenas": 3
+   },
+   "ricardone:Calada": {
+    "total": 142,
+    "sinCaptura": 26,
+    "conParecida": 21,
+    "soloMalas": 59,
+    "soloValidasAjenas": 36
+   },
+   "san_lorenzo:Plataformas Volcables": {
+    "total": 233,
+    "sinCaptura": 8,
+    "conParecida": 23,
+    "soloMalas": 192,
+    "soloValidasAjenas": 10
+   },
+   "ricardone:Tolva de carga silo Chief": {
+    "total": 149,
+    "sinCaptura": 75,
+    "conParecida": 19,
+    "soloMalas": 51,
+    "soloValidasAjenas": 4
+   },
+   "san_lorenzo:Carga / Descarga OSL": {
+    "total": 78,
+    "sinCaptura": 29,
+    "conParecida": 3,
+    "soloMalas": 22,
+    "soloValidasAjenas": 24
+   },
+   "san_lorenzo:Carga/descarga": {
+    "total": 9,
+    "sinCaptura": 1,
+    "conParecida": 0,
+    "soloMalas": 5,
+    "soloValidasAjenas": 3
+   },
+   "ricardone:Pre ingreso": {
+    "total": 6,
+    "sinCaptura": 0,
+    "conParecida": 2,
+    "soloMalas": 4,
+    "soloValidasAjenas": 0
+   },
+   "ricardone:Volcable 1": {
+    "total": 5,
+    "sinCaptura": 0,
+    "conParecida": 3,
+    "soloMalas": 2,
+    "soloValidasAjenas": 0
+   },
+   "ricardone:Volcable 2": {
+    "total": 17,
+    "sinCaptura": 0,
+    "conParecida": 9,
+    "soloMalas": 8,
+    "soloValidasAjenas": 0
+   },
+   "san_lorenzo:Egreso": {
+    "total": 4,
+    "sinCaptura": 0,
+    "conParecida": 4,
+    "soloMalas": 0,
+    "soloValidasAjenas": 0
+   },
+   "ricardone:Volcable Silo Keppler": {
+    "total": 6,
+    "sinCaptura": 0,
+    "conParecida": 1,
+    "soloMalas": 5,
+    "soloValidasAjenas": 0
+   }
+  }
+ }
+}

@@ -82,3 +82,13 @@ export function scoreCandidates(read, candidates) {
     otherProbability: total ? other / total : 1,
   }
 }
+
+/*
+ * Umbrales para aplicar sola una lectura con color/marca/tipo del DSS. Calibrados el 08/10 con 78
+ * decisiones de operaciones con atributos (scratchpad/attrcal.mjs):
+ *   - ≥ 90 %: 5 de 5 bien. Entre 85 y 90 % falló AB912RO → AB912PO (camiones distintos, mismos atributos).
+ *   - patente válida leída en este mismo nodo: 2 de 2 bien desde 75 % (AC297UX → AC297HX 90 %,
+ *     AH861QO → AH861QQ 87 % el 08/10 en vivo); se usa 85 % por margen.
+ */
+export const AUTO_EVIDENCE_PROBABILITY = 0.9
+export const AUTO_EVIDENCE_SAME_NODE_PROBABILITY = 0.85
