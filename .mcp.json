@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "etl": {
-      "command": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\agentes\\.venv\\Scripts\\etl-mcp.exe",
-      "args": [],
+      "command": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\agentes\\.venv\\Scripts\\python.exe",
+      "args": ["C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\agentes\\run_mcp.py"],
       "env": {
         "ETL_API_BASE": "http://127.0.0.1:8787"
       }

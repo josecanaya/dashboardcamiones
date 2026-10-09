@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { NvaiPanel } from './NvaiPanel'
 import type { NvaiFocus } from './nvaiApi'
+import type { AnalysisScope } from '../../context/AnalysisContext'
 
 export type NvaiBubbleProps = {
+  context?: AnalysisScope
   site?: string
   focus?: NvaiFocus | string | null
 }
@@ -11,7 +13,7 @@ export type NvaiBubbleProps = {
  * Burbuja global 56px abajo-derecha. Al abrir: panel 400px pegado a la derecha,
  * sin oscurecer ni tapar el fondo.
  */
-export function NvaiBubble({ site = 'ricardone', focus = null }: NvaiBubbleProps) {
+export function NvaiBubble({ site = 'ricardone', focus = null, context }: NvaiBubbleProps) {
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState(() => {
     const fallback = { x: Math.max(8, window.innerWidth - 104), y: Math.max(8, window.innerHeight - 104) }
@@ -26,6 +28,11 @@ export function NvaiBubble({ site = 'ricardone', focus = null }: NvaiBubbleProps
   })
   const drag = useRef<{ pointerId: number; startX: number; startY: number; originX: number; originY: number } | null>(null)
   const suppressClick = useRef(false)
+  useEffect(() => {
+    const openAnalysis = () => setOpen(true)
+    window.addEventListener('truckflow:analysis-open', openAnalysis)
+    return () => window.removeEventListener('truckflow:analysis-open', openAnalysis)
+  }, [])
 
   const clamp = (x: number, y: number) => ({
     x: Math.min(Math.max(8, x), Math.max(8, window.innerWidth - 84)),
@@ -79,7 +86,7 @@ export function NvaiBubble({ site = 'ricardone', focus = null }: NvaiBubbleProps
           role="dialog"
           aria-label="NVAi"
         >
-          <NvaiPanel site={site} focus={focus} onClose={() => setOpen(false)} />
+          <NvaiPanel site={site} focus={focus} context={context} onClose={() => setOpen(false)} />
         </aside>
       ) : null}
 

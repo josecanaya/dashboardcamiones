@@ -173,7 +173,7 @@ export function IdentificationPanel({ sites, mode = 'desk', onOpen }: { sites: S
     {receipt ? <p className="id-notice" role="status">{receipt}</p> : null}
     <div className="id-workspace"><aside className="id-queue" aria-label="Casos por revisar"><div className="id-queue__title">{filtered ? `${visible.length} de ${queueRows.length} casos` : `${visible.length} casos`}</div>
       {visible.map(row => <button type="button" disabled={busy} key={row.key} className={active?.key === row.key ? 'is-selected' : ''} aria-pressed={active?.key === row.key} onClick={() => { patch({ selected: row.key }); setReceipt('') }}>
-        <span className={`id-level id-level--${row.item.level}`}>{row.item.decision?.action === 'defer' ? 'Pospuesta' : row.item.decision?.action === 'review' ? 'Revisión solicitada' : LABEL[row.item.level]}</span>
+        <span className={`id-level id-level--${row.item.level}`}>{row.item.decision?.action === 'defer' ? 'Pospuesta' : row.item.decision?.action === 'review' ? 'Revisión solicitada' : row.item.decision?.source === 'automatic_relevance' ? 'Descartada automáticamente' : LABEL[row.item.level]}</span>
         <strong>{row.item.readPlate === 'SIN_PATENTE' ? 'Sin lectura' : row.item.readPlate}</strong><span>{siteName(row.site)} · {row.item.nodeLabel}</span>
         <small>{stamp(row.item.at)}{queue !== 'resueltas' ? ` · hace ${age(row.item.at, now)}` : ''} · {row.item.candidates.length} candidatos{row.item.events > 1 ? ` · ${row.item.events} capturas` : ''}</small>
         {otherSeat(row.item) ? <small className="id-claim">En revisión en otro puesto{otherSeat(row.item)!.label ? ` (${otherSeat(row.item)!.label})` : ''}</small> : null}
@@ -181,8 +181,8 @@ export function IdentificationPanel({ sites, mode = 'desk', onOpen }: { sites: S
         {row.item.decision?.action === 'defer' ? <small className="id-defer">Motivo: {row.item.decision.reason}{row.item.decision.attempts ? ` · ${row.item.decision.attempts} intento(s)` : ''}</small> : null}
       </button>)}
       {!visible.length ? <p className="id-empty">{emptyMessage}{filtered && queueRows.length ? <button type="button" onClick={() => patch({ search: '', point: '' })}>Limpiar filtros</button> : null}</p> : null}</aside>
-    <main className="id-case">{active ? <><header className="id-case__header"><div><span className="id-eyebrow">{siteName(active.site)} · {active.item.nodeLabel}</span><h3>{isPending(active.item) ? 'Confirmar identidad del camión' : 'Identificación resuelta'}</h3><p>{stamp(active.item.at)} · <span title="Código de cámara">{active.item.deviceCode}</span></p></div><span className={`id-level id-level--${active.item.level}`}>{LABEL[active.item.level]}</span></header>
-      <p className="id-reason">{active.item.reason}</p>
+    <main className="id-case">{active ? <><header className="id-case__header"><div><span className="id-eyebrow">{siteName(active.site)} · {active.item.nodeLabel}</span><h3>{isPending(active.item) ? 'Confirmar identidad del camión' : 'Identificación resuelta'}</h3><p>{stamp(active.item.at)} · <span title="Código de cámara">{active.item.deviceCode}</span></p></div><span className={`id-level id-level--${active.item.level}`}>{active.item.decision?.source === 'automatic_relevance' ? 'Descartada automáticamente' : LABEL[active.item.level]}</span></header>
+      <p className="id-reason">{active.item.decision?.source === 'automatic_relevance' ? active.item.decision.reason ?? active.item.reason : active.item.reason}</p>
       {otherSeat(active.item) ? <p className="id-claim" role="status">Este caso está abierto en otro puesto{otherSeat(active.item)!.label ? ` (${otherSeat(active.item)!.label})` : ''}. Si guardás y el otro ya decidió, el sistema te avisará del conflicto.</p> : null}
       <CaseNotes key={`notes-${active.key}`} notes={active.item.decision?.notes ?? []} busy={busy} onAdd={text => decide(active, { action: 'note', text })} />
       {isPending(active.item)
@@ -219,6 +219,7 @@ function ResolvedView({ row, busy, onReopen }: { row: Row; busy: boolean; onReop
   const d = row.item.decision
   return <div className="id-resolved">
     <strong>{row.item.readPlate} → {row.item.assignedPlate ?? 'Descartada'}</strong>
+    {d?.source === 'automatic_relevance' ? <p>Descartada automáticamente por relevancia · tipo detectado: {d.relevance?.capture.vehicleCategory ?? 'sin dato'} · regla {d.relevance?.ruleVersion}. Podés reabrirla para revisión humana.</p> : null}
     <p>{row.item.level === 'casi_seguro' ? 'Aplicada automáticamente por el sistema.' : d?.updatedAt ? `Decidida ${stamp(d.updatedAt)}${d.reason ? ` · motivo: ${d.reason}` : ''}${d.sameAs ? ' · aplicada junto con otra lectura' : ''}.` : ''}</p>
     {row.item.candidates.length ? <p>Candidatos evaluados: {row.item.candidates.map(c => `${c.plate} (puntaje ${c.score})`).join(' · ')}</p> : null}
     <CapturePhoto deviceCode={row.item.deviceCode} at={row.item.at} readPlate={row.item.readPlate} />

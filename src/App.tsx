@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 import { SiteProvider } from './context/SiteContext'
+import { AnalysisProvider } from './context/AnalysisContext'
 import { EtlWorkbenchProvider } from './features/real-truckflow/etlWorkbench/EtlWorkbenchContext'
 import { AppShell } from './app/AppShell'
 import { LEGACY_ROUTE_REDIRECTS } from './app/sectors'
@@ -33,6 +34,7 @@ function App() {
   return (
     <SiteProvider>
       <EtlWorkbenchProvider>
+        <AnalysisProvider>
         <Routes>
           <Route element={<AppShell />}>
             {/* Monitoreo de cámaras y flujo de camiones; la vista anterior queda como detalle. */}
@@ -72,6 +74,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
+        </AnalysisProvider>
       </EtlWorkbenchProvider>
     </SiteProvider>
   )

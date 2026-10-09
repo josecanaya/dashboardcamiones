@@ -1,0 +1,138 @@
+[
+ {
+  "plate": "KEB002",
+  "device": "SLZBalIngFte",
+  "horaOperativa": "09-30_1130",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "KEB002",
+   "confidence": 78,
+   "color": "Blue",
+   "marca": null,
+   "tipo": "Bus",
+   "at": "2026-09-30T14:26:15.000Z"
+  },
+  "sceneFile": "KEB002_09-30_1130_SLZBalIngFte_escena.jpg",
+  "plateFile": "KEB002_09-30_1130_SLZBalIngFte_patente.jpg"
+ },
+ {
+  "plate": "KEB002",
+  "device": "SLZVolcableC2",
+  "horaOperativa": "09-30_1156",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "KEB002",
+   "confidence": 78,
+   "color": "White",
+   "marca": null,
+   "tipo": "Medium Truck",
+   "at": "2026-09-30T14:52:25.000Z"
+  },
+  "sceneFile": "KEB002_09-30_1156_SLZVolcableC2_escena.jpg",
+  "plateFile": "KEB002_09-30_1156_SLZVolcableC2_patente.jpg"
+ },
+ {
+  "plate": "KEB002",
+  "device": "SLZVolcableC3",
+  "horaOperativa": "09-30_1246",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "KEB002",
+   "confidence": 78,
+   "color": "White",
+   "marca": null,
+   "tipo": "Large Truck",
+   "at": "2026-09-30T15:42:02.000Z"
+  },
+  "sceneFile": "KEB002_09-30_1246_SLZVolcableC3_escena.jpg",
+  "plateFile": "KEB002_09-30_1246_SLZVolcableC3_patente.jpg"
+ },
+ {
+  "plate": "KEB002",
+  "device": "SLZVolcableC2",
+  "horaOperativa": "09-30_1317",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "KEB002",
+   "confidence": 54,
+   "color": "Silver",
+   "marca": null,
+   "tipo": "Medium Truck",
+   "at": "2026-09-30T16:13:41.000Z"
+  },
+  "sceneFile": "KEB002_09-30_1317_SLZVolcableC2_escena.jpg",
+  "plateFile": "KEB002_09-30_1317_SLZVolcableC2_patente.jpg"
+ },
+ {
+  "plate": "KEB002",
+  "device": "SLZCalado",
+  "horaOperativa": "09-30_1329",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "KEB002",
+   "confidence": 86,
+   "color": "White",
+   "marca": null,
+   "tipo": "Medium Truck",
+   "at": "2026-09-30T16:25:52.000Z"
+  },
+  "sceneFile": "KEB002_09-30_1329_SLZCalado_escena.jpg",
+  "plateFile": "KEB002_09-30_1329_SLZCalado_patente.jpg"
+ },
+ {
+  "plate": "KEB002",
+  "device": "SLZBalIngFte",
+  "horaOperativa": "09-30_1334",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "KEB002",
+   "confidence": 86,
+   "color": "Blue",
+   "marca": "Volkswagen",
+   "tipo": "Small Truck",
+   "at": "2026-09-30T16:30:02.000Z"
+  },
+  "sceneFile": "KEB002_09-30_1334_SLZBalIngFte_escena.jpg",
+  "plateFile": "KEB002_09-30_1334_SLZBalIngFte_patente.jpg"
+ },
+ {
+  "plate": "KEB002",
+  "device": "SLZVolcableC3",
+  "horaOperativa": "09-30_1338",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "KEB002",
+   "confidence": 42,
+   "color": "White",
+   "marca": null,
+   "tipo": "Large Truck",
+   "at": "2026-09-30T16:34:22.000Z"
+  },
+  "sceneFile": "KEB002_09-30_1338_SLZVolcableC3_escena.jpg",
+  "plateFile": "KEB002_09-30_1338_SLZVolcableC3_patente.jpg"
+ },
+ {
+  "plate": "KEB002",
+  "device": "SLZSalidaC1Fte",
+  "horaOperativa": "09-30_1354",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "KEB002",
+   "confidence": 46,
+   "color": "White",
+   "marca": "Suzuki",
+   "tipo": "Large Truck",
+   "at": "2026-09-30T16:50:46.000Z"
+  },
+  "sceneFile": "KEB002_09-30_1354_SLZSalidaC1Fte_escena.jpg",
+  "plateFile": "KEB002_09-30_1354_SLZSalidaC1Fte_patente.jpg"
+ }
+]

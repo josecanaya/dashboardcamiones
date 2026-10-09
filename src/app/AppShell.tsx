@@ -5,6 +5,9 @@ import { NvaiBubble } from '../components/nvai/NvaiBubble'
 import { PRODUCT_SECTIONS, type NavGroup, type NavLeaf, type NavSection } from './sectors'
 import './appShell.css'
 import { HistoricalWorkspace } from '../features/real-truckflow/components/HistoricalWorkspace'
+import { useAnalysis, usePublishAnalysis } from '../context/AnalysisContext'
+import { useAnalysisPeriod } from '../features/real-truckflow/public/analysis'
+import { AnalysisMetric } from '../components/AnalysisMetric'
 
 function SidebarLink({ to, label }: NavLeaf) {
   return (
@@ -57,6 +60,9 @@ function SidebarSection({ section }: { section: NavSection }) {
 
 export function AppShell() {
   const location = useLocation()
+  const { scope } = useAnalysis()
+  const period = useAnalysisPeriod()
+  usePublishAnalysis({ mode: 'historical', site: 'both', ...period }, location.pathname.startsWith('/estadisticas/') && !location.pathname.endsWith('/tiempos'))
   const isHomePrototype = location.pathname === '/herramientas/prototipo-home'
   const isMapHome = location.pathname === '/' || isHomePrototype
   const [navOpen, setNavOpen] = useState(false)
@@ -91,12 +97,13 @@ export function AppShell() {
           </section>}
 
           <div className="min-h-0 flex-1">
+            {location.pathname.startsWith('/estadisticas/') ? <AnalysisMetric /> : null}
             {isHomePrototype ? <Outlet /> : <HistoricalWorkspace><Outlet /></HistoricalWorkspace>}
           </div>
         </div>
       </main>
 
-      {isHomePrototype ? null : <NvaiBubble site="ricardone" />}
+      {isHomePrototype ? null : <NvaiBubble site={scope.site} focus={{ sector: scope.sector ?? undefined, plate: scope.plate ?? undefined, label: scope.label ?? undefined }} context={scope} />}
     </div>
   )
 }

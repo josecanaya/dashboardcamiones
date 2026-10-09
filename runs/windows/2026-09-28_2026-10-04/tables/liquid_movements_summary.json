@@ -20,22 +20,22 @@
   ],
   "rows": [
     {
-      "riccalliq_operations": 145,
-      "aceite_platform_excel_ops": 327,
+      "riccalliq_operations": 306,
+      "aceite_platform_excel_ops": 626,
       "aceite_platform_s10_captured": 1,
-      "aceite_platform_excel_with_truckflow": 305,
-      "truckflow_s10_descarga_events": 171,
-      "truckflow_s10_with_excel_match": 146,
-      "sl1_sl5_operations": 327,
+      "aceite_platform_excel_with_truckflow": 592,
+      "truckflow_s10_descarga_events": 262,
+      "truckflow_s10_with_excel_match": 307,
+      "sl1_sl5_operations": 626,
       "sl1_sl5_s10_captured": 1,
       "bridge_ric_sl_count": 0,
-      "cohort_liquido_recepcion_ric": 57,
+      "cohort_liquido_recepcion_ric": 101,
       "cohort_liquido_despacho_ric": 0,
-      "cohort_transile_externo_ric_sl": 369,
-      "cohort_despacho_generico_calada": 6,
-      "cohort_sl_liquido_san_lorenzo": 171,
-      "cohort_ambiguo_riccalliq": 0,
-      "cohort_sin_riccalliq": 839
+      "cohort_transile_externo_ric_sl": 591,
+      "cohort_despacho_generico_calada": 14,
+      "cohort_sl_liquido_san_lorenzo": 262,
+      "cohort_ambiguo_riccalliq": 1,
+      "cohort_sin_riccalliq": 1638
     }
   ]
 }

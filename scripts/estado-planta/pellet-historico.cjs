@@ -13,7 +13,7 @@ const OPS = [
   { id: '4/9', desde: '2026-08-28', hasta: '2026-09-02', comite: '4/9', ciclo: 381 },
   { id: '11/9', desde: '2026-09-03', hasta: '2026-09-05', comite: '11/9', ciclo: 392 },
   { id: '18/9', desde: '2026-09-14', hasta: '2026-09-15', comite: '18/9', ciclo: 263 },
-  { id: '2/10', desde: '2026-09-24', hasta: '2026-09-30', comite: '2/10', ciclo: null },
+  { id: 'actual', desde: '2026-09-24', hasta: '2026-10-04', comite: 'Actual', ciclo: null },
 ]
 const seen = new Set(), R = []
 for (const d of fs.readdirSync(ROOT).filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort()) {

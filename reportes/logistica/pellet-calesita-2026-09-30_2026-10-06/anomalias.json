@@ -1,0 +1,282 @@
+{
+ "fueraDeCircuito": [
+  {
+   "p": "RDL445",
+   "carga": "10-06 11:31",
+   "devs": "SLZBalSC2Fte",
+   "horas": "10-06 16:05"
+  },
+  {
+   "p": "UUO981",
+   "carga": "10-06 11:43",
+   "devs": "SLZBalSC2Fte",
+   "horas": "10-06 16:19"
+  },
+  {
+   "p": "UUO981",
+   "carga": "10-06 17:51",
+   "devs": "SLZBalSC2Fte",
+   "horas": "10-06 19:00"
+  },
+  {
+   "p": "CKQ212",
+   "carga": "10-06 11:38",
+   "devs": "SLZBalSC2Fte",
+   "horas": "10-06 16:17"
+  },
+  {
+   "p": "CKQ212",
+   "carga": "10-06 17:27",
+   "devs": "SLZBalSC2Fte",
+   "horas": "10-06 18:53"
+  },
+  {
+   "p": "UPW705",
+   "carga": "10-01 11:22",
+   "devs": "SLZBalSC2Fte",
+   "horas": "10-01 16:55"
+  },
+  {
+   "p": "UKL882",
+   "carga": "09-30 10:04",
+   "devs": "SLZBalSC2Fte",
+   "horas": "09-30 15:12"
+  },
+  {
+   "p": "UKL882",
+   "carga": "09-30 15:34",
+   "devs": "SLZBalSC2Fte,SLZBalSC1Fte",
+   "horas": "09-30 15:12 09-30 17:52"
+  },
+  {
+   "p": "UYM942",
+   "carga": "09-30 10:33",
+   "devs": "SLZBalSC2Fte",
+   "horas": "09-30 15:28"
+  },
+  {
+   "p": "DTG181",
+   "carga": "10-01 05:06",
+   "devs": "SLZCalado",
+   "horas": "10-01 18:12"
+  },
+  {
+   "p": "DFP716",
+   "carga": "10-01 07:51",
+   "devs": "SLZBalSC2Fte",
+   "horas": "10-01 13:26"
+  },
+  {
+   "p": "AAE877",
+   "carga": "10-06 11:43",
+   "devs": "SLZBalSC2Fte",
+   "horas": "10-06 16:36"
+  },
+  {
+   "p": "EVL273",
+   "carga": "10-06 12:24",
+   "devs": "SLZBalSC2Fte",
+   "horas": "10-06 17:07"
+  },
+  {
+   "p": "EVL273",
+   "carga": "10-06 17:26",
+   "devs": "SLZBalSC2Fte",
+   "horas": "10-06 18:34"
+  },
+  {
+   "p": "AYM824",
+   "carga": "10-06 12:23",
+   "devs": "SLZBalSC2Fte",
+   "horas": "10-06 16:37"
+  },
+  {
+   "p": "AYM824",
+   "carga": "10-06 17:51",
+   "devs": "SLZBalSC2Fte",
+   "horas": "10-06 19:17"
+  }
+ ],
+ "volcableNoV4": [],
+ "interplantaLarga": [
+  {
+   "p": "DTG181",
+   "salidaRic": "10-01 13:44",
+   "ingresoSL": "10-01 15:02",
+   "min": 78,
+   "camarasEnMedio": "SLZIngCamFrente"
+  }
+ ],
+ "regresoLargo": [
+  {
+   "p": "UUO981",
+   "salidaSL": "10-06 16:20",
+   "siguienteIngresoRic": "10-06 17:51",
+   "min": 90,
+   "camarasEnMedio": "RicIngCamFrente,RicPreIngInFr"
+  },
+  {
+   "p": "CKQ212",
+   "salidaSL": "10-06 16:20",
+   "siguienteIngresoRic": "10-06 17:27",
+   "min": 67,
+   "camarasEnMedio": "SLZSalidaC1Fte,RicPreIngInFr"
+  },
+  {
+   "p": "BHL749",
+   "salidaSL": "09-30 13:58",
+   "siguienteIngresoRic": "09-30 15:06",
+   "min": 68,
+   "camarasEnMedio": "RicPreIngInFr"
+  },
+  {
+   "p": "BHL749",
+   "salidaSL": "10-01 14:39",
+   "siguienteIngresoRic": "10-01 17:37",
+   "min": 177,
+   "camarasEnMedio": "RicPreIngInFr"
+  },
+  {
+   "p": "UUL425",
+   "salidaSL": "10-01 17:40",
+   "siguienteIngresoRic": "10-01 18:47",
+   "min": 67,
+   "camarasEnMedio": "RicPreIngInFr"
+  },
+  {
+   "p": "UKL882",
+   "salidaSL": "10-01 11:12",
+   "siguienteIngresoRic": "10-01 16:41",
+   "min": 329,
+   "camarasEnMedio": "RicPreIngInFr"
+  },
+  {
+   "p": "AYM824",
+   "salidaSL": "10-06 16:40",
+   "siguienteIngresoRic": "10-06 17:51",
+   "min": 71,
+   "camarasEnMedio": "RicPreIngInFr"
+  }
+ ],
+ "ricLargo": [
+  {
+   "p": "RDL445",
+   "carga": "10-06 11:31",
+   "min": 238
+  },
+  {
+   "p": "UUO981",
+   "carga": "10-06 11:43",
+   "min": 236
+  },
+  {
+   "p": "CKQ212",
+   "carga": "10-06 11:38",
+   "min": 239
+  },
+  {
+   "p": "TAO150",
+   "carga": "10-01 10:44",
+   "min": 268
+  },
+  {
+   "p": "DTG181",
+   "carga": "10-01 05:06",
+   "min": 518
+  },
+  {
+   "p": "AAE877",
+   "carga": "10-06 11:43",
+   "min": 246
+  },
+  {
+   "p": "EVL273",
+   "carga": "10-06 12:24",
+   "min": 246
+  },
+  {
+   "p": "AYM824",
+   "carga": "10-06 12:23",
+   "min": 208
+  }
+ ],
+ "puertoLargo": [],
+ "kilos": [
+  {
+   "p": "DTG181",
+   "salida": "10-01 01:37",
+   "kgRic": 27660,
+   "kgPuerto": 26600,
+   "dif": -1060,
+   "taraRic": 13840,
+   "taraPuerto": 14860
+  },
+  {
+   "p": "GES056",
+   "salida": "10-01 02:02",
+   "kgRic": 28760,
+   "kgPuerto": 28540,
+   "dif": -220,
+   "taraRic": 15220,
+   "taraPuerto": 15380
+  },
+  {
+   "p": "UER485",
+   "salida": "10-01 05:09",
+   "kgRic": 25360,
+   "kgPuerto": 25140,
+   "dif": -220,
+   "taraRic": 12540,
+   "taraPuerto": 12700
+  },
+  {
+   "p": "UPW705",
+   "salida": "10-01 05:45",
+   "kgRic": 24820,
+   "kgPuerto": 24300,
+   "dif": -520,
+   "taraRic": 12880,
+   "taraPuerto": 13360
+  },
+  {
+   "p": "DTG181",
+   "salida": "10-01 13:44",
+   "kgRic": 27460,
+   "kgPuerto": 28320,
+   "dif": 860,
+   "taraRic": 14860,
+   "taraPuerto": 13920
+  },
+  {
+   "p": "XBL711",
+   "salida": "10-01 16:35",
+   "kgRic": 26740,
+   "kgPuerto": 26500,
+   "dif": -240,
+   "taraRic": 12880,
+   "taraPuerto": 13040
+  },
+  {
+   "p": "CFQ560",
+   "salida": "10-01 20:06",
+   "kgRic": 27660,
+   "kgPuerto": 27400,
+   "dif": -260,
+   "taraRic": 14540,
+   "taraPuerto": 14720
+  }
+ ],
+ "devicesFuera": {
+  "SLZBalSC2Fte": 15,
+  "SLZBalSC1Fte": 1,
+  "SLZCalado": 1
+ },
+ "interplantaDist": {
+  "n": 298,
+  "media": 16,
+  "mas30": 2,
+  "mas40": 1,
+  "mas60": 1,
+  "negativos": 0
+ }
+}

@@ -1,0 +1,40 @@
+{
+ "excluidos_servicio_particular": 571,
+ "camiones_fuera_excel": 307,
+ "capturas_frontales": 27735,
+ "lecturas_buenas": 6495,
+ "viajes": 2908,
+ "viajes_2_o_mas_nodos": 1430,
+ "viajes_con_circuito": 929,
+ "circuitos": {
+  "R7": 864,
+  "R29": 38,
+  "R5": 8,
+  "R28": 5,
+  "SL6": 4,
+  "R33": 3,
+  "R24": 2,
+  "R21": 1,
+  "R23": 1,
+  "R34": 1,
+  "R6": 1,
+  "SL10": 1
+ },
+ "nodos_con_camara_faltantes": 1602,
+ "estados_huecos": {
+  "ASIGNADA": 879,
+  "SIN_CAMARA": 929,
+  "NO_LEIDO_DEDUCIDO": 723
+ },
+ "cerrados_antes": 234,
+ "cerrados_con_asignadas": 460,
+ "cerrados_con_deducidos": 929,
+ "prueba_ciega": {
+  "casos": 1046,
+  "correctas": 1043,
+  "incorrectas": 1,
+  "pendientes": 2,
+  "precision_sobre_decididas": 0.999,
+  "recuperacion": 0.9971
+ }
+}

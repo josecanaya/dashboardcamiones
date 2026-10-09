@@ -193,6 +193,7 @@ export type EtlTransformOutput = {
     segmentTiming?: SegmentTimingIndex | null
     circuitTiming?: CircuitTimingIndex | null
     kpiTiemposBuilt?: boolean
+    materializationRevisions?: Record<string,string>
     movimientosContrato?: {
       enabled: boolean
       logs: string[]

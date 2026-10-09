@@ -184,6 +184,7 @@ export function composeRunsIntoTransformOutput(
     segmentTiming: index,
     kpiTiemposBuilt: true,
     composedFrom: runs.map((r) => r.runId),
+    materializationRevisions: Object.assign({}, ...runs.map(r => r.output.stats.materializationRevisions ?? {})),
     composedRange: { from, to },
   } as unknown as EtlTransformOutput['stats']
 

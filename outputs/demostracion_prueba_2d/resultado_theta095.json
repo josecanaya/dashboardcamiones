@@ -1,0 +1,396 @@
+{
+  "semana": "prueba_2d",
+  "summary": {
+    "semana": "prueba",
+    "days": [
+      "2026-10-01",
+      "2026-10-02"
+    ],
+    "eventos": 8536,
+    "lecturasSoloDss": 2388,
+    "capturasEnNodos": 10936,
+    "conDss": 5352,
+    "movimientos": 1027,
+    "pasos": 7814,
+    "pasosLeidos": 4373,
+    "lecturasMalas": 3192,
+    "verdad": {
+      "ambigua": 2605,
+      "relectura": 362,
+      "nunca_visto": 176,
+      "firme": 49
+    },
+    "evaluadasPorElModelo": 3192
+  },
+  "thetaElegido": 0.95,
+  "curva": [
+    {
+      "theta": 0.5,
+      "asignadas": 338,
+      "correctas": 242,
+      "errores": 5,
+      "sinVerificar": 91,
+      "exactitud": 0.979757085020243,
+      "cotaInferior95": 0.9579106981418727,
+      "peorCaso": 0.7159763313609467,
+      "completanPaso": 116,
+      "dobleLectura": 26,
+      "lecturaPosterior": 100
+    },
+    {
+      "theta": 0.7,
+      "asignadas": 243,
+      "correctas": 183,
+      "errores": 2,
+      "sinVerificar": 58,
+      "exactitud": 0.9891891891891892,
+      "cotaInferior95": 0.9663616491538595,
+      "peorCaso": 0.7530864197530864,
+      "completanPaso": 95,
+      "dobleLectura": 18,
+      "lecturaPosterior": 70
+    },
+    {
+      "theta": 0.8,
+      "asignadas": 208,
+      "correctas": 156,
+      "errores": 2,
+      "sinVerificar": 50,
+      "exactitud": 0.9873417721518988,
+      "cotaInferior95": 0.9606914511177316,
+      "peorCaso": 0.75,
+      "completanPaso": 86,
+      "dobleLectura": 16,
+      "lecturaPosterior": 54
+    },
+    {
+      "theta": 0.9,
+      "asignadas": 171,
+      "correctas": 133,
+      "errores": 2,
+      "sinVerificar": 36,
+      "exactitud": 0.9851851851851852,
+      "cotaInferior95": 0.9541009651696357,
+      "peorCaso": 0.7777777777777778,
+      "completanPaso": 77,
+      "dobleLectura": 14,
+      "lecturaPosterior": 42
+    },
+    {
+      "theta": 0.95,
+      "asignadas": 137,
+      "correctas": 112,
+      "errores": 1,
+      "sinVerificar": 24,
+      "exactitud": 0.9911504424778761,
+      "cotaInferior95": 0.9587079756854491,
+      "peorCaso": 0.8175182481751825,
+      "completanPaso": 65,
+      "dobleLectura": 13,
+      "lecturaPosterior": 34
+    },
+    {
+      "theta": 0.97,
+      "asignadas": 121,
+      "correctas": 100,
+      "errores": 0,
+      "sinVerificar": 21,
+      "exactitud": 1,
+      "cotaInferior95": 0.97048695039296,
+      "peorCaso": 0.8264462809917356,
+      "completanPaso": 62,
+      "dobleLectura": 11,
+      "lecturaPosterior": 27
+    },
+    {
+      "theta": 0.98,
+      "asignadas": 112,
+      "correctas": 91,
+      "errores": 0,
+      "sinVerificar": 21,
+      "exactitud": 1,
+      "cotaInferior95": 0.9676158352635655,
+      "peorCaso": 0.8125,
+      "completanPaso": 58,
+      "dobleLectura": 11,
+      "lecturaPosterior": 22
+    },
+    {
+      "theta": 0.99,
+      "asignadas": 94,
+      "correctas": 76,
+      "errores": 0,
+      "sinVerificar": 18,
+      "exactitud": 1,
+      "cotaInferior95": 0.9613492332742745,
+      "peorCaso": 0.8085106382978723,
+      "completanPaso": 49,
+      "dobleLectura": 10,
+      "lecturaPosterior": 17
+    },
+    {
+      "theta": 0.995,
+      "asignadas": 78,
+      "correctas": 67,
+      "errores": 0,
+      "sinVerificar": 11,
+      "exactitud": 1,
+      "cotaInferior95": 0.9562724452181105,
+      "peorCaso": 0.8589743589743589,
+      "completanPaso": 44,
+      "dobleLectura": 9,
+      "lecturaPosterior": 14
+    },
+    {
+      "theta": 0.999,
+      "asignadas": 54,
+      "correctas": 49,
+      "errores": 0,
+      "sinVerificar": 5,
+      "exactitud": 1,
+      "cotaInferior95": 0.9406939858103028,
+      "peorCaso": 0.9074074074074074,
+      "completanPaso": 30,
+      "dobleLectura": 7,
+      "lecturaPosterior": 12
+    }
+  ],
+  "resultado": {
+    "theta": 0.95,
+    "asignadas": 137,
+    "correctas": 112,
+    "errores": 1,
+    "sinVerificar": 24,
+    "exactitud": 0.9911504424778761,
+    "cotaInferior95": 0.9587079756854491,
+    "peorCaso": 0.8175182481751825,
+    "completanPaso": 65,
+    "dobleLectura": 13,
+    "lecturaPosterior": 34
+  },
+  "azar": {
+    "comparaciones": 528,
+    "confirmadas": 109,
+    "tasa": 0.20643939393939395
+  },
+  "verdadIndependiente": {
+    "valida_fuera_excel": 2058,
+    "invalida": 1134
+  },
+  "pasos": {
+    "esperados": 3933,
+    "leidos": 2269,
+    "recuperados": 61,
+    "faltantesSinRecuperar": 1603,
+    "deEsosSinNingunaCaptura": 501
+  },
+  "porPunto": {
+    "san_lorenzo:Ingreso": {
+      "dia": {
+        "esperados": 205,
+        "leidos": 180,
+        "recuperados": 1
+      },
+      "noche": {
+        "esperados": 234,
+        "leidos": 158,
+        "recuperados": 4
+      }
+    },
+    "san_lorenzo:Balanza Ingreso": {
+      "dia": {
+        "esperados": 221,
+        "leidos": 121,
+        "recuperados": 1
+      },
+      "noche": {
+        "esperados": 224,
+        "leidos": 107,
+        "recuperados": 4
+      }
+    },
+    "san_lorenzo:Balanza Egreso": {
+      "dia": {
+        "esperados": 217,
+        "leidos": 12,
+        "recuperados": 14
+      },
+      "noche": {
+        "esperados": 229,
+        "leidos": 7,
+        "recuperados": 1
+      }
+    },
+    "ricardone:Balanza Egreso": {
+      "dia": {
+        "esperados": 137,
+        "leidos": 95,
+        "recuperados": 1
+      },
+      "noche": {
+        "esperados": 74,
+        "leidos": 63,
+        "recuperados": 1
+      }
+    },
+    "san_lorenzo:Egreso": {
+      "dia": {
+        "esperados": 220,
+        "leidos": 180,
+        "recuperados": 3
+      },
+      "noche": {
+        "esperados": 221,
+        "leidos": 157,
+        "recuperados": 5
+      }
+    },
+    "ricardone:Salida 2": {
+      "dia": {
+        "esperados": 167,
+        "leidos": 121,
+        "recuperados": 1
+      },
+      "noche": {
+        "esperados": 208,
+        "leidos": 90,
+        "recuperados": 6
+      }
+    },
+    "san_lorenzo:Plataformas Volcables": {
+      "dia": {
+        "esperados": 93,
+        "leidos": 79,
+        "recuperados": 1
+      },
+      "noche": {
+        "esperados": 148,
+        "leidos": 22,
+        "recuperados": 7
+      }
+    },
+    "ricardone:Playa 3": {
+      "dia": {
+        "esperados": 98,
+        "leidos": 83,
+        "recuperados": 1
+      },
+      "noche": {
+        "esperados": 61,
+        "leidos": 23,
+        "recuperados": 0
+      }
+    },
+    "ricardone:Balanza Ingreso": {
+      "dia": {
+        "esperados": 141,
+        "leidos": 43,
+        "recuperados": 2
+      },
+      "noche": {
+        "esperados": 65,
+        "leidos": 3,
+        "recuperados": 0
+      }
+    },
+    "ricardone:Pre ingreso": {
+      "dia": {
+        "esperados": 227,
+        "leidos": 203,
+        "recuperados": 0
+      },
+      "noche": {
+        "esperados": 207,
+        "leidos": 145,
+        "recuperados": 0
+      }
+    },
+    "ricardone:Calada": {
+      "dia": {
+        "esperados": 217,
+        "leidos": 172,
+        "recuperados": 1
+      },
+      "noche": {
+        "esperados": 227,
+        "leidos": 154,
+        "recuperados": 3
+      }
+    },
+    "san_lorenzo:Carga/descarga": {
+      "dia": {
+        "esperados": 4,
+        "leidos": 0,
+        "recuperados": 0
+      },
+      "noche": {
+        "esperados": 3,
+        "leidos": 0,
+        "recuperados": 0
+      }
+    },
+    "ricardone:Volcable Silo Keppler": {
+      "dia": {
+        "esperados": 1,
+        "leidos": 1,
+        "recuperados": 0
+      },
+      "noche": {
+        "esperados": 2,
+        "leidos": 1,
+        "recuperados": 0
+      }
+    },
+    "san_lorenzo:Carga / Descarga OSL": {
+      "dia": {
+        "esperados": 42,
+        "leidos": 29,
+        "recuperados": 2
+      },
+      "noche": {
+        "esperados": 20,
+        "leidos": 7,
+        "recuperados": 0
+      }
+    },
+    "ricardone:Volcable 2": {
+      "dia": {
+        "esperados": 12,
+        "leidos": 8,
+        "recuperados": 2
+      },
+      "noche": {
+        "esperados": 8,
+        "leidos": 5,
+        "recuperados": 0
+      }
+    }
+  },
+  "errores": [
+    {
+      "at": "2026-10-02T13:38:50.322Z",
+      "node": "ricardone:Salida 2",
+      "device": "RicEgrCamFrente",
+      "read": "GAD821",
+      "asignada": "GHD821",
+      "p": 0.962,
+      "kind": "valida_fuera_excel",
+      "check": {
+        "node": "ricardone:Playa 3",
+        "minutos": 17,
+        "enOrden": false
+      },
+      "excelMissing": [],
+      "excelTwins": [
+        "AI451SC",
+        "AD086JX",
+        "LXG917",
+        "BLT769",
+        "JEM906",
+        "UUA161",
+        "DAO236",
+        "BTY903"
+      ]
+    }
+  ]
+}

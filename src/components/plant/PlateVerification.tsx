@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import type { CameraCaptureLookup, IdentificationCandidate, CandidateEvidence, IdentificationEvidence } from '../../services/live/plantStateApi'
 import { cameraCaptureImageUrl, DecisionError, findCameraCapture, newOpId } from '../../services/live/plantStateApi'
 import type { ReviewDecision, DecideFn, SiblingRead } from './ReviewCandidates'
+import { candidateFactors, EvidenceSpark, FactorChips, OddsDonut, ownTitle, rankOptions } from './CandidateOdds'
 import './plateVerification.css'
 
 const TZ = 'America/Argentina/Buenos_Aires'
@@ -104,6 +105,8 @@ export function PlateVerification({ choice: initialChoice, evidence, alternative
   const [sharedZoomValue, setSharedZoomValue] = useState<Zoom>(null)
   const shared: SharedZoom | undefined = syncZoom ? { zoom: sharedZoomValue, setZoom: setSharedZoomValue } : undefined
   const [attrFlags, setAttrFlags] = useState<string[]>([])
+  const [attributeSide, setAttributeSide] = useState<'capture' | 'reference' | 'both' | 'unknown'>('unknown')
+  const [identityDifferent, setIdentityDifferent] = useState(false)
   const seen = useRef<Record<string, CameraCaptureLookup['capture']>>({})
   // El mismo opId en cada reintento: el servidor no duplica una operación ya aplicada (EV-05).
   const opId = useRef(newOpId())
@@ -115,7 +118,7 @@ export function PlateVerification({ choice: initialChoice, evidence, alternative
     const next = options[(i + step + options.length) % options.length]
     if (!next || next.plate === choice.candidate?.plate) return
     setChoice({ decision: { action: 'confirm', plate: next.plate, journeyUid: next.journeyUid }, candidate: next })
-    setPhotos(p => ({ ...p, ref: 'loading' })); seen.current.referencia = null; setAttrFlags([]); setNoPhotoOk(false); setSave({ kind: 'idle' })
+    setPhotos(p => ({ ...p, ref: 'loading' })); seen.current.referencia = null; setAttrFlags([]); setAttributeSide('unknown'); setIdentityDifferent(false); setNoPhotoOk(false); setSave({ kind: 'idle' })
     opId.current = newOpId()
   }
   const plate = choice.decision.action === 'confirm' ? choice.decision.plate : readPlate
@@ -129,7 +132,7 @@ export function PlateVerification({ choice: initialChoice, evidence, alternative
   const saving = save.kind === 'saving'
   const finalReason = reason === 'Otro' ? reasonText.trim() : reason
   const queryReady = photos.query === 'ready'
-  const refReady = choice.ownRead && !renameTrip ? true : photos.ref === 'ready'
+  const refReady = choice.ownRead && !renameTrip && !identityDifferent ? true : photos.ref === 'ready'
   const photosLoading = photos.query === 'loading' || (!refReady && photos.ref === 'loading')
   // EV-04: sin las dos fotos no hay verificación visual; la excepción es explícita.
   const evidenceOk = isReject ? photos.query !== 'loading' : (queryReady && refReady) || (!photosLoading && noPhotoOk)
@@ -144,8 +147,13 @@ export function PlateVerification({ choice: initialChoice, evidence, alternative
     if (decision.action === 'reject') decision = { action: 'reject', reason: finalReason }
     if (decision.action === 'confirm' && noPhotoOk && !(queryReady && refReady)) decision = { ...decision, reason: 'confirmado sin foto de referencia' }
     if (decision.action === 'confirm' && attrFlags.length) decision = { ...decision, attrFlags }
-    const photos = Object.fromEntries(Object.entries(seen.current).filter(([, c]) => c).map(([role, c]) => [role, { device: c!.device, at: c!.at, plate: c!.plate, sceneFile: c!.sceneFile, plateFile: c!.plateFile }]))
-    try { await onConfirm(decision, { applyTo, stay, photos }, opId.current) }
+    // Capturas que vio el operador (no confundir con `photos`, el estado de carga de las dos fotos).
+    const seenPhotos = Object.fromEntries(Object.entries(seen.current).filter(([, c]) => c).map(([role, c]) => [role, { device: c!.device, at: c!.at, plate: c!.plate, sceneFile: c!.sceneFile, plateFile: c!.plateFile }]))
+    const learning = { version: 'operator-comparison-v1', identity: (decision.action!=='confirm' || !candidate) ? 'unknown' as const : (choice.ownRead && !renameTrip) ? (identityDifferent ? 'different_vehicle' as const : 'unknown' as const) : 'same_vehicle' as const,
+      referencePlate: candidate?.plate??null, referenceDevice:candidate?.photoDevice??null, referenceAt:candidate?.photoAt??null,
+      visualVerified:queryReady && photos.ref==='ready' && !noPhotoOk,
+      attributeErrors:attrFlags.map(kind=>({kind,side:attributeSide})) }
+    try { await onConfirm(decision, { applyTo, stay, photos: seenPhotos, learning }, opId.current) }
     catch (e) { setSave({ kind: 'error', error: e instanceof Error ? e : new Error(String(e)) }) }
   }
 
@@ -165,7 +173,11 @@ export function PlateVerification({ choice: initialChoice, evidence, alternative
       <p>{isReject ? `La lectura ${readPlate} se retira por no ser un caso válido. Si solo no podés identificarla, cancelá y usá «No puedo determinar».` : <><b className="pv-change">{readPlate} → {plate}</b>{choice.ownRead ? ' · la cámara leyó bien' : ''}</>}</p>
       {switchable ? <div className="pv-switch" role="group" aria-label="Alternar candidato">
         <button type="button" onClick={() => switchTo(-1)} aria-label="Candidato anterior">←</button>
-        {options.map(c => <button key={c.plate} type="button" aria-pressed={c.plate === choice.candidate?.plate} onClick={() => switchTo(options.indexOf(c) - options.findIndex(o => o.plate === choice.candidate?.plate))}>{c.plate}</button>)}
+        {options.map(c => {
+          const p = evidence?.candidates.find(e => e.plate === c.plate)?.probability ?? c.probability
+          const best = Math.max(...options.map(o => evidence?.candidates.find(e => e.plate === o.plate)?.probability ?? o.probability ?? 0), evidence?.otherProbability ?? 0)
+          return <button key={c.plate} type="button" className={p != null && p === best ? 'is-best' : ''} aria-pressed={c.plate === choice.candidate?.plate} onClick={() => switchTo(options.indexOf(c) - options.findIndex(o => o.plate === choice.candidate?.plate))}>{c.plate}{p != null ? <small> {pct(p)}</small> : null}</button>
+        })}
         <button type="button" onClick={() => switchTo(1)} aria-label="Candidato siguiente">→</button>
         <small>La captura a identificar queda fija. Teclas ← →.</small>
       </div> : null}</div>
@@ -173,16 +185,25 @@ export function PlateVerification({ choice: initialChoice, evidence, alternative
     <div className="pv-body">
       <div className="pv-photos">
         <VerificationPhoto label="Captura a identificar" device={device} at={at} plate={readPlate} shared={shared} onState={s => setPhotos(p => ({ ...p, query: s }))} onCapture={c => { seen.current.captura = c }} />
-        {isReject || (choice.ownRead && !renameTrip) ? null : <VerificationPhoto key={candidate?.plate ?? 'ref'} label={refLabel} device={referenceDevice} at={referenceAt} plate={candidate?.plate ?? plate} relation={refRelation} shared={shared} onState={s => setPhotos(p => ({ ...p, ref: s }))} onCapture={c => { seen.current.referencia = c }} />}
+        {isReject || (choice.ownRead && !renameTrip && !identityDifferent) ? null : <VerificationPhoto key={candidate?.plate ?? 'ref'} label={refLabel} device={referenceDevice} at={referenceAt} plate={candidate?.plate ?? plate} relation={refRelation} shared={shared} onState={s => setPhotos(p => ({ ...p, ref: s }))} onCapture={c => { seen.current.referencia = c }} />}
       </div>
       <label className="pv-sync"><input type="checkbox" checked={syncZoom} onChange={e => { setSyncZoom(e.target.checked); setSharedZoomValue(null) }} /> Ampliar las dos fotos juntas (clic en la imagen amplía ese punto; otro clic restablece)</label>
-      {!isReject && candidate && !choice.ownRead ? <div className="pv-scores">
-        <div><span>Apoyo del modelo a este candidato</span><strong>{pct(candidate.probability)}</strong><small>Estimación relativa entre los candidatos listados; no es una certeza calibrada.</small></div>
-        <div><span>Factor: parecido de patente</span><strong>{pct(candidate.similarity)}</strong><small>Cuánto se parecen los caracteres, nada más.</small></div>
-        <div><span>Factor: esperado en este punto</span><strong>{pct(candidate.nodeProbability)}</strong></div>
-        <div><span>Factor: circuito compatible</span><strong>{candidate.circuit ? `${candidate.circuit} · ${pct(candidate.circuitProbability)}` : 'Sin circuito confirmado'}</strong></div>
-      </div> : null}
-      {!isReject && candidate && !choice.ownRead && (candidate.similarity ?? 0) - (candidate.probability ?? 0) > 0.4 ? <p className="pv-note">La patente se parece, pero el modelo le da poco apoyo: hay otros candidatos o el recorrido no cierra. Los porcentajes no se suman ni se reemplazan entre sí.</p> : null}
+      {!isReject && (candidate || choice.ownRead) ? (() => {
+        const ranked = rankOptions(options, evidence ? evidence.otherProbability : null)
+        const selectedId = choice.ownRead ? '__own__' : candidate?.plate
+        const sel = ranked.find(o => o.id === selectedId)
+        const isTop = ranked[0]?.id === selectedId
+        const factors = !choice.ownRead && candidate ? candidateFactors(candidate) : null
+        return <div className={`pv-odds${isTop ? ' is-top' : ''}`}>
+          {evidence ? <OddsDonut options={ranked} readPlate={readPlate} validFormat={evidence.read.validFormat} size={120} selected={selectedId} /> : null}
+          <div className="pv-odds__text">
+            <span>{isTop ? 'Es la opción con mayor apoyo' : `Opción ${ranked.findIndex(o => o.id === selectedId) + 1} de ${ranked.length}`}{!isTop && ranked[0] ? ` · mayor apoyo para ${ranked[0].kind === 'own' ? ownTitle(readPlate, evidence?.read.validFormat ?? false) : ranked[0].plate}` : ''}</span>
+            <strong>{sel?.probability != null ? pct(sel.probability) : 'No disponible'} <small>{choice.ownRead ? 'para ningún candidato listado' : `de apoyo para ${candidate?.plate}`}</small></strong>
+            {factors ? <div className="pv-odds__why"><EvidenceSpark factors={factors} emphasis /><FactorChips factors={factors} size="sm" /></div> : null}
+          </div>
+        </div>
+      })() : null}
+      {!isReject && candidate && !choice.ownRead && (candidate.similarity ?? 0) - (candidate.probability ?? 0) > 0.4 ? <p className="pv-note">El modelo puede penalizar atributos mal detectados. Este porcentaje expresa apoyo relativo, no certeza de identidad: compará las fotos y el recorrido.</p> : null}
       {!isReject && candidate?.comparisons?.length && !choice.ownRead ? <div className="pv-comparisons"><b>Detectado por cámara</b>{candidate.comparisons.map(c => <span key={c.kind} className={`${c.result === 'distinto' ? 'is-different' : ''}${attrFlags.includes(c.kind) ? ' is-flagged' : ''}`}>{ATTR[c.kind] ?? c.kind}: {es(c.read) ?? 'sin dato'} → {es(c.candidate) ?? 'sin dato'} · {c.result === 'coincide' ? 'coincide' : c.result === 'distinto' ? 'difiere' : 'sin dato'}
         <button type="button" disabled={saving} aria-pressed={attrFlags.includes(c.kind)} title="Marcar que la cámara detectó mal este atributo (queda registrado con la decisión)" onClick={() => setAttrFlags(f => f.includes(c.kind) ? f.filter(k => k !== c.kind) : [...f, c.kind])}>{attrFlags.includes(c.kind) ? 'marcado mal detectado' : 'mal detectado?'}</button></span>)}</div> : null}
       {choice.ownRead && candidate ? <fieldset className="pv-scope"><legend>¿Qué afirmás?</legend>
@@ -199,6 +220,8 @@ export function PlateVerification({ choice: initialChoice, evidence, alternative
         <p className="pv-note">Por defecto solo se decide esta captura. Marcá las que verificaste que son el mismo vehículo.</p>
         {siblings.map(s => <label key={s.fragmentKey}><input type="checkbox" disabled={saving} checked={applyTo.includes(s.fragmentKey)} onChange={e => setApplyTo(list => e.target.checked ? [...list, s.fragmentKey] : list.filter(k => k !== s.fragmentKey))} /> {hhmm(s.at)} · {s.nodeLabel} · {s.deviceCode}</label>)}
       </fieldset> : null}
+      {choice.ownRead && !renameTrip && candidate ? <label className="pv-exception"><input type="checkbox" checked={identityDifferent} disabled={saving} onChange={e=>setIdentityDifferent(e.target.checked)} /> Comparé la referencia: son vehículos distintos (abre ambas fotos y registra un ejemplo negativo).</label> : null}
+      {attrFlags.length ? <label className="pv-exception">Atributos mal detectados en <select value={attributeSide} disabled={saving} onChange={e=>setAttributeSide(e.target.value as typeof attributeSide)}><option value="unknown">No puedo identificar qué cámara</option><option value="capture">Esta captura</option><option value="reference">La referencia</option><option value="both">Ambas cámaras</option></select>. Se registra por separado de la patente.</label> : null}
       {!isReject && !photosLoading && !(queryReady && refReady) ? <label className="pv-exception"><input type="checkbox" checked={noPhotoOk} disabled={saving} onChange={e => setNoPhotoOk(e.target.checked)} /> Falta una foto: confirmo igual por otra evidencia (queda registrado como confirmación sin foto).</label> : null}
       <p className="pv-note">Alcance: {isReject ? 'se descarta' : 'se confirma'} esta captura{applyTo.length ? ` y ${applyTo.length} lectura(s) marcada(s)` : ' únicamente'}{choice.ownRead && renameTrip ? `, y se renombra el viaje ${candidate?.plate}` : ''}.</p>
     </div>

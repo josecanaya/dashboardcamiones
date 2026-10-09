@@ -13,6 +13,7 @@ import type { PlantLayout, PlantCameraGroup } from '../data/plantZones.types'
 import type { PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow } from '../services/live/plantStateApi'
 import { cameraCaptureImageUrl, correctTruckLocation, findCameraCapture, formatDrainMinutes, getIdentifications, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
 import './liveMonitor.css'
+import { usePublishAnalysis } from '../context/AnalysisContext'
 
 type Site = 'ricardone' | 'san_lorenzo'
 type Panel = 'camiones' | 'camaras' | 'capturas'
@@ -106,6 +107,7 @@ export function LiveMonitorPage() {
     .filter(t => !zoneFilter || t.zoneId === zoneFilter)
     .filter(t => !search || t.plate.includes(search.toUpperCase()))
   const followedRow = trucks.find(t => t.plate === followed) ?? null
+  usePublishAnalysis({ mode: 'live', site, sector: followedRow?.sectorCode ?? pointOpen?.sectorCode, zone: zoneFilter, plate: followed, label: pointOpen?.label, metricId: view === 'patentes' ? 'identification.pending_cases' : 'plant.trucks_present' })
   const ageS = live.lastUpdateMs ? Math.round((now - live.lastUpdateMs) / 1000) : null
   const statusText = live.status === 'live' ? 'En vivo' : live.status === 'stale' ? 'Datos demorados' : live.status === 'error' ? 'Sin conexión' : 'Conectando…'
   const lastEvent = snap?.source?.lastEventAt ? Math.round((now - Date.parse(snap.source.lastEventAt)) / 60000) : null

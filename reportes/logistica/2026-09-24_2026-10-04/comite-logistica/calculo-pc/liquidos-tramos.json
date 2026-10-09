@@ -1,0 +1,102 @@
+{
+ "dias": [
+  "2026-09-24",
+  "2026-09-25",
+  "2026-09-26",
+  "2026-09-27",
+  "2026-09-28",
+  "2026-09-29",
+  "2026-09-30",
+  "2026-10-01",
+  "2026-10-02",
+  "2026-10-03",
+  "2026-10-04"
+ ],
+ "universo": 437,
+ "circuitos": {
+  "SL1": {
+   "nombre": "SL1 · Terminal San Lorenzo",
+   "operaciones": 219,
+   "conCamaras": 208,
+   "puertaAPuerta": {
+    "n": 219,
+    "media": 293,
+    "mediana": 249
+   },
+   "ingresos": 0,
+   "egresos": 219,
+   "tramos": [
+    {
+     "desde": "Ingreso",
+     "hasta": "Calada",
+     "n": 125,
+     "media": 24,
+     "mediana": 2
+    },
+    {
+     "desde": "Calada",
+     "hasta": "Balanza ingreso",
+     "n": 161,
+     "media": 50,
+     "mediana": 12
+    },
+    {
+     "desde": "Balanza ingreso",
+     "hasta": "Carga",
+     "n": 147,
+     "media": 157,
+     "mediana": 145
+    },
+    {
+     "desde": "Carga",
+     "hasta": "Egreso",
+     "n": 151,
+     "media": 39,
+     "mediana": 37
+    }
+   ]
+  },
+  "R8": {
+   "nombre": "R8 · Recepción líquida Ricardone",
+   "operaciones": 149,
+   "conCamaras": 143,
+   "puertaAPuerta": {
+    "n": 149,
+    "media": 323,
+    "mediana": 188
+   },
+   "ingresos": 72,
+   "egresos": 77,
+   "tramos": [
+    {
+     "desde": "Pre-ingreso",
+     "hasta": "Calle líquida",
+     "n": 52,
+     "media": 11,
+     "mediana": 7
+    },
+    {
+     "desde": "Calle líquida",
+     "hasta": "Balanza ingreso",
+     "n": 0,
+     "media": null,
+     "mediana": null
+    },
+    {
+     "desde": "Balanza ingreso",
+     "hasta": "Balanza egreso",
+     "n": 0,
+     "media": null,
+     "mediana": null
+    },
+    {
+     "desde": "Balanza egreso",
+     "hasta": "Egreso",
+     "n": 2,
+     "media": 37,
+     "mediana": 47
+    }
+   ]
+  }
+ }
+}

@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { usePublishAnalysis } from '../../../context/AnalysisContext'
+import { useAnalysisPeriod } from '../public/analysis'
 import { EXECUTIVE_CIRCUIT_MATRIX } from '../etlWorkbench/finalCircuitScoring'
 import { pelletUnifiedCircuitLabel } from '../../../etl-core/reports/transileExternoCiclo'
 import {
@@ -10,6 +12,7 @@ import {
   kpiCircuitCodesForScatterFilter,
   VOLCABLE_RECEIPT_KPI_UNION_CODE,
   SEGMENT_TIMING_HISTOGRAM_BIN_MIN,
+  rebuildSegmentTimingIndexFromLegs,
   type SegmentTimingAggregate,
 } from '../etlWorkbench/etlSegmentTiming'
 import { useEtlWorkbenchOptional } from '../etlWorkbench/EtlWorkbenchContext'
@@ -36,7 +39,7 @@ import { turnoLabel } from '../etlWorkbench/operationalTurno'
 import { parseCsvToRecords } from '../etlWorkbench/etlCsvParse'
 import { legsForAggregate } from '../etlWorkbench/etlSegmentSlowTail'
 import { isDemoraLegDuration, isWithinKpiSegmentDisplayMax } from '../etlWorkbench/etlSegmentTimingRules'
-import { buildJourneyOperationalDayMap } from '../etlWorkbench/etlOperationalDay'
+import { buildJourneyOperationalDayMap, operationalDayOfIso, enumerateDays } from '../etlWorkbench/etlOperationalDay'
 
 function fmtMin(v: number): string {
   return v.toFixed(1)
@@ -50,6 +53,9 @@ function buildChartDataForAggregate(agg: SegmentTimingAggregate) {
 export function KpiTiemposTab() {
   const wb = useEtlWorkbenchOptional()
   const tr = wb?.transformResult
+  const analysisPeriod = useAnalysisPeriod()
+  const journeyDayById = useMemo(() => buildJourneyOperationalDayMap({ circuitTimingJourneysCsv:tr?.csv.circuit_timing_journeys, excelOperationsCsv:tr?.csv.excel_operations_with_truckflow }), [tr?.csv.circuit_timing_journeys,tr?.csv.excel_operations_with_truckflow])
+  const scatterSource = useMemo(() => parseSegmentScatterByDayCsv(tr?.csv.segment_scatter_by_day), [tr?.csv.segment_scatter_by_day])
   const kpiBuilt = wb?.kpiTiemposBuilt ?? tr?.stats.kpiTiemposBuilt ?? false
   /**
    * Recalcular funciona con el insumo en memoria (tras un Transform) O re-agregando
@@ -65,7 +71,7 @@ export function KpiTiemposTab() {
     autoKpiRef.current = tr
     void wb?.runKpiTiempos()
   }, [tr, kpiBuilt, canRunKpi, wb?.periodBusy, wb?.transformBusy, wb?.kpiTiemposBusy, wb?.runKpiTiempos])
-  const segmentTimingRaw = kpiBuilt ? tr?.stats.segmentTiming : null
+  const persistedSegmentTiming = kpiBuilt ? tr?.stats.segmentTiming : null
 
   const analysisSourceLabel = tr?.csv.excel_operations_with_truckflow?.trim() ?
     'Excel-first + Truckflow'
@@ -87,6 +93,18 @@ export function KpiTiemposTab() {
   // Filtro general (día / banda horaria) compartido por TODOS los gráficos de KPI tiempos.
   const [selectedDay, setSelectedDay] = useState(SCATTER_DAY_FILTER_ALL)
   const [franjaFilter, setFranjaFilter] = useState<FranjaHoraria | null>(null)
+  const segmentTimingRaw = useMemo(() => {
+    if (!persistedSegmentTiming) return null
+    if (!analysisPeriod.from || !analysisPeriod.to) return persistedSegmentTiming
+    const legs = persistedSegmentTiming.legs.filter(leg => {
+      const day = journeyDayById.get(leg.journeyId)
+      if (!day || day < analysisPeriod.from! || day > analysisPeriod.to!) return false
+      if (selectedDay !== SCATTER_DAY_FILTER_ALL && day !== selectedDay) return false
+      if (franjaFilter && !scatterSource.some(row => row.journey_id === leg.journeyId && row.segment_from === leg.fromCode && row.segment_to === leg.toCode && row.franja_horaria === franjaFilter)) return false
+      return true
+    })
+    return rebuildSegmentTimingIndexFromLegs(legs)
+  }, [persistedSegmentTiming,analysisPeriod.from,analysisPeriod.to,journeyDayById,selectedDay,franjaFilter,scatterSource])
 
   const segmentTiming = useMemo(() => {
     if (!segmentTimingRaw) return null
@@ -97,19 +115,20 @@ export function KpiTiemposTab() {
   }, [segmentTimingRaw, circuitFilter])
 
   const periodLabel = useMemo(() => {
+    if (analysisPeriod.from && analysisPeriod.to) return `${analysisPeriod.from} → ${analysisPeriod.to}`
     if (!wb?.loadSummary?.daysDetected.length) return '—'
     const d = wb.loadSummary.daysDetected
     return d.length === 1 ? d[0] : `${d[0]} → ${d[d.length - 1]}`
-  }, [wb?.loadSummary])
+  }, [wb?.loadSummary,analysisPeriod.from,analysisPeriod.to])
 
   /** Circuitos reales presentes (para el checklist). */
   const checklistOptions = useMemo(
     () =>
-      (segmentTimingRaw?.circuitCodes ?? []).map((c) => ({
+      (persistedSegmentTiming?.circuitCodes ?? []).map((c) => ({
         id: c,
         label: `${c} · ${pelletUnifiedCircuitLabel(c) ?? EXECUTIVE_CIRCUIT_MATRIX[c]?.label ?? c}`,
       })),
-    [segmentTimingRaw?.circuitCodes]
+    [persistedSegmentTiming?.circuitCodes]
   )
 
   // Set efectivo: null (sin inicializar) = todos los circuitos.
@@ -135,8 +154,8 @@ export function KpiTiemposTab() {
   }, [checklistOptions, effectiveChecked])
 
   const scatterByDayAll = useMemo(
-    () => parseSegmentScatterByDayCsv(tr?.csv.segment_scatter_by_day),
-    [tr?.csv.segment_scatter_by_day]
+    () => scatterSource.filter(row => (!analysisPeriod.from || row.fecha_tramo >= analysisPeriod.from) && (!analysisPeriod.to || row.fecha_tramo <= analysisPeriod.to)),
+    [scatterSource,analysisPeriod.from,analysisPeriod.to]
   )
 
   /**
@@ -145,16 +164,9 @@ export function KpiTiemposTab() {
    * solo trae algunos circuitos en rangos compuestos). Sirve para recalcular la barra de tiempos
    * medios del día elegido filtrando los legs por el día de su journey.
    */
-  const journeyDayById = useMemo(
-    () =>
-      buildJourneyOperationalDayMap({
-        circuitTimingJourneysCsv: tr?.csv.circuit_timing_journeys,
-        excelOperationsCsv: tr?.csv.excel_operations_with_truckflow,
-      }),
-    [tr?.csv.circuit_timing_journeys, tr?.csv.excel_operations_with_truckflow]
-  )
 
   const periodFechas = useMemo(() => {
+    if (analysisPeriod.from && analysisPeriod.to) return enumerateDays(analysisPeriod.from,analysisPeriod.to)
     const fromDisk = [...(wb?.loadSummary?.daysDetected ?? [])]
     const fromScatter = scatterByDayAll.map((r) => r.fecha_tramo).filter(Boolean)
     // Los días también salen de `circuit_timing_journeys` (journeyDayById): las corridas
@@ -163,7 +175,7 @@ export function KpiTiemposTab() {
     // vacío (no se podía filtrar por día) aunque el filtro por tramo sí sabe el día.
     const fromJourneys = [...journeyDayById.values()]
     return [...new Set([...fromDisk, ...fromScatter, ...fromJourneys])].sort()
-  }, [wb?.loadSummary?.daysDetected, scatterByDayAll, journeyDayById])
+  }, [wb?.loadSummary?.daysDetected, scatterByDayAll, journeyDayById,analysisPeriod.from,analysisPeriod.to])
 
   // Si el día elegido en el filtro general ya no existe en el período, volver a "todos".
   useEffect(() => {
@@ -207,6 +219,7 @@ export function KpiTiemposTab() {
     }
     return aggregatesWithData[0] ?? visibleAggregates[visibleAggregates.length - 1] ?? null
   }, [visibleAggregates, aggregatesWithData, selectedKey])
+  usePublishAnalysis({ mode: 'historical', site: 'both', ...analysisPeriod, circuit: circuitFilter || null, franja: franjaFilter, fromPoint: selectedAggregate?.fromCode, toPoint: selectedAggregate?.toCode, from: selectedDay === SCATTER_DAY_FILTER_ALL ? analysisPeriod.from : selectedDay, to: selectedDay === SCATTER_DAY_FILTER_ALL ? analysisPeriod.to : selectedDay, metricId: selectedAggregate ? 'segment.duration_median' : 'circuit.duration_median' })
 
   const circuitScatterUniqueOps = useMemo(() => {
     if (!circuitFilter) return 0
@@ -268,6 +281,8 @@ export function KpiTiemposTab() {
     const seen = new Set<string>()
     const ops: QuarterCircuitOpInput[] = []
     for (const r of excelOperationRows) {
+      const day = operationalDayOfIso(r.truckflow_first_seen_at || r.external_ingreso_at) || r.source_date
+      if (!day || (analysisPeriod.from && day < analysisPeriod.from) || (analysisPeriod.to && day > analysisPeriod.to)) continue
       if (!codes.has(String(r.resolved_executive_circuit_code ?? '').trim())) continue
       const id = String(r.external_operation_id ?? '').trim()
       if (id) {
@@ -281,7 +296,7 @@ export function KpiTiemposTab() {
       })
     }
     return ops
-  }, [excelOperationRows, circuitFilter])
+  }, [excelOperationRows, circuitFilter,analysisPeriod.from,analysisPeriod.to])
 
   const quarterCircuitSummary = useMemo(
     () => buildQuarterCircuitSummary(circuitOps, { periodStartDay: periodFechas[0], selectedDay }),

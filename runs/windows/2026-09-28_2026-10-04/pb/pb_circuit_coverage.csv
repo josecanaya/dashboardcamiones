@@ -1,19 +1,20 @@
 coverage_type,matrix_code,matrix_name,circuit_group,en_matriz_operativa,circuitos_observados,reconstruccion_posible,cobertura_sobre_circuitos_pct,reconstruccion_sobre_observados_pct
-punto_operativo,INGRESO,ingreso,Secuencia lógica Ricardone,si,0,0,0,
-punto_operativo,PREINGRESO,preingreso,Secuencia lógica Ricardone,si,519,241,81,46.4
-punto_operativo,CALADA,calada,Secuencia lógica Ricardone,si,420,233,65.5,55.5
-punto_operativo,BALANZA_INGRESO,balanza ingreso,Secuencia lógica Ricardone,si,62,0,9.7,0
-punto_operativo,BALANZA_EGRESO,balanza egreso,Secuencia lógica Ricardone,si,163,27,25.4,16.6
-punto_operativo,EGRESO,egreso,Secuencia lógica Ricardone,si,411,232,64.1,56.4
-punto_operativo,VOLCABLE,volcable,Secuencia lógica Ricardone,si,39,16,6.1,41
+punto_operativo,INGRESO,ingreso,Secuencia lógica Ricardone,si,13,5,1.2,38.5
+punto_operativo,PREINGRESO,preingreso,Secuencia lógica Ricardone,si,907,513,81.6,56.6
+punto_operativo,CALADA,calada,Secuencia lógica Ricardone,si,763,504,68.6,66.1
+punto_operativo,BALANZA_INGRESO,balanza ingreso,Secuencia lógica Ricardone,si,119,1,10.7,0.8
+punto_operativo,BALANZA_EGRESO,balanza egreso,Secuencia lógica Ricardone,si,259,50,23.3,19.3
+punto_operativo,EGRESO,egreso,Secuencia lógica Ricardone,si,738,489,66.4,66.3
+punto_operativo,VOLCABLE,volcable,Secuencia lógica Ricardone,si,61,36,5.5,59
 punto_operativo,CELDA16_DESCARGA,celda16 descarga,Secuencia lógica Ricardone,si,0,0,0,
-punto_operativo,CELDA16_CARGA,celda16 carga,Secuencia lógica Ricardone,si,0,0,0,
-punto_operativo,LIQUIDO,liquido,Secuencia lógica Ricardone,si,63,7,9.8,11.1
-punto_operativo,SL_INGRESO,sl ingreso,Secuencia lógica Ricardone,si,139,4,21.7,2.9
-circuito_preliminar,CIRCUITO_SAN_LORENZO,CIRCUITO_SAN_LORENZO,Clasificación ETL,si,362,220,56.5,60.8
-circuito_preliminar,DESPACHO_SIN_PUNTO_INSTRUMENTADO,DESPACHO_SIN_PUNTO_INSTRUMENTADO,Clasificación ETL,parcial,177,5,27.6,2.8
-circuito_preliminar,CIRCUITO_LIQUIDO,CIRCUITO_LIQUIDO,Clasificación ETL,si,63,7,9.8,11.1
-circuito_preliminar,CIRCUITO_VOLCABLE_1_2,CIRCUITO_VOLCABLE_1_2,Clasificación ETL,si,39,16,6.1,41
+punto_operativo,CELDA16_CARGA,celda16 carga,Secuencia lógica Ricardone,si,1,1,0.1,100
+punto_operativo,LIQUIDO,liquido,Secuencia lógica Ricardone,si,84,9,7.6,10.7
+punto_operativo,SL_INGRESO,sl ingreso,Secuencia lógica Ricardone,si,159,9,14.3,5.7
+circuito_preliminar,CIRCUITO_SAN_LORENZO,CIRCUITO_SAN_LORENZO,Clasificación ETL,si,679,477,61.1,70.3
+circuito_preliminar,DESPACHO_SIN_PUNTO_INSTRUMENTADO,DESPACHO_SIN_PUNTO_INSTRUMENTADO,Clasificación ETL,parcial,287,5,25.8,1.7
+circuito_preliminar,CIRCUITO_LIQUIDO,CIRCUITO_LIQUIDO,Clasificación ETL,si,84,9,7.6,10.7
+circuito_preliminar,CIRCUITO_VOLCABLE_1_2,CIRCUITO_VOLCABLE_1_2,Clasificación ETL,si,61,36,5.5,59
+circuito_preliminar,CIRCUITO_CELDA16_CARGA,CIRCUITO_CELDA16_CARGA,Clasificación ETL,si,1,1,0.1,100
 matriz_negocio,A1V0,Celda 16,Recepción / Descarga sólido,si,0,0,0,
 matriz_negocio,A2V0,Silo Australiano,Recepción / Descarga sólido,si,0,0,0,
 matriz_negocio,A3V0,Silos Kepler,Recepción / Descarga sólido,si,0,0,0,

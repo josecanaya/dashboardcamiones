@@ -1,0 +1,15 @@
+[
+ {
+  "dev": "RicB1Ingreso",
+  "device": "RicB1Ingreso",
+  "plate": "DTG181",
+  "confidence": 54,
+  "vehicleBrand": "Chevrolet",
+  "vehicleColor": "White",
+  "vehicleCategory": "Medium Truck",
+  "at": "2026-10-01T15:50:42.000Z",
+  "sceneFile": "aHR0cHM6Ly8xOTIuMTY4LjQuMjo0NDMvdjEvcy8zMjMyMjM2NTQ2Lzk5MDEvMWVhN2EyZmItMTY2Ny0xMWYxLTk1OWYtMDI1MGJjODFkNzc1LzIwMjYxMDAxLzEvZHNmXzlhNjYxODBmLWJkYWYtMTFmMS1hOWM2LTdjYTYyYTZiMDgxZl8yMzk0NTIyXzMwMjY1MjIuanBn",
+  "plateFile": "aHR0cHM6Ly8xOTIuMTY4LjQuMjo0NDMvdjEvcy8zMjMyMjM2NTQ2Lzk5MDEvMWVhN2EyZmItMTY2Ny0xMWYxLTk1OWYtMDI1MGJjODFkNzc1LzIwMjYxMDAxLzEvZHNmXzlhNjYxODBmLWJkYWYtMTFmMS1hOWM2LTdjYTYyYTZiMDgxZl8zMDI2NTIyXzMwMzU4ODQuanBn",
+  "diffMs": 3000
+ }
+]

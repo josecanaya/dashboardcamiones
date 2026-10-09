@@ -1,0 +1,88 @@
+{
+  "testedAt": "2026-10-07T19:29:59.615Z",
+  "checks": [
+    {
+      "test": "plant-state",
+      "site": "ricardone",
+      "status": 200,
+      "siteReturned": "ricardone",
+      "shape": true,
+      "presentMatches": true,
+      "at": "2026-10-07T16:29:59-03:00"
+    },
+    {
+      "test": "plant-state",
+      "site": "san_lorenzo",
+      "status": 200,
+      "siteReturned": "san_lorenzo",
+      "shape": true,
+      "presentMatches": true,
+      "at": "2026-10-07T16:29:59-03:00"
+    },
+    {
+      "test": "agent-status",
+      "status": 200,
+      "body": {
+        "configured": true,
+        "model": "claude-code (suscripción)",
+        "mode": "claude-cli-subscription",
+        "cliPath": "claude.exe",
+        "hasMcpConfig": true,
+        "subagents": [],
+        "effort": "medium",
+        "note": "Sin ANTHROPIC_API_KEY: corre en la suscripción vía Claude Code. Requiere `claude login`."
+      }
+    },
+    {
+      "test": "windows",
+      "status": 200,
+      "count": 46,
+      "latest": {
+        "from": "2026-05-12",
+        "to": "2026-05-17",
+        "runId": "2026-05-12_2026-05-17",
+        "rulesVersion": "etl_transform_v13",
+        "createdAt": "2026-07-28T12:53:39.705Z",
+        "stale": true,
+        "exists": true
+      }
+    },
+    {
+      "test": "resolve-window",
+      "status": 200,
+      "body": {
+        "from": "2026-05-12",
+        "to": "2026-05-17",
+        "runId": "2026-05-12_2026-05-17",
+        "inputHash": "b3ac8f6b29d2",
+        "rulesVersion": "etl_transform_v13",
+        "createdAt": "2026-07-28T12:53:39.705Z",
+        "stale": true,
+        "currentRulesVersion": "etl_transform_v17"
+      }
+    },
+    {
+      "test": "tables",
+      "status": 200,
+      "modelTables": [
+        "C_operaciones_con_camara",
+        "C_operaciones_sin_camara",
+        "D_camiones_sin_contrato",
+        "D_circuitos_anomalos",
+        "D_circuitos_incompletos",
+        "D_circuitos_validos",
+        "D_descartados",
+        "E_kpi_circuito",
+        "E_kpi_operacion"
+      ],
+      "hasSegmentLegs": true
+    },
+    {
+      "test": "summary",
+      "status": 200,
+      "rulesVersion": "etl_transform_v13",
+      "manifestStatus": "ok",
+      "inputHash": "b3ac8f6b29d2"
+    }
+  ]
+}

@@ -1,5 +1,8 @@
 import type { EtlTransformOutput } from './etlTransformContracts'
 import { fetchRunTable, getRunSummary, listRunTables } from '../api/etlRunCacheApi'
+import { persistedLegRowsToSegmentLegs } from './etlComposeRuns'
+import { rebuildSegmentTimingIndexFromLegs } from './etlSegmentTiming'
+import { aggregateCircuitTimingSummaries, circuitTimingJourneysFromCsvRows } from './etlCircuitTiming'
 
 /**
  * Reconstruye un EtlTransformOutput a partir de runs/windows/<runId>/ (o legacy).
@@ -14,11 +17,31 @@ export async function loadTransformOutputFromRun(runId: string): Promise<EtlTran
     tables[name] = t
     csv[name] = serializeCsv(t.headers, t.rows)
   }
+  const finalSummary = await getRunSummary(runId)
+  if (summary.revision && summary.revision !== finalSummary.revision) throw new Error('La corrida cambió durante la carga. Volvé a cargar el período.')
   const rulesVersion = String((summary.manifest?.rulesVersion as string) ?? '')
+  // stats.json conserva solo contadores: los índices se reconstruyen desde hechos persistidos.
+  const stats = { ...summary.stats } as EtlTransformOutput['stats']
+  stats.materializationRevisions = summary.revision ? { [runId]:summary.revision } : {}
+  if (tables.circuit_timing_journeys) {
+    const journeys = circuitTimingJourneysFromCsvRows(tables.circuit_timing_journeys.rows.map(row => Object.fromEntries(Object.entries(row).map(([key,value]) => [key, String(value ?? '')]))))
+    const summaries = aggregateCircuitTimingSummaries(journeys)
+    stats.circuitTiming = { journeys, summaries, circuitCodes: summaries.map(row => row.executiveCircuitCode) }
+  } else stats.circuitTiming = null
+  const legTable = tables.segment_timing_legs
+  if (legTable) {
+    const legs = persistedLegRowsToSegmentLegs(legTable.rows)
+    if (legTable.rows.length && !legs.length) throw new Error('La corrida contiene tramos con un esquema incompatible. No es un período sin datos.')
+    stats.segmentTiming = rebuildSegmentTimingIndexFromLegs(legs)
+    stats.kpiTiemposBuilt = true
+  } else if (stats.kpiTiemposBuilt && !Array.isArray(stats.segmentTiming?.aggregates)) {
+    stats.kpiTiemposBuilt = false
+    stats.segmentTiming = undefined
+  }
   return {
     csv,
     tables: tables as unknown as EtlTransformOutput['tables'],
-    stats: summary.stats as EtlTransformOutput['stats'],
+    stats,
     rulesVersion: rulesVersion as EtlTransformOutput['rulesVersion'],
   }
 }

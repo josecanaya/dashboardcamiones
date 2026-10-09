@@ -1,0 +1,19 @@
+[
+ {
+  "plate": "QD523QM",
+  "device": "SLZVolcableC2",
+  "horaOperativa": "10-06_1344",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "QD523QM",
+   "confidence": 14,
+   "color": "White",
+   "marca": "Volvo",
+   "tipo": "Medium Truck",
+   "at": "2026-10-06T16:40:55.000Z"
+  },
+  "sceneFile": "QD523QM_10-06_1344_SLZVolcableC2_escena.jpg",
+  "plateFile": "QD523QM_10-06_1344_SLZVolcableC2_patente.jpg"
+ }
+]

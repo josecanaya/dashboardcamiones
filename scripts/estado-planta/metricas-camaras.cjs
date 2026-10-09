@@ -1,5 +1,5 @@
 // Métricas de la semana SOLO con cámaras (sin Excel de movimientos). Misma regla para las dos semanas.
-// Uso: node --max-old-space-size=4096 scripts/estado-planta/metricas-camaras.cjs <salida.json> [prev_from] [cur_from]
+// Uso: node --max-old-space-size=4096 scripts/estado-planta/metricas-camaras.cjs <salida.json> [prev_from] [cur_from] [cur_dias]
 //   prev_from / cur_from = primer día (jueves) de cada semana de comité; por defecto 2026-09-17 y 2026-09-24.
 // Hora operativa = occurredAt + 206 min. Los circuitos se arman por secuencia de cámaras por patente:
 //   R29 (transile) = carga en silo → calada → egreso → volcable puerto
@@ -16,9 +16,11 @@ const addDays = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 86400000).
 const prevFrom = process.argv[3] || '2026-09-17'
 const curFrom = process.argv[4] || '2026-09-24'
 const W = { prev: [], cur: [] }
-for (let i = 0; i < 7; i++) { W.prev.push(addDays(prevFrom, i)); W.cur.push(addDays(curFrom, i)) }
+const curLen = +(process.argv[5] || 7)
+for (let i = 0; i < 7; i++) W.prev.push(addDays(prevFrom, i))
+for (let i = 0; i < curLen; i++) W.cur.push(addDays(curFrom, i))
 const files = []
-for (let d = addDays(prevFrom, -2); d <= addDays(curFrom, 7); d = addDays(d, 1)) files.push(d)
+for (let d = addDays(prevFrom, -2); d <= addDays(curFrom, curLen); d = addDays(d, 1)) files.push(d)
 
 const fake = /^(.)\1+$/
 const seen = new Set()

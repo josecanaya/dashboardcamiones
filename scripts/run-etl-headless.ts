@@ -4,6 +4,7 @@
  * Uso: npx tsx scripts/run-etl-headless.ts --events <json> --from-day <d> --to-day <d> [--out runs/]
  */
 import { createHash } from 'node:crypto'
+import { archiveRun, sourceFingerprint } from '../server/analytics/provenance.mjs'
 import {
   mkdirSync,
   readFileSync,
@@ -394,7 +395,6 @@ async function main() {
 
   const runId = stableWindowRunId(effectiveFrom, effectiveTo)
   const runDir = join(args.outRoot, 'windows', runId)
-  wipeAndCreateRunDir(runDir)
 
   const startedAt = new Date().toISOString()
   const logLines: string[] = []
@@ -424,18 +424,24 @@ async function main() {
   let liveCorrections: LiveCorrectionsDocument | null = null
   try {
     const port = process.env.TRUCKFLOW_LOCAL_SERVER_PORT || '8787'
-    const res = await fetch(`http://127.0.0.1:${port}/api/truckflow/live/corrections`)
-    if (res.ok) liveCorrections = (await res.json()) as LiveCorrectionsDocument
-  } catch {
-    /* servidor apagado */
+    const res = await fetch(`http://127.0.0.1:${port}/api/truckflow/live/corrections`, { signal: AbortSignal.timeout(15000) })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    liveCorrections = (await res.json()) as LiveCorrectionsDocument
+    if (!Array.isArray(liveCorrections?.corrections)) throw new Error('Esquema de correcciones incompatible')
+  } catch (error) {
+    throw new Error(`No se pudo verificar la fuente de correcciones. La corrida anterior se conserva. ${error instanceof Error ? error.message : String(error)}`)
   }
   log(`[etl-headless] correcciones de En vivo: ${liveCorrections?.corrections.length ?? 0}`)
+  const priorRevision = archiveRun(args.outRoot, runId, existsSync(runDir) ? runDir : null)
+  const fingerprint = sourceFingerprint({ eventsPaths: args.eventsPaths, movimientosRoot: args.movimientosRoot, from: effectiveFrom, to: effectiveTo, corrections: liveCorrections?.corrections })
+  wipeAndCreateRunDir(runDir)
 
   const inputHash = createHash('sha256')
     .update(
       JSON.stringify({
-        events: args.eventsPaths,
-        movimientosRows: preNormalizedMovimientos?.length ?? 0,
+        events: args.eventsPaths.map(p => ({ path: p, hash: createHash('sha256').update(readFileSync(p)).digest('hex') })),
+        movimientos: preNormalizedMovimientos ?? [],
+        corrections: liveCorrections?.corrections ?? [],
         rulesVersion: ETL_TRANSFORM_RULES_VERSION,
         from: effectiveFrom,
         to: effectiveTo,
@@ -564,6 +570,8 @@ async function main() {
         {
           runId,
           status: 'ok',
+          sourceFingerprint: fingerprint,
+          priorRevision,
           startedAt,
           finishedAt,
           fromDay: effectiveFrom,
@@ -576,6 +584,7 @@ async function main() {
             movimientosRows: preNormalizedMovimientos?.length ?? 0,
             inputHash,
             eventCount: events.length,
+            liveCorrections: { count: liveCorrections?.corrections.length ?? 0, revision: createHash('sha256').update(JSON.stringify(liveCorrections?.corrections ?? [])).digest('hex') },
           },
           output: {
             tableCount: coreCount + debugCount,
@@ -618,6 +627,7 @@ async function main() {
       inputHash,
       rulesVersion: out.rulesVersion ?? ETL_TRANSFORM_RULES_VERSION,
     })
+    archiveRun(args.outRoot, runId, runDir)
 
     console.log(runId)
   } catch (err) {

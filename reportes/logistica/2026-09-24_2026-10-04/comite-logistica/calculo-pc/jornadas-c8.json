@@ -1,0 +1,205 @@
+{
+ "desde": "2026-09-24",
+ "hasta": "2026-10-04",
+ "corteHoras": 8,
+ "circuitos": {
+  "pellet": {
+   "viajes": 443,
+   "camiones": 64,
+   "jornadas": 140,
+   "dias": [
+    "2026-09-24",
+    "2026-09-25",
+    "2026-09-26",
+    "2026-09-30",
+    "2026-10-01"
+   ],
+   "horasJornada": {
+    "media": 16.4,
+    "p50": 14.2,
+    "p90": 33.6,
+    "max": 40.2
+   },
+   "jornadasMas12h": 88,
+   "jornadasMas15h": 59,
+   "porViajes": {
+    "1": {
+     "jornadas": 22,
+     "horasMedia": 5.9,
+     "horasMax": 17.6
+    },
+    "2": {
+     "jornadas": 33,
+     "horasMedia": 10.3,
+     "horasMax": 14.6
+    },
+    "3": {
+     "jornadas": 39,
+     "horasMedia": 14.7,
+     "horasMax": 18.2
+    },
+    "4": {
+     "jornadas": 22,
+     "horasMedia": 19,
+     "horasMax": 28.6
+    },
+    "5": {
+     "jornadas": 5,
+     "horasMedia": 27.4,
+     "horasMax": 30.5
+    },
+    "6": {
+     "jornadas": 8,
+     "horasMedia": 33.2,
+     "horasMax": 34.3
+    },
+    "7": {
+     "jornadas": 11,
+     "horasMedia": 38.6,
+     "horasMax": 40.2
+    }
+   },
+   "viajesPorJornada": 3.2,
+   "viajesPorCamionOperativo": 6.9,
+   "porDia": {
+    "2026-09-24": {
+     "viajes": 41,
+     "camiones": 32,
+     "viajesPorCamion": 1.3
+    },
+    "2026-09-25": {
+     "viajes": 70,
+     "camiones": 38,
+     "viajesPorCamion": 1.8
+    },
+    "2026-09-26": {
+     "viajes": 90,
+     "camiones": 35,
+     "viajesPorCamion": 2.6
+    },
+    "2026-09-30": {
+     "viajes": 106,
+     "camiones": 43,
+     "viajesPorCamion": 2.5
+    },
+    "2026-10-01": {
+     "viajes": 136,
+     "camiones": 47,
+     "viajesPorCamion": 2.9
+    }
+   }
+  },
+  "soja": {
+   "viajes": 516,
+   "camiones": 57,
+   "jornadas": 153,
+   "dias": [
+    "2026-09-24",
+    "2026-09-25",
+    "2026-09-26",
+    "2026-09-27",
+    "2026-09-28",
+    "2026-09-29"
+   ],
+   "horasJornada": {
+    "media": 16,
+    "p50": 13.3,
+    "p90": 37.8,
+    "max": 62.3
+   },
+   "jornadasMas12h": 85,
+   "jornadasMas15h": 56,
+   "porViajes": {
+    "1": {
+     "jornadas": 40,
+     "horasMedia": 4.5,
+     "horasMax": 6.5
+    },
+    "2": {
+     "jornadas": 29,
+     "horasMedia": 10.2,
+     "horasMax": 16.4
+    },
+    "3": {
+     "jornadas": 44,
+     "horasMedia": 14.2,
+     "horasMax": 17.8
+    },
+    "4": {
+     "jornadas": 18,
+     "horasMedia": 19.7,
+     "horasMax": 37.8
+    },
+    "5": {
+     "jornadas": 4,
+     "horasMedia": 22.4,
+     "horasMax": 25.2
+    },
+    "6": {
+     "jornadas": 3,
+     "horasMedia": 27.6,
+     "horasMax": 29.9
+    },
+    "9": {
+     "jornadas": 3,
+     "horasMedia": 43.2,
+     "horasMax": 48
+    },
+    "11": {
+     "jornadas": 2,
+     "horasMedia": 56.5,
+     "horasMax": 62.3
+    },
+    "12": {
+     "jornadas": 4,
+     "horasMedia": 57.3,
+     "horasMax": 61.9
+    },
+    "13": {
+     "jornadas": 5,
+     "horasMedia": 58.5,
+     "horasMax": 59.6
+    },
+    "14": {
+     "jornadas": 1,
+     "horasMedia": 62.1,
+     "horasMax": 62.1
+    }
+   },
+   "viajesPorJornada": 3.4,
+   "viajesPorCamionOperativo": 9.1,
+   "porDia": {
+    "2026-09-24": {
+     "viajes": 112,
+     "camiones": 46,
+     "viajesPorCamion": 2.4
+    },
+    "2026-09-25": {
+     "viajes": 64,
+     "camiones": 40,
+     "viajesPorCamion": 1.6
+    },
+    "2026-09-26": {
+     "viajes": 42,
+     "camiones": 30,
+     "viajesPorCamion": 1.4
+    },
+    "2026-09-27": {
+     "viajes": 116,
+     "camiones": 34,
+     "viajesPorCamion": 3.4
+    },
+    "2026-09-28": {
+     "viajes": 118,
+     "camiones": 40,
+     "viajesPorCamion": 3
+    },
+    "2026-09-29": {
+     "viajes": 64,
+     "camiones": 29,
+     "viajesPorCamion": 2.2
+    }
+   }
+  }
+ }
+}

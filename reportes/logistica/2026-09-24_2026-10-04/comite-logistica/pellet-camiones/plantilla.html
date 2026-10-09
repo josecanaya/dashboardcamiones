@@ -1,0 +1,325 @@
+<title>Pellet camión por camión</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: informe de una columna; fórmula como hoja de cálculo, ejemplos en fila, gráfico de actividad (Gantt) y tabla completa debajo */
+:root {
+  --bg: #F5F8F4; --surface: #FFFFFF; --ink: #14281E; --muted: #4A5D52; --line: #D3E2D7;
+  --green: #0B5638; --ric: #3A8F63; --ruta: #B7C3BB; --puerto: #6B55A3; --brown: #5E4428; --soft: #EAF2EC; --hl: #F3EADF; --warn: #D9822B;
+  --sans: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif; --mono: 'IBM Plex Mono', Consolas, 'Courier New', monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0F1A14; --surface: #16241C; --ink: #E6EFE9; --muted: #A3B6AA; --line: #2B3D33;
+  --green: #7FCBA0; --ric: #4FA97A; --ruta: #5B6B62; --puerto: #9A86D6; --brown: #D9B48A; --soft: #1C2E24; --hl: #2C2418; --warn: #F0A050; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0F1A14; --surface: #16241C; --ink: #E6EFE9; --muted: #A3B6AA; --line: #2B3D33;
+  --green: #7FCBA0; --ric: #4FA97A; --ruta: #5B6B62; --puerto: #9A86D6; --brown: #D9B48A; --soft: #1C2E24; --hl: #2C2418; --warn: #F0A050; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 64px; display: flex; flex-direction: column; gap: 40px; }
+h1 { font-size: clamp(26px, 4vw, 38px); line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-size: 22px; margin: 0; text-wrap: balance; }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--brown); }
+.lead { max-width: 70ch; color: var(--muted); margin: 0; }
+section { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.num { font-variant-numeric: tabular-nums; }
+/* fórmula */
+.formula { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; display: grid; grid-template-columns: minmax(0, 1fr); }
+.frow { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px; padding: 16px 20px; border-top: 1px solid var(--line); align-items: center; }
+.frow:first-child { border-top: 0; }
+.frow .eq { font-family: var(--mono); font-size: 15px; }
+.frow .eq b { color: var(--green); }
+.frow .calc { font-family: var(--mono); font-size: 14px; color: var(--muted); }
+.frow .calc strong { color: var(--ink); font-size: 18px; }
+.frow.key { background: var(--soft); }
+@media (max-width: 760px) { .frow { grid-template-columns: minmax(0, 1fr); gap: 6px; } }
+/* ejemplos */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.card .tag { font-family: var(--mono); font-weight: 600; font-size: 18px; }
+.card .when { color: var(--muted); font-size: 13px; }
+.card dl { display: grid; grid-template-columns: auto auto; gap: 4px 12px; margin: 0; font-size: 14px; }
+.card dt { color: var(--muted); } .card dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.card .big { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.card.good .big { color: var(--green); } .card.bad .big { color: var(--puerto); }
+.trips { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+/* gráfico */
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+.scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+#gantt, #area, #lineas { display: block; }
+#area text, #lineas text { font: 12px var(--sans); fill: var(--muted); }
+/* tabla */
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+th, td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+th:nth-child(-n+2), td:nth-child(-n+2) { text-align: left; }
+th { position: sticky; top: 0; background: var(--surface); font-size: 12px; color: var(--muted); font-weight: 600; cursor: pointer; user-select: none; }
+th:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; }
+th[aria-sort="descending"]::after { content: " ▼"; } th[aria-sort="ascending"]::after { content: " ▲"; }
+td.pat { font-family: var(--mono); font-weight: 600; }
+td.up { color: var(--green); font-weight: 600; }
+tr.five td { background: var(--hl); }
+.note { font-size: 13px; color: var(--muted); max-width: 90ch; margin: 0; }
+</style>
+
+<div class="wrap">
+  <header style="display:flex; flex-direction:column; gap:10px">
+    <p class="eyebrow">Operativo de pellet · 24/09 al 01/10 · 64 camiones · 443 viajes</p>
+    <h1>Pellet camión por camión: por qué con menos espera en el puerto el camionero gana más a menor tarifa</h1>
+    <p class="lead">Todo sale de la planilla de movimientos (cargas en Ricardone) y de las cámaras del puerto, viaje por viaje. Se supone un mismo chofer por camión.</p>
+  </header>
+
+  <section>
+    <p class="eyebrow">La fórmula</p>
+    <h2>Lo que gana el camionero depende de la tarifa y del tiempo de cada vuelta</h2>
+    <div class="formula" id="formula"></div>
+    <p class="note">Vuelta = carga en Ricardone + ruta + puerto (ingreso → salida de San Lorenzo) + regreso. Hoy, medida en 353 viajes con cámaras: Ricardone 85 min, manejando 36, fila del puerto 194, descarga y salida 18.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Camiones de ejemplo</p>
+    <h2>El mismo operativo, con vueltas cortas y vueltas largas</h2>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Dónde estaban los camiones, hora por hora</p>
+    <h2>La mayor parte de la flota estuvo parada en el puerto</h2>
+    <div class="legend"><span><i style="background:var(--puerto)"></i>En el puerto (fila y descarga)</span><span><i style="background:var(--ruta)"></i>En ruta</span><span><i style="background:var(--ric)"></i>Cargando en Ricardone</span></div>
+    <div class="scroll"><svg id="area" role="img" aria-label="Camiones en cada lugar, cada 15 minutos, solo horas con operativo"></svg></div>
+    <p class="note">Solo las horas con operativo: las líneas punteadas marcan los cortes (noche del 25 al 26/09 y del 27 al 29/09 sin transile).</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Tiempo de cada viaje</p>
+    <h2>El puerto marca el ritmo: cuando sube, el camión tarda más en volver a cargar</h2>
+    <div class="legend"><span><i style="background:var(--puerto)"></i>Minutos en el puerto por viaje</span><span><i style="background:var(--ric)"></i>Minutos cargando en Ricardone</span><span><i style="background:var(--brown)"></i>Objetivo de puerto: 90 min</span></div>
+    <div class="scroll"><svg id="lineas" role="img" aria-label="Minutos en el puerto y en Ricardone por viaje, promedio por cada 2 horas"></svg></div>
+    <p class="note">Promedio de los viajes que entraron al puerto en cada bloque de 2 horas (solo viajes con lectura de cámara en el puerto).</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Regla de manejo</p>
+    <h2>Máximo 12 horas seguidas y 6 horas de descanso antes de volver a cargar</h2>
+    <div class="formula" id="regla"></div>
+    <div class="cards" id="reglaCards"></div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Horas por encima de las 12</p>
+    <h2 id="extraTitulo">Horas que trabajó cada camión por encima de las 12 seguidas</h2>
+    <p class="note">Jornada = desde la carga en Ricardone hasta la salida del puerto del último viaje, sin un descanso de 6 horas en el medio. Horas por encima de 12 = lo que cada jornada pasa de 12 horas, sumado en todo el operativo. Mismo chofer por camión.</p>
+    <div class="cards" id="extraCards"></div>
+    <div class="scroll"><svg id="extra" role="img" aria-label="Horas por encima de 12 por camión, de mayor a menor"></svg></div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Actividad de cada camión</p>
+    <h2>Los 64 camiones, de mayor a menor cantidad de viajes</h2>
+    <div class="legend"><span><i style="background:var(--ric)"></i>Carga en Ricardone</span><span><i style="background:var(--ruta)"></i>En ruta</span><span><i style="background:var(--puerto)"></i>En el puerto</span><span><i style="background:var(--warn)"></i>Pasada la hora 12 de la jornada</span></div>
+    <div class="scroll"><canvas id="gantt" role="img" aria-label="Actividad por camión, solo horas con operativo"></canvas></div>
+    <p class="note">Barras = cada viaje. Cuando el puerto no tiene lectura de cámara, se toma desde la salida de Ricardone + 17 min hasta 22 min antes de la carga siguiente. Marca naranja: el viaje termina después de 12 horas seguidas de jornada.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Tabla completa</p>
+    <h2>Viajes, horas y plata de cada camión</h2>
+    <p class="note">Horas trabajadas = jornadas seguidas (desde la carga hasta la salida del puerto del último viaje; corte con más de 6 h entre la salida de Ricardone y la carga siguiente). Con la propuesta: mismas horas, vuelta de 3 h 31 m, $ 5.000/t. En marrón, los camiones que hicieron 5 cargas en 24 h. Tocá un encabezado para ordenar.</p>
+    <div class="scroll"><table id="tabla"></table></div>
+  </section>
+</div>
+
+<script>
+const DATA = /*DATA*/null;
+const T = DATA.totales, CAM = DATA.camiones;
+const FLETE_HOY = 6000, FLETE_PROP = 5000, TN = 30;
+const VU_HOY = T.vueltaMedia.total, VU_PROP = 211, VU_OBJ = 181;
+const fmt = n => Math.round(n).toLocaleString('es-AR');
+const pesos = n => n >= 1e6 ? '$ ' + (n / 1e6).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' M' : '$ ' + fmt(n);
+const hm = m => Math.floor(m / 60) + ' h ' + String(Math.round(m % 60)).padStart(2, '0') + ' m';
+const porHora = (tarifa, vuelta) => TN * tarifa / (vuelta / 60);
+
+// fórmula
+const ventaja = (FLETE_PROP / FLETE_HOY) * (VU_HOY / VU_PROP) - 1;
+const empate = FLETE_HOY * VU_PROP / VU_HOY;
+const rows = [
+  ['<b>Por hora</b> = 30 t × tarifa ÷ vuelta', `Hoy: 30 × $ 6.000 ÷ ${hm(VU_HOY)} = <strong>$ ${fmt(porHora(FLETE_HOY, VU_HOY))}</strong> · Propuesta: 30 × $ 5.000 ÷ ${hm(VU_PROP)} = <strong>$ ${fmt(porHora(FLETE_PROP, VU_PROP))}</strong>`],
+  ['<b>Viajes por jornada</b> = jornada ÷ vuelta, para abajo', `Jornada de 12 h: hoy ⌊720 ÷ ${VU_HOY}⌋ = <strong>${Math.floor(720 / VU_HOY)}</strong> · propuesta ⌊720 ÷ ${VU_PROP}⌋ = <strong>${Math.floor(720 / VU_PROP)}</strong> · objetivo 4 viajes en ${hm(4 * VU_OBJ)}`],
+  ['<b>Ventaja del camionero</b> = (tarifa nueva ÷ tarifa hoy) × (vuelta hoy ÷ vuelta nueva) − 1', `(5.000 ÷ 6.000) × (${VU_HOY} ÷ ${VU_PROP}) − 1 = <strong>+${Math.round(ventaja * 100)} % por hora</strong>`],
+  ['<b>Tarifa de empate</b> = tarifa hoy × vuelta nueva ÷ vuelta hoy', `6.000 × ${VU_PROP} ÷ ${VU_HOY} = <strong>$ ${fmt(Math.round(empate / 100) * 100)}/t</strong>: por encima, el camionero gana más que hoy`],
+  ['<b>Ahorro de Vicentin</b> = viajes × 30 t × (tarifa hoy − tarifa nueva)', `443 × 30 × $ 1.000 = <strong>${pesos(443 * 30 * 1000)}</strong> en este operativo, con los mismos viajes`],
+];
+document.getElementById('formula').innerHTML = rows.map((r, i) => `<div class="frow${i === 2 ? ' key' : ''}"><div class="eq">${r[0]}</div><div class="calc">${r[1]}</div></div>`).join('');
+
+// ejemplos: un día de cada camión, vuelta medida entre cargas
+const dayOf = m => new Date((m - 180) * 60000).toISOString().slice(0, 10);
+const hhmm = m => new Date((m - 180) * 60000).toISOString().slice(11, 16);
+function ejemplo(p, d, clase, texto) {
+  const c = CAM.find(x => x.p === p); const V = c.viajesDet.filter(v => dayOf(v.a) === d);
+  const vu = V.slice(1).map((v, k) => v.a - V[k].a); const vm = vu.reduce((a, b) => a + b, 0) / vu.length;
+  const ini = V[0].a, fin = V[V.length - 1].s, h = (fin - ini) / 60;
+  return `<div class="card ${clase}"><div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px"><span class="tag">${p}</span><span class="when">${d.slice(8, 10)}/${d.slice(5, 7)} · ${V.length} viajes</span></div>
+    <div><div class="big">$ ${fmt(porHora(FLETE_HOY, vm))}</div><div class="when">por hora a $ 6.000/t, con vuelta de ${hm(vm)}</div></div>
+    <dl><dt>Trabajó</dt><dd>${hhmm(ini)} a ${hhmm(fin)} · ${h.toFixed(1).replace('.', ',')} h</dd>
+    <dt>Cobró</dt><dd>${pesos(V.length * TN * FLETE_HOY)}</dd>
+    <dt>Puerto por viaje</dt><dd>${V.map(v => v.s - v.i).join(' · ')} min</dd></dl>
+    <div class="trips">Cargas: ${V.map(v => hhmm(v.a)).join(' · ')}</div><p class="note">${texto}</p></div>`;
+}
+document.getElementById('cards').innerHTML =
+  ejemplo('CRJ139', '2026-09-26', 'good', 'Día con el puerto ágil: 4 viajes de día, con la vuelta que pide la propuesta. A $ 5.000/t hubiera cobrado $ ' + fmt(porHora(FLETE_PROP, 196)) + ' por hora, más que el promedio de hoy.') +
+  ejemplo('BVS300', '2026-09-30', 'bad', 'Mismos 4 viajes, pero con el puerto trabado: necesitó la noche para hacerlos.') +
+  ejemplo('RKS646', '2026-10-01', 'bad', 'Puerto de casi 5 horas por viaje: 3 viajes en todo el día y la peor plata por hora.');
+
+// eje con solo las horas de operativo: bloques de actividad unidos (cortes de más de 3 h quedan afuera)
+const SEGS = CAM.flatMap(c => c.viajesDet.map(v => [v.a, v.s]));
+const BL = (() => { const a = SEGS.slice().sort((x, y) => x[0] - y[0]); const out = []; for (const [x, y] of a) { const b = out[out.length - 1]; if (b && x - b[1] < 180) b[1] = Math.max(b[1], y); else out.push([x, y]) } return out.map(([x, y]) => [Math.floor((x - 30) / 60) * 60, Math.ceil((y + 30) / 60) * 60]) })();
+const BRK = 18;
+function axis(pxh, x0) {
+  const starts = []; let x = x0; for (const [a, b] of BL) { starts.push(x); x += (b - a) / 60 * pxh + BRK }
+  return { W: x - BRK, X: m => { for (let k = 0; k < BL.length; k++) { const [a, b] = BL[k]; if (m >= a && m <= b) return starts[k] + (m - a) / 60 * pxh } return null }, starts, pxh };
+}
+const lbl = m => { const d = new Date((m - 180) * 60000).toISOString(); return d.slice(8, 10) + '/' + d.slice(5, 7) + ' ' + d.slice(11, 13) + ' h' };
+function ticksSvg(ax, H, top, step) {
+  let o = '';
+  BL.forEach(([a, b], k) => {
+    for (let m = Math.ceil(a / step) * step; m <= b; m += step) { const x = ax.X(m); o += `<line x1="${x}" x2="${x}" y1="${top}" y2="${H - 22}" stroke="var(--line)"/><text x="${x + 3}" y="${H - 6}">${lbl(m)}</text>` }
+    if (k) { const x = ax.starts[k] - BRK / 2; o += `<line x1="${x}" x2="${x}" y1="${top - 6}" y2="${H - 22}" stroke="var(--muted)" stroke-dasharray="3 3"/>` }
+  });
+  return o;
+}
+// área apilada: camiones en cada lugar cada 15 min
+function drawArea() {
+  const PXH = 9, L = 44, H = 300, TOP = 14, BOT = 26, ax = axis(PXH, L);
+  const pts = []; for (const [a, b] of BL) for (let m = a; m <= b; m += 15) pts.push(m);
+  const V = CAM.flatMap(c => c.viajesDet);
+  const cnt = pts.map(m => { let r = 0, t = 0, q = 0; for (const v of V) { if (m >= v.a && m < v.b) r++; else if (m >= v.b && m < v.i) t++; else if (m >= v.i && m < v.s) q++ } return [q, t, r] });
+  const mx = Math.ceil(Math.max(...cnt.map(c => c[0] + c[1] + c[2])) / 10) * 10, Y = n => TOP + (H - TOP - BOT) * (1 - n / mx);
+  let o = '';
+  for (let n = 0; n <= mx; n += 10) o += `<line x1="${L}" x2="${ax.W}" y1="${Y(n)}" y2="${Y(n)}" stroke="var(--line)"/><text x="${L - 6}" y="${Y(n) + 4}" text-anchor="end">${n}</text>`;
+  o += ticksSvg(ax, H, TOP, 720);
+  const layers = [['--puerto', 0], ['--ruta', 1], ['--ric', 2]];
+  for (let k = 0; k < BL.length; k++) {
+    const idx = pts.map((m, i) => i).filter(i => pts[i] >= BL[k][0] && pts[i] <= BL[k][1]);
+    let base = idx.map(() => 0);
+    for (const [col, li] of layers) {
+      const top = idx.map((i, z) => base[z] + cnt[i][li]);
+      const up = idx.map((i, z) => `${ax.X(pts[i]).toFixed(1)},${Y(top[z]).toFixed(1)}`), dn = idx.map((i, z) => `${ax.X(pts[i]).toFixed(1)},${Y(base[z]).toFixed(1)}`).reverse();
+      o += `<polygon points="${up.concat(dn).join(' ')}" fill="var(${col})" opacity="0.92"/>`; base = top;
+    }
+  }
+  const pk = cnt.reduce((b, c, i) => (c[0] > cnt[b][0] ? i : b), 0);
+  o += `<text x="${ax.X(pts[pk]) + 6}" y="${Y(cnt[pk][0] + cnt[pk][1] + cnt[pk][2]) - 6}" style="fill:var(--ink); font-weight:600">${cnt[pk][0]} en el puerto · ${lbl(pts[pk]).slice(0, 5)} ${lbl(pts[pk]).slice(6)}</text>`;
+  const el = document.getElementById('area'); el.setAttribute('viewBox', `0 0 ${ax.W + 10} ${H}`); el.setAttribute('width', ax.W + 10); el.setAttribute('height', H); el.innerHTML = o;
+  const tq = cnt.reduce((s, c) => s + c[0], 0), tt = cnt.reduce((s, c) => s + c[0] + c[1] + c[2], 0);
+  return Math.round(tq / tt * 100);
+}
+// líneas: minutos en el puerto y en Ricardone por viaje, promedio cada 2 h
+function drawLines() {
+  const PXH = 9, L = 44, H = 300, TOP = 14, BOT = 26, ax = axis(PXH, L);
+  const V = CAM.flatMap(c => c.viajesDet);
+  const series = (sel, val) => { const out = []; for (const [a, b] of BL) for (let m = a; m < b; m += 120) { const r = V.filter(v => sel(v) >= m && sel(v) < m + 120 && val(v) != null); if (r.length >= 3) out.push([m + 60, r.reduce((s, v) => s + val(v), 0) / r.length, r.length]) } return out };
+  const port = series(v => v.i, v => v.l ? v.s - v.i : null), ric = series(v => v.a, v => v.b - v.a);
+  const mx = Math.ceil(Math.max(...port.map(x => x[1])) / 60) * 60, Y = n => TOP + (H - TOP - BOT) * (1 - n / mx);
+  let o = '';
+  for (let n = 0; n <= mx; n += 60) o += `<line x1="${L}" x2="${ax.W}" y1="${Y(n)}" y2="${Y(n)}" stroke="var(--line)"/><text x="${L - 6}" y="${Y(n) + 4}" text-anchor="end">${n}</text>`;
+  o += ticksSvg(ax, H, TOP, 720);
+  o += `<line x1="${L}" x2="${ax.W}" y1="${Y(90)}" y2="${Y(90)}" stroke="var(--brown)" stroke-width="2" stroke-dasharray="6 4"/>`;
+  const path = (sr, col) => { let d = '', prevK = -1; for (const [m, v] of sr) { const k = BL.findIndex(([a, b]) => m >= a && m <= b); d += (k !== prevK ? 'M' : 'L') + ax.X(m).toFixed(1) + ',' + Y(v).toFixed(1) + ' '; prevK = k } return `<path d="${d}" fill="none" stroke="var(${col})" stroke-width="2.5" stroke-linejoin="round"/>` + sr.map(([m, v]) => `<circle cx="${ax.X(m).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="2.6" fill="var(${col})"/>`).join('') };
+  const mxp = port.reduce((b, x) => (x[1] > b[1] ? x : b));
+  o += path(ric, '--ric') + path(port, '--puerto');
+  o += `<text x="${ax.X(mxp[0]) + 6}" y="${Y(mxp[1]) + 4}" style="fill:var(--ink); font-weight:600">${Math.round(mxp[1])} min</text>`;
+  const el = document.getElementById('lineas'); el.setAttribute('viewBox', `0 0 ${ax.W + 60} ${H}`); el.setAttribute('width', ax.W + 60); el.setAttribute('height', H); el.innerHTML = o;
+}
+// regla 12 h + 6 h: cumplimiento real y capacidad con cada vuelta
+const JOR = [];
+let fuera = 0;
+for (const c of CAM) {
+  let cur = null; c.fueraRegla = 0; c.jor = [];
+  for (const v of c.viajesDet) { if (!cur || v.a - cur.fin >= 360) { cur = { ini: v.a, fin: v.s, n: 0 }; JOR.push(cur); c.jor.push(cur) } cur.n++; cur.fin = Math.max(cur.fin, v.s); v.fuera = v.s - cur.ini > 720; if (v.fuera) { fuera++; c.fueraRegla++ } }
+  const hs = c.jor.map(j => (j.fin - j.ini) / 60);
+  c.extra = hs.reduce((a, h) => a + Math.max(0, h - 12), 0); c.jor12 = hs.filter(h => h > 12).length;
+  const k = hs.indexOf(Math.max(...hs)); c.jorMax = hs[k]; c.jorMaxN = c.jor[k].n; c.jorMaxIni = c.jor[k].ini; c.horasJor = hs.reduce((a, b) => a + b, 0);
+}
+const camFuera = CAM.filter(c => c.fueraRegla).length;
+const cap = v => { const k = Math.floor(720 / v), ciclo = k * v / 60 + 6, d = 24 / ciclo * k; return { k, jornada: k * v / 60, dia: d, pico: Math.ceil(136 / d), semana: Math.floor(168 / ciclo) * k } };
+const CH = cap(VU_HOY), CP = cap(VU_PROP);
+document.getElementById('regla').innerHTML = [
+  ['<b>Viajes por jornada</b> = 12 h ÷ vuelta, para abajo', `Hoy ⌊12 h ÷ ${hm(VU_HOY)}⌋ = <strong>${CH.k}</strong> (${CH.jornada.toFixed(1).replace('.', ',')} h) · propuesta ⌊12 h ÷ ${hm(VU_PROP)}⌋ = <strong>${CP.k}</strong> (${CP.jornada.toFixed(1).replace('.', ',')} h)`],
+  ['<b>Viajes por camión en 24 h</b> = viajes por jornada × 24 ÷ (jornada + 6 h de descanso)', `Hoy ${CH.k} × 24 ÷ ${(CH.jornada + 6).toFixed(1).replace('.', ',')} = <strong>${CH.dia.toFixed(1).replace('.', ',')}</strong> · propuesta ${CP.k} × 24 ÷ ${(CP.jornada + 6).toFixed(1).replace('.', ',')} = <strong>${CP.dia.toFixed(1).replace('.', ',')}</strong>`],
+  ['<b>Camiones para el día pico</b> = 136 viajes ÷ viajes por camión en 24 h', `Hoy <strong>${CH.pico}</strong> · propuesta <strong>${CP.pico}</strong> (contratados en este operativo: 64)`],
+].map((r, i) => `<div class="frow${i === 2 ? ' key' : ''}"><div class="eq">${r[0]}</div><div class="calc">${r[1]}</div></div>`).join('');
+const pctPuerto = drawArea();
+function drawExtra() {
+  const L = 150, RH = 22, TOP = 26, BW = 640, list = CAM.filter(c => c.extra > 0).sort((a, b) => b.extra - a.extra);
+  const mx = Math.ceil(Math.max(...list.map(c => c.extra)) / 12) * 12, X = h => L + h / mx * BW, H = TOP + list.length * RH + 10, W = L + BW + 260;
+  let o = '';
+  for (let h = 0; h <= mx; h += 12) o += `<line x1="${X(h)}" x2="${X(h)}" y1="${TOP - 6}" y2="${H - 6}" stroke="var(--line)"/><text x="${X(h)}" y="${TOP - 10}" text-anchor="middle">${h} h</text>`;
+  list.forEach((c, k) => {
+    const y = TOP + k * RH;
+    o += `<text x="8" y="${y + 15}" style="font:600 12px var(--mono); fill:var(--ink)">${c.p}</text><text x="${L - 10}" y="${y + 15}" text-anchor="end">${c.viajes} viajes</text>`;
+    o += `<rect x="${L}" y="${y + 4}" width="${Math.max(2, X(c.extra) - L).toFixed(1)}" height="${RH - 8}" rx="3" fill="var(--warn)"/>`;
+    o += `<text x="${X(c.extra) + 8}" y="${y + 15}" style="fill:var(--ink); font-weight:600">${c.extra.toFixed(1).replace('.', ',')} h</text><text x="${X(c.extra) + 64}" y="${y + 15}">jornada más larga ${c.jorMax.toFixed(1).replace('.', ',')} h · ${c.jorMaxN} viajes</text>`;
+  });
+  const el = document.getElementById('extra'); el.setAttribute('viewBox', `0 0 ${W} ${H}`); el.setAttribute('width', W); el.setAttribute('height', H); el.innerHTML = o;
+  const tot = CAM.reduce((a, c) => a + c.extra, 0), totH = CAM.reduce((a, c) => a + c.horasJor, 0);
+  const n24 = list.filter(c => c.extra > 24).length, top = list[0];
+  document.getElementById('extraCards').innerHTML =
+    `<div class="card bad"><span class="when">Todo el operativo</span><div class="big">${fmt(tot)} h</div><p class="note">por encima de las 12 seguidas, de ${fmt(totH)} horas de camión trabajando (${Math.round(tot / totH * 100)} %).</p></div>`
+    + `<div class="card bad"><span class="when">Camiones que pasaron las 12 h</span><div class="big">${list.length} de 64</div><p class="note">${n24} de ellos sumaron más de 24 horas extra en el operativo.</p></div>`
+    + `<div class="card bad"><span class="when">El caso más largo</span><div class="big">${top.p} · ${top.extra.toFixed(1).replace('.', ',')} h</div><p class="note">Su jornada más larga: ${top.jorMaxN} viajes en ${top.jorMax.toFixed(1).replace('.', ',')} h, desde el ${lbl(top.jorMaxIni)}, sin 6 horas de descanso.</p></div>`;
+}
+drawExtra();
+drawLines();
+document.getElementById('reglaCards').innerHTML =
+  `<div class="card bad"><span class="when">Hoy, con la regla</span><div class="big">${fuera} de 443</div><p class="note">viajes terminaron después de 12 horas seguidas de jornada, en ${camFuera} de los 64 camiones. Con la vuelta de hoy, la regla obliga a ${CH.pico} camiones para el día pico.</p></div>`
+  + `<div class="card good"><span class="when">Con la propuesta y la regla</span><div class="big">${CP.k} viajes en ${CP.jornada.toFixed(1).replace('.', ',')} h</div><p class="note">cada jornada queda dentro de las 12 horas, con 6 horas de descanso. Alcanzan ${CP.pico} camiones para el día pico y cada uno hace hasta ${CP.semana} viajes por semana.</p></div>`
+  + `<div class="card"><span class="when">Cobra el camionero por jornada</span><div class="big">${pesos(CH.k * TN * FLETE_HOY)} → ${pesos(CP.k * TN * FLETE_PROP)}</div><p class="note">${CH.k} viajes a $ 6.000/t hoy contra ${CP.k} a $ 5.000/t, en menos horas. Hoy, en ${Math.round(pctPuerto)} de cada 100 horas-camión el camión estaba en el puerto.</p></div>`;
+// actividad por camión, mismo eje sin horas vacías
+function drawGantt() {
+  const cv = document.getElementById('gantt'), css = getComputedStyle(document.documentElement);
+  const col = k => css.getPropertyValue(k).trim();
+  const LAB = 118, RH = 15, TOP = 30, ax = axis(7, LAB);
+  const W = ax.W + 12, Hh = TOP + CAM.length * RH + 8;
+  const dpr = window.devicePixelRatio || 1; cv.width = W * dpr; cv.height = Hh * dpr; cv.style.width = W + 'px'; cv.style.height = Hh + 'px';
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, Hh);
+  g.font = '12px ' + col('--sans'); g.textBaseline = 'middle';
+  BL.forEach(([a, b], k) => {
+    for (let m = Math.ceil(a / 720) * 720; m <= b; m += 720) { const x = ax.X(m); g.strokeStyle = col('--line'); g.setLineDash([]); g.beginPath(); g.moveTo(x, TOP - 4); g.lineTo(x, Hh - 6); g.stroke(); g.fillStyle = col('--muted'); g.fillText(lbl(m), x + 3, 12) }
+    if (k) { const x = ax.starts[k] - BRK / 2; g.strokeStyle = col('--muted'); g.setLineDash([3, 3]); g.beginPath(); g.moveTo(x, TOP - 8); g.lineTo(x, Hh - 6); g.stroke(); g.setLineDash([]) }
+  });
+  CAM.forEach((c, k) => {
+    const y = TOP + k * RH;
+    if (k % 2 === 0) { g.fillStyle = col('--soft'); g.fillRect(0, y, W, RH) }
+    g.fillStyle = col('--ink'); g.font = '600 12px ' + col('--mono'); g.fillText(c.p, 6, y + RH / 2);
+    g.fillStyle = col('--muted'); g.font = '12px ' + col('--sans'); g.fillText(c.viajes, 82, y + RH / 2);
+    for (const v of c.viajesDet) {
+      for (const [a, b, k2] of [[v.a, v.b, '--ric'], [v.b, v.i, '--ruta'], [v.i, v.s, '--puerto']]) { const xa = ax.X(a), xb = ax.X(b); if (xa === null || xb === null) continue; g.fillStyle = col(k2); g.fillRect(xa, y + 3, Math.max(1.5, xb - xa), RH - 6) }
+      if (v.fuera) { const xa = ax.X(v.a), xb = ax.X(v.s); if (xa !== null && xb !== null) { g.fillStyle = col('--warn'); g.fillRect(xa, y + RH - 3, xb - xa, 2.5) } }
+    }
+  });
+}
+drawGantt();
+const redraw = () => { drawGantt() };
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw);
+new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+// tabla
+const COLS = [
+  ['#', c => c._i], ['Patente', c => c.p], ['Viajes', c => c.viajes], ['Días', c => c.dias], ['Máx. por día', c => c.maxDia], ['Máx. en 24 h', c => c.max24],
+  ['Horas trabajadas', c => c.horas], ['Puerto por viaje (min)', c => c.minPuerto], ['Cobró hoy', c => c.viajes * TN * FLETE_HOY], ['Por hora hoy', c => c.viajes * TN * FLETE_HOY / c.horas],
+  ['Horas por encima de 12', c => c.extra],
+  ['Jornada más larga (h)', c => c.jorMax],
+  ['Viajes pasada la hora 12', c => c.fueraRegla],
+  ['Viajes con la propuesta', c => Math.floor(c.horas * 60 / VU_PROP)], ['Cobraría', c => Math.floor(c.horas * 60 / VU_PROP) * TN * FLETE_PROP],
+];
+CAM.forEach((c, i) => c._i = i + 1);
+let sortK = 0, asc = true;
+function renderTable() {
+  const rows = [...CAM].sort((a, b) => { const x = COLS[sortK][1](a), y = COLS[sortK][1](b); return (x > y ? 1 : x < y ? -1 : 0) * (asc ? 1 : -1) });
+  const show = (k, c) => { const v = COLS[k][1](c); if (v == null) return '—'; if (k === 8 || k === 14) return pesos(v); if (k === 10 || k === 11) return v.toFixed(1).replace('.', ','); if (k === 9) return '$ ' + fmt(v); if (k === 6) return fmt(v); return v };
+  document.getElementById('tabla').innerHTML = '<thead><tr>' + COLS.map((c, k) => `<th tabindex="0" data-k="${k}"${k === sortK ? ` aria-sort="${asc ? 'ascending' : 'descending'}"` : ''}>${c[0]}</th>`).join('') + '</tr></thead><tbody>'
+    + rows.map(c => `<tr class="${c.max24 >= 5 ? 'five' : ''}">` + COLS.map((_, k) => `<td class="${k === 1 ? 'pat' : ''}${k === 14 && COLS[14][1](c) > COLS[8][1](c) ? 'up' : ''}">${show(k, c)}</td>`).join('') + '</tr>').join('') + '</tbody>';
+  document.querySelectorAll('#tabla th').forEach(th => { const go = () => { const k = +th.dataset.k; if (k === sortK) asc = !asc; else { sortK = k; asc = k <= 1 } renderTable() }; th.onclick = go; th.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go() } } });
+}
+renderTable();
+</script>

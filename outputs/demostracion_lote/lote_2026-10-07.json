@@ -1,0 +1,5789 @@
+{
+  "dia": "2026-10-07",
+  "umbral": 0.6,
+  "porPunto": {
+    "san_lorenzo:Ingreso": {
+      "esperados": 55,
+      "camara": 38,
+      "reconstruida": 10,
+      "deducida": 7,
+      "deducidaFinal": 0,
+      "falta": 0
+    },
+    "san_lorenzo:Balanza Ingreso": {
+      "esperados": 55,
+      "camara": 33,
+      "reconstruida": 13,
+      "deducida": 9,
+      "deducidaFinal": 0,
+      "falta": 0
+    },
+    "san_lorenzo:Carga / Descarga OSL": {
+      "esperados": 20,
+      "camara": 9,
+      "reconstruida": 3,
+      "deducida": 8,
+      "deducidaFinal": 0,
+      "falta": 0
+    },
+    "san_lorenzo:Balanza Egreso": {
+      "esperados": 55,
+      "camara": 38,
+      "reconstruida": 4,
+      "deducida": 12,
+      "deducidaFinal": 0,
+      "falta": 1
+    },
+    "san_lorenzo:Egreso": {
+      "esperados": 55,
+      "camara": 35,
+      "reconstruida": 18,
+      "deducida": 0,
+      "deducidaFinal": 1,
+      "falta": 1
+    },
+    "ricardone:Pre ingreso": {
+      "esperados": 64,
+      "camara": 46,
+      "reconstruida": 4,
+      "deducida": 9,
+      "deducidaFinal": 0,
+      "falta": 5
+    },
+    "ricardone:Calada": {
+      "esperados": 64,
+      "camara": 37,
+      "reconstruida": 2,
+      "deducida": 12,
+      "deducidaFinal": 1,
+      "falta": 12
+    },
+    "ricardone:Salida 2": {
+      "esperados": 32,
+      "camara": 25,
+      "reconstruida": 3,
+      "deducida": 4,
+      "deducidaFinal": 0,
+      "falta": 0
+    },
+    "san_lorenzo:Plataformas Volcables": {
+      "esperados": 31,
+      "camara": 21,
+      "reconstruida": 8,
+      "deducida": 2,
+      "deducidaFinal": 0,
+      "falta": 0
+    },
+    "ricardone:Balanza Egreso": {
+      "esperados": 33,
+      "camara": 6,
+      "reconstruida": 1,
+      "deducida": 1,
+      "deducidaFinal": 12,
+      "falta": 13
+    },
+    "san_lorenzo:Carga/descarga": {
+      "esperados": 3,
+      "camara": 0,
+      "reconstruida": 1,
+      "deducida": 2,
+      "deducidaFinal": 0,
+      "falta": 0
+    },
+    "ricardone:Playa 3": {
+      "esperados": 15,
+      "camara": 8,
+      "reconstruida": 1,
+      "deducida": 2,
+      "deducidaFinal": 4,
+      "falta": 0
+    },
+    "ricardone:Volcable 2": {
+      "esperados": 14,
+      "camara": 2,
+      "reconstruida": 0,
+      "deducida": 2,
+      "deducidaFinal": 10,
+      "falta": 0
+    }
+  },
+  "porCamion": [
+    {
+      "plate": "CMF111",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 3,
+      "reconstruida": 0,
+      "deducida": 2,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T06:46:00.000Z",
+      "sal": "2026-10-07T08:10:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T06:44:15.094Z",
+          "read": "CMF111",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T06:47:43.818Z",
+          "read": "CMF111",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:11:10.252Z",
+          "read": "CMF111",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "AD940CT",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 5,
+      "reconstruida": 2,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T03:15:00.000Z",
+      "sal": "2026-10-07T09:22:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T03:11:35.360Z",
+          "read": "AD940CT",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T03:14:09.908Z",
+          "read": "AD940CT",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T08:07:52.928Z",
+          "read": "AD940CT",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T08:21:51.171Z",
+          "read": "AD940CT",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T08:31:47.793Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZIngCamFrente",
+          "P": 0.8349973277796011,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "IKP586",
+              "p": 0.0010153386380138845
+            },
+            {
+              "plate": "AH763FD",
+              "p": 0.0001302830858381943
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:35:23.853Z",
+          "read": "AD940CT",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "reconstruida",
+          "t": "2026-10-07T08:51:04.000Z",
+          "read": "ABU",
+          "device": "SLZVolcableC5",
+          "P": 0.6592021246164106,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "OQM486",
+              "p": 0.03852552096475331
+            },
+            {
+              "plate": "AXB198",
+              "p": 0.03790889733757647
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T09:22:20.617Z",
+          "read": "AD940CT",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "IKP586",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 7,
+      "reconstruida": 1,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T03:38:00.000Z",
+      "sal": "2026-10-07T10:24:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T03:34:03.118Z",
+          "read": "IKP586",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T03:37:03.346Z",
+          "read": "IKP586",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T08:14:17.943Z",
+          "read": "IKP586",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T08:26:29.747Z",
+          "read": "IKP586",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:36:15.649Z",
+          "read": "IKP586",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:40:15.210Z",
+          "read": "IKP586",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T10:14:33.052Z",
+          "read": "IKP586",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T10:23:08.168Z",
+          "read": "IKP586",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T10:24:55.814Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.9790217154107208,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "AB898XT",
+              "p": 0.000013362356913884173
+            },
+            {
+              "plate": "KXI049",
+              "p": 0.00000232615341688947
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "OQM486",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 8,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T03:36:00.000Z",
+      "sal": "2026-10-07T10:44:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T03:31:53.430Z",
+          "read": "OQM486",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T03:35:19.662Z",
+          "read": "OQM486",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T08:11:54.705Z",
+          "read": "OQM486",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T08:31:42.243Z",
+          "read": "OQM486",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:41:38.385Z",
+          "read": "OQM486",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:44:19.908Z",
+          "read": "OQM486",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T10:22:27.845Z",
+          "read": "OQM486",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T10:42:38.295Z",
+          "read": "OQM486",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T10:49:17.399Z",
+          "read": "OQM486",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "AXB198",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 7,
+      "reconstruida": 1,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T04:05:00.000Z",
+      "sal": "2026-10-07T11:33:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T04:02:07.379Z",
+          "read": "AXB198",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T04:04:20.483Z",
+          "read": "AXB198",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T08:20:08.523Z",
+          "read": "AXB198",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T08:32:41.608Z",
+          "read": "AXB198",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:44:00.235Z",
+          "read": "AXB198",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:46:17.589Z",
+          "read": "AXB198",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T11:18:52.786Z",
+          "read": "AXB198",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:32:32.705Z",
+          "read": "AXB198",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T11:34:18.056Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.8240418960270387,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "KXI049",
+              "p": 0.00015511091832844966
+            },
+            {
+              "plate": "AB898XT",
+              "p": 0.00010800842845072778
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "KXI049",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 7,
+      "reconstruida": 0,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T03:59:00.000Z",
+      "sal": "2026-10-07T11:40:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T03:54:03.588Z",
+          "read": "KXI049",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T03:58:09.900Z",
+          "read": "KXI049",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T08:16:08.219Z",
+          "read": "KXI049",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T08:33:07.290Z",
+          "read": "KXI049",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:46:35.122Z",
+          "read": "KXI049",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T11:30:05.119Z",
+          "read": "KXI049",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:38:51.593Z",
+          "read": "KXI049",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:42:35.335Z",
+          "read": "KXI049",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "EPK546",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 6,
+      "reconstruida": 1,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T05:07:00.000Z",
+      "sal": "2026-10-07T11:48:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T05:03:20.551Z",
+          "read": "EPK546",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T08:23:10.753Z",
+          "read": "EPK546",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T08:34:52.017Z",
+          "read": "EPK546",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T08:48:12.755Z",
+          "read": "EFK546",
+          "device": "SLZIngCamFrente",
+          "P": 0.9054400802262476,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "VCB094",
+              "p": 0.00003517038283894835
+            },
+            {
+              "plate": "KUJ709",
+              "p": 0.0000027530606465388524
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:51:33.635Z",
+          "read": "EPK546",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T11:36:00.921Z",
+          "read": "EPK546",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:46:19.691Z",
+          "read": "EPK546",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:50:43.770Z",
+          "read": "EPK546",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "NWZ336",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 0,
+      "reconstruida": 2,
+      "deducida": 3,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T09:55:00.000Z",
+      "sal": "2026-10-07T11:51:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T10:32:01.977Z",
+          "read": "NWZ3336",
+          "device": "SLZBalIngFte",
+          "P": 0.9762683207497633,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "KXI049",
+              "p": 0.0008197958367315133
+            },
+            {
+              "plate": "VCB094",
+              "p": 0.0007045835259108539
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T11:49:53.696Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZBalSC2Fte",
+          "P": 0.6585798100302935,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "KUJ709",
+              "p": 0.07764237703928951
+            },
+            {
+              "plate": "AB898XT",
+              "p": 0.011207087117019865
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "deducidaFinal"
+        }
+      ]
+    },
+    {
+      "plate": "RSO471",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 1,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 2,
+      "faltan": [
+        "ricardone:Calada",
+        "ricardone:Balanza Egreso"
+      ],
+      "ing": "2026-10-07T03:01:00.000Z",
+      "sal": "2026-10-07T11:58:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T02:57:09.631Z",
+          "read": "RSO471",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T02:59:28.576Z",
+          "read": "RSO471",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "falta"
+        }
+      ]
+    },
+    {
+      "plate": "KUJ709",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 6,
+      "reconstruida": 1,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T04:20:00.000Z",
+      "sal": "2026-10-07T12:03:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T04:16:22.148Z",
+          "read": "KUJ709",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T04:19:22.694Z",
+          "read": "KUJ709",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T08:20:45.549Z",
+          "read": "KUJ709",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T08:36:46.342Z",
+          "read": "KUJ709",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T08:53:00.000Z",
+          "read": "KU70",
+          "device": "SLZBalIngFte",
+          "P": 0.9869479870604689,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "VCB094",
+              "p": 0.00017033039064106743
+            },
+            {
+              "plate": "AB898XT",
+              "p": 0.0001149951338033548
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T11:46:36.018Z",
+          "read": "KUJ709",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:01:52.823Z",
+          "read": "KUJ709",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:06:46.355Z",
+          "read": "KUJ709",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "RUK692",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 0,
+      "reconstruida": 1,
+      "deducida": 0,
+      "falta": 2,
+      "faltan": [
+        "ricardone:Calada",
+        "ricardone:Balanza Egreso"
+      ],
+      "ing": "2026-10-07T10:41:00.000Z",
+      "sal": "2026-10-07T12:05:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T11:19:46.000Z",
+          "read": "M35",
+          "device": "RicPreIngInFr",
+          "P": 0.8640554363804499,
+          "prueba": false,
+          "rivales": []
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "falta"
+        }
+      ]
+    },
+    {
+      "plate": "BTS626",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 4,
+      "reconstruida": 0,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T09:44:00.000Z",
+      "sal": "2026-10-07T12:07:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T09:42:45.745Z",
+          "read": "BTS626",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T10:46:51.237Z",
+          "read": "BTS626",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:06:03.649Z",
+          "read": "BTS626",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:08:16.631Z",
+          "read": "BTS626",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "VCB094",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 6,
+      "reconstruida": 1,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T06:22:00.000Z",
+      "sal": "2026-10-07T12:12:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T06:18:22.916Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "RicIngCamFrente",
+          "P": 0.78125,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "BYK469",
+              "p": 0.015624999999999998
+            },
+            {
+              "plate": "FMT166",
+              "p": 0.015624999999999998
+            }
+          ]
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T06:20:42.241Z",
+          "read": "VCB094",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T08:29:09.458Z",
+          "read": "VCB094",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T08:39:42.193Z",
+          "read": "VCB094",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T08:49:42.000Z",
+          "read": "VU71",
+          "device": "SLZIngCamFrente",
+          "P": 0.7798672364342011,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "KUJ709",
+              "p": 0.03080274950010416
+            },
+            {
+              "plate": "BYK469",
+              "p": 0.03080274950010416
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T12:01:12.094Z",
+          "read": "VCB094",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:11:21.566Z",
+          "read": "VCB094",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:13:00.144Z",
+          "read": "VCB094",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "AB898XT",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 5,
+      "reconstruida": 3,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T07:26:00.000Z",
+      "sal": "2026-10-07T12:21:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T07:23:44.424Z",
+          "read": "AB898XT",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T07:25:58.494Z",
+          "read": "AB898XT",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T08:35:07.631Z",
+          "read": "AB898XT",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T08:43:54.048Z",
+          "read": "AB898XT",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:51:38.686Z",
+          "read": "AB898XT",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T08:55:50.891Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZBalIngFte",
+          "P": 0.947083851863052,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "VCB094",
+              "p": 0.003524511850414079
+            },
+            {
+              "plate": "KXI049",
+              "p": 0.0031058825703611332
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "reconstruida",
+          "t": "2026-10-07T11:30:05.119Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZVolcableC5",
+          "P": 0.840179733683367,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "KXI049",
+              "p": 0.02242069795395809
+            },
+            {
+              "plate": "FNT719",
+              "p": 0.0023482829433344927
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:19:51.922Z",
+          "read": "AB898XT",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T12:21:29.428Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.9321969232121895,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "NWZ336",
+              "p": 0.00011832366196561584
+            },
+            {
+              "plate": "AF411UI",
+              "p": 0.00008344259564343565
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "PLV786",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 4,
+      "reconstruida": 1,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T10:58:00.000Z",
+      "sal": "2026-10-07T12:26:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:11:07.333Z",
+          "read": "PLV786",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:22:49.084Z",
+          "read": "PLV786",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "camara",
+          "t": "2026-10-07T11:29:59.046Z",
+          "read": "PLV786",
+          "device": "RenDescFte"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:24:32.185Z",
+          "read": "PLV786",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T12:28:01.025Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.9755234186682524,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "AF411UI",
+              "p": 0.0016754444618330717
+            },
+            {
+              "plate": "OQT140",
+              "p": 0.0010171497805089762
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "BYK469",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 6,
+      "reconstruida": 2,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T06:23:00.000Z",
+      "sal": "2026-10-07T12:30:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T06:22:20.486Z",
+          "read": "BYK469",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T08:32:12.280Z",
+          "read": "BYK469",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T08:37:33.706Z",
+          "read": "BYK469",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:57:55.028Z",
+          "read": "BYK469",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T09:14:33.000Z",
+          "read": "FH51",
+          "device": "SLZBalIngFte",
+          "P": 0.7320150262997939,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "FNT719",
+              "p": 0.00876016377667406
+            },
+            {
+              "plate": "KXI049",
+              "p": 0.00736234846988926
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T12:19:40.784Z",
+          "read": "BYK469",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:28:28.917Z",
+          "read": "BYK469",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T12:31:07.579Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.9020300352553325,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "AF411UI",
+              "p": 0.001603598323892149
+            },
+            {
+              "plate": "NWZ336",
+              "p": 0.0015797501982793148
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "FNT719",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 3,
+      "reconstruida": 1,
+      "deducida": 4,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T06:55:00.000Z",
+      "sal": "2026-10-07T12:44:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T08:44:26.609Z",
+          "read": "FNT719",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T12:28:54.828Z",
+          "read": "FNT719",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T12:41:53.363Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZBalSC2Fte",
+          "P": 0.9683709269377515,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "FMT166",
+              "p": 0.003104300898542459
+            },
+            {
+              "plate": "OQT140",
+              "p": 0.0002542144785548602
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:44:58.072Z",
+          "read": "FNT719",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "XAD231",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 1,
+      "reconstruida": 1,
+      "deducida": 0,
+      "falta": 1,
+      "faltan": [
+        "ricardone:Balanza Egreso"
+      ],
+      "ing": "2026-10-07T03:02:00.000Z",
+      "sal": "2026-10-07T12:46:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T02:57:09.631Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "RicIngCamFrente",
+          "P": 0.6410256410256411,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "RSO471",
+              "p": 0.25641025641025644
+            },
+            {
+              "plate": "AD940CT",
+              "p": 0.012820512820512822
+            }
+          ]
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T03:00:35.381Z",
+          "read": "XAD231",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "reconstruida",
+          "t": "2026-10-07T11:22:20.000Z",
+          "read": "I910",
+          "device": "RicCalLiq",
+          "P": 0.6257996353164705,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "RSO471",
+              "p": 0.10362775066579509
+            },
+            {
+              "plate": "GXT382",
+              "p": 0.008420222489924046
+            }
+          ]
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "falta"
+        }
+      ]
+    },
+    {
+      "plate": "FMT166",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 3,
+      "reconstruida": 1,
+      "deducida": 4,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T03:18:00.000Z",
+      "sal": "2026-10-07T12:50:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T10:11:38.424Z",
+          "read": "FMT166",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "reconstruida",
+          "t": "2026-10-07T12:38:18.528Z",
+          "read": "FMI166",
+          "device": "SLZVolcableC5",
+          "P": 0.9580290260486735,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "AH763FD",
+              "p": 0.000007829872986691026
+            },
+            {
+              "plate": "LWD558",
+              "p": 0.0000015841553491594768
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:49:10.210Z",
+          "read": "FMT166",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:51:54.793Z",
+          "read": "FMT166",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "AH763FD",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 5,
+      "reconstruida": 2,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T08:29:00.000Z",
+      "sal": "2026-10-07T12:56:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:28:06.870Z",
+          "read": "AH763FD",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T10:55:38.760Z",
+          "read": "AH763FD",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T11:01:12.949Z",
+          "read": "AH763FD",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T11:09:42.128Z",
+          "read": "AH763ED",
+          "device": "SLZIngCamFrente",
+          "P": 0.9941800000385593,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "PLV786",
+              "p": 1.3980376074542248e-7
+            },
+            {
+              "plate": "OQT140",
+              "p": 1.3980376074542248e-7
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T12:48:57.901Z",
+          "read": "AH763FD",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:55:15.906Z",
+          "read": "AH763FD",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T12:56:53.934Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.9550224125722756,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "AF411UI",
+              "p": 0.0007492972881615517
+            },
+            {
+              "plate": "OQT140",
+              "p": 0.00012517624457503246
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "OQT140",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 2,
+      "reconstruida": 3,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T10:59:00.000Z",
+      "sal": "2026-10-07T13:06:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T11:12:56.939Z",
+          "read": "OQT40",
+          "device": "SLZIngCamFrente",
+          "P": 0.9999905370247585,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "AF411UI",
+              "p": 9.577268492720886e-7
+            },
+            {
+              "plate": "GJH043",
+              "p": 9.577268492720886e-7
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:29:01.907Z",
+          "read": "OQT140",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "reconstruida",
+          "t": "2026-10-07T12:02:42.995Z",
+          "read": "OQT10",
+          "device": "RenDescFte",
+          "P": 0.9999891377999981,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "BTS626",
+              "p": 0.0000011310275681475183
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:04:39.861Z",
+          "read": "OQT140",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T13:08:14.206Z",
+          "read": "OQT180",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.9957044907078201,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "FFR877",
+              "p": 8.477399132266702e-7
+            },
+            {
+              "plate": "AF411UI",
+              "p": 1.1465942445631329e-8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "FFR877",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 3,
+      "reconstruida": 1,
+      "deducida": 4,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T08:21:00.000Z",
+      "sal": "2026-10-07T13:08:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T11:12:52.670Z",
+          "read": "FFR877",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T12:56:16.812Z",
+          "read": "FFR877",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:06:52.900Z",
+          "read": "FFR877",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T13:09:37.919Z",
+          "read": "FFR4877",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.9978052776217858,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "NWZ336",
+              "p": 0.000006051987411761597
+            },
+            {
+              "plate": "AF411UI",
+              "p": 0.000005657640325651649
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "AZS144",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 7,
+      "reconstruida": 0,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T10:57:00.000Z",
+      "sal": "2026-10-07T13:12:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T10:56:36.932Z",
+          "read": "AZS144",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T11:07:10.448Z",
+          "read": "AZS144",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:31:47.567Z",
+          "read": "AZS144",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:34:22.356Z",
+          "read": "AZS144",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T13:01:22.205Z",
+          "read": "AZS144",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:11:33.778Z",
+          "read": "AZS144",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:13:29.332Z",
+          "read": "AZS144",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "OYH142",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 3,
+      "reconstruida": 2,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T11:49:00.000Z",
+      "sal": "2026-10-07T13:17:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:04:46.501Z",
+          "read": "OYH142",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T12:13:54.875Z",
+          "read": "DYH142",
+          "device": "SLZBalIngFte",
+          "P": 0.9847323634587453,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "SZG666",
+              "p": 8.351864272116369e-7
+            },
+            {
+              "plate": "AH763FD",
+              "p": 4.461834879966571e-7
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "camara",
+          "t": "2026-10-07T12:36:05.503Z",
+          "read": "OYH142",
+          "device": "RenDescFte"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:15:50.069Z",
+          "read": "OYH142",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T13:18:27.291Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.9706204924922794,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "AF411UI",
+              "p": 0.00018735742840631525
+            },
+            {
+              "plate": "NWZ336",
+              "p": 0.00007279676392817996
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "HBQ125",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 3,
+      "reconstruida": 4,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T10:48:00.000Z",
+      "sal": "2026-10-07T13:23:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T10:41:44.480Z",
+          "read": "HBQ125",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T10:47:13.619Z",
+          "read": "HBQ125",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "reconstruida",
+          "t": "2026-10-07T11:03:27.295Z",
+          "read": "HBL25",
+          "device": "RicCal03",
+          "P": 0.8068369744014601,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "XAD231",
+              "p": 0.061060457722344794
+            },
+            {
+              "plate": "RSO471",
+              "p": 0.010111156241231406
+            }
+          ]
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T11:24:21.748Z",
+          "read": "HBQ125",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T11:33:26.211Z",
+          "read": "HBB25",
+          "device": "SLZIngCamFrente",
+          "P": 0.9983097106243587,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "FNT719",
+              "p": 0.0003201360793948421
+            },
+            {
+              "plate": "FFR877",
+              "p": 0.00006333275549878985
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "reconstruida",
+          "t": "2026-10-07T13:11:04.000Z",
+          "read": "HB125",
+          "device": "SLZVolcableC5",
+          "P": 0.9994580144396564,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "LWD558",
+              "p": 0.00020242659987102302
+            },
+            {
+              "plate": "AI318EE",
+              "p": 0.00015314847289551962
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:21:57.543Z",
+          "read": "HBQ125",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T13:26:30.000Z",
+          "read": "HBAA25",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.8107769669217968,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "NWZ336",
+              "p": 0.005450134710065179
+            },
+            {
+              "plate": "AF411UI",
+              "p": 0.00011187509176103755
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "LWD558",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 7,
+      "reconstruida": 1,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T11:07:00.000Z",
+      "sal": "2026-10-07T13:33:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T11:04:54.880Z",
+          "read": "LWD558",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:07:05.448Z",
+          "read": "LWD558",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T11:14:13.951Z",
+          "read": "LWD558",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T11:34:13.382Z",
+          "read": "LWD558",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:42:29.922Z",
+          "read": "LWD558",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:46:50.801Z",
+          "read": "LWD558",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T13:22:05.096Z",
+          "read": "LWD558",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T13:32:02.958Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZBalSC2Fte",
+          "P": 0.7736585676029344,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "SZG666",
+              "p": 0.0021834204290122495
+            },
+            {
+              "plate": "JFV670",
+              "p": 0.0018437798519620897
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:33:38.976Z",
+          "read": "LWD558",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "SZG666",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 3,
+      "reconstruida": 1,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T12:23:00.000Z",
+      "sal": "2026-10-07T13:41:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:20:44.557Z",
+          "read": "SZG666",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:24:10.192Z",
+          "read": "SZG666",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:40:13.402Z",
+          "read": "SZG666",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T13:41:37.927Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.7080720610077998,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "GKC728",
+              "p": 0.1704054414590672
+            },
+            {
+              "plate": "NWZ336",
+              "p": 0.00020975782082526914
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "GKC728",
+      "circuit": "SL2",
+      "pasos": 5,
+      "camara": 4,
+      "reconstruida": 0,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T12:31:00.000Z",
+      "sal": "2026-10-07T13:42:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:29:14.507Z",
+          "read": "GKC728",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:41:42.600Z",
+          "read": "GKC728",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Carga/descarga",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:41:04.128Z",
+          "read": "GKC728",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T14:20:47.366Z",
+          "read": "GKC728",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "AI318EE",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 6,
+      "reconstruida": 2,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T12:11:00.000Z",
+      "sal": "2026-10-07T13:50:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T12:06:46.719Z",
+          "read": "AI318EE",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:10:12.390Z",
+          "read": "AI318EE",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T12:49:09.852Z",
+          "read": "AI318EE",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T12:55:17.748Z",
+          "read": "AI318EE",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:03:38.388Z",
+          "read": "AI318EE",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:06:47.826Z",
+          "read": "AI318EE",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "reconstruida",
+          "t": "2026-10-07T13:37:54.441Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZVolcableC5",
+          "P": 0.8752438667722262,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "JFV670",
+              "p": 0.009814200167431845
+            },
+            {
+              "plate": "AI306JL",
+              "p": 0.0005000734344816292
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:48:56.240Z",
+          "read": "AI318EE",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T13:51:19.400Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.9719750779286365,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "NWZ336",
+              "p": 0.00009003586691139783
+            },
+            {
+              "plate": "JFV670",
+              "p": 0.00004430814695338168
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "RUK692",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 2,
+      "reconstruida": 0,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T12:21:00.000Z",
+      "sal": "2026-10-07T13:51:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:19:49.223Z",
+          "read": "RUK692",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:49:56.161Z",
+          "read": "RUK692",
+          "device": "RicB2Egreso"
+        }
+      ]
+    },
+    {
+      "plate": "JFV670",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 7,
+      "reconstruida": 1,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T12:41:00.000Z",
+      "sal": "2026-10-07T14:03:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:39:00.248Z",
+          "read": "JFV670",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T12:58:22.526Z",
+          "read": "JFV670",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "reconstruida",
+          "t": "2026-10-07T13:08:35.000Z",
+          "read": "FV670",
+          "device": "RicEgrCamFrente",
+          "P": 0.9999999348987448,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "FEQ886",
+              "p": 5.928669417927563e-9
+            },
+            {
+              "plate": "AA614HL",
+              "p": 2.3018349958951972e-11
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:23:40.059Z",
+          "read": "JFV670",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:26:11.958Z",
+          "read": "JFV670",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T13:49:27.188Z",
+          "read": "JFV670",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T14:02:12.938Z",
+          "read": "JFV670",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T14:03:55.862Z",
+          "read": "JFV670",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "VCK738",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 0,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 3,
+      "faltan": [
+        "ricardone:Pre ingreso",
+        "ricardone:Calada",
+        "ricardone:Balanza Egreso"
+      ],
+      "ing": "2026-10-07T12:51:00.000Z",
+      "sal": "2026-10-07T14:07:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "falta"
+        }
+      ]
+    },
+    {
+      "plate": "AI306JL",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 6,
+      "reconstruida": 2,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T13:13:00.000Z",
+      "sal": "2026-10-07T14:12:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T13:09:00.136Z",
+          "read": "AI306JL",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:12:54.608Z",
+          "read": "AI306JL",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T13:17:54.389Z",
+          "read": "AI306JL",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "reconstruida",
+          "t": "2026-10-07T13:23:15.310Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "RicEgrCamFrente",
+          "P": 0.9984343614342932,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "AA614HL",
+              "p": 3.7676003884655124e-8
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:35:07.699Z",
+          "read": "AI306JL",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:37:56.074Z",
+          "read": "AI306JL",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T14:01:40.041Z",
+          "read": "AI306JL",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T14:10:54.121Z",
+          "read": "AI306JL",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T14:12:27.966Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.9924769674671906,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "NWZ336",
+              "p": 0.000027328555108917705
+            },
+            {
+              "plate": "AF411UI",
+              "p": 0.000004349300258316846
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "FEQ886",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 8,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T12:01:00.000Z",
+      "sal": "2026-10-07T14:27:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T11:56:47.246Z",
+          "read": "FEQ886",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:00:44.836Z",
+          "read": "FEQ886",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T12:52:57.271Z",
+          "read": "FEQ886",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T13:09:51.076Z",
+          "read": "FEQ886",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:27:28.391Z",
+          "read": "FEQ886",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:48:25.237Z",
+          "read": "FEQ886",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T14:11:55.194Z",
+          "read": "FEQ886",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T14:25:44.816Z",
+          "read": "FEQ886",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T14:27:52.696Z",
+          "read": "FEQ886",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "NRD487",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 3,
+      "reconstruida": 2,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T12:47:00.000Z",
+      "sal": "2026-10-07T14:30:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:45:11.685Z",
+          "read": "NRD487",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T13:08:53.236Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZBalIngFte",
+          "P": 0.9942738240441008,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "HBQ125",
+              "p": 0.000037830014077263595
+            },
+            {
+              "plate": "IFK980",
+              "p": 0.00003550605634190315
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "reconstruida",
+          "t": "2026-10-07T13:48:51.742Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "RenDescFte",
+          "P": 0.7903221071789516,
+          "prueba": true,
+          "rivales": []
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T14:28:40.214Z",
+          "read": "NRD487",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T15:13:24.628Z",
+          "read": "NRD487",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "HWD100",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 7,
+      "reconstruida": 1,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T12:11:00.000Z",
+      "sal": "2026-10-07T14:39:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T12:08:35.845Z",
+          "read": "HWD100",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:10:53.830Z",
+          "read": "HWD100",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T12:52:59.586Z",
+          "read": "HWD100",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T13:07:45.487Z",
+          "read": "HWD100",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:22:29.016Z",
+          "read": "HWD100",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:51:19.467Z",
+          "read": "HWD100",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "reconstruida",
+          "t": "2026-10-07T14:28:22.705Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZVolcableC5",
+          "P": 0.7266466369873753,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "OKH237",
+              "p": 0.033397590103921564
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T14:38:22.028Z",
+          "read": "HWD100",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T14:41:22.340Z",
+          "read": "HWD100",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "AI357FC",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 1,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 2,
+      "faltan": [
+        "ricardone:Calada",
+        "ricardone:Balanza Egreso"
+      ],
+      "ing": "2026-10-07T08:27:00.000Z",
+      "sal": "2026-10-07T14:45:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T08:20:41.023Z",
+          "read": "AI357FC",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:26:40.386Z",
+          "read": "AI357FC",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "falta"
+        }
+      ]
+    },
+    {
+      "plate": "OKH237",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 7,
+      "reconstruida": 1,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T13:47:00.000Z",
+      "sal": "2026-10-07T14:48:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T13:41:52.413Z",
+          "read": "OKH237",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T13:43:47.516Z",
+          "read": "OKH237",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T13:51:25.231Z",
+          "read": "OKH237",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T13:58:11.913Z",
+          "read": "OKH237",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T14:07:24.291Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZIngCamFrente",
+          "P": 0.9914023949322732,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "GJH043",
+              "p": 0.00013474596078263325
+            },
+            {
+              "plate": "IFK980",
+              "p": 0.00013474596078263325
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T14:10:13.066Z",
+          "read": "OKH237",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T14:38:15.175Z",
+          "read": "OKH237",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T14:46:50.093Z",
+          "read": "OKH237",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T14:48:54.680Z",
+          "read": "OKH237",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "RUK692",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 0,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 3,
+      "faltan": [
+        "ricardone:Pre ingreso",
+        "ricardone:Calada",
+        "ricardone:Balanza Egreso"
+      ],
+      "ing": "2026-10-07T14:07:00.000Z",
+      "sal": "2026-10-07T15:25:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "falta"
+        }
+      ]
+    },
+    {
+      "plate": "VCK738",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 0,
+      "reconstruida": 0,
+      "deducida": 3,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T14:27:00.000Z",
+      "sal": "2026-10-07T15:47:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T14:32:56.000Z",
+          "read": "VCK738",
+          "device": "RicB1Ingreso"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "deducidaFinal"
+        }
+      ]
+    },
+    {
+      "plate": "GFP699",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 0,
+      "reconstruida": 1,
+      "deducida": 0,
+      "falta": 2,
+      "faltan": [
+        "ricardone:Calada",
+        "ricardone:Balanza Egreso"
+      ],
+      "ing": "2026-10-07T11:14:00.000Z",
+      "sal": "2026-10-07T16:05:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T11:13:27.710Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "RicPreIngInFr",
+          "P": 0.9708855277436469,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "RUK692",
+              "p": 0.00008790319044249804
+            }
+          ]
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "falta"
+        }
+      ]
+    },
+    {
+      "plate": "DBC119",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 4,
+      "reconstruida": 1,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T14:47:00.000Z",
+      "sal": "2026-10-07T16:28:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T14:45:36.663Z",
+          "read": "DBC119",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T14:58:18.431Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZBalIngFte",
+          "P": 0.8414938284956258,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "FSR386",
+              "p": 0.1426122380149388
+            },
+            {
+              "plate": "IFK980",
+              "p": 0.00004630013589175717
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "camara",
+          "t": "2026-10-07T15:01:45.503Z",
+          "read": "DBC119",
+          "device": "RenDescFte"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T16:26:56.444Z",
+          "read": "DBC119",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T16:35:49.979Z",
+          "read": "DBC119",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "FSR386",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 4,
+      "reconstruida": 1,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T14:54:00.000Z",
+      "sal": "2026-10-07T16:31:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T14:52:57.810Z",
+          "read": "FSR386",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T15:02:31.892Z",
+          "read": "FSR386",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "reconstruida",
+          "t": "2026-10-07T15:28:36.629Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "RenDescFte",
+          "P": 0.7518733561609846,
+          "prueba": true,
+          "rivales": []
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T16:29:29.742Z",
+          "read": "FSR386",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T16:36:21.672Z",
+          "read": "FSR386",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "AF411UI",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 3,
+      "reconstruida": 1,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T11:24:00.000Z",
+      "sal": "2026-10-07T16:46:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:21:14.891Z",
+          "read": "AF411UI",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T11:35:24.000Z",
+          "read": "AF4110I",
+          "device": "SLZBalIngFte",
+          "P": 0.9996422402964681,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "OYH142",
+              "p": 0.00002309495221663168
+            },
+            {
+              "plate": "GJH043",
+              "p": 0.000014121529556455873
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:43:32.258Z",
+          "read": "AF411UI",
+          "device": "SLZBalSC1Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T16:47:48.399Z",
+          "read": "AF411UI",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "EFA323",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 1,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 2,
+      "faltan": [
+        "ricardone:Calada",
+        "ricardone:Balanza Egreso"
+      ],
+      "ing": "2026-10-07T10:19:00.000Z",
+      "sal": "2026-10-07T16:47:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T10:18:20.504Z",
+          "read": "EFA323",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "falta"
+        }
+      ]
+    },
+    {
+      "plate": "AA614HL",
+      "circuit": "R13",
+      "pasos": 5,
+      "camara": 2,
+      "reconstruida": 1,
+      "deducida": 2,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T12:23:00.000Z",
+      "sal": "2026-10-07T17:09:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T12:21:39.067Z",
+          "read": "AA614HL",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T13:34:06.712Z",
+          "read": "AA614HL",
+          "device": "RicCalLiq"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Playa 3",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "reconstruida",
+          "t": "2026-10-07T14:00:22.321Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "RicEgrCamFrente",
+          "P": 0.7558419692028826,
+          "prueba": true,
+          "rivales": []
+        }
+      ]
+    },
+    {
+      "plate": "RUK692",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 1,
+      "reconstruida": 0,
+      "deducida": 2,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T15:43:00.000Z",
+      "sal": "2026-10-07T17:12:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:11:15.984Z",
+          "read": "RUK692",
+          "device": "RicB2Egreso"
+        }
+      ]
+    },
+    {
+      "plate": "GYW157",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 1,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 2,
+      "faltan": [
+        "ricardone:Calada",
+        "ricardone:Balanza Egreso"
+      ],
+      "ing": "2026-10-07T05:31:00.000Z",
+      "sal": "2026-10-07T17:29:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T05:27:07.913Z",
+          "read": "GYW157",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T05:29:46.540Z",
+          "read": "GYW157",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "falta"
+        }
+      ]
+    },
+    {
+      "plate": "VCK738",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 0,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 3,
+      "faltan": [
+        "ricardone:Pre ingreso",
+        "ricardone:Calada",
+        "ricardone:Balanza Egreso"
+      ],
+      "ing": "2026-10-07T16:06:00.000Z",
+      "sal": "2026-10-07T17:46:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "falta"
+        }
+      ]
+    },
+    {
+      "plate": "AH634CT",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 8,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T15:24:00.000Z",
+      "sal": "2026-10-07T17:49:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T15:19:49.714Z",
+          "read": "AH634CT",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T15:23:34.047Z",
+          "read": "AH634CT",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T16:45:42.290Z",
+          "read": "AH634CT",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T16:53:52.549Z",
+          "read": "AH634CT",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:01:31.642Z",
+          "read": "AH634CT",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:20:29.169Z",
+          "read": "AH634CT",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T17:25:03.897Z",
+          "read": "AH634CT",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:47:46.595Z",
+          "read": "AH634CT",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:49:10.031Z",
+          "read": "AH634CT",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "NAY557",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 5,
+      "reconstruida": 3,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T15:26:00.000Z",
+      "sal": "2026-10-07T17:52:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T15:23:35.808Z",
+          "read": "NAY557",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T15:25:40.613Z",
+          "read": "NAY557",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T16:48:04.943Z",
+          "read": "NAY557",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T16:54:45.593Z",
+          "read": "NAY557",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T17:04:28.294Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZIngCamFrente",
+          "P": 0.8955023324443364,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "GJH043",
+              "p": 0.00139142248606515
+            },
+            {
+              "plate": "IFK980",
+              "p": 0.00139142248606515
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:22:53.787Z",
+          "read": "NAY557",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "reconstruida",
+          "t": "2026-10-07T17:46:25.264Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZVolcableC5",
+          "P": 0.9671373793653617,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "SHA458",
+              "p": 0.00007884784752092058
+            },
+            {
+              "plate": "IYG086",
+              "p": 0.00007878105246936859
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:50:49.239Z",
+          "read": "NAY557",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T17:53:53.087Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.9854070456437838,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "WXW827",
+              "p": 0.00013715786942231604
+            },
+            {
+              "plate": "NWZ336",
+              "p": 0.00007718335318847922
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "WXW827",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 4,
+      "reconstruida": 1,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T16:41:00.000Z",
+      "sal": "2026-10-07T17:55:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T16:39:38.127Z",
+          "read": "WXW827",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T16:51:19.967Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZBalIngFte",
+          "P": 0.6685177861264031,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "AFR797",
+              "p": 0.045063050768520505
+            },
+            {
+              "plate": "GMO261",
+              "p": 0.029425332438702722
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "camara",
+          "t": "2026-10-07T16:58:49.093Z",
+          "read": "WXW827",
+          "device": "RenDescFte"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:53:07.322Z",
+          "read": "WXW827",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T19:29:12.981Z",
+          "read": "WXW827",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "GXT382",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 1,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 2,
+      "faltan": [
+        "ricardone:Calada",
+        "ricardone:Balanza Egreso"
+      ],
+      "ing": "2026-10-07T10:46:00.000Z",
+      "sal": "2026-10-07T18:20:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T10:41:12.158Z",
+          "read": "GXT382",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T10:43:24.244Z",
+          "read": "GXT382",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "falta"
+        }
+      ]
+    },
+    {
+      "plate": "SQL603",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 5,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T16:41:00.000Z",
+      "sal": "2026-10-07T18:36:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T16:40:42.530Z",
+          "read": "SQL603",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T16:57:27.274Z",
+          "read": "SQL603",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "camara",
+          "t": "2026-10-07T17:49:52.705Z",
+          "read": "SQL603",
+          "device": "RenDescFte"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T18:34:49.288Z",
+          "read": "SQL603",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T19:30:32.172Z",
+          "read": "SQL603",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "SHA458",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 8,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T15:47:00.000Z",
+      "sal": "2026-10-07T18:40:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T15:40:45.388Z",
+          "read": "SHA458",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T15:43:22.916Z",
+          "read": "SHA458",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T16:54:19.476Z",
+          "read": "SHA458",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T17:00:10.730Z",
+          "read": "SHA458",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:19:24.266Z",
+          "read": "SHA458",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:36:23.707Z",
+          "read": "SHA458",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T17:52:44.529Z",
+          "read": "SHA458",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T18:38:36.228Z",
+          "read": "SHA458",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T18:40:24.439Z",
+          "read": "SHA458",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "IYG086",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 7,
+      "reconstruida": 1,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T15:49:00.000Z",
+      "sal": "2026-10-07T18:46:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T15:40:59.789Z",
+          "read": "IYG086",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T15:48:12.211Z",
+          "read": "IYG086",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T16:59:16.466Z",
+          "read": "IYG086",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T17:11:05.090Z",
+          "read": "IYG086",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T17:21:18.993Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZIngCamFrente",
+          "P": 0.994310529878565,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "GJH043",
+              "p": 0.0000791206301560678
+            },
+            {
+              "plate": "IFK980",
+              "p": 0.0000791206301560678
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:38:12.230Z",
+          "read": "IYG086",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-07T18:33:43.328Z",
+          "read": "IYG086",
+          "device": "SLZVolcableC5"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T18:44:43.164Z",
+          "read": "IYG086",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T18:46:40.309Z",
+          "read": "IYG086",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "CMF111",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 3,
+      "reconstruida": 1,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T17:48:00.000Z",
+      "sal": "2026-10-07T18:58:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:45:22.218Z",
+          "read": "CMF111",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:49:32.852Z",
+          "read": "CMF111",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T18:57:20.282Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZBalSC2Fte",
+          "P": 0.8856725303304319,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "AFR797",
+              "p": 0.06337018693062116
+            },
+            {
+              "plate": "GMO261",
+              "p": 0.0014467079040897351
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T19:15:05.162Z",
+          "read": "CMF111",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "RUK692",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 0,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 3,
+      "faltan": [
+        "ricardone:Pre ingreso",
+        "ricardone:Calada",
+        "ricardone:Balanza Egreso"
+      ],
+      "ing": "2026-10-07T17:27:00.000Z",
+      "sal": "2026-10-07T19:01:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "falta"
+        }
+      ]
+    },
+    {
+      "plate": "AFR797",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 5,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T16:42:00.000Z",
+      "sal": "2026-10-07T19:03:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T16:41:10.852Z",
+          "read": "AFR797",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:01:34.529Z",
+          "read": "AFR797",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "camara",
+          "t": "2026-10-07T18:09:22.611Z",
+          "read": "AFR797",
+          "device": "RenDescFte"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T19:02:25.339Z",
+          "read": "AFR797",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T19:27:31.180Z",
+          "read": "AFR797",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "GNZ601",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 5,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T16:43:00.000Z",
+      "sal": "2026-10-07T19:21:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T16:42:34.375Z",
+          "read": "GNZ601",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:16:36.642Z",
+          "read": "GNZ601",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "camara",
+          "t": "2026-10-07T18:38:05.509Z",
+          "read": "GNZ601",
+          "device": "RenDescFte"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T19:20:01.366Z",
+          "read": "GNZ601",
+          "device": "SLZBalSC2Fte"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T19:42:15.974Z",
+          "read": "GNZ601",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "ROO085",
+      "circuit": "SL3",
+      "pasos": 4,
+      "camara": 1,
+      "reconstruida": 1,
+      "deducida": 0,
+      "falta": 2,
+      "faltan": [
+        "san_lorenzo:Balanza Egreso",
+        "san_lorenzo:Egreso"
+      ],
+      "ing": "2026-10-07T16:42:00.000Z",
+      "sal": "2026-10-07T19:47:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T16:41:42.055Z",
+          "read": "ROO085",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T17:15:30.056Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZBalIngFte",
+          "P": 0.9040636468310077,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "GNZ601",
+              "p": 0.046872366548657445
+            },
+            {
+              "plate": "AH634CT",
+              "p": 0.000575359606295479
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "falta"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "falta"
+        }
+      ]
+    },
+    {
+      "plate": "AJW729",
+      "circuit": "R6",
+      "pasos": 5,
+      "camara": 2,
+      "reconstruida": 0,
+      "deducida": 3,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T03:15:00.000Z",
+      "sal": "2026-10-07T19:55:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T08:53:20.879Z",
+          "read": "AJW729",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T08:59:17.000Z",
+          "read": "AJW729",
+          "device": "RicB1Ingreso"
+        },
+        {
+          "node": "ricardone:Playa 3",
+          "estado": "camara",
+          "t": "2026-10-07T09:15:54.884Z",
+          "read": "AJW729",
+          "device": "RicS6Playa3"
+        },
+        {
+          "node": "ricardone:Volcable 2",
+          "estado": "deducidaFinal"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "deducidaFinal"
+        }
+      ]
+    },
+    {
+      "plate": "VCK738",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 0,
+      "reconstruida": 0,
+      "deducida": 0,
+      "falta": 3,
+      "faltan": [
+        "ricardone:Pre ingreso",
+        "ricardone:Calada",
+        "ricardone:Balanza Egreso"
+      ],
+      "ing": "2026-10-07T18:08:00.000Z",
+      "sal": "2026-10-07T20:07:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "falta"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "falta"
+        }
+      ]
+    },
+    {
+      "plate": "GMO261",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 4,
+      "reconstruida": 0,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T17:05:00.000Z",
+      "sal": "2026-10-07T20:13:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:03:05.329Z",
+          "read": "GMO261",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T17:21:25.832Z",
+          "read": "GMO261",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "camara",
+          "t": "2026-10-07T19:29:22.560Z",
+          "read": "GMO261",
+          "device": "RenDescFte"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T20:40:04.417Z",
+          "read": "GMO261",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "AF511LP",
+      "circuit": "R6",
+      "pasos": 5,
+      "camara": 0,
+      "reconstruida": 0,
+      "deducida": 5,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T05:32:00.000Z",
+      "sal": "2026-10-07T20:26:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T09:01:10.000Z",
+          "read": "AF511LP",
+          "device": "RicB1Ingreso"
+        },
+        {
+          "node": "ricardone:Playa 3",
+          "estado": "deducidaFinal"
+        },
+        {
+          "node": "ricardone:Volcable 2",
+          "estado": "deducidaFinal"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "deducidaFinal"
+        }
+      ]
+    },
+    {
+      "plate": "AF636KC",
+      "circuit": "R6",
+      "pasos": 5,
+      "camara": 3,
+      "reconstruida": 0,
+      "deducida": 2,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T05:33:00.000Z",
+      "sal": "2026-10-07T20:57:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T05:28:44.881Z",
+          "read": "AF636KC",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T05:31:58.871Z",
+          "read": "AF636KC",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T08:56:20.790Z",
+          "read": "AF636KC",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Playa 3",
+          "estado": "camara",
+          "t": "2026-10-07T09:17:38.413Z",
+          "read": "AF636KC",
+          "device": "RicS6Playa3"
+        },
+        {
+          "node": "ricardone:Volcable 2",
+          "estado": "deducidaFinal"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "deducidaFinal"
+        }
+      ]
+    },
+    {
+      "plate": "SMA331",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 4,
+      "reconstruida": 0,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T19:50:00.000Z",
+      "sal": "2026-10-07T20:59:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T19:48:52.330Z",
+          "read": "SMA331",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T20:03:23.354Z",
+          "read": "SMA331",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "camara",
+          "t": "2026-10-07T20:22:17.377Z",
+          "read": "SMA331",
+          "device": "RenDescFte"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T21:02:42.960Z",
+          "read": "SMA331",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "GJH043",
+      "circuit": "SL2",
+      "pasos": 5,
+      "camara": 0,
+      "reconstruida": 3,
+      "deducida": 2,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T11:21:00.000Z",
+      "sal": "2026-10-07T21:12:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T20:02:06.000Z",
+          "read": "JH043",
+          "device": "SLZBalIngFte",
+          "P": 0.9999895949284727,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "IFK980",
+              "p": 9.136960765761337e-8
+            },
+            {
+              "plate": "SMA331",
+              "p": 2.1769401679097803e-8
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Carga/descarga",
+          "estado": "reconstruida",
+          "t": "2026-10-07T20:21:30.000Z",
+          "read": "H043",
+          "device": "SLZBalLiq2a",
+          "P": 0.9978446555440248,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "IFK980",
+              "p": 0.00035922407599584883
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T21:13:09.000Z",
+          "read": "GH043",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.9981258520701352,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "NWZ336",
+              "p": 0.0002874602454016729
+            },
+            {
+              "plate": "IFK980",
+              "p": 1.871485972631503e-8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "IFK980",
+      "circuit": "SL2",
+      "pasos": 5,
+      "camara": 1,
+      "reconstruida": 1,
+      "deducida": 3,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T11:20:00.000Z",
+      "sal": "2026-10-07T21:14:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T19:23:38.000Z",
+          "read": "048",
+          "device": "SLZIngCamFrente",
+          "P": 0.8524594927795499,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "GJH043",
+              "p": 0.0426229746389775
+            },
+            {
+              "plate": "BER232",
+              "p": 0.0026639359149360936
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Carga/descarga",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T21:14:39.567Z",
+          "read": "IFK980",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "RUK692",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 2,
+      "reconstruida": 0,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T19:33:00.000Z",
+      "sal": "2026-10-07T21:16:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T19:29:54.692Z",
+          "read": "RUK692",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T19:37:18.000Z",
+          "read": "RUK692",
+          "device": "RicB1Ingreso"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-07T21:14:26.755Z",
+          "read": "RUK692",
+          "device": "RicB2Egreso"
+        }
+      ]
+    },
+    {
+      "plate": "ESI808",
+      "circuit": "R6",
+      "pasos": 5,
+      "camara": 3,
+      "reconstruida": 0,
+      "deducida": 2,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T07:19:00.000Z",
+      "sal": "2026-10-07T21:33:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T07:18:44.868Z",
+          "read": "ESI808",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T08:58:25.577Z",
+          "read": "ESI808",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T09:03:58.000Z",
+          "read": "ESI808",
+          "device": "RicB1Ingreso"
+        },
+        {
+          "node": "ricardone:Playa 3",
+          "estado": "camara",
+          "t": "2026-10-07T09:18:21.511Z",
+          "read": "ESI808",
+          "device": "RicS6Playa3"
+        },
+        {
+          "node": "ricardone:Volcable 2",
+          "estado": "deducidaFinal"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "deducidaFinal"
+        }
+      ]
+    },
+    {
+      "plate": "GPX849",
+      "circuit": "R6",
+      "pasos": 5,
+      "camara": 1,
+      "reconstruida": 0,
+      "deducida": 4,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T06:38:00.000Z",
+      "sal": "2026-10-07T22:35:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T06:37:12.057Z",
+          "read": "GPX849",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T09:05:42.000Z",
+          "read": "GPX849",
+          "device": "RicB1Ingreso"
+        },
+        {
+          "node": "ricardone:Playa 3",
+          "estado": "deducidaFinal"
+        },
+        {
+          "node": "ricardone:Volcable 2",
+          "estado": "deducidaFinal"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "deducidaFinal"
+        }
+      ]
+    },
+    {
+      "plate": "RUK692",
+      "circuit": "R8",
+      "pasos": 3,
+      "camara": 1,
+      "reconstruida": 0,
+      "deducida": 2,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T21:33:00.000Z",
+      "sal": "2026-10-07T23:04:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T23:30:45.321Z",
+          "read": "RUK692",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T23:34:18.689Z",
+          "read": "RUK692",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "deducidaFinal"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "deducidaFinal"
+        }
+      ]
+    },
+    {
+      "plate": "TGT378",
+      "circuit": "R6",
+      "pasos": 5,
+      "camara": 1,
+      "reconstruida": 0,
+      "deducida": 4,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T07:36:00.000Z",
+      "sal": "2026-10-07T23:05:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T09:01:50.339Z",
+          "read": "TGT378",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Playa 3",
+          "estado": "deducidaFinal"
+        },
+        {
+          "node": "ricardone:Volcable 2",
+          "estado": "deducidaFinal"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "deducidaFinal"
+        }
+      ]
+    },
+    {
+      "plate": "MOF325",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 3,
+      "reconstruida": 3,
+      "deducida": 2,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T18:09:00.000Z",
+      "sal": "2026-10-07T23:12:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T17:59:56.701Z",
+          "read": "MOF325",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T18:08:17.128Z",
+          "read": "MOF325",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T18:11:02.814Z",
+          "read": "MOF325",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T22:17:57.199Z",
+          "read": "MOF325",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T22:22:05.725Z",
+          "read": "MQF325",
+          "device": "SLZBalIngFte",
+          "P": 0.9590021865282367,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "BER232",
+              "p": 4.11979123605274e-9
+            },
+            {
+              "plate": "FEE463",
+              "p": 8.997624059539183e-10
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "reconstruida",
+          "t": "2026-10-07T23:05:06.000Z",
+          "read": "CTF4",
+          "device": "SLZVolcableC3",
+          "P": 0.8871217641156784,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "BER232",
+              "p": 0.0023797983639411435
+            },
+            {
+              "plate": "FEE463",
+              "p": 0.0005197479626847457
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T23:12:44.704Z",
+          "read": "MCF325",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.7677359131541487,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "ROO085",
+              "p": 3.861714269834923e-7
+            },
+            {
+              "plate": "BER232",
+              "p": 8.76518970834418e-9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "VMB674",
+      "circuit": "R6",
+      "pasos": 5,
+      "camara": 1,
+      "reconstruida": 0,
+      "deducida": 4,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T08:36:00.000Z",
+      "sal": "2026-10-07T23:29:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:35:58.177Z",
+          "read": "VMB674",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T09:09:25.000Z",
+          "read": "VMB674",
+          "device": "RicB1Ingreso"
+        },
+        {
+          "node": "ricardone:Playa 3",
+          "estado": "deducidaFinal"
+        },
+        {
+          "node": "ricardone:Volcable 2",
+          "estado": "deducidaFinal"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "deducidaFinal"
+        }
+      ]
+    },
+    {
+      "plate": "ROR161",
+      "circuit": "R6",
+      "pasos": 5,
+      "camara": 3,
+      "reconstruida": 0,
+      "deducida": 2,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T08:43:00.000Z",
+      "sal": "2026-10-07T23:58:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T08:42:03.398Z",
+          "read": "ROR161",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T09:04:44.116Z",
+          "read": "ROR161",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T09:11:25.000Z",
+          "read": "ROR161",
+          "device": "RicB1Ingreso"
+        },
+        {
+          "node": "ricardone:Playa 3",
+          "estado": "camara",
+          "t": "2026-10-07T09:21:48.803Z",
+          "read": "ROR161",
+          "device": "RicS6Playa3"
+        },
+        {
+          "node": "ricardone:Volcable 2",
+          "estado": "deducidaFinal"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "deducidaFinal"
+        }
+      ]
+    },
+    {
+      "plate": "BXN336",
+      "circuit": "R6",
+      "pasos": 5,
+      "camara": 3,
+      "reconstruida": 0,
+      "deducida": 2,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T10:15:00.000Z",
+      "sal": "2026-10-08T00:21:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T09:55:03.496Z",
+          "read": "BXN336",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T16:35:38.374Z",
+          "read": "BXN336",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Playa 3",
+          "estado": "camara",
+          "t": "2026-10-07T16:54:09.614Z",
+          "read": "BXN336",
+          "device": "RicS6Playa3"
+        },
+        {
+          "node": "ricardone:Volcable 2",
+          "estado": "deducidaFinal"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "deducidaFinal"
+        }
+      ]
+    },
+    {
+      "plate": "FEE463",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 4,
+      "reconstruida": 1,
+      "deducida": 3,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T19:51:00.000Z",
+      "sal": "2026-10-08T00:24:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T19:46:39.952Z",
+          "read": "FEE463",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T19:50:27.664Z",
+          "read": "FEE463",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T23:55:48.152Z",
+          "read": "FEE463",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-08T00:03:39.960Z",
+          "read": "FEE463",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "camara",
+          "t": "2026-10-08T00:12:15.326Z",
+          "read": "FEE463",
+          "device": "SLZVolcableC3"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-08T00:24:56.596Z",
+          "read": "FEF463",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.9739513492287536,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "ROO085",
+              "p": 3.62857983240472e-8
+            },
+            {
+              "plate": "BER232",
+              "p": 2.9125339390811995e-8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "FJV994",
+      "circuit": "R6",
+      "pasos": 5,
+      "camara": 3,
+      "reconstruida": 0,
+      "deducida": 2,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T11:40:00.000Z",
+      "sal": "2026-10-08T00:42:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T11:35:56.453Z",
+          "read": "FJV994",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T11:38:57.238Z",
+          "read": "FJV994",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T16:39:09.611Z",
+          "read": "FJV994",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Playa 3",
+          "estado": "camara",
+          "t": "2026-10-07T16:56:58.979Z",
+          "read": "FJV994",
+          "device": "RicS6Playa3"
+        },
+        {
+          "node": "ricardone:Volcable 2",
+          "estado": "deducidaFinal"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "deducidaFinal"
+        }
+      ]
+    },
+    {
+      "plate": "CMF111",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 2,
+      "reconstruida": 1,
+      "deducida": 2,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T23:29:00.000Z",
+      "sal": "2026-10-08T00:52:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T23:26:32.080Z",
+          "read": "CMF111",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T23:30:55.983Z",
+          "read": "CMF111",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-08T00:52:57.687Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "SLZSalidaC1Fte",
+          "P": 0.909719944679566,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "BER232",
+              "p": 0.0005761427748818825
+            },
+            {
+              "plate": "ROO085",
+              "p": 0.0004998170714938607
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "KNH067",
+      "circuit": "R6",
+      "pasos": 5,
+      "camara": 3,
+      "reconstruida": 2,
+      "deducida": 0,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T14:35:00.000Z",
+      "sal": "2026-10-08T01:14:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T14:31:03.065Z",
+          "read": "KNH067",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T14:34:04.114Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "RicPreIngInFr",
+          "P": 0.9958199221568124,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "RUK692",
+              "p": 0.00021832768801102883
+            }
+          ]
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T16:40:47.332Z",
+          "read": "KNH067",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T16:52:25.000Z",
+          "read": "KNH067",
+          "device": "RicB1Ingreso"
+        },
+        {
+          "node": "ricardone:Playa 3",
+          "estado": "camara",
+          "t": "2026-10-07T16:58:16.410Z",
+          "read": "KNH067",
+          "device": "RicS6Playa3"
+        },
+        {
+          "node": "ricardone:Volcable 2",
+          "estado": "camara",
+          "t": "2026-10-08T00:40:49.347Z",
+          "read": "KNH067",
+          "device": "RicVolcable2"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "reconstruida",
+          "t": "2026-10-08T01:11:48.000Z",
+          "read": "NH057",
+          "device": "RicB2Egreso",
+          "P": 0.9422153766772658,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "AB305ZA",
+              "p": 0.00011957605755128189
+            },
+            {
+              "plate": "BHO070",
+              "p": 0.00011957605755128189
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "plate": "BER232",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 3,
+      "reconstruida": 1,
+      "deducida": 4,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T19:24:00.000Z",
+      "sal": "2026-10-08T01:41:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T19:23:19.791Z",
+          "read": "BER232",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T23:59:30.832Z",
+          "read": "BER232",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-08T01:22:24.087Z",
+          "read": "BFR232",
+          "device": "SLZBalIngFte",
+          "P": 0.97955484716595,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "SZG666",
+              "p": 0.0000017534008268112177
+            },
+            {
+              "plate": "UXZ281",
+              "p": 1.2701431830303384e-7
+            }
+          ]
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-08T01:43:08.210Z",
+          "read": "BER232",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "AB305ZA",
+      "circuit": "R6",
+      "pasos": 5,
+      "camara": 3,
+      "reconstruida": 1,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T16:15:00.000Z",
+      "sal": "2026-10-08T01:47:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T16:10:18.533Z",
+          "read": "AE305ZA",
+          "device": "RicIngCamFrente",
+          "P": 0.9737873783186869,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "RUK692",
+              "p": 2.702985419165157e-7
+            },
+            {
+              "plate": "VCK738",
+              "p": 2.702985419165157e-7
+            }
+          ]
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T16:14:03.664Z",
+          "read": "AB305ZA",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T16:42:54.303Z",
+          "read": "AB305ZA",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T16:54:15.000Z",
+          "read": "AB305ZA",
+          "device": "RicB1Ingreso"
+        },
+        {
+          "node": "ricardone:Playa 3",
+          "estado": "reconstruida",
+          "t": "2026-10-07T17:00:59.505Z",
+          "read": "AE305ZA",
+          "device": "RicS6Playa3",
+          "P": 0.8218045647377129,
+          "prueba": false,
+          "rivales": [
+            {
+              "plate": "VMB674",
+              "p": 0.000006994382017405012
+            },
+            {
+              "plate": "AF511LP",
+              "p": 0.0000010458209823884498
+            }
+          ]
+        },
+        {
+          "node": "ricardone:Volcable 2",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-08T01:45:23.303Z",
+          "read": "AB305ZA",
+          "device": "RicB2Egreso"
+        }
+      ]
+    },
+    {
+      "plate": "UXZ281",
+      "circuit": "R7",
+      "pasos": 8,
+      "camara": 4,
+      "reconstruida": 1,
+      "deducida": 3,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T21:19:00.000Z",
+      "sal": "2026-10-08T01:50:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "reconstruida",
+          "t": "2026-10-07T21:12:07.951Z",
+          "read": "(patente borrada para la prueba)",
+          "device": "RicPreIngInFr",
+          "P": 0.6097505335007815,
+          "prueba": true,
+          "rivales": [
+            {
+              "plate": "MWG720",
+              "p": 0.006851245884657196
+            },
+            {
+              "plate": "VCK738",
+              "p": 0.0060717005074759235
+            }
+          ]
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T23:17:12.830Z",
+          "read": "UXZ281",
+          "device": "RicCal04"
+        },
+        {
+          "node": "ricardone:Salida 2",
+          "estado": "camara",
+          "t": "2026-10-07T23:49:39.650Z",
+          "read": "UXZ281",
+          "device": "RicEgrCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "camara",
+          "t": "2026-10-08T01:23:30.227Z",
+          "read": "UXZ281",
+          "device": "SLZBalIngFte"
+        },
+        {
+          "node": "san_lorenzo:Plataformas Volcables",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-08T01:51:25.511Z",
+          "read": "UXZ281",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "SZG666",
+      "circuit": "SL1",
+      "pasos": 5,
+      "camara": 2,
+      "reconstruida": 0,
+      "deducida": 3,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-08T00:26:00.000Z",
+      "sal": "2026-10-08T02:03:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "san_lorenzo:Ingreso",
+          "estado": "camara",
+          "t": "2026-10-08T00:24:07.820Z",
+          "read": "SZG666",
+          "device": "SLZIngCamFrente"
+        },
+        {
+          "node": "san_lorenzo:Balanza Ingreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Carga / Descarga OSL",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Balanza Egreso",
+          "estado": "deducida"
+        },
+        {
+          "node": "san_lorenzo:Egreso",
+          "estado": "camara",
+          "t": "2026-10-08T02:03:45.078Z",
+          "read": "SZG666",
+          "device": "SLZSalidaC1Fte"
+        }
+      ]
+    },
+    {
+      "plate": "BHO070",
+      "circuit": "R6",
+      "pasos": 5,
+      "camara": 4,
+      "reconstruida": 0,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T16:53:00.000Z",
+      "sal": "2026-10-08T02:24:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T16:47:59.727Z",
+          "read": "BHO070",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T16:50:07.951Z",
+          "read": "BHO070",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-07T17:07:25.601Z",
+          "read": "BHO070",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Playa 3",
+          "estado": "camara",
+          "t": "2026-10-07T17:25:07.023Z",
+          "read": "BHO070",
+          "device": "RicS6Playa3"
+        },
+        {
+          "node": "ricardone:Volcable 2",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-08T02:23:00.076Z",
+          "read": "BHO070",
+          "device": "RicB2Egreso"
+        }
+      ]
+    },
+    {
+      "plate": "MWG720",
+      "circuit": "R6",
+      "pasos": 5,
+      "camara": 4,
+      "reconstruida": 0,
+      "deducida": 1,
+      "falta": 0,
+      "faltan": [],
+      "ing": "2026-10-07T21:17:00.000Z",
+      "sal": "2026-10-08T02:46:00.000Z",
+      "pasosDetalle": [
+        {
+          "node": "ricardone:Ingreso",
+          "estado": "excluido",
+          "t": "2026-10-07T21:09:24.321Z",
+          "read": "MWG720",
+          "device": "RicIngCamFrente"
+        },
+        {
+          "node": "ricardone:Pre ingreso",
+          "estado": "camara",
+          "t": "2026-10-07T21:12:07.951Z",
+          "read": "MWG720",
+          "device": "RicPreIngInFr"
+        },
+        {
+          "node": "ricardone:Calada",
+          "estado": "camara",
+          "t": "2026-10-08T01:52:42.674Z",
+          "read": "MWG720",
+          "device": "RicCal03"
+        },
+        {
+          "node": "ricardone:Balanza Ingreso",
+          "estado": "excluido"
+        },
+        {
+          "node": "ricardone:Playa 3",
+          "estado": "deducida"
+        },
+        {
+          "node": "ricardone:Volcable 2",
+          "estado": "camara",
+          "t": "2026-10-08T02:22:58.608Z",
+          "read": "MWG720",
+          "device": "RicVolcable2"
+        },
+        {
+          "node": "ricardone:Balanza Egreso",
+          "estado": "camara",
+          "t": "2026-10-08T02:44:48.711Z",
+          "read": "MWG720",
+          "device": "RicB2Egreso"
+        }
+      ]
+    }
+  ],
+  "prueba": {
+    "n": 94,
+    "bien": 35,
+    "otro": 3
+  }
+}

@@ -37,6 +37,19 @@ def _tool(
 
 
 TOOLS: list[dict[str, Any]] = [
+    _tool("get_metric_evidence", "Recupera evidencia histórica por evidenceId, incluso después de un reproceso.", {"evidenceId":{"type":"string"}}, ["evidenceId"]),
+    _tool("compare_metric", "Compara el mismo KPI/planta entre períodos. Devuelve ambas poblaciones y variación calculada por el servicio.", {"current":{"type":"object"}, "reference":{"type":"object"}}, ["current","reference"]),
+    _tool("get_metric_catalog", "Catálogo compartido con el dashboard: definiciones, unidad, población y fuente de cada KPI.", {}),
+    _tool("get_metric", "Calcula el mismo KPI que el dashboard. No promediar medianas/P90. Devuelve valor, n, cobertura, revisión y evidenceId. Usar los filtros del contexto recibido.", {
+        "metricId": {"type": "string"}, "mode": {"type": "string", "enum": ["live", "historical"]},
+        "site": {"type": "string", "enum": ["ricardone", "san_lorenzo", "both"]},
+        "from": {"type": "string"}, "to": {"type": "string"},
+        "runIds": {"type": "array", "items": {"type": "string"}},
+        "circuit": {"type": "string"}, "product": {"type": "string"}, "plate": {"type": "string"},
+        "sector": {"type": "string"}, "zone": {"type": "string"},
+        "fromPoint": {"type": "string"}, "toPoint": {"type": "string"}, "franja": {"type": "string"},
+        "revisions": {"type": "object", "additionalProperties": {"type":"string"}}
+    }, ["metricId", "mode", "site"]),
     _tool(
         "run_etl",
         (
@@ -237,6 +250,14 @@ def dispatch_tool(
     """Ejecuta una tool por nombre. `delegar` requiere delegate_handler."""
     c = client or EtlClient()
     try:
+        if name == "get_metric_evidence":
+            return c._request("GET", "/api/analytics/evidence/" + str(args["evidenceId"]))
+        if name == "compare_metric":
+            return c._request("POST", "/api/analytics/compare", json=args)
+        if name == "get_metric_catalog":
+            return c._request("GET", "/api/analytics/catalog")
+        if name == "get_metric":
+            return c._request("POST", "/api/analytics/metric", json=args)
         if name == "run_etl":
             return c.create_run(
                 events_paths=args.get("events_paths"),

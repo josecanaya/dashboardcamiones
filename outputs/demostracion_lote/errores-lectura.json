@@ -1,0 +1,7034 @@
+[
+ {
+  "fuente": "doble",
+  "node": "Balanza egreso",
+  "real": "UAJ766",
+  "leida": "IMH787"
+ },
+ {
+  "fuente": "doble",
+  "node": "Balanza egreso",
+  "real": "DPI309",
+  "leida": "AWZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "Balanza egreso",
+  "real": "RNM392",
+  "leida": "AI217QP"
+ },
+ {
+  "fuente": "doble",
+  "node": "Balanza egreso",
+  "real": "FEA810",
+  "leida": "AI217QP"
+ },
+ {
+  "fuente": "doble",
+  "node": "Volcable 2",
+  "real": "NLR442",
+  "leida": "J77"
+ },
+ {
+  "fuente": "doble",
+  "node": "Volcable 2",
+  "real": "LFT141",
+  "leida": "AZ7"
+ },
+ {
+  "fuente": "doble",
+  "node": "Volcable 2",
+  "real": "NLR442",
+  "leida": "VV11"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "SWE419",
+  "leida": "PM8"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "JPZ027",
+  "leida": "JZJZ7"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "DTG181",
+  "leida": "AA326"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AI455EY",
+  "leida": "I809"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AC065FR",
+  "leida": "M2X"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AC065FP",
+  "leida": "M2X"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "BMM438",
+  "leida": "OX496"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AI125ZN",
+  "leida": "LAT13"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "EYH843",
+  "leida": "AF11"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "EVL273",
+  "leida": "P19"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AE382XE",
+  "leida": "AA625II"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AAE877",
+  "leida": "XBL71"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AA037JX",
+  "leida": "IAVEC"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "CRJ139",
+  "leida": "IAVEC"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "EGV380",
+  "leida": "EIH917"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "CFQ560",
+  "leida": "AB626FS"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "HQM403",
+  "leida": "COW52"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "IRF326",
+  "leida": "IAB766F0"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AE229IC",
+  "leida": "JRK45"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AE322PY",
+  "leida": "JRK45"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AH597II",
+  "leida": "I491"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "RUK692",
+  "leida": "WKX26"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "NYF932",
+  "leida": "H396"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AE458GA",
+  "leida": "AB7"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "ERT433",
+  "leida": "OOR763"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "OZH665",
+  "leida": "Y47"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "EQK330",
+  "leida": "HJ12"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AH942OD",
+  "leida": "P04"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "NYR510",
+  "leida": "AC673JZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AC339NP",
+  "leida": "AC673JZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "LZA381",
+  "leida": "DC9"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "CRK690",
+  "leida": "LO7WR"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AC195QD",
+  "leida": "AE888WG"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "JZY051",
+  "leida": "AE953H8"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "EKA070",
+  "leida": "IMH883"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "MTM756",
+  "leida": "AA559S7"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "OJW902",
+  "leida": "H820"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "SCG152",
+  "leida": "EVU342"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AI523IB",
+  "leida": "6Z7"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "BAZ896",
+  "leida": "IL7"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AE521HY",
+  "leida": "JOA988"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AB909QW",
+  "leida": "AG318Z"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "BCQ422",
+  "leida": "AG318Z"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "EVL273",
+  "leida": "CKO212"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "CRJ139",
+  "leida": "FEW918"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "UKL882",
+  "leida": "HHZ336"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "OTF911",
+  "leida": "G03"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AG554DA",
+  "leida": "AAD"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AA752WM",
+  "leida": "MC12"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "AFR797",
+  "leida": "FITL417"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "GNZ601",
+  "leida": "FITL417"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "CKQ212",
+  "leida": "OUO981"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "NZE366",
+  "leida": "OUO981"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "VCB094",
+  "leida": "VU71"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Ingreso",
+  "real": "RUK692",
+  "leida": "T07"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "AH313SL",
+  "leida": "AIH3"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "OAC204",
+  "leida": "VIS9"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Volcables",
+  "real": "BMM438",
+  "leida": "OOY184"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Volcables",
+  "real": "KIM991",
+  "leida": "AE180I0"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "AH056AH",
+  "leida": "B9SLC0"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "FMZ505",
+  "leida": "FWZ505"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "KBX017",
+  "leida": "Y1U"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "FEB737",
+  "leida": "AVI340"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "ICZ675",
+  "leida": "TCZ675"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "ICZ675",
+  "leida": "TCZ675"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "CEI975",
+  "leida": "CET975"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "AH415RM",
+  "leida": "BBS180"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "AA473XW",
+  "leida": "AA47JAW"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "LSJ114",
+  "leida": "LSJ1114"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "LSJ114",
+  "leida": "LSJ1114"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "LSJ114",
+  "leida": "LSJ1114"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "HPU174",
+  "leida": "HPU274"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "AB912XV",
+  "leida": "AB912XW"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "EAX665",
+  "leida": "CP8"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "SWE419",
+  "leida": "CP8"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "BNU854",
+  "leida": "PGO317"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AA459EI",
+  "leida": "C90"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AI455EY",
+  "leida": "MU8"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AAE877",
+  "leida": "ITT1"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "EHS233",
+  "leida": "AA160DQ"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "DFP716",
+  "leida": "AA625LI"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AAE877",
+  "leida": "E85"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "GYW157",
+  "leida": "E85"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AA037JX",
+  "leida": "JRL8899"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AC310RN",
+  "leida": "Y757"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "DTG181",
+  "leida": "AE8"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "JZN133",
+  "leida": "PEP068"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "WNL428",
+  "leida": "AA4920J"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "EAR164",
+  "leida": "AA4920J"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AYJ768",
+  "leida": "232"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AB274UR",
+  "leida": "3361230"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "KUY671",
+  "leida": "ICL9"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "OJD684",
+  "leida": "CPW551"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "OAC204",
+  "leida": "IL9"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "MXD863",
+  "leida": "L490"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AH597II",
+  "leida": "L490"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "THE665",
+  "leida": "MJB78"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "NYF932",
+  "leida": "F30"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "NYF932",
+  "leida": "PY77"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AE458GA",
+  "leida": "PY77"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AG818PJ",
+  "leida": "C49"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AA323QQ",
+  "leida": "OOY184"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "END934",
+  "leida": "HDC12"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AC339NP",
+  "leida": "AC67302"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "OKH237",
+  "leida": "EI05"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "EKA070",
+  "leida": "M1J"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "ORN981",
+  "leida": "FIU47"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "MTM756",
+  "leida": "AA559SV"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "LZH220",
+  "leida": "A92"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AI523IB",
+  "leida": "I94"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "BTS626",
+  "leida": "AA698OB"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "JEO911",
+  "leida": "DPL"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "HEA334",
+  "leida": "GHN59"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "SRF590",
+  "leida": "CD10"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "MHE805",
+  "leida": "GOE007"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AA752WM",
+  "leida": "MC02373"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AH177UX",
+  "leida": "MC02373"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "BTS626",
+  "leida": "QTV74G"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "BER232",
+  "leida": "IH1"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AG988ZC",
+  "leida": "IH1"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AG988ZC",
+  "leida": "FMW00"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "GOX306",
+  "leida": "JVQ8900"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "OKH237",
+  "leida": "368"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "OKH237",
+  "leida": "CQGT"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AD788TS",
+  "leida": "CQGT"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "GYW157",
+  "leida": "EFA3233"
+ },
+ {
+  "fuente": "doble",
+  "node": "Salida 2",
+  "real": "AH389MF",
+  "leida": "EM93"
+ },
+ {
+  "fuente": "doble",
+  "node": "Balanza ingreso",
+  "real": "AFH021",
+  "leida": "01Q1"
+ },
+ {
+  "fuente": "doble",
+  "node": "Balanza ingreso",
+  "real": "FPF313",
+  "leida": "LLLL"
+ },
+ {
+  "fuente": "doble",
+  "node": "Calada",
+  "real": "AF411UI",
+  "leida": "AF41101"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "CSZ358",
+  "leida": "TUL425"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EFZ230",
+  "leida": "SFZ230"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "IBC288",
+  "leida": "TLHE101"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "PJJ799",
+  "leida": "AA336B1"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AWQ503",
+  "leida": "ANSSTA0"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "FLC094",
+  "leida": "OCB815"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AI362IP",
+  "leida": "UX998"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "SBV011",
+  "leida": "M626"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EAX665",
+  "leida": "M626"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EAX665",
+  "leida": "ETX665"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EEW075",
+  "leida": "ETX665"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "KAM352",
+  "leida": "EC0"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "RLP943",
+  "leida": "AB919WH"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "RRE349",
+  "leida": "AG142JP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AI125ZN",
+  "leida": "AF778YL"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AD790NK",
+  "leida": "AH185MZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "SFY369",
+  "leida": "DVT968"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "OQY184",
+  "leida": "AH763WD"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "GTZ627",
+  "leida": "AF413LL"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "XBN447",
+  "leida": "JZW724"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE247CC",
+  "leida": "AF211CP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE247CC",
+  "leida": "NAH953"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AA703FC",
+  "leida": "AB178YN"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "VJG112",
+  "leida": "AI456GB"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "VJG112",
+  "leida": "AH933LO"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "MSE565",
+  "leida": "AG270UK"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EVD342",
+  "leida": "GCW191"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AGR963",
+  "leida": "AG294KA"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "VCK738",
+  "leida": "OJD501"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "UUL425",
+  "leida": "OJD501"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "UUL425",
+  "leida": "NXH113"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "CGS172",
+  "leida": "GMW107"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EBO971",
+  "leida": "HVH136"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "BWV144",
+  "leida": "AF174BB"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "OFG785",
+  "leida": "DIY765"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE882UD",
+  "leida": "AE747HZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE882UD",
+  "leida": "AG294KA"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "RNM392",
+  "leida": "MYW261"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "RNM392",
+  "leida": "AD790SU"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AZG422",
+  "leida": "DVT968"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AC732JF",
+  "leida": "DVT968"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE341FF",
+  "leida": "AF443"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE341FF",
+  "leida": "AF292IS"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AA703FC",
+  "leida": "FAF824"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "SAT582",
+  "leida": "TC9401"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "BVS300",
+  "leida": "IMH787"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "CRJ139",
+  "leida": "AG622BE"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "FFU874",
+  "leida": "AF778YL"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EHY029",
+  "leida": "AD1137"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "RKS646",
+  "leida": "AD1137"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AG223TK",
+  "leida": "LJB988"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "VRA989",
+  "leida": "PQK206"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "GQL244",
+  "leida": "AG066KT"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "RLP943",
+  "leida": "GIH043"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "LAU467",
+  "leida": "AG650"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "IRK465",
+  "leida": "GP699"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "GXT382",
+  "leida": "AA4920U"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "KAD727",
+  "leida": "FMNB46"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "RDL445",
+  "leida": "AF778YL"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AA037JX",
+  "leida": "AF529RF"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "XBL711",
+  "leida": "VEC0"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "BVS300",
+  "leida": "BV5300"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "WGG348",
+  "leida": "BV5300"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EKC971",
+  "leida": "DJD501"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "JPZ027",
+  "leida": "613"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "UUO981",
+  "leida": "KZS251"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "HQM403",
+  "leida": "OOY184"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "BTS626",
+  "leida": "AF778YL"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AA703FC",
+  "leida": "IMH787"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AH597II",
+  "leida": "AB22032"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AH597II",
+  "leida": "AF042JP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "FFU874",
+  "leida": "AD790SU"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "LAU467",
+  "leida": "AA358U"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "GTZ627",
+  "leida": "AE937LN"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "VNA879",
+  "leida": "AD790SU"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "KOQ228",
+  "leida": "AA19UI"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "CMF111",
+  "leida": "HDB515"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "VCK738",
+  "leida": "AI456GB"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AD887XZ",
+  "leida": "AF211GP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AD887XZ",
+  "leida": "IMH787"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "BLT769",
+  "leida": "AA834RS"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AH313SL",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "CJV457",
+  "leida": "AF211CP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AG756MR",
+  "leida": "AC539Y9"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "CMF111",
+  "leida": "AH926WU"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE855UA",
+  "leida": "AD465CS"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "NXO394",
+  "leida": "JZHB66"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE322PY",
+  "leida": "AF211FP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "JVQ890",
+  "leida": "AB148YJ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "JVA446",
+  "leida": "AH149NK"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AH466PL",
+  "leida": "IMH787"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AD532VQ",
+  "leida": "RUE227"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EXA572",
+  "leida": "DTY765"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE827TK",
+  "leida": "AD0137"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EQK330",
+  "leida": "HLJ13"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "SZG666",
+  "leida": "AH700ET"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AF047OT",
+  "leida": "NYR2510"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AH629ZR",
+  "leida": "AA169YD"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AA697HO",
+  "leida": "AH700ET"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AB092TC",
+  "leida": "AA174HS"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "CMF111",
+  "leida": "BDH080"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "IWJ952",
+  "leida": "TWJ952"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "LZH220",
+  "leida": "ZH220"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AD489PM",
+  "leida": "CJW902"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EKE716",
+  "leida": "DJ3117"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "BTS626",
+  "leida": "AH540BR"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AA703FC",
+  "leida": "AE036AM"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AG834TM",
+  "leida": "AF857FV"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "PAR121",
+  "leida": "AB349QJ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "LGI725",
+  "leida": "AB349QJ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE821PH",
+  "leida": "AD545MJ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE260HD",
+  "leida": "AC437MQ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AA703FC",
+  "leida": "AI456GB"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE260HD",
+  "leida": "AG625QU"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EPH797",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "OKY453",
+  "leida": "NAH953"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AB608FB",
+  "leida": "AF211FP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AF194CA",
+  "leida": "AG294KA"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE171GF",
+  "leida": "AB934GV"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "BER232",
+  "leida": "AG275GX"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "UIM596",
+  "leida": "JNN608"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AB531CT",
+  "leida": "AA19UI"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AB531CT",
+  "leida": "AB697TJ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "FEA642",
+  "leida": "LTC"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "FEA642",
+  "leida": "AG726CU"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "OIR976",
+  "leida": "AD630GU"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AF829YZ",
+  "leida": "NOO450"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AA703FC",
+  "leida": "NAH953"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AF194CA",
+  "leida": "AA834RT"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "KOQ228",
+  "leida": "IMH787"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AB608FB",
+  "leida": "AF111FP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AB608FB",
+  "leida": "AF174BB"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "KUE702",
+  "leida": "AE040HU"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "GYW157",
+  "leida": "AB501TQ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AG725TB",
+  "leida": "AG266HU"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "VAJ028",
+  "leida": "PFA290"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "RNM392",
+  "leida": "AA208QN"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "UKL882",
+  "leida": "823"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "XBL711",
+  "leida": "PFA290"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "XBL711",
+  "leida": "AVEC0"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AI281GO",
+  "leida": "DTV765"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "JDA988",
+  "leida": "268"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "UKL882",
+  "leida": "L423"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "XBL711",
+  "leida": "VUELTA"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "DGR440",
+  "leida": "DGR40"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EVL273",
+  "leida": "OCB815"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "GGL625",
+  "leida": "IXE965"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "GGL625",
+  "leida": "CGL625"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AA703FC",
+  "leida": "PFA290"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "HGK066",
+  "leida": "KOU446"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "KUZ569",
+  "leida": "HHL273"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "GAS911",
+  "leida": "AB143DW"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "SCG152",
+  "leida": "AG078NR"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AI494DO",
+  "leida": "FLX002"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "HGJ002",
+  "leida": "AH185MZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EVD342",
+  "leida": "AF881FZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "SZG666",
+  "leida": "ODY901"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AA703FC",
+  "leida": "HHL273"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AF411UI",
+  "leida": "JLQ557"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AD175PQ",
+  "leida": "AI276FZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AD175PQ",
+  "leida": "AH341SS"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "CNU939",
+  "leida": "EMR320"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AB437XR",
+  "leida": "ONS723"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AB646GL",
+  "leida": "DVT968"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "CXA592",
+  "leida": "IMH787"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AD887XZ",
+  "leida": "AE772KD"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EGV380",
+  "leida": "AC026RV"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AG988ZC",
+  "leida": "AE264XY"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AF411UI",
+  "leida": "AG361MX"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "WGG348",
+  "leida": "NGK896"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "NWZ336",
+  "leida": "OEH303"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "CDF727",
+  "leida": "1E1F74"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "UUO981",
+  "leida": "AE036AM"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "SAZ976",
+  "leida": "FLN56"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AA703FC",
+  "leida": "AF778YL"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AXB198",
+  "leida": "AB226DX"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "KUJ709",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AB898XT",
+  "leida": "AB148YJ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "FNT719",
+  "leida": "SLF772"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AZS144",
+  "leida": "IOB330"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AA703FC",
+  "leida": "AI456GB"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "FEQ886",
+  "leida": "HLT270"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "UAJ766",
+  "leida": "AA492OU"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE052QO",
+  "leida": "VSR057"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "OKH237",
+  "leida": "VSR057"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "HWU967",
+  "leida": "JLQ557"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "RSO471",
+  "leida": "AA208QN"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AC132NO",
+  "leida": "AC71"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "NAY557",
+  "leida": "NAH953"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "IYG086",
+  "leida": "AE772KD"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AB675DP",
+  "leida": "AG142JP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "GYW157",
+  "leida": "AC282QI"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "RUK692",
+  "leida": "AC282QI"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "UDC759",
+  "leida": "AE040HU"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "EFA323",
+  "leida": "AE040HU"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "GMO261",
+  "leida": "AA745QE"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "IFK980",
+  "leida": "7BOF"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "RLP943",
+  "leida": "GP639"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "FDH917",
+  "leida": "AB919"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "KGH536",
+  "leida": "AA326"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "RXV065",
+  "leida": "IME7WA"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "LOF032",
+  "leida": "UMX998"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "RYX227",
+  "leida": "FWZ505"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "AC310RN",
+  "leida": "FWZ505"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "TVU654",
+  "leida": "IDC92"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "SKU396",
+  "leida": "SKU"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "SKU396",
+  "leida": "E19"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "SKU396",
+  "leida": "E19"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "AC195QD",
+  "leida": "T165"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "CRK690",
+  "leida": "T165"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "AE879OO",
+  "leida": "B858"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "XBL711",
+  "leida": "WXX408"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "DGR440",
+  "leida": "GLM5522"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "RDL445",
+  "leida": "RRB128"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "TSX149",
+  "leida": "KII"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "AF636KC",
+  "leida": "AF611LQ"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "GPX849",
+  "leida": "P27"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "MBT452",
+  "leida": "F17"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "UXZ281",
+  "leida": "F17"
+ },
+ {
+  "fuente": "doble",
+  "node": "Silo Keppler",
+  "real": "LFT141",
+  "leida": "7R9A"
+ },
+ {
+  "fuente": "doble",
+  "node": "Silo Keppler",
+  "real": "LFT141",
+  "leida": "S974"
+ },
+ {
+  "fuente": "doble",
+  "node": "Silo Keppler",
+  "real": "LFT141",
+  "leida": "444"
+ },
+ {
+  "fuente": "doble",
+  "node": "Silo Keppler",
+  "real": "LFT141",
+  "leida": "AYF824"
+ },
+ {
+  "fuente": "doble",
+  "node": "Playa 3",
+  "real": "EBO971",
+  "leida": "BWV104"
+ },
+ {
+  "fuente": "doble",
+  "node": "Playa 3",
+  "real": "UPW705",
+  "leida": "DJG112"
+ },
+ {
+  "fuente": "doble",
+  "node": "Playa 3",
+  "real": "VAJ028",
+  "leida": "AG644XU"
+ },
+ {
+  "fuente": "doble",
+  "node": "Playa 3",
+  "real": "AAE877",
+  "leida": "L1C"
+ },
+ {
+  "fuente": "doble",
+  "node": "Playa 3",
+  "real": "EVL273",
+  "leida": "JL00DP"
+ },
+ {
+  "fuente": "doble",
+  "node": "Playa 3",
+  "real": "CRJ139",
+  "leida": "DU924"
+ },
+ {
+  "fuente": "doble",
+  "node": "Playa 3",
+  "real": "VNA879",
+  "leida": "924KHA"
+ },
+ {
+  "fuente": "doble",
+  "node": "Playa 3",
+  "real": "AAE877",
+  "leida": "UUD981"
+ },
+ {
+  "fuente": "doble",
+  "node": "Playa 3",
+  "real": "GGY416",
+  "leida": "BLL295"
+ },
+ {
+  "fuente": "doble",
+  "node": "Playa 3",
+  "real": "EAA743",
+  "leida": "H21"
+ },
+ {
+  "fuente": "doble",
+  "node": "Playa 3",
+  "real": "FVJ129",
+  "leida": "PF313"
+ },
+ {
+  "fuente": "doble",
+  "node": "Playa 3",
+  "real": "AF636KC",
+  "leida": "I11"
+ },
+ {
+  "fuente": "doble",
+  "node": "Playa 3",
+  "real": "BHO070",
+  "leida": "924KHT"
+ },
+ {
+  "fuente": "doble",
+  "node": "Playa 3",
+  "real": "MBT452",
+  "leida": "MWC21"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "UUL425",
+  "leida": "UL425"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "UUL425",
+  "leida": "FHSW233"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "BHL749",
+  "leida": "BHL74"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "LHE266",
+  "leida": "LHIE266"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "LHE266",
+  "leida": "LHIE266"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "IBC288",
+  "leida": "IHF288"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "CGV979",
+  "leida": "I30"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "CGV979",
+  "leida": "EGV979"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "SLT997",
+  "leida": "SLT4997"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "SLT997",
+  "leida": "SLT4997"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "OJD089",
+  "leida": "OJD0B9"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "RKS646",
+  "leida": "RKS64G"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "AA459EI",
+  "leida": "GLI789"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "HZZ526",
+  "leida": "HHZZ526"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "HZZ526",
+  "leida": "HHZZ526"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "UUL425",
+  "leida": "FHSW233"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "BIE472",
+  "leida": "BIE4Y2"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "CGV979",
+  "leida": "AVI1C0"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "AAE877",
+  "leida": "ATAE877"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "DGR440",
+  "leida": "XXX7F"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "LAU467",
+  "leida": "LA467"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "KDG811",
+  "leida": "KIG811"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "KDG811",
+  "leida": "KIG81"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "CFQ560",
+  "leida": "CFT560"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "OQY184",
+  "leida": "OOY184"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "SCG152",
+  "leida": "SCG6152"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "AD156FB",
+  "leida": "XXX51"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "FSK263",
+  "leida": "SK263"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "UPP812",
+  "leida": "DP812"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "UPP812",
+  "leida": "LPB812"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "UPP812",
+  "leida": "DF912"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "UPP812",
+  "leida": "LFP8112"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "LAU467",
+  "leida": "LA467"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "AB606HB",
+  "leida": "AB406PB"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "AB606HB",
+  "leida": "AB606WB"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "GFP912",
+  "leida": "GFP90"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "AE458GA",
+  "leida": "AB750SL"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "OQY184",
+  "leida": "OOY181"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "OZH665",
+  "leida": "DZH665"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "AE808WG",
+  "leida": "AE898WG"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "GJU523",
+  "leida": "XXX792"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "AH278RX",
+  "leida": "DIX640"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "OIX640",
+  "leida": "DIX640"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "OIX640",
+  "leida": "AA1741"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "RIN374",
+  "leida": "RTN374"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "AA703FC",
+  "leida": "CGL3"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "GSA321",
+  "leida": "4X7X"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "MTT517",
+  "leida": "1289"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "MTT517",
+  "leida": "1289"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "MTT517",
+  "leida": "1289"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "MTT517",
+  "leida": "MT517"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "MTT517",
+  "leida": "MTF517"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "MTT517",
+  "leida": "1289"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "MTT517",
+  "leida": "MT5117"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "AA473XW",
+  "leida": "AA473"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "AB909QW",
+  "leida": "197"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "AD195CG",
+  "leida": "TD195CG"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "SZG666",
+  "leida": "JLUW000"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "SZG666",
+  "leida": "MKE212"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "AD001RG",
+  "leida": "IZGWD22"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "AE200RZ",
+  "leida": "AC57SJ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza ingreso",
+  "real": "KUJ709",
+  "leida": "KU70"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Volcables",
+  "real": "CRK690",
+  "leida": "CRK69D"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "FEA810",
+  "leida": "ALOULE"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "GTZ627",
+  "leida": "BZH333"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "VCK738",
+  "leida": "KIZ415"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "VCK738",
+  "leida": "BZH333"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "VCK738",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "VCK738",
+  "leida": "PQK206"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "OFG785",
+  "leida": "GKI406"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AD956ZF",
+  "leida": "VCK7"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AD956ZF",
+  "leida": "CGS586"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AA703FC",
+  "leida": "IPV223"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "SLD748",
+  "leida": "IPV223"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "GXT382",
+  "leida": "AH718NW"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AD956ZF",
+  "leida": "IQC171"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "EPH797",
+  "leida": "S846"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "FQI716",
+  "leida": "AH456NL"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "HAQ820",
+  "leida": "CEE9B9"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "SZG666",
+  "leida": "AF406NS"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "KOE138",
+  "leida": "GSF224"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AF550CI",
+  "leida": "GKX840"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "GYW157",
+  "leida": "HIR922"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "GYW157",
+  "leida": "RON82B"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "GYW157",
+  "leida": "HOC1"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "MRM512",
+  "leida": "OCI"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "MNB810",
+  "leida": "BELGRANO"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "LAU467",
+  "leida": "EMC0"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "LAU467",
+  "leida": "381289"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "JBN715",
+  "leida": "PQK206"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AH249IB",
+  "leida": "AA689GI"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "BTS626",
+  "leida": "AH456NL"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "BTS626",
+  "leida": "CMV335"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "KOQ228",
+  "leida": "GKX840"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "KOQ228",
+  "leida": "INV942"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AD887XZ",
+  "leida": "AE532MU"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AD887XZ",
+  "leida": "A5524683"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "CMF111",
+  "leida": "A5524683"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "CMF111",
+  "leida": "ECL370"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "CMF111",
+  "leida": "ECL370"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "KWN857",
+  "leida": "AF11C"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "UAJ766",
+  "leida": "NI321"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "KWN857",
+  "leida": "S9JI"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AA703FC",
+  "leida": "AD074OH"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "HWU967",
+  "leida": "AH328UP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "BDT263",
+  "leida": "AF969BJ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "RVG299",
+  "leida": "RVG259"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "RVG299",
+  "leida": "RVG29"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "RVG299",
+  "leida": "VSULTING"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "UAJ766",
+  "leida": "UAJ76B"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "UAJ766",
+  "leida": "FSY771"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "WGG348",
+  "leida": "AD880JF"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "WGG348",
+  "leida": "I7J"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "VCK738",
+  "leida": "IPV223"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "RUK692",
+  "leida": "IPV223"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "RUK692",
+  "leida": "LLU467"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "RSW086",
+  "leida": "S4360"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "SZG666",
+  "leida": "PIUG8Q11"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "VCK738",
+  "leida": "PIUG8Q11"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "VCK738",
+  "leida": "MGS00066628"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF179IC"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF179IC"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF179IO"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF179IO"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "KUE702",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AB608FB",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "CMF111",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "NNCV0"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "NNCV0"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "BTS626",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF5660P"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF5660P"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "SCG152",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AB466FD",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "B3451H"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566O"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "EDG875"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "EDG875"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AH859DF"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF857FV"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF857FV"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF857FV"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "HVQ537"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "HVQ537"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "PAR121",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AF829YZ",
+  "leida": "OL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "JLI914",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "JLI914",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "LGI725",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "L57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "EVGG"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "EVGG"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "EVGG"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "HVQ537"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "EVGG"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "IL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "IL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "CEE8B3"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "AD0G1TD"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "AE295RI"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NWZ336",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "FMK877",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "FMK877",
+  "leida": "L57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AB531CT",
+  "leida": "AA698OB"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "UAJ766",
+  "leida": "TG96"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "JLI914",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "JLI914",
+  "leida": "O3414916424"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AA703FC",
+  "leida": "L57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AA703FC",
+  "leida": "I57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "EPH797",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AD806UM",
+  "leida": "L57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AD806UM",
+  "leida": "AD80"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "SZG666",
+  "leida": "AA101HW"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "SZG666",
+  "leida": "AA101HW"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "SZG666",
+  "leida": "L57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "SZG666",
+  "leida": "L57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "SZG666",
+  "leida": "L57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "SZG666",
+  "leida": "AB996FZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AF194CA",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AF194CA",
+  "leida": "AI157"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "AI157"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "AI157"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "AI157"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "AI157"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "AI157"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "ZL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "T57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "T57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "L57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "AD793XZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "L57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "L57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "G310"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "G310"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "AG575TD"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "AG575TD"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKV292",
+  "leida": "TL57"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "WU967"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "WU967"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "EMG07"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "6G53"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "6G53"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "OIY765"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "OIY765"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "AF881FZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "AF881FZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "AF881FZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "AF881FZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AB343JC",
+  "leida": "AH456NL"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "JLI914",
+  "leida": "AH456NL"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "AH456NL"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "OEH303"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "OEH303"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "OTY765"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "CBU204"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "LD13"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "LD13"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "MLE1"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "MLE1"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "KMY352"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "KMY352"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "VNY665"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "TAV827"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "JI11"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AG897AF",
+  "leida": "JI11"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "EPH797",
+  "leida": "IOI074"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "IRK465",
+  "leida": "CC29"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AA703FC",
+  "leida": "EYT1"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "KHB772",
+  "leida": "CT352"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "KHB772",
+  "leida": "AA364HK"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "SZG666",
+  "leida": "TB58ASAN247"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "UAJ766",
+  "leida": "EMG070"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "FEA642",
+  "leida": "NSV789"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AF877NZ",
+  "leida": "OEH303"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "BTS626",
+  "leida": "BTS625"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "VCK738",
+  "leida": "LTO068"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AF411UI",
+  "leida": "AF411QI"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "ATS104",
+  "leida": "LJB988"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "ATS104",
+  "leida": "HLT270"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "ATS104",
+  "leida": "HLT270"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "UQR036",
+  "leida": "AB151TD"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AD887XZ",
+  "leida": "ECL370"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AA875OG",
+  "leida": "OVF581"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "UAJ766",
+  "leida": "OVF581"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "GMO261",
+  "leida": "GMW107"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "GMO261",
+  "leida": "S846"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "ATS104",
+  "leida": "GTQ670"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AA703FC",
+  "leida": "0GMGALOULER"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "GNX755",
+  "leida": "AH793XT"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "CMF111",
+  "leida": "G755"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "DBC119",
+  "leida": "VUZ771"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "RUK692",
+  "leida": "AF881FZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "EGV380",
+  "leida": "CVX5"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "WXW827",
+  "leida": "RDT443"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "JAU7D16",
+  "leida": "JAC7110"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AFR797",
+  "leida": "AF1G"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "NKN077",
+  "leida": "095"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "UAJ766",
+  "leida": "AA2004"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "WGG348",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "WGG348",
+  "leida": "AGL695"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AE171GF",
+  "leida": "1GF"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "SZG666",
+  "leida": "GDF9"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AF829YZ",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "IRK465",
+  "leida": "332CUM1170"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AH016TX",
+  "leida": "TBH186"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AH016TX",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "VCK738",
+  "leida": "AF566OP"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AI357FC",
+  "leida": "RMANN"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "UAJ766",
+  "leida": "LZZ2"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "RUK692",
+  "leida": "AE264XY"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AA703FC",
+  "leida": "DRE"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "EFA323",
+  "leida": "HND004"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "GXT382",
+  "leida": "SE30"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AFR797",
+  "leida": "RTN141"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "CMF111",
+  "leida": "S3172"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Renova",
+  "real": "AA703FC",
+  "leida": "AMABL"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza egreso",
+  "real": "UPW705",
+  "leida": "IW705"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza egreso",
+  "real": "WGG348",
+  "leida": "WGG3"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza egreso",
+  "real": "EIO943",
+  "leida": "EIO941"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza egreso",
+  "real": "AH278RX",
+  "leida": "AH278R"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza egreso",
+  "real": "UAJ766",
+  "leida": "AIL1L"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza egreso",
+  "real": "AG725TB",
+  "leida": "AG725"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza egreso",
+  "real": "EGV380",
+  "leida": "GV380"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Balanza egreso",
+  "real": "XAD231",
+  "leida": "HHU866"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "NYK584",
+  "leida": "HTK722"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE882UD",
+  "leida": "AA834RS"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE882UD",
+  "leida": "NAH953"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "RSW086",
+  "leida": "AH456NL"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AE882UD",
+  "leida": "AA834RT"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "VCK738",
+  "leida": "AG978PR"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "AB646GL",
+  "leida": "JUE083"
+ },
+ {
+  "fuente": "doble",
+  "node": "SL Egreso",
+  "real": "BTS626",
+  "leida": "AA208QN"
+ },
+ {
+  "fuente": "doble",
+  "node": "Balanza egreso",
+  "real": "AH831XA",
+  "leida": "AC31"
+ },
+ {
+  "fuente": "doble",
+  "node": "Balanza egreso",
+  "real": "AF443TR",
+  "leida": "NAH953"
+ },
+ {
+  "fuente": "doble",
+  "node": "Balanza egreso",
+  "real": "AE260HD",
+  "leida": "PORTER1"
+ },
+ {
+  "fuente": "doble",
+  "node": "Balanza ingreso",
+  "real": "AH831XA",
+  "leida": "A00P2000000"
+ },
+ {
+  "fuente": "doble",
+  "node": "Balanza ingreso",
+  "real": "AE260HD",
+  "leida": "AG382ZP"
+ },
+ {
+  "fuente": "doble",
+  "node": "Balanza ingreso",
+  "real": "AE260HD",
+  "leida": "A58R3"
+ },
+ {
+  "fuente": "doble",
+  "node": "Balanza ingreso",
+  "real": "AE882UD",
+  "leida": "AH185MZ"
+ },
+ {
+  "fuente": "doble",
+  "node": "Preingreso",
+  "real": "AI494DO",
+  "leida": "AI494"
+ },
+ {
+  "fuente": "doble",
+  "node": "Ingreso",
+  "real": "AG972CZ",
+  "leida": "DNANO"
+ },
+ {
+  "fuente": "doble",
+  "node": "Ingreso",
+  "real": "PAS288",
+  "leida": "DNANO"
+ },
+ {
+  "fuente": "doble",
+  "node": "Ingreso",
+  "real": "HQM403",
+  "leida": "CIW"
+ },
+ {
+  "fuente": "doble",
+  "node": "Ingreso",
+  "real": "WCC802",
+  "leida": "FIT147"
+ },
+ {
+  "fuente": "doble",
+  "node": "Ingreso",
+  "real": "OVY928",
+  "leida": "212"
+ },
+ {
+  "fuente": "doble",
+  "node": "Ingreso",
+  "real": "AG554DA",
+  "leida": "524"
+ },
+ {
+  "fuente": "doble",
+  "node": "Ingreso",
+  "real": "EME541",
+  "leida": "AE26"
+ },
+ {
+  "fuente": "doble",
+  "node": "Ingreso",
+  "real": "ATS104",
+  "leida": "ITO068"
+ },
+ {
+  "fuente": "doble",
+  "node": "Ingreso",
+  "real": "AE260HD",
+  "leida": "E60"
+ },
+ {
+  "fuente": "doble",
+  "node": "Ingreso",
+  "real": "ANV363",
+  "leida": "BOH961"
+ },
+ {
+  "fuente": "doble",
+  "node": "Ingreso",
+  "real": "AF636KC",
+  "leida": "CF511AD"
+ },
+ {
+  "fuente": "doble",
+  "node": "Ingreso",
+  "real": "VCB094",
+  "leida": "265"
+ },
+ {
+  "fuente": "doble",
+  "node": "Ingreso",
+  "real": "AA346YI",
+  "leida": "OFG116"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Calada",
+  "real": "GNB091",
+  "leida": "TBC288"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "KQV940",
+  "leida": "OJR677"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "AB114CN",
+  "leida": "RKS546"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable Silo Keppler",
+  "real": "AB114CN",
+  "leida": "AYK824"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Calada",
+  "real": "AI362IP",
+  "leida": "DNR2158"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Calada",
+  "real": "FLC094",
+  "leida": "GNH07"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "TAO150",
+  "leida": "TCD15"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "AA346YI",
+  "leida": "J00L"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable Silo Keppler",
+  "real": "AA346YI",
+  "leida": "00JRH"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AA326VM",
+  "leida": "AA326"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable Silo Keppler",
+  "real": "AA346YI",
+  "leida": "NL9"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "AB919WW",
+  "leida": "AB9199"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable Silo Keppler",
+  "real": "AA346YI",
+  "leida": "172"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable Silo Keppler",
+  "real": "AA346YI",
+  "leida": "L76"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable Silo Keppler",
+  "real": "AA346YI",
+  "leida": "IS9"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable Silo Keppler",
+  "real": "AA346YI",
+  "leida": "IB974"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable Silo Keppler",
+  "real": "AA346YI",
+  "leida": "CZZ"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable Silo Keppler",
+  "real": "AA346YI",
+  "leida": "B96"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable Silo Keppler",
+  "real": "TGT378",
+  "leida": "CSE"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable Silo Keppler",
+  "real": "TGT378",
+  "leida": "7R9A"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable Silo Keppler",
+  "real": "TGT378",
+  "leida": "7R97"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable Silo Keppler",
+  "real": "TGT378",
+  "leida": "R29A"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "CIE516",
+  "leida": "PW470"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "ATO068",
+  "leida": "AF11"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "CUL425",
+  "leida": "PP5"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "RLP943",
+  "leida": "7VW"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AA625UI",
+  "leida": "A625LI"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "TAO150",
+  "leida": "BM144"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "TAO150",
+  "leida": "HOL445"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "AF411UI",
+  "leida": "PORTERI"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "AA936RA",
+  "leida": "SC8"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "AAE877",
+  "leida": "5M7"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "AAE877",
+  "leida": "DDN1"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "BWV144",
+  "leida": "HHS"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "BWV144",
+  "leida": "VL625"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "CKQ212",
+  "leida": "DFO22"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "NLC566",
+  "leida": "AK6"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "NLC566",
+  "leida": "AC01"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "NLC566",
+  "leida": "743"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "NLC566",
+  "leida": "IA141"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AB544TA",
+  "leida": "AA961"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "DIX053",
+  "leida": "DIX05"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "AE555WZ",
+  "leida": "AE555W7"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "GCB347",
+  "leida": "AF141"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "IFK980",
+  "leida": "AI168AF"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "IFK980",
+  "leida": "ITP"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AFH021",
+  "leida": "FH021"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "AGR963",
+  "leida": "GH962"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "CRO351",
+  "leida": "LCJ"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "PEP080",
+  "leida": "PSP20"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "JZN133",
+  "leida": "PEP08"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "AB544TA",
+  "leida": "HAE"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "AB544TA",
+  "leida": "IA1"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "AB544TA",
+  "leida": "AH19"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "AB544TA",
+  "leida": "CL22"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "EAW743",
+  "leida": "924KA"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "EAW743",
+  "leida": "924KHAT"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "EAW743",
+  "leida": "YF1C"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "FFR574",
+  "leida": "CCN603"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "AB544TA",
+  "leida": "AD531D"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "GJH043",
+  "leida": "SH048"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "AB544TA",
+  "leida": "HW957"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "CRO351",
+  "leida": "EIE"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "WYJ554",
+  "leida": "801789"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "CJV457",
+  "leida": "ICJV457"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "IAB283",
+  "leida": "301202"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "BDT263",
+  "leida": "ZZ4"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "RNZ709",
+  "leida": "NZ709"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "RNZ709",
+  "leida": "Y17"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "JJT929",
+  "leida": "UEB955"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "GVJ645",
+  "leida": "301202"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "JDH880",
+  "leida": "64C"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "EFD127",
+  "leida": "A84"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "JJT929",
+  "leida": "JEE"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "MBO020",
+  "leida": "HELVE"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "CNG506",
+  "leida": "OCNG506"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "JUP399",
+  "leida": "KPY"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Ingreso",
+  "real": "KOE138",
+  "leida": "XXX51"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "HDT433",
+  "leida": "TU07"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "GZI868",
+  "leida": "LCJ2888"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AC980HY",
+  "leida": "AC986H"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "JJT929",
+  "leida": "VZ00JRH"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Egreso",
+  "real": "GZI868",
+  "leida": "GZI7FH"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "AD336OO",
+  "leida": "AD33600"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "CBW551",
+  "leida": "CP551"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "FPF313",
+  "leida": "WH033"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AB606HB",
+  "leida": "AB606R3"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "AD732JV",
+  "leida": "534"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "DRM112",
+  "leida": "DRH112"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "AI117OI",
+  "leida": "Z000RH"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "KBC169",
+  "leida": "KGC169"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Carga/descarga",
+  "real": "PAR121",
+  "leida": "AC427OG"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "GFP912",
+  "leida": "GFP91"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "AF894QK",
+  "leida": "J63"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "UUU110",
+  "leida": "U76"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "KGF179",
+  "leida": "GG179"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "HNG637",
+  "leida": "ILL631"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "CMF111",
+  "leida": "C0SS"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "HNG637",
+  "leida": "BNG637"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AE949OO",
+  "leida": "AE94800"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "UYC052",
+  "leida": "IYF052"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AA842KO",
+  "leida": "A84270"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "NEX116",
+  "leida": "OEX116"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AC177GH",
+  "leida": "AC777GH"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "GVJ645",
+  "leida": "383RP"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "CTB691",
+  "leida": "SCAN"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "VDB780",
+  "leida": "TB691"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Carga / Descarga OSL",
+  "real": "AGR963",
+  "leida": "AGR953"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "SKT848",
+  "leida": "5R1O"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "AA699TL",
+  "leida": "J74"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "AA699TL",
+  "leida": "DIY755"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "AA699TL",
+  "leida": "G171"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Egreso",
+  "real": "OTF911",
+  "leida": "QTF911"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "KQI412",
+  "leida": "AI248"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Egreso",
+  "real": "KQI412",
+  "leida": "DFK55"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "SKT848",
+  "leida": "AD601"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "EXA572",
+  "leida": "ELF"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "EXA572",
+  "leida": "3Z5"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "AA699TL",
+  "leida": "AA699T"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "FKX849",
+  "leida": "A99"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "RUK692",
+  "leida": "PT692"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AI494DO",
+  "leida": "AI494"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "IZX624",
+  "leida": "IC382RH"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "IZX624",
+  "leida": "924KHAT"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "HDK895",
+  "leida": "709RP"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "IZX624",
+  "leida": "L383RP"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "HDK895",
+  "leida": "95X"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "HDK895",
+  "leida": "MWJ"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "HDK895",
+  "leida": "TQ5"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "HDK895",
+  "leida": "RC9"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "HDK895",
+  "leida": "JC9"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "HDK895",
+  "leida": "PZ00LRP"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "HDK895",
+  "leida": "BK82"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "ODR763",
+  "leida": "ASA"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AAJ512",
+  "leida": "GA52"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "BXT318",
+  "leida": "BX318"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "CHP130",
+  "leida": "KC29"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "AAJ512",
+  "leida": "JWF4"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "AAJ512",
+  "leida": "437"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "AAJ512",
+  "leida": "39BRH"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "NRD487",
+  "leida": "A39"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "NRD487",
+  "leida": "383RH"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "NRD487",
+  "leida": "7F7"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "NRD487",
+  "leida": "93R"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Carga/descarga",
+  "real": "PAR121",
+  "leida": "OTV7C5"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "HDI137",
+  "leida": "IO0"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "NRD487",
+  "leida": "PC087"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "RVG299",
+  "leida": "TG23"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "RVG299",
+  "leida": "615"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "EIO943",
+  "leida": "EIO941"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "VCK738",
+  "leida": "4J2"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "VCK738",
+  "leida": "A383RP"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "GPZ202",
+  "leida": "WA1J"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "RVG299",
+  "leida": "TC755"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AD074JB",
+  "leida": "AD074OB"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "AXS846",
+  "leida": "XY5"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "JZY051",
+  "leida": "AE953H8"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "AEE773",
+  "leida": "LL53"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "AEE773",
+  "leida": "ZN4"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "AEE773",
+  "leida": "OZ220"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "AEE773",
+  "leida": "G9901"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "RVG299",
+  "leida": "OWB80"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "HAP522",
+  "leida": "HC623"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "HAP522",
+  "leida": "DL82"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "GMW577",
+  "leida": "9667"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "GMW577",
+  "leida": "IC16"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "RVG299",
+  "leida": "CWT57"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "RVG299",
+  "leida": "AU42"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "RVG299",
+  "leida": "IO9"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "RVG299",
+  "leida": "DUN01"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "NPF900",
+  "leida": "DDJ0"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "GMW577",
+  "leida": "S31"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "VQD079",
+  "leida": "ZA1"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Carga/descarga",
+  "real": "PAR121",
+  "leida": "EK74"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "GMW577",
+  "leida": "DD01"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AD806UM",
+  "leida": "SPM66"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Ingreso",
+  "real": "GFP699",
+  "leida": "PSR"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "GFP699",
+  "leida": "202"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Ingreso",
+  "real": "WXW827",
+  "leida": "FIT147"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "GMW577",
+  "leida": "DDN01"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "GFP699",
+  "leida": "DDN01"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "GFP699",
+  "leida": "MC2"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "GMO261",
+  "leida": "Q6R"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "GFP699",
+  "leida": "AF4110"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "GFP699",
+  "leida": "ZQ3"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "GFP699",
+  "leida": "AG313OO"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "GFP699",
+  "leida": "IS623"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Ingreso",
+  "real": "JNN408",
+  "leida": "D493"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "GFP699",
+  "leida": "FA1"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Calada",
+  "real": "GFP699",
+  "leida": "JMEGA"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "GFP699",
+  "leida": "XN816"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "GFP699",
+  "leida": "J27"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "GFP699",
+  "leida": "DD101"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "GFP699",
+  "leida": "WM8"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "SJV022",
+  "leida": "FTC"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "GFP699",
+  "leida": "L2M"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "RDL445",
+  "leida": "FH1T"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "GFP699",
+  "leida": "EE22"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "RDL445",
+  "leida": "WMW838"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "SJV022",
+  "leida": "SU1022"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "DGR440",
+  "leida": "PDB"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AF931QO",
+  "leida": "8EQ422"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "VHL423",
+  "leida": "FAJ"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "FZV750",
+  "leida": "EZV750"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Calada",
+  "real": "NAZ841",
+  "leida": "WA5408"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Calada",
+  "real": "NAZ841",
+  "leida": "UERA85"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "LSJ114",
+  "leida": "LSJ10"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Ingreso",
+  "real": "AAE877",
+  "leida": "MY00"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "CKQ212",
+  "leida": "AMRW"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "UKL882",
+  "leida": "V747"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AAE877",
+  "leida": "AGF877"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "AZG422",
+  "leida": "EZ22"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Ingreso",
+  "real": "AG085YQ",
+  "leida": "212"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "AAE877",
+  "leida": "MVWH"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AC744ZO",
+  "leida": "AC74420"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AF688II",
+  "leida": "I11"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AE200RZ",
+  "leida": "JF7"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "IFK980",
+  "leida": "932"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "AA752WM",
+  "leida": "M1W1"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "MOD373",
+  "leida": "MCD37J"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "AC744ZO",
+  "leida": "C470"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "DPW054",
+  "leida": "UIG19"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "FFU874",
+  "leida": "FFU873"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "DPW054",
+  "leida": "BEK3"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "AC475VF",
+  "leida": "AE00TL"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "AA752WM",
+  "leida": "AA752H"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "AC475VF",
+  "leida": "393RP"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Egreso",
+  "real": "AA752WM",
+  "leida": "MAL938M4"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "VDB780",
+  "leida": "ZP1"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "CTB691",
+  "leida": "CE00"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "AG890BW",
+  "leida": "AU829RV"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "CTB691",
+  "leida": "A58R3"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "CTB691",
+  "leida": "VP7"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "CTB691",
+  "leida": "AC4751F"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "CTB691",
+  "leida": "CT8691"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "AC658DF",
+  "leida": "DDN01"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "AC475VF",
+  "leida": "D1AA689GK"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "OFH669",
+  "leida": "DDN01"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "OFH669",
+  "leida": "AF7"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "OFH669",
+  "leida": "DFH669"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "HDK895",
+  "leida": "MCC802"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "HDK895",
+  "leida": "BBP85"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "HDK895",
+  "leida": "I00"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "HDK895",
+  "leida": "BBP85"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "HDK895",
+  "leida": "W95"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "HDK895",
+  "leida": "417"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "HDK895",
+  "leida": "BBP85"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "HDK895",
+  "leida": "924KHA"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "HDK895",
+  "leida": "924KHA"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "HDK895",
+  "leida": "DFI55"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "NRD487",
+  "leida": "AE31211"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Carga/descarga",
+  "real": "KGX035",
+  "leida": "ELEX"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Carga/descarga",
+  "real": "KGX035",
+  "leida": "OTV769"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Ingreso",
+  "real": "AB226IK",
+  "leida": "AD8"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Ingreso",
+  "real": "VCK738",
+  "leida": "FJV111"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Ingreso",
+  "real": "AYM824",
+  "leida": "381289"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "MQQ861",
+  "leida": "MIG0"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Ingreso",
+  "real": "HLD270",
+  "leida": "AMZ336"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "ROO085",
+  "leida": "AD3J2"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Egreso",
+  "real": "ROO085",
+  "leida": "AB367K4"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "ROO085",
+  "leida": "AL1"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "ROO085",
+  "leida": "AC8160"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "ROO085",
+  "leida": "VWW"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Egreso",
+  "real": "ROO085",
+  "leida": "RN799"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "ROO085",
+  "leida": "C3777"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "ROO085",
+  "leida": "AI3920"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "ROO085",
+  "leida": "AI39208"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Egreso",
+  "real": "ROO085",
+  "leida": "MJG611"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "LQL832",
+  "leida": "AX1"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "BDH961",
+  "leida": "UZV438"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "LQL832",
+  "leida": "MC4001"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "LQL832",
+  "leida": "AD07"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "LQL832",
+  "leida": "THLT"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "LQL832",
+  "leida": "TLT"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Egreso",
+  "real": "LQL832",
+  "leida": "IHL"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "VDB780",
+  "leida": "AEQA0HA"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "VDB780",
+  "leida": "IOT54"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "VDB780",
+  "leida": "HC321"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "VDB780",
+  "leida": "H187"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Carga / Descarga OSL",
+  "real": "BTS626",
+  "leida": "OQT10"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "VDB780",
+  "leida": "B1W"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "VDB780",
+  "leida": "FCS"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "VDB780",
+  "leida": "AG7"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "RUK692",
+  "leida": "BW71CA40"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Ingreso",
+  "real": "RUK692",
+  "leida": "755"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "BHO070",
+  "leida": "PLO"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "RUK692",
+  "leida": "VAL"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "TGT378",
+  "leida": "AE3371"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "TGT378",
+  "leida": "OKH940"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "TGT378",
+  "leida": "ICH187"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Salida 2",
+  "real": "MOF325",
+  "leida": "CAS21"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "TGT378",
+  "leida": "G253"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "TGT378",
+  "leida": "WX77"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "TGT378",
+  "leida": "00002220000"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "TGT378",
+  "leida": "0PP0000"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Carga / Descarga OSL",
+  "real": "GMO261",
+  "leida": "ROJ4085"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Ingreso",
+  "real": "BER232",
+  "leida": "113H"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Ingreso",
+  "real": "TGT378",
+  "leida": "L115"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Carga/descarga",
+  "real": "IFK980",
+  "leida": "JH993"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "UXZ281",
+  "leida": "F17"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Egreso",
+  "real": "NWZ336",
+  "leida": "AC3581"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Egreso",
+  "real": "NWZ336",
+  "leida": "AC3382"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Egreso",
+  "real": "NWZ336",
+  "leida": "AE4463"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Egreso",
+  "real": "NWZ336",
+  "leida": "PFD290"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Balanza Ingreso",
+  "real": "MOF325",
+  "leida": "MQF325"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Ingreso",
+  "real": "RUK692",
+  "leida": "J11"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Pre ingreso",
+  "real": "RUK692",
+  "leida": "FNW930"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "MWG720",
+  "leida": "FJO0JP"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "BHO070",
+  "leida": "TVE8"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Plataformas Volcables",
+  "real": "MOF325",
+  "leida": "CTF4"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Egreso",
+  "real": "MOF325",
+  "leida": "MCF325"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Egreso",
+  "real": "FEE463",
+  "leida": "FEF463"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Balanza Egreso",
+  "real": "KNH067",
+  "leida": "NH057"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "MWG720",
+  "leida": "T00RH"
+ },
+ {
+  "fuente": "inventario",
+  "node": "SL Plataformas Volcables",
+  "real": "UXZ281",
+  "leida": "ITZ1H"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Volcable 2",
+  "real": "BHO070",
+  "leida": "FMOW"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Calada",
+  "real": "RUK692",
+  "leida": "VIS6"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Calada",
+  "real": "RUK692",
+  "leida": "OFG110"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Playa 3",
+  "real": "MWG720",
+  "leida": "MWC21"
+ },
+ {
+  "fuente": "inventario",
+  "node": "Calada",
+  "real": "RUK692",
+  "leida": "OO8000"
+ }
+]

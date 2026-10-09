@@ -24,8 +24,8 @@ dev = ["pytest>=8.0"]
 etl-mcp = "agentes.mcp_server:main"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["prototipo-mcp-local"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["prototipo-mcp-local"]

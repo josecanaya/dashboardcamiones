@@ -1,0 +1,186 @@
+{
+  "porPunto": {
+    "san_lorenzo:Ingreso": {
+      "esperados": 439,
+      "leidos": 338,
+      "reconstruidos": 88,
+      "conLecturaParecida": 35
+    },
+    "san_lorenzo:Balanza Ingreso": {
+      "esperados": 445,
+      "leidos": 228,
+      "reconstruidos": 119,
+      "conLecturaParecida": 24
+    },
+    "san_lorenzo:Balanza Egreso": {
+      "esperados": 446,
+      "leidos": 19,
+      "reconstruidos": 152,
+      "conLecturaParecida": 20
+    },
+    "ricardone:Balanza Egreso": {
+      "esperados": 211,
+      "leidos": 158,
+      "reconstruidos": 43,
+      "conLecturaParecida": 7
+    },
+    "san_lorenzo:Egreso": {
+      "esperados": 441,
+      "leidos": 337,
+      "reconstruidos": 103,
+      "conLecturaParecida": 34
+    },
+    "ricardone:Salida 2": {
+      "esperados": 375,
+      "leidos": 211,
+      "reconstruidos": 74,
+      "conLecturaParecida": 23
+    },
+    "san_lorenzo:Plataformas Volcables": {
+      "esperados": 241,
+      "leidos": 101,
+      "reconstruidos": 130,
+      "conLecturaParecida": 26
+    },
+    "ricardone:Playa 3": {
+      "esperados": 159,
+      "leidos": 106,
+      "reconstruidos": 30,
+      "conLecturaParecida": 11
+    },
+    "ricardone:Balanza Ingreso": {
+      "esperados": 206,
+      "leidos": 46,
+      "reconstruidos": 149,
+      "conLecturaParecida": 14
+    },
+    "ricardone:Pre ingreso": {
+      "esperados": 434,
+      "leidos": 348,
+      "reconstruidos": 78,
+      "conLecturaParecida": 33
+    },
+    "ricardone:Calada": {
+      "esperados": 444,
+      "leidos": 326,
+      "reconstruidos": 100,
+      "conLecturaParecida": 31
+    },
+    "san_lorenzo:Carga/descarga": {
+      "esperados": 7,
+      "leidos": 0,
+      "reconstruidos": 4,
+      "conLecturaParecida": 0
+    },
+    "ricardone:Volcable Silo Keppler": {
+      "esperados": 3,
+      "leidos": 2,
+      "reconstruidos": 1,
+      "conLecturaParecida": 0
+    },
+    "san_lorenzo:Carga / Descarga OSL": {
+      "esperados": 62,
+      "leidos": 36,
+      "reconstruidos": 8,
+      "conLecturaParecida": 4
+    },
+    "ricardone:Volcable 2": {
+      "esperados": 20,
+      "leidos": 13,
+      "reconstruidos": 7,
+      "conLecturaParecida": 3
+    }
+  },
+  "pruebaPatenteBorrada": {
+    "san_lorenzo:Egreso": {
+      "n": 74,
+      "ok": 11,
+      "otra": 62,
+      "nada": 1
+    },
+    "ricardone:Balanza Egreso": {
+      "n": 44,
+      "ok": 15,
+      "otra": 17,
+      "nada": 12
+    },
+    "ricardone:Pre ingreso": {
+      "n": 140,
+      "ok": 48,
+      "otra": 81,
+      "nada": 11
+    },
+    "ricardone:Calada": {
+      "n": 90,
+      "ok": 41,
+      "otra": 29,
+      "nada": 20
+    },
+    "ricardone:Playa 3": {
+      "n": 15,
+      "ok": 8,
+      "otra": 2,
+      "nada": 5
+    },
+    "san_lorenzo:Balanza Egreso": {
+      "n": 9,
+      "ok": 3,
+      "otra": 3,
+      "nada": 3
+    },
+    "san_lorenzo:Balanza Ingreso": {
+      "n": 95,
+      "ok": 34,
+      "otra": 60,
+      "nada": 1
+    },
+    "san_lorenzo:Ingreso": {
+      "n": 49,
+      "ok": 27,
+      "otra": 8,
+      "nada": 14
+    },
+    "ricardone:Salida 2": {
+      "n": 49,
+      "ok": 18,
+      "otra": 17,
+      "nada": 14
+    },
+    "ricardone:Volcable Silo Keppler": {
+      "n": 2,
+      "ok": 2,
+      "otra": 0,
+      "nada": 0
+    },
+    "san_lorenzo:Plataformas Volcables": {
+      "n": 11,
+      "ok": 9,
+      "otra": 2,
+      "nada": 0
+    },
+    "ricardone:Balanza Ingreso": {
+      "n": 9,
+      "ok": 6,
+      "otra": 3,
+      "nada": 0
+    },
+    "san_lorenzo:Carga / Descarga OSL": {
+      "n": 3,
+      "ok": 3,
+      "otra": 0,
+      "nada": 0
+    },
+    "ricardone:Ingreso": {
+      "n": 2,
+      "ok": 2,
+      "otra": 0,
+      "nada": 0
+    },
+    "ricardone:Volcable 2": {
+      "n": 3,
+      "ok": 3,
+      "otra": 0,
+      "nada": 0
+    }
+  }
+}

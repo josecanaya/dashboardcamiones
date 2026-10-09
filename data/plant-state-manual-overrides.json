@@ -13,12 +13,182 @@
     "924KHA": {
       "action": "remove",
       "journeyUid": "76bb2914-7570-4db3-af9c-ef411b0903a2",
-      "updatedAt": "2026-09-30T19:15:15.593Z"
+      "reason": "Tractor o maquinaria",
+      "operator": null,
+      "updatedAt": "2026-10-08T15:02:18.067Z"
     },
     "DJG36": {
       "action": "remove",
       "journeyUid": "5129c72c-8d69-4b17-8703-15af5e004b25",
       "updatedAt": "2026-09-30T19:15:26.922Z"
+    },
+    "924XHAT": {
+      "action": "remove",
+      "journeyUid": "a0743842-e50c-4f5d-820b-e77c48e5ac61",
+      "updatedAt": "2026-10-07T17:18:24.836Z"
+    },
+    "AE264XY": {
+      "action": "remove",
+      "journeyUid": "9d4949c6-63f4-4cd4-8f73-e5ad884f1689",
+      "reason": "Vehículo de servicio (agua, comida, prestadores)",
+      "operator": null,
+      "updatedAt": "2026-10-07T18:49:55.882Z"
+    },
+    "924KHAT": {
+      "action": "remove",
+      "journeyUid": "c726988a-e9d5-4af5-b645-b9985d462d82",
+      "reason": "Tractor o maquinaria",
+      "operator": null,
+      "updatedAt": "2026-10-09T17:34:27.394Z"
+    },
+    "DRF12": {
+      "action": "remove",
+      "journeyUid": "68a7a286-a9f1-4b9e-b368-020f38cfef55",
+      "reason": "Tractor o maquinaria",
+      "operator": null,
+      "updatedAt": "2026-10-08T15:44:25.657Z"
+    },
+    "924KPAT": {
+      "action": "remove",
+      "journeyUid": "a4169dfb-22fc-4fb4-b454-245a640e1e70",
+      "reason": "Tractor o maquinaria",
+      "operator": null,
+      "updatedAt": "2026-10-08T15:00:17.548Z"
+    },
+    "ZLJ35": {
+      "action": "remove",
+      "journeyUid": "ef1ce880-6eaf-45fe-928c-23e847338d20",
+      "reason": "Vehículo de servicio (agua, comida, prestadores)",
+      "operator": null,
+      "updatedAt": "2026-10-08T15:02:34.517Z"
+    },
+    "VNA879": {
+      "action": "remove",
+      "journeyUid": "d90de826-8499-43dc-906a-3dddb93426c7",
+      "reason": "Vehículo de servicio (agua, comida, prestadores)",
+      "operator": null,
+      "updatedAt": "2026-10-08T15:02:46.100Z"
+    },
+    "OVH054": {
+      "action": "remove",
+      "journeyUid": "b0f0ea55-1625-4616-a5d5-cdb71c711091",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-08T18:29:16.676Z"
+    },
+    "AC656IE": {
+      "action": "remove",
+      "journeyUid": "582284a7-1530-442c-a488-b5292ce501c9",
+      "reason": "Vehículo de servicio (agua, comida, prestadores)",
+      "operator": null,
+      "updatedAt": "2026-10-08T15:04:55.174Z"
+    },
+    "FID06": {
+      "action": "remove",
+      "journeyUid": "8d09f9f1-66e0-4fbf-b55f-01fed3725c17",
+      "reason": "Tractor o maquinaria",
+      "operator": null,
+      "updatedAt": "2026-10-08T15:44:14.166Z"
+    },
+    "924KHT": {
+      "action": "remove",
+      "journeyUid": "6633a8f5-8040-441f-9abb-f9ddd3578c1f",
+      "reason": "Tractor o maquinaria",
+      "operator": null,
+      "updatedAt": "2026-10-08T15:44:32.838Z"
+    },
+    "FIM0100": {
+      "action": "remove",
+      "journeyUid": "94aaa359-176b-4ee0-a435-bd94db0bfd96",
+      "reason": "Tractor o maquinaria",
+      "operator": null,
+      "updatedAt": "2026-10-08T15:44:43.255Z"
+    },
+    "MSE380": {
+      "action": "remove",
+      "journeyUid": "80512c6f-b7c4-4f21-ab0e-48d9ba1e33e1",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-09T17:35:07.290Z"
+    },
+    "AE897IT": {
+      "action": "remove",
+      "journeyUid": "017a16f9-743d-429b-b353-045853e4e327",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-09T17:35:24.472Z"
+    },
+    "AG644XU": {
+      "action": "remove",
+      "journeyUid": "7260bf6d-7d52-4152-8f57-c559f8164166",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-09T17:49:12.020Z"
+    }
+  },
+  "san_lorenzo": {
+    "AD051TD": {
+      "action": "remove",
+      "journeyUid": "350c10e9-75bb-4655-beaa-f416ecca00a3",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-07T18:52:57.862Z"
+    },
+    "AE040HU": {
+      "action": "remove",
+      "journeyUid": "eed7dfe4-64d9-4f46-b3f9-8793cf8d0a54",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-07T19:18:22.036Z"
+    },
+    "AF211ER": {
+      "action": "remove",
+      "journeyUid": "3687ec06-be50-4846-ad24-c9084c41e2d4",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-07T19:18:36.498Z"
+    },
+    "AH456NL": {
+      "action": "remove",
+      "journeyUid": "94787392-044a-4ec6-8470-8386bf7b3412",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-08T12:53:34.654Z"
+    },
+    "AI454LQ": {
+      "action": "remove",
+      "journeyUid": "9b49290e-4f0d-4472-aaff-adbaa0958f9a",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-08T12:42:46.305Z"
+    },
+    "AG696QV": {
+      "action": "remove",
+      "journeyUid": "b8890422-b39f-4d94-94db-ba2568a2472e",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-08T12:53:28.722Z"
+    },
+    "AF516VT": {
+      "action": "remove",
+      "journeyUid": "3d73a456-5b48-4500-899e-fb7d5a19f9ec",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-08T12:53:40.766Z"
+    },
+    "KDG543": {
+      "action": "remove",
+      "journeyUid": "2ff6bcb7-f8a5-4797-a39a-f316ce87fd30",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-08T15:29:18.534Z"
+    },
+    "AE264XY": {
+      "action": "remove",
+      "journeyUid": "baf8838d-4dcf-4251-b7e7-cbe3d73f6c68",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-08T15:29:02.797Z"
     }
   }
 }

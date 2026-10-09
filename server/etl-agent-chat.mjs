@@ -13,7 +13,7 @@
  * volvé a la API key.
  */
 import { spawn } from 'node:child_process'
-import { existsSync, readdirSync, writeFileSync, unlinkSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, writeFileSync, unlinkSync } from 'node:fs'
 import path from 'node:path'
 import { tmpdir } from 'node:os'
 
@@ -29,6 +29,10 @@ const CHAT_TIMEOUT_MS = Number(process.env.ETL_AGENT_TIMEOUT_MS || 300_000)
  * El orquestador tiene todas las tools MCP que tenían ellos, incluida la de PPTX.
  */
 const ALLOWED_TOOLS = [
+  'mcp__etl__get_metric',
+  'mcp__etl__get_metric_catalog',
+  'mcp__etl__get_metric_evidence',
+  'mcp__etl__compare_metric',
   'mcp__etl__resolve_window',
   'mcp__etl__run_etl',
   'mcp__etl__list_runs',
@@ -133,11 +137,11 @@ const SYSTEM_APPEND = [
   '  (adentro de Ricardone), bridge_media_min (viaje Ric→SL) y sl_media_min (adentro de San',
   '  Lorenzo) en E_kpi_circuito. "Qué circuito es más lento" sí se responde con mediana_min.',
   '',
-  'TABLAS PROHIBIDAS: excel_operations_with_truckflow, final_circuits, circuit_timing_*,',
-  'segment_timing_*, segment_scatter_analysis, clean_journeys_for_analysis,',
-  'movimientos_reconciliation, merged_truckflow_movimientos y debug_matrix_classification son del',
-  'modelo VIEJO (v13): son insumo o derivadas y dan números que se contradicen entre sí. No las',
-  'consultes ni las cites, aunque parezcan tener lo que buscás. El ruteo de arriba ya lo cubre.',
+  'KPIs: consultar get_metric/get_metric_catalog con el contexto exacto de pantalla. Este servicio',
+  'reutiliza las reglas del dashboard sobre hechos persistidos y devuelve población, n y evidencia.',
+  'No calcular medianas/P90 en el lenguaje ni promediar agregados. Las tablas de timing y Excel',
+  'son evidencia de detalle; no usarlas para inventar conteos ejecutivos. Nunca contar movimientos',
+  'con merged_truckflow_movimientos ni movimientos_without_truckflow_match.',
   '',
   'CÓMO OBTENER DATOS (obligatorio):',
   '1. Si la pregunta menciona fechas/período → llamá mcp__etl__resolve_window(from_day, to_day).',
@@ -174,6 +178,14 @@ const SYSTEM_APPEND = [
 function findClaudeCli() {
   const override = process.env.CLAUDE_CLI_PATH?.trim()
   if (override && existsSync(override)) return override
+  // Los shims npm .ps1/.cmd no son ejecutables para spawn(shell:false) en Windows.
+  const candidates = [
+    process.env.APPDATA && path.join(process.env.APPDATA, 'npm', 'node_modules', '@anthropic-ai', 'claude-code', 'bin', 'claude.exe'),
+    process.env.USERPROFILE && path.join(process.env.USERPROFILE, '.local', 'bin', 'claude.exe'),
+    ...String(process.env.PATH || '').split(path.delimiter).map(dir => path.join(dir, process.platform === 'win32' ? 'claude.exe' : 'claude')),
+  ].filter(Boolean)
+  const installed = candidates.find(file => existsSync(file))
+  if (installed) return installed
 
   const localAppData = process.env.LOCALAPPDATA
   if (localAppData) {
@@ -373,7 +385,13 @@ export function createEtlAgentChat({ projectRoot, port }) {
     formato,
     ...(formato === 'stream-json' ? ['--verbose'] : []),
     '--mcp-config',
-    mcpConfigPath,
+    (() => {
+      const configured = JSON.parse(readFileSync(mcpConfigPath, 'utf8'))
+      if (!configured.mcpServers?.etl) throw new Error('Falta el servidor MCP etl')
+      const isolated = path.join(tmpdir(), `truckflow-etl-mcp-${process.pid}.json`)
+      writeFileSync(isolated, JSON.stringify({ mcpServers: { etl: configured.mcpServers.etl } }))
+      return isolated
+    })(),
     // Sólo el MCP `etl`: cualquier otro server configurado en la máquina
     // agrandaría la superficie de tools y da más lugar a que se pierda.
     '--strict-mcp-config',
@@ -393,7 +411,7 @@ export function createEtlAgentChat({ projectRoot, port }) {
 
   function cliAvailable() {
     // 'claude'/'claude.exe' sin ruta = confiamos en PATH; rutas absolutas se verifican.
-    if (cliPath === 'claude' || cliPath === 'claude.exe') return true
+    if (cliPath === 'claude' || cliPath === 'claude.exe') return false
     return existsSync(cliPath)
   }
 
@@ -404,6 +422,10 @@ export function createEtlAgentChat({ projectRoot, port }) {
   function status() {
     return {
       configured: isConfigured(),
+      runtimeAvailable: cliAvailable(),
+      toolsAvailable: existsSync(mcpConfigPath),
+      authenticated: null,
+      checkedAt: new Date().toISOString(),
       model: 'claude-code (suscripción)',
       mode: 'claude-cli-subscription',
       cliPath,
@@ -415,6 +437,38 @@ export function createEtlAgentChat({ projectRoot, port }) {
       effort: process.env.ETL_AGENT_EFFORT || 'medium',
       note: 'Sin ANTHROPIC_API_KEY: corre en la suscripción vía Claude Code. Requiere `claude login`.',
     }
+  }
+  let healthCache = null
+  let healthPending = null
+  async function health() {
+    if (healthCache && Date.now() - healthCache.at < 30000) return healthCache.value
+    if (healthPending) return healthPending
+    healthPending = (async () => {
+      const base = status()
+      if (!base.runtimeAvailable) return base
+      const authenticated = await new Promise(resolve => {
+        const child = spawn(cliPath, ['auth', 'status'], { windowsHide:true, cwd:projectRoot, stdio:['ignore','pipe','pipe'] })
+        let output = ''
+        const timeout = setTimeout(() => { child.kill(); resolve(null) }, 10000)
+        child.stdout.on('data', data => { output += data })
+        child.on('error', () => { clearTimeout(timeout); resolve(false) })
+        child.on('close', () => { clearTimeout(timeout); try { resolve(JSON.parse(output).loggedIn === true) } catch { resolve(null) } })
+      })
+      const toolsAvailable = await new Promise(resolve => {
+        let config
+        try { config = JSON.parse(readFileSync(mcpConfigPath,'utf8')).mcpServers.etl } catch { resolve(false); return }
+        const child = spawn(config.command, [path.join(projectRoot,'agentes','probe_mcp.py'),mcpConfigPath], { windowsHide:true, cwd:projectRoot, stdio:['ignore','pipe','pipe'] })
+        let output = ''
+        const timeout = setTimeout(() => { child.kill(); resolve(false) }, 15000)
+        child.stdout.on('data', data => { output += data })
+        child.on('error', () => { clearTimeout(timeout); resolve(false) })
+        child.on('close', () => { clearTimeout(timeout); try { resolve(JSON.parse(output).toolsAvailable === true) } catch { resolve(false) } })
+      })
+      const value = { ...base, authenticated, toolsAvailable, configured: base.configured && authenticated === true && toolsAvailable }
+      healthCache = { at:Date.now(), value }
+      return value
+    })().finally(() => { healthPending = null })
+    return healthPending
   }
 
   function runClaude(prompt) {
@@ -729,5 +783,5 @@ export function createEtlAgentChat({ projectRoot, port }) {
     }
   }
 
-  return { status, isConfigured, chat, chatStream, limiteSesion }
+  return { status, health, isConfigured, chat, chatStream, limiteSesion }
 }

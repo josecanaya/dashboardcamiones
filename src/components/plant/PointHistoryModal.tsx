@@ -6,9 +6,7 @@ import type { LiveCapture } from '../../services/live/plantStateApi'
 import { getRecentCaptures } from '../../services/live/plantStateApi'
 import { CapturePhoto } from './CapturePhoto'
 import { CaladaCamerasPanel, type CameraActivityLabels } from '../../features/real-truckflow/tabs/CaladaCamerasPanel'
-import { listWindows } from '../../features/real-truckflow/api/etlRunCacheApi'
-import { composeRunsIntoTransformOutput, computeRangeCoverage, type RangeCoverage } from '../../features/real-truckflow/etlWorkbench/etlComposeRuns'
-import { loadTransformOutputFromRun } from '../../features/real-truckflow/etlWorkbench/etlTransformOutputFromDisk'
+import { loadPointHistory, type RangeCoverage } from '../../features/real-truckflow/public/analysis'
 import './pointHistory.css'
 
 type Site = 'ricardone' | 'san_lorenzo'
@@ -101,8 +99,8 @@ function Today({ site, devices }: { site: Site; devices: string[] }) {
   return (
     <div className="ph-today">
       <dl className="ph-kpis">
-        <div><dt>Capturas hoy</dt><dd>{mine.length}</dd></div>
-        <div><dt>Camiones distintos</dt><dd>{plates.size}</dd></div>
+        <div><dt>Capturas recientes de hoy</dt><dd>{mine.length}</dd></div>
+        <div><dt>Patentes distintas en la muestra</dt><dd>{plates.size}</dd></div>
         <div><dt>Última</dt><dd>{mine[0] ? hhmm(mine[0].at) : '—'}</dd></div>
       </dl>
       <div className="ph-hours" aria-label="Capturas por hora">
@@ -136,12 +134,8 @@ function LastWeek({ history }: { history: History | null }) {
     let alive = true
     ;(async () => {
       try {
-        const windows = (await listWindows()).filter(w => !w.stale)
-        const coverage = computeRangeCoverage(from, to, windows)
-        if (!coverage.selectedRuns.length) { if (alive) setState({ phase: 'ok', coverage }); return }
-        const loaded = await Promise.all(coverage.selectedRuns.map(async r => ({ runId: r.runId, output: await loadTransformOutputFromRun(r.runId), spanFrom: r.spanFrom, spanTo: r.spanTo })))
-        const composed = composeRunsIntoTransformOutput(loaded, from, to)
-        if (alive) setState({ phase: 'ok', csv: composed.output.csv[history.table], coverage })
+        const { csv, coverage } = await loadPointHistory(history.table, from, to)
+        if (alive) setState({ phase: 'ok', csv, coverage })
       } catch (e) {
         if (alive) setState({ phase: 'error', msg: e instanceof Error ? e.message : String(e) })
       }

@@ -14,14 +14,14 @@
   ],
   "rows": [
     {
-      "total_movimientos": 1442,
-      "movimientos_de_vuelta": 320,
-      "patentes_con_vuelta": 52,
-      "operaciones_pellet": 106,
+      "total_movimientos": 2607,
+      "movimientos_de_vuelta": 466,
+      "patentes_con_vuelta": 55,
+      "operaciones_pellet": 242,
       "operaciones_soja": 202,
       "operaciones_girasol": 0,
       "operaciones_aceite": 0,
-      "operaciones_sin_familia": 12,
+      "operaciones_sin_familia": 22,
       "columna_detectada": "",
       "headers_muestra": ""
     }

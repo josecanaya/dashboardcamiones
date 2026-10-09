@@ -1,0 +1,122 @@
+{
+ "days": [
+  "2026-09-24",
+  "2026-09-25",
+  "2026-09-26",
+  "2026-09-27",
+  "2026-09-28",
+  "2026-09-29",
+  "2026-09-30"
+ ],
+ "r7": {
+  "ops": 773,
+  "dia": [
+   117,
+   131,
+   92,
+   87,
+   134,
+   96,
+   116
+  ],
+  "n": 773,
+  "media": 268,
+  "mediana": 246
+ },
+ "girasol": {
+  "ops": 209,
+  "dia": [
+   43,
+   67,
+   36,
+   0,
+   37,
+   26,
+   0
+  ],
+  "R5": 137,
+  "R6": 72,
+  "n": 209,
+  "media": 846,
+  "mediana": 814
+ },
+ "r4": 38,
+ "liquidos": {
+  "camiones": 330,
+  "ingresos": 89,
+  "egresos": 241,
+  "dia": [
+   54,
+   41,
+   12,
+   7,
+   71,
+   74,
+   71
+  ],
+  "n": 330,
+  "media": 329,
+  "mediana": 246,
+  "porCircuito": {
+   "SL3": 18,
+   "SL1": 167,
+   "R8": 91,
+   "SL2": 54
+  },
+  "porProducto": {
+   "BORRA DE ACSOJA REFINADO": 13,
+   "ACEITE GIRASOL CRUDO": 16,
+   "ACEITE GIRASOL REFINADO": 147,
+   "GLICERINA REFINADA": 38,
+   "ACEITE SOJA CRUDO DESGOMADO": 7,
+   "GLICERINA": 37,
+   "BORRA ACEITE GIRASOL": 7,
+   "NITROGENO LIQUIDO": 1,
+   "BIODIESEL": 5,
+   "ACEITE GIRASOL PARA REFINAR": 44,
+   "PRODUCTOS VARIOS": 3,
+   "BORRA ACEITE GIRASOL REFINADO": 11,
+   "RESIDUOS DE CAHUCHO": 1
+  },
+  "sinCircuito": {}
+ },
+ "pelletTransile": {
+  "viajes": 307,
+  "dia": [
+   41,
+   70,
+   90,
+   0,
+   0,
+   0,
+   106
+  ],
+  "camiones": 62,
+  "kgs": 8369140,
+  "paresCamionDia": 148
+ },
+ "pelletEgresos": {
+  "n": 365,
+  "dia": [
+   88,
+   28,
+   89,
+   0,
+   2,
+   3,
+   155
+  ]
+ },
+ "r29": {
+  "ops": 516,
+  "dia": [
+   112,
+   64,
+   42,
+   116,
+   118,
+   64,
+   0
+  ]
+ }
+}

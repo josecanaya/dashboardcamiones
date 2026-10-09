@@ -1,3 +1,5 @@
+import { buildLearningModel } from './plantState/cameraLearning.mjs'
+import { createRelevanceCleaner } from './plantState/relevanceCleaner.mjs'
 /**
  * Servidor local: extracción día a día hacia data/truckflow/ y lectura fusionada para el dashboard.
  * Puerto: TRUCKFLOW_LOCAL_SERVER_PORT (default 8787)
@@ -6,8 +8,10 @@ import './load-env.mjs'
 import cors from 'cors'
 import express from 'express'
 import fs from 'fs/promises'
-import { spawnSync } from 'node:child_process'
-import { existsSync, readdirSync, readFileSync, writeFileSync, unlinkSync, mkdirSync } from 'node:fs'
+import { spawnSync, spawn } from 'node:child_process'
+import { createMetricService, METRICS } from './analytics/metrics.mjs'
+import { sourceFingerprint, archiveRun, digest } from './analytics/provenance.mjs'
+import { existsSync, readdirSync, readFileSync, writeFileSync, unlinkSync, mkdirSync, cpSync, renameSync } from 'node:fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { createTruckPlateRegistryRouter } from './truck-plate-registry.mjs'
@@ -251,6 +255,18 @@ app.use(createLogisticsReportRouter({ projectRoot: PROJECT_ROOT }))
 
 /** Plant State en vivo (buffer 6 h + SSE). */
 const plantState = getPlantStateService()
+const analytics = createMetricService({ runsRoot: RUNS_ROOT, getSnapshot: site => plantState.getSnapshot(site), getIdentifications: site => plantState.getIdentifications(site), getFreshness:runFreshness })
+app.get(['/api/analytics/catalog', '/api/truckflow/analytics/catalog'], (_req, res) => res.json({ metrics: METRICS, schemaVersion: '1' }))
+app.post(['/api/analytics/metric', '/api/truckflow/analytics/metric'], async (req, res) => {
+  try { res.json(await analytics.getMetric(req.body)) }
+  catch (error) { res.status(error.httpStatus ?? 500).json({ error: error.message }) }
+})
+app.get(['/api/analytics/evidence/:id', '/api/truckflow/analytics/evidence/:id'], (req,res) => {
+  try { res.json(analytics.getEvidence(req.params.id)) } catch(error) { res.status(error.httpStatus ?? 500).json({ error:error.message }) }
+})
+app.post(['/api/analytics/compare', '/api/truckflow/analytics/compare'], async (req,res) => {
+  try { res.json(await analytics.compareMetric(req.body)) } catch(error) { res.status(error.httpStatus ?? 500).json({ error:error.message }) }
+})
 const plantQueries = createPlantStateQueries(plantState)
 
 app.get('/api/truckflow/live/plant-state', async (req, res) => {
@@ -391,6 +407,24 @@ app.get('/api/truckflow/live/captures', async (req, res) => {
 
 /** Evidencia por candidato (patente, color, marca, tipo, recorrido) con probabilidad, atributos del DSS. */
 app.get('/api/truckflow/live/identifications/:fragmentKey/evidence', dssPhotos.evidence)
+// Lecturas que se pueden decidir con color/marca/tipo del DSS: se evalúan solas en segundo plano.
+if (process.env.AUTO_EVIDENCE !== '0') dssPhotos.startAutoEvidence()
+
+const relevanceCleaner = createRelevanceCleaner({ dss: dssLive, getPlantState: () => plantState, projectRoot: PROJECT_ROOT })
+app.post('/api/truckflow/live/relevance/cleanup', express.json(), async (req,res) => {
+  try { res.json(await relevanceCleaner.sweep({dryRun:req.body?.dryRun !== false,limit:req.body?.limit ?? 10,force:req.body?.force === true})) }
+  catch(e) { res.status(500).json({error:e.message}) }
+})
+if (process.env.AUTO_RELEVANCE !== '0') relevanceCleaner.start()
+
+
+app.get('/api/truckflow/live/identification-learning', async (_req,res) => {
+  try {
+    const content=await fs.readFile(path.join(PROJECT_ROOT,'data','plate-identification-log.jsonl'),'utf8')
+    const rows=content.split(/\r?\n/).filter(Boolean).map(line=>{try{return JSON.parse(line)}catch{return null}}).filter(Boolean)
+    res.json({...buildLearningModel(rows),generatedAt:new Date().toISOString()})
+  } catch(e) {res.status(500).json({error:e.message})}
+})
 
 /** Reserva blanda de un caso por un puesto (aviso a otros operadores). */
 app.post('/api/truckflow/live/identifications/:fragmentKey/claim', express.json(), (req, res) => {
@@ -1048,6 +1082,13 @@ function listTruckflowDataDays() {
 const CURRENT_RULES_VERSION = 'etl_transform_v17'
 
 /** POST /api/etl/runs — spawnea runner headless; responde { runId }. */
+let etlRunning = false
+function runFreshness(runId, from, to) {
+  const dir = resolveRunDir(RUNS_ROOT, runId)
+  const manifest = dir ? readJsonSyncSafe(path.join(dir, 'manifest.json')) : null
+  const current = sourceFingerprint({ eventsPaths: resolveEtlEventsPaths({ from, to }), movimientosRoot: MOV_DATA_ROOT, from, to, corrections: plantState.exportCorrections().corrections })
+  return { stale: manifest?.status !== 'ok' || !manifest?.sourceFingerprint || manifest.sourceFingerprint !== current || manifest.rulesVersion !== CURRENT_RULES_VERSION, sourceFingerprint: current, freshness: !manifest?.sourceFingerprint ? 'untracked' : manifest.sourceFingerprint === current ? 'current' : 'inputs_changed' }
+}
 app.post('/api/etl/runs', async (req, res) => {
   const eventsPaths = resolveEtlEventsPaths({
     eventsPaths: req.body?.eventsPaths,
@@ -1076,7 +1117,7 @@ app.post('/api/etl/runs', async (req, res) => {
     const idx = readWindowIndex()
     const hit = idx.entries[idxKey]
     if (hit && runDirExists(RUNS_ROOT, hit.runId)) {
-      const stale = String(hit.rulesVersion || '') !== CURRENT_RULES_VERSION
+      const stale = runFreshness(hit.runId, String(req.body.from), String(req.body.to)).stale
       if (!stale) {
         res.json({ runId: hit.runId, cached: true, supabase: null })
         return
@@ -1084,6 +1125,9 @@ app.post('/api/etl/runs', async (req, res) => {
     }
   }
 
+  if (etlRunning) { res.status(409).json({ error: 'Hay una corrida en ejecución. Esperá a que termine.' }); return }
+  etlRunning = true
+  try {
   // Movimientos: la corrida se nutre SOLO del backup local (data/movimientos/<día>/),
   // leído por rango dentro del runner. Ya no se pasa un Excel por corrida.
   const args = [ETL_HEADLESS_SCRIPT, '--out', RUNS_ROOT]
@@ -1094,13 +1138,22 @@ app.post('/api/etl/runs', async (req, res) => {
   if (req.body?.to) args.push('--to-day', String(req.body.to))
   if (req.body?.persistDebug === true) args.push('--persist-debug')
 
-  const result = spawnSync('npx', ['tsx', ...args], {
-    cwd: PROJECT_ROOT,
-    encoding: 'utf8',
-    shell: true,
-    env: process.env,
-    maxBuffer: 32 * 1024 * 1024,
+  // Mantener disponible el API: el runner consulta las correcciones de En vivo.
+  let priorRevision = null, fingerprint = null
+  if (req.body?.from && req.body?.to) {
+    const id = stableWindowRunId(String(req.body.from), String(req.body.to))
+    priorRevision = archiveRun(RUNS_ROOT, id, resolveRunDir(RUNS_ROOT, id))
+    fingerprint = runFreshness(id, String(req.body.from), String(req.body.to)).sourceFingerprint
+  }
+  const result = await new Promise(resolve => {
+    const child = spawn(process.execPath, [path.join(PROJECT_ROOT, 'node_modules/tsx/dist/cli.mjs'), ...args], { cwd: PROJECT_ROOT, env: process.env, windowsHide: true })
+    let stdout = '', stderr = ''
+    child.stdout.on('data', data => { stdout = (stdout + data).slice(-32 * 1024 * 1024) })
+    child.stderr.on('data', data => { stderr = (stderr + data).slice(-32 * 1024 * 1024) })
+    child.on('error', error => resolve({ status: 1, stdout, stderr: error.message }))
+    child.on('close', status => resolve({ status, stdout, stderr }))
   })
+  etlRunning = false
 
   const stdout = String(result.stdout || '')
   const stderr = String(result.stderr || '')
@@ -1111,6 +1164,15 @@ app.post('/api/etl/runs', async (req, res) => {
   const runId = lines[lines.length - 1] || ''
 
   if (result.status !== 0 || !runId) {
+    if (priorRevision && req.body?.from && req.body?.to) {
+      const id = stableWindowRunId(String(req.body.from), String(req.body.to))
+      const stable = path.resolve(RUNS_ROOT,'windows',id), failed = path.resolve(RUNS_ROOT,'_failed',`${id}-${Date.now()}`)
+      const prior = path.resolve(RUNS_ROOT,'_revisions',id,priorRevision)
+      const inside = value => value.startsWith(path.resolve(RUNS_ROOT) + path.sep)
+      if (![stable,failed,prior].every(inside)) throw new Error('Ruta de recuperación fuera de runs')
+      if (existsSync(stable)) { mkdirSync(path.dirname(failed),{recursive:true}); renameSync(stable,failed) }
+      cpSync(prior,stable,{recursive:true})
+    }
     res.status(500).json({
       error: 'Falló el runner headless',
       status: result.status,
@@ -1119,6 +1181,13 @@ app.post('/api/etl/runs', async (req, res) => {
       stdout: stdout.slice(-4000),
     })
     return
+  }
+  if (fingerprint) {
+    const dir = resolveRunDir(RUNS_ROOT, runId)
+    const manifestFile = path.join(dir, 'manifest.json')
+    const manifest = readJsonSyncSafe(manifestFile)
+    writeFileSync(manifestFile, JSON.stringify({ ...manifest, sourceFingerprint: fingerprint, priorRevision }, null, 2))
+    archiveRun(RUNS_ROOT, runId, dir)
   }
 
   let supabase = null
@@ -1134,6 +1203,7 @@ app.post('/api/etl/runs', async (req, res) => {
   }
 
   res.json({ runId, supabase })
+  } finally { etlRunning = false }
 })
 
 /** Cobertura del backup de movimientos: días con particiones + filas por día. */
@@ -1307,7 +1377,8 @@ app.get('/api/etl/resolve-window', (req, res) => {
     res.status(404).json({ error: 'run_missing', from, to, runId: entry.runId })
     return
   }
-  const stale = String(entry.rulesVersion || '') !== CURRENT_RULES_VERSION
+  const freshness = runFreshness(entry.runId, from, to)
+  const stale = freshness.stale
   res.json({
     from,
     to,
@@ -1316,6 +1387,7 @@ app.get('/api/etl/resolve-window', (req, res) => {
     rulesVersion: entry.rulesVersion,
     createdAt: entry.createdAt,
     stale,
+    freshness: freshness.freshness,
     currentRulesVersion: CURRENT_RULES_VERSION,
   })
 })
@@ -1337,7 +1409,7 @@ app.get('/api/etl/windows', (_req, res) => {
         runId,
         rulesVersion: e.rulesVersion,
         createdAt: e.createdAt,
-        stale: String(e.rulesVersion || '') !== CURRENT_RULES_VERSION,
+        stale: runFreshness(runId, from, to).stale,
         exists: runDirExists(RUNS_ROOT, runId),
       }
     })
@@ -1349,6 +1421,7 @@ app.get('/api/etl/windows', (_req, res) => {
 
 /** GET /api/etl/runs/:id/summary — stats.json */
 app.get('/api/etl/runs/:id/summary', (req, res) => {
+  if (etlRunning) { res.status(409).json({ error: 'Corrida en ejecución: esperá para cargar resultados completos' }); return }
   const runId = String(req.params.id || '').trim()
   const runDir = resolveRunDir(RUNS_ROOT, runId)
   const statsPath = runDir ? path.join(runDir, 'stats.json') : ''
@@ -1358,7 +1431,7 @@ app.get('/api/etl/runs/:id/summary', (req, res) => {
   }
   const stats = readJsonSyncSafe(statsPath)
   const manifest = readJsonSyncSafe(path.join(runDir, 'manifest.json'))
-  res.json({ runId, manifest, stats })
+  res.json({ runId, manifest, stats, revision: digest(JSON.stringify({ manifest, stats })) })
 })
 
 /** GET /api/etl/runs/:id/tables — nombres de tablas (núcleo; ?debug=1 incluye debug/). */
@@ -1386,6 +1459,7 @@ app.get('/api/etl/runs/:id/tables', (req, res) => {
 
 /** GET /api/etl/runs/:id/tables/:name — filas con limit/offset/col/eq */
 app.get('/api/etl/runs/:id/tables/:name', (req, res) => {
+  if (etlRunning) { res.status(409).json({ error: 'Corrida en ejecución: esperá para cargar resultados completos' }); return }
   const runId = String(req.params.id || '').trim()
   const name = String(req.params.name || '').trim()
   if (!name || name.includes('..') || name.includes('/') || name.includes('\\')) {
@@ -1406,6 +1480,8 @@ app.get('/api/etl/runs/:id/tables/:name', (req, res) => {
     return
   }
   const doc = readJsonSyncSafe(tablePath)
+  const revision = digest(readFileSync(tablePath))
+  if (req.query.revision && req.query.revision !== revision) { res.status(409).json({ error: 'La tabla cambió durante la lectura: volvé a cargar la corrida' }); return }
   if (!doc || !Array.isArray(doc.rows)) {
     res.status(500).json({ error: 'Tabla corrupta o sin filas' })
     return
@@ -1426,6 +1502,7 @@ app.get('/api/etl/runs/:id/tables/:name', (req, res) => {
     runId,
     name,
     headers: doc.headers ?? [],
+    revision,
     total: rows.length,
     limit,
     offset,
@@ -1466,8 +1543,8 @@ const etlAgent = createEtlAgentChat({
 })
 
 /** GET /api/etl/agent/status — ¿hay ANTHROPIC_API_KEY? (sin revelar la clave). */
-app.get('/api/etl/agent/status', (_req, res) => {
-  res.json(etlAgent.status())
+app.get('/api/etl/agent/status', async (_req, res) => {
+  res.json(await etlAgent.health())
 })
 
 /**
@@ -1570,6 +1647,8 @@ app.post('/api/truckflow/live/nvai/ask', async (req, res) => {
       site,
       focus,
       history,
+      context: req.body?.context,
+      metrics: req.body?.context?.metricId && METRICS.some(m => m.id === req.body.context.metricId) ? [await analytics.getMetric(req.body.context)] : [],
       getSnapshot: (s) => plantState.getSnapshot(s),
       chatStream: (args, onProgress) => etlAgent.chatStream(args, onProgress),
       onProgress: (label) => write({ type: 'progress', label }),

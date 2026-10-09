@@ -1,0 +1,36 @@
+[
+ {
+  "plate": "RRE349",
+  "device": "RicB2Egreso",
+  "horaOperativa": "09-30_1111",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "RRE349",
+   "confidence": 42,
+   "color": "Blue",
+   "marca": null,
+   "tipo": null,
+   "at": "2026-09-30T14:07:10.000Z"
+  },
+  "sceneFile": "RRE349_09-30_1111_RicB2Egreso_escena.jpg",
+  "plateFile": "RRE349_09-30_1111_RicB2Egreso_patente.jpg"
+ },
+ {
+  "plate": "RRE349",
+  "device": "SLZIngCamFrente",
+  "horaOperativa": "09-30_1149",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "RRE349",
+   "confidence": 78,
+   "color": "Red",
+   "marca": null,
+   "tipo": "Sedan",
+   "at": "2026-09-30T14:45:39.000Z"
+  },
+  "sceneFile": "RRE349_09-30_1149_SLZIngCamFrente_escena.jpg",
+  "plateFile": "RRE349_09-30_1149_SLZIngCamFrente_patente.jpg"
+ }
+]

@@ -1,0 +1,88 @@
+{
+  "runId": "2026-09-28_2026-10-04",
+  "rulesVersion": "etl_transform_v17",
+  "kpiTiemposBuilt": true,
+  "segmentTimingPresent": true,
+  "tables": [
+    {
+      "table": "E_kpi_circuito",
+      "status": 200,
+      "total": 4,
+      "headers": [
+        "circuito_code",
+        "n_operaciones",
+        "mediana_min",
+        "p90_min",
+        "media_min",
+        "min_min",
+        "max_min",
+        "n_camara",
+        "n_camara_parcial",
+        "n_excel_respaldo",
+        "porcentaje_camara_pura",
+        "ric_media_min",
+        "ric_p90_min",
+        "ric_n",
+        "bridge_media_min",
+        "bridge_p90_min",
+        "bridge_n",
+        "sl_media_min",
+        "sl_p90_min",
+        "sl_n"
+      ]
+    },
+    {
+      "table": "E_kpi_operacion",
+      "status": 200,
+      "total": 458,
+      "headers": [
+        "journey_key",
+        "external_operation_id",
+        "plate_normalized",
+        "circuito_code",
+        "product_normalized",
+        "inicio_at",
+        "fin_at",
+        "total_min",
+        "time_source",
+        "ric_min",
+        "bridge_min",
+        "sl_min"
+      ]
+    },
+    {
+      "table": "segment_timing_kpi",
+      "status": 200,
+      "total": 25,
+      "headers": [
+        "executive_circuit_code",
+        "from_logical",
+        "to_logical",
+        "transition_label",
+        "n",
+        "mean_min",
+        "min_min",
+        "min_plate",
+        "max_min",
+        "max_plate",
+        "std_min",
+        "median_min",
+        "p90_min"
+      ]
+    },
+    {
+      "table": "segment_timing_legs",
+      "status": 200,
+      "total": 3308,
+      "headers": [
+        "executive_circuit_code",
+        "journey_id",
+        "plate",
+        "from_logical",
+        "to_logical",
+        "transition_label",
+        "duration_min"
+      ]
+    }
+  ]
+}

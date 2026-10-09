@@ -1,0 +1,280 @@
+{
+  "dias": [
+    "2026-10-01",
+    "2026-10-02"
+  ],
+  "umbral": 0.6,
+  "porNodo": {
+    "san_lorenzo:Egreso": {
+      "capturas": 1149,
+      "buenas": 755,
+      "dudosas": 244,
+      "asignadas": 16,
+      "prueba": {
+        "n": 55,
+        "bien": 4,
+        "otra": 3,
+        "nada": 48
+      },
+      "universoMediana": 25,
+      "efectivoMediana": 5.953494710004001
+    },
+    "san_lorenzo:Balanza Ingreso": {
+      "capturas": 563,
+      "buenas": 358,
+      "dudosas": 165,
+      "asignadas": 36,
+      "prueba": {
+        "n": 85,
+        "bien": 15,
+        "otra": 4,
+        "nada": 66
+      },
+      "universoMediana": 26,
+      "efectivoMediana": 7.493213691239148
+    },
+    "san_lorenzo:Ingreso": {
+      "capturas": 524,
+      "buenas": 355,
+      "dudosas": 158,
+      "asignadas": 50,
+      "prueba": {
+        "n": 47,
+        "bien": 27,
+        "otra": 2,
+        "nada": 18
+      },
+      "universoMediana": 19,
+      "efectivoMediana": 3.0146188161506093
+    },
+    "ricardone:Pre ingreso": {
+      "capturas": 499,
+      "buenas": 188,
+      "dudosas": 275,
+      "asignadas": 0,
+      "prueba": {
+        "n": 9,
+        "bien": 0,
+        "otra": 0,
+        "nada": 9
+      },
+      "universoMediana": 92,
+      "efectivoMediana": 90.99999999999994
+    },
+    "ricardone:Calada": {
+      "capturas": 468,
+      "buenas": 266,
+      "dudosas": 185,
+      "asignadas": 15,
+      "prueba": {
+        "n": 58,
+        "bien": 0,
+        "otra": 3,
+        "nada": 55
+      },
+      "universoMediana": 35,
+      "efectivoMediana": 9.185705562338418
+    },
+    "san_lorenzo:Carga/Descarga Renova": {
+      "capturas": 462,
+      "buenas": 223,
+      "dudosas": 156,
+      "asignadas": 9,
+      "prueba": {
+        "n": 17,
+        "bien": 1,
+        "otra": 0,
+        "nada": 16
+      },
+      "universoMediana": 19,
+      "efectivoMediana": 6.405521625435186
+    },
+    "san_lorenzo:Plataformas Volcables": {
+      "capturas": 406,
+      "buenas": 191,
+      "dudosas": 209,
+      "asignadas": 28,
+      "prueba": {
+        "n": 34,
+        "bien": 2,
+        "otra": 0,
+        "nada": 32
+      },
+      "universoMediana": 38,
+      "efectivoMediana": 14.923293412002641
+    },
+    "ricardone:Salida 2": {
+      "capturas": 405,
+      "buenas": 246,
+      "dudosas": 139,
+      "asignadas": 28,
+      "prueba": {
+        "n": 58,
+        "bien": 7,
+        "otra": 3,
+        "nada": 48
+      },
+      "universoMediana": 43,
+      "efectivoMediana": 7.717367923222913
+    },
+    "ricardone:Balanza Egreso": {
+      "capturas": 349,
+      "buenas": 246,
+      "dudosas": 75,
+      "asignadas": 7,
+      "prueba": {
+        "n": 32,
+        "bien": 1,
+        "otra": 0,
+        "nada": 31
+      },
+      "universoMediana": 26,
+      "efectivoMediana": 10.95281710767385
+    },
+    "ricardone:Balanza Ingreso": {
+      "capturas": 349,
+      "buenas": 118,
+      "dudosas": 188,
+      "asignadas": 33,
+      "prueba": {
+        "n": 3,
+        "bien": 1,
+        "otra": 0,
+        "nada": 2
+      },
+      "universoMediana": 20,
+      "efectivoMediana": 4.5747501362753455
+    },
+    "san_lorenzo:Balanza Egreso": {
+      "capturas": 292,
+      "buenas": 88,
+      "dudosas": 144,
+      "asignadas": 40,
+      "prueba": {
+        "n": 7,
+        "bien": 0,
+        "otra": 1,
+        "nada": 6
+      },
+      "universoMediana": 68,
+      "efectivoMediana": 12.931777585059905
+    },
+    "ricardone:Playa 3": {
+      "capturas": 173,
+      "buenas": 121,
+      "dudosas": 26,
+      "asignadas": 10,
+      "prueba": {
+        "n": 8,
+        "bien": 4,
+        "otra": 1,
+        "nada": 3
+      },
+      "universoMediana": 20,
+      "efectivoMediana": 2.936456652184808
+    },
+    "ricardone:Volcable Silo Keppler": {
+      "capturas": 81,
+      "buenas": 53,
+      "dudosas": 14,
+      "asignadas": 0,
+      "prueba": {
+        "n": 0,
+        "bien": 0,
+        "otra": 0,
+        "nada": 0
+      },
+      "universoMediana": 6,
+      "efectivoMediana": 4.909090909090908
+    },
+    "ricardone:Volcable 2": {
+      "capturas": 79,
+      "buenas": 42,
+      "dudosas": 36,
+      "asignadas": 5,
+      "prueba": {
+        "n": 1,
+        "bien": 0,
+        "otra": 0,
+        "nada": 1
+      },
+      "universoMediana": 10,
+      "efectivoMediana": 3.4356423202981334
+    },
+    "san_lorenzo:Calada": {
+      "capturas": 66,
+      "buenas": 48,
+      "dudosas": 18,
+      "asignadas": 5,
+      "prueba": {
+        "n": 14,
+        "bien": 4,
+        "otra": 0,
+        "nada": 10
+      },
+      "universoMediana": 67,
+      "efectivoMediana": 9.629334949252456
+    },
+    "san_lorenzo:Carga / Descarga OSL": {
+      "capturas": 46,
+      "buenas": 31,
+      "dudosas": 15,
+      "asignadas": 4,
+      "prueba": {
+        "n": 7,
+        "bien": 2,
+        "otra": 0,
+        "nada": 5
+      },
+      "universoMediana": 17,
+      "efectivoMediana": 6.455861509512769
+    },
+    "san_lorenzo:Carga/descarga": {
+      "capturas": 30,
+      "buenas": 10,
+      "dudosas": 2,
+      "asignadas": 0,
+      "prueba": {
+        "n": 1,
+        "bien": 0,
+        "otra": 0,
+        "nada": 1
+      },
+      "universoMediana": 55,
+      "efectivoMediana": 40.20869565217392
+    },
+    "ricardone:Ingreso": {
+      "capturas": 19,
+      "buenas": 10,
+      "dudosas": 9,
+      "asignadas": 0,
+      "prueba": {
+        "n": 0,
+        "bien": 0,
+        "otra": 0,
+        "nada": 0
+      },
+      "universoMediana": 84,
+      "efectivoMediana": 83.99999999999989
+    },
+    "ricardone:Celda 16": {
+      "capturas": 1,
+      "buenas": 1,
+      "dudosas": 0,
+      "asignadas": 0,
+      "prueba": {
+        "n": 0,
+        "bien": 0,
+        "otra": 0,
+        "nada": 0
+      },
+      "universoMediana": null,
+      "efectivoMediana": null
+    }
+  },
+  "total": {
+    "n": 436,
+    "bien": 68,
+    "otra": 17
+  }
+}

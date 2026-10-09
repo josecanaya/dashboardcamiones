@@ -1,4 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from 'react'
+import type { AnalysisScope } from '../../context/AnalysisContext'
+import { AnalysisMetric } from '../AnalysisMetric'
 import {
   parseNvaiFacts,
   streamNvaiAsk,
@@ -8,6 +10,8 @@ import {
 } from './nvaiApi'
 
 type UiMessage = NvaiChatMessage & {
+  context?: AnalysisScope
+  snapshotAt?: string | null
   facts?: NvaiFact[]
   error?: boolean
   tools?: string[]
@@ -44,6 +48,7 @@ function FactsBlock({ facts }: { facts: NvaiFact[] }) {
 }
 
 export type NvaiPanelProps = {
+  context?: AnalysisScope
   site?: string
   focus?: NvaiFocus | string | null
   /** Embebido en Home: sin chrome de drawer. */
@@ -55,6 +60,7 @@ export type NvaiPanelProps = {
 export function NvaiPanel({
   site = 'ricardone',
   focus = null,
+  context,
   embedded = false,
   onClose,
   className = '',
@@ -64,6 +70,7 @@ export function NvaiPanel({
   const [busy, setBusy] = useState(false)
   const [progress, setProgress] = useState<string[]>([])
   const bottomRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => { if (context?.question) setDraft(context.question) }, [context?.question])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
@@ -76,12 +83,13 @@ export function NvaiPanel({
     const history = messages
       .filter((m) => !m.error)
       .map(({ role, content }) => ({ role, content }))
-    setMessages((prev) => [...prev, { role: 'user', content: question }])
+    const sentContext = context ? structuredClone(context) : undefined
+    setMessages((prev) => [...prev, { role: 'user', content: question, context: sentContext }])
     setBusy(true)
     setProgress([])
     try {
       const out = await streamNvaiAsk(
-        { question, site, focus, history },
+        { question, site, focus, history, context: sentContext },
         (label) =>
           setProgress((prev) => (prev[prev.length - 1] === label ? prev : [...prev, label]))
       )
@@ -93,6 +101,8 @@ export function NvaiPanel({
         {
           role: 'assistant',
           content: parsed.plain,
+          context: sentContext,
+          snapshotAt: out.snapshotAt,
           facts: parsed.facts,
           tools: (out.toolTrace || []).map((t) => t.name),
         },
@@ -140,7 +150,8 @@ export function NvaiPanel({
           <div className="text-sm font-semibold text-slate-900">NVAi</div>
           <div className="truncate font-mono text-[11px] text-slate-400">
             {site}
-            {focusHint ? ` · ${focusHint}` : ' · ahora'}
+            {context?.mode === 'historical' ? ` · ${context.from ?? 'sin período'} → ${context.to ?? '—'}` : ' · en vivo'}
+            {focusHint ? ` · ${focusHint}` : ''}
           </div>
         </div>
         {messages.length > 0 ? (
@@ -166,6 +177,7 @@ export function NvaiPanel({
         ) : null}
       </header>
 
+      <AnalysisMetric />
       <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4">
         {messages.length === 0 && !busy ? (
           <div className="space-y-3">
@@ -173,7 +185,7 @@ export function NvaiPanel({
               Empezá por acá
             </p>
             <div className="grid gap-2">
-              {SUGGESTIONS.map((s) => (
+              {(context?.mode === 'historical' ? ['Explicá el KPI seleccionado y su fuente', '¿Qué datos faltan en este período?', '¿Qué deberíamos revisar primero?'] : SUGGESTIONS.map(s => s.replace('Ricardone', site === 'san_lorenzo' ? 'San Lorenzo' : site === 'both' ? 'las dos plantas' : 'Ricardone'))).map((s) => (
                 <button
                   key={s}
                   type="button"
@@ -197,6 +209,7 @@ export function NvaiPanel({
             {m.role === 'user' ? (
               <div className="max-w-[85%] rounded-xl rounded-br-sm border border-sky-100 bg-sky-50 px-3.5 py-2.5 text-[13px] leading-relaxed text-slate-800">
                 {m.content}
+                {m.context ? <small className="mt-1 block text-[10px] text-slate-500">{m.context.site} · {m.context.mode === 'live' ? 'en vivo' : `${m.context.from} → ${m.context.to}`} {m.context.circuit ?? m.context.plate ?? ''}</small> : null}
               </div>
             ) : m.error ? (
               <div className="rounded-xl bg-rose-50 px-3.5 py-2.5 text-sm text-rose-950 ring-1 ring-rose-100">
@@ -210,6 +223,7 @@ export function NvaiPanel({
                   </p>
                 ) : null}
                 <FactsBlock facts={m.facts ?? []} />
+                {m.context ? <p className="mt-2 text-[10px] text-slate-500">Respuesta para {m.context.site} · {m.context.mode === 'live' ? `snapshot ${m.snapshotAt ? new Date(m.snapshotAt).toLocaleTimeString('es-AR') : 'sin hora disponible'}` : `${m.context.from} → ${m.context.to}`} {m.context.circuit ?? ''}</p> : null}
                 {m.tools?.length ? (
                   <p className="mt-2 text-[10px] text-slate-400">
                     Tools: {m.tools.slice(0, 4).join(' · ')}

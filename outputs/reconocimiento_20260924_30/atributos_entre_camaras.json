@@ -1,0 +1,26 @@
+{
+ "color": {
+  "disponible": 0.976,
+  "coincide_mismo": 0.577,
+  "coincide_otro": 0.419,
+  "LR_si_coincide": 1.38,
+  "LR_si_no": 0.728,
+  "info": 0.05
+ },
+ "marca": {
+  "disponible": 0.604,
+  "coincide_mismo": 0.838,
+  "coincide_otro": 0.177,
+  "LR_si_coincide": 4.75,
+  "LR_si_no": 0.197,
+  "info": 1.042
+ },
+ "tipo": {
+  "disponible": 0.893,
+  "coincide_mismo": 0.787,
+  "coincide_otro": 0.72,
+  "LR_si_coincide": 1.09,
+  "LR_si_no": 0.759,
+  "info": 0.012
+ }
+}

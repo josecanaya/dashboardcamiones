@@ -1,0 +1,308 @@
+[
+ {
+  "plate": "DTG181",
+  "device": "RicPreIngInFr",
+  "horaOperativa": "10-01_0031",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 86,
+   "color": "White",
+   "marca": null,
+   "tipo": null,
+   "at": "2026-10-01T03:27:39.000Z"
+  },
+  "sceneFile": "DTG181_10-01_0031_RicPreIngInFr_escena.jpg",
+  "plateFile": "DTG181_10-01_0031_RicPreIngInFr_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "RicS6Playa3",
+  "horaOperativa": "10-01_0046",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 90,
+   "color": "White",
+   "marca": "Chevrolet",
+   "tipo": "Pickup",
+   "at": "2026-10-01T03:42:31.000Z"
+  },
+  "sceneFile": "DTG181_10-01_0046_RicS6Playa3_escena.jpg",
+  "plateFile": "DTG181_10-01_0046_RicS6Playa3_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "RicB2Egreso",
+  "horaOperativa": "10-01_0049",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 22,
+   "color": "Black",
+   "marca": null,
+   "tipo": "Pickup",
+   "at": "2026-10-01T03:45:17.000Z"
+  },
+  "sceneFile": "DTG181_10-01_0049_RicB2Egreso_escena.jpg",
+  "plateFile": "DTG181_10-01_0049_RicB2Egreso_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "RicCalLiq",
+  "horaOperativa": "10-01_0054",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 74,
+   "color": "White",
+   "marca": "Mitsubishi",
+   "tipo": "SUV",
+   "at": "2026-10-01T03:50:07.000Z"
+  },
+  "sceneFile": "DTG181_10-01_0054_RicCalLiq_escena.jpg",
+  "plateFile": "DTG181_10-01_0054_RicCalLiq_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "RicB2Egreso",
+  "horaOperativa": "10-01_0135",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 18,
+   "color": "Black",
+   "marca": null,
+   "tipo": "Sedan",
+   "at": "2026-10-01T04:31:42.000Z"
+  },
+  "sceneFile": "DTG181_10-01_0135_RicB2Egreso_escena.jpg",
+  "plateFile": "DTG181_10-01_0135_RicB2Egreso_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "SLZIngCamFrente",
+  "horaOperativa": "10-01_0150",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 86,
+   "color": "White",
+   "marca": null,
+   "tipo": null,
+   "at": "2026-10-01T04:46:17.000Z"
+  },
+  "sceneFile": "DTG181_10-01_0150_SLZIngCamFrente_escena.jpg",
+  "plateFile": "DTG181_10-01_0150_SLZIngCamFrente_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "SLZBalIngFte",
+  "horaOperativa": "10-01_0409",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 70,
+   "color": "White",
+   "marca": null,
+   "tipo": "Pickup",
+   "at": "2026-10-01T07:05:21.000Z"
+  },
+  "sceneFile": "DTG181_10-01_0409_SLZBalIngFte_escena.jpg",
+  "plateFile": "DTG181_10-01_0409_SLZBalIngFte_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "SLZSalidaC1Fte",
+  "horaOperativa": "10-01_0450",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 66,
+   "color": "White",
+   "marca": null,
+   "tipo": "Pickup",
+   "at": "2026-10-01T07:46:34.000Z"
+  },
+  "sceneFile": "DTG181_10-01_0450_SLZSalidaC1Fte_escena.jpg",
+  "plateFile": "DTG181_10-01_0450_SLZSalidaC1Fte_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "RicPreIngInFr",
+  "horaOperativa": "10-01_0504",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 78,
+   "color": "White",
+   "marca": null,
+   "tipo": null,
+   "at": "2026-10-01T08:00:46.000Z"
+  },
+  "sceneFile": "DTG181_10-01_0504_RicPreIngInFr_escena.jpg",
+  "plateFile": "DTG181_10-01_0504_RicPreIngInFr_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "RicCalLiq",
+  "horaOperativa": "10-01_1248",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 62,
+   "color": "White",
+   "marca": "Mitsubishi",
+   "tipo": "Pickup",
+   "at": "2026-10-01T15:44:16.000Z"
+  },
+  "sceneFile": "DTG181_10-01_1248_RicCalLiq_escena.jpg",
+  "plateFile": "DTG181_10-01_1248_RicCalLiq_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "RicEgrCamFrente",
+  "horaOperativa": "10-01_1250",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 78,
+   "color": "White",
+   "marca": "Chevrolet",
+   "tipo": "Medium Truck",
+   "at": "2026-10-01T15:46:44.000Z"
+  },
+  "sceneFile": "DTG181_10-01_1250_RicEgrCamFrente_escena.jpg",
+  "plateFile": "DTG181_10-01_1250_RicEgrCamFrente_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "RicS6Playa3",
+  "horaOperativa": "10-01_1300",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 82,
+   "color": "White",
+   "marca": null,
+   "tipo": "Large Truck",
+   "at": "2026-10-01T15:56:36.000Z"
+  },
+  "sceneFile": "DTG181_10-01_1300_RicS6Playa3_escena.jpg",
+  "plateFile": "DTG181_10-01_1300_RicS6Playa3_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "RicB2Egreso",
+  "horaOperativa": "10-01_1342",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 54,
+   "color": "White",
+   "marca": null,
+   "tipo": null,
+   "at": "2026-10-01T16:38:41.000Z"
+  },
+  "sceneFile": "DTG181_10-01_1342_RicB2Egreso_escena.jpg",
+  "plateFile": "DTG181_10-01_1342_RicB2Egreso_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "SLZIngCamFrente",
+  "horaOperativa": "10-01_1501",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 58,
+   "color": "White",
+   "marca": "Chevrolet",
+   "tipo": "Bus",
+   "at": "2026-10-01T17:57:10.000Z"
+  },
+  "sceneFile": "DTG181_10-01_1501_SLZIngCamFrente_escena.jpg",
+  "plateFile": "DTG181_10-01_1501_SLZIngCamFrente_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "SLZCalado",
+  "horaOperativa": "10-01_1812",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 66,
+   "color": "Blue",
+   "marca": "Chevrolet",
+   "tipo": "Medium Truck",
+   "at": "2026-10-01T21:08:54.000Z"
+  },
+  "sceneFile": "DTG181_10-01_1812_SLZCalado_escena.jpg",
+  "plateFile": "DTG181_10-01_1812_SLZCalado_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "SLZBalIngFte",
+  "horaOperativa": "10-01_1837",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 78,
+   "color": "White",
+   "marca": "Chevrolet",
+   "tipo": "Bus",
+   "at": "2026-10-01T21:33:20.000Z"
+  },
+  "sceneFile": "DTG181_10-01_1837_SLZBalIngFte_escena.jpg",
+  "plateFile": "DTG181_10-01_1837_SLZBalIngFte_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "SLZSalidaC1Fte",
+  "horaOperativa": "10-01_2127",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 78,
+   "color": "White",
+   "marca": "Chevrolet",
+   "tipo": "Pickup",
+   "at": "2026-10-02T00:23:30.000Z"
+  },
+  "sceneFile": "DTG181_10-01_2127_SLZSalidaC1Fte_escena.jpg",
+  "plateFile": "DTG181_10-01_2127_SLZSalidaC1Fte_patente.jpg"
+ },
+ {
+  "plate": "DTG181",
+  "device": "RicPreIngInFr",
+  "horaOperativa": "10-01_2139",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "DTG181",
+   "confidence": 78,
+   "color": "White",
+   "marca": null,
+   "tipo": null,
+   "at": "2026-10-02T00:35:24.000Z"
+  },
+  "sceneFile": "DTG181_10-01_2139_RicPreIngInFr_escena.jpg",
+  "plateFile": "DTG181_10-01_2139_RicPreIngInFr_patente.jpg"
+ }
+]

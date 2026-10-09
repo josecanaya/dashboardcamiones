@@ -64,6 +64,7 @@ export async function listWindows(): Promise<SavedWindow[]> {
 }
 
 export async function getRunSummary(runId: string): Promise<{
+  revision?: string
   runId: string
   manifest: Record<string, unknown>
   stats: Record<string, unknown>
@@ -81,6 +82,7 @@ export async function listRunTables(runId: string): Promise<string[]> {
 const RUN_TABLE_PAGE_SIZE = 10000
 
 type RunTablePage = {
+  revision?: string
   headers?: string[]
   total?: number
   limit?: number
@@ -104,11 +106,14 @@ export async function fetchRunTable(
   let total: number | null = null
   let offset = 0
   let pages = 0
+  let revision: string | undefined
 
   while (true) {
-    const url = `${base()}/runs/${encRun}/tables/${encName}?limit=${RUN_TABLE_PAGE_SIZE}&offset=${offset}`
+    const url = `${base()}/runs/${encRun}/tables/${encName}?limit=${RUN_TABLE_PAGE_SIZE}&offset=${offset}${revision ? `&revision=${encodeURIComponent(revision)}` : ''}`
     const res = await fetch(url, { cache: 'no-store' })
     const page = await parseJson<RunTablePage>(res)
+    if (revision && revision !== page.revision) throw new Error(`Tabla ${name}: revisión cambió entre páginas`)
+    revision = page.revision
     pages += 1
 
     if (!Array.isArray(page.rows)) {

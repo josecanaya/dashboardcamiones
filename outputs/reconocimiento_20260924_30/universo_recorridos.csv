@@ -1,0 +1,549 @@
+﻿recorrido,n,p
+SL:Balanza Ingreso > SL:Egreso,57,0.0414
+SL:Ingreso > SL:Balanza Ingreso,55,0.0399
+R:Pre ingreso > R:Calada,37,0.0269
+SL:Balanza Egreso > SL:Egreso,27,0.0196
+R:Salida 2 > SL:Ingreso,24,0.0174
+SL:Egreso > SL:Balanza Egreso > SL:Egreso,21,0.0153
+R:Calada > R:Playa 3,21,0.0153
+SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,20,0.0145
+R:Calada > SL:Balanza Ingreso,18,0.0131
+SL:Ingreso > SL:Egreso,18,0.0131
+R:Calada > SL:Ingreso,18,0.0131
+R:Calada > SL:Ingreso > SL:Balanza Ingreso,17,0.0123
+R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso,16,0.0116
+SL:Egreso > SL:Carga/Descarga Renova > SL:Egreso,13,0.0094
+R:Calada > R:Salida 2 > SL:Ingreso,12,0.0087
+R:Calada > SL:Ingreso > SL:Egreso,12,0.0087
+SL:Carga/Descarga Renova > SL:Egreso,12,0.0087
+R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,11,0.008
+R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso,10,0.0073
+R:Calada > R:Balanza Ingreso,10,0.0073
+SL:Calada > SL:Balanza Ingreso,10,0.0073
+R:Pre ingreso > SL:Balanza Ingreso,10,0.0073
+SL:Egreso > SL:Balanza Egreso,9,0.0065
+R:Salida 2 > SL:Balanza Ingreso,9,0.0065
+R:Pre ingreso > R:Salida 2,9,0.0065
+R:Balanza Ingreso > R:Balanza Egreso,9,0.0065
+R:Calada > SL:Plataformas Volcables,9,0.0065
+R:Pre ingreso > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso,9,0.0065
+SL:Plataformas Volcables > SL:Egreso,9,0.0065
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,8,0.0058
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso,8,0.0058
+R:Calada > R:Salida 2 > SL:Balanza Ingreso,8,0.0058
+SL:Ingreso > SL:Calada > SL:Balanza Ingreso,8,0.0058
+SL:Balanza Ingreso > SL:Carga/Descarga Renova,8,0.0058
+R:Calada > R:Salida 2,8,0.0058
+R:Pre ingreso > SL:Ingreso > SL:Balanza Ingreso,8,0.0058
+SL:Ingreso > SL:Calada,8,0.0058
+R:Pre ingreso > SL:Ingreso,8,0.0058
+R:Pre ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,7,0.0051
+R:Calada > SL:Balanza Ingreso > SL:Egreso,7,0.0051
+R:Calada > SL:Egreso,7,0.0051
+R:Salida 2 > SL:Egreso,7,0.0051
+R:Pre ingreso > R:Salida 2 > SL:Ingreso,7,0.0051
+R:Calada > R:Salida 2 > SL:Balanza Ingreso > SL:Egreso,7,0.0051
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso,7,0.0051
+R:Pre ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso,7,0.0051
+R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,7,0.0051
+R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables,7,0.0051
+R:Calada > R:Salida 2 > SL:Ingreso > SL:Egreso,7,0.0051
+SL:Carga / Descarga OSL > SL:Egreso,7,0.0051
+R:Pre ingreso > R:Calada > SL:Ingreso > SL:Egreso,6,0.0044
+R:Pre ingreso > R:Calada > SL:Ingreso,6,0.0044
+R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables,6,0.0044
+R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,6,0.0044
+R:Pre ingreso > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,6,0.0044
+SL:Egreso > SL:Carga/Descarga Renova,6,0.0044
+SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables,6,0.0044
+R:Balanza Ingreso > SL:Egreso,6,0.0044
+SL:Egreso > SL:Balanza Ingreso,5,0.0036
+SL:Balanza Ingreso > SL:Egreso > SL:Balanza Ingreso,5,0.0036
+R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso,5,0.0036
+R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso,5,0.0036
+SL:Calada > SL:Carga / Descarga OSL,5,0.0036
+SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso,5,0.0036
+R:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables,5,0.0036
+SL:Egreso > R:Balanza Egreso,5,0.0036
+R:Salida 2 > SL:Ingreso > SL:Egreso,5,0.0036
+R:Pre ingreso > R:Calada > SL:Egreso,5,0.0036
+R:Pre ingreso > SL:Ingreso > SL:Egreso,5,0.0036
+R:Pre ingreso > R:Calada > R:Salida 2,5,0.0036
+SL:Ingreso > SL:Carga/Descarga Renova,4,0.0029
+R:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso,4,0.0029
+R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables,4,0.0029
+SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso,4,0.0029
+R:Calada > R:Volcable 1,4,0.0029
+SL:Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Carga / Descarga OSL > SL:Egreso,4,0.0029
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso,4,0.0029
+R:Pre ingreso > R:Calada > R:Playa 3,4,0.0029
+R:Salida 2 > SL:Balanza Ingreso > SL:Egreso,4,0.0029
+R:Salida 2 > R:Balanza Ingreso,4,0.0029
+SL:Calada > SL:Balanza Ingreso > SL:Carga / Descarga OSL > SL:Egreso,4,0.0029
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables,4,0.0029
+R:Pre ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,4,0.0029
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables,4,0.0029
+R:Pre ingreso > R:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables,4,0.0029
+R:Pre ingreso > SL:Egreso,4,0.0029
+SL:Balanza Ingreso > SL:Carga / Descarga OSL,4,0.0029
+SL:Egreso > SL:Ingreso > SL:Balanza Ingreso,3,0.0022
+SL:Balanza Ingreso > SL:Plataformas Volcables,3,0.0022
+R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso,3,0.0022
+R:Calada > R:Playa 3 > R:Volcable 1,3,0.0022
+SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova,3,0.0022
+R:Calada > SL:Plataformas Volcables > SL:Egreso,3,0.0022
+R:Calada > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables > SL:Egreso,3,0.0022
+SL:Balanza Ingreso > SL:Balanza Egreso > SL:Egreso,3,0.0022
+SL:Calada > SL:Egreso,3,0.0022
+R:Salida 2 > SL:Ingreso > SL:Calada,3,0.0022
+R:Calada > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables,3,0.0022
+SL:Egreso > SL:Balanza Ingreso > SL:Egreso,3,0.0022
+R:Balanza Ingreso > R:Balanza Egreso > SL:Egreso,3,0.0022
+R:Pre ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables,3,0.0022
+SL:Egreso > R:Balanza Ingreso,3,0.0022
+R:Calada > R:Salida 2 > SL:Balanza Ingreso > SL:Plataformas Volcables,3,0.0022
+R:Pre ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso,3,0.0022
+SL:Egreso > R:Balanza Ingreso > SL:Egreso,3,0.0022
+R:Salida 2 > SL:Plataformas Volcables,3,0.0022
+R:Calada > R:Salida 2 > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso,2,0.0015
+SL:Carga/Descarga Renova > SL:Carga/descarga,2,0.0015
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Balanza Ingreso > SL:Egreso,2,0.0015
+R:Pre ingreso > R:Calada > SL:Balanza Ingreso,2,0.0015
+R:Calada > R:Balanza Ingreso > R:Playa 3,2,0.0015
+R:Salida 2 > SL:Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Carga / Descarga OSL,2,0.0015
+SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Calada > SL:Balanza Ingreso,2,0.0015
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables > SL:Egreso,2,0.0015
+R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Balanza Egreso,2,0.0015
+R:Calada > SL:Ingreso > SL:Plataformas Volcables > SL:Egreso,2,0.0015
+R:Pre ingreso > R:Salida 2 > SL:Balanza Ingreso,2,0.0015
+SL:Ingreso > SL:Plataformas Volcables,2,0.0015
+SL:Ingreso > SL:Calada > SL:Egreso,2,0.0015
+SL:Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Carga/Descarga Renova,2,0.0015
+R:Balanza Egreso > R:Salida 2,2,0.0015
+R:Calada > SL:Ingreso > SL:Plataformas Volcables,2,0.0015
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Balanza Ingreso > SL:Plataformas Volcables,2,0.0015
+SL:Carga/Descarga Renova > SL:Egreso > SL:Carga/Descarga Renova > SL:Egreso,2,0.0015
+SL:Egreso > SL:Carga/Descarga Renova > SL:Egreso > SL:Carga/Descarga Renova,2,0.0015
+SL:Egreso > SL:Ingreso,2,0.0015
+R:Balanza Egreso > SL:Egreso,2,0.0015
+R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Egreso,2,0.0015
+R:Salida 2 > SL:Ingreso > SL:Carga/Descarga Renova,2,0.0015
+R:Pre ingreso > R:Salida 2 > SL:Ingreso > SL:Egreso,2,0.0015
+R:Balanza Ingreso > R:Playa 3,2,0.0015
+R:Calada > R:Salida 2 > SL:Egreso,2,0.0015
+R:Pre ingreso > R:Calada > SL:Ingreso > SL:Plataformas Volcables,2,0.0015
+SL:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables,2,0.0015
+SL:Ingreso > SL:Carga / Descarga OSL,2,0.0015
+SL:Carga/descarga > SL:Egreso,2,0.0015
+R:Balanza Ingreso > R:Calada,2,0.0015
+SL:Ingreso > SL:Balanza Ingreso > SL:Ingreso,2,0.0015
+R:Pre ingreso > R:Playa 3,2,0.0015
+SL:Ingreso > SL:Calada > SL:Carga / Descarga OSL,2,0.0015
+R:Playa 3 > R:Calada > SL:Balanza Ingreso > SL:Egreso > R:Playa 3 > R:Calada > R:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables,1,0.0007
+R:Salida 2 > R:Calada > R:Tolva de carga silo Chief > R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Balanza Ingreso > R:Playa 3 > R:Calada > R:Salida 2 > SL:Plataformas Volcables > SL:Balanza Egreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Calada > R:Salida 2 > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+R:Salida 2 > R:Playa 3 > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables,1,0.0007
+SL:Egreso > SL:Balanza Ingreso > SL:Egreso > SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+SL:Balanza Ingreso > SL:Egreso > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+SL:Balanza Ingreso > R:Pre ingreso > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > SL:Balanza Ingreso > SL:Egreso > SL:Balanza Ingreso,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+SL:Balanza Egreso > SL:Carga/Descarga Renova,1,0.0007
+SL:Carga/descarga > SL:Carga/Descarga Renova > SL:Egreso,1,0.0007
+SL:Egreso > SL:Carga/descarga > SL:Balanza Egreso > SL:Egreso > SL:Balanza Egreso,1,0.0007
+SL:Balanza Egreso > SL:Carga/descarga > SL:Egreso,1,0.0007
+SL:Egreso > R:Pre ingreso > SL:Balanza Ingreso > R:Ingreso > R:Pre ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+SL:Ingreso > SL:Carga/Descarga Renova > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Egreso > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+SL:Egreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Egreso,1,0.0007
+SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova,1,0.0007
+R:Ingreso > R:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables,1,0.0007
+R:Pre ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Calada > SL:Balanza Ingreso,1,0.0007
+SL:Egreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Egreso > SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Balanza Egreso > SL:Egreso > SL:Ingreso,1,0.0007
+SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Ingreso > SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > SL:Ingreso > SL:Carga/Descarga Renova > SL:Balanza Egreso > SL:Ingreso > SL:Carga/Descarga Renova > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova,1,0.0007
+SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Egreso > SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova,1,0.0007
+SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Ingreso > SL:Balanza Ingreso > SL:Balanza Egreso > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+SL:Egreso > SL:Balanza Egreso > SL:Carga/descarga > SL:Balanza Egreso > SL:Egreso,1,0.0007
+R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Balanza Egreso,1,0.0007
+SL:Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Carga / Descarga OSL > SL:Egreso,1,0.0007
+SL:Calada > SL:Carga / Descarga OSL > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Carga / Descarga OSL,1,0.0007
+SL:Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Carga / Descarga OSL > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+R:Pre ingreso > R:Tolva de carga silo Chief > R:Playa 3 > R:Calada > SL:Plataformas Volcables,1,0.0007
+R:Playa 3 > R:Calada,1,0.0007
+SL:Balanza Ingreso > SL:Plataformas Volcables > R:Playa 3 > SL:Ingreso,1,0.0007
+R:Playa 3 > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Playa 3 > R:Calada,1,0.0007
+SL:Balanza Egreso > SL:Carga/Descarga Renova > SL:Egreso,1,0.0007
+R:Pre ingreso > R:Salida 2 > R:Pre ingreso,1,0.0007
+R:Pre ingreso > R:Salida 2 > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+SL:Balanza Ingreso > SL:Calada,1,0.0007
+SL:Carga/Descarga Renova > SL:Balanza Ingreso,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Calada,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Calada > R:Balanza Ingreso > R:Calada,1,0.0007
+SL:Balanza Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Balanza Ingreso > SL:Egreso > SL:Ingreso > SL:Carga/Descarga Renova > SL:Balanza Ingreso,1,0.0007
+R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Balanza Egreso > SL:Egreso,1,0.0007
+SL:Balanza Ingreso > SL:Calada > SL:Egreso,1,0.0007
+R:Balanza Ingreso > SL:Balanza Egreso > R:Balanza Ingreso,1,0.0007
+R:Calada > R:Salida 2 > SL:Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+SL:Egreso > SL:Carga/descarga,1,0.0007
+SL:Egreso > SL:Balanza Egreso > SL:Carga/Descarga Renova > SL:Balanza Egreso > SL:Egreso > R:Balanza Ingreso > R:Playa 3 > R:Ingreso > R:Salida 2,1,0.0007
+R:Salida 2 > SL:Balanza Ingreso > SL:Balanza Egreso,1,0.0007
+R:Balanza Ingreso > SL:Egreso > SL:Carga/Descarga Renova,1,0.0007
+SL:Calada > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Carga / Descarga OSL,1,0.0007
+SL:Egreso > SL:Balanza Egreso > SL:Egreso > SL:Balanza Egreso > SL:Egreso,1,0.0007
+SL:Egreso > SL:Balanza Egreso > SL:Egreso > SL:Balanza Egreso,1,0.0007
+SL:Balanza Egreso > SL:Egreso > SL:Balanza Egreso,1,0.0007
+SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Balanza Egreso,1,0.0007
+SL:Balanza Ingreso > SL:Carga/descarga > SL:Egreso,1,0.0007
+R:Balanza Egreso > R:Salida 2 > R:Balanza Egreso > R:Salida 2 > R:Balanza Egreso > R:Salida 2 > R:Balanza Egreso,1,0.0007
+R:Salida 2 > SL:Carga/Descarga Renova,1,0.0007
+R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Ingreso,1,0.0007
+R:Calada > R:Playa 3 > R:Salida 2,1,0.0007
+SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Balanza Egreso > SL:Balanza Ingreso > SL:Calada > SL:Balanza Ingreso,1,0.0007
+R:Calada > SL:Ingreso > SL:Balanza Egreso,1,0.0007
+SL:Egreso > SL:Ingreso > SL:Egreso,1,0.0007
+SL:Egreso > SL:Balanza Egreso > SL:Carga/descarga,1,0.0007
+SL:Calada > SL:Balanza Ingreso > SL:Balanza Egreso > SL:Egreso,1,0.0007
+R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Balanza Egreso,1,0.0007
+SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Balanza Egreso > SL:Egreso > SL:Balanza Egreso > SL:Egreso,1,0.0007
+R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables,1,0.0007
+SL:Balanza Ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+SL:Balanza Egreso > SL:Egreso > SL:Balanza Egreso > SL:Egreso > SL:Carga/descarga > SL:Egreso,1,0.0007
+R:Calada > R:Salida 2 > SL:Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Pre ingreso > R:Calada > R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Egreso,1,0.0007
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > R:Salida 2 > SL:Ingreso > SL:Egreso,1,0.0007
+R:Pre ingreso > SL:Ingreso > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Balanza Egreso,1,0.0007
+R:Calada > R:Salida 2 > R:Calada,1,0.0007
+SL:Balanza Ingreso > SL:Egreso > R:Salida 2 > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Calada > R:Salida 2 > SL:Plataformas Volcables,1,0.0007
+R:Salida 2 > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Playa 3 > SL:Balanza Ingreso,1,0.0007
+R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Calada > R:Playa 3,1,0.0007
+R:Calada > R:Salida 2 > SL:Balanza Ingreso > R:Salida 2,1,0.0007
+R:Pre ingreso > R:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables,1,0.0007
+R:Volcable Silo Keppler > SL:Ingreso > R:Balanza Ingreso > SL:Ingreso,1,0.0007
+R:Salida 2 > R:Volcable Silo Keppler,1,0.0007
+R:Volcable Silo Keppler > R:Playa 3,1,0.0007
+SL:Ingreso > SL:Plataformas Volcables > R:Salida 2 > R:Balanza Ingreso > R:Salida 2 > SL:Ingreso > R:Balanza Ingreso,1,0.0007
+R:Pre ingreso > R:Salida 2 > R:Playa 3 > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables,1,0.0007
+R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > R:Playa 3,1,0.0007
+R:Calada > R:Playa 3 > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > R:Balanza Ingreso,1,0.0007
+R:Calada > SL:Egreso > R:Playa 3 > R:Pre ingreso,1,0.0007
+SL:Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Egreso > R:Salida 2 > SL:Balanza Ingreso > SL:Egreso > R:Calada > SL:Balanza Ingreso,1,0.0007
+R:Balanza Ingreso > R:Pre ingreso > R:Calada > SL:Balanza Ingreso,1,0.0007
+R:Calada > R:Salida 2 > R:Balanza Ingreso > SL:Ingreso > SL:Egreso > R:Salida 2,1,0.0007
+SL:Balanza Ingreso > SL:Egreso > R:Balanza Ingreso > R:Playa 3,1,0.0007
+SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso,1,0.0007
+SL:Balanza Ingreso > SL:Plataformas Volcables > R:Calada > SL:Balanza Ingreso > SL:Egreso > R:Pre ingreso > R:Balanza Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables > R:Pre ingreso > R:Balanza Ingreso > SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Salida 2 > R:Balanza Ingreso > R:Tolva de carga silo Chief > SL:Ingreso > SL:Calada > SL:Balanza Ingreso > R:Calada > R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > SL:Balanza Ingreso > R:Pre ingreso > SL:Balanza Egreso > SL:Egreso > R:Balanza Ingreso > SL:Egreso > SL:Ingreso > SL:Plataformas Volcables > R:Pre ingreso > R:Calada > R:Balanza Ingreso,1,0.0007
+SL:Balanza Ingreso > R:Balanza Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > R:Salida 2 > SL:Balanza Ingreso > R:Pre ingreso > R:Balanza Ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Egreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > SL:Balanza Ingreso > R:Calada > SL:Balanza Ingreso > SL:Egreso > R:Salida 2 > R:Balanza Ingreso > R:Playa 3 > R:Salida 2 > SL:Plataformas Volcables > R:Salida 2 > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Calada > R:Pre ingreso > R:Calada > SL:Balanza Ingreso > SL:Egreso > R:Salida 2,1,0.0007
+R:Pre ingreso > R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Calada > R:Salida 2 > R:Playa 3 > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Pre ingreso > R:Calada > SL:Ingreso > R:Pre ingreso,1,0.0007
+R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso,1,0.0007
+R:Pre ingreso > R:Calada > R:Balanza Ingreso > R:Playa 3,1,0.0007
+R:Volcable Silo Keppler > R:Calada > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Calada > R:Tolva de carga silo Chief > R:Salida 2 > SL:Balanza Ingreso > R:Calada > SL:Egreso,1,0.0007
+R:Calada > R:Playa 3 > SL:Balanza Ingreso > R:Calada > R:Playa 3 > SL:Balanza Ingreso > SL:Plataformas Volcables,1,0.0007
+R:Balanza Ingreso > R:Playa 3 > SL:Balanza Ingreso > R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Playa 3 > SL:Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Pre ingreso > R:Calada > R:Playa 3 > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables,1,0.0007
+R:Playa 3 > SL:Plataformas Volcables > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+R:Pre ingreso > R:Calada > R:Balanza Ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Playa 3 > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Calada > R:Playa 3 > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Pre ingreso > R:Salida 2 > R:Volcable Silo Keppler > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Pre ingreso > R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Salida 2 > SL:Ingreso > SL:Egreso,1,0.0007
+R:Salida 2 > R:Balanza Ingreso > SL:Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+R:Playa 3 > R:Balanza Ingreso > SL:Balanza Ingreso > R:Balanza Ingreso > SL:Balanza Ingreso > R:Pre ingreso > SL:Balanza Ingreso > R:Pre ingreso,1,0.0007
+SL:Egreso > R:Pre ingreso > R:Balanza Ingreso > R:Tolva de carga silo Chief > SL:Plataformas Volcables > R:Pre ingreso > R:Calada > R:Balanza Ingreso > R:Playa 3,1,0.0007
+R:Pre ingreso > SL:Plataformas Volcables > SL:Egreso > R:Calada > R:Balanza Ingreso > R:Playa 3 > SL:Ingreso > SL:Egreso > R:Pre ingreso > R:Calada > R:Balanza Ingreso > SL:Ingreso,1,0.0007
+R:Playa 3 > R:Pre ingreso > R:Balanza Ingreso > R:Salida 2 > SL:Plataformas Volcables > R:Pre ingreso > SL:Balanza Ingreso > R:Pre ingreso > SL:Egreso > R:Salida 2 > R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso > R:Playa 3,1,0.0007
+R:Pre ingreso > SL:Balanza Ingreso > R:Pre ingreso,1,0.0007
+R:Tolva de carga silo Chief > R:Calada > SL:Ingreso,1,0.0007
+R:Pre ingreso > SL:Plataformas Volcables,1,0.0007
+R:Calada > R:Salida 2 > SL:Ingreso > R:Pre ingreso > R:Calada > R:Balanza Ingreso,1,0.0007
+R:Pre ingreso > R:Balanza Ingreso > R:Playa 3 > SL:Ingreso > SL:Plataformas Volcables > R:Calada > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Calada > R:Balanza Ingreso > R:Tolva de carga silo Chief > SL:Balanza Ingreso > SL:Egreso > R:Salida 2 > SL:Ingreso > R:Balanza Ingreso,1,0.0007
+R:Pre ingreso > R:Balanza Ingreso > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Balanza Ingreso > SL:Ingreso > SL:Egreso > R:Pre ingreso > R:Calada > SL:Balanza Ingreso > R:Pre ingreso > R:Balanza Ingreso,1,0.0007
+SL:Egreso > SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Pre ingreso > R:Calada > SL:Carga/descarga,1,0.0007
+R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/descarga,1,0.0007
+R:Playa 3 > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Playa 3 > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > R:Calada > R:Playa 3 > R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Calada > R:Balanza Ingreso > R:Playa 3 > R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > R:Pre ingreso > R:Calada > R:Balanza Ingreso > R:Playa 3 > SL:Ingreso > SL:Egreso > R:Pre ingreso > R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > R:Pre ingreso > R:Calada > R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Balanza Ingreso > SL:Ingreso,1,0.0007
+R:Pre ingreso > R:Salida 2 > R:Tolva de carga silo Chief,1,0.0007
+R:Pre ingreso > R:Salida 2 > R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > R:Playa 3 > SL:Egreso,1,0.0007
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/descarga,1,0.0007
+R:Calada > SL:Balanza Ingreso > SL:Egreso > SL:Balanza Ingreso,1,0.0007
+R:Balanza Ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > R:Calada > SL:Balanza Ingreso > R:Volcable 1 > R:Volcable Silo Keppler > R:Volcable 1,1,0.0007
+R:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Salida 2 > SL:Plataformas Volcables > R:Pre ingreso > R:Playa 3 > R:Salida 2 > SL:Egreso,1,0.0007
+R:Pre ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Balanza Ingreso > SL:Balanza Ingreso > R:Salida 2 > R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > SL:Plataformas Volcables > R:Calada > R:Salida 2 > R:Pre ingreso > R:Salida 2 > R:Calada > SL:Egreso,1,0.0007
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > R:Playa 3 > SL:Ingreso > SL:Plataformas Volcables > R:Salida 2 > R:Playa 3 > R:Salida 2 > SL:Ingreso,1,0.0007
+R:Balanza Ingreso > R:Calada > R:Salida 2,1,0.0007
+R:Calada > R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > SL:Ingreso,1,0.0007
+SL:Egreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Calada > SL:Balanza Ingreso,1,0.0007
+R:Calada > SL:Balanza Ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Calada > R:Playa 3 > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Calada > SL:Balanza Ingreso > SL:Egreso > R:Calada > SL:Balanza Ingreso,1,0.0007
+R:Tolva de carga silo Chief > SL:Balanza Ingreso > R:Pre ingreso > R:Salida 2 > R:Balanza Ingreso > R:Tolva de carga silo Chief > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Calada > SL:Balanza Ingreso,1,0.0007
+R:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Tolva de carga silo Chief > R:Calada > R:Pre ingreso,1,0.0007
+R:Pre ingreso > R:Calada > SL:Plataformas Volcables,1,0.0007
+SL:Ingreso > SL:Carga / Descarga OSL > SL:Calada > SL:Balanza Ingreso,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Carga / Descarga OSL,1,0.0007
+R:Pre ingreso > R:Calada > R:Pre ingreso > SL:Balanza Ingreso > R:Tolva de carga silo Chief > R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Pre ingreso > R:Salida 2,1,0.0007
+R:Calada > R:Playa 3 > SL:Ingreso > R:Pre ingreso > R:Balanza Ingreso > R:Playa 3 > SL:Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Calada,1,0.0007
+R:Pre ingreso > R:Calada > R:Balanza Ingreso,1,0.0007
+R:Pre ingreso > R:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+R:Salida 2 > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Calada > R:Salida 2 > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Playa 3 > SL:Ingreso,1,0.0007
+SL:Plataformas Volcables > SL:Balanza Ingreso > SL:Egreso > R:Pre ingreso > R:Balanza Ingreso > R:Salida 2 > SL:Plataformas Volcables > SL:Egreso > R:Salida 2 > SL:Ingreso > SL:Egreso > R:Pre ingreso > R:Calada > SL:Plataformas Volcables > SL:Egreso > R:Pre ingreso > SL:Balanza Ingreso > SL:Egreso > SL:Ingreso > SL:Egreso > SL:Balanza Ingreso > R:Calada > R:Balanza Ingreso > R:Playa 3 > SL:Balanza Ingreso > SL:Egreso > R:Pre ingreso > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Tolva de carga silo Chief > R:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Pre ingreso > R:Calada,1,0.0007
+R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > SL:Balanza Ingreso > R:Playa 3 > SL:Balanza Ingreso > R:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Calada > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > R:Tolva de carga silo Chief > R:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Playa 3 > SL:Balanza Ingreso,1,0.0007
+R:Pre ingreso > R:Calada > SL:Balanza Ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Calada > R:Salida 2 > SL:Balanza Ingreso > R:Balanza Ingreso > R:Calada > SL:Balanza Ingreso,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Pre ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > SL:Plataformas Volcables > R:Pre ingreso > R:Playa 3 > R:Tolva de carga silo Chief > SL:Balanza Ingreso > SL:Egreso > R:Calada > SL:Plataformas Volcables,1,0.0007
+R:Playa 3 > SL:Balanza Ingreso > R:Playa 3 > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Pre ingreso > R:Calada,1,0.0007
+SL:Balanza Ingreso > SL:Carga / Descarga OSL > SL:Egreso,1,0.0007
+R:Playa 3 > R:Pre ingreso,1,0.0007
+SL:Ingreso > SL:Carga/Descarga Renova > SL:Ingreso,1,0.0007
+SL:Ingreso > SL:Carga/descarga > SL:Egreso,1,0.0007
+R:Calada > R:Playa 3 > R:Calada > R:Salida 2,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Egreso > SL:Carga/Descarga Renova > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Egreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+SL:Ingreso > SL:Carga/Descarga Renova > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > SL:Ingreso > SL:Egreso,1,0.0007
+R:Calada > R:Salida 2 > R:Balanza Ingreso,1,0.0007
+SL:Calada > SL:Plataformas Volcables,1,0.0007
+SL:Ingreso > SL:Egreso > SL:Ingreso > SL:Plataformas Volcables > SL:Balanza Ingreso > SL:Egreso > SL:Plataformas Volcables > SL:Egreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Calada,1,0.0007
+R:Playa 3 > R:Calada > R:Salida 2 > SL:Egreso > R:Calada > SL:Egreso > R:Calada > SL:Ingreso,1,0.0007
+SL:Plataformas Volcables > SL:Balanza Ingreso > SL:Balanza Egreso > SL:Egreso > R:Playa 3 > R:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Calada,1,0.0007
+SL:Egreso > SL:Ingreso > SL:Egreso > R:Balanza Ingreso > R:Playa 3 > R:Balanza Ingreso > R:Calada > R:Salida 2 > R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Balanza Egreso,1,0.0007
+SL:Plataformas Volcables > R:Salida 2 > SL:Balanza Ingreso > R:Tolva de carga silo Chief > SL:Balanza Ingreso,1,0.0007
+SL:Balanza Ingreso > SL:Plataformas Volcables > R:Pre ingreso > SL:Balanza Ingreso > R:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables,1,0.0007
+SL:Plataformas Volcables > SL:Egreso > R:Calada > R:Salida 2 > R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > SL:Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Calada > R:Salida 2 > SL:Balanza Ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > R:Salida 2 > R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > R:Calada > R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Calada > SL:Balanza Ingreso > R:Calada > R:Balanza Ingreso > R:Calada > SL:Egreso > R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Balanza Ingreso > R:Playa 3 > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Calada > SL:Ingreso > R:Balanza Ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Balanza Ingreso > R:Calada > SL:Ingreso > R:Calada > R:Salida 2,1,0.0007
+SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Calada > SL:Ingreso,1,0.0007
+R:Pre ingreso > R:Calada > SL:Ingreso > SL:Calada > SL:Balanza Ingreso,1,0.0007
+R:Calada > SL:Balanza Ingreso > R:Calada,1,0.0007
+R:Calada > R:Pre ingreso,1,0.0007
+SL:Egreso > R:Balanza Ingreso > SL:Egreso > R:Calada,1,0.0007
+R:Calada > R:Balanza Ingreso > R:Playa 3 > SL:Egreso > R:Balanza Ingreso > SL:Plataformas Volcables > R:Calada,1,0.0007
+R:Calada > R:Salida 2 > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Tolva de carga silo Chief > SL:Plataformas Volcables > R:Pre ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Pre ingreso > R:Salida 2 > R:Playa 3 > R:Calada > R:Salida 2 > SL:Balanza Ingreso > SL:Egreso > R:Pre ingreso > R:Salida 2 > SL:Balanza Ingreso,1,0.0007
+R:Balanza Ingreso > R:Playa 3 > R:Tolva de carga silo Chief > R:Salida 2 > SL:Egreso,1,0.0007
+SL:Ingreso > R:Calada > R:Salida 2 > SL:Balanza Ingreso,1,0.0007
+SL:Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Carga / Descarga OSL,1,0.0007
+SL:Ingreso > SL:Carga / Descarga OSL > SL:Egreso,1,0.0007
+SL:Carga/descarga > SL:Calada > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Balanza Egreso > SL:Carga/descarga > SL:Calada > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Salida 2 > R:Balanza Ingreso > R:Calada,1,0.0007
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Carga/descarga,1,0.0007
+R:Salida 2 > SL:Balanza Ingreso > R:Pre ingreso,1,0.0007
+R:Calada > R:Salida 2 > R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > SL:Calada > SL:Egreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Calada > SL:Balanza Ingreso > R:Calada > SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso,1,0.0007
+R:Pre ingreso > R:Salida 2 > SL:Balanza Ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Balanza Egreso > SL:Egreso > R:Pre ingreso > R:Balanza Ingreso > R:Salida 2 > SL:Ingreso > SL:Egreso > R:Pre ingreso > R:Playa 3 > SL:Balanza Ingreso > R:Balanza Ingreso > SL:Balanza Ingreso > SL:Egreso > SL:Balanza Ingreso,1,0.0007
+R:Pre ingreso > R:Calada > SL:Ingreso > SL:Egreso > R:Pre ingreso > R:Calada > R:Salida 2 > SL:Balanza Ingreso > R:Pre ingreso,1,0.0007
+SL:Plataformas Volcables > R:Calada > SL:Egreso > R:Playa 3 > SL:Plataformas Volcables > SL:Egreso > R:Calada,1,0.0007
+SL:Egreso > R:Calada,1,0.0007
+R:Pre ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables,1,0.0007
+R:Salida 2 > R:Pre ingreso > R:Salida 2 > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Pre ingreso > R:Balanza Ingreso > R:Playa 3 > SL:Ingreso > SL:Plataformas Volcables > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Balanza Egreso > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Pre ingreso > R:Balanza Ingreso > SL:Ingreso > SL:Egreso > R:Salida 2 > SL:Ingreso > SL:Egreso,1,0.0007
+SL:Egreso > R:Salida 2,1,0.0007
+SL:Ingreso > R:Salida 2 > SL:Ingreso,1,0.0007
+SL:Ingreso > SL:Egreso > SL:Ingreso,1,0.0007
+R:Ingreso > R:Salida 2 > SL:Calada > SL:Egreso,1,0.0007
+R:Salida 2 > SL:Ingreso > SL:Carga/Descarga Renova > SL:Egreso,1,0.0007
+SL:Calada > SL:Carga / Descarga OSL > SL:Egreso,1,0.0007
+SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Balanza Egreso,1,0.0007
+R:Salida 2 > R:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Balanza Egreso > SL:Egreso,1,0.0007
+SL:Egreso > R:Balanza Ingreso > SL:Egreso > R:Balanza Ingreso > SL:Egreso > R:Balanza Egreso,1,0.0007
+SL:Egreso > R:Balanza Egreso > SL:Egreso > R:Balanza Ingreso,1,0.0007
+SL:Egreso > R:Balanza Ingreso > SL:Egreso > R:Balanza Ingreso > SL:Egreso > R:Balanza Ingreso,1,0.0007
+SL:Egreso > R:Balanza Ingreso > SL:Egreso > R:Balanza Ingreso > R:Balanza Egreso > SL:Egreso > R:Balanza Ingreso > R:Balanza Egreso,1,0.0007
+SL:Carga/Descarga Renova > R:Pre ingreso,1,0.0007
+R:Salida 2 > R:Playa 3,1,0.0007
+R:Calada > R:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Pre ingreso > R:Playa 3,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > R:Salida 2,1,0.0007
+R:Balanza Ingreso > R:Balanza Egreso > R:Balanza Ingreso > R:Balanza Egreso,1,0.0007
+SL:Calada > SL:Balanza Ingreso > SL:Carga/descarga > SL:Egreso,1,0.0007
+SL:Egreso > SL:Balanza Egreso > R:Balanza Egreso,1,0.0007
+SL:Balanza Ingreso > R:Calada > R:Playa 3 > SL:Balanza Ingreso,1,0.0007
+R:Calada > R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Volcable Silo Keppler > SL:Balanza Ingreso,1,0.0007
+R:Volcable Silo Keppler > R:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Pre ingreso,1,0.0007
+R:Calada > R:Playa 3 > SL:Balanza Ingreso > SL:Egreso > R:Playa 3 > R:Tolva de carga silo Chief > R:Salida 2 > R:Playa 3,1,0.0007
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Egreso,1,0.0007
+R:Balanza Egreso > R:Balanza Ingreso > R:Balanza Egreso,1,0.0007
+R:Calada > SL:Ingreso > SL:Calada > SL:Balanza Egreso,1,0.0007
+SL:Calada > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+SL:Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Calada > SL:Balanza Ingreso,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Calada > SL:Plataformas Volcables > SL:Egreso > SL:Ingreso > SL:Carga/Descarga Renova,1,0.0007
+SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Ingreso > SL:Balanza Ingreso > SL:Calada > SL:Balanza Ingreso,1,0.0007
+R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Pre ingreso > R:Calada > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+R:Balanza Ingreso > R:Pre ingreso > R:Salida 2,1,0.0007
+R:Playa 3 > R:Volcable 2,1,0.0007
+R:Volcable Silo Keppler > R:Volcable 1,1,0.0007
+SL:Egreso > SL:Calada > SL:Balanza Ingreso,1,0.0007
+SL:Balanza Egreso > SL:Balanza Ingreso,1,0.0007
+R:Salida 2 > SL:Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Balanza Egreso > SL:Calada,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+SL:Egreso > SL:Balanza Ingreso > SL:Calada,1,0.0007
+R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Carga/descarga,1,0.0007
+SL:Egreso > R:Balanza Ingreso > R:Balanza Egreso,1,0.0007
+SL:Ingreso > SL:Calada > SL:Carga/Descarga Renova > SL:Carga / Descarga OSL > SL:Egreso,1,0.0007
+R:Calada > R:Pre ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Balanza Ingreso,1,0.0007
+R:Pre ingreso > R:Salida 2 > R:Balanza Ingreso,1,0.0007
+SL:Balanza Ingreso > SL:Calada > SL:Carga/Descarga Renova,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Carga / Descarga OSL > SL:Balanza Ingreso > SL:Carga / Descarga OSL,1,0.0007
+SL:Ingreso > SL:Egreso > SL:Calada > SL:Carga / Descarga OSL > SL:Egreso,1,0.0007
+SL:Egreso > SL:Balanza Egreso > SL:Egreso > SL:Balanza Egreso > SL:Carga/descarga > SL:Balanza Egreso,1,0.0007
+SL:Egreso > R:Balanza Egreso > SL:Egreso,1,0.0007
+R:Balanza Ingreso > SL:Egreso > SL:Carga/descarga > SL:Balanza Egreso > SL:Egreso > SL:Carga/descarga > SL:Balanza Egreso > SL:Carga/Descarga Renova,1,0.0007
+R:Playa 3 > R:Volcable Silo Keppler,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Egreso,1,0.0007
+R:Balanza Ingreso > SL:Egreso > R:Balanza Ingreso,1,0.0007
+R:Balanza Ingreso > R:Playa 3 > R:Volcable 1,1,0.0007
+R:Salida 2 > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+SL:Egreso > SL:Carga/Descarga Renova > SL:Egreso > SL:Carga/Descarga Renova > SL:Egreso,1,0.0007
+R:Pre ingreso > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables,1,0.0007
+SL:Ingreso > SL:Calada > SL:Balanza Egreso > SL:Egreso,1,0.0007
+R:Calada > R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > SL:Balanza Ingreso > SL:Egreso > R:Tolva de carga silo Chief,1,0.0007
+R:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Balanza Egreso > SL:Egreso > SL:Carga/Descarga Renova > SL:Egreso > SL:Carga/Descarga Renova > SL:Balanza Egreso > SL:Egreso,1,0.0007
+R:Balanza Ingreso > SL:Egreso > SL:Balanza Egreso > SL:Egreso > SL:Carga/Descarga Renova > SL:Balanza Egreso > R:Pre ingreso,1,0.0007
+SL:Egreso > SL:Carga/descarga > SL:Egreso,1,0.0007
+R:Salida 2 > R:Balanza Ingreso > SL:Egreso > SL:Carga/Descarga Renova > SL:Balanza Egreso > SL:Egreso,1,0.0007
+R:Salida 2 > SL:Egreso > SL:Carga/Descarga Renova > SL:Egreso > SL:Balanza Egreso > SL:Egreso,1,0.0007
+R:Calada > R:Salida 2 > SL:Ingreso > SL:Calada > SL:Egreso > R:Pre ingreso > R:Calada > R:Salida 2,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > R:Salida 2,1,0.0007
+R:Calada > R:Salida 2 > SL:Ingreso > SL:Calada,1,0.0007
+SL:Balanza Ingreso > R:Pre ingreso,1,0.0007
+SL:Egreso > SL:Carga/Descarga Renova > SL:Egreso > R:Balanza Egreso > SL:Balanza Egreso > SL:Egreso > R:Balanza Egreso,1,0.0007
+R:Calada > R:Pre ingreso > R:Calada,1,0.0007
+R:Calada > R:Pre ingreso > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+R:Calada > R:Playa 3 > SL:Ingreso > R:Pre ingreso > R:Salida 2 > SL:Ingreso > SL:Balanza Egreso > R:Pre ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > SL:Balanza Ingreso > R:Pre ingreso > R:Salida 2 > SL:Ingreso > R:Pre ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+SL:Ingreso > R:Pre ingreso > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Salida 2 > R:Balanza Ingreso > R:Salida 2 > R:Calada > R:Salida 2 > R:Calada > R:Salida 2,1,0.0007
+SL:Egreso > SL:Carga/Descarga Renova > SL:Carga/descarga,1,0.0007
+SL:Plataformas Volcables > R:Balanza Ingreso > R:Playa 3,1,0.0007
+SL:Plataformas Volcables > R:Tolva de carga silo Chief,1,0.0007
+R:Calada > SL:Plataformas Volcables > R:Pre ingreso > SL:Balanza Ingreso > SL:Ingreso,1,0.0007
+SL:Plataformas Volcables > R:Balanza Ingreso > R:Calada > R:Balanza Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Calada > R:Balanza Ingreso > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Tolva de carga silo Chief > SL:Plataformas Volcables > R:Pre ingreso,1,0.0007
+R:Balanza Ingreso > R:Calada > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+SL:Balanza Ingreso > R:Playa 3 > SL:Plataformas Volcables > SL:Egreso > R:Calada,1,0.0007
+SL:Plataformas Volcables > SL:Egreso > R:Tolva de carga silo Chief > R:Salida 2,1,0.0007
+SL:Ingreso > R:Calada,1,0.0007
+SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > SL:Ingreso,1,0.0007
+SL:Ingreso > R:Pre ingreso > SL:Ingreso,1,0.0007
+SL:Plataformas Volcables > SL:Egreso > SL:Plataformas Volcables > SL:Ingreso,1,0.0007
+SL:Balanza Ingreso > R:Pre ingreso > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Egreso,1,0.0007
+SL:Balanza Ingreso > SL:Plataformas Volcables > R:Balanza Ingreso > R:Tolva de carga silo Chief > SL:Ingreso > R:Pre ingreso,1,0.0007
+R:Pre ingreso > SL:Ingreso > SL:Balanza Ingreso > R:Balanza Ingreso > SL:Ingreso > R:Pre ingreso > R:Balanza Ingreso > R:Playa 3,1,0.0007
+R:Pre ingreso > R:Balanza Ingreso > SL:Ingreso > R:Balanza Ingreso > R:Playa 3 > SL:Ingreso > R:Pre ingreso > R:Balanza Ingreso > R:Playa 3 > SL:Ingreso,1,0.0007
+R:Balanza Ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Balanza Ingreso > R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables > R:Balanza Ingreso,1,0.0007
+R:Salida 2 > R:Balanza Ingreso > R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > SL:Ingreso > R:Pre ingreso > R:Salida 2 > R:Balanza Ingreso > R:Calada > R:Salida 2 > SL:Ingreso > R:Pre ingreso,1,0.0007
+R:Calada > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables > R:Pre ingreso > R:Salida 2 > R:Balanza Ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+SL:Balanza Egreso > SL:Ingreso,1,0.0007
+R:Calada > R:Pre ingreso > R:Calada > R:Pre ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Pre ingreso > R:Balanza Ingreso > R:Playa 3 > R:Balanza Ingreso > R:Playa 3 > R:Calada > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables > R:Pre ingreso,1,0.0007
+SL:Plataformas Volcables > R:Calada > SL:Ingreso > R:Pre ingreso,1,0.0007
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Pre ingreso > R:Calada > R:Balanza Ingreso > R:Playa 3 > SL:Egreso,1,0.0007
+R:Salida 2 > SL:Balanza Ingreso > R:Calada,1,0.0007
+SL:Balanza Ingreso > SL:Egreso > R:Playa 3 > SL:Balanza Ingreso,1,0.0007
+R:Pre ingreso > R:Calada > R:Playa 3 > R:Calada > SL:Egreso > R:Calada > R:Playa 3 > SL:Ingreso,1,0.0007
+SL:Plataformas Volcables > SL:Egreso > R:Playa 3 > SL:Ingreso > SL:Plataformas Volcables,1,0.0007
+R:Calada > R:Pre ingreso > R:Balanza Ingreso > R:Calada > R:Playa 3 > R:Salida 2 > SL:Ingreso,1,0.0007
+R:Pre ingreso > SL:Plataformas Volcables > SL:Egreso > R:Pre ingreso > R:Balanza Ingreso > SL:Egreso > R:Salida 2 > R:Balanza Ingreso > R:Playa 3 > R:Balanza Egreso > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Balanza Ingreso,1,0.0007
+R:Calada > R:Pre ingreso > R:Calada > R:Pre ingreso > R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > R:Pre ingreso > R:Balanza Ingreso,1,0.0007
+SL:Plataformas Volcables > SL:Egreso > R:Calada,1,0.0007
+R:Tolva de carga silo Chief > SL:Egreso,1,0.0007
+SL:Egreso > R:Calada > SL:Balanza Ingreso,1,0.0007
+R:Ingreso > R:Pre ingreso,1,0.0007
+R:Calada > SL:Plataformas Volcables > SL:Egreso > R:Balanza Ingreso > R:Playa 3 > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > SL:Ingreso,1,0.0007
+SL:Balanza Ingreso > SL:Egreso > R:Calada > SL:Balanza Ingreso > SL:Carga/Descarga Renova,1,0.0007
+SL:Carga/Descarga Renova > R:Pre ingreso > SL:Balanza Ingreso,1,0.0007
+SL:Egreso > SL:Ingreso > SL:Carga/Descarga Renova > SL:Balanza Ingreso > SL:Carga/Descarga Renova,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Ingreso > SL:Egreso,1,0.0007
+R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > SL:Egreso > R:Pre ingreso > R:Salida 2 > SL:Balanza Ingreso > SL:Egreso > R:Pre ingreso > SL:Egreso > R:Salida 2,1,0.0007
+R:Pre ingreso > R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Balanza Ingreso > R:Tolva de carga silo Chief > R:Calada > SL:Ingreso > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > SL:Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > R:Pre ingreso > R:Balanza Ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Egreso > R:Pre ingreso > R:Tolva de carga silo Chief > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > R:Pre ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Balanza Ingreso > R:Tolva de carga silo Chief > R:Calada > SL:Ingreso > SL:Plataformas Volcables > R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > R:Pre ingreso > R:Calada > R:Salida 2 > SL:Balanza Ingreso > R:Salida 2 > SL:Ingreso > R:Pre ingreso > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Pre ingreso > R:Balanza Ingreso > R:Calada > SL:Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Pre ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables > SL:Egreso > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Pre ingreso > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > SL:Ingreso,1,0.0007
+R:Calada > SL:Balanza Ingreso > R:Calada > SL:Balanza Ingreso,1,0.0007
+R:Pre ingreso > R:Calada > SL:Balanza Ingreso > SL:Egreso > R:Balanza Ingreso > SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+SL:Plataformas Volcables > R:Playa 3 > R:Volcable Silo Keppler,1,0.0007
+R:Playa 3 > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Playa 3,1,0.0007
+SL:Carga/Descarga Renova > SL:Carga / Descarga OSL,1,0.0007
+SL:Carga/Descarga Renova > SL:Plataformas Volcables > SL:Carga/Descarga Renova,1,0.0007
+R:Balanza Egreso > SL:Egreso > R:Pre ingreso > R:Balanza Ingreso > SL:Egreso > R:Pre ingreso > R:Salida 2 > R:Calada > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables,1,0.0007
+R:Pre ingreso > R:Salida 2 > R:Balanza Ingreso > R:Pre ingreso > R:Balanza Ingreso > R:Pre ingreso > R:Calada > R:Balanza Ingreso > R:Calada > R:Balanza Ingreso > SL:Ingreso > SL:Plataformas Volcables > R:Calada > R:Balanza Ingreso > SL:Egreso > R:Pre ingreso > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Calada > R:Balanza Egreso > R:Pre ingreso > R:Balanza Ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Egreso > R:Pre ingreso > R:Balanza Ingreso > R:Playa 3 > SL:Egreso > R:Balanza Ingreso > R:Playa 3 > R:Balanza Egreso > R:Salida 2 > SL:Ingreso > R:Calada > R:Balanza Ingreso > R:Calada > SL:Egreso > R:Calada > R:Balanza Ingreso,1,0.0007
+SL:Plataformas Volcables > R:Salida 2 > R:Balanza Ingreso > R:Salida 2 > R:Pre ingreso > R:Salida 2 > R:Balanza Ingreso > R:Playa 3 > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+SL:Plataformas Volcables > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > R:Salida 2 > R:Tolva de carga silo Chief > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+R:Pre ingreso > R:Salida 2 > SL:Plataformas Volcables > SL:Egreso > R:Balanza Ingreso > R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Pre ingreso > R:Calada > R:Salida 2 > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+R:Salida 2 > SL:Calada > SL:Balanza Ingreso > SL:Carga / Descarga OSL > SL:Calada,1,0.0007
+SL:Ingreso > SL:Egreso > R:Pre ingreso,1,0.0007
+R:Salida 2 > R:Pre ingreso,1,0.0007
+R:Pre ingreso > SL:Calada > SL:Balanza Ingreso > SL:Carga/Descarga Renova > SL:Carga / Descarga OSL > SL:Calada,1,0.0007
+R:Calada > R:Pre ingreso > R:Balanza Ingreso > R:Playa 3 > R:Calada > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > R:Salida 2 > R:Balanza Ingreso > R:Playa 3 > R:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Calada > SL:Plataformas Volcables > R:Balanza Ingreso,1,0.0007
+R:Pre ingreso > R:Balanza Ingreso > R:Calada > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables > R:Pre ingreso > R:Salida 2 > R:Balanza Ingreso > SL:Balanza Ingreso > R:Balanza Ingreso,1,0.0007
+R:Balanza Ingreso > R:Tolva de carga silo Chief > R:Pre ingreso > R:Calada > SL:Plataformas Volcables > R:Salida 2,1,0.0007
+R:Pre ingreso > R:Calada > R:Salida 2 > R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > R:Pre ingreso > R:Calada > R:Balanza Ingreso > R:Playa 3 > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Pre ingreso,1,0.0007
+R:Calada > R:Tolva de carga silo Chief,1,0.0007
+SL:Balanza Ingreso > SL:Balanza Egreso,1,0.0007
+R:Pre ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > SL:Ingreso,1,0.0007
+SL:Egreso > R:Pre ingreso > SL:Ingreso,1,0.0007
+SL:Balanza Ingreso > SL:Egreso > R:Salida 2 > SL:Egreso > R:Pre ingreso,1,0.0007
+R:Ingreso > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+SL:Egreso > SL:Ingreso > R:Salida 2,1,0.0007
+R:Calada > SL:Plataformas Volcables > R:Pre ingreso > SL:Egreso > SL:Plataformas Volcables,1,0.0007
+R:Balanza Ingreso > SL:Plataformas Volcables > R:Pre ingreso > R:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > SL:Plataformas Volcables > SL:Egreso > R:Calada > R:Salida 2,1,0.0007
+R:Tolva de carga silo Chief > R:Calada > R:Tolva de carga silo Chief > R:Pre ingreso > R:Playa 3,1,0.0007
+R:Balanza Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables,1,0.0007
+SL:Balanza Ingreso > SL:Egreso > R:Pre ingreso > SL:Balanza Ingreso > SL:Egreso > R:Playa 3 > R:Calada > SL:Ingreso > R:Playa 3 > R:Tolva de carga silo Chief > SL:Balanza Ingreso,1,0.0007
+SL:Plataformas Volcables > R:Salida 2 > SL:Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Playa 3,1,0.0007
+SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Calada > SL:Ingreso > SL:Plataformas Volcables,1,0.0007
+R:Balanza Egreso > SL:Ingreso,1,0.0007
+R:Tolva de carga silo Chief > R:Calada > SL:Balanza Ingreso > SL:Egreso > SL:Balanza Ingreso > SL:Egreso > R:Balanza Ingreso > R:Tolva de carga silo Chief > R:Calada > R:Salida 2 > SL:Ingreso,1,0.0007
+SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Ingreso > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+R:Calada > SL:Ingreso > R:Calada > R:Playa 3 > SL:Plataformas Volcables > R:Calada > SL:Egreso,1,0.0007
+R:Salida 2 > R:Playa 3 > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Calada > R:Salida 2 > R:Balanza Ingreso > R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Playa 3 > R:Pre ingreso > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+SL:Egreso > R:Calada > SL:Plataformas Volcables > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso,1,0.0007
+R:Playa 3 > R:Calada > R:Salida 2 > SL:Ingreso > R:Pre ingreso > R:Calada > R:Playa 3 > R:Salida 2 > SL:Ingreso,1,0.0007
+R:Calada > R:Pre ingreso > R:Calada > SL:Ingreso > R:Pre ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Tolva de carga silo Chief > SL:Ingreso,1,0.0007
+R:Calada > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > R:Calada,1,0.0007
+R:Pre ingreso > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso > R:Salida 2,1,0.0007
+R:Pre ingreso > R:Balanza Ingreso > R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables,1,0.0007
+R:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Pre ingreso > R:Balanza Ingreso > SL:Ingreso,1,0.0007
+R:Balanza Ingreso > R:Volcable Silo Keppler,1,0.0007
+R:Pre ingreso > R:Salida 2 > R:Calada > SL:Ingreso > SL:Balanza Ingreso > R:Calada > SL:Balanza Ingreso > SL:Plataformas Volcables,1,0.0007
+SL:Ingreso > R:Pre ingreso,1,0.0007
+SL:Ingreso > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+SL:Plataformas Volcables > SL:Balanza Ingreso > SL:Balanza Egreso > R:Calada,1,0.0007
+SL:Plataformas Volcables > R:Pre ingreso > SL:Balanza Ingreso,1,0.0007
+SL:Balanza Ingreso > R:Calada > SL:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Playa 3 > R:Tolva de carga silo Chief > R:Calada > R:Tolva de carga silo Chief,1,0.0007
+R:Playa 3 > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Tolva de carga silo Chief,1,0.0007
+R:Playa 3 > R:Tolva de carga silo Chief > R:Calada > SL:Plataformas Volcables > SL:Egreso > R:Playa 3 > R:Tolva de carga silo Chief > R:Calada,1,0.0007
+R:Playa 3 > SL:Balanza Ingreso,1,0.0007
+SL:Balanza Ingreso > SL:Ingreso,1,0.0007
+R:Ingreso > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+SL:Plataformas Volcables > SL:Egreso > R:Playa 3 > SL:Ingreso > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Tolva de carga silo Chief > R:Calada > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > R:Pre ingreso > R:Balanza Ingreso > SL:Plataformas Volcables > SL:Egreso > SL:Ingreso > SL:Balanza Ingreso > SL:Balanza Egreso > SL:Plataformas Volcables > SL:Egreso > R:Calada > SL:Egreso,1,0.0007
+R:Playa 3 > SL:Balanza Ingreso > SL:Plataformas Volcables > R:Playa 3 > SL:Ingreso > SL:Egreso > R:Pre ingreso > R:Balanza Ingreso > SL:Egreso,1,0.0007
+R:Pre ingreso > SL:Egreso > SL:Plataformas Volcables > R:Pre ingreso,1,0.0007
+SL:Ingreso > SL:Carga/Descarga Renova > SL:Calada > R:Calada,1,0.0007
+SL:Ingreso > R:Pre ingreso > R:Calada,1,0.0007
+SL:Plataformas Volcables > R:Calada,1,0.0007
+R:Calada > R:Playa 3 > SL:Balanza Ingreso > SL:Plataformas Volcables,1,0.0007
+SL:Plataformas Volcables > SL:Balanza Ingreso,1,0.0007
+R:Playa 3 > R:Balanza Egreso,1,0.0007
+SL:Ingreso > R:Salida 2 > SL:Ingreso > SL:Balanza Ingreso,1,0.0007
+R:Calada > SL:Plataformas Volcables > R:Playa 3 > SL:Plataformas Volcables > SL:Egreso,1,0.0007
+SL:Egreso > R:Pre ingreso > SL:Egreso,1,0.0007
+SL:Plataformas Volcables > R:Salida 2,1,0.0007
+SL:Egreso > R:Pre ingreso > R:Balanza Ingreso,1,0.0007
+SL:Balanza Ingreso > SL:Ingreso > SL:Balanza Ingreso > SL:Egreso > SL:Ingreso,1,0.0007

@@ -13,8 +13,10 @@ const out={days};
 const r7=pick(r=>r.resolved_executive_circuit_code==='R7',pkgDay); out.r7={ops:r7.length,dia:per(r7),...stats(r7)};
 const g=pick(r=>['R5','R6'].includes(r.resolved_executive_circuit_code),pkgDay); out.girasol={ops:g.length,dia:per(g),R5:g.filter(r=>r.resolved_executive_circuit_code==='R5').length,R6:g.filter(r=>r.resolved_executive_circuit_code==='R6').length,...stats(g)};
 const r4=pick(r=>r.resolved_executive_circuit_code==='R4',pkgDay); out.r4=r4.length;
-const PROD=/ACEITE|BORRA|GLICERINA|LECITINA|GOMA|ACIDO.? GRASO|METANOL|METILATO/, EXC=/ENVASADO|AGUA/, PL=new Set(['RICARDONE','TERMINAL_EMBARQUE','RENOPACK']);
-const lq=pick(r=>PROD.test(r.product_normalized||'')&&!EXC.test(r.product_normalized||'')&&PL.has(r.planta_normalized)&&['INGRESO','EGRESO'].includes(r.movement_type),excDay);
+const PROD=/ACEITE|BORRA|GLICERINA|LECITINA|GOMA|ACIDO.? GRASO|METANOL|METILATO/, EXC=/ENVASADO|AGUA/, PL=new Set(['RICARDONE','TERMINAL_EMBARQUE']); // Renopack queda fuera: no tiene cámaras instaladas
+// líquidos = movimientos con circuito líquido resuelto (R8, SL1, SL2, SL3), así cada circuito suma igual en todas las láminas
+const LQC=new Set(['R8','SL1','SL2','SL3']);
+const lq=pick(r=>LQC.has(r.resolved_executive_circuit_code)&&!/AGUA/.test(r.product_normalized||'')&&PL.has(r.planta_normalized)&&['INGRESO','EGRESO'].includes(r.movement_type),excDay);
 out.liquidos={camiones:lq.length,ingresos:lq.filter(r=>r.movement_type==='INGRESO').length,egresos:lq.filter(r=>r.movement_type==='EGRESO').length,dia:per(lq),...stats(lq)};
 const src=r=>r.source_date;
 const pt=pick(r=>/^R3[012]$/.test(r.resolved_executive_circuit_code),src); out.pelletTransile={viajes:pt.length,dia:per(pt),camiones:new Set(pt.map(r=>r.plate_normalized)).size,kgs:pt.reduce((s,r)=>s+(+r.kgs_neto||0),0)};
@@ -24,6 +26,8 @@ const r29=pick(r=>r.resolved_executive_circuit_code==='R29',src); out.r29={ops:r
 // líquidos por circuito resuelto (mismo denominador)
 const byC={};for(const r of lq){const c=r.resolved_executive_circuit_code||'sin circuito';byC[c]=(byC[c]||0)+1}
 out.liquidos.porCircuito=byC;
+// por circuito: E = egreso = carga, I = ingreso = descarga
+const byCM={};for(const r of lq){const c=r.resolved_executive_circuit_code;(byCM[c]??={carga:0,descarga:0})[r.movement_type==='EGRESO'?'carga':'descarga']++}out.liquidos.porCircuitoMov=byCM;
 const prod={};for(const r of lq){prod[r.product_normalized]=(prod[r.product_normalized]||0)+1};out.liquidos.porProducto=prod;
 // pellet: viajes por camión y día (pares camión-día)
 const pairs=new Set(pt.map(r=>r.plate_normalized+'|'+r.source_date));out.pelletTransile.paresCamionDia=pairs.size;

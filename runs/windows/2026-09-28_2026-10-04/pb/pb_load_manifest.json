@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-10-01T18:13:09.862Z",
+  "generated_at": "2026-10-07T20:10:57.124Z",
   "load_period_start": "2026-09-27",
-  "load_period_end": "2026-09-30",
+  "load_period_end": "2026-10-04",
   "load_group_type": "day",
   "layer": "executive_committee",
   "source_files_count": 5,
   "source_days": [
-    "2026-09-27_2026-09-30"
+    "2026-09-27_2026-10-04"
   ],
-  "output_folder": "data/powerbi/rango_2026-09-27_2026-09-30/",
+  "output_folder": "data/powerbi/rango_2026-09-27_2026-10-04/",
   "output_files": [
     "pb_committee_summary.csv",
     "pb_final_circuits.csv",
@@ -69,13 +69,13 @@
   ],
   "total_rows_by_file": {
     "pb_committee_summary.csv": 1,
-    "pb_final_circuits.csv": 641,
+    "pb_final_circuits.csv": 1112,
     "pb_circuit_summary.csv": 1,
-    "pb_anomalies.csv": 244,
+    "pb_anomalies.csv": 377,
     "pb_camera_committee_status.csv": 0,
     "pb_camera_lpr_analysis.csv": 0,
     "pb_alerts_operational.csv": 0,
-    "pb_circuit_coverage.csv": 36,
+    "pb_circuit_coverage.csv": 37,
     "pb_dss_vs_truckflow.csv": 6,
     "pb_transform_summary.csv": 2,
     "pb_camera_status_general.csv": 0,
@@ -86,8 +86,8 @@
     "pb_front_alerts.csv": 0,
     "pb_rear_events.csv": 0,
     "pb_rear_alerts.csv": 0,
-    "circuit_timing_summary.csv": 5,
-    "circuit_timing_journeys.csv": 553
+    "circuit_timing_summary.csv": 6,
+    "circuit_timing_journeys.csv": 951
   },
   "rules_version": "etl_transform_v17"
 }

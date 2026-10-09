@@ -1,0 +1,634 @@
+[
+ {
+  "op": "jun-jul",
+  "dia": "2026-06-30",
+  "viajes": 48,
+  "camiones": 29,
+  "horas": 11.7,
+  "viajesPorCamion": 1.7,
+  "viajesHora": 4.1,
+  "leidos": 0,
+  "ciclo": null,
+  "ric": null,
+  "puerto": null,
+  "sl": null,
+  "volcables": [],
+  "porVolcable": {}
+ },
+ {
+  "op": "jun-jul",
+  "dia": "2026-07-01",
+  "viajes": 135,
+  "camiones": 42,
+  "horas": 26.6,
+  "viajesPorCamion": 3.2,
+  "viajesHora": 5.1,
+  "leidos": 0,
+  "ciclo": null,
+  "ric": null,
+  "puerto": null,
+  "sl": null,
+  "volcables": [],
+  "porVolcable": {}
+ },
+ {
+  "op": "jun-jul",
+  "dia": "2026-07-02",
+  "viajes": 41,
+  "camiones": 18,
+  "horas": 25.8,
+  "viajesPorCamion": 2.3,
+  "viajesHora": 1.6,
+  "leidos": 0,
+  "ciclo": null,
+  "ric": null,
+  "puerto": null,
+  "sl": null,
+  "volcables": [],
+  "porVolcable": {}
+ },
+ {
+  "op": "jun-jul",
+  "dia": "2026-07-03",
+  "viajes": 69,
+  "camiones": 34,
+  "horas": 49.3,
+  "viajesPorCamion": 2,
+  "viajesHora": 1.4,
+  "leidos": 0,
+  "ciclo": null,
+  "ric": null,
+  "puerto": null,
+  "sl": null,
+  "volcables": [],
+  "porVolcable": {}
+ },
+ {
+  "op": "jun-jul",
+  "dia": "2026-07-04",
+  "viajes": 44,
+  "camiones": 27,
+  "horas": 13.1,
+  "viajesPorCamion": 1.6,
+  "viajesHora": 3.4,
+  "leidos": 0,
+  "ciclo": null,
+  "ric": null,
+  "puerto": null,
+  "sl": null,
+  "volcables": [],
+  "porVolcable": {}
+ },
+ {
+  "op": "jul",
+  "dia": "2026-07-08",
+  "viajes": 25,
+  "camiones": 24,
+  "horas": 4.3,
+  "viajesPorCamion": 1,
+  "viajesHora": 5.7,
+  "leidos": 0,
+  "ciclo": null,
+  "ric": null,
+  "puerto": null,
+  "sl": null,
+  "volcables": [],
+  "porVolcable": {}
+ },
+ {
+  "op": "jul",
+  "dia": "2026-07-09",
+  "viajes": 171,
+  "camiones": 59,
+  "horas": 24.9,
+  "viajesPorCamion": 2.9,
+  "viajesHora": 6.9,
+  "leidos": 0,
+  "ciclo": null,
+  "ric": null,
+  "puerto": null,
+  "sl": null,
+  "volcables": [],
+  "porVolcable": {}
+ },
+ {
+  "op": "jul",
+  "dia": "2026-07-10",
+  "viajes": 109,
+  "camiones": 52,
+  "horas": 24.6,
+  "viajesPorCamion": 2.1,
+  "viajesHora": 4.4,
+  "leidos": 0,
+  "ciclo": null,
+  "ric": null,
+  "puerto": null,
+  "sl": null,
+  "volcables": [],
+  "porVolcable": {}
+ },
+ {
+  "op": "jul",
+  "dia": "2026-07-11",
+  "viajes": 121,
+  "camiones": 51,
+  "horas": 23.8,
+  "viajesPorCamion": 2.4,
+  "viajesHora": 5.1,
+  "leidos": 0,
+  "ciclo": null,
+  "ric": null,
+  "puerto": null,
+  "sl": null,
+  "volcables": [],
+  "porVolcable": {}
+ },
+ {
+  "op": "jul",
+  "dia": "2026-07-12",
+  "viajes": 149,
+  "camiones": 50,
+  "horas": 34,
+  "viajesPorCamion": 3,
+  "viajesHora": 4.4,
+  "leidos": 0,
+  "ciclo": null,
+  "ric": null,
+  "puerto": null,
+  "sl": null,
+  "volcables": [],
+  "porVolcable": {}
+ },
+ {
+  "op": "jul",
+  "dia": "2026-07-13",
+  "viajes": 64,
+  "camiones": 43,
+  "horas": 10.3,
+  "viajesPorCamion": 1.5,
+  "viajesHora": 6.2,
+  "leidos": 0,
+  "ciclo": null,
+  "ric": null,
+  "puerto": null,
+  "sl": null,
+  "volcables": [],
+  "porVolcable": {}
+ },
+ {
+  "op": "jul",
+  "dia": "2026-07-15",
+  "viajes": 129,
+  "camiones": 34,
+  "horas": 20.3,
+  "viajesPorCamion": 3.8,
+  "viajesHora": 6.3,
+  "leidos": 0,
+  "ciclo": null,
+  "ric": null,
+  "puerto": null,
+  "sl": null,
+  "volcables": [],
+  "porVolcable": {}
+ },
+ {
+  "op": "28/8",
+  "dia": "2026-08-18",
+  "viajes": 21,
+  "camiones": 21,
+  "horas": 6,
+  "viajesPorCamion": 1,
+  "viajesHora": 3.5,
+  "leidos": 16,
+  "ciclo": 300,
+  "ric": 202,
+  "puerto": 59,
+  "sl": 79,
+  "volcables": [
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 15
+  }
+ },
+ {
+  "op": "28/8",
+  "dia": "2026-08-19",
+  "viajes": 159,
+  "camiones": 55,
+  "horas": 27.4,
+  "viajesPorCamion": 2.9,
+  "viajesHora": 5.8,
+  "leidos": 125,
+  "ciclo": 411,
+  "ric": 171,
+  "puerto": 184,
+  "sl": 202,
+  "volcables": [
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 108,
+   "V3": 1
+  }
+ },
+ {
+  "op": "28/8",
+  "dia": "2026-08-20",
+  "viajes": 145,
+  "camiones": 56,
+  "horas": 25.3,
+  "viajesPorCamion": 2.6,
+  "viajesHora": 5.7,
+  "leidos": 112,
+  "ciclo": 513,
+  "ric": 124,
+  "puerto": 295,
+  "sl": 326,
+  "volcables": [
+   "V3",
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 70,
+   "V3": 23
+  }
+ },
+ {
+  "op": "28/8",
+  "dia": "2026-08-21",
+  "viajes": 152,
+  "camiones": 52,
+  "horas": 24.7,
+  "viajesPorCamion": 2.9,
+  "viajesHora": 6.2,
+  "leidos": 114,
+  "ciclo": 309,
+  "ric": 70,
+  "puerto": 201,
+  "sl": 210,
+  "volcables": [
+   "V3",
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 32,
+   "V3": 63
+  }
+ },
+ {
+  "op": "28/8",
+  "dia": "2026-08-22",
+  "viajes": 55,
+  "camiones": 40,
+  "horas": 11.8,
+  "viajesPorCamion": 1.4,
+  "viajesHora": 4.6,
+  "leidos": 37,
+  "ciclo": 193,
+  "ric": 39,
+  "puerto": 97,
+  "sl": 123,
+  "volcables": [
+   "V3",
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 22,
+   "V3": 7
+  }
+ },
+ {
+  "op": "4/9",
+  "dia": "2026-08-28",
+  "viajes": 117,
+  "camiones": 42,
+  "horas": 17.8,
+  "viajesPorCamion": 2.8,
+  "viajesHora": 6.6,
+  "leidos": 85,
+  "ciclo": 261,
+  "ric": 97,
+  "puerto": 116,
+  "sl": 136,
+  "volcables": [
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 79
+  }
+ },
+ {
+  "op": "4/9",
+  "dia": "2026-08-29",
+  "viajes": 169,
+  "camiones": 56,
+  "horas": 24.4,
+  "viajesPorCamion": 3,
+  "viajesHora": 6.9,
+  "leidos": 129,
+  "ciclo": 384,
+  "ric": 77,
+  "puerto": 255,
+  "sl": 267,
+  "volcables": [
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 114
+  }
+ },
+ {
+  "op": "4/9",
+  "dia": "2026-08-30",
+  "viajes": 123,
+  "camiones": 50,
+  "horas": 24.4,
+  "viajesPorCamion": 2.5,
+  "viajesHora": 5.1,
+  "leidos": 94,
+  "ciclo": 460,
+  "ric": 50,
+  "puerto": 342,
+  "sl": 358,
+  "volcables": [
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 78
+  }
+ },
+ {
+  "op": "4/9",
+  "dia": "2026-08-31",
+  "viajes": 158,
+  "camiones": 48,
+  "horas": 32.7,
+  "viajesPorCamion": 3.3,
+  "viajesHora": 4.8,
+  "leidos": 125,
+  "ciclo": 300,
+  "ric": 95,
+  "puerto": 162,
+  "sl": 179,
+  "volcables": [
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 110
+  }
+ },
+ {
+  "op": "4/9",
+  "dia": "2026-09-01",
+  "viajes": 119,
+  "camiones": 47,
+  "horas": 22.4,
+  "viajesPorCamion": 2.5,
+  "viajesHora": 5.3,
+  "leidos": 85,
+  "ciclo": 390,
+  "ric": 55,
+  "puerto": 272,
+  "sl": 290,
+  "volcables": [
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 76
+  }
+ },
+ {
+  "op": "4/9",
+  "dia": "2026-09-02",
+  "viajes": 37,
+  "camiones": 28,
+  "horas": 9.9,
+  "viajesPorCamion": 1.3,
+  "viajesHora": 3.7,
+  "leidos": 28,
+  "ciclo": 302,
+  "ric": 244,
+  "puerto": 26,
+  "sl": 45,
+  "volcables": [
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 26
+  }
+ },
+ {
+  "op": "11/9",
+  "dia": "2026-09-03",
+  "viajes": 138,
+  "camiones": 57,
+  "horas": 16.8,
+  "viajesPorCamion": 2.4,
+  "viajesHora": 8.2,
+  "leidos": 107,
+  "ciclo": 293,
+  "ric": 169,
+  "puerto": 77,
+  "sl": 103,
+  "volcables": [
+   "V3",
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 40,
+   "V3": 49
+  }
+ },
+ {
+  "op": "11/9",
+  "dia": "2026-09-04",
+  "viajes": 168,
+  "camiones": 63,
+  "horas": 29.7,
+  "viajesPorCamion": 2.7,
+  "viajesHora": 5.7,
+  "leidos": 119,
+  "ciclo": 515,
+  "ric": 268,
+  "puerto": 215,
+  "sl": 233,
+  "volcables": [
+   "V3",
+   "V4"
+  ],
+  "porVolcable": {
+   "V3": 32,
+   "V4": 63
+  }
+ },
+ {
+  "op": "11/9",
+  "dia": "2026-09-05",
+  "viajes": 77,
+  "camiones": 40,
+  "horas": 19.8,
+  "viajesPorCamion": 1.9,
+  "viajesHora": 3.9,
+  "leidos": 57,
+  "ciclo": 351,
+  "ric": 46,
+  "puerto": 256,
+  "sl": 270,
+  "volcables": [
+   "V3",
+   "V4"
+  ],
+  "porVolcable": {
+   "V3": 22,
+   "V4": 30
+  }
+ },
+ {
+  "op": "18/9",
+  "dia": "2026-09-14",
+  "viajes": 70,
+  "camiones": 41,
+  "horas": 9.8,
+  "viajesPorCamion": 1.7,
+  "viajesHora": 7.1,
+  "leidos": 47,
+  "ciclo": 202,
+  "ric": 93,
+  "puerto": 76,
+  "sl": 89,
+  "volcables": [
+   "V3",
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 19,
+   "V3": 11
+  }
+ },
+ {
+  "op": "18/9",
+  "dia": "2026-09-15",
+  "viajes": 119,
+  "camiones": 48,
+  "horas": 19.7,
+  "viajesPorCamion": 2.5,
+  "viajesHora": 6,
+  "leidos": 88,
+  "ciclo": 243,
+  "ric": 147,
+  "puerto": 52,
+  "sl": 75,
+  "volcables": [
+   "V3",
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 40,
+   "V3": 37
+  }
+ },
+ {
+  "op": "actual",
+  "dia": "2026-09-24",
+  "viajes": 41,
+  "camiones": 32,
+  "horas": 5.8,
+  "viajesPorCamion": 1.3,
+  "viajesHora": 7,
+  "leidos": 36,
+  "ciclo": 289,
+  "ric": 145,
+  "puerto": 98,
+  "sl": 130,
+  "volcables": [
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 27,
+   "V3": 3,
+   "V5": 1
+  }
+ },
+ {
+  "op": "actual",
+  "dia": "2026-09-25",
+  "viajes": 70,
+  "camiones": 38,
+  "horas": 17.2,
+  "viajesPorCamion": 1.8,
+  "viajesHora": 4.1,
+  "leidos": 56,
+  "ciclo": 312,
+  "ric": 62,
+  "puerto": 230,
+  "sl": 223,
+  "volcables": [
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 43
+  }
+ },
+ {
+  "op": "actual",
+  "dia": "2026-09-26",
+  "viajes": 90,
+  "camiones": 35,
+  "horas": 14.7,
+  "viajesPorCamion": 2.6,
+  "viajesHora": 6.1,
+  "leidos": 84,
+  "ciclo": 232,
+  "ric": 93,
+  "puerto": 100,
+  "sl": 120,
+  "volcables": [
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 75,
+   "V5": 1
+  }
+ },
+ {
+  "op": "actual",
+  "dia": "2026-09-30",
+  "viajes": 106,
+  "camiones": 43,
+  "horas": 16.3,
+  "viajesPorCamion": 2.5,
+  "viajesHora": 6.5,
+  "leidos": 90,
+  "ciclo": 311,
+  "ric": 86,
+  "puerto": 184,
+  "sl": 205,
+  "volcables": [
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 66
+  }
+ },
+ {
+  "op": "actual",
+  "dia": "2026-10-01",
+  "viajes": 136,
+  "camiones": 47,
+  "horas": 22.4,
+  "viajesPorCamion": 2.9,
+  "viajesHora": 6.1,
+  "leidos": 111,
+  "ciclo": 376,
+  "ric": 78,
+  "puerto": 253,
+  "sl": 272,
+  "volcables": [
+   "V4"
+  ],
+  "porVolcable": {
+   "V4": 93
+  }
+ }
+]

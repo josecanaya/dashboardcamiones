@@ -1,0 +1,39 @@
+{
+  "Total": 46,
+  "ByDevice": [
+    {
+      "Device": "SLZSalidaC1Fte",
+      "Count": 17
+    },
+    {
+      "Device": "SLZSalidaC2Fte",
+      "Count": 24
+    },
+    {
+      "Device": "SLZTK400",
+      "Count": 5
+    }
+  ],
+  "ByCategory": [
+    {
+      "Category": "Bus",
+      "Count": 21
+    },
+    {
+      "Category": "Pickup",
+      "Count": 10
+    },
+    {
+      "Category": "Sedan",
+      "Count": 2
+    },
+    {
+      "Category": "SUV",
+      "Count": 2
+    },
+    {
+      "Category": "Van",
+      "Count": 11
+    }
+  ]
+}

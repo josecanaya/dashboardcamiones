@@ -192,7 +192,7 @@
       "planta": "RICARDONE"
     },
     {
-      "journey_id": "d04fcc56-4e57-4e12-8597-d8566e8e62ad__cycle_1",
+      "journey_id": "8652a1cb-9f6d-4b7b-b58e-d9227bf2fe98__cycle_1",
       "patente": "KRB128",
       "producto": "GIRASOL",
       "circuito": "R4",
@@ -553,6 +553,25 @@
       "planta": "RICARDONE"
     },
     {
+      "journey_id": "21ec23b7-fa3f-4a70-a631-82cbcde1d37d__cycle_3",
+      "patente": "AB114CN",
+      "producto": "GIRASOL",
+      "circuito": "R4",
+      "tramo_operativo": "ingreso → calada",
+      "sector": "ingreso → calada",
+      "timestamp_inicio": "2026-09-30T22:00:00",
+      "timestamp_fin": "2026-09-30T23:21:00",
+      "duracion_minutos": "81",
+      "es_stock_inicial": "false",
+      "motivo_stock_inicial": "",
+      "fecha_inicio": "2026-09-30",
+      "hora_inicio": "22:00",
+      "fecha_fin": "2026-09-30",
+      "hora_fin": "23:21",
+      "estado_ejecutivo": "",
+      "planta": "RICARDONE"
+    },
+    {
       "journey_id": "0cde1ba7-bf9d-47e9-8570-9130e9cc859c",
       "patente": "AC658DF",
       "producto": "GIRASOL",
@@ -572,7 +591,7 @@
       "planta": "RICARDONE"
     },
     {
-      "journey_id": "95cf8504-07a7-4be5-8ffc-e8039b2dac24",
+      "journey_id": "95cf8504-07a7-4be5-8ffc-e8039b2dac24__cycle_1",
       "patente": "EAW743",
       "producto": "GIRASOL",
       "circuito": "R4",
@@ -587,6 +606,44 @@
       "hora_inicio": "14:58",
       "fecha_fin": "2026-09-30",
       "hora_fin": "17:25",
+      "estado_ejecutivo": "",
+      "planta": "RICARDONE"
+    },
+    {
+      "journey_id": "fa8751df-ab4f-410c-933f-ce1f03c80dde",
+      "patente": "AA346YI",
+      "producto": "GIRASOL",
+      "circuito": "R4",
+      "tramo_operativo": "ingreso → calada",
+      "sector": "ingreso → calada",
+      "timestamp_inicio": "2026-09-30T23:35:00",
+      "timestamp_fin": "2026-10-01T02:14:00",
+      "duracion_minutos": "159",
+      "es_stock_inicial": "false",
+      "motivo_stock_inicial": "",
+      "fecha_inicio": "2026-09-30",
+      "hora_inicio": "23:35",
+      "fecha_fin": "2026-10-01",
+      "hora_fin": "02:14",
+      "estado_ejecutivo": "",
+      "planta": "RICARDONE"
+    },
+    {
+      "journey_id": "34afe77a-b17d-4c80-86a0-8e91777fda64",
+      "patente": "AE305VO",
+      "producto": "GIRASOL",
+      "circuito": "R4",
+      "tramo_operativo": "ingreso → calada",
+      "sector": "ingreso → calada",
+      "timestamp_inicio": "2026-10-01T08:27:00",
+      "timestamp_fin": "2026-10-01T10:58:00",
+      "duracion_minutos": "151",
+      "es_stock_inicial": "false",
+      "motivo_stock_inicial": "",
+      "fecha_inicio": "2026-10-01",
+      "hora_inicio": "08:27",
+      "fecha_fin": "2026-10-01",
+      "hora_fin": "10:58",
       "estado_ejecutivo": "",
       "planta": "RICARDONE"
     }

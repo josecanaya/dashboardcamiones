@@ -160,4 +160,12 @@ describe('fetchRunTable', () => {
       jsonRes(200, { headers: ['i'], rows: [], limit: 10_000, offset: 0 })) as typeof globalThis.fetch
     await expect(fetchRunTable('R', 't')).rejects.toThrow(/total inválido/)
   })
+  it('rechaza una revisión distinta aunque total y headers no cambien', async () => {
+    let calls = 0
+    globalThis.fetch = (async () => {
+      calls++
+      return jsonRes(200, { headers:['i'], rows:Array.from({length:10000}, (_,i)=>({i})), total:20000, offset:(calls-1)*10000, revision:calls === 1 ? 'old' : 'new' })
+    }) as typeof globalThis.fetch
+    await expect(fetchRunTable('R','t')).rejects.toThrow(/revisión cambió/)
+  })
 })

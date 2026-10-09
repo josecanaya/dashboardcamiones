@@ -3,6 +3,7 @@ import type { LiveCapture } from '../../services/live/plantStateApi'
 import { getRecentCaptures } from '../../services/live/plantStateApi'
 import { LiveCameraPlayerModal } from './LiveCameraPlayerModal'
 import { openIdentificationCase } from './IdentificationPanel'
+import { CapturePhoto } from './CapturePhoto'
 
 type Site = 'ricardone' | 'san_lorenzo'
 type Row = LiveCapture & { site: Site }
@@ -38,6 +39,8 @@ export function LiveActivityFeed({ sites, onOpenCase }: { sites: Site[]; onOpenC
   const seen = useRef<Set<string>>(new Set())
   const [fresh, setFresh] = useState<Set<string>>(new Set())
   const [camera, setCamera] = useState<string | null>(null)
+  const [query, setQuery] = useState('')
+  const [reviewOnly, setReviewOnly] = useState(false)
 
   // EV-33: la dependencia es el contenido de `sites`, no la identidad del arreglo (que cambia cada render).
   const sitesKey = sites.join(',')
@@ -80,6 +83,7 @@ export function LiveActivityFeed({ sites, onOpenCase }: { sites: Site[]; onOpenC
   }, [load])
 
   const toReview = rows.filter((r) => r.level === 'provisorio' || r.level === 'pendiente').length
+  const visibleRows = rows.filter(r => (!reviewOnly || r.level === 'provisorio' || r.level === 'pendiente') && `${r.readPlate} ${r.identifiedPlate ?? ''} ${r.nodeLabel} ${r.deviceCode}`.toLowerCase().includes(query.toLowerCase()))
 
   return (
     <aside className="tf-activity-feed" aria-label="Actividad de cámaras en vivo">
@@ -90,10 +94,15 @@ export function LiveActivityFeed({ sites, onOpenCase }: { sites: Site[]; onOpenC
         </div>
         <span className="tf-map-context__live" title="Entre las últimas 40 capturas. La bandeja cuenta casos, que pueden agrupar varias capturas.">{toReview ? `${toReview} capturas por revisar (últimas 40)` : 'Últimas 40 capturas'}</span>
       </div>
+      <div className="tf-capture-filters">
+        <input aria-label="Buscar captura por patente o cámara" placeholder="Patente o cámara…" value={query} onChange={e => setQuery(e.target.value)} />
+        <button type="button" aria-pressed={reviewOnly} className={reviewOnly ? 'is-active' : ''} onClick={() => setReviewOnly(v => !v)}>Por revisar</button>
+      </div>
       {error ? <p className="mt-3 text-xs text-rose-700">{rows.length ? 'Datos anteriores: ' : 'Sin conexión: '}{error}</p> : null}
       <ol className="tf-activity-feed__list">
         {rows.length === 0 && !error ? <li className="text-xs text-slate-400">Esperando capturas…</li> : null}
-        {rows.map((r) => {
+        {rows.length > 0 && visibleRows.length === 0 ? <li className="tf-empty-state">No hay capturas que coincidan. <button type="button" onClick={() => { setQuery(''); setReviewOnly(false) }}>Limpiar filtros</button></li> : null}
+        {visibleRows.map((r) => {
           const k = `${r.site}|${r.deviceCode}|${r.at}|${r.readPlate}`
           const lv = LEVEL[r.level]
           const review = r.level === 'provisorio' || r.level === 'pendiente'
@@ -118,17 +127,15 @@ export function LiveActivityFeed({ sites, onOpenCase }: { sites: Site[]; onOpenC
                 {corrected && !review ? <span className="font-mono text-[14px] font-semibold text-emerald-800">→ {deduced}</span> : null}
                 <span className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-semibold ${lv.cls}`}>{lv.label}</span>
               </div>
-              {review ? (
-                <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-600">
-                  <span>{r.candidates.length ? `${r.candidates.length} candidatos` : 'sin candidatos'}</span>
-                  {r.fragmentKey && onOpenCase ? (
+                <div className="tf-capture-actions">
+                  {review && r.fragmentKey && onOpenCase ? (
                     <button type="button" className="tf-activity-feed__btn" onClick={() => { openIdentificationCase(r.site, r.fragmentKey!); onOpenCase() }}>
                       Abrir caso
                     </button>
                   ) : null}
                   <button type="button" className="tf-activity-feed__btn" onClick={() => setCamera(r.deviceCode)}>Ver cámara</button>
                 </div>
-              ) : null}
+              <div className="tf-capture-photo"><CapturePhoto deviceCode={r.deviceCode} at={r.at} readPlate={r.readPlate} /></div>
             </li>
           )
         })}

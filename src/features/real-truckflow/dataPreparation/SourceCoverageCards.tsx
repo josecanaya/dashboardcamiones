@@ -50,13 +50,14 @@ type Props = {
 /** Tres tarjetas: Cámaras (eventos+alertas), Excel (movimientos) y Procesamiento (corrida). */
 export function SourceCoverageCards({ state, excelCoverage, hasActiveRun }: Props): JSX.Element {
   const [showDetail, setShowDetail] = useState(false)
-  const days = state.sourceDays
+  const requested = state.draft
+  const days = state.sourceDays.filter(d => (!requested.from || d.day >= requested.from) && (!requested.to || d.day <= requested.to))
   const eventsSummary = summarizeSources(days, 'events')
   const alertsSummary = summarizeSources(days, 'alerts')
 
   const excelByDay = new Map(excelCoverage.map(c => [c.day, c.rows]))
   const missingExcel = state.missingExcelDays
-  const excelWithRows = excelCoverage.filter(c => c.rows > 0).length
+  const excelWithRows = days.filter(d => (excelByDay.get(d.day) ?? 0) > 0).length
 
   return (
     <section aria-label="Disponibilidad de fuentes" className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>

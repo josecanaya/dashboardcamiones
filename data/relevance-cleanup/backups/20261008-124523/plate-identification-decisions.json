@@ -1,0 +1,1536 @@
+{
+  "ricardone": {
+    "4b94c52a-5e21-4ada-bbd4-2ee3879ac751": {
+      "action": "confirm",
+      "plate": "EIY162",
+      "journeyUid": "4c6b6460-c2e4-4ce5-9db1-1c7460771cd3",
+      "updatedAt": "2026-10-06T18:09:29.216Z"
+    },
+    "92f1fcd4-0cae-44de-978b-fb8b79cddc69": {
+      "action": "confirm",
+      "plate": "EVL273",
+      "journeyUid": "b6b6efbd-4b1f-4633-a498-8f4a5847e834",
+      "updatedAt": "2026-10-06T18:09:43.638Z"
+    },
+    "818120da-1e0b-4904-a3b2-04aa81093b2e": {
+      "action": "reject",
+      "updatedAt": "2026-10-06T18:40:38.635Z"
+    },
+    "34bacb07-e68d-4425-abb7-7e22c03d53b0": {
+      "action": "confirm",
+      "plate": "FMN002",
+      "journeyUid": "1d602e9e-28f8-4493-9a2b-05bdddc02b2f",
+      "updatedAt": "2026-10-06T18:45:49.239Z"
+    },
+    "561bdad5-6e0f-4fd1-9976-8e488ca9ed45": {
+      "action": "reject",
+      "updatedAt": "2026-10-06T18:49:55.625Z"
+    },
+    "4b6661e8-5332-4295-b3fe-883d9b3ed29d": {
+      "action": "confirm",
+      "plate": "JVQ890",
+      "journeyUid": null,
+      "updatedAt": "2026-10-06T19:13:32.668Z"
+    },
+    "1256b033-9452-4c01-82bb-cdf3fdea223b": {
+      "action": "confirm",
+      "plate": "RDL445",
+      "journeyUid": "0f2704d8-021a-4ea4-a457-7d5dd71baf89",
+      "updatedAt": "2026-10-06T19:30:28.873Z"
+    },
+    "7df9fde4-9806-4182-8a3c-6ce0a6e36299": {
+      "action": "confirm",
+      "plate": "LFT141",
+      "journeyUid": null,
+      "updatedAt": "2026-10-06T19:32:54.133Z"
+    },
+    "c7ed0d35-0223-45d9-b5d5-11ac83868822": {
+      "action": "reject",
+      "updatedAt": "2026-10-07T12:50:46.247Z"
+    },
+    "4165b253-8bf0-4c52-bd40-7ec326b71850": {
+      "action": "reject",
+      "updatedAt": "2026-10-07T13:34:58.416Z"
+    },
+    "01e7a308-bcf1-46ba-83b5-bd7202178b80": {
+      "action": "confirm",
+      "plate": "VDB780",
+      "journeyUid": "e04737c7-4ea1-4ce8-9cca-a3ab430992d6",
+      "updatedAt": "2026-10-07T13:58:03.666Z"
+    },
+    "8ddb0d26-9328-402a-b3bf-257e31137002": {
+      "action": "confirm",
+      "plate": "AB114CN",
+      "journeyUid": "21ec23b7-fa3f-4a70-a631-82cbcde1d37d",
+      "updatedAt": "2026-10-07T13:58:10.057Z"
+    },
+    "008f1968-92c5-446a-b8b2-52fac9e2300b": {
+      "action": "confirm",
+      "plate": "TGT378",
+      "journeyUid": "66dc7220-db8e-42a9-8f8b-fd637b63a1c8",
+      "updatedAt": "2026-10-07T15:10:07.922Z"
+    },
+    "cff99211-d17a-494c-abd6-af6486ea39ec": {
+      "action": "confirm",
+      "plate": "AF611LQ",
+      "journeyUid": "7f7c7e97-a0c3-451c-967e-3b26ea635639",
+      "updatedAt": "2026-10-07T13:58:30.293Z"
+    },
+    "7c07465d-289e-4bd0-81cf-a8c33f4c2e6c": {
+      "action": "confirm",
+      "plate": "FNT719",
+      "journeyUid": "529af859-68e7-43b2-9dfa-94b5e555483e",
+      "updatedAt": "2026-10-07T13:58:50.516Z"
+    },
+    "df9fba97-feca-430f-88e6-de5b9e07f0e0": {
+      "action": "reject",
+      "updatedAt": "2026-10-07T13:58:56.404Z"
+    },
+    "4a254128-ed05-466f-9ad7-0300851dc82d": {
+      "action": "reject",
+      "updatedAt": "2026-10-07T13:59:00.425Z"
+    },
+    "d6d2db75-9e08-43ea-a12f-a6fe7e434542": {
+      "action": "confirm",
+      "plate": "WKB258",
+      "journeyUid": "2631dc0d-ca19-4014-ba82-babb20c2aee5",
+      "updatedAt": "2026-10-07T13:59:26.127Z"
+    },
+    "dfbe2285-92a6-4428-899f-b1aeb1d33a86": {
+      "action": "confirm",
+      "plate": "EFR877",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T13:59:46.805Z"
+    },
+    "11439135-573f-4fec-8fd6-dbede27e979e": {
+      "action": "confirm",
+      "plate": "AF060AZ",
+      "journeyUid": "5d5223e1-77eb-459c-8c5c-37dabb55092e",
+      "updatedAt": "2026-10-07T14:00:00.636Z"
+    },
+    "2d8f5dbf-edf0-4b50-b59e-87b8992543b1": {
+      "action": "confirm",
+      "plate": "FFM301",
+      "journeyUid": "5810c9ee-f710-450d-b8a7-b3f190f6db2c",
+      "updatedAt": "2026-10-07T14:00:09.761Z"
+    },
+    "01fc62f1-dac0-466b-8451-36a0e1f0e0e7": {
+      "action": "confirm",
+      "plate": "AA118YK",
+      "journeyUid": "5aad7b2a-6b12-4789-ba73-2bf60ede0259",
+      "updatedAt": "2026-10-07T14:00:27.938Z"
+    },
+    "2b458098-ed5b-4789-a253-138c7d56c5e6": {
+      "action": "confirm",
+      "plate": "RNI799",
+      "journeyUid": "f6c4141d-3aea-40a6-912e-de9d76450299",
+      "updatedAt": "2026-10-07T14:00:41.949Z"
+    },
+    "a356e0de-3776-4b93-8f62-306a8b4472c3": {
+      "action": "confirm",
+      "plate": "RNZ709",
+      "journeyUid": "f6c4141d-3aea-40a6-912e-de9d76450299",
+      "updatedAt": "2026-10-07T14:01:07.093Z"
+    },
+    "3d3441d6-5018-4da0-89dc-352be7de950c": {
+      "action": "confirm",
+      "plate": "RNI799",
+      "journeyUid": "f6c4141d-3aea-40a6-912e-de9d76450299",
+      "updatedAt": "2026-10-07T14:01:30.144Z"
+    },
+    "0f356038-7129-46fe-b39f-7aa7c43baa47": {
+      "action": "confirm",
+      "plate": "RNZ709",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T14:01:50.001Z"
+    },
+    "b0e613bb-0069-462f-a236-91fccd8022a3": {
+      "action": "confirm",
+      "plate": "MWG720",
+      "journeyUid": "424cb85d-be9e-4987-be90-70f80e2f4dd8",
+      "updatedAt": "2026-10-07T14:02:11.979Z"
+    },
+    "959819ec-521e-4ae5-98ad-22069ac6d417": {
+      "action": "confirm",
+      "plate": "RUO784",
+      "journeyUid": "6f2b84b7-4709-4094-aa54-a2c7769e72b9",
+      "updatedAt": "2026-10-07T14:02:22.955Z"
+    },
+    "9add578b-d5c1-4739-b850-b92f8dfde0c1": {
+      "action": "reject",
+      "updatedAt": "2026-10-07T14:02:53.007Z"
+    },
+    "dd61c6b5-3541-49cd-9612-a7fc920e4c73": {
+      "action": "confirm",
+      "plate": "LQL832",
+      "journeyUid": "5ce1f600-608e-4f01-937e-782ba40c0033",
+      "updatedAt": "2026-10-07T14:03:00.279Z"
+    },
+    "8652a1cb-9f6d-4b7b-b58e-d9227bf2fe98": {
+      "action": "confirm",
+      "plate": "KDB128",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T14:03:34.677Z"
+    },
+    "9b2885f3-c24e-47a6-98d6-f6022dc8deb1": {
+      "action": "confirm",
+      "plate": "RNI799",
+      "journeyUid": "f6c4141d-3aea-40a6-912e-de9d76450299",
+      "updatedAt": "2026-10-07T14:03:42.576Z"
+    },
+    "b60c6fe1-e13d-40a5-aea0-21768e203522": {
+      "action": "confirm",
+      "plate": "RNA350",
+      "journeyUid": "b9b5d2a1-dd7f-40e7-b317-5a2a374f6f17",
+      "updatedAt": "2026-10-07T14:03:46.971Z"
+    },
+    "5eb451d7-dac7-4e77-925f-d05874cbca0c": {
+      "action": "confirm",
+      "plate": "UUO981",
+      "journeyUid": "cffc448f-4f01-4d36-8b60-819b42602abb",
+      "updatedAt": "2026-10-07T14:03:56.791Z"
+    },
+    "cd314a3c-ebd8-47d4-ba67-310a8c36dbca": {
+      "action": "confirm",
+      "plate": "RKU605",
+      "journeyUid": "9a0b8a73-3976-45ea-8809-2be0df950ce5",
+      "updatedAt": "2026-10-07T14:04:12.696Z"
+    },
+    "bcf3c99a-219a-4c9a-86e4-1e09eaac122d": {
+      "action": "confirm",
+      "plate": "AI217QP",
+      "journeyUid": "2c875aef-7b38-47a6-a9b4-8c40ca67993f",
+      "updatedAt": "2026-10-07T14:04:35.822Z"
+    },
+    "ac26e9f4-c2ad-4fb8-9422-38e2a8bace47": {
+      "action": "confirm",
+      "plate": "AB226IK",
+      "journeyUid": "88400dc0-668b-4c55-9bb1-a46718126643",
+      "updatedAt": "2026-10-07T14:04:46.240Z"
+    },
+    "ed9e9f5b-4fbf-4258-97a0-4fa362d86540": {
+      "action": "confirm",
+      "plate": "NZE366",
+      "journeyUid": "9f342199-a87e-45a3-af02-820686ed010c",
+      "updatedAt": "2026-10-07T14:05:12.676Z"
+    },
+    "cffc448f-4f01-4d36-8b60-819b42602abb": {
+      "action": "confirm",
+      "plate": "UUO981",
+      "journeyUid": "5eb451d7-dac7-4e77-925f-d05874cbca0c",
+      "updatedAt": "2026-10-07T14:05:27.626Z"
+    },
+    "af2a181d-3ec9-4747-9627-e906e29b5547": {
+      "action": "confirm",
+      "plate": "RDL445",
+      "journeyUid": "1256b033-9452-4c01-82bb-cdf3fdea223b",
+      "updatedAt": "2026-10-07T14:05:40.910Z"
+    },
+    "e0e26e1a-5c0a-4d1e-979a-0cb0d8d20348": {
+      "action": "confirm",
+      "plate": "NAH953",
+      "journeyUid": "aa94098a-d8fd-4701-b32b-948146310cba",
+      "updatedAt": "2026-10-07T14:05:50.564Z"
+    },
+    "9a0b8a73-3976-45ea-8809-2be0df950ce5": {
+      "action": "confirm",
+      "plate": "RKU685",
+      "journeyUid": "cd314a3c-ebd8-47d4-ba67-310a8c36dbca",
+      "updatedAt": "2026-10-07T15:10:26.405Z"
+    },
+    "489b0be6-67a4-4867-b31e-05cee96e3514": {
+      "action": "confirm",
+      "plate": "AG988ZC",
+      "journeyUid": "206ede13-9908-43a6-86bd-a5b2bdba8b95",
+      "updatedAt": "2026-10-07T15:13:02.303Z"
+    },
+    "a19a08a5-a9e7-40fb-8a8a-5b52da8d12e7": {
+      "action": "confirm",
+      "plate": "FQI716",
+      "journeyUid": "c70913e5-3a3d-4a2e-839d-934fc7e56609",
+      "updatedAt": "2026-10-07T15:36:20.618Z"
+    },
+    "f1407146-7aa3-4f54-9f58-7d06d2c40291": {
+      "action": "confirm",
+      "plate": "FFR877",
+      "journeyUid": "25e71a9a-09f9-4178-b803-e9af39ba5001",
+      "updatedAt": "2026-10-07T15:43:04.891Z"
+    },
+    "2d12bb59-4dcd-490b-8ff1-da7a4356a0a4": {
+      "action": "confirm",
+      "plate": "AB305ZA",
+      "journeyUid": "a2bae0ab-8cfc-4efb-aaec-2c2cc4462827",
+      "updatedAt": "2026-10-07T17:03:08.683Z"
+    },
+    "82e84108-772b-4ca3-a023-3b83aa6d0be4": {
+      "action": "confirm",
+      "plate": "AF183OR",
+      "journeyUid": "2e60ed48-3509-4c80-bfbd-0357d62c25d9",
+      "updatedAt": "2026-10-07T17:20:33.793Z"
+    },
+    "ec4d21f0-424e-4ab9-bb6f-9b3fab0fa062": {
+      "action": "confirm",
+      "plate": "GIH043",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T17:21:04.651Z"
+    },
+    "25e71a9a-09f9-4178-b803-e9af39ba5001": {
+      "action": "confirm",
+      "plate": "FFR877",
+      "journeyUid": "f1407146-7aa3-4f54-9f58-7d06d2c40291",
+      "updatedAt": "2026-10-07T17:22:05.491Z"
+    },
+    "a0743842-e50c-4f5d-820b-e77c48e5ac61": {
+      "action": "reject",
+      "updatedAt": "2026-10-07T17:22:26.334Z"
+    },
+    "f5961090-0b2c-4ec8-9c63-3761dedb85e5": {
+      "action": "confirm",
+      "plate": "AB912RO",
+      "journeyUid": "4686befe-7d0e-4e0e-a8f3-cf262fee9f8c",
+      "updatedAt": "2026-10-07T17:22:37.484Z"
+    },
+    "03d3a907-c64c-4207-a867-c9d66568ac53": {
+      "action": "confirm",
+      "plate": "OJD501",
+      "journeyUid": "b76ec30b-5562-4709-8673-942b1369c1fa",
+      "updatedAt": "2026-10-07T17:23:22.695Z"
+    },
+    "b76ec30b-5562-4709-8673-942b1369c1fa": {
+      "action": "confirm",
+      "plate": "OJD501",
+      "journeyUid": "03d3a907-c64c-4207-a867-c9d66568ac53",
+      "updatedAt": "2026-10-07T17:23:32.571Z"
+    },
+    "4686befe-7d0e-4e0e-a8f3-cf262fee9f8c": {
+      "action": "confirm",
+      "plate": "AB912RO",
+      "journeyUid": "f5961090-0b2c-4ec8-9c63-3761dedb85e5",
+      "updatedAt": "2026-10-07T17:23:56.968Z"
+    },
+    "66dc7220-db8e-42a9-8f8b-fd637b63a1c8": {
+      "action": "confirm",
+      "plate": "TGT378",
+      "journeyUid": "008f1968-92c5-446a-b8b2-52fac9e2300b",
+      "updatedAt": "2026-10-07T17:24:20.084Z"
+    },
+    "32b07df8-f46f-4d60-9a5a-39e9005004f0": {
+      "action": "confirm",
+      "plate": "GPX849",
+      "journeyUid": "35646bf3-8d9b-4b7c-8225-01c29bd43387",
+      "updatedAt": "2026-10-07T17:25:46.844Z"
+    },
+    "d44a4db4-8362-4a61-b24d-fac412d502da": {
+      "action": "confirm",
+      "plate": "VJB780",
+      "journeyUid": "01e7a308-bcf1-46ba-83b5-bd7202178b80",
+      "updatedAt": "2026-10-07T17:26:15.408Z"
+    },
+    "6633a8f5-8040-441f-9abb-f9ddd3578c1f": {
+      "action": "reject",
+      "updatedAt": "2026-10-07T17:26:33.266Z"
+    },
+    "c726988a-e9d5-4af5-b645-b9985d462d82": {
+      "action": "reject",
+      "updatedAt": "2026-10-07T17:45:06.228Z"
+    },
+    "ea3a100e-5f01-4655-8550-9d68d177b445": {
+      "action": "confirm",
+      "plate": "REL854",
+      "journeyUid": "6639795b-67f2-44b0-a37a-c7f44f12d585",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T18:16:22.082Z"
+    },
+    "c43e9b1f-9575-4541-a895-e3f8881aabca": {
+      "action": "confirm",
+      "plate": "BLL295",
+      "journeyUid": "9add578b-d5c1-4739-b850-b92f8dfde0c1",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T18:17:03.343Z"
+    },
+    "d5ccf653-4146-4ecb-87ce-9db40c11858f": {
+      "action": "confirm",
+      "plate": "GIW009",
+      "journeyUid": "5827f1cd-c6b6-4d03-8828-520da3df8e86",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T18:17:26.205Z"
+    },
+    "d04fcc56-4e57-4e12-8597-d8566e8e62ad": {
+      "action": "confirm",
+      "plate": "KRB128",
+      "journeyUid": "8652a1cb-9f6d-4b7b-b58e-d9227bf2fe98",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T18:18:09.675Z"
+    },
+    "76bb2914-7570-4db3-af9c-ef411b0903a2": {
+      "action": "reject",
+      "reason": "No es un vehículo (falsa detección)",
+      "operator": null,
+      "updatedAt": "2026-10-07T18:18:24.495Z"
+    },
+    "02b5225f-3bb6-4caa-9ba2-f765fe5c0ca1": {
+      "action": "confirm",
+      "plate": "FKZ258",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T18:18:56.113Z"
+    },
+    "68a7a286-a9f1-4b9e-b368-020f38cfef55": {
+      "action": "reject",
+      "reason": "No es un vehículo (falsa detección)",
+      "operator": null,
+      "updatedAt": "2026-10-07T18:23:54.950Z"
+    },
+    "a4dad68b-9321-4a08-a2e1-16f53f6f1691": {
+      "action": "confirm",
+      "plate": "IMH787",
+      "journeyUid": "00a8e394-3a9f-41ef-8cd8-a7e9396bbb29",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T18:24:22.734Z"
+    },
+    "0f470a49-c145-46b2-a1a2-2ca3b1a070b2": {
+      "action": "reject",
+      "reason": "No es un vehículo (falsa detección)",
+      "operator": null,
+      "updatedAt": "2026-10-07T18:29:41.846Z"
+    },
+    "nolink:AB305ZA:16b2dfe7-c761-4855-ae11-3d7db170af39": {
+      "action": "nolink",
+      "plate": "AB305ZA",
+      "readPlate": "HBB25",
+      "operator": null,
+      "updatedAt": "2026-10-07T18:48:16.659Z"
+    },
+    "link:89332360-c2d0-49f5-8f3e-f4204edf8390": {
+      "action": "link",
+      "plate": "MSE380",
+      "journeyUid": "80512c6f-b7c4-4f21-ab0e-48d9ba1e33e1",
+      "readPlate": "MSE380",
+      "operator": null,
+      "updatedAt": "2026-10-07T18:49:34.390Z"
+    },
+    "cfc60d9c-d30b-49aa-be0a-431a9742ee77": {
+      "action": "confirm",
+      "plate": "AE264XY",
+      "journeyUid": "9d4949c6-63f4-4cd4-8f73-e5ad884f1689",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T18:51:37.304Z"
+    },
+    "d97ebdd0-7a89-4f7c-bd1f-d370af483f6c": {
+      "action": "confirm",
+      "plate": "JEQ388",
+      "journeyUid": "71eecf53-53da-40b6-af98-d4e03c093834",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T18:51:55.510Z"
+    },
+    "link:c5b6fed7-511a-4047-a9b9-aae68ce40f05": {
+      "action": "link",
+      "plate": "ROJ4085",
+      "journeyUid": null,
+      "readPlate": "ROO784",
+      "operator": null,
+      "updatedAt": "2026-10-07T19:23:31.518Z"
+    },
+    "fd785665-df46-4ab7-b74c-6fb353d35328": {
+      "action": "confirm",
+      "plate": "MFY788",
+      "journeyUid": "597d5794-7ed4-4eb2-8bee-81425d66651a",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T19:42:27.297Z"
+    },
+    "d4b9a192-a072-4d01-bdf2-129be06c42c0": {
+      "action": "confirm",
+      "plate": "EIQ974",
+      "journeyUid": "30f8a9e8-03fa-4b2f-916b-e2f4b0edae5d",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:26:06.176Z"
+    },
+    "f014b372-1b83-40c3-8247-f09aa35bcf2d": {
+      "action": "confirm",
+      "plate": "EFA323",
+      "journeyUid": "4664efd5-fd60-45a0-84a4-d85ce70d5db5",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:26:34.249Z"
+    },
+    "884f31d9-1113-4287-9022-3c8c3b122a0b": {
+      "action": "confirm",
+      "plate": "HNG637",
+      "journeyUid": "d6b70eaa-b5e5-4a64-88ce-f3aa8b2b1f80",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:26:47.374Z"
+    },
+    "8db92805-4001-4c0b-9ddf-6e37416508ce": {
+      "action": "confirm",
+      "plate": "ESI808",
+      "journeyUid": "1b0e9d3d-e0ff-40a7-990a-cc2d890a97fb",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:27:01.114Z"
+    },
+    "1b0e9d3d-e0ff-40a7-990a-cc2d890a97fb": {
+      "action": "confirm",
+      "plate": "ESI808",
+      "journeyUid": "8db92805-4001-4c0b-9ddf-6e37416508ce",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:27:21.381Z"
+    },
+    "7bc55206-730e-4a57-8643-76b4d0c799c0": {
+      "action": "confirm",
+      "plate": "BER232",
+      "journeyUid": "5532c946-9cc3-4fa2-a05d-69cd7b64aab1",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:28:14.345Z"
+    },
+    "9cf8ac31-f0c0-4735-9e26-0d9f9f5cdb7b": {
+      "action": "confirm",
+      "plate": "OFG116",
+      "journeyUid": "80e9eb99-e456-4b0c-b65e-fdcc45e67843",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:28:47.112Z"
+    },
+    "b4260dcb-756c-439a-8bfb-14ced3af785d": {
+      "action": "reject",
+      "reason": "Lectura duplicada de otra captura",
+      "operator": null,
+      "updatedAt": "2026-10-08T12:29:13.229Z"
+    },
+    "f0f43f50-1816-4bfc-b2f3-62f86512bd1d": {
+      "action": "confirm",
+      "plate": "GSD674",
+      "journeyUid": "611f54fe-b80e-4d60-aa01-aa693139cd53",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:29:38.691Z"
+    },
+    "14afc1ed-9eaa-4cd9-8bb5-e3b272e47a7b": {
+      "action": "confirm",
+      "plate": "COI299",
+      "journeyUid": "9791b5c9-697f-42b8-af5e-92e9223ad013",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:29:56.711Z"
+    },
+    "d7b1687a-197e-43e7-8151-fcc7aa1973b1": {
+      "action": "confirm",
+      "plate": "LCE509",
+      "journeyUid": "f90e72b0-5f73-492b-bf03-529acbf4353f",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:32:00.775Z"
+    },
+    "3b1f87c7-d723-4b5f-b97a-7ae19d74524a": {
+      "action": "confirm",
+      "plate": "AC297UX",
+      "journeyUid": "79fcbccf-74ee-473f-8ae9-3642b0f27a8d",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T13:21:09.958Z"
+    },
+    "11d3b71b-eea1-4555-bcab-876e8ab6ce99": {
+      "action": "confirm",
+      "plate": "COI299",
+      "journeyUid": "9791b5c9-697f-42b8-af5e-92e9223ad013",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T13:22:37.845Z"
+    },
+    "d928aad9-232b-4bf3-9094-d70a9d819f02": {
+      "action": "reject",
+      "reason": "PAtente de otro pais",
+      "operator": null,
+      "updatedAt": "2026-10-08T15:11:49.929Z"
+    },
+    "a4169dfb-22fc-4fb4-b454-245a640e1e70": {
+      "action": "reject",
+      "reason": "No es un vehículo (falsa detección)",
+      "operator": null,
+      "updatedAt": "2026-10-08T15:12:18.048Z"
+    },
+    "8d09f9f1-66e0-4fbf-b55f-01fed3725c17": {
+      "action": "reject",
+      "reason": "No es un vehículo (falsa detección)",
+      "operator": null,
+      "updatedAt": "2026-10-08T15:12:43.160Z"
+    },
+    "23b3c556-00a3-4286-8b46-23ed7b89f433": {
+      "action": "confirm",
+      "plate": "AF960DJ",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T15:16:48.153Z"
+    },
+    "79fcbccf-74ee-473f-8ae9-3642b0f27a8d": {
+      "action": "confirm",
+      "plate": "AC297HX",
+      "journeyUid": "3b1f87c7-d723-4b5f-b97a-7ae19d74524a",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T15:27:01.905Z"
+    }
+  },
+  "san_lorenzo": {
+    "77a518a3-079e-476c-811f-f1dc67448ec3": {
+      "action": "reject",
+      "updatedAt": "2026-10-06T18:22:59.103Z"
+    },
+    "abe09f8d-99fc-4005-b9be-852eaabcd02b": {
+      "action": "confirm",
+      "plate": "NLH953",
+      "journeyUid": "aa94098a-d8fd-4701-b32b-948146310cba",
+      "updatedAt": "2026-10-06T18:24:43.088Z"
+    },
+    "27120fc8-5a8d-4d70-ab00-2f57e5b27a65": {
+      "action": "confirm",
+      "plate": "GMO261",
+      "journeyUid": "183f6e19-8e62-41b8-846c-681a23ba55b2",
+      "updatedAt": "2026-10-06T18:38:09.301Z"
+    },
+    "77fac895-b2c1-456c-ab5b-8bffcfb87f91": {
+      "action": "confirm",
+      "plate": "AG692JE",
+      "journeyUid": "5d0328fa-9bb1-4504-8728-0fc5a8c24cc6",
+      "updatedAt": "2026-10-06T18:42:26.412Z"
+    },
+    "564eae03-109c-4411-99bb-59ab5eef88f8": {
+      "action": "confirm",
+      "plate": "AG692JE",
+      "journeyUid": "5d0328fa-9bb1-4504-8728-0fc5a8c24cc6",
+      "updatedAt": "2026-10-06T18:42:31.349Z"
+    },
+    "cc26961a-c125-4da8-b44d-bca72920efe8": {
+      "action": "confirm",
+      "plate": "DVT968",
+      "journeyUid": "f1d100bf-0644-4094-9672-1f32b6e5585e",
+      "updatedAt": "2026-10-06T18:50:40.145Z"
+    },
+    "b4d73a73-1107-444e-9268-e6bbf60e758e": {
+      "action": "reject",
+      "updatedAt": "2026-10-06T19:07:49.903Z"
+    },
+    "08c7ca98-12b5-49bf-addf-b27ccdb54c99": {
+      "action": "confirm",
+      "plate": "AE264XY",
+      "journeyUid": "d744ef9e-0dfc-434d-a47e-1d91a2ea1f7f",
+      "updatedAt": "2026-10-06T19:18:42.131Z"
+    },
+    "c20b7d62-4c78-4955-afa0-0112d09522db": {
+      "action": "confirm",
+      "plate": "AB996PZ",
+      "journeyUid": null,
+      "updatedAt": "2026-10-06T19:19:17.123Z"
+    },
+    "aa94098a-d8fd-4701-b32b-948146310cba": {
+      "action": "confirm",
+      "plate": "NAH953",
+      "journeyUid": "e0e26e1a-5c0a-4d1e-979a-0cb0d8d20348",
+      "updatedAt": "2026-10-06T19:23:01.095Z"
+    },
+    "941b51f2-edd9-470b-8ee5-b7038fb7f472": {
+      "action": "reject",
+      "updatedAt": "2026-10-06T19:29:14.761Z"
+    },
+    "4d2032f3-7d0a-4a3b-b945-f1e54470d593": {
+      "action": "reject",
+      "updatedAt": "2026-10-06T19:29:23.660Z"
+    },
+    "af9a6f69-638a-49b7-9892-21d46d96522e": {
+      "action": "confirm",
+      "plate": "SOL603",
+      "journeyUid": null,
+      "updatedAt": "2026-10-06T19:30:10.808Z"
+    },
+    "10ce6dd5-6033-49f6-9c34-3253221bfefc": {
+      "action": "confirm",
+      "plate": "AD714BI",
+      "journeyUid": "678c00d5-261d-4dcb-b706-e20d18d41929",
+      "updatedAt": "2026-10-06T19:31:07.465Z"
+    },
+    "ce0afd42-8e26-4ff1-8227-b621875e8d4b": {
+      "action": "confirm",
+      "plate": "KGX035",
+      "journeyUid": "d88f363e-f29b-4985-9030-721fd8160fe6",
+      "updatedAt": "2026-10-06T19:31:25.092Z"
+    },
+    "7462050b-205e-4e43-b37e-9fc1ecf29907": {
+      "action": "confirm",
+      "plate": "AF114VE",
+      "journeyUid": "2b52f3de-7edb-4cb7-a92f-6e0e637a9c77",
+      "updatedAt": "2026-10-07T15:01:03.334Z"
+    },
+    "ab220a7d-d81d-44fa-835e-f1bbfcf8940b": {
+      "action": "confirm",
+      "plate": "AF114VE",
+      "journeyUid": "2b52f3de-7edb-4cb7-a92f-6e0e637a9c77",
+      "updatedAt": "2026-10-06T19:31:49.426Z"
+    },
+    "1bf16b04-071b-4730-a88a-fd579face5a6": {
+      "action": "reject",
+      "updatedAt": "2026-10-06T19:32:14.766Z"
+    },
+    "4148acf4-d454-43e5-9249-61b0e8e5bf31": {
+      "action": "confirm",
+      "plate": "NZE366",
+      "journeyUid": "9f342199-a87e-45a3-af02-820686ed010c",
+      "updatedAt": "2026-10-06T19:32:31.726Z"
+    },
+    "a75bd3aa-378d-4ac0-b7af-bf95fd10143a": {
+      "action": "confirm",
+      "plate": "NWZ336",
+      "journeyUid": null,
+      "updatedAt": "2026-10-06T19:33:12.883Z"
+    },
+    "5a55dc3c-3c41-4f0a-ac75-ad16dd42af6b": {
+      "action": "confirm",
+      "plate": "NWZ336",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T13:31:32.917Z"
+    },
+    "9ef1f167-4478-4521-918e-a4bcd00040eb": {
+      "action": "confirm",
+      "plate": "OQT140",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T13:31:58.893Z"
+    },
+    "6166f2a7-c758-4b84-94b5-617a369df3b9": {
+      "action": "confirm",
+      "plate": "OQT140",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T13:32:11.083Z"
+    },
+    "16b2dfe7-c761-4855-ae11-3d7db170af39": {
+      "action": "confirm",
+      "plate": "HBQ125",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T13:32:35.696Z"
+    },
+    "f28d8f15-1f92-4a1b-88c9-d10afb1d43c6": {
+      "action": "reject",
+      "updatedAt": "2026-10-07T13:32:44.401Z"
+    },
+    "597d5794-7ed4-4eb2-8bee-81425d66651a": {
+      "action": "confirm",
+      "plate": "MFY738",
+      "journeyUid": "34a7fccb-c7b8-4f1f-96f0-908e9dcb5d12",
+      "updatedAt": "2026-10-07T13:32:52.233Z"
+    },
+    "c532ee32-754a-4e66-919b-70f4a5d3be7c": {
+      "action": "confirm",
+      "plate": "OQT140",
+      "journeyUid": "3c5fff53-38c7-4d31-9a90-0e516fe1a4b4",
+      "updatedAt": "2026-10-07T13:33:05.888Z"
+    },
+    "508841ba-0ef4-4f2b-9c96-cc379666910a": {
+      "action": "confirm",
+      "plate": "AF566OP",
+      "journeyUid": "08183d86-c215-40b7-b69e-5a78ace95550",
+      "updatedAt": "2026-10-07T13:33:17.266Z"
+    },
+    "24f9c9f2-d6d8-4cfe-b50d-478c280eed65": {
+      "action": "confirm",
+      "plate": "AF566OP",
+      "journeyUid": "08183d86-c215-40b7-b69e-5a78ace95550",
+      "updatedAt": "2026-10-07T17:30:46.300Z"
+    },
+    "2f8012bb-221f-49da-afdf-ca625a84f8ff": {
+      "action": "confirm",
+      "plate": "AH763WD",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T17:31:25.689Z"
+    },
+    "96072037-d4e4-42e1-8a74-7582a4428bf3": {
+      "action": "confirm",
+      "plate": "OQT140",
+      "journeyUid": "3c5fff53-38c7-4d31-9a90-0e516fe1a4b4",
+      "updatedAt": "2026-10-07T13:33:59.070Z"
+    },
+    "ef3b0429-1d82-43fa-bb9c-c3bb66505348": {
+      "action": "confirm",
+      "plate": "AH763WD",
+      "journeyUid": "f9bb48ee-03cb-4ad3-8ade-e33883f32887",
+      "updatedAt": "2026-10-07T13:34:17.898Z"
+    },
+    "9e102229-32b8-47ed-8214-0a9efc33f129": {
+      "action": "reject",
+      "updatedAt": "2026-10-07T13:34:25.645Z"
+    },
+    "4de025fd-8064-425d-8945-68cfcf58006e": {
+      "action": "confirm",
+      "plate": "GFP699",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T13:35:34.958Z"
+    },
+    "9e439474-e38e-4871-a3e2-0b0e2256f97a": {
+      "action": "confirm",
+      "plate": "FMT166",
+      "journeyUid": "44ff439f-b417-429b-9204-c01dec418969",
+      "updatedAt": "2026-10-07T13:36:01.583Z"
+    },
+    "563b00e8-e589-4aab-965e-dcee7f277ee8": {
+      "action": "reject",
+      "updatedAt": "2026-10-07T14:11:15.494Z"
+    },
+    "cf1836e0-0e5f-4f76-806c-82bf0d5b8d65": {
+      "action": "reject",
+      "updatedAt": "2026-10-07T14:11:22.463Z"
+    },
+    "5f9e7593-9b88-4542-9c2b-195d84e1886f": {
+      "action": "reject",
+      "updatedAt": "2026-10-07T14:11:33.354Z"
+    },
+    "41dc387d-3ff5-4593-9e6e-dd105fa71869": {
+      "action": "confirm",
+      "plate": "AF566LP",
+      "journeyUid": "508841ba-0ef4-4f2b-9c96-cc379666910a",
+      "updatedAt": "2026-10-07T17:31:43.303Z"
+    },
+    "5c824cde-5588-4cd8-a107-35b2eb1ee1f2": {
+      "action": "confirm",
+      "plate": "JLQ557",
+      "journeyUid": "d7fd73d0-ab30-4187-b6f3-ce4c71107cf3",
+      "updatedAt": "2026-10-07T14:12:24.851Z"
+    },
+    "d7fd73d0-ab30-4187-b6f3-ce4c71107cf3": {
+      "action": "confirm",
+      "plate": "JLO557",
+      "journeyUid": "5c824cde-5588-4cd8-a107-35b2eb1ee1f2",
+      "updatedAt": "2026-10-07T14:12:32.159Z"
+    },
+    "ae25fef1-6d90-4995-bae9-41fd7617720f": {
+      "action": "confirm",
+      "plate": "JLO557",
+      "journeyUid": "5c824cde-5588-4cd8-a107-35b2eb1ee1f2",
+      "updatedAt": "2026-10-07T14:12:52.071Z"
+    },
+    "e0e26e1a-5c0a-4d1e-979a-0cb0d8d20348": {
+      "action": "confirm",
+      "plate": "NAH953",
+      "journeyUid": "aa94098a-d8fd-4701-b32b-948146310cba",
+      "updatedAt": "2026-10-07T14:13:40.578Z"
+    },
+    "9a8083c0-c205-4c18-8c08-d8126f27e23f": {
+      "action": "confirm",
+      "plate": "HHL273",
+      "journeyUid": "45cc34db-6567-4e47-98b5-fe5b41442fe5",
+      "updatedAt": "2026-10-07T14:14:19.502Z"
+    },
+    "f1d100bf-0644-4094-9672-1f32b6e5585e": {
+      "action": "confirm",
+      "plate": "UVI968",
+      "journeyUid": "cc26961a-c125-4da8-b44d-bca72920efe8",
+      "updatedAt": "2026-10-07T14:14:25.671Z"
+    },
+    "01db7ddf-3a6c-4121-bcc3-c4c6b4c6aac8": {
+      "action": "confirm",
+      "plate": "AG622BE",
+      "journeyUid": "77fac895-b2c1-456c-ab5b-8bffcfb87f91",
+      "updatedAt": "2026-10-07T15:01:14.054Z"
+    },
+    "5d0328fa-9bb1-4504-8728-0fc5a8c24cc6": {
+      "action": "confirm",
+      "plate": "AG622BE",
+      "journeyUid": "77fac895-b2c1-456c-ab5b-8bffcfb87f91",
+      "updatedAt": "2026-10-07T15:01:22.955Z"
+    },
+    "a293e4cb-3a6a-4c7e-9b78-165be31ac80c": {
+      "action": "confirm",
+      "plate": "AD790SU",
+      "journeyUid": "31527930-f260-4ab3-a535-fd288a17b45f",
+      "updatedAt": "2026-10-07T14:14:40.607Z"
+    },
+    "32ba85f7-42a9-4843-8006-ebc9daa7e70b": {
+      "action": "confirm",
+      "plate": "AE772KD",
+      "journeyUid": "09dde6fc-cffc-4f32-95d0-ce3f54363ef1",
+      "updatedAt": "2026-10-07T14:14:44.894Z"
+    },
+    "37e5dc23-ed9b-4175-bdb9-3103f102d6fc": {
+      "action": "confirm",
+      "plate": "AE772KD",
+      "journeyUid": "09dde6fc-cffc-4f32-95d0-ce3f54363ef1",
+      "updatedAt": "2026-10-07T14:14:52.821Z"
+    },
+    "677fa648-6847-45c0-b89b-e9be16706a06": {
+      "action": "confirm",
+      "plate": "AG688FB",
+      "journeyUid": "7d202a80-79e2-4fa8-b8d6-80b3468be763",
+      "updatedAt": "2026-10-07T14:14:57.834Z"
+    },
+    "89435e79-9836-4687-a41c-a973ed372815": {
+      "action": "confirm",
+      "plate": "AG688FB",
+      "journeyUid": "7d202a80-79e2-4fa8-b8d6-80b3468be763",
+      "updatedAt": "2026-10-07T14:15:01.442Z"
+    },
+    "8000ad69-1174-4463-9915-1c253d1a89aa": {
+      "action": "confirm",
+      "plate": "AE264XY",
+      "journeyUid": "08c7ca98-12b5-49bf-addf-b27ccdb54c99",
+      "updatedAt": "2026-10-07T14:15:05.394Z"
+    },
+    "fb26db30-9e88-4ad7-9992-38187cc13542": {
+      "action": "confirm",
+      "plate": "MSE380",
+      "journeyUid": "2d158eda-c3c2-4c70-a0fa-508b2aa9bde3",
+      "updatedAt": "2026-10-07T14:15:08.457Z"
+    },
+    "045f8a73-b59e-4541-94ca-79674261fed3": {
+      "action": "confirm",
+      "plate": "AB226IK",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T14:16:37.254Z"
+    },
+    "206ede13-9908-43a6-86bd-a5b2bdba8b95": {
+      "action": "confirm",
+      "plate": "AC988RL",
+      "journeyUid": "489b0be6-67a4-4867-b31e-05cee96e3514",
+      "updatedAt": "2026-10-07T14:16:48.976Z"
+    },
+    "1478c11c-d250-4377-902b-71c0e3ebf7ab": {
+      "action": "confirm",
+      "plate": "AD829PY",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T14:17:16.627Z"
+    },
+    "d88f363e-f29b-4985-9030-721fd8160fe6": {
+      "action": "confirm",
+      "plate": "KGX035",
+      "journeyUid": "ce0afd42-8e26-4ff1-8227-b621875e8d4b",
+      "updatedAt": "2026-10-07T14:17:46.320Z"
+    },
+    "88400dc0-668b-4c55-9bb1-a46718126643": {
+      "action": "confirm",
+      "plate": "AB276IK",
+      "journeyUid": "ac26e9f4-c2ad-4fb8-9422-38e2a8bace47",
+      "updatedAt": "2026-10-07T14:18:13.916Z"
+    },
+    "fb191a4c-f8f1-4f40-8742-e58a03aeb56b": {
+      "action": "confirm",
+      "plate": "AG688FB",
+      "journeyUid": "7d202a80-79e2-4fa8-b8d6-80b3468be763",
+      "updatedAt": "2026-10-07T14:18:21.609Z"
+    },
+    "0b5d99bd-ea5e-4edb-b1ac-415a738a7b07": {
+      "action": "confirm",
+      "plate": "AG688FB",
+      "journeyUid": "7d202a80-79e2-4fa8-b8d6-80b3468be763",
+      "updatedAt": "2026-10-07T14:18:26.606Z"
+    },
+    "f5be0f78-1757-483e-ade3-8abd1b19fe45": {
+      "action": "confirm",
+      "plate": "MSE380",
+      "journeyUid": "fb26db30-9e88-4ad7-9992-38187cc13542",
+      "updatedAt": "2026-10-07T14:18:32.389Z"
+    },
+    "2d158eda-c3c2-4c70-a0fa-508b2aa9bde3": {
+      "action": "confirm",
+      "plate": "MSE380",
+      "journeyUid": "fb26db30-9e88-4ad7-9992-38187cc13542",
+      "updatedAt": "2026-10-07T14:18:37.446Z"
+    },
+    "c6ee66b7-657f-4263-b9c8-6c28d73acdf9": {
+      "action": "confirm",
+      "plate": "AE264XY",
+      "journeyUid": "08c7ca98-12b5-49bf-addf-b27ccdb54c99",
+      "updatedAt": "2026-10-07T14:18:43.612Z"
+    },
+    "44be7f85-228e-4004-a838-07831462fdbf": {
+      "action": "confirm",
+      "plate": "AF529RF",
+      "journeyUid": "742c09ac-40ae-42ee-a76f-7f46e6968521",
+      "updatedAt": "2026-10-07T14:18:48.049Z"
+    },
+    "43261ea6-8528-4f04-851a-f4ff1975ffc8": {
+      "action": "confirm",
+      "plate": "AF529RF",
+      "journeyUid": "742c09ac-40ae-42ee-a76f-7f46e6968521",
+      "updatedAt": "2026-10-07T14:18:51.416Z"
+    },
+    "61a532ea-a527-4f94-a588-5a8ae8c7c9a9": {
+      "action": "confirm",
+      "plate": "SMN846",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T14:19:07.022Z"
+    },
+    "742c09ac-40ae-42ee-a76f-7f46e6968521": {
+      "action": "confirm",
+      "plate": "AC529RF",
+      "journeyUid": "43261ea6-8528-4f04-851a-f4ff1975ffc8",
+      "updatedAt": "2026-10-07T14:19:26.312Z"
+    },
+    "510610e8-f1fa-4f0e-9b61-37aebe97c9a8": {
+      "action": "confirm",
+      "plate": "AYM824",
+      "journeyUid": "9a0ec242-61b8-4072-bae3-afddc1653ce2",
+      "updatedAt": "2026-10-07T14:19:32.841Z"
+    },
+    "4efc3e31-f144-4e24-9d51-cb66907f696b": {
+      "action": "confirm",
+      "plate": "AB772DA",
+      "journeyUid": "09dde6fc-cffc-4f32-95d0-ce3f54363ef1",
+      "updatedAt": "2026-10-07T14:19:39.769Z"
+    },
+    "0b6e4cb8-59a3-4cbe-addb-9fb07499430f": {
+      "action": "reject",
+      "updatedAt": "2026-10-07T14:19:56.043Z"
+    },
+    "7f5a71dc-1f1d-4bcc-8c3f-275066f94232": {
+      "action": "confirm",
+      "plate": "ROU086",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T14:20:13.279Z"
+    },
+    "bb3acbb9-16ec-4b33-a8da-133666966316": {
+      "action": "confirm",
+      "plate": "ROU086",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T14:20:23.742Z"
+    },
+    "3668d802-aa94-4a6d-945e-825352275cba": {
+      "action": "confirm",
+      "plate": "AD829RV",
+      "journeyUid": "0ef24ea8-18f9-494f-9e16-bd37169a7a35",
+      "updatedAt": "2026-10-07T14:20:34.209Z"
+    },
+    "14e95e0a-39ef-4a85-a094-414e4b1f3aee": {
+      "action": "confirm",
+      "plate": "ROO784",
+      "journeyUid": "6f2b84b7-4709-4094-aa54-a2c7769e72b9",
+      "updatedAt": "2026-10-07T14:20:54.345Z"
+    },
+    "1b549027-3384-4386-9136-0104e3093a3d": {
+      "action": "confirm",
+      "plate": "PQD849",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T14:21:24.796Z"
+    },
+    "aeaf0cd6-9b40-4023-858d-b89ef630bda7": {
+      "action": "reject",
+      "updatedAt": "2026-10-07T14:21:34.980Z"
+    },
+    "c942cb6a-5056-4649-9824-8238dc667f4f": {
+      "action": "confirm",
+      "plate": "MGG011",
+      "journeyUid": "0641e64a-339d-45fa-a350-7c0b45a9e875",
+      "updatedAt": "2026-10-07T14:22:01.089Z"
+    },
+    "e99eb163-606b-4381-b31f-635175ed6863": {
+      "action": "confirm",
+      "plate": "AC889HD",
+      "journeyUid": "ffe4445b-f436-4694-8a29-bdb243189011",
+      "updatedAt": "2026-10-07T14:22:18.037Z"
+    },
+    "830c2af6-4e16-4d24-9bb7-8e69308af6ba": {
+      "action": "confirm",
+      "plate": "AF060AZ",
+      "journeyUid": "11439135-573f-4fec-8fd6-dbede27e979e",
+      "updatedAt": "2026-10-07T14:23:04.530Z"
+    },
+    "d8c0756a-0106-471f-b587-744f7966f014": {
+      "action": "confirm",
+      "plate": "FYC813",
+      "journeyUid": "a3fbc792-f95a-471d-9087-ea8158f5c508",
+      "updatedAt": "2026-10-07T14:23:39.461Z"
+    },
+    "f05febef-8cc6-4d6d-8f4d-565b57510c81": {
+      "action": "confirm",
+      "plate": "AD001TD",
+      "journeyUid": "21a1068e-f850-417a-8755-8ad4ffec6590",
+      "updatedAt": "2026-10-07T14:23:49.296Z"
+    },
+    "60d0c74f-4f09-453a-ac4d-332d9e41a2a7": {
+      "action": "confirm",
+      "plate": "MFY738",
+      "journeyUid": "597d5794-7ed4-4eb2-8bee-81425d66651a",
+      "updatedAt": "2026-10-07T14:23:54.328Z"
+    },
+    "39a93298-280f-48a6-9c8e-6df6e26c8c56": {
+      "action": "confirm",
+      "plate": "AF778YL",
+      "journeyUid": "82e84108-772b-4ca3-a023-3b83aa6d0be4",
+      "updatedAt": "2026-10-07T14:23:59.446Z"
+    },
+    "7b08f7b5-0925-4c48-86f3-6b3f1fabc695": {
+      "action": "confirm",
+      "plate": "AE036AM",
+      "journeyUid": "139432ef-eac9-47ad-92fa-e85fe53109f2",
+      "updatedAt": "2026-10-07T14:24:03.121Z"
+    },
+    "e9976301-eb64-4405-89a4-c2d850e9b0e8": {
+      "action": "confirm",
+      "plate": "AF211ER",
+      "journeyUid": "35719c69-ba54-48d7-9b6e-4465e6536f21",
+      "updatedAt": "2026-10-07T14:24:06.972Z"
+    },
+    "1911f38e-ac83-4e96-8cfe-a6a823e30382": {
+      "action": "confirm",
+      "plate": "AF566OP",
+      "journeyUid": "24f9c9f2-d6d8-4cfe-b50d-478c280eed65",
+      "updatedAt": "2026-10-07T14:24:10.082Z"
+    },
+    "d4c31cdf-0022-4a78-b297-246e5ed80471": {
+      "action": "confirm",
+      "plate": "AA358JP",
+      "journeyUid": "d78f7d54-31c8-4020-a2bf-3aafb4b13488",
+      "updatedAt": "2026-10-07T15:00:21.238Z"
+    },
+    "d78f7d54-31c8-4020-a2bf-3aafb4b13488": {
+      "action": "confirm",
+      "plate": "AA358JD",
+      "journeyUid": "d4c31cdf-0022-4a78-b297-246e5ed80471",
+      "updatedAt": "2026-10-07T15:00:31.724Z"
+    },
+    "66db36ac-34fa-40a9-89dc-efb1b1e996c8": {
+      "action": "confirm",
+      "plate": "AB449JK",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T17:30:17.573Z"
+    },
+    "e17c4841-4c49-427e-ade1-3c555c2ce4ff": {
+      "action": "confirm",
+      "plate": "AB449JK",
+      "journeyUid": null,
+      "updatedAt": "2026-10-07T17:30:17.573Z",
+      "sameAs": "66db36ac-34fa-40a9-89dc-efb1b1e996c8"
+    },
+    "35719c69-ba54-48d7-9b6e-4465e6536f21": {
+      "action": "confirm",
+      "plate": "AF211ER",
+      "journeyUid": "c3add5a7-5fcb-4281-aec7-a7e52bbb945d",
+      "updatedAt": "2026-10-07T17:30:36.490Z"
+    },
+    "af5c7467-1c3f-4a3e-92f3-de72b85d83c4": {
+      "action": "confirm",
+      "plate": "IMH787",
+      "journeyUid": "00a8e394-3a9f-41ef-8cd8-a7e9396bbb29",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T18:30:17.676Z"
+    },
+    "5d105a87-cad4-459b-b0fd-0783df3452b8": {
+      "action": "confirm",
+      "plate": "AA528MD",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T18:33:29.272Z"
+    },
+    "7e74c422-e890-42c3-9dbc-cf96c6ed8ed4": {
+      "action": "confirm",
+      "plate": "MFY738",
+      "journeyUid": "597d5794-7ed4-4eb2-8bee-81425d66651a",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T18:34:09.186Z"
+    },
+    "19d1277a-caeb-46bd-af3a-d5889fefab52": {
+      "action": "confirm",
+      "plate": "MFY738",
+      "journeyUid": "597d5794-7ed4-4eb2-8bee-81425d66651a",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T18:34:09.186Z",
+      "sameAs": "7e74c422-e890-42c3-9dbc-cf96c6ed8ed4"
+    },
+    "nolink:ROJ4085:3c40b885-0ca9-4e91-b0df-25b546fe5602": {
+      "action": "nolink",
+      "plate": "ROJ4085",
+      "readPlate": "ROO085",
+      "operator": null,
+      "updatedAt": "2026-10-07T19:16:51.057Z"
+    },
+    "nolink:ROJ4085:b76ec30b-5562-4709-8673-942b1369c1fa": {
+      "action": "nolink",
+      "plate": "ROJ4085",
+      "readPlate": "OJO501",
+      "operator": null,
+      "updatedAt": "2026-10-07T19:16:56.278Z"
+    },
+    "nolink:ROJ4085:03d3a907-c64c-4207-a867-c9d66568ac53": {
+      "action": "nolink",
+      "plate": "ROJ4085",
+      "readPlate": "OJD501",
+      "operator": null,
+      "updatedAt": "2026-10-07T19:16:57.215Z"
+    },
+    "3687ec06-be50-4846-ad24-c9084c41e2d4": {
+      "action": "confirm",
+      "plate": "AF211ER",
+      "journeyUid": "35719c69-ba54-48d7-9b6e-4465e6536f21",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T19:19:07.445Z"
+    },
+    "527d65e4-987b-462d-910d-540f22b45de7": {
+      "action": "confirm",
+      "plate": "AG688FB",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T19:19:58.015Z"
+    },
+    "183f6e19-8e62-41b8-846c-681a23ba55b2": {
+      "action": "confirm",
+      "plate": "GMO261",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T19:19:43.290Z"
+    },
+    "a488c05f-9d00-4139-b77f-cb396e4f1bbc": {
+      "action": "confirm",
+      "plate": "AG688FB",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T19:19:51.372Z"
+    },
+    "826eb3a9-f1a8-404e-80a1-62300c0a9523": {
+      "action": "confirm",
+      "plate": "AF566OP",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T19:20:08.749Z"
+    },
+    "9a0ec242-61b8-4072-bae3-afddc1653ce2": {
+      "action": "confirm",
+      "plate": "AYM824",
+      "journeyUid": "510610e8-f1fa-4f0e-9b61-37aebe97c9a8",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T19:20:27.915Z"
+    },
+    "71eecf53-53da-40b6-af98-d4e03c093834": {
+      "action": "confirm",
+      "plate": "JEQ388",
+      "journeyUid": "ab953f10-9ef1-4f75-8db1-3340b20002fc",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T19:20:48.340Z"
+    },
+    "68c65636-cbee-44ff-b21a-8aa3b9646c3c": {
+      "action": "confirm",
+      "plate": "AE264AY",
+      "journeyUid": "08c7ca98-12b5-49bf-addf-b27ccdb54c99",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T19:21:00.918Z"
+    },
+    "c46d2f85-8eb0-4dd0-b5af-5385906beced": {
+      "action": "confirm",
+      "plate": "MGG011",
+      "journeyUid": "0641e64a-339d-45fa-a350-7c0b45a9e875",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T19:21:57.962Z"
+    },
+    "aeeb82d5-b4a8-41e5-82c8-61abd9d4e5aa": {
+      "action": "defer",
+      "reason": "Foto ilegible o tapada",
+      "operator": null,
+      "attempts": 1,
+      "updatedAt": "2026-10-07T19:22:24.743Z"
+    },
+    "c5ba8f66-1bda-4058-a5b6-feebf15d063c": {
+      "action": "confirm",
+      "plate": "AG688FB",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T19:22:57.198Z"
+    },
+    "a85fc4d5-df5d-44a5-b2be-a034219dd127": {
+      "action": "confirm",
+      "plate": "AE827VZ",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-07T19:23:04.332Z"
+    },
+    "a60ef00c-1ff3-44ef-b177-16e418473097": {
+      "action": "confirm",
+      "plate": "KKD861",
+      "journeyUid": "3967ba4f-2b1b-4e80-97df-0ed0255d0175",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:21:32.097Z"
+    },
+    "d59e7da8-96f2-45aa-81c3-05981b4ccb10": {
+      "action": "confirm",
+      "plate": "AB349QJ",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:37:31.346Z"
+    },
+    "07b0fb8e-8558-4c3e-9f93-bcd514ef24c8": {
+      "action": "confirm",
+      "plate": "AB349QJ",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:37:38.265Z"
+    },
+    "dd0374fc-b75c-4c9c-a78d-b4b7f0f57090": {
+      "action": "reject",
+      "reason": "Vehículo de servicio / fuera del circuito",
+      "operator": null,
+      "updatedAt": "2026-10-08T12:37:19.015Z"
+    },
+    "6a1b0cfc-f789-4483-a9cf-f406c8444a23": {
+      "action": "reject",
+      "reason": "ilegible",
+      "operator": null,
+      "updatedAt": "2026-10-08T12:24:02.993Z"
+    },
+    "716c9daa-55d8-4497-9d85-54c5db2bacae": {
+      "action": "confirm",
+      "plate": "AF446TN",
+      "journeyUid": "f82c7871-50e4-453b-bf86-a77b7acd6157",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:24:50.535Z"
+    },
+    "f82c7871-50e4-453b-bf86-a77b7acd6157": {
+      "action": "confirm",
+      "plate": "AF416TN",
+      "journeyUid": "716c9daa-55d8-4497-9d85-54c5db2bacae",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:24:59.450Z"
+    },
+    "479b030e-e908-4436-b9b2-98d2f095266d": {
+      "action": "confirm",
+      "plate": "AG688FB",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:25:31.842Z"
+    },
+    "cf7034f2-2f00-41c4-8483-6c23b71c420f": {
+      "action": "confirm",
+      "plate": "PQK206",
+      "journeyUid": "f6f105bf-4993-4d44-9a78-dd7af428355e",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:38:33.883Z"
+    },
+    "fb41c6dd-5b35-4bb3-ae55-031cd5ee8f2f": {
+      "action": "confirm",
+      "plate": "LBF848",
+      "journeyUid": "92f73418-7194-4577-bb78-f85a85ad8ba4",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:38:58.712Z"
+    },
+    "596d6b41-1fbc-431f-a27a-2adf983e39f4": {
+      "action": "confirm",
+      "plate": "PQK206",
+      "journeyUid": "cf7034f2-2f00-41c4-8483-6c23b71c420f",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T12:39:22.779Z"
+    },
+    "d08073e7-0169-44b8-a206-28a654448f8d": {
+      "action": "confirm",
+      "plate": "AD449JK",
+      "journeyUid": "2e29b7f0-6fba-4046-990a-9519073b226c",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T13:08:51.245Z"
+    },
+    "d654d5cb-dd70-4b95-a2ee-a45d3f2e2ba7": {
+      "action": "confirm",
+      "plate": "FEA810",
+      "journeyUid": "fd6192a9-a147-4f1d-b0ca-b93045c0eedb",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T13:23:25.863Z"
+    },
+    "c9da86e4-5e0f-4742-9cf2-a3e987e67b51": {
+      "action": "confirm",
+      "plate": "AB934GV",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T13:24:22.626Z"
+    },
+    "b85a443b-3e68-4ad0-a4bb-dccebed5c87a": {
+      "action": "confirm",
+      "plate": "AH861QQ",
+      "journeyUid": "282a8bc6-f455-43f2-b5a9-d0bf61bbc419",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T13:24:31.704Z"
+    },
+    "74e4a5de-0ef1-4059-afe8-916a3f6e1cee": {
+      "action": "confirm",
+      "plate": "PQK206",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T13:24:41.525Z"
+    },
+    "2c4f12da-8495-4159-b183-f33f132c93c9": {
+      "action": "confirm",
+      "plate": "AD449JK",
+      "journeyUid": "2e29b7f0-6fba-4046-990a-9519073b226c",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T13:25:25.715Z"
+    },
+    "9fc4c6ee-1e47-4a00-989c-9752c15dc722": {
+      "action": "confirm",
+      "plate": "AD449JK",
+      "journeyUid": "2e29b7f0-6fba-4046-990a-9519073b226c",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T14:19:57.209Z"
+    },
+    "2e29b7f0-6fba-4046-990a-9519073b226c": {
+      "action": "confirm",
+      "plate": "AD447JK",
+      "journeyUid": "d08073e7-0169-44b8-a206-28a654448f8d",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T14:20:12.942Z"
+    },
+    "2a836e6d-e348-4ce4-aeb6-24bdb2be95ad": {
+      "action": "confirm",
+      "plate": "LJB988",
+      "journeyUid": "9e9c2373-e833-49ad-a54d-fe75e22df0fd",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T13:30:01.169Z"
+    },
+    "ce30e6ed-8300-476a-8c0e-e57f46a99710": {
+      "action": "confirm",
+      "plate": "AF969BJ",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T14:17:26.863Z"
+    },
+    "2e64fd8d-9a4d-4c14-b2db-2ace28af6c65": {
+      "action": "confirm",
+      "plate": "AF211ER",
+      "journeyUid": "c9032d43-5fd3-40d7-ae99-00c1485d3870",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T14:17:36.348Z"
+    },
+    "5b279c00-f08a-4d8f-b30d-ea6a17632559": {
+      "action": "confirm",
+      "plate": "AG169JJ",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T14:19:16.417Z"
+    },
+    "79f12463-e4a0-4ddd-a2f3-4c0a48100433": {
+      "action": "confirm",
+      "plate": "AG169JJ",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T14:19:50.525Z"
+    },
+    "76b6d2fb-f23e-48c7-867d-4b8c0f32d418": {
+      "action": "confirm",
+      "plate": "AH049ID",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T14:20:04.163Z"
+    },
+    "f6f105bf-4993-4d44-9a78-dd7af428355e": {
+      "action": "confirm",
+      "plate": "POK206",
+      "journeyUid": "3e254298-6713-48c5-8c10-f5c58bb4c707",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T14:18:23.850Z"
+    },
+    "fea4afa8-53d3-4fbe-b7b9-1fcd7319c577": {
+      "action": "confirm",
+      "plate": "POK206",
+      "journeyUid": "3e254298-6713-48c5-8c10-f5c58bb4c707",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T14:18:23.850Z",
+      "sameAs": "f6f105bf-4993-4d44-9a78-dd7af428355e"
+    },
+    "4cfcdb04-662c-44b6-8f32-bbc08bf085d6": {
+      "action": "confirm",
+      "plate": "KDG543",
+      "journeyUid": "d3647f80-d8d4-4b65-b931-89e526fda794",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T14:18:51.682Z"
+    },
+    "713062be-b153-44f9-8b2e-aaf370b19546": {
+      "action": "confirm",
+      "plate": "AG692JX",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T14:18:59.615Z"
+    },
+    "2af55740-6da5-4946-b397-fdf70e82fa89": {
+      "action": "confirm",
+      "plate": "AF211FP",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T14:19:06.353Z"
+    },
+    "a16744ce-cfb0-4390-9728-d8834fc6aa4e": {
+      "action": "confirm",
+      "plate": "AH049ID",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T14:19:22.118Z"
+    },
+    "f863550f-18ce-4882-b784-59b4f6c16304": {
+      "action": "confirm",
+      "plate": "AG692JX",
+      "journeyUid": null,
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T14:52:47.497Z"
+    },
+    "c7260639-f847-4263-be81-5eb5aff24c85": {
+      "action": "confirm",
+      "plate": "AH933LO",
+      "journeyUid": "44da995b-d4f0-4503-80c5-3c5cfecebc76",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T15:34:09.659Z"
+    },
+    "d3647f80-d8d4-4b65-b931-89e526fda794": {
+      "action": "confirm",
+      "plate": "KDG543",
+      "journeyUid": "2ff6bcb7-f8a5-4797-a39a-f316ce87fd30",
+      "reason": null,
+      "operator": null,
+      "updatedAt": "2026-10-08T15:34:31.075Z"
+    }
+  }
+}

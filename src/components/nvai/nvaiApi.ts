@@ -1,5 +1,6 @@
 /** Cliente fino de NVAi (Plant State + agente ETL vía :8787). */
 
+import type { AnalysisScope } from '../../context/AnalysisContext'
 export type NvaiFocus = {
   sector?: string
   plate?: string
@@ -83,6 +84,7 @@ export function parseNvaiFacts(reply: string): { plain: string; facts: NvaiFact[
 export async function streamNvaiAsk(
   args: {
     question: string
+    context?: AnalysisScope
     site?: string
     focus?: NvaiFocus | string | null
     history?: NvaiChatMessage[]
@@ -97,6 +99,7 @@ export async function streamNvaiAsk(
       site: args.site ?? 'ricardone',
       focus: args.focus ?? null,
       history: args.history ?? [],
+      context: args.context ?? null,
     }),
   })
   if (!res.ok || !res.body) {

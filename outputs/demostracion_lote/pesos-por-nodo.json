@@ -1,0 +1,902 @@
+[
+  {
+    "node": "Balanza egreso",
+    "franja": "dia",
+    "n": 581,
+    "camion": 269,
+    "exacta": 269,
+    "attr": {
+      "color": {
+        "dato": 262,
+        "mismo": 159,
+        "nMismo": 259,
+        "otro": 103,
+        "nOtro": 262
+      },
+      "marca": {
+        "dato": 98,
+        "mismo": 66,
+        "nMismo": 95,
+        "otro": 16,
+        "nOtro": 92
+      },
+      "tipo": {
+        "dato": 222,
+        "mismo": 77,
+        "nMismo": 220,
+        "otro": 70,
+        "nOtro": 221
+      }
+    }
+  },
+  {
+    "node": "Balanza egreso",
+    "franja": "noche",
+    "n": 215,
+    "camion": 155,
+    "exacta": 155,
+    "attr": {
+      "color": {
+        "dato": 151,
+        "mismo": 73,
+        "nMismo": 150,
+        "otro": 49,
+        "nOtro": 149
+      },
+      "marca": {
+        "dato": 41,
+        "mismo": 24,
+        "nMismo": 39,
+        "otro": 8,
+        "nOtro": 40
+      },
+      "tipo": {
+        "dato": 116,
+        "mismo": 51,
+        "nMismo": 114,
+        "otro": 37,
+        "nOtro": 114
+      }
+    }
+  },
+  {
+    "node": "Balanza egreso SL",
+    "franja": "dia",
+    "n": 847,
+    "camion": 194,
+    "exacta": 194,
+    "attr": {
+      "color": {
+        "dato": 193,
+        "mismo": 142,
+        "nMismo": 192,
+        "otro": 89,
+        "nOtro": 192
+      },
+      "marca": {
+        "dato": 160,
+        "mismo": 136,
+        "nMismo": 159,
+        "otro": 24,
+        "nOtro": 154
+      },
+      "tipo": {
+        "dato": 194,
+        "mismo": 118,
+        "nMismo": 193,
+        "otro": 82,
+        "nOtro": 193
+      }
+    }
+  },
+  {
+    "node": "Balanza ingreso",
+    "franja": "dia",
+    "n": 632,
+    "camion": 142,
+    "exacta": 142,
+    "attr": {
+      "color": {
+        "dato": 140,
+        "mismo": 95,
+        "nMismo": 140,
+        "otro": 49,
+        "nOtro": 139
+      },
+      "marca": {
+        "dato": 81,
+        "mismo": 77,
+        "nMismo": 80,
+        "otro": 19,
+        "nOtro": 79
+      },
+      "tipo": {
+        "dato": 114,
+        "mismo": 71,
+        "nMismo": 113,
+        "otro": 49,
+        "nOtro": 113
+      }
+    }
+  },
+  {
+    "node": "Balanza ingreso SL",
+    "franja": "dia",
+    "n": 893,
+    "camion": 798,
+    "exacta": 798,
+    "attr": {
+      "color": {
+        "dato": 790,
+        "mismo": 561,
+        "nMismo": 789,
+        "otro": 384,
+        "nOtro": 788
+      },
+      "marca": {
+        "dato": 591,
+        "mismo": 478,
+        "nMismo": 590,
+        "otro": 105,
+        "nOtro": 556
+      },
+      "tipo": {
+        "dato": 798,
+        "mismo": 411,
+        "nMismo": 797,
+        "otro": 327,
+        "nOtro": 795
+      }
+    }
+  },
+  {
+    "node": "Balanza ingreso SL",
+    "franja": "noche",
+    "n": 809,
+    "camion": 591,
+    "exacta": 591,
+    "attr": {
+      "color": {
+        "dato": 591,
+        "mismo": 350,
+        "nMismo": 591,
+        "otro": 269,
+        "nOtro": 588
+      },
+      "marca": {
+        "dato": 220,
+        "mismo": 155,
+        "nMismo": 220,
+        "otro": 35,
+        "nOtro": 211
+      },
+      "tipo": {
+        "dato": 591,
+        "mismo": 161,
+        "nMismo": 591,
+        "otro": 102,
+        "nOtro": 586
+      }
+    }
+  },
+  {
+    "node": "Calada",
+    "franja": "dia",
+    "n": 575,
+    "camion": 483,
+    "exacta": 483,
+    "attr": {
+      "color": {
+        "dato": 472,
+        "mismo": 398,
+        "nMismo": 470,
+        "otro": 286,
+        "nOtro": 471
+      },
+      "marca": {
+        "dato": 394,
+        "mismo": 373,
+        "nMismo": 392,
+        "otro": 78,
+        "nOtro": 373
+      },
+      "tipo": {
+        "dato": 483,
+        "mismo": 248,
+        "nMismo": 482,
+        "otro": 172,
+        "nOtro": 478
+      }
+    }
+  },
+  {
+    "node": "Calada",
+    "franja": "noche",
+    "n": 748,
+    "camion": 516,
+    "exacta": 516,
+    "attr": {
+      "color": {
+        "dato": 515,
+        "mismo": 353,
+        "nMismo": 510,
+        "otro": 292,
+        "nOtro": 514
+      },
+      "marca": {
+        "dato": 455,
+        "mismo": 388,
+        "nMismo": 442,
+        "otro": 78,
+        "nOtro": 428
+      },
+      "tipo": {
+        "dato": 516,
+        "mismo": 260,
+        "nMismo": 510,
+        "otro": 193,
+        "nOtro": 512
+      }
+    }
+  },
+  {
+    "node": "Calada SL",
+    "franja": "dia",
+    "n": 217,
+    "camion": 206,
+    "exacta": 206,
+    "attr": {
+      "color": {
+        "dato": 206,
+        "mismo": 194,
+        "nMismo": 205,
+        "otro": 123,
+        "nOtro": 206
+      },
+      "marca": {
+        "dato": 187,
+        "mismo": 179,
+        "nMismo": 186,
+        "otro": 43,
+        "nOtro": 179
+      },
+      "tipo": {
+        "dato": 206,
+        "mismo": 140,
+        "nMismo": 205,
+        "otro": 89,
+        "nOtro": 206
+      }
+    }
+  },
+  {
+    "node": "Carga OSL SL",
+    "franja": "dia",
+    "n": 138,
+    "camion": 121,
+    "exacta": 121,
+    "attr": {
+      "color": {
+        "dato": 120,
+        "mismo": 91,
+        "nMismo": 120,
+        "otro": 49,
+        "nOtro": 120
+      },
+      "marca": {
+        "dato": 107,
+        "mismo": 98,
+        "nMismo": 107,
+        "otro": 31,
+        "nOtro": 100
+      },
+      "tipo": {
+        "dato": 113,
+        "mismo": 92,
+        "nMismo": 113,
+        "otro": 50,
+        "nOtro": 111
+      }
+    }
+  },
+  {
+    "node": "Egreso SL",
+    "franja": "dia",
+    "n": 2331,
+    "camion": 742,
+    "exacta": 742,
+    "attr": {
+      "color": {
+        "dato": 732,
+        "mismo": 597,
+        "nMismo": 728,
+        "otro": 413,
+        "nOtro": 729
+      },
+      "marca": {
+        "dato": 607,
+        "mismo": 539,
+        "nMismo": 603,
+        "otro": 107,
+        "nOtro": 571
+      },
+      "tipo": {
+        "dato": 742,
+        "mismo": 365,
+        "nMismo": 739,
+        "otro": 280,
+        "nOtro": 736
+      }
+    }
+  },
+  {
+    "node": "Egreso SL",
+    "franja": "noche",
+    "n": 987,
+    "camion": 508,
+    "exacta": 508,
+    "attr": {
+      "color": {
+        "dato": 505,
+        "mismo": 357,
+        "nMismo": 492,
+        "otro": 323,
+        "nOtro": 502
+      },
+      "marca": {
+        "dato": 416,
+        "mismo": 330,
+        "nMismo": 389,
+        "otro": 67,
+        "nOtro": 393
+      },
+      "tipo": {
+        "dato": 508,
+        "mismo": 201,
+        "nMismo": 494,
+        "otro": 171,
+        "nOtro": 505
+      }
+    }
+  },
+  {
+    "node": "Ingreso",
+    "franja": "dia",
+    "n": 149,
+    "camion": 122,
+    "exacta": 122,
+    "attr": {
+      "color": {
+        "dato": 121,
+        "mismo": 79,
+        "nMismo": 121,
+        "otro": 42,
+        "nOtro": 120
+      },
+      "marca": {
+        "dato": 69,
+        "mismo": 62,
+        "nMismo": 67,
+        "otro": 16,
+        "nOtro": 63
+      },
+      "tipo": {
+        "dato": 100,
+        "mismo": 53,
+        "nMismo": 98,
+        "otro": 46,
+        "nOtro": 98
+      }
+    }
+  },
+  {
+    "node": "Ingreso",
+    "franja": "noche",
+    "n": 154,
+    "camion": 100,
+    "exacta": 100,
+    "attr": {
+      "color": {
+        "dato": 100,
+        "mismo": 55,
+        "nMismo": 100,
+        "otro": 35,
+        "nOtro": 100
+      },
+      "marca": {
+        "dato": 57,
+        "mismo": 38,
+        "nMismo": 56,
+        "otro": 6,
+        "nOtro": 53
+      },
+      "tipo": {
+        "dato": 92,
+        "mismo": 42,
+        "nMismo": 92,
+        "otro": 31,
+        "nOtro": 91
+      }
+    }
+  },
+  {
+    "node": "Ingreso SL",
+    "franja": "dia",
+    "n": 711,
+    "camion": 653,
+    "exacta": 653,
+    "attr": {
+      "color": {
+        "dato": 649,
+        "mismo": 440,
+        "nMismo": 648,
+        "otro": 289,
+        "nOtro": 648
+      },
+      "marca": {
+        "dato": 546,
+        "mismo": 513,
+        "nMismo": 542,
+        "otro": 87,
+        "nOtro": 518
+      },
+      "tipo": {
+        "dato": 588,
+        "mismo": 412,
+        "nMismo": 587,
+        "otro": 355,
+        "nOtro": 582
+      }
+    }
+  },
+  {
+    "node": "Ingreso SL",
+    "franja": "noche",
+    "n": 608,
+    "camion": 417,
+    "exacta": 417,
+    "attr": {
+      "color": {
+        "dato": 416,
+        "mismo": 239,
+        "nMismo": 414,
+        "otro": 188,
+        "nOtro": 415
+      },
+      "marca": {
+        "dato": 282,
+        "mismo": 218,
+        "nMismo": 276,
+        "otro": 51,
+        "nOtro": 269
+      },
+      "tipo": {
+        "dato": 383,
+        "mismo": 187,
+        "nMismo": 382,
+        "otro": 211,
+        "nOtro": 377
+      }
+    }
+  },
+  {
+    "node": "Playa 3",
+    "franja": "dia",
+    "n": 270,
+    "camion": 177,
+    "exacta": 177,
+    "attr": {
+      "color": {
+        "dato": 173,
+        "mismo": 138,
+        "nMismo": 173,
+        "otro": 88,
+        "nOtro": 173
+      },
+      "marca": {
+        "dato": 130,
+        "mismo": 113,
+        "nMismo": 129,
+        "otro": 19,
+        "nOtro": 125
+      },
+      "tipo": {
+        "dato": 177,
+        "mismo": 81,
+        "nMismo": 177,
+        "otro": 67,
+        "nOtro": 177
+      }
+    }
+  },
+  {
+    "node": "Playa 3",
+    "franja": "noche",
+    "n": 123,
+    "camion": 59,
+    "exacta": 59,
+    "attr": {
+      "color": {
+        "dato": 59,
+        "mismo": 24,
+        "nMismo": 58,
+        "otro": 24,
+        "nOtro": 59
+      },
+      "marca": {
+        "dato": 28,
+        "mismo": 16,
+        "nMismo": 27,
+        "otro": 5,
+        "nOtro": 28
+      },
+      "tipo": {
+        "dato": 59,
+        "mismo": 30,
+        "nMismo": 59,
+        "otro": 27,
+        "nOtro": 59
+      }
+    }
+  },
+  {
+    "node": "Preingreso",
+    "franja": "dia",
+    "n": 680,
+    "camion": 594,
+    "exacta": 594,
+    "attr": {
+      "color": {
+        "dato": 577,
+        "mismo": 353,
+        "nMismo": 571,
+        "otro": 207,
+        "nOtro": 576
+      },
+      "marca": {
+        "dato": 301,
+        "mismo": 200,
+        "nMismo": 296,
+        "otro": 39,
+        "nOtro": 287
+      },
+      "tipo": {
+        "dato": 482,
+        "mismo": 309,
+        "nMismo": 476,
+        "otro": 254,
+        "nOtro": 478
+      }
+    }
+  },
+  {
+    "node": "Preingreso",
+    "franja": "noche",
+    "n": 662,
+    "camion": 480,
+    "exacta": 480,
+    "attr": {
+      "color": {
+        "dato": 478,
+        "mismo": 266,
+        "nMismo": 466,
+        "otro": 172,
+        "nOtro": 478
+      },
+      "marca": {
+        "dato": 159,
+        "mismo": 106,
+        "nMismo": 154,
+        "otro": 23,
+        "nOtro": 152
+      },
+      "tipo": {
+        "dato": 357,
+        "mismo": 142,
+        "nMismo": 348,
+        "otro": 130,
+        "nOtro": 354
+      }
+    }
+  },
+  {
+    "node": "Renova SL",
+    "franja": "dia",
+    "n": 2186,
+    "camion": 1034,
+    "exacta": 1034,
+    "attr": {
+      "color": {
+        "dato": 1031,
+        "mismo": 911,
+        "nMismo": 1031,
+        "otro": 662,
+        "nOtro": 1025
+      },
+      "marca": {
+        "dato": 902,
+        "mismo": 828,
+        "nMismo": 902,
+        "otro": 178,
+        "nOtro": 847
+      },
+      "tipo": {
+        "dato": 1034,
+        "mismo": 815,
+        "nMismo": 1034,
+        "otro": 334,
+        "nOtro": 1024
+      }
+    }
+  },
+  {
+    "node": "Renova SL",
+    "franja": "noche",
+    "n": 228,
+    "camion": 33,
+    "exacta": 33,
+    "attr": {
+      "color": {
+        "dato": 33,
+        "mismo": 24,
+        "nMismo": 33,
+        "otro": 19,
+        "nOtro": 32
+      },
+      "marca": {
+        "dato": 18,
+        "mismo": 12,
+        "nMismo": 18,
+        "otro": 1,
+        "nOtro": 15
+      },
+      "tipo": {
+        "dato": 33,
+        "mismo": 10,
+        "nMismo": 33,
+        "otro": 7,
+        "nOtro": 33
+      }
+    }
+  },
+  {
+    "node": "Salida 2",
+    "franja": "dia",
+    "n": 578,
+    "camion": 470,
+    "exacta": 470,
+    "attr": {
+      "color": {
+        "dato": 464,
+        "mismo": 312,
+        "nMismo": 462,
+        "otro": 173,
+        "nOtro": 463
+      },
+      "marca": {
+        "dato": 399,
+        "mismo": 376,
+        "nMismo": 395,
+        "otro": 66,
+        "nOtro": 382
+      },
+      "tipo": {
+        "dato": 439,
+        "mismo": 314,
+        "nMismo": 437,
+        "otro": 257,
+        "nOtro": 433
+      }
+    }
+  },
+  {
+    "node": "Salida 2",
+    "franja": "noche",
+    "n": 445,
+    "camion": 283,
+    "exacta": 283,
+    "attr": {
+      "color": {
+        "dato": 277,
+        "mismo": 124,
+        "nMismo": 277,
+        "otro": 101,
+        "nOtro": 277
+      },
+      "marca": {
+        "dato": 176,
+        "mismo": 112,
+        "nMismo": 175,
+        "otro": 20,
+        "nOtro": 165
+      },
+      "tipo": {
+        "dato": 259,
+        "mismo": 121,
+        "nMismo": 259,
+        "otro": 125,
+        "nOtro": 255
+      }
+    }
+  },
+  {
+    "node": "Silo Keppler",
+    "franja": "dia",
+    "n": 45,
+    "camion": 44,
+    "exacta": 44,
+    "attr": {
+      "color": {
+        "dato": 44,
+        "mismo": 23,
+        "nMismo": 44,
+        "otro": 21,
+        "nOtro": 44
+      },
+      "marca": {
+        "dato": 33,
+        "mismo": 26,
+        "nMismo": 33,
+        "otro": 8,
+        "nOtro": 32
+      },
+      "tipo": {
+        "dato": 44,
+        "mismo": 31,
+        "nMismo": 44,
+        "otro": 21,
+        "nOtro": 44
+      }
+    }
+  },
+  {
+    "node": "Silo Keppler",
+    "franja": "noche",
+    "n": 54,
+    "camion": 30,
+    "exacta": 30,
+    "attr": {
+      "color": {
+        "dato": 30,
+        "mismo": 26,
+        "nMismo": 30,
+        "otro": 19,
+        "nOtro": 30
+      },
+      "marca": {
+        "dato": 20,
+        "mismo": 5,
+        "nMismo": 20,
+        "otro": 0,
+        "nOtro": 19
+      },
+      "tipo": {
+        "dato": 30,
+        "mismo": 29,
+        "nMismo": 30,
+        "otro": 19,
+        "nOtro": 30
+      }
+    }
+  },
+  {
+    "node": "Volcable 2",
+    "franja": "dia",
+    "n": 112,
+    "camion": 63,
+    "exacta": 63,
+    "attr": {
+      "color": {
+        "dato": 63,
+        "mismo": 32,
+        "nMismo": 63,
+        "otro": 22,
+        "nOtro": 63
+      },
+      "marca": {
+        "dato": 60,
+        "mismo": 55,
+        "nMismo": 60,
+        "otro": 9,
+        "nOtro": 60
+      },
+      "tipo": {
+        "dato": 63,
+        "mismo": 55,
+        "nMismo": 63,
+        "otro": 33,
+        "nOtro": 61
+      }
+    }
+  },
+  {
+    "node": "Volcable 2",
+    "franja": "noche",
+    "n": 95,
+    "camion": 39,
+    "exacta": 39,
+    "attr": {
+      "color": {
+        "dato": 39,
+        "mismo": 12,
+        "nMismo": 39,
+        "otro": 9,
+        "nOtro": 39
+      },
+      "marca": {
+        "dato": 34,
+        "mismo": 28,
+        "nMismo": 34,
+        "otro": 4,
+        "nOtro": 34
+      },
+      "tipo": {
+        "dato": 39,
+        "mismo": 28,
+        "nMismo": 39,
+        "otro": 23,
+        "nOtro": 39
+      }
+    }
+  },
+  {
+    "node": "Volcables SL",
+    "franja": "dia",
+    "n": 506,
+    "camion": 407,
+    "exacta": 407,
+    "attr": {
+      "color": {
+        "dato": 398,
+        "mismo": 338,
+        "nMismo": 397,
+        "otro": 210,
+        "nOtro": 397
+      },
+      "marca": {
+        "dato": 367,
+        "mismo": 345,
+        "nMismo": 364,
+        "otro": 47,
+        "nOtro": 351
+      },
+      "tipo": {
+        "dato": 406,
+        "mismo": 247,
+        "nMismo": 405,
+        "otro": 153,
+        "nOtro": 402
+      }
+    }
+  },
+  {
+    "node": "Volcables SL",
+    "franja": "noche",
+    "n": 428,
+    "camion": 140,
+    "exacta": 140,
+    "attr": {
+      "color": {
+        "dato": 136,
+        "mismo": 98,
+        "nMismo": 136,
+        "otro": 77,
+        "nOtro": 136
+      },
+      "marca": {
+        "dato": 103,
+        "mismo": 85,
+        "nMismo": 101,
+        "otro": 12,
+        "nOtro": 97
+      },
+      "tipo": {
+        "dato": 139,
+        "mismo": 77,
+        "nMismo": 139,
+        "otro": 65,
+        "nOtro": 138
+      }
+    }
+  }
+]

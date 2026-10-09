@@ -1,21 +1,23 @@
 [etl-headless] runId=2026-09-28_2026-10-04 (ventana 2026-09-28..2026-10-04, pisado)
 [etl-headless] path=windows/2026-09-28_2026-10-04
-[etl-headless] events=C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-27\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-28\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-29\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-30\event-list.json
-[etl-headless] movimientos backup: 1524 filas (2026-09-28→2026-10-04)
+[etl-headless] events=C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-27\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-28\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-29\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-09-30\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-10-01\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-10-02\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-10-03\event-list.json, C:\Users\Usuario\Desktop\Dashboard_camiones\data\truckflow\2026-10-04\event-list.json
+[etl-headless] movimientos backup: 2849 filas (2026-09-28→2026-10-04)
+[etl-headless] correcciones de En vivo: 310
+[etl-headless] correcciones aplicadas: 58 eventos renombrados, 28 descartados
 [etl-headless] construyendo KPI tiempos…
-[etl-headless] Truckflow COMPLETOS: 1918 tramos, 609 journeys · 109 viajes de pellet atribuidos a R30/R13 por cámara · 7 excluidos sin ingreso/preingreso
-[etl-headless] Excel-first: 30 tramos, 30 operaciones (ready_for_scatter)
-[etl-headless] KPI tramos unificado (cámaras + Excel): 1947 tramos (1918 de cámara + 30 de Excel, deduplicados por recorrido+tramo) · circuitos: R5, R6, R7, R8, R4, SL1, R13/14/15, R30/31/32
-[etl-headless] segment_scatter_analysis: 30 filas
-[etl-headless] segment_scatter_by_day: 30 filas
-[etl-headless] SL balanza→egreso embudo · incluido=0 · evaluadas=30 · circuito_R7/SL=0 · con_segmento_camara_balanza=0 · sin_salida_excel=0 · sin_inicio_balanza=30 · duracion_invalida=0 · duracion_excede_180=0 · not_ready_scatter=0
-[etl-headless] detalle_comité · ok=0 · sin_inicio=30 · excel_ric_como_s1=0 · s1_antes_ingreso_sl=0 · salida_antes_s1=0 · duracion_corta=0 · duracion_mayor_180=0 · sin_salida=0
-[etl-headless] sector_occupancy_30min: 96 intervalos · events: 30
-[etl-headless] san_lorenzo_volcable_events: 659 camiones · 5 calles · producto en 438/659 · filas INGRESO volcable: 445
-[etl-headless] calada_camera_events: 782 eventos · 5 cámaras · producto asignado a 133/782 (mapa uid→producto: 1036)
-[etl-headless] calada_sl_camera_events: 149 eventos · producto asignado a 101/149
-[etl-headless] calada_ricardone_liquid_events: 312 eventos · producto asignado a 81/312
-[etl-headless] descargas: ricardone_volcable=209 · ricardone_silo=479 · ricardone_celda16=2 · sl_aceite_pto=0 camiones (0 ev) · sl_aceite_osl=80 camiones (81 ev) (aceite: actividad de cámara, solo patentes válidas — sin cruce Excel)
-[etl-headless] niveles: C 1017/1442 con cámara · D 185 válidos, 33 anómalos, 229 incompletos, 59 sin contrato · E 4 circuitos (100% cámara pura)
-[etl-headless] pb: 21 archivos (8 productivos) 2026-09-27..2026-09-30
+[etl-headless] Truckflow COMPLETOS: 3271 tramos, 1097 journeys · 242 viajes de pellet atribuidos a R30/R13 por cámara · 15 excluidos sin ingreso/preingreso
+[etl-headless] Excel-first: 33 tramos, 33 operaciones (ready_for_scatter)
+[etl-headless] KPI tramos unificado (cámaras + Excel): 3303 tramos (3271 de cámara + 33 de Excel, deduplicados por recorrido+tramo) · circuitos: R5, R6, R7, R8, R4, SL1, R13/14/15, R30/31/32
+[etl-headless] segment_scatter_analysis: 33 filas
+[etl-headless] segment_scatter_by_day: 33 filas
+[etl-headless] SL balanza→egreso embudo · incluido=0 · evaluadas=33 · circuito_R7/SL=0 · con_segmento_camara_balanza=0 · sin_salida_excel=0 · sin_inicio_balanza=33 · duracion_invalida=0 · duracion_excede_180=0 · not_ready_scatter=0
+[etl-headless] detalle_comité · ok=0 · sin_inicio=33 · excel_ric_como_s1=0 · s1_antes_ingreso_sl=0 · salida_antes_s1=0 · duracion_corta=0 · duracion_mayor_180=0 · sin_salida=0
+[etl-headless] sector_occupancy_30min: 144 intervalos · events: 33
+[etl-headless] san_lorenzo_volcable_events: 1189 camiones · 5 calles · producto en 912/1189 · filas INGRESO volcable: 1036
+[etl-headless] calada_camera_events: 1213 eventos · 5 cámaras · producto asignado a 221/1213 (mapa uid→producto: 1856)
+[etl-headless] calada_sl_camera_events: 227 eventos · producto asignado a 169/227
+[etl-headless] calada_ricardone_liquid_events: 468 eventos · producto asignado a 186/468
+[etl-headless] descargas: ricardone_volcable=268 · ricardone_silo=528 · ricardone_celda16=3 · sl_aceite_pto=0 camiones (0 ev) · sl_aceite_osl=120 camiones (121 ev) (aceite: actividad de cámara, solo patentes válidas — sin cruce Excel)
+[etl-headless] niveles: C 1817/2607 con cámara · D 465 válidos, 41 anómalos, 346 incompletos, 64 sin contrato · E 4 circuitos (100% cámara pura)
+[etl-headless] pb: 21 archivos (8 productivos) 2026-09-27..2026-10-04
 [etl-headless] tablas núcleo=37 (sin debug) rules=etl_transform_v17

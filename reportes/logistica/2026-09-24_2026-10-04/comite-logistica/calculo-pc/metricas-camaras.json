@@ -1,0 +1,2872 @@
+{
+ "semanas": {
+  "prev": [
+   "2026-09-17",
+   "2026-09-18",
+   "2026-09-19",
+   "2026-09-20",
+   "2026-09-21",
+   "2026-09-22",
+   "2026-09-23"
+  ],
+  "cur": [
+   "2026-09-24",
+   "2026-09-25",
+   "2026-09-26",
+   "2026-09-27",
+   "2026-09-28",
+   "2026-09-29",
+   "2026-09-30",
+   "2026-10-01",
+   "2026-10-02",
+   "2026-10-03",
+   "2026-10-04"
+  ]
+ },
+ "sectores": {
+  "prev": {
+   "ingresoRic": [
+    473,
+    366,
+    167,
+    108,
+    245,
+    264,
+    305
+   ],
+   "caladaRic": [
+    456,
+    378,
+    176,
+    96,
+    210,
+    184,
+    256
+   ],
+   "caladaLiq": [
+    32,
+    8,
+    0,
+    0,
+    59,
+    72,
+    26
+   ],
+   "volcRic1": [
+    68,
+    60,
+    41,
+    13,
+    54,
+    24,
+    49
+   ],
+   "volcRic2": [
+    10,
+    5,
+    13,
+    7,
+    8,
+    11,
+    14
+   ],
+   "playa3": [
+    81,
+    70,
+    23,
+    10,
+    98,
+    87,
+    92
+   ],
+   "silosCarga": [
+    3,
+    4,
+    6,
+    9,
+    59,
+    66,
+    61
+   ],
+   "silosDesc": [
+    0,
+    1,
+    1,
+    0,
+    3,
+    6,
+    11
+   ],
+   "egresoRic": [
+    425,
+    326,
+    150,
+    75,
+    209,
+    185,
+    236
+   ],
+   "balanzaSL": [
+    410,
+    342,
+    174,
+    73,
+    205,
+    216,
+    272
+   ],
+   "caladaSL": [
+    45,
+    34,
+    14,
+    2,
+    58,
+    31,
+    40
+   ],
+   "volcSL": [
+    326,
+    237,
+    112,
+    50,
+    108,
+    106,
+    172
+   ],
+   "salidaSL": [
+    539,
+    466,
+    234,
+    118,
+    311,
+    343,
+    401
+   ],
+   "aceiteSL": [
+    9,
+    18,
+    6,
+    2,
+    7,
+    20,
+    19
+   ]
+  },
+  "cur": {
+   "ingresoRic": [
+    245,
+    246,
+    170,
+    124,
+    248,
+    195,
+    221,
+    191,
+    152,
+    109,
+    100
+   ],
+   "caladaRic": [
+    228,
+    224,
+    152,
+    122,
+    196,
+    164,
+    141,
+    108,
+    123,
+    91,
+    108
+   ],
+   "caladaLiq": [
+    35,
+    52,
+    50,
+    37,
+    42,
+    20,
+    59,
+    67,
+    16,
+    4,
+    1
+   ],
+   "volcRic1": [
+    57,
+    56,
+    56,
+    10,
+    10,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "volcRic2": [
+    16,
+    16,
+    9,
+    2,
+    20,
+    29,
+    16,
+    11,
+    16,
+    11,
+    0
+   ],
+   "playa3": [
+    140,
+    96,
+    76,
+    44,
+    73,
+    61,
+    83,
+    61,
+    25,
+    21,
+    2
+   ],
+   "silosCarga": [
+    52,
+    49,
+    20,
+    45,
+    81,
+    33,
+    6,
+    4,
+    3,
+    2,
+    0
+   ],
+   "silosDesc": [
+    12,
+    5,
+    2,
+    5,
+    5,
+    13,
+    21,
+    2,
+    0,
+    0,
+    0
+   ],
+   "egresoRic": [
+    158,
+    205,
+    102,
+    105,
+    213,
+    180,
+    186,
+    171,
+    144,
+    69,
+    98
+   ],
+   "balanzaSL": [
+    206,
+    233,
+    151,
+    106,
+    219,
+    200,
+    220,
+    221,
+    165,
+    101,
+    97
+   ],
+   "caladaSL": [
+    36,
+    27,
+    2,
+    6,
+    42,
+    38,
+    29,
+    31,
+    25,
+    6,
+    2
+   ],
+   "volcSL": [
+    128,
+    156,
+    119,
+    69,
+    153,
+    92,
+    132,
+    134,
+    78,
+    54,
+    39
+   ],
+   "salidaSL": [
+    323,
+    340,
+    205,
+    151,
+    338,
+    323,
+    346,
+    360,
+    297,
+    166,
+    113
+   ],
+   "aceiteSL": [
+    11,
+    7,
+    7,
+    5,
+    8,
+    25,
+    19,
+    9,
+    9,
+    5,
+    3
+   ]
+  }
+ },
+ "calles": {
+  "prev": {
+   "RC1": [
+    138,
+    31,
+    38,
+    0,
+    46,
+    0,
+    0
+   ],
+   "RC2": [
+    143,
+    33,
+    36,
+    0,
+    24,
+    1,
+    1
+   ],
+   "RC3": [
+    90,
+    160,
+    52,
+    44,
+    76,
+    101,
+    136
+   ],
+   "RC4": [
+    91,
+    164,
+    51,
+    53,
+    64,
+    93,
+    135
+   ],
+   "RC5": [
+    0,
+    1,
+    0,
+    0,
+    21,
+    0,
+    0
+   ],
+   "RC6": [
+    0,
+    0,
+    0,
+    0,
+    19,
+    10,
+    0
+   ],
+   "V1": [
+    0,
+    30,
+    0,
+    0,
+    1,
+    0,
+    6
+   ],
+   "V2": [
+    1,
+    22,
+    18,
+    0,
+    59,
+    71,
+    14
+   ],
+   "V3": [
+    127,
+    70,
+    0,
+    15,
+    0,
+    7,
+    75
+   ],
+   "V4": [
+    124,
+    76,
+    23,
+    0,
+    0,
+    0,
+    43
+   ],
+   "V5": [
+    75,
+    43,
+    71,
+    35,
+    52,
+    39,
+    63
+   ]
+  },
+  "cur": {
+   "RC1": [
+    0,
+    0,
+    0,
+    0,
+    40,
+    31,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "RC2": [
+    0,
+    0,
+    0,
+    0,
+    49,
+    48,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "RC3": [
+    116,
+    109,
+    78,
+    58,
+    59,
+    46,
+    73,
+    55,
+    65,
+    44,
+    55
+   ],
+   "RC4": [
+    125,
+    122,
+    78,
+    76,
+    76,
+    53,
+    69,
+    54,
+    60,
+    47,
+    54
+   ],
+   "RC5": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "RC6": [
+    0,
+    0,
+    0,
+    2,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "V1": [
+    0,
+    0,
+    1,
+    0,
+    7,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   "V2": [
+    0,
+    0,
+    7,
+    42,
+    0,
+    0,
+    1,
+    38,
+    8,
+    7,
+    0
+   ],
+   "V3": [
+    73,
+    50,
+    28,
+    0,
+    108,
+    49,
+    24,
+    0,
+    0,
+    0,
+    0
+   ],
+   "V4": [
+    35,
+    53,
+    42,
+    0,
+    39,
+    18,
+    54,
+    70,
+    20,
+    0,
+    0
+   ],
+   "V5": [
+    57,
+    84,
+    50,
+    37,
+    14,
+    34,
+    54,
+    26,
+    51,
+    47,
+    39
+   ]
+  }
+ },
+ "horas": {
+  "prev": {
+   "ingresoRic": [
+    112,
+    92,
+    66,
+    72,
+    53,
+    58,
+    64,
+    126,
+    114,
+    89,
+    114,
+    112,
+    97,
+    99,
+    97,
+    91,
+    85,
+    96,
+    115,
+    58,
+    142,
+    99,
+    211,
+    104
+   ],
+   "caladaRic": [
+    109,
+    91,
+    74,
+    61,
+    94,
+    120,
+    12,
+    42,
+    107,
+    60,
+    83,
+    98,
+    46,
+    98,
+    119,
+    78,
+    43,
+    102,
+    31,
+    29,
+    105,
+    75,
+    125,
+    131
+   ],
+   "caladaLiq": [
+    5,
+    1,
+    3,
+    7,
+    9,
+    7,
+    11,
+    17,
+    40,
+    15,
+    21,
+    28,
+    19,
+    9,
+    20,
+    16,
+    13,
+    13,
+    15,
+    10,
+    14,
+    2,
+    9,
+    6
+   ],
+   "volcRic1": [
+    19,
+    18,
+    23,
+    15,
+    17,
+    16,
+    7,
+    11,
+    20,
+    21,
+    20,
+    20,
+    23,
+    15,
+    20,
+    19,
+    12,
+    19,
+    14,
+    13,
+    20,
+    20,
+    23,
+    16
+   ],
+   "volcRic2": [
+    8,
+    10,
+    5,
+    9,
+    9,
+    9,
+    9,
+    9,
+    11,
+    12,
+    12,
+    14,
+    11,
+    10,
+    13,
+    9,
+    8,
+    12,
+    6,
+    5,
+    8,
+    4,
+    8,
+    10
+   ],
+   "playa3": [
+    32,
+    16,
+    20,
+    4,
+    21,
+    26,
+    19,
+    18,
+    52,
+    30,
+    26,
+    57,
+    36,
+    25,
+    26,
+    24,
+    33,
+    40,
+    22,
+    2,
+    16,
+    5,
+    29,
+    26
+   ],
+   "silosCarga": [
+    18,
+    20,
+    18,
+    27,
+    21,
+    24,
+    10,
+    21,
+    28,
+    35,
+    38,
+    41,
+    37,
+    28,
+    31,
+    29,
+    26,
+    24,
+    16,
+    25,
+    25,
+    25,
+    23,
+    27
+   ],
+   "silosDesc": [
+    0,
+    3,
+    2,
+    1,
+    0,
+    2,
+    1,
+    0,
+    1,
+    0,
+    0,
+    2,
+    1,
+    1,
+    1,
+    1,
+    0,
+    1,
+    4,
+    0,
+    1,
+    0,
+    2,
+    0
+   ],
+   "egresoRic": [
+    66,
+    71,
+    45,
+    45,
+    40,
+    78,
+    24,
+    40,
+    108,
+    83,
+    128,
+    144,
+    89,
+    111,
+    127,
+    93,
+    57,
+    108,
+    36,
+    24,
+    86,
+    41,
+    108,
+    113
+   ],
+   "balanzaSL": [
+    66,
+    94,
+    58,
+    57,
+    42,
+    80,
+    34,
+    54,
+    108,
+    94,
+    119,
+    119,
+    69,
+    116,
+    123,
+    105,
+    101,
+    85,
+    53,
+    65,
+    85,
+    88,
+    104,
+    117
+   ],
+   "caladaSL": [
+    0,
+    3,
+    2,
+    2,
+    1,
+    2,
+    1,
+    19,
+    33,
+    15,
+    25,
+    25,
+    21,
+    32,
+    32,
+    18,
+    15,
+    16,
+    9,
+    7,
+    10,
+    6,
+    10,
+    7
+   ],
+   "volcSL": [
+    57,
+    53,
+    35,
+    43,
+    18,
+    36,
+    9,
+    23,
+    48,
+    66,
+    67,
+    81,
+    58,
+    46,
+    65,
+    82,
+    71,
+    82,
+    36,
+    35,
+    49,
+    44,
+    40,
+    55
+   ],
+   "salidaSL": [
+    97,
+    105,
+    108,
+    110,
+    56,
+    67,
+    170,
+    124,
+    127,
+    167,
+    185,
+    243,
+    140,
+    135,
+    168,
+    233,
+    161,
+    140,
+    154,
+    89,
+    98,
+    105,
+    104,
+    101
+   ],
+   "aceiteSL": [
+    1,
+    4,
+    5,
+    2,
+    3,
+    2,
+    2,
+    4,
+    7,
+    4,
+    6,
+    3,
+    9,
+    2,
+    4,
+    9,
+    3,
+    2,
+    2,
+    4,
+    4,
+    3,
+    4,
+    2
+   ]
+  },
+  "cur": {
+   "ingresoRic": [
+    126,
+    84,
+    86,
+    79,
+    67,
+    79,
+    79,
+    125,
+    136,
+    128,
+    112,
+    139,
+    140,
+    138,
+    98,
+    123,
+    122,
+    118,
+    119,
+    69,
+    89,
+    83,
+    210,
+    150
+   ],
+   "caladaRic": [
+    160,
+    72,
+    55,
+    58,
+    66,
+    109,
+    13,
+    57,
+    123,
+    73,
+    79,
+    54,
+    23,
+    135,
+    41,
+    76,
+    84,
+    135,
+    28,
+    31,
+    135,
+    18,
+    142,
+    147
+   ],
+   "caladaLiq": [
+    29,
+    25,
+    21,
+    14,
+    14,
+    14,
+    13,
+    42,
+    50,
+    36,
+    32,
+    36,
+    32,
+    59,
+    44,
+    46,
+    51,
+    43,
+    29,
+    15,
+    42,
+    20,
+    22,
+    28
+   ],
+   "volcRic1": [
+    13,
+    10,
+    14,
+    12,
+    11,
+    16,
+    7,
+    9,
+    13,
+    11,
+    13,
+    12,
+    12,
+    9,
+    13,
+    14,
+    8,
+    10,
+    5,
+    9,
+    11,
+    12,
+    15,
+    12
+   ],
+   "volcRic2": [
+    12,
+    10,
+    16,
+    10,
+    11,
+    13,
+    12,
+    12,
+    12,
+    16,
+    12,
+    8,
+    12,
+    9,
+    14,
+    16,
+    22,
+    16,
+    11,
+    12,
+    14,
+    9,
+    9,
+    4
+   ],
+   "playa3": [
+    17,
+    19,
+    24,
+    21,
+    14,
+    37,
+    19,
+    55,
+    80,
+    65,
+    84,
+    62,
+    54,
+    71,
+    64,
+    63,
+    64,
+    60,
+    45,
+    6,
+    25,
+    10,
+    13,
+    30
+   ],
+   "silosCarga": [
+    28,
+    23,
+    38,
+    33,
+    28,
+    24,
+    13,
+    27,
+    34,
+    42,
+    37,
+    37,
+    34,
+    29,
+    31,
+    47,
+    42,
+    29,
+    16,
+    22,
+    23,
+    55,
+    26,
+    30
+   ],
+   "silosDesc": [
+    6,
+    2,
+    5,
+    3,
+    6,
+    3,
+    2,
+    5,
+    4,
+    3,
+    3,
+    3,
+    3,
+    3,
+    5,
+    5,
+    5,
+    5,
+    2,
+    2,
+    4,
+    1,
+    3,
+    3
+   ],
+   "egresoRic": [
+    126,
+    61,
+    23,
+    30,
+    43,
+    74,
+    15,
+    55,
+    145,
+    96,
+    122,
+    126,
+    106,
+    168,
+    100,
+    108,
+    65,
+    134,
+    62,
+    19,
+    93,
+    28,
+    83,
+    110
+   ],
+   "balanzaSL": [
+    139,
+    108,
+    93,
+    93,
+    70,
+    69,
+    41,
+    91,
+    194,
+    120,
+    166,
+    148,
+    96,
+    142,
+    169,
+    116,
+    110,
+    155,
+    78,
+    35,
+    97,
+    86,
+    99,
+    85
+   ],
+   "caladaSL": [
+    2,
+    1,
+    0,
+    0,
+    0,
+    1,
+    6,
+    18,
+    51,
+    26,
+    25,
+    23,
+    12,
+    27,
+    28,
+    18,
+    20,
+    20,
+    12,
+    9,
+    8,
+    0,
+    2,
+    2
+   ],
+   "volcSL": [
+    52,
+    64,
+    61,
+    58,
+    47,
+    42,
+    19,
+    44,
+    55,
+    80,
+    100,
+    105,
+    97,
+    76,
+    92,
+    94,
+    88,
+    101,
+    59,
+    28,
+    36,
+    39,
+    34,
+    38
+   ],
+   "salidaSL": [
+    102,
+    139,
+    129,
+    153,
+    115,
+    89,
+    250,
+    189,
+    200,
+    240,
+    284,
+    328,
+    253,
+    204,
+    241,
+    281,
+    241,
+    190,
+    224,
+    146,
+    99,
+    88,
+    110,
+    111
+   ],
+   "aceiteSL": [
+    4,
+    2,
+    0,
+    2,
+    3,
+    2,
+    1,
+    5,
+    8,
+    6,
+    7,
+    7,
+    17,
+    14,
+    8,
+    8,
+    1,
+    4,
+    3,
+    16,
+    3,
+    2,
+    2,
+    3
+   ]
+  }
+ },
+ "horasActivas": {
+  "prev": {
+   "ingresoRic": 164,
+   "caladaRic": 139,
+   "caladaLiq": 69,
+   "volcRic1": 156,
+   "volcRic2": 130,
+   "playa3": 112,
+   "silosCarga": 154,
+   "silosDesc": 21,
+   "egresoRic": 144,
+   "balanzaSL": 160,
+   "caladaSL": 101,
+   "volcSL": 144,
+   "salidaSL": 167,
+   "aceiteSL": 62
+  },
+  "cur": {
+   "ingresoRic": 256,
+   "caladaRic": 201,
+   "caladaLiq": 164,
+   "volcRic1": 99,
+   "volcRic2": 168,
+   "playa3": 190,
+   "silosCarga": 171,
+   "silosDesc": 54,
+   "egresoRic": 223,
+   "balanzaSL": 251,
+   "caladaSL": 108,
+   "volcSL": 228,
+   "salidaSL": 262,
+   "aceiteSL": 82
+  }
+ },
+ "circuitos": {
+  "prev": {
+   "r7": {
+    "total": 738,
+    "porDia": [
+     235,
+     181,
+     85,
+     40,
+     54,
+     54,
+     89
+    ],
+    "cuartos": {
+     "Q1": [
+      80,
+      64,
+      32,
+      6,
+      13,
+      14,
+      26
+     ],
+     "Q2": [
+      70,
+      59,
+      22,
+      13,
+      15,
+      16,
+      21
+     ],
+     "Q3": [
+      61,
+      36,
+      27,
+      19,
+      22,
+      11,
+      31
+     ],
+     "Q4": [
+      24,
+      22,
+      4,
+      2,
+      4,
+      13,
+      11
+     ]
+    },
+    "tiempos": {
+     "p1": {
+      "mean": 102,
+      "n": 685
+     },
+     "calEgr": {
+      "mean": 16,
+      "n": 598
+     },
+     "puente": {
+      "mean": 15,
+      "n": 151
+     },
+     "osl": {
+      "mean": 156,
+      "n": 147
+     },
+     "balVolc": {
+      "mean": 49,
+      "n": 670
+     },
+     "volcSal": {
+      "mean": 18,
+      "n": 707
+     },
+     "egrVolc": {
+      "mean": 172,
+      "n": 661
+     },
+     "total": {
+      "mean": 325,
+      "n": 665
+     },
+     "ric": {
+      "mean": 134,
+      "n": 631
+     },
+     "sl": {
+      "mean": 218,
+      "n": 148
+     }
+    },
+    "tiemposDia": [
+     {
+      "p1": 128,
+      "calEgr": 16,
+      "puente": 15,
+      "osl": 156,
+      "balVolc": 41,
+      "volcSal": 19,
+      "egrVolc": 196,
+      "total": 389,
+      "ric": 163,
+      "sl": 218
+     },
+     {
+      "p1": 83,
+      "calEgr": 19,
+      "puente": null,
+      "osl": null,
+      "balVolc": 50,
+      "volcSal": 19,
+      "egrVolc": 265,
+      "total": 382,
+      "ric": 108,
+      "sl": null
+     },
+     {
+      "p1": 84,
+      "calEgr": 14,
+      "puente": null,
+      "osl": null,
+      "balVolc": 68,
+      "volcSal": 18,
+      "egrVolc": 117,
+      "total": 246,
+      "ric": 108,
+      "sl": null
+     },
+     {
+      "p1": 60,
+      "calEgr": 27,
+      "puente": null,
+      "osl": null,
+      "balVolc": 66,
+      "volcSal": 17,
+      "egrVolc": 104,
+      "total": 232,
+      "ric": 109,
+      "sl": null
+     },
+     {
+      "p1": 89,
+      "calEgr": 15,
+      "puente": null,
+      "osl": null,
+      "balVolc": 34,
+      "volcSal": 18,
+      "egrVolc": 76,
+      "total": 217,
+      "ric": 109,
+      "sl": null
+     },
+     {
+      "p1": 89,
+      "calEgr": 11,
+      "puente": null,
+      "osl": null,
+      "balVolc": 45,
+      "volcSal": 15,
+      "egrVolc": 94,
+      "total": 257,
+      "ric": 142,
+      "sl": null
+     },
+     {
+      "p1": 121,
+      "calEgr": 12,
+      "puente": null,
+      "osl": null,
+      "balVolc": 57,
+      "volcSal": 20,
+      "egrVolc": 102,
+      "total": 278,
+      "ric": 154,
+      "sl": null
+     }
+    ],
+    "porVolcable": {
+     "1": 24,
+     "2": 75,
+     "3": 192,
+     "4": 180,
+     "5": 267
+    }
+   },
+   "r29": {
+    "total": 141,
+    "porDia": [
+     0,
+     0,
+     0,
+     0,
+     43,
+     39,
+     59
+    ],
+    "cuartos": {
+     "Q1": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      4,
+      6
+     ],
+     "Q2": [
+      0,
+      0,
+      0,
+      0,
+      16,
+      29,
+      16
+     ],
+     "Q3": [
+      0,
+      0,
+      0,
+      0,
+      22,
+      4,
+      22
+     ],
+     "Q4": [
+      0,
+      0,
+      0,
+      0,
+      4,
+      2,
+      15
+     ]
+    },
+    "tiempos": {
+     "calEgr": {
+      "mean": 12,
+      "n": 125
+     },
+     "puente": {
+      "mean": null,
+      "n": 0
+     },
+     "osl": {
+      "mean": null,
+      "n": 0
+     },
+     "balVolc": {
+      "mean": 45,
+      "n": 115
+     },
+     "volcSal": {
+      "mean": 15,
+      "n": 135
+     },
+     "egrVolc": {
+      "mean": 85,
+      "n": 126
+     },
+     "ric": {
+      "mean": 264,
+      "n": 117
+     },
+     "preLiq": {
+      "mean": 20,
+      "n": 68
+     },
+     "liqP3": {
+      "mean": 17,
+      "n": 61
+     },
+     "p3Silo": {
+      "mean": 180,
+      "n": 96
+     },
+     "siloBal": {
+      "mean": 19,
+      "n": 130
+     },
+     "balCal": {
+      "mean": 12,
+      "n": 127
+     },
+     "siloCal": {
+      "mean": 41,
+      "n": 141
+     },
+     "ciclo": {
+      "mean": 370,
+      "n": 126
+     }
+    },
+    "tiemposDia": [
+     {
+      "calEgr": null,
+      "puente": null,
+      "osl": null,
+      "balVolc": null,
+      "volcSal": null,
+      "egrVolc": null,
+      "ric": null,
+      "preLiq": null,
+      "liqP3": null,
+      "p3Silo": null,
+      "siloBal": null,
+      "balCal": null,
+      "siloCal": null,
+      "ciclo": null
+     },
+     {
+      "calEgr": null,
+      "puente": null,
+      "osl": null,
+      "balVolc": null,
+      "volcSal": null,
+      "egrVolc": null,
+      "ric": null,
+      "preLiq": null,
+      "liqP3": null,
+      "p3Silo": null,
+      "siloBal": null,
+      "balCal": null,
+      "siloCal": null,
+      "ciclo": null
+     },
+     {
+      "calEgr": null,
+      "puente": null,
+      "osl": null,
+      "balVolc": null,
+      "volcSal": null,
+      "egrVolc": null,
+      "ric": null,
+      "preLiq": null,
+      "liqP3": null,
+      "p3Silo": null,
+      "siloBal": null,
+      "balCal": null,
+      "siloCal": null,
+      "ciclo": null
+     },
+     {
+      "calEgr": null,
+      "puente": null,
+      "osl": null,
+      "balVolc": null,
+      "volcSal": null,
+      "egrVolc": null,
+      "ric": null,
+      "preLiq": null,
+      "liqP3": null,
+      "p3Silo": null,
+      "siloBal": null,
+      "balCal": null,
+      "siloCal": null,
+      "ciclo": null
+     },
+     {
+      "calEgr": 13,
+      "puente": null,
+      "osl": null,
+      "balVolc": 23,
+      "volcSal": 15,
+      "egrVolc": 61,
+      "ric": 279,
+      "preLiq": 29,
+      "liqP3": 18,
+      "p3Silo": 191,
+      "siloBal": 21,
+      "balCal": 11,
+      "siloCal": 38,
+      "ciclo": 367
+     },
+     {
+      "calEgr": 11,
+      "puente": null,
+      "osl": null,
+      "balVolc": 47,
+      "volcSal": 13,
+      "egrVolc": 71,
+      "ric": 199,
+      "preLiq": 10,
+      "liqP3": 14,
+      "p3Silo": 129,
+      "siloBal": 15,
+      "balCal": 9,
+      "siloCal": 40,
+      "ciclo": 293
+     },
+     {
+      "calEgr": 12,
+      "puente": null,
+      "osl": null,
+      "balVolc": 64,
+      "volcSal": 17,
+      "egrVolc": 115,
+      "ric": 301,
+      "preLiq": 6,
+      "liqP3": 15,
+      "p3Silo": 205,
+      "siloBal": 20,
+      "balCal": 16,
+      "siloCal": 45,
+      "ciclo": 427
+     }
+    ]
+   },
+   "gir": {
+    "total": 149,
+    "porDia": [
+     39,
+     30,
+     17,
+     1,
+     29,
+     25,
+     8
+    ],
+    "cuartos": {
+     "Q1": [
+      13,
+      11,
+      7,
+      1,
+      18,
+      6,
+      0
+     ],
+     "Q2": [
+      0,
+      0,
+      6,
+      0,
+      7,
+      0,
+      4
+     ],
+     "Q3": [
+      12,
+      8,
+      1,
+      0,
+      2,
+      3,
+      4
+     ],
+     "Q4": [
+      14,
+      11,
+      3,
+      0,
+      2,
+      16,
+      0
+     ]
+    },
+    "tiempos": {
+     "p1": {
+      "mean": 132,
+      "n": 113
+     },
+     "total": {
+      "mean": 462,
+      "n": 100
+     },
+     "pbruto": {
+      "mean": null,
+      "n": 0
+     },
+     "accP3": {
+      "mean": null,
+      "n": 0
+     },
+     "descarga": {
+      "mean": 230,
+      "n": 105
+     },
+     "tara": {
+      "mean": 23,
+      "n": 120
+     },
+     "calVolc": {
+      "mean": 269,
+      "n": 149
+     }
+    },
+    "tiemposDia": [
+     {
+      "p1": 186,
+      "total": 472,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": 234,
+      "tara": 22,
+      "calVolc": 262
+     },
+     {
+      "p1": 162,
+      "total": 524,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": 321,
+      "tara": 22,
+      "calVolc": 347
+     },
+     {
+      "p1": 63,
+      "total": 184,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": 88,
+      "tara": 23,
+      "calVolc": 119
+     },
+     {
+      "p1": null,
+      "total": null,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": null,
+      "tara": null,
+      "calVolc": 27
+     },
+     {
+      "p1": 90,
+      "total": 235,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": 103,
+      "tara": 23,
+      "calVolc": 125
+     },
+     {
+      "p1": 90,
+      "total": 827,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": 360,
+      "tara": 26,
+      "calVolc": 398
+     },
+     {
+      "p1": null,
+      "total": 1163,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": 360,
+      "tara": 16,
+      "calVolc": 471
+     }
+    ],
+    "porVolcable": {
+     "R5": 141,
+     "R6": 8
+    }
+   },
+   "liq": {
+    "total": 171,
+    "porDia": [
+     36,
+     10,
+     0,
+     0,
+     35,
+     66,
+     24
+    ],
+    "cuartos": {
+     "Q1": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "Q2": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "Q3": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "Q4": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    "tiempos": {
+     "total": {
+      "mean": 105,
+      "n": 98
+     }
+    },
+    "tiemposDia": [
+     {
+      "total": 76
+     },
+     {
+      "total": 120
+     },
+     {
+      "total": null
+     },
+     {
+      "total": null
+     },
+     {
+      "total": 281
+     },
+     {
+      "total": 57
+     },
+     {
+      "total": 83
+     }
+    ]
+   }
+  },
+  "cur": {
+   "r7": {
+    "total": 601,
+    "porDia": [
+     76,
+     72,
+     59,
+     41,
+     94,
+     55,
+     53,
+     45,
+     39,
+     40,
+     27
+    ],
+    "cuartos": {
+     "Q1": [
+      25,
+      16,
+      20,
+      17,
+      18,
+      15,
+      8,
+      12,
+      10,
+      19,
+      4
+     ],
+     "Q2": [
+      25,
+      22,
+      22,
+      9,
+      37,
+      14,
+      20,
+      14,
+      16,
+      13,
+      5
+     ],
+     "Q3": [
+      21,
+      25,
+      14,
+      11,
+      27,
+      18,
+      20,
+      16,
+      12,
+      7,
+      16
+     ],
+     "Q4": [
+      5,
+      9,
+      3,
+      4,
+      12,
+      8,
+      5,
+      3,
+      1,
+      1,
+      2
+     ]
+    },
+    "tiempos": {
+     "p1": {
+      "mean": 95,
+      "n": 552
+     },
+     "calEgr": {
+      "mean": 14,
+      "n": 449
+     },
+     "puente": {
+      "mean": 12,
+      "n": 472
+     },
+     "osl": {
+      "mean": 57,
+      "n": 438
+     },
+     "balVolc": {
+      "mean": 62,
+      "n": 525
+     },
+     "volcSal": {
+      "mean": 18,
+      "n": 583
+     },
+     "egrVolc": {
+      "mean": 131,
+      "n": 504
+     },
+     "total": {
+      "mean": 279,
+      "n": 543
+     },
+     "ric": {
+      "mean": 128,
+      "n": 481
+     },
+     "sl": {
+      "mean": 139,
+      "n": 463
+     }
+    },
+    "tiemposDia": [
+     {
+      "p1": 114,
+      "calEgr": 12,
+      "puente": 13,
+      "osl": 13,
+      "balVolc": 31,
+      "volcSal": 17,
+      "egrVolc": 55,
+      "total": 216,
+      "ric": 152,
+      "sl": 56
+     },
+     {
+      "p1": 91,
+      "calEgr": 15,
+      "puente": 11,
+      "osl": 39,
+      "balVolc": 81,
+      "volcSal": 17,
+      "egrVolc": 138,
+      "total": 285,
+      "ric": 128,
+      "sl": 143
+     },
+     {
+      "p1": 93,
+      "calEgr": 20,
+      "puente": 11,
+      "osl": 29,
+      "balVolc": 69,
+      "volcSal": 17,
+      "egrVolc": 108,
+      "total": 279,
+      "ric": 131,
+      "sl": 115
+     },
+     {
+      "p1": 147,
+      "calEgr": 15,
+      "puente": 11,
+      "osl": 48,
+      "balVolc": 37,
+      "volcSal": 22,
+      "egrVolc": 127,
+      "total": 311,
+      "ric": 157,
+      "sl": 137
+     },
+     {
+      "p1": 92,
+      "calEgr": 13,
+      "puente": 12,
+      "osl": 153,
+      "balVolc": 57,
+      "volcSal": 19,
+      "egrVolc": 218,
+      "total": 359,
+      "ric": 123,
+      "sl": 224
+     },
+     {
+      "p1": 69,
+      "calEgr": 13,
+      "puente": 13,
+      "osl": 18,
+      "balVolc": 38,
+      "volcSal": 19,
+      "egrVolc": 67,
+      "total": 190,
+      "ric": 94,
+      "sl": 73
+     },
+     {
+      "p1": 88,
+      "calEgr": 14,
+      "puente": 12,
+      "osl": 11,
+      "balVolc": 94,
+      "volcSal": 20,
+      "egrVolc": 115,
+      "total": 244,
+      "ric": 98,
+      "sl": 121
+     },
+     {
+      "p1": 70,
+      "calEgr": 14,
+      "puente": 11,
+      "osl": 43,
+      "balVolc": 40,
+      "volcSal": 21,
+      "egrVolc": 92,
+      "total": 222,
+      "ric": 110,
+      "sl": 102
+     },
+     {
+      "p1": 114,
+      "calEgr": 12,
+      "puente": 16,
+      "osl": 14,
+      "balVolc": 129,
+      "volcSal": 16,
+      "egrVolc": 156,
+      "total": 355,
+      "ric": 171,
+      "sl": 162
+     },
+     {
+      "p1": 73,
+      "calEgr": 13,
+      "puente": 10,
+      "osl": 125,
+      "balVolc": 73,
+      "volcSal": 17,
+      "egrVolc": 200,
+      "total": 350,
+      "ric": 123,
+      "sl": 203
+     },
+     {
+      "p1": 101,
+      "calEgr": 18,
+      "puente": 11,
+      "osl": 28,
+      "balVolc": 25,
+      "volcSal": 18,
+      "egrVolc": 84,
+      "total": 243,
+      "ric": 135,
+      "sl": 91
+     }
+    ],
+    "porVolcable": {
+     "1": 1,
+     "2": 66,
+     "3": 158,
+     "4": 47,
+     "5": 329
+    }
+   },
+   "r29": {
+    "total": 197,
+    "porDia": [
+     50,
+     33,
+     7,
+     36,
+     46,
+     25,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "cuartos": {
+     "Q1": [
+      10,
+      0,
+      7,
+      1,
+      9,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "Q2": [
+      26,
+      2,
+      0,
+      15,
+      11,
+      21,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "Q3": [
+      14,
+      25,
+      0,
+      17,
+      24,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "Q4": [
+      0,
+      6,
+      0,
+      3,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    "tiempos": {
+     "calEgr": {
+      "mean": 15,
+      "n": 177
+     },
+     "puente": {
+      "mean": 11,
+      "n": 155
+     },
+     "osl": {
+      "mean": 27,
+      "n": 151
+     },
+     "balVolc": {
+      "mean": 51,
+      "n": 165
+     },
+     "volcSal": {
+      "mean": 15,
+      "n": 190
+     },
+     "egrVolc": {
+      "mean": 91,
+      "n": 171
+     },
+     "ric": {
+      "mean": 184,
+      "n": 163
+     },
+     "preLiq": {
+      "mean": 9,
+      "n": 88
+     },
+     "liqP3": {
+      "mean": 11,
+      "n": 58
+     },
+     "p3Silo": {
+      "mean": 131,
+      "n": 143
+     },
+     "siloBal": {
+      "mean": 20,
+      "n": 184
+     },
+     "balCal": {
+      "mean": 10,
+      "n": 182
+     },
+     "siloCal": {
+      "mean": 36,
+      "n": 197
+     },
+     "ciclo": {
+      "mean": 285,
+      "n": 175
+     }
+    },
+    "tiemposDia": [
+     {
+      "calEgr": 23,
+      "puente": 15,
+      "osl": 5,
+      "balVolc": 23,
+      "volcSal": 14,
+      "egrVolc": 59,
+      "ric": 267,
+      "preLiq": null,
+      "liqP3": null,
+      "p3Silo": 178,
+      "siloBal": 18,
+      "balCal": 11,
+      "siloCal": 31,
+      "ciclo": 313
+     },
+     {
+      "calEgr": 12,
+      "puente": 12,
+      "osl": 10,
+      "balVolc": 51,
+      "volcSal": 14,
+      "egrVolc": 72,
+      "ric": 192,
+      "preLiq": 12,
+      "liqP3": 13,
+      "p3Silo": 293,
+      "siloBal": 22,
+      "balCal": 12,
+      "siloCal": 62,
+      "ciclo": 290
+     },
+     {
+      "calEgr": 12,
+      "puente": 9,
+      "osl": 3,
+      "balVolc": 170,
+      "volcSal": 12,
+      "egrVolc": 182,
+      "ric": 150,
+      "preLiq": 5,
+      "liqP3": 11,
+      "p3Silo": 101,
+      "siloBal": 15,
+      "balCal": 5,
+      "siloCal": 20,
+      "ciclo": 344
+     },
+     {
+      "calEgr": 12,
+      "puente": 11,
+      "osl": 72,
+      "balVolc": 43,
+      "volcSal": 16,
+      "egrVolc": 125,
+      "ric": 148,
+      "preLiq": 9,
+      "liqP3": 10,
+      "p3Silo": 84,
+      "siloBal": 18,
+      "balCal": 11,
+      "siloCal": 28,
+      "ciclo": 284
+     },
+     {
+      "calEgr": 11,
+      "puente": 11,
+      "osl": 22,
+      "balVolc": 62,
+      "volcSal": 15,
+      "egrVolc": 94,
+      "ric": 177,
+      "preLiq": 6,
+      "liqP3": 12,
+      "p3Silo": 93,
+      "siloBal": 22,
+      "balCal": 10,
+      "siloCal": 37,
+      "ciclo": 283
+     },
+     {
+      "calEgr": 14,
+      "puente": 11,
+      "osl": 20,
+      "balVolc": 39,
+      "volcSal": 16,
+      "egrVolc": 74,
+      "ric": 126,
+      "preLiq": 14,
+      "liqP3": 13,
+      "p3Silo": 67,
+      "siloBal": 22,
+      "balCal": 8,
+      "siloCal": 30,
+      "ciclo": 217
+     },
+     {
+      "calEgr": null,
+      "puente": null,
+      "osl": null,
+      "balVolc": null,
+      "volcSal": null,
+      "egrVolc": null,
+      "ric": null,
+      "preLiq": null,
+      "liqP3": null,
+      "p3Silo": null,
+      "siloBal": null,
+      "balCal": null,
+      "siloCal": null,
+      "ciclo": null
+     },
+     {
+      "calEgr": null,
+      "puente": null,
+      "osl": null,
+      "balVolc": null,
+      "volcSal": null,
+      "egrVolc": null,
+      "ric": null,
+      "preLiq": null,
+      "liqP3": null,
+      "p3Silo": null,
+      "siloBal": null,
+      "balCal": null,
+      "siloCal": null,
+      "ciclo": null
+     },
+     {
+      "calEgr": null,
+      "puente": null,
+      "osl": null,
+      "balVolc": null,
+      "volcSal": null,
+      "egrVolc": null,
+      "ric": null,
+      "preLiq": null,
+      "liqP3": null,
+      "p3Silo": null,
+      "siloBal": null,
+      "balCal": null,
+      "siloCal": null,
+      "ciclo": null
+     },
+     {
+      "calEgr": null,
+      "puente": null,
+      "osl": null,
+      "balVolc": null,
+      "volcSal": null,
+      "egrVolc": null,
+      "ric": null,
+      "preLiq": null,
+      "liqP3": null,
+      "p3Silo": null,
+      "siloBal": null,
+      "balCal": null,
+      "siloCal": null,
+      "ciclo": null
+     },
+     {
+      "calEgr": null,
+      "puente": null,
+      "osl": null,
+      "balVolc": null,
+      "volcSal": null,
+      "egrVolc": null,
+      "ric": null,
+      "preLiq": null,
+      "liqP3": null,
+      "p3Silo": null,
+      "siloBal": null,
+      "balCal": null,
+      "siloCal": null,
+      "ciclo": null
+     }
+    ]
+   },
+   "gir": {
+    "total": 126,
+    "porDia": [
+     32,
+     46,
+     18,
+     0,
+     11,
+     4,
+     0,
+     1,
+     7,
+     7,
+     0
+    ],
+    "cuartos": {
+     "Q1": [
+      0,
+      19,
+      3,
+      0,
+      5,
+      0,
+      0,
+      0,
+      3,
+      2,
+      0
+     ],
+     "Q2": [
+      16,
+      12,
+      7,
+      0,
+      0,
+      1,
+      0,
+      0,
+      3,
+      1,
+      0
+     ],
+     "Q3": [
+      10,
+      10,
+      8,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      0
+     ],
+     "Q4": [
+      6,
+      5,
+      0,
+      0,
+      6,
+      3,
+      0,
+      1,
+      1,
+      1,
+      0
+     ]
+    },
+    "tiempos": {
+     "p1": {
+      "mean": 210,
+      "n": 69
+     },
+     "total": {
+      "mean": 579,
+      "n": 63
+     },
+     "pbruto": {
+      "mean": null,
+      "n": 0
+     },
+     "accP3": {
+      "mean": null,
+      "n": 0
+     },
+     "descarga": {
+      "mean": 334,
+      "n": 92
+     },
+     "tara": {
+      "mean": 28,
+      "n": 104
+     },
+     "calVolc": {
+      "mean": 345,
+      "n": 126
+     }
+    },
+    "tiemposDia": [
+     {
+      "p1": 21,
+      "total": 821,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": 401,
+      "tara": 27,
+      "calVolc": 429
+     },
+     {
+      "p1": 311,
+      "total": 802,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": 398,
+      "tara": 25,
+      "calVolc": 383
+     },
+     {
+      "p1": 244,
+      "total": 635,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": 308,
+      "tara": 23,
+      "calVolc": 358
+     },
+     {
+      "p1": null,
+      "total": null,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": null,
+      "tara": null,
+      "calVolc": null
+     },
+     {
+      "p1": 57,
+      "total": 359,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": 297,
+      "tara": 39,
+      "calVolc": 256
+     },
+     {
+      "p1": 168,
+      "total": 730,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": 559,
+      "tara": 35,
+      "calVolc": 527
+     },
+     {
+      "p1": null,
+      "total": null,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": null,
+      "tara": null,
+      "calVolc": null
+     },
+     {
+      "p1": 232,
+      "total": 274,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": null,
+      "tara": 21,
+      "calVolc": 21
+     },
+     {
+      "p1": 125,
+      "total": 224,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": 60,
+      "tara": 41,
+      "calVolc": 67
+     },
+     {
+      "p1": 83,
+      "total": 142,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": 22,
+      "tara": 24,
+      "calVolc": 35
+     },
+     {
+      "p1": null,
+      "total": null,
+      "pbruto": null,
+      "accP3": null,
+      "descarga": null,
+      "tara": null,
+      "calVolc": null
+     }
+    ],
+    "porVolcable": {
+     "R5": 88,
+     "R6": 38
+    }
+   },
+   "liq": {
+    "total": 562,
+    "porDia": [
+     40,
+     54,
+     99,
+     35,
+     31,
+     25,
+     110,
+     139,
+     20,
+     6,
+     3
+    ],
+    "cuartos": {
+     "Q1": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "Q2": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "Q3": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "Q4": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    "tiempos": {
+     "total": {
+      "mean": 153,
+      "n": 195
+     }
+    },
+    "tiemposDia": [
+     {
+      "total": 669
+     },
+     {
+      "total": 293
+     },
+     {
+      "total": 143
+     },
+     {
+      "total": 276
+     },
+     {
+      "total": 141
+     },
+     {
+      "total": 82
+     },
+     {
+      "total": 36
+     },
+     {
+      "total": 152
+     },
+     {
+      "total": 79
+     },
+     {
+      "total": null
+     },
+     {
+      "total": null
+     }
+    ]
+   }
+  }
+ }
+}

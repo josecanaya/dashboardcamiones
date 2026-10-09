@@ -1,8 +1,8 @@
 {
   "runId": "2026-09-28_2026-10-04",
   "status": "ok",
-  "startedAt": "2026-10-01T18:12:57.439Z",
-  "finishedAt": "2026-10-01T18:13:10.046Z",
+  "startedAt": "2026-10-07T20:10:39.488Z",
+  "finishedAt": "2026-10-07T20:10:57.422Z",
   "fromDay": "2026-09-28",
   "toDay": "2026-10-04",
   "rulesVersion": "etl_transform_v17",
@@ -13,11 +13,15 @@
       "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\data\\truckflow\\2026-09-27\\event-list.json",
       "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\data\\truckflow\\2026-09-28\\event-list.json",
       "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\data\\truckflow\\2026-09-29\\event-list.json",
-      "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\data\\truckflow\\2026-09-30\\event-list.json"
+      "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\data\\truckflow\\2026-09-30\\event-list.json",
+      "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\data\\truckflow\\2026-10-01\\event-list.json",
+      "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\data\\truckflow\\2026-10-02\\event-list.json",
+      "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\data\\truckflow\\2026-10-03\\event-list.json",
+      "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\data\\truckflow\\2026-10-04\\event-list.json"
     ],
-    "movimientosRows": 1524,
-    "inputHash": "41bdef0c424c",
-    "eventCount": 10721
+    "movimientosRows": 2849,
+    "inputHash": "3fc544ac4831",
+    "eventCount": 17024
   },
   "output": {
     "tableCount": 37,
@@ -70,7 +74,7 @@
     "powerBi": {
       "dir": "pb",
       "periodStart": "2026-09-27",
-      "periodEnd": "2026-09-30",
+      "periodEnd": "2026-10-04",
       "files": [
         "circuit_timing_journeys.csv",
         "circuit_timing_summary.csv",
@@ -105,5 +109,7 @@
         "pb_load_manifest.json"
       ]
     }
-  }
+  },
+  "sourceFingerprint": "73184415898fa2f9644a2d75563d1c5b75e0bcec930939a9765aaa754fce5cbe",
+  "priorRevision": "d879eccb169faddb4ca72aae03ef3d4b452617c996cda200d73cada98d1a453d"
 }

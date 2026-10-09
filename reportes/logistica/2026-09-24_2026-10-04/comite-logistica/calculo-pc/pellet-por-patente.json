@@ -1,0 +1,2781 @@
+{
+ "totales": {
+  "camiones": 64,
+  "viajes": 443,
+  "jornadas": 143,
+  "horasCamion": 2365,
+  "vueltaMedia": {
+   "ricardone": 85,
+   "manejando": 36,
+   "filaPuerto": 194,
+   "descargaSalida": 18,
+   "viajesMedidos": 353,
+   "total": 333
+  },
+  "jornadasMas12h": 91,
+  "jornadasMas15h": 67,
+  "camionesConJornadaMas15h": 46,
+  "camionesPorMax24h": {
+   "1": 3,
+   "2": 7,
+   "3": 14,
+   "4": 16,
+   "5": 24
+  },
+  "cincoCargas24hSinCorte": 24,
+  "jornadasPorViajes": {
+   "1": {
+    "jornadas": 25,
+    "horasMedia": 6.1
+   },
+   "2": {
+    "jornadas": 34,
+    "horasMedia": 10.4
+   },
+   "3": {
+    "jornadas": 39,
+    "horasMedia": 15.2
+   },
+   "4": {
+    "jornadas": 21,
+    "horasMedia": 19.3
+   },
+   "5": {
+    "jornadas": 6,
+    "horasMedia": 29.1
+   },
+   "6": {
+    "jornadas": 7,
+    "horasMedia": 34.7
+   },
+   "7": {
+    "jornadas": 11,
+    "horasMedia": 40.2
+   }
+  },
+  "pct": {
+   "ricardone": 26,
+   "manejando": 11,
+   "filaPuerto": 58,
+   "descargaSalida": 5
+  },
+  "flete": 79740000,
+  "fletePagadoEnFilaPuerto": 46455135
+ },
+ "camiones": [
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 08:09",
+   "max24hHasta": "01/10 06:29",
+   "max24hEntreCargasHoras": 6,
+   "patente": "RAW481",
+   "viajes": 15,
+   "dias": 5,
+   "conCamara": 8,
+   "jornadas": 3,
+   "horasJornadas": 78.3,
+   "jornadaMaxHoras": 41.2,
+   "jornadaMaxViajes": 7,
+   "jornadaMaxDesde": "30/09 07:53",
+   "jornadaMaxHasta": "02/10 01:04",
+   "jornadasMas12h": 3,
+   "jornadasMas15h": 3,
+   "minRicardone": 92,
+   "minManejando": 49,
+   "minFilaPuerto": 199,
+   "minDescargaSalida": 22,
+   "minVuelta": 362,
+   "pctFilaPuerto": 55,
+   "pctManejando": 14,
+   "flete": 2700000,
+   "fletePorHora": 34464,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:17",
+     "hasta": "25/09 14:15",
+     "horas": 20,
+     "viajes": 4
+    },
+    {
+     "desde": "26/09 06:16",
+     "hasta": "26/09 23:28",
+     "horas": 17.2,
+     "viajes": 4
+    },
+    {
+     "desde": "30/09 07:53",
+     "hasta": "02/10 01:04",
+     "horas": 41.2,
+     "viajes": 7
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 07:36",
+   "max24hHasta": "01/10 04:03",
+   "max24hEntreCargasHoras": 6.1,
+   "patente": "UWX998",
+   "viajes": 15,
+   "dias": 5,
+   "conCamara": 7,
+   "jornadas": 3,
+   "horasJornadas": 73.1,
+   "jornadaMaxHoras": 37,
+   "jornadaMaxViajes": 7,
+   "jornadaMaxDesde": "30/09 07:34",
+   "jornadaMaxHasta": "01/10 20:34",
+   "jornadasMas12h": 3,
+   "jornadasMas15h": 3,
+   "minRicardone": 66,
+   "minManejando": 33,
+   "minFilaPuerto": 125,
+   "minDescargaSalida": 18,
+   "minVuelta": 242,
+   "pctFilaPuerto": 52,
+   "pctManejando": 14,
+   "flete": 2700000,
+   "fletePorHora": 36919,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:14",
+     "hasta": "25/09 14:32",
+     "horas": 20.3,
+     "viajes": 4
+    },
+    {
+     "desde": "26/09 06:15",
+     "hasta": "26/09 22:05",
+     "horas": 15.8,
+     "viajes": 4
+    },
+    {
+     "desde": "30/09 07:34",
+     "hasta": "01/10 20:34",
+     "horas": 37,
+     "viajes": 7
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 08:14",
+   "max24hHasta": "01/10 06:30",
+   "max24hEntreCargasHoras": 6,
+   "patente": "FDH917",
+   "viajes": 14,
+   "dias": 5,
+   "conCamara": 13,
+   "jornadas": 3,
+   "horasJornadas": 76.2,
+   "jornadaMaxHoras": 41.2,
+   "jornadaMaxViajes": 7,
+   "jornadaMaxDesde": "30/09 07:55",
+   "jornadaMaxHasta": "02/10 01:08",
+   "jornadasMas12h": 3,
+   "jornadasMas15h": 2,
+   "minRicardone": 78,
+   "minManejando": 31,
+   "minFilaPuerto": 206,
+   "minDescargaSalida": 21,
+   "minVuelta": 336,
+   "pctFilaPuerto": 61,
+   "pctManejando": 9,
+   "flete": 2520000,
+   "fletePorHora": 33083,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:16",
+     "hasta": "25/09 15:11",
+     "horas": 20.9,
+     "viajes": 4
+    },
+    {
+     "desde": "26/09 09:26",
+     "hasta": "26/09 23:29",
+     "horas": 14,
+     "viajes": 3
+    },
+    {
+     "desde": "30/09 07:55",
+     "hasta": "02/10 01:08",
+     "horas": 41.2,
+     "viajes": 7
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 07:35",
+   "max24hHasta": "01/10 03:57",
+   "max24hEntreCargasHoras": 6.1,
+   "patente": "BVS300",
+   "viajes": 14,
+   "dias": 5,
+   "conCamara": 13,
+   "jornadas": 3,
+   "horasJornadas": 70,
+   "jornadaMaxHoras": 39,
+   "jornadaMaxViajes": 7,
+   "jornadaMaxDesde": "30/09 07:34",
+   "jornadaMaxHasta": "01/10 22:35",
+   "jornadasMas12h": 3,
+   "jornadasMas15h": 3,
+   "minRicardone": 66,
+   "minManejando": 32,
+   "minFilaPuerto": 178,
+   "minDescargaSalida": 17,
+   "minVuelta": 293,
+   "pctFilaPuerto": 61,
+   "pctManejando": 11,
+   "flete": 2520000,
+   "fletePorHora": 35976,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:20",
+     "hasta": "25/09 10:13",
+     "horas": 15.9,
+     "viajes": 3
+    },
+    {
+     "desde": "26/09 06:14",
+     "hasta": "26/09 21:23",
+     "horas": 15.1,
+     "viajes": 4
+    },
+    {
+     "desde": "30/09 07:34",
+     "hasta": "01/10 22:35",
+     "horas": 39,
+     "viajes": 7
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 11:17",
+   "max24hHasta": "01/10 09:16",
+   "max24hEntreCargasHoras": 6,
+   "patente": "VAJ028",
+   "viajes": 14,
+   "dias": 5,
+   "conCamara": 14,
+   "jornadas": 3,
+   "horasJornadas": 69.3,
+   "jornadaMaxHoras": 33.7,
+   "jornadaMaxViajes": 6,
+   "jornadaMaxDesde": "30/09 11:15",
+   "jornadaMaxHasta": "01/10 20:55",
+   "jornadasMas12h": 3,
+   "jornadasMas15h": 3,
+   "minRicardone": 69,
+   "minManejando": 41,
+   "minFilaPuerto": 188,
+   "minDescargaSalida": 16,
+   "minVuelta": 314,
+   "pctFilaPuerto": 60,
+   "pctManejando": 13,
+   "flete": 2520000,
+   "fletePorHora": 36390,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:11",
+     "hasta": "25/09 13:47",
+     "horas": 19.6,
+     "viajes": 4
+    },
+    {
+     "desde": "26/09 06:21",
+     "hasta": "26/09 22:20",
+     "horas": 16,
+     "viajes": 4
+    },
+    {
+     "desde": "30/09 11:15",
+     "hasta": "01/10 20:55",
+     "horas": 33.7,
+     "viajes": 6
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 13:02",
+   "max24hHasta": "01/10 12:38",
+   "max24hEntreCargasHoras": 6.4,
+   "patente": "EYH843",
+   "viajes": 13,
+   "dias": 5,
+   "conCamara": 13,
+   "jornadas": 3,
+   "horasJornadas": 68.2,
+   "jornadaMaxHoras": 36.1,
+   "jornadaMaxViajes": 6,
+   "jornadaMaxDesde": "30/09 13:01",
+   "jornadaMaxHasta": "02/10 01:05",
+   "jornadasMas12h": 3,
+   "jornadasMas15h": 3,
+   "minRicardone": 95,
+   "minManejando": 32,
+   "minFilaPuerto": 179,
+   "minDescargaSalida": 17,
+   "minVuelta": 323,
+   "pctFilaPuerto": 55,
+   "pctManejando": 10,
+   "flete": 2340000,
+   "fletePorHora": 34299,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:23",
+     "hasta": "25/09 10:39",
+     "horas": 16.3,
+     "viajes": 3
+    },
+    {
+     "desde": "26/09 06:20",
+     "hasta": "26/09 22:14",
+     "horas": 15.9,
+     "viajes": 4
+    },
+    {
+     "desde": "30/09 13:01",
+     "hasta": "02/10 01:05",
+     "horas": 36.1,
+     "viajes": 6
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 12:24",
+   "max24hHasta": "01/10 12:07",
+   "max24hEntreCargasHoras": 6.4,
+   "patente": "VJG112",
+   "viajes": 12,
+   "dias": 5,
+   "conCamara": 6,
+   "jornadas": 3,
+   "horasJornadas": 65.5,
+   "jornadaMaxHoras": 36.1,
+   "jornadaMaxViajes": 6,
+   "jornadaMaxDesde": "30/09 12:24",
+   "jornadaMaxHasta": "02/10 00:28",
+   "jornadasMas12h": 3,
+   "jornadasMas15h": 2,
+   "minRicardone": 101,
+   "minManejando": 39,
+   "minFilaPuerto": 164,
+   "minDescargaSalida": 21,
+   "minVuelta": 325,
+   "pctFilaPuerto": 50,
+   "pctManejando": 12,
+   "flete": 2160000,
+   "fletePorHora": 33000,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:37",
+     "hasta": "25/09 09:50",
+     "horas": 15.2,
+     "viajes": 3
+    },
+    {
+     "desde": "26/09 06:11",
+     "hasta": "26/09 20:21",
+     "horas": 14.2,
+     "viajes": 3
+    },
+    {
+     "desde": "30/09 12:24",
+     "hasta": "02/10 00:28",
+     "horas": 36.1,
+     "viajes": 6
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 10:04",
+   "max24hHasta": "01/10 06:05",
+   "max24hEntreCargasHoras": 6,
+   "patente": "UKL882",
+   "viajes": 12,
+   "dias": 5,
+   "conCamara": 11,
+   "jornadas": 4,
+   "horasJornadas": 60.5,
+   "jornadaMaxHoras": 25.2,
+   "jornadaMaxViajes": 5,
+   "jornadaMaxDesde": "30/09 10:03",
+   "jornadaMaxHasta": "01/10 11:12",
+   "jornadasMas12h": 3,
+   "jornadasMas15h": 1,
+   "minRicardone": 90,
+   "minManejando": 36,
+   "minFilaPuerto": 186,
+   "minDescargaSalida": 13,
+   "minVuelta": 325,
+   "pctFilaPuerto": 57,
+   "pctManejando": 11,
+   "flete": 2160000,
+   "fletePorHora": 35725,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:14",
+     "hasta": "25/09 09:07",
+     "horas": 14.9,
+     "viajes": 3
+    },
+    {
+     "desde": "26/09 06:23",
+     "hasta": "26/09 19:32",
+     "horas": 13.1,
+     "viajes": 3
+    },
+    {
+     "desde": "30/09 10:03",
+     "hasta": "01/10 11:12",
+     "horas": 25.2,
+     "viajes": 5
+    },
+    {
+     "desde": "01/10 16:40",
+     "hasta": "01/10 23:58",
+     "horas": 7.3,
+     "viajes": 1
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 08:34",
+   "max24hHasta": "01/10 07:26",
+   "max24hEntreCargasHoras": 5.8,
+   "patente": "UUL425",
+   "viajes": 11,
+   "dias": 3,
+   "conCamara": 10,
+   "jornadas": 2,
+   "horasJornadas": 61,
+   "jornadaMaxHoras": 42.5,
+   "jornadaMaxViajes": 7,
+   "jornadaMaxDesde": "30/09 08:33",
+   "jornadaMaxHasta": "02/10 03:02",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 2,
+   "minRicardone": 106,
+   "minManejando": 34,
+   "minFilaPuerto": 169,
+   "minDescargaSalida": 28,
+   "minVuelta": 337,
+   "pctFilaPuerto": 50,
+   "pctManejando": 10,
+   "flete": 1980000,
+   "fletePorHora": 32449,
+   "jornadasDetalle": [
+    {
+     "desde": "26/09 05:05",
+     "hasta": "26/09 23:37",
+     "horas": 18.5,
+     "viajes": 4
+    },
+    {
+     "desde": "30/09 08:33",
+     "hasta": "02/10 03:02",
+     "horas": 42.5,
+     "viajes": 7
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 07:39",
+   "max24hHasta": "01/10 04:22",
+   "max24hEntreCargasHoras": 5.8,
+   "patente": "EEW075",
+   "viajes": 11,
+   "dias": 5,
+   "conCamara": 8,
+   "jornadas": 3,
+   "horasJornadas": 57.8,
+   "jornadaMaxHoras": 39.2,
+   "jornadaMaxViajes": 7,
+   "jornadaMaxDesde": "30/09 07:39",
+   "jornadaMaxHasta": "01/10 22:50",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 2,
+   "minRicardone": 81,
+   "minManejando": 27,
+   "minFilaPuerto": 207,
+   "minDescargaSalida": 12,
+   "minVuelta": 327,
+   "pctFilaPuerto": 63,
+   "pctManejando": 8,
+   "flete": 1980000,
+   "fletePorHora": 34256,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:22",
+     "hasta": "25/09 10:15",
+     "horas": 15.9,
+     "viajes": 3
+    },
+    {
+     "desde": "26/09 06:15",
+     "hasta": "26/09 08:57",
+     "horas": 2.7,
+     "viajes": 1
+    },
+    {
+     "desde": "30/09 07:39",
+     "hasta": "01/10 22:50",
+     "horas": 39.2,
+     "viajes": 7
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "30/09 07:48",
+   "max24hHasta": "01/10 08:38",
+   "max24hEntreCargasHoras": 13.7,
+   "patente": "CKQ212",
+   "viajes": 11,
+   "dias": 5,
+   "conCamara": 10,
+   "jornadas": 4,
+   "horasJornadas": 54.2,
+   "jornadaMaxHoras": 17.6,
+   "jornadaMaxViajes": 3,
+   "jornadaMaxDesde": "01/10 07:35",
+   "jornadaMaxHasta": "02/10 01:09",
+   "jornadasMas12h": 3,
+   "jornadasMas15h": 2,
+   "minRicardone": 78,
+   "minManejando": 41,
+   "minFilaPuerto": 194,
+   "minDescargaSalida": 15,
+   "minVuelta": 328,
+   "pctFilaPuerto": 59,
+   "pctManejando": 13,
+   "flete": 1980000,
+   "fletePorHora": 36537,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:04",
+     "hasta": "25/09 06:46",
+     "horas": 12.7,
+     "viajes": 3
+    },
+    {
+     "desde": "26/09 07:40",
+     "hasta": "26/09 15:12",
+     "horas": 7.5,
+     "viajes": 2
+    },
+    {
+     "desde": "30/09 07:46",
+     "hasta": "01/10 00:11",
+     "horas": 16.4,
+     "viajes": 3
+    },
+    {
+     "desde": "01/10 07:35",
+     "hasta": "02/10 01:09",
+     "horas": 17.6,
+     "viajes": 3
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 08:20",
+   "max24hHasta": "01/10 07:26",
+   "max24hEntreCargasHoras": 6,
+   "patente": "GES056",
+   "viajes": 10,
+   "dias": 3,
+   "conCamara": 10,
+   "jornadas": 2,
+   "horasJornadas": 54,
+   "jornadaMaxHoras": 41.7,
+   "jornadaMaxViajes": 7,
+   "jornadaMaxDesde": "30/09 07:57",
+   "jornadaMaxHasta": "02/10 01:38",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 1,
+   "minRicardone": 91,
+   "minManejando": 35,
+   "minFilaPuerto": 155,
+   "minDescargaSalida": 19,
+   "minVuelta": 300,
+   "pctFilaPuerto": 52,
+   "pctManejando": 12,
+   "flete": 1800000,
+   "fletePorHora": 33363,
+   "jornadasDetalle": [
+    {
+     "desde": "26/09 06:20",
+     "hasta": "26/09 18:36",
+     "horas": 12.3,
+     "viajes": 3
+    },
+    {
+     "desde": "30/09 07:57",
+     "hasta": "02/10 01:38",
+     "horas": 41.7,
+     "viajes": 7
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 09:40",
+   "max24hHasta": "01/10 08:01",
+   "max24hEntreCargasHoras": 5.6,
+   "patente": "RXV065",
+   "viajes": 10,
+   "dias": 3,
+   "conCamara": 10,
+   "jornadas": 2,
+   "horasJornadas": 54.3,
+   "jornadaMaxHoras": 41.2,
+   "jornadaMaxViajes": 7,
+   "jornadaMaxDesde": "30/09 09:39",
+   "jornadaMaxHasta": "02/10 02:50",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 1,
+   "minRicardone": 86,
+   "minManejando": 33,
+   "minFilaPuerto": 169,
+   "minDescargaSalida": 28,
+   "minVuelta": 316,
+   "pctFilaPuerto": 53,
+   "pctManejando": 10,
+   "flete": 1800000,
+   "fletePorHora": 33151,
+   "jornadasDetalle": [
+    {
+     "desde": "26/09 06:22",
+     "hasta": "26/09 19:29",
+     "horas": 13.1,
+     "viajes": 3
+    },
+    {
+     "desde": "30/09 09:39",
+     "hasta": "02/10 02:50",
+     "horas": 41.2,
+     "viajes": 7
+    }
+   ]
+  },
+  {
+   "max24hViajes": 3,
+   "max24hDesde": "26/09 06:20",
+   "max24hHasta": "26/09 14:59",
+   "max24hEntreCargasHoras": 4.1,
+   "patente": "UUO981",
+   "viajes": 10,
+   "dias": 4,
+   "conCamara": 10,
+   "jornadas": 4,
+   "horasJornadas": 53.1,
+   "jornadaMaxHoras": 19.3,
+   "jornadaMaxViajes": 3,
+   "jornadaMaxDesde": "01/10 07:56",
+   "jornadaMaxHasta": "02/10 03:15",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 2,
+   "minRicardone": 85,
+   "minManejando": 42,
+   "minFilaPuerto": 182,
+   "minDescargaSalida": 15,
+   "minVuelta": 324,
+   "pctFilaPuerto": 56,
+   "pctManejando": 13,
+   "flete": 1800000,
+   "fletePorHora": 33924,
+   "jornadasDetalle": [
+    {
+     "desde": "25/09 07:11",
+     "hasta": "25/09 13:18",
+     "horas": 6.1,
+     "viajes": 1
+    },
+    {
+     "desde": "26/09 06:17",
+     "hasta": "26/09 18:15",
+     "horas": 12,
+     "viajes": 3
+    },
+    {
+     "desde": "30/09 07:37",
+     "hasta": "30/09 23:16",
+     "horas": 15.7,
+     "viajes": 3
+    },
+    {
+     "desde": "01/10 07:56",
+     "hasta": "02/10 03:15",
+     "horas": 19.3,
+     "viajes": 3
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "30/09 22:43",
+   "max24hHasta": "01/10 18:05",
+   "max24hEntreCargasHoras": 6.8,
+   "patente": "CGV979",
+   "viajes": 10,
+   "dias": 5,
+   "conCamara": 8,
+   "jornadas": 4,
+   "horasJornadas": 52.4,
+   "jornadaMaxHoras": 17.2,
+   "jornadaMaxViajes": 3,
+   "jornadaMaxDesde": "24/09 18:33",
+   "jornadaMaxHasta": "25/09 11:47",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 1,
+   "minRicardone": 93,
+   "minManejando": 30,
+   "minFilaPuerto": 157,
+   "minDescargaSalida": 17,
+   "minVuelta": 297,
+   "pctFilaPuerto": 53,
+   "pctManejando": 10,
+   "flete": 1800000,
+   "fletePorHora": 34344,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:33",
+     "hasta": "25/09 11:47",
+     "horas": 17.2,
+     "viajes": 3
+    },
+    {
+     "desde": "26/09 08:51",
+     "hasta": "26/09 21:45",
+     "horas": 12.9,
+     "viajes": 3
+    },
+    {
+     "desde": "30/09 22:42",
+     "hasta": "01/10 09:40",
+     "horas": 11,
+     "viajes": 2
+    },
+    {
+     "desde": "01/10 10:31",
+     "hasta": "01/10 21:50",
+     "horas": 11.3,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 13:02",
+   "max24hHasta": "01/10 12:27",
+   "max24hEntreCargasHoras": 6.3,
+   "patente": "RLP943",
+   "viajes": 9,
+   "dias": 4,
+   "conCamara": 9,
+   "jornadas": 2,
+   "horasJornadas": 52.3,
+   "jornadaMaxHoras": 35.6,
+   "jornadaMaxViajes": 6,
+   "jornadaMaxDesde": "30/09 13:00",
+   "jornadaMaxHasta": "02/10 00:33",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 2,
+   "minRicardone": 89,
+   "minManejando": 34,
+   "minFilaPuerto": 234,
+   "minDescargaSalida": 18,
+   "minVuelta": 375,
+   "pctFilaPuerto": 62,
+   "pctManejando": 9,
+   "flete": 1620000,
+   "fletePorHora": 30997,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:18",
+     "hasta": "25/09 11:01",
+     "horas": 16.7,
+     "viajes": 3
+    },
+    {
+     "desde": "30/09 13:00",
+     "hasta": "02/10 00:33",
+     "horas": 35.6,
+     "viajes": 6
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 16:17",
+   "max24hHasta": "01/10 14:43",
+   "max24hEntreCargasHoras": 6,
+   "patente": "DFP716",
+   "viajes": 9,
+   "dias": 4,
+   "conCamara": 9,
+   "jornadas": 3,
+   "horasJornadas": 50.7,
+   "jornadaMaxHoras": 28.3,
+   "jornadaMaxViajes": 5,
+   "jornadaMaxDesde": "30/09 16:16",
+   "jornadaMaxHasta": "01/10 20:33",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 2,
+   "minRicardone": 65,
+   "minManejando": 35,
+   "minFilaPuerto": 245,
+   "minDescargaSalida": 18,
+   "minVuelta": 363,
+   "pctFilaPuerto": 67,
+   "pctManejando": 10,
+   "flete": 1620000,
+   "fletePorHora": 31930,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 19:38",
+     "hasta": "25/09 11:39",
+     "horas": 16,
+     "viajes": 3
+    },
+    {
+     "desde": "30/09 16:16",
+     "hasta": "01/10 20:33",
+     "horas": 28.3,
+     "viajes": 5
+    },
+    {
+     "desde": "01/10 20:45",
+     "hasta": "02/10 03:11",
+     "horas": 6.4,
+     "viajes": 1
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "30/09 07:37",
+   "max24hHasta": "01/10 08:31",
+   "max24hEntreCargasHoras": 14.4,
+   "patente": "RDL445",
+   "viajes": 9,
+   "dias": 4,
+   "conCamara": 8,
+   "jornadas": 4,
+   "horasJornadas": 43.4,
+   "jornadaMaxHoras": 19.1,
+   "jornadaMaxViajes": 3,
+   "jornadaMaxDesde": "01/10 07:14",
+   "jornadaMaxHasta": "02/10 02:22",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 1,
+   "minRicardone": 81,
+   "minManejando": 28,
+   "minFilaPuerto": 155,
+   "minDescargaSalida": 14,
+   "minVuelta": 278,
+   "pctFilaPuerto": 56,
+   "pctManejando": 10,
+   "flete": 1620000,
+   "fletePorHora": 37290,
+   "jornadasDetalle": [
+    {
+     "desde": "25/09 08:22",
+     "hasta": "25/09 12:40",
+     "horas": 4.3,
+     "viajes": 1
+    },
+    {
+     "desde": "26/09 06:13",
+     "hasta": "26/09 11:52",
+     "horas": 5.6,
+     "viajes": 2
+    },
+    {
+     "desde": "30/09 07:37",
+     "hasta": "30/09 21:59",
+     "horas": 14.4,
+     "viajes": 3
+    },
+    {
+     "desde": "01/10 07:14",
+     "hasta": "02/10 02:22",
+     "horas": 19.1,
+     "viajes": 3
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "30/09 10:47",
+   "max24hHasta": "01/10 10:06",
+   "max24hEntreCargasHoras": 10.4,
+   "patente": "AZG422",
+   "viajes": 9,
+   "dias": 4,
+   "conCamara": 6,
+   "jornadas": 4,
+   "horasJornadas": 47.2,
+   "jornadaMaxHoras": 15.8,
+   "jornadaMaxViajes": 3,
+   "jornadaMaxDesde": "30/09 10:46",
+   "jornadaMaxHasta": "01/10 02:33",
+   "jornadasMas12h": 3,
+   "jornadasMas15h": 1,
+   "minRicardone": 80,
+   "minManejando": 33,
+   "minFilaPuerto": 187,
+   "minDescargaSalida": 14,
+   "minVuelta": 314,
+   "pctFilaPuerto": 60,
+   "pctManejando": 11,
+   "flete": 1620000,
+   "fletePorHora": 34296,
+   "jornadasDetalle": [
+    {
+     "desde": "25/09 07:10",
+     "hasta": "25/09 13:09",
+     "horas": 6,
+     "viajes": 1
+    },
+    {
+     "desde": "26/09 08:14",
+     "hasta": "26/09 21:35",
+     "horas": 13.3,
+     "viajes": 3
+    },
+    {
+     "desde": "30/09 10:46",
+     "hasta": "01/10 02:33",
+     "horas": 15.8,
+     "viajes": 3
+    },
+    {
+     "desde": "01/10 08:09",
+     "hasta": "01/10 20:18",
+     "horas": 12.1,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 07:38",
+   "max24hHasta": "01/10 05:19",
+   "max24hEntreCargasHoras": 5.9,
+   "patente": "CIE516",
+   "viajes": 8,
+   "dias": 3,
+   "conCamara": 4,
+   "jornadas": 2,
+   "horasJornadas": 41.4,
+   "jornadaMaxHoras": 37.8,
+   "jornadaMaxViajes": 7,
+   "jornadaMaxDesde": "30/09 07:36",
+   "jornadaMaxHasta": "01/10 21:26",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 73,
+   "minManejando": 32,
+   "minFilaPuerto": 170,
+   "minDescargaSalida": 19,
+   "minVuelta": 294,
+   "pctFilaPuerto": 58,
+   "pctManejando": 11,
+   "flete": 1440000,
+   "fletePorHora": 34748,
+   "jornadasDetalle": [
+    {
+     "desde": "26/09 07:50",
+     "hasta": "26/09 11:27",
+     "horas": 3.6,
+     "viajes": 1
+    },
+    {
+     "desde": "30/09 07:36",
+     "hasta": "01/10 21:26",
+     "horas": 37.8,
+     "viajes": 7
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "30/09 10:28",
+   "max24hHasta": "01/10 09:30",
+   "max24hEntreCargasHoras": 10.6,
+   "patente": "TVH101",
+   "viajes": 8,
+   "dias": 4,
+   "conCamara": 8,
+   "jornadas": 3,
+   "horasJornadas": 49.3,
+   "jornadaMaxHoras": 19.9,
+   "jornadaMaxViajes": 3,
+   "jornadaMaxDesde": "24/09 18:10",
+   "jornadaMaxHasta": "25/09 14:04",
+   "jornadasMas12h": 3,
+   "jornadasMas15h": 2,
+   "minRicardone": 75,
+   "minManejando": 33,
+   "minFilaPuerto": 260,
+   "minDescargaSalida": 16,
+   "minVuelta": 384,
+   "pctFilaPuerto": 68,
+   "pctManejando": 9,
+   "flete": 1440000,
+   "fletePorHora": 29195,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:10",
+     "hasta": "25/09 14:04",
+     "horas": 19.9,
+     "viajes": 3
+    },
+    {
+     "desde": "30/09 10:27",
+     "hasta": "01/10 02:22",
+     "horas": 15.9,
+     "viajes": 3
+    },
+    {
+     "desde": "01/10 08:06",
+     "hasta": "01/10 21:36",
+     "horas": 13.5,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 3,
+   "max24hDesde": "30/09 08:13",
+   "max24hHasta": "30/09 21:57",
+   "max24hEntreCargasHoras": 6.9,
+   "patente": "BHL749",
+   "viajes": 8,
+   "dias": 4,
+   "conCamara": 7,
+   "jornadas": 5,
+   "horasJornadas": 57.4,
+   "jornadaMaxHoras": 19.3,
+   "jornadaMaxViajes": 1,
+   "jornadaMaxDesde": "24/09 18:22",
+   "jornadaMaxHasta": "25/09 13:37",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 2,
+   "minRicardone": 81,
+   "minManejando": 43,
+   "minFilaPuerto": 197,
+   "minDescargaSalida": 18,
+   "minVuelta": 339,
+   "pctFilaPuerto": 58,
+   "pctManejando": 13,
+   "flete": 1440000,
+   "fletePorHora": 25088,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:22",
+     "hasta": "25/09 13:37",
+     "horas": 19.3,
+     "viajes": 1
+    },
+    {
+     "desde": "26/09 12:21",
+     "hasta": "26/09 21:32",
+     "horas": 9.2,
+     "viajes": 2
+    },
+    {
+     "desde": "30/09 08:12",
+     "hasta": "01/10 01:27",
+     "horas": 17.3,
+     "viajes": 3
+    },
+    {
+     "desde": "01/10 08:40",
+     "hasta": "01/10 14:39",
+     "horas": 6,
+     "viajes": 1
+    },
+    {
+     "desde": "01/10 17:37",
+     "hasta": "01/10 23:19",
+     "horas": 5.7,
+     "viajes": 1
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "24/09 18:14",
+   "max24hHasta": "25/09 08:02",
+   "max24hEntreCargasHoras": 4.5,
+   "patente": "VRA989",
+   "viajes": 8,
+   "dias": 4,
+   "conCamara": 4,
+   "jornadas": 3,
+   "horasJornadas": 38.1,
+   "jornadaMaxHoras": 18.8,
+   "jornadaMaxViajes": 4,
+   "jornadaMaxDesde": "24/09 18:14",
+   "jornadaMaxHasta": "25/09 13:02",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 86,
+   "minManejando": 30,
+   "minFilaPuerto": 193,
+   "minDescargaSalida": 17,
+   "minVuelta": 326,
+   "pctFilaPuerto": 59,
+   "pctManejando": 9,
+   "flete": 1440000,
+   "fletePorHora": 37751,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:14",
+     "hasta": "25/09 13:02",
+     "horas": 18.8,
+     "viajes": 4
+    },
+    {
+     "desde": "26/09 10:09",
+     "hasta": "26/09 18:42",
+     "horas": 8.5,
+     "viajes": 2
+    },
+    {
+     "desde": "01/10 10:18",
+     "hasta": "01/10 21:05",
+     "horas": 10.8,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 3,
+   "max24hDesde": "30/09 07:54",
+   "max24hHasta": "30/09 20:47",
+   "max24hEntreCargasHoras": 5.5,
+   "patente": "DGR440",
+   "viajes": 8,
+   "dias": 4,
+   "conCamara": 6,
+   "jornadas": 4,
+   "horasJornadas": 41.3,
+   "jornadaMaxHoras": 16.3,
+   "jornadaMaxViajes": 3,
+   "jornadaMaxDesde": "30/09 07:52",
+   "jornadaMaxHasta": "01/10 00:12",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 88,
+   "minManejando": 48,
+   "minFilaPuerto": 172,
+   "minDescargaSalida": 24,
+   "minVuelta": 332,
+   "pctFilaPuerto": 52,
+   "pctManejando": 14,
+   "flete": 1440000,
+   "fletePorHora": 34904,
+   "jornadasDetalle": [
+    {
+     "desde": "25/09 07:39",
+     "hasta": "25/09 14:00",
+     "horas": 6.3,
+     "viajes": 1
+    },
+    {
+     "desde": "26/09 09:18",
+     "hasta": "26/09 17:04",
+     "horas": 7.8,
+     "viajes": 2
+    },
+    {
+     "desde": "30/09 07:52",
+     "hasta": "01/10 00:12",
+     "horas": 16.3,
+     "viajes": 3
+    },
+    {
+     "desde": "01/10 07:59",
+     "hasta": "01/10 18:48",
+     "horas": 10.8,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "26/09 06:14",
+   "max24hHasta": "26/09 17:07",
+   "max24hEntreCargasHoras": 3.9,
+   "patente": "CRJ139",
+   "viajes": 8,
+   "dias": 3,
+   "conCamara": 8,
+   "jornadas": 3,
+   "horasJornadas": 38.7,
+   "jornadaMaxHoras": 14.4,
+   "jornadaMaxViajes": 4,
+   "jornadaMaxDesde": "26/09 06:13",
+   "jornadaMaxHasta": "26/09 20:35",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 0,
+   "minRicardone": 75,
+   "minManejando": 33,
+   "minFilaPuerto": 174,
+   "minDescargaSalida": 17,
+   "minVuelta": 299,
+   "pctFilaPuerto": 58,
+   "pctManejando": 11,
+   "flete": 1440000,
+   "fletePorHora": 37169,
+   "jornadasDetalle": [
+    {
+     "desde": "26/09 06:13",
+     "hasta": "26/09 20:35",
+     "horas": 14.4,
+     "viajes": 4
+    },
+    {
+     "desde": "30/09 12:32",
+     "hasta": "30/09 23:44",
+     "horas": 11.2,
+     "viajes": 2
+    },
+    {
+     "desde": "01/10 09:53",
+     "hasta": "01/10 23:02",
+     "horas": 13.2,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 09:10",
+   "max24hHasta": "01/10 08:15",
+   "max24hEntreCargasHoras": 6.1,
+   "patente": "EBO971",
+   "viajes": 7,
+   "dias": 2,
+   "conCamara": 7,
+   "jornadas": 1,
+   "horasJornadas": 40.7,
+   "jornadaMaxHoras": 40.7,
+   "jornadaMaxViajes": 7,
+   "jornadaMaxDesde": "30/09 09:09",
+   "jornadaMaxHasta": "02/10 01:51",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 88,
+   "minManejando": 41,
+   "minFilaPuerto": 219,
+   "minDescargaSalida": 22,
+   "minVuelta": 370,
+   "pctFilaPuerto": 59,
+   "pctManejando": 11,
+   "flete": 1260000,
+   "fletePorHora": 30952,
+   "jornadasDetalle": [
+    {
+     "desde": "30/09 09:09",
+     "hasta": "02/10 01:51",
+     "horas": 40.7,
+     "viajes": 7
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 09:40",
+   "max24hHasta": "01/10 08:28",
+   "max24hEntreCargasHoras": 6.3,
+   "patente": "RRE349",
+   "viajes": 7,
+   "dias": 2,
+   "conCamara": 7,
+   "jornadas": 1,
+   "horasJornadas": 40.7,
+   "jornadaMaxHoras": 40.7,
+   "jornadaMaxViajes": 7,
+   "jornadaMaxDesde": "30/09 09:38",
+   "jornadaMaxHasta": "02/10 02:23",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 78,
+   "minManejando": 33,
+   "minFilaPuerto": 252,
+   "minDescargaSalida": 16,
+   "minVuelta": 379,
+   "pctFilaPuerto": 66,
+   "pctManejando": 9,
+   "flete": 1260000,
+   "fletePorHora": 30924,
+   "jornadasDetalle": [
+    {
+     "desde": "30/09 09:38",
+     "hasta": "02/10 02:23",
+     "horas": 40.7,
+     "viajes": 7
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "30/09 22:22",
+   "max24hHasta": "01/10 16:32",
+   "max24hEntreCargasHoras": 6.4,
+   "patente": "RYJ562",
+   "viajes": 7,
+   "dias": 4,
+   "conCamara": 7,
+   "jornadas": 2,
+   "horasJornadas": 39.9,
+   "jornadaMaxHoras": 23.6,
+   "jornadaMaxViajes": 4,
+   "jornadaMaxDesde": "30/09 22:20",
+   "jornadaMaxHasta": "01/10 21:56",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 2,
+   "minRicardone": 94,
+   "minManejando": 34,
+   "minFilaPuerto": 242,
+   "minDescargaSalida": 17,
+   "minVuelta": 387,
+   "pctFilaPuerto": 63,
+   "pctManejando": 9,
+   "flete": 1260000,
+   "fletePorHora": 31610,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:32",
+     "hasta": "25/09 10:48",
+     "horas": 16.3,
+     "viajes": 3
+    },
+    {
+     "desde": "30/09 22:20",
+     "hasta": "01/10 21:56",
+     "horas": 23.6,
+     "viajes": 4
+    }
+   ]
+  },
+  {
+   "max24hViajes": 3,
+   "max24hDesde": "26/09 06:12",
+   "max24hHasta": "26/09 16:33",
+   "max24hEntreCargasHoras": 5,
+   "patente": "TAC436",
+   "viajes": 7,
+   "dias": 3,
+   "conCamara": 7,
+   "jornadas": 3,
+   "horasJornadas": 34.1,
+   "jornadaMaxHoras": 14.5,
+   "jornadaMaxViajes": 3,
+   "jornadaMaxDesde": "30/09 07:33",
+   "jornadaMaxHasta": "30/09 22:01",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 0,
+   "minRicardone": 83,
+   "minManejando": 34,
+   "minFilaPuerto": 130,
+   "minDescargaSalida": 21,
+   "minVuelta": 268,
+   "pctFilaPuerto": 49,
+   "pctManejando": 13,
+   "flete": 1260000,
+   "fletePorHora": 36999,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 19:19",
+     "hasta": "25/09 01:17",
+     "horas": 6,
+     "viajes": 1
+    },
+    {
+     "desde": "26/09 06:12",
+     "hasta": "26/09 19:49",
+     "horas": 13.6,
+     "viajes": 3
+    },
+    {
+     "desde": "30/09 07:33",
+     "hasta": "30/09 22:01",
+     "horas": 14.5,
+     "viajes": 3
+    }
+   ]
+  },
+  {
+   "max24hViajes": 3,
+   "max24hDesde": "24/09 20:03",
+   "max24hHasta": "25/09 06:27",
+   "max24hEntreCargasHoras": 6,
+   "patente": "UPW705",
+   "viajes": 7,
+   "dias": 4,
+   "conCamara": 2,
+   "jornadas": 3,
+   "horasJornadas": 37.3,
+   "jornadaMaxHoras": 14.2,
+   "jornadaMaxViajes": 3,
+   "jornadaMaxDesde": "24/09 20:03",
+   "jornadaMaxHasta": "25/09 10:12",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 0,
+   "minRicardone": 62,
+   "minManejando": 39,
+   "minFilaPuerto": 222,
+   "minDescargaSalida": 22,
+   "minVuelta": 345,
+   "pctFilaPuerto": 64,
+   "pctManejando": 11,
+   "flete": 1260000,
+   "fletePorHora": 33784,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 20:03",
+     "hasta": "25/09 10:12",
+     "horas": 14.2,
+     "viajes": 3
+    },
+    {
+     "desde": "30/09 09:51",
+     "hasta": "30/09 20:47",
+     "horas": 10.9,
+     "viajes": 2
+    },
+    {
+     "desde": "01/10 04:47",
+     "hasta": "01/10 16:58",
+     "horas": 12.2,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 3,
+   "max24hDesde": "30/09 08:30",
+   "max24hHasta": "01/10 09:45",
+   "max24hEntreCargasHoras": 18.4,
+   "patente": "RNM392",
+   "viajes": 7,
+   "dias": 4,
+   "conCamara": 7,
+   "jornadas": 4,
+   "horasJornadas": 39.6,
+   "jornadaMaxHoras": 13.7,
+   "jornadaMaxViajes": 2,
+   "jornadaMaxDesde": "01/10 08:07",
+   "jornadaMaxHasta": "01/10 21:52",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 0,
+   "minRicardone": 91,
+   "minManejando": 39,
+   "minFilaPuerto": 204,
+   "minDescargaSalida": 19,
+   "minVuelta": 353,
+   "pctFilaPuerto": 58,
+   "pctManejando": 11,
+   "flete": 1260000,
+   "fletePorHora": 31857,
+   "jornadasDetalle": [
+    {
+     "desde": "25/09 06:14",
+     "hasta": "25/09 12:20",
+     "horas": 6.1,
+     "viajes": 1
+    },
+    {
+     "desde": "26/09 06:25",
+     "hasta": "26/09 14:42",
+     "horas": 8.3,
+     "viajes": 2
+    },
+    {
+     "desde": "30/09 08:28",
+     "hasta": "30/09 19:53",
+     "horas": 11.4,
+     "viajes": 2
+    },
+    {
+     "desde": "01/10 08:07",
+     "hasta": "01/10 21:52",
+     "horas": 13.7,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 3,
+   "max24hDesde": "30/09 08:06",
+   "max24hHasta": "01/10 07:27",
+   "max24hEntreCargasHoras": 17.1,
+   "patente": "CGS172",
+   "viajes": 7,
+   "dias": 4,
+   "conCamara": 7,
+   "jornadas": 4,
+   "horasJornadas": 36.3,
+   "jornadaMaxHoras": 11.9,
+   "jornadaMaxViajes": 2,
+   "jornadaMaxDesde": "01/10 06:05",
+   "jornadaMaxHasta": "01/10 18:01",
+   "jornadasMas12h": 0,
+   "jornadasMas15h": 0,
+   "minRicardone": 87,
+   "minManejando": 35,
+   "minFilaPuerto": 186,
+   "minDescargaSalida": 16,
+   "minVuelta": 324,
+   "pctFilaPuerto": 57,
+   "pctManejando": 11,
+   "flete": 1260000,
+   "fletePorHora": 34704,
+   "jornadasDetalle": [
+    {
+     "desde": "25/09 06:15",
+     "hasta": "25/09 12:26",
+     "horas": 6.2,
+     "viajes": 1
+    },
+    {
+     "desde": "26/09 06:25",
+     "hasta": "26/09 14:28",
+     "horas": 8,
+     "viajes": 2
+    },
+    {
+     "desde": "30/09 08:05",
+     "hasta": "30/09 18:13",
+     "horas": 10.1,
+     "viajes": 2
+    },
+    {
+     "desde": "01/10 06:05",
+     "hasta": "01/10 18:01",
+     "horas": 11.9,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 3,
+   "max24hDesde": "30/09 10:33",
+   "max24hHasta": "01/10 08:47",
+   "max24hEntreCargasHoras": 16,
+   "patente": "UYM942",
+   "viajes": 7,
+   "dias": 4,
+   "conCamara": 3,
+   "jornadas": 4,
+   "horasJornadas": 34.3,
+   "jornadaMaxHoras": 10.9,
+   "jornadaMaxViajes": 2,
+   "jornadaMaxDesde": "30/09 10:33",
+   "jornadaMaxHasta": "30/09 21:24",
+   "jornadasMas12h": 0,
+   "jornadasMas15h": 0,
+   "minRicardone": 88,
+   "minManejando": 33,
+   "minFilaPuerto": 162,
+   "minDescargaSalida": 16,
+   "minVuelta": 299,
+   "pctFilaPuerto": 54,
+   "pctManejando": 11,
+   "flete": 1260000,
+   "fletePorHora": 36768,
+   "jornadasDetalle": [
+    {
+     "desde": "25/09 08:30",
+     "hasta": "25/09 12:47",
+     "horas": 4.3,
+     "viajes": 1
+    },
+    {
+     "desde": "26/09 12:39",
+     "hasta": "26/09 21:10",
+     "horas": 8.5,
+     "viajes": 2
+    },
+    {
+     "desde": "30/09 10:33",
+     "hasta": "30/09 21:24",
+     "horas": 10.9,
+     "viajes": 2
+    },
+    {
+     "desde": "01/10 07:44",
+     "hasta": "01/10 18:20",
+     "horas": 10.6,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 15:36",
+   "max24hHasta": "01/10 13:48",
+   "max24hEntreCargasHoras": 6.2,
+   "patente": "BWV144",
+   "viajes": 6,
+   "dias": 2,
+   "conCamara": 6,
+   "jornadas": 1,
+   "horasJornadas": 34.4,
+   "jornadaMaxHoras": 34.4,
+   "jornadaMaxViajes": 6,
+   "jornadaMaxDesde": "30/09 15:35",
+   "jornadaMaxHasta": "02/10 02:01",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 79,
+   "minManejando": 30,
+   "minFilaPuerto": 224,
+   "minDescargaSalida": 19,
+   "minVuelta": 352,
+   "pctFilaPuerto": 64,
+   "pctManejando": 9,
+   "flete": 1080000,
+   "fletePorHora": 31357,
+   "jornadasDetalle": [
+    {
+     "desde": "30/09 15:35",
+     "hasta": "02/10 02:01",
+     "horas": 34.4,
+     "viajes": 6
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 12:23",
+   "max24hHasta": "01/10 11:39",
+   "max24hEntreCargasHoras": 6.7,
+   "patente": "UER485",
+   "viajes": 6,
+   "dias": 2,
+   "conCamara": 5,
+   "jornadas": 1,
+   "horasJornadas": 33.6,
+   "jornadaMaxHoras": 33.6,
+   "jornadaMaxViajes": 6,
+   "jornadaMaxDesde": "30/09 12:21",
+   "jornadaMaxHasta": "01/10 22:00",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 67,
+   "minManejando": 35,
+   "minFilaPuerto": 257,
+   "minDescargaSalida": 19,
+   "minVuelta": 378,
+   "pctFilaPuerto": 68,
+   "pctManejando": 9,
+   "flete": 1080000,
+   "fletePorHora": 32105,
+   "jornadasDetalle": [
+    {
+     "desde": "30/09 12:21",
+     "hasta": "01/10 22:00",
+     "horas": 33.6,
+     "viajes": 6
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 14:39",
+   "max24hHasta": "01/10 13:29",
+   "max24hEntreCargasHoras": 6.4,
+   "patente": "EHS233",
+   "viajes": 6,
+   "dias": 2,
+   "conCamara": 5,
+   "jornadas": 1,
+   "horasJornadas": 33.6,
+   "jornadaMaxHoras": 33.6,
+   "jornadaMaxViajes": 6,
+   "jornadaMaxDesde": "30/09 14:17",
+   "jornadaMaxHasta": "01/10 23:55",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 83,
+   "minManejando": 36,
+   "minFilaPuerto": 238,
+   "minDescargaSalida": null,
+   "minVuelta": null,
+   "pctFilaPuerto": null,
+   "pctManejando": null,
+   "flete": 1080000,
+   "fletePorHora": 32117,
+   "jornadasDetalle": [
+    {
+     "desde": "30/09 14:17",
+     "hasta": "01/10 23:55",
+     "horas": 33.6,
+     "viajes": 6
+    }
+   ]
+  },
+  {
+   "max24hViajes": 3,
+   "max24hDesde": "24/09 20:54",
+   "max24hHasta": "25/09 07:22",
+   "max24hEntreCargasHoras": 5.2,
+   "patente": "RGV982",
+   "viajes": 6,
+   "dias": 3,
+   "conCamara": 4,
+   "jornadas": 2,
+   "horasJornadas": 28.1,
+   "jornadaMaxHoras": 15.2,
+   "jornadaMaxViajes": 3,
+   "jornadaMaxDesde": "24/09 20:54",
+   "jornadaMaxHasta": "25/09 12:04",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 1,
+   "minRicardone": 80,
+   "minManejando": 40,
+   "minFilaPuerto": 154,
+   "minDescargaSalida": 18,
+   "minVuelta": 292,
+   "pctFilaPuerto": 53,
+   "pctManejando": 14,
+   "flete": 1080000,
+   "fletePorHora": 38443,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 20:54",
+     "hasta": "25/09 12:04",
+     "horas": 15.2,
+     "viajes": 3
+    },
+    {
+     "desde": "26/09 08:39",
+     "hasta": "26/09 21:35",
+     "horas": 12.9,
+     "viajes": 3
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 12:25",
+   "max24hHasta": "01/10 15:12",
+   "max24hEntreCargasHoras": 6.2,
+   "patente": "TAO150",
+   "viajes": 5,
+   "dias": 2,
+   "conCamara": 4,
+   "jornadas": 1,
+   "horasJornadas": 33.2,
+   "jornadaMaxHoras": 33.2,
+   "jornadaMaxViajes": 5,
+   "jornadaMaxDesde": "30/09 12:25",
+   "jornadaMaxHasta": "01/10 21:35",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 154,
+   "minManejando": 57,
+   "minFilaPuerto": 186,
+   "minDescargaSalida": 22,
+   "minVuelta": 419,
+   "pctFilaPuerto": 44,
+   "pctManejando": 14,
+   "flete": 900000,
+   "fletePorHora": 27134,
+   "jornadasDetalle": [
+    {
+     "desde": "30/09 12:25",
+     "hasta": "01/10 21:35",
+     "horas": 33.2,
+     "viajes": 5
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 16:51",
+   "max24hHasta": "01/10 17:15",
+   "max24hEntreCargasHoras": 6.3,
+   "patente": "RKS646",
+   "viajes": 5,
+   "dias": 2,
+   "conCamara": 5,
+   "jornadas": 1,
+   "horasJornadas": 30.3,
+   "jornadaMaxHoras": 30.3,
+   "jornadaMaxViajes": 5,
+   "jornadaMaxDesde": "30/09 16:50",
+   "jornadaMaxHasta": "01/10 23:10",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 70,
+   "minManejando": 25,
+   "minFilaPuerto": 252,
+   "minDescargaSalida": 25,
+   "minVuelta": 372,
+   "pctFilaPuerto": 68,
+   "pctManejando": 7,
+   "flete": 900000,
+   "fletePorHora": 29674,
+   "jornadasDetalle": [
+    {
+     "desde": "30/09 16:50",
+     "hasta": "01/10 23:10",
+     "horas": 30.3,
+     "viajes": 5
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 17:41",
+   "max24hHasta": "01/10 17:46",
+   "max24hEntreCargasHoras": 6.1,
+   "patente": "JPZ027",
+   "viajes": 5,
+   "dias": 2,
+   "conCamara": 5,
+   "jornadas": 1,
+   "horasJornadas": 30.2,
+   "jornadaMaxHoras": 30.2,
+   "jornadaMaxViajes": 5,
+   "jornadaMaxDesde": "30/09 17:40",
+   "jornadaMaxHasta": "01/10 23:52",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 74,
+   "minManejando": 31,
+   "minFilaPuerto": 247,
+   "minDescargaSalida": 16,
+   "minVuelta": 368,
+   "pctFilaPuerto": 67,
+   "pctManejando": 8,
+   "flete": 900000,
+   "fletePorHora": 29798,
+   "jornadasDetalle": [
+    {
+     "desde": "30/09 17:40",
+     "hasta": "01/10 23:52",
+     "horas": 30.2,
+     "viajes": 5
+    }
+   ]
+  },
+  {
+   "max24hViajes": 5,
+   "max24hDesde": "30/09 11:21",
+   "max24hHasta": "01/10 10:26",
+   "max24hEntreCargasHoras": 6.3,
+   "patente": "SAT582",
+   "viajes": 5,
+   "dias": 2,
+   "conCamara": 5,
+   "jornadas": 1,
+   "horasJornadas": 27.5,
+   "jornadaMaxHoras": 27.5,
+   "jornadaMaxViajes": 5,
+   "jornadaMaxDesde": "30/09 11:19",
+   "jornadaMaxHasta": "01/10 14:50",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 57,
+   "minManejando": 35,
+   "minFilaPuerto": 242,
+   "minDescargaSalida": 15,
+   "minVuelta": 349,
+   "pctFilaPuerto": 69,
+   "pctManejando": 10,
+   "flete": 900000,
+   "fletePorHora": 32715,
+   "jornadasDetalle": [
+    {
+     "desde": "30/09 11:19",
+     "hasta": "01/10 14:50",
+     "horas": 27.5,
+     "viajes": 5
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "24/09 18:19",
+   "max24hHasta": "25/09 11:34",
+   "max24hEntreCargasHoras": 6,
+   "patente": "ROS380",
+   "viajes": 5,
+   "dias": 3,
+   "conCamara": 5,
+   "jornadas": 2,
+   "horasJornadas": 25.1,
+   "jornadaMaxHoras": 21.3,
+   "jornadaMaxViajes": 4,
+   "jornadaMaxDesde": "24/09 18:18",
+   "jornadaMaxHasta": "25/09 15:35",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 98,
+   "minManejando": 28,
+   "minFilaPuerto": 165,
+   "minDescargaSalida": 23,
+   "minVuelta": 314,
+   "pctFilaPuerto": 53,
+   "pctManejando": 9,
+   "flete": 900000,
+   "fletePorHora": 35804,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:18",
+     "hasta": "25/09 15:35",
+     "horas": 21.3,
+     "viajes": 4
+    },
+    {
+     "desde": "26/09 06:24",
+     "hasta": "26/09 10:15",
+     "horas": 3.9,
+     "viajes": 1
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "24/09 18:06",
+   "max24hHasta": "25/09 07:24",
+   "max24hEntreCargasHoras": 5.4,
+   "patente": "OHI283",
+   "viajes": 5,
+   "dias": 3,
+   "conCamara": 3,
+   "jornadas": 2,
+   "horasJornadas": 23,
+   "jornadaMaxHoras": 17.1,
+   "jornadaMaxViajes": 4,
+   "jornadaMaxDesde": "24/09 18:05",
+   "jornadaMaxHasta": "25/09 11:09",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 82,
+   "minManejando": 27,
+   "minFilaPuerto": 105,
+   "minDescargaSalida": 21,
+   "minVuelta": 235,
+   "pctFilaPuerto": 45,
+   "pctManejando": 11,
+   "flete": 900000,
+   "fletePorHora": 39144,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:05",
+     "hasta": "25/09 11:09",
+     "horas": 17.1,
+     "viajes": 4
+    },
+    {
+     "desde": "26/09 08:11",
+     "hasta": "26/09 14:07",
+     "horas": 5.9,
+     "viajes": 1
+    }
+   ]
+  },
+  {
+   "max24hViajes": 3,
+   "max24hDesde": "24/09 19:21",
+   "max24hHasta": "25/09 06:09",
+   "max24hEntreCargasHoras": 6.3,
+   "patente": "EVL273",
+   "viajes": 5,
+   "dias": 3,
+   "conCamara": 4,
+   "jornadas": 2,
+   "horasJornadas": 29.2,
+   "jornadaMaxHoras": 16.1,
+   "jornadaMaxViajes": 3,
+   "jornadaMaxDesde": "24/09 19:20",
+   "jornadaMaxHasta": "25/09 11:27",
+   "jornadasMas12h": 2,
+   "jornadasMas15h": 1,
+   "minRicardone": 86,
+   "minManejando": 39,
+   "minFilaPuerto": 227,
+   "minDescargaSalida": 12,
+   "minVuelta": 364,
+   "pctFilaPuerto": 62,
+   "pctManejando": 11,
+   "flete": 900000,
+   "fletePorHora": 30823,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 19:20",
+     "hasta": "25/09 11:27",
+     "horas": 16.1,
+     "viajes": 3
+    },
+    {
+     "desde": "01/10 10:30",
+     "hasta": "01/10 23:34",
+     "horas": 13.1,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 3,
+   "max24hDesde": "24/09 21:33",
+   "max24hHasta": "25/09 07:42",
+   "max24hEntreCargasHoras": 5.3,
+   "patente": "VHL423",
+   "viajes": 5,
+   "dias": 3,
+   "conCamara": 4,
+   "jornadas": 2,
+   "horasJornadas": 23.9,
+   "jornadaMaxHoras": 15.1,
+   "jornadaMaxViajes": 3,
+   "jornadaMaxDesde": "24/09 21:33",
+   "jornadaMaxHasta": "25/09 12:41",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 70,
+   "minManejando": 37,
+   "minFilaPuerto": 179,
+   "minDescargaSalida": 21,
+   "minVuelta": 307,
+   "pctFilaPuerto": 58,
+   "pctManejando": 12,
+   "flete": 900000,
+   "fletePorHora": 37707,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 21:33",
+     "hasta": "25/09 12:41",
+     "horas": 15.1,
+     "viajes": 3
+    },
+    {
+     "desde": "26/09 12:03",
+     "hasta": "26/09 20:47",
+     "horas": 8.7,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 3,
+   "max24hDesde": "26/09 08:16",
+   "max24hHasta": "26/09 16:59",
+   "max24hEntreCargasHoras": 3.8,
+   "patente": "AAE877",
+   "viajes": 5,
+   "dias": 2,
+   "conCamara": 2,
+   "jornadas": 2,
+   "horasJornadas": 23.4,
+   "jornadaMaxHoras": 12.5,
+   "jornadaMaxViajes": 3,
+   "jornadaMaxDesde": "26/09 08:16",
+   "jornadaMaxHasta": "26/09 20:44",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 0,
+   "minRicardone": 75,
+   "minManejando": 27,
+   "minFilaPuerto": 99,
+   "minDescargaSalida": 20,
+   "minVuelta": 221,
+   "pctFilaPuerto": 45,
+   "pctManejando": 12,
+   "flete": 900000,
+   "fletePorHora": 38407,
+   "jornadasDetalle": [
+    {
+     "desde": "26/09 08:16",
+     "hasta": "26/09 20:44",
+     "horas": 12.5,
+     "viajes": 3
+    },
+    {
+     "desde": "01/10 09:21",
+     "hasta": "01/10 20:19",
+     "horas": 11,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "30/09 12:50",
+   "max24hHasta": "01/10 13:44",
+   "max24hEntreCargasHoras": 6.1,
+   "patente": "DTG181",
+   "viajes": 4,
+   "dias": 2,
+   "conCamara": 4,
+   "jornadas": 1,
+   "horasJornadas": 32.6,
+   "jornadaMaxHoras": 32.6,
+   "jornadaMaxViajes": 4,
+   "jornadaMaxDesde": "30/09 12:49",
+   "jornadaMaxHasta": "01/10 21:27",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 243,
+   "minManejando": 51,
+   "minFilaPuerto": 207,
+   "minDescargaSalida": 13,
+   "minVuelta": 514,
+   "pctFilaPuerto": 40,
+   "pctManejando": 10,
+   "flete": 720000,
+   "fletePorHora": 22060,
+   "jornadasDetalle": [
+    {
+     "desde": "30/09 12:49",
+     "hasta": "01/10 21:27",
+     "horas": 32.6,
+     "viajes": 4
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "24/09 18:18",
+   "max24hHasta": "25/09 10:36",
+   "max24hEntreCargasHoras": 6.1,
+   "patente": "EDQ876",
+   "viajes": 4,
+   "dias": 2,
+   "conCamara": 4,
+   "jornadas": 1,
+   "horasJornadas": 21,
+   "jornadaMaxHoras": 21,
+   "jornadaMaxViajes": 4,
+   "jornadaMaxDesde": "24/09 18:17",
+   "jornadaMaxHasta": "25/09 15:19",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 78,
+   "minManejando": 30,
+   "minFilaPuerto": 265,
+   "minDescargaSalida": 21,
+   "minVuelta": 394,
+   "pctFilaPuerto": 67,
+   "pctManejando": 8,
+   "flete": 720000,
+   "fletePorHora": 34229,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:17",
+     "hasta": "25/09 15:19",
+     "horas": 21,
+     "viajes": 4
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "24/09 18:15",
+   "max24hHasta": "25/09 09:44",
+   "max24hEntreCargasHoras": 5.8,
+   "patente": "WIU141",
+   "viajes": 4,
+   "dias": 2,
+   "conCamara": 3,
+   "jornadas": 1,
+   "horasJornadas": 20.4,
+   "jornadaMaxHoras": 20.4,
+   "jornadaMaxViajes": 4,
+   "jornadaMaxDesde": "24/09 18:15",
+   "jornadaMaxHasta": "25/09 14:38",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 37,
+   "minManejando": 46,
+   "minFilaPuerto": 272,
+   "minDescargaSalida": 16,
+   "minVuelta": 371,
+   "pctFilaPuerto": 73,
+   "pctManejando": 12,
+   "flete": 720000,
+   "fletePorHora": 35309,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:15",
+     "hasta": "25/09 14:38",
+     "horas": 20.4,
+     "viajes": 4
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "24/09 18:18",
+   "max24hHasta": "25/09 10:59",
+   "max24hEntreCargasHoras": 6,
+   "patente": "GFL789",
+   "viajes": 4,
+   "dias": 2,
+   "conCamara": 2,
+   "jornadas": 1,
+   "horasJornadas": 20.4,
+   "jornadaMaxHoras": 20.4,
+   "jornadaMaxViajes": 4,
+   "jornadaMaxDesde": "24/09 18:17",
+   "jornadaMaxHasta": "25/09 14:44",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 173,
+   "minManejando": 27,
+   "minFilaPuerto": 195,
+   "minDescargaSalida": 20,
+   "minVuelta": 415,
+   "pctFilaPuerto": 47,
+   "pctManejando": 7,
+   "flete": 720000,
+   "fletePorHora": 35228,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:17",
+     "hasta": "25/09 14:44",
+     "horas": 20.4,
+     "viajes": 4
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "24/09 18:13",
+   "max24hHasta": "25/09 07:52",
+   "max24hEntreCargasHoras": 4.7,
+   "patente": "DIH255",
+   "viajes": 4,
+   "dias": 2,
+   "conCamara": 4,
+   "jornadas": 1,
+   "horasJornadas": 18.7,
+   "jornadaMaxHoras": 18.7,
+   "jornadaMaxViajes": 4,
+   "jornadaMaxDesde": "24/09 18:12",
+   "jornadaMaxHasta": "25/09 12:56",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 75,
+   "minManejando": 43,
+   "minFilaPuerto": 271,
+   "minDescargaSalida": 18,
+   "minVuelta": 407,
+   "pctFilaPuerto": 67,
+   "pctManejando": 11,
+   "flete": 720000,
+   "fletePorHora": 38417,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:12",
+     "hasta": "25/09 12:56",
+     "horas": 18.7,
+     "viajes": 4
+    }
+   ]
+  },
+  {
+   "max24hViajes": 4,
+   "max24hDesde": "24/09 18:12",
+   "max24hHasta": "25/09 07:47",
+   "max24hEntreCargasHoras": 4.7,
+   "patente": "GLK802",
+   "viajes": 4,
+   "dias": 2,
+   "conCamara": 4,
+   "jornadas": 1,
+   "horasJornadas": 18.6,
+   "jornadaMaxHoras": 18.6,
+   "jornadaMaxViajes": 4,
+   "jornadaMaxDesde": "24/09 18:11",
+   "jornadaMaxHasta": "25/09 12:48",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 83,
+   "minManejando": 48,
+   "minFilaPuerto": 153,
+   "minDescargaSalida": 25,
+   "minVuelta": 309,
+   "pctFilaPuerto": 50,
+   "pctManejando": 16,
+   "flete": 720000,
+   "fletePorHora": 38667,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:11",
+     "hasta": "25/09 12:48",
+     "horas": 18.6,
+     "viajes": 4
+    }
+   ]
+  },
+  {
+   "max24hViajes": 3,
+   "max24hDesde": "24/09 19:14",
+   "max24hHasta": "25/09 06:00",
+   "max24hEntreCargasHoras": 6,
+   "patente": "WHR567",
+   "viajes": 4,
+   "dias": 3,
+   "conCamara": 3,
+   "jornadas": 2,
+   "horasJornadas": 23.5,
+   "jornadaMaxHoras": 15.9,
+   "jornadaMaxViajes": 3,
+   "jornadaMaxDesde": "24/09 19:14",
+   "jornadaMaxHasta": "25/09 11:08",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 1,
+   "minRicardone": 59,
+   "minManejando": null,
+   "minFilaPuerto": null,
+   "minDescargaSalida": 17,
+   "minVuelta": null,
+   "pctFilaPuerto": null,
+   "pctManejando": null,
+   "flete": 720000,
+   "fletePorHora": 30595,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 19:14",
+     "hasta": "25/09 11:08",
+     "horas": 15.9,
+     "viajes": 3
+    },
+    {
+     "desde": "01/10 19:03",
+     "hasta": "02/10 02:40",
+     "horas": 7.6,
+     "viajes": 1
+    }
+   ]
+  },
+  {
+   "max24hViajes": 2,
+   "max24hDesde": "26/09 12:20",
+   "max24hHasta": "26/09 17:23",
+   "max24hEntreCargasHoras": 3.8,
+   "patente": "AYB759",
+   "viajes": 4,
+   "dias": 3,
+   "conCamara": 4,
+   "jornadas": 3,
+   "horasJornadas": 20.3,
+   "jornadaMaxHoras": 8.4,
+   "jornadaMaxViajes": 2,
+   "jornadaMaxDesde": "26/09 12:19",
+   "jornadaMaxHasta": "26/09 20:45",
+   "jornadasMas12h": 0,
+   "jornadasMas15h": 0,
+   "minRicardone": 97,
+   "minManejando": 33,
+   "minFilaPuerto": 172,
+   "minDescargaSalida": 20,
+   "minVuelta": 322,
+   "pctFilaPuerto": 53,
+   "pctManejando": 10,
+   "flete": 720000,
+   "fletePorHora": 35396,
+   "jornadasDetalle": [
+    {
+     "desde": "26/09 12:19",
+     "hasta": "26/09 20:45",
+     "horas": 8.4,
+     "viajes": 2
+    },
+    {
+     "desde": "30/09 08:06",
+     "hasta": "30/09 13:46",
+     "horas": 5.7,
+     "viajes": 1
+    },
+    {
+     "desde": "01/10 08:21",
+     "hasta": "01/10 14:36",
+     "horas": 6.2,
+     "viajes": 1
+    }
+   ]
+  },
+  {
+   "max24hViajes": 3,
+   "max24hDesde": "24/09 19:59",
+   "max24hHasta": "25/09 06:16",
+   "max24hEntreCargasHoras": 6,
+   "patente": "AYM824",
+   "viajes": 3,
+   "dias": 2,
+   "conCamara": 2,
+   "jornadas": 1,
+   "horasJornadas": 14.1,
+   "jornadaMaxHoras": 14.1,
+   "jornadaMaxViajes": 3,
+   "jornadaMaxDesde": "24/09 19:55",
+   "jornadaMaxHasta": "25/09 10:01",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 0,
+   "minRicardone": 100,
+   "minManejando": 29,
+   "minFilaPuerto": null,
+   "minDescargaSalida": null,
+   "minVuelta": null,
+   "pctFilaPuerto": null,
+   "pctManejando": null,
+   "flete": 540000,
+   "fletePorHora": 38331,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 19:55",
+     "hasta": "25/09 10:01",
+     "horas": 14.1,
+     "viajes": 3
+    }
+   ]
+  },
+  {
+   "max24hViajes": 2,
+   "max24hDesde": "30/09 09:41",
+   "max24hHasta": "30/09 16:39",
+   "max24hEntreCargasHoras": 5.7,
+   "patente": "CFQ560",
+   "viajes": 3,
+   "dias": 2,
+   "conCamara": 1,
+   "jornadas": 2,
+   "horasJornadas": 18.2,
+   "jornadaMaxHoras": 10.7,
+   "jornadaMaxViajes": 2,
+   "jornadaMaxDesde": "30/09 09:41",
+   "jornadaMaxHasta": "30/09 20:24",
+   "jornadasMas12h": 0,
+   "jornadasMas15h": 0,
+   "minRicardone": 131,
+   "minManejando": 42,
+   "minFilaPuerto": 270,
+   "minDescargaSalida": 28,
+   "minVuelta": 471,
+   "pctFilaPuerto": 57,
+   "pctManejando": 9,
+   "flete": 540000,
+   "fletePorHora": 29672,
+   "jornadasDetalle": [
+    {
+     "desde": "30/09 09:41",
+     "hasta": "30/09 20:24",
+     "horas": 10.7,
+     "viajes": 2
+    },
+    {
+     "desde": "01/10 17:53",
+     "hasta": "02/10 01:22",
+     "horas": 7.5,
+     "viajes": 1
+    }
+   ]
+  },
+  {
+   "max24hViajes": 2,
+   "max24hDesde": "30/09 07:36",
+   "max24hHasta": "30/09 12:37",
+   "max24hEntreCargasHoras": 4.3,
+   "patente": "ECX249",
+   "viajes": 3,
+   "dias": 2,
+   "conCamara": 3,
+   "jornadas": 2,
+   "horasJornadas": 14.8,
+   "jornadaMaxHoras": 9,
+   "jornadaMaxViajes": 2,
+   "jornadaMaxDesde": "30/09 07:36",
+   "jornadaMaxHasta": "30/09 16:35",
+   "jornadasMas12h": 0,
+   "jornadasMas15h": 0,
+   "minRicardone": 45,
+   "minManejando": 33,
+   "minFilaPuerto": 173,
+   "minDescargaSalida": 16,
+   "minVuelta": 267,
+   "pctFilaPuerto": 65,
+   "pctManejando": 12,
+   "flete": 540000,
+   "fletePorHora": 36376,
+   "jornadasDetalle": [
+    {
+     "desde": "25/09 04:35",
+     "hasta": "25/09 10:26",
+     "horas": 5.8,
+     "viajes": 1
+    },
+    {
+     "desde": "30/09 07:36",
+     "hasta": "30/09 16:35",
+     "horas": 9,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 2,
+   "max24hDesde": "01/10 09:23",
+   "max24hHasta": "01/10 16:35",
+   "max24hEntreCargasHoras": 6,
+   "patente": "XBL711",
+   "viajes": 2,
+   "dias": 1,
+   "conCamara": 1,
+   "jornadas": 1,
+   "horasJornadas": 13,
+   "jornadaMaxHoras": 13,
+   "jornadaMaxViajes": 2,
+   "jornadaMaxDesde": "01/10 09:23",
+   "jornadaMaxHasta": "01/10 22:24",
+   "jornadasMas12h": 1,
+   "jornadasMas15h": 0,
+   "minRicardone": null,
+   "minManejando": null,
+   "minFilaPuerto": null,
+   "minDescargaSalida": 20,
+   "minVuelta": null,
+   "pctFilaPuerto": null,
+   "pctManejando": null,
+   "flete": 360000,
+   "fletePorHora": 27637,
+   "jornadasDetalle": [
+    {
+     "desde": "01/10 09:23",
+     "hasta": "01/10 22:24",
+     "horas": 13,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 2,
+   "max24hDesde": "01/10 12:49",
+   "max24hHasta": "01/10 20:41",
+   "max24hEntreCargasHoras": 5.8,
+   "patente": "HNE318",
+   "viajes": 2,
+   "dias": 1,
+   "conCamara": 2,
+   "jornadas": 1,
+   "horasJornadas": 11.6,
+   "jornadaMaxHoras": 11.6,
+   "jornadaMaxViajes": 2,
+   "jornadaMaxDesde": "01/10 12:48",
+   "jornadaMaxHasta": "02/10 00:26",
+   "jornadasMas12h": 0,
+   "jornadasMas15h": 0,
+   "minRicardone": 94,
+   "minManejando": 22,
+   "minFilaPuerto": 245,
+   "minDescargaSalida": 17,
+   "minVuelta": 378,
+   "pctFilaPuerto": 65,
+   "pctManejando": 6,
+   "flete": 360000,
+   "fletePorHora": 30970,
+   "jornadasDetalle": [
+    {
+     "desde": "01/10 12:48",
+     "hasta": "02/10 00:26",
+     "horas": 11.6,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 2,
+   "max24hDesde": "26/09 10:50",
+   "max24hHasta": "26/09 16:47",
+   "max24hEntreCargasHoras": 4.8,
+   "patente": "KDE342",
+   "viajes": 2,
+   "dias": 1,
+   "conCamara": 1,
+   "jornadas": 1,
+   "horasJornadas": 9.3,
+   "jornadaMaxHoras": 9.3,
+   "jornadaMaxViajes": 2,
+   "jornadaMaxDesde": "26/09 10:50",
+   "jornadaMaxHasta": "26/09 20:07",
+   "jornadasMas12h": 0,
+   "jornadasMas15h": 0,
+   "minRicardone": 73,
+   "minManejando": 38,
+   "minFilaPuerto": null,
+   "minDescargaSalida": null,
+   "minVuelta": null,
+   "pctFilaPuerto": null,
+   "pctManejando": null,
+   "flete": 360000,
+   "fletePorHora": 38719,
+   "jornadasDetalle": [
+    {
+     "desde": "26/09 10:50",
+     "hasta": "26/09 20:07",
+     "horas": 9.3,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 2,
+   "max24hDesde": "26/09 10:59",
+   "max24hHasta": "26/09 16:22",
+   "max24hEntreCargasHoras": 3.9,
+   "patente": "CTA045",
+   "viajes": 2,
+   "dias": 1,
+   "conCamara": 2,
+   "jornadas": 1,
+   "horasJornadas": 8.7,
+   "jornadaMaxHoras": 8.7,
+   "jornadaMaxViajes": 2,
+   "jornadaMaxDesde": "26/09 10:59",
+   "jornadaMaxHasta": "26/09 19:38",
+   "jornadasMas12h": 0,
+   "jornadasMas15h": 0,
+   "minRicardone": 89,
+   "minManejando": 35,
+   "minFilaPuerto": 145,
+   "minDescargaSalida": 11,
+   "minVuelta": 280,
+   "pctFilaPuerto": 52,
+   "pctManejando": 13,
+   "flete": 360000,
+   "fletePorHora": 41553,
+   "jornadasDetalle": [
+    {
+     "desde": "26/09 10:59",
+     "hasta": "26/09 19:38",
+     "horas": 8.7,
+     "viajes": 2
+    }
+   ]
+  },
+  {
+   "max24hViajes": 1,
+   "max24hDesde": "24/09 19:18",
+   "max24hHasta": "24/09 22:12",
+   "max24hEntreCargasHoras": 0,
+   "patente": "RQC013",
+   "viajes": 1,
+   "dias": 1,
+   "conCamara": 0,
+   "jornadas": 1,
+   "horasJornadas": 6.7,
+   "jornadaMaxHoras": 6.7,
+   "jornadaMaxViajes": 1,
+   "jornadaMaxDesde": "24/09 19:18",
+   "jornadaMaxHasta": "25/09 01:57",
+   "jornadasMas12h": 0,
+   "jornadasMas15h": 0,
+   "minRicardone": null,
+   "minManejando": null,
+   "minFilaPuerto": null,
+   "minDescargaSalida": null,
+   "minVuelta": null,
+   "pctFilaPuerto": null,
+   "pctManejando": null,
+   "flete": 180000,
+   "fletePorHora": 27068,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 19:18",
+     "hasta": "25/09 01:57",
+     "horas": 6.7,
+     "viajes": 1
+    }
+   ]
+  },
+  {
+   "max24hViajes": 1,
+   "max24hDesde": "26/09 18:20",
+   "max24hHasta": "26/09 20:34",
+   "max24hEntreCargasHoras": 0,
+   "patente": "OYX549",
+   "viajes": 1,
+   "dias": 1,
+   "conCamara": 1,
+   "jornadas": 1,
+   "horasJornadas": 3.9,
+   "jornadaMaxHoras": 3.9,
+   "jornadaMaxViajes": 1,
+   "jornadaMaxDesde": "26/09 18:20",
+   "jornadaMaxHasta": "26/09 22:13",
+   "jornadasMas12h": 0,
+   "jornadasMas15h": 0,
+   "minRicardone": null,
+   "minManejando": 100,
+   "minFilaPuerto": 60,
+   "minDescargaSalida": 23,
+   "minVuelta": null,
+   "pctFilaPuerto": null,
+   "pctManejando": null,
+   "flete": 180000,
+   "fletePorHora": 46229,
+   "jornadasDetalle": [
+    {
+     "desde": "26/09 18:20",
+     "hasta": "26/09 22:13",
+     "horas": 3.9,
+     "viajes": 1
+    }
+   ]
+  },
+  {
+   "max24hViajes": 1,
+   "max24hDesde": "24/09 18:07",
+   "max24hHasta": "24/09 19:54",
+   "max24hEntreCargasHoras": 0,
+   "patente": "AA087XZ",
+   "viajes": 1,
+   "dias": 1,
+   "conCamara": 1,
+   "jornadas": 1,
+   "horasJornadas": 3.4,
+   "jornadaMaxHoras": 3.4,
+   "jornadaMaxViajes": 1,
+   "jornadaMaxDesde": "24/09 18:06",
+   "jornadaMaxHasta": "24/09 21:29",
+   "jornadasMas12h": 0,
+   "jornadasMas15h": 0,
+   "minRicardone": 107,
+   "minManejando": 41,
+   "minFilaPuerto": 38,
+   "minDescargaSalida": 39,
+   "minVuelta": 225,
+   "pctFilaPuerto": 17,
+   "pctManejando": 18,
+   "flete": 180000,
+   "fletePorHora": 53216,
+   "jornadasDetalle": [
+    {
+     "desde": "24/09 18:06",
+     "hasta": "24/09 21:29",
+     "horas": 3.4,
+     "viajes": 1
+    }
+   ]
+  }
+ ]
+}

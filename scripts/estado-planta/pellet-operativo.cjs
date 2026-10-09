@@ -98,7 +98,7 @@ for (const [p, L] of Object.entries(byP)) {
     if (bad || !(slV || slB || slS)) continue
     const p3x = p3 && (!liq || p3 > liq) ? p3 : null
     trips.push({
-      p, day: calDay(e.t), q: quarter(pre ?? e.t), conLiq: !!liq, volc,
+      p, day: calDay(e.t), q: quarter(pre ?? e.t), conLiq: !!liq, volc, ts: { pre, liq, p3: p3x, balE: e.t, slI, slB, slV, slS, back },
       ingreso: m(ing, pre, 60), playa1: m(pre, liq, 240), ptara: m(liq ?? pre, p3x, 120), carga: m(p3x ?? liq ?? pre, e.t, 480),
       interplanta: m(e.t, slI, 60), playaOsl: m(slI, slB, 480), descarga: m(slB ?? slI, slV, 360), salida: m(slV, slS, 120),
       ric: m(pre, e.t, 600), sl: m(slI ?? e.t, slS, 720), ciclo: m(pre, slS, 1200), vuelta: m(slS, back, 180),
@@ -125,6 +125,11 @@ const out = {
 }
 out.camaras.calleLiquidaPorOrden = (() => { const by = {}; for (const t of trips) (by[t.p + t.day] ??= []).push(t); const r = { primero: [0, 0], siguientes: [0, 0] }; for (const v of Object.values(by)) v.forEach((t, i) => { const k = i === 0 ? "primero" : "siguientes"; r[k][0]++; if (t.conLiq) r[k][1]++ }); return r })()
 fs.writeFileSync(outPath, JSON.stringify(out, null, 1))
+// viajes uno por uno (planilla + cámaras) para el análisis por patente
+if (process.env.TRIPS_OUT) fs.writeFileSync(process.env.TRIPS_OUT, JSON.stringify({
+  planilla: X.map(x => ({ p: x.plate_normalized, dia: x.source_date, ingreso: x.external_ingreso_at, salida: x.external_salida_at, kg: +x.kgs_neto || 0 })),
+  camaras: trips.map(t => ({ p: t.p, day: t.day, ...t.ts })),
+}))
 console.log("calle liquida [viajes, con calle]", JSON.stringify(out.camaras.calleLiquidaPorOrden))
 console.log(JSON.stringify(out.planilla, null, 1))
 console.log('camaras viajes', out.camaras.viajes, 'con calle liquida', out.camaras.conCalleLiquida)

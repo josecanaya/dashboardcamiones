@@ -1,21 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button, MetricCard as KpiCard } from '../components/ui/Interface'
 import './plantHome.css'
-import { LiveCameraPlayerModal } from '../components/plant/LiveCameraPlayerModal'
+import { LiveCameraPlayerModal, PinnedCameras } from '../components/plant/LiveCameraPlayerModal'
 import { PlantMap } from '../components/plant/PlantMap'
 import { IdentificationPanel } from '../components/plant/IdentificationPanel'
 import { TruckSteps } from '../components/plant/TruckSteps'
 import { LiveActivityFeed } from '../components/plant/LiveActivityFeed'
+import { usePublishAnalysis } from '../context/AnalysisContext'
 import type { PlantLayout } from '../data/plantZones.types'
 import type { TruckRow, ZoneState } from '../services/live/plantStateApi'
 import { correctTruckLocation, formatDrainMinutes, getSectorTrucks, getZoneTrucks } from '../services/live/plantStateApi'
-
-const ZONE_ROW: Record<string, string> = {
-  normal: '',
-  attention: 'bg-amber-50/60',
-  critical: 'bg-rose-50/70',
-  no_data: 'bg-slate-50',
-}
 
 const ZONE_STATUS_LABEL: Record<string, string> = {
   normal: 'Normal',
@@ -155,21 +149,19 @@ function formatAge(lastUpdateMs: number | null): string {
   return `hace ${min} min`
 }
 
-function Skeleton({ className }: { className?: string }) {
-  return <div className={`animate-pulse rounded bg-slate-200 ${className ?? 'h-8 w-16'}`} />
-}
-
 export function PlantHome() {
   const ricLive = useLivePlantState('ricardone')
   const slLive = useLivePlantState('san_lorenzo')
   const [scope, setScope] = useState<'ricardone' | 'san_lorenzo' | 'both'>('ricardone')
   const [view, setView] = useState<'plano' | 'colas' | 'actividad' | 'identificacion'>('plano')
+  const [zoneSearch, setZoneSearch] = useState('')
+  const [onlyAttention, setOnlyAttention] = useState(false)
   const [layoutError, setLayoutError] = useState(false)
   const [layouts, setLayouts] = useState<Record<'ricardone' | 'san_lorenzo', PlantLayout | null>>({ ricardone: null, san_lorenzo: null })
   const [selected, setSelected] = useState<string | null>(null)
   const [selectedMapSite, setSelectedMapSite] = useState<'ricardone' | 'san_lorenzo'>('ricardone')
   const [selectedZoneId, setSelectedZoneId] = useState<string | null>(null)
-  const [cameraGroup, setCameraGroup] = useState<{ label: string; devices: string[] } | null>(null)
+  const [cameraGroup, setCameraGroup] = useState<{ label: string; devices: string[]; site?: 'ricardone' | 'san_lorenzo' } | null>(null)
   const [recentEntries, setRecentEntries] = useState<RecentTruck[]>([])
   const [recentExits, setRecentExits] = useState<RecentTruck[]>([])
   const [recentLoading, setRecentLoading] = useState(true)
@@ -299,7 +291,7 @@ export function PlantHome() {
   const tag = (site: 'ricardone' | 'san_lorenzo', list?: ZoneState[]): SiteZone[] => (list ?? []).map(z => ({ ...z, site }))
   const zones: SiteZone[] = scope === 'both' ? [...tag('ricardone', ricLive.snapshot?.zones), ...tag('san_lorenzo', slLive.snapshot?.zones)] : tag(scope, selectedLive.snapshot?.zones)
   const layout = layouts[selectedMapSite]
-  const visibleSites: ('ricardone' | 'san_lorenzo')[] = scope === 'both' ? ['ricardone', 'san_lorenzo'] : [scope]
+  const visibleSites = useMemo<('ricardone' | 'san_lorenzo')[]>(() => scope === 'both' ? ['ricardone', 'san_lorenzo'] : [scope], [scope])
   const selectedSector = (selectedMapSite === 'ricardone' ? ricLive.snapshot : slLive.snapshot)?.sectors.find(item => item.sectorCode === selected) ?? null
   const selectedLiveZone = (selectedMapSite === 'ricardone' ? ricLive.snapshot : slLive.snapshot)?.zones.find(item => item.id === selectedZoneId) ?? null
   const selectedZone = layout?.zones.find((z) => z.zoneId === selectedZoneId)
@@ -324,11 +316,6 @@ export function PlantHome() {
     (selectedZone && selectedZone.cameras.length > 0
       ? [{ label: selectedZone.label, devices: selectedZone.cameras }]
       : [])
-  const cameraCount = cameraGroups.reduce((acc, g) => acc + g.devices.length, 0)
-  const cameraLabel = selectedZone
-    ? `${selectedZone.label} · ${cameraCount > 0 ? `${cameraCount} cámaras` : 'sin cámara'}`
-    : 'Elegí una zona'
-
   /** Al elegir una zona se abre el detalle del punto que la drena: ahí está el problema. */
   const pickZone = (site: 'ricardone' | 'san_lorenzo', zoneId: string) => {
     setSelectedMapSite(site)
@@ -339,9 +326,10 @@ export function PlantHome() {
   const siteName = (site: 'ricardone' | 'san_lorenzo') => site === 'ricardone' ? 'Ricardone' : 'San Lorenzo'
   const contextPanel = <MapContextPanel selectedZone={selectedLiveZone} selectedSector={selectedSector} recentEntries={recentEntries} recentExits={recentExits} loading={recentLoading} zoneTrucks={zoneTrucks} zoneTrucksLoading={zoneTrucksLoading} zoneTrucksError={zoneTrucksError} availableZones={availableZones} busyPlate={busyPlate} onRemoveTruck={(plate) => void applyTruckCorrection(plate, { action: 'remove' })} onMoveTruck={(plate, zoneId) => void applyTruckCorrection(plate, { action: 'move', zoneId })} onClear={() => { setSelected(null); setSelectedZoneId(null) }} site={selectedMapSite} />
   const alertZones = zones.filter(z => z.status === 'critical' || z.status === 'attention')
+  usePublishAnalysis({ mode: 'live', site: scope, sector: selected, zone: selectedZoneId, label: selectedLiveZone?.label })
 
   const openCameraGroup = (group: { label: string; devices: string[] }) => {
-    if (group.devices.length > 0) setCameraGroup(group)
+    if (group.devices.length > 0) setCameraGroup({ ...group, site: selectedMapSite })
   }
 
   return (
@@ -419,267 +407,62 @@ export function PlantHome() {
 
       {status === 'error' ? <p className="ui-message ui-message--error" role="alert">Sin conexión con el estado de planta. {selectedLive.snapshot ? 'Se conserva la última lectura recibida.' : 'Sin dato disponible.'} La reconexión es automática.</p> : null}
       <nav className="ui-section-nav tf-view-switcher" aria-label="Vistas de planta">
-        {([{ id: 'plano', label: 'Monitoreo en vivo' }, { id: 'colas', label: 'Colas por zona' }, { id: 'actividad', label: 'Actividad y cámaras' }, { id: 'identificacion', label: 'Bandeja de patentes' }] as const).map(item => (
-          <Button key={item.id} primary={view === item.id} aria-pressed={view === item.id} onClick={() => setView(item.id)}>{item.label}</Button>
+        {([{ id: 'plano', label: 'Supervisión', detail: 'Plano y puntos de control' }, { id: 'colas', label: 'Zonas de espera', detail: 'Ocupación y camiones' }, { id: 'actividad', label: 'Cámaras y capturas', detail: 'Acceso directo a cada punto' }, { id: 'identificacion', label: 'Revisión de patentes', detail: 'Resolver identificaciones' }] as const).map(item => (
+          <Button key={item.id} primary={view === item.id} aria-pressed={view === item.id} onClick={() => setView(item.id)}><strong>{item.label}</strong><small>{item.detail}</small></Button>
         ))}
       </nav>
       {view !== 'identificacion' ? <IdentificationPanel sites={visibleSites} mode="monitor" onOpen={() => setView('identificacion')} /> : null}
-      {/* Mapa + NVAi: se conserva montado al cambiar de vista. */}
-      <div hidden={view !== 'plano'}>
-      <div className="tf-map-layout">
-      <div className={scope === 'both' ? 'grid min-w-0 gap-3 2xl:grid-cols-2' : 'min-w-0'}>
-        {visibleSites.map(site => {
-          const siteLayout = layouts[site]
-          const siteLive = site === 'ricardone' ? ricLive : slLive
-          return <div key={site} className="min-w-0">
-          {scope === 'both' ? <div className="tf-map-site-label">{site === 'ricardone' ? 'Ricardone' : 'San Lorenzo'}</div> : null}
-          {siteLayout ? (
-            <PlantMap
-              layout={siteLayout}
-              site={site}
-              compact={scope === 'both'}
-              showCircuitControls={false}
-              align="left"
-              flowPulse={scope === 'both' ? { ingress: 0, egress: 0 } : flowPulse}
-              zones={siteLive.snapshot?.zones ?? []}
-              selectedSector={selected}
-              onSelectSector={(sectorCode) => { setSelectedMapSite(site); setSelected(sectorCode) }}
-              onSelectZone={(zoneId) => { setSelectedMapSite(site); setSelectedZoneId(zoneId || null) }}
-              onOpenCameras={(group) => setCameraGroup(group)}
-            />
-          ) : (
-            <div className="flex h-[480px] items-center justify-center rounded-[14px] border border-slate-200 bg-slate-100 text-sm text-slate-500">
-              {layoutError ? 'Plano no disponible. Recargá la página para volver a intentar.' : 'Cargando plano…'}
-            </div>
-          )}
-        </div>})}
-      </div>
-      {view === 'plano' ? contextPanel : null}
-      <LiveActivityFeed sites={visibleSites} onOpenCase={() => setView('identificacion')} />
-      </div>
-
-      </div>
-      <div hidden={view !== 'colas'}>
-      {/* Backlog por zona: donde el camión espera y cuánto tarda en salir */}
-      <div className="overflow-hidden rounded-[14px] border border-slate-200 bg-white shadow-sm">
-        <div className="flex flex-wrap items-baseline gap-3 border-b border-slate-200 px-4 py-3">
-          <span className="text-[14px] font-semibold text-slate-800">Colas por zona</span>
-          <span className="text-[12px] text-slate-400">
-            Elegí una zona para revisar el punto de salida, los camiones y sus cámaras.
-          </span>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px] border-collapse">
-            <thead>
-              <tr>
-                {[...(scope === 'both' ? ['Planta'] : []), 'Zona', 'Esperando', 'Drena por', 'Tasa efectiva', 'Tiempo estimado', 'Espacio', 'Estado'].map(
-                  (h) => (
-                    <th
-                      key={h}
-                      className="border-b border-slate-200 px-3 pb-2 text-left text-[10px] font-semibold uppercase tracking-[.12em] text-slate-400"
-                    >
-                      {h}
-                    </th>
-                  )
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {loading
-                ? Array.from({ length: 6 }).map((_, i) => (
-                    <tr key={i}>
-                      <td className="px-3 py-2" colSpan={8}>
-                        <Skeleton className="h-4 w-full" />
-                      </td>
-                    </tr>
-                  ))
-                : zones
-                    .filter((z) => z.backlog > 0 || z.capacityOperational != null)
-                    .map((z) => {
-                      const drain = formatDrainMinutes(z.drainMinutes)
-                      const targets =
-                        z.drainPoints.length > 1
-                          ? `${z.drainPoints.length} puntos`
-                          : (z.drainPoints[0]?.label ?? '—')
-                      return (
-                        <tr
-                          key={`${z.site}:${z.id}`}
-                          onClick={() => pickZone(z.site, z.id)}
-                          tabIndex={0}
-                          onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pickZone(z.site, z.id) } }}
-                          aria-label={`Ver zona ${z.label} de ${siteName(z.site)}`}
-                          aria-selected={selectedMapSite === z.site && selectedZoneId === z.id}
-                          className={`cursor-pointer border-b border-slate-100 transition hover:bg-slate-50 ${ZONE_ROW[z.status]} ${
-                            selectedMapSite === z.site && selectedZoneId === z.id ? 'ring-1 ring-inset ring-sky-300' : ''
-                          }`}
-                        >
-                          {scope === 'both' ? <td className="px-3 py-2 text-[12px] text-slate-600">{siteName(z.site)}</td> : null}
-                          <td className="px-3 py-2 text-[12.5px] text-slate-700">
-                            <span className="font-semibold text-slate-900">{z.label}</span>
-                          </td>
-                          <td className="px-3 py-2 font-mono text-[15px] font-semibold tabular-nums text-slate-900">
-                            {z.entryBlind ? (
-                              <span className="text-[12px] font-normal text-amber-700">sin dato</span>
-                            ) : z.backlogInferred ? (
-                              <span title="Estimado desde el egreso de Ricardone + 15 min: la cámara de ingreso del puerto no está emitiendo.">
-                                ≈{z.backlog}{' '}
-                                <span className="text-[10px] font-normal text-amber-700">estimado</span>
-                              </span>
-                            ) : (
-                              z.backlog
-                            )}
-                          </td>
-                          <td className="px-3 py-2 font-mono text-[12px] text-slate-600">{targets}</td>
-                          <td className="px-3 py-2 font-mono text-[12px] text-slate-600">
-                            {z.drainRatePerHour == null ? (
-                              <span className="text-amber-700">sin relevar</span>
-                            ) : (
-                              <>
-                                {z.drainRatePerHour}/h
-                                {z.idlePoints.length ? (
-                                  <span className="text-slate-400">
-                                    {' '}
-                                    ({z.idlePoints.length} sin operar)
-                                  </span>
-                                ) : null}
-                              </>
-                            )}
-                          </td>
-                          <td className="px-3 py-2 font-mono text-[13px] font-semibold tabular-nums text-slate-900">
-                            {drain ?? <span className="text-slate-400">sin referencia</span>}
-                          </td>
-                          <td className="px-3 py-2 font-mono text-[12px] text-slate-500">
-                            {z.entryBlind || z.capacityOperational == null
-                              ? '—'
-                              : `${z.backlog} / ${z.capacityOperational}`}
-                          </td>
-                          <td className="px-3 py-2 text-[12px]">
-                            <span style={{ color: STATUS_DOT[z.status] }} title={z.status === 'no_data' ? 'Sin dato suficiente para evaluar la cola (ocupación o tasa). No implica cámara caída.' : undefined}>
-                              {ZONE_STATUS_LABEL[z.status]}
-                            </span>
-                          </td>
-                        </tr>
-                      )
-                    })}
-            </tbody>
-          </table>
-        </div>
-        <div className="border-t border-slate-100 px-4 py-2.5 text-[11.5px] text-slate-500">
-          Total en planta <span className="font-mono text-slate-800">{plant?.trucksInPlant ?? '—'}</span> — la suma de
-          las zonas. La tasa de la balanza de Ricardone es 38/h (1,5 min por pesaje), igual que las de San Lorenzo.
-        </div>
-      </div>
-
-      {view === 'colas' ? <div className="tf-colas-detail">{selectedZoneId ? <>
-        {contextPanel}
-        {cameraGroups.length ? <div className="tf-colas-cameras">{cameraGroups.map(group => <button key={group.label} type="button" className="tf-activity-feed__btn" onClick={() => openCameraGroup(group)}>Ver cámaras · {group.label} ({group.devices.length})</button>)}</div> : <p className="text-[12px] text-slate-500">Esta zona no tiene cámaras asociadas.</p>}
-      </> : <p className="text-[12px] text-slate-500">Elegí una fila para ver acá su detalle, camiones y cámaras.</p>}</div> : null}
-      </div>
-      <div hidden={view !== 'actividad'}>
-      {/* Fila inferior */}
-      <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr_1fr]">
-        <div className="rounded-[14px] border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="text-[13px] font-semibold text-slate-800">Actividad de la última hora</div>
-          {loading ? (
-            <Skeleton className="mt-4 h-28 w-full" />
-          ) : plant ? (
-            <div className="mt-4 space-y-3">
-              <div className="flex items-baseline justify-between gap-3">
-                <span className="text-xs text-slate-500">Ingresos última hora</span>
-                <span className="font-mono text-lg font-semibold tabular-nums text-slate-900">
-                  {plant.inflow60}
-                </span>
+      {view !== 'identificacion' ? <div className="tf-operations-workspace">
+        <main className="tf-operations-main">
+          <section className={"tf-operations-panel" + (view === 'plano' ? ' is-supervision' : '')}>
+            <header className="tf-operations-heading">
+              <div><span className="tf-home-eyebrow">{scope === 'both' ? 'Supervisión de ambas plantas' : siteName(scope)}</span><h2>{view === 'plano' ? 'La operación, de un vistazo' : view === 'colas' ? 'Zonas de espera' : 'Puntos de cámara'}</h2><p>{view === 'plano' ? 'Seleccioná una zona para ver sus camiones o una cámara para abrirla.' : view === 'colas' ? 'Elegí una zona. Su ocupación, camiones y cámaras se abren a la derecha.' : 'Abrí un punto de control. Las capturas recientes siguen visibles a la derecha.'}</p></div>
+              <span className="tf-operations-count">{view === 'actividad' ? 'Acceso a transmisiones' : zones.length + ' zonas'}</span>
+            </header>
+            {view === 'plano' ? <div className="tf-supervision-maps">
+              {visibleSites.map(site => <section key={site} className="tf-supervision-map">
+                <div className="tf-map-label"><strong>{siteName(site)}</strong><span>{(site === 'ricardone' ? ricLive : slLive).snapshot?.plant.trucksInPlant ?? '—'} camiones en planta</span></div>
+                {layouts[site] ? <PlantMap layout={layouts[site]!} site={site} showCircuitControls={false} align="center" flowPulse={scope === 'both' ? { ingress: 0, egress: 0 } : flowPulse} zones={(site === 'ricardone' ? ricLive : slLive).snapshot?.zones ?? []} selectedSector={selectedMapSite === site ? selected : null}
+                  onSelectSector={sectorCode => { setSelectedMapSite(site); setSelected(sectorCode) }}
+                  onSelectZone={zoneId => { setSelectedMapSite(site); setSelectedZoneId(zoneId || null) }}
+                  onOpenCameras={group => setCameraGroup({ ...group, site })} /> : <p className="tf-empty-state">{layoutError ? 'No se pudo cargar el plano. Las zonas y cámaras siguen disponibles en sus vistas.' : 'Cargando plano…'}</p>}
+              </section>)}
+            </div> : null}
+            {view === 'actividad' ? <div className="tf-camera-directory">
+              {visibleSites.flatMap(site => (layouts[site]?.points ?? []).filter(point => point.cameraGroup.devices.length).map(point => <button type="button" className="tf-camera-tile" key={site + ':' + point.id} onClick={() => setCameraGroup({ ...point.cameraGroup, label: point.label, site })}>
+                <span className="tf-camera-tile__screen" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="6" width="14" height="12" rx="3"/><path d="m16 10 6-3v10l-6-3"/></svg><span>Abrir cámaras ↗</span></span>
+                <span className="tf-camera-tile__info"><small>{siteName(site)}</small><strong>{point.label}</strong><span>{point.cameraGroup.devices.length} {point.cameraGroup.devices.length === 1 ? 'cámara' : 'cámaras'} · {point.id}</span></span>
+              </button>))}
+              {!visibleSites.some(site => layouts[site]?.points?.some(point => point.cameraGroup.devices.length)) ? <p className="tf-empty-state">{layoutError ? 'No se pudo cargar el catálogo de cámaras.' : 'Cargando puntos de cámara…'}</p> : null}
+            </div> : <>
+              <div className="tf-zone-toolbar"><h3>{view === 'plano' ? 'Acceso rápido a zonas' : 'Buscar una zona'}</h3><div><input aria-label="Buscar zona" placeholder="Buscar zona…" value={zoneSearch} onChange={e => setZoneSearch(e.target.value)} /><button type="button" aria-pressed={onlyAttention} className={onlyAttention ? 'is-active' : ''} onClick={() => setOnlyAttention(v => !v)}>En atención ({alertZones.length})</button></div></div>
+              <div className="tf-zone-cards">
+                {zones.filter(z => (!onlyAttention || z.status === 'critical' || z.status === 'attention') && (z.label + ' ' + siteName(z.site)).toLowerCase().includes(zoneSearch.toLowerCase())).map(z => <button type="button" key={z.site + ':' + z.id} className={'tf-zone-card ' + (selectedMapSite === z.site && selectedZoneId === z.id ? 'is-selected' : '')} aria-pressed={selectedMapSite === z.site && selectedZoneId === z.id} onClick={() => pickZone(z.site, z.id)}>
+                  <span className="tf-zone-card__top"><small>{siteName(z.site)}</small><span className={'tf-zone-status is-' + z.status}><i style={{background: STATUS_DOT[z.status]}} />{z.status === 'no_data' ? 'Estado sin evaluar' : ZONE_STATUS_LABEL[z.status]}</span></span>
+                  <strong>{z.label}</strong><span className="tf-zone-card__occupancy"><b>{z.entryBlind ? '—' : (z.backlogInferred ? '≈' : '') + z.backlog}</b><span>{z.entryBlind ? 'Ocupación sin dato' : 'camiones esperando'}</span></span>
+                  <span className="tf-zone-card__bottom"><span>{z.capacityOperational != null ? 'Capacidad ' + z.capacityOperational : 'Capacidad sin definir'}</span><span>Ver detalle →</span></span>
+                </button>)}
+                {!loading && !zones.some(z => (!onlyAttention || z.status === 'critical' || z.status === 'attention') && (z.label + ' ' + siteName(z.site)).toLowerCase().includes(zoneSearch.toLowerCase())) ? <div className="tf-empty-state">No hay zonas que coincidan con estos filtros. <button type="button" onClick={() => { setZoneSearch(''); setOnlyAttention(false) }}>Ver todas las zonas</button></div> : null}
+                {loading ? <p className="tf-empty-state">Cargando estado de zonas…</p> : null}
               </div>
-              <div className="flex items-baseline justify-between gap-3">
-                <span className="text-xs text-slate-500">Egresos última hora</span>
-                <span className="font-mono text-lg font-semibold tabular-nums text-slate-900">
-                  {plant.outflow60}
-                </span>
-              </div>
-              <div className="flex items-baseline justify-between gap-3">
-                <span className="text-xs text-slate-500">Balance</span>
-                <span className="font-mono text-lg font-semibold tabular-nums text-slate-900">
-                  {plant.balance60 > 0 ? `+${plant.balance60}` : String(plant.balance60)}
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-400">
-                Ingresos, egresos y balance de los últimos 60 minutos.
-              </p>
-            </div>
-          ) : (
-            <p className="mt-4 text-sm text-slate-400">sin dato</p>
-          )}
-        </div>
-
-        <div className="rounded-[14px] border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="text-[13px] font-semibold text-slate-800">Punto a observar</div>
-          <select className="mt-3 w-full rounded-md border border-slate-300 px-2 py-1.5 text-[13px]" aria-label="Elegir planta y zona" value={selectedZoneId ? `${selectedMapSite}|${selectedZoneId}` : ''} onChange={e => { const [site, id] = e.target.value.split('|'); if (id) pickZone(site as 'ricardone' | 'san_lorenzo', id) }}>
-            <option value="">Elegí planta y zona…</option>
-            {zones.map(z => <option key={`${z.site}:${z.id}`} value={`${z.site}|${z.id}`}>{siteName(z.site)} · {z.label}</option>)}
-          </select>
-          <p className="mt-2 text-[11px] text-slate-400">Las capturas individuales están en «Monitoreo en vivo» (columna de capturas).</p>
-        </div>
-
-        <div className="rounded-[14px] border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="mb-2 flex flex-wrap items-baseline gap-2">
-            <span className="text-[13px] font-semibold text-slate-800">Cámaras en vivo</span>
-            <span className="font-mono text-[11px] text-slate-400">{cameraLabel}</span>
-          </div>
-          {cameraGroups.length === 0 ? (
-            <div
-              className="flex aspect-video w-full items-center justify-center rounded-[10px] border border-[#16243A] text-[11px] text-slate-400"
-              style={{ background: '#0B1220' }}
-            >
-              Elegí planta y zona
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {cameraGroups.map((group) => (
-                <button
-                  key={group.label}
-                  type="button"
-                  onClick={() => openCameraGroup(group)}
-                  className="relative flex aspect-video w-full items-center justify-center rounded-[10px] border border-[#16243A]"
-                  style={{ background: '#0B1220' }}
-                  aria-label={`Abrir en vivo ${group.label}`}
-                >
-                  <svg width="34" height="34" viewBox="0 0 26 26" aria-hidden>
-                    <rect
-                      x="2.5"
-                      y="6.5"
-                      width="17"
-                      height="13"
-                      rx="2"
-                      stroke="#2B3D55"
-                      strokeWidth="1.4"
-                      fill="none"
-                    />
-                    <path d="M19.5 11l4-2.5v9L19.5 15z" stroke="#2B3D55" strokeWidth="1.4" fill="none" />
-                  </svg>
-                  <span className="absolute bottom-2 left-2 rounded bg-[rgba(12,23,40,.85)] px-2 py-1 text-[10.5px] text-slate-300">
-                    {group.label} · {group.devices.length} {group.devices.length === 1 ? 'cámara' : 'cámaras'}
-                  </span>
-                </button>
-              ))}
-            </div>
-          )}
-          <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
-            Abrí una cámara desde el mapa o elegí planta y zona para ver sus grupos.
-          </p>
-        </div>
-      </div>
-
-      </div>
-      {view === 'identificacion' ? <p className={`tf-watch-strip${alertZones.length ? ' has-alerts' : ''}`} role="status">
-        {alertZones.length ? <>Atención en {alertZones.slice(0, 4).map(z => `${siteName(z.site)} · ${z.label} (${ZONE_STATUS_LABEL[z.status]})`).join(' · ')}{alertZones.length > 4 ? ` y ${alertZones.length - 4} más` : ''} <button type="button" onClick={() => setView('plano')}>Ver monitoreo</button></> : `Supervisión: sin zonas en atención · estado de planta ${formatAge(lastUpdateMs)}`}
-      </p> : null}
-      <div hidden={view !== 'identificacion'}>
-        {view === 'identificacion' ? <IdentificationPanel sites={visibleSites} /> : null}
-      </div>
+            </>}
+          </section>
+        </main>
+        <aside className="tf-operations-rail" aria-label="Detalle y actividad operativa">
+          {view !== 'actividad' ? <>
+            <div key={selectedMapSite + ':' + selectedZoneId + ':' + selected}>{contextPanel}</div>
+            {selectedZoneId && cameraGroups.length ? <section className="tf-zone-camera-links"><h3>Cámaras de {selectedLiveZone?.label ?? selectedZone?.label}</h3>{cameraGroups.map(group => <button key={group.label} type="button" onClick={() => openCameraGroup(group)}>{group.label}<span>Abrir ↗</span></button>)}</section> : null}
+          </> : null}
+          <LiveActivityFeed sites={visibleSites} onOpenCase={() => setView('identificacion')} />
+        </aside>
+      </div> : <>
+        <p className={'tf-watch-strip' + (alertZones.length ? ' has-alerts' : '')} role="status">{alertZones.length ? alertZones.length + ' zonas requieren atención' : 'Supervisión de zonas · ' + formatAge(lastUpdateMs)}<button type="button" onClick={() => setView('plano')}>Volver a supervisión</button> <PinnedCameras /></p>
+        <IdentificationPanel sites={visibleSites} />
+      </>}
       <LiveCameraPlayerModal
         open={cameraGroup != null}
         devices={cameraGroup?.devices ?? null}
-        title={cameraGroup ? `${siteName(selectedMapSite)} · ${selectedZone?.label ?? ''} · ${cameraGroup.label}` : undefined}
+        title={cameraGroup ? `${siteName(cameraGroup.site ?? selectedMapSite)} · ${cameraGroup.label}` : undefined}
         onClose={() => setCameraGroup(null)}
       />
     </section>
