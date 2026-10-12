@@ -8,7 +8,7 @@
 //   Líquidos       = calle líquida (RicCalLiq) sin carga en silo después
 const fs = require('fs')
 const path = require('path')
-const ROOT = path.join(__dirname, '..', '..', 'data', 'truckflow') + '/'
+const ROOT = path.join(process.env.VICENTIN_ROOT || path.join(__dirname, '..', '..'), 'data', 'truckflow') + '/'
 const SKEW = 206 * 60000
 const H = 3600000
 const AR = 3 * H
