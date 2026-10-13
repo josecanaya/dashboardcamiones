@@ -1,0 +1,733 @@
+{
+ "generado": "2026-10-12T16:19:35.643Z",
+ "periodo": {
+  "desde": "2026-10-05",
+  "hasta": "2026-10-11",
+  "dias": [
+   "2026-10-05",
+   "2026-10-06",
+   "2026-10-07",
+   "2026-10-08",
+   "2026-10-09",
+   "2026-10-10",
+   "2026-10-11"
+  ]
+ },
+ "fuentes": {
+  "camaras": [
+   "2026-10-05",
+   "2026-10-06",
+   "2026-10-07",
+   "2026-10-08",
+   "2026-10-09",
+   "2026-10-10",
+   "2026-10-11"
+  ],
+  "camarasFaltantes": [],
+  "excel": [],
+  "excelFaltante": [
+   "2026-10-05",
+   "2026-10-06",
+   "2026-10-07",
+   "2026-10-08",
+   "2026-10-09",
+   "2026-10-10",
+   "2026-10-11"
+  ],
+  "padronExcel": "27/08 al 04/10",
+  "padronPatentes": 7390,
+  "correcciones": {
+   "origen": "servidor local",
+   "reglas": 646,
+   "renombradas": 813,
+   "descartadas": 343
+  },
+  "lecturasPeriodo": 9741,
+  "lecturasPorDia": {
+   "2026-10-05": 2133,
+   "2026-10-06": 2057,
+   "2026-10-07": 1456,
+   "2026-10-08": 1616,
+   "2026-10-09": 1515,
+   "2026-10-10": 732,
+   "2026-10-11": 232
+  }
+ },
+ "viajeNormalRicSLmin": 11,
+ "vueltas": [
+  {
+   "patente": "BWA132",
+   "dia": "09/10",
+   "estado": "pendiente_excel",
+   "minPuerto": 18,
+   "puertoTxt": "18 min",
+   "hastaTxt": "3 h 32 m",
+   "hastaLbl": "hasta descargar",
+   "balanzaSalida": false,
+   "caladasVuelta": 1,
+   "descargaPosterior": "Volcable 3",
+   "grupos": [
+    {
+     "planta": "ric",
+     "items": [
+      {
+       "hora": "20:07",
+       "punto": "Calada"
+      },
+      {
+       "hora": "20:17",
+       "punto": "Egreso"
+      }
+     ]
+    },
+    {
+     "planta": "sl",
+     "items": [
+      {
+       "hora": "20:28",
+       "punto": "Ingreso"
+      },
+      {
+       "hora": "20:31",
+       "punto": "Balanza"
+      },
+      {
+       "hora": "20:46",
+       "punto": "Egreso"
+      }
+     ]
+    },
+    {
+     "planta": "ric",
+     "items": [
+      {
+       "hora": "23:06",
+       "punto": "Ingreso"
+      },
+      {
+       "hora": "23:31",
+       "punto": "2.ª calada"
+      }
+     ]
+    },
+    {
+     "planta": "sl",
+     "items": [
+      {
+       "hora": "00:18",
+       "punto": "Volcable 3"
+      },
+      {
+       "hora": "00:37",
+       "punto": "Egreso"
+      }
+     ]
+    }
+   ],
+   "excel": null,
+   "producto": null,
+   "lecturas": [
+    "2026-10-09 18:45 RicPreIngInFr",
+    "2026-10-09 20:07 RicCal03",
+    "2026-10-09 20:17 RicEgrCamFrente",
+    "2026-10-09 20:28 SLZIngCamFrente",
+    "2026-10-09 20:31 SLZBalIngFte",
+    "2026-10-09 20:46 SLZSalidaC1Fte",
+    "2026-10-09 23:06 RicIngCamFrente",
+    "2026-10-09 23:09 RicPreIngInFr",
+    "2026-10-09 23:31 RicCal03",
+    "2026-10-09 23:39 RicEgrCamFrente",
+    "2026-10-09 23:51 SLZIngCamFrente",
+    "2026-10-10 00:18 SLZVolcableC3",
+    "2026-10-10 00:37 SLZSalidaC1Fte"
+   ]
+  }
+ ],
+ "interplanta": [],
+ "interplantaCercanos": [
+  {
+   "dia": "05/10",
+   "salida": "01:06",
+   "patente": "OSL239",
+   "min": 49,
+   "motivo": "caló en el puerto"
+  },
+  {
+   "dia": "05/10",
+   "salida": "13:15",
+   "patente": "BAZ896",
+   "min": 29,
+   "motivo": "entre 25 y 30 min"
+  },
+  {
+   "dia": "05/10",
+   "salida": "13:18",
+   "patente": "MIP760",
+   "min": 26,
+   "motivo": "entre 25 y 30 min"
+  },
+  {
+   "dia": "05/10",
+   "salida": "13:19",
+   "patente": "AF117RK",
+   "min": 27,
+   "motivo": "entre 25 y 30 min"
+  }
+ ],
+ "dosCalles": [
+  {
+   "patente": "AG821ZY",
+   "dia": "06/10",
+   "calles": [
+    {
+     "calle": "1",
+     "hora": "01:32"
+    },
+    {
+     "calle": "3",
+     "hora": "01:34"
+    }
+   ],
+   "involucraC5": false,
+   "excel": null
+  },
+  {
+   "patente": "AD714BI",
+   "dia": "06/10",
+   "calles": [
+    {
+     "calle": "2",
+     "hora": "12:53"
+    },
+    {
+     "calle": "3",
+     "hora": "13:44"
+    },
+    {
+     "calle": "1",
+     "hora": "14:01"
+    }
+   ],
+   "involucraC5": false,
+   "excel": null
+  },
+  {
+   "patente": "AD523QM",
+   "dia": "06/10",
+   "calles": [
+    {
+     "calle": "2",
+     "hora": "13:41"
+    },
+    {
+     "calle": "1",
+     "hora": "14:24"
+    }
+   ],
+   "involucraC5": false,
+   "excel": null
+  },
+  {
+   "patente": "AA317IV",
+   "dia": "06/10",
+   "calles": [
+    {
+     "calle": "1",
+     "hora": "15:07"
+    },
+    {
+     "calle": "4",
+     "hora": "15:12"
+    }
+   ],
+   "involucraC5": false,
+   "excel": null
+  },
+  {
+   "patente": "AF566OP",
+   "dia": "10/10",
+   "calles": [
+    {
+     "calle": "3",
+     "hora": "10:53"
+    },
+    {
+     "calle": "4",
+     "hora": "10:54"
+    }
+   ],
+   "involucraC5": false,
+   "excel": null
+  }
+ ],
+ "declarado": [],
+ "camionetas": {
+  "umbral": 10,
+  "lista": [
+   {
+    "patente": "NAH953",
+    "viajes": 56,
+    "dias": 7,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / SLZBalSC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG622BE",
+    "viajes": 39,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "OCB815",
+    "viajes": 36,
+    "dias": 7,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / RicB2Egreso / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG696QV",
+    "viajes": 30,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZTK400",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AF778YL",
+    "viajes": 28,
+    "dias": 5,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / RicB2Egreso",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AE036AM",
+    "viajes": 27,
+    "dias": 7,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "PFA290",
+    "viajes": 26,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AF529RF",
+    "viajes": 25,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AH090IH",
+    "viajes": 25,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AH456NL",
+    "viajes": 25,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZTK400 / SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "MYW261",
+    "viajes": 25,
+    "dias": 5,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+    "parecida": "MYW269",
+    "registro": false
+   },
+   {
+    "patente": "AG688FB",
+    "viajes": 24,
+    "dias": 5,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / RicCalLiq",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AF282QI",
+    "viajes": 23,
+    "dias": 7,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "IMH787",
+    "viajes": 22,
+    "dias": 7,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / RicB3Ingreso / RicB3Egreso",
+    "parecida": "",
+    "registro": true
+   },
+   {
+    "patente": "AG294KA",
+    "viajes": 21,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / SLZTK400",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "JLQ557",
+    "viajes": 21,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / SLZTK400",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AE040HU",
+    "viajes": 20,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZBalSC1Fte / SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "JZW724",
+    "viajes": 20,
+    "dias": 4,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZBalSC1Fte / SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AA208QN",
+    "viajes": 19,
+    "dias": 7,
+    "zona": "San Lorenzo",
+    "camaras": "SLZBalSC1Fte / SLZTK400 / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AC169LG",
+    "viajes": 18,
+    "dias": 5,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZTK400",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AE937SG",
+    "viajes": 18,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AF566OP",
+    "viajes": 18,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZTK400 / SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AA689GI",
+    "viajes": 17,
+    "dias": 4,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZBalSC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AE264XY",
+    "viajes": 17,
+    "dias": 5,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZTK400 / SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": true
+   },
+   {
+    "patente": "AH700ET",
+    "viajes": 17,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "JUE083",
+    "viajes": 17,
+    "dias": 5,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / RicB3Ingreso",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AF881FZ",
+    "viajes": 16,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZTK400 / SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "HLT270",
+    "viajes": 16,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZTK400 / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AF211ER",
+    "viajes": 15,
+    "dias": 5,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZTK400 / SLZBalSC1Fte",
+    "parecida": "AI211ER",
+    "registro": true
+   },
+   {
+    "patente": "AG978PR",
+    "viajes": 15,
+    "dias": 4,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / SLZTK400",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG142JP",
+    "viajes": 14,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG361MX",
+    "viajes": 14,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AH540BR",
+    "viajes": 13,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "GCW191",
+    "viajes": 13,
+    "dias": 7,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / SLZTK400",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "IJN886",
+    "viajes": 13,
+    "dias": 3,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / SLZBalSC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "LJB988",
+    "viajes": 13,
+    "dias": 4,
+    "zona": "San Lorenzo",
+    "camaras": "SLZBalSC1Fte / SLZTK400 / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": true
+   },
+   {
+    "patente": "AH926WU",
+    "viajes": 12,
+    "dias": 2,
+    "zona": "San Lorenzo",
+    "camaras": "SLZBalSC1Fte / SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AI456GB",
+    "viajes": 12,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "INE931",
+    "viajes": 12,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZTK400 / SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AB148YJ",
+    "viajes": 11,
+    "dias": 4,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / SLZBalSC1Fte",
+    "parecida": "AB148YV",
+    "registro": false
+   },
+   {
+    "patente": "AE260HD",
+    "viajes": 11,
+    "dias": 5,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "RicB3Ingreso / RicEgrCamFrente / RicB3Egreso",
+    "parecida": "AE264HD",
+    "registro": false
+   },
+   {
+    "patente": "AH793XT",
+    "viajes": 11,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / SLZTK400",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AD686SH",
+    "viajes": 10,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG066KT",
+    "viajes": 10,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG275GX",
+    "viajes": 10,
+    "dias": 4,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG408SM",
+    "viajes": 10,
+    "dias": 4,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZTK400 / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AI065WC",
+    "viajes": 10,
+    "dias": 4,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "AH065WC",
+    "registro": false
+   },
+   {
+    "patente": "NRD487",
+    "viajes": 10,
+    "dias": 5,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZBalIngFte / SLZCalado / RicEgrCamFrente",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "OIY765",
+    "viajes": 10,
+    "dias": 4,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZTK400 / SLZBalSC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "PQK206",
+    "viajes": 10,
+    "dias": 4,
+    "zona": "San Lorenzo",
+    "camaras": "SLZTK400 / SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   }
+  ],
+  "sinExcelTotal": 154,
+  "parecidas": [
+   "MYW261~MYW269",
+   "AF211ER~AI211ER",
+   "AB148YJ~AB148YV",
+   "AE260HD~AE264HD",
+   "AI065WC~AH065WC"
+  ],
+  "enRegistro": [
+   "IMH787",
+   "AE264XY",
+   "AF211ER",
+   "LJB988"
+  ]
+ }
+}

@@ -1,0 +1,62 @@
+{
+ "v": 4,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-10-12T16:19:35Z"
+ },
+ "lists": "css",
+ "title": "Comité de Seguridad · 05/10 al 11/10",
+ "order": [
+  "cover",
+  "historico",
+  "numeros",
+  "div-vuelta",
+  "v-bwa132-0910",
+  "div-calles",
+  "calles",
+  "div-interplanta",
+  "interplanta",
+  "camionetas",
+  "anexo",
+  "parque-anios",
+  "parque-vuelta"
+ ],
+ "cover": "cover",
+ "sections": {
+  "s1": {
+   "description": "Portada, histórico y números del período",
+   "start": "cover"
+  },
+  "s2": {
+   "description": "Camiones que fueron al puerto y volvieron a Ricardone antes de descargar",
+   "start": "div-vuelta"
+  },
+  "s3": {
+   "description": "Calles del puerto",
+   "start": "div-calles"
+  },
+  "s4": {
+   "description": "Demoras entre plantas sin calado en el puerto y vehículos sin Excel",
+   "start": "div-interplanta"
+  },
+  "s5": {
+   "description": "Anexo: antigüedad del parque",
+   "start": "anexo"
+  }
+ },
+ "faces": {
+  "domine": {
+   "family": "Domine",
+   "href": "https://fonts.googleapis.com/css2?family=Domine:wght@400..700&display=swap"
+  },
+  "public-sans": {
+   "family": "Public Sans",
+   "href": "https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap"
+  },
+  "ibm-plex-sans": {
+   "family": "IBM Plex Sans",
+   "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap"
+  }
+ },
+ "designSystems": []
+}

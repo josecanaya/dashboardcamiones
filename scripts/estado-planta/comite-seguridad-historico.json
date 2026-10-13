@@ -1,0 +1,41 @@
+{
+ "_nota": "Serie histórica y anexo del Comité de Seguridad Nodo Sur. Lo lee gen_comite_seguridad.py y le suma el comité que se genera («Hoy»). Después de presentar un comité, agregar su barra a 'series' y sus casos a 'categorias'. Fuente hasta 04/10: PDF «Comité de Seguridad · 24 09 al 04 10» (láminas 15–17) y Excel Historico anomalias (29/06–05/08).",
+ "historico": {
+  "desde": "10/06",
+  "series": [["10/6", 2], ["18/6", 5], ["24/6", 4], ["8/7", 2], ["15/7", 5], ["23/7", 8], ["31/7", 10], ["7/8", 10], ["14/8", 8], ["4/9", 10], ["11/9", 4], ["18/9", 7], ["28/9", 9], ["4/10", 8]],
+  "_series_nota": "Rótulo = fecha del comité; el del período 24/09–04/10 se rotula con el cierre del período (4/10).",
+  "categorias": [
+   {"clave": "doble", "nombre": "Doble ciclo (trabado por entregador)", "casos": 34},
+   {"clave": "vuelta", "nombre": "Volvió a Ricardone desde el puerto (pasado de kg)", "casos": 21},
+   {"clave": "otros", "nombre": "Otros", "casos": 16},
+   {"clave": "primer", "nombre": "Primer ingreso por el puerto", "casos": 11},
+   {"clave": "calles", "nombre": "Descarga en otra calle o en dos calles", "casos": 10}
+  ]
+ },
+ "anexo": {
+  "fuente": "Patentes distintas del Excel de movimientos 15/05–04/10. Año aproximado por la serie de la patente (±1 año): es el de patentamiento, no el de fabricación.",
+  "promedioAnios": 14,
+  "unoDeCada": "1 de cada 3",
+  "unoDeCadaTxt": "es anterior a 2008",
+  "bins": [
+   {"rango": "Hasta 1995", "edad": "más de 30 años", "camiones": 563, "pct": "2,5%"},
+   {"rango": "1996–1999", "edad": "27 a 30 años", "camiones": 1978, "pct": "9,0%"},
+   {"rango": "2000–2005", "edad": "21 a 26 años", "camiones": 2897, "pct": "13,1%"},
+   {"rango": "2006–2009", "edad": "17 a 20 años", "camiones": 3213, "pct": "14,5%"},
+   {"rango": "2010–2015", "edad": "11 a 16 años", "camiones": 5318, "pct": "24,1%"},
+   {"rango": "2016–2019", "edad": "7 a 10 años", "camiones": 3853, "pct": "17,4%"},
+   {"rango": "2020–2026", "edad": "hasta 6 años", "camiones": 4275, "pct": "19,3%"}
+  ],
+  "vuelta": {
+   "_nota": "Camiones marcados «es de vuelta» en el Excel (transile).",
+   "total": 133, "fechables": 62,
+   "kpis": [
+    {"big": "~26 años", "txt": "antigüedad mediana (patente ≈ 2000); resto del parque: ~14 años"},
+    {"big": "82%", "txt": "anteriores a 2010; resto del parque: 39%"},
+    {"big": "0", "txt": "camiones de 2020 en adelante; resto del parque: 19%"}
+   ],
+   "bins": [["Hasta 1995", 7, "11%"], ["1996–1999", 18, "29%"], ["2000–2005", 18, "29%"], ["2006–2009", 8, "13%"], ["2010–2015", 9, "15%"], ["2016–2019", 2, "3%"], ["2020–2026", 0, "0%"]],
+   "conclusion": "<b>7 de cada 10</b> tienen más de 20 años, contra 1 de cada 4 en el resto del parque."
+  }
+ }
+}
