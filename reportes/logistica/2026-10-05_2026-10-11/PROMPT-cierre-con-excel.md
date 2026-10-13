@@ -28,14 +28,18 @@ PASO 1 · Cargar el Excel y reprocesar la semana
    Confirmá en `runs/windows/2026-10-05_2026-10-11/manifest.json` que `movimientosRows` > 0.
 
 PASO 2 · Comité de Logística
-Seguí el runbook `reportes/logistica/2026-10-05_2026-10-11/comite-logistica/calculo/README.md`, sección «Cuando llegue la
-planilla» (paquete-periodo, r7-camaras, pellet-camaras, liquidos-camaras, liquidos-criterio, metricas-camaras,
-datos_comite_semana.py, gen_comite_logistica_semana.py). `VICENTIN_ROOT` = la raíz del repo si `data/` y `runs/` están ahí.
-Con planilla, los scripts agregan el bloque `calibracion` de la semana y el generador toma los conteos de la planilla.
-Contame qué cifras cambiaron respecto de la versión solo cámaras (R7, pellet, líquidos, volcables del puerto).
+Un comando (ya hace la ingesta y el reproceso si le pasás los Excel; si ya los cargaste en el PASO 1, agregá `--sin-etl`):
+```
+python scripts/estado-planta/comite_semana.py --desde 2026-10-05 --hasta 2026-10-11 --sin-etl
+```
+Detalle en `reportes/logistica/2026-10-05_2026-10-11/comite-logistica/calculo/README.md` («Cuando llegue la planilla»).
+`VICENTIN_ROOT` = la raíz con `data/` y `runs/` (por defecto, el repo principal). El resumen final dice el modo:
+solo pasa a «planilla» si todos los días 05–11/10 tienen movimientos, el último Excel es posterior al 11/10 y la corrida
+tiene movimientos; si queda en «parcial»/«cámaras», decime qué días faltan y no publiques como definitivo.
+Contame qué cifras cambiaron respecto de la versión solo cámaras (R7, girasol, pellet, líquidos, puerta a puerta).
 El criterio nuevo de líquidos sigue pendiente de mi aprobación: mostrame los dos números (criterio viejo y nuevo) y no
 elijas por mí. Para actualizar la presentación publicada (artifact https://claude.ai/artifact/BLSZxYCY8QWkuMNqGxKNHo),
-leela primero y publicá sobre esa misma URL.
+leela primero y publicá sobre esa misma URL solo los archivos de `deck/project/` que cambiaron.
 
 PASO 3 · Comité de Seguridad
 ```
