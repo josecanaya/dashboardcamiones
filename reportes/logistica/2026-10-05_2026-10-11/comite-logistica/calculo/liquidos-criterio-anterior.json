@@ -1,0 +1,449 @@
+{
+ "desde": "2026-09-24",
+ "hasta": "2026-10-04",
+ "dias": [
+  "2026-09-24",
+  "2026-09-25",
+  "2026-09-26",
+  "2026-09-27",
+  "2026-09-28",
+  "2026-09-29",
+  "2026-09-30",
+  "2026-10-01",
+  "2026-10-02",
+  "2026-10-03",
+  "2026-10-04"
+ ],
+ "criterio": "producto líquido a granel (aceites, borras, glicerina, insumos químicos, biodiésel, lecitina); Ricardone y Terminal; ingresos y egresos por separado; día operativo del ingreso; sin patentes ficticias",
+ "total": {
+  "n": 479,
+  "conTiempo": 478,
+  "media": 362,
+  "mediana": 252
+ },
+ "porPlantaSentido": {
+  "TERMINAL_EMBARQUE · EGRESO": {
+   "n": 311,
+   "conTiempo": 311,
+   "media": 283,
+   "mediana": 240
+  },
+  "TERMINAL_EMBARQUE · INGRESO": {
+   "n": 111,
+   "conTiempo": 110,
+   "media": 560,
+   "mediana": 411
+  },
+  "RICARDONE · INGRESO": {
+   "n": 53,
+   "conTiempo": 53,
+   "media": 337,
+   "mediana": 135
+  },
+  "RICARDONE · EGRESO": {
+   "n": 4,
+   "conTiempo": 4,
+   "media": 1354,
+   "mediana": 1811
+  }
+ },
+ "porPlantaFamiliaSentido": {
+  "TERMINAL_EMBARQUE · aceite · EGRESO": {
+   "n": 193,
+   "conTiempo": 193,
+   "media": 308,
+   "mediana": 254
+  },
+  "TERMINAL_EMBARQUE · glicerina · EGRESO": {
+   "n": 70,
+   "conTiempo": 70,
+   "media": 291,
+   "mediana": 245
+  },
+  "TERMINAL_EMBARQUE · borras · EGRESO": {
+   "n": 48,
+   "conTiempo": 48,
+   "media": 169,
+   "mediana": 144
+  },
+  "TERMINAL_EMBARQUE · insumos químicos · INGRESO": {
+   "n": 47,
+   "conTiempo": 47,
+   "media": 584,
+   "mediana": 411
+  },
+  "TERMINAL_EMBARQUE · aceite · INGRESO": {
+   "n": 44,
+   "conTiempo": 43,
+   "media": 694,
+   "mediana": 616
+  },
+  "RICARDONE · glicerina · INGRESO": {
+   "n": 31,
+   "conTiempo": 31,
+   "media": 173,
+   "mediana": 123
+  },
+  "RICARDONE · aceite · INGRESO": {
+   "n": 21,
+   "conTiempo": 21,
+   "media": 588,
+   "mediana": 877
+  },
+  "TERMINAL_EMBARQUE · glicerina · INGRESO": {
+   "n": 20,
+   "conTiempo": 20,
+   "media": 218,
+   "mediana": 164
+  },
+  "RICARDONE · borras · EGRESO": {
+   "n": 4,
+   "conTiempo": 4,
+   "media": 1354,
+   "mediana": 1811
+  },
+  "RICARDONE · insumos químicos · INGRESO": {
+   "n": 1,
+   "conTiempo": 1,
+   "media": 168,
+   "mediana": 168
+  }
+ },
+ "porProducto": {
+  "TERMINAL_EMBARQUE · EGRESO · ACEITE GIRASOL REFINADO": {
+   "n": 188,
+   "conTiempo": 188,
+   "media": 312,
+   "mediana": 262
+  },
+  "TERMINAL_EMBARQUE · EGRESO · GLICERINA REFINADA": {
+   "n": 54,
+   "conTiempo": 54,
+   "media": 329,
+   "mediana": 298
+  },
+  "TERMINAL_EMBARQUE · INGRESO · ACEITE GIRASOL PARA REFINAR": {
+   "n": 43,
+   "conTiempo": 43,
+   "media": 694,
+   "mediana": 616
+  },
+  "TERMINAL_EMBARQUE · INGRESO · METANOL": {
+   "n": 33,
+   "conTiempo": 33,
+   "media": 648,
+   "mediana": 415
+  },
+  "RICARDONE · INGRESO · GLICERINA": {
+   "n": 31,
+   "conTiempo": 31,
+   "media": 173,
+   "mediana": 123
+  },
+  "TERMINAL_EMBARQUE · EGRESO · BORRA DE ACSOJA REFINADO": {
+   "n": 22,
+   "conTiempo": 22,
+   "media": 154,
+   "mediana": 151
+  },
+  "TERMINAL_EMBARQUE · EGRESO · BORRA ACEITE GIRASOL REFINADO": {
+   "n": 21,
+   "conTiempo": 21,
+   "media": 149,
+   "mediana": 106
+  },
+  "RICARDONE · INGRESO · ACGIRASOL OLEICO": {
+   "n": 21,
+   "conTiempo": 21,
+   "media": 588,
+   "mediana": 877
+  },
+  "TERMINAL_EMBARQUE · INGRESO · GLICERINA": {
+   "n": 20,
+   "conTiempo": 20,
+   "media": 218,
+   "mediana": 164
+  },
+  "TERMINAL_EMBARQUE · EGRESO · GLICERINA": {
+   "n": 12,
+   "conTiempo": 12,
+   "media": 119,
+   "mediana": 118
+  },
+  "TERMINAL_EMBARQUE · INGRESO · METILATO DE SODIO": {
+   "n": 7,
+   "conTiempo": 7,
+   "media": 304,
+   "mediana": 275
+  },
+  "TERMINAL_EMBARQUE · EGRESO · ACEITE SOJA CRUDO DESGOMADO": {
+   "n": 5,
+   "conTiempo": 5,
+   "media": 150,
+   "mediana": 135
+  },
+  "TERMINAL_EMBARQUE · EGRESO · BORRA ACEITE GIRASOL": {
+   "n": 5,
+   "conTiempo": 5,
+   "media": 320,
+   "mediana": 280
+  },
+  "RICARDONE · EGRESO · BORRA ACEITE GIRASOL": {
+   "n": 4,
+   "conTiempo": 4,
+   "media": 1354,
+   "mediana": 1811
+  },
+  "TERMINAL_EMBARQUE · EGRESO · GLICERINA SUBSTANDARD": {
+   "n": 4,
+   "conTiempo": 4,
+   "media": 293,
+   "mediana": 360
+  },
+  "TERMINAL_EMBARQUE · INGRESO · ACIDO CLORHIDRICO": {
+   "n": 3,
+   "conTiempo": 3,
+   "media": 649,
+   "mediana": 681
+  },
+  "TERMINAL_EMBARQUE · INGRESO · SODA CAUSTICA LIQUIDA": {
+   "n": 2,
+   "conTiempo": 2,
+   "media": 542,
+   "mediana": 835
+  },
+  "RICARDONE · INGRESO · ACIDO SULFURICO": {
+   "n": 1,
+   "conTiempo": 1,
+   "media": 168,
+   "mediana": 168
+  },
+  "TERMINAL_EMBARQUE · INGRESO · ACIDO FOSFORICO": {
+   "n": 1,
+   "conTiempo": 1,
+   "media": 703,
+   "mediana": 703
+  },
+  "TERMINAL_EMBARQUE · INGRESO · ACEITE GIRASOL REFINADO": {
+   "n": 1,
+   "conTiempo": 0,
+   "media": null,
+   "mediana": null
+  },
+  "TERMINAL_EMBARQUE · INGRESO · HIPOCLORITO DE SODIO": {
+   "n": 1,
+   "conTiempo": 1,
+   "media": 193,
+   "mediana": 193
+  }
+ },
+ "porDia": {
+  "2026-09-24": {
+   "RICARDONE": {
+    "INGRESO": 5,
+    "EGRESO": 0
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 3,
+    "EGRESO": 47
+   }
+  },
+  "2026-09-25": {
+   "RICARDONE": {
+    "INGRESO": 5,
+    "EGRESO": 1
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 5,
+    "EGRESO": 28
+   }
+  },
+  "2026-09-26": {
+   "RICARDONE": {
+    "INGRESO": 6,
+    "EGRESO": 0
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 7,
+    "EGRESO": 4
+   }
+  },
+  "2026-09-27": {
+   "RICARDONE": {
+    "INGRESO": 2,
+    "EGRESO": 0
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 3,
+    "EGRESO": 4
+   }
+  },
+  "2026-09-28": {
+   "RICARDONE": {
+    "INGRESO": 2,
+    "EGRESO": 1
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 22,
+    "EGRESO": 49
+   }
+  },
+  "2026-09-29": {
+   "RICARDONE": {
+    "INGRESO": 0,
+    "EGRESO": 1
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 27,
+    "EGRESO": 46
+   }
+  },
+  "2026-09-30": {
+   "RICARDONE": {
+    "INGRESO": 0,
+    "EGRESO": 0
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 16,
+    "EGRESO": 45
+   }
+  },
+  "2026-10-01": {
+   "RICARDONE": {
+    "INGRESO": 10,
+    "EGRESO": 1
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 7,
+    "EGRESO": 39
+   }
+  },
+  "2026-10-02": {
+   "RICARDONE": {
+    "INGRESO": 10,
+    "EGRESO": 0
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 12,
+    "EGRESO": 30
+   }
+  },
+  "2026-10-03": {
+   "RICARDONE": {
+    "INGRESO": 6,
+    "EGRESO": 0
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 7,
+    "EGRESO": 7
+   }
+  },
+  "2026-10-04": {
+   "RICARDONE": {
+    "INGRESO": 7,
+    "EGRESO": 0
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 2,
+    "EGRESO": 12
+   }
+  }
+ },
+ "renopack": {
+  "INGRESO · ACEITE GIRASOL REFINADO": {
+   "n": 30,
+   "conTiempo": 30,
+   "media": 241,
+   "mediana": 146
+  },
+  "INGRESO · ACEITE SOJA REFINADO": {
+   "n": 30,
+   "conTiempo": 30,
+   "media": 177,
+   "mediana": 137
+  },
+  "EGRESO · ACEITE SOJA REFINADO": {
+   "n": 1,
+   "conTiempo": 1,
+   "media": 140,
+   "mediana": 140
+  }
+ },
+ "otrasPlantas": {},
+ "otrosSentidos": {},
+ "excluidos": {
+  "excluido:agua · TERMINAL_EMBARQUE · AGUA INDUSTRIAL": {
+   "n": 67,
+   "conTiempo": 67,
+   "media": 112,
+   "mediana": 76
+  },
+  "excluido:alcohol (Avellaneda) · AVELLANEDA · ALCOHOL ETILICO ANHIDRO P/ BIOCOMB ORIG CEREAL": {
+   "n": 55,
+   "conTiempo": 53,
+   "media": 82,
+   "mediana": 69
+  },
+  "excluido:envasado · RENOPACK · ACEITE GIRASOL ENVASADO": {
+   "n": 40,
+   "conTiempo": 40,
+   "media": 288,
+   "mediana": 266
+  },
+  "excluido:sal glicerinosa · TERMINAL_EMBARQUE · SAL GLICERINOSA": {
+   "n": 22,
+   "conTiempo": 21,
+   "media": 220,
+   "mediana": 31
+  },
+  "excluido:envasado · RENOPACK · ACEITE SOJA ENVASADO": {
+   "n": 19,
+   "conTiempo": 19,
+   "media": 523,
+   "mediana": 522
+  },
+  "excluido:vinaza (Avellaneda) · AVELLANEDA · THIN STILLAGE DE MAIZ": {
+   "n": 9,
+   "conTiempo": 0,
+   "media": null,
+   "mediana": null
+  },
+  "excluido:envasado · RENOPACK · ACEITE MEZCLA ENVASADO": {
+   "n": 6,
+   "conTiempo": 6,
+   "media": 226,
+   "mediana": 202
+  },
+  "excluido:agua · TERMINAL_EMBARQUE · AGUA POTABLE": {
+   "n": 3,
+   "conTiempo": 3,
+   "media": 134,
+   "mediana": 128
+  },
+  "excluido:agua · RICARDONE · AGUA POTABLE": {
+   "n": 2,
+   "conTiempo": 2,
+   "media": 383,
+   "mediana": 390
+  },
+  "excluido:gas industrial · TERMINAL_EMBARQUE · NITROGENO LIQUIDO": {
+   "n": 2,
+   "conTiempo": 2,
+   "media": 174,
+   "mediana": 208
+  },
+  "excluido:alcohol (Avellaneda) · AVELLANEDA · ALCOHOL ETILICO BUEN GUSTO/POTABLE DE CEREAL": {
+   "n": 2,
+   "conTiempo": 2,
+   "media": 106,
+   "mediana": 111
+  },
+  "excluido:gas industrial · RENOPACK · NITROGENO LIQUIDO": {
+   "n": 2,
+   "conTiempo": 2,
+   "media": 52,
+   "mediana": 69
+  }
+ },
+ "ficticias": 38
+}

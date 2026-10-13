@@ -1,0 +1,75 @@
+{
+ "v": 4,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-10-12T16:33:41Z"
+ },
+ "lists": "css",
+ "title": "Comité de Logística Nodo Sur · 5 – 11 oct",
+ "order": [
+  "portada",
+  "resumen-planta",
+  "dia-a-dia",
+  "div-soja",
+  "tramos-r7",
+  "resumen-soja",
+  "hallazgo",
+  "plantas",
+  "cuartos",
+  "historico",
+  "div-pellet",
+  "pellet-operativo",
+  "pellet-tramos",
+  "pellet-hist",
+  "div-girasol",
+  "girasol",
+  "girasol-hist",
+  "div-liquidos",
+  "liq-criterio",
+  "liq-productos",
+  "liq-semana",
+  "div-sectores",
+  "calada",
+  "volcables",
+  "silos",
+  "cruces"
+ ],
+ "cover": "portada",
+ "faces": {
+  "ibm-plex-sans": {
+   "family": "IBM Plex Sans",
+   "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap"
+  }
+ },
+ "designSystems": [],
+ "sections": {
+  "s1": {
+   "description": "Portada, resumen de la planta y la semana día por día",
+   "start": "portada"
+  },
+  "s2": {
+   "description": "Soja: tiempos por tramo de R7, resumen, día por día, por planta, por horario y en contexto",
+   "start": "div-soja"
+  },
+  "s2b": {
+   "description": "Pellet: monitoreo del transile de la semana",
+   "start": "div-pellet"
+  },
+  "s3": {
+   "description": "Girasol: tiempos por tramo y comparación con el comité anterior",
+   "start": "div-girasol"
+  },
+  "s3b": {
+   "description": "Líquidos: criterio nuevo, qué se mueve y la semana por cámaras",
+   "start": "div-liquidos"
+  },
+  "s4": {
+   "description": "Sectores: calada, volcables del puerto y silos",
+   "start": "div-sectores"
+  },
+  "s5": {
+   "description": "Cierre",
+   "start": "cruces"
+  }
+ }
+}
