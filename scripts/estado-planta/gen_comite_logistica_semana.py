@@ -15,7 +15,8 @@ CAL_DIR = os.path.join(D, 'calculo')
 JC = lambda f: json.load(open(os.path.join(CAL_DIR, f), encoding='utf-8'))
 OUT = os.path.join(D, 'deck')
 SL = os.path.join(OUT, 'project', 'slides'); os.makedirs(SL, exist_ok=True)
-CAMARAS = X['modo'] == 'camaras'
+CAMARAS = X['modo'] != 'planilla'          # 'parcial' = llegó parte de la planilla: los conteos siguen siendo de cámaras
+PLAN = X.get('planilla') or {}
 
 DAYS = X['periodo']['days']
 N = len(DAYS)
@@ -82,14 +83,23 @@ K7 = X['r7']['calibracion']; R7P = JC(K7['archivo'])                   # misma m
 TP = {k: v['mean'] for k, v in R7P['tramos'].items()}
 CAL_LBL = f'{fdm(K7["dias"][0])}–{fdm(K7["dias"][-1])}'
 # con planilla de la semana (r7-camaras.cjs la cruza sola cuando data/movimientos trae esos días) el conteo pasa a ser el de la planilla
-PR7 = RC.get('calibracion') if (RC.get('calibracion') or {}).get('planillaR7') else None
+PR7 = RC.get('calibracion') if not CAMARAS and (RC.get('calibracion') or {}).get('planillaR7') else None
 APR = '' if PR7 else '≈ '
 R7 = dict(viajes=RC['viajes'], est=PR7['planillaR7'] if PR7 else round(RC['viajes'] / K7['cobertura']), etl=X['r7']['etlRecorridos'],
           dia=[PR7['planillaPorDia'][d] for d in DAYS] if PR7 else X['r7']['etlPorDia'],
           viajesDia=[RC['porDia'][d] for d in DAYS], total=T7['total'], ric=T7['ric'], slz=T7['sl'], p1=T7['playa1'],
           totDia=[TD[d]['total']['mean'] for d in DAYS], ricDia=[TD[d]['ric']['mean'] for d in DAYS], slzDia=[TD[d]['sl']['mean'] for d in DAYS],
           totN=[TD[d]['total']['n'] for d in DAYS])
+CAMT = T7['total']                                                    # puerta a puerta por cámaras (patente)
+PQS = X['paquete']['tiempos']['soja']                                 # con planilla: salida − ingreso de cada operación R7 (como los comités anteriores)
+P2P_PLAN = not CAMARAS and PQS['periodo'].get('camiones') and PQS['periodo'].get('tiempoMedioMin')
+if P2P_PLAN:
+    R7['total'] = round(PQS['periodo']['tiempoMedioMin'])
+    R7['totDia'] = [round(PQS['porDia'].get(d, {}).get('tiempoMedioMin') or 0) or c for d, c in zip(DAYS, R7['totDia'])]
+P2P_SRC = (f'planilla (salida − ingreso de {fmtn(PQS["periodo"]["tiempoMedioN"])} operaciones R7; por cámaras da {CAMT})' if P2P_PLAN
+           else f'cámaras por patente ({N7["total"]} viajes; en {CAL_LBL} el mismo método dio {K7["p2pCamara"]} contra {K7["p2pPlanilla"]} de la planilla)')
 r7_dia, r7_dia_prev = R7['est'] / N, PUB['r7_ops'] / ANT_N
+LIVIANA = r7_dia < 0.9 * r7_dia_prev; PESADA = r7_dia > 1.1 * r7_dia_prev
 QN = {q: sum(v) for q, v in RC['cuartos'].items()}; qd = RC['cuartos']
 # girasol (metricas-camaras.cjs: calada → volcable de Ricardone por patente) · volcable 2 (paquete)
 GM = X['girasol']['metricas']; GT_ = {k: v['mean'] for k, v in GM['tiempos'].items()}; GN_ = {k: v['n'] for k, v in GM['tiempos'].items()}
@@ -102,18 +112,25 @@ def act(key):
             'calleDia': {d: {c['camara']: c['camiones'] for c in a['porDia'].get(d, {}).get('porCalle', [])} for d in DAYS}}
 CAL = act('calada_ricardone'); LIQ = act('calada_ricardone_liquidos'); CSL = act('calada_san_lorenzo'); VR = act('volcable_ricardone'); SIL = act('silos_ricardone')
 GI = dict(rec=VR['camiones'], dia=VR['porDia'], viajes=GM['total'], p1=GT_.get('p1'), calVolc=GT_.get('calVolc'), desc=GT_.get('descarga'), tara=GT_.get('tara'), total=GT_.get('total'))
+PQG = X['paquete']['tiempos']['girasol']
+GOPS = PQG.get('operaciones') if not CAMARAS and PQG.get('operaciones') else None    # con planilla: operaciones R5+R6
+GOPS_DIA = [PQG['porDia'].get(d, {}).get('camiones', 0) for d in DAYS] if GOPS else None
 GIR_OK = None not in (GI['p1'], GI['calVolc'], GI['tara'], GI['total']) and GN_.get('total', 0) >= 10   # con menos de 10 camiones medidos no se publican tramos
 # volcables del puerto: camiones distintos leídos por cada cámara de volcable, por día calendario (metricas-camaras.cjs)
 VOL = {k: X['sectores']['calles'].get(k, [0] * N) for k in ('V1', 'V2', 'V3', 'V4', 'V5')}
 VOL_TOT = sum(sum(v) for v in VOL.values())
 # pellet (pellet-camaras.cjs)
 PE = X['pellet']['camaras']; PK = X['pellet']['calibracion']; PEP = JC(X['pellet']['calibracionArchivo'])
-PPE = PE.get('calibracion') if (PE.get('calibracion') or {}).get('planillaEgresosPellet') else None   # planilla de la semana
+PPE = PE.get('calibracion') if not CAMARAS and (PE.get('calibracion') or {}).get('planillaEgresosPellet') else None   # planilla de la semana
+PEL_N = PPE['planillaEgresosPellet'] if PPE else PE['viajes']               # viajes: planilla si hay, si no leídos por cámaras
+PEL_CAM = PPE.get('planillaCamiones', PE['camiones']) if PPE else PE['camiones']
+PEL_U = 'viajes' if PPE else 'viajes leídos'
+PEL_CHICO = (PEL_N if PPE else PE['viajes'] / PK['recall']) < min(o['viajes'] for o in ANT['pelletHistorico'])
 pt = {k: v['mean'] for k, v in PE['tramos'].items()}; ptn = {k: v['n'] for k, v in PE['tramos'].items()}
 ptp = {k: v['mean'] for k, v in PEP['tramos'].items()}
 pdays = [d for d in DAYS if PE['viajesDia'][d]]
 # líquidos
-LC = X['liquidos']['camaras']; LK = X['liquidos']['calibracion']; LKV = X['liquidos']['calibracionVisitas']; LCR = X['liquidos']['criterioAnterior']; LCW = X['liquidos'].get('criterioSemana')
+LC = X['liquidos']['camaras']; LK = X['liquidos']['calibracion']; LKV = X['liquidos']['calibracionVisitas']; LCR = X['liquidos']['criterioAnterior']; LCW = X['liquidos'].get('criterioSemana') if not CAMARAS else None
 LKD = len(K7['dias'])
 r29 = X['r29']
 
@@ -135,7 +152,7 @@ def add(id, html): slides.append((id, html))
 def section(id, body, notes, bg=BG, gap=40, extra=''):
     add(id, f'<section id="{id}" data-transition="fade" style="background:{bg}; color:{TEXT}; font-family:{FONT}; padding:112px 128px 160px; display:flex; flex-direction:column; gap:{gap}px{extra}">{body}{footer(0)}<aside>{notes}</aside></section>')
 def pill(t, bg): return f'<p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#F1F6F2; background:{bg}; padding:6px 18px; border-radius:999px">{t}</p>'
-def tagcam(): return f'<p style="font-size:24px; font-weight:600; color:{BODY}; border:2px solid {GREY}; padding:4px 16px; border-radius:999px">Según cámaras</p>' if CAMARAS else ''
+def tagcam(): return f'<p style="font-size:24px; font-weight:600; color:{BODY}; border:2px solid {GREY}; padding:4px 16px; border-radius:999px">Según cámaras</p>' if CAMARAS else f'<p style="font-size:24px; font-weight:600; color:{BODY}; border:2px solid {GREY}; padding:4px 16px; border-radius:999px">Planilla y cámaras</p>'
 def head(tag, title, tagbg=GDK, size=64, cam=False):
     return (f'<div style="display:flex; flex-direction:column; gap:16px"><div style="display:flex; flex-direction:row; gap:16px; align-items:center">{pill(tag, tagbg)}{tagcam() if cam else ""}</div>'
             f'<h2 style="font-size:{size}px; font-weight:600; line-height:1.1; color:{TEXT}">{title}</h2></div>')
@@ -231,7 +248,7 @@ def hbar(rows, width=620, col=BLU, lab_w=420, sub_w=None):
         f'<p style="font-size:30px; font-weight:600; color:{TEXT}; white-space:nowrap">{fmtn(v)}</p></div>' for a, s, v, c in rows) + '</div>'
 
 # ------------------------------------------------------------------ 1 portada
-modo_txt = ('Versión solo cámaras: la planilla de movimientos de estos días todavía no llegó' if CAMARAS else 'Con planilla de movimientos y cámaras')
+modo_txt = ('Con planilla de movimientos y cámaras' if not CAMARAS else 'Versión solo cámaras: la planilla de movimientos de estos días todavía no llegó' if X['modo'] == 'camaras' else f'Versión con cámaras: la planilla está incompleta (último Excel {PLAN.get("ultimoExcel")})')
 add('portada', f'<section id="portada" data-transition="fade" style="display:flex; flex-direction:column; gap:22px; padding:96px 128px 88px; background:{GDK}; font-family:{FONT}; color:#F1F6F2"><div style="position:absolute; left:0px; top:0px; width:1920px; height:1080px; background:linear-gradient(160deg, #0B5638 0%, #0E4A33 60%, #2E1B4E 100%)"></div><img src="{AER_RIC}" alt="Vista aérea de la planta Ricardone" style="position:absolute; left:900px; top:0px; width:1020px; height:536px; object-fit:cover"><img src="{AER_SL}" alt="Vista aérea del puerto San Lorenzo" style="position:absolute; left:900px; top:544px; width:1020px; height:536px; object-fit:cover"><div style="position:absolute; left:900px; top:0px; width:460px; height:1080px; background:linear-gradient(90deg, #0B5638 0%, rgba(11,86,56,0.55) 45%, rgba(11,86,56,0) 100%)"></div><div style="position:absolute; left:900px; top:536px; width:1020px; height:8px; background:#9CCBAE"></div><div style="position:absolute; left:1512px; top:448px; width:368px; height:60px; display:flex; flex-direction:row; align-items:center; justify-content:center; gap:12px; background:rgba(14,40,28,0.82); border-left:6px solid #9CCBAE; border-radius:10px"><p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#F1F6F2">Planta Ricardone</p></div><div style="position:absolute; left:1512px; top:992px; width:368px; height:60px; display:flex; flex-direction:row; align-items:center; justify-content:center; gap:12px; background:rgba(30,18,52,0.82); border-left:6px solid #B9A8E0; border-radius:10px"><p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#F1F6F2">Puerto San Lorenzo</p></div><img src="{NVA_L}" alt="Nueva Vicentin Argentina" style="width:240px; height:128px; object-fit:contain; align-self:start"><div style="flex:1"></div><p style="width:700px; font-size:28px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#9CCBAE">Logística · Ricardone y San Lorenzo</p><h1 style="width:720px; font-size:112px; font-weight:600; line-height:1.02; color:#F1F6F2">Comité de Logística Nodo Sur</h1><div style="width:160px; height:8px; background:#9CCBAE; border-radius:4px"></div><p style="width:700px; font-size:40px; line-height:1.3; color:#D6E4DA">{LBL_LARGO}</p><p style="width:700px; font-size:26px; line-height:1.35; color:#9CCBAE">{modo_txt}</p><div style="flex:1"></div><img src="{BTZ_L}" alt="Bimtrazer" style="width:190px; height:90px; object-fit:contain; align-self:start"><aside>Portada. Comité de Logística Nodo Sur, semana {LBL} (lunes a domingo, {N} días). '
     + (f'Sin planilla de movimientos para estos días: todas las cifras salen de las cámaras ({RUNTXT}) y de los scripts por patente de scripts/estado-planta. Cada lámina dice su denominador y cómo se calibró contra la planilla de {CAL_LBL}. Cuando llegue la planilla se reemplazan los conteos.' if CAMARAS else RUNTXT)
     + f' Comparativos contra el comité anterior ({ANT_LBL}, {ANT_N} días): las cantidades se comparan por día.</aside></section>')
@@ -249,17 +266,19 @@ lq_dia = [LC['porDia'][d]['RIC'] + LC['porDia'][d]['TER'] for d in DAYS]
 pel_dia = [PE['viajesDia'][d] for d in DAYS]
 section('resumen-planta', head('Planta', 'Qué entró a la planta, cuándo y cuánto tardó', VIO, cam=True)
     + '<div style="display:flex; flex-direction:row; gap:24px">'
-    + pcard('Soja · R7', GDK, GMID, f'{APR}{fmtn(R7["est"])}', 'operaciones' if PR7 else 'camiones', f'<b>{R7["total"]} min</b> puerta a puerta', R7['dia'], GDK, GMID, f'{days[imx]}: el día con más recorridos.')
-    + pcard('Girasol · R6', '#7A5608', '#E0A526', fmtn(GI['rec']), 'recorridos', (f'<b>{GI["total"]} min</b> en planta' if GIR_OK else 'pocos camiones medidos'), GI['dia'], '#7A5608', '#E0A526', 'Todo por la volcable 2.')
-    + pcard('Líquidos', BLU, BMID, fmtn(lq_tot), 'visitas', f'Terminal {LQV["TER"]} · Ricardone {LQV["RIC"]}', lq_dia, BLU, BMID, 'Estimación por cámaras, ver sección 04.')
-    + pcard('Pellet', PEL, PELM, fmtn(PE['viajes']), 'viajes leídos', f'<b>{pt["ciclo"]} min</b> de ciclo', pel_dia, PEL, PELM, f'Operativo corto: {y_([full[iD[d]] for d in pdays])}.' if pdays else 'Sin transile de pellet.')
+    + pcard('Soja · R7', GDK, GMID, f'{APR}{fmtn(R7["est"])}', 'operaciones' if PR7 else 'camiones', f'<b>{R7["total"]} min</b> puerta a puerta', R7['dia'], GDK, GMID, f'{days[imx]}: el día con más ' + ('operaciones.' if PR7 else 'recorridos.'))
+    + pcard('Girasol', '#7A5608', '#E0A526', fmtn(GOPS or GI['rec']), 'operaciones' if GOPS else 'recorridos', (f'<b>{GI["total"]} min</b> en planta' if GIR_OK else 'pocos camiones medidos'), GOPS_DIA or GI['dia'], '#7A5608', '#E0A526', f'{GI["rec"]} recorridos de cámara por la volcable 2.' if GOPS else 'Recorridos de la cámara de la volcable 2.')
+    + (pcard('Líquidos', BLU, BMID, fmtn(LCW['total']['n']), 'movimientos', f'Terminal {sum(v["n"] for k, v in LCW["porPlantaSentido"].items() if k.startswith("TERMINAL"))} · Ricardone {sum(v["n"] for k, v in LCW["porPlantaSentido"].items() if k.startswith("RICARDONE"))}',
+          [sum(n for pl in LCW['porDia'][d].values() for n in pl.values()) for d in DAYS], BLU, BMID, 'Planilla, criterio por producto (sección 04).') if LCW else
+       pcard('Líquidos', BLU, BMID, fmtn(lq_tot), 'visitas', f'Terminal {LQV["TER"]} · Ricardone {LQV["RIC"]}', lq_dia, BLU, BMID, 'Estimación por cámaras, ver sección 04.'))
+    + pcard('Pellet', PEL, PELM, fmtn(PEL_N), PEL_U, f'<b>{pt["ciclo"]} min</b> de ciclo', pel_dia, PEL, PELM, (f'{"Operativo corto" if PEL_CHICO else "Operativo"}: {y_([full[iD[d]] for d in pdays])}.') if pdays else 'Sin transile de pellet.')
     + '</div><div style="display:flex; flex-direction:row; gap:32px">'
     + strip('Calada sólida Ricardone', f'{fmtn(CAL["camiones"])} recorridos de cámara · activa el {round(CAL["horas"] / HOURS * 100)} % de las horas')
     + strip('Volcables puerto', f'{fmtn(VOL_TOT)} camiones leídos · ' + ' y '.join(f'{k} {round(sum(VOL[k]) / VOL_TOT * 100)} %' for k in sorted(VOL, key=lambda k: -sum(VOL[k]))[:2]))
     + strip('Silos Ricardone', f'{fmtn(SIL["camiones"])} recorridos de cámara · sin transile R29' if not r29['metricas']['total'] else f'{fmtn(SIL["camiones"])} recorridos · {r29["metricas"]["total"]} transiles R29')
     + '</div>',
     (f'Soja: {fmtn(R7["est"])} operaciones R7 de la planilla de la semana (TERMINAL · INGRESO · SOJA por volcable, día operativo del ingreso); por cámaras se leyeron {R7["viajes"]} viajes completos. ' if PR7 else '') + f'Semana {LBL} ({N} días), {RUNTXT}. Soja por cámaras: ≈ {fmtn(round(RC["viajes"] / K7["cobertura"]))} camiones = {R7["viajes"]} viajes completos leídos por patente (calada → egreso → ingreso y salida de San Lorenzo; r7-camaras.cjs) divididos por la cobertura medida en {CAL_LBL} ({K7["camara"]} viajes contra {K7["planilla"]} operaciones R7 de la planilla, {round(K7["cobertura"] * 100)} %). '
-    f'La corrida da {R7["etl"]} recorridos R7 en final_circuits, una cifra del mismo orden. Puerta a puerta {R7["total"]} min (media de {N7["total"]} viajes; en {CAL_LBL} el mismo método dio {K7["p2pCamara"]} contra {K7["p2pPlanilla"]} de la planilla). Barras de soja: ' + ('operaciones R7 de la planilla' if PR7 else 'recorridos R7 de la corrida') + f' por día operativo ({", ".join(map(str, R7["dia"]))}). '
+    f'La corrida da {R7["etl"]} recorridos R7 en final_circuits, una cifra del mismo orden. Puerta a puerta {R7["total"]} min, {P2P_SRC}. Barras de soja: ' + ('operaciones R7 de la planilla' if PR7 else 'recorridos R7 de la corrida') + f' por día operativo ({", ".join(map(str, R7["dia"]))}). '
     f'Girasol: {GI["rec"]} recorridos de la cámara de la volcable 2 (paquete del dashboard; la volcable 1 no aparece en la planilla desde el 28/09); en {CAL_LBL} esa cámara leyó 38 camiones contra 42 operaciones R6 de la planilla. Tiempo en planta = pre-ingreso → balanza de egreso, media de {GN_["total"]} camiones medidos por patente. '
     f'Líquidos: visitas de camión a la zona de líquidos (liquidos-camaras.cjs), no movimientos; calibración en la sección 04. Pellet: viajes de transile leídos por patente (pellet-camaras.cjs); en {fdm(PK["planillaPorDia"] and list(PK["planillaPorDia"])[0])}–{fdm(list(PK["planillaPorDia"])[-1])} las cámaras vieron {PK["emparejados"]} de {PK["planillaEgresosPellet"]} viajes de la planilla ({round(PK["recall"] * 100)} %). '
     f'Calada sólida: {fmtn(CAL["camiones"])} recorridos en {CAL["horas"]} de {HOURS} h. Volcables puerto: camiones distintos leídos por día en cada cámara de volcable (incluye el pellet de la V4). Silos: {SIL["camiones"]} recorridos.', gap=28)
@@ -309,10 +328,10 @@ section('tramos-r7', head('Soja · R7', 'Tiempos medios por tramo', cam=True)
     + kcard(f'Contra el comité anterior ({PUB["total"]})', f'{sgn(d_tot)} min', GMID, GDK)
     + kcard('Viajes medidos de punta a punta', fmtn(N7['total']), VMID, VIO) + '</div>',
     f'Circuito R7, promedio de la semana por tramo en minutos (viajes con el tramo leído): ingreso {v7[0]} ({n7[0]}), Playa 1 {v7[1]} ({n7[1]}), salida {v7[2]} ({n7[2]}), interplanta {v7[3]} ({n7[3]}), Playa OSL {v7[4]} ({n7[4]}), descarga {v7[5]} ({n7[5]}), egreso {v7[6]} ({n7[6]}). '
-    f'Suman {sum(v7)}; el puerta a puerta medido de punta a punta (pre-ingreso → salida de San Lorenzo) da {R7["total"]} sobre {N7["total"]} viajes: cada tramo se promedia sobre los viajes que lo tienen leído. '
+    f'Suman {sum(v7)}; el puerta a puerta medido de punta a punta (pre-ingreso → salida de San Lorenzo) da {CAMT} sobre {N7["total"]} viajes: cada tramo se promedia sobre los viajes que lo tienen leído. '
     f'Método: viajes por patente con cámaras (r7-camaras.cjs), calada sólida → egreso → ingreso a San Lorenzo en menos de 90 min → salida; la descarga y el egreso solo cuando se leyó la volcable ({n7[5]} viajes). '
     f'Calibración en {CAL_LBL}: el mismo método da {K7["p2pCamara"]} min de puerta a puerta y la planilla {K7["p2pPlanilla"]}. Comité anterior ({ANT_LBL}, planilla): {PUB["total"]} min. '
-    f'Mismo método en los dos períodos: {CAL_LBL} {TP["total"]} min (Ricardone {TP["ric"]}, San Lorenzo {TP["sl"]}) → esta semana {R7["total"]} (Ricardone {R7["ric"]}, San Lorenzo {R7["slz"]}).', gap=36)
+    f'Mismo método en los dos períodos: {CAL_LBL} {TP["total"]} min (Ricardone {TP["ric"]}, San Lorenzo {TP["sl"]}) → esta semana {CAMT} (Ricardone {R7["ric"]}, San Lorenzo {R7["slz"]}).', gap=36)
 
 # resumen soja
 rk_tot = rank(TOT + [R7['total']], R7['total'])
@@ -325,7 +344,7 @@ section('resumen-soja', head('Soja · R7', 'Resumen de la semana: soja', cam=Tru
     + kpi('Ricardone · ingreso, Playa 1 y salida', f'{R7["ric"]} min', GDK, f'{sgn(d_ric)} vs. {CAL_LBL}', GXLT, None)
     + kpi('San Lorenzo · ingreso a salida', f'{R7["slz"]} min', VIO, f'{sgn(d_sl)} vs. {CAL_LBL}', VLT, None)
     + kpi('Camiones R7 por día', f'{APR}{fmtn(r7_dia)}', GDK, f'{spct(pct(r7_dia, r7_dia_prev))} vs. comité anterior', GXLT, None)
-    + '</div>' + key(f'Semana liviana y rápida: unos {fmtn(r7_dia)} camiones por día y {R7["total"]} min puerta a puerta, {ordinal.get(rk_tot, f"el {rk_tot}.º")} desde junio. Con el mismo método de cámaras, la mejora contra {CAL_LBL} vino más de {quien} (Ricardone {sgn(d_ric)}, San Lorenzo {sgn(d_sl)} min).', 28),
+    + '</div>' + key(f'Semana {"liviana" if LIVIANA else "cargada" if PESADA else "de volumen parecido"} {"y rápida" if d_tot < 0 else "y más lenta" if d_tot > 0 else ""}: {"" if PR7 else "unos "}{fmtn(r7_dia)} camiones por día y {R7["total"]} min puerta a puerta, {ordinal.get(rk_tot, f"el {rk_tot}.º")} desde junio. Con el mismo método de cámaras, la mejora contra {CAL_LBL} vino más de {quien} (Ricardone {sgn(d_ric)}, San Lorenzo {sgn(d_sl)} min).', 28),
     f'{APR}{fmtn(R7["est"])} {"operaciones" if PR7 else "camiones"} R7 en {N} días: {fmtn(r7_dia)} por día, contra {fmtn(r7_dia_prev)} por día del comité anterior ({fmtn(PUB["r7_ops"])} operaciones de la planilla en {ANT_N} días). ' + ('Cifra de la planilla. ' if PR7 else 'La cifra de esta semana es una estimación por cámaras (ver lámina 2). ') +
     f'Ricardone y San Lorenzo se comparan contra {CAL_LBL} medido igual (cámaras por patente, misma PC): Ricardone {TP["ric"]} → {R7["ric"]}, San Lorenzo {TP["sl"]} → {R7["slz"]}. No se comparan contra los tramos publicados del comité anterior porque salen de otra muestra (recorridos unidos a una operación de la planilla). '
     f'Línea: puerta a puerta por fecha de comité, del 17/06 al comité anterior («Ant.», {ANT_LBL}: {PUB["total"]}), y el último punto es esta semana por cámaras.')
@@ -387,13 +406,13 @@ section('cuartos', head('Soja · R7', f'{cap(QL[qmax])} concentró el ingreso: {
 W_ = weeks + ['Actual']
 section('historico', head('Soja · R7', 'Dónde queda la semana: ' + ('el tiempo más bajo desde junio' if rk_tot == 1 else f'{ordinal.get(rk_tot, f"el {rk_tot}.º")} desde junio'), cam=True)
     + legend([('Tiempo puerta a puerta (min) · rótulo = fecha del comité', GDK), (f'Promedio de la serie: {avg(TOT)}', BODY)])
-    + linechart(TOT + [R7['total']], W_, GDK, 200, 500 if max(TOT) <= 500 else 600, avg(TOT), hollow=(len(W_) - 1,) if CAMARAS else ())
+    + linechart(TOT + [R7['total']], W_, GDK, 200, 500 if max(TOT) <= 500 else 600, avg(TOT), hollow=() if P2P_PLAN else (len(W_) - 1,))
     + '<div style="position:absolute; left:1280px; top:330px; width:512px; display:flex; flex-direction:column; gap:20px">'
     + ctx('Ricardone · espera Playa 1', f'{R7["p1"]} min', P1 + [R7['p1']], GDK, f'Promedio desde junio: {avg(P1)}')
     + ctx(f'San Lorenzo · {CAL_LBL} → esta semana', f'{R7["slz"]} min', [TP['sl'], R7['slz']], VMID, f'Ingreso → salida por cámaras ({TP["sl"]} → {R7["slz"]})')
     + key(f'{R7["total"]} min contra {PUB["total"]} del comité anterior; Playa 1 en {R7["p1"]} min, {"debajo" if R7["p1"] < avg(P1) else "arriba"} del promedio de la serie ({avg(P1)}).') + '</div>',
     f'Tiempo puerta a puerta R7 por comité (rótulo = fecha del comité, que informa la semana previa); «Ant.» = comité anterior ({ANT_LBL}, {PUB["total"]} min, planilla). '
-    + (f'«Actual» (círculo hueco) = esta semana medida por cámaras ({R7["total"]} min): el método se calibró en {CAL_LBL} ({K7["p2pCamara"]} por cámaras contra {K7["p2pPlanilla"]} de la planilla), así que es comparable con la serie; se confirma con la planilla. ' if CAMARAS else '')
+    + (f'«Actual» = esta semana, planilla ({R7["total"]} min). ' if P2P_PLAN else f'«Actual» (círculo hueco) = esta semana medida por cámaras ({R7["total"]} min): el método se calibró en {CAL_LBL} ({K7["p2pCamara"]} por cámaras contra {K7["p2pPlanilla"]} de la planilla), así que es comparable con la serie; se confirma con la planilla. ')
     + f'Playa 1: serie publicada y esta semana por cámaras (en {CAL_LBL} el mismo método dio {TP["playa1"]} contra {PUB["p1"]} publicado para el período). San Lorenzo no se agrega a la serie publicada (suma de tramos de otra muestra, {PUB["slz"]} min en el comité anterior): se muestra la comparación por cámaras con el mismo método.', gap=24)
 
 # ------------------------------------------------------------------ pellet (solo monitoreo)
@@ -402,20 +421,20 @@ pl_blk = [b for b in PE['bloques'] if b['viajes'] >= 5]
 if PE['viajes']:
     prow = [(days[iD[d]], PE['tramosDia'][d]['ric']['mean'], PE['tramosDia'][d]['sl']['mean']) for d in pdays]
     vv = sorted(PE['porVolcable'].items(), key=lambda kv: -kv[1])
-    section('pellet-operativo', head('Pellet · transile', f'Un operativo corto: {fmtn(PE["viajes"])} viajes leídos, el {y_([full[iD[d]] for d in pdays], last=" y el ")}', PEL, cam=True)
+    section('pellet-operativo', head('Pellet · transile', f'{"Un operativo corto" if PEL_CHICO else "Operativo de pellet"}: {fmtn(PEL_N)} {PEL_U}, el {y_([full[iD[d]] for d in pdays], last=" y el ")}', PEL, cam=True)
         + '<div style="flex:1; display:flex; flex-direction:row; gap:48px"><div style="width:440px; display:flex; flex-direction:column; gap:16px">'
-        + (box(fmtn(PPE['planillaEgresosPellet']), 'Egresos de pellet de la planilla', f'{PE["viajes"]} leídos por cámaras · {PE["camiones"]} camiones') if PPE else box(fmtn(PE['viajes']), 'Viajes leídos por cámaras', f'{PE["camiones"]} camiones distintos'))
+        + (box(fmtn(PPE['planillaEgresosPellet']), 'Egresos de pellet de la planilla', f'{PE["viajes"]} leídos por cámaras · {PEL_CAM} camiones') if PPE else box(fmtn(PE['viajes']), 'Viajes leídos por cámaras', f'{PE["camiones"]} camiones distintos'))
         + box(f'{len(pl_blk)} tanda' + ('s' if len(pl_blk) != 1 else ''), ' y '.join(f'{b["inicio"][8:10]}/{b["inicio"][5:7]} {b["inicio"][11:13]}–{b["fin"][11:13]} h' for b in pl_blk))
         + box(f'{pt["ciclo"]} min', 'Ciclo por viaje', f'contra {ptp["ciclo"]} en el operativo anterior')
         + '</div><div style="flex:1; display:flex; flex-direction:column; gap:16px">'
         + f'<div style="display:flex; flex-direction:row; justify-content:space-between; align-items:center">{legend([("Ricardone", HC1), ("San Lorenzo", HC2)])}<p style="font-size:24px; color:{BODY}">Tiempo por viaje, día por día (min)</p></div>'
         + hstack(prow, width=900, bh=60, gap=18, lab_w=120)
         + '</div></div>'
-        + key(f'Sin fila en el puerto: San Lorenzo tomó {pt["sl"]} min por viaje, contra {ptp["sl"]} en el operativo anterior. Descargó por la {vv[0][0]}.'),
+        + key((f'Sin fila en el puerto: ' if pt['sl'] <= 0.6 * ptp['sl'] else f'En el puerto: ') + f'San Lorenzo tomó {pt["sl"]} min por viaje, contra {ptp["sl"]} en el operativo anterior. Descargó por la {vv[0][0]}.'),
         f'Transile de pellet de girasol de Ricardone al puerto, solo con cámaras (pellet-camaras.cjs): balanza de egreso de Ricardone con Playa 3 o calle líquida antes, sin calada sólida, silo ni volcable de Ricardone, y lecturas del puerto en las 12 h siguientes. '
         f'Viajes por día: {", ".join(f"{fdm(d)} {PE["viajesDia"][d]}" for d in pdays)}; camiones por día: {", ".join(f"{fdm(d)} {PE["camionesDia"][d]}" for d in pdays)}. Volcable leída: {", ".join(f"{k} {v}" for k, v in vv)}. '
         f'Calibración contra la planilla ({fdm(list(PK["planillaPorDia"])[0])}–{fdm(list(PK["planillaPorDia"])[-1])}): las cámaras vieron {PK["emparejados"]} de los {PK["planillaEgresosPellet"]} egresos de pellet de Ricardone ({round(PK["recall"] * 100)} %) y el {round(PK["precision"] * 100)} % de lo que vieron era pellet de la planilla. '
-        f'Con esa cobertura, la semana rondaría {round(PE["viajes"] / PK["recall"])} viajes; la planilla dará el número. Operativo anterior (comité {ANT_LBL}): {fmtn(PUB["pel_viajes"])} viajes de la planilla, ciclo publicado {PUB["pel_ciclo"]} min; con este mismo método de cámaras, ciclo {ptp["ciclo"]} y puerto {ptp["sl"]} min. Monitoreo: sin propuesta de puerto ni de flete.', gap=26)
+        + (f'La planilla tiene {PEL_N} egresos de pellet al puerto ({PEL_CAM} camiones). ' if PPE else f'Con esa cobertura, la semana rondaría {round(PE["viajes"] / PK["recall"])} viajes; la planilla dará el número. ') + f' Operativo anterior (comité {ANT_LBL}): {fmtn(PUB["pel_viajes"])} viajes de la planilla, ciclo publicado {PUB["pel_ciclo"]} min; con este mismo método de cámaras, ciclo {ptp["ciclo"]} y puerto {ptp["sl"]} min. Monitoreo: sin propuesta de puerto ni de flete.', gap=26)
     vp = [pt['playa1'], pt['ptara'], pt['carga'], pt['interplanta'], pt['playaOsl'], pt['descarga'], pt['salida']]
     vpn = [ptn['playa1'], ptn['ptara'], ptn['carga'], ptn['interplanta'], ptn['playaOsl'], ptn['descarga'], ptn['salida']]
     vpp = [ptp['playa1'], ptp['ptara'], ptp['carga'], ptp['interplanta'], ptp['playaOsl'], ptp['descarga'], ptp['salida']]
@@ -429,7 +448,7 @@ if PE['viajes']:
         + '<div style="display:flex; flex-direction:row; gap:24px">'
         + kcard(f'Ciclo completo por viaje · {hm(pt["ciclo"])}', f'{pt["ciclo"]} min', PELM, PEL)
         + kcard('Operativo anterior, mismo método', f'{ptp["ciclo"]} min', GMID, GDK)
-        + kcard('Viajes por camión en la semana', fx(PE['viajes'] / PE['camiones']), VMID, VIO) + '</div>'
+        + kcard('Viajes por camión en la semana', fx(PEL_N / PEL_CAM), VMID, VIO) + '</div>'
         + key(f'La diferencia con el operativo anterior está en {TRN[imaxd]}: {vpp[imaxd]} → {vp[imaxd]} min. La carga en Ricardone tomó {pt["carga"]} min.'),
         f'Tramos medidos por cámaras sobre los {PE["viajes"]} viajes leídos (viajes con cada tramo: {", ".join(f"{a} {b}" for a, b in zip(TRN, vpn))}). Suman {sum(v or 0 for v in vp)}; el ciclo medido de punta a punta da {pt["ciclo"]} ({ptn["ciclo"]} viajes). '
         f'Operativo anterior con el mismo método ({fdm(list(PK["planillaPorDia"])[0])}–{fdm(list(PK["planillaPorDia"])[-1])}, {PEP["viajes"]} viajes): ' + ', '.join(f'{a} {b}' for a, b in zip(TRN, vpp)) + f', ciclo {ptp["ciclo"]}.', gap=32)
@@ -445,12 +464,12 @@ if PE['viajes']:
     table = (f'<div style="display:flex; flex-direction:row; padding:0px 0px 6px 0px">' + ''.join(f'<p style="width:{w}px; font-size:24px; font-weight:600; color:{BODY}; text-align:{"left" if k < 2 else "right"}">{c}</p>' for k, (w, c) in enumerate(zip(cols_w, hdr))) + '</div>'
              + ''.join(row([o['comite'] or '—', f'{fd(o["desde"])} a {fd(o["hasta"])}', fmtn(o['viajes']), str(o['camiones']), fx(o['viajesPorCamion']),
                             f'{fmtn(o["toneladas30"])} t', fx(o['horas']), f'{o["ciclo"]} min' if o['ciclo'] else '—']) for o in PH)
-             + row(['Actual', f'{fd(pdays[0])} a {fd(pdays[-1])}', f'{fmtn(PE["viajes"])}*', f'{PE["camiones"]}*', fx(PE['viajes'] / PE['camiones']), f'{fmtn(PE["viajes"] * 30)} t*', fx(horas_act), f'{pt["ciclo"]} min'], bold=True, bg=PELL, col=PEL))
-    section('pellet-hist', head('Pellet · transile', 'Los operativos de pellet desde junio' + (': este fue el más chico' if PE['viajes'] / PK['recall'] < min(o['viajes'] for o in PH) else ''), PEL)
+             + row(['Actual', f'{fd(pdays[0])} a {fd(pdays[-1])}', f'{fmtn(PEL_N)}{"" if PPE else "*"}', f'{PEL_CAM}{"" if PPE else "*"}', fx(PEL_N / PEL_CAM), f'{fmtn(PEL_N * 30)} t{"" if PPE else "*"}', fx(horas_act), f'{pt["ciclo"]} min'], bold=True, bg=PELL, col=PEL))
+    section('pellet-hist', head('Pellet · transile', 'Los operativos de pellet desde junio' + (': este fue el más chico' if PEL_CHICO else ''), PEL)
         + f'<div style="display:flex; flex-direction:column">{table}</div>'
         + '<div style="display:flex; flex-direction:row; gap:48px">'
-        + p(f'* Según cámaras: viajes leídos, no viajes de la planilla. Con la cobertura medida ({round(PK["recall"] * 100)} %) serían unos {round(PE["viajes"] / PK["recall"])}.', 26, BODY, '; flex:1')
-        + '<div style="flex:1">' + key(f'Operativo de {PE["camiones"]} camiones y {fx(horas_act)} h de actividad, con ciclo de {pt["ciclo"]} min: el más corto de la serie.' if pt['ciclo'] < min(o['ciclo'] for o in PH if o['ciclo']) else f'Operativo de {PE["camiones"]} camiones y {fx(horas_act)} h de actividad, con ciclo de {pt["ciclo"]} min.') + '</div></div>',
+        + p(f'Esta semana: viajes de la planilla; horas y ciclo, por cámaras ({PE["viajes"]} viajes leídos).' if PPE else f'* Según cámaras: viajes leídos, no viajes de la planilla. Con la cobertura medida ({round(PK["recall"] * 100)} %) serían unos {round(PE["viajes"] / PK["recall"])}.', 26, BODY, '; flex:1')
+        + '<div style="flex:1">' + key(f'Operativo de {PEL_CAM} camiones y {fx(horas_act)} h de actividad, con ciclo de {pt["ciclo"]} min: el más corto de la serie.' if pt['ciclo'] < min(o['ciclo'] for o in PH if o['ciclo']) else f'Operativo de {PEL_CAM} camiones y {fx(horas_act)} h de actividad, con ciclo de {pt["ciclo"]} min.') + '</div></div>',
         'Operativos anteriores: planilla de movimientos (transile de pellet de girasol de Ricardone al puerto, sin patentes ficticias); camiones = patentes distintas; toneladas = viajes × 30; horas = tramos continuos de actividad; ciclo = el publicado en cada comité. '
         f'Esta semana: cámaras (pellet-camaras.cjs); horas = bloques de viajes leídos separados por más de 4 h; toneladas = viajes leídos × 30. Se reemplaza por la planilla cuando llegue.', gap=24)
 
@@ -531,7 +550,7 @@ lbars = ''.join(f'<div style="flex:1; display:flex; flex-direction:column; align
                 f'<div style="height:{round(LC["porDia"][d]["TER"] / mxl * 330)}px; background:{BLU}"></div><div style="height:{round(LC["porDia"][d]["RIC"] / mxl * 330)}px; background:#A9C8E6"></div></div><p style="font-size:24px; font-weight:600; color:{TEXT}; white-space:nowrap">{days[i]}</p></div>' for i, d in enumerate(DAYS))
 kT, kR = LK['TER'], LK['RIC']
 ter_d, ter_dp = LQV['TER'] / N, LKV['TER'] / LKD
-section('liq-semana', head('Líquidos · la semana', (f'La Terminal mantuvo su ritmo: {round(ter_d)} visitas de camión por día' if abs(pct(ter_d, ter_dp)) <= 10 else f'La Terminal {"subió" if ter_d > ter_dp else "bajó"} a {round(ter_d)} visitas de camión por día ({spct(pct(ter_d, ter_dp))})'), BLU, cam=True)
+section('liq-semana', head('Líquidos · la semana', (f'{fmtn(LCW["total"]["n"])} camiones de líquidos en la planilla; la Terminal hizo {round(sum(v["n"] for k, v in LCW["porPlantaSentido"].items() if k.startswith("TERMINAL")) / LCW["total"]["n"] * 100)} %' if LCW else None) or (f'La Terminal mantuvo su ritmo: {round(ter_d)} visitas de camión por día' if abs(pct(ter_d, ter_dp)) <= 10 else f'La Terminal {"subió" if ter_d > ter_dp else "bajó"} a {round(ter_d)} visitas de camión por día ({spct(pct(ter_d, ter_dp))})'), BLU, cam=True)
     + '<div style="flex:1; display:flex; flex-direction:row; gap:56px"><div style="flex:1; display:flex; flex-direction:column; gap:16px">'
     + legend([('Terminal San Lorenzo', BLU), ('Ricardone', '#A9C8E6')], f'<div style="flex:1"></div><p style="font-size:24px; color:{BODY}">Visitas de camión a la zona de líquidos por día</p>')
     + f'<div style="flex:1; display:flex; flex-direction:row; gap:6px; align-items:end">{lbars}</div></div>'
@@ -614,15 +633,15 @@ def cx(big, title, txt, band):
 add('cruces', f'<section id="cruces" data-transition="fade" style="background:{VIO}; color:#F1F6F2; font-family:{FONT}; padding:96px 128px 96px; display:flex; flex-direction:column; gap:28px"><div style="position:absolute; left:0px; top:0px; width:1920px; height:1080px; background:linear-gradient(120deg, #2E1B4E 0%, #1F3A38 60%, #0B5638 100%)"></div>'
     f'<div style="display:flex; flex-direction:column; gap:12px"><p style="font-size:28px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:{GLT}">Cierre · análisis general</p><h2 style="font-size:72px; font-weight:600; line-height:1.1; color:#F1F6F2">La semana en seis lecturas</h2></div>'
     '<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px">'
-    + cx(f'{R7["total"]} min', 'La soja, más rápida', f'Puerta a puerta por cámaras, {sgn(d_tot)} min contra el comité anterior ({PUB["total"]}); {ordinal.get(rk_tot, f"el {rk_tot}.º")} desde junio.', GLT)
-    + cx(f'{APR}{fmtn(r7_dia)}', 'Semana liviana', f'Camiones R7 por día ({spct(pct(r7_dia, r7_dia_prev))}); la calada hizo {fmtn(cal_dia)} recorridos por día contra {fmtn(cal_dia_prev)}.', GLT)
+    + cx(f'{R7["total"]} min', 'La soja, más rápida' if d_tot < 0 else 'La soja, más lenta' if d_tot > 0 else 'La soja, igual', f'Puerta a puerta {"de la planilla" if P2P_PLAN else "por cámaras"}, {sgn(d_tot)} min contra el comité anterior ({PUB["total"]}); {ordinal.get(rk_tot, f"el {rk_tot}.º")} desde junio.', GLT)
+    + cx(f'{APR}{fmtn(r7_dia)}', 'Semana liviana' if LIVIANA else 'Semana cargada' if PESADA else 'Volumen parecido', f'Camiones R7 por día ({spct(pct(r7_dia, r7_dia_prev))}); la calada hizo {fmtn(cal_dia)} recorridos por día contra {fmtn(cal_dia_prev)}.', GLT)
     + (cx(f'{GI["total"]} min', 'Girasol, sin la espera de septiembre', f'Por cámaras, contra {GAT["total"]} con el mismo método: la espera en Playa 3 bajó de {GAT["descarga"]} a {GI["desc"]} min.', GLT) if GIR_OK and GI['total'] < GAT['total'] else cx(fmtn(GI['rec']), 'Girasol', f'{GI["rec"]} recorridos por la volcable 2.', GLT))
     + cx(f'{v1_} → {v2_}' if relevo else v1_, 'Volcables del puerto', (f'Desde el {full[first2]} la cámara de la {v1_} casi no leyó y la {v2_} tomó el volumen. Revisar con mantenimiento.' if relevo else f'La {v1_} leyó el {round(sum(VOL[v1_]) / VOL_TOT * 100)} % de los camiones.'), '#B9A8E0')
-    + cx(f'{fmtn(PE["viajes"])} viajes', 'Pellet, operativo corto', (f'{y_([full[iD[d]] for d in pdays])}, {PE["camiones"]} camiones, ciclo de {pt["ciclo"]} min sin fila en el puerto.' if PE['viajes'] else 'Sin transile de pellet.'), '#B9A8E0')
+    + cx(f'{fmtn(PEL_N)} viajes', 'Pellet, operativo corto' if PEL_CHICO else 'Pellet', (f'{y_([full[iD[d]] for d in pdays])}, {PEL_CAM} camiones, ciclo de {pt["ciclo"]} min' + (' sin fila en el puerto.' if pt['sl'] <= 0.6 * ptp['sl'] else f', {pt["sl"]} en el puerto.') if PE['viajes'] else 'Sin transile de pellet.'), '#B9A8E0')
     + cx(fmtn(LCR['total']['n']), 'Líquidos, con criterio nuevo', f'{ANT_LBL} recalculado por producto: Terminal {TE["n"] + TI["n"]}, Ricardone {ric_tot}. Falta aprobar el criterio y la planilla de esta semana.', '#B9A8E0')
     + f'</div><div style="flex:1"></div><div style="display:flex; flex-direction:row; justify-content:space-between; align-items:center"><img src="{NVA_L}" alt="Nueva Vicentin Argentina" style="width:180px; height:96px; object-fit:contain"><p style="font-size:24px; color:#C9D8CE">Comité de Logística Nodo Sur · {LBL}</p><img src="{BTZ_L}" alt="Bimtrazer" style="width:170px; height:80px; object-fit:contain"></div>'
-    f'<aside>Lecturas para discutir en comité; no son conclusiones cerradas. Semana {LBL}, {"solo cámaras" if CAMARAS else "planilla y cámaras"} ({RUNTXT}). Soja: ≈ {fmtn(R7["est"])} camiones estimados, {R7["total"]} min puerta a puerta por cámaras (calibrado en {CAL_LBL}: {K7["p2pCamara"]} contra {K7["p2pPlanilla"]} de la planilla). '
-    f'Ricardone {R7["ric"]} y San Lorenzo {R7["slz"]} min (en {CAL_LBL}, {TP["ric"]} y {TP["sl"]}). Pellet: {PE["viajes"]} viajes leídos. Transile R29: {r29["metricas"]["total"]}. Líquidos: {LQV["TER"]} visitas en la Terminal y {LQV["RIC"]} en Ricardone por cámaras.</aside></section>')
+    f'<aside>Lecturas para discutir en comité; no son conclusiones cerradas. Semana {LBL}, {"solo cámaras" if CAMARAS else "planilla y cámaras"} ({RUNTXT}). Soja: {APR}{fmtn(R7["est"])} {"operaciones de la planilla" if PR7 else "camiones estimados por cámaras"}, {R7["total"]} min puerta a puerta, {P2P_SRC}. '
+    f'Ricardone {R7["ric"]} y San Lorenzo {R7["slz"]} min (en {CAL_LBL}, {TP["ric"]} y {TP["sl"]}). Pellet: {PEL_N} {PEL_U}. Transile R29: {r29["metricas"]["total"]}. Líquidos: {LQV["TER"]} visitas en la Terminal y {LQV["RIC"]} en Ricardone por cámaras.</aside></section>')
 
 # ------------------------------------------------------------------ write
 ORDER = ['portada', 'resumen-planta', 'dia-a-dia', 'div-soja', 'tramos-r7', 'resumen-soja', 'hallazgo', 'plantas', 'cuartos', 'historico',

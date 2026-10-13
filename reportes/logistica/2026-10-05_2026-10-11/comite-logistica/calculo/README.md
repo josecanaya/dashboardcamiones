@@ -46,22 +46,26 @@ varios; Ricardone tuvo 57 camiones de líquidos.
 
 ## Cuando llegue la planilla (Excel del 13/10 en adelante)
 
+Un solo comando (desde la raíz del repo o del worktree; los datos se leen de `VICENTIN_ROOT`, por defecto el repo principal):
+
 ```bash
-npx tsx scripts/ingest-movimientos.ts --excel <MovimientosPorContrato_2026101X.xlsx>   # uno por día; el del día D trae D-1/D-2
-# reprocesar la ventana (server arriba): POST /api/etl/runs {"from":"2026-10-05","to":"2026-10-11","force":true}
-export VICENTIN_ROOT=<raíz con data/ y runs/>
-C=reportes/logistica/2026-10-05_2026-10-11/comite-logistica/calculo
-npx tsx scripts/estado-planta/paquete-periodo.ts $C/paquete.json 2026-10-05 2026-10-11 "$VICENTIN_ROOT/runs/windows/2026-10-05_2026-10-11:2026-10-05:2026-10-11"
-node --max-old-space-size=4096 scripts/estado-planta/r7-camaras.cjs 2026-10-05 2026-10-11 $C/r7-camaras.json
-node --max-old-space-size=4096 scripts/estado-planta/pellet-camaras.cjs 2026-10-05 2026-10-11 $C/pellet-camaras.json
-node --max-old-space-size=4096 scripts/estado-planta/liquidos-camaras.cjs 2026-10-05 2026-10-11 $C/liquidos-camaras.json
-node scripts/estado-planta/liquidos-criterio.cjs 2026-10-05 2026-10-11 $C/liquidos-criterio.json
-node --max-old-space-size=4096 scripts/estado-planta/metricas-camaras.cjs $C/metricas-camaras.json 2026-09-28 2026-10-05 7
-python scripts/estado-planta/datos_comite_semana.py reportes/logistica/2026-10-05_2026-10-11/comite-logistica 2026-10-05 2026-10-11 "$VICENTIN_ROOT/runs/windows/2026-10-05_2026-10-11" "$VICENTIN_ROOT/reportes/logistica/2026-09-24_2026-10-04/comite-logistica"
-python scripts/estado-planta/gen_comite_logistica_semana.py reportes/logistica/2026-10-05_2026-10-11/comite-logistica
+python scripts/estado-planta/comite_semana.py --desde 2026-10-05 --hasta 2026-10-11 --excel <MovimientosPorContrato_20261012.xlsx> <MovimientosPorContrato_20261013.xlsx>
 ```
 
-Con planilla de la semana, `r7-camaras.cjs`, `pellet-camaras.cjs` y `liquidos-camaras.cjs` agregan solos el bloque
-`calibracion` de la misma semana y el generador toma de ahí los conteos (operaciones R7 por día, egresos de pellet,
-movimientos de líquidos por planta y sentido). Los tiempos siguen saliendo de cámaras por patente (calibrados).
-Probado sobre 30/09–04/10: toma 532 operaciones R7 y el día a día 116/131/99/106/80 de la planilla.
+Hace: ingesta (`scripts/ingest-movimientos.ts` → `data/movimientos/<día>`), corrida ETL con `force` (levanta el server si está
+apagado), paquete, `r7-camaras`, `pellet-camaras`, `liquidos-camaras`, `liquidos-criterio` de la semana, `metricas-camaras`,
+`datos.json` y el deck. Termina con un resumen: modo, movimientos de planilla por día y último Excel cargado.
+
+**Cuándo pasa a «planilla»** (`datos.json → planilla.completa`): todos los días de la semana tienen movimientos, el último
+Excel cargado (`source_date` de las filas) es posterior al domingo y la corrida tiene movimientos. Si falta algo queda en
+«parcial»/«cámaras» y el deck sigue con los conteos de cámaras (la portada lo dice).
+
+En modo planilla:
+- Soja R7: operaciones de la planilla por día (TERMINAL · INGRESO · SOJA por volcable, día operativo del ingreso) y puerta a puerta
+  de la planilla (paquete, salida − ingreso, como los comités anteriores). Tramos y tiempos por planta siguen por cámaras.
+- Girasol: operaciones R5+R6 del paquete. Pellet: egresos de pellet de Ricardone al puerto (sin despachos a terceros).
+- Líquidos: movimientos de la semana con el criterio por producto (`liquidos-criterio.json`); las visitas de cámara quedan como apoyo.
+
+Publicar: subir los archivos de `deck/project/` que cambiaron al artifact de `deck/assets.json`
+(https://claude.ai/artifact/BLSZxYCY8QWkuMNqGxKNHo). Probado en modo planilla sobre 30/09–03/10: 452 operaciones R7,
+puerta a puerta 274 (por día 269/230/315/299, igual que el paquete oficial), pellet 242 viajes, líquidos 190.

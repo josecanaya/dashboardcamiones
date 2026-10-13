@@ -13,12 +13,35 @@
   ]
  },
  "modo": "camaras",
+ "planilla": {
+  "porDia": {
+   "2026-10-05": 0,
+   "2026-10-06": 0,
+   "2026-10-07": 0,
+   "2026-10-08": 0,
+   "2026-10-09": 0,
+   "2026-10-10": 0,
+   "2026-10-11": 0
+  },
+  "ultimoExcel": null,
+  "diasSinMovimientos": [
+   "2026-10-05",
+   "2026-10-06",
+   "2026-10-07",
+   "2026-10-08",
+   "2026-10-09",
+   "2026-10-10",
+   "2026-10-11"
+  ],
+  "completa": false,
+  "corridaConPlanilla": false
+ },
  "corrida": {
   "runId": "2026-10-05_2026-10-11",
   "rulesVersion": "etl_transform_v17",
   "eventCount": 10836,
   "movimientosRows": 0,
-  "finishedAt": "2026-10-12T16:01:42.103Z",
+  "finishedAt": "2026-10-13T03:04:11.231Z",
   "eventDays": [
    "2026-10-04",
    "2026-10-05",
@@ -7618,19 +7641,19 @@
    }
   },
   "calibracion": {
-   "planillaEgresosPellet": 246,
+   "planillaEgresosPellet": 242,
    "planillaPorDia": {
-    "2026-09-30": 107,
-    "2026-10-01": 137,
-    "2026-10-02": 1,
-    "2026-10-03": 1,
+    "2026-09-30": 106,
+    "2026-10-01": 136,
+    "2026-10-02": 0,
+    "2026-10-03": 0,
     "2026-10-04": 0
    },
    "camaraViajes": 184,
    "emparejados": 181,
-   "recall": 0.736,
+   "recall": 0.748,
    "precision": 0.984,
-   "nota": "Egresos de pellet de girasol de Ricardone en la planilla, por día calendario de la salida (incluye despachos a terceros que no van al puerto)."
+   "nota": "Egresos de pellet de girasol de Ricardone al puerto en la planilla (sin despachos a terceros), por día calendario de la salida."
   },
   "calibracionArchivo": "pellet-camaras-calibracion-30-04.json"
  },
@@ -8208,7 +8231,7 @@
   "criterioSemana": null
  },
  "anterior": {
-  "carpeta": "C:/Users/Pc/Desktop/JOSE/Programacion/Vicentin/rutas/dashboard/reportes/logistica/2026-09-24_2026-10-04/comite-logistica",
+  "carpeta": "C:\\Users\\Pc\\Desktop\\JOSE\\Programacion\\Vicentin\\rutas\\dashboard\\reportes\\logistica\\2026-09-24_2026-10-04\\comite-logistica",
   "dias": [
    "2026-09-24",
    "2026-09-25",

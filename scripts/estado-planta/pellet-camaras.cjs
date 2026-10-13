@@ -97,6 +97,7 @@ for (let d = addDays(from, -1); d <= addDays(to, 3); d = addDays(d, 1)) {
     if (seenOp.has(r.external_operation_id)) continue
     seenOp.add(r.external_operation_id)
     if (r.planta_normalized !== 'RICARDONE' || r.movement_type !== 'EGRESO' || !/PELLETS GIRASOL/.test(r.product_normalized || '') || fake(r.plate_normalized || '')) continue
+    if (r.entregado_por_a && !/PUERTO/.test(r.entregado_por_a)) continue   // despachos a terceros: no van al puerto
     const s = r.external_salida_at; if (!/^\d{4}-\d{2}-\d{2}T/.test(s || '')) continue
     const t = Date.parse(s.slice(0, 16) + ':00-03:00'); if (t < ini || t >= fin) continue
     X.push({ p: r.plate_normalized, t, day: calDay(t) })
@@ -106,9 +107,9 @@ if (X.length) {
   // viaje de cámara ↔ egreso de la planilla: misma patente, balanza egreso y salida de Ricardone a ±90 min
   const used = new Set(); let ok = 0
   for (const c of trips) { const k = X.findIndex((x, i) => !used.has(i) && x.p === c.p && Math.abs(x.t - c.t) <= 90 * 60000); if (k >= 0) { used.add(k); ok++ } }
-  out.calibracion = { planillaEgresosPellet: X.length, planillaPorDia: Object.fromEntries(dias.map(d => [d, X.filter(x => x.day === d).length])),
+  out.calibracion = { planillaEgresosPellet: X.length, planillaCamiones: new Set(X.map(x => x.p)).size, planillaPorDia: Object.fromEntries(dias.map(d => [d, X.filter(x => x.day === d).length])),
     camaraViajes: trips.length, emparejados: ok, recall: +(ok / X.length).toFixed(3), precision: trips.length ? +(ok / trips.length).toFixed(3) : null,
-    nota: 'Egresos de pellet de girasol de Ricardone en la planilla, por día calendario de la salida (incluye despachos a terceros que no van al puerto).' }
+    nota: 'Egresos de pellet de girasol de Ricardone al puerto en la planilla (sin despachos a terceros), por día calendario de la salida.' }
 }
 fs.writeFileSync(outPath, JSON.stringify(out, null, 1))
 console.log(JSON.stringify({ ...out, tramosDia: undefined }, null, 1))

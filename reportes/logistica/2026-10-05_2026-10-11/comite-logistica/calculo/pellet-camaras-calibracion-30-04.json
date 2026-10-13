@@ -329,18 +329,18 @@
   }
  },
  "calibracion": {
-  "planillaEgresosPellet": 246,
+  "planillaEgresosPellet": 242,
   "planillaPorDia": {
-   "2026-09-30": 107,
-   "2026-10-01": 137,
-   "2026-10-02": 1,
-   "2026-10-03": 1,
+   "2026-09-30": 106,
+   "2026-10-01": 136,
+   "2026-10-02": 0,
+   "2026-10-03": 0,
    "2026-10-04": 0
   },
   "camaraViajes": 184,
   "emparejados": 181,
-  "recall": 0.736,
+  "recall": 0.748,
   "precision": 0.984,
-  "nota": "Egresos de pellet de girasol de Ricardone en la planilla, por día calendario de la salida (incluye despachos a terceros que no van al puerto)."
+  "nota": "Egresos de pellet de girasol de Ricardone al puerto en la planilla (sin despachos a terceros), por día calendario de la salida."
  }
 }

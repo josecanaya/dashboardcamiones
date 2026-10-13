@@ -30,7 +30,23 @@ def one(pat):
 d0 = datetime.date.fromisoformat(DESDE)
 DAYS = [(d0 + datetime.timedelta(days=i)).isoformat() for i in range((datetime.date.fromisoformat(HASTA) - d0).days + 1)]
 man = J(RUN, 'manifest.json')
-modo = 'planilla' if (man.get('input') or {}).get('movimientosRows') else 'camaras'
+# cobertura de la planilla (data/movimientos, particionado por día de ingreso): la semana está completa cuando cada día
+# tiene movimientos y el último Excel cargado es de después del último día (el Excel del día D trae D-1/D-2 y parte de D)
+ROOT = os.environ.get('VICENTIN_ROOT') or os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+pl_dia, ult = {}, None
+for i in range(len(DAYS) + 3):
+    d = (d0 + datetime.timedelta(days=i)).isoformat()
+    f = os.path.join(ROOT, 'data', 'movimientos', d, 'movimientos.json')
+    rr = json.load(open(f, encoding='utf-8')) if os.path.exists(f) else []
+    if d in DAYS: pl_dia[d] = len(rr)
+    for r in rr:                                   # source_date = fecha del Excel que trajo la fila
+        sd = str(r.get('source_date') or '')[:10]
+        if sd and (ult is None or sd > ult): ult = sd
+faltan = [d for d in DAYS if not pl_dia[d]]
+planilla = {'porDia': pl_dia, 'ultimoExcel': ult, 'diasSinMovimientos': faltan,
+            'completa': not faltan and bool(ult) and ult > HASTA, 'corridaConPlanilla': bool((man.get('input') or {}).get('movimientosRows'))}
+planilla['completa'] = planilla['completa'] and planilla['corridaConPlanilla']
+modo = 'planilla' if planilla['completa'] else ('parcial' if any(pl_dia.values()) else 'camaras')
 
 def rows(name):
     t = J(RUN, 'tables', name + '.json')
@@ -86,6 +102,7 @@ if ANT:
 out = {
     'periodo': {'desde': DESDE, 'hasta': HASTA, 'days': DAYS},
     'modo': modo,
+    'planilla': planilla,
     'corrida': {'runId': man['runId'], 'rulesVersion': man['rulesVersion'], 'eventCount': man['input'].get('eventCount'),
                 'movimientosRows': man['input'].get('movimientosRows'), 'finishedAt': man.get('finishedAt'),
                 'eventDays': [os.path.basename(os.path.dirname(p)) for p in man['input'].get('eventsPaths', [])]},
@@ -103,4 +120,4 @@ out = {
     'anterior': ant,
 }
 json.dump(out, open(os.path.join(D, 'datos.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-print(json.dumps({'modo': modo, 'run': out['corrida'], 'r7': {'viajes': R7['viajes'], 'etl': len(r7ids), 'p2p': R7['tramos']['total']}, 'cal': cal_r7}, ensure_ascii=False))
+print(json.dumps({'modo': modo, 'planilla': planilla, 'run': out['corrida'], 'r7': {'viajes': R7['viajes'], 'etl': len(r7ids), 'p2p': R7['tramos']['total']}, 'cal': cal_r7}, ensure_ascii=False))
