@@ -295,6 +295,7 @@ function motorRun(P, K) {
   const calBusy = Array(7).fill(-1e9), calHeld = Array(7).fill(null);
   const volcBusy = Array(5).fill(null), volcHeld = Array(5).fill(null), rdBusy = Array(RIC_DESC.length).fill(-1e9);
   let playa1 = 0, demorado = 0, playa3 = 0, osl = 0, salida = 0, downstream = 0, inTransit = 0;
+  const downP = {};  // camiones pesados que todavía no bajaron del volcable, por producto
   const busy = {}, open = {};
   const addBusy = (res, t, dur) => { const b = busy[res] ||= {}; let m = t; while (m < t + dur) { const h = Math.floor(m / 60), s = Math.min(t + dur, (h + 1) * 60) - m; b[h] = (b[h] || 0) + s; m += s; } };
   const [ls, ld] = P.prm.bal_limpieza;
@@ -413,14 +414,15 @@ function motorRun(P, K) {
     });
     // Puerto: el ingreso se frena si Playa OSL está llena (cuando tiene tope)
     serve('ingsl', t, L, () => !K.capOsl || osl < K.capOsl, (k, t0, d) => { outP[k].t20 = t0; osl++; push(t0 + d, 'arr_bal', k); });
-    // la balanza pesa al primero de Playa OSL que tenga algún volcable abierto para su producto
-    const nv = L.volc.filter(v => v.on).length;
+    // la balanza pesa al primero de Playa OSL que tenga lugar adelante: cada producto tiene (volcables abiertos que lo
+    // reciben) × (1 + en camino) lugares, así una avalancha de soja no tapa al pellet que tiene su volcable libre
+    const nv = L.volc.filter(v => v.on).length, lugar = p => L.volc.filter(v => v.on && v.prods.includes(p)).length * (1 + K.gate);
     serve('bal', t, L, () => !(ls <= t && t < ls + ld) && downstream < nv * (1 + K.gate),
-      (k, t0, d) => { outP[k].t22 = t0; osl--; downstream++; push(t0 + d, 'bal_done', k); },
-      q => q.findIndex(k => L.volc.some(v => v.on && v.prods.includes(PORT[k].prod))));
+      (k, t0, d) => { const p = PORT[k].prod; outP[k].t22 = t0; osl--; downstream++; downP[p] = (downP[p] || 0) + 1; push(t0 + d, 'bal_done', k); },
+      q => q.findIndex(k => (downP[PORT[k].prod] || 0) < lugar(PORT[k].prod)));
     // volcables: el que terminó baja solo si hay lugar en la espera para salir (hasta pasar el egreso)
     for (let s = 0; s < 5; s++) if (volcHeld[s] != null && (!K.capSal || salida < K.capSal)) {
-      const k = volcHeld[s]; volcHeld[s] = null; downstream--; salida++;
+      const k = volcHeld[s]; volcHeld[s] = null; downstream--; downP[PORT[k].prod]--; salida++;
       outP[k].baja = t; push(t + TRAMO.volcBalEgr, 'arr_balegr', k);
     }
     unload(L.volc, Q.volc, k => PORT[k].prod, s => volcBusy[s] === null && volcHeld[s] == null, (s, k, dur) => {

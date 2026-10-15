@@ -168,7 +168,7 @@ canvas{display:block;width:100%}
 .gsec{font-size:10.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:700;margin-top:2px}
 .gauges{display:grid;grid-template-columns:repeat(4,1fr);gap:0 4px}
 .gauge{display:flex;flex-direction:column;align-items:center}
-.gauge svg{width:100%;max-width:84px;height:auto;display:block}
+.gauge svg{width:100%;max-width:76px;height:auto;display:block}
 .gauge .zt{fill:none;stroke:rgba(124,194,156,.28);stroke-width:6}
 .gauge .zg{fill:none;stroke:rgba(63,160,110,.55);stroke-width:6}
 .gauge .za{fill:none;stroke:rgba(227,163,59,.7);stroke-width:6}
@@ -213,6 +213,9 @@ canvas{display:block;width:100%}
 .c-soja{background:var(--soja)}.c-girasol{background:var(--girasol)}.c-pellet{background:var(--pellet)}.c-liquido{background:var(--liq)}.c-0{background:transparent;color:var(--muted)!important;font-weight:400!important}
 .mxmode{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px}.mxmode.on{color:#0E1A16;background:var(--warn);border-color:var(--warn);font-weight:700}
 .mxwait{font-size:11px;color:var(--muted);display:flex;gap:4px;align-items:center}
+.fxsplit{flex-basis:100%;font-size:11.5px;color:var(--muted)}.fxsplit b{font-family:var(--mono);color:var(--ink)}.fxsplit b.neg{color:#F2A194}.fxsplit b.pos{color:var(--accent)}
+.fxwhy{flex-basis:100%;font-size:11.5px;line-height:1.35;color:var(--ink);background:rgba(224,90,71,.14);border-left:3px solid var(--crit);border-radius:4px;padding:3px 6px}
+.fxwhy:empty{display:none}
 /* Calles: actividad por calle de calada y por volcable */
 .lanes{display:flex;flex-direction:column;gap:5px}
 .lgrp{font-size:11px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;font-weight:700;margin-top:4px}
@@ -277,7 +280,8 @@ canvas{display:block;width:100%}
     <div class="side">
       <div class="card knobcard" id="knobCard" hidden>
         <div class="kchead"><h2>Ritmos ahora</h2><button id="kReset">Volver a lo medido</button></div>
-        <div class="gain" id="fxGainBox" hidden><span class="n" id="fxGain">+0</span><span class="l">camiones descargados de más en el día<br><span id="fxNow"></span></span></div>
+        <div class="gain" id="fxGainBox" hidden><span class="n" id="fxGain">+0</span><span class="l"><span id="fxGainLab">descargas más que el día real</span><span id="fxNow" hidden></span></span>
+          <div class="fxsplit" id="fxSplit"></div><div class="fxwhy" id="fxWhy"></div></div>
         <div class="gwrap" id="gauges"></div>
         <div class="glegend"><span><i class="gn"></i>tu simulación</span><span><i class="gr"></i>lo que pasó</span></div>
       </div>
@@ -777,7 +781,8 @@ function panel() {
   if (FX) {
     const upto = arr => { let n = 0; for (const t of arr) { if (t > T) break; n++; } return n; };
     const a = upto(FX.desc), b = upto(BASE.desc), d = a - b;
-    fxNow.innerHTML = `Hasta las ${fmtT(T)}: <b>${fmtN(a)}</b> descargas en el puerto contra ${fmtN(b)} del día real (${d > 0 ? '+' : ''}${fmtN(d)})`;
+    fxNow.innerHTML = `hasta las ${fmtT(T)}: <b>${fmtN(a)}</b> descargas (puerto y Ricardone) contra ${fmtN(b)} en el día real (${d > 0 ? '+' : ''}${fmtN(d)})`;
+    fxWhy.innerHTML = frenoPrincipal();
   }
   now.innerHTML = best ? `Donde más camiones esperan: <b>${best.nd.label}${best.nd.plant === 'san_lorenzo' ? ' (puerto)' : ''}</b> con ${best.q} camiones${best.nd.cap ? `, ${Math.round(best.load * 100)} % de su capacidad` : ''}.` : 'Planta vacía.';
 }
@@ -846,7 +851,7 @@ function renderEvents() {
 // la balanza de ingreso y los volcables del puerto. La capacidad es física: calles (o volcables) abiertas
 // × ritmo de cada una. Dos capas: barras por franja de 2 h y perillas que suben o bajan todo el día.
 // Con todo en lo medido, el motor reproduce el día; cada cambio se compara contra esa reproducción.
-let LIVE = [], PREP = null, BST = null, BMK = null, MOTOR = null, BK = null, BG = null, K = null, G = null, EK = null, BASE = null, applyTimer = 0, mP1, mOsl, mManda, mCapC, mCapV;
+let REF = {key: null, m: null}, LIVE = [], PREP = null, BST = null, BMK = null, MOTOR = null, BK = null, BG = null, K = null, G = null, EK = null, BASE = null, applyTimer = 0, mP1, mOsl, mManda, mCapC, mCapV;
 const BLOCKS = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
 const ROWS = [
   {k: 'calles', lab: 'Calles de calada abiertas', u: 'de 6', max: 6},
@@ -953,6 +958,12 @@ function apply() {
     FX = null; model = REAL.model; S = REAL.S; fixCard.hidden = fxGainBox.hidden = simBadge.hidden = true; daySub.textContent = realSub();
   } else {
     const res = runK(EK);
+    // con jugadas, también el manual sin tocar (misma configuración típica, sin ninguna jugada): así el resultado se
+    // separa en «pasar a manual» y «tus jugadas»
+    if (LIVE.length && EK.frozen) {
+      const key = JSON.stringify([EK.frozen.t, G, K]);
+      if (REF.key !== key) REF = {key, m: runK({...EK, live: []}).m};
+    } else REF = {key: null, m: null};
     model = prepare({...MODEL, ...REAL.d, trucks: res.trucks}); S = series(); FX = res; simBadge.hidden = false;
     renderFixCard();
     daySub.textContent = REAL.d.title + ' · simulado con el motor de colas: los mismos camiones, con las capacidades de la mesa.';
@@ -1058,6 +1069,25 @@ function updateMesa() {
   updateKnobs();
 }
 
+// El freno principal en la hora del reloj: la playa o cola con más camiones de más que en el día real y, si hay,
+// la jugada que cerró la estación o el canal que la alimenta
+const ZONA = {entrada: ['afuera de Ricardone', ['ing', 'pre']], playa1: ['en Playa 1', ['cal']], demorado: ['en Playa demorado', ['sal2']],
+              playa3: ['en Playa 3', ['rd', 'balric']], ruta: ['afuera del puerto', ['ingsl']], osl: ['en Playa OSL', ['bal', 'volc']],
+              salida: ['esperando salir del puerto', ['balegr', 'egr']]};
+function frenoPrincipal() {
+  if (!FX || !BASE) return '';
+  const m = Math.max(0, Math.min(1439, Math.floor(T)));
+  const ex = Object.keys(ZONA).map(z => [z, FX.g[z][m] - BASE.g[z][m], FX.g[z][m]]).sort((x, y) => y[1] - x[1])[0];
+  if (!ex || ex[1] < 15) return '';
+  const [z, extra, n] = ex, [lab, feeds] = ZONA[z], pp = FX.g.porProd[z];
+  const prods = ['soja', 'girasol', 'pellet', 'liquido'].filter(p => pp[p][m] > 0).map(p => `${pp[p][m]} de ${PNAME[p]}`).join(', ');
+  const cerr = LIVE.filter(x => x.t <= T && x.on === false && (feeds.includes(x.i) || feeds.includes(x.g))).map(x => `${LANE_NAME[x.g](x.i)} cerrado desde las ${fmtT(x.t)}`);
+  const Ls = motorLaneState(PREP, EK, T), sinCanal = ['soja', 'girasol', 'pellet', 'liquido'].filter(p => pp[p][m] > 0 &&
+    (z === 'osl' ? !Ls.volc.some(v => v.on && v.prods.includes(p)) : z === 'playa1' ? !Ls.cal.some(c => c.on && c.prods.includes(p)) : false));
+  return `<b>Freno:</b> ${n} camiones ${lab} (${extra > 0 ? '+' : ''}${extra} contra el día real${prods ? ': ' + prods : ''}).` +
+    (cerr.length ? ' ' + cerr.join('; ') + '.' : '') + (sinCanal.length ? ` Ningún canal abierto recibe ${sinCanal.map(p => PNAME[p]).join(' ni ')}.` : '');
+}
+
 // Qué cambia respecto de lo medido, en palabras
 function cambios() {
   const out = [], hh = h => String(h).padStart(2, '0');
@@ -1084,6 +1114,11 @@ function renderFixCard() {
   fxCambio.innerHTML = cambios().map(t => `<div>${t}</div>`).join('');
   fxGain.textContent = (dm > 0 ? '+' : '') + fmtN(dm);
   fxGain.classList.toggle('zero', dm <= 0);
+  fxGainLab.textContent = dm < 0 ? 'descargas menos que el día real' : 'descargas más que el día real';
+  fxGainLab.title = `Día real: ${fmtN(a.descargas)} descargas (${fmtN(a.descPuerto)} en el puerto, contando cada vuelta de los transiles, y ${fmtN(a.descRic)} en Ricardone). ` +
+    `El Excel cuenta camiones (cada transil una vez), por eso da menos.`;
+  const sg = v => (v > 0 ? '+' : '') + fmtN(v);
+  fxSplit.innerHTML = REF.m ? `pasar a manual sin tocar: <b>${sg(REF.m.descargas - a.descargas)}</b> · tus jugadas: <b class="${b.descargas - REF.m.descargas < 0 ? 'neg' : 'pos'}">${sg(b.descargas - REF.m.descargas)}</b>` : '';
   const row = (lab, x, y, fmt, lowerIsBetter = true) => {
     const cls = Math.round(y) === Math.round(x) ? '' : (y < x) === lowerIsBetter ? 'down' : 'up';
     return `<span>${lab}</span><b>${fmt(x)}</b><b class="${cls}">${fmt(y)}</b>`;
@@ -1300,7 +1335,8 @@ function updateMixer(cnt) {
     : '<div class="note">Todavía no tocaste nada. Dale play y, a la hora que quieras, abrí una calle, cerrá un volcable o cambiale el ritmo a una balanza.</div>';
   if (mxMoves.dataset.html !== html) { mxMoves.innerHTML = html; mxMoves.dataset.html = html; }
   mxMode.title = LIVE.length ? 'Desde tu primera jugada cada canal queda como estaba y solo cambia con lo que toques' : 'Los canales siguen el día como se midió. Tocá cualquiera para manejar vos.';
-  mxMode.textContent = LIVE.length ? 'manual desde ' + fmtT(Math.min(...LIVE.map(m => m.t))) : 'día medido';
+  mxMode.textContent = LIVE.length ? `manual desde ${fmtT(Math.min(...LIVE.map(m => m.t)))} · ${LIVE.length} jugada${LIVE.length > 1 ? 's' : ''}` : 'día medido';
+  mxMode.title = (mxMode.title || '') + (LIVE.length ? '\n' + [...LIVE].sort((x, y) => x.t - y.t).map(x => fmtT(x.t) + ' · ' + moveTxt(x)).join('\n') : '');
   mxMode.classList.toggle('on', !!LIVE.length);
   {
     const pp = (FX || BASE).g.porProd, m = Math.max(0, Math.min(1439, Math.floor(T)));
@@ -1311,7 +1347,8 @@ function updateMixer(cnt) {
   if (FX && BASE) {
     const upto = arr => { let n = 0; for (const t of arr) { if (t > T) break; n++; } return n; };
     const d = upto(FX.desc) - upto(BASE.desc), dd = FX.m.descargas - BASE.m.descargas, sg = v => (v > 0 ? '+' : '') + v;
-    mxScore.innerHTML = `vs. real a las ${fmtT(T)}: <b class="${d < 0 ? 'neg' : ''}">${sg(d)}</b> · día <b class="${dd < 0 ? 'neg' : ''}">${sg(dd)}</b>`;
+    mxScore.title = 'Descargas de la simulación menos las del día real (puerto y Ricardone, cada vuelta de transile cuenta)';
+    mxScore.innerHTML = `vs. día real, a las ${fmtT(T)}: <b class="${d < 0 ? 'neg' : ''}">${sg(d)}</b> · día <b class="${dd < 0 ? 'neg' : ''}">${sg(dd)}</b>`;
   } else mxScore.textContent = '';
 }
 
@@ -1367,6 +1404,7 @@ document.getElementById('endClose').onclick = () => { endModal.hidden = true; };
 document.getElementById('endReset').onclick = () => { endModal.hidden = true; resetMesa(); setView('real'); T = 0; redraw(); };
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !endModal.hidden) endModal.hidden = true; });
 document.getElementById('runDay').onclick = () => { endModal.hidden = true; T = 0; redraw(); toggle(true); };
+const fxGainLab = document.getElementById('fxGainLab'), fxSplit = document.getElementById('fxSplit'), fxWhy = document.getElementById('fxWhy');
 const mesaCalib = document.getElementById('mesaCalib'), knobCard = document.getElementById('knobCard'), fxGainBox = document.getElementById('fxGainBox');
 const mesa = document.getElementById('mesa'), mesaGrid = document.getElementById('mesaGrid'), lanes = document.getElementById('lanes');
 const knobsEl = document.getElementById('knobs');
