@@ -1,0 +1,1394 @@
+<title>Repetición de un día · Nodo Sur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: sala de control. Plano a la izquierda, tablero a la derecha, curva del día abajo. Un solo tema oscuro, elegido a propósito. */
+:root{
+  --bg:#0E1A16; --panel:#14241E; --line:#24392F; --ink:#E8F0EA; --muted:#93A89C;
+  --ric:#173027; --sl:#1B2433; --road:#3A4A42;
+  --soja:#4FBF68; --pellet:#A77BEB; --girasol:#F2CE3C; --grano:#C9A27E; --liq:#6FA8DC; --otro:#9AA5A0;
+  --ok:#3FA06E; --warn:#E3A33B; --crit:#E05A47; --accent:#7CC29C;
+  --sans:'Plus Jakarta Sans',system-ui,Arial,sans-serif; --mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--sans);padding-inline:16px;padding-block:16px 28px}
+.app{max-width:1500px;margin-inline:auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px}
+h1{font-size:22px;font-weight:800;margin:0;letter-spacing:.2px;text-wrap:balance}
+.sub{color:var(--muted);font-size:13px}
+.days{display:flex;gap:6px;flex-wrap:wrap}
+button,select{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--accent);color:#0E1A16;border-color:var(--accent);font-weight:700}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:14px;align-items:start}
+@media (max-width:980px){.main{grid-template-columns:minmax(0,1fr)}}
+.mapwrap{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px;min-width:0}
+canvas{display:block;width:100%}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:8px 6px 2px}
+.clock{font-family:var(--mono);font-size:30px;font-weight:600;letter-spacing:1px;min-width:120px;font-variant-numeric:tabular-nums}
+#scrub{flex:1;min-width:180px;accent-color:var(--accent)}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.card h2{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);margin:0;font-weight:700}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.n{font-family:var(--mono);font-size:26px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.l{font-size:12px;color:var(--muted);margin-top:4px}
+.big{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.big .n{font-size:40px}.big .l b{color:var(--ink);font-family:var(--mono)}
+.bar{display:flex;flex-direction:column;gap:4px}
+.bar .row{display:flex;justify-content:space-between;font-size:13px}
+.bar .row b{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.track{height:10px;border-radius:5px;background:#0B1512;overflow:hidden}
+.fill{height:100%;border-radius:5px;transition:width .2s linear}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;color:var(--muted)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.now{font-size:14px;line-height:1.45}
+.now b{color:var(--warn)}
+.bottom{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px}
+@media (max-width:980px){.bottom{grid-template-columns:minmax(0,1fr)}}
+.events{max-height:190px;overflow:auto;display:flex;flex-direction:column;gap:4px}
+.ev{display:flex;gap:10px;font-size:13px;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:6px 2px}
+.ev .t{font-family:var(--mono);color:var(--accent);min-width:44px}
+.ev.crit .t{color:var(--crit)}
+.note{font-size:12px;color:var(--muted);line-height:1.5}
+.tip{position:absolute;pointer-events:none;background:#0B1512;border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px;line-height:1.45;white-space:nowrap;z-index:5}
+.tip b{font-family:var(--mono)}
+.money{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:10px;font-size:13px}
+.money .row{display:flex;justify-content:space-between;gap:10px}
+.money b{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.money .good b{color:var(--accent)}
+#day{width:300px;max-width:100%}
+.hm{display:grid;grid-template-columns:170px repeat(24,minmax(22px,1fr)) 64px 54px;gap:2px;font-size:12px;min-width:860px;align-items:center}
+.hm .lab{color:var(--ink);white-space:nowrap;padding-right:6px}
+.hm .grp{grid-column:1/-1;color:var(--muted);font-size:11px;letter-spacing:1.4px;text-transform:uppercase;font-weight:700;padding-top:8px}
+.hm .c{height:20px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:#0E1A16}
+.hm .c.now{outline:2px solid var(--ink);outline-offset:-1px}
+.hm .h{color:var(--muted);font-family:var(--mono);font-size:10px;text-align:center}
+.hm .v{font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+.hm .hot{color:var(--warn);font-weight:600}
+[hidden]{display:none!important}
+/* Corregir el día: escenarios del motor de colas */
+.fix{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.fix .t{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-right:4px}
+.fix button{padding:6px 11px;font-size:13px}
+.fix button.real[aria-pressed="true"]{background:var(--ink);border-color:var(--ink)}
+.fixcard{border-color:var(--accent)}
+.fixcard .gain{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.fixcard .gain .n{font-size:40px;color:var(--accent)}
+.fixcard .gain .n.zero{color:var(--warn)}
+.cmp{display:grid;grid-template-columns:1fr auto auto;gap:4px 12px;font-size:13px;align-items:baseline}
+.cmp .h{font-size:11px;color:var(--muted);text-align:right}
+.cmp b{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.cmp .up{color:var(--crit)}.cmp .down{color:var(--accent)}
+.fxc div+div{margin-top:3px}
+/* Mesa de control: barras arrastrables por franja */
+.mesahead{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
+.mesascroll{overflow-x:auto}
+.calib{font-size:12px;border-radius:6px;padding:3px 8px}
+.calib.ok{color:var(--accent);background:rgba(124,194,156,.12)}
+.calib.warn{color:var(--warn);background:rgba(227,163,59,.14)}
+.mgrid{display:grid;grid-template-columns:210px repeat(12,minmax(44px,1fr));gap:4px 3px;min-width:780px;align-items:stretch}
+.mgrid .ml{display:flex;flex-direction:column;justify-content:center;font-size:13px;line-height:1.25;padding-right:8px}
+.mgrid .ml span{font-size:11px;color:var(--muted)}
+.mgrid .mh{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;border-radius:4px;padding:2px 0}
+.mgrid .mh.now{background:var(--ink);color:var(--bg)}
+.krow{grid-column:2/-1;display:grid;grid-template-columns:repeat(12,1fr);gap:3px;touch-action:none;cursor:ns-resize;user-select:none}
+.kc{position:relative;height:58px;background:#0B1512;border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.kc.now{border-color:var(--ink)}
+.kc .kf{position:absolute;left:0;right:0;bottom:0;background:rgba(147,168,156,.45)}
+.kc.chg .kf{background:var(--accent)}
+.kc .kg{position:absolute;left:0;right:0;height:2px;background:var(--warn)}
+.kc span{position:absolute;inset:auto 0 4px;text-align:center;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--ink);text-shadow:0 0 3px #0B1512}
+.mrow{grid-column:2/-1;display:grid;grid-template-columns:repeat(12,1fr);gap:3px}
+.mrow div{text-align:center;font-family:var(--mono);font-size:12px;padding:4px 0;border-radius:4px;background:rgba(255,255,255,.04)}
+.mrow div.warn{background:rgba(227,163,59,.25);color:var(--warn)}
+.mrow div.crit{background:rgba(224,90,71,.3);color:#F2A194;font-weight:600}
+.mrow.manda div{font-family:var(--sans);font-size:11px;padding:5px 2px}
+.mrow.manda div.port{background:rgba(111,168,220,.22);color:#A9CBEB}
+.mrow.manda div.ricq{background:rgba(227,185,94,.22);color:var(--soja)}
+.knobs{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
+/* Perillas giratorias al costado del mapa: el arco va de lo medido (punto amarillo) al valor actual */
+.knobcard{gap:3px;padding:8px 12px}
+.kchead{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.kchead button{padding:4px 10px;font-size:12px}
+.knobcard .gain .n{font-size:28px}
+.knobcard .gain{gap:8px}.knobcard .gain .l{font-size:11.5px}
+.more{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;align-items:start}
+.rks{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 4px}
+.rk{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:ns-resize;touch-action:none;user-select:none;border-radius:10px;padding:4px 2px}
+.rk:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rk svg{width:54px;height:54px}
+.rk .tr{fill:none;stroke:rgba(232,240,234,.14);stroke-width:9;stroke-linecap:round}
+.rk .va{fill:none;stroke:var(--muted);stroke-width:9;stroke-linecap:round}
+.rk.up .va{stroke:var(--accent)}.rk.down .va{stroke:var(--crit)}
+.rk .bm{fill:var(--warn)}
+.rk .pt{stroke:var(--ink);stroke-width:4;stroke-linecap:round}
+.rk .rv{font-family:var(--mono);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;margin-top:-6px}
+.rk.up .rv{color:var(--accent)}.rk.down .rv{color:#F2A194}
+.rk .rl{font-size:10.5px;color:var(--muted);text-align:center;line-height:1.25}
+.mrow.cap div.more{background:rgba(124,194,156,.22);color:var(--accent);font-weight:600}
+.mrow.cap div.less{background:rgba(224,90,71,.22);color:#F2A194;font-weight:600}
+/* Consola en vivo: un canal por calle (vúmetro, fader y botón de encendido) */
+.mixer{border-top:1px solid var(--line);margin-top:4px;padding:6px 6px 0;display:flex;flex-direction:column;gap:4px}
+.mxhead{display:flex;flex-wrap:nowrap;align-items:center;gap:4px 12px;white-space:nowrap}
+.mxhead .note{overflow:hidden;text-overflow:ellipsis}
+.mxhead h2{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);margin:0;font-weight:700}
+.mxscore{margin-left:auto;font-size:13px}.mxscore b{font-family:var(--mono);font-size:18px;color:var(--accent)}.mxscore b.neg{color:#F2A194}
+.mxbody{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:stretch}
+.mxgrp{display:flex;flex-direction:column;gap:3px}
+.mxt{font-size:12px;font-weight:700;display:flex;gap:8px;align-items:baseline;white-space:nowrap}.mxt span{font-weight:400;color:var(--muted);font-size:11px}
+.strips{display:flex;gap:2px}
+.strip{display:flex;flex-direction:column;align-items:center;gap:3px;width:32px;background:#0B1512;border:1px solid var(--line);border-radius:8px;padding:6px 2px}
+.strip.mod{border-color:var(--accent)}
+.strip .sv{font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
+.strip .row{display:flex;gap:3px;align-items:flex-end;height:54px}
+.strip .vu{width:6px;height:54px;background:rgba(255,255,255,.06);border-radius:3px;display:flex;align-items:flex-end;overflow:hidden}
+.strip .vu i{display:block;width:100%;background:var(--accent);border-radius:3px}
+.fader{writing-mode:vertical-lr;direction:rtl;width:20px;height:54px;margin:0;accent-color:var(--accent);cursor:ns-resize}
+.led{width:29px;padding:3px 0;font-size:11px;font-weight:700;border-radius:6px;background:#1A2A23;color:var(--muted)}
+.led[aria-pressed="true"]{background:var(--accent);color:#0E1A16;border-color:var(--accent)}
+.strip.stop .led[aria-pressed="true"]{background:var(--warn);border-color:var(--warn)}
+.strip.chgp .led[aria-pressed="true"]{background:var(--warn);border-color:var(--warn)}.strip.chgp .sv{color:var(--warn)}
+.strip.off .sv,.strip.off .fader{opacity:.4}
+.mxmoves{flex:1;min-width:200px}
+.moves{display:flex;flex-direction:column;gap:3px;max-height:128px;overflow:auto;font-size:12px}
+.moves .mv{display:flex;gap:8px;align-items:center}.moves .mv b{font-family:var(--mono);color:var(--accent)}
+.moves .mv button,.mini{padding:1px 7px;font-size:11px;border-radius:5px}
+/* Perillas de velocidad dentro de la consola */
+.mixer .rks{display:grid;grid-template-columns:repeat(5,62px);gap:2px 4px}
+.mixer .rk svg{width:30px;height:30px}
+.mixer .rk .rv{font-size:11px;margin-top:-4px}
+.mixer .rk .rl{font-size:10px;white-space:nowrap}
+.mixer .rk{padding:1px 0}
+.rundy{background:var(--accent);color:#0E1A16;border-color:var(--accent);font-weight:700;padding:5px 12px}
+/* Velocímetros: tablero con marcas; aguja = simulación, marca amarilla = lo que pasó */
+.gwrap{display:flex;flex-direction:column;gap:2px}
+.gsec{font-size:10.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:700;margin-top:2px}
+.gauges{display:grid;grid-template-columns:repeat(4,1fr);gap:0 4px}
+.gauge{display:flex;flex-direction:column;align-items:center}
+.gauge svg{width:100%;max-width:84px;height:auto;display:block}
+.gauge .zt{fill:none;stroke:rgba(124,194,156,.28);stroke-width:6}
+.gauge .zg{fill:none;stroke:rgba(63,160,110,.55);stroke-width:6}
+.gauge .za{fill:none;stroke:rgba(227,163,59,.7);stroke-width:6}
+.gauge .zr{fill:none;stroke:rgba(224,90,71,.7);stroke-width:6}
+.gauge .tk{stroke:rgba(232,240,234,.45);stroke-width:1.2}
+.gauge .tn{fill:var(--muted);font-family:var(--mono);font-size:8px;text-anchor:middle}
+.gauge .nd{fill:var(--ink)}
+.gauge .hub{fill:var(--ink);stroke:#0B1512;stroke-width:2}
+.gauge .gr{stroke:var(--warn);stroke-width:3.5;stroke-linecap:round}
+.gauge .gvv{fill:var(--ink);font-family:var(--mono);font-size:13px;font-weight:600;text-anchor:middle}
+.gauge.warn .gvv{fill:var(--warn)}.gauge.over .gvv{fill:#F2A194}.gauge.over .nd{fill:#F2A194}
+.gauge .gl{font-size:10.5px;color:var(--ink);text-align:center;line-height:1.15;margin-top:-2px}
+.gauge .gs{font-size:10px;color:var(--muted);text-align:center;line-height:1.2}
+.glegend{display:flex;gap:14px;font-size:11px;color:var(--muted)}
+.glegend i{display:inline-block;width:12px;height:3px;margin-right:5px;vertical-align:3px}
+.glegend .gn{background:var(--ink)}.glegend .gr{background:var(--warn)}
+.simbadge{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:3;background:var(--accent);color:#0E1A16;font-weight:800;font-size:12px;letter-spacing:.6px;border-radius:999px;padding:4px 12px;pointer-events:none;white-space:nowrap}
+.strip.sta{border-color:rgba(111,168,220,.55)}.strip.sta .led{font-size:9.5px}
+.mxknobs{flex-basis:100%}.mxknobs .rks{grid-template-columns:repeat(13,62px)}
+/* Cierre del día */
+.modal{position:fixed;inset:0;background:rgba(5,10,8,.72);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+.endsec{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px 22px;align-items:start}
+.endsec .cmp .sec{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-weight:700}
+.cmp.fl{max-height:220px;overflow:auto;margin-top:6px}
+.mbox{background:var(--panel);border:1px solid var(--accent);border-radius:14px;padding:22px 24px;max-width:980px;width:100%;display:flex;flex-direction:column;gap:12px;max-height:90vh;overflow:auto}
+.mbox h2{font-size:13px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);margin:0}
+.mvs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center}
+.mvs .n{font-size:38px}.mvs .l{font-size:12px}
+.mvs .gain .n{color:var(--accent)}.mvs .gain.neg .n{color:#F2A194}
+.mbtn{display:flex;flex-wrap:wrap;gap:8px}
+.mbtn button:first-child{background:var(--accent);color:#0E1A16;border-color:var(--accent);font-weight:700}
+.strips .sep{width:1px;background:var(--line);margin:0 3px}
+.strip .pd{display:flex;gap:1px}
+.strip .pd button{width:10px;height:12px;padding:0;font-size:8px;line-height:12px;border-radius:3px;font-weight:800;color:#0E1A16;opacity:.25;border:0}
+.strip .pd button[aria-pressed="true"]{opacity:1}
+.p-soja{background:var(--soja)}.p-girasol{background:var(--girasol)}.p-pellet{background:var(--pellet)}.p-liquido{background:var(--liq)}
+.strip[data-g="cal"] .pd button{width:7px;font-size:7px}
+/* Camiones por producto: soja verde, girasol amarillo, pellet violeta, líquido azul */
+.gpp{display:flex;gap:3px;justify-content:center;flex-wrap:wrap;margin-top:0;min-height:13px}
+.gpp span,.mxwait span{font-family:var(--mono);font-size:10px;font-weight:700;border-radius:3px;padding:0 3px;color:#0E1A16}
+.mxwait span{font-size:11px;font-family:var(--sans);font-weight:600;padding:1px 5px}.mxwait b{font-family:var(--mono)}
+.c-soja{background:var(--soja)}.c-girasol{background:var(--girasol)}.c-pellet{background:var(--pellet)}.c-liquido{background:var(--liq)}.c-0{background:transparent;color:var(--muted)!important;font-weight:400!important}
+.mxmode{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px}.mxmode.on{color:#0E1A16;background:var(--warn);border-color:var(--warn);font-weight:700}
+.mxwait{font-size:11px;color:var(--muted);display:flex;gap:4px;align-items:center}
+/* Calles: actividad por calle de calada y por volcable */
+.lanes{display:flex;flex-direction:column;gap:5px}
+.lgrp{font-size:11px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;font-weight:700;margin-top:4px}
+.lane{display:grid;grid-template-columns:78px 1fr 26px 54px;gap:8px;align-items:center;font-size:12px}
+.lane .track{height:8px}.lane .fill{background:var(--accent);height:100%}
+.lane b{font-family:var(--mono);text-align:right}
+.lane i{font-style:normal;font-size:11px;color:var(--muted)}
+.lane.cerrada span,.lane.cerrada b{color:var(--muted)}.lane.cerrada .fill{background:var(--muted)}
+.lane.parada i{color:var(--warn)}.lane.abierta i{color:var(--accent)}
+.lect{margin:0;padding-left:18px;font-size:13px;line-height:1.5;display:flex;flex-direction:column;gap:3px}
+</style>
+
+<div class="app">
+  <header>
+    <div>
+      <h1>Repetición de un día · Nodo Sur</h1>
+      <div class="sub" id="daySub">Cada camión aparece donde lo leyó una cámara y espera en la playa que le corresponde.</div>
+    </div>
+    <div class="days" id="days" role="group" aria-label="Elegir día"></div>
+  </header>
+  <div class="fix" id="fix" role="group" aria-label="Corregir el día" hidden></div>
+
+  <div class="main">
+    <div class="mapwrap">
+      <div style="position:relative"><div class="simbadge" id="simBadge" hidden>SIMULACIÓN · los camiones se mueven con tus cambios</div><canvas id="map" aria-label="Plano de Ricardone y Puerto San Lorenzo con los camiones del día"></canvas><div id="tip" class="tip" hidden></div></div>
+      <div class="controls">
+        <button id="play" aria-label="Reproducir">▶ Reproducir</button>
+        <div class="clock" id="clock">00:00</div>
+        <input id="scrub" type="range" min="0" max="1440" step="1" value="0" aria-label="Hora del día">
+        <label class="sub" for="speed">Velocidad</label>
+        <select id="speed">
+          <option value="30">30 min por minuto</option>
+          <option value="60" selected>1 hora por minuto</option>
+          <option value="120">2 horas por minuto</option>
+          <option value="240">4 horas por minuto</option>
+          <option value="600">10 horas por minuto</option>
+        </select>
+      </div>
+      <div class="legend" style="padding:4px 6px 2px">
+        <span><i class="dot" style="background:var(--soja)"></i>Soja</span>
+        <span><i class="dot" style="background:var(--pellet)"></i>Pellet</span>
+        <span><i class="dot" style="background:var(--girasol)"></i>Girasol</span>
+        <span><i class="dot" style="background:var(--grano)"></i>Otros granos</span>
+        <span><i class="dot" style="background:var(--liq)"></i>Líquidos</span>
+        <span><i class="dot" style="background:var(--otro)"></i>Otros</span>
+      </div>
+      <div class="mixer" id="mixer" hidden>
+        <div class="mxhead">
+          <h2 title="Botón: abre o cierra. Fader: su ritmo. Vale desde la hora del reloj hasta que lo vuelvas a tocar. Las perillas de abajo valen todo el día.">Consola en vivo</h2><span class="note">botón abre o cierra · fader, ritmo · desde la hora del reloj</span>
+          <button id="runDay" class="rundy" title="Arranca el día desde las 00:00">▶ Correr día</button><button id="mxPlay" class="mini">❚❚ Pausa</button>
+          <span class="mxmode" id="mxMode"></span><span class="mxwait" id="mxWait"></span>
+          <span class="mxscore" id="mxScore"></span>
+        </div>
+        <div class="mxbody">
+          <div class="mxgrp"><div class="mxt">Ricardone <span>al puerto │ girasol: balanza, volcables, silos</span></div><div class="strips" id="mxCal"></div></div>
+          <div class="mxgrp"><div class="mxt">Puerto</div><div class="strips" id="mxVolc"></div></div>
+          <div class="mxgrp mxknobs"><div class="mxt">Todo el día <span>doble clic vuelve a lo medido</span></div><div class="rks" id="knobs"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card knobcard" id="knobCard" hidden>
+        <div class="kchead"><h2>Ritmos ahora</h2><button id="kReset">Volver a lo medido</button></div>
+        <div class="gain" id="fxGainBox" hidden><span class="n" id="fxGain">+0</span><span class="l">camiones descargados de más en el día<br><span id="fxNow"></span></span></div>
+        <div class="gwrap" id="gauges"></div>
+        <div class="glegend"><span><i class="gn"></i>tu simulación</span><span><i class="gr"></i>lo que pasó</span></div>
+      </div>
+      <div class="card" id="movesCard" hidden>
+        <div class="kchead"><h2>Tus jugadas</h2><button id="mxClear" class="mini">Borrar</button></div>
+        <div class="moves" id="mxMoves"></div>
+      </div>
+      <div class="card fixcard" id="fixCard" hidden>
+        <h2 id="fxTitle">Qué cambia con la mesa</h2>
+        <div class="note fxc" id="fxCambio" style="color:var(--ink)"></div>
+        <div class="cmp" id="fxCmp"></div>
+        <ul class="lect" id="fxLect"></ul>
+      </div>
+      <div class="card">
+        <h2>Calles · camiones en la última hora</h2>
+        <div class="lanes" id="lanes"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mesa" id="mesa" hidden>
+    <div class="mesahead">
+      <h2>Mesa de control del circuito</h2>
+      <span class="calib" id="mesaCalib"></span>
+      <span class="note">Las perillas de al lado del mapa suben o bajan todo el día (arrastrá arriba o abajo, rueda o flechas; doble clic vuelve a lo medido). Acá, arrastrá una barra para cambiar una sola franja de 2 h. La rayita marca lo medido.</span>
+    </div>
+    <div class="mesascroll"><div class="mgrid" id="mesaGrid"></div></div>
+  </div>
+
+  <div class="more">
+      <div class="card">
+        <h2>Camiones adentro</h2>
+        <div class="trio">
+          <div><div class="n" id="cRic">0</div><div class="l">en Ricardone</div></div>
+          <div><div class="n" id="cRoad">0</div><div class="l">en el camino</div></div>
+          <div><div class="n" id="cSl">0</div><div class="l">en el puerto</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Descargas del día · Excel</h2>
+        <div class="big"><span class="n" id="pN">0</span><span class="l">de <b id="pOf">0</b> camiones descargan · <b id="pT">0</b> t</span></div>
+        <div class="track" style="margin-top:10px"><div class="fill" id="pBar" style="width:0;background:var(--accent)"></div></div>
+        <div class="l" id="pNow"></div>
+        <div class="money" style="margin-top:10px">
+          <div class="row"><span>En Ricardone</span><b id="pRic">0</b></div>
+          <div class="row"><span>En el puerto</span><b id="pSl">0</b></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Cierre del día · hasta esta hora</h2>
+        <div class="trio" style="grid-template-columns:1fr 1fr">
+          <div><div class="n" id="dN">0</div><div class="l">camiones descargados</div></div>
+          <div><div class="n" id="dT">0</div><div class="l">toneladas descargadas</div></div>
+          <div><div class="n" id="sT">0</div><div class="l">t de soja · <span id="sU">USD 0</span></div></div>
+          <div><div class="n" id="wH">0</div><div class="l">horas de camión esperando en playas</div></div>
+        </div>
+        <div class="money">
+          <div class="row"><span>Transile del día</span><b id="trV">0 viajes · 0 t</b></div>
+          <div class="row"><span>Flete a $ 6.000/t</span><b id="trF">$ 0</b></div>
+          <div class="row good"><span>Fluido, a $ 5.000/t</span><b id="trA">$ 0 menos</b></div>
+          <div class="row good"><span>Mitad de espera</span><b id="wHalf">0 h libres</b></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Playas</h2>
+        <div id="bars" style="display:flex;flex-direction:column;gap:10px"></div>
+      </div>
+      <div class="card">
+        <h2>Ahora</h2>
+        <div class="now" id="now">—</div>
+      </div>
+  </div>
+
+  <div class="bottom">
+    <div class="card">
+      <h2>Ocupación de las playas en el día</h2>
+      <canvas id="chart" height="190" aria-label="Ocupación de las playas a lo largo del día"></canvas>
+    </div>
+    <div class="card">
+      <h2>Momentos de saturación</h2>
+      <div class="events" id="events"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Actividad por calle de calada y por volcable · camiones por hora</h2>
+    <div id="heat" style="overflow-x:auto"></div>
+  </div>
+  <div class="modal" id="endModal" hidden role="dialog" aria-modal="true" aria-labelledby="endTitle">
+    <div class="mbox">
+      <h2 id="endTitle">Cierre del día</h2>
+      <div class="mvs" id="endVs"></div>
+      <div class="endsec" id="endCmp"></div>
+      <div id="endFleet"></div>
+      <div class="note" id="endMoves"></div>
+      <div class="note">Lo único que no cambia es la hora a la que llegaron los camiones: el resto depende de lo que hiciste en la consola.</div>
+      <div class="mbtn"><button id="endAgain">Repetir el día con estos cambios</button><button id="endClose">Seguir ajustando</button><button id="endReset">Empezar de cero</button></div>
+    </div>
+  </div>
+
+  <p class="note" id="fxNote" hidden>Corregir el día y mesa de control: el motor de colas (scripts/simulador/motor_colas.py, que también corre en esta página) toma las mismas llegadas reales y las hace pasar por la calada de Ricardone, la balanza de ingreso y los volcables del puerto, con las capacidades medidas hora por hora. «Motor sin cambios» es esa reproducción, calibrada contra las cámaras, y la columna «real» de «Qué corrige» sale de ahí. Cada corrección o perilla cambia una capacidad y se compara contra esa reproducción: así, los camiones de más y las esperas no dependen de las lecturas que faltan. En el gráfico de playas, la línea punteada es el día real.</p>
+  <p class="note">Datos reales: lecturas de las cámaras (hora operativa) y Excel de movimientos del mismo día. Solo camiones que figuran en el Excel. Entre dos lecturas, el camión espera en la playa de ese tramo y se mueve en los últimos minutos. Capacidades de las playas: Playa 1, 200 camiones; Playa 3, 50; Playa OSL, 100; Playa demorado, 30. Entre Calada y Salida 2 el camión está demorado.</p>
+</div>
+
+<script>
+/*__ENGINE__*/
+</script>
+<script>
+const MODEL = __MODEL__;
+const INDEX = __INDEX__;
+const DEFAULT_DAY = __DEFAULT__;
+const CACHE = {[DEFAULT_DAY.day]: DEFAULT_DAY};
+const USD_T = 370, FLETE = 6000, FLETE_FLUIDO = 5000;
+const PLAN = __PLAN__;
+const MOTOR_DAYS = __MOTOR_DAYS__;  // días con entradas del motor de colas (mesa de control)
+// MODE: 'real' o el escenario del motor. REAL guarda el día real para compararlo con la corrección.
+let MODE = 'real', REAL = null, FX = null;
+// Plano: Ricardone a la izquierda a toda altura, el puerto a la derecha, la ruta en el medio.
+const VW = 1800, VH = 620, GAP = 110;
+const BOX = {ric: {x: 0, y: 0, h: VH}, sl: {}};
+BOX.ric.w = VH * PLAN.ric.aspect;
+BOX.sl.x = BOX.ric.w + GAP; BOX.sl.w = VW - BOX.sl.x; BOX.sl.h = BOX.sl.w / PLAN.sl.aspect; BOX.sl.y = (VH - BOX.sl.h) / 2;
+const IMG = {}; for (const k of ['ric', 'sl']) { IMG[k] = new Image(); IMG[k].onload = () => model && redraw(); IMG[k].src = PLAN[k].img; }
+const toXY = (pl, xp, yp) => [BOX[pl].x + BOX[pl].w * xp / 100, BOX[pl].y + BOX[pl].h * yp / 100];
+// Nodo del modelo → punto del plano (planta, id de punto) y playas → zona dibujada
+const NODE_PT = {
+  'ricardone:Ingreso': ['ric', 'S0'], 'ricardone:Pre ingreso': ['ric', 'S1'], 'ricardone:Calada': ['ric', 'S2'],
+  'ricardone:Liquidos Carga/Descarga': ['ric', 'S2-LIQ'], 'ricardone:Balanza Ingreso': ['ric', 'S4'], 'ricardone:Balanza Egreso': ['ric', 'S4'],
+  'ricardone:Celda 16': ['ric', 'S5'], 'ricardone:Playa 3': ['ric', 'S6'], 'ricardone:Volcable 1': ['ric', 'S9-V1'], 'ricardone:Volcable 2': ['ric', 'S9-V2'],
+  'ricardone:Volcable Silo Keppler': ['ric', 'S7-A'], 'ricardone:Volcable Silo Chief': ['ric', 'S8'], 'ricardone:Tolva de carga silo Chief': ['ric', 'S8'],
+  'ricardone:Silo Australiano': ['ric', 'S7-B'], 'ricardone:Tolva de carga Celda 09': ['ric', 'S5'], 'ricardone:Tolva de carga Celda 10': ['ric', 'S5'], 'ricardone:Tolva de carga Celda 11': ['ric', 'S5'],
+  'ricardone:Salida 2': ['ric', 'S3'], 'ricardone:Salida 1': ['ric', 'S10'], 'ricardone:Playa de egreso': ['ric', 'S10'],
+  'san_lorenzo:Ingreso': ['sl', 'S0'], 'san_lorenzo:Calada': ['sl', 'S2'], 'san_lorenzo:Balanza Ingreso': ['sl', 'S1'], 'san_lorenzo:Plataformas Volcables': ['sl', 'S4'],
+  'san_lorenzo:Balanza Egreso': ['sl', 'S5'], 'san_lorenzo:Egreso': ['sl', 'S7'], 'san_lorenzo:Carga/Descarga Renova': ['sl', 'S8'],
+  'san_lorenzo:Carga / Descarga OSL': ['sl', 'S10'], 'san_lorenzo:Carga/descarga': ['sl', 'S6'], 'san_lorenzo:Cargadero': ['sl', 'S4'],
+};
+const AREA_ZONE = {
+  'ricardone:Playa 1': ['ric', PLAN.ric.zones.Z2], 'ricardone:Playa 3': ['ric', PLAN.ric.zones.Z6], 'san_lorenzo:Playa OSL': ['sl', PLAN.sl.zones.Z0],
+  'ricardone:Playa demorado': ['ric', PLAN.ric.zones.Z9 || [[17.5, 75.5], [24.5, 75.5], [24.5, 79.8], [17.5, 79.8]]],  // Playa Demorados del plano
+};
+// Caminos de cada planta: los tramos entre puntos de public/plant/<planta>/plantZones.json (los mismos
+// que dibuja En vivo) más los accesos desde la ruta. 'S4' es un punto de control del plano.
+const ACCESS = {
+  ric: [
+    [[0, 81.5], [14.5, 83.3], [30, 86.5], [47.5, 90], [60, 92], [72, 92.3], [85, 90.5], [100, 87]],  // ruta
+    ['S0', [14.5, 83.3]], ['S3', [14.5, 83.3]], ['S10', [47.5, 90]],
+  ],
+  sl: [
+    [[0, 22], [4, 23.5], 'S0'],  // entrada desde la colectora
+    ['S7', [40, 77.5], [35, 75], [26, 70.5], [20, 67.5], [9.8, 63], [3, 58], [2.5, 50], [2.5, 30], [0, 22]],  // egreso a la colectora
+  ],
+};
+const ROADS = {};
+for (const pl of ['ric', 'sl']) ROADS[pl] = [...ACCESS[pl], ...PLAN[pl].tramos.map(([a, via, b]) => [a, ...via, b])];
+const ROAD_GATE = {ric: [100, 87], sl: [0, 22]};  // por dónde sale y entra la ruta entre plantas
+const WAIT_AT = {'san_lorenzo:Ingreso': 'san_lorenzo:Playa OSL'};
+// Tramos sin playa en el grafo donde el camión espera en una playa conocida
+const WAIT_PAIR = {'ricardone:Calada>ricardone:Salida 2': 'ricardone:Playa demorado'};
+const PROD = {soja:'--soja',pellet:'--pellet',girasol:'--girasol',otros_granos:'--grano',liquido:'--liq',otro:'--otro'};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const COLORS = {}; for (const k in PROD) COLORS[k] = css(PROD[k]);
+const C = {ric:css('--ric'),sl:css('--sl'),road:css('--road'),line:css('--line'),ink:css('--ink'),muted:css('--muted'),ok:css('--ok'),warn:css('--warn'),crit:css('--crit'),accent:css('--accent'),panel:css('--panel')};
+const fmtT = m => { m = Math.max(0, Math.min(1439, Math.floor(m))); return String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0'); };
+const fmtN = n => Math.round(n).toLocaleString('es-AR');
+const fmtMoney = v => v >= 1e6 ? (v / 1e6).toLocaleString('es-AR', {maximumFractionDigits: 1}) + ' M' : Math.round(v).toLocaleString('es-AR');
+
+let D, T = 0, playing = false, last = 0, speed = 60, model;
+
+function prepare(d) {
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden'; document.body.appendChild(svg);
+  const edges = d.edges.map(e => {
+    const p = document.createElementNS(svgNS, 'path'); p.setAttribute('d', e.d); svg.appendChild(p);
+    const L = p.getTotalLength(), pts = [];
+    for (let i = 0; i <= 40; i++) { const q = p.getPointAtLength(L * i / 40); pts.push([q.x, q.y]); }
+    return {...e, pts, path2d: new Path2D(e.d)};
+  });
+  svg.remove();
+  const out = {}; edges.forEach((e, i) => (out[e.a] ||= []).push(i));
+  const cache = {};
+  function route(a, b) {
+    const k = a + '>' + b; if (k in cache) return cache[k];
+    const prev = {[a]: null}, q = [a];
+    while (q.length) { const n = q.shift(); if (n === b) break; for (const ei of out[n] || []) { const m = edges[ei].b; if (!(m in prev)) { prev[m] = ei; q.push(m); } } }
+    if (!(b in prev)) return cache[k] = null;
+    const seq = []; let n = b; while (n !== a) { const ei = prev[n]; seq.unshift(ei); n = edges[ei].a; }
+    return cache[k] = seq;
+  }
+  const nodes = d.nodes.map(n => {
+    const m = {...n, x0: n.x, y0: n.y};
+    const z = AREA_ZONE[n.id];
+    if (z) {
+      const poly = z[1].map(([a, b]) => toXY(z[0], a, b));
+      const xs = poly.map(p => p[0]), ys = poly.map(p => p[1]);
+      m.poly = poly; m.x = (Math.min(...xs) + Math.max(...xs)) / 2; m.y = (Math.min(...ys) + Math.max(...ys)) / 2;
+      m.slots = fillSlots(poly, n.cap || 30);
+    } else if (NODE_PT[n.id]) {
+      const [pl, id] = NODE_PT[n.id], p = PLAN[pl].points[id];
+      [m.x, m.y] = toXY(pl, p[0], p[1]);
+    } else { m.hidden = true; [m.x, m.y] = n.plant === 'ricardone' ? toXY('ric', 50, 50) : toXY('sl', 50, 50); }
+    return m;
+  });
+  const idOf = {}; nodes.forEach((n, i) => idOf[n.id] = i);
+  const G = {ric: graph('ric'), sl: graph('sl')};
+  const plOf = n => n.plant === 'ricardone' ? 'ric' : 'sl';
+  nodes.forEach(n => { if (!n.hidden) n.rv = G[plOf(n)].near(n.x, n.y); });
+  // ruta entre plantas: sale de Ricardone por la ruta y entra al puerto por la colectora
+  const gOut = toXY('ric', ...ROAD_GATE.ric), gIn = toXY('sl', ...ROAD_GATE.sl);
+  const ROAD = [gOut, [gOut[0] + GAP * 0.35, gOut[1]], [gIn[0] - GAP * 0.35, gIn[1]], gIn];
+  const pathCache = {};
+  // recorrido de un punto a otro siguiendo los caminos; si cambia de planta, pasa por la ruta
+  function walk(A, B) {
+    const k = A.id + '>' + B.id; if (k in pathCache) return pathCache[k];
+    let pts;
+    if (A.hidden || B.hidden) pts = [[A.x, A.y], [B.x, B.y]];
+    else if (A.plant === B.plant) pts = [[A.x, A.y], ...G[plOf(A)].path(A.rv, B.rv), [B.x, B.y]];
+    else {
+      const a = plOf(A), b = plOf(B);
+      const ga = G[a].near(...(a === 'ric' ? gOut : gIn)), gb = G[b].near(...(b === 'ric' ? gOut : gIn));
+      const mid = a === 'ric' ? ROAD.slice(1, 3) : ROAD.slice(1, 3).reverse();
+      pts = [[A.x, A.y], ...G[a].path(A.rv, ga), ...mid, ...G[b].path(gb, B.rv), [B.x, B.y]];
+    }
+    return pathCache[k] = resample(pts);
+  }
+  const exits = new Set(nodes.map((n, i) => i).filter(i => ['san_lorenzo:Egreso', 'ricardone:Salida 1', 'ricardone:Playa de egreso'].includes(nodes[i].id) || nodes[i].label.startsWith('Balanza egreso')));
+  const trucks = d.trucks.map(([plate, prod, t, reads, transile, desc, descT]) => {
+    const segs = [];
+    for (let i = 0; i + 1 < reads.length; i++) {
+      const [a, ta] = reads[i], [b, tb] = reads[i + 1];
+      const r = route(a, b);
+      let wait = a, travel = 0, pts = null;
+      if (r) {
+        const ns = [a, ...r.map(ei => edges[ei].b)];
+        const w = ns.slice(1, -1).find(n => nodes[n].area); if (w !== undefined) wait = w;
+        else if (WAIT_PAIR[nodes[a].id + '>' + nodes[b].id] && tb - ta > 10) wait = idOf[WAIT_PAIR[nodes[a].id + '>' + nodes[b].id]];
+        else if (WAIT_AT[nodes[a].id] && tb - ta > 10) wait = idOf[WAIT_AT[nodes[a].id]];
+        r.forEach(ei => edges[ei].use = (edges[ei].use || 0) + 1);
+        const inter = r.some(ei => edges[ei].inter);
+        const A = nodes[wait], B = nodes[b];
+        pts = walk(A, B);
+        travel = Math.min(tb - ta, inter ? 12 : 3);
+      }
+      segs.push({a, b, ta, tb, wait, travel, pts});
+    }
+    const lastN = reads[reads.length - 1][0];
+    return {plate, prod, t, reads, segs, transile, desc, descT, t0: reads[0][1], t1: reads[reads.length - 1][1] + (exits.has(lastN) ? 4 : 15)};
+  });
+  return {d, nodes, edges, trucks, ROAD, G};
+}
+
+// Grafo de caminos de una planta: vértices en píxeles del plano, aristas por distancia
+function graph(pl) {
+  const V = [], key = {}, adj = [];
+  const vert = tok => {
+    const [xp, yp] = typeof tok === 'string' ? PLAN[pl].points[tok] : tok;
+    const k = xp.toFixed(2) + ',' + yp.toFixed(2);
+    if (!(k in key)) { key[k] = V.length; V.push(toXY(pl, xp, yp)); adj.push([]); }
+    return key[k];
+  };
+  const lines = ROADS[pl].map(l => l.map(vert));
+  for (const l of lines) for (let i = 0; i + 1 < l.length; i++) {
+    const a = l[i], b = l[i + 1], d = Math.hypot(V[a][0] - V[b][0], V[a][1] - V[b][1]);
+    adj[a].push([b, d]); adj[b].push([a, d]);
+  }
+  const near = (x, y) => { let best = 0, bd = Infinity; V.forEach((v, i) => { const d = (v[0] - x) ** 2 + (v[1] - y) ** 2; if (d < bd) { bd = d; best = i; } }); return best; };
+  const path = (a, b) => {
+    const dist = V.map(() => Infinity), prev = V.map(() => -1), done = V.map(() => false); dist[a] = 0;
+    for (;;) {
+      let u = -1; for (let i = 0; i < V.length; i++) if (!done[i] && dist[i] < Infinity && (u < 0 || dist[i] < dist[u])) u = i;
+      if (u < 0 || u === b) break; done[u] = true;
+      for (const [v, d] of adj[u]) if (dist[u] + d < dist[v]) { dist[v] = dist[u] + d; prev[v] = u; }
+    }
+    if (dist[b] === Infinity) return [V[a], V[b]];
+    const out = []; for (let n = b; n >= 0; n = prev[n]) { out.unshift(V[n]); if (n === a) break; }
+    return out;
+  };
+  return {V, lines: lines.map(l => l.map(i => V[i])), near, path};
+}
+
+// Puntos a paso parejo a lo largo de un recorrido, para que el camión avance a velocidad constante
+function resample(pts) {
+  const L = [0]; for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+  const tot = L[L.length - 1] || 1, n = Math.max(20, Math.min(240, Math.round(tot / 5))), out = [];
+  for (let k = 0, j = 0; k <= n; k++) {
+    const s = tot * k / n; while (j < pts.length - 2 && L[j + 1] < s) j++;
+    const f = (s - L[j]) / ((L[j + 1] - L[j]) || 1);
+    out.push([pts[j][0] + (pts[j + 1][0] - pts[j][0]) * f, pts[j][1] + (pts[j + 1][1] - pts[j][1]) * f]);
+  }
+  return out;
+}
+
+// Puntos para ubicar camiones dentro de una playa dibujada (grilla recortada al polígono)
+function fillSlots(poly, cap) {
+  const xs = poly.map(p => p[0]), ys = poly.map(p => p[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const inside = (x, y) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
+  let sp = Math.max(3, Math.sqrt((x1 - x0) * (y1 - y0) / cap)), out = [];
+  for (let k = 0; k < 12; k++) {
+    out = [];
+    for (let y = y0 + sp / 2; y < y1; y += sp) for (let x = x0 + sp / 2; x < x1; x += sp) if (inside(x, y)) out.push([x, y]);
+    if (out.length >= cap) break; sp *= 0.85;
+  }
+  // de arriba a la izquierda hacia abajo: la playa se llena en orden
+  return out.length ? out : [[(x0 + x1) / 2, (y0 + y1) / 2]];
+}
+
+function state(tr, t) {
+  if (t < tr.t0 || t > tr.t1) return null;
+  for (const s of tr.segs) {
+    if (t >= s.ta && t < s.tb) {
+      if (!s.pts) return null;
+      if (t < s.tb - s.travel) return {wait: s.wait};
+      const f = (t - (s.tb - s.travel)) / Math.max(s.travel, 0.01);
+      const i = Math.min(s.pts.length - 1, Math.floor(f * (s.pts.length - 1)));
+      return {x: s.pts[i][0], y: s.pts[i][1], moving: true, inter: s.wait !== undefined && model.nodes[s.wait].plant !== model.nodes[s.b].plant};
+    }
+  }
+  return {wait: tr.reads[tr.reads.length - 1][0]};
+}
+
+function counts(t) {
+  const occ = {}, plant = {ricardone: 0, road: 0, san_lorenzo: 0};
+  const pos = [];
+  for (const tr of model.trucks) {
+    const s = state(tr, t); if (!s) continue;
+    if (s.moving) { if (s.inter) plant.road++; else plant[nearPlant(s.x)]++; pos.push({tr, x: s.x, y: s.y}); }
+    else { (occ[s.wait] ||= []).push(tr); plant[model.nodes[s.wait].plant]++; }
+  }
+  return {occ, plant, pos};
+}
+const nearPlant = x => x < BOX.ric.w + GAP / 2 ? 'ricardone' : 'san_lorenzo';
+
+function series() {
+  const areas = model.nodes.map((n, i) => i).filter(i => model.nodes[i].cap && model.nodes[i].cap >= 20);
+  const s = {}; areas.forEach(i => s[i] = []);
+  const ev = [];
+  const flags = {};
+  for (let t = 0; t <= 1440; t += 5) {
+    const {occ} = counts(t);
+    for (const i of areas) {
+      const n = (occ[i] || []).length; s[i].push(n);
+      const cap = model.nodes[i].cap, lvl = n >= cap ? 2 : n >= cap * 0.8 ? 1 : 0;
+      if (lvl > (flags[i] || 0)) ev.push({t, i, lvl, n, cap});
+      if (lvl < (flags[i] || 0) && n < cap * 0.6) flags[i] = 0; else flags[i] = Math.max(flags[i] || 0, lvl);
+    }
+    // cola en la balanza de ingreso del puerto
+    const bi = model.nodes.findIndex(n => n.id === 'san_lorenzo:Balanza Ingreso');
+    const q = (occ[bi] || []).length;
+    if (q >= 15 && !(flags.bal)) { ev.push({t, i: bi, lvl: 1, n: q, cola: true}); flags.bal = 1; } else if (q < 8) flags.bal = 0;
+  }
+  // descargas: las del Excel del día (filas de ingreso); la hora es la del volcable del puerto o la última lectura en la planta
+  const discharged = [], disRic = [], disSl = [];
+  const vol = model.nodes.findIndex(n => n.id === 'san_lorenzo:Plataformas Volcables');
+  const soja = [], transile = [];
+  const slIng = model.nodes.findIndex(n => n.id === 'san_lorenzo:Ingreso');
+  for (const tr of model.trucks) {
+    if (tr.desc) {
+      const pl = tr.desc === 'S' ? 'san_lorenzo' : 'ricardone';
+      const inPl = tr.reads.filter(r => model.nodes[r[0]].plant === pl);
+      const r = (tr.desc === 'S' && inPl.find(r => r[0] === vol)) || inPl[inPl.length - 1] || tr.reads[tr.reads.length - 1];
+      const at = Math.max(0, Math.min(1440, r[1])), e = [at, tr.descT || tr.t];
+      discharged.push(e); (tr.desc === 'S' ? disSl : disRic).push(e); if (tr.prod === 'soja') soja.push(e);
+    }
+    if (tr.transile) {
+      const ri = tr.reads.find(r => r[0] === slIng && r[1] >= 0 && r[1] <= 1440) || (tr.reads[0][1] >= 0 && tr.reads[0][1] <= 1440 ? tr.reads[0] : null);
+      if (ri) transile.push([ri[1], tr.t]);
+    }
+  }
+  for (const a of [discharged, disRic, disSl, soja, transile]) a.sort((x, y) => x[0] - y[0]);
+  return {areas, s, ev, discharged, disRic, disSl, soja, transile};
+}
+
+// ---------- dibujo ----------
+const map = document.getElementById('map'), mctx = map.getContext('2d');
+const chart = document.getElementById('chart'), cctx = chart.getContext('2d');
+let S;
+
+function sizeCanvas(cv, w, h) {
+  const r = window.devicePixelRatio || 1; cv.width = Math.round(w * r); cv.height = Math.round(h * r);
+  return r;
+}
+
+let HOVER = [];
+function drawMap() {
+  const W = VW, H = VH, cw = map.clientWidth || 900, sc = cw / W;
+  const r = sizeCanvas(map, cw, H * sc); map.style.height = (H * sc) + 'px';
+  const g = mctx; g.setTransform(r * sc, 0, 0, r * sc, 0, 0); g.clearRect(0, 0, W, H);
+  // fotos aéreas, oscurecidas para que se lean los camiones
+  for (const k of ['ric', 'sl']) {
+    const b = BOX[k];
+    if (IMG[k].complete && IMG[k].naturalWidth) g.drawImage(IMG[k], b.x, b.y, b.w, b.h); else { g.fillStyle = C.panel; g.fillRect(b.x, b.y, b.w, b.h); }
+    g.fillStyle = 'rgba(10,20,16,.55)'; g.fillRect(b.x, b.y, b.w, b.h);
+    g.fillStyle = C.ink; g.font = '800 16px ' + css('--sans'); g.fillText(k === 'ric' ? 'RICARDONE' : 'PUERTO SAN LORENZO', b.x + 14, b.y + 26);
+  }
+  // caminos internos
+  g.strokeStyle = 'rgba(232,240,236,.34)'; g.lineWidth = 3.5; g.lineJoin = g.lineCap = 'round';
+  for (const k of ['ric', 'sl']) for (const l of model.G[k].lines) { g.beginPath(); l.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke(); }
+  // ruta entre plantas
+  g.strokeStyle = C.accent; g.lineWidth = 3; g.setLineDash([12, 9]); g.beginPath();
+  model.ROAD.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke(); g.setLineDash([]);
+  g.fillStyle = C.accent; g.font = '700 13px ' + css('--sans'); g.fillText('Ruta · 12 min', BOX.ric.w + 10, (model.ROAD[1][1] + model.ROAD[2][1]) / 2 - 10);
+  const {occ, pos} = counts(T);
+  HOVER = [];
+  // playas: polígono del plano pintado según ocupación y camiones adentro
+  model.nodes.forEach((n, i) => {
+    const q = occ[i] || [];
+    if (n.poly) {
+      const cap = n.cap || 30, ratio = q.length / cap;
+      const col = ratio >= 1 ? C.crit : ratio >= 0.8 ? C.warn : C.ok;
+      g.beginPath(); n.poly.forEach((p, k) => k ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath();
+      g.fillStyle = ratio >= 0.8 ? (ratio >= 1 ? 'rgba(224,90,71,.28)' : 'rgba(227,163,59,.22)') : 'rgba(63,160,110,.14)'; g.fill();
+      g.strokeStyle = col; g.lineWidth = 2; g.stroke();
+      q.forEach((tr, k) => { const p = n.slots[k % n.slots.length]; dot(g, p[0], p[1], 3.2, COLORS[tr.prod]); HOVER.push({x: p[0], y: p[1], tr, where: n.label}); });
+      pill(g, n.label + '  ' + q.length + ' / ' + cap, n.poly.reduce((a, p) => Math.min(a, p[0]), 1e9), n.poly.reduce((a, p) => Math.min(a, p[1]), 1e9) - 8, col);
+    }
+  });
+  // puntos de control con su cola
+  model.nodes.forEach((n, i) => {
+    if (n.poly || n.hidden || !n.cam) return;
+    const q = occ[i] || [];
+    q.forEach((tr, k) => { const a = k * 0.7, rad = 11 + k * 0.6, x = n.x + Math.cos(a) * rad, y = n.y + Math.sin(a) * rad; dot(g, x, y, 2.9, COLORS[tr.prod]); HOVER.push({x, y, tr, where: n.label}); });
+    g.beginPath(); g.arc(n.x, n.y, 7, 0, 7); g.fillStyle = '#0E1A16'; g.fill(); g.strokeStyle = q.length >= 10 ? C.warn : C.ink; g.lineWidth = 2; g.stroke();
+  });
+  for (const p of pos) { dot(g, p.x, p.y, 3.6, COLORS[p.tr.prod], true); HOVER.push({x: p.x, y: p.y, tr: p.tr, where: 'en movimiento'}); }
+  // nombres de los puntos (sin repetir el mismo punto del plano)
+  const seen = new Set();
+  g.font = '600 11px ' + css('--sans');
+  model.nodes.forEach((n, i) => {
+    if (n.poly || n.hidden || !n.cam) return;
+    const key = Math.round(n.x) + ',' + Math.round(n.y); if (seen.has(key)) return; seen.add(key);
+    const q = (occ[i] || []).length;
+    pill(g, n.label + (q ? ' · ' + q : ''), n.x + 10, n.y - 10, q >= 10 ? C.warn : null, true);
+  });
+}
+function pill(g, txt, x, y, col, small) {
+  g.font = (small ? '600 11px ' : '700 13px ') + css('--sans');
+  const w = g.measureText(txt).width + 12, h = small ? 18 : 22;
+  g.beginPath(); g.roundRect(x, y - h + 4, w, h, 6); g.fillStyle = 'rgba(14,26,22,.85)'; g.fill();
+  if (col) { g.strokeStyle = col; g.lineWidth = 1.5; g.stroke(); }
+  g.fillStyle = C.ink; g.fillText(txt, x + 6, y - (small ? 1 : 2));
+}
+function dot(g, x, y, r, col, ring) { g.beginPath(); g.arc(x, y, r, 0, 7); g.fillStyle = col; g.fill(); if (ring) { g.strokeStyle = '#0E1A16'; g.lineWidth = 1; g.stroke(); } }
+function rr(g, x, y, w, h, r, fill, stroke) { g.beginPath(); g.roundRect(x, y, w, h, r); if (fill) { g.fillStyle = fill; g.fill(); } if (stroke) { g.stroke(); } }
+
+function drawChart() {
+  const cw = chart.clientWidth || 800, ch = 190, r = sizeCanvas(chart, cw, ch);
+  const g = cctx; g.setTransform(r, 0, 0, r, 0, 0); g.clearRect(0, 0, cw, ch);
+  const L = 40, R = 10, Tp = 12, B = 26, w = cw - L - R, h = ch - Tp - B;
+  g.font = '12px ' + css('--mono'); g.fillStyle = C.muted; g.strokeStyle = C.line; g.lineWidth = 1;
+  for (const p of [0, 50, 100]) { const y = Tp + h - h * p / 100; g.beginPath(); g.moveTo(L, y); g.lineTo(L + w, y); g.stroke(); g.fillText(p + '%', 4, y + 4); }
+  for (let hh = 0; hh <= 24; hh += 3) { const x = L + w * hh / 24; g.fillText(String(hh).padStart(2, '0'), x - 7, ch - 8); }
+  const palette = [C.warn, '#B79BEA', '#6FA8DC', '#E05A47'];
+  if (MODE !== 'real' && REAL) {  // el día real, punteado, para comparar con la corrección
+    g.setLineDash([5, 5]); g.globalAlpha = 0.55;
+    REAL.S.areas.forEach((i, k) => {
+      const arr = REAL.S.s[i], cap = model.nodes[i].cap; g.strokeStyle = palette[k % 4]; g.lineWidth = 1.5; g.beginPath();
+      arr.forEach((v, j) => { const x = L + w * (j * 5) / 1440, y = Tp + h - h * Math.min(1.15, v / cap); j ? g.lineTo(x, y) : g.moveTo(x, y); });
+      g.stroke();
+    });
+    g.setLineDash([]); g.globalAlpha = 1;
+  }
+  S.areas.forEach((i, k) => {
+    const arr = S.s[i], cap = model.nodes[i].cap; g.strokeStyle = palette[k % 4]; g.lineWidth = 2; g.beginPath();
+    arr.forEach((v, j) => { const x = L + w * (j * 5) / 1440, y = Tp + h - h * Math.min(1.15, v / cap); j ? g.lineTo(x, y) : g.moveTo(x, y); });
+    g.stroke();
+    g.fillStyle = palette[k % 4]; g.fillText(model.nodes[i].label, L + 8 + k * 150, Tp + 12);
+  });
+  const x = L + w * T / 1440; g.strokeStyle = C.ink; g.lineWidth = 1.5; g.beginPath(); g.moveTo(x, Tp); g.lineTo(x, Tp + h); g.stroke();
+}
+
+function panel() {
+  const {occ, plant} = counts(T);
+  document.getElementById('clock').textContent = fmtT(T);
+  document.getElementById('scrub').value = T;
+  cRic.textContent = plant.ricardone; cRoad.textContent = plant.road; cSl.textContent = plant.san_lorenzo;
+  const upto = arr => { let n = 0, t = 0; for (const [tt, kg] of arr) { if (tt > T) break; n++; t += kg; } return [n, t]; };
+  const [n, t] = upto(S.discharged), [, st] = upto(S.soja), [tn, tt] = upto(S.transile);
+  const nTot = S.discharged.length, tTot = S.discharged.reduce((a, x) => a + x[1], 0);
+  dN.textContent = fmtN(n); dT.textContent = fmtN(t); sT.textContent = fmtN(st);
+  pN.textContent = fmtN(nTot); pOf.textContent = fmtN(model.trucks.length); pT.textContent = fmtN(tTot);
+  pRic.textContent = fmtN(S.disRic.length); pSl.textContent = fmtN(S.disSl.length);
+  pBar.style.width = (nTot ? n / nTot * 100 : 0) + '%'; pNow.textContent = fmtN(n) + ' de ' + fmtN(nTot) + ' ya descargaron a las ' + fmtT(T);
+  sU.textContent = 'USD ' + fmtMoney(st * USD_T);
+  let wh = 0; const k = Math.floor(T / 5);
+  for (const i of S.areas) for (let j = 0; j < Math.min(k, S.s[i].length); j++) wh += S.s[i][j] * 5 / 60;
+  wH.textContent = fmtN(wh); wHalf.textContent = fmtN(wh / 2) + ' h libres';
+  trV.textContent = fmtN(tn) + ' viajes · ' + fmtN(tt) + ' t';
+  trF.textContent = '$ ' + fmtMoney(tt * FLETE);
+  trA.textContent = '$ ' + fmtMoney(tt * (FLETE - FLETE_FLUIDO)) + ' menos';
+  bars.innerHTML = S.areas.map(i => {
+    const q = (occ[i] || []).length, cap = model.nodes[i].cap, p = Math.min(100, q / cap * 100);
+    const col = q >= cap ? C.crit : q >= cap * .8 ? C.warn : C.ok;
+    return `<div class="bar"><div class="row"><span>${model.nodes[i].label}</span><b>${q} / ${cap}</b></div><div class="track"><div class="fill" style="width:${p}%;background:${col}"></div></div></div>`;
+  }).join('');
+  // recurso más cargado ahora
+  let best = null; model.nodes.forEach((nd, i) => { const q = (occ[i] || []).length; const load = nd.cap ? q / nd.cap : q / 40; if (q && (!best || load > best.load)) best = {nd, q, load}; });
+  if (FX) {
+    const upto = arr => { let n = 0; for (const t of arr) { if (t > T) break; n++; } return n; };
+    const a = upto(FX.desc), b = upto(BASE.desc), d = a - b;
+    fxNow.innerHTML = `Hasta las ${fmtT(T)}: <b>${fmtN(a)}</b> descargas en el puerto contra ${fmtN(b)} del día real (${d > 0 ? '+' : ''}${fmtN(d)})`;
+  }
+  now.innerHTML = best ? `Donde más camiones esperan: <b>${best.nd.label}${best.nd.plant === 'san_lorenzo' ? ' (puerto)' : ''}</b> con ${best.q} camiones${best.nd.cap ? `, ${Math.round(best.load * 100)} % de su capacidad` : ''}.` : 'Planta vacía.';
+}
+
+function buildHeat() {
+  const devs = model.d.devices, H = devs.map(() => Array(24).fill(0)), all = [];
+  for (const tr of model.trucks) for (const r of tr.reads) { const dv = r[2]; if (dv >= 0 && r[1] >= 0 && r[1] < 1440) { H[dv][Math.floor(r[1] / 60)]++; all.push([dv, r[1]]); } }
+  model.heat = {H, all};
+  const groups = [['calada', 'Calada Ricardone'], ['volc_ric', 'Descarga Ricardone'], ['volc_sl', 'Volcables del puerto']];
+  let html = '<div class="hm"><div></div>' + Array.from({length: 24}, (_, h) => `<div class="h">${String(h).padStart(2, '0')}</div>`).join('') + '<div class="h">última h</div><div class="h">día</div>';
+  for (const [g, name] of groups) {
+    const idx = devs.map((d, i) => i).filter(i => devs[i][2] === g);
+    const mx = Math.max(1, ...idx.flatMap(i => H[i]));
+    html += `<div class="grp">${name}</div>`;
+    for (const i of idx) {
+      const tot = H[i].reduce((a, b) => a + b, 0);
+      html += `<div class="lab">${devs[i][1]}</div>` + H[i].map((v, h) => { const a = v / mx; const bg = v ? `rgba(124,194,156,${0.15 + 0.85 * a})` : 'rgba(255,255,255,.04)'; return `<div class="c" data-h="${h}" style="background:${bg}">${v || ''}</div>`; }).join('') + `<div class="v" id="lh${i}">0</div><div class="v">${tot}</div>`;
+    }
+  }
+  heat.innerHTML = html + '</div>';
+}
+function updateHeat() {
+  const h = Math.min(23, Math.floor(T / 60));
+  heat.querySelectorAll('.c.now').forEach(c => c.classList.remove('now'));
+  heat.querySelectorAll(`.c[data-h="${h}"]`).forEach(c => c.classList.add('now'));
+  const cnt = {}; for (const [dv, t] of model.heat.all) if (t <= T && t > T - 60) cnt[dv] = (cnt[dv] || 0) + 1;
+  model.d.devices.forEach((d, i) => { const el = document.getElementById('lh' + i); if (el) { el.textContent = cnt[i] || 0; el.classList.toggle('hot', (cnt[i] || 0) >= 8); } });
+  renderLanes(cnt); updateMixer(cnt); updateGauges();
+  const hb = Math.floor(T / 120); if (hb !== updateHeat.hb) { updateHeat.hb = hb; updateMesa(); }
+}
+
+function frame(ts) {
+  if (playing) { const dt = (ts - last) / 1000; T = Math.min(1440, T + dt * speed / 60 * 60 / 60 * 1); if (T >= 1440) { toggle(false); showEnd(); } }
+  last = ts; drawMap(); drawChart(); panel(); updateHeat();
+  if (playing) requestAnimationFrame(frame);
+}
+function toggle(v) { playing = v ?? !playing; play.textContent = playing ? '❚❚ Pausa' : '▶ Reproducir'; if (window.mxPlay) mxPlay.textContent = playing ? '❚❚ Pausa' : '▶ Seguir'; play.setAttribute('aria-label', playing ? 'Pausar' : 'Reproducir'); if (playing) { last = performance.now(); requestAnimationFrame(frame); } }
+function redraw() { drawMap(); drawChart(); panel(); updateHeat(); }
+
+async function load(day) {
+  daySel.value = day;
+  let d = CACHE[day];
+  if (!d) {
+    daySub.textContent = 'Cargando el día…';
+    try { d = CACHE[day] = await (await fetch('days/' + day + '.json')).json(); }
+    catch (err) { daySub.textContent = 'No se pudo cargar ese día. Probá con otro.'; return; }
+  }
+  model = prepare({...MODEL, ...d}); S = series(); buildHeat(); toggle(false);
+  REAL = {model, S, d}; MODE = 'real'; FX = null; fixCard.hidden = true;
+  daySub.textContent = realSub();
+  renderEvents(); loadMotor(day);
+  T = 600; redraw();
+}
+const realSub = () => REAL.d.title + ' · ' + REAL.model.trucks.length + ' camiones del Excel leídos por las cámaras · ' + REAL.S.discharged.length + ' descargan' + (REAL.d.day < '2026-07-31' ? ' · antes del 31/07 el puerto tenía menos cámaras' : '') + '.';
+
+function renderEvents() {
+  events.innerHTML = S.ev.length ? S.ev.map(e => {
+    const nd = model.nodes[e.i];
+    const txt = e.cola ? `Cola de ${e.n} camiones en la balanza de ingreso del puerto` : `${nd.label} ${e.lvl === 2 ? 'llena' : 'al 80 %'}: ${e.n} de ${e.cap} camiones`;
+    return `<button class="ev ${e.lvl === 2 ? 'crit' : ''}" data-t="${e.t}"><span class="t">${fmtT(e.t)}</span><span>${txt}</span></button>`;
+  }).join('') : '<div class="note">Ninguna playa llegó al 80 % de su capacidad.</div>';
+}
+
+// ---------- mesa de control del circuito (motor de colas corriendo en la página) ----------
+// El motor (motor_colas.js) toma las mismas llegadas reales del día y las pasa por la calada de Ricardone,
+// la balanza de ingreso y los volcables del puerto. La capacidad es física: calles (o volcables) abiertas
+// × ritmo de cada una. Dos capas: barras por franja de 2 h y perillas que suben o bajan todo el día.
+// Con todo en lo medido, el motor reproduce el día; cada cambio se compara contra esa reproducción.
+let LIVE = [], PREP = null, BST = null, BMK = null, MOTOR = null, BK = null, BG = null, K = null, G = null, EK = null, BASE = null, applyTimer = 0, mP1, mOsl, mManda, mCapC, mCapV;
+const BLOCKS = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
+const ROWS = [
+  {k: 'calles', lab: 'Calles de calada abiertas', u: 'de 6', max: 6},
+  {k: 'calRate', lab: 'Ritmo por calle de calada', u: 'camiones por hora, cada calle', max: 60},
+  {k: 'vact', lab: 'Volcables del puerto abiertos', u: 'de 5', max: 5},
+  {k: 'volcRate', lab: 'Ritmo por volcable', u: 'camiones por hora, cada volcable', max: 15},
+];
+const PARADAS = ['juntos', 'escalonada', 'sin'], PARADA_TXT = ['Los 5 juntos', 'De a uno', 'Sin parada'];
+const dec = v => String(Math.round(v * 10) / 10).replace('.', ',');
+const signed = v => (v > 0 ? '+' : '') + v;
+// Perillas: suben o bajan todo el día; doble clic vuelve a lo medido
+const KNOBS = [
+  {k: 'extraPct', s: 'Llegadas extra', lab: 'Llegadas extra a Ricardone', min: 0, max: 100, step: 5, fmt: v => '+' + v + ' %'},
+  {k: 'flPellet', s: 'Flota pellet', lab: 'Camiones de la flota de transile de pellet (cada uno hace vueltas puerto → Ricardone)', min: 0, max: 150, step: 1, fmt: v => v + ' cam.', fleet: 'pellet'},
+  {k: 'flSoja', s: 'Flota soja silos', lab: 'Camiones de la flota de transile de soja de silos', min: 0, max: 60, step: 1, fmt: v => v + ' cam.', fleet: 'soja'},
+  {k: 'calPct', s: 'Ritmo calada', lab: 'Ritmo de calada, todas las calles', min: 0, max: 200, step: 5, fmt: v => v + ' %'},
+  {k: 'callesOff', s: 'Calles calada', lab: 'Calles de calada abiertas, más o menos', min: -5, max: 5, step: 1, fmt: v => signed(v)},
+  {k: 'vactOff', s: 'Volcables', lab: 'Volcables abiertos, más o menos', min: -4, max: 4, step: 1, fmt: v => signed(v)},
+  {k: 'volcPct', s: 'Ritmo volcables', lab: 'Ritmo de volcables, todos', min: 0, max: 200, step: 5, fmt: v => v + ' %'},
+  {k: 'demoraPct', s: 'Playa demorado', lab: 'Demora en Playa demorado (calada → Salida 2)', min: 20, max: 150, step: 5, fmt: v => v + ' %'},
+  {k: 'gate', s: 'En camino', lab: 'Camiones en camino por volcable', min: 1, max: 6, step: 1, fmt: v => String(v)},
+  {k: 'N', s: 'Soltar si OSL <', lab: 'Salida 2 suelta solo si Playa OSL y la ruta tienen menos de', min: 0, max: 200, step: 10, fmt: v => v ? String(v) : 'sin tope'},
+  {k: 'capOsl', s: 'Lugar OSL', lab: 'Lugar en Playa OSL (si se llena, el ingreso del puerto frena)', min: 0, max: 200, step: 10, fmt: v => v ? String(v) : 'sin tope'},
+  {k: 'capSal', s: 'Lugar salida', lab: 'Lugar para esperar la balanza de egreso (si se llena, el camión no baja del volcable)', min: 0, max: 40, step: 2, fmt: v => v ? String(v) : 'sin tope'},
+  {k: 'parada', s: 'Parada 06:30', lab: 'Parada de las 06:30 de los volcables', min: 0, max: 2, step: 1, fmt: v => PARADA_TXT[v]},
+];
+const hi = h => h - MOTOR.h0;
+const cloneK = k => ({calles: [...k.calles], calRate: [...k.calRate], vact: [...k.vact], volcRate: [...k.volcRate]});
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+// Perillas efectivas para el motor: capacidad total = abiertas × ritmo de cada una × perilla
+// Las perillas actúan de 00 a 24 h: la precarga (−6 a 0 h) queda como se midió, así no se corre gente al día anterior.
+// Desde la primera jugada manda el usuario: los canales pasan a la configuración típica del día (motorFreeze),
+// con un solo producto cada uno, y desde ahí solo cambian con lo que se toque
+function withFreeze(ek) {
+  if (!LIVE.length || !BASE) return ek;
+  return {...ek, frozen: motorFreeze(PREP, ek, Math.min(...LIVE.map(m => m.t)))};
+}
+function eff(k, g) {
+  const inDay = i => i >= hi(0) && i < hi(24), on = (i, x, x0) => inDay(i) ? x : x0;
+  const calles = k.calles.map((c, i) => on(i, clamp(c + g.callesOff, 0, 6), c)), vact = k.vact.map((v, i) => on(i, clamp(v + g.vactOff, 0, 5), v));
+  return {calles: calles.map(c => Math.max(1, c)), cal: calles.map((c, i) => c * k.calRate[i] * on(i, g.calPct, 100) / 100),
+          vact, volc: vact.map((v, i) => v * k.volcRate[i] * on(i, g.volcPct, 100) / 100),
+          parada: PARADAS[g.parada], N: g.N, gate: g.gate, extra: g.extraPct, demoraPct: g.demoraPct, fleet: {pellet: g.flPellet, soja: g.flSoja},
+          st: {...BST}, volcProds: BMK.volcProds, rd: BMK.rd, calProds: BMK.calProds, calLiq: BMK.calLiq, capP1: 200, capDem: 30, capP3: 50, capOsl: g.capOsl, capSal: g.capSal,
+          live: [...LIVE].sort((a, b) => a.t - b.t), frozen: null};
+}
+function runK(ek) {
+  // con la perilla de llegadas, el motor corre sobre la lista ampliada (camiones del día + copias)
+  const A = ek.extra ? motorAugment(PREP, REAL.d.trucks, ek.extra) : {P2: PREP, trucks: REAL.d.trucks, nExtra: 0, port0: PREP.port.length};
+  const r = motorRun(A.P2, ek), m = motorMetrics(A.P2, r), trucks = motorTrucks(A.P2, r, A.trucks);
+  m.extraLlegan = A.nExtra;
+  m.extraDescargan = r.outP.slice(A.port0).filter(o => o && o.t25 >= 0 && o.t25 < 1440).length;
+  m.extraPuerto = A.P2.port.length - A.port0;
+  const g = motorSeries(A.P2, r);
+  return {r, m, trucks, g, desc: [...g.volc, ...g.rd].sort((x, y) => x - y)};
+}
+async function loadMotor(day) {
+  MOTOR = null; K = null; FX = null; MODE = 'real'; LIVE = [];
+  const has = MOTOR_DAYS.includes(day);
+  mesa.hidden = fix.hidden = fxNote.hidden = knobCard.hidden = mixer.hidden = movesCard.hidden = !has; fxGainBox.hidden = true; endModal.hidden = true;
+  if (!has) return;
+  try { MOTOR = await (await fetch('escenarios/' + day + '_motor.json')).json(); }
+  catch (err) { mesa.hidden = fix.hidden = knobCard.hidden = mixer.hidden = movesCard.hidden = true; return; }
+  if (REAL.d.day !== day) return;
+  PREP = motorPrep(MOTOR, REAL.d.trucks);
+  const mk = motorKnobs(PREP); BST = {...mk.st}; BMK = mk;
+  BK = {calles: mk.calles, calRate: mk.cal.map((c, i) => c / mk.calles[i]), vact: mk.vact, volcRate: mk.volc.map((v, i) => mk.vact[i] ? v / mk.vact[i] : 0)};
+  BG = {flPellet: (mk.fleet || {}).pellet || 0, flSoja: (mk.fleet || {}).soja || 0, extraPct: 0, calPct: 100, callesOff: 0, vactOff: 0, volcPct: 100, gate: mk.gate, N: 0, parada: 0, demoraPct: 100, capOsl: 0, capSal: mk.capSal};
+  K = cloneK(BK); G = {...BG}; EK = eff(K, G); BASE = runK(EK);
+  fix.innerHTML = '<span class="t">Ver</span><button class="real" data-p="real" aria-pressed="true">Como fue</button>' +
+    '<button data-p="sim" aria-pressed="false">Simulado con la mesa</button>';
+  buildMesa(); buildKnobs(); buildMixer(); buildGauges(); updateMesa();
+  // qué tan bien reproduce el motor este día (criterios de docs/simulador/PLAN_MOTOR_COLAS.md)
+  const c = MOTOR.calibracion, ok = Object.values(c.acepta).filter(Boolean).length;
+  const pc = v => (v > 0 ? '+' : '') + String(v).replace('.', ',') + ' %';
+  const fallas = [!c.acepta.descargas_5pct && 'descargas ' + pc(c.descargas_dif_pct),
+    !c.acepta.error_hora_4 && 'error por hora ' + String(c.error_medio_hora_volcables).replace('.', ','),
+    !c.acepta.espera_cal_15pct && 'espera de calada ' + pc(c.espera_cal_dif_pct),
+    !c.acepta.espera_osl_15pct && 'espera en OSL ' + pc(c.espera_osl_dif_pct)].filter(Boolean);
+  mesaCalib.className = 'calib ' + (ok === 4 ? 'ok' : 'warn');
+  mesaCalib.textContent = ok === 4 ? `Motor calibrado para este día: ${c.descargas_sim} descargas contra ${c.descargas_real} reales, cumple los 4 criterios.`
+    : `Calibración aproximada (${ok} de 4 criterios): ${fallas.join(', ')}. Tomá las cifras como orientativas.`;
+}
+function setView(v) {
+  if (!MOTOR) return;
+  MODE = v;
+  apply();
+}
+function resetMesa() {
+  if (!MOTOR) return;
+  K = cloneK(BK); G = {...BG}; LIVE = [];
+  knobChanged(true);
+}
+function knobChanged(now) {
+  MODE = 'sim';
+  EK = withFreeze(eff(K, G));
+  updateMesa();
+  clearTimeout(applyTimer);
+  applyTimer = setTimeout(apply, now ? 0 : 140);
+}
+function apply() {
+  fix.querySelectorAll('button[data-p]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.p === MODE)));
+  if (MODE === 'real') {
+    FX = null; model = REAL.model; S = REAL.S; fixCard.hidden = fxGainBox.hidden = simBadge.hidden = true; daySub.textContent = realSub();
+  } else {
+    const res = runK(EK);
+    model = prepare({...MODEL, ...REAL.d, trucks: res.trucks}); S = series(); FX = res; simBadge.hidden = false;
+    renderFixCard();
+    daySub.textContent = REAL.d.title + ' · simulado con el motor de colas: los mismos camiones, con las capacidades de la mesa.';
+  }
+  updateMesa(); buildHeat(); renderEvents(); redraw();
+}
+
+// Barras arrastrables: una fila por perilla y una columna por franja de 2 h. La rayita marca lo medido.
+function buildMesa() {
+  const hh = b => String(b).padStart(2, '0');
+  const head = '<div class="ml"></div>' + BLOCKS.map(b => `<div class="mh" data-b="${b}">${hh(b)}–${hh(b + 2)}</div>`).join('');
+  const rows = ROWS.map(r => `<div class="ml"><b>${r.lab}</b><span>${r.u}</span></div>` +
+    `<div class="krow" data-k="${r.k}" role="group" aria-label="${r.lab} por franja">` +
+    BLOCKS.map(b => `<div class="kc" data-b="${b}"><div class="kf"></div><div class="kg"></div><span></span></div>`).join('') + '</div>').join('');
+  const mon = '<div class="ml"><b>Capacidad de calada</b><span>camiones por hora, con las perillas</span></div><div class="mrow cap" id="mCapC"></div>' +
+    '<div class="ml"><b>Capacidad del puerto</b><span>camiones por hora, con las perillas</span></div><div class="mrow cap" id="mCapV"></div>' +
+    '<div class="ml"><b>Cola en Playa 1</b><span>al empezar la franja · cap. 200</span></div><div class="mrow" id="mP1"></div>' +
+    '<div class="ml"><b>Cola en Playa OSL</b><span>al empezar la franja · cap. 100</span></div><div class="mrow" id="mOsl"></div>' +
+    '<div class="ml"><b>Manda</b><span>el recurso que pone el techo</span></div><div class="mrow manda" id="mManda"></div>';
+  mesaGrid.innerHTML = head + rows + mon;
+  [mP1, mOsl, mManda, mCapC, mCapV] = ['mP1', 'mOsl', 'mManda', 'mCapC', 'mCapV'].map(id => document.getElementById(id));
+  mesaGrid.querySelectorAll('.krow').forEach(row => {
+    const r = ROWS.find(x => x.k === row.dataset.k);
+    const set = e => {
+      const cells = [...row.children], rc = row.getBoundingClientRect();
+      const i = clamp(Math.floor((e.clientX - rc.left) / rc.width * 12), 0, 11);
+      const cr = cells[i].getBoundingClientRect();
+      const v = clamp(Math.round((cr.bottom - e.clientY) / cr.height * r.max), 0, r.max);
+      const b = BLOCKS[i];
+      if (K[r.k][hi(b)] === v && K[r.k][hi(b + 1)] === v) return;
+      K[r.k][hi(b)] = K[r.k][hi(b + 1)] = v;
+      knobChanged();
+    };
+    row.addEventListener('pointerdown', e => { try { row.setPointerCapture(e.pointerId); } catch (err) { /* sin captura, igual sigue el arrastre */ } row.dataset.drag = '1'; set(e); });
+    row.addEventListener('pointermove', e => { if (row.dataset.drag) set(e); });
+    row.addEventListener('pointerup', () => { delete row.dataset.drag; knobChanged(true); });
+  });
+}
+
+// Perilla giratoria: arrastrar arriba/abajo, rueda del mouse o flechas; doble clic vuelve a lo medido.
+const ARC = 135, polar = a => [50 + 38 * Math.sin(a * Math.PI / 180), 50 - 38 * Math.cos(a * Math.PI / 180)];
+const arcPath = (a0, a1) => { const [x0, y0] = polar(a0), [x1, y1] = polar(a1); return `M${x0} ${y0}A38 38 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1} ${y1}`; };
+function buildKnobs() {
+  // la perilla de flota va de 0 al triple de la flota real (mínimo 20); sin flota ese día, no aparece
+  for (const d of KNOBS) if (d.fleet) { const n = ((PREP.fleet || {})[d.fleet] || []).length; d.max = Math.max(20, 3 * n); d.hide = !n; }
+  knobsEl.innerHTML = KNOBS.filter(d => !d.hide).map(d => `<div class="rk" data-k="${d.k}" tabindex="0" role="slider" aria-label="${d.lab}" aria-valuemin="${d.min}" aria-valuemax="${d.max}">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><path class="tr" d="${arcPath(-ARC, ARC)}"/><path class="va"/><circle class="bm" r="4"/><line class="pt" x1="50" y1="50"/></svg>
+    <div class="rv"></div><div class="rl" title="${d.lab}">${d.s || d.lab}</div></div>`).join('');
+  knobsEl.querySelectorAll('.rk').forEach(el => {
+    const d = KNOBS.find(x => x.k === el.dataset.k);
+    const setV = v => { v = clamp(Math.round(v / d.step) * d.step, d.min, d.max); v = Math.round(v * 10) / 10; if (v !== G[d.k]) { G[d.k] = v; knobChanged(); } };
+    let y0 = 0, v0 = 0, drag = false;
+    el.addEventListener('pointerdown', e => { drag = true; y0 = e.clientY; v0 = G[d.k]; try { el.setPointerCapture(e.pointerId); } catch (err) { /* sin captura */ } });
+    el.addEventListener('pointermove', e => { if (drag) setV(v0 + (y0 - e.clientY) / 160 * (d.max - d.min)); });
+    el.addEventListener('pointerup', () => { if (drag) { drag = false; knobChanged(true); } });
+    el.addEventListener('wheel', e => { e.preventDefault(); setV(G[d.k] + (e.deltaY < 0 ? d.step : -d.step)); }, {passive: false});
+    el.addEventListener('keydown', e => {
+      const k = {ArrowUp: 1, ArrowRight: 1, ArrowDown: -1, ArrowLeft: -1}[e.key];
+      if (k) { e.preventDefault(); setV(G[d.k] + k * d.step); }
+    });
+    el.addEventListener('dblclick', () => { G[d.k] = BG[d.k]; knobChanged(true); });
+  });
+}
+function updateKnobs() {
+  knobsEl.querySelectorAll('.rk').forEach(el => {
+    const d = KNOBS.find(x => x.k === el.dataset.k), v = G[d.k], b = BG[d.k];
+    const ang = x => -ARC + 2 * ARC * (x - d.min) / (d.max - d.min);
+    const a = ang(v), ab = ang(b);
+    el.querySelector('.va').setAttribute('d', a === ab ? '' : arcPath(Math.min(a, ab), Math.max(a, ab)));
+    const low = d.k === 'demoraPct';  // en esta, menos es mejor
+    el.classList.toggle('up', v !== b && (low ? v < b : v > b));
+    el.classList.toggle('down', v !== b && (low ? v > b : v < b));
+    const [bx, by] = polar(ab), [px, py] = polar(a);
+    el.querySelector('.bm').setAttribute('cx', bx); el.querySelector('.bm').setAttribute('cy', by);
+    el.querySelector('.pt').setAttribute('x2', 50 + (px - 50) * 0.8); el.querySelector('.pt').setAttribute('y2', 50 + (py - 50) * 0.8);
+    el.querySelector('.rv').textContent = d.fmt(v);
+    el.setAttribute('aria-valuenow', v); el.setAttribute('aria-valuetext', d.fmt(v));
+  });
+}
+function updateMesa() {
+  if (!MOTOR || !K) return;
+  const bv = (k, key, b) => (k[key][hi(b)] + k[key][hi(b + 1)]) / 2;
+  const hb = Math.min(22, Math.floor(T / 120) * 2);
+  mesaGrid.querySelectorAll('.krow').forEach(row => {
+    const r = ROWS.find(x => x.k === row.dataset.k);
+    [...row.children].forEach((c, i) => {
+      const b = BLOCKS[i], v = bv(K, r.k, b), v0 = bv(BK, r.k, b);
+      c.querySelector('.kf').style.height = Math.min(100, v / r.max * 100) + '%';
+      c.querySelector('.kg').style.bottom = Math.min(100, v0 / r.max * 100) + '%';
+      c.querySelector('span').textContent = r.k.endsWith('Rate') ? dec(v) : Math.round(v);
+      c.classList.toggle('chg', Math.abs(v - v0) > 0.05); c.classList.toggle('now', b === hb);
+    });
+  });
+  mesaGrid.querySelectorAll('.mh').forEach(h => h.classList.toggle('now', +h.dataset.b === hb));
+  const B = eff(BK, BG), capCell = (x, x0) => `<div class="${Math.round(x) > Math.round(x0) ? 'more' : Math.round(x) < Math.round(x0) ? 'less' : ''}">${Math.round(x)}</div>`;
+  mCapC.innerHTML = BLOCKS.map(b => capCell((EK.cal[hi(b)] + EK.cal[hi(b + 1)]) / 2, (B.cal[hi(b)] + B.cal[hi(b + 1)]) / 2)).join('');
+  mCapV.innerHTML = BLOCKS.map(b => capCell((EK.volc[hi(b)] + EK.volc[hi(b + 1)]) / 2, (B.volc[hi(b)] + B.volc[hi(b + 1)]) / 2)).join('');
+  const m = (FX || BASE).m;
+  const cell = (v, cap) => `<div class="${v >= cap ? 'crit' : v >= cap * 0.8 ? 'warn' : ''}">${v}</div>`;
+  mP1.innerHTML = BLOCKS.map(b => cell(m.playa1[b], 200)).join('');
+  mOsl.innerHTML = BLOCKS.map(b => cell(m.osl[b], 100)).join('');
+  mManda.innerHTML = m.mando.map(x => `<div style="grid-column:span 2" class="${x.quien.startsWith('volc') ? 'port' : x.quien.startsWith('calada') ? 'ricq' : ''}">${x.quien}</div>`).join('');
+  updateKnobs();
+}
+
+// Qué cambia respecto de lo medido, en palabras
+function cambios() {
+  const out = [], hh = h => String(h).padStart(2, '0');
+  for (const r of ROWS) {
+    const ch = BLOCKS.filter(b => Math.abs(K[r.k][hi(b)] - BK[r.k][hi(b)]) > 0.05 || Math.abs(K[r.k][hi(b + 1)] - BK[r.k][hi(b + 1)]) > 0.05);
+    let i = 0;
+    while (i < ch.length) {
+      let j = i; while (j + 1 < ch.length && ch[j + 1] === ch[j] + 2) j++;
+      const bs = ch.slice(i, j + 1), nv = [...new Set(bs.map(b => dec(K[r.k][hi(b)])))], ov = [...new Set(bs.map(b => dec(BK[r.k][hi(b)])))];
+      out.push(`${r.lab} de ${hh(bs[0])} a ${hh(bs[bs.length - 1] + 2)} h: ${nv.join(', ')} (medido: ${ov.join(', ')}).`);
+      i = j + 1;
+    }
+  }
+  for (const d of KNOBS) if (G[d.k] !== BG[d.k]) out.push(`${d.lab}: ${d.fmt(G[d.k])} (medido: ${d.fmt(BG[d.k])}).`);
+  if (LIVE.length) out.push(`Control manual desde las ${fmtT(Math.min(...LIVE.map(m => m.t)))}: desde ahí cada canal queda como estaba y solo cambia con tus jugadas.`);
+  for (const m of [...LIVE].sort((a, b) => a.t - b.t)) out.push(`${fmtT(m.t)} · ${moveTxt(m)}.`);
+  return out.length ? out : ['Todo en lo medido: es el día reproducido por el motor.'];
+}
+function renderFixCard() {
+  const a = BASE.m, b = FX.m, m = v => v == null ? '—' : fmtN(v) + ' min', mx = v => Math.max(...v);
+  const dm = b.descargas - a.descargas, retB = mx(b.ret);
+  fixCard.hidden = fxGainBox.hidden = false;
+  fxTitle.textContent = 'Qué cambia con la mesa';
+  fxCambio.innerHTML = cambios().map(t => `<div>${t}</div>`).join('');
+  fxGain.textContent = (dm > 0 ? '+' : '') + fmtN(dm);
+  fxGain.classList.toggle('zero', dm <= 0);
+  const row = (lab, x, y, fmt, lowerIsBetter = true) => {
+    const cls = Math.round(y) === Math.round(x) ? '' : (y < x) === lowerIsBetter ? 'down' : 'up';
+    return `<span>${lab}</span><b>${fmt(x)}</b><b class="${cls}">${fmt(y)}</b>`;
+  };
+  fxCmp.innerHTML = '<span></span><span class="h">medido</span><span class="h">con la mesa</span>' +
+    row('Descargas en el día', a.descargas, b.descargas, fmtN, false) + row('Toneladas descargadas', a.tons, b.tons, fmtN, false) +
+    row('· en el puerto', a.descPuerto, b.descPuerto, fmtN, false) + row('· en Ricardone', a.descRic, b.descRic, fmtN, false) +
+    ['soja', 'girasol', 'pellet'].map(p => row(`· ${p}`, a.porProd[p], b.porProd[p], fmtN, false)).join('') +
+    row('Espera para entrar (garita → preingreso)', a.esperaEntrada, b.esperaEntrada, m) +
+    row('Espera para calar', a.esperaCal, b.esperaCal, m) +
+    row('Espera en Playa OSL', a.esperaOsl, b.esperaOsl, m) +
+    row('Playa 1, máximo (cap. 200)', mx(a.playa1), mx(b.playa1), fmtN) +
+    row('Playa demorado, máximo (cap. 30)', mx(a.ret), retB, fmtN) +
+    row('Playa OSL, máximo (cap. 100)', mx(a.osl), mx(b.osl), fmtN) +
+    row('Siguen adentro a las 24 h', a.pendientes, b.pendientes, fmtN) +
+    (b.extraLlegan ? row('Camiones que llegan a Ricardone', MOTOR.ric.filter(x => x[1] >= 0 && x[1] < 1440).length, MOTOR.ric.filter(x => x[1] >= 0 && x[1] < 1440).length + b.extraLlegan, fmtN, false) : '');
+  const L = [];
+  L.push(dm > 0 ? `Se descargan ${dm} camiones más en el día.` : dm < 0 ? `Se descargan ${-dm} camiones menos en el día.` : 'No se descarga ningún camión de más.');
+  if (b.extraLlegan) {
+    L.push(`Llegan ${b.extraLlegan} camiones más a Ricardone; de los ${b.extraPuerto} que van al puerto, ${b.extraDescargan} alcanzan a descargar antes de las 24 h.`);
+    if (dm < b.extraDescargan) L.push(`Pero el puerto ya estaba lleno: ocupan el lugar de otros, y a las 24 h quedan ${b.pendientes} camiones adentro. Para que sumen, hay que subir la capacidad que manda.`);
+  }
+  if (Math.abs(b.esperaCal - a.esperaCal) >= 15) L.push(`La espera para calar pasa de ${fmtN(a.esperaCal)} a ${fmtN(b.esperaCal)} min.`);
+  if (Math.abs(b.esperaOsl - a.esperaOsl) >= 15) L.push(`La espera en Playa OSL pasa de ${fmtN(a.esperaOsl)} a ${fmtN(b.esperaOsl)} min.`);
+  if (mx(b.osl) > 100) L.push(`Playa OSL llega a ${mx(b.osl)} camiones, y su capacidad es de 100.`);
+  if (mx(b.playa1) > 200) L.push(`Playa 1 llega a ${mx(b.playa1)} camiones, y su capacidad es de 200.`);
+  if (retB > 30) L.push(`Playa demorado llega a ${retB} camiones, y tiene 30 lugares.`);
+  if (Math.abs((b.esperaEntrada || 0) - (a.esperaEntrada || 0)) >= 15) L.push(`La espera para entrar a Ricardone pasa de ${fmtN(a.esperaEntrada)} a ${fmtN(b.esperaEntrada)} min.`);
+  if (dm > 0 && b.pendientes <= 2) L.push(b.extraLlegan ? 'A las 24 h no queda nadie adentro: el circuito todavía tiene lugar, se pueden sumar más llegadas.' : 'Es el techo con las llegadas de ese día: a las 24 h ya no queda nadie adentro. Para ver más, subí las llegadas.');
+  const cnt = {}; b.mando.forEach(x => cnt[x.quien] = (cnt[x.quien] || 0) + 1);
+  L.push('Manda la mayor parte del día: ' + Object.entries(cnt).sort((x, y) => y[1] - x[1])[0][0] + '.');
+  fxLect.innerHTML = L.map(t => `<li>${t}</li>`).join('');
+}
+
+// Velocímetros: ritmo de cada estación en la última hora y cuántos camiones hay en cada playa, en la hora del
+// reloj. Aguja = la simulación; marca amarilla = lo que pasó (el motor con todo en lo medido).
+const ST_LAB = {ing: 'Ingreso Ricardone', pre: 'Preingreso', sal2: 'Salida 2 (egreso Ricardone)', ingsl: 'Ingreso del puerto',
+                balric: 'Balanza de ingreso de Ricardone', balegrric: 'Balanza de egreso de Ricardone',
+                bal: 'Balanza de ingreso del puerto', balegr: 'Balanza de egreso del puerto', egr: 'Egreso del puerto'};
+const ST_SHORT = {ing: 'ING', pre: 'PRE', sal2: 'SAL 2', balric: 'BAL', balegrric: 'BAL E', ingsl: 'ING', bal: 'BAL', balegr: 'BAL E', egr: 'EGR'};
+const GAUGES = [
+  {k: 'ing', lab: 'Ingreso Ricardone', max: 60}, {k: 'pre', lab: 'Preingreso', max: 60}, {k: 'cal', lab: 'Calada', max: 80},
+  {k: 'sal2', lab: 'Salida 2', max: 80}, {k: 'rd', lab: 'Descarga Ricardone', max: 25}, {k: 'ingsl', lab: 'Ingreso puerto', max: 60},
+  {k: 'bal', lab: 'Balanza ingreso SL', max: 60}, {k: 'volc', lab: 'Volcables puerto', max: 45}, {k: 'balegr', lab: 'Balanza egreso SL', max: 45},
+  {k: 'egr', lab: 'Egreso puerto', max: 45},
+  {k: 'entrada', lab: 'Afuera de Ricardone', max: 60, playa: true}, {k: 'playa1', lab: 'Playa 1', max: 250, cap: 200, playa: true},
+  {k: 'demorado', lab: 'Playa demorado', max: 60, cap: 30, playa: true}, {k: 'playa3', lab: 'Playa 3', max: 70, cap: 50, playa: true},
+  {k: 'ruta', lab: 'Afuera del puerto', max: 60, playa: true}, {k: 'osl', lab: 'Playa OSL', max: 150, cap: 100, playa: true},
+  {k: 'salida', lab: 'Esperando salir del puerto', max: 40, cap: 20, playa: true},
+];
+const SWEEP = 240, gAng = f => (-SWEEP / 2 + SWEEP * Math.max(0, Math.min(1, f))) * Math.PI / 180;
+const gPt = (f, r) => [60 + r * Math.sin(gAng(f)), 56 - r * Math.cos(gAng(f))];
+const gArc = (f0, f1, r = 44) => { const [x0, y0] = gPt(f0, r), [x1, y1] = gPt(f1, r); return `M${x0.toFixed(1)} ${y0.toFixed(1)}A${r} ${r} 0 ${(f1 - f0) * SWEEP > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; };
+function gaugeValue(g, k) {
+  const m = Math.max(0, Math.min(1439, Math.floor(T)));
+  if (!Array.isArray(g[k])) return g[k][m];
+  const arr = g[k], lower = x => { let a = 0, b = arr.length; while (a < b) { const c = (a + b) >> 1; if (arr[c] <= x) a = c + 1; else b = c; } return a; };
+  return lower(T) - lower(T - 60);
+}
+function buildGauges() {
+  const dial = d => {
+    let ticks = '';
+    for (let i = 0; i <= 10; i++) { const f = i / 10, [x0, y0] = gPt(f, 44 - (i % 5 ? 4 : 8)), [x1, y1] = gPt(f, 44); ticks += `<line class="tk" x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}"/>`; }
+    const num = f => { const [x, y] = gPt(f, 30); return `<text class="tn" x="${x.toFixed(1)}" y="${(y + 3).toFixed(1)}">${Math.round(d.max * f)}</text>`; };
+    const zones = d.cap ? `<path class="zg" d="${gArc(0, 0.8 * d.cap / d.max)}"/><path class="za" d="${gArc(0.8 * d.cap / d.max, d.cap / d.max)}"/><path class="zr" d="${gArc(d.cap / d.max, 1)}"/>`
+      : `<path class="zt" d="${gArc(0, 1)}"/>`;
+    return `<svg viewBox="0 0 120 92" aria-hidden="true">${zones}${ticks}${num(0)}${num(0.5)}${num(1)}<path class="gr"/>` +
+      `<polygon class="nd"/><circle class="hub" cx="60" cy="56" r="5"/><text class="gvv" x="60" y="82"></text></svg>`;
+  };
+  const sec = (title, list) => `<div class="gsec">${title}</div><div class="gauges">` + list.map(d =>
+    `<div class="gauge${d.playa ? ' playa' : ''}" data-k="${d.k}">${dial(d)}<div class="gl">${d.lab}</div><div class="gs"></div>${d.playa ? '<div class="gpp"></div>' : ''}</div>`).join('') + '</div>';
+  gauges.innerHTML = sec('Ritmo de cada estación · camiones en la última hora', GAUGES.filter(d => !d.playa)) +
+    sec('Playas y colas · camiones esperando ahora', GAUGES.filter(d => d.playa));
+}
+function updateGauges() {
+  if (!MOTOR || !BASE || knobCard.hidden) return;
+  const sim = (FX || BASE).g, real = BASE.g;
+  gauges.querySelectorAll('.gauge').forEach(el => {
+    const d = GAUGES.find(x => x.k === el.dataset.k), v = gaugeValue(sim, d.k), v0 = gaugeValue(real, d.k);
+    const f = v / d.max, a = gAng(f), [r1x, r1y] = gPt(v0 / d.max, 46), [r2x, r2y] = gPt(v0 / d.max, 36);
+    const tip = [60 + 38 * Math.sin(a), 56 - 38 * Math.cos(a)], l = [60 + 4 * Math.cos(a), 56 + 4 * Math.sin(a)], r = [60 - 4 * Math.cos(a), 56 - 4 * Math.sin(a)];
+    el.querySelector('.nd').setAttribute('points', [tip, l, r].map(p => p.map(x => x.toFixed(1)).join(',')).join(' '));
+    el.querySelector('.gr').setAttribute('d', `M${r1x.toFixed(1)} ${r1y.toFixed(1)}L${r2x.toFixed(1)} ${r2y.toFixed(1)}`);
+    el.querySelector('.gvv').textContent = v + (d.cap ? ' / ' + d.cap : '');
+    el.querySelector('.gs').textContent = 'real ' + v0 + (v !== v0 ? ' · ' + (v > v0 ? '+' : '') + (v - v0) : '');
+    el.classList.toggle('over', !!d.cap && v >= d.cap);
+    el.classList.toggle('warn', !!d.cap && v >= 0.8 * d.cap && v < d.cap);
+    const gp = el.querySelector('.gpp');
+    if (gp && sim.porProd[d.k]) {  // cuántos de cada producto hay en esa playa ahora
+      const m = Math.max(0, Math.min(1439, Math.floor(T)));
+      gp.innerHTML = ['soja', 'girasol', 'pellet', 'liquido'].map(p => [p, sim.porProd[d.k][p][m]]).filter(([, n]) => n > 0)
+        .map(([p, n]) => `<span class="c-${p}" title="${PNAME[p]}">${n}</span>`).join('');
+    }
+  });
+}
+
+// Cierre del día: al llegar a las 24 h, lo que pasó (el motor con todo en lo medido) contra la simulación
+const PLAYAS = [['playa1', 'Playa 1', 200], ['demorado', 'Playa demorado', 30], ['playa3', 'Playa 3', 50], ['osl', 'Playa OSL', 100], ['salida', 'Espera para salir del puerto', 20]];
+function saturacion(g, k, cap) {  // veces que llegó a la capacidad y horas que estuvo llena (00 a 24 h)
+  let veces = 0, min = 0, llena = false;
+  for (let m = 0; m < 1440; m++) { const v = g[k][m]; if (v >= cap) { min++; if (!llena) veces++; llena = true; } else if (v < cap * 0.9) llena = false; }
+  return {veces, horas: min / 60};
+}
+function showEnd() {
+  if (!MOTOR || !BASE) return;
+  const a = BASE.m, b = (FX || BASE).m, dm = b.descargas - a.descargas, dt = b.tons - a.tons, mx = v => Math.max(...v), mn = v => v == null ? '—' : fmtN(v) + ' min';
+  const h1 = v => v == null ? '—' : (Math.round(v * 10) / 10).toLocaleString('es-AR') + ' h';
+  endTitle.textContent = 'Cierre del día · ' + REAL.d.title;
+  endVs.innerHTML = `<div><div class="n">${fmtN(a.descargas)}</div><div class="l">camiones descargados<br>en la realidad · ${fmtN(a.tons)} t</div></div>` +
+    `<div><div class="n">${fmtN(b.descargas)}</div><div class="l">camiones descargados<br>en tu simulación · ${fmtN(b.tons)} t</div></div>` +
+    `<div class="gain ${dt < 0 ? 'neg' : ''}"><div class="n">${dt > 0 ? '+' : ''}${fmtN(dt)} t</div><div class="l">${dt < 0 ? 'menos' : 'más'} que en la realidad<br>(${dm > 0 ? '+' : ''}${fmtN(dm)} camiones)</div></div>`;
+  const row = (lab, x, y, fmt, lowerIsBetter = true) => {
+    const cls = Math.round(y * 10) === Math.round(x * 10) ? '' : (y < x) === lowerIsBetter ? 'down' : 'up';
+    return `<span>${lab}</span><b>${fmt(x)}</b><b class="${cls}">${fmt(y)}</b>`;
+  };
+  const head = t => `<span class="sec">${t}</span><span class="h">realidad</span><span class="h">simulación</span>`;
+  const sec = [];
+  sec.push(head('Lo que se movió') +
+    row('Descargas en el puerto', a.descPuerto, b.descPuerto, fmtN, false) + row('Descargas en Ricardone', a.descRic, b.descRic, fmtN, false) +
+    ['soja', 'girasol', 'pellet'].map(p => row(`${p}: camiones · toneladas`, a.porProd[p], b.porProd[p], fmtN, false) + row('', a.tonsProd[p], b.tonsProd[p], v => fmtN(v) + ' t', false)).join('') +
+    row('Siguen adentro a las 24 h', a.pendientes, b.pendientes, fmtN) +
+    (b.extraLlegan ? row('Camiones extra que llegaron', 0, b.extraLlegan, fmtN, false) : ''));
+  sec.push(head('Esperas') + row('Para entrar a Ricardone', a.esperaEntrada, b.esperaEntrada, mn) +
+    row('Para calar', a.esperaCal, b.esperaCal, mn) + row('En Playa OSL', a.esperaOsl, b.esperaOsl, mn));
+  sec.push(head('Playas: veces que se llenaron · horas llenas') + PLAYAS.map(([k, lab, cap]) => {
+    const x = saturacion(BASE.g, k, cap), y = saturacion((FX || BASE).g, k, cap);
+    return row(`${lab} (cap. ${cap})`, x.veces, y.veces, v => fmtN(v) + ' veces') + row('', x.horas, y.horas, h1);
+  }).join(''));
+  // flota de transile: viajes por camión
+  const vj = m => { const o = {}; for (const v of m.viajes) { const k = v.prod; (o[k] ||= {cam: 0, viajes: 0}); o[k].cam++; o[k].viajes += v.viajes; } return o; };
+  const fa = vj(a), fb = vj(b), prods = [...new Set([...Object.keys(fa), ...Object.keys(fb)])];
+  if (prods.length) sec.push(head('Transile: camiones · viajes · viajes por camión') + prods.map(p => {
+    const x = fa[p] || {cam: 0, viajes: 0}, y = fb[p] || {cam: 0, viajes: 0}, pc = o => o.cam ? o.viajes / o.cam : 0;
+    return row(`Flota de ${p}`, x.cam, y.cam, v => fmtN(v) + ' cam.', false) + row('', x.viajes, y.viajes, v => fmtN(v) + ' viajes', false) +
+      row('', pc(x), pc(y), v => (Math.round(v * 10) / 10).toLocaleString('es-AR') + ' por camión', false);
+  }).join(''));
+  // horas de cada canal: activo (calando / descargando), abierto sin trabajo, parado (parada o cambio de producto), cerrado
+  const lane = (g, i, lab) => { const x = a.lanes[g][i], y = b.lanes[g][i]; if (!x || !y) return '';
+    return row(`${lab}: activo`, x.activo, y.activo, h1, false) + row('· parado / cambio', x.parado, y.parado, h1) + row('· cerrado', x.cerrado, y.cerrado, h1); };
+  sec.push(head('Calles de calada: horas') + [0, 1, 2, 3, 4, 5, 6].map(i => lane('cal', i, i === 6 ? 'CL líquidos' : 'C' + (i + 1))).join(''));
+  sec.push(head('Volcables del puerto: horas') + [0, 1, 2, 3, 4].map(i => lane('volc', i, 'V' + (i + 1))).join(''));
+  sec.push(head('Descarga en Ricardone: horas') + RIC_DESC.map((d, i) => lane('rd', i, d.short)).join(''));
+  endCmp.innerHTML = sec.map(x => `<div class="cmp">${x}</div>`).join('');
+  // detalle de viajes por camión de la flota (los que cambian)
+  const byPlate = m => { const o = {}; for (const v of m.viajes) { const k = v.plateOf + (v.extra ? '+' + v.id : ''); o[k] = (o[k] || 0) + v.viajes; } return o; };
+  const pa = byPlate(a), pb = byPlate(b), keys = [...new Set([...Object.keys(pa), ...Object.keys(pb)])];
+  const fl = keys.map(k => { const tr = REAL.d.trucks[+k.split('+')[0]]; return [(tr ? tr[0] : '?') + (k.includes('+') ? ' (flota +)' : ''), pa[k] || 0, pb[k] || 0]; })
+    .sort((x, y) => (y[2] - y[1]) - (x[2] - x[1]) || y[2] - x[2]);
+  endFleet.innerHTML = fl.length ? `<details><summary>Viajes de cada camión de transile (${fl.length})</summary><div class="cmp fl">` +
+    '<span></span><span class="h">realidad</span><span class="h">simulación</span>' + fl.map(([p, x, y]) => row(p, x, y, fmtN, false)).join('') + '</div></details>' : '';
+  const ch = MODE === 'real' ? [] : cambios();
+  endMoves.innerHTML = ch.length ? '<b>Lo que cambiaste:</b><br>' + ch.join('<br>') : 'No cambiaste nada: es el día como fue.';
+  endModal.hidden = false;
+  endAgain.focus();
+}
+
+// Consola en vivo: un canal por estación, por calle de calada y por volcable. Cada toque queda como jugada a la
+// hora del reloj y vale desde ahí hasta que se vuelva a tocar.
+const LANE_NAME = {cal: i => i === 6 ? 'Calle de calada de líquidos' : 'Calle ' + (i + 1) + ' de calada', volc: i => 'Volcable ' + (i + 1) + ' del puerto', rd: i => RIC_DESC[i].lab, st: i => ST_LAB[i]};
+const PRODS = [['soja', 'S'], ['girasol', 'G'], ['pellet', 'P']], PRODS_CAL = [...PRODS, ['liquido', 'L']];
+const PNAME = {soja: 'soja', girasol: 'girasol', pellet: 'pellet', liquido: 'líquido'};
+const masc = m => m.g === 'volc' || (m.g === 'rd' && RIC_DESC[m.i].k.startsWith('v')) || m.g === 'st' && /bal/.test(m.i);
+const moveTxt = m => LANE_NAME[m.g](m.i) + ': ' + [m.on != null ? (m.on ? (masc(m) ? 'abierto' : 'abierta') : (masc(m) ? 'cerrado' : 'cerrada')) : '',
+  m.rate != null ? 'ritmo ' + dec(m.rate) + ' por hora' : '', m.prods != null ? 'pasa a ' + m.prods.map(p => PNAME[p]).join(' y ') + ' (60 min sin recibir)' : ''].filter(Boolean).join(', ');
+function buildMixer() {
+  const strip = (g, i, max, label) => `<div class="strip${g === 'st' ? ' sta' : ''}" data-g="${g}" data-i="${i}" title="${LANE_NAME[g](i)}"><b class="sv"></b><div class="row"><div class="vu"><i></i></div>` +
+    `<input type="range" class="fader" min="0" max="${max}" step="1" aria-label="Ritmo de ${LANE_NAME[g](i)}"></div>` +
+    `<button class="led" aria-pressed="false" aria-label="Abrir o cerrar ${LANE_NAME[g](i)}">${label}</button>` +
+    (g === 'volc' || g === 'rd' || g === 'cal' ? '<div class="pd">' + (g === 'cal' ? PRODS_CAL : PRODS).map(([p, l]) => `<button class="p-${p}" data-prod="${p}" aria-pressed="false" title="Recibe ${p}" aria-label="${LANE_NAME[g](i)} recibe ${p}">${l}</button>`).join('') + '</div>' : '') +
+    '</div>';
+  const st = k => strip('st', k, k === 'bal' || k === 'balegr' ? 80 : 120, ST_SHORT[k]);
+  mxCal.innerHTML = st('ing') + st('pre') + [0, 1, 2, 3, 4, 5].map(i => strip('cal', i, 60, 'C' + (i + 1))).join('') + strip('cal', 6, 20, 'CL') + st('sal2') +
+    '<span class="sep"></span>' + st('balric') + RIC_DESC.map((d, i) => strip('rd', i, 12, d.short)).join('') + st('balegrric');
+  mxVolc.innerHTML = st('ingsl') + st('bal') + [0, 1, 2, 3, 4].map(i => strip('volc', i, 20, 'V' + (i + 1))).join('') + st('balegr') + st('egr');
+  mixer.querySelectorAll('.strip').forEach(el => {
+    const g = el.dataset.g, i = g === 'st' ? el.dataset.i : +el.dataset.i, fader = el.querySelector('.fader');
+    el.querySelector('.led').onclick = () => addMove({g, i, on: !motorLaneState(PREP, EK, T)[g][i].on});
+    // un solo producto por canal: elegir otro lo deja 60 min sin recibir (limpieza / cambio)
+    el.querySelectorAll('.pd button').forEach(b => b.onclick = () => {
+      const cur = motorLaneState(PREP, EK, T)[g][i].prods, p = b.dataset.prod;
+      if (cur.length === 1 && cur[0] === p) return;
+      addMove({g, i, prods: [p]});
+    });
+    fader.addEventListener('input', () => { el.querySelector('.sv').textContent = fader.value; });
+    fader.addEventListener('pointerdown', () => { fader.dataset.drag = '1'; });
+    fader.addEventListener('change', () => { delete fader.dataset.drag; addMove({g, i, rate: +fader.value}); });
+  });
+  mxMoves.onclick = e => { const b = e.target.closest('button[data-k]'); if (b) { LIVE.splice(+b.dataset.k, 1); knobChanged(true); } };
+}
+function addMove(m) {
+  const t = Math.max(0, Math.min(1439, Math.round(T)));
+  const same = LIVE.find(x => x.t === t && x.g === m.g && x.i === m.i);
+  if (same) Object.assign(same, m); else LIVE.push({t, ...m});
+  knobChanged(true);
+}
+function updateMixer(cnt) {
+  if (!MOTOR || !EK || mixer.hidden) return;
+  const Ls = motorLaneState(PREP, EK, T), ser = (FX || BASE).g;
+  mixer.querySelectorAll('.strip').forEach(el => {
+    const g = el.dataset.g, i = g === 'st' ? el.dataset.i : +el.dataset.i, L = Ls[g][i], fader = el.querySelector('.fader');
+    const dev = g === 'cal' ? i : g === 'volc' ? 11 + i : g === 'rd' ? RIC_DESC[i].dev : -1;
+    const n = g === 'st' ? gaugeValue(ser, i) : (cnt && dev >= 0 && cnt[dev]) || 0;
+    if (L.prods) el.querySelectorAll('.pd button').forEach(b => b.setAttribute('aria-pressed', String(L.prods.includes(b.dataset.prod))));
+    if (!fader.dataset.drag && document.activeElement !== fader) { fader.value = Math.round(L.rate); el.querySelector('.sv').textContent = L.changing ? Math.ceil(L.changeUntil - T) + "'" : Math.round(L.rate); }
+    el.classList.toggle('chgp', !!L.changing);
+    el.title = LANE_NAME[g](i) + (L.changing ? ` · cambiando de producto, recibe a las ${fmtT(L.changeUntil)}` : '');
+    el.querySelector('.led').setAttribute('aria-pressed', String(L.on));
+    el.classList.toggle('off', !L.on); el.classList.toggle('stop', L.on && !!L.stop);
+    el.classList.toggle('mod', LIVE.some(x => x.g === g && x.i === i && x.t <= T));
+    el.querySelector('.vu i').style.height = Math.min(100, n / Math.max(1, L.rate) * 100) + '%';
+  });
+  const sorted = LIVE.map((m, k) => [m, k]).sort((a, b) => a[0].t - b[0].t);
+  const html = sorted.length ? sorted.map(([m, k]) => `<div class="mv"><b>${fmtT(m.t)}</b><span>${moveTxt(m)}</span><button data-k="${k}" aria-label="Borrar jugada">✕</button></div>`).join('')
+    : '<div class="note">Todavía no tocaste nada. Dale play y, a la hora que quieras, abrí una calle, cerrá un volcable o cambiale el ritmo a una balanza.</div>';
+  if (mxMoves.dataset.html !== html) { mxMoves.innerHTML = html; mxMoves.dataset.html = html; }
+  mxMode.title = LIVE.length ? 'Desde tu primera jugada cada canal queda como estaba y solo cambia con lo que toques' : 'Los canales siguen el día como se midió. Tocá cualquiera para manejar vos.';
+  mxMode.textContent = LIVE.length ? 'manual desde ' + fmtT(Math.min(...LIVE.map(m => m.t))) : 'día medido';
+  mxMode.classList.toggle('on', !!LIVE.length);
+  {
+    const pp = (FX || BASE).g.porProd, m = Math.max(0, Math.min(1439, Math.floor(T)));
+    mxWait.title = 'Camiones esperando ahora en todas las playas y colas, por producto';
+    mxWait.innerHTML = ['soja', 'girasol', 'pellet', 'liquido'].map(p =>
+      `<span class="c-${p}">${PNAME[p]} <b>${Object.values(pp).reduce((a, z) => a + z[p][m], 0)}</b></span>`).join(' ');
+  }
+  if (FX && BASE) {
+    const upto = arr => { let n = 0; for (const t of arr) { if (t > T) break; n++; } return n; };
+    const d = upto(FX.desc) - upto(BASE.desc), dd = FX.m.descargas - BASE.m.descargas, sg = v => (v > 0 ? '+' : '') + v;
+    mxScore.innerHTML = `vs. real a las ${fmtT(T)}: <b class="${d < 0 ? 'neg' : ''}">${sg(d)}</b> · día <b class="${dd < 0 ? 'neg' : ''}">${sg(dd)}</b>`;
+  } else mxScore.textContent = '';
+}
+
+// Calles de calada y volcables: lecturas de la última hora y, con el motor, si están abiertas en este momento
+function renderLanes(cnt) {
+  const devs = model.d.devices, h = Math.max(0, Math.min(23, Math.floor(T / 60)));
+  const st = (kind, i) => {
+    if (MODE === 'real' || !EK) return '';
+    const Ls = motorLaneState(PREP, EK, T);
+    if (kind === 'calada') return Ls.cal[i].on && Ls.cal[i].rate > 0 ? 'abierta' : 'cerrada';
+    if (!Ls.volc[i].on) return 'cerrada';
+    if (Ls.volc[i].stop) return 'parada';
+    return 'abierta';
+    const [s0, d0, vs0] = MOTOR.prm.paradas[0];
+    const par = EK.parada === 'sin' ? [] : EK.parada === 'escalonada' ? vs0.map((v, j) => [s0 + j * d0, d0, [v]]) : MOTOR.prm.paradas;
+    return par.some(([s, d, vs]) => s <= T && T < s + d && vs.includes(i)) ? 'parada' : 'abierta';
+  };
+  const grp = (kind, title, idx, max) => `<div class="lgrp">${title}</div>` + idx.map((d, k) => {
+    const n = cnt[d] || 0, s = st(kind, k);
+    return `<div class="lane ${s}"><span>${devs[d][1].replace('Calada calle', 'Calle').replace(' puerto', '')}</span><div class="track"><div class="fill" style="width:${Math.min(100, n / max * 100)}%"></div></div><b>${n}</b><i>${s}</i></div>`;
+  }).join('');
+  lanes.innerHTML = grp('calada', 'Calada Ricardone', [0, 1, 2, 3, 4, 5, 6], 30) + grp('volc', 'Volcables del puerto', [11, 12, 13, 14, 15], 10);
+}
+
+// ---------- arranque ----------
+const days = document.getElementById('days');
+days.innerHTML = '<button id="prevDay" aria-label="Día anterior">◀</button><select id="day" aria-label="Elegir día"></select><button id="nextDay" aria-label="Día siguiente">▶</button>';
+const daySel = document.getElementById('day');
+const MESES = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+let curMonth = '', opts = '';
+for (const x of INDEX) {
+  const m = x.day.slice(0, 7);
+  if (m !== curMonth) { opts += (curMonth ? '</optgroup>' : '') + `<optgroup label="${MESES[+m.slice(5)]}">`; curMonth = m; }
+  opts += `<option value="${x.day}">${x.label} · ${x.descargan != null ? x.descargan + " de " : ""}${x.camiones} camiones${x.descargan != null ? " descargan" : ""}</option>`;
+}
+daySel.innerHTML = opts + '</optgroup>';
+daySel.onchange = () => load(daySel.value);
+const step = k => { const i = INDEX.findIndex(x => x.day === daySel.value) + k; if (i >= 0 && i < INDEX.length) load(INDEX[i].day); };
+document.getElementById('prevDay').onclick = () => step(-1);
+document.getElementById('nextDay').onclick = () => step(1);
+const fix = document.getElementById('fix'), fixCard = document.getElementById('fixCard'), fxNote = document.getElementById('fxNote');
+const fxTitle = document.getElementById('fxTitle'), fxCambio = document.getElementById('fxCambio'), fxGain = document.getElementById('fxGain');
+const fxNow = document.getElementById('fxNow'), fxCmp = document.getElementById('fxCmp'), fxLect = document.getElementById('fxLect');
+fix.onclick = e => { const b = e.target.closest('button[data-p]'); if (b) setView(b.dataset.p); };
+const mxPlay = document.getElementById('mxPlay'), mxMode = document.getElementById('mxMode'), mxWait = document.getElementById('mxWait');
+mxPlay.onclick = () => toggle();
+const mixer = document.getElementById('mixer'), mxCal = document.getElementById('mxCal'), mxVolc = document.getElementById('mxVolc'), mxMoves = document.getElementById('mxMoves'), mxScore = document.getElementById('mxScore');
+document.getElementById('mxClear').onclick = () => { LIVE = []; knobChanged(true); };
+const simBadge = document.getElementById('simBadge'), gauges = document.getElementById('gauges'), movesCard = document.getElementById('movesCard'), endModal = document.getElementById('endModal');
+const endFleet = document.getElementById('endFleet'), endTitle = document.getElementById('endTitle'), endVs = document.getElementById('endVs'), endCmp = document.getElementById('endCmp'), endMoves = document.getElementById('endMoves'), endAgain = document.getElementById('endAgain');
+endAgain.onclick = () => { endModal.hidden = true; T = 0; redraw(); toggle(true); };
+document.getElementById('endClose').onclick = () => { endModal.hidden = true; };
+document.getElementById('endReset').onclick = () => { endModal.hidden = true; resetMesa(); setView('real'); T = 0; redraw(); };
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !endModal.hidden) endModal.hidden = true; });
+document.getElementById('runDay').onclick = () => { endModal.hidden = true; T = 0; redraw(); toggle(true); };
+const mesaCalib = document.getElementById('mesaCalib'), knobCard = document.getElementById('knobCard'), fxGainBox = document.getElementById('fxGainBox');
+const mesa = document.getElementById('mesa'), mesaGrid = document.getElementById('mesaGrid'), lanes = document.getElementById('lanes');
+const knobsEl = document.getElementById('knobs');
+document.getElementById('kReset').onclick = resetMesa;
+document.getElementById('play').onclick = () => toggle();
+document.getElementById('speed').onchange = e => speed = +e.target.value;
+document.getElementById('scrub').oninput = e => { T = +e.target.value; redraw(); };
+document.getElementById('events').onclick = e => { const b = e.target.closest('.ev'); if (b) { T = +b.dataset.t; redraw(); } };
+document.addEventListener('keydown', e => { if (e.code === 'Space' && !/INPUT|SELECT|BUTTON/.test(document.activeElement.tagName)) { e.preventDefault(); toggle(); } });
+window.addEventListener('resize', redraw);
+const tip = document.getElementById('tip');
+map.addEventListener('mousemove', e => {
+  const rc = map.getBoundingClientRect(), sc = rc.width / VW, x = (e.clientX - rc.left) / sc, y = (e.clientY - rc.top) / sc;
+  let best = null, bd = 64; for (const h of HOVER) { const d = (h.x - x) ** 2 + (h.y - y) ** 2; if (d < bd) { bd = d; best = h; } }
+  if (!best) { tip.hidden = true; return; }
+  const names = {soja: 'Soja', pellet: 'Pellet', girasol: 'Girasol', otros_granos: 'Otros granos', liquido: 'Líquido', otro: 'Otro'};
+  tip.innerHTML = `<b>${best.tr.plate}</b> · ${names[best.tr.prod]} · ${best.tr.t} t${best.tr.transile ? ' · transile' : ''}<br>${best.where} · entró ${best.tr.t0 < 0 ? 'el día anterior' : fmtT(best.tr.t0)}`;
+  tip.style.left = Math.min(rc.width - 220, e.clientX - rc.left + 12) + 'px'; tip.style.top = (e.clientY - rc.top + 12) + 'px'; tip.hidden = false;
+});
+map.addEventListener('mouseleave', () => tip.hidden = true);
+const cRic = document.getElementById('cRic'), cRoad = document.getElementById('cRoad'), cSl = document.getElementById('cSl'), dN = document.getElementById('dN'), dT = document.getElementById('dT'), bars = document.getElementById('bars'), now = document.getElementById('now'), daySub = document.getElementById('daySub'), events = document.getElementById('events'), play = document.getElementById('play'), heat = document.getElementById('heat');
+const pN = document.getElementById('pN'), pOf = document.getElementById('pOf'), pT = document.getElementById('pT'), pRic = document.getElementById('pRic'), pSl = document.getElementById('pSl'), pBar = document.getElementById('pBar'), pNow = document.getElementById('pNow');
+const sT = document.getElementById('sT'), sU = document.getElementById('sU'), wH = document.getElementById('wH'), wHalf = document.getElementById('wHalf'), trV = document.getElementById('trV'), trF = document.getElementById('trF'), trA = document.getElementById('trA');
+load(DEFAULT_DAY.day);
+</script>
