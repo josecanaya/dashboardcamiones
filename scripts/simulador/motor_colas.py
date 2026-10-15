@@ -672,16 +672,24 @@ def main():
     import sys
     sys.stdout.reconfigure(encoding='utf-8')
     ap = argparse.ArgumentParser()
-    ap.add_argument('days', nargs='+')
+    ap.add_argument('days', nargs='+', help="días AAAA-MM-DD, o 'todos': los días con puerto y ≥ 300 camiones desde el 31/07")
     ap.add_argument('--escenario', default='base')
     ap.add_argument('--todos', action='store_true')
     ap.add_argument('--N', type=int, default=80, help='palanca B: tope de Playa OSL + en viaje')
-    ap.add_argument('--visual', action='store_true', help='exporta public/simulador/escenarios/ para la repetición')
+    ap.add_argument('--visual', action='store_true', help='exporta public/simulador/escenarios/<día>_motor.json para la consola')
     a = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
-    names = ['base', 'A', 'AB', 'AC', 'P', 'AP'] if a.todos or a.visual else [a.escenario]
+    if a.days == ['todos']:
+        # antes del 31/07 el puerto tenía menos cámaras; el 01/09 tiene un hueco en el export de cámaras
+        idx = json.loads((DAYS.parent / 'index.json').read_text(encoding='utf-8'))
+        a.days = [x['day'] for x in idx if x.get('puerto') and x.get('camiones', 0) >= 300 and x['day'] >= '2026-07-31' and x['day'] != '2026-09-01']
+    # la consola solo usa las entradas del motor (base); los escenarios A…AP son del análisis del 29/08
+    names = ['base'] if a.visual and not a.todos else ['base', 'A', 'AB', 'AC', 'P', 'AP'] if a.todos else [a.escenario]
     for day in a.days:
-        run_day(day, names, a)
+        try:
+            run_day(day, names, a)
+        except Exception as e:  # un día con datos raros no corta el resto
+            print(f'{day}: no se pudo calibrar ({e})')
 
 
 def run_day(day, names, a):

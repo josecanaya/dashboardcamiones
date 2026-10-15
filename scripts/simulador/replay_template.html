@@ -221,6 +221,24 @@ canvas{display:block;width:100%}
 .fix .esc .lleg{background:transparent;color:var(--muted);font-weight:400}.fix .esc .lleg b{color:var(--ink)}
 .headroom{background:rgba(124,194,156,.12);border:1px solid var(--accent);border-radius:8px;padding:8px 12px;font-size:13px;line-height:1.45}
 .headroom b{font-family:var(--mono)}.headroom:empty{display:none}
+.conf{font-size:12px;border-radius:6px;padding:4px 8px}
+.conf.confiable{background:rgba(124,194,156,.14);color:var(--accent)}.conf.aproximado{background:rgba(227,163,59,.16);color:var(--warn)}.conf.poco-confiable{background:rgba(224,90,71,.18);color:#F2A194}
+.endgrid{display:grid;grid-template-columns:minmax(260px,1fr) minmax(300px,1.4fr);gap:14px;align-items:start}
+@media (max-width:760px){.endgrid{grid-template-columns:1fr}}
+.charts figure{margin:0 0 6px}.charts figcaption{font-size:11px;color:var(--muted)}
+.charts i,.lanes2 i.br,.lanes2 i.bp,.lanes2 .sec i{display:inline-block;width:14px;height:3px;vertical-align:3px;margin:0 3px}
+svg.lin{width:100%;height:auto;display:block}
+svg.lin .gl0{stroke:rgba(232,240,234,.08)}svg.lin .gt0,svg.lin .gt1{fill:var(--muted);font-size:9px;font-family:var(--mono)}svg.lin .gt0{text-anchor:end}svg.lin .gt1{text-anchor:middle}
+svg.lin path{fill:none;stroke-width:2}svg.lin .lr{stroke:var(--warn);stroke-dasharray:4 3}svg.lin .lp{stroke:var(--ink)}svg.lin .osl.lr{stroke:#6FA8DC}svg.lin .osl.lp{stroke:#A9CBEB}
+.charts .lr,.lanes2 .br{background:var(--warn)}.charts .lp,.lanes2 .bp{background:var(--ink)}
+.lanes2{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:3px 18px;font-size:12px}
+.lanes2 .sec{grid-column:1/-1;font-size:11px;color:var(--muted)}
+.lanes2 .ln{display:grid;grid-template-columns:34px 1fr 96px;gap:6px;align-items:center}.lanes2 .ln b{font-family:var(--mono);font-size:11px;text-align:right}
+.lanes2 .bars,.mdt .bars{display:flex;flex-direction:column;gap:2px}.lanes2 .bars i,.mdt .bars i{display:block;height:5px;border-radius:2px;margin:0}
+.mdsel{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:13px}.mdsel select{margin-left:4px}
+table.mdt{width:100%;border-collapse:collapse;font-size:12.5px}.mdt th{font-size:11px;color:var(--muted);text-align:left;font-weight:600;padding:3px 6px;border-bottom:1px solid var(--line)}
+.mdt td{padding:3px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-family:var(--mono)}.mdt td:first-child{font-family:var(--sans)}.mdt td.bars{min-width:120px}
+.mdt .br{background:var(--warn)}.mdt .bp{background:var(--ink)}.mdt td.neg{color:#F2A194}.mdt td.pos{color:var(--accent)}.mdt .conf{font-family:var(--sans);font-size:11px;padding:1px 6px}
 /* Calles: actividad por calle de calada y por volcable */
 .lanes{display:flex;flex-direction:column;gap:5px}
 .lgrp{font-size:11px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;font-weight:700;margin-top:4px}
@@ -270,7 +288,7 @@ canvas{display:block;width:100%}
       <div class="mixer" id="mixer" hidden>
         <div class="mxhead">
           <h2 title="Botón: abre o cierra. Fader: su ritmo. Vale desde la hora del reloj hasta que lo vuelvas a tocar. Las perillas de abajo valen todo el día.">Consola en vivo</h2><span class="note">botón abre o cierra · fader, ritmo · desde la hora del reloj</span>
-          <button id="projDay" class="rundy" title="Corre el día hasta las 24:00 con esta configuración y muestra el resultado">⏭ Proyectar el día</button><button id="runDay" class="mini" title="Reproduce desde la hora del reloj; pausá, cambiá y volvé a proyectar">▶ Ver hora a hora</button><button id="mxPlay" class="mini">❚❚ Pausa</button>
+          <button id="projDay" class="rundy" title="Corre el día hasta las 24:00 con esta configuración y muestra el resultado">⏭ Proyectar el día</button><button id="projVarios" class="mini" title="La misma configuración en varios días, contra lo que pasó">⏭ Varios días</button><button id="runDay" class="mini" title="Reproduce desde la hora del reloj; pausá, cambiá y volvé a proyectar">▶ Ver hora a hora</button><button id="mxPlay" class="mini">❚❚ Pausa</button>
           <span class="mxmode" id="mxMode"></span><span class="mxwait" id="mxWait"></span>
           <span class="mxscore" id="mxScore"></span>
         </div>
@@ -377,13 +395,25 @@ canvas{display:block;width:100%}
   <div class="modal" id="endModal" hidden role="dialog" aria-modal="true" aria-labelledby="endTitle">
     <div class="mbox">
       <h2 id="endTitle">Cierre del día</h2>
+      <div class="conf" id="endConf"></div>
       <div class="mvs" id="endVs"></div>
       <div class="headroom" id="endRoom"></div>
-      <div class="endsec" id="endCmp"></div>
+      <div class="endgrid"><div id="endCmp"></div><div class="charts" id="endCharts"></div></div>
+      <div class="lanes2" id="endLanes"></div>
       <div id="endFleet"></div>
       <div class="note" id="endMoves"></div>
-      <div class="note">Lo único que no cambia es la hora a la que llegaron los camiones: el resto depende de lo que hiciste en la consola.</div>
-      <div class="mbtn"><button id="endAgain">Repetir el día con estos cambios</button><button id="endClose">Seguir ajustando</button><button id="endReset">Empezar de cero</button></div>
+      <div class="mbtn"><button id="endAgain">Repetir el día con estos cambios</button><button id="endVarios">Proyectar varios días</button><button id="endClose">Seguir ajustando</button><button id="endReset">Empezar de cero</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="mdModal" hidden role="dialog" aria-modal="true" aria-labelledby="mdTitle">
+    <div class="mbox">
+      <h2 id="mdTitle">Proyectar varios días con la misma configuración</h2>
+      <div class="mdsel"><label>Desde <select id="mdFrom"></select></label><label>Hasta <select id="mdTo"></select></label>
+        <button id="mdWeek" class="mini">Última semana</button><button id="mdAll" class="mini">Todos</button><button id="mdGo" class="rundy">⏭ Proyectar</button></div>
+      <div class="note" id="mdCambios"></div>
+      <div id="mdOut"></div>
+      <div class="mbtn"><button id="mdClose">Cerrar</button></div>
     </div>
   </div>
 
@@ -989,7 +1019,7 @@ function escenarioReal() {
   const chip = (p, lab, extra = '') => by[p] ? `<span class="c-${p}">${lab} <b>${fmtN(by[p].cam)}</b> cam. · <b>${fmtN(by[p].t)}</b> t${extra}</span>` : '';
   return chip('soja', 'soja') + chip('girasol', 'girasol') +
     chip('pellet', 'pellet', fl.pellet ? ` · flota <b>${fl.pellet.length}</b> · <b>${viajes(fl.pellet)}</b> viajes` : '') + chip('liquido', 'líquido') +
-    `<span class="lleg"><b>${fmtN(tr.length)}</b> camiones en el día · la hora de llegada de cada uno queda fija</span>`;
+    `<span class="lleg"><b>${fmtN(tr.length)}</b> camiones en el día (llegada fija)</span>`;
 }
 
 // Barras arrastrables: una fila por perilla y una columna por franja de 2 h. La rayita marca lo medido.
@@ -1238,96 +1268,160 @@ function updateGauges() {
   });
 }
 
-// Cierre del día: al llegar a las 24 h, lo que pasó (el motor con todo en lo medido) contra la simulación
+// ---------- cierre de un día y proyección de varios días ----------
+// «Real» = el motor con todo en lo medido (reproduce el día; su error contra las cámaras dice cuánto confiar).
+// «Proyección» = el motor con tu configuración. Lo único fijo es la hora de llegada de cada camión.
 const PLAYAS = [['playa1', 'Playa 1', 200], ['demorado', 'Playa demorado', 30], ['playa3', 'Playa 3', 50], ['osl', 'Playa OSL', 100], ['salida', 'Espera para salir del puerto', 20]];
 function saturacion(g, k, cap) {  // veces que llegó a la capacidad y horas que estuvo llena (00 a 24 h)
   let veces = 0, min = 0, llena = false;
   for (let m = 0; m < 1440; m++) { const v = g[k][m]; if (v >= cap) { min++; if (!llena) veces++; llena = true; } else if (v < cap * 0.9) llena = false; }
   return {veces, horas: min / 60};
 }
+// Cuánto confiar en el motor para un día: descargas del puerto del motor sin cambios contra las de las cámaras
+function confiabilidad(P, m) {
+  const real = P.port.filter(p => p.t25 >= 0 && p.t25 < 1440).length, err = real ? (m.descPuerto / real - 1) * 100 : 0;
+  const nivel = Math.abs(err) <= 5 ? 'confiable' : Math.abs(err) <= 10 ? 'aproximado' : 'poco confiable';
+  return {err, nivel, real, txt: `El motor reproduce este día con ${err > 0 ? '+' : ''}${String(Math.round(err * 10) / 10).replace('.', ',')} % en descargas del puerto (${fmtN(m.descPuerto)} contra ${fmtN(real)} de las cámaras): ${nivel}.`};
+}
+// Perillas de la proyección para cualquier día: tus cambios (con su hora) sobre la configuración típica de ese día;
+// la flota de transile se escala en la misma proporción que la cambiaste en el día de la pantalla
+function ekParaDia(P) {
+  const k = motorKnobs(P), fl = {};
+  for (const [p, n] of Object.entries(k.fleet || {})) {
+    const key = p === 'pellet' ? 'flPellet' : 'flSoja', b0 = BG[key] || 0;
+    fl[p] = b0 ? Math.round(n * (G[key] || 0) / b0) : n;
+  }
+  const ek = {...k, fleet: fl, live: [...LIVE].sort((a, b) => a.t - b.t)};
+  return LIVE.length ? {...ek, frozen: motorFreeze(P, ek, Math.min(...LIVE.map(m => m.t)))} : ek;
+}
+// Capacidad que sobró: llegadas extra con la misma mezcla y horario hasta que dejan de descargarse
+// (cada tanda nueva rinde menos de 1 de cada 4); y desde qué hora la planta queda vacía
+function sobrante(P, trucks, ek, m0, g, pasos = [10, 20, 35, 50, 75, 100, 150, 200]) {
+  const zonas = ['entrada', 'playa1', 'demorado', 'playa3', 'ruta', 'osl', 'salida'];
+  let vacia = null;
+  for (let t = 1439; t >= 0; t--) if (zonas.some(z => g[z][t] > 0)) { vacia = t + 1; break; }
+  let prev = {gain: 0, added: 0}, best = {gain: 0, added: 0, tons: 0};
+  for (const p of pasos) {
+    const A = motorAugment(P, trucks, p), m = motorMetrics(A.P2, motorRun(A.P2, ek));
+    const gain = m.descargas - m0.descargas, added = A.nExtra;
+    if (gain > best.gain) best = {gain, added, tons: m.tons - m0.tons};
+    if ((gain - prev.gain) / Math.max(1, added - prev.added) < 0.25 && p !== pasos[0]) break;
+    prev = {gain, added};
+  }
+  return {...best, vacia: vacia != null && vacia < 1380 ? vacia : null};
+}
+// Gráfico de líneas chico: una o más series por hora (0 a 24), real punteada y proyección llena
+function lineas(series, {alto = 120, unidad = ''} = {}) {
+  const W = 560, H = alto, L = 34, B = 18, top = 8, max = Math.max(1, ...series.flatMap(s => s.v));
+  const x = h => L + (W - L - 8) * h / 24, y = v => top + (H - top - B) * (1 - v / max);
+  const path = v => v.map((val, h) => `${h ? 'L' : 'M'}${x(h).toFixed(1)} ${y(val).toFixed(1)}`).join('');
+  return `<svg class="lin" viewBox="0 0 ${W} ${H}" role="img">` +
+    [0, 0.5, 1].map(f => `<line x1="${L}" x2="${W - 8}" y1="${y(max * f)}" y2="${y(max * f)}" class="gl0"/><text x="${L - 4}" y="${y(max * f) + 3}" class="gt0">${fmtN(max * f)}</text>`).join('') +
+    [0, 6, 12, 18, 24].map(h => `<text x="${x(h)}" y="${H - 4}" class="gt1">${String(h).padStart(2, '0')}</text>`).join('') +
+    series.map(s => `<path d="${path(s.v)}" class="${s.cls}"/>`).join('') + `</svg>`;
+}
+const porHora = (arr, acum) => { const v = Array(25).fill(0); for (const t of arr) if (t >= 0 && t < 1440) v[Math.floor(t / 60) + 1]++; if (acum) for (let h = 1; h < 25; h++) v[h] += v[h - 1]; return v; };
+const ocupHora = (g, k) => Array.from({length: 25}, (_, h) => g[k][Math.min(1439, h * 60)]);
+
 function showEnd() {
   if (!MOTOR || !BASE) return;
-  const a = BASE.m, b = (FX || BASE).m, dm = b.descargas - a.descargas, dt = b.tons - a.tons, mx = v => Math.max(...v), mn = v => v == null ? '—' : fmtN(v) + ' min';
-  const h1 = v => v == null ? '—' : (Math.round(v * 10) / 10).toLocaleString('es-AR') + ' h';
+  const a = BASE.m, b = (FX || BASE).m, gA = BASE.g, gB = (FX || BASE).g, sim = MODE === 'sim' && FX;
+  const dm = b.descargas - a.descargas, dt = b.tons - a.tons, sg = v => (v > 0 ? '+' : '') + fmtN(v);
+  const mn = v => v == null ? '—' : fmtN(v) + ' min', h1 = v => (Math.round(v * 10) / 10).toLocaleString('es-AR') + ' h';
+  const conf = confiabilidad(PREP, a);
   endTitle.textContent = 'Cierre del día · ' + REAL.d.title;
-  endVs.innerHTML = `<div><div class="n">${fmtN(a.descargas)}</div><div class="l">camiones descargados<br>en la realidad · ${fmtN(a.tons)} t</div></div>` +
-    `<div><div class="n">${fmtN(b.descargas)}</div><div class="l">camiones descargados<br>en tu simulación · ${fmtN(b.tons)} t</div></div>` +
-    `<div class="gain ${dt < 0 ? 'neg' : ''}"><div class="n">${dt > 0 ? '+' : ''}${fmtN(dt)} t</div><div class="l">${dt < 0 ? 'menos' : 'más'} que en la realidad<br>(${dm > 0 ? '+' : ''}${fmtN(dm)} camiones)</div></div>`;
-  const row = (lab, x, y, fmt, lowerIsBetter = true) => {
+  endConf.className = 'conf ' + conf.nivel.replace(' ', '-');
+  endConf.textContent = conf.txt;
+  endVs.innerHTML = `<div><div class="n">${fmtN(a.descargas)}</div><div class="l">descargas reales<br>${fmtN(a.tons)} t</div></div>` +
+    `<div><div class="n">${fmtN(b.descargas)}</div><div class="l">descargas en la proyección<br>${fmtN(b.tons)} t</div></div>` +
+    `<div class="gain ${dm < 0 ? 'neg' : ''}"><div class="n">${sg(dm)}</div><div class="l">${dm < 0 ? 'menos' : 'más'} que el día real<br>${sg(dt)} t</div></div>`;
+  // lo que se trabó: solo lo que cambia o se llenó
+  const filas = [];
+  const fila = (lab, x, y, fmt, lowerIsBetter = true) => {
     const cls = Math.round(y * 10) === Math.round(x * 10) ? '' : (y < x) === lowerIsBetter ? 'down' : 'up';
-    return `<span>${lab}</span><b>${fmt(x)}</b><b class="${cls}">${fmt(y)}</b>`;
+    filas.push(`<span>${lab}</span><b>${fmt(x)}</b><b class="${cls}">${fmt(y)}</b>`);
   };
-  const head = t => `<span class="sec">${t}</span><span class="h">realidad</span><span class="h">simulación</span>`;
-  const sec = [];
-  sec.push(head('Lo que se movió') +
-    row('Descargas en el puerto', a.descPuerto, b.descPuerto, fmtN, false) + row('Descargas en Ricardone', a.descRic, b.descRic, fmtN, false) +
-    ['soja', 'girasol', 'pellet'].map(p => row(`${p}: camiones · toneladas`, a.porProd[p], b.porProd[p], fmtN, false) + row('', a.tonsProd[p], b.tonsProd[p], v => fmtN(v) + ' t', false)).join('') +
-    row('Siguen adentro a las 24 h', a.pendientes, b.pendientes, fmtN) +
-    (b.extraLlegan ? row('Camiones extra que llegaron', 0, b.extraLlegan, fmtN, false) : ''));
-  sec.push(head('Esperas') + row('Para entrar a Ricardone', a.esperaEntrada, b.esperaEntrada, mn) +
-    row('Para calar', a.esperaCal, b.esperaCal, mn) + row('En Playa OSL', a.esperaOsl, b.esperaOsl, mn));
-  sec.push(head('Playas: veces que se llenaron · horas llenas') + PLAYAS.map(([k, lab, cap]) => {
-    const x = saturacion(BASE.g, k, cap), y = saturacion((FX || BASE).g, k, cap);
-    return row(`${lab} (cap. ${cap})`, x.veces, y.veces, v => fmtN(v) + ' veces') + row('', x.horas, y.horas, h1);
-  }).join(''));
-  // flota de transile: viajes por camión
-  const vj = m => { const o = {}; for (const v of m.viajes) { const k = v.prod; (o[k] ||= {cam: 0, viajes: 0}); o[k].cam++; o[k].viajes += v.viajes; } return o; };
-  const fa = vj(a), fb = vj(b), prods = [...new Set([...Object.keys(fa), ...Object.keys(fb)])];
-  if (prods.length) sec.push(head('Transile: camiones · viajes · viajes por camión') + prods.map(p => {
-    const x = fa[p] || {cam: 0, viajes: 0}, y = fb[p] || {cam: 0, viajes: 0}, pc = o => o.cam ? o.viajes / o.cam : 0;
-    return row(`Flota de ${p}`, x.cam, y.cam, v => fmtN(v) + ' cam.', false) + row('', x.viajes, y.viajes, v => fmtN(v) + ' viajes', false) +
-      row('', pc(x), pc(y), v => (Math.round(v * 10) / 10).toLocaleString('es-AR') + ' por camión', false);
-  }).join(''));
-  // horas de cada canal: activo (calando / descargando), abierto sin trabajo, parado (parada o cambio de producto), cerrado
-  const lane = (g, i, lab) => { const x = a.lanes[g][i], y = b.lanes[g][i]; if (!x || !y) return '';
-    return row(`${lab}: activo`, x.activo, y.activo, h1, false) + row('· parado / cambio', x.parado, y.parado, h1) + row('· cerrado', x.cerrado, y.cerrado, h1); };
-  sec.push(head('Calles de calada: horas') + [0, 1, 2, 3, 4, 5, 6].map(i => lane('cal', i, i === 6 ? 'CL líquidos' : 'C' + (i + 1))).join(''));
-  sec.push(head('Volcables del puerto: horas') + [0, 1, 2, 3, 4].map(i => lane('volc', i, 'V' + (i + 1))).join(''));
-  sec.push(head('Descarga en Ricardone: horas') + RIC_DESC.map((d, i) => lane('rd', i, d.short)).join(''));
-  endCmp.innerHTML = sec.map(x => `<div class="cmp">${x}</div>`).join('');
-  // detalle de viajes por camión de la flota (los que cambian)
-  const byPlate = m => { const o = {}; for (const v of m.viajes) { const k = v.plateOf + (v.extra ? '+' + v.id : ''); o[k] = (o[k] || 0) + v.viajes; } return o; };
-  const pa = byPlate(a), pb = byPlate(b), keys = [...new Set([...Object.keys(pa), ...Object.keys(pb)])];
-  const fl = keys.map(k => { const tr = REAL.d.trucks[+k.split('+')[0]]; return [(tr ? tr[0] : '?') + (k.includes('+') ? ' (flota +)' : ''), pa[k] || 0, pb[k] || 0]; })
-    .sort((x, y) => (y[2] - y[1]) - (x[2] - x[1]) || y[2] - x[2]);
-  endFleet.innerHTML = fl.length ? `<details><summary>Viajes de cada camión de transile (${fl.length})</summary><div class="cmp fl">` +
-    '<span></span><span class="h">realidad</span><span class="h">simulación</span>' + fl.map(([p, x, y]) => row(p, x, y, fmtN, false)).join('') + '</div></details>' : '';
-  const ch = MODE === 'real' ? [] : cambios();
-  endMoves.innerHTML = ch.length ? '<b>Lo que cambiaste:</b><br>' + ch.join('<br>') : 'No cambiaste nada: es el día como fue.';
+  for (const p of ['soja', 'girasol', 'pellet']) if (a.porProd[p] || b.porProd[p]) fila(`Descargas de ${PNAME[p]}`, a.porProd[p], b.porProd[p], fmtN, false);
+  fila('Espera para calar', a.esperaCal, b.esperaCal, mn);
+  fila('Espera en Playa OSL', a.esperaOsl, b.esperaOsl, mn);
+  for (const [k, lab, cap] of PLAYAS) { const x = saturacion(gA, k, cap), y = saturacion(gB, k, cap); if (x.horas || y.horas) fila(`${lab} llena (cap. ${cap})`, x.horas, y.horas, h1); }
+  fila('Quedan adentro a las 24 h', a.pendientes, b.pendientes, fmtN);
+  const fa = a.viajes.reduce((s, v) => s + v.viajes, 0), fb = b.viajes.reduce((s, v) => s + v.viajes, 0);
+  if (fa || fb) fila(`Viajes de transile (${a.viajes.length} → ${b.viajes.length} camiones)`, fa, fb, fmtN, false);
+  endCmp.innerHTML = `<div class="cmp"><span></span><span class="h">real</span><span class="h">proyección</span>${filas.join('')}</div>`;
+  // gráficos: descargas acumuladas y playas, real contra proyección
+  endCharts.innerHTML =
+    `<figure><figcaption>Descargas acumuladas · <i class="lr"></i> real <i class="lp"></i> proyección</figcaption>${lineas([{v: porHora(BASE.desc, true), cls: 'lr'}, {v: porHora((FX || BASE).desc, true), cls: 'lp'}])}</figure>` +
+    `<figure><figcaption>Camiones esperando en Playa 1 y Playa OSL · <i class="lr"></i> real <i class="lp"></i> proyección</figcaption>${lineas([
+      {v: ocupHora(gA, 'playa1'), cls: 'lr'}, {v: ocupHora(gB, 'playa1'), cls: 'lp'}, {v: ocupHora(gA, 'osl'), cls: 'lr osl'}, {v: ocupHora(gB, 'osl'), cls: 'lp osl'}])}</figure>`;
+  // canales que trabajaron: horas activas, real → proyección
+  const ch = [];
+  const lane = (g, i, lab) => { const x = a.lanes[g][i], y = b.lanes[g][i]; if (!x || !y || (x.activo < 0.1 && y.activo < 0.1)) return;
+    ch.push(`<div class="ln"><span>${lab}</span><div class="bars"><i class="br" style="width:${Math.min(100, x.activo / 24 * 100)}%"></i><i class="bp" style="width:${Math.min(100, y.activo / 24 * 100)}%"></i></div><b>${h1(x.activo)} → ${h1(y.activo)}</b></div>`); };
+  [0, 1, 2, 3, 4, 5, 6].forEach(i => lane('cal', i, i === 6 ? 'CL' : 'C' + (i + 1)));
+  RIC_DESC.forEach((d, i) => lane('rd', i, d.short));
+  [0, 1, 2, 3, 4].forEach(i => lane('volc', i, 'V' + (i + 1)));
+  endLanes.innerHTML = ch.length ? `<div class="sec">Horas trabajando de cada calle, volcable y silo · <i class="br"></i> real <i class="bp"></i> proyección (sobre 24 h)</div>${ch.join('')}` : '';
+  endFleet.innerHTML = '';
+  const cam = sim ? cambios() : [];
+  endMoves.innerHTML = cam.length ? '<b>Lo que cambiaste:</b> ' + cam.join(' ') : 'Sin cambios: es el día como fue.';
+  endRoom.innerHTML = sim ? '<b>Capacidad que sobró</b> · calculando…' : '';
   endModal.hidden = false;
   endAgain.focus();
-  capacidadSobrante();
-}
-
-// Cuánto más entraba con esta configuración: se agregan camiones con la misma mezcla y el mismo horario de llegada
-// hasta que dejan de descargarse (cada tanda nueva rinde menos de 1 de cada 4). También desde qué hora la planta
-// queda vacía.
-let roomTimer = 0;
-function capacidadSobrante() {
   clearTimeout(roomTimer);
-  if (!FX || MODE !== 'sim') { endRoom.innerHTML = ''; return; }
-  const g = FX.g, zonas = ['entrada', 'playa1', 'demorado', 'playa3', 'ruta', 'osl', 'salida'];
-  let vacia = null;
-  for (let m = 1439; m >= 0; m--) if (zonas.some(z => g[z][m] > 0)) { vacia = m + 1; break; }
-  const libre = vacia != null && vacia < 1380 ? `La planta queda vacía desde las <b>${fmtT(vacia)}</b>: ${fmtN((1440 - vacia) / 60)} h sin camiones esperando. ` : '';
-  endRoom.innerHTML = `<b>Capacidad que sobró</b> · ${libre}Calculando cuánto más entraba…`;
-  const base0 = FX.m, steps = [10, 20, 35, 50, 75, 100, 150, 200];
-  let i = 0, prev = {gain: 0, added: 0}, best = {gain: 0, added: 0, tons: 0, pct: 0};
-  const step = () => {
-    if (endModal.hidden || i >= steps.length) return done();
-    const p = steps[i++], m = runK({...EK, extra: p}).m, gain = m.descargas - base0.descargas, added = m.extraLlegan;
-    if (gain > best.gain) best = {gain, added, tons: m.tons - base0.tons, pct: p};
-    const marginal = (gain - prev.gain) / Math.max(1, added - prev.added);
-    prev = {gain, added};
-    if (marginal < 0.25 && i > 1) return done();
-    roomTimer = setTimeout(step, 0);
-  };
-  const done = () => {
-    endRoom.innerHTML = `<b>Capacidad que sobró</b> · ${libre}` + (best.gain >= 5
-      ? `Con esta configuración entraban <b>${fmtN(best.gain)} camiones más</b> (≈ ${fmtN(best.tons)} t) en el día, si hubieran llegado con la misma mezcla y el mismo horario (se probó con ${fmtN(best.added)} camiones extra).`
+  if (sim) roomTimer = setTimeout(() => {
+    const r = sobrante(PREP, REAL.d.trucks, EK, FX.m, FX.g);
+    endRoom.innerHTML = '<b>Capacidad que sobró</b> · ' + (r.vacia != null ? `La planta queda vacía desde las <b>${fmtT(r.vacia)}</b>. ` : '') + (r.gain >= 5
+      ? `Con esta configuración entraban <b>${fmtN(r.gain)} camiones más</b> (≈ ${fmtN(r.tons)} t) si hubieran llegado, con la misma mezcla y el mismo horario.`
       : 'La configuración ya va al límite: si llegaban más camiones, se quedaban esperando.');
-  };
-  roomTimer = setTimeout(step, 30);
+  }, 30);
+}
+let roomTimer = 0;
+
+// ---------- varios días: la misma configuración en cada día, contra lo que pasó ----------
+const MD_CACHE = {};
+async function cargarDia(day) {
+  if (MD_CACHE[day]) return MD_CACHE[day];
+  const d = CACHE[day] || (CACHE[day] = await (await fetch('days/' + day + '.json')).json());
+  const M = await (await fetch('escenarios/' + day + '_motor.json')).json();
+  return MD_CACHE[day] = {d, P: motorPrep(M, d.trucks)};
+}
+function abrirVarios() {
+  const opts = MOTOR_DAYS.map(d => `<option value="${d}">${(INDEX.find(x => x.day === d) || {label: d}).label}</option>`).join('');
+  mdFrom.innerHTML = mdTo.innerHTML = opts;
+  const i = Math.max(0, MOTOR_DAYS.indexOf(REAL.d.day));
+  mdFrom.value = MOTOR_DAYS[Math.max(0, i - 6)]; mdTo.value = MOTOR_DAYS[i];
+  mdOut.innerHTML = ''; mdCambios.innerHTML = LIVE.length || G.flPellet !== BG.flPellet || G.flSoja !== BG.flSoja
+    ? '<b>Se aplica en cada día:</b> ' + cambios().join(' ') : 'No hay cambios: cada día da lo que pasó. Configurá la consola (a las 00:00 vale todo el día) y volvé.';
+  mdModal.hidden = false;
+}
+let mdRun = 0;
+async function proyectarVarios() {
+  const run = ++mdRun, days = MOTOR_DAYS.filter(d => d >= mdFrom.value && d <= mdTo.value);
+  if (!days.length) { mdOut.innerHTML = '<div class="note">Elegí un rango con días.</div>'; return; }
+  const rows = [];
+  for (const [n, day] of days.entries()) {
+    mdOut.innerHTML = `<div class="note">Proyectando ${n + 1} de ${days.length}…</div>`;
+    await new Promise(r => setTimeout(r, 0));
+    if (run !== mdRun) return;
+    const {d, P} = await cargarDia(day);
+    const k0 = motorKnobs(P), r0 = motorRun(P, k0), m0 = motorMetrics(P, r0), ek = ekParaDia(P), r1 = motorRun(P, ek), m1 = motorMetrics(P, r1);
+    const so = sobrante(P, d.trucks, ek, m1, motorSeries(P, r1), [20, 50, 100]);
+    rows.push({day, label: (INDEX.find(x => x.day === day) || {label: day}).label, conf: confiabilidad(P, m0), a: m0, b: m1, so});
+  }
+  const tot = k => rows.reduce((s, r) => s + k(r), 0), sg = v => (v > 0 ? '+' : '') + fmtN(v);
+  const max = Math.max(...rows.flatMap(r => [r.a.descargas, r.b.descargas]));
+  mdOut.innerHTML = `<div class="mvs"><div><div class="n">${fmtN(tot(r => r.a.descargas))}</div><div class="l">descargas reales<br>${fmtN(tot(r => r.a.tons))} t</div></div>` +
+    `<div><div class="n">${fmtN(tot(r => r.b.descargas))}</div><div class="l">descargas en la proyección<br>${fmtN(tot(r => r.b.tons))} t</div></div>` +
+    `<div class="gain ${tot(r => r.b.descargas - r.a.descargas) < 0 ? 'neg' : ''}"><div class="n">${sg(tot(r => r.b.descargas - r.a.descargas))}</div><div class="l">en ${rows.length} días<br>${sg(tot(r => r.b.tons - r.a.tons))} t</div></div></div>` +
+    `<div class="headroom"><b>Capacidad que sobró</b> · con esta configuración entraban <b>${fmtN(tot(r => r.so.gain))} camiones más</b> (≈ ${fmtN(tot(r => r.so.tons))} t) en esos ${rows.length} días, si hubieran llegado.</div>` +
+    `<table class="mdt"><thead><tr><th>Día</th><th>Motor</th><th>Real</th><th>Proyección</th><th></th><th>Diferencia</th><th>Sobró</th><th>Vacía desde</th></tr></thead><tbody>` +
+    rows.map(r => `<tr><td>${r.label}</td><td><span class="conf ${r.conf.nivel.replace(' ', '-')}" title="${r.conf.txt}">${r.conf.nivel}</span></td>` +
+      `<td>${fmtN(r.a.descargas)}</td><td>${fmtN(r.b.descargas)}</td>` +
+      `<td class="bars"><i class="br" style="width:${r.a.descargas / max * 100}%"></i><i class="bp" style="width:${r.b.descargas / max * 100}%"></i></td>` +
+      `<td class="${r.b.descargas < r.a.descargas ? 'neg' : 'pos'}">${sg(r.b.descargas - r.a.descargas)} · ${sg(r.b.tons - r.a.tons)} t</td>` +
+      `<td>${r.so.gain >= 5 ? '+' + fmtN(r.so.gain) : '—'}</td><td>${r.so.vacia != null ? fmtT(r.so.vacia) : '—'}</td></tr>`).join('') +
+    `</tbody></table><div class="note">Cada día se simula por separado: no pasan camiones de un día al siguiente. «Motor» dice cuánto confiar en ese día (descargas del puerto del motor contra las cámaras: confiable ±5 %, aproximado ±10 %). «Sobró»: camiones más que entraban con esa configuración si hubieran llegado.</div>`;
 }
 
 // Consola en vivo: un canal por estación, por calle de calada y por volcable. Cada toque queda como jugada a la
@@ -1454,11 +1548,19 @@ mxPlay.onclick = () => toggle();
 const mixer = document.getElementById('mixer'), mxCal = document.getElementById('mxCal'), mxVolc = document.getElementById('mxVolc'), mxMoves = document.getElementById('mxMoves'), mxScore = document.getElementById('mxScore');
 document.getElementById('mxClear').onclick = () => { LIVE = []; knobChanged(true); };
 const simBadge = document.getElementById('simBadge'), gauges = document.getElementById('gauges'), movesCard = document.getElementById('movesCard'), endModal = document.getElementById('endModal');
+const endConf = document.getElementById('endConf'), endCharts = document.getElementById('endCharts'), endLanes = document.getElementById('endLanes');
+const mdModal = document.getElementById('mdModal'), mdFrom = document.getElementById('mdFrom'), mdTo = document.getElementById('mdTo'), mdOut = document.getElementById('mdOut'), mdCambios = document.getElementById('mdCambios');
+document.getElementById('projVarios').onclick = () => { toggle(false); abrirVarios(); };
+document.getElementById('endVarios').onclick = () => { endModal.hidden = true; abrirVarios(); };
+document.getElementById('mdGo').onclick = proyectarVarios;
+document.getElementById('mdClose').onclick = () => { mdRun++; mdModal.hidden = true; };
+document.getElementById('mdWeek').onclick = () => { const i = MOTOR_DAYS.indexOf(mdTo.value); mdFrom.value = MOTOR_DAYS[Math.max(0, i - 6)]; };
+document.getElementById('mdAll').onclick = () => { mdFrom.value = MOTOR_DAYS[0]; mdTo.value = MOTOR_DAYS[MOTOR_DAYS.length - 1]; };
 const endRoom = document.getElementById('endRoom'), endFleet = document.getElementById('endFleet'), endTitle = document.getElementById('endTitle'), endVs = document.getElementById('endVs'), endCmp = document.getElementById('endCmp'), endMoves = document.getElementById('endMoves'), endAgain = document.getElementById('endAgain');
 endAgain.onclick = () => { endModal.hidden = true; T = 0; redraw(); toggle(true); };
 document.getElementById('endClose').onclick = () => { endModal.hidden = true; };
 document.getElementById('endReset').onclick = () => { endModal.hidden = true; resetMesa(); setView('real'); T = 0; redraw(); };
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && !endModal.hidden) endModal.hidden = true; });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { endModal.hidden = true; mdRun++; mdModal.hidden = true; } });
 document.getElementById('runDay').onclick = () => { endModal.hidden = true; if (MODE !== 'sim') setView('sim'); if (T >= 1439) T = 0; redraw(); toggle(true); };
 document.getElementById('projDay').onclick = () => { if (MODE !== 'sim') setView('sim'); toggle(false); T = 1440; redraw(); showEnd(); };
 const fxGainLab = document.getElementById('fxGainLab'), fxSplit = document.getElementById('fxSplit'), fxWhy = document.getElementById('fxWhy');

@@ -25,7 +25,7 @@
     "test:watch": "vitest",
     "contract-first:local": "node scripts/run-truckflow-transform-local.mjs",
     "sim:build": "python scripts/simulador/build_replay.py --all --out public/simulador && npm run sim:motor && python scripts/simulador/build_replay_html.py public/simulador public/simulador/index.html --standalone",
-    "sim:motor": "python scripts/simulador/motor_colas.py 2026-08-29 2026-08-21 2026-08-25 2026-09-03 --visual"
+    "sim:motor": "python scripts/simulador/motor_colas.py todos --visual"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
