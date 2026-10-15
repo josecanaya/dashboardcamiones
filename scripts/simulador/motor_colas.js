@@ -18,7 +18,7 @@ const N_ING_RIC = 0, N_PRE = 1, N_CAL = 2, N_BAL_RIC = 3, N_BAL_EGR_RIC = 16, N_
 const N_ING_SL = 20, N_BAL_SL = 22, N_VOLC = 25, N_BAL_EGR = 28, N_EGR_SL = 30;
 const SL_NODES = new Set([20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]);
 // Estaciones de un solo puesto (las calles de calada y los puntos de descarga van aparte, uno por canal)
-const STATIONS = ['ing', 'pre', 'sal2', 'balric', 'balegrric', 'ingsl', 'bal', 'balegr', 'egr'];
+const STATIONS = ['ing', 'pre', 'sal2', 'balric', 'balegrric', 'ingsl', 'bal', 'balegr', 'egr', 'cargapellet', 'cargasoja'];
 const TRAMO = {ingPre: 5.6, calSal2: 6, sal2IngSl: 12.8, balVolc: 16, volcBalEgr: 4, balEgrEgr: 5.3,
                calBalRic: 7.9, balRicP3: 7.4, descBalEgrRic: 15};
 // Puntos de descarga de Ricardone: nodo y device del modelo, productos y ritmo por defecto (camiones por hora)
@@ -42,7 +42,8 @@ function motorKnobs(M) {
   // Perillas por hora (de M.h0 a 26 h) copiadas de los perfiles calibrados, más los ritmos de cada estación.
   // Las garitas y balanzas sin medir van por encima de lo observado; en Ricardone abren los puntos que se usaron.
   return {cal: [...M.cal], calles: M.calles.map((c, i) => Math.max(c, M.cal[i] >= 60 ? 2 : 1)), volc: [...M.volc], vact: [...M.vact],
-          st: {ing: 90, pre: 90, sal2: 90, balric: 40, balegrric: 40, ingsl: 90, bal: 60 / M.prm.bal_min, balegr: 40, egr: 90},
+          st: {ing: 90, pre: 90, sal2: 90, balric: 40, balegrric: 40, ingsl: 90, bal: 60 / M.prm.bal_min, balegr: 40, egr: 90,
+               cargapellet: ((M.carga || {}).pellet || {}).cap || 8, cargasoja: ((M.carga || {}).soja || {}).cap || 4},
           volcProds: (M.volcProds || PORT_PRODS).map(p => [...p]), calProds: CAL_PRODS.map(p => [...p]),
           calLiq: {on: M.calLiqUsed !== false, rate: M.calLiqRate || CAL_LIQ_RATE},
           rd: RIC_DESC.map((d, i) => ({on: M.rdDay ? M.rdDay[i].used : d.k === 'vr2' || d.k === 'k1', rate: d.rate, prods: M.rdDay ? [...M.rdDay[i].prods] : [...d.prods]})),
@@ -146,8 +147,33 @@ function motorPrep(M, dayTrucks) {
       viajesReal: ks.filter(k => port[k].t25 >= 0 && port[k].t25 < 1440).length});
   }
   for (const l of Object.values(fleet)) l.sort((a, b) => a.first - b.first);
+  // La vuelta de un transil: egreso SL → Ricardone (ruta), adentro de Ricardone (tiempo fijo + cola y carga en tolva
+  // o silo) y Ricardone → ingreso SL. La carga es una estación con su ritmo sostenido: salidas cargadas de
+  // Ricardone de ese producto por hora, en las horas en que se cargó. Así, con más camiones, crece la cola de carga y no los viajes.
+  const qv = (v, p, d) => v.length ? [...v].sort((a, b) => a - b)[Math.floor(p * (v.length - 1))] : d;
+  const carga = {};
+  for (const t of dayTrucks) {
+    if (t[4] !== 1) continue;
+    const prod = prodOf(t[1]) === 'pellet' ? 'pellet' : 'soja', c = carga[prod] ||= {back: [], inside: [], toSl: [], dep: Array(24).fill(0)};
+    t[3].forEach(([n, m], i) => {
+      if (n === N_BAL_EGR_RIC && m >= 0 && m < 1440) c.dep[Math.floor(m / 60)]++;
+      if (n !== N_EGR_SL) return;
+      const nx = t[3].slice(i + 1), r0 = nx.find(x => [N_ING_RIC, N_PRE, N_BAL_RIC].includes(x[0])), r16 = nx.find(x => x[0] === N_BAL_EGR_RIC), r20 = nx.find(x => x[0] === N_ING_SL);
+      if (r0 && r16 && r20 && r0[1] < r16[1] && r16[1] < r20[1]) { c.back.push(r0[1] - m); c.inside.push(r16[1] - r0[1]); c.toSl.push(r20[1] - r16[1]); }
+    });
+  }
+  for (const [p, c] of Object.entries(carga)) {
+    // ritmo sostenido: salidas cargadas por hora en las horas en que se cargó (el pico de 2 h no se sostiene)
+    const act = c.dep.filter(x => x > 0), best = act.length ? act.reduce((x, y) => x + y, 0) / act.length : 0;
+    // la cámara de la balanza de egreso de Ricardone pierde lecturas: el ritmo se toma de los viajes que llegan al
+    // puerto (pasadas de la flota en el día) por hora con llegadas, si da más
+    const llegH = Array(24).fill(0);
+    (fleet[p] || []).forEach(fl => port.forEach((pp, k) => { if (fleetPass.has(k) && pp.i === fl.i && pp.t20 >= 0 && pp.t20 < 1440) llegH[Math.floor(pp.t20 / 60)]++; }));
+    const actL = llegH.filter(x => x > 0), capL = actL.length ? actL.reduce((x, y) => x + y, 0) / actL.length : 0;
+    carga[p] = {cap: Math.max(2, best, capL) || (p === 'pellet' ? 6 : 3), back: qv(c.back, 0.5, 11), inFix: Math.max(10, qv(c.inside, 0.1, 35) - 60 / Math.max(2, best || 6)), toSl: qv(c.toSl, 0.5, 18)};
+  }
   return {...M, ric, port, nTrucks: dayTrucks.length, calOrder: order(0, 6), volcOrder: order(11, 5), volcRate, rdDay, calLiqUsed, calLiqRate,
-          fleet, fleetPass,
+          fleet, fleetPass, carga,
           volcFactor: 1.05};  // calibración con 4 días: descargas del puerto ±5 % (29/08 +2,4; 21/08 −3,7; 25/08 0; 03/09 +0,8)
 }
 
@@ -295,7 +321,8 @@ function motorRun(P, K) {
   };
   const laneMin = {cal: Array.from({length: 7}, () => ({open: 0, stop: 0, off: 0})), volc: Array.from({length: 5}, () => ({open: 0, stop: 0, off: 0})),
                    rd: RIC_DESC.map(() => ({open: 0, stop: 0, off: 0}))};
-  const Q = {ing: [], pre: [], cal: [], sal2: [], balric: [], p3: [], balegrric: [], ingsl: [], bal: [], volc: [], balegr: [], egr: []};
+  const Q = {ing: [], pre: [], cal: [], sal2: [], balric: [], p3: [], balegrric: [], ingsl: [], bal: [], volc: [], balegr: [], egr: [], cargapellet: [], cargasoja: []};
+  const cargaEv = [];  // llegada a Ricardone e inicio de carga de cada vuelta, para la cola de carga
   const stBusy = Object.fromEntries(STATIONS.map(s => [s, -1e9]));
   const calBusy = Array(7).fill(-1e9), calHeld = Array(7).fill(null);
   const volcBusy = Array(5).fill(null), volcHeld = Array(5).fill(null), rdBusy = Array(RIC_DESC.length).fill(-1e9);
@@ -316,7 +343,13 @@ function motorRun(P, K) {
     } else if (r.pre < P.T0) { Object.assign(o, {ing: r.ing, pre: r.pre}); playa1++; push(P.T0, 'arr_cal', k); }
     else push(Math.max(r.ing, P.T0), 'arr_ing', k);
   });
-  fleetT.forEach(f => newTrip(f, f.first));
+  // el primer viaje también sale de la carga en Ricardone: cada camión llega a la tolva o silo antes de su primera
+  // llegada real al puerto (lo que tarda la carga, el tiempo fijo adentro y la ruta)
+  fleetT.forEach(f => {
+    const C = (P.carga || {})[f.prod === 'pellet' ? 'pellet' : 'soja'];
+    const tc = C ? f.first - C.toSl - C.inFix - 60 / C.cap : null;
+    if (C && tc >= P.T0) push(tc, 'arr_carga', f.id); else newTrip(f, f.first);
+  });
   P.port.forEach((p, k) => {
     if (p.ri >= 0 || PORT[k].skip) return;
     if (p.t22 < P.T0) Object.assign(outP[k], {t20: p.t20, t22: p.t22, t25: p.t25, t28: p.t28, t30: p.t30, fixed: true});
@@ -344,9 +377,14 @@ function motorRun(P, K) {
       case 'arr_balegr': Q.balegr.push(x); break;
       case 'balegr_done': push(t + PORT[x].exitWalk, 'arr_egr', x); break;
       case 'arr_egr': Q.egr.push(x); break;
+      case 'arr_carga': { const f = fleetT[x]; const ev = {f: x, prod: f.prod, arr: t}; cargaEv.push(ev); Q[f.prod === 'pellet' ? 'cargapellet' : 'cargasoja'].push(ev); break; }
       case 'egr_done': salida--;
-        // vuelve a cargar y viene de nuevo, dentro de su turno (de su primera llegada a su última salida reales)
-        if (PORT[x].ft != null) { const f = fleetT[PORT[x].ft]; if (t + f.vuelta < Math.min(P.T_END, f.until)) newTrip(f, t + f.vuelta); }
+        // vuelve a Ricardone a cargar (cola en la tolva o silo) y viene de nuevo, dentro de su turno
+        if (PORT[x].ft != null) {
+          const f = fleetT[PORT[x].ft], C = (P.carga || {})[f.prod === 'pellet' ? 'pellet' : 'soja'];
+          if (!C) { if (t + f.vuelta < Math.min(P.T_END, f.until)) newTrip(f, t + f.vuelta); }
+          else if (t + C.back < Math.min(P.T_END, f.until)) push(t + C.back, 'arr_carga', f.id);
+        }
         break;
     }
     const L = motorLaneState(P, K, t, paradas);
@@ -437,8 +475,14 @@ function motorRun(P, K) {
     });
     serve('balegr', t, L, null, (k, t0, d) => { outP[k].t28 = t0; push(t0 + d, 'balegr_done', k); });
     serve('egr', t, L, null, (k, t0, d) => { outP[k].t30 = t0; push(t0 + d, 'egr_done', k); });
+    // carga de transiles en Ricardone: sale cargado y llega al puerto después del tiempo fijo adentro y la ruta
+    for (const cs of ['cargapellet', 'cargasoja']) serve(cs, t, L, null, (ev, t0, d) => {
+      ev.ini = t0; const f = fleetT[ev.f], C = P.carga[cs === 'cargapellet' ? 'pellet' : 'soja'];
+      const next = t0 + d + C.inFix + C.toSl;
+      if (next < Math.min(P.T_END, f.until + 60)) newTrip(f, next);
+    });
   }
-  return {outR, outP, busy, open, port: PORT, fleetT, laneMin};
+  return {outR, outP, busy, open, port: PORT, fleetT, laneMin, cargaEv};
 }
 
 // Medidas del día sobre el resultado del motor (las mismas para lo medido y para la simulación)
@@ -492,7 +536,7 @@ function motorSeries(P, run) {
   const PORT = run.port || P.port;
   const R = run.outR.filter(o => !o.fixed), Pp = run.outP.filter((o, k) => !o.fixed && !PORT[k].skip);
   const occ = () => new Int32Array(1442);
-  const z = {entrada: occ(), playa1: occ(), demorado: occ(), playa3: occ(), osl: occ(), salida: occ(), ruta: occ()};
+  const z = {entrada: occ(), playa1: occ(), demorado: occ(), playa3: occ(), osl: occ(), salida: occ(), ruta: occ(), carga: occ()};
   const PR = ['soja', 'girasol', 'pellet', 'liquido'];
   const zp = Object.fromEntries(Object.keys(z).map(k => [k, Object.fromEntries(PR.map(p => [p, occ()]))]));
   const span2 = (k, p, a, b) => { span(z[k], a, b); span(zp[k][p], a, b); };
@@ -504,11 +548,12 @@ function motorSeries(P, run) {
     if (r.dest === 'R') span2('playa3', r.prod, o.tBalRic, o.tDesc);
   });
   run.outP.forEach((o, k) => { if (o.fixed || PORT[k].skip) return; const p = PORT[k].prod; span2('osl', p, o.t20, o.t22); span2('salida', p, o.baja, o.t30); span2('ruta', p, o.arr, o.t20); });
+  for (const ev of run.cargaEv || []) span2('carga', ev.prod === 'pellet' ? 'pellet' : 'soja', ev.arr, ev.ini);
   for (const a of [...Object.values(z), ...Object.values(zp).flatMap(x => Object.values(x))]) for (let m = 1; m < 1442; m++) a[m] += a[m - 1];
   return {ing: sortT(R.map(o => o.ing)), pre: sortT(R.map(o => o.pre)), cal: sortT(R.map(o => o.cal)), sal2: sortT(R.map(o => o.s2)),
           balric: sortT(R.map(o => o.tBalRic)), rd: sortT(R.map(o => o.tDesc)), balegrric: sortT(R.map(o => o.tBalEgrRic)),
           ingsl: sortT(Pp.map(o => o.t20)), bal: sortT(Pp.map(o => o.t22)), volc: sortT(Pp.map(o => o.t25)),
-          balegr: sortT(Pp.map(o => o.t28)), egr: sortT(Pp.map(o => o.t30)), ...z, porProd: zp};
+          balegr: sortT(Pp.map(o => o.t28)), egr: sortT(Pp.map(o => o.t30)), cargaR: sortT((run.cargaEv || []).map(e => e.ini)), ...z, porProd: zp};
 }
 
 // Recorridos simulados con el formato de days/<día>.json: cada lectura de un hito toma la hora del motor (y, en

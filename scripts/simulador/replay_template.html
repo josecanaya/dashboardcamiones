@@ -249,6 +249,63 @@ table.mdt{width:100%;border-collapse:collapse;font-size:12.5px}.mdt th{font-size
 .lane.cerrada span,.lane.cerrada b{color:var(--muted)}.lane.cerrada .fill{background:var(--muted)}
 .lane.parada i{color:var(--warn)}.lane.abierta i{color:var(--accent)}
 .lect{margin:0;padding-left:18px;font-size:13px;line-height:1.5;display:flex;flex-direction:column;gap:3px}
+/* Una sola pantalla: todo entra en el alto de la ventana; el detalle va en un panel lateral */
+html,body{height:100%;overflow:hidden}
+body{margin:0;padding:10px 14px}
+.app{max-width:none;height:100%;gap:8px}
+header{flex-wrap:wrap;gap:6px 14px;flex:none}
+header>div:first-child{display:flex;align-items:baseline;gap:12px;min-width:0;flex:1 1 200px}
+header h1{font-size:17px;white-space:nowrap}
+header .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#day{width:330px}
+.days button{padding:6px 10px}
+#dayConf{font-weight:600;white-space:nowrap}
+.fix{flex:1 1 100%;min-width:0;background:none;border:0;border-radius:0;padding:0;flex-wrap:nowrap}
+.fix .esc{flex-wrap:nowrap;overflow:hidden;white-space:nowrap}
+.main{flex:1;min-height:0;grid-template-columns:minmax(0,1fr) 360px;align-items:stretch}
+.mapwrap{display:flex;flex-direction:column;min-height:0;overflow:hidden;padding:6px}
+.mapwrap canvas#map{max-width:calc((100vh - 450px) * 2.9);margin-inline:auto}
+.controls{flex-wrap:nowrap;padding:4px 4px 0}
+.clock{font-size:24px;min-width:90px}
+.side{min-height:0;overflow:auto;gap:8px}
+.knobcard{padding:10px 12px;gap:6px}
+.knobcard .gain .n{font-size:44px;line-height:1}
+.fxwait,.fxtres{flex-basis:100%;display:grid;gap:6px}
+.fxwait{grid-template-columns:1fr 1fr}
+.fxwait span{border-radius:7px;padding:5px 8px;font-size:11.5px;background:rgba(255,255,255,.05);color:var(--muted)}
+.fxwait b{display:block;font-family:var(--mono);font-size:16px;color:var(--ink)}
+.fxwait .better{background:rgba(124,194,156,.14)}.fxwait .better b{color:var(--accent)}
+.fxwait .worse{background:rgba(224,90,71,.14)}.fxwait .worse b{color:#F2A194}
+.fxtres{grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);padding-top:6px;font-size:11px;color:var(--muted)}
+.fxtres b{display:block;font-family:var(--mono);font-size:15px;color:var(--ink)}.fxtres .med b{color:#F5D547}.fxtres .sim b{color:var(--accent)}
+.fxwhy{border-left:0;border:1px solid rgba(224,90,71,.45);border-radius:8px;padding:6px 9px;font-size:12px}
+.gwrap.key .gsec{display:none}
+.gwrap.key .gauge:not([data-k=ing]):not([data-k=cal]):not([data-k=bal]):not([data-k=volc]):not([data-k=playa1]):not([data-k=demorado]):not([data-k=osl]):not([data-k=ruta]){display:none}
+.gwrap.key .gauges+.gauges{margin-top:4px}
+.gauge .gl{font-size:11px}.gauge .gs{font-size:11px}.gsec{font-size:11px}
+.detbtn{flex:none;padding:10px 12px;border-radius:10px;font-weight:600;text-align:center}
+/* Consola: un botón de producto por canal, con el color de lo que recibe */
+.strip{width:34px}
+.strip .pp{width:30px;height:22px;padding:0;border-radius:6px;font-size:11px;font-weight:800;color:#0E1A16;border:0;background:#2A3B33;letter-spacing:-.5px}
+.strip .pp.c-soja{background:var(--soja)}.strip .pp.c-girasol{background:var(--girasol)}.strip .pp.c-pellet{background:var(--pellet)}.strip .pp.c-liquido{background:var(--liq)}
+.strip .pp.multi{background:#2A3B33;color:var(--ink);font-size:10px}
+.strip .pp:disabled{cursor:default;opacity:.9}
+.led{width:30px;padding:4px 0}
+.strip.sta .led{font-size:10px}
+.mxknobs .rks{grid-template-columns:repeat(5,86px)}
+.mixer .mxknobs .rk .rl{white-space:normal;font-size:11px}
+/* Panel de detalle */
+.drawer{position:fixed;top:10px;right:10px;bottom:10px;width:min(760px,calc(100vw - 20px));z-index:15;background:var(--bg);border:1px solid var(--accent);border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.55);display:flex;flex-direction:column;overflow:hidden}
+.drhead{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.drhead h2{font-size:13px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin:0}
+.tabs{display:flex;gap:3px;padding:3px;border-radius:10px;background:var(--panel);border:1px solid var(--line);flex:1}
+.tabs button{flex:1;border:0;background:transparent;color:var(--muted);font-weight:600;padding:6px 8px}
+.tabs button[aria-selected="true"]{background:var(--accent);color:#0E1A16}
+.drclose{width:34px;height:34px;padding:0}
+.drbody{flex:1;overflow:auto;padding:12px 14px;display:flex;flex-direction:column;gap:12px}
+.pane{display:flex;flex-direction:column;gap:12px}
+.drawer .more{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.drawer .bottom{grid-template-columns:minmax(0,1fr)}
 </style>
 
 <div class="app">
@@ -258,8 +315,9 @@ table.mdt{width:100%;border-collapse:collapse;font-size:12.5px}.mdt th{font-size
       <div class="sub" id="daySub">Cada camión aparece donde lo leyó una cámara y espera en la playa que le corresponde.</div>
     </div>
     <div class="days" id="days" role="group" aria-label="Elegir día"></div>
+    <span class="conf" id="dayConf" hidden></span>
+    <div class="fix" id="fix" role="group" aria-label="Ver el día como fue o proyectarlo" hidden></div>
   </header>
-  <div class="fix" id="fix" role="group" aria-label="Corregir el día" hidden></div>
 
   <div class="main">
     <div class="mapwrap">
@@ -277,14 +335,6 @@ table.mdt{width:100%;border-collapse:collapse;font-size:12.5px}.mdt th{font-size
           <option value="600">10 horas por minuto</option>
         </select>
       </div>
-      <div class="legend" style="padding:4px 6px 2px">
-        <span><i class="dot" style="background:var(--soja)"></i>Soja</span>
-        <span><i class="dot" style="background:var(--pellet)"></i>Pellet</span>
-        <span><i class="dot" style="background:var(--girasol)"></i>Girasol</span>
-        <span><i class="dot" style="background:var(--grano)"></i>Otros granos</span>
-        <span><i class="dot" style="background:var(--liq)"></i>Líquidos</span>
-        <span><i class="dot" style="background:var(--otro)"></i>Otros</span>
-      </div>
       <div class="mixer" id="mixer" hidden>
         <div class="mxhead">
           <h2 title="Botón: abre o cierra. Fader: su ritmo. Vale desde la hora del reloj hasta que lo vuelvas a tocar. Las perillas de abajo valen todo el día.">Consola en vivo</h2><span class="note">botón abre o cierra · fader, ritmo · desde la hora del reloj</span>
@@ -293,35 +343,24 @@ table.mdt{width:100%;border-collapse:collapse;font-size:12.5px}.mdt th{font-size
           <span class="mxscore" id="mxScore"></span>
         </div>
         <div class="mxbody">
-          <div class="mxgrp"><div class="mxt">Ricardone <span>calada · Salida 2 │ volcables y silos</span></div><div class="strips" id="mxCal"></div></div>
+          <div class="mxgrp"><div class="mxt">Ricardone <span>calada · Salida 2 │ volcables y silos · carga de transiles</span></div><div class="strips" id="mxCal"></div></div>
           <div class="mxgrp"><div class="mxt">Puerto <span>volcables · egreso</span></div><div class="strips" id="mxVolc"></div></div>
-          <div class="mxgrp mxknobs"><div class="mxt">Flota de transile <span>camiones que se llaman en el día · doble clic vuelve a lo real</span></div><div class="rks" id="knobs"></div></div>
+          <div class="mxgrp mxknobs"><div class="mxt">Todo el día <span>arrastrá, rueda o flechas · doble clic vuelve a lo medido</span></div><div class="rks" id="knobs"></div></div>
         </div>
       </div>
     </div>
 
     <div class="side">
       <div class="card knobcard" id="knobCard" hidden>
-        <div class="kchead"><h2>Ritmos ahora</h2><button id="kReset">Volver a lo medido</button></div>
-        <div class="gain" id="fxGainBox" hidden><span class="n" id="fxGain">+0</span><span class="l"><span id="fxGainLab">descargas más que el día real</span><span id="fxNow" hidden></span></span>
+        <div class="kchead"><h2>Resultado del día</h2><button id="kReset">Volver a lo medido</button></div>
+        <div class="gain" id="fxGainBox" hidden><span class="n" id="fxGain">+0</span><span class="l"><span id="fxGainLab">descargas de más que la reproducción del día</span><span id="fxNow" hidden></span></span>
+          <div class="fxwait" id="fxWait"></div><div class="fxtres" id="fxTres"></div>
           <div class="fxsplit" id="fxSplit"></div><div class="fxwhy" id="fxWhy"></div></div>
-        <div class="gwrap" id="gauges"></div>
-        <div class="glegend"><span><i class="gn"></i>tu simulación</span><span><i class="gr"></i>lo que pasó</span></div>
+        <div class="kchead"><h2>Última hora · ritmos y playas</h2><button id="gAll" class="mini" aria-pressed="false" title="Mostrar todas las estaciones y colas">Ver todos</button></div>
+        <div class="gwrap key" id="gauges"></div>
+        <div class="glegend"><span><i class="gn"></i>simulación</span><span><i class="gr"></i>lo que pasó</span></div>
       </div>
-      <div class="card" id="movesCard" hidden>
-        <div class="kchead"><h2>Tus jugadas</h2><button id="mxClear" class="mini">Borrar</button></div>
-        <div class="moves" id="mxMoves"></div>
-      </div>
-      <div class="card fixcard" id="fixCard" hidden>
-        <h2 id="fxTitle">Qué cambia con la mesa</h2>
-        <div class="note fxc" id="fxCambio" style="color:var(--ink)"></div>
-        <div class="cmp" id="fxCmp"></div>
-        <ul class="lect" id="fxLect"></ul>
-      </div>
-      <div class="card">
-        <h2>Calles · camiones en la última hora</h2>
-        <div class="lanes" id="lanes"></div>
-      </div>
+      <button class="detbtn" id="openDetail">Ver detalle · qué cambia, jugadas, calles y el día completo</button>
     </div>
   </div>
 
@@ -334,6 +373,45 @@ table.mdt{width:100%;border-collapse:collapse;font-size:12.5px}.mdt th{font-size
     <div class="mesascroll"><div class="mgrid" id="mesaGrid"></div></div>
   </div>
 
+  <aside class="drawer" id="drawer" hidden aria-labelledby="drTitle">
+    <div class="drhead">
+      <h2 id="drTitle">Detalle</h2>
+      <div class="tabs" role="tablist" aria-label="Secciones del detalle">
+        <button role="tab" data-tab="cambios" aria-selected="true">Qué cambia</button><button role="tab" data-tab="jugadas" aria-selected="false">Jugadas</button><button role="tab" data-tab="calles" aria-selected="false">Calles</button><button role="tab" data-tab="dia" aria-selected="false">Día completo</button>
+      </div>
+      <button id="drClose" class="drclose" aria-label="Cerrar el detalle">✕</button>
+    </div>
+    <div class="drbody">
+    <div class="pane" data-pane="cambios">
+      <p class="note" id="fxEmpty">Pasá a «Proyección», tocá un canal o una perilla y acá aparece qué cambia contra la reproducción del día.</p>
+      <div class="card fixcard" id="fixCard" hidden>
+        <h2 id="fxTitle">Qué cambia con la mesa</h2>
+        <div class="note fxc" id="fxCambio" style="color:var(--ink)"></div>
+        <div class="cmp" id="fxCmp"></div>
+        <ul class="lect" id="fxLect"></ul>
+      </div>
+    </div>
+    <div class="pane" data-pane="jugadas" hidden>
+      <div class="card" id="movesCard" hidden>
+        <div class="kchead"><h2>Tus jugadas</h2><button id="mxClear" class="mini">Borrar</button></div>
+        <div class="moves" id="mxMoves"></div>
+      </div>
+    </div>
+    <div class="pane" data-pane="calles" hidden>
+      <div class="card">
+        <h2>Calles · camiones en la última hora</h2>
+        <div class="lanes" id="lanes"></div>
+      </div>
+    </div>
+    <div class="pane" data-pane="dia" hidden>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--soja)"></i>Soja</span>
+    <span><i class="dot" style="background:var(--pellet)"></i>Pellet</span>
+    <span><i class="dot" style="background:var(--girasol)"></i>Girasol</span>
+    <span><i class="dot" style="background:var(--grano)"></i>Otros granos</span>
+    <span><i class="dot" style="background:var(--liq)"></i>Líquidos</span>
+    <span><i class="dot" style="background:var(--otro)"></i>Otros</span>
+  </div>
   <div class="more">
       <div class="card">
         <h2>Camiones adentro</h2>
@@ -392,6 +470,11 @@ table.mdt{width:100%;border-collapse:collapse;font-size:12.5px}.mdt th{font-size
     <h2>Actividad por calle de calada y por volcable · camiones por hora</h2>
     <div id="heat" style="overflow-x:auto"></div>
   </div>
+  <p class="note" id="fxNote" hidden>Proyección: el motor de colas (scripts/simulador/motor_colas.js) toma las mismas llegadas reales y las hace pasar por la calada de Ricardone, la balanza de ingreso y los volcables del puerto, con las capacidades medidas hora por hora. «Reproducción del día» es el motor con todo en lo medido, calibrado contra las cámaras. Cada cambio se compara contra esa reproducción: así, los camiones de más y las esperas no dependen de las lecturas que faltan. En el gráfico de playas, la línea punteada es el día real.</p>
+  <p class="note">Datos reales: lecturas de las cámaras (hora operativa) y Excel de movimientos del mismo día. Solo camiones que figuran en el Excel. Entre dos lecturas, el camión espera en la playa de ese tramo y se mueve en los últimos minutos. Capacidades de las playas: Playa 1, 200 camiones; Playa 3, 50; Playa OSL, 100; Playa demorado, 30. Entre Calada y Salida 2 el camión está demorado.</p>
+    </div>
+    </div>
+  </aside>
   <div class="modal" id="endModal" hidden role="dialog" aria-modal="true" aria-labelledby="endTitle">
     <div class="mbox">
       <h2 id="endTitle">Cierre del día</h2>
@@ -417,8 +500,6 @@ table.mdt{width:100%;border-collapse:collapse;font-size:12.5px}.mdt th{font-size
     </div>
   </div>
 
-  <p class="note" id="fxNote" hidden>Corregir el día y mesa de control: el motor de colas (scripts/simulador/motor_colas.py, que también corre en esta página) toma las mismas llegadas reales y las hace pasar por la calada de Ricardone, la balanza de ingreso y los volcables del puerto, con las capacidades medidas hora por hora. «Motor sin cambios» es esa reproducción, calibrada contra las cámaras, y la columna «real» de «Qué corrige» sale de ahí. Cada corrección o perilla cambia una capacidad y se compara contra esa reproducción: así, los camiones de más y las esperas no dependen de las lecturas que faltan. En el gráfico de playas, la línea punteada es el día real.</p>
-  <p class="note">Datos reales: lecturas de las cámaras (hora operativa) y Excel de movimientos del mismo día. Solo camiones que figuran en el Excel. Entre dos lecturas, el camión espera en la playa de ese tramo y se mueve en los últimos minutos. Capacidades de las playas: Playa 1, 200 camiones; Playa 3, 50; Playa OSL, 100; Playa demorado, 30. Entre Calada y Salida 2 el camión está demorado.</p>
 </div>
 
 <script>
@@ -817,7 +898,7 @@ function panel() {
   if (FX) {
     const upto = arr => { let n = 0; for (const t of arr) { if (t > T) break; n++; } return n; };
     const a = upto(FX.desc), b = upto(BASE.desc), d = a - b;
-    fxNow.innerHTML = `hasta las ${fmtT(T)}: <b>${fmtN(a)}</b> descargas (puerto y Ricardone) contra ${fmtN(b)} en el día real (${d > 0 ? '+' : ''}${fmtN(d)})`;
+    fxNow.innerHTML = `hasta las ${fmtT(T)}: <b>${fmtN(a)}</b> descargas (puerto y Ricardone) contra ${fmtN(b)} en la reproducción del día (${d > 0 ? '+' : ''}${fmtN(d)})`;
     fxWhy.innerHTML = frenoPrincipal();
   }
   now.innerHTML = best ? `Donde más camiones esperan: <b>${best.nd.label}${best.nd.plant === 'san_lorenzo' ? ' (puerto)' : ''}</b> con ${best.q} camiones${best.nd.cap ? `, ${Math.round(best.load * 100)} % de su capacidad` : ''}.` : 'Planta vacía.';
@@ -946,6 +1027,7 @@ function runK(ek) {
 }
 async function loadMotor(day) {
   MOTOR = null; K = null; FX = null; MODE = 'real'; LIVE = [];
+  dayConf.hidden = true;
   const has = MOTOR_DAYS.includes(day);
   mesa.hidden = true; fix.hidden = fxNote.hidden = knobCard.hidden = mixer.hidden = movesCard.hidden = !has; fxGainBox.hidden = true; endModal.hidden = true;
   if (!has) return;
@@ -971,6 +1053,12 @@ async function loadMotor(day) {
   mesaCalib.className = 'calib ' + (ok === 4 ? 'ok' : 'warn');
   mesaCalib.textContent = ok === 4 ? `Motor calibrado para este día: ${c.descargas_sim} descargas contra ${c.descargas_real} reales, cumple los 4 criterios.`
     : `Calibración aproximada (${ok} de 4 criterios): ${fallas.join(', ')}. Tomá las cifras como orientativas.`;
+  // cuánto confiar en este día, a la vista al lado del selector (la misma medida del cierre y de Varios días)
+  const cf = confiabilidad(PREP, BASE.m);
+  dayConf.className = 'conf ' + cf.nivel.replace(' ', '-');
+  dayConf.textContent = cf.nivel[0].toUpperCase() + cf.nivel.slice(1) + ' · ' + pc(Math.round(cf.err * 10) / 10) + ' contra cámaras';
+  dayConf.title = cf.txt;
+  dayConf.hidden = false;
 }
 function setView(v) {
   if (!MOTOR) return;
@@ -1059,8 +1147,9 @@ const ARC = 135, polar = a => [50 + 38 * Math.sin(a * Math.PI / 180), 50 - 38 * 
 const arcPath = (a0, a1) => { const [x0, y0] = polar(a0), [x1, y1] = polar(a1); return `M${x0} ${y0}A38 38 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1} ${y1}`; };
 function buildKnobs() {
   // la perilla de flota va de 0 al triple de la flota real (mínimo 20); sin flota ese día, no aparece
-  // en la consola quedan solo las flotas de transile; el resto de las perillas sigue en lo medido
-  for (const d of KNOBS) d.hide = !d.fleet;
+  // en la consola: ritmo de calada, ritmo de volcables, llegadas extra y las flotas de transile; el resto sigue en lo medido
+  const VISIBLE = ['calPct', 'volcPct', 'extraPct'];
+  for (const d of KNOBS) d.hide = !d.fleet && !VISIBLE.includes(d.k);
   for (const d of KNOBS) if (d.fleet) { const n = ((PREP.fleet || {})[d.fleet] || []).length; d.max = Math.max(20, 3 * n); d.hide = !n; }
   knobsEl.innerHTML = KNOBS.filter(d => !d.hide).map(d => `<div class="rk" data-k="${d.k}" tabindex="0" role="slider" aria-label="${d.lab}" aria-valuemin="${d.min}" aria-valuemax="${d.max}">
     <svg viewBox="0 0 100 100" aria-hidden="true"><path class="tr" d="${arcPath(-ARC, ARC)}"/><path class="va"/><circle class="bm" r="4"/><line class="pt" x1="50" y1="50"/></svg>
@@ -1126,7 +1215,7 @@ function updateMesa() {
 // la jugada que cerró la estación o el canal que la alimenta
 const ZONA = {entrada: ['afuera de Ricardone', ['ing', 'pre']], playa1: ['en Playa 1', ['cal']], demorado: ['en Playa demorado', ['sal2']],
               playa3: ['en Playa 3', ['rd', 'balric']], ruta: ['afuera del puerto', ['ingsl']], osl: ['en Playa OSL', ['bal', 'volc']],
-              salida: ['esperando salir del puerto', ['balegr', 'egr']]};
+              salida: ['esperando salir del puerto', ['balegr', 'egr']], carga: ['esperando carga de transile en Ricardone', ['cargapellet', 'cargasoja']]};
 function frenoPrincipal() {
   if (!FX || !BASE) return '';
   const m = Math.max(0, Math.min(1439, Math.floor(T)));
@@ -1137,7 +1226,7 @@ function frenoPrincipal() {
   const cerr = LIVE.filter(x => x.t <= T && x.on === false && (feeds.includes(x.i) || feeds.includes(x.g))).map(x => `${LANE_NAME[x.g](x.i)} cerrado desde las ${fmtT(x.t)}`);
   const Ls = motorLaneState(PREP, EK, T), sinCanal = ['soja', 'girasol', 'pellet', 'liquido'].filter(p => pp[p][m] > 0 &&
     (z === 'osl' ? !Ls.volc.some(v => v.on && v.prods.includes(p)) : z === 'playa1' ? !Ls.cal.some(c => c.on && c.prods.includes(p)) : false));
-  return `<b>Freno:</b> ${n} camiones ${lab} (${extra > 0 ? '+' : ''}${extra} contra el día real${prods ? ': ' + prods : ''}).` +
+  return `<b>Freno:</b> ${n} camiones ${lab} (${extra > 0 ? '+' : ''}${extra} contra la reproducción del día${prods ? ': ' + prods : ''}).` +
     (cerr.length ? ' ' + cerr.join('; ') + '.' : '') + (sinCanal.length ? ` Ningún canal abierto recibe ${sinCanal.map(p => PNAME[p]).join(' ni ')}.` : '');
 }
 
@@ -1167,16 +1256,23 @@ function renderFixCard() {
   fxCambio.innerHTML = cambios().map(t => `<div>${t}</div>`).join('');
   fxGain.textContent = (dm > 0 ? '+' : '') + fmtN(dm);
   fxGain.classList.toggle('zero', dm <= 0);
-  fxGainLab.textContent = dm < 0 ? 'descargas menos que el día real' : 'descargas más que el día real';
-  fxGainLab.title = `Día real: ${fmtN(a.descargas)} descargas (${fmtN(a.descPuerto)} en el puerto, contando cada vuelta de los transiles, y ${fmtN(a.descRic)} en Ricardone). ` +
+  fxGainLab.textContent = dm < 0 ? 'descargas de menos que la reproducción del día' : 'descargas de más que la reproducción del día';
+  fxGainLab.title = `Reproducción del día (el motor con todo en lo medido): ${fmtN(a.descargas)} descargas (${fmtN(a.descPuerto)} en el puerto, contando cada vuelta de los transiles, y ${fmtN(a.descRic)} en Ricardone). ` +
     `El Excel cuenta camiones (cada transil una vez), por eso da menos.`;
+  // aunque no se descargue ninguno de más, la espera puede cambiar mucho: va a la vista
+  const espera = (lab, x, y) => { const d = Math.round(y - x); return `<span class="${d < -2 ? 'better' : d > 2 ? 'worse' : ''}">${lab}<b>${d > 0 ? '+' : d < 0 ? '−' : ''}${fmtN(Math.abs(d))} min</b></span>`; };
+  fxWait.innerHTML = espera('Espera en Playa OSL', a.esperaOsl, b.esperaOsl) + espera('Espera para calar', a.esperaCal, b.esperaCal);
+  const cf = confiabilidad(PREP, a);
+  fxTres.innerHTML = `<span class="med" title="Descargas en el puerto según las cámaras">Medido (cámaras)<b>${fmtN(cf.real)}</b></span>` +
+    `<span title="El motor con todo en lo medido, descargas en el puerto">Reproducción<b>${fmtN(a.descPuerto)}</b></span>` +
+    `<span class="sim" title="Descargas en el puerto con tus cambios">Con tus cambios<b>${fmtN(b.descPuerto)}</b></span>`;
   const sg = v => (v > 0 ? '+' : '') + fmtN(v);
   fxSplit.innerHTML = REF.m ? `configuración típica sin cambios: <b>${sg(REF.m.descargas - a.descargas)}</b> · tus cambios: <b class="${b.descargas - REF.m.descargas < 0 ? 'neg' : 'pos'}">${sg(b.descargas - REF.m.descargas)}</b>` : '';
   const row = (lab, x, y, fmt, lowerIsBetter = true) => {
     const cls = Math.round(y) === Math.round(x) ? '' : (y < x) === lowerIsBetter ? 'down' : 'up';
     return `<span>${lab}</span><b>${fmt(x)}</b><b class="${cls}">${fmt(y)}</b>`;
   };
-  fxCmp.innerHTML = '<span></span><span class="h">medido</span><span class="h">con la mesa</span>' +
+  fxCmp.innerHTML = '<span></span><span class="h">reproducción</span><span class="h">con tus cambios</span>' +
     row('Descargas en el día', a.descargas, b.descargas, fmtN, false) + row('Toneladas descargadas', a.tons, b.tons, fmtN, false) +
     row('· en el puerto', a.descPuerto, b.descPuerto, fmtN, false) + row('· en Ricardone', a.descRic, b.descRic, fmtN, false) +
     ['soja', 'girasol', 'pellet'].map(p => row(`· ${p}`, a.porProd[p], b.porProd[p], fmtN, false)).join('') +
@@ -1209,18 +1305,19 @@ function renderFixCard() {
 // Velocímetros: ritmo de cada estación en la última hora y cuántos camiones hay en cada playa, en la hora del
 // reloj. Aguja = la simulación; marca amarilla = lo que pasó (el motor con todo en lo medido).
 const ST_LAB = {ing: 'Ingreso Ricardone', pre: 'Preingreso', sal2: 'Salida 2 (egreso Ricardone)', ingsl: 'Ingreso del puerto',
+                cargapellet: 'Carga de pellet en Ricardone (tolvas)', cargasoja: 'Carga de soja de silos en Ricardone',
                 balric: 'Balanza de ingreso de Ricardone', balegrric: 'Balanza de egreso de Ricardone',
                 bal: 'Balanza de ingreso del puerto', balegr: 'Balanza de egreso del puerto', egr: 'Egreso del puerto'};
-const ST_SHORT = {ing: 'ING', pre: 'PRE', sal2: 'SAL 2', balric: 'BAL', balegrric: 'BAL E', ingsl: 'ING', bal: 'BAL', balegr: 'BAL E', egr: 'EGR'};
+const ST_SHORT = {cargapellet: 'CARGA', cargasoja: 'CG S', ing: 'ING', pre: 'PRE', sal2: 'SAL 2', balric: 'BAL', balegrric: 'BAL E', ingsl: 'ING', bal: 'BAL', balegr: 'BAL E', egr: 'EGR'};
 const GAUGES = [
   {k: 'ing', lab: 'Ingreso Ricardone', max: 60}, {k: 'pre', lab: 'Preingreso', max: 60}, {k: 'cal', lab: 'Calada', max: 80},
   {k: 'sal2', lab: 'Salida 2', max: 80}, {k: 'rd', lab: 'Descarga Ricardone', max: 25}, {k: 'ingsl', lab: 'Ingreso puerto', max: 60},
   {k: 'bal', lab: 'Balanza ingreso SL', max: 60}, {k: 'volc', lab: 'Volcables puerto', max: 45}, {k: 'balegr', lab: 'Balanza egreso SL', max: 45},
-  {k: 'egr', lab: 'Egreso puerto', max: 45},
+  {k: 'egr', lab: 'Egreso puerto', max: 45}, {k: 'cargaR', lab: 'Carga transile Ricardone', max: 20},
   {k: 'entrada', lab: 'Afuera de Ricardone', max: 60, playa: true}, {k: 'playa1', lab: 'Playa 1', max: 250, cap: 200, playa: true},
   {k: 'demorado', lab: 'Playa demorado', max: 60, cap: 30, playa: true}, {k: 'playa3', lab: 'Playa 3', max: 70, cap: 50, playa: true},
   {k: 'ruta', lab: 'Afuera del puerto', max: 60, playa: true}, {k: 'osl', lab: 'Playa OSL', max: 150, cap: 100, playa: true},
-  {k: 'salida', lab: 'Esperando salir del puerto', max: 40, cap: 20, playa: true},
+  {k: 'salida', lab: 'Esperando salir del puerto', max: 40, cap: 20, playa: true}, {k: 'carga', lab: 'Transiles esperando carga', max: 60, playa: true},
 ];
 const SWEEP = 240, gAng = f => (-SWEEP / 2 + SWEEP * Math.max(0, Math.min(1, f))) * Math.PI / 180;
 const gPt = (f, r) => [60 + r * Math.sin(gAng(f)), 56 - r * Math.cos(gAng(f))];
@@ -1281,7 +1378,10 @@ function saturacion(g, k, cap) {  // veces que llegó a la capacidad y horas que
 function confiabilidad(P, m) {
   const real = P.port.filter(p => p.t25 >= 0 && p.t25 < 1440).length, err = real ? (m.descPuerto / real - 1) * 100 : 0;
   const nivel = Math.abs(err) <= 5 ? 'confiable' : Math.abs(err) <= 10 ? 'aproximado' : 'poco confiable';
-  return {err, nivel, real, txt: `El motor reproduce este día con ${err > 0 ? '+' : ''}${String(Math.round(err * 10) / 10).replace('.', ',')} % en descargas del puerto (${fmtN(m.descPuerto)} contra ${fmtN(real)} de las cámaras): ${nivel}.`};
+  const pr = ((P.fleet || {}).pellet || []).reduce((s0, f) => s0 + f.viajesReal, 0), pe = pr >= 20 ? (m.porProd.pellet / pr - 1) * 100 : null;
+  const pc = v => (v > 0 ? '+' : '') + String(Math.round(v * 10) / 10).replace('.', ',') + ' %';
+  return {err, nivel, real, txt: `El motor reproduce este día con ${pc(err)} en descargas del puerto (${fmtN(m.descPuerto)} contra ${fmtN(real)} de las cámaras): ${nivel}.` +
+    (pe != null ? ` Viajes de pellet: ${pc(pe)} (${fmtN(m.porProd.pellet)} contra ${fmtN(pr)}); la flota es lo menos preciso porque las cámaras de los transiles pierden lecturas.` : '')};
 }
 // Perillas de la proyección para cualquier día: tus cambios (con su hora) sobre la configuración típica de ese día;
 // la flota de transile se escala en la misma proporción que la cambiaste en el día de la pantalla
@@ -1332,9 +1432,9 @@ function showEnd() {
   endTitle.textContent = 'Cierre del día · ' + REAL.d.title;
   endConf.className = 'conf ' + conf.nivel.replace(' ', '-');
   endConf.textContent = conf.txt;
-  endVs.innerHTML = `<div><div class="n">${fmtN(a.descargas)}</div><div class="l">descargas reales<br>${fmtN(a.tons)} t</div></div>` +
+  endVs.innerHTML = `<div><div class="n">${fmtN(a.descargas)}</div><div class="l">reproducción del día<br>${fmtN(a.tons)} t</div></div>` +
     `<div><div class="n">${fmtN(b.descargas)}</div><div class="l">descargas en la proyección<br>${fmtN(b.tons)} t</div></div>` +
-    `<div class="gain ${dm < 0 ? 'neg' : ''}"><div class="n">${sg(dm)}</div><div class="l">${dm < 0 ? 'menos' : 'más'} que el día real<br>${sg(dt)} t</div></div>`;
+    `<div class="gain ${dm < 0 ? 'neg' : ''}"><div class="n">${sg(dm)}</div><div class="l">${dm < 0 ? 'menos' : 'más'} que la reproducción<br>${sg(dt)} t</div></div>`;
   // lo que se trabó: solo lo que cambia o se llenó
   const filas = [];
   const fila = (lab, x, y, fmt, lowerIsBetter = true) => {
@@ -1348,6 +1448,7 @@ function showEnd() {
   fila('Quedan adentro a las 24 h', a.pendientes, b.pendientes, fmtN);
   const fa = a.viajes.reduce((s, v) => s + v.viajes, 0), fb = b.viajes.reduce((s, v) => s + v.viajes, 0);
   if (fa || fb) fila(`Viajes de transile (${a.viajes.length} → ${b.viajes.length} camiones)`, fa, fb, fmtN, false);
+  if (fa || fb) fila('Cola máx. para cargar en Ricardone', Math.max(...gA.carga.slice(0, 1440)), Math.max(...gB.carga.slice(0, 1440)), fmtN);
   endCmp.innerHTML = `<div class="cmp"><span></span><span class="h">real</span><span class="h">proyección</span>${filas.join('')}</div>`;
   // gráficos: descargas acumuladas y playas, real contra proyección
   endCharts.innerHTML =
@@ -1411,11 +1512,11 @@ async function proyectarVarios() {
   }
   const tot = k => rows.reduce((s, r) => s + k(r), 0), sg = v => (v > 0 ? '+' : '') + fmtN(v);
   const max = Math.max(...rows.flatMap(r => [r.a.descargas, r.b.descargas]));
-  mdOut.innerHTML = `<div class="mvs"><div><div class="n">${fmtN(tot(r => r.a.descargas))}</div><div class="l">descargas reales<br>${fmtN(tot(r => r.a.tons))} t</div></div>` +
+  mdOut.innerHTML = `<div class="mvs"><div><div class="n">${fmtN(tot(r => r.a.descargas))}</div><div class="l">reproducción de los días<br>${fmtN(tot(r => r.a.tons))} t</div></div>` +
     `<div><div class="n">${fmtN(tot(r => r.b.descargas))}</div><div class="l">descargas en la proyección<br>${fmtN(tot(r => r.b.tons))} t</div></div>` +
     `<div class="gain ${tot(r => r.b.descargas - r.a.descargas) < 0 ? 'neg' : ''}"><div class="n">${sg(tot(r => r.b.descargas - r.a.descargas))}</div><div class="l">en ${rows.length} días<br>${sg(tot(r => r.b.tons - r.a.tons))} t</div></div></div>` +
     `<div class="headroom"><b>Capacidad que sobró</b> · con esta configuración entraban <b>${fmtN(tot(r => r.so.gain))} camiones más</b> (≈ ${fmtN(tot(r => r.so.tons))} t) en esos ${rows.length} días, si hubieran llegado.</div>` +
-    `<table class="mdt"><thead><tr><th>Día</th><th>Motor</th><th>Real</th><th>Proyección</th><th></th><th>Diferencia</th><th>Sobró</th><th>Vacía desde</th></tr></thead><tbody>` +
+    `<table class="mdt"><thead><tr><th>Día</th><th>Confianza</th><th>Reproducción</th><th>Proyección</th><th></th><th>Diferencia</th><th>Sobró</th><th>Vacía desde</th></tr></thead><tbody>` +
     rows.map(r => `<tr><td>${r.label}</td><td><span class="conf ${r.conf.nivel.replace(' ', '-')}" title="${r.conf.txt}">${r.conf.nivel}</span></td>` +
       `<td>${fmtN(r.a.descargas)}</td><td>${fmtN(r.b.descargas)}</td>` +
       `<td class="bars"><i class="br" style="width:${r.a.descargas / max * 100}%"></i><i class="bp" style="width:${r.b.descargas / max * 100}%"></i></td>` +
@@ -1429,6 +1530,11 @@ async function proyectarVarios() {
 const LANE_NAME = {cal: i => i === 6 ? 'Calle de calada de líquidos' : 'Calle ' + (i + 1) + ' de calada', volc: i => 'Volcable ' + (i + 1) + ' del puerto', rd: i => RIC_DESC[i].lab, st: i => ST_LAB[i]};
 const PRODS = [['soja', 'S'], ['girasol', 'G'], ['pellet', 'P']], PRODS_CAL = [...PRODS, ['liquido', 'L']];
 const PNAME = {soja: 'soja', girasol: 'girasol', pellet: 'pellet', liquido: 'líquido'};
+const PLET = {soja: 'S', girasol: 'G', pellet: 'P', liquido: 'L'};
+// Productos que cada canal puede recibir (reglas de planta): calles de grano soja y girasol, la de líquidos su mezcla,
+// volcables del puerto según el día, VR1 y VR2 solo girasol, silos girasol o soja
+const laneAllowed = (g, i) => g === 'cal' ? CAL_PRODS[i] : g === 'volc' ? ((BMK && BMK.volcProds) || PORT_PRODS)[i] : g === 'rd' ? RIC_DESC[i].prods : [];
+const nextProd = (ok, cur) => cur.length === 1 && ok.includes(cur[0]) ? ok[(ok.indexOf(cur[0]) + 1) % ok.length] : ok[0];
 const masc = m => m.g === 'volc' || (m.g === 'rd' && RIC_DESC[m.i].k.startsWith('v')) || m.g === 'st' && /bal/.test(m.i);
 const moveTxt = m => LANE_NAME[m.g](m.i) + ': ' + [m.on != null ? (m.on ? (masc(m) ? 'abierto' : 'abierta') : (masc(m) ? 'cerrado' : 'cerrada')) : '',
   m.rate != null ? 'ritmo ' + dec(m.rate) + ' por hora' : '', m.prods != null ? 'pasa a ' + m.prods.map(p => PNAME[p]).join(' y ') + ' (60 min sin recibir)' : ''].filter(Boolean).join(', ');
@@ -1436,22 +1542,28 @@ function buildMixer() {
   const strip = (g, i, max, label) => `<div class="strip${g === 'st' ? ' sta' : ''}" data-g="${g}" data-i="${i}" title="${LANE_NAME[g](i)}"><b class="sv"></b><div class="row"><div class="vu"><i></i></div>` +
     `<input type="range" class="fader" min="0" max="${max}" step="1" aria-label="Ritmo de ${LANE_NAME[g](i)}"></div>` +
     `<button class="led" aria-pressed="false" aria-label="Abrir o cerrar ${LANE_NAME[g](i)}">${label}</button>` +
-    (g === 'volc' || g === 'rd' || g === 'cal' ? '<div class="pd">' + (g === 'cal' ? PRODS_CAL : PRODS).map(([p, l]) => `<button class="p-${p}" data-prod="${p}" aria-pressed="false" title="Recibe ${p}" aria-label="${LANE_NAME[g](i)} recibe ${p}">${l}</button>`).join('') + '</div>' : '') +
+    (g === 'volc' || g === 'rd' || g === 'cal' ? '<button class="pp multi"></button>' : '') +
     '</div>';
-  const st = k => strip('st', k, k === 'bal' || k === 'balegr' ? 80 : 120, ST_SHORT[k]);
+  const st = k => strip('st', k, k === 'bal' || k === 'balegr' ? 80 : k.startsWith('carga') ? 20 : 120, ST_SHORT[k]);
   // solo lo que se decide: calada, volcables y silos, egreso; garitas, preingreso y balanzas de ingreso quedan como pasaron
   mxCal.innerHTML = [0, 1, 2, 3, 4, 5].map(i => strip('cal', i, 60, 'C' + (i + 1))).join('') + strip('cal', 6, 20, 'CL') + st('sal2') +
-    '<span class="sep"></span>' + RIC_DESC.map((d, i) => strip('rd', i, 12, d.short)).join('');
+    '<span class="sep"></span>' + RIC_DESC.map((d, i) => strip('rd', i, 12, d.short)).join('') +
+    (PREP.carga && PREP.carga.pellet ? st('cargapellet') : '') + (PREP.carga && PREP.carga.soja && (PREP.fleet.soja || []).length ? st('cargasoja') : '');
   mxVolc.innerHTML = [0, 1, 2, 3, 4].map(i => strip('volc', i, 20, 'V' + (i + 1))).join('') + st('balegr') + st('egr');
   mixer.querySelectorAll('.strip').forEach(el => {
     const g = el.dataset.g, i = g === 'st' ? el.dataset.i : +el.dataset.i, fader = el.querySelector('.fader');
     el.querySelector('.led').onclick = () => addMove({g, i, on: !motorLaneState(PREP, EK, T)[g][i].on});
-    // un solo producto por canal: elegir otro lo deja 60 min sin recibir (limpieza / cambio)
-    el.querySelectorAll('.pd button').forEach(b => b.onclick = () => {
-      const cur = motorLaneState(PREP, EK, T)[g][i].prods, p = b.dataset.prod;
-      if (cur.length === 1 && cur[0] === p) return;
-      addMove({g, i, prods: [p]});
-    });
+    // un solo producto por canal: cada toque pasa al siguiente que el canal puede recibir y lo deja 60 min sin recibir
+    const pp = el.querySelector('.pp');
+    if (pp) {
+      const ok = laneAllowed(g, i);
+      pp.disabled = ok.length < 2;
+      pp.onclick = () => {
+        const cur = motorLaneState(PREP, EK, T)[g][i].prods, p = nextProd(ok, cur);
+        if (cur.length === 1 && cur[0] === p) return;
+        addMove({g, i, prods: [p]});
+      };
+    }
     fader.addEventListener('input', () => { el.querySelector('.sv').textContent = fader.value; });
     fader.addEventListener('pointerdown', () => { fader.dataset.drag = '1'; });
     fader.addEventListener('change', () => { delete fader.dataset.drag; addMove({g, i, rate: +fader.value}); });
@@ -1470,8 +1582,16 @@ function updateMixer(cnt) {
   mixer.querySelectorAll('.strip').forEach(el => {
     const g = el.dataset.g, i = g === 'st' ? el.dataset.i : +el.dataset.i, L = Ls[g][i], fader = el.querySelector('.fader');
     const dev = g === 'cal' ? i : g === 'volc' ? 11 + i : g === 'rd' ? RIC_DESC[i].dev : -1;
-    const n = g === 'st' ? gaugeValue(ser, i) : (cnt && dev >= 0 && cnt[dev]) || 0;
-    if (L.prods) el.querySelectorAll('.pd button').forEach(b => b.setAttribute('aria-pressed', String(L.prods.includes(b.dataset.prod))));
+    const n = g === 'st' ? gaugeValue(ser, i.startsWith('carga') ? 'cargaR' : i) : (cnt && dev >= 0 && cnt[dev]) || 0;
+    const pp = el.querySelector('.pp');
+    if (pp && L.prods) {
+      const one = L.prods.length === 1, ok = laneAllowed(g, i), nx = nextProd(ok, L.prods);
+      pp.className = 'pp ' + (one ? 'c-' + L.prods[0] : 'multi');
+      pp.textContent = L.prods.map(p => PLET[p]).join('');
+      pp.setAttribute('aria-label', `${LANE_NAME[g](i)} recibe ${L.prods.map(p => PNAME[p]).join(' y ')}` + (ok.length > 1 ? `; tocá para pasar a ${PNAME[nx]}` : ''));
+      pp.title = one ? 'Recibe ' + PNAME[L.prods[0]] + (ok.length > 1 ? ' · tocá para pasar a ' + PNAME[nx] + ' (queda 60 min sin recibir)' : ' · solo puede recibir ' + PNAME[ok[0]])
+        : 'Recibe ' + L.prods.map(p => PNAME[p]).join(' y ') + ' como en el día medido · tocá para dejarle uno solo';
+    }
     if (!fader.dataset.drag && document.activeElement !== fader) { fader.value = Math.round(L.rate); el.querySelector('.sv').textContent = L.changing ? Math.ceil(L.changeUntil - T) + "'" : Math.round(L.rate); }
     el.classList.toggle('chgp', !!L.changing);
     el.title = LANE_NAME[g](i) + (L.changing ? ` · cambiando de producto, recibe a las ${fmtT(L.changeUntil)}` : '');
@@ -1497,8 +1617,8 @@ function updateMixer(cnt) {
   if (FX && BASE) {
     const upto = arr => { let n = 0; for (const t of arr) { if (t > T) break; n++; } return n; };
     const d = upto(FX.desc) - upto(BASE.desc), dd = FX.m.descargas - BASE.m.descargas, sg = v => (v > 0 ? '+' : '') + v;
-    mxScore.title = 'Descargas de la simulación menos las del día real (puerto y Ricardone, cada vuelta de transile cuenta)';
-    mxScore.innerHTML = `vs. día real, a las ${fmtT(T)}: <b class="${d < 0 ? 'neg' : ''}">${sg(d)}</b> · día <b class="${dd < 0 ? 'neg' : ''}">${sg(dd)}</b>`;
+    mxScore.title = 'Descargas de la simulación menos las de la reproducción del día (puerto y Ricardone, cada vuelta de transile cuenta)';
+    mxScore.innerHTML = `vs. reproducción, a las ${fmtT(T)}: <b class="${d < 0 ? 'neg' : ''}">${sg(d)}</b> · día <b class="${dd < 0 ? 'neg' : ''}">${sg(dd)}</b>`;
   } else mxScore.textContent = '';
 }
 
@@ -1560,10 +1680,25 @@ const endRoom = document.getElementById('endRoom'), endFleet = document.getEleme
 endAgain.onclick = () => { endModal.hidden = true; T = 0; redraw(); toggle(true); };
 document.getElementById('endClose').onclick = () => { endModal.hidden = true; };
 document.getElementById('endReset').onclick = () => { endModal.hidden = true; resetMesa(); setView('real'); T = 0; redraw(); };
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { endModal.hidden = true; mdRun++; mdModal.hidden = true; } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { endModal.hidden = true; mdRun++; mdModal.hidden = true; drawer.hidden = true; } });
+// Detalle: lo que no entra en la pantalla (qué cambia, jugadas, calles y el día completo) en un panel con pestañas
+const drawer = document.getElementById('drawer'), fxEmpty = document.getElementById('fxEmpty');
+function showTab(t) {
+  drawer.dataset.tab = t;
+  drawer.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
+  drawer.querySelectorAll('[data-pane]').forEach(p => { p.hidden = p.dataset.pane !== t; });
+  fxEmpty.hidden = !fixCard.hidden;
+  if (t === 'dia') { drawChart(); updateHeat(); }
+}
+document.getElementById('openDetail').onclick = () => { drawer.hidden = false; showTab(drawer.dataset.tab || 'cambios'); };
+document.getElementById('drClose').onclick = () => { drawer.hidden = true; };
+drawer.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+const gAll = document.getElementById('gAll');
+gAll.onclick = () => { const all = gAll.getAttribute('aria-pressed') !== 'true'; gAll.setAttribute('aria-pressed', String(all)); gAll.textContent = all ? 'Ver menos' : 'Ver todos'; gauges.classList.toggle('key', !all); };
 document.getElementById('runDay').onclick = () => { endModal.hidden = true; if (MODE !== 'sim') setView('sim'); if (T >= 1439) T = 0; redraw(); toggle(true); };
 document.getElementById('projDay').onclick = () => { if (MODE !== 'sim') setView('sim'); toggle(false); T = 1440; redraw(); showEnd(); };
 const fxGainLab = document.getElementById('fxGainLab'), fxSplit = document.getElementById('fxSplit'), fxWhy = document.getElementById('fxWhy');
+const dayConf = document.getElementById('dayConf'), fxWait = document.getElementById('fxWait'), fxTres = document.getElementById('fxTres');
 const mesaCalib = document.getElementById('mesaCalib'), knobCard = document.getElementById('knobCard'), fxGainBox = document.getElementById('fxGainBox');
 const mesa = document.getElementById('mesa'), mesaGrid = document.getElementById('mesaGrid'), lanes = document.getElementById('lanes');
 const knobsEl = document.getElementById('knobs');

@@ -23,6 +23,7 @@ import { PlantHome } from './pages/PlantHome'
 import { LiveMonitorPage } from './pages/LiveMonitorPage'
 import { PlantLayoutEditorPage } from './pages/PlantLayoutEditorPage'
 import { HomeUxPrototype } from './pages/HomeUxPrototype'
+import { SimulacionPage } from './pages/SimulacionPage'
 import { DataWorkspace } from './features/real-truckflow/dataPreparation/DataWorkspace'
 
 /**
@@ -44,6 +45,7 @@ function App() {
             <Route path="producto/:id" element={<ProductoTransformTab />} />
             {/* Herramienta de configuración del plano (ubicar puntos clickeando la imagen). */}
             <Route path="herramientas/editor-plano" element={<PlantLayoutEditorPage />} />
+            <Route path="simulacion" element={<SimulacionPage />} />
             <Route path="herramientas/prototipo-home" element={<HomeUxPrototype />} />
 
             <Route path="estadisticas/indicadores/tiempos" element={<KpiTiemposTab />} />

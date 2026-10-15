@@ -18,6 +18,7 @@ export const PRODUCT_SECTIONS: NavSection[] = [
     title: 'Principal',
     items: [
       { to: '/', label: 'En vivo' },
+      { to: '/simulacion', label: 'Simulación' },
       { to: '/herramientas/editor-plano', label: 'Editar plano' },
     ],
   },
