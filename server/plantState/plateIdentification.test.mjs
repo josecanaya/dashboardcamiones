@@ -7,6 +7,7 @@ import {
   nodeModelCatalog,
   plateSimilarity,
 } from './plateIdentification.mjs'
+import { buildBalanzaRegistry } from './balanzaRegistry.mjs'
 
 const catalog = nodeModelCatalog()
 
@@ -289,5 +290,64 @@ describe('patente válida leída en el mismo nodo (08/10)', () => {
     expect(it0.evidenceEligible).toBe(false)
     const r = identifyFragments(events, now, { catalog, evidenceVerdicts: { [it0.fragmentKey]: { plate: 'MML273', probability: 0.95 } } })
     expect(r.items.find((i) => i.readPlate === 'HHL273').level).toBe('provisorio')
+  })
+})
+
+describe('refuerzo de balanza (SGC) y la cuenta del documento (15/10)', () => {
+  const now = Date.parse('2026-10-15T12:00:00-03:00')
+  const ms = (iso) => Date.parse(iso)
+
+  it('la patente del acoplado se suma al camión que la balanza tiene con ese acoplado', () => {
+    const events = [
+      ev('MDY035', 't1', '2-S1', 'RicPreIngInFr', '2026-10-15T10:00:00-03:00'),
+      ev('MDY035', 't1', '2-S2', 'RicCal03', '2026-10-15T10:30:00-03:00'),
+      ev('AE762LY', 'a1', '2-S2', 'RicCal03Tras', '2026-10-15T10:31:00-03:00'),
+      ev('AE762LY', 'a1', '2-S3', 'RicSalida2', '2026-10-15T10:50:00-03:00'),
+    ]
+    const balanza = buildBalanzaRegistry([{ plate: 'MDY035', trailer: 'AE762LY', ingresoMs: ms('2026-10-15T10:01:00-03:00'), salidaMs: null }])
+    const it0 = identifyFragments(events, now, { catalog, balanza }).items.find((i) => i.readPlate === 'AE762LY')
+    expect(it0.level).toBe('casi_seguro')
+    expect(it0.rule).toBe('acoplado_balanza')
+    expect(it0.assignedPlate).toBe('MDY035')
+    expect(it0.assignedJourneyUid).toBe('t1')
+  })
+
+  it('patente válida que la balanza tiene en planta: la cámara leyó bien, no se une a la parecida', () => {
+    const events = [
+      ev('MFY788', 'm1', '2-S1', 'RicPreIngInFr', '2026-10-15T11:00:00-03:00'),
+      ev('MFY788', 'm1', '2-S2', 'RicCal03', '2026-10-15T11:20:00-03:00'),
+      ev('MFY738', 'm2', '2-S3', 'RicSalida2', '2026-10-15T11:40:00-03:00'),
+    ]
+    const balanza = buildBalanzaRegistry([
+      { plate: 'MFY788', ingresoMs: ms('2026-10-15T11:01:00-03:00'), salidaMs: null },
+      { plate: 'MFY738', ingresoMs: ms('2026-10-15T10:30:00-03:00'), salidaMs: null },
+    ])
+    const it0 = identifyFragments(events, now, { catalog, balanza }).items.find((i) => i.readPlate === 'MFY738')
+    expect(it0.rule).toBe('leida_bien_balanza')
+    expect(it0.assignedPlate).toBe('MFY738')
+  })
+
+  it('patente válida que nunca pasó por la balanza y un solo camión parecido en planta: se corrige sola', () => {
+    const events = [
+      ev('MWG720', 'w1', '2-S1', 'RicPreIngInFr', '2026-10-15T11:00:00-03:00'),
+      ev('MWC720', 'w2', '2-S2', 'RicCal03', '2026-10-15T11:20:00-03:00'),
+    ]
+    const balanza = buildBalanzaRegistry([{ plate: 'MWG720', ingresoMs: ms('2026-10-15T11:01:00-03:00'), salidaMs: null }])
+    const it0 = identifyFragments(events, now, { catalog, balanza }).items.find((i) => i.readPlate === 'MWC720')
+    expect(it0.level).toBe('casi_seguro')
+    expect(it0.assignedPlate).toBe('MWG720')
+    // Sin balanza sigue siendo un caso para operaciones (MFY738/MFY788 son dos camiones reales).
+    const sin = identifyFragments(events, now, { catalog }).items.find((i) => i.readPlate === 'MWC720')
+    expect(sin.level).toBe('provisorio')
+  })
+
+  it('si la patente leída ya vino a la balanza, no se corrige por parecido', () => {
+    const events = [
+      ev('MWG720', 'w1', '2-S1', 'RicPreIngInFr', '2026-10-15T11:00:00-03:00'),
+      ev('MWC720', 'w2', '2-S2', 'RicCal03', '2026-10-15T11:20:00-03:00'),
+    ]
+    const balanza = buildBalanzaRegistry([{ plate: 'MWG720', ingresoMs: ms('2026-10-15T11:01:00-03:00'), salidaMs: null }], new Set(['MWC720']))
+    const it0 = identifyFragments(events, now, { catalog, balanza }).items.find((i) => i.readPlate === 'MWC720')
+    expect(it0.level).toBe('provisorio')
   })
 })

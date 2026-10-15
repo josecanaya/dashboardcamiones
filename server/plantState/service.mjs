@@ -15,6 +15,7 @@ import { resolveSectorStatus, resolveZoneStatus, resolveBottleneck } from './sta
 import { POINTS, zonesOfSite } from './plantGraph.mjs'
 import { SECTOR_DEVICES } from './sectorProfiles.mjs'
 import { applyIdentifications, applyLinks, findPredecessors, identifyFragments, journeyKeyOf, nodeModelCatalog, recentCaptures, updateRecentCircuits } from './plateIdentification.mjs'
+import { liveBalanzaRegistry } from './balanzaRegistry.mjs'
 import { createIdentificationArchive } from './identificationArchive.mjs'
 import { assessVehicleRelevance, excludeIrrelevantEvents } from './vehicleRelevance.mjs'
 
@@ -334,6 +335,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
         recentCounts,
         decisions: identificationDecisions[site] || {},
         evidenceVerdicts: evidenceVerdicts.get(site) || {},
+        // Refuerzo de balanza (SGC + movimientos): camión en planta, acoplado, ¿vino alguna vez?
+        balanza: process.env.IDENTIFICATION_BALANZA === '0' ? null : liveBalanzaRegistry(nowMs),
         otherSiteEvents: [...(bySite.get(site === 'ricardone' ? 'san_lorenzo' : 'ricardone')?.history.values() ?? [])],
       }),
       recentCounts,

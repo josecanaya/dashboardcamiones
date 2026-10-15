@@ -4,6 +4,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { AUTO_EVIDENCE_PROBABILITY, AUTO_EVIDENCE_SAME_NODE_PROBABILITY, scoreCandidates } from './plantState/identificationEvidence.mjs'
 import { scoreWithNodeModel } from './plantState/nodeModelScore.mjs'
+import { CUENTA_AUTO_PROBABILITY } from './plantState/plateIdentification.mjs'
 
 // El DSS registra todas las lecturas con foto, confianza, marca, color y tipo. El dashboard
 // le pide la lectura de una cámara a una hora y baja la foto solo cuando alguien la mira.
@@ -42,7 +43,8 @@ export function createDssPhotoLookup({ dss, getPlantState = () => null }) {
 
   /** Patente, color, marca, tipo y recorrido de cada candidato de una lectura, con la probabilidad combinada. */
   async function computeEvidence(item) {
-    const shown = item.candidates.filter((c) => c.similarity >= 0.4 || c.nodeProbability >= 0.5).slice(0, 3)
+    // El candidato de la cuenta siempre se compara (puede no parecerse en nada a la lectura: UUL425 / A26027).
+    const shown = item.candidates.filter((c) => c.similarity >= 0.4 || c.nodeProbability >= 0.5 || c.plate === item.cuenta?.plate).slice(0, 3)
     const dssOk = dss.isDssConfigured()
     // Un error del DSS no se oculta como «sin dato»: se informa y el resultado no se guarda en caché.
     let dssError = null
@@ -55,10 +57,11 @@ export function createDssPhotoLookup({ dss, getPlantState = () => null }) {
     const withAttrs = []
     for (const c of shown) withAttrs.push({ ...c, attrs: dssOk ? await safe(attrsAt(c.photoDevice, c.photoAt, c.plate)) : null })
     const scored = scoreCandidates({ readPlate: item.readPlate, validFormat: item.validFormat, readAttrs }, withAttrs)
-    // Modelo por nodos, en evaluación: todos los candidatos (no solo los 3 con fotos) y «nunca visto»
-    // según el nodo. No interviene en la aplicación automática.
+    // La cuenta del documento (la misma que decide en plateIdentification): camiones con el paso pendiente
+    // y «nuevo en el circuito», ahora con color/marca/tipo. Con ≥ CUENTA_AUTO_PROBABILITY se aplica sola.
     const attrLrOf = new Map(withAttrs.map((c, i) => [c.plate, scored.candidates[i].attrLr]))
-    const nodeModel = scoreWithNodeModel(item, item.candidates.map((c) => ({ ...c, attrLr: attrLrOf.get(c.plate) ?? 1 })))
+    const pending = item.candidates.filter((c) => !c.seenAfter && c.inventory?.status === 'expected')
+    const nodeModel = scoreWithNodeModel(item, (pending.length ? pending : item.candidates).map((c) => ({ ...c, attrLr: attrLrOf.get(c.plate) ?? 1 })), { ignorePlate: Boolean(item.cuenta?.ignorePlate) })
     return {
       nodeModel,
       fragmentKey: item.fragmentKey,
@@ -122,9 +125,14 @@ export function createDssPhotoLookup({ dss, getPlantState = () => null }) {
           evidenceCache.set(`${site}|${item.fragmentKey}`, { at: Date.now(), signature:signatureOf(item), body: ev })
           const top = [...ev.candidates].sort((a, b) => b.probability - a.probability)[0]
           const threshold = item.validFormat ? AUTO_EVIDENCE_SAME_NODE_PROBABILITY : AUTO_EVIDENCE_PROBABILITY
+          // La cuenta del documento con color/marca/tipo (paso × patente × atributos contra «nuevo»).
+          const nmTop = [...(ev.nodeModel?.candidates ?? [])].sort((a, b) => b.probability - a.probability)[0]
           if (top && top.plate === best.plate && top.probability >= threshold) {
             ps.setEvidenceVerdict(site, item.fragmentKey, { plate: top.plate, probability: Math.round(top.probability * 1000) / 1000, at: new Date().toISOString() })
             console.log(`[identificación] ${site} ${item.readPlate} → ${top.plate} aplicada con DSS (${Math.round(top.probability * 100)}%)`)
+          } else if (nmTop && item.cuenta?.plate === nmTop.plate && nmTop.probability >= CUENTA_AUTO_PROBABILITY) {
+            ps.setEvidenceVerdict(site, item.fragmentKey, { plate: nmTop.plate, probability: Math.round(nmTop.probability * 1000) / 1000, at: new Date().toISOString(), rule: 'cuenta' })
+            console.log(`[identificación] ${site} ${item.readPlate} → ${nmTop.plate} aplicada por la cuenta con DSS (${Math.round(nmTop.probability * 100)}%)`)
           }
         }
       }

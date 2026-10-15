@@ -19,7 +19,7 @@
  */
 
 import { visitRowsAt, assessVisitCandidate } from './visitInventory.mjs'
-import { arrivalWeight } from './nodeModelScore.mjs'
+import { arrivalWeight, scoreWithNodeModel } from './nodeModelScore.mjs'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -56,6 +56,22 @@ const ONE_READ_SIMILARITY = 0.85
 export const TWIN_MS = 3 * 60 * 1000
 /** 0,5 unió JAC7110 con JAU7D16 (otro vehículo, descartado por operaciones el 07/10). */
 const TWIN_MIN_SIMILARITY = 0.6
+/**
+ * La cuenta del modelo de nodos (docs «algoritmo explicado»): P(camión) = paso esperado × patente ×
+ * atributos, contra «nuevo en el circuito». Por encima de este umbral se aplica sola.
+ */
+export const CUENTA_AUTO_PROBABILITY = 0.95
+/** Lectura ilegible: replay 06–08/10 contra operaciones, ≥ 90 % → 4 de 4 bien (≥ 80 %: 5 de 5). */
+export const CUENTA_INVALID_AUTO_PROBABILITY = 0.9
+/**
+ * Patente válida que nunca pasó por la balanza y un solo camión parecido (una letra) que la balanza tiene
+ * en planta, con el paso pendiente y la cuenta a su favor (≥ 50 %): replay 06–08/10, 13 de 14 bien
+ * (falló RKU605 → RKU685, dos camiones reales y RKU605 no figuraba en el Excel).
+ */
+const BALANZA_NEAR_SIMILARITY = 0.8
+const BALANZA_NEAR_CUENTA = 0.5
+/** Patente válida corregida por la cuenta: solo si se parece de verdad (una letra) al camión elegido. */
+const CUENTA_VALID_SIMILARITY = 0.8
 const ENTRY_NODES = new Set(['S0', 'S1', 'SL_S0', 'SL_S1'])
 /** Salidas de planta: un camión visto ahí hace más de EXIT_GRACE_MS ya se fue (90 min cubre relecturas tardías en egreso). */
 const EXIT_NODES = new Set(['SL_S7', 'S10'])
@@ -319,10 +335,15 @@ export function identifyFragments(events, nowMs, ctx) {
   // Una lectura con decisión de operaciones sigue siendo un caso aunque después deje de parecer un
   // fragmento (se volvió a leer en otro nodo, el candidato salió de planta): la decisión no se pierde.
   const decided = (j) => ['confirm', 'reject'].includes(decisions[j.key]?.action)
+  /** Registro de balanza (SGC): refuerzo ante la duda. Ver balanzaRegistry.mjs. */
+  const bz = ctx.balanza ?? null
+  const trailerOfJourney = (j) => (bz && bz.isTrailer(j.plate) && !bz.truckAt(j.plate, j.rows[0].t) ? bz.trailerAt(j.plate, j.rows[0].t) : null)
   const fragments = journeys.filter((j) => {
     if (decided(j)) return true
     const first = j.rows[0].logical
     if (!isValidPlate(j.plate)) return true
+    // Patente del acoplado (cámaras traseras): el feed la trata como otro camión aunque recorra varios nodos.
+    if (trailerOfJourney(j)) return true
     // Patente válida que arranca a mitad de circuito: puede ser una lectura cambiada (KMO254 por KWO254).
     // Si la misma patente se leyó en dos o más nodos distintos, es un camión real al que no se le leyó el ingreso.
     if (new Set(j.rows.map((r) => r.logical)).size > 1) return false
@@ -523,6 +544,54 @@ export function identifyFragments(events, nowMs, ctx) {
       candidates.unshift(twin)
     }
     const twinText = twin ? `${twin.plate} se leyó en este mismo nodo ${twin.twinSeconds < 60 ? `a ${twin.twinSeconds} s` : `a ${Math.round(twin.twinSeconds / 60)} min`}` : ''
+
+    // Refuerzo de balanza (SGC): ¿es el acoplado de un camión en planta? ¿es un camión que entró?
+    const trailerHit = trailerOfJourney(f)
+    const readInBalanza = Boolean(bz && valid && bz.truckAt(f.plate, head.t))
+    const readKnown = Boolean(bz && valid && bz.isKnown(f.plate))
+    const inBalanza = (plate) => Boolean(bz?.truckAt(plate, head.t))
+    /** Viaje del camión más cercano a la lectura (para sumarle la lectura del acoplado). */
+    const journeyOfPlate = (plate) =>
+      candidates.find((c) => c.plate === plate) ??
+      parents
+        .filter((p) => p.plate === plate)
+        .map((p) => ({ p, d: head.t < p.rows[0].t ? p.rows[0].t - head.t : Math.max(0, head.t - p.rows[p.rows.length - 1].t) }))
+        .sort((a, b) => a.d - b.d)
+        .map(({ p }) => ({ plate, journeyUid: p.journeyUid, journeyKey: p.key }))[0] ??
+      { plate, journeyUid: null }
+
+    // La cuenta del documento: camiones con el paso pendiente (no los leídos recién después) contra «nuevo».
+    // Lectura ilegible sin ningún parecido: la patente no informa, deciden el recorrido y la hora.
+    // «Paso pendiente» = el inventario de la visita lo espera acá (no lo consumió por otro carril, etc.).
+    const eligible = candidates.filter((c) => !c.seenAfter && arrivalWeight(c) > 0 && c.inventory?.status === 'expected')
+    let cuenta = null
+    if (eligible.length) {
+      const nm = scoreWithNodeModel(
+        { readPlate: f.plate, validFormat: valid, node: head.logical, at: new Date(head.t).toISOString(), expectedAtNode },
+        eligible,
+        { ignorePlate: !valid && !plateMatches.length }
+      )
+      const top = [...nm.candidates].sort((a, b) => b.probability - a.probability)[0]
+      const c = top && eligible.find((x) => x.plate === top.plate)
+      cuenta = { probability: top?.probability ?? 0, neverSeen: nm.neverSeen.probability, candidate: c ?? null, ignorePlate: !valid && !plateMatches.length }
+    }
+    // Patente válida: se corrige solo si la leída nunca pasó por la balanza y el elegido sí está en planta
+    // (o tiene dos lecturas), y se parece de verdad. MFY738/MFY788 son dos camiones reales: la balanza los separa.
+    const cuentaOk = Boolean(
+      opt.cuenta !== false && cuenta?.candidate &&
+      (!valid
+        ? cuenta.probability >= CUENTA_INVALID_AUTO_PROBABILITY
+        : cuenta.probability >= CUENTA_AUTO_PROBABILITY && bz && !readKnown && cuenta.candidate.similarity >= CUENTA_VALID_SIMILARITY && (inBalanza(cuenta.candidate.plate) || cuenta.candidate.reads >= opt.minReads))
+    )
+    // Patente válida desconocida para la balanza y un único camión parecido que sí está en planta.
+    const nearInBalanza = valid && bz && !readKnown ? candidates.filter((c) => c.similarity >= BALANZA_NEAR_SIMILARITY && !c.seenAfter && inBalanza(c.plate)) : []
+    const balanzaNear =
+      opt.cuenta !== false && nearInBalanza.length === 1 && nearInBalanza[0].inventory?.status === 'expected' &&
+      cuenta?.candidate?.plate === nearInBalanza[0].plate && cuenta.probability >= BALANZA_NEAR_CUENTA
+        ? nearInBalanza[0]
+        : null
+    // Doble lectura con dos patentes válidas: la balanza dice cuál es la real.
+    const twinByBalanza = Boolean(twin && valid && bz && inBalanza(twin.plate) && !readKnown)
     // Una patente válida se corrige sola solo si la buena se leyó en este mismo nodo hace poco
     // (misma cámara o la de al lado: AC297UX → AC297HX en Balanza B3, 15 min antes) y el camión
     // tiene al menos dos lecturas. Sin eso fallaba 1 de cada 3 (MFY738/MFY788, OJD501/OJO501).
@@ -537,11 +606,31 @@ export function identifyFragments(events, nowMs, ctx) {
     const verdict = ctx.evidenceVerdicts?.[f.key]
     /** @type {typeof best} */
     let chosen = null
+    let rule = null
+    // Patente válida que la balanza tiene en planta y no se parece a nadie: no es un caso, es un camión real.
+    if (readInBalanza && !plateMatches.length && !decided(f) && !trailerHit) continue
     if (twin && !valid) {
       // Lectura ilegible y el camión leído bien en el mismo nodo a segundos/minutos: es él.
       level = 'casi_seguro'
       reason = twinText
       chosen = twin
+      rule = 'doble_lectura'
+    } else if (trailerHit) {
+      level = 'casi_seguro'
+      chosen = journeyOfPlate(trailerHit.plate)
+      reason = `${f.plate} es el acoplado de ${trailerHit.plate} según la balanza (SGC)`
+      rule = 'acoplado_balanza'
+    } else if (readInBalanza) {
+      // Patente válida de un camión que la balanza tiene en planta: la cámara leyó bien.
+      level = 'casi_seguro'
+      chosen = { plate: f.plate, journeyUid: f.journeyUid }
+      reason = `${f.plate} figura en la balanza (SGC): es un camión en planta y la cámara leyó bien`
+      rule = 'leida_bien_balanza'
+    } else if (twinByBalanza) {
+      level = 'casi_seguro'
+      chosen = twin
+      reason = `${twinText}; la balanza tiene a ${twin.plate} en planta y ${f.plate} nunca pasó por la balanza`
+      rule = 'doble_lectura_balanza'
     } else if (twin) {
       // Dos patentes válidas en el mismo nodo a segundos: es el mismo camión pero no se sabe cuál leyó
       // mal (MML273 en Egreso C1 y HHL273 en C2: la correcta era HHL273). Decide operaciones.
@@ -553,11 +642,23 @@ export function identifyFragments(events, nowMs, ctx) {
       reason = valid
         ? `${best.plate} se leyó en este mismo nodo hace ${best.gapMinutes} min y es el único camión del universo`
         : `patente reparable y ${best.plate} es el único camión del universo esperado en este nodo`
-    } else if (verdict && best && verdict.plate === best.plate && evidenceEligible) {
+      rule = 'universo'
+    } else if (verdict && ((best && verdict.plate === best.plate && evidenceEligible) || (verdict.rule === 'cuenta' && cuenta?.candidate?.plate === verdict.plate))) {
       // Patente + recorrido + color/marca/tipo del DSS por encima del umbral calibrado.
       level = 'casi_seguro'
-      chosen = best
+      chosen = best && verdict.plate === best.plate ? best : cuenta.candidate
       reason = `patente, recorrido y color/marca/tipo coinciden con ${chosen.plate} (${Math.round(verdict.probability * 100)}%)`
+      rule = 'atributos_dss'
+    } else if (cuentaOk) {
+      level = 'casi_seguro'
+      chosen = cuenta.candidate
+      reason = `la cuenta da ${Math.round(cuenta.probability * 100)} % a ${chosen.plate}: tenía este paso pendiente${cuenta.ignorePlate ? ' (la lectura no se parece a ninguna patente)' : ''}${valid ? ` y ${f.plate} nunca pasó por la balanza` : ''}`
+      rule = 'cuenta'
+    } else if (balanzaNear) {
+      level = 'casi_seguro'
+      chosen = balanzaNear
+      reason = `${f.plate} nunca pasó por la balanza y ${chosen.plate} (una letra distinta) está en planta según la balanza, con este paso pendiente (cuenta ${Math.round(cuenta.probability * 100)} %)`
+      rule = 'balanza_parecida'
     } else if (best && valid) {
       level = 'provisorio'
       reason = `patente válida parecida a ${best.plate}${best.inUniverse ? ' (en el universo de este nodo)' : ''}: elegir la correcta`
@@ -628,8 +729,12 @@ export function identifyFragments(events, nowMs, ctx) {
       assignedJourneyUid,
       renameJourneyUid,
       /** El servidor puede decidirlo con color/marca/tipo del DSS (umbral en identificationEvidence). */
-      evidenceEligible: evidenceEligible && level !== 'casi_seguro' && !decision,
-      candidates: candidates.slice(0, opt.maxCandidates ?? 5).map(({ score, ...c }) => ({ ...c, score: Math.round(score * 100) / 100 })),
+      // También las que la cuenta deja cerca del umbral: color/marca/tipo del DSS pueden cerrarlas.
+      evidenceEligible: (evidenceEligible || Boolean(!twin && cuenta?.candidate && cuenta.probability >= 0.5 && (!valid || (bz && !readKnown)))) && level !== 'casi_seguro' && !decision,
+      rule: decision ? 'operaciones' : rule,
+      cuenta: cuenta ? { plate: cuenta.candidate?.plate ?? null, probability: Math.round(cuenta.probability * 1000) / 1000, nuevo: Math.round(cuenta.neverSeen * 1000) / 1000, ignorePlate: cuenta.ignorePlate } : null,
+      balanza: bz ? { readInPlant: readInBalanza, readKnown, trailerOf: trailerHit?.plate ?? null } : null,
+      candidates: [...candidates.slice(0, opt.maxCandidates ?? 5), ...(cuenta?.candidate && !candidates.slice(0, opt.maxCandidates ?? 5).includes(cuenta.candidate) ? [cuenta.candidate] : [])].map(({ score, ...c }) => ({ ...c, inBalanza: inBalanza(c.plate), score: Math.round(score * 100) / 100 })),
       decision,
     })
   }
