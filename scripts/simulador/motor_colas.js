@@ -151,21 +151,26 @@ function motorPrep(M, dayTrucks) {
           volcFactor: 1.05};  // calibración con 4 días: descargas del puerto ±5 % (29/08 +2,4; 21/08 −3,7; 25/08 0; 03/09 +0,8)
 }
 
-// Llegadas extra: copia pct % de los camiones que llegan a Ricardone en el día (00 a 24 h), repartidos parejo
-// y llegando `off` min después del original, con su producto, destino y tramos reales.
+// Llegadas extra: copia pct % de los camiones que llegan a Ricardone en el día (00 a 24 h), repartidos parejo y
+// llegando `off` min después del original, con su producto, destino y tramos reales. Más de 100 % = varias rondas
+// de copias (a 6, 12, 18… min del original). Sirve para medir cuánto más entraba con una configuración.
 function motorAugment(P, dayTrucks, pct, off = 6) {
   const cand = P.ric.map((r, k) => k).filter(k => P.ric[k].ing >= 0 && P.ric[k].ing < 1440).sort((a, b) => P.ric[a].ing - P.ric[b].ing);
-  const pick = cand.filter((k, n) => Math.floor((n + 1) * pct / 100) > Math.floor(n * pct / 100));
   const ric = [...P.ric], port = [...P.port], trucks = [...dayTrucks];
-  const sh = o => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, typeof v === 'number' && /^t[A-Z\d]|^ing$|^pre$|^cal$|^s2$/.test(k) ? v + off : v]));
-  for (const k of pick) {
-    const r = P.ric[k], t = dayTrucks[r.i], ni = trucks.length;
-    trucks.push([t[0] + ' (extra)', t[1], t[2], t[3].map(([n, m, d]) => [n, m + off, d]), t[4], t[5], t[6]]);
-    const nr = ric.length;
-    ric.push({...sh(r), i: ni, pi: r.pi >= 0 ? port.length : -1});
-    if (r.pi >= 0) port.push({...sh(P.port[r.pi]), i: ni, ri: nr});
+  let nExtra = 0;
+  for (let round = 0; round * 100 < pct; round++) {
+    const pr = Math.min(100, pct - round * 100), o = off * (round + 1);
+    const sh = x => Object.fromEntries(Object.entries(x).map(([k, v]) => [k, typeof v === 'number' && /^t[A-Z\d]|^ing$|^pre$|^cal$|^s2$/.test(k) ? v + o : v]));
+    for (const k of cand.filter((k, n) => Math.floor((n + 1) * pr / 100) > Math.floor(n * pr / 100))) {
+      const r = P.ric[k], t = dayTrucks[r.i], ni = trucks.length;
+      trucks.push([t[0] + ' (extra)', t[1], t[2], t[3].map(([n, m, d]) => [n, m + o, d]), t[4], t[5], t[6]]);
+      const nr = ric.length;
+      ric.push({...sh(r), i: ni, pi: r.pi >= 0 ? port.length : -1});
+      if (r.pi >= 0) port.push({...sh(P.port[r.pi]), i: ni, ri: nr});
+      nExtra++;
+    }
   }
-  return {P2: {...P, ric, port}, trucks, nExtra: pick.length, port0: P.port.length};
+  return {P2: {...P, ric, port}, trucks, nExtra, port0: P.port.length};
 }
 
 function motorParadas(M, K) {

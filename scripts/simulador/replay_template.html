@@ -187,7 +187,7 @@ canvas{display:block;width:100%}
 .glegend .gn{background:var(--ink)}.glegend .gr{background:var(--warn)}
 .simbadge{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:3;background:var(--accent);color:#0E1A16;font-weight:800;font-size:12px;letter-spacing:.6px;border-radius:999px;padding:4px 12px;pointer-events:none;white-space:nowrap}
 .strip.sta{border-color:rgba(111,168,220,.55)}.strip.sta .led{font-size:9.5px}
-.mxknobs{flex-basis:100%}.mxknobs .rks{grid-template-columns:repeat(13,62px)}
+.mxknobs{flex-basis:auto}.mxknobs .rks{grid-template-columns:repeat(2,70px)}
 /* Cierre del día */
 .modal{position:fixed;inset:0;background:rgba(5,10,8,.72);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
 .endsec{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px 22px;align-items:start}
@@ -216,6 +216,11 @@ canvas{display:block;width:100%}
 .fxsplit{flex-basis:100%;font-size:11.5px;color:var(--muted)}.fxsplit b{font-family:var(--mono);color:var(--ink)}.fxsplit b.neg{color:#F2A194}.fxsplit b.pos{color:var(--accent)}
 .fxwhy{flex-basis:100%;font-size:11.5px;line-height:1.35;color:var(--ink);background:rgba(224,90,71,.14);border-left:3px solid var(--crit);border-radius:4px;padding:3px 6px}
 .fxwhy:empty{display:none}
+.fix .esc{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;margin-left:6px;font-size:12px}
+.fix .esc span{border-radius:4px;padding:2px 6px;color:#0E1A16;font-weight:600}.fix .esc b{font-family:var(--mono)}
+.fix .esc .lleg{background:transparent;color:var(--muted);font-weight:400}.fix .esc .lleg b{color:var(--ink)}
+.headroom{background:rgba(124,194,156,.12);border:1px solid var(--accent);border-radius:8px;padding:8px 12px;font-size:13px;line-height:1.45}
+.headroom b{font-family:var(--mono)}.headroom:empty{display:none}
 /* Calles: actividad por calle de calada y por volcable */
 .lanes{display:flex;flex-direction:column;gap:5px}
 .lgrp{font-size:11px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;font-weight:700;margin-top:4px}
@@ -265,14 +270,14 @@ canvas{display:block;width:100%}
       <div class="mixer" id="mixer" hidden>
         <div class="mxhead">
           <h2 title="Botón: abre o cierra. Fader: su ritmo. Vale desde la hora del reloj hasta que lo vuelvas a tocar. Las perillas de abajo valen todo el día.">Consola en vivo</h2><span class="note">botón abre o cierra · fader, ritmo · desde la hora del reloj</span>
-          <button id="runDay" class="rundy" title="Arranca el día desde las 00:00">▶ Correr día</button><button id="mxPlay" class="mini">❚❚ Pausa</button>
+          <button id="projDay" class="rundy" title="Corre el día hasta las 24:00 con esta configuración y muestra el resultado">⏭ Proyectar el día</button><button id="runDay" class="mini" title="Reproduce desde la hora del reloj; pausá, cambiá y volvé a proyectar">▶ Ver hora a hora</button><button id="mxPlay" class="mini">❚❚ Pausa</button>
           <span class="mxmode" id="mxMode"></span><span class="mxwait" id="mxWait"></span>
           <span class="mxscore" id="mxScore"></span>
         </div>
         <div class="mxbody">
-          <div class="mxgrp"><div class="mxt">Ricardone <span>al puerto │ girasol: balanza, volcables, silos</span></div><div class="strips" id="mxCal"></div></div>
-          <div class="mxgrp"><div class="mxt">Puerto</div><div class="strips" id="mxVolc"></div></div>
-          <div class="mxgrp mxknobs"><div class="mxt">Todo el día <span>doble clic vuelve a lo medido</span></div><div class="rks" id="knobs"></div></div>
+          <div class="mxgrp"><div class="mxt">Ricardone <span>calada · Salida 2 │ volcables y silos</span></div><div class="strips" id="mxCal"></div></div>
+          <div class="mxgrp"><div class="mxt">Puerto <span>volcables · egreso</span></div><div class="strips" id="mxVolc"></div></div>
+          <div class="mxgrp mxknobs"><div class="mxt">Flota de transile <span>camiones que se llaman en el día · doble clic vuelve a lo real</span></div><div class="rks" id="knobs"></div></div>
         </div>
       </div>
     </div>
@@ -373,6 +378,7 @@ canvas{display:block;width:100%}
     <div class="mbox">
       <h2 id="endTitle">Cierre del día</h2>
       <div class="mvs" id="endVs"></div>
+      <div class="headroom" id="endRoom"></div>
       <div class="endsec" id="endCmp"></div>
       <div id="endFleet"></div>
       <div class="note" id="endMoves"></div>
@@ -911,7 +917,7 @@ function runK(ek) {
 async function loadMotor(day) {
   MOTOR = null; K = null; FX = null; MODE = 'real'; LIVE = [];
   const has = MOTOR_DAYS.includes(day);
-  mesa.hidden = fix.hidden = fxNote.hidden = knobCard.hidden = mixer.hidden = movesCard.hidden = !has; fxGainBox.hidden = true; endModal.hidden = true;
+  mesa.hidden = true; fix.hidden = fxNote.hidden = knobCard.hidden = mixer.hidden = movesCard.hidden = !has; fxGainBox.hidden = true; endModal.hidden = true;
   if (!has) return;
   try { MOTOR = await (await fetch('escenarios/' + day + '_motor.json')).json(); }
   catch (err) { mesa.hidden = fix.hidden = knobCard.hidden = mixer.hidden = movesCard.hidden = true; return; }
@@ -922,7 +928,8 @@ async function loadMotor(day) {
   BG = {flPellet: (mk.fleet || {}).pellet || 0, flSoja: (mk.fleet || {}).soja || 0, extraPct: 0, calPct: 100, callesOff: 0, vactOff: 0, volcPct: 100, gate: mk.gate, N: 0, parada: 0, demoraPct: 100, capOsl: 0, capSal: mk.capSal};
   K = cloneK(BK); G = {...BG}; EK = eff(K, G); BASE = runK(EK);
   fix.innerHTML = '<span class="t">Ver</span><button class="real" data-p="real" aria-pressed="true">Como fue</button>' +
-    '<button data-p="sim" aria-pressed="false">Simulado con la mesa</button>';
+    '<button data-p="sim" aria-pressed="false" title="Configurás calada, volcables, egreso y flota de pellet, y proyectás el día">Proyección</button>' +
+    `<span class="esc" title="Lo que pasó ese día: es fijo, la proyección lo compara">${escenarioReal()}</span>`;
   buildMesa(); buildKnobs(); buildMixer(); buildGauges(); updateMesa();
   // qué tan bien reproduce el motor este día (criterios de docs/simulador/PLAN_MOTOR_COLAS.md)
   const c = MOTOR.calibracion, ok = Object.values(c.acepta).filter(Boolean).length;
@@ -937,6 +944,7 @@ async function loadMotor(day) {
 }
 function setView(v) {
   if (!MOTOR) return;
+  if (v === 'sim' && MODE !== 'sim' && !LIVE.length) { T = 0; }  // la configuración se arma a las 00:00 y vale todo el día
   MODE = v;
   apply();
 }
@@ -969,6 +977,19 @@ function apply() {
     daySub.textContent = REAL.d.title + ' · simulado con el motor de colas: los mismos camiones, con las capacidades de la mesa.';
   }
   updateMesa(); buildHeat(); renderEvents(); redraw();
+}
+
+// Escenario del día (lo que pasó): camiones y toneladas por producto según el Excel, flota de pellet y sus viajes,
+// llegadas a Ricardone. Es lo único que no se configura: la proyección lo compara.
+function escenarioReal() {
+  const by = {}, tr = REAL.d.trucks;
+  for (const t of tr) if (t[5]) { const p = prodOf(t[1]); const o = by[p] ||= {cam: 0, t: 0}; o.cam++; o.t += t[6] || t[2] || 0; }
+  const fl = PREP.fleet || {}, viajes = l => (l || []).reduce((a, f) => a + f.viajesReal, 0);
+
+  const chip = (p, lab, extra = '') => by[p] ? `<span class="c-${p}">${lab} <b>${fmtN(by[p].cam)}</b> cam. · <b>${fmtN(by[p].t)}</b> t${extra}</span>` : '';
+  return chip('soja', 'soja') + chip('girasol', 'girasol') +
+    chip('pellet', 'pellet', fl.pellet ? ` · flota <b>${fl.pellet.length}</b> · <b>${viajes(fl.pellet)}</b> viajes` : '') + chip('liquido', 'líquido') +
+    `<span class="lleg"><b>${fmtN(tr.length)}</b> camiones en el día · la hora de llegada de cada uno queda fija</span>`;
 }
 
 // Barras arrastrables: una fila por perilla y una columna por franja de 2 h. La rayita marca lo medido.
@@ -1008,6 +1029,8 @@ const ARC = 135, polar = a => [50 + 38 * Math.sin(a * Math.PI / 180), 50 - 38 * 
 const arcPath = (a0, a1) => { const [x0, y0] = polar(a0), [x1, y1] = polar(a1); return `M${x0} ${y0}A38 38 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1} ${y1}`; };
 function buildKnobs() {
   // la perilla de flota va de 0 al triple de la flota real (mínimo 20); sin flota ese día, no aparece
+  // en la consola quedan solo las flotas de transile; el resto de las perillas sigue en lo medido
+  for (const d of KNOBS) d.hide = !d.fleet;
   for (const d of KNOBS) if (d.fleet) { const n = ((PREP.fleet || {})[d.fleet] || []).length; d.max = Math.max(20, 3 * n); d.hide = !n; }
   knobsEl.innerHTML = KNOBS.filter(d => !d.hide).map(d => `<div class="rk" data-k="${d.k}" tabindex="0" role="slider" aria-label="${d.lab}" aria-valuemin="${d.min}" aria-valuemax="${d.max}">
     <svg viewBox="0 0 100 100" aria-hidden="true"><path class="tr" d="${arcPath(-ARC, ARC)}"/><path class="va"/><circle class="bm" r="4"/><line class="pt" x1="50" y1="50"/></svg>
@@ -1118,7 +1141,7 @@ function renderFixCard() {
   fxGainLab.title = `Día real: ${fmtN(a.descargas)} descargas (${fmtN(a.descPuerto)} en el puerto, contando cada vuelta de los transiles, y ${fmtN(a.descRic)} en Ricardone). ` +
     `El Excel cuenta camiones (cada transil una vez), por eso da menos.`;
   const sg = v => (v > 0 ? '+' : '') + fmtN(v);
-  fxSplit.innerHTML = REF.m ? `pasar a manual sin tocar: <b>${sg(REF.m.descargas - a.descargas)}</b> · tus jugadas: <b class="${b.descargas - REF.m.descargas < 0 ? 'neg' : 'pos'}">${sg(b.descargas - REF.m.descargas)}</b>` : '';
+  fxSplit.innerHTML = REF.m ? `configuración típica sin cambios: <b>${sg(REF.m.descargas - a.descargas)}</b> · tus cambios: <b class="${b.descargas - REF.m.descargas < 0 ? 'neg' : 'pos'}">${sg(b.descargas - REF.m.descargas)}</b>` : '';
   const row = (lab, x, y, fmt, lowerIsBetter = true) => {
     const cls = Math.round(y) === Math.round(x) ? '' : (y < x) === lowerIsBetter ? 'down' : 'up';
     return `<span>${lab}</span><b>${fmt(x)}</b><b class="${cls}">${fmt(y)}</b>`;
@@ -1273,6 +1296,38 @@ function showEnd() {
   endMoves.innerHTML = ch.length ? '<b>Lo que cambiaste:</b><br>' + ch.join('<br>') : 'No cambiaste nada: es el día como fue.';
   endModal.hidden = false;
   endAgain.focus();
+  capacidadSobrante();
+}
+
+// Cuánto más entraba con esta configuración: se agregan camiones con la misma mezcla y el mismo horario de llegada
+// hasta que dejan de descargarse (cada tanda nueva rinde menos de 1 de cada 4). También desde qué hora la planta
+// queda vacía.
+let roomTimer = 0;
+function capacidadSobrante() {
+  clearTimeout(roomTimer);
+  if (!FX || MODE !== 'sim') { endRoom.innerHTML = ''; return; }
+  const g = FX.g, zonas = ['entrada', 'playa1', 'demorado', 'playa3', 'ruta', 'osl', 'salida'];
+  let vacia = null;
+  for (let m = 1439; m >= 0; m--) if (zonas.some(z => g[z][m] > 0)) { vacia = m + 1; break; }
+  const libre = vacia != null && vacia < 1380 ? `La planta queda vacía desde las <b>${fmtT(vacia)}</b>: ${fmtN((1440 - vacia) / 60)} h sin camiones esperando. ` : '';
+  endRoom.innerHTML = `<b>Capacidad que sobró</b> · ${libre}Calculando cuánto más entraba…`;
+  const base0 = FX.m, steps = [10, 20, 35, 50, 75, 100, 150, 200];
+  let i = 0, prev = {gain: 0, added: 0}, best = {gain: 0, added: 0, tons: 0, pct: 0};
+  const step = () => {
+    if (endModal.hidden || i >= steps.length) return done();
+    const p = steps[i++], m = runK({...EK, extra: p}).m, gain = m.descargas - base0.descargas, added = m.extraLlegan;
+    if (gain > best.gain) best = {gain, added, tons: m.tons - base0.tons, pct: p};
+    const marginal = (gain - prev.gain) / Math.max(1, added - prev.added);
+    prev = {gain, added};
+    if (marginal < 0.25 && i > 1) return done();
+    roomTimer = setTimeout(step, 0);
+  };
+  const done = () => {
+    endRoom.innerHTML = `<b>Capacidad que sobró</b> · ${libre}` + (best.gain >= 5
+      ? `Con esta configuración entraban <b>${fmtN(best.gain)} camiones más</b> (≈ ${fmtN(best.tons)} t) en el día, si hubieran llegado con la misma mezcla y el mismo horario (se probó con ${fmtN(best.added)} camiones extra).`
+      : 'La configuración ya va al límite: si llegaban más camiones, se quedaban esperando.');
+  };
+  roomTimer = setTimeout(step, 30);
 }
 
 // Consola en vivo: un canal por estación, por calle de calada y por volcable. Cada toque queda como jugada a la
@@ -1290,9 +1345,10 @@ function buildMixer() {
     (g === 'volc' || g === 'rd' || g === 'cal' ? '<div class="pd">' + (g === 'cal' ? PRODS_CAL : PRODS).map(([p, l]) => `<button class="p-${p}" data-prod="${p}" aria-pressed="false" title="Recibe ${p}" aria-label="${LANE_NAME[g](i)} recibe ${p}">${l}</button>`).join('') + '</div>' : '') +
     '</div>';
   const st = k => strip('st', k, k === 'bal' || k === 'balegr' ? 80 : 120, ST_SHORT[k]);
-  mxCal.innerHTML = st('ing') + st('pre') + [0, 1, 2, 3, 4, 5].map(i => strip('cal', i, 60, 'C' + (i + 1))).join('') + strip('cal', 6, 20, 'CL') + st('sal2') +
-    '<span class="sep"></span>' + st('balric') + RIC_DESC.map((d, i) => strip('rd', i, 12, d.short)).join('') + st('balegrric');
-  mxVolc.innerHTML = st('ingsl') + st('bal') + [0, 1, 2, 3, 4].map(i => strip('volc', i, 20, 'V' + (i + 1))).join('') + st('balegr') + st('egr');
+  // solo lo que se decide: calada, volcables y silos, egreso; garitas, preingreso y balanzas de ingreso quedan como pasaron
+  mxCal.innerHTML = [0, 1, 2, 3, 4, 5].map(i => strip('cal', i, 60, 'C' + (i + 1))).join('') + strip('cal', 6, 20, 'CL') + st('sal2') +
+    '<span class="sep"></span>' + RIC_DESC.map((d, i) => strip('rd', i, 12, d.short)).join('');
+  mxVolc.innerHTML = [0, 1, 2, 3, 4].map(i => strip('volc', i, 20, 'V' + (i + 1))).join('') + st('balegr') + st('egr');
   mixer.querySelectorAll('.strip').forEach(el => {
     const g = el.dataset.g, i = g === 'st' ? el.dataset.i : +el.dataset.i, fader = el.querySelector('.fader');
     el.querySelector('.led').onclick = () => addMove({g, i, on: !motorLaneState(PREP, EK, T)[g][i].on});
@@ -1335,7 +1391,7 @@ function updateMixer(cnt) {
     : '<div class="note">Todavía no tocaste nada. Dale play y, a la hora que quieras, abrí una calle, cerrá un volcable o cambiale el ritmo a una balanza.</div>';
   if (mxMoves.dataset.html !== html) { mxMoves.innerHTML = html; mxMoves.dataset.html = html; }
   mxMode.title = LIVE.length ? 'Desde tu primera jugada cada canal queda como estaba y solo cambia con lo que toques' : 'Los canales siguen el día como se midió. Tocá cualquiera para manejar vos.';
-  mxMode.textContent = LIVE.length ? `manual desde ${fmtT(Math.min(...LIVE.map(m => m.t)))} · ${LIVE.length} jugada${LIVE.length > 1 ? 's' : ''}` : 'día medido';
+  mxMode.textContent = MODE !== 'sim' ? 'como fue' : LIVE.length ? `${LIVE.length} cambio${LIVE.length > 1 ? 's' : ''} · desde ${fmtT(Math.min(...LIVE.map(m => m.t)))}` : 'configurá y proyectá';
   mxMode.title = (mxMode.title || '') + (LIVE.length ? '\n' + [...LIVE].sort((x, y) => x.t - y.t).map(x => fmtT(x.t) + ' · ' + moveTxt(x)).join('\n') : '');
   mxMode.classList.toggle('on', !!LIVE.length);
   {
@@ -1398,12 +1454,13 @@ mxPlay.onclick = () => toggle();
 const mixer = document.getElementById('mixer'), mxCal = document.getElementById('mxCal'), mxVolc = document.getElementById('mxVolc'), mxMoves = document.getElementById('mxMoves'), mxScore = document.getElementById('mxScore');
 document.getElementById('mxClear').onclick = () => { LIVE = []; knobChanged(true); };
 const simBadge = document.getElementById('simBadge'), gauges = document.getElementById('gauges'), movesCard = document.getElementById('movesCard'), endModal = document.getElementById('endModal');
-const endFleet = document.getElementById('endFleet'), endTitle = document.getElementById('endTitle'), endVs = document.getElementById('endVs'), endCmp = document.getElementById('endCmp'), endMoves = document.getElementById('endMoves'), endAgain = document.getElementById('endAgain');
+const endRoom = document.getElementById('endRoom'), endFleet = document.getElementById('endFleet'), endTitle = document.getElementById('endTitle'), endVs = document.getElementById('endVs'), endCmp = document.getElementById('endCmp'), endMoves = document.getElementById('endMoves'), endAgain = document.getElementById('endAgain');
 endAgain.onclick = () => { endModal.hidden = true; T = 0; redraw(); toggle(true); };
 document.getElementById('endClose').onclick = () => { endModal.hidden = true; };
 document.getElementById('endReset').onclick = () => { endModal.hidden = true; resetMesa(); setView('real'); T = 0; redraw(); };
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !endModal.hidden) endModal.hidden = true; });
-document.getElementById('runDay').onclick = () => { endModal.hidden = true; T = 0; redraw(); toggle(true); };
+document.getElementById('runDay').onclick = () => { endModal.hidden = true; if (MODE !== 'sim') setView('sim'); if (T >= 1439) T = 0; redraw(); toggle(true); };
+document.getElementById('projDay').onclick = () => { if (MODE !== 'sim') setView('sim'); toggle(false); T = 1440; redraw(); showEnd(); };
 const fxGainLab = document.getElementById('fxGainLab'), fxSplit = document.getElementById('fxSplit'), fxWhy = document.getElementById('fxWhy');
 const mesaCalib = document.getElementById('mesaCalib'), knobCard = document.getElementById('knobCard'), fxGainBox = document.getElementById('fxGainBox');
 const mesa = document.getElementById('mesa'), mesaGrid = document.getElementById('mesaGrid'), lanes = document.getElementById('lanes');
