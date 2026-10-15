@@ -17,6 +17,7 @@ const LEVEL: Record<LiveCapture['level'], { label: string; cls: string }> = {
   provisorio: { label: 'Por confirmar', cls: 'bg-amber-100 text-amber-800' },
   pendiente: { label: 'Lectura ilegible', cls: 'bg-rose-100 text-rose-800' },
   rechazado: { label: 'Descartada', cls: 'bg-slate-100 text-slate-500' },
+  fuera_sistema: { label: 'Fuera del sistema', cls: 'bg-slate-100 text-slate-500' },
 }
 
 function hora(iso: string) {

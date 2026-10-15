@@ -15,7 +15,7 @@ import { resolveSectorStatus, resolveZoneStatus, resolveBottleneck } from './sta
 import { POINTS, zonesOfSite } from './plantGraph.mjs'
 import { SECTOR_DEVICES } from './sectorProfiles.mjs'
 import { applyIdentifications, applyLinks, findPredecessors, identifyFragments, journeyKeyOf, nodeModelCatalog, recentCaptures, updateRecentCircuits } from './plateIdentification.mjs'
-import { liveBalanzaRegistry } from './balanzaRegistry.mjs'
+import { liveBalanzaRegistry, outsideTruckSystem, replayBalanzaRegistry } from './balanzaRegistry.mjs'
 import { createIdentificationArchive } from './identificationArchive.mjs'
 import { assessVehicleRelevance, excludeIrrelevantEvents } from './vehicleRelevance.mjs'
 
@@ -322,6 +322,32 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     identificationCache.delete(key)
   }
 
+  /** Registro de balanza por día para los casos archivados (ya fuera del buffer de 24 h). */
+  const archiveBalanza = new Map()
+  /**
+   * Casos archivados sin decisión: si ni la lectura ni ningún candidato figuran en la balanza de ese día,
+   * van a «fuera del sistema»; si la balanza los alcanzó después (el SGC llega con demora), vuelven a la bandeja.
+   */
+  function withOutsideSystem(items) {
+    if (process.env.IDENTIFICATION_BALANZA === '0') return items
+    return items.map((it) => {
+      if (!it.archived || it.decision?.action === 'confirm' || it.decision?.action === 'reject') return it
+      if (!['provisorio', 'pendiente', 'fuera_sistema'].includes(it.level)) return it
+      const day = new Date(Date.parse(it.at) - 3 * 3600_000).toISOString().slice(0, 10)
+      let reg = archiveBalanza.get(day)
+      if (!reg || Date.now() - reg.at > 10 * 60_000) {
+        reg = { at: Date.now(), registry: replayBalanzaRegistry(day) }
+        archiveBalanza.set(day, reg)
+      }
+      const outside = outsideTruckSystem(it, it.candidates ?? [], reg.registry, { closed: Date.now() - Date.parse(it.at) > 24 * 3600_000 })
+      if (outside && it.level !== 'fuera_sistema') {
+        return { ...it, level: 'fuera_sistema', rule: 'fuera_sistema', reason: `ni ${it.readPlate} ni sus candidatos figuran en la balanza: vehículo fuera del sistema de camiones` }
+      }
+      if (!outside && it.level === 'fuera_sistema') return { ...it, level: it.validFormat || it.candidates?.length ? 'provisorio' : 'pendiente' }
+      return it
+    })
+  }
+
   function identifyRaw(site, rawEvents, nowMs = Date.now()) {
     const cached = identificationCache.get(site)
     if (cached && nowMs - cached.at < IDENTIFICATION_CACHE_MS) return cached.result
@@ -341,7 +367,7 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       }),
       recentCounts,
     }
-    result.items = identificationArchive.merge(site, result.items, identificationDecisions[site] || {})
+    result.items = withOutsideSystem(identificationArchive.merge(site, result.items, identificationDecisions[site] || {}))
     result.counts = result.items.reduce((counts, item) => ({ ...counts, [item.level]: (counts[item.level] || 0) + 1 }), {})
     identificationCache.set(site, { at: nowMs, result })
     return result
@@ -596,7 +622,9 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       if (!plate) throw new PlantStateError('plate_required', 400, 'patente requerida')
       // EV-15: atributos del DSS que el operador marcó como mal detectados (no se editan los originales).
       const attrFlags = Array.isArray(body?.attrFlags) ? body.attrFlags.map(String).filter((k) => ['color', 'marca', 'tipo'].includes(k)) : undefined
-      identificationDecisions[key][fk] = { action, plate, journeyUid: body?.journeyUid ? String(body.journeyUid) : null, reason, operator, attrFlags, learning, notes, updatedAt: now }
+      identificationDecisions[key][fk] = { action, plate, journeyUid: body?.journeyUid ? String(body.journeyUid) : null, reason, operator, attrFlags, learning, notes, updatedAt: now,
+        // Reproceso de casos archivados con el reconocedor (scripts/reprocesar-archivados.mjs): no es una etiqueta de operaciones.
+        ...(body?.source === 'automatic_algorithm' ? { source: 'automatic_algorithm', rule: body.rule ? String(body.rule).slice(0, 40) : null } : {}) }
     } else if (action === 'reject') {
       if (!reason) throw new PlantStateError('reason_required', 400, 'motivo requerido para descartar')
       identificationDecisions[key][fk] = { action, reason, operator, notes, updatedAt: now, ...(body?.relevance ? { source: 'automatic_relevance', relevance: body.relevance } : {}) }

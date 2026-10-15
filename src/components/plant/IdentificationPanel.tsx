@@ -7,11 +7,13 @@ import type { DecisionOptions } from '../../services/live/plantStateApi'
 import './identificationDesk.css'
 
 type Site = 'ricardone' | 'san_lorenzo'
-type Queue = 'actual' | 'anteriores' | 'resueltas'
+type Queue = 'actual' | 'anteriores' | 'fuera' | 'resueltas'
 type Sort = 'antiguedad' | 'punto' | 'recientes'
 type Row = { site: Site; item: IdentificationItem; key: string }
-const LABEL: Record<IdentificationLevel, string> = { confirmado: 'Confirmada por operador', casi_seguro: 'Aplicada automáticamente', provisorio: 'Por confirmar', pendiente: 'Lectura ilegible', rechazado: 'Descartada' }
+const LABEL: Record<IdentificationLevel, string> = { confirmado: 'Confirmada por operador', casi_seguro: 'Aplicada automáticamente', provisorio: 'Por confirmar', pendiente: 'Lectura ilegible', rechazado: 'Descartada', fuera_sistema: 'Fuera del sistema' }
 const isPending = (item: IdentificationItem) => item.level === 'provisorio' || item.level === 'pendiente'
+/** Ni la lectura ni sus candidatos figuran en la balanza: lista aparte, se puede revisar igual. */
+const isOutside = (item: IdentificationItem) => item.level === 'fuera_sistema'
 const siteName = (site: Site) => site === 'ricardone' ? 'Ricardone' : 'San Lorenzo'
 const TZ = 'America/Argentina/Buenos_Aires'
 function stamp(at: string) {
@@ -97,14 +99,15 @@ export function IdentificationPanel({ sites, mode = 'desk', onOpen }: { sites: S
   const start = shiftStart(now)
   const current = rows.filter(row => isPending(row.item) && Date.parse(row.item.at) >= start)
   const previous = rows.filter(row => isPending(row.item) && Date.parse(row.item.at) < start)
-  const resolved = rows.filter(row => !isPending(row.item))
+  const outside = rows.filter(row => isOutside(row.item))
+  const resolved = rows.filter(row => !isPending(row.item) && !isOutside(row.item))
   // Caso pedido desde otra vista: se ubica en la cola que lo contiene.
   useEffect(() => {
     if (!session.locate || !loaded || !selected) return
-    const q: Queue | null = current.some(r => r.key === selected) ? 'actual' : previous.some(r => r.key === selected) ? 'anteriores' : resolved.some(r => r.key === selected) ? 'resueltas' : null
+    const q: Queue | null = current.some(r => r.key === selected) ? 'actual' : previous.some(r => r.key === selected) ? 'anteriores' : outside.some(r => r.key === selected) ? 'fuera' : resolved.some(r => r.key === selected) ? 'resueltas' : null
     patch({ locate: false, ...(q ? { queue: q } : {}) })
   })
-  const queueRows = queue ==='actual' ? current : queue === 'anteriores' ? previous : resolved
+  const queueRows = queue ==='actual' ? current : queue === 'anteriores' ? previous : queue === 'fuera' ? outside : resolved
   const filtered = Boolean(search || point)
   const visible = queueRows
     .filter(({ site, item }) => (!point || `${site}:${item.node}` === point) && `${item.readPlate} ${item.assignedPlate ?? ''} ${item.candidates.map(c => c.plate).join(' ')}`.includes(search.toUpperCase()))
@@ -154,7 +157,7 @@ export function IdentificationPanel({ sites, mode = 'desk', onOpen }: { sites: S
     <button type="button" onClick={onOpen}>Abrir bandeja <span aria-hidden="true">→</span></button>
   </section>
 
-  const emptyMessage = !loaded ? 'Cargando casos…' : errors.length === sites.length ? 'No se pudo consultar la bandeja.' : filtered && queueRows.length ? `Sin coincidencias: 0 de ${queueRows.length} casos con estos filtros.` : queue === 'actual' ? 'Sin casos pendientes en este turno.' : queue === 'anteriores' ? 'No hay pendientes anteriores registrados.' : 'Todavía no hay decisiones registradas.'
+  const emptyMessage = !loaded ? 'Cargando casos…' : errors.length === sites.length ? 'No se pudo consultar la bandeja.' : filtered && queueRows.length ? `Sin coincidencias: 0 de ${queueRows.length} casos con estos filtros.` : queue === 'actual' ? 'Sin casos pendientes en este turno.' : queue === 'anteriores' ? 'No hay pendientes anteriores registrados.' : queue === 'fuera' ? 'No hay vehículos fuera del sistema.' : 'Todavía no hay decisiones registradas.'
   // EV-17: «al día» solo si de verdad no hay pendientes, la carga terminó y ninguna planta falló.
   const reallyClear = loaded && !errors.length && !current.length && !previous.length
 
@@ -163,12 +166,12 @@ export function IdentificationPanel({ sites, mode = 'desk', onOpen }: { sites: S
       <div className="id-auto">{sites.map(s => <div key={s}><span className={state[s]?.error ? 'is-down' : stale.includes(s) ? 'is-stale' : ''} /> {siteName(s)}: {state[s]?.error ? 'sin respuesta' : state[s]?.fetchedAt ? `actualizado ${new Date(state[s]!.fetchedAt!).toLocaleTimeString('es-AR', { timeZone: TZ, hour12: false })}` : 'consultando…'}</div>)}<small>Indica la última respuesta de la bandeja, no que las cámaras estén leyendo.</small>
         <label className="id-operator">Operador <input value={operator} onChange={e => setOperator(e.target.value)} placeholder="Tu nombre o puesto" aria-label="Nombre del operador o puesto" /></label></div></header>
     <div className="id-summary"><div><strong>{loaded ? current.length : '—'}</strong><span>Casos por confirmar · turno actual</span></div><div><strong>{loaded ? previous.length : '—'}</strong><span>Casos pendientes anteriores</span></div><div><strong>{resolved.filter(r => r.item.level === 'casi_seguro').length}</strong><span>Aplicadas automáticamente · archivo</span></div><div><strong>{resolved.filter(r => r.item.level === 'confirmado').length}</strong><span>Confirmadas por operador · archivo</span></div></div>
-    <div className="id-toolbar"><div role="group" aria-label="Cola de revisión">{([['actual', 'Turno actual', current.length], ['anteriores', 'Turnos anteriores', previous.length], ['resueltas', 'Resueltas', resolved.length]] as const).map(([id, label, count]) => <button type="button" key={id} aria-pressed={queue === id} onClick={() => patch({ queue: id, selected: null })}>{label} <b>{count}</b></button>)}</div>
+    <div className="id-toolbar"><div role="group" aria-label="Cola de revisión">{([['actual', 'Turno actual', current.length], ['anteriores', 'Turnos anteriores', previous.length], ['fuera', 'Fuera del sistema', outside.length], ['resueltas', 'Resueltas', resolved.length]] as const).map(([id, label, count]) => <button type="button" key={id} aria-pressed={queue === id} onClick={() => patch({ queue: id, selected: null })}>{label} <b>{count}</b></button>)}</div>
       <input aria-label="Buscar patente o candidato" placeholder="Buscar patente o candidato" value={search} onChange={e => patch({ search: e.target.value })} />
       <select aria-label="Filtrar punto de control" value={point} onChange={e => patch({ point: e.target.value })}><option value="">Todos los puntos</option>{Array.from(new Map(rows.map(r => [`${r.site}:${r.item.node}`, `${siteName(r.site)} · ${r.item.nodeLabel}`])).entries()).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select>
       {queue !== 'resueltas' ? <select aria-label="Orden" value={sort} onChange={e => patch({ sort: e.target.value as Sort })}><option value="antiguedad">Más antiguos primero</option><option value="recientes">Más recientes primero</option><option value="punto">Por planta y punto</option></select> : null}
       {filtered ? <button type="button" onClick={() => patch({ search: '', point: '' })}>Limpiar filtros</button> : null}</div>
-    <p className="id-shift">{queue === 'anteriores' ? 'Pendientes conservados con sus candidatos originales, aunque ya no estén en el estado de planta.' : queue === 'actual' ? `Turnos de referencia: ${shiftText} h · hora argentina. La antigüedad indica hace cuánto se capturó, no que el camión siga esperando.` : 'Registro de decisiones. Ver la decisión no la modifica; reabrir es una acción aparte.'}</p>
+    <p className="id-shift">{queue === 'anteriores' ? 'Pendientes conservados con sus candidatos originales, aunque ya no estén en el estado de planta.' : queue === 'fuera' ? 'Vehículos fuera del sistema de camiones: ni la patente leída ni ningún candidato figuran en la balanza (SGC). No hace falta decidir; si alguno es un camión, se puede confirmar igual.' : queue === 'actual' ? `Turnos de referencia: ${shiftText} h · hora argentina. La antigüedad indica hace cuánto se capturó, no que el camión siga esperando.` : 'Registro de decisiones. Ver la decisión no la modifica; reabrir es una acción aparte.'}</p>
     {errors.length ? <div className="id-error" role="alert">No se pudo actualizar {errors.map(s => `${siteName(s)} (${state[s]?.error})`).join(' · ')}. {errors.length < sites.length ? 'La otra planta sigue actualizada.' : ''}<button type="button" onClick={() => void load()}>Reintentar</button></div> : null}
     {receipt ? <p className="id-notice" role="status">{receipt}</p> : null}
     <div className="id-workspace"><aside className="id-queue" aria-label="Casos por revisar"><div className="id-queue__title">{filtered ? `${visible.length} de ${queueRows.length} casos` : `${visible.length} casos`}</div>
@@ -181,11 +184,11 @@ export function IdentificationPanel({ sites, mode = 'desk', onOpen }: { sites: S
         {row.item.decision?.action === 'defer' ? <small className="id-defer">Motivo: {row.item.decision.reason}{row.item.decision.attempts ? ` · ${row.item.decision.attempts} intento(s)` : ''}</small> : null}
       </button>)}
       {!visible.length ? <p className="id-empty">{emptyMessage}{filtered && queueRows.length ? <button type="button" onClick={() => patch({ search: '', point: '' })}>Limpiar filtros</button> : null}</p> : null}</aside>
-    <main className="id-case">{active ? <><header className="id-case__header"><div><span className="id-eyebrow">{siteName(active.site)} · {active.item.nodeLabel}</span><h3>{isPending(active.item) ? 'Confirmar identidad del camión' : 'Identificación resuelta'}</h3><p>{stamp(active.item.at)} · <span title="Código de cámara">{active.item.deviceCode}</span></p></div><span className={`id-level id-level--${active.item.level}`}>{active.item.decision?.source === 'automatic_relevance' ? 'Descartada automáticamente' : LABEL[active.item.level]}</span></header>
+    <main className="id-case">{active ? <><header className="id-case__header"><div><span className="id-eyebrow">{siteName(active.site)} · {active.item.nodeLabel}</span><h3>{isOutside(active.item) ? 'Vehículo fuera del sistema de camiones' : isPending(active.item) ? 'Confirmar identidad del camión' : 'Identificación resuelta'}</h3><p>{stamp(active.item.at)} · <span title="Código de cámara">{active.item.deviceCode}</span></p></div><span className={`id-level id-level--${active.item.level}`}>{active.item.decision?.source === 'automatic_relevance' ? 'Descartada automáticamente' : LABEL[active.item.level]}</span></header>
       <p className="id-reason">{active.item.decision?.source === 'automatic_relevance' ? active.item.decision.reason ?? active.item.reason : active.item.reason}</p>
       {otherSeat(active.item) ? <p className="id-claim" role="status">Este caso está abierto en otro puesto{otherSeat(active.item)!.label ? ` (${otherSeat(active.item)!.label})` : ''}. Si guardás y el otro ya decidió, el sistema te avisará del conflicto.</p> : null}
       <CaseNotes key={`notes-${active.key}`} notes={active.item.decision?.notes ?? []} busy={busy} onAdd={text => decide(active, { action: 'note', text })} />
-      {isPending(active.item)
+      {isPending(active.item) || isOutside(active.item)
         ? <ReviewCandidates key={active.key} site={active.site} fragmentKey={active.item.fragmentKey} readPlate={active.item.readPlate} validFormat={active.item.validFormat} deviceCode={active.item.deviceCode} at={active.item.at} nodeLabel={active.item.nodeLabel} candidates={active.item.candidates} busy={busy} siblings={siblingsOf(active)} onDecide={(d, o, id) => decide(active, d, o, id)} />
         : <ResolvedView key={active.key} row={active} busy={busy} onReopen={reason => decide(active, { action: 'clear', reason })} />}</>
       : <div className="id-case__empty"><span aria-hidden="true">{reallyClear ? '✓' : '·'}</span>

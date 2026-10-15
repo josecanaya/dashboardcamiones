@@ -379,7 +379,8 @@ export function openPlantStateStream(
 
 /* ---------- Identificación de patentes en vivo ---------- */
 
-export type IdentificationLevel = 'confirmado' | 'casi_seguro' | 'provisorio' | 'pendiente' | 'rechazado'
+/** fuera_sistema: ni la lectura ni ningún candidato figuran en la balanza (autos/camionetas); no va a la bandeja. */
+export type IdentificationLevel = 'confirmado' | 'casi_seguro' | 'provisorio' | 'pendiente' | 'rechazado' | 'fuera_sistema'
 
 export interface IdentificationCandidate {
   inventory?: { version: string; visitId: string; nodeId: string; phase: string | null; lane: string | null; fromNode: string | null; visitStartedAt: string | null; status: 'expected' | 'exception'; reason: string; shadow?: { mode: 'evaluacion'; reason: string } }

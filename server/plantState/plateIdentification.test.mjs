@@ -341,6 +341,22 @@ describe('refuerzo de balanza (SGC) y la cuenta del documento (15/10)', () => {
     expect(sin.level).toBe('provisorio')
   })
 
+  it('ni la lectura ni ningún candidato en la balanza: sale de la bandeja como fuera del sistema', () => {
+    const events = [
+      ev('FQX653', 'q1', '1-S6', 'SLZRenovaFte', '2026-10-15T11:00:00-03:00'),
+      ev('FQX653', 'q1', '1-S7', 'SLZSalidaC1Fte', '2026-10-15T11:20:00-03:00'),
+      ev('FQX693', 'q2', '1-S7', 'SLZSalidaC2Fte', '2026-10-15T11:21:00-03:00'),
+    ]
+    const balanza = buildBalanzaRegistry([{ plate: 'MWG720', ingresoMs: ms('2026-10-15T09:00:00-03:00'), salidaMs: null }])
+    const it0 = identifyFragments(events, now, { catalog, balanza }).items.find((i) => i.readPlate === 'FQX693')
+    expect(it0.level).toBe('fuera_sistema')
+    expect(it0.assignedPlate).toBeNull()
+    // Si el candidato figura en la balanza, vuelve a ser un caso para operaciones.
+    const conCamion = buildBalanzaRegistry([{ plate: 'FQX653', ingresoMs: ms('2026-10-15T10:30:00-03:00'), salidaMs: null }])
+    const it1 = identifyFragments(events, now, { catalog, balanza: conCamion }).items.find((i) => i.readPlate === 'FQX693')
+    expect(it1.level).not.toBe('fuera_sistema')
+  })
+
   it('si la patente leída ya vino a la balanza, no se corrige por parecido', () => {
     const events = [
       ev('MWG720', 'w1', '2-S1', 'RicPreIngInFr', '2026-10-15T11:00:00-03:00'),

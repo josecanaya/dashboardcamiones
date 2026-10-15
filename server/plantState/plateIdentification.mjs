@@ -20,6 +20,7 @@
 
 import { visitRowsAt, assessVisitCandidate } from './visitInventory.mjs'
 import { arrivalWeight, scoreWithNodeModel } from './nodeModelScore.mjs'
+import { outsideTruckSystem } from './balanzaRegistry.mjs'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -710,6 +711,14 @@ export function identifyFragments(events, nowMs, ctx) {
       reason = 'descartado por operaciones'
       assignedPlate = null
       assignedJourneyUid = null
+    }
+    // Ni la lectura ni ningún candidato figuran en la balanza: vehículo fuera del sistema de camiones
+    // (autos y camionetas en Egreso SL y Renova). Sale de la bandeja del operador a una lista aparte.
+    if (!decision && (level === 'provisorio' || level === 'pendiente') && bz &&
+        outsideTruckSystem({ readPlate: f.plate, validFormat: valid, at: new Date(head.t).toISOString() }, candidates, bz)) {
+      level = 'fuera_sistema'
+      reason = `ni ${f.plate || 'la lectura'} ni ${candidates.length ? 'sus candidatos' : 'ningún camión'} figuran en la balanza: vehículo fuera del sistema de camiones`
+      rule = 'fuera_sistema'
     }
 
     items.push({

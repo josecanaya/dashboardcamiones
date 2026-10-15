@@ -77,6 +77,29 @@ export function buildBalanzaRegistry(visits, known = new Set()) {
   }
 }
 
+/**
+ * Vehículo fuera del sistema de camiones: ni la patente leída ni ningún candidato figuran en la balanza
+ * (en planta a esa hora, como acoplado, o alguna vez en la historia). Típico de autos y camionetas en
+ * Egreso SL y Renova. Esos casos salen de la bandeja del operador a una lista aparte.
+ * @param {{ readPlate: string, validFormat: boolean, at: string }} item
+ * @param {{ plate: string, similarity?: number }[]} candidates
+ * @param {ReturnType<typeof buildBalanzaRegistry>} reg
+ * @param {{ closed?: boolean }} [opts] closed: caso de un día cerrado (la balanza de esa hora ya está
+ *   completa): el candidato cuenta solo si estaba en planta. En vivo el SGC llega con horas de demora,
+ *   así que también cuenta un candidato que vino alguna vez a la balanza.
+ */
+export function outsideTruckSystem(item, candidates, reg, opts = {}) {
+  if (!reg) return false
+  const t = Date.parse(item.at)
+  const read = item.readPlate
+  if (read && (reg.truckAt(read, t) || reg.trailerAt(read, t) || (item.validFormat && reg.isKnown(read)))) return false
+  // Patente válida: solo cuentan los candidatos parecidos (los que entran solo por recorrido, con 0,2–0,4
+  // de parecido, no son esa patente). Lectura ilegible: cuentan todos, la patente no informa.
+  const plates = candidates.filter((c) => !item.validFormat || (c.similarity ?? 0) >= OUTSIDE_MIN_SIMILARITY).map((c) => c.plate)
+  return !plates.some((p) => reg.truckAt(p, t) || (!opts.closed && reg.isKnown(p)))
+}
+const OUTSIDE_MIN_SIMILARITY = 0.65
+
 const readJson = (f, fb) => {
   try {
     return fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8').replace(/^\uFEFF/, '')) : fb

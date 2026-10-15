@@ -14,7 +14,7 @@ const json = (p) => JSON.parse(fs.readFileSync(path.join(root, p), 'utf8').repla
 const logs = fs.readFileSync(path.join(root, 'data/plate-identification-log.jsonl'), 'utf8').split(/\r?\n/).filter(Boolean).map((l) => JSON.parse(l))
 const final = new Map()
 for (const r of logs) if (r.fragmentKey && r.action !== 'note') final.set(`${r.site}|${r.fragmentKey}`, r)
-const labels = [...final.values()].filter((r) => r.action === 'confirm' && r.readPlate && r.plate && r.source !== 'automatic_relevance')
+const labels = [...final.values()].filter((r) => r.action === 'confirm' && r.readPlate && r.plate && !['automatic_relevance', 'automatic_algorithm'].includes(r.source))
 const catalog = nodeModelCatalog()
 const SITE_OF = (e) => (String(e.deviceCode ?? '').startsWith('SLZ') ? 'san_lorenzo' : 'ricardone')
 
