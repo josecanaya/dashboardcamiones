@@ -101,3 +101,21 @@ Diseñar para **1366×768 como mínimo** y verificar en 1440×860 y 1920×1080, 
 1. **¿El bloqueo entre productos existe en la planta?** Por ejemplo, si soja en OSL demora al pellet aunque V4 esté libre. Si existe, «abrir resta» puede ser real: se deja y se explica en pantalla. Si no existe, se elimina del motor. Por la regla pedida («abrir nunca resta»), la recomendación es eliminarlo.
 2. **Perillas globales.** Hoy en la pantalla solo están las de la flota. Ritmo de calada, ritmo de volcables y llegadas extra están ocultos, así que las jugadas «calada al 150 %», «puerto de noche» y «más llegadas» no se pueden hacer a mano. ¿Se vuelven a mostrar como 3 perillas en la consola?
 3. **Base de comparación.** ¿«Descargas de más» contra la reproducción del motor (recomendado: compara lo mismo con lo mismo) o contra lo medido por las cámaras?
+
+## Informe «Por qué» (15/10, pedido del usuario: «sin un informe de por qué descarga más o menos, no se entiende»)
+- [x] Pestaña **Por qué**, la primera del detalle. Se abre con el botón «¿Por qué?» al lado del número grande, y su versión corta aparece en el cierre del día. Trae:
+  - un veredicto en una o dos oraciones;
+  - **qué suma y qué resta**: cada jugada, cada perilla y el paso a manual, medidos sacándolos y volviendo a correr el día;
+  - en qué canal se nota: horas trabajando, cerrado, sin recibir o abierto sin camiones de su producto;
+  - **por qué no da más**: quién queda adentro a las 24 h, por producto, y qué recurso manda;
+  - **dónde se nota** y **cuánto se parece al día real**, hora por hora contra las cámaras.
+- Tarda entre 0,1 y 0,3 s por análisis en el 29/08, porque corre el motor una vez por cada cambio.
+
+## Escenario hipotético y programador (16/10, pedido del usuario)
+- [x] **✎ Escenario** (al lado de Como fue / Proyección):
+  - Se elige cuántos camiones de soja, girasol, pellet a Ricardone y líquido llegan entre las 00 y las 24 h, más los camiones de la flota de transile de pellet y de soja de silos.
+  - Si se piden más camiones, se copian del mismo producto con su horario real (`motorEscenario` en motor_colas.js, 7 min después del original). Si se piden menos, se sacan parejo en el día.
+  - No se tocan los que ya esperaban a las 00 h ni los transiles. Por eso el «real» de esa ventana es menor que el chip del Excel, y la ventana lo aclara.
+  - En Varios días se aplica en proporción. «Por qué» lo mide como un aporte más.
+  - Ejemplo en el 29/08: soja +20 % y girasol ×2 dan +26 y dejan 39 adentro a las 24 h. Soja a la mitad da −114.
+- [x] **⏱ Programar** (en la consola): se eligen varios canales (calles, volcables y silos, estaciones), qué hacer (abrir, cerrar, ritmo o producto) y desde qué hora. Rechaza el producto que el canal no recibe y lista lo programado, con borrar.

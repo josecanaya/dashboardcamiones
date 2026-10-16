@@ -306,6 +306,39 @@ header .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:elli
 .pane{display:flex;flex-direction:column;gap:12px}
 .drawer .more{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .drawer .bottom{grid-template-columns:minmax(0,1fr)}
+/* Escenario y programador */
+.fix .escbtn{border-color:var(--accent);color:var(--accent);font-weight:700}
+.fix button,.mxhead button{white-space:nowrap}
+.escon{font-size:12px;font-weight:700;color:#0E1A16;background:var(--warn);border-radius:6px;padding:3px 8px;white-space:nowrap}
+.escbox,.progbox{max-width:760px}
+.escgrid{display:grid;grid-template-columns:190px 60px 1fr 96px;gap:10px 12px;align-items:center;font-size:13px}
+.escgrid .h{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:700}
+.escgrid .pn{display:flex;align-items:center;gap:8px;font-weight:600}.escgrid .pn i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.escgrid .rv{font-family:var(--mono);color:var(--muted);text-align:right}
+.escgrid input[type=range]{width:100%;accent-color:var(--accent)}
+.escgrid input[type=number]{width:90px;font:inherit;font-family:var(--mono);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 8px}
+.escgrid .dif{grid-column:2/-1;font-size:11px;color:var(--muted);margin-top:-6px}
+.pgsec{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:4px}.pgsec span{text-transform:none;letter-spacing:0;font-weight:400}
+.pgch{display:flex;flex-wrap:wrap;gap:6px}
+.pgch .grp{flex-basis:100%;font-size:12px;color:var(--muted);margin-top:2px}
+.pgch button{min-width:52px;padding:6px 10px;font-weight:700}
+.pgdo{display:flex;flex-direction:column;gap:8px;font-size:14px}
+.pgdo input[type=number],.pgdo select,.pgtime input{font:inherit;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 8px}
+.pgdo input[type=number]{width:70px}
+.pgtime{display:flex;align-items:center;gap:12px}.pgtime input{font-family:var(--mono);font-size:18px}
+/* Por qué: el resultado explicado */
+.why{gap:8px}
+.why .wver{margin:0;font-size:15px;line-height:1.5}.why .wver b{color:var(--accent)}
+.why .wsec{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:6px}
+.why .wtx{margin:0;font-size:13px;line-height:1.5}
+.why ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.why .wap li{display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:baseline;font-size:13px;line-height:1.4}
+.why .wap li i{display:block;font-style:normal;font-size:12px;color:var(--muted)}
+.why .wd{font-family:var(--mono);font-weight:700;font-size:15px;text-align:right;color:var(--muted)}
+.why .wd.pos{color:var(--accent)}.why .wd.neg{color:#F2A194}
+.why .wls{padding-left:16px;list-style:disc;font-size:13px;line-height:1.45}
+.endwhy{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:10px 14px;display:flex;flex-direction:column;align-items:flex-start}
+.whybtn{padding:3px 10px;font-size:12px;font-weight:700;border-color:var(--accent);color:var(--accent);align-self:center}
 </style>
 
 <div class="app">
@@ -338,7 +371,7 @@ header .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:elli
       <div class="mixer" id="mixer" hidden>
         <div class="mxhead">
           <h2 title="Botón: abre o cierra. Fader: su ritmo. Vale desde la hora del reloj hasta que lo vuelvas a tocar. Las perillas de abajo valen todo el día.">Consola en vivo</h2><span class="note">botón abre o cierra · fader, ritmo · desde la hora del reloj</span>
-          <button id="projDay" class="rundy" title="Corre el día hasta las 24:00 con esta configuración y muestra el resultado">⏭ Proyectar el día</button><button id="projVarios" class="mini" title="La misma configuración en varios días, contra lo que pasó">⏭ Varios días</button><button id="runDay" class="mini" title="Reproduce desde la hora del reloj; pausá, cambiá y volvé a proyectar">▶ Ver hora a hora</button><button id="mxPlay" class="mini">❚❚ Pausa</button>
+          <button id="projDay" class="rundy" title="Corre el día hasta las 24:00 con esta configuración y muestra el resultado">⏭ Proyectar el día</button><button id="projVarios" class="mini" title="La misma configuración en varios días, contra lo que pasó">⏭ Varios días</button><button id="runDay" class="mini" title="Reproduce desde la hora del reloj; pausá, cambiá y volvé a proyectar">▶ Ver hora a hora</button><button id="progOpen" class="mini" title="Elegí canales, qué hacer y a qué hora">⏱ Programar</button><button id="mxPlay" class="mini">❚❚ Pausa</button>
           <span class="mxmode" id="mxMode"></span><span class="mxwait" id="mxWait"></span>
           <span class="mxscore" id="mxScore"></span>
         </div>
@@ -354,6 +387,7 @@ header .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:elli
       <div class="card knobcard" id="knobCard" hidden>
         <div class="kchead"><h2>Resultado del día</h2><button id="kReset">Volver a lo medido</button></div>
         <div class="gain" id="fxGainBox" hidden><span class="n" id="fxGain">+0</span><span class="l"><span id="fxGainLab">descargas de más que la reproducción del día</span><span id="fxNow" hidden></span></span>
+          <button class="whybtn" id="whyBtn" title="Qué jugada suma o resta, dónde se nota y qué pone el techo">¿Por qué?</button>
           <div class="fxwait" id="fxWait"></div><div class="fxtres" id="fxTres"></div>
           <div class="fxsplit" id="fxSplit"></div><div class="fxwhy" id="fxWhy"></div></div>
         <div class="kchead"><h2>Última hora · ritmos y playas</h2><button id="gAll" class="mini" aria-pressed="false" title="Mostrar todas las estaciones y colas">Ver todos</button></div>
@@ -377,12 +411,15 @@ header .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:elli
     <div class="drhead">
       <h2 id="drTitle">Detalle</h2>
       <div class="tabs" role="tablist" aria-label="Secciones del detalle">
-        <button role="tab" data-tab="cambios" aria-selected="true">Qué cambia</button><button role="tab" data-tab="jugadas" aria-selected="false">Jugadas</button><button role="tab" data-tab="calles" aria-selected="false">Calles</button><button role="tab" data-tab="dia" aria-selected="false">Día completo</button>
+        <button role="tab" data-tab="porque" aria-selected="true">Por qué</button><button role="tab" data-tab="cambios" aria-selected="false">Qué cambia</button><button role="tab" data-tab="jugadas" aria-selected="false">Jugadas</button><button role="tab" data-tab="calles" aria-selected="false">Calles</button><button role="tab" data-tab="dia" aria-selected="false">Día completo</button>
       </div>
       <button id="drClose" class="drclose" aria-label="Cerrar el detalle">✕</button>
     </div>
     <div class="drbody">
-    <div class="pane" data-pane="cambios">
+    <div class="pane" data-pane="porque">
+      <div class="card why" id="whyBody"></div>
+    </div>
+    <div class="pane" data-pane="cambios" hidden>
       <p class="note" id="fxEmpty">Pasá a «Proyección», tocá un canal o una perilla y acá aparece qué cambia contra la reproducción del día.</p>
       <div class="card fixcard" id="fixCard" hidden>
         <h2 id="fxTitle">Qué cambia con la mesa</h2>
@@ -480,12 +517,44 @@ header .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:elli
       <h2 id="endTitle">Cierre del día</h2>
       <div class="conf" id="endConf"></div>
       <div class="mvs" id="endVs"></div>
+      <div class="why endwhy"><div id="endWhy"></div><button id="endWhyMore" class="mini">Ver el informe completo</button></div>
       <div class="headroom" id="endRoom"></div>
       <div class="endgrid"><div id="endCmp"></div><div class="charts" id="endCharts"></div></div>
       <div class="lanes2" id="endLanes"></div>
       <div id="endFleet"></div>
       <div class="note" id="endMoves"></div>
       <div class="mbtn"><button id="endAgain">Repetir el día con estos cambios</button><button id="endVarios">Proyectar varios días</button><button id="endClose">Seguir ajustando</button><button id="endReset">Empezar de cero</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="escModal" hidden role="dialog" aria-modal="true" aria-labelledby="escTitle">
+    <div class="mbox escbox">
+      <h2 id="escTitle">Escenario del día · camiones que llegan</h2>
+      <p class="note">Elegí cuántos camiones de cada producto llegan a Ricardone en el día. Se reparten con el mismo horario que el día real: si pedís más, se copian camiones de ese producto; si pedís menos, se sacan parejo en el día. El pellet y la soja de silos que van al puerto son transiles: se manejan con la cantidad de camiones de la flota.</p>
+      <div class="escgrid" id="escGrid"></div>
+      <div class="note" id="escSum"></div>
+      <div class="mbtn"><button id="escApply">Proyectar con este escenario</button><button id="escReal">Volver a lo real</button><button id="escClose">Cerrar</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="progModal" hidden role="dialog" aria-modal="true" aria-labelledby="progTitle">
+    <div class="mbox progbox">
+      <h2 id="progTitle">Programar jugadas</h2>
+      <div class="pgsec">1 · Canales <span>tocá uno o varios</span></div>
+      <div class="pgch" id="progCh"></div>
+      <div class="pgsec">2 · Qué hacer</div>
+      <div class="pgdo" role="radiogroup" aria-label="Qué hacer">
+        <label><input type="radio" name="pgdo" value="on" checked> Abrir</label>
+        <label><input type="radio" name="pgdo" value="off"> Cerrar</label>
+        <label><input type="radio" name="pgdo" value="rate"> Ritmo <input type="number" id="progRate" min="0" max="120" step="1" value="10" aria-label="Ritmo, camiones por hora"> camiones por hora</label>
+        <label><input type="radio" name="pgdo" value="prod"> Cambiar producto a <select id="progProd" aria-label="Producto"><option value="soja">soja</option><option value="girasol">girasol</option><option value="pellet">pellet</option><option value="liquido">líquido</option></select></label>
+      </div>
+      <div class="pgsec">3 · Desde qué hora</div>
+      <div class="pgtime"><input type="time" id="progTime" step="900" value="04:00" aria-label="Hora"><span class="note">vale desde esa hora hasta que la vuelvas a cambiar</span></div>
+      <div class="mbtn"><button id="progAdd">Agregar</button><button id="progClose">Listo</button></div>
+      <div class="note" id="progMsg"></div>
+      <div class="pgsec">Programado</div>
+      <div class="moves" id="progList"></div>
     </div>
   </div>
 
@@ -968,6 +1037,7 @@ function renderEvents() {
 // la balanza de ingreso y los volcables del puerto. La capacidad es física: calles (o volcables) abiertas
 // × ritmo de cada una. Dos capas: barras por franja de 2 h y perillas que suben o bajan todo el día.
 // Con todo en lo medido, el motor reproduce el día; cada cambio se compara contra esa reproducción.
+let ESC = null, ESC_BASE = {};
 let REF = {key: null, m: null}, LIVE = [], PREP = null, BST = null, BMK = null, MOTOR = null, BK = null, BG = null, K = null, G = null, EK = null, BASE = null, applyTimer = 0, mP1, mOsl, mManda, mCapC, mCapV;
 const BLOCKS = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
 const ROWS = [
@@ -1013,20 +1083,24 @@ function eff(k, g) {
           vact, volc: vact.map((v, i) => v * k.volcRate[i] * on(i, g.volcPct, 100) / 100),
           parada: PARADAS[g.parada], N: g.N, gate: g.gate, extra: g.extraPct, demoraPct: g.demoraPct, fleet: {pellet: g.flPellet, soja: g.flSoja},
           st: {...BST}, volcProds: BMK.volcProds, rd: BMK.rd, calProds: BMK.calProds, calLiq: BMK.calLiq, capP1: 200, capDem: 30, capP3: 50, capOsl: g.capOsl, capSal: g.capSal,
-          live: [...LIVE].sort((a, b) => a.t - b.t), frozen: null};
+          live: [...LIVE].sort((a, b) => a.t - b.t), frozen: null, escenario: ESC ? {...ESC} : null};
 }
+// Escenario de llegadas (camiones por producto) aplicado a un día: devuelve el motor preparado y los camiones
+function conEscenario(P, trucks, ek) { return ek && ek.escenario ? motorEscenario(P, trucks, ek.escenario) : {P2: P, trucks}; }
 function runK(ek) {
-  // con la perilla de llegadas, el motor corre sobre la lista ampliada (camiones del día + copias)
-  const A = ek.extra ? motorAugment(PREP, REAL.d.trucks, ek.extra) : {P2: PREP, trucks: REAL.d.trucks, nExtra: 0, port0: PREP.port.length};
+  // escenario de llegadas por producto y, encima, la perilla de llegadas extra: el motor corre sobre esa lista
+  const E = conEscenario(PREP, REAL.d.trucks, ek);
+  const A = ek.extra ? motorAugment(E.P2, E.trucks, ek.extra) : {P2: E.P2, trucks: E.trucks, nExtra: 0, port0: E.P2.port.length};
   const r = motorRun(A.P2, ek), m = motorMetrics(A.P2, r), trucks = motorTrucks(A.P2, r, A.trucks);
   m.extraLlegan = A.nExtra;
-  m.extraDescargan = r.outP.slice(A.port0).filter(o => o && o.t25 >= 0 && o.t25 < 1440).length;
+  // solo las copias: las vueltas de la flota se agregan después del último camión y no cuentan
+  m.extraDescargan = r.outP.slice(A.port0, A.P2.port.length).filter(o => o && o.t25 >= 0 && o.t25 < 1440).length;
   m.extraPuerto = A.P2.port.length - A.port0;
   const g = motorSeries(A.P2, r);
   return {r, m, trucks, g, desc: [...g.volc, ...g.rd].sort((x, y) => x - y)};
 }
 async function loadMotor(day) {
-  MOTOR = null; K = null; FX = null; MODE = 'real'; LIVE = [];
+  MOTOR = null; K = null; FX = null; MODE = 'real'; LIVE = []; ESC = null;
   dayConf.hidden = true;
   const has = MOTOR_DAYS.includes(day);
   mesa.hidden = true; fix.hidden = fxNote.hidden = knobCard.hidden = mixer.hidden = movesCard.hidden = !has; fxGainBox.hidden = true; endModal.hidden = true;
@@ -1041,7 +1115,10 @@ async function loadMotor(day) {
   K = cloneK(BK); G = {...BG}; EK = eff(K, G); BASE = runK(EK);
   fix.innerHTML = '<span class="t">Ver</span><button class="real" data-p="real" aria-pressed="true">Como fue</button>' +
     '<button data-p="sim" aria-pressed="false" title="Configurás calada, volcables, egreso y flota de pellet, y proyectás el día">Proyección</button>' +
-    `<span class="esc" title="Lo que pasó ese día: es fijo, la proyección lo compara">${escenarioReal()}</span>`;
+    '<button class="mini escbtn" id="escOpen" title="Cuántos camiones de soja, girasol, pellet y líquido llegan en el día">✎ Escenario</button>' +
+    `<span class="esc" title="Lo que pasó ese día: es fijo, la proyección lo compara">${escenarioReal()}</span><span class="escon" id="escOn" hidden></span>`;
+  ESC_BASE = motorLlegadas(PREP, REAL.d.trucks);
+  document.getElementById('escOpen').onclick = abrirEscenario;
   buildMesa(); buildKnobs(); buildMixer(); buildGauges(); updateMesa();
   // qué tan bien reproduce el motor este día (criterios de docs/simulador/PLAN_MOTOR_COLAS.md)
   const c = MOTOR.calibracion, ok = Object.values(c.acepta).filter(Boolean).length;
@@ -1068,7 +1145,7 @@ function setView(v) {
 }
 function resetMesa() {
   if (!MOTOR) return;
-  K = cloneK(BK); G = {...BG}; LIVE = [];
+  K = cloneK(BK); G = {...BG}; LIVE = []; ESC = null;
   knobChanged(true);
 }
 function knobChanged(now) {
@@ -1095,6 +1172,9 @@ function apply() {
     daySub.textContent = REAL.d.title + ' · simulado con el motor de colas: los mismos camiones, con las capacidades de la mesa.';
   }
   updateMesa(); buildHeat(); renderEvents(); redraw();
+  // el informe «Por qué» abierto se rehace con cada cambio
+  const dr = document.getElementById('drawer');
+  if (dr && !dr.hidden && dr.dataset.tab === 'porque') renderWhy(document.getElementById('whyBody'), false);
 }
 
 // Escenario del día (lo que pasó): camiones y toneladas por producto según el Excel, flota de pellet y sus viajes,
@@ -1244,6 +1324,7 @@ function cambios() {
     }
   }
   for (const d of KNOBS) if (G[d.k] !== BG[d.k]) out.push(`${d.lab}: ${d.fmt(G[d.k])} (medido: ${d.fmt(BG[d.k])}).`);
+  if (ESC) out.push('Escenario de llegadas: ' + escTxt() + '.');
   if (LIVE.length) out.push(`Control manual desde las ${fmtT(Math.min(...LIVE.map(m => m.t)))}: desde ahí cada canal queda como estaba y solo cambia con tus jugadas.`);
   for (const m of [...LIVE].sort((a, b) => a.t - b.t)) out.push(`${fmtT(m.t)} · ${moveTxt(m)}.`);
   return out.length ? out : ['Todo en lo medido: es el día reproducido por el motor.'];
@@ -1385,13 +1466,13 @@ function confiabilidad(P, m) {
 }
 // Perillas de la proyección para cualquier día: tus cambios (con su hora) sobre la configuración típica de ese día;
 // la flota de transile se escala en la misma proporción que la cambiaste en el día de la pantalla
-function ekParaDia(P) {
+function ekParaDia(P, d) {
   const k = motorKnobs(P), fl = {};
   for (const [p, n] of Object.entries(k.fleet || {})) {
     const key = p === 'pellet' ? 'flPellet' : 'flSoja', b0 = BG[key] || 0;
     fl[p] = b0 ? Math.round(n * (G[key] || 0) / b0) : n;
   }
-  const ek = {...k, fleet: fl, live: [...LIVE].sort((a, b) => a.t - b.t)};
+  const ek = {...k, fleet: fl, live: [...LIVE].sort((a, b) => a.t - b.t), escenario: escParaDia(P, d)};
   return LIVE.length ? {...ek, frozen: motorFreeze(P, ek, Math.min(...LIVE.map(m => m.t)))} : ek;
 }
 // Capacidad que sobró: llegadas extra con la misma mezcla y horario hasta que dejan de descargarse
@@ -1449,11 +1530,11 @@ function showEnd() {
   const fa = a.viajes.reduce((s, v) => s + v.viajes, 0), fb = b.viajes.reduce((s, v) => s + v.viajes, 0);
   if (fa || fb) fila(`Viajes de transile (${a.viajes.length} → ${b.viajes.length} camiones)`, fa, fb, fmtN, false);
   if (fa || fb) fila('Cola máx. para cargar en Ricardone', Math.max(...gA.carga.slice(0, 1440)), Math.max(...gB.carga.slice(0, 1440)), fmtN);
-  endCmp.innerHTML = `<div class="cmp"><span></span><span class="h">real</span><span class="h">proyección</span>${filas.join('')}</div>`;
+  endCmp.innerHTML = `<div class="cmp"><span></span><span class="h">reproducción</span><span class="h">proyección</span>${filas.join('')}</div>`;
   // gráficos: descargas acumuladas y playas, real contra proyección
   endCharts.innerHTML =
-    `<figure><figcaption>Descargas acumuladas · <i class="lr"></i> real <i class="lp"></i> proyección</figcaption>${lineas([{v: porHora(BASE.desc, true), cls: 'lr'}, {v: porHora((FX || BASE).desc, true), cls: 'lp'}])}</figure>` +
-    `<figure><figcaption>Camiones esperando en Playa 1 y Playa OSL · <i class="lr"></i> real <i class="lp"></i> proyección</figcaption>${lineas([
+    `<figure><figcaption>Descargas acumuladas · <i class="lr"></i> reproducción <i class="lp"></i> proyección</figcaption>${lineas([{v: porHora(BASE.desc, true), cls: 'lr'}, {v: porHora((FX || BASE).desc, true), cls: 'lp'}])}</figure>` +
+    `<figure><figcaption>Camiones esperando en Playa 1 y Playa OSL · <i class="lr"></i> reproducción <i class="lp"></i> proyección</figcaption>${lineas([
       {v: ocupHora(gA, 'playa1'), cls: 'lr'}, {v: ocupHora(gB, 'playa1'), cls: 'lp'}, {v: ocupHora(gA, 'osl'), cls: 'lr osl'}, {v: ocupHora(gB, 'osl'), cls: 'lp osl'}])}</figure>`;
   // canales que trabajaron: horas activas, real → proyección
   const ch = [];
@@ -1462,22 +1543,160 @@ function showEnd() {
   [0, 1, 2, 3, 4, 5, 6].forEach(i => lane('cal', i, i === 6 ? 'CL' : 'C' + (i + 1)));
   RIC_DESC.forEach((d, i) => lane('rd', i, d.short));
   [0, 1, 2, 3, 4].forEach(i => lane('volc', i, 'V' + (i + 1)));
-  endLanes.innerHTML = ch.length ? `<div class="sec">Horas trabajando de cada calle, volcable y silo · <i class="br"></i> real <i class="bp"></i> proyección (sobre 24 h)</div>${ch.join('')}` : '';
+  endLanes.innerHTML = ch.length ? `<div class="sec">Horas trabajando de cada calle, volcable y silo · <i class="br"></i> reproducción <i class="bp"></i> proyección (sobre 24 h)</div>${ch.join('')}` : '';
   endFleet.innerHTML = '';
   const cam = sim ? cambios() : [];
   endMoves.innerHTML = cam.length ? '<b>Lo que cambiaste:</b> ' + cam.join(' ') : 'Sin cambios: es el día como fue.';
   endRoom.innerHTML = sim ? '<b>Capacidad que sobró</b> · calculando…' : '';
+  renderWhy(document.getElementById('endWhy'), true);
   endModal.hidden = false;
   endAgain.focus();
   clearTimeout(roomTimer);
   if (sim) roomTimer = setTimeout(() => {
-    const r = sobrante(PREP, REAL.d.trucks, EK, FX.m, FX.g);
+    const E = conEscenario(PREP, REAL.d.trucks, EK), r = sobrante(E.P2, E.trucks, EK, FX.m, FX.g);
     endRoom.innerHTML = '<b>Capacidad que sobró</b> · ' + (r.vacia != null ? `La planta queda vacía desde las <b>${fmtT(r.vacia)}</b>. ` : '') + (r.gain >= 5
       ? `Con esta configuración entraban <b>${fmtN(r.gain)} camiones más</b> (≈ ${fmtN(r.tons)} t) si hubieran llegado, con la misma mezcla y el mismo horario.`
       : 'La configuración ya va al límite: si llegaban más camiones, se quedaban esperando.');
   }, 30);
 }
 let roomTimer = 0;
+
+// ---------- Por qué: explica el resultado en palabras ----------
+// Cada jugada y cada perilla se mide sacándola y volviendo a correr el día con todo lo demás igual: la diferencia es su
+// aporte. Después se mira en qué canal se nota (horas trabajando, cerrado, sin recibir, abierto sin camiones), quién
+// queda adentro a las 24 h y qué recurso pone el techo. Aparte, cuánto se parece la reproducción a las cámaras.
+const ZONAS24 = ['entrada', 'playa1', 'demorado', 'playa3', 'ruta', 'osl', 'salida', 'carga'];
+const PRODS4 = ['soja', 'girasol', 'pellet', 'liquido'];
+const hh1 = v => (Math.round(v * 10) / 10).toLocaleString('es-AR') + ' h';
+const sgn = v => (v > 0 ? '+' : v < 0 ? '−' : '') + fmtN(Math.abs(v));
+let WHY = {key: null, res: null};
+function quedanA24(g) {
+  const o = [];
+  for (const z of ZONAS24) {
+    const tot = g[z][1439]; if (!tot) continue;
+    o.push({z, tot, prods: PRODS4.map(p => [p, g.porProd[z][p][1439]]).filter(([, n]) => n)});
+  }
+  return o.sort((x, y) => y.tot - x.tot);
+}
+const mezcla = prods => prods.map(([p, n]) => `${n} de ${PNAME[p]}`).join(', ');
+function enElCanal(m, con, sin) {
+  if (m.g === 'st' || !con.m.lanes[m.g] || !sin.m.lanes[m.g]) return '';
+  const x = sin.m.lanes[m.g][m.i], y = con.m.lanes[m.g][m.i]; if (!x || !y) return '';
+  const p = [];
+  if (y.cerrado - x.cerrado >= 0.3) p.push(`estuvo ${hh1(y.cerrado - x.cerrado)} más cerrado`);
+  if (x.cerrado - y.cerrado >= 0.3) p.push(`estuvo ${hh1(x.cerrado - y.cerrado)} más abierto`);
+  if (y.parado - x.parado >= 0.3) p.push(`pasó ${hh1(y.parado - x.parado)} sin recibir (cambio de producto o parada)`);
+  if (y.ocioso - x.ocioso >= 0.5) p.push(`estuvo ${hh1(y.ocioso - x.ocioso)} abierto sin camiones de su producto`);
+  if (y.activo - x.activo >= 0.3) p.push(`trabajó ${hh1(y.activo - x.activo)} más`);
+  if (x.activo - y.activo >= 0.3) p.push(`trabajó ${hh1(x.activo - y.activo)} menos`);
+  return p.join(', ');
+}
+function enProductos(con, sin) {
+  return ['soja', 'girasol', 'pellet'].map(p => [p, con.m.porProd[p] - sin.m.porProd[p]]).filter(([, d]) => d)
+    .map(([p, d]) => `${PNAME[p]} ${sgn(d)}`).join(', ');
+}
+// Aporte de cada jugada, de cada perilla y de pasar a manual
+function aportes() {
+  const out = [], tot = FX.m.descargas, live = EK.live || [];
+  if (live.length && REF.m) out.push({txt: `Pasar a manejo manual desde las ${fmtT(EK.frozen.t)} (cada canal con un solo producto, como estaba a esa hora)`,
+    d: REF.m.descargas - BASE.m.descargas, why: 'sin tocar nada, los canales dejan de seguir el día medido y quedan como estaban', manual: true});
+  live.forEach((m, j) => {
+    const sin = runK({...EK, live: live.filter((_, k) => k !== j)});
+    let why = enElCanal(m, FX, sin);
+    // cambio de producto: cuánto llega en el día del producto nuevo (si llega poco, el canal se queda sin trabajo)
+    if (m.prods && m.prods.length === 1) why += (why ? '; ' : '') + `del ${PNAME[m.prods[0]]} se descargan ${fmtN(BASE.m.porProd[m.prods[0]] || 0)} en todo el día`;
+    out.push({txt: `${fmtT(m.t)} · ${moveTxt(m)}`, d: tot - sin.m.descargas, why, prods: enProductos(FX, sin)});
+  });
+  if (EK.escenario) {
+    const sin = runK({...EK, escenario: null});
+    out.push({txt: 'Escenario de llegadas: ' + escTxt(), d: tot - sin.m.descargas, prods: enProductos(FX, sin)});
+  }
+  for (const d of KNOBS) if (G[d.k] !== BG[d.k]) {
+    const ek = eff(K, {...G, [d.k]: BG[d.k]}); ek.live = EK.live; ek.frozen = EK.frozen;
+    const sin = runK(ek);
+    out.push({txt: `${d.lab}: ${d.fmt(G[d.k])} (medido ${d.fmt(BG[d.k])})`, d: tot - sin.m.descargas, prods: enProductos(FX, sin)});
+  }
+  return out;
+}
+// Cuánto se parece la reproducción a lo que leyeron las cámaras, hora por hora, en descargas del puerto
+function contraCamaras() {
+  const real = Array(24).fill(0), rep = Array(24).fill(0);
+  PREP.port.forEach(p => { if (p.t25 >= 0 && p.t25 < 1440) real[Math.floor(p.t25 / 60)]++; });
+  BASE.g.volc.forEach(t => { if (t >= 0 && t < 1440) rep[Math.floor(t / 60)]++; });
+  const gaps = real.map((r, h) => ({h, r, s: rep[h], d: rep[h] - r})).filter(x => Math.abs(x.d) >= 4).sort((x, y) => Math.abs(y.d) - Math.abs(x.d)).slice(0, 3);
+  const err = real.reduce((s, r, h) => s + Math.abs(rep[h] - r), 0) / 24;
+  return {gaps, err};
+}
+function analizarPorQue() {
+  const a = BASE.m, sim = MODE === 'sim' && FX, b = sim ? FX.m : a, dm = b.descargas - a.descargas;
+  const ap = sim ? aportes().filter(x => x.d || x.why) : [];
+  const cambiado = sim && (LIVE.length || ESC || KNOBS.some(d => G[d.k] !== BG[d.k]));
+  const top = [...ap].filter(x => !x.manual).sort((x, y) => (dm < 0 ? x.d - y.d : y.d - x.d))[0];
+  const q = quedanA24(sim ? FX.g : BASE.g), qa = quedanA24(BASE.g);
+  // qué manda en cada bloque de 4 h; si nadie va al tope pero hay cola, es que esa cola no tiene canal para su producto
+  const gB = sim ? FX.g : BASE.g;
+  const quien = (x, g) => x.key ? x.quien : (['playa1', 'osl', 'demorado', 'ruta'].some(z => g[z][Math.min(1439, x.h0 * 60 + 120)] >= 10)
+    ? 'faltan canales para el producto que espera (hay cola y otros canales quedan sin trabajo)' : 'las llegadas (no hay cola)');
+  const mB = b.mando.map(x => ({...x, q: quien(x, gB)})), mA = a.mando.map(x => ({...x, q: quien(x, BASE.g)}));
+  const mandaFin = mB[mB.length - 1].q, mandaMas = (() => { const c = {}; mB.forEach(x => c[x.q] = (c[x.q] || 0) + 1); return Object.entries(c).sort((x, y) => y[1] - x[1])[0][0]; })();
+  const ocVol = (b.lanes.volc || []).reduce((s, l) => s + l.ocioso, 0), ocVolA = (a.lanes.volc || []).reduce((s, l) => s + l.ocioso, 0);
+  const dOsl = Math.round((b.esperaOsl || 0) - (a.esperaOsl || 0)), dCal = Math.round((b.esperaCal || 0) - (a.esperaCal || 0));
+  // veredicto: una o dos oraciones
+  let ver;
+  if (!cambiado) ver = 'Todavía no cambiaste nada: es la reproducción del día. Abajo, por qué descarga lo que descarga y cuánto se parece a las cámaras.';
+  else if (dm > 0) ver = `Se descargan <b>${fmtN(dm)} camiones más</b>.` + (top && top.d > 0 ? ` Lo que más suma es «${top.txt}» (${sgn(top.d)})${top.why ? ': ' + top.why : ''}.` : '');
+  else if (dm < 0) ver = `Se descargan <b>${fmtN(-dm)} camiones menos</b>.` + (top && top.d < 0 ? ` Lo que más resta es «${top.txt}» (${sgn(top.d)})${top.why ? ': ' + top.why : ''}.` : '');
+  else ver = 'No cambia el total de descargas.' + (a.pendientes <= 2 ? ` La reproducción ya descargaba a casi todos los que llegaron ese día (a las 24 h quedaba${a.pendientes === 1 ? '' : 'n'} ${a.pendientes}): sin más llegadas, no hay más camiones para descargar.` : '');
+  if (cambiado && (Math.abs(dOsl) >= 10 || Math.abs(dCal) >= 10)) ver += ` Sí cambia la espera: ${Math.abs(dOsl) >= 10 ? `en Playa OSL ${sgn(dOsl)} min` : ''}${Math.abs(dOsl) >= 10 && Math.abs(dCal) >= 10 ? ' y ' : ''}${Math.abs(dCal) >= 10 ? `para calar ${sgn(dCal)} min` : ''}.`;
+  // techo: por qué no da más
+  let techo;
+  const maxOsl = Math.max(...b.osl), maxP1 = Math.max(...b.playa1);
+  if (b.pendientes <= 2) techo = `Durante el día manda <b>${mandaMas}</b>` + (maxOsl >= 50 || maxP1 >= 50 ? ` (llega a haber ${fmtN(Math.max(maxOsl, maxP1))} camiones esperando en ${maxOsl >= maxP1 ? 'Playa OSL' : 'Playa 1'})` : '') +
+    `, pero a la noche la cola se vacía y a las 24 h no queda nadie: se descargó todo lo que llegó${ocVol >= 6 ? ` (los volcables del puerto estuvieron ${hh1(ocVol)} abiertos sin camiones)` : ''}. ` +
+    'Por eso, con las mismas llegadas, más capacidad adelanta las descargas y baja la espera, pero casi no suma camiones. Para descargar más hay que sumar llegadas.';
+  else {
+    const z = q[0];
+    techo = `A las 24 h quedan <b>${fmtN(b.pendientes)}</b> camiones adentro` + (z ? `, la mayoría ${ZONA[z.z][0]} (${mezcla(z.prods)})` : '') + `. Lo que pone el techo la mayor parte del día: <b>${mandaMas}</b>` + (mandaFin !== mandaMas ? `; de 20 a 24 h, ${mandaFin}` : '') + '.';
+  }
+  // dónde se nota
+  const nota = [];
+  if (cambiado) {
+    const pp = ['soja', 'girasol', 'pellet'].map(p => [p, b.porProd[p] - a.porProd[p]]).filter(([, d]) => d);
+    if (pp.length) nota.push('Por producto: ' + pp.map(([p, d]) => `${PNAME[p]} ${sgn(d)}`).join(', ') + '.');
+    if (Math.abs(ocVol - ocVolA) >= 1) nota.push(`Volcables del puerto abiertos sin camiones: ${hh1(ocVolA)} → ${hh1(ocVol)}.`);
+    const zz = ZONAS24.map(z => { const x = (qa.find(o => o.z === z) || {tot: 0}).tot, y = (q.find(o => o.z === z) || {tot: 0, prods: []}); return {z, d: y.tot - x, prods: y.prods || []}; })
+      .filter(o => Math.abs(o.d) >= 3).sort((x, y) => Math.abs(y.d) - Math.abs(x.d));
+    for (const o of zz.slice(0, 2)) nota.push(`A las 24 h, ${ZONA[o.z][0]}: ${sgn(o.d)} camiones${o.d > 0 && o.prods.length ? ` (quedan ${mezcla(o.prods)})` : ''}.`);
+    // cambios de lo que manda, juntando bloques seguidos con el mismo cambio
+    const ch = [];
+    mA.forEach((x, k) => { const y = mB[k]; if (x.q === y.q) return; const last = ch[ch.length - 1];
+      if (last && last.de === x.q && last.a === y.q && last.h1 === x.h0) last.h1 = x.h0 + 4; else ch.push({h0: x.h0, h1: x.h0 + 4, de: x.q, a: y.q}); });
+    if (ch.length) nota.push('Cambia lo que manda: ' + ch.map(c => `de ${String(c.h0).padStart(2, '0')} a ${String(c.h1).padStart(2, '0')} h, ${c.de} → ${c.a}`).join('; ') + '.');
+  }
+  const cf = confiabilidad(PREP, a), cc = contraCamaras();
+  const parecido = `La reproducción da ${fmtN(a.descPuerto)} descargas en el puerto contra ${fmtN(cf.real)} de las cámaras (${cf.nivel}; en promedio se aparta ${dec(cc.err)} por hora).` +
+    (cc.gaps.length ? ' Donde más se aparta: ' + cc.gaps.map(x => `${String(x.h).padStart(2, '0')} h (cámaras ${x.r}, reproducción ${x.s})`).join(', ') + '.' : '') +
+    (cf.err > 5 ? ' Da de más: puede faltar una parada o un hueco que el motor no conoce, o las cámaras perdieron lecturas.' : cf.err < -5 ? ' Da de menos: ese día el puerto rindió más de lo que el motor toma como capacidad medida.' : '');
+  return {ver, ap: ap.sort((x, y) => Math.abs(y.d) - Math.abs(x.d)), techo, nota, parecido, dm, cambiado};
+}
+function whyHTML(r, corto) {
+  const ap = r.ap.slice(0, corto ? 3 : 12).map(x => `<li><span class="wd ${x.d > 0 ? 'pos' : x.d < 0 ? 'neg' : ''}">${sgn(x.d)}</span><span>${x.txt}` +
+    (x.why || x.prods ? `<i>${[x.why, x.prods && 'por producto ' + x.prods].filter(Boolean).join(' · ')}</i>` : '') + '</span></li>').join('');
+  return `<p class="wver">${r.ver}</p>` +
+    (ap ? `<div class="wsec">Qué suma y qué resta · cada cambio medido solo, con todo lo demás igual</div><ul class="wap">${ap}</ul>` +
+      (!corto && r.ap.length > 1 ? '<p class="note">Los aportes no siempre suman el total: dos cambios juntos pueden potenciarse o pisarse.</p>' : '') : '') +
+    `<div class="wsec">Por qué no da más</div><p class="wtx">${r.techo}</p>` +
+    (!corto && r.nota.length ? `<div class="wsec">Dónde se nota</div><ul class="wls">${r.nota.map(t => `<li>${t}</li>`).join('')}</ul>` : '') +
+    (!corto ? `<div class="wsec">Cuánto se parece al día real</div><p class="wtx">${r.parecido}</p>` : '');
+}
+function renderWhy(el, corto) {
+  if (!MOTOR || !BASE) { el.innerHTML = '<p class="note">Este día no tiene simulación.</p>'; return; }
+  const key = JSON.stringify([REAL.d.day, MODE, LIVE, G, ESC, K.calles, K.calRate, K.vact, K.volcRate]);
+  const draw = () => { el.innerHTML = whyHTML(WHY.res, corto); };
+  if (WHY.key === key) return draw();
+  el.innerHTML = '<p class="note">Midiendo qué aporta cada cambio…</p>';
+  setTimeout(() => { WHY = {key, res: analizarPorQue()}; draw(); }, 20);
+}
 
 // ---------- varios días: la misma configuración en cada día, contra lo que pasó ----------
 const MD_CACHE = {};
@@ -1506,8 +1725,8 @@ async function proyectarVarios() {
     await new Promise(r => setTimeout(r, 0));
     if (run !== mdRun) return;
     const {d, P} = await cargarDia(day);
-    const k0 = motorKnobs(P), r0 = motorRun(P, k0), m0 = motorMetrics(P, r0), ek = ekParaDia(P), r1 = motorRun(P, ek), m1 = motorMetrics(P, r1);
-    const so = sobrante(P, d.trucks, ek, m1, motorSeries(P, r1), [20, 50, 100]);
+    const k0 = motorKnobs(P), r0 = motorRun(P, k0), m0 = motorMetrics(P, r0), ek = ekParaDia(P, d), E1 = conEscenario(P, d.trucks, ek), r1 = motorRun(E1.P2, ek), m1 = motorMetrics(E1.P2, r1);
+    const so = sobrante(E1.P2, E1.trucks, ek, m1, motorSeries(E1.P2, r1), [20, 50, 100]);
     rows.push({day, label: (INDEX.find(x => x.day === day) || {label: day}).label, conf: confiabilidad(P, m0), a: m0, b: m1, so});
   }
   const tot = k => rows.reduce((s, r) => s + k(r), 0), sg = v => (v > 0 ? '+' : '') + fmtN(v);
@@ -1570,8 +1789,8 @@ function buildMixer() {
   });
   mxMoves.onclick = e => { const b = e.target.closest('button[data-k]'); if (b) { LIVE.splice(+b.dataset.k, 1); knobChanged(true); } };
 }
-function addMove(m) {
-  const t = Math.max(0, Math.min(1439, Math.round(T)));
+function addMove(m, at) {
+  const t = Math.max(0, Math.min(1439, Math.round(at ?? T)));
   const same = LIVE.find(x => x.t === t && x.g === m.g && x.i === m.i);
   if (same) Object.assign(same, m); else LIVE.push({t, ...m});
   knobChanged(true);
@@ -1680,7 +1899,112 @@ const endRoom = document.getElementById('endRoom'), endFleet = document.getEleme
 endAgain.onclick = () => { endModal.hidden = true; T = 0; redraw(); toggle(true); };
 document.getElementById('endClose').onclick = () => { endModal.hidden = true; };
 document.getElementById('endReset').onclick = () => { endModal.hidden = true; resetMesa(); setView('real'); T = 0; redraw(); };
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { endModal.hidden = true; mdRun++; mdModal.hidden = true; drawer.hidden = true; } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { endModal.hidden = true; mdRun++; mdModal.hidden = true; drawer.hidden = true; escModal.hidden = true; progModal.hidden = true; } });
+// ---------- Escenario hipotético: camiones por producto que llegan en el día ----------
+const escModal = document.getElementById('escModal'), progModal = document.getElementById('progModal');
+const escGrid = document.getElementById('escGrid'), escSum = document.getElementById('escSum');
+const progCh = document.getElementById('progCh'), progList = document.getElementById('progList'), progMsg = document.getElementById('progMsg');
+const progTime = document.getElementById('progTime'), progRate = document.getElementById('progRate'), progProd = document.getElementById('progProd');
+const ESC_PRODS = [['soja', 'Soja'], ['girasol', 'Girasol'], ['pellet', 'Pellet (a Ricardone)'], ['liquido', 'Líquido']];
+let ESC_DRAFT = null;
+function abrirEscenario() {
+  if (!MOTOR) return;
+  ESC_DRAFT = {...ESC_BASE, ...(ESC || {}), flPellet: G.flPellet, flSoja: G.flSoja};
+  const row = (k, lab, real, max, col, unidad) => `<span class="pn"><i style="background:${col}"></i>${lab}</span><span class="rv" title="Lo que pasó">${fmtN(real)}</span>` +
+    `<input type="range" min="0" max="${max}" step="1" value="${ESC_DRAFT[k]}" data-k="${k}" aria-label="${lab}">` +
+    `<input type="number" min="0" max="${max}" step="1" value="${ESC_DRAFT[k]}" data-k="${k}" aria-label="${lab}, ${unidad}">`;
+  const fl = PREP.fleet || {};
+  escGrid.innerHTML = '<span class="h">Producto</span><span class="h" style="text-align:right">Real</span><span class="h">Escenario</span><span></span>' +
+    ESC_PRODS.filter(([p]) => ESC_BASE[p]).map(([p, lab]) => row(p, lab, ESC_BASE[p], Math.max(20, ESC_BASE[p] * 3), COLORS[p], 'camiones en el día')).join('') +
+    ((fl.pellet || []).length ? row('flPellet', 'Pellet · flota de transile', BG.flPellet, Math.max(20, BG.flPellet * 3), COLORS.pellet, 'camiones de la flota') +
+      `<span class="dif">camiones de la flota; el día real hizo ${fmtN(fl.pellet.reduce((s0, f) => s0 + f.viajesReal, 0))} viajes al puerto</span>` : '') +
+    ((fl.soja || []).length ? row('flSoja', 'Soja de silos · flota', BG.flSoja, Math.max(20, BG.flSoja * 3), COLORS.soja, 'camiones de la flota') : '');
+  escGrid.querySelectorAll('input').forEach(inp => inp.oninput = () => {
+    const k = inp.dataset.k, v = Math.max(0, Math.round(+inp.value || 0)); ESC_DRAFT[k] = v;
+    escGrid.querySelectorAll(`input[data-k="${k}"]`).forEach(o => { if (o !== inp) o.value = v; });
+    escResumen();
+  });
+  escResumen();
+  escModal.hidden = false;
+}
+function escResumen() {
+  const tot = ESC_PRODS.reduce((s0, [p]) => s0 + (ESC_BASE[p] ? ESC_DRAFT[p] : 0), 0), tot0 = ESC_PRODS.reduce((s0, [p]) => s0 + (ESC_BASE[p] || 0), 0);
+  // los que ya estaban esperando a las 00 h (llegaron el día anterior) y los transiles no se cambian
+  const antes = PREP.ric.filter(r => r.ing < 0 && r.cal >= 0 && r.dest).length;
+  escSum.innerHTML = `Llegan <b>${fmtN(tot)}</b> camiones a Ricardone entre las 00 y las 24 h (real: ${fmtN(tot0)}, ${tot >= tot0 ? '+' : ''}${fmtN(tot - tot0)}). ` +
+    `Además, a las 00 h ya había <b>${fmtN(antes)}</b> esperando del día anterior, que no se cambian. Por eso estas cifras son menores que las del Excel del día, que cuenta también a esos y a los transiles.`;
+}
+function escTxt() {
+  return ESC ? ESC_PRODS.filter(([p]) => ESC[p] != null && ESC[p] !== ESC_BASE[p]).map(([p]) => `${PNAME[p]} ${fmtN(ESC[p])} (real ${fmtN(ESC_BASE[p] || 0)})`).join(', ') : '';
+}
+function escUpdateChip() {
+  const on = document.getElementById('escOn'); if (!on) return;
+  const t = escTxt(); on.hidden = !t; on.textContent = 'Escenario: ' + t;
+}
+// en otro día, el mismo escenario en proporción: si pediste 20 % más de soja, ese día llega 20 % más de soja
+function escParaDia(P, d) {
+  if (!ESC || !d) return null;
+  const base = motorLlegadas(P, d.trucks), out = {};
+  for (const [p] of ESC_PRODS) if (ESC[p] != null && ESC_BASE[p]) out[p] = Math.round((base[p] || 0) * ESC[p] / ESC_BASE[p]);
+  return out;
+}
+document.getElementById('escApply').onclick = () => {
+  const e = {}; let cambia = false;
+  for (const [p] of ESC_PRODS) if (ESC_BASE[p]) { e[p] = ESC_DRAFT[p]; if (e[p] !== ESC_BASE[p]) cambia = true; }
+  ESC = cambia ? e : null;
+  G.flPellet = ESC_DRAFT.flPellet ?? G.flPellet; G.flSoja = ESC_DRAFT.flSoja ?? G.flSoja;
+  escModal.hidden = true; escUpdateChip(); knobChanged(true);
+};
+document.getElementById('escReal').onclick = () => { ESC = null; G.flPellet = BG.flPellet; G.flSoja = BG.flSoja; escModal.hidden = true; escUpdateChip(); knobChanged(true); };
+document.getElementById('escClose').onclick = () => { escModal.hidden = true; };
+// ---------- Programador: elegir canales, qué hacer y desde qué hora ----------
+const PG_SEL = new Set();
+function abrirProgramador() {
+  if (!MOTOR) return;
+  const grupos = [['Calles de calada · Ricardone', s0 => s0.dataset.g === 'cal'], ['Volcables y silos · Ricardone', s0 => s0.dataset.g === 'rd'],
+    ['Volcables · puerto', s0 => s0.dataset.g === 'volc'], ['Estaciones', s0 => s0.dataset.g === 'st']];
+  const strips = [...mixer.querySelectorAll('.strip')];
+  progCh.innerHTML = grupos.map(([lab, f]) => `<span class="grp">${lab}</span>` + strips.filter(f).map(el => {
+    const key = el.dataset.g + ':' + el.dataset.i, g = el.dataset.g, i = g === 'st' ? el.dataset.i : +el.dataset.i;
+    return `<button data-key="${key}" aria-pressed="${PG_SEL.has(key)}" title="${LANE_NAME[g](i)}">${el.querySelector('.led').textContent}</button>`;
+  }).join('')).join('');
+  progCh.querySelectorAll('button').forEach(b => b.onclick = () => { const k = b.dataset.key; if (PG_SEL.has(k)) PG_SEL.delete(k); else PG_SEL.add(k); b.setAttribute('aria-pressed', String(PG_SEL.has(k))); });
+  progTime.value = fmtT(Math.min(1425, Math.round(T / 15) * 15));
+  progMsg.textContent = '';
+  renderProgList();
+  progModal.hidden = false;
+}
+function renderProgList() {
+  const sorted = LIVE.map((m, k) => [m, k]).sort((a, b) => a[0].t - b[0].t);
+  progList.innerHTML = sorted.length ? sorted.map(([m, k]) => `<div class="mv"><b>${fmtT(m.t)}</b><span>${moveTxt(m)}</span><button data-k="${k}" aria-label="Borrar jugada">✕</button></div>`).join('')
+    : '<div class="note">Todavía no hay nada programado.</div>';
+}
+progList.onclick = e => { const b = e.target.closest('button[data-k]'); if (b) { LIVE.splice(+b.dataset.k, 1); knobChanged(true); renderProgList(); } };
+document.getElementById('progAdd').onclick = () => {
+  if (!PG_SEL.size) { progMsg.textContent = 'Elegí al menos un canal.'; return; }
+  const [hh, mm] = (progTime.value || '00:00').split(':').map(Number), t = Math.max(0, Math.min(1439, hh * 60 + mm));
+  const que = progModal.querySelector('input[name=pgdo]:checked').value, prod = progProd.value, rate = Math.max(0, +progRate.value || 0);
+  const ok = [], skip = [];
+  for (const key of PG_SEL) {
+    const [g, si] = key.split(':'), i = g === 'st' ? si : +si, nombre = LANE_NAME[g](i);
+    let m;
+    if (que === 'on' || que === 'off') m = {g, i, on: que === 'on'};
+    else if (que === 'rate') m = {g, i, rate};
+    else {
+      if (g === 'st') { skip.push(`${nombre} (no tiene producto)`); continue; }
+      if (!laneAllowed(g, i).includes(prod)) { skip.push(`${nombre} (no recibe ${PNAME[prod]})`); continue; }
+      m = {g, i, prods: [prod]};
+    }
+    const same = LIVE.find(x => x.t === t && x.g === g && x.i === i);
+    if (same) Object.assign(same, m); else LIVE.push({t, ...m});
+    ok.push(nombre);
+  }
+  if (ok.length) { MODE = 'sim'; knobChanged(true); }
+  progMsg.textContent = (ok.length ? `Programado a las ${fmtT(t)}: ${ok.join(', ')}.` : '') + (skip.length ? ` No se programó: ${skip.join(', ')}.` : '');
+  renderProgList();
+};
+document.getElementById('progClose').onclick = () => { progModal.hidden = true; };
+document.getElementById('progOpen').onclick = abrirProgramador;
 // Detalle: lo que no entra en la pantalla (qué cambia, jugadas, calles y el día completo) en un panel con pestañas
 const drawer = document.getElementById('drawer'), fxEmpty = document.getElementById('fxEmpty');
 function showTab(t) {
@@ -1689,8 +2013,12 @@ function showTab(t) {
   drawer.querySelectorAll('[data-pane]').forEach(p => { p.hidden = p.dataset.pane !== t; });
   fxEmpty.hidden = !fixCard.hidden;
   if (t === 'dia') { drawChart(); updateHeat(); }
+  if (t === 'porque') renderWhy(document.getElementById('whyBody'), false);
 }
-document.getElementById('openDetail').onclick = () => { drawer.hidden = false; showTab(drawer.dataset.tab || 'cambios'); };
+const openDetail = tab => { drawer.hidden = false; showTab(tab || drawer.dataset.tab || 'porque'); };
+document.getElementById('openDetail').onclick = () => openDetail();
+document.getElementById('whyBtn').onclick = () => openDetail('porque');
+document.getElementById('endWhyMore').onclick = () => { endModal.hidden = true; openDetail('porque'); };
 document.getElementById('drClose').onclick = () => { drawer.hidden = true; };
 drawer.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => showTab(b.dataset.tab));
 const gAll = document.getElementById('gAll');

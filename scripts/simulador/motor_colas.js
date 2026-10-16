@@ -199,6 +199,49 @@ function motorAugment(P, dayTrucks, pct, off = 6) {
   return {P2: {...P, ric, port}, trucks, nExtra, port0: P.port.length};
 }
 
+// Camiones que llegan a Ricardone en el día (00 a 24 h) y descargan, por producto. Sin la flota de transile, que se
+// maneja con su propia perilla (cantidad de camiones de la flota).
+function motorLlegadas(P, dayTrucks) {
+  const c = {};
+  P.ric.forEach(r => { if (r.ing >= 0 && r.ing < 1440 && r.dest && dayTrucks[r.i][4] !== 1) c[r.prod] = (c[r.prod] || 0) + 1; });
+  return c;
+}
+
+// Escenario hipotético: cuántos camiones de cada producto llegan a Ricardone en el día. Si se piden más, se copian
+// camiones de ese producto (con su horario, destino y tramos reales, 7 min después del original por cada ronda); si se
+// piden menos, se sacan parejo a lo largo del día. Lo que llegó antes de las 00 h y la flota de transile no se tocan.
+function motorEscenario(P, dayTrucks, target) {
+  const byProd = {};
+  P.ric.forEach((r, k) => { if (r.ing >= 0 && r.ing < 1440 && r.dest && dayTrucks[r.i][4] !== 1) (byProd[r.prod] ||= []).push(k); });
+  for (const l of Object.values(byProd)) l.sort((a, b) => P.ric[a].ing - P.ric[b].ing);
+  const drop = new Set(), add = [];
+  for (const [p, list] of Object.entries(byProd)) {
+    if (target[p] == null) continue;
+    const n = list.length, w = Math.max(0, Math.round(target[p]));
+    if (w < n) { const q = n - w; list.forEach((k, j) => { if (Math.floor((j + 1) * q / n) > Math.floor(j * q / n)) drop.add(k); }); }
+    else for (let j = 0; j < w - n; j++) add.push({k: list[j % n], round: Math.floor(j / n) + 1});
+  }
+  if (!drop.size && !add.length) return {P2: P, trucks: dayTrucks, nAdd: 0, nDrop: 0};
+  // sacar: el camión y su visita al puerto; los índices se renumeran
+  const mapR = new Map(), mapP = new Map(), ric = [], port = [];
+  const trucks = dayTrucks.map((t, i) => t);
+  P.ric.forEach((r, k) => { if (drop.has(k)) { const t = trucks[r.i]; trucks[r.i] = [t[0], t[1], t[2], [], t[4], '', 0]; } else { mapR.set(k, ric.length); ric.push(r); } });
+  P.port.forEach((p, k) => { if (p.ri >= 0 && drop.has(p.ri)) return; mapP.set(k, port.length); port.push(p); });
+  for (let j = 0; j < ric.length; j++) if (ric[j].pi >= 0) ric[j] = {...ric[j], pi: mapP.get(ric[j].pi)};
+  for (let j = 0; j < port.length; j++) if (port[j].ri >= 0) port[j] = {...port[j], ri: mapR.get(port[j].ri)};
+  const fleetPass = new Set([...(P.fleetPass || [])].filter(k => mapP.has(k)).map(k => mapP.get(k)));
+  // sumar: copias del mismo producto
+  for (const {k, round} of add) {
+    const r = P.ric[k], t = dayTrucks[r.i], o = 7 * round, ni = trucks.length;
+    const sh = x => Object.fromEntries(Object.entries(x).map(([kk, v]) => [kk, typeof v === 'number' && /^t[A-Z\d]|^ing$|^pre$|^cal$|^s2$/.test(kk) ? v + o : v]));
+    trucks.push([t[0] + ' (escenario)', t[1], t[2], t[3].map(([n, m, d]) => [n, m + o, d]), t[4], t[5], t[6]]);
+    const nr = ric.length;
+    ric.push({...sh(r), i: ni, pi: r.pi >= 0 ? port.length : -1});
+    if (r.pi >= 0) port.push({...sh(P.port[r.pi]), i: ni, ri: nr});
+  }
+  return {P2: {...P, ric, port, fleetPass}, trucks, nAdd: add.length, nDrop: drop.size};
+}
+
 function motorParadas(M, K) {
   return K.parada === 'sin' ? [] : K.parada === 'escalonada'
     ? M.prm.paradas.flatMap(([s, d, vs], k) => k === 0 ? vs.map((v, j) => [s + j * d, d, [v]]) : [[s, d, vs]])
