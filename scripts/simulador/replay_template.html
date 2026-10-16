@@ -977,7 +977,7 @@ function panel() {
   let best = null; model.nodes.forEach((nd, i) => { const q = (occ[i] || []).length; const load = nd.cap ? q / nd.cap : q / 40; if (q && (!best || load > best.load)) best = {nd, q, load}; });
   if (FX) {
     const upto = arr => { let n = 0; for (const t of arr) { if (t > T) break; n++; } return n; };
-    const a = upto(FX.desc), b = upto(BASE.desc), d = a - b;
+    const a = upto(FX.desc), b = upto(baseRef().desc), d = a - b;
     fxNow.innerHTML = `hasta las ${fmtT(T)}: <b>${fmtN(a)}</b> descargas (puerto y Ricardone) contra ${fmtN(b)} en la reproducción del día (${d > 0 ? '+' : ''}${fmtN(d)})`;
     fxWhy.innerHTML = frenoPrincipal();
   }
@@ -1096,6 +1096,18 @@ function eff(k, g) {
           st: {...BST}, volcProds: BMK.volcProds, rd: BMK.rd, calProds: BMK.calProds, calLiq: BMK.calLiq, capP1: 200, capDem: 30, capP3: 50, capOsl: g.capOsl, capSal: g.capSal,
           live: [...LIVE].sort((a, b) => a.t - b.t), frozen: null, escenario: ESC ? {...ESC} : null, pelletOp: ESC && ESC.op ? {...ESC.op} : null};
 }
+// Base de comparación. Sin escenario: la reproducción del día (el motor con todo en lo medido). Con un escenario
+// hipotético: ese mismo escenario con la planta configurada como trabajó ese día y sin tus jugadas. Así, «de más» o
+// «de menos» mide lo que cambiaste dentro del escenario y no la diferencia de llegadas contra el día real.
+let BESC = {key: null, res: null};
+function baseRef() {
+  if (!ESC || !BASE) return BASE;
+  const key = JSON.stringify([REAL.d.day, ESC, G.flPellet, G.flSoja]);
+  if (BESC.key !== key) BESC = {key, res: runK({...eff(BK, {...BG, flPellet: G.flPellet, flSoja: G.flSoja}), live: []})};
+  return BESC.res;
+}
+const refLab = () => ESC ? 'el escenario sin tus cambios' : 'la reproducción del día';
+const refCorto = () => ESC ? 'escenario' : 'reproducción';
 // Escenario de llegadas (camiones por producto) aplicado a un día: devuelve el motor preparado y los camiones
 function conEscenario(P, trucks, ek) { return ek && ek.escenario ? motorEscenario(P, trucks, ek.escenario) : {P2: P, trucks}; }
 function runK(ek) {
@@ -1310,7 +1322,7 @@ const ZONA = {entrada: ['afuera de Ricardone', ['ing', 'pre']], playa1: ['en Pla
 function frenoPrincipal() {
   if (!FX || !BASE) return '';
   const m = Math.max(0, Math.min(1439, Math.floor(T)));
-  const ex = Object.keys(ZONA).map(z => [z, FX.g[z][m] - BASE.g[z][m], FX.g[z][m]]).sort((x, y) => y[1] - x[1])[0];
+  const ex = Object.keys(ZONA).map(z => [z, FX.g[z][m] - baseRef().g[z][m], FX.g[z][m]]).sort((x, y) => y[1] - x[1])[0];
   if (!ex || ex[1] < 15) return '';
   const [z, extra, n] = ex, [lab, feeds] = ZONA[z], pp = FX.g.porProd[z];
   const prods = ['soja', 'girasol', 'pellet', 'liquido'].filter(p => pp[p][m] > 0).map(p => `${pp[p][m]} de ${PNAME[p]}`).join(', ');
@@ -1341,14 +1353,14 @@ function cambios() {
   return out.length ? out : ['Todo en lo medido: es el día reproducido por el motor.'];
 }
 function renderFixCard() {
-  const a = BASE.m, b = FX.m, m = v => v == null ? '—' : fmtN(v) + ' min', mx = v => Math.max(...v);
+  const a = baseRef().m, b = FX.m, m = v => v == null ? '—' : fmtN(v) + ' min', mx = v => Math.max(...v);
   const dm = b.descargas - a.descargas, retB = mx(b.ret);
   fixCard.hidden = fxGainBox.hidden = false;
   fxTitle.textContent = 'Qué cambia con la mesa';
   fxCambio.innerHTML = cambios().map(t => `<div>${t}</div>`).join('');
   fxGain.textContent = (dm > 0 ? '+' : '') + fmtN(dm);
   fxGain.classList.toggle('zero', dm <= 0);
-  fxGainLab.textContent = dm < 0 ? 'descargas de menos que la reproducción del día' : 'descargas de más que la reproducción del día';
+  fxGainLab.textContent = dm < 0 ? 'descargas de menos que ' + refLab() : 'descargas de más que ' + refLab();
   fxGainLab.title = `Reproducción del día (el motor con todo en lo medido): ${fmtN(a.descargas)} descargas (${fmtN(a.descPuerto)} en el puerto, contando cada vuelta de los transiles, y ${fmtN(a.descRic)} en Ricardone). ` +
     `El Excel cuenta camiones (cada transil una vez), por eso da menos.`;
   // aunque no se descargue ninguno de más, la espera puede cambiar mucho: va a la vista
@@ -1356,7 +1368,7 @@ function renderFixCard() {
   fxWait.innerHTML = espera('Espera en Playa OSL', a.esperaOsl, b.esperaOsl) + espera('Espera para calar', a.esperaCal, b.esperaCal);
   const cf = confiabilidad(PREP, a);
   fxTres.innerHTML = `<span class="med" title="Descargas en el puerto según las cámaras">Medido (cámaras)<b>${fmtN(cf.real)}</b></span>` +
-    `<span title="El motor con todo en lo medido, descargas en el puerto">Reproducción<b>${fmtN(a.descPuerto)}</b></span>` +
+    `<span title="Descargas en el puerto sin tus cambios">${ESC ? "Escenario sin cambios" : "Reproducción"}<b>${fmtN(a.descPuerto)}</b></span>` +
     `<span class="sim" title="Descargas en el puerto con tus cambios">Con tus cambios<b>${fmtN(b.descPuerto)}</b></span>`;
   const sg = v => (v > 0 ? '+' : '') + fmtN(v);
   fxSplit.innerHTML = REF.m ? `configuración típica sin cambios: <b>${sg(REF.m.descargas - a.descargas)}</b> · tus cambios: <b class="${b.descargas - REF.m.descargas < 0 ? 'neg' : 'pos'}">${sg(b.descargas - REF.m.descargas)}</b>` : '';
@@ -1364,7 +1376,7 @@ function renderFixCard() {
     const cls = Math.round(y) === Math.round(x) ? '' : (y < x) === lowerIsBetter ? 'down' : 'up';
     return `<span>${lab}</span><b>${fmt(x)}</b><b class="${cls}">${fmt(y)}</b>`;
   };
-  fxCmp.innerHTML = '<span></span><span class="h">reproducción</span><span class="h">con tus cambios</span>' +
+  fxCmp.innerHTML = '<span></span><span class="h">' + refCorto() + '</span><span class="h">con tus cambios</span>' +
     row('Descargas en el día', a.descargas, b.descargas, fmtN, false) + row('Toneladas descargadas', a.tons, b.tons, fmtN, false) +
     row('· en el puerto', a.descPuerto, b.descPuerto, fmtN, false) + row('· en Ricardone', a.descRic, b.descRic, fmtN, false) +
     ['soja', 'girasol', 'pellet'].map(p => row(`· ${p}`, a.porProd[p], b.porProd[p], fmtN, false)).join('') +
@@ -1517,16 +1529,16 @@ const ocupHora = (g, k) => Array.from({length: 25}, (_, h) => g[k][Math.min(1439
 
 function showEnd() {
   if (!MOTOR || !BASE) return;
-  const a = BASE.m, b = (FX || BASE).m, gA = BASE.g, gB = (FX || BASE).g, sim = MODE === 'sim' && FX;
+  const R0 = baseRef(), a = R0.m, b = (FX || R0).m, gA = R0.g, gB = (FX || BASE).g, sim = MODE === 'sim' && FX;
   const dm = b.descargas - a.descargas, dt = b.tons - a.tons, sg = v => (v > 0 ? '+' : '') + fmtN(v);
   const mn = v => v == null ? '—' : fmtN(v) + ' min', h1 = v => (Math.round(v * 10) / 10).toLocaleString('es-AR') + ' h';
   const conf = confiabilidad(PREP, a);
   endTitle.textContent = 'Cierre del día · ' + REAL.d.title;
   endConf.className = 'conf ' + conf.nivel.replace(' ', '-');
   endConf.textContent = conf.txt;
-  endVs.innerHTML = `<div><div class="n">${fmtN(a.descargas)}</div><div class="l">reproducción del día<br>${fmtN(a.tons)} t</div></div>` +
+  endVs.innerHTML = `<div><div class="n">${fmtN(a.descargas)}</div><div class="l">${ESC ? "escenario sin tus cambios" : "reproducción del día"}<br>${fmtN(a.tons)} t</div></div>` +
     `<div><div class="n">${fmtN(b.descargas)}</div><div class="l">descargas en la proyección<br>${fmtN(b.tons)} t</div></div>` +
-    `<div class="gain ${dm < 0 ? 'neg' : ''}"><div class="n">${sg(dm)}</div><div class="l">${dm < 0 ? 'menos' : 'más'} que la reproducción<br>${sg(dt)} t</div></div>`;
+    `<div class="gain ${dm < 0 ? 'neg' : ''}"><div class="n">${sg(dm)}</div><div class="l">${dm < 0 ? 'menos' : 'más'} que ${refLab()}<br>${sg(dt)} t</div></div>`;
   // lo que se trabó: solo lo que cambia o se llenó
   const filas = [];
   const fila = (lab, x, y, fmt, lowerIsBetter = true) => {
@@ -1541,11 +1553,11 @@ function showEnd() {
   const fa = a.viajes.reduce((s, v) => s + v.viajes, 0), fb = b.viajes.reduce((s, v) => s + v.viajes, 0);
   if (fa || fb) fila(`Viajes de transile (${a.viajes.length} → ${b.viajes.length} camiones)`, fa, fb, fmtN, false);
   if (fa || fb) fila('Cola máx. para cargar en Ricardone', Math.max(...gA.carga.slice(0, 1440)), Math.max(...gB.carga.slice(0, 1440)), fmtN);
-  endCmp.innerHTML = `<div class="cmp"><span></span><span class="h">reproducción</span><span class="h">proyección</span>${filas.join('')}</div>`;
+  endCmp.innerHTML = `<div class="cmp"><span></span><span class="h">${refCorto()}</span><span class="h">proyección</span>${filas.join('')}</div>`;
   // gráficos: descargas acumuladas y playas, real contra proyección
   endCharts.innerHTML =
-    `<figure><figcaption>Descargas acumuladas · <i class="lr"></i> reproducción <i class="lp"></i> proyección</figcaption>${lineas([{v: porHora(BASE.desc, true), cls: 'lr'}, {v: porHora((FX || BASE).desc, true), cls: 'lp'}])}</figure>` +
-    `<figure><figcaption>Camiones esperando en Playa 1 y Playa OSL · <i class="lr"></i> reproducción <i class="lp"></i> proyección</figcaption>${lineas([
+    `<figure><figcaption>Descargas acumuladas · <i class="lr"></i> ${refCorto()} <i class="lp"></i> proyección</figcaption>${lineas([{v: porHora(R0.desc, true), cls: 'lr'}, {v: porHora((FX || BASE).desc, true), cls: 'lp'}])}</figure>` +
+    `<figure><figcaption>Camiones esperando en Playa 1 y Playa OSL · <i class="lr"></i> ${refCorto()} <i class="lp"></i> proyección</figcaption>${lineas([
       {v: ocupHora(gA, 'playa1'), cls: 'lr'}, {v: ocupHora(gB, 'playa1'), cls: 'lp'}, {v: ocupHora(gA, 'osl'), cls: 'lr osl'}, {v: ocupHora(gB, 'osl'), cls: 'lp osl'}])}</figure>`;
   // canales que trabajaron: horas activas, real → proyección
   const ch = [];
@@ -1554,7 +1566,7 @@ function showEnd() {
   [0, 1, 2, 3, 4, 5, 6].forEach(i => lane('cal', i, i === 6 ? 'CL' : 'C' + (i + 1)));
   RIC_DESC.forEach((d, i) => lane('rd', i, d.short));
   [0, 1, 2, 3, 4].forEach(i => lane('volc', i, 'V' + (i + 1)));
-  endLanes.innerHTML = ch.length ? `<div class="sec">Horas trabajando de cada calle, volcable y silo · <i class="br"></i> reproducción <i class="bp"></i> proyección (sobre 24 h)</div>${ch.join('')}` : '';
+  endLanes.innerHTML = ch.length ? `<div class="sec">Horas trabajando de cada calle, volcable y silo · <i class="br"></i> ${refCorto()} <i class="bp"></i> proyección (sobre 24 h)</div>${ch.join('')}` : '';
   endFleet.innerHTML = '';
   const cam = sim ? cambios() : [];
   endMoves.innerHTML = cam.length ? '<b>Lo que cambiaste:</b> ' + cam.join(' ') : 'Sin cambios: es el día como fue.';
@@ -1610,7 +1622,7 @@ function enProductos(con, sin) {
 function aportes() {
   const out = [], tot = FX.m.descargas, live = EK.live || [];
   if (live.length && REF.m) out.push({txt: `Pasar a manejo manual desde las ${fmtT(EK.frozen.t)} (cada canal con un solo producto, como estaba a esa hora)`,
-    d: REF.m.descargas - BASE.m.descargas, why: 'sin tocar nada, los canales dejan de seguir el día medido y quedan como estaban', manual: true});
+    d: REF.m.descargas - baseRef().m.descargas, why: 'sin tocar nada, los canales dejan de seguir el día medido y quedan como estaban', manual: true});
   live.forEach((m, j) => {
     const sin = runK({...EK, live: live.filter((_, k) => k !== j)});
     let why = enElCanal(m, FX, sin);
@@ -1618,11 +1630,8 @@ function aportes() {
     if (m.prods && m.prods.length === 1) why += (why ? '; ' : '') + `del ${PNAME[m.prods[0]]} se descargan ${fmtN(BASE.m.porProd[m.prods[0]] || 0)} en todo el día`;
     out.push({txt: `${fmtT(m.t)} · ${moveTxt(m)}`, d: tot - sin.m.descargas, why, prods: enProductos(FX, sin)});
   });
-  if (EK.escenario) {
-    const sin = runK({...EK, escenario: null, pelletOp: null});
-    out.push({txt: 'Escenario de llegadas: ' + escTxt(), d: tot - sin.m.descargas, prods: enProductos(FX, sin)});
-  }
-  for (const d of KNOBS) if (G[d.k] !== BG[d.k]) {
+  // con escenario, las llegadas y la flota son parte de la base: acá solo cuentan tus cambios dentro del escenario
+  for (const d of KNOBS) if (G[d.k] !== BG[d.k] && !(ESC && d.fleet)) {
     const ek = eff(K, {...G, [d.k]: BG[d.k]}); ek.live = EK.live; ek.frozen = EK.frozen;
     const sin = runK(ek);
     out.push({txt: `${d.lab}: ${d.fmt(G[d.k])} (medido ${d.fmt(BG[d.k])})`, d: tot - sin.m.descargas, prods: enProductos(FX, sin)});
@@ -1639,25 +1648,32 @@ function contraCamaras() {
   return {gaps, err};
 }
 function analizarPorQue() {
-  const a = BASE.m, sim = MODE === 'sim' && FX, b = sim ? FX.m : a, dm = b.descargas - a.descargas;
+  const R0 = baseRef(), a = R0.m, sim = MODE === 'sim' && FX, b = sim ? FX.m : a, dm = b.descargas - a.descargas;
   const ap = sim ? aportes().filter(x => x.d || x.why) : [];
-  const cambiado = sim && (LIVE.length || ESC || KNOBS.some(d => G[d.k] !== BG[d.k]));
+  const cambiado = sim && (LIVE.length || KNOBS.some(d => G[d.k] !== BG[d.k] && !(ESC && d.fleet)));
   const top = [...ap].filter(x => !x.manual).sort((x, y) => (dm < 0 ? x.d - y.d : y.d - x.d))[0];
-  const q = quedanA24(sim ? FX.g : BASE.g), qa = quedanA24(BASE.g);
+  const q = quedanA24(sim ? FX.g : R0.g), qa = quedanA24(R0.g);
   // qué manda en cada bloque de 4 h; si nadie va al tope pero hay cola, es que esa cola no tiene canal para su producto
-  const gB = sim ? FX.g : BASE.g;
+  const gB = sim ? FX.g : R0.g;
   const quien = (x, g) => x.key ? x.quien : (['playa1', 'osl', 'demorado', 'ruta'].some(z => g[z][Math.min(1439, x.h0 * 60 + 120)] >= 10)
     ? 'faltan canales para el producto que espera (hay cola y otros canales quedan sin trabajo)' : 'las llegadas (no hay cola)');
-  const mB = b.mando.map(x => ({...x, q: quien(x, gB)})), mA = a.mando.map(x => ({...x, q: quien(x, BASE.g)}));
+  const mB = b.mando.map(x => ({...x, q: quien(x, gB)})), mA = a.mando.map(x => ({...x, q: quien(x, R0.g)}));
   const mandaFin = mB[mB.length - 1].q, mandaMas = (() => { const c = {}; mB.forEach(x => c[x.q] = (c[x.q] || 0) + 1); return Object.entries(c).sort((x, y) => y[1] - x[1])[0][0]; })();
   const ocVol = (b.lanes.volc || []).reduce((s, l) => s + l.ocioso, 0), ocVolA = (a.lanes.volc || []).reduce((s, l) => s + l.ocioso, 0);
   const dOsl = Math.round((b.esperaOsl || 0) - (a.esperaOsl || 0)), dCal = Math.round((b.esperaCal || 0) - (a.esperaCal || 0));
   // veredicto: una o dos oraciones
   let ver;
-  if (!cambiado) ver = 'Todavía no cambiaste nada: es la reproducción del día. Abajo, por qué descarga lo que descarga y cuánto se parece a las cámaras.';
-  else if (dm > 0) ver = `Se descargan <b>${fmtN(dm)} camiones más</b>.` + (top && top.d > 0 ? ` Lo que más suma es «${top.txt}» (${sgn(top.d)})${top.why ? ': ' + top.why : ''}.` : '');
-  else if (dm < 0) ver = `Se descargan <b>${fmtN(-dm)} camiones menos</b>.` + (top && top.d < 0 ? ` Lo que más resta es «${top.txt}» (${sgn(top.d)})${top.why ? ': ' + top.why : ''}.` : '');
-  else ver = 'No cambia el total de descargas.' + (a.pendientes <= 2 ? ` La reproducción ya descargaba a casi todos los que llegaron ese día (a las 24 h quedaba${a.pendientes === 1 ? '' : 'n'} ${a.pendientes}): sin más llegadas, no hay más camiones para descargar.` : '');
+  // con escenario: primero qué pasa en ese escenario con la planta como trabajó ese día, contra el día real
+  const escIntro = !ESC ? '' : (() => {
+    const lleg = ESC_PRODS.reduce((s0, [p]) => s0 + (ESC[p] != null ? ESC[p] : (ESC_BASE[p] || 0)), 0), lleg0 = ESC_PRODS.reduce((s0, [p]) => s0 + (ESC_BASE[p] || 0), 0);
+    return `<b>Escenario:</b> llegan ${fmtN(lleg)} camiones a Ricardone en el día (el día real: ${fmtN(lleg0)})${ESC.cupo ? ', por cupo cada 2 h' : ''}. ` +
+      `Con la planta como trabajó ese día se descargan <b>${fmtN(a.descargas)}</b> (el día real: ${fmtN(BASE.m.descargas)}) y a las 24 h quedan <b>${fmtN(a.pendientes)}</b> adentro. `;
+  })();
+  if (!cambiado) ver = ESC ? escIntro + 'Todavía no cambiaste nada dentro del escenario: tocá canales o programá jugadas y acá se mide cuánto suman o restan.'
+    : 'Todavía no cambiaste nada: es la reproducción del día. Abajo, por qué descarga lo que descarga y cuánto se parece a las cámaras.';
+  else if (dm > 0) ver = escIntro + `${ESC ? 'Con tus cambios se' : 'Se'} descargan <b>${fmtN(dm)} camiones más</b>.` + (top && top.d > 0 ? ` Lo que más suma es «${top.txt}» (${sgn(top.d)})${top.why ? ': ' + top.why : ''}.` : '');
+  else if (dm < 0) ver = escIntro + `${ESC ? 'Con tus cambios se' : 'Se'} descargan <b>${fmtN(-dm)} camiones menos</b>.` + (top && top.d < 0 ? ` Lo que más resta es «${top.txt}» (${sgn(top.d)})${top.why ? ': ' + top.why : ''}.` : '');
+  else ver = escIntro + 'No cambia el total de descargas.' + (a.pendientes <= 2 ? ` La reproducción ya descargaba a casi todos los que llegaron ese día (a las 24 h quedaba${a.pendientes === 1 ? '' : 'n'} ${a.pendientes}): sin más llegadas, no hay más camiones para descargar.` : '');
   if (sim && EK.pelletOp) ver += ' <b>' + opTxt(opPelletResultado(FX, EK.pelletOp)) + '</b>';
   if (cambiado && (Math.abs(dOsl) >= 10 || Math.abs(dCal) >= 10)) ver += ` Sí cambia la espera: ${Math.abs(dOsl) >= 10 ? `en Playa OSL ${sgn(dOsl)} min` : ''}${Math.abs(dOsl) >= 10 && Math.abs(dCal) >= 10 ? ' y ' : ''}${Math.abs(dCal) >= 10 ? `para calar ${sgn(dCal)} min` : ''}.`;
   // techo: por qué no da más
@@ -1847,7 +1863,7 @@ function updateMixer(cnt) {
   }
   if (FX && BASE) {
     const upto = arr => { let n = 0; for (const t of arr) { if (t > T) break; n++; } return n; };
-    const d = upto(FX.desc) - upto(BASE.desc), dd = FX.m.descargas - BASE.m.descargas, sg = v => (v > 0 ? '+' : '') + v;
+    const d = upto(FX.desc) - upto(baseRef().desc), dd = FX.m.descargas - baseRef().m.descargas, sg = v => (v > 0 ? '+' : '') + v;
     mxScore.title = 'Descargas de la simulación menos las de la reproducción del día (puerto y Ricardone, cada vuelta de transile cuenta)';
     mxScore.innerHTML = `vs. reproducción, a las ${fmtT(T)}: <b class="${d < 0 ? 'neg' : ''}">${sg(d)}</b> · día <b class="${dd < 0 ? 'neg' : ''}">${sg(dd)}</b>`;
   } else mxScore.textContent = '';
