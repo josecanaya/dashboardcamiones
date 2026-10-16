@@ -119,3 +119,8 @@ Diseñar para **1366×768 como mínimo** y verificar en 1440×860 y 1920×1080, 
   - En Varios días se aplica en proporción. «Por qué» lo mide como un aporte más.
   - Ejemplo en el 29/08: soja +20 % y girasol ×2 dan +26 y dejan 39 adentro a las 24 h. Soja a la mitad da −114.
 - [x] **⏱ Programar** (en la consola): se eligen varios canales (calles, volcables y silos, estaciones), qué hacer (abrir, cerrar, ritmo o producto) y desde qué hora. Rechaza el producto que el canal no recibe y lista lo programado, con borrar.
+- [x] (16/10) **Cupo cada 2 h**, el modo por defecto del escenario: el total del día de cada producto se divide en 12 ventanas de 2 h, con llegadas parejas dentro de cada una (`target.cupo` en `motorEscenario`). En el 29/08, con las mismas cantidades, da unas 22 llegadas por ventana y −16 descargas contra la reproducción.
+- [x] (16/10) **Operativo de pellet**: se cargan las toneladas, la hora de inicio y las horas (`K.pelletOp` en `motorRun`). La flota empieza a cargar a esa hora y deja de cargar al llegar a las toneladas o al terminar las horas. «Por qué» dice si se cumple, a qué hora termina o cuánto falta, y qué lo frena.
+  - Ejemplo en el 29/08: 6.000 t en 12 h no se cumplen ni con el doble de flota, porque la carga en Ricardone saca unos 6 camiones por hora (≈ 2.000 t).
+  - Con carga a 20 por hora y doble flota, se llega a 3.400 t; el freno pasa a ser los volcables de pellet.
+  - Si además V2 pasa a pellet, se completa, pero a las 22:43, fuera de plazo.

@@ -207,9 +207,12 @@ function motorLlegadas(P, dayTrucks) {
   return c;
 }
 
-// Escenario hipotético: cuántos camiones de cada producto llegan a Ricardone en el día. Si se piden más, se copian
-// camiones de ese producto (con su horario, destino y tramos reales, 7 min después del original por cada ronda); si se
-// piden menos, se sacan parejo a lo largo del día. Lo que llegó antes de las 00 h y la flota de transile no se tocan.
+// Escenario hipotético: cuántos camiones de cada producto llegan a Ricardone en el día. Lo que llegó antes de las
+// 00 h y la flota de transile no se tocan.
+// - Con target.cupo (así trabaja la planta): el cupo del día se abre cada 2 h; cada ventana recibe el total ÷ 12 y los
+//   camiones llegan parejos dentro de las 2 h. Cada llegada usa los tramos reales de un camión del mismo producto.
+// - Sin cupo: se sigue el horario del día real; si se piden más, se copian camiones de ese producto (7 min después del
+//   original por cada ronda) y si se piden menos, se sacan parejo a lo largo del día.
 function motorEscenario(P, dayTrucks, target) {
   const byProd = {};
   P.ric.forEach((r, k) => { if (r.ing >= 0 && r.ing < 1440 && r.dest && dayTrucks[r.i][4] !== 1) (byProd[r.prod] ||= []).push(k); });
@@ -218,8 +221,15 @@ function motorEscenario(P, dayTrucks, target) {
   for (const [p, list] of Object.entries(byProd)) {
     if (target[p] == null) continue;
     const n = list.length, w = Math.max(0, Math.round(target[p]));
-    if (w < n) { const q = n - w; list.forEach((k, j) => { if (Math.floor((j + 1) * q / n) > Math.floor(j * q / n)) drop.add(k); }); }
-    else for (let j = 0; j < w - n; j++) add.push({k: list[j % n], round: Math.floor(j / n) + 1});
+    if (target.cupo) {
+      list.forEach(k => drop.add(k));
+      let j = 0;
+      for (let v = 0; v < 12; v++) {
+        const nv = Math.floor((v + 1) * w / 12) - Math.floor(v * w / 12);
+        for (let q = 0; q < nv; q++, j++) { const k = list[j % n]; add.push({k, o: 120 * v + (q + 0.5) * 120 / nv - P.ric[k].ing, tag: 'cupo'}); }
+      }
+    } else if (w < n) { const q = n - w; list.forEach((k, j) => { if (Math.floor((j + 1) * q / n) > Math.floor(j * q / n)) drop.add(k); }); }
+    else for (let j = 0; j < w - n; j++) add.push({k: list[j % n], o: 7 * (Math.floor(j / n) + 1), tag: 'escenario'});
   }
   if (!drop.size && !add.length) return {P2: P, trucks: dayTrucks, nAdd: 0, nDrop: 0};
   // sacar: el camión y su visita al puerto; los índices se renumeran
@@ -231,10 +241,10 @@ function motorEscenario(P, dayTrucks, target) {
   for (let j = 0; j < port.length; j++) if (port[j].ri >= 0) port[j] = {...port[j], ri: mapR.get(port[j].ri)};
   const fleetPass = new Set([...(P.fleetPass || [])].filter(k => mapP.has(k)).map(k => mapP.get(k)));
   // sumar: copias del mismo producto
-  for (const {k, round} of add) {
-    const r = P.ric[k], t = dayTrucks[r.i], o = 7 * round, ni = trucks.length;
+  for (const {k, o, tag} of add) {
+    const r = P.ric[k], t = dayTrucks[r.i], ni = trucks.length;
     const sh = x => Object.fromEntries(Object.entries(x).map(([kk, v]) => [kk, typeof v === 'number' && /^t[A-Z\d]|^ing$|^pre$|^cal$|^s2$/.test(kk) ? v + o : v]));
-    trucks.push([t[0] + ' (escenario)', t[1], t[2], t[3].map(([n, m, d]) => [n, m + o, d]), t[4], t[5], t[6]]);
+    trucks.push([t[0] + ` (${tag})`, t[1], t[2], t[3].map(([n, m, d]) => [n, m + o, d]), t[4], t[5], t[6]]);
     const nr = ric.length;
     ric.push({...sh(r), i: ni, pi: r.pi >= 0 ? port.length : -1});
     if (r.pi >= 0) port.push({...sh(P.port[r.pi]), i: ni, ri: nr});
@@ -348,13 +358,18 @@ function motorRun(P, K) {
   // las pasadas reales de la flota se reemplazan por las vueltas que hace cada camión en la simulación
   const PORT = P.port.map((p, k) => P.fleetPass && P.fleetPass.has(k) ? {...p, skip: true} : p);
   const fleetT = [];
+  // Operativo de pellet planificado (K.pelletOp = {tons, ini, horas}): la flota arranca a cargar a la hora de inicio
+  // (de a uno, cada 2 min), trabaja hasta que terminan las horas y deja de cargar cuando ya cargó las toneladas
+  const op = K.pelletOp && K.pelletOp.tons > 0 ? K.pelletOp : null;
+  let opCargadas = 0;
   for (const [prod, list] of Object.entries(P.fleet || {})) {
     const n = Math.max(0, Math.round((K.fleet || {})[prod] ?? list.length));
     for (let j = 0; j < n && list.length; j++) {
       const T = list[j % list.length], extra = j >= list.length;
-      fleetT.push({id: fleetT.length, prod, tons: T.tons, vuelta: T.vuelta, plateOf: T.i, vi: extra ? null : T.i, extra, trips: 0,
-                   first: Math.max(P.T0, T.first + (extra ? 20 * Math.floor(j / list.length) : 0)),
-                   until: T.until + (extra ? 20 * Math.floor(j / list.length) : 0)});
+      const enOp = op && prod === 'pellet';
+      fleetT.push({id: fleetT.length, prod, tons: T.tons, vuelta: T.vuelta, plateOf: T.i, vi: extra ? null : T.i, extra, trips: 0, op: !!enOp,
+                   first: enOp ? Math.max(P.T0, op.ini + 2 * j) : Math.max(P.T0, T.first + (extra ? 20 * Math.floor(j / list.length) : 0)),
+                   until: enOp ? op.ini + op.horas * 60 : T.until + (extra ? 20 * Math.floor(j / list.length) : 0)});
     }
   }
   const newTrip = (f, t) => {
@@ -390,7 +405,8 @@ function motorRun(P, K) {
   // llegada real al puerto (lo que tarda la carga, el tiempo fijo adentro y la ruta)
   fleetT.forEach(f => {
     const C = (P.carga || {})[f.prod === 'pellet' ? 'pellet' : 'soja'];
-    const tc = C ? f.first - C.toSl - C.inFix - 60 / C.cap : null;
+    // en el operativo planificado la flota empieza cargando en Ricardone a la hora de inicio
+    const tc = C ? (f.op ? f.first : f.first - C.toSl - C.inFix - 60 / C.cap) : null;
     if (C && tc >= P.T0) push(tc, 'arr_carga', f.id); else newTrip(f, f.first);
   });
   P.port.forEach((p, k) => {
@@ -426,7 +442,7 @@ function motorRun(P, K) {
         if (PORT[x].ft != null) {
           const f = fleetT[PORT[x].ft], C = (P.carga || {})[f.prod === 'pellet' ? 'pellet' : 'soja'];
           if (!C) { if (t + f.vuelta < Math.min(P.T_END, f.until)) newTrip(f, t + f.vuelta); }
-          else if (t + C.back < Math.min(P.T_END, f.until)) push(t + C.back, 'arr_carga', f.id);
+          else if (t + C.back < Math.min(P.T_END, f.until) && !(f.op && opCargadas >= op.tons)) push(t + C.back, 'arr_carga', f.id);
         }
         break;
     }
@@ -521,6 +537,7 @@ function motorRun(P, K) {
     // carga de transiles en Ricardone: sale cargado y llega al puerto después del tiempo fijo adentro y la ruta
     for (const cs of ['cargapellet', 'cargasoja']) serve(cs, t, L, null, (ev, t0, d) => {
       ev.ini = t0; const f = fleetT[ev.f], C = P.carga[cs === 'cargapellet' ? 'pellet' : 'soja'];
+      if (f.op) { if (opCargadas >= op.tons || t0 >= f.until) return; opCargadas += f.tons; }  // operativo cumplido o terminado: no carga más
       const next = t0 + d + C.inFix + C.toSl;
       if (next < Math.min(P.T_END, f.until + 60)) newTrip(f, next);
     });

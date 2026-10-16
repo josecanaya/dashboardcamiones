@@ -326,6 +326,11 @@ header .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:elli
 .pgdo input[type=number],.pgdo select,.pgtime input{font:inherit;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 8px}
 .pgdo input[type=number]{width:70px}
 .pgtime{display:flex;align-items:center;gap:12px}.pgtime input{font-family:var(--mono);font-size:18px}
+.esccupo{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.escop{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:10px;font-size:13px}.escop:empty{display:none}
+.opgrid{display:flex;flex-wrap:wrap;gap:10px 18px}
+.opgrid input{font:inherit;font-family:var(--mono);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 8px;margin-left:6px}
+.opgrid input[type=number]{width:96px}
 /* Por qué: el resultado explicado */
 .why{gap:8px}
 .why .wver{margin:0;font-size:15px;line-height:1.5}.why .wver b{color:var(--accent)}
@@ -531,8 +536,14 @@ header .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:elli
     <div class="mbox escbox">
       <h2 id="escTitle">Escenario del día · camiones que llegan</h2>
       <p class="note">Elegí cuántos camiones de cada producto llegan a Ricardone en el día. Se reparten con el mismo horario que el día real: si pedís más, se copian camiones de ese producto; si pedís menos, se sacan parejo en el día. El pellet y la soja de silos que van al puerto son transiles: se manejan con la cantidad de camiones de la flota.</p>
+      <div class="esccupo" role="radiogroup" aria-label="Cómo llegan">
+        <span class="pgsec">Cómo llegan</span>
+        <label><input type="radio" name="escModo" value="cupo" checked> Por cupo: se abre cada 2 h, cada ventana recibe el total ÷ 12, parejos en las 2 h</label>
+        <label><input type="radio" name="escModo" value="real"> Con el horario del día real</label>
+      </div>
       <div class="escgrid" id="escGrid"></div>
       <div class="note" id="escSum"></div>
+      <div class="escop" id="escOp"></div>
       <div class="mbtn"><button id="escApply">Proyectar con este escenario</button><button id="escReal">Volver a lo real</button><button id="escClose">Cerrar</button></div>
     </div>
   </div>
@@ -1083,7 +1094,7 @@ function eff(k, g) {
           vact, volc: vact.map((v, i) => v * k.volcRate[i] * on(i, g.volcPct, 100) / 100),
           parada: PARADAS[g.parada], N: g.N, gate: g.gate, extra: g.extraPct, demoraPct: g.demoraPct, fleet: {pellet: g.flPellet, soja: g.flSoja},
           st: {...BST}, volcProds: BMK.volcProds, rd: BMK.rd, calProds: BMK.calProds, calLiq: BMK.calLiq, capP1: 200, capDem: 30, capP3: 50, capOsl: g.capOsl, capSal: g.capSal,
-          live: [...LIVE].sort((a, b) => a.t - b.t), frozen: null, escenario: ESC ? {...ESC} : null};
+          live: [...LIVE].sort((a, b) => a.t - b.t), frozen: null, escenario: ESC ? {...ESC} : null, pelletOp: ESC && ESC.op ? {...ESC.op} : null};
 }
 // Escenario de llegadas (camiones por producto) aplicado a un día: devuelve el motor preparado y los camiones
 function conEscenario(P, trucks, ek) { return ek && ek.escenario ? motorEscenario(P, trucks, ek.escenario) : {P2: P, trucks}; }
@@ -1472,7 +1483,7 @@ function ekParaDia(P, d) {
     const key = p === 'pellet' ? 'flPellet' : 'flSoja', b0 = BG[key] || 0;
     fl[p] = b0 ? Math.round(n * (G[key] || 0) / b0) : n;
   }
-  const ek = {...k, fleet: fl, live: [...LIVE].sort((a, b) => a.t - b.t), escenario: escParaDia(P, d)};
+  const ek = {...k, fleet: fl, live: [...LIVE].sort((a, b) => a.t - b.t), escenario: escParaDia(P, d), pelletOp: ESC && ESC.op ? {...ESC.op} : null};
   return LIVE.length ? {...ek, frozen: motorFreeze(P, ek, Math.min(...LIVE.map(m => m.t)))} : ek;
 }
 // Capacidad que sobró: llegadas extra con la misma mezcla y horario hasta que dejan de descargarse
@@ -1608,7 +1619,7 @@ function aportes() {
     out.push({txt: `${fmtT(m.t)} · ${moveTxt(m)}`, d: tot - sin.m.descargas, why, prods: enProductos(FX, sin)});
   });
   if (EK.escenario) {
-    const sin = runK({...EK, escenario: null});
+    const sin = runK({...EK, escenario: null, pelletOp: null});
     out.push({txt: 'Escenario de llegadas: ' + escTxt(), d: tot - sin.m.descargas, prods: enProductos(FX, sin)});
   }
   for (const d of KNOBS) if (G[d.k] !== BG[d.k]) {
@@ -1647,6 +1658,7 @@ function analizarPorQue() {
   else if (dm > 0) ver = `Se descargan <b>${fmtN(dm)} camiones más</b>.` + (top && top.d > 0 ? ` Lo que más suma es «${top.txt}» (${sgn(top.d)})${top.why ? ': ' + top.why : ''}.` : '');
   else if (dm < 0) ver = `Se descargan <b>${fmtN(-dm)} camiones menos</b>.` + (top && top.d < 0 ? ` Lo que más resta es «${top.txt}» (${sgn(top.d)})${top.why ? ': ' + top.why : ''}.` : '');
   else ver = 'No cambia el total de descargas.' + (a.pendientes <= 2 ? ` La reproducción ya descargaba a casi todos los que llegaron ese día (a las 24 h quedaba${a.pendientes === 1 ? '' : 'n'} ${a.pendientes}): sin más llegadas, no hay más camiones para descargar.` : '');
+  if (sim && EK.pelletOp) ver += ' <b>' + opTxt(opPelletResultado(FX, EK.pelletOp)) + '</b>';
   if (cambiado && (Math.abs(dOsl) >= 10 || Math.abs(dCal) >= 10)) ver += ` Sí cambia la espera: ${Math.abs(dOsl) >= 10 ? `en Playa OSL ${sgn(dOsl)} min` : ''}${Math.abs(dOsl) >= 10 && Math.abs(dCal) >= 10 ? ' y ' : ''}${Math.abs(dCal) >= 10 ? `para calar ${sgn(dCal)} min` : ''}.`;
   // techo: por qué no da más
   let techo;
@@ -1910,6 +1922,7 @@ let ESC_DRAFT = null;
 function abrirEscenario() {
   if (!MOTOR) return;
   ESC_DRAFT = {...ESC_BASE, ...(ESC || {}), flPellet: G.flPellet, flSoja: G.flSoja};
+  escModal.querySelector(`input[name=escModo][value=${!ESC || ESC.cupo ? 'cupo' : 'real'}]`).checked = true;
   const row = (k, lab, real, max, col, unidad) => `<span class="pn"><i style="background:${col}"></i>${lab}</span><span class="rv" title="Lo que pasó">${fmtN(real)}</span>` +
     `<input type="range" min="0" max="${max}" step="1" value="${ESC_DRAFT[k]}" data-k="${k}" aria-label="${lab}">` +
     `<input type="number" min="0" max="${max}" step="1" value="${ESC_DRAFT[k]}" data-k="${k}" aria-label="${lab}, ${unidad}">`;
@@ -1924,18 +1937,72 @@ function abrirEscenario() {
     escGrid.querySelectorAll(`input[data-k="${k}"]`).forEach(o => { if (o !== inp) o.value = v; });
     escResumen();
   });
+  // operativo de pellet: toneladas, desde qué hora y cuántas horas (por defecto, lo que se movió el día real)
+  const op0 = opPelletReal(), op = (ESC && ESC.op) || null;
+  document.getElementById('escOp').innerHTML = !(fl.pellet || []).length ? '' :
+    `<label class="opchk"><input type="checkbox" id="opOn" ${op ? 'checked' : ''}> <b>Planificar el operativo de pellet</b></label>` +
+    `<div class="opgrid"><label>Toneladas a mover <input type="number" id="opTons" min="0" step="100" value="${op ? op.tons : op0.tons}"></label>` +
+    `<label>Desde las <input type="time" id="opIni" step="900" value="${fmtT(op ? op.ini : op0.ini)}"></label>` +
+    `<label>Durante <input type="number" id="opHoras" min="1" max="24" step="1" value="${op ? op.horas : op0.horas}"> horas</label></div>` +
+    `<div class="note">El día real movió ${fmtN(op0.tons)} t en ${fmtN(op0.viajes)} viajes, entre las ${fmtT(op0.ini)} y las ${fmtT(Math.min(1439, op0.ini + op0.horas * 60))}. ` +
+    'Con la flota de arriba, la proyección dice si el operativo se cumple y a qué hora termina.</div>';
+  escModal.querySelectorAll('input[name=escModo]').forEach(r => r.onchange = escResumen);
   escResumen();
   escModal.hidden = false;
+}
+// Lo que movió la flota de pellet el día real: toneladas, primera carga y duración
+function opPelletReal() {
+  const fl = (PREP.fleet || {}).pellet || [], C = (PREP.carga || {}).pellet;
+  const tons = fl.reduce((s0, f) => s0 + f.viajesReal * (f.tons || 30), 0), viajes = fl.reduce((s0, f) => s0 + f.viajesReal, 0);
+  if (!fl.length) return {tons: 0, viajes: 0, ini: 0, horas: 24};
+  const first = Math.min(...fl.map(f => f.first)) - (C ? C.toSl + C.inFix : 0), last = Math.max(...fl.map(f => f.until));
+  const ini = Math.max(0, Math.floor(first / 15) * 15);
+  return {tons: Math.round(tons / 100) * 100, viajes, ini, horas: Math.max(1, Math.min(24, Math.ceil((Math.min(1440, last) - ini) / 60)))};
+}
+// Cómo terminó el operativo en una corrida: toneladas descargadas en el puerto y a qué hora se llegó al objetivo
+function opPelletResultado(res, op) {
+  const PORT = res.r.port, out = res.r.outP, xs = [];
+  PORT.forEach((p, k) => { const o = out[k]; if (p.ft != null && p.prod === 'pellet' && o && o.t25 != null && o.t25 >= 0 && o.t25 < 1440) xs.push([o.t25, p.tons || 30]); });
+  xs.sort((a, b) => a[0] - b[0]);
+  let acc = 0, fin = null;
+  for (const [t, tn] of xs) { acc += tn; if (fin == null && acc >= op.tons) fin = t; }
+  return {tons: acc, viajes: xs.length, fin, objetivo: op.tons, hasta: op.ini + op.horas * 60};
+}
+function opTxt(r) {
+  if (r.fin != null && r.fin > r.hasta) {
+    const tarde = Math.round(r.fin - r.hasta);
+    return `Operativo de pellet completo, pero fuera de plazo: las ${fmtN(r.objetivo)} t se terminan de descargar a las ${fmtT(r.fin)}, ${Math.floor(tarde / 60)} h ${tarde % 60} min después de las ${fmtT(Math.min(1439, r.hasta))} (${fmtN(r.viajes)} viajes). ` + opFreno(r);
+  }
+  return r.fin != null ? `Operativo de pellet cumplido: ${fmtN(r.objetivo)} t a las ${fmtT(r.fin)} (${fmtN(r.viajes)} viajes; plazo hasta las ${fmtT(Math.min(1439, r.hasta))}).`
+    : `Operativo de pellet sin cumplir: se descargaron ${fmtN(r.tons)} de ${fmtN(r.objetivo)} t en el día (${fmtN(r.viajes)} viajes); faltan ${fmtN(r.objetivo - r.tons)} t. ` + opFreno(r);
+}
+// Por qué no se cumple: la carga en Ricardone (tolvas) tiene un ritmo; con ese ritmo y esas horas no alcanza, aunque haya más flota
+function opFreno(r) {
+  // ritmo de carga en las horas del operativo, con las jugadas del canal CARGA
+  const ini = EK.pelletOp ? EK.pelletOp.ini : 0, horas = (Math.min(1440, r.hasta) - ini) / 60, rs = [];
+  for (let t = ini + 30; t < Math.min(1440, r.hasta); t += 60) { const s0 = (motorLaneState(PREP, EK, t).st || {}).cargapellet; if (s0) rs.push(s0.on === false ? 0 : s0.rate); }
+  const cap = rs.length ? rs.reduce((a, b) => a + b, 0) / rs.length : ((PREP.carga || {}).pellet || {}).cap || 6;
+  const tPorViaje = r.viajes ? r.tons / r.viajes : 30, maxT = cap * horas * tPorViaje;
+  return maxT < r.objetivo
+    ? `La carga de pellet en Ricardone saca unos ${dec(cap)} camiones por hora: en ${dec(horas)} h son como máximo ${fmtN(maxT)} t, aunque haya más flota. Hace falta más ritmo de carga (canal CARGA) o más horas.`
+    : `La carga alcanzaría (${dec(cap)} camiones por hora): lo que frena es la flota (camiones que hacen la vuelta) o los volcables del puerto que reciben pellet. Probá sumar flota o pasar otro volcable a pellet.`;
 }
 function escResumen() {
   const tot = ESC_PRODS.reduce((s0, [p]) => s0 + (ESC_BASE[p] ? ESC_DRAFT[p] : 0), 0), tot0 = ESC_PRODS.reduce((s0, [p]) => s0 + (ESC_BASE[p] || 0), 0);
   // los que ya estaban esperando a las 00 h (llegaron el día anterior) y los transiles no se cambian
   const antes = PREP.ric.filter(r => r.ing < 0 && r.cal >= 0 && r.dest).length;
-  escSum.innerHTML = `Llegan <b>${fmtN(tot)}</b> camiones a Ricardone entre las 00 y las 24 h (real: ${fmtN(tot0)}, ${tot >= tot0 ? '+' : ''}${fmtN(tot - tot0)}). ` +
+  const cupo = escModal.querySelector('input[name=escModo]:checked').value === 'cupo';
+  const porVentana = cupo ? ' Por ventana de 2 h: ' + ESC_PRODS.filter(([p]) => ESC_BASE[p] && ESC_DRAFT[p]).map(([p]) => {
+    const n = ESC_DRAFT[p], a = Math.floor(n / 12), b = Math.ceil(n / 12); return `${PNAME[p]} ${a === b ? a : a + ' o ' + b}`; }).join(', ') + '.' : '';
+  escSum.innerHTML = `Llegan <b>${fmtN(tot)}</b> camiones a Ricardone entre las 00 y las 24 h (real: ${fmtN(tot0)}, ${tot >= tot0 ? '+' : ''}${fmtN(tot - tot0)}).${porVentana} ` +
     `Además, a las 00 h ya había <b>${fmtN(antes)}</b> esperando del día anterior, que no se cambian. Por eso estas cifras son menores que las del Excel del día, que cuenta también a esos y a los transiles.`;
 }
 function escTxt() {
-  return ESC ? ESC_PRODS.filter(([p]) => ESC[p] != null && ESC[p] !== ESC_BASE[p]).map(([p]) => `${PNAME[p]} ${fmtN(ESC[p])} (real ${fmtN(ESC_BASE[p] || 0)})`).join(', ') : '';
+  if (!ESC) return '';
+  const t = ESC_PRODS.filter(([p]) => ESC[p] != null && ESC[p] !== ESC_BASE[p]).map(([p]) => `${PNAME[p]} ${fmtN(ESC[p])} (real ${fmtN(ESC_BASE[p] || 0)})`);
+  if (ESC.cupo) t.unshift('llegadas por cupo cada 2 h');
+  if (ESC.op) t.push(`operativo de pellet ${fmtN(ESC.op.tons)} t desde las ${fmtT(ESC.op.ini)} en ${ESC.op.horas} h`);
+  return t.join(', ');
 }
 function escUpdateChip() {
   const on = document.getElementById('escOn'); if (!on) return;
@@ -1946,11 +2013,19 @@ function escParaDia(P, d) {
   if (!ESC || !d) return null;
   const base = motorLlegadas(P, d.trucks), out = {};
   for (const [p] of ESC_PRODS) if (ESC[p] != null && ESC_BASE[p]) out[p] = Math.round((base[p] || 0) * ESC[p] / ESC_BASE[p]);
+  if (ESC.cupo) out.cupo = true;
   return out;
 }
 document.getElementById('escApply').onclick = () => {
   const e = {}; let cambia = false;
   for (const [p] of ESC_PRODS) if (ESC_BASE[p]) { e[p] = ESC_DRAFT[p]; if (e[p] !== ESC_BASE[p]) cambia = true; }
+  if (escModal.querySelector('input[name=escModo]:checked').value === 'cupo') { e.cupo = true; cambia = true; }
+  const opOn = document.getElementById('opOn');
+  if (opOn && opOn.checked) {
+    const [hh, mm] = (document.getElementById('opIni').value || '00:00').split(':').map(Number);
+    e.op = {tons: Math.max(0, +document.getElementById('opTons').value || 0), ini: hh * 60 + mm, horas: Math.max(1, Math.min(24, +document.getElementById('opHoras').value || 1))};
+    cambia = true;
+  }
   ESC = cambia ? e : null;
   G.flPellet = ESC_DRAFT.flPellet ?? G.flPellet; G.flSoja = ESC_DRAFT.flSoja ?? G.flSoja;
   escModal.hidden = true; escUpdateChip(); knobChanged(true);
