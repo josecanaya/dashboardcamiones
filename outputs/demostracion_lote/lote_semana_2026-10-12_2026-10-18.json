@@ -4,98 +4,98 @@
   "porPunto": {
     "san_lorenzo:Ingreso": {
       "esperados": 413,
-      "camara": 332,
-      "reconstruida": 50,
+      "camara": 366,
+      "reconstruida": 16,
       "deducida": 28,
       "deducidaFinal": 2,
       "falta": 1
     },
     "san_lorenzo:Balanza Ingreso": {
       "esperados": 413,
-      "camara": 326,
-      "reconstruida": 48,
-      "deducida": 32,
-      "deducidaFinal": 6,
+      "camara": 362,
+      "reconstruida": 12,
+      "deducida": 33,
+      "deducidaFinal": 5,
       "falta": 1
     },
     "san_lorenzo:Carga / Descarga OSL": {
       "esperados": 137,
-      "camara": 84,
-      "reconstruida": 12,
+      "camara": 90,
+      "reconstruida": 6,
       "deducida": 41,
       "deducidaFinal": 0,
       "falta": 0
     },
     "san_lorenzo:Balanza Egreso": {
       "esperados": 413,
-      "camara": 265,
-      "reconstruida": 53,
-      "deducida": 78,
-      "deducidaFinal": 16,
+      "camara": 290,
+      "reconstruida": 28,
+      "deducida": 79,
+      "deducidaFinal": 15,
       "falta": 1
     },
     "san_lorenzo:Egreso": {
       "esperados": 413,
-      "camara": 336,
-      "reconstruida": 52,
+      "camara": 372,
+      "reconstruida": 17,
       "deducida": 2,
-      "deducidaFinal": 22,
+      "deducidaFinal": 21,
       "falta": 1
     },
     "ricardone:Pre ingreso": {
       "esperados": 402,
-      "camara": 327,
-      "reconstruida": 49,
-      "deducida": 25,
+      "camara": 362,
+      "reconstruida": 16,
+      "deducida": 23,
       "deducidaFinal": 0,
       "falta": 1
     },
     "ricardone:Calada": {
       "esperados": 402,
-      "camara": 298,
-      "reconstruida": 62,
+      "camara": 333,
+      "reconstruida": 28,
       "deducida": 39,
-      "deducidaFinal": 2,
+      "deducidaFinal": 1,
       "falta": 1
     },
     "ricardone:Salida 2": {
       "esperados": 277,
-      "camara": 213,
-      "reconstruida": 44,
-      "deducida": 19,
+      "camara": 239,
+      "reconstruida": 24,
+      "deducida": 13,
       "deducidaFinal": 0,
       "falta": 1
     },
     "san_lorenzo:Plataformas Volcables": {
       "esperados": 265,
-      "camara": 154,
-      "reconstruida": 68,
-      "deducida": 35,
-      "deducidaFinal": 7,
+      "camara": 184,
+      "reconstruida": 41,
+      "deducida": 33,
+      "deducidaFinal": 6,
       "falta": 1
     },
     "ricardone:Balanza Egreso": {
       "esperados": 137,
-      "camara": 96,
-      "reconstruida": 11,
+      "camara": 102,
+      "reconstruida": 7,
       "deducida": 10,
-      "deducidaFinal": 20,
+      "deducidaFinal": 18,
       "falta": 0
     },
     "ricardone:Playa 3": {
       "esperados": 78,
-      "camara": 53,
-      "reconstruida": 14,
+      "camara": 59,
+      "reconstruida": 9,
       "deducida": 9,
-      "deducidaFinal": 2,
+      "deducidaFinal": 1,
       "falta": 0
     },
     "ricardone:Volcable 2": {
       "esperados": 70,
-      "camara": 33,
-      "reconstruida": 19,
-      "deducida": 13,
-      "deducidaFinal": 5,
+      "camara": 40,
+      "reconstruida": 12,
+      "deducida": 14,
+      "deducidaFinal": 4,
       "falta": 0
     },
     "ricardone:Volcable Silo Keppler": {
@@ -375,8 +375,8 @@
       "plate": "CRK690",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 1,
+      "camara": 6,
+      "reconstruida": 0,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -407,22 +407,10 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-12T09:51:43.000Z",
-          "read": "ONTR0LAD0",
-          "device": "SLZIngCamFrente",
-          "P": 0.45383835719891447,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "SZG666",
-              "p": 0.04796530160487609
-            },
-            {
-              "plate": "TSJ519",
-              "p": 0.001043201385637186
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-12T12:08:08.051Z",
+          "read": "CRK690",
+          "device": "SLZIngCamFrente"
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
@@ -693,8 +681,8 @@
       "plate": "GZI868",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 3,
-      "reconstruida": 2,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -717,7 +705,7 @@
         },
         {
           "node": "san_lorenzo:Carga / Descarga OSL",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-12T14:45:53.978Z",
           "read": "GZT868",
           "device": "RenCargFte",
@@ -743,7 +731,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-12T15:09:27.098Z",
           "read": "GZT868",
           "device": "SLZSalidaC1Fte",
@@ -867,8 +855,8 @@
       "plate": "RUK692",
       "circuit": "R8",
       "pasos": 3,
-      "camara": 1,
-      "reconstruida": 2,
+      "camara": 2,
+      "reconstruida": 1,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -891,13 +879,10 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
-          "t": "2026-10-12T14:23:44.000Z",
-          "read": "AE808W6",
-          "device": "RicCalLiq",
-          "P": 0.6377197655833777,
-          "prueba": false,
-          "rivales": []
+          "estado": "camara",
+          "t": "2026-10-12T14:32:29.388Z",
+          "read": "RUK692",
+          "device": "RicCalLiq"
         },
         {
           "node": "ricardone:Balanza Ingreso",
@@ -1071,8 +1056,8 @@
       "plate": "AGR963",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -1095,7 +1080,7 @@
         },
         {
           "node": "san_lorenzo:Carga / Descarga OSL",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-12T19:48:08.571Z",
           "read": "AGR983",
           "device": "RenCargFte",
@@ -1328,8 +1313,8 @@
       "plate": "AA875OG",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 3,
-      "reconstruida": 1,
+      "camara": 4,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -1348,7 +1333,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-12T20:52:27.000Z",
           "read": "AA8750G",
           "device": "SLZBalIngFte",
@@ -1468,8 +1453,8 @@
       "plate": "AD195CG",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 2,
-      "reconstruida": 2,
+      "camara": 4,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -1478,7 +1463,7 @@
       "pasosDetalle": [
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-12T23:05:57.000Z",
           "read": "D195CG",
           "device": "SLZIngCamFrente",
@@ -1504,7 +1489,7 @@
         },
         {
           "node": "san_lorenzo:Carga / Descarga OSL",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-12T23:39:52.000Z",
           "read": "D195CG",
           "device": "RenCargFte",
@@ -1848,8 +1833,8 @@
       "plate": "LXX335",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 1,
+      "camara": 6,
+      "reconstruida": 0,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -1893,22 +1878,10 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-13T02:08:41.899Z",
-          "read": "LXX33",
-          "device": "SLZBalIngFte",
-          "P": 0.9999125056001386,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AF092QT",
-              "p": 0.000018959263954598788
-            },
-            {
-              "plate": "AA575WD",
-              "p": 2.9175735725720717e-8
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-13T02:09:14.488Z",
+          "read": "LXX335",
+          "device": "SLZBalIngFte"
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
@@ -1931,8 +1904,8 @@
       "plate": "AA575WD",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 1,
-      "reconstruida": 2,
+      "camara": 2,
+      "reconstruida": 1,
       "deducida": 5,
       "falta": 0,
       "faltan": [],
@@ -1956,7 +1929,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T01:04:35.333Z",
           "read": "AA575HD",
           "device": "RicPreIngInFr",
@@ -2033,8 +2006,8 @@
       "plate": "AF092QT",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 4,
-      "reconstruida": 4,
+      "camara": 6,
+      "reconstruida": 2,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -2081,37 +2054,17 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-13T01:59:38.000Z",
-          "read": "A5750D",
-          "device": "RicEgrCamFrente",
-          "P": 0.48999079334888124,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AA575WD",
-              "p": 0.01527598227176964
-            },
-            {
-              "plate": "AD602QY",
-              "p": 0.0013110556096276248
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-13T02:03:40.419Z",
+          "read": "AF092QT",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-13T02:07:43.000Z",
-          "read": "870",
-          "device": "SLZIngCamFrente",
-          "P": 0.6769708404159641,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AA575WD",
-              "p": 0.0006844884015366718
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-13T02:13:33.183Z",
+          "read": "AF092QT",
+          "device": "SLZIngCamFrente"
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
@@ -2260,8 +2213,8 @@
       "plate": "SZG666",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 3,
-      "reconstruida": 1,
+      "camara": 4,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -2270,22 +2223,10 @@
       "pasosDetalle": [
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-13T10:56:04.000Z",
-          "read": "914",
-          "device": "SLZIngCamFrente",
-          "P": 0.5022328276879615,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "CXA592",
-              "p": 0.11589988331260649
-            },
-            {
-              "plate": "FSR947",
-              "p": 0.03866347669881482
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-13T11:07:48.078Z",
+          "read": "SZG666",
+          "device": "SLZIngCamFrente"
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
@@ -2489,8 +2430,8 @@
       "plate": "FSR947",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -2558,22 +2499,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-13T13:48:35.404Z",
-          "read": "FSR907",
-          "device": "SLZSalidaC2Fte",
-          "P": 0.4922288619732365,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "IJR747",
-              "p": 0.000005513971790725432
-            },
-            {
-              "plate": "AB362FR",
-              "p": 0.0000039266883231438755
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-13T13:48:36.440Z",
+          "read": "FSR947",
+          "device": "SLZSalidaC1Fte"
         }
       ]
     },
@@ -2998,8 +2927,8 @@
       "plate": "GGX385",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 3,
-      "reconstruida": 1,
+      "camara": 4,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -3026,22 +2955,10 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-13T14:52:13.592Z",
-          "read": "AH86100",
-          "device": "SLZBalSC2Fte",
-          "P": 0.4494967710985275,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "LZP122",
-              "p": 0.1654289125323582
-            },
-            {
-              "plate": "PLV786",
-              "p": 0.020240265565594044
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-13T15:25:27.277Z",
+          "read": "GGX385",
+          "device": "SLZBalSC2Fte"
         },
         {
           "node": "san_lorenzo:Egreso",
@@ -3141,8 +3058,8 @@
       "plate": "BUT271",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 3,
+      "camara": 6,
+      "reconstruida": 2,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -3231,22 +3148,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-13T15:40:08.825Z",
-          "read": "BUT27",
-          "device": "SLZSalidaC2Fte",
-          "P": 0.9984718364592006,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "PLV786",
-              "p": 0.0000014730197028333013
-            },
-            {
-              "plate": "GZI868",
-              "p": 6.706816065487309e-7
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-13T15:40:09.936Z",
+          "read": "BUT271",
+          "device": "SLZSalidaC1Fte"
         }
       ]
     },
@@ -3254,8 +3159,8 @@
       "plate": "OLZ492",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 3,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -3278,7 +3183,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T15:00:24.200Z",
           "read": "DLZ492",
           "device": "RicCal03",
@@ -3318,7 +3223,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T15:38:49.957Z",
           "read": "DLZ492",
           "device": "SLZVolcableC5",
@@ -3337,7 +3242,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T15:48:14.354Z",
           "read": "DLZ492",
           "device": "SLZBalSC2Fte",
@@ -3813,8 +3718,8 @@
       "plate": "AA875OG",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -3851,22 +3756,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-13T17:28:13.000Z",
-          "read": "AB148Y1",
-          "device": "SLZSalidaC2Fte",
-          "P": 0.6949740458174815,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "GZI868",
-              "p": 0.00018157157250684288
-            },
-            {
-              "plate": "AB127BY",
-              "p": 0.000022809650395072378
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-13T17:28:17.846Z",
+          "read": "AA875OG",
+          "device": "SLZSalidaC2Fte"
         }
       ]
     },
@@ -3874,8 +3767,8 @@
       "plate": "AD602QY",
       "circuit": "R13",
       "pasos": 5,
-      "camara": 1,
-      "reconstruida": 2,
+      "camara": 2,
+      "reconstruida": 1,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -3918,13 +3811,10 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-13T13:37:30.000Z",
-          "read": "2L9",
-          "device": "RicEgrCamFrente",
-          "P": 0.4782513181019332,
-          "prueba": false,
-          "rivales": []
+          "estado": "camara",
+          "t": "2026-10-13T15:01:15.947Z",
+          "read": "AD602QY",
+          "device": "RicEgrCamFrente"
         }
       ]
     },
@@ -3981,8 +3871,8 @@
       "plate": "RNA350",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 2,
-      "reconstruida": 3,
+      "camara": 4,
+      "reconstruida": 1,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -4017,7 +3907,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T13:26:21.530Z",
           "read": "RCL350",
           "device": "RicCal03",
@@ -4040,7 +3930,7 @@
         },
         {
           "node": "ricardone:Playa 3",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T13:47:27.623Z",
           "read": "RNL350",
           "device": "RicS6Playa3",
@@ -4192,8 +4082,8 @@
       "plate": "UWC148",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -4330,22 +4220,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-13T18:33:25.259Z",
-          "read": "TWC149",
-          "device": "SLZSalidaC2Fte",
-          "P": 0.9828545188115365,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AI112IQ",
-              "p": 0.000002033099063305545
-            },
-            {
-              "plate": "AE220CU",
-              "p": 5.058842184708589e-7
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-13T18:33:25.691Z",
+          "read": "UWC148",
+          "device": "SLZSalidaC1Fte"
         }
       ]
     },
@@ -4511,8 +4389,8 @@
       "plate": "MKW108",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -4535,7 +4413,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T17:51:08.000Z",
           "read": "MKW10B",
           "device": "RicCal03",
@@ -4877,8 +4755,8 @@
       "plate": "ESI808",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -4925,7 +4803,7 @@
         },
         {
           "node": "ricardone:Volcable 2",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T18:59:56.886Z",
           "read": "EST808",
           "device": "RicVolcable2",
@@ -4944,8 +4822,8 @@
       "plate": "ATP474",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -4986,7 +4864,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T20:20:05.540Z",
           "read": "ATP074",
           "device": "SLZBalIngFte",
@@ -5030,8 +4908,8 @@
       "plate": "AH019OV",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -5087,7 +4965,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T20:23:39.000Z",
           "read": "AH0190V",
           "device": "SLZBalIngFte",
@@ -5288,8 +5166,8 @@
       "plate": "AG112IW",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -5316,18 +5194,10 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-13T20:10:30.000Z",
-          "read": "BS2",
-          "device": "RicEgrCamFrente",
-          "P": 0.4593735615952021,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "RYJ384",
-              "p": 0.01887775650673109
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-13T20:18:57.750Z",
+          "read": "AG112IW",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -5476,8 +5346,8 @@
       "plate": "BDH961",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 3,
-      "reconstruida": 2,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -5501,7 +5371,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T14:01:15.735Z",
           "read": "BOH961",
           "device": "RicPreIngInFr",
@@ -5541,7 +5411,7 @@
         },
         {
           "node": "ricardone:Volcable 2",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T20:43:23.186Z",
           "read": "BOH961",
           "device": "RicVolcable2",
@@ -5798,8 +5668,8 @@
       "plate": "AJV928",
       "circuit": "R8",
       "pasos": 3,
-      "camara": 2,
-      "reconstruida": 1,
+      "camara": 3,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -5812,13 +5682,10 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-13T12:06:42.000Z",
-          "read": "P49",
-          "device": "RicPreIngEgFr",
-          "P": 0.5353093664539654,
-          "prueba": false,
-          "rivales": []
+          "estado": "camara",
+          "t": "2026-10-13T12:13:17.835Z",
+          "read": "AJV928",
+          "device": "RicPreIngInFr"
         },
         {
           "node": "ricardone:Calada",
@@ -5973,8 +5840,8 @@
       "plate": "UVX713",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -5987,22 +5854,10 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-13T14:47:56.000Z",
-          "read": "634",
-          "device": "RicPreIngInFr",
-          "P": 0.4768422963107506,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "UZY871",
-              "p": 0.15636990617757945
-            },
-            {
-              "plate": "UWC148",
-              "p": 0.04727462279787286
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-13T14:57:32.731Z",
+          "read": "UVX713",
+          "device": "RicPreIngInFr"
         },
         {
           "node": "ricardone:Calada",
@@ -6115,8 +5970,8 @@
       "plate": "AB382HC",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 3,
-      "reconstruida": 3,
+      "camara": 4,
+      "reconstruida": 2,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -6148,7 +6003,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T23:13:55.994Z",
           "read": "AB382HL",
           "device": "RicCal03",
@@ -6538,8 +6393,8 @@
       "plate": "AB301CF",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 4,
-      "reconstruida": 3,
+      "camara": 6,
+      "reconstruida": 1,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -6569,22 +6424,10 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-13T23:22:41.000Z",
-          "read": "C30",
-          "device": "RicEgrCamFrente",
-          "P": 0.7523127341235205,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AA674NH",
-              "p": 0.006230793159013429
-            },
-            {
-              "plate": "AB866NE",
-              "p": 0.004121442215692429
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-13T23:25:30.264Z",
+          "read": "AB301CF",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -6607,22 +6450,10 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-13T23:34:22.000Z",
-          "read": "ACSL",
-          "device": "SLZBalIngFte",
-          "P": 0.5949786521231155,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AB382HC",
-              "p": 0.041078367182920884
-            },
-            {
-              "plate": "GZI868",
-              "p": 0.0028264713831014105
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-13T23:35:31.814Z",
+          "read": "AB301CF",
+          "device": "SLZBalIngFte"
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
@@ -6660,8 +6491,8 @@
       "plate": "AA674NH",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 2,
-      "reconstruida": 5,
+      "camara": 6,
+      "reconstruida": 1,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -6677,7 +6508,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T22:55:58.558Z",
           "read": "AA674NM",
           "device": "RicPreIngInFr",
@@ -6710,7 +6541,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T23:37:36.000Z",
           "read": "AA874H",
           "device": "SLZIngCamFrente",
@@ -6729,7 +6560,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-13T23:41:56.835Z",
           "read": "AA674AH",
           "device": "SLZBalIngFte",
@@ -6759,7 +6590,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T00:08:31.000Z",
           "read": "AA74AH",
           "device": "SLZSalidaC1Fte",
@@ -7619,8 +7450,8 @@
       "plate": "OLZ495",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 1,
-      "reconstruida": 2,
+      "camara": 2,
+      "reconstruida": 1,
       "deducida": 5,
       "falta": 0,
       "faltan": [],
@@ -7652,7 +7483,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T02:20:51.836Z",
           "read": "DLZ495",
           "device": "RicCal03",
@@ -7785,8 +7616,8 @@
       "plate": "OLZ500",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 1,
-      "reconstruida": 5,
+      "camara": 4,
+      "reconstruida": 2,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -7840,7 +7671,7 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T02:40:00.250Z",
           "read": "DLZ500",
           "device": "RicEgrCamFrente",
@@ -7859,7 +7690,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T02:49:44.453Z",
           "read": "QLZ1501",
           "device": "SLZIngCamFrente",
@@ -7878,7 +7709,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T02:52:32.201Z",
           "read": "OFZ4500",
           "device": "SLZBalIngFte",
@@ -8112,8 +7943,8 @@
       "plate": "ESI096",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 0,
-      "reconstruida": 5,
+      "camara": 4,
+      "reconstruida": 1,
       "deducida": 3,
       "falta": 0,
       "faltan": [],
@@ -8126,7 +7957,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T02:02:52.272Z",
           "read": "FSI096",
           "device": "RicPreIngInFr",
@@ -8145,7 +7976,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T02:28:27.168Z",
           "read": "FSI096",
           "device": "RicCal03",
@@ -8164,7 +7995,7 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T02:52:52.853Z",
           "read": "TSI096",
           "device": "RicEgrCamFrente",
@@ -8202,7 +8033,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T03:14:22.309Z",
           "read": "FSI096",
           "device": "SLZBalIngFte",
@@ -8621,8 +8452,8 @@
       "plate": "ELD110",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 0,
-      "reconstruida": 1,
+      "camara": 1,
+      "reconstruida": 0,
       "deducida": 4,
       "falta": 0,
       "faltan": [],
@@ -8638,7 +8469,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T01:52:35.594Z",
           "read": "ELU110",
           "device": "RicPreIngInFr",
@@ -8813,8 +8644,8 @@
       "plate": "ERF651",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 2,
-      "reconstruida": 2,
+      "camara": 3,
+      "reconstruida": 1,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -8849,7 +8680,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T02:13:57.780Z",
           "read": "ERF851",
           "device": "RicCal04",
@@ -9460,8 +9291,8 @@
       "plate": "AB036IH",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 3,
-      "reconstruida": 2,
+      "camara": 4,
+      "reconstruida": 1,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -9517,22 +9348,10 @@
         },
         {
           "node": "ricardone:Volcable 2",
-          "estado": "reconstruida",
-          "t": "2026-10-14T07:26:34.000Z",
-          "read": "EW52",
-          "device": "RicVolcable2",
-          "P": 0.4315444702725974,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "EDV522",
-              "p": 0.043523401349996146
-            },
-            {
-              "plate": "AA874CB",
-              "p": 0.001795521302682884
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-14T10:37:09.192Z",
+          "read": "AB036IH",
+          "device": "RicVolcable2"
         },
         {
           "node": "ricardone:Balanza Egreso",
@@ -9547,9 +9366,9 @@
       "plate": "EED511",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 0,
-      "reconstruida": 1,
-      "deducida": 4,
+      "camara": 2,
+      "reconstruida": 0,
+      "deducida": 3,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-14T06:31:00.000Z",
@@ -9576,7 +9395,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T06:30:10.247Z",
           "read": "EEU511",
           "device": "RicPreIngInFr",
@@ -9595,7 +9414,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "deducidaFinal"
+          "estado": "deducida"
         },
         {
           "node": "ricardone:Balanza Ingreso",
@@ -9603,15 +9422,19 @@
         },
         {
           "node": "ricardone:Playa 3",
-          "estado": "deducidaFinal"
+          "estado": "deducida"
         },
         {
           "node": "ricardone:Volcable 2",
-          "estado": "deducidaFinal"
+          "estado": "deducida"
         },
         {
           "node": "ricardone:Balanza Egreso",
-          "estado": "deducidaFinal"
+          "estado": "camara",
+          "t": "2026-10-14T11:25:57.000Z",
+          "read": "2ED511",
+          "device": "RicB2Egreso",
+          "P": 0.9904736654896545
         }
       ]
     },
@@ -9940,8 +9763,8 @@
       "circuit": "R8",
       "pasos": 3,
       "camara": 1,
-      "reconstruida": 1,
-      "deducida": 1,
+      "reconstruida": 2,
+      "deducida": 0,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-13T22:03:00.000Z",
@@ -9975,7 +9798,11 @@
         },
         {
           "node": "ricardone:Balanza Egreso",
-          "estado": "deducidaFinal"
+          "estado": "reconstruida",
+          "t": "2026-10-14T10:28:41.000Z",
+          "read": "E072",
+          "device": "RicB1Egreso",
+          "P": 0.44099231888083135
         }
       ]
     },
@@ -10293,8 +10120,8 @@
       "plate": "EVD342",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -10303,7 +10130,7 @@
       "pasosDetalle": [
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T08:40:49.747Z",
           "read": "EVU342",
           "device": "SLZIngCamFrente",
@@ -10354,8 +10181,8 @@
       "plate": "BTS626",
       "circuit": "SL14",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 1,
+      "camara": 6,
+      "reconstruida": 0,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -10383,7 +10210,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T10:42:28.633Z",
           "read": "BTSQ626",
           "device": "SLZBalIngFte",
@@ -10701,8 +10528,8 @@
       "plate": "JJD706",
       "circuit": "R8",
       "pasos": 3,
-      "camara": 1,
-      "reconstruida": 2,
+      "camara": 2,
+      "reconstruida": 1,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -10751,22 +10578,10 @@
         },
         {
           "node": "ricardone:Balanza Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-14T11:25:57.000Z",
-          "read": "2ED511",
-          "device": "RicB2Egreso",
-          "P": 0.5104819981544793,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "JWL417",
-              "p": 0.006055538708249574
-            },
-            {
-              "plate": "OZJ940",
-              "p": 0.002635551827681153
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-14T14:17:36.981Z",
+          "read": "JJD706",
+          "device": "RicB2Egreso"
         }
       ]
     },
@@ -10814,8 +10629,8 @@
       "plate": "JBS552",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -10845,22 +10660,10 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-13T22:08:03.000Z",
-          "read": "E04",
-          "device": "RicEgrCamFrente",
-          "P": 0.8502610326470279,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AB382HC",
-              "p": 0.009702175124185683
-            },
-            {
-              "plate": "KAP160",
-              "p": 0.0004802703694779626
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-14T13:59:34.273Z",
+          "read": "JBS552",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -10964,8 +10767,8 @@
       "plate": "GGX385",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -10974,22 +10777,10 @@
       "pasosDetalle": [
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-14T10:24:22.000Z",
-          "read": "LCQNTRQL007",
-          "device": "SLZIngCamFrente",
-          "P": 0.6079966295069029,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "JBS552",
-              "p": 0.003950179285196774
-            },
-            {
-              "plate": "OLZ495",
-              "p": 0.0009875448213172897
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-14T10:25:59.899Z",
+          "read": "GGX385",
+          "device": "SLZIngCamFrente"
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
@@ -11354,8 +11145,8 @@
       "plate": "CXA592",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -11392,22 +11183,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-14T16:18:02.000Z",
-          "read": "AAAC",
-          "device": "SLZSalidaC2Fte",
-          "P": 0.9213851913588756,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "LZP122",
-              "p": 0.00009971861706373275
-            },
-            {
-              "plate": "WGG348",
-              "p": 0.0000030639980555530363
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-14T16:18:24.761Z",
+          "read": "CXA592",
+          "device": "SLZSalidaC2Fte"
         }
       ]
     },
@@ -11415,8 +11194,8 @@
       "plate": "UXG866",
       "circuit": "R4",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -11479,7 +11258,7 @@
         },
         {
           "node": "ricardone:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T16:19:57.328Z",
           "read": "MXG866",
           "device": "RicB2Egreso",
@@ -11621,8 +11400,8 @@
       "plate": "DVM004",
       "circuit": "R4",
       "pasos": 5,
-      "camara": 2,
-      "reconstruida": 3,
+      "camara": 3,
+      "reconstruida": 2,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -11697,7 +11476,7 @@
         },
         {
           "node": "ricardone:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T16:59:05.545Z",
           "read": "DVM0041",
           "device": "RicB2Egreso",
@@ -11856,8 +11635,8 @@
       "plate": "AA824GE",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 2,
-      "reconstruida": 6,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -11885,7 +11664,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T15:16:05.000Z",
           "read": "A824GE",
           "device": "RicPreIngInFr",
@@ -11900,7 +11679,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T16:29:53.000Z",
           "read": "A824GE",
           "device": "RicCal01",
@@ -11919,7 +11698,7 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T16:46:40.000Z",
           "read": "A824GE",
           "device": "RicEgrCamFrente",
@@ -11938,7 +11717,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T16:59:24.000Z",
           "read": "A824GE",
           "device": "SLZIngCamFrente",
@@ -11971,7 +11750,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T17:36:01.000Z",
           "read": "A824GE",
           "device": "SLZBalSC2Fte",
@@ -11990,22 +11769,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-14T17:40:29.000Z",
-          "read": "A824GE",
-          "device": "SLZSalidaC2Fte",
-          "P": 0.9999339728264794,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "WGG348",
-              "p": 3.9361898577884644e-9
-            },
-            {
-              "plate": "GZI868",
-              "p": 2.3472123075024948e-9
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-14T17:40:29.408Z",
+          "read": "AA824GE",
+          "device": "SLZSalidaC1Fte"
         }
       ]
     },
@@ -12086,8 +11853,8 @@
       "plate": "AE088HX",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -12154,22 +11921,10 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-14T17:58:15.007Z",
-          "read": "DRF28",
-          "device": "SLZBalSC1Fte",
-          "P": 0.41346983702316964,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "WGG348",
-              "p": 0.005010046706392804
-            },
-            {
-              "plate": "GZI868",
-              "p": 0.001565391160823083
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-14T18:03:55.991Z",
+          "read": "AE088HX",
+          "device": "SLZBalSC2Fte"
         },
         {
           "node": "san_lorenzo:Egreso",
@@ -12245,8 +12000,8 @@
       "plate": "GZI868",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -12269,7 +12024,7 @@
         },
         {
           "node": "san_lorenzo:Carga / Descarga OSL",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T18:19:39.661Z",
           "read": "GZT868",
           "device": "RenCargFte",
@@ -12777,8 +12532,8 @@
       "plate": "HOT021",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -12801,7 +12556,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T19:41:00.893Z",
           "read": "HQT021",
           "device": "RicCal02",
@@ -13071,8 +12826,8 @@
       "plate": "RNA350",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 2,
-      "reconstruida": 3,
+      "camara": 3,
+      "reconstruida": 2,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -13092,7 +12847,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T16:50:32.621Z",
           "read": "RNLD350",
           "device": "RicCal02",
@@ -13584,8 +13339,8 @@
       "plate": "OLZ499",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 2,
-      "reconstruida": 4,
+      "camara": 4,
+      "reconstruida": 2,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -13620,7 +13375,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T23:55:50.349Z",
           "read": "OIZ499",
           "device": "SLZIngCamFrente",
@@ -13630,13 +13385,10 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-15T00:06:23.000Z",
-          "read": "OZ0C",
-          "device": "SLZBalIngFte",
-          "P": 0.9734045414285526,
-          "prueba": false,
-          "rivales": []
+          "estado": "camara",
+          "t": "2026-10-15T00:06:27.603Z",
+          "read": "OLZ499",
+          "device": "SLZBalIngFte"
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
@@ -13806,8 +13558,8 @@
       "plate": "BDH961",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 3,
-      "reconstruida": 1,
+      "camara": 4,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -13835,7 +13587,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-14T13:23:55.978Z",
           "read": "BOH961",
           "device": "RicPreIngInFr",
@@ -14009,8 +13761,8 @@
       "plate": "AE286EK",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -14080,7 +13832,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T02:18:43.000Z",
           "read": "AE286E",
           "device": "SLZBalSC2Fte",
@@ -14319,8 +14071,8 @@
       "plate": "JXQ163",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 2,
-      "reconstruida": 6,
+      "camara": 3,
+      "reconstruida": 5,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -14351,7 +14103,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T01:42:48.517Z",
           "read": "JXO163",
           "device": "RicCal04",
@@ -14476,8 +14228,8 @@
       "plate": "AD910IP",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 1,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -14528,7 +14280,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T02:33:08.000Z",
           "read": "AD9101P",
           "device": "SLZVolcableC5",
@@ -14574,8 +14326,8 @@
       "plate": "MDY213",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 1,
-      "reconstruida": 5,
+      "camara": 3,
+      "reconstruida": 3,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -14588,7 +14340,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T01:04:43.803Z",
           "read": "MUY213",
           "device": "RicPreIngInFr",
@@ -14603,7 +14355,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T01:37:25.788Z",
           "read": "MDY210",
           "device": "RicCal04",
@@ -14691,8 +14443,8 @@
       "plate": "MIW979",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 2,
-      "reconstruida": 5,
+      "camara": 5,
+      "reconstruida": 2,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -14705,13 +14457,10 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-15T01:38:10.000Z",
-          "read": "274",
-          "device": "RicPreIngInFr",
-          "P": 0.6569084957869415,
-          "prueba": false,
-          "rivales": []
+          "estado": "camara",
+          "t": "2026-10-15T01:43:51.941Z",
+          "read": "MIW979",
+          "device": "RicPreIngInFr"
         },
         {
           "node": "ricardone:Calada",
@@ -14742,7 +14491,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T02:26:55.080Z",
           "read": "MIW079",
           "device": "SLZBalIngFte",
@@ -14768,7 +14517,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T03:06:26.000Z",
           "read": "MIW9W9",
           "device": "SLZSalidaC1Fte",
@@ -14791,8 +14540,8 @@
       "plate": "CMF111",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 3,
-      "reconstruida": 1,
+      "camara": 4,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -14819,7 +14568,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T05:27:33.372Z",
           "read": "LMF111",
           "device": "SLZBalSC2Fte",
@@ -14849,8 +14598,8 @@
       "plate": "AE205LN",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -14906,7 +14655,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T08:18:45.392Z",
           "read": "AE205LM",
           "device": "SLZBalIngFte",
@@ -15021,8 +14770,8 @@
       "plate": "AB058QV",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 1,
-      "reconstruida": 5,
+      "camara": 5,
+      "reconstruida": 1,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -15061,7 +14810,7 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T08:01:56.000Z",
           "read": "AB0580V",
           "device": "RicEgrCamFrente",
@@ -15080,7 +14829,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T08:14:33.282Z",
           "read": "AB058VV",
           "device": "SLZIngCamFrente",
@@ -15099,22 +14848,10 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-15T08:21:09.000Z",
-          "read": "AB0589V",
-          "device": "SLZBalIngFte",
-          "P": 0.8479683097113208,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "DEZ159",
-              "p": 0.002714814114031135
-            },
-            {
-              "plate": "AA288YX",
-              "p": 0.002067284384866298
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-15T08:21:42.542Z",
+          "read": "AB058QV",
+          "device": "SLZBalIngFte"
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
@@ -15141,7 +14878,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T09:06:42.000Z",
           "read": "AB05GVV",
           "device": "SLZSalidaC1Fte",
@@ -15164,9 +14901,9 @@
       "plate": "CJE449",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 0,
+      "camara": 1,
       "reconstruida": 3,
-      "deducida": 5,
+      "deducida": 4,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-15T03:33:46.000Z",
@@ -15189,7 +14926,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T03:32:38.962Z",
           "read": "CJE409",
           "device": "RicPreIngInFr",
@@ -15203,7 +14940,10 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "deducida"
+          "estado": "reconstruida",
+          "t": "2026-10-15T08:05:08.000Z",
+          "read": "CJ449",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -15241,8 +14981,8 @@
       "plate": "AA288YX",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 4,
-      "reconstruida": 3,
+      "camara": 6,
+      "reconstruida": 1,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -15258,7 +14998,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T05:13:55.735Z",
           "read": "AA288VX",
           "device": "RicPreIngInFr",
@@ -15294,7 +15034,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T08:24:39.087Z",
           "read": "AA280YX",
           "device": "SLZBalIngFte",
@@ -15347,9 +15087,9 @@
       "plate": "SMA860",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 2,
+      "camara": 3,
       "reconstruida": 1,
-      "deducida": 5,
+      "deducida": 4,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-15T05:08:47.000Z",
@@ -15379,7 +15119,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T08:12:01.030Z",
           "read": "SMW860",
           "device": "SLZIngCamFrente",
@@ -15398,11 +15138,15 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "deducidaFinal"
+          "estado": "deducida"
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "deducidaFinal"
+          "estado": "reconstruida",
+          "t": "2026-10-15T09:00:52.000Z",
+          "read": "SH90",
+          "device": "SLZVolcableC5",
+          "P": 0.6860154317348481
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
@@ -15418,8 +15162,8 @@
       "plate": "DEZ159",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 1,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -15464,22 +15208,10 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
-          "t": "2026-10-15T09:00:52.000Z",
-          "read": "SH90",
-          "device": "SLZVolcableC5",
-          "P": 0.879311417467612,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "SMA860",
-              "p": 0.022723076913231395
-            },
-            {
-              "plate": "CJE449",
-              "p": 0.004447357155099001
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-15T10:20:40.618Z",
+          "read": "DEZ159",
+          "device": "SLZVolcableC5"
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
@@ -15501,8 +15233,8 @@
       "plate": "PDB901",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 2,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -15525,41 +15257,17 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
-          "t": "2026-10-15T07:50:10.000Z",
-          "read": "CI609",
-          "device": "RicCal03",
-          "P": 0.6995478605032676,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "CJE449",
-              "p": 0.07151655457958637
-            },
-            {
-              "plate": "AE205LN",
-              "p": 0.010278666803634373
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-15T08:00:12.696Z",
+          "read": "PDB901",
+          "device": "RicCal04"
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-15T08:05:08.000Z",
-          "read": "CJ449",
-          "device": "RicEgrCamFrente",
-          "P": 0.9265286392062098,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "CJE449",
-              "p": 0.06808270539620696
-            },
-            {
-              "plate": "AA288YX",
-              "p": 0.0004801021924518766
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-15T08:07:49.237Z",
+          "read": "PDB901",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -15772,8 +15480,8 @@
       "plate": "EVD342",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -15782,7 +15490,7 @@
       "pasosDetalle": [
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T07:58:59.785Z",
           "read": "EVD312",
           "device": "SLZIngCamFrente",
@@ -15882,8 +15590,8 @@
       "plate": "GMM265",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 2,
+      "camara": 6,
+      "reconstruida": 1,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -15936,7 +15644,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T10:24:27.323Z",
           "read": "LMM265",
           "device": "SLZBalIngFte",
@@ -15981,8 +15689,8 @@
       "plate": "HAQ820",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -15998,7 +15706,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T10:27:39.880Z",
           "read": "HAO020",
           "device": "SLZBalIngFte",
@@ -16224,8 +15932,8 @@
       "plate": "GGX385",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -16234,7 +15942,7 @@
       "pasosDetalle": [
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T10:23:57.012Z",
           "read": "GGX3850",
           "device": "SLZIngCamFrente",
@@ -16309,8 +16017,8 @@
       "plate": "GFP699",
       "circuit": "SL3",
       "pasos": 4,
-      "camara": 0,
-      "reconstruida": 3,
+      "camara": 2,
+      "reconstruida": 1,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -16338,7 +16046,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T11:29:07.515Z",
           "read": "IGFP699",
           "device": "SLZBalIngFte",
@@ -16361,7 +16069,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T21:10:16.865Z",
           "read": "ILFP699",
           "device": "SLZSalidaC2Fte",
@@ -16384,8 +16092,8 @@
       "plate": "MVH188",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -16429,7 +16137,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T11:19:39.696Z",
           "read": "MVH2188",
           "device": "SLZBalIngFte",
@@ -16598,8 +16306,8 @@
       "plate": "TVO953",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 4,
-      "reconstruida": 3,
+      "camara": 5,
+      "reconstruida": 2,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -16671,22 +16379,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-15T14:38:05.000Z",
-          "read": "VO953",
-          "device": "SLZSalidaC2Fte",
-          "P": 0.9941279545654775,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "HHK602",
-              "p": 0.0002598096723798876
-            },
-            {
-              "plate": "GMM265",
-              "p": 0.000015188844195169144
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-15T14:38:06.790Z",
+          "read": "TVO953",
+          "device": "SLZSalidaC1Fte"
         }
       ]
     },
@@ -16694,8 +16390,8 @@
       "plate": "AC707BY",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -16708,18 +16404,10 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-15T09:32:42.000Z",
-          "read": "8212",
-          "device": "RicPreIngEgFr",
-          "P": 0.7014942415446255,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "GMM265",
-              "p": 0.13781960983313563
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-15T10:10:55.256Z",
+          "read": "AC707BY",
+          "device": "RicPreIngInFr"
         },
         {
           "node": "ricardone:Calada",
@@ -16861,8 +16549,8 @@
       "plate": "HWF178",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 2,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -16893,7 +16581,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T10:58:30.941Z",
           "read": "HWF170",
           "device": "RicCal04",
@@ -16903,13 +16591,10 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-15T11:08:17.000Z",
-          "read": "ZX7Y",
-          "device": "RicEgrCamFrente",
-          "P": 0.4782513181019332,
-          "prueba": false,
-          "rivales": []
+          "estado": "camara",
+          "t": "2026-10-15T11:08:28.210Z",
+          "read": "HWF178",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -17105,8 +16790,8 @@
       "plate": "HLU324",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 1,
+      "camara": 6,
+      "reconstruida": 0,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -17138,13 +16823,10 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-15T11:16:59.000Z",
-          "read": "IGEP6991",
-          "device": "RicEgrCamFrente",
-          "P": 0.41028117048883095,
-          "prueba": false,
-          "rivales": []
+          "estado": "camara",
+          "t": "2026-10-15T14:01:39.555Z",
+          "read": "HLU324",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -17260,8 +16942,8 @@
       "plate": "WEJ048",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 3,
-      "reconstruida": 4,
+      "camara": 6,
+      "reconstruida": 1,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -17281,11 +16963,11 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T13:43:18.421Z",
           "read": "WFJ4048",
           "device": "RicCal03",
-          "P": 0.8703715897113438
+          "P": 0.773371563059724
         },
         {
           "node": "ricardone:Salida 2",
@@ -17297,7 +16979,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T14:15:41.872Z",
           "read": "MEJ048",
           "device": "SLZIngCamFrente"
@@ -17325,22 +17007,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-15T15:11:24.149Z",
-          "read": "ME9048",
-          "device": "SLZSalidaC1Fte",
-          "P": 0.9191210618324439,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "EAO104",
-              "p": 0.0015791715962392408
-            },
-            {
-              "plate": "GFP699",
-              "p": 0.0003592325419256736
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-15T15:11:24.785Z",
+          "read": "WEJ048",
+          "device": "SLZSalidaC2Fte"
         }
       ]
     },
@@ -17348,8 +17018,8 @@
       "plate": "AB930VZ",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 1,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -17409,7 +17079,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T14:55:12.958Z",
           "read": "AB93112",
           "device": "SLZVolcableC5",
@@ -18035,8 +17705,8 @@
       "plate": "AA875OG",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 3,
-      "reconstruida": 1,
+      "camara": 4,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -18070,22 +17740,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-15T17:09:18.139Z",
-          "read": "SVD85",
-          "device": "SLZSalidaC2Fte",
-          "P": 0.4250468565068334,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "RUF463",
-              "p": 0.010705504459621637
-            },
-            {
-              "plate": "GFP699",
-              "p": 0.007446425114390927
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-15T17:13:20.465Z",
+          "read": "AA875OG",
+          "device": "SLZSalidaC1Fte"
         }
       ]
     },
@@ -18093,8 +17751,8 @@
       "plate": "SPH903",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 1,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -18121,13 +17779,10 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-15T14:21:55.469Z",
-          "read": "AKJ9891",
-          "device": "RicEgrCamFrente",
-          "P": 0.8259616489089535,
-          "prueba": false,
-          "rivales": []
+          "estado": "camara",
+          "t": "2026-10-15T16:43:03.745Z",
+          "read": "SPH903",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -18236,8 +17891,8 @@
       "plate": "AD208IR",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -18267,22 +17922,10 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-15T16:39:47.000Z",
-          "read": "A9H3R2",
-          "device": "RicEgrCamFrente",
-          "P": 0.4356824509240814,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AI411QI",
-              "p": 0.033575305214721116
-            },
-            {
-              "plate": "FSH798",
-              "p": 0.00876123284222521
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-15T16:44:22.871Z",
+          "read": "AD208IR",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -18621,8 +18264,8 @@
       "plate": "SMA331",
       "circuit": "R33",
       "pasos": 9,
-      "camara": 5,
-      "reconstruida": 1,
+      "camara": 6,
+      "reconstruida": 0,
       "deducida": 3,
       "falta": 0,
       "faltan": [],
@@ -18638,18 +18281,10 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-15T15:36:21.000Z",
-          "read": "A9W",
-          "device": "RicPreIngEgFr",
-          "P": 0.4280229401779435,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "TZJ373",
-              "p": 0.10728642627602195
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-15T15:37:39.315Z",
+          "read": "SMA331",
+          "device": "RicPreIngInFr"
         },
         {
           "node": "ricardone:Calada",
@@ -18822,8 +18457,8 @@
       "circuit": "R7",
       "pasos": 8,
       "camara": 5,
-      "reconstruida": 1,
-      "deducida": 2,
+      "reconstruida": 0,
+      "deducida": 3,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-15T14:01:45.000Z",
@@ -18850,10 +18485,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-15T14:01:01.000Z",
-          "read": "301866",
-          "device": "RicPreIngInFr"
+          "estado": "deducida"
         },
         {
           "node": "ricardone:Calada",
@@ -19118,8 +18750,8 @@
       "plate": "AI411QI",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -19168,22 +18800,10 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-15T18:37:01.000Z",
-          "read": "C4G",
-          "device": "SLZIngCamFrente",
-          "P": 0.8673682894154956,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AA534LO",
-              "p": 0.050925755485096556
-            },
-            {
-              "plate": "CDF727",
-              "p": 0.00012722132983773878
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-15T18:37:16.491Z",
+          "read": "AI411QI",
+          "device": "SLZIngCamFrente"
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
@@ -19231,8 +18851,8 @@
       "plate": "GZI868",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -19286,7 +18906,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T19:00:12.334Z",
           "read": "GZT868",
           "device": "SLZBalSC2Fte",
@@ -19886,8 +19506,8 @@
       "plate": "AA534LO",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -19957,7 +19577,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T22:43:24.000Z",
           "read": "AA534L0",
           "device": "SLZBalSC2Fte",
@@ -20259,9 +19879,9 @@
       "plate": "SJS686",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
+      "camara": 7,
       "reconstruida": 1,
-      "deducida": 1,
+      "deducida": 0,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-15T19:09:54.000Z",
@@ -20273,7 +19893,10 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "deducida"
+          "estado": "reconstruida",
+          "t": "2026-10-15T19:13:55.000Z",
+          "read": "HERMAN",
+          "device": "RicPreIngEgFr"
         },
         {
           "node": "ricardone:Calada",
@@ -20319,22 +19942,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-15T23:57:10.000Z",
-          "read": "D686",
-          "device": "SLZSalidaC2Fte",
-          "P": 0.8603145317544264,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "GNZ601",
-              "p": 0.001550351909849389
-            },
-            {
-              "plate": "AFR797",
-              "p": 0.0006805051980319195
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-15T23:57:11.562Z",
+          "read": "SJS686",
+          "device": "SLZSalidaC1Fte"
         }
       ]
     },
@@ -20514,8 +20125,8 @@
       "plate": "GMZ752",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 1,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -20528,22 +20139,10 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-15T19:13:55.000Z",
-          "read": "HERMAN",
-          "device": "RicPreIngEgFr",
-          "P": 0.5129286847506852,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "SJS686",
-              "p": 0.010505217942355973
-            },
-            {
-              "plate": "FPB081",
-              "p": 0.005937731880462073
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-15T19:17:16.186Z",
+          "read": "GMZ752",
+          "device": "RicPreIngInFr"
         },
         {
           "node": "ricardone:Calada",
@@ -20698,8 +20297,8 @@
       "plate": "LRL086",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 2,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -20750,7 +20349,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T00:19:30.000Z",
           "read": "LRL0B6",
           "device": "SLZVolcableC5",
@@ -20765,22 +20364,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-16T00:31:12.000Z",
-          "read": "LRL08F",
-          "device": "SLZSalidaC2Fte",
-          "P": 0.9998764329843899,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "ORN981",
-              "p": 2.556634192190375e-7
-            },
-            {
-              "plate": "ESK363",
-              "p": 2.2904381673587874e-8
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T00:31:15.940Z",
+          "read": "LRL086",
+          "device": "SLZSalidaC1Fte"
         }
       ]
     },
@@ -20970,8 +20557,8 @@
       "circuit": "R7",
       "pasos": 8,
       "camara": 1,
-      "reconstruida": 3,
-      "deducida": 4,
+      "reconstruida": 4,
+      "deducida": 3,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-15T21:52:25.000Z",
@@ -21035,11 +20622,14 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "deducidaFinal"
+          "estado": "deducida"
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "deducidaFinal"
+          "estado": "reconstruida",
+          "t": "2026-10-15T23:57:10.000Z",
+          "read": "D686",
+          "device": "SLZSalidaC2Fte"
         }
       ]
     },
@@ -21047,8 +20637,8 @@
       "plate": "CMF111",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 3,
-      "reconstruida": 1,
+      "camara": 4,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -21075,7 +20665,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T01:35:18.548Z",
           "read": "LMF111",
           "device": "SLZBalSC2Fte"
@@ -21154,8 +20744,8 @@
       "plate": "AA596LV",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 0,
-      "reconstruida": 4,
+      "camara": 2,
+      "reconstruida": 2,
       "deducida": 4,
       "falta": 0,
       "faltan": [],
@@ -21179,7 +20769,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T18:09:51.369Z",
           "read": "AA594LV",
           "device": "RicPreIngInFr",
@@ -21194,7 +20784,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T18:46:25.000Z",
           "read": "AA590L",
           "device": "RicCal03",
@@ -21669,8 +21259,8 @@
       "plate": "AA323QP",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 2,
-      "reconstruida": 2,
+      "camara": 3,
+      "reconstruida": 1,
       "deducida": 4,
       "falta": 0,
       "faltan": [],
@@ -21693,7 +21283,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T23:06:43.000Z",
           "read": "AA3230P",
           "device": "RicCal04",
@@ -21746,8 +21336,8 @@
       "plate": "OHL339",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 4,
-      "reconstruida": 2,
+      "camara": 5,
+      "reconstruida": 1,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -21763,7 +21353,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T00:42:56.341Z",
           "read": "OFL339",
           "device": "RicPreIngInFr",
@@ -21951,9 +21541,9 @@
       "plate": "REW171",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
+      "camara": 6,
       "reconstruida": 1,
-      "deducida": 2,
+      "deducida": 1,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-16T00:29:00.000Z",
@@ -21980,7 +21570,10 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "deducida"
+          "estado": "reconstruida",
+          "t": "2026-10-16T00:27:22.000Z",
+          "read": "CJL",
+          "device": "RicPreIngInFr"
         },
         {
           "node": "ricardone:Calada",
@@ -22028,7 +21621,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T03:57:43.596Z",
           "read": "PEW171",
           "device": "SLZBalSC2Fte",
@@ -22195,8 +21788,8 @@
       "plate": "EXI580",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 4,
-      "reconstruida": 4,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -22209,26 +21802,14 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-16T00:27:22.000Z",
-          "read": "CJL",
-          "device": "RicPreIngInFr",
-          "P": 0.554831129077185,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "REW171",
-              "p": 0.0847562601898407
-            },
-            {
-              "plate": "OHL339",
-              "p": 0.016304031397637673
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T00:30:43.418Z",
+          "read": "EXI580",
+          "device": "RicPreIngInFr"
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T01:35:01.804Z",
           "read": "EXT580",
           "device": "RicCal04",
@@ -22268,7 +21849,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T03:52:10.951Z",
           "read": "EXT580",
           "device": "SLZVolcableC5",
@@ -22287,7 +21868,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T04:18:21.355Z",
           "read": "EXT580",
           "device": "SLZBalSC2Fte"
@@ -22317,8 +21898,8 @@
       "plate": "JBC213",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -22364,18 +21945,10 @@
         },
         {
           "node": "ricardone:Playa 3",
-          "estado": "reconstruida",
-          "t": "2026-10-15T16:41:59.000Z",
-          "read": "GG528",
-          "device": "RicS6Playa3",
-          "P": 0.5468875130886898,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "MCO802",
-              "p": 0.001633634462394974
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-15T16:51:58.339Z",
+          "read": "JBC213",
+          "device": "RicS6Playa3"
         },
         {
           "node": "ricardone:Volcable 2",
@@ -22502,8 +22075,8 @@
       "plate": "AF529BM",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 3,
-      "reconstruida": 3,
+      "camara": 6,
+      "reconstruida": 0,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -22526,7 +22099,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T01:31:44.000Z",
           "read": "AF5290M",
           "device": "RicCal04",
@@ -22563,7 +22136,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T04:28:19.000Z",
           "read": "AF5290H",
           "device": "SLZVolcableC5",
@@ -22586,7 +22159,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T05:04:46.093Z",
           "read": "AF5298",
           "device": "SLZSalidaC1Fte",
@@ -22609,8 +22182,8 @@
       "plate": "AI352BF",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -22648,22 +22221,10 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-15T23:41:40.000Z",
-          "read": "D0I036",
-          "device": "RicEgrCamFrente",
-          "P": 0.7526915921357639,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "ROO102",
-              "p": 0.013750932206462268
-            },
-            {
-              "plate": "AC099XW",
-              "p": 0.010343125648472565
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T01:21:03.607Z",
+          "read": "AI352BF",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -22706,8 +22267,8 @@
       "plate": "AA995NB",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 0,
-      "reconstruida": 7,
+      "camara": 6,
+      "reconstruida": 1,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -22735,7 +22296,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-15T23:56:35.136Z",
           "read": "AA995NE",
           "device": "RicPreIngInFr",
@@ -22777,7 +22338,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T03:13:16.000Z",
           "read": "AA995N",
           "device": "SLZIngCamFrente",
@@ -22785,26 +22346,14 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-16T03:15:32.027Z",
-          "read": "AA995ND",
-          "device": "SLZBalIngFte",
-          "P": 0.9553130150612885,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AF529BM",
-              "p": 0.00012101670187500706
-            },
-            {
-              "plate": "AA323QP",
-              "p": 0.00007881031596518563
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T03:16:11.963Z",
+          "read": "AA995NB",
+          "device": "SLZBalIngFte"
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T04:59:43.380Z",
           "read": "AA995ND",
           "device": "SLZVolcableC5",
@@ -22823,7 +22372,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T05:11:16.117Z",
           "read": "AA9957",
           "device": "SLZBalSC2Fte",
@@ -22842,7 +22391,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T05:13:08.814Z",
           "read": "AA995RB",
           "device": "SLZSalidaC1Fte",
@@ -22974,8 +22523,8 @@
       "plate": "FTW206",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 2,
-      "reconstruida": 3,
+      "camara": 3,
+      "reconstruida": 2,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -23033,7 +22582,7 @@
         },
         {
           "node": "ricardone:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T05:50:43.668Z",
           "read": "ETW206",
           "device": "RicB2Egreso",
@@ -23165,8 +22714,8 @@
       "plate": "AA817CC",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 2,
-      "reconstruida": 2,
+      "camara": 4,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -23189,7 +22738,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T02:27:24.889Z",
           "read": "AA017CC",
           "device": "RicCal04",
@@ -23212,7 +22761,7 @@
         },
         {
           "node": "ricardone:Playa 3",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T02:55:55.689Z",
           "read": "AA017CC",
           "device": "RicS6Playa3",
@@ -23246,9 +22795,9 @@
       "plate": "DPW047",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 1,
+      "camara": 2,
       "reconstruida": 1,
-      "deducida": 3,
+      "deducida": 2,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-16T02:48:00.000Z",
@@ -23260,7 +22809,10 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "deducida"
+          "estado": "reconstruida",
+          "t": "2026-10-16T03:09:50.000Z",
+          "read": "AB138H",
+          "device": "RicPreIngEgFr"
         },
         {
           "node": "ricardone:Calada",
@@ -23278,7 +22830,7 @@
         },
         {
           "node": "ricardone:Playa 3",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T03:42:58.265Z",
           "read": "DPW007",
           "device": "RicS6Playa3",
@@ -23309,8 +22861,8 @@
       "plate": "HDC112",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 1,
-      "reconstruida": 6,
+      "camara": 6,
+      "reconstruida": 1,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -23326,7 +22878,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T02:06:27.433Z",
           "read": "HUC112",
           "device": "RicPreIngInFr",
@@ -23336,7 +22888,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T07:49:00.319Z",
           "read": "HOC2112",
           "device": "RicCal04",
@@ -23362,7 +22914,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T08:16:26.173Z",
           "read": "HOC112",
           "device": "SLZIngCamFrente",
@@ -23381,7 +22933,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T08:18:59.215Z",
           "read": "HOCZ112",
           "device": "SLZBalIngFte",
@@ -23423,7 +22975,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T08:54:53.885Z",
           "read": "HDC2112",
           "device": "SLZSalidaC2Fte",
@@ -23678,8 +23230,8 @@
       "plate": "AG857OJ",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 3,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -23723,26 +23275,14 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-16T08:34:13.000Z",
-          "read": "AG8570J",
-          "device": "SLZBalIngFte",
-          "P": 0.9628424087333013,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "DOX036",
-              "p": 0.005035168466408329
-            },
-            {
-              "plate": "AYZ915",
-              "p": 0.003907643948175471
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T08:34:46.071Z",
+          "read": "AG857OJ",
+          "device": "SLZBalIngFte"
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T08:57:23.000Z",
           "read": "AG8570J",
           "device": "SLZVolcableC5",
@@ -23761,22 +23301,10 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-16T09:03:35.895Z",
-          "read": "AG8570",
-          "device": "SLZBalSC2Fte",
-          "P": 0.9819514582551998,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "JFX298",
-              "p": 0.00006579586203361952
-            },
-            {
-              "plate": "FBV155",
-              "p": 0.00003887704416064784
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T09:03:41.537Z",
+          "read": "AG857OJ",
+          "device": "SLZBalSC2Fte"
         },
         {
           "node": "san_lorenzo:Egreso",
@@ -23791,8 +23319,8 @@
       "plate": "AYZ915",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 3,
       "falta": 0,
       "faltan": [],
@@ -23827,7 +23355,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T08:04:54.235Z",
           "read": "CYZ915",
           "device": "RicCal04",
@@ -23883,9 +23411,9 @@
       "plate": "FBV155",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 4,
-      "reconstruida": 2,
-      "deducida": 2,
+      "camara": 5,
+      "reconstruida": 3,
+      "deducida": 0,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-16T05:09:00.000Z",
@@ -23915,7 +23443,10 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "deducida"
+          "estado": "reconstruida",
+          "t": "2026-10-16T08:25:27.000Z",
+          "read": "G882",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -23926,7 +23457,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T08:41:19.027Z",
           "read": "FBV3155",
           "device": "SLZBalIngFte",
@@ -23945,7 +23476,11 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "deducida"
+          "estado": "reconstruida",
+          "t": "2026-10-16T09:10:56.000Z",
+          "read": "AT188",
+          "device": "SLZVolcableC5",
+          "P": 0.6000855958825719
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
@@ -23967,8 +23502,8 @@
       "plate": "FAI896",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -24043,22 +23578,10 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
-          "t": "2026-10-16T09:10:56.000Z",
-          "read": "AT188",
-          "device": "SLZVolcableC5",
-          "P": 0.41372404484171055,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "FBV155",
-              "p": 0.40995583451846307
-            },
-            {
-              "plate": "FAZ872",
-              "p": 0.01682675548730808
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T09:19:33.947Z",
+          "read": "FAI896",
+          "device": "SLZVolcableC5"
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
@@ -24080,8 +23603,8 @@
       "plate": "AB592JA",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 3,
-      "reconstruida": 2,
+      "camara": 4,
+      "reconstruida": 1,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -24094,7 +23617,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T02:49:46.064Z",
           "read": "AB592AA",
           "device": "RicPreIngInFr",
@@ -24301,8 +23824,8 @@
       "plate": "AD536BQ",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 3,
-      "reconstruida": 4,
+      "camara": 6,
+      "reconstruida": 1,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -24318,7 +23841,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T03:40:49.304Z",
           "read": "AD53680",
           "device": "RicPreIngInFr",
@@ -24348,7 +23871,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T08:07:51.000Z",
           "read": "A153660",
           "device": "SLZIngCamFrente",
@@ -24371,22 +23894,10 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
-          "t": "2026-10-16T10:22:48.000Z",
-          "read": "LF7",
-          "device": "SLZVolcableC2",
-          "P": 0.5876396786405499,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AA510XV",
-              "p": 0.02194897686969983
-            },
-            {
-              "plate": "FAZ872",
-              "p": 0.02162915243558129
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T11:22:10.842Z",
+          "read": "AD536BQ",
+          "device": "SLZVolcableC5"
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
@@ -24408,8 +23919,8 @@
       "plate": "AA510XV",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 2,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -24422,13 +23933,10 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-16T03:41:07.841Z",
-          "read": "IAD64",
-          "device": "RicPreIngEgFr",
-          "P": 0.5353093664539654,
-          "prueba": false,
-          "rivales": []
+          "estado": "camara",
+          "t": "2026-10-16T03:44:03.714Z",
+          "read": "AA510XV",
+          "device": "RicPreIngInFr"
         },
         {
           "node": "ricardone:Calada",
@@ -24457,22 +23965,10 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
-          "t": "2026-10-16T10:26:51.000Z",
-          "read": "LF7",
-          "device": "SLZVolcableC2",
-          "P": 0.6069044581249785,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "FAZ872",
-              "p": 0.022447256187805038
-            },
-            {
-              "plate": "AA807IW",
-              "p": 0.02130349789995325
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T11:28:55.258Z",
+          "read": "AA510XV",
+          "device": "SLZVolcableC5"
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
@@ -24494,8 +23990,8 @@
       "plate": "HKH684",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -24511,22 +24007,10 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-16T03:09:50.000Z",
-          "read": "AB138H",
-          "device": "RicPreIngEgFr",
-          "P": 0.9059020712249616,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "ENQ213",
-              "p": 0.02191485628436951
-            },
-            {
-              "plate": "OJP930",
-              "p": 0.006072791500487936
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T03:10:48.296Z",
+          "read": "HKH684",
+          "device": "RicPreIngInFr"
         },
         {
           "node": "ricardone:Calada",
@@ -24578,8 +24062,8 @@
       "plate": "FAZ872",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 2,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -24628,7 +24112,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T08:23:51.082Z",
           "read": "IAZ872",
           "device": "SLZIngCamFrente",
@@ -24651,22 +24135,10 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
-          "t": "2026-10-16T10:40:50.000Z",
-          "read": "2ZJ",
-          "device": "SLZVolcableC1",
-          "P": 0.6262584238187805,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AA807IW",
-              "p": 0.020870776351736498
-            },
-            {
-              "plate": "AC099XW",
-              "p": 0.009234649600503927
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T11:51:57.544Z",
+          "read": "FAZ872",
+          "device": "SLZVolcableC5"
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
@@ -24745,8 +24217,8 @@
       "plate": "AA807IW",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -24776,22 +24248,10 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-16T08:25:27.000Z",
-          "read": "G882",
-          "device": "RicEgrCamFrente",
-          "P": 0.5216881594792406,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "MCO802",
-              "p": 0.04112049966346555
-            },
-            {
-              "plate": "FBV155",
-              "p": 0.006653876617961394
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T08:36:39.096Z",
+          "read": "AA807IW",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -25186,8 +24646,8 @@
       "plate": "JXP796",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -25252,22 +24712,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-16T13:22:00.000Z",
-          "read": "XP796",
-          "device": "SLZSalidaC2Fte",
-          "P": 0.9994400483701472,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "HFY597",
-              "p": 0.00003494029137252401
-            },
-            {
-              "plate": "CMF111",
-              "p": 0.000006293331084154087
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T13:22:26.221Z",
+          "read": "JXP796",
+          "device": "SLZSalidaC1Fte"
         }
       ]
     },
@@ -26125,8 +25573,8 @@
       "plate": "KUZ393",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -26163,7 +25611,7 @@
         },
         {
           "node": "ricardone:Playa 3",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T08:37:27.826Z",
           "read": "KIZ393",
           "device": "RicS6Playa3",
@@ -26222,9 +25670,9 @@
         {
           "node": "ricardone:Calada",
           "estado": "reconstruida",
-          "t": "2026-10-16T08:23:04.819Z",
-          "read": "HKL02",
-          "device": "RicCal03",
+          "t": "2026-10-16T09:21:26.000Z",
+          "read": "UC744",
+          "device": "RicCalLiq",
           "P": 0.5738280270744547
         },
         {
@@ -26365,8 +25813,8 @@
       "plate": "SOY202",
       "circuit": "R16",
       "pasos": 4,
-      "camara": 2,
-      "reconstruida": 1,
+      "camara": 3,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -26382,22 +25830,10 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-16T07:07:51.000Z",
-          "read": "SO202",
-          "device": "RicPreIngInFr",
-          "P": 0.982545768486164,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "JVG882",
-              "p": 0.00030661957281204774
-            },
-            {
-              "plate": "RKY623",
-              "p": 0.0002831095723858278
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T13:48:39.757Z",
+          "read": "SOY202",
+          "device": "RicPreIngInFr"
         },
         {
           "node": "ricardone:Calada",
@@ -26625,8 +26061,8 @@
       "plate": "EPN057",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -26691,7 +26127,7 @@
         },
         {
           "node": "ricardone:Volcable 2",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T15:30:52.508Z",
           "read": "IPN057",
           "device": "RicVolcable2",
@@ -26779,8 +26215,8 @@
       "plate": "OJP930",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 2,
+      "camara": 7,
+      "reconstruida": 1,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -26796,7 +26232,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T03:16:28.398Z",
           "read": "QJP930",
           "device": "RicPreIngInFr",
@@ -27135,8 +26571,8 @@
       "plate": "AH626RK",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -27190,22 +26626,10 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-16T13:21:36.000Z",
-          "read": "227",
-          "device": "RicEgrCamFrente",
-          "P": 0.47716650693368723,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "MCO802",
-              "p": 0.0010650873288232821
-            },
-            {
-              "plate": "SOY202",
-              "p": 0.000019723839422649036
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T14:30:53.712Z",
+          "read": "AH626RK",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -27530,8 +26954,8 @@
       "plate": "MVH188",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -27617,22 +27041,10 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
-          "t": "2026-10-16T17:18:12.000Z",
-          "read": "B28",
-          "device": "SLZVolcableC1",
-          "P": 0.7220482491271843,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AG725TB",
-              "p": 0.010931230389638015
-            },
-            {
-              "plate": "AA061OB",
-              "p": 0.0003086999607730809
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T17:22:51.535Z",
+          "read": "MVH188",
+          "device": "SLZVolcableC5"
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
@@ -27666,8 +27078,8 @@
       "plate": "JUC744",
       "circuit": "R8",
       "pasos": 3,
-      "camara": 1,
-      "reconstruida": 2,
+      "camara": 2,
+      "reconstruida": 1,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -27702,22 +27114,10 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
-          "t": "2026-10-16T09:21:26.000Z",
-          "read": "UC744",
-          "device": "RicCalLiq",
-          "P": 0.9984072459763367,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "PAZ923",
-              "p": 0.0009450198741426663
-            },
-            {
-              "plate": "RKY623",
-              "p": 0.00012376237170225483
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T14:11:03.747Z",
+          "read": "JUC744",
+          "device": "RicCalLiq"
         },
         {
           "node": "ricardone:Balanza Ingreso",
@@ -28745,9 +28145,9 @@
       "plate": "AG725TB",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
+      "camara": 6,
       "reconstruida": 1,
-      "deducida": 2,
+      "deducida": 1,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-16T15:23:00.000Z",
@@ -28773,17 +28173,17 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "deducida"
+          "estado": "reconstruida",
+          "t": "2026-10-16T17:01:27.000Z",
+          "read": "OU144",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-16T16:03:59.000Z",
-          "read": "0ZG1",
-          "device": "SLZIngCamFrente",
-          "P": 0.46837569361537734,
-          "prueba": false,
-          "rivales": []
+          "estado": "camara",
+          "t": "2026-10-16T20:36:53.573Z",
+          "read": "AG725TB",
+          "device": "SLZIngCamFrente"
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
@@ -28946,8 +28346,8 @@
       "plate": "GKA328",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 1,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -28967,7 +28367,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T21:06:32.329Z",
           "read": "GKA320",
           "device": "RicCal03",
@@ -29138,8 +28538,8 @@
       "plate": "CMF111",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 3,
-      "reconstruida": 1,
+      "camara": 4,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -29166,7 +28566,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T00:06:19.415Z",
           "read": "LMF111",
           "device": "SLZBalSC2Fte",
@@ -29234,8 +28634,8 @@
       "plate": "AA699TL",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 3,
-      "reconstruida": 2,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -29276,7 +28676,7 @@
         },
         {
           "node": "ricardone:Volcable 2",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T23:55:06.000Z",
           "read": "AA699T",
           "device": "RicVolcable2",
@@ -29291,7 +28691,7 @@
         },
         {
           "node": "ricardone:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T00:30:23.824Z",
           "read": "AA6991",
           "device": "RicB2Egreso",
@@ -29531,8 +28931,8 @@
       "plate": "ESK363",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -29562,7 +28962,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T01:44:02.837Z",
           "read": "ESK360",
           "device": "SLZBalSC2Fte"
@@ -29580,8 +28980,8 @@
       "plate": "CXA592",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 1,
-      "reconstruida": 2,
+      "camara": 2,
+      "reconstruida": 1,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -29615,7 +29015,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T02:00:25.000Z",
           "read": "CYA592",
           "device": "SLZSalidaC1Fte",
@@ -29627,8 +29027,8 @@
       "plate": "UFB595",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 4,
-      "reconstruida": 1,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -29651,18 +29051,10 @@
         },
         {
           "node": "san_lorenzo:Carga / Descarga OSL",
-          "estado": "reconstruida",
-          "t": "2026-10-17T01:22:38.000Z",
-          "read": "C30015P0",
-          "device": "RenDescFte",
-          "P": 0.6155487996891257,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "CXA592",
-              "p": 0.3170294095881128
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T01:24:12.779Z",
+          "read": "UFB595",
+          "device": "RenDescFte"
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
@@ -29684,8 +29076,8 @@
       "plate": "AD195CG",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 1,
-      "reconstruida": 1,
+      "camara": 2,
+      "reconstruida": 0,
       "deducida": 3,
       "falta": 0,
       "faltan": [],
@@ -29702,7 +29094,7 @@
         },
         {
           "node": "san_lorenzo:Carga / Descarga OSL",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T01:54:30.340Z",
           "read": "MD195CG",
           "device": "RenCargFte",
@@ -29727,8 +29119,8 @@
       "plate": "ABO881",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 1,
-      "reconstruida": 5,
+      "camara": 4,
+      "reconstruida": 2,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -29755,7 +29147,7 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T02:16:00.086Z",
           "read": "ABO1881",
           "device": "RicEgrCamFrente",
@@ -29793,7 +29185,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T02:29:51.539Z",
           "read": "AB0881",
           "device": "SLZBalIngFte",
@@ -29820,7 +29212,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T02:49:40.871Z",
           "read": "ABQ881",
           "device": "SLZSalidaC1Fte"
@@ -29892,8 +29284,8 @@
       "plate": "ADJ153",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 2,
+      "camara": 7,
+      "reconstruida": 1,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -29944,7 +29336,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T02:46:30.530Z",
           "read": "AD1151",
           "device": "SLZVolcableC5",
@@ -29993,8 +29385,8 @@
       "plate": "EAO104",
       "circuit": "SL3",
       "pasos": 4,
-      "camara": 1,
-      "reconstruida": 3,
+      "camara": 2,
+      "reconstruida": 2,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -30010,7 +29402,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-16T22:33:00.504Z",
           "read": "EAD104",
           "device": "SLZBalIngFte",
@@ -30641,8 +30033,8 @@
       "plate": "FQS578",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -30670,7 +30062,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T01:22:53.451Z",
           "read": "FOS578",
           "device": "RicPreIngInFr",
@@ -30742,8 +30134,8 @@
       "plate": "LXR659",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 1,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -30818,7 +30210,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T03:54:48.766Z",
           "read": "LXP659",
           "device": "SLZVolcableC5",
@@ -30852,8 +30244,8 @@
       "plate": "GQF081",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 3,
-      "reconstruida": 2,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 3,
       "falta": 0,
       "faltan": [],
@@ -30899,7 +30291,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T03:35:14.227Z",
           "read": "GOF081",
           "device": "SLZIngCamFrente",
@@ -30945,7 +30337,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T04:17:50.878Z",
           "read": "GDF081",
           "device": "SLZSalidaC1Fte",
@@ -30957,8 +30349,8 @@
       "plate": "AA323QV",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 0,
-      "reconstruida": 4,
+      "camara": 3,
+      "reconstruida": 1,
       "deducida": 4,
       "falta": 0,
       "faltan": [],
@@ -30986,14 +30378,14 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T00:59:44.970Z",
           "read": "AA323CV",
           "device": "RicPreIngInFr"
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T02:03:17.659Z",
           "read": "AA3235",
           "device": "RicCal03",
@@ -31012,7 +30404,7 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T02:21:41.000Z",
           "read": "AA3238V",
           "device": "RicEgrCamFrente",
@@ -31223,8 +30615,8 @@
       "plate": "CMF111",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 1,
-      "reconstruida": 1,
+      "camara": 2,
+      "reconstruida": 0,
       "deducida": 3,
       "falta": 0,
       "faltan": [],
@@ -31237,22 +30629,10 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-17T03:51:22.000Z",
-          "read": "A10",
-          "device": "SLZBalIngFte",
-          "P": 0.4933715375791737,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "FWZ197",
-              "p": 0.024285909707087414
-            },
-            {
-              "plate": "AA323QV",
-              "p": 0.023491836341899316
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T04:02:07.555Z",
+          "read": "CMF111",
+          "device": "SLZBalIngFte"
         },
         {
           "node": "san_lorenzo:Carga / Descarga OSL",
@@ -31352,8 +30732,8 @@
       "plate": "VYS158",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 2,
-      "reconstruida": 2,
+      "camara": 4,
+      "reconstruida": 0,
       "deducida": 4,
       "falta": 0,
       "faltan": [],
@@ -31399,7 +30779,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T03:55:35.578Z",
           "read": "VYS150",
           "device": "SLZIngCamFrente",
@@ -31430,7 +30810,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T05:27:10.261Z",
           "read": "VFS158",
           "device": "SLZSalidaC1Fte",
@@ -31442,8 +30822,8 @@
       "plate": "LNT874",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 4,
-      "reconstruida": 2,
+      "camara": 5,
+      "reconstruida": 1,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -31489,7 +30869,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T04:13:47.962Z",
           "read": "LNI874",
           "device": "SLZIngCamFrente",
@@ -31614,8 +30994,8 @@
       "plate": "STN281",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 0,
-      "reconstruida": 1,
+      "camara": 1,
+      "reconstruida": 0,
       "deducida": 7,
       "falta": 0,
       "faltan": [],
@@ -31640,7 +31020,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T04:15:40.128Z",
           "read": "STK281",
           "device": "SLZIngCamFrente",
@@ -31919,8 +31299,8 @@
       "plate": "AG090RF",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 1,
-      "reconstruida": 6,
+      "camara": 6,
+      "reconstruida": 1,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -31948,21 +31328,21 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T03:56:24.330Z",
           "read": "AG090PF",
           "device": "RicPreIngInFr"
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T04:05:32.546Z",
           "read": "AG090PF",
           "device": "RicCal04"
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T04:14:00.000Z",
           "read": "AG09CPF",
           "device": "RicEgrCamFrente",
@@ -32007,7 +31387,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T06:29:12.000Z",
           "read": "AG090P",
           "device": "SLZVolcableC5",
@@ -32030,7 +31410,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T06:43:24.583Z",
           "read": "AG090PF",
           "device": "SLZSalidaC1Fte",
@@ -32053,8 +31433,8 @@
       "plate": "AE206EF",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 1,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -32098,22 +31478,10 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-17T04:39:31.000Z",
-          "read": "AE2066F",
-          "device": "SLZBalIngFte",
-          "P": 0.9998076871437676,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "STN281",
-              "p": 0.000028609288326824272
-            },
-            {
-              "plate": "AC916VX",
-              "p": 0.000013177052403200763
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T04:39:37.069Z",
+          "read": "AE206EF",
+          "device": "SLZBalIngFte"
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
@@ -32384,8 +31752,8 @@
       "plate": "GCU647",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -32436,7 +31804,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T09:05:44.908Z",
           "read": "GCU607",
           "device": "SLZVolcableC5",
@@ -32624,8 +31992,8 @@
       "circuit": "R7",
       "pasos": 8,
       "camara": 2,
-      "reconstruida": 2,
-      "deducida": 4,
+      "reconstruida": 4,
+      "deducida": 2,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-17T04:47:00.000Z",
@@ -32663,7 +32031,11 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "deducida"
+          "estado": "reconstruida",
+          "t": "2026-10-17T08:29:29.000Z",
+          "read": "VEC",
+          "device": "RicEgrCamFrente",
+          "P": 0.5663862631168154
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -32675,7 +32047,11 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "deducida"
+          "estado": "reconstruida",
+          "t": "2026-10-17T09:30:48.000Z",
+          "read": "RS430",
+          "device": "SLZVolcableC5",
+          "P": 0.9979339026035697
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
@@ -32698,9 +32074,9 @@
       "plate": "GZG893",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 1,
+      "camara": 2,
       "reconstruida": 2,
-      "deducida": 2,
+      "deducida": 1,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-17T04:50:00.000Z",
@@ -32739,17 +32115,17 @@
         },
         {
           "node": "ricardone:Playa 3",
-          "estado": "deducida"
+          "estado": "reconstruida",
+          "t": "2026-10-17T08:30:13.000Z",
+          "read": "L1903",
+          "device": "RicS6Playa3"
         },
         {
           "node": "ricardone:Volcable 2",
-          "estado": "reconstruida",
-          "t": "2026-10-17T05:07:21.000Z",
-          "read": "11P",
-          "device": "RicVolcable2",
-          "P": 0.6611689476893459,
-          "prueba": false,
-          "rivales": []
+          "estado": "camara",
+          "t": "2026-10-17T09:06:34.911Z",
+          "read": "GZG893",
+          "device": "RicVolcable2"
         },
         {
           "node": "ricardone:Balanza Egreso",
@@ -32765,8 +32141,8 @@
       "circuit": "R7",
       "pasos": 8,
       "camara": 2,
-      "reconstruida": 4,
-      "deducida": 2,
+      "reconstruida": 5,
+      "deducida": 1,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-17T06:20:00.000Z",
@@ -32797,7 +32173,11 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "deducida"
+          "estado": "reconstruida",
+          "t": "2026-10-17T08:28:40.000Z",
+          "read": "DVEC0LUP326",
+          "device": "RicCal04",
+          "P": 0.48081688045238724
         },
         {
           "node": "ricardone:Salida 2",
@@ -32884,8 +32264,8 @@
       "plate": "IOJ448",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -32912,7 +32292,7 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T08:51:13.729Z",
           "read": "IQJ448",
           "device": "RicEgrCamFrente",
@@ -33042,8 +32422,8 @@
       "plate": "AUV533",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 3,
-      "reconstruida": 4,
+      "camara": 6,
+      "reconstruida": 1,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -33071,7 +32451,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T07:09:42.687Z",
           "read": "AJV533",
           "device": "RicPreIngInFr",
@@ -33101,7 +32481,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T09:05:45.723Z",
           "read": "AJV533",
           "device": "SLZIngCamFrente",
@@ -33146,7 +32526,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T10:50:22.330Z",
           "read": "AJV533",
           "device": "SLZBalSC2Fte"
@@ -33164,8 +32544,8 @@
       "plate": "AA638NV",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 2,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -33228,7 +32608,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T10:48:08.000Z",
           "read": "AA6J8NV",
           "device": "SLZVolcableC5",
@@ -33247,7 +32627,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T10:55:59.000Z",
           "read": "AA6J8NV",
           "device": "SLZBalSC2Fte",
@@ -33366,8 +32746,8 @@
       "plate": "JAG814",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 3,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -33402,22 +32782,10 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
-          "t": "2026-10-17T08:28:40.000Z",
-          "read": "DVEC0LUP326",
-          "device": "RicCal04",
-          "P": 0.4471071413031138,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AVB781",
-              "p": 0.034114963494818795
-            },
-            {
-              "plate": "AB422FZ",
-              "p": 0.028299245606472317
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T08:36:27.290Z",
+          "read": "JAG814",
+          "device": "RicCal04"
         },
         {
           "node": "ricardone:Salida 2",
@@ -33454,41 +32822,17 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
-          "t": "2026-10-17T09:30:48.000Z",
-          "read": "RS430",
-          "device": "SLZVolcableC5",
-          "P": 0.4047200105109062,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "FGJ326",
-              "p": 0.1523182127865005
-            },
-            {
-              "plate": "HRS430",
-              "p": 0.1231956070105218
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T11:11:55.232Z",
+          "read": "JAG814",
+          "device": "SLZVolcableC5"
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-17T09:44:45.000Z",
-          "read": "VI200",
-          "device": "SLZBalSC2Fte",
-          "P": 0.6444714009567457,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "CXA592",
-              "p": 0.004530793155094363
-            },
-            {
-              "plate": "FGJ326",
-              "p": 0.003589467576009692
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T11:55:56.012Z",
+          "read": "JAG814",
+          "device": "SLZBalSC2Fte"
         },
         {
           "node": "san_lorenzo:Egreso",
@@ -33580,8 +32924,8 @@
       "plate": "UFZ176",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -33604,7 +32948,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T08:43:25.707Z",
           "read": "UFZ170",
           "device": "RicCal04",
@@ -34199,8 +33543,8 @@
       "circuit": "R7",
       "pasos": 8,
       "camara": 5,
-      "reconstruida": 1,
-      "deducida": 2,
+      "reconstruida": 2,
+      "deducida": 1,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-17T05:05:00.000Z",
@@ -34238,7 +33582,11 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "deducida"
+          "estado": "reconstruida",
+          "t": "2026-10-17T10:50:30.000Z",
+          "read": "TRANOHF",
+          "device": "RicEgrCamFrente",
+          "P": 0.6037284818148272
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -34456,8 +33804,8 @@
       "plate": "UCT966",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 2,
-      "reconstruida": 6,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -34470,7 +33818,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T08:56:46.981Z",
           "read": "UCT968",
           "device": "RicPreIngInFr",
@@ -34496,26 +33844,14 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-17T10:50:30.000Z",
-          "read": "TRANOHF",
-          "device": "RicEgrCamFrente",
-          "P": 0.7146894585676659,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "OIO489",
-              "p": 0.03573447292838329
-            },
-            {
-              "plate": "JRP278",
-              "p": 0.03435185435602752
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T10:51:12.390Z",
+          "read": "UCT966",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T11:01:50.392Z",
           "read": "UCT968",
           "device": "SLZIngCamFrente",
@@ -34534,7 +33870,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T11:21:55.508Z",
           "read": "UCT968",
           "device": "SLZBalIngFte"
@@ -34548,7 +33884,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T14:20:11.122Z",
           "read": "UCT968",
           "device": "SLZBalSC2Fte",
@@ -34567,22 +33903,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-17T14:21:59.897Z",
-          "read": "UCT968",
-          "device": "SLZSalidaC2Fte",
-          "P": 0.7018053477520674,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "GRN627",
-              "p": 0.0000034497986096788867
-            },
-            {
-              "plate": "OIO489",
-              "p": 0.000001395939257101632
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T14:22:00.122Z",
+          "read": "UCT966",
+          "device": "SLZSalidaC1Fte"
         }
       ]
     },
@@ -34590,8 +33914,8 @@
       "plate": "AB086WB",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 1,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -34626,7 +33950,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T04:47:48.176Z",
           "read": "AB080WB",
           "device": "RicCal04",
@@ -34699,12 +34023,9 @@
         {
           "node": "ricardone:Ingreso",
           "estado": "excluido",
-          "t": "2026-10-17T08:57:43.000Z",
-          "read": "BV834",
-          "device": "RicIngCamFrente",
-          "P": 0.5103059804111998,
-          "prueba": false,
-          "rivales": []
+          "t": "2026-10-17T09:08:29.021Z",
+          "read": "OIO489",
+          "device": "RicIngCamFrente"
         },
         {
           "node": "ricardone:Pre ingreso",
@@ -34892,8 +34213,8 @@
       "plate": "CAL265",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 2,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -34917,7 +34238,7 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T08:30:47.021Z",
           "read": "GA2265",
           "device": "RicEgrCamFrente",
@@ -34925,7 +34246,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T08:44:54.693Z",
           "read": "EA5265",
           "device": "SLZIngCamFrente",
@@ -35143,8 +34464,8 @@
       "plate": "WEJ048",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -35178,7 +34499,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T13:44:30.563Z",
           "read": "MEJ048",
           "device": "SLZIngCamFrente",
@@ -35229,8 +34550,8 @@
       "plate": "LIF292",
       "circuit": "R8",
       "pasos": 3,
-      "camara": 1,
-      "reconstruida": 1,
+      "camara": 2,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -35247,18 +34568,10 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
-          "t": "2026-10-16T20:51:02.685Z",
-          "read": "LTF292",
-          "device": "RicCalLiq",
-          "P": 0.977042270529883,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "GKA328",
-              "p": 0.000055704672475218205
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-16T22:39:21.101Z",
+          "read": "LIF292",
+          "device": "RicCalLiq"
         },
         {
           "node": "ricardone:Balanza Ingreso",
@@ -35277,8 +34590,8 @@
       "plate": "AI514NE",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -35308,22 +34621,10 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-17T13:34:26.000Z",
-          "read": "TTM0L",
-          "device": "RicEgrCamFrente",
-          "P": 0.9223105265803051,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "HOZ983",
-              "p": 0.017113283435065747
-            },
-            {
-              "plate": "CCZ413",
-              "p": 0.003857729499946451
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T13:34:33.923Z",
+          "read": "AI514NE",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -35467,8 +34768,8 @@
       "plate": "CCZ413",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -35543,22 +34844,10 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
-          "t": "2026-10-17T15:14:38.000Z",
-          "read": "B93",
-          "device": "SLZVolcableC3",
-          "P": 0.6093090277013942,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AE734CT",
-              "p": 0.13595199021548585
-            },
-            {
-              "plate": "LTY664",
-              "p": 0.04112476454458165
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T15:29:53.812Z",
+          "read": "CCZ413",
+          "device": "SLZVolcableC5"
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
@@ -35830,8 +35119,8 @@
       "plate": "HIE900",
       "circuit": "R6",
       "pasos": 5,
-      "camara": 3,
-      "reconstruida": 2,
+      "camara": 5,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -35865,7 +35154,7 @@
         },
         {
           "node": "ricardone:Playa 3",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T14:54:12.089Z",
           "read": "HTE900",
           "device": "RicS6Playa3",
@@ -35884,7 +35173,7 @@
         },
         {
           "node": "ricardone:Volcable 2",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T15:34:16.518Z",
           "read": "BIE900",
           "device": "RicVolcable2",
@@ -35914,8 +35203,8 @@
       "plate": "MYT215",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 3,
-      "reconstruida": 5,
+      "camara": 7,
+      "reconstruida": 1,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -35969,7 +35258,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T15:13:41.000Z",
           "read": "MYT21544",
           "device": "SLZIngCamFrente",
@@ -36007,7 +35296,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T15:55:48.000Z",
           "read": "MYT21544",
           "device": "SLZVolcableC5",
@@ -36026,7 +35315,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T16:06:08.000Z",
           "read": "MYT21544",
           "device": "SLZBalSC2Fte",
@@ -36045,7 +35334,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T16:09:03.000Z",
           "read": "MYT21544",
           "device": "SLZSalidaC2Fte",
@@ -36068,8 +35357,8 @@
       "plate": "RDH183",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -36103,7 +35392,7 @@
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T15:11:00.247Z",
           "read": "ROH183",
           "device": "SLZIngCamFrente",
@@ -36852,8 +36141,8 @@
       "plate": "JPW916",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -36904,22 +36193,10 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
-          "t": "2026-10-17T16:32:22.000Z",
-          "read": "2Q39",
-          "device": "SLZVolcableC4",
-          "P": 0.5606195026464531,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AE734CT",
-              "p": 0.33019706155413625
-            },
-            {
-              "plate": "RPW636",
-              "p": 0.016991814817903024
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T16:33:59.688Z",
+          "read": "JPW916",
+          "device": "SLZVolcableC5"
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
@@ -37016,8 +36293,8 @@
       "plate": "AE734CT",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -37089,22 +36366,10 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
-          "t": "2026-10-17T16:39:58.000Z",
-          "read": "B39",
-          "device": "SLZVolcableC3",
-          "P": 0.42034945670783436,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "RPW636",
-              "p": 0.3130245727287433
-            },
-            {
-              "plate": "AI195ZQ",
-              "p": 0.0037861681526811
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T16:41:48.359Z",
+          "read": "AE734CT",
+          "device": "SLZVolcableC5"
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
@@ -37138,8 +36403,8 @@
       "plate": "RPW636",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -37159,7 +36424,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T14:47:56.709Z",
           "read": "RPW630",
           "device": "RicCal03",
@@ -38167,8 +37432,8 @@
       "plate": "MKH829",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -38224,22 +37489,10 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-17T19:34:59.000Z",
-          "read": "ILT",
-          "device": "SLZBalIngFte",
-          "P": 0.9973907991551614,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "THE526",
-              "p": 0.00020021671167341347
-            },
-            {
-              "plate": "RDL151",
-              "p": 0.0001000077287539143
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T19:35:01.718Z",
+          "read": "MKH829",
+          "device": "SLZBalIngFte"
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
@@ -38516,8 +37769,8 @@
       "plate": "RDL151",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -38558,7 +37811,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T19:39:15.706Z",
           "read": "BDL151",
           "device": "SLZBalIngFte",
@@ -38626,8 +37879,8 @@
       "plate": "AI195ZQ",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 1,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -38737,22 +37990,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-17T22:36:17.000Z",
-          "read": "AI172",
-          "device": "SLZSalidaC2Fte",
-          "P": 0.9911983367375328,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "CDT243",
-              "p": 0.000030130210361251796
-            },
-            {
-              "plate": "AC984QM",
-              "p": 0.00001637743336612111
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T22:36:57.418Z",
+          "read": "AI195ZQ",
+          "device": "SLZSalidaC1Fte"
         }
       ]
     },
@@ -38760,8 +38001,8 @@
       "plate": "AB120XE",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 1,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -38824,7 +38065,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T22:31:47.263Z",
           "read": "AD120XE",
           "device": "SLZVolcableC3",
@@ -38944,8 +38185,8 @@
       "plate": "FFC220",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -39013,22 +38254,10 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-17T22:05:07.464Z",
-          "read": "FFC21",
-          "device": "SLZBalIngFte",
-          "P": 0.9992167075574487,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "CDT243",
-              "p": 0.000033307223585248296
-            },
-            {
-              "plate": "CQQ052",
-              "p": 0.00002535314526223335
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T22:05:11.147Z",
+          "read": "FFC220",
+          "device": "SLZBalIngFte"
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
@@ -39057,8 +38286,8 @@
       "plate": "CDT243",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 1,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -39118,7 +38347,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T23:19:04.630Z",
           "read": "CDT203",
           "device": "SLZVolcableC3",
@@ -39571,8 +38800,8 @@
       "plate": "CQQ052",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 4,
-      "reconstruida": 2,
+      "camara": 6,
+      "reconstruida": 0,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -39624,7 +38853,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T22:14:09.952Z",
           "read": "CDQ052",
           "device": "SLZBalIngFte",
@@ -39643,7 +38872,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T23:53:48.997Z",
           "read": "CQD052",
           "device": "SLZVolcableC3",
@@ -39674,8 +38903,8 @@
       "plate": "LOI639",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 0,
-      "reconstruida": 5,
+      "camara": 1,
+      "reconstruida": 4,
       "deducida": 3,
       "falta": 0,
       "faltan": [],
@@ -39707,7 +38936,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-17T20:41:12.773Z",
           "read": "EOI639",
           "device": "RicCal03",
@@ -39863,9 +39092,9 @@
       "plate": "AC099YG",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 4,
-      "reconstruida": 3,
-      "deducida": 1,
+      "camara": 7,
+      "reconstruida": 1,
+      "deducida": 0,
       "falta": 0,
       "faltan": [],
       "ing": "2026-10-17T18:47:00.000Z",
@@ -39894,45 +39123,25 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "deducida"
+          "estado": "reconstruida",
+          "t": "2026-10-17T22:34:23.000Z",
+          "read": "CE0",
+          "device": "RicEgrCamFrente",
+          "P": 0.6241504773669352
         },
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-17T21:23:26.000Z",
-          "read": "XXVK4464",
-          "device": "SLZIngCamFrente",
-          "P": 0.5651112293952621,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AC306BV",
-              "p": 0.14018582062686877
-            },
-            {
-              "plate": "LOI639",
-              "p": 0.08968010806322672
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T22:53:29.675Z",
+          "read": "AC099YG",
+          "device": "SLZIngCamFrente"
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-17T22:15:11.000Z",
-          "read": "LC4",
-          "device": "SLZBalIngFte",
-          "P": 0.47470260188415936,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "MYA819",
-              "p": 0.4159878434692642
-            },
-            {
-              "plate": "CJU617",
-              "p": 0.005616497788972452
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T22:56:48.671Z",
+          "read": "AC099YG",
+          "device": "SLZBalIngFte"
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
@@ -39943,7 +39152,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-18T00:29:19.116Z",
           "read": "AC099VG",
           "device": "SLZBalSC2Fte"
@@ -40065,8 +39274,8 @@
       "plate": "AC306BV",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 2,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -40117,22 +39326,10 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
-          "t": "2026-10-17T23:39:26.000Z",
-          "read": "AL09",
-          "device": "SLZVolcableC3",
-          "P": 0.6097551468742585,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AC099YG",
-              "p": 0.23311946325018817
-            },
-            {
-              "plate": "MYA819",
-              "p": 0.012885490725840115
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-18T00:34:48.112Z",
+          "read": "AC306BV",
+          "device": "SLZVolcableC3"
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
@@ -40140,22 +39337,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-17T23:52:31.000Z",
-          "read": "BA01",
-          "device": "SLZSalidaC1Fte",
-          "P": 0.42831475503864735,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "AC099YG",
-              "p": 0.008561184686667299
-            },
-            {
-              "plate": "CJU617",
-              "p": 0.005565148217200165
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-18T00:50:15.772Z",
+          "read": "AC306BV",
+          "device": "SLZSalidaC1Fte"
         }
       ]
     },
@@ -40268,8 +39453,8 @@
       "plate": "SZG666",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 3,
-      "reconstruida": 1,
+      "camara": 4,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -40278,22 +39463,10 @@
       "pasosDetalle": [
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-17T23:50:12.055Z",
-          "read": "ID1923",
-          "device": "SLZIngCamFrente",
-          "P": 0.4934298314959174,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "KVD290",
-              "p": 0.1206693244355357
-            },
-            {
-              "plate": "LOI639",
-              "p": 0.04645101431281551
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-17T23:54:46.229Z",
+          "read": "SZG666",
+          "device": "SLZIngCamFrente"
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
@@ -40326,8 +39499,8 @@
       "plate": "AE861LB",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 2,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -40375,22 +39548,10 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
-          "t": "2026-10-18T00:41:54.000Z",
-          "read": "AVC0",
-          "device": "SLZVolcableC3",
-          "P": 0.9386936579062015,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "MYA819",
-              "p": 0.0017252954454776745
-            },
-            {
-              "plate": "KVD290",
-              "p": 0.0012814113922829092
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-18T00:42:44.770Z",
+          "read": "AE861LB",
+          "device": "SLZVolcableC3"
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
@@ -40398,22 +39559,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-18T00:54:10.000Z",
-          "read": "AVC0",
-          "device": "SLZSalidaC1Fte",
-          "P": 0.6024639649127401,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "SZG666",
-              "p": 0.0003978575543376843
-            },
-            {
-              "plate": "CQQ052",
-              "p": 0.0003257580952235303
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-18T01:04:51.603Z",
+          "read": "AE861LB",
+          "device": "SLZSalidaC1Fte"
         }
       ]
     },
@@ -40421,8 +39570,8 @@
       "plate": "AC275KB",
       "circuit": "SL1",
       "pasos": 5,
-      "camara": 1,
-      "reconstruida": 3,
+      "camara": 4,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -40431,22 +39580,10 @@
       "pasosDetalle": [
         {
           "node": "san_lorenzo:Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-18T00:56:11.964Z",
-          "read": "AL275KB",
-          "device": "SLZIngCamFrente",
-          "P": 0.9728961240135146,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "KQI971",
-              "p": 4.958035662302758e-8
-            },
-            {
-              "plate": "KVD290",
-              "p": 1.2633462809843517e-8
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-18T10:14:29.164Z",
+          "read": "AC275KB",
+          "device": "SLZIngCamFrente"
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
@@ -40461,41 +39598,17 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-18T06:39:49.632Z",
-          "read": "SCY61",
-          "device": "SLZBalSC2Fte",
-          "P": 0.761307791012473,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "LOI639",
-              "p": 0.00073833127703739
-            },
-            {
-              "plate": "FIV899",
-              "p": 0.0006512072975805147
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-18T11:18:59.553Z",
+          "read": "AC275KB",
+          "device": "SLZBalSC2Fte"
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-18T09:37:11.145Z",
-          "read": "AC28201",
-          "device": "SLZSalidaC2Fte",
-          "P": 0.8093988061654844,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "KVD290",
-              "p": 0.0000735996525103367
-            },
-            {
-              "plate": "DBT190",
-              "p": 0.000036166869243596446
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-18T11:21:23.239Z",
+          "read": "AC275KB",
+          "device": "SLZSalidaC1Fte"
         }
       ]
     },
@@ -40503,8 +39616,8 @@
       "plate": "KQI971",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 3,
+      "camara": 7,
+      "reconstruida": 1,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -40548,7 +39661,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-18T01:52:23.161Z",
           "read": "KOI971",
           "device": "SLZBalIngFte",
@@ -40605,7 +39718,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-18T02:15:35.635Z",
           "read": "KOI971",
           "device": "SLZSalidaC1Fte",
@@ -40628,8 +39741,8 @@
       "plate": "GXT479",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 2,
+      "camara": 7,
+      "reconstruida": 1,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -40708,7 +39821,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-18T02:17:39.280Z",
           "read": "DXT479",
           "device": "SLZBalSC2Fte",
@@ -40836,8 +39949,8 @@
       "plate": "DBT190",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 1,
-      "reconstruida": 6,
+      "camara": 2,
+      "reconstruida": 5,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -40896,7 +40009,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-18T02:11:41.770Z",
           "read": "DLT190",
           "device": "SLZBalIngFte",
@@ -41038,8 +40151,8 @@
       "plate": "AB571AO",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 3,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -41074,7 +40187,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-18T17:16:34.000Z",
           "read": "AB571A0",
           "device": "RicCal04",
@@ -41119,7 +40232,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-18T17:41:13.000Z",
           "read": "AB571A0",
           "device": "SLZBalIngFte",
@@ -41145,7 +40258,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-18T17:58:54.000Z",
           "read": "AB571A0",
           "device": "SLZBalSC2Fte",
@@ -41566,8 +40679,8 @@
       "plate": "NXF586",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 6,
-      "reconstruida": 1,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -41594,18 +40707,10 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
-          "t": "2026-10-18T14:19:35.699Z",
-          "read": "MEWP782",
-          "device": "RicEgrCamFrente",
-          "P": 0.5060793500668005,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "KIA301",
-              "p": 0.03512065985959913
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-18T14:43:24.583Z",
+          "read": "NXF586",
+          "device": "RicEgrCamFrente"
         },
         {
           "node": "san_lorenzo:Ingreso",
@@ -41789,8 +40894,8 @@
       "plate": "OSK502",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -41867,22 +40972,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-18T19:00:40.000Z",
-          "read": "SK502",
-          "device": "SLZSalidaC2Fte",
-          "P": 0.9955392085629307,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "SNR847",
-              "p": 0.0003521597494960217
-            },
-            {
-              "plate": "OVQ091",
-              "p": 7.029737986961377e-10
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-18T19:00:44.558Z",
+          "read": "OSK502",
+          "device": "SLZSalidaC1Fte"
         }
       ]
     },
@@ -42273,8 +41366,8 @@
       "plate": "GON155",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 2,
-      "reconstruida": 3,
+      "camara": 3,
+      "reconstruida": 2,
       "deducida": 3,
       "falta": 0,
       "faltan": [],
@@ -42297,7 +41390,7 @@
         },
         {
           "node": "ricardone:Calada",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-18T22:26:27.802Z",
           "read": "GON1165",
           "device": "RicCal03",
@@ -42359,8 +41452,8 @@
       "plate": "MBK543",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 7,
-      "reconstruida": 1,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -42401,22 +41494,10 @@
         },
         {
           "node": "san_lorenzo:Balanza Ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-18T22:48:16.340Z",
-          "read": "COM1759",
-          "device": "SLZBalIngFte",
-          "P": 0.8751892415799488,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "GON155",
-              "p": 0.08199072248670777
-            },
-            {
-              "plate": "CMF111",
-              "p": 0.0032681008501793765
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-18T22:50:10.443Z",
+          "read": "MBK543",
+          "device": "SLZBalIngFte"
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
@@ -42645,8 +41726,8 @@
       "plate": "OQK664",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 2,
+      "camara": 7,
+      "reconstruida": 0,
       "deducida": 1,
       "falta": 0,
       "faltan": [],
@@ -42684,7 +41765,7 @@
         },
         {
           "node": "ricardone:Salida 2",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-18T22:41:07.364Z",
           "read": "OOK664",
           "device": "RicEgrCamFrente",
@@ -42728,7 +41809,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-18T23:41:25.419Z",
           "read": "OOK664",
           "device": "SLZSalidaC1Fte",
@@ -42922,8 +42003,8 @@
       "plate": "REV889",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 1,
-      "reconstruida": 4,
+      "camara": 3,
+      "reconstruida": 2,
       "deducida": 3,
       "falta": 0,
       "faltan": [],
@@ -42947,7 +42028,7 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-18T22:43:21.738Z",
           "read": "REV3889",
           "device": "RicPreIngInFr",
@@ -43010,7 +42091,7 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-19T00:09:58.104Z",
           "read": "REVE889",
           "device": "SLZSalidaC1Fte",
@@ -43212,8 +42293,8 @@
       "plate": "AC308FS",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 5,
-      "reconstruida": 3,
+      "camara": 8,
+      "reconstruida": 0,
       "deducida": 0,
       "falta": 0,
       "faltan": [],
@@ -43276,7 +42357,7 @@
         },
         {
           "node": "san_lorenzo:Plataformas Volcables",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-19T01:33:01.000Z",
           "read": "AC08PS",
           "device": "SLZVolcableC5",
@@ -43295,7 +42376,7 @@
         },
         {
           "node": "san_lorenzo:Balanza Egreso",
-          "estado": "reconstruida",
+          "estado": "camara",
           "t": "2026-10-19T01:41:17.586Z",
           "read": "AC308PS",
           "device": "SLZBalSC2Fte",
@@ -43314,22 +42395,10 @@
         },
         {
           "node": "san_lorenzo:Egreso",
-          "estado": "reconstruida",
-          "t": "2026-10-19T01:43:23.843Z",
-          "read": "AC308PS",
-          "device": "SLZSalidaC1Fte",
-          "P": 0.9970312413362641,
-          "prueba": false,
-          "rivales": [
-            {
-              "plate": "SZG666",
-              "p": 2.628368804515928e-10
-            },
-            {
-              "plate": "GON155",
-              "p": 3.953414234891726e-11
-            }
-          ]
+          "estado": "camara",
+          "t": "2026-10-19T01:43:26.478Z",
+          "read": "AC308FS",
+          "device": "SLZSalidaC2Fte"
         }
       ]
     },
@@ -43380,8 +42449,8 @@
       "plate": "HDN628",
       "circuit": "R7",
       "pasos": 8,
-      "camara": 0,
-      "reconstruida": 6,
+      "camara": 1,
+      "reconstruida": 5,
       "deducida": 2,
       "falta": 0,
       "faltan": [],
@@ -43400,13 +42469,10 @@
         },
         {
           "node": "ricardone:Pre ingreso",
-          "estado": "reconstruida",
-          "t": "2026-10-18T23:56:15.112Z",
-          "read": "HGN628",
-          "device": "RicPreIngInFr",
-          "P": 0.9357264426903733,
-          "prueba": false,
-          "rivales": []
+          "estado": "camara",
+          "t": "2026-10-18T23:57:09.996Z",
+          "read": "HDN628",
+          "device": "RicPreIngInFr"
         },
         {
           "node": "ricardone:Calada",
@@ -44215,12 +43281,12 @@
     }
   ],
   "eliminacion": {
-    "pasos": 91,
+    "pasos": 107,
     "prueba": {
-      "n": 588,
-      "bien": 333,
-      "otro": 18,
-      "nada": 237
+      "n": 612,
+      "bien": 331,
+      "otro": 21,
+      "nada": 260
     }
   }
 }

@@ -16,6 +16,9 @@ import { readLikelihood, DAMAGED_READ } from '../../server/plantState/nodeModelS
 import { compareAttribute } from '../../server/plantState/identificationEvidence.mjs'
 import { getEventLiveInstantMs } from '../../server/plantState/liveEventTime.mjs'
 import { alertReadEvents } from '../../server/plantState/alertReads.mjs'
+import { tsImport } from 'tsx/esm/api'
+// Mismo criterio de «lee la patente (exacta u OCR)» que el informe por nodo (informe-reconocimiento-camaras.ts).
+const { isLikelyOcrPlateMatch } = await tsImport('../../src/services/circuitPlateOcr.ts', import.meta.url)
 
 const ARG = process.argv[2] ?? '2026-10-01'
 const WEEK = ARG === 'semana' || ARG.startsWith('semana:')
@@ -408,6 +411,13 @@ for (const c of front) {
     const iN = own.exp.indexOf(c.node), iL = own.last ? own.exp.indexOf(own.last) : -1
     // Antes del ingreso solo valen los primeros puntos; después, cada paso tiene que ir después del anterior.
     const inOrder = iN > iL && (c.t >= own.ing - 5 * 60_000 || iN <= 1)
+    // La lectura exacta gana el paso: si estaba ocupado por una reconstrucción, la reemplaza y libera esa captura.
+    const prev = own.status.get(c.node)
+    if (iN >= 0 && prev && prev.via === 'reconstruida' && !prev.prueba) {
+      if (prev.cap) prev.cap.used = undefined
+      own.status.set(c.node, { via: 'camara', t: c.t, read: c.plate, device: c.device })
+      continue
+    }
     if (iN >= 0 && inOrder && !own.status.has(c.node)) { own.status.set(c.node, { via: 'camara', t: c.t, read: c.plate, device: c.device }); own.last = c.node; own.lastT = c.t }
     continue
   }
@@ -586,7 +596,9 @@ const porCamion = []
 for (const m of lote.filter((x) => x.inSample)) {
   // La prueba (patente borrada a 1 de cada 4 lecturas buenas) mide el algoritmo, pero esa captura la leyó
   // la cámara: en los totales cuenta como «cámara», no como «reconstruida».
-  const st = m.exp.map((n) => { const s = m.status.get(n); return s?.via === 'reconstruida' && s.prueba ? 'camara' : s?.via ?? null })
+  // «Cámara» = la cámara leyó la patente, exacta u OCR tolerante (mismo criterio que el informe por nodo).
+  // «Reconstruida» queda para las capturas sin patente legible asignadas por horario, franja o DSS.
+  const st = m.exp.map((n) => { const s = m.status.get(n); return s?.via === 'reconstruida' && (s.prueba || (s.read && isLikelyOcrPlateMatch(s.read, m.plate))) ? 'camara' : s?.via ?? null })
   const filledIdx = st.map((v, i) => (v ? i : -1)).filter((i) => i >= 0)
   const lastFilled = filledIdx.at(-1) ?? -1
   // Deducido: sin captura, pero el camión se identificó en un punto posterior de su circuito.
