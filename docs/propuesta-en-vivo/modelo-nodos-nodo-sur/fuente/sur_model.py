@@ -46,13 +46,13 @@ N[PLAYA_1] = {'id': PLAYA_1, 'plant': 'ricardone', 'code': '', 'name': 'Playa 1'
 N[PLAYA_DEMORADO] = {'id': PLAYA_DEMORADO, 'plant': 'ricardone', 'code': '', 'name': 'Playa demorado'}
 
 # ---------- áreas de espera (playas): sin cámara propia ni dato del sistema de camiones; se miden
-# por las cámaras de su entrada y su salida. Capacidad en camiones (dato de planta, 29-09-2026). ----------
+# por las cámaras de su entrada y su salida. Capacidad en camiones (dato de planta, 14-10-2026). ----------
 AREAS = {
-    PLAYA_1: 300,
-    PLAYA_DEMORADO: 20,
-    'ricardone:Playa 3': 100,
+    PLAYA_1: 200,
+    PLAYA_DEMORADO: 30,
+    'ricardone:Playa 3': 50,
     'ricardone:Playa de egreso': 4,
-    PLAYA_OSL: 150,
+    PLAYA_OSL: 100,
 }
 # Desvíos opcionales (no son pasos de ningún circuito): se dibujan punteados.
 OPTIONAL_EDGES = [('ricardone:Calada', PLAYA_DEMORADO), (PLAYA_DEMORADO, 'ricardone:Balanza Ingreso'),

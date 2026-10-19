@@ -1,0 +1,159 @@
+{
+ "_nota": "Correcciones a mano del usuario sobre las fichas (16/10/2026), tomadas de la base del artifact y normalizadas (tipo y marca). Pisan lo que informa el DSS.",
+ "vehiculos": {
+  "AA101HW": {
+   "tipo": "Utilitario"
+  },
+  "AA612YW": {
+   "tipo": "Auto"
+  },
+  "AA678OF": {
+   "tipo": "Minibús"
+  },
+  "AA717EA": {
+   "tipo": "Pickup"
+  },
+  "AB449JK": {
+   "tipo": "Pickup"
+  },
+  "AB681IS": {
+   "tipo": "Utilitario"
+  },
+  "AC753ZK": {
+   "tipo": "Pickup"
+  },
+  "AD001TD": {
+   "tipo": "Utilitario"
+  },
+  "AD052ZD": {
+   "tipo": "Pickup"
+  },
+  "AD459UE": {
+   "tipo": "Utilitario"
+  },
+  "AD953SE": {
+   "tipo": "Minibús"
+  },
+  "AD959BE": {
+   "tipo": "Pickup"
+  },
+  "AE532MU": {
+   "marca": "Scania"
+  },
+  "AE580ZP": {
+   "tipo": "Minibús"
+  },
+  "AE747HZ": {
+   "tipo": "Utilitario"
+  },
+  "AE962CH": {
+   "tipo": "Camión chico"
+  },
+  "AF378MD": {
+   "marca": "Mercedes-Benz"
+  },
+  "AF532VJ": {
+   "tipo": "Utilitario"
+  },
+  "AF638KW": {
+   "tipo": "Camión chico"
+  },
+  "AF738XZ": {
+   "marca": "Mercedes-Benz"
+  },
+  "AF809MM": {
+   "marca": "Mercedes-Benz"
+  },
+  "AG158FM": {
+   "tipo": "Utilitario"
+  },
+  "AG245ND": {
+   "tipo": "Pickup"
+  },
+  "AG282SC": {
+   "tipo": "Pickup"
+  },
+  "AG625QU": {
+   "marca": "Ford"
+  },
+  "AG714DI": {
+   "tipo": "Auto"
+  },
+  "AH215CA": {
+   "tipo": "Pickup",
+   "marca": "Ford"
+  },
+  "AH262HP": {
+   "tipo": "Pickup"
+  },
+  "AH933LO": {
+   "marca": "Honda"
+  },
+  "AH961BL": {
+   "tipo": "Pickup"
+  },
+  "AI217IT": {
+   "color": "Blanco"
+  },
+  "AI217QP": {
+   "tipo": "Pickup",
+   "marca": "Fiat"
+  },
+  "AI276FZ": {
+   "marca": "Sin dato"
+  },
+  "DTV765": {
+   "tipo": "Utilitario"
+  },
+  "FAF824": {
+   "marca": "Toyota"
+  },
+  "FYJ679": {
+   "tipo": "Pickup"
+  },
+  "HTK722": {
+   "tipo": "Pickup"
+  },
+  "HVH138": {
+   "tipo": "Pickup"
+  },
+  "IOB330": {
+   "marca": "Hyundai"
+  },
+  "KIZ415": {
+   "tipo": "Pickup"
+  },
+  "KWK424": {
+   "tipo": "Utilitario"
+  },
+  "LPZ901": {
+   "tipo": "Pickup"
+  },
+  "LRA786": {
+   "color": "Gris"
+  },
+  "LVA495": {
+   "tipo": "Utilitario",
+   "marca": "Fiat"
+  },
+  "MFY738": {
+   "tipo": "Pickup"
+  },
+  "NOY444": {
+   "tipo": "Utilitario"
+  },
+  "ONS723": {
+   "tipo": "Camión chico",
+   "marca": "Iveco"
+  },
+  "OTV755": {
+   "patente": "OIY755"
+  },
+  "PHM505": {
+   "tipo": "Utilitario"
+  },
+  "SLF772": {
+   "marca": "Mercedes-Benz"
+  }
+ }
+}

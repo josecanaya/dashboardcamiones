@@ -1,0 +1,965 @@
+[
+ {
+  "patente": "AB688RB",
+  "grupo": "Sin chapa",
+  "marca": "Volvo",
+  "modelo": "FM",
+  "color": "Blanco",
+  "tipo": "Tractor",
+  "foto": "recorridos/AB688RB/202607230303/091146_RicEgrCamFrente_vacia.jpg",
+  "logos": [
+   "VOIV",
+   "VO1L",
+   "VOLV"
+  ],
+  "nota": "Paragolpes liso, sin chapa ni papel. Ninguna cámara leyó nunca la patente completa; a falta de chapa leen el logo VOLVO («VOIV0», «VO1L70») y alguna vez casi la patente («AB688R6» en calada, «AB688PB» en la salida del puerto). El 01/09 llevaba un papel chico en el paragolpes (la balanza de ingreso del puerto leyó «AB670»).",
+  "visitas": [
+   {
+    "ingreso": "2026-07-23 03:03:00",
+    "salida": "2026-07-23 10:13:00",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "SOJA",
+    "mov": "INGRESO",
+    "pasos": [
+     {
+      "punto": "Ingreso Ricardone",
+      "camara": "RicIngCamFrente",
+      "hora": "2026-07-23 02:58:17",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202607230303\\025817_RicIngCamFrente_vacia.jpg"
+     },
+     {
+      "punto": "Calada Ricardone",
+      "camara": "RicCal04",
+      "hora": "2026-07-23 08:53:45",
+      "lectura": "SEW7474",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202607230303\\085345_RicCal04_SEW7474.jpg"
+     },
+     {
+      "punto": "Egreso Ricardone",
+      "camara": "RicEgrCamFrente",
+      "hora": "2026-07-23 09:11:46",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202607230303\\091146_RicEgrCamFrente_vacia.jpg"
+     },
+     {
+      "punto": "Ingreso puerto",
+      "camara": "SLZIngCamFrente",
+      "hora": "2026-07-23 09:19:04",
+      "lectura": "EB9",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202607230303\\091904_SLZIngCamFrente_EB9.jpg"
+     },
+     {
+      "punto": "Balanza ingreso puerto",
+      "camara": "SLZBalIngFte",
+      "hora": "2026-07-23 09:24:37",
+      "lectura": "TAAMI3M",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202607230303\\092437_SLZBalIngFte_TAAMI3M.jpg"
+     },
+     {
+      "punto": "Salida puerto",
+      "camara": "SLZSalidaC1Fte",
+      "hora": "2026-07-23 10:15:18",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202607230303\\101518_SLZSalidaC1Fte_vacia.jpg"
+     }
+    ],
+    "dss": true,
+    "revisada": true
+   },
+   {
+    "ingreso": "2026-08-28 16:38:00",
+    "salida": "2026-08-29 02:48:00",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "SOJA",
+    "mov": "INGRESO",
+    "pasos": [
+     {
+      "punto": "Ingreso Ricardone",
+      "camara": "RicIngCamFrente",
+      "hora": "2026-08-28 16:20:44",
+      "lectura": "PB9",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202608281638\\162044_RicIngCamFrente_PB9.jpg"
+     },
+     {
+      "punto": "Preingreso",
+      "camara": "RicPreIngInFr",
+      "hora": "2026-08-28 16:33:55",
+      "lectura": "S32",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202608281638\\163355_RicPreIngInFr_S32.jpg"
+     },
+     {
+      "punto": "Calada Ricardone",
+      "camara": "RicCal03",
+      "hora": "2026-08-28 19:40:50",
+      "lectura": "AB688R6",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202608281638\\194050_RicCal03_AB688R6.jpg"
+     },
+     {
+      "punto": "Volcables puerto",
+      "camara": "SLZVolcableC3",
+      "hora": "2026-08-29 02:29:04",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202608281638\\022904_SLZVolcableC3_vacia.jpg"
+     }
+    ],
+    "dss": true,
+    "revisada": true
+   },
+   {
+    "ingreso": "2026-09-01 15:15:00",
+    "salida": "2026-09-02 00:24:00",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "SOJA",
+    "mov": "INGRESO",
+    "pasos": [
+     {
+      "punto": "Ingreso Ricardone",
+      "camara": "RicIngCamFrente",
+      "hora": "2026-09-01 15:00:57",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202609011515\\150057_RicIngCamFrente_vacia.jpg"
+     },
+     {
+      "punto": "Preingreso",
+      "camara": "RicPreIngInFr",
+      "hora": "2026-09-01 15:10:16",
+      "lectura": "VOIV0",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202609011515\\151016_RicPreIngInFr_VOIV0.jpg"
+     },
+     {
+      "punto": "Calada Ricardone",
+      "camara": "RicCal04",
+      "hora": "2026-09-01 18:09:35",
+      "lectura": "BB8MP",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202609011515\\180935_RicCal04_BB8MP.jpg"
+     },
+     {
+      "punto": "Balanza ingreso puerto",
+      "camara": "SLZBalIngFte",
+      "hora": "2026-09-01 23:39:25",
+      "lectura": "AB670",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202609011515\\anclas\\233925_SLZBalIngFte_AB670.jpg"
+     },
+     {
+      "punto": "Volcables puerto",
+      "camara": "SLZVolcableC3",
+      "hora": "2026-09-02 00:06:16",
+      "lectura": "S7474",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202609011515\\000616_SLZVolcableC3_S7474.jpg"
+     },
+     {
+      "punto": "Salida puerto",
+      "camara": "SLZSalidaC1Fte",
+      "hora": "2026-09-02 00:26:15",
+      "lectura": "AB688PB",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202609011515\\002615_SLZSalidaC1Fte_AB688PB.jpg"
+     }
+    ],
+    "dss": true,
+    "revisada": true
+   },
+   {
+    "ingreso": "2026-09-10 09:06:00",
+    "salida": "2026-09-10 20:14:00",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "SOJA",
+    "mov": "INGRESO",
+    "pasos": [
+     {
+      "punto": "Ingreso Ricardone",
+      "camara": "RicIngCamFrente",
+      "hora": "2026-09-10 08:59:28",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202609100906\\085928_RicIngCamFrente_vacia.jpg"
+     },
+     {
+      "punto": "Preingreso",
+      "camara": "RicPreIngInFr",
+      "hora": "2026-09-10 09:01:31",
+      "lectura": "VO1L70",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202609100906\\090131_RicPreIngInFr_VO1L70.jpg"
+     },
+     {
+      "punto": "Calada Ricardone",
+      "camara": "RicCal04",
+      "hora": "2026-09-10 10:23:31",
+      "lectura": "SEW7474",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202609100906\\102331_RicCal04_SEW7474.jpg"
+     },
+     {
+      "punto": "Balanza ingreso puerto",
+      "camara": "SLZBalIngFte",
+      "hora": "2026-09-10 17:47:43",
+      "lectura": "VOIV0",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202609100906\\174743_SLZBalIngFte_VOIV0.jpg"
+     },
+     {
+      "punto": "Volcables puerto",
+      "camara": "SLZVolcableC5",
+      "hora": "2026-09-10 19:46:04",
+      "lectura": "7474",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202609100906\\anclas\\194604_SLZVolcableC5_7474.jpg"
+     },
+     {
+      "punto": "Salida puerto",
+      "camara": "SLZSalidaC1Fte",
+      "hora": "2026-09-10 20:21:23",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB688RB\\202609100906\\202123_SLZSalidaC1Fte_vacia.jpg"
+     }
+    ],
+    "dss": true,
+    "revisada": true
+   }
+  ],
+  "lecturas": [
+   "SEW7474",
+   "EB9",
+   "TAAMI3M",
+   "PB9",
+   "S32",
+   "AB688R6",
+   "VOIV0",
+   "BB8MP",
+   "AB670",
+   "S7474",
+   "AB688PB",
+   "VO1L70",
+   "7474"
+  ]
+ },
+ {
+  "patente": "AH439OV",
+  "grupo": "Sin chapa",
+  "marca": "Foton",
+  "modelo": "Auman (2027)",
+  "color": "Gris",
+  "tipo": "Tractor",
+  "foto": "papel/AH439OV/RicPreIngInFr.jpg",
+  "logos": [
+   "WWWW"
+  ],
+  "nota": "Camión nuevo con el marco de la chapa vacío: todavía no le pusieron la patente.",
+  "visitas": [
+   {
+    "ingreso": "2026-09-27 17:30:00",
+    "salida": "2026-09-27 23:12:00",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "SOJA",
+    "mov": "INGRESO",
+    "pasos": [
+     {
+      "punto": "Preingreso",
+      "camara": "RicPreIngInFr",
+      "hora": "2026-09-27 17:25:18",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AH439OV\\202609271730\\172518_RicPreIngInFr_vacia.jpg"
+     },
+     {
+      "punto": "Calada Ricardone",
+      "camara": "RicCal03",
+      "hora": "2026-09-27 20:08:01",
+      "lectura": "WWWWW",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AH439OV\\202609271730\\200801_RicCal03_WWWWW.jpg"
+     },
+     {
+      "punto": "Egreso Ricardone",
+      "camara": "RicEgrCamFrente",
+      "hora": "2026-09-27 20:36:36",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AH439OV\\202609271730\\203636_RicEgrCamFrente_vacia.jpg"
+     },
+     {
+      "punto": "Ingreso puerto",
+      "camara": "SLZIngCamFrente",
+      "hora": "2026-09-27 20:45:58",
+      "lectura": "TQF",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AH439OV\\202609271730\\204558_SLZIngCamFrente_TQF.jpg"
+     },
+     {
+      "punto": "Balanza ingreso puerto",
+      "camara": "SLZBalIngFte",
+      "hora": "2026-09-27 20:50:38",
+      "lectura": "G6556",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AH439OV\\202609271730\\205038_SLZBalIngFte_G6556.jpg"
+     },
+     {
+      "punto": "Volcables puerto",
+      "camara": "SLZVolcableC5",
+      "hora": "2026-09-27 22:56:14",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AH439OV\\202609271730\\anclas\\225614_SLZVolcableC5_vacia.jpg"
+     },
+     {
+      "punto": "Salida puerto",
+      "camara": "SLZSalidaC1Fte",
+      "hora": "2026-09-27 23:09:02",
+      "lectura": "T17",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AH439OV\\202609271730\\anclas\\230902_SLZSalidaC1Fte_T17.jpg"
+     }
+    ],
+    "dss": true,
+    "revisada": true
+   }
+  ],
+  "lecturas": [
+   "WWWWW",
+   "TQF",
+   "G6556",
+   "T17"
+  ]
+ },
+ {
+  "patente": "DDD727",
+  "grupo": "Sin chapa",
+  "marca": "Scania",
+  "modelo": "114G 330",
+  "color": "Blanco",
+  "tipo": "Camión",
+  "foto": "papel/DDD727/RicPreIngInFr.jpg",
+  "logos": [
+   "330"
+  ],
+  "nota": "Paragolpes sin chapa; la cámara lee «330», el modelo pintado en el frente.",
+  "visitas": [
+   {
+    "ingreso": "2026-08-31 02:39:00",
+    "salida": "2026-08-31 09:34:00",
+    "planta": "RICARDONE",
+    "producto": "GIRASOL",
+    "mov": "INGRESO",
+    "pasos": [
+     {
+      "punto": "Ingreso Ricardone",
+      "camara": "RicIngCamFrente",
+      "hora": "2026-08-31 02:33:48",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202608310239\\anclas\\023348_RicIngCamFrente_vacia.jpg"
+     },
+     {
+      "punto": "Preingreso",
+      "camara": "RicPreIngInFr",
+      "hora": "2026-08-31 02:35:17",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202608310239\\023517_RicPreIngInFr_vacia.jpg"
+     },
+     {
+      "punto": "Calada Ricardone",
+      "camara": "RicCal04",
+      "hora": "2026-08-31 05:00:54",
+      "lectura": "SCAN4",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202608310239\\anclas\\050054_RicCal04_SCAN4.jpg"
+     },
+     {
+      "punto": "Silo Keppler",
+      "camara": "RicS7DescLinea1",
+      "hora": "2026-08-31 09:08:30",
+      "lectura": "SCAN",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202608310239\\anclas\\090830_RicS7DescLinea1_SCAN.jpg"
+     },
+     {
+      "punto": "Balanza egreso Ricardone",
+      "camara": "RicB2Egreso",
+      "hora": "2026-08-31 09:29:32",
+      "lectura": "G9C",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202608310239\\anclas\\092932_RicB2Egreso_G9C.jpg"
+     }
+    ],
+    "dss": true,
+    "revisada": true
+   },
+   {
+    "ingreso": "2026-09-18 12:35:00",
+    "salida": "2026-09-18 21:02:00",
+    "planta": "RICARDONE",
+    "producto": "GIRASOL",
+    "mov": "INGRESO",
+    "pasos": [
+     {
+      "punto": "Ingreso Ricardone",
+      "camara": "RicIngCamFrente",
+      "hora": "2026-09-18 12:27:07",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202609181235\\anclas\\122707_RicIngCamFrente_vacia.jpg"
+     },
+     {
+      "punto": "Preingreso",
+      "camara": "RicPreIngInFr",
+      "hora": "2026-09-18 12:30:34",
+      "lectura": "330",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202609181235\\123034_RicPreIngInFr_330.jpg"
+     },
+     {
+      "punto": "Calada Ricardone",
+      "camara": "RicCal03",
+      "hora": "2026-09-18 15:48:16",
+      "lectura": "11G",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202609181235\\anclas\\154816_RicCal03_11G.jpg"
+     },
+     {
+      "punto": "Balanza ingreso Ricardone",
+      "camara": "RicB1Ingreso",
+      "hora": "2026-09-18 15:58:01",
+      "lectura": "GQC",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202609181235\\anclas\\155801_RicB1Ingreso_GQC.jpg"
+     },
+     {
+      "punto": "Balanza egreso Ricardone",
+      "camara": "RicB2Egreso",
+      "hora": "2026-09-18 20:56:45",
+      "lectura": "S33",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202609181235\\anclas\\205645_RicB2Egreso_S33.jpg"
+     }
+    ],
+    "dss": true,
+    "revisada": true
+   },
+   {
+    "ingreso": "2026-09-25 04:52:00",
+    "salida": "2026-09-25 18:41:00",
+    "planta": "RICARDONE",
+    "producto": "GIRASOL",
+    "mov": "INGRESO",
+    "pasos": [
+     {
+      "punto": "Preingreso",
+      "camara": "RicPreIngInFr",
+      "hora": "2026-09-25 04:46:51",
+      "lectura": "XI1",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202609250452\\anclas\\044651_RicPreIngInFr_XI1.jpg"
+     },
+     {
+      "punto": "Calada Ricardone",
+      "camara": "RicCal04",
+      "hora": "2026-09-25 08:30:19",
+      "lectura": "1140",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202609250452\\anclas\\083019_RicCal04_1140.jpg"
+     },
+     {
+      "punto": "Balanza ingreso Ricardone",
+      "camara": "RicB1Ingreso",
+      "hora": "2026-09-25 08:38:02",
+      "lectura": "G8C",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202609250452\\anclas\\083802_RicB1Ingreso_G8C.jpg"
+     },
+     {
+      "punto": "Playa 3",
+      "camara": "RicS6Playa3",
+      "hora": "2026-09-25 08:46:00",
+      "lectura": "114G",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202609250452\\anclas\\084600_RicS6Playa3_114G.jpg"
+     },
+     {
+      "punto": "Volcables Ricardone",
+      "camara": "RicVolcable1",
+      "hora": "2026-09-25 18:00:38",
+      "lectura": "SCN",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202609250452\\anclas\\180038_RicVolcable1_SCN.jpg"
+     },
+     {
+      "punto": "Balanza egreso Ricardone",
+      "camara": "RicB2Egreso",
+      "hora": "2026-09-25 18:35:52",
+      "lectura": "LJK",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\DDD727\\202609250452\\anclas\\183552_RicB2Egreso_LJK.jpg"
+     }
+    ],
+    "dss": true,
+    "revisada": true
+   }
+  ],
+  "lecturas": [
+   "SCAN4",
+   "SCAN",
+   "G9C",
+   "330",
+   "11G",
+   "GQC",
+   "S33",
+   "XI1",
+   "1140",
+   "G8C",
+   "114G",
+   "SCN",
+   "LJK"
+  ]
+ },
+ {
+  "patente": "GQQ158",
+  "grupo": "Sin chapa",
+  "marca": "Mercedes-Benz",
+  "modelo": "1634",
+  "color": "Blanco",
+  "tipo": "Tractor",
+  "foto": "papel/GQQ158/RicPreIngInFr.jpg",
+  "logos": [],
+  "nota": "Marco de la chapa vacío.",
+  "visitas": [
+   {
+    "ingreso": "2026-07-23 23:14:00",
+    "salida": "2026-07-24 06:52:00",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "SOJA",
+    "mov": "INGRESO",
+    "pasos": [],
+    "dss": true,
+    "revisada": true
+   },
+   {
+    "ingreso": "2026-09-12 14:02:00",
+    "salida": "2026-09-13 03:12:00",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "SOJA",
+    "mov": "INGRESO",
+    "pasos": [
+     {
+      "punto": "Ingreso Ricardone",
+      "camara": "RicIngCamFrente",
+      "hora": "2026-09-12 13:55:39",
+      "lectura": "21352",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\GQQ158\\202609121402\\135539_RicIngCamFrente_21352.jpg"
+     },
+     {
+      "punto": "Preingreso",
+      "camara": "RicPreIngInFr",
+      "hora": "2026-09-12 13:57:48",
+      "lectura": "OCO",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\GQQ158\\202609121402\\135748_RicPreIngInFr_OCO.jpg"
+     },
+     {
+      "punto": "Calada Ricardone",
+      "camara": "RicCal02",
+      "hora": "2026-09-12 15:06:53",
+      "lectura": "VC010",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\GQQ158\\202609121402\\150653_RicCal02_VC010.jpg"
+     }
+    ],
+    "dss": true,
+    "revisada": true
+   }
+  ],
+  "lecturas": [
+   "21352",
+   "OCO",
+   "VC010"
+  ]
+ },
+ {
+  "patente": "EOV644",
+  "grupo": "Sin chapa",
+  "marca": "Mercedes-Benz",
+  "modelo": "",
+  "color": "Blanco",
+  "tipo": "Tractor",
+  "foto": "papel/EOV644/RicPreIngInFr.jpg",
+  "logos": [],
+  "nota": "Marco de la chapa vacío. Los otros dos camiones que entraron en ese minuto tienen chapa y se leyeron.",
+  "visitas": [
+   {
+    "ingreso": "2026-08-14 17:01:00",
+    "salida": "2026-08-15 03:19:00",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "SOJA",
+    "mov": "INGRESO",
+    "pasos": [
+     {
+      "punto": "Ingreso Ricardone",
+      "camara": "RicIngCamFrente",
+      "hora": "2026-08-14 16:47:13",
+      "lectura": "T79",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\EOV644\\202608141701\\164713_RicIngCamFrente_T79.jpg"
+     },
+     {
+      "punto": "Preingreso",
+      "camara": "RicPreIngInFr",
+      "hora": "2026-08-14 16:55:55",
+      "lectura": "F96",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\EOV644\\202608141701\\165555_RicPreIngInFr_F96.jpg"
+     },
+     {
+      "punto": "Calada Ricardone",
+      "camara": "RicCal04",
+      "hora": "2026-08-14 20:38:04",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\EOV644\\202608141701\\anclas\\203804_RicCal04_vacia.jpg"
+     }
+    ],
+    "dss": true,
+    "revisada": true
+   }
+  ],
+  "lecturas": [
+   "T79",
+   "F96"
+  ]
+ },
+ {
+  "patente": "AB723QC",
+  "grupo": "Papel en el parabrisas",
+  "marca": "Scania",
+  "modelo": "Streamline",
+  "color": "Blanco",
+  "tipo": "Tractor",
+  "foto": "recorridos/AB723QC/202608290537/anclas/154119_SLZVolcableC5_SEO8673.jpg",
+  "logos": [],
+  "nota": "Sin chapa en el paragolpes; lleva carteles en el parabrisas: «AB723QC» arriba (se lee en la balanza de ingreso del puerto) y «SEO 8673» abajo. Los accesos de Ricardone no lo leen nunca.",
+  "visitas": [
+   {
+    "ingreso": "2026-08-29 05:37:00",
+    "salida": "2026-08-29 15:55:00",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "SOJA",
+    "mov": "INGRESO",
+    "pasos": [
+     {
+      "punto": "Ingreso Ricardone",
+      "camara": "RicIngCamFrente",
+      "hora": "2026-08-29 05:29:26",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB723QC\\202608290537\\052926_RicIngCamFrente_vacia.jpg"
+     },
+     {
+      "punto": "Preingreso",
+      "camara": "RicPreIngInFr",
+      "hora": "2026-08-29 05:33:07",
+      "lectura": "RJX",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB723QC\\202608290537\\053307_RicPreIngInFr_RJX.jpg"
+     },
+     {
+      "punto": "Balanza ingreso puerto",
+      "camara": "SLZBalIngFte",
+      "hora": "2026-08-29 15:00:27",
+      "lectura": "NWNN0U",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB723QC\\202608290537\\anclas\\150027_SLZBalIngFte_NWNN0U.jpg"
+     },
+     {
+      "punto": "Volcables puerto",
+      "camara": "SLZVolcableC5",
+      "hora": "2026-08-29 15:41:19",
+      "lectura": "SEO8673",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB723QC\\202608290537\\anclas\\154119_SLZVolcableC5_SEO8673.jpg"
+     },
+     {
+      "punto": "Balanza egreso puerto",
+      "camara": "SLZBalSC2Fte",
+      "hora": "2026-08-29 15:49:57",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB723QC\\202608290537\\anclas\\154957_SLZBalSC2Fte_vacia.jpg"
+     },
+     {
+      "punto": "Salida puerto",
+      "camara": "SLZSalidaC1Fte",
+      "hora": "2026-08-29 15:59:10",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\AB723QC\\202608290537\\anclas\\155910_SLZSalidaC1Fte_vacia.jpg"
+     }
+    ],
+    "dss": true,
+    "revisada": true
+   }
+  ],
+  "lecturas": [
+   "RJX",
+   "NWNN0U",
+   "SEO8673"
+  ]
+ },
+ {
+  "patente": "KTH925",
+  "grupo": "Papel en el parabrisas",
+  "marca": "Iveco",
+  "modelo": "Cursor",
+  "color": "Blanco",
+  "tipo": "Camión",
+  "foto": "papel/KTH925/RicC16Descarga2.jpg",
+  "logos": [
+   "VEC"
+  ],
+  "nota": "Portapatente vacío y papel «KTH925» en el parabrisas: lo leen la calada y Celda 16. Las demás cámaras leen el logo IVECO («AVEC0», «VEC0»).",
+  "visitas": [
+   {
+    "ingreso": "2026-07-29 16:13:00",
+    "salida": "2026-07-29 18:17:00",
+    "planta": "RICARDONE",
+    "producto": "SOJA",
+    "mov": "INGRESO",
+    "pasos": [
+     {
+      "punto": "Ingreso Ricardone",
+      "camara": "RicIngCamFrente",
+      "hora": "2026-07-29 16:06:14",
+      "lectura": "AVAEC",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\KTH925\\202607291613\\160614_RicIngCamFrente_AVAEC.jpg"
+     },
+     {
+      "punto": "Calada Ricardone",
+      "camara": "RicCal01",
+      "hora": "2026-07-29 17:19:45",
+      "lectura": "KTH925",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\KTH925\\202607291613\\171945_RicCal01_KTH925.jpg"
+     },
+     {
+      "punto": "Balanza ingreso Ricardone",
+      "camara": "RicB1Ingreso",
+      "hora": "2026-07-29 17:27:27",
+      "lectura": "AVEC0",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\KTH925\\202607291613\\172727_RicB1Ingreso_AVEC0.jpg"
+     },
+     {
+      "punto": "Celda 16",
+      "camara": "RicC16Descarga2",
+      "hora": "2026-07-29 17:53:58",
+      "lectura": "KTH925",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\papel\\KTH925\\RicC16Descarga2.jpg"
+     },
+     {
+      "punto": "Playa 3",
+      "camara": "RicS6Playa3",
+      "hora": "2026-07-29 18:06:58",
+      "lectura": "VEC0",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\KTH925\\202607291613\\180658_RicS6Playa3_VEC0.jpg"
+     },
+     {
+      "punto": "Balanza egreso Ricardone",
+      "camara": "RicB2Egreso",
+      "hora": "2026-07-29 18:11:56",
+      "lectura": "MVEC",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\KTH925\\202607291613\\anclas\\181156_RicB2Egreso_MVEC.jpg"
+     }
+    ],
+    "dss": true,
+    "revisada": true
+   }
+  ],
+  "lecturas": [
+   "AVAEC",
+   "KTH925",
+   "AVEC0",
+   "VEC0",
+   "MVEC"
+  ]
+ },
+ {
+  "patente": "RGP363",
+  "grupo": "Papel en el parabrisas",
+  "marca": "Scania",
+  "modelo": "113",
+  "color": "Azul",
+  "tipo": "Tractor",
+  "foto": "papel/RGP363/RicCal01_0909120429.jpg",
+  "logos": [],
+  "nota": "Sin chapa adelante; papel «PATENTE RGP363» en el parabrisas, que solo lee la calada.",
+  "visitas": [
+   {
+    "ingreso": "2026-09-09 11:07:00",
+    "salida": "2026-09-09 15:31:00",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "SOJA",
+    "mov": "INGRESO",
+    "pasos": [
+     {
+      "punto": "Ingreso Ricardone",
+      "camara": "RicIngCamFrente",
+      "hora": "2026-09-09 10:56:58",
+      "lectura": "P21",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\RGP363\\202609091107\\105658_RicIngCamFrente_P21.jpg"
+     },
+     {
+      "punto": "Preingreso",
+      "camara": "RicPreIngInFr",
+      "hora": "2026-09-09 11:00:31",
+      "lectura": "QJD",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\RGP363\\202609091107\\110031_RicPreIngInFr_QJD.jpg"
+     },
+     {
+      "punto": "Calada Ricardone",
+      "camara": "RicCal01",
+      "hora": "2026-09-09 12:04:29",
+      "lectura": "RGP363",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\RGP363\\202609091107\\120429_RicCal01_RGP363.jpg"
+     },
+     {
+      "punto": "Balanza ingreso puerto",
+      "camara": "SLZBalIngFte",
+      "hora": "2026-09-09 14:27:03",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\RGP363\\202609091107\\142703_SLZBalIngFte_vacia.jpg"
+     },
+     {
+      "punto": "Volcables puerto",
+      "camara": "SLZVolcableC1",
+      "hora": "2026-09-09 15:14:48",
+      "lectura": "CSD",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\RGP363\\202609091107\\151448_SLZVolcableC1_CSD.jpg"
+     },
+     {
+      "punto": "Balanza egreso puerto",
+      "camara": "SLZBalSC2Fte",
+      "hora": "2026-09-09 15:25:10",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\RGP363\\202609091107\\anclas\\152510_SLZBalSC2Fte_vacia.jpg"
+     },
+     {
+      "punto": "Salida puerto",
+      "camara": "SLZSalidaC1Fte",
+      "hora": "2026-09-09 15:28:49",
+      "lectura": "1133H",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\RGP363\\202609091107\\anclas\\152849_SLZSalidaC1Fte_1133H.jpg"
+     }
+    ],
+    "dss": true,
+    "revisada": true
+   },
+   {
+    "ingreso": "2026-09-11 10:20:00",
+    "salida": "2026-09-11 16:15:00",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "SOJA",
+    "mov": "INGRESO",
+    "pasos": [
+     {
+      "punto": "Ingreso Ricardone",
+      "camara": "RicIngCamFrente",
+      "hora": "2026-09-11 10:14:01",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\RGP363\\202609111020\\101401_RicIngCamFrente_vacia.jpg"
+     },
+     {
+      "punto": "Preingreso",
+      "camara": "RicPreIngInFr",
+      "hora": "2026-09-11 10:15:37",
+      "lectura": "949",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\RGP363\\202609111020\\101537_RicPreIngInFr_949.jpg"
+     },
+     {
+      "punto": "Calada Ricardone",
+      "camara": "RicCal01",
+      "hora": "2026-09-11 11:07:25",
+      "lectura": "IWUT",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\RGP363\\202609111020\\110725_RicCal01_IWUT.jpg"
+     },
+     {
+      "punto": "Balanza ingreso puerto",
+      "camara": "SLZBalIngFte",
+      "hora": "2026-09-11 15:28:35",
+      "lectura": "",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\RGP363\\202609111020\\152835_SLZBalIngFte_vacia.jpg"
+     },
+     {
+      "punto": "Volcables puerto",
+      "camara": "SLZVolcableC3",
+      "hora": "2026-09-11 15:57:27",
+      "lectura": "SCN0",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\RGP363\\202609111020\\155727_SLZVolcableC3_SCN0.jpg"
+     },
+     {
+      "punto": "Balanza egreso puerto",
+      "camara": "SLZBalSC2Fte",
+      "hora": "2026-09-11 16:10:14",
+      "lectura": "A99331",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\RGP363\\202609111020\\anclas\\161014_SLZBalSC2Fte_A99331.jpg"
+     },
+     {
+      "punto": "Salida puerto",
+      "camara": "SLZSalidaC1Fte",
+      "hora": "2026-09-11 16:16:39",
+      "lectura": "GM6662848",
+      "estado": "confirmado",
+      "foto": "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\reportes\\cruce-sistema-truckflow\\recorridos\\RGP363\\202609111020\\161639_SLZSalidaC1Fte_GM6662848.jpg"
+     }
+    ],
+    "dss": true,
+    "revisada": true
+   }
+  ],
+  "lecturas": [
+   "P21",
+   "QJD",
+   "RGP363",
+   "CSD",
+   "1133H",
+   "949",
+   "IWUT",
+   "SCN0",
+   "A99331",
+   "GM6662848"
+  ]
+ }
+]

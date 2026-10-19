@@ -1,0 +1,1329 @@
+{
+  "generado": "2026-10-19T18:04:41.988Z",
+  "desde": "2026-10-13",
+  "hasta": "2026-10-19",
+  "movimientos": 701,
+  "noCamionesExcluidos": 707,
+  "validacion": {
+    "borrada": {
+      "PRE": {
+        "n": 17,
+        "bien": 14,
+        "mal": 0,
+        "nada": 3
+      },
+      "ING_RIC": {
+        "n": 14,
+        "bien": 7,
+        "mal": 0,
+        "nada": 7
+      },
+      "CAL_RIC": {
+        "n": 15,
+        "bien": 3,
+        "mal": 0,
+        "nada": 12
+      },
+      "BAL_ING_RIC": {
+        "n": 3,
+        "bien": 1,
+        "mal": 0,
+        "nada": 2
+      },
+      "BAL_EGR_RIC": {
+        "n": 6,
+        "bien": 3,
+        "mal": 0,
+        "nada": 3
+      },
+      "ING_SL": {
+        "n": 18,
+        "bien": 2,
+        "mal": 0,
+        "nada": 16
+      },
+      "CAL_SL": {
+        "n": 5,
+        "bien": 0,
+        "mal": 0,
+        "nada": 5
+      },
+      "BAL_ING_SL": {
+        "n": 15,
+        "bien": 5,
+        "mal": 1,
+        "nada": 9
+      },
+      "BAL_EGR_SL": {
+        "n": 14,
+        "bien": 11,
+        "mal": 0,
+        "nada": 3
+      }
+    },
+    "alterada": {
+      "PRE": {
+        "n": 17,
+        "bien": 16,
+        "mal": 0,
+        "nada": 1
+      },
+      "ING_RIC": {
+        "n": 14,
+        "bien": 11,
+        "mal": 0,
+        "nada": 3
+      },
+      "CAL_RIC": {
+        "n": 15,
+        "bien": 14,
+        "mal": 0,
+        "nada": 1
+      },
+      "BAL_ING_RIC": {
+        "n": 3,
+        "bien": 3,
+        "mal": 0,
+        "nada": 0
+      },
+      "BAL_EGR_RIC": {
+        "n": 6,
+        "bien": 5,
+        "mal": 0,
+        "nada": 1
+      },
+      "ING_SL": {
+        "n": 18,
+        "bien": 17,
+        "mal": 0,
+        "nada": 1
+      },
+      "CAL_SL": {
+        "n": 5,
+        "bien": 4,
+        "mal": 0,
+        "nada": 1
+      },
+      "BAL_ING_SL": {
+        "n": 15,
+        "bien": 14,
+        "mal": 0,
+        "nada": 1
+      },
+      "BAL_EGR_SL": {
+        "n": 14,
+        "bien": 13,
+        "mal": 0,
+        "nada": 1
+      }
+    }
+  },
+  "global": {
+    "cruzó": 677,
+    "recuperado": 14,
+    "solo_otras_camaras": 5,
+    "patente_distinta": 0,
+    "nunca_cruzó": 5,
+    "sinExactaEnPuntosClave": 24
+  },
+  "porPunto": {
+    "PRE": {
+      "label": "Preingreso Ricardone",
+      "esperados": 589,
+      "exacta": 412,
+      "formato": 0,
+      "parecida": 36,
+      "por_hora": 11,
+      "otra_patente": 6,
+      "sin_lectura": 124
+    },
+    "ING_RIC": {
+      "label": "Ingreso Ricardone",
+      "esperados": 589,
+      "exacta": 333,
+      "formato": 1,
+      "parecida": 36,
+      "por_hora": 0,
+      "otra_patente": 0,
+      "sin_lectura": 219
+    },
+    "CAL_RIC": {
+      "label": "Calada Ricardone",
+      "esperados": 589,
+      "exacta": 366,
+      "formato": 2,
+      "parecida": 49,
+      "por_hora": 0,
+      "otra_patente": 0,
+      "sin_lectura": 172
+    },
+    "BAL_ING_RIC": {
+      "label": "Balanza ingreso Ricardone",
+      "esperados": 156,
+      "exacta": 11,
+      "formato": 0,
+      "parecida": 0,
+      "por_hora": 0,
+      "otra_patente": 0,
+      "sin_lectura": 145
+    },
+    "BAL_EGR_RIC": {
+      "label": "Balanza egreso Ricardone",
+      "esperados": 303,
+      "exacta": 150,
+      "formato": 0,
+      "parecida": 0,
+      "por_hora": 0,
+      "otra_patente": 0,
+      "sin_lectura": 153
+    },
+    "ING_SL": {
+      "label": "Ingreso puerto",
+      "esperados": 554,
+      "exacta": 427,
+      "formato": 0,
+      "parecida": 38,
+      "por_hora": 0,
+      "otra_patente": 0,
+      "sin_lectura": 89
+    },
+    "CAL_SL": {
+      "label": "Calada puerto",
+      "esperados": 240,
+      "exacta": 105,
+      "formato": 0,
+      "parecida": 0,
+      "por_hora": 0,
+      "otra_patente": 0,
+      "sin_lectura": 135
+    },
+    "BAL_ING_SL": {
+      "label": "Balanza ingreso puerto",
+      "esperados": 554,
+      "exacta": 435,
+      "formato": 3,
+      "parecida": 24,
+      "por_hora": 0,
+      "otra_patente": 0,
+      "sin_lectura": 92
+    },
+    "BAL_EGR_SL": {
+      "label": "Balanza egreso puerto",
+      "esperados": 554,
+      "exacta": 356,
+      "formato": 3,
+      "parecida": 42,
+      "por_hora": 17,
+      "otra_patente": 0,
+      "sin_lectura": 136
+    }
+  },
+  "porMes": {
+    "2026-10": {
+      "movimientos": 701,
+      "sinExactaEnPuntosClave": 24,
+      "cruzó": 677,
+      "recuperado": 14,
+      "solo_otras_camaras": 5,
+      "patente_distinta": 0,
+      "nunca_cruzó": 5
+    }
+  },
+  "porPlanta": {
+    "TERMINAL_EMBARQUE": {
+      "movimientos": 506,
+      "sinExactaEnPuntosClave": 19,
+      "cruzó": 487,
+      "recuperado": 13,
+      "solo_otras_camaras": 1,
+      "patente_distinta": 0,
+      "nunca_cruzó": 5
+    },
+    "RICARDONE": {
+      "movimientos": 195,
+      "sinExactaEnPuntosClave": 5,
+      "cruzó": 190,
+      "recuperado": 1,
+      "solo_otras_camaras": 4,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    }
+  },
+  "porProducto": {
+    "SOJA": {
+      "movimientos": 289,
+      "sinExactaEnPuntosClave": 14,
+      "cruzó": 275,
+      "recuperado": 12,
+      "solo_otras_camaras": 1,
+      "patente_distinta": 0,
+      "nunca_cruzó": 1
+    },
+    "ACEITE GIRASOL REFINADO": {
+      "movimientos": 53,
+      "sinExactaEnPuntosClave": 3,
+      "cruzó": 50,
+      "recuperado": 1,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 2
+    },
+    "SEMILLA CON AGUA/BARRO": {
+      "movimientos": 2,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 2,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "ACEITE SOJA CRUDO DESGOMADO": {
+      "movimientos": 36,
+      "sinExactaEnPuntosClave": 1,
+      "cruzó": 35,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 1
+    },
+    "RESIDUOS ORG": {
+      "movimientos": 21,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 21,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "PRODUCTOS VARIOS": {
+      "movimientos": 47,
+      "sinExactaEnPuntosClave": 4,
+      "cruzó": 43,
+      "recuperado": 0,
+      "solo_otras_camaras": 4,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "BORRA ACEITE GIRASOL": {
+      "movimientos": 5,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 5,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "AGUA INDUSTRIAL": {
+      "movimientos": 28,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 28,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "ACGIRASOL OLEICO": {
+      "movimientos": 44,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 44,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "AGUA POTABLE": {
+      "movimientos": 3,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 3,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "RESIDUOS ASIMILABLES A DOMICILIARIOS": {
+      "movimientos": 19,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 19,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "GIRASOL": {
+      "movimientos": 103,
+      "sinExactaEnPuntosClave": 1,
+      "cruzó": 102,
+      "recuperado": 1,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "TARIMAS MADERA": {
+      "movimientos": 1,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 1,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "ESCORIA": {
+      "movimientos": 5,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 5,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "CASCARA DE SOJA PELLETEADA": {
+      "movimientos": 2,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 2,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "CHATARRA": {
+      "movimientos": 1,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 1,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "NITROGENO LIQUIDO": {
+      "movimientos": 1,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 1,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "BARRIDO DE MERCADERIA": {
+      "movimientos": 2,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 2,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "GLICERINA SUBSTANDARD": {
+      "movimientos": 4,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 4,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "GLICERINA REFINADA": {
+      "movimientos": 1,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 1,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "PELLETS GIRASOL": {
+      "movimientos": 2,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 2,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "CASCARA DE GIRASOL": {
+      "movimientos": 2,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 2,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "TIERRA DESC FILTROS": {
+      "movimientos": 1,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 1,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "METANOL": {
+      "movimientos": 11,
+      "sinExactaEnPuntosClave": 1,
+      "cruzó": 10,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 1
+    },
+    "BORRA DE ACSOJA REFINADO": {
+      "movimientos": 8,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 8,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "HIPOCLORITO DE SODIO": {
+      "movimientos": 1,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 1,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "GLICERINA": {
+      "movimientos": 4,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 4,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "SODA CAUSTICA LIQUIDA": {
+      "movimientos": 1,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 1,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    },
+    "BORRA ACEITE GIRASOL REFINADO": {
+      "movimientos": 4,
+      "sinExactaEnPuntosClave": 0,
+      "cruzó": 4,
+      "recuperado": 0,
+      "solo_otras_camaras": 0,
+      "patente_distinta": 0,
+      "nunca_cruzó": 0
+    }
+  },
+  "offsets": {
+    "ING_RIC|TERMINAL_EMBARQUE|ing": {
+      "n": 201,
+      "p05": -13.216666666666667,
+      "p25": -4.533566666666666,
+      "p50": -3.771916666666667,
+      "p75": -3.252066666666667,
+      "p95": -2.82385,
+      "spread": 10.392816666666667
+    },
+    "ING_RIC|TERMINAL_EMBARQUE|calado": {
+      "n": 121,
+      "p05": -195.71003333333334,
+      "p25": -124.5803,
+      "p50": -75.53356666666667,
+      "p75": -27.184516666666667,
+      "p95": -16.102866666666667,
+      "spread": 179.60716666666667
+    },
+    "ING_RIC|TERMINAL_EMBARQUE|sal": {
+      "n": 201,
+      "p05": -479.0839833333333,
+      "p25": -303.13536666666664,
+      "p50": -216.76211666666666,
+      "p75": -139.0713,
+      "p95": -79.24968333333334,
+      "spread": 399.8343
+    },
+    "ING_RIC|TERMINAL_EMBARQUE|P:PRE": {
+      "n": 188,
+      "p05": -6.4672,
+      "p25": -3.5029,
+      "p50": -2.8331166666666667,
+      "p75": -2.3469,
+      "p95": -1.8441666666666667,
+      "spread": 4.623033333333334
+    },
+    "ING_RIC|TERMINAL_EMBARQUE|P:CAL_RIC": {
+      "n": 159,
+      "p05": -216.45718333333335,
+      "p25": -124.05435,
+      "p50": -70.97331666666666,
+      "p75": -31.661033333333332,
+      "p95": -11.648483333333333,
+      "spread": 204.80870000000002
+    },
+    "ING_RIC|TERMINAL_EMBARQUE|P:ING_SL": {
+      "n": 190,
+      "p05": -318.0121833333333,
+      "p25": -174.29356666666666,
+      "p50": -111.38995,
+      "p75": -65.19133333333333,
+      "p95": -23.538666666666668,
+      "spread": 294.4735166666667
+    },
+    "ING_RIC|TERMINAL_EMBARQUE|P:BAL_ING_SL": {
+      "n": 176,
+      "p05": -408.76208333333335,
+      "p25": -214.79978333333332,
+      "p50": -144.5097,
+      "p75": -76.00725,
+      "p95": -28.8658,
+      "spread": 379.8962833333334
+    },
+    "PRE|TERMINAL_EMBARQUE|ing": {
+      "n": 258,
+      "p05": -3.3833333333333333,
+      "p25": -1.1205833333333333,
+      "p50": -0.91095,
+      "p75": -0.5491166666666667,
+      "p95": -0.05421666666666667,
+      "spread": 3.3291166666666667
+    },
+    "PRE|TERMINAL_EMBARQUE|calado": {
+      "n": 158,
+      "p05": -193.2259,
+      "p25": -116.84118333333333,
+      "p50": -66.82978333333334,
+      "p75": -28.439116666666667,
+      "p95": -13.272633333333333,
+      "spread": 179.95326666666665
+    },
+    "PRE|TERMINAL_EMBARQUE|sal": {
+      "n": 258,
+      "p05": -471.24178333333333,
+      "p25": -285.8289,
+      "p50": -206.1781,
+      "p75": -134.91666666666666,
+      "p95": -80.83041666666666,
+      "spread": 390.41136666666665
+    },
+    "PRE|TERMINAL_EMBARQUE|P:ING_RIC": {
+      "n": 188,
+      "p05": 1.8028333333333333,
+      "p25": 2.3441833333333335,
+      "p50": 2.81595,
+      "p75": 3.4932333333333334,
+      "p95": 6.2774,
+      "spread": 4.474566666666667
+    },
+    "PRE|TERMINAL_EMBARQUE|P:CAL_RIC": {
+      "n": 200,
+      "p05": -206.20585,
+      "p25": -121.66916666666667,
+      "p50": -68.41526666666667,
+      "p75": -29.880133333333333,
+      "p95": -9.494083333333334,
+      "spread": 196.71176666666668
+    },
+    "PRE|TERMINAL_EMBARQUE|P:ING_SL": {
+      "n": 229,
+      "p05": -311.63641666666666,
+      "p25": -168.46985,
+      "p50": -104.051,
+      "p75": -65.7866,
+      "p95": -17.417816666666667,
+      "spread": 294.2186
+    },
+    "PRE|TERMINAL_EMBARQUE|P:BAL_ING_SL": {
+      "n": 220,
+      "p05": -377.81286666666665,
+      "p25": -207.73333333333332,
+      "p50": -136.40491666666668,
+      "p75": -75.05103333333334,
+      "p95": -31.800083333333333,
+      "spread": 346.01278333333335
+    },
+    "CAL_RIC|TERMINAL_EMBARQUE|ing": {
+      "n": 213,
+      "p05": 9.11265,
+      "p25": 28.408783333333332,
+      "p50": 66.77118333333334,
+      "p75": 121.96926666666667,
+      "p95": 199.50413333333333,
+      "spread": 190.39148333333333
+    },
+    "CAL_RIC|TERMINAL_EMBARQUE|calado": {
+      "n": 136,
+      "p05": -7.33155,
+      "p25": -4.537883333333333,
+      "p50": -3.8591333333333333,
+      "p75": -3.4570333333333334,
+      "p95": -2.8278333333333334,
+      "spread": 4.503716666666667
+    },
+    "CAL_RIC|TERMINAL_EMBARQUE|sal": {
+      "n": 213,
+      "p05": -302.8100333333333,
+      "p25": -181.37916666666666,
+      "p50": -102.70791666666666,
+      "p75": -66.42918333333333,
+      "p95": -44.457033333333335,
+      "spread": 258.35299999999995
+    },
+    "CAL_RIC|TERMINAL_EMBARQUE|P:ING_RIC": {
+      "n": 159,
+      "p05": 11.4776,
+      "p25": 30.543433333333333,
+      "p50": 70.97331666666666,
+      "p75": 123.01635,
+      "p95": 203.06035,
+      "spread": 191.58275
+    },
+    "CAL_RIC|TERMINAL_EMBARQUE|P:PRE": {
+      "n": 200,
+      "p05": 8.755233333333333,
+      "p25": 29.57271666666667,
+      "p50": 68.38858333333333,
+      "p75": 121.50603333333333,
+      "p95": 200.6081,
+      "spread": 191.85286666666667
+    },
+    "CAL_RIC|TERMINAL_EMBARQUE|P:ING_SL": {
+      "n": 200,
+      "p05": -187.96051666666668,
+      "p25": -32.00313333333333,
+      "p50": -25.063783333333333,
+      "p75": -20.51285,
+      "p95": -15.542616666666667,
+      "spread": 172.4179
+    },
+    "CAL_RIC|TERMINAL_EMBARQUE|P:BAL_ING_SL": {
+      "n": 196,
+      "p05": -255.90443333333334,
+      "p25": -95.26026666666667,
+      "p50": -37.24135,
+      "p75": -26.953966666666666,
+      "p95": -20.237366666666667,
+      "spread": 235.66706666666667
+    },
+    "ING_SL|TERMINAL_EMBARQUE|ing": {
+      "n": 427,
+      "p05": -5.681983333333333,
+      "p25": -1.9098333333333333,
+      "p50": 39.52291666666667,
+      "p75": 118.31121666666667,
+      "p95": 254.66603333333333,
+      "spread": 260.34801666666664
+    },
+    "ING_SL|TERMINAL_EMBARQUE|calado": {
+      "n": 147,
+      "p05": 11.34635,
+      "p25": 16.373833333333334,
+      "p50": 21.041766666666668,
+      "p75": 28.07555,
+      "p95": 180.94478333333333,
+      "spread": 169.59843333333333
+    },
+    "ING_SL|TERMINAL_EMBARQUE|sal": {
+      "n": 427,
+      "p05": -392.42791666666665,
+      "p25": -187.01705,
+      "p50": -99.61928333333333,
+      "p75": -47.836283333333334,
+      "p95": -23.91745,
+      "spread": 368.5104666666667
+    },
+    "ING_SL|TERMINAL_EMBARQUE|P:ING_RIC": {
+      "n": 190,
+      "p05": 19.487266666666667,
+      "p25": 64.4753,
+      "p50": 107.93275,
+      "p75": 172.87688333333332,
+      "p95": 317.0402833333333,
+      "spread": 297.5530166666667
+    },
+    "ING_SL|TERMINAL_EMBARQUE|P:PRE": {
+      "n": 229,
+      "p05": 17.416266666666665,
+      "p25": 65.7866,
+      "p50": 104.051,
+      "p75": 168.46985,
+      "p95": 301.40343333333334,
+      "spread": 283.98716666666667
+    },
+    "ING_SL|TERMINAL_EMBARQUE|P:CAL_RIC": {
+      "n": 200,
+      "p05": 15.41535,
+      "p25": 20.400266666666667,
+      "p50": 25.011633333333332,
+      "p75": 31.855533333333334,
+      "p95": 185.7767,
+      "spread": 170.36135000000002
+    },
+    "ING_SL|TERMINAL_EMBARQUE|P:BAL_ING_SL": {
+      "n": 392,
+      "p05": -122.0971,
+      "p25": -24.848933333333335,
+      "p50": -7.2283,
+      "p75": -3.5054333333333334,
+      "p95": -2.21355,
+      "spread": 119.88355
+    },
+    "BAL_ING_SL|TERMINAL_EMBARQUE|ing": {
+      "n": 431,
+      "p05": 0.85,
+      "p25": 7.033333333333333,
+      "p50": 69.24425,
+      "p75": 156.21006666666668,
+      "p95": 335.6,
+      "spread": 334.75
+    },
+    "BAL_ING_SL|TERMINAL_EMBARQUE|calado": {
+      "n": 149,
+      "p05": 15.4,
+      "p25": 24.05035,
+      "p50": 43.11666666666667,
+      "p75": 109.2622,
+      "p95": 252.1,
+      "spread": 236.7
+    },
+    "BAL_ING_SL|TERMINAL_EMBARQUE|sal": {
+      "n": 431,
+      "p05": -338.4895666666667,
+      "p25": -155.23333333333332,
+      "p50": -74.94965,
+      "p75": -36.6,
+      "p95": -21.105916666666666,
+      "spread": 317.38365000000005
+    },
+    "BAL_ING_SL|TERMINAL_EMBARQUE|P:ING_RIC": {
+      "n": 176,
+      "p05": 27.588766666666668,
+      "p25": 75.48245,
+      "p50": 144.27546666666666,
+      "p75": 213.64771666666667,
+      "p95": 406.16316666666665,
+      "spread": 378.57439999999997
+    },
+    "BAL_ING_SL|TERMINAL_EMBARQUE|P:PRE": {
+      "n": 220,
+      "p05": 29.264566666666667,
+      "p25": 75.02276666666667,
+      "p50": 136.32031666666666,
+      "p75": 204.85765,
+      "p95": 373.6349333333333,
+      "spread": 344.37036666666665
+    },
+    "BAL_ING_SL|TERMINAL_EMBARQUE|P:CAL_RIC": {
+      "n": 196,
+      "p05": 20.050733333333334,
+      "p25": 26.836816666666667,
+      "p50": 36.03071666666666,
+      "p75": 93.0776,
+      "p95": 255.07461666666666,
+      "spread": 235.02388333333332
+    },
+    "BAL_ING_SL|TERMINAL_EMBARQUE|P:ING_SL": {
+      "n": 392,
+      "p05": 2.20035,
+      "p25": 3.453316666666667,
+      "p50": 7.160566666666667,
+      "p75": 23.789983333333332,
+      "p95": 119.04868333333333,
+      "spread": 116.84833333333333
+    },
+    "ING_SL|TERMINAL_EMBARQUE|P:CAL_SL": {
+      "n": 96,
+      "p05": -222.13526666666667,
+      "p25": -101.35115,
+      "p50": -15.532766666666667,
+      "p75": -2.9499166666666667,
+      "p95": -1.7580666666666667,
+      "spread": 220.3772
+    },
+    "ING_SL|TERMINAL_EMBARQUE|P:BAL_EGR_SL": {
+      "n": 328,
+      "p05": -363.70253333333335,
+      "p25": -190.88766666666666,
+      "p50": -100.9308,
+      "p75": -47.73855,
+      "p95": -21.90426666666667,
+      "spread": 341.7982666666667
+    },
+    "CAL_SL|TERMINAL_EMBARQUE|ing": {
+      "n": 104,
+      "p05": 0.5596333333333333,
+      "p25": 1.3685333333333334,
+      "p50": 16.2814,
+      "p75": 98.27346666666666,
+      "p95": 283.7,
+      "spread": 283.14036666666664
+    },
+    "CAL_SL|TERMINAL_EMBARQUE|sal": {
+      "n": 104,
+      "p05": -362.99558333333334,
+      "p25": -234.0321,
+      "p50": -165.77295,
+      "p75": -107.51186666666666,
+      "p95": -15.283333333333333,
+      "spread": 347.71225
+    },
+    "CAL_SL|TERMINAL_EMBARQUE|P:ING_SL": {
+      "n": 96,
+      "p05": 1.7524,
+      "p25": 2.8941833333333333,
+      "p50": 13.605466666666667,
+      "p75": 100.85526666666667,
+      "p95": 213.27555,
+      "spread": 211.52315000000002
+    },
+    "CAL_SL|TERMINAL_EMBARQUE|P:BAL_ING_SL": {
+      "n": 101,
+      "p05": -54.703316666666666,
+      "p25": -12.7746,
+      "p50": -8.023516666666668,
+      "p75": -5.74765,
+      "p95": 171.80185,
+      "spread": 226.50516666666667
+    },
+    "CAL_SL|TERMINAL_EMBARQUE|P:BAL_EGR_SL": {
+      "n": 87,
+      "p05": -311.6381166666667,
+      "p25": -216.25113333333334,
+      "p50": -158.1864,
+      "p75": -106.61781666666667,
+      "p95": -12.357633333333334,
+      "spread": 299.28048333333334
+    },
+    "BAL_ING_SL|TERMINAL_EMBARQUE|P:CAL_SL": {
+      "n": 101,
+      "p05": -171.80185,
+      "p25": 5.74765,
+      "p50": 8.023516666666668,
+      "p75": 12.7746,
+      "p95": 54.703316666666666,
+      "spread": 226.50516666666667
+    },
+    "BAL_ING_SL|TERMINAL_EMBARQUE|P:BAL_EGR_SL": {
+      "n": 330,
+      "p05": -250.98303333333334,
+      "p25": -156.81403333333333,
+      "p50": -76.82891666666667,
+      "p75": -35.300716666666666,
+      "p95": -18.872333333333334,
+      "spread": 232.1107
+    },
+    "BAL_EGR_SL|TERMINAL_EMBARQUE|ing": {
+      "n": 350,
+      "p05": 25.9057,
+      "p25": 109.20943333333334,
+      "p50": 189.23183333333333,
+      "p75": 272.18373333333335,
+      "p95": 474.68893333333335,
+      "spread": 448.7832333333333
+    },
+    "BAL_EGR_SL|TERMINAL_EMBARQUE|sal": {
+      "n": 350,
+      "p05": -11.672383333333334,
+      "p25": -2.0478833333333335,
+      "p50": -1.6751166666666666,
+      "p75": -1.31905,
+      "p95": -0.7681666666666667,
+      "spread": 10.904216666666667
+    },
+    "BAL_EGR_SL|TERMINAL_EMBARQUE|P:ING_SL": {
+      "n": 328,
+      "p05": 21.837733333333333,
+      "p25": 47.24053333333333,
+      "p50": 100.17761666666667,
+      "p75": 189.49676666666667,
+      "p95": 355.9377333333333,
+      "spread": 334.09999999999997
+    },
+    "BAL_EGR_SL|TERMINAL_EMBARQUE|P:CAL_SL": {
+      "n": 87,
+      "p05": 9.213733333333334,
+      "p25": 105.67171666666667,
+      "p50": 158.1864,
+      "p75": 215.00536666666667,
+      "p95": 303.15793333333335,
+      "spread": 293.9442
+    },
+    "BAL_EGR_SL|TERMINAL_EMBARQUE|P:BAL_ING_SL": {
+      "n": 330,
+      "p05": 18.084883333333334,
+      "p25": 35.12985,
+      "p50": 76.17113333333333,
+      "p75": 155.96518333333333,
+      "p95": 237.12313333333333,
+      "spread": 219.03825
+    },
+    "ING_RIC|TERMINAL_EMBARQUE|P:BAL_EGR_SL": {
+      "n": 145,
+      "p05": -595.6383,
+      "p25": -303.61705,
+      "p50": -222.01785,
+      "p75": -160.53418333333335,
+      "p95": -83.0712,
+      "spread": 512.5671
+    },
+    "PRE|TERMINAL_EMBARQUE|P:BAL_EGR_SL": {
+      "n": 179,
+      "p05": -573.17455,
+      "p25": -300.63186666666667,
+      "p50": -218.99886666666666,
+      "p75": -148.89651666666666,
+      "p95": -78.91186666666667,
+      "spread": 494.26268333333326
+    },
+    "CAL_RIC|TERMINAL_EMBARQUE|P:BAL_EGR_SL": {
+      "n": 157,
+      "p05": -301.6999666666667,
+      "p25": -187.76728333333332,
+      "p50": -113.60055,
+      "p75": -70.13973333333334,
+      "p95": -42.4349,
+      "spread": 259.2650666666667
+    },
+    "BAL_EGR_SL|TERMINAL_EMBARQUE|calado": {
+      "n": 109,
+      "p05": 36.602133333333335,
+      "p25": 78.48388333333334,
+      "p50": 132.00706666666667,
+      "p75": 219.20988333333332,
+      "p95": 341.8360333333333,
+      "spread": 305.2339
+    },
+    "BAL_EGR_SL|TERMINAL_EMBARQUE|P:ING_RIC": {
+      "n": 145,
+      "p05": 82.20946666666667,
+      "p25": 160.53418333333335,
+      "p50": 222.01785,
+      "p75": 303.61705,
+      "p95": 537.0519833333333,
+      "spread": 454.8425166666666
+    },
+    "BAL_EGR_SL|TERMINAL_EMBARQUE|P:PRE": {
+      "n": 179,
+      "p05": 73.0828,
+      "p25": 141.67135,
+      "p50": 218.99886666666666,
+      "p75": 299.64255,
+      "p95": 535.2077833333333,
+      "spread": 462.12498333333326
+    },
+    "BAL_EGR_SL|TERMINAL_EMBARQUE|P:CAL_RIC": {
+      "n": 157,
+      "p05": 41.77418333333333,
+      "p25": 70.13973333333334,
+      "p50": 113.60055,
+      "p75": 187.76728333333332,
+      "p95": 293.5382833333333,
+      "spread": 251.76409999999998
+    },
+    "ING_RIC|RICARDONE|ing": {
+      "n": 135,
+      "p05": -16.613516666666666,
+      "p25": -5.2959,
+      "p50": -4.00255,
+      "p75": -3.2655166666666666,
+      "p95": -2.5114,
+      "spread": 14.102116666666666
+    },
+    "ING_RIC|RICARDONE|sal": {
+      "n": 135,
+      "p05": -1077.2511,
+      "p25": -682.3134,
+      "p50": -396.65995,
+      "p75": -246.53803333333335,
+      "p95": -40.5043,
+      "spread": 1036.7468
+    },
+    "ING_RIC|RICARDONE|P:PRE": {
+      "n": 123,
+      "p05": -6.568083333333333,
+      "p25": -4.305633333333334,
+      "p50": -2.9869166666666667,
+      "p75": -2.1292833333333334,
+      "p95": -1.7304666666666666,
+      "spread": 4.8376166666666665
+    },
+    "ING_RIC|RICARDONE|P:CAL_RIC": {
+      "n": 112,
+      "p05": -320.56446666666665,
+      "p25": -108.99031666666667,
+      "p50": -40.036233333333335,
+      "p75": -13.127466666666667,
+      "p95": -4.7858,
+      "spread": 315.77866666666665
+    },
+    "ING_RIC|RICARDONE|P:BAL_EGR_RIC": {
+      "n": 100,
+      "p05": -1088.2664833333333,
+      "p25": -696.5898833333333,
+      "p50": -418.3919,
+      "p75": -263.9705,
+      "p95": -34.7025,
+      "spread": 1053.5639833333332
+    },
+    "PRE|RICARDONE|ing": {
+      "n": 158,
+      "p05": -3.773833333333333,
+      "p25": -1.2673333333333334,
+      "p50": -0.8850333333333333,
+      "p75": -0.5179,
+      "p95": -0.020483333333333333,
+      "spread": 3.7533499999999997
+    },
+    "PRE|RICARDONE|sal": {
+      "n": 158,
+      "p05": -1085.3166666666666,
+      "p25": -697.0138,
+      "p50": -444.6166666666667,
+      "p75": -275.22605,
+      "p95": -90.51883333333333,
+      "spread": 994.7978333333333
+    },
+    "PRE|RICARDONE|P:ING_RIC": {
+      "n": 123,
+      "p05": 1.7183333333333333,
+      "p25": 2.0881833333333333,
+      "p50": 2.9869166666666667,
+      "p75": 4.247933333333333,
+      "p95": 6.5405,
+      "spread": 4.822166666666666
+    },
+    "PRE|RICARDONE|P:CAL_RIC": {
+      "n": 133,
+      "p05": -354.6338,
+      "p25": -103.41436666666667,
+      "p50": -36.9657,
+      "p75": -10.86185,
+      "p95": -1.9842,
+      "spread": 352.6496
+    },
+    "PRE|RICARDONE|P:BAL_EGR_RIC": {
+      "n": 121,
+      "p05": -1084.2333333333333,
+      "p25": -710.4482,
+      "p50": -458.3906,
+      "p75": -273.8481,
+      "p95": -37.59493333333333,
+      "spread": 1046.6384
+    },
+    "CAL_RIC|RICARDONE|ing": {
+      "n": 153,
+      "p05": 1.10655,
+      "p25": 11.009533333333334,
+      "p50": 36.95896666666667,
+      "p75": 117.91021666666667,
+      "p95": 316.3557166666667,
+      "spread": 315.24916666666667
+    },
+    "CAL_RIC|RICARDONE|sal": {
+      "n": 153,
+      "p05": -1009.65,
+      "p25": -565.3468333333333,
+      "p50": -356.3940166666667,
+      "p75": -182.864,
+      "p95": -83.47643333333333,
+      "spread": 926.1735666666666
+    },
+    "CAL_RIC|RICARDONE|P:ING_RIC": {
+      "n": 112,
+      "p05": 4.444883333333333,
+      "p25": 13.03415,
+      "p50": 36.846583333333335,
+      "p75": 98.16385,
+      "p95": 320.1757666666667,
+      "spread": 315.73088333333334
+    },
+    "CAL_RIC|RICARDONE|P:PRE": {
+      "n": 133,
+      "p05": 1.8117833333333333,
+      "p25": 10.86185,
+      "p50": 36.9657,
+      "p75": 103.41436666666667,
+      "p95": 317.6904666666667,
+      "spread": 315.87868333333336
+    },
+    "CAL_RIC|RICARDONE|P:BAL_EGR_RIC": {
+      "n": 113,
+      "p05": -1043.2611833333333,
+      "p25": -574.4558,
+      "p50": -376.0254166666667,
+      "p75": -195.83571666666666,
+      "p95": -94.45208333333333,
+      "spread": 948.8091
+    },
+    "BAL_EGR_RIC|RICARDONE|ing": {
+      "n": 143,
+      "p05": 26.8,
+      "p25": 263.7996166666667,
+      "p50": 442.90425,
+      "p75": 709.8553833333333,
+      "p95": 1078.2666666666667,
+      "spread": 1051.4666666666667
+    },
+    "BAL_EGR_RIC|RICARDONE|sal": {
+      "n": 143,
+      "p05": -9.333333333333334,
+      "p25": -2.174383333333333,
+      "p50": -1.6,
+      "p75": -1.1382,
+      "p95": -0.8361166666666666,
+      "spread": 8.497216666666667
+    },
+    "BAL_EGR_RIC|RICARDONE|P:ING_RIC": {
+      "n": 100,
+      "p05": 27.596533333333333,
+      "p25": 241.40816666666666,
+      "p50": 403.835,
+      "p75": 688.61875,
+      "p95": 1076.3177666666666,
+      "spread": 1048.7212333333332
+    },
+    "BAL_EGR_RIC|RICARDONE|P:PRE": {
+      "n": 121,
+      "p05": 37.59493333333333,
+      "p25": 273.8481,
+      "p50": 458.3906,
+      "p75": 710.4482,
+      "p95": 1084.2333333333333,
+      "spread": 1046.6384
+    },
+    "BAL_EGR_RIC|RICARDONE|P:CAL_RIC": {
+      "n": 113,
+      "p05": 84.00255,
+      "p25": 195.83571666666666,
+      "p50": 376.0254166666667,
+      "p75": 574.4558,
+      "p95": 1007.95,
+      "spread": 923.94745
+    },
+    "PRE|RICARDONE|P:BAL_ING_RIC": {
+      "n": 40,
+      "p05": -942.9374333333334,
+      "p25": -277.74356666666665,
+      "p50": -101.70965,
+      "p75": -37.67705,
+      "p95": -18.407166666666665,
+      "spread": 924.5302666666668
+    },
+    "CAL_RIC|RICARDONE|P:BAL_ING_RIC": {
+      "n": 46,
+      "p05": -516.9603833333333,
+      "p25": -20.823016666666668,
+      "p50": -14.127583333333334,
+      "p75": -11.520883333333334,
+      "p95": -9.099683333333333,
+      "spread": 507.86069999999995
+    },
+    "BAL_ING_RIC|RICARDONE|ing": {
+      "n": 52,
+      "p05": 10.283333333333333,
+      "p25": 30.483333333333334,
+      "p50": 82.65,
+      "p75": 253.6,
+      "p95": 531.8166666666667,
+      "spread": 521.5333333333334
+    },
+    "BAL_ING_RIC|RICARDONE|sal": {
+      "n": 52,
+      "p05": -703.1,
+      "p25": -443.6666666666667,
+      "p50": -309.9,
+      "p75": -139.18333333333334,
+      "p95": -68.58333333333333,
+      "spread": 634.5166666666667
+    },
+    "BAL_ING_RIC|RICARDONE|P:PRE": {
+      "n": 40,
+      "p05": 11.7135,
+      "p25": 30.8,
+      "p50": 97.56106666666666,
+      "p75": 253.81748333333334,
+      "p95": 532.1553666666666,
+      "spread": 520.4418666666667
+    },
+    "BAL_ING_RIC|RICARDONE|P:CAL_RIC": {
+      "n": 46,
+      "p05": 7.963466666666666,
+      "p25": 11.42165,
+      "p50": 13.8228,
+      "p75": 20.6005,
+      "p95": 444.67991666666666,
+      "spread": 436.71645
+    },
+    "BAL_ING_RIC|RICARDONE|P:BAL_EGR_RIC": {
+      "n": 44,
+      "p05": -701.3095333333333,
+      "p25": -462.46188333333333,
+      "p50": -336.86825,
+      "p75": -163.3,
+      "p95": -76.76666666666667,
+      "spread": 624.5428666666667
+    },
+    "BAL_EGR_RIC|RICARDONE|P:BAL_ING_RIC": {
+      "n": 44,
+      "p05": 75.18333333333334,
+      "p25": 149.79553333333334,
+      "p50": 328.85,
+      "p75": 454.1483333333333,
+      "p95": 687.1965,
+      "spread": 612.0131666666666
+    },
+    "ING_RIC|RICARDONE|calado": {
+      "n": 79,
+      "p05": -363.9934666666667,
+      "p25": -145.73568333333333,
+      "p50": -51.73585,
+      "p75": -21.57065,
+      "p95": -13.650616666666666,
+      "spread": 350.34285
+    },
+    "PRE|RICARDONE|calado": {
+      "n": 103,
+      "p05": -331.8500833333333,
+      "p25": -127.07425,
+      "p50": -42.01841666666667,
+      "p75": -15.799066666666667,
+      "p95": -10.733333333333333,
+      "spread": 321.11674999999997
+    },
+    "CAL_RIC|RICARDONE|calado": {
+      "n": 104,
+      "p05": -47.77295,
+      "p25": -6.836216666666667,
+      "p50": -4.78155,
+      "p75": -3.66925,
+      "p95": -2.5079166666666666,
+      "spread": 45.265033333333335
+    },
+    "BAL_EGR_RIC|RICARDONE|calado": {
+      "n": 92,
+      "p05": 95.5,
+      "p25": 202.24333333333334,
+      "p50": 346.85538333333335,
+      "p75": 505.3333333333333,
+      "p95": 1040.45,
+      "spread": 944.95
+    }
+  },
+  "fueraDelSistema": {
+    "patentes": 419,
+    "visitas": 825,
+    "recurrentes3dias": 107
+  },
+  "recuperadasPorTipo": {
+    "BAL_EGR_SL|por_hora": 17,
+    "ING_RIC|parecida": 36,
+    "PRE|parecida": 36,
+    "CAL_RIC|parecida": 49,
+    "BAL_EGR_SL|parecida": 42,
+    "CAL_RIC|formato": 2,
+    "BAL_ING_SL|parecida": 24,
+    "BAL_ING_SL|formato": 3,
+    "ING_SL|parecida": 38,
+    "PRE|por_hora": 11,
+    "BAL_EGR_SL|formato": 3,
+    "PRE|otra_patente": 6,
+    "ING_RIC|formato": 1
+  }
+}

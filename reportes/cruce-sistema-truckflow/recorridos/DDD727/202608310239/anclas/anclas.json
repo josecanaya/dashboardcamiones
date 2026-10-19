@@ -1,0 +1,265 @@
+{
+ "patente": "DDD727",
+ "ingreso": "2026-08-31 02:39:00",
+ "calado": "2026-08-31 05:07:00",
+ "salida": "2026-08-31 09:34:00",
+ "plataforma": "KEPPLER_1",
+ "producto": "GIRASOL",
+ "planta": "RICARDONE",
+ "puntos": [
+  {
+   "punto": "Ingreso Ricardone",
+   "ancla": "ing",
+   "ventana": [
+    "02:19:48",
+    "02:38:06"
+   ],
+   "centro": "02:33:12",
+   "camaras": [
+    "RicIngCamFrente"
+   ],
+   "total": 4,
+   "candidatas": [
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-08-31 02:33:48",
+     "lectura": "",
+     "marca": "Scania",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "023348_RicIngCamFrente_vacia.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-08-31 02:34:02",
+     "lectura": "",
+     "marca": "Jeep",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "023402_RicIngCamFrente_vacia.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-08-31 02:28:56",
+     "lectura": "DI811",
+     "marca": null,
+     "color": "Black",
+     "tipo": "Medium Truck",
+     "foto": "022856_RicIngCamFrente_DI811.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-08-31 02:24:53",
+     "lectura": "AVEC",
+     "marca": null,
+     "color": "Black",
+     "tipo": null,
+     "foto": "022453_RicIngCamFrente_AVEC.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Preingreso",
+   "ancla": "ing",
+   "ventana": [
+    "02:28:54",
+    "02:40:18"
+   ],
+   "centro": "02:36:18",
+   "camaras": [
+    "RicPreIngInFr"
+   ],
+   "total": 3,
+   "candidatas": [
+    {
+     "camara": "RicPreIngInFr",
+     "hora": "2026-08-31 02:35:55",
+     "lectura": "3P4",
+     "marca": "Mitsubishi",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "023555_RicPreIngInFr_3P4.jpg"
+    },
+    {
+     "camara": "RicPreIngInFr",
+     "hora": "2026-08-31 02:35:17",
+     "lectura": "",
+     "marca": "Smart",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "023517_RicPreIngInFr_vacia.jpg"
+    },
+    {
+     "camara": "RicPreIngInFr",
+     "hora": "2026-08-31 02:32:34",
+     "lectura": "877",
+     "marca": null,
+     "color": "White",
+     "tipo": null,
+     "foto": "023234_RicPreIngInFr_877.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Calada Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "04:50:54",
+    "05:05:42"
+   ],
+   "centro": "05:01:06",
+   "camaras": [
+    "RicCal01",
+    "RicCal02",
+    "RicCal03",
+    "RicCal04",
+    "RicCal05",
+    "RicCal06"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicCal04",
+     "hora": "2026-08-31 05:00:54",
+     "lectura": "SCAN4",
+     "marca": "Scania",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "050054_RicCal04_SCAN4.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza ingreso Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "05:04:06",
+    "05:33:24"
+   ],
+   "centro": "05:10:24",
+   "camaras": [
+    "RicB1Ingreso",
+    "RicB2Ingreso",
+    "RicB3Ingreso"
+   ],
+   "total": 0,
+   "candidatas": []
+  },
+  {
+   "punto": "Playa 3",
+   "ancla": "calado",
+   "ventana": [
+    "05:08:24",
+    "05:38:42"
+   ],
+   "centro": "05:15:42",
+   "camaras": [
+    "RicS6Playa3"
+   ],
+   "total": 0,
+   "candidatas": []
+  },
+  {
+   "punto": "Descarga plataforma",
+   "ancla": "sal",
+   "ventana": [
+    "08:43:00",
+    "09:22:06"
+   ],
+   "centro": "09:05:00",
+   "camaras": [
+    "RicS7DescLinea1",
+    "RicS7DescLinea2"
+   ],
+   "total": 3,
+   "candidatas": [
+    {
+     "camara": "RicS7DescLinea1",
+     "hora": "2026-08-31 09:08:30",
+     "lectura": "SCAN",
+     "marca": null,
+     "color": "White",
+     "tipo": null,
+     "foto": "090830_RicS7DescLinea1_SCAN.jpg"
+    },
+    {
+     "camara": "RicS7DescLinea1",
+     "hora": "2026-08-31 09:11:47",
+     "lectura": "",
+     "marca": null,
+     "color": "White",
+     "tipo": "Sedan",
+     "foto": "091147_RicS7DescLinea1_vacia.jpg"
+    },
+    {
+     "camara": "RicS7DescLinea1",
+     "hora": "2026-08-31 08:47:21",
+     "lectura": "VC5",
+     "marca": "Scania",
+     "color": "Black",
+     "tipo": "Medium Truck",
+     "foto": "084721_RicS7DescLinea1_VC5.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza egreso Ricardone",
+   "ancla": "sal",
+   "ventana": [
+    "09:23:42",
+    "09:35:12"
+   ],
+   "centro": "09:31:00",
+   "camaras": [
+    "RicB1Egreso",
+    "RicB2Egreso",
+    "RicB3Egreso"
+   ],
+   "total": 2,
+   "candidatas": [
+    {
+     "camara": "RicB2Egreso",
+     "hora": "2026-08-31 09:30:23",
+     "lectura": "",
+     "marca": null,
+     "color": "Gray",
+     "tipo": "Sedan",
+     "foto": "093023_RicB2Egreso_vacia.jpg"
+    },
+    {
+     "camara": "RicB2Egreso",
+     "hora": "2026-08-31 09:29:32",
+     "lectura": "G9C",
+     "marca": null,
+     "color": "White",
+     "tipo": "Sedan",
+     "foto": "092932_RicB2Egreso_G9C.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Egreso Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "04:47:54",
+    "05:32:54"
+   ],
+   "centro": "05:09:54",
+   "camaras": [
+    "RicEgrCamFrente"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicEgrCamFrente",
+     "hora": "2026-08-31 05:06:07",
+     "lectura": "A31Q",
+     "marca": "Toyota",
+     "color": "Black",
+     "tipo": "Medium Truck",
+     "foto": "050607_RicEgrCamFrente_A31Q.jpg"
+    }
+   ]
+  }
+ ]
+}

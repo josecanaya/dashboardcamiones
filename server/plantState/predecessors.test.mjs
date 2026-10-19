@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { applyLinks, findPredecessors, nodeModelCatalog } from './plateIdentification.mjs'
+import { applyLinks, autoPredecessorLinks, deduceSkippedSteps, findPredecessors, nodeModelCatalog } from './plateIdentification.mjs'
+import { buildBalanzaRegistry } from './balanzaRegistry.mjs'
 
 const catalog = nodeModelCatalog()
 function ev(plate, uid, sectorCode, deviceCode, wallIso) {
@@ -74,5 +75,49 @@ describe('findPredecessors', () => {
     const moved = out.find((e) => e.identifiedFromPlate === 'AB128CO')
     expect(moved.normalizedPlate).toBe('AB123CD')
     expect(moved.journeyUid).toBe('jOk')
+  })
+})
+
+describe('autoPredecessorLinks (búsqueda hacia atrás automática)', () => {
+  const now = Date.parse('2026-09-08T12:00:00-03:00')
+  const alta = (plate, wallIso) => ({ plate, ingresoMs: Date.parse(wallIso), salidaMs: null })
+  const base = [
+    // Aparece en Calada sin entrada; su Preingreso quedó con la patente cortada a la hora del alta.
+    ev('AB123CD', 'jOk', '2-S2', 'RicCal03', '2026-09-08T11:20:00-03:00'),
+    ev('123CD', 'jBad', '2-S1', 'RicPreIngInFr', '2026-09-08T11:00:00-03:00'),
+  ]
+
+  it('une la lectura suelta de Preingreso al camión que la balanza da de alta a esa hora', () => {
+    const balanza = buildBalanzaRegistry([alta('AB123CD', '2026-09-08T11:00:30-03:00')])
+    const links = autoPredecessorLinks(base, now, { balanza, site: 'ricardone' })
+    expect(links).toHaveLength(1)
+    expect(links[0]).toMatchObject({ journeyKey: 'jBad', plate: 'AB123CD', targetJourneyUid: 'jOk', auto: true })
+  })
+
+  it('una lectura vacía no se une sola: la hora no alcanza', () => {
+    const balanza = buildBalanzaRegistry([alta('AB123CD', '2026-09-08T11:00:30-03:00')])
+    const blank = [base[0], ev('', 'jBlank', '2-S1', 'RicPreIngInFr', '2026-09-08T11:00:00-03:00')]
+    expect(autoPredecessorLinks(blank, now, { balanza, site: 'ricardone' }).some((l) => l.auto)).toBe(false)
+  })
+
+  it('sin alta en balanza, lejos de la hora del alta o en San Lorenzo no hace nada', () => {
+    expect(autoPredecessorLinks(base, now, { balanza: buildBalanzaRegistry([]), site: 'ricardone' })).toEqual([])
+    expect(autoPredecessorLinks(base, now, { balanza: buildBalanzaRegistry([alta('AB123CD', '2026-09-08T10:30:00-03:00')]), site: 'ricardone' })).toEqual([])
+    expect(autoPredecessorLinks(base, now, { balanza: buildBalanzaRegistry([alta('AB123CD', '2026-09-08T11:00:30-03:00')]), site: 'san_lorenzo' })).toEqual([])
+  })
+
+  it('respeta el «No es» de operaciones', () => {
+    const balanza = buildBalanzaRegistry([alta('AB123CD', '2026-09-08T11:00:30-03:00')])
+    expect(autoPredecessorLinks(base, now, { balanza, site: 'ricardone', dismissed: (p, k) => p === 'AB123CD' && k === 'jBad' })).toEqual([])
+  })
+})
+
+describe('deduceSkippedSteps (paso deducido)', () => {
+  it('Preingreso → Balanza sin Calada leída: Calada queda deducida', () => {
+    expect(deduceSkippedSteps(['S1', 'S4'], catalog)).toEqual([expect.objectContaining({ after: 'S1', before: 'S4', node: 'S2' })])
+  })
+  it('sin hueco no deduce nada; tampoco antes de la primera ni después de la última lectura', () => {
+    expect(deduceSkippedSteps(['S1', 'S2', 'S4'], catalog)).toEqual([])
+    expect(deduceSkippedSteps(['S2'], catalog)).toEqual([])
   })
 })

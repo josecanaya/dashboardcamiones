@@ -78,6 +78,20 @@ export type PlantPoint = {
   xPercent: number
   yPercent: number
   cameraGroup: PlantCameraGroup
+  /** Punto siguiente más probable: ubica en tránsito a un camión sin circuito confirmado. */
+  nextDefault?: string
+  /**
+   * Minutos que el camión se queda en el punto tras la lectura antes de salir a la línea
+   * (calada, carga, descarga). `null` = punto de espera: se queda hasta la próxima lectura.
+   */
+  stayMin?: number | null
+  /** Playa donde espera el camión al salir de este punto (zoneId con polígono): se dibuja en su grilla. */
+  waitZone?: string
+  /**
+   * Minutos en este punto sin lectura del siguiente tras los que se da por pasado a `nextDefault`
+   * (lectura perdida o patente leída distinto). También lo da por pasado un ingreso en SGC.
+   */
+  assumeNextAfterMin?: number
 }
 
 /** Geometría editable del camino físico entre dos puntos del circuito. */

@@ -256,9 +256,9 @@ export const ZONES = [
     label: 'Playa 1',
     from: 'PREINGRESO',
     to: ['CALADA'],
-    // Capacidades de playas: dato de planta 29-09-2026 (modelo de nodos, nodoSur.ts).
-    capacityPhysical: 300,
-    capacityOperational: 300,
+    // Capacidades de playas: dato de planta 14-10-2026 (modelo de nodos, nodoSur.ts).
+    capacityPhysical: 200,
+    capacityOperational: 200,
   },
   {
     id: 'Z3',
@@ -266,9 +266,9 @@ export const ZONES = [
     label: 'Playa demorado → Balanza',
     from: 'CALADA',
     to: ['BALANZA'],
-    capacityPhysical: 20,
-    capacityOperational: 20,
-    note: 'Playa demorado (20 camiones) es una sola área: Z3 y Z4 la comparten, separadas por destino',
+    capacityPhysical: 30,
+    capacityOperational: 30,
+    note: 'Playa demorado (30 camiones) es una sola área: Z3 y Z4 la comparten, separadas por destino',
   },
   {
     id: 'Z4',
@@ -276,9 +276,9 @@ export const ZONES = [
     label: 'Playa demorado → Salida 2',
     from: 'CALADA',
     to: ['EGRESO'],
-    capacityPhysical: 20,
-    capacityOperational: 20,
-    note: 'R7 no pesa en Ricardone; comparte los 20 de Playa demorado con Z3',
+    capacityPhysical: 30,
+    capacityOperational: 30,
+    note: 'R7 no pesa en Ricardone; comparte los 30 de Playa demorado con Z3',
   },
   {
     id: 'Z3U',
@@ -305,7 +305,7 @@ export const ZONES = [
     label: 'Playa 3',
     from: 'PLAYA3',
     to: DISCHARGE_POINTS,
-    capacityPhysical: 100,
+    capacityPhysical: 50,
     capacityOperational: 30,
     note: 'solo espera y clasificación por destino; nunca debe llenarse porque bloquea circulación',
   },
@@ -346,8 +346,8 @@ export const ZONES = [
    * zona buscando su zoneId en el snapshot, asi que tienen que coincidir o el
    * sector queda dibujado pero muerto.
    *
-   * Capacidades: Playa OSL 150 y Balanza-Volcable 20 camiones (dato de planta,
-   * 21-09-2026). El resto queda en null hasta que se releve: un numero inventado
+   * Capacidades: Playa OSL 100 (dato de planta 14-10-2026) y Balanza-Volcable 20
+   * camiones (21-09-2026). El resto queda en null hasta que se releve: un numero inventado
    * se propaga a ocupacion, estado y ETA sin distinguirse de uno medido.
    */
   {
@@ -366,8 +366,8 @@ export const ZONES = [
     label: 'Playa OSL',
     from: 'SL_INGRESO',
     to: ['SL_BALANZA_INGRESO'],
-    capacityPhysical: 150,
-    capacityOperational: 150,
+    capacityPhysical: 100,
+    capacityOperational: 100,
     note: 'espera entre ingreso y balanza; SL_INGRESO_TO_BALANZA_MAX_MINUTES la trata como cola',
   },
   {

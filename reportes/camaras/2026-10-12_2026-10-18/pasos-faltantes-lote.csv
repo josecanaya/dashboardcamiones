@@ -1,0 +1,35 @@
+﻿patente,circuito,nodo,camaras,desde_hora_camara,hasta_hora_camara,paso_anterior,paso_siguiente
+ROO085,SL3,san_lorenzo:Ingreso,SLZIngCamFrente,2026-10-13 06:42,2026-10-13 08:12,ingreso Excel 07:12,salida Excel 07:12
+ROO085,SL3,san_lorenzo:Balanza Ingreso,SLZBalIngFte,2026-10-13 06:42,2026-10-13 08:12,ingreso Excel 07:12,salida Excel 07:12
+ROO085,SL3,san_lorenzo:Balanza Egreso,SLZBalSC1Fte SLZBalSC2Fte,2026-10-13 06:42,2026-10-13 08:12,ingreso Excel 07:12,salida Excel 07:12
+ROO085,SL3,san_lorenzo:Egreso,SLZSalidaC1Fte SLZSalidaC2Fte,2026-10-13 06:42,2026-10-13 08:12,ingreso Excel 07:12,salida Excel 07:12
+AD602QY,R13,ricardone:Pre ingreso,RicPreIngInFr RicPreIngEgFr,2026-10-12 20:06,2026-10-13 15:30,ingreso Excel 20:36,salida Excel 14:30
+AD602QY,R13,ricardone:Calada,RicCal01 RicCal02 RicCal03 RicCal04 RicCal05 RicCal06 RicCalLiq,2026-10-12 20:06,2026-10-13 15:30,ingreso Excel 20:36,salida Excel 14:30
+AD602QY,R13,ricardone:Playa 3,RicS6Playa3,2026-10-12 20:06,2026-10-13 15:30,ingreso Excel 20:36,salida Excel 14:30
+AD602QY,R13,ricardone:Balanza Egreso,RicB1Egreso RicB2Egreso RicB3Egreso,2026-10-12 20:06,2026-10-13 15:30,ingreso Excel 20:36,salida Excel 14:30
+AD602QY,R13,ricardone:Salida 2,RicEgrCamFrente,2026-10-12 20:06,2026-10-13 15:30,ingreso Excel 20:36,salida Excel 14:30
+GFP699,R8,ricardone:Pre ingreso,RicPreIngInFr RicPreIngEgFr,2026-10-15 07:42,2026-10-15 12:11,ingreso Excel 08:12,salida Excel 11:11
+GFP699,R8,ricardone:Calada,RicCal01 RicCal02 RicCal03 RicCal04 RicCal05 RicCal06 RicCalLiq,2026-10-15 07:42,2026-10-15 12:11,ingreso Excel 08:12,salida Excel 11:11
+GFP699,R8,ricardone:Balanza Egreso,RicB1Egreso RicB2Egreso RicB3Egreso,2026-10-15 07:42,2026-10-15 12:11,ingreso Excel 08:12,salida Excel 11:11
+OJP930,R7,san_lorenzo:Egreso,SLZSalidaC1Fte SLZSalidaC2Fte,2026-10-16 12:03,2026-10-16 14:21,Balanza Egreso 12:03,salida Excel 13:21
+GZI868,SL1,san_lorenzo:Ingreso,SLZIngCamFrente,2026-10-16 19:54,2026-10-17 01:51,ingreso Excel 20:24,salida Excel 00:51
+GZI868,SL1,san_lorenzo:Balanza Ingreso,SLZBalIngFte,2026-10-16 19:54,2026-10-17 01:51,ingreso Excel 20:24,salida Excel 00:51
+GZI868,SL1,san_lorenzo:Carga / Descarga OSL,RenCargFte RenDescFte,2026-10-16 19:54,2026-10-17 01:51,ingreso Excel 20:24,salida Excel 00:51
+GZI868,SL1,san_lorenzo:Balanza Egreso,SLZBalSC1Fte SLZBalSC2Fte,2026-10-16 19:54,2026-10-17 01:51,ingreso Excel 20:24,salida Excel 00:51
+GZI868,SL1,san_lorenzo:Egreso,SLZSalidaC1Fte SLZSalidaC2Fte,2026-10-16 19:54,2026-10-17 01:51,ingreso Excel 20:24,salida Excel 00:51
+AVB781,R7,ricardone:Pre ingreso,RicPreIngInFr RicPreIngEgFr,2026-10-16 23:38,2026-10-17 02:41,ingreso Excel 00:08,salida Excel 01:41
+AVB781,R7,ricardone:Calada,RicCal01 RicCal02 RicCal03 RicCal04 RicCal05 RicCal06 RicCalLiq,2026-10-16 23:38,2026-10-17 02:41,ingreso Excel 00:08,salida Excel 01:41
+AVB781,R7,ricardone:Salida 2,RicEgrCamFrente,2026-10-16 23:38,2026-10-17 02:41,ingreso Excel 00:08,salida Excel 01:41
+AVB781,R7,san_lorenzo:Ingreso,SLZIngCamFrente,2026-10-16 23:38,2026-10-17 02:41,ingreso Excel 00:08,salida Excel 01:41
+AVB781,R7,san_lorenzo:Balanza Ingreso,SLZBalIngFte,2026-10-16 23:38,2026-10-17 02:41,ingreso Excel 00:08,salida Excel 01:41
+AVB781,R7,san_lorenzo:Plataformas Volcables,SLZVolcableC1 SLZVolcableC2 SLZVolcableC3 SLZVolcableC4 SLZVolcableC5 SLZDescCam,2026-10-16 23:38,2026-10-17 02:41,ingreso Excel 00:08,salida Excel 01:41
+AVB781,R7,san_lorenzo:Balanza Egreso,SLZBalSC1Fte SLZBalSC2Fte,2026-10-16 23:38,2026-10-17 02:41,ingreso Excel 00:08,salida Excel 01:41
+AVB781,R7,san_lorenzo:Egreso,SLZSalidaC1Fte SLZSalidaC2Fte,2026-10-16 23:38,2026-10-17 02:41,ingreso Excel 00:08,salida Excel 01:41
+STN281,R7,ricardone:Pre ingreso,RicPreIngInFr RicPreIngEgFr,2026-10-17 00:06,2026-10-17 03:56,ingreso Excel 00:36,salida Excel 02:56
+STN281,R7,ricardone:Calada,RicCal01 RicCal02 RicCal03 RicCal04 RicCal05 RicCal06 RicCalLiq,2026-10-17 00:06,2026-10-17 03:56,ingreso Excel 00:36,salida Excel 02:56
+STN281,R7,ricardone:Salida 2,RicEgrCamFrente,2026-10-17 00:06,2026-10-17 03:56,ingreso Excel 00:36,salida Excel 02:56
+STN281,R7,san_lorenzo:Ingreso,SLZIngCamFrente,2026-10-17 00:06,2026-10-17 03:56,ingreso Excel 00:36,salida Excel 02:56
+STN281,R7,san_lorenzo:Balanza Ingreso,SLZBalIngFte,2026-10-17 00:06,2026-10-17 03:56,ingreso Excel 00:36,salida Excel 02:56
+STN281,R7,san_lorenzo:Plataformas Volcables,SLZVolcableC1 SLZVolcableC2 SLZVolcableC3 SLZVolcableC4 SLZVolcableC5 SLZDescCam,2026-10-17 00:06,2026-10-17 03:56,ingreso Excel 00:36,salida Excel 02:56
+STN281,R7,san_lorenzo:Balanza Egreso,SLZBalSC1Fte SLZBalSC2Fte,2026-10-17 00:06,2026-10-17 03:56,ingreso Excel 00:36,salida Excel 02:56
+STN281,R7,san_lorenzo:Egreso,SLZSalidaC1Fte SLZSalidaC2Fte,2026-10-17 00:06,2026-10-17 03:56,ingreso Excel 00:36,salida Excel 02:56

@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-12T16:19:35.643Z",
+ "generado": "2026-10-13T12:32:45.555Z",
  "periodo": {
   "desde": "2026-10-05",
   "hasta": "2026-10-11",
@@ -24,8 +24,7 @@
    "2026-10-11"
   ],
   "camarasFaltantes": [],
-  "excel": [],
-  "excelFaltante": [
+  "excel": [
    "2026-10-05",
    "2026-10-06",
    "2026-10-07",
@@ -34,20 +33,21 @@
    "2026-10-10",
    "2026-10-11"
   ],
-  "padronExcel": "27/08 al 04/10",
-  "padronPatentes": 7390,
+  "excelFaltante": [],
+  "padronExcel": "15/05 al 12/10",
+  "padronPatentes": 25777,
   "correcciones": {
    "origen": "servidor local",
-   "reglas": 646,
-   "renombradas": 813,
-   "descartadas": 343
+   "reglas": 653,
+   "renombradas": 821,
+   "descartadas": 344
   },
-  "lecturasPeriodo": 9741,
+  "lecturasPeriodo": 9740,
   "lecturasPorDia": {
    "2026-10-05": 2133,
    "2026-10-06": 2057,
    "2026-10-07": 1456,
-   "2026-10-08": 1616,
+   "2026-10-08": 1615,
    "2026-10-09": 1515,
    "2026-10-10": 732,
    "2026-10-11": 232
@@ -58,7 +58,7 @@
   {
    "patente": "BWA132",
    "dia": "09/10",
-   "estado": "pendiente_excel",
+   "estado": "confirmado_excel",
    "minPuerto": 18,
    "puertoTxt": "18 min",
    "hastaTxt": "3 h 32 m",
@@ -124,8 +124,8 @@
      ]
     }
    ],
-   "excel": null,
-   "producto": null,
+   "excel": [],
+   "producto": "Soja",
    "lecturas": [
     "2026-10-09 18:45 RicPreIngInFr",
     "2026-10-09 20:07 RicCal03",
@@ -189,7 +189,7 @@
     }
    ],
    "involucraC5": false,
-   "excel": null
+   "excel": "Soja · Volcable 3"
   },
   {
    "patente": "AD714BI",
@@ -209,7 +209,7 @@
     }
    ],
    "involucraC5": false,
-   "excel": null
+   "excel": "Cascara de soja pelleteada"
   },
   {
    "patente": "AD523QM",
@@ -225,7 +225,7 @@
     }
    ],
    "involucraC5": false,
-   "excel": null
+   "excel": "Cascara de soja pelleteada"
   },
   {
    "patente": "AA317IV",
@@ -241,7 +241,7 @@
     }
    ],
    "involucraC5": false,
-   "excel": null
+   "excel": "Sin operación"
   },
   {
    "patente": "AF566OP",
@@ -257,10 +257,35 @@
     }
    ],
    "involucraC5": false,
-   "excel": null
+   "excel": "Sin operación"
   }
  ],
- "declarado": [],
+ "declarado": [
+  {
+   "patente": "KEK968",
+   "dia": "05/10",
+   "excel": "Soja · Volcable 3",
+   "calles": [
+    {
+     "calle": "1",
+     "hora": "06:08"
+    }
+   ],
+   "involucraC5": false
+  },
+  {
+   "patente": "AI309UB",
+   "dia": "09/10",
+   "excel": "Soja · Volcable 5",
+   "calles": [
+    {
+     "calle": "3",
+     "hora": "01:49"
+    }
+   ],
+   "involucraC5": true
+  }
+ ],
  "camionetas": {
   "umbral": 10,
   "lista": [
@@ -288,7 +313,7 @@
     "dias": 7,
     "zona": "Ricardone y San Lorenzo",
     "camaras": "SLZSalidaC1Fte / RicB2Egreso / SLZSalidaC2Fte",
-    "parecida": "",
+    "parecida": "CCB815",
     "registro": false
    },
    {
@@ -333,7 +358,7 @@
     "dias": 6,
     "zona": "San Lorenzo",
     "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
-    "parecida": "",
+    "parecida": "AF529TF AF529RI",
     "registro": false
    },
    {
@@ -513,7 +538,7 @@
     "dias": 6,
     "zona": "San Lorenzo",
     "camaras": "SLZSalidaC2Fte / SLZTK400 / SLZSalidaC1Fte",
-    "parecida": "",
+    "parecida": "HLD270 HLX270",
     "registro": false
    },
    {
@@ -603,7 +628,7 @@
     "dias": 6,
     "zona": "San Lorenzo",
     "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
-    "parecida": "",
+    "parecida": "AI456GI",
     "registro": false
    },
    {
@@ -622,15 +647,6 @@
     "zona": "San Lorenzo",
     "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / SLZBalSC1Fte",
     "parecida": "AB148YV",
-    "registro": false
-   },
-   {
-    "patente": "AE260HD",
-    "viajes": 11,
-    "dias": 5,
-    "zona": "Ricardone y San Lorenzo",
-    "camaras": "RicB3Ingreso / RicEgrCamFrente / RicB3Egreso",
-    "parecida": "AE264HD",
     "registro": false
    },
    {
@@ -688,15 +704,6 @@
     "registro": false
    },
    {
-    "patente": "NRD487",
-    "viajes": 10,
-    "dias": 5,
-    "zona": "Ricardone y San Lorenzo",
-    "camaras": "SLZBalIngFte / SLZCalado / RicEgrCamFrente",
-    "parecida": "",
-    "registro": false
-   },
-   {
     "patente": "OIY765",
     "viajes": 10,
     "dias": 4,
@@ -715,12 +722,15 @@
     "registro": false
    }
   ],
-  "sinExcelTotal": 154,
+  "sinExcelTotal": 122,
   "parecidas": [
+   "OCB815~CCB815",
+   "AF529RF~AF529TF AF529RI",
    "MYW261~MYW269",
+   "HLT270~HLD270 HLX270",
    "AF211ER~AI211ER",
+   "AI456GB~AI456GI",
    "AB148YJ~AB148YV",
-   "AE260HD~AE264HD",
    "AI065WC~AH065WC"
   ],
   "enRegistro": [

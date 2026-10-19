@@ -1,0 +1,210 @@
+{
+ "patente": "DDD727",
+ "ingreso": "2026-09-18 12:35:00",
+ "calado": "2026-09-18 15:56:00",
+ "salida": "2026-09-18 21:02:00",
+ "plataforma": "VOLCABLE_1",
+ "producto": "GIRASOL",
+ "planta": "RICARDONE",
+ "puntos": [
+  {
+   "punto": "Ingreso Ricardone",
+   "ancla": "ing",
+   "ventana": [
+    "12:15:48",
+    "12:34:06"
+   ],
+   "centro": "12:29:12",
+   "camaras": [
+    "RicIngCamFrente"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-09-18 12:27:07",
+     "lectura": "",
+     "marca": "Scania",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "122707_RicIngCamFrente_vacia.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Preingreso",
+   "ancla": "ing",
+   "ventana": [
+    "12:24:54",
+    "12:36:18"
+   ],
+   "centro": "12:32:18",
+   "camaras": [
+    "RicPreIngInFr"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicPreIngInFr",
+     "hora": "2026-09-18 12:30:34",
+     "lectura": "330",
+     "marca": null,
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "123034_RicPreIngInFr_330.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Calada Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "15:39:54",
+    "15:54:42"
+   ],
+   "centro": "15:50:06",
+   "camaras": [
+    "RicCal01",
+    "RicCal02",
+    "RicCal03",
+    "RicCal04",
+    "RicCal05",
+    "RicCal06"
+   ],
+   "total": 2,
+   "candidatas": [
+    {
+     "camara": "RicCal03",
+     "hora": "2026-09-18 15:48:16",
+     "lectura": "11G",
+     "marca": "Scania",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "154816_RicCal03_11G.jpg"
+    },
+    {
+     "camara": "RicCal03",
+     "hora": "2026-09-18 15:40:17",
+     "lectura": "VUU7805",
+     "marca": "Peugeot",
+     "color": "Red",
+     "tipo": "Medium Truck",
+     "foto": "154017_RicCal03_VUU7805.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza ingreso Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "15:53:06",
+    "16:22:24"
+   ],
+   "centro": "15:59:24",
+   "camaras": [
+    "RicB1Ingreso",
+    "RicB2Ingreso",
+    "RicB3Ingreso"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicB1Ingreso",
+     "hora": "2026-09-18 15:58:01",
+     "lectura": "GQC",
+     "marca": null,
+     "color": "White",
+     "tipo": null,
+     "foto": "155801_RicB1Ingreso_GQC.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Playa 3",
+   "ancla": "calado",
+   "ventana": [
+    "15:57:24",
+    "16:27:42"
+   ],
+   "centro": "16:04:42",
+   "camaras": [
+    "RicS6Playa3"
+   ],
+   "total": 0,
+   "candidatas": []
+  },
+  {
+   "punto": "Descarga plataforma",
+   "ancla": "sal",
+   "ventana": [
+    "20:11:00",
+    "20:50:06"
+   ],
+   "centro": "20:33:00",
+   "camaras": [
+    "RicVolcable1"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicVolcable1",
+     "hora": "2026-09-18 20:36:37",
+     "lectura": "SGAN4",
+     "marca": "Scania",
+     "color": "Silver",
+     "tipo": "Large Truck",
+     "foto": "203637_RicVolcable1_SGAN4.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza egreso Ricardone",
+   "ancla": "sal",
+   "ventana": [
+    "20:51:42",
+    "21:03:12"
+   ],
+   "centro": "20:59:00",
+   "camaras": [
+    "RicB1Egreso",
+    "RicB2Egreso",
+    "RicB3Egreso"
+   ],
+   "total": 2,
+   "candidatas": [
+    {
+     "camara": "RicB2Egreso",
+     "hora": "2026-09-18 20:56:45",
+     "lectura": "",
+     "marca": null,
+     "color": "White",
+     "tipo": "Sedan",
+     "foto": "205645_RicB2Egreso_vacia.jpg"
+    },
+    {
+     "camara": "RicB2Egreso",
+     "hora": "2026-09-18 20:56:45",
+     "lectura": "S33",
+     "marca": null,
+     "color": null,
+     "tipo": "Bus",
+     "foto": "205645_RicB2Egreso_S33.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Egreso Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "15:36:54",
+    "16:21:54"
+   ],
+   "centro": "15:58:54",
+   "camaras": [
+    "RicEgrCamFrente"
+   ],
+   "total": 0,
+   "candidatas": []
+  }
+ ]
+}

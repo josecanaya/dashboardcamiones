@@ -63,6 +63,8 @@ export function TruckJourneyPanel(props: {
     )
   }
   if (!journey) return null
+  /** Solo lecturas de cámara (los pasos deducidos no tienen hora). */
+  const reads = journey.timeline.filter((r): r is typeof r & { at: string } => r.step !== 'deducido' && r.at != null)
 
   return (
     <div className="rounded-[12px] border border-slate-200 bg-slate-50/60 p-4">
@@ -135,12 +137,12 @@ export function TruckJourneyPanel(props: {
               Recorrido
             </span>
             <span className="font-mono text-[11px] text-slate-400">
-              {journey.timeline.length} detecciones · el tiempo de cada fila es el del tramo anterior
+              {reads.length} detecciones · el tiempo de cada fila es el del tramo anterior
             </span>
           </div>
           <ul className="space-y-0">
-            {journey.timeline.map((row, idx) => {
-              const isLast = idx === journey.timeline.length - 1
+            {reads.map((row, idx) => {
+              const isLast = idx === reads.length - 1
               return (
                 <li key={`${row.at}-${idx}`} className="flex gap-3">
                   <div className="w-12 shrink-0 pt-0.5 text-right font-mono text-[13px] font-semibold text-slate-700">

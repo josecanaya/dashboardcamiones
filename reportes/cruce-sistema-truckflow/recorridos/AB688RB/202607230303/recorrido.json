@@ -1,0 +1,417 @@
+{
+ "patente": "AB688RB",
+ "ingreso": "2026-07-23 03:03:00",
+ "salida": "2026-07-23 10:13:00",
+ "producto": "SOJA",
+ "planta": "TERMINAL_EMBARQUE",
+ "ancla": {
+  "camara": "RicPreIngInFr",
+  "hora": "2026-07-23 02:58:30",
+  "lectura": ""
+ },
+ "puntos": [
+  {
+   "punto": "Preingreso",
+   "estado": "sin_captura",
+   "vecinos": []
+  },
+  {
+   "punto": "Ingreso Ricardone",
+   "intervalo": [
+    "02:46:13",
+    "03:18:42"
+   ],
+   "vecinos": [
+    "AF653CK@02:50:13",
+    "AF973HK@02:58:35",
+    "LXV420@03:14:42"
+   ],
+   "elegida": {
+    "camara": "RicIngCamFrente",
+    "hora": "2026-07-23 02:58:17",
+    "at": "2026-07-23T05:58:17.000Z",
+    "lectura": "",
+    "marca": "Honda",
+    "color": "White",
+    "tipo": "Van",
+    "foto": "025817_RicIngCamFrente_vacia.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-23 02:58:17",
+     "at": "2026-07-23T05:58:17.000Z",
+     "lectura": "",
+     "marca": "Honda",
+     "color": "White",
+     "tipo": "Van",
+     "foto": "025817_RicIngCamFrente_vacia.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-23 02:56:33",
+     "at": "2026-07-23T05:56:33.000Z",
+     "lectura": "G3321",
+     "marca": "Scania",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "025633_RicIngCamFrente_G3321.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-23 03:04:06",
+     "at": "2026-07-23T06:04:06.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "Gray",
+     "tipo": "Medium Truck",
+     "foto": "030406_RicIngCamFrente_vacia.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-23 03:08:42",
+     "at": "2026-07-23T06:08:42.000Z",
+     "lectura": "P0000DMC800",
+     "marca": null,
+     "color": "Black",
+     "tipo": null,
+     "foto": "030842_RicIngCamFrente_P0000DMC800.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-23 03:13:33",
+     "at": "2026-07-23T06:13:33.000Z",
+     "lectura": "075",
+     "marca": "Iveco",
+     "color": "Black",
+     "tipo": "Pickup",
+     "foto": "031333_RicIngCamFrente_075.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-23 03:14:54",
+     "at": "2026-07-23T06:14:54.000Z",
+     "lectura": "T25",
+     "marca": null,
+     "color": "Black",
+     "tipo": "Small Truck",
+     "foto": "031454_RicIngCamFrente_T25.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Calada Ricardone",
+   "intervalo": [
+    "08:25:25",
+    "09:25:25"
+   ],
+   "vecinos": [
+    "AF653CK@08:49:06",
+    "AF973HK@08:55:25",
+    "LXV420@09:01:04"
+   ],
+   "elegida": {
+    "camara": "RicCal04",
+    "hora": "2026-07-23 08:53:45",
+    "at": "2026-07-23T11:53:45.000Z",
+    "lectura": "SEW7474",
+    "marca": "Volvo",
+    "color": "White",
+    "tipo": "Large Truck",
+    "foto": "085345_RicCal04_SEW7474.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicCal04",
+     "hora": "2026-07-23 08:53:45",
+     "at": "2026-07-23T11:53:45.000Z",
+     "lectura": "SEW7474",
+     "marca": "Volvo",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "085345_RicCal04_SEW7474.jpg"
+    },
+    {
+     "camara": "RicCal03",
+     "hora": "2026-07-23 08:33:39",
+     "at": "2026-07-23T11:33:39.000Z",
+     "lectura": "JBSSCJAM65",
+     "marca": "Mercedes-Benz",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "083339_RicCal03_JBSSCJAM65.jpg"
+    },
+    {
+     "camara": "RicCal03",
+     "hora": "2026-07-23 09:11:17",
+     "at": "2026-07-23T12:11:17.000Z",
+     "lectura": "FW0",
+     "marca": "Daihatsu",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "091117_RicCal03_FW0.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza ingreso Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Playa 3",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Celda 16",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Silo Keppler",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Volcables Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Balanza egreso Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Egreso Ricardone",
+   "intervalo": [
+    "08:55:45",
+    "09:23:45"
+   ],
+   "vecinos": [
+    "GRP281@08:59:10",
+    "AF653CK@08:57:03",
+    "AA971YG@09:02:24",
+    "AF973HK@13:17:43",
+    "AB654QP@09:18:25",
+    "LXV420@09:14:58"
+   ],
+   "elegida": {
+    "camara": "RicEgrCamFrente",
+    "hora": "2026-07-23 09:11:46",
+    "at": "2026-07-23T12:11:46.000Z",
+    "lectura": "",
+    "marca": "Volvo",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "foto": "091146_RicEgrCamFrente_vacia.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicEgrCamFrente",
+     "hora": "2026-07-23 09:11:46",
+     "at": "2026-07-23T12:11:46.000Z",
+     "lectura": "",
+     "marca": "Volvo",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "091146_RicEgrCamFrente_vacia.jpg"
+    },
+    {
+     "camara": "RicEgrCamFrente",
+     "hora": "2026-07-23 09:11:50",
+     "at": "2026-07-23T12:11:50.000Z",
+     "lectura": "7LI",
+     "marca": null,
+     "color": "Gray",
+     "tipo": null,
+     "foto": "091150_RicEgrCamFrente_7LI.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Ingreso puerto",
+   "intervalo": [
+    "09:05:45",
+    "09:38:45"
+   ],
+   "vecinos": [
+    "AA971YG@09:11:56",
+    "GRP281@09:08:44",
+    "AF653CK@09:07:28",
+    "LXV420@09:23:37",
+    "AD336OO@09:42:04",
+    "AB654QP@09:26:11"
+   ],
+   "elegida": {
+    "camara": "SLZIngCamFrente",
+    "hora": "2026-07-23 09:19:04",
+    "at": "2026-07-23T12:19:04.000Z",
+    "lectura": "EB9",
+    "marca": "Volvo",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "foto": "091904_SLZIngCamFrente_EB9.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "SLZIngCamFrente",
+     "hora": "2026-07-23 09:19:04",
+     "at": "2026-07-23T12:19:04.000Z",
+     "lectura": "EB9",
+     "marca": "Volvo",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "091904_SLZIngCamFrente_EB9.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza ingreso puerto",
+   "intervalo": [
+    "09:20:04",
+    "09:58:00"
+   ],
+   "vecinos": [
+    "AA971YG@09:14:34",
+    "GRP281@09:13:01",
+    "AF653CK@09:11:55",
+    "LXV420@09:26:17",
+    "AB654QP@09:28:21",
+    "LEE215@09:38:48"
+   ],
+   "elegida": {
+    "camara": "SLZBalIngFte",
+    "hora": "2026-07-23 09:24:37",
+    "at": "2026-07-23T12:24:37.000Z",
+    "lectura": "TAAMI3M",
+    "marca": "Volvo",
+    "color": "White",
+    "tipo": "Large Truck",
+    "foto": "092437_SLZBalIngFte_TAAMI3M.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-07-23 09:24:37",
+     "at": "2026-07-23T12:24:37.000Z",
+     "lectura": "TAAMI3M",
+     "marca": "Volvo",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "092437_SLZBalIngFte_TAAMI3M.jpg"
+    },
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-07-23 09:21:20",
+     "at": "2026-07-23T12:21:20.000Z",
+     "lectura": "H14",
+     "marca": "Volkswagen",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "092120_SLZBalIngFte_H14.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Volcables puerto",
+   "intervalo": [
+    "09:25:37",
+    "10:10:00"
+   ],
+   "vecinos": [],
+   "candidatas": []
+  },
+  {
+   "punto": "Balanza egreso puerto",
+   "intervalo": [
+    "10:09:00",
+    "10:15:00"
+   ],
+   "vecinos": [],
+   "elegida": {
+    "camara": "SLZBalSC1Fte",
+    "hora": "2026-07-23 10:09:22",
+    "at": "2026-07-23T13:09:22.000Z",
+    "lectura": "",
+    "marca": null,
+    "color": "Blue",
+    "tipo": "Small Truck",
+    "foto": "100922_SLZBalSC1Fte_vacia.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "SLZBalSC1Fte",
+     "hora": "2026-07-23 10:09:22",
+     "at": "2026-07-23T13:09:22.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "Blue",
+     "tipo": "Small Truck",
+     "foto": "100922_SLZBalSC1Fte_vacia.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Salida puerto",
+   "intervalo": [
+    "10:13:00",
+    "10:33:00"
+   ],
+   "vecinos": [],
+   "elegida": {
+    "camara": "SLZSalidaC1Fte",
+    "hora": "2026-07-23 10:15:18",
+    "at": "2026-07-23T13:15:18.000Z",
+    "lectura": "",
+    "marca": "Volvo",
+    "color": "White",
+    "tipo": "Large Truck",
+    "foto": "101518_SLZSalidaC1Fte_vacia.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "SLZSalidaC1Fte",
+     "hora": "2026-07-23 10:15:18",
+     "at": "2026-07-23T13:15:18.000Z",
+     "lectura": "",
+     "marca": "Volvo",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "101518_SLZSalidaC1Fte_vacia.jpg"
+    },
+    {
+     "camara": "SLZSalidaC2Fte",
+     "hora": "2026-07-23 10:22:31",
+     "at": "2026-07-23T13:22:31.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "Red",
+     "tipo": "Bus",
+     "foto": "102231_SLZSalidaC2Fte_vacia.jpg"
+    },
+    {
+     "camara": "SLZSalidaC1Fte",
+     "hora": "2026-07-23 10:19:03",
+     "at": "2026-07-23T13:19:03.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "Blue",
+     "tipo": "Sedan",
+     "foto": "101903_SLZSalidaC1Fte_vacia.jpg"
+    },
+    {
+     "camara": "SLZSalidaC1Fte",
+     "hora": "2026-07-23 10:31:08",
+     "at": "2026-07-23T13:31:08.000Z",
+     "lectura": "MSE2380",
+     "marca": "Toyota",
+     "color": "Silver",
+     "tipo": "Pickup",
+     "foto": "103108_SLZSalidaC1Fte_MSE2380.jpg"
+    }
+   ]
+  }
+ ]
+}

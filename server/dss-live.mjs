@@ -476,6 +476,33 @@ export function createDssLiveRouter({ projectRoot }) {
     }
   }
 
+  /** Lecturas de una cámara en un rango de hora real (para buscar un camión que no se leyó). `page` desde 1. */
+  function listVehicleCaptures(deviceName, fromMs, toMs, pageSize = 100, page = 1) {
+    return serialized(async () => {
+      if (!isDssConfigured()) return []
+      const cam = (await loadChannelMap()).get(String(deviceName).trim().toLowerCase())
+      if (!cam?.channelId) return []
+      const body = { currentPage: page, page, pageSize, startTime: String(Math.floor(fromMs / 1000)), endTime: String(Math.ceil(toMs / 1000)), channelIds: [cam.channelId] }
+      const res = await withDssAuth((token) => dssHttpJson('POST', DSS_API.vehicleCaptureRecords, { token, body }))
+      if (res.status !== 200 || res.json?.code !== 1000) {
+        if (res.status === 429) throw Object.assign(new Error('DSS: límite de consultas (429)'), { rateLimited: true })
+        throw new Error(`DSS respondió ${res.json?.code ?? `HTTP ${res.status}`}: ${res.json?.desc ?? res.text?.slice(0, 120) ?? ''}`)
+      }
+      const known = (v) => (v && v !== 'Unrecognized' && v !== 'Unknown' ? v : null)
+      return (res.json?.data?.pageData ?? []).map((r) => ({
+        device: r.channelName,
+        plate: r.plateNo || '',
+        confidence: Number(r.confidence) || null,
+        vehicleBrand: known(r.vehicleBrandName),
+        vehicleColor: known(r.vehicleColorName),
+        vehicleCategory: known(r.vehicleModelName),
+        at: new Date(Number(r.captureTime) * 1000).toISOString(),
+        scenePicture: r.capturePicture || null,
+        platePicture: r.plateNoPicture || null,
+      }))
+    })
+  }
+
   /** Baja una foto del DSS (solo URLs del propio DSS) con la credencial de la sesión. */
   function fetchPicture(url) {
     return serialized(() => fetchPictureNow(url))
@@ -514,5 +541,5 @@ export function createDssLiveRouter({ projectRoot }) {
     return [...(await loadChannelMap()).values()]
   }
 
-  return { status, getStream, listChannels, isDssConfigured, listCameras, findVehicleCapture, fetchPicture }
+  return { status, getStream, listChannels, isDssConfigured, listCameras, findVehicleCapture, listVehicleCaptures, fetchPicture }
 }

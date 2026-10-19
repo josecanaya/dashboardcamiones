@@ -7,7 +7,7 @@ import type {
   PlantPointType,
 } from '../../data/plantZones.types'
 import { getRicardoneCircuitRoutes, type PlantCircuitRoute } from '../../data/plantCircuitRoutes'
-import { tramoPath } from '../../data/plantRouteGeometry'
+import { pointAlongPath, tramoPath } from '../../data/plantRouteGeometry'
 import type { SectorStatus, ZoneState } from '../../services/live/plantStateApi'
 
 /**
@@ -49,8 +49,53 @@ const TYPE_LABEL: Record<PlantPointType, string> = {
   operation: 'Carga o descarga',
 }
 
-/** Camión ubicado en un punto del plano (capa de flujo del monitoreo). */
-export type MapTruck = { plate: string; pointId: string; status: 'normal' | 'attention' | 'critical'; label?: string }
+/**
+ * Camión en el plano (capa de flujo del monitoreo): junto a su punto o, con `transit`, sobre la línea
+ * que une su punto con el siguiente, a `fraction` del recorrido. `guessed` = destino estimado.
+ */
+export type MapTruck = {
+  plate: string
+  pointId: string
+  status: 'normal' | 'attention' | 'critical'
+  label?: string
+  transit?: { toPointId: string; fraction: number; guessed: boolean } | null
+  /** Playa donde espera: se dibuja en la grilla de su polígono, los que más esperan primero. */
+  waitZoneId?: string | null
+  /** Minutos esperando (ordena la grilla de la playa). */
+  waitMin?: number | null
+  /** Ubicación que supone una lectura de cámara que no llegó. */
+  inferred?: boolean
+}
+
+/**
+ * Lugares para camiones dentro de una playa: grilla recortada al polígono, de arriba a la izquierda
+ * hacia abajo (como en el simulador). Se mide en píxeles de la imagen base para que sea pareja.
+ */
+function fillSlots(poly: { xPercent: number; yPercent: number }[], cap: number, width: number, height: number) {
+  const px = poly.map((p) => [(p.xPercent / 100) * width, (p.yPercent / 100) * height] as const)
+  const xs = px.map((p) => p[0])
+  const ys = px.map((p) => p[1])
+  const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)]
+  const inside = (x: number, y: number) => {
+    let c = false
+    for (let i = 0, j = px.length - 1; i < px.length; j = i++) {
+      const [xi, yi] = px[i]
+      const [xj, yj] = px[j]
+      if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c
+    }
+    return c
+  }
+  let sp = Math.max(6, Math.sqrt(((x1 - x0) * (y1 - y0)) / Math.max(1, cap)))
+  let out: [number, number][] = []
+  for (let k = 0; k < 12; k++) {
+    out = []
+    for (let y = y0 + sp / 2; y < y1; y += sp) for (let x = x0 + sp / 2; x < x1; x += sp) if (inside(x, y)) out.push([x, y])
+    if (out.length >= cap) break
+    sp *= 0.85
+  }
+  if (!out.length) out = [[(x0 + x1) / 2, (y0 + y1) / 2]]
+  return out.map(([x, y]) => ({ xPercent: (x / width) * 100, yPercent: (y / height) * 100 }))
+}
 const TRUCK_COLOR: Record<MapTruck['status'], string> = { normal: '#16A34A', attention: '#F59E0B', critical: '#DC2626' }
 
 /** Reparte los camiones de un mismo punto en anillos alrededor del marcador, para que no se tapen. */
@@ -115,13 +160,17 @@ export function PlantMap(props: {
   onSelectTruck?: (plate: string) => void
   /** Recorrido del camión seguido (ids de punto en orden) y su próximo punto esperado. */
   followPath?: string[]
+  /** Puntos del recorrido que son pasos deducidos (sin lectura): se dibujan punteados. */
+  followDeduced?: string[]
   followNext?: string | null
   /** Oculta los rótulos grandes de ocupación (el monitoreo los muestra en el panel). */
   quietZones?: boolean
+  /** Dibuja la red de caminos (tramos) por donde circulan los camiones. */
+  showRoads?: boolean
   /** Si está, el clic en un punto lo entrega entero (en vez de abrir directo sus cámaras). */
   onSelectPoint?: (point: PlantPoint) => void
 }): JSX.Element {
-  const { layout, site = 'ricardone', compact = false, showCircuitControls = true, align = 'center', flowPulse = { ingress: 0, egress: 0 }, zones, onOpenCameras, onSelectSector, onSelectZone, selectedSector, fill = false, trucks = [], followedPlate = null, onSelectTruck, followPath = [], followNext = null, quietZones = false, onSelectPoint } = props
+  const { layout, site = 'ricardone', compact = false, showCircuitControls = true, align = 'center', flowPulse = { ingress: 0, egress: 0 }, zones, onOpenCameras, onSelectSector, onSelectZone, selectedSector, fill = false, trucks = [], followedPlate = null, onSelectTruck, followPath = [], followDeduced = [], followNext = null, quietZones = false, showRoads = false, onSelectPoint } = props
   const [hovered, setHovered] = useState<string | null>(null)
   const [hoveredZone, setHoveredZone] = useState<string | null>(null)
   const [circuit, setCircuit] = useState<string | null>(null)
@@ -146,19 +195,56 @@ export function PlantMap(props: {
   const inCircuit = useMemo(() => new Set(activeSegments.flatMap((segment) => [segment.from, segment.to])), [activeSegments])
   const pointState = useMemo(() => statePerPoint(points, zones), [points, zones])
   const liveZoneById = useMemo(() => new Map(zones.map((zone) => [zone.id, zone])), [zones])
+  const zoneShape = useMemo(() => new Map(layout.zones.filter((z) => (z.polygonPercent?.length ?? 0) >= 3).map((z) => [z.zoneId, z.polygonPercent!])), [layout.zones])
+  /** Camiones esperando en playas: cada uno en un lugar de la grilla, los que más esperan arriba a la izquierda. */
+  const zoneTrucks = useMemo(() => {
+    if (!base) return []
+    const groups = new Map<string, MapTruck[]>()
+    for (const t of trucks) if (t.waitZoneId && zoneShape.has(t.waitZoneId)) groups.set(t.waitZoneId, [...(groups.get(t.waitZoneId) ?? []), t])
+    return [...groups.entries()].flatMap(([zoneId, list]) => {
+      const cap = Math.max(list.length, liveZoneById.get(zoneId)?.capacityOperational ?? 40)
+      const slots = fillSlots(zoneShape.get(zoneId)!, cap, base.width, base.height)
+      return [...list].sort((a, b) => (b.waitMin ?? 0) - (a.waitMin ?? 0)).map((truck, i) => ({ truck, at: slots[i % slots.length] }))
+    })
+  }, [trucks, zoneShape, base, liveZoneById])
   const trucksByPoint = useMemo(() => {
     const m = new Map<string, MapTruck[]>()
     for (const t of trucks) {
-      if (!byId.has(t.pointId)) continue
+      if (!byId.has(t.pointId) || (t.transit && byId.has(t.transit.toPointId)) || (t.waitZoneId && zoneShape.has(t.waitZoneId))) continue
       m.set(t.pointId, [...(m.get(t.pointId) ?? []), t])
     }
     return m
   }, [trucks, byId])
+  /**
+   * Camiones en tránsito: posición sobre el tramo. Los que comparten tramo se encolan hacia atrás
+   * sobre la línea (fila de camiones) en vez de taparse en el mismo punto.
+   */
+  const transitTrucks = useMemo(() => {
+    if (!base) return []
+    const groups = new Map<string, { truck: MapTruck; a: PlantPoint; b: PlantPoint }[]>()
+    for (const t of trucks) {
+      const a = byId.get(t.pointId)
+      const b = t.transit ? byId.get(t.transit.toPointId) : undefined
+      if (!t.transit || !a || !b) continue
+      const key = `${a.id}>${b.id}`
+      groups.set(key, [...(groups.get(key) ?? []), { truck: t, a, b }])
+    }
+    return [...groups.values()].flatMap((list) => {
+      const path = tramoPath(list[0].a, list[0].b, layout.tramos ?? [])
+      let prev = Infinity
+      return [...list].sort((x, y) => y.truck.transit!.fraction - x.truck.transit!.fraction).map(({ truck }, i) => {
+        const f = Math.max(0.02, Math.min(truck.transit!.fraction, prev - 0.045))
+        prev = f
+        return { truck, at: pointAlongPath(path, f, base.width, base.height), lane: f <= 0.02 && i ? (i % 2 ? -1 : 1) : 0 }
+      })
+    })
+  }, [trucks, byId, layout.tramos, base])
   const followSegments = useMemo(() => {
     const steps = followPath.filter((id, i) => byId.has(id) && followPath[i - 1] !== id)
     return steps.slice(0, -1).map((from, i) => ({ key: `f-${from}-${steps[i + 1]}-${i}`, from, to: steps[i + 1]! }))
   }, [followPath, byId])
   const followKnown = followPath.filter((id) => byId.has(id))
+  const deducedSet = useMemo(() => new Set(followDeduced), [followDeduced])
   const followLast = followKnown[followKnown.length - 1] ?? null
 
   if (!base) {
@@ -279,6 +365,17 @@ export function PlantMap(props: {
               <path d="M0,1 L9,5 L0,9 z" fill="#0EA5E9" />
             </marker>
           </defs>
+          {/* Red de caminos: los tramos por donde circulan los camiones entre puntos. */}
+          {showRoads ? (layout.tramos ?? []).map((tramo) => {
+            const a = byId.get(tramo.fromPointId)
+            const b = byId.get(tramo.toPointId)
+            if (!a || !b) return null
+            const pts = tramoPath(a, b, layout.tramos ?? []).map((pt) => `${(pt.xPercent / 100) * base.width},${(pt.yPercent / 100) * base.height}`).join(' ')
+            return <g key={`road-${tramo.id}`}>
+              <polyline points={pts} fill="none" stroke="rgba(15,23,42,.55)" strokeWidth={9} strokeLinecap="round" strokeLinejoin="round" />
+              <polyline points={pts} fill="none" stroke="#E2E8F0" strokeOpacity={0.85} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" />
+            </g>
+          }) : null}
           {/* Capa de sectores: límites configurados por el editor del plano. */}
           {showSectors ? layout.zones.map((zone) => {
             const vertices = zone.polygonPercent ?? []
@@ -345,9 +442,11 @@ export function PlantMap(props: {
             const b = byId.get(to)
             if (!a || !b) return null
             const pts = tramoPath(a, b, layout.tramos ?? []).map((pt) => `${(pt.xPercent / 100) * base.width},${(pt.yPercent / 100) * base.height}`).join(' ')
+            // Tramo hacia o desde un paso deducido: punteado (no hubo lectura en ese punto).
+            const deduced = deducedSet.has(from) || deducedSet.has(to)
             return <g key={key}>
               <polyline points={pts} fill="none" stroke="#FFFFFF" strokeWidth={10} strokeOpacity={0.85} strokeLinecap="round" strokeLinejoin="round" />
-              <polyline points={pts} fill="none" stroke="#7C3AED" strokeWidth={5} strokeLinecap="round" strokeLinejoin="round" />
+              <polyline points={pts} fill="none" stroke="#7C3AED" strokeWidth={5} strokeLinecap="round" strokeLinejoin="round" strokeDasharray={deduced ? '2 10' : undefined} />
             </g>
           })}
           {followLast && followNext && byId.get(followNext) ? (() => {
@@ -533,7 +632,7 @@ export function PlantMap(props: {
         {/* Puntos por los que pasó el camión seguido, numerados en orden; el próximo con aro verde. */}
         {followKnown.filter((id, i) => followKnown[i - 1] !== id).map((id, i) => {
           const p = byId.get(id)!
-          return <span key={`fstep-${id}-${i}`} className="tf-map-step" style={{ left: `${p.xPercent}%`, top: `${p.yPercent}%` }} aria-hidden>{i + 1}</span>
+          return <span key={`fstep-${id}-${i}`} className={`tf-map-step${deducedSet.has(id) ? ' tf-map-step--deduced' : ''}`} title={deducedSet.has(id) ? 'Paso deducido: sin lectura de cámara' : undefined} style={{ left: `${p.xPercent}%`, top: `${p.yPercent}%` }} aria-hidden>{i + 1}</span>
         })}
         {followNext && byId.get(followNext) ? <span className="tf-map-step tf-map-step--next" style={{ left: `${byId.get(followNext)!.xPercent}%`, top: `${byId.get(followNext)!.yPercent}%` }} aria-hidden>→</span> : null}
 
@@ -558,6 +657,45 @@ export function PlantMap(props: {
               </button>
             )
           })
+        })}
+
+        {/* Camiones esperando en playas, en su grilla. */}
+        {zoneTrucks.map(({ truck: t, at }) => {
+          const followed = t.plate === followedPlate
+          return (
+            <button
+              key={`truck-${t.plate}`}
+              type="button"
+              className={`tf-map-truck is-waiting${t.inferred ? ' is-guessed' : ''}${followed ? ' is-followed' : ''}${followedPlate && !followed ? ' is-dimmed' : ''}`}
+              style={{ left: `${at.xPercent}%`, top: `${at.yPercent}%`, ['--truck' as string]: TRUCK_COLOR[t.status] }}
+              onClick={() => onSelectTruck?.(t.plate)}
+              aria-label={`Camión ${t.plate} esperando en playa${t.label ? `, ${t.label}` : ''}. Seguir`}
+              aria-pressed={followed}
+              title={`${t.plate}${t.inferred ? ' · paso por Preingreso inferido' : ''}${t.label ? ` · ${t.label}` : ''}`}
+            >
+              {followed ? <span className="tf-map-truck__plate">{t.plate}</span> : null}
+            </button>
+          )
+        })}
+
+        {/* Camiones en tránsito: sobre la línea entre su último punto y el siguiente. */}
+        {transitTrucks.map(({ truck: t, at, lane }) => {
+          const followed = t.plate === followedPlate
+          const dy = lane * 9
+          return (
+            <button
+              key={`truck-${t.plate}`}
+              type="button"
+              className={`tf-map-truck is-transit${t.transit?.guessed ? ' is-guessed' : ''}${followed ? ' is-followed' : ''}${followedPlate && !followed ? ' is-dimmed' : ''}`}
+              style={{ left: `${at.xPercent}%`, top: `calc(${at.yPercent}% + ${dy}px)`, ['--truck' as string]: TRUCK_COLOR[t.status] }}
+              onClick={() => onSelectTruck?.(t.plate)}
+              aria-label={`Camión ${t.plate} en tránsito hacia ${byId.get(t.transit!.toPointId)?.label ?? t.transit!.toPointId}${t.label ? `, ${t.label}` : ''}. Seguir`}
+              aria-pressed={followed}
+              title={`${t.plate} · hacia ${byId.get(t.transit!.toPointId)?.label ?? t.transit!.toPointId}${t.transit?.guessed ? ' (estimado)' : ''}${t.label ? ` · ${t.label}` : ''}`}
+            >
+              {followed ? <span className="tf-map-truck__plate">{t.plate}</span> : null}
+            </button>
+          )
         })}
 
         {/* Leyenda compacta y plegable */}

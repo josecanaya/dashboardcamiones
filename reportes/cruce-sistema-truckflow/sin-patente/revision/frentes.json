@@ -1,0 +1,828 @@
+[
+ {
+  "patente": "DGC830",
+  "alta": "2026-08-10 21:45:00",
+  "hora": "2026-08-10 21:41:49",
+  "lectura": "",
+  "escena": "fotos/2026-08-10_2026-08-16/DGC830_0810214149_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "DGC830",
+  "alta": "2026-08-10 21:45:00",
+  "hora": "2026-08-10 21:43:53",
+  "lectura": "",
+  "escena": "fotos/2026-08-10_2026-08-16/DGC830_0810214353_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "DGC830",
+  "alta": "2026-08-11 21:18:00",
+  "hora": "2026-08-11 21:15:21",
+  "lectura": "",
+  "escena": "fotos/2026-08-10_2026-08-16/DGC830_0811211521_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "SDH227",
+  "alta": "2026-08-10 22:08:00",
+  "hora": "2026-08-10 22:04:51",
+  "lectura": "FY4",
+  "escena": "fotos/2026-08-10_2026-08-16/SDH227_0810220451_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "CEQ294",
+  "alta": "2026-08-13 19:28:00",
+  "hora": "2026-08-13 19:21:24",
+  "lectura": "",
+  "escena": "fotos/2026-08-10_2026-08-16/CEQ294_0813192124_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "TQL026",
+  "alta": "2026-08-13 20:59:00",
+  "hora": "2026-08-13 20:54:44",
+  "lectura": "X13",
+  "escena": "fotos/2026-08-10_2026-08-16/TQL026_0813205444_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "EOV644",
+  "alta": "2026-08-14 17:01:00",
+  "hora": "2026-08-14 16:55:55",
+  "lectura": "F96",
+  "escena": "fotos/2026-08-10_2026-08-16/EOV644_0814165555_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "TRI745",
+  "alta": "2026-08-14 17:04:00",
+  "hora": "2026-08-14 16:55:55",
+  "lectura": "F96",
+  "escena": "fotos/2026-08-10_2026-08-16/TRI745_0814165555_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AD932LA",
+  "alta": "2026-08-14 20:02:00",
+  "hora": "2026-08-14 19:59:02",
+  "lectura": "",
+  "escena": "fotos/2026-08-10_2026-08-16/AD932LA_0814195902_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "VZW898",
+  "alta": "2026-08-16 22:33:00",
+  "hora": "2026-08-16 22:30:32",
+  "lectura": "",
+  "escena": "fotos/2026-08-10_2026-08-16/VZW898_0816223032_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "VZW898",
+  "alta": "2026-08-16 22:33:00",
+  "hora": "2026-08-16 22:30:33",
+  "lectura": "Z08",
+  "escena": "fotos/2026-08-10_2026-08-16/VZW898_0816223033_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AA605TF",
+  "alta": "2026-08-16 22:37:00",
+  "hora": "2026-08-16 22:30:33",
+  "lectura": "Z08",
+  "escena": "fotos/2026-08-10_2026-08-16/AA605TF_0816223033_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AA605TF",
+  "alta": "2026-08-16 22:37:00",
+  "hora": "2026-08-16 22:30:32",
+  "lectura": "",
+  "escena": "fotos/2026-08-10_2026-08-16/AA605TF_0816223032_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "MMZ197",
+  "alta": "2026-08-18 20:37:00",
+  "hora": "2026-08-18 20:30:25",
+  "lectura": "653",
+  "escena": "fotos/2026-08-17_2026-08-23/MMZ197_0818203025_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "MMZ197",
+  "alta": "2026-08-18 20:37:00",
+  "hora": "2026-08-18 20:30:12",
+  "lectura": "",
+  "escena": "fotos/2026-08-17_2026-08-23/MMZ197_0818203012_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "SAZ905",
+  "alta": "2026-08-19 21:48:00",
+  "hora": "2026-08-19 21:45:01",
+  "lectura": "L31",
+  "escena": "fotos/2026-08-17_2026-08-23/SAZ905_0819214501_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "GOZ524",
+  "alta": "2026-08-20 21:46:00",
+  "hora": "2026-08-20 21:42:37",
+  "lectura": "C24",
+  "escena": "fotos/2026-08-17_2026-08-23/GOZ524_0820214237_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "HJY197",
+  "alta": "2026-08-20 21:48:00",
+  "hora": "2026-08-20 21:42:37",
+  "lectura": "C24",
+  "escena": "fotos/2026-08-17_2026-08-23/HJY197_0820214237_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AA579GS",
+  "alta": "2026-08-20 22:07:00",
+  "hora": "2026-08-20 22:03:43",
+  "lectura": "A37",
+  "escena": "fotos/2026-08-17_2026-08-23/AA579GS_0820220343_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "RRR188",
+  "alta": "2026-08-20 23:00:00",
+  "hora": "2026-08-20 22:50:18",
+  "lectura": "WZ9",
+  "escena": "fotos/2026-08-17_2026-08-23/RRR188_0820225018_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "EED511",
+  "alta": "2026-08-21 03:21:00",
+  "hora": "2026-08-21 03:17:08",
+  "lectura": "",
+  "escena": "fotos/2026-08-17_2026-08-23/EED511_0821031708_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "TYQ293",
+  "alta": "2026-08-21 22:18:00",
+  "hora": "2026-08-21 22:14:49",
+  "lectura": "",
+  "escena": "fotos/2026-08-17_2026-08-23/TYQ293_0821221449_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "TYQ293",
+  "alta": "2026-08-21 22:18:00",
+  "hora": "2026-08-21 22:14:51",
+  "lectura": "537",
+  "escena": "fotos/2026-08-17_2026-08-23/TYQ293_0821221451_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "BER228",
+  "alta": "2026-08-23 01:26:00",
+  "hora": "2026-08-23 01:22:19",
+  "lectura": "FT7",
+  "escena": "fotos/2026-08-17_2026-08-23/BER228_0823012219_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "SJV014",
+  "alta": "2026-08-23 22:09:00",
+  "hora": "2026-08-23 22:04:48",
+  "lectura": "U20",
+  "escena": "fotos/2026-08-17_2026-08-23/SJV014_0823220448_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "SJV014",
+  "alta": "2026-08-23 22:09:00",
+  "hora": "2026-08-23 22:02:12",
+  "lectura": "651",
+  "escena": "fotos/2026-08-17_2026-08-23/SJV014_0823220212_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AF401EF",
+  "alta": "2026-08-23 22:11:00",
+  "hora": "2026-08-23 22:04:48",
+  "lectura": "U20",
+  "escena": "fotos/2026-08-17_2026-08-23/AF401EF_0823220448_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AF401EF",
+  "alta": "2026-08-23 22:11:00",
+  "hora": "2026-08-23 22:02:12",
+  "lectura": "651",
+  "escena": "fotos/2026-08-17_2026-08-23/AF401EF_0823220212_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "HFE152",
+  "alta": "2026-08-25 21:15:00",
+  "hora": "2026-08-25 21:11:30",
+  "lectura": "102",
+  "escena": "fotos/2026-08-24_2026-08-30/HFE152_0825211130_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AB155BS",
+  "alta": "2026-08-26 00:03:00",
+  "hora": "2026-08-26 00:01:39",
+  "lectura": "E53",
+  "escena": "fotos/2026-08-24_2026-08-30/AB155BS_0826000139_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AC136MU",
+  "alta": "2026-08-26 19:18:00",
+  "hora": "2026-08-26 19:09:53",
+  "lectura": "",
+  "escena": "fotos/2026-08-24_2026-08-30/AC136MU_0826190953_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "CKJ479",
+  "alta": "2026-08-26 23:09:00",
+  "hora": "2026-08-26 23:04:12",
+  "lectura": "310",
+  "escena": "fotos/2026-08-24_2026-08-30/CKJ479_0826230412_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AB688RB",
+  "alta": "2026-08-28 16:38:00",
+  "hora": "2026-08-28 16:33:55",
+  "lectura": "S32",
+  "escena": "fotos/2026-08-24_2026-08-30/AB688RB_0828163355_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AB534ID",
+  "alta": "2026-08-29 00:02:00",
+  "hora": "2026-08-28 23:58:12",
+  "lectura": "550",
+  "escena": "fotos/2026-08-24_2026-08-30/AB534ID_0828235812_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "SBY377",
+  "alta": "2026-08-29 00:07:00",
+  "hora": "2026-08-29 00:06:15",
+  "lectura": "",
+  "escena": "fotos/2026-08-24_2026-08-30/SBY377_0829000615_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "SBY377",
+  "alta": "2026-08-29 00:07:00",
+  "hora": "2026-08-28 23:58:12",
+  "lectura": "550",
+  "escena": "fotos/2026-08-24_2026-08-30/SBY377_0828235812_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AB723QC",
+  "alta": "2026-08-29 05:37:00",
+  "hora": "2026-08-29 05:33:07",
+  "lectura": "RJX",
+  "escena": "fotos/2026-08-24_2026-08-30/AB723QC_0829053307_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "HKQ275",
+  "alta": "2026-08-29 22:05:00",
+  "hora": "2026-08-29 22:06:08",
+  "lectura": "A58",
+  "escena": "fotos/2026-08-24_2026-08-30/HKQ275_0829220608_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "SLK512",
+  "alta": "2026-08-29 22:07:00",
+  "hora": "2026-08-29 22:06:08",
+  "lectura": "A58",
+  "escena": "fotos/2026-08-24_2026-08-30/SLK512_0829220608_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "BAQ255",
+  "alta": "2026-08-29 22:11:00",
+  "hora": "2026-08-29 22:06:46",
+  "lectura": "",
+  "escena": "fotos/2026-08-24_2026-08-30/BAQ255_0829220646_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "DDD727",
+  "alta": "2026-08-31 02:39:00",
+  "hora": "2026-08-31 02:35:17",
+  "lectura": "",
+  "escena": "fotos/2026-08-31_2026-09-06/DDD727_0831023517_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "DDD727",
+  "alta": "2026-08-31 02:39:00",
+  "hora": "2026-08-31 02:35:55",
+  "lectura": "3P4",
+  "escena": "fotos/2026-08-31_2026-09-06/DDD727_0831023555_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "DDD727",
+  "alta": "2026-08-31 02:39:00",
+  "hora": "2026-08-31 02:32:34",
+  "lectura": "877",
+  "escena": "fotos/2026-08-31_2026-09-06/DDD727_0831023234_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "RGQ044",
+  "alta": "2026-08-31 20:36:00",
+  "hora": "2026-08-31 20:32:09",
+  "lectura": "T33",
+  "escena": "fotos/2026-08-31_2026-09-06/RGQ044_0831203209_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "RGQ044",
+  "alta": "2026-08-31 20:36:00",
+  "hora": "2026-08-31 20:32:47",
+  "lectura": "E83",
+  "escena": "fotos/2026-08-31_2026-09-06/RGQ044_0831203247_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "HMB938",
+  "alta": "2026-08-31 21:42:00",
+  "hora": "2026-08-31 21:37:42",
+  "lectura": "",
+  "escena": "fotos/2026-08-31_2026-09-06/HMB938_0831213742_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "DQG063",
+  "alta": "2026-08-31 22:47:00",
+  "hora": "2026-08-31 22:38:05",
+  "lectura": "777",
+  "escena": "fotos/2026-08-31_2026-09-06/DQG063_0831223805_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AA745MT",
+  "alta": "2026-09-01 04:01:00",
+  "hora": "2026-09-01 03:56:19",
+  "lectura": "A7A",
+  "escena": "fotos/2026-08-31_2026-09-06/AA745MT_0901035619_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AA745MT",
+  "alta": "2026-09-01 04:01:00",
+  "hora": "2026-09-01 03:58:04",
+  "lectura": "MX9",
+  "escena": "fotos/2026-08-31_2026-09-06/AA745MT_0901035804_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "ROK966",
+  "alta": "2026-09-01 19:50:00",
+  "hora": "2026-09-01 19:45:23",
+  "lectura": "CT6",
+  "escena": "fotos/2026-08-31_2026-09-06/ROK966_0901194523_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "ROK966",
+  "alta": "2026-09-01 19:50:00",
+  "hora": "2026-09-01 19:51:49",
+  "lectura": "117",
+  "escena": "fotos/2026-08-31_2026-09-06/ROK966_0901195149_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AD004IV",
+  "alta": "2026-09-02 00:20:00",
+  "hora": "2026-09-02 00:10:43",
+  "lectura": "72K",
+  "escena": "fotos/2026-08-31_2026-09-06/AD004IV_0902001043_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "DMP804",
+  "alta": "2026-09-02 01:40:00",
+  "hora": "2026-09-02 01:36:28",
+  "lectura": "977",
+  "escena": "fotos/2026-08-31_2026-09-06/DMP804_0902013628_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "WWH602",
+  "alta": "2026-09-02 19:38:00",
+  "hora": "2026-09-02 19:33:26",
+  "lectura": "",
+  "escena": "fotos/2026-08-31_2026-09-06/WWH602_0902193326_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "TPT886",
+  "alta": "2026-09-02 20:04:00",
+  "hora": "2026-09-02 19:59:53",
+  "lectura": "HTI",
+  "escena": "fotos/2026-08-31_2026-09-06/TPT886_0902195953_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "RSY009",
+  "alta": "2026-09-02 23:28:00",
+  "hora": "2026-09-02 23:22:51",
+  "lectura": "I92",
+  "escena": "fotos/2026-08-31_2026-09-06/RSY009_0902232251_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "HYN452",
+  "alta": "2026-09-02 23:34:00",
+  "hora": "2026-09-02 23:28:45",
+  "lectura": "Z89",
+  "escena": "fotos/2026-08-31_2026-09-06/HYN452_0902232845_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AC136MU",
+  "alta": "2026-09-03 15:32:00",
+  "hora": "2026-09-03 15:24:45",
+  "lectura": "393",
+  "escena": "fotos/2026-08-31_2026-09-06/AC136MU_0903152445_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "EDG424",
+  "alta": "2026-09-03 23:21:00",
+  "hora": "2026-09-03 23:22:14",
+  "lectura": "",
+  "escena": "fotos/2026-08-31_2026-09-06/EDG424_0903232214_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AB651MF",
+  "alta": "2026-09-04 03:11:00",
+  "hora": "2026-09-04 03:02:02",
+  "lectura": "",
+  "escena": "fotos/2026-08-31_2026-09-06/AB651MF_0904030202_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AB032RU",
+  "alta": "2026-09-04 22:13:00",
+  "hora": "2026-09-04 22:06:15",
+  "lectura": "",
+  "escena": "fotos/2026-08-31_2026-09-06/AB032RU_0904220615_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "HCT226",
+  "alta": "2026-09-07 19:33:00",
+  "hora": "2026-09-07 19:29:05",
+  "lectura": "HI3",
+  "escena": "fotos/2026-09-07_2026-09-13/HCT226_0907192905_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AF256QT",
+  "alta": "2026-09-07 19:50:00",
+  "hora": "2026-09-07 19:42:49",
+  "lectura": "",
+  "escena": "fotos/2026-09-07_2026-09-13/AF256QT_0907194249_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "RMH549",
+  "alta": "2026-09-07 22:11:00",
+  "hora": "2026-09-07 22:08:18",
+  "lectura": "B58",
+  "escena": "fotos/2026-09-07_2026-09-13/RMH549_0907220818_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "RMH549",
+  "alta": "2026-09-07 22:11:00",
+  "hora": "2026-09-07 22:10:10",
+  "lectura": "I11",
+  "escena": "fotos/2026-09-07_2026-09-13/RMH549_0907221010_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "SOA304",
+  "alta": "2026-09-07 22:57:00",
+  "hora": "2026-09-07 22:52:42",
+  "lectura": "",
+  "escena": "fotos/2026-09-07_2026-09-13/SOA304_0907225242_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "GBL341",
+  "alta": "2026-09-08 00:00:00",
+  "hora": "2026-09-07 23:58:10",
+  "lectura": "435",
+  "escena": "fotos/2026-09-07_2026-09-13/GBL341_0907235810_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "WIU001",
+  "alta": "2026-09-08 07:47:00",
+  "hora": "2026-09-08 07:42:30",
+  "lectura": "OO7",
+  "escena": "fotos/2026-09-07_2026-09-13/WIU001_0908074230_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "RQS526",
+  "alta": "2026-09-08 23:58:00",
+  "hora": "2026-09-08 23:54:16",
+  "lectura": "B66",
+  "escena": "fotos/2026-09-07_2026-09-13/RQS526_0908235416_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AC941HV",
+  "alta": "2026-09-09 06:22:00",
+  "hora": "2026-09-09 06:21:35",
+  "lectura": "T00",
+  "escena": "fotos/2026-09-07_2026-09-13/AC941HV_0909062135_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AC941HV",
+  "alta": "2026-09-12 00:03:00",
+  "hora": "2026-09-12 00:00:50",
+  "lectura": "O05",
+  "escena": "fotos/2026-09-07_2026-09-13/AC941HV_0912000050_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AC769CU",
+  "alta": "2026-09-09 18:29:00",
+  "hora": "2026-09-09 18:23:21",
+  "lectura": "UU1",
+  "escena": "fotos/2026-09-07_2026-09-13/AC769CU_0909182321_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "DOS165",
+  "alta": "2026-09-09 19:27:00",
+  "hora": "2026-09-09 19:22:04",
+  "lectura": "S16",
+  "escena": "fotos/2026-09-07_2026-09-13/DOS165_0909192204_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "DOS165",
+  "alta": "2026-09-09 19:27:00",
+  "hora": "2026-09-09 19:19:51",
+  "lectura": "",
+  "escena": "fotos/2026-09-07_2026-09-13/DOS165_0909191951_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "WXV633",
+  "alta": "2026-09-10 23:20:00",
+  "hora": "2026-09-10 23:10:32",
+  "lectura": "B03",
+  "escena": "fotos/2026-09-07_2026-09-13/WXV633_0910231032_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "DPN081",
+  "alta": "2026-09-11 20:16:00",
+  "hora": "2026-09-11 20:11:48",
+  "lectura": "I5F",
+  "escena": "fotos/2026-09-07_2026-09-13/DPN081_0911201148_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AKK951",
+  "alta": "2026-09-11 22:15:00",
+  "hora": "2026-09-11 22:07:54",
+  "lectura": "U75",
+  "escena": "fotos/2026-09-07_2026-09-13/AKK951_0911220754_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "CLO700",
+  "alta": "2026-09-11 23:12:00",
+  "hora": "2026-09-11 23:08:15",
+  "lectura": "Q00",
+  "escena": "fotos/2026-09-07_2026-09-13/CLO700_0911230815_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "VZW898",
+  "alta": "2026-09-11 23:25:00",
+  "hora": "2026-09-11 23:21:04",
+  "lectura": "",
+  "escena": "fotos/2026-09-07_2026-09-13/VZW898_0911232104_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "TQI282",
+  "alta": "2026-09-11 23:27:00",
+  "hora": "2026-09-11 23:21:04",
+  "lectura": "",
+  "escena": "fotos/2026-09-07_2026-09-13/TQI282_0911232104_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "LUC306",
+  "alta": "2026-09-12 00:09:00",
+  "hora": "2026-09-12 00:00:50",
+  "lectura": "O05",
+  "escena": "fotos/2026-09-07_2026-09-13/LUC306_0912000050_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "GZV347",
+  "alta": "2026-09-12 00:20:00",
+  "hora": "2026-09-12 00:19:05",
+  "lectura": "040",
+  "escena": "fotos/2026-09-07_2026-09-13/GZV347_0912001905_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "GQQ158",
+  "alta": "2026-09-12 14:02:00",
+  "hora": "2026-09-12 13:57:48",
+  "lectura": "OCO",
+  "escena": "fotos/2026-09-07_2026-09-13/GQQ158_0912135748_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AFZ467",
+  "alta": "2026-09-12 22:24:00",
+  "hora": "2026-09-12 22:19:38",
+  "lectura": "AVC",
+  "escena": "fotos/2026-09-07_2026-09-13/AFZ467_0912221938_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "IHA930",
+  "alta": "2026-09-14 21:38:00",
+  "hora": "2026-09-14 21:34:58",
+  "lectura": "VEC",
+  "escena": "fotos/2026-09-14_2026-09-20/IHA930_0914213458_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "IHA930",
+  "alta": "2026-09-14 21:38:00",
+  "hora": "2026-09-14 21:32:04",
+  "lectura": "IP9",
+  "escena": "fotos/2026-09-14_2026-09-20/IHA930_0914213204_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "CDM073",
+  "alta": "2026-09-14 23:57:00",
+  "hora": "2026-09-14 23:53:39",
+  "lectura": "",
+  "escena": "fotos/2026-09-14_2026-09-20/CDM073_0914235339_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "APU434",
+  "alta": "2026-09-16 01:12:00",
+  "hora": "2026-09-16 01:12:53",
+  "lectura": "035",
+  "escena": "fotos/2026-09-14_2026-09-20/APU434_0916011253_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "VPG189",
+  "alta": "2026-09-16 03:42:00",
+  "hora": "2026-09-16 03:32:57",
+  "lectura": "367",
+  "escena": "fotos/2026-09-14_2026-09-20/VPG189_0916033257_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "REA522",
+  "alta": "2026-09-16 21:11:00",
+  "hora": "2026-09-16 21:06:21",
+  "lectura": "F65",
+  "escena": "fotos/2026-09-14_2026-09-20/REA522_0916210621_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "TWL118",
+  "alta": "2026-09-16 21:58:00",
+  "hora": "2026-09-16 21:56:19",
+  "lectura": "669",
+  "escena": "fotos/2026-09-14_2026-09-20/TWL118_0916215619_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AF060EM",
+  "alta": "2026-09-16 23:12:00",
+  "hora": "2026-09-16 23:12:22",
+  "lectura": "I90",
+  "escena": "fotos/2026-09-14_2026-09-20/AF060EM_0916231222_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AF060EM",
+  "alta": "2026-09-18 23:17:00",
+  "hora": "2026-09-18 23:12:54",
+  "lectura": "080",
+  "escena": "fotos/2026-09-14_2026-09-20/AF060EM_0918231254_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "SBY377",
+  "alta": "2026-09-17 00:09:00",
+  "hora": "2026-09-17 00:03:25",
+  "lectura": "BS3",
+  "escena": "fotos/2026-09-14_2026-09-20/SBY377_0917000325_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "TRO957",
+  "alta": "2026-09-17 21:29:00",
+  "hora": "2026-09-17 21:19:17",
+  "lectura": "VEC",
+  "escena": "fotos/2026-09-14_2026-09-20/TRO957_0917211917_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "EJJ089",
+  "alta": "2026-09-17 22:47:00",
+  "hora": "2026-09-17 22:42:26",
+  "lectura": "BL4",
+  "escena": "fotos/2026-09-14_2026-09-20/EJJ089_0917224226_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "DDD727",
+  "alta": "2026-09-18 12:35:00",
+  "hora": "2026-09-18 12:30:34",
+  "lectura": "330",
+  "escena": "fotos/2026-09-14_2026-09-20/DDD727_0918123034_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AA553BG",
+  "alta": "2026-09-19 02:31:00",
+  "hora": "2026-09-19 02:25:53",
+  "lectura": "J53",
+  "escena": "fotos/2026-09-14_2026-09-20/AA553BG_0919022553_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "FEV702",
+  "alta": "2026-09-20 20:06:00",
+  "hora": "2026-09-20 20:01:55",
+  "lectura": "C02",
+  "escena": "fotos/2026-09-14_2026-09-20/FEV702_0920200155_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AA776WD",
+  "alta": "2026-09-22 00:04:00",
+  "hora": "2026-09-21 23:59:05",
+  "lectura": "A22",
+  "escena": "fotos/2026-09-21_2026-09-27/AA776WD_0921235905_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AA140CY",
+  "alta": "2026-09-22 21:05:00",
+  "hora": "2026-09-22 21:00:06",
+  "lectura": "",
+  "escena": "fotos/2026-09-21_2026-09-27/AA140CY_0922210006_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AA140CY",
+  "alta": "2026-09-22 21:05:00",
+  "hora": "2026-09-22 20:56:51",
+  "lectura": "",
+  "escena": "fotos/2026-09-21_2026-09-27/AA140CY_0922205651_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AD084AN",
+  "alta": "2026-09-23 05:54:00",
+  "hora": "2026-09-23 05:48:43",
+  "lectura": "8AN",
+  "escena": "fotos/2026-09-21_2026-09-27/AD084AN_0923054843_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AB673GC",
+  "alta": "2026-09-24 19:33:00",
+  "hora": "2026-09-24 19:26:15",
+  "lectura": "",
+  "escena": "fotos/2026-09-21_2026-09-27/AB673GC_0924192615_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "KTM039",
+  "alta": "2026-09-24 21:58:00",
+  "hora": "2026-09-24 21:53:55",
+  "lectura": "JN2",
+  "escena": "fotos/2026-09-21_2026-09-27/KTM039_0924215355_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "DDD727",
+  "alta": "2026-09-25 04:52:00",
+  "hora": "2026-09-25 04:46:51",
+  "lectura": "XI1",
+  "escena": "fotos/2026-09-21_2026-09-27/DDD727_0925044651_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "DDD727",
+  "alta": "2026-09-25 04:52:00",
+  "hora": "2026-09-25 04:45:28",
+  "lectura": "",
+  "escena": "fotos/2026-09-21_2026-09-27/DDD727_0925044528_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "ADS392",
+  "alta": "2026-09-26 22:05:00",
+  "hora": "2026-09-26 21:59:56",
+  "lectura": "K28",
+  "escena": "fotos/2026-09-21_2026-09-27/ADS392_0926215956_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AH439OV",
+  "alta": "2026-09-27 17:30:00",
+  "hora": "2026-09-27 17:25:49",
+  "lectura": "O11",
+  "escena": "fotos/2026-09-21_2026-09-27/AH439OV_0927172549_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "AH439OV",
+  "alta": "2026-09-27 17:30:00",
+  "hora": "2026-09-27 17:25:18",
+  "lectura": "",
+  "escena": "fotos/2026-09-21_2026-09-27/AH439OV_0927172518_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "TDU296",
+  "alta": "2026-09-28 21:17:00",
+  "hora": "2026-09-28 21:09:35",
+  "lectura": "WAK",
+  "escena": "fotos/2026-09-28_2026-10-04/TDU296_0928210935_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "TDU296",
+  "alta": "2026-09-28 21:17:00",
+  "hora": "2026-09-28 21:09:11",
+  "lectura": "",
+  "escena": "fotos/2026-09-28_2026-10-04/TDU296_0928210911_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "RTN143",
+  "alta": "2026-09-30 14:40:00",
+  "hora": "2026-09-30 14:35:02",
+  "lectura": "AY7",
+  "escena": "fotos/2026-09-28_2026-10-04/RTN143_0930143502_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "SLU489",
+  "alta": "2026-10-01 00:39:00",
+  "hora": "2026-10-01 00:33:42",
+  "lectura": "11H",
+  "escena": "fotos/2026-09-28_2026-10-04/SLU489_1001003342_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "ADS392",
+  "alta": "2026-10-02 22:09:00",
+  "hora": "2026-10-02 22:03:50",
+  "lectura": "",
+  "escena": "fotos/2026-09-28_2026-10-04/ADS392_1002220350_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "TFN865",
+  "alta": "2026-10-02 23:15:00",
+  "hora": "2026-10-02 23:09:43",
+  "lectura": "CA5",
+  "escena": "fotos/2026-09-28_2026-10-04/TFN865_1002230943_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "STI174",
+  "alta": "2026-10-06 15:18:00",
+  "hora": "2026-10-06 15:13:54",
+  "lectura": "KII",
+  "escena": "fotos/2026-10-05_2026-10-11/STI174_1006151354_RicPreIngInFr.jpg"
+ },
+ {
+  "patente": "STI174",
+  "alta": "2026-10-06 15:18:00",
+  "hora": "2026-10-06 15:13:52",
+  "lectura": "",
+  "escena": "fotos/2026-10-05_2026-10-11/STI174_1006151352_RicPreIngInFr.jpg"
+ }
+]

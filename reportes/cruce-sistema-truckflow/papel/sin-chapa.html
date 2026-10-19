@@ -1,0 +1,197 @@
+<title>Camiones sin chapa delantera</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Expediente por camión: foto grande a la izquierda, visitas del Sistema a la derecha; se apila en el teléfono. */
+:root{
+  --bg:#f3f4f2; --panel:#ffffff; --fg:#1b211f; --mute:#5b6661; --line:#d7dcd7; --acc:#23629f; --red:#b23b30; --redbg:#f8e3e0;
+  --display:'IBM Plex Sans Condensed','Arial Narrow',sans-serif; --body:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121614;--panel:#1a201e;--fg:#e2e7e3;--mute:#96a19b;--line:#2d3631;--acc:#72a9e4;--red:#ec7b6f;--redbg:#3a1e1b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121614;--panel:#1a201e;--fg:#e2e7e3;--mute:#96a19b;--line:#2d3631;--acc:#72a9e4;--red:#ec7b6f;--redbg:#3a1e1b;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:14.5px/1.5 var(--body)}
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:22px}
+h1{font:700 2rem/1.1 var(--display);margin:0;text-wrap:balance}
+h2{font:700 1.3rem var(--display);margin:8px 0 0}
+.eyebrow{font:500 .74rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.lede{color:var(--mute);max-width:78ch;margin:8px 0 0}
+.stats{display:flex;flex-wrap:wrap;gap:22px;font-size:.9rem;color:var(--mute)}
+.stats b{font:700 1.6rem var(--display);color:var(--fg);display:block}
+.card{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+@media (max-width:860px){.card{grid-template-columns:minmax(0,1fr)}}
+.shot{border:0;padding:0;background:#000;cursor:zoom-in;display:block}
+.shot img{width:100%;height:100%;object-fit:cover;display:block;max-width:100%}
+.shot:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.body{padding:14px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.plate{font:600 1.6rem var(--mono);letter-spacing:.06em}
+.tag{font:500 .74rem var(--mono);padding:2px 9px;border-radius:10px;background:var(--redbg);color:var(--red)}
+.note{margin:0;font-size:.86rem;color:var(--mute)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.82rem}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font:500 .68rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.mono{font-family:var(--mono);white-space:nowrap}
+.cams{font-family:var(--mono);font-size:.74rem;color:var(--mute)}
+.none{color:var(--red)}
+.method{font-size:.86rem;color:var(--mute);max-width:80ch;display:grid;gap:6px}
+.method p{margin:0}
+dialog{border:0;padding:0;background:transparent;max-width:96vw;max-height:94vh}
+dialog::backdrop{background:rgba(0,0,0,.85)}
+dialog img{max-width:96vw;max-height:92vh;display:block}
+</style>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Sistema de camiones vs. cámaras · Nodo Sur · julio → octubre 2026</div>
+    <h1>Camiones sin chapa delantera</h1>
+    <p class="lede">Camiones que figuran en el Sistema y que las cámaras nunca leyeron porque no llevan chapa en el paragolpes. Algunos no tienen nada; otros llevan la patente en un papel o en una chapa suelta detrás del parabrisas, que solo leen las cámaras altas de calada y Celda 16. Tocá la foto para verla grande.</p>
+  </header>
+  <div class="stats"><span><b>12</b>camiones confirmados con foto</span><span><b>22</b>visitas en el Sistema</span><span><b>6</b>sin nada</span><span><b>6</b>con papel o chapa suelta adentro</span></div>
+  <h2>Sin nada en el paragolpes</h2>
+  <article class="card">
+  <button class="shot" type="button" data-src="mini/AH439OV.jpg" aria-label="Ver foto grande de AH439OV"><img src="mini/AH439OV.jpg" alt="Portapatente vacío — AH439OV" loading="lazy"></button>
+  <div class="body">
+    <div class="row"><span class="plate">AH439OV</span><span class="tag">Portapatente vacío</span></div>
+    <p class="note">Foton nuevo, modelo 2027: el marco de la chapa está vacío. Foto: RicPreIngInFr. Ninguna cámara leyó nunca esta patente.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Ingreso (Sistema)</th><th>Salida</th><th>Planta</th><th>Producto</th><th>Cámaras que la leyeron</th></tr></thead>
+      <tbody><tr><td class="mono"><b>2026-09-27 17:30</b></td><td class="mono">2026-09-27 23:12</td><td>Puerto</td><td>SOJA</td><td class="cams"><span class="none">ninguna</span></td></tr></tbody>
+    </table></div>
+  </div>
+</article>
+<article class="card">
+  <button class="shot" type="button" data-src="mini/DDD727.jpg" aria-label="Ver foto grande de DDD727"><img src="mini/DDD727.jpg" alt="Sin chapa — DDD727" loading="lazy"></button>
+  <div class="body">
+    <div class="row"><span class="plate">DDD727</span><span class="tag">Sin chapa</span></div>
+    <p class="note">Scania 114G blanco; la cámara lee «330» del frente. Se repite en varias visitas. Foto: RicPreIngInFr. Ninguna cámara leyó nunca esta patente.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Ingreso (Sistema)</th><th>Salida</th><th>Planta</th><th>Producto</th><th>Cámaras que la leyeron</th></tr></thead>
+      <tbody><tr><td class="mono"><b>2026-08-31 02:39</b></td><td class="mono">2026-08-31 09:34</td><td>Ricardone</td><td>GIRASOL</td><td class="cams"><span class="none">ninguna</span></td></tr><tr><td class="mono"><b>2026-09-18 12:35</b></td><td class="mono">2026-09-18 21:02</td><td>Ricardone</td><td>GIRASOL</td><td class="cams"><span class="none">ninguna</span></td></tr><tr><td class="mono"><b>2026-09-25 04:52</b></td><td class="mono">2026-09-25 18:41</td><td>Ricardone</td><td>GIRASOL</td><td class="cams"><span class="none">ninguna</span></td></tr></tbody>
+    </table></div>
+  </div>
+</article>
+<article class="card">
+  <button class="shot" type="button" data-src="mini/GQQ158.jpg" aria-label="Ver foto grande de GQQ158"><img src="mini/GQQ158.jpg" alt="Portapatente vacío — GQQ158" loading="lazy"></button>
+  <div class="body">
+    <div class="row"><span class="plate">GQQ158</span><span class="tag">Portapatente vacío</span></div>
+    <p class="note">Mercedes blanco con el marco de la chapa vacío. Foto: RicPreIngInFr. Ninguna cámara leyó nunca esta patente.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Ingreso (Sistema)</th><th>Salida</th><th>Planta</th><th>Producto</th><th>Cámaras que la leyeron</th></tr></thead>
+      <tbody><tr><td class="mono"><b>2026-07-23 23:14</b></td><td class="mono">2026-07-24 06:52</td><td>Puerto</td><td>SOJA</td><td class="cams"><span class="none">ninguna</span></td></tr><tr><td class="mono"><b>2026-09-12 14:02</b></td><td class="mono">2026-09-13 03:12</td><td>Puerto</td><td>SOJA</td><td class="cams"><span class="none">ninguna</span></td></tr></tbody>
+    </table></div>
+  </div>
+</article>
+<article class="card">
+  <button class="shot" type="button" data-src="mini/AB688RB.jpg" aria-label="Ver foto grande de AB688RB"><img src="mini/AB688RB.jpg" alt="Sin chapa — AB688RB" loading="lazy"></button>
+  <div class="body">
+    <div class="row"><span class="plate">AB688RB</span><span class="tag">Sin chapa</span></div>
+    <p class="note">Volvo FM blanco, paragolpes liso. Otros días la cámara leyó «VOIV0» / «VO1L70»: el logo VOLVO, a falta de chapa. Foto: RicPreIngInFr. Ninguna cámara leyó nunca esta patente.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Ingreso (Sistema)</th><th>Salida</th><th>Planta</th><th>Producto</th><th>Cámaras que la leyeron</th></tr></thead>
+      <tbody><tr><td class="mono"><b>2026-07-23 03:03</b></td><td class="mono">2026-07-23 10:13</td><td>Puerto</td><td>SOJA</td><td class="cams"><span class="none">ninguna</span></td></tr><tr><td class="mono"><b>2026-08-28 16:38</b></td><td class="mono">2026-08-29 02:48</td><td>Puerto</td><td>SOJA</td><td class="cams"><span class="none">ninguna</span></td></tr><tr><td class="mono"><b>2026-09-01 15:15</b></td><td class="mono">2026-09-02 00:24</td><td>Puerto</td><td>SOJA</td><td class="cams"><span class="none">ninguna</span></td></tr><tr><td class="mono"><b>2026-09-10 09:06</b></td><td class="mono">2026-09-10 20:14</td><td>Puerto</td><td>SOJA</td><td class="cams"><span class="none">ninguna</span></td></tr></tbody>
+    </table></div>
+  </div>
+</article>
+<article class="card">
+  <button class="shot" type="button" data-src="mini/AB723QC.jpg" aria-label="Ver foto grande de AB723QC"><img src="mini/AB723QC.jpg" alt="Sin chapa — AB723QC" loading="lazy"></button>
+  <div class="body">
+    <div class="row"><span class="plate">AB723QC</span><span class="tag">Sin chapa</span></div>
+    <p class="note">Scania blanco, paragolpes sin chapa. Foto: RicPreIngInFr. Ninguna cámara leyó nunca esta patente.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Ingreso (Sistema)</th><th>Salida</th><th>Planta</th><th>Producto</th><th>Cámaras que la leyeron</th></tr></thead>
+      <tbody><tr><td class="mono"><b>2026-08-29 05:37</b></td><td class="mono">2026-08-29 15:55</td><td>Puerto</td><td>SOJA</td><td class="cams"><span class="none">ninguna</span></td></tr></tbody>
+    </table></div>
+  </div>
+</article>
+<article class="card">
+  <button class="shot" type="button" data-src="mini/EOV644.jpg" aria-label="Ver foto grande de EOV644"><img src="mini/EOV644.jpg" alt="Portapatente vacío — EOV644" loading="lazy"></button>
+  <div class="body">
+    <div class="row"><span class="plate">EOV644</span><span class="tag">Portapatente vacío</span></div>
+    <p class="note">Mercedes blanco. Los otros dos camiones de ese minuto (OMG541, TRI745) tienen chapa y se leyeron. Foto: RicPreIngInFr. Ninguna cámara leyó nunca esta patente.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Ingreso (Sistema)</th><th>Salida</th><th>Planta</th><th>Producto</th><th>Cámaras que la leyeron</th></tr></thead>
+      <tbody><tr><td class="mono"><b>2026-08-14 17:01</b></td><td class="mono">2026-08-15 03:19</td><td>Puerto</td><td>SOJA</td><td class="cams"><span class="none">ninguna</span></td></tr></tbody>
+    </table></div>
+  </div>
+</article>
+  <h2>Patente en papel o chapa suelta detrás del parabrisas</h2>
+  <article class="card">
+  <button class="shot" type="button" data-src="mini/AH374JU.jpg" aria-label="Ver foto grande de AH374JU"><img src="mini/AH374JU.jpg" alt="Chapa suelta sobre el tablero — AH374JU" loading="lazy"></button>
+  <div class="body">
+    <div class="row"><span class="plate">AH374JU</span><span class="tag">Chapa suelta sobre el tablero</span></div>
+    <p class="note">Paragolpes sin chapa. Foto: RicCal02. Ninguna cámara de acceso (Preingreso, Ingreso, balanzas, salidas) leyó nunca esta patente.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Ingreso (Sistema)</th><th>Salida</th><th>Planta</th><th>Producto</th><th>Cámaras que la leyeron</th></tr></thead>
+      <tbody><tr><td class="mono"><b>2026-09-17 00:45</b></td><td class="mono">2026-09-17 07:27</td><td>Puerto</td><td>SOJA</td><td class="cams">RicCal02</td></tr></tbody>
+    </table></div>
+  </div>
+</article>
+<article class="card">
+  <button class="shot" type="button" data-src="mini/RGP363.jpg" aria-label="Ver foto grande de RGP363"><img src="mini/RGP363.jpg" alt="Papel «PATENTE RGP363» en el parabrisas — RGP363" loading="lazy"></button>
+  <div class="body">
+    <div class="row"><span class="plate">RGP363</span><span class="tag">Papel «PATENTE RGP363» en el parabrisas</span></div>
+    <p class="note">Paragolpes sin chapa. Foto: RicCal01. Ninguna cámara de acceso (Preingreso, Ingreso, balanzas, salidas) leyó nunca esta patente.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Ingreso (Sistema)</th><th>Salida</th><th>Planta</th><th>Producto</th><th>Cámaras que la leyeron</th></tr></thead>
+      <tbody><tr><td class="mono"><b>2026-09-09 11:07</b></td><td class="mono">2026-09-09 15:31</td><td>Puerto</td><td>SOJA</td><td class="cams">RicCal01</td></tr><tr><td class="mono"><b>2026-09-11 10:20</b></td><td class="mono">2026-09-11 16:15</td><td>Puerto</td><td>SOJA</td><td class="cams"><span class="none">ninguna</span></td></tr></tbody>
+    </table></div>
+  </div>
+</article>
+<article class="card">
+  <button class="shot" type="button" data-src="mini/HDI681.jpg" aria-label="Ver foto grande de HDI681"><img src="mini/HDI681.jpg" alt="Chapa suelta sobre el tablero — HDI681" loading="lazy"></button>
+  <div class="body">
+    <div class="row"><span class="plate">HDI681</span><span class="tag">Chapa suelta sobre el tablero</span></div>
+    <p class="note">Portapatente delantero vacío. Foto: RicCal02. Ninguna cámara de acceso (Preingreso, Ingreso, balanzas, salidas) leyó nunca esta patente.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Ingreso (Sistema)</th><th>Salida</th><th>Planta</th><th>Producto</th><th>Cámaras que la leyeron</th></tr></thead>
+      <tbody><tr><td class="mono"><b>2026-07-16 11:11</b></td><td class="mono">2026-07-16 21:14</td><td>Puerto</td><td>SOJA</td><td class="cams">RicCal02</td></tr><tr><td class="mono"><b>2026-09-01 01:06</b></td><td class="mono">2026-09-01 11:22</td><td>Puerto</td><td>SOJA</td><td class="cams"><span class="none">ninguna</span></td></tr></tbody>
+    </table></div>
+  </div>
+</article>
+<article class="card">
+  <button class="shot" type="button" data-src="mini/KTH925.jpg" aria-label="Ver foto grande de KTH925"><img src="mini/KTH925.jpg" alt="Papel «KTH925» en el parabrisas — KTH925" loading="lazy"></button>
+  <div class="body">
+    <div class="row"><span class="plate">KTH925</span><span class="tag">Papel «KTH925» en el parabrisas</span></div>
+    <p class="note">Portapatente delantero vacío. Caso de Celda 16 de julio. Foto: RicC16Descarga2. Ninguna cámara de acceso (Preingreso, Ingreso, balanzas, salidas) leyó nunca esta patente.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Ingreso (Sistema)</th><th>Salida</th><th>Planta</th><th>Producto</th><th>Cámaras que la leyeron</th></tr></thead>
+      <tbody><tr><td class="mono"><b>2026-07-29 16:13</b></td><td class="mono">2026-07-29 18:17</td><td>Ricardone</td><td>SOJA</td><td class="cams">RicCal01, RicC16Descarga2</td></tr></tbody>
+    </table></div>
+  </div>
+</article>
+<article class="card">
+  <button class="shot" type="button" data-src="mini/AE685QF.jpg" aria-label="Ver foto grande de AE685QF"><img src="mini/AE685QF.jpg" alt="Chapa suelta detrás del parabrisas — AE685QF" loading="lazy"></button>
+  <div class="body">
+    <div class="row"><span class="plate">AE685QF</span><span class="tag">Chapa suelta detrás del parabrisas</span></div>
+    <p class="note">Paragolpes sin chapa. Foto: RicCal02. Ninguna cámara de acceso (Preingreso, Ingreso, balanzas, salidas) leyó nunca esta patente.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Ingreso (Sistema)</th><th>Salida</th><th>Planta</th><th>Producto</th><th>Cámaras que la leyeron</th></tr></thead>
+      <tbody><tr><td class="mono"><b>2026-07-01 10:21</b></td><td class="mono">2026-07-01 15:59</td><td>Puerto</td><td>SOJA</td><td class="cams">RicCal05</td></tr><tr><td class="mono"><b>2026-07-15 22:08</b></td><td class="mono">2026-07-16 03:14</td><td>Puerto</td><td>SOJA</td><td class="cams">RicCal02</td></tr><tr><td class="mono"><b>2026-07-28 11:21</b></td><td class="mono">2026-07-28 13:26</td><td>Puerto</td><td>SOJA</td><td class="cams">RicCal01</td></tr></tbody>
+    </table></div>
+  </div>
+</article>
+<article class="card">
+  <button class="shot" type="button" data-src="mini/KYZ754.jpg" aria-label="Ver foto grande de KYZ754"><img src="mini/KYZ754.jpg" alt="Chapa suelta sobre el tablero — KYZ754" loading="lazy"></button>
+  <div class="body">
+    <div class="row"><span class="plate">KYZ754</span><span class="tag">Chapa suelta sobre el tablero</span></div>
+    <p class="note">Paragolpes sin chapa. Foto: RicCal02. Ninguna cámara de acceso (Preingreso, Ingreso, balanzas, salidas) leyó nunca esta patente.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Ingreso (Sistema)</th><th>Salida</th><th>Planta</th><th>Producto</th><th>Cámaras que la leyeron</th></tr></thead>
+      <tbody><tr><td class="mono"><b>2026-07-02 07:00</b></td><td class="mono">2026-07-02 12:00</td><td>Puerto</td><td>SOJA</td><td class="cams">RicCal02</td></tr></tbody>
+    </table></div>
+  </div>
+</article>
+  <section class="method">
+    <div class="eyebrow">Cómo se encontraron</div>
+    <p><b>Sin nada.</b> Para cada visita desde el 10/08 de un camión del Sistema que ninguna cámara leyó nunca (314 visitas), se pidieron al DSS las capturas de Preingreso que registró sin patente, de 10 min antes a 2 min después del alta. 118 son del frente; se revisaron a ojo. La mayoría tiene chapa (rota, sucia o encandilada); estos 6 no tienen nada. Para cada foto se verificó que los otros camiones que entraban en ese minuto sí se leyeron, y después se siguió su recorrido por todas las cámaras. TRO957 salió de la lista: el recorrido mostró que es un camión viejo con chapa gastada.</p>
+    <p><b>Papel o chapa suelta.</b> Patentes del Sistema que ningún acceso leyó en todo el período pero sí una cámara alta: 76 desde julio. 70 tienen chapa en el paragolpes y son fallas de lectura; estas 6 no.</p>
+  </section>
+</div>
+<dialog id="dlg"><img id="dlgImg" alt=""></dialog>
+<script>
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('.shot')
+  if (b) { document.getElementById('dlgImg').src = b.dataset.src; document.getElementById('dlg').showModal(); return }
+  if (e.target.closest('dialog')) document.getElementById('dlg').close()
+})
+</script>

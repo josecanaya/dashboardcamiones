@@ -1,0 +1,139 @@
+{
+ "_nota": "Revisión a ojo de las hojas de recorrido (19/10/2026). Por visita y punto: índice de la candidata confirmada (0 = A, 1 = B…). Punto ausente = sin foto confirmada. 'extra' = foto de otra fuente (papel/). Visitas fuera: TRO957 (tiene chapa: es el camión «TOTORAS», la cámara lee RO957/RD957), GQQ158 23/07 (la foto de Preingreso era otro camión), DDD727 25/09 (ninguna pasada confirmada).",
+ "AB688RB/202607230303": {
+  "Ingreso Ricardone": 0,
+  "Calada Ricardone": 0,
+  "Egreso Ricardone": 0,
+  "Ingreso puerto": 0,
+  "Balanza ingreso puerto": 0,
+  "Salida puerto": 0
+ },
+ "AB688RB/202608281638": {
+  "Preingreso": 0,
+  "Ingreso Ricardone": 0,
+  "Calada Ricardone": 0,
+  "Volcables puerto": 0
+ },
+ "AB688RB/202609011515": {
+  "Preingreso": 0,
+  "Ingreso Ricardone": 0,
+  "Calada Ricardone": 0,
+  "Volcables puerto": 0,
+  "Salida puerto": 0
+ },
+ "AB688RB/202609100906": {
+  "Preingreso": 0,
+  "Ingreso Ricardone": 0,
+  "Calada Ricardone": 0,
+  "Balanza ingreso puerto": 0,
+  "Salida puerto": 0
+ },
+ "KTH925/202607291613": {
+  "Ingreso Ricardone": 1,
+  "Calada Ricardone": 0,
+  "Balanza ingreso Ricardone": 0,
+  "Playa 3": 0,
+  "extra": [
+   {
+    "punto": "Celda 16",
+    "camara": "RicC16Descarga2",
+    "hora": "2026-07-29 17:53:58",
+    "lectura": "KTH925",
+    "foto": "../../../papel/KTH925/RicC16Descarga2.jpg"
+   }
+  ]
+ },
+ "RGP363/202609091107": {
+  "Preingreso": 0,
+  "Ingreso Ricardone": 0,
+  "Calada Ricardone": 0,
+  "Balanza ingreso puerto": 0,
+  "Volcables puerto": 0
+ },
+ "RGP363/202609111020": {
+  "Preingreso": 0,
+  "Ingreso Ricardone": 0,
+  "Calada Ricardone": 0,
+  "Balanza ingreso puerto": 0,
+  "Volcables puerto": 0,
+  "Salida puerto": 0
+ },
+ "AH439OV/202609271730": {
+  "Preingreso": 0,
+  "Calada Ricardone": 0,
+  "Egreso Ricardone": 2,
+  "Ingreso puerto": 1,
+  "Balanza ingreso puerto": 2
+ },
+ "GQQ158/202609121402": {
+  "Preingreso": 0,
+  "Ingreso Ricardone": 0,
+  "Calada Ricardone": 1
+ },
+ "EOV644/202608141701": {
+  "Preingreso": 0,
+  "Ingreso Ricardone": 0
+ },
+ "AB723QC/202608290537": {
+  "Preingreso": 0,
+  "Ingreso Ricardone": 0
+ },
+ "DDD727/202608310239": {
+  "Preingreso": 0
+ },
+ "DDD727/202609181235": {
+  "Preingreso": 0
+ },
+ "GQQ158/202607232314": {},
+ "DDD727/202609250452": {},
+ "AE685QF/202607011021": {
+  "Preingreso": 0,
+  "Calada Ricardone": 0
+ },
+ "AE685QF/202607152208": {
+  "Calada Ricardone": 0,
+  "Egreso Ricardone": 0,
+  "Ingreso puerto": 1,
+  "Salida puerto": 0
+ },
+ "KYZ754/202607020700": {
+  "Ingreso Ricardone": 3,
+  "Calada Ricardone": 0,
+  "Egreso Ricardone": 0,
+  "Ingreso puerto": 0,
+  "Balanza ingreso puerto": 0,
+  "Salida puerto": 0
+ },
+ "AE685QF/202607281121": {
+  "Preingreso": 0,
+  "Ingreso Ricardone": 0,
+  "Calada Ricardone": 0,
+  "Egreso Ricardone": 0,
+  "Ingreso puerto": 0,
+  "Balanza ingreso puerto": 0,
+  "Salida puerto": 0
+ },
+ "HDI681/202609010106": {
+  "Calada Ricardone": 0,
+  "Ingreso puerto": 0,
+  "Balanza ingreso puerto": 0,
+  "Volcables puerto": 0,
+  "Balanza egreso puerto": 0,
+  "Salida puerto": 0
+ },
+ "HDI681/202607161111": {
+  "Calada Ricardone": 0,
+  "Salida puerto": 0
+ },
+ "AH374JU/202609170045": {
+  "extra": [
+   {
+    "punto": "Calada Ricardone",
+    "camara": "RicCal02",
+    "hora": "2026-09-17 03:41:15",
+    "lectura": "AH374JU",
+    "foto": "../../../papel/AH374JU/RicCal02_0917034115.jpg"
+   }
+  ]
+ }
+}

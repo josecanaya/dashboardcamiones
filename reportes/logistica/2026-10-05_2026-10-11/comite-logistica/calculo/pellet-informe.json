@@ -1,0 +1,29 @@
+{
+  "fuente": "Transile de pellet 30/09–06/10 (informe armado entre semana, PDF en Descargas). 2.ª tanda = esta semana; 1.ª tanda = operativo anterior.",
+  "total": {"toneladas": 8014, "viajes": 298, "camiones": 53, "volcable": "V4"},
+  "dias": [
+    {"dia": "2026-09-30", "lbl": "Mié 30/09", "viajes": 112, "camiones": 43, "ric": 86, "sl": 206, "tanda": 1},
+    {"dia": "2026-10-01", "lbl": "Jue 1/10", "viajes": 130, "camiones": 47, "ric": 78, "sl": 281, "tanda": 1},
+    {"dia": "2026-10-02", "lbl": "Vie 2/10", "viajes": 0, "tanda": 0},
+    {"dia": "2026-10-03", "lbl": "Sáb 3/10", "viajes": 0, "tanda": 0},
+    {"dia": "2026-10-04", "lbl": "Dom 4/10", "viajes": 0, "tanda": 0},
+    {"dia": "2026-10-05", "lbl": "Lun 5/10", "viajes": 45, "camiones": 18, "ric": 71, "sl": 48, "tanda": 2},
+    {"dia": "2026-10-06", "lbl": "Mar 6/10", "viajes": 11, "camiones": 6, "ric": 137, "sl": 25, "tanda": 2}
+  ],
+  "actual": {
+    "desde": "2026-10-05T15:38", "hasta": "2026-10-06T19:19", "tandaTxt": "05/10 15:38 → 06/10 19:19",
+    "viajes": 56, "camiones": 18, "toneladas": 1491, "horas": 12.1, "tph": 124, "volcable": "V4",
+    "tramos": {"playa1": 13, "ptara": 14, "carga": 62, "interplanta": 17, "playaOsl": 4, "descarga": 21, "salida": 17},
+    "ric": 89, "sl": 42,
+    "porDia": {"2026-10-05": {"viajes": 45, "camiones": 18, "ric": 71, "sl": 48}, "2026-10-06": {"viajes": 11, "camiones": 6, "ric": 137, "sl": 25}},
+    "jornadaBig": "0", "jornadaTxt": "camiones pasaron las 12 horas seguidas. La jornada más larga fue de 9 h; los que más viajaron hicieron 5 viajes en dos jornadas de unas 7 h.",
+    "jornada": "Ningún camión pasó las 12 horas seguidas: la jornada más larga fue de 9 h y los que más viajaron hicieron 5 viajes en dos jornadas de unas 7 h."
+  },
+  "anterior": {
+    "desde": "2026-09-30T07:33", "hasta": "2026-10-02T03:15", "tandaTxt": "30/09 07:33 → 02/10 03:15",
+    "viajes": 242, "camiones": 49, "toneladas": 6523, "horas": 43.7, "tph": 149,
+    "tramos": {"playa1": 11, "ptara": 15, "carga": 57, "interplanta": 17, "playaOsl": 140, "descarga": 97, "salida": 18},
+    "ric": 83, "sl": 255,
+    "jornadaBig": "44 de 49", "jornadaTxt": "camiones trabajaron más de 12 horas seguidas. 26 encadenaron jornadas de más de 24 h e hicieron 159 de los 242 viajes."
+  }
+}

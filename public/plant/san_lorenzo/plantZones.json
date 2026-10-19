@@ -87,7 +87,10 @@
           "SLZIngCamFrente",
           "SLZIngCamTrasera"
         ]
-      }
+      },
+      "nextDefault": "S1",
+      "stayMin": null,
+      "waitZone": "Z0"
     },
     {
       "id": "S1",
@@ -103,7 +106,9 @@
           "SLZBalIngFte",
           "SLZBalIngTras"
         ]
-      }
+      },
+      "nextDefault": "S4",
+      "stayMin": 3
     },
     {
       "id": "S2",
@@ -118,7 +123,9 @@
         "devices": [
           "SLZCalado"
         ]
-      }
+      },
+      "nextDefault": "S1",
+      "stayMin": 15
     },
     {
       "id": "S4",
@@ -137,7 +144,9 @@
           "SLZVolcableC4",
           "SLZVolcableC5"
         ]
-      }
+      },
+      "nextDefault": "S5",
+      "stayMin": 25
     },
     {
       "id": "S5",
@@ -155,7 +164,9 @@
           "SLZBalSC2Fte",
           "SLZBalSC2Tras"
         ]
-      }
+      },
+      "nextDefault": "S7",
+      "stayMin": 3
     },
     {
       "id": "S7",
@@ -173,7 +184,8 @@
           "SLZSalidaC2Fte",
           "SLZSalidaC2Tras"
         ]
-      }
+      },
+      "stayMin": 0
     },
     {
       "id": "S8",
@@ -188,7 +200,9 @@
         "devices": [
           "SLZTK400"
         ]
-      }
+      },
+      "nextDefault": "S7",
+      "stayMin": 25
     },
     {
       "id": "S10",
@@ -206,7 +220,9 @@
           "RenDescFte",
           "RenDescTras"
         ]
-      }
+      },
+      "nextDefault": "S7",
+      "stayMin": 25
     },
     {
       "id": "S6",
@@ -224,7 +240,9 @@
           "SLZBalLiq2a",
           "SLZBalLiq2b"
         ]
-      }
+      },
+      "nextDefault": "S5",
+      "stayMin": 25
     }
   ],
   "unplacedSteps": [
@@ -267,13 +285,394 @@
   ],
   "tramos": [
     {
+      "id": "S0::S2",
+      "fromPointId": "S0",
+      "toPointId": "S2",
+      "viaPercent": [
+        {
+          "xPercent": 7,
+          "yPercent": 28
+        },
+        {
+          "xPercent": 9.5,
+          "yPercent": 29.5
+        },
+        {
+          "xPercent": 11.5,
+          "yPercent": 24
+        },
+        {
+          "xPercent": 11,
+          "yPercent": 18
+        },
+        {
+          "xPercent": 13,
+          "yPercent": 13
+        },
+        {
+          "xPercent": 17,
+          "yPercent": 11.5
+        },
+        {
+          "xPercent": 19.5,
+          "yPercent": 12.5
+        }
+      ]
+    },
+    {
       "id": "S0::S1",
       "fromPointId": "S0",
       "toPointId": "S1",
       "viaPercent": [
         {
-          "xPercent": 21.9,
-          "yPercent": 28.9
+          "xPercent": 7,
+          "yPercent": 28
+        },
+        {
+          "xPercent": 9.5,
+          "yPercent": 29.5
+        },
+        {
+          "xPercent": 18,
+          "yPercent": 27
+        },
+        {
+          "xPercent": 23,
+          "yPercent": 24.5
+        },
+        {
+          "xPercent": 26.5,
+          "yPercent": 20.5
+        },
+        {
+          "xPercent": 30.5,
+          "yPercent": 19
+        }
+      ]
+    },
+    {
+      "id": "S1::S2",
+      "fromPointId": "S2",
+      "toPointId": "S1",
+      "viaPercent": [
+        {
+          "xPercent": 24,
+          "yPercent": 15.3
+        },
+        {
+          "xPercent": 28,
+          "yPercent": 17
+        },
+        {
+          "xPercent": 31,
+          "yPercent": 19
+        }
+      ]
+    },
+    {
+      "id": "S1::S4",
+      "fromPointId": "S1",
+      "toPointId": "S4",
+      "viaPercent": [
+        {
+          "xPercent": 35,
+          "yPercent": 20.5
+        },
+        {
+          "xPercent": 44.4,
+          "yPercent": 23.4
+        },
+        {
+          "xPercent": 55,
+          "yPercent": 29.1
+        },
+        {
+          "xPercent": 61.8,
+          "yPercent": 33.3
+        },
+        {
+          "xPercent": 64.8,
+          "yPercent": 42.9
+        },
+        {
+          "xPercent": 65.5,
+          "yPercent": 49.6
+        },
+        {
+          "xPercent": 66,
+          "yPercent": 57.2
+        },
+        {
+          "xPercent": 67.3,
+          "yPercent": 64.8
+        }
+      ]
+    },
+    {
+      "id": "S1::S10",
+      "fromPointId": "S1",
+      "toPointId": "S10",
+      "viaPercent": [
+        {
+          "xPercent": 33.4,
+          "yPercent": 20.7
+        },
+        {
+          "xPercent": 34.2,
+          "yPercent": 24.5
+        },
+        {
+          "xPercent": 35.5,
+          "yPercent": 30.7
+        },
+        {
+          "xPercent": 38,
+          "yPercent": 34.5
+        }
+      ]
+    },
+    {
+      "id": "S1::S8",
+      "fromPointId": "S1",
+      "toPointId": "S8",
+      "viaPercent": [
+        {
+          "xPercent": 33.4,
+          "yPercent": 20.7
+        },
+        {
+          "xPercent": 34.2,
+          "yPercent": 24.5
+        },
+        {
+          "xPercent": 32.5,
+          "yPercent": 27.6
+        },
+        {
+          "xPercent": 30,
+          "yPercent": 35.3
+        },
+        {
+          "xPercent": 27.5,
+          "yPercent": 41.4
+        },
+        {
+          "xPercent": 26.4,
+          "yPercent": 49.6
+        },
+        {
+          "xPercent": 25.6,
+          "yPercent": 54.2
+        }
+      ]
+    },
+    {
+      "id": "S7::S8",
+      "fromPointId": "S8",
+      "toPointId": "S7",
+      "viaPercent": [
+        {
+          "xPercent": 28,
+          "yPercent": 56.9
+        },
+        {
+          "xPercent": 34.2,
+          "yPercent": 60.3
+        },
+        {
+          "xPercent": 37.8,
+          "yPercent": 59.5
+        },
+        {
+          "xPercent": 41,
+          "yPercent": 61
+        },
+        {
+          "xPercent": 44.4,
+          "yPercent": 64.5
+        },
+        {
+          "xPercent": 47,
+          "yPercent": 71
+        },
+        {
+          "xPercent": 45.5,
+          "yPercent": 77
+        }
+      ]
+    },
+    {
+      "id": "S10::S7",
+      "fromPointId": "S10",
+      "toPointId": "S7",
+      "viaPercent": [
+        {
+          "xPercent": 38.4,
+          "yPercent": 41.4
+        },
+        {
+          "xPercent": 38.4,
+          "yPercent": 49.6
+        },
+        {
+          "xPercent": 38,
+          "yPercent": 57
+        },
+        {
+          "xPercent": 37.8,
+          "yPercent": 59.5
+        },
+        {
+          "xPercent": 41,
+          "yPercent": 61
+        },
+        {
+          "xPercent": 44.4,
+          "yPercent": 64.5
+        },
+        {
+          "xPercent": 47,
+          "yPercent": 71
+        },
+        {
+          "xPercent": 45.5,
+          "yPercent": 77
+        }
+      ]
+    },
+    {
+      "id": "S4::S5",
+      "fromPointId": "S4",
+      "toPointId": "S5",
+      "viaPercent": [
+        {
+          "xPercent": 68.3,
+          "yPercent": 71.8
+        },
+        {
+          "xPercent": 71.1,
+          "yPercent": 84
+        },
+        {
+          "xPercent": 71.3,
+          "yPercent": 87.4
+        },
+        {
+          "xPercent": 69.8,
+          "yPercent": 89.5
+        },
+        {
+          "xPercent": 66.4,
+          "yPercent": 88.2
+        },
+        {
+          "xPercent": 63,
+          "yPercent": 87.1
+        }
+      ]
+    },
+    {
+      "id": "S5::S7",
+      "fromPointId": "S5",
+      "toPointId": "S7",
+      "viaPercent": [
+        {
+          "xPercent": 58.4,
+          "yPercent": 85.7
+        },
+        {
+          "xPercent": 52.9,
+          "yPercent": 82.6
+        },
+        {
+          "xPercent": 46,
+          "yPercent": 79
+        }
+      ]
+    },
+    {
+      "id": "S5::S6",
+      "fromPointId": "S5",
+      "toPointId": "S6",
+      "viaPercent": [
+        {
+          "xPercent": 66,
+          "yPercent": 92.4
+        },
+        {
+          "xPercent": 74.4,
+          "yPercent": 97
+        },
+        {
+          "xPercent": 80.8,
+          "yPercent": 99.5
+        },
+        {
+          "xPercent": 83.3,
+          "yPercent": 99.3
+        },
+        {
+          "xPercent": 83.5,
+          "yPercent": 93.2
+        },
+        {
+          "xPercent": 81.2,
+          "yPercent": 87.5
+        }
+      ]
+    },
+    {
+      "id": "S1::S6",
+      "fromPointId": "S1",
+      "toPointId": "S6",
+      "viaPercent": [
+        {
+          "xPercent": 35,
+          "yPercent": 20.5
+        },
+        {
+          "xPercent": 44.4,
+          "yPercent": 23.4
+        },
+        {
+          "xPercent": 55,
+          "yPercent": 29.1
+        },
+        {
+          "xPercent": 61.8,
+          "yPercent": 33.3
+        },
+        {
+          "xPercent": 64.8,
+          "yPercent": 42.9
+        },
+        {
+          "xPercent": 65.5,
+          "yPercent": 49.6
+        },
+        {
+          "xPercent": 70.3,
+          "yPercent": 49.8
+        },
+        {
+          "xPercent": 74.5,
+          "yPercent": 51
+        },
+        {
+          "xPercent": 77,
+          "yPercent": 55.4
+        },
+        {
+          "xPercent": 78.7,
+          "yPercent": 63.1
+        },
+        {
+          "xPercent": 80.4,
+          "yPercent": 73.8
+        },
+        {
+          "xPercent": 81.7,
+          "yPercent": 81.1
         }
       ]
     }

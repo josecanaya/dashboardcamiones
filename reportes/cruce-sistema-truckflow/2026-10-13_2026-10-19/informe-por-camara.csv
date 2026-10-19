@@ -1,0 +1,24 @@
+﻿punto,camara,trasera,vistos,exactas,leyo_pct,corregidas,corregimos_pct,quedan,quedan_pct,corregidas_mal,total_pct
+Preingreso Ricardone,RicPreIngInFr,,458,412,90,26,5.7,20,4.4,0,95.6
+Preingreso Ricardone,RicPreIngInTr,si,8,4,50,0,0,4,50,1,50
+Preingreso Ricardone,RicPreIngEgFr,,3,0,0,1,33.3,2,66.7,0,33.3
+Ingreso Ricardone,RicIngCamFrente,,371,334,90,20,5.4,17,4.6,0,95.4
+Ingreso Ricardone,RicIngCamTrasera,si,2,2,100,0,0,0,0,0,100
+Calada Ricardone,RicCal03,,159,136,85.5,14,8.8,9,5.7,0,94.3
+Calada Ricardone,RicCal04,,152,129,84.9,18,11.8,5,3.3,0,96.7
+Calada Ricardone,RicCalLiq,,63,61,96.8,2,3.2,0,0,0,100
+Calada Ricardone,RicCal02,,26,24,92.3,1,3.8,1,3.8,0,96.2
+Calada Ricardone,RicCal01,,17,16,94.1,1,5.9,0,0,0,100
+Balanza ingreso Ricardone,RicB1Ingreso,,52,52,100,0,0,0,0,0,100
+Balanza ingreso Ricardone,RicB3Ingreso,,1,1,100,0,0,0,0,0,100
+Balanza egreso Ricardone,RicB2Egreso,,149,149,100,0,0,0,0,0,100
+Balanza egreso Ricardone,RicB3Egreso,,1,1,100,0,0,0,0,0,100
+Ingreso puerto,SLZIngCamFrente,,464,426,91.8,27,5.8,11,2.4,0,97.6
+Ingreso puerto,SLZIngCamTrasera,si,1,1,100,0,0,0,0,0,100
+Calada puerto,SLZCalado,,106,106,100,0,0,0,0,0,100
+Balanza ingreso puerto,SLZBalIngFte,,392,367,93.6,18,4.6,7,1.8,0,98.2
+Balanza ingreso puerto,SLZBalIngTras,si,71,69,97.2,2,2.8,0,0,0,100
+Balanza egreso puerto,SLZBalSC2Fte,,391,340,87,32,8.2,19,4.9,1,95.1
+Balanza egreso puerto,SLZBalSC2Tras,si,18,7,38.9,0,0,11,61.1,3,38.9
+Balanza egreso puerto,SLZBalSC1Fte,,7,7,100,0,0,0,0,0,100
+Balanza egreso puerto,SLZBalSC1Tras,si,2,2,100,0,0,0,0,0,100

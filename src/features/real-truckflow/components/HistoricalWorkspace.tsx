@@ -29,7 +29,8 @@ const PAGE_TITLES: Record<string, [string, string]> = {
 export function HistoricalWorkspace({ children }: { children: ReactNode }) {
   const { pathname } = useLocation()
   const wb = useEtlWorkbench()
-  if (pathname === '/' || pathname.startsWith('/en-vivo')) return <>{children}</>
+  // En vivo y Simulación tienen su propia cabecera y no dependen del período histórico.
+  if (pathname === '/' || pathname.startsWith('/en-vivo') || pathname === '/simulacion') return <>{children}</>
 
   const [title, description] = PAGE_TITLES[pathname.split('/').pop() ?? ''] ?? ['Ficha de producto', 'Detalle del período histórico activo.']
   const isDataPage = pathname === '/estadisticas/datos'

@@ -64,6 +64,53 @@
    "SLZBalLiq1a": 1
   }
  },
+ "calibracion": {
+  "RIC": {
+   "visitasCamara": 31,
+   "porFamiliaPlanilla": {
+    "otro": 18,
+    "liquido": 7,
+    "sin movimiento en planilla": 6
+   },
+   "precision": 0.226,
+   "movimientosPlanilla": 32,
+   "conVisita": 14,
+   "cobertura": 0.438,
+   "porSentido": {
+    "INGRESO": {
+     "planilla": 32,
+     "conVisita": 14
+    },
+    "EGRESO": {
+     "planilla": 0,
+     "conVisita": 0
+    }
+   }
+  },
+  "TER": {
+   "visitasCamara": 270,
+   "porFamiliaPlanilla": {
+    "agua": 24,
+    "otro": 75,
+    "liquido": 155,
+    "sin movimiento en planilla": 16
+   },
+   "precision": 0.574,
+   "movimientosPlanilla": 169,
+   "conVisita": 140,
+   "cobertura": 0.828,
+   "porSentido": {
+    "INGRESO": {
+     "planilla": 12,
+     "conVisita": 4
+    },
+    "EGRESO": {
+     "planilla": 157,
+     "conVisita": 136
+    }
+   }
+  }
+ },
  "detalle": [
   {
    "p": "SZG666",

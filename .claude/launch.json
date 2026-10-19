@@ -4,21 +4,79 @@
     {
       "name": "vite-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 5173
     },
     {
       "name": "truckflow-server",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["server/truckflow-local-server.mjs"],
+      "runtimeArgs": [
+        "server/truckflow-local-server.mjs"
+      ],
       "port": 8787
+    },
+    {
+      "name": "deck-reunion",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8799",
+        "--directory",
+        "C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Desktop-Dashboard-camiones\\a6991b1f-3049-4c33-9d26-f3500f636e17\\scratchpad\\deck-reunion"
+      ],
+      "port": 8799
     },
     {
       "name": "ops2",
       "runtimeExecutable": "cmd",
-      "runtimeArgs": ["/c", "npm", "--prefix", "C:\\Users\\Usuario\\Desktop\\DASHBO~1.0", "run", "dev"],
+      "runtimeArgs": [
+        "/c",
+        "npm",
+        "--prefix",
+        "C:\\Users\\Usuario\\Desktop\\DASHBO~1.0",
+        "run",
+        "dev"
+      ],
       "port": 5183,
       "autoPort": true
+    },
+    {
+      "name": "vite-verify-8788",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "node_modules/vite/bin/vite.js",
+        "--config",
+        "C:/Users/Usuario/AppData/Local/Temp/claude/C--Users-Usuario-Desktop-Dashboard-camiones/b859d3fc-3017-4456-a8de-769425a599ef/scratchpad/vite.8788.config.mjs"
+      ],
+      "port": 5199
+    },
+    {
+      "name": "vehiculos-deck",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8798",
+        "--directory",
+        "reportes/logistica/vehiculos-sin-sistema/2026-08-01_2026-10-14"
+      ],
+      "port": 8798
+    },
+    {
+      "name": "informe-a4",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8812",
+        "--directory",
+        "C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Desktop-Dashboard-camiones\\51b24ff6-e69d-4437-9997-87a0c9af8d59\\scratchpad\\a4"
+      ],
+      "port": 8812
     }
   ]
 }

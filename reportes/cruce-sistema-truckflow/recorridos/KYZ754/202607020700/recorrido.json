@@ -1,0 +1,415 @@
+{
+ "patente": "KYZ754",
+ "ingreso": "2026-07-02 07:00:00",
+ "salida": "2026-07-02 12:00:00",
+ "producto": "SOJA",
+ "planta": "TERMINAL_EMBARQUE",
+ "ancla": {
+  "camara": "RicPreIngInFr",
+  "hora": "2026-07-02 06:54:07",
+  "lectura": "AA5140K"
+ },
+ "puntos": [
+  {
+   "punto": "Preingreso",
+   "elegida": {
+    "camara": "RicPreIngInFr",
+    "hora": "2026-07-02 06:54:07",
+    "at": "2026-07-02T09:54:07.000Z",
+    "lectura": "AA5140K",
+    "marca": null,
+    "color": "Black",
+    "tipo": null,
+    "foto": "065407_RicPreIngInFr_AA5140K.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicPreIngInFr",
+     "hora": "2026-07-02 06:54:07",
+     "at": "2026-07-02T09:54:07.000Z",
+     "lectura": "AA5140K",
+     "marca": null,
+     "color": "Black",
+     "tipo": null,
+     "foto": "065407_RicPreIngInFr_AA5140K.jpg"
+    }
+   ],
+   "vecinos": []
+  },
+  {
+   "punto": "Ingreso Ricardone",
+   "intervalo": [
+    "06:32:39",
+    "07:02:58"
+   ],
+   "vecinos": [
+    "AG998EK@06:36:39",
+    "OIN683@06:39:19",
+    "AC769VJ@06:41:51",
+    "ENE620@06:58:58"
+   ],
+   "elegida": {
+    "camara": "RicIngCamFrente",
+    "hora": "2026-07-02 06:41:22",
+    "at": "2026-07-02T09:41:22.000Z",
+    "lectura": "",
+    "marca": "Iveco",
+    "color": "Black",
+    "tipo": "Medium Truck",
+    "foto": "064122_RicIngCamFrente_vacia.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-02 06:41:22",
+     "at": "2026-07-02T09:41:22.000Z",
+     "lectura": "",
+     "marca": "Iveco",
+     "color": "Black",
+     "tipo": "Medium Truck",
+     "foto": "064122_RicIngCamFrente_vacia.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-02 06:37:00",
+     "at": "2026-07-02T09:37:00.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "Black",
+     "tipo": "Medium Truck",
+     "foto": "063700_RicIngCamFrente_vacia.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-02 06:48:38",
+     "at": "2026-07-02T09:48:38.000Z",
+     "lectura": "",
+     "marca": "Hino",
+     "color": "Black",
+     "tipo": "Medium Truck",
+     "foto": "064838_RicIngCamFrente_vacia.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-02 06:48:38",
+     "at": "2026-07-02T09:48:38.000Z",
+     "lectura": "BAL8",
+     "marca": "Mercedes-Benz",
+     "color": "Black",
+     "tipo": "Medium Truck",
+     "foto": "064838_RicIngCamFrente_BAL8.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-02 06:53:54",
+     "at": "2026-07-02T09:53:54.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "065354_RicIngCamFrente_vacia.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-02 06:53:54",
+     "at": "2026-07-02T09:53:54.000Z",
+     "lectura": "ARL1",
+     "marca": "Mercedes-Benz",
+     "color": "Black",
+     "tipo": "Medium Truck",
+     "foto": "065354_RicIngCamFrente_ARL1.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Calada Ricardone",
+   "intervalo": [
+    "10:21:21",
+    "10:49:29"
+   ],
+   "vecinos": [
+    "AG998EK@10:25:21",
+    "AC769VJ@10:34:33",
+    "ENE620@10:45:29"
+   ],
+   "elegida": {
+    "camara": "RicCal02",
+    "hora": "2026-07-02 10:38:51",
+    "at": "2026-07-02T13:38:51.000Z",
+    "lectura": "KYZ754",
+    "marca": "Renault",
+    "color": "White",
+    "tipo": "Large Truck",
+    "foto": "103851_RicCal02_KYZ754.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicCal02",
+     "hora": "2026-07-02 10:38:51",
+     "at": "2026-07-02T13:38:51.000Z",
+     "lectura": "KYZ754",
+     "marca": "Renault",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "103851_RicCal02_KYZ754.jpg"
+    },
+    {
+     "camara": "RicCal02",
+     "hora": "2026-07-02 10:31:28",
+     "at": "2026-07-02T13:31:28.000Z",
+     "lectura": "AVEC",
+     "marca": "Iveco",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "103128_RicCal02_AVEC.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza ingreso Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Playa 3",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Celda 16",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Silo Keppler",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Volcables Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Balanza egreso Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Egreso Ricardone",
+   "intervalo": [
+    "10:40:51",
+    "11:08:51"
+   ],
+   "vecinos": [
+    "NQJ140@14:39:13",
+    "AC769VJ@10:39:36",
+    "AA514OK@10:36:20",
+    "AA226KZ@10:52:16",
+    "ENE620@14:43:04",
+    "BMY837@14:41:28"
+   ],
+   "elegida": {
+    "camara": "RicEgrCamFrente",
+    "hora": "2026-07-02 10:52:39",
+    "at": "2026-07-02T13:52:39.000Z",
+    "lectura": "GJ6",
+    "marca": "Renault",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "foto": "105239_RicEgrCamFrente_GJ6.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicEgrCamFrente",
+     "hora": "2026-07-02 10:52:39",
+     "at": "2026-07-02T13:52:39.000Z",
+     "lectura": "GJ6",
+     "marca": "Renault",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "105239_RicEgrCamFrente_GJ6.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Ingreso puerto",
+   "intervalo": [
+    "10:50:51",
+    "11:23:51"
+   ],
+   "vecinos": [
+    "AA226KZ@11:02:00",
+    "OIN683@10:54:04",
+    "NTW459@10:49:08",
+    "GHO115@11:08:15",
+    "BYJ544@11:18:02"
+   ],
+   "elegida": {
+    "camara": "SLZIngCamFrente",
+    "hora": "2026-07-02 11:02:41",
+    "at": "2026-07-02T14:02:41.000Z",
+    "lectura": "",
+    "marca": "Renault",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "foto": "110241_SLZIngCamFrente_vacia.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "SLZIngCamFrente",
+     "hora": "2026-07-02 11:02:41",
+     "at": "2026-07-02T14:02:41.000Z",
+     "lectura": "",
+     "marca": "Renault",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "110241_SLZIngCamFrente_vacia.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza ingreso puerto",
+   "intervalo": [
+    "11:03:41",
+    "11:45:00"
+   ],
+   "vecinos": [
+    "NTW459@11:05:51"
+   ],
+   "elegida": {
+    "camara": "SLZBalIngFte",
+    "hora": "2026-07-02 11:20:20",
+    "at": "2026-07-02T14:20:20.000Z",
+    "lectura": "18808",
+    "marca": "Renault",
+    "color": "Black",
+    "tipo": "Medium Truck",
+    "foto": "112020_SLZBalIngFte_18808.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-07-02 11:20:20",
+     "at": "2026-07-02T14:20:20.000Z",
+     "lectura": "18808",
+     "marca": "Renault",
+     "color": "Black",
+     "tipo": "Medium Truck",
+     "foto": "112020_SLZBalIngFte_18808.jpg"
+    },
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-07-02 11:04:16",
+     "at": "2026-07-02T14:04:16.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "Blue",
+     "tipo": "Large Truck",
+     "foto": "110416_SLZBalIngFte_vacia.jpg"
+    },
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-07-02 11:05:08",
+     "at": "2026-07-02T14:05:08.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "Red",
+     "tipo": "Small Truck",
+     "foto": "110508_SLZBalIngFte_vacia.jpg"
+    },
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-07-02 11:08:07",
+     "at": "2026-07-02T14:08:07.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "Blue",
+     "tipo": "Medium Truck",
+     "foto": "110807_SLZBalIngFte_vacia.jpg"
+    },
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-07-02 11:08:08",
+     "at": "2026-07-02T14:08:08.000Z",
+     "lectura": "CXXXT",
+     "marca": null,
+     "color": "Blue",
+     "tipo": "Medium Truck",
+     "foto": "110808_SLZBalIngFte_CXXXT.jpg"
+    },
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-07-02 11:12:12",
+     "at": "2026-07-02T14:12:12.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "Red",
+     "tipo": "Medium Truck",
+     "foto": "111212_SLZBalIngFte_vacia.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Volcables puerto",
+   "intervalo": [
+    "11:21:20",
+    "11:57:00"
+   ],
+   "vecinos": [],
+   "candidatas": []
+  },
+  {
+   "punto": "Balanza egreso puerto",
+   "intervalo": [
+    "11:56:00",
+    "12:02:00"
+   ],
+   "vecinos": [],
+   "candidatas": []
+  },
+  {
+   "punto": "Salida puerto",
+   "intervalo": [
+    "12:00:00",
+    "12:20:00"
+   ],
+   "vecinos": [
+    "NTW459@13:56:13",
+    "HUM407@11:25:46"
+   ],
+   "elegida": {
+    "camara": "SLZSalidaC1Fte",
+    "hora": "2026-07-02 12:02:33",
+    "at": "2026-07-02T15:02:33.000Z",
+    "lectura": "",
+    "marca": "Renault",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "foto": "120233_SLZSalidaC1Fte_vacia.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "SLZSalidaC1Fte",
+     "hora": "2026-07-02 12:02:33",
+     "at": "2026-07-02T15:02:33.000Z",
+     "lectura": "",
+     "marca": "Renault",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "120233_SLZSalidaC1Fte_vacia.jpg"
+    },
+    {
+     "camara": "SLZSalidaC2Fte",
+     "hora": "2026-07-02 12:10:12",
+     "at": "2026-07-02T15:10:12.000Z",
+     "lectura": "",
+     "marca": "Volkswagen",
+     "color": "Red",
+     "tipo": "SUV",
+     "foto": "121012_SLZSalidaC2Fte_vacia.jpg"
+    }
+   ]
+  }
+ ]
+}

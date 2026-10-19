@@ -1,0 +1,46 @@
+{
+  "v": 4,
+  "attachments": {},
+  "cover": "portada",
+  "createdOnFiles": {
+    "at": "2026-10-15T13:30:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "faces": {
+    "ibm-plex-sans": {
+      "family": "IBM Plex Sans",
+      "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap"
+    }
+  },
+  "lists": "css",
+  "order": [
+    "portada",
+    "conclusiones-ric",
+    "comparacion-ric",
+    "dia-por-dia",
+    "conclusiones-sl",
+    "comparacion-sl",
+    "dia-por-dia-sl",
+    "reconstruccion"
+  ],
+  "sections": {
+    "s1": {
+      "description": "Portada",
+      "start": "portada"
+    },
+    "s2": {
+      "description": "Ricardone: conclusiones, sectores mes contra mes y día a día",
+      "start": "conclusiones-ric"
+    },
+    "s3": {
+      "description": "Puerto San Lorenzo: conclusiones, sectores mes contra mes y día a día",
+      "start": "conclusiones-sl"
+    },
+    "s4": {
+      "description": "Ejemplo: por qué importa que la cámara capture el camión",
+      "start": "reconstruccion"
+    }
+  },
+  "title": "Reconocimiento de cámaras · Octubre"
+}

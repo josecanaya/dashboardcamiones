@@ -69,7 +69,7 @@ describe('nodoSur — modelo de nodos como fuente única', () => {
       expect(c.nodes).toContain('ricardone:Salida 2')
     }
     const areas = Object.fromEntries(NODO_SUR_NODES.filter((n) => n.area).map((n) => [n.label, n.capacity]))
-    expect(areas).toEqual({ 'Playa 1': 300, 'Playa demorado': 20, 'Playa 3': 100, 'Playa de salida': 4, 'Playa OSL': 150 })
+    expect(areas).toEqual({ 'Playa 1': 200, 'Playa demorado': 30, 'Playa 3': 50, 'Playa de salida': 4, 'Playa OSL': 100 })
     // Playa 1: todo circuito que pasa Preingreso → Calada espera ahí.
     for (const c of NODO_SUR_CIRCUITS) {
       const i = c.nodes.indexOf('ricardone:Pre ingreso')

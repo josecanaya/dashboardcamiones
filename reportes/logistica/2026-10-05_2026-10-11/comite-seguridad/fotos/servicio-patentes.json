@@ -1,0 +1,115 @@
+{
+ "_nota": "Vehículos de servicio habituales que figuran en la planilla (agua y residuos). Tipo por la planilla y la foto; FEA810 = atmosférico (confirmado por José, 13/10). mov = movimientos de la planilla 05–11/10; dias = días con lecturas de cámara. Destino según la planilla (mayo–octubre): las cisternas sacan residuos orgánicos a SOLAMB S.R.L. (Timbúes) y WORMS Argentina (Arroyo Seco), unas 20 t por viaje; AE808WG y AF411UI también llevan borra de aceite de girasol a Santa Fe Aceites (Capitán Bermúdez); FEA810 mueve residuos orgánicos entre Ricardone y la Terminal (unas 4 t por viaje).",
+ "lista": [
+  {
+   "patente": "SZG666",
+   "producto": "Agua industrial",
+   "mov": 21,
+   "dias": 7,
+   "tipo": "Agua industrial",
+   "foto": "servicio/SZG666_0510_1113_SLZIngCamFrente.jpg",
+   "corto": "Agua industrial",
+   "destino": "Agua a la Terminal"
+  },
+  {
+   "patente": "CMF111",
+   "producto": "Agua industrial",
+   "mov": 21,
+   "dias": 7,
+   "tipo": "Agua industrial",
+   "foto": "servicio/CMF111_0510_0805_SLZIngCamFrente.jpg",
+   "corto": "Agua industrial",
+   "destino": "Agua a la Terminal"
+  },
+  {
+   "patente": "AB608FB",
+   "producto": "Residuos orgánicos",
+   "mov": 7,
+   "dias": 6,
+   "tipo": "Cisterna · residuos orgánicos",
+   "foto": "servicio-lado/AB608FB_SLZCalado.jpg",
+   "corto": "Cisterna",
+   "destino": "Res. org. → Solamb (Timbúes)"
+  },
+  {
+   "patente": "AE880CH",
+   "producto": "Residuos orgánicos",
+   "mov": 9,
+   "dias": 5,
+   "tipo": "Residuos orgánicos",
+   "foto": "servicio-ric/AE880CH_0510_1303_RicEgrCamFrente.jpg",
+   "corto": "Residuos",
+   "destino": "Res. org. → Solamb (Timbúes)"
+  },
+  {
+   "patente": "FEA810",
+   "producto": "Residuos orgánicos",
+   "mov": 7,
+   "dias": 5,
+   "tipo": "Atmosférico",
+   "foto": "servicio-lado/FEA810_SLZCalado.jpg",
+   "corto": "Atmosférico",
+   "destino": "Res. org. Ricardone ↔ Terminal"
+  },
+  {
+   "patente": "AE808WG",
+   "producto": "Residuos orgánicos",
+   "mov": 4,
+   "dias": 5,
+   "tipo": "Cisterna · residuos orgánicos",
+   "foto": "servicio-lado/AE808WG_SLZCalado.jpg",
+   "corto": "Cisterna",
+   "destino": "Res. org. y borra de girasol"
+  },
+  {
+   "patente": "AB675DP",
+   "producto": "Residuos orgánicos",
+   "mov": 8,
+   "dias": 4,
+   "tipo": "Cisterna · residuos orgánicos",
+   "foto": "servicio-ric/AB675DP_0610_1152_RicIngCamFrente.jpg",
+   "corto": "Cisterna",
+   "destino": "Res. org. → Solamb (Timbúes)"
+  },
+  {
+   "patente": "HWU967",
+   "producto": "Residuos asimilables a domiciliarios",
+   "mov": 12,
+   "dias": 3,
+   "tipo": "Recolector de residuos",
+   "foto": "servicio-lado/HWU967_SLZTK400.jpg",
+   "corto": "Recolector",
+   "destino": "Residuos domiciliarios"
+  },
+  {
+   "patente": "AB608FC",
+   "producto": "Residuos orgánicos",
+   "mov": 5,
+   "dias": 3,
+   "tipo": "Cisterna · residuos orgánicos",
+   "foto": "servicio-lado/AB608FC_SLZCalado.jpg",
+   "corto": "Cisterna",
+   "destino": "Res. org. → Solamb (Timbúes)"
+  },
+  {
+   "patente": "AF411UI",
+   "producto": "Residuos orgánicos y semilla con agua/barro",
+   "mov": 3,
+   "dias": 3,
+   "tipo": "Cisterna · residuos orgánicos",
+   "foto": "servicio-ric/AF411UI_0510_0908_RicIngCamFrente.jpg",
+   "corto": "Cisterna",
+   "destino": "Res. org. y borra de girasol"
+  },
+  {
+   "patente": "BTS626",
+   "producto": "Agua potable",
+   "mov": 2,
+   "dias": 3,
+   "tipo": "Agua potable",
+   "foto": "servicio-ric/BTS626_0510_0938_RicEgrCamFrente.jpg",
+   "corto": "Agua potable",
+   "destino": "Agua potable"
+  }
+ ]
+}

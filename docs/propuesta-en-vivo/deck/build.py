@@ -539,7 +539,7 @@ notes(s14, 'Esta es la ventaja competitiva frente a lo que hay: tiempo real en v
 s15 = new_slide('surf')
 header(s15, 'PRÓXIMO PASO · IA ABIERTA', 'Que Vicentin arme sus automatizaciones con su propia IA')
 chat = [('Avisame cuando un camión salga de Ricardone al puerto sin calar.', 'Listo: te aviso en el momento, con patente, hora y foto.'),
-        ('Mandale un mensaje al jefe de turno cuando Playa 1 pase de 250 camiones.', 'Aviso activado para Playa 1 (capacidad 300).'),
+        ('Mandale un mensaje al jefe de turno cuando Playa 1 pase de 170 camiones.', 'Aviso activado para Playa 1 (capacidad 200).'),
         ('¿Qué destino tiene más lugar ahora para la soja?', 'Te respondo con la ocupación de cada destino en este momento.'),
         ('Todos los días a las 7, decime qué camiones estuvieron más de 3 horas en planta.', 'Programado: informe diario a las 07:00.')]
 box(s15, 0.89, 1.95, 6.9, 4.65, fill=C['bg2'], line=C['line'], radius=0.03)

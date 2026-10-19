@@ -1,0 +1,230 @@
+{
+ "patente": "GQQ158",
+ "ingreso": "2026-09-12 14:02:00",
+ "calado": "2026-09-12 15:16:00",
+ "salida": "2026-09-13 03:12:00",
+ "plataforma": "VOLCABLE_PTO_5",
+ "producto": "SOJA",
+ "planta": "TERMINAL_EMBARQUE",
+ "puntos": [
+  {
+   "punto": "Ingreso Ricardone",
+   "ancla": "ing",
+   "ventana": [
+    "13:41:00",
+    "14:01:12"
+   ],
+   "centro": "13:56:00",
+   "camaras": [
+    "RicIngCamFrente"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-09-12 13:55:39",
+     "lectura": "21352",
+     "marca": "Mercedes-Benz",
+     "color": "Silver",
+     "tipo": "Medium Truck",
+     "foto": "135539_RicIngCamFrente_21352.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Preingreso",
+   "ancla": "ing",
+   "ventana": [
+    "13:51:42",
+    "14:03:30"
+   ],
+   "centro": "13:59:06",
+   "camaras": [
+    "RicPreIngInFr"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicPreIngInFr",
+     "hora": "2026-09-12 13:57:48",
+     "lectura": "OCO",
+     "marca": "Nissan",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "135748_RicPreIngInFr_OCO.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Calada Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "15:02:12",
+    "15:14:12"
+   ],
+   "centro": "15:10:06",
+   "camaras": [
+    "RicCal01",
+    "RicCal02",
+    "RicCal03",
+    "RicCal04",
+    "RicCal05",
+    "RicCal06"
+   ],
+   "total": 4,
+   "candidatas": [
+    {
+     "camara": "RicCal01",
+     "hora": "2026-09-12 15:05:12",
+     "lectura": "GRQ258",
+     "marca": "Iveco",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "150512_RicCal01_GRQ258.jpg"
+    },
+    {
+     "camara": "RicCal02",
+     "hora": "2026-09-12 15:06:53",
+     "lectura": "VC010",
+     "marca": "Mercedes-Benz",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "150653_RicCal02_VC010.jpg"
+    },
+    {
+     "camara": "RicCal02",
+     "hora": "2026-09-12 15:06:19",
+     "lectura": "",
+     "marca": "Mercedes-Benz",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "150619_RicCal02_vacia.jpg"
+    },
+    {
+     "camara": "RicCal02",
+     "hora": "2026-09-12 15:03:23",
+     "lectura": "C070O7",
+     "marca": "Iveco",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "150323_RicCal02_C070O7.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Egreso Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "15:12:48",
+    "15:44:24"
+   ],
+   "centro": "15:21:24",
+   "camaras": [
+    "RicEgrCamFrente"
+   ],
+   "total": 0,
+   "candidatas": []
+  },
+  {
+   "punto": "Ingreso puerto",
+   "ancla": "calado",
+   "ventana": [
+    "15:23:06",
+    "15:56:30"
+   ],
+   "centro": "15:33:30",
+   "camaras": [
+    "SLZIngCamFrente"
+   ],
+   "total": 0,
+   "candidatas": []
+  },
+  {
+   "punto": "Balanza ingreso puerto",
+   "ancla": "sal",
+   "ventana": [
+    "01:55:00",
+    "02:40:00"
+   ],
+   "centro": "02:17:00",
+   "camaras": [
+    "SLZBalIngFte"
+   ],
+   "total": 0,
+   "candidatas": []
+  },
+  {
+   "punto": "Descarga plataforma",
+   "ancla": "sal",
+   "ventana": [
+    "02:39:24",
+    "03:02:00"
+   ],
+   "centro": "02:53:42",
+   "camaras": [
+    "SLZVolcableC5"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "SLZVolcableC5",
+     "hora": "2026-09-13 02:54:33",
+     "lectura": "",
+     "marca": null,
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "025433_SLZVolcableC5_vacia.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza egreso puerto",
+   "ancla": "sal",
+   "ventana": [
+    "03:01:06",
+    "03:11:36"
+   ],
+   "centro": "03:07:00",
+   "camaras": [
+    "SLZBalSC1Fte",
+    "SLZBalSC2Fte"
+   ],
+   "total": 0,
+   "candidatas": []
+  },
+  {
+   "punto": "Salida puerto",
+   "ancla": "sal",
+   "ventana": [
+    "03:06:30",
+    "03:22:06"
+   ],
+   "centro": "03:14:12",
+   "camaras": [
+    "SLZSalidaC1Fte",
+    "SLZSalidaC2Fte"
+   ],
+   "total": 2,
+   "candidatas": [
+    {
+     "camara": "SLZSalidaC2Fte",
+     "hora": "2026-09-13 03:11:50",
+     "lectura": "",
+     "marca": "Fiat",
+     "color": "Black",
+     "tipo": "Small Truck",
+     "foto": "031150_SLZSalidaC2Fte_vacia.jpg"
+    },
+    {
+     "camara": "SLZSalidaC1Fte",
+     "hora": "2026-09-13 03:11:28",
+     "lectura": "",
+     "marca": null,
+     "color": "White",
+     "tipo": "Bus",
+     "foto": "031128_SLZSalidaC1Fte_vacia.jpg"
+    }
+   ]
+  }
+ ]
+}

@@ -34,7 +34,7 @@ export function TruckSteps({ site, plate }: { site: string; plate: string }) {
   if (error) return <p className="mt-1 text-[11px] text-rose-700">No se pudo leer el recorrido: {error}</p>
   if (!journey) return <p className="mt-1 text-[11px] text-slate-500">Cargando recorrido…</p>
 
-  const steps = [...(journey.timeline ?? [])].reverse().slice(0, 8)
+  const steps = (journey.timeline ?? []).filter((s): s is typeof s & { at: string } => s.step !== 'deducido' && s.at != null).reverse().slice(0, 8)
   return (
     <div className="mt-2 rounded-md border border-slate-200 bg-slate-50 p-2 text-[11px]">
       <div className="mb-1 text-slate-600">

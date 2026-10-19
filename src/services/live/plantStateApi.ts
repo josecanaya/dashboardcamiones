@@ -183,13 +183,20 @@ export type TrucksList = {
 }
 
 export type TruckTimelineRow = {
-  at: string
-  sectorCode: string
+  /** null en un paso deducido (no hubo lectura). */
+  at: string | null
+  sectorCode: string | null
   logicalSector: string | null
   label: string
   deviceCode: string | null
   edgeId: string | null
   legFromPreviousMin: number | null
+  /** Estado del paso: leído por la cámara, corregido (lectura mal leída asignada al camión) o deducido (sin lectura, leído antes y después). */
+  step?: 'camara' | 'corregido' | 'deducido'
+  /** Lo que leyó la cámara en un paso corregido. */
+  readPlate?: string | null
+  identificationLevel?: string | null
+  probability?: number
 }
 
 export type TruckJourney = {
@@ -298,7 +305,8 @@ export type PredecessorsResponse = {
   previousTrips?: { journeyKey: string; startAt: string; endAt: string; gapMin: number; reads: { at: string; node: string; nodeLabel: string; device: string }[] }[]
   /** Recorrido de la misma patente en la otra planta (Ricardone â†” San Lorenzo). */
   otherPlantTrips?: { journeyKey: string; startAt: string; endAt: string; gapMin: number; reads: { at: string; node: string; nodeLabel: string; device: string }[] }[]
-  linked: { journeyKey: string; plate: string; journeyUid: string | null }[]
+  /** `auto`: unido solo por la búsqueda hacia atrás (cuenta ≥ 95 % + alta en balanza). */
+  linked: { journeyKey: string; plate: string; journeyUid: string | null; auto?: boolean; readPlate?: string; reason?: string; probability?: number }[]
 }
 
 /** Lecturas anteriores candidatas de un camión que arranca a mitad de circuito. */
@@ -672,4 +680,43 @@ export async function getIdentificationEvidence(site: string, fragmentKey: strin
   const body = (await res.json()) as IdentificationEvidence & { error?: string }
   if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
   return body
+}
+
+/** Ingreso por balanza (Oracle SGC de Vicentin, vista de las últimas 24 h). */
+export type BalanzaRow = {
+  nroIngreso: number
+  plate: string
+  trailer: string | null
+  productCode: string
+  product: string
+  plant: string
+  plantName: string
+  ingresoAt: string
+  salidaAt: string | null
+  minutes: number
+  /** Solo para los que siguen adentro: primer peso tara = vino a cargar; bruto = vino a descargar. */
+  intent: 'carga' | 'descarga' | null
+  brutoKg: number | null
+  taraKg: number | null
+  netoKg: number | null
+}
+
+export type BalanzaSnapshot = {
+  site: string
+  status: { enabled: boolean; fetchedAt: string | null; lastOkAt: string | null; error: string | null; pollMs: number }
+  counts: { inPlant: number; ingresos24h: number; salidas24h: number; netoKg24h: number; carga: number; descarga: number }
+  byProduct: { product: string; n: number }[]
+  inPlant: BalanzaRow[]
+  closed: BalanzaRow[]
+  /** Ingresos abiertos de otras plantas: el SGC anota la planta de destino (un R7 entra por Ricardone como Terminal). */
+  otherOpen?: BalanzaRow[]
+}
+
+export async function getBalanza(site: string): Promise<BalanzaSnapshot> {
+  const res = await fetchLocalTruckflow(`/live/balanza?${new URLSearchParams({ site })}`, {
+    headers: { Accept: 'application/json' },
+  })
+  const body = (await res.json()) as Partial<BalanzaSnapshot> & { error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return body as BalanzaSnapshot
 }

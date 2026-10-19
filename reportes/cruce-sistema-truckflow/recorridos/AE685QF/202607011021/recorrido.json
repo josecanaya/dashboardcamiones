@@ -1,0 +1,292 @@
+{
+ "patente": "AE685QF",
+ "ingreso": "2026-07-01 10:21:00",
+ "salida": "2026-07-01 15:59:00",
+ "producto": "SOJA",
+ "planta": "TERMINAL_EMBARQUE",
+ "ancla": {
+  "camara": "RicPreIngInFr",
+  "hora": "2026-07-01 10:18:41",
+  "lectura": "R420"
+ },
+ "puntos": [
+  {
+   "punto": "Preingreso",
+   "elegida": {
+    "camara": "RicPreIngInFr",
+    "hora": "2026-07-01 10:18:41",
+    "at": "2026-07-01T13:18:41.000Z",
+    "lectura": "R420",
+    "marca": null,
+    "color": "Silver",
+    "tipo": null,
+    "foto": "101841_RicPreIngInFr_R420.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicPreIngInFr",
+     "hora": "2026-07-01 10:18:41",
+     "at": "2026-07-01T13:18:41.000Z",
+     "lectura": "R420",
+     "marca": null,
+     "color": "Silver",
+     "tipo": null,
+     "foto": "101841_RicPreIngInFr_R420.jpg"
+    }
+   ],
+   "vecinos": []
+  },
+  {
+   "punto": "Ingreso Ricardone",
+   "intervalo": [
+    "09:48:09",
+    "10:27:50"
+   ],
+   "vecinos": [
+    "AC608RN@10:11:48",
+    "GDK235@09:52:09",
+    "FCK246@10:08:48",
+    "XCI885@10:16:50",
+    "IFM515@10:23:06",
+    "EPX966@10:23:50"
+   ],
+   "elegida": {
+    "camara": "RicIngCamFrente",
+    "hora": "2026-07-01 09:52:48",
+    "at": "2026-07-01T12:52:48.000Z",
+    "lectura": "AC385",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "foto": "095248_RicIngCamFrente_AC385.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-01 09:52:48",
+     "at": "2026-07-01T12:52:48.000Z",
+     "lectura": "AC385",
+     "marca": "Mercedes-Benz",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "095248_RicIngCamFrente_AC385.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Calada Ricardone",
+   "intervalo": [
+    "10:59:46",
+    "11:22:47"
+   ],
+   "vecinos": [
+    "AC608RN@11:07:42",
+    "GDK235@11:09:10",
+    "FCK246@11:03:46",
+    "XCI885@11:11:28",
+    "IFM515@11:15:34",
+    "EPX966@11:18:47"
+   ],
+   "elegida": {
+    "camara": "RicCal05",
+    "hora": "2026-07-01 11:12:54",
+    "at": "2026-07-01T14:12:54.000Z",
+    "lectura": "AE685QF",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck",
+    "foto": "111254_RicCal05_AE685QF.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicCal05",
+     "hora": "2026-07-01 11:12:54",
+     "at": "2026-07-01T14:12:54.000Z",
+     "lectura": "AE685QF",
+     "marca": "Scania",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "111254_RicCal05_AE685QF.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza ingreso Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Playa 3",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Celda 16",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Silo Keppler",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Volcables Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Balanza egreso Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Egreso Ricardone",
+   "intervalo": [
+    "11:14:54",
+    "11:42:54"
+   ],
+   "vecinos": [
+    "XCI885@11:24:36",
+    "GDK235@11:22:47",
+    "AC608RN@14:25:47",
+    "EPX966@11:25:11",
+    "OHO964@11:36:39"
+   ],
+   "candidatas": []
+  },
+  {
+   "punto": "Ingreso puerto",
+   "intervalo": [
+    "11:24:54",
+    "11:57:54"
+   ],
+   "vecinos": [
+    "XCI885@11:37:09",
+    "GDK235@11:33:59",
+    "AC608RN@14:38:49",
+    "EPX966@11:37:53",
+    "OHO964@11:46:16"
+   ],
+   "candidatas": []
+  },
+  {
+   "punto": "Balanza ingreso puerto",
+   "intervalo": [
+    "11:59:00",
+    "15:44:00"
+   ],
+   "vecinos": [
+    "XCI885@15:37:56",
+    "GDK235@15:34:16",
+    "EPX966@15:38:47",
+    "OHO964@15:41:09"
+   ],
+   "elegida": {
+    "camara": "SLZBalIngFte",
+    "hora": "2026-07-01 13:31:57",
+    "at": "2026-07-01T16:31:57.000Z",
+    "lectura": "",
+    "marca": "Chevrolet",
+    "color": "Red",
+    "tipo": "Large Truck",
+    "foto": "133157_SLZBalIngFte_vacia.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-07-01 13:31:57",
+     "at": "2026-07-01T16:31:57.000Z",
+     "lectura": "",
+     "marca": "Chevrolet",
+     "color": "Red",
+     "tipo": "Large Truck",
+     "foto": "133157_SLZBalIngFte_vacia.jpg"
+    },
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-07-01 13:30:29",
+     "at": "2026-07-01T16:30:29.000Z",
+     "lectura": "UYIA5",
+     "marca": null,
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "133029_SLZBalIngFte_UYIA5.jpg"
+    },
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-07-01 13:30:28",
+     "at": "2026-07-01T16:30:28.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "133028_SLZBalIngFte_vacia.jpg"
+    },
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-07-01 13:29:22",
+     "at": "2026-07-01T16:29:22.000Z",
+     "lectura": "",
+     "marca": "Mitsubishi",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "132922_SLZBalIngFte_vacia.jpg"
+    },
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-07-01 13:27:30",
+     "at": "2026-07-01T16:27:30.000Z",
+     "lectura": "",
+     "marca": "Fiat",
+     "color": "Black",
+     "tipo": "Medium Truck",
+     "foto": "132730_SLZBalIngFte_vacia.jpg"
+    },
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-07-01 13:26:20",
+     "at": "2026-07-01T16:26:20.000Z",
+     "lectura": "",
+     "marca": "MINI",
+     "color": "White",
+     "tipo": "Bus",
+     "foto": "132620_SLZBalIngFte_vacia.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Volcables puerto",
+   "intervalo": [
+    "14:29:00",
+    "15:56:00"
+   ],
+   "vecinos": [],
+   "candidatas": []
+  },
+  {
+   "punto": "Balanza egreso puerto",
+   "intervalo": [
+    "15:55:00",
+    "16:01:00"
+   ],
+   "vecinos": [],
+   "candidatas": []
+  },
+  {
+   "punto": "Salida puerto",
+   "intervalo": [
+    "15:59:00",
+    "16:19:00"
+   ],
+   "vecinos": [
+    "PLN892@14:11:48",
+    "JDT186@13:57:45",
+    "GOQ066@15:07:35",
+    "AE996CE@14:40:03",
+    "OOU846@14:56:18"
+   ],
+   "candidatas": []
+  }
+ ]
+}

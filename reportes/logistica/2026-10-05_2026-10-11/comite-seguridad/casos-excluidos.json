@@ -1,0 +1,8 @@
+{
+ "_nota": "Casos que el detector marca y se sacan a mano después de revisar las fotos (13/10/2026): AG821ZY cambió de calle en el momento (calle 1 → 3 en 2 min) y descargó en la que declaró; AD714BI es un egreso de cáscara de soja (carga), no una descarga. AD523QM: también egreso de cáscara de soja (carga), sacado el 13/10.",
+ "calles": [
+  "AG821ZY",
+  "AD714BI",
+  "AD523QM"
+ ]
+}

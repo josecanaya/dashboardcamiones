@@ -1,0 +1,53 @@
+SAN LORENZO
+
+Criterios:
+- Playa = 0,010101 camiones/m2
+- Camino = 0,0056 camiones/m2
+
+S0 - S1 u S2 | 9074 m2 | Playa  | 9074 x 0,010101 = 91,66  -> 92 camiones
+S2           | 350 m2  | Camino | 350 x 0,0056   = 1,96   -> 2 camiones
+S1           | 300 m2  | Camino | 300 x 0,0056   = 1,68   -> 2 camiones
+S1 - S3      | 2350 m2 | Camino | 2350 x 0,0056  = 13,16  -> 13 camiones
+S3 - S4      | 3000 m2 | Camino | 3000 x 0,0056  = 16,80  -> 17 camiones
+S3 - S6      | 5000 m2 | Camino | 5000 x 0,0056  = 28,00  -> 28 camiones
+S4 - S5      | 3500 m2 | Camino | 3500 x 0,0056  = 19,60  -> 20 camiones
+S5 - S7      | 2500 m2 | Camino | 2500 x 0,0056  = 14,00  -> 14 camiones
+S5 - S8      | 4200 m2 | Camino | 4200 x 0,0056  = 23,52  -> 24 camiones
+S8 - S2 o S1 | 2000 m2 | Camino | 2000 x 0,0056  = 11,20  -> 11 camiones
+S10          | 2000 m2 | Camino | 2000 x 0,0056  = 11,20  -> 11 camiones
+
+Total estimado San Lorenzo:
+- Total decimal: 231,78 camiones
+- Total redondeado por sector: 234 camiones
+- Total conservador: 231 camiones
+
+
+RICARDONE
+
+Criterios:
+- Playa = 0,010101 camiones/m2
+- Camino = 0,0056 camiones/m2
+
+S0 - S1       | 5000 m2  | Camino | 5000 x 0,0056   = 28,00   -> 28 camiones
+S1 - S2       | 26000 m2 | Playa  | 26000 x 0,010101 = 262,63 -> 263 camiones
+S2 - S3       | 7000 m2  | Camino | 7000 x 0,0056   = 39,20   -> 39 camiones
+S2 - S4       | 13000 m2 | Camino | 13000 x 0,0056  = 72,80   -> 73 camiones
+S4 - S5       | 2500 m2  | Camino | 2500 x 0,0056   = 14,00   -> 14 camiones
+S6            | 14000 m2 | Playa  | 14000 x 0,010101 = 141,41 -> 141 camiones
+Playa espera  | 20000 m2 | Playa  | 20000 x 0,010101 = 202,02 -> 202 camiones
+Pulmon        | 4400 m2  | Playa  | 4400 x 0,010101  = 44,44  -> 44 camiones
+
+Total estimado Ricardone:
+- Total decimal: 804,50 camiones
+- Total redondeado por sector: 804 camiones
+- Total conservador: 803 camiones
+
+
+RESUMEN GENERAL
+
+San Lorenzo: ~232 camiones
+Ricardone: ~804 camiones
+
+Densidades utilizadas:
+- Playa: 0,010101 camiones/m2
+- Camino: 0,0056 camiones/m2

@@ -1,5 +1,5 @@
 # Matriz de clasificación ETL — subsecuencias ordenadas de puntos operativos Ricardone + San Lorenzo
-# Generado: 2026-10-07T20:26:30.052Z
+# Generado: 2026-10-14T19:49:43.428Z
 # Puntos canónicos (17): INGRESO | PREINGRESO | CALADA | BALANZA_INGRESO | VOLCABLE | CELDA16_DESCARGA | CELDA16_CARGA | LIQUIDO | BALANZA_EGRESO | EGRESO | SL_INGRESO | SL_PREINGRESO | SL_CALADA | SL_BALANZA_INGRESO | SL_DESCARGA | SL_BALANZA_SALIDA | SL_EGRESO
 # Combinaciones con >= 3 eventos (orden temporal respetado): 130918 filas
 #

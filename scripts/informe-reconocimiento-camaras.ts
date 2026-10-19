@@ -298,6 +298,10 @@ type Obs = {
   readRearOnly: boolean
   /** Lectura frontal solo vía alerta (no entró al journey). */
   readAlertOnly: boolean
+  /** La cámara capturó al camión aunque la patente salió mal (reconstruible por algoritmo). */
+  detected?: boolean
+  /** El reconocedor (replay con balanza + alertas) asignó a este camión una lectura mala de este nodo. */
+  corrected?: boolean
   t: number
   devicesRead: string[]
   laneDevice: string | null
@@ -366,15 +370,106 @@ for (const m of movs.values()) {
   for (const r of rows) if (!puntoExcluido(r.nodeId, arDay(r.t))) observations.push(r)
 }
 
+// ── Detección: la cámara vio el camión aunque no haya leído bien la patente ─────────────────
+/**
+ * Un camión no leído cuenta como DETECTADO si, cerca de la hora estimada de su paso (±30 min),
+ * una cámara frontal del punto registró una captura que nadie más reclama y que es compatible
+ * con una mala lectura de ESTE camión: patente inválida o corta (< 6 caracteres) o que comparte
+ * 4 caracteres seguidos con la suya. Las capturas con patente válida de otro camión (p. ej. un
+ * camión fuera del Excel) no cuentan. Asignación uno a uno, de la más cercana en tiempo.
+ * Un camión detectado pero mal leído se puede reconstruir con el algoritmo multiseñal; uno no
+ * detectado, no: ahí la cámara no lo vio.
+ */
+const DET_WIN_MS = 30 * 60_000
+const sharesRun = (a: string, b: string, k: number) => {
+  for (let i = 0; i + k <= a.length; i++) if (b.includes(a.slice(i, i + k))) return true
+  return false
+}
+{
+  type Cap = { t: number; plate: string; used: boolean }
+  const capsByNode = new Map<string, Cap[]>()
+  for (const e of events) {
+    for (const nid of eventNodes(e)) {
+      const n = nodeById.get(nid)!
+      if (isRear(n, e.device) || CAMARAS_INEXISTENTES.has(e.device)) continue
+      if (!capsByNode.has(nid)) capsByNode.set(nid, [])
+      capsByNode.get(nid)!.push({ t: e.t, plate: e.plate, used: false })
+    }
+  }
+  const nearest = (caps: Cap[], t: number, ok: (c: Cap) => boolean) => {
+    let best: Cap | null = null
+    for (const c of caps) {
+      if (c.used || Math.abs(c.t - t) > DET_WIN_MS || !ok(c)) continue
+      if (!best || Math.abs(c.t - t) < Math.abs(best.t - t)) best = c
+    }
+    return best
+  }
+  const byNode = new Map<string, Obs[]>()
+  for (const o of observations) {
+    if (!byNode.has(o.nodeId)) byNode.set(o.nodeId, [])
+    byNode.get(o.nodeId)!.push(o)
+  }
+  for (const [nid, obs] of byNode) {
+    const caps = capsByNode.get(nid) ?? []
+    // Primero se consumen las capturas de los camiones leídos.
+    for (const o of obs.filter((x) => x.read)) {
+      o.detected = true
+      const c = nearest(caps, o.t, (c) => c.plate === o.plate || isLikelyOcrPlateMatch(o.plate, c.plate))
+      if (c) c.used = true
+    }
+    for (const o of obs.filter((x) => !x.read).sort((a, b) => a.t - b.t)) {
+      const c = nearest(caps, o.t, (c) => !c.plate || c.plate.length < 6 || sharesRun(c.plate, o.plate, 4))
+      if (c) {
+        c.used = true
+        o.detected = true
+      } else o.detected = false
+    }
+  }
+}
+
+// ── Correcciones del algoritmo (--correcciones, de scripts/cruce-sistema-truckflow/replay-correcciones.mjs) ──
+/**
+ * Paso esperado sin lectura exacta que el reconocedor recuperó: asignó a esta patente una lectura mala de
+ * una cámara del nodo (frontal o trasera, ±2 h de la hora del paso).
+ */
+const CORR_FILE = argOf('--correcciones')
+const CORR_WIN_MS = 2 * 3600_000
+if (CORR_FILE) {
+  const corr: { plate: string; device: string; t: number }[] = JSON.parse(readFileSync(resolve(process.cwd(), CORR_FILE), 'utf8'))
+  const byPlate = new Map<string, { device: string; t: number }[]>()
+  for (const c of corr) {
+    if (!byPlate.has(c.plate)) byPlate.set(c.plate, [])
+    byPlate.get(c.plate)!.push(c)
+  }
+  for (const o of observations) {
+    if (o.readExact) continue
+    const n = nodeById.get(o.nodeId)!
+    const devs = new Set([...n.devices, ...n.rearDevices])
+    o.corrected = (byPlate.get(o.plate) ?? []).some((c) => devs.has(c.device) && Math.abs(c.t - o.t) <= CORR_WIN_MS)
+  }
+}
+
 // ── Agregados ─────────────────────────────────────────────────────────────────────────────────
-type Agg = { esperados: number; leidos: number; exactos: number; soloTrasera: number; soloAlerta: number }
-const emptyAgg = (): Agg => ({ esperados: 0, leidos: 0, exactos: 0, soloTrasera: 0, soloAlerta: 0 })
+/**
+ * exactos + corregidos + sinCorregir + noVistos = esperados (con --correcciones):
+ *  exactos     — la cámara leyó la patente exacta
+ *  corregidos  — la leyó mal y el algoritmo la recuperó
+ *  sinCorregir — la cámara la vio (leída aproximada o patente mala) y el algoritmo todavía no la resolvió
+ *  noVistos    — ninguna cámara del nodo capturó al camión
+ */
+type Agg = { esperados: number; leidos: number; exactos: number; soloTrasera: number; soloAlerta: number; corregidos: number; sinCorregir: number; noVistos: number }
+const emptyAgg = (): Agg => ({ esperados: 0, leidos: 0, exactos: 0, soloTrasera: 0, soloAlerta: 0, corregidos: 0, sinCorregir: 0, noVistos: 0 })
 const add = (a: Agg, o: Obs) => {
   a.esperados++
   if (o.read) a.leidos++
   if (o.readExact) a.exactos++
   if (o.readRearOnly) a.soloTrasera++
   if (o.readAlertOnly) a.soloAlerta++
+  if (!o.readExact) {
+    if (o.corrected) a.corregidos++
+    else if (o.read || o.detected) a.sinCorregir++
+    else a.noVistos++
+  }
 }
 const pct = (a: Agg) => (a.esperados ? Math.round((a.leidos / a.esperados) * 1000) / 10 : null)
 
@@ -405,8 +500,13 @@ const puntos = nodeOrder.map((n) => {
   const porDia: Record<string, { dia: Agg; noche: Agg }> = {}
   const circuitos: Record<string, number> = {}
   const deviceReads: Record<string, number> = {}
+  const det = { total: { esperados: 0, detectados: 0 }, dia: { esperados: 0, detectados: 0 }, noche: { esperados: 0, detectados: 0 } }
   for (const d of days) porDia[d] = { dia: emptyAgg(), noche: emptyAgg() }
   for (const o of obs) {
+    for (const k of ['total', franja(o.t)] as const) {
+      det[k].esperados++
+      if (o.detected) det[k].detectados++
+    }
     add(total, o)
     const fr = franja(o.t)
     add(fr === 'dia' ? dia : noche, o)
@@ -439,6 +539,8 @@ const puntos = nodeOrder.map((n) => {
     lecturasPorCamara: deviceReads,
     lecturasCrudasPorCamaraDia: eventosPorCamaraDia,
     fallasLprPorCamara: fallasLpr,
+    /** Detectados = leídos + vistos con patente mala (reconstruibles). */
+    deteccion: det,
   }
 })
 
@@ -575,9 +677,9 @@ const outDir = join(root, 'reportes/camaras', `${FROM}_${TO}`)
 mkdirSync(outDir, { recursive: true })
 writeFileSync(join(outDir, 'reconocimiento-camaras.json'), JSON.stringify(out, null, 2), 'utf8')
 const csv = [
-  'planta,punto,codigo,esperados,leidos,pct,esperados_dia,leidos_dia,pct_dia,esperados_noche,leidos_noche,pct_noche,solo_trasera',
+  'planta,punto,codigo,esperados,leidos,pct,esperados_dia,leidos_dia,pct_dia,esperados_noche,leidos_noche,pct_noche,solo_trasera,exactos,corregidos,sin_corregir,no_vistos',
   ...puntos.map((p) =>
-    [p.planta, p.punto, p.codigo, p.total.esperados, p.total.leidos, p.total.pct, p.dia.esperados, p.dia.leidos, p.dia.pct, p.noche.esperados, p.noche.leidos, p.noche.pct, p.total.soloTrasera].join(',')
+    [p.planta, p.punto, p.codigo, p.total.esperados, p.total.leidos, p.total.pct, p.dia.esperados, p.dia.leidos, p.dia.pct, p.noche.esperados, p.noche.leidos, p.noche.pct, p.total.soloTrasera, p.total.exactos, p.total.corregidos, p.total.sinCorregir, p.total.noVistos].join(',')
   ),
 ].join('\n')
 writeFileSync(join(outDir, 'reconocimiento-puntos.csv'), csv, 'utf8')
@@ -597,6 +699,14 @@ for (const p of puntos)
   console.log(
     `${p.planta.padEnd(11)} ${String(p.punto).padEnd(24)} ${String(p.total.leidos).padStart(5)}/${String(p.total.esperados).padEnd(5)} ${String(p.total.pct).padStart(5)}% | día ${p.dia.pct}% (${p.dia.esperados}) | noche ${p.noche.pct}% (${p.noche.esperados}) | solo tras ${p.total.soloTrasera} | solo alerta ${p.total.soloAlerta}`
   )
+if (CORR_FILE) {
+  console.log('--- por nodo: leyó exacto / corregimos / queda por corregir / no lo vio ---')
+  const pc = (x: number, n: number) => (n ? `${Math.round((x / n) * 1000) / 10}%` : '—')
+  for (const p of puntos) {
+    const t = p.total
+    console.log(`${p.planta.padEnd(11)} ${String(p.punto).padEnd(24)} ${String(t.esperados).padStart(5)} | leyó ${pc(t.exactos, t.esperados).padStart(6)} | corregimos ${pc(t.corregidos, t.esperados).padStart(6)} | queda ${pc(t.sinCorregir, t.esperados).padStart(6)} (${t.sinCorregir}) | no lo vio ${pc(t.noVistos, t.esperados).padStart(6)} (${t.noVistos})`)
+  }
+}
 console.log('--- por cámara ---')
 for (const c of camaras)
   console.log(`${c.camara.padEnd(18)} ${c.tipo.padEnd(8)} ${String(c.total.leidos).padStart(5)}/${String(c.total.esperados).padEnd(5)} ${c.total.pct}% | día ${c.dia.pct}% | noche ${c.noche.pct}% | LPR falla ${c.fallasLpr.dia}/${c.fallasLpr.noche}`)

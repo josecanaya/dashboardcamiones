@@ -1,0 +1,243 @@
+{
+ "patente": "KTH925",
+ "ingreso": "2026-07-29 16:13:00",
+ "salida": "2026-07-29 18:17:00",
+ "producto": "SOJA",
+ "planta": "RICARDONE",
+ "ancla": {
+  "camara": "RicPreIngInFr",
+  "hora": "2026-07-29 16:08:30",
+  "lectura": ""
+ },
+ "puntos": [
+  {
+   "punto": "Preingreso",
+   "estado": "sin_captura",
+   "vecinos": []
+  },
+  {
+   "punto": "Ingreso Ricardone",
+   "intervalo": [
+    "15:43:42",
+    "16:18:39"
+   ],
+   "vecinos": [
+    "CMR225@15:57:40",
+    "AE911OI@15:51:55",
+    "GMN518@15:47:42",
+    "EEP760@16:14:39"
+   ],
+   "elegida": {
+    "camara": "RicIngCamFrente",
+    "hora": "2026-07-29 16:06:13",
+    "at": "2026-07-29T19:06:13.000Z",
+    "lectura": "",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck",
+    "foto": "160613_RicIngCamFrente_vacia.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-29 16:06:13",
+     "at": "2026-07-29T19:06:13.000Z",
+     "lectura": "",
+     "marca": "Iveco",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "160613_RicIngCamFrente_vacia.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-29 16:06:14",
+     "at": "2026-07-29T19:06:14.000Z",
+     "lectura": "AVAEC",
+     "marca": "Iveco",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "160614_RicIngCamFrente_AVAEC.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Calada Ricardone",
+   "intervalo": [
+    "17:07:17",
+    "17:30:57"
+   ],
+   "vecinos": [
+    "CMR225@17:17:56",
+    "AE911OI@17:14:36",
+    "GMN518@17:11:17",
+    "EEP760@17:26:57"
+   ],
+   "elegida": {
+    "camara": "RicCal01",
+    "hora": "2026-07-29 17:19:45",
+    "at": "2026-07-29T20:19:45.000Z",
+    "lectura": "KTH925",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "foto": "171945_RicCal01_KTH925.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicCal01",
+     "hora": "2026-07-29 17:19:45",
+     "at": "2026-07-29T20:19:45.000Z",
+     "lectura": "KTH925",
+     "marca": "Iveco",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "171945_RicCal01_KTH925.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza ingreso Ricardone",
+   "intervalo": [
+    "17:22:45",
+    "17:49:45"
+   ],
+   "vecinos": [
+    "CMR225@17:25:23",
+    "AE911OI@17:20:39",
+    "GMN518@17:16:33",
+    "EEP760@17:38:41"
+   ],
+   "elegida": {
+    "camara": "RicB1Ingreso",
+    "hora": "2026-07-29 17:27:27",
+    "at": "2026-07-29T20:27:27.000Z",
+    "lectura": "AVEC0",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck",
+    "foto": "172727_RicB1Ingreso_AVEC0.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicB1Ingreso",
+     "hora": "2026-07-29 17:27:27",
+     "at": "2026-07-29T20:27:27.000Z",
+     "lectura": "AVEC0",
+     "marca": "Iveco",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "172727_RicB1Ingreso_AVEC0.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Playa 3",
+   "intervalo": [
+    "17:45:07",
+    "18:15:00"
+   ],
+   "vecinos": [
+    "CMR225@18:00:57",
+    "AE911OI@17:54:23",
+    "GMN518@17:49:07",
+    "EEP760@18:28:02"
+   ],
+   "elegida": {
+    "camara": "RicS6Playa3",
+    "hora": "2026-07-29 18:06:58",
+    "at": "2026-07-29T21:06:58.000Z",
+    "lectura": "VEC0",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck",
+    "foto": "180658_RicS6Playa3_VEC0.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicS6Playa3",
+     "hora": "2026-07-29 18:06:58",
+     "at": "2026-07-29T21:06:58.000Z",
+     "lectura": "VEC0",
+     "marca": "Iveco",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "180658_RicS6Playa3_VEC0.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Celda 16",
+   "intervalo": [
+    "18:06:58",
+    "18:15:00"
+   ],
+   "vecinos": [
+    "CMR225@17:48:25",
+    "AE911OI@17:43:57",
+    "AD051GY@17:34:21"
+   ],
+   "candidatas": []
+  },
+  {
+   "punto": "Silo Keppler",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Volcables Ricardone",
+   "intervalo": [
+    "18:07:58",
+    "18:14:00"
+   ],
+   "vecinos": [],
+   "candidatas": []
+  },
+  {
+   "punto": "Balanza egreso Ricardone",
+   "intervalo": [
+    "18:13:00",
+    "18:19:00"
+   ],
+   "vecinos": [
+    "CMR225@18:04:30",
+    "AE911OI@18:00:04",
+    "AD051GY@17:58:54"
+   ],
+   "candidatas": []
+  },
+  {
+   "punto": "Egreso Ricardone",
+   "intervalo": [
+    "18:17:00",
+    "18:37:00"
+   ],
+   "vecinos": [],
+   "candidatas": []
+  },
+  {
+   "punto": "Ingreso puerto",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Balanza ingreso puerto",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Volcables puerto",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Balanza egreso puerto",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Salida puerto",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  }
+ ]
+}

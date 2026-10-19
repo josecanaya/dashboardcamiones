@@ -7,16 +7,19 @@ import { IdentificationPanel } from '../components/plant/IdentificationPanel'
 import { VerificationPhoto, type PhotoState } from '../components/plant/PlateVerification'
 import { createPortal } from 'react-dom'
 import { PointHistoryModal } from '../components/plant/PointHistoryModal'
+import { placeTrucks } from '../services/live/truckTransit'
+import { crossPlantSources, SOURCE_SGC, SOURCE_TF, type PlantTruck } from '../services/live/plantCrossSource'
 import type { PlantPoint } from '../data/plantZones.types'
 import { useLivePlantState } from '../hooks/useLivePlantState'
 import type { PlantLayout, PlantCameraGroup } from '../data/plantZones.types'
-import type { PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow } from '../services/live/plantStateApi'
-import { cameraCaptureImageUrl, correctTruckLocation, findCameraCapture, formatDrainMinutes, getIdentifications, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
+import type { BalanzaRow, BalanzaSnapshot, PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow, TruckTimelineRow } from '../services/live/plantStateApi'
+import { cameraCaptureImageUrl, correctTruckLocation, findCameraCapture, formatDrainMinutes, getBalanza, getIdentifications, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
 import './liveMonitor.css'
 import { usePublishAnalysis } from '../context/AnalysisContext'
 
 type Site = 'ricardone' | 'san_lorenzo'
 type Panel = 'camiones' | 'camaras' | 'capturas'
+type SourceFilter = 'todas' | 'ambas' | 'sgc' | 'tf'
 const SITE_NAME: Record<Site, string> = { ricardone: 'Ricardone', san_lorenzo: 'San Lorenzo' }
 const STATUS_TEXT: Record<TruckRow['status'], string> = { normal: 'En tiempo', attention: 'Demorado', critical: 'Muy demorado' }
 
@@ -53,6 +56,9 @@ export function LiveMonitorPage() {
   const [pointOpen, setPointOpen] = useState<PlantPoint | null>(null)
   const [pending, setPending] = useState<number | null>(null)
   const [now, setNow] = useState(Date.now())
+  const [balanza, setBalanza] = useState<BalanzaSnapshot | null>(null)
+  const [balanzaError, setBalanzaError] = useState<string | null>(null)
+  const [sourceFilter, setSourceFilter] = useState<SourceFilter>('todas')
 
   useEffect(() => { const t = setInterval(() => setNow(Date.now()), 5000); return () => clearInterval(t) }, [])
 
@@ -72,15 +78,28 @@ export function LiveMonitorPage() {
     return () => { alive = false; clearInterval(t) }
   }, [site, live.lastUpdateMs])
 
-  // Camión seguido: su recorrido completo, refrescado cada 10 s.
+  // Balanza (SGC Vicentin): el server la consulta cada 2 min; acá se relee cada 30 s.
   useEffect(() => {
-    if (!followed) { setJourney(null); return }
     let alive = true
-    const load = () => getTruckJourney(site, followed).then(j => { if (alive) setJourney(j) }).catch(() => { if (alive) setJourney(null) })
+    setBalanza(null)
+    const load = () => getBalanza(site).then(b => { if (alive) { setBalanza(b); setBalanzaError(null) } }).catch(e => { if (alive) setBalanzaError(e instanceof Error ? e.message : String(e)) })
+    void load()
+    const t = setInterval(load, 30_000)
+    return () => { alive = false; clearInterval(t) }
+  }, [site])
+
+  // Camión seguido: su recorrido completo, refrescado cada 10 s.
+  const plantTrucks = useMemo(() => crossPlantSources(trucks, balanza?.inPlant ?? [], balanza?.closed ?? [], balanza?.otherOpen ?? []), [trucks, balanza])
+  const followedItem = plantTrucks.find(t => t.plate === followed) ?? null
+  const followedTf = followedItem?.tf?.plate ?? null
+  useEffect(() => {
+    if (!followedTf) { setJourney(null); return }
+    let alive = true
+    const load = () => getTruckJourney(site, followedTf).then(j => { if (alive) setJourney(j) }).catch(() => { if (alive) setJourney(null) })
     void load()
     const t = setInterval(load, 10_000)
     return () => { alive = false; clearInterval(t) }
-  }, [site, followed, journeyTick])
+  }, [site, followedTf, journeyTick])
 
   // Patentes por confirmar (solo el número; la bandeja completa vive en su pestaña).
   useEffect(() => {
@@ -94,25 +113,48 @@ export function LiveMonitorPage() {
   const points = useMemo(() => layout?.points ?? [], [layout])
   const pointOfSector = useMemo(() => new Map(points.map(p => [p.sectorCode, p.id])), [points])
   const pointLabel = useMemo(() => new Map(points.map(p => [p.id, p.label])), [points])
-  const mapTrucks: MapTruck[] = useMemo(() => trucks.flatMap(t => {
-    const pointId = pointOfSector.get(t.sectorCode)
-    return pointId ? [{ plate: t.plate, pointId, status: t.status, label: `${STATUS_TEXT[t.status]} · ${minutes(t.dwellSectorMin)} en el punto` }] : []
-  }), [trucks, pointOfSector])
+  // Cada camión en su punto o en tránsito sobre la línea hacia el siguiente (como en el simulador).
+  const mapTrucks: MapTruck[] = useMemo(() => {
+    const byPlate = new Map(trucks.map(t => [t.plate, t]))
+    // Alta en SGC = pasó Preingreso aunque la cámara no lo haya leído.
+    const sgcPlates = new Set([...(balanza?.inPlant ?? []), ...(balanza?.otherOpen ?? [])].flatMap(r => [r.plate, r.trailer ?? '']).filter(Boolean))
+    return placeTrucks(trucks, layout, { sgcPlates }).map(p => {
+      const t = byPlate.get(p.plate)!
+      const waitMin = t.dwellSectorMin ?? t.minutesSinceLastDetection
+      const label = p.waitZoneId ? `${STATUS_TEXT[t.status]} · esperando hace ${minutes(waitMin)}` : p.transit ? `${STATUS_TEXT[t.status]} · salió hace ${minutes(t.minutesSinceLastDetection)}` : `${STATUS_TEXT[t.status]} · ${minutes(t.dwellSectorMin)} en el punto`
+      return { ...p, status: t.status, waitMin, label }
+    })
+  }, [trucks, layout, balanza])
 
   const snap = live.snapshot
   const zones = snap?.zones ?? []
   const queues = zones.filter(z => z.backlog > 0 || z.status === 'attention' || z.status === 'critical').sort((a, b) => b.backlog - a.backlog)
   const alerts = zones.filter(z => z.status === 'critical' || z.status === 'attention')
-  const visibleTrucks = trucks
-    .filter(t => !zoneFilter || t.zoneId === zoneFilter)
-    .filter(t => !search || t.plate.includes(search.toUpperCase()))
-  const followedRow = trucks.find(t => t.plate === followed) ?? null
+  const counts = { ambas: 0, sgc: 0, tf: 0 }
+  for (const t of plantTrucks) counts[t.sources]++
+  const q = search.trim().toUpperCase()
+  const visibleTrucks = plantTrucks
+    .filter(t => sourceFilter === 'todas' || t.sources === sourceFilter)
+    .filter(t => !zoneFilter || t.tf?.zoneId === zoneFilter)
+    .filter(t => !q || [t.plate, t.tf?.plate, t.sgc?.trailer, t.sgc?.product].some(v => v?.toUpperCase().includes(q)))
+  const followedRow = followedItem?.tf ?? null
+  const placementOf = new Map(mapTrucks.map(m => [m.plate, m]))
+  /** Dónde está según el mapa: en su punto o en camino al siguiente. */
+  const placeText = (row: TruckRow) => {
+    const m = placementOf.get(row.plate)
+    if (m?.waitZoneId) return `Esperando en ${layout?.zones.find(z => z.zoneId === m.waitZoneId)?.label ?? 'playa'}${m.inferred ? ' (inferido)' : ''}`
+    if (m?.transit) return `En camino a ${pointLabel.get(m.transit.toPointId) ?? m.transit.toPointId}`
+    return pointLabel.get(m?.pointId ?? pointOfSector.get(row.sectorCode) ?? '') ?? row.sectorCode
+  }
+  const sgcOk = Boolean(balanza?.status.lastOkAt)
   usePublishAnalysis({ mode: 'live', site, sector: followedRow?.sectorCode ?? pointOpen?.sectorCode, zone: zoneFilter, plate: followed, label: pointOpen?.label, metricId: view === 'patentes' ? 'identification.pending_cases' : 'plant.trucks_present' })
   const ageS = live.lastUpdateMs ? Math.round((now - live.lastUpdateMs) / 1000) : null
   const statusText = live.status === 'live' ? 'En vivo' : live.status === 'stale' ? 'Datos demorados' : live.status === 'error' ? 'Sin conexión' : 'Conectando…'
   const lastEvent = snap?.source?.lastEventAt ? Math.round((now - Date.parse(snap.source.lastEventAt)) / 60000) : null
 
   const follow = (plate: string | null) => { setFollowed(plate); if (plate) setPanel('camiones') }
+  /** El mapa devuelve la patente leída por cámara: se sigue al camión cruzado que la contiene. */
+  const followCamera = (plate: string) => follow(plantTrucks.find(t => t.tf?.plate === plate)?.plate ?? plate)
   const openPoint = (group: PlantCameraGroup) => { if (group.devices.length) setCamera({ title: `${SITE_NAME[site]} · ${group.label}`, devices: group.devices }) }
 
   return (
@@ -127,7 +169,10 @@ export function LiveMonitorPage() {
           {(Object.keys(SITE_NAME) as Site[]).map(s => <button key={s} type="button" aria-pressed={site === s} onClick={() => setSite(s)}>{SITE_NAME[s]}</button>)}
         </div>
         <dl className="lm-kpis">
-          <div><dt>En planta</dt><dd>{snap?.plant.trucksInPlant ?? '—'}</dd></div>
+          <div title={`Cruce ${SOURCE_TF} (cámaras) + ${SOURCE_SGC} (balanza Vicentin) por patente`}>
+            <dt>En planta</dt><dd>{plantTrucks.length || (snap?.plant.trucksInPlant ?? '—')}</dd>
+            <small className="lm-kpis__src">{sgcOk ? `${counts.ambas} en ambas · ${counts.sgc} solo ${SOURCE_SGC} · ${counts.tf} solo cámaras` : `${SOURCE_SGC} sin conexión`}</small>
+          </div>
           <div><dt>Ingresan / h</dt><dd>{snap?.plant.inflow60 ?? '—'}</dd></div>
           <div><dt>Salen / h</dt><dd>{snap?.plant.outflow60 ?? '—'}</dd></div>
           <div className={snap?.plant.bottleneck ? 'is-warn' : ''}><dt>Cuello de botella</dt><dd>{snap?.plant.bottleneck ? `${snap.plant.bottleneck.label}` : 'Sin cola'}</dd></div>
@@ -154,12 +199,14 @@ export function LiveMonitorPage() {
               site={site}
               fill
               quietZones
+              showRoads
               showCircuitControls={false}
               zones={zones}
               trucks={mapTrucks}
-              followedPlate={followed}
-              onSelectTruck={plate => follow(plate === followed ? null : plate)}
+              followedPlate={followedTf}
+              onSelectTruck={plate => (plate === followedTf ? follow(null) : followCamera(plate))}
               followPath={journey?.timeline.map(r => r.logicalSector ?? '').filter(Boolean) ?? []}
+              followDeduced={journey?.timeline.filter(r => r.step === 'deducido').map(r => r.logicalSector ?? '').filter(Boolean) ?? []}
               followNext={journey?.nextExpectedPoint ?? null}
               onOpenCameras={openPoint}
               onSelectPoint={setPointOpen}
@@ -169,6 +216,7 @@ export function LiveMonitorPage() {
               <span><i style={{ background: '#16A34A' }} />En tiempo</span>
               <span><i style={{ background: '#F59E0B' }} />Demorado</span>
               <span><i style={{ background: '#DC2626' }} />Muy demorado</span>
+              <span>Sobre la línea: en tránsito al punto siguiente (borde punteado = destino estimado)</span>
               <span>Clic en un camión para seguirlo · clic en un punto para ver cámaras, actividad de hoy y últimos 7 días</span>
             </div>
           </div>
@@ -177,18 +225,19 @@ export function LiveMonitorPage() {
             {followed ? (
               <TruckCard
                 plate={followed}
+                item={followedItem}
                 row={followedRow}
                 journey={journey}
                 pointLabel={pointLabel}
                 site={site}
                 onClose={() => setFollowed(null)}
                 onChanged={() => setJourneyTick(t => t + 1)}
-                onDiscarded={() => { setFollowed(null); setTrucks(list => list.filter(t => t.plate !== followed)) }}
+                onDiscarded={() => { setFollowed(null); setTrucks(list => list.filter(t => t.plate !== followedTf)) }}
               />
             ) : (
               <>
                 <div className="lm-tabs" role="tablist">
-                  {([['camiones', `Camiones ${trucks.length}`], ['camaras', 'Cámaras'], ['capturas', 'Capturas']] as const).map(([id, label]) =>
+                  {([['camiones', `Camiones ${plantTrucks.length}`], ['camaras', 'Cámaras'], ['capturas', 'Capturas']] as const).map(([id, label]) =>
                     <button key={id} type="button" role="tab" aria-selected={panel === id} onClick={() => setPanel(id)}>{label}</button>)}
                 </div>
                 {panel === 'camiones' ? <div className="lm-panel">
@@ -204,17 +253,27 @@ export function LiveMonitorPage() {
                     <input placeholder="Buscar patente" aria-label="Buscar patente" value={search} onChange={e => setSearch(e.target.value)} />
                     {zoneFilter ? <button type="button" onClick={() => setZoneFilter(null)}>{zones.find(z => z.id === zoneFilter)?.label ?? zoneFilter} ×</button> : null}
                   </div>
-                  {trucksError ? <p className="lm-error">No se pudo actualizar la lista: {trucksError}</p> : null}
+                  <div className="lm-srcfilter" role="group" aria-label="Fuente">
+                    {([['todas', `Todos ${plantTrucks.length}`], ['ambas', `En ambas ${counts.ambas}`], ['sgc', `Solo ${SOURCE_SGC} ${counts.sgc}`], ['tf', `Solo cámaras ${counts.tf}`]] as const).map(([id, label]) =>
+                      <button key={id} type="button" aria-pressed={sourceFilter === id} onClick={() => setSourceFilter(id)}>{label}</button>)}
+                  </div>
+                  {trucksError ? <p className="lm-error">{SOURCE_TF}: no se pudo actualizar la lista ({trucksError})</p> : null}
+                  {balanza?.status.error || balanzaError ? <p className="lm-error">{SOURCE_SGC} sin conexión{balanza?.status.lastOkAt ? ` · datos de las ${hhmm(balanza.status.lastOkAt)}` : ''}</p> : null}
                   <ol className="lm-trucks">
-                    {visibleTrucks.map(t => <li key={t.plate}>
+                    {visibleTrucks.map(t => <li key={`${t.plate}-${t.sgc?.nroIngreso ?? t.tf?.plate}`}>
                       <button type="button" onClick={() => follow(t.plate)}>
                         <i className={`lm-dot lm-dot--${t.status}`} />
                         <strong>{t.plate}</strong>
-                        <span>{pointLabel.get(pointOfSector.get(t.sectorCode) ?? '') ?? t.sectorCode}</span>
-                        <em>{minutes(t.dwellSectorMin)}</em>
+                        <span>
+                          {t.tf ? placeText(t.tf) : `Sin cámara · ingresó ${hhmm(t.sgc?.ingresoAt ?? '')}`}
+                          {t.sgc ? <small> · {t.sgc.product}</small> : null}
+                          {t.sgcClosed ? <small className="lm-warn"> · {SOURCE_SGC}: salió {hhmm(t.sgcClosed.salidaAt ?? '')}</small> : null}
+                        </span>
+                        <SourceTags t={t} />
+                        <em>{minutes(t.tf?.dwellSectorMin ?? t.dwellPlantMin)}</em>
                       </button>
                     </li>)}
-                    {!visibleTrucks.length ? <li className="lm-empty">{trucks.length ? 'Ningún camión con ese filtro.' : 'Sin camiones en planta.'}</li> : null}
+                    {!visibleTrucks.length ? <li className="lm-empty">{plantTrucks.length ? 'Ningún camión con ese filtro.' : 'Sin camiones en planta.'}</li> : null}
                   </ol>
                 </div> : null}
                 {panel === 'camaras' ? <div className="lm-panel">
@@ -242,9 +301,52 @@ export function LiveMonitorPage() {
 
 /** Ficha del camión seguido: dónde está, cuánto lleva, por dónde pasó y qué sigue. */
 /** Ficha del camión seguido: última captura (foto), pasos con su foto y recuperación de lecturas anteriores. */
-function TruckCard({ site, plate, row, journey, pointLabel, onClose, onChanged, onDiscarded }: {
+/** Chips de fuente: qué sistema registra hoy a este camión. */
+function SourceTags({ t }: { t: PlantTruck }) {
+  return <span className="lm-srctags" aria-label="Fuentes">
+    <b className={t.tf ? 'is-on' : ''} title={t.tf ? `${SOURCE_TF}: lo ven las cámaras` : `${SOURCE_TF}: sin lectura`}>TF</b>
+    <b className={t.sgc ? 'is-on' : t.sgcClosed ? 'is-warn' : ''} title={t.sgc ? `${SOURCE_SGC}: ingreso ${t.sgc.nroIngreso}` : t.sgcClosed ? `${SOURCE_SGC}: ya salió` : `${SOURCE_SGC}: sin ingreso`}>{SOURCE_SGC}</b>
+  </span>
+}
+
+const kgText = (kg: number | null) => (kg == null ? '—' : `${(kg / 1000).toLocaleString('es-AR', { maximumFractionDigits: 1 })} t`)
+const MATCH_TEXT = { patente: 'misma patente', acoplado: 'la cámara leyó el acoplado', parecida: 'patente parecida (una letra distinta)' } as const
+
+/** Lecturas de cámara del recorrido (sin los pasos deducidos, que no tienen hora). */
+const readSteps = (journey: TruckJourney | null) => (journey?.timeline ?? []).filter((r): r is TruckTimelineRow & { at: string } => r.step !== 'deducido' && r.at != null)
+
+/** Qué dice cada fuente del camión seguido, citada. */
+function SourcesBlock({ item, journey }: { item: PlantTruck | null; journey: TruckJourney | null }) {
+  const sgc = item?.sgc ?? item?.sgcClosed ?? null
+  const steps = readSteps(journey)
+  const first = steps[0]
+  const last = steps[steps.length - 1]
+  return <section className="lm-sources">
+    <h3>Fuentes</h3>
+    <div className={`lm-source-row${item?.tf ? '' : ' is-off'}`}>
+      <b>{SOURCE_TF} · cámaras</b>
+      {item?.tf ? <span>
+        {first ? `Primera lectura ${hhmm(first.at)}` : 'Leyendo recorrido…'}{last ? ` · última ${hhmm(last.at)}` : ''}
+        {item.tf.plate !== item.plate ? ` · leída como ${item.tf.plate}` : ''}
+      </span> : <span>Sin lecturas de cámara hoy.</span>}
+    </div>
+    <div className={`lm-source-row${sgc ? '' : ' is-off'}`}>
+      <b>{SOURCE_SGC} · balanza Vicentin</b>
+      {sgc ? <span>
+        Ingreso {sgc.nroIngreso} · entró {hhmm(sgc.ingresoAt)}{sgc.salidaAt ? ` · salió ${hhmm(sgc.salidaAt)}` : ''} · planta {sgc.plantName}<br />
+        {sgc.product}{sgc.intent ? ` · vino a ${sgc.intent === 'carga' ? 'cargar' : 'descargar'}` : ''} · acoplado {sgc.trailer ?? '—'}<br />
+        Bruto {kgText(sgc.brutoKg)} · Tara {kgText(sgc.taraKg)} · Neto {kgText(sgc.netoKg)}
+        {item?.match && item.match !== 'patente' && item.tf ? <><br /><small>Cruce: {MATCH_TEXT[item.match]}</small></> : null}
+      </span> : <span>Sin ingreso en {SOURCE_SGC}: no pasó por balanza en las últimas 24 h.</span>}
+    </div>
+    {item?.sgcClosed && item.tf ? <p className="lm-card__alert">{SOURCE_SGC} registra la salida a las {hhmm(item.sgcClosed.salidaAt ?? '')}, pero las cámaras lo siguen viendo.</p> : null}
+  </section>
+}
+
+function TruckCard({ site, plate, item, row, journey, pointLabel, onClose, onChanged, onDiscarded }: {
   site: Site
   plate: string
+  item: PlantTruck | null
   row: TruckRow | null
   journey: TruckJourney | null
   pointLabel: Map<string, string>
@@ -253,46 +355,54 @@ function TruckCard({ site, plate, row, journey, pointLabel, onClose, onChanged, 
   onDiscarded: () => void
 }) {
   const status = (journey?.status ?? row?.status ?? 'normal') as TruckRow['status']
-  const steps = journey?.timeline ?? []
+  const timeline = journey?.timeline ?? []
+  const steps = readSteps(journey)
   const last = steps[steps.length - 1]
   const startsMidway = steps.length > 0 && !ENTRY_POINTS.has(steps[0].logicalSector ?? '')
+  const sgc: BalanzaRow | null = item?.sgc ?? null
+  const sgcOnly = Boolean(item && !item.tf)
+  const tfPlate = row?.plate ?? plate
   return (
     <div className="lm-card">
       <header>
         <div>
           <span className="lm-card__eyebrow">Siguiendo</span>
           <h2>{plate}</h2>
-          <p>{journey?.circuitLabel ?? row?.circuitLabel ?? 'Circuito sin confirmar'}{journey?.provisional ? ' · provisorio' : ''}</p>
+          <p>{journey?.circuitLabel ?? row?.circuitLabel ?? 'Circuito sin confirmar'}{journey?.provisional ? ' · provisorio' : ''}{sgc ? ` · ${sgc.product}` : ''}</p>
         </div>
         <button type="button" onClick={onClose} aria-label="Dejar de seguir">Dejar de seguir</button>
       </header>
       <div className={`lm-card__state lm-card__state--${status}`}>
         <i className={`lm-dot lm-dot--${status}`} />
         <div>
-          <strong>{journey?.sectorLabel ?? row?.sectorCode ?? '—'}</strong>
-          <span>{STATUS_TEXT[status] ?? status} · {minutes(journey?.dwellSectorMin ?? row?.dwellSectorMin)} en este punto</span>
+          <strong>{sgcOnly ? 'En planta, sin lectura de cámara' : journey?.sectorLabel ?? row?.sectorCode ?? '—'}</strong>
+          <span>{sgcOnly ? `Dato de ${SOURCE_SGC}: entró ${hhmm(sgc?.ingresoAt ?? '')}` : `${STATUS_TEXT[status] ?? status} · ${minutes(journey?.dwellSectorMin ?? row?.dwellSectorMin)} en este punto`}</span>
         </div>
       </div>
       <dl className="lm-card__facts">
-        <div><dt>En planta</dt><dd>{minutes(journey?.dwellPlantMin ?? row?.dwellPlantMin)}</dd></div>
+        <div><dt>En planta</dt><dd>{minutes(sgc ? sgc.minutes : journey?.dwellPlantMin ?? row?.dwellPlantMin)}<small>{sgc ? SOURCE_SGC : SOURCE_TF}</small></dd></div>
+        <div><dt>Ingreso</dt><dd>{sgc ? hhmm(sgc.ingresoAt) : steps[0] ? hhmm(steps[0].at) : '—'}<small>{sgc ? SOURCE_SGC : steps[0] ? SOURCE_TF : ''}</small></dd></div>
         <div><dt>Próximo</dt><dd>{journey?.nextExpectedLabel ?? row?.nextExpectedLabel ?? '—'}</dd></div>
-        <div><dt>Última lectura</dt><dd>hace {minutes(journey?.minutesSinceLastDetection ?? row?.minutesSinceLastDetection)}</dd></div>
+        <div><dt>Última lectura</dt><dd>{sgcOnly ? 'Sin cámara' : `hace ${minutes(journey?.minutesSinceLastDetection ?? row?.minutesSinceLastDetection)}`}</dd></div>
       </dl>
       {journey?.anomaly ? <p className="lm-card__alert">{journey.anomaly.rule}</p> : null}
-      <DiscardTruck site={site} plate={plate} onDone={onDiscarded} />
+      <SourcesBlock item={item} journey={journey} />
+      {sgcOnly ? <CrossPlant key={`cross-${plate}`} site={site} plate={plate} /> : <>
+      <DiscardTruck site={site} plate={tfPlate} onDone={onDiscarded} />
 
       <h3>Última captura</h3>
-      {last?.deviceCode ? <CaptureShot key={`${last.deviceCode}-${last.at}`} device={last.deviceCode} at={last.at} plate={plate} caption={`${pointLabel.get(last.logicalSector ?? '') ?? last.label} · ${hhmm(last.at)}`} /> : <p className="lm-empty">{journey ? 'Sin cámara registrada en el último paso.' : 'Cargando…'}</p>}
+      {last?.deviceCode ? <CaptureShot key={`${last.deviceCode}-${last.at}`} device={last.deviceCode} at={last.at} plate={tfPlate} caption={`${pointLabel.get(last.logicalSector ?? '') ?? last.label} · ${hhmm(last.at)}`} /> : <p className="lm-empty">{journey ? 'Sin cámara registrada en el último paso.' : 'Cargando…'}</p>}
 
-      <CrossPlant key={`cross-${plate}`} site={site} plate={plate} />
+      <CrossPlant key={`cross-${plate}`} site={site} plate={tfPlate} />
 
       <h3>Recorrido en {SITE_NAME[site]}</h3>
       {journey ? <ol className="lm-steps">
-        {steps.map((r, i) => <StepRow key={`${r.at}-${i}`} step={r} plate={plate} label={pointLabel.get(r.logicalSector ?? '') ?? r.label} current={i === steps.length - 1} />)}
+        {timeline.map((r, i) => <StepRow key={`${r.at ?? r.logicalSector}-${i}`} step={r} plate={tfPlate} label={pointLabel.get(r.logicalSector ?? '') ?? r.label} current={i === timeline.length - 1} />)}
         {journey.nextExpectedLabel ? <li className="is-next"><time>…</time><div><strong>{journey.nextExpectedLabel}</strong><span>Próximo punto esperado</span></div></li> : null}
       </ol> : <p className="lm-empty">Cargando recorrido…</p>}
 
-      {journey ? <Predecessors key={plate} site={site} plate={plate} autoOpen={startsMidway} firstLabel={steps[0] ? (pointLabel.get(steps[0].logicalSector ?? '') ?? steps[0].label) : null} reference={steps[0]?.deviceCode ? { device: steps[0].deviceCode, at: steps[0].at, label: pointLabel.get(steps[0].logicalSector ?? '') ?? steps[0].label } : null} onChanged={onChanged} /> : null}
+      {journey ? <Predecessors key={plate} site={site} plate={row?.plate ?? plate} autoOpen={startsMidway} firstLabel={steps[0] ? (pointLabel.get(steps[0].logicalSector ?? '') ?? steps[0].label) : null} reference={steps[0]?.deviceCode ? { device: steps[0].deviceCode, at: steps[0].at, label: pointLabel.get(steps[0].logicalSector ?? '') ?? steps[0].label } : null} onChanged={onChanged} /> : null}
+      </>}
     </div>
   )
 }
@@ -391,12 +501,24 @@ function CaptureShot({ device, at, plate, caption }: { device: string; at: strin
 /** Paso del recorrido con su foto a pedido. */
 function StepRow({ step, plate, label, current }: { step: TruckJourney['timeline'][number]; plate: string; label: string; current: boolean }) {
   const [open, setOpen] = useState(false)
+  if (step.step === 'deducido' || !step.at) {
+    return (
+      <li className="is-deduced">
+        <time>—</time>
+        <div>
+          <strong>{label} <em className="lm-step-tag lm-step-tag--deducido">deducido</em></strong>
+          <span>Sin lectura: el camión se leyó antes y después y todo circuito posible pasa por acá</span>
+        </div>
+      </li>
+    )
+  }
   return (
     <li className={current ? 'is-current' : ''}>
       <time>{hhmm(step.at)}</time>
       <div>
-        <strong>{label}</strong>
-        {step.legFromPreviousMin != null ? <span>{minutes(step.legFromPreviousMin)} desde el paso anterior</span> : <span>Primera lectura</span>}
+        <strong>{label}{step.step === 'corregido' ? <> <em className="lm-step-tag lm-step-tag--corregido" title={step.identificationLevel === 'confirmado' ? 'Asignada por operaciones' : 'Asignada automáticamente'}>corregido</em></> : null}</strong>
+        {step.legFromPreviousMin != null ? <span>{minutes(step.legFromPreviousMin)} desde la lectura anterior</span> : <span>Primera lectura</span>}
+        {step.step === 'corregido' && step.readPlate ? <span>La cámara leyó {step.readPlate}</span> : null}
         {open && step.deviceCode ? <CaptureShot device={step.deviceCode} at={step.at} plate={plate} caption={`${label} · ${hhmm(step.at)}`} /> : null}
       </div>
       {step.deviceCode ? <button type="button" aria-pressed={open} onClick={() => setOpen(o => !o)} aria-label={open ? 'Ocultar foto' : `Ver foto en ${label}`}>{open ? '×' : '📷'}</button> : null}
@@ -464,7 +586,9 @@ function Predecessors({ site, plate, autoOpen, firstLabel, reference, onChanged 
           <ol className="lm-steps">{t.reads.map((r, i) => <ReadRow key={`${r.at}-${i}`} read={r} plate={plate} />)}</ol>
         </div>)}
       </div> : null}
-      {data?.linked.length ? <ul className="lm-recover__linked">{data.linked.map(l => <li key={l.journeyKey}>Vinculado: viaje {l.journeyKey.slice(0, 8)}… <button type="button" disabled={busy === l.journeyKey} onClick={() => void link({ journeyKey: l.journeyKey, journeyUid: null }, 'unlink').catch(() => undefined)}>Desvincular</button></li>)}</ul> : null}
+      {data?.linked.length ? <ul className="lm-recover__linked">{data.linked.map(l => l.auto
+        ? <li key={l.journeyKey} title={l.reason}>Unido solo: lectura {l.readPlate} ({Math.round((l.probability ?? 0) * 100)} %) <button type="button" disabled={busy === l.journeyKey} onClick={() => void link({ journeyKey: l.journeyKey, journeyUid: null, readPlate: l.readPlate }, 'dismiss').then(onChanged).catch(() => undefined)}>No es</button></li>
+        : <li key={l.journeyKey}>Vinculado: viaje {l.journeyKey.slice(0, 8)}… <button type="button" disabled={busy === l.journeyKey} onClick={() => void link({ journeyKey: l.journeyKey, journeyUid: null }, 'unlink').catch(() => undefined)}>Desvincular</button></li>)}</ul> : null}
       {!data && !error ? <p className="lm-empty">Buscando…</p> : null}
       {data && !data.candidates.length ? <p className="lm-empty">Ninguna lectura de otra patente encaja antes en las últimas {hours} h. Probá ir más atrás.</p> : null}
       <ol className="lm-recover__list">

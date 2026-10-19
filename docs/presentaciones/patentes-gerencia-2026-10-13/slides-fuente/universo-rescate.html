@@ -1,0 +1,41 @@
+<section id="universo-rescate" data-transition="fade" style="background:#F5F4EE;color:#17302A;font-family:'Plus Jakarta Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:36px">
+<div style="position:absolute;left:128px;top:72px;width:48px;height:8px;background:#1F6E4A;border-radius:4px"></div>
+<div style="position:absolute;left:184px;top:72px;width:24px;height:8px;background:#6B46A8;border-radius:4px"></div>
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#1F6E4A">Algoritmo · Un camión que no estaba en la lista</p>
+<h2 style="font-size:56px;font-weight:800;line-height:1.12;width:1664px">Si aparece uno nuevo, se busca hacia atrás una lectura mal hecha</h2>
+</div>
+<div style="display:flex;gap:16px;align-items:stretch">
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#DCE7F3;border:3px solid #2E6DA4;border-radius:12px;padding:20px 24px">
+<p style="font-size:24px;font-weight:700;color:#1F4F7A">1 · CALADA, 15:37</p>
+<p style="font-size:26px;line-height:1.35">Lee <b style="font-family:'IBM Plex Mono', Courier New, monospace">FHN229</b>: no está en el universo conocido</p>
+</div>
+<p style="font-size:48px;font-weight:800;color:#6B46A8;align-self:center">→</p>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#FDFCF9;border:3px dashed #6B46A8;border-radius:12px;padding:20px 24px">
+<p style="font-size:24px;font-weight:700;color:#6B46A8">2 · SE BUSCA HACIA ATRÁS</p>
+<p style="font-size:26px;line-height:1.35">Lecturas de Preingreso de las últimas horas que no se asignaron a ningún camión</p>
+</div>
+<p style="font-size:48px;font-weight:800;color:#6B46A8;align-self:center">→</p>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#F6E3DF;border:3px solid #B3412E;border-radius:12px;padding:20px 24px">
+<p style="font-size:24px;font-weight:700;color:#8E2F20">3 · APARECE, 14:57</p>
+<p style="font-size:26px;line-height:1.35"><b style="font-family:'IBM Plex Mono', Courier New, monospace">FMN229</b>: una letra distinta, H leída como M</p>
+</div>
+<p style="font-size:48px;font-weight:800;color:#6B46A8;align-self:center">→</p>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#DDEBE2;border:3px solid #1F6E4A;border-radius:12px;padding:20px 24px">
+<p style="font-size:24px;font-weight:700;color:#1F6E4A">4 · SE CORRIGE</p>
+<p style="font-size:26px;line-height:1.35">Preingreso pasa a FHN229 y el recorrido queda completo</p>
+</div>
+</div>
+<div style="display:flex;gap:40px;align-items:center">
+<img src="img/ej-fhn.png" alt="Izquierda: en Preingreso la patente se ve FHN 229 pero la cámara leyó FMN229. Derecha: el mismo Mercedes blanco en Calada, leído FHN229" style="width:1000px;height:325px;object-fit:cover;border-radius:12px">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px">
+<p style="font-size:26px;line-height:1.35">Una letra distinta. Blanco y Mercedes en las dos fotos.</p>
+<div style="display:flex;flex-direction:column;gap:6px;background:#143D2E;padding:16px 22px;border-radius:10px">
+<p style="font-size:24px;color:#CFE0D7">Paso <b style="color:#7CC29C">×1</b> · Patente <b style="color:#C9B6EE">×0,26</b> · Atributos <b style="color:#E3B95E">×6,26</b></p>
+<p style="font-size:30px;font-weight:700;color:#EEF3EF">P = 1,65 ÷ (1,65 + 0,20) = <span style="color:#7CC29C">89 %</span></p>
+</div>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5F6B66"><b style="color:#6B46A8">NODO SUR</b> · 0</p>
+<aside>Caso real, Ricardone, 09/10. Preingreso leyó FMN229 a las 14:57; esa lectura no se repite en ningún otro punto. Calada leyó FHN229 a las 15:37, y después lo leyeron Playa 3 (15:52) y la balanza de egreso (20:44), así que FHN229 es la patente real. Si la búsqueda hacia atrás no encuentra nada parecido, el camión entra como nuevo y su paso anterior queda «deducido por circuito».</aside>
+</section>

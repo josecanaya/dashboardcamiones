@@ -1,0 +1,106 @@
+{
+ "criterio": "ver cabecera de scripts/estado-planta/seguridad-doble-ciclo.py",
+ "dobleCiclo": [
+  {
+   "patente": "BWA132",
+   "dia": "09/10",
+   "opsExcel": 1,
+   "producto": [
+    "SOJA"
+   ],
+   "excel": [
+    "soja · ingreso 23:11 · salida 00:36 · VOLCABLE_PTO_3"
+   ],
+   "minPuerto1": 18,
+   "hastaDescargar": 352,
+   "grupos": [
+    {
+     "planta": "ric",
+     "items": [
+      {
+       "hora": "18:45",
+       "punto": "Pre-ingreso",
+       "dev": "RicPreIngInFr"
+      },
+      {
+       "hora": "20:07",
+       "punto": "Calada",
+       "dev": "RicCal03"
+      },
+      {
+       "hora": "20:17",
+       "punto": "Egreso",
+       "dev": "RicEgrCamFrente"
+      }
+     ]
+    },
+    {
+     "planta": "sl",
+     "items": [
+      {
+       "hora": "20:28",
+       "punto": "Ingreso",
+       "dev": "SLZIngCamFrente"
+      },
+      {
+       "hora": "20:31",
+       "punto": "Balanza",
+       "dev": "SLZBalIngFte"
+      },
+      {
+       "hora": "20:46",
+       "punto": "Egreso",
+       "dev": "SLZSalidaC1Fte"
+      }
+     ]
+    },
+    {
+     "planta": "ric",
+     "items": [
+      {
+       "hora": "23:06",
+       "punto": "Ingreso",
+       "dev": "RicIngCamFrente"
+      },
+      {
+       "hora": "23:09",
+       "punto": "Pre-ingreso",
+       "dev": "RicPreIngInFr"
+      },
+      {
+       "hora": "23:31",
+       "punto": "Calada",
+       "dev": "RicCal03"
+      },
+      {
+       "hora": "23:39",
+       "punto": "Egreso",
+       "dev": "RicEgrCamFrente"
+      }
+     ]
+    },
+    {
+     "planta": "sl",
+     "items": [
+      {
+       "hora": "23:51",
+       "punto": "Ingreso",
+       "dev": "SLZIngCamFrente"
+      },
+      {
+       "hora": "00:18",
+       "punto": "Volcable 3",
+       "dev": "SLZVolcableC3"
+      },
+      {
+       "hora": "00:37",
+       "punto": "Egreso",
+       "dev": "SLZSalidaC1Fte"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "primerIngresoPuerto": []
+}

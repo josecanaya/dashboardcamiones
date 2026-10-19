@@ -199,6 +199,93 @@ function motorAugment(P, dayTrucks, pct, off = 6) {
   return {P2: {...P, ric, port}, trucks, nExtra, port0: P.port.length};
 }
 
+// ---------- Escenario propio: un día armado desde cero, sin ningún día real ----------
+// EST = planta estándar (escenarios/_estandar.json, scripts/simulador/planta_estandar.mjs). spec = el escenario:
+//   llegadas: {soja, girasol, liquido} camiones a Ricardone en el día; ventanas: {producto: [12 números]} cuántos en
+//   cada ventana de 2 h (si no está, el total se reparte parejo); espera0: {producto: n} esperando en Playa 1 a las
+//   00 h; flota: {pellet, soja} camiones de transile; flotaIni / flotaHoras: desde cuándo y cuántas horas trabaja.
+// Todos los camiones usan los tiempos estándar de cada tramo (los mismos para todos) y la planta arranca en la
+// configuración estándar; desde ahí solo cambia con las jugadas. Devuelve el motor preparado y los camiones (con el
+// formato de days/<día>.json) para que la consola, el mapa y el cierre funcionen igual que con un día real.
+function motorSintetico(EST, spec) {
+  const T = EST.tramos, H = EST.H, trucks = [], ric = [], port = [];
+  const dest = {soja: 'S', girasol: 'R', liquido: ''}, tn = p => (EST.tons || {})[p] || 30;
+  const llegar = (prod, ing, tag) => {
+    const i = trucks.length, pre = ing + T.walk, cal = pre + 1, d = dest[prod];
+    const r = {i, ing, pre, cal, s2: cal + T.demora, pi: -1, dev: -1, dest: d, prod, tons: tn(prod), walk: T.walk, demora: T.demora,
+               route: T.route, idx: {[N_ING_RIC]: 0, [N_PRE]: 1, [N_CAL]: 2, [N_SAL2]: -1}};
+    const reads = [[N_ING_RIC, ing, -1], [N_PRE, pre, -1], [N_CAL, cal, -1]];
+    if (d === 'S') {
+      const t20 = r.s2 + T.route, t22 = t20 + 5, t25 = t22 + TRAMO.balVolc, t28 = t25 + 11.7, t30 = t28 + T.exitWalk;
+      r.pi = port.length; r.idx[N_SAL2] = 3;
+      reads.push([N_SAL2, r.s2, -1], [N_ING_SL, t20, -1], [N_BAL_SL, t22, -1], [N_VOLC, t25, -1], [N_BAL_EGR, t28, -1], [N_EGR_SL, t30, -1]);
+      port.push({i, t20, t22, t25, t28, t30, ri: ric.length, prod, tons: r.tons, transile: false, exitWalk: T.exitWalk,
+                 idx: {[N_ING_SL]: 4, [N_BAL_SL]: 5, [N_VOLC]: 6, [N_BAL_EGR]: 7, [N_EGR_SL]: 8}});
+    } else if (d === 'R') {
+      Object.assign(r, {tBalRic: cal + T.walkBal, walkBal: T.walkBal});
+      r.tDesc = r.tBalRic + 10; r.tBalEgrRic = r.tDesc + 35;
+      reads.push([N_BAL_RIC, r.tBalRic, -1], [14, r.tDesc, 8], [N_BAL_EGR_RIC, r.tBalEgrRic, -1]);
+      Object.assign(r.idx, {[N_BAL_RIC]: 3, desc: 4, [N_BAL_EGR_RIC]: 5});
+    }
+    ric.push(r);
+    trucks.push([`${tag}-${String(i + 1).padStart(3, '0')}`, prod, r.tons, reads, 0, d, d ? r.tons : 0]);
+  };
+  for (const prod of ['soja', 'girasol', 'liquido']) {
+    const n0 = Math.max(0, Math.round((spec.espera0 || {})[prod] || 0));  // ya esperando en Playa 1 a las 00 h
+    for (let q = 0; q < n0; q++) llegar(prod, -60 + q * 60 / Math.max(1, n0), 'ESP');
+    const tot = Math.max(0, Math.round((spec.llegadas || {})[prod] || 0)), v = (spec.ventanas || {})[prod];
+    const porV = v && v.length === 12 ? v.map(x => Math.max(0, Math.round(x))) : Array.from({length: 12}, (_, k) => Math.floor((k + 1) * tot / 12) - Math.floor(k * tot / 12));
+    porV.forEach((nv, k) => { for (let q = 0; q < nv; q++) llegar(prod, 120 * k + (q + 0.5) * 120 / nv, 'ESC'); });
+  }
+  // flota de transile: arranca a cargar en Ricardone a flotaIni, uno cada 5 min, y trabaja flotaHoras
+  const fleet = {}, carga = EST.carga || {};
+  for (const prod of ['pellet', 'soja']) {
+    const n = Math.max(0, Math.round((spec.flota || {})[prod] || 0)), C = carga[prod];
+    if (!n || !C) continue;
+    const ini = prod === 'pellet' ? (spec.flotaIni ?? 0) : (spec.flotaIniSoja ?? spec.flotaIni ?? 0), horas = prod === 'pellet' ? (spec.flotaHoras ?? 24) : 24;
+    fleet[prod] = Array.from({length: n}, (_, j) => {
+      const i = trucks.length;
+      trucks.push([`TR${prod === 'pellet' ? 'P' : 'S'}-${String(j + 1).padStart(3, '0')}`, prod, tn(prod), [], 1, 'S', tn(prod)]);
+      return {i, prod, tons: tn(prod), first: ini + j * 5 + C.toSl + C.inFix + 60 / C.cap, until: ini + horas * 60, vuelta: C.back + C.inFix + C.toSl, viajesReal: 0};
+    });
+  }
+  // perfiles por hora (solo para las perillas de la consola): la planta estándar, igual todo el día
+  const pl = EST.planta, sum = (ls, n) => ls.slice(0, n).filter(l => l.on).reduce((a, l) => a + l.rate, 0), nOn = (ls, n) => ls.slice(0, n).filter(l => l.on).length;
+  const cal = Array(H).fill(sum(pl.cal, 6)), calles = Array(H).fill(Math.max(1, nOn(pl.cal, 6))), volc = Array(H).fill(sum(pl.volc, 5)), vact = Array(H).fill(nOn(pl.volc, 5));
+  // turnos reales del puerto (planta_estandar.mjs): paradas de los cambios de turno de 06 y 18 h y, en cada hora,
+  // el ritmo de las volcables contra el de las 08–17 h (de noche rinden la mitad aunque haya cola)
+  // Con OEE medido (EST.oee), cada volcable trabaja a su capacidad teórica × rendimiento y para lo que le falta de
+  // disponibilidad (de día y de noche): eso ya incluye los cambios de turno, así que no se suman las paradas ni el factor.
+  const oee = EST.oee || null;
+  const prm = oee ? {...EST.prm, paradas: []} : EST.turnos ? {...EST.prm, paradas: EST.turnos.paradas} : EST.prm;
+  const P = {prm, oee, turnos: !oee && EST.turnos ? EST.turnos.factor : null, T0: EST.T0, T_END: EST.T_END, h0: EST.h0, cal, calles, volc, vact, ric, port, nTrucks: trucks.length,
+             calOrder: Array.from({length: H}, () => [0, 1, 2, 3, 4, 5]), volcOrder: Array.from({length: H}, () => [0, 1, 2, 3, 4]),
+             volcRate: pl.volc.map((l, i) => oee ? oee[i].teorica * oee[i].rend : l.rate), rdDay: pl.rd.map(l => ({used: l.on, prods: [...l.prods]})), calLiqUsed: pl.cal[6].on, calLiqRate: pl.cal[6].rate,
+             fleet, fleetPass: new Set(), carga, volcFactor: 1, sintetico: true,
+             volcProds: pl.volc.map((l, i) => [...new Set([...l.prods, ...PORT_PRODS[i]])])};
+  return {P, trucks};
+}
+
+// Planta estándar congelada desde el arranque del escenario (t = T0): no cambia por hora; solo con jugadas. Si el
+// escenario trae un producto que ningún canal abierto recibe (por ejemplo, flota de pellet con V4 cerrado), se abre el
+// primer canal que lo acepta, así el punto de partida no deja productos varados.
+function motorPlantaEscenario(EST, P, spec) {
+  const cp = x => x.map(l => ({...l, prods: [...l.prods]})), pl = EST.planta;
+  const F = {t: P.T0, cal: cp(pl.cal), volc: cp(pl.volc).map((l, i) => P.oee ? {...l, rate: Math.round(P.oee[i].teorica * P.oee[i].rend * 10) / 10} : l), rd: cp(pl.rd), st: Object.fromEntries(Object.entries(pl.st).map(([k, s]) => [k, {...s}]))};
+  for (const [p, c] of Object.entries(P.carga || {})) if (F.st['carga' + p]) F.st['carga' + p].rate = c.cap;
+  const asegurar = (lanes, prod, acepta) => {
+    if (lanes.some(l => l.on && l.prods.includes(prod))) return;
+    const i = lanes.findIndex((l, k) => !l.on && acepta(k).includes(prod)), j = i >= 0 ? i : lanes.findIndex((l, k) => acepta(k).includes(prod));
+    if (j >= 0) Object.assign(lanes[j], {on: true, prods: [prod]});
+  };
+  const ll = spec.llegadas || {}, fl = spec.flota || {};
+  if (ll.soja || fl.soja) { asegurar(F.cal, 'soja', k => CAL_PRODS[k]); asegurar(F.volc, 'soja', k => PORT_PRODS[k]); }
+  if (ll.girasol) { asegurar(F.cal, 'girasol', k => CAL_PRODS[k]); asegurar(F.rd, 'girasol', k => RIC_DESC[k].prods); }
+  if (ll.liquido) asegurar(F.cal, 'liquido', k => CAL_PRODS[k]);
+  if (fl.pellet) asegurar(F.volc, 'pellet', k => PORT_PRODS[k]);
+  return F;
+}
+
 // Camiones que llegan a Ricardone en el día (00 a 24 h) y descargan, por producto. Sin la flota de transile, que se
 // maneja con su propia perilla (cantidad de camiones de la flota).
 function motorLlegadas(P, dayTrucks) {
@@ -284,6 +371,18 @@ function motorLaneState(M, K, t, paradas) {
   }
   for (const L of [...cal, ...volc, ...rd]) L.changing = L.changeUntil != null && t < L.changeUntil;
   for (const [s0, d, vs] of paradas || motorParadas(M, K)) if (s0 <= t && t < s0 + d) vs.forEach(i => volc[i].stop = true);
+  if (M.turnos && K.parada !== 'sin') { const f = M.turnos[((Math.floor(t / 60) % 24) + 24) % 24]; volc.forEach(v => v.turno = f); }
+  // OEE (escenario propio): ritmo = el del canal × perilla de rendimiento, nunca más que la teórica; en cada hora la
+  // volcable para (1 − disponibilidad) × 60 min, cada una en otro momento de la hora para que no paren todas juntas.
+  // Las perillas son multiplicadores sobre lo medido (K.oeeDisp, K.oeeRend; 1 = como opera hoy).
+  if (M.oee) {
+    const h = ((Math.floor(t / 60) % 24) + 24) % 24, noche = h < 7 || h >= 19, m = ((t % 60) + 60) % 60;
+    volc.forEach((v, i) => {
+      const o = M.oee[i], d = Math.min(1, (noche ? o.dispNoche : o.dispDia) * (K.oeeDisp ?? 1)), off = (i * 13) % 60;
+      v.rate = Math.min(o.teorica, v.rate * (K.oeeRend ?? 1));
+      if ((m - off + 60) % 60 < (1 - d) * 60) v.stop = true;
+    });
+  }
   return {cal, volc, rd, st};
 }
 
@@ -476,7 +575,7 @@ function motorRun(P, K) {
       if (!q.length || !ln.on || ln.stop || ln.changing || ln.rate <= 0 || !isFree(s)) return;
       const j = q.findIndex(x => ln.prods.includes(prodOfX(x)));
       if (j < 0) return;
-      start(s, q.splice(j, 1)[0], 60 / ln.rate);
+      start(s, q.splice(j, 1)[0], 60 / (ln.rate * (ln.turno ?? 1)));  // turno: ritmo de esa hora (escenario propio)
     });
   }
   function dispatch(t, L) {

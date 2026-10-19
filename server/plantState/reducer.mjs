@@ -1,8 +1,10 @@
 /**
  * Reductor puro de Plant State.
- * Entra: eventos + instante de corte. Sale: snapshot. Sin red, sin disco, sin Date.now().
+ * Entra: eventos + instante de corte. Sale: snapshot. Sin red, sin Date.now(); el único disco es el
+ * modelo de nodos (pasos deducidos), que se lee una vez y queda en caché.
  */
 
+import { withDeducedSequence } from './plateIdentification.mjs'
 import { getEventLiveInstantMs, formatArgentinaIsoFromMs } from './liveEventTime.mjs'
 import {
   EDGE_LABELS,
@@ -178,7 +180,7 @@ export function reducePlantState(events, nowMs, options = {}) {
 
     // Recorrido por zonas: se alinea la secuencia observada contra la plantilla del
     // circuito para saber, en cada lectura, cuál era el próximo punto esperado.
-    const match = matchCircuitByPrefix(buildLogicalSequence(withSector.map((r) => r.sector)))
+    const match = matchCircuitByPrefix(withDeducedSequence(buildLogicalSequence(withSector.map((r) => r.sector))))
     const seq = Array.isArray(match?.matchedSequence) ? match.matchedSequence : []
     let seqPos = 0
     let prevZoneId = null

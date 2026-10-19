@@ -34,6 +34,7 @@ import {
 } from './truckflow-raw-journey-stats.mjs'
 import { resolveRunDir, runDirExists, stableWindowRunId } from './etl-runs-layout.mjs'
 import { getSourceAvailability } from './sourceAvailability.mjs'
+import { createSgcSource } from './sgc/sgcSource.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = path.resolve(__dirname, '..')
@@ -268,6 +269,10 @@ app.post(['/api/analytics/compare', '/api/truckflow/analytics/compare'], async (
   try { res.json(await analytics.compareMetric(req.body)) } catch(error) { res.status(error.httpStatus ?? 500).json({ error:error.message }) }
 })
 const plantQueries = createPlantStateQueries(plantState)
+
+/** Balanza Vicentin (Oracle SGC): reemplaza al Excel de movimientos y alimenta En vivo. */
+const sgc = createSgcSource({ projectRoot: PROJECT_ROOT })
+app.use(sgc.router)
 
 app.get('/api/truckflow/live/plant-state', async (req, res) => {
   const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
@@ -1673,6 +1678,7 @@ app.listen(PORT, async () => {
   )
   // El video en vivo necesita go2rtc: lo levantamos acá para que no sea un
   // segundo proceso que alguien se tenga que acordar de arrancar.
+  sgc.start()
   const go2rtc = await ensureGo2rtc({ projectRoot: PROJECT_ROOT })
   console.info(`[truckflow-local] go2rtc: ${go2rtc.started ? 'levantado' : 'no levantado'} — ${go2rtc.reason}`)
 })

@@ -1,0 +1,33 @@
+{
+ "circuito": "Cargas de aceite a granel en la Terminal (Excel TERMINAL_EMBARQUE · EGRESO · ACEITE*, sin envasados ni patentes ficticias); circuito SL1",
+ "operaciones": 104,
+ "conTiempo": 104,
+ "p2pMedia": 322,
+ "p2pMediana": 280,
+ "productos": {
+  "ACEITE GIRASOL REFINADO": 40,
+  "ACEITE SOJA CRUDO DESGOMADO": 64
+ },
+ "tramos": {
+  "bal>carga": {
+   "media": 164,
+   "mediana": 133,
+   "n": 37
+  },
+  "carga>bals": {
+   "media": 38,
+   "mediana": 30,
+   "n": 9
+  },
+  "bals>sal": {
+   "media": 14,
+   "mediana": 4,
+   "n": 33
+  },
+  "ing>bal": {
+   "media": 90,
+   "mediana": 24,
+   "n": 83
+  }
+ }
+}

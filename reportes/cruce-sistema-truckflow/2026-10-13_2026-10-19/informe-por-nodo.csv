@@ -1,0 +1,20 @@
+﻿planta,nodo,nombre,camiones_sistema,leyo_pct,corregimos_pct,quedan_pct,quedan,sin_balanza,no_camion,camaras
+ricardone,S1,Preingreso,1051,40.4,7.4,52.1,548,131,39,RicPreIngEgFr RicPreIngEgTr RicPreIngInFr RicPreIngInTr
+ricardone,S3,Salida 2,972,42.7,7.6,49.7,483,208,15,RicEgrCamFrente RicEgrCamTraser
+ricardone,S4,Balanza,912,24.1,2.7,73.1,667,289,165,RicB1Egreso RicB1Ingreso RicB2Egreso RicB2Ingreso RicB3Egreso RicB3Ingreso
+ricardone,S2,Calada,729,53.1,6.2,40.7,297,80,5,RicCal01 RicCal02 RicCal03 RicCal04 RicCal05 RicCalLiq
+ricardone,S0,Ingreso,576,61.5,6.6,31.9,184,184,90,RicIngCamFrente RicIngCamTrasera
+ricardone,S6,Playa 3,320,34.4,3.4,62.2,199,19,14,RicS6Playa3
+ricardone,S9,Volcable,236,22.5,12.7,64.8,153,1,17,RicVolcable2
+ricardone,S8,Tolva silo Chief,77,6.5,29.9,63.6,49,2,10,RicS8CargaLinea1 RicS8CargaLinea2
+ricardone,S7,Silo Keppler,7,85.7,14.3,0,0,1,34,RicS7Carga RicS7DescLinea2
+ricardone,S5,Celda 16,0,0,0,0,0,2,0,RicC16Carga1 RicC16Carga2
+san_lorenzo,SL_S7,Egreso SL,5594,13.5,1.8,84.7,4740,1701,950,SLZSalidaC1Fte SLZSalidaC1Tras SLZSalidaC2Fte SLZSalidaC2Tras
+san_lorenzo,SL_S1,Balanza ingreso SL,1360,36,9.1,54.9,747,160,2,SLZBalIngFte SLZBalIngTras
+san_lorenzo,SL_S5,Balanza egreso SL,1085,32.9,6.5,60.6,658,291,105,SLZBalSC1Fte SLZBalSC1Tras SLZBalSC2Fte SLZBalSC2Tras
+san_lorenzo,SL_S0,Ingreso SL,922,47.6,4.8,47.6,439,142,0,SLZIngCamFrente SLZIngCamTrasera
+san_lorenzo,SL_S8,Renova,800,13.4,4.8,81.9,655,239,209,SLZTK400
+san_lorenzo,SL_S4,Volcables SL,409,46.5,7.8,45.7,187,43,2,SLZVolcableC1 SLZVolcableC2 SLZVolcableC3 SLZVolcableC4 SLZVolcableC5
+san_lorenzo,SL_S10,Carga OSL,174,44.8,40.8,14.4,25,4,60,RenCargFte RenCargTras RenDescFte RenDescTras
+san_lorenzo,SL_S2,Calada SL,142,76.1,2.8,21.1,30,23,14,SLZCalado
+san_lorenzo,SL_S6,Carga y descarga SL,17,17.6,5.9,76.5,13,36,56,SLZBalLiq1a SLZBalLiq1b SLZBalLiq2a SLZBalLiq2b

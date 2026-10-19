@@ -1,0 +1,20 @@
+<section id="candidatos-pelea" data-transition="fade" style="background:#F5F4EE;color:#17302A;font-family:'Plus Jakarta Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:32px">
+<div style="position:absolute;left:128px;top:72px;width:48px;height:8px;background:#1F6E4A;border-radius:4px"></div>
+<div style="position:absolute;left:184px;top:72px;width:24px;height:8px;background:#6B46A8;border-radius:4px"></div>
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#1F6E4A">Algoritmo · La ecuación aplicada</p>
+<h2 style="font-size:56px;font-weight:800;line-height:1.12;width:1664px">Calada leyó CFK008: así se calcula quién es</h2>
+</div>
+<table style="font-size:26px;width:1664px">
+<tr style="background:#143D2E"><th style="width:17%;color:#EEF3EF">Candidato</th><th style="width:12%;color:#7CC29C">Paso esperado</th><th style="width:20%;color:#C9B6EE">Patente</th><th style="width:31%;color:#E3B95E">Atributos</th><th style="width:10%;text-align:right;color:#EEF3EF">Puntaje</th><th style="width:10%;text-align:right;color:#EEF3EF">P</th></tr>
+<tr style="background:#DDEBE2"><td><b style="font-family:'IBM Plex Mono', Courier New, monospace">CFK006</b></td><td>Sí · ×1</td><td>5 de 6 iguales · ×0,26</td><td>Blanco ✓ ×1,21 · Scania ✓ ×4,75 · tamaño ✗ ×0,76 = <b>×4,36</b></td><td style="text-align:right;font-weight:700">1,15</td><td style="text-align:right;font-weight:800;color:#1F6E4A">85 %</td></tr>
+<tr><td style="font-family:'IBM Plex Mono', Courier New, monospace">IZX624 · AC475VF<br>AC463RB · AE260HD</td><td>Sí · ×1</td><td>Nada en común · ×0,0003</td><td>No se parecen a lo que leyó la cámara</td><td style="text-align:right">0,0003 c/u</td><td style="text-align:right">0 %</td></tr>
+<tr style="background:#EAE8DF"><td style="color:#2E6DA4"><b>Nuevo en el circuito</b></td><td>—</td><td>—</td><td>Peso en Calada: un camión que no estaba en la lista</td><td style="text-align:right;font-weight:700">0,20</td><td style="text-align:right;font-weight:700">15 %</td></tr>
+</table>
+<div style="display:flex;flex-direction:column;gap:12px;align-items:center;background:#143D2E;padding:28px 40px;border-radius:16px">
+<p style="font-size:40px;font-weight:700;color:#EEF3EF">P(CFK006) = 1,15 ÷ (1,15 + 0,20 + 0,001) = <span style="color:#7CC29C">85 %</span></p>
+<p style="font-size:26px;color:#CFE0D7">Puntaje = paso esperado × patente × atributos. P = su puntaje sobre la suma de todos.</p>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5F6B66"><b style="color:#6B46A8">NODO SUR</b> · 0</p>
+<aside>Caso real del 08/10. Atributos del DSS: la captura de Calada (CFK008) dio blanco, Scania, camión grande; CFK006 en Ingreso dio blanco, Scania, camión mediano. Factores medidos en 3.683 pasos del mismo camión (24–30/09): blanco coincide ×1,21, marca coincide ×4,75, tamaño distinto ×0,76. Patente: exp(8 × (parecido − 1)); 5 de 6 = 0,83 da 0,26; nada en común da 0,0003. «Otro vehículo» vale 0,20 cuando la lectura tiene formato de patente válida. Es la misma cuenta que usa el sistema (identificationEvidence.mjs).</aside>
+</section>

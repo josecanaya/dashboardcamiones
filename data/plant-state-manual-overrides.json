@@ -15,7 +15,7 @@
       "journeyUid": "76bb2914-7570-4db3-af9c-ef411b0903a2",
       "reason": "Tractor o maquinaria",
       "operator": null,
-      "updatedAt": "2026-10-08T15:02:18.067Z"
+      "updatedAt": "2026-10-15T19:08:12.548Z"
     },
     "DJG36": {
       "action": "remove",
@@ -29,10 +29,10 @@
     },
     "AE264XY": {
       "action": "remove",
-      "journeyUid": "9d4949c6-63f4-4cd4-8f73-e5ad884f1689",
-      "reason": "Vehículo de servicio (agua, comida, prestadores)",
+      "journeyUid": "b741bcd8-62f5-40f8-bcfb-4459abc70165",
+      "reason": "Auto particular / camioneta",
       "operator": null,
-      "updatedAt": "2026-10-07T18:49:55.882Z"
+      "updatedAt": "2026-10-19T19:21:43.680Z"
     },
     "924KHAT": {
       "action": "remove",
@@ -189,6 +189,69 @@
       "reason": "Auto particular / camioneta",
       "operator": null,
       "updatedAt": "2026-10-08T15:29:02.797Z"
+    },
+    "PQK206": {
+      "action": "remove",
+      "journeyUid": "7201b888-65b7-4613-bb0b-5c047c454b20",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-13T13:26:14.803Z"
+    },
+    "AA689GK": {
+      "action": "remove",
+      "journeyUid": "588a7b3a-88de-46a3-85ab-3b32cdc7dbd2",
+      "reason": "Vehículo de servicio (agua, comida, prestadores)",
+      "operator": null,
+      "updatedAt": "2026-10-13T13:26:22.198Z"
+    },
+    "AF566OP": {
+      "action": "remove",
+      "journeyUid": "3ce82cdc-c41a-4d73-9cd1-af8bdcb553cd",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-13T13:28:07.384Z"
+    },
+    "HVU577": {
+      "action": "remove",
+      "journeyUid": "78f69887-65f4-4121-88ee-0eb22a46c40c",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-13T13:27:06.823Z"
+    },
+    "AF881FZ": {
+      "action": "remove",
+      "journeyUid": "e57c9a08-2050-4501-aa5e-db812b60d7e2",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-13T13:27:18.712Z"
+    },
+    "KQG451": {
+      "action": "remove",
+      "journeyUid": "56c12791-5be3-4aed-846c-e4e716caf2c0",
+      "reason": "Vehículo de servicio (agua, comida, prestadores)",
+      "operator": null,
+      "updatedAt": "2026-10-13T13:27:28.443Z"
+    },
+    "AA101HW": {
+      "action": "remove",
+      "journeyUid": "2641cb86-0937-4f7f-9420-7d1f4546689e",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-13T13:27:47.285Z"
+    },
+    "JBF932": {
+      "action": "remove",
+      "journeyUid": "213e586b-fbd1-4b2f-a4d4-8a8cb42ad046",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-13T13:28:19.710Z"
+    },
+    "AI343MC": {
+      "action": "remove",
+      "journeyUid": "50668c30-e851-40a9-845f-1be8ccb3e8d6",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-10-13T13:28:27.509Z"
     }
   }
 }

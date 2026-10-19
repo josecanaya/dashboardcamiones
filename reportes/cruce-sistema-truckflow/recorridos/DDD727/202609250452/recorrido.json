@@ -1,0 +1,187 @@
+{
+ "patente": "DDD727",
+ "ingreso": "2026-09-25 04:52:00",
+ "salida": "2026-09-25 18:41:00",
+ "producto": "GIRASOL",
+ "planta": "RICARDONE",
+ "ancla": {
+  "camara": "RicPreIngInFr",
+  "hora": "2026-09-25 04:48:07",
+  "lectura": "PF489"
+ },
+ "puntos": [
+  {
+   "punto": "Preingreso",
+   "elegida": {
+    "camara": "RicPreIngInFr",
+    "hora": "2026-09-25 04:48:07",
+    "at": "2026-09-25T07:48:07.000Z",
+    "lectura": "PF489",
+    "marca": "Škoda",
+    "color": "Black",
+    "tipo": "Medium Truck",
+    "foto": "044807_RicPreIngInFr_PF489.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicPreIngInFr",
+     "hora": "2026-09-25 04:48:07",
+     "at": "2026-09-25T07:48:07.000Z",
+     "lectura": "PF489",
+     "marca": "Škoda",
+     "color": "Black",
+     "tipo": "Medium Truck",
+     "foto": "044807_RicPreIngInFr_PF489.jpg"
+    }
+   ],
+   "vecinos": []
+  },
+  {
+   "punto": "Ingreso Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Calada Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": [
+    "EYH843@10:53:51"
+   ]
+  },
+  {
+   "punto": "Balanza ingreso Ricardone",
+   "intervalo": [
+    "05:38:10",
+    "05:46:10"
+   ],
+   "vecinos": [
+    "CGV979@05:42:10",
+    "CGV979@05:42:10"
+   ],
+   "elegida": {
+    "camara": "RicB1Ingreso",
+    "hora": "2026-09-25 05:43:30",
+    "at": "2026-09-25T08:43:30.000Z",
+    "lectura": "982",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "foto": "054330_RicB1Ingreso_982.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicB1Ingreso",
+     "hora": "2026-09-25 05:43:30",
+     "at": "2026-09-25T08:43:30.000Z",
+     "lectura": "982",
+     "marca": "Mercedes-Benz",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "054330_RicB1Ingreso_982.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Playa 3",
+   "estado": "fuera_del_recorrido",
+   "vecinos": [
+    "FKX409@06:00:08"
+   ]
+  },
+  {
+   "punto": "Celda 16",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Silo Keppler",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Volcables Ricardone",
+   "intervalo": [
+    "16:11:00",
+    "18:38:00"
+   ],
+   "vecinos": [],
+   "elegida": {
+    "camara": "RicVolcable1",
+    "hora": "2026-09-25 18:00:38",
+    "at": "2026-09-25T21:00:38.000Z",
+    "lectura": "SCN",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck",
+    "foto": "180038_RicVolcable1_SCN.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicVolcable1",
+     "hora": "2026-09-25 18:00:38",
+     "at": "2026-09-25T21:00:38.000Z",
+     "lectura": "SCN",
+     "marca": "Scania",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "180038_RicVolcable1_SCN.jpg"
+    },
+    {
+     "camara": "RicVolcable2",
+     "hora": "2026-09-25 16:57:33",
+     "at": "2026-09-25T19:57:33.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "Brown",
+     "tipo": null,
+     "foto": "165733_RicVolcable2_vacia.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza egreso Ricardone",
+   "intervalo": [
+    "18:37:00",
+    "18:43:00"
+   ],
+   "vecinos": [
+    "CRO351@18:03:05"
+   ],
+   "candidatas": []
+  },
+  {
+   "punto": "Egreso Ricardone",
+   "intervalo": [
+    "18:41:00",
+    "19:01:00"
+   ],
+   "vecinos": [],
+   "candidatas": []
+  },
+  {
+   "punto": "Ingreso puerto",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Balanza ingreso puerto",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Volcables puerto",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Balanza egreso puerto",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Salida puerto",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  }
+ ]
+}

@@ -22,6 +22,7 @@ import {
   sectorToLogical,
 } from './circuitPrefix.mjs'
 import { PlantStateError } from './service.mjs'
+import { deduceSkippedSteps, nodeModelCatalog, withDeducedSequence } from './plateIdentification.mjs'
 import { pointOfSector, pointOfLogical, resolveZone, zonesOfSite } from './plantGraph.mjs'
 
 const TWELVE_H_MS = 12 * 60 * 60 * 1000
@@ -34,6 +35,44 @@ function round1(n) {
   return Math.round(n * 10) / 10
 }
 
+/*
+ * Paso deducido: nodo sin lectura entre dos lecturas del camión por el que pasan todos los circuitos
+ * compatibles (deduceSkippedSteps). Se intercala en el recorrido sin hora. Replay 01–14/10:
+ * scripts/replay-busqueda-atras.mjs. Apagar con PLANT_DEDUCED_STEPS=0.
+ */
+function withDeducedSteps(rows) {
+  if (process.env.PLANT_DEDUCED_STEPS === '0') return rows
+  const visits = []
+  rows.forEach((r, i) => {
+    if (!r.logicalSector || r.logicalSector === 'ESPERA') return
+    const v = visits[visits.length - 1]
+    if (v && v.logical === r.logicalSector) v.last = i
+    else visits.push({ logical: r.logicalSector, last: i })
+  })
+  let deduced = []
+  try {
+    deduced = deduceSkippedSteps(visits.map((v) => v.logical), nodeModelCatalog())
+  } catch {
+    return rows
+  }
+  if (!deduced.length) return rows
+  /** Índice de fila después de la cual va cada paso deducido (fin de la visita «after» seguida de «before»). */
+  const insertAfter = new Map()
+  for (let k = 0; k < visits.length - 1; k++) {
+    const list = deduced.filter((d) => d.after === visits[k].logical && d.before === visits[k + 1].logical)
+    if (list.length) insertAfter.set(visits[k].last, list)
+  }
+  const out = []
+  rows.forEach((r, i) => {
+    out.push(r)
+    for (const d of insertAfter.get(i) ?? []) {
+      out.push({ at: null, sectorCode: null, logicalSector: d.node, label: logicalLabel(d.node), deviceCode: null, edgeId: null, legFromPreviousMin: null, step: 'deducido', readPlate: null, identificationLevel: null, probability: d.probability })
+    }
+  })
+  return out
+}
+
+/**
 /**
  * Agrupa eventos en journeys abiertos (misma lógica que el reductor).
  * @param {object[]} events
@@ -96,7 +135,8 @@ function collectOpenJourneys(events, nowMs) {
 
     const sectorSeq = withSector.map((r) => r.sector)
     const logicalSeq = buildLogicalSequence(sectorSeq)
-    const match = matchCircuitByPrefix(logicalSeq)
+    // Con los pasos deducidos: el próximo punto no puede ser uno que ya se dedujo pasado.
+    const match = matchCircuitByPrefix(withDeducedSequence(logicalSeq))
 
     const siteZones = zonesOfSite(lastProfile?.site)
     const matchedSequence = Array.isArray(match?.matchedSequence) ? match.matchedSequence : []
@@ -369,10 +409,11 @@ export function createPlantStateQueries(service) {
     }
 
     /** Timeline: tiempo de cada fila = del tramo anterior. */
-    const timeline = truck.events.map((row, idx) => {
+    const read = truck.events.map((row, idx) => {
       const prev = idx > 0 ? truck.events[idx - 1] : null
       const legMin = prev ? (row.t - prev.t) / 60000 : null
       const profile = getSectorProfile(row.sector)
+      const from = row.e.identifiedFromPlate ? String(row.e.identifiedFromPlate) : null
       return {
         at: formatArgentinaIsoFromMs(row.t),
         sectorCode: row.sector,
@@ -382,8 +423,13 @@ export function createPlantStateQueries(service) {
         edgeId: profile?.edgeId || null,
         /** Minutos del tramo anterior (llegada a este punto desde el previo). */
         legFromPreviousMin: legMin == null ? null : round1(legMin),
+        /** Estado del paso (doc «algoritmo explicado»): leído por la cámara, corregido (lectura asignada) o deducido. */
+        step: from && from !== truck.plate ? 'corregido' : 'camara',
+        readPlate: from && from !== truck.plate ? from : null,
+        identificationLevel: from && from !== truck.plate ? row.e.identificationLevel ?? null : null,
       }
     })
+    const timeline = withDeducedSteps(read)
 
     return {
       site: String(site || 'ricardone').toLowerCase(),

@@ -67,6 +67,12 @@ export function buildBalanzaRegistry(visits, known = new Set()) {
       const trucks = new Set(hits.map((v) => v.plate))
       return trucks.size === 1 ? hits[0] : null
     },
+    /** Patentes de los camiones que la balanza tiene en planta a la hora t. */
+    platesAt(t) {
+      const out = []
+      for (const [plate, vs] of byPlate) if (vs.some((v) => inside(v, t))) out.push(plate)
+      return out
+    },
     /** La patente pasó alguna vez por la balanza (historia) o figura hoy. */
     isKnown(plate) {
       return known.has(plate) || byPlate.has(plate)

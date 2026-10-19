@@ -5,6 +5,7 @@ import {
   expectedNodes,
   identifyFragments,
   nodeModelCatalog,
+  ownStepProbability,
   plateSimilarity,
 } from './plateIdentification.mjs'
 import { buildBalanzaRegistry } from './balanzaRegistry.mjs'
@@ -56,10 +57,11 @@ describe('identifyFragments', () => {
     expect(out.filter((e) => e.truckPlate === 'AAA000')).toHaveLength(3)
   })
 
-  it('lectura ilegible queda pendiente y la confirma operaciones', () => {
+  it('lectura ilegible: la cuenta por encima del 60 % se aplica y operaciones puede corregirla', () => {
     const events = [...base, ev('XC4', 'j3', '2-S3', 'RicEgrCamFrente', '2026-09-08T11:40:00-03:00')]
     const pend = identifyFragments(events, now, { catalog }).items.find((i) => i.readPlate === 'XC4')
-    expect(pend.level).toBe('pendiente')
+    expect(pend.cuenta.probability).toBeGreaterThanOrEqual(0.6)
+    expect(pend.level).toBe('casi_seguro')
     const decided = identifyFragments(events, now, {
       catalog,
       decisions: { [pend.fragmentKey]: { action: 'confirm', plate: 'AAA000', journeyUid: 'j1' } },
@@ -365,5 +367,53 @@ describe('refuerzo de balanza (SGC) y la cuenta del documento (15/10)', () => {
     const balanza = buildBalanzaRegistry([{ plate: 'MWG720', ingresoMs: ms('2026-10-15T11:01:00-03:00'), salidaMs: null }], new Set(['MWC720']))
     const it0 = identifyFragments(events, now, { catalog, balanza }).items.find((i) => i.readPlate === 'MWC720')
     expect(it0.level).toBe('provisorio')
+  })
+})
+
+describe('patrón propio del camión (ida y vuelta interno)', () => {
+  it('Volcable ↔ Silo Chief repetido cuenta como paso probable aunque el catálogo no lo tenga', () => {
+    const seen = ['S9', 'S8', 'S9', 'S8', 'S9', 'S8', 'S9']
+    expect(ownStepProbability(seen, 'S9', 'S8')).toBe(1)
+    expect(ownStepProbability(['S9', 'S8', 'S9'], 'S9', 'S8')).toBe(0)
+  })
+})
+
+describe('camión fantasma (lectura mala repetida que arma su propio viaje)', () => {
+  const now = Date.parse('2026-09-08T12:00:00-03:00')
+  const base = [
+    ev('AAA000', 'j1', '2-S1', 'RicPreIngInFr', '2026-09-08T11:00:00-03:00'),
+    ev('AAA000', 'j1', '2-S2', 'RicCal03', '2026-09-08T11:20:00-03:00'),
+    ev('AAA00', 'j2', '2-S3', 'RicEgrCamFrente', '2026-09-08T11:40:00-03:00'),
+  ]
+  const alta = (plate) => ({ plate, ingresoMs: Date.parse('2026-09-08T10:59:00-03:00'), salidaMs: null })
+
+  it('no asigna al elegido fuera de balanza si otro parecido está en planta (DSP63 → OSP630, no DSP630)', () => {
+    const balanza = buildBalanzaRegistry([alta('AAB000')])
+    const it0 = identifyFragments(base, now, { catalog, balanza }).items.find((i) => i.readPlate === 'AAA00')
+    expect(it0.level).toBe('provisorio')
+    expect(it0.assignedPlate).toBeNull()
+    expect(it0.balanza.similarInPlant).toContain('AAB000')
+  })
+
+  it('si el elegido está en la balanza, se aplica igual', () => {
+    const balanza = buildBalanzaRegistry([alta('AAA000'), alta('AAB000')])
+    const it0 = identifyFragments(base, now, { catalog, balanza }).items.find((i) => i.readPlate === 'AAA00')
+    expect(it0.level).toBe('casi_seguro')
+    expect(it0.assignedPlate).toBe('AAA000')
+  })
+})
+
+describe('camión fantasma por el lado del elegido', () => {
+  it('lectura ilegible que la cuenta manda a un viaje cuya patente se parece a un camión en balanza: no se aplica (COM1759 → MIN155, era GON155)', () => {
+    const now = Date.parse('2026-09-08T12:00:00-03:00')
+    const events = [
+      ev('AAA000', 'j1', '2-S1', 'RicPreIngInFr', '2026-09-08T11:00:00-03:00'),
+      ev('AAA000', 'j1', '2-S2', 'RicCal03', '2026-09-08T11:20:00-03:00'),
+      ev('XC4', 'j3', '2-S3', 'RicEgrCamFrente', '2026-09-08T11:40:00-03:00'),
+    ]
+    const balanza = buildBalanzaRegistry([{ plate: 'AAB000', ingresoMs: Date.parse('2026-09-08T10:59:00-03:00'), salidaMs: null }])
+    const it0 = identifyFragments(events, now, { catalog, balanza }).items.find((i) => i.readPlate === 'XC4')
+    expect(it0.assignedPlate).toBeNull()
+    expect(it0.reason).toContain('AAB000')
   })
 })

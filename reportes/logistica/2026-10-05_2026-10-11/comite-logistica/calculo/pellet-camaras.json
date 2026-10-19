@@ -9,7 +9,8 @@
   "2026-10-08",
   "2026-10-09",
   "2026-10-10",
-  "2026-10-11"
+  "2026-10-11",
+  "2026-10-12"
  ],
  "metodo": "cámaras por patente (sin planilla)",
  "viajes": 38,
@@ -419,5 +420,23 @@
     "n": 0
    }
   }
+ },
+ "calibracion": {
+  "planillaEgresosPellet": 56,
+  "planillaCamiones": 18,
+  "planillaPorDia": {
+   "2026-10-05": 45,
+   "2026-10-06": 11,
+   "2026-10-07": 0,
+   "2026-10-08": 0,
+   "2026-10-09": 0,
+   "2026-10-10": 0,
+   "2026-10-11": 0
+  },
+  "camaraViajes": 38,
+  "emparejados": 38,
+  "recall": 0.679,
+  "precision": 1,
+  "nota": "Egresos de pellet de girasol de Ricardone al puerto en la planilla (sin despachos a terceros), por día calendario de la salida."
  }
 }

@@ -5,18 +5,24 @@
 // peso), la patente, color/marca/tipo y la trasera (acoplado visto antes con ese tractor).
 // Por camión: puntos leídos por la cámara, reconstruidos (captura dudosa asignada), deducidos (sin captura,
 // pero leído antes y después) y faltantes. Prueba: a 1 de cada 4 lecturas buenas se le borra la patente.
-// Uso: node scripts/demostracion/lote.mjs [día=2026-10-01] [umbral=0.6]
+// Uso: node scripts/demostracion/lote.mjs [día=2026-10-01 | semana | semana:DESDE:HASTA] [umbral=0.6]
+// semana:DESDE:HASTA (p. ej. semana:2026-10-12:2026-10-18): cualquier semana. Sin export del DSS que la cubra
+// (data/dss-export/<desde>_<dd hasta>/capturas.csv), las capturas que no entraron al feed salen de las
+// alertas de TruckFlow (son las mismas lecturas, sin color/marca/tipo).
 import fs from 'node:fs'
 import path from 'node:path'
 import { isValidPlate } from '../../server/plantState/plateIdentification.mjs'
 import { readLikelihood, DAMAGED_READ } from '../../server/plantState/nodeModelScore.mjs'
 import { compareAttribute } from '../../server/plantState/identificationEvidence.mjs'
 import { getEventLiveInstantMs } from '../../server/plantState/liveEventTime.mjs'
+import { alertReadEvents } from '../../server/plantState/alertReads.mjs'
 
 const ARG = process.argv[2] ?? '2026-10-01'
-const WEEK = ARG === 'semana'
-const DAY = WEEK ? '2026-10-01' : ARG
-const WEEK_DAYS = ['2026-10-01', '2026-10-02', '2026-10-03', '2026-10-04', '2026-10-05', '2026-10-06', '2026-10-07']
+const WEEK = ARG === 'semana' || ARG.startsWith('semana:')
+const [W_FROM, W_TO] = ARG.startsWith('semana:') ? ARG.split(':').slice(1) : ['2026-10-01', '2026-10-07']
+const DAY = WEEK ? W_FROM : ARG
+const WEEK_DAYS = []
+for (let d = W_FROM; d <= W_TO; d = new Date(Date.parse(`${d}T12:00:00Z`) + 86400_000).toISOString().slice(0, 10)) WEEK_DAYS.push(d)
 const THETA = Number(process.argv[3] ?? 0.6)
 // Cuarto del día (opcional): Q1 22–04 h (desde la noche anterior), Q2 04–10, Q3 10–16, Q4 16–22.
 const Q = process.argv[4] ? Number(process.argv[4]) : null
@@ -27,10 +33,23 @@ const plateOf = (s) => String(s ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '')
 const arDay = (ms) => new Date(ms - 3 * 3600_000).toISOString().slice(0, 10)
 const addDays = (d, n) => new Date(Date.parse(`${d}T12:00:00Z`) + n * 86400_000).toISOString().slice(0, 10)
 const localMs = (s) => (s ? Date.parse(/[zZ]|[+-]\d\d:\d\d$/.test(s) ? s : `${s}-03:00`) : NaN)
+const editDist = (a, b) => { const d = [...Array(a.length + 1)].map((_, i) => [i, ...Array(b.length).fill(0)]); for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length] }
+// Lecturas con caracteres de más (IVB7874, IGFP699): la cámara agrega basura antes o después de la chapa.
+// Se mide también contra cada patente de formato válido que contenga (IVB787, GFP699).
+function plateCores(read) {
+  if (!read || isValidPlate(read)) return []
+  const out = []
+  for (const n of [6, 7]) for (let i = 0; i + n <= read.length; i++) { const s = read.slice(i, i + n); if (isValidPlate(s)) out.push(s) }
+  return out
+}
+const readDist = (read, real) => Math.min(editDist(read, real), ...plateCores(read).map((s) => editDist(s, real)))
 const PAD = 45 * 60_000
 const H8 = 8 * 3600_000
-const DAYS = WEEK ? [addDays(DAY, -1), ...WEEK_DAYS, '2026-10-08'] : [addDays(DAY, -1), DAY, addDays(DAY, 1), addDays(DAY, 2)]
+const DAYS = WEEK ? [addDays(W_FROM, -1), ...WEEK_DAYS, addDays(W_TO, 1)] : [addDays(DAY, -1), DAY, addDays(DAY, 1), addDays(DAY, 2)]
+/** Ventanas guardadas (semanas lunes→domingo) que tocan los días del análisis. */
+const RUNS = fs.readdirSync(path.join(process.cwd(), 'runs/windows')).filter((w) => /^\d{4}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2}$/.test(w) && w.slice(0, 10) !== w.slice(11) && w.slice(11) >= DAYS[0] && w.slice(0, 10) <= DAYS.at(-1) && fs.existsSync(path.join(process.cwd(), 'runs/windows', w, 'tables/excel_operations_with_truckflow.json')))
 const EXCLUIDOS = new Set(['ricardone:Ingreso', 'ricardone:Balanza Ingreso']) // fallas de hardware
+const SALIDAS = new Set(['ricardone:Salida 2', 'san_lorenzo:Egreso'])
 
 // ── Modelo de nodos ──
 const model = json('docs/propuesta-en-vivo/modelo-nodos-nodo-sur/datos/modelo_nodo_sur.json')
@@ -60,7 +79,10 @@ function expectedNodes(circuit, platform) {
 // ── Capturas (feed + solo DSS), frontales y traseras, con atributos ──
 const dss = new Map()
 {
-  const lines = fs.readFileSync(path.join(root, 'data/dss-export/2026-10-01_07/capturas.csv'), 'utf8').trim().split(/\r?\n/)
+  const lastDay = WEEK ? W_TO : addDays(DAY, 1)
+  const dssDir = fs.readdirSync(path.join(root, 'data/dss-export')).find((d) => /^\d{4}-\d{2}-\d{2}_\d{2}$/.test(d) && d.slice(0, 10) <= DAY && `${d.slice(0, 8)}${d.slice(11)}` >= lastDay && fs.existsSync(path.join(root, 'data/dss-export', d, 'capturas.csv')))
+  const lines = dssDir ? fs.readFileSync(path.join(root, 'data/dss-export', dssDir, 'capturas.csv'), 'utf8').trim().split(/\r?\n/) : ['camara,hora_camara,patente,color,marca,tipo']
+  console.log(dssDir ? `export del DSS: ${dssDir}` : 'sin export del DSS para estas fechas: capturas extra desde las alertas de TruckFlow')
   const head = lines[0].split(',')
   let row = 0
   for (const l of lines.slice(1)) {
@@ -100,6 +122,17 @@ for (const d of DAYS) {
     caps.push({ node, rear: !frontNode.has(dev), device: e.deviceCode, t, plate, attrs: a })
   }
 }
+if (!dss.size) {
+  // Sin DSS: las lecturas que TruckFlow solo manda como alerta (LPR_MALFUNCTION, UNMATCHED_TAIL…).
+  const feed = caps.map((c) => ({ deviceCode: c.device, truckPlate: c.plate, occurredAt: new Date(c.t - 206 * 60_000).toISOString() }))
+  const alerts = DAYS.flatMap((d) => { const f = `data/truckflow/${d}/alert-list.json`; if (!fs.existsSync(path.join(root, f))) return []; const o = json(f); return Array.isArray(o) ? o : o.records ?? o.value ?? [] })
+  for (const e of alertReadEvents(alerts, feed)) {
+    const dev = String(e.deviceCode).toLowerCase()
+    const node = frontNode.get(dev) ?? rearNode.get(dev)
+    const t = getEventLiveInstantMs(e)
+    if (node && Number.isFinite(t)) caps.push({ node, rear: !frontNode.has(dev), device: e.deviceCode, t, plate: plateOf(e.truckPlate), attrs: null })
+  }
+}
 for (const [dev, list] of dss) {
   const node = frontNode.get(dev) ?? rearNode.get(dev)
   if (!node) continue
@@ -127,21 +160,32 @@ for (const c of front) {
 // ── Lote: movimientos que ingresaron ese día ──
 const lote = []
 const seenOp = new Set()
-for (const run of ['2026-09-28_2026-10-04', '2026-10-05_2026-10-11']) {
+for (const run of RUNS) {
   for (const r of json(`runs/windows/${run}/tables/excel_operations_with_truckflow.json`).rows) {
     const plate = plateOf(r.plate_normalized)
     const ing = localMs(r.external_ingreso_at), sal = localMs(r.external_salida_at)
     if (!isValidPlate(plate) || /^(X+|P+|T+)$/.test(plate) || !['RICARDONE', 'TERMINAL_EMBARQUE'].includes(r.planta_normalized)) continue
     if (!Number.isFinite(ing) || !Number.isFinite(sal)) continue
     const t0 = Math.min(ing, sal)
-    if (WEEK ? !['2026-09-30', ...WEEK_DAYS].includes(arDay(t0)) : qRange ? t0 < qRange[0] || t0 >= qRange[1] : arDay(t0) !== DAY) continue
+    if (WEEK ? ![addDays(W_FROM, -1), ...WEEK_DAYS].includes(arDay(t0)) : qRange ? t0 < qRange[0] || t0 >= qRange[1] : arDay(t0) !== DAY) continue
     const id = r.external_operation_id ?? `${plate}|${ing}`
     if (seenOp.has(id)) continue
     seenOp.add(id)
     const exp = expectedNodes(r.resolved_executive_circuit_code, r.platform_normalized)
     if (!exp.length) continue
-    lote.push({ id, plate, circuit: r.resolved_executive_circuit_code, ing: Math.min(ing, sal), sal: Math.max(ing, sal), exp, status: new Map(), last: null, lastT: Math.min(ing, sal) })
+    lote.push({ id, plate, planta: r.planta_normalized, circuit: r.resolved_executive_circuit_code, ing: Math.min(ing, sal), sal: Math.max(ing, sal), exp, status: new Map(), last: null, lastT: Math.min(ing, sal) })
   }
+}
+// Registro sin visita: ingreso = salida en el mismo minuto (comprobante administrativo) y ninguna cámara
+// leyó la patente cerca. No es un camión que pasó sin ser visto: se saca del lote.
+let registrosSinVisita = 0
+for (let i = lote.length - 1; i >= 0; i--) {
+  const m = lote[i]
+  if (m.sal - m.ing >= 60_000) continue
+  if (front.some((c) => c.plate === m.plate && c.t >= m.ing - 2 * 3600_000 && c.t <= m.ing + 12 * 3600_000)) continue
+  console.log(`registro sin visita: ${m.plate} ${m.circuit} ${new Date(m.ing - 3 * 3600_000).toISOString().slice(0, 16)}`)
+  lote.splice(i, 1)
+  registrosSinVisita++
 }
 const allExcel = new Set()
 for (const d of fs.readdirSync(path.join(root, 'data/movimientos')).filter((x) => /^\d{4}-\d{2}-\d{2}$/.test(x))) {
@@ -150,10 +194,12 @@ for (const d of fs.readdirSync(path.join(root, 'data/movimientos')).filter((x) =
   const o = json(f)
   for (const r of Array.isArray(o) ? o : Object.values(o)) { const pl = plateOf(r?.plate_normalized); if (pl) allExcel.add(pl) }
 }
-// La visita sale de las cámaras: empieza 20 min antes del ingreso y termina cuando el camión arranca la
-// vuelta siguiente (próximo ingreso de esa patente en el Excel, cualquier planta) o a las 12 h.
+// La visita sale de las cámaras: empieza 40 min antes del ingreso (en Ricardone el Sistema registra el
+// ingreso hasta ~30 min después de que la cámara lo ve en Ingreso/Preingreso) y termina cuando el camión
+// arranca la vuelta siguiente (próximo ingreso de esa patente en el Excel, cualquier planta) o a las 12 h;
+// si la salida del Excel es posterior (visitas de 18 h, p. ej. carga de líquidos), a la salida + 30 min.
 const nextIng = new Map()
-for (const run of ['2026-09-28_2026-10-04', '2026-10-05_2026-10-11']) for (const r of json(`runs/windows/${run}/tables/excel_operations_with_truckflow.json`).rows) {
+for (const run of RUNS) for (const r of json(`runs/windows/${run}/tables/excel_operations_with_truckflow.json`).rows) {
   const pl = plateOf(r.plate_normalized), t = localMs(r.external_ingreso_at)
   if (!Number.isFinite(t)) continue
   if (!nextIng.has(pl)) nextIng.set(pl, [])
@@ -161,8 +207,8 @@ for (const run of ['2026-09-28_2026-10-04', '2026-10-05_2026-10-11']) for (const
 }
 for (const m of lote) {
   const after = (nextIng.get(m.plate) ?? []).filter((t) => t > m.ing + 10 * 60_000).sort((a, b) => a - b)[0]
-  m.vStart = m.ing - 20 * 60_000
-  m.vEnd = Math.min(after != null ? after - 10 * 60_000 : Infinity, m.ing + 12 * 3600_000)
+  m.vStart = m.ing - 40 * 60_000
+  m.vEnd = Math.min(after != null ? after - 10 * 60_000 : Infinity, Math.max(m.ing + 12 * 3600_000, m.sal + 30 * 60_000))
 }
 const MUESTRA = process.env.MUESTRA ? process.env.MUESTRA.split(':') : null
 if (MUESTRA) {
@@ -190,6 +236,29 @@ for (const m of lote) {
   if (best && lcs(obs, best.exp) <= lcs(obs, m.exp)) continue
   if (best && best.id !== m.circuit) { m.circuitExcel = m.circuit; m.circuit = best.id; m.exp = best.exp; circuitosCambiados++ }
 }
+// Circuito de otra planta: un movimiento del puerto con circuito de Ricardone (o al revés) no puede
+// recorrerlo. Se elige entre los circuitos de su planta el que mejor explica sus lecturas, contando también
+// las lecturas parecidas (≤ 1 cambio, chapa con basura); sin lecturas, el de líquidos del puerto (SL1).
+const PLANTA_PREFIX = { TERMINAL_EMBARQUE: 'san_lorenzo:', RICARDONE: 'ricardone:' }
+let circuitosOtraPlanta = 0
+for (const m of lote) {
+  const pre = PLANTA_PREFIX[m.planta]
+  if (!pre || m.exp.some((n) => n.startsWith(pre))) continue
+  // Transile (pellet R13 con CTG del puerto): si una cámara leyó la patente en su circuito, el circuito vale.
+  if (front.some((c) => c.plate === m.plate && c.t >= m.vStart && c.t <= m.vEnd && m.exp.includes(c.node))) continue
+  const propios = circuitNodes.filter((c) => c.exp.every((n) => n.startsWith(pre)))
+  const obs = front.filter((c) => c.t >= m.vStart && c.t <= m.vEnd && c.node.startsWith(pre) && c.plate && readDist(c.plate, m.plate) <= 1).map((c) => c.node).filter((n, i, a) => n !== a[i - 1])
+  let best = null
+  for (const c of propios) {
+    const k = lcs(obs, c.exp)
+    const score = k * 10 - (c.exp.length - k) * 0.1
+    if (!best || score > best.score) best = { ...c, score }
+  }
+  if (!obs.length) best = propios.find((c) => c.id === 'SL1') ?? null
+  if (!best) continue
+  console.log(`circuito de otra planta: ${m.plate} ${m.planta} ${m.circuit} → ${best.id} (lecturas: ${obs.join(' > ') || 'ninguna'})`)
+  m.circuitExcel = m.circuit; m.circuit = best.id; m.exp = best.exp; circuitosOtraPlanta++
+}
 const lotePlates = new Map()
 for (const m of lote) { if (!lotePlates.has(m.plate)) lotePlates.set(m.plate, []); lotePlates.get(m.plate).push(m) }
 const activeMov = (plate, t) => (lotePlates.get(plate) ?? []).find((m) => t >= m.vStart && t <= m.vEnd)
@@ -207,6 +276,15 @@ for (const m of lote) {
     gapHist.get(k)[Math.min(NB - 1, Math.max(0, Math.floor((hit.t - prevT) / BIN)))]++
     prevT = hit.t
     prevN = n
+  }
+  // Ingreso del Excel → primera lectura buena en cada punto, por planta donde arranca el circuito
+  // (un R7 llega al puerto ~1 h después de entrar a Ricardone; un SL1, en minutos). Ancla sin lecturas previas.
+  for (const n of m.exp) {
+    const hit = front.find((c) => c.node === n && c.plate === m.plate && c.t >= m.ing - 60_000 && c.t <= m.vEnd)
+    if (!hit) continue
+    const k = `ING@${m.exp[0].split(':')[0]}>${n}`
+    if (!gapHist.has(k)) gapHist.set(k, new Array(NB).fill(0))
+    gapHist.get(k)[Math.min(NB - 1, Math.max(0, Math.floor((hit.t - m.ing) / BIN)))]++
   }
 }
 // Primer punto: minutos entre el ingreso y la primera lectura buena en ese punto (con signo), por punto.
@@ -281,14 +359,19 @@ const ACCESOS = new Set(['ricardone:Ingreso', 'ricardone:Pre ingreso', 'ricardon
 // Cada cantidad se reparte entre las formas posibles de hacerla (≈ 6 posiciones × 20 caracteres por cambio).
 const MAL = 0.45 // parte de las lecturas que salen mal
 const PK = { 1: 0.08, 2: 0.05, 3: 0.03 }
-const editDist = (a, b) => { const d = [...Array(a.length + 1)].map((_, i) => [i, ...Array(b.length).fill(0)]); for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length] }
 const combos = (n, k) => { let r = 1; for (let i = 0; i < k; i++) r = (r * (n - i)) / (i + 1); return r }
 const FRAG = (MAL * 0.83) / 1e6 // fragmento: igual para cualquier camión
+// Lectura cortada que arranca igual que la patente (GZI, GZIH1, GZI04 → GZI868): las 3 primeras letras
+// coinciden en ~1 de cada 8000 patentes. Se pesa 30 veces un fragmento cualquiera por cada 3 caracteres
+// iniciales (× 20 por cada uno más), sin pasar lo que vale una lectura con 1 cambio.
+const prefixLen = (read, real) => { let i = 0; while (i < read.length && i < real.length && read[i] === real[i]) i++; return i }
+const prefixFrag = (read, real) => !isValidPlate(read) && read.length < real.length + 2 && prefixLen(read, real) >= 3
 function readL(read, real) {
   if (read === real) return 1 - MAL
-  const k = editDist(read, real)
-  if (k >= 4 || !PK[k]) return FRAG
-  return Math.max(FRAG, (MAL * PK[k]) / (combos(real.length, k) * Math.pow(20, k)))
+  const k = Math.max(1, readDist(read, real)) // chapa exacta con basura alrededor ≈ un cambio
+  const base = k >= 4 || !PK[k] ? FRAG : Math.max(FRAG, (MAL * PK[k]) / (combos(real.length, k) * Math.pow(20, k)))
+  if (!prefixFrag(read, real)) return base
+  return Math.max(base, Math.min((MAL * PK[1]) / (combos(real.length, 1) * 20), FRAG * 30 * Math.pow(20, prefixLen(read, real) - 3)))
 }
 
 const NOT_TRUCK = /sedan|suv|pickup|van|car\b|motor|mpv|hatchback/i
@@ -299,7 +382,7 @@ const res = {}
 const R = (n) => (res[n] ??= { prueba: { n: 0, bien: 0, otro: 0, nada: 0, errores: [] }, universo: [], efectivo: [], cap: { total: 0, lote: 0, otroDiaOVehiculo: 0, noCamion: 0, sinCandidato: 0, sinDecidir: 0, asignada: 0 } })
 let hideCounter = 0
 const start = Date.parse(`${DAY}T00:00:00-03:00`) - 3600_000
-const end = Date.parse(`${WEEK ? '2026-10-08' : addDays(DAY, 2)}T23:59:59-03:00`)
+const end = Date.parse(`${WEEK ? addDays(W_TO, 1) : addDays(DAY, 2)}T23:59:59-03:00`)
 for (const c of front) {
   if (c.t < start || c.t > end) continue
   const inDay = WEEK ? WEEK_DAYS.includes(arDay(c.t)) : DAYS.slice(1, 3).includes(arDay(c.t))
@@ -320,12 +403,15 @@ for (const c of front) {
     continue
   }
   // Autos y camionetas solo pasan por los accesos; en calada, balanzas y descargas el tipo del DSS se equivoca
-  // por el ángulo de la cámara y no se descarta nada.
-  if (!hidden && ACCESOS.has(c.node) && c.attrs && NOT_TRUCK.test(c.attrs.vehicleCategory ?? '')) { if (inDay) CR.noCamion++; continue }
+  // por el ángulo de la cámara y no se descarta nada. De noche el DSS también ve «SaloonCar» en camiones:
+  // si la patente leída se parece (≤ 2 cambios) a un camión del lote con ese paso pendiente, no se descarta.
+  const pareceDelLote = () => c.plate && lote.some((m) => c.t >= m.vStart && c.t <= m.vEnd && !m.status.has(c.node) && m.exp.includes(c.node) && readDist(c.plate, m.plate) <= 2)
+  if (!hidden && ACCESOS.has(c.node) && c.attrs && NOT_TRUCK.test(c.attrs.vehicleCategory ?? '') && !pareceDelLote()) { if (inDay) CR.noCamion++; continue }
   // Patente válida de un camión de otro lote o que no está en el Excel: es otro vehículo real.
   if (!hidden && isValidPlate(c.plate) && allExcel.has(c.plate)) { if (inDay) CR.otroDiaOVehiculo++; continue }
   // Universo: camiones del lote con ese paso pendiente, que siguen en planta y cuyo último punto es anterior.
   const U = []
+  const pl0 = hidden ? null : c.plate
   for (const m of lote) {
     if (c.t < m.vStart || c.t > m.vEnd || m.status.has(c.node)) continue
     const iN = m.exp.indexOf(c.node)
@@ -333,12 +419,18 @@ for (const c of front) {
     const iL = m.last ? m.exp.indexOf(m.last) : -1
     if (iL >= iN) continue
     // Sin ningún punto identificado todavía, solo se reconstruyen los primeros puntos: hace falta un ancla.
-    if (iL < 0 && iN > 1) continue
+    // Excepción: el ingreso del Excel es el ancla cuando la patente leída casi coincide (≤ 1 cambio), p. ej.
+    // un R7 que Ricardone no leyó de noche y el puerto lee con una letra cambiada.
+    const anclaExcel = iL < 0 && iN > 1
+    if (anclaExcel && !(pl0 && (readDist(pl0, m.plate) <= 1 || prefixFrag(pl0, m.plate)))) continue
     const skipped = iN - iL - 1
     // Primer punto: el camión tiene que estar a pocos minutos de su ingreso (±5 min pesa entero; después cae).
-    const w = m.last == null
-      ? Math.pow(0.25, skipped) * entryWeight(c.node, c.t - m.ing)
-      : Math.pow(0.25, skipped) * hazard(m.last, c.node, c.t - m.lastT)
+    // Con el ancla del Excel los puntos previos sin leer no penalizan: es justamente el caso (no hubo lectura).
+    const w = anclaExcel
+      ? hazard(`ING@${m.exp[0].split(':')[0]}`, c.node, c.t - m.ing)
+      : m.last == null
+        ? Math.pow(0.25, skipped) * entryWeight(c.node, c.t - m.ing)
+        : Math.pow(0.25, skipped) * hazard(m.last, c.node, c.t - m.lastT)
     if (w > 0) U.push({ m, w })
   }
   const r = R(c.node)
@@ -383,7 +475,9 @@ for (const m of lote.filter((x) => x.inSample)) {
   // Deducido: sin captura, pero el camión se identificó en un punto posterior de su circuito.
   // Final del recorrido: si después de su último punto identificado no hay otra lectura suya en la visita,
   // salió por el único camino que le queda en su circuito (deducido al final).
-  const seenAfter = front.some((c) => c.plate === m.plate && c.t > (m.status.get(m.exp[lastFilled])?.t ?? m.ing) && c.t <= m.vEnd && !m.exp.includes(c.node))
+  // Una lectura posterior en una salida de planta no cuenta: confirma que se fue (los líquidos de Ricardone
+  // salen por Salida 2 aunque el circuito diga Salida 1, sin cámara).
+  const seenAfter = front.some((c) => c.plate === m.plate && c.t > (m.status.get(m.exp[lastFilled])?.t ?? m.ing) && c.t <= m.vEnd && !m.exp.includes(c.node) && !SALIDAS.has(c.node))
   const final = st.map((v, i) => v ?? (i < lastFilled ? 'deducida' : lastFilled >= 0 && !seenAfter ? 'deducidaFinal' : 'falta'))
   m.exp.forEach((n, i) => {
     if (EXCLUIDOS.has(n)) return
@@ -398,7 +492,7 @@ for (const m of lote.filter((x) => x.inSample)) {
 const med = (l) => { if (!l.length) return null; const s = [...l].sort((a, b) => a - b); return s[s.length >> 1] }
 const pc = (a, b) => (b ? `${(a / b * 100).toFixed(1)}%` : '—')
 console.log(MUESTRA ? `muestra: ingresaron el ${MUESTRA[0]} en Q${MUESTRA[1]} → ${lote.filter((m) => m.inSample).length} camiones (universo: inventario de ${lote.length})` : '')
-console.log(`${WEEK ? 'inventario de la semana 01–07/10' : `lote ingresado el ${DAY}${Q ? ` · Q${Q}` : ''}`}: ${lote.length} camiones · umbral ${THETA}`)
+console.log(`${WEEK ? `inventario de la semana ${W_FROM} a ${W_TO}` : `lote ingresado el ${DAY}${Q ? ` · Q${Q}` : ''}`}: ${lote.length} camiones · umbral ${THETA}`)
 console.log('punto'.padEnd(36), 'esper cámara +recon +deduc +final falta  cámara%  final%  efect | capturas: total lote otro noCam sinCand sinDec asign | prueba')
 const T = { esperados: 0, camara: 0, reconstruida: 0, deducida: 0, deducidaFinal: 0, falta: 0 }
 for (const [n, o] of Object.entries(porPunto).sort((a, b) => b[1].esperados - a[1].esperados)) {
@@ -416,7 +510,8 @@ const dist = {}
 for (const c of porCamion) dist[c.falta] = (dist[c.falta] ?? 0) + 1
 console.log('camiones por cantidad de puntos que faltan:', JSON.stringify(dist), `· completos: ${dist[0] ?? 0} de ${porCamion.length} (${pc(dist[0] ?? 0, porCamion.length)})`)
 fs.mkdirSync(path.join(root, 'outputs/demostracion_lote'), { recursive: true })
-console.log('circuitos corregidos por cámaras:', circuitosCambiados)
+console.log('circuitos corregidos por cámaras:', circuitosCambiados, '· de otra planta:', circuitosOtraPlanta, '· registros sin visita fuera del lote:', registrosSinVisita)
 const erroresPrueba = Object.values(res).flatMap((r) => r.prueba.errores)
-fs.writeFileSync(path.join(root, 'outputs/demostracion_lote/pares-inventario.json'), JSON.stringify(paresInventario) + '\n')
-fs.writeFileSync(path.join(root, `outputs/demostracion_lote/lote_${WEEK ? 'semana' : DAY}${Q ? `_Q${Q}` : ''}${MUESTRA ? `_muestra_${MUESTRA.join('Q')}` : ''}.json`), JSON.stringify({ dia: DAY, umbral: THETA, porPunto, porCamion, prueba: pr, erroresPrueba }, null, 2) + '\n')
+// Auxiliar (errores-lectura.mjs): si Windows lo tiene bloqueado, no impide guardar el resultado del lote.
+try { fs.writeFileSync(path.join(root, 'outputs/demostracion_lote/pares-inventario.json'), JSON.stringify(paresInventario) + '\n') } catch (e) { console.warn(`pares-inventario.json no se pudo escribir (${e.code})`) }
+fs.writeFileSync(path.join(root, `outputs/demostracion_lote/lote_${WEEK ? `semana_${W_FROM}_${W_TO}` : DAY}${Q ? `_Q${Q}` : ''}${MUESTRA ? `_muestra_${MUESTRA.join('Q')}` : ''}.json`), JSON.stringify({ dia: DAY, umbral: THETA, porPunto, porCamion, prueba: pr, erroresPrueba }, null, 2) + '\n')

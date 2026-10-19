@@ -1,0 +1,116 @@
+[
+ {
+  "_fuente": "Informe «Camión DTG181 · 01/10» (PDF en Descargas, artifact Camión DTG181). Horas y pesos del informe; fotos del DSS (fotos/DTG181, bajadas con fotos-dss.cjs).",
+  "id": "dtg181-0110",
+  "patente": "DTG181",
+  "meta": "01/10 · PELLET · TRANSILE",
+  "titulo": "Salió del puerto con 1.020 kg arriba y volvió a cargar encima",
+  "categoria": "otros",
+  "pills": [
+   [
+    "1.020 kg",
+    "de pellet sin descargar"
+   ],
+   [
+    "7 h 44 m",
+    "sin lecturas en Ricardone"
+   ]
+  ],
+  "viajes": [
+   {
+    "lbl": "Viaje 3 · carga 00:32, descarga 04:34",
+    "pesos": [
+     [
+      "Ricardone vacío",
+      13840,
+      ""
+     ],
+     [
+      "Ricardone cargado",
+      41500,
+      ""
+     ],
+     [
+      "Puerto cargado",
+      41460,
+      ""
+     ],
+     [
+      "Puerto vacío",
+      14860,
+      "1.020 kg de más"
+     ]
+    ],
+    "cargo": 27660,
+    "descargo": 26600
+   },
+   {
+    "lbl": "Viaje 4 · carga 05:06 a 13:44, descarga 20:46",
+    "pesos": [
+     [
+      "Ricardone vacío",
+      14860,
+      "entró con la tonelada"
+     ],
+     [
+      "Ricardone cargado",
+      42320,
+      ""
+     ],
+     [
+      "Puerto cargado",
+      42240,
+      ""
+     ],
+     [
+      "Puerto vacío",
+      13920,
+      ""
+     ]
+    ],
+    "cargo": 27460,
+    "descargo": 28320
+   }
+  ],
+  "fotos": [
+   [
+    "DTG181_10-01_0438_SLZVolcableC4_escena.jpg",
+    "04:34",
+    "Volcable 4 (viaje 3)",
+    false
+   ],
+   [
+    "DTG181_10-01_0450_SLZSalidaC1Fte_escena.jpg",
+    "04:46",
+    "Sale con 1.020 kg",
+    true
+   ],
+   [
+    "DTG181_10-01_0504_RicPreIngInFr_escena.jpg",
+    "05:00",
+    "Pre-ingreso Ricardone",
+    true
+   ],
+   [
+    "DTG181_10-01_1248_RicCalLiq_escena.jpg",
+    "12:44",
+    "Calada líquida, 7 h 44 m después",
+    false
+   ],
+   [
+    "DTG181_10-01_1342_RicB2Egreso_escena.jpg",
+    "13:38",
+    "Balanza 2, sale cargado",
+    false
+   ],
+   [
+    "DTG181_10-01_2050_SLZVolcableC4_escena.jpg",
+    "20:46",
+    "Volcable 4, descarga todo",
+    false
+   ]
+  ],
+  "conclusion": "En el viaje 3 salió del puerto con 1.020 kg de pellet todavía arriba. Volvió así a Ricardone, lo pesaron «vacío» con esa tonelada adentro y le cargaron encima. En el puerto descargó todo: lo del viaje 4 más la tonelada del viaje 3.",
+  "nota": "Vacío, este camión pesa unos 13.800 kg en todos sus otros viajes. Caso del 01/10 (semana anterior), revisado después del comité del 24/09–04/10."
+ }
+]

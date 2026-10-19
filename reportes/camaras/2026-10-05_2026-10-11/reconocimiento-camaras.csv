@@ -1,0 +1,12 @@
+camara,tipo,planta,punto,esperados,leidos,pct,esperados_dia,leidos_dia,pct_dia,esperados_noche,leidos_noche,pct_noche
+RicIngCamFrente,frontal,ricardone,Ingreso,733,367,50.1,371,192,51.8,362,175,48.3
+RicS6Playa3,frontal,ricardone,Playa 3,207,142,68.6,106,93,87.7,101,49,48.5
+RicVolcable2,frontal,ricardone,Volcable 2,139,65,46.8,66,33,50,73,32,43.8
+RicEgrCamFrente,frontal,ricardone,Salida 2,518,409,79,204,186,91.2,314,223,71
+SLZIngCamFrente,frontal,san_lorenzo,Ingreso,670,601,89.7,328,301,91.8,342,300,87.7
+SLZBalIngFte,frontal,san_lorenzo,Balanza ingreso,670,564,84.2,327,305,93.3,343,259,75.5
+SLZVolcableC1,frontal,san_lorenzo,Volcables,0,0,,0,0,,0,0,
+SLZVolcableC2,frontal,san_lorenzo,Volcables,2,2,100,2,2,100,0,0,
+SLZVolcableC3,frontal,san_lorenzo,Volcables,155,115,74.2,50,46,92,105,69,65.7
+SLZVolcableC4,frontal,san_lorenzo,Volcables,0,0,,0,0,,0,0,
+SLZVolcableC5,frontal,san_lorenzo,Volcables,293,143,48.8,139,129,92.8,154,14,9.1

@@ -2,7 +2,7 @@
  "v": 4,
  "createdOnFiles": {
   "v": 1,
-  "at": "2026-10-13T03:08:14Z"
+  "at": "2026-10-13T13:45:50Z"
  },
  "lists": "css",
  "title": "Comité de Logística Nodo Sur · 5 – 11 oct",
@@ -18,19 +18,22 @@
   "cuartos",
   "historico",
   "div-pellet",
-  "pellet-operativo",
-  "pellet-tramos",
-  "pellet-hist",
+  "pel-periodo",
+  "pel-tramos",
+  "pel-dias",
+  "pel-jornadas",
+  "pel-numeros",
   "div-girasol",
   "girasol",
   "girasol-hist",
   "div-liquidos",
-  "liq-criterio",
   "liq-productos",
+  "liq-tramos",
   "liq-semana",
   "div-sectores",
   "calada",
   "volcables",
+  "volcables-mes",
   "silos",
   "cruces"
  ],
@@ -52,7 +55,7 @@
    "start": "div-soja"
   },
   "s2b": {
-   "description": "Pellet: monitoreo del transile de la semana",
+   "description": "Pellet: las dos tandas del transile, comparadas",
    "start": "div-pellet"
   },
   "s3": {
@@ -60,7 +63,7 @@
    "start": "div-girasol"
   },
   "s3b": {
-   "description": "Líquidos: criterio nuevo, qué se mueve y la semana por cámaras",
+   "description": "Líquidos: qué se mueve y la semana",
    "start": "div-liquidos"
   },
   "s4": {

@@ -1,0 +1,40 @@
+<section id="alg-ecuacion" data-transition="fade" style="display:flex; flex-direction:column; gap:28px; padding:112px 128px 160px; background:#f5f4ee; color:#17302a; font-family:'Plus Jakarta Sans', Arial, sans-serif">
+  <div style="position:absolute; top:72px; left:128px; width:48px; height:8px; background:#1f6e4a; border-radius:4px"></div>
+  <div style="position:absolute; top:72px; left:184px; width:24px; height:8px; background:#6b46a8; border-radius:4px"></div>
+  <div style="display:flex; flex-direction:column; gap:16px">
+    <p style="font-size:24px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#1f6e4a">Algoritmo · La ecuación</p>
+    <h2 style="width:1664px; font-size:60px; font-weight:800; line-height:1.12">Una sola cuenta: qué tan probable es que la foto sea de cada camión</h2>
+  </div>
+  <div style="display:flex; flex-direction:row; gap:32px; align-items:stretch">
+    <div style="display:flex; flex-direction:column; gap:12px; flex:1; justify-content:center; align-items:center; padding:32px 40px; background:#143d2e; border-radius:16px">
+      <p style="font-size:40px; font-weight:700; text-align:center; color:#eef3ef">P(camión) = <span style="color:#7cc29c">paso esperado</span> × <span style="color:#c9b6ee">patente</span> × <span style="color:#e3b95e">atributos</span></p>
+      <x-shape kind="line" style="width:900px; height:3px; flex:0 0 auto; background:#bcd3c7"></x-shape>
+      <p style="font-size:30px; text-align:center; color:#cfe0d7">la misma cuenta, sumada para todos los camiones esperados</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px; width:560px; padding:32px 36px; background:#e3dcf2; border-radius:16px">
+      <h3 style="font-size:30px; font-weight:700; color:#6b46a8">Qué significa P(camión)</h3>
+      <p style="font-size:26px; line-height:1.4">De 0 a 100 %: la chance de que la foto sea de ese camión y no de otro. Entre todos los candidatos suman 100 %.</p>
+      <p style="font-size:26px; line-height:1.4"><b>Gana el más alto</b> y la patente se corrige sola.</p>
+    </div>
+  </div>
+  <div style="display:flex; flex-direction:row; gap:20px">
+    <div style="display:flex; flex-direction:column; gap:10px; flex:1; padding:24px 28px; background:#fdfcf9; border:1px solid #dcd9ce; border-radius:12px">
+      <h3 style="font-size:28px; font-weight:700; color:#1f6e4a">Paso esperado</h3>
+      <p style="font-size:24px; line-height:1.4">¿Le tocaba pasar por ahí, en ese horario? Si sí, suma; si su recorrido no lo permite, resta mucho.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; flex:1; padding:24px 28px; background:#fdfcf9; border:1px solid #dcd9ce; border-radius:12px">
+      <h3 style="font-size:28px; font-weight:700; color:#6b46a8">Patente</h3>
+      <p style="font-size:24px; line-height:1.4">Igual: suma todo. Una letra distinta: resta poco. Dos o más: resta mucho. Si no se parece a ninguna, no suma ni resta para nadie.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; flex:1; padding:24px 28px; background:#fdfcf9; border:1px solid #dcd9ce; border-radius:12px">
+      <h3 style="font-size:28px; font-weight:700; color:#8a5f12">Atributos</h3>
+      <p style="font-size:24px; line-height:1.4">Marca, color y tipo de vehículo que ve la cámara: si coinciden suman, si no restan.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; flex:1; padding:24px 28px; background:#fdfcf9; border:1px solid #dcd9ce; border-radius:12px">
+      <h3 style="font-size:28px; font-weight:700; color:#2e6da4">«Nuevo en el circuito»</h3>
+      <p style="font-size:24px; line-height:1.4">Siempre compite: un camión que no estaba en la lista. Su peso depende del punto: alto en los accesos, casi nulo en volcables o en la balanza de ingreso de San Lorenzo.</p>
+    </div>
+  </div>
+  <p style="position:absolute; bottom:64px; left:128px; width:1664px; font-size:24px; color:#5f6b66"><span style="color:#6b46a8"><b>NODO SUR</b></span> · 7</p>
+  <aside>P(camión) es la probabilidad de que la captura sea de ese camión, comparado con todos los esperados en ese punto más la opción «otro vehículo». Paso esperado: no resta si le tocaba; si el modelo lo hace imposible, pesa un tercio; el tiempo de tramo pesa, nunca filtra. Pesos de atributos medidos en el DSS 24/09–07/10: la marca coincide 79 % entre capturas del mismo camión y 14 % entre camiones distintos (≈ ×5 / ÷5); un color raro que coincide vale más (azul ×3, rojo ×11) que un blanco. El análisis semanal asigna con P ≥ 60 %; en vivo una patente válida nunca se cambia sola.</aside>
+</section>

@@ -1,0 +1,416 @@
+{
+ "patente": "AB723QC",
+ "ingreso": "2026-08-29 05:37:00",
+ "salida": "2026-08-29 15:55:00",
+ "producto": "SOJA",
+ "planta": "TERMINAL_EMBARQUE",
+ "ancla": {
+  "camara": "RicPreIngInFr",
+  "hora": "2026-08-29 05:33:07",
+  "lectura": "RJX"
+ },
+ "puntos": [
+  {
+   "punto": "Preingreso",
+   "elegida": {
+    "camara": "RicPreIngInFr",
+    "hora": "2026-08-29 05:33:07",
+    "at": "2026-08-29T08:33:07.000Z",
+    "lectura": "RJX",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck",
+    "foto": "053307_RicPreIngInFr_RJX.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicPreIngInFr",
+     "hora": "2026-08-29 05:33:07",
+     "at": "2026-08-29T08:33:07.000Z",
+     "lectura": "RJX",
+     "marca": null,
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "053307_RicPreIngInFr_RJX.jpg"
+    }
+   ],
+   "vecinos": []
+  },
+  {
+   "punto": "Ingreso Ricardone",
+   "intervalo": [
+    "05:05:58",
+    "05:39:26"
+   ],
+   "vecinos": [
+    "AI278JO@05:24:31",
+    "MVY131@05:21:56",
+    "ONS316@05:09:58",
+    "AI106QB@05:35:26"
+   ],
+   "elegida": {
+    "camara": "RicIngCamFrente",
+    "hora": "2026-08-29 05:29:26",
+    "at": "2026-08-29T08:29:26.000Z",
+    "lectura": "",
+    "marca": "Scania",
+    "color": "Gray",
+    "tipo": "Medium Truck",
+    "foto": "052926_RicIngCamFrente_vacia.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-08-29 05:29:26",
+     "at": "2026-08-29T08:29:26.000Z",
+     "lectura": "",
+     "marca": "Scania",
+     "color": "Gray",
+     "tipo": "Medium Truck",
+     "foto": "052926_RicIngCamFrente_vacia.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-08-29 05:17:00",
+     "at": "2026-08-29T08:17:00.000Z",
+     "lectura": "AVC",
+     "marca": null,
+     "color": "Black",
+     "tipo": null,
+     "foto": "051700_RicIngCamFrente_AVC.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-08-29 05:16:05",
+     "at": "2026-08-29T08:16:05.000Z",
+     "lectura": "A92",
+     "marca": null,
+     "color": "White",
+     "tipo": "SUV",
+     "foto": "051605_RicIngCamFrente_A92.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-08-29 05:34:18",
+     "at": "2026-08-29T08:34:18.000Z",
+     "lectura": "BL223",
+     "marca": "Iveco",
+     "color": "Black",
+     "tipo": "Pickup",
+     "foto": "053418_RicIngCamFrente_BL223.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-08-29 05:36:04",
+     "at": "2026-08-29T08:36:04.000Z",
+     "lectura": "B16",
+     "marca": "Volvo",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "053604_RicIngCamFrente_B16.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Calada Ricardone",
+   "intervalo": [
+    "12:14:21",
+    "13:14:21"
+   ],
+   "vecinos": [
+    "AI278JO@11:58:50",
+    "MVY131@11:55:07",
+    "AI106QB@12:44:21",
+    "FWX537@12:47:21"
+   ],
+   "elegida": {
+    "camara": "RicCal05",
+    "hora": "2026-08-29 12:56:39",
+    "at": "2026-08-29T15:56:39.000Z",
+    "lectura": "",
+    "marca": null,
+    "color": null,
+    "tipo": "Motorcycle",
+    "foto": "125639_RicCal05_vacia.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicCal05",
+     "hora": "2026-08-29 12:56:39",
+     "at": "2026-08-29T15:56:39.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": null,
+     "tipo": "Motorcycle",
+     "foto": "125639_RicCal05_vacia.jpg"
+    },
+    {
+     "camara": "RicCalLiq",
+     "hora": "2026-08-29 13:08:45",
+     "at": "2026-08-29T16:08:45.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "Blue",
+     "tipo": "Pickup",
+     "foto": "130845_RicCalLiq_vacia.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza ingreso Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Playa 3",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Celda 16",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Silo Keppler",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Volcables Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Balanza egreso Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Egreso Ricardone",
+   "intervalo": [
+    "12:58:39",
+    "13:26:39"
+   ],
+   "vecinos": [
+    "HLS747@13:01:25",
+    "DJB818@13:00:07",
+    "ISW862@13:05:47",
+    "FAV049@13:18:31"
+   ],
+   "elegida": {
+    "camara": "RicEgrCamFrente",
+    "hora": "2026-08-29 13:12:31",
+    "at": "2026-08-29T16:12:31.000Z",
+    "lectura": "IVEC0",
+    "marca": "Iveco",
+    "color": "Silver",
+    "tipo": "Medium Truck",
+    "foto": "131231_RicEgrCamFrente_IVEC0.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicEgrCamFrente",
+     "hora": "2026-08-29 13:12:31",
+     "at": "2026-08-29T16:12:31.000Z",
+     "lectura": "IVEC0",
+     "marca": "Iveco",
+     "color": "Silver",
+     "tipo": "Medium Truck",
+     "foto": "131231_RicEgrCamFrente_IVEC0.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Ingreso puerto",
+   "intervalo": [
+    "13:08:39",
+    "13:41:39"
+   ],
+   "vecinos": [
+    "FYM935@13:20:43",
+    "MJT037@13:18:32",
+    "ISW862@13:14:33",
+    "AE342UD@13:26:32",
+    "FAV049@13:30:37",
+    "FWX537@13:40:14"
+   ],
+   "candidatas": []
+  },
+  {
+   "punto": "Balanza ingreso puerto",
+   "intervalo": [
+    "13:13:31",
+    "15:40:00"
+   ],
+   "vecinos": [
+    "FYM935@17:37:08",
+    "MJT037@17:36:09",
+    "ISW862@17:33:13",
+    "FAV049@17:40:30",
+    "FWX537@17:42:39"
+   ],
+   "elegida": {
+    "camara": "SLZBalIngFte",
+    "hora": "2026-08-29 15:00:27",
+    "at": "2026-08-29T18:00:27.000Z",
+    "lectura": "NWNN0U",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck",
+    "foto": "150027_SLZBalIngFte_NWNN0U.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-08-29 15:00:27",
+     "at": "2026-08-29T18:00:27.000Z",
+     "lectura": "NWNN0U",
+     "marca": "Scania",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "150027_SLZBalIngFte_NWNN0U.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Volcables puerto",
+   "intervalo": [
+    "15:01:27",
+    "15:52:00"
+   ],
+   "vecinos": [
+    "AA869FA@15:27:27",
+    "AE281UZ@15:22:22",
+    "AC701DS@15:15:53",
+    "AE300QP@15:36:26",
+    "MBP152@15:32:18",
+    "AH323TF@15:38:33"
+   ],
+   "elegida": {
+    "camara": "SLZVolcableC5",
+    "hora": "2026-08-29 15:41:19",
+    "at": "2026-08-29T18:41:19.000Z",
+    "lectura": "SEO8673",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck",
+    "foto": "154119_SLZVolcableC5_SEO8673.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "SLZVolcableC5",
+     "hora": "2026-08-29 15:41:19",
+     "at": "2026-08-29T18:41:19.000Z",
+     "lectura": "SEO8673",
+     "marca": "Scania",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "154119_SLZVolcableC5_SEO8673.jpg"
+    },
+    {
+     "camara": "SLZVolcableC2",
+     "hora": "2026-08-29 15:07:28",
+     "at": "2026-08-29T18:07:28.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "Red",
+     "tipo": null,
+     "foto": "150728_SLZVolcableC2_vacia.jpg"
+    },
+    {
+     "camara": "SLZVolcableC2",
+     "hora": "2026-08-29 15:31:31",
+     "at": "2026-08-29T18:31:31.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "Black",
+     "tipo": null,
+     "foto": "153131_SLZVolcableC2_vacia.jpg"
+    },
+    {
+     "camara": "SLZVolcableC2",
+     "hora": "2026-08-29 15:36:27",
+     "at": "2026-08-29T18:36:27.000Z",
+     "lectura": "",
+     "marca": null,
+     "color": "Green",
+     "tipo": null,
+     "foto": "153627_SLZVolcableC2_vacia.jpg"
+    },
+    {
+     "camara": "SLZVolcableC1",
+     "hora": "2026-08-29 15:43:00",
+     "at": "2026-08-29T18:43:00.000Z",
+     "lectura": "AP750S",
+     "marca": "Iveco",
+     "color": "Silver",
+     "tipo": "Large Truck",
+     "foto": "154300_SLZVolcableC1_AP750S.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza egreso puerto",
+   "intervalo": [
+    "15:51:00",
+    "15:57:00"
+   ],
+   "vecinos": [
+    "AH323TF@15:53:58",
+    "AE300QP@15:44:30",
+    "MBP152@15:42:17",
+    "DPQ409@16:01:53",
+    "HVJ373@16:01:00"
+   ],
+   "candidatas": []
+  },
+  {
+   "punto": "Salida puerto",
+   "intervalo": [
+    "15:55:00",
+    "16:15:00"
+   ],
+   "vecinos": [
+    "AH323TF@15:58:31",
+    "AE300QP@15:48:23",
+    "MBP152@16:03:37",
+    "PCP293@15:56:52",
+    "DPQ409@16:07:50",
+    "HVJ373@16:07:16"
+   ],
+   "elegida": {
+    "camara": "SLZSalidaC1Fte",
+    "hora": "2026-08-29 15:59:47",
+    "at": "2026-08-29T18:59:47.000Z",
+    "lectura": "AR750",
+    "marca": "Toyota Crown",
+    "color": "White",
+    "tipo": "Large Truck",
+    "foto": "155947_SLZSalidaC1Fte_AR750.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "SLZSalidaC1Fte",
+     "hora": "2026-08-29 15:59:47",
+     "at": "2026-08-29T18:59:47.000Z",
+     "lectura": "AR750",
+     "marca": "Toyota Crown",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "155947_SLZSalidaC1Fte_AR750.jpg"
+    },
+    {
+     "camara": "SLZSalidaC1Fte",
+     "hora": "2026-08-29 15:59:10",
+     "at": "2026-08-29T18:59:10.000Z",
+     "lectura": "",
+     "marca": "Toyota Crown",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "155910_SLZSalidaC1Fte_vacia.jpg"
+    }
+   ]
+  }
+ ]
+}

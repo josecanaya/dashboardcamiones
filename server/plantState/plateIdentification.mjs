@@ -61,15 +61,21 @@ const TWIN_MIN_SIMILARITY = 0.6
  * La cuenta del modelo de nodos (docs «algoritmo explicado»): P(camión) = paso esperado × patente ×
  * atributos, contra «nuevo en el circuito». Por encima de este umbral se aplica sola.
  */
-export const CUENTA_AUTO_PROBABILITY = 0.95
-/** Lectura ilegible: replay 06–08/10 contra operaciones, ≥ 90 % → 4 de 4 bien (≥ 80 %: 5 de 5). */
-export const CUENTA_INVALID_AUTO_PROBABILITY = 0.9
+// Criterio de operaciones (19/10): reconocimiento mayor al 60 % se aplica. Antes 0,95 / 0,90
+// (replay 06–08/10 contra operaciones); las guardas de balanza y parecido siguen igual.
+export const AUTO_APPLY_PROBABILITY = 0.6
+export const CUENTA_AUTO_PROBABILITY = AUTO_APPLY_PROBABILITY
+export const CUENTA_INVALID_AUTO_PROBABILITY = AUTO_APPLY_PROBABILITY
 /**
  * Patente válida que nunca pasó por la balanza y un solo camión parecido (una letra) que la balanza tiene
  * en planta, con el paso pendiente y la cuenta a su favor (≥ 50 %): replay 06–08/10, 13 de 14 bien
  * (falló RKU605 → RKU685, dos camiones reales y RKU605 no figuraba en el Excel).
  */
 const BALANZA_NEAR_SIMILARITY = 0.8
+/** Reglas automáticas a las que se les pide que el elegido no sea un «camión fantasma» (ver identifyFragments). */
+const GHOST_GUARD_RULES = new Set(['universo', 'cuenta', 'atributos_dss'])
+/** Parecido mínimo entre una lectura y un camión de la balanza para el viaje fantasma y la regla «balanza única». */
+export const GHOST_SIMILARITY = 0.75
 const BALANZA_NEAR_CUENTA = 0.5
 /** Patente válida corregida por la cuenta: solo si se parece de verdad (una letra) al camión elegido. */
 const CUENTA_VALID_SIMILARITY = 0.8
@@ -193,6 +199,24 @@ function collapse(logicals) {
   const out = []
   for (const l of logicals) if (out[out.length - 1] !== l) out.push(l)
   return out
+}
+
+/** Veces que el propio camión repitió un tramo para que cuente como su patrón (ida y vuelta interno). */
+export const OWN_STEP_MIN_REPEATS = 2
+/**
+ * Probabilidad del paso from → to según el recorrido del propio camión en esta visita. Los camiones
+ * internos (AYM824: Volcable ↔ Silo Chief toda la noche) hacen tramos que ningún circuito del catálogo
+ * tiene, y el catálogo les daba 0 % aunque el ida y vuelta se repitiera diez veces.
+ */
+export function ownStepProbability(seen, from, to) {
+  let total = 0
+  let hits = 0
+  for (let i = 0; i + 1 < seen.length; i++) {
+    if (seen[i] !== from) continue
+    total++
+    if (seen[i + 1] === to) hits++
+  }
+  return hits >= OWN_STEP_MIN_REPEATS ? hits / total : 0
 }
 
 /** Posiciones de h como subsecuencia ordenada de seq, o null. */
@@ -339,12 +363,21 @@ export function identifyFragments(events, nowMs, ctx) {
   /** Registro de balanza (SGC): refuerzo ante la duda. Ver balanzaRegistry.mjs. */
   const bz = ctx.balanza ?? null
   const trailerOfJourney = (j) => (bz && bz.isTrailer(j.plate) && !bz.truckAt(j.plate, j.rows[0].t) ? bz.trailerAt(j.plate, j.rows[0].t) : null)
+  /**
+   * Viaje fantasma: patente válida mal leída igual en varias cámaras (BOH961 en Preingreso e Ingreso, era
+   * BDH961). No está en la balanza ni vino nunca, y en planta hay un camión parecido según la balanza.
+   * Cruce 13–19/10: 57 de 175 lecturas malas eran viajes así y nunca llegaban a la bandeja.
+   */
+  const ghostOfJourney = (j) =>
+    Boolean(bz && isValidPlate(j.plate) && !bz.truckAt(j.plate, j.rows[0].t) && !bz.isKnown(j.plate) &&
+      bz.platesAt(j.rows[0].t).some((p) => p !== j.plate && plateSimilarity(j.plate, p) >= GHOST_SIMILARITY))
   const fragments = journeys.filter((j) => {
     if (decided(j)) return true
     const first = j.rows[0].logical
     if (!isValidPlate(j.plate)) return true
     // Patente del acoplado (cámaras traseras): el feed la trata como otro camión aunque recorra varios nodos.
     if (trailerOfJourney(j)) return true
+    if (ghostOfJourney(j)) return true
     // Patente válida que arranca a mitad de circuito: puede ser una lectura cambiada (KMO254 por KWO254).
     // Si la misma patente se leyó en dos o más nodos distintos, es un camión real al que no se le leyó el ingreso.
     if (new Set(j.rows.map((r) => r.logical)).size > 1) return false
@@ -476,7 +509,8 @@ export function identifyFragments(events, nowMs, ctx) {
       // Otra cámara del mismo nodo donde ya está el camión (frente/trasera, doble lectura): es esperado.
       const lastBefore = before[before.length - 1]
       const sameNode = before.some(r=>r.logical===head.logical && head.t-r.t<=TWIN_MS) || (lastBefore.logical === head.logical && head.t - lastBefore.t <= SAME_NODE_MS)
-      const pNext = sameNode ? 1 : exp.next[head.logical] || 0
+      const pOwn = ownStepProbability(seen, lastBefore.logical, head.logical)
+      const pNext = sameNode ? 1 : Math.max(exp.next[head.logical] || 0, pOwn)
       const pReach = exp.reachable[head.logical] || 0
       if (pNext > 0 || pReach > 0) {
         const onTime = sameNode || transitFit(transit, lastBefore.logical, head.logical, head.t - lastBefore.t).onTime
@@ -677,9 +711,55 @@ export function identifyFragments(events, nowMs, ctx) {
       // Sin candidatos hoy (salieron de planta), pero operaciones ya decidió: se respeta.
       level = 'provisorio'
       reason = 'decisión de operaciones'
+    } else if (ghostOfJourney(f)) {
+      level = 'provisorio'
+      reason = `${f.plate} no figura en la balanza y se parece a un camión que sí está en planta: posible lectura mala repetida`
     } else {
       // Patente válida sin parecido con nadie: camión real al que no se le leyó el ingreso.
       continue
+    }
+
+    // Camión fantasma: una lectura mala repetida en varias cámaras (DSP630 en Ingreso y Calada) arma un
+    // viaje propio que atrae las demás lecturas malas. Si el elegido no está en la balanza y otro camión
+    // parecido sí está en planta, no se aplica solo: cruce 13–19/10, 5 de 7 errores automáticos
+    // (DSP63 → DSP630 era OSP630, HOCZ112 → HOC112 era HDC112, MDY20 → MDY210 era MDY213).
+    const bzSimilar = bz ? bz.platesAt(head.t).filter((p) => p !== f.plate && plateSimilarity(f.plate, p) >= MIN_SIMILARITY) : []
+    if (bz && level === 'casi_seguro' && chosen && GHOST_GUARD_RULES.has(rule) && !inBalanza(chosen.plate)) {
+      // Parecido a la lectura o al propio elegido: COM1759 (ilegible) → MIN155, que es la lectura mala de GON155.
+      const inPlant = [...new Set([...bzSimilar, ...bz.platesAt(head.t).filter((p) => plateSimilarity(chosen.plate, p) >= MIN_SIMILARITY)])].filter((p) => p !== chosen.plate)
+      if (inPlant.length) {
+        for (const p of inPlant) if (!bzSimilar.includes(p)) bzSimilar.push(p)
+        level = 'provisorio'
+        reason = `${chosen.plate} no figura en la balanza y ${inPlant.slice(0, 2).join(' / ')} (patente parecida) sí está en planta: elegir la correcta`
+        rule = null
+        chosen = null
+      }
+    }
+
+    // Balanza única: lo que quedó abierto se asigna al ÚNICO camión parecido que la balanza tiene en planta.
+    // Lectura ilegible: alcanza con eso. Patente válida (viaje fantasma): además ese camión no tiene
+    // ninguna lectura de cámara en su visita (el fantasma es su recorrido) y la leída nunca vino a la balanza.
+    if (bz && (level === 'provisorio' || level === 'pendiente') && !twin && !readInBalanza && !(valid && readKnown)) {
+      const ranked = bz.platesAt(head.t)
+        .filter((p) => p !== f.plate)
+        .map((p) => ({ plate: p, similarity: plateSimilarity(f.plate, p) }))
+        .filter((x) => x.similarity >= GHOST_SIMILARITY)
+        .sort((a, b) => b.similarity - a.similarity)
+      const top = ranked[0]
+      const clear = top && (!ranked[1] || top.similarity - ranked[1].similarity >= RIVAL_MARGIN)
+      // Un camión de cámara en el universo que se parece más (interno de silos, sin balanza) manda.
+      const betterCamera = top && plateMatches.some((c) => c.inUniverse && c.similarity > top.similarity && !inBalanza(c.plate))
+      const visit = top && bz.truckAt(top.plate, head.t)
+      const unread = visit && !(readsByPlate.get(top.plate) ?? []).some((r) => r.t >= visit.ingresoMs - 30 * 60_000 && r.t <= (visit.salidaMs ?? head.t + 6 * 3600_000) + 60 * 60_000)
+      // Lectura suelta en un solo nodo: no hace falta que el camión real no tenga lecturas (es una lectura más suya).
+      const singleNode = new Set(f.rows.map((r) => r.logical)).size === 1
+      if (clear && !betterCamera && (!valid || unread || singleNode)) {
+        level = 'casi_seguro'
+        chosen = journeyOfPlate(top.plate)
+        rule = 'balanza_unica'
+        reason = `${f.plate} no figura en la balanza y ${top.plate} (parecido ${Math.round(top.similarity * 100)} %) es el único camión parecido en planta según la balanza${valid && !singleNode ? ', sin ninguna lectura de cámara en su visita' : ''}`
+        if (!bzSimilar.includes(top.plate)) bzSimilar.push(top.plate)
+      }
     }
 
     const decision = decisions[f.key] || null
@@ -714,7 +794,9 @@ export function identifyFragments(events, nowMs, ctx) {
     }
     // Ni la lectura ni ningún candidato figuran en la balanza: vehículo fuera del sistema de camiones
     // (autos y camionetas en Egreso SL y Renova). Sale de la bandeja del operador a una lista aparte.
-    if (!decision && (level === 'provisorio' || level === 'pendiente') && bz &&
+    // Un camión parecido en planta según la balanza (aunque ninguna cámara lo haya leído bien) prueba
+    // que la lectura es de un camión: no va a «fuera del sistema».
+    if (!decision && (level === 'provisorio' || level === 'pendiente') && bz && !bzSimilar.length &&
         outsideTruckSystem({ readPlate: f.plate, validFormat: valid, at: new Date(head.t).toISOString() }, candidates, bz)) {
       level = 'fuera_sistema'
       reason = `ni ${f.plate || 'la lectura'} ni ${candidates.length ? 'sus candidatos' : 'ningún camión'} figuran en la balanza: vehículo fuera del sistema de camiones`
@@ -742,7 +824,7 @@ export function identifyFragments(events, nowMs, ctx) {
       evidenceEligible: (evidenceEligible || Boolean(!twin && cuenta?.candidate && cuenta.probability >= 0.5 && (!valid || (bz && !readKnown)))) && level !== 'casi_seguro' && !decision,
       rule: decision ? 'operaciones' : rule,
       cuenta: cuenta ? { plate: cuenta.candidate?.plate ?? null, probability: Math.round(cuenta.probability * 1000) / 1000, nuevo: Math.round(cuenta.neverSeen * 1000) / 1000, ignorePlate: cuenta.ignorePlate } : null,
-      balanza: bz ? { readInPlant: readInBalanza, readKnown, trailerOf: trailerHit?.plate ?? null } : null,
+      balanza: bz ? { readInPlant: readInBalanza, readKnown, trailerOf: trailerHit?.plate ?? null, similarInPlant: bzSimilar } : null,
       candidates: [...candidates.slice(0, opt.maxCandidates ?? 5), ...(cuenta?.candidate && !candidates.slice(0, opt.maxCandidates ?? 5).includes(cuenta.candidate) ? [cuenta.candidate] : [])].map(({ score, ...c }) => ({ ...c, inBalanza: inBalanza(c.plate), score: Math.round(score * 100) / 100 })),
       decision,
     })
@@ -966,9 +1048,182 @@ export function findPredecessors(events, nowMs, plate, ctx) {
 }
 
 /**
+ * Paso deducido (doc «algoritmo explicado»: cámara / corregido / deducido): un nodo sin lectura entre dos
+ * lecturas del camión, por el que pasan TODOS (≥ minProbability del peso) los circuitos compatibles con lo
+ * que leyó. Ej. Preingreso → Balanza sin Calada leída: Calada queda deducida.
+ * @param {string[]} seen secuencia lógica colapsada de lecturas (una planta)
+ * @param {{ code: string, sequences: string[][] }[]} catalog
+ * @returns {{ after: string, before: string, node: string, probability: number }[]}
+ */
+export function deduceSkippedSteps(seen, catalog, { weights = circuitWeights({}, historicalPrior(), catalog.map((c) => c.code)), minProbability = DEDUCED_MIN_PROBABILITY } = {}) {
+  const h = seen.filter((l) => l && l !== 'ESPERA')
+  if (h.length < 2) return []
+  /** Por par (i, i+1): peso de cada nodo intermedio y peso total de los circuitos compatibles. */
+  const between = h.slice(1).map(() => new Map())
+  let total = 0
+  for (const entry of catalog) {
+    const fits = []
+    for (const s of entry.sequences) {
+      // Posición de cada lectura en el circuito (primera coincidencia en orden).
+      const pos = []
+      let j = 0
+      for (const l of h) {
+        while (j < s.length && s[j] !== l) j++
+        if (j >= s.length) break
+        pos.push(j++)
+      }
+      if (pos.length === h.length) fits.push([s, pos])
+    }
+    if (!fits.length) continue
+    const w = (weights[entry.code] ?? 0.05) / fits.length
+    for (const [s, pos] of fits) {
+      total += w
+      for (let i = 0; i < pos.length - 1; i++) for (const n of new Set(s.slice(pos[i] + 1, pos[i + 1]))) between[i].set(n, (between[i].get(n) ?? 0) + w)
+    }
+  }
+  if (!total) return []
+  const out = []
+  between.forEach((m, i) => {
+    for (const [node, w] of m) if (w / total >= minProbability && !h.includes(node)) out.push({ after: h[i], before: h[i + 1], node, probability: Math.round((w / total) * 1000) / 1000 })
+  })
+  return out
+}
+export const DEDUCED_MIN_PROBABILITY = 0.95
+
+/**
+ * Secuencia lógica con los pasos deducidos intercalados (para elegir circuito y próximo punto: si Preingreso
+ * quedó deducido entre Ingreso y Calada, el próximo no es Preingreso). Apagar con PLANT_DEDUCED_STEPS=0.
+ * @param {string[]} logicalSeq
+ */
+export function withDeducedSequence(logicalSeq, catalog = nodeModelCatalog()) {
+  if (process.env.PLANT_DEDUCED_STEPS === '0') return logicalSeq
+  const seq = collapse((logicalSeq || []).filter((l) => l && l !== 'ESPERA'))
+  const deduced = deduceSkippedSteps(seq, catalog)
+  if (!deduced.length) return logicalSeq
+  const out = []
+  seq.forEach((l, i) => {
+    out.push(l)
+    for (const d of deduced) if (d.after === l && d.before === seq[i + 1]) out.push(d.node)
+  })
+  return out
+}
+
+/*
+ * Búsqueda hacia atrás automática (doc «algoritmo explicado»): un camión que aparece a mitad de circuito
+ * (Calada, Balanza…) sin lectura de entrada, y que la balanza (SGC/movimientos) tiene en planta, se une
+ * a la lectura de entrada suelta (Preingreso/Ingreso) que no se asignó a nadie y cae a la hora de su alta
+ * en balanza. Compiten por cada lectura suelta todos los camiones que la balanza da de alta a esa hora
+ * (también los que tienen su propia lectura de entrada: la suelta puede ser una doble lectura suya) y
+ * «nuevo» (auto, servicio o camión que el SGC todavía no muestra). Decide la cuenta (scoreWithNodeModel).
+ * Solo Ricardone: en San Lorenzo el ingreso del movimiento no es la llegada a la planta (R7, transiles).
+ */
+/**
+ * Minutos de la lectura de entrada respecto del alta en balanza (replay 06–09/10, Ricardone):
+ * Preingreso S1 p25–p75 = −1…0 min; Ingreso S0 p05–p95 = −16…−2 min.
+ */
+export const BACKWARD_ENTRY_WINDOW_MIN = { S1: [-6, 2], S0: [-17, 0] }
+// Sigue en 95 %: une lecturas vacías solo por la hora del alta, no hay patente que reconocer.
+export const BACKWARD_AUTO_PROBABILITY = 0.95
+/** «Nuevo» en Preingreso: lecturas de entrada que no son de ningún camión de la balanza (calibrado en el replay). */
+export const BACKWARD_NEW_PRIOR = 0.3
+
+/**
+ * @param {object[]} events historia cruda de la planta (sin identificaciones aplicadas)
+ * @param {number} nowMs
+ * @param {{ balanza: ReturnType<import('./balanzaRegistry.mjs').buildBalanzaRegistry>|null, site?: string, catalog?: object[], excludeKeys?: Iterable<string>, dismissed?: (plate: string, journeyKey: string) => boolean, options?: { window?: Record<string, [number, number]>, threshold?: number, newPrior?: number, lookbackMs?: number } }} ctx
+ * @returns {{ journeyKey: string, journeyUid: string|null, plate: string, targetJourneyUid: string|null, readPlate: string, node: string, at: string, probability: number, auto: boolean, reason: string, rivals: { plate: string, probability: number }[] }[]}
+ */
+export function autoPredecessorLinks(events, nowMs, ctx) {
+  const bz = ctx.balanza
+  if (!bz || (ctx.site && ctx.site !== 'ricardone')) return []
+  const win = ctx.options?.window ?? BACKWARD_ENTRY_WINDOW_MIN
+  const threshold = ctx.options?.threshold ?? BACKWARD_AUTO_PROBABILITY
+  const newPrior = ctx.options?.newPrior ?? BACKWARD_NEW_PRIOR
+  const lookbackMs = ctx.options?.lookbackMs ?? DAY_MS
+  const exclude = new Set(ctx.excludeKeys ?? [])
+  const journeys = buildJourneys(events, nowMs)
+  const isEntry = (l) => Object.hasOwn(win, l)
+  const inWindow = (r, ingresoMs) => {
+    const [lo, hi] = win[r.logical] ?? [0, -1]
+    const d = (r.t - ingresoMs) / 60000
+    return d >= lo && d <= hi
+  }
+  // Lecturas de entrada sueltas: viajes que solo tienen lecturas de entrada, sin asignar ni vincular, y cuya
+  // patente no es de otro camión que la balanza tiene en planta.
+  const orphans = journeys.filter((j) =>
+    !exclude.has(j.key) && j.rows.every((r) => isEntry(r.logical)) && nowMs - j.rows[0].t <= lookbackMs &&
+    !(isValidPlate(j.plate) && (bz.truckAt(j.plate, j.rows[0].t) || bz.isTrailer(j.plate))))
+  if (!orphans.length) return []
+  // Camiones que necesitan su entrada: patente válida, primera lectura a mitad de circuito, en balanza, y
+  // sin ninguna lectura de entrada propia (otro viaje de la misma patente) cerca de su alta.
+  /** @type {Map<string, { plate: string, key: string, journeyUid: string|null, first: { t: number, logical: string }, ingresoMs: number }>} */
+  const needing = new Map()
+  for (const j of journeys) {
+    if (!isValidPlate(j.plate) || isEntry(j.rows[0].logical) || exclude.has(j.key)) continue
+    if (nowMs - j.rows[0].t > lookbackMs) continue
+    const v = bz.truckAt(j.plate, j.rows[0].t)
+    if (!v || v.ingresoMs > j.rows[0].t) continue
+    const ownEntry = journeys.some((o) => o.plate === j.plate && o.rows.some((r) => isEntry(r.logical) && Math.abs(r.t - v.ingresoMs) <= 60 * 60_000))
+    if (ownEntry) continue
+    const prev = needing.get(j.plate)
+    if (!prev || j.rows[0].t < prev.first.t) needing.set(j.plate, { plate: j.plate, key: j.key, journeyUid: j.journeyUid, first: j.rows[0], ingresoMs: v.ingresoMs })
+  }
+  if (!needing.size) return []
+  // Altas de balanza a la hora de cada lectura suelta: todos los camiones de la balanza que entraron ahí.
+  const entryPlates = new Map()
+  for (const j of journeys) if (isValidPlate(j.plate)) entryPlates.set(j.plate, true)
+  for (const n of needing.values()) entryPlates.set(n.plate, true)
+
+  const out = []
+  for (const o of orphans) {
+    const at = o.rows[0]
+    // Candidatos: patentes leídas en la planta (o que necesitan entrada) con alta en balanza que encaja con la lectura.
+    const cands = []
+    for (const plate of entryPlates.keys()) {
+      const v = bz.truckAt(plate, at.t)
+      if (!v || !o.rows.some((r) => inWindow(r, v.ingresoMs))) continue
+      const need = needing.get(plate)
+      // Un camión que necesita entrada tiene que haberse leído después de esta lectura.
+      if (need && need.first.t < o.rows[o.rows.length - 1].t) continue
+      cands.push({ plate, need: need ?? null, sameNode: false, nextProbability: 1, nodeProbability: 1, onTime: true })
+    }
+    if (!cands.some((c) => c.need)) continue
+    const valid = isValidPlate(o.plate)
+    const similar = cands.some((c) => plateSimilarity(o.plate, c.plate) >= MIN_SIMILARITY)
+    const nm = scoreWithNodeModel(
+      { readPlate: o.plate, validFormat: valid, node: at.logical, at: new Date(at.t).toISOString(), expectedAtNode: cands.length },
+      cands,
+      { ignorePlate: !o.plate || (!valid && !similar), pInicio: newPrior }
+    )
+    const ranked = nm.candidates.map((r, i) => ({ ...r, c: cands[i] })).sort((a, b) => b.probability - a.probability)
+    const top = ranked[0]
+    if (!top?.c.need) continue
+    out.push({
+      journeyKey: o.key,
+      journeyUid: o.journeyUid,
+      plate: top.plate,
+      targetJourneyUid: top.c.need.journeyUid,
+      readPlate: o.plate || 'SIN_PATENTE',
+      node: at.logical,
+      at: new Date(at.t).toISOString(),
+      probability: Math.round(top.probability * 1000) / 1000,
+      auto: top.probability >= threshold,
+      reason: `${top.plate} apareció en ${logicalLabel(top.c.need.first.logical)} sin lectura de entrada; la balanza lo da de alta ${Math.round((at.t - top.c.need.ingresoMs) / 60000)} min respecto de esta lectura de ${logicalLabel(at.logical)} (cuenta ${Math.round(top.probability * 100)} %)`,
+      rivals: ranked.slice(1, 3).map((r) => ({ plate: r.plate, probability: Math.round(r.probability * 1000) / 1000 })),
+    })
+  }
+  // Una lectura por camión: si dos sueltas apuntan al mismo, ninguna se aplica sola (puede ser frente/trasera
+  // de él, pero también de otro que el SGC todavía no muestra).
+  const perPlate = new Map()
+  for (const l of out) perPlate.set(l.plate, (perPlate.get(l.plate) ?? 0) + 1)
+  for (const l of out) if (perPlate.get(l.plate) > 1 && !ctx.options?.allowMany) l.auto = false
+  return out.filter((l) => !ctx.dismissed?.(l.plate, l.journeyKey))
+}
+
+/**
  * Aplica los vínculos confirmados por operaciones: los eventos del viaje mal leído pasan a ser del camión.
  * @param {object[]} events
- * @param {{ journeyKey: string, plate: string, journeyUid?: string|null }[]} links
+ * @param {{ journeyKey: string, plate: string, journeyUid?: string|null, level?: string }[]} links
  */
 export function applyLinks(events, links) {
   if (!links.length) return events
@@ -976,6 +1231,6 @@ export function applyLinks(events, links) {
   return events.map((e) => {
     const l = byKey.get(journeyKeyOf(e, getEventLiveInstantMs(e)))
     if (!l) return e
-    return { ...e, normalizedPlate: l.plate, truckPlate: l.plate, journeyUid: l.journeyUid || e.journeyUid, identifiedFromPlate: plateOf(e), identificationLevel: 'confirmado' }
+    return { ...e, normalizedPlate: l.plate, truckPlate: l.plate, journeyUid: l.journeyUid || e.journeyUid, identifiedFromPlate: plateOf(e), identificationLevel: l.level ?? 'confirmado' }
   })
 }

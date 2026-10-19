@@ -1,0 +1,206 @@
+[
+ {
+  "plate": "BWA132",
+  "device": "RicCal03",
+  "horaOperativa": "10-09_2007",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "BWA132",
+   "confidence": 78,
+   "color": "White",
+   "marca": null,
+   "tipo": "Large Truck",
+   "at": "2026-10-09T23:03:30.000Z"
+  },
+  "sceneFile": "BWA132_10-09_2007_RicCal03_escena.jpg",
+  "plateFile": "BWA132_10-09_2007_RicCal03_patente.jpg"
+ },
+ {
+  "plate": "BWA132",
+  "device": "RicEgrCamFrente",
+  "horaOperativa": "10-09_2017",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "BWA132",
+   "confidence": 62,
+   "color": "White",
+   "marca": "Volvo",
+   "tipo": "Medium Truck",
+   "at": "2026-10-09T23:13:14.000Z"
+  },
+  "sceneFile": "BWA132_10-09_2017_RicEgrCamFrente_escena.jpg",
+  "plateFile": "BWA132_10-09_2017_RicEgrCamFrente_patente.jpg"
+ },
+ {
+  "plate": "BWA132",
+  "device": "SLZIngCamFrente",
+  "horaOperativa": "10-09_2028",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "BWA132",
+   "confidence": 70,
+   "color": "Silver",
+   "marca": null,
+   "tipo": "Medium Truck",
+   "at": "2026-10-09T23:24:21.000Z"
+  },
+  "sceneFile": "BWA132_10-09_2028_SLZIngCamFrente_escena.jpg",
+  "plateFile": "BWA132_10-09_2028_SLZIngCamFrente_patente.jpg"
+ },
+ {
+  "plate": "BWA132",
+  "device": "SLZBalIngFte",
+  "horaOperativa": "10-09_2031",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "BWA132",
+   "confidence": 78,
+   "color": "White",
+   "marca": null,
+   "tipo": "Small Truck",
+   "at": "2026-10-09T23:27:20.000Z"
+  },
+  "sceneFile": "BWA132_10-09_2031_SLZBalIngFte_escena.jpg",
+  "plateFile": "BWA132_10-09_2031_SLZBalIngFte_patente.jpg"
+ },
+ {
+  "plate": "BWA132",
+  "device": "SLZSalidaC1Fte",
+  "horaOperativa": "10-09_2046",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "BWA132",
+   "confidence": 82,
+   "color": "White",
+   "marca": "Mercedes-Benz",
+   "tipo": "Medium Truck",
+   "at": "2026-10-09T23:42:45.000Z"
+  },
+  "sceneFile": "BWA132_10-09_2046_SLZSalidaC1Fte_escena.jpg",
+  "plateFile": "BWA132_10-09_2046_SLZSalidaC1Fte_patente.jpg"
+ },
+ {
+  "plate": "BWA132",
+  "device": "RicIngCamFrente",
+  "horaOperativa": "10-09_2306",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "BWA132",
+   "confidence": 30,
+   "color": "White",
+   "marca": "Volvo",
+   "tipo": "Medium Truck",
+   "at": "2026-10-10T02:02:49.000Z"
+  },
+  "sceneFile": "BWA132_10-09_2306_RicIngCamFrente_escena.jpg",
+  "plateFile": "BWA132_10-09_2306_RicIngCamFrente_patente.jpg"
+ },
+ {
+  "plate": "BWA132",
+  "device": "RicPreIngInFr",
+  "horaOperativa": "10-09_2309",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "BWA132",
+   "confidence": 86,
+   "color": "White",
+   "marca": null,
+   "tipo": "Medium Truck",
+   "at": "2026-10-10T02:05:05.000Z"
+  },
+  "sceneFile": "BWA132_10-09_2309_RicPreIngInFr_escena.jpg",
+  "plateFile": "BWA132_10-09_2309_RicPreIngInFr_patente.jpg"
+ },
+ {
+  "plate": "BWA132",
+  "device": "RicCal03",
+  "horaOperativa": "10-09_2331",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "BWA132",
+   "confidence": 82,
+   "color": "Black",
+   "marca": null,
+   "tipo": "Medium Truck",
+   "at": "2026-10-10T02:27:28.000Z"
+  },
+  "sceneFile": "BWA132_10-09_2331_RicCal03_escena.jpg",
+  "plateFile": "BWA132_10-09_2331_RicCal03_patente.jpg"
+ },
+ {
+  "plate": "BWA132",
+  "device": "RicEgrCamFrente",
+  "horaOperativa": "10-09_2339",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "BWA132",
+   "confidence": 42,
+   "color": "Yellow",
+   "marca": "Volvo",
+   "tipo": "Medium Truck",
+   "at": "2026-10-10T02:35:20.000Z"
+  },
+  "sceneFile": "BWA132_10-09_2339_RicEgrCamFrente_escena.jpg",
+  "plateFile": "BWA132_10-09_2339_RicEgrCamFrente_patente.jpg"
+ },
+ {
+  "plate": "BWA132",
+  "device": "SLZIngCamFrente",
+  "horaOperativa": "10-09_2351",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "BWA132",
+   "confidence": 38,
+   "color": "Gray",
+   "marca": null,
+   "tipo": null,
+   "at": "2026-10-10T02:46:59.000Z"
+  },
+  "sceneFile": "BWA132_10-09_2351_SLZIngCamFrente_escena.jpg",
+  "plateFile": "BWA132_10-09_2351_SLZIngCamFrente_patente.jpg"
+ },
+ {
+  "plate": "BWA132",
+  "device": "SLZVolcableC3",
+  "horaOperativa": "10-10_0018",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "BWA132",
+   "confidence": 74,
+   "color": "White",
+   "marca": "Peugeot",
+   "tipo": "Medium Truck",
+   "at": "2026-10-10T03:14:54.000Z"
+  },
+  "sceneFile": "BWA132_10-10_0018_SLZVolcableC3_escena.jpg",
+  "plateFile": "BWA132_10-10_0018_SLZVolcableC3_patente.jpg"
+ },
+ {
+  "plate": "BWA132",
+  "device": "SLZSalidaC1Fte",
+  "horaOperativa": "10-10_0037",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "BWA132",
+   "confidence": 78,
+   "color": "White",
+   "marca": null,
+   "tipo": "Medium Truck",
+   "at": "2026-10-10T03:33:21.000Z"
+  },
+  "sceneFile": "BWA132_10-10_0037_SLZSalidaC1Fte_escena.jpg",
+  "plateFile": "BWA132_10-10_0037_SLZSalidaC1Fte_patente.jpg"
+ }
+]

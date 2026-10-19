@@ -67,4 +67,10 @@ export type ExternalMovimientoContratoNormalized = {
   external_sl_volcable_at?: string
   /** Hora de salida/portería del puerto (pata INGRESO de la vuelta): ancla el hito `SL_EGRESO`. */
   external_sl_egreso_at?: string
+  /** Solo SGC: condición del calado (CONFORME TOTAL FABRICA, RECHAZADO, DEMORADO…). */
+  condicion?: string
+  /** Solo SGC: depósito de carga/descarga (DEPOSITO1 / DEPOSITO2, p. ej. SILO 7). */
+  deposito?: string
+  /** Solo SGC: ingreso dado de baja (anulado) en el sistema de camiones. */
+  baja?: boolean
 }

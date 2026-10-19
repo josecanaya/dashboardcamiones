@@ -1,0 +1,100 @@
+[
+ {
+  "patente": "AB688RB",
+  "grupo": "Sin chapa",
+  "marca": "Volvo",
+  "modelo": "FM",
+  "color": "Blanco",
+  "tipo": "Tractor",
+  "foto": "recorridos/AB688RB/202607230303/091146_RicEgrCamFrente_vacia.jpg",
+  "logos": [
+   "VOIV",
+   "VO1L",
+   "VOLV"
+  ],
+  "nota": "Paragolpes liso, sin chapa ni papel. Ninguna cámara leyó nunca la patente completa; a falta de chapa leen el logo VOLVO («VOIV0», «VO1L70») y alguna vez casi la patente («AB688R6» en calada, «AB688PB» en la salida del puerto). El 01/09 llevaba un papel chico en el paragolpes (la balanza de ingreso del puerto leyó «AB670»)."
+ },
+ {
+  "patente": "AH439OV",
+  "grupo": "Sin chapa",
+  "marca": "Foton",
+  "modelo": "Auman (2027)",
+  "color": "Gris",
+  "tipo": "Tractor",
+  "foto": "papel/AH439OV/RicPreIngInFr.jpg",
+  "logos": [
+   "WWWW"
+  ],
+  "nota": "Camión nuevo con el marco de la chapa vacío: todavía no le pusieron la patente."
+ },
+ {
+  "patente": "DDD727",
+  "grupo": "Sin chapa",
+  "marca": "Scania",
+  "modelo": "114G 330",
+  "color": "Blanco",
+  "tipo": "Camión",
+  "foto": "papel/DDD727/RicPreIngInFr.jpg",
+  "logos": [
+   "330"
+  ],
+  "nota": "Paragolpes sin chapa; la cámara lee «330», el modelo pintado en el frente."
+ },
+ {
+  "patente": "GQQ158",
+  "grupo": "Sin chapa",
+  "marca": "Mercedes-Benz",
+  "modelo": "1634",
+  "color": "Blanco",
+  "tipo": "Tractor",
+  "foto": "papel/GQQ158/RicPreIngInFr.jpg",
+  "logos": [],
+  "nota": "Marco de la chapa vacío."
+ },
+ {
+  "patente": "EOV644",
+  "grupo": "Sin chapa",
+  "marca": "Mercedes-Benz",
+  "modelo": "",
+  "color": "Blanco",
+  "tipo": "Tractor",
+  "foto": "papel/EOV644/RicPreIngInFr.jpg",
+  "logos": [],
+  "nota": "Marco de la chapa vacío. Los otros dos camiones que entraron en ese minuto tienen chapa y se leyeron."
+ },
+ {
+  "patente": "AB723QC",
+  "grupo": "Papel en el parabrisas",
+  "marca": "Scania",
+  "modelo": "Streamline",
+  "color": "Blanco",
+  "tipo": "Tractor",
+  "foto": "recorridos/AB723QC/202608290537/anclas/154119_SLZVolcableC5_SEO8673.jpg",
+  "logos": [],
+  "nota": "Sin chapa en el paragolpes; lleva carteles en el parabrisas: «AB723QC» arriba (se lee en la balanza de ingreso del puerto) y «SEO 8673» abajo. Los accesos de Ricardone no lo leen nunca."
+ },
+ {
+  "patente": "KTH925",
+  "grupo": "Papel en el parabrisas",
+  "marca": "Iveco",
+  "modelo": "Cursor",
+  "color": "Blanco",
+  "tipo": "Camión",
+  "foto": "papel/KTH925/RicC16Descarga2.jpg",
+  "logos": [
+   "VEC"
+  ],
+  "nota": "Portapatente vacío y papel «KTH925» en el parabrisas: lo leen la calada y Celda 16. Las demás cámaras leen el logo IVECO («AVEC0», «VEC0»)."
+ },
+ {
+  "patente": "RGP363",
+  "grupo": "Papel en el parabrisas",
+  "marca": "Scania",
+  "modelo": "113",
+  "color": "Azul",
+  "tipo": "Tractor",
+  "foto": "papel/RGP363/RicCal01_0909120429.jpg",
+  "logos": [],
+  "nota": "Sin chapa adelante; papel «PATENTE RGP363» en el parabrisas, que solo lee la calada."
+ }
+]

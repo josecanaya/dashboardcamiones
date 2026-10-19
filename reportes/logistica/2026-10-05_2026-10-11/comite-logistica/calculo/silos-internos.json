@@ -1,0 +1,177 @@
+{
+ "criterio": "camiones con 3 o más cargas en el silo 7 (RicS7Carga) en un mismo día; hora operativa = occurredAt + 206 min; cruce con data/movimientos por patente",
+ "internos": [
+  {
+   "patente": "LFT141",
+   "dias": 5,
+   "cargasS7": 20,
+   "excel": {
+    "filas": 5,
+    "producto": [
+     "PRODUCTOS VARIOS"
+    ],
+    "planta": [
+     "RICARDONE"
+    ],
+    "mov": [
+     "E"
+    ],
+    "kgsNeto": 200.0,
+    "turnos": [
+     [
+      "07:24",
+      "16:28"
+     ],
+     [
+      "07:25",
+      "16:33"
+     ],
+     [
+      "07:26",
+      "16:33"
+     ],
+     [
+      "07:23",
+      "19:22"
+     ],
+     [
+      "07:33",
+      "19:37"
+     ]
+    ]
+   }
+  },
+  {
+   "patente": "NLR442",
+   "dias": 5,
+   "cargasS7": 23,
+   "excel": {
+    "filas": 5,
+    "producto": [
+     "PRODUCTOS VARIOS"
+    ],
+    "planta": [
+     "RICARDONE"
+    ],
+    "mov": [
+     "E"
+    ],
+    "kgsNeto": -40.0,
+    "turnos": [
+     [
+      "07:24",
+      "16:26"
+     ],
+     [
+      "07:24",
+      "16:31"
+     ],
+     [
+      "07:24",
+      "16:37"
+     ],
+     [
+      "07:24",
+      "19:23"
+     ],
+     [
+      "07:34",
+      "19:38"
+     ]
+    ]
+   }
+  }
+ ],
+ "porDia": {
+  "2026-10-05": {
+   "cargasS7": 7,
+   "volcable2": 8,
+   "silo7Linea2": 0,
+   "camiones": 2
+  },
+  "2026-10-06": {
+   "cargasS7": 6,
+   "volcable2": 6,
+   "silo7Linea2": 0,
+   "camiones": 2
+  },
+  "2026-10-07": {
+   "cargasS7": 8,
+   "volcable2": 7,
+   "silo7Linea2": 0,
+   "camiones": 2
+  },
+  "2026-10-08": {
+   "cargasS7": 12,
+   "volcable2": 1,
+   "silo7Linea2": 11,
+   "camiones": 2
+  },
+  "2026-10-09": {
+   "cargasS7": 10,
+   "volcable2": 0,
+   "silo7Linea2": 11,
+   "camiones": 2
+  },
+  "2026-10-10": {
+   "cargasS7": 0,
+   "volcable2": 0,
+   "silo7Linea2": 0,
+   "camiones": 0
+  },
+  "2026-10-11": {
+   "cargasS7": 0,
+   "volcable2": 0,
+   "silo7Linea2": 0,
+   "camiones": 0
+  }
+ },
+ "otros": [
+  {
+   "patente": "AD545MJ",
+   "lecturas": {
+    "RicB3Egreso": 2,
+    "RicB3Ingreso": 4,
+    "RicS8CargaLinea2": 1
+   },
+   "excel": []
+  },
+  {
+   "patente": "AF804QL",
+   "lecturas": {
+    "RicS7Carga": 1
+   },
+   "excel": [
+    "E semilla con agua/barro"
+   ]
+  },
+  {
+   "patente": "AG644XU",
+   "lecturas": {
+    "RicS7Carga": 1,
+    "RicC16Carga2": 6,
+    "RicC16Carga1": 7,
+    "RicB3Ingreso": 8,
+    "RicB3Egreso": 2,
+    "RicS8CargaLinea2": 2
+   },
+   "excel": []
+  },
+  {
+   "patente": "DDN04",
+   "lecturas": {
+    "RicS8CargaLinea2": 1
+   },
+   "excel": []
+  },
+  {
+   "patente": "MSE380",
+   "lecturas": {
+    "RicB3Ingreso": 5,
+    "RicB3Egreso": 2,
+    "RicS8CargaLinea2": 1
+   },
+   "excel": []
+  }
+ ]
+}

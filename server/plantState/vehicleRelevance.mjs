@@ -1,7 +1,8 @@
 /** Relevancia logística por visita: no crea una lista negra permanente de patentes. */
-export const RELEVANCE_RULE_VERSION = 'sl-shared-gates-nontruck-v2'
+export const RELEVANCE_RULE_VERSION = 'sl-shared-gates-nontruck-v3'
 export const isRelevanceDevice = device => /^SLZSalidaC[12](Fte|Tras)$/.test(device ?? '') || device === 'SLZTK400'
-const NON_TRUCK = new Set(['car','sedan','suv','pickup','van','bus','minibus','coach','motorcycle','auto','camioneta','colectivo'])
+// v3 (19/10): el DSS también devuelve «MPV» (787 lecturas en Portería SL/Renova) y «Medium Bus» (262), que se escapaban.
+const NON_TRUCK = new Set(['car','sedan','suv','pickup','van','bus','minibus','mediumbus','coach','mpv','motorcycle','auto','camioneta','colectivo'])
 const normalized = value => String(value ?? '').replace(/[^a-z0-9]/gi,'').toLowerCase()
 const processDevice = device => /^(SLZBal|SLZCalado|SLZVolcable|RenCarg|RenDesc|RicB[123]|RicCal|RicVolcable|RicC16|RicS[678])/.test(device ?? '')
 /** Solo quita visitas descartadas por esta regla; las capturas crudas quedan disponibles. */

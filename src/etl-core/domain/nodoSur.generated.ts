@@ -121,7 +121,7 @@ export const NODO_SUR_NODES: readonly NodoSurNode[] = [
     "feedCode": "2-S6",
     "hasCamera": true,
     "area": true,
-    "capacity": 100,
+    "capacity": 50,
     "optional": false,
     "devices": [
       "RicS6Playa3"
@@ -427,7 +427,7 @@ export const NODO_SUR_NODES: readonly NodoSurNode[] = [
     "feedCode": "1-S3",
     "hasCamera": false,
     "area": true,
-    "capacity": 150,
+    "capacity": 100,
     "optional": false,
     "devices": [],
     "rearDevices": []
@@ -544,7 +544,7 @@ export const NODO_SUR_NODES: readonly NodoSurNode[] = [
     "feedCode": null,
     "hasCamera": false,
     "area": true,
-    "capacity": 300,
+    "capacity": 200,
     "optional": false,
     "devices": [],
     "rearDevices": []
@@ -557,7 +557,7 @@ export const NODO_SUR_NODES: readonly NodoSurNode[] = [
     "feedCode": null,
     "hasCamera": false,
     "area": true,
-    "capacity": 20,
+    "capacity": 30,
     "optional": true,
     "devices": [],
     "rearDevices": []

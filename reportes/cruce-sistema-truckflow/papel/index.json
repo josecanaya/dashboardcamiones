@@ -1,0 +1,2097 @@
+[
+ {
+  "patente": "AE685QF",
+  "visitas": [
+   {
+    "ingreso": "2026-07-01 10:21:00",
+    "salida": "2026-07-01 15:59:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal05",
+    "primera": "2026-07-01 11:16:54"
+   },
+   {
+    "ingreso": "2026-07-15 22:08:00",
+    "salida": "2026-07-16 03:14:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-07-15 23:26:58"
+   },
+   {
+    "ingreso": "2026-07-28 11:21:00",
+    "salida": "2026-07-28 13:26:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal01",
+    "primera": "2026-07-28 12:35:19"
+   }
+  ],
+  "camaras": "RicCal05 RicCal02 RicCal01",
+  "fotos": [
+   {
+    "camara": "RicCal01",
+    "horaCamara": "2026-07-28 12:31:19",
+    "lecturaDss": "AE685QF",
+    "confianza": 26,
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AE685QF/RicCal01_0728123119.jpg"
+   },
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-07-15 23:22:58",
+    "lecturaDss": "AE685QF",
+    "confianza": 18,
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AE685QF/RicCal02_0715232258.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AE957RF",
+  "visitas": [
+   {
+    "ingreso": "2026-07-03 00:26:00",
+    "salida": "2026-07-03 10:33:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-07-03 04:52:48"
+   },
+   {
+    "ingreso": "2026-09-02 20:35:00",
+    "salida": "2026-09-03 00:02:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-09-02 23:03:14"
+   }
+  ],
+  "camaras": "RicCal02 RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-09-02 22:59:14",
+    "error": "el DSS no tiene esa captura"
+   },
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-07-03 04:48:48",
+    "lecturaDss": "AE957RF",
+    "confianza": 90,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AE957RF/RicCal02_0703044848.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "TJT629",
+  "visitas": [
+   {
+    "ingreso": "2026-07-01 03:23:00",
+    "salida": "2026-07-01 13:56:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal06",
+    "primera": "2026-07-01 08:12:57"
+   }
+  ],
+  "camaras": "RicCal06",
+  "fotos": [
+   {
+    "camara": "RicCal06",
+    "horaCamara": "2026-07-01 08:08:57",
+    "lecturaDss": "TJT629",
+    "confianza": 86,
+    "marca": "Mercedes-Benz",
+    "color": "Gray",
+    "tipo": "Medium Truck",
+    "escena": "TJT629/RicCal06_0701080857.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "FED895",
+  "visitas": [
+   {
+    "ingreso": "2026-07-01 06:17:00",
+    "salida": "2026-07-01 10:32:00",
+    "producto": "GIRASOL",
+    "planta": "RICARDONE",
+    "camaras": "RicCal06",
+    "primera": "2026-07-01 08:40:06"
+   }
+  ],
+  "camaras": "RicCal06",
+  "fotos": [
+   {
+    "camara": "RicCal06",
+    "horaCamara": "2026-07-01 08:36:06",
+    "lecturaDss": "FED895",
+    "confianza": 78,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "FED895/RicCal06_0701083606.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "HDP022",
+  "visitas": [
+   {
+    "ingreso": "2026-07-01 19:27:00",
+    "salida": "2026-07-01 23:41:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal01",
+    "primera": "2026-07-01 20:43:38"
+   }
+  ],
+  "camaras": "RicCal01",
+  "fotos": [
+   {
+    "camara": "RicCal01",
+    "horaCamara": "2026-07-01 20:39:38",
+    "lecturaDss": "HDP022",
+    "confianza": 22,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "HDP022/RicCal01_0701203938.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "KYZ754",
+  "visitas": [
+   {
+    "ingreso": "2026-07-02 07:00:00",
+    "salida": "2026-07-02 12:00:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-07-02 10:42:50"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-07-02 10:38:50",
+    "lecturaDss": "KYZ754",
+    "confianza": 66,
+    "marca": "Renault",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "KYZ754/RicCal02_0702103850.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "LXH836",
+  "visitas": [
+   {
+    "ingreso": "2026-07-08 00:44:00",
+    "salida": "2026-07-08 04:23:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-07-08 03:06:06"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-07-08 03:02:06",
+    "lecturaDss": "LXH836",
+    "confianza": 78,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "LXH836/RicCal02_0708030206.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "ABD315",
+  "visitas": [
+   {
+    "ingreso": "2026-07-08 20:13:00",
+    "salida": "2026-07-09 01:45:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-07-08 21:08:06"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-07-08 21:04:06",
+    "lecturaDss": "ABD315",
+    "confianza": 74,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "ABD315/RicCal02_0708210406.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AB334QO",
+  "visitas": [
+   {
+    "ingreso": "2026-07-11 00:26:00",
+    "salida": "2026-07-11 07:54:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal04",
+    "primera": "2026-07-11 04:53:47"
+   }
+  ],
+  "camaras": "RicCal04",
+  "fotos": [
+   {
+    "camara": "RicCal04",
+    "horaCamara": "2026-07-11 04:49:47",
+    "lecturaDss": "AB334QO",
+    "confianza": 82,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "AB334QO/RicCal04_0711044947.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "FZD243",
+  "visitas": [
+   {
+    "ingreso": "2026-07-12 22:38:00",
+    "salida": "2026-07-13 02:46:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal01",
+    "primera": "2026-07-12 23:49:24"
+   }
+  ],
+  "camaras": "RicCal01",
+  "fotos": [
+   {
+    "camara": "RicCal01",
+    "horaCamara": "2026-07-12 23:45:24",
+    "lecturaDss": "FZD243",
+    "confianza": 22,
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "FZD243/RicCal01_0712234524.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "COU347",
+  "visitas": [
+   {
+    "ingreso": "2026-07-15 10:55:00",
+    "salida": "2026-07-15 16:08:00",
+    "producto": "GIRASOL",
+    "planta": "RICARDONE",
+    "camaras": "RicCal06",
+    "primera": "2026-07-15 11:21:35"
+   }
+  ],
+  "camaras": "RicCal06",
+  "fotos": [
+   {
+    "camara": "RicCal06",
+    "horaCamara": "2026-07-15 11:17:35",
+    "lecturaDss": "COU347",
+    "confianza": 62,
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "COU347/RicCal06_0715111735.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "DTQ508",
+  "visitas": [
+   {
+    "ingreso": "2026-07-15 20:31:00",
+    "salida": "2026-07-16 01:13:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal01",
+    "primera": "2026-07-15 22:15:33"
+   }
+  ],
+  "camaras": "RicCal01",
+  "fotos": [
+   {
+    "camara": "RicCal01",
+    "horaCamara": "2026-07-15 22:11:33",
+    "lecturaDss": "DTQ508",
+    "confianza": 74,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "DTQ508/RicCal01_0715221133.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "HDI681",
+  "visitas": [
+   {
+    "ingreso": "2026-07-16 11:11:00",
+    "salida": "2026-07-16 21:14:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-07-16 15:11:14"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-07-16 15:07:14",
+    "lecturaDss": "HDI681",
+    "confianza": 22,
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "HDI681/RicCal02_0716150714.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AH101YH",
+  "visitas": [
+   {
+    "ingreso": "2026-07-16 22:23:00",
+    "salida": "2026-07-17 05:26:00",
+    "producto": "GIRASOL",
+    "planta": "RICARDONE",
+    "camaras": "RicCal02",
+    "primera": "2026-07-17 01:37:06"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-07-17 01:33:06",
+    "lecturaDss": "AH101YH",
+    "confianza": 22,
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AH101YH/RicCal02_0717013306.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AB596TV",
+  "visitas": [
+   {
+    "ingreso": "2026-07-20 19:10:00",
+    "salida": "2026-07-21 04:29:00",
+    "producto": "GIRASOL",
+    "planta": "RICARDONE",
+    "camaras": "RicCal02",
+    "primera": "2026-07-20 20:15:00"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-07-20 20:11:00",
+    "lecturaDss": "AB596TV",
+    "confianza": 90,
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AB596TV/RicCal02_0720201100.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "HID670",
+  "visitas": [
+   {
+    "ingreso": "2026-07-22 22:09:00",
+    "salida": "2026-07-23 03:08:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-07-23 01:24:15"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-07-23 01:20:15",
+    "lecturaDss": "HID670",
+    "confianza": 78,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "HID670/RicCal03_0723012015.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AF243WI",
+  "visitas": [
+   {
+    "ingreso": "2026-07-23 20:34:00",
+    "salida": "2026-07-24 02:45:00",
+    "producto": "SOJA",
+    "planta": "RICARDONE",
+    "camaras": "RicCal03",
+    "primera": "2026-07-24 01:20:27"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-07-24 01:16:27",
+    "lecturaDss": "AF243WI",
+    "confianza": 74,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AF243WI/RicCal03_0724011627.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "HRG752",
+  "visitas": [
+   {
+    "ingreso": "2026-07-24 22:53:00",
+    "salida": "2026-07-25 03:03:00",
+    "producto": "SOJA",
+    "planta": "RICARDONE",
+    "camaras": "RicCal02",
+    "primera": "2026-07-25 02:23:48"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-07-25 02:19:48",
+    "lecturaDss": "HRG752",
+    "confianza": 46,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "HRG752/RicCal02_0725021948.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AA326TN",
+  "visitas": [
+   {
+    "ingreso": "2026-07-25 00:11:00",
+    "salida": "2026-07-25 09:28:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal01",
+    "primera": "2026-07-25 05:53:57"
+   }
+  ],
+  "camaras": "RicCal01",
+  "fotos": [
+   {
+    "camara": "RicCal01",
+    "horaCamara": "2026-07-25 05:49:57",
+    "lecturaDss": "AA326TN",
+    "confianza": 66,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AA326TN/RicCal01_0725054957.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AA264ZM",
+  "visitas": [
+   {
+    "ingreso": "2026-07-26 01:14:00",
+    "salida": "2026-07-26 05:51:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-07-26 05:06:25"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-07-26 05:02:25",
+    "lecturaDss": "AA264ZM",
+    "confianza": 82,
+    "marca": "Volvo",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AA264ZM/RicCal02_0726050225.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "MWL984",
+  "visitas": [
+   {
+    "ingreso": "2026-07-26 19:18:00",
+    "salida": "2026-07-26 20:54:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-07-26 20:00:24"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-07-26 19:56:24",
+    "lecturaDss": "MWL984",
+    "confianza": 78,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "MWL984/RicCal03_0726195624.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AB471RN",
+  "visitas": [
+   {
+    "ingreso": "2026-07-26 22:23:00",
+    "salida": "2026-07-27 01:58:00",
+    "producto": "GIRASOL",
+    "planta": "RICARDONE",
+    "camaras": "RicCal02",
+    "primera": "2026-07-26 23:47:46"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-07-26 23:43:46",
+    "lecturaDss": "AB471RN",
+    "confianza": 82,
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AB471RN/RicCal02_0726234346.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "GXP282",
+  "visitas": [
+   {
+    "ingreso": "2026-07-27 01:02:00",
+    "salida": "2026-07-27 08:01:00",
+    "producto": "SOJA",
+    "planta": "RICARDONE",
+    "camaras": "RicCal01",
+    "primera": "2026-07-27 02:28:32"
+   }
+  ],
+  "camaras": "RicCal01",
+  "fotos": [
+   {
+    "camara": "RicCal01",
+    "horaCamara": "2026-07-27 02:24:32",
+    "lecturaDss": "GXP282",
+    "confianza": 90,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "GXP282/RicCal01_0727022432.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "NOQ449",
+  "visitas": [
+   {
+    "ingreso": "2026-07-27 22:15:00",
+    "salida": "2026-07-28 02:17:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-07-28 01:46:49"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-07-28 01:42:49",
+    "lecturaDss": "NOQ449",
+    "confianza": 82,
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "NOQ449/RicCal02_0728014249.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "MHS655",
+  "visitas": [
+   {
+    "ingreso": "2026-07-27 22:29:00",
+    "salida": "2026-07-28 06:04:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal01",
+    "primera": "2026-07-28 02:24:33"
+   }
+  ],
+  "camaras": "RicCal01",
+  "fotos": [
+   {
+    "camara": "RicCal01",
+    "horaCamara": "2026-07-28 02:20:33",
+    "lecturaDss": "MHS655",
+    "confianza": 66,
+    "marca": "Volvo",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "MHS655/RicCal01_0728022033.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AC049IC",
+  "visitas": [
+   {
+    "ingreso": "2026-07-28 21:54:00",
+    "salida": "2026-07-29 03:14:00",
+    "producto": "GIRASOL",
+    "planta": "RICARDONE",
+    "camaras": "RicCal02",
+    "primera": "2026-07-28 23:28:43"
+   }
+  ],
+  "camaras": "RicVolcable1 RicCal04 RicCal03 RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-07-28 23:24:43",
+    "lecturaDss": "AC049IC",
+    "confianza": 82,
+    "marca": "Mercedes-Benz",
+    "color": "Silver",
+    "tipo": "Large Truck",
+    "escena": "AC049IC/RicCal02_0728232443.jpg"
+   },
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-05-16 20:28:02",
+    "lecturaDss": "AC049IC",
+    "confianza": 78,
+    "marca": "Mercedes-Benz",
+    "color": "Silver",
+    "tipo": "Large Truck",
+    "escena": "AC049IC/RicCal03_0516202802.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "IVD031",
+  "visitas": [
+   {
+    "ingreso": "2026-07-28 21:57:00",
+    "salida": "2026-07-29 03:36:00",
+    "producto": "GIRASOL",
+    "planta": "RICARDONE",
+    "camaras": "RicCal01",
+    "primera": "2026-07-28 23:33:28"
+   }
+  ],
+  "camaras": "RicCal01",
+  "fotos": [
+   {
+    "camara": "RicCal01",
+    "horaCamara": "2026-07-28 23:29:28",
+    "lecturaDss": "IVD031",
+    "confianza": 46,
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "IVD031/RicCal01_0728232928.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AA649IU",
+  "visitas": [
+   {
+    "ingreso": "2026-07-28 22:06:00",
+    "salida": "2026-07-29 01:20:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal01",
+    "primera": "2026-07-29 00:08:11"
+   }
+  ],
+  "camaras": "RicCal01",
+  "fotos": [
+   {
+    "camara": "RicCal01",
+    "horaCamara": "2026-07-29 00:04:11",
+    "lecturaDss": "AA649IU",
+    "confianza": 58,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "AA649IU/RicCal01_0729000411.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "FAU636",
+  "visitas": [
+   {
+    "ingreso": "2026-07-28 22:56:00",
+    "salida": "2026-07-29 03:36:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-07-29 02:40:57"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-07-29 02:36:57",
+    "lecturaDss": "FAU636",
+    "confianza": 86,
+    "marca": "Mercedes-Benz",
+    "color": "Black",
+    "tipo": "Large Truck",
+    "escena": "FAU636/RicCal03_0729023657.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "KTH925",
+  "visitas": [
+   {
+    "ingreso": "2026-07-29 16:13:00",
+    "salida": "2026-07-29 18:17:00",
+    "producto": "SOJA",
+    "planta": "RICARDONE",
+    "camaras": "RicCal01 RicC16Descarga2",
+    "primera": "2026-07-29 17:23:45"
+   }
+  ],
+  "camaras": "RicCal04 RicCal01 RicC16Descarga2",
+  "fotos": [
+   {
+    "camara": "RicC16Descarga2",
+    "horaCamara": "2026-07-29 17:53:58",
+    "lecturaDss": "KTH925",
+    "confianza": 218,
+    "marca": "Iveco",
+    "color": "Blue",
+    "tipo": "Large Truck",
+    "escena": "KTH925/RicC16Descarga2_0729175358.jpg"
+   },
+   {
+    "camara": "RicCal01",
+    "horaCamara": "2026-07-29 17:19:45",
+    "lecturaDss": "KTH925",
+    "confianza": 28,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "KTH925/RicCal01_0729171945.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "UZN262",
+  "visitas": [
+   {
+    "ingreso": "2026-07-29 22:52:00",
+    "salida": "2026-07-30 02:28:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-07-30 00:49:08"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-07-30 00:45:08",
+    "lecturaDss": "UZN262",
+    "confianza": 42,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "SUV",
+    "escena": "UZN262/RicCal02_0730004508.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "HAE720",
+  "visitas": [
+   {
+    "ingreso": "2026-07-30 00:16:00",
+    "salida": "2026-07-30 05:54:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-07-30 02:56:08"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-07-30 02:52:08",
+    "lecturaDss": "HAE720",
+    "confianza": 54,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "HAE720/RicCal03_0730025208.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "OHP701",
+  "visitas": [
+   {
+    "ingreso": "2026-07-30 22:17:00",
+    "salida": "2026-07-31 04:40:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal01",
+    "primera": "2026-07-30 23:38:34"
+   }
+  ],
+  "camaras": "RicCal01",
+  "fotos": [
+   {
+    "camara": "RicCal01",
+    "horaCamara": "2026-07-30 23:34:34",
+    "lecturaDss": "OHP701",
+    "confianza": 66,
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "OHP701/RicCal01_0730233434.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "RDP898",
+  "visitas": [
+   {
+    "ingreso": "2026-07-31 12:15:00",
+    "salida": "2026-07-31 17:25:00",
+    "producto": "SOJA",
+    "planta": "RICARDONE",
+    "camaras": "RicCal02 RicS6Playa3",
+    "primera": "2026-07-31 13:38:32"
+   }
+  ],
+  "camaras": "RicCal02 RicS6Playa3",
+  "fotos": [
+   {
+    "camara": "RicS6Playa3",
+    "horaCamara": "2026-07-31 15:43:43",
+    "lecturaDss": "RDP898",
+    "confianza": 50,
+    "marca": null,
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "RDP898/RicS6Playa3_0731154343.jpg"
+   },
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-07-31 13:34:32",
+    "lecturaDss": "RDP898",
+    "confianza": 74,
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "RDP898/RicCal02_0731133432.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "EZQ788",
+  "visitas": [
+   {
+    "ingreso": "2026-08-01 16:34:00",
+    "salida": "2026-08-01 21:45:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal04",
+    "primera": "2026-08-01 17:25:58"
+   }
+  ],
+  "camaras": "RicCal04",
+  "fotos": [
+   {
+    "camara": "RicCal04",
+    "horaCamara": "2026-08-01 17:21:58",
+    "lecturaDss": "EZQ788",
+    "confianza": 82,
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "EZQ788/RicCal04_0801172158.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AF319PE",
+  "visitas": [
+   {
+    "ingreso": "2026-08-04 22:33:00",
+    "salida": "2026-08-05 03:38:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal04",
+    "primera": "2026-08-05 00:27:21"
+   }
+  ],
+  "camaras": "RicCal04",
+  "fotos": [
+   {
+    "camara": "RicCal04",
+    "horaCamara": "2026-08-05 00:23:21",
+    "lecturaDss": "AF319PE",
+    "confianza": 82,
+    "marca": "Daewoo",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AF319PE/RicCal04_0805002321.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "APK435",
+  "visitas": [
+   {
+    "ingreso": "2026-08-04 22:52:00",
+    "salida": "2026-08-05 04:15:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-08-05 01:11:02"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-08-05 01:07:02",
+    "lecturaDss": "APK435",
+    "confianza": 42,
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "APK435/RicCal03_0805010702.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "FCK340",
+  "visitas": [
+   {
+    "ingreso": "2026-08-06 02:14:00",
+    "salida": "2026-08-07 04:22:00",
+    "producto": "GIRASOL",
+    "planta": "RICARDONE",
+    "camaras": "RicCal03",
+    "primera": "2026-08-07 00:37:36"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-08-07 00:33:36",
+    "lecturaDss": "FCK340",
+    "confianza": 70,
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "FCK340/RicCal03_0807003336.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "FID950",
+  "visitas": [
+   {
+    "ingreso": "2026-08-09 22:10:00",
+    "salida": "2026-08-09 23:17:00",
+    "producto": "GIRASOL",
+    "planta": "RICARDONE",
+    "camaras": "RicCal03",
+    "primera": "2026-08-09 22:43:18"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-08-09 22:39:18",
+    "lecturaDss": "FID950",
+    "confianza": 62,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "FID950/RicCal03_0809223918.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "JDQ102",
+  "visitas": [
+   {
+    "ingreso": "2026-08-11 06:07:00",
+    "salida": "2026-08-11 11:14:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-08-11 08:36:47"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-08-11 08:32:47",
+    "lecturaDss": "JDQ102",
+    "confianza": 58,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "JDQ102/RicCal03_0811083247.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "FVY923",
+  "visitas": [
+   {
+    "ingreso": "2026-08-13 02:08:00",
+    "salida": "2026-08-13 14:23:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal01",
+    "primera": "2026-08-13 07:48:56"
+   }
+  ],
+  "camaras": "RicCal01",
+  "fotos": [
+   {
+    "camara": "RicCal01",
+    "horaCamara": "2026-08-13 07:44:56",
+    "lecturaDss": "FVY923",
+    "confianza": 46,
+    "marca": null,
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "FVY923/RicCal01_0813074456.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AA779BH",
+  "visitas": [
+   {
+    "ingreso": "2026-08-15 02:06:00",
+    "salida": "2026-08-15 09:15:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-08-15 05:50:06"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-08-15 05:46:06",
+    "lecturaDss": "AA779BH",
+    "confianza": 70,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "AA779BH/RicCal03_0815054606.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "SGK246",
+  "visitas": [
+   {
+    "ingreso": "2026-08-20 19:20:00",
+    "salida": "2026-08-20 23:40:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal04",
+    "primera": "2026-08-20 21:33:28"
+   }
+  ],
+  "camaras": "RicCal04",
+  "fotos": [
+   {
+    "camara": "RicCal04",
+    "horaCamara": "2026-08-20 21:29:28",
+    "lecturaDss": "SGK246",
+    "confianza": 26,
+    "marca": null,
+    "color": "Black",
+    "tipo": "Medium Truck",
+    "escena": "SGK246/RicCal04_0820212928.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "SDJ202",
+  "visitas": [
+   {
+    "ingreso": "2026-08-25 00:30:00",
+    "salida": "2026-08-25 07:48:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-08-25 01:44:19"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-08-25 01:40:19",
+    "lecturaDss": "SDJ202",
+    "confianza": 42,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "SDJ202/RicCal03_0825014019.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "GMO198",
+  "visitas": [
+   {
+    "ingreso": "2026-08-27 19:09:00",
+    "salida": "2026-08-27 22:33:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-08-27 20:37:21"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-08-27 20:37:21",
+    "lecturaDss": "GMO198",
+    "confianza": 66,
+    "marca": "Mercedes-Benz",
+    "color": "Gray",
+    "tipo": "Medium Truck",
+    "escena": "GMO198/RicCal03_0827203721.jpg"
+   },
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-08-27 20:33:21",
+    "error": "el DSS no tiene esa captura"
+   }
+  ]
+ },
+ {
+  "patente": "HPD052",
+  "visitas": [
+   {
+    "ingreso": "2026-08-27 22:15:00",
+    "salida": "2026-08-28 03:13:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "SLZVolcableC2",
+    "primera": "2026-08-28 02:54:32"
+   }
+  ],
+  "camaras": "SLZVolcableC2",
+  "fotos": [
+   {
+    "camara": "SLZVolcableC2",
+    "horaCamara": "2026-08-28 02:54:46",
+    "lecturaDss": "HPD052",
+    "confianza": 66,
+    "marca": "Volvo",
+    "color": "Blue",
+    "tipo": "Large Truck",
+    "escena": "HPD052/SLZVolcableC2_0828025446.jpg"
+   },
+   {
+    "camara": "SLZVolcableC2",
+    "horaCamara": "2026-08-28 02:52:34",
+    "error": "el DSS no tiene esa captura"
+   }
+  ]
+ },
+ {
+  "patente": "AA262OS",
+  "visitas": [
+   {
+    "ingreso": "2026-08-29 03:30:00",
+    "salida": "2026-08-30 01:10:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03 SLZVolcableC2",
+    "primera": "2026-08-29 11:36:16"
+   }
+  ],
+  "camaras": "RicCal03 SLZVolcableC2",
+  "fotos": [
+   {
+    "camara": "SLZVolcableC2",
+    "horaCamara": "2026-08-30 00:53:38",
+    "error": "el DSS no tiene esa captura"
+   },
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-08-29 11:36:16",
+    "lecturaDss": "AA262OS",
+    "confianza": 90,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AA262OS/RicCal03_0829113616.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "CPV019",
+  "visitas": [
+   {
+    "ingreso": "2026-08-29 23:51:00",
+    "salida": "2026-08-30 05:50:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "SLZVolcableC3",
+    "primera": "2026-08-30 05:20:02"
+   }
+  ],
+  "camaras": "SLZVolcableC3",
+  "fotos": [
+   {
+    "camara": "SLZVolcableC3",
+    "horaCamara": "2026-08-30 05:20:02",
+    "lecturaDss": "CPV019",
+    "confianza": 58,
+    "marca": "Chevrolet",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "CPV019/SLZVolcableC3_0830052002.jpg"
+   },
+   {
+    "camara": "SLZVolcableC3",
+    "horaCamara": "2026-08-30 05:16:02",
+    "error": "el DSS no tiene esa captura"
+   }
+  ]
+ },
+ {
+  "patente": "CAD083",
+  "visitas": [
+   {
+    "ingreso": "2026-08-31 22:44:00",
+    "salida": "2026-09-01 03:39:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-09-01 00:31:59"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-09-01 00:31:59",
+    "lecturaDss": "CAD083",
+    "confianza": 70,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "CAD083/RicCal03_0901003159.jpg"
+   },
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-09-01 00:27:59",
+    "error": "el DSS no tiene esa captura"
+   }
+  ]
+ },
+ {
+  "patente": "AA724IC",
+  "visitas": [
+   {
+    "ingreso": "2026-09-02 00:15:00",
+    "salida": "2026-09-02 04:31:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "SLZVolcableC2",
+    "primera": "2026-09-02 03:53:52"
+   }
+  ],
+  "camaras": "SLZVolcableC2",
+  "fotos": [
+   {
+    "camara": "SLZVolcableC2",
+    "horaCamara": "2026-09-02 03:49:52",
+    "error": "el DSS no tiene esa captura"
+   }
+  ]
+ },
+ {
+  "patente": "VMD012",
+  "visitas": [
+   {
+    "ingreso": "2026-09-02 23:47:00",
+    "salida": "2026-09-03 05:16:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "SLZVolcableC2",
+    "primera": "2026-09-03 05:01:39"
+   }
+  ],
+  "camaras": "SLZVolcableC2",
+  "fotos": [
+   {
+    "camara": "SLZVolcableC2",
+    "horaCamara": "2026-09-03 04:57:39",
+    "lecturaDss": "VMD012",
+    "confianza": 46,
+    "marca": null,
+    "color": "Blue",
+    "tipo": "Medium Truck",
+    "escena": "VMD012/SLZVolcableC2_0903045739.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AC566DQ",
+  "visitas": [
+   {
+    "ingreso": "2026-09-03 22:13:00",
+    "salida": "2026-09-04 04:01:00",
+    "producto": "GIRASOL",
+    "planta": "RICARDONE",
+    "camaras": "RicVolcable1",
+    "primera": "2026-09-04 03:30:46"
+   }
+  ],
+  "camaras": "RicVolcable1",
+  "fotos": [
+   {
+    "camara": "RicVolcable1",
+    "horaCamara": "2026-09-04 03:26:46",
+    "lecturaDss": "AC566DQ",
+    "confianza": 46,
+    "marca": "Mercedes-Benz",
+    "color": "Silver",
+    "tipo": "Large Truck",
+    "escena": "AC566DQ/RicVolcable1_0904032646.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AA470BI",
+  "visitas": [
+   {
+    "ingreso": "2026-09-07 21:03:00",
+    "salida": "2026-09-08 01:23:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-09-07 22:47:09"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-09-07 22:43:09",
+    "lecturaDss": "AA470BI",
+    "confianza": 46,
+    "marca": "Volvo",
+    "color": "Black",
+    "tipo": "Large Truck",
+    "escena": "AA470BI/RicCal03_0907224309.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AC044VF",
+  "visitas": [
+   {
+    "ingreso": "2026-09-07 23:43:00",
+    "salida": "2026-09-08 05:36:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-09-08 02:03:28"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-09-08 01:59:28",
+    "lecturaDss": "AC044VF",
+    "confianza": 74,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AC044VF/RicCal02_0908015928.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "OZH649",
+  "visitas": [
+   {
+    "ingreso": "2026-09-08 22:27:00",
+    "salida": "2026-09-09 01:41:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-09-08 23:24:30"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-09-08 23:20:30",
+    "lecturaDss": "OZH649",
+    "confianza": 86,
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "OZH649/RicCal02_0908232030.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "WUV479",
+  "visitas": [
+   {
+    "ingreso": "2026-09-09 01:24:00",
+    "salida": "2026-09-09 04:42:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "SLZVolcableC1",
+    "primera": "2026-09-09 04:29:32"
+   }
+  ],
+  "camaras": "SLZVolcableC1",
+  "fotos": [
+   {
+    "camara": "SLZVolcableC1",
+    "horaCamara": "2026-09-09 04:25:32",
+    "lecturaDss": "WUV479",
+    "confianza": 82,
+    "marca": null,
+    "color": null,
+    "tipo": "Medium Truck",
+    "escena": "WUV479/SLZVolcableC1_0909042532.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "RGP363",
+  "visitas": [
+   {
+    "ingreso": "2026-09-09 11:07:00",
+    "salida": "2026-09-09 15:31:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal01",
+    "primera": "2026-09-09 12:08:29"
+   }
+  ],
+  "camaras": "RicCal01",
+  "fotos": [
+   {
+    "camara": "RicCal01",
+    "horaCamara": "2026-09-09 12:04:29",
+    "lecturaDss": "RGP363",
+    "confianza": 22,
+    "marca": "Scania",
+    "color": "Blue",
+    "tipo": "Medium Truck",
+    "escena": "RGP363/RicCal01_0909120429.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "GPX951",
+  "visitas": [
+   {
+    "ingreso": "2026-09-09 19:58:00",
+    "salida": "2026-09-10 01:29:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal01",
+    "primera": "2026-09-09 23:34:28"
+   }
+  ],
+  "camaras": "RicCal01",
+  "fotos": [
+   {
+    "camara": "RicCal01",
+    "horaCamara": "2026-09-09 23:30:28",
+    "lecturaDss": "GPX951",
+    "confianza": 62,
+    "marca": "Volkswagen",
+    "color": "Gray",
+    "tipo": "Large Truck",
+    "escena": "GPX951/RicCal01_0909233028.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AMC613",
+  "visitas": [
+   {
+    "ingreso": "2026-09-09 21:31:00",
+    "salida": "2026-09-10 03:30:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-09-10 00:40:59"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-09-10 01:34:15",
+    "lecturaDss": "AMC613",
+    "confianza": 78,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AMC613/RicCal02_0910013415.jpg"
+   },
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-09-10 00:36:59",
+    "lecturaDss": "AMC613",
+    "confianza": 26,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AMC613/RicCal02_0910003659.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "MLB537",
+  "visitas": [
+   {
+    "ingreso": "2026-09-10 00:19:00",
+    "salida": "2026-09-10 09:02:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "SLZVolcableC2",
+    "primera": "2026-09-10 08:49:37"
+   }
+  ],
+  "camaras": "SLZVolcableC2",
+  "fotos": [
+   {
+    "camara": "SLZVolcableC2",
+    "horaCamara": "2026-09-10 08:45:37",
+    "lecturaDss": "MLB537",
+    "confianza": 82,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "MLB537/SLZVolcableC2_0910084537.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "GVF594",
+  "visitas": [
+   {
+    "ingreso": "2026-09-11 02:44:00",
+    "salida": "2026-09-12 01:36:00",
+    "producto": "GIRASOL",
+    "planta": "RICARDONE",
+    "camaras": "RicVolcable1",
+    "primera": "2026-09-12 01:25:00"
+   }
+  ],
+  "camaras": "RicVolcable1",
+  "fotos": [
+   {
+    "camara": "RicVolcable1",
+    "horaCamara": "2026-09-12 01:21:00",
+    "lecturaDss": "GVF594",
+    "confianza": 54,
+    "marca": "Mercedes-Benz",
+    "color": "Silver",
+    "tipo": "Large Truck",
+    "escena": "GVF594/RicVolcable1_0912012100.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "GYU959",
+  "visitas": [
+   {
+    "ingreso": "2026-09-11 23:29:00",
+    "salida": "2026-09-12 04:47:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal04",
+    "primera": "2026-09-12 03:54:04"
+   }
+  ],
+  "camaras": "RicCal04",
+  "fotos": [
+   {
+    "camara": "RicCal04",
+    "horaCamara": "2026-09-12 03:50:04",
+    "lecturaDss": "GYU959",
+    "confianza": 82,
+    "marca": "Iveco",
+    "color": "Black",
+    "tipo": "Medium Truck",
+    "escena": "GYU959/RicCal04_0912035004.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "BAZ897",
+  "visitas": [
+   {
+    "ingreso": "2026-09-12 19:14:00",
+    "salida": "2026-09-13 00:26:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-09-12 20:32:21"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-09-12 20:28:21",
+    "lecturaDss": "BAZ897",
+    "confianza": 86,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "BAZ897/RicCal03_0912202821.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AC487EG",
+  "visitas": [
+   {
+    "ingreso": "2026-09-15 04:31:00",
+    "salida": "2026-09-15 11:59:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-09-15 05:12:35"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-09-15 05:08:35",
+    "lecturaDss": "AC487EG",
+    "confianza": 82,
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AC487EG/RicCal02_0915050835.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "TCF363",
+  "visitas": [
+   {
+    "ingreso": "2026-09-15 22:14:00",
+    "salida": "2026-09-16 04:36:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-09-16 00:16:51"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-09-16 00:12:51",
+    "lecturaDss": "TCF363",
+    "confianza": 66,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "TCF363/RicCal02_0916001251.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "LQW868",
+  "visitas": [
+   {
+    "ingreso": "2026-09-15 22:55:00",
+    "salida": "2026-09-16 06:06:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "SLZVolcableC4",
+    "primera": "2026-09-16 05:54:31"
+   }
+  ],
+  "camaras": "SLZVolcableC4",
+  "fotos": [
+   {
+    "camara": "SLZVolcableC4",
+    "horaCamara": "2026-09-16 05:50:31",
+    "lecturaDss": "LQW868",
+    "confianza": 82,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "LQW868/SLZVolcableC4_0916055031.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AH374JU",
+  "visitas": [
+   {
+    "ingreso": "2026-09-17 00:45:00",
+    "salida": "2026-09-17 07:27:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-09-17 03:45:15"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-09-17 03:41:15",
+    "lecturaDss": "AH374JU",
+    "confianza": 34,
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AH374JU/RicCal02_0917034115.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "SDL197",
+  "visitas": [
+   {
+    "ingreso": "2026-09-18 22:23:00",
+    "salida": "2026-09-19 01:55:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal02",
+    "primera": "2026-09-18 23:44:30"
+   }
+  ],
+  "camaras": "RicCal02",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "horaCamara": "2026-09-18 23:40:30",
+    "lecturaDss": "SDL197",
+    "confianza": 74,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "SDL197/RicCal02_0918234030.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "DDR230",
+  "visitas": [
+   {
+    "ingreso": "2026-09-19 22:08:00",
+    "salida": "2026-09-20 02:32:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal04",
+    "primera": "2026-09-19 22:48:00"
+   }
+  ],
+  "camaras": "RicCal04",
+  "fotos": [
+   {
+    "camara": "RicCal04",
+    "horaCamara": "2026-09-19 22:44:00",
+    "lecturaDss": "DDR230",
+    "confianza": 44,
+    "marca": null,
+    "color": "White",
+    "tipo": "Pickup",
+    "escena": "DDR230/RicCal04_0919224400.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AD745GM",
+  "visitas": [
+   {
+    "ingreso": "2026-09-23 22:29:00",
+    "salida": "2026-09-24 00:25:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "SLZVolcableC4",
+    "primera": "2026-09-24 00:10:01"
+   }
+  ],
+  "camaras": "SLZVolcableC4",
+  "fotos": [
+   {
+    "camara": "SLZVolcableC4",
+    "horaCamara": "2026-09-24 00:06:01",
+    "lecturaDss": "AD745GM",
+    "confianza": 74,
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AD745GM/SLZVolcableC4_0924000601.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AF543AC",
+  "visitas": [
+   {
+    "ingreso": "2026-09-26 22:17:00",
+    "salida": "2026-09-27 01:05:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-09-26 23:35:06"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-09-26 23:31:06",
+    "lecturaDss": "AF543AC",
+    "confianza": 78,
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AF543AC/RicCal03_0926233106.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "FMZ505",
+  "visitas": [
+   {
+    "ingreso": "2026-10-01 22:02:00",
+    "salida": "2026-10-02 01:48:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-10-01 22:57:24"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-10-01 22:53:24",
+    "lecturaDss": "FMZ505",
+    "confianza": 82,
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "FMZ505/RicCal03_1001225324.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AD074JB",
+  "visitas": [
+   {
+    "ingreso": "2026-10-04 22:16:00",
+    "salida": "2026-10-05 03:58:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03 SLZVolcableC3",
+    "primera": "2026-10-04 22:54:35"
+   }
+  ],
+  "camaras": "RicCal03 SLZVolcableC3",
+  "fotos": [
+   {
+    "camara": "SLZVolcableC3",
+    "horaCamara": "2026-10-05 03:41:12",
+    "lecturaDss": "AD074JB",
+    "confianza": 78,
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AD074JB/SLZVolcableC3_1005034112.jpg"
+   },
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-10-04 22:50:35",
+    "lecturaDss": "AD074JB",
+    "confianza": 74,
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "AD074JB/RicCal03_1004225035.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "LSJ114",
+  "visitas": [
+   {
+    "ingreso": "2026-10-05 21:02:00",
+    "salida": "2026-10-05 23:08:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-10-05 22:20:53"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-10-05 22:16:53",
+    "lecturaDss": "LSJ114",
+    "confianza": 86,
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "LSJ114/RicCal03_1005221653.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "JXE965",
+  "visitas": [
+   {
+    "ingreso": "2026-10-05 22:03:00",
+    "salida": "2026-10-06 01:35:00",
+    "producto": "SOJA",
+    "planta": "TERMINAL_EMBARQUE",
+    "camaras": "RicCal03",
+    "primera": "2026-10-05 22:29:01"
+   }
+  ],
+  "camaras": "RicCal03",
+  "fotos": [
+   {
+    "camara": "RicCal03",
+    "horaCamara": "2026-10-05 22:25:01",
+    "lecturaDss": "JXE965",
+    "confianza": 30,
+    "marca": "Iveco",
+    "color": "Black",
+    "tipo": "Medium Truck",
+    "escena": "JXE965/RicCal03_1005222501.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "FTW206",
+  "visitas": [
+   {
+    "ingreso": "2026-10-15 15:56:33",
+    "salida": "2026-10-16 02:52:41",
+    "producto": "GIRASOL",
+    "planta": "RICARDONE",
+    "camaras": "RicCal04 RicS6Playa3",
+    "primera": "2026-10-15 20:33:39"
+   }
+  ],
+  "camaras": "RicCal04 RicS6Playa3",
+  "fotos": [
+   {
+    "camara": "RicS6Playa3",
+    "horaCamara": "2026-10-15 20:49:03",
+    "lecturaDss": "FTW206",
+    "confianza": 86,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck",
+    "escena": "FTW206/RicS6Playa3_1015204903.jpg"
+   },
+   {
+    "camara": "RicCal04",
+    "horaCamara": "2026-10-15 20:29:39",
+    "lecturaDss": "FTW206",
+    "confianza": 78,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck",
+    "escena": "FTW206/RicCal04_1015202939.jpg"
+   }
+  ]
+ }
+]

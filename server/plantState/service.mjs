@@ -14,10 +14,11 @@ import { buildBaselines, quarterOf } from './baselines.mjs'
 import { resolveSectorStatus, resolveZoneStatus, resolveBottleneck } from './status.mjs'
 import { POINTS, zonesOfSite } from './plantGraph.mjs'
 import { SECTOR_DEVICES } from './sectorProfiles.mjs'
-import { applyIdentifications, applyLinks, findPredecessors, identifyFragments, journeyKeyOf, nodeModelCatalog, recentCaptures, updateRecentCircuits } from './plateIdentification.mjs'
+import { applyIdentifications, applyLinks, autoPredecessorLinks, findPredecessors, identifyFragments, journeyKeyOf, MIN_SIMILARITY, nodeModelCatalog, plateSimilarity, recentCaptures, updateRecentCircuits } from './plateIdentification.mjs'
 import { liveBalanzaRegistry, outsideTruckSystem, replayBalanzaRegistry } from './balanzaRegistry.mjs'
 import { createIdentificationArchive } from './identificationArchive.mjs'
 import { assessVehicleRelevance, excludeIrrelevantEvents } from './vehicleRelevance.mjs'
+import { alertInstantMs, alertReadEvents } from './alertReads.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '../..')
@@ -36,7 +37,8 @@ const MANUAL_OVERRIDES_PATH = path.join(ROOT, 'data', 'plant-state-manual-overri
 const SENSOR_CLOCK_SKEW_MS = 206 * 60_000
 const MANUAL_OVERRIDE_TTL_MS = 12 * 60 * 60 * 1000
 const IDENTIFICATION_DECISIONS_PATH = path.join(ROOT, 'data', 'plate-identification-decisions.json')
-const IDENTIFICATION_CACHE_MS = 10_000
+// 60 s: con las lecturas de alertas el cálculo tarda 1–4 s por planta (19/10).
+const IDENTIFICATION_CACHE_MS = 60_000
 
 function normalizePlate(value) {
   return String(value ?? '').replace(/[^A-Za-z0-9]/g, '').toUpperCase()
@@ -211,6 +213,26 @@ async function fetchRemoteEvents(baseUrl, startIso, endIso, siteQuery) {
 }
 
 /**
+ * Alertas de TruckFlow del período (hora de pared). Ahí llegan las lecturas que no entraron a un journey
+ * (LPR_MALFUNCTION, UNMATCHED_TAIL…): ver alertReads.mjs.
+ */
+async function fetchRemoteAlerts(baseUrl, startIso, endIso, siteQuery) {
+  const u = new URL('alert/list', baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`)
+  u.searchParams.set('startDate', startIso)
+  u.searchParams.set('endDate', endIso)
+  if (siteQuery) u.searchParams.set('site', siteQuery)
+  const ctl = new AbortController()
+  const t = setTimeout(() => ctl.abort(), FETCH_TIMEOUT_MS)
+  try {
+    const res = await fetch(u.toString(), { cache: 'no-store', headers: { Accept: 'application/json' }, signal: ctl.signal })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return extractArray(await res.json())
+  } finally {
+    clearTimeout(t)
+  }
+}
+
+/**
  * @param {string} [projectRoot]
  */
 export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_API_BASE } = {}) {
@@ -339,7 +361,9 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
         reg = { at: Date.now(), registry: replayBalanzaRegistry(day) }
         archiveBalanza.set(day, reg)
       }
-      const outside = outsideTruckSystem(it, it.candidates ?? [], reg.registry, { closed: Date.now() - Date.parse(it.at) > 24 * 3600_000 })
+      // Un camión parecido en planta según la balanza prueba que la lectura es de un camión.
+      const similarInPlant = reg.registry.platesAt(Date.parse(it.at)).some((p) => p !== it.readPlate && plateSimilarity(it.readPlate, p) >= MIN_SIMILARITY)
+      const outside = !similarInPlant && outsideTruckSystem(it, it.candidates ?? [], reg.registry, { closed: Date.now() - Date.parse(it.at) > 24 * 3600_000 })
       if (outside && it.level !== 'fuera_sistema') {
         return { ...it, level: 'fuera_sistema', rule: 'fuera_sistema', reason: `ni ${it.readPlate} ni sus candidatos figuran en la balanza: vehículo fuera del sistema de camiones` }
       }
@@ -352,6 +376,9 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     const cached = identificationCache.get(site)
     if (cached && nowMs - cached.at < IDENTIFICATION_CACHE_MS) return cached.result
     const catalog = nodeModelCatalog()
+    // Lecturas que solo llegaron como alerta: entran al reconocedor como lecturas sueltas.
+    const alertRaw = bySite.get(site)?.alertRaw
+    if (alertRaw?.size) rawEvents = [...rawEvents, ...alertReadEvents([...alertRaw.values()], rawEvents)]
     if (!recentCircuitsBySite.has(site)) recentCircuitsBySite.set(site, new Map())
     const recentCounts = updateRecentCircuits(recentCircuitsBySite.get(site), rawEvents, nowMs, catalog)
     const result = {
@@ -367,10 +394,50 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       }),
       recentCounts,
     }
+    // Lectura de alerta que el reconocedor no resolvió: no va a la bandeja (serían ~700 ilegibles por día).
+    result.items = result.items.filter((it) => !String(it.fragmentKey).startsWith('alert-') || it.assignedPlate || it.decision)
+    result.alertReads = rawEvents.filter((e) => e.fromAlert)
+    result.autoLinks = backwardLinks(site, rawEvents, nowMs, result.items)
     result.items = withOutsideSystem(identificationArchive.merge(site, result.items, identificationDecisions[site] || {}))
     result.counts = result.items.reduce((counts, item) => ({ ...counts, [item.level]: (counts[item.level] || 0) + 1 }), {})
     identificationCache.set(site, { at: nowMs, result })
     return result
+  }
+
+  /*
+   * Búsqueda hacia atrás automática (doc «algoritmo explicado»): camión que aparece a mitad de circuito
+   * sin lectura de entrada → su lectura de Preingreso/Ingreso suelta, si la cuenta da ≥ 95 % y la balanza
+   * lo da de alta a esa hora. Replay 01–14/10: scripts/replay-busqueda-atras.mjs. Apagar con
+   * IDENTIFICATION_BACKWARD=0. La lectura suelta que además era un fragmento de la bandeja se resuelve ahí.
+   */
+  function backwardLinks(site, rawEvents, nowMs, items) {
+    if (process.env.IDENTIFICATION_BACKWARD === '0' || process.env.IDENTIFICATION_BALANZA === '0') return []
+    try {
+      const decisions = identificationDecisions[site] || {}
+      const taken = [
+        ...items.filter((it) => it.assignedPlate || it.decision).map((it) => it.fragmentKey),
+        ...linksOf(site).map((l) => l.journeyKey),
+        ...Object.keys(decisions).filter((k) => !k.includes(':')),
+      ]
+      const links = autoPredecessorLinks(rawEvents, nowMs, {
+        balanza: liveBalanzaRegistry(nowMs),
+        site,
+        excludeKeys: taken,
+        dismissed: (plate, journeyKey) => Boolean(decisions[`nolink:${plate}:${journeyKey}`]),
+      })
+      for (const l of links) {
+        if (!l.auto) continue
+        const it = items.find((x) => x.fragmentKey === l.journeyKey)
+        if (!it) continue
+        // La lectura suelta ya estaba en la bandeja: queda resuelta por la búsqueda hacia atrás.
+        Object.assign(it, { level: 'casi_seguro', assignedPlate: l.plate, assignedJourneyUid: l.targetJourneyUid, rule: 'busqueda_atras', reason: l.reason, evidenceEligible: false })
+        l.item = true
+      }
+      return links
+    } catch (e) {
+      console.warn('[plant-state] búsqueda hacia atrás falló:', e instanceof Error ? e.message : e)
+      return []
+    }
   }
 
   /** Aplica las identificaciones (calculadas sobre la historia de 24 h) a los eventos del buffer. */
@@ -378,9 +445,16 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     try {
       const source = st ? [...st.history.values()] : rawEvents
       // Vínculos de lecturas anteriores (sobre claves crudas) y después las identificaciones de fragmentos.
-      const items = identifyRaw(site, source, nowMs).items
-      const operational = excludeIrrelevantEvents(rawEvents, items, e => journeyKeyOf(e, getEventLiveInstantMs(e)))
-      return applyIdentifications(applyLinks(operational, linksOf(site)), items.filter(item => !item.archived))
+      const identified = identifyRaw(site, source, nowMs)
+      const items = identified.items
+      // Lecturas de alerta resueltas: se suman al recorrido del camión (completan los puntos sin lectura).
+      const assignedAlert = new Set(items.filter((it) => it.assignedPlate && String(it.fragmentKey).startsWith('alert-')).map((it) => it.fragmentKey))
+      const bufferCut = nowMs - BUFFER_MS
+      const alertEvents = (identified.alertReads ?? []).filter((e) => assignedAlert.has(e.journeyUid) && getEventLiveInstantMs(e) >= bufferCut)
+      const operational = excludeIrrelevantEvents([...rawEvents, ...alertEvents], items, e => journeyKeyOf(e, getEventLiveInstantMs(e)))
+      // Vínculos automáticos de la búsqueda hacia atrás que no pasaron por la bandeja (patente válida suelta en la entrada).
+      const autoLinks = (identified.autoLinks ?? []).filter((l) => l.auto && !l.item).map((l) => ({ journeyKey: l.journeyKey, plate: l.plate, journeyUid: l.targetJourneyUid, level: 'casi_seguro' }))
+      return applyIdentifications(applyLinks(operational, [...linksOf(site), ...autoLinks]), items.filter(item => !item.archived))
     } catch (e) {
       console.warn('[plant-state] identificación de patentes falló:', e instanceof Error ? e.message : e)
       return rawEvents
@@ -405,15 +479,19 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     const nowMs = Date.now()
     const catalog = nodeModelCatalog()
     const links = linksOf(key)
+    // Vínculos que hizo sola la búsqueda hacia atrás (operaciones los deshace con «No es»).
+    const autoLinks = (identifyRaw(key, [...st.history.values()], nowMs).autoLinks ?? [])
+      .filter((l) => l.auto)
+      .map((l) => ({ journeyKey: l.journeyKey, plate: l.plate, journeyUid: l.targetJourneyUid, auto: true, readPlate: l.readPlate, reason: l.reason, probability: l.probability }))
     const result = findPredecessors([...st.history.values()], nowMs, want, {
       catalog,
       recentCounts: identificationCache.get(key)?.result?.recentCounts ?? {},
       otherSiteEvents: [...(bySite.get(otherSite(key))?.history.values() ?? [])],
       // Ya vinculados (a cualquier camión) o descartados por el operador para ESTE camión.
-      linkedKeys: [...links.map((l) => l.journeyKey), ...dismissedFor(key, want)],
+      linkedKeys: [...links.map((l) => l.journeyKey), ...autoLinks.map((l) => l.journeyKey), ...dismissedFor(key, want)],
       windowMs: Math.min(24, Math.max(1, Number(windowHours) || 6)) * 60 * 60 * 1000,
     })
-    return { site: key, ...result, linked: links.filter((l) => l.plate === want) }
+    return { site: key, ...result, linked: [...links, ...autoLinks].filter((l) => l.plate === want) }
   }
 
   /*
@@ -743,6 +821,9 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
         events: new Map(),
         /** Eventos de las últimas 24 h (solo para identificación de patentes). */
         history: new Map(),
+        /** Alertas crudas de las últimas 24 h (lecturas fuera de journey para la identificación). */
+        alertRaw: new Map(),
+        lastAlertFetchMs: 0,
         historyLoaded: false,
         lastOccurredAt: null,
         lastRefreshMs: 0,
@@ -768,6 +849,10 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     for (const [k, e] of st.events) {
       const t = keepT(e)
       if (!Number.isFinite(t) || t < cut) st.events.delete(k)
+    }
+    for (const [k, a] of st.alertRaw) {
+      const t = alertInstantMs(a)
+      if (!Number.isFinite(t) || t < histCut) st.alertRaw.delete(k)
     }
     for (const [k, e] of st.history) {
       const t = keepT(e)
@@ -864,6 +949,18 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       mergeEvents(st, rows)
     } else {
       mergeEvents(st, rows)
+    }
+
+    if (usedRemote && process.env.IDENTIFICATION_ALERTS !== '0') {
+      // Lecturas que solo llegan como alerta: no bloquean el refresco si la API de alertas falla.
+      try {
+        const from = st.lastAlertFetchMs ? st.lastAlertFetchMs - 10 * 60_000 : nowMs - HISTORY_MS
+        const alerts = await fetchRemoteAlerts(base, formatArgentinaIsoFromMs(from).slice(0, 19), endIso, siteQ)
+        for (const a of alerts) if (a?.id != null) st.alertRaw.set(String(a.id), a)
+        st.lastAlertFetchMs = nowMs
+      } catch (e) {
+        console.warn('[plant-state] alertas no disponibles:', e instanceof Error ? e.message : e)
+      }
     }
 
     pruneBuffer(st, nowMs)

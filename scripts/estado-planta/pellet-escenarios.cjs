@@ -16,8 +16,10 @@ for (const d of fs.readdirSync(path.join(ROOT, 'data', 'movimientos')).filter(d 
   if (!fs.existsSync(f)) continue
   for (const x of JSON.parse(fs.readFileSync(f))) {
     if (seenOp.has(x.external_operation_id)) continue
+    // la balanza SGC no trae «entregado por/a»: el destino puerto sale del transile emparejado (es_de_vuelta),
+    // que en el Excel coincide 1 a 1 con «PUERTO» en los egresos de pellet de Ricardone
     seenOp.add(x.external_operation_id)
-    if (x.planta_normalized !== 'RICARDONE' || x.movement_type !== 'EGRESO' || !/PELLETS GIRASOL/.test(x.product_normalized || '') || !/PUERTO/.test(x.entregado_por_a || '')) continue
+    if (x.planta_normalized !== 'RICARDONE' || x.movement_type !== 'EGRESO' || !/PELLETS GIRASOL/.test(x.product_normalized || '') || !(x.entregado_por_a ? /PUERTO/.test(x.entregado_por_a) : x.es_de_vuelta === true)) continue
     if (/^(.)\1+$/.test(x.plate_normalized || '')) continue
     R.push(x)
   }

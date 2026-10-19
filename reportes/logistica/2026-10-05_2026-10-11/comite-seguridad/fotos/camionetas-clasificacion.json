@@ -1,0 +1,23 @@
+{
+  "_nota": "Clasificación visual de la foto de DSS de cada vehículo sin Excel (fotos/camionetas.json). El tipo que informa el DSS no es confiable (marca pickups como Sedan/SUV y una Kangoo como MPV), por eso se clasificó mirando la foto. Revisado el 13/10/2026.",
+  "categorias": {
+    "pickup": {"nombre": "Camionetas (pickups)", "orden": 1},
+    "utilitario": {"nombre": "Utilitarios y traffics", "orden": 2},
+    "colectivo": {"nombre": "Colectivos y minibuses", "orden": 3},
+    "camion_chico": {"nombre": "Camiones chicos", "orden": 4},
+    "auto": {"nombre": "Auto", "orden": 5}
+  },
+  "patentes": {
+    "NAH953": "pickup", "AG696QV": "pickup", "JLQ557": "pickup", "AE040HU": "pickup", "JZW724": "pickup", "AA208QN": "pickup",
+    "AF566OP": "pickup", "AA689GI": "pickup", "JUE083": "pickup", "AF881FZ": "pickup", "AF211ER": "pickup", "AG361MX": "pickup",
+    "IJN886": "pickup", "LJB988": "pickup", "AH926WU": "pickup", "INE931": "pickup", "AG275GX": "pickup",
+    "AE036AM": "utilitario", "PFA290": "utilitario", "AF529RF": "utilitario", "AH456NL": "utilitario", "MYW261": "utilitario",
+    "AG688FB": "utilitario", "AF282QI": "utilitario", "IMH787": "utilitario", "AG294KA": "utilitario", "AE264XY": "utilitario",
+    "AH700ET": "utilitario", "AH540BR": "utilitario", "AI456GB": "utilitario", "AH793XT": "utilitario", "AG408SM": "utilitario",
+    "AI065WC": "utilitario", "OIY765": "utilitario", "PQK206": "utilitario",
+    "AG622BE": "colectivo", "AF778YL": "colectivo", "AH090IH": "colectivo", "AE937SG": "colectivo", "AG142JP": "colectivo",
+    "AD686SH": "colectivo", "AG066KT": "colectivo",
+    "AC169LG": "camion_chico", "HLT270": "camion_chico", "AG978PR": "camion_chico", "GCW191": "camion_chico", "AB148YJ": "camion_chico",
+    "OCB815": "auto"
+  }
+}

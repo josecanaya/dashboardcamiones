@@ -71,7 +71,7 @@ export function scoreCandidates(read, candidates) {
     const plate = plateLikelihood(c.similarity)
     // Recorrido: si el nodo no es esperado no se descarta (puede faltar una cámara), pero pesa poco.
     // Si ningún circuito del modelo pasa por lo que hizo + este nodo, el recorrido pesa en contra.
-    const route = c.sameNode ? 1 : c.circuit == null ? NO_CIRCUIT_ROUTE : Math.max(c.nodeProbability, ROUTE_FLOOR)
+    const route = c.sameNode ? 1 : c.circuit == null && !(c.nodeProbability > 0) ? NO_CIRCUIT_ROUTE : Math.max(c.nodeProbability, ROUTE_FLOOR)
     return { plate: c.plate, plateLikelihood: plate, route, attrLr, comparisons, score: plate * route * attrLr }
   })
   // Hipótesis «otro camión»: la lectura es una patente válida de un camión que no está entre los candidatos.
@@ -90,5 +90,6 @@ export function scoreCandidates(read, candidates) {
  *   - patente válida leída en este mismo nodo: 2 de 2 bien desde 75 % (AC297UX → AC297HX 90 %,
  *     AH861QO → AH861QQ 87 % el 08/10 en vivo); se usa 85 % por margen.
  */
-export const AUTO_EVIDENCE_PROBABILITY = 0.9
-export const AUTO_EVIDENCE_SAME_NODE_PROBABILITY = 0.85
+// Reconocimiento mayor al 60 % se aplica (criterio de operaciones, 19/10; antes 0,90 / 0,85).
+export const AUTO_EVIDENCE_PROBABILITY = 0.6
+export const AUTO_EVIDENCE_SAME_NODE_PROBABILITY = 0.6

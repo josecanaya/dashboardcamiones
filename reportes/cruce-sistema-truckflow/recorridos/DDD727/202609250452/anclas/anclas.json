@@ -1,0 +1,229 @@
+{
+ "patente": "DDD727",
+ "ingreso": "2026-09-25 04:52:00",
+ "calado": "2026-09-25 08:39:00",
+ "salida": "2026-09-25 18:41:00",
+ "plataforma": "VOLCABLE_1",
+ "producto": "GIRASOL",
+ "planta": "RICARDONE",
+ "puntos": [
+  {
+   "punto": "Ingreso Ricardone",
+   "ancla": "ing",
+   "ventana": [
+    "04:32:48",
+    "04:51:06"
+   ],
+   "centro": "04:46:12",
+   "camaras": [
+    "RicIngCamFrente"
+   ],
+   "total": 0,
+   "candidatas": []
+  },
+  {
+   "punto": "Preingreso",
+   "ancla": "ing",
+   "ventana": [
+    "04:41:54",
+    "04:53:18"
+   ],
+   "centro": "04:49:18",
+   "camaras": [
+    "RicPreIngInFr"
+   ],
+   "total": 2,
+   "candidatas": [
+    {
+     "camara": "RicPreIngInFr",
+     "hora": "2026-09-25 04:46:51",
+     "lectura": "XI1",
+     "marca": null,
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "044651_RicPreIngInFr_XI1.jpg"
+    },
+    {
+     "camara": "RicPreIngInFr",
+     "hora": "2026-09-25 04:45:28",
+     "lectura": "",
+     "marca": "Alfa Romeo",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "044528_RicPreIngInFr_vacia.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Calada Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "08:22:54",
+    "08:37:42"
+   ],
+   "centro": "08:33:06",
+   "camaras": [
+    "RicCal01",
+    "RicCal02",
+    "RicCal03",
+    "RicCal04",
+    "RicCal05",
+    "RicCal06"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicCal04",
+     "hora": "2026-09-25 08:30:19",
+     "lectura": "1140",
+     "marca": "Scania",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "083019_RicCal04_1140.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza ingreso Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "08:36:06",
+    "09:05:24"
+   ],
+   "centro": "08:42:24",
+   "camaras": [
+    "RicB1Ingreso",
+    "RicB2Ingreso",
+    "RicB3Ingreso"
+   ],
+   "total": 3,
+   "candidatas": [
+    {
+     "camara": "RicB3Ingreso",
+     "hora": "2026-09-25 08:44:01",
+     "lectura": "DDN01",
+     "marca": null,
+     "color": "Blue",
+     "tipo": "Sedan",
+     "foto": "084401_RicB3Ingreso_DDN01.jpg"
+    },
+    {
+     "camara": "RicB1Ingreso",
+     "hora": "2026-09-25 08:38:02",
+     "lectura": "G8C",
+     "marca": "Scania",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "083802_RicB1Ingreso_G8C.jpg"
+    },
+    {
+     "camara": "RicB1Ingreso",
+     "hora": "2026-09-25 08:36:28",
+     "lectura": "LCJ",
+     "marca": "Ford",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "083628_RicB1Ingreso_LCJ.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Playa 3",
+   "ancla": "calado",
+   "ventana": [
+    "08:40:24",
+    "09:10:42"
+   ],
+   "centro": "08:47:42",
+   "camaras": [
+    "RicS6Playa3"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicS6Playa3",
+     "hora": "2026-09-25 08:46:00",
+     "lectura": "114G",
+     "marca": "Scania",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "084600_RicS6Playa3_114G.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Descarga plataforma",
+   "ancla": "sal",
+   "ventana": [
+    "17:50:00",
+    "18:29:06"
+   ],
+   "centro": "18:12:00",
+   "camaras": [
+    "RicVolcable1"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicVolcable1",
+     "hora": "2026-09-25 18:00:38",
+     "lectura": "SCN",
+     "marca": "Scania",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "180038_RicVolcable1_SCN.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza egreso Ricardone",
+   "ancla": "sal",
+   "ventana": [
+    "18:30:42",
+    "18:42:12"
+   ],
+   "centro": "18:38:00",
+   "camaras": [
+    "RicB1Egreso",
+    "RicB2Egreso",
+    "RicB3Egreso"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicB2Egreso",
+     "hora": "2026-09-25 18:35:52",
+     "lectura": "LJK",
+     "marca": null,
+     "color": "White",
+     "tipo": "Sedan",
+     "foto": "183552_RicB2Egreso_LJK.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Egreso Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "08:19:54",
+    "09:04:54"
+   ],
+   "centro": "08:41:54",
+   "camaras": [
+    "RicEgrCamFrente"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicEgrCamFrente",
+     "hora": "2026-09-25 09:00:17",
+     "lectura": "3361230",
+     "marca": null,
+     "color": "Silver",
+     "tipo": null,
+     "foto": "090017_RicEgrCamFrente_3361230.jpg"
+    }
+   ]
+  }
+ ]
+}

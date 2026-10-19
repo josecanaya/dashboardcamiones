@@ -1,0 +1,155 @@
+{
+ "patente": "DDD727",
+ "ingreso": "2026-09-18 12:35:00",
+ "salida": "2026-09-18 21:02:00",
+ "producto": "GIRASOL",
+ "planta": "RICARDONE",
+ "ancla": {
+  "camara": "RicPreIngInFr",
+  "hora": "2026-09-18 12:30:34",
+  "lectura": "330"
+ },
+ "puntos": [
+  {
+   "punto": "Preingreso",
+   "elegida": {
+    "camara": "RicPreIngInFr",
+    "hora": "2026-09-18 12:30:34",
+    "at": "2026-09-18T15:30:34.000Z",
+    "lectura": "330",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck",
+    "foto": "123034_RicPreIngInFr_330.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicPreIngInFr",
+     "hora": "2026-09-18 12:30:34",
+     "at": "2026-09-18T15:30:34.000Z",
+     "lectura": "330",
+     "marca": null,
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "123034_RicPreIngInFr_330.jpg"
+    }
+   ],
+   "vecinos": []
+  },
+  {
+   "punto": "Ingreso Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Calada Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Balanza ingreso Ricardone",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Playa 3",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Celda 16",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Silo Keppler",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Volcables Ricardone",
+   "intervalo": [
+    "18:32:00",
+    "20:59:00"
+   ],
+   "vecinos": [],
+   "elegida": {
+    "camara": "RicVolcable1",
+    "hora": "2026-09-18 20:36:37",
+    "at": "2026-09-18T23:36:37.000Z",
+    "lectura": "SGAN4",
+    "marca": "Scania",
+    "color": "Silver",
+    "tipo": "Large Truck",
+    "foto": "203637_RicVolcable1_SGAN4.jpg"
+   },
+   "candidatas": [
+    {
+     "camara": "RicVolcable1",
+     "hora": "2026-09-18 20:36:37",
+     "at": "2026-09-18T23:36:37.000Z",
+     "lectura": "SGAN4",
+     "marca": "Scania",
+     "color": "Silver",
+     "tipo": "Large Truck",
+     "foto": "203637_RicVolcable1_SGAN4.jpg"
+    },
+    {
+     "camara": "RicVolcable2",
+     "hora": "2026-09-18 19:07:40",
+     "at": "2026-09-18T22:07:40.000Z",
+     "lectura": "IT001",
+     "marca": "Mercedes-Benz",
+     "color": "Blue",
+     "tipo": "Large Truck",
+     "foto": "190740_RicVolcable2_IT001.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza egreso Ricardone",
+   "intervalo": [
+    "20:58:00",
+    "21:04:00"
+   ],
+   "vecinos": [
+    "GNR994@20:43:07"
+   ],
+   "candidatas": []
+  },
+  {
+   "punto": "Egreso Ricardone",
+   "intervalo": [
+    "21:02:00",
+    "21:22:00"
+   ],
+   "vecinos": [],
+   "candidatas": []
+  },
+  {
+   "punto": "Ingreso puerto",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Balanza ingreso puerto",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Volcables puerto",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Balanza egreso puerto",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  },
+  {
+   "punto": "Salida puerto",
+   "estado": "fuera_del_recorrido",
+   "vecinos": []
+  }
+ ]
+}

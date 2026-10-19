@@ -8,7 +8,7 @@ describe('descarte por relevancia de acceso compartido',()=> {
     expect(excludeIrrelevantEvents(events,[discarded],e=>e.id)).toEqual([events[1]])
     expect(excludeIrrelevantEvents(events,[{...discarded,level:'provisorio'}],e=>e.id)).toEqual(events)
   })
-  it.each(['Pickup','Bus','Car','SUV','Van','Sedan','Minibus'])('descarta %s sin recorrido operativo',type=>expect(assessVehicleRelevance({...base,capture:{...base.capture,vehicleCategory:type}}).reject).toBe(true))
+  it.each(['Pickup','Bus','Car','SUV','Van','Sedan','Minibus','MPV','Medium Bus'])('descarta %s sin recorrido operativo',type=>expect(assessVehicleRelevance({...base,capture:{...base.capture,vehicleCategory:type}}).reject).toBe(true))
   it.each(['Large Truck','Small Truck','Unknown','Other',null])('preserva %s',type=>expect(assessVehicleRelevance({...base,capture:{...base.capture,vehicleCategory:type}}).reject).toBe(false))
   it('no descarta un camión mal clasificado en DSS que pasó por balanza',()=>expect(assessVehicleRelevance({...base,reads:[{deviceCode:'SLZBalIngFte'}]}).reason).toBe('recorrido_operativo'))
   it('protege candidatos operativos parecidos',()=>expect(assessVehicleRelevance({...base,item:{...base.item,candidates:[{similarity:.83,inUniverse:true,recentReads:[{device:'RicCal04'}]}]}}).reject).toBe(false))

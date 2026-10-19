@@ -48,6 +48,33 @@ planilla = {'porDia': pl_dia, 'ultimoExcel': ult, 'diasSinMovimientos': faltan,
 planilla['completa'] = planilla['completa'] and planilla['corridaConPlanilla']
 modo = 'planilla' if planilla['completa'] else ('parcial' if any(pl_dia.values()) else 'camaras')
 
+# ---- girasol desde movimientos: RICARDONE · INGRESO · GIRASOL por día operativo del ingreso (desde las 22 h).
+# Con Excel cuentan las volcables 1/2 (R5+R6); la balanza SGC no trae plataforma, así que sus filas entran todas
+# (incluyen las descargas a silos Kepler, R4) y se informan aparte para que la lámina lo diga.
+def girasol_movimientos():
+    seen, por_dia, sgc, kepler = set(), {d: 0 for d in DAYS}, 0, 0
+    for i in range(-1, len(DAYS) + 3):
+        f = os.path.join(ROOT, 'data', 'movimientos', (d0 + datetime.timedelta(days=i)).isoformat(), 'movimientos.json')
+        for r in (json.load(open(f, encoding='utf-8')) if os.path.exists(f) else []):
+            oid = r.get('external_operation_id')
+            if oid in seen: continue
+            seen.add(oid)
+            if r.get('planta_normalized') != 'RICARDONE' or r.get('movement_type') != 'INGRESO' or r.get('product_normalized') != 'GIRASOL': continue
+            p = str(r.get('plate_normalized') or '')
+            if len(p) < 6 or len(set(p)) == 1: continue
+            ing = str(r.get('external_ingreso_at') or '')
+            if len(ing) < 16: continue
+            dd = (datetime.datetime.fromisoformat(ing[:16]) + datetime.timedelta(hours=2)).date().isoformat()
+            if dd not in por_dia: continue
+            plat = str(r.get('platform_normalized') or '')
+            es_sgc = r.get('source_file') == 'SGC_PROD.CamionesActivos24horas'
+            if not es_sgc and not plat.startswith('VOLCABLE_'):
+                kepler += plat.startswith('KEPPLER')
+                continue
+            sgc += es_sgc
+            por_dia[dd] += 1
+    return {'operaciones': sum(por_dia.values()), 'porDia': por_dia, 'balanzaSgc': sgc, 'keplerExcluidasExcel': kepler}
+
 def rows(name):
     t = J(RUN, 'tables', name + '.json')
     return t if isinstance(t, list) else t.get('rows', [])
@@ -110,7 +137,7 @@ out = {
     'finalCircuits': {'total': len(fc), 'porCircuito': bucket},
     'r7': {'camaras': R7, 'calibracion': cal_r7, 'etlRecorridos': len(r7ids), 'etlPorDia': [etl_r7_dia[d] for d in DAYS],
            'metricas': M['circuitos']['cur']['r7']},
-    'girasol': {'metricas': M['circuitos']['cur']['gir'], 'volcable2PorDia': M['sectores']['cur']['volcRic2'], 'volcable1PorDia': M['sectores']['cur']['volcRic1']},
+    'girasol': {'movimientos': girasol_movimientos(), 'metricas': M['circuitos']['cur']['gir'], 'volcable2PorDia': M['sectores']['cur']['volcRic2'], 'volcable1PorDia': M['sectores']['cur']['volcRic1']},
     'r29': {'metricas': M['circuitos']['cur']['r29'], 'silosCarga': M['sectores']['cur']['silosCarga'], 'silosDesc': M['sectores']['cur']['silosDesc']},
     'sectores': {'metricas': M['sectores']['cur'], 'calles': M['calles']['cur'], 'horasActivas': M['horasActivas']['cur']},
     'pellet': {'camaras': PE, 'calibracion': (PEc or {}).get('calibracion'), 'calibracionArchivo': PEcf},

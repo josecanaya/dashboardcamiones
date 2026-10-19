@@ -137,13 +137,15 @@ export function arrivalWeight(c) {
 /**
  * `opts.ignorePlate`: lectura ilegible, la patente no informa. Se decide solo por recorrido, hora y
  * atributos (la chance de la lectura vale lo mismo para todos los candidatos y para «nunca visto»).
+ * `opts.pInicio`: reemplaza el p_inicio del nodo (búsqueda hacia atrás: en Preingreso p_inicio vale ~1
+ * para cualquier camión; ahí «nuevo» es la parte de esas lecturas que no es de ningún camión de la balanza).
  */
 export function scoreWithNodeModel(item, candidates, opts = {}) {
   const table = pInicioTable()
   const at = Date.parse(item.at)
   const franja = franjaOf(at)
   const node = table.nodes[item.node] ?? null
-  const pInicio = node?.pInicio?.[franja] ?? 1
+  const pInicio = opts.pInicio ?? node?.pInicio?.[franja] ?? 1
   const read = node?.read?.[franja] ?? DEFAULT_READ
   const weights = candidates.map(arrivalWeight)
   // Camiones conocidos que esperan este paso: los parecidos y los que no. Mínimo 1.

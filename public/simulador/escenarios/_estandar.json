@@ -1,0 +1,419 @@
+{
+ "dias": 41,
+ "desde": "2026-07-31",
+ "hasta": "2026-09-25",
+ "prm": {
+  "bal_min": 1.5,
+  "bal_limpieza": [
+   390,
+   15
+  ],
+  "traslado": 16,
+  "gate_extra": 3,
+  "paradas": [
+   [
+    390,
+    45,
+    [
+     0,
+     1,
+     2,
+     3,
+     4
+    ]
+   ]
+  ]
+ },
+ "T0": -360,
+ "T_END": 1560,
+ "h0": -6,
+ "H": 33,
+ "planta": {
+  "cal": [
+   {
+    "on": false,
+    "rate": 13.1,
+    "prods": [
+     "soja"
+    ]
+   },
+   {
+    "on": false,
+    "rate": 17.1,
+    "prods": [
+     "soja"
+    ]
+   },
+   {
+    "on": true,
+    "rate": 10.5,
+    "prods": [
+     "girasol"
+    ]
+   },
+   {
+    "on": true,
+    "rate": 18.8,
+    "prods": [
+     "soja"
+    ]
+   },
+   {
+    "on": false,
+    "rate": 9.5,
+    "prods": [
+     "soja"
+    ]
+   },
+   {
+    "on": false,
+    "rate": 9.5,
+    "prods": [
+     "soja"
+    ]
+   },
+   {
+    "on": true,
+    "rate": 2,
+    "prods": [
+     "liquido"
+    ]
+   }
+  ],
+  "volc": [
+   {
+    "on": true,
+    "rate": 8.4,
+    "prods": [
+     "soja"
+    ]
+   },
+   {
+    "on": true,
+    "rate": 8.4,
+    "prods": [
+     "soja"
+    ]
+   },
+   {
+    "on": true,
+    "rate": 7.6,
+    "prods": [
+     "soja"
+    ]
+   },
+   {
+    "on": false,
+    "rate": 7.3,
+    "prods": [
+     "pellet"
+    ]
+   },
+   {
+    "on": false,
+    "rate": 7.9,
+    "prods": [
+     "soja"
+    ]
+   }
+  ],
+  "rd": [
+   {
+    "on": true,
+    "rate": 4.5,
+    "prods": [
+     "girasol"
+    ]
+   },
+   {
+    "on": true,
+    "rate": 4.5,
+    "prods": [
+     "girasol"
+    ]
+   },
+   {
+    "on": true,
+    "rate": 4.5,
+    "prods": [
+     "girasol"
+    ]
+   },
+   {
+    "on": false,
+    "rate": 4.7,
+    "prods": [
+     "girasol"
+    ]
+   },
+   {
+    "on": false,
+    "rate": 5.3,
+    "prods": [
+     "girasol"
+    ]
+   }
+  ],
+  "st": {
+   "ing": {
+    "on": true,
+    "rate": 90
+   },
+   "pre": {
+    "on": true,
+    "rate": 90
+   },
+   "sal2": {
+    "on": true,
+    "rate": 90
+   },
+   "balric": {
+    "on": true,
+    "rate": 40
+   },
+   "balegrric": {
+    "on": true,
+    "rate": 40
+   },
+   "ingsl": {
+    "on": true,
+    "rate": 90
+   },
+   "bal": {
+    "on": true,
+    "rate": 40
+   },
+   "balegr": {
+    "on": true,
+    "rate": 40
+   },
+   "egr": {
+    "on": true,
+    "rate": 90
+   },
+   "cargapellet": {
+    "on": true,
+    "rate": 8
+   },
+   "cargasoja": {
+    "on": true,
+    "rate": 2
+   }
+  }
+ },
+ "tramos": {
+  "walk": 4.8,
+  "demora": 9.3,
+  "route": 12.7,
+  "exitWalk": 5.3,
+  "walkBal": 7.9
+ },
+ "carga": {
+  "pellet": {
+   "cap": 6.1,
+   "back": 10.9,
+   "inFix": 29.7,
+   "toSl": 18.4
+  },
+  "soja": {
+   "cap": 2,
+   "back": 11,
+   "inFix": 10,
+   "toSl": 18
+  }
+ },
+ "llegadas": {
+  "soja": 253,
+  "girasol": 31,
+  "liquido": 11
+ },
+ "reparto": {
+  "soja": [
+   0.163,
+   0.087,
+   0.058,
+   0.106,
+   0.106,
+   0.114,
+   0.116,
+   0.113,
+   0.081,
+   0.042,
+   0.013,
+   0.001
+  ],
+  "girasol": [
+   0.119,
+   0.089,
+   0.069,
+   0.107,
+   0.205,
+   0.185,
+   0.103,
+   0.053,
+   0.055,
+   0.011,
+   0.004,
+   0
+  ],
+  "liquido": [
+   0.045,
+   0.031,
+   0.102,
+   0.18,
+   0.198,
+   0.143,
+   0.085,
+   0.073,
+   0.089,
+   0.04,
+   0.013,
+   0
+  ]
+ },
+ "tons": {
+  "soja": 31,
+  "girasol": 29.7,
+  "pellet": 28.6,
+  "liquido": 29
+ },
+ "flota": {
+  "pellet": 50,
+  "soja": 2,
+  "pelletIni": 0,
+  "pelletHoras": 31
+ },
+ "turnos": {
+  "dias": 16,
+  "factor": [
+   0.46,
+   0.53,
+   0.55,
+   0.55,
+   0.53,
+   0.57,
+   0.52,
+   0.47,
+   0.78,
+   0.96,
+   1,
+   0.98,
+   1,
+   1,
+   0.9,
+   0.99,
+   1,
+   1,
+   0.73,
+   0.4,
+   0.51,
+   0.58,
+   0.54,
+   0.5
+  ],
+  "paradas": [
+   [
+    360,
+    65,
+    [
+     0,
+     1,
+     2,
+     3,
+     4
+    ]
+   ],
+   [
+    1080,
+    40,
+    [
+     0,
+     1,
+     2,
+     3,
+     4
+    ]
+   ]
+  ]
+ },
+ "oee": [
+  {
+   "v": "V1",
+   "ciclo": 5.9,
+   "teorica": 10.2,
+   "dispDia": 0.62,
+   "dispNoche": 0.4,
+   "rend": 0.83,
+   "horas": 170
+  },
+  {
+   "v": "V2",
+   "ciclo": 5.7,
+   "teorica": 10.5,
+   "dispDia": 0.58,
+   "dispNoche": 0.33,
+   "rend": 1,
+   "horas": 244
+  },
+  {
+   "v": "V3",
+   "ciclo": 5.3,
+   "teorica": 11.3,
+   "dispDia": 0.53,
+   "dispNoche": 0.33,
+   "rend": 0.96,
+   "horas": 256
+  },
+  {
+   "v": "V4",
+   "ciclo": 7.2,
+   "teorica": 8.3,
+   "dispDia": 0.66,
+   "dispNoche": 0.32,
+   "rend": 1,
+   "horas": 187
+  },
+  {
+   "v": "V5",
+   "ciclo": 7.4,
+   "teorica": 8.1,
+   "dispDia": 0.76,
+   "dispNoche": 0.25,
+   "rend": 1,
+   "horas": 247
+  }
+ ],
+ "record": {
+  "fuente": "Excel de movimientos (descargas por día) y cámaras (balanza de ingreso SL)",
+  "puertoDia": {
+   "n": 654,
+   "dia": "2026-08-29"
+  },
+  "volcDia": {
+   "V1": {
+    "n": 170,
+    "dia": "2026-09-09"
+   },
+   "V2": {
+    "n": 195,
+    "dia": "2026-07-17"
+   },
+   "V3": {
+    "n": 194,
+    "dia": "2026-07-30"
+   },
+   "V4": {
+    "n": 169,
+    "dia": "2026-08-25"
+   },
+   "V5": {
+    "n": 170,
+    "dia": "2026-09-04"
+   }
+  },
+  "bal3h": {
+   "n": 43.3,
+   "dia": "2026-09-15"
+  }
+ }
+}

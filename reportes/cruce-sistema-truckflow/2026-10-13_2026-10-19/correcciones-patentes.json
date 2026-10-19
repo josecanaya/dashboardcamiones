@@ -1,0 +1,2622 @@
+[
+ {
+  "hora": "2026-10-13T04:44:14.000Z",
+  "camara": "SLZBalSC2Tras",
+  "punto": "BAL_EGR_SL",
+  "lectura": "7M497",
+  "patente": "AG487FD",
+  "como": "por_hora",
+  "score": 0.23,
+  "movimiento": "CTG_10135551371"
+ },
+ {
+  "hora": "2026-10-13T13:58:40.706Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "BOH961",
+  "patente": "BDH961",
+  "como": "parecida",
+  "score": 0.82,
+  "movimiento": "CTG_10235553798"
+ },
+ {
+  "hora": "2026-10-13T14:01:15.735Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "BOH961",
+  "patente": "BDH961",
+  "como": "parecida",
+  "score": 0.83,
+  "movimiento": "CTG_10235553798"
+ },
+ {
+  "hora": "2026-10-13T15:00:24.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "DLZ492",
+  "patente": "OLZ492",
+  "como": "parecida",
+  "score": 0.81,
+  "movimiento": "CTG_10135550060"
+ },
+ {
+  "hora": "2026-10-13T15:48:14.354Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "DLZ492",
+  "patente": "OLZ492",
+  "como": "parecida",
+  "score": 0.83,
+  "movimiento": "CTG_10135550060"
+ },
+ {
+  "hora": "2026-10-13T17:51:07.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "MKW10B",
+  "patente": "MKW108",
+  "como": "formato",
+  "score": 0.97,
+  "movimiento": "CTG_10135557478"
+ },
+ {
+  "hora": "2026-10-13T18:32:57.799Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "MF194CA",
+  "patente": "AF194CA",
+  "como": "parecida",
+  "score": 0.75,
+  "movimiento": "COMPROB_000400423395"
+ },
+ {
+  "hora": "2026-10-13T20:20:05.540Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "ATP074",
+  "patente": "ATP474",
+  "como": "parecida",
+  "score": 0.81,
+  "movimiento": "CTG_10135555168"
+ },
+ {
+  "hora": "2026-10-13T20:23:39.000Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "AH0190V",
+  "patente": "AH019OV",
+  "como": "formato",
+  "score": 0.96,
+  "movimiento": "CTG_10135550411"
+ },
+ {
+  "hora": "2026-10-13T22:45:56.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "428",
+  "patente": "WNL428",
+  "como": "parecida",
+  "score": 0.53,
+  "movimiento": "CTG_30035571100"
+ },
+ {
+  "hora": "2026-10-13T22:55:58.558Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "AA674NM",
+  "patente": "AA674NH",
+  "como": "parecida",
+  "score": 0.65,
+  "movimiento": "CTG_10235565896"
+ },
+ {
+  "hora": "2026-10-13T23:06:14.000Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "FNJ9",
+  "patente": "SFN197",
+  "como": "parecida",
+  "score": 0.47,
+  "movimiento": "CTG_10235564145"
+ },
+ {
+  "hora": "2026-10-13T23:13:55.994Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "AB382HL",
+  "patente": "AB382HC",
+  "como": "parecida",
+  "score": 0.55,
+  "movimiento": "CTG_10235564666"
+ },
+ {
+  "hora": "2026-10-13T23:37:36.000Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "AA874H",
+  "patente": "AA674NH",
+  "como": "parecida",
+  "score": 0.68,
+  "movimiento": "CTG_10235565896"
+ },
+ {
+  "hora": "2026-10-13T23:41:56.835Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "AA674AH",
+  "patente": "AA674NH",
+  "como": "parecida",
+  "score": 0.85,
+  "movimiento": "CTG_10235565896"
+ },
+ {
+  "hora": "2026-10-14T00:53:57.284Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "DLZ500",
+  "patente": "OLZ500",
+  "como": "parecida",
+  "score": 0.25,
+  "movimiento": "CTG_10135550731"
+ },
+ {
+  "hora": "2026-10-14T01:49:05.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "EM651",
+  "patente": "ERF651",
+  "como": "parecida",
+  "score": 0.5,
+  "movimiento": "CTG_10235561907"
+ },
+ {
+  "hora": "2026-10-14T01:52:35.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "ELU110",
+  "patente": "ELD110",
+  "como": "parecida",
+  "score": 0.88,
+  "movimiento": "CTG_10235561536"
+ },
+ {
+  "hora": "2026-10-14T02:02:52.272Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "FSI096",
+  "patente": "ESI096",
+  "como": "parecida",
+  "score": 0.77,
+  "movimiento": "CTG_10235567442"
+ },
+ {
+  "hora": "2026-10-14T02:13:57.000Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "ERF851",
+  "patente": "ERF651",
+  "como": "parecida",
+  "score": 0.79,
+  "movimiento": "CTG_10235561907"
+ },
+ {
+  "hora": "2026-10-14T02:20:19.000Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "DZ500",
+  "patente": "OLZ500",
+  "como": "parecida",
+  "score": 0.27,
+  "movimiento": "CTG_10135550731"
+ },
+ {
+  "hora": "2026-10-14T02:20:51.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "DLZ495",
+  "patente": "OLZ495",
+  "como": "parecida",
+  "score": 0.39,
+  "movimiento": "CTG_10135550542"
+ },
+ {
+  "hora": "2026-10-14T02:28:27.168Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "FSI096",
+  "patente": "ESI096",
+  "como": "parecida",
+  "score": 0.92,
+  "movimiento": "CTG_10235567442"
+ },
+ {
+  "hora": "2026-10-14T02:49:44.453Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "QLZ1501",
+  "patente": "OLZ500",
+  "como": "parecida",
+  "score": 0.66,
+  "movimiento": "CTG_10135550731"
+ },
+ {
+  "hora": "2026-10-14T03:08:01.000Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "SI0O6",
+  "patente": "ESI096",
+  "como": "parecida",
+  "score": 0.28,
+  "movimiento": "CTG_10235567442"
+ },
+ {
+  "hora": "2026-10-14T03:14:22.309Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "FSI096",
+  "patente": "ESI096",
+  "como": "parecida",
+  "score": 0.95,
+  "movimiento": "CTG_10235567442"
+ },
+ {
+  "hora": "2026-10-14T04:04:12.370Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "FO0358",
+  "patente": "SUT358",
+  "como": "parecida",
+  "score": 0.52,
+  "movimiento": "CTG_10235561222"
+ },
+ {
+  "hora": "2026-10-14T05:28:08.000Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "IH114",
+  "patente": "GIW114",
+  "como": "parecida",
+  "score": 0.59,
+  "movimiento": "CTG_10235568792"
+ },
+ {
+  "hora": "2026-10-14T06:27:19.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "EL511",
+  "patente": "EED511",
+  "como": "parecida",
+  "score": 0.61,
+  "movimiento": "CTG_10235567405"
+ },
+ {
+  "hora": "2026-10-14T06:30:10.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "EEU511",
+  "patente": "EED511",
+  "como": "parecida",
+  "score": 0.95,
+  "movimiento": "CTG_10235567405"
+ },
+ {
+  "hora": "2026-10-14T06:46:59.000Z",
+  "camara": "RicCalLiq",
+  "punto": "CAL_RIC",
+  "lectura": "JD706",
+  "patente": "JJD706",
+  "como": "parecida",
+  "score": 0.64,
+  "movimiento": "CTG_30035572630"
+ },
+ {
+  "hora": "2026-10-14T10:34:21.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "BWGW12",
+  "patente": "EHF120",
+  "como": "por_hora",
+  "score": 0.29,
+  "movimiento": "COMPROB_000301070362"
+ },
+ {
+  "hora": "2026-10-14T10:42:28.000Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "BTSQ626",
+  "patente": "BTS626",
+  "como": "parecida",
+  "score": 0.27,
+  "movimiento": "COMPROB_000400423406"
+ },
+ {
+  "hora": "2026-10-14T10:44:24.000Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "VSC98",
+  "patente": "VSC984",
+  "como": "parecida",
+  "score": 0.63,
+  "movimiento": "COMPROB_000400423426"
+ },
+ {
+  "hora": "2026-10-14T13:22:07.386Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "BOH961",
+  "patente": "BDH961",
+  "como": "parecida",
+  "score": 0.7,
+  "movimiento": "CTG_10235573042"
+ },
+ {
+  "hora": "2026-10-14T13:23:55.978Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "BOH961",
+  "patente": "BDH961",
+  "como": "parecida",
+  "score": 0.82,
+  "movimiento": "CTG_10235573042"
+ },
+ {
+  "hora": "2026-10-14T15:12:04.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "A824GE",
+  "patente": "AA824GE",
+  "como": "parecida",
+  "score": 0.59,
+  "movimiento": "CTG_10135573346"
+ },
+ {
+  "hora": "2026-10-14T15:16:05.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "A824GE",
+  "patente": "AA824GE",
+  "como": "parecida",
+  "score": 0.91,
+  "movimiento": "CTG_10135573346"
+ },
+ {
+  "hora": "2026-10-14T16:50:32.621Z",
+  "camara": "RicCal02",
+  "punto": "CAL_RIC",
+  "lectura": "RNLD350",
+  "patente": "RNA350",
+  "como": "parecida",
+  "score": 0.73,
+  "movimiento": "CTG_10235573307"
+ },
+ {
+  "hora": "2026-10-14T16:59:24.000Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "A824GE",
+  "patente": "AA824GE",
+  "como": "parecida",
+  "score": 0.88,
+  "movimiento": "CTG_10135573346"
+ },
+ {
+  "hora": "2026-10-14T17:16:24.000Z",
+  "camara": "RicCal01",
+  "punto": "CAL_RIC",
+  "lectura": "FGM5990",
+  "patente": "FSM599",
+  "como": "parecida",
+  "score": 0.72,
+  "movimiento": "SGC_14506820"
+ },
+ {
+  "hora": "2026-10-14T17:36:00.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "A824GE",
+  "patente": "AA824GE",
+  "como": "parecida",
+  "score": 0.88,
+  "movimiento": "CTG_10135573346"
+ },
+ {
+  "hora": "2026-10-14T18:30:38.940Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "TTC138",
+  "patente": "TDC138",
+  "como": "parecida",
+  "score": 0.78,
+  "movimiento": "SGC_14506851"
+ },
+ {
+  "hora": "2026-10-14T19:41:00.893Z",
+  "camara": "RicCal02",
+  "punto": "CAL_RIC",
+  "lectura": "HQT021",
+  "patente": "HOT021",
+  "como": "parecida",
+  "score": 0.35,
+  "movimiento": "CTG_10235573939"
+ },
+ {
+  "hora": "2026-10-14T23:28:29.325Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "OLZ09",
+  "patente": "OLZ499",
+  "como": "parecida",
+  "score": 0.2,
+  "movimiento": "CTG_10135550650"
+ },
+ {
+  "hora": "2026-10-14T23:55:50.349Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "OIZ499",
+  "patente": "OLZ499",
+  "como": "parecida",
+  "score": 0.93,
+  "movimiento": "CTG_10135550650"
+ },
+ {
+  "hora": "2026-10-15T00:02:32.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "MF111",
+  "patente": "CMF111",
+  "como": "parecida",
+  "score": 0.69,
+  "movimiento": "COMPROB_000404071534"
+ },
+ {
+  "hora": "2026-10-15T01:04:43.803Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "MUY213",
+  "patente": "MDY213",
+  "como": "parecida",
+  "score": 0.94,
+  "movimiento": "SGC_14506900"
+ },
+ {
+  "hora": "2026-10-15T01:37:25.788Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "MDY210",
+  "patente": "MDY213",
+  "como": "parecida",
+  "score": 0.47,
+  "movimiento": "SGC_14506900"
+ },
+ {
+  "hora": "2026-10-15T01:38:11.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "274",
+  "patente": "BQF823",
+  "como": "por_hora",
+  "score": 0.3,
+  "movimiento": "SGC_14506904"
+ },
+ {
+  "hora": "2026-10-15T01:42:48.517Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "JXO163",
+  "patente": "JXQ163",
+  "como": "parecida",
+  "score": 0.29,
+  "movimiento": "CTG_10135580866"
+ },
+ {
+  "hora": "2026-10-15T01:56:54.725Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "BOF823",
+  "patente": "BQF823",
+  "como": "parecida",
+  "score": 0.93,
+  "movimiento": "SGC_14506904"
+ },
+ {
+  "hora": "2026-10-15T02:03:30.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "MIW19",
+  "patente": "MIW979",
+  "como": "parecida",
+  "score": 0.61,
+  "movimiento": "SGC_14506906"
+ },
+ {
+  "hora": "2026-10-15T02:07:29.553Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "JXQ16",
+  "patente": "JXQ163",
+  "como": "parecida",
+  "score": 0.64,
+  "movimiento": "CTG_10135580866"
+ },
+ {
+  "hora": "2026-10-15T02:10:02.550Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "JXO16",
+  "patente": "JXQ163",
+  "como": "parecida",
+  "score": 0.64,
+  "movimiento": "CTG_10135580866"
+ },
+ {
+  "hora": "2026-10-15T02:18:43.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "AE286E",
+  "patente": "AE286EK",
+  "como": "parecida",
+  "score": 0.87,
+  "movimiento": "CTG_10135593792"
+ },
+ {
+  "hora": "2026-10-15T02:26:55.080Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "MIW079",
+  "patente": "MIW979",
+  "como": "parecida",
+  "score": 0.81,
+  "movimiento": "SGC_14506906"
+ },
+ {
+  "hora": "2026-10-15T02:34:03.790Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "JXO16",
+  "patente": "JXQ163",
+  "como": "parecida",
+  "score": 0.55,
+  "movimiento": "CTG_10135580866"
+ },
+ {
+  "hora": "2026-10-15T02:58:51.619Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "MDY20",
+  "patente": "MDY213",
+  "como": "parecida",
+  "score": 0.61,
+  "movimiento": "SGC_14506900"
+ },
+ {
+  "hora": "2026-10-15T03:04:57.000Z",
+  "camara": "SLZBalSC2Tras",
+  "punto": "BAL_EGR_SL",
+  "lectura": "MTW971",
+  "patente": "MIW979",
+  "como": "parecida",
+  "score": 0.75,
+  "movimiento": "SGC_14506906"
+ },
+ {
+  "hora": "2026-10-15T03:28:22.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "CJ449",
+  "patente": "CJE449",
+  "como": "parecida",
+  "score": 0.38,
+  "movimiento": "SGC_14506914"
+ },
+ {
+  "hora": "2026-10-15T03:32:38.962Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "CJE409",
+  "patente": "CJE449",
+  "como": "parecida",
+  "score": 0.82,
+  "movimiento": "SGC_14506914"
+ },
+ {
+  "hora": "2026-10-15T05:05:16.652Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "SAA860",
+  "patente": "SMA860",
+  "como": "parecida",
+  "score": 0.67,
+  "movimiento": "SGC_14506917"
+ },
+ {
+  "hora": "2026-10-15T05:11:06.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "AB0569V",
+  "patente": "AB058QV",
+  "como": "parecida",
+  "score": 0.69,
+  "movimiento": "SGC_14506919"
+ },
+ {
+  "hora": "2026-10-15T05:13:55.735Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "AA288VX",
+  "patente": "AA288YX",
+  "como": "parecida",
+  "score": 0.95,
+  "movimiento": "SGC_14506920"
+ },
+ {
+  "hora": "2026-10-15T05:27:33.372Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "LMF111",
+  "patente": "CMF111",
+  "como": "parecida",
+  "score": 0.83,
+  "movimiento": "SGC_14506916"
+ },
+ {
+  "hora": "2026-10-15T08:10:52.000Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "NOV212",
+  "patente": "NAV212",
+  "como": "parecida",
+  "score": 0.26,
+  "movimiento": "SGC_14506915"
+ },
+ {
+  "hora": "2026-10-15T08:12:01.030Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "SMW860",
+  "patente": "SMA860",
+  "como": "parecida",
+  "score": 0.41,
+  "movimiento": "SGC_14506917"
+ },
+ {
+  "hora": "2026-10-15T08:14:33.282Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "AB058VV",
+  "patente": "AB058QV",
+  "como": "parecida",
+  "score": 0.86,
+  "movimiento": "SGC_14506919"
+ },
+ {
+  "hora": "2026-10-15T08:18:45.392Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "AE205LM",
+  "patente": "AE205LN",
+  "como": "parecida",
+  "score": 0.93,
+  "movimiento": "SGC_14506918"
+ },
+ {
+  "hora": "2026-10-15T08:24:39.087Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "AA280YX",
+  "patente": "AA288YX",
+  "como": "parecida",
+  "score": 0.95,
+  "movimiento": "SGC_14506920"
+ },
+ {
+  "hora": "2026-10-15T10:23:57.012Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "GGX3850",
+  "patente": "GGX385",
+  "como": "parecida",
+  "score": 0.88,
+  "movimiento": "SGC_14506972"
+ },
+ {
+  "hora": "2026-10-15T10:24:27.000Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "LMM265",
+  "patente": "GMM265",
+  "como": "parecida",
+  "score": 0.83,
+  "movimiento": "SGC_14506963"
+ },
+ {
+  "hora": "2026-10-15T10:27:39.000Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "HAO020",
+  "patente": "HAQ820",
+  "como": "parecida",
+  "score": 0.27,
+  "movimiento": "SGC_14506957"
+ },
+ {
+  "hora": "2026-10-15T10:58:30.000Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "HWF170",
+  "patente": "HWF178",
+  "como": "parecida",
+  "score": 0.92,
+  "movimiento": "SGC_14506967"
+ },
+ {
+  "hora": "2026-10-15T11:08:12.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "IGTP6991",
+  "patente": "GFP699",
+  "como": "parecida",
+  "score": 0.56,
+  "movimiento": "SGC_14506988"
+ },
+ {
+  "hora": "2026-10-15T11:24:59.000Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "IGEP6991",
+  "patente": "GFP699",
+  "como": "parecida",
+  "score": 0.73,
+  "movimiento": "SGC_14506988"
+ },
+ {
+  "hora": "2026-10-15T11:29:07.515Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "IGFP699",
+  "patente": "GFP699",
+  "como": "parecida",
+  "score": 0.89,
+  "movimiento": "SGC_14506988"
+ },
+ {
+  "hora": "2026-10-15T12:37:40.179Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "AKJ9891",
+  "patente": "AKJ989",
+  "como": "parecida",
+  "score": 0.79,
+  "movimiento": "CTG_10235593288"
+ },
+ {
+  "hora": "2026-10-15T13:27:46.000Z",
+  "camara": "RicPreIngInTr",
+  "punto": "PRE",
+  "lectura": "ASEN",
+  "patente": "AB930VZ",
+  "como": "por_hora",
+  "score": 0.29,
+  "movimiento": "SGC_14507039"
+ },
+ {
+  "hora": "2026-10-15T13:43:18.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "WFJ4048",
+  "patente": "WEJ048",
+  "como": "parecida",
+  "score": 0.6,
+  "movimiento": "SGC_14506994"
+ },
+ {
+  "hora": "2026-10-15T14:01:01.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "301866",
+  "patente": "AG790BN",
+  "como": "por_hora",
+  "score": 0.3,
+  "movimiento": "SGC_14507049"
+ },
+ {
+  "hora": "2026-10-15T14:15:41.872Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "MEJ048",
+  "patente": "WEJ048",
+  "como": "parecida",
+  "score": 0.93,
+  "movimiento": "SGC_14506994"
+ },
+ {
+  "hora": "2026-10-15T17:04:00.000Z",
+  "camara": "RicPreIngEgFr",
+  "punto": "PRE",
+  "lectura": "TKS88",
+  "patente": "TKS889",
+  "como": "parecida",
+  "score": 0.67,
+  "movimiento": "SGC_14507104"
+ },
+ {
+  "hora": "2026-10-15T18:07:30.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "AA596V",
+  "patente": "AA596LV",
+  "como": "parecida",
+  "score": 0.85,
+  "movimiento": "CTG_10235593715"
+ },
+ {
+  "hora": "2026-10-15T18:09:51.369Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "AA594LV",
+  "patente": "AA596LV",
+  "como": "parecida",
+  "score": 0.84,
+  "movimiento": "CTG_10235593715"
+ },
+ {
+  "hora": "2026-10-15T18:46:24.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "AA590L",
+  "patente": "AA596LV",
+  "como": "parecida",
+  "score": 0.35,
+  "movimiento": "CTG_10235593715"
+ },
+ {
+  "hora": "2026-10-15T18:56:12.000Z",
+  "camara": "RicPreIngEgFr",
+  "punto": "PRE",
+  "lectura": "FIW20",
+  "patente": "FTW206",
+  "como": "parecida",
+  "score": 0.45,
+  "movimiento": "CTG_10235593999"
+ },
+ {
+  "hora": "2026-10-15T19:00:12.334Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "GZT868",
+  "patente": "GZI868",
+  "como": "parecida",
+  "score": 0.95,
+  "movimiento": "SGC_14507109"
+ },
+ {
+  "hora": "2026-10-15T19:09:08.000Z",
+  "camara": "RicPreIngInTr",
+  "punto": "PRE",
+  "lectura": "UPX89",
+  "patente": "SJS686",
+  "como": "parecida",
+  "score": 0.69,
+  "movimiento": "SGC_14507150"
+ },
+ {
+  "hora": "2026-10-15T22:43:24.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "AA534L0",
+  "patente": "AA534LO",
+  "como": "formato",
+  "score": 0.93,
+  "movimiento": "SGC_14507102"
+ },
+ {
+  "hora": "2026-10-15T22:58:37.005Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "WFV559",
+  "patente": "WPV559",
+  "como": "parecida",
+  "score": 0.93,
+  "movimiento": "SGC_14507106"
+ },
+ {
+  "hora": "2026-10-15T23:03:53.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "Z415",
+  "patente": "ROO085",
+  "como": "por_hora",
+  "score": 0.3,
+  "movimiento": "SGC_14507121"
+ },
+ {
+  "hora": "2026-10-15T23:06:43.000Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "AA3230P",
+  "patente": "AA323QP",
+  "como": "parecida",
+  "score": 0.9,
+  "movimiento": "CTG_10235593883"
+ },
+ {
+  "hora": "2026-10-15T23:26:04.228Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "GAY485",
+  "patente": "GAY486",
+  "como": "parecida",
+  "score": 0.73,
+  "movimiento": "CTG_10135607301"
+ },
+ {
+  "hora": "2026-10-15T23:54:44.408Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "AA995NE",
+  "patente": "AA995NB",
+  "como": "parecida",
+  "score": 0.7,
+  "movimiento": "CTG_10235602360"
+ },
+ {
+  "hora": "2026-10-15T23:56:35.136Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "AA995NE",
+  "patente": "AA995NB",
+  "como": "parecida",
+  "score": 0.88,
+  "movimiento": "CTG_10235602360"
+ },
+ {
+  "hora": "2026-10-16T00:27:21.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "CJL",
+  "patente": "REW171",
+  "como": "por_hora",
+  "score": 0.25,
+  "movimiento": "CTG_10235600813"
+ },
+ {
+  "hora": "2026-10-16T00:42:56.341Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "OFL339",
+  "patente": "OHL339",
+  "como": "parecida",
+  "score": 0.66,
+  "movimiento": "CTG_10235588761"
+ },
+ {
+  "hora": "2026-10-16T00:54:29.000Z",
+  "camara": "SLZBalSC2Tras",
+  "punto": "BAL_EGR_SL",
+  "lectura": "PI497",
+  "patente": "DOX036",
+  "como": "parecida",
+  "score": 0.5,
+  "movimiento": "SGC_14507178"
+ },
+ {
+  "hora": "2026-10-16T01:29:23.820Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "AA995RB",
+  "patente": "AA995NB",
+  "como": "parecida",
+  "score": 0.71,
+  "movimiento": "CTG_10235602360"
+ },
+ {
+  "hora": "2026-10-16T01:31:44.000Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "AF5290M",
+  "patente": "AF529BM",
+  "como": "parecida",
+  "score": 0.76,
+  "movimiento": "CTG_10235593744"
+ },
+ {
+  "hora": "2026-10-16T01:35:01.804Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "EXT580",
+  "patente": "EXI580",
+  "como": "parecida",
+  "score": 0.95,
+  "movimiento": "CTG_10235583883"
+ },
+ {
+  "hora": "2026-10-16T01:35:18.548Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "LMF111",
+  "patente": "CMF111",
+  "como": "parecida",
+  "score": 0.8,
+  "movimiento": "SGC_14507193"
+ },
+ {
+  "hora": "2026-10-16T01:38:19.000Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "JFX99",
+  "patente": "JFX298",
+  "como": "parecida",
+  "score": 0.61,
+  "movimiento": "CTG_10235596243"
+ },
+ {
+  "hora": "2026-10-16T02:06:27.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "HUC112",
+  "patente": "HDC112",
+  "como": "parecida",
+  "score": 0.91,
+  "movimiento": "CTG_10235601417"
+ },
+ {
+  "hora": "2026-10-16T02:27:24.000Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "AA017CC",
+  "patente": "AA817CC",
+  "como": "parecida",
+  "score": 0.88,
+  "movimiento": "CTG_10235598059"
+ },
+ {
+  "hora": "2026-10-16T02:47:00.051Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "AB692JA",
+  "patente": "AB592JA",
+  "como": "parecida",
+  "score": 0.85,
+  "movimiento": "CTG_10235598016"
+ },
+ {
+  "hora": "2026-10-16T02:49:46.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "AB592AA",
+  "patente": "AB592JA",
+  "como": "parecida",
+  "score": 0.74,
+  "movimiento": "CTG_10235598016"
+ },
+ {
+  "hora": "2026-10-16T02:59:47.000Z",
+  "camara": "SLZBalSC2Tras",
+  "punto": "BAL_EGR_SL",
+  "lectura": "O4784",
+  "patente": "AA596LV",
+  "como": "por_hora",
+  "score": 0.16,
+  "movimiento": "CTG_10235593715"
+ },
+ {
+  "hora": "2026-10-16T03:04:53.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "AA6170W",
+  "patente": "AA617UW",
+  "como": "parecida",
+  "score": 0.82,
+  "movimiento": "CTG_10235605252"
+ },
+ {
+  "hora": "2026-10-16T03:13:15.000Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "AA995N",
+  "patente": "AA995NB",
+  "como": "parecida",
+  "score": 0.88,
+  "movimiento": "CTG_10235602360"
+ },
+ {
+  "hora": "2026-10-16T03:16:28.398Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "QJP930",
+  "patente": "OJP930",
+  "como": "parecida",
+  "score": 0.84,
+  "movimiento": "CTG_30035625787"
+ },
+ {
+  "hora": "2026-10-16T03:40:49.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "AD53680",
+  "patente": "AD536BQ",
+  "como": "parecida",
+  "score": 0.77,
+  "movimiento": "CTG_10135607529"
+ },
+ {
+  "hora": "2026-10-16T03:57:43.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "PEW171",
+  "patente": "REW171",
+  "como": "parecida",
+  "score": 0.9,
+  "movimiento": "CTG_10235600813"
+ },
+ {
+  "hora": "2026-10-16T04:18:21.355Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "EXT580",
+  "patente": "EXI580",
+  "como": "parecida",
+  "score": 0.95,
+  "movimiento": "CTG_10235583883"
+ },
+ {
+  "hora": "2026-10-16T04:31:18.016Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "FMZ93",
+  "patente": "FMZ930",
+  "como": "parecida",
+  "score": 0.58,
+  "movimiento": "CTG_10235607566"
+ },
+ {
+  "hora": "2026-10-16T05:11:16.117Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "AA9957",
+  "patente": "AA995NB",
+  "como": "parecida",
+  "score": 0.77,
+  "movimiento": "CTG_10235602360"
+ },
+ {
+  "hora": "2026-10-16T05:11:26.074Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "EAZ872",
+  "patente": "FAZ872",
+  "como": "parecida",
+  "score": 0.78,
+  "movimiento": "CTG_10235600686"
+ },
+ {
+  "hora": "2026-10-16T07:49:00.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "A53662",
+  "patente": "AD536BQ",
+  "como": "parecida",
+  "score": 0.42,
+  "movimiento": "CTG_10135607529"
+ },
+ {
+  "hora": "2026-10-16T07:49:00.319Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "HOC2112",
+  "patente": "HDC112",
+  "como": "parecida",
+  "score": 0.22,
+  "movimiento": "CTG_10235601417"
+ },
+ {
+  "hora": "2026-10-16T08:04:54.000Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "CYZ915",
+  "patente": "AYZ915",
+  "como": "parecida",
+  "score": 0.69,
+  "movimiento": "CTG_10235595774"
+ },
+ {
+  "hora": "2026-10-16T08:16:26.173Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "HOC112",
+  "patente": "HDC112",
+  "como": "parecida",
+  "score": 0.82,
+  "movimiento": "CTG_10235601417"
+ },
+ {
+  "hora": "2026-10-16T08:18:59.215Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "HOCZ112",
+  "patente": "HDC112",
+  "como": "parecida",
+  "score": 0.71,
+  "movimiento": "CTG_10235601417"
+ },
+ {
+  "hora": "2026-10-16T08:41:19.000Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "FBV3155",
+  "patente": "FBV155",
+  "como": "parecida",
+  "score": 0.9,
+  "movimiento": "CTG_10235607373"
+ },
+ {
+  "hora": "2026-10-16T08:51:59.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "DZ72",
+  "patente": "HDC112",
+  "como": "por_hora",
+  "score": 0.29,
+  "movimiento": "CTG_10235601417"
+ },
+ {
+  "hora": "2026-10-16T11:40:23.000Z",
+  "camara": "RicPreIngEgFr",
+  "punto": "PRE",
+  "lectura": "A52M",
+  "patente": "RSW086",
+  "como": "por_hora",
+  "score": 0.29,
+  "movimiento": "COMPROB_000404071632"
+ },
+ {
+  "hora": "2026-10-16T21:06:32.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "GKA320",
+  "patente": "GKA328",
+  "como": "parecida",
+  "score": 0.54,
+  "movimiento": "CTG_10135618691"
+ },
+ {
+  "hora": "2026-10-16T23:26:58.237Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "SMA33",
+  "patente": "SMA331",
+  "como": "parecida",
+  "score": 0.61,
+  "movimiento": "COMPROB_000400423516"
+ },
+ {
+  "hora": "2026-10-16T23:59:48.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "MI774",
+  "patente": "GXI774",
+  "como": "parecida",
+  "score": 0.62,
+  "movimiento": "COMPROB_000301070389"
+ },
+ {
+  "hora": "2026-10-17T00:06:19.415Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "LMF111",
+  "patente": "CMF111",
+  "como": "parecida",
+  "score": 0.83,
+  "movimiento": "COMPROB_000404071656"
+ },
+ {
+  "hora": "2026-10-17T00:21:56.000Z",
+  "camara": "RicCalLiq",
+  "punto": "CAL_RIC",
+  "lectura": "B528",
+  "patente": "HQB528",
+  "como": "parecida",
+  "score": 0.59,
+  "movimiento": "CTG_30035616206"
+ },
+ {
+  "hora": "2026-10-17T00:25:55.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "GV599",
+  "patente": "WPV559",
+  "como": "por_hora",
+  "score": 0.27,
+  "movimiento": "COMPROB_000400423518"
+ },
+ {
+  "hora": "2026-10-17T00:59:44.970Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "AA323CV",
+  "patente": "AA323QV",
+  "como": "parecida",
+  "score": 0.74,
+  "movimiento": "CTG_10235622396"
+ },
+ {
+  "hora": "2026-10-17T01:20:31.600Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "FOS578",
+  "patente": "FQS578",
+  "como": "parecida",
+  "score": 0.88,
+  "movimiento": "CTG_10235617771"
+ },
+ {
+  "hora": "2026-10-17T01:22:53.451Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "FOS578",
+  "patente": "FQS578",
+  "como": "parecida",
+  "score": 0.94,
+  "movimiento": "CTG_10235617771"
+ },
+ {
+  "hora": "2026-10-17T01:28:56.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "OF785",
+  "patente": "OFG785",
+  "como": "parecida",
+  "score": 0.66,
+  "movimiento": "COMPROB_000400423519"
+ },
+ {
+  "hora": "2026-10-17T01:41:01.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "JG271",
+  "patente": "EJG271",
+  "como": "parecida",
+  "score": 0.6,
+  "movimiento": "COMPROB_000400423520"
+ },
+ {
+  "hora": "2026-10-17T01:42:55.121Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "HOR560",
+  "patente": "HOB560",
+  "como": "parecida",
+  "score": 0.7,
+  "movimiento": "CTG_10235627889"
+ },
+ {
+  "hora": "2026-10-17T01:44:02.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "ESK360",
+  "patente": "ESK363",
+  "como": "parecida",
+  "score": 0.7,
+  "movimiento": "COMPROB_000400423521"
+ },
+ {
+  "hora": "2026-10-17T01:59:32.000Z",
+  "camara": "SLZBalSC2Tras",
+  "punto": "BAL_EGR_SL",
+  "lectura": "OC0",
+  "patente": "CXA592",
+  "como": "por_hora",
+  "score": 0.19,
+  "movimiento": "COMPROB_000400423522"
+ },
+ {
+  "hora": "2026-10-17T02:04:49.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "AA323",
+  "patente": "AA323QV",
+  "como": "parecida",
+  "score": 0.24,
+  "movimiento": "CTG_10235622396"
+ },
+ {
+  "hora": "2026-10-17T02:26:12.198Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "ABO87",
+  "patente": "ABO881",
+  "como": "parecida",
+  "score": 0.5,
+  "movimiento": "CTG_10235631618"
+ },
+ {
+  "hora": "2026-10-17T02:29:51.539Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "AB0881",
+  "patente": "ABO881",
+  "como": "formato",
+  "score": 0.95,
+  "movimiento": "CTG_10235631618"
+ },
+ {
+  "hora": "2026-10-17T02:31:56.860Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "AAB23",
+  "patente": "AA323QV",
+  "como": "parecida",
+  "score": 0.62,
+  "movimiento": "CTG_10235622396"
+ },
+ {
+  "hora": "2026-10-17T02:32:46.000Z",
+  "camara": "SLZBalSC2Tras",
+  "punto": "BAL_EGR_SL",
+  "lectura": "FK536",
+  "patente": "AD195CG",
+  "como": "por_hora",
+  "score": 0.16,
+  "movimiento": "COMPROB_000400423524"
+ },
+ {
+  "hora": "2026-10-17T03:00:08.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "AO115",
+  "patente": "ADJ153",
+  "como": "por_hora",
+  "score": 0.3,
+  "movimiento": "CTG_10235634752"
+ },
+ {
+  "hora": "2026-10-17T03:05:43.111Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "MYS158",
+  "patente": "VYS158",
+  "como": "parecida",
+  "score": 0.82,
+  "movimiento": "CTG_10235620485"
+ },
+ {
+  "hora": "2026-10-17T03:07:08.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "NL102",
+  "patente": "EAO104",
+  "como": "por_hora",
+  "score": 0.3,
+  "movimiento": "COMPROB_000400423526"
+ },
+ {
+  "hora": "2026-10-17T03:07:53.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "IVB7874",
+  "patente": "AVB781",
+  "como": "parecida",
+  "score": 0.55,
+  "movimiento": "CTG_10235635113"
+ },
+ {
+  "hora": "2026-10-17T03:35:14.227Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "GOF081",
+  "patente": "GQF081",
+  "como": "parecida",
+  "score": 0.95,
+  "movimiento": "CTG_10235617373"
+ },
+ {
+  "hora": "2026-10-17T03:49:27.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "GZI",
+  "patente": "GZI868",
+  "como": "parecida",
+  "score": 0.6,
+  "movimiento": "COMPROB_000400423527"
+ },
+ {
+  "hora": "2026-10-17T03:53:24.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "AG09CPF",
+  "patente": "AG090RF",
+  "como": "parecida",
+  "score": 0.81,
+  "movimiento": "CTG_10235622866"
+ },
+ {
+  "hora": "2026-10-17T03:55:35.578Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "VYS150",
+  "patente": "VYS158",
+  "como": "parecida",
+  "score": 0.78,
+  "movimiento": "CTG_10235620485"
+ },
+ {
+  "hora": "2026-10-17T03:56:24.330Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "AG090PF",
+  "patente": "AG090RF",
+  "como": "parecida",
+  "score": 0.92,
+  "movimiento": "CTG_10235622866"
+ },
+ {
+  "hora": "2026-10-17T04:05:32.546Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "AG090PF",
+  "patente": "AG090RF",
+  "como": "parecida",
+  "score": 0.85,
+  "movimiento": "CTG_10235622866"
+ },
+ {
+  "hora": "2026-10-17T04:13:47.962Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "LNI874",
+  "patente": "LNT874",
+  "como": "parecida",
+  "score": 0.93,
+  "movimiento": "CTG_10235628343"
+ },
+ {
+  "hora": "2026-10-17T04:14:36.000Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "VK754",
+  "patente": "EVK754",
+  "como": "parecida",
+  "score": 0.68,
+  "movimiento": "CTG_10235631435"
+ },
+ {
+  "hora": "2026-10-17T04:15:40.128Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "STK281",
+  "patente": "STN281",
+  "como": "parecida",
+  "score": 0.83,
+  "movimiento": "CTG_10235628724"
+ },
+ {
+  "hora": "2026-10-17T04:36:22.000Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "AG09APC",
+  "patente": "AG090RF",
+  "como": "parecida",
+  "score": 0.67,
+  "movimiento": "CTG_10235622866"
+ },
+ {
+  "hora": "2026-10-17T04:39:45.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "T5013",
+  "patente": "AVB781",
+  "como": "por_hora",
+  "score": 0.28,
+  "movimiento": "CTG_10235635113"
+ },
+ {
+  "hora": "2026-10-17T04:47:48.176Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "AB080WB",
+  "patente": "AB086WB",
+  "como": "parecida",
+  "score": 0.5,
+  "movimiento": "CTG_10235621065"
+ },
+ {
+  "hora": "2026-10-17T04:49:52.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "GG893",
+  "patente": "GZG893",
+  "como": "parecida",
+  "score": 0.58,
+  "movimiento": "CTG_10235636290"
+ },
+ {
+  "hora": "2026-10-17T04:55:43.174Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "PA624AG",
+  "patente": "AA624AG",
+  "como": "parecida",
+  "score": 0.85,
+  "movimiento": "CTG_10235629403"
+ },
+ {
+  "hora": "2026-10-17T04:58:25.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "A62AG",
+  "patente": "AA624AG",
+  "como": "parecida",
+  "score": 0.67,
+  "movimiento": "CTG_10235629403"
+ },
+ {
+  "hora": "2026-10-17T04:59:09.000Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "XF789",
+  "patente": "VXF789",
+  "como": "parecida",
+  "score": 0.46,
+  "movimiento": "CTG_10135630228"
+ },
+ {
+  "hora": "2026-10-17T05:01:03.503Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "LMF111",
+  "patente": "CMF111",
+  "como": "parecida",
+  "score": 0.7,
+  "movimiento": "COMPROB_000404071671"
+ },
+ {
+  "hora": "2026-10-17T05:04:10.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "G33",
+  "patente": "CFA967",
+  "como": "por_hora",
+  "score": 0.3,
+  "movimiento": "CTG_10235618345"
+ },
+ {
+  "hora": "2026-10-17T05:28:14.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "H874",
+  "patente": "LNT874",
+  "como": "parecida",
+  "score": 0.6,
+  "movimiento": "CTG_10235628343"
+ },
+ {
+  "hora": "2026-10-17T06:12:16.000Z",
+  "camara": "SLZBalSC2Tras",
+  "punto": "BAL_EGR_SL",
+  "lectura": "G006",
+  "patente": "KVV515",
+  "como": "por_hora",
+  "score": 0.3,
+  "movimiento": "CTG_10235617572"
+ },
+ {
+  "hora": "2026-10-17T07:07:11.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "HV533",
+  "patente": "AUV533",
+  "como": "parecida",
+  "score": 0.6,
+  "movimiento": "CTG_10135626972"
+ },
+ {
+  "hora": "2026-10-17T07:09:42.687Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "AJV533",
+  "patente": "AUV533",
+  "como": "parecida",
+  "score": 0.79,
+  "movimiento": "CTG_10135626972"
+ },
+ {
+  "hora": "2026-10-17T08:14:50.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "RS430",
+  "patente": "HRS430",
+  "como": "parecida",
+  "score": 0.68,
+  "movimiento": "CTG_10235631988"
+ },
+ {
+  "hora": "2026-10-17T08:16:12.000Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "A621G",
+  "patente": "AA624AG",
+  "como": "parecida",
+  "score": 0.46,
+  "movimiento": "CTG_10235629403"
+ },
+ {
+  "hora": "2026-10-17T08:17:23.642Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "ROO167",
+  "patente": "RQQ167",
+  "como": "parecida",
+  "score": 0.86,
+  "movimiento": "CTG_10235633080"
+ },
+ {
+  "hora": "2026-10-17T08:20:34.000Z",
+  "camara": "RicPreIngInTr",
+  "punto": "PRE",
+  "lectura": "II14",
+  "patente": "RQQ167",
+  "como": "por_hora",
+  "score": 0.28,
+  "movimiento": "CTG_10235633080"
+ },
+ {
+  "hora": "2026-10-17T08:35:13.000Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "62G",
+  "patente": "AA624AG",
+  "como": "parecida",
+  "score": 0.49,
+  "movimiento": "CTG_10235629403"
+ },
+ {
+  "hora": "2026-10-17T08:43:25.000Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "UFZ170",
+  "patente": "UFZ176",
+  "como": "parecida",
+  "score": 0.81,
+  "movimiento": "CTG_10235630133"
+ },
+ {
+  "hora": "2026-10-17T08:45:33.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "ROO167",
+  "patente": "RQQ167",
+  "como": "parecida",
+  "score": 0.85,
+  "movimiento": "CTG_10235633080"
+ },
+ {
+  "hora": "2026-10-17T08:56:46.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "UCT968",
+  "patente": "UCT966",
+  "como": "parecida",
+  "score": 0.81,
+  "movimiento": "CTG_10235628722"
+ },
+ {
+  "hora": "2026-10-17T09:05:45.723Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "AJV533",
+  "patente": "AUV533",
+  "como": "parecida",
+  "score": 0.81,
+  "movimiento": "CTG_10135626972"
+ },
+ {
+  "hora": "2026-10-17T09:44:47.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "RS430",
+  "patente": "HRS430",
+  "como": "parecida",
+  "score": 0.63,
+  "movimiento": "CTG_10235631988"
+ },
+ {
+  "hora": "2026-10-17T10:23:36.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "113H",
+  "patente": "AUV770",
+  "como": "por_hora",
+  "score": 0.28,
+  "movimiento": "CTG_10235634931"
+ },
+ {
+  "hora": "2026-10-17T10:50:22.330Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "AJV533",
+  "patente": "AUV533",
+  "como": "parecida",
+  "score": 0.83,
+  "movimiento": "CTG_10135626972"
+ },
+ {
+  "hora": "2026-10-17T10:52:31.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "MYT21548",
+  "patente": "MYT215",
+  "como": "parecida",
+  "score": 0.75,
+  "movimiento": "CTG_10235629476"
+ },
+ {
+  "hora": "2026-10-17T10:55:59.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "AA6J8NV",
+  "patente": "AA638NV",
+  "como": "parecida",
+  "score": 0.74,
+  "movimiento": "CTG_10235629664"
+ },
+ {
+  "hora": "2026-10-17T11:01:50.392Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "UCT968",
+  "patente": "UCT966",
+  "como": "parecida",
+  "score": 0.77,
+  "movimiento": "CTG_10235628722"
+ },
+ {
+  "hora": "2026-10-17T11:07:40.093Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "AD829RV",
+  "patente": "AD829RY",
+  "como": "parecida",
+  "score": 0.95,
+  "movimiento": "COMPROB_000400423535"
+ },
+ {
+  "hora": "2026-10-17T13:44:30.563Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "MEJ048",
+  "patente": "WEJ048",
+  "como": "parecida",
+  "score": 0.92,
+  "movimiento": "CTG_10235628498"
+ },
+ {
+  "hora": "2026-10-17T14:20:11.122Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "UCT968",
+  "patente": "UCT966",
+  "como": "parecida",
+  "score": 0.74,
+  "movimiento": "CTG_10235628722"
+ },
+ {
+  "hora": "2026-10-17T14:40:54.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "MYI2154A",
+  "patente": "MYT215",
+  "como": "parecida",
+  "score": 0.47,
+  "movimiento": "CTG_10235629476"
+ },
+ {
+  "hora": "2026-10-17T14:47:56.709Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "RPW630",
+  "patente": "RPW636",
+  "como": "parecida",
+  "score": 0.54,
+  "movimiento": "CTG_10235636011"
+ },
+ {
+  "hora": "2026-10-17T15:11:00.247Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "ROH183",
+  "patente": "RDH183",
+  "como": "parecida",
+  "score": 0.78,
+  "movimiento": "CTG_10235630790"
+ },
+ {
+  "hora": "2026-10-17T15:13:41.000Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "MYT21544",
+  "patente": "MYT215",
+  "como": "parecida",
+  "score": 0.78,
+  "movimiento": "CTG_10235629476"
+ },
+ {
+  "hora": "2026-10-17T15:42:13.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "AD8291",
+  "patente": "AD829RY",
+  "como": "parecida",
+  "score": 0.59,
+  "movimiento": "COMPROB_000400423535"
+ },
+ {
+  "hora": "2026-10-17T16:06:07.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "MYT21544",
+  "patente": "MYT215",
+  "como": "parecida",
+  "score": 0.79,
+  "movimiento": "CTG_10235629476"
+ },
+ {
+  "hora": "2026-10-17T17:31:58.044Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "AD2971",
+  "patente": "AD829RY",
+  "como": "parecida",
+  "score": 0.63,
+  "movimiento": "COMPROB_000400423540"
+ },
+ {
+  "hora": "2026-10-17T19:39:15.000Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "BDL151",
+  "patente": "RDL151",
+  "como": "parecida",
+  "score": 0.29,
+  "movimiento": "CTG_10235636573"
+ },
+ {
+  "hora": "2026-10-17T19:49:49.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "BSZ",
+  "patente": "LOI639",
+  "como": "por_hora",
+  "score": 0.25,
+  "movimiento": "CTG_10235636563"
+ },
+ {
+  "hora": "2026-10-17T20:41:12.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "EOI639",
+  "patente": "LOI639",
+  "como": "parecida",
+  "score": 0.58,
+  "movimiento": "CTG_10235636563"
+ },
+ {
+  "hora": "2026-10-17T20:50:09.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "AI8291Y",
+  "patente": "AD829RY",
+  "como": "parecida",
+  "score": 0.71,
+  "movimiento": "COMPROB_000400423540"
+ },
+ {
+  "hora": "2026-10-17T22:25:18.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "IVEC0",
+  "patente": "KVD290",
+  "como": "por_hora",
+  "score": 0.3,
+  "movimiento": "CTG_10235639625"
+ },
+ {
+  "hora": "2026-10-17T23:48:09.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "TA01",
+  "patente": "MYA819",
+  "como": "por_hora",
+  "score": 0.3,
+  "movimiento": "CTG_10135634101"
+ },
+ {
+  "hora": "2026-10-17T23:59:34.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "HEE50KA",
+  "patente": "AF260KA",
+  "como": "por_hora",
+  "score": 0.29,
+  "movimiento": "COMPROB_000404071750"
+ },
+ {
+  "hora": "2026-10-18T00:29:19.116Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "AC099VG",
+  "patente": "AC099YG",
+  "como": "parecida",
+  "score": 0.96,
+  "movimiento": "CTG_10235644988"
+ },
+ {
+  "hora": "2026-10-18T00:56:11.964Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "AL275KB",
+  "patente": "AC275KB",
+  "como": "parecida",
+  "score": 0.85,
+  "movimiento": "COMPROB_000400423541"
+ },
+ {
+  "hora": "2026-10-18T01:52:23.161Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "KOI971",
+  "patente": "KQI971",
+  "como": "parecida",
+  "score": 0.92,
+  "movimiento": "CTG_10235630533"
+ },
+ {
+  "hora": "2026-10-18T02:02:55.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "518",
+  "patente": "AC275KB",
+  "como": "por_hora",
+  "score": 0.28,
+  "movimiento": "COMPROB_000400423541"
+ },
+ {
+  "hora": "2026-10-18T02:11:14.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "QI971",
+  "patente": "KQI971",
+  "como": "parecida",
+  "score": 0.7,
+  "movimiento": "CTG_10235630533"
+ },
+ {
+  "hora": "2026-10-18T02:17:39.280Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "DXT479",
+  "patente": "GXT479",
+  "como": "parecida",
+  "score": 0.72,
+  "movimiento": "CTG_10235638088"
+ },
+ {
+  "hora": "2026-10-18T17:16:34.000Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "AB571A0",
+  "patente": "AB571AO",
+  "como": "formato",
+  "score": 0.93,
+  "movimiento": "SGC_14507771"
+ },
+ {
+  "hora": "2026-10-18T17:41:12.000Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "AB571A0",
+  "patente": "AB571AO",
+  "como": "formato",
+  "score": 0.94,
+  "movimiento": "SGC_14507771"
+ },
+ {
+  "hora": "2026-10-18T17:58:54.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "AB571A0",
+  "patente": "AB571AO",
+  "como": "formato",
+  "score": 0.97,
+  "movimiento": "SGC_14507771"
+ },
+ {
+  "hora": "2026-10-18T20:53:13.000Z",
+  "camara": "SLZBalIngTras",
+  "punto": "BAL_ING_SL",
+  "lectura": "OVQ01",
+  "patente": "OVQ091",
+  "como": "parecida",
+  "score": 0.7,
+  "movimiento": "SGC_14507773"
+ },
+ {
+  "hora": "2026-10-18T22:26:27.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "GON1165",
+  "patente": "GON155",
+  "como": "parecida",
+  "score": 0.72,
+  "movimiento": "SGC_14507796"
+ },
+ {
+  "hora": "2026-10-18T22:40:05.235Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "MEV88",
+  "patente": "REV889",
+  "como": "parecida",
+  "score": 0.58,
+  "movimiento": "SGC_14507802"
+ },
+ {
+  "hora": "2026-10-18T22:43:21.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "REV3889",
+  "patente": "REV889",
+  "como": "parecida",
+  "score": 0.9,
+  "movimiento": "SGC_14507802"
+ },
+ {
+  "hora": "2026-10-18T22:48:16.340Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "COM1759",
+  "patente": "GON155",
+  "como": "parecida",
+  "score": 0.62,
+  "movimiento": "SGC_14507796"
+ },
+ {
+  "hora": "2026-10-18T23:15:36.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "I55",
+  "patente": "GON155",
+  "como": "por_hora",
+  "score": 0.29,
+  "movimiento": "SGC_14507796"
+ },
+ {
+  "hora": "2026-10-18T23:22:26.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "J11",
+  "patente": "JSU988",
+  "como": "por_hora",
+  "score": 0.3,
+  "movimiento": "SGC_14507798"
+ },
+ {
+  "hora": "2026-10-18T23:25:35.703Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "RE3399",
+  "patente": "REV889",
+  "como": "parecida",
+  "score": 0.7,
+  "movimiento": "SGC_14507802"
+ },
+ {
+  "hora": "2026-10-18T23:30:56.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "JR621",
+  "patente": "JJR621",
+  "como": "parecida",
+  "score": 0.7,
+  "movimiento": "SGC_14507799"
+ },
+ {
+  "hora": "2026-10-19T00:04:41.942Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "KLJ850",
+  "patente": "KLJ854",
+  "como": "parecida",
+  "score": 0.44,
+  "movimiento": "SGC_14507809"
+ },
+ {
+  "hora": "2026-10-19T00:07:55.000Z",
+  "camara": "SLZBalSC2Tras",
+  "punto": "BAL_EGR_SL",
+  "lectura": "KHP25",
+  "patente": "REV889",
+  "como": "parecida",
+  "score": 0.53,
+  "movimiento": "SGC_14507802"
+ },
+ {
+  "hora": "2026-10-19T00:12:26.933Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "AL275KB",
+  "patente": "AC275KB",
+  "como": "parecida",
+  "score": 0.84,
+  "movimiento": "SGC_14507810"
+ },
+ {
+  "hora": "2026-10-19T00:26:26.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "MF111",
+  "patente": "CMF111",
+  "como": "parecida",
+  "score": 0.7,
+  "movimiento": "SGC_14507804"
+ },
+ {
+  "hora": "2026-10-19T00:38:22.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "AB588I8",
+  "patente": "AB588IB",
+  "como": "formato",
+  "score": 0.97,
+  "movimiento": "SGC_14507811"
+ },
+ {
+  "hora": "2026-10-19T00:41:34.394Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "EKM267",
+  "patente": "FKW267",
+  "como": "parecida",
+  "score": 0.76,
+  "movimiento": "SGC_14507812"
+ },
+ {
+  "hora": "2026-10-19T01:03:25.000Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "H7Y414",
+  "patente": "HZY414",
+  "como": "parecida",
+  "score": 0.82,
+  "movimiento": "SGC_14507816"
+ },
+ {
+  "hora": "2026-10-19T01:06:13.000Z",
+  "camara": "SLZBalIngTras",
+  "punto": "BAL_ING_SL",
+  "lectura": "ZG666",
+  "patente": "SZG666",
+  "como": "parecida",
+  "score": 0.69,
+  "movimiento": "SGC_14507817"
+ },
+ {
+  "hora": "2026-10-19T01:27:34.064Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "DSP63",
+  "patente": "OSP630",
+  "como": "parecida",
+  "score": 0.42,
+  "movimiento": "SGC_14507821"
+ },
+ {
+  "hora": "2026-10-19T01:41:17.586Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "AC308PS",
+  "patente": "AC308FS",
+  "como": "parecida",
+  "score": 0.95,
+  "movimiento": "SGC_14507795"
+ },
+ {
+  "hora": "2026-10-19T02:15:07.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "SW267",
+  "patente": "FKW267",
+  "como": "parecida",
+  "score": 0.59,
+  "movimiento": "SGC_14507812"
+ },
+ {
+  "hora": "2026-10-19T02:25:29.115Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "JTE006",
+  "patente": "JTE406",
+  "como": "parecida",
+  "score": 0.83,
+  "movimiento": "SGC_14507818"
+ },
+ {
+  "hora": "2026-10-19T02:28:43.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "DSP630",
+  "patente": "OSP630",
+  "como": "parecida",
+  "score": 0.83,
+  "movimiento": "SGC_14507821"
+ },
+ {
+  "hora": "2026-10-19T02:30:17.733Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "HUC112",
+  "patente": "HDC112",
+  "como": "parecida",
+  "score": 0.45,
+  "movimiento": "SGC_14507806"
+ },
+ {
+  "hora": "2026-10-19T02:33:49.385Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "HDL7112",
+  "patente": "HDC112",
+  "como": "parecida",
+  "score": 0.72,
+  "movimiento": "SGC_14507806"
+ },
+ {
+  "hora": "2026-10-19T02:33:58.466Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "MTX959",
+  "patente": "MTK959",
+  "como": "parecida",
+  "score": 0.95,
+  "movimiento": "SGC_14507805"
+ },
+ {
+  "hora": "2026-10-19T02:36:35.000Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "MT859",
+  "patente": "MTK959",
+  "como": "parecida",
+  "score": 0.6,
+  "movimiento": "SGC_14507805"
+ },
+ {
+  "hora": "2026-10-19T02:41:41.000Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "IU628",
+  "patente": "HDN628",
+  "como": "parecida",
+  "score": 0.35,
+  "movimiento": "SGC_14507808"
+ },
+ {
+  "hora": "2026-10-19T02:57:27.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "H525",
+  "patente": "HDN628",
+  "como": "por_hora",
+  "score": 0.27,
+  "movimiento": "SGC_14507808"
+ },
+ {
+  "hora": "2026-10-19T03:00:11.000Z",
+  "camara": "SLZBalSC2Tras",
+  "punto": "BAL_EGR_SL",
+  "lectura": "GZU44",
+  "patente": "HDC112",
+  "como": "parecida",
+  "score": 0.58,
+  "movimiento": "SGC_14507806"
+ },
+ {
+  "hora": "2026-10-19T03:22:29.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "K317",
+  "patente": "PCK317",
+  "como": "parecida",
+  "score": 0.31,
+  "movimiento": "SGC_14507828"
+ },
+ {
+  "hora": "2026-10-19T03:28:44.000Z",
+  "camara": "SLZBalSC2Tras",
+  "punto": "BAL_EGR_SL",
+  "lectura": "AG8500G",
+  "patente": "FKW267",
+  "como": "formato",
+  "score": 0.79,
+  "movimiento": "SGC_14507812"
+ },
+ {
+  "hora": "2026-10-19T03:34:33.000Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "BRZ180",
+  "patente": "BRZ160",
+  "como": "parecida",
+  "score": 0.93,
+  "movimiento": "SGC_14507825"
+ },
+ {
+  "hora": "2026-10-19T04:05:22.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "AB355C",
+  "patente": "AB355LC",
+  "como": "parecida",
+  "score": 0.91,
+  "movimiento": "SGC_14507829"
+ },
+ {
+  "hora": "2026-10-19T04:08:21.537Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "AB355EC",
+  "patente": "AB355LC",
+  "como": "parecida",
+  "score": 0.85,
+  "movimiento": "SGC_14507829"
+ },
+ {
+  "hora": "2026-10-19T05:08:00.375Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "AE137UM",
+  "patente": "AE137UN",
+  "como": "parecida",
+  "score": 0.92,
+  "movimiento": "SGC_14507834"
+ },
+ {
+  "hora": "2026-10-19T05:16:05.000Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "PK317",
+  "patente": "PCK317",
+  "como": "parecida",
+  "score": 0.7,
+  "movimiento": "SGC_14507828"
+ },
+ {
+  "hora": "2026-10-19T06:12:14.000Z",
+  "camara": "SLZBalSC2Tras",
+  "punto": "BAL_EGR_SL",
+  "lectura": "Z771",
+  "patente": "CMF111",
+  "como": "parecida",
+  "score": 0.57,
+  "movimiento": "SGC_14507832"
+ },
+ {
+  "hora": "2026-10-19T06:12:39.081Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "ITM235",
+  "patente": "IXM235",
+  "como": "parecida",
+  "score": 0.73,
+  "movimiento": "SGC_14507838"
+ },
+ {
+  "hora": "2026-10-19T06:29:31.000Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "I990",
+  "patente": "LTI990",
+  "como": "parecida",
+  "score": 0.64,
+  "movimiento": "SGC_14507841"
+ },
+ {
+  "hora": "2026-10-19T06:32:32.762Z",
+  "camara": "RicPreIngInFr",
+  "punto": "PRE",
+  "lectura": "LII990",
+  "patente": "LTI990",
+  "como": "parecida",
+  "score": 0.85,
+  "movimiento": "SGC_14507841"
+ },
+ {
+  "hora": "2026-10-19T08:09:53.000Z",
+  "camara": "RicCal03",
+  "punto": "CAL_RIC",
+  "lectura": "AB355IC",
+  "patente": "AB355LC",
+  "como": "parecida",
+  "score": 0.65,
+  "movimiento": "SGC_14507829"
+ },
+ {
+  "hora": "2026-10-19T08:20:04.000Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "137UN",
+  "patente": "AE137UN",
+  "como": "parecida",
+  "score": 0.66,
+  "movimiento": "SGC_14507834"
+ },
+ {
+  "hora": "2026-10-19T08:25:27.000Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "AB355C",
+  "patente": "AB355LC",
+  "como": "parecida",
+  "score": 0.31,
+  "movimiento": "SGC_14507829"
+ },
+ {
+  "hora": "2026-10-19T08:31:51.969Z",
+  "camara": "RicIngCamFrente",
+  "punto": "ING_RIC",
+  "lectura": "MDK364",
+  "patente": "KDK364",
+  "como": "parecida",
+  "score": 0.76,
+  "movimiento": "SGC_14507878"
+ },
+ {
+  "hora": "2026-10-19T08:36:56.353Z",
+  "camara": "RicCal04",
+  "punto": "CAL_RIC",
+  "lectura": "AB249EM",
+  "patente": "AD249EM",
+  "como": "parecida",
+  "score": 0.58,
+  "movimiento": "SGC_14507877"
+ },
+ {
+  "hora": "2026-10-19T09:05:46.839Z",
+  "camara": "SLZIngCamFrente",
+  "punto": "ING_SL",
+  "lectura": "LII990",
+  "patente": "LTI990",
+  "como": "parecida",
+  "score": 0.92,
+  "movimiento": "SGC_14507841"
+ },
+ {
+  "hora": "2026-10-19T09:09:29.000Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "AB355IC",
+  "patente": "AB355LC",
+  "como": "parecida",
+  "score": 0.32,
+  "movimiento": "SGC_14507829"
+ },
+ {
+  "hora": "2026-10-19T09:15:52.797Z",
+  "camara": "SLZBalIngFte",
+  "punto": "BAL_ING_SL",
+  "lectura": "AJ249EM",
+  "patente": "AD249EM",
+  "como": "parecida",
+  "score": 0.83,
+  "movimiento": "SGC_14507877"
+ },
+ {
+  "hora": "2026-10-19T11:32:30.945Z",
+  "camara": "SLZBalSC2Fte",
+  "punto": "BAL_EGR_SL",
+  "lectura": "AJ249EM",
+  "patente": "AD249EM",
+  "como": "parecida",
+  "score": 0.46,
+  "movimiento": "SGC_14507877"
+ }
+]

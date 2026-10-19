@@ -87,6 +87,11 @@
 .lm-steps li:last-child::after { display: none; }
 .lm-steps li.is-current::before { box-shadow: 0 0 0 4px #ede4fd; }
 .lm-steps li.is-next::before { background: #fff; border: 2px dashed var(--lm-follow); }
+.lm-steps li.is-deduced::before { background: #fff; border: 2px dashed var(--lm-follow); }
+.lm-steps li.is-deduced strong { color: var(--lm-muted); font-weight: 600; }
+.lm-step-tag { display: inline-block; margin-left: 4px; padding: 0 6px; border-radius: 999px; font: 700 10px/16px system-ui, sans-serif; font-style: normal; vertical-align: 1px; }
+.lm-step-tag--deducido { background: #f3effd; color: #6d28d9; border: 1px dashed #a78bfa; }
+.lm-step-tag--corregido { background: #fff7ed; color: #c2410c; }
 .lm-steps time { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--lm-muted); padding-top: 1px; }
 .lm-steps strong { display: block; font-size: 14px; }.lm-steps span { font-size: 11px; color: var(--lm-muted); }
 .lm-steps button { width: 28px; height: 28px; border-radius: 8px; background: var(--lm-bg); color: var(--lm-brand); font-size: 11px; }
@@ -155,6 +160,7 @@
 /* Pasos del camión seguido sobre el plano */
 .tf-map-step { position: absolute; z-index: 32; width: 20px; height: 20px; margin: -32px 0 0 4px; display: grid; place-items: center; border-radius: 50%; background: #7c3aed; color: #fff; font: 800 11px system-ui, sans-serif; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.35); pointer-events: none; }
 .tf-map-step--next { background: #f0fdf4; color: #15803d; border: 2px dashed #86efac; }
+.tf-map-step--deduced { background: #fff; color: #7c3aed; border: 2px dashed #7c3aed; }
 
 .lm-discard__open { width: 100%; margin: 0 0 10px; padding: 7px; border-radius: 8px; border: 1px solid #e3b4b0; color: #9a2a22; background: #fff; font-size: 12px; font-weight: 700; }
 .lm-discard { margin: 0 0 12px; padding: 10px; border-radius: 10px; background: #fdecec; display: grid; gap: 4px; font-size: 13px; }
@@ -165,3 +171,29 @@
 .lm-cross { margin: 0 0 12px; padding: 10px; border-radius: 10px; background: #eef6ff; }
 .lm-cross h3 { color: #1d4ed8; }.lm-cross__trip > span { display: block; font-size: 11px; color: var(--lm-muted); margin-bottom: 4px; }
 .lm-cross__hint { margin: 4px 0 0; font-size: 11px; color: var(--lm-muted); }
+
+/* Cruce de fuentes: Truckflow (cámaras) + SGC (balanza Vicentin) */
+.lm-kpis__src { font-size: 10px; color: #a9d4bd; white-space: nowrap; }
+.lm-trucks button { grid-template-columns: 12px 92px 1fr auto auto; }
+.lm-srcfilter { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 8px; }
+.lm-srcfilter button { padding: 4px 9px; border: 1px solid var(--lm-line); border-radius: 99px; font-size: 11px; font-weight: 700; color: var(--lm-muted); }
+.lm-srcfilter button[aria-pressed=true] { background: var(--lm-brand); border-color: var(--lm-brand); color: #fff; }
+.lm-srctags { display: inline-flex; gap: 3px; }
+.lm-srctags b { font-size: 9px; font-weight: 800; letter-spacing: .04em; padding: 2px 5px; border-radius: 4px; border: 1px dashed var(--lm-line); color: #b7c4bd; }
+.lm-srctags b.is-on { border: 1px solid var(--lm-brand); background: var(--lm-brand-soft); color: var(--lm-brand); }
+.lm-srctags b.is-warn { border: 1px solid #f59e0b; background: #fef3c7; color: #92400e; }
+.lm-trucks small { font-size: 11px; }
+.lm-warn { color: #b45309; font-weight: 700; }
+.lm-card__facts { grid-template-columns: repeat(2, 1fr); }
+.lm-card__facts dd small { margin-left: 6px; font-size: 9px; font-weight: 800; letter-spacing: .05em; color: var(--lm-brand); background: var(--lm-brand-soft); padding: 1px 5px; border-radius: 4px; vertical-align: middle; }
+.lm-sources { margin: 0 0 12px; display: grid; gap: 6px; }
+.lm-source-row { border-left: 3px solid var(--lm-brand); background: var(--lm-bg); border-radius: 0 8px 8px 0; padding: 7px 10px; font-size: 12px; line-height: 1.45; }
+.lm-source-row b { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--lm-brand); margin-bottom: 2px; }
+.lm-source-row.is-off { border-left-color: var(--lm-line); color: var(--lm-muted); }
+.lm-source-row.is-off b { color: var(--lm-muted); }
+
+
+/* Camiones en tránsito sobre los tramos */
+.tf-map-truck.is-transit { z-index: 26; }
+.tf-map-truck.is-guessed { border-style: dashed; }
+.tf-map-truck.is-waiting { z-index: 24; width: 12px; height: 8px; margin: -4px 0 0 -6px; border-width: 1.5px; }

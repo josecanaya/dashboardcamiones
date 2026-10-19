@@ -1,0 +1,246 @@
+{
+ "patente": "KTH925",
+ "ingreso": "2026-07-29 16:13:00",
+ "calado": "2026-07-29 17:25:00",
+ "salida": "2026-07-29 18:17:00",
+ "plataforma": "CELDA_16",
+ "producto": "SOJA",
+ "planta": "RICARDONE",
+ "puntos": [
+  {
+   "punto": "Ingreso Ricardone",
+   "ancla": "ing",
+   "ventana": [
+    "15:53:48",
+    "16:12:06"
+   ],
+   "centro": "16:07:12",
+   "camaras": [
+    "RicIngCamFrente"
+   ],
+   "total": 2,
+   "candidatas": [
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-29 16:06:14",
+     "lectura": "AVAEC",
+     "marca": "Iveco",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "160614_RicIngCamFrente_AVAEC.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-07-29 16:06:13",
+     "lectura": "",
+     "marca": "Iveco",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "160613_RicIngCamFrente_vacia.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Preingreso",
+   "ancla": "ing",
+   "ventana": [
+    "16:02:54",
+    "16:14:18"
+   ],
+   "centro": "16:10:18",
+   "camaras": [
+    "RicPreIngInFr"
+   ],
+   "total": 0,
+   "candidatas": []
+  },
+  {
+   "punto": "Calada Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "17:08:54",
+    "17:23:42"
+   ],
+   "centro": "17:19:06",
+   "camaras": [
+    "RicCal01",
+    "RicCal02",
+    "RicCal03",
+    "RicCal04",
+    "RicCal05",
+    "RicCal06"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicCal01",
+     "hora": "2026-07-29 17:19:45",
+     "lectura": "KTH925",
+     "marca": "Iveco",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "171945_RicCal01_KTH925.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza ingreso Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "17:22:06",
+    "17:51:24"
+   ],
+   "centro": "17:28:24",
+   "camaras": [
+    "RicB1Ingreso",
+    "RicB2Ingreso",
+    "RicB3Ingreso"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicB1Ingreso",
+     "hora": "2026-07-29 17:27:27",
+     "lectura": "AVEC0",
+     "marca": "Iveco",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "172727_RicB1Ingreso_AVEC0.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Playa 3",
+   "ancla": "calado",
+   "ventana": [
+    "17:26:24",
+    "17:56:42"
+   ],
+   "centro": "17:33:42",
+   "camaras": [
+    "RicS6Playa3"
+   ],
+   "total": 0,
+   "candidatas": []
+  },
+  {
+   "punto": "Descarga plataforma",
+   "ancla": "sal",
+   "ventana": [
+    "17:26:00",
+    "18:05:06"
+   ],
+   "centro": "17:48:00",
+   "camaras": [
+    "RicC16Descarga1",
+    "RicC16Descarga2"
+   ],
+   "total": 7,
+   "candidatas": [
+    {
+     "camara": "RicC16Descarga2",
+     "hora": "2026-07-29 17:53:58",
+     "lectura": "KTH925",
+     "marca": "Iveco",
+     "color": "Blue",
+     "tipo": "Large Truck",
+     "foto": "175358_RicC16Descarga2_KTH925.jpg"
+    },
+    {
+     "camara": "RicC16Descarga2",
+     "hora": "2026-07-29 17:49:30",
+     "lectura": "IWUUAWIW1",
+     "marca": "ISUZU",
+     "color": "Yellow",
+     "tipo": "Sedan",
+     "foto": "174930_RicC16Descarga2_IWUUAWIW1.jpg"
+    },
+    {
+     "camara": "RicC16Descarga2",
+     "hora": "2026-07-29 17:53:57",
+     "lectura": "",
+     "marca": "Iveco",
+     "color": "Silver",
+     "tipo": "Medium Truck",
+     "foto": "175357_RicC16Descarga2_vacia.jpg"
+    },
+    {
+     "camara": "RicC16Descarga2",
+     "hora": "2026-07-29 17:41:50",
+     "lectura": "VES86",
+     "marca": null,
+     "color": "Blue",
+     "tipo": "Bus",
+     "foto": "174150_RicC16Descarga2_VES86.jpg"
+    },
+    {
+     "camara": "RicC16Descarga2",
+     "hora": "2026-07-29 17:41:40",
+     "lectura": "",
+     "marca": "Chevrolet",
+     "color": "Blue",
+     "tipo": "Bus",
+     "foto": "174140_RicC16Descarga2_vacia.jpg"
+    },
+    {
+     "camara": "RicC16Descarga2",
+     "hora": "2026-07-29 17:59:21",
+     "lectura": "AVLETC10",
+     "marca": "Iveco",
+     "color": "Brown",
+     "tipo": "Small Truck",
+     "foto": "175921_RicC16Descarga2_AVLETC10.jpg"
+    },
+    {
+     "camara": "RicC16Descarga2",
+     "hora": "2026-07-29 17:36:10",
+     "lectura": "",
+     "marca": null,
+     "color": "Blue",
+     "tipo": "Pickup",
+     "foto": "173610_RicC16Descarga2_vacia.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza egreso Ricardone",
+   "ancla": "sal",
+   "ventana": [
+    "18:06:42",
+    "18:18:12"
+   ],
+   "centro": "18:14:00",
+   "camaras": [
+    "RicB1Egreso",
+    "RicB2Egreso",
+    "RicB3Egreso"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicB2Egreso",
+     "hora": "2026-07-29 18:11:56",
+     "lectura": "MVEC",
+     "marca": null,
+     "color": "White",
+     "tipo": "Sedan",
+     "foto": "181156_RicB2Egreso_MVEC.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Egreso Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "17:05:54",
+    "17:50:54"
+   ],
+   "centro": "17:27:54",
+   "camaras": [
+    "RicEgrCamFrente"
+   ],
+   "total": 0,
+   "candidatas": []
+  }
+ ]
+}

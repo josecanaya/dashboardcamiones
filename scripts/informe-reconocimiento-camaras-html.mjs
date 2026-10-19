@@ -65,6 +65,13 @@ const gaps = relevant
  * Las calles del volcable SL quedan afuera: tienen su propio porcentaje (C4 se usa poco, no está caída).
  */
 const perCameraRow = new Set(R.camaras.map((c) => c.camara))
+/**
+ * Cámaras de poco uso por diseño (criterio de planta, 15/10/2026): poca lectura no es falla.
+ * Calada Ricardone trabaja con las calles 3 y 4; las demás no se usan. B1 es la balanza de
+ * ingreso y B2 la de egreso, así que RicB2Ingreso y RicB1Egreso casi no ven camiones.
+ */
+const LOW_USE_LANES = new Set(['RicPreIngEgFr', 'RicCal01', 'RicCal02', 'RicCal05', 'RicCal06', 'RicB2Ingreso', 'RicB1Egreso'])
+for (const dv of LOW_USE_LANES) perCameraRow.add(dv)
 const mute = []
 for (const p of R.puntos) {
   if (p.camarasFrontales.length < 2 || p.total.esperados < MIN_N) continue

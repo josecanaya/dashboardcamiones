@@ -1,0 +1,440 @@
+{
+ "patente": "EOV644",
+ "ingreso": "2026-08-14 17:01:00",
+ "calado": "2026-08-14 20:40:00",
+ "salida": "2026-08-15 03:19:00",
+ "plataforma": "VOLCABLE_PTO_1",
+ "producto": "SOJA",
+ "planta": "TERMINAL_EMBARQUE",
+ "puntos": [
+  {
+   "punto": "Ingreso Ricardone",
+   "ancla": "ing",
+   "ventana": [
+    "16:40:00",
+    "17:00:12"
+   ],
+   "centro": "16:55:00",
+   "camaras": [
+    "RicIngCamFrente"
+   ],
+   "total": 2,
+   "candidatas": [
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-08-14 16:52:24",
+     "lectura": "",
+     "marca": null,
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "165224_RicIngCamFrente_vacia.jpg"
+    },
+    {
+     "camara": "RicIngCamFrente",
+     "hora": "2026-08-14 16:47:13",
+     "lectura": "T79",
+     "marca": "Mercedes-Benz",
+     "color": "White",
+     "tipo": "Bus",
+     "foto": "164713_RicIngCamFrente_T79.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Preingreso",
+   "ancla": "ing",
+   "ventana": [
+    "16:50:42",
+    "17:02:30"
+   ],
+   "centro": "16:58:06",
+   "camaras": [
+    "RicPreIngInFr"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "RicPreIngInFr",
+     "hora": "2026-08-14 16:55:55",
+     "lectura": "F96",
+     "marca": "Ford",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "165555_RicPreIngInFr_F96.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Calada Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "20:26:12",
+    "20:38:12"
+   ],
+   "centro": "20:34:06",
+   "camaras": [
+    "RicCal01",
+    "RicCal02",
+    "RicCal03",
+    "RicCal04",
+    "RicCal05",
+    "RicCal06"
+   ],
+   "total": 9,
+   "candidatas": [
+    {
+     "camara": "RicCal04",
+     "hora": "2026-08-14 20:34:39",
+     "lectura": "TRJ71",
+     "marca": null,
+     "color": "Silver",
+     "tipo": "Medium Truck",
+     "foto": "203439_RicCal04_TRJ71.jpg"
+    },
+    {
+     "camara": "RicCal01",
+     "hora": "2026-08-14 20:32:38",
+     "lectura": "IDV",
+     "marca": null,
+     "color": "Black",
+     "tipo": "Large Truck",
+     "foto": "203238_RicCal01_IDV.jpg"
+    },
+    {
+     "camara": "RicCal01",
+     "hora": "2026-08-14 20:32:32",
+     "lectura": "",
+     "marca": "Mercedes-Benz",
+     "color": "Silver",
+     "tipo": "Large Truck",
+     "foto": "203232_RicCal01_vacia.jpg"
+    },
+    {
+     "camara": "RicCal03",
+     "hora": "2026-08-14 20:32:11",
+     "lectura": "BVC0",
+     "marca": "Iveco",
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "203211_RicCal03_BVC0.jpg"
+    },
+    {
+     "camara": "RicCal04",
+     "hora": "2026-08-14 20:38:04",
+     "lectura": "",
+     "marca": "Mercedes-Benz",
+     "color": "Silver",
+     "tipo": "Large Truck",
+     "foto": "203804_RicCal04_vacia.jpg"
+    },
+    {
+     "camara": "RicCal02",
+     "hora": "2026-08-14 20:29:57",
+     "lectura": "VIS6",
+     "marca": null,
+     "color": "Gray",
+     "tipo": "Small Truck",
+     "foto": "202957_RicCal02_VIS6.jpg"
+    },
+    {
+     "camara": "RicCal02",
+     "hora": "2026-08-14 20:29:43",
+     "lectura": "VIS6",
+     "marca": null,
+     "color": "Silver",
+     "tipo": "Pickup",
+     "foto": "202943_RicCal02_VIS6.jpg"
+    },
+    {
+     "camara": "RicCal02",
+     "hora": "2026-08-14 20:29:26",
+     "lectura": "VI6S6",
+     "marca": null,
+     "color": "Silver",
+     "tipo": "Small Truck",
+     "foto": "202926_RicCal02_VI6S6.jpg"
+    },
+    {
+     "camara": "RicCal02",
+     "hora": "2026-08-14 20:29:16",
+     "lectura": "VI6S6",
+     "marca": "Mercedes-Benz",
+     "color": "Silver",
+     "tipo": "Small Truck",
+     "foto": "202916_RicCal02_VI6S6.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Egreso Ricardone",
+   "ancla": "calado",
+   "ventana": [
+    "20:36:48",
+    "21:08:24"
+   ],
+   "centro": "20:45:24",
+   "camaras": [
+    "RicEgrCamFrente"
+   ],
+   "total": 4,
+   "candidatas": [
+    {
+     "camara": "RicEgrCamFrente",
+     "hora": "2026-08-14 20:42:36",
+     "lectura": "263",
+     "marca": "Volkswagen",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "204236_RicEgrCamFrente_263.jpg"
+    },
+    {
+     "camara": "RicEgrCamFrente",
+     "hora": "2026-08-14 20:41:02",
+     "lectura": "GB3",
+     "marca": "Iveco",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "204102_RicEgrCamFrente_GB3.jpg"
+    },
+    {
+     "camara": "RicEgrCamFrente",
+     "hora": "2026-08-14 20:50:00",
+     "lectura": "L92",
+     "marca": null,
+     "color": "Black",
+     "tipo": null,
+     "foto": "205000_RicEgrCamFrente_L92.jpg"
+    },
+    {
+     "camara": "RicEgrCamFrente",
+     "hora": "2026-08-14 20:38:32",
+     "lectura": "I43",
+     "marca": "Mercedes-Benz",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "203832_RicEgrCamFrente_I43.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Ingreso puerto",
+   "ancla": "calado",
+   "ventana": [
+    "20:47:06",
+    "21:20:30"
+   ],
+   "centro": "20:57:30",
+   "camaras": [
+    "SLZIngCamFrente"
+   ],
+   "total": 3,
+   "candidatas": [
+    {
+     "camara": "SLZIngCamFrente",
+     "hora": "2026-08-14 20:55:22",
+     "lectura": "VC0",
+     "marca": "Iveco",
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "205522_SLZIngCamFrente_VC0.jpg"
+    },
+    {
+     "camara": "SLZIngCamFrente",
+     "hora": "2026-08-14 21:04:50",
+     "lectura": "PAC75",
+     "marca": null,
+     "color": "Black",
+     "tipo": "Medium Truck",
+     "foto": "210450_SLZIngCamFrente_PAC75.jpg"
+    },
+    {
+     "camara": "SLZIngCamFrente",
+     "hora": "2026-08-14 20:47:08",
+     "lectura": "IIV14",
+     "marca": null,
+     "color": "Black",
+     "tipo": "Medium Truck",
+     "foto": "204708_SLZIngCamFrente_IIV14.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza ingreso puerto",
+   "ancla": "sal",
+   "ventana": [
+    "02:02:00",
+    "02:47:00"
+   ],
+   "centro": "02:24:00",
+   "camaras": [
+    "SLZBalIngFte"
+   ],
+   "total": 1,
+   "candidatas": [
+    {
+     "camara": "SLZBalIngFte",
+     "hora": "2026-08-15 02:45:15",
+     "lectura": "",
+     "marca": null,
+     "color": "White",
+     "tipo": "Bus",
+     "foto": "024515_SLZBalIngFte_vacia.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Descarga plataforma",
+   "ancla": "sal",
+   "ventana": [
+    "02:46:24",
+    "03:09:00"
+   ],
+   "centro": "03:00:42",
+   "camaras": [
+    "SLZVolcableC1"
+   ],
+   "total": 3,
+   "candidatas": [
+    {
+     "camara": "SLZVolcableC1",
+     "hora": "2026-08-15 02:55:54",
+     "lectura": "CJJ77",
+     "marca": null,
+     "color": "Black",
+     "tipo": "Medium Bus",
+     "foto": "025554_SLZVolcableC1_CJJ77.jpg"
+    },
+    {
+     "camara": "SLZVolcableC1",
+     "hora": "2026-08-15 02:51:09",
+     "lectura": "IKCP7",
+     "marca": null,
+     "color": "White",
+     "tipo": "Large Truck",
+     "foto": "025109_SLZVolcableC1_IKCP7.jpg"
+    },
+    {
+     "camara": "SLZVolcableC1",
+     "hora": "2026-08-15 02:49:36",
+     "lectura": "",
+     "marca": null,
+     "color": "White",
+     "tipo": "Sedan",
+     "foto": "024936_SLZVolcableC1_vacia.jpg"
+    }
+   ]
+  },
+  {
+   "punto": "Balanza egreso puerto",
+   "ancla": "sal",
+   "ventana": [
+    "03:08:06",
+    "03:18:36"
+   ],
+   "centro": "03:14:00",
+   "camaras": [
+    "SLZBalSC1Fte",
+    "SLZBalSC2Fte"
+   ],
+   "total": 0,
+   "candidatas": []
+  },
+  {
+   "punto": "Salida puerto",
+   "ancla": "sal",
+   "ventana": [
+    "03:13:30",
+    "03:29:06"
+   ],
+   "centro": "03:21:12",
+   "camaras": [
+    "SLZSalidaC1Fte",
+    "SLZSalidaC2Fte"
+   ],
+   "total": 9,
+   "candidatas": [
+    {
+     "camara": "SLZSalidaC1Fte",
+     "hora": "2026-08-15 03:22:13",
+     "lectura": "",
+     "marca": null,
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "032213_SLZSalidaC1Fte_vacia.jpg"
+    },
+    {
+     "camara": "SLZSalidaC2Fte",
+     "hora": "2026-08-15 03:22:13",
+     "lectura": "",
+     "marca": null,
+     "color": "Black",
+     "tipo": "Small Truck",
+     "foto": "032213_SLZSalidaC2Fte_vacia.jpg"
+    },
+    {
+     "camara": "SLZSalidaC2Fte",
+     "hora": "2026-08-15 03:17:52",
+     "lectura": "",
+     "marca": null,
+     "color": "Red",
+     "tipo": "Large Truck",
+     "foto": "031752_SLZSalidaC2Fte_vacia.jpg"
+    },
+    {
+     "camara": "SLZSalidaC2Fte",
+     "hora": "2026-08-15 03:16:58",
+     "lectura": "",
+     "marca": null,
+     "color": "Black",
+     "tipo": "Small Truck",
+     "foto": "031658_SLZSalidaC2Fte_vacia.jpg"
+    },
+    {
+     "camara": "SLZSalidaC2Fte",
+     "hora": "2026-08-15 03:16:12",
+     "lectura": "",
+     "marca": null,
+     "color": "White",
+     "tipo": "Small Truck",
+     "foto": "031612_SLZSalidaC2Fte_vacia.jpg"
+    },
+    {
+     "camara": "SLZSalidaC1Fte",
+     "hora": "2026-08-15 03:14:54",
+     "lectura": "RAND0N",
+     "marca": null,
+     "color": "White",
+     "tipo": "Small Truck",
+     "foto": "031454_SLZSalidaC1Fte_RAND0N.jpg"
+    },
+    {
+     "camara": "SLZSalidaC2Fte",
+     "hora": "2026-08-15 03:14:49",
+     "lectura": "",
+     "marca": null,
+     "color": "Black",
+     "tipo": "Large Truck",
+     "foto": "031449_SLZSalidaC2Fte_vacia.jpg"
+    },
+    {
+     "camara": "SLZSalidaC1Fte",
+     "hora": "2026-08-15 03:14:39",
+     "lectura": "",
+     "marca": null,
+     "color": "White",
+     "tipo": "Medium Truck",
+     "foto": "031439_SLZSalidaC1Fte_vacia.jpg"
+    },
+    {
+     "camara": "SLZSalidaC2Fte",
+     "hora": "2026-08-15 03:14:38",
+     "lectura": "",
+     "marca": "Mercedes-Benz",
+     "color": "Gray",
+     "tipo": "Small Truck",
+     "foto": "031438_SLZSalidaC2Fte_vacia.jpg"
+    }
+   ]
+  }
+ ]
+}

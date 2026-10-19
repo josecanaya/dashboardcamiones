@@ -54,19 +54,34 @@ function writeDay(dataRoot: string, day: string, rows: ExternalMovimientoContrat
   writeFileSync(dayFile(dataRoot, day), JSON.stringify(rows), 'utf8')
 }
 
+function isSgcDay(dataRoot: string, day: string): boolean {
+  const f = join(dataRoot, day, 'SOURCE.json')
+  if (!existsSync(f)) return false
+  try {
+    return JSON.parse(readFileSync(f, 'utf8'))?.source === 'sgc'
+  } catch {
+    return false
+  }
+}
+
 /** Ingesta un buffer Excel al backup. Exportada para reuso desde el server. */
 export function ingestMovimientosBuffer(
   buf: Uint8Array,
   sourceFile: string,
   dataRoot: string
-): { days: { day: string; total: number; added: number; duplicatesRemoved: number }[]; undated: number; totalRows: number } {
+): { days: { day: string; total: number; added: number; duplicatesRemoved: number; skipped?: string }[]; undated: number; totalRows: number } {
   const ab = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength)
   const { rows: raw } = readMovimientosContratoXlsx(ab, sourceFile)
   const normalized = normalizeMovimientosContratoBatch(raw)
   const { byDay, undated } = partitionMovimientosByDay(normalized)
 
-  const summary: { day: string; total: number; added: number; duplicatesRemoved: number }[] = []
+  const summary: { day: string; total: number; added: number; duplicatesRemoved: number; skipped?: string }[] = []
   for (const [day, incoming] of [...byDay.entries()].sort()) {
+    // Desde la balanza SGC esos días los genera server/sgc/sgcSource.mjs: el Excel no los pisa.
+    if (isSgcDay(dataRoot, day)) {
+      summary.push({ day, total: 0, added: 0, duplicatesRemoved: 0, skipped: 'sgc' })
+      continue
+    }
     const existing = readDay(dataRoot, day)
     const { merged, added, duplicatesRemoved } = mergeMovimientosDedup(existing, incoming)
     writeDay(dataRoot, day, merged)

@@ -90,6 +90,7 @@ const out = {
 }
 // calibración contra la planilla, si existe para el rango
 const seenOp = new Set(), X = []
+let sinDestino = 0
 for (let d = addDays(from, -1); d <= addDays(to, 3); d = addDays(d, 1)) {
   const f = path.join(ROOT, 'data', 'movimientos', d, 'movimientos.json')
   if (!fs.existsSync(f)) continue
@@ -100,6 +101,9 @@ for (let d = addDays(from, -1); d <= addDays(to, 3); d = addDays(d, 1)) {
     if (r.entregado_por_a && !/PUERTO/.test(r.entregado_por_a)) continue   // despachos a terceros: no van al puerto
     const s = r.external_salida_at; if (!/^\d{4}-\d{2}-\d{2}T/.test(s || '')) continue
     const t = Date.parse(s.slice(0, 16) + ':00-03:00'); if (t < ini || t >= fin) continue
+    // balanza SGC (sin «entregado por/a»): va al puerto si se emparejó con su ingreso al puerto (es_de_vuelta)
+    // o, si no, si las cámaras vieron el viaje al puerto (misma patente, ±90 min); el resto se toma como despacho
+    if (!r.entregado_por_a && !r.es_de_vuelta && !trips.some(c => c.p === r.plate_normalized && Math.abs(c.t - t) <= 90 * 60000)) { sinDestino++; continue }
     X.push({ p: r.plate_normalized, t, day: calDay(t) })
   }
 }
@@ -108,7 +112,7 @@ if (X.length) {
   const used = new Set(); let ok = 0
   for (const c of trips) { const k = X.findIndex((x, i) => !used.has(i) && x.p === c.p && Math.abs(x.t - c.t) <= 90 * 60000); if (k >= 0) { used.add(k); ok++ } }
   out.calibracion = { planillaEgresosPellet: X.length, planillaCamiones: new Set(X.map(x => x.p)).size, planillaPorDia: Object.fromEntries(dias.map(d => [d, X.filter(x => x.day === d).length])),
-    camaraViajes: trips.length, emparejados: ok, recall: +(ok / X.length).toFixed(3), precision: trips.length ? +(ok / trips.length).toFixed(3) : null,
+    camaraViajes: trips.length, emparejados: ok, sgcSinDestinoPuerto: sinDestino, recall: +(ok / X.length).toFixed(3), precision: trips.length ? +(ok / trips.length).toFixed(3) : null,
     nota: 'Egresos de pellet de girasol de Ricardone al puerto en la planilla (sin despachos a terceros), por día calendario de la salida.' }
 }
 fs.writeFileSync(outPath, JSON.stringify(out, null, 1))
