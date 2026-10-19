@@ -5,7 +5,7 @@
 // peso), la patente, color/marca/tipo y la trasera (acoplado visto antes con ese tractor).
 // Por camión: puntos leídos por la cámara, reconstruidos (captura dudosa asignada), deducidos (sin captura,
 // pero leído antes y después) y faltantes. Prueba: a 1 de cada 4 lecturas buenas se le borra la patente.
-// Uso: node scripts/demostracion/lote.mjs [día=2026-10-01 | semana | semana:DESDE:HASTA] [umbral=0.6]
+// Uso: node scripts/demostracion/lote.mjs [día=2026-10-01 | semana | semana:DESDE:HASTA] [umbral=0.4]
 // semana:DESDE:HASTA (p. ej. semana:2026-10-12:2026-10-18): cualquier semana. Sin export del DSS que la cubra
 // (data/dss-export/<desde>_<dd hasta>/capturas.csv), las capturas que no entraron al feed salen de las
 // alertas de TruckFlow (son las mismas lecturas, sin color/marca/tipo).
@@ -23,7 +23,9 @@ const [W_FROM, W_TO] = ARG.startsWith('semana:') ? ARG.split(':').slice(1) : ['2
 const DAY = WEEK ? W_FROM : ARG
 const WEEK_DAYS = []
 for (let d = W_FROM; d <= W_TO; d = new Date(Date.parse(`${d}T12:00:00Z`) + 86400_000).toISOString().slice(0, 10)) WEEK_DAYS.push(d)
-const THETA = Number(process.argv[3] ?? 0.6)
+// Umbral 0,4 (desde el 19/10, antes 0,6): semana 12–18/10 reconstruye 402 pasos en vez de 302,
+// con 92,6 % de aciertos en la prueba (antes 96,8 %).
+const THETA = Number(process.argv[3] ?? 0.4)
 // Cuarto del día (opcional): Q1 22–04 h (desde la noche anterior), Q2 04–10, Q3 10–16, Q4 16–22.
 const Q = process.argv[4] ? Number(process.argv[4]) : null
 const qRange = Q ? [Date.parse(`${DAY}T00:00:00-03:00`) + (-2 + (Q - 1) * 6) * 3600_000, Date.parse(`${DAY}T00:00:00-03:00`) + (4 + (Q - 1) * 6) * 3600_000] : null
@@ -346,11 +348,16 @@ const learnAttrs = (plate, a) => {
   const s = attrsOf.get(plate)
   for (const k of Object.keys(s)) { const v = a[k]; if (v && !/unknown|unrecognized/i.test(v)) s[k][v] = (s[k][v] ?? 0) + 1 }
 }
-const mode = (o) => Object.entries(o ?? {}).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null
-const lrAttrs = (a, plate) => {
+// Perfil de cada camión (color, marca, tipo del DSS) armado de antemano con TODAS sus lecturas exactas de la
+// semana, no solo las anteriores a la captura: así el perfil existe desde el primer punto de la visita.
+for (const c of front) if (c.attrs && isValidPlate(c.plate) && lotePlates.has(c.plate)) learnAttrs(c.plate, c.attrs)
+// Moda sin contar la propia captura (si la captura evaluada es del mismo camión, p. ej. en la prueba).
+const mode = (o, self) => Object.entries(o ?? {}).map(([k, n]) => [k, k === self ? n - 1 : n]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null
+const lrAttrs = (a, plate, own) => {
   const s = attrsOf.get(plate)
   if (!a || !s) return 1
-  return compareAttribute('color', a.vehicleColor, mode(s.vehicleColor)).lr * compareAttribute('marca', a.vehicleBrand, mode(s.vehicleBrand)).lr * compareAttribute('tipo', a.vehicleCategory, mode(s.vehicleCategory)).lr
+  const self = (k) => (own ? a[k] : null)
+  return compareAttribute('color', a.vehicleColor, mode(s.vehicleColor, self('vehicleColor'))).lr * compareAttribute('marca', a.vehicleBrand, mode(s.vehicleBrand, self('vehicleBrand'))).lr * compareAttribute('tipo', a.vehicleCategory, mode(s.vehicleCategory, self('vehicleCategory'))).lr
 }
 const ACCESOS = new Set(['ricardone:Ingreso', 'ricardone:Pre ingreso', 'ricardone:Salida 2', 'san_lorenzo:Ingreso', 'san_lorenzo:Egreso', 'san_lorenzo:Carga/Descarga Renova'])
 // Chance de leer `read` si pasó `real`, con la frecuencia medida de cada cantidad de cambios
@@ -377,6 +384,8 @@ function readL(read, real) {
 const NOT_TRUCK = /sedan|suv|pickup|van|car\b|motor|mpv|hatchback/i
 
 // ── Recorrido del lote ──
+const DUP_MS = 20 * 60_000
+const esDuplicado = (c) => c.plate && c.plate.length >= 3 && !lotePlates.has(c.plate) && lote.some((m) => { const s = m.status.get(c.node); return s && Math.abs(s.t - c.t) < DUP_MS && (readDist(c.plate, m.plate) <= 1 || prefixFrag(c.plate, m.plate)) })
 const paresInventario = []
 const res = {}
 const R = (n) => (res[n] ??= { prueba: { n: 0, bien: 0, otro: 0, nada: 0, errores: [] }, universo: [], efectivo: [], cap: { total: 0, lote: 0, otroDiaOVehiculo: 0, noCamion: 0, sinCandidato: 0, sinDecidir: 0, asignada: 0 } })
@@ -393,9 +402,9 @@ for (const c of front) {
   // Orden: antes del ingreso solo valen los primeros puntos; después, cada paso va después del anterior.
   const ordered = (m, node) => { const iN = m.exp.indexOf(node), iL = m.last ? m.exp.indexOf(m.last) : -1; return iN >= 0 && iN > iL && (c.t >= m.ing - 5 * 60_000 || iN <= 1) }
   if (own && ordered(own, c.node) && !own.status.has(c.node) && hideCounter++ % 4 === 0) hidden = own
+  if (own) c.used = 'propia' // la patente es de un camión del lote: no queda libre para otro
   if (own && !hidden) {
     if (inDay) CR.lote++
-    learnAttrs(own.plate, c.attrs)
     const iN = own.exp.indexOf(c.node), iL = own.last ? own.exp.indexOf(own.last) : -1
     // Antes del ingreso solo valen los primeros puntos; después, cada paso tiene que ir después del anterior.
     const inOrder = iN > iL && (c.t >= own.ing - 5 * 60_000 || iN <= 1)
@@ -406,9 +415,26 @@ for (const c of front) {
   // por el ángulo de la cámara y no se descarta nada. De noche el DSS también ve «SaloonCar» en camiones:
   // si la patente leída se parece (≤ 2 cambios) a un camión del lote con ese paso pendiente, no se descarta.
   const pareceDelLote = () => c.plate && lote.some((m) => c.t >= m.vStart && c.t <= m.vEnd && !m.status.has(c.node) && m.exp.includes(c.node) && readDist(c.plate, m.plate) <= 2)
-  if (!hidden && ACCESOS.has(c.node) && c.attrs && NOT_TRUCK.test(c.attrs.vehicleCategory ?? '') && !pareceDelLote()) { if (inDay) CR.noCamion++; continue }
+  if (!hidden && ACCESOS.has(c.node) && c.attrs && NOT_TRUCK.test(c.attrs.vehicleCategory ?? '') && !pareceDelLote()) { c.used = 'noCamion'; if (inDay) CR.noCamion++; continue }
   // Patente válida de un camión de otro lote o que no está en el Excel: es otro vehículo real.
-  if (!hidden && isValidPlate(c.plate) && allExcel.has(c.plate)) { if (inDay) CR.otroDiaOVehiculo++; continue }
+  if (!hidden && isValidPlate(c.plate) && allExcel.has(c.plate)) { c.used = 'otroVehiculo'; if (inDay) CR.otroDiaOVehiculo++; continue }
+  // Duplicado: el mismo camión leído por otra cámara del mismo punto o dos veces seguidas. Si la lectura casi
+  // coincide (≤ 1 cambio o arranca igual) con un camión que pasó por este punto hace menos de 20 min, es suya.
+  // Reemplazo: si la lectura casi coincide con un camión cuyo paso quedó ocupado por una reconstrucción débil
+  // (por horario o con una patente que no se le parece), la buena ocupa el paso y la débil queda libre.
+  if (!hidden && c.plate && c.plate.length >= 3 && !lotePlates.has(c.plate)) {
+    const fuerte = (m) => readDist(c.plate, m.plate) <= 1 || prefixFrag(c.plate, m.plate)
+    const debil = (s, m) => s.via === 'reconstruida' && !s.prueba && (!s.read || (readDist(s.read, m.plate) >= 3 && !prefixFrag(s.read, m.plate)))
+    const m = lote.find((x) => c.t >= x.vStart && c.t <= x.vEnd && x.status.has(c.node) && fuerte(x) && debil(x.status.get(c.node), x))
+    if (m) {
+      const old = m.status.get(c.node)
+      if (old.cap) old.cap.used = undefined
+      m.status.set(c.node, { via: 'reconstruida', t: c.t, P: 1, read: c.plate, device: c.device, cap: c, reemplaza: old.read })
+      c.used = 'asignada'
+      continue
+    }
+  }
+  if (!hidden && esDuplicado(c)) { c.used = 'duplicada'; continue }
   // Universo: camiones del lote con ese paso pendiente, que siguen en planta y cuyo último punto es anterior.
   const U = []
   const pl0 = hidden ? null : c.plate
@@ -445,7 +471,7 @@ for (const c of front) {
     const L = pl ? readL(pl, m.plate) : FRAG
     let rearLr = 1
     for (const x of rearHere) { const k = trailerOf.get(x.plate)?.get(m.plate) ?? 0; if (k) rearLr = Math.max(rearLr, k >= 2 ? 50 : 20) }
-    return { m, score: ((1 - po) * w / Math.max(ws, 1e-9)) * L * lrAttrs(c.attrs, m.plate) * rearLr }
+    return { m, score: ((1 - po) * w / Math.max(ws, 1e-9)) * L * lrAttrs(c.attrs, m.plate, c.plate === m.plate) * rearLr }
   })
   const never = po * (pl && isValidPlate(pl) ? (1 - MAL) / 12789 : FRAG)
   const total = scored.reduce((a, s) => a + s.score, 0) + never
@@ -454,7 +480,8 @@ for (const c of front) {
   const pick = best && P >= THETA ? best.m : null
   if (inDay && !hidden) { if (!U.length) CR.sinCandidato++; else if (pick) CR.asignada++; else CR.sinDecidir++ }
   const before = pick && hidden ? { verdadero: { last: hidden.last, esperaMin: Math.round((c.t - hidden.lastT) / 60000) }, asignado: { last: pick.last, esperaMin: Math.round((c.t - pick.lastT) / 60000) }, rankVerdadero: scored.findIndex((x) => x.m === hidden) + 1 } : null
-  if (pick) { pick.status.set(c.node, { via: 'reconstruida', t: c.t, P, prueba: !!hidden, read: hidden ? '(patente borrada para la prueba)' : c.plate, device: c.device, rivales: scored.slice(1, 3).map((x) => ({ plate: x.m.plate, p: total ? x.score / total : 0 })) }); pick.last = c.node; pick.lastT = c.t }
+  if (pick) c.used = 'asignada'
+  if (pick) { pick.status.set(c.node, { via: 'reconstruida', cap: hidden ? null : c, t: c.t, P, prueba: !!hidden, read: hidden ? '(patente borrada para la prueba)' : c.plate, device: c.device, rivales: scored.slice(1, 3).map((x) => ({ plate: x.m.plate, p: total ? x.score / total : 0 })) }); pick.last = c.node; pick.lastT = c.t }
   if (hidden && hidden.inSample) {
     r.prueba.n++
     if (pick === hidden) r.prueba.bien++
@@ -464,6 +491,94 @@ for (const c of front) {
     if (pick !== hidden && !hidden.status.has(c.node) && ordered(hidden, c.node)) { hidden.status.set(c.node, { via: 'camara', t: c.t, read: hidden.plate, device: c.device }); hidden.last = c.node; hidden.lastT = c.t }
   }
 }
+
+// ── Segunda pasada: eliminación por lote ──
+// Un camión visto antes y después de un punto pasó por ese punto en esa franja. Si en la franja hay UNA sola
+// captura sin dueño y esa captura solo cae en la franja de ESE camión, es suya. Cada asignación achica las
+// franjas de los demás pasos del mismo camión, así que se repite hasta que no cambie nada.
+// Libres: capturas que nadie usó; una patente válida que no es del camión (≥ 2 cambios) es otro vehículo.
+const BRK_INI = 40 * 60_000, BRK_FIN = 30 * 60_000
+function franjas(m, st) {
+  const out = []
+  m.exp.forEach((n, i) => {
+    if (st.has(n) || EXCLUIDOS.has(n)) return
+    let prev = null, next = null
+    for (let j = i - 1; j >= 0 && !prev; j--) if (st.has(m.exp[j])) prev = st.get(m.exp[j])
+    for (let k = i + 1; k < m.exp.length && !next; k++) if (st.has(m.exp[k])) next = st.get(m.exp[k])
+    if (!prev && !next) return // sin ancla
+    out.push({ m, n, t0: prev ? prev.t : m.ing - BRK_INI, t1: next ? next.t : Math.min(m.vEnd, m.sal + BRK_FIN) })
+  })
+  return out
+}
+function eliminacion(states, libres) {
+  const byNode = new Map()
+  for (const c of libres) { if (!byNode.has(c.node)) byNode.set(c.node, []); byNode.get(c.node).push(c) }
+  const asignadas = []
+  for (let vuelta = 0; vuelta < 20; vuelta++) {
+    const pend = lote.filter((m) => m.inSample).flatMap((m) => franjas(m, states.get(m)))
+    const cand = pend.map((p) => ({ p, C: (byNode.get(p.n) ?? []).filter((c) => !c.tomada && c.t > p.t0 && c.t < p.t1 && !(c.plate && isValidPlate(c.plate) && readDist(c.plate, p.m.plate) >= 2)) }))
+    const cuenta = new Map()
+    for (const { C } of cand) for (const c of C) cuenta.set(c, (cuenta.get(c) ?? 0) + 1)
+    let cambios = 0
+    const hecho = new Set()
+    for (const { p, C } of cand) {
+      if (C.length !== 1 || cuenta.get(C[0]) !== 1 || C[0].tomada) continue
+      const c = C[0]
+      c.tomada = true
+      hecho.add(p)
+      states.get(p.m).set(p.n, { via: 'reconstruida', metodo: 'eliminacion', t: c.t, read: c.plate, device: c.device })
+      asignadas.push({ m: p.m, n: p.n, c })
+      cambios++
+    }
+    // Franja compartida: la captura cae en la franja de varios camiones (vistos antes Y después del punto).
+    // El universo son solo esos; decide la patente leída y color/marca/tipo del DSS, con el mismo umbral.
+    const porCaptura = new Map()
+    for (const { p, C } of cand) if (!hecho.has(p)) for (const c of C) if (!c.tomada) { if (!porCaptura.has(c)) porCaptura.set(c, []); porCaptura.get(c).push(p) }
+    const propuestas = []
+    for (const [c, ps] of porCaptura) {
+      const sc = ps.map((p) => ({ p, s: (c.plate ? readL(c.plate, p.m.plate) : FRAG) * lrAttrs(c.attrs, p.m.plate, c.prueba ? c.prueba.m.plate === p.m.plate : false) }))
+      const never = pOtro(c.node) * (c.plate && isValidPlate(c.plate) ? (1 - MAL) / 12789 : FRAG)
+      const tot = sc.reduce((a, x) => a + x.s * (1 - pOtro(c.node)) / ps.length, 0) + never
+      const best = sc.sort((a, b) => b.s - a.s)[0]
+      const P = tot ? (best.s * (1 - pOtro(c.node)) / ps.length) / tot : 0
+      if (P >= THETA) propuestas.push({ c, p: best.p, P })
+    }
+    for (const { c, p, P } of propuestas.sort((a, b) => b.P - a.P)) {
+      if (c.tomada || hecho.has(p)) continue
+      c.tomada = true
+      hecho.add(p)
+      states.get(p.m).set(p.n, { via: 'reconstruida', metodo: 'franja', P, t: c.t, read: c.plate, device: c.device })
+      asignadas.push({ m: p.m, n: p.n, c })
+      cambios++
+    }
+    if (!cambios) break
+  }
+  return asignadas
+}
+const libresReales = () => front.filter((c) => !c.used && c.t >= start && c.t <= end && !esDuplicado(c)).map((c) => ({ node: c.node, t: c.t, plate: c.plate, device: c.device, attrs: c.attrs }))
+// Prueba: a 1 de cada 4 pasos leídos por la cámara se les saca la lectura (queda como captura libre sin patente)
+// y se mide si la eliminación se la devuelve al camión correcto.
+const pruebaElim = { n: 0, bien: 0, otro: 0, nada: 0 }
+const capAt = new Map(front.map((c) => [`${c.device}|${c.t}`, c]))
+{
+  const st = new Map(lote.map((m) => [m, new Map(m.status)]))
+  const libres = libresReales()
+  let k = 0
+  for (const m of lote.filter((x) => x.inSample)) for (const [n, s] of st.get(m)) {
+    if (s.via !== 'camara' || k++ % 4) continue
+    st.get(m).delete(n)
+    libres.push({ node: n, t: s.t, plate: '', device: s.device, attrs: capAt.get(`${s.device}|${s.t}`)?.attrs, prueba: { m, n } })
+  }
+  const asg = eliminacion(st, libres)
+  for (const c of libres.filter((x) => x.prueba)) {
+    pruebaElim.n++
+    const a = asg.find((x) => x.c === c)
+    if (!a) pruebaElim.nada++
+    else if (a.m === c.prueba.m && a.n === c.prueba.n) pruebaElim.bien++
+    else pruebaElim.otro++
+  }
+}
+const porEliminacion = eliminacion(new Map(lote.map((m) => [m, m.status])), libresReales())
 
 // ── Deducidos y faltantes, por camión y por punto ──
 const porPunto = {}
@@ -512,8 +627,9 @@ const dist = {}
 for (const c of porCamion) dist[c.falta] = (dist[c.falta] ?? 0) + 1
 console.log('camiones por cantidad de puntos que faltan:', JSON.stringify(dist), `· completos: ${dist[0] ?? 0} de ${porCamion.length} (${pc(dist[0] ?? 0, porCamion.length)})`)
 fs.mkdirSync(path.join(root, 'outputs/demostracion_lote'), { recursive: true })
+console.log(`eliminación por lote: ${porEliminacion.length} pasos · prueba ${pruebaElim.bien}/${pruebaElim.n} bien, ${pruebaElim.otro} a otro paso (de las asignadas, ${Math.round((pruebaElim.bien / Math.max(1, pruebaElim.bien + pruebaElim.otro)) * 1000) / 10} % correctas)`)
 console.log('circuitos corregidos por cámaras:', circuitosCambiados, '· de otra planta:', circuitosOtraPlanta, '· registros sin visita fuera del lote:', registrosSinVisita)
 const erroresPrueba = Object.values(res).flatMap((r) => r.prueba.errores)
 // Auxiliar (errores-lectura.mjs): si Windows lo tiene bloqueado, no impide guardar el resultado del lote.
 try { fs.writeFileSync(path.join(root, 'outputs/demostracion_lote/pares-inventario.json'), JSON.stringify(paresInventario) + '\n') } catch (e) { console.warn(`pares-inventario.json no se pudo escribir (${e.code})`) }
-fs.writeFileSync(path.join(root, `outputs/demostracion_lote/lote_${WEEK ? `semana_${W_FROM}_${W_TO}` : DAY}${Q ? `_Q${Q}` : ''}${MUESTRA ? `_muestra_${MUESTRA.join('Q')}` : ''}.json`), JSON.stringify({ dia: DAY, umbral: THETA, porPunto, porCamion, prueba: pr, erroresPrueba }, null, 2) + '\n')
+fs.writeFileSync(path.join(root, `outputs/demostracion_lote/lote_${WEEK ? `semana_${W_FROM}_${W_TO}` : DAY}${Q ? `_Q${Q}` : ''}${MUESTRA ? `_muestra_${MUESTRA.join('Q')}` : ''}.json`), JSON.stringify({ dia: DAY, umbral: THETA, porPunto, porCamion, prueba: pr, erroresPrueba, eliminacion: { pasos: porEliminacion.length, prueba: pruebaElim } }, null, 2) + '\n')
