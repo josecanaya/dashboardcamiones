@@ -469,7 +469,9 @@ for (const c of front) {
 const porPunto = {}
 const porCamion = []
 for (const m of lote.filter((x) => x.inSample)) {
-  const st = m.exp.map((n) => m.status.get(n)?.via ?? null)
+  // La prueba (patente borrada a 1 de cada 4 lecturas buenas) mide el algoritmo, pero esa captura la leyó
+  // la cámara: en los totales cuenta como «cámara», no como «reconstruida».
+  const st = m.exp.map((n) => { const s = m.status.get(n); return s?.via === 'reconstruida' && s.prueba ? 'camara' : s?.via ?? null })
   const filledIdx = st.map((v, i) => (v ? i : -1)).filter((i) => i >= 0)
   const lastFilled = filledIdx.at(-1) ?? -1
   // Deducido: sin captura, pero el camión se identificó en un punto posterior de su circuito.
