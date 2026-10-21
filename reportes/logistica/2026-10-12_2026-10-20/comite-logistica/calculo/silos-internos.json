@@ -43,6 +43,7 @@
    },
    "cicloMedianaMin": 55,
    "nocturnos": 31,
+   "horasActivas": 65,
    "primero": "2026-10-13T10:23",
    "ultimo": "2026-10-20T11:49",
    "excel": {
@@ -98,6 +99,7 @@
    },
    "cicloMedianaMin": 57,
    "nocturnos": 32,
+   "horasActivas": 73,
    "primero": "2026-10-13T08:29",
    "ultimo": "2026-10-20T11:26",
    "excel": {
@@ -160,6 +162,7 @@
    },
    "cicloMedianaMin": 54,
    "nocturnos": 18,
+   "horasActivas": 52,
    "primero": "2026-10-16T13:57",
    "ultimo": "2026-10-20T10:22",
    "excel": {
@@ -291,6 +294,193 @@
   11,
   9,
   15
+ ],
+ "cuartos": [
+  {
+   "dia": "2026-10-13",
+   "q": "Q2",
+   "viajes": 1,
+   "porCamion": {
+    "LFT141": 1
+   }
+  },
+  {
+   "dia": "2026-10-13",
+   "q": "Q3",
+   "viajes": 1,
+   "porCamion": {
+    "NLR442": 1
+   }
+  },
+  {
+   "dia": "2026-10-16",
+   "q": "Q3",
+   "viajes": 3,
+   "porCamion": {
+    "NLR442": 1,
+    "AYM824": 2
+   }
+  },
+  {
+   "dia": "2026-10-16",
+   "q": "Q4",
+   "viajes": 12,
+   "porCamion": {
+    "NLR442": 4,
+    "LFT141": 5,
+    "AYM824": 3
+   }
+  },
+  {
+   "dia": "2026-10-17",
+   "q": "Q1",
+   "viajes": 14,
+   "porCamion": {
+    "NLR442": 5,
+    "LFT141": 6,
+    "AYM824": 3
+   }
+  },
+  {
+   "dia": "2026-10-17",
+   "q": "Q2",
+   "viajes": 5,
+   "porCamion": {
+    "NLR442": 2,
+    "LFT141": 2,
+    "AYM824": 1
+   }
+  },
+  {
+   "dia": "2026-10-17",
+   "q": "Q3",
+   "viajes": 5,
+   "porCamion": {
+    "NLR442": 1,
+    "LFT141": 2,
+    "AYM824": 2
+   }
+  },
+  {
+   "dia": "2026-10-17",
+   "q": "Q4",
+   "viajes": 13,
+   "porCamion": {
+    "NLR442": 4,
+    "LFT141": 4,
+    "AYM824": 5
+   }
+  },
+  {
+   "dia": "2026-10-18",
+   "q": "Q1",
+   "viajes": 18,
+   "porCamion": {
+    "NLR442": 7,
+    "LFT141": 7,
+    "AYM824": 4
+   }
+  },
+  {
+   "dia": "2026-10-18",
+   "q": "Q2",
+   "viajes": 17,
+   "porCamion": {
+    "NLR442": 6,
+    "LFT141": 5,
+    "AYM824": 6
+   }
+  },
+  {
+   "dia": "2026-10-18",
+   "q": "Q3",
+   "viajes": 19,
+   "porCamion": {
+    "NLR442": 7,
+    "LFT141": 7,
+    "AYM824": 5
+   }
+  },
+  {
+   "dia": "2026-10-18",
+   "q": "Q4",
+   "viajes": 16,
+   "porCamion": {
+    "NLR442": 5,
+    "LFT141": 6,
+    "AYM824": 5
+   }
+  },
+  {
+   "dia": "2026-10-19",
+   "q": "Q1",
+   "viajes": 15,
+   "porCamion": {
+    "NLR442": 6,
+    "LFT141": 6,
+    "AYM824": 3
+   }
+  },
+  {
+   "dia": "2026-10-19",
+   "q": "Q2",
+   "viajes": 10,
+   "porCamion": {
+    "NLR442": 2,
+    "LFT141": 4,
+    "AYM824": 4
+   }
+  },
+  {
+   "dia": "2026-10-19",
+   "q": "Q3",
+   "viajes": 14,
+   "porCamion": {
+    "NLR442": 5,
+    "LFT141": 5,
+    "AYM824": 4
+   }
+  },
+  {
+   "dia": "2026-10-19",
+   "q": "Q4",
+   "viajes": 17,
+   "porCamion": {
+    "NLR442": 6,
+    "LFT141": 6,
+    "AYM824": 5
+   }
+  },
+  {
+   "dia": "2026-10-20",
+   "q": "Q1",
+   "viajes": 15,
+   "porCamion": {
+    "NLR442": 6,
+    "LFT141": 6,
+    "AYM824": 3
+   }
+  },
+  {
+   "dia": "2026-10-20",
+   "q": "Q2",
+   "viajes": 14,
+   "porCamion": {
+    "NLR442": 4,
+    "LFT141": 6,
+    "AYM824": 4
+   }
+  },
+  {
+   "dia": "2026-10-20",
+   "q": "Q3",
+   "viajes": 5,
+   "porCamion": {
+    "NLR442": 3,
+    "LFT141": 1,
+    "AYM824": 1
+   }
+  }
  ],
  "otros": [
   {

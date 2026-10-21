@@ -2,7 +2,7 @@
  "v": 4,
  "createdOnFiles": {
   "v": 1,
-  "at": "2026-10-21T18:35:49Z"
+  "at": "2026-10-21T18:54:23Z"
  },
  "lists": "css",
  "title": "Comité de Logística Nodo Sur · 12 – 20 oct",
@@ -28,6 +28,8 @@
   "calada",
   "volcables",
   "silos",
+  "silos-camiones",
+  "silos-ritmo",
   "cruces"
  ],
  "cover": "portada",

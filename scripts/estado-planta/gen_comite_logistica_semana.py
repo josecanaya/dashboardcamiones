@@ -894,6 +894,62 @@ if SI_OK:
         + 'Otras lecturas en silos: ' + '; '.join(f'{o["patente"]} ({", ".join(f"{k} {v}" for k, v in o["lecturas"].items())}; planilla: {", ".join(o["excel"]) or "sin movimiento"})' for o in SI['otros'] if sum(o['lecturas'].values()) >= 3) + '. '
         + f'El paquete del dashboard contó {SIL["camiones"]} recorridos en silos porque une las lecturas de cada camión en un solo recorrido por día.', gap=24)
 
+    # ---- los camiones del transile interno: foto de carga y de descarga (calculo/silos-fotos.json, capturas del DSS)
+    SF = JC('silos-fotos.json') if os.path.exists(os.path.join(CAL_DIR, 'silos-fotos.json')) else {}
+    TCOL = [GDK, VMID, BLU]
+    QD = [x for x in SI['cuartos'] if x['viajes'] >= 3]                    # el operativo, sin viajes sueltos de otros días
+    if QD:
+        i0 = SI['cuartos'].index(QD[0]); i1 = SI['cuartos'].index(QD[-1]); QD = SI['cuartos'][i0:i1 + 1]
+    def colcam(k, c):
+        fs = SF.get(c['patente'], [])
+        img = ''.join(f'<div style="display:flex; flex-direction:column; gap:6px"><img src="{f[0]}" alt="{c["patente"]}: {f[2].lower()}, {f[1]}" style="width:520px; height:224px; object-fit:cover; border-radius:12px">'
+                      f'<p style="font-size:24px; color:{BODY}"><b style="color:{TEXT}">{f[2]}</b> · {f[1]}</p></div>' for f in fs[:2])
+        d = c['destinos']
+        return (f'<div style="flex:1; display:flex; flex-direction:column; gap:12px"><div style="display:flex; flex-direction:row; align-items:baseline; gap:16px; border-bottom:6px solid {TCOL[k % 3]}; padding:0px 0px 6px 0px">'
+                f'<h3 style="font-size:44px; font-weight:600; color:{TEXT}">{c["patente"]}</h3><p style="font-size:28px; font-weight:600; color:{TCOL[k % 3]}">{c["viajes"]} viajes</p></div>{img}'
+                f'<p style="font-size:24px; line-height:1.35; color:{BODY}">Uno cada {c["cicloMedianaMin"]} min · {c["nocturnos"]} de noche · {d.get("volcable2", 0)} con descarga leída en la volcable 2</p></div>')
+    if SF:
+        section('silos-camiones', head('Sectores · silos Ricardone', f'Los {num_txt(len(IN))} camiones del transile interno', GDK, 56)
+            + '<div style="display:flex; flex-direction:row; gap:32px">' + ''.join(colcam(k, c) for k, c in enumerate(IN)) + '</div>',
+            'Capturas del DSS (scripts/estado-planta/fotos-dss.cjs) de una carga en el silo y una descarga en la volcable 2 de cada camión, el 18/10 entre las 13 y las 15 h. '
+            + 'Por camión: ' + '; '.join(f'{c["patente"]} {c["viajes"]} viajes, ciclo mediano {c["cicloMedianaMin"]} min, {c["nocturnos"]} de noche, primero {c["primero"][8:10]}/{c["primero"][5:7]} {c["primero"][11:16]}, último {c["ultimo"][8:10]}/{c["ultimo"][5:7]} {c["ultimo"][11:16]}' for c in IN) + '.', gap=32)
+    # ---- ritmo de trabajo: viajes por cuarto del día operativo, total y por camión
+    if len(QD) >= 4:
+        qv = [x['viajes'] for x in QD]; qn = len(qv)
+        WCH, X0c, Y0c, Hc = 1060, 160, 420, 340
+        vmax = max(20, -(-max(qv) // 5) * 5)
+        xy = lambda i, v: (X0c + round(i * WCH / (qn - 1)), Y0c + round((vmax - v) / vmax * Hc))
+        pts = [xy(i, v) for i, v in enumerate(qv)]
+        avg_q = round(sum(qv) / qn, 1)
+        svg = f'<svg aria-label="Viajes por cuarto del día, {QD[0]["dia"][8:]} a {QD[-1]["dia"][8:]}/10" viewBox="0 0 {WCH + 40} {Hc + 40}" width="{WCH + 40}" height="{Hc + 40}" style="position:absolute; left:{X0c - 20}px; top:{Y0c - 20}px; width:{WCH + 40}px; height:{Hc + 40}px">'
+        svg += ''.join(f'<line x1="20" y1="{20 + g * Hc // 4}" x2="{WCH + 20}" y2="{20 + g * Hc // 4}" stroke="{LINE}" stroke-width="2"/>' for g in range(5))
+        ay = xy(0, avg_q)[1] - Y0c + 20
+        svg += f'<line x1="20" y1="{ay}" x2="{WCH + 20}" y2="{ay}" stroke="{BODY}" stroke-width="2" stroke-dasharray="8 8"/>'
+        for k, c in enumerate(IN):   # una línea fina por camión
+            cp = [xy(i, x['porCamion'].get(c['patente'], 0)) for i, x in enumerate(QD)]
+            svg += f'<polyline fill="none" stroke="{TCOL[k % 3]}" stroke-width="3" stroke-opacity="0.55" stroke-linejoin="round" points="' + ' '.join(f'{x - X0c + 20},{y - Y0c + 20}' for x, y in cp) + '"/>'
+        svg += f'<polyline fill="none" stroke="{TEXT}" stroke-width="5" stroke-linejoin="round" points="' + ' '.join(f'{x - X0c + 20},{y - Y0c + 20}' for x, y in pts) + '"/>'
+        svg += ''.join(f'<circle cx="{x - X0c + 20}" cy="{y - Y0c + 20}" r="6" fill="{TEXT}"/>' for x, y in pts) + '</svg>'
+        labs = ''.join(f'<p style="position:absolute; left:{x - 30}px; top:{y - 46}px; width:60px; text-align:center; font-size:24px; font-weight:600; color:{TEXT}">{qv[i]}</p>'
+                       f'<p style="position:absolute; left:{x - 30}px; top:{Y0c + Hc + 20}px; width:60px; text-align:center; font-size:24px; color:{BODY}">{QD[i]["q"]}</p>' for i, (x, y) in enumerate(pts))
+        dias_q = {}
+        for i, x in enumerate(QD): dias_q.setdefault(x['dia'], []).append(pts[i][0])
+        labs += ''.join(f'<p style="position:absolute; left:{min(xs) - 60}px; top:{Y0c + Hc + 56}px; width:{max(xs) - min(xs) + 120}px; text-align:center; font-size:24px; font-weight:600; color:{TEXT}">{["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"][wd(d)]} {dd(d)}</p>' for d, xs in dias_q.items())
+        pk = max(range(qn), key=lambda i: qv[i]); inner = list(range(1, qn - 1)) or list(range(qn)); lo = min(inner, key=lambda i: qv[i])
+        dlab = lambda x: f'{["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"][wd(x["dia"])]} {dd(x["dia"])} ({x["q"]})'
+        plenos = sorted(v for v in qv if v >= 0.6 * max(qv)); med_pleno = plenos[len(plenos) // 2]
+        cards = ''.join(ctx(c['patente'], f'{c["viajes"]}', [x['porCamion'].get(c['patente'], 0) for x in QD], TCOL[k % 3],
+                            f'uno cada {c["cicloMedianaMin"]} min · {c["nocturnos"]} de noche') for k, c in enumerate(IN))
+        section('silos-ritmo', head('Sectores · silos Ricardone', f'El ritmo del transile interno: {med_pleno} viajes por cuarto de 6 h con los {num_txt(len(IN))} camiones andando', GDK, 56)
+            + legend([('Total', TEXT)] + [(c['patente'], TCOL[k % 3]) for k, c in enumerate(IN)], f'<div style="width:24px"></div><p style="font-size:24px; color:{BODY}">Promedio: {str(avg_q).replace(".", ",")} por cuarto (punteada)</p>')
+            + svg + labs
+            + f'<div style="position:absolute; left:1300px; top:290px; width:492px; display:flex; flex-direction:column; gap:12px">{cards}</div>'
+            + f'<div style="position:absolute; left:128px; top:880px; width:1100px">' + key(f'Pico: {qv[pk]} viajes el {dlab(QD[pk])}. El cuarto más flojo con el operativo en marcha fue el {dlab(QD[lo])}, con {qv[lo]}.', 24) + '</div>',
+            'Viajes de transile interno (carga en silo, scripts/estado-planta/silos-internos.py) por cuarto del día operativo: Q1 22–04, Q2 04–10, Q3 10–16, Q4 16–22 (el día operativo empieza a las 22 h del día anterior). '
+            + 'Por cuarto: ' + ', '.join(f'{x["dia"][8:10]}/{x["dia"][5:7]} {x["q"]} {x["viajes"]} (' + ', '.join(f'{k} {v}' for k, v in x['porCamion'].items()) + ')' for x in QD) + '. '
+            + f'Por camión, viajes por hora con actividad: ' + ', '.join(f'{c["patente"]} {round(c["viajes"] / c["horasActivas"], 1)}' for c in IN) + '. El último cuarto ({dlab(QD[-1])}) es el cierre del operativo.', gap=24)
+
+
 sbars = daybars(SIL['porDia'], days, lambda i, v: GDK if v >= 5 else GLT, 380, 64)
 silcam = SIL['porCalle']
 section('silos-old' if SI_OK else 'silos', head('Sectores · silos Ricardone', 'Silos: transiles internos en Ricardone, sin envíos al puerto' if SIL_INT else 'Silos casi quietos: no hubo transile R29' if not r29['metricas']['total'] else f'Silos: {r29["metricas"]["total"]} transiles R29', cam=True)
@@ -926,7 +982,7 @@ add('cruces', f'<section id="cruces" data-transition="fade" style="background:{V
 # ------------------------------------------------------------------ write
 ORDER = ['portada', 'resumen-planta', 'dia-a-dia', 'div-soja', 'tramos-r7', 'resumen-soja', 'hallazgo', 'plantas', 'cuartos', 'historico',
          'div-pellet', 'pel-periodo', 'pel-tramos', 'pel-dias', 'pel-jornadas', 'pel-numeros', 'pellet-operativo', 'pellet-tramos', 'pellet-hist', 'div-girasol', 'girasol', 'girasol-hist',
-         'div-liquidos', 'liq-criterio', 'liq-productos', 'liq-tramos', 'liq-semana', 'div-sectores', 'calada', 'volcables', 'volcables-mes', 'silos', 'cruces']
+         'div-liquidos', 'liq-criterio', 'liq-productos', 'liq-tramos', 'liq-semana', 'div-sectores', 'calada', 'volcables', 'volcables-mes', 'silos', 'silos-camiones', 'silos-ritmo', 'cruces']
 if LCW: slides = [x for x in slides if x[0] != 'liq-criterio']
 ORDER = [o for o in ORDER if o in {i for i, _ in slides}]
 slides = sorted([x for x in slides if x[0] in ORDER], key=lambda x: ORDER.index(x[0]))   # las láminas fuera del orden (p. ej. silos-old) no se escriben

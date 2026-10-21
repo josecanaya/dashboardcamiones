@@ -76,6 +76,7 @@ inter = [p for p in keep if any(v['destino'] != 'sinLectura' for v in viajes(sor
 med = lambda a: (sorted(a)[len(a) // 2] if a else None)
 porDia = {d: {'viajes': 0, 'silo7': 0, 'silo8': 0, 'volcable2': 0, 'aSilo7': 0, 'sinLectura': 0, 'camiones': 0} for d in DAYS}
 porHora = [0] * 24
+cuartos = {}
 cam = []
 for p in inter:
     vs = viajes(sorted(ev[p]))
@@ -87,10 +88,13 @@ for p in inter:
         porHora[v['t'].hour] += 1
     xl = [r for r in mov[p].values() if (r.get('external_ingreso_at') or '')[:10] in DAYS or (r.get('external_salida_at') or '')[:10] in DAYS]
     noche = sum(1 for v in vs if v['t'].hour >= 22 or v['t'].hour < 6)
+    for v in vs:   # cuartos del día operativo (desde las 22 h): Q1 22–04, Q2 04–10, Q3 10–16, Q4 16–22
+        o = v['t'] + dt.timedelta(hours=2); k = f'{o.date().isoformat()}|Q{o.hour // 6 + 1}'
+        cuartos.setdefault(k, collections.Counter())[p] += 1
     cam.append({'patente': p, 'alias': sorted(a for a, q in alias.items() if q == p), 'dias': len(cuenta_dia(vs)), 'viajes': len(vs),
                 'silos': dict(collections.Counter(v['silo'] for v in vs)), 'destinos': dict(collections.Counter(v['destino'] for v in vs)),
                 'porDia': dict(sorted(cuenta_dia(vs).items())), 'cicloMedianaMin': (round(med([v['ciclo'] for v in vs if v['ciclo'] and v['ciclo'] < 120])) if vs else None),
-                'nocturnos': noche, 'primero': vs[0]['t'].isoformat(timespec='minutes'), 'ultimo': vs[-1]['t'].isoformat(timespec='minutes'),
+                'nocturnos': noche, 'horasActivas': len({v['t'].replace(minute=0, second=0, microsecond=0) for v in vs}), 'primero': vs[0]['t'].isoformat(timespec='minutes'), 'ultimo': vs[-1]['t'].isoformat(timespec='minutes'),
                 'excel': {'filas': len(xl), 'producto': sorted({r['product_normalized'] for r in xl}), 'planta': sorted({r['planta_normalized'] for r in xl}), 'mov': sorted({r['mov'] for r in xl}),
                           'kgsNeto': sum(float(r.get('kgs_neto') or 0) for r in xl), 'turnos': [(r['external_ingreso_at'][5:16], r['external_salida_at'][5:16]) for r in xl]}})
 otros = []
@@ -102,7 +106,8 @@ for p, es in ev.items():
 out = {'criterio': 'camiones con 3 o más viajes desde el silo 7 (RicS7Carga) o el silo 8 (RicS8CargaLinea1/2) en un mismo día; viaje = carga sin repetir a menos de 15 min, '
                    'destino = primera descarga leída antes de la carga siguiente; hora operativa = occurredAt + 206 min; cruce con data/movimientos por patente',
        'periodo': {'desde': DESDE, 'hasta': HASTA, 'dias': DAYS}, 'viajes': sum(c['viajes'] for c in cam),
-       'internos': cam, 'porDia': porDia, 'porHora': porHora, 'otros': sorted(otros, key=lambda o: o['patente'])}
+       'internos': cam, 'porDia': porDia, 'porHora': porHora,
+       'cuartos': [{'dia': k.split('|')[0], 'q': k.split('|')[1], 'viajes': sum(c.values()), 'porCamion': dict(c)} for k, c in sorted(cuartos.items())], 'otros': sorted(otros, key=lambda o: o['patente'])}
 json.dump(out, open(OUT, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 print(json.dumps({'viajes': out['viajes'], 'internos': [(c['patente'], c['viajes'], c['silos'], c['destinos'], c['alias']) for c in cam],
                   'porDia': {d: v['viajes'] for d, v in porDia.items()}}, ensure_ascii=False))
