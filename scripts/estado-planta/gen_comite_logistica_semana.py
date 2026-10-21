@@ -757,6 +757,94 @@ section('liq-semana', head('Líquidos · la semana', (f'{fmtn(LCW["total"]["n"])
     f'Visitas por día (Terminal/Ricardone): ' + ', '.join(f'{days[i].lower()} {LC["porDia"][d]["TER"]}/{LC["porDia"][d]["RIC"]}' for i, d in enumerate(DAYS)) + '. Desde el 05/10 la cámara RenDescFte (descarga OSL) lee camiones; antes solo leía la de carga. No son movimientos: ' + ('la planilla dará cargas y descargas por producto.' if CAMARAS else 'los movimientos de la planilla, por planta y sentido, van en la nota de la derecha.'), gap=28)
 
 # ------------------------------------------------------------------ sectores
+# ---- líquidos: aceite que entra a Ricardone (liquidos-ricardone-ingresos.py) y ritmo por cuarto (liquidos-criterio.cjs)
+RI = JC('liquidos-ricardone-ingresos.json') if os.path.exists(os.path.join(CAL_DIR, 'liquidos-ricardone-ingresos.json')) else None
+RIA = JC('liquidos-ricardone-ingresos-anterior.json') if os.path.exists(os.path.join(CAL_DIR, 'liquidos-ricardone-ingresos-anterior.json')) else None
+DIAS_L = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
+hfmt = lambda m: (f'{m // 60} h {m % 60:02d}' if m >= 60 else f'{m} min') if m is not None else '—'
+hdec = lambda m: str(round(m / 60, 1)).replace('.', ',')
+def lchart(series, labels, vmax, X0, Y0, W, H, label_fn, sub=None, seps=None):
+    """Líneas con el valor en cada punto (label_fn decide qué puntos llevan número). series = [(valores, color, ancho)]."""
+    n = len(labels)
+    xy = lambda i, v: (X0 + round(i * W / (n - 1)), Y0 + round((vmax - v) / vmax * H))
+    out = f'<svg aria-label="Serie de {labels[0]} a {labels[-1]}" viewBox="0 0 {W + 40} {H + 40}" width="{W + 40}" height="{H + 40}" style="position:absolute; left:{X0 - 20}px; top:{Y0 - 20}px; width:{W + 40}px; height:{H + 40}px">'
+    out += ''.join(f'<line x1="20" y1="{20 + g * H // 4}" x2="{W + 20}" y2="{20 + g * H // 4}" stroke="{LINE}" stroke-width="2"/>' for g in range(5))
+    for x in (seps or []): out += f'<line x1="{x - X0 + 20}" y1="20" x2="{x - X0 + 20}" y2="{H + 20}" stroke="{LINE}" stroke-width="2" stroke-dasharray="4 6"/>'
+    txt = ''
+    for ser in series:
+        vals, col, wdt = ser[:3]; below = len(ser) > 3 and ser[3]
+        pts = [None if v is None else xy(i, v) for i, v in enumerate(vals)]
+        seg = [q for q in pts if q]
+        out += f'<polyline fill="none" stroke="{col}" stroke-width="{wdt}" stroke-linejoin="round" points="' + ' '.join(f'{x - X0 + 20},{y - Y0 + 20}' for x, y in seg) + '"/>'
+        out += ''.join(f'<circle cx="{q[0] - X0 + 20}" cy="{q[1] - Y0 + 20}" r="{6 if wdt >= 4 else 4}" fill="{col}"/>' for q in seg)
+        txt += ''.join(f'<p style="position:absolute; left:{q[0] - 50}px; top:{q[1] + (12 if below else -46)}px; width:100px; text-align:center; font-size:24px; font-weight:600; color:{col}">{label_fn(vals, i)}</p>'
+                       for i, q in enumerate(pts) if q and label_fn(vals, i))
+    for i, l in enumerate(labels):
+        if l: txt += f'<p style="position:absolute; left:{xy(i, 0)[0] - 60}px; top:{Y0 + H + 20}px; width:120px; text-align:center; font-size:24px; font-weight:600; color:{TEXT}">{l}</p>'
+    if sub:
+        for i, l in enumerate(sub):
+            if l: txt += f'<p style="position:absolute; left:{xy(i, 0)[0] - 60}px; top:{Y0 + H + 54}px; width:120px; text-align:center; font-size:24px; color:{BODY}">{l}</p>'
+    return out + '</svg>' + txt, xy
+
+if RI and RI['total']['camiones']:
+    T_ = RI['total']; PD = RI['porDia']
+    dl = [d for d in DAYS if PD[d]['camiones']]
+    v_pl = [PD[d]['adentroMediana'] / 60 for d in dl]; v_cm = [(PD[d]['caladaAEgresoMediana'] / 60 if PD[d]['caladaAEgresoMediana'] else None) for d in dl]
+    vmx = max(4, -(-max(v_pl + [x for x in v_cm if x]) // 4) * 4)
+    chart, _ = lchart([(v_pl, BLU, 5), (v_cm, BMID, 3, True)], [f'{DIAS_L[wd(d)]} {dd(d)}' for d in dl], vmx, 200, 400, 1000, 360,
+                      lambda vals, i: str(round(vals[i], 1)).replace('.', ',') + ' h' if vals[i] is not None else '', sub=[f'{PD[d]["camiones"]} cam.' for d in dl])
+    prod = max(RI['productos'], key=RI['productos'].get).lower().replace('acgirasol', 'girasol')
+    ms = RI['maxSimultaneos']; msat = f'{ms["at"][8:10]}/{ms["at"][5:7]} {ms["at"][11:16]}' if ms['at'] else ''
+    big = max(dl, key=lambda d: PD[d]['adentroMediana']); gap_d = [d for d in dl if PD[d]['caladaAEgresoMediana'] and PD[d]['adentroMediana'] - PD[d]['caladaAEgresoMediana'] > 180]
+    section('liq-oleico', head('Líquidos · Ricardone', f'Entró aceite de {prod} a Ricardone: {T_["camiones"]} camiones, {hdec(T_["adentroMediana"])} h adentro', BLU, 56)
+        + legend([('Horas adentro, según planilla (mediana)', BLU), ('Calada de líquidos → balanza de egreso, por cámaras', BMID)])
+        + chart
+        + '<div style="position:absolute; left:1300px; top:290px; width:492px; display:flex; flex-direction:column; gap:14px">'
+        + note(f'{T_["camiones"]} · {fmtn(T_["toneladas"])} t', f'camiones en {len(dl)} días' + ('; el comité anterior no tuvo ninguno.' if RIA is not None and not RIA['total']['camiones'] else '.'), BLU, BLU)
+        + note(f'{T_["ingresoACaladaMediana"]} min', 'del ingreso a la calada de líquidos: no espera para entrar.', BMID)
+        + note(hfmt(T_['caladaAEgresoMediana']), 'de la calada a la balanza de egreso, sin lecturas en el medio: la descarga no tiene cámara.', BMID)
+        + note(f'{ms["n"]}', f'adentro a la vez ({msat}); salió uno cada {RI["minEntreSalidasMediana"]} min.', GLT)
+        + '</div>'
+        + f'<div style="position:absolute; left:128px; top:870px; width:1120px">' + key('El tiempo se va en la descarga, después de la calada. Para ver con la planta: cuántos camiones de oleico puede descargar a la vez.', 24) + '</div>',
+        f'{RI["criterio"]}. Productos: ' + ', '.join(f'{k} {v}' for k, v in RI['productos'].items()) + f'. Fuentes: ' + ', '.join(f'{k} {v}' for k, v in RI['fuentes'].items()) + '. Por día (camiones, t, mediana adentro, ingreso→calada, calada→egreso, con cámaras): '
+        + '; '.join(f'{dd(d)}/{d[5:7]} {PD[d]["camiones"]}, {PD[d]["toneladas"]} t, {hfmt(PD[d]["adentroMediana"])}, {PD[d]["ingresoACaladaMediana"]} min, {hfmt(PD[d]["caladaAEgresoMediana"])}, {PD[d]["conCamaras"]}' for d in dl)
+        + f'. scripts/estado-planta/liquidos-ricardone-ingresos.py.' + (' Ojo: ' + ', '.join(f'el {dd(d)}/{d[5:7]} la planilla da {hfmt(PD[d]["adentroMediana"])} y las cámaras {hfmt(PD[d]["caladaAEgresoMediana"])} de calada a egreso' for d in gap_d) + ': revisar las horas de la planilla de esos días.' if gap_d else ''), gap=24)
+
+LQC = JC('liquidos-criterio.json') if os.path.exists(os.path.join(CAL_DIR, 'liquidos-criterio.json')) else None
+LQA = JC('liquidos-criterio-anterior.json') if os.path.exists(os.path.join(CAL_DIR, 'liquidos-criterio-anterior.json')) else None
+if LQC and LQC.get('cuartos') and LQC['total']['n']:
+    QL = LQC['cuartos']; nq = len(QL)
+    K_T, K_R = 'TERMINAL_EMBARQUE · EGRESO', 'RICARDONE · INGRESO'
+    vt = [x['porPlantaSentido'][K_T] for x in QL]; vr = [x['porPlantaSentido'][K_R] for x in QL]
+    def pico_dia(vals, i):   # número solo en el cuarto más alto de cada día
+        d = QL[i]['dia']; idx = [k for k in range(nq) if QL[k]['dia'] == d]
+        return str(vals[i]) if vals[i] and i == max(idx, key=lambda k: vals[k]) else ''
+    X0q, Wq = 160, 1060
+    seps = [X0q + round(k * Wq / (nq - 1)) - round(Wq / (nq - 1) / 2) for k in range(4, nq, 4)]
+    labs = [f'{DIAS_L[wd(x["dia"])]} {dd(x["dia"])}' if x['q'] == 'Q3' else '' for x in QL]
+    vmq = max(10, -(-max(vt + vr) // 5) * 5)
+    chart, _ = lchart([(vt, BLU, 5), (vr, VMID, 4)], labs, vmq, X0q, 420, Wq, 340, pico_dia, seps=seps)
+    NA = len(LQA['dias']) if LQA else None
+    fam_lbl = lambda k: (lambda pl, fa, se: f'{"Terminal" if pl.startswith("TERMINAL") else "Ricardone"} · {"cargas" if se == "EGRESO" else "descargas"} de {fa}')(*k.split(' · '))
+    top = list(LQC['porPlantaFamiliaSentido'].items())[:2]   # las dos familias principales; el resto va en las notas
+    def ccard(k, v, col):
+        a = (LQA or {}).get('porPlantaFamiliaSentido', {}).get(k)
+        sub = (f'antes {str(round(a["n"] / NA, 1)).replace(".", ",")} · mediana {v["mediana"]} min (antes {a["mediana"]})' if a else f'mediana {v["mediana"]} min · antes no hubo')
+        return ctx(fam_lbl(k), str(round(v['n'] / N, 1)).replace('.', ','), LQC['porFamiliaDia'][k], col, 'por día · ' + sub)
+    cards = ''.join(ccard(k, v, [BLU, VMID, GMID][i]) for i, (k, v) in enumerate(top))
+    per_q = collections.Counter(); [per_q.update({x['q']: x['porPlantaSentido'][K_T] + x['porPlantaSentido'][K_R]}) for x in QL]
+    qmax = max(per_q, key=per_q.get); QH = {'Q1': '22 a 4', 'Q2': '4 a 10', 'Q3': '10 a 16', 'Q4': '16 a 22'}
+    noche = per_q['Q1'] / (sum(per_q.values()) or 1)
+    section('liq-ritmo', head('Líquidos · ritmo', f'El ritmo de líquidos: la Terminal cargó {str(round(sum(vt) / N, 1)).replace(".", ",")} camiones por día y Ricardone descargó {str(round(sum(vr) / N, 1)).replace(".", ",")}', BLU, 56)
+        + legend([('Terminal · cargas', BLU), ('Ricardone · descargas', VMID)], f'<div style="width:24px"></div><p style="font-size:24px; color:{BODY}">Camiones por cuarto del día</p>')
+        + chart
+        + f'<div style="position:absolute; left:1300px; top:290px; width:492px; display:flex; flex-direction:column; gap:14px">{cards}</div>'
+        + f'<div style="position:absolute; left:128px; top:870px; width:1120px">' + key(f'Los líquidos entran sobre todo de {QH[qmax]} h ({qmax}, {round(per_q[qmax] / (sum(per_q.values()) or 1) * 100)} % de los camiones); de noche (Q1) entró el {round(noche * 100)} %.', 24) + '</div>',
+        'Movimientos de líquidos de la planilla (liquidos-criterio.cjs): por cuarto del día operativo según la hora de ingreso; el número marca el cuarto más alto de cada día. '
+        + 'Terminal · cargas por cuarto: ' + ', '.join(map(str, vt)) + '. Ricardone · descargas por cuarto: ' + ', '.join(map(str, vr)) + '. '
+        + 'Resto: ' + '; '.join(f'{fam_lbl(k)} {str(round(v["n"] / N, 1)).replace(".", ",")} por día, mediana {v["mediana"]} min' for k, v in list(LQC['porPlantaFamiliaSentido'].items())[2:]) + '. '
+        + 'Tarjetas: las dos familias con más movimientos, por día contra el comité anterior (' + (f'{ANT_LBL}, {NA} días' if LQA else 'sin dato') + ').', gap=24)
+
 divider('div-sectores', '05', 'Sectores', 'Calada, volcables y silos: dónde se concentró la actividad de la semana.', GDK, GLT)
 calles = sorted([(f'Calle {k[-1]}', v) for k, v in CAL['porCalle'].items()] + [(f'Calle {n}', 0) for n in '123456' if f'RicCal0{n}' not in CAL['porCalle']], key=lambda x: -x[1])
 ccol = [GDK, GDK, GLT, GLT, GXLT, GXLT]
@@ -982,14 +1070,16 @@ add('cruces', f'<section id="cruces" data-transition="fade" style="background:{V
 # ------------------------------------------------------------------ write
 ORDER = ['portada', 'resumen-planta', 'dia-a-dia', 'div-soja', 'tramos-r7', 'resumen-soja', 'hallazgo', 'plantas', 'cuartos', 'historico',
          'div-pellet', 'pel-periodo', 'pel-tramos', 'pel-dias', 'pel-jornadas', 'pel-numeros', 'pellet-operativo', 'pellet-tramos', 'pellet-hist', 'div-girasol', 'girasol', 'girasol-hist',
-         'div-liquidos', 'liq-criterio', 'liq-productos', 'liq-tramos', 'liq-semana', 'div-sectores', 'calada', 'volcables', 'volcables-mes', 'silos', 'silos-camiones', 'silos-ritmo', 'cruces']
+         'div-liquidos', 'liq-criterio', 'liq-productos', 'liq-tramos', 'liq-semana', 'liq-oleico', 'liq-ritmo', 'div-sectores', 'calada', 'volcables', 'volcables-mes', 'silos', 'silos-camiones', 'silos-ritmo', 'cruces']
 if LCW: slides = [x for x in slides if x[0] != 'liq-criterio']
 ORDER = [o for o in ORDER if o in {i for i, _ in slides}]
 slides = sorted([x for x in slides if x[0] in ORDER], key=lambda x: ORDER.index(x[0]))   # las láminas fuera del orden (p. ej. silos-old) no se escriben
 for f in os.listdir(SL):
     if f.endswith('.html') and f[:-5] not in ORDER: os.remove(os.path.join(SL, f))
 for k, (i, h) in enumerate(slides):
-    open(os.path.join(SL, f'{i}.html'), 'w', encoding='utf-8').write(h.replace('§N§', str(k + 1)))
+    fp, txt_ = os.path.join(SL, f'{i}.html'), h.replace('§N§', str(k + 1))
+    if os.path.exists(fp) and open(fp, encoding='utf-8').read() == txt_: continue   # igual: no se reescribe (otro proceso puede tenerla abierta)
+    with open(fp, 'w', encoding='utf-8') as fh: fh.write(txt_)
 SECC = [('s1', 'Portada, resumen de la planta y la semana día por día', 'portada'),
         ('s2', 'Soja: tiempos por tramo de R7, resumen, día por día, por planta, por horario y en contexto', 'div-soja'),
         ('s2b', 'Pellet: las dos tandas del transile, comparadas' if PI else 'Pellet: monitoreo del transile de la semana', 'div-pellet'),

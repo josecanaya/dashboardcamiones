@@ -9,7 +9,8 @@ const ROOT = process.env.VICENTIN_ROOT || path.join(__dirname, '..', '..')
 const shift = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 864e5).toISOString().slice(0, 10)
 const ts = s => (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(String(s || '')) ? Date.parse(String(s).slice(0, 16) + ':00-03:00') : null)
 const opDay = s => { const t = ts(s); return t == null ? null : new Date(t - 36e5).toISOString().slice(0, 10) } // hora AR + 2 h
-const fake = p => !p || /^(.)\1+$/.test(p) || p.length < 6
+const cuarto = s => { const t = ts(s); return t == null ? null : 'Q' + (Math.floor(((new Date(t - 3 * 36e5).getUTCHours() + 2) % 24) / 6) + 1) }
+const fake = p =>!p || /^(.)\1+$/.test(p) || p.length < 6
 
 // familia por producto; null = no es líquido
 const FAM = [
@@ -51,6 +52,12 @@ const out = {
   porPlantaFamiliaSentido: group(nodo, r => `${r.planta} · ${r.fam} · ${r.sentido}`),
   porProducto: group(nodo, r => `${r.planta} · ${r.sentido} · ${r.prod}`),
   porDia: Object.fromEntries(dias.map(d => [d, Object.fromEntries(['RICARDONE', 'TERMINAL_EMBARQUE'].map(p => [p, Object.fromEntries(['INGRESO', 'EGRESO'].map(s => [s, nodo.filter(r => r.dia === d && r.planta === p && r.sentido === s).length]))]))])),
+  // por día, cada planta · familia · sentido (para los mini-gráficos)
+  porFamiliaDia: Object.fromEntries(Object.keys(group(nodo, r => `${r.planta} · ${r.fam} · ${r.sentido}`)).map(k => [k, dias.map(d => nodo.filter(r => r.dia === d && `${r.planta} · ${r.fam} · ${r.sentido}` === k).length)])),
+  // cuartos del día operativo por hora de ingreso: Q1 22–04, Q2 04–10, Q3 10–16, Q4 16–22
+  cuartos: dias.flatMap(d => ['Q1', 'Q2', 'Q3', 'Q4'].map(qq => ({ dia: d, q: qq,
+    porPlantaSentido: Object.fromEntries(['TERMINAL_EMBARQUE · EGRESO', 'TERMINAL_EMBARQUE · INGRESO', 'RICARDONE · INGRESO', 'RICARDONE · EGRESO']
+      .map(k => [k, nodo.filter(r => r.dia === d && `${r.planta} · ${r.sentido}` === k && cuarto(r.ingreso) === qq).length])) }))),
   renopack: group(dentro.filter(r => r.planta === 'RENOPACK'), r => `${r.sentido} · ${r.prod}`),
   otrasPlantas: group(dentro.filter(r => !['RICARDONE', 'TERMINAL_EMBARQUE', 'RENOPACK'].includes(r.planta)), r => `${r.planta} · ${r.sentido} · ${r.prod}`),
   otrosSentidos: group(dentro.filter(r => ['RICARDONE', 'TERMINAL_EMBARQUE'].includes(r.planta) && r.sentido !== 'INGRESO' && r.sentido !== 'EGRESO'), r => `${r.planta} · ${r.sentido} · ${r.prod}`),

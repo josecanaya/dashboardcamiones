@@ -98,6 +98,11 @@ def main():
         ax = json.load(open(os.path.join(a.anterior, 'datos.json'), encoding='utf-8'))
         ad = ax['periodo']['days'] if 'periodo' in ax else ax['days']
         run(['node', 'scripts/estado-planta/liquidos-criterio.cjs', ad[0], ad[-1], os.path.join(C, 'liquidos-criterio-anterior.json')])
+    run([sys.executable, 'scripts/estado-planta/liquidos-ricardone-ingresos.py', os.path.join(C, 'liquidos-ricardone-ingresos.json'), a.desde, a.hasta])
+    if not os.path.exists(os.path.join(C, 'liquidos-ricardone-ingresos-anterior.json')):
+        ax = json.load(open(os.path.join(a.anterior, 'datos.json'), encoding='utf-8'))
+        ad = ax['periodo']['days'] if 'periodo' in ax else ax['days']
+        run([sys.executable, 'scripts/estado-planta/liquidos-ricardone-ingresos.py', os.path.join(C, 'liquidos-ricardone-ingresos-anterior.json'), ad[0], ad[-1]])
     run([sys.executable, 'scripts/estado-planta/silos-internos.py', os.path.join(C, 'silos-internos.json'), a.desde, a.hasta])
     if not os.path.exists(os.path.join(C, 'silos-internos-anterior.json')):
         ax = json.load(open(os.path.join(a.anterior, 'datos.json'), encoding='utf-8'))

@@ -2,7 +2,7 @@
  "v": 4,
  "createdOnFiles": {
   "v": 1,
-  "at": "2026-10-21T18:54:23Z"
+  "at": "2026-10-21T19:19:36Z"
  },
  "lists": "css",
  "title": "Comité de Logística Nodo Sur · 12 – 20 oct",
@@ -24,6 +24,8 @@
   "div-liquidos",
   "liq-productos",
   "liq-semana",
+  "liq-oleico",
+  "liq-ritmo",
   "div-sectores",
   "calada",
   "volcables",
