@@ -1,0 +1,293 @@
+{
+ "criterio": "camiones con 3 o más viajes desde el silo 7 (RicS7Carga) o el silo 8 (RicS8CargaLinea1/2) en un mismo día; viaje = carga sin repetir a menos de 15 min, destino = primera descarga leída antes de la carga siguiente; hora operativa = occurredAt + 206 min; cruce con data/movimientos por patente",
+ "periodo": {
+  "desde": "2026-10-05",
+  "hasta": "2026-10-11",
+  "dias": [
+   "2026-10-05",
+   "2026-10-06",
+   "2026-10-07",
+   "2026-10-08",
+   "2026-10-09",
+   "2026-10-10",
+   "2026-10-11"
+  ]
+ },
+ "viajes": 43,
+ "internos": [
+  {
+   "patente": "NLR442",
+   "alias": [],
+   "dias": 5,
+   "viajes": 23,
+   "silos": {
+    "7": 23
+   },
+   "destinos": {
+    "volcable2": 11,
+    "sinLectura": 2,
+    "silo7": 10
+   },
+   "porDia": {
+    "2026-10-05": 4,
+    "2026-10-06": 3,
+    "2026-10-07": 4,
+    "2026-10-08": 6,
+    "2026-10-09": 6
+   },
+   "cicloMedianaMin": 79,
+   "nocturnos": 0,
+   "primero": "2026-10-05T08:01",
+   "ultimo": "2026-10-09T15:41",
+   "excel": {
+    "filas": 5,
+    "producto": [
+     "PRODUCTOS VARIOS"
+    ],
+    "planta": [
+     "RICARDONE"
+    ],
+    "mov": [
+     "E"
+    ],
+    "kgsNeto": -40.0,
+    "turnos": [
+     [
+      "10-05T07:24",
+      "10-05T16:26"
+     ],
+     [
+      "10-06T07:24",
+      "10-06T16:31"
+     ],
+     [
+      "10-07T07:24",
+      "10-07T16:37"
+     ],
+     [
+      "10-08T07:24",
+      "10-08T19:23"
+     ],
+     [
+      "10-09T07:34",
+      "10-09T19:38"
+     ]
+    ]
+   }
+  },
+  {
+   "patente": "LFT141",
+   "alias": [],
+   "dias": 5,
+   "viajes": 20,
+   "silos": {
+    "7": 20
+   },
+   "destinos": {
+    "volcable2": 7,
+    "sinLectura": 3,
+    "silo7": 10
+   },
+   "porDia": {
+    "2026-10-05": 3,
+    "2026-10-06": 3,
+    "2026-10-07": 4,
+    "2026-10-08": 6,
+    "2026-10-09": 4
+   },
+   "cicloMedianaMin": 85,
+   "nocturnos": 0,
+   "primero": "2026-10-05T11:53",
+   "ultimo": "2026-10-09T15:16",
+   "excel": {
+    "filas": 5,
+    "producto": [
+     "PRODUCTOS VARIOS"
+    ],
+    "planta": [
+     "RICARDONE"
+    ],
+    "mov": [
+     "E"
+    ],
+    "kgsNeto": 200.0,
+    "turnos": [
+     [
+      "10-05T07:24",
+      "10-05T16:28"
+     ],
+     [
+      "10-06T07:25",
+      "10-06T16:33"
+     ],
+     [
+      "10-07T07:26",
+      "10-07T16:33"
+     ],
+     [
+      "10-08T07:23",
+      "10-08T19:22"
+     ],
+     [
+      "10-09T07:33",
+      "10-09T19:37"
+     ]
+    ]
+   }
+  }
+ ],
+ "porDia": {
+  "2026-10-05": {
+   "viajes": 7,
+   "silo7": 7,
+   "silo8": 0,
+   "volcable2": 5,
+   "aSilo7": 0,
+   "sinLectura": 2,
+   "camiones": 2
+  },
+  "2026-10-06": {
+   "viajes": 6,
+   "silo7": 6,
+   "silo8": 0,
+   "volcable2": 5,
+   "aSilo7": 0,
+   "sinLectura": 1,
+   "camiones": 2
+  },
+  "2026-10-07": {
+   "viajes": 8,
+   "silo7": 8,
+   "silo8": 0,
+   "volcable2": 7,
+   "aSilo7": 0,
+   "sinLectura": 1,
+   "camiones": 2
+  },
+  "2026-10-08": {
+   "viajes": 12,
+   "silo7": 12,
+   "silo8": 0,
+   "volcable2": 1,
+   "aSilo7": 11,
+   "sinLectura": 0,
+   "camiones": 2
+  },
+  "2026-10-09": {
+   "viajes": 10,
+   "silo7": 10,
+   "silo8": 0,
+   "volcable2": 0,
+   "aSilo7": 9,
+   "sinLectura": 1,
+   "camiones": 2
+  },
+  "2026-10-10": {
+   "viajes": 0,
+   "silo7": 0,
+   "silo8": 0,
+   "volcable2": 0,
+   "aSilo7": 0,
+   "sinLectura": 0,
+   "camiones": 0
+  },
+  "2026-10-11": {
+   "viajes": 0,
+   "silo7": 0,
+   "silo8": 0,
+   "volcable2": 0,
+   "aSilo7": 0,
+   "sinLectura": 0,
+   "camiones": 0
+  }
+ },
+ "porHora": [
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  2,
+  2,
+  4,
+  6,
+  8,
+  4,
+  4,
+  6,
+  4,
+  2,
+  1,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "otros": [
+  {
+   "patente": "AA317IV",
+   "lecturas": {
+    "RicC16Carga2": 1
+   },
+   "excel": []
+  },
+  {
+   "patente": "AD001TD",
+   "lecturas": {
+    "RicB3Ingreso": 2,
+    "RicC16Carga1": 1
+   },
+   "excel": []
+  },
+  {
+   "patente": "AD545MJ",
+   "lecturas": {
+    "RicB3Egreso": 2,
+    "RicB3Ingreso": 4,
+    "RicS8CargaLinea2": 1
+   },
+   "excel": []
+  },
+  {
+   "patente": "AF804QL",
+   "lecturas": {
+    "RicS7Carga": 1
+   },
+   "excel": [
+    "E semilla con agua/barro"
+   ]
+  },
+  {
+   "patente": "AG644XU",
+   "lecturas": {
+    "RicS7Carga": 1,
+    "RicC16Carga2": 6,
+    "RicC16Carga1": 7,
+    "RicB3Ingreso": 8,
+    "RicB3Egreso": 2,
+    "RicS8CargaLinea2": 2
+   },
+   "excel": []
+  },
+  {
+   "patente": "DDN04",
+   "lecturas": {
+    "RicS8CargaLinea2": 1
+   },
+   "excel": []
+  },
+  {
+   "patente": "MSE380",
+   "lecturas": {
+    "RicB3Ingreso": 5,
+    "RicB3Egreso": 2,
+    "RicS8CargaLinea2": 1
+   },
+   "excel": []
+  }
+ ]
+}

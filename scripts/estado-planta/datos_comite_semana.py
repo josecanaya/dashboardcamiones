@@ -29,7 +29,14 @@ def one(pat):
 
 d0 = datetime.date.fromisoformat(DESDE)
 DAYS = [(d0 + datetime.timedelta(days=i)).isoformat() for i in range((datetime.date.fromisoformat(HASTA) - d0).days + 1)]
-man = J(RUN, 'manifest.json')
+# período de más de una semana: <dirCorrida> = corridas semanales separadas por coma (ventanas lunes→domingo que lo cubren)
+RUNS = RUN.split(',')
+_mans = [J(r, 'manifest.json') for r in RUNS]
+man = {'runId': ' + '.join(m['runId'] for m in _mans), 'rulesVersion': _mans[0]['rulesVersion'],
+       'finishedAt': min(m.get('finishedAt') or '' for m in _mans),
+       'input': {'eventCount': sum((m.get('input') or {}).get('eventCount') or 0 for m in _mans),
+                 'movimientosRows': sum((m.get('input') or {}).get('movimientosRows') or 0 for m in _mans),
+                 'eventsPaths': sorted({p for m in _mans for p in (m.get('input') or {}).get('eventsPaths', [])})}}
 # cobertura de la planilla (data/movimientos, particionado por día de ingreso): la semana está completa cuando cada día
 # tiene movimientos y el último Excel cargado es de después del último día (el Excel del día D trae D-1/D-2 y parte de D)
 ROOT = os.environ.get('VICENTIN_ROOT') or os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -76,8 +83,11 @@ def girasol_movimientos():
     return {'operaciones': sum(por_dia.values()), 'porDia': por_dia, 'balanzaSgc': sgc, 'keplerExcluidasExcel': kepler}
 
 def rows(name):
-    t = J(RUN, 'tables', name + '.json')
-    return t if isinstance(t, list) else t.get('rows', [])
+    out = []
+    for r in RUNS:
+        t = J(r, 'tables', name + '.json')
+        out += t if isinstance(t, list) else t.get('rows', [])
+    return out
 
 PX = J(C, 'paquete.json')
 R7 = J(C, 'r7-camaras.json'); R7c, R7cf = one('r7-camaras-calibracion-*.json')
@@ -105,10 +115,14 @@ for x in fc:
     b = bucket.setdefault(k, {})
     b[x.get('executive_bucket')] = b.get(x.get('executive_bucket'), 0) + 1
 
+def paquete_ant(AX):
+    if 'periodo' in AX: return J(ANT, AX['paquete']['archivo'])
+    return J(os.path.abspath(os.path.join(ANT, '..', '..', '..', '..')), AX['paquete'])   # paquete oficial del comité anterior (ruta desde la raíz)
+
 cal_r7 = None
 if R7c and R7c.get('calibracion'):
     k = R7c['calibracion']
-    pd_ = (ANT and J(os.path.abspath(os.path.join(ANT, '..', '..', '..', '..')), J(ANT, 'datos.json')['paquete'])['tiempos']['soja']['porDia']) or {}
+    pd_ = (ANT and paquete_ant(J(ANT, 'datos.json'))['tiempos']['soja']['porDia']) or {}
     w = [pd_[d] for d in k['planillaPorDia'] if d in pd_ and pd_[d].get('tiempoMedioN')]
     cal_r7 = {'p2pPlanilla': round(sum(x['tiempoMedioMin'] * x['tiempoMedioN'] for x in w) / sum(x['tiempoMedioN'] for x in w)) if w else None,
               'archivo': R7cf, 'dias': sorted(k['planillaPorDia']), 'camara': R7c['viajes'], 'planilla': k['planillaR7'],
@@ -116,7 +130,16 @@ if R7c and R7c.get('calibracion'):
 
 # ---- comité anterior (publicado) y su medición por cámaras con el mismo script (metricas-camaras)
 ant = None
-if ANT:
+if ANT and 'periodo' in J(ANT, 'datos.json'):
+    # comité armado con comite_semana.py: lo que publicó lo dejó gen_comite_logistica_semana.py en publicado.json
+    AX = J(ANT, 'datos.json'); PB = J(ANT, 'publicado.json'); APX = paquete_ant(AX)
+    AM = opt(ANT, 'calculo', 'metricas-camaras.json')
+    ant = {'carpeta': ANT, 'dias': PB['dias'], 'comite': PB['comite'], 'series': PB['series'], 'extras': PB['extras'],
+           'girasol': PB['girasol'], 'pelletHistorico': PB['pelletHistorico'], 'paquete': AX['paquete']['archivo'],
+           'sojaPorDia': APX['tiempos']['soja']['porDia'], 'sojaPeriodo': {k: v for k, v in APX['tiempos']['soja']['periodo'].items() if k != 'porHora'},
+           'actividad': {k: {'periodo': {kk: vv for kk, vv in v['periodo'].items() if kk != 'porHora'}, 'porDia': {d: x.get('camiones') for d, x in v['porDia'].items()}} for k, v in APX['actividad'].items()},
+           'metricas': AM['circuitos']['cur'] if AM else None, 'metricasSemanas': AM['semanas']['cur'] if AM else None}
+elif ANT:
     AX = J(ANT, 'datos.json')
     AM = opt(ANT, 'calculo-pc', 'metricas-camaras.json')
     APX = J(os.path.abspath(os.path.join(ANT, '..', '..', '..', '..')), AX['paquete'])   # paquete oficial del comité anterior

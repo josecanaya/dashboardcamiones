@@ -48,7 +48,12 @@ def main():
     a = ap.parse_args()
     D = os.path.join(WT, 'reportes', 'logistica', f'{a.desde}_{a.hasta}', 'comite-logistica'); C = os.path.join(D, 'calculo')
     os.makedirs(C, exist_ok=True)
-    RUN = os.path.join(ROOT, 'runs', 'windows', f'{a.desde}_{a.hasta}')
+    # corridas = ventanas semanales lunes→domingo que cubren el período (no se crean ventanas a medida)
+    lun = datetime.date.fromisoformat(a.desde); lun -= datetime.timedelta(days=lun.weekday())
+    semanas = []
+    while lun.isoformat() <= a.hasta:
+        semanas.append((lun.isoformat(), shift(lun.isoformat(), 6))); lun += datetime.timedelta(days=7)
+    RUNS = [os.path.join(ROOT, 'runs', 'windows', f'{s}_{h}') for s, h in semanas]
     print(f'Comité {a.desde} → {a.hasta} · datos en {ROOT}')
 
     # 1 · planilla
@@ -59,7 +64,7 @@ def main():
             if l.startswith('[ingest]'): print('   ', l)
     # 2 · corrida
     if not a.sin_etl:
-        print('2 · Corrida ETL de la semana')
+        print('2 · Corridas ETL de las semanas del período')
         if not server_up():
             print('   server apagado: lo levanto')
             subprocess.Popen(['node', 'server/truckflow-local-server.mjs'], cwd=ROOT, env=ENV, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
@@ -68,18 +73,21 @@ def main():
                 time.sleep(2)
                 if server_up(): break
             else: sys.exit('El server no levantó (npm run server:truckflow)')
-        req = urllib.request.Request(API + '/api/etl/runs', method='POST', headers={'Content-Type': 'application/json'},
-                                     data=json.dumps({'from': a.desde, 'to': a.hasta, 'force': True, 'skipSupabase': True}).encode())
-        res = json.load(urllib.request.urlopen(req, timeout=1800))
-        if not res.get('runId'): sys.exit(f'La corrida falló: {res}')
-    man = json.load(open(os.path.join(RUN, 'manifest.json'), encoding='utf-8'))
-    print(f'   {man["runId"]} · {man["rulesVersion"]} · {man["input"]["eventCount"]} eventos · {man["input"]["movimientosRows"]} movimientos · {man["status"]}')
+        for s, h in semanas:
+            req = urllib.request.Request(API + '/api/etl/runs', method='POST', headers={'Content-Type': 'application/json'},
+                                         data=json.dumps({'from': s, 'to': h, 'force': True, 'skipSupabase': True}).encode())
+            res = json.load(urllib.request.urlopen(req, timeout=1800))
+            if not res.get('runId'): sys.exit(f'La corrida falló: {res}')
+    for RUN in RUNS:
+        man = json.load(open(os.path.join(RUN, 'manifest.json'), encoding='utf-8'))
+        print(f'   {man["runId"]} · {man["rulesVersion"]} · {man["input"]["eventCount"]} eventos · {man["input"]["movimientosRows"]} movimientos · {man["status"]}')
 
     # 3 · cálculos
     print('3 · Cálculos')
     big = ['node', '--max-old-space-size=4096']
     cf, ct = a.calibracion.split(':'); cl = f'{cf[8:10]}-{ct[8:10]}'
-    run(['node', TSX, 'scripts/estado-planta/paquete-periodo.ts', os.path.join(C, 'paquete.json'), a.desde, a.hasta, f'{RUN}:{a.desde}:{a.hasta}'])
+    run(['node', TSX, 'scripts/estado-planta/paquete-periodo.ts', os.path.join(C, 'paquete.json'), a.desde, a.hasta]
+        + [f'{r}:{max(s, a.desde)}:{min(h, a.hasta)}' for r, (s, h) in zip(RUNS, semanas)])
     for s, f in (('r7-camaras', 'r7-camaras'), ('pellet-camaras', 'pellet-camaras'), ('liquidos-camaras', 'liquidos-camaras')):
         run(big + [f'scripts/estado-planta/{s}.cjs', a.desde, a.hasta, os.path.join(C, f + '.json')])
         cal = os.path.join(C, f'{f}-calibracion-{cl}.json')
@@ -87,14 +95,20 @@ def main():
             run(big + [f'scripts/estado-planta/{s}.cjs', cf, ct, cal])
     run(['node', 'scripts/estado-planta/liquidos-criterio.cjs', a.desde, a.hasta, os.path.join(C, 'liquidos-criterio.json')])
     if not os.path.exists(os.path.join(C, 'liquidos-criterio-anterior.json')):
-        ad = json.load(open(os.path.join(a.anterior, 'datos.json'), encoding='utf-8'))['days']
+        ax = json.load(open(os.path.join(a.anterior, 'datos.json'), encoding='utf-8'))
+        ad = ax['periodo']['days'] if 'periodo' in ax else ax['days']
         run(['node', 'scripts/estado-planta/liquidos-criterio.cjs', ad[0], ad[-1], os.path.join(C, 'liquidos-criterio-anterior.json')])
+    run([sys.executable, 'scripts/estado-planta/silos-internos.py', os.path.join(C, 'silos-internos.json'), a.desde, a.hasta])
+    if not os.path.exists(os.path.join(C, 'silos-internos-anterior.json')):
+        ax = json.load(open(os.path.join(a.anterior, 'datos.json'), encoding='utf-8'))
+        ad = ax['periodo']['days'] if 'periodo' in ax else ax['days']
+        run([sys.executable, 'scripts/estado-planta/silos-internos.py', os.path.join(C, 'silos-internos-anterior.json'), ad[0], ad[-1]])
     run(big + ['scripts/estado-planta/metricas-camaras.cjs', os.path.join(C, 'metricas-camaras.json'), shift(a.desde, -7), a.desde,
                str((datetime.date.fromisoformat(a.hasta) - datetime.date.fromisoformat(a.desde)).days + 1)])
 
     # 4 · datos y deck
     print('4 · datos.json y deck')
-    run([sys.executable, 'scripts/estado-planta/datos_comite_semana.py', D, a.desde, a.hasta, RUN, a.anterior])
+    run([sys.executable, 'scripts/estado-planta/datos_comite_semana.py', D, a.desde, a.hasta, ','.join(RUNS), a.anterior])
     g = json.loads(run([sys.executable, 'scripts/estado-planta/gen_comite_logistica_semana.py', D]).strip().splitlines()[-1])
     X = json.load(open(os.path.join(D, 'datos.json'), encoding='utf-8'))
     P = X['planilla']

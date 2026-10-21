@@ -292,6 +292,13 @@ if CALLES:
         f'Cámaras {D0}–{D1}: visitas al puerto con lecturas de dos o más cámaras de volcable (SLZVolcableC1–C5) y descargas en una calle distinta del volcable declarado en el Excel. Fotos del DSS de cada lectura (fotos-dss-lote.py calles). '
         + ('Sacados después de revisar las fotos: ' + ', '.join(EXCL.get('calles', [])) + '. ' if EXCL.get('calles') else '')
         + (f'Sin operación en el Excel (camionetas): {", ".join(SACADOS)}. ' if SACADOS else '') + ctexto, gap=24)
+else:
+    # sin casos: la lámina lo dice (y por qué la comparación contra el volcable declarado puede no estar)
+    section('calles', eyebrow('CALLE DE DESCARGA · PUERTO SAN LORENZO') + h2('Calles: ningún caso para revisar', 52)
+        + f'<p style="font-size:30px; line-height:1.4; color:{INK}; max-width:1500px">Ninguna visita al puerto con lecturas de dos calles que no tenga explicación'
+        + (f' (sacados por no tener operación en la planilla: {", ".join(SACADOS)})' if SACADOS else '') + '.</p>',
+        f'Cámaras {D0}–{D1}: visitas al puerto con lecturas de dos o más cámaras de volcable (SLZVolcableC1–C5). '
+        + (f'Sin operación en la planilla: {", ".join(SACADOS)}. ' if SACADOS else '') + ctexto, gap=32)
 
 # ---------- 03 interplanta
 divider('div-interplanta', '03', 'Demoras entre plantas sin calado en el puerto',
@@ -316,11 +323,12 @@ CL = D['camionetas']['lista']
 zonas = [('Ricardone y San Lorenzo', 'Ricardone y puerto', BLU), ('Ricardone', 'Solo Ricardone', GDK), ('San Lorenzo', 'Solo puerto San Lorenzo', ORG)]
 NDIAS = len(F['camaras']) if F.get('camaras') else 7
 SIEMPRE = lambda x: x.get('dias', 0) >= NDIAS - 1   # vienen siempre: todos los días o todos menos uno
+CHIP = 'padding:4px 12px; font-size:22px' if len(CL) <= 45 else 'padding:2px 10px; font-size:19px'
 def chip(x, col):
     mark = ' ≈' if x['parecida'] else ''
     if SIEMPRE(x):
-        return f'<span style="display:inline-flex; gap:8px; align-items:baseline; background:{VIO}; border:2px solid {VIO}; border-radius:10px; padding:4px 12px; font-size:22px"><b style="color:#FFFFFF">{x["patente"]}{mark}</b><span style="color:#E4DCF5">{x["viajes"]}</span></span>'
-    return f'<span style="display:inline-flex; gap:8px; align-items:baseline; background:#FFFFFF; border:2px solid #D3DAD6; border-radius:10px; padding:4px 12px; font-size:22px"><b style="color:{INK}">{x["patente"]}{mark}</b><span style="color:{col}">{x["viajes"]}</span></span>'
+        return f'<span style="display:inline-flex; gap:8px; align-items:baseline; background:{VIO}; border:2px solid {VIO}; border-radius:10px; {CHIP}"><b style="color:#FFFFFF">{x["patente"]}{mark}</b><span style="color:#E4DCF5">{x["viajes"]}</span></span>'
+    return f'<span style="display:inline-flex; gap:8px; align-items:baseline; background:#FFFFFF; border:2px solid #D3DAD6; border-radius:10px; {CHIP}"><b style="color:{INK}">{x["patente"]}{mark}</b><span style="color:{col}">{x["viajes"]}</span></span>'
 grp = ''
 for z, nombre, col in zonas:
     xs = [x for x in CL if x['zona'] == z]
