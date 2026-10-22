@@ -8,7 +8,7 @@ Diferencias con gen_comite_logistica_rango.py:
 - Pellet queda solo como monitoreo (sin propuesta de puerto ni de flete).
 - Líquidos con el criterio por producto, planta y sentido (liquidos-criterio.cjs) y estimación por cámaras (liquidos-camaras.cjs).
 """
-import json, os, sys, datetime, collections
+import json, os, re, sys, datetime, collections
 D = os.path.abspath(sys.argv[1])
 X = json.load(open(os.path.join(D, 'datos.json'), encoding='utf-8'))
 CAL_DIR = os.path.join(D, 'calculo')
@@ -737,13 +737,23 @@ if LCW:
     lbars = ''.join(f'<div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:end; gap:8px"><p style="font-size:26px; font-weight:600; color:{TEXT}">{a + b}</p><div style="width:64px; display:flex; flex-direction:column; border-radius:8px 8px 0px 0px; overflow:hidden">'
                     f'<div style="height:{round(a / mxw * 330)}px; background:{BLU}"></div><div style="height:{round(b / mxw * 330)}px; background:#A9C8E6"></div></div><p style="font-size:24px; font-weight:600; color:{TEXT}; white-space:nowrap">{days[i]}</p></div>' for i, (a, b) in enumerate(lw))
 ter_d, ter_dp = LQV['TER'] / N, LKV['TER'] / LKD
+def famsem():
+    """Movimientos por planta, familia y sentido, con la mediana puerta a puerta (planilla)."""
+    mx = max(v['n'] for v in LPF.values()) or 1; out = ''
+    for pl, nom in (('TERMINAL_EMBARQUE', 'Terminal'), ('RICARDONE', 'Ricardone')):
+        rs = sorted([(k.split(' · ')[1], k.split(' · ')[2], v) for k, v in LPF.items() if k.startswith(pl)], key=lambda r: -r[2]['n'])
+        out += f'<p style="font-size:28px; font-weight:700; color:{BLU}">{nom} · {sum(v["n"] for _, _, v in rs)}</p>'
+        for fam, se, v in rs:
+            out += (f'<div style="display:flex; flex-direction:row; align-items:center; gap:12px"><p style="width:300px; font-size:22px; color:{TEXT}; white-space:nowrap"><b>{fam}</b> · {"carga" if se == "EGRESO" else "descarga"}</p>'
+                    f'<div style="width:{max(6, round(v["n"] / mx * 150))}px; height:28px; background:{FAMCOL.get(fam, BLU)}; border-radius:0px 6px 6px 0px"></div>'
+                    f'<p style="font-size:24px; font-weight:600; color:{TEXT}; white-space:nowrap">{v["n"]}</p><p style="font-size:22px; color:{BODY}; white-space:nowrap">· {v["mediana"]} min</p></div>')
+    return out
 section('liq-semana', head('Líquidos · la semana', (f'{fmtn(LCW["total"]["n"])} movimientos de líquidos; la Terminal hizo {round(sum(v["n"] for k, v in LCW["porPlantaSentido"].items() if k.startswith("TERMINAL")) / LCW["total"]["n"] * 100)} %' if LCW else None) or (f'La Terminal mantuvo su ritmo: {round(ter_d)} visitas de camión por día' if abs(pct(ter_d, ter_dp)) <= 10 else f'La Terminal {"subió" if ter_d > ter_dp else "bajó"} a {round(ter_d)} visitas de camión por día ({spct(pct(ter_d, ter_dp))})'), BLU, cam=True)
     + '<div style="flex:1; display:flex; flex-direction:row; gap:56px"><div style="flex:1; display:flex; flex-direction:column; gap:16px">'
     + legend([('Terminal San Lorenzo', BLU), ('Ricardone', '#A9C8E6')], f'<div style="flex:1"></div><p style="font-size:24px; color:{BODY}">' + ('Movimientos de líquidos por día' if LCW else 'Visitas de camión a la zona de líquidos por día') + '</p>')
     + f'<div style="flex:1; display:flex; flex-direction:row; gap:6px; align-items:end">{lbars}</div></div>'
-    + '<div style="width:480px; display:flex; flex-direction:column; justify-content:center; gap:16px">'
-    + (''.join(note(fmtn(v['n']), {'TERMINAL_EMBARQUE · EGRESO': 'cargas en la Terminal', 'TERMINAL_EMBARQUE · INGRESO': 'descargas en la Terminal', 'RICARDONE · INGRESO': 'descargas en Ricardone', 'RICARDONE · EGRESO': 'cargas en Ricardone'}.get(k, k) + (f' · mediana {v["mediana"]} min' if v.get('mediana') else ''), BLU if k.startswith('TERMINAL') else GLT, BLU if k.startswith('TERMINAL') else TEXT)
-           for k, v in sorted(LCW['porPlantaSentido'].items(), key=lambda kv: -kv[1]['n'])) + '</div></div>' if LCW else '')
+    + '<div style="width:640px; display:flex; flex-direction:column; justify-content:center; gap:8px">'
+    + (famsem() + '</div></div>' if LCW else '')
     + ('' if LCW else note(fmtn(LQV['TER']), f'visitas en la Terminal; {round(ter_dp)} por día en {CAL_LBL}. Cargas leídas en la playa OSL: {LC["terminalCargaDescarga"]["carga"]}.', BLU, BLU)
     + note(fmtn(LQV['RIC']), f'visitas en Ricardone ({fx(LQV["RIC"] / N)} por día; {fx(LKV["RIC"] / LKD)} en {CAL_LBL}).', GLT)
     + (note(fmtn(LCW['total']['n']), 'movimientos de líquidos en la planilla de la semana: ' + ', '.join(f'{k.replace("TERMINAL_EMBARQUE", "Terminal").replace("RICARDONE", "Ricardone").replace(" · EGRESO", " cargas").replace(" · INGRESO", " descargas")} {v["n"]}' for k, v in LCW['porPlantaSentido'].items()) + '.', BMID)
@@ -1068,10 +1078,224 @@ add('cruces', f'<section id="cruces" data-transition="fade" style="background:{V
     f'Ricardone {R7["ric"]} y San Lorenzo {R7["slz"]} min (en {CAL_LBL}, {TP["ric"]} y {TP["sl"]}). Pellet: {PEL_N} {PEL_U}. Transile R29: {r29["metricas"]["total"]}. Líquidos: {LQV["TER"]} visitas en la Terminal y {LQV["RIC"]} en Ricardone por cámaras.</aside></section>')
 
 # ------------------------------------------------------------------ write
+# ---- sección de contexto: los últimos comités publicados y este período (calculo/serie-comites.json)
+SCF = os.path.join(CAL_DIR, 'serie-comites.json')
+SC = json.load(open(SCF, encoding='utf-8')) if os.path.exists(SCF) else None
+SEP_IDS = []
+if SC:
+    T7_ = dict(T7)
+    cal_top = sorted(CAL['porCalle'].items(), key=lambda kv: -kv[1])
+    top2 = [str(int(re.sub(r'\D', '', k) or 0)) for k, v in cal_top[:2]]
+    SIN = JC('silos-internos.json') if os.path.exists(os.path.join(CAL_DIR, 'silos-internos.json')) else {'viajes': 0}
+    hoy = {'comite': 'Hoy', 'desde': DAYS[0], 'hasta': DAYS[-1], 'dias': N, 'soja': R7['est'], 'girasol': GOPS or GI['rec'],
+           'p2p': R7['total'], 'p1': R7['p1'], 'slz': R7['slz'], 'calada': CAL['camiones'], 'caladaHoras': CAL['horas'], 'caladaHorasTot': HOURS,
+           'girasolMin': GSUM if GIR_OK else None, 'transileInterno': SIN['viajes']}
+    CS = SC['comites'] + [hoy]
+    C4 = CS[-4:]                                    # los últimos 4 comités (el actual incluido)
+    per = lambda c, k: round(c[k] / c['dias'])
+    TPD = JC('toneladas-periodos.json') if os.path.exists(os.path.join(CAL_DIR, 'toneladas-periodos.json')) else None
+    CC = JC('calles-comites.json') if os.path.exists(os.path.join(CAL_DIR, 'calles-comites.json')) else None
+    dm_ = lambda d: f'{int(d[8:10])}/{int(d[5:7])}'
+    D0m = CS[0]['desde']
+    MDAYS = []
+    d_ = datetime.date.fromisoformat(D0m)
+    while d_.isoformat() <= DAYS[-1]: MDAYS.append(d_.isoformat()); d_ += datetime.timedelta(days=1)
+    PD_ = (TPD or {}).get('porDia', {})
+    serie = lambda k: [PD_.get(d, {}).get(k, 0) for d in MDAYS]
+    PCOL = ['#C9D8CE', '#9CCBAE', GMID, GDK]                      # un color por comité (los últimos 4)
+    FT = "font-family='IBM Plex Sans, Arial, sans-serif'"
+    # ---- gráficos
+    def mix(c, a, base=BG):
+        """Color c al a (0–1) sobre el fondo: franjas de comité sin transparencias."""
+        h = lambda x: [int(x[k:k + 2], 16) for k in (1, 3, 5)]
+        return '#' + ''.join(f'{round(q * a + b * (1 - a)):02X}' for q, b in zip(h(c), h(base)))
+    RAMPA = lambda col: [mix(col, a) for a in [0.07, 0.12, 0.18, 0.25, 0.33][-len(CS):]]   # más oscuro = comité más nuevo
+    def paso(mx):
+        return next((st for st in (5, 10, 20, 25, 50, 100, 200, 250, 500) if mx / st <= 5), 1000)
+    def dlinea(vals, col, eje='camiones por día', W=1664, H=340, total=False):
+        """Actividad por día: línea sobre una franja por comité (más oscura la más nueva), eje de cantidades a la izquierda y fechas abajo."""
+        st = paso(max(vals) or 1); tope = st * -(-max(max(vals), 1) // st)
+        L = 96; nd = len(vals); PW = W - L - 16; rmp = RAMPA(col)
+        xs = [L + round((k + 0.5) * PW / nd) for k in range(nd)]
+        y = lambda v: round(20 + (1 - v / tope) * H)
+        out = f'<svg aria-label="Por día del {dm_(MDAYS[0])} al {dm_(MDAYS[-1])}" viewBox="0 0 {W} {H + 64}" width="{W}" height="{H + 64}" style="width:{W}px; height:{H + 64}px">'
+        for jx, c in enumerate(CS):
+            idx = [k for k, d in enumerate(MDAYS) if c['desde'] <= d <= c['hasta']]
+            if idx: out += f'<rect x="{L + round(idx[0] * PW / nd)}" y="20" width="{round((idx[-1] + 1) * PW / nd) - round(idx[0] * PW / nd)}" height="{H}" fill="{rmp[jx]}"/>'
+        for v in range(0, tope + 1, st):
+            out += f'<line x1="{L}" y1="{y(v)}" x2="{L + PW}" y2="{y(v)}" stroke="{LINE}" stroke-width="2"/><text x="{L - 14}" y="{y(v) + 8}" text-anchor="end" font-size="22" fill="{BODY}" {FT}>{fmtn(v)}</text>'
+        out += f'<text x="22" y="{20 + H // 2}" text-anchor="middle" font-size="22" fill="{BODY}" transform="rotate(-90 22 {20 + H // 2})" {FT}>{eje}</text>'
+        for k in list(range(0, nd, 7)) + ([nd - 1] if (nd - 1) % 7 > 2 else []):
+            out += f'<line x1="{xs[k]}" y1="{H + 20}" x2="{xs[k]}" y2="{H + 30}" stroke="{GREY}" stroke-width="2"/><text x="{xs[k]}" y="{H + 56}" text-anchor="middle" font-size="22" fill="{BODY}" {FT}>{dm_(MDAYS[k])}</text>'
+        out += f'<polyline fill="none" stroke="{col}" stroke-width="4" stroke-linejoin="round" points="' + ' '.join(f'{x},{y(v)}' for x, v in zip(xs, vals)) + '"/>'
+        for c in CS:
+            idx = [k for k, d in enumerate(MDAYS) if c['desde'] <= d <= c['hasta']]
+            if idx and max(vals[k] for k in idx) > 0:
+                k = max(idx, key=lambda k: vals[k])
+                out += f'<circle cx="{xs[k]}" cy="{y(vals[k])}" r="7" fill="{col}"/><text x="{min(W - 30, max(L + 20, xs[k]))}" y="{y(vals[k]) - 14}" text-anchor="middle" font-size="24" font-weight="600" fill="{col}" {FT}>{fmtn(vals[k])}</text>'
+        out += '</svg>'
+        def lab(c):
+            t = sum(v for d, v in zip(MDAYS, vals) if c['desde'] <= d <= c['hasta']); n = max(1, sum(1 for d in MDAYS if c['desde'] <= d <= c['hasta']))
+            return 'sin operativo' if not t else (f'{fmtn(t)} viajes' if total else f'{round(t / n)} por día')
+        band = ''.join(f'<div style="flex:{sum(1 for d in MDAYS if c["desde"] <= d <= c["hasta"])}; display:flex; flex-direction:column; align-items:center; border-top:8px solid {mix(col, [0.2, 0.35, 0.5, 0.7, 0.9][-len(CS):][jx])}; padding:6px 0px 0px 0px">'
+                       f'<p style="font-size:24px; font-weight:600; color:{TEXT}">{c["comite"] if c["comite"] != "Hoy" else "Actual"} · {lab(c)}</p><p style="font-size:24px; color:{BODY}; white-space:nowrap">{dm_(c["desde"])}–{dm_(c["hasta"])}</p></div>' for jx, c in enumerate(CS))
+        return (f'<div style="width:{W}px; display:flex; flex-direction:column; gap:4px">{out}'
+                f'<div style="width:{PW + L}px; display:flex; flex-direction:row; gap:4px; padding:0px 0px 0px {L}px">{band}</div></div>')
+    def hstackN(rows, unidad, W=1180, bh=50, cols=PCOL, total_lab=True, lw=90):
+        """Barras horizontales apiladas: una fila por calle, un tramo por comité (los últimos 4), % de participación al final."""
+        mx = max(sum(v) for _, v in rows) or 1; tot = sum(sum(v) for _, v in rows) or 1
+        out = ''
+        for lab, v in rows:
+            segs = ''.join(f'<div style="width:{max(0, round(x / mx * (W - lw - 140)))}px; height:{bh}px; background:{cols[k]}; display:flex; flex-direction:row; align-items:center; justify-content:center; border-right:2px solid {BG}">'
+                           + (f'<p style="font-size:22px; font-weight:600; color:{"#F1F6F2" if k >= 2 else TEXT}">{fmtn(x)}</p>' if x / mx * (W - lw - 140) >= 56 else '') + '</div>' for k, x in enumerate(v) if x)
+            out += (f'<div style="display:flex; flex-direction:row; align-items:center; gap:14px"><p style="width:{lw}px; font-size:30px; font-weight:700; color:{TEXT}">{lab}</p>'
+                    f'<div style="display:flex; flex-direction:row; border-left:2px solid {TEXT}">{segs}</div>'
+                    + (f'<p style="font-size:30px; font-weight:700; color:{TEXT}">{round(sum(v) / tot * 100)} %</p>' if total_lab else f'<p style="font-size:26px; font-weight:600; color:{TEXT}">{fmtn(sum(v))}{unidad}</p>') + '</div>')
+        return f'<div style="display:flex; flex-direction:column; gap:14px">{out}</div>'
+    cname = lambda c: c['comite'] if c['comite'] != 'Hoy' else 'Actual'
+    leg4 = lambda: legend([(f'{cname(c)} ({dm_(c["desde"])}–{dm_(c["hasta"])})', PCOL[k]) for k, c in enumerate(C4)])
+    def historico(series, labs, vmax, W=1080, H=360, X0=200, Y0=420, prom=None):
+        """Histórico de tiempos por comité: la primera serie con el valor en cada punto, las otras con el valor al final.
+        prom = promedios (uno por serie) que van como línea punteada del color de la serie."""
+        main = series[0][0]
+        fn = lambda vals, i: (str(vals[i]) if vals is main or i == len(vals) - 1 else '') if vals[i] is not None else ''
+        ch, xy = lchart(series, labs, vmax, X0, Y0, W, H, fn)
+        if prom:
+            dash = ''.join(f'<line x1="20" y1="{xy(0, a)[1] - Y0 + 20}" x2="{W + 20}" y2="{xy(0, a)[1] - Y0 + 20}" stroke="{ser[1]}" stroke-width="3" stroke-dasharray="12 9" opacity="0.75"/>'
+                           for ser, a in zip(series, prom) if a is not None)
+            ch = ch.replace('</svg>', dash + '</svg>', 1)
+        return ch
+    def lamina(id_, tag, col, titulo, cuerpo, conclusion, notas, top=880):
+        section(id_, head(f'Últimos comités · {tag}', titulo, col, 52) + cuerpo
+                + f'<div style="position:absolute; left:128px; top:{top}px; width:1664px">' + key(conclusion, 24) + '</div>', notas, gap=22)
+    divider('sep-div', '00', 'Últimos comités', f'Del {dm_(D0m)} al {dm_(DAYS[-1])}: actividad y tiempos de soja, girasol y pellet, calada y volcables, comité por comité.', GDK, GLT)
+    H_LAB = SER['weeks'] + [ANT.get('comite') or 'Ant.', 'Actual']
+    hcards = lambda items: '<div style="position:absolute; left:1340px; top:300px; width:452px; display:flex; flex-direction:column; gap:14px">' + ''.join(note(b, f'{t} · {sb}', c) for t, b, v, c, sb in items) + '</div>'
+    avg = lambda a: round(sum(x for x in a if x is not None) / len([x for x in a if x is not None]))
+    sp = lambda k, c: avg([v for d, v in zip(MDAYS, serie(k)) if c['desde'] <= d <= c['hasta']] or [0])   # por día, igual que la franja
+    PUNT = f'<div style="width:24px"></div><svg aria-label="línea punteada" viewBox="0 0 44 8" width="44" height="8" style="width:44px; height:8px"><line x1="0" y1="4" x2="44" y2="4" stroke="{BODY}" stroke-width="3" stroke-dasharray="10 7"/></svg><p style="font-size:24px; color:{BODY}">promedio desde junio</p>'
+    # ---- soja
+    sj = [sp('soja', c) for c in CS]
+    lamina('sep-soja', 'soja · actividad', GDK, f'Soja: de {sj[0]} a {sj[-1]} camiones por día desde mediados de septiembre',
+           legend([('Camiones de soja por día (planilla y balanza)', GDK)], f'<div style="width:24px"></div><p style="font-size:24px; color:{BODY}">Franjas: un color por comité, más oscuro el más nuevo</p>') + dlinea(serie('soja'), GDK),
+           f'El 21/10 volvió a subir a {serie("soja")[-1]} camiones, pero el período actual sigue siendo el más liviano de la serie: {sj[-1]} por día contra {sj[0]} a mediados de septiembre.',
+           'Ingresos de soja a la Terminal por día operativo (toneladas-periodos.cjs); abajo, camiones por día de cada comité.')
+    T7, P7, S7 = TOT + [R7['total']], P1 + [R7['p1']], SLZ + [R7['slz']]
+    lamina('sep-soja-t', 'soja · tiempos', GDK, f'Soja: el ciclo bajó a {R7["total"]} min porque hay pocos camiones',
+           legend([('Puerta a puerta', GDK), ('San Lorenzo', VMID), ('Espera Playa 1', '#B83A26')], PUNT)
+           + historico([(T7, GDK, 5), (S7, VMID, 3), (P7, '#B83A26', 3)], H_LAB, 500, prom=[avg(T7), avg(S7), avg(P7)])
+           + hcards([('Puerta a puerta', f'{T7[-1]} min', T7[-6:], GDK, f'promedio desde junio: {avg(T7)}'), ('San Lorenzo', f'{S7[-1]} min', S7[-6:], VMID, f'promedio desde junio: {avg(S7)}'), ('Espera Playa 1', f'{P7[-1]} min', P7[-6:], '#B83A26', f'{P7[-3]} en el 4/10, con el doble de camiones')]),
+           f'Con un séptimo de los camiones de mediados de septiembre, el ciclo bajó {T7[-6] - T7[-1]} min y quedó {avg(T7) - T7[-1]} min debajo del promedio desde junio; la espera en Playa 1 dejó de bajar ({P7[-3]} → {P7[-1]} min desde el 4/10).',
+           'Serie publicada de cada comité desde el 17/06 y el período actual (corrida 12–21/10). Línea punteada: promedio de la serie de cada tiempo.')
+    # ---- girasol
+    GCOL = '#C98A12'
+    lamina('sep-girasol', 'girasol · actividad', '#7A5608', f'Girasol: de {sp("girasol", CS[0])} a {sp("girasol", CS[-1])} camiones por día; el 18 y 19/10 no entró girasol',
+           legend([('Ingresos de girasol a Ricardone por día', GCOL)], f'<div style="width:24px"></div><p style="font-size:24px; color:{BODY}">Franjas: un color por comité, más oscuro el más nuevo</p>') + dlinea(serie('girasol'), GCOL),
+           f'El girasol bajó a {sp("girasol", CS[-1])} camiones por día y tuvo días sin descargas: la volcable 2 se usó para el transile interno desde el silo 8 (16 al 20/10).',
+           'Ingresos de girasol a Ricardone por día operativo (planilla y balanza).')
+    GT7, GP7, GD7 = GT + [GSUM], GP + [GI['p1']], GD + [(GI['desc'] or 0) + (GI['tara'] or 0)]
+    lamina('sep-girasol-t', 'girasol · tiempos', '#7A5608', f'Girasol: {GT7[-1]} min en planta; la descarga, el tramo más largo',
+           legend([('Tiempo en planta (suma de tramos)', '#7A5608'), ('Descarga y tara', GCOL), ('Playa 1', GMID)], PUNT)
+           + historico([(GT7, '#7A5608', 5), (GD7, GCOL, 3), (GP7, GMID, 3)], H_LAB, 500, prom=[avg(GT7), avg(GD7), avg(GP7)])
+           + hcards([('Tiempo en planta', f'{GT7[-1]} min', GT7[-6:], '#7A5608', f'promedio desde junio: {avg(GT7)}'), ('Descarga y tara', f'{GD7[-1]} min', GD7[-6:], GCOL, f'promedio desde junio: {avg(GD7)}'), ('Playa 1', f'{GP7[-1]} min', GP7[-6:], GMID, f'promedio desde junio: {avg(GP7)}')]),
+           f'A diferencia de la soja, el girasol no bajó con el volumen: la descarga y tara ({GD7[-1]} min) está {GD7[-1] - avg(GD7)} min arriba de su promedio; Playa 1 bajó a {GP7[-1]} min.',
+           'Serie publicada de cada comité (suma de tramos de girasol, Playa 1 y descarga + tara) y el período actual por cámaras. Línea punteada: promedio de la serie de cada tiempo.')
+    # ---- pellet: una lámina, un renglón por operativo (viajes y ciclo)
+    PH_ = json.load(open(os.path.join(ANT['carpeta'], 'publicado.json'), encoding='utf-8'))['pelletHistorico'] if os.path.exists(os.path.join(ANT['carpeta'], 'publicado.json')) else []
+    ops = [o for o in PH_ if o.get('ciclo')]
+    if ops:
+        shift = lambda d, n: (datetime.date.fromisoformat(d) + datetime.timedelta(days=n)).isoformat()
+        cic = [o['ciclo'] for o in ops]; vij = [o['viajes'] for o in ops]
+        W_, RH, T0 = 1664, 84, 64
+        XV, WV, XC, WC = 330, 700, 1150, 480                     # viajes: barra; ciclo: punto sobre 0–450 min
+        mv = max(vij); cmx = 450
+        cx = lambda m: XC + round(m / cmx * WC)
+        sv = f'<svg aria-label="Operativos de pellet: viajes y ciclo" viewBox="0 0 {W_} {T0 + RH * len(ops) + 20}" width="{W_}" height="{T0 + RH * len(ops) + 20}" style="width:{W_}px; height:{T0 + RH * len(ops) + 20}px">'
+        sv += f'<text x="0" y="30" font-size="24" font-weight="600" fill="{BODY}" {FT}>Operativo · comité</text><text x="{XV}" y="30" font-size="24" font-weight="600" fill="{BODY}" {FT}>Viajes al puerto · camiones</text><text x="{XC}" y="30" font-size="24" font-weight="600" fill="{BODY}" {FT}>Ciclo del operativo (min)</text>'
+        for m in range(0, cmx + 1, 100):
+            sv += f'<line x1="{cx(m)}" y1="{T0 - 8}" x2="{cx(m)}" y2="{T0 + RH * len(ops)}" stroke="{LINE}" stroke-width="2"/><text x="{cx(m)}" y="{T0 + RH * len(ops) + 18}" text-anchor="middle" font-size="20" fill="{BODY}" {FT}>{m}</text>'
+        pts = []
+        for r, o in enumerate(ops):
+            yc = T0 + r * RH + RH // 2; com = o.get('comite') if o.get('comite') != 'Actual' else dm_(ANT_DAYS[-1])
+            colr = mix(PEL, 0.35 + 0.65 * r / max(1, len(ops) - 1))
+            sv += f'<text x="0" y="{yc + 8}" font-size="28" font-weight="700" fill="{TEXT}" {FT}>{dm_(o["desde"])}–{dm_(o["hasta"])}</text><text x="190" y="{yc + 8}" font-size="24" fill="{BODY}" {FT}>· {com}</text>'
+            bw = max(8, round(o['viajes'] / mv * (WV - 150)))
+            sv += f'<rect x="{XV}" y="{yc - 22}" width="{bw}" height="44" rx="6" fill="{colr}"/><text x="{XV + bw + 12}" y="{yc + 8}" font-size="26" font-weight="700" fill="{TEXT}" {FT}>{fmtn(o["viajes"])}</text>'
+            if o.get('camiones'): sv += f'<text x="{XV + bw + 90}" y="{yc + 8}" font-size="24" fill="{BODY}" {FT}>· {o["camiones"]} cam.</text>'
+            pts.append((cx(o['ciclo']), yc))
+        sv += f'<polyline fill="none" stroke="{PELM}" stroke-width="3" points="' + ' '.join(f'{x},{y}' for x, y in pts) + '"/>'
+        sv += ''.join(f'<circle cx="{x}" cy="{y}" r="11" fill="{PEL}"/><text x="{x + 20}" y="{y + 9}" font-size="26" font-weight="700" fill="{PEL}" {FT}>{o["ciclo"]}</text>' for (x, y), o in zip(pts, ops))
+        sv += '</svg>'
+        lamina('sep-pellet', 'pellet', PEL, f'Pellet: el ciclo bajó de {cic[0]} a {cic[-1]} min; sin operativo desde el {dm_(shift(ops[-1]["hasta"], 1))}',
+               sv, ' '.join(SC.get('pelletConclusiones', [])),
+               'Operativos de transile de pellet publicados en cada comité (pelletHistorico): viajes y camiones del operativo; ciclo = carga en Ricardone → descarga en el puerto → vuelta. '
+               + '; '.join(f'{dm_(o["desde"])}–{dm_(o["hasta"])}: {o["viajes"]} viajes, {o.get("camiones") or "s/d"} camiones, ciclo {o["ciclo"]} min' for o in ops)
+               + f'. Del {dm_(shift(ops[-1]["hasta"], 1))} al {dm_(DAYS[-1])} no hubo transile de pellet al puerto.')
+    # ---- calada y volcables: actividad por calle en los últimos 4 comités; tiempos e ocupación
+    if CC:
+        for gid, tit, pref, col in (('calada', 'Calada', 'C', GDK), ('volcables', 'Volcables', '', VIO)):
+            G = CC['grupos'][gid]
+            rows_c = [(f'{pref}{c}', [x['camiones'] for x in f]) for c, f in G.items() if sum(x['camiones'] for x in f) >= 5]
+            tot = [sum(v[k] for _, v in rows_c) for k in range(4)]
+            top = sorted(rows_c, key=lambda r: -sum(r[1]))[:2]
+            share = round(sum(sum(v) for _, v in top) / (sum(tot) or 1) * 100)
+            lamina(f'sep-{gid}', f'{gid} · actividad', col, f'{tit}: {top[0][0]} y {top[1][0]} hicieron el {share} % de los camiones',
+                   leg4() + f'<div style="display:flex; flex-direction:row; gap:24px; align-items:start"><div style="display:flex; flex-direction:column; gap:8px"><p style="font-size:24px; color:{BODY}">Camiones por calle · % = participación en los cuatro períodos</p>{hstackN(rows_c, "")}</div>'
+                   + '<div style="flex:1; display:flex; flex-direction:column; gap:14px">' + ''.join(note(fmtn(t), f'camiones en el {c["comite"] if c["comite"] != "Hoy" else "período actual"} ({round(t / c["dias"])} por día)', PCOL[k]) for k, (t, c) in enumerate(zip(tot, C4))) + '</div></div>',
+                   (f'Con menos volumen la calada se concentró en las calles 3 y 4; las calles 1 y 2 trabajaron solo en el 28/9 y el 4/10, y algunos días del 14/10.' if gid == 'calada' else
+                    f'La V5 fue la volcable principal en los cuatro períodos; la V4 trabajó con el pellet y quedó parada desde el 7/10, y la V2 casi no se usó en octubre.'),
+                   f'{CC["criterio"]}. Por calle y comité: ' + '; '.join(f'{lab} ' + ', '.join(str(x) for x in v) for lab, v in rows_c) + '.')
+        # calada: la espera en Playa 1 y las horas ocupadas de cada calada (sólida, líquidos y San Lorenzo) sobre las horas del período
+        SEC = CC.get('sectores') or {}
+        secs = [k for k in ('Calada sólida', 'Calada líquidos', 'Calada San Lorenzo') if k in SEC]
+        def ocup(k):
+            out = f'<p style="font-size:26px; font-weight:700; color:{TEXT}">{ {"Calada sólida": "Calada sólida Ricardone", "Calada líquidos": "Calada de líquidos Ricardone"}.get(k, k) }</p>'
+            for jx, (c, x) in enumerate(zip(C4, SEC[k])):
+                pc_ = round(x['horas'] / x['horasPeriodo'] * 100)
+                out += (f'<div style="display:flex; flex-direction:row; align-items:center; gap:12px"><p style="width:96px; font-size:22px; color:{BODY}">{cname(c)}</p>'
+                        f'<div style="width:420px; height:22px; background:{BG2}; border-radius:4px; display:flex; flex-direction:row"><div style="width:{round(pc_ / 100 * 420)}px; height:22px; background:{PCOL[jx]}; border-radius:4px"></div></div>'
+                        f'<p style="font-size:22px; font-weight:600; color:{TEXT}; white-space:nowrap">{pc_} % · {x["horas"]} de {x["horasPeriodo"]} h</p></div>')
+            return f'<div style="display:flex; flex-direction:column; gap:4px">{out}</div>'
+        PL8 = P7[-8:]
+        sol = SEC.get('Calada sólida')
+        pcs = [round(x['horas'] / x['horasPeriodo'] * 100) for x in sol] if sol else None
+        lamina('sep-calada-t', 'calada · espera y ocupación', GDK, f'Calada: Playa 1 subió a {PL8[-1]} min con la calada abierta menos horas',
+               legend([('Espera en Playa 1 (soja, min)', '#B83A26')], PUNT)
+               + historico([(PL8, '#B83A26', 5)], H_LAB[-8:], 200, W=760, X0=180, prom=[avg(P7)])
+               + f'<div style="position:absolute; left:1030px; top:280px; width:762px; display:flex; flex-direction:column; gap:12px"><p style="font-size:24px; color:{BODY}">Horas con camiones en cada calada, sobre las horas del período</p>'
+               + ''.join(ocup(k) for k in secs) + '</div>',
+               (f'Desde el 4/10 la espera en Playa 1 subió de {P7[-3]} a {PL8[-1]} min aunque entraron menos camiones; la calada sólida estuvo abierta el {pcs[-1]} % de las horas (el {pcs[0]} % en el {C4[0]["comite"]}).' if pcs else
+                f'La espera en Playa 1 llegó a {PL8[-1]} min en el período actual.'),
+               'Playa 1: serie publicada desde el 17/06 (pre-ingreso → calada, soja R7) y el período actual; línea punteada: promedio desde junio. Horas ocupadas: horas reloj con al menos una lectura en las cámaras de cada calada '
+               '(sólida RicCal01–06, líquidos RicCalLiq, San Lorenzo SLZCalado), sobre las horas del período (calles-semanas.py). '
+               + '; '.join(f'{k}: ' + ', '.join(f'{x["horas"]}/{x["horasPeriodo"]} h' for x in SEC[k]) for k in secs) + '.')
+        # volcables: espera en Playa OSL + balanza → volcable, y horas ocupadas por calle
+        STC = JC('sl-tramos-comites.json') if os.path.exists(os.path.join(CAL_DIR, 'sl-tramos-comites.json')) else None
+        Gv = CC['grupos']['volcables']
+        rows_h = [(c, [x['horas'] for x in f]) for c, f in Gv.items() if sum(x['camiones'] for x in f) >= 5]
+        v_ult = {c: f[-1]['camiones'] for c, f in Gv.items()}; v_top = max(v_ult, key=v_ult.get); v_pct = round(v_ult[v_top] / (sum(v_ult.values()) or 1) * 100)
+        if STC:
+            lb = [c['comite'] for c in STC['comites']] + ['Actual']
+            OSL = [c['playaOsl'] for c in STC['comites']] + [T7_['playaOsl']]; DES = [c['descarga'] for c in STC['comites']] + [T7_['descarga']]
+            TSL = [a + b for a, b in zip(OSL, DES)]
+            chv = historico([(TSL, VIO, 5), (OSL, VMID, 3), (DES, VXLT, 3)], lb, 250, W=760, X0=180)
+            lamina('sep-volcables-t', 'volcables · espera y descarga', VIO, f'Volcables: Playa OSL + descarga bajó de {TSL[0]} a {TSL[-1]} min',
+                   legend([('Playa OSL + descarga', VIO), ('Espera en Playa OSL', VMID), ('Balanza → volcable', VXLT)])
+                   + chv
+                   + f'<div style="position:absolute; left:1060px; top:300px; width:732px; display:flex; flex-direction:column; gap:10px"><p style="font-size:24px; color:{BODY}">Horas con lecturas por calle (cada período)</p>{hstackN(rows_h, " h", W=732, bh=44, total_lab=False)}'
+                   + legend([(cname(c), PCOL[k]) for k, c in enumerate(C4)]) + '</div>',
+                   f'La espera en Playa OSL bajó de {OSL[0]} a {OSL[-1]} min; de la balanza a la volcable se tarda más ({DES[0]} → {DES[-1]} min), con la {v_top} sola haciendo el {v_pct} % de las descargas del período actual.',
+                   f'Soja R7, media por tramo (min): Playa OSL = ingreso San Lorenzo → balanza OSL; descarga = balanza OSL → volcable. {STC["criterio"]}. '
+                   + '; '.join(f'{a}: {o} + {d}' for a, o, d in zip(lb, OSL, DES)) + '. Horas reloj con al menos una lectura por calle en cada período (calles-semanas.py).')
+    divider('div-semana', f'{int(DAYS[0][8:10])}–{int(DAYS[-1][8:10])}/{int(DAYS[-1][5:7])}', 'Análisis de la semana', f'Del {dm_(DAYS[0])} al {dm_(DAYS[-1])}: qué entró a la planta, soja, pellet, girasol, líquidos y sectores.', '#2E1B4E', '#B9A8E0')
+    SEP_IDS = ['sep-div', 'sep-soja', 'sep-soja-t', 'sep-girasol', 'sep-girasol-t', 'sep-pellet', 'sep-calada', 'sep-calada-t', 'sep-volcables', 'sep-volcables-t', 'div-semana']
+
 ORDER = ['portada', 'resumen-planta', 'dia-a-dia', 'div-soja', 'tramos-r7', 'resumen-soja', 'hallazgo', 'plantas', 'cuartos', 'historico',
          'div-pellet', 'pel-periodo', 'pel-tramos', 'pel-dias', 'pel-jornadas', 'pel-numeros', 'pellet-operativo', 'pellet-tramos', 'pellet-hist', 'div-girasol', 'girasol', 'girasol-hist',
          'div-liquidos', 'liq-criterio', 'liq-productos', 'liq-tramos', 'liq-semana', 'liq-oleico', 'liq-ritmo', 'div-sectores', 'calada', 'volcables', 'volcables-mes', 'silos', 'silos-camiones', 'silos-ritmo', 'cruces']
-if LCW: slides = [x for x in slides if x[0] != 'liq-criterio']
+if LCW: slides = [x for x in slides if x[0] not in ('liq-criterio', 'div-liquidos', 'liq-productos', 'liq-ritmo')]   # líquidos: la semana y el oleico
+if not PEL_OP: slides = [x for x in slides if x[0] != 'div-pellet']
+ORDER = ORDER[:1] + SEP_IDS + [x for x in ORDER[1:] if x not in SEP_IDS]
 ORDER = [o for o in ORDER if o in {i for i, _ in slides}]
 slides = sorted([x for x in slides if x[0] in ORDER], key=lambda x: ORDER.index(x[0]))   # las láminas fuera del orden (p. ej. silos-old) no se escriben
 for f in os.listdir(SL):
@@ -1081,10 +1305,12 @@ for k, (i, h) in enumerate(slides):
     if os.path.exists(fp) and open(fp, encoding='utf-8').read() == txt_: continue   # igual: no se reescribe (otro proceso puede tenerla abierta)
     with open(fp, 'w', encoding='utf-8') as fh: fh.write(txt_)
 SECC = [('s1', 'Portada, resumen de la planta y la semana día por día', 'portada'),
+        ('s0', 'Últimos comités: actividad y tiempos de soja, girasol, pellet, calada y volcables', 'sep-div'),
+        ('s0b', 'Análisis de la semana', 'div-semana'),
         ('s2', 'Soja: tiempos por tramo de R7, resumen, día por día, por planta, por horario y en contexto', 'div-soja'),
         ('s2b', 'Pellet: las dos tandas del transile, comparadas' if PI else 'Pellet: monitoreo del transile de la semana', 'div-pellet'),
         ('s3', 'Girasol: tiempos por tramo y comparación con el comité anterior', 'div-girasol'),
-        ('s3b', 'Líquidos: qué se mueve y la semana' if LCW else 'Líquidos: criterio nuevo, qué se mueve y la semana por cámaras', 'div-liquidos'),
+        ('s3b', 'Líquidos: la semana y el aceite que entró a Ricardone', 'liq-semana') if LCW else ('s3b', 'Líquidos: criterio nuevo, qué se mueve y la semana por cámaras', 'div-liquidos'),
         ('s4', 'Sectores: calada, volcables del puerto y silos', 'div-sectores'),
         ('s5', 'Cierre', 'cruces')]
 deck = {'v': 4, 'createdOnFiles': {'v': 1, 'at': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}, 'lists': 'css',

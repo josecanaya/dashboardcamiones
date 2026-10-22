@@ -586,7 +586,7 @@
   }
  },
  "calibracion": {
-  "planillaR7": 505,
+  "planillaR7": 563,
   "planillaPorDia": {
    "2026-10-12": 7,
    "2026-10-13": 29,
@@ -594,7 +594,7 @@
    "2026-10-15": 53,
    "2026-10-16": 32,
    "2026-10-17": 93,
-   "2026-10-18": 31,
+   "2026-10-18": 89,
    "2026-10-19": 42,
    "2026-10-20": 64,
    "2026-10-21": 135
@@ -612,9 +612,10 @@
    "2026-10-21": 93
   },
   "planillaPorVolcable": {
-   "V3": 29,
-   "V5": 167,
-   "VC": 309
+   "V3": 88,
+   "V5": 227,
+   "V1": 1,
+   "VC": 247
   },
   "nota": "Operaciones R7 de la planilla = TERMINAL · INGRESO · SOJA con plataforma VOLCABLE_PTO_n, por día operativo del ingreso."
  }

@@ -104,7 +104,7 @@
    "primero": "2026-10-13T08:29",
    "ultimo": "2026-10-20T11:26",
    "excel": {
-    "filas": 2,
+    "filas": 3,
     "producto": [
      "PRODUCTOS VARIOS"
     ],
@@ -123,6 +123,10 @@
      [
       "10-16T13:25",
       "10-17T07:04"
+     ],
+     [
+      "10-17T11:03",
+      "10-18T09:46"
      ]
     ]
    }
@@ -552,6 +556,7 @@
     "RicS7DescLinea2": 1
    },
    "excel": [
+    "I girasol",
     "I girasol"
    ]
   },
@@ -619,6 +624,7 @@
     "RicS7DescLinea2": 1
    },
    "excel": [
+    "I girasol",
     "I girasol"
    ]
   },
@@ -628,6 +634,7 @@
     "RicS7DescLinea2": 1
    },
    "excel": [
+    "I girasol",
     "I girasol"
    ]
   }

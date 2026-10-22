@@ -95,7 +95,7 @@ for p in inter:
         cuartos.setdefault(k, collections.Counter())[p] += 1
     cam.append({'patente': p, 'alias': sorted(a for a, q in alias.items() if q == p), 'dias': len(cuenta_dia(vs)), 'viajes': len(vs),
                 'silos': dict(collections.Counter(v['silo'] for v in vs)), 'destinos': dict(collections.Counter(v['destino'] for v in vs)),
-                'porDia': dict(sorted(cuenta_dia(vs).items())), 'cicloMedianaMin': (round(med([v['ciclo'] for v in vs if v['ciclo'] and v['ciclo'] < 120])) if vs else None),
+                'porDia': dict(sorted(cuenta_dia(vs).items())), 'cicloMedianaMin': (lambda m: round(m) if m is not None else None)(med([v['ciclo'] for v in vs if v['ciclo'] and v['ciclo'] < 120])),
                 'nocturnos': noche, 'horasActivas': len({v['t'].replace(minute=0, second=0, microsecond=0) for v in vs}), 'primero': vs[0]['t'].isoformat(timespec='minutes'), 'ultimo': vs[-1]['t'].isoformat(timespec='minutes'),
                 'excel': {'filas': len(xl), 'producto': sorted({r['product_normalized'] for r in xl}), 'planta': sorted({r['planta_normalized'] for r in xl}), 'mov': sorted({r['mov'] for r in xl}),
                           'kgsNeto': sum(float(r.get('kgs_neto') or 0) for r in xl), 'turnos': [(r['external_ingreso_at'][5:16], r['external_salida_at'][5:16]) for r in xl]}})

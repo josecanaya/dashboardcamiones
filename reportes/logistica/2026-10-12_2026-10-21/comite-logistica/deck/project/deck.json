@@ -2,12 +2,23 @@
  "v": 4,
  "createdOnFiles": {
   "v": 1,
-  "at": "2026-10-22T17:38:56Z"
+  "at": "2026-10-22T20:16:29Z"
  },
  "lists": "css",
  "title": "Comité de Logística Nodo Sur · 12 – 21 oct",
  "order": [
   "portada",
+  "sep-div",
+  "sep-soja",
+  "sep-soja-t",
+  "sep-girasol",
+  "sep-girasol-t",
+  "sep-pellet",
+  "sep-calada",
+  "sep-calada-t",
+  "sep-volcables",
+  "sep-volcables-t",
+  "div-semana",
   "resumen-planta",
   "dia-a-dia",
   "div-soja",
@@ -17,18 +28,15 @@
   "plantas",
   "cuartos",
   "historico",
-  "div-pellet",
   "div-girasol",
   "girasol",
   "girasol-hist",
-  "div-liquidos",
-  "liq-productos",
   "liq-semana",
   "liq-oleico",
-  "liq-ritmo",
   "div-sectores",
   "calada",
   "volcables",
+  "volcables-mes",
   "silos",
   "silos-camiones",
   "silos-ritmo",
@@ -47,21 +55,25 @@
    "description": "Portada, resumen de la planta y la semana día por día",
    "start": "portada"
   },
+  "s0": {
+   "description": "Últimos comités: actividad y tiempos de soja, girasol, pellet, calada y volcables",
+   "start": "sep-div"
+  },
+  "s0b": {
+   "description": "Análisis de la semana",
+   "start": "div-semana"
+  },
   "s2": {
    "description": "Soja: tiempos por tramo de R7, resumen, día por día, por planta, por horario y en contexto",
    "start": "div-soja"
-  },
-  "s2b": {
-   "description": "Pellet: monitoreo del transile de la semana",
-   "start": "div-pellet"
   },
   "s3": {
    "description": "Girasol: tiempos por tramo y comparación con el comité anterior",
    "start": "div-girasol"
   },
   "s3b": {
-   "description": "Líquidos: qué se mueve y la semana",
-   "start": "div-liquidos"
+   "description": "Líquidos: la semana y el aceite que entró a Ricardone",
+   "start": "liq-semana"
   },
   "s4": {
    "description": "Sectores: calada, volcables del puerto y silos",

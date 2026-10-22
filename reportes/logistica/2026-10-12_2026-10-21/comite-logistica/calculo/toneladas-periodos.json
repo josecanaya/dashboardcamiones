@@ -1,0 +1,435 @@
+{
+ "criterio": "data/movimientos sin repetir operación ni patentes ficticias, día operativo del ingreso; toneladas netas",
+ "etiquetas": {
+  "soja": "Soja a la Terminal",
+  "r29": "Soja de silos al puerto (R29)",
+  "girasol": "Girasol a Ricardone",
+  "pellet": "Pellet al puerto",
+  "liquidos": "Líquidos cargados en la Terminal",
+  "aceiteRic": "Aceite descargado en Ricardone"
+ },
+ "periodos": [
+  {
+   "comite": "18/9",
+   "desde": "2026-09-10",
+   "hasta": "2026-09-16",
+   "dias": 7,
+   "grupos": {
+    "soja": {
+     "camiones": 2569,
+     "toneladas": 82697
+    },
+    "r29": {
+     "camiones": 0,
+     "toneladas": 0
+    },
+    "girasol": {
+     "camiones": 483,
+     "toneladas": 14500
+    },
+    "pellet": {
+     "camiones": 189,
+     "toneladas": 5076
+    },
+    "liquidos": {
+     "camiones": 211,
+     "toneladas": 5287
+    },
+    "aceiteRic": {
+     "camiones": 0,
+     "toneladas": 0
+    }
+   }
+  },
+  {
+   "comite": "28/9",
+   "desde": "2026-09-17",
+   "hasta": "2026-09-23",
+   "dias": 7,
+   "grupos": {
+    "soja": {
+     "camiones": 1672,
+     "toneladas": 52778
+    },
+    "r29": {
+     "camiones": 340,
+     "toneladas": 9937
+    },
+    "girasol": {
+     "camiones": 376,
+     "toneladas": 11524
+    },
+    "pellet": {
+     "camiones": 0,
+     "toneladas": 0
+    },
+    "liquidos": {
+     "camiones": 214,
+     "toneladas": 5530
+    },
+    "aceiteRic": {
+     "camiones": 0,
+     "toneladas": 0
+    }
+   }
+  },
+  {
+   "comite": "4/10",
+   "desde": "2026-09-24",
+   "hasta": "2026-10-04",
+   "dias": 11,
+   "grupos": {
+    "soja": {
+     "camiones": 1227,
+     "toneladas": 39484
+    },
+    "r29": {
+     "camiones": 510,
+     "toneladas": 14949
+    },
+    "girasol": {
+     "camiones": 290,
+     "toneladas": 8704
+    },
+    "pellet": {
+     "camiones": 441,
+     "toneladas": 11946
+    },
+    "liquidos": {
+     "camiones": 335,
+     "toneladas": 8433
+    },
+    "aceiteRic": {
+     "camiones": 21,
+     "toneladas": 611
+    }
+   }
+  },
+  {
+   "comite": "11/10",
+   "desde": "2026-10-05",
+   "hasta": "2026-10-11",
+   "dias": 7,
+   "grupos": {
+    "soja": {
+     "camiones": 448,
+     "toneladas": 14390
+    },
+    "r29": {
+     "camiones": 0,
+     "toneladas": 0
+    },
+    "girasol": {
+     "camiones": 139,
+     "toneladas": 4095
+    },
+    "pellet": {
+     "camiones": 56,
+     "toneladas": 1487
+    },
+    "liquidos": {
+     "camiones": 166,
+     "toneladas": 4326
+    },
+    "aceiteRic": {
+     "camiones": 0,
+     "toneladas": 0
+    }
+   }
+  },
+  {
+   "comite": "Hoy",
+   "desde": "2026-10-12",
+   "hasta": "2026-10-21",
+   "dias": 10,
+   "grupos": {
+    "soja": {
+     "camiones": 563,
+     "toneladas": 17919
+    },
+    "r29": {
+     "camiones": 7,
+     "toneladas": 0
+    },
+    "girasol": {
+     "camiones": 116,
+     "toneladas": 3475
+    },
+    "pellet": {
+     "camiones": 0,
+     "toneladas": 0
+    },
+    "liquidos": {
+     "camiones": 169,
+     "toneladas": 4566
+    },
+    "aceiteRic": {
+     "camiones": 75,
+     "toneladas": 2236
+    }
+   }
+  }
+ ],
+ "total": {
+  "soja": {
+   "camiones": 6479,
+   "toneladas": 207268
+  },
+  "r29": {
+   "camiones": 857,
+   "toneladas": 24886
+  },
+  "girasol": {
+   "camiones": 1404,
+   "toneladas": 42298
+  },
+  "pellet": {
+   "camiones": 686,
+   "toneladas": 18509
+  },
+  "liquidos": {
+   "camiones": 1095,
+   "toneladas": 28142
+  },
+  "aceiteRic": {
+   "camiones": 96,
+   "toneladas": 2847
+  }
+ },
+ "porDia": {
+  "2026-09-10": {
+   "liquidos": 54,
+   "soja": 512,
+   "girasol": 113
+  },
+  "2026-09-11": {
+   "soja": 481,
+   "liquidos": 29,
+   "girasol": 97
+  },
+  "2026-09-12": {
+   "liquidos": 6,
+   "soja": 423,
+   "girasol": 40
+  },
+  "2026-09-13": {
+   "soja": 35,
+   "girasol": 9,
+   "liquidos": 1
+  },
+  "2026-09-14": {
+   "soja": 316,
+   "girasol": 67,
+   "liquidos": 49,
+   "pellet": 47
+  },
+  "2026-09-15": {
+   "pellet": 142,
+   "soja": 392,
+   "girasol": 82,
+   "liquidos": 35
+  },
+  "2026-09-16": {
+   "soja": 410,
+   "girasol": 75,
+   "liquidos": 37
+  },
+  "2026-09-17": {
+   "liquidos": 29,
+   "soja": 374,
+   "girasol": 89
+  },
+  "2026-09-18": {
+   "soja": 343,
+   "liquidos": 43,
+   "girasol": 59
+  },
+  "2026-09-19": {
+   "soja": 179,
+   "girasol": 27,
+   "liquidos": 11
+  },
+  "2026-09-20": {
+   "soja": 99,
+   "liquidos": 5,
+   "girasol": 2
+  },
+  "2026-09-21": {
+   "girasol": 56,
+   "liquidos": 44,
+   "soja": 183,
+   "r29": 95
+  },
+  "2026-09-22": {
+   "soja": 234,
+   "r29": 118,
+   "girasol": 62,
+   "liquidos": 31
+  },
+  "2026-09-23": {
+   "soja": 260,
+   "r29": 127,
+   "liquidos": 51,
+   "girasol": 81
+  },
+  "2026-09-24": {
+   "soja": 129,
+   "r29": 106,
+   "liquidos": 51,
+   "girasol": 59,
+   "pellet": 20
+  },
+  "2026-09-25": {
+   "pellet": 90,
+   "soja": 131,
+   "liquidos": 31,
+   "girasol": 57,
+   "r29": 65
+  },
+  "2026-09-26": {
+   "soja": 94,
+   "r29": 41,
+   "pellet": 89,
+   "liquidos": 6,
+   "girasol": 27
+  },
+  "2026-09-27": {
+   "soja": 86,
+   "r29": 116,
+   "liquidos": 4
+  },
+  "2026-09-28": {
+   "r29": 120,
+   "girasol": 36,
+   "soja": 158,
+   "liquidos": 54
+  },
+  "2026-09-29": {
+   "r29": 62,
+   "soja": 95,
+   "liquidos": 49,
+   "girasol": 45
+  },
+  "2026-09-30": {
+   "liquidos": 45,
+   "soja": 116,
+   "girasol": 19,
+   "pellet": 90
+  },
+  "2026-10-01": {
+   "girasol": 7,
+   "soja": 131,
+   "pellet": 152,
+   "liquidos": 42,
+   "aceiteRic": 10
+  },
+  "2026-10-02": {
+   "liquidos": 31,
+   "soja": 99,
+   "girasol": 17,
+   "aceiteRic": 10
+  },
+  "2026-10-03": {
+   "soja": 106,
+   "girasol": 22,
+   "liquidos": 8,
+   "aceiteRic": 1
+  },
+  "2026-10-04": {
+   "liquidos": 14,
+   "soja": 82,
+   "girasol": 1
+  },
+  "2026-10-05": {
+   "soja": 106,
+   "girasol": 10,
+   "liquidos": 55,
+   "pellet": 30
+  },
+  "2026-10-06": {
+   "pellet": 26,
+   "girasol": 45,
+   "soja": 87,
+   "liquidos": 53
+  },
+  "2026-10-07": {
+   "liquidos": 32,
+   "soja": 46,
+   "girasol": 18
+  },
+  "2026-10-08": {
+   "soja": 77,
+   "girasol": 15,
+   "liquidos": 19
+  },
+  "2026-10-09": {
+   "soja": 79,
+   "girasol": 26,
+   "liquidos": 7
+  },
+  "2026-10-10": {
+   "soja": 46,
+   "girasol": 23
+  },
+  "2026-10-11": {
+   "soja": 7,
+   "girasol": 2
+  },
+  "2026-10-12": {
+   "soja": 7,
+   "liquidos": 15
+  },
+  "2026-10-13": {
+   "soja": 29,
+   "liquidos": 18,
+   "girasol": 20,
+   "aceiteRic": 15
+  },
+  "2026-10-14": {
+   "soja": 19,
+   "girasol": 43,
+   "liquidos": 18,
+   "aceiteRic": 4
+  },
+  "2026-10-15": {
+   "soja": 53,
+   "girasol": 23,
+   "liquidos": 36
+  },
+  "2026-10-16": {
+   "soja": 32,
+   "girasol": 20,
+   "liquidos": 25,
+   "aceiteRic": 20
+  },
+  "2026-10-17": {
+   "soja": 93,
+   "girasol": 7,
+   "liquidos": 5,
+   "aceiteRic": 2
+  },
+  "2026-10-18": {
+   "soja": 89,
+   "liquidos": 6,
+   "aceiteRic": 1
+  },
+  "2026-10-19": {
+   "soja": 42,
+   "liquidos": 5,
+   "aceiteRic": 6
+  },
+  "2026-10-20": {
+   "soja": 64,
+   "r29": 3,
+   "girasol": 3,
+   "liquidos": 14,
+   "aceiteRic": 11
+  },
+  "2026-10-21": {
+   "soja": 135,
+   "liquidos": 27,
+   "r29": 4,
+   "aceiteRic": 16
+  }
+ }
+}

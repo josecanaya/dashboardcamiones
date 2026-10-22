@@ -1,0 +1,299 @@
+{
+ "criterio": "camiones = patentes distintas por visita (misma patente y calle a menos de 60 min = un camión); horas = horas reloj con al menos una lectura; hora operativa = occurredAt + 206 min",
+ "semanas": [
+  {
+   "desde": "2026-09-17",
+   "hasta": "2026-09-23"
+  },
+  {
+   "desde": "2026-09-24",
+   "hasta": "2026-10-04"
+  },
+  {
+   "desde": "2026-10-05",
+   "hasta": "2026-10-11"
+  },
+  {
+   "desde": "2026-10-12",
+   "hasta": "2026-10-21"
+  }
+ ],
+ "grupos": {
+  "calada": {
+   "1": [
+    {
+     "camiones": 255,
+     "horas": 30
+    },
+    {
+     "camiones": 74,
+     "horas": 15
+    },
+    {
+     "camiones": 0,
+     "horas": 0
+    },
+    {
+     "camiones": 22,
+     "horas": 8
+    }
+   ],
+   "2": [
+    {
+     "camiones": 244,
+     "horas": 30
+    },
+    {
+     "camiones": 114,
+     "horas": 20
+    },
+    {
+     "camiones": 0,
+     "horas": 0
+    },
+    {
+     "camiones": 27,
+     "horas": 8
+    }
+   ],
+   "3": [
+    {
+     "camiones": 681,
+     "horas": 107
+    },
+    {
+     "camiones": 794,
+     "horas": 163
+    },
+    {
+     "camiones": 284,
+     "horas": 79
+    },
+    {
+     "camiones": 374,
+     "horas": 94
+    }
+   ],
+   "4": [
+    {
+     "camiones": 729,
+     "horas": 110
+    },
+    {
+     "camiones": 949,
+     "horas": 176
+    },
+    {
+     "camiones": 277,
+     "horas": 82
+    },
+    {
+     "camiones": 356,
+     "horas": 98
+    }
+   ],
+   "5": [
+    {
+     "camiones": 23,
+     "horas": 4
+    },
+    {
+     "camiones": 0,
+     "horas": 0
+    },
+    {
+     "camiones": 0,
+     "horas": 0
+    },
+    {
+     "camiones": 5,
+     "horas": 5
+    }
+   ],
+   "6": [
+    {
+     "camiones": 29,
+     "horas": 7
+    },
+    {
+     "camiones": 5,
+     "horas": 4
+    },
+    {
+     "camiones": 1,
+     "horas": 1
+    },
+    {
+     "camiones": 0,
+     "horas": 0
+    }
+   ]
+  },
+  "volcables": {
+   "V1": [
+    {
+     "camiones": 38,
+     "horas": 11
+    },
+    {
+     "camiones": 11,
+     "horas": 6
+    },
+    {
+     "camiones": 6,
+     "horas": 5
+    },
+    {
+     "camiones": 15,
+     "horas": 8
+    }
+   ],
+   "V2": [
+    {
+     "camiones": 222,
+     "horas": 54
+    },
+    {
+     "camiones": 117,
+     "horas": 35
+    },
+    {
+     "camiones": 10,
+     "horas": 7
+    },
+    {
+     "camiones": 1,
+     "horas": 1
+    }
+   ],
+   "V3": [
+    {
+     "camiones": 306,
+     "horas": 59
+    },
+    {
+     "camiones": 379,
+     "horas": 79
+    },
+    {
+     "camiones": 123,
+     "horas": 39
+    },
+    {
+     "camiones": 79,
+     "horas": 27
+    }
+   ],
+   "V4": [
+    {
+     "camiones": 270,
+     "horas": 53
+    },
+    {
+     "camiones": 511,
+     "horas": 96
+    },
+    {
+     "camiones": 52,
+     "horas": 16
+    },
+    {
+     "camiones": 0,
+     "horas": 0
+    }
+   ],
+   "V5": [
+    {
+     "camiones": 410,
+     "horas": 116
+    },
+    {
+     "camiones": 550,
+     "horas": 158
+    },
+    {
+     "camiones": 152,
+     "horas": 50
+    },
+    {
+     "camiones": 393,
+     "horas": 117
+    }
+   ]
+  }
+ },
+ "sectores": {
+  "Calada sólida": [
+   {
+    "horas": 139,
+    "horasPeriodo": 168
+   },
+   {
+    "horas": 201,
+    "horasPeriodo": 264
+   },
+   {
+    "horas": 86,
+    "horasPeriodo": 168
+   },
+   {
+    "horas": 113,
+    "horasPeriodo": 240
+   }
+  ],
+  "Calada líquidos": [
+   {
+    "horas": 69,
+    "horasPeriodo": 168
+   },
+   {
+    "horas": 164,
+    "horasPeriodo": 264
+   },
+   {
+    "horas": 59,
+    "horasPeriodo": 168
+   },
+   {
+    "horas": 92,
+    "horasPeriodo": 240
+   }
+  ],
+  "Calada San Lorenzo": [
+   {
+    "horas": 101,
+    "horasPeriodo": 168
+   },
+   {
+    "horas": 108,
+    "horasPeriodo": 264
+   },
+   {
+    "horas": 77,
+    "horasPeriodo": 168
+   },
+   {
+    "horas": 103,
+    "horasPeriodo": 240
+   }
+  ],
+  "Volcables puerto": [
+   {
+    "horas": 146,
+    "horasPeriodo": 168
+   },
+   {
+    "horas": 233,
+    "horasPeriodo": 264
+   },
+   {
+    "horas": 93,
+    "horasPeriodo": 168
+   },
+   {
+    "horas": 139,
+    "horasPeriodo": 240
+   }
+  ]
+ }
+}

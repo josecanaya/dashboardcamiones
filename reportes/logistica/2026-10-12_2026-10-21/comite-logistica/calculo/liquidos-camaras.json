@@ -83,8 +83,8 @@
    "visitasCamara": 98,
    "porFamiliaPlanilla": {
     "liquido": 66,
-    "otro": 5,
-    "sin movimiento en planilla": 26,
+    "otro": 6,
+    "sin movimiento en planilla": 25,
     "agua": 1
    },
    "precision": 0.673,
@@ -105,23 +105,23 @@
   "TER": {
    "visitasCamara": 358,
    "porFamiliaPlanilla": {
-    "liquido": 192,
-    "sin movimiento en planilla": 95,
-    "agua": 22,
-    "otro": 49
+    "liquido": 197,
+    "sin movimiento en planilla": 84,
+    "agua": 24,
+    "otro": 53
    },
-   "precision": 0.536,
-   "movimientosPlanilla": 219,
-   "conVisita": 181,
-   "cobertura": 0.826,
+   "precision": 0.55,
+   "movimientosPlanilla": 225,
+   "conVisita": 185,
+   "cobertura": 0.822,
    "porSentido": {
     "INGRESO": {
-     "planilla": 53,
-     "conVisita": 34
+     "planilla": 55,
+     "conVisita": 35
     },
     "EGRESO": {
-     "planilla": 165,
-     "conVisita": 147
+     "planilla": 169,
+     "conVisita": 150
     }
    }
   }
