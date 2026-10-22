@@ -1,0 +1,948 @@
+{
+ "criterio": "RICARDONE · INGRESO · aceite de la planilla (día operativo del ingreso); cámaras: primera RicCalLiq y última RicB2Egreso entre 3 h antes del ingreso y 1 h después de la salida",
+ "periodo": {
+  "desde": "2026-10-12",
+  "hasta": "2026-10-21",
+  "dias": [
+   "2026-10-12",
+   "2026-10-13",
+   "2026-10-14",
+   "2026-10-15",
+   "2026-10-16",
+   "2026-10-17",
+   "2026-10-18",
+   "2026-10-19",
+   "2026-10-20",
+   "2026-10-21"
+  ]
+ },
+ "productos": {
+  "ACGIRASOL OLEICO": 75
+ },
+ "total": {
+  "camiones": 75,
+  "toneladas": 2236,
+  "adentroMediana": 563,
+  "ingresoACaladaMediana": 8,
+  "caladaAEgresoMediana": 532,
+  "conCamaras": 56
+ },
+ "porDia": {
+  "2026-10-12": {
+   "camiones": 0,
+   "toneladas": 0,
+   "adentroMediana": null,
+   "ingresoACaladaMediana": null,
+   "caladaAEgresoMediana": null,
+   "conCamaras": 0
+  },
+  "2026-10-13": {
+   "camiones": 15,
+   "toneladas": 436,
+   "adentroMediana": 612,
+   "ingresoACaladaMediana": 2,
+   "caladaAEgresoMediana": 608,
+   "conCamaras": 10
+  },
+  "2026-10-14": {
+   "camiones": 4,
+   "toneladas": 119,
+   "adentroMediana": 494,
+   "ingresoACaladaMediana": 2,
+   "caladaAEgresoMediana": 491,
+   "conCamaras": 3
+  },
+  "2026-10-15": {
+   "camiones": 0,
+   "toneladas": 0,
+   "adentroMediana": null,
+   "ingresoACaladaMediana": null,
+   "caladaAEgresoMediana": null,
+   "conCamaras": 0
+  },
+  "2026-10-16": {
+   "camiones": 20,
+   "toneladas": 601,
+   "adentroMediana": 1052,
+   "ingresoACaladaMediana": 13,
+   "caladaAEgresoMediana": 592,
+   "conCamaras": 15
+  },
+  "2026-10-17": {
+   "camiones": 2,
+   "toneladas": 59,
+   "adentroMediana": 697,
+   "ingresoACaladaMediana": 13,
+   "caladaAEgresoMediana": 683,
+   "conCamaras": 2
+  },
+  "2026-10-18": {
+   "camiones": 1,
+   "toneladas": 28,
+   "adentroMediana": 861,
+   "ingresoACaladaMediana": 2,
+   "caladaAEgresoMediana": null,
+   "conCamaras": 0
+  },
+  "2026-10-19": {
+   "camiones": 6,
+   "toneladas": 173,
+   "adentroMediana": 167,
+   "ingresoACaladaMediana": 26,
+   "caladaAEgresoMediana": 81,
+   "conCamaras": 3
+  },
+  "2026-10-20": {
+   "camiones": 11,
+   "toneladas": 334,
+   "adentroMediana": 830,
+   "ingresoACaladaMediana": 4,
+   "caladaAEgresoMediana": 778,
+   "conCamaras": 8
+  },
+  "2026-10-21": {
+   "camiones": 16,
+   "toneladas": 485,
+   "adentroMediana": 505,
+   "ingresoACaladaMediana": 8,
+   "caladaAEgresoMediana": 152,
+   "conCamaras": 15
+  }
+ },
+ "maxSimultaneos": {
+  "n": 13,
+  "at": "2026-10-13T20:40"
+ },
+ "minEntreSalidasMediana": 15,
+ "fuentes": {
+  "excel": 41,
+  "sgc": 34
+ },
+ "camiones": [
+  {
+   "patente": "AJV928",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29800.0,
+   "fuente": "excel",
+   "adentroMin": 616,
+   "ingresoACaladaMin": 1,
+   "caladaAEgresoMin": 606,
+   "ingreso": "2026-10-13T09:17",
+   "salida": "2026-10-13T19:33"
+  },
+  {
+   "patente": "CSB958",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29000.0,
+   "fuente": "excel",
+   "adentroMin": 554,
+   "ingresoACaladaMin": 8,
+   "caladaAEgresoMin": 543,
+   "ingreso": "2026-10-13T09:59",
+   "salida": "2026-10-13T19:13"
+  },
+  {
+   "patente": "FAZ585",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29520.0,
+   "fuente": "excel",
+   "adentroMin": 638,
+   "ingresoACaladaMin": 1,
+   "caladaAEgresoMin": 636,
+   "ingreso": "2026-10-13T10:34",
+   "salida": "2026-10-13T21:12"
+  },
+  {
+   "patente": "MKT278",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29060.0,
+   "fuente": "excel",
+   "adentroMin": 635,
+   "ingresoACaladaMin": 1,
+   "caladaAEgresoMin": 632,
+   "ingreso": "2026-10-13T10:49",
+   "salida": "2026-10-13T21:24"
+  },
+  {
+   "patente": "UZY871",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28860.0,
+   "fuente": "excel",
+   "adentroMin": 610,
+   "ingresoACaladaMin": 1,
+   "caladaAEgresoMin": 608,
+   "ingreso": "2026-10-13T12:01",
+   "salida": "2026-10-13T22:11"
+  },
+  {
+   "patente": "BSU797",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29380.0,
+   "fuente": "excel",
+   "adentroMin": 534,
+   "ingresoACaladaMin": 1,
+   "caladaAEgresoMin": 532,
+   "ingreso": "2026-10-13T16:00",
+   "salida": "2026-10-14T00:54"
+  },
+  {
+   "patente": "JPS813",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28820.0,
+   "fuente": "excel",
+   "adentroMin": 507,
+   "ingresoACaladaMin": 9,
+   "caladaAEgresoMin": 497,
+   "ingreso": "2026-10-13T16:32",
+   "salida": "2026-10-14T00:59"
+  },
+  {
+   "patente": "CNG506",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29480.0,
+   "fuente": "excel",
+   "adentroMin": 500,
+   "ingresoACaladaMin": 1,
+   "caladaAEgresoMin": 496,
+   "ingreso": "2026-10-13T16:50",
+   "salida": "2026-10-14T01:10"
+  },
+  {
+   "patente": "FLF111",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29340.0,
+   "fuente": "excel",
+   "adentroMin": 593,
+   "ingresoACaladaMin": 2,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-13T17:10",
+   "salida": "2026-10-14T03:03"
+  },
+  {
+   "patente": "AG724FB",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29820.0,
+   "fuente": "excel",
+   "adentroMin": 612,
+   "ingresoACaladaMin": 2,
+   "caladaAEgresoMin": 609,
+   "ingreso": "2026-10-13T17:34",
+   "salida": "2026-10-14T03:46"
+  },
+  {
+   "patente": "JUP399",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29440.0,
+   "fuente": "excel",
+   "adentroMin": 509,
+   "ingresoACaladaMin": 35,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-13T19:02",
+   "salida": "2026-10-14T03:31"
+  },
+  {
+   "patente": "EAR164",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28900.0,
+   "fuente": "excel",
+   "adentroMin": 872,
+   "ingresoACaladaMin": null,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-13T19:03",
+   "salida": "2026-10-14T09:35"
+  },
+  {
+   "patente": "WNL428",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28000.0,
+   "fuente": "excel",
+   "adentroMin": 827,
+   "ingresoACaladaMin": 3,
+   "caladaAEgresoMin": 824,
+   "ingreso": "2026-10-13T19:51",
+   "salida": "2026-10-14T09:38"
+  },
+  {
+   "patente": "FZC944",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28520.0,
+   "fuente": "excel",
+   "adentroMin": 808,
+   "ingresoACaladaMin": null,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-13T20:08",
+   "salida": "2026-10-14T09:36"
+  },
+  {
+   "patente": "DOE150",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28340.0,
+   "fuente": "excel",
+   "adentroMin": 886,
+   "ingresoACaladaMin": null,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-13T20:40",
+   "salida": "2026-10-14T11:26"
+  },
+  {
+   "patente": "GVJ645",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28900.0,
+   "fuente": "excel",
+   "adentroMin": 494,
+   "ingresoACaladaMin": 2,
+   "caladaAEgresoMin": 491,
+   "ingreso": "2026-10-14T03:03",
+   "salida": "2026-10-14T11:17"
+  },
+  {
+   "patente": "JJD706",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29900.0,
+   "fuente": "excel",
+   "adentroMin": 456,
+   "ingresoACaladaMin": null,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-14T03:43",
+   "salida": "2026-10-14T11:19"
+  },
+  {
+   "patente": "JWL417",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29880.0,
+   "fuente": "excel",
+   "adentroMin": 523,
+   "ingresoACaladaMin": 10,
+   "caladaAEgresoMin": 512,
+   "ingreso": "2026-10-14T03:44",
+   "salida": "2026-10-14T12:27"
+  },
+  {
+   "patente": "JDH880",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29960.0,
+   "fuente": "excel",
+   "adentroMin": 236,
+   "ingresoACaladaMin": 1,
+   "caladaAEgresoMin": 234,
+   "ingreso": "2026-10-14T08:12",
+   "salida": "2026-10-14T12:08"
+  },
+  {
+   "patente": "SOY202",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28680.0,
+   "fuente": "excel",
+   "adentroMin": 493,
+   "ingresoACaladaMin": 413,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-16T04:09",
+   "salida": "2026-10-16T12:22"
+  },
+  {
+   "patente": "AC258IH",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 30140.0,
+   "fuente": "excel",
+   "adentroMin": 527,
+   "ingresoACaladaMin": 8,
+   "caladaAEgresoMin": 518,
+   "ingreso": "2026-10-16T04:30",
+   "salida": "2026-10-16T13:17"
+  },
+  {
+   "patente": "OEF695",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 31100.0,
+   "fuente": "excel",
+   "adentroMin": 497,
+   "ingresoACaladaMin": 356,
+   "caladaAEgresoMin": 137,
+   "ingreso": "2026-10-16T05:12",
+   "salida": "2026-10-16T13:29"
+  },
+  {
+   "patente": "PAZ923",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 30100.0,
+   "fuente": "excel",
+   "adentroMin": 499,
+   "ingresoACaladaMin": 354,
+   "caladaAEgresoMin": 144,
+   "ingreso": "2026-10-16T05:12",
+   "salida": "2026-10-16T13:31"
+  },
+  {
+   "patente": "PLR345",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 30420.0,
+   "fuente": "excel",
+   "adentroMin": 609,
+   "ingresoACaladaMin": 15,
+   "caladaAEgresoMin": 592,
+   "ingreso": "2026-10-16T05:13",
+   "salida": "2026-10-16T15:22"
+  },
+  {
+   "patente": "JUC744",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 27920.0,
+   "fuente": "excel",
+   "adentroMin": 509,
+   "ingresoACaladaMin": 292,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-16T06:19",
+   "salida": "2026-10-16T14:48"
+  },
+  {
+   "patente": "LKT119",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 30920.0,
+   "fuente": "excel",
+   "adentroMin": 398,
+   "ingresoACaladaMin": 121,
+   "caladaAEgresoMin": 276,
+   "ingreso": "2026-10-16T08:44",
+   "salida": "2026-10-16T15:22"
+  },
+  {
+   "patente": "JSP646",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28600.0,
+   "fuente": "excel",
+   "adentroMin": 110,
+   "ingresoACaladaMin": 9,
+   "caladaAEgresoMin": 99,
+   "ingreso": "2026-10-16T10:29",
+   "salida": "2026-10-16T12:19"
+  },
+  {
+   "patente": "AA809NI",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29320.0,
+   "fuente": "excel",
+   "adentroMin": 111,
+   "ingresoACaladaMin": 13,
+   "caladaAEgresoMin": 94,
+   "ingreso": "2026-10-16T10:30",
+   "salida": "2026-10-16T12:21"
+  },
+  {
+   "patente": "PEA114",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 30100.0,
+   "fuente": "excel",
+   "adentroMin": 301,
+   "ingresoACaladaMin": 4,
+   "caladaAEgresoMin": 296,
+   "ingreso": "2026-10-16T12:00",
+   "salida": "2026-10-16T17:01"
+  },
+  {
+   "patente": "AD645AQ",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29780.0,
+   "fuente": "excel",
+   "adentroMin": 1153,
+   "ingresoACaladaMin": 1,
+   "caladaAEgresoMin": 1151,
+   "ingreso": "2026-10-16T16:00",
+   "salida": "2026-10-17T11:13"
+  },
+  {
+   "patente": "OQE440",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 32040.0,
+   "fuente": "excel",
+   "adentroMin": 1144,
+   "ingresoACaladaMin": 28,
+   "caladaAEgresoMin": 1115,
+   "ingreso": "2026-10-16T16:14",
+   "salida": "2026-10-17T11:18"
+  },
+  {
+   "patente": "LIF292",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 27700.0,
+   "fuente": "excel",
+   "adentroMin": 1132,
+   "ingresoACaladaMin": 122,
+   "caladaAEgresoMin": 1008,
+   "ingreso": "2026-10-16T17:37",
+   "salida": "2026-10-17T12:29"
+  },
+  {
+   "patente": "KWM867",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 30780.0,
+   "fuente": "excel",
+   "adentroMin": 1079,
+   "ingresoACaladaMin": 12,
+   "caladaAEgresoMin": 1066,
+   "ingreso": "2026-10-16T19:30",
+   "salida": "2026-10-17T13:29"
+  },
+  {
+   "patente": "OWS503",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 30920.0,
+   "fuente": "excel",
+   "adentroMin": 1074,
+   "ingresoACaladaMin": 13,
+   "caladaAEgresoMin": 1060,
+   "ingreso": "2026-10-16T19:36",
+   "salida": "2026-10-17T13:30"
+  },
+  {
+   "patente": "EPE381",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28620.0,
+   "fuente": "excel",
+   "adentroMin": 1052,
+   "ingresoACaladaMin": 7,
+   "caladaAEgresoMin": 1043,
+   "ingreso": "2026-10-16T19:45",
+   "salida": "2026-10-17T13:17"
+  },
+  {
+   "patente": "OOX719",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 30260.0,
+   "fuente": "excel",
+   "adentroMin": 1115,
+   "ingresoACaladaMin": 1,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-16T20:32",
+   "salida": "2026-10-17T15:07"
+  },
+  {
+   "patente": "PDC059",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 34440.0,
+   "fuente": "excel",
+   "adentroMin": 1084,
+   "ingresoACaladaMin": null,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-16T21:11",
+   "salida": "2026-10-17T15:15"
+  },
+  {
+   "patente": "HQB528",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 31520.0,
+   "fuente": "excel",
+   "adentroMin": 1079,
+   "ingresoACaladaMin": null,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-16T21:18",
+   "salida": "2026-10-17T15:17"
+  },
+  {
+   "patente": "FDH719",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 27760.0,
+   "fuente": "excel",
+   "adentroMin": 1139,
+   "ingresoACaladaMin": 11,
+   "caladaAEgresoMin": 1127,
+   "ingreso": "2026-10-16T21:19",
+   "salida": "2026-10-17T16:18"
+  },
+  {
+   "patente": "GYZ853",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29400.0,
+   "fuente": "excel",
+   "adentroMin": 697,
+   "ingresoACaladaMin": 13,
+   "caladaAEgresoMin": 683,
+   "ingreso": "2026-10-17T04:57",
+   "salida": "2026-10-17T16:34"
+  },
+  {
+   "patente": "AD761NO",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29520.0,
+   "fuente": "excel",
+   "adentroMin": 563,
+   "ingresoACaladaMin": 2,
+   "caladaAEgresoMin": 557,
+   "ingreso": "2026-10-17T07:52",
+   "salida": "2026-10-17T17:15"
+  },
+  {
+   "patente": "KLJ854",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28100.0,
+   "fuente": "sgc",
+   "adentroMin": 861,
+   "ingresoACaladaMin": 2,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-18T21:07",
+   "salida": "2026-10-19T11:27"
+  },
+  {
+   "patente": "KGH346",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28800.0,
+   "fuente": "sgc",
+   "adentroMin": 478,
+   "ingresoACaladaMin": 39,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-19T05:11",
+   "salida": "2026-10-19T13:10"
+  },
+  {
+   "patente": "CTU452",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 26760.0,
+   "fuente": "sgc",
+   "adentroMin": 169,
+   "ingresoACaladaMin": 5,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-19T10:16",
+   "salida": "2026-10-19T13:06"
+  },
+  {
+   "patente": "CBF677",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28920.0,
+   "fuente": "sgc",
+   "adentroMin": 95,
+   "ingresoACaladaMin": 8,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-19T13:32",
+   "salida": "2026-10-19T15:07"
+  },
+  {
+   "patente": "KOP385",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 30040.0,
+   "fuente": "sgc",
+   "adentroMin": 107,
+   "ingresoACaladaMin": 26,
+   "caladaAEgresoMin": 79,
+   "ingreso": "2026-10-19T13:33",
+   "salida": "2026-10-19T15:20"
+  },
+  {
+   "patente": "FES324",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28780.0,
+   "fuente": "sgc",
+   "adentroMin": 111,
+   "ingresoACaladaMin": 28,
+   "caladaAEgresoMin": 81,
+   "ingreso": "2026-10-19T13:34",
+   "salida": "2026-10-19T15:25"
+  },
+  {
+   "patente": "AH135DG",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29940.0,
+   "fuente": "sgc",
+   "adentroMin": 167,
+   "ingresoACaladaMin": 23,
+   "caladaAEgresoMin": 140,
+   "ingreso": "2026-10-19T13:45",
+   "salida": "2026-10-19T16:32"
+  },
+  {
+   "patente": "GYZ853",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29460.0,
+   "fuente": "sgc",
+   "adentroMin": 164,
+   "ingresoACaladaMin": 10,
+   "caladaAEgresoMin": 152,
+   "ingreso": "2026-10-20T11:44",
+   "salida": "2026-10-20T14:28"
+  },
+  {
+   "patente": "KLJ854",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28140.0,
+   "fuente": "sgc",
+   "adentroMin": 136,
+   "ingresoACaladaMin": 2,
+   "caladaAEgresoMin": 132,
+   "ingreso": "2026-10-20T15:35",
+   "salida": "2026-10-20T17:51"
+  },
+  {
+   "patente": "NRT949",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 30360.0,
+   "fuente": "sgc",
+   "adentroMin": 103,
+   "ingresoACaladaMin": 1,
+   "caladaAEgresoMin": 100,
+   "ingreso": "2026-10-20T16:15",
+   "salida": "2026-10-20T17:58"
+  },
+  {
+   "patente": "PEA114",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 30100.0,
+   "fuente": "sgc",
+   "adentroMin": 100,
+   "ingresoACaladaMin": 25,
+   "caladaAEgresoMin": 73,
+   "ingreso": "2026-10-20T16:15",
+   "salida": "2026-10-20T17:56"
+  },
+  {
+   "patente": "AH717AW",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 35120.0,
+   "fuente": "sgc",
+   "adentroMin": 992,
+   "ingresoACaladaMin": 27,
+   "caladaAEgresoMin": 962,
+   "ingreso": "2026-10-20T16:16",
+   "salida": "2026-10-21T08:48"
+  },
+  {
+   "patente": "DHB418",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 30580.0,
+   "fuente": "sgc",
+   "adentroMin": 930,
+   "ingresoACaladaMin": null,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-20T17:12",
+   "salida": "2026-10-21T08:42"
+  },
+  {
+   "patente": "NUD400",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 31020.0,
+   "fuente": "sgc",
+   "adentroMin": 881,
+   "ingresoACaladaMin": 4,
+   "caladaAEgresoMin": 875,
+   "ingreso": "2026-10-20T18:17",
+   "salida": "2026-10-21T08:58"
+  },
+  {
+   "patente": "AA725PC",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29760.0,
+   "fuente": "sgc",
+   "adentroMin": 879,
+   "ingresoACaladaMin": null,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-20T19:14",
+   "salida": "2026-10-21T09:53"
+  },
+  {
+   "patente": "FZC944",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28720.0,
+   "fuente": "sgc",
+   "adentroMin": 861,
+   "ingresoACaladaMin": null,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-20T19:20",
+   "salida": "2026-10-21T09:41"
+  },
+  {
+   "patente": "AC258IH",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 29900.0,
+   "fuente": "sgc",
+   "adentroMin": 830,
+   "ingresoACaladaMin": 1,
+   "caladaAEgresoMin": 827,
+   "ingreso": "2026-10-20T20:04",
+   "salida": "2026-10-21T09:54"
+  },
+  {
+   "patente": "PLF475",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 31240.0,
+   "fuente": "sgc",
+   "adentroMin": 783,
+   "ingresoACaladaMin": 3,
+   "caladaAEgresoMin": 778,
+   "ingreso": "2026-10-20T21:50",
+   "salida": "2026-10-21T10:52"
+  },
+  {
+   "patente": "AH135DG",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 30040.0,
+   "fuente": "sgc",
+   "adentroMin": 773,
+   "ingresoACaladaMin": 24,
+   "caladaAEgresoMin": 747,
+   "ingreso": "2026-10-20T22:01",
+   "salida": "2026-10-21T10:54"
+  },
+  {
+   "patente": "JSP646",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28660.0,
+   "fuente": "sgc",
+   "adentroMin": 505,
+   "ingresoACaladaMin": 4,
+   "caladaAEgresoMin": 499,
+   "ingreso": "2026-10-21T02:30",
+   "salida": "2026-10-21T10:55"
+  },
+  {
+   "patente": "AE139LO",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 31580.0,
+   "fuente": "sgc",
+   "adentroMin": 87,
+   "ingresoACaladaMin": 4,
+   "caladaAEgresoMin": 81,
+   "ingreso": "2026-10-21T11:42",
+   "salida": "2026-10-21T13:09"
+  },
+  {
+   "patente": "CXW285",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 32200.0,
+   "fuente": "sgc",
+   "adentroMin": 90,
+   "ingresoACaladaMin": 3,
+   "caladaAEgresoMin": 85,
+   "ingreso": "2026-10-21T11:53",
+   "salida": "2026-10-21T13:23"
+  },
+  {
+   "patente": "RVG299",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 26640.0,
+   "fuente": "sgc",
+   "adentroMin": 102,
+   "ingresoACaladaMin": 1,
+   "caladaAEgresoMin": 100,
+   "ingreso": "2026-10-21T14:03",
+   "salida": "2026-10-21T15:45"
+  },
+  {
+   "patente": "EOI579",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 30980.0,
+   "fuente": "sgc",
+   "adentroMin": 135,
+   "ingresoACaladaMin": 4,
+   "caladaAEgresoMin": 128,
+   "ingreso": "2026-10-21T14:47",
+   "salida": "2026-10-21T17:02"
+  },
+  {
+   "patente": "JUC744",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28080.0,
+   "fuente": "sgc",
+   "adentroMin": 131,
+   "ingresoACaladaMin": 12,
+   "caladaAEgresoMin": 117,
+   "ingreso": "2026-10-21T15:42",
+   "salida": "2026-10-21T17:53"
+  },
+  {
+   "patente": "EOW676",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28360.0,
+   "fuente": "sgc",
+   "adentroMin": 209,
+   "ingresoACaladaMin": 54,
+   "caladaAEgresoMin": 152,
+   "ingreso": "2026-10-21T15:42",
+   "salida": "2026-10-21T19:11"
+  },
+  {
+   "patente": "OQE440",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 32120.0,
+   "fuente": "sgc",
+   "adentroMin": 123,
+   "ingresoACaladaMin": 27,
+   "caladaAEgresoMin": 94,
+   "ingreso": "2026-10-21T16:18",
+   "salida": "2026-10-21T18:21"
+  },
+  {
+   "patente": "AA421OL",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 34500.0,
+   "fuente": "sgc",
+   "adentroMin": 110,
+   "ingresoACaladaMin": 22,
+   "caladaAEgresoMin": 86,
+   "ingreso": "2026-10-21T16:29",
+   "salida": "2026-10-21T18:20"
+  },
+  {
+   "patente": "OEF695",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 31120.0,
+   "fuente": "sgc",
+   "adentroMin": 1010,
+   "ingresoACaladaMin": 7,
+   "caladaAEgresoMin": 1001,
+   "ingreso": "2026-10-21T17:07",
+   "salida": "2026-10-22T09:57"
+  },
+  {
+   "patente": "AA996WD",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28060.0,
+   "fuente": "sgc",
+   "adentroMin": 1003,
+   "ingresoACaladaMin": null,
+   "caladaAEgresoMin": null,
+   "ingreso": "2026-10-21T17:15",
+   "salida": "2026-10-22T09:58"
+  },
+  {
+   "patente": "LKT119",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 31320.0,
+   "fuente": "sgc",
+   "adentroMin": 968,
+   "ingresoACaladaMin": 13,
+   "caladaAEgresoMin": 953,
+   "ingreso": "2026-10-21T17:54",
+   "salida": "2026-10-22T10:02"
+  },
+  {
+   "patente": "EPE381",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 28600.0,
+   "fuente": "sgc",
+   "adentroMin": 954,
+   "ingresoACaladaMin": 24,
+   "caladaAEgresoMin": 929,
+   "ingreso": "2026-10-21T19:14",
+   "salida": "2026-10-22T11:09"
+  },
+  {
+   "patente": "KBD454",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 35740.0,
+   "fuente": "sgc",
+   "adentroMin": 910,
+   "ingresoACaladaMin": 6,
+   "caladaAEgresoMin": 902,
+   "ingreso": "2026-10-21T20:04",
+   "salida": "2026-10-22T11:14"
+  },
+  {
+   "patente": "LIF292",
+   "producto": "ACGIRASOL OLEICO",
+   "kg": 27400.0,
+   "fuente": "sgc",
+   "adentroMin": 857,
+   "ingresoACaladaMin": 8,
+   "caladaAEgresoMin": 847,
+   "ingreso": "2026-10-21T21:12",
+   "salida": "2026-10-22T11:28"
+  }
+ ]
+}

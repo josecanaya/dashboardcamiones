@@ -1,0 +1,351 @@
+{
+ "desde": "2026-09-30",
+ "hasta": "2026-10-04",
+ "metodo": "cámaras por patente: calada sólida → egreso Ricardone → ingreso SLZ (≤ 90 min) → salida SLZ; sin silo antes ni volcable de Ricardone",
+ "viajes": 349,
+ "porDia": {
+  "2026-09-30": 76,
+  "2026-10-01": 87,
+  "2026-10-02": 60,
+  "2026-10-03": 68,
+  "2026-10-04": 58
+ },
+ "cuartos": {
+  "Q1": [
+   18,
+   40,
+   14,
+   33,
+   21
+  ],
+  "Q2": [
+   19,
+   17,
+   16,
+   12,
+   5
+  ],
+  "Q3": [
+   21,
+   16,
+   17,
+   13,
+   20
+  ],
+  "Q4": [
+   18,
+   14,
+   13,
+   10,
+   12
+  ]
+ },
+ "porVolcable": {
+  "sin lectura": 167,
+  "V5": 148,
+  "V2": 34
+ },
+ "volcablePorDia": {
+  "2026-09-30": {
+   "sin lectura": 30,
+   "V5": 44,
+   "V2": 2
+  },
+  "2026-10-01": {
+   "V2": 27,
+   "V5": 15,
+   "sin lectura": 45
+  },
+  "2026-10-02": {
+   "V5": 32,
+   "sin lectura": 25,
+   "V2": 3
+  },
+  "2026-10-03": {
+   "V5": 32,
+   "sin lectura": 34,
+   "V2": 2
+  },
+  "2026-10-04": {
+   "sin lectura": 33,
+   "V5": 25
+  }
+ },
+ "tramos": {
+  "ingreso": {
+   "mean": 3,
+   "n": 5
+  },
+  "playa1": {
+   "mean": 76,
+   "n": 337
+  },
+  "salida": {
+   "mean": 20,
+   "n": 329
+  },
+  "interplanta": {
+   "mean": 12,
+   "n": 349
+  },
+  "playaOsl": {
+   "mean": 44,
+   "n": 307
+  },
+  "descarga": {
+   "mean": 73,
+   "n": 168
+  },
+  "egreso": {
+   "mean": 20,
+   "n": 178
+  },
+  "ric": {
+   "mean": 113,
+   "n": 337
+  },
+  "sl": {
+   "mean": 138,
+   "n": 335
+  },
+  "total": {
+   "mean": 263,
+   "n": 325
+  }
+ },
+ "tramosDia": {
+  "2026-09-30": {
+   "ingreso": {
+    "mean": null,
+    "n": 0
+   },
+   "playa1": {
+    "mean": 81,
+    "n": 73
+   },
+   "salida": {
+    "mean": 16,
+    "n": 74
+   },
+   "interplanta": {
+    "mean": 13,
+    "n": 76
+   },
+   "playaOsl": {
+    "mean": 23,
+    "n": 70
+   },
+   "descarga": {
+    "mean": 91,
+    "n": 46
+   },
+   "egreso": {
+    "mean": 19,
+    "n": 46
+   },
+   "ric": {
+    "mean": 110,
+    "n": 73
+   },
+   "sl": {
+    "mean": 134,
+    "n": 76
+   },
+   "total": {
+    "mean": 256,
+    "n": 73
+   }
+  },
+  "2026-10-01": {
+   "ingreso": {
+    "mean": null,
+    "n": 0
+   },
+   "playa1": {
+    "mean": 65,
+    "n": 85
+   },
+   "salida": {
+    "mean": 13,
+    "n": 83
+   },
+   "interplanta": {
+    "mean": 11,
+    "n": 87
+   },
+   "playaOsl": {
+    "mean": 56,
+    "n": 78
+   },
+   "descarga": {
+    "mean": 40,
+    "n": 41
+   },
+   "egreso": {
+    "mean": 21,
+    "n": 42
+   },
+   "ric": {
+    "mean": 92,
+    "n": 85
+   },
+   "sl": {
+    "mean": 122,
+    "n": 84
+   },
+   "total": {
+    "mean": 226,
+    "n": 82
+   }
+  },
+  "2026-10-02": {
+   "ingreso": {
+    "mean": 3,
+    "n": 5
+   },
+   "playa1": {
+    "mean": 96,
+    "n": 57
+   },
+   "salida": {
+    "mean": 26,
+    "n": 54
+   },
+   "interplanta": {
+    "mean": 16,
+    "n": 60
+   },
+   "playaOsl": {
+    "mean": 23,
+    "n": 51
+   },
+   "descarga": {
+    "mean": 127,
+    "n": 31
+   },
+   "egreso": {
+    "mean": 23,
+    "n": 32
+   },
+   "ric": {
+    "mean": 147,
+    "n": 57
+   },
+   "sl": {
+    "mean": 161,
+    "n": 55
+   },
+   "total": {
+    "mean": 325,
+    "n": 53
+   }
+  },
+  "2026-10-03": {
+   "ingreso": {
+    "mean": null,
+    "n": 0
+   },
+   "playa1": {
+    "mean": 52,
+    "n": 65
+   },
+   "salida": {
+    "mean": 27,
+    "n": 62
+   },
+   "interplanta": {
+    "mean": 11,
+    "n": 68
+   },
+   "playaOsl": {
+    "mean": 86,
+    "n": 60
+   },
+   "descarga": {
+    "mean": 67,
+    "n": 30
+   },
+   "egreso": {
+    "mean": 17,
+    "n": 33
+   },
+   "ric": {
+    "mean": 99,
+    "n": 65
+   },
+   "sl": {
+    "mean": 174,
+    "n": 65
+   },
+   "total": {
+    "mean": 284,
+    "n": 63
+   }
+  },
+  "2026-10-04": {
+   "ingreso": {
+    "mean": null,
+    "n": 0
+   },
+   "playa1": {
+    "mean": 91,
+    "n": 57
+   },
+   "salida": {
+    "mean": 25,
+    "n": 56
+   },
+   "interplanta": {
+    "mean": 11,
+    "n": 58
+   },
+   "playaOsl": {
+    "mean": 23,
+    "n": 48
+   },
+   "descarga": {
+    "mean": 24,
+    "n": 20
+   },
+   "egreso": {
+    "mean": 18,
+    "n": 25
+   },
+   "ric": {
+    "mean": 128,
+    "n": 57
+   },
+   "sl": {
+    "mean": 104,
+    "n": 55
+   },
+   "total": {
+    "mean": 246,
+    "n": 54
+   }
+  }
+ },
+ "calibracion": {
+  "planillaR7": 534,
+  "planillaPorDia": {
+   "2026-09-30": 116,
+   "2026-10-01": 131,
+   "2026-10-02": 99,
+   "2026-10-03": 106,
+   "2026-10-04": 82
+  },
+  "camaraPorDia": {
+   "2026-09-30": 76,
+   "2026-10-01": 87,
+   "2026-10-02": 60,
+   "2026-10-03": 68,
+   "2026-10-04": 58
+  },
+  "planillaPorVolcable": {
+   "V5": 451,
+   "V2": 81,
+   "V1": 2
+  },
+  "nota": "Operaciones R7 de la planilla = TERMINAL · INGRESO · SOJA con plataforma VOLCABLE_PTO_n, por día operativo del ingreso."
+ }
+}

@@ -69,9 +69,11 @@ for p, es in ev.items():
     cand = {alias.get(q, q) for q in inter if parecida(p, q) or parecida(q, p)}
     if len(cand) == 1: alias[p] = cand.pop()
 for p, q in alias.items(): ev[q] += [(t, d) for t, d in ev[p] if d in SILOS]
-# transile interno = al menos un viaje con descarga leída dentro de la planta (volcable 2 o silo 7); el resto (cargas que
-# salen por balanza) va a «otros»
-inter = [p for p in keep if any(v['destino'] != 'sinLectura' for v in viajes(sorted(ev[p])))]
+# transile interno = al menos un cuarto de los viajes con descarga leída dentro de la planta (volcable 2 o silo 7); el resto
+# (cargas que salen por balanza, con alguna lectura suelta en una descarga) va a «otros»
+def adentro(p):
+    vs = viajes(sorted(ev[p])); return bool(vs) and sum(v['destino'] != 'sinLectura' for v in vs) >= 0.25 * len(vs)
+inter = [p for p in keep if adentro(p)]
 
 med = lambda a: (sorted(a)[len(a) // 2] if a else None)
 porDia = {d: {'viajes': 0, 'silo7': 0, 'silo8': 0, 'volcable2': 0, 'aSilo7': 0, 'sinLectura': 0, 'camiones': 0} for d in DAYS}
