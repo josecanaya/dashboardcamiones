@@ -18,7 +18,7 @@ const { detectSanLorenzoEgressToRicardoneReturnFromEvents, SL_EGRESS_RIC_RETURN_
   await import(auditUrl)
 const { parsePayloadToJourneyEvents } = await import(dsUrl)
 
-const API_BASE = process.env.TRUCKFLOW_EXPORT_API_BASE?.trim() || 'http://138.36.237.33:8090'
+const API_BASE = process.env.TRUCKFLOW_EXPORT_API_BASE?.trim() || 'http://100.54.73.142:8090'
 const DEFAULT_JSON = resolve(root, 'public/mock-data/realdata/journey-events_2026-05-04_2026-05-10.json')
 
 const arg1 = process.argv[2]

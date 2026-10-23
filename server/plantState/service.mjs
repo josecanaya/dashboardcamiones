@@ -30,7 +30,7 @@ const REFRESH_MS = 10_000
 const RECONCILE_MS = 5 * 60 * 1000
 const FETCH_TIMEOUT_MS = Number(process.env.TRUCKFLOW_FETCH_TIMEOUT_MS || 30_000)
 const DEFAULT_API_BASE =
-  process.env.TRUCKFLOW_EXPORT_API_BASE?.trim() || 'http://138.36.237.33:8090'
+  process.env.TRUCKFLOW_EXPORT_API_BASE?.trim() || 'http://100.54.73.142:8090'
 
 const KNOWN_SITES = new Set(['ricardone', 'san_lorenzo'])
 const MANUAL_OVERRIDES_PATH = path.join(ROOT, 'data', 'plant-state-manual-overrides.json')

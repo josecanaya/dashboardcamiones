@@ -90,7 +90,7 @@ export default defineConfig({
       },
       /** Evita CORS en desarrollo hacia journey-event/list */
       '/journey-api': {
-        target: 'http://138.36.237.33:8090',
+        target: 'http://100.54.73.142:8090',
         changeOrigin: true,
         rewrite: (p) => p.replace(/^\/journey-api/, ''),
       },

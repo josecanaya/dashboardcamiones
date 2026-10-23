@@ -1,7 +1,7 @@
 const plate = process.argv[2] || 'AE785CS'
 const start = process.argv[3] || '2026-05-01T00:00:00'
 const end = process.argv[4] || '2026-06-07T23:59:59'
-const base = process.env.TRUCKFLOW_EXPORT_API_BASE || 'http://138.36.237.33:8090'
+const base = process.env.TRUCKFLOW_EXPORT_API_BASE || 'http://100.54.73.142:8090'
 const url = `${base.replace(/\/$/, '')}/journey-event/list?startDate=${encodeURIComponent(start)}&endDate=${encodeURIComponent(end)}&plate=${encodeURIComponent(plate)}`
 
 const res = await fetch(url, { headers: { Accept: 'application/json' } })

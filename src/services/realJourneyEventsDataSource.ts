@@ -8,7 +8,7 @@ import { fetchJourneyEvents } from './realTruckflowApi'
 import { yieldToBrowser } from '../utils/yieldToBrowser'
 
 /** Origen público del servicio journey-event */
-export const JOURNEY_EVENT_API_PUBLIC_ORIGIN = 'http://138.36.237.33:8090'
+export const JOURNEY_EVENT_API_PUBLIC_ORIGIN = 'http://100.54.73.142:8090'
 
 export const RECOMMENDED_JOURNEY_EXPORT_START_DATE = '2026-04-29'
 export const RECOMMENDED_JOURNEY_EXPORT_END_DATE = '2026-05-05'

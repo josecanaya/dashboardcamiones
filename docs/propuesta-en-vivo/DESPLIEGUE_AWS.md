@@ -14,7 +14,7 @@ dashboard, el ETL y la capa de agentes van **en la misma red privada (VPC)**, al
 | Nosotros | Qué usuarios entran y con qué rol; quién aprueba acciones de la capa 4 |
 
 La VPN es lo crítico: sin ella en AWS anda todo **menos** video en vivo y lo que esté solo en la red de planta.
-Ojo: al mudar TruckFlow, los Edge de planta tienen que apuntar al nuevo destino (hoy `138.36.237.33:8090`).
+Ojo: al mudar TruckFlow, los Edge de planta tienen que apuntar al nuevo destino (desde 23/10/2026 `100.54.73.142:8090`, VM de BIMtrazer; antes `138.36.237.33:8090`).
 
 ## 2. Topología propuesta
 

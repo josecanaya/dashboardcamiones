@@ -7,7 +7,7 @@ import type { ApiRealJourneyEventRow, RealJourneyEventDto } from './realJourneyE
 import { annotateRealJourneyEventsWithPlateFieldsChunked } from './realJourneyEventPlate'
 import { yieldToBrowser } from '../utils/yieldToBrowser'
 
-export const REAL_TRUCKFLOW_BASE_URL = 'http://138.36.237.33:8090'
+export const REAL_TRUCKFLOW_BASE_URL = 'http://100.54.73.142:8090'
 
 /** Aborta `fetch` si la API no responde — evita “tildados” indefinidos. Subir desde env sólo si hace falta. */
 export const DEFAULT_TRUCKFLOW_FETCH_TIMEOUT_MS = 90_000

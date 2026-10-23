@@ -9,7 +9,7 @@ import { pathToFileURL } from 'url'
 
 const startDate = process.argv[2] || '2026-05-29'
 const endDate = process.argv[3] || '2026-06-02'
-const API_BASE = process.env.TRUCKFLOW_EXPORT_API_BASE?.trim() || 'http://138.36.237.33:8090'
+const API_BASE = process.env.TRUCKFLOW_EXPORT_API_BASE?.trim() || 'http://100.54.73.142:8090'
 const root = resolve(import.meta.dirname, '..')
 
 const committeeUrl = pathToFileURL(

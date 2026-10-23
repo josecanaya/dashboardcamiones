@@ -46,7 +46,7 @@ const MOV_DATA_ROOT = path.join(PROJECT_ROOT, 'data', 'movimientos')
 const INGEST_MOV_SCRIPT = path.join(PROJECT_ROOT, 'scripts', 'ingest-movimientos.ts')
 
 
-const DEFAULT_API_BASE = process.env.TRUCKFLOW_EXPORT_API_BASE?.trim() || 'http://138.36.237.33:8090'
+const DEFAULT_API_BASE = process.env.TRUCKFLOW_EXPORT_API_BASE?.trim() || 'http://100.54.73.142:8090'
 const FETCH_TIMEOUT_MS = Number(process.env.TRUCKFLOW_FETCH_TIMEOUT_MS || 120_000)
 const PORT = Number(process.env.TRUCKFLOW_LOCAL_SERVER_PORT || 8787)
 /** Días descargados en paralelo en export-period (eventos+alertas siguen en serie por día). */
