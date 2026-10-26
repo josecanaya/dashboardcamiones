@@ -191,6 +191,12 @@
 .lm-source-row b { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--lm-brand); margin-bottom: 2px; }
 .lm-source-row.is-off { border-left-color: var(--lm-line); color: var(--lm-muted); }
 .lm-source-row.is-off b { color: var(--lm-muted); }
+.lm-cpe { display: block; }
+.lm-cpe + .lm-cpe { margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--lm-line); }
+.lm-cpe__open { margin-top: 4px; border: 1px solid var(--lm-brand); color: var(--lm-brand); background: none; border-radius: 6px; padding: 3px 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.lm-cpe-dialog { width: min(920px, calc(100vw - 32px)); height: calc(100dvh - 32px); display: flex; flex-direction: column; overflow: hidden; }
+.lm-cpe-dialog:not([open]) { display: none; }
+.lm-cpe-dialog__pdf { flex: 1; width: 100%; border: 0; }
 
 
 /* Camiones en tránsito sobre los tramos */

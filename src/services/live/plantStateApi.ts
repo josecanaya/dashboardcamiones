@@ -712,6 +712,42 @@ export type BalanzaSnapshot = {
   otherOpen?: BalanzaRow[]
 }
 
+export interface CartaPorteNote {
+  ctg: string
+  stateCode: string
+  stateText: string
+  stateSince: string | null
+  departure: string | null
+  plant: string
+  plates: string[]
+  turnCode: string | null
+  grossKg: number | null
+  tareKg: number | null
+  /** La patente buscada es el acoplado, no el chasis. */
+  byTrailer: boolean
+}
+
+export interface CartaPorteLookup {
+  plate: string
+  notes: CartaPorteNote[]
+  copy: { available: boolean; newestDeparture: string | null; updatedAt: string | null }
+}
+
+/** Cartas de porte ARCA del camión (copia de la base, plantas del sitio). */
+export async function getCartaPorte(site: string, plate: string): Promise<CartaPorteLookup> {
+  const res = await fetchLocalTruckflow(`/agro/carta-porte?${new URLSearchParams({ site, plate })}`, {
+    headers: { Accept: 'application/json' },
+  })
+  const body = (await res.json()) as Partial<CartaPorteLookup> & { error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return body as CartaPorteLookup
+}
+
+/** PDF oficial de ARCA, pedido en el momento por el servidor (las claves no llegan al navegador). */
+export function cartaPortePdfUrl(ctg: string): string {
+  return `${localApiPrefix()}/agro/carta-porte/${encodeURIComponent(ctg)}/pdf`
+}
+
 export async function getBalanza(site: string): Promise<BalanzaSnapshot> {
   const res = await fetchLocalTruckflow(`/live/balanza?${new URLSearchParams({ site })}`, {
     headers: { Accept: 'application/json' },

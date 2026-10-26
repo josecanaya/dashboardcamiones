@@ -12,8 +12,8 @@ import { crossPlantSources, SOURCE_SGC, SOURCE_TF, type PlantTruck } from '../se
 import type { PlantPoint } from '../data/plantZones.types'
 import { useLivePlantState } from '../hooks/useLivePlantState'
 import type { PlantLayout, PlantCameraGroup } from '../data/plantZones.types'
-import type { BalanzaRow, BalanzaSnapshot, PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow, TruckTimelineRow } from '../services/live/plantStateApi'
-import { cameraCaptureImageUrl, correctTruckLocation, findCameraCapture, formatDrainMinutes, getBalanza, getIdentifications, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
+import type { BalanzaRow, BalanzaSnapshot, CartaPorteLookup, CartaPorteNote, PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow, TruckTimelineRow } from '../services/live/plantStateApi'
+import { cameraCaptureImageUrl, cartaPortePdfUrl, correctTruckLocation, getCartaPorte, findCameraCapture, formatDrainMinutes, getBalanza, getIdentifications, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
 import './liveMonitor.css'
 import { usePublishAnalysis } from '../context/AnalysisContext'
 
@@ -316,7 +316,7 @@ const MATCH_TEXT = { patente: 'misma patente', acoplado: 'la cámara leyó el ac
 const readSteps = (journey: TruckJourney | null) => (journey?.timeline ?? []).filter((r): r is TruckTimelineRow & { at: string } => r.step !== 'deducido' && r.at != null)
 
 /** Qué dice cada fuente del camión seguido, citada. */
-function SourcesBlock({ item, journey }: { item: PlantTruck | null; journey: TruckJourney | null }) {
+function SourcesBlock({ site, plate, item, journey }: { site: Site; plate: string; item: PlantTruck | null; journey: TruckJourney | null }) {
   const sgc = item?.sgc ?? item?.sgcClosed ?? null
   const steps = readSteps(journey)
   const first = steps[0]
@@ -340,7 +340,65 @@ function SourcesBlock({ item, journey }: { item: PlantTruck | null; journey: Tru
       </span> : <span>Sin ingreso en {SOURCE_SGC}: no pasó por balanza en las últimas 24 h.</span>}
     </div>
     {item?.sgcClosed && item.tf ? <p className="lm-card__alert">{SOURCE_SGC} registra la salida a las {hhmm(item.sgcClosed.salidaAt ?? '')}, pero las cámaras lo siguen viendo.</p> : null}
+    <CartaPorteRow site={site} plate={plate} trailer={sgc?.trailer ?? null} />
   </section>
+}
+
+const dayHhmm = (iso: string) => `${new Date(iso).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' })} ${hhmm(iso)}`
+
+/** Carta de porte ARCA del camión (copia de la base) y su PDF oficial. */
+function CartaPorteRow({ site, plate, trailer }: { site: Site; plate: string; trailer: string | null }) {
+  const [state, setState] = useState<{ phase: 'loading' } | { phase: 'ok'; lookup: CartaPorteLookup } | { phase: 'error'; msg: string }>({ phase: 'loading' })
+  const [pdf, setPdf] = useState<CartaPorteNote | null>(null)
+  useEffect(() => {
+    let alive = true
+    setState({ phase: 'loading' })
+    const lookup = async () => {
+      const own = await getCartaPorte(site, plate)
+      return own.notes.length || !trailer ? own : { ...(await getCartaPorte(site, trailer)), plate }
+    }
+    lookup().then(r => { if (alive) setState({ phase: 'ok', lookup: r }) }).catch(e => { if (alive) setState({ phase: 'error', msg: e instanceof Error ? e.message : String(e) }) })
+    return () => { alive = false }
+  }, [site, plate, trailer])
+  const notes = state.phase === 'ok' ? state.lookup.notes : []
+  const newest = state.phase === 'ok' ? state.lookup.copy.newestDeparture : null
+  return <div className={`lm-source-row${notes.length ? '' : ' is-off'}`}>
+    <b>ARCA · carta de porte</b>
+    {state.phase === 'loading' ? <span>Buscando carta…</span>
+      : state.phase === 'error' ? <span>No se pudo consultar: {state.msg}</span>
+      : !notes.length ? <span>Sin carta de porte a esta planta{newest ? ` en la copia (hasta ${dayHhmm(newest)})` : ''}.</span>
+      : notes.map(n => <span key={n.ctg} className="lm-cpe">
+        CTG {n.ctg} · {n.stateText}{n.stateSince ? ` ${dayHhmm(n.stateSince)}` : ''}<br />
+        Partida {n.departure ? dayHhmm(n.departure) : '—'} · {n.plates.join(' / ')}{n.byTrailer ? ' (por acoplado)' : ''} · planta {n.plant}
+        {n.grossKg != null && n.tareKg != null ? <> · neto origen {kgText(n.grossKg - n.tareKg)}</> : null}<br />
+        <button type="button" className="lm-cpe__open" onClick={() => setPdf(n)}>Ver carta de porte (PDF)</button>
+      </span>)}
+    {pdf ? <CartaPortePdf note={pdf} plate={plate} onClose={() => setPdf(null)} /> : null}
+  </div>
+}
+
+function CartaPortePdf({ note, plate, onClose }: { note: CartaPorteNote; plate: string; onClose: () => void }) {
+  const dialog = useRef<HTMLDialogElement>(null)
+  useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null
+    const el = dialog.current
+    el?.showModal()
+    return () => { el?.close(); opener?.focus?.() }
+  }, [])
+  return createPortal(
+    <dialog ref={dialog} className="pv-dialog lm-cpe-dialog" aria-labelledby="cpe-title" onCancel={e => { e.preventDefault(); onClose() }}>
+      <header className="pv-header">
+        <div>
+          <span>Carta de porte · ARCA</span>
+          <h2 id="cpe-title">{plate} · CTG {note.ctg}</h2>
+          <p>{note.stateText} · partida {note.departure ? dayHhmm(note.departure) : '—'} · <a href={cartaPortePdfUrl(note.ctg)} target="_blank" rel="noreferrer">Abrir en otra pestaña</a></p>
+        </div>
+        <button type="button" aria-label="Cerrar" onClick={onClose}>×</button>
+      </header>
+      <iframe className="lm-cpe-dialog__pdf" src={cartaPortePdfUrl(note.ctg)} title={`Carta de porte ${note.ctg}`} />
+    </dialog>,
+    document.body,
+  )
 }
 
 function TruckCard({ site, plate, item, row, journey, pointLabel, onClose, onChanged, onDiscarded }: {
@@ -386,7 +444,7 @@ function TruckCard({ site, plate, item, row, journey, pointLabel, onClose, onCha
         <div><dt>Última lectura</dt><dd>{sgcOnly ? 'Sin cámara' : `hace ${minutes(journey?.minutesSinceLastDetection ?? row?.minutesSinceLastDetection)}`}</dd></div>
       </dl>
       {journey?.anomaly ? <p className="lm-card__alert">{journey.anomaly.rule}</p> : null}
-      <SourcesBlock item={item} journey={journey} />
+      <SourcesBlock site={site} plate={plate} item={item} journey={journey} />
       {sgcOnly ? <CrossPlant key={`cross-${plate}`} site={site} plate={plate} /> : <>
       <DiscardTruck site={site} plate={tfPlate} onDone={onDiscarded} />
 

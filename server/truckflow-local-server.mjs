@@ -35,6 +35,7 @@ import {
 import { resolveRunDir, runDirExists, stableWindowRunId } from './etl-runs-layout.mjs'
 import { getSourceAvailability } from './sourceAvailability.mjs'
 import { createSgcSource } from './sgc/sgcSource.mjs'
+import { createCartaPorteSource } from './agro/cartaPorte.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = path.resolve(__dirname, '..')
@@ -273,6 +274,9 @@ const plantQueries = createPlantStateQueries(plantState)
 /** Balanza Vicentin (Oracle SGC): reemplaza al Excel de movimientos y alimenta En vivo. */
 const sgc = createSgcSource({ projectRoot: PROJECT_ROOT })
 app.use(sgc.router)
+
+/** Cartas de porte ARCA del camión en planta y su PDF oficial (API agro.bimtrazer.com). */
+app.use(createCartaPorteSource({ projectRoot: PROJECT_ROOT }).router)
 
 app.get('/api/truckflow/live/plant-state', async (req, res) => {
   const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
