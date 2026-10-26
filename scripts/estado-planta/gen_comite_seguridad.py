@@ -82,6 +82,7 @@ for v in VUELTAS:   # también doble ciclo (volvió por el pre-ingreso, un solo 
         v['fotosNota'] = (f'Al volver pasó por el pre-ingreso ({pre}) y la planilla tiene un solo movimiento ({ing}): también es un doble ciclo con un solo contrato.' if pre and ing else 'También es un doble ciclo con un solo contrato.')
 VUELTAS_DESC = [v for v in D['vueltas'] if v['estado'] == 'descartado_excel']
 V_PEND = [v for v in VUELTAS if v['estado'] == 'pendiente_excel']
+PKG = (D.get('balanza') or {}).get('pasadosKg', [])   # pasados de kilos por balanza (comite-seguridad-deteccion.ts 1b)
 CAMIONETAS = {x['patente'] for x in D['camionetas']['lista']}
 CALLES = [dict(c, tipo='dos') for c in D['dosCalles']]
 for c in D['declarado']:
@@ -98,7 +99,7 @@ def explica(c):
     if c['tipo'] == 'otra':
         return f'Declaró el volcable {decl} y la cámara lo leyó en la calle {cs[0]}.', True
     contig = all(abs(int(a) - int(b)) == 1 for a, b in zip(cs, cs[1:]))
-    if not decl and ex:
+    if not decl and ex and 'VOLCABLE_PTO' not in ex.upper():
         return f'Egreso de {ex.lower()}: carga, sin volcable declarado; circula por la zona de volcables' + (' (calles contiguas).' if contig else '.'), False
     gaps = [(_min(b['hora']) - _min(a['hora'])) % 1440 for a, b in zip(c['calles'], c['calles'][1:])]
     if max(gaps) <= 5:
@@ -111,7 +112,7 @@ EXCL = json.load(open(os.path.join(CARPETA, 'casos-excluidos.json'), encoding='u
 CALLES = [c for c in CALLES if c['patente'] not in EXCL.get('calles', [])]   # sacados a mano después de revisar las fotos
 REVISAR = [c for c in CALLES if c['revisar']]
 EXTRA = json.load(open(os.path.join(CARPETA, 'casos-extra.json'), encoding='utf-8')) if os.path.exists(os.path.join(CARPETA, 'casos-extra.json')) else []
-INTER = D['interplanta']; CERCA = D['interplantaCercanos']
+INTER = D['interplanta']; CERCA = D['interplantaCercanos']; UI = D.get('umbralInterplantaMin', 30)   # norma: 20 min (pedido 26/10)
 N_HOY = len(VUELTAS) + len(REVISAR) + len(EXTRA)
 
 # ---------- portada
@@ -155,7 +156,7 @@ if F['camarasFaltantes']:
 section('numeros', h2(f'Del {D0} al {D1} en números', 64)
     + '<div style="flex:1; display:flex; flex-direction:row; gap:28px">'
     + card(str(nv), vtxt, '#FBE9E4', RED, 'A confirmar con el Excel' if V_PEND else '')
-    + card(str(len(INTER)), 'demoras de más de 30 min entre plantas sin calado en el puerto', '#FDEEDD', ORG)
+    + card(str(len(INTER)), f'demoras de más de {UI} min entre plantas sin calado en el puerto', '#FDEEDD', ORG)
     + card(str(len(REVISAR)), ctxt, '#ECE8F3', VIO, 'Volcable declarado: falta el Excel' if F['excelFaltante'] else ((f'{len(CALLES) - len(REVISAR)} paso por dos calles explicado' if len(CALLES) - len(REVISAR) == 1 else f'{len(CALLES) - len(REVISAR)} pasos por dos calles explicados') if len(CALLES) > len(REVISAR) else ''))
     + '</div>' + ''.join(pendiente(b) for b in banner),
     f'Cámaras {D0}–{D1} ({F["lecturasPeriodo"]} lecturas; hora operativa = hora de cámara + 206 min) con {F["correcciones"]["renombradas"]} lecturas corregidas y {F["correcciones"]["descartadas"]} descartadas por las correcciones de patentes de En vivo. '
@@ -169,40 +170,99 @@ divider('div-vuelta', '01', 'Anomalías de circuito' if EXTRA else 'Fueron al pu
          'El circuito de grano termina en San Lorenzo. Estos camiones llegaron al puerto, salieron sin descargar y volvieron a entrar a Ricardone.')
         + (' Detectados con las cámaras; falta el Excel para confirmarlos.' if V_PEND else ''))
 
-def box(t, lab, red=False, plant='ric'):
+def box(t, lab, red=False, plant='ric', compacto=False):
     c = RED if red else (BLU if plant == 'ric' else ORG)
     bc = RED if red else ('#2F8FCB' if plant == 'ric' else '#E07B1F')
-    return (f'<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; background:#FFFFFF; border:{3 if red else 2}px solid {bc}; border-radius:14px; padding:12px 6px">'
-            f'<p style="font-size:28px; font-weight:700; color:{c}; white-space:nowrap">{t}</p><p style="font-size:24px; line-height:1.15; text-align:center; color:{RED if red else INK}">{lab}</p></div>')
-def group(plant, items, flex):
+    ft, fl, pad = (22, 18, '8px 2px') if compacto else (28, 24, '12px 6px')
+    return (f'<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; background:#FFFFFF; border:{3 if red else 2}px solid {bc}; border-radius:14px; padding:{pad}">'
+            f'<p style="font-size:{ft}px; font-weight:700; color:{c}; white-space:nowrap">{t}</p><p style="font-size:{fl}px; line-height:1.15; text-align:center; color:{RED if red else INK}">{lab}</p></div>')
+def group(plant, items, flex, compacto=False):   # compacto: muchos pasos en la misma línea (recorridos de 10+ lecturas)
     bg, col, name = ('#E3F1FA', BLU, 'RICARDONE') if plant == 'ric' else ('#FDEEDD', ORG, 'SAN LORENZO')
-    return (f'<div style="flex:{flex}; display:flex; flex-direction:column; gap:10px; background:{bg}; border-radius:20px; padding:14px 12px 12px"><p style="font-size:24px; font-weight:700; letter-spacing:2px; color:{col}">{name}</p>'
-            f'<div style="display:flex; flex-direction:row; gap:8px">' + ''.join(box(t, l, r, plant) for t, l, r in items) + '</div></div>')
+    return (f'<div style="flex:{flex}; display:flex; flex-direction:column; gap:{6 if compacto else 10}px; background:{bg}; border-radius:20px; padding:{"10px 8px 8px" if compacto else "14px 12px 12px"}"><p style="font-size:{20 if compacto else 24}px; font-weight:700; letter-spacing:2px; color:{col}">{name}</p>'
+            f'<div style="display:flex; flex-direction:row; gap:{4 if compacto else 8}px">' + ''.join(box(t, l, r, plant, compacto) for t, l, r in items) + '</div></div>')
 def arrow(red=False):
     return f'<div style="display:flex; flex-direction:column; justify-content:center; padding-top:38px"><x-shape kind="arrow-right" style="background:{RED if red else "#A7B0AB"}; width:44px; height:26px"></x-shape></div>'
 
 def titulo_vuelta(v):
+    if v.get('titulo'): return v['titulo']
     if v['balanzaSalida']: t = 'Pasó por las dos balanzas del puerto sin descargar'
     else: t = f'Salió del puerto a los {v["minPuerto"]} minutos'
     n = v['caladasVuelta']
     t += ' y volvió a calar' + (' dos veces' if n >= 2 else '') if n else ' y volvió a Ricardone'
     return t
+# rechazados en la balanza del puerto: mismo formato que las vueltas (patente, línea por planta y todas las fotos del DSS)
+_bf = os.path.join(CARPETA, 'fotos', 'recorridos', 'blobs.json'); _ef = os.path.join(CARPETA, 'recorridos-excluidos.json')
+BLOBS_REC = json.load(open(_bf, encoding='utf-8')) if os.path.exists(_bf) else {}
+EXC_REC0 = json.load(open(_ef, encoding='utf-8'))['pasos'] if os.path.exists(_ef) else []
+CORTO = {'Ingreso puerto': 'Ingreso', 'Balanza puerto': 'Balanza', 'Balanza salida puerto': 'Bal. salida', 'Salida puerto': 'Salida'}
+hm_ = lambda m: f'{int(m)} min' if m < 60 else f'{int(m) // 60} h {int(m) % 60:02d} m'
+# Sistema de camiones (data/movimientos, sin kilos) de los rechazados: ingresos del período (¿dado de baja?) y descargas anteriores,
+# para responder «¿es un camión de descarga?» y «¿son dos viajes distintos?» (pedido 26/10).
+DATA_DIR = os.path.abspath(os.path.join(CARPETA, '..', '..', '..', '..', 'data'))
+_FLOTA = {x['patente'] for x in PKG}
+SGC_HIST = collections.defaultdict(list)
+for _d in sorted(os.listdir(os.path.join(DATA_DIR, 'movimientos'))) if _FLOTA else []:
+    _f = os.path.join(DATA_DIR, 'movimientos', _d, 'movimientos.json')
+    if not os.path.exists(_f): continue
+    for r in json.load(open(_f, encoding='utf-8')):
+        if r.get('plate_normalized') in _FLOTA:
+            k = (r.get('ingreso_id') or r.get('external_operation_id'), r.get('fecha_ing_original'))
+            if all((o.get('ingreso_id') or o.get('external_operation_id'), o.get('fecha_ing_original')) != k for o in SGC_HIST[r['plate_normalized']]): SGC_HIST[r['plate_normalized']].append(r)
+PLAT = lambda p: (p or '').replace('VOLCABLE_PTO_SGC', 'volcable').replace('VOLCABLE_PTO_', 'volcable ').replace('CELDA_16', 'Celda 16').lower() or 'sin plataforma'
+# Calle donde descargó el reingreso. El DEPOSITO del SGC («SILO 5») es el destino del grano, no la calle: no se usa.
+# GVW791: Volcable 5 por foto del DSS (listVehicleCaptures): Ford Cargo sin patente en SLZVolcableC5 02:13:50 (cámara) y
+# en SLZBalSC2Fte 02:23:04 (leyó «VH4»), 6 min antes de su salida leída. Las dos fotos se agregaron a mano a la lámina (26/10).
+CALLE_DESCARGA = {'GVW791': '5'}
+def sistema_rechazo(pl, dia):   # texto corto: ingresos desde el rechazo + historial de descargas
+    rs = SGC_HIST.get(pl, []); d0 = f'{P0[:4]}-{dia[3:5]}-{dia[:2]}'
+    hoy = sorted([r for r in rs if str(r.get('external_ingreso_at', ''))[:10] >= d0], key=lambda r: r.get('external_ingreso_at') or '')
+    antes = [r for r in rs if str(r.get('external_ingreso_at', ''))[:10] < d0 and r.get('movement_type') == 'INGRESO' and not r.get('baja')]
+    ing = '; '.join(f'ingreso {r.get("ingreso_id")} {"en Ricardone" if r.get("planta_normalized") == "RICARDONE" else "al puerto"} {str(r.get("external_ingreso_at"))[8:10]}/{str(r.get("external_ingreso_at"))[5:7]} {str(r.get("external_ingreso_at"))[11:16]}'
+                    + (' dado de baja por la balanza' if r.get('baja') else f', descargó{" en el Volcable " + CALLE_DESCARGA[pl] if pl in CALLE_DESCARGA else ""}') for r in hoy)
+    hist = (f'Camión de descarga habitual: {len(antes)} descargas de {antes[0]["product_normalized"].lower()} antes ({", ".join(dict.fromkeys(PLAT(r.get("platform_normalized")) for r in antes))})' if antes else 'Sin descargas anteriores en el sistema')
+    return ing, hist
+for x in PKG:
+    pl = x['patente']; exk = {e['clave'] for e in EXC_REC0 if e['patente'] == pl}
+    vis = [dict(v, items=[it for it in v['items'] if f'{pl}|{it.get("device")}|{it.get("at")}' not in exk]) for v in x['visitas']]
+    vis = [v for v in vis if v['items']]
+    sl_ = [v for v in vis if v['planta'] == 'sl']
+    m1 = (sl_[0]['items'][-1]['t'] - sl_[0]['items'][0]['t']) / 60000 if sl_ else 0
+    hasta = (sl_[1]['items'][0]['t'] - sl_[0]['items'][-1]['t']) / 60000 if len(sl_) > 1 else None
+    fotos_ = [(BLOBS_REC.get(f'{pl}_{it["hora"].replace(":", "")}_{it.get("device", "")}'), it['hora'], CORTO.get(it['punto'], it['punto']) + (' (alg.)' if it['estado'] != 'camara' else ''), v['planta']) for v in vis for it in v['items']]
+    sin_foto = [f for f in fotos_ if not f[0]]
+    if len(sin_foto) < len(fotos_): FOTOS[f'{pl}_todas'] = [f for f in fotos_ if f[0]]   # el DSS no siempre tiene la captura
+    exc_txt = '; '.join(f'{e["punto"]} {e["hora"]}' for e in EXC_REC0 if e['patente'] == pl)
+    s_ing, s_hist = sistema_rechazo(pl, x['primerIngreso'][:5])
+    VUELTAS.append({'patente': pl, 'dia': x['primerIngreso'][:5], 'estado': 'balanza', 'producto': x['producto'],
+        'titulo': ((('La balanza del puerto le dio de baja el ingreso' if any(r.get('baja') for r in SGC_HIST.get(pl, [])) else 'La balanza del puerto no lo pesó') + (', volvió a Ricardone y entró de nuevo' if x['estado'] == 'volvio_a_ricardone' else ' y no volvió a entrar'))),
+        'puertoTxt': hm_(m1), 'hastaTxt': hm_(hasta) if hasta is not None else 'Sin volver', 'hastaLbl': 'hasta entrar de nuevo al puerto' if hasta is not None else 'todavía',
+        'grupos': [{'planta': v['planta'], 'items': [{'hora': it['hora'], 'punto': CORTO.get(it['punto'], it['punto']) + (' (alg.)' if it['estado'] != 'camara' else '')} for it in v['items']]} for v in vis],
+        'lecturas': [f'{it["hora"]} {it["punto"]}' + (f' (algoritmo, leyó {it.get("leyo") or "sin patente"})' if it['estado'] != 'camara' else '') for v in vis for it in v['items']],
+        'fotosNota': (f'<b>Sistema de camiones:</b> {s_ing}. {s_hist}.<br>' + '(alg.) = paso que la cámara vio sin leer bien la patente y el algoritmo por lote asignó a este camión; se revisó con la foto.' + (f' Se sacó lo que la foto mostró de otro camión: {exc_txt}.' if exc_txt else '')
+                      + (f' Sin foto en el DSS: {", ".join(f[1] + " " + f[2] for f in sin_foto)}.' if sin_foto else '')),
+        'notas': f'{pl}: sistema de camiones — {s_ing}. {s_hist}. Balanza SGC, 1.º ingreso {x["primerIngreso"]}–{x["primeraSalida"][-5:]} sin pesar' + (f'; 2.º ingreso {x["segundoIngreso"]}–{x["segundaSalida"][-5:]}' if x['segundoIngreso'] else '; sin otro ingreso todavía') + '. Lecturas: ' + '; '.join(f'{it["hora"]} {it["punto"]}' for v in vis for it in v['items']) + '.'})
 for v in VUELTAS:
     pl = v['patente']
     pills = [(v['puertoTxt'], 'en el puerto sin descargar')] + ([(v['hastaTxt'], v['hastaLbl'])] if v['hastaTxt'] else [])
     pl_html = ''.join(f'<div style="display:flex; flex-direction:row; align-items:baseline; gap:14px; background:{bg}; padding:12px 24px; border-radius:40px"><p style="font-family:{SERIF}; font-size:36px; font-weight:700; color:{c}; white-space:nowrap">{a}</p><p style="font-size:24px; color:{INK}; white-space:nowrap">{b}</p></div>'
                       for (a, b), (bg, c) in zip(pills, [('#FBE9E4', RED), ('#FDEEDD', ORG)]))
     tl = ''
+    compacto = sum(len(g['items']) for g in v['grupos']) > 10
     for i, g in enumerate(v['grupos']):
         red_grp = i == 2
         items = [(x['hora'], x['punto'], red_grp or (i == 1 and x['punto'] in ('Egreso', 'Balanza salida'))) for x in g['items']]
         if i: tl += arrow(red_grp)
-        tl += group(g['planta'], items, max(2, len(items)))
+        tl += group(g['planta'], items, max(2, len(items)), compacto)
     fotos = FOTOS.get(pl, []); todas = FOTOS.get(f'{pl}_todas', [])
     if todas:   # todas las lecturas del camión en la misma lámina
-        ph = (f'<div style="display:grid; grid-template-columns:repeat(6, 264px); gap:8px 16px">' + ''.join(
-              f'<div style="display:flex; flex-direction:column; gap:4px"><img src="{src}" alt="Cámara {t} · {pt}" style="width:264px; height:146px; object-fit:cover; border-radius:10px">'
-              f'<p style="font-size:20px; color:{MUTE}; white-space:nowrap"><b style="color:{INK}">{t}</b> · {"Ric." if planta == "ric" else "SL"} · {pt}</p></div>' for src, t, pt, planta in todas) + '</div>'
+        n_t = len(todas)
+        if n_t <= 12: nc, fw, fh = 6, 264, 146
+        else:   # muchas lecturas: dos filas, fotos más chicas y el rótulo en dos líneas
+            nc = min(10, -(-n_t // 2)); fw = (1664 - (nc - 1) * 12) // nc; fh = round(fw * 0.56)
+        ph = (f'<div style="display:grid; grid-template-columns:repeat({nc}, {fw}px); gap:8px {16 if n_t <= 12 else 12}px">' + ''.join(
+              f'<div style="display:flex; flex-direction:column; gap:4px"><img src="{src}" alt="Cámara {t} · {pt}" style="width:{fw}px; height:{fh}px; object-fit:cover; border-radius:10px">'
+              + (f'<p style="font-size:20px; color:{MUTE}; white-space:nowrap"><b style="color:{INK}">{t}</b> · {"Ric." if planta == "ric" else "SL"} · {pt}</p></div>' if n_t <= 12 else
+                 f'<p style="font-size:18px; line-height:1.2; color:{MUTE}"><b style="color:{INK}">{t}</b> · {"Ric." if planta == "ric" else "SL"}<br>{pt}</p></div>') for src, t, pt, planta in todas) + '</div>'
               + (f'<p style="font-size:24px; line-height:1.35; color:{INK}">{v["fotosNota"]}</p>' if v.get('fotosNota') else ''))
     elif fotos:
         ph = ''.join(f'<div style="width:401px; display:flex; flex-direction:column; gap:12px"><img src="{src}" alt="Cámara {t} · {lab}" style="width:401px; height:236px; object-fit:cover; border-radius:14px"><p style="font-size:24px; color:{MUTE}"><b style="color:{INK}">{t}</b> · {lab}</p></div>' for src, t, lab in fotos)
@@ -216,7 +276,7 @@ for v in VUELTAS:
             f'<div style="flex:1; display:flex; flex-direction:column; gap:14px"><div style="display:flex; flex-direction:row; gap:20px; align-items:center"><p style="font-size:24px; font-weight:600; letter-spacing:2px; color:{MUTE}">{meta}</p>{badge("CANDIDATO · A CONFIRMAR CON EXCEL") if v["estado"] == "pendiente_excel" else ""}</div>'
             f'<h2 style="font-family:{SERIF}; font-size:44px; font-weight:700; line-height:1.15; color:{INK}">{titulo_vuelta(v)}</h2><div style="display:flex; flex-direction:row; gap:16px">{pl_html}</div></div></div>')
     body = f'{head}<div style="display:flex; flex-direction:row; gap:10px; align-items:stretch">{tl}</div>' + (f'<div style="display:flex; flex-direction:column; gap:12px">{ph}</div>' if todas else f'<div style="display:flex; flex-direction:row; gap:20px">{ph}</div>')
-    notes = (f'{pl}: lecturas de cámara (hora operativa) — ' + '; '.join(v['lecturas']) + '. '
+    notes = v['notas'] if v.get('notas') else (f'{pl}: lecturas de cámara (hora operativa) — ' + '; '.join(v['lecturas']) + '. '
              + ('Excel del día no disponible: candidato.' if v['estado'] == 'pendiente_excel' else f'Excel: sin operación en el puerto para la primera visita. Operaciones: {"; ".join(v["excel"] or [])}.'))
     slides.append((f'v-{pl.lower()}-{v["dia"].replace("/", "")}', f'<section id="v-{pl.lower()}-{v["dia"].replace("/", "")}" style="background:{BG}; color:{INK}; font-family:{SANS}; padding:{"80px 128px 150px" if todas else "112px 128px 176px"}; display:flex; flex-direction:column; gap:{18 if todas else 30}px; justify-content:start">{body}{footer()}<aside>{notes}</aside></section>'))
 def caso_extra(x):
@@ -244,7 +304,7 @@ def caso_extra(x):
     slides.append((sid, f'<section id="{sid}" style="background:{BG}; color:{INK}; font-family:{SANS}; padding:72px 128px 150px; display:flex; flex-direction:column; gap:18px">{body}{footer()}'
                    f'<aside>{x["nota"]} {x["_fuente"]}</aside></section>'))
 for x in EXTRA: caso_extra(x)
-if not VUELTAS:
+if not VUELTAS and not PKG:
     section('v-ninguna', eyebrow('VUELTAS A RICARDONE') + h2(f'Del {D0} al {D1} ningún camión volvió a Ricardone sin descargar')
         + (pendiente(f'Revisado con las cámaras; falta {FALTA_EXCEL} para cerrar.') if F['excelFaltante'] else ''),
         'Misma regla que el comité anterior, sobre todas las visitas al puerto del período.')
@@ -302,21 +362,29 @@ else:
 
 # ---------- 03 interplanta
 divider('div-interplanta', '03', 'Demoras entre plantas sin calado en el puerto',
-        f'Más de 30 minutos entre la salida de Ricardone y la entrada al puerto (el viaje normal es de {D["viajeNormalRicSLmin"]}), sin pasar después por la calada de San Lorenzo.')
+        f'Más de {UI} minutos entre la salida de Ricardone y la entrada al puerto (el viaje normal es de {D["viajeNormalRicSLmin"]}), sin pasar después por la calada de San Lorenzo.')
 if INTER:
-    tr = ''.join(f'<tr style="background:{"#FDEEDD" if i % 2 == 0 else BG}"><td>{r["dia"]}</td><td>{r["salida"]}</td><td style="font-weight:700">{r["patente"]}</td><td>{r["tipo"]}</td><td>{r["descarga"]}</td><td style="color:{RED}; font-weight:700; text-align:right">{r["min"]} min</td></tr>' for i, r in enumerate(INTER))
-    n = len(INTER); trans = [r for r in INTER if r['tipo'] == 'Transile']
-    section('interplanta', eyebrow('INTERPLANTA · RICARDONE → SAN LORENZO') + h2(f'{num(n, True)} {"camión tardó" if n == 1 else "camiones tardaron"} más de 30 minutos y no {"pasó" if n == 1 else "pasaron"} por la calada del puerto', 52)
-        + f'<table style="font-size:24px; color:{INK}; padding:8px 22px"><tr><th style="width:11%">Día</th><th style="width:13%">Salida Ric</th><th style="width:16%">Patente</th><th style="width:24%">Origen</th><th style="width:20%">Descarga</th><th style="width:16%; text-align:right">Demora</th></tr>{tr}</table>'
-        + (pendiente(f'Transiles ({", ".join(r["patente"] for r in trans)}): la salida de Ricardone es la última lectura de egreso; si no se leyó la balanza de egreso, la demora real es menor. Se confirma con {FALTA_EXCEL}.') if trans and F['excelFaltante'] else ''),
-        f'Regla: último egreso de Ricardone → cámara de ingreso de San Lorenzo, más de 30 min y hasta 2 h, sin lectura en la calada del puerto hasta la salida. Solo grano: caló en Ricardone o transile (Playa 3 / carga); fuera líquidos y camiones sin calada ni carga (residuos, servicios). Si después del egreso hay Playa 3 o carga, la salida real no se leyó y el viaje no se mide. Viaje normal = mediana de la semana ({D["viajeNormalRicSLmin"]} min).')
+    # todos los casos, sin fotos: día, salida, patente, demora (pedido 26/10). Los que salieron de Ricardone con ≤15 min
+    # de diferencia el mismo día se marcan como tanda: llegan juntos y esperan juntos en el ingreso del puerto.
+    _ts = sorted(INTER, key=lambda r: (r['dia'][3:5], r['dia'][:2], r['salida']))
+    _mins = lambda r: int(r['salida'][:2]) * 60 + int(r['salida'][3:])
+    tanda = {}
+    for a, b in zip(_ts, _ts[1:]):
+        if a['dia'] == b['dia'] and _mins(b) - _mins(a) <= 15: tanda[id(a)] = tanda[id(b)] = True
+    def celda(r): return (f'<div style="display:flex; flex-direction:row; align-items:baseline; gap:14px; background:{"#FDEEDD" if tanda.get(id(r)) else "#FFFFFF"}; border:2px solid {"#F2C9A0" if tanda.get(id(r)) else "#D3DAD6"}; border-radius:12px; padding:8px 16px">'
+                          f'<p style="font-size:22px; color:{MUTE}; width:150px; white-space:nowrap">{r["dia"]} {r["salida"]}</p><p style="flex:1; font-size:24px; font-weight:700; color:{INK}">{r["patente"]}</p><p style="font-size:24px; font-weight:700; color:{RED}">{r["min"]} min</p></div>')
+    n = len(INTER); nt = sum(1 for r in INTER if tanda.get(id(r)))
+    section('interplanta', eyebrow('INTERPLANTA · RICARDONE → SAN LORENZO') + h2(f'{num(n, True)} {"camión tardó" if n == 1 else "camiones tardaron"} más de {UI} minutos y no {"pasó" if n == 1 else "pasaron"} por la calada del puerto', 52)
+        + f'<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px 20px">' + ''.join(celda(r) for r in _ts) + '</div>'
+        + (f'<p style="font-size:26px; line-height:1.4; color:{INK}"><span style="display:inline-block; width:30px; height:20px; background:#FDEEDD; border:2px solid #F2C9A0; border-radius:5px"></span> <b>{nt} salieron en tanda</b> (con menos de 15 min entre uno y otro): llegaron juntos al puerto; hay que ver si la demora fue espera en el ingreso.</p>' if nt else ''),
+        f'Regla: último egreso de Ricardone → cámara de ingreso de San Lorenzo, más de {UI} min (norma) y hasta 2 h, sin lectura en la calada del puerto hasta la salida. Solo grano: caló en Ricardone o transile (Playa 3 / carga); fuera líquidos y camiones sin calada ni carga (residuos, servicios). Si después del egreso hay Playa 3 o carga, la salida real no se leyó y el viaje no se mide. Viaje normal = mediana de la semana ({D["viajeNormalRicSLmin"]} min).')
 else:
     cr = ''.join(f'<tr style="background:{"#FDEEDD" if i % 2 == 0 else BG}"><td>{r["dia"]}</td><td>{r["salida"]}</td><td style="font-weight:700">{r["patente"]}</td><td style="text-align:right">{r["min"]} min</td><td>{r["motivo"].capitalize()}</td></tr>' for i, r in enumerate(CERCA))
-    section('interplanta', eyebrow('INTERPLANTA · RICARDONE → SAN LORENZO') + h2(f'Del {D0} al {D1}, ningún camión de grano tardó más de 30 minutos sin pasar por la calada del puerto', 52)
+    section('interplanta', eyebrow('INTERPLANTA · RICARDONE → SAN LORENZO') + h2(f'Del {D0} al {D1}, ningún camión de grano tardó más de {UI} minutos sin pasar por la calada del puerto', 52)
         + f'<div style="display:flex; flex-direction:row; gap:28px; align-items:stretch">{card(str(D["viajeNormalRicSLmin"]) + " min", "viaje normal de Ricardone al puerto (mediana de la semana)", "#E3F1EA", GDK)}'
         + (f'<div style="flex:2; display:flex; flex-direction:column; gap:14px"><p style="font-size:26px; font-weight:700">Los más cercanos a la regla</p><table style="font-size:24px; color:{INK}; padding:8px 22px"><tr><th style="width:12%">Día</th><th style="width:16%">Salida Ric</th><th style="width:18%">Patente</th><th style="width:16%; text-align:right">Viaje</th><th style="width:38%">Por qué no entra</th></tr>{cr}</table></div>' if CERCA else '')
         + '</div>',
-        f'Regla: último egreso de Ricardone → cámara de ingreso de San Lorenzo, más de 30 min y hasta 2 h, sin lectura en la calada del puerto. Solo grano (caló en Ricardone o transile). Las semanas del 11/09 y 18/09 hubo 33 y 25 casos; del 24/09 al 04/10, 10. Cercanos: entre 25 y 30 min, o más de 30 min pero con calada en el puerto.')
+        f'Regla: último egreso de Ricardone → cámara de ingreso de San Lorenzo, más de {UI} min y hasta 2 h, sin lectura en la calada del puerto. Solo grano (caló en Ricardone o transile). Cercanos: hasta 5 min por debajo de la norma, o más pero con calada en el puerto.')
 
 # ---------- camionetas sin Excel
 CL = D['camionetas']['lista']
@@ -403,9 +471,262 @@ if SV:
         + f'<div style="display:grid; grid-template-columns:repeat(6, 264px); gap:10px 16px">{sg}</div>',
         SV.get('_nota', '') + ' ' + '; '.join(f'{r["patente"]} {r["tipo"]} ({r["producto"]}): {r["mov"]} movimientos, {r["dias"]} días' for r in SVL) + '.', gap=20)
 
+# ---------- 04 balanza (SGC) y ETL: datos.json → balanza / etl (comite-seguridad-deteccion.ts)
+BAL = D.get('balanza'); ETL = [x for x in (D.get('etl') or []) if not str(x.get('conclusion', '')).startswith('Descargó')]   # balanza + algoritmo confirman la descarga: no es caso
+hmin = lambda m: f'{m} min' if m < 60 else f'{m // 60} h {m % 60:02d} m'
+def y_(l): l = list(l); return l[0] if len(l) == 1 else ', '.join(l[:-1]) + ' y ' + l[-1]
+TD = 'padding:6px 18px'
+if BAL is not None:
+    divider('div-balanza', '04', 'Balanza y recorridos fuera de lo común',
+            'Lo que marcan la balanza (SGC) y el ETL, explicado con las cámaras: ingresos que salieron sin pesar, reingresos rápidos, visitas relámpago al puerto.')
+    SP = [x for x in BAL['sinPesar'] if x['planta'] == 'Ricardone']; SPP = [x for x in BAL['sinPesar'] if x['planta'] != 'Ricardone']
+    al_puerto = [x for x in SP if x['alerta']]
+    if SP:
+        ult = lambda x: ' → '.join(x['adentro'].split(' → ')[-2:]) if ' → ' in x['adentro'] else x['adentro']
+        # muchos casos: en la tabla solo los que fueron al puerto; los demás, en una línea (no entran 14+ filas)
+        RESTO = [x for x in SP if x['destino'] == 'No fue al puerto'] if len(SP) > 13 else []
+        TAB = [x for x in SP if x not in RESTO]
+        tr =''.join(f'<tr style="background:{"#FDEEDD" if x["alerta"] else ("#F1F4F2" if i % 2 == 0 else BG)}"><td>{x["ingreso"]}</td><td style="font-weight:700">{x["patente"]}</td><td>{x["producto"].capitalize()}</td><td style="text-align:right">{hmin(x["minutos"])}</td><td>{ult(x)}</td><td style="color:{RED if x["alerta"] else GDK}; font-weight:700">{x["destino"]}</td></tr>' for i, x in enumerate(TAB))
+        section('sin-pesar', eyebrow('BALANZA · INGRESOS SIN PESAR', BLU)
+            + h2(f'{num(len(SP), True)} camiones entraron a Ricardone y salieron sin pesar: ' + (f'{num(len(al_puerto))} fue{"ron" if len(al_puerto) != 1 else ""} igual al puerto' if al_puerto else 'ninguno fue al puerto'), 48)
+            + f'<table style="font-size:22px; color:{INK}; {TD}"><tr><th style="width:13%">Ingreso</th><th style="width:11%">Patente</th><th style="width:16%">Producto</th><th style="width:10%; text-align:right">Adentro</th><th style="width:25%">Últimas cámaras en Ricardone</th><th style="width:25%">Después (12 h)</th></tr>{tr}</table>'
+            + (f'<p style="font-size:24px; color:{INK}"><b>No fueron al puerto ({len(RESTO)}):</b> ' + ', '.join(f'{x["patente"]} {x["ingreso"][:5]}' for x in RESTO) + '. Calaron o se quedaron en Ricardone y salieron.</p>' if RESTO else '')
+            + (f'<p style="font-size:22px; color:{MUTE}">En el puerto salieron sin pesar {num(len(SPP))} más: ' + ', '.join(x['patente'] for x in SPP) + '. Los de grano van en la lámina de vueltas a Ricardone.</p>' if SPP else ''),
+            f'Balanza SGC del {D0} al {D1}: ingresos de grano y aceite con salida y sin peso neto (no se pesaron). Son rechazos de la balanza (calidad, documentación u otros). '
+            f'Cámaras (con las correcciones de En vivo): lecturas de la patente o el acoplado entre 1 h antes del ingreso y 30 min después de la salida, y si en las 12 h siguientes apareció en el puerto. Total sin pesar: {len(BAL["sinPesar"])}.', gap=24)
+    if ETL:
+        # cada caso contra el sistema (balanza), el algoritmo por lote y En vivo (comite-seguridad-deteccion.ts → contraste)
+        CASOS = [x for x in ETL if x.get('esCaso')]
+        sis = lambda x: re.sub(r' · [\d.]+ kg', '', x.get('sistema', '')) if x.get('sistema') != 'No figura' else '<span style="color:' + RED + '">No figura</span>'
+        def alg(x):
+            t = x.get('lote') or ''
+            m = re.match(r'Circuito (\S+): (\d+) pasos leídos, (\d+) reconstruidos, (\d+) deducidos, (\d+) faltan', t)
+            if not m: return t.replace('No está en el lote (no es camión del sistema)', 'Fuera del lote')
+            c, *n = m.groups()
+            return f'{c} · {n[0]} leídos' + ''.join(f', {v} {k}' for v, k in zip(n[1:], ('reconstruidos', 'deducidos', 'faltan')) if v != '0')
+        tr = ''.join(f'<tr style="background:{"#FDEEDD" if x.get("esCaso") else ("#F1F4F2" if i % 2 == 0 else BG)}"><td>{x["dia"]}</td><td style="font-weight:700">{x["patente"]}</td><td>{x["motivo"].replace(" (error de destino)", "")}</td><td>{sis(x)}</td><td>{alg(x)}</td><td style="font-weight:700; color:{RED if x.get("esCaso") else GDK}">{x.get("conclusion", "")}</td></tr>' for i, x in enumerate(ETL))
+        cnt = collections.Counter(x['motivo'] for x in ETL)
+        ETL_TXT = {'Reingreso rápido a Ricardone': ('reingreso rápido a Ricardone', 'reingresos rápidos a Ricardone'),
+                   'Visita relámpago al puerto sin operar': ('visita relámpago al puerto', 'visitas relámpago al puerto'),
+                   'Del puerto a Ricardone en menos de 2 h (error de destino)': ('vuelta del puerto a Ricardone en menos de 2 h', 'vueltas del puerto a Ricardone en menos de 2 h')}
+        pls = sorted({x['patente'] for x in CASOS})
+        section('etl-raros', eyebrow('RECORRIDOS · LO QUE MARCA EL ETL, CONTRA EL SISTEMA Y EL ALGORITMO', BLU)
+            + h2(f'{num(len(ETL), True)} recorridos marcados por el ETL; con la balanza y el algoritmo, ' + (f'quedan {len(pls)} vehículos fuera del sistema para identificar' if pls else 'ninguno queda como caso'), 48)
+            + f'<table style="font-size:22px; color:{INK}; {TD}"><tr><th style="width:7%">Día</th><th style="width:10%">Patente</th><th style="width:16%">Qué marcó</th><th style="width:20%">En el sistema (balanza)</th><th style="width:24%">Algoritmo por lote</th><th style="width:23%">Conclusión</th></tr>{tr}</table>'
+            + (f'<p style="font-size:24px; color:{INK}"><b>Para identificar:</b> {", ".join(pls)}. Circulan por la planta varios días del período sin ningún movimiento de balanza.</p>' if pls else ''),
+            'Corridas ETL semanales (final_circuits.anomaly_kind_reason, v17): ' + y_(sorted(f'{n_} {ETL_TXT.get(m, (m, m))[n_ != 1]}' for m, n_ in cnt.items())) + '. '
+            'Cada caso se cruzó con los movimientos de balanza del período (SGC o Excel, misma patente ±3 h), con el algoritmo por lote (outputs/demostracion_lote, lote.mjs: el lote son los camiones del sistema) y con lo que se decidió en En vivo. '
+            'Cámaras: ' + ' | '.join(f'{x["patente"]} {x["dia"]}: {x["lecturas"]}' for x in ETL), gap=24)
+    if PKG:
+        VOLV = [x for x in PKG if x['estado'] == 'volvio_a_ricardone']; SIGUE = [x for x in PKG if x['estado'] == 'sin_reingreso']
+        tr = ''.join(f'<tr style="background:{"#FDEEDD" if x["estado"] == "volvio_a_ricardone" else ("#F1F4F2" if i % 2 == 0 else BG)}"><td style="font-weight:700">{x["patente"]}</td><td>{x["primerIngreso"]}–{x["primeraSalida"][-5:]}</td><td>{x["primerViaje"]}</td><td>{x["ricardone"]}</td><td>{(x["segundoIngreso"] or "Sin volver todavía")}</td><td>{x["segundoViaje"] or "—"}</td></tr>' for i, x in enumerate(PKG))
+        section('pasados-kg', eyebrow('VUELTAS A RICARDONE · RECHAZADOS EN LA BALANZA DEL PUERTO')
+            + h2((f'{num(len(VOLV), True)} camiones salieron del puerto sin pesar, volvieron a Ricardone y entraron de nuevo' if VOLV else f'{num(len(PKG), True)} camiones salieron del puerto sin pesar') + (f'; {"uno" if len(SIGUE) == 1 else num(len(SIGUE))} sin volver todavía' if SIGUE else ''), 48)
+            + f'<table style="font-size:22px; color:{INK}; {TD}"><tr><th style="width:10%">Patente</th><th style="width:15%">1.º ingreso, sin pesar</th><th style="width:25%">Cámaras en el puerto</th><th style="width:20%">De vuelta en Ricardone</th><th style="width:11%">2.º ingreso</th><th style="width:19%">2.ª vez en el puerto</th></tr>{tr}</table>'
+            + (f'<p style="font-size:24px; color:{INK}"><b>Lectura:</b> la balanza del puerto no los registró; volvieron a Ricardone y entraron con un ingreso nuevo.</p>' if VOLV else ''),
+            f'Balanza SGC del {D0} al {D1}: ingresos de grano a la terminal con salida y sin peso (la balanza no los registró) y, dentro de las 24 h, otro ingreso de la misma patente. '
+            'En el medio, las cámaras de Ricardone (con las correcciones de En vivo). El segundo ingreso del SGC arranca en Ricardone (la operación R7 se abre ahí). '
+            'Equivale a la categoría «volvió a Ricardone desde el puerto» de los comités anteriores.', gap=24)
+        # recorrido completo de cada uno: cámaras + pasos del algoritmo por lote (reconstruidos punteados, deducidos abajo)
+        # fotos del DSS ya subidas al deck (fotos-recorridos.cjs + upload) y pasos que la foto desmintió (otro vehículo)
+        _bf = os.path.join(CARPETA, 'fotos', 'recorridos', 'blobs.json'); _ef = os.path.join(CARPETA, 'recorridos-excluidos.json')
+        BLOBS = json.load(open(_bf, encoding='utf-8')) if os.path.exists(_bf) else {}
+        EXC_REC = json.load(open(_ef, encoding='utf-8'))['pasos'] if os.path.exists(_ef) else []
+        exc_keys = {e['clave'] for e in EXC_REC}
+        for x in PKG:
+            pat = x['patente']; dia = x['primerIngreso'][:5]
+            x['visitas'] = [dict(v, items=[it for it in v['items'] if f'{pat}|{it.get("device")}|{it.get("at")}' not in exc_keys]) for v in x['visitas']]
+            x['visitas'] = [v for v in x['visitas'] if v['items']]
+            exc_x = [e for e in EXC_REC if e['patente'] == pat]
+            def chip(it):
+                if it['estado'] == 'camara':
+                    return f'<span style="display:inline-flex; gap:8px; align-items:baseline; background:#FFFFFF; border:2px solid #D3DAD6; border-radius:10px; padding:6px 14px; font-size:24px"><b style="color:{INK}">{it["punto"]}</b><span style="color:{MUTE}">{it["hora"]}</span></span>'
+                return (f'<span style="display:inline-flex; gap:8px; align-items:baseline; background:#F6F3FB; border:2px dashed {VIO}; border-radius:10px; padding:6px 14px; font-size:24px"><b style="color:{VIO}">{it["punto"]}</b><span style="color:{MUTE}">{it["hora"]}</span>'
+                        f'<span style="font-size:20px; color:{VIO}">algoritmo{" · leyó " + it["leyo"] if it.get("leyo") else ""}</span></span>')
+            fil = ''
+            for v in x['visitas']:
+                ric = v['planta'] == 'ric'
+                fil += (f'<div style="display:flex; flex-direction:row; gap:24px; align-items:center"><div style="width:250px; display:flex; flex-direction:column; gap:2px; background:{GDK if ric else VIO}; border-radius:12px; padding:10px 16px">'
+                        f'<p style="font-size:24px; font-weight:700; color:#FFFFFF">{"Ricardone" if ric else "Puerto"}</p><p style="font-size:22px; color:#DCE7E1">{v["items"][0]["hora"]} a {v["items"][-1]["hora"]}</p></div>'
+                        f'<div style="flex:1; display:flex; flex-direction:row; flex-wrap:wrap; gap:10px">{"".join(chip(it) for it in v["items"])}</div></div>')
+            ded = [d_ for d_ in x.get('deducidos', []) if not (d_['punto'] == 'Volcable' and d_['viaje'] == 1)]
+            sgc = f'1.º ingreso {x["primerIngreso"][-5:]} a {x["primeraSalida"][-5:]}, sin pesar' + (f' · 2.º ingreso {x["segundoIngreso"][-5:]} a {x["segundaSalida"][-5:]}' if x['segundoIngreso'] else ' · sin otro ingreso todavía')
+            tit = (f'{pat} · {dia}: la balanza del puerto no lo pesó, volvió a Ricardone y entró de nuevo a las {x["segundoIngreso"][-5:]}' if x['estado'] == 'volvio_a_ricardone'
+                   else f'{pat} · {dia}: la balanza del puerto no lo pesó y no volvió a entrar' if x['estado'] == 'sin_reingreso' else f'{pat} · {dia}: la balanza del puerto no lo pesó y entró de nuevo sin pasar por Ricardone')
+            foto = lambda it: BLOBS.get(f'{pat}_{it["hora"].replace(":", "")}_{it.get("device", "")}')
+            if BLOBS and all(foto(it) for v in x['visitas'] for it in v['items']):
+                # con fotos: una lámina por viaje (Ricardone + puerto); cada paso, su escena del DSS
+                viajes = []
+                for v in x['visitas']:
+                    if not viajes or (v['planta'] == 'ric' and viajes[-1][-1]['planta'] == 'sl'): viajes.append([])
+                    viajes[-1].append(v)
+                for n_, vj in enumerate(viajes, 1):
+                    def card_f(it, ric):
+                        alg = it['estado'] != 'camara'
+                        return (f'<div style="width:268px; display:flex; flex-direction:column; gap:4px; background:#FFFFFF; border:{"3px dashed " + VIO if alg else "2px solid #D3DAD6"}; border-top:6px solid {GDK if ric else VIO}; border-radius:10px; padding:6px">'
+                                f'<img src="{foto(it)}" alt="{pat}, {it["punto"]} {it["hora"]}" style="width:252px; height:150px; object-fit:cover; border-radius:6px">'
+                                f'<p style="font-size:22px; line-height:1.2; color:{INK}"><b>{it["punto"]}</b> {it["hora"]}</p>'
+                                + (f'<p style="font-size:18px; color:{VIO}">algoritmo · leyó {it.get("leyo") or "sin patente"}</p>' if alg else '') + '</div>')
+                    grid = ''.join(f'<div style="display:flex; flex-direction:row; gap:16px; align-items:center"><div style="width:150px; display:flex; flex-direction:column; gap:2px; background:{GDK if v["planta"] == "ric" else VIO}; border-radius:12px; padding:10px 14px">'
+                                   f'<p style="font-size:24px; font-weight:700; color:#FFFFFF">{"Ricardone" if v["planta"] == "ric" else "Puerto"}</p><p style="font-size:20px; color:#DCE7E1">{v["items"][0]["hora"]}–{v["items"][-1]["hora"]}</p></div>'
+                                   f'<div style="flex:1; display:flex; flex-direction:row; flex-wrap:wrap; gap:12px">{"".join(card_f(it, v["planta"] == "ric") for it in v["items"])}</div></div>' for v in vj)
+                    ultimo = n_ == len(viajes)
+                    section(f'pk-{pat.lower()}-{n_}', eyebrow(f'RECHAZADOS EN LA BALANZA DEL PUERTO · RECORRIDO COMPLETO · {n_} DE {len(viajes)}')
+                        + h2(tit if n_ == 1 else f'{pat} · {dia}: de vuelta en Ricardone y el 2.º ingreso al puerto', 44)
+                        + (f'<p style="font-size:24px; color:{INK}"><b>Balanza (SGC):</b> {sgc}.</p>' if n_ == 1 else '')
+                        + f'<div style="display:flex; flex-direction:column; gap:14px">{grid}</div>'
+                        + (f'<p style="font-size:22px; color:{MUTE}"><b>Sin lectura, deducido por el algoritmo:</b> ' + ', '.join(f'{d_["punto"]} ({"Ricardone" if d_["planta"] == "ric" else "puerto"})' for d_ in ded) + '.' + (' Se sacó el paso que la foto mostró de otro camión: ' + ', '.join(f'{e["punto"]} {e["hora"]}' for e in exc_x) + '.' if exc_x else '') + '</p>' if ultimo and (ded or exc_x) else ''),
+                        f'Escenas del DSS de cada lectura de {pat} (fotos-recorridos.cjs), viaje {n_} de {len(viajes)}. Borde punteado: paso que la cámara vio sin leer bien la patente y el algoritmo por lote asignó a este camión; '
+                        'se revisó con la foto que sea el mismo vehículo. En el ingreso que la balanza no pesó no se muestra la volcable que el algoritmo pueda asignar.', gap=18)
+                continue
+            section(f'pk-{pat.lower()}', eyebrow('RECHAZADOS EN LA BALANZA DEL PUERTO · RECORRIDO COMPLETO')
+                + h2(tit, 46)
+                + f'<p style="font-size:26px; color:{INK}"><b>Balanza (SGC):</b> {sgc}.</p>'
+                + f'<div style="display:flex; flex-direction:column; gap:16px">{fil}</div>'
+                + (f'<p style="font-size:24px; color:{MUTE}"><b>Sin lectura, deducido por el algoritmo:</b> ' + ', '.join(f'{d_["punto"]} ({"Ricardone" if d_["planta"] == "ric" else "puerto"})' for d_ in ded) + '.</p>' if ded else '')
+                + f'<p style="font-size:22px; color:{MUTE}">Punteado: paso que la cámara vio sin leer bien la patente y el algoritmo por lote asignó a este camión.</p>',
+                f'Lecturas de cámara de {pat} (patente o acoplado) desde 2 h antes del primer ingreso hasta 1 h después de la última salida, con las correcciones de En vivo, más los pasos del algoritmo por lote '
+                '(outputs/demostracion_lote, lote.mjs). En el ingreso que la balanza no pesó no se muestra la volcable que el algoritmo pueda asignar: sin peso no hubo descarga.', gap=22)
+    PS = BAL['pesados']
+    if PS:
+        tope = max(PS, key=lambda x: x['brutoKg'])
+        bajo53 = sum(1 for x in PS if x['brutoKg'] <= 53000)
+        prod = collections.Counter(x['producto'] for x in PS)
+        chips = ''.join(f'<span style="display:inline-flex; gap:8px; align-items:baseline; background:{"#FBE9E4" if x["brutoKg"] > 53000 else "#FFFFFF"}; border:2px solid {"#E7B9AE" if x["brutoKg"] > 53000 else "#D3DAD6"}; border-radius:10px; padding:4px 12px; font-size:22px"><b style="color:{INK}">{x["patente"]}</b><span style="color:{MUTE}">{x["dia"]} · {miles(x["brutoKg"])} kg</span></span>' for x in PS if x['brutoKg'] > 53000)
+        pdia = collections.Counter(x['dia'] for x in PS if x['brutoKg'] <= 53000)
+        chips += f'<p style="font-size:24px; color:{MUTE}; width:100%">Entre 52.500 y 53.000 kg, por día: ' + ' · '.join(f'{d} {n_}' for d, n_ in sorted(pdia.items(), key=lambda kv: (kv[0][3:5], kv[0][:2]))) + '</p>'
+        section('pesados', eyebrow('BALANZA · BRUTOS ALTOS', BLU)
+            + h2(f'{num(len(PS), True)} ingresos pesaron más de {miles(BAL["brutoMaxKg"])} kg de bruto; el más pesado, {tope["patente"]} con {miles(tope["brutoKg"])} kg', 48)
+            + f'<div style="display:flex; flex-direction:row; gap:28px; align-items:stretch">{card(str(len(PS) - bajo53), "pasaron los 53.000 kg (en rojo)", "#FBE9E4", RED)}{card(str(bajo53), "entre 52.500 y 53.000 kg", "#E3F1EA", GDK)}{card(str(BAL["ingresosConPeso"]), "ingresos con peso en Ricardone y el puerto", "#EEF0EF", INK)}</div>'
+            + f'<div style="display:flex; flex-direction:row; flex-wrap:wrap; gap:10px">{chips}</div>'
+            + f'<p style="font-size:24px; color:{INK}"><b>Para definir:</b> ¿cuál es el bruto que el comité toma como pasado de kilos? El corte de {miles(BAL["brutoMaxKg"])} kg es provisorio.</p>',
+            f'Balanza SGC, Ricardone y puerto, del {D0} al {D1}: ingresos con PESOBRUTO mayor a {miles(BAL["brutoMaxKg"])} kg. Por producto: ' + ', '.join(f'{k} {v}' for k, v in prod.most_common()) + '. '
+            'La planilla de pasados de kilos de Vicentin (julio–02/10) tiene brutos de 45 a 60 t: el peso solo no alcanza para decir pasado de kilos.', gap=28)
+
+# ---------- fichas por tema (un caso de ejemplo cada una): patente, qué pasó, sistema de camiones / cámaras / qué pedimos,
+# recorrido por planta y fotos del DSS. Ejemplo elegido: FICHA_EJEMPLOS (o el primero de cada tema). Sin kilos.
+DATA_DIR = os.path.abspath(os.path.join(CARPETA, '..', '..', '..', '..', 'data'))
+FICHA_EJEMPLOS = {'vuelta': os.environ.get('FICHA_VUELTA', 'GVW791'), 'demora': os.environ.get('FICHA_DEMORA', ''),
+                  'calles': os.environ.get('FICHA_CALLES', 'LUE562'), 'particular': os.environ.get('FICHA_PARTICULAR', 'IMH787')}
+def sistema_txt(pat, dia):   # movimientos de la balanza de esa patente ese día y el siguiente (sin kilos)
+    d = datetime.date.fromisoformat(f'{P0[:4]}-{dia[3:5]}-{dia[:2]}'); out = []
+    for dd in (d, d + datetime.timedelta(days=1)):
+        f = os.path.join(DATA_DIR, 'movimientos', dd.isoformat(), 'movimientos.json')
+        for r in (json.load(open(f, encoding='utf-8')) if os.path.exists(f) else []):
+            if r.get('plate_normalized') != pat or str(r.get('external_ingreso_at', ''))[:10] != d.isoformat(): continue
+            t = f'{"Ricardone" if r.get("planta_normalized") == "RICARDONE" else "Puerto"} · {str(r.get("product_normalized") or "").capitalize()} · {str(r.get("external_ingreso_at"))[11:16]} a {str(r.get("external_salida_at") or "")[11:16] or "?"}'
+            if t not in out: out.append(t)
+    return out
+def ficha(sid, tema, col, n_txt, x, que, datos, otros, nota, meta=''):
+    pat = x['patente']; vis = [v for v in x.get('visitas', []) if v['items']]
+    fotos_ = [(BLOBS_REC.get(f'{pat}_{it["hora"].replace(":", "")}_{it.get("device", "")}'), it['hora'], CORTO.get(it['punto'], it['punto']), v['planta'], it['estado'] != 'camara') for v in vis for it in v['items']]
+    fotos_ = [f for f in fotos_ if f[0]]
+    if len(fotos_) > 8: fotos_ = [fotos_[round(i * (len(fotos_) - 1) / 7)] for i in range(8)]
+    n_items = sum(len(v['items']) for v in vis)
+    tl = ''.join((arrow(False) if i else '') + group(v['planta'], [(it['hora'], CORTO.get(it['punto'], it['punto']) + (' (alg.)' if it['estado'] != 'camara' else ''), False) for it in v['items']], max(1, len(v['items'])), n_items > 8) for i, v in enumerate(vis[:8]))
+    plate = (f'<div style="display:flex; flex-direction:column; width:280px; background:#FFFFFF; border:4px solid {INK}; border-radius:12px; overflow:hidden"><div style="height:16px; background:#1F3F8C"></div>'
+             f'<p style="font-family:Arial, sans-serif; font-size:52px; font-weight:700; letter-spacing:2px; text-align:center; color:{INK}; padding:2px 0px 6px">{pat}</p></div>')
+    cajas = ''.join(f'<div style="flex:1; display:flex; flex-direction:column; gap:6px; background:#FFFFFF; border:2px solid #D3DAD6; border-top:6px solid {col}; border-radius:12px; padding:12px 16px">'
+                    f'<p style="font-size:20px; font-weight:700; letter-spacing:1px; color:{col}">{t.upper()}</p><p style="font-size:22px; line-height:1.3; color:{INK}">{v}</p></div>' for t, v in datos)
+    fw = 194 if len(fotos_) > 6 else 260
+    ph = ''.join(f'<div style="width:{fw}px; display:flex; flex-direction:column; gap:4px"><img src="{s}" alt="{pat} · {pt} {h}" style="width:{fw}px; height:{round(fw * .56)}px; object-fit:cover; border-radius:8px; border:{"3px dashed " + VIO if alg else "0px solid #FFFFFF"}">'
+                 f'<p style="font-size:18px; line-height:1.2; color:{MUTE}"><b style="color:{INK}">{h}</b> · {"Ric." if pl_ == "ric" else "SL"} · {pt}{" (alg.)" if alg else ""}</p></div>' for s, h, pt, pl_, alg in fotos_)
+    section(sid, f'<div style="display:flex; flex-direction:row; align-items:center; justify-content:space-between"><p style="font-size:26px; font-weight:700; letter-spacing:3px; color:{col}">FICHA · {tema.upper()}</p>'
+            f'<p style="font-size:26px; font-weight:700; color:{INK}; background:#EEF0EF; padding:6px 18px; border-radius:24px">{n_txt}</p></div>'
+        + f'<div style="display:flex; flex-direction:row; gap:32px; align-items:center">{plate}<div style="flex:1; display:flex; flex-direction:column; gap:8px"><p style="font-size:22px; font-weight:600; letter-spacing:2px; color:{MUTE}">{meta}</p>'
+          f'<h2 style="font-family:{SERIF}; font-size:38px; font-weight:700; line-height:1.2; color:{INK}">{que}</h2></div></div>'
+        + f'<div style="display:flex; flex-direction:row; gap:16px; align-items:stretch">{cajas}</div>'
+        + f'<div style="display:flex; flex-direction:row; gap:8px; align-items:stretch">{tl}</div>'
+        + f'<div style="display:flex; flex-direction:row; gap:12px">{ph}</div>'
+        + (f'<p style="font-size:22px; color:{MUTE}"><b>Otros casos del período:</b> {otros}</p>' if otros else ''),
+        nota, gap=14)
+CAM_NOMBRE = {'SLZSalidaC1Fte': 'la portería del puerto', 'SLZSalidaC2Fte': 'la portería del puerto', 'RicB3Ingreso': 'la balanza 3 de Ricardone', 'RicB3Egreso': 'la balanza 3 de Ricardone',
+              'RicIngCamFrente': 'el ingreso de Ricardone', 'RicEgrCamFrente': 'el egreso de Ricardone', 'SLZTK400': 'los tanques del puerto', 'SLZBalIngFte': 'la balanza del puerto'}
+FICHAS = []
+_pk = {x['patente']: x for x in PKG}
+if PKG:
+    x = _pk.get(FICHA_EJEMPLOS['vuelta']) or PKG[0]
+    vis = [v for v in x['visitas'] if v['items']]; sl_ = [v for v in vis if v['planta'] == 'sl']
+    hasta = (sl_[1]['items'][0]['t'] - sl_[0]['items'][-1]['t']) / 60000 if len(sl_) > 1 else None
+    ficha('ficha-vuelta', 'Van y vuelven entre el puerto y Ricardone', RED, f'{len(PKG)} casos en el período', x,
+          ('Llegó al puerto, ' + ('la balanza le dio de baja el ingreso' if any(r.get('baja') for r in SGC_HIST.get(x['patente'], [])) else 'la balanza no lo pesó')
+           + (', volvió a Ricardone y entró de nuevo' + (f' {hm_(hasta)} después' if hasta else '') if x['estado'] == 'volvio_a_ricardone' else ' y no volvió a entrar')),
+          [('Sistema de camiones', sistema_rechazo(x['patente'], x['primerIngreso'][:5])[0].replace('; ', '<br>')),
+           ('Cámaras', f'{sum(len(v["items"]) for v in vis)} lecturas en {len(vis)} pasadas por planta; mismo camión en todas las fotos'),
+           ('Qué pedimos', 'Que la balanza informe el peso del 1.º ingreso, por qué lo dio de baja y si ese ingreso tuvo descarga')],
+          ', '.join(p for p in _pk if p != x['patente']), f'{x["patente"]}: ' + '; '.join(f'{it["hora"]} {it["punto"]}' for v in vis for it in v['items']), meta=f'{x["primerIngreso"][:5]} · {x["producto"].upper()}')
+    FICHAS.append('ficha-vuelta')
+_dc = {c['patente']: c for c in D['dosCalles']}
+if _dc:
+    x = _dc.get(FICHA_EJEMPLOS['calles']) or next(iter(_dc.values()))
+    cs = x['calles']; sis = sistema_txt(x['patente'], x['dia'])
+    ficha('ficha-calles', 'Declaran una calle y descargan en otra', VIO, f'{len(_dc)} pasos por dos calles · {len(REVISAR)} para revisar', x,
+          f'Entró a la calle {cs[0]["calle"]} a las {cs[0]["hora"]} y a las {cs[-1]["hora"]} estaba en la calle {cs[-1]["calle"]}',
+          [('Sistema de camiones', ('<br>'.join(sis) or 'No figura') + '<br>la balanza no informa la calle declarada'), ('Cámaras', ' → '.join(f'calle {c["calle"]} {c["hora"]}' for c in cs)),
+           ('Qué pedimos', 'Que la balanza informe la calle declarada para cruzarla con la cámara')],
+          ', '.join(f'{c["patente"]} {c["dia"]}' for c in D['dosCalles'] if c['patente'] != x['patente']), f'{x["patente"]} {x["dia"]}: cámaras de volcable ' + ' → '.join(f'C{c["calle"]} {c["hora"]}' for c in cs) + '. Sin calle declarada en el SGC (VOLCABLE_PTO_SGC).', meta=f'{x["dia"]} · PUERTO SAN LORENZO')
+    FICHAS.append('ficha-calles')
+# Ficha «Vehículo permitido» para los livianos de la lámina de camionetas (no son camiones: la regla del sistema de
+# camiones no les aplica). Un ejemplo con foto y los puntos donde lo leyeron; los campos los completa cada sector en la
+# reunión (luego, en línea). Pedido 26/10.
+FICHA_PERMITIDO = []
+_cl = {c['patente']: c for c in CL if c.get('visitas')}
+PUNTO_SECTOR = {'RicIngCamFrente': ('ric', 'Ingreso / egreso'), 'RicEgrCamFrente': ('ric', 'Ingreso / egreso'), 'RicPreIngInFr': ('ric', 'Pre-ingreso y playas'),
+                'RicCal03': ('ric', 'Calada'), 'RicCal04': ('ric', 'Calada'), 'SLZSalidaC1Fte': ('sl', 'Portería'), 'SLZSalidaC2Fte': ('sl', 'Portería'), 'SLZIngCamFrente': ('sl', 'Ingreso camiones'),
+                'SLZTK400': ('sl', 'Tanques y líquidos'), 'SLZBalLiq2b': ('sl', 'Tanques y líquidos'), 'SLZBalIngFte': ('sl', 'Balanzas'), 'SLZBalSC1Fte': ('sl', 'Balanzas'), 'SLZBalSC2Fte': ('sl', 'Balanzas')}
+SECTORES = {'ric': ['Ingreso / egreso', 'Pre-ingreso y playas', 'Balanzas', 'Calada', 'Planta y silos'], 'sl': ['Portería', 'Ingreso camiones', 'Balanzas', 'Volcables', 'Tanques y líquidos', 'Muelle']}
+def sector_de(it):
+    d = it.get('device', '')
+    if d in PUNTO_SECTOR: return PUNTO_SECTOR[d]
+    if d.startswith('RicB'): return ('ric', 'Balanzas')
+    if d.startswith('SLZVolcable'): return ('sl', 'Volcables')
+    return None
+if _cl:
+    x = _cl.get(os.environ.get('FICHA_PERMITIDO', 'AE264XY')) or next(iter(_cl.values()))
+    pat = x['patente']; vis = [v for v in x['visitas'] if v['items']]
+    visto = collections.Counter(s for v in vis for it in v['items'] if (s := sector_de(it)))
+    fotos_ = [(BLOBS_REC[k], it['hora'], (sector_de(it) or ('', it['punto']))[1], v['planta']) for v in vis for it in v['items'] if (k := f'{pat}_{it["hora"].replace(":", "")}_{it.get("device", "")}') in BLOBS_REC][:2]
+    ph = ''.join(f'<div style="position:relative; width:560px; height:300px"><img src="{s}" alt="{pat} · {pt} {h}" style="width:560px; height:300px; object-fit:cover; border-radius:14px">'
+                 f'<p style="position:absolute; left:12px; bottom:12px; font-size:20px; font-weight:700; color:#FFFFFF; background:rgba(27,36,32,0.78); padding:4px 12px; border-radius:8px">{h} · {"Ricardone" if pl_ == "ric" else "Puerto"} · {pt}</p></div>' for s, h, pt, pl_ in fotos_)
+    def casilla(planta, s):
+        n_ = visto.get((planta, s), 0)
+        marca = f' <b style="color:{VIO}">· visto {n_}</b>' if n_ else ''
+        return (f'<div style="display:flex; flex-direction:row; align-items:center; gap:10px; background:{"#EEE8F7" if n_ else "#FFFFFF"}; border:2px solid {"#B9A8DA" if n_ else "#D3DAD6"}; border-radius:10px; padding:6px 12px">'
+                f'<span style="display:inline-block; width:24px; height:24px; background:#FFFFFF; border:3px solid {INK}; border-radius:5px"></span>'
+                f'<p style="font-size:21px; color:{INK}">{s}{marca}</p></div>')
+    def planta_box(planta, nombre, col):
+        return (f'<div style="flex:1; display:flex; flex-direction:column; gap:8px"><p style="font-size:20px; font-weight:700; letter-spacing:2px; color:{col}">{nombre}</p>'
+                f'<div style="display:flex; flex-direction:row; flex-wrap:wrap; gap:8px">' + ''.join(casilla(planta, s) for s in SECTORES[planta]) + '</div></div>')
+    def campo(lbl, ancho=1):
+        return (f'<div style="flex:{ancho}; display:flex; flex-direction:column; gap:4px"><p style="font-size:19px; font-weight:700; letter-spacing:1px; color:{MUTE}">{lbl.upper()}</p>'
+                f'<div style="height:44px; background:#FFFFFF; border:2px solid #D3DAD6; border-bottom:3px solid {INK}; border-radius:8px"></div></div>')
+    plate = (f'<div style="display:flex; flex-direction:column; width:260px; background:#FFFFFF; border:4px solid {INK}; border-radius:12px; overflow:hidden"><div style="height:14px; background:#1F3F8C"></div>'
+             f'<p style="font-family:Arial, sans-serif; font-size:48px; font-weight:700; letter-spacing:2px; text-align:center; color:{INK}; padding:2px 0px 6px">{pat}</p></div>')
+    section('ficha-permitido',
+        f'<div style="display:flex; flex-direction:row; align-items:center; justify-content:space-between"><p style="font-size:26px; font-weight:700; letter-spacing:3px; color:{VIO}">FICHA · VEHÍCULO PERMITIDO</p>'
+        f'<p style="font-size:24px; font-weight:700; color:{INK}; background:#EEE8F7; padding:6px 18px; border-radius:24px">Ejemplo · la completa cada sector</p></div>'
+        + f'<div style="display:flex; flex-direction:row; gap:32px; align-items:start">'
+          f'<div style="width:560px; display:flex; flex-direction:column; gap:14px"><div style="display:flex; flex-direction:row; gap:20px; align-items:center">{plate}<p style="flex:1; font-size:24px; line-height:1.3; color:{INK}"><b>{x["viajes"]} viajes</b> en {x["dias"]} días<br><span style="color:{MUTE}">{x["zona"]}</span></p></div>{ph}</div>'
+          f'<div style="flex:1; display:flex; flex-direction:column; gap:16px">'
+          f'<div style="display:flex; flex-direction:row; gap:16px">{campo("Titular / empresa", 3)}{campo("Tipo de vehículo", 2)}</div>'
+          f'<div style="display:flex; flex-direction:row; gap:16px">{campo("Motivo del ingreso", 3)}{campo("Contacto", 2)}</div>'
+          f'<div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:2px solid #D3DAD6; border-top:6px solid {VIO}; border-radius:12px; padding:14px 18px">'
+          f'<p style="font-size:20px; font-weight:700; letter-spacing:1px; color:{VIO}">SECTORES PERMITIDOS <span style="font-weight:400; color:{MUTE}">· en violeta, donde lo leyeron las cámaras el {x.get("diaEjemplo", "")}</span></p>'
+          f'<div style="display:flex; flex-direction:row; gap:20px">{planta_box("ric", "RICARDONE", GDK)}{planta_box("sl", "PUERTO SAN LORENZO", ORG)}</div></div>'
+          f'<div style="display:flex; flex-direction:row; gap:16px">{campo("Horario permitido", 2)}{campo("Vigencia hasta", 2)}{campo("Autoriza (nombre y sector)", 3)}</div>'
+          f'<div style="display:flex; flex-direction:row; gap:20px; align-items:center; background:#EEE8F7; border-radius:16px; padding:16px 24px"><x-icon name="ShieldCheck" style="color:{VIO}; width:40px; height:40px"></x-icon>'
+          f'<p style="flex:1; font-size:24px; line-height:1.4; color:{INK}"><b>Vehículos Permitidos:</b> cada sector carga los suyos en la ficha en línea. Con eso el sistema deja de marcarlos y avisa solo cuando uno pasa por un sector que no tiene permitido.</p></div>'
+          f'</div></div>',
+        f'{pat}: utilitario con {x["viajes"]} viajes de cámara en {x["dias"]} días del {D0} al {D1}, sin movimientos en el sistema de camiones (no es camión: la regla del sistema no le aplica). Sectores donde lo leyeron el {x.get("diaEjemplo", "")}: '
+        + ', '.join(f'{"Ricardone" if p == "ric" else "Puerto"} {s} ({n_})' for (p, s), n_ in visto.most_common()) + '. Los campos en blanco los completa el sector responsable; la versión en línea alimenta el registro de vehículos permitidos.', gap=22)
+    FICHA_PERMITIDO.append('ficha-permitido')
+
 # ---------- escribir
-ORDER = ['cover', 'div-vuelta'] + [s[0] for s in slides if s[0].startswith('v-')] + ['div-calles', 'calles', 'div-interplanta', 'interplanta', 'camionetas'] + [s_[0] for s_ in slides if s_[0].startswith('camionetas-fotos-')] + ['servicio']   # el anexo de antigüedad del parque se presentó una sola vez (24/09–04/10)   # sin la lámina del histórico de anomalías (pedido 13/10)
+CALLES_VAN = bool(REVISAR)   # todas explicadas: la sección de calles no va (pedido 23/10)
+ORDER = ['cover'] + FICHAS + ['div-vuelta', 'pasados-kg'] + [s[0] for s in slides if s[0].startswith('v-')] + (['div-calles', 'calles'] if CALLES_VAN else []) + ['div-interplanta', 'interplanta', 'camionetas'] + FICHA_PERMITIDO + [s_[0] for s_ in slides if s_[0].startswith('camionetas-fotos-')] + ['div-balanza', 'sin-pesar', 'etl-raros', 'servicio']   # sin 'pesados': los kilos son del sistema de camiones (pedido 23/10)   # el anexo de antigüedad del parque se presentó una sola vez (24/09–04/10)   # sin la lámina del histórico de anomalías (pedido 13/10)
 slides = sorted([x for x in slides if x[0] in ORDER], key=lambda x: ORDER.index(x[0]))
+if not CALLES_VAN:   # sin la sección 02 de calles, las siguientes se corren un número
+    slides = [(i, h.replace('>03</p>', '>02</p>', 1) if i == 'div-interplanta' else h.replace('>04</p>', '>03</p>', 1) if i == 'div-balanza' else h) for i, h in slides]
 for f in os.listdir(SL):
     if f.endswith('.html'): os.remove(os.path.join(SL, f))
 for k, (i, h) in enumerate(slides):
@@ -414,8 +735,9 @@ deck = {"v": 4, "createdOnFiles": {"v": 1, "at": datetime.datetime.now(datetime.
         "title": f"Comité de Seguridad · {D0} al {D1}", "order": ORDER, "cover": "cover",
         "sections": {"s1": {"description": "Portada, histórico y números del período", "start": "cover"},
                      "s2": {"description": "Anomalías de circuito: vueltas a Ricardone y descargas incompletas" if EXTRA else "Camiones que fueron al puerto y volvieron a Ricardone antes de descargar", "start": "div-vuelta"},
-                     "s3": {"description": "Calles del puerto", "start": "div-calles"},
-                     "s4": {"description": "Demoras entre plantas sin calado en el puerto y vehículos sin Excel", "start": "div-interplanta"}},
+                     **({"s3": {"description": "Calles del puerto", "start": "div-calles"}} if CALLES_VAN else {}),
+                     "s4": {"description": "Demoras entre plantas sin calado en el puerto y vehículos sin Excel", "start": "div-interplanta"},
+                     **({"s5": {"description": "Balanza y recorridos fuera de lo común: sin pesar, reingresos y visitas relámpago", "start": "div-balanza"}} if BAL is not None else {})},
         "faces": {"domine": {"family": "Domine", "href": "https://fonts.googleapis.com/css2?family=Domine:wght@400..700&display=swap"},
                   "public-sans": {"family": "Public Sans", "href": "https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap"},
                   "ibm-plex-sans": {"family": "IBM Plex Sans", "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap"}},

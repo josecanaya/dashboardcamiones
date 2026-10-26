@@ -22,7 +22,7 @@
  *   - Vuelta a Ricardone: visita a Ricardone con calada → visita al puerto sin lectura de volcable →
  *     reingreso directo a Ricardone (ingreso o calada, sin pre-ingreso) antes de 12 h. Con Excel se confirma si no hay operación en el puerto para
  *     esa visita; sin Excel queda como candidato.
- *   - Interplanta: egreso Ricardone → cámara de ingreso San Lorenzo, más de 30 min y hasta 2 h, sin lectura en la calada
+ *   - Interplanta: egreso Ricardone → cámara de ingreso San Lorenzo, más de 20 min (norma; COMITE_INTERPLANTA_MIN) y hasta 2 h, sin lectura en la calada
  *     del puerto hasta la salida. Fuera líquidos (lecturas en puntos de líquidos de cualquiera de las plantas).
  *   - Dos calles: en una misma visita al puerto, lecturas de dos cámaras de volcable distintas.
  *   - Volcable declarado vs calle (solo con Excel): plataforma VOLCABLE PTO N y la cámara de la calle de
@@ -146,6 +146,7 @@ const excelDays: string[] = []
 const excelAll: string[] = []
 const knownPlates = new Set<string>()
 const movsPeriod: Mov[] = []
+const movsContraste: Mov[] = []   // período + el día siguiente, para cruzar casos con la balanza
 const localMs = (s: string) => (s ? Date.parse(`${s}-03:00`) : NaN)
 if (existsSync(movRoot)) {
   for (const d of readdirSync(movRoot).filter((x) => /^\d{4}-\d{2}-\d{2}$/.test(x)).sort()) {
@@ -157,8 +158,10 @@ if (existsSync(movRoot)) {
     for (const x of JSON.parse(readFileSync(f, 'utf8')) as Record<string, string>[]) {
       const p = String(x.plate_normalized || x.patente_original || '').toUpperCase().trim()
       if (p) knownPlates.add(p)
-      if (inP) movsPeriod.push({ plate: p, planta: x.planta_normalized, plataforma: x.platform_normalized || x.plataforma_original, producto: x.product_normalized || x.producto_original,
-        ingreso: localMs(x.external_ingreso_at), salida: localMs(x.external_salida_at), day: d, kg: x.kgs_neto })
+      const mv = { plate: p, planta: x.planta_normalized, plataforma: x.platform_normalized || x.plataforma_original, producto: x.product_normalized || x.producto_original,
+        ingreso: localMs(x.external_ingreso_at), salida: localMs(x.external_salida_at), day: d, kg: x.kgs_neto }
+      if (inP) movsPeriod.push(mv)
+      if (inP || d === addDays(hasta, 1)) movsContraste.push(mv)   // data/movimientos se parte por día de salida
     }
   }
 }
@@ -177,6 +180,8 @@ try {
 // ---------- reglas
 type Item = { hora: string; punto: string; t: number }
 const vueltas: Record<string, unknown>[] = []
+// Norma del comité: el viaje Ricardone → puerto no debe pasar de 20 min (antes se usaba 30).
+const UMBRAL_INTER = Number(process.env.COMITE_INTERPLANTA_MIN || 20)
 const interplanta: { dia: string; salida: string; patente: string; tipo: string; descarga: string; min: number; ingresoSL: string; salidaSL: string; _t: number }[] = []
 const viajesRicSL: number[] = []
 const cercanos: { dia: string; salida: string; patente: string; min: number; motivo: string; _t: number }[] = []
@@ -208,9 +213,9 @@ for (const [plate, list] of byPlate) {
         // Solo calada de líquidos en Ricardone: cuenta como pellet únicamente si descargó en un volcable.
         const liqOnly = !has(prev, 'CALADA', ...CARGA_RIC)
         const grano = !isLiquid(v) && isGrain(prev) && !(liqOnly && !calles.length)
-        if (inPeriod(egr) && grano && ((min > 30 && min <= 120 && has(v, 'SL_CALADA')) || (min >= 25 && min <= 30)))
-          cercanos.push({ dia: ddmm(egr.day), salida: egr.hm, patente: plate, min, motivo: min > 30 ? 'caló en el puerto' : 'entre 25 y 30 min', _t: egr.t })
-        if (inPeriod(egr) && min > 30 && min <= 120 && !has(v, 'SL_CALADA') && grano) {
+        if (inPeriod(egr) && grano && ((min > UMBRAL_INTER && min <= 120 && has(v, 'SL_CALADA')) || (min >= UMBRAL_INTER - 5 && min <= UMBRAL_INTER)))
+          cercanos.push({ dia: ddmm(egr.day), salida: egr.hm, patente: plate, min, motivo: min > UMBRAL_INTER ? 'caló en el puerto' : `entre ${UMBRAL_INTER - 5} y ${UMBRAL_INTER} min`, _t: egr.t })
+        if (inPeriod(egr) && min > UMBRAL_INTER && min <= 120 && !has(v, 'SL_CALADA') && grano) {
           interplanta.push({ dia: ddmm(egr.day), salida: egr.hm, patente: plate, min, ingresoSL: ing.hm, salidaSL: (lastOf(v, 'SL_EGRESO') ?? v.reads[v.reads.length - 1]!).hm,
             tipo: has(prev, 'CALADA') ? 'Calada en Ricardone' : 'Transile', descarga: calles.length ? `Volcable ${calles.join(' y ')}` : 'Sin volcable leído', _t: egr.t })
         }
@@ -284,7 +289,10 @@ const lev1 = (a: string, b: string) => {
   return d === 1
 }
 const known = [...knownPlates].filter((p) => PLATE_RE.test(p))
-const sinExcel: { patente: string; viajes: number; dias: number; zona: string; camaras: string; parecida: string; registro: boolean }[] = []
+const sinExcel: { patente: string; viajes: number; dias: number; zona: string; camaras: string; parecida: string; registro: boolean; porCamara: Record<string, number>; fotos: { device: string; at: string; hora: string; dia: string }[] }[] = []
+// Foto de cada vehículo para la ficha «Vehículos Permitidos» (fotos-recorridos.cjs las baja del DSS): de día y en
+// cámaras de frente, primero las de cada planta que mejor muestran el vehículo.
+const FOTO_PREF = ['RicIngCamFrente', 'RicEgrCamFrente', 'SLZBalLiq2b', 'SLZIngCamFrente', 'RicPreIngInFr', 'SLZSalidaC1Fte', 'SLZBalIngFte', 'SLZTK400', 'SLZSalidaC2Fte']
 for (const [plate, list] of byPlate) {
   if (!PLATE_RE.test(plate) || knownPlates.has(plate)) continue
   const rs = list.filter(inPeriod)
@@ -297,12 +305,209 @@ for (const [plate, list] of byPlate) {
   sinExcel.push({ patente: plate, viajes, dias: new Set(rs.map((r) => r.day)).size,
     zona: sites.size === 2 ? 'Ricardone y San Lorenzo' : sites.has('ric') ? 'Ricardone' : 'San Lorenzo',
     camaras: [...dev.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k]) => k).join(' / '),
-    parecida: known.filter((k) => lev1(k, plate)).slice(0, 3).join(' '), registro: registry.has(plate) })
+    parecida: known.filter((k) => lev1(k, plate)).slice(0, 3).join(' '), registro: registry.has(plate),
+    porCamara: Object.fromEntries(dev),
+    fotos: (() => {   // hasta 2 lecturas de día (10–17 h operativas), una por planta, en la cámara preferida
+      const dia_ = rs.filter((r) => r.hm >= '10:00' && r.hm <= '17:00')
+      const rank = (r: Read) => { const i = FOTO_PREF.indexOf(r.device); return i < 0 ? 99 : i }
+      const out: Read[] = []
+      for (const site of ['ric', 'sl'] as const) {
+        const best = [...(dia_.length ? dia_ : rs)].filter((r) => r.site === site).sort((a, b) => rank(a) - rank(b) || b.t - a.t)[0]
+        if (best && rank(best) < 99) out.push(best)
+      }
+      return out.map((r) => ({ device: r.device, at: new Date(r.t).toISOString(), hora: r.hm, dia: ddmm(r.day) }))
+    })() })
 }
 sinExcel.sort((a, b) => b.viajes - a.viajes || a.patente.localeCompare(b.patente))
 // Igual que el comité anterior: entran también las parecidas a una patente del Excel y las del registro
 // de particulares (quedan marcadas en el CSV).
 const camionetas = sinExcel.filter((x) => x.viajes >= 10)
+
+// ---------- balanza (SGC) y ETL: lo que las reglas de cámaras solas no ven
+// data/sgc/<día>/ingresos.json = la vista SGC por NROINGRESO; PLANTA SAN LORENZO es la fábrica de Ricardone
+// (server/sgc/sgcMovimientos.mjs). Horas del SGC en hora local.
+const NOMBRE: Record<string, string> = {
+  INGRESO: 'Ingreso', PREINGRESO: 'Pre-ingreso', CALADA: 'Calada', EGRESO: 'Egreso', BALANZA_INGRESO: 'Balanza ingreso', BALANZA_EGRESO: 'Balanza egreso',
+  PLAYA: 'Playa 3', VOLCABLE: 'Volcable', LIQUIDO: 'Calada líquidos', SL_INGRESO: 'Ingreso puerto', SL_CALADA: 'Calada puerto',
+  SL_BALANZA_INGRESO: 'Balanza puerto', SL_VOLCABLE: 'Volcable', SL_BALANZA_SALIDA: 'Balanza salida puerto', SL_EGRESO: 'Salida puerto', UNKNOWN: 'Cámara sin punto',
+}
+const nombre = (r: Read) => (r.logical === 'SL_VOLCABLE' && calle(r) ? `Volcable ${calle(r)}` : NOMBRE[r.logical] ?? r.logical.replace(/_/g, ' ').toLowerCase())
+const recorrido = (rs: Read[]) => rs.filter((r, i) => i === 0 || nombre(r) !== nombre(rs[i - 1]!)).map((r) => `${nombre(r)} ${r.hm}`)
+const sgcRaw: Record<string, Record<string, any>> = {}
+for (const d of daysBetween(addDays(desde, -1), addDays(hasta, 2))) {
+  const f = join(DATA, 'sgc', d, 'ingresos.json')
+  if (existsSync(f)) Object.assign(sgcRaw, JSON.parse(readFileSync(f, 'utf8')))
+}
+const sgcPeriodo = Object.values(sgcRaw).filter((r) => { const d = String(r.FECHAINGRESO ?? '').slice(0, 10); return d >= desde && d <= hasta })
+const plantaSgc = (p: string) => (/TERMINAL/.test(p) ? 'Puerto' : /SAN LORENZO/.test(p) ? 'Ricardone' : p.replace(/^PLANTA /, '').toLowerCase())
+const hmLocal = (s: string) => `${s.slice(8, 10)}/${s.slice(5, 7)} ${s.slice(11, 16)}`
+// 1 · Entraron y salieron sin peso (grano y aceite en Ricardone o el puerto): rechazo o pasado de kilos. Las cámaras
+// dicen qué hizo adentro y si después fue al puerto (12 h).
+const sinPesar = sgcPeriodo
+  .filter((r) => r.FECHASALIDA && !(Number(r.PESONETO) > 0) && /SOJA|GIRASOL|ACEITE|MAIZ|TRIGO/.test(r.PRODUCTO) && /SAN LORENZO|TERMINAL/.test(r.PLANTA))
+  .map((r) => {
+    const ing = localMs(r.FECHAINGRESO), sal = localMs(r.FECHASALIDA)
+    const plates = [r.PATENTECAMION, r.PATENTEACOPLADO].map((p) => String(p ?? '').toUpperCase()).filter(Boolean)
+    const rs = plates.flatMap((p) => byPlate.get(p) ?? []).sort((a, b) => a.t - b.t)
+    const adentro = rs.filter((x) => x.t >= ing - H && x.t <= sal + 0.5 * H)
+    const despues = rs.filter((x) => x.t > sal + 0.5 * H && x.t <= sal + 12 * H)
+    const puerto = despues.filter((x) => x.site === 'sl')
+    const volc = puerto.filter((x) => x.logical === 'SL_VOLCABLE')
+    const planta = plantaSgc(r.PLANTA)
+    // fue al puerto con un ingreso propio de la terminal (otro NROINGRESO): operación del sistema, no alerta (AA400OA 22/10)
+    const conIngreso = Object.values(sgcRaw).find((o) => o.PATENTECAMION === r.PATENTECAMION && /TERMINAL/.test(o.PLANTA) && localMs(o.FECHAINGRESO) > ing && localMs(o.FECHAINGRESO) < sal + 12 * H)
+    const destino = planta === 'Puerto' ? '' : !puerto.length ? 'No fue al puerto' : conIngreso ? `Fue al puerto con su ingreso de la terminal (${hmLocal(conIngreso.FECHAINGRESO).slice(-5)})`
+      : volc.length ? `Fue al puerto y descargó (${nombre(volc[0]!)} ${volc[0]!.hm})` : `Fue al puerto (${puerto[0]!.hm}) sin lectura de volcable`
+    return { _t: ing, patente: r.PATENTECAMION, producto: String(r.PRODUCTO).toLowerCase(), planta, ingreso: hmLocal(r.FECHAINGRESO), salida: hmLocal(r.FECHASALIDA),
+      minutos: Math.round((sal - ing) / 60000), brutoKg: r.PESOBRUTO ?? null, nroIngreso: r.NROINGRESO,
+      adentro: adentro.length ? recorrido(adentro).slice(0, 6).join(' → ') : 'Sin lecturas de cámara', destino, alerta: Boolean(puerto.length && planta === 'Ricardone' && !conIngreso) }
+  })
+// 1b · Pasado de kilos por balanza: ingreso de grano al puerto que sale sin peso (la balanza lo rechaza), vuelve a
+// Ricardone a bajar el excedente y entra de nuevo al puerto con otro NROINGRESO y peso (21/10: BMF567, JJV417, UMT456).
+// Sin segundo ingreso todavía = rechazado, a seguir. El segundo bruto dice a cuánto tuvo que bajar.
+const sgcTodo = Object.values(sgcRaw)
+const pasadosKg = sgcPeriodo
+  .filter((r) => /TERMINAL/.test(r.PLANTA) && r.FECHASALIDA && !(Number(r.PESONETO) > 0) && /^(SOJA|GIRASOL|MAIZ|TRIGO)/.test(r.PRODUCTO))   // grano, no aceite
+  .map((r) => {
+    const ing = localMs(r.FECHAINGRESO), sal = localMs(r.FECHASALIDA)
+    const otro = sgcTodo.filter((o) => o.PATENTECAMION === r.PATENTECAMION && o.NROINGRESO !== r.NROINGRESO && localMs(o.FECHAINGRESO) > sal && localMs(o.FECHAINGRESO) < sal + 24 * H)
+      .sort((a, b) => localMs(a.FECHAINGRESO) - localMs(b.FECHAINGRESO))[0]
+    const rs = byPlate.get(String(r.PATENTECAMION).toUpperCase()) ?? []
+    const hasta2 = otro ? localMs(otro.FECHAINGRESO) : sal + 12 * H
+    const primero = rs.filter((x) => x.t >= ing - H && x.t <= sal + 0.5 * H)
+    const enRic = rs.filter((x) => x.t > sal && x.t < hasta2 && x.site === 'ric')
+    const segundo = otro ? rs.filter((x) => x.t >= localMs(otro.FECHAINGRESO) - H && x.t <= localMs(otro.FECHASALIDA) + 0.5 * H && x.site === 'sl') : []
+    return { _t: ing, patente: r.PATENTECAMION, producto: String(r.PRODUCTO).toLowerCase(), primerIngreso: hmLocal(r.FECHAINGRESO), primeraSalida: hmLocal(r.FECHASALIDA),
+      primerViaje: primero.length ? recorrido(primero.filter((x) => x.site === 'sl')).join(' → ') || recorrido(primero).slice(-3).join(' → ') : 'Sin lecturas de cámara',
+      ricardone: enRic.length ? recorrido(enRic).slice(0, 5).join(' → ') : 'Sin lecturas en Ricardone',
+      segundoIngreso: otro ? hmLocal(otro.FECHAINGRESO) : null, segundaSalida: otro?.FECHASALIDA ? hmLocal(otro.FECHASALIDA) : null,
+      brutoFinalKg: otro?.PESOBRUTO ?? null, netoFinalKg: otro?.PESONETO ?? null, segundoViaje: recorrido(segundo).slice(-3).join(' → '),
+      estado: !otro ? 'sin_reingreso' : enRic.length ? 'volvio_a_ricardone' : 'reingreso_sin_ricardone',
+      ...visitasCompletas([r.PATENTECAMION, r.PATENTEACOPLADO], ing - 2 * H, (otro?.FECHASALIDA ? localMs(otro.FECHASALIDA) : sal + 12 * H) + H, [ing - H, sal + 0.5 * H]) }
+  })
+// Recorrido completo de un camión en una ventana: lecturas de la patente o el acoplado y, del algoritmo por lote
+// (outputs/demostracion_lote), los pasos reconstruidos (captura sin patente legible asignada) y deducidos (sin captura).
+function lotePunto(n: string): string | undefined { return ({
+  'ricardone:Ingreso': 'Ingreso', 'ricardone:Pre ingreso': 'Pre-ingreso', 'ricardone:Calada': 'Calada', 'ricardone:Salida 2': 'Egreso',
+  'san_lorenzo:Ingreso': 'Ingreso puerto', 'san_lorenzo:Balanza Ingreso': 'Balanza puerto', 'san_lorenzo:Plataformas Volcables': 'Volcable',
+  'san_lorenzo:Balanza Egreso': 'Balanza salida puerto', 'san_lorenzo:Egreso': 'Salida puerto',
+  } as Record<string, string>)[n] }
+function pasosLote(placa: string, desdeMs: number, hastaMs: number) {
+  const dir = join(resolve(DATA, '..'), 'outputs', 'demostracion_lote')
+  const out: { t: number | null; planta: 'ric' | 'sl'; punto: string; estado: 'reconstruida' | 'deducida'; leyo: string; viaje: number; device: string }[] = []
+  let viaje = 0
+  // una sola corrida del lote: la que cubre el día y termina más tarde (varias corridas repiten los mismos viajes)
+  const dia = new Date(desdeMs + 2 * H - 3 * H).toISOString().slice(0, 10)
+  const cubre = (existsSync(dir) ? readdirSync(dir) : []).map((n) => n.match(/^lote_semana_(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})\.json$/))
+    .filter((m): m is RegExpMatchArray => !!m && m[1]! <= dia && m[2]! >= dia).sort((a, b) => b[2]!.localeCompare(a[2]!))
+  for (const f of cubre.slice(0, 1).map((m) => m[0])) {
+    const L = JSON.parse(readFileSync(join(dir, f), 'utf8'))
+    for (const c of (L.porCamion as any[]).filter((k) => k.plate === placa && Date.parse(k.ing) >= desdeMs && Date.parse(k.ing) <= hastaMs)) {
+      viaje++
+      for (const p of c.pasosDetalle as any[]) {
+        if (p.estado !== 'reconstruida' && !String(p.estado).startsWith('deducida')) continue
+        const vol = (String(p.device ?? '').match(/SLZVolcableC(\d)/) ?? [])[1]
+        out.push({ t: p.t ? Date.parse(p.t) : null, planta: String(p.node).startsWith('ricardone') ? 'ric' : 'sl',
+          punto: vol ? `Volcable ${vol}` : lotePunto(p.node) ?? String(p.node).split(':')[1]!, estado: p.estado === 'reconstruida' ? 'reconstruida' : 'deducida', leyo: p.read ?? '', viaje, device: String(p.device ?? '') })
+      }
+    }
+  }
+  return out
+}
+// sinDescarga: ventana del ingreso que la balanza no pesó; ahí el algoritmo no puede ubicar una descarga (JJV417 21/10 08:38)
+function visitasCompletas(placas: unknown[], desdeMs: number, hastaMs: number, sinDescarga?: [number, number]) {
+  type Item = { t: number; punto: string; hora: string; dia: string; estado: 'camara' | 'reconstruida'; leyo?: string; device: string; at: string }   // device + at: para pedir la foto al DSS
+  const pl = placas.map((p) => String(p ?? '').toUpperCase()).filter(Boolean)
+  const items: (Item & { planta: 'ric' | 'sl' })[] = pl.flatMap((p) => byPlate.get(p) ?? [])
+    .filter((x) => x.t >= desdeMs && x.t <= hastaMs && x.site !== '?')
+    .map((x) => ({ t: x.t, planta: x.site as 'ric' | 'sl', punto: nombre(x), hora: x.hm, dia: ddmm(x.day), estado: 'camara' as const, leyo: x.plate, device: x.device, at: new Date(x.t).toISOString() }))
+  const lote = pl[0] ? pasosLote(pl[0], desdeMs, hastaMs) : []
+  const hmL = (ms: number) => new Date(ms - 3 * H).toISOString()
+  for (const p of lote) if (p.estado === 'reconstruida' && p.t && !(sinDescarga && p.punto.startsWith('Volcable') && p.t >= sinDescarga[0] && p.t <= sinDescarga[1])) items.push({ t: p.t, planta: p.planta, punto: p.punto, hora: hmL(p.t).slice(11, 16), dia: ddmm(hmL(p.t).slice(0, 10)), estado: 'reconstruida', leyo: p.leyo, device: p.device, at: new Date(p.t).toISOString() })
+  items.sort((a, b) => a.t - b.t)
+  const out: { planta: 'ric' | 'sl'; items: Item[] }[] = []
+  for (const x of items) {
+    let v = out[out.length - 1]
+    if (!v || v.planta !== x.planta) { v = { planta: x.planta, items: [] }; out.push(v) }
+    const ult = v.items[v.items.length - 1]
+    if (ult && ult.punto === x.punto) continue
+    const { planta: _p, ...it } = x
+    v.items.push(it)
+  }
+  return { visitas: out, deducidos: lote.filter((p) => p.estado === 'deducida').map((p) => ({ viaje: p.viaje, planta: p.planta, punto: p.punto })) }
+}
+// 2 · Anomalías de comportamiento del ETL (final_circuits.anomaly_kind_reason) en las corridas semanales que cubren el período
+const ETL_MOTIVOS: Record<string, string> = {
+  SL_VISITA_RELAMPAGO_SIN_OPERAR: 'Visita relámpago al puerto sin operar',
+  RIC_REINGRESO_RAPIDO_NO_PELLET: 'Reingreso rápido a Ricardone',
+  SL_RIC_2H_ERROR_DESTINO_NO_PELLET: 'Del puerto a Ricardone en menos de 2 h (error de destino)',
+}
+const etlCasos: { _t: number; patente: string; dia: string; motivo: string; circuito: string; lecturas: string }[] = []
+let lunes = new Date(Date.parse(`${desde}T12:00:00Z`)); lunes = new Date(lunes.getTime() - ((lunes.getUTCDay() + 6) % 7) * DAY_MS)
+for (let l = lunes.toISOString().slice(0, 10); l <= hasta; l = addDays(l, 7)) {
+  const f = join(resolve(DATA, '..'), 'runs', 'windows', `${l}_${addDays(l, 6)}`, 'tables', 'final_circuits.json')
+  if (!existsSync(f)) continue
+  const t = JSON.parse(readFileSync(f, 'utf8')); const rows: Record<string, any>[] = Array.isArray(t) ? t : t.rows
+  for (const x of rows) {
+    const motivo = ETL_MOTIVOS[x.anomaly_kind_reason]
+    if (!motivo) continue
+    // recorridos unidos por el ETL: merged_<prefijo uid>__<prefijo uid>
+    const uid = String(x.journey_uid), partes = uid.startsWith('merged_') ? uid.slice(7).split('__') : [uid]
+    const rs = (byPlate.get(String(x.normalized_plate)) ?? reads).filter((r) => partes.some((pp) => r.uid === pp || (uid.startsWith('merged_') && r.uid.startsWith(pp))))
+    if (!rs.length || !inPeriod(rs[0]!)) continue
+    etlCasos.push({ _t: rs[0]!.t, patente: x.normalized_plate, dia: ddmm(rs[0]!.day), motivo, circuito: x.executive_circuit_code || '', lecturas: recorrido(rs).slice(0, 8).join(' → '),
+      ...contraste(String(x.normalized_plate), rs[0]!.t, rs[rs.length - 1]!.t, motivo) })
+  }
+}
+// Cada caso del ETL contra el sistema (movimientos de balanza: SGC o Excel), el algoritmo por lote
+// (outputs/demostracion_lote/lote_semana_<desde>_<hasta>.json, scripts/demostracion/lote.mjs) y lo que se
+// decidió en En vivo (data/plant-state-manual-overrides.json).
+function contraste(patente: string, t0: number, t1: number, motivo: string) {
+  const hmL = (ms: number) => new Date(ms - 3 * H).toISOString().slice(11, 16)
+  const ops = movsContraste.filter((o) => o.plate === patente && (o.salida || o.ingreso) >= t0 - 12 * H && o.ingreso <= t1 + 12 * H)   // ±12 h: el ingreso puede ser horas después del recorrido marcado (AD549AY 21/10)
+  const cerca = [...ops].sort((a, b) => Math.abs(a.ingreso - t0) - Math.abs(b.ingreso - t0)).slice(0, 2).sort((a, b) => a.ingreso - b.ingreso)   // los dos movimientos más cercanos al recorrido
+  const sistema = cerca.length ? cerca.map((o) => `${o.planta === 'RICARDONE' ? 'Ricardone' : 'Puerto'} · ${cap(String(o.producto ?? ''))} · ${hmL(o.ingreso)}–${o.salida ? hmL(o.salida) : '?'}${Number(o.kg) ? ` · ${Number(o.kg).toLocaleString('es-AR')} kg` : ''}`).join('; ') : ''
+  const loteDir = join(resolve(DATA, '..'), 'outputs', 'demostracion_lote')
+  let lote = '', loteCirc = '', reconstruyo: string[] = []
+  for (const f of existsSync(loteDir) ? readdirSync(loteDir).filter((n) => /^lote_semana_\d{4}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2}\.json$/.test(n)) : []) {
+    const [a, b] = f.slice(12, -5).split('_'); const dia = new Date(t0 - 3 * H).toISOString().slice(0, 10)
+    if (dia < a! || dia > b!) continue
+    const L = JSON.parse(readFileSync(join(loteDir, f), 'utf8'))
+    const c = (L.porCamion as any[]).find((k) => k.plate === patente && Math.abs(Date.parse(k.ing) - t0) < 12 * H)
+    if (!c) { lote = 'No está en el lote (no es camión del sistema)'; continue }
+    loteCirc = c.circuit
+    reconstruyo = (c.pasosDetalle as any[]).filter((p) => p.estado === 'reconstruida').map((p) => `${String(p.node).split(':')[1]!.replace('Plataformas Volcables', 'volcable')} ${hmL(Date.parse(p.t))}`)
+    lote = `Circuito ${c.circuit}: ${c.camara} pasos leídos, ${c.reconstruida} reconstruidos, ${c.deducida} deducidos, ${c.falta} faltan` + (reconstruyo.length ? ` (reconstruyó ${reconstruyo.join(', ')})` : '')
+    break
+  }
+  const ovf = join(DATA, 'plant-state-manual-overrides.json')
+  const ovPlantas = existsSync(ovf) ? Object.values(JSON.parse(readFileSync(ovf, 'utf8')) as Record<string, Record<string, any>>) : []   // { ricardone: {patente: …}, san_lorenzo: … }
+  const ov = ovPlantas.map((pl) => pl?.[patente]).find((x) => x?.reason) ?? null
+  const enVivo = ov?.reason ? `En vivo: ${String(ov.reason).toLowerCase()}` : ''
+  const descargo = reconstruyo.some((r) => /Volcable/i.test(r))
+  const conclusion = ops.length
+    ? (/relámpago/.test(motivo) && descargo ? `Descargó: está en el sistema y el algoritmo le asigna la lectura de ${reconstruyo.find((r) => /Volcable/i.test(r))}` : `Operación del sistema${loteCirc ? ` (circuito ${loteCirc})` : ''}: el ETL cortó el recorrido`)
+    : enVivo ? `Fuera del sistema · ${enVivo}` : 'Fuera del sistema: vehículo sin movimiento de balanza, identificar'
+  return { sistema: sistema || 'No figura', lote: lote || 'Sin corrida del lote para ese día', enVivo, conclusion, esCaso: !ops.length && !enVivo }
+}
+// 3 · Brutos de más de 52,5 t en la balanza (corte provisorio: el comité define el criterio de «pasado de kilos»)
+const BRUTO_MAX = 52500
+const pesados = sgcPeriodo.filter((r) => Number(r.PESOBRUTO) > BRUTO_MAX && /SAN LORENZO|TERMINAL/.test(r.PLANTA)).map((r) => ({ _t: localMs(r.FECHAINGRESO), patente: r.PATENTECAMION,
+  producto: String(r.PRODUCTO).toLowerCase(), planta: plantaSgc(r.PLANTA), dia: hmLocal(r.FECHAINGRESO).slice(0, 5), brutoKg: r.PESOBRUTO, netoKg: r.PESONETO ?? null }))
+const conPeso = sgcPeriodo.filter((r) => Number(r.PESOBRUTO) > 0 && /SAN LORENZO|TERMINAL/.test(r.PLANTA)).length   // Nodo Sur: Ricardone y puerto
+
+// Recorrido completo (cámaras + algoritmo) para las fichas del comité: interplanta y dos calles alrededor del caso;
+// vehículos sin sistema, su día con más lecturas (los 5 con más viajes).
+for (const x of [...interplanta, ...dosCalles] as Record<string, any>[]) Object.assign(x, visitasCompletas([x.patente], Number(x._t) - 4 * H, Number(x._t) + 6 * H))
+for (const x of camionetas.slice(0, 5) as Record<string, any>[]) {
+  const rs = byPlate.get(x.patente) ?? []
+  const porDia = new Map<string, number>(); for (const r of rs) porDia.set(r.day, (porDia.get(r.day) ?? 0) + 1)
+  const dia = [...porDia.entries()].filter(([d]) => PERIOD_DAYS.includes(d)).sort((a, b) => b[1] - a[1])[0]?.[0]
+  if (!dia) continue
+  const d0 = rs.find((r) => r.day === dia)!.t
+  x.diaEjemplo = ddmm(dia)
+  Object.assign(x, visitasCompletas([x.patente], d0 - H, d0 + 24 * H))
+}
 
 // ---------- salida
 const median = (a: number[]) => { const s = [...a].sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)]! : null }
@@ -319,11 +524,13 @@ const datos = {
     lecturasPeriodo: reads.filter(inPeriod).length,
     lecturasPorDia: Object.fromEntries(PERIOD_DAYS.map((d) => [d, reads.filter((r) => r.day === d).length])),
   },
-  viajeNormalRicSLmin: median(viajesRicSL),
+  viajeNormalRicSLmin: median(viajesRicSL), umbralInterplantaMin: UMBRAL_INTER,
   vueltas: strip(vueltas), interplanta: strip(interplanta), interplantaCercanos: strip(cercanos), dosCalles: strip(dosCalles), declarado: strip(declarado),
   camionetas: { umbral: 10, lista: camionetas, sinExcelTotal: sinExcel.length,
     parecidas: camionetas.filter((x) => x.parecida).map((x) => `${x.patente}~${x.parecida}`),
     enRegistro: camionetas.filter((x) => x.registro).map((x) => x.patente) },
+  balanza: { sinPesar: strip(sinPesar), pasadosKg: strip(pasadosKg), pesados: strip(pesados), brutoMaxKg: BRUTO_MAX, ingresosConPeso: conPeso, ingresosSgc: sgcPeriodo.length },
+  etl: strip(etlCasos),
 }
 writeFileSync(join(OUT, 'datos.json'), JSON.stringify(datos, null, 1))
 const csv = (rows: Record<string, unknown>[]) => '﻿' + (rows.length ? [Object.keys(rows[0]!).join(';'), ...rows.map((r) => Object.values(r).map((v) => String(v ?? '')).join(';'))].join('\n') : '') + '\n'

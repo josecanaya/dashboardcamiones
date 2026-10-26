@@ -1,0 +1,71 @@
+{
+ "v": 4,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-10-26T13:22:35Z"
+ },
+ "lists": "css",
+ "title": "Comité de Seguridad · 12/10 al 25/10",
+ "order": [
+  "cover",
+  "ficha-vuelta",
+  "ficha-calles",
+  "div-vuelta",
+  "pasados-kg",
+  "v-bmf567-2110",
+  "v-umt456-2110",
+  "v-jjv417-2110",
+  "v-pep080-2110",
+  "v-tcd135-2310",
+  "v-gxu312-2310",
+  "v-gvw791-2310",
+  "div-calles",
+  "calles",
+  "div-interplanta",
+  "interplanta",
+  "camionetas",
+  "ficha-permitido",
+  "div-balanza",
+  "sin-pesar",
+  "etl-raros",
+  "servicio"
+ ],
+ "cover": "cover",
+ "sections": {
+  "s1": {
+   "description": "Portada, histórico y números del período",
+   "start": "cover"
+  },
+  "s2": {
+   "description": "Camiones que fueron al puerto y volvieron a Ricardone antes de descargar",
+   "start": "div-vuelta"
+  },
+  "s3": {
+   "description": "Calles del puerto",
+   "start": "div-calles"
+  },
+  "s4": {
+   "description": "Demoras entre plantas sin calado en el puerto y vehículos sin Excel",
+   "start": "div-interplanta"
+  },
+  "s5": {
+   "description": "Balanza y recorridos fuera de lo común: sin pesar, reingresos y visitas relámpago",
+   "start": "div-balanza"
+  }
+ },
+ "faces": {
+  "domine": {
+   "family": "Domine",
+   "href": "https://fonts.googleapis.com/css2?family=Domine:wght@400..700&display=swap"
+  },
+  "public-sans": {
+   "family": "Public Sans",
+   "href": "https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap"
+  },
+  "ibm-plex-sans": {
+   "family": "IBM Plex Sans",
+   "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap"
+  }
+ },
+ "designSystems": []
+}
