@@ -5,17 +5,17 @@
  *   (data/arca/arca_consignment_notes.json, export de saasDB.arca_consignment_notes). Se relee si cambia.
  * - El PDF oficial se pide a la API en el momento (solo consulta, no registra lecturas); las claves
  *   quedan del lado del servidor (AGRO_API_BASE, AGRO_GW_KEY, AGRO_PLANT_ACCESS_KEY en .env.local).
- * - Router: GET /api/truckflow/agro/carta-porte?plate=&site=, GET /api/truckflow/agro/carta-porte/:ctg/pdf.
+ * - Router: GET /api/truckflow/agro/carta-porte?plate=, GET /api/truckflow/agro/carta-porte/:ctg/pdf.
  */
 import express from 'express'
 import { existsSync, readFileSync, statSync } from 'node:fs'
 import path from 'node:path'
 
-/** Plantas ARCA de Vicentin por sitio del En vivo. */
-const SITE_PLANTS = {
-  san_lorenzo: ['21831', '21832', '21836', '23326', '25567'],
-  ricardone: ['813124'],
-}
+/**
+ * Vicentin como destino. No se filtra por planta: lo que descarga en Ricardone viaja con carta a la
+ * 25567 (San Lorenzo) — la 813124 no recibe cartas — y el SGC lo registra igual como «PLANTA SAN LORENZO».
+ */
+const VICENTIN_CUIT = '30500959629'
 /** Activa, contingencia, arribo confirmado, descargando: el camión todavía no terminó con esa carta. */
 const OPEN_STATES = new Set(['AC', 'CT', 'CF', 'DD'])
 const STATE_TEXT = { AC: 'Activa', CT: 'Contingencia', CF: 'Arribo confirmado', DD: 'Descargando', CN: 'Descargada', AN: 'Anulada', RE: 'Rechazada', DE: 'Desactivada' }
@@ -43,6 +43,7 @@ export function createCartaPorteSource({ projectRoot }) {
         departure: dateOf(n.departure_time),
         expire: dateOf(n.expire_time),
         plant: String(numOf(n.destination?.plant) ?? ''),
+        destCuit: String(n.destination?.cuit ?? ''),
         plates: (n.transport?.plates ?? []).map(normPlate),
         turnCode: n.transport?.turn_code ?? null,
         grossKg: Number(numOf(n.load?.gross_weight_kg)) || null,
@@ -59,10 +60,9 @@ export function createCartaPorteSource({ projectRoot }) {
   }
 
   /** La carta con la que el camión está hoy en planta: abierta primero, después la descargada más reciente. */
-  function findForPlate(plate, site, now = Date.now()) {
-    const plants = new Set(SITE_PLANTS[site] ?? Object.values(SITE_PLANTS).flat())
+  function findForPlate(plate, now = Date.now()) {
     const notes = (index().byPlate.get(normPlate(plate)) ?? [])
-      .filter(n => plants.has(n.plant) && n.departure && now - Date.parse(n.departure) < MAX_AGE_MS)
+      .filter(n => n.destCuit === VICENTIN_CUIT && n.departure && now - Date.parse(n.departure) < MAX_AGE_MS)
       .filter(n => OPEN_STATES.has(n.stateCode) || (n.stateCode === 'CN' && now - Date.parse(n.stateSince ?? 0) < 86400000))
       .sort((a, b) => Number(OPEN_STATES.has(b.stateCode)) - Number(OPEN_STATES.has(a.stateCode)) || b.departure.localeCompare(a.departure))
     return notes.map(n => ({ ...n, stateText: STATE_TEXT[n.stateCode] ?? n.stateCode, byTrailer: n.plates[0] !== normPlate(plate) }))
@@ -72,12 +72,11 @@ export function createCartaPorteSource({ projectRoot }) {
 
   router.get('/api/truckflow/agro/carta-porte', (req, res) => {
     const plate = normPlate(req.query.plate)
-    const site = String(req.query.site ?? '').trim().toLowerCase()
     if (!plate) return res.status(400).json({ error: 'Falta la patente' })
     const { newestDeparture, mtimeMs } = index()
     res.json({
       plate,
-      notes: findForPlate(plate, site),
+      notes: findForPlate(plate),
       copy: { available: mtimeMs > 0, newestDeparture, updatedAt: mtimeMs ? new Date(mtimeMs).toISOString() : null },
     })
   })

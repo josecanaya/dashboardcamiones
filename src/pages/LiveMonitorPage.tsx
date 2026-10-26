@@ -366,7 +366,7 @@ function CartaPorteRow({ site, plate, trailer }: { site: Site; plate: string; tr
     <b>ARCA · carta de porte</b>
     {state.phase === 'loading' ? <span>Buscando carta…</span>
       : state.phase === 'error' ? <span>No se pudo consultar: {state.msg}</span>
-      : !notes.length ? <span>Sin carta de porte a esta planta{newest ? ` en la copia (hasta ${dayHhmm(newest)})` : ''}.</span>
+      : !notes.length ? <span>Sin carta de porte a Vicentin{newest ? ` en la copia (hasta ${dayHhmm(newest)})` : ''}.</span>
       : notes.map(n => <span key={n.ctg} className="lm-cpe">
         CTG {n.ctg} · {n.stateText}{n.stateSince ? ` ${dayHhmm(n.stateSince)}` : ''}<br />
         Partida {n.departure ? dayHhmm(n.departure) : '—'} · {n.plates.join(' / ')}{n.byTrailer ? ' (por acoplado)' : ''} · planta {n.plant}
