@@ -18,6 +18,7 @@
     "etl:run": "npx tsx scripts/run-etl-headless.ts",
     "mov:resumen": "node scripts/build-movimientos-resumen.mjs",
     "vinculo": "node scripts/vinculo/cobertura.mjs",
+    "vinculo:lote": "node scripts/vinculo/lote-html.mjs",
     "informe:diario": "tsx scripts/informe-diario.ts",
     "informe:diario:procesar": "tsx scripts/informe-diario.ts --procesar",
     "smoke:etl": "node scripts/smoke-etl-api.mjs",

@@ -33,6 +33,7 @@ const H = 3600_000
 const DAYS = []
 for (let d = addDays(FROM, -1); d <= addDays(TO, 1); d = addDays(d, 1)) DAYS.push(d)
 const inWeek = (t) => arDay(t) >= FROM && arDay(t) <= TO
+const loaded = (t) => DAYS.includes(arDay(t)) // ±1 día: la visita de un camión que entra el último día termina el siguiente
 
 // ── Cámaras → nodo (frontal o trasera), del modelo de nodos ──
 const model = json('docs/propuesta-en-vivo/modelo-nodos-nodo-sur/datos/modelo_nodo_sur.json')
@@ -111,10 +112,12 @@ for (const [src, list] of [['feed', feed], ['alerta', alertReadEvents(alerts, fe
     const dev = String(e.deviceCode ?? '').toLowerCase()
     const node = frontNode.get(dev) ?? rearNode.get(dev)
     const t = getEventLiveInstantMs(e)
-    if (!node || !Number.isFinite(t) || !inWeek(t)) continue
+    if (!node || !Number.isFinite(t) || !loaded(t)) continue
     const plate = plateOf(e.normalizedPlate || e.truckPlate)
     const a = dssAt(e.deviceCode, t, plate, usedDss)
     if (a) usedDss.add(a.row)
+    // La marca que traen las alertas no se usa: medido 19–25/10, baja los aciertos de la prueba de 95,5 % a 91,7 %
+    // con DSS y no recupera nada más sin DSS.
     caps.push({ src, node, rear: !frontNode.has(dev), device: e.deviceCode, t, plate, journey: e.journeyUid ?? null, attrs: a })
   }
 }
@@ -122,7 +125,7 @@ const dssMatched = caps.filter((c) => c.attrs).length
 for (const [dev, list] of dss) {
   const node = frontNode.get(dev) ?? rearNode.get(dev)
   if (!node) continue
-  for (const r of list) if (!usedDss.has(r.row) && inWeek(r.t)) caps.push({ src: 'dss', node, rear: !frontNode.has(dev), device: r.device, t: r.t, plate: r.plate, journey: null, attrs: r })
+  for (const r of list) if (!usedDss.has(r.row) && loaded(r.t)) caps.push({ src: 'dss', node, rear: !frontNode.has(dev), device: r.device, t: r.t, plate: r.plate, journey: null, attrs: r })
 }
 caps.sort((a, b) => a.t - b.t)
 
@@ -191,7 +194,8 @@ for (const c of caps) {
   if (vehicles.size === 1) { c.orig = c.cls; c.cls = 'mismo_paso'; c.vehicle = [...vehicles][0] }
 }
 
-for (const c of caps) {
+const weekCaps = caps.filter((c) => inWeek(c.t)) // las estadísticas de lecturas son solo de la semana
+for (const c of weekCaps) {
   const cls = c.cls
   counts[cls] = (counts[cls] ?? 0) + 1
   perNode[c.node] ??= {}
@@ -199,14 +203,14 @@ for (const c of caps) {
   if (samples[cls] && samples[cls].length < 40) samples[cls].push({ plate: c.plate, node: c.node, device: c.device, at: new Date(c.t - 3 * H).toISOString().slice(0, 16), src: c.src, ...(c.vehicle && c.vehicle !== c.plate ? { vehiculo: c.vehicle } : {}), ...(c.orig ? { antes: c.orig } : {}) })
 }
 
-const total = caps.length
+const total = weekCaps.length
 const pct = (n) => `${((n / total) * 100).toFixed(1)} %`
 const linked = (counts.carta ?? 0) + (counts.carta_corregida ?? 0)
-console.log(`Semana ${FROM} → ${TO}: ${total} lecturas (${caps.filter((c) => c.src === 'alerta').length} solo como alerta, ${caps.filter((c) => c.src === 'dss').length} solo en el DSS)`)
+console.log(`Semana ${FROM} → ${TO}: ${total} lecturas (${weekCaps.filter((c) => c.src === 'alerta').length} solo como alerta, ${weekCaps.filter((c) => c.src === 'dss').length} solo en el DSS)`)
 console.log(dssDir ? `  export del DSS ${dssDir}: ${dssMatched} lecturas de TruckFlow con marca/color/tipo` : '  sin export del DSS para esta semana')
 for (const k of ['carta', 'carta_corregida', 'sin_carta', 'mismo_paso', 'suelta', 'ilegible', 'sin_patente']) console.log(`  ${k.padEnd(16)} ${String(counts[k] ?? 0).padStart(6)}  ${pct(counts[k] ?? 0)}`)
-const toCarta = caps.filter((c) => c.vehicle && (cartasByPlate.has(c.vehicle))).length
-const toVehicle = caps.filter((c) => c.vehicle).length
+const toCarta = weekCaps.filter((c) => c.vehicle && (cartasByPlate.has(c.vehicle))).length
+const toVehicle = weekCaps.filter((c) => c.vehicle).length
 console.log(`  → vinculadas a una carta: ${linked} directas, ${toCarta} con el mismo paso (${pct(toCarta)})`)
 console.log(`  → vinculadas a algún vehículo (carta o sin carta): ${toVehicle} (${pct(toVehicle)})`)
 console.log('\nPor nodo (carta+corregida / total):')
@@ -230,18 +234,27 @@ const circuits = model.circuits.map((c) => {
   }
   return { id: c.id, exp, liquid: c.seq.some((s) => LIQUID_NODES.has(s)) }
 }).filter((c) => c.exp.length && !c.liquid) // las cartas de porte son de granos: nunca un circuito de líquidos
+// Rechazado en la calada de Ricardone (no está en el modelo): sale por donde entró y nunca va a balanza.
+// Solo con evidencia: leído en Ingreso más de 5 min después de la Calada y en ninguna balanza.
+const BALANZAS = ['ricardone:Balanza Ingreso', 'ricardone:Balanza Egreso', 'san_lorenzo:Balanza Ingreso', 'san_lorenzo:Balanza Egreso']
+circuits.push({ id: 'Rechazo Ric', exp: ['ricardone:Ingreso', 'ricardone:Pre ingreso', 'ricardone:Calada'], rechazo: true })
+const rechazado = (mine) => {
+  const cal = mine.filter((c) => c.node === 'ricardone:Calada').map((c) => c.t)
+  return cal.length > 0 && !mine.some((c) => BALANZAS.includes(c.node)) && mine.some((c) => c.node === 'ricardone:Ingreso' && c.t > Math.min(...cal) + 5 * 60_000)
+}
 const capsByVehicle = new Map()
 for (const c of caps) if (c.vehicle) capsByVehicle.set(c.vehicle, [...(capsByVehicle.get(c.vehicle) ?? []), c])
 const trucks = []
 for (const n of cartas) {
   const dep = Date.parse(n.departure)
   const mine = n.plates.flatMap((p) => capsByVehicle.get(p) ?? []).filter((c) => c.t >= dep - 48 * H && c.t <= dep + 120 * H)
-  if (!mine.length || !inWeek(mine[0].t)) continue
+  if (!mine.length || !inWeek(Math.min(...mine.map((c) => c.t)))) continue
   const seen = new Set(mine.map((c) => c.node))
   // Puntaje: nodos esperados vistos − esperados que faltan − nodos vistos que el circuito no explica
   // (sin este último, SL3 le ganaba a R7 a un camión leído en la Calada y la Salida 2 de Ricardone).
   const score = (c) => c.hit - c.miss.length - c.extra
-  const best = circuits.map((c) => ({ ...c, hit: c.exp.filter((x) => seen.has(x)).length, miss: c.exp.filter((x) => !seen.has(x)), extra: [...seen].filter((x) => !c.exp.includes(x)).length }))
+  const isRech = rechazado(mine)
+  const best = circuits.filter((c) => !c.rechazo || isRech).map((c) => ({ ...c, hit: c.exp.filter((x) => seen.has(x)).length, miss: c.exp.filter((x) => !seen.has(x)), extra: [...seen].filter((x) => !c.exp.includes(x)).length }))
     .sort((a, b) => score(b) - score(a) || a.exp.length - b.exp.length)[0]
   trucks.push({ ctg: n.ctg, plate: n.plates[0], circuit: best.id, expected: best.exp.length, missing: best.miss, byClass: Object.fromEntries([...new Set(mine.map((c) => c.cls))].map((k) => [k, mine.filter((c) => c.cls === k).length])) })
 }
@@ -366,8 +379,34 @@ for (let pass = 0, changed = true; changed && pass < 6; pass++) {
     changed = true
   }
 }
+// Por qué no se llenó cada hueco: sin lecturas libres en la ventana, lejos del horario esperado, empate con otra
+// lectura del mismo hueco, o la lectura le queda igual de bien a otro camión.
+const hhmm = (t) => new Date(t - 3 * H).toISOString().slice(5, 16).replace('T', ' ')
+const why = new Map()
+const motivos = {}
+for (const s of slots) {
+  if (s.filled) continue
+  const inWin = (freeByNode.get(s.node) ?? []).filter((c) => c.t > s.from && c.t < s.to)
+  const list = (bySlot.get(s) ?? []).filter((p) => !taken.has(p.c))
+  let motivo
+  if (!inWin.length) motivo = 'sin lecturas libres en la ventana'
+  else if (!list.length) motivo = (bySlot.get(s) ?? []).length ? 'sus lecturas se las llevaron otros camiones' : 'lecturas lejos del horario esperado'
+  else {
+    const p = list[0]
+    const otherCap = secondBest(list, p, (o) => Math.abs(o.c.t - p.c.t) > SAME_PASS_MS)
+    motivo = p.score < MARGIN * otherCap ? 'dos lecturas parecidas, no se puede elegir' : 'la lectura le sirve igual a otro camión'
+  }
+  motivos[motivo] = (motivos[motivo] ?? 0) + 1
+  why.set(s, {
+    motivo,
+    lecturasEnVentana: inWin.length,
+    candidatas: (bySlot.get(s) ?? []).slice(0, 4).map((p) => ({ patente: p.c.plate || '(sin patente)', hora: hhmm(p.c.t), puntaje: Math.round(p.score * 100) / 100, marca: p.c.attrs?.vehicleBrand ?? null, otrosCamiones: (byCap.get(p.c) ?? []).filter((o) => o !== p).map((o) => o.s.truck.plate).slice(0, 3), tomada: taken.has(p.c) })),
+  })
+}
 let ok = 0, bad = 0, none = 0
 for (const s of slots) {
+  s.truck.huecos ??= []
+  if (s.truck.status[s.node] !== 'prueba') s.truck.huecos.push({ nodo: s.node, desde: hhmm(s.from), hasta: hhmm(s.to), esperada: s.est.length ? hhmm(s.est[0].at) : null, ...(s.filled ? { asignada: { patente: s.filled.plate || '(sin patente)', hora: hhmm(s.filled.t), fuente: s.filled.src, marca: s.filled.attrs?.vehicleBrand ?? null } } : why.get(s)) })
   if (s.truck.status[s.node] === 'prueba') {
     if (!s.filled) none++
     else if (s.filled.testOf === s.truck.ctg) ok++
@@ -380,6 +419,7 @@ for (const tr of trucks) for (const v of Object.values(tr.status)) tally[v] = (t
 const nSteps = Object.values(tally).reduce((a, b) => a + b, 0)
 console.log(`\nAlgoritmo por lote sobre los pasos de los camiones con carta (${nSteps} pasos${TEST ? `, con prueba en 1 de cada ${TEST_EVERY}` : ''}):`)
 for (const k of ['camara', 'reconstruido', 'deducido', 'falta']) console.log(`  ${k.padEnd(13)} ${String(tally[k] ?? 0).padStart(5)}  ${(((tally[k] ?? 0) / nSteps) * 100).toFixed(1)} %`)
+console.log('  pasos sin asignar, por motivo:', Object.entries(motivos).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(' · '))
 if (TEST) console.log(`  prueba: ${ok} bien · ${bad} mal · ${none} sin asignar (de ${ok + bad + none}) → aciertos ${((ok / Math.max(1, ok + bad)) * 100).toFixed(1)} % de lo asignado, recupera ${((ok / Math.max(1, ok + bad + none)) * 100).toFixed(1)} %`)
 for (const tr of trucks) tr.missing = Object.entries(tr.status).filter(([, v]) => v === 'falta').map(([k]) => k)
 
@@ -397,7 +437,7 @@ const out = path.join(root, 'reportes/vinculo', `${FROM}_${TO}`)
 fs.mkdirSync(out, { recursive: true })
 fs.writeFileSync(path.join(out, 'cobertura.json'), JSON.stringify({
   desde: FROM, hasta: TO, total, counts, perNode, samples, transit: Object.fromEntries([...transit].map(([k, v]) => [k, { n: v.n, medMin: Math.round(v.med / 60_000) }])),
-  camiones: trucks.map(({ mine, ...t }) => t),
+  camiones: trucks.map(({ mine, ...t }) => ({ ...t, lecturas: mine.filter((c) => !c.testOf).map((c) => ({ nodo: c.node, hora: hhmm(c.t), patente: c.plate, clase: c.cls, fuente: c.src, marca: c.attrs?.vehicleBrand ?? null })) })),
   sinCarta: [...sinCartaPlates].map(([plate, nodes]) => ({ plate, lecturas: byPlate.get(plate).length, nodos: [...nodes] })).sort((a, b) => b.lecturas - a.lecturas),
 }, null, 1))
 console.log(`\n→ ${path.relative(root, out)}/cobertura.json`)

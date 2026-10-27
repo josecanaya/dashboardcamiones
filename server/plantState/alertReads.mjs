@@ -16,6 +16,17 @@ const DUP_MS = 2 * 60_000
 const READ_CODES = new Set(['LPR_MALFUNCTION', 'UNMATCHED_TAIL_OBSERVATION', 'INVALID_ROUTE', 'INVALID_JOURNEY_START'])
 const plateKey = (p) => String(p ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '')
 
+/**
+ * Marca de la alerta con el nombre del export del DSS. Cruce de las mismas capturas, 19–25/10: Benz → Mercedes-Benz,
+ * Naveco → Iveco… y las que terminan en número (Toyota2, Volvo2) el DSS las da como no reconocidas.
+ */
+const BRAND = { Benz: 'Mercedes-Benz', Naveco: 'Iveco', Citroen: 'Citroën', Lsuzu: 'ISUZU', DF: 'Dongfeng' }
+export function alertBrand(v) {
+  const s = String(v ?? '').trim()
+  if (!s || /^unknown$/i.test(s) || /\d$/.test(s)) return null
+  return BRAND[s] ?? s
+}
+
 /** Instante operativo de la alerta (ms) o NaN. */
 export function alertInstantMs(a) {
   let p = {}
@@ -45,7 +56,12 @@ export function alertToReadEvent(a) {
   const t = alertInstantMs(a)
   if (!Number.isFinite(t)) return null
   const occurredAt = new Date(t - SKEW_MS).toISOString()
+  // Atributos del vehículo (el feed no los trae). La marca viene con nombres de la cámara: ver alertBrand.
+  const body = p.externalEventBody ?? {}
   return {
+    vehicleBrand: alertBrand(body.VehicleBrand),
+    vehicleColor: body.VehicleColor ?? null,
+    vehicleCategory: body.Vehicle?.Category ?? null,
     id: `alert-${a.id}`,
     journeyUid: `alert-${a.id}`,
     truckPlate: plate,
