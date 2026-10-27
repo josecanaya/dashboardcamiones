@@ -59,5 +59,19 @@ for (const t of lote) {
   casos.push({ ctg: t.ctg, patentes: t.plates, circuito: t.circuit, llegada: t.llegada, status: t.status, lecturas: t.lecturas, referencias: refs, huecos })
   process.stdout.write(`\r${casos.length}/${lote.length} camiones · ${n} candidatas`)
 }
-fs.writeFileSync(path.join(out, 'casos.json'), JSON.stringify({ desde: FROM, hasta: TO, llegadaDesde: START, casos }, null, 1))
+// Posición de cada nodo en el plano de su planta (public/plant/<planta>/plantZones.json), por sus cámaras.
+const model = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'docs/propuesta-en-vivo/modelo-nodos-nodo-sur/datos/modelo_nodo_sur.json'), 'utf8'))
+const byDevice = {}
+for (const site of ['ricardone', 'san_lorenzo']) {
+  const z = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'public/plant', site, 'plantZones.json'), 'utf8'))
+  for (const p of z.points) for (const d of p.cameraGroup?.devices ?? []) byDevice[d.toLowerCase()] = { planta: site, punto: p.id, etiqueta: p.label, x: p.xPercent, y: p.yPercent }
+}
+const nodos = {}
+for (const n of model.nodes) {
+  const hit = [...(n.devices ?? []), ...(n.rear ?? [])].map((d) => byDevice[d.toLowerCase()]).find(Boolean)
+  if (hit) nodos[n.id] = { ...hit }
+}
+// Balanza de egreso de Ricardone comparte punto con la de ingreso: se corre un poco para que se vean las dos.
+if (nodos['ricardone:Balanza Egreso']) nodos['ricardone:Balanza Egreso'].y += 5
+fs.writeFileSync(path.join(out, 'casos.json'), JSON.stringify({ desde: FROM, hasta: TO, llegadaDesde: START, nodos, casos }, null, 1))
 console.log(`\n→ ${path.relative(process.cwd(), out)}/casos.json`)

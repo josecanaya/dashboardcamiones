@@ -1,6 +1,7 @@
 // Server del simulador del vínculo: sirve la página, las fotos y guarda las correcciones del usuario.
 // Uso: node scripts/vinculo/simulador-server.mjs [DESDE HASTA] [PUERTO=8820]
-//   página    http://127.0.0.1:8820/
+//   página    http://127.0.0.1:8820/        (paso por paso)
+//   tiempo    http://127.0.0.1:8820/tiempo  (el lote en el plano, con reloj)
 //   guarda en reportes/vinculo/<desde>_<hasta>/simulador/correcciones.json
 import fs from 'node:fs'
 import http from 'node:http'
@@ -14,9 +15,16 @@ const readCorr = () => (fs.existsSync(corrFile) ? JSON.parse(fs.readFileSync(cor
 
 http.createServer((req, res) => {
   const url = new URL(req.url, 'http://x')
-  if (url.pathname === '/') {
+  if (url.pathname.startsWith('/plano/')) {
+    const site = path.basename(url.pathname, '.png')
+    const f = path.join(process.cwd(), 'public/plant', site, `${site}-plano.png`)
+    if (!fs.existsSync(f)) { res.writeHead(404); return res.end() }
+    res.writeHead(200, { 'Content-Type': 'image/png', 'Cache-Control': 'max-age=86400' })
+    return fs.createReadStream(f).pipe(res)
+  }
+  if (url.pathname === '/' || url.pathname === '/tiempo') {
     const data = fs.readFileSync(path.join(dir, 'casos.json'), 'utf8')
-    const page = fs.readFileSync(path.join(here, 'simulador.html'), 'utf8').replace('__DATA__', () => data.replace(/</g, '\\u003c')).replace('__CORR__', () => JSON.stringify(readCorr()))
+    const page = fs.readFileSync(path.join(here, url.pathname === '/' ? 'simulador.html' : 'simulador-tiempo.html'), 'utf8').replace('__DATA__', () => data.replace(/</g, '\\u003c')).replace('__CORR__', () => JSON.stringify(readCorr()))
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' })
     return res.end(page)
   }
