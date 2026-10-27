@@ -36,6 +36,8 @@ import { resolveRunDir, runDirExists, stableWindowRunId } from './etl-runs-layou
 import { getSourceAvailability } from './sourceAvailability.mjs'
 import { createSgcSource } from './sgc/sgcSource.mjs'
 import { createCartaPorteSource } from './agro/cartaPorte.mjs'
+import { createPadron } from './live/padron/padron.mjs'
+import { createCartasSource } from './live/padron/cartasSource.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = path.resolve(__dirname, '..')
@@ -276,8 +278,13 @@ const sgc = createSgcSource({ projectRoot: PROJECT_ROOT })
 app.use(sgc.router)
 
 /** Cartas de porte ARCA del camión en planta y su PDF oficial (API agro.bimtrazer.com). */
+/** Padrón del día: quién puede venir al Nodo Sur, en memoria (docs/propuesta-en-vivo/ARQUITECTURA_PADRON_EN_VIVO.md). */
+const padron = createPadron({ projectRoot: PROJECT_ROOT, source: createCartasSource({ projectRoot: PROJECT_ROOT }) })
+padron.start()
+
 app.use(createCartaPorteSource({
   projectRoot: PROJECT_ROOT,
+  padron,
   getLive: async () => {
     const lists = await Promise.all(['ricardone', 'san_lorenzo'].map(site =>
       plantQueries.listTrucks(site).then(l => l.trucks.map(t => ({ ...t, site }))).catch(() => [])))

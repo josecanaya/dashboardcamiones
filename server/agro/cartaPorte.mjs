@@ -1,40 +1,28 @@
 /**
  * Cartas de porte (ARCA) de los camiones en planta, vía la API de control de acceso de agro.bimtrazer.com.
  *
- * - La llave de cámara no puede listar cartas: el CTG de cada patente sale de la copia de la base
- *   (data/arca/arca_consignment_notes.json, export de saasDB.arca_consignment_notes). Se relee si cambia.
+ * - Las cartas salen del padrón del día (server/live/padron): esperados, cumplimiento y ficha leen de
+ *   memoria; el padrón se resincroniza por detrás desde su fuente (export o API de agro).
  * - El PDF oficial se pide a la API en el momento (solo consulta, no registra lecturas); las claves
  *   quedan del lado del servidor (AGRO_API_BASE, AGRO_GW_KEY, AGRO_PLANT_ACCESS_KEY en .env.local).
- * - Router: GET /api/truckflow/agro/esperados?day=, GET /api/truckflow/agro/recorrido/:ctg, GET /api/truckflow/agro/carta-porte?plate=, GET /api/truckflow/agro/carta-porte/:ctg/pdf.
+ * - Router: GET /api/truckflow/agro/padron, GET /api/truckflow/agro/esperados?day=, GET /api/truckflow/agro/recorrido/:ctg, GET /api/truckflow/agro/carta-porte?plate=, GET /api/truckflow/agro/carta-porte/:ctg/pdf.
  */
 import express from 'express'
-import { existsSync, readFileSync, statSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
+import { normPlate } from '../live/padron/cartasSource.mjs'
+import { arDay, shiftDay } from '../live/padron/padron.mjs'
 import { getEventLiveInstantMs } from '../plantState/liveEventTime.mjs'
 import { resolveCanonicalSectorForLiveFeed } from '../plantState/sectorProfiles.mjs'
 import { logicalLabel, sectorToLogical } from '../plantState/circuitPrefix.mjs'
 
-/**
- * Vicentin como destino. No se filtra por planta: lo que descarga en Ricardone viaja con carta a la
- * 25567 (San Lorenzo) — la 813124 no recibe cartas — y el SGC lo registra igual como «PLANTA SAN LORENZO».
- */
-const VICENTIN_CUIT = '30500959629'
 /** Activa, contingencia, arribo confirmado, descargando: el camión todavía no terminó con esa carta. */
 const OPEN_STATES = new Set(['AC', 'CT', 'CF', 'DD'])
 const STATE_TEXT = { AC: 'Activa', CT: 'Contingencia', CF: 'Arribo confirmado', DD: 'Descargando', CN: 'Descargada', AN: 'Anulada', RE: 'Rechazada', DE: 'Desactivada' }
 const MAX_AGE_MS = 10 * 86400000
-/** codGrano ARCA → producto, deducido del cruce con PRODUCTO del SGC (26/10/2026). */
-const GRAIN_NAME = { 2: 'Girasol', 19: 'Maíz', 23: 'Soja', 31: 'Algodón', 32: 'Cártamo' }
-/** Localidad ARCA de San Lorenzo: las plantas del Nodo Sur (Ricardone descarga con carta a la 25567). */
-const NODO_SUR_LOCALITY = 18794
-/** Turno STOP: VIC<nro><DDMMAA>. */
-const TURN_RE = /^[A-Z]+\d+(\d{2})(\d{2})(\d{2})$/i
-const turnDayOf = code => {
-  const m = TURN_RE.exec(String(code ?? '').trim())
-  return m ? `20${m[3]}-${m[2]}-${m[1]}` : null
-}
-const arDay = (ms = Date.now()) => new Date(ms - 3 * 3600000).toISOString().slice(0, 10)
-const prevDay = day => arDay(Date.parse(`${day}T15:00:00Z`) - 86400000)
+const prevDay = day => shiftDay(day, -1)
+/** Llegan al Nodo Sur con carta: externos y transiles internos (los dos ocupan turno STOP). */
+const ARRIVES = new Set(['entra', 'interno'])
 /** Cuartos operativos unificados (Q1 22–04, Q2 04–10, Q3 10–16, Q4 16–22) por hora local. */
 const quarterOf = h => (h >= 22 || h < 4 ? 'Q1' : h < 10 ? 'Q2' : h < 16 ? 'Q3' : 'Q4')
 const ARRIVED = new Set(['arribo', 'en_planta', 'salio', 'descargado'])
@@ -77,49 +65,16 @@ async function fetchPlateReads(plates, fromMs, toMs) {
   return trips
 }
 
-const normPlate = p => String(p ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '')
-const dateOf = v => (v && typeof v === 'object' ? v.$date : v) ?? null
-const numOf = v => (v && typeof v === 'object' ? v.$numberLong : v) ?? null
 
-/** getLive: () => Promise<{ trucks: {plate, site, sectorCode, dwellPlantMin}[], sgc: BalanzaRow[] }> (cámaras y SGC de ambos sitios). */
-export function createCartaPorteSource({ projectRoot, getLive = null }) {
-  const file = path.join(projectRoot, 'data', 'arca', 'arca_consignment_notes.json')
-  const cache = { mtimeMs: 0, byPlate: new Map(), newestDeparture: null }
-
-  function index() {
-    if (!existsSync(file)) return cache
-    const { mtimeMs } = statSync(file)
-    if (mtimeMs === cache.mtimeMs) return cache
-    const byPlate = new Map()
-    const all = []
-    let newest = null
-    for (const n of JSON.parse(readFileSync(file, 'utf8'))) {
-      const note = {
-        ctg: String(n.ctg),
-        stateCode: n.arca_state_code,
-        stateSince: dateOf(n.state_start_time),
-        departure: dateOf(n.departure_time),
-        expire: dateOf(n.expire_time),
-        plant: String(numOf(n.destination?.plant) ?? ''),
-        destCuit: String(n.destination?.cuit ?? ''),
-        plates: (n.transport?.plates ?? []).map(normPlate),
-        turnCode: n.transport?.turn_code ?? null,
-        turnDay: turnDayOf(n.transport?.turn_code),
-        locality: n.destination?.locality_code ?? null,
-        grain: GRAIN_NAME[n.load?.grain_code] ?? (n.load?.grain_code != null ? `Grano ${n.load.grain_code}` : null),
-        distanceKm: n.transport?.distance_km ?? null,
-        grossKg: Number(numOf(n.load?.gross_weight_kg)) || null,
-        tareKg: Number(numOf(n.load?.tare_weight_kg)) || null,
-      }
-      if (note.departure && (!newest || note.departure > newest)) newest = note.departure
-      all.push(note)
-      for (const p of note.plates) {
-        if (!byPlate.has(p)) byPlate.set(p, [])
-        byPlate.get(p).push(note)
-      }
-    }
-    Object.assign(cache, { mtimeMs, byPlate, all, newestDeparture: newest })
-    return cache
+/**
+ * padron: el padrón del día (server/live/padron/padron.mjs).
+ * getLive: () => Promise<{ trucks: {plate, site, sectorCode, dwellPlantMin}[], sgc: BalanzaRow[] }> (cámaras y SGC de ambos sitios).
+ */
+export function createCartaPorteSource({ projectRoot, padron, getLive = null }) {
+  /** Lo que la vista muestra de la frescura del dato: de qué fuente y hasta cuándo. */
+  const copyInfo = () => {
+    const st = padron.status()
+    return { available: st.available, newestDeparture: st.newestDeparture, updatedAt: st.sourceUpdatedAt, syncedAt: st.syncedAt, source: st.source, version: st.version }
   }
 
   /**
@@ -129,10 +84,9 @@ export function createCartaPorteSource({ projectRoot, getLive = null }) {
    * (la 25567 descarga en Ricardone y en la Terminal): se cruza con cámaras y SGC.
    */
   async function expected(day) {
-    const { all = [] } = index()
     const dayStart = Date.parse(`${day}T03:00:00Z`)
     const yesterday = prevDay(day)
-    const notes = all.filter(n => n.destCuit === VICENTIN_CUIT && n.locality === NODO_SUR_LOCALITY && !['AN', 'RE', 'DE'].includes(n.stateCode))
+    const notes = [...padron.notes()].filter(n => ARRIVES.has(n.direction) && !['AN', 'RE', 'DE'].includes(n.stateCode))
       .filter(n => n.turnDay === day || (n.turnDay === yesterday && OPEN_STATES.has(n.stateCode))
         || (!n.turnDay && n.stateCode !== 'CN' && n.departure && dayStart - Date.parse(n.departure) < 3 * 86400000 && Date.parse(n.departure) < dayStart + 86400000))
     const live = getLive ? await getLive().catch(() => null) : null
@@ -193,8 +147,8 @@ export function createCartaPorteSource({ projectRoot, getLive = null }) {
 
   /** La carta con la que el camión está hoy en planta: abierta primero, después la descargada más reciente. */
   function findForPlate(plate, now = Date.now()) {
-    const notes = (index().byPlate.get(normPlate(plate)) ?? [])
-      .filter(n => n.destCuit === VICENTIN_CUIT && n.departure && now - Date.parse(n.departure) < MAX_AGE_MS)
+    const notes = padron.lookup(plate)
+      .filter(n => ARRIVES.has(n.direction) && n.departure && now - Date.parse(n.departure) < MAX_AGE_MS)
       .filter(n => OPEN_STATES.has(n.stateCode) || (n.stateCode === 'CN' && now - Date.parse(n.stateSince ?? 0) < 86400000))
       .sort((a, b) => Number(OPEN_STATES.has(b.stateCode)) - Number(OPEN_STATES.has(a.stateCode)) || b.departure.localeCompare(a.departure))
     return notes.map(n => ({ ...n, stateText: STATE_TEXT[n.stateCode] ?? n.stateCode, byTrailer: n.plates[0] !== normPlate(plate) }))
@@ -219,10 +173,8 @@ export function createCartaPorteSource({ projectRoot, getLive = null }) {
    * los ingresos guardados del SGC: llegó en el día, llegó al día siguiente o no llegó.
    */
   function compliance(day) {
-    const { all = [] } = index()
-    const next = arDay(Date.parse(`${day}T15:00:00Z`) + 86400000)
-    const sgc = sgcIngresosByPlate([prevDay(day), day, next])
-    const notes = all.filter(n => n.turnDay === day && n.destCuit === VICENTIN_CUIT && n.locality === NODO_SUR_LOCALITY && !['AN', 'RE', 'DE'].includes(n.stateCode))
+    const sgc = sgcIngresosByPlate([prevDay(day), day, shiftDay(day, 1)])
+    const notes = [...padron.notes()].filter(n => n.turnDay === day && ARRIVES.has(n.direction) && !['AN', 'RE', 'DE'].includes(n.stateCode))
     const rows = notes.map(n => {
       const departedLocal = n.departure ? new Date(Date.parse(n.departure) - 3 * 3600000 - DEPARTURE_SLACK_MS).toISOString().slice(0, 19) : ''
       const hit =n.plates.flatMap(p => sgc.get(p) ?? []).filter(r => String(r.ingresoAt) >= departedLocal)
@@ -251,10 +203,12 @@ export function createCartaPorteSource({ projectRoot, getLive = null }) {
   const inFlight = new Map()
   async function expectedCached(day) {
     const hit = expectedCache.get(day)
-    if (hit && Date.now() - hit.at < 60_000) return hit.value
+    const version = padron.status().version
+    // Un padrón nuevo (llegaron cartas) invalida al instante; si no, el cruce en vivo se refresca cada minuto.
+    if (hit && hit.version === version && Date.now() - hit.at < 60_000) return hit.value
     if (!inFlight.has(day)) {
       inFlight.set(day, expected(day)
-        .then(value => { expectedCache.set(day, { at: Date.now(), value }); return value })
+        .then(value => { expectedCache.set(day, { at: Date.now(), version, value }); return value })
         .finally(() => inFlight.delete(day)))
     }
     // Mientras se recalcula, el último valor sirve: no se hace esperar a la vista.
@@ -267,21 +221,17 @@ export function createCartaPorteSource({ projectRoot, getLive = null }) {
 
   const router = express.Router()
 
+  router.get('/api/truckflow/agro/padron', (_req, res) => res.json(padron.status()))
+
   router.get('/api/truckflow/agro/carta-porte', (req, res) => {
     const plate = normPlate(req.query.plate)
     if (!plate) return res.status(400).json({ error: 'Falta la patente' })
-    const { newestDeparture, mtimeMs } = index()
-    res.json({
-      plate,
-      notes: findForPlate(plate),
-      copy: { available: mtimeMs > 0, newestDeparture, updatedAt: mtimeMs ? new Date(mtimeMs).toISOString() : null },
-    })
+    res.json({ plate, notes: findForPlate(plate), copy: copyInfo() })
   })
 
   router.get('/api/truckflow/agro/esperados', async (req, res) => {
     const day = /^\d{4}-\d{2}-\d{2}$/.test(String(req.query.day ?? '')) ? String(req.query.day) : arDay()
-    const { newestDeparture, mtimeMs } = index()
-    res.json({ ...(await expectedCached(day)), copy:{ available: mtimeMs > 0, newestDeparture, updatedAt: mtimeMs ? new Date(mtimeMs).toISOString() : null } })
+    res.json({ ...(await expectedCached(day)), copy: copyInfo() })
   })
 
   router.get('/api/truckflow/agro/cumplimiento', (req, res) => {
@@ -291,8 +241,8 @@ export function createCartaPorteSource({ projectRoot, getLive = null }) {
 
   router.get('/api/truckflow/agro/recorrido/:ctg', async (req, res) => {
     const ctg = String(req.params.ctg ?? '').replace(/\D/g, '')
-    const note = (index().all ?? []).find(n => n.ctg === ctg)
-    if (!note) return res.status(404).json({ error: 'La carta no está en la copia' })
+    const note = padron.byCtg(ctg)
+    if (!note) return res.status(404).json({ error: 'La carta no está en el padrón' })
     const fromMs = Date.parse(note.departure ?? '') || Date.now() - 86400000
     const toMs = Math.min(Date.now(), fromMs + 6 * 86400000)
     try {

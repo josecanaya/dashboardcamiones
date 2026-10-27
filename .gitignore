@@ -73,8 +73,9 @@ docs/demostracion-patentes/dudas1-full/
 /reportes/sgc/
 /data/sgc/
 
-# Copia de cartas de porte ARCA (CUIT de choferes) — no versionar
+# Copia de cartas de porte ARCA (CUIT de choferes) y fotos diarias del padrón — no versionar
 /data/arca/
+/data/padron/
 
 # Cruce Sistema ↔ TruckFlow: caché de lecturas y logs regenerables (lecturas.mjs)
 reportes/cruce-sistema-truckflow/_*
