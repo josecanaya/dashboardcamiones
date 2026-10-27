@@ -153,7 +153,9 @@ const readDist = (read, real) => Math.min(editDist(read, real), ...plateCores(re
 
 // Camiones con carta presentes cerca de cada hora: lecturas exactas por patente de carta.
 const exactByPlate = new Map()
-for (const c of caps) if (cartaAt(c.plate, c.t)) exactByPlate.set(c.plate, [...(exactByPlate.get(c.plate) ?? []), c.t])
+// Todas las chapas de la carta (chasis y acoplado): con leer bien una, la otra también está presente
+// (WPV930 / VSQ334, 20/10: solo el acoplado se leyó exacto y «HPV930» quedaba suelta).
+for (const c of caps) { const n = cartaAt(c.plate, c.t); if (n) for (const p of n.plates) exactByPlate.set(p, [...(exactByPlate.get(p) ?? []), c.t]) }
 const present = (t) => [...exactByPlate].filter(([, ts]) => ts.some((x) => Math.abs(x - t) <= 6 * H)).map(([p]) => p)
 
 // Misma patente en otros nodos (±12 h) → vehículo real.
@@ -191,7 +193,10 @@ for (const c of caps) if (c.vehicle) known.set(c.node, [...(known.get(c.node) ??
 for (const c of caps) {
   if (c.vehicle) continue
   const vehicles = new Set((known.get(c.node) ?? []).filter((o) => Math.abs(o.t - c.t) <= SAME_PASS_MS).map((o) => o.vehicle))
-  if (vehicles.size === 1) { c.orig = c.cls; c.cls = 'mismo_paso'; c.vehicle = [...vehicles][0] }
+  // Si la lectura trae texto, tiene que parecerse al vehículo (≤ 2 cambios): «HPV930» no es AA568PL aunque
+  // pasaran por la misma cámara con 55 s de diferencia (era WPV930, 20/10 23:14).
+  const v = [...vehicles][0]
+  if (vehicles.size === 1 && (c.plate.length < 3 || readDist(c.plate, v) <= 2)) { c.orig = c.cls; c.cls = 'mismo_paso'; c.vehicle = v }
 }
 
 const weekCaps = caps.filter((c) => inWeek(c.t)) // las estadísticas de lecturas son solo de la semana
@@ -383,6 +388,13 @@ for (let pass = 0, changed = true; changed && pass < 6; pass++) {
 // lectura del mismo hueco, o la lectura le queda igual de bien a otro camión.
 const hhmm = (t) => new Date(t - 3 * H).toISOString().slice(5, 16).replace('T', ' ')
 const why = new Map()
+// Todas las lecturas libres del punto en la ventana del hueco (las 12 de mayor puntaje), con el desglose
+// del puntaje: patente × marca × horario. Es lo que muestra el simulador (scripts/vinculo/simulador.mjs).
+const allCands = (s) => (freeByNode.get(s.node) ?? []).filter((c) => c.t > s.from && c.t < s.to).map((c) => {
+  const marca = lrAttrs(c, s.truck), horario = timeFit(c, s), patente = affinity(c, s) / marca
+  return { at: new Date(c.t).toISOString(), hora: hhmm(c.t), camara: c.device, patente: c.plate || '', fuente: c.src, marca: c.attrs?.vehicleBrand ?? null, color: c.attrs?.vehicleColor ?? null, tipo: c.attrs?.vehicleCategory ?? null,
+    partes: { patente: Math.round(patente * 100) / 100, marca: Math.round(marca * 100) / 100, horario: Math.round(horario * 100) / 100 }, puntaje: Math.round(patente * marca * horario * 1000) / 1000, elegida: s.filled === c, tomada: taken.has(c) && s.filled !== c }
+}).sort((a, b) => b.puntaje - a.puntaje).slice(0, 12)
 const motivos = {}
 for (const s of slots) {
   if (s.filled) continue
@@ -406,7 +418,7 @@ for (const s of slots) {
 let ok = 0, bad = 0, none = 0
 for (const s of slots) {
   s.truck.huecos ??= []
-  if (s.truck.status[s.node] !== 'prueba') s.truck.huecos.push({ nodo: s.node, desde: hhmm(s.from), hasta: hhmm(s.to), esperada: s.est.length ? hhmm(s.est[0].at) : null, ...(s.filled ? { asignada: { patente: s.filled.plate || '(sin patente)', hora: hhmm(s.filled.t), fuente: s.filled.src, marca: s.filled.attrs?.vehicleBrand ?? null } } : why.get(s)) })
+  if (s.truck.status[s.node] !== 'prueba') s.truck.huecos.push({ nodo: s.node, desde: hhmm(s.from), hasta: hhmm(s.to), esperada: s.est.length ? hhmm(s.est[0].at) : null, ...(s.filled ? { asignada: { patente: s.filled.plate || '(sin patente)', hora: hhmm(s.filled.t), fuente: s.filled.src, marca: s.filled.attrs?.vehicleBrand ?? null } } : why.get(s)), todas: allCands(s) })
   if (s.truck.status[s.node] === 'prueba') {
     if (!s.filled) none++
     else if (s.filled.testOf === s.truck.ctg) ok++
@@ -437,7 +449,7 @@ const out = path.join(root, 'reportes/vinculo', `${FROM}_${TO}`)
 fs.mkdirSync(out, { recursive: true })
 fs.writeFileSync(path.join(out, 'cobertura.json'), JSON.stringify({
   desde: FROM, hasta: TO, total, counts, perNode, samples, transit: Object.fromEntries([...transit].map(([k, v]) => [k, { n: v.n, medMin: Math.round(v.med / 60_000) }])),
-  camiones: trucks.map(({ mine, ...t }) => ({ ...t, lecturas: mine.filter((c) => !c.testOf).map((c) => ({ nodo: c.node, hora: hhmm(c.t), patente: c.plate, clase: c.cls, fuente: c.src, marca: c.attrs?.vehicleBrand ?? null })) })),
+  camiones: trucks.map(({ mine, ...t }) => ({ ...t, lecturas: mine.filter((c) => !c.testOf).map((c) => ({ nodo: c.node, hora: hhmm(c.t), at: new Date(c.t).toISOString(), camara: c.device, patente: c.plate, clase: c.cls, fuente: c.src, marca: c.attrs?.vehicleBrand ?? null })) })),
   sinCarta: [...sinCartaPlates].map(([plate, nodes]) => ({ plate, lecturas: byPlate.get(plate).length, nodos: [...nodes] })).sort((a, b) => b.lecturas - a.lecturas),
 }, null, 1))
 console.log(`\n→ ${path.relative(root, out)}/cobertura.json`)
