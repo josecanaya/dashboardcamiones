@@ -65,7 +65,8 @@ var N = DATA.nodos, casos = DATA.casos
 var MIN = 60000, H = 3600000
 var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] }) }
 var hhmm = function (t) { return new Date(t - 3 * H).toISOString().slice(11, 16) }
-var short = function (n) { return n.split(':')[1] }
+var short = function (n) { return n.replace('ricardone:', 'Ric · ').replace('san_lorenzo:', 'SL · ') }
+var place = function (n) { return n.split(':')[1] }
 var LBL = { camara: 'cámara', reconstruido: 'recuperado', deducido: 'deducido', falta: 'falta' }
 var COL = { camara: 'var(--cam)', reconstruido: 'var(--rec)', deducido: 'var(--ded)', falta: 'var(--fal)' }
 
@@ -127,7 +128,7 @@ events.sort(function (a, b) { return a.t - b.t })
 Object.keys(N).forEach(function (id) {
   var n = N[id], m = document.getElementById('map-' + n.planta)
   if (!m || !casos.some(function (c) { return c.status[id] })) return
-  var d = document.createElement('div'); d.className = 'node'; d.style.left = n.x + '%'; d.style.top = n.y + '%'; d.textContent = short(id); m.appendChild(d)
+  var d = document.createElement('div'); d.className = 'node'; d.style.left = n.x + '%'; d.style.top = n.y + '%'; d.textContent = place(id); m.appendChild(d)
 })
 var toks = casos.map(function (c, ci) {
   var d = document.createElement('div'); d.className = 'tok'; d.textContent = c.patentes[0]; d.onclick = function () { showTruck(ci) }
@@ -199,11 +200,11 @@ function showHueco(ci, h) {
       var mine = me && me.eleccion === x.at
       return '<div class="cand' + (x.elegida ? ' al' : '') + (mine ? ' me' : '') + '">' + (x.foto && x.foto.escena ? '<img src="/fotos/' + esc(x.foto.escena) + '" alt="Captura">' : '<span class="mut">sin foto</span>') +
         '<b>' + esc(x.patente || '(sin patente)') + '</b> ' + hhmm(Date.parse(x.at)) + '<br><span class="mut">patente ×' + x.partes.patente + ' · marca ×' + x.partes.marca + ' · horario ×' + x.partes.horario + ' = ' + x.puntaje + '</span>' +
-        '<button data-at="' + esc(x.at) + '" data-pl="' + esc(x.patente) + '">' + (mine ? 'Elegida ✓' : 'Es este') + '</button></div>'
+        '<button data-at="' + esc(x.at) + '" data-pl="' + esc(x.patente) + '" data-cam="' + esc(x.camara) + '">' + (mine ? 'Elegida ✓' : 'Es este') + '</button></div>'
     }).join('') + '</div><div class="acts"><button data-at="ninguna" class="' + (me && me.eleccion === 'ninguna' ? 'on' : '') + '">Ninguna</button><button data-at="no_se_sabe" class="' + (me && me.eleccion === 'no_se_sabe' ? 'on' : '') + '">No se sabe</button></div>'
   document.querySelectorAll('#detail button[data-at]').forEach(function (b) {
     b.onclick = function () {
-      CORR[k] = { eleccion: b.dataset.at, patenteLeida: b.dataset.pl || null, nota: me && me.nota || '' }
+      CORR[k] = { eleccion: b.dataset.at, patenteLeida: b.dataset.pl || null, camara: b.dataset.cam || null, nota: me && me.nota || '' }
       fetch('/api/correcciones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: k, value: CORR[k] }) })
       showHueco(ci, h)
     }

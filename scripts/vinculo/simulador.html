@@ -99,7 +99,7 @@ function cand(c, h, x, i) {
     '<div class="meta">' + esc([dss && dss.marca, dss && dss.color, dss && dss.tipo].filter(function (v) { return v && !/unrecognized|unknown/i.test(v) }).join(' · ')) + '</div>' +
     '<div class="bars"><span>puntaje</span><span><i style="width:' + Math.max(2, x.puntaje / maxP * 100) + '%"></i></span><span>' + x.puntaje + '</span>' +
     '<span>patente</span><span></span><span>×' + p.patente + '</span><span>marca</span><span></span><span>×' + p.marca + '</span><span>horario</span><span></span><span>×' + p.horario + '</span></div>' +
-    '<button data-k="' + esc(k) + '" data-at="' + esc(x.at) + '" data-pl="' + esc(x.patente) + '">' + (yo ? 'Elegida ✓' : 'Es este camión') + '</button></div>'
+    '<button data-k="' + esc(k) + '" data-at="' + esc(x.at) + '" data-pl="' + esc(x.patente) + '" data-cam="' + esc(x.camara) + '">' + (yo ? 'Elegida ✓' : 'Es este camión') + '</button></div>'
 }
 function hueco(c, h) {
   var k = key(c, h), mine = CORR[k]
@@ -142,7 +142,7 @@ function detail() {
       var k = b.dataset.k, at = b.dataset.at
       if (at === 'borrar') return save(k, null)
       var ta = document.querySelector('textarea[data-k="' + CSS.escape(k) + '"]')
-      save(k, { eleccion: at, patenteLeida: b.dataset.pl || null, nota: ta ? ta.value : '' })
+      save(k, { eleccion: at, patenteLeida: b.dataset.pl || null, camara: b.dataset.cam || null, nota: ta ? ta.value : '' })
     }
   })
   document.querySelectorAll('main textarea[data-k]').forEach(function (t) {

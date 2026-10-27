@@ -107,15 +107,25 @@ for (const d of DAYS) {
 }
 const alerts = DAYS.flatMap((d) => { const f = `truckflow/${d}/alert-list.json`; if (!fs.existsSync(path.join(DATA, f))) return []; const o = dataJson(f); return Array.isArray(o) ? o : o.records ?? o.value ?? [] })
 const usedDss = new Set()
+// Una alerta en la misma cámara a ±2 s de otra lectura es la misma captura repetida (TruckFlow manda la del
+// feed y 1 o 2 alertas vacías): no es otra candidata. 20/10 22:43, Pre ingreso: dos alertas vacías de la
+// lectura de OKW772 empataban con RZI017 (HZT017) y el paso no se asignaba.
+const seenAt = new Map()
+const dupCapture = (dev, t) => (seenAt.get(dev) ?? []).some((x) => Math.abs(x - t) <= 2000)
 for (const [src, list] of [['feed', feed], ['alerta', alertReadEvents(alerts, feed)]]) {
   for (const e of list) {
     const dev = String(e.deviceCode ?? '').toLowerCase()
     const node = frontNode.get(dev) ?? rearNode.get(dev)
     const t = getEventLiveInstantMs(e)
     if (!node || !Number.isFinite(t) || !loaded(t)) continue
-    const plate = plateOf(e.normalizedPlate || e.truckPlate)
-    const a = dssAt(e.deviceCode, t, plate, usedDss)
+    if (src === 'alerta' && dupCapture(dev, t)) continue
+    seenAt.set(dev, [...(seenAt.get(dev) ?? []), t])
+    const tfPlate = plateOf(e.normalizedPlate || e.truckPlate)
+    const a = dssAt(e.deviceCode, t, tfPlate, usedDss)
     if (a) usedDss.add(a.row)
+    // TruckFlow sin patente pero el DSS la leyó en la misma captura: vale la del DSS (HZT017, 20/10 22:45:
+    // TruckFlow vacío, DSS «RZI017»).
+    const plate = tfPlate || a?.plate || ''
     // La marca que traen las alertas no se usa: medido 19–25/10, baja los aciertos de la prueba de 95,5 % a 91,7 %
     // con DSS y no recupera nada más sin DSS.
     caps.push({ src, node, rear: !frontNode.has(dev), device: e.deviceCode, t, plate, journey: e.journeyUid ?? null, attrs: a })
@@ -271,9 +281,10 @@ for (const n of cartas) {
 // lectura vuelve al camión que era.
 const TEST = process.argv.includes('--prueba')
 const TEST_EVERY = 4
-// Semana 19–25/10, prueba sin patente. Sin DSS, margen 2: 93 % de aciertos; 1,2 → 79 %, 3 → 95 % pero recupera
-// la mitad. Con DSS (marca), margen 3: 93 % de aciertos y recupera 32 % en vez de 18 %.
-const MARGIN = Number(process.env.VINCULO_MARGEN ?? (dss.size ? 3 : 2))
+// Semana 19–25/10, prueba sin patente, con DSS y sin capturas repetidas: margen 2 → 93,4 % de aciertos y
+// recupera 51 %; 3 → 93,6 % y 45 %; 1,5 → 91,3 % y 55 %. Contra las correcciones del simulador (lote del 20/10)
+// 2 y 3 coinciden igual; con 3 quedaban sin asignar candidatas que el usuario eligió.
+const MARGIN = Number(process.env.VINCULO_MARGEN ?? 2)
 let testIdx = 0
 for (const tr of trucks) tr.plates = cartas.find((x) => x.ctg === tr.ctg).plates
 const firstAtOf = new Map()
@@ -359,6 +370,8 @@ const affinity = (c, s) => {
   const d = Math.min(...s.truck.plates.map((p) => readDist(c.plate, p)))
   return (d <= 1 ? 1 : d <= 2 ? 0.7 : d >= 4 ? 0.05 : 0.3) * attrs
 }
+// Probado con las correcciones del simulador: un horario más ancho (escala ×2 o ×3, piso 0,2) o tratar las
+// lecturas cortadas como neutras generan más empates y asignan menos (0 de 12 coincidencias).
 const timeFit = (c, s) => s.est.length ? Math.max(...s.est.map((e) => Math.exp(-Math.abs(c.t - e.at) / e.scale))) : 0.3
 const pairs = []
 for (const s of slots) for (const c of freeByNode.get(s.node) ?? []) {
