@@ -5,6 +5,7 @@
  */
 
 import { spawnSync } from 'node:child_process'
+import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { getSectorProfile } from './sectorProfiles.mjs'
@@ -137,10 +138,33 @@ function loadViaTsx() {
   return JSON.parse(raw.slice(jsonStart))
 }
 
+/**
+ * Lanzar tsx cuesta ~1,3 s en cada arranque (perfil 27/10/2026): el catálogo se guarda en disco y solo
+ * se regenera si cambió algún .ts de src/etl-core/domain (circuitCatalog, nodoSur.generated…).
+ */
+const CATALOG_CACHE = path.join(ROOT, 'data', 'cache', 'circuit-catalog.json')
+function domainSignature() {
+  const dir = path.join(ROOT, 'src', 'etl-core', 'domain')
+  let max = 0
+  for (const f of fs.readdirSync(dir)) if (f.endsWith('.ts')) max = Math.max(max, fs.statSync(path.join(dir, f)).mtimeMs)
+  return String(max)
+}
+function loadCached() {
+  const signature = domainSignature()
+  try {
+    const cached = JSON.parse(fs.readFileSync(CATALOG_CACHE, 'utf8'))
+    if (cached.signature === signature && Array.isArray(cached.catalog)) return cached.catalog
+  } catch { /* sin caché: se genera */ }
+  const catalog = loadViaTsx()
+  fs.mkdirSync(path.dirname(CATALOG_CACHE), { recursive: true })
+  fs.writeFileSync(CATALOG_CACHE, JSON.stringify({ signature, catalog }))
+  return catalog
+}
+
 function ensureCatalog() {
   if (_catalog) return _catalog
   try {
-    _catalog = loadViaTsx()
+    _catalog = loadCached()
     _loadSource = 'circuitCatalog.ts'
   } catch (e) {
     console.warn(

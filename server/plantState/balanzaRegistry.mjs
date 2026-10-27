@@ -137,21 +137,54 @@ export function visitsFromMovimientos(rows) {
   }))
 }
 
-let _known = null
+/**
+ * Lo derivado de cada archivo de día (patentes, visitas) se calcula una sola vez y se recalcula solo
+ * si el archivo cambió. Antes cada día archivado releía y parseaba 90 días de movimientos (~8,8 s de
+ * los ~18 s del primer estado en vivo, perfil 27/10/2026).
+ */
+const _derived = new Map()
+function derivedFromFile(f, fallback, derive) {
+  let mtimeMs = 0
+  try { mtimeMs = fs.statSync(f).mtimeMs } catch { return derive(fallback) }
+  const key = `${f}|${derive.name}`
+  const hit = _derived.get(key)
+  if (hit && hit.mtimeMs === mtimeMs) return hit.value
+  const value = derive(readJson(f, fallback))
+  _derived.set(key, { mtimeMs, value })
+  return value
+}
+function movPlates(rows) {
+  const set = new Set()
+  for (const r of rows) {
+    const p = plateOf(r.plate_normalized)
+    if (p && !FAKE.test(p)) set.add(p)
+  }
+  return set
+}
+const sgcVisits = (store) => visitsFromSgc(Object.values(store))
+const movVisits = (rows) => visitsFromMovimientos(rows)
+/** Visitas SGC + movimientos de un día (sin copiar: quien las usa no las modifica). */
+function dayVisits(root, d) {
+  return [
+    ...derivedFromFile(path.join(root, 'data', 'sgc', d, 'ingresos.json'), {}, sgcVisits),
+    ...derivedFromFile(path.join(root, 'data', 'movimientos', d, 'movimientos.json'), [], movVisits),
+  ]
+}
+
+const _known = new Map()
 /** Patentes de los movimientos de los últimos HISTORY_DAYS días (se recarga cada hora o al cambiar de día). */
 function knownPlates(root, nowMs) {
-  if (_known && Math.abs(nowMs - _known.at) < 3600_000 && dayOf(nowMs) === dayOf(_known.at)) return _known.set
-  const set = new Set()
   const dir = path.join(root, 'data', 'movimientos')
   const from = dayOf(nowMs - HISTORY_DAYS * DAY_MS)
   // Hasta el día anterior: el día en curso lo cubre el registro (y en un replay no se mira el futuro).
   const to = dayOf(nowMs - DAY_MS)
+  const key = `${dir}|${from}|${to}`
+  const hit = _known.get(key)
+  if (hit && Date.now() - hit.at < 3600_000) return hit.set
   const days = fs.existsSync(dir) ? fs.readdirSync(dir).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d) && d >= from && d <= to) : []
-  for (const d of days) for (const r of readJson(path.join(dir, d, 'movimientos.json'), [])) {
-    const p = plateOf(r.plate_normalized)
-    if (p && !FAKE.test(p)) set.add(p)
-  }
-  _known = { at: nowMs, set }
+  const set = new Set()
+  for (const d of days) for (const p of derivedFromFile(path.join(dir, d, 'movimientos.json'), [], movPlates)) set.add(p)
+  _known.set(key, { at: Date.now(), set })
   return set
 }
 
@@ -163,11 +196,7 @@ let _live = null
 export function liveBalanzaRegistry(nowMs = Date.now(), root = ROOT) {
   if (_live && nowMs - _live.at < 120_000) return _live.registry
   const visits = []
-  for (let k = -3; k <= 0; k++) {
-    const d = dayOf(nowMs + k * DAY_MS)
-    visits.push(...visitsFromSgc(Object.values(readJson(path.join(root, 'data', 'sgc', d, 'ingresos.json'), {}))))
-    visits.push(...visitsFromMovimientos(readJson(path.join(root, 'data', 'movimientos', d, 'movimientos.json'), [])))
-  }
+  for (let k = -3; k <= 0; k++) visits.push(...dayVisits(root, dayOf(nowMs + k * DAY_MS)))
   const registry = buildBalanzaRegistry(visits, knownPlates(root, nowMs))
   _live = { at: nowMs, registry }
   return registry
@@ -177,10 +206,6 @@ export function liveBalanzaRegistry(nowMs = Date.now(), root = ROOT) {
 export function replayBalanzaRegistry(day, root = ROOT) {
   const visits = []
   const base = Date.parse(`${day}T12:00:00-03:00`)
-  for (let k = -2; k <= 2; k++) {
-    const d = dayOf(base + k * DAY_MS)
-    visits.push(...visitsFromSgc(Object.values(readJson(path.join(root, 'data', 'sgc', d, 'ingresos.json'), {}))))
-    visits.push(...visitsFromMovimientos(readJson(path.join(root, 'data', 'movimientos', d, 'movimientos.json'), [])))
-  }
+  for (let k = -2; k <= 2; k++) visits.push(...dayVisits(root, dayOf(base + k * DAY_MS)))
   return buildBalanzaRegistry(visits, knownPlates(root, base))
 }

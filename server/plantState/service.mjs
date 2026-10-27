@@ -908,6 +908,13 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       startIso = String(st.lastOccurredAt).slice(0, 19)
     }
 
+    // Las alertas se piden en paralelo con los eventos (en serie sumaban ~4 s al primer estado, 27/10/2026);
+    // si los eventos fallan, la respuesta de alertas se descarta.
+    const alertsFrom = st.lastAlertFetchMs ? st.lastAlertFetchMs - 10 * 60_000 : nowMs - HISTORY_MS
+    const alertsPromise = process.env.IDENTIFICATION_ALERTS !== '0'
+      ? fetchRemoteAlerts(base, formatArgentinaIsoFromMs(alertsFrom).slice(0, 19), endIso, siteQ).then((alerts) => ({ alerts }), (error) => ({ error }))
+      : null
+
     let rows = []
     let usedRemote = false
     try {
@@ -951,15 +958,14 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       mergeEvents(st, rows)
     }
 
-    if (usedRemote && process.env.IDENTIFICATION_ALERTS !== '0') {
+    if (usedRemote && alertsPromise) {
       // Lecturas que solo llegan como alerta: no bloquean el refresco si la API de alertas falla.
-      try {
-        const from = st.lastAlertFetchMs ? st.lastAlertFetchMs - 10 * 60_000 : nowMs - HISTORY_MS
-        const alerts = await fetchRemoteAlerts(base, formatArgentinaIsoFromMs(from).slice(0, 19), endIso, siteQ)
+      const { alerts, error } = await alertsPromise
+      if (alerts) {
         for (const a of alerts) if (a?.id != null) st.alertRaw.set(String(a.id), a)
         st.lastAlertFetchMs = nowMs
-      } catch (e) {
-        console.warn('[plant-state] alertas no disponibles:', e instanceof Error ? e.message : e)
+      } else {
+        console.warn('[plant-state] alertas no disponibles:', error instanceof Error ? error.message : error)
       }
     }
 

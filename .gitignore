@@ -76,6 +76,8 @@ docs/demostracion-patentes/dudas1-full/
 # Copia de cartas de porte ARCA (CUIT de choferes) y fotos diarias del padrón — no versionar
 /data/arca/
 /data/padron/
+# Cachés regenerables del servidor (catálogo de circuitos, etc.)
+/data/cache/
 
 # Cruce Sistema ↔ TruckFlow: caché de lecturas y logs regenerables (lecturas.mjs)
 reportes/cruce-sistema-truckflow/_*

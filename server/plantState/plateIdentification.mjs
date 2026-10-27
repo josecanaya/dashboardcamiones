@@ -430,6 +430,17 @@ export function identifyFragments(events, nowMs, ctx) {
     maxMinutes: fit ? fit.maxMinutes : null,
   })
 
+  // Los pesos base (solo el histórico) no cambian entre lecturas: el circuito de cada recorrido con esos
+  // pesos se calcula una vez (antes se recalculaba por cada lectura suelta: ~2 s del arranque, 27/10/2026).
+  const prior=historicalPrior()
+  const base=circuitWeights({},prior,ctx.catalog.map(c=>c.code))
+  const baseFit=new Map()
+  const bestBaseCircuit=(seen)=>{
+    const k=seen.join('>')
+    if(!baseFit.has(k))baseFit.set(k,bestCircuit(seen,ctx.catalog,base))
+    return baseFit.get(k)
+  }
+
   /** @type {object[]} */
   const items = []
   for (const f of fragments) {
@@ -439,12 +450,10 @@ export function identifyFragments(events, nowMs, ctx) {
     weights=causalWeights.get(head.t)
     if (!weights) {
       const counts={}
-      const prior=historicalPrior()
-      const base=circuitWeights({},prior,ctx.catalog.map(c=>c.code))
       for (const j of causalJourneys) {
         if (!isValidPlate(j.plate) || !ENTRY_NODES.has(j.rows[0].logical) || head.t-j.rows[0].t>DAY_MS) continue
         const seen=collapse(j.rows.map(r=>r.logical));if(seen.length<2)continue
-        const fit=bestCircuit(seen,ctx.catalog,base)
+        const fit=bestBaseCircuit(seen)
         if(fit && fit.p>=0.5)counts[fit.code]=(counts[fit.code]??0)+1
       }
       weights=circuitWeights(counts,prior,ctx.catalog.map(c=>c.code));causalWeights.set(head.t,weights)

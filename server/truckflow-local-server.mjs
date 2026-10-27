@@ -1698,6 +1698,13 @@ app.listen(PORT, async () => {
   // El video en vivo necesita go2rtc: lo levantamos acá para que no sea un
   // segundo proceso que alguien se tenga que acordar de arrancar.
   sgc.start()
+  // Precarga del estado en vivo de las dos plantas (~6 s de cámaras + identificación): el primero que
+  // abre En vivo ya lo encuentra listo, en vez de pagar la carga en su consulta.
+  if (process.env.PLANT_STATE_WARMUP !== '0') {
+    for (const site of ['ricardone', 'san_lorenzo']) {
+      plantState.getSnapshot(site).catch((e) => console.warn(`[plant-state] precarga ${site}:`, e instanceof Error ? e.message : e))
+    }
+  }
   const go2rtc = await ensureGo2rtc({ projectRoot: PROJECT_ROOT })
   console.info(`[truckflow-local] go2rtc: ${go2rtc.started ? 'levantado' : 'no levantado'} — ${go2rtc.reason}`)
 })
