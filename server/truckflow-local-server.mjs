@@ -276,7 +276,15 @@ const sgc = createSgcSource({ projectRoot: PROJECT_ROOT })
 app.use(sgc.router)
 
 /** Cartas de porte ARCA del camión en planta y su PDF oficial (API agro.bimtrazer.com). */
-app.use(createCartaPorteSource({ projectRoot: PROJECT_ROOT }).router)
+app.use(createCartaPorteSource({
+  projectRoot: PROJECT_ROOT,
+  getLive: async () => {
+    const lists = await Promise.all(['ricardone', 'san_lorenzo'].map(site =>
+      plantQueries.listTrucks(site).then(l => l.trucks.map(t => ({ ...t, site }))).catch(() => [])))
+    const b = sgc.balanza('all')
+    return { trucks: lists.flat(), sgc: [...b.inPlant, ...b.closed] }
+  },
+}).router)
 
 app.get('/api/truckflow/live/plant-state', async (req, res) => {
   const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'

@@ -743,6 +743,46 @@ export async function getCartaPorte(site: string, plate: string): Promise<CartaP
   return body as CartaPorteLookup
 }
 
+export type ExpectedStatus = 'en_camino' | 'arribo' | 'en_planta' | 'salio' | 'descargado'
+
+export interface ExpectedTruck extends Omit<CartaPorteNote, 'byTrailer'> {
+  turnDay: string | null
+  grain: string | null
+  distanceKm: number | null
+  status: ExpectedStatus
+  /** Turno STOP de ayer, todavía sin llegar. */
+  late: boolean
+  arrivedQuarter: 'Q1' | 'Q2' | 'Q3' | 'Q4' | null
+  /** Sitio donde lo ven las cámaras ahora (null si no está en planta). */
+  site: 'ricardone' | 'san_lorenzo' | null
+  camera: { plate: string; sectorCode: string | null; dwellPlantMin: number | null } | null
+  sgc: { nroIngreso: number; plantName: string; product: string; ingresoAt: string; salidaAt: string | null } | null
+}
+
+export interface ExpectedTrucks {
+  day: string
+  total: number
+  arrived: number
+  pending: number
+  lateFromYesterday: number
+  counts: Partial<Record<ExpectedStatus, number>>
+  byProduct: { product: string; esperados: number; llegaron: number; faltan: number; deAyer: number }[]
+  arrivedByQuarter: Record<'Q1' | 'Q2' | 'Q3' | 'Q4', number>
+  rows: ExpectedTruck[]
+  live: boolean
+  copy: CartaPorteLookup['copy']
+}
+
+/** Camiones esperados en el Nodo Sur: cartas a Vicentin con turno STOP del día, cruzadas con cámaras y SGC. */
+export async function getExpectedTrucks(day?: string): Promise<ExpectedTrucks> {
+  const res = await fetchLocalTruckflow(`/agro/esperados${day ? `?${new URLSearchParams({ day })}` : ''}`, {
+    headers: { Accept: 'application/json' },
+  })
+  const body = (await res.json()) as Partial<ExpectedTrucks> & { error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return body as ExpectedTrucks
+}
+
 /** PDF oficial de ARCA, pedido en el momento por el servidor (las claves no llegan al navegador). */
 export function cartaPortePdfUrl(ctg: string): string {
   return `${localApiPrefix()}/agro/carta-porte/${encodeURIComponent(ctg)}/pdf`

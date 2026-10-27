@@ -197,6 +197,19 @@
 .lm-cpe-dialog { width: min(920px, calc(100vw - 32px)); height: calc(100dvh - 32px); display: flex; flex-direction: column; overflow: hidden; }
 .lm-cpe-dialog:not([open]) { display: none; }
 .lm-cpe-dialog__pdf { flex: 1; width: 100%; border: 0; }
+.lm-exp__head { margin: 0 0 8px; font-size: 13px; line-height: 1.4; }
+.lm-exp__head b { font-size: 18px; color: var(--lm-brand); }
+.lm-exp__head small { display: block; color: var(--lm-muted); font-size: 11px; }
+.lm-exp__row { display: grid; grid-template-columns: 11px 80px 1fr auto; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; font-size: 13px; }
+.lm-exp__row:hover { background: var(--lm-bg); }
+.lm-exp .lm-exp__row span { white-space: normal; line-height: 1.35; }
+.lm-exp__dot { width: 11px; height: 11px; border-radius: 50%; background: var(--lm-muted); }
+.lm-exp__dot--en_camino { background: var(--lm-follow); }
+.lm-exp__dot--arribo { background: var(--lm-warn); }
+.lm-exp__dot--en_planta { background: var(--lm-ok); }
+.lm-exp__dot--salio, .lm-exp__dot--descargado { background: var(--lm-line); }
+.lm-exp .lm-exp__actions { display: flex; gap: 4px; }
+.lm-exp .lm-exp__actions button { width: auto; display: inline-block; padding: 3px 8px; border: 1px solid var(--lm-brand); border-radius: 6px; color: var(--lm-brand); background: none; font-size: 12px; font-weight: 700; }
 
 
 /* Camiones en tránsito sobre los tramos */

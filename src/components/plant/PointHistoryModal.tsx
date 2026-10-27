@@ -5,6 +5,7 @@ import type { PlantPoint } from '../../data/plantZones.types'
 import type { LiveCapture } from '../../services/live/plantStateApi'
 import { getRecentCaptures } from '../../services/live/plantStateApi'
 import { CapturePhoto } from './CapturePhoto'
+import { ExpectedTrucksSummary } from './ExpectedTrucksSummary'
 import { CaladaCamerasPanel, type CameraActivityLabels } from '../../features/real-truckflow/tabs/CaladaCamerasPanel'
 import { loadPointHistory, type RangeCoverage } from '../../features/real-truckflow/public/analysis'
 import './pointHistory.css'
@@ -33,6 +34,9 @@ function historyFor(site: Site, pointId: string): History | null {
   return null
 }
 
+/** Puntos de llegada: Ingreso y Preingreso de Ricardone, Ingreso de San Lorenzo. Muestran los esperados del día. */
+const isEntryPoint = (site: Site, pointId: string) => (site === 'ricardone' ? pointId === 'S0' || pointId === 'S1' : pointId === 'S0')
+
 const TZ = 'America/Argentina/Buenos_Aires'
 const dayOf = (ms: number) => new Date(ms).toLocaleDateString('en-CA', { timeZone: TZ })
 const hourOf = (iso: string) => Number(new Date(iso).toLocaleTimeString('en-GB', { timeZone: TZ, hour: '2-digit', hour12: false }).slice(0, 2))
@@ -52,7 +56,8 @@ export function PointHistoryModal({ site, point, onClose, onOpenCameras }: { sit
     return () => { el?.close(); opener?.focus?.() }
   }, [])
   const history = historyFor(site, point.id)
-  const [tab, setTab] = useState<'hoy' | 'semana'>('hoy')
+  const expected = isEntryPoint(site, point.id)
+  const [tab, setTab] = useState<'esperados' | 'hoy' | 'semana'>(expected ? 'esperados' : 'hoy')
   return createPortal(
     <dialog ref={dialog} className="ph-dialog" aria-labelledby="ph-title" onCancel={e => { e.preventDefault(); onClose() }}>
       <header className="ph-header">
@@ -66,11 +71,12 @@ export function PointHistoryModal({ site, point, onClose, onOpenCameras }: { sit
         </div>
       </header>
       <div className="ph-tabs" role="tablist">
+        {expected ? <button type="button" role="tab" aria-selected={tab === 'esperados'} onClick={() => setTab('esperados')}>Esperados hoy</button> : null}
         <button type="button" role="tab" aria-selected={tab === 'hoy'} onClick={() => setTab('hoy')}>Hoy (en vivo)</button>
         <button type="button" role="tab" aria-selected={tab === 'semana'} onClick={() => setTab('semana')}>Últimos 7 días</button>
       </div>
       <div className="ph-body">
-        {tab === 'hoy' ? <Today site={site} devices={point.cameraGroup.devices} /> : <LastWeek history={history} />}
+        {tab === 'esperados' ? <ExpectedTrucksSummary /> : tab === 'hoy' ? <Today site={site} devices={point.cameraGroup.devices} /> : <LastWeek history={history} />}
       </div>
     </dialog>,
     document.body,

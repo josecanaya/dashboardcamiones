@@ -5,7 +5,7 @@
  *   (data/arca/arca_consignment_notes.json, export de saasDB.arca_consignment_notes). Se relee si cambia.
  * - El PDF oficial se pide a la API en el momento (solo consulta, no registra lecturas); las claves
  *   quedan del lado del servidor (AGRO_API_BASE, AGRO_GW_KEY, AGRO_PLANT_ACCESS_KEY en .env.local).
- * - Router: GET /api/truckflow/agro/carta-porte?plate=, GET /api/truckflow/agro/carta-porte/:ctg/pdf.
+ * - Router: GET /api/truckflow/agro/esperados?day=, GET /api/truckflow/agro/carta-porte?plate=, GET /api/truckflow/agro/carta-porte/:ctg/pdf.
  */
 import express from 'express'
 import { existsSync, readFileSync, statSync } from 'node:fs'
@@ -20,12 +20,28 @@ const VICENTIN_CUIT = '30500959629'
 const OPEN_STATES = new Set(['AC', 'CT', 'CF', 'DD'])
 const STATE_TEXT = { AC: 'Activa', CT: 'Contingencia', CF: 'Arribo confirmado', DD: 'Descargando', CN: 'Descargada', AN: 'Anulada', RE: 'Rechazada', DE: 'Desactivada' }
 const MAX_AGE_MS = 10 * 86400000
+/** codGrano ARCA → producto, deducido del cruce con PRODUCTO del SGC (26/10/2026). */
+const GRAIN_NAME = { 2: 'Girasol', 19: 'Maíz', 23: 'Soja', 31: 'Algodón', 32: 'Cártamo' }
+/** Localidad ARCA de San Lorenzo: las plantas del Nodo Sur (Ricardone descarga con carta a la 25567). */
+const NODO_SUR_LOCALITY = 18794
+/** Turno STOP: VIC<nro><DDMMAA>. */
+const TURN_RE = /^[A-Z]+\d+(\d{2})(\d{2})(\d{2})$/i
+const turnDayOf = code => {
+  const m = TURN_RE.exec(String(code ?? '').trim())
+  return m ? `20${m[3]}-${m[2]}-${m[1]}` : null
+}
+const arDay = (ms = Date.now()) => new Date(ms - 3 * 3600000).toISOString().slice(0, 10)
+const prevDay = day => arDay(Date.parse(`${day}T15:00:00Z`) - 86400000)
+/** Cuartos operativos unificados (Q1 22–04, Q2 04–10, Q3 10–16, Q4 16–22) por hora local. */
+const quarterOf = h => (h >= 22 || h < 4 ? 'Q1' : h < 10 ? 'Q2' : h < 16 ? 'Q3' : 'Q4')
+const ARRIVED = new Set(['arribo', 'en_planta', 'salio', 'descargado'])
 
 const normPlate = p => String(p ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '')
 const dateOf = v => (v && typeof v === 'object' ? v.$date : v) ?? null
 const numOf = v => (v && typeof v === 'object' ? v.$numberLong : v) ?? null
 
-export function createCartaPorteSource({ projectRoot }) {
+/** getLive: () => Promise<{ trucks: {plate, site, sectorCode, dwellPlantMin}[], sgc: BalanzaRow[] }> (cámaras y SGC de ambos sitios). */
+export function createCartaPorteSource({ projectRoot, getLive = null }) {
   const file = path.join(projectRoot, 'data', 'arca', 'arca_consignment_notes.json')
   const cache = { mtimeMs: 0, byPlate: new Map(), newestDeparture: null }
 
@@ -34,6 +50,7 @@ export function createCartaPorteSource({ projectRoot }) {
     const { mtimeMs } = statSync(file)
     if (mtimeMs === cache.mtimeMs) return cache
     const byPlate = new Map()
+    const all = []
     let newest = null
     for (const n of JSON.parse(readFileSync(file, 'utf8'))) {
       const note = {
@@ -46,17 +63,91 @@ export function createCartaPorteSource({ projectRoot }) {
         destCuit: String(n.destination?.cuit ?? ''),
         plates: (n.transport?.plates ?? []).map(normPlate),
         turnCode: n.transport?.turn_code ?? null,
+        turnDay: turnDayOf(n.transport?.turn_code),
+        locality: n.destination?.locality_code ?? null,
+        grain: GRAIN_NAME[n.load?.grain_code] ?? (n.load?.grain_code != null ? `Grano ${n.load.grain_code}` : null),
+        distanceKm: n.transport?.distance_km ?? null,
         grossKg: Number(numOf(n.load?.gross_weight_kg)) || null,
         tareKg: Number(numOf(n.load?.tare_weight_kg)) || null,
       }
       if (note.departure && (!newest || note.departure > newest)) newest = note.departure
+      all.push(note)
       for (const p of note.plates) {
         if (!byPlate.has(p)) byPlate.set(p, [])
         byPlate.get(p).push(note)
       }
     }
-    Object.assign(cache, { mtimeMs, byPlate, newestDeparture: newest })
+    Object.assign(cache, { mtimeMs, byPlate, all, newestDeparture: newest })
     return cache
+  }
+
+  /**
+   * Camiones esperados en el Nodo Sur un día: cartas a Vicentin con turno STOP de ese día, más las
+   * activas sin turno que partieron hace ≤ 3 días, más las de turno de ayer todavía sin llegar
+   * (≈ 1 de cada 5 llega un día tarde: medido 26/10). El sitio físico no se sabe hasta que llega
+   * (la 25567 descarga en Ricardone y en la Terminal): se cruza con cámaras y SGC.
+   */
+  async function expected(day) {
+    const { all = [] } = index()
+    const dayStart = Date.parse(`${day}T03:00:00Z`)
+    const yesterday = prevDay(day)
+    const notes = all.filter(n => n.destCuit === VICENTIN_CUIT && n.locality === NODO_SUR_LOCALITY && !['AN', 'RE', 'DE'].includes(n.stateCode))
+      .filter(n => n.turnDay === day || (n.turnDay === yesterday && OPEN_STATES.has(n.stateCode))
+        || (!n.turnDay && n.stateCode !== 'CN' && n.departure && dayStart - Date.parse(n.departure) < 3 * 86400000 && Date.parse(n.departure) < dayStart + 86400000))
+    const live = getLive ? await getLive().catch(() => null) : null
+    const camByPlate = new Map((live?.trucks ?? []).map(t => [normPlate(t.plate), t]))
+    const sgcByPlate = new Map()
+    for (const r of live?.sgc ?? []) for (const p of [r.plate, r.trailer]) if (p) sgcByPlate.set(normPlate(p), [...(sgcByPlate.get(normPlate(p)) ?? []), r])
+    const rows = notes.map(n => {
+      const cam = n.plates.map(p => camByPlate.get(p)).find(Boolean) ?? null
+      // El ingreso SGC de esta carta: el primero posterior a la partida (hora local sin zona, como el SGC).
+      const departedLocal = n.departure ? new Date(Date.parse(n.departure) - 3 * 3600000).toISOString().slice(0, 19) : ''
+      const sgc = n.plates.flatMap(p => sgcByPlate.get(p) ?? []).filter(r => String(r.ingresoAt) >= departedLocal)
+        .sort((a, b) => String(a.ingresoAt).localeCompare(String(b.ingresoAt)))[0] ?? null
+      const status = sgc?.salidaAt ? 'salio' : cam || sgc ? 'en_planta' : n.stateCode === 'CN' ? 'descargado' : n.stateCode === 'CF' || n.stateCode === 'DD' ? 'arribo' : 'en_camino'
+      // Hora de llegada: ingreso SGC (hora local sin zona) o, sin SGC, el cambio de estado en ARCA (UTC).
+      const arrivedLocal = !ARRIVED.has(status) ? null
+        : sgc ? String(sgc.ingresoAt)
+        : n.stateSince ? new Date(Date.parse(n.stateSince) - 3 * 3600000).toISOString().slice(0, 19) : null
+      // Turno de ayer que ya llegó ayer: no es esperado de hoy.
+      if (n.turnDay === yesterday && arrivedLocal && arrivedLocal.slice(0, 10) < day) return null
+      const arrivedHour = arrivedLocal ? Number(arrivedLocal.slice(11, 13)) : null
+      return {
+        ...n,
+        stateText: STATE_TEXT[n.stateCode] ?? n.stateCode,
+        status,
+        late: n.turnDay === yesterday,
+        arrivedQuarter: arrivedHour == null || Number.isNaN(arrivedHour) ? null : quarterOf(arrivedHour),
+        site: cam?.site ?? null,
+        camera: cam ? { plate: cam.plate, sectorCode: cam.sectorCode ?? null, dwellPlantMin: cam.dwellPlantMin ?? null } : null,
+        sgc: sgc ? { nroIngreso: sgc.nroIngreso, plantName: sgc.plantName, product: sgc.product, ingresoAt: sgc.ingresoAt, salidaAt: sgc.salidaAt } : null,
+      }
+    }).filter(Boolean).sort((a, b) => String(a.departure).localeCompare(String(b.departure)))
+    const counts = {}
+    const products = new Map()
+    const quarters = { Q1: 0, Q2: 0, Q3: 0, Q4: 0 }
+    for (const r of rows) {
+      counts[r.status] = (counts[r.status] ?? 0) + 1
+      const p = products.get(r.grain ?? 'Sin dato') ?? { product: r.grain ?? 'Sin dato', esperados: 0, llegaron: 0, faltan: 0, deAyer: 0 }
+      p.esperados++
+      if (ARRIVED.has(r.status)) p.llegaron++; else p.faltan++
+      if (r.late) p.deAyer++
+      products.set(p.product, p)
+      if (r.arrivedQuarter) quarters[r.arrivedQuarter]++
+    }
+    const arrived = rows.filter(r => ARRIVED.has(r.status)).length
+    return {
+      day,
+      total: rows.length,
+      arrived,
+      pending: rows.length - arrived,
+      lateFromYesterday: rows.filter(r => r.late).length,
+      counts,
+      byProduct: [...products.values()].sort((a, b) => b.esperados - a.esperados),
+      arrivedByQuarter: quarters,
+      rows,
+      live: Boolean(live),
+    }
   }
 
   /** La carta con la que el camión está hoy en planta: abierta primero, después la descargada más reciente. */
@@ -79,6 +170,12 @@ export function createCartaPorteSource({ projectRoot }) {
       notes: findForPlate(plate),
       copy: { available: mtimeMs > 0, newestDeparture, updatedAt: mtimeMs ? new Date(mtimeMs).toISOString() : null },
     })
+  })
+
+  router.get('/api/truckflow/agro/esperados', async (req, res) => {
+    const day = /^\d{4}-\d{2}-\d{2}$/.test(String(req.query.day ?? '')) ? String(req.query.day) : arDay()
+    const { newestDeparture, mtimeMs } = index()
+    res.json({ ...(await expected(day)), copy: { available: mtimeMs > 0, newestDeparture, updatedAt: mtimeMs ? new Date(mtimeMs).toISOString() : null } })
   })
 
   router.get('/api/truckflow/agro/carta-porte/:ctg/pdf', async (req, res) => {

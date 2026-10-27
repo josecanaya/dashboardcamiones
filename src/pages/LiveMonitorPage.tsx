@@ -12,13 +12,13 @@ import { crossPlantSources, SOURCE_SGC, SOURCE_TF, type PlantTruck } from '../se
 import type { PlantPoint } from '../data/plantZones.types'
 import { useLivePlantState } from '../hooks/useLivePlantState'
 import type { PlantLayout, PlantCameraGroup } from '../data/plantZones.types'
-import type { BalanzaRow, BalanzaSnapshot, CartaPorteLookup, CartaPorteNote, PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow, TruckTimelineRow } from '../services/live/plantStateApi'
-import { cameraCaptureImageUrl, cartaPortePdfUrl, correctTruckLocation, getCartaPorte, findCameraCapture, formatDrainMinutes, getBalanza, getIdentifications, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
+import type { BalanzaRow, BalanzaSnapshot, CartaPorteLookup, CartaPorteNote, ExpectedStatus, ExpectedTruck, ExpectedTrucks, PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow, TruckTimelineRow } from '../services/live/plantStateApi'
+import { cameraCaptureImageUrl, cartaPortePdfUrl, correctTruckLocation, getCartaPorte, getExpectedTrucks, findCameraCapture, formatDrainMinutes, getBalanza, getIdentifications, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
 import './liveMonitor.css'
 import { usePublishAnalysis } from '../context/AnalysisContext'
 
 type Site = 'ricardone' | 'san_lorenzo'
-type Panel = 'camiones' | 'camaras' | 'capturas'
+type Panel = 'camiones' | 'esperados' | 'camaras' | 'capturas'
 type SourceFilter = 'todas' | 'ambas' | 'sgc' | 'tf'
 const SITE_NAME: Record<Site, string> = { ricardone: 'Ricardone', san_lorenzo: 'San Lorenzo' }
 const STATUS_TEXT: Record<TruckRow['status'], string> = { normal: 'En tiempo', attention: 'Demorado', critical: 'Muy demorado' }
@@ -237,7 +237,7 @@ export function LiveMonitorPage() {
             ) : (
               <>
                 <div className="lm-tabs" role="tablist">
-                  {([['camiones', `Camiones ${plantTrucks.length}`], ['camaras', 'Cámaras'], ['capturas', 'Capturas']] as const).map(([id, label]) =>
+                  {([['camiones', `Camiones ${plantTrucks.length}`], ['esperados', 'Esperados'], ['camaras', 'Cámaras'], ['capturas', 'Capturas']] as const).map(([id, label]) =>
                     <button key={id} type="button" role="tab" aria-selected={panel === id} onClick={() => setPanel(id)}>{label}</button>)}
                 </div>
                 {panel === 'camiones' ? <div className="lm-panel">
@@ -276,6 +276,7 @@ export function LiveMonitorPage() {
                     {!visibleTrucks.length ? <li className="lm-empty">{plantTrucks.length ? 'Ningún camión con ese filtro.' : 'Sin camiones en planta.'}</li> : null}
                   </ol>
                 </div> : null}
+                {panel === 'esperados' ? <div className="lm-panel"><ExpectedPanel site={site} onFollow={plate => follow(plate)} /></div> : null}
                 {panel === 'camaras' ? <div className="lm-panel">
                   <ul className="lm-cams">
                     {points.filter(p => p.cameraGroup.devices.length).map(p => <li key={p.id}>
@@ -377,7 +378,75 @@ function CartaPorteRow({ site, plate, trailer }: { site: Site; plate: string; tr
   </div>
 }
 
-function CartaPortePdf({ note, plate, onClose }: { note: CartaPorteNote; plate: string; onClose: () => void }) {
+const EXPECTED_TEXT: Record<ExpectedStatus, string> = { en_camino: 'En camino', arribo: 'Arribó', en_planta: 'En planta', salio: 'Ya salió', descargado: 'Descargado' }
+const EXPECTED_ORDER: ExpectedStatus[] = ['en_camino', 'arribo', 'en_planta', 'salio', 'descargado']
+
+/**
+ * Camiones que se esperan hoy según carta de porte y turno STOP (todo el Nodo Sur: la carta no dice
+ * si descarga en Ricardone o en la Terminal). Cruzado con cámaras y SGC para saber si ya llegó.
+ */
+function ExpectedPanel({ site, onFollow }: { site: Site; onFollow: (plate: string) => void }) {
+  const [data, setData] = useState<ExpectedTrucks | null>(null)
+  const [error, setError] = useState('')
+  const [filter, setFilter] = useState<ExpectedStatus | 'todos'>('en_camino')
+  const [search, setSearch] = useState('')
+  const [pdf, setPdf] = useState<ExpectedTruck | null>(null)
+  useEffect(() => {
+    let alive = true
+    const load = () => getExpectedTrucks().then(r => { if (alive) { setData(r); setError('') } }).catch(e => { if (alive) setError(e instanceof Error ? e.message : String(e)) })
+    void load()
+    const id = setInterval(load, 120_000)
+    return () => { alive = false; clearInterval(id) }
+  }, [])
+  const q = search.trim().toUpperCase().replace(/[^A-Z0-9]/g, '')
+  const rows = (data?.rows ?? []).filter(r => (filter === 'todos' || r.status === filter) && (!q || r.plates.some(p => p.includes(q)) || r.ctg.includes(q)))
+  if (!data) return error ? <p className="lm-error">No se pudo cargar: {error}</p> : <p className="lm-empty">Cargando esperados…</p>
+  return <>
+    <p className="lm-exp__head">
+      <b>{data.total}</b> camiones con turno STOP para hoy · carta de porte a Vicentin (Nodo Sur)
+      <small>Copia de cartas hasta {data.copy.newestDeparture ? dayHhmm(data.copy.newestDeparture) : '—'}: lo emitido después no aparece.{data.live ? '' : ' Sin cruce en vivo.'}</small>
+    </p>
+    <div className="lm-search">
+      <input placeholder="Buscar patente o CTG" aria-label="Buscar patente o CTG" value={search} onChange={e => setSearch(e.target.value)} />
+    </div>
+    <div className="lm-srcfilter" role="group" aria-label="Estado">
+      {(['todos', ...EXPECTED_ORDER.filter(s => data.counts[s])] as const).map(s =>
+        <button key={s} type="button" aria-pressed={filter === s} onClick={() => setFilter(s)}>{s === 'todos' ? `Todos ${data.total}` : `${EXPECTED_TEXT[s]} ${data.counts[s]}`}</button>)}
+    </div>
+    <ol className="lm-trucks lm-exp">
+      {rows.map(r => {
+        const here = r.status === 'en_planta' && r.site === site
+        return <li key={r.ctg}>
+          <div className="lm-exp__row">
+            <i className={`lm-exp__dot lm-exp__dot--${r.status}`} />
+            <strong>{r.plates[0]}</strong>
+            <span>
+              {r.grain ?? '—'} · {expectedLine(r)}
+              <small> · {r.plates.slice(1).join(' / ') || 'sin acoplado'} · CTG {r.ctg}{r.turnCode ? ` · turno ${r.turnCode}` : ' · sin turno'}</small>
+            </span>
+            <span className="lm-exp__actions">
+              {here ? <button type="button" onClick={() => onFollow(r.camera?.plate ?? r.plates[0])}>Seguir</button> : null}
+              <button type="button" onClick={() => setPdf(r)}>PDF</button>
+            </span>
+          </div>
+        </li>
+      })}
+      {!rows.length ? <li className="lm-empty">Ningún camión con ese filtro.</li> : null}
+    </ol>
+    {pdf ? <CartaPortePdf note={pdf} plate={pdf.plates[0]} onClose={() => setPdf(null)} /> : null}
+  </>
+}
+
+function expectedLine(r: ExpectedTruck): string {
+  const from = `partió ${r.departure ? dayHhmm(r.departure) : '—'}${r.distanceKm ? ` · ${r.distanceKm} km` : ''}`
+  if (r.status === 'en_planta') return `en ${r.site ? SITE_NAME[r.site] : 'planta'}${r.sgc ? ` · ingresó ${hhmm(r.sgc.ingresoAt)}` : ''}`
+  if (r.status === 'salio') return `salió ${hhmm(r.sgc?.salidaAt ?? '')}${r.sgc ? ` · ${r.sgc.plantName}` : ''}`
+  if (r.status === 'descargado') return `descargado según ARCA ${r.stateSince ? dayHhmm(r.stateSince) : ''}`
+  if (r.status === 'arribo') return `arribo confirmado ${r.stateSince ? dayHhmm(r.stateSince) : ''} · sin ingreso en balanza`
+  return from
+}
+
+function CartaPortePdf({ note, plate, onClose }: { note: Pick<CartaPorteNote, 'ctg' | 'stateText' | 'departure'>; plate: string; onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null)
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null
