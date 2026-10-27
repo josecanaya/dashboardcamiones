@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import type { PlantPoint } from '../../data/plantZones.types'
-import type { LiveCapture } from '../../services/live/plantStateApi'
+import type { ExpectedTruck, LiveCapture } from '../../services/live/plantStateApi'
 import { getRecentCaptures } from '../../services/live/plantStateApi'
 import { CapturePhoto } from './CapturePhoto'
 import { ExpectedTrucksSummary } from './ExpectedTrucksSummary'
@@ -47,7 +47,7 @@ const hhmm = (iso: string) => new Date(iso).toLocaleTimeString('es-AR', { timeZo
  * gráficos de siempre (por calle/cámara), compuestos desde las corridas guardadas sin tocar el resto
  * del dashboard.
  */
-export function PointHistoryModal({ site, point, onClose, onOpenCameras }: { site: Site; point: PlantPoint; onClose: () => void; onOpenCameras: () => void }) {
+export function PointHistoryModal({ site, point, onClose, onOpenCameras, onOpenTrip }: { site: Site; point: PlantPoint; onClose: () => void; onOpenCameras: () => void; onOpenTrip?: (truck: ExpectedTruck) => void }) {
   const dialog = useRef<HTMLDialogElement>(null)
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null
@@ -76,7 +76,7 @@ export function PointHistoryModal({ site, point, onClose, onOpenCameras }: { sit
         <button type="button" role="tab" aria-selected={tab === 'semana'} onClick={() => setTab('semana')}>Últimos 7 días</button>
       </div>
       <div className="ph-body">
-        {tab === 'esperados' ? <ExpectedTrucksSummary /> : tab === 'hoy' ? <Today site={site} devices={point.cameraGroup.devices} /> : <LastWeek history={history} />}
+        {tab === 'esperados' ? <ExpectedTrucksSummary onOpenTrip={onOpenTrip} /> : tab === 'hoy' ? <Today site={site} devices={point.cameraGroup.devices} /> : <LastWeek history={history} />}
       </div>
     </dialog>,
     document.body,

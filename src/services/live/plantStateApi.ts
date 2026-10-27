@@ -783,6 +783,39 @@ export async function getExpectedTrucks(day?: string): Promise<ExpectedTrucks> {
   return body as ExpectedTrucks
 }
 
+export interface TurnCompliance {
+  day: string
+  turnos: number
+  cumplidos: number
+  counts: { antes: number; en_el_dia: number; tarde: number; descargado_sin_sgc: number; no_llego: number }
+  byProduct: { product: string; turnos: number; enElDia: number; tarde: number; noLlego: number }[]
+  /** Solo los que llegaron tarde o no llegaron. */
+  rows: { ctg: string; plates: string[]; grain: string | null; turnCode: string | null; departure: string | null; stateCode: string; result: 'tarde' | 'no_llego'; ingresoAt: string | null; plantName: string | null }[]
+}
+
+/** ¿Se cumplió el turno STOP de un día (por defecto ayer)? Cartas contra ingresos guardados del SGC. */
+export async function getTurnCompliance(day?: string): Promise<TurnCompliance> {
+  const res = await fetchLocalTruckflow(`/agro/cumplimiento${day ? `?${new URLSearchParams({ day })}` : ''}`, { headers: { Accept: 'application/json' } })
+  const body = (await res.json()) as TurnCompliance & { error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return body
+}
+
+export interface ExpectedTrip {
+  site: 'ricardone' | 'san_lorenzo'
+  startAt: string
+  endAt: string
+  reads: { at: string; node: string; nodeLabel: string; device: string; readPlate: string }[]
+}
+
+/** Recorrido de cámaras de las patentes de una carta desde su partida, por planta. */
+export async function getExpectedTrip(ctg: string): Promise<{ ctg: string; plates: string[]; trips: ExpectedTrip[] }> {
+  const res = await fetchLocalTruckflow(`/agro/recorrido/${encodeURIComponent(ctg)}`, { headers: { Accept: 'application/json' } })
+  const body = (await res.json()) as { ctg: string; plates: string[]; trips: ExpectedTrip[]; error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return body
+}
+
 /** PDF oficial de ARCA, pedido en el momento por el servidor (las claves no llegan al navegador). */
 export function cartaPortePdfUrl(ctg: string): string {
   return `${localApiPrefix()}/agro/carta-porte/${encodeURIComponent(ctg)}/pdf`

@@ -209,6 +209,16 @@
 .lm-exp__dot--en_planta { background: var(--lm-ok); }
 .lm-exp__dot--salio, .lm-exp__dot--descargado { background: var(--lm-line); }
 .lm-exp .lm-exp__actions { display: flex; gap: 4px; }
+.lm-exp .lm-exp__plate { width: auto; display: inline; padding: 0; background: none; border: 0; text-align: left; font: 800 15px ui-monospace, monospace; color: inherit; cursor: pointer; text-decoration: underline dotted; }
+/* Los diálogos van a body: fuera de .lm, repiten sus colores. */
+.lm-trip-dialog, .lm-cpe-dialog { --lm-ink: #10231a; --lm-muted: #5d6f65; --lm-line: #dbe5df; --lm-panel: #ffffff; --lm-bg: #f3f6f4; --lm-brand: #0f4a33; --lm-brand-soft: #e6f1eb; --lm-ok: #16a34a; --lm-warn: #f59e0b; --lm-bad: #dc2626; --lm-follow: #7c3aed; }
+.lm-trip-dialog { width: min(720px, calc(100vw - 32px)); }
+.lm-trip { padding: 16px 24px 24px; display: grid; gap: 10px; }
+.lm-trip__actions { display: flex; gap: 8px; margin: 0; }
+.lm-trip__actions button { border: 1px solid var(--lm-brand, #0f4a33); color: var(--lm-brand, #0f4a33); background: none; border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 700; cursor: pointer; }
+.lm-trip__from { margin: 0; font-size: 13px; color: #67796d; }
+.lm-trip__leg h3 { margin: 6px 0; font-size: 14px; }
+.lm-trip__leg h3 small { font-weight: 400; color: #67796d; }
 .lm-exp .lm-exp__actions button { width: auto; display: inline-block; padding: 3px 8px; border: 1px solid var(--lm-brand); border-radius: 6px; color: var(--lm-brand); background: none; font-size: 12px; font-weight: 700; }
 
 

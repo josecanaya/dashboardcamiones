@@ -12,8 +12,8 @@ import { crossPlantSources, SOURCE_SGC, SOURCE_TF, type PlantTruck } from '../se
 import type { PlantPoint } from '../data/plantZones.types'
 import { useLivePlantState } from '../hooks/useLivePlantState'
 import type { PlantLayout, PlantCameraGroup } from '../data/plantZones.types'
-import type { BalanzaRow, BalanzaSnapshot, CartaPorteLookup, CartaPorteNote, ExpectedStatus, ExpectedTruck, ExpectedTrucks, PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow, TruckTimelineRow } from '../services/live/plantStateApi'
-import { cameraCaptureImageUrl, cartaPortePdfUrl, correctTruckLocation, getCartaPorte, getExpectedTrucks, findCameraCapture, formatDrainMinutes, getBalanza, getIdentifications, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
+import type { BalanzaRow, BalanzaSnapshot, CartaPorteLookup, CartaPorteNote, ExpectedStatus, ExpectedTrip, ExpectedTruck, ExpectedTrucks, PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow, TruckTimelineRow } from '../services/live/plantStateApi'
+import { cameraCaptureImageUrl, cartaPortePdfUrl, correctTruckLocation, getCartaPorte, getExpectedTrip, getExpectedTrucks, findCameraCapture, formatDrainMinutes, getBalanza, getIdentifications, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
 import './liveMonitor.css'
 import { usePublishAnalysis } from '../context/AnalysisContext'
 
@@ -50,6 +50,7 @@ export function LiveMonitorPage() {
   const [journey, setJourney] = useState<TruckJourney | null>(null)
   const [journeyTick, setJourneyTick] = useState(0)
   const [panel, setPanel] = useState<Panel>('camiones')
+  const [trip, setTrip] = useState<ExpectedTruck | null>(null)
   const [search, setSearch] = useState('')
   const [zoneFilter, setZoneFilter] = useState<string | null>(null)
   const [camera, setCamera] = useState<{ title: string; devices: string[] } | null>(null)
@@ -276,7 +277,7 @@ export function LiveMonitorPage() {
                     {!visibleTrucks.length ? <li className="lm-empty">{plantTrucks.length ? 'Ningún camión con ese filtro.' : 'Sin camiones en planta.'}</li> : null}
                   </ol>
                 </div> : null}
-                {panel === 'esperados' ? <div className="lm-panel"><ExpectedPanel site={site} onFollow={plate => follow(plate)} /></div> : null}
+                {panel === 'esperados' ? <div className="lm-panel"><ExpectedPanel site={site} onFollow={plate => follow(plate)} onOpenTrip={setTrip} /></div> : null}
                 {panel === 'camaras' ? <div className="lm-panel">
                   <ul className="lm-cams">
                     {points.filter(p => p.cameraGroup.devices.length).map(p => <li key={p.id}>
@@ -294,7 +295,8 @@ export function LiveMonitorPage() {
           </aside>
         </div>
       )}
-      {pointOpen ? <PointHistoryModal site={site} point={pointOpen} onClose={() => setPointOpen(null)} onOpenCameras={() => openPoint(pointOpen.cameraGroup)} /> : null}
+      {pointOpen ? <PointHistoryModal site={site} point={pointOpen} onClose={() => setPointOpen(null)} onOpenCameras={() => openPoint(pointOpen.cameraGroup)} onOpenTrip={t => { setPointOpen(null); setTrip(t) }} /> : null}
+      {trip ? <ExpectedTripDialog key={trip.ctg} truck={trip} site={site} onClose={() => setTrip(null)} onFollow={plate => follow(plate)} /> : null}
       <LiveCameraPlayerModal open={camera != null} devices={camera?.devices ?? null} title={camera?.title} onClose={() => setCamera(null)} />
     </section>
   )
@@ -379,21 +381,23 @@ function CartaPorteRow({ site, plate, trailer }: { site: Site; plate: string; tr
 }
 
 const EXPECTED_TEXT: Record<ExpectedStatus, string> = { en_camino: 'En camino', arribo: 'Arribó', en_planta: 'En planta', salio: 'Ya salió', descargado: 'Descargado' }
-const EXPECTED_ORDER: ExpectedStatus[] = ['en_camino', 'arribo', 'en_planta', 'salio', 'descargado']
+/** Último resultado en memoria: volver a la pestaña muestra el dato al instante y refresca detrás. */
+let lastExpectedPanel: ExpectedTrucks | null = null
+const EXPECTED_ORDER: ExpectedStatus[] =['en_camino', 'arribo', 'en_planta', 'salio', 'descargado']
 
 /**
  * Camiones que se esperan hoy según carta de porte y turno STOP (todo el Nodo Sur: la carta no dice
  * si descarga en Ricardone o en la Terminal). Cruzado con cámaras y SGC para saber si ya llegó.
  */
-function ExpectedPanel({ site, onFollow }: { site: Site; onFollow: (plate: string) => void }) {
-  const [data, setData] = useState<ExpectedTrucks | null>(null)
+function ExpectedPanel({ site, onFollow, onOpenTrip }: { site: Site; onFollow: (plate: string) => void; onOpenTrip: (truck: ExpectedTruck) => void }) {
+  const [data, setData] = useState<ExpectedTrucks | null>(lastExpectedPanel)
   const [error, setError] = useState('')
   const [filter, setFilter] = useState<ExpectedStatus | 'todos'>('en_camino')
   const [search, setSearch] = useState('')
   const [pdf, setPdf] = useState<ExpectedTruck | null>(null)
   useEffect(() => {
     let alive = true
-    const load = () => getExpectedTrucks().then(r => { if (alive) { setData(r); setError('') } }).catch(e => { if (alive) setError(e instanceof Error ? e.message : String(e)) })
+    const load = () => getExpectedTrucks().then(r => { lastExpectedPanel = r; if (alive) { setData(r); setError('') } }).catch(e => { if (alive) setError(e instanceof Error ? e.message : String(e)) })
     void load()
     const id = setInterval(load, 120_000)
     return () => { alive = false; clearInterval(id) }
@@ -419,12 +423,13 @@ function ExpectedPanel({ site, onFollow }: { site: Site; onFollow: (plate: strin
         return <li key={r.ctg}>
           <div className="lm-exp__row">
             <i className={`lm-exp__dot lm-exp__dot--${r.status}`} />
-            <strong>{r.plates[0]}</strong>
+            <button type="button" className="lm-exp__plate" onClick={() => onOpenTrip(r)} title="Ver recorrido">{r.plates[0]}</button>
             <span>
               {r.grain ?? '—'} · {expectedLine(r)}
               <small> · {r.plates.slice(1).join(' / ') || 'sin acoplado'} · CTG {r.ctg}{r.turnCode ? ` · turno ${r.turnCode}` : ' · sin turno'}</small>
             </span>
             <span className="lm-exp__actions">
+              <button type="button" onClick={() => onOpenTrip(r)}>Recorrido</button>
               {here ? <button type="button" onClick={() => onFollow(r.camera?.plate ?? r.plates[0])}>Seguir</button> : null}
               <button type="button" onClick={() => setPdf(r)}>PDF</button>
             </span>
@@ -435,6 +440,54 @@ function ExpectedPanel({ site, onFollow }: { site: Site; onFollow: (plate: strin
     </ol>
     {pdf ? <CartaPortePdf note={pdf} plate={pdf.plates[0]} onClose={() => setPdf(null)} /> : null}
   </>
+}
+
+/** Recorrido de cámaras de un camión esperado (por su carta), en Ricardone y San Lorenzo, con foto por paso. */
+function ExpectedTripDialog({ truck, site, onClose, onFollow }: { truck: ExpectedTruck; site: Site; onClose: () => void; onFollow: (plate: string) => void }) {
+  const dialog = useRef<HTMLDialogElement>(null)
+  const [state, setState] = useState<{ phase: 'loading' } | { phase: 'ok'; trips: ExpectedTrip[] } | { phase: 'error'; msg: string }>({ phase: 'loading' })
+  const [pdf, setPdf] = useState(false)
+  useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null
+    const el = dialog.current
+    el?.showModal()
+    return () => { el?.close(); opener?.focus?.() }
+  }, [])
+  useEffect(() => {
+    let alive = true
+    getExpectedTrip(truck.ctg).then(r => { if (alive) setState({ phase: 'ok', trips: r.trips }) }).catch(e => { if (alive) setState({ phase: 'error', msg: e instanceof Error ? e.message : String(e) }) })
+    return () => { alive = false }
+  }, [truck.ctg])
+  const plate = truck.plates[0]
+  const here = truck.status === 'en_planta' && truck.site === site
+  return createPortal(
+    <dialog ref={dialog} className="pv-dialog lm-trip-dialog" aria-labelledby="trip-title" onCancel={e => { e.preventDefault(); onClose() }}>
+      <header className="pv-header">
+        <div>
+          <span>Recorrido · carta de porte</span>
+          <h2 id="trip-title">{plate}{truck.plates[1] ? <small> / {truck.plates[1]}</small> : null}</h2>
+          <p>{truck.grain ?? '—'} · {EXPECTED_TEXT[truck.status]} · {expectedLine(truck)} · CTG {truck.ctg}{truck.turnCode ? ` · turno ${truck.turnCode}` : ''}</p>
+        </div>
+        <button type="button" aria-label="Cerrar" onClick={onClose}>×</button>
+      </header>
+      <div className="lm-trip">
+        <p className="lm-trip__actions">
+          <button type="button" onClick={() => setPdf(true)}>Ver carta de porte (PDF)</button>
+          {here ? <button type="button" onClick={() => { onClose(); onFollow(truck.camera?.plate ?? plate) }}>Seguir en el mapa</button> : null}
+        </p>
+        <p className="lm-trip__from">Partió {truck.departure ? dayHhmm(truck.departure) : '—'}{truck.distanceKm ? ` · ${truck.distanceKm} km hasta el Nodo Sur` : ''}</p>
+        {state.phase === 'loading' ? <p className="lm-empty">Buscando lecturas de cámara…</p>
+          : state.phase === 'error' ? <p className="lm-error">No se pudo traer el recorrido: {state.msg}</p>
+          : !state.trips.length ? <p className="lm-empty">{truck.status === 'en_camino' ? 'Todavía no lo leyó ninguna cámara: viene en camino.' : 'Sin lecturas de cámara de estas patentes desde la partida.'}</p>
+          : state.trips.map((t, i) => <section key={`${t.site}-${t.startAt}`} className="lm-trip__leg">
+            <h3>{SITE_NAME[t.site]} · {hhmm(t.startAt)} – {hhmm(t.endAt)}{i > 0 ? <small> · {minutes((Date.parse(t.startAt) - Date.parse(state.trips[i - 1].endAt)) / 60000)} desde {SITE_NAME[state.trips[i - 1].site]}</small> : null}</h3>
+            <ol className="lm-steps">{t.reads.map((r, j) => <ReadRow key={`${r.at}-${j}`} read={r} plate={r.readPlate || plate} />)}</ol>
+          </section>)}
+      </div>
+      {pdf ? <CartaPortePdf note={truck} plate={plate} onClose={() => setPdf(false)} /> : null}
+    </dialog>,
+    document.body,
+  )
 }
 
 function expectedLine(r: ExpectedTruck): string {

@@ -17,12 +17,27 @@
 .ex-quarters i { display: block; width: 60%; min-height: 2px; border-radius: 4px 4px 0 0; background: #0f4a33; }
 .ex-quarters b { font-variant-numeric: tabular-nums; }
 .ex-quarters span { font-size: 11px; color: #67796d; }
-.ex-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; max-height: 260px; overflow: auto; }
-.ex-list li { display: grid; grid-template-columns: 84px 1fr; gap: 0 8px; padding: 5px 6px; border-radius: 6px; }
-.ex-list li:nth-child(odd) { background: #f5faf7; }
+.ex-lists { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ex-lists h3 { margin-bottom: 4px; }
+.ex-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; max-height: 300px; overflow: auto; }
+.ex-list button { width: 100%; display: grid; grid-template-columns: 84px 1fr; gap: 0 8px; padding: 5px 6px; border: 0; border-radius: 6px; background: none; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.ex-list li:nth-child(odd) button { background: #f5faf7; }
+.ex-list button:hover:not(:disabled) { outline: 2px solid #16a34a; }
+.ex-list button:disabled { cursor: default; }
+@media (max-width: 760px) { .ex-lists { grid-template-columns: 1fr; } }
 .ex-list strong { font: 800 14px ui-monospace, monospace; grid-row: span 2; align-self: center; }
 .ex-list em { font-style: normal; color: #b45309; font-weight: 700; }
 .ex-list small { color: #7b897e; font-size: 11px; }
+.ex-yday { border: 1px solid #dfe7e2; border-radius: 10px; padding: 10px 12px; display: grid; gap: 6px; }
+.ex-yday h3 { margin: 0; }
+.ex-yday p { margin: 0; line-height: 1.5; }
+.ex-yday p b { font-size: 18px; }
+.ex-yday p button { margin-left: 8px; border: 1px solid #c6d6cb; border-radius: 6px; background: none; padding: 2px 8px; font-size: 12px; cursor: pointer; }
+.ex-yday__bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: #edf2ee; }
+.ex-yday .is-ok { color: #15803d; } .ex-yday__bar .is-ok { background: #16a34a; }
+.ex-yday .is-late { color: #b45309; } .ex-yday__bar .is-late { background: #f59e0b; }
+.ex-yday .is-miss { color: #dc2626; } .ex-yday__bar .is-miss { background: #dc2626; }
+.ex-list--plain li { display: grid; grid-template-columns: 84px 1fr; gap: 0 8px; padding: 5px 6px; }
 .ex-foot, .ex-muted { color: #7b897e; font-size: 11px; margin: 0; }
 .ex-error { color: #dc2626; }
 @media (max-width: 640px) { .ex-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
