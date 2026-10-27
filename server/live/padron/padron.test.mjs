@@ -10,11 +10,11 @@ import { normalizeNote } from './cartasSource.mjs'
 
 const today = arDay()
 const turno = day => `VIC123456${day.slice(8, 10)}${day.slice(5, 7)}${day.slice(2, 4)}`
-const raw = (ctg, plates, { origin = '30000000000', originLoc = 1, dest = VICENTIN_CUIT, destLoc = NODO_SUR_LOCALITY, day = today } = {}) => ({
+const raw = (ctg, plates, { origin = '30000000000', originLoc = 1, originPlant = '0', dest = VICENTIN_CUIT, destLoc = NODO_SUR_LOCALITY, destPlant = '25567', day = today } = {}) => ({
   ctg, arca_state_code: 'AC',
   departure_time: { $date: `${day}T12:00:00.000Z` },
-  origin: { cuit: origin, locality_code: originLoc, plant: { $numberLong: '0' } },
-  destination: { cuit: dest, locality_code: destLoc, plant: { $numberLong: '25567' } },
+  origin: { cuit: origin, locality_code: originLoc, plant: { $numberLong: originPlant } },
+  destination: { cuit: dest, locality_code: destLoc, plant: { $numberLong: destPlant } },
   transport: { plates, turn_code: turno(day), distance_km: 300 },
   load: { grain_code: 23 },
 })
@@ -36,15 +36,18 @@ describe('padrón del día', () => {
     const { padron } = setup([
       raw('1', ['AB123CD', 'XY987ZW']),
       raw('2', ['TRA001'], { origin: VICENTIN_CUIT, originLoc: NODO_SUR_LOCALITY }),
-      raw('3', ['SAL001'], { origin: VICENTIN_CUIT, originLoc: NODO_SUR_LOCALITY, dest: '30111111111', destLoc: 5 }),
-      raw('4', ['AVE001'], { destLoc: 15312 }),
+      raw('3', ['SAL001'], { origin: VICENTIN_CUIT, originLoc: NODO_SUR_LOCALITY, dest: '30111111111', destLoc: 5, destPlant: '0' }),
+      raw('4', ['AVE001'], { destLoc: 15312, destPlant: '21835' }),
+      // Emitida por Vicentin con localidad de origen 0 (lo habitual): se reconoce por la planta.
+      raw('5', ['SAL002'], { origin: VICENTIN_CUIT, originLoc: 0, originPlant: '21832', dest: '30111111111', destLoc: 5, destPlant: '0' }),
     ])
     await padron.sync()
     expect(padron.byCtg('1').direction).toBe('entra')
     expect(padron.byCtg('2').direction).toBe('interno')
     expect(padron.byCtg('3').direction).toBe('sale')
     expect(padron.byCtg('4')).toBeNull()
-    expect(padron.status().counts).toEqual({ entra: 1, interno: 1, sale: 1 })
+    expect(padron.byCtg('5').direction).toBe('sale')
+    expect(padron.status().counts).toEqual({ entra: 1, interno: 1, sale: 2 })
   })
 
   it('encuentra por chasis o acoplado, con la patente escrita de cualquier forma', async () => {

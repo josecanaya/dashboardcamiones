@@ -14,6 +14,11 @@ import { normPlate } from './cartasSource.mjs'
 export const VICENTIN_CUIT = '30500959629'
 /** Localidad ARCA de San Lorenzo: Ricardone descarga con carta a la 25567, así que el padrón es del Nodo Sur. */
 export const NODO_SUR_LOCALITY = 18794
+/**
+ * Plantas ARCA del Nodo Sur (guía de agro, 26/10): las cartas que emite Vicentin suelen traer la localidad
+ * de origen en 0, así que la salida se reconoce por la planta de origen.
+ */
+export const NODO_SUR_PLANTS = new Set(['21831', '21832', '21836', '23326', '25567', '813124'])
 const DAY_MS = 86400000
 /** Ventana que se guarda: alcanza para el cumplimiento de la semana y los turnos de los próximos días. */
 const KEEP_PAST_DAYS = 10
@@ -27,8 +32,8 @@ export const shiftDay = (day, n) => arDay(Date.parse(`${day}T15:00:00Z`) + n * D
  * (de Vicentin a Vicentin dentro del Nodo Sur: 21832 → 25567, 3 km, con turno STOP: ocupa cupo), o no nos toca.
  */
 function directionOf(n) {
-  const toNodo = n.destCuit === VICENTIN_CUIT && n.locality === NODO_SUR_LOCALITY
-  const fromNodo = n.originCuit === VICENTIN_CUIT && n.originLocality === NODO_SUR_LOCALITY
+  const toNodo = n.destCuit === VICENTIN_CUIT && (n.locality === NODO_SUR_LOCALITY || NODO_SUR_PLANTS.has(n.plant))
+  const fromNodo = n.originCuit === VICENTIN_CUIT && (n.originLocality === NODO_SUR_LOCALITY || NODO_SUR_PLANTS.has(n.originPlant))
   if (toNodo && fromNodo) return 'interno'
   if (toNodo) return 'entra'
   if (fromNodo) return 'sale'

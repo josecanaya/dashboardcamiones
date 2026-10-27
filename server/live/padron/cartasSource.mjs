@@ -3,9 +3,8 @@
  *
  * - Hoy: el export de saasDB.arca_consignment_notes en data/arca/arca_consignment_notes.json (Mongo
  *   extended JSON). Se relee cuando cambia el archivo: dejar un export nuevo alcanza.
- * - Con AGRO_SUPPORT_KEY (llave de soporte de agro): la API de agro, que mantiene la copia de ARCA
- *   al día (destino cada 10 min, emitidas cada 1 min). Pendiente de conectar: la llave de cámara da
- *   403 al listar (27/10/2026).
+ * - Con AGRO_SUPPORT_KEY (llave de soporte de agro, credencial 10003): la API de agro, que mantiene la
+ *   copia de ARCA al día (destino cada 10 min, emitidas cada 1 min). La llave de cámara (10002) da 403.
  *
  * Las dos devuelven notas normalizadas con normalizeNote: el padrón no sabe de dónde vinieron.
  */
@@ -16,12 +15,15 @@ import path from 'node:path'
 const GRAIN_NAME = { 2: 'Girasol', 19: 'Maíz', 23: 'Soja', 31: 'Algodón', 32: 'Cártamo' }
 /** Turno STOP: VIC<nro><DDMMAA>. */
 const TURN_RE = /^[A-Z]+\d+(\d{2})(\d{2})(\d{2})$/i
+/** Turno de otras terminales (salidas de girasol a la 408411): MOL<nro>/<DDMMAAAA>. */
+const TURN_SLASH_RE = /\/(\d{2})(\d{2})\d{2}(\d{2})$/
 
 export const normPlate = p => String(p ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '')
 const dateOf = v => (v && typeof v === 'object' ? v.$date : v) ?? null
 const numOf = v => (v && typeof v === 'object' ? v.$numberLong : v) ?? null
 const turnDayOf = code => {
-  const m = TURN_RE.exec(String(code ?? '').trim())
+  const s = String(code ?? '').trim()
+  const m = TURN_RE.exec(s) ?? TURN_SLASH_RE.exec(s)
   return m ? `20${m[3]}-${m[2]}-${m[1]}` : null
 }
 
@@ -36,8 +38,11 @@ export function normalizeNote(n) {
   const turnCode = t.turn_code ?? t.turnCode ?? null
   return {
     ctg: String(n.ctg),
+    /** 74 = granos (CPE), 284 = derivados granarios (CPEDG). Las copias viejas no lo traían: eran todas de granos. */
+    typeCode: Number(n.type_code ?? n.typeCode) || 74,
+    derivedProductCode: Number(load.derived_product_code ?? load.derivedProductCode) || null,
     stateCode: n.arca_state_code ?? n.arcaStateCode ?? null,
-    stateSince: dateOf(n.state_start_time) ?? n.stateHistory?.at?.(-1)?.time ?? null,
+    stateSince: dateOf(n.state_start_time) ?? n.stateStartTime ?? null,
     issued: dateOf(n.issue_time ?? n.issueTime),
     departure: dateOf(n.departure_time ?? n.departureTime),
     expire: dateOf(n.expire_time ?? n.expireTime),
@@ -45,6 +50,7 @@ export function normalizeNote(n) {
     destCuit: String(n.destination?.cuit ?? ''),
     locality: Number(n.destination?.locality_code ?? n.destination?.localityCode) || null,
     originCuit: String(n.origin?.cuit ?? ''),
+    originPlant: String(numOf(n.origin?.plant) ?? ''),
     originLocality: Number(n.origin?.locality_code ?? n.origin?.localityCode) || null,
     plates: (t.plates ?? []).map(normPlate),
     turnCode,
@@ -74,9 +80,64 @@ function createJsonSource(projectRoot) {
   }
 }
 
+/** Ventana de la carga inicial: la del padrón (10 días atrás) con margen, por fecha de emisión. */
+const COLD_PAST_DAYS = 12
+const COLD_FUTURE_DAYS = 5
+/** Cada consulta incremental se superpone 2 min con la anterior: una carta sincronizada en el borde no se pierde. */
+const OVERLAP_MS = 2 * 60_000
+const PAGE_SIZE = 100 // tope de la API (pide 500, devuelve 100)
+
+/**
+ * API de agro con la llave de soporte (credencial 10003): GET /v1/arca_consignment_notes, de los dos tipos
+ * (74 granos, 284 derivados), entrando y saliendo. Arranque: todo lo emitido en la ventana del padrón.
+ * Después: solo lo que la copia de agro sincronizó desde la última consulta (filter.syncTimeAfter).
+ */
+function createAgroSource(env) {
+  const base = String(env.AGRO_API_BASE ?? 'https://agro.bimtrazer.com').replace(/\/$/, '')
+  const headers = { SaasAgroArApiKey: env.AGRO_GW_KEY, 'X-Plant-Access-Key': env.AGRO_SUPPORT_KEY }
+  let cursor = null
+
+  async function listAll(params) {
+    const notes = []
+    for (let page = 1; ; page++) {
+      const q = new URLSearchParams({ ...params, 'pageParams.pageSize': String(PAGE_SIZE), 'pageParams.pageNumber': String(page) })
+      const r = await fetch(`${base}/v1/arca_consignment_notes?${q}`, { headers, signal: AbortSignal.timeout(60_000) })
+      if (!r.ok) {
+        const body = await r.json().catch(() => ({}))
+        throw new Error(`agro ${r.status}: ${body.detail ?? body.title ?? 'error'}`)
+      }
+      const body = await r.json()
+      notes.push(...(body.list ?? []).map(normalizeNote))
+      if (page >= Number(body.pagination?.totalPages ?? 1)) return notes
+    }
+  }
+  const ymd = (prefix, ms) => {
+    const d = new Date(ms - 3 * 3600_000)
+    return { [`${prefix}.year`]: String(d.getUTCFullYear()), [`${prefix}.month`]: String(d.getUTCMonth() + 1), [`${prefix}.day`]: String(d.getUTCDate()) }
+  }
+
+  return {
+    kind: 'api',
+    describe: () => 'API agro (llave de soporte)',
+    async fetchChanges() {
+      const startedAt = Date.now()
+      if (!cursor) {
+        const notes = await listAll({
+          ...ymd('filter.issueDateRange.startDate', startedAt - COLD_PAST_DAYS * 86400_000),
+          ...ymd('filter.issueDateRange.endDate', startedAt + COLD_FUTURE_DAYS * 86400_000),
+        })
+        cursor = startedAt - OVERLAP_MS
+        return { full: true, notes, sourceUpdatedAt: new Date(startedAt).toISOString() }
+      }
+      const notes = await listAll({ 'filter.syncTimeAfter': new Date(cursor).toISOString() })
+      cursor = startedAt - OVERLAP_MS
+      return notes.length ? { full: false, notes, sourceUpdatedAt: new Date(startedAt).toISOString() } : null
+    },
+  }
+}
+
 export function createCartasSource({ projectRoot, env = process.env }) {
-  // La llave de soporte todavía no llegó: cuando esté, acá va la consulta incremental a la API de agro
-  // (listar cartas modificadas desde el último cursor) y este módulo deja de leer el export.
-  if (env.AGRO_SUPPORT_KEY) console.warn('[padron] AGRO_SUPPORT_KEY presente pero la fuente de agro no está conectada: se sigue leyendo el export')
+  // Con la llave de soporte, la API de agro (al día); sin ella, el export que se deja en data/arca.
+  if (env.AGRO_SUPPORT_KEY && env.AGRO_GW_KEY) return createAgroSource(env)
   return createJsonSource(projectRoot)
 }
