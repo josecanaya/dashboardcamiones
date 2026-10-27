@@ -7,10 +7,15 @@
 //   suelta           patente válida leída una sola vez, sin carta
 //   ilegible         texto leído sin formato de patente (mala lectura)
 //   sin_patente      la cámara vio un vehículo y no leyó nada (alertas LPR_MALFUNCTION, cola sin patente)
+// Si hay export del DSS que cubra la semana (data/dss-export/<desde>_<dd hasta>/capturas.csv), suma sus capturas
+// que no llegaron a TruckFlow y usa marca y color para rellenar pasos. Sin export, funciona igual que antes.
 // Uso: node scripts/vinculo/cobertura.mjs DESDE HASTA   → reportes/vinculo/<desde>_<hasta>/cobertura.json
+// VINCULO_DATA: otra carpeta de datos (por defecto ./data). VINCULO_SIN_DSS=1: ignora el export del DSS.
 import fs from 'node:fs'
 import path from 'node:path'
+import { execFileSync } from 'node:child_process'
 import { isValidPlate } from '../../server/plantState/plateIdentification.mjs'
+import { compareAttribute } from '../../server/plantState/identificationEvidence.mjs'
 import { getEventLiveInstantMs } from '../../server/plantState/liveEventTime.mjs'
 import { alertReadEvents } from '../../server/plantState/alertReads.mjs'
 import { normalizeNote } from '../../server/live/padron/cartasSource.mjs'
@@ -18,7 +23,9 @@ import { NODO_SUR_LOCALITY, NODO_SUR_PLANTS, VICENTIN_CUIT } from '../../server/
 
 const [FROM = '2026-10-19', TO = '2026-10-25'] = process.argv.slice(2)
 const root = process.cwd()
+const DATA = path.resolve(root, process.env.VINCULO_DATA ?? 'data')
 const json = (p) => JSON.parse(fs.readFileSync(path.join(root, p), 'utf8').replace(/^﻿/, ''))
+const dataJson = (p) => JSON.parse(fs.readFileSync(path.join(DATA, p), 'utf8').replace(/^﻿/, ''))
 const plateOf = (s) => String(s ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '')
 const arDay = (ms) => new Date(ms - 3 * 3600_000).toISOString().slice(0, 10)
 const addDays = (d, n) => new Date(Date.parse(`${d}T12:00:00Z`) + n * 86400_000).toISOString().slice(0, 10)
@@ -38,32 +45,89 @@ for (const n of model.nodes) {
   for (const d of n.rear ?? []) if (!rearNode.has(d.toLowerCase())) rearNode.set(d.toLowerCase(), id)
 }
 
-// ── Lecturas: feed + alertas (las que no entraron a ningún viaje) ──
+// ── Capturas del DSS (marca, color, tipo) si hay export que cubra la semana ──
+// Mismo criterio que scripts/demostracion/lote.mjs: hora DSS + 240 s, misma cámara a ±5 s.
+// Si la semana no tiene capturas.csv, se arma solo con el export más nuevo que la cubra en la carpeta del DSS
+// (VINCULO_DSS_ZIPS, por defecto C:\Users\Public\DSS Client: «Vehicle Capture Records-*.zip»).
+const dss = new Map()
+const findDssDir = () => fs.readdirSync(path.join(DATA, 'dss-export')).find((d) => /^\d{4}-\d{2}-\d{2}_\d{2}$/.test(d) && d.slice(0, 10) <= FROM && `${d.slice(0, 8)}${d.slice(11)}` >= TO && fs.existsSync(path.join(DATA, 'dss-export', d, 'capturas.csv')))
+function importDss() {
+  const zips = process.env.VINCULO_DSS_ZIPS ?? 'C:/Users/Public/DSS Client'
+  if (!fs.existsSync(zips)) return
+  const dir = path.join(DATA, 'dss-export', `${FROM}_${TO.slice(8)}`)
+  const csv = path.join(dir, 'capturas.csv')
+  for (const z of fs.readdirSync(zips).filter((f) => /^Vehicle Capture Records-.*\.zip$/.test(f)).sort().reverse()) {
+    fs.mkdirSync(dir, { recursive: true })
+    const [n, first, last] = execFileSync('python', ['-I', path.join(root, 'scripts/demostracion/dss-xlsx-a-csv.py'), path.join(zips, z), csv, addDays(FROM, -1), addDays(TO, 1)], { encoding: 'utf8' }).trim().split(/\s+(?=\d{4}-)/)
+    // Tiene que cubrir de 22:00 del día anterior a las 02:00 del día siguiente (hora de cámara).
+    if (Number(n.split(' ')[0]) && first <= `${addDays(FROM, -1)} 22:00` && last >= `${addDays(TO, 1)} 02:00`) { console.log(`export del DSS importado de ${z}: ${n} filas`); return }
+    fs.rmSync(csv)
+  }
+  console.log('ningún export del DSS cubre la semana entera: sigo sin DSS')
+}
+let dssDir = null
+if (!process.env.VINCULO_SIN_DSS) { dssDir = findDssDir(); if (!dssDir) { importDss(); dssDir = findDssDir() } }
+if (dssDir) {
+  const lines = fs.readFileSync(path.join(DATA, 'dss-export', dssDir, 'capturas.csv'), 'utf8').trim().split(/\r?\n/)
+  const head = lines[0].split(',')
+  let row = 0
+  for (const l of lines.slice(1)) {
+    const v = l.split(','), r = Object.fromEntries(head.map((h, i) => [h, v[i]]))
+    const t = Date.parse(`${r.hora_camara.replace(' ', 'T')}-03:00`) + 240_000
+    const k = r.camara.toLowerCase()
+    if (!dss.has(k)) dss.set(k, [])
+    dss.get(k).push({ row: row++, device: r.camara, t, plate: plateOf(r.patente), vehicleColor: r.color, vehicleBrand: r.marca, vehicleCategory: r.tipo })
+  }
+  for (const l of dss.values()) l.sort((a, b) => a.t - b.t)
+}
+const dssAt = (dev, t, plate, used) => {
+  let best = null
+  for (const r of dss.get(dev.toLowerCase()) ?? []) {
+    if (r.t < t - 5000) continue
+    if (r.t > t + 5000) break
+    if (used.has(r.row)) continue
+    const s = (r.plate === plate ? 0 : 10_000) + Math.abs(r.t - t)
+    if (!best || s < best.s) best = { ...r, s }
+  }
+  return best
+}
+
+// ── Lecturas: feed + alertas (las que no entraron a ningún viaje) + capturas que solo tiene el DSS ──
 const caps = []
 const feed = []
 for (const d of DAYS) {
-  const f = `data/truckflow/${d}/event-list.json`
-  if (!fs.existsSync(path.join(root, f))) continue
-  const o = json(f)
+  const f = `truckflow/${d}/event-list.json`
+  if (!fs.existsSync(path.join(DATA, f))) continue
+  const o = dataJson(f)
   for (const e of Array.isArray(o) ? o : o.records ?? []) {
     if (e.inferred || e.manualCorrection || e.eventCategory !== 'physical') continue
     feed.push(e)
   }
 }
-const alerts = DAYS.flatMap((d) => { const f = `data/truckflow/${d}/alert-list.json`; if (!fs.existsSync(path.join(root, f))) return []; const o = json(f); return Array.isArray(o) ? o : o.records ?? o.value ?? [] })
+const alerts = DAYS.flatMap((d) => { const f = `truckflow/${d}/alert-list.json`; if (!fs.existsSync(path.join(DATA, f))) return []; const o = dataJson(f); return Array.isArray(o) ? o : o.records ?? o.value ?? [] })
+const usedDss = new Set()
 for (const [src, list] of [['feed', feed], ['alerta', alertReadEvents(alerts, feed)]]) {
   for (const e of list) {
     const dev = String(e.deviceCode ?? '').toLowerCase()
     const node = frontNode.get(dev) ?? rearNode.get(dev)
     const t = getEventLiveInstantMs(e)
     if (!node || !Number.isFinite(t) || !inWeek(t)) continue
-    caps.push({ src, node, rear: !frontNode.has(dev), device: e.deviceCode, t, plate: plateOf(e.normalizedPlate || e.truckPlate), journey: e.journeyUid ?? null })
+    const plate = plateOf(e.normalizedPlate || e.truckPlate)
+    const a = dssAt(e.deviceCode, t, plate, usedDss)
+    if (a) usedDss.add(a.row)
+    caps.push({ src, node, rear: !frontNode.has(dev), device: e.deviceCode, t, plate, journey: e.journeyUid ?? null, attrs: a })
   }
+}
+const dssMatched = caps.filter((c) => c.attrs).length
+for (const [dev, list] of dss) {
+  const node = frontNode.get(dev) ?? rearNode.get(dev)
+  if (!node) continue
+  for (const r of list) if (!usedDss.has(r.row) && inWeek(r.t)) caps.push({ src: 'dss', node, rear: !frontNode.has(dev), device: r.device, t: r.t, plate: r.plate, journey: null, attrs: r })
 }
 caps.sort((a, b) => a.t - b.t)
 
 // ── Cartas del Nodo Sur (entran, internas o salen) con su ventana de visita ──
-const cartas = json('data/arca/arca_consignment_notes.json').map(normalizeNote).filter((n) => n.departure && (
+const cartas = dataJson('arca/arca_consignment_notes.json').map(normalizeNote).filter((n) => n.departure && (
   (n.destCuit === VICENTIN_CUIT && (n.locality === NODO_SUR_LOCALITY || NODO_SUR_PLANTS.has(n.plant))) ||
   (n.originCuit === VICENTIN_CUIT && (n.originLocality === NODO_SUR_LOCALITY || NODO_SUR_PLANTS.has(n.originPlant)))))
 const cartasByPlate = new Map()
@@ -138,7 +202,8 @@ for (const c of caps) {
 const total = caps.length
 const pct = (n) => `${((n / total) * 100).toFixed(1)} %`
 const linked = (counts.carta ?? 0) + (counts.carta_corregida ?? 0)
-console.log(`Semana ${FROM} → ${TO}: ${total} lecturas (${caps.filter((c) => c.src === 'alerta').length} solo como alerta)`)
+console.log(`Semana ${FROM} → ${TO}: ${total} lecturas (${caps.filter((c) => c.src === 'alerta').length} solo como alerta, ${caps.filter((c) => c.src === 'dss').length} solo en el DSS)`)
+console.log(dssDir ? `  export del DSS ${dssDir}: ${dssMatched} lecturas de TruckFlow con marca/color/tipo` : '  sin export del DSS para esta semana')
 for (const k of ['carta', 'carta_corregida', 'sin_carta', 'mismo_paso', 'suelta', 'ilegible', 'sin_patente']) console.log(`  ${k.padEnd(16)} ${String(counts[k] ?? 0).padStart(6)}  ${pct(counts[k] ?? 0)}`)
 const toCarta = caps.filter((c) => c.vehicle && (cartasByPlate.has(c.vehicle))).length
 const toVehicle = caps.filter((c) => c.vehicle).length
@@ -188,8 +253,9 @@ for (const n of cartas) {
 // lectura vuelve al camión que era.
 const TEST = process.argv.includes('--prueba')
 const TEST_EVERY = 4
-// Margen 2 (semana 19–25/10, prueba sin patente): 93 % de aciertos; 1,2 → 79 %, 3 → 95 % pero recupera la mitad.
-const MARGIN = Number(process.env.VINCULO_MARGEN ?? 2)
+// Semana 19–25/10, prueba sin patente. Sin DSS, margen 2: 93 % de aciertos; 1,2 → 79 %, 3 → 95 % pero recupera
+// la mitad. Con DSS (marca), margen 3: 93 % de aciertos y recupera 32 % en vez de 18 %.
+const MARGIN = Number(process.env.VINCULO_MARGEN ?? (dss.size ? 3 : 2))
 let testIdx = 0
 for (const tr of trucks) tr.plates = cartas.find((x) => x.ctg === tr.ctg).plates
 const firstAtOf = new Map()
@@ -249,11 +315,31 @@ for (const tr of trucks) {
 }
 const freeByNode = new Map()
 for (const c of caps) if (!c.vehicle) freeByNode.set(c.node, [...(freeByNode.get(c.node) ?? []), c])
-// Parecido de patente: si la lectura no trae nada, neutro.
+// Perfil de marca de cada camión con carta (frontal y trasera por separado: la trasera ve el acoplado), armado
+// con sus lecturas exactas de la semana. Las lecturas borradas de la prueba no cuentan.
+// Solo la marca: con color la prueba acierta un poco menos (92,6 % contra 93,2 %) y el tipo no sirve
+// (en balanzas y calada el DSS confunde camión con camioneta por el ángulo). Pesar más una marca rara que
+// Mercedes tampoco cambió nada (93,6 %).
+const USE_ATTRS = dss.size > 0 && !process.env.VINCULO_SIN_ATRIBUTOS
+const profile = new Map()
+for (const tr of trucks) {
+  const p = { f: {}, t: {} }
+  for (const c of tr.mine) {
+    const v = c.attrs?.vehicleBrand
+    if (!v || c.testOf || c.cls !== 'carta' || /unknown|unrecognized/i.test(v)) continue
+    const side = p[c.rear ? 't' : 'f']
+    side[v] = (side[v] ?? 0) + 1
+  }
+  profile.set(tr, p)
+}
+const mode = (o) => Object.entries(o).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null
+const lrAttrs = (c, tr) => (USE_ATTRS && c.attrs ? compareAttribute('marca', c.attrs.vehicleBrand, mode(profile.get(tr)[c.rear ? 't' : 'f'])).lr : 1)
+// Parecido de patente (si la lectura no trae nada, neutro) × marca del DSS.
 const affinity = (c, s) => {
-  if (!c.plate) return 0.5
+  const attrs = lrAttrs(c, s.truck)
+  if (!c.plate) return 0.5 * attrs
   const d = Math.min(...s.truck.plates.map((p) => readDist(c.plate, p)))
-  return d <= 1 ? 1 : d <= 2 ? 0.7 : d >= 4 ? 0.05 : 0.3
+  return (d <= 1 ? 1 : d <= 2 ? 0.7 : d >= 4 ? 0.05 : 0.3) * attrs
 }
 const timeFit = (c, s) => s.est.length ? Math.max(...s.est.map((e) => Math.exp(-Math.abs(c.t - e.at) / e.scale))) : 0.3
 const pairs = []
