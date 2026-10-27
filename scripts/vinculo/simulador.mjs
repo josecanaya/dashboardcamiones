@@ -59,6 +59,26 @@ for (const t of lote) {
   casos.push({ ctg: t.ctg, patentes: t.plates, circuito: t.circuit, llegada: t.llegada, status: t.status, lecturas: t.lecturas, referencias: refs, huecos })
   process.stdout.write(`\r${casos.length}/${lote.length} camiones · ${n} candidatas`)
 }
+// Capturas que se disputa algún camión del lote, con la foto buena de cada camión rival (de la misma cámara si
+// existe, si no la lectura exacta más cercana en hora).
+const loteCtg = new Set(lote.map((t) => t.ctg))
+const byCtg = new Map(r.camiones.map((t) => [t.ctg, t]))
+const refOf = async (ctg, cap) => {
+  const t = byCtg.get(ctg)
+  const good = (t?.lecturas ?? []).filter((l) => l.clase === 'carta')
+  const tc = Date.parse(cap.at)
+  const l = good.filter((x) => x.camara === cap.camara).sort((a, b) => Math.abs(Date.parse(a.at) - tc) - Math.abs(Date.parse(b.at) - tc))[0] ??
+    good.sort((a, b) => Math.abs(Date.parse(a.at) - tc) - Math.abs(Date.parse(b.at) - tc))[0]
+  return l ? { nodo: l.nodo, camara: l.camara, hora: l.hora, patente: l.patente, foto: await foto(l.camara, l.at, l.patente) } : null
+}
+const capturas = []
+for (const c of r.capturas ?? []) {
+  if (!c.rivales.some((x) => loteCtg.has(x.ctg))) continue
+  const rivales = []
+  for (const x of c.rivales) rivales.push({ ...x, plates: byCtg.get(x.ctg)?.plates ?? [x.patente], ref: await refOf(x.ctg, c) })
+  capturas.push({ ...c, foto: await foto(c.camara, c.at, c.patente), rivales })
+  process.stdout.write(`${capturas.length} capturas en disputa`)
+}
 // Posición de cada nodo en el plano de su planta (public/plant/<planta>/plantZones.json), por sus cámaras.
 const model = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'docs/propuesta-en-vivo/modelo-nodos-nodo-sur/datos/modelo_nodo_sur.json'), 'utf8'))
 const byDevice = {}
@@ -73,5 +93,5 @@ for (const n of model.nodes) {
 }
 // Balanza de egreso de Ricardone comparte punto con la de ingreso: se corre un poco para que se vean las dos.
 if (nodos['ricardone:Balanza Egreso']) nodos['ricardone:Balanza Egreso'].y += 5
-fs.writeFileSync(path.join(out, 'casos.json'), JSON.stringify({ desde: FROM, hasta: TO, llegadaDesde: START, nodos, casos }, null, 1))
+fs.writeFileSync(path.join(out, 'casos.json'), JSON.stringify({ desde: FROM, hasta: TO, llegadaDesde: START, nodos, casos, capturas }, null, 1))
 console.log(`\n→ ${path.relative(process.cwd(), out)}/casos.json`)

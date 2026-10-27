@@ -376,9 +376,13 @@ const timeFit = (c, s) => s.est.length ? Math.max(...s.est.map((e) => Math.exp(-
 // probabilidad. Un camión pasa una vez: ya asignado un paso, las capturas de ese punto 60 s después pesan ×0,1.
 // Solo una patente válida que no se parece a ningún candidato (≥ 3 cambios) queda como otro vehículo.
 const PASS_MS = 5 * 60_000
+// Pasadas leídas: lecturas del camión en un punto a menos de 5 min entre sí; cada una es candidata solo a ±5 min.
 for (const tr of trucks) for (const node of new Set(tr.mine.filter((c) => !c.testOf).map((c) => c.node))) {
-  const ts = tr.mine.filter((c) => c.node === node && !c.testOf).map((c) => c.t)
-  slots.push({ truck: tr, node, from: Math.min(...ts) - PASS_MS, to: Math.max(...ts) + PASS_MS, est: ts.map((t) => ({ at: t, scale: 60_000 })), read: true })
+  const ts = tr.mine.filter((c) => c.node === node && !c.testOf).map((c) => c.t).sort((a, b) => a - b)
+  let pass = [ts[0]]
+  const push = () => slots.push({ truck: tr, node, from: pass[0] - PASS_MS, to: pass.at(-1) + PASS_MS, est: pass.map((t) => ({ at: t, scale: 60_000 })), read: true })
+  for (const t of ts.slice(1)) { if (t - pass.at(-1) > PASS_MS) { push(); pass = [t] } else pass.push(t) }
+  push()
 }
 const slotsByNode = new Map()
 for (const s of slots) slotsByNode.set(s.node, [...(slotsByNode.get(s.node) ?? []), s])
@@ -387,7 +391,7 @@ const taken = new Set()
 const free = caps.filter((c) => !c.vehicle && inWeek(c.t))
 const ranked = new Map()
 for (const c of free) {
-  const rank = (slotsByNode.get(c.node) ?? []).filter((s) => c.t > s.from && c.t < s.to).map((s) => ({ s, score: affinity(c, s) * timeFit(c, s) })).filter((x) => x.score > 0).sort((x, y) => y.score - x.score)
+  const rank = (slotsByNode.get(c.node) ?? []).filter((s) => c.t > s.from && c.t < s.to).map((s) => ({ s, score: affinity(c, s) * timeFit(c, s), h: timeFit(c, s) })).filter((x) => x.h >= 0.01).sort((x, y) => y.score - x.score)
   // Patente válida que no se parece a ningún candidato: es otro vehículo, no se asigna.
   if (!rank.length || (isValidPlate(c.plate) && Math.min(...rank[0].s.truck.plates.map((p) => readDist(c.plate, p))) >= 3)) continue
   ranked.set(c, rank)
@@ -403,7 +407,7 @@ for (let round = 0, changed = true; changed && round < 8; round++) {
     const ok = rank.filter((x) => !(banned.get(c)?.has(x.s)))
     if (!ok.length) continue
     const total = ok.reduce((t, x) => t + x.score, 0)
-    decisions.set(c, { s: ok[0].s, P: ok[0].score / total, rank: ok.slice(0, 4) })
+    decisions.set(c, { s: ok[0].s, P: ok[0].score / total, rank: ok.slice(0, 5).map((x) => ({ ...x, P: x.score / total })) })
     if (!ok[0].s.read) bySlotNow.set(ok[0].s, [...(bySlotNow.get(ok[0].s) ?? []), { c, score: ok[0].score }])
   }
   for (const [s, list] of bySlotNow) {
@@ -480,6 +484,9 @@ fs.mkdirSync(out, { recursive: true })
 fs.writeFileSync(path.join(out, 'cobertura.json'), JSON.stringify({
   desde: FROM, hasta: TO, total, counts, perNode, samples, transit: Object.fromEntries([...transit].map(([k, v]) => [k, { n: v.n, medMin: Math.round(v.med / 60_000) }])),
   camiones: trucks.map(({ mine, ...t }) => ({ ...t, lecturas: mine.filter((c) => !c.testOf).map((c) => ({ nodo: c.node, hora: hhmm(c.t), at: new Date(c.t).toISOString(), camara: c.device, patente: c.plate, clase: c.cls, fuente: c.src, marca: c.attrs?.vehicleBrand ?? null })) })),
+  // Cada captura asignada con los camiones que se la disputaban (para el simulador).
+  capturas: [...decisions].map(([c, d]) => ({ at: new Date(c.t).toISOString(), hora: hhmm(c.t), camara: c.device, nodo: c.node, patente: c.plate || '', fuente: c.src, marca: c.attrs?.vehicleBrand ?? null,
+    rivales: d.rank.map((x) => { const m = lrAttrs(c, x.s.truck), h = timeFit(c, x.s); return { ctg: x.s.truck.ctg, patente: x.s.truck.plate, prob: Math.round(x.P * 100), por: x.s.read ? 'leido' : 'pendiente', desde: hhmm(x.s.from), hasta: hhmm(x.s.to), partes: { patente: Math.round((affinity(c, x.s) / m) * 100) / 100, marca: Math.round(m * 100) / 100, horario: Math.round(h * 100) / 100 } } }) })),
   sinCarta: [...sinCartaPlates].map(([plate, nodes]) => ({ plate, lecturas: byPlate.get(plate).length, nodos: [...nodes] })).sort((a, b) => b.lecturas - a.lecturas),
 }, null, 1))
 console.log(`\n→ ${path.relative(root, out)}/cobertura.json`)

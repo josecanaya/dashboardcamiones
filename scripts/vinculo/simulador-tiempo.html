@@ -36,6 +36,14 @@
 .cand button,.acts button{font:inherit;font-size:11px;padding:3px 6px;margin-top:3px;border-radius:5px;border:1px solid var(--line);background:var(--card);color:inherit;cursor:pointer;width:100%}
 .acts{display:flex;gap:6px;margin-top:6px}.acts button.on{background:var(--yo);color:#fff}
 .mut{color:var(--mut)}
+.capimg{width:100%;border-radius:6px;display:block}.capplate{height:36px;margin-top:4px}
+.rivals{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:8px}
+.rival{border:2px solid var(--line);border-radius:8px;padding:5px;font-size:11px;display:flex;flex-direction:column;gap:3px}
+.rival.al{border-color:var(--cam)}.rival.me{border-color:var(--yo);box-shadow:0 0 0 2px var(--yo)}
+.rival img{width:100%;border-radius:4px}.rival b.p{font:600 13px ui-monospace,monospace}
+.pb{height:6px;background:var(--line);border-radius:3px}.pb i{display:block;height:6px;border-radius:3px;background:var(--acc)}
+.rival button,.navq button{font:inherit;font-size:12px;padding:5px;border-radius:5px;border:1px solid var(--line);background:var(--card);color:inherit;cursor:pointer}
+.navq{display:flex;gap:6px;align-items:center;margin-bottom:6px}.ev.k-cap{border-color:var(--acc)}
 </style>
 </head>
 <body>
@@ -44,6 +52,7 @@
   <span class="clock" id="clock"></span>
   <button id="play">▶ Reproducir</button>
   <select id="speed" aria-label="Velocidad"><option value="2">2 min por segundo</option><option value="5">5 min por segundo</option><option value="10" selected>10 min por segundo</option><option value="30">30 min por segundo</option></select>
+  <button id="dudosas">Revisar dudosas</button>
   <input type="range" id="slider" min="0" max="1000" value="0" aria-label="Hora">
   <span class="legend"><span><i style="background:var(--cam)"></i>lectura del camión</span><span><i style="background:var(--free)"></i>lectura sin dueño</span><span><i style="background:var(--rec)"></i>asignada por el algoritmo</span><span><i style="border:2px dashed var(--ded)"></i>posición deducida</span></span>
 </div>
@@ -122,6 +131,44 @@ casos.forEach(function (c, ci) {
     h.todas.forEach(function (x) { flashes.push({ t: Date.parse(x.at), nodo: h.nodo, color: x.elegida ? 'var(--rec)' : 'var(--free)' }) })
   })
 })
+var capturas = DATA.capturas || []
+var lote = {}
+casos.forEach(function (c) { lote[c.ctg] = true })
+var capKey = function (k) { return 'cap|' + k.camara + '|' + k.at }
+capturas.forEach(function (k, i) {
+  var top = k.rivales[0], me = CORR[capKey(k)]
+  var mineTxt = me ? ' <span class="yo">Vos: ' + (me.eleccion === 'ninguno' ? 'ninguno' : me.eleccion === 'no_se_sabe' ? 'no se sabe' : esc(me.patente)) + (me.eleccion === top.ctg ? ' ✓' : ' ✗') + '</span>' : ''
+  events.push({ t: Date.parse(k.at), k: 'cap', cap: i, txt: 'Captura «' + esc(k.patente || 'sin patente') + '» en ' + esc(short(k.nodo)) + ' → <b>' + esc(top.patente) + '</b> ' + top.prob + ' %' + (k.rivales.length > 1 ? ' · compite con ' + k.rivales.slice(1, 3).map(function (x) { return esc(x.patente) + ' ' + x.prob + ' %' }).join(' · ') : ' (único candidato)') + mineTxt })
+})
+var dudosas = capturas.map(function (k, i) { return i }).filter(function (i) { return capturas[i].rivales[0].prob < 80 })
+function showCaptura(i) {
+  var k = capturas[i], key = capKey(k), me = CORR[key]
+  var qi = dudosas.indexOf(i)
+  var nav = '<div class="navq"><button id="qprev">← Anterior</button><button id="qnext">Siguiente →</button><span class="mut">' + (qi >= 0 ? 'dudosa ' + (qi + 1) + ' de ' + dudosas.length : 'seguridad ' + k.rivales[0].prob + ' %') + '</span></div>'
+  var porTxt = function (x) { return x.por === 'leido' ? 'leído en este punto (' + esc(x.desde.slice(6)) + '–' + esc(x.hasta.slice(6)) + ')' : 'tiene este paso pendiente (ventana ' + esc(x.desde.slice(6)) + '–' + esc(x.hasta.slice(6)) + ')' }
+  document.getElementById('detail').innerHTML = nav + '<h3>Captura de ' + esc(short(k.nodo)) + ' · ' + hhmm(Date.parse(k.at)) + '</h3>' +
+    '<p class="mut" style="margin:0 0 4px">' + esc(k.camara) + ' · leyó «' + esc(k.patente || 'sin patente') + '» · ' + esc(k.fuente) + (k.marca && !/unrecognized/i.test(k.marca) ? ' · ' + esc(k.marca) : '') + '</p>' +
+    (k.foto && k.foto.escena ? '<img class="capimg" src="/fotos/' + esc(k.foto.escena) + '" alt="Captura">' + (k.foto.patente ? '<img class="capplate" src="/fotos/' + esc(k.foto.patente) + '" alt="Patente de la captura">' : '') : '<p class="mut">El DSS no tiene la foto de esta captura.</p>') +
+    '<p style="margin:10px 0 0"><b>¿De qué camión es?</b> Compiten ' + k.rivales.length + ':</p><div class="rivals">' + k.rivales.map(function (x, j) {
+      var mine = me && me.eleccion === x.ctg
+      return '<div class="rival' + (j === 0 ? ' al' : '') + (mine ? ' me' : '') + '">' + (x.ref && x.ref.foto && x.ref.foto.escena ? '<img src="/fotos/' + esc(x.ref.foto.escena) + '" alt="Foto de ' + esc(x.patente) + '">' : '<span class="mut">sin foto buena</span>') +
+        '<b class="p">' + esc(x.plates.join(' / ')) + '</b>' + (lote[x.ctg] ? '' : '<span class="mut">fuera del lote</span>') +
+        (x.ref ? '<span class="mut">foto: ' + esc(short(x.ref.nodo)) + ' ' + esc(x.ref.hora.slice(6)) + (x.ref.camara === k.camara ? ' (misma cámara)' : '') + '</span>' : '') +
+        '<span>' + porTxt(x) + '</span><div class="pb"><i style="width:' + x.prob + '%"></i></div><span><b>' + x.prob + ' %</b>' + (j === 0 ? ' · eligió el algoritmo' : '') + '</span>' +
+        '<span class="mut">patente ×' + x.partes.patente + ' · marca ×' + x.partes.marca + ' · horario ×' + x.partes.horario + '</span>' +
+        '<button data-c="' + esc(x.ctg) + '" data-p="' + esc(x.patente) + '">' + (mine ? 'Elegido ✓' : 'Es este camión') + '</button></div>'
+    }).join('') + '</div><div class="acts"><button data-c="ninguno" class="' + (me && me.eleccion === 'ninguno' ? 'on' : '') + '">Ninguno de estos</button><button data-c="no_se_sabe" class="' + (me && me.eleccion === 'no_se_sabe' ? 'on' : '') + '">No se ve / no se sabe</button></div>'
+  document.querySelectorAll('#detail button[data-c]').forEach(function (b) {
+    b.onclick = function () {
+      CORR[key] = { eleccion: b.dataset.c, patente: b.dataset.p || null, camara: k.camara, at: k.at, nodo: k.nodo, algoritmo: k.rivales[0].ctg }
+      fetch('/api/correcciones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: key, value: CORR[key] }) })
+      if (qi >= 0 && qi + 1 < dudosas.length) { var j = dudosas[qi + 1]; now = Date.parse(capturas[j].at); draw(); showCaptura(j) } else showCaptura(i)
+    }
+  })
+  var go = function (d) { var j = qi >= 0 ? dudosas[Math.max(0, Math.min(dudosas.length - 1, qi + d))] : Math.max(0, Math.min(capturas.length - 1, i + d)); now = Date.parse(capturas[j].at); draw(); showCaptura(j) }
+  document.getElementById('qprev').onclick = function () { go(-1) }
+  document.getElementById('qnext').onclick = function () { go(1) }
+}
 events.sort(function (a, b) { return a.t - b.t })
 
 // ── Plano: nodos ──
@@ -180,7 +227,7 @@ function draw() {
   if (log.dataset.sig !== sig) {
     log.dataset.sig = sig
     log.innerHTML = shown.map(function (e) { return '<div class="ev k-' + e.k + '" data-i="' + events.indexOf(e) + '"><span class="h">' + hhmm(e.t) + '</span> ' + e.txt + '</div>' }).join('') || '<p class="mut">Todavía no pasó nada. Dale a reproducir.</p>'
-    log.querySelectorAll('.ev').forEach(function (d) { d.onclick = function () { var e = events[Number(d.dataset.i)]; e.hueco ? showHueco(e.ci, e.hueco) : showTruck(e.ci) } })
+    log.querySelectorAll('.ev').forEach(function (d) { d.onclick = function () { var e = events[Number(d.dataset.i)]; e.cap != null ? showCaptura(e.cap) : e.hueco ? showHueco(e.ci, e.hueco) : showTruck(e.ci) } })
   }
 }
 function showTruck(ci) {
@@ -199,9 +246,10 @@ function showHueco(ci, h) {
     '<div class="cands">' + h.todas.map(function (x) {
       var mine = me && me.eleccion === x.at
       return '<div class="cand' + (x.elegida ? ' al' : '') + (mine ? ' me' : '') + '">' + (x.foto && x.foto.escena ? '<img src="/fotos/' + esc(x.foto.escena) + '" alt="Captura">' : '<span class="mut">sin foto</span>') +
-        '<b>' + esc(x.patente || '(sin patente)') + '</b> ' + hhmm(Date.parse(x.at)) + (x.vaA ? '<br><span>fue a <b>' + esc(x.vaA.patente) + '</b> (' + x.vaA.prob + ' %)</span>' : '<br><span class="mut">otro vehículo</span>') + '<br><span class="mut">patente ×' + x.partes.patente + ' · marca ×' + x.partes.marca + ' · horario ×' + x.partes.horario + ' = ' + x.puntaje + '</span>' +
+        '<b>' + esc(x.patente || '(sin patente)') + '</b> ' + hhmm(Date.parse(x.at)) + (x.vaA ? '<br><span>fue a <b>' + esc(x.vaA.patente) + '</b> (' + x.vaA.prob + ' %)</span> <a href="#" data-cap="' + esc(x.camara + '|' + x.at) + '">ver con quién compite</a>' : '<br><span class="mut">otro vehículo</span>') + '<br><span class="mut">patente ×' + x.partes.patente + ' · marca ×' + x.partes.marca + ' · horario ×' + x.partes.horario + ' = ' + x.puntaje + '</span>' +
         '<button data-at="' + esc(x.at) + '" data-pl="' + esc(x.patente) + '" data-cam="' + esc(x.camara) + '">' + (mine ? 'Elegida ✓' : 'Es este') + '</button></div>'
     }).join('') + '</div><div class="acts"><button data-at="ninguna" class="' + (me && me.eleccion === 'ninguna' ? 'on' : '') + '">Ninguna</button><button data-at="no_se_sabe" class="' + (me && me.eleccion === 'no_se_sabe' ? 'on' : '') + '">No se sabe</button></div>'
+  document.querySelectorAll('#detail a[data-cap]').forEach(function (a) { a.onclick = function (ev) { ev.preventDefault(); var i = capturas.findIndex(function (k) { return k.camara + '|' + k.at === a.dataset.cap }); if (i >= 0) showCaptura(i) } })
   document.querySelectorAll('#detail button[data-at]').forEach(function (b) {
     b.onclick = function () {
       CORR[k] = { eleccion: b.dataset.at, patenteLeida: b.dataset.pl || null, camara: b.dataset.cam || null, nota: me && me.nota || '' }
@@ -219,6 +267,7 @@ function tick(ts) {
   last = ts
   requestAnimationFrame(tick)
 }
+document.getElementById('dudosas').onclick = function () { var first = dudosas.filter(function (i) { return !CORR[capKey(capturas[i])] })[0]; if (first == null) first = dudosas[0]; if (first == null) return; now = Date.parse(capturas[first].at); draw(); showCaptura(first) }
 document.getElementById('play').onclick = function () { playing = !playing; if (now >= T1) now = T0; this.textContent = playing ? '❚❚ Pausa' : '▶ Reproducir' }
 document.getElementById('slider').oninput = function () { now = T0 + (T1 - T0) * this.value / 1000; draw() }
 document.getElementById('ttl').textContent = 'Simulación del lote · ' + casos.length + ' camiones'
