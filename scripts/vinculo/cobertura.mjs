@@ -273,18 +273,14 @@ for (const n of cartas) {
     .sort((a, b) => score(b) - score(a) || a.exp.length - b.exp.length)[0]
   trucks.push({ ctg: n.ctg, plate: n.plates[0], circuit: best.id, expected: best.exp.length, missing: best.miss, byClass: Object.fromEntries([...new Set(mine.map((c) => c.cls))].map((k) => [k, mine.filter((c) => c.cls === k).length])) })
 }
-// ── Rellenar los pasos que faltan (lote: el universo son los camiones con ese paso pendiente) ──
-// Cada hueco (camión × nodo sin lectura) busca lecturas sin vincular de ese nodo entre su paso anterior y el
-// siguiente. Puntaje = parecido de patente × qué tan bien encaja la hora con el tiempo típico del tramo
-// (medido en los camiones bien leídos). Se asigna de mejor a peor y solo si le gana con margen a la segunda.
+// ── Pasos de cada camión con carta y capturas sin dueño ──
+// Hueco = paso del circuito sin lectura propia, con su ventana (entre el paso anterior y el siguiente) y la hora
+// esperada por el tiempo típico del tramo (medido en los camiones bien leídos). Más abajo, cada captura sin
+// dueño se asigna al camión más probable; un hueco que recibe una captura queda «reconstruido».
 // --prueba: a 1 de cada 4 pasos leídos se les borra la patente y se los da por faltantes; acierto = la
 // lectura vuelve al camión que era.
 const TEST = process.argv.includes('--prueba')
 const TEST_EVERY = 4
-// Semana 19–25/10, prueba sin patente, con DSS y sin capturas repetidas: margen 2 → 93,4 % de aciertos y
-// recupera 51 %; 3 → 93,6 % y 45 %; 1,5 → 91,3 % y 55 %. Contra las correcciones del simulador (lote del 20/10)
-// 2 y 3 coinciden igual; con 3 quedaban sin asignar candidatas que el usuario eligió.
-const MARGIN = Number(process.env.VINCULO_MARGEN ?? 2)
 let testIdx = 0
 for (const tr of trucks) tr.plates = cartas.find((x) => x.ctg === tr.ctg).plates
 const firstAtOf = new Map()
@@ -373,30 +369,57 @@ const affinity = (c, s) => {
 // Probado con las correcciones del simulador: un horario más ancho (escala ×2 o ×3, piso 0,2) o tratar las
 // lecturas cortadas como neutras generan más empates y asignan menos (0 de 12 coincidencias).
 const timeFit = (c, s) => s.est.length ? Math.max(...s.est.map((e) => Math.exp(-Math.abs(c.t - e.at) / e.scale))) : 0.3
-const pairs = []
-for (const s of slots) for (const c of freeByNode.get(s.node) ?? []) {
-  if (c.t <= s.from || c.t >= s.to) continue
-  const score = affinity(c, s) * timeFit(c, s)
-  if (score > 0.02) pairs.push({ s, c, score })
+// ── Cada captura sin dueño va a algún camión ──
+// Se recorren por hora. Candidatos: los camiones del lote que podían estar en ese punto en ese momento, o sea
+// los que tienen ese paso pendiente (ventana abierta) y los que fueron leídos ahí a ±5 min (la otra cámara del
+// mismo paso, una lectura doble). Gana el de mayor puntaje (patente × marca × horario), siempre, con su
+// probabilidad. Un camión pasa una vez: ya asignado un paso, las capturas de ese punto 60 s después pesan ×0,1.
+// Solo una patente válida que no se parece a ningún candidato (≥ 3 cambios) queda como otro vehículo.
+const PASS_MS = 5 * 60_000
+for (const tr of trucks) for (const node of new Set(tr.mine.filter((c) => !c.testOf).map((c) => c.node))) {
+  const ts = tr.mine.filter((c) => c.node === node && !c.testOf).map((c) => c.t)
+  slots.push({ truck: tr, node, from: Math.min(...ts) - PASS_MS, to: Math.max(...ts) + PASS_MS, est: ts.map((t) => ({ at: t, scale: 60_000 })), read: true })
 }
-pairs.sort((a, b) => b.score - a.score)
-const bySlot = new Map(), byCap = new Map()
-for (const p of pairs) { bySlot.set(p.s, [...(bySlot.get(p.s) ?? []), p]); byCap.set(p.c, [...(byCap.get(p.c) ?? []), p]) }
+const slotsByNode = new Map()
+for (const s of slots) slotsByNode.set(s.node, [...(slotsByNode.get(s.node) ?? []), s])
+const decisions = new Map() // captura → { s, P, rank: [{ s, score }] }
 const taken = new Set()
-const secondBest = (list, self, ok) => list.filter((p) => p !== self && ok(p)).reduce((m, p) => Math.max(m, p.score), 0)
-for (let pass = 0, changed = true; changed && pass < 6; pass++) {
+const free = caps.filter((c) => !c.vehicle && inWeek(c.t))
+const ranked = new Map()
+for (const c of free) {
+  const rank = (slotsByNode.get(c.node) ?? []).filter((s) => c.t > s.from && c.t < s.to).map((s) => ({ s, score: affinity(c, s) * timeFit(c, s) })).filter((x) => x.score > 0).sort((x, y) => y.score - x.score)
+  // Patente válida que no se parece a ningún candidato: es otro vehículo, no se asigna.
+  if (!rank.length || (isValidPlate(c.plate) && Math.min(...rank[0].s.truck.plates.map((p) => readDist(c.plate, p))) >= 3)) continue
+  ranked.set(c, rank)
+}
+// Cada captura a su camión más probable; si un paso pendiente recibe capturas de momentos distintos (> 60 s),
+// se queda con la mejor y las demás pasan a su siguiente candidato. Se repite hasta que no cambia nada.
+const banned = new Map() // captura → pasos que ya la rechazaron
+for (let round = 0, changed = true; changed && round < 8; round++) {
   changed = false
-  for (const p of pairs) {
-    if (p.s.filled || taken.has(p.c)) continue
-    // Que la lectura sea la mejor del hueco y el hueco el mejor de la lectura, con margen sobre la segunda.
-    const otherCap = secondBest(bySlot.get(p.s), p, (o) => !taken.has(o.c) && Math.abs(o.c.t - p.c.t) > SAME_PASS_MS)
-    const otherSlot = secondBest(byCap.get(p.c), p, (o) => !o.s.filled)
-    if (p.score < MARGIN * otherCap || p.score < MARGIN * otherSlot) continue
-    for (const o of freeByNode.get(p.s.node)) if (Math.abs(o.t - p.c.t) <= SAME_PASS_MS) taken.add(o)
-    p.s.filled = p.c
-    changed = true
+  decisions.clear()
+  const bySlotNow = new Map()
+  for (const [c, rank] of ranked) {
+    const ok = rank.filter((x) => !(banned.get(c)?.has(x.s)))
+    if (!ok.length) continue
+    const total = ok.reduce((t, x) => t + x.score, 0)
+    decisions.set(c, { s: ok[0].s, P: ok[0].score / total, rank: ok.slice(0, 4) })
+    if (!ok[0].s.read) bySlotNow.set(ok[0].s, [...(bySlotNow.get(ok[0].s) ?? []), { c, score: ok[0].score }])
+  }
+  for (const [s, list] of bySlotNow) {
+    const best = list.reduce((m, x) => (x.score > m.score ? x : m))
+    for (const x of list) if (Math.abs(x.c.t - best.c.t) > SAME_PASS_MS) { banned.set(x.c, new Set([...(banned.get(x.c) ?? []), s])); changed = true }
   }
 }
+for (const [c, d] of decisions) {
+  taken.add(c)
+  const s = d.s
+  if (!s.read && (!s.filled || d.rank[0].score > s.filledScore)) { s.filled = c; s.filledScore = d.rank[0].score; s.P = d.P }
+}
+slots.splice(0, slots.length, ...slots.filter((s) => !s.read))
+const pairs = [...decisions].map(([c, d]) => ({ c, s: d.s, score: d.rank[0].score }))
+const bySlot = new Map()
+for (const s of slots) bySlot.set(s, (freeByNode.get(s.node) ?? []).filter((c) => c.t > s.from && c.t < s.to).map((c) => ({ c, s, score: affinity(c, s) * timeFit(c, s) })).sort((x, y) => y.score - x.score))
 // Por qué no se llenó cada hueco: sin lecturas libres en la ventana, lejos del horario esperado, empate con otra
 // lectura del mismo hueco, o la lectura le queda igual de bien a otro camión.
 const hhmm = (t) => new Date(t - 3 * H).toISOString().slice(5, 16).replace('T', ' ')
@@ -406,32 +429,25 @@ const why = new Map()
 const allCands = (s) => (freeByNode.get(s.node) ?? []).filter((c) => c.t > s.from && c.t < s.to).map((c) => {
   const marca = lrAttrs(c, s.truck), horario = timeFit(c, s), patente = affinity(c, s) / marca
   return { at: new Date(c.t).toISOString(), hora: hhmm(c.t), camara: c.device, patente: c.plate || '', fuente: c.src, marca: c.attrs?.vehicleBrand ?? null, color: c.attrs?.vehicleColor ?? null, tipo: c.attrs?.vehicleCategory ?? null,
-    partes: { patente: Math.round(patente * 100) / 100, marca: Math.round(marca * 100) / 100, horario: Math.round(horario * 100) / 100 }, puntaje: Math.round(patente * marca * horario * 1000) / 1000, elegida: s.filled === c, tomada: taken.has(c) && s.filled !== c }
+    partes: { patente: Math.round(patente * 100) / 100, marca: Math.round(marca * 100) / 100, horario: Math.round(horario * 100) / 100 }, puntaje: Math.round(patente * marca * horario * 1000) / 1000, elegida: s.filled === c, tomada: taken.has(c) && decisions.get(c)?.s !== s,
+    vaA: decisions.get(c) ? { patente: decisions.get(c).s.truck.plate, prob: Math.round(decisions.get(c).P * 100) } : null }
 }).sort((a, b) => b.puntaje - a.puntaje).slice(0, 12)
 const motivos = {}
 for (const s of slots) {
   if (s.filled) continue
   const inWin = (freeByNode.get(s.node) ?? []).filter((c) => c.t > s.from && c.t < s.to)
-  const list = (bySlot.get(s) ?? []).filter((p) => !taken.has(p.c))
-  let motivo
-  if (!inWin.length) motivo = 'sin lecturas libres en la ventana'
-  else if (!list.length) motivo = (bySlot.get(s) ?? []).length ? 'sus lecturas se las llevaron otros camiones' : 'lecturas lejos del horario esperado'
-  else {
-    const p = list[0]
-    const otherCap = secondBest(list, p, (o) => Math.abs(o.c.t - p.c.t) > SAME_PASS_MS)
-    motivo = p.score < MARGIN * otherCap ? 'dos lecturas parecidas, no se puede elegir' : 'la lectura le sirve igual a otro camión'
-  }
+  const motivo = !inWin.length ? 'sin capturas en el punto dentro de la ventana' : 'cada captura de la ventana fue más probable de otro camión'
   motivos[motivo] = (motivos[motivo] ?? 0) + 1
-  why.set(s, {
-    motivo,
-    lecturasEnVentana: inWin.length,
-    candidatas: (bySlot.get(s) ?? []).slice(0, 4).map((p) => ({ patente: p.c.plate || '(sin patente)', hora: hhmm(p.c.t), puntaje: Math.round(p.score * 100) / 100, marca: p.c.attrs?.vehicleBrand ?? null, otrosCamiones: (byCap.get(p.c) ?? []).filter((o) => o !== p).map((o) => o.s.truck.plate).slice(0, 3), tomada: taken.has(p.c) })),
-  })
+  why.set(s, { motivo, lecturasEnVentana: inWin.length })
 }
 let ok = 0, bad = 0, none = 0
+const bands = { 'alta (≥ 80 %)': [0, 0], 'media (50–80 %)': [0, 0], 'baja (< 50 %)': [0, 0] }
+for (const s of slots) {
+  if (s.truck.status[s.node] === 'prueba' && s.filled) { const b = bands[s.P >= 0.8 ? 'alta (≥ 80 %)' : s.P >= 0.5 ? 'media (50–80 %)' : 'baja (< 50 %)']; b[s.filled.testOf === s.truck.ctg ? 0 : 1]++ }
+}
 for (const s of slots) {
   s.truck.huecos ??= []
-  if (s.truck.status[s.node] !== 'prueba') s.truck.huecos.push({ nodo: s.node, desde: hhmm(s.from), hasta: hhmm(s.to), esperada: s.est.length ? hhmm(s.est[0].at) : null, ...(s.filled ? { asignada: { patente: s.filled.plate || '(sin patente)', hora: hhmm(s.filled.t), fuente: s.filled.src, marca: s.filled.attrs?.vehicleBrand ?? null } } : why.get(s)), todas: allCands(s) })
+  if (s.truck.status[s.node] !== 'prueba') s.truck.huecos.push({ nodo: s.node, desde: hhmm(s.from), hasta: hhmm(s.to), esperada: s.est.length ? hhmm(s.est[0].at) : null, ...(s.filled ? { asignada: { patente: s.filled.plate || '(sin patente)', hora: hhmm(s.filled.t), fuente: s.filled.src, marca: s.filled.attrs?.vehicleBrand ?? null, prob: Math.round(s.P * 100) } } : why.get(s)), todas: allCands(s) })
   if (s.truck.status[s.node] === 'prueba') {
     if (!s.filled) none++
     else if (s.filled.testOf === s.truck.ctg) ok++
@@ -446,6 +462,7 @@ console.log(`\nAlgoritmo por lote sobre los pasos de los camiones con carta (${n
 for (const k of ['camara', 'reconstruido', 'deducido', 'falta']) console.log(`  ${k.padEnd(13)} ${String(tally[k] ?? 0).padStart(5)}  ${(((tally[k] ?? 0) / nSteps) * 100).toFixed(1)} %`)
 console.log('  pasos sin asignar, por motivo:', Object.entries(motivos).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(' · '))
 if (TEST) console.log(`  prueba: ${ok} bien · ${bad} mal · ${none} sin asignar (de ${ok + bad + none}) → aciertos ${((ok / Math.max(1, ok + bad)) * 100).toFixed(1)} % de lo asignado, recupera ${((ok / Math.max(1, ok + bad + none)) * 100).toFixed(1)} %`)
+if (TEST) for (const [k, [b, m]] of Object.entries(bands)) console.log(`    seguridad ${k.padEnd(16)} ${b} bien · ${m} mal → ${((b / Math.max(1, b + m)) * 100).toFixed(0)} %`)
 for (const tr of trucks) tr.missing = Object.entries(tr.status).filter(([, v]) => v === 'falta').map(([k]) => k)
 
 const complete = trucks.filter((t) => !t.missing.length).length
