@@ -143,12 +143,18 @@ caps.sort((a, b) => a.t - b.t)
 const cartas = dataJson('arca/arca_consignment_notes.json').map(normalizeNote).filter((n) => n.departure && (
   (n.destCuit === VICENTIN_CUIT && (n.locality === NODO_SUR_LOCALITY || NODO_SUR_PLANTS.has(n.plant))) ||
   (n.originCuit === VICENTIN_CUIT && (n.originLocality === NODO_SUR_LOCALITY || NODO_SUR_PLANTS.has(n.originPlant)))))
-const cartasByPlate = new Map()
+// Una carta cerrada (descarga confirmada, anulada, rechazada, desactivada) no explica lecturas de 2 h después:
+// son del viaje siguiente del mismo camión (INV971, 28/10: su carta del 24/10 cerrada en CN se llevaba la
+// lectura de hoy y quedaba con 4 pasos faltantes).
+const CLOSED = new Set(['CN', 'AN', 'RE', 'DE'])
 for (const n of cartas) {
   const dep = Date.parse(n.departure)
-  const c = { ...n, from: dep - 48 * H, to: dep + 120 * H }
-  for (const p of n.plates) cartasByPlate.set(p, [...(cartasByPlate.get(p) ?? []), c])
+  const closedAt = CLOSED.has(n.stateCode) ? Date.parse(n.stateSince) : NaN
+  n.from = dep - 48 * H
+  n.to = Math.min(dep + 120 * H, closedAt + 2 * H || Infinity)
 }
+const cartasByPlate = new Map()
+for (const c of cartas) for (const p of c.plates) cartasByPlate.set(p, [...(cartasByPlate.get(p) ?? []), c])
 const cartaAt = (plate, t) => (cartasByPlate.get(plate) ?? []).find((c) => t >= c.from && t <= c.to) ?? null
 
 // ── Distancia de lectura (con núcleos de formato válido dentro de lecturas con basura) ──
@@ -261,8 +267,7 @@ const capsByVehicle = new Map()
 for (const c of caps) if (c.vehicle) capsByVehicle.set(c.vehicle, [...(capsByVehicle.get(c.vehicle) ?? []), c])
 const trucks = []
 for (const n of cartas) {
-  const dep = Date.parse(n.departure)
-  const mine = n.plates.flatMap((p) => capsByVehicle.get(p) ?? []).filter((c) => c.t >= dep - 48 * H && c.t <= dep + 120 * H)
+  const mine = n.plates.flatMap((p) => capsByVehicle.get(p) ?? []).filter((c) => c.t >= n.from && c.t <= n.to)
   if (!mine.length || !inWeek(Math.min(...mine.map((c) => c.t)))) continue
   const seen = new Set(mine.map((c) => c.node))
   // Puntaje: nodos esperados vistos − esperados que faltan − nodos vistos que el circuito no explica
@@ -286,8 +291,7 @@ for (const tr of trucks) tr.plates = cartas.find((x) => x.ctg === tr.ctg).plates
 const firstAtOf = new Map()
 for (const tr of trucks) {
   const n = cartas.find((x) => x.ctg === tr.ctg)
-  const dep = Date.parse(n.departure)
-  tr.mine = n.plates.flatMap((p) => capsByVehicle.get(p) ?? []).filter((c) => c.t >= dep - 48 * H && c.t <= dep + 120 * H)
+  tr.mine = n.plates.flatMap((p) => capsByVehicle.get(p) ?? []).filter((c) => c.t >= n.from && c.t <= n.to)
   const firstAt = new Map()
   for (const c of tr.mine) if (!firstAt.has(c.node) || c.t < firstAt.get(c.node)) firstAt.set(c.node, c.t)
   firstAtOf.set(tr, firstAt)
@@ -308,6 +312,7 @@ const transit = new Map([...gaps].map(([k, l]) => {
   return [k, { n: l.length, med: q(0.5), scale: Math.max(5 * 60_000, (q(0.75) - q(0.25)) / 2) }]
 }))
 
+const DATA_END = caps.at(-1)?.t ?? 0
 const slots = []
 for (const tr of trucks) {
   const fa = firstAtOf.get(tr)
@@ -322,20 +327,46 @@ for (const tr of trucks) {
       tr.status[node] = 'prueba'
     }
   }
+  // La carta en estado CN (descarga confirmada) se sella con la tara: coincide con la lectura de la Balanza
+  // Egreso del destino a ±2 min (27–28/10: mediana 1 min en 111 camiones R7). Ancla ese paso aunque la cámara
+  // no lo lea, y con la descarga confirmada el resto del circuito está hecho.
+  const n = cartas.find((x) => x.ctg === tr.ctg)
+  tr.carta = { estado: n.stateCode, desde: n.stateSince }
+  const at = new Map(fa)
+  const balEg = circuit.exp.filter((x) => x.endsWith(':Balanza Egreso')).at(-1)
+  const cn = n.stateCode === 'CN' && n.destCuit === VICENTIN_CUIT ? Date.parse(n.stateSince) : NaN
+  const firstT = Math.min(...tr.mine.map((c) => c.t)), lastT = Math.max(...tr.mine.map((c) => c.t))
+  const anchored = balEg && cn > firstT && cn < firstT + 24 * H
+  if (anchored && !fa.has(balEg)) at.set(balEg, cn)
+  // Viaje abierto: la carta sigue activa o con arribo sin descarga confirmada y el camión se leyó hace < 24 h.
+  const open = (n.stateCode === 'AC' || n.stateCode === 'CF') && DATA_END - lastT < 24 * H
   circuit.exp.forEach((node, i) => {
     if (tr.status[node] !== 'falta' && tr.status[node] !== 'prueba') return
-    const prev = circuit.exp.slice(0, i).filter((x) => fa.has(x)).at(-1)
-    const next = circuit.exp.slice(i + 1).find((x) => fa.has(x))
+    const prev = circuit.exp.slice(0, i).filter((x) => at.has(x) && x !== node).at(-1)
+    const next = circuit.exp.slice(i + 1).find((x) => at.has(x))
     if (!prev && !next) return
-    const from = prev ? fa.get(prev) : fa.get(next) - 6 * H
-    const to = next ? fa.get(next) : fa.get(prev) + 6 * H
+    // Viaje abierto: después del último paso leído solo el inmediato siguiente puede haber pasado sin lectura;
+    // los de más adelante no se rellenan (BMN766, 28/10: tomaba una captura de Balanza Egreso antes de calar).
+    if (open && !next && circuit.exp[i - 1] !== prev) { tr.status[node] = 'en_curso'; return }
+    const anchor = anchored && node === balEg
+    const from = anchor ? cn - 10 * 60_000 : prev ? at.get(prev) : at.get(next) - 6 * H
+    const to = anchor ? cn + 10 * 60_000 : next ? at.get(next) : at.get(prev) + 6 * H
     // Hora esperada en el nodo: desde el paso anterior (tramo prev→nodo) y/o hacia el siguiente (nodo→next).
     const est = []
     const tp = prev && transit.get(`${prev}>${node}`)
     const tn = next && transit.get(`${node}>${next}`)
-    if (tp) est.push({ at: fa.get(prev) + tp.med, scale: tp.scale })
-    if (tn) est.push({ at: fa.get(next) - tn.med, scale: tn.scale })
-    slots.push({ truck: tr, node, from, to, est, bounded: Boolean(prev && next) })
+    if (anchor) est.push({ at: cn, scale: 2 * 60_000 })
+    else {
+      if (tp) est.push({ at: at.get(prev) + tp.med, scale: tp.scale })
+      if (tn) est.push({ at: at.get(next) - tn.med, scale: tn.scale })
+    }
+    // Pasó seguro sin captura: entre dos pasos leídos, en la entrada a la planta si leyó el paso siguiente
+    // (Ingreso Ricardone pierde ~15 % aunque Pre ingreso lea) o con la descarga confirmada por la carta.
+    const bounded = Boolean(prev && next) || (i === 0 && Boolean(next)) || Boolean(anchored)
+    // Todavía no pasó: paso final sin lectura posterior de un viaje abierto, o ventana que termina después
+    // del último dato.
+    const pending = !next && (open || to > DATA_END)
+    slots.push({ truck: tr, node, from, to, est, bounded, anchor, pending })
   })
 }
 const freeByNode = new Map()
@@ -457,24 +488,29 @@ for (const s of slots) {
     else if (s.filled.testOf === s.truck.ctg) ok++
     else bad++
   }
-  s.truck.status[s.node] = s.filled ? 'reconstruido' : s.bounded ? 'deducido' : 'falta'
+  s.truck.status[s.node] = s.filled ? 'reconstruido' : s.anchor ? 'por_carta' : s.bounded ? 'deducido' : s.pending ? 'en_curso' : 'falta'
 }
 const tally = {}
 for (const tr of trucks) for (const v of Object.values(tr.status)) tally[v] = (tally[v] ?? 0) + 1
 const nSteps = Object.values(tally).reduce((a, b) => a + b, 0)
 console.log(`\nAlgoritmo por lote sobre los pasos de los camiones con carta (${nSteps} pasos${TEST ? `, con prueba en 1 de cada ${TEST_EVERY}` : ''}):`)
-for (const k of ['camara', 'reconstruido', 'deducido', 'falta']) console.log(`  ${k.padEnd(13)} ${String(tally[k] ?? 0).padStart(5)}  ${(((tally[k] ?? 0) / nSteps) * 100).toFixed(1)} %`)
+for (const k of ['camara', 'reconstruido', 'por_carta', 'deducido', 'en_curso', 'falta']) console.log(`  ${k.padEnd(13)} ${String(tally[k] ?? 0).padStart(5)}  ${(((tally[k] ?? 0) / nSteps) * 100).toFixed(1)} %`)
 console.log('  pasos sin asignar, por motivo:', Object.entries(motivos).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(' · '))
 if (TEST) console.log(`  prueba: ${ok} bien · ${bad} mal · ${none} sin asignar (de ${ok + bad + none}) → aciertos ${((ok / Math.max(1, ok + bad)) * 100).toFixed(1)} % de lo asignado, recupera ${((ok / Math.max(1, ok + bad + none)) * 100).toFixed(1)} %`)
 if (TEST) for (const [k, [b, m]] of Object.entries(bands)) console.log(`    seguridad ${k.padEnd(16)} ${b} bien · ${m} mal → ${((b / Math.max(1, b + m)) * 100).toFixed(0)} %`)
 for (const tr of trucks) tr.missing = Object.entries(tr.status).filter(([, v]) => v === 'falta').map(([k]) => k)
 
-const complete = trucks.filter((t) => !t.missing.length).length
 const missByNode = {}
 for (const t of trucks) for (const m of t.missing) missByNode[m] = (missByNode[m] ?? 0) + 1
 const steps = trucks.reduce((s, t) => s + t.expected, 0)
 const missing = trucks.reduce((s, t) => s + t.missing.length, 0)
-console.log(`\nCamiones con carta que llegaron: ${trucks.length} · completos ${complete} (${((complete / trucks.length) * 100).toFixed(1)} %) · pasos ${steps - missing}/${steps} (${(((steps - missing) / steps) * 100).toFixed(1)} %)`)
+const enCurso = trucks.filter((t) => Object.values(t.status).includes('en_curso'))
+const pend = trucks.reduce((s, t) => s + Object.values(t.status).filter((v) => v === 'en_curso').length, 0)
+const closed = trucks.length - enCurso.length
+const completeClosed = trucks.filter((t) => !t.missing.length && !enCurso.includes(t)).length
+console.log(`\nCamiones con carta que llegaron: ${trucks.length} · ${closed} con el viaje terminado, ${enCurso.length} en curso (último dato ${new Date(DATA_END - 3 * H).toISOString().slice(5, 16).replace('T', ' ')})`)
+console.log(`  terminados: completos ${completeClosed}/${closed} (${((completeClosed / Math.max(1, closed)) * 100).toFixed(1)} %) · pasos ${steps - missing - pend}/${steps - pend} (${(((steps - missing - pend) / (steps - pend)) * 100).toFixed(1)} %)`)
+console.log(`  en curso: ${pend} pasos por hacer; con faltantes antes de la última lectura: ${enCurso.filter((t) => t.missing.length).length}`)
 console.log('  por circuito:', Object.entries(trucks.reduce((o, t) => ({ ...o, [t.circuit]: (o[t.circuit] ?? 0) + 1 }), {})).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(' · '))
 console.log('  pasos que faltan por nodo:')
 for (const [k, v] of Object.entries(missByNode).sort((a, b) => b[1] - a[1])) console.log(`    ${k.padEnd(42)} ${v}`)
