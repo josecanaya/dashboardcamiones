@@ -81,3 +81,5 @@ docs/demostracion-patentes/dudas1-full/
 
 # Cruce Sistema ↔ TruckFlow: caché de lecturas y logs regenerables (lecturas.mjs)
 reportes/cruce-sistema-truckflow/_*
+# Galería de fotos, vectores, veredictos de la IA y modelo de imágenes (server/live/vision)
+/data/vision/

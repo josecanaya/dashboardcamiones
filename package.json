@@ -28,6 +28,7 @@
     "sim:motor": "python scripts/simulador/motor_colas.py todos --visual"
   },
   "dependencies": {
+    "@huggingface/transformers": "3.7.6",
     "@supabase/supabase-js": "^2.49.1",
     "cors": "^2.8.6",
     "dotenv": "^16.4.7",

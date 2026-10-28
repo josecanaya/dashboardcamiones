@@ -342,6 +342,12 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
    * @type {Map<string, Record<string, { plate: string, probability: number, at: string }>>}
    */
   const evidenceVerdicts = new Map()
+  /**
+   * Veredicto de la IA (Claude Opus, imagen contra imagen: server/live/vision/visionJudge.mjs) por
+   * fragmento. Modo sombra: se muestra en el caso como `ia`, no decide.
+   * @type {Map<string, Record<string, object>>}
+   */
+  const visionVerdicts = new Map()
   function setEvidenceVerdict(site, fragmentKey, verdict) {
     const key = String(site || '').trim().toLowerCase()
     if (!evidenceVerdicts.has(key)) evidenceVerdicts.set(key, {})
@@ -406,6 +412,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     // Lectura de alerta que el reconocedor no resolvió: va a la bandeja solo si tiene formato de patente
     // (mal leída pero patente); las ilegibles quedan afuera (serían ~700 por día).
     result.items = result.items.filter((it) => !String(it.fragmentKey).startsWith('alert-') || it.assignedPlate || it.decision || it.validFormat)
+    const ia = visionVerdicts.get(site)
+    if (ia) result.items = result.items.map((it) => (ia[it.fragmentKey] ? { ...it, ia: ia[it.fragmentKey] } : it))
     result.alertReads = rawEvents.filter((e) => e.fromAlert)
     result.autoLinks = backwardLinks(site, rawEvents, nowMs, result.items)
     result.items = withOutsideSystem(identificationArchive.merge(site, result.items, identificationDecisions[site] || {}))
@@ -1127,6 +1135,13 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     setPadron(p, permitidos = null) {
       padronIndex = p || permitidos ? padronCartas(p, permitidos) : null
       identificationCache.clear()
+    },
+    /** Veredicto de la IA por imagen para un caso (modo sombra). */
+    setVisionVerdict(site, fragmentKey, verdict) {
+      const key = String(site || '').trim().toLowerCase()
+      if (!visionVerdicts.has(key)) visionVerdicts.set(key, {})
+      visionVerdicts.get(key)[fragmentKey] = verdict
+      identificationCache.delete(key)
     },
     /** Lo aprendido de operaciones (corregidos y no camiones): primer paso de la corrección. */
     setAprendizaje(a) {

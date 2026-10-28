@@ -175,7 +175,7 @@ const SYSTEM_APPEND = [
 ].join('\n')
 
 /** Ubica el ejecutable de Claude Code: env override → paquete Desktop → PATH. */
-function findClaudeCli() {
+export function findClaudeCli() {
   const override = process.env.CLAUDE_CLI_PATH?.trim()
   if (override && existsSync(override)) return override
   // Los shims npm .ps1/.cmd no son ejecutables para spawn(shell:false) en Windows.
