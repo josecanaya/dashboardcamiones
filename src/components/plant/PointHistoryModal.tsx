@@ -1,17 +1,18 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Link } from 'react-router-dom'
 import type { PlantPoint } from '../../data/plantZones.types'
 import type { ExpectedTruck, LiveCapture } from '../../services/live/plantStateApi'
 import { getRecentCaptures } from '../../services/live/plantStateApi'
 import { CapturePhoto } from './CapturePhoto'
 import { ExpectedTrucksSummary } from './ExpectedTrucksSummary'
-import { CaladaCamerasPanel, type CameraActivityLabels } from '../../features/real-truckflow/tabs/CaladaCamerasPanel'
-import { loadPointHistory, type RangeCoverage } from '../../features/real-truckflow/public/analysis'
+import type { CameraActivityLabels } from '../../features/real-truckflow/tabs/CaladaCamerasPanel'
+import type { History } from './PointHistoryLastWeek'
 import './pointHistory.css'
 
+// Los últimos 7 días componen corridas guardadas con el código del ETL: se baja solo al abrir esa pestaña.
+const LastWeek = lazy(() => import('./PointHistoryLastWeek').then(m => ({ default: m.LastWeek })))
+
 type Site = 'ricardone' | 'san_lorenzo'
-type History = { table: string; labels: CameraActivityLabels }
 
 const L = (entitySingular: string, entityPlural: string, trucksMetric: string, activityMetric: string, tableName: string, extra: Partial<CameraActivityLabels> = {}): CameraActivityLabels => ({
   entitySingular, entityPlural, columnHeader: entitySingular[0].toUpperCase() + entitySingular.slice(1), trucksMetric, activityMetric, exportName: tableName, tableName, ...extra,
@@ -38,7 +39,7 @@ function historyFor(site: Site, pointId: string): History | null {
 const isEntryPoint = (site: Site, pointId: string) => (site === 'ricardone' ? pointId === 'S0' || pointId === 'S1' : pointId === 'S0')
 
 const TZ = 'America/Argentina/Buenos_Aires'
-const dayOf = (ms: number) => new Date(ms).toLocaleDateString('en-CA', { timeZone: TZ })
+export const dayOf = (ms: number) => new Date(ms).toLocaleDateString('en-CA', { timeZone: TZ })
 const hourOf = (iso: string) => Number(new Date(iso).toLocaleTimeString('en-GB', { timeZone: TZ, hour: '2-digit', hour12: false }).slice(0, 2))
 const hhmm = (iso: string) => new Date(iso).toLocaleTimeString('es-AR', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false })
 
@@ -76,7 +77,7 @@ export function PointHistoryModal({ site, point, onClose, onOpenCameras, onOpenT
         <button type="button" role="tab" aria-selected={tab === 'semana'} onClick={() => setTab('semana')}>Últimos 7 días</button>
       </div>
       <div className="ph-body">
-        {tab === 'esperados' ? <ExpectedTrucksSummary onOpenTrip={onOpenTrip} /> : tab === 'hoy' ? <Today site={site} devices={point.cameraGroup.devices} /> : <LastWeek history={history} />}
+        {tab === 'esperados' ? <ExpectedTrucksSummary onOpenTrip={onOpenTrip} /> : tab === 'hoy' ? <Today site={site} devices={point.cameraGroup.devices} /> : <Suspense fallback={<p className="ph-empty">Cargando…</p>}><LastWeek history={history} /></Suspense>}
       </div>
     </dialog>,
     document.body,
@@ -126,43 +127,6 @@ function Today({ site, devices }: { site: Site; devices: string[] }) {
         </li>)}
         {!mine.length ? <li className="ph-empty">Sin capturas hoy en estas cámaras dentro de la ventana en vivo.</li> : null}
       </ul>
-    </div>
-  )
-}
-
-/** Últimos 7 días (hasta ayer) desde las corridas semanales guardadas, con el panel estándar por calle/cámara. */
-function LastWeek({ history }: { history: History | null }) {
-  const to = dayOf(Date.now() - 86_400_000)
-  const from = dayOf(Date.now() - 7 * 86_400_000)
-  const [state, setState] = useState<{ phase: 'loading' } | { phase: 'ok'; csv?: string; coverage: RangeCoverage } | { phase: 'error'; msg: string }>({ phase: 'loading' })
-  useEffect(() => {
-    if (!history) return
-    let alive = true
-    ;(async () => {
-      try {
-        const { csv, coverage } = await loadPointHistory(history.table, from, to)
-        if (alive) setState({ phase: 'ok', csv, coverage })
-      } catch (e) {
-        if (alive) setState({ phase: 'error', msg: e instanceof Error ? e.message : String(e) })
-      }
-    })()
-    return () => { alive = false }
-  }, [history, from, to])
-  if (!history) return (
-    <div className="ph-empty">
-      <p>Este punto no tiene un panel por cámara en el análisis. Sus tiempos están en el KPI de tiempos por tramo.</p>
-      <Link to="/estadisticas/indicadores/tiempos" className="ph-link">Abrir KPI de tiempos →</Link>
-    </div>
-  )
-  if (state.phase === 'loading') return <p className="ph-empty">Armando {from} → {to} desde las corridas guardadas…</p>
-  if (state.phase === 'error') return <p className="ph-empty">No se pudo cargar el histórico: {state.msg}</p>
-  const missing = state.coverage.missingDays
-  return (
-    <div>
-      {missing.length ? <p className="ph-warn">Sin corrida guardada para {missing.length} día(s): {missing.join(', ')}. Procesalos en «Análisis local» para completarlos.</p> : null}
-      {state.csv
-        ? <CaladaCamerasPanel csv={state.csv} checkedCircuits={new Set()} filterActive={false} periodLabel={`${from} → ${to}`} labels={history.labels} />
-        : <p className="ph-empty">Las corridas de este período no tienen la tabla {history.table}.</p>}
     </div>
   )
 }
