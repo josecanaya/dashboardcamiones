@@ -38,6 +38,7 @@ import { createSgcSource } from './sgc/sgcSource.mjs'
 import { createCartaPorteSource } from './agro/cartaPorte.mjs'
 import { createPadron } from './live/padron/padron.mjs'
 import { createCartasSource } from './live/padron/cartasSource.mjs'
+import { createVehiculosPermitidos } from './live/padron/vehiculosPermitidos.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = path.resolve(__dirname, '..')
@@ -281,6 +282,14 @@ app.use(sgc.router)
 /** Padrón del día: quién puede venir al Nodo Sur, en memoria (docs/propuesta-en-vivo/ARQUITECTURA_PADRON_EN_VIVO.md). */
 const padron = createPadron({ projectRoot: PROJECT_ROOT, source: createCartasSource({ projectRoot: PROJECT_ROOT }) })
 padron.start()
+/** Vehículos Permitidos (sin carta: agua, residuos, proveedores, registro): se consultan antes que la carta. */
+const vehiculosPermitidos = createVehiculosPermitidos({ projectRoot: PROJECT_ROOT })
+vehiculosPermitidos.start()
+plantState.setPadron(padron, vehiculosPermitidos)
+app.get('/api/truckflow/agro/permitidos', (req, res) => {
+  const plate = String(req.query.plate ?? '').trim()
+  res.json(plate ? { plate, vehiculo: vehiculosPermitidos.lookup(plate) } : vehiculosPermitidos.status() ?? { vehiculos: 0 })
+})
 
 app.use(createCartaPorteSource({
   projectRoot: PROJECT_ROOT,

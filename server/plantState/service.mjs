@@ -17,6 +17,7 @@ import { SECTOR_DEVICES } from './sectorProfiles.mjs'
 import { applyIdentifications, applyLinks, autoPredecessorLinks, findPredecessors, identifyFragments, journeyKeyOf, MIN_SIMILARITY, nodeModelCatalog, plateSimilarity, recentCaptures, updateRecentCircuits } from './plateIdentification.mjs'
 import { liveBalanzaRegistry, outsideTruckSystem, replayBalanzaRegistry } from './balanzaRegistry.mjs'
 import { createIdentificationArchive } from './identificationArchive.mjs'
+import { padronCartas } from './padronCartas.mjs'
 import { assessVehicleRelevance, excludeIrrelevantEvents } from './vehicleRelevance.mjs'
 import { alertInstantMs, alertReadEvents } from './alertReads.mjs'
 
@@ -331,6 +332,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
   const recentCircuitsBySite = new Map()
   /** @type {Map<string, { at: number, result: object }>} */
   const identificationCache = new Map()
+  /** @type {ReturnType<typeof padronCartas>|null} */
+  let padronIndex = null
   /**
    * Veredictos con color/marca/tipo del DSS (los calcula dssPhotoLookup en segundo plano): fragmento →
    * candidato que superó el umbral. Solo en memoria: tras un reinicio se recalculan.
@@ -390,6 +393,7 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
         evidenceVerdicts: evidenceVerdicts.get(site) || {},
         // Refuerzo de balanza (SGC + movimientos): camión en planta, acoplado, ¿vino alguna vez?
         balanza: process.env.IDENTIFICATION_BALANZA === '0' ? null : liveBalanzaRegistry(nowMs),
+        padron: process.env.IDENTIFICATION_PADRON === '0' ? null : padronIndex,
         otherSiteEvents: [...(bySite.get(site === 'ricardone' ? 'san_lorenzo' : 'ricardone')?.history.values() ?? [])],
       }),
       recentCounts,
@@ -1113,6 +1117,11 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
   }
 
   return {
+    /** Capa 2 del reconocedor: Vehículos Permitidos y padrón de cartas. Se enganchan después porque los crea el server. */
+    setPadron(p, permitidos = null) {
+      padronIndex = p || permitidos ? padronCartas(p, permitidos) : null
+      identificationCache.clear()
+    },
     getSnapshot,
     getEvents,
     getBaselines: loadBaselines,

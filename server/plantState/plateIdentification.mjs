@@ -21,6 +21,7 @@
 import { visitRowsAt, assessVisitCandidate } from './visitInventory.mjs'
 import { arrivalWeight, scoreWithNodeModel } from './nodeModelScore.mjs'
 import { outsideTruckSystem } from './balanzaRegistry.mjs'
+import { padronLabel } from './padronCartas.mjs'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -362,14 +363,29 @@ export function identifyFragments(events, nowMs, ctx) {
   const decided = (j) => ['confirm', 'reject'].includes(decisions[j.key]?.action)
   /** Registro de balanza (SGC): refuerzo ante la duda. Ver balanzaRegistry.mjs. */
   const bz = ctx.balanza ?? null
-  const trailerOfJourney = (j) => (bz && bz.isTrailer(j.plate) && !bz.truckAt(j.plate, j.rows[0].t) ? bz.trailerAt(j.plate, j.rows[0].t) : null)
+  /** Horas de lectura de cada patente en las dos plantas (para validar pares acoplado → chasis históricos). */
+  const readsByPlateEarly = new Map()
+  for (const j of [...journeys, ...otherJourneys]) if (j.plate) readsByPlateEarly.set(j.plate, [...(readsByPlateEarly.get(j.plate) ?? []), ...j.rows.map((r) => r.t)])
+  /** Capa 2 (ver padronCartas.mjs): Vehículos Permitidos y después la carta de porte. Primero se busca acá quién es. */
+  const cartaOf = (plate, t) => (ctx.padron && isValidPlate(plate) ? ctx.padron.at(plate, t) : null)
+  const trailerOfJourney = (j) => {
+    if (bz && bz.isTrailer(j.plate) && !bz.truckAt(j.plate, j.rows[0].t)) {
+      const hit = bz.trailerAt(j.plate, j.rows[0].t)
+      if (hit) return { ...hit, source: 'balanza' }
+    }
+    const carta = cartaOf(j.plate, j.rows[0].t)
+    if (carta?.role !== 'acoplado') return null
+    // Par histórico (Vehículos Permitidos): solo si el chasis se leyó en planta a ±2 h de esta lectura.
+    if (carta.source === 'permitido' && !(readsByPlateEarly.get(carta.chasis) ?? []).some((t) => Math.abs(t - j.rows[0].t) <= 2 * 3600_000)) return null
+    return { plate: carta.chasis, source: carta.source, hit: carta }
+  }
   /**
    * Viaje fantasma: patente válida mal leída igual en varias cámaras (BOH961 en Preingreso e Ingreso, era
    * BDH961). No está en la balanza ni vino nunca, y en planta hay un camión parecido según la balanza.
    * Cruce 13–19/10: 57 de 175 lecturas malas eran viajes así y nunca llegaban a la bandeja.
    */
   const ghostOfJourney = (j) =>
-    Boolean(bz && isValidPlate(j.plate) && !bz.truckAt(j.plate, j.rows[0].t) && !bz.isKnown(j.plate) &&
+    Boolean(bz && isValidPlate(j.plate) && !bz.truckAt(j.plate, j.rows[0].t) && !bz.isKnown(j.plate) && !cartaOf(j.plate, j.rows[0].t) &&
       bz.platesAt(j.rows[0].t).some((p) => p !== j.plate && plateSimilarity(j.plate, p) >= GHOST_SIMILARITY))
   const fragments = journeys.filter((j) => {
     if (decided(j)) return true
@@ -592,7 +608,11 @@ export function identifyFragments(events, nowMs, ctx) {
     // Refuerzo de balanza (SGC): ¿es el acoplado de un camión en planta? ¿es un camión que entró?
     const trailerHit = trailerOfJourney(f)
     const readInBalanza = Boolean(bz && valid && bz.truckAt(f.plate, head.t))
-    const readKnown = Boolean(bz && valid && bz.isKnown(f.plate))
+    // Capa 2: la patente leída es un vehículo permitido o el chasis de una carta vigente → conocido, la cámara leyó bien.
+    const readCartaHit = valid ? cartaOf(f.plate, head.t) : null
+    const readCarta = readCartaHit?.role === 'chasis' ? readCartaHit : null
+    // En la capa 2 también es una patente conocida: la cuenta no la corrige hacia otro camión.
+    const readKnown = Boolean(bz && valid && (bz.isKnown(f.plate) || readCarta))
     const inBalanza = (plate) => Boolean(bz?.truckAt(plate, head.t))
     /** Viaje del camión más cercano a la lectura (para sumarle la lectura del acoplado). */
     const journeyOfPlate = (plate) =>
@@ -652,7 +672,9 @@ export function identifyFragments(events, nowMs, ctx) {
     let chosen = null
     let rule = null
     // Patente válida que la balanza tiene en planta y no se parece a nadie: no es un caso, es un camión real.
-    if (readInBalanza && !plateMatches.length && !decided(f) && !trailerHit) continue
+    if ((readInBalanza || readCarta) && !plateMatches.length && !decided(f) && !trailerHit) continue
+    // Doble lectura de dos patentes válidas conocidas las dos: son dos vehículos reales, no se elige solo.
+    const twinCarta = twin ? cartaOf(twin.plate, head.t) : null
     if (twin && !valid) {
       // Lectura ilegible y el camión leído bien en el mismo nodo a segundos/minutos: es él.
       level = 'casi_seguro'
@@ -662,19 +684,31 @@ export function identifyFragments(events, nowMs, ctx) {
     } else if (trailerHit) {
       level = 'casi_seguro'
       chosen = journeyOfPlate(trailerHit.plate)
-      reason = `${f.plate} es el acoplado de ${trailerHit.plate} según la balanza (SGC)`
-      rule = 'acoplado_balanza'
+      reason = trailerHit.hit
+        ? `${f.plate} es el acoplado de ${trailerHit.plate} según ${padronLabel(trailerHit.hit)}`
+        : `${f.plate} es el acoplado de ${trailerHit.plate} según la balanza (SGC)`
+      rule = trailerHit.source === 'carta' ? 'acoplado_carta' : trailerHit.source === 'permitido' ? 'acoplado_permitido' : 'acoplado_balanza'
     } else if (readInBalanza) {
       // Patente válida de un camión que la balanza tiene en planta: la cámara leyó bien.
       level = 'casi_seguro'
       chosen = { plate: f.plate, journeyUid: f.journeyUid }
       reason = `${f.plate} figura en la balanza (SGC): es un camión en planta y la cámara leyó bien`
       rule = 'leida_bien_balanza'
+    } else if (readCarta && !twinCarta?.role) {
+      level = 'casi_seguro'
+      chosen = { plate: f.plate, journeyUid: f.journeyUid }
+      reason = `${f.plate} figura en ${padronLabel(readCarta)}: es un vehículo conocido y la cámara leyó bien`
+      rule = readCarta.source === 'permitido' ? 'vehiculo_permitido' : 'carta_porte'
     } else if (twinByBalanza) {
       level = 'casi_seguro'
       chosen = twin
       reason = `${twinText}; la balanza tiene a ${twin.plate} en planta y ${f.plate} nunca pasó por la balanza`
       rule = 'doble_lectura_balanza'
+    } else if (twin && valid && twinCarta?.role === 'chasis' && !readCarta && !bz?.isKnown(f.plate)) {
+      level = 'casi_seguro'
+      chosen = twin
+      reason = `${twinText}; ${twin.plate} figura en ${padronLabel(twinCarta)} y ${f.plate} no`
+      rule = twinCarta.source === 'permitido' ? 'doble_lectura_permitido' : 'doble_lectura_carta'
     } else if (twin) {
       // Dos patentes válidas en el mismo nodo a segundos: es el mismo camión pero no se sabe cuál leyó
       // mal (MML273 en Egreso C1 y HHL273 en C2: la correcta era HHL273). Decide operaciones.
@@ -805,7 +839,7 @@ export function identifyFragments(events, nowMs, ctx) {
     // (autos y camionetas en Egreso SL y Renova). Sale de la bandeja del operador a una lista aparte.
     // Un camión parecido en planta según la balanza (aunque ninguna cámara lo haya leído bien) prueba
     // que la lectura es de un camión: no va a «fuera del sistema».
-    if (!decision && (level === 'provisorio' || level === 'pendiente') && bz && !bzSimilar.length &&
+    if (!decision && (level === 'provisorio' || level === 'pendiente') && bz && !bzSimilar.length && !readCartaHit &&
         outsideTruckSystem({ readPlate: f.plate, validFormat: valid, at: new Date(head.t).toISOString() }, candidates, bz)) {
       level = 'fuera_sistema'
       reason = `ni ${f.plate || 'la lectura'} ni ${candidates.length ? 'sus candidatos' : 'ningún camión'} figuran en la balanza: vehículo fuera del sistema de camiones`
@@ -834,7 +868,9 @@ export function identifyFragments(events, nowMs, ctx) {
       rule: decision ? 'operaciones' : rule,
       cuenta: cuenta ? { plate: cuenta.candidate?.plate ?? null, probability: Math.round(cuenta.probability * 1000) / 1000, nuevo: Math.round(cuenta.neverSeen * 1000) / 1000, ignorePlate: cuenta.ignorePlate } : null,
       balanza: bz ? { readInPlant: readInBalanza, readKnown, trailerOf: trailerHit?.plate ?? null, similarInPlant: bzSimilar } : null,
-      candidates: [...candidates.slice(0, opt.maxCandidates ?? 5), ...(cuenta?.candidate && !candidates.slice(0, opt.maxCandidates ?? 5).includes(cuenta.candidate) ? [cuenta.candidate] : [])].map(({ score, ...c }) => ({ ...c, inBalanza: inBalanza(c.plate), score: Math.round(score * 100) / 100 })),
+      // Capa 2 a la ida (la leída) y a la vuelta (la patente corregida, si hay).
+      padron: ctx.padron ? { read: readCartaHit, assigned: assignedPlate && assignedPlate !== f.plate ? cartaOf(assignedPlate, head.t) : null } : null,
+      candidates: [...candidates.slice(0, opt.maxCandidates ?? 5), ...(cuenta?.candidate && !candidates.slice(0, opt.maxCandidates ?? 5).includes(cuenta.candidate) ? [cuenta.candidate] : [])].map(({ score, ...c }) => ({ ...c, inBalanza: inBalanza(c.plate), padron: padronLabel(cartaOf(c.plate, head.t)) || null, score: Math.round(score * 100) / 100 })),
       decision,
     })
   }
