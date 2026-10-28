@@ -190,7 +190,7 @@ export function buildJourneys(events, nowMs) {
       j = { key, plate: plateOf(e), journeyUid: String(e.journeyUid ?? '').trim() || null, rows: [] }
       map.set(key, j)
     }
-    j.rows.push({ t, logical, sectorCode, device })
+    j.rows.push(e.attributes ? { t, logical, sectorCode, device, attributes: e.attributes } : { t, logical, sectorCode, device })
   }
   for (const j of map.values()) j.rows.sort((a, b) => a.t - b.t)
   return [...map.values()].filter((j) => j.rows.length)
@@ -340,6 +340,20 @@ export function bestCircuit(seen, catalog, weights) {
   return code ? { code, p } : null
 }
 
+const CATEGORY_ES = { Pickup: 'camioneta', SUV: 'SUV', SaloonCar: 'auto', PassengerCar: 'auto', MPV: 'utilitario', Microbus: 'minibús', MicroTruck: 'camión chico', MidTruck: 'camión', LargeTruck: 'camión grande' }
+const COLOR_ES = { White: 'blanco', Black: 'negro', Gray: 'gris', Silver: 'gris plata', Blue: 'azul', Red: 'rojo', Green: 'verde', Yellow: 'amarillo', Brown: 'marrón', Orange: 'naranja' }
+
+/** Atributos del vehículo en esas lecturas: la más reciente que los tenga (vienen de las alertas, ver alertReads.mjs). */
+export function rowsAttributes(rows) {
+  return [...(rows ?? [])].reverse().find((r) => r.attributes)?.attributes ?? null
+}
+
+/** «camioneta Toyota blanco» para los motivos. */
+export function describeVehicle(a) {
+  if (!a) return ''
+  return [CATEGORY_ES[a.category] ?? (a.vehicleClass === 'liviano' ? 'liviano' : a.vehicleClass === 'camion' ? 'camión' : null), a.brand?.replace(/\d+$/, ''), COLOR_ES[a.color] ?? null].filter(Boolean).join(' ')
+}
+
 /**
  * Clasifica las lecturas sueltas (fragmentos) contra los camiones en planta.
  * @param {object[]} events eventos crudos del buffer (antes de aplicar alias)
@@ -394,6 +408,9 @@ export function identifyFragments(events, nowMs, ctx) {
     // Patente del acoplado (cámaras traseras): el feed la trata como otro camión aunque recorra varios nodos.
     if (trailerOfJourney(j)) return true
     if (ghostOfJourney(j)) return true
+    // Capa 2: cada captura se busca primero en Vehículos Permitidos y en la carta de porte; la que no está
+    // en ninguna pasa a la corrección aunque recorra varios nodos (OIY765/QIY765/OTY765 el 28/10).
+    if (ctx.padron && !cartaOf(j.plate, j.rows[0].t)) return true
     // Patente válida que arranca a mitad de circuito: puede ser una lectura cambiada (KMO254 por KWO254).
     // Si la misma patente se leyó en dos o más nodos distintos, es un camión real al que no se le leyó el ingreso.
     if (new Set(j.rows.map((r) => r.logical)).size > 1) return false
@@ -688,17 +705,18 @@ export function identifyFragments(events, nowMs, ctx) {
         ? `${f.plate} es el acoplado de ${trailerHit.plate} según ${padronLabel(trailerHit.hit)}`
         : `${f.plate} es el acoplado de ${trailerHit.plate} según la balanza (SGC)`
       rule = trailerHit.source === 'carta' ? 'acoplado_carta' : trailerHit.source === 'permitido' ? 'acoplado_permitido' : 'acoplado_balanza'
+    } else if (readCarta && !twinCarta?.role) {
+      // Capa 2 antes que la balanza: la balanza es solo un apoyo de la corrección.
+      level = 'casi_seguro'
+      chosen = { plate: f.plate, journeyUid: f.journeyUid }
+      reason = `${f.plate} figura en ${padronLabel(readCarta)}: es un vehículo conocido y la cámara leyó bien`
+      rule = readCarta.source === 'permitido' ? 'vehiculo_permitido' : 'carta_porte'
     } else if (readInBalanza) {
       // Patente válida de un camión que la balanza tiene en planta: la cámara leyó bien.
       level = 'casi_seguro'
       chosen = { plate: f.plate, journeyUid: f.journeyUid }
       reason = `${f.plate} figura en la balanza (SGC): es un camión en planta y la cámara leyó bien`
       rule = 'leida_bien_balanza'
-    } else if (readCarta && !twinCarta?.role) {
-      level = 'casi_seguro'
-      chosen = { plate: f.plate, journeyUid: f.journeyUid }
-      reason = `${f.plate} figura en ${padronLabel(readCarta)}: es un vehículo conocido y la cámara leyó bien`
-      rule = readCarta.source === 'permitido' ? 'vehiculo_permitido' : 'carta_porte'
     } else if (twinByBalanza) {
       level = 'casi_seguro'
       chosen = twin
@@ -757,6 +775,12 @@ export function identifyFragments(events, nowMs, ctx) {
     } else if (ghostOfJourney(f)) {
       level = 'provisorio'
       reason = `${f.plate} no figura en la balanza y se parece a un camión que sí está en planta: posible lectura mala repetida`
+    } else if (ctx.padron && !readCartaHit && !readInBalanza) {
+      // Ni en la capa 2 ni parecida a nadie en planta: alerta para registrarlo (Vehículos Permitidos) o revisarlo.
+      level = 'fuera_sistema'
+      rule = 'fuera_sistema'
+      const seen = describeVehicle(rowsAttributes(f.rows))
+      reason = `${f.plate}${seen ? ` (${seen})` : ''} no figura en Vehículos Permitidos ni en una carta de porte vigente y no se parece a ningún vehículo en planta`
     } else {
       // Patente válida sin parecido con nadie: camión real al que no se le leyó el ingreso.
       continue
@@ -842,7 +866,8 @@ export function identifyFragments(events, nowMs, ctx) {
     if (!decision && (level === 'provisorio' || level === 'pendiente') && bz && !bzSimilar.length && !readCartaHit &&
         outsideTruckSystem({ readPlate: f.plate, validFormat: valid, at: new Date(head.t).toISOString() }, candidates, bz)) {
       level = 'fuera_sistema'
-      reason = `ni ${f.plate || 'la lectura'} ni ${candidates.length ? 'sus candidatos' : 'ningún camión'} figuran en la balanza: vehículo fuera del sistema de camiones`
+      const seen = describeVehicle(rowsAttributes(f.rows))
+      reason = `ni ${f.plate || 'la lectura'}${seen ? ` (${seen})` : ''} ni ${candidates.length ? 'sus candidatos' : 'ningún camión'} figuran en la balanza: vehículo fuera del sistema de camiones`
       rule = 'fuera_sistema'
     }
 
@@ -870,7 +895,9 @@ export function identifyFragments(events, nowMs, ctx) {
       balanza: bz ? { readInPlant: readInBalanza, readKnown, trailerOf: trailerHit?.plate ?? null, similarInPlant: bzSimilar } : null,
       // Capa 2 a la ida (la leída) y a la vuelta (la patente corregida, si hay).
       padron: ctx.padron ? { read: readCartaHit, assigned: assignedPlate && assignedPlate !== f.plate ? cartaOf(assignedPlate, head.t) : null } : null,
-      candidates: [...candidates.slice(0, opt.maxCandidates ?? 5), ...(cuenta?.candidate && !candidates.slice(0, opt.maxCandidates ?? 5).includes(cuenta.candidate) ? [cuenta.candidate] : [])].map(({ score, ...c }) => ({ ...c, inBalanza: inBalanza(c.plate), padron: padronLabel(cartaOf(c.plate, head.t)) || null, score: Math.round(score * 100) / 100 })),
+      // Lo que vio la cámara del vehículo (de las alertas): tipo, tamaño, color, marca.
+      attributes: rowsAttributes(f.rows),
+      candidates: [...candidates.slice(0, opt.maxCandidates ?? 5), ...(cuenta?.candidate && !candidates.slice(0, opt.maxCandidates ?? 5).includes(cuenta.candidate) ? [cuenta.candidate] : [])].map(({ score, ...c }) => ({ ...c, attributes: rowsAttributes((readsByPlate.get(c.plate) ?? []).filter((r) => r.t <= head.t).sort((a, b) => a.t - b.t)), inBalanza: inBalanza(c.plate), padron: padronLabel(cartaOf(c.plate, head.t)) || null, score: Math.round(score * 100) / 100 })),
       decision,
     })
   }

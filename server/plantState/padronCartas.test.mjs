@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { padronCartas } from './padronCartas.mjs'
 import { identifyFragments, nodeModelCatalog } from './plateIdentification.mjs'
 import { buildBalanzaRegistry } from './balanzaRegistry.mjs'
+import { alertAttributes, withAlertAttributes } from './alertReads.mjs'
 
 const catalog = nodeModelCatalog()
 const ev = (plate, uid, sectorCode, deviceCode, wallIso) => {
@@ -118,5 +119,59 @@ describe('Vehículos Permitidos antes que la carta', () => {
     const it0 = identifyFragments(events, now, { catalog, padron }).items.find((i) => i.readPlate === 'AC111BB')
     expect(it0.rule).toBe('acoplado_permitido')
     expect(it0.assignedPlate).toBe('FEA810')
+  })
+})
+
+describe('cada captura pasa por la capa 2', () => {
+  const now = Date.parse('2026-10-28T12:00:00-03:00')
+  const permitidos = (list) => ({ lookup: (p) => list.find((v) => v.plate === p) ?? null })
+
+  it('recorrido con patente válida en varios nodos que no está en la capa 2: va a corrección', () => {
+    const events = [
+      ev('BDT263', 'b1', '2-S1', 'RicPreIngInFr', '2026-10-28T10:00:00-03:00'),
+      ev('BDT263', 'b1', '2-S2', 'RicCal03', '2026-10-28T10:30:00-03:00'),
+      ev('BDI263', 'x1', '2-S4', 'RicB3Ingreso', '2026-10-28T10:50:00-03:00'),
+      ev('BDI263', 'x1', '2-S3', 'RicSalida2', '2026-10-28T11:20:00-03:00'),
+    ]
+    const padron = padronCartas(fakePadron([carta('3', ['BDT263', 'AA111BB'])]))
+    const sin = identifyFragments(events, now, { catalog }).items.find((i) => i.readPlate === 'BDI263')
+    expect(sin).toBeUndefined()
+    const con = identifyFragments(events, now, { catalog, padron }).items.find((i) => i.readPlate === 'BDI263')
+    expect(con).toBeDefined()
+    expect(con.candidates[0].plate).toBe('BDT263')
+  })
+
+  it('no está en la capa 2 ni se parece a nadie: alerta fuera del sistema con lo que vio la cámara', () => {
+    const attributes = { category: 'Pickup', size: 'Light-duty', color: 'White', brand: 'Toyota', plateConfidence: 86, vehicleClass: 'liviano' }
+    const events = [
+      { ...ev('JUE083', 'p1', '2-S4', 'RicB3Ingreso', '2026-10-28T11:00:00-03:00'), attributes },
+      ev('JUE083', 'p1', '2-S3', 'RicSalida2', '2026-10-28T11:10:00-03:00'),
+    ]
+    const padron = padronCartas(null, permitidos([]))
+    const it0 = identifyFragments(events, now, { catalog, padron }).items.find((i) => i.readPlate === 'JUE083')
+    expect(it0.level).toBe('fuera_sistema')
+    expect(it0.reason).toContain('camioneta Toyota blanco')
+    expect(it0.attributes.vehicleClass).toBe('liviano')
+  })
+})
+
+describe('atributos de las alertas', () => {
+  const alert = (extra = {}) => ({
+    id: 1, alertCode: 'INVALID_ROUTE', deviceCode: 'RicB3Ingreso', sectorCode: '2-S4', truckPlate: 'JUE083',
+    payload: JSON.stringify({ normalizedPlate: 'JUE083', externalEventBody: { UTC: 1793197253, VehicleColor: 'Blue', VehicleBrand: 'Chevrolet', Object: { Confidence: 86 }, Vehicle: { Category: 'Pickup' }, TrafficCar: { VehicleSize: 'Light-duty' }, ...extra } }),
+  })
+
+  it('tipo, tamaño, color, marca y confianza; Unknown queda vacío', () => {
+    expect(alertAttributes(alert())).toEqual({ category: 'Pickup', size: 'Light-duty', color: 'Blue', brand: 'Chevrolet', plateConfidence: 86, vehicleClass: 'liviano' })
+    expect(alertAttributes(alert({ VehicleBrand: 'Unknown', Vehicle: { Category: 'MidTruck' }, TrafficCar: { VehicleSize: 'Oversize' } }))).toMatchObject({ brand: null, vehicleClass: 'camion' })
+  })
+
+  it('se suman a la lectura del feed de la misma cámara y patente', () => {
+    const t = (1793197253 * 1000 + 3 * 3600_000 + 240_000) - 206 * 60_000
+    const feed = { journeyUid: 'j', truckPlate: 'JUE083', deviceCode: 'RicB3Ingreso', occurredAt: new Date(t + 30_000).toISOString() }
+    const other = { ...feed, deviceCode: 'RicSalida2' }
+    const [a, b] = withAlertAttributes([feed, other], [alert()])
+    expect(a.attributes).toMatchObject({ brand: 'Chevrolet' })
+    expect(b.attributes).toBeUndefined()
   })
 })

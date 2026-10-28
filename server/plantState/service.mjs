@@ -19,7 +19,7 @@ import { liveBalanzaRegistry, outsideTruckSystem, replayBalanzaRegistry } from '
 import { createIdentificationArchive } from './identificationArchive.mjs'
 import { padronCartas } from './padronCartas.mjs'
 import { assessVehicleRelevance, excludeIrrelevantEvents } from './vehicleRelevance.mjs'
-import { alertInstantMs, alertReadEvents } from './alertReads.mjs'
+import { alertInstantMs, alertReadEvents, withAlertAttributes } from './alertReads.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '../..')
@@ -381,7 +381,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     const catalog = nodeModelCatalog()
     // Lecturas que solo llegaron como alerta: entran al reconocedor como lecturas sueltas.
     const alertRaw = bySite.get(site)?.alertRaw
-    if (alertRaw?.size) rawEvents = [...rawEvents, ...alertReadEvents([...alertRaw.values()], rawEvents)]
+    // Y los atributos del vehículo (tipo, tamaño, color, marca) que solo traen las alertas se suman a cada lectura.
+    if (alertRaw?.size) rawEvents = withAlertAttributes([...rawEvents, ...alertReadEvents([...alertRaw.values()], rawEvents)], [...alertRaw.values()])
     if (!recentCircuitsBySite.has(site)) recentCircuitsBySite.set(site, new Map())
     const recentCounts = updateRecentCircuits(recentCircuitsBySite.get(site), rawEvents, nowMs, catalog)
     const result = {
@@ -398,8 +399,9 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       }),
       recentCounts,
     }
-    // Lectura de alerta que el reconocedor no resolvió: no va a la bandeja (serían ~700 ilegibles por día).
-    result.items = result.items.filter((it) => !String(it.fragmentKey).startsWith('alert-') || it.assignedPlate || it.decision)
+    // Lectura de alerta que el reconocedor no resolvió: va a la bandeja solo si tiene formato de patente
+    // (mal leída pero patente); las ilegibles quedan afuera (serían ~700 por día).
+    result.items = result.items.filter((it) => !String(it.fragmentKey).startsWith('alert-') || it.assignedPlate || it.decision || it.validFormat)
     result.alertReads = rawEvents.filter((e) => e.fromAlert)
     result.autoLinks = backwardLinks(site, rawEvents, nowMs, result.items)
     result.items = withOutsideSystem(identificationArchive.merge(site, result.items, identificationDecisions[site] || {}))
