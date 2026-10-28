@@ -241,18 +241,12 @@ app.get('/api/truckflow/camera-captures/find', dssPhotos.find)
 app.get('/api/truckflow/camera-captures/image', dssPhotos.image)
 
 /**
- * Editor del plano (ver server/plantLayoutEditor.mjs y
- * src/pages/PlantLayoutEditorPage.tsx) — clickear la imagen real para ubicar
- * un punto, en vez de describir coordenadas por chat.
+ * Editor del plano sobre el modelo IFC (ver server/plantLayoutEditor.mjs y
+ * src/components/plant/PlantIfcEditor.tsx) — clickear el modelo para ubicar
+ * un punto o elegir la playa de una zona, en vez de describir coordenadas por chat.
  */
 const plantLayoutEditor = createPlantLayoutEditorRouter({ publicDir: path.join(PROJECT_ROOT, 'public') })
-app.get('/api/truckflow/plant-layout/:site', plantLayoutEditor.getLayout)
-app.put('/api/truckflow/plant-layout/:site', plantLayoutEditor.savePoints)
-app.post(
-  '/api/truckflow/plant-layout/:site/image',
-  express.raw({ type: 'image/*', limit: '15mb' }),
-  plantLayoutEditor.uploadImage
-)
+app.put('/api/truckflow/plant-layout/:site/ifc-overrides', plantLayoutEditor.saveIfcOverrides)
 
 /**
  * Informe de logística: el dashboard manda el paquete del período y acá se escribe el Excel

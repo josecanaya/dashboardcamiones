@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { PlantLayoutEditorPage } from './PlantLayoutEditorPage'
+import { PlantIfcEditor } from '../components/plant/PlantIfcEditor'
 import { downloadCameraDay, getCoverage, runWeek, type Coverage, type SavedWindow } from '../services/datos/corridasApi'
 // El editor del plano usa los botones ui-* del dashboard (tokens bajo .tf-ui).
 import '../components/ui/ui.css'
 
 /**
  * Datos: la corrida semanal que leen los agentes y los decks (runs/windows/<lunes>_<domingo>)
- * y el editor del plano. Una semana = una corrida; no se crean ventanas a medida.
+ * y el editor del plano sobre el modelo IFC. Una semana = una corrida; no se crean ventanas a medida.
  */
 export function DatosPage() {
   const [params, setParams] = useSearchParams()
@@ -28,7 +28,7 @@ export function DatosPage() {
           </button>
         ))}
       </div>
-      {vista === 'plano' ? <PlantLayoutEditorPage /> : <Corridas />}
+      {vista === 'plano' ? <PlantIfcEditor /> : <Corridas />}
     </section>
   )
 }

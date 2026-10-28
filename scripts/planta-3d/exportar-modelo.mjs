@@ -1,6 +1,7 @@
 // Exporta el modelo IFC de cada planta (paquete NVA en data/nva-ifc) al formato que dibuja En vivo:
 // public/plant/<site>/modelo-3d.json con las mallas, la cámara fija de las imágenes de circuitos
-// y la transformación del plano cenital (porcentajes del layout) a coordenadas locales del IFC.
+// la transformación del plano cenital (porcentajes del layout) a coordenadas locales del IFC
+// y los tramos entre puntos sobre los ejes viales del IFC (trafico.json → edges).
 //
 //   node scripts/planta-3d/exportar-modelo.mjs
 //
@@ -133,6 +134,53 @@ function fitAffine(src, dst) {
 }
 const applyAffine = (M, [x, y]) => [M[0][0] * x + M[0][1] * y + M[0][2], M[1][0] * x + M[1][1] * y + M[1][2]]
 
+/** Ejes viales del IFC que siguen el centro de una franja de las imágenes (los demás son pendientes o lógicos). */
+const EDGE_OK = 'centro_de_franja_extraida_de_imagen'
+
+/**
+ * Tramos entre puntos del layout sobre los ejes del IFC. Cada nodo con punto (ANCHORS) es un extremo;
+ * los nodos sin punto (Playa 1, Balanza Egreso…) se atraviesan encadenando ejes, nunca otro punto.
+ * Por cada par queda el camino más corto (suma de `length_m`), en coordenadas locales.
+ */
+function tramosFromEdges(site) {
+  const pointOf = new Map(Object.entries(ANCHORS[site]).map(([id, name]) => [`${site}:${name}`, id]))
+  const adj = new Map()
+  const link = (from, to, e, pts) => adj.set(from, [...(adj.get(from) ?? []), { to, e, pts }])
+  for (const e of trafico.edges) {
+    if (e.plant !== site || e.status !== EDGE_OK || !e.points?.length || e.from === e.to) continue
+    link(e.from, e.to, e, e.points)
+    link(e.to, e.from, e, [...e.points].reverse())
+  }
+  const best = new Map()
+  for (const [start, fromId] of pointOf) {
+    if (!adj.has(start)) continue
+    const dist = new Map([[start, { d: 0, steps: [] }]])
+    const open = new Set([start])
+    while (open.size) {
+      const node = [...open].reduce((m, n) => (dist.get(n).d < dist.get(m).d ? n : m))
+      open.delete(node)
+      const cur = dist.get(node)
+      // Un punto del layout corta el camino: se llega a él, no se pasa por él.
+      if (node !== start && pointOf.has(node)) continue
+      for (const { to, e, pts } of adj.get(node) ?? []) {
+        const d = cur.d + e.length_m
+        if (dist.has(to) && dist.get(to).d <= d) continue
+        dist.set(to, { d, steps: [...cur.steps, { e, pts }] })
+        open.add(to)
+      }
+    }
+    for (const [node, { d, steps }] of dist) {
+      const toId = pointOf.get(node)
+      if (!toId || node === start) continue
+      const id = [fromId, toId].sort().join('::')
+      if (best.has(id) && best.get(id).lengthM <= d) continue
+      const points = steps.flatMap(({ pts }, i) => (i ? pts.slice(1) : pts)).map((q) => q.map(r2))
+      best.set(id, { id, fromPointId: fromId, toPointId: toId, lengthM: r2(d), edges: steps.map(({ e }) => e.id), points })
+    }
+  }
+  return [...best.values()].sort((x, y) => x.id.localeCompare(y.id))
+}
+
 /** Ejes de pantalla de la proyección ortogonal de las imágenes: derecha y arriba en coordenadas locales. */
 function cameraFromImages(site) {
   const best = trazados.filter((t) => t.plant === site).sort((a, b) => b.registration_inliers - a.registration_inliers)[0]
@@ -202,6 +250,20 @@ for (const site of ['ricardone', 'san_lorenzo']) {
     console.log(`  ${site} ${z.zoneId} ${z.label}: ${floor ? `piso ${floor.guid} (${Math.round(polyArea(floor.points))} m²)` : 'sin piso en el IFC, queda el polígono de la foto'}`)
   }
 
+  // Ejes con trazado sin repetidos: el mismo eje figura una vez por circuito que lo recorre.
+  const byShape = new Map()
+  const canonical = new Map()
+  for (const e of trafico.edges) {
+    if (e.plant !== site || !(e.points?.length >= 2)) continue
+    const points = e.points.map((q) => q.map(r2))
+    const key = [JSON.stringify(points), JSON.stringify([...points].reverse())].sort()[0]
+    if (!byShape.has(key)) byShape.set(key, { id: e.id, from: e.from, to: e.to, lengthM: e.length_m, points })
+    canonical.set(e.id, byShape.get(key).id)
+  }
+  const edges = [...byShape.values()]
+  const tramos = tramosFromEdges(site).map((t) => ({ ...t, edges: t.edges.map((id) => canonical.get(id) ?? id) }))
+  console.log(`  ${site} tramos sobre ejes del IFC: ${tramos.map((t) => `${t.id} (${Math.round(t.lengthM)} m, ${t.edges.length} ejes)`).join(' · ')}`)
+
   const meshes = modelos[site]
     .filter((o) => o.t !== 'IfcOpeningElement')
     .map((o) => ({ t: o.t, n: o.name.split(':')[0].trim(), v: o.v.flat().map(r2), f: o.f.flat() }))
@@ -221,6 +283,12 @@ for (const site of ['ricardone', 'san_lorenzo']) {
     pointNodes,
     /** Zona de espera del layout → piso del IFC donde se dibujan sus camiones. */
     zoneFloors,
+    /** Pisos del IFC (vista simplificada): las playas que el editor de plano puede asignar a cada zona. */
+    floors: floors.map((o) => ({ guid: o.guid, polygon: ring(o), z: r2(o.z) })),
+    /** Ejes viales con trazado de la planta, sin repetidos (un eje por circuito que lo usa): el editor de plano arma tramos con ellos. */
+    edges,
+    /** Caminos entre puntos del layout sobre los ejes viales del IFC (coordenadas locales, de `fromPointId` a `toPointId`). */
+    tramos,
     meshes,
   }
   const file = path.join(ROOT, 'public/plant', site, 'modelo-3d.json')

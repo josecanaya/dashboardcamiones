@@ -35,6 +35,10 @@ export type PlantZoneShape = {
    * Sin `cameraGroups` el monitor abre `cameras` en una sola grilla.
    */
   cameraGroups?: { label: string; devices: string[] }[]
+  /** Vista iso: todos los pisos del IFC que forman la playa (el primero es `polygonPercent`). */
+  polygonsPercent?: { xPercent: number; yPercent: number }[][]
+  /** Vista iso: lugares de estacionamiento ordenados dentro de la playa, desde su acceso. */
+  parkPercent?: { xPercent: number; yPercent: number }[]
 }
 
 /** La vista cenital de la planta: capa fija, tal cual la entregó operaciones. */
@@ -45,6 +49,8 @@ export type PlantBasePlan = {
   note?: string
   /** 'iso' = render fijo del modelo IFC (vista oblicua de las imágenes de circuitos), no foto cenital. */
   projection?: 'iso'
+  /** Vista iso: ancho del glifo de camión en px de la imagen base, para dibujarlo a escala real. */
+  truckGlyphWidth?: number
 }
 
 /** Familia del punto — define el color del marcador, no su estado. */
@@ -96,6 +102,8 @@ export type PlantPoint = {
   assumeNextAfterMin?: number
   /** Piso donde se estacionan los camiones del punto (playa del IFC), en porcentajes de la imagen base. */
   areaPercent?: { xPercent: number; yPercent: number }[]
+  /** Vista iso: lugares de estacionamiento ordenados (filas alineadas al modelo) para los camiones del punto. */
+  parkPercent?: { xPercent: number; yPercent: number }[]
 }
 
 /** Geometría editable del camino físico entre dos puntos del circuito. */

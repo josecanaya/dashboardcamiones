@@ -138,23 +138,34 @@ function isoBox(x0: number, x1: number, y0: number, y1: number, h: number) {
     front: isoFace([[x1, y0, 0], [x1, y1, 0], [x1, y1, h], [x1, y0, h]]),
   }
 }
-// Semirremolque que avanza hacia el frente de la vista: caja detrás, cabina adelante.
-const ISO_TRAILER = isoBox(0, 14.5, 0, 5.5, 5.5)
-const ISO_CAB = isoBox(15.1, 19, 0.4, 5.1, 6.6)
+// Chasis y acoplado que avanza hacia el frente de la vista: acoplado atrás, lanza, caja del chasis y cabina.
+// Proporción real (≈ 20 m × 2,6 m), apenas ensanchado para que se lea a escala de planta.
+const ISO_ACOPLADO = isoBox(0, 7.6, 0, 3.6, 4.2)
+const ISO_CHASIS = isoBox(8.8, 15.6, 0, 3.6, 4.2)
+const ISO_CAB = isoBox(16, 19, 0.2, 3.4, 4.6)
+const ISO_LANZA = [iso(7.6, 1.8, 0.9), iso(8.8, 1.8, 0.9)].map((q) => q.map((v) => v.toFixed(2)).join(',')).join(' ')
 
-/** Semirremolque isométrico: la caja lleva el color del estado, la cabina va blanca. */
+/**
+ * Chasis y acoplado isométrico: las dos cajas llevan el color del estado, la cabina va blanca. El viewBox
+ * está centrado en el centro del camión sobre el piso, así el lugar de estacionamiento cae en el medio.
+ */
 function IsoTruck({ color }: { color: string }) {
+  const boxes = [ISO_ACOPLADO, ISO_CHASIS]
   return (
-    <svg viewBox="-6 -8 24 22" width="24" height="22" aria-hidden className="tf-iso-truck">
-      <polygon points={ISO_TRAILER.side} fill={color} style={{ filter: 'brightness(.72)' }} />
-      <polygon points={ISO_TRAILER.front} fill={color} style={{ filter: 'brightness(.55)' }} />
-      <polygon points={ISO_TRAILER.top} fill={color} />
+    <svg viewBox="-4.3 -4.4 22 20" aria-hidden className="tf-iso-truck">
+      <polyline points={ISO_LANZA} stroke="#1f2937" strokeWidth=".7" />
+      {boxes.map((b, i) => (
+        <g key={i}>
+          <polygon points={b.side} fill={color} style={{ filter: 'brightness(.72)' }} />
+          <polygon points={b.front} fill={color} style={{ filter: 'brightness(.55)' }} />
+          <polygon points={b.top} fill={color} />
+        </g>
+      ))}
       <polygon points={ISO_CAB.side} fill="#cbd5e1" />
       <polygon points={ISO_CAB.front} fill="#94a3b8" />
       <polygon points={ISO_CAB.top} fill="#ffffff" />
       <g fill="none" stroke="#1f2937" strokeWidth=".5" strokeLinejoin="round">
-        <polygon points={ISO_TRAILER.top} /><polygon points={ISO_TRAILER.side} /><polygon points={ISO_TRAILER.front} />
-        <polygon points={ISO_CAB.top} /><polygon points={ISO_CAB.side} /><polygon points={ISO_CAB.front} />
+        {[...boxes, ISO_CAB].map((b, i) => <g key={i}><polygon points={b.top} /><polygon points={b.side} /><polygon points={b.front} /></g>)}
       </g>
     </svg>
   )
@@ -242,6 +253,8 @@ export function PlantMap(props: {
   const pointState = useMemo(() => statePerPoint(points, zones), [points, zones])
   const liveZoneById = useMemo(() => new Map(zones.map((zone) => [zone.id, zone])), [zones])
   const zoneShape = useMemo(() => new Map(layout.zones.filter((z) => (z.polygonPercent?.length ?? 0) >= 3).map((z) => [z.zoneId, z.polygonPercent!])), [layout.zones])
+  /** Vista iso: lugares de estacionamiento de cada playa, en filas alineadas al modelo y desde su acceso. */
+  const zoneParks = useMemo(() => new Map(layout.zones.filter((z) => z.parkPercent?.length).map((z) => [z.zoneId, z.parkPercent!])), [layout.zones])
   /** Camiones esperando en playas: cada uno en un lugar de la grilla, los que más esperan arriba a la izquierda. */
   const zoneTrucks = useMemo(() => {
     if (!base) return []
@@ -249,10 +262,10 @@ export function PlantMap(props: {
     for (const t of trucks) if (t.waitZoneId && zoneShape.has(t.waitZoneId)) groups.set(t.waitZoneId, [...(groups.get(t.waitZoneId) ?? []), t])
     return [...groups.entries()].flatMap(([zoneId, list]) => {
       const cap = Math.max(list.length, liveZoneById.get(zoneId)?.capacityOperational ?? 40)
-      const slots = fillSlots(zoneShape.get(zoneId)!, cap, base.width, base.height)
+      const slots = zoneParks.get(zoneId) ?? fillSlots(zoneShape.get(zoneId)!, cap, base.width, base.height)
       return [...list].sort((a, b) => (b.waitMin ?? 0) - (a.waitMin ?? 0)).map((truck, i) => ({ truck, at: slots[i % slots.length] }))
     })
-  }, [trucks, zoneShape, base, liveZoneById])
+  }, [trucks, zoneShape, zoneParks, base, liveZoneById])
   const trucksByPoint = useMemo(() => {
     const m = new Map<string, MapTruck[]>()
     for (const t of trucks) {
@@ -362,7 +375,8 @@ export function PlantMap(props: {
       <div
         className={`relative max-w-full overflow-hidden rounded-2xl bg-slate-900 shadow-[0_18px_45px_rgba(15,23,42,.18)] ${align === 'left' ? 'mr-auto' : 'mx-auto'}`}
         style={fill
-          ? { aspectRatio: `${base.width} / ${base.height}`, height: '100%', width: 'auto', maxWidth: '100%', marginInline: 'auto' }
+          // Contenedor de consulta: el camión iso se mide en cqw para quedar a escala del modelo a cualquier tamaño.
+          ? { aspectRatio: `${base.width} / ${base.height}`, height: '100%', width: 'auto', maxWidth: '100%', marginInline: 'auto', containerType: 'size', ['--iso-truck-w' as string]: base.truckGlyphWidth ? `${(base.truckGlyphWidth / base.width) * 100}cqw` : undefined }
           : compact
           ? { aspectRatio: '16 / 10', width: '100%' }
           // Relación real de la imagen: si se deforma, los puntos y los polígonos
@@ -411,8 +425,8 @@ export function PlantMap(props: {
               <path d="M0,1 L9,5 L0,9 z" fill="#0EA5E9" />
             </marker>
           </defs>
-          {/* Red de caminos: los tramos por donde circulan los camiones entre puntos. */}
-          {showRoads ? (layout.tramos ?? []).map((tramo) => {
+          {/* Red de caminos: los tramos por donde circulan los camiones entre puntos. En la vista iso no hay líneas: las franjas del modelo ya son el camino. */}
+          {showRoads && !isoView ? (layout.tramos ?? []).map((tramo) => {
             const a = byId.get(tramo.fromPointId)
             const b = byId.get(tramo.toPointId)
             if (!a || !b) return null
@@ -432,9 +446,10 @@ export function PlantMap(props: {
             const selected = Boolean(sectorCode && selectedSector === sectorCode)
             const hoveredNow = hoveredZone === zone.zoneId
             return (
-              <polygon
-                key={zone.zoneId}
-                points={polygonPoints(vertices)}
+              // Una playa puede ser varios pisos del IFC: todos responden igual al cursor y al clic.
+              <g key={zone.zoneId}>{(zone.polygonsPercent ?? [vertices]).map((poly, index) => <polygon
+                key={index}
+                points={polygonPoints(poly)}
                 fill={zone.color ?? '#2563EB'}
                 fillOpacity={hoveredNow || selected ? 0.24 : isoView ? 0 : 0.1}
                 stroke={selected || hoveredNow ? status.ring : (zone.color ?? '#2563EB')}
@@ -458,7 +473,7 @@ export function PlantMap(props: {
                     onSelectSector?.(sectorCode)
                   }
                 }}
-              />
+              />)}</g>
             )
           }) : null}
           {showSectors && !quietZones ? layout.zones.map((zone) => {
@@ -482,8 +497,8 @@ export function PlantMap(props: {
               )}
             </g>
           }) : null}
-          {/* Recorrido del camión seguido: lo hecho en sólido, lo próximo punteado. */}
-          {followSegments.map(({ key, from, to }) => {
+          {/* Recorrido del camión seguido: lo hecho en sólido, lo próximo punteado (en iso quedan solo los números de paso). */}
+          {isoView ? null : followSegments.map(({ key, from, to }) => {
             const a = byId.get(from)
             const b = byId.get(to)
             if (!a || !b) return null
@@ -495,7 +510,7 @@ export function PlantMap(props: {
               <polyline points={pts} fill="none" stroke="#7C3AED" strokeWidth={5} strokeLinecap="round" strokeLinejoin="round" strokeDasharray={deduced ? '2 10' : undefined} />
             </g>
           })}
-          {followLast && followNext && byId.get(followNext) ? (() => {
+          {!isoView && followLast && followNext && byId.get(followNext) ? (() => {
             const a = byId.get(followLast)!
             const b = byId.get(followNext)!
             const pts = tramoPath(a, b, layout.tramos ?? []).map((pt) => `${(pt.xPercent / 100) * base.width},${(pt.yPercent / 100) * base.height}`).join(' ')
@@ -504,7 +519,7 @@ export function PlantMap(props: {
               <animate attributeName="stroke-dashoffset" from="16" to="0" dur="1.2s" repeatCount="indefinite" />
             </polyline>
           })() : null}
-          {active
+          {active && !isoView
             ? activeSegments.map(({ key, from, to }) => {
                 const a = byId.get(from)
                 const b = byId.get(to)
@@ -688,7 +703,12 @@ export function PlantMap(props: {
           // Punto que es una playa: los camiones se estacionan dentro de su piso, nunca afuera. Siguen la
           // fila de los que ya esperan en la zona del punto, para no pisarse cuando comparten piso.
           const waiting = p.waitZone ? trucks.filter((t) => t.waitZoneId === p.waitZone).length : 0
-          const slots = p.areaPercent && p.areaPercent.length >= 3 ? fillSlots(p.areaPercent, Math.max(waiting + list.length, (p.waitZone && liveZoneById.get(p.waitZone)?.capacityOperational) || 40), base.width, base.height).slice(waiting) : null
+          const zonePark = p.areaPercent && p.waitZone ? zoneParks.get(p.waitZone) : undefined
+          const slots = zonePark?.length
+            ? zonePark.slice(waiting)
+            : p.parkPercent?.length
+              ? p.parkPercent
+              : p.areaPercent && p.areaPercent.length >= 3 ? fillSlots(p.areaPercent, Math.max(waiting + list.length, (p.waitZone && liveZoneById.get(p.waitZone)?.capacityOperational) || 40), base.width, base.height).slice(waiting) : null
           const offsets = isoView ? isoOffsets(list.length) : truckOffsets(list.length)
           return list.map((t, i) => {
             const followed = t.plate === followedPlate

@@ -1,14 +1,13 @@
-// Editor del plano de planta: guarda a disco lo que se edita a mano en
-// PlantLayoutEditor.tsx (`/herramientas/editor-plano`), para no seguir
-// describiendo coordenadas por chat — el punto se ubica clickeando la imagen
-// real y ahí queda.
+// Editor del plano sobre el modelo IFC: guarda a disco los ajustes que se hacen a mano en
+// PlantIfcEditor.tsx (Datos → Editar plano), para no seguir describiendo coordenadas por chat —
+// el punto se ubica clickeando el modelo y ahí queda.
 //
-// Archivos que toca, por sitio (`ricardone`, `san_lorenzo`, …):
-//   public/plant/<site>/plantZones.json — el layout completo (PlantLayout).
-//     Este módulo solo reemplaza el array `points`; el resto (zones, roads,
-//     unplacedCameras, etc.) se relee y se reescribe tal cual estaba.
-//   public/plant/<site>/<site>-plano.<ext> — la imagen de fondo, si todavía
-//     no existe una planta cargada para ese sitio.
+// Archivo que toca, por sitio (`ricardone`, `san_lorenzo`, …):
+//   public/plant/<site>/ifc-overrides.json —
+//     { points: { S6: [x, y, z] }, zoneFloors: { Z6: [guid, …] }, removedZones: ['Z3'], tramos: { 'S1::S2': [edgeId | floorGuid, …] } }
+//     en coordenadas locales del IFC. En vivo (plant3dView.ts) los aplica por encima de lo que
+//     deduce el exportador (`pointNodes`, `zoneFloors`, `tramos` de modelo-3d.json). Un tramo con
+//     lista vacía va en línea recta.
 //
 // Es una herramienta local de configuración (la usa quien administra el
 // tablero), no una API pública: sin auth propia, pensada para correr en la
@@ -23,11 +22,14 @@ function isValidSite(site) {
   return typeof site === 'string' && SITE_RE.test(site)
 }
 
-const EXT_BY_MIME = { 'image/png': '.png', 'image/jpeg': '.jpg', 'image/jpg': '.jpg', 'image/webp': '.webp' }
+/** Coordenadas locales razonables para una planta (metros desde el origen del modelo). */
+const MAX_LOCAL_M = 5000
 
 export function createPlantLayoutEditorRouter({ publicDir }) {
   const plantDir = (site) => path.join(publicDir, 'plant', site)
   const layoutPath = (site) => path.join(plantDir(site), 'plantZones.json')
+  const modelPath = (site) => path.join(plantDir(site), 'modelo-3d.json')
+  const overridesPath = (site) => path.join(plantDir(site), 'ifc-overrides.json')
 
   /** Escribe atómico: a un .tmp primero, después rename — no deja el JSON a medio escribir. */
   function writeJsonAtomic(filePath, data) {
@@ -36,157 +38,70 @@ export function createPlantLayoutEditorRouter({ publicDir }) {
     fs.renameSync(tmp, filePath)
   }
 
-  /** GET /api/truckflow/plant-layout/:site */
-  function getLayout(req, res) {
-    const { site } = req.params
-    if (!isValidSite(site)) return res.status(400).json({ error: 'sitio inválido' })
-    if (!fs.existsSync(layoutPath(site))) return res.status(404).json({ exists: false })
-    try {
-      const data = JSON.parse(fs.readFileSync(layoutPath(site), 'utf8'))
-      res.json({ exists: true, layout: data })
-    } catch (e) {
-      res.status(500).json({ error: `plantZones.json de ${site} no se pudo leer: ${e.message}` })
-    }
-  }
-
   /**
-   * PUT /api/truckflow/plant-layout/:site — reemplaza `points` (y opcionalmente
-   * `zones`/`flow` si vienen) en el layout guardado. El resto del archivo
-   * (metersPerUnit, unplacedCameras, etc.) se conserva tal cual.
+   * PUT /api/truckflow/plant-layout/:site/ifc-overrides — reemplaza el archivo entero. Cada punto y
+   * zona tiene que existir en plantZones.json; cada piso y eje, en `floors`/`edges` de modelo-3d.json.
    */
-  function savePoints(req, res) {
+  function saveIfcOverrides(req, res) {
     const { site } = req.params
     if (!isValidSite(site)) return res.status(400).json({ error: 'sitio inválido' })
-    const { points, zones, tramos, circuitCompositions } = req.body ?? {}
-    if (!Array.isArray(points)) return res.status(400).json({ error: 'falta `points` (array)' })
-    for (const p of points) {
-      if (!p || typeof p.id !== 'string' || !p.id.trim()) {
-        return res.status(400).json({ error: 'cada punto necesita `id`' })
-      }
-      if (typeof p.xPercent !== 'number' || typeof p.yPercent !== 'number') {
-        return res.status(400).json({ error: `punto ${p.id}: xPercent/yPercent tienen que ser números` })
-      }
-      if (p.xPercent < 0 || p.xPercent > 100 || p.yPercent < 0 || p.yPercent > 100) {
-        return res.status(400).json({ error: `punto ${p.id}: coordenadas fuera del plano` })
-      }
+    const { points = {}, zoneFloors = {}, removedZones = [], tramos = {} } = req.body ?? {}
+    const isMap = (v) => v && typeof v === 'object' && !Array.isArray(v)
+    if (!isMap(points) || !isMap(zoneFloors) || !isMap(tramos) || !Array.isArray(removedZones)) {
+      return res.status(400).json({ error: '`points`, `zoneFloors` y `tramos` tienen que ser objetos; `removedZones`, una lista' })
     }
-    const ids = points.map((p) => p.id)
-    const dupe = ids.find((id, i) => ids.indexOf(id) !== i)
-    if (dupe) return res.status(400).json({ error: `id de punto repetido: ${dupe}` })
-
-    if (zones != null && !Array.isArray(zones)) {
-      return res.status(400).json({ error: '`zones` tiene que ser un array' })
+    if (!fs.existsSync(layoutPath(site)) || !fs.existsSync(modelPath(site))) {
+      return res.status(404).json({ error: `${site} no tiene plano o modelo IFC exportado` })
     }
-    if (Array.isArray(zones)) {
-      const zoneIds = zones.map((z) => z?.zoneId)
-      const duplicateZone = zoneIds.find((id, i) => typeof id === 'string' && zoneIds.indexOf(id) !== i)
-      if (duplicateZone) return res.status(400).json({ error: `zoneId repetido: ${duplicateZone}` })
-      for (const zone of zones) {
-        if (!zone || typeof zone.zoneId !== 'string' || !zone.zoneId.trim()) {
-          return res.status(400).json({ error: 'cada sector necesita `zoneId`' })
-        }
-        if (typeof zone.label !== 'string' || !zone.label.trim()) {
-          return res.status(400).json({ error: `sector ${zone.zoneId}: falta nombre` })
-        }
-        if (zone.polygonPercent != null) {
-          if (!Array.isArray(zone.polygonPercent) || (zone.polygonPercent.length > 0 && zone.polygonPercent.length < 3)) {
-            return res.status(400).json({ error: `sector ${zone.zoneId}: el polígono necesita al menos 3 vértices` })
-          }
-          for (const vertex of zone.polygonPercent) {
-            const x = vertex?.xPercent
-            const y = vertex?.yPercent
-            if (!Number.isFinite(x) || !Number.isFinite(y) || x < 0 || x > 100 || y < 0 || y > 100) {
-              return res.status(400).json({ error: `sector ${zone.zoneId}: vértice fuera del plano` })
-            }
-          }
-        }
-      }
-    }
-    if (tramos != null && !Array.isArray(tramos)) return res.status(400).json({ error: '`tramos` tiene que ser un array' })
-    if (Array.isArray(tramos)) {
-      const tramoIds = new Set()
-      for (const tramo of tramos) {
-        if (!tramo || typeof tramo.id !== 'string' || tramoIds.has(tramo.id)) return res.status(400).json({ error: 'tramo inválido o repetido' })
-        tramoIds.add(tramo.id)
-        if (typeof tramo.fromPointId !== 'string' || typeof tramo.toPointId !== 'string' || tramo.fromPointId === tramo.toPointId) return res.status(400).json({ error: `tramo ${tramo.id}: extremos inválidos` })
-        if (!ids.includes(tramo.fromPointId) || !ids.includes(tramo.toPointId)) return res.status(400).json({ error: `tramo ${tramo.id}: referencia un punto inexistente` })
-        if (!Array.isArray(tramo.viaPercent)) return res.status(400).json({ error: `tramo ${tramo.id}: falta viaPercent` })
-        for (const vertex of tramo.viaPercent) {
-          if (!Number.isFinite(vertex?.xPercent) || !Number.isFinite(vertex?.yPercent) || vertex.xPercent < 0 || vertex.xPercent > 100 || vertex.yPercent < 0 || vertex.yPercent > 100) return res.status(400).json({ error: `tramo ${tramo.id}: vértice fuera del plano` })
-        }
-      }
-    }
-    if (circuitCompositions != null && !Array.isArray(circuitCompositions)) return res.status(400).json({ error: '`circuitCompositions` tiene que ser un array' })
-    if (Array.isArray(circuitCompositions)) {
-      const validTramos = new Set((tramos ?? []).map((item) => item.id))
-      for (const composition of circuitCompositions) {
-        if (!composition || typeof composition.circuitCode !== 'string' || !Array.isArray(composition.tramos)) return res.status(400).json({ error: 'composición de circuito inválida' })
-        if (composition.tramos.some((ref) => !ref || typeof ref.tramoId !== 'string' || !validTramos.has(ref.tramoId))) return res.status(400).json({ error: `circuito ${composition.circuitCode}: referencia un tramo inexistente` })
-      }
-    }
-
-    if (!fs.existsSync(layoutPath(site))) return res.status(404).json({ error: `${site} no tiene plano cargado todavía` })
-    let current
+    let layout, model
     try {
-      current = JSON.parse(fs.readFileSync(layoutPath(site), 'utf8'))
+      layout = JSON.parse(fs.readFileSync(layoutPath(site), 'utf8'))
+      model = JSON.parse(fs.readFileSync(modelPath(site), 'utf8'))
     } catch (e) {
-      return res.status(500).json({ error: `plantZones.json de ${site} no se pudo leer: ${e.message}` })
+      return res.status(500).json({ error: `no se pudo leer el plano de ${site}: ${e.message}` })
     }
-    current.points = points
-    if (Array.isArray(zones)) current.zones = zones
-    if (Array.isArray(tramos)) current.tramos = tramos
-    if (Array.isArray(circuitCompositions)) current.circuitCompositions = circuitCompositions
-    current.rev = new Date().toISOString().slice(0, 10)
+    const pointIds = new Set((layout.points ?? []).map((p) => p.id))
+    const zoneIds = new Set((layout.zones ?? []).map((z) => z.zoneId))
+    const floorIds = new Set((model.floors ?? []).map((f) => f.guid))
+    const edgeIds = new Set((model.edges ?? []).map((e) => e.id))
+
+    for (const [id, at] of Object.entries(points)) {
+      if (!pointIds.has(id)) return res.status(400).json({ error: `punto ${id}: no existe en el plano` })
+      if (!Array.isArray(at) || at.length !== 3 || !at.every((v) => Number.isFinite(v) && Math.abs(v) <= MAX_LOCAL_M)) {
+        return res.status(400).json({ error: `punto ${id}: tiene que ser [x, y, z] en metros del modelo` })
+      }
+    }
+    for (const [id, guids] of Object.entries(zoneFloors)) {
+      if (!zoneIds.has(id)) return res.status(400).json({ error: `zona ${id}: no existe en el plano` })
+      const list = Array.isArray(guids) ? guids : [guids]
+      const bad = list.find((g) => typeof g !== 'string' || !floorIds.has(g))
+      if (bad !== undefined) return res.status(400).json({ error: `zona ${id}: el piso ${bad} no está en el modelo` })
+    }
+    const badZone = removedZones.find((id) => !zoneIds.has(id))
+    if (badZone !== undefined) return res.status(400).json({ error: `zona ${badZone}: no existe en el plano` })
+    for (const [id, edges] of Object.entries(tramos)) {
+      const [a, b, extra] = id.split('::')
+      if (extra !== undefined || !pointIds.has(a) || !pointIds.has(b) || a === b || [a, b].sort().join('::') !== id) {
+        return res.status(400).json({ error: `tramo ${id}: tiene que ser A::B con dos puntos del plano en orden` })
+      }
+      if (!Array.isArray(edges)) return res.status(400).json({ error: `tramo ${id}: tiene que ser una lista de ejes y pisos` })
+      const bad = edges.find((e) => !edgeIds.has(e) && !floorIds.has(e))
+      if (bad !== undefined) return res.status(400).json({ error: `tramo ${id}: ${bad} no es un eje ni un piso del modelo` })
+    }
+
+    const out = {
+      points: Object.fromEntries(Object.entries(points).map(([id, at]) => [id, at.map((v) => Math.round(v * 100) / 100)])),
+      zoneFloors: Object.fromEntries(Object.entries(zoneFloors).map(([id, g]) => [id, [...new Set(Array.isArray(g) ? g : [g])]])),
+      removedZones: [...new Set(removedZones)],
+      tramos: Object.fromEntries(Object.entries(tramos).map(([id, e]) => [id, [...new Set(e)]])),
+    }
     try {
-      writeJsonAtomic(layoutPath(site), current)
+      writeJsonAtomic(overridesPath(site), out)
     } catch (e) {
       return res.status(500).json({ error: `no se pudo guardar: ${e.message}` })
     }
-    res.json({ ok: true, pointCount: points.length, zoneCount: current.zones?.length ?? 0, tramoCount: current.tramos?.length ?? 0 })
+    res.json({ ok: true, pointCount: Object.keys(out.points).length, zoneCount: Object.keys(out.zoneFloors).length, removedZoneCount: out.removedZones.length, tramoCount: Object.keys(out.tramos).length })
   }
 
-  /**
-   * POST /api/truckflow/plant-layout/:site/image?width=&height= — sube la
-   * imagen de fondo. Si el sitio no tiene `plantZones.json`, crea uno nuevo y
-   * vacío (sin puntos: se agregan después, clickeando en el editor); si ya
-   * existe, solo reemplaza la imagen y sus medidas.
-   *
-   * El ancho/alto viajan por query porque los mide el browser al elegir el
-   * archivo (`img.naturalWidth/Height`) — evita sumar una librería de imágenes
-   * en el server solo para leer el header.
-   */
-  function uploadImage(req, res) {
-    const { site } = req.params
-    if (!isValidSite(site)) return res.status(400).json({ error: 'sitio inválido' })
-    const width = Number(req.query.width)
-    const height = Number(req.query.height)
-    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
-      return res.status(400).json({ error: 'faltan width/height (numéricos) de la imagen' })
-    }
-    const ext = EXT_BY_MIME[req.headers['content-type']]
-    if (!ext) return res.status(400).json({ error: `Content-Type de imagen no soportado: ${req.headers['content-type']}` })
-    if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
-      return res.status(400).json({ error: 'cuerpo de la petición vacío' })
-    }
-
-    const dir = plantDir(site)
-    fs.mkdirSync(dir, { recursive: true })
-    const fileName = `${site}-plano${ext}`
-    fs.writeFileSync(path.join(dir, fileName), req.body)
-
-    const isNewSite = !fs.existsSync(layoutPath(site))
-    const existing = isNewSite
-      ? { rev: new Date().toISOString().slice(0, 10), zones: [], points: [], tramos: [], circuitCompositions: [] }
-      : JSON.parse(fs.readFileSync(layoutPath(site), 'utf8'))
-    existing.basePlan = {
-      image: fileName,
-      width,
-      height,
-      note: 'Vista cenital de la planta. Capa fija: no se redibuja ni se recorta.',
-    }
-    writeJsonAtomic(layoutPath(site), existing)
-    res.json({ ok: true, image: fileName, width, height, isNewSite })
-  }
-
-  return { getLayout, savePoints, uploadImage }
+  return { saveIfcOverrides }
 }
