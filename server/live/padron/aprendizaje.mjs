@@ -7,7 +7,11 @@
  *   las verificó.
  * - no-camiones.json: vehículos que no son camiones (tractor o maquinaria, autos y camionetas, servicio,
  *   colectivos), de las quitas manuales con motivo, los descartes del operador y los descartes
- *   automáticos por tipo de vehículo en los accesos compartidos de San Lorenzo.
+ *   automáticos por tipo de vehículo en los accesos compartidos de San Lorenzo, y las máquinas que la IA
+ *   ve en la foto (pala cargadora, minicargadora: data/vision/veredictos.jsonl).
+ *
+ * En corregidos, cada par cuenta además cuántas veces operaciones confirmó lo mismo que había dicho la IA
+ * (`confirmaIa`) y cuántas la corrigió (`corrigeIa`): es la medición de la IA contra operaciones.
  *
  * Fuentes: data/plate-identification-log.jsonl (cada decisión, con la lectura), el archivo de casos
  * (data/plate-identification-archive.json) y las quitas de data/plant-state-manual-overrides.json.
@@ -51,6 +55,21 @@ export function kindOf(text) {
   return null
 }
 
+/** Veredictos de la IA por imagen (server/live/vision/visionJudge.mjs), por sitio y fragmento. */
+function visionVerdicts(root) {
+  const out = new Map()
+  try {
+    for (const line of readFileSync(path.join(root, 'data', 'vision', 'veredictos.jsonl'), 'utf8').split('\n')) {
+      if (!line) continue
+      try {
+        const v = JSON.parse(line)
+        out.set(`${v.site}|${v.fragmentKey}`, v)
+      } catch {}
+    }
+  } catch {}
+  return out
+}
+
 /**
  * Última decisión de cada caso (una «limpiar» o un descarte posterior anulan la confirmación).
  * El log trae la lectura desde el 07/10; las anteriores se completan con el archivo de casos.
@@ -71,11 +90,18 @@ function lastDecisions(root) {
 export function buildCorregidos(root = ROOT) {
   const pairs = new Map()
   const real = new Map()
+  const ia = visionVerdicts(root)
+  const iaStats = { confirmadas: 0, corregidas: 0 }
   for (const d of lastDecisions(root)) {
     if (d.action !== 'confirm' || d.source === 'automatic_algorithm') continue
     const read = normPlate(d.readPlate)
     const plate = normPlate(d.plate)
     if (!read || !plate || FAKE.test(plate)) continue
+    // ¿Operaciones dijo lo mismo que la IA (el candidato elegido o la patente que leyó en la foto)?
+    const v = ia.get(`${d.site}|${d.fragmentKey}`)
+    const iaPlates = v ? [v.plate, v.seenPlate].filter(Boolean).map(normPlate) : []
+    const iaAgrees = iaPlates.includes(plate)
+    if (v && !v.skipped) iaAgrees ? iaStats.confirmadas++ : iaStats.corregidas++
     if (read === plate) {
       const r = real.get(plate) ?? { plate, count: 0, lastAt: null }
       r.count++
@@ -84,15 +110,16 @@ export function buildCorregidos(root = ROOT) {
       continue
     }
     const k = `${read}>${plate}`
-    const p = pairs.get(k) ?? { read, real: plate, count: 0, devices: {}, lastAt: null }
+    const p = pairs.get(k) ?? { read, real: plate, count: 0, devices: {}, lastAt: null, confirmaIa: 0, corrigeIa: 0 }
     p.count++
+    if (v && !v.skipped) iaAgrees ? p.confirmaIa++ : p.corrigeIa++
     if (d.deviceCode) p.devices[d.deviceCode] = (p.devices[d.deviceCode] ?? 0) + 1
     p.lastAt = [p.lastAt, d.decidedAt].filter(Boolean).sort().at(-1)
     pairs.set(k, p)
   }
   // Una patente confirmada como real no es la lectura mala de otra (OJD501 / OJO501: los dos existen).
   const entries = [...pairs.values()].map((p) => ({ ...p, readIsReal: real.has(p.read) }))
-  const doc = { builtAt: new Date().toISOString(), pairs: entries, real: [...real.values()] }
+  const doc = { builtAt: new Date().toISOString(), pairs: entries, real: [...real.values()], ia: iaStats }
   writeAtomic(OUT_CORREGIDOS(root), doc)
   return doc
 }
@@ -125,6 +152,14 @@ export function buildNoCamiones(root = ROOT) {
       add(d.readPlate, kindOf(d.reason), 'operador', d.decidedAt)
     }
   }
+  // Máquinas que la IA vio en la foto: la lectura (y la patente que leyó, si leyó una) es de una máquina.
+  for (const v of visionVerdicts(root).values()) {
+    // Los veredictos anteriores al campo «tipo» lo dicen en el motivo (KOV00, MOB09 el 28/10).
+    const machine = v.vehicleType ? v.vehicleType === 'maquinaria' : !v.plate && /pala cargadora|minicargadora|autoelevador|tractor agr[ií]cola|retroexcavadora/i.test(v.reason ?? '')
+    if (!machine) continue
+    add(v.readPlate, 'tractor_maquinaria', 'ia', v.at)
+    if (v.seenPlate) add(v.seenPlate, 'tractor_maquinaria', 'ia', v.at)
+  }
   // Un vehículo con movimientos de balanza (Vehículos Permitidos) es un camión aunque una vez se haya descartado.
   const permitidos = new Set((readJson(path.join(root, 'data', 'padron', 'vehiculos-permitidos.json'))?.entries ?? []).filter((e) => e.category !== 'vehiculo_particular').map((e) => e.plate))
   const entries = [...byPlate.values()]
@@ -154,7 +189,7 @@ export function createAprendizaje({ projectRoot = ROOT, rebuildMs = 3600_000, lo
       real = new Set(c.real.map((r) => r.plate))
     }
     if (n) noCam = new Map(n.entries.map((e) => [e.plate, e]))
-    meta = { builtAt: c?.builtAt ?? n?.builtAt ?? null, pares: c?.pairs.length ?? 0, confirmadas: c?.real.length ?? 0, noCamiones: n?.entries.length ?? 0, porTipo: n?.counts ?? {} }
+    meta = { builtAt: c?.builtAt ?? n?.builtAt ?? null, ia: c?.ia ?? null, pares: c?.pairs.length ?? 0, confirmadas: c?.real.length ?? 0, noCamiones: n?.entries.length ?? 0, porTipo: n?.counts ?? {} }
   }
   const rebuild = async () => {
     try {

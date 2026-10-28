@@ -1,11 +1,12 @@
 /**
- * La IA en vivo (capa 3, última instancia): para cada lectura que quedó abierta con candidatos, baja
+ * La IA en vivo (capa 3, última instancia): para cada lectura abierta (con o sin candidatos) o ilegible, baja
  * del DSS la foto de la captura y las de las lecturas anteriores de cada candidato, las guarda en la
  * galería por patente (data/vision/fotos + galeria.jsonl con su vector) y le pregunta a Claude Opus
  * de quién es, imagen contra imagen (claudeVision.mjs). De la galería se suman, por candidato, las
  * fotos anteriores que la base vectorial ve más parecidas a la captura.
  *
- * Modo sombra: el veredicto queda en el caso (`ia`) y en data/vision/veredictos.jsonl, no se aplica.
+ * El veredicto queda en el caso (`ia`) y en data/vision/veredictos.jsonl; se aplica solo si la patente que lee
+ * la IA figura en la carta o en Vehículos Permitidos (seenPlate.mjs). Las máquinas van a la base de no camiones.
  * Apagada por defecto: VISION_IA=1 la prende; VISION_MAX_PER_DAY limita cuántas consultas hace por día.
  */
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
@@ -20,7 +21,7 @@ const safe = (v) => String(v || 'x').replace(/[^A-Za-z0-9_.-]/g, '_').slice(0, 8
 const f32ToB64 = (v) => Buffer.from(new Float32Array(v).buffer).toString('base64')
 const b64ToF32 = (s) => Array.from(new Float32Array(Buffer.from(s, 'base64').buffer.slice(0)))
 
-export function createVisionJudge({ dss, getPlantState, projectRoot, intervalMs = 60_000, perTick = 1, maxPerDay = Number(process.env.VISION_MAX_PER_DAY || 300), log = console }) {
+export function createVisionJudge({ dss, getPlantState, projectRoot, intervalMs = 60_000, perTick = 1, maxPerDay = Number(process.env.VISION_MAX_PER_DAY || 300), onMachine = () => {}, log = console }) {
   const dir = path.join(projectRoot, 'data', 'vision')
   const galleryFile = path.join(dir, 'galeria.jsonl')
   const verdictFile = path.join(dir, 'veredictos.jsonl')
@@ -103,10 +104,10 @@ export function createVisionJudge({ dss, getPlantState, projectRoot, intervalMs 
       const imgs = await candidateImages(c, cap)
       if (imgs.length) withImages.push({ id: c.plate, images: imgs.map((g) => ({ scene: g.scene, plate: g.plateCrop, label: g.device })) })
     }
-    if (!withImages.length) return { skipped: 'sin fotos de los candidatos' }
+    // Sin candidatos (o sin fotos de ellos) la IA igual mira la captura: lee la patente y dice qué vehículo es.
     const r = await decideByImage({ scene: cap.scene, plate: cap.plateCrop, label: item.deviceCode }, withImages)
-    // seenPlate: la patente que la IA lee en la foto (para volver a buscarla en la capa 2).
-    return { plate: r.choice, confidence: r.confidence, seenPlate: r.seenPlate, reason: r.reason, candidates: withImages.map((c) => c.id), costUsd: r.costUsd }
+    // seenPlate: la patente que la IA lee en la foto (vuelve a buscarse en la capa 2, ver seenPlate.mjs).
+    return { plate: r.choice, confidence: r.confidence, seenPlate: r.seenPlate, seenPlateConfidence: r.seenPlateConfidence, vehicleType: r.vehicleType, reason: r.reason, candidates: withImages.map((c) => c.id), costUsd: r.costUsd }
   }
 
   async function tick() {
@@ -122,8 +123,11 @@ export function createVisionJudge({ dss, getPlantState, projectRoot, intervalMs 
       const ps = getPlantState()
       for (const site of ['ricardone', 'san_lorenzo']) {
         const ids = await ps.getIdentifications(site)
-        // Las más recientes primero: son las que todavía sirven en vivo.
-        const queue = ids.items.filter((it) => OPEN.has(it.level) && !it.decision && !it.archived && it.candidates?.length && !verdicts.has(`${site}|${it.fragmentKey}`))
+        // Abiertas (con o sin candidatos) y las ilegibles que quedaron «fuera del sistema». Primero las sin
+        // candidatos (nadie más las puede resolver), y dentro de cada grupo las más recientes.
+        const queue = ids.items
+          .filter((it) => (OPEN.has(it.level) || (it.level === 'fuera_sistema' && !it.validFormat)) && !it.decision && !it.archived && !verdicts.has(`${site}|${it.fragmentKey}`))
+          .sort((a, b) => Number(Boolean(a.candidates?.length)) - Number(Boolean(b.candidates?.length)) || b.at.localeCompare(a.at))
         for (const item of queue.slice(0, perTick)) {
           if (usedToday >= maxPerDay) break
           usedToday++
@@ -132,6 +136,8 @@ export function createVisionJudge({ dss, getPlantState, projectRoot, intervalMs 
           verdicts.set(`${site}|${item.fragmentKey}`, v)
           appendFileSync(verdictFile, `${JSON.stringify(v)}\n`)
           ps.setVisionVerdict?.(site, item.fragmentKey, v)
+          // Una máquina vista en la foto entra a la base de no camiones (aprendizaje.mjs).
+          if (v.vehicleType === 'maquinaria') onMachine(v)
           log.info?.(`[ia] ${site} ${item.readPlate}: ${v.skipped ?? `${v.plate ?? 'ninguno'} (${Math.round((v.confidence ?? 0) * 100)} %)`}`)
         }
       }

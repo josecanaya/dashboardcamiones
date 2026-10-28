@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { parseVerdict } from './claudeVision.mjs'
-import { checkSeenPlate } from './seenPlate.mjs'
+import { applyVisionVerdict, checkSeenPlate } from './seenPlate.mjs'
 import { cameraBackground, cosine, vehicleVector } from './vectorBase.mjs'
 
 describe('respuesta de Claude', () => {
   it('JSON con texto o bloque de código alrededor', () => {
-    expect(parseVerdict('Listo:\n```json\n{"eleccion": "b", "confianza": 0.9, "patente_vista": "roq 011", "motivo": "mismo calco"}\n```')).toEqual({ eleccion: 'B', confianza: 0.9, patente: 'ROQ011', motivo: 'mismo calco' })
+    expect(parseVerdict('Listo:\n```json\n{"eleccion": "b", "confianza": 0.9, "patente_vista": "roq 011", "confianza_patente": 0.8, "tipo": "Camion", "motivo": "mismo calco"}\n```')).toEqual({ eleccion: 'B', confianza: 0.9, patente: 'ROQ011', confianzaPatente: 0.8, tipo: 'camion', motivo: 'mismo calco' })
   })
   it('«ninguno» no elige a nadie; la confianza queda entre 0 y 1', () => {
     expect(parseVerdict('{"eleccion":"ninguno","confianza":1.4,"motivo":"x"}')).toMatchObject({ eleccion: null, confianza: 1 })
@@ -30,6 +30,30 @@ describe('patente que ve la IA', () => {
     expect(r).toMatchObject({ igualALeida: true, enPlanta: false })
     expect(r.texto).toContain('no figura en ninguna base')
     expect(checkSeenPlate({ seenPlate: '' }, item)).toBeNull()
+  })
+})
+
+describe('la IA se aplica sola', () => {
+  const at = '2026-10-28T15:59:00-03:00'
+  const occ = (iso) => new Date(Date.parse(iso) - 206 * 60_000).toISOString()
+  const events = [{ journeyUid: 'tso', truckPlate: 'TSO035', normalizedPlate: 'TSO035', deviceCode: 'RicCal03', occurredAt: occ('2026-10-28T15:30:00-03:00') }]
+  const caso = (ia, extra = {}) => ({ fragmentKey: 'f', readPlate: 'TGO035', at, level: 'provisorio', decision: null, ia, ...extra })
+  const pv = (capa2) => ({ plate: 'TSO035', capa2, capa2Label: capa2 ? 'carta de porte 1013' : null })
+  const carta = { source: 'carta', ctg: '1013', role: 'chasis', chasis: 'TSO035' }
+
+  it('patente vista en la carta y confianza ≥ 0,4: se suma al viaje de esa patente', () => {
+    const r = applyVisionVerdict(caso({ seenPlateConfidence: 0.45, patenteVista: pv(carta) }), events)
+    expect(r).toMatchObject({ level: 'casi_seguro', rule: 'ia_imagen', assignedPlate: 'TSO035', assignedJourneyUid: 'tso' })
+  })
+  it('no se aplica: confianza baja, fuera de la capa 2, máquina o decisión de operaciones', () => {
+    expect(applyVisionVerdict(caso({ seenPlateConfidence: 0.3, patenteVista: pv(carta) }), events)).toBeNull()
+    expect(applyVisionVerdict(caso({ seenPlateConfidence: 0.9, patenteVista: pv(null) }), events)).toBeNull()
+    expect(applyVisionVerdict(caso({ seenPlateConfidence: 0.9, vehicleType: 'maquinaria', patenteVista: pv(carta) }), events)).toBeNull()
+    expect(applyVisionVerdict(caso({ seenPlateConfidence: 0.9, patenteVista: pv(carta) }, { decision: { action: 'review' } }), events)).toBeNull()
+  })
+  it('acoplado de una carta: se asigna al chasis', () => {
+    const r = applyVisionVerdict(caso({ seenPlateConfidence: 0.8, patenteVista: { ...pv({ source: 'carta', ctg: '9', role: 'acoplado', chasis: 'TSO035' }), plate: 'AA111BB' } }), events)
+    expect(r.assignedPlate).toBe('TSO035')
   })
 })
 

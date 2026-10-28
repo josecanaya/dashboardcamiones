@@ -23,17 +23,22 @@ const TOP_BAR = 0.04
 const SYSTEM = 'Sos un perito que compara fotos de vehículos de cámaras de una planta de granos. Respondés solo con el JSON pedido.'
 
 const INSTRUCTIONS = (candidates) => [
-  'Una cámara capturó un vehículo y la patente quedó mal leída o en duda. Decidí, mirando las imágenes,',
-  'si ese vehículo es alguno de los camiones candidatos (fotos de lecturas anteriores de cada uno).',
-  `Candidatos: ${candidates.length ? candidates.join(', ') : '(ninguno)'}.`,
+  'Una cámara capturó un vehículo y la patente quedó mal leída o en duda.',
+  ...(candidates.length
+    ? ['Decidí, mirando las imágenes, si ese vehículo es alguno de los camiones candidatos (fotos de lecturas anteriores de cada uno).', `Candidatos: ${candidates.join(', ')}.`]
+    : ['No hay candidatos: leé la patente en la foto (escena y recorte) lo mejor que puedas y decí qué vehículo es. "eleccion" va "ninguno".']),
   '',
   'Compará el vehículo: forma y color de cabina, marca y modelo, deflector, franjas, calcos, logos, llantas,',
   'paragolpes, espejos, abolladuras, carga o acoplado, y los caracteres visibles de la patente. Las fotos son de',
   'cámaras y horas distintas (día/noche, frente/trasera): no descartes por eso. La patente leída puede estar mal.',
   'Si dos candidatos son igual de compatibles, respondé "ninguno" o confianza baja: errar es peor que no decidir.',
   '',
+  'Patente argentina: AAA999 (vieja) o AA999AA (Mercosur). Si no se lee entera, dejala vacía.',
+  'Tipo de vehículo: camion (camión o tractor de ruta con o sin acoplado), liviano (auto, pickup, utilitario, furgón),',
+  'colectivo, maquinaria (pala cargadora, minicargadora, tractor agrícola, autoelevador) u otro.',
+  '',
   'Respondé SOLO con este JSON:',
-  '{"eleccion": "<letra o ninguno>", "confianza": <0 a 1>, "patente_vista": "<la patente que leés en la captura, o vacío>", "motivo": "<una o dos frases con los rasgos que coinciden o difieren>"}',
+  '{"eleccion": "<letra o ninguno>", "confianza": <0 a 1 de la elección>, "patente_vista": "<la patente que leés en la captura, o vacío>", "confianza_patente": <0 a 1 de esa lectura>, "tipo": "<camion|liviano|colectivo|maquinaria|otro>", "motivo": "<una o dos frases con los rasgos que coinciden o difieren>"}',
 ].join('\n')
 
 /** JSON final de la respuesta del modelo (puede venir con texto o bloque de código alrededor). */
@@ -48,6 +53,8 @@ export function parseVerdict(text) {
       eleccion: /^ninguno$/i.test(eleccion) ? null : eleccion.toUpperCase(),
       confianza: Number.isFinite(confianza) ? Math.max(0, Math.min(1, confianza)) : 0,
       patente: String(v.patente_vista ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '') || null,
+      confianzaPatente: Number.isFinite(Number(v.confianza_patente)) ? Math.max(0, Math.min(1, Number(v.confianza_patente))) : null,
+      tipo: ['camion', 'liviano', 'colectivo', 'maquinaria', 'otro'].includes(String(v.tipo ?? '').toLowerCase()) ? String(v.tipo).toLowerCase() : null,
       motivo: String(v.motivo ?? ''),
     }
   } catch {
@@ -103,7 +110,7 @@ function runClaude(content, { model, cli }) {
 /**
  * @param {{ scene?: string|null, plate?: string|null, label?: string }} capture rutas a la foto de escena y al recorte de patente
  * @param {{ id: string, images: { scene?: string|null, plate?: string|null, label?: string }[] }[]} candidates fotos anteriores de cada camión (id = patente, no se le muestra a la IA)
- * @returns {Promise<{ choice: string|null, confidence: number, seenPlate: string|null, reason: string, letters: Record<string, string>, costUsd: number|null, ms: number|null, raw: string }>}
+ * @returns {Promise<{ choice: string|null, confidence: number, seenPlate: string|null, seenPlateConfidence: number|null, vehicleType: string|null, reason: string, letters: Record<string, string>, costUsd: number|null, ms: number|null, raw: string }>}
  */
 export async function decideByImage(capture, candidates, { model = process.env.VISION_MODEL || 'opus', cli = findClaudeCli() } = {}) {
   const content = []
@@ -127,5 +134,5 @@ export async function decideByImage(capture, candidates, { model = process.env.V
   const r = await runClaude(content, { model, cli })
   const v = parseVerdict(r.text)
   const choice = v?.eleccion && letters[v.eleccion] ? letters[v.eleccion] : null
-  return { choice, confidence: v ? v.confianza : 0, seenPlate: v?.patente ?? null, reason: v?.motivo ?? "sin respuesta válida", letters, costUsd: r.costUsd, ms: r.ms, usage: r.usage, raw: r.text }
+  return { choice, confidence: v ? v.confianza : 0, seenPlate: v?.patente ?? null, seenPlateConfidence: v?.confianzaPatente ?? null, vehicleType: v?.tipo ?? null, reason: v?.motivo ?? "sin respuesta válida", letters, costUsd: r.costUsd, ms: r.ms, usage: r.usage, raw: r.text }
 }

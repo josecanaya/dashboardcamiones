@@ -25,6 +25,13 @@ function fixture() {
   writeFileSync(path.join(root, 'data', 'plant-state-manual-overrides.json'), JSON.stringify({ ricardone: { '924KHA': { action: 'remove', reason: 'Tractor o maquinaria', updatedAt: '2026-10-10T10:00:00Z' } } }))
   // TRK123 tiene movimientos de balanza: es un camión aunque una vez lo hayan descartado.
   writeFileSync(path.join(root, 'data', 'padron', 'vehiculos-permitidos.json'), JSON.stringify({ entries: [{ plate: 'TRK123', category: 'insumos' }] }))
+  // Veredictos de la IA: una máquina y el caso «a» (JLO557), donde la IA dijo lo mismo que operaciones.
+  mkdirSync(path.join(root, 'data', 'vision'), { recursive: true })
+  writeFileSync(path.join(root, 'data', 'vision', 'veredictos.jsonl'), [
+    { site: 'san_lorenzo', fragmentKey: 'm', readPlate: 'KOV00', vehicleType: 'maquinaria', plate: null, at: '2026-10-28T18:37:31Z' },
+    { site: 'ricardone', fragmentKey: 'a', readPlate: 'JLO557', plate: null, seenPlate: 'JLQ557', at: '2026-10-20T09:00:00Z' },
+    { site: 'ricardone', fragmentKey: 'b', readPlate: 'JLO557', plate: 'XXX999', at: '2026-10-21T09:00:00Z' },
+  ].map((v) => JSON.stringify(v)).join('\n'))
   return root
 }
 
@@ -51,6 +58,14 @@ describe('aprendizaje de operaciones', () => {
     expect(a.corregidos.realOf('OJD501')).toEqual([])
     expect(a.corregidos.isReal('OJD501')).toBe(true)
     expect(a.noCamiones.lookup('924-KHA').kind).toBe('tractor_maquinaria')
+  })
+
+  it('la IA: sus máquinas van a no camiones y se mide contra operaciones', () => {
+    const root = fixture()
+    expect(buildNoCamiones(root).entries.find((e) => e.plate === 'KOV00')).toMatchObject({ kind: 'tractor_maquinaria', sources: { ia: 1 } })
+    const c = buildCorregidos(root)
+    expect(c.ia).toEqual({ confirmadas: 1, corregidas: 1 })
+    expect(c.pairs.find((p) => p.read === 'JLO557')).toMatchObject({ confirmaIa: 1, corrigeIa: 1 })
   })
 
   it('tipo por motivo o categoría', () => {

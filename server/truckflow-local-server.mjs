@@ -462,7 +462,7 @@ app.get('/api/truckflow/live/identifications/:fragmentKey/evidence', dssPhotos.e
 // Lecturas que se pueden decidir con color/marca/tipo del DSS: se evalúan solas en segundo plano.
 if (process.env.AUTO_EVIDENCE !== '0') dssPhotos.startAutoEvidence()
 /** La IA (Claude Opus) decide por imagen los casos abiertos, en modo sombra: server/live/vision/visionJudge.mjs. */
-const visionJudge = createVisionJudge({ dss: dssLive, getPlantState: () => plantState, projectRoot: PROJECT_ROOT })
+const visionJudge = createVisionJudge({ dss: dssLive, getPlantState: () => plantState, projectRoot: PROJECT_ROOT, onMachine: scheduleAprendizaje })
 // Apagada salvo pedido explícito: cada consulta consume la cuenta de Claude con la que esté logueado el CLI.
 if (process.env.VISION_IA === '1') visionJudge.start()
 app.get('/api/truckflow/live/vision', (req, res) => {

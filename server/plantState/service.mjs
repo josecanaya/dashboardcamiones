@@ -20,7 +20,7 @@ import { createIdentificationArchive } from './identificationArchive.mjs'
 import { padronCartas } from './padronCartas.mjs'
 import { assessVehicleRelevance, excludeIrrelevantEvents } from './vehicleRelevance.mjs'
 import { alertInstantMs, alertReadEvents, withAlertAttributes } from './alertReads.mjs'
-import { checkSeenPlate } from '../live/vision/seenPlate.mjs'
+import { applyVisionVerdict, checkSeenPlate } from '../live/vision/seenPlate.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '../..')
@@ -424,8 +424,19 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       }
       result.items = result.items.map((it) => {
         const v = ia[it.fragmentKey]
-        return v ? { ...it, ia: { ...v, patenteVista: checkSeenPlate(v, it, ctxSeen) } } : it
+        if (!v) return it
+        const withIa = { ...it, ia: { ...v, patenteVista: checkSeenPlate(v, it, ctxSeen) } }
+        return process.env.VISION_APPLY === '0' ? withIa : applyVisionVerdict(withIa, rawEvents, { minConfidence: Number(process.env.VISION_APPLY_MIN ?? 0.4) }) ?? withIa
       })
+      // Varias lecturas que la IA lleva a la misma patente sin viaje en planta (TGO035 e ISD035 → TSO035):
+      // se juntan en el viaje de la primera, para que sea un solo camión.
+      const firstJourney = new Map()
+      for (const it of [...result.items].sort((x, y) => x.at.localeCompare(y.at))) {
+        // Solo claves que son un journeyUid (las de alerta o «PATENTE#n» no son viajes del feed).
+        if (it.rule !== 'ia_imagen' || it.assignedJourneyUid || String(it.fragmentKey).startsWith('alert-') || String(it.fragmentKey).includes('#')) continue
+        if (!firstJourney.has(it.assignedPlate)) firstJourney.set(it.assignedPlate, it.fragmentKey)
+      }
+      result.items = result.items.map((it) => (it.rule === 'ia_imagen' && !it.assignedJourneyUid && firstJourney.has(it.assignedPlate) ? { ...it, assignedJourneyUid: firstJourney.get(it.assignedPlate) } : it))
     }
     result.alertReads = rawEvents.filter((e) => e.fromAlert)
     result.autoLinks = backwardLinks(site, rawEvents, nowMs, result.items)
