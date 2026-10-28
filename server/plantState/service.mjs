@@ -20,6 +20,7 @@ import { createIdentificationArchive } from './identificationArchive.mjs'
 import { padronCartas } from './padronCartas.mjs'
 import { assessVehicleRelevance, excludeIrrelevantEvents } from './vehicleRelevance.mjs'
 import { alertInstantMs, alertReadEvents, withAlertAttributes } from './alertReads.mjs'
+import { checkSeenPlate } from '../live/vision/seenPlate.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '../..')
@@ -413,7 +414,19 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     // (mal leída pero patente); las ilegibles quedan afuera (serían ~700 por día).
     result.items = result.items.filter((it) => !String(it.fragmentKey).startsWith('alert-') || it.assignedPlate || it.decision || it.validFormat)
     const ia = visionVerdicts.get(site)
-    if (ia) result.items = result.items.map((it) => (ia[it.fragmentKey] ? { ...it, ia: ia[it.fragmentKey] } : it))
+    if (ia) {
+      // La patente que la IA lee en la foto vuelve a buscarse en la capa 2, los no camiones, la balanza y las cámaras.
+      const ctxSeen = {
+        padron: process.env.IDENTIFICATION_PADRON === '0' ? null : padronIndex,
+        balanza: process.env.IDENTIFICATION_BALANZA === '0' ? null : liveBalanzaRegistry(nowMs),
+        noCamiones: aprendizajeIndex?.noCamiones ?? null,
+        plantPlates: new Set(rawEvents.map((e) => String(e.normalizedPlate || e.truckPlate || '').toUpperCase().replace(/[^A-Z0-9]/g, '')).filter(Boolean)),
+      }
+      result.items = result.items.map((it) => {
+        const v = ia[it.fragmentKey]
+        return v ? { ...it, ia: { ...v, patenteVista: checkSeenPlate(v, it, ctxSeen) } } : it
+      })
+    }
     result.alertReads = rawEvents.filter((e) => e.fromAlert)
     result.autoLinks = backwardLinks(site, rawEvents, nowMs, result.items)
     result.items = withOutsideSystem(identificationArchive.merge(site, result.items, identificationDecisions[site] || {}))

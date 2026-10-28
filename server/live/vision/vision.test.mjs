@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { parseVerdict } from './claudeVision.mjs'
+import { checkSeenPlate } from './seenPlate.mjs'
 import { cameraBackground, cosine, vehicleVector } from './vectorBase.mjs'
 
 describe('respuesta de Claude', () => {
@@ -11,6 +12,24 @@ describe('respuesta de Claude', () => {
   })
   it('sin JSON: null', () => {
     expect(parseVerdict('no puedo ver las imágenes')).toBeNull()
+  })
+})
+
+describe('patente que ve la IA', () => {
+  const item = { readPlate: 'TGO035', at: '2026-10-28T15:59:00-03:00' }
+  const padron = { at: (p) => (p === 'TSO035' ? { source: 'carta', ctg: '1013', role: 'chasis', chasis: 'TSO035' } : null) }
+  const balanza = { truckAt: (p) => p === 'TSO035', isKnown: () => false }
+
+  it('vuelve a buscarse en la capa 2, la balanza y las cámaras', () => {
+    const r = checkSeenPlate({ seenPlate: 'tso 035', plate: 'ISD035' }, item, { padron, balanza, plantPlates: new Set(['TSO035']) })
+    expect(r).toMatchObject({ plate: 'TSO035', capa2Label: 'carta de porte 1013', balanza: 'en_planta', enPlanta: true, igualAElegida: false })
+    expect(r.texto).toContain('figura en carta de porte 1013')
+  })
+  it('igual a la leída: estar en las cámaras no cuenta; sin patente válida no hay sugerencia', () => {
+    const r = checkSeenPlate({ seenPlate: 'TGO035' }, item, { plantPlates: new Set(['TGO035']) })
+    expect(r).toMatchObject({ igualALeida: true, enPlanta: false })
+    expect(r.texto).toContain('no figura en ninguna base')
+    expect(checkSeenPlate({ seenPlate: '' }, item)).toBeNull()
   })
 })
 
