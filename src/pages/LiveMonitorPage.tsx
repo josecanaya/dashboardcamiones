@@ -66,7 +66,10 @@ export function LiveMonitorPage() {
   useEffect(() => {
     let alive = true
     setLayout(null); setFollowed(null); setZoneFilter(null)
-    fetch(`/plant/${site}/plantZones.json`).then(r => r.ok ? r.json() : null).then(l => { if (alive) setLayout(l) }).catch(() => undefined)
+    // El plano es el modelo IFC en vista fija; si el navegador no puede dibujarlo, queda la foto cenital.
+    fetch(`/plant/${site}/plantZones.json`).then(r => r.ok ? r.json() as Promise<PlantLayout> : null)
+      .then(async l => l && import('../components/plant/plant3dView').then(m => m.loadPlant3dLayout(site, l)).catch(e => { console.warn('Modelo 3D no disponible:', e); return l }))
+      .then(l => { if (alive) setLayout(l) }).catch(() => undefined)
     return () => { alive = false }
   }, [site])
 
@@ -200,7 +203,6 @@ export function LiveMonitorPage() {
               site={site}
               fill
               quietZones
-              showRoads
               showCircuitControls={false}
               zones={zones}
               trucks={mapTrucks}

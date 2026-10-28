@@ -226,3 +226,13 @@
 .tf-map-truck.is-transit { z-index: 26; }
 .tf-map-truck.is-guessed { border-style: dashed; }
 .tf-map-truck.is-waiting { z-index: 24; width: 12px; height: 8px; margin: -4px 0 0 -6px; border-width: 1.5px; }
+
+/* Camión sobre el modelo isométrico: semirremolque dibujado, sin pastilla. */
+.tf-map-truck.tf-map-truck--iso { width: 24px; height: 22px; margin: -11px 0 0 -12px; border: 0; border-radius: 0; background: none; box-shadow: none; filter: drop-shadow(0 1.5px 1.5px rgba(15,23,42,.35)); }
+.tf-map-truck.tf-map-truck--iso::after { content: none; }
+.tf-map-truck.tf-map-truck--iso .tf-iso-truck { display: block; overflow: visible; }
+.tf-map-truck.tf-map-truck--iso.is-waiting { width: 24px; height: 22px; margin: -11px 0 0 -12px; transform: scale(.82); }
+.tf-map-truck.tf-map-truck--iso.is-waiting:hover { transform: scale(1.2); }
+.tf-map-truck.tf-map-truck--iso.is-guessed { opacity: .65; }
+.tf-map-truck.tf-map-truck--iso.is-followed { width: 24px; height: 22px; margin: -11px 0 0 -12px; border: 0; transform: scale(1.5); animation: none; box-shadow: none; filter: drop-shadow(0 0 3px #7c3aed) drop-shadow(0 0 6px rgba(124,58,237,.6)); }
+.tf-map-truck.tf-map-truck--iso.is-followed .tf-map-truck__plate { bottom: 22px; transform: translateX(-50%) scale(.67); }

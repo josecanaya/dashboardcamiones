@@ -43,6 +43,8 @@ export type PlantBasePlan = {
   width: number
   height: number
   note?: string
+  /** 'iso' = render fijo del modelo IFC (vista oblicua de las imágenes de circuitos), no foto cenital. */
+  projection?: 'iso'
 }
 
 /** Familia del punto — define el color del marcador, no su estado. */
@@ -92,6 +94,8 @@ export type PlantPoint = {
    * (lectura perdida o patente leída distinto). También lo da por pasado un ingreso en SGC.
    */
   assumeNextAfterMin?: number
+  /** Piso donde se estacionan los camiones del punto (playa del IFC), en porcentajes de la imagen base. */
+  areaPercent?: { xPercent: number; yPercent: number }[]
 }
 
 /** Geometría editable del camino físico entre dos puntos del circuito. */

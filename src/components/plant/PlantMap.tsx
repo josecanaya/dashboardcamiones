@@ -115,6 +115,51 @@ function truckOffsets(count: number): { dx: number; dy: number }[] {
   return out
 }
 
+/**
+ * Camiones en el modelo isométrico: estacionados lado a lado, de a cuatro
+ * por hilera y las hileras una detrás de otra, al costado del punto (no en anillo encima del marcador).
+ */
+function isoOffsets(count: number): { dx: number; dy: number }[] {
+  return Array.from({ length: count }, (_, i) => {
+    const col = i % 4
+    const row = Math.floor(i / 4)
+    return { dx: 24 - col * 6.5 + row * 19, dy: 2 + col * 3.8 + row * 11 }
+  })
+}
+
+/** Proyección isométrica del glifo: x = largo del camión, y = ancho, z = alto (en px). */
+const iso = (x: number, y: number, z: number) => [(x - y) * 0.866, (x + y) * 0.5 - z] as const
+const isoFace = (pts: [number, number, number][]) => pts.map(([x, y, z]) => iso(x, y, z).map((v) => v.toFixed(2)).join(',')).join(' ')
+function isoBox(x0: number, x1: number, y0: number, y1: number, h: number) {
+  // Caras visibles: arriba, el lateral y1 y el frente x1 (las más cercanas a quien mira).
+  return {
+    top: isoFace([[x0, y0, h], [x1, y0, h], [x1, y1, h], [x0, y1, h]]),
+    side: isoFace([[x0, y1, 0], [x1, y1, 0], [x1, y1, h], [x0, y1, h]]),
+    front: isoFace([[x1, y0, 0], [x1, y1, 0], [x1, y1, h], [x1, y0, h]]),
+  }
+}
+// Semirremolque que avanza hacia el frente de la vista: caja detrás, cabina adelante.
+const ISO_TRAILER = isoBox(0, 14.5, 0, 5.5, 5.5)
+const ISO_CAB = isoBox(15.1, 19, 0.4, 5.1, 6.6)
+
+/** Semirremolque isométrico: la caja lleva el color del estado, la cabina va blanca. */
+function IsoTruck({ color }: { color: string }) {
+  return (
+    <svg viewBox="-6 -8 24 22" width="24" height="22" aria-hidden className="tf-iso-truck">
+      <polygon points={ISO_TRAILER.side} fill={color} style={{ filter: 'brightness(.72)' }} />
+      <polygon points={ISO_TRAILER.front} fill={color} style={{ filter: 'brightness(.55)' }} />
+      <polygon points={ISO_TRAILER.top} fill={color} />
+      <polygon points={ISO_CAB.side} fill="#cbd5e1" />
+      <polygon points={ISO_CAB.front} fill="#94a3b8" />
+      <polygon points={ISO_CAB.top} fill="#ffffff" />
+      <g fill="none" stroke="#1f2937" strokeWidth=".5" strokeLinejoin="round">
+        <polygon points={ISO_TRAILER.top} /><polygon points={ISO_TRAILER.side} /><polygon points={ISO_TRAILER.front} />
+        <polygon points={ISO_CAB.top} /><polygon points={ISO_CAB.side} /><polygon points={ISO_CAB.front} />
+      </g>
+    </svg>
+  )
+}
+
 const STATUS_RANK: Record<SectorStatus, number> = { no_data: 0, normal: 1, attention: 2, critical: 3 }
 
 type PointState = { queue: number | null; status: SectorStatus; zones: string[] }
@@ -179,6 +224,7 @@ export function PlantMap(props: {
   const [showPoints, setShowPoints] = useState(true)
 
   const base = layout.basePlan
+  const isoView = base?.projection === 'iso'
   const points = useMemo(() => layout.points ?? [], [layout.points])
   const byId = useMemo(() => new Map(points.map((p) => [p.id, p])), [points])
   const routes = useMemo(() => getRicardoneCircuitRoutes(points.map((p) => p.id)), [points])
@@ -333,8 +379,8 @@ export function PlantMap(props: {
             : { inset: 0 }}
         >
         <img
-          src={`/plant/${site}/${base.image}`}
-          alt={`Vista cenital de la planta de ${site === 'ricardone' ? 'Ricardone' : 'San Lorenzo'}`}
+          src={/^(blob|data):/.test(base.image) ? base.image : `/plant/${site}/${base.image}`}
+          alt={`Plano de la planta de ${site === 'ricardone' ? 'Ricardone' : 'San Lorenzo'}`}
           draggable={false}
           className="absolute inset-0 h-full w-full select-none"
         />
@@ -390,10 +436,10 @@ export function PlantMap(props: {
                 key={zone.zoneId}
                 points={polygonPoints(vertices)}
                 fill={zone.color ?? '#2563EB'}
-                fillOpacity={hoveredNow || selected ? 0.24 : 0.1}
+                fillOpacity={hoveredNow || selected ? 0.24 : isoView ? 0 : 0.1}
                 stroke={selected || hoveredNow ? status.ring : (zone.color ?? '#2563EB')}
                 strokeWidth={selected || hoveredNow ? 2.5 : 1.25}
-                strokeOpacity={selected || hoveredNow ? 0.95 : 0.72}
+                strokeOpacity={selected || hoveredNow ? 0.95 : isoView ? 0 : 0.72}
                 strokeLinejoin="round"
                 vectorEffect="non-scaling-stroke"
                 className={sectorCode ? 'pointer-events-auto cursor-pointer' : 'pointer-events-auto'}
@@ -639,21 +685,29 @@ export function PlantMap(props: {
         {/* Capa de flujo: cada camión en su punto actual. */}
         {[...trucksByPoint.entries()].map(([pointId, list]) => {
           const p = byId.get(pointId)!
-          const offsets = truckOffsets(list.length)
+          // Punto que es una playa: los camiones se estacionan dentro de su piso, nunca afuera. Siguen la
+          // fila de los que ya esperan en la zona del punto, para no pisarse cuando comparten piso.
+          const waiting = p.waitZone ? trucks.filter((t) => t.waitZoneId === p.waitZone).length : 0
+          const slots = p.areaPercent && p.areaPercent.length >= 3 ? fillSlots(p.areaPercent, Math.max(waiting + list.length, (p.waitZone && liveZoneById.get(p.waitZone)?.capacityOperational) || 40), base.width, base.height).slice(waiting) : null
+          const offsets = isoView ? isoOffsets(list.length) : truckOffsets(list.length)
           return list.map((t, i) => {
             const followed = t.plate === followedPlate
+            const at = slots
+              ? { left: `${slots[i % slots.length].xPercent}%`, top: `${slots[i % slots.length].yPercent}%` }
+              : { left: `calc(${p.xPercent}% + ${offsets[i].dx}px)`, top: `calc(${p.yPercent}% + ${offsets[i].dy}px)` }
             return (
               <button
                 key={`truck-${t.plate}`}
                 type="button"
-                className={`tf-map-truck${followed ? ' is-followed' : ''}${followedPlate && !followed ? ' is-dimmed' : ''}`}
-                style={{ left: `calc(${p.xPercent}% + ${offsets[i].dx}px)`, top: `calc(${p.yPercent}% + ${offsets[i].dy}px)`, ['--truck' as string]: TRUCK_COLOR[t.status] }}
+                className={`tf-map-truck${isoView ? ' tf-map-truck--iso' : ''}${followed ? ' is-followed' : ''}${followedPlate && !followed ? ' is-dimmed' : ''}`}
+                style={{ ...at, ['--truck' as string]: TRUCK_COLOR[t.status] }}
                 onClick={() => onSelectTruck?.(t.plate)}
                 aria-label={`Camión ${t.plate}${t.label ? `, ${t.label}` : ''}. Seguir`}
                 aria-pressed={followed}
                 title={`${t.plate}${t.label ? ` · ${t.label}` : ''}`}
               >
-                {followed ? <span className="tf-map-truck__plate">{t.plate}</span> : null}
+                {isoView ? <IsoTruck color={TRUCK_COLOR[t.status]} /> : null}
+              {followed ? <span className="tf-map-truck__plate">{t.plate}</span> : null}
               </button>
             )
           })
@@ -666,13 +720,14 @@ export function PlantMap(props: {
             <button
               key={`truck-${t.plate}`}
               type="button"
-              className={`tf-map-truck is-waiting${t.inferred ? ' is-guessed' : ''}${followed ? ' is-followed' : ''}${followedPlate && !followed ? ' is-dimmed' : ''}`}
+              className={`tf-map-truck${isoView ? ' tf-map-truck--iso' : ''} is-waiting${t.inferred ? ' is-guessed' : ''}${followed ? ' is-followed' : ''}${followedPlate && !followed ? ' is-dimmed' : ''}`}
               style={{ left: `${at.xPercent}%`, top: `${at.yPercent}%`, ['--truck' as string]: TRUCK_COLOR[t.status] }}
               onClick={() => onSelectTruck?.(t.plate)}
               aria-label={`Camión ${t.plate} esperando en playa${t.label ? `, ${t.label}` : ''}. Seguir`}
               aria-pressed={followed}
               title={`${t.plate}${t.inferred ? ' · paso por Preingreso inferido' : ''}${t.label ? ` · ${t.label}` : ''}`}
             >
+              {isoView ? <IsoTruck color={TRUCK_COLOR[t.status]} /> : null}
               {followed ? <span className="tf-map-truck__plate">{t.plate}</span> : null}
             </button>
           )
@@ -686,13 +741,14 @@ export function PlantMap(props: {
             <button
               key={`truck-${t.plate}`}
               type="button"
-              className={`tf-map-truck is-transit${t.transit?.guessed ? ' is-guessed' : ''}${followed ? ' is-followed' : ''}${followedPlate && !followed ? ' is-dimmed' : ''}`}
+              className={`tf-map-truck${isoView ? ' tf-map-truck--iso' : ''} is-transit${t.transit?.guessed ? ' is-guessed' : ''}${followed ? ' is-followed' : ''}${followedPlate && !followed ? ' is-dimmed' : ''}`}
               style={{ left: `${at.xPercent}%`, top: `calc(${at.yPercent}% + ${dy}px)`, ['--truck' as string]: TRUCK_COLOR[t.status] }}
               onClick={() => onSelectTruck?.(t.plate)}
               aria-label={`Camión ${t.plate} en tránsito hacia ${byId.get(t.transit!.toPointId)?.label ?? t.transit!.toPointId}${t.label ? `, ${t.label}` : ''}. Seguir`}
               aria-pressed={followed}
               title={`${t.plate} · hacia ${byId.get(t.transit!.toPointId)?.label ?? t.transit!.toPointId}${t.transit?.guessed ? ' (estimado)' : ''}${t.label ? ` · ${t.label}` : ''}`}
             >
+              {isoView ? <IsoTruck color={TRUCK_COLOR[t.status]} /> : null}
               {followed ? <span className="tf-map-truck__plate">{t.plate}</span> : null}
             </button>
           )
