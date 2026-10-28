@@ -155,6 +155,47 @@ describe('cada captura pasa por la capa 2', () => {
   })
 })
 
+describe('primer paso de la corrección: lo aprendido de operaciones', () => {
+  const now = Date.parse('2026-10-28T12:00:00-03:00')
+  const corregidos = (pairs, real = []) => ({ realOf: (r) => pairs.filter((p) => p.read === r), isReal: (p) => real.includes(p) })
+  const noCamiones = (list) => ({ lookup: (p) => list.find((v) => v.plate === p) ?? null })
+
+  it('lectura mala que operaciones ya llevó a un camión en planta: se corrige sola', () => {
+    const events = [
+      ev('JLQ557', 'j1', '2-S1', 'RicPreIngInFr', '2026-10-28T10:00:00-03:00'),
+      ev('JLQ557', 'j1', '2-S2', 'RicCal03', '2026-10-28T10:30:00-03:00'),
+      ev('JLO557', 'x1', '2-S3', 'RicSalida2', '2026-10-28T11:20:00-03:00'),
+    ]
+    const it0 = identifyFragments(events, now, { catalog, corregidos: corregidos([{ read: 'JLO557', real: 'JLQ557', count: 2 }]) }).items.find((i) => i.readPlate === 'JLO557')
+    expect(it0.rule).toBe('corregida_antes')
+    expect(it0.assignedPlate).toBe('JLQ557')
+  })
+
+  it('patente que operaciones confirmó como real: no se corrige hacia la parecida', () => {
+    const events = [
+      ev('OJO501', 'o1', '2-S1', 'RicPreIngInFr', '2026-10-28T10:00:00-03:00'),
+      ev('OJO501', 'o1', '2-S2', 'RicCal03', '2026-10-28T10:30:00-03:00'),
+      ev('OJD501', 'd1', '2-S3', 'RicSalida2', '2026-10-28T11:20:00-03:00'),
+    ]
+    const it0 = identifyFragments(events, now, { catalog, corregidos: corregidos([], ['OJD501']) }).items.find((i) => i.readPlate === 'OJD501')
+    expect(it0.rule).toBe('confirmada_antes')
+    expect(it0.assignedPlate).toBe('OJD501')
+  })
+
+  it('vehículo de la base de no camiones: fuera del sistema, salvo que la cámara vea un camión', () => {
+    const at = '2026-10-28T11:20:00-03:00'
+    const base = { catalog, noCamiones: noCamiones([{ plate: 'AE040HU', kind: 'liviano' }, { plate: '924KHA', kind: 'tractor_maquinaria' }]) }
+    const liv = identifyFragments([ev('AE040HU', 'l1', '2-S3', 'RicSalida2', at)], now, base).items.find((i) => i.readPlate === 'AE040HU')
+    expect(liv).toMatchObject({ level: 'fuera_sistema', rule: 'no_camion' })
+    expect(liv.reason).toContain('auto o camioneta')
+    const tr = identifyFragments([ev('924KHA', 't1', '2-S2', 'RicCal03', at)], now, base).items.find((i) => i.readPlate === '924KHA')
+    expect(tr).toMatchObject({ level: 'fuera_sistema', rule: 'no_camion' })
+    const camion = { category: 'MidTruck', size: 'Oversize', vehicleClass: 'camion' }
+    const visto = identifyFragments([{ ...ev('AE040HU', 'l2', '2-S3', 'RicSalida2', at), attributes: camion }], now, base).items.find((i) => i.readPlate === 'AE040HU')
+    expect(visto?.rule).not.toBe('no_camion')
+  })
+})
+
 describe('atributos de las alertas', () => {
   const alert = (extra = {}) => ({
     id: 1, alertCode: 'INVALID_ROUTE', deviceCode: 'RicB3Ingreso', sectorCode: '2-S4', truckPlate: 'JUE083',

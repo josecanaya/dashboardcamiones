@@ -340,6 +340,7 @@ export function bestCircuit(seen, catalog, weights) {
   return code ? { code, p } : null
 }
 
+const NO_CAMION_ES = { tractor_maquinaria: 'tractor o maquinaria', liviano: 'auto o camioneta', servicio: 'vehículo de servicio', colectivo: 'colectivo' }
 const CATEGORY_ES = { Pickup: 'camioneta', SUV: 'SUV', SaloonCar: 'auto', PassengerCar: 'auto', MPV: 'utilitario', Microbus: 'minibús', MicroTruck: 'camión chico', MidTruck: 'camión', LargeTruck: 'camión grande' }
 const COLOR_ES = { White: 'blanco', Black: 'negro', Gray: 'gris', Silver: 'gris plata', Blue: 'azul', Red: 'rojo', Green: 'verde', Yellow: 'amarillo', Brown: 'marrón', Orange: 'naranja' }
 
@@ -628,8 +629,16 @@ export function identifyFragments(events, nowMs, ctx) {
     // Capa 2: la patente leída es un vehículo permitido o el chasis de una carta vigente → conocido, la cámara leyó bien.
     const readCartaHit = valid ? cartaOf(f.plate, head.t) : null
     const readCarta = readCartaHit?.role === 'chasis' ? readCartaHit : null
+    // Lo aprendido de operaciones (server/live/padron/aprendizaje.mjs): patente que ya confirmaron como
+    // bien leída, lectura mala que ya llevaron a un camión, vehículo que no es camión.
+    const seenAttrs = rowsAttributes(f.rows)
+    // Confirmada como bien leída no dice que sea un camión: una camioneta confirmada sigue fuera del sistema.
+    const knownReal = Boolean(valid && !readCartaHit && ctx.corregidos?.isReal(f.plate) && seenAttrs?.vehicleClass !== 'liviano')
+    const noCamionHit = !readCartaHit ? ctx.noCamiones?.lookup(f.plate) ?? null : null
+    // La cámara vio un camión y la base dice auto o colectivo: manda lo que se ve (patente repetida o mal leída).
+    const noCamion = noCamionHit && !(seenAttrs?.vehicleClass === 'camion' && ['liviano', 'colectivo'].includes(noCamionHit.kind)) ? noCamionHit : null
     // En la capa 2 también es una patente conocida: la cuenta no la corrige hacia otro camión.
-    const readKnown = Boolean(bz && valid && (bz.isKnown(f.plate) || readCarta))
+    const readKnown = Boolean(bz && valid && (bz.isKnown(f.plate) || readCarta || knownReal))
     const inBalanza = (plate) => Boolean(bz?.truckAt(plate, head.t))
     /** Viaje del camión más cercano a la lectura (para sumarle la lectura del acoplado). */
     const journeyOfPlate = (plate) =>
@@ -689,7 +698,8 @@ export function identifyFragments(events, nowMs, ctx) {
     let chosen = null
     let rule = null
     // Patente válida que la balanza tiene en planta y no se parece a nadie: no es un caso, es un camión real.
-    if ((readInBalanza || readCarta) && !plateMatches.length && !decided(f) && !trailerHit) continue
+    if ((readInBalanza || readCarta || knownReal) && !plateMatches.length && !decided(f) && !trailerHit) continue
+    const learned = !readCartaHit && !knownReal && !noCamion ? (ctx.corregidos?.realOf(f.plate) ?? []).filter((p) => candidates.some((c) => c.plate === p.real)) : []
     // Doble lectura de dos patentes válidas conocidas las dos: son dos vehículos reales, no se elige solo.
     const twinCarta = twin ? cartaOf(twin.plate, head.t) : null
     if (twin && !valid) {
@@ -711,6 +721,15 @@ export function identifyFragments(events, nowMs, ctx) {
       chosen = { plate: f.plate, journeyUid: f.journeyUid }
       reason = `${f.plate} figura en ${padronLabel(readCarta)}: es un vehículo conocido y la cámara leyó bien`
       rule = readCarta.source === 'permitido' ? 'vehiculo_permitido' : 'carta_porte'
+    } else if (noCamion) {
+      level = 'fuera_sistema'
+      reason = `${f.plate} figura en la base de no camiones (${NO_CAMION_ES[noCamion.kind] ?? noCamion.kind})`
+      rule = 'no_camion'
+    } else if (knownReal && !twin) {
+      level = 'casi_seguro'
+      chosen = { plate: f.plate, journeyUid: f.journeyUid }
+      reason = `operaciones ya confirmó que ${f.plate} es una patente real y la cámara leyó bien`
+      rule = 'confirmada_antes'
     } else if (readInBalanza) {
       // Patente válida de un camión que la balanza tiene en planta: la cámara leyó bien.
       level = 'casi_seguro'
@@ -727,6 +746,12 @@ export function identifyFragments(events, nowMs, ctx) {
       chosen = twin
       reason = `${twinText}; ${twin.plate} figura en ${padronLabel(twinCarta)} y ${f.plate} no`
       rule = twinCarta.source === 'permitido' ? 'doble_lectura_permitido' : 'doble_lectura_carta'
+    } else if (learned.length === 1) {
+      // Lectura mala que operaciones ya llevó a este camión, y el camión está en planta.
+      level = 'casi_seguro'
+      chosen = candidates.find((c) => c.plate === learned[0].real)
+      reason = `operaciones ya corrigió ${f.plate} → ${chosen.plate}${learned[0].count > 1 ? ` (${learned[0].count} veces)` : ''} y ${chosen.plate} está en planta`
+      rule = 'corregida_antes'
     } else if (twin) {
       // Dos patentes válidas en el mismo nodo a segundos: es el mismo camión pero no se sabe cuál leyó
       // mal (MML273 en Egreso C1 y HHL273 en C2: la correcta era HHL273). Decide operaciones.

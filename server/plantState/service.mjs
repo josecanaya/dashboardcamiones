@@ -334,6 +334,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
   const identificationCache = new Map()
   /** @type {ReturnType<typeof padronCartas>|null} */
   let padronIndex = null
+  /** Lo aprendido de operaciones: corregidos y no camiones (server/live/padron/aprendizaje.mjs). */
+  let aprendizajeIndex = null
   /**
    * Veredictos con color/marca/tipo del DSS (los calcula dssPhotoLookup en segundo plano): fragmento →
    * candidato que superó el umbral. Solo en memoria: tras un reinicio se recalculan.
@@ -395,6 +397,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
         // Refuerzo de balanza (SGC + movimientos): camión en planta, acoplado, ¿vino alguna vez?
         balanza: process.env.IDENTIFICATION_BALANZA === '0' ? null : liveBalanzaRegistry(nowMs),
         padron: process.env.IDENTIFICATION_PADRON === '0' ? null : padronIndex,
+        corregidos: process.env.IDENTIFICATION_APRENDIZAJE === '0' ? null : aprendizajeIndex?.corregidos ?? null,
+        noCamiones: process.env.IDENTIFICATION_APRENDIZAJE === '0' ? null : aprendizajeIndex?.noCamiones ?? null,
         otherSiteEvents: [...(bySite.get(site === 'ricardone' ? 'san_lorenzo' : 'ricardone')?.history.values() ?? [])],
       }),
       recentCounts,
@@ -1122,6 +1126,11 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     /** Capa 2 del reconocedor: Vehículos Permitidos y padrón de cartas. Se enganchan después porque los crea el server. */
     setPadron(p, permitidos = null) {
       padronIndex = p || permitidos ? padronCartas(p, permitidos) : null
+      identificationCache.clear()
+    },
+    /** Lo aprendido de operaciones (corregidos y no camiones): primer paso de la corrección. */
+    setAprendizaje(a) {
+      aprendizajeIndex = a ?? null
       identificationCache.clear()
     },
     getSnapshot,

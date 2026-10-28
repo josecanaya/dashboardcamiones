@@ -39,6 +39,7 @@ import { createCartaPorteSource } from './agro/cartaPorte.mjs'
 import { createPadron } from './live/padron/padron.mjs'
 import { createCartasSource } from './live/padron/cartasSource.mjs'
 import { createVehiculosPermitidos } from './live/padron/vehiculosPermitidos.mjs'
+import { createAprendizaje } from './live/padron/aprendizaje.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = path.resolve(__dirname, '..')
@@ -286,6 +287,23 @@ padron.start()
 const vehiculosPermitidos = createVehiculosPermitidos({ projectRoot: PROJECT_ROOT })
 vehiculosPermitidos.start()
 plantState.setPadron(padron, vehiculosPermitidos)
+/** Lo aprendido de operaciones: lecturas malas ya corregidas y vehículos que no son camiones (data/padron). */
+const aprendizaje = createAprendizaje({ projectRoot: PROJECT_ROOT })
+aprendizaje.start()
+plantState.setAprendizaje(aprendizaje)
+/** Una decisión de operaciones enseña al rato (5 min), no a la hora: varias seguidas rearman una sola vez. */
+let aprendizajeTimer = null
+const scheduleAprendizaje = () => {
+  if (aprendizajeTimer) return
+  aprendizajeTimer = setTimeout(() => { aprendizajeTimer = null; void aprendizaje.rebuild() }, 5 * 60_000)
+  aprendizajeTimer.unref?.()
+}
+app.get('/api/truckflow/agro/aprendizaje', (req, res) => {
+  const plate = String(req.query.plate ?? '').trim()
+  res.json(plate
+    ? { plate, corregidaA: aprendizaje.corregidos.realOf(plate), confirmada: aprendizaje.corregidos.isReal(plate), noCamion: aprendizaje.noCamiones.lookup(plate) }
+    : aprendizaje.status() ?? {})
+})
 app.get('/api/truckflow/agro/permitidos', (req, res) => {
   const plate = String(req.query.plate ?? '').trim()
   res.json(plate ? { plate, vehiculo: vehiculosPermitidos.lookup(plate) } : vehiculosPermitidos.status() ?? { vehiculos: 0 })
@@ -483,6 +501,7 @@ app.post('/api/truckflow/live/identifications/:fragmentKey', express.json(), asy
   try {
     const result = plantState.decideIdentification(site, req.params.fragmentKey, req.body)
     res.json(result)
+    if (!result.replayed) scheduleAprendizaje()
     // EV-40: fotos vistas al decidir, copiadas en segundo plano (no demora ni condiciona la respuesta).
     if (!result.replayed && req.body?.photos && ['confirm', 'reject'].includes(req.body.action)) {
       dssPhotos
