@@ -4,7 +4,7 @@
  */
 
 import { getEventLiveInstantMs, formatArgentinaIsoFromMs } from './liveEventTime.mjs'
-import { isJourneyOpenAtSector, reducePlantState } from './reducer.mjs'
+import { buildSightings, isJourneyOpen, reducePlantState, rowPlate } from './reducer.mjs'
 import { quarterOf } from './baselines.mjs'
 import { resolveSectorStatus } from './status.mjs'
 import {
@@ -77,8 +77,10 @@ function withDeducedSteps(rows) {
  * Agrupa eventos en journeys abiertos (misma lógica que el reductor).
  * @param {object[]} events
  * @param {number} nowMs
+ * @param {{ site?: string, otherSiteSightings?: { plate: string, t: number }[] }} [opts]
  */
-function collectOpenJourneys(events, nowMs) {
+function collectOpenJourneys(events, nowMs, opts = {}) {
+  const site = opts.site ? String(opts.site).toLowerCase() : null
   /** @type {{ e: object, t: number, sector: string|null, device: string }[]} */
   const normalized = []
   for (const e of events || []) {
@@ -90,8 +92,10 @@ function collectOpenJourneys(events, nowMs) {
     normalized.push({
       e,
       t,
-      sector: profile ? sector : null,
+      // Como en el reductor: una lectura de la otra planta no ubica al camión acá, pero sí cierra su visita.
+      sector: profile && (!site || profile.site === site) ? sector : null,
       device,
+      otherSite: Boolean(profile && site && profile.site !== site),
     })
   }
 
@@ -110,16 +114,23 @@ function collectOpenJourneys(events, nowMs) {
     else byJourney.set(key, [row])
   }
 
+  const journeyLast = []
+  for (const [key, list] of byJourney) {
+    list.sort((a, b) => a.t - b.t || (a.e.sequenceNumber ?? 0) - (b.e.sequenceNumber ?? 0))
+    const withSector = list.filter((r) => r.sector)
+    if (withSector.length) journeyLast.push({ key, plate: rowPlate(withSector[withSector.length - 1].e), lastT: withSector[withSector.length - 1].t })
+  }
+  const sightings = buildSightings(journeyLast, normalized.filter((r) => r.otherSite).map((r) => ({ plate: rowPlate(r.e), t: r.t }))
+    .concat((opts.otherSiteSightings ?? []).filter((s) => s.t <= nowMs)))
+
   /** @type {object[]} */
   const open = []
   for (const [journeyKey, list] of byJourney) {
-    list.sort((a, b) => a.t - b.t || (a.e.sequenceNumber ?? 0) - (b.e.sequenceNumber ?? 0))
     const withSector = list.filter((r) => r.sector)
     if (!withSector.length) continue
     const last = withSector[withSector.length - 1]
     const lastProfile = getSectorProfile(last.sector)
-    const idle = nowMs - last.t
-    if (!isJourneyOpenAtSector(lastProfile, idle, last.device)) continue
+    if (!isJourneyOpen(withSector, nowMs, { key: journeyKey, plate: rowPlate(last.e), sightings })) continue
 
     let enteredAt = last.t
     for (let i = withSector.length - 1; i >= 0; i--) {
@@ -127,11 +138,7 @@ function collectOpenJourneys(events, nowMs) {
       enteredAt = withSector[i].t
     }
 
-    const plate = String(
-      last.e.normalizedPlate || last.e.truckPlate || last.e.rawTruckPlate || ''
-    )
-      .replace(/[^A-Za-z0-9]/g, '')
-      .toUpperCase()
+    const plate = rowPlate(last.e)
 
     const sectorSeq = withSector.map((r) => r.sector)
     const logicalSeq = buildLogicalSequence(sectorSeq)
@@ -214,7 +221,8 @@ export function createPlantStateQueries(service) {
     const events = await service.getEvents(site)
     const baselines = await service.getBaselines(site)
     const nowMs = Date.now()
-    const snap = reducePlantState(events, nowMs, { site })
+    const otherSiteSightings = service.getOtherSiteSightings?.(site) ?? []
+    const snap = reducePlantState(events, nowMs, { site, otherSiteSightings })
     const q = quarterOf(snap.at) || quarterOf(formatArgentinaIsoFromMs(nowMs))
     const edgeById = Object.fromEntries(snap.edges.map((e) => [e.id, e]))
     const rawSector = snap.sectors.find((s) => s.sectorCode === code)
@@ -230,7 +238,7 @@ export function createPlantStateQueries(service) {
     const presenceSeries = []
     for (let i = seriesPoints; i >= 0; i--) {
       const t = nowMs - i * SERIES_STEP_MS
-      const slice = reducePlantState(events, t, { site, skipDelta: true })
+      const slice = reducePlantState(events, t, { site, skipDelta: true, otherSiteSightings })
       const s = slice.sectors.find((x) => x.sectorCode === code)
       presenceSeries.push({
         at: formatArgentinaIsoFromMs(t),
@@ -314,7 +322,7 @@ export function createPlantStateQueries(service) {
     const baselines = await service.getBaselines(site)
     const nowMs = Date.now()
     const q = quarterOf(formatArgentinaIsoFromMs(nowMs))
-    const open = collectOpenJourneys(events, nowMs)
+    const open = collectOpenJourneys(events, nowMs, { site, otherSiteSightings: service.getOtherSiteSightings?.(site) ?? [] })
 
     let rows = open
     if (sectorFilter) rows = rows.filter((t) => t.sectorCode === sectorFilter)
@@ -371,7 +379,7 @@ export function createPlantStateQueries(service) {
     const baselines = await service.getBaselines(site)
     const nowMs = Date.now()
     const q = quarterOf(formatArgentinaIsoFromMs(nowMs))
-    const open = collectOpenJourneys(events, nowMs)
+    const open = collectOpenJourneys(events, nowMs, { site, otherSiteSightings: service.getOtherSiteSightings?.(site) ?? [] })
     const truck = open.find((t) => t.plate === want)
     if (!truck) {
       throw new PlantStateError('truck_not_open', 404, `sin journey abierto para ${want}`)

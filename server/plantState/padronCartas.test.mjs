@@ -196,6 +196,22 @@ describe('primer paso de la corrección: lo aprendido de operaciones', () => {
   })
 })
 
+describe('los no camiones no son candidatos', () => {
+  it('una lectura ilegible no se le asigna a un auto de la base de no camiones', () => {
+    const now = Date.parse('2026-10-29T10:00:00-03:00')
+    const events = [
+      ev('AD001TD', 'car', '2-S1', 'RicPreIngInFr', '2026-10-29T09:00:00-03:00'),
+      ev('AD001TD', 'car', '2-S2', 'RicCal03', '2026-10-29T09:20:00-03:00'),
+      ev('SINPAT', 'x1', '2-S3', 'RicSalida2', '2026-10-29T09:40:00-03:00'),
+    ]
+    const noCamiones = { lookup: (p) => (p === 'AD001TD' ? { plate: p, kind: 'liviano' } : null) }
+    const sin = identifyFragments(events, now, { catalog }).items.find((i) => i.readPlate === 'SINPAT')
+    const con = identifyFragments(events, now, { catalog, noCamiones }).items.find((i) => i.readPlate === 'SINPAT')
+    expect(sin?.candidates.some((c) => c.plate === 'AD001TD')).toBe(true)
+    expect(con?.candidates.some((c) => c.plate === 'AD001TD') ?? false).toBe(false)
+  })
+})
+
 describe('atributos de las alertas', () => {
   const alert = (extra = {}) => ({
     id: 1, alertCode: 'INVALID_ROUTE', deviceCode: 'RicB3Ingreso', sectorCode: '2-S4', truckPlate: 'JUE083',

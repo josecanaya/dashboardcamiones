@@ -36,7 +36,6 @@ const SCALE_EGRESO_DEVICES = new Set([
 ])
 const DELTA_LOOKBACK_MS = 40 * 60 * 1000
 const TWELVE_H_MS = 12 * HOUR_MS
-
 /**
  * @param {{ type?: string }|null|undefined} profile
  * @param {number} idleMs
@@ -49,6 +48,67 @@ export function isJourneyOpenAtSector(profile, idleMs, lastDevice) {
     return idleMs < SCALE_MAX_IDLE_MS
   }
   return idleMs < OPEN_MAX_IDLE_MS
+}
+
+/** Patentes que difieren en un carácter (cambiado, sobrante o faltante): misma unidad leída distinto. */
+export function nearPlate(a, b) {
+  if (a === b) return true
+  if (Math.abs(a.length - b.length) > 1 || Math.min(a.length, b.length) < 5) return false
+  let i = 0
+  let j = 0
+  let edits = 0
+  while (i < a.length && j < b.length) {
+    if (a[i] === b[j]) { i++; j++; continue }
+    if (++edits > 1) return false
+    if (a.length > b.length) i++
+    else if (b.length > a.length) j++
+    else { i++; j++ }
+  }
+  return edits + (a.length - i) + (b.length - j) <= 1
+}
+
+/** Patente de una fila de evento, solo letras y números en mayúscula. */
+export function rowPlate(e) {
+  return String(e?.normalizedPlate || e?.truckPlate || e?.rawTruckPlate || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase()
+}
+
+/**
+ * Dónde más se vio cada patente, para cerrar visitas que siguieron en otro lado:
+ * - `journeys`: última lectura de cada journey de esta planta (misma patente o a un carácter);
+ * - `otherSite`: lecturas en la otra planta (solo misma patente: entre plantas el parecido no alcanza).
+ * @param {{ key: string, plate: string, lastT: number }[]} journeys
+ * @param {{ plate: string, t: number }[]} otherSite
+ */
+export function buildSightings(journeys, otherSite = []) {
+  const otherLast = new Map()
+  for (const { plate, t } of otherSite) if (plate && (otherLast.get(plate) ?? -Infinity) < t) otherLast.set(plate, t)
+  return {
+    /** Fuente de la última lectura posterior a `afterT`, o null si la patente no volvió a aparecer. */
+    seenAfter(key, plate, afterT) {
+      if (!plate) return null
+      if ((otherLast.get(plate) ?? -Infinity) > afterT) return 'otra_planta'
+      for (const j of journeys) if (j.key !== key && j.lastT > afterT && nearPlate(j.plate, plate)) return 'otra_visita'
+      return null
+    },
+  }
+}
+
+/**
+ * ¿Sigue el camión en la planta? Además del límite por inactividad, se cierra la visita si la patente se
+ * leyó después en otra visita de esta planta o en la otra planta: el camión ya está en otro lado.
+ * (Cortes solo por tiempo —una lectura sola, límite por sector— se midieron contra octubre y sacaban
+ * 20–60 % de camiones que seguían adentro: scripts/plant-state/replay-presencia.mjs.)
+ * @param {{ sector: string, device: string, t: number }[]} withSector lecturas del journey, en orden
+ * @param {number} nowMs
+ * @param {{ key?: string, plate?: string, sightings?: ReturnType<typeof buildSightings>|null, legacy?: boolean }} [ctx]
+ */
+export function isJourneyOpen(withSector, nowMs, ctx = {}) {
+  const last = withSector[withSector.length - 1]
+  const profile = getSectorProfile(last.sector)
+  const idle = nowMs - last.t
+  if (!isJourneyOpenAtSector(profile, idle, last.device)) return false
+  if (!ctx.legacy && ctx.sightings?.seenAfter(ctx.key, ctx.plate, last.t)) return false
+  return true
 }
 
 /**
@@ -80,7 +140,7 @@ function round1(n) {
 /**
  * @param {object[]} events
  * @param {number} nowMs
- * @param {{ site?: string, skipDelta?: boolean, alerts?: object[] }} options
+ * @param {{ site?: string, skipDelta?: boolean, alerts?: object[], otherSiteSightings?: { plate: string, t: number }[], legacyPresence?: boolean }} options  otherSiteSightings: lecturas de la otra planta; legacyPresence: regla anterior (solo para medir)
  */
 export function reducePlantState(events, nowMs, options = {}) {
   const t0 = performance.now()
@@ -136,6 +196,19 @@ export function reducePlantState(events, nowMs, options = {}) {
     list.sort((a, b) => a.t - b.t || (a.e.sequenceNumber ?? 0) - (b.e.sequenceNumber ?? 0))
   }
 
+  // Dónde más se vio cada patente: en otra visita de esta planta o en la otra planta (las lecturas
+  // de la otra que traen los archivos locales, más las que pasa el servicio desde su buffer).
+  const journeyLast = []
+  for (const [key, list] of byJourney) {
+    const withSector = list.filter((r) => r.sector)
+    if (withSector.length) journeyLast.push({ key, plate: rowPlate(withSector[withSector.length - 1].e), lastT: withSector[withSector.length - 1].t })
+  }
+  const otherSite = normalized
+    .filter((r) => !r.sector && r.rawSector && getSectorProfile(r.rawSector))
+    .map((r) => ({ plate: rowPlate(r.e), t: r.t }))
+    .concat((options.otherSiteSightings ?? []).filter((s) => s.t <= nowMs))
+  const sightings = buildSightings(journeyLast, otherSite)
+
   /** @type {Record<string, number>} */
   const present = Object.fromEntries(siteSectorCodes.map((k) => [k, 0]))
   /** @type {Record<string, number>} */
@@ -160,7 +233,7 @@ export function reducePlantState(events, nowMs, options = {}) {
   /** @type {Record<string, number[]>} */
   const zoneDwells = Object.fromEntries(siteZones.map((z) => [z.id, []]))
 
-  for (const list of byJourney.values()) {
+  for (const [journeyKey, list] of byJourney) {
     const withSector = list.filter((r) => r.sector)
     if (!withSector.length) continue
 
@@ -208,9 +281,7 @@ export function reducePlantState(events, nowMs, options = {}) {
     }
 
     const last = withSector[withSector.length - 1]
-    const lastProfile = getSectorProfile(last.sector)
-    const idle = nowMs - last.t
-    const open = isJourneyOpenAtSector(lastProfile, idle, last.device)
+    const open = isJourneyOpen(withSector, nowMs, { key: journeyKey, plate: rowPlate(last.e), sightings, legacy: options.legacyPresence })
 
     if (open) {
       trucksOpen += 1

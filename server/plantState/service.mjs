@@ -9,7 +9,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { getEventLiveInstantMs, formatArgentinaIsoFromMs, parseLiveMillis } from './liveEventTime.mjs'
-import { reducePlantState } from './reducer.mjs'
+import { reducePlantState, rowPlate } from './reducer.mjs'
 import { buildBaselines, quarterOf } from './baselines.mjs'
 import { resolveSectorStatus, resolveZoneStatus, resolveBottleneck } from './status.mjs'
 import { POINTS, zonesOfSite } from './plantGraph.mjs'
@@ -18,7 +18,7 @@ import { applyIdentifications, applyLinks, autoPredecessorLinks, findPredecessor
 import { liveBalanzaRegistry, outsideTruckSystem, replayBalanzaRegistry } from './balanzaRegistry.mjs'
 import { createIdentificationArchive } from './identificationArchive.mjs'
 import { padronCartas } from './padronCartas.mjs'
-import { assessVehicleRelevance, excludeIrrelevantEvents } from './vehicleRelevance.mjs'
+import { assessVehicleRelevance, excludeIrrelevantEvents, excludeNonTrucks } from './vehicleRelevance.mjs'
 import { alertInstantMs, alertReadEvents, withAlertAttributes } from './alertReads.mjs'
 import { applyVisionVerdict, checkSeenPlate } from '../live/vision/seenPlate.mjs'
 
@@ -496,7 +496,16 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       const operational = excludeIrrelevantEvents([...rawEvents, ...alertEvents], items, e => journeyKeyOf(e, getEventLiveInstantMs(e)))
       // Vínculos automáticos de la búsqueda hacia atrás que no pasaron por la bandeja (patente válida suelta en la entrada).
       const autoLinks = (identified.autoLinks ?? []).filter((l) => l.auto && !l.item).map((l) => ({ journeyKey: l.journeyKey, plate: l.plate, journeyUid: l.targetJourneyUid, level: 'casi_seguro' }))
-      return applyIdentifications(applyLinks(operational, [...linksOf(site), ...autoLinks]), items.filter(item => !item.archived))
+      const identifiedEvents = applyIdentifications(applyLinks(operational, [...linksOf(site), ...autoLinks]), items.filter(item => !item.archived))
+      // Autos, camionetas y máquinas no cuentan como camiones en la planta.
+      if (process.env.LIVE_SHOW_NON_TRUCKS === '1') return identifiedEvents
+      return excludeNonTrucks(identifiedEvents, items, {
+        noCamiones: aprendizajeIndex?.noCamiones ?? null,
+        padron: process.env.IDENTIFICATION_PADRON === '0' ? null : padronIndex,
+        balanza: process.env.IDENTIFICATION_BALANZA === '0' ? null : liveBalanzaRegistry(nowMs),
+        plateOf: rowPlate,
+        timeOf: getEventLiveInstantMs,
+      })
     } catch (e) {
       console.warn('[plant-state] identificación de patentes falló:', e instanceof Error ? e.message : e)
       return rawEvents
@@ -1095,7 +1104,7 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     }
 
     events = applyManualOverrides(key, events, nowMs)
-    const snap = reducePlantState(events, nowMs, { site: key })
+    const snap = reducePlantState(events, nowMs, { site: key, otherSiteSightings: getOtherSiteSightings(key) })
     const q = quarterOf(snap.at) || quarterOf(formatArgentinaIsoFromMs(nowMs))
     const edgeById = Object.fromEntries(snap.edges.map((e) => [e.id, e]))
 
@@ -1131,6 +1140,19 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     snap.source = { lastEventAt: Number.isFinite(lastEventMs) ? new Date(lastEventMs).toISOString() : null, lastRefreshAt: st.lastRefreshMs ? new Date(st.lastRefreshMs).toISOString() : null, lastError: st.lastError ?? null }
 
     return snap
+  }
+
+  /**
+   * Lecturas de la otra planta (patente e instante), para cerrar acá la visita de un camión que ya se leyó
+   * allá. Arranca el buffer de la otra planta si no estaba; mientras carga, devuelve lo que haya.
+   * @param {string} site
+   * @returns {{ plate: string, t: number }[]}
+   */
+  function getOtherSiteSightings(site) {
+    const other = String(site || '').trim().toLowerCase() === 'ricardone' ? 'san_lorenzo' : 'ricardone'
+    const { key, st } = ensureSite(other)
+    startBackground(key)
+    return [...st.events.values()].map((e) => ({ plate: rowPlate(e), t: getEventLiveInstantMs(e) })).filter((r) => r.plate && Number.isFinite(r.t))
   }
 
   /**
@@ -1174,6 +1196,7 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     },
     getSnapshot,
     getEvents,
+    getOtherSiteSightings,
     getBaselines: loadBaselines,
     startBackground,
     refresh,

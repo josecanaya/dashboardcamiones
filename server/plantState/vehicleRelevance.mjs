@@ -25,3 +25,34 @@ export function assessVehicleRelevance({site,item,capture,reads=[],historyAvaila
   if (plausible) return result(false,'candidato_operativo_parecido')
   return result(true,`Vehículo no camión (${capture.vehicleCategory}) en acceso compartido, sin recorrido operativo conocido`)
 }
+
+/**
+ * Lo que no es camión no cuenta en la planta (En vivo mostraba autos y camionetas como camiones en la playa,
+ * 29/10). Es no camión la patente que el reconocedor dejó como `no_camion`, la «fuera del sistema» que la
+ * cámara vio liviana, la que la IA vio liviana o máquina, y la de la base de no camiones o particular de
+ * Vehículos Permitidos. Si la balanza la tiene en planta, es un camión y queda.
+ * @param {object[]} events eventos ya identificados (patente final en normalizedPlate)
+ * @param {object[]} items casos del reconocedor
+ * @param {{ noCamiones?: { lookup: Function }|null, padron?: { at: Function }|null, balanza?: { truckAt: Function }|null, plateOf: (e: object) => string, timeOf: (e: object) => number }} ctx
+ */
+export function excludeNonTrucks(events, items, { noCamiones = null, padron = null, balanza = null, plateOf, timeOf }) {
+  const flagged = new Set()
+  for (const it of items) {
+    if (it.assignedPlate && it.assignedPlate !== it.readPlate) continue
+    const liviano = it.attributes?.vehicleClass === 'liviano' && it.level === 'fuera_sistema'
+    const iaNoCamion = ['liviano', 'maquinaria', 'colectivo'].includes(it.ia?.vehicleType) && !it.ia?.plate
+    const particular = it.rule === 'vehiculo_permitido' && it.padron?.read?.category === 'vehiculo_particular'
+    if (it.rule === 'no_camion' || liviano || iaNoCamion || particular) flagged.add(it.readPlate)
+  }
+  const verdict = new Map()
+  const isNonTruck = (plate, t) => {
+    if (!plate) return false
+    const k = plate
+    if (!verdict.has(k)) {
+      const h = padron?.at(plate, t)
+      verdict.set(k, flagged.has(plate) || Boolean(noCamiones?.lookup(plate)) || (h?.source === 'permitido' && h.category === 'vehiculo_particular'))
+    }
+    return verdict.get(k) && !balanza?.truckAt(plate, t)
+  }
+  return events.filter((e) => !isNonTruck(plateOf(e), timeOf(e)))
+}

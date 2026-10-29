@@ -372,7 +372,16 @@ export function identifyFragments(events, nowMs, ctx) {
   const decisions = ctx.decisions || {}
 
   const opt = { universe: true, universeNodeProbability: UNIVERSE_NODE_PROBABILITY, validAutoSimilarity: VALID_AUTO_SIMILARITY, minReads: 2, validSameNode: true, validSameNodeSimilarity: 0.8, ...ctx.options }
-  const parents = [...journeys, ...otherJourneys].filter((j) => isValidPlate(j.plate))
+  // Un vehículo que no es camión (base de no camiones, particular de Vehículos Permitidos) no puede llevarse
+  // lecturas de camiones: AD001TD (un auto) se quedaba con 9 capturas ilegibles por «la cuenta» (29/10).
+  // Si la balanza lo tiene en planta, es un camión.
+  const nonTruck = (j) => {
+    if (ctx.balanza?.truckAt(j.plate, j.rows[0].t)) return false
+    if (ctx.noCamiones?.lookup(j.plate)) return true
+    const h = ctx.padron && isValidPlate(j.plate) ? ctx.padron.at(j.plate, j.rows[0].t) : null
+    return h?.source === 'permitido' && h.category === 'vehiculo_particular'
+  }
+  const parents = [...journeys, ...otherJourneys].filter((j) => isValidPlate(j.plate) && !nonTruck(j))
   // Una lectura con decisión de operaciones sigue siendo un caso aunque después deje de parecer un
   // fragmento (se volvió a leer en otro nodo, el candidato salió de planta): la decisión no se pierde.
   const decided = (j) => ['confirm', 'reject'].includes(decisions[j.key]?.action)

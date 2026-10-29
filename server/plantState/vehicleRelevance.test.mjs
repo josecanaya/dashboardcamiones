@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest'
-import {assessVehicleRelevance,excludeIrrelevantEvents} from './vehicleRelevance.mjs'
+import {assessVehicleRelevance,excludeIrrelevantEvents,excludeNonTrucks} from './vehicleRelevance.mjs'
 const base = {site:'san_lorenzo',item:{deviceCode:'SLZTK400',readPlate:'ABC123',level:'provisorio',candidates:[]},capture:{plate:'ABC123',vehicleCategory:'Pickup',diffMs:0},historyAvailable:true,reads:[]}
 describe('descarte por relevancia de acceso compartido',()=> {
   it('excluye solo la visita descartada, no toda esa patente ni una reapertura',()=>{
@@ -23,5 +23,25 @@ describe('descarte por relevancia de acceso compartido',()=> {
     expect(assessVehicleRelevance({...base,site:'ricardone'}).reject).toBe(false)
     expect(assessVehicleRelevance({...base,item:{...base.item,deviceCode:'SLZBalIngFte'}}).reject).toBe(false)
     expect(assessVehicleRelevance({...base,item:{...base.item,deviceCode:'SLZSalidaC2Tras'}}).reject).toBe(true)
+  })
+})
+
+describe('lo que no es camión no cuenta en la planta', () => {
+  const ev = (plate, t = 1000) => ({ plate, t })
+  const ctx = (extra = {}) => ({ plateOf: (e) => e.plate, timeOf: (e) => e.t, ...extra })
+  it('saca no camiones, livianos fuera del sistema y lo que la IA vio liviano; deja camiones', () => {
+    const items = [
+      { readPlate: 'OIY765', rule: 'no_camion', level: 'fuera_sistema' },
+      { readPlate: 'AA208QN', level: 'fuera_sistema', attributes: { vehicleClass: 'liviano' } },
+      { readPlate: 'MOB09', level: 'pendiente', ia: { vehicleType: 'maquinaria', plate: null } },
+      { readPlate: 'AF861FZ', level: 'fuera_sistema' },
+      { readPlate: 'XX1', assignedPlate: 'TAO150', rule: 'cuenta', level: 'casi_seguro' },
+    ]
+    const out = excludeNonTrucks([ev('OIY765'), ev('AA208QN'), ev('MOB09'), ev('AF861FZ'), ev('TAO150'), ev('AD001TD')], items, ctx({ noCamiones: { lookup: (p) => (p === 'AD001TD' ? { kind: 'liviano' } : null) } }))
+    expect(out.map((e) => e.plate)).toEqual(['AF861FZ', 'TAO150'])
+  })
+  it('si la balanza lo tiene en planta es un camión aunque figure como no camión', () => {
+    const out = excludeNonTrucks([ev('OIY765')], [{ readPlate: 'OIY765', rule: 'no_camion' }], ctx({ balanza: { truckAt: (p) => p === 'OIY765' } }))
+    expect(out).toHaveLength(1)
   })
 })
