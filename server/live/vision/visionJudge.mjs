@@ -1,5 +1,5 @@
 /**
- * La IA en vivo (capa 3, última instancia): para cada lectura abierta (con o sin candidatos) o ilegible, baja
+ * La IA en vivo (capa 3, última instancia): para cada lectura abierta (con o sin candidatos) o fuera del sistema, baja
  * del DSS la foto de la captura y las de las lecturas anteriores de cada candidato, las guarda en la
  * galería por patente (data/vision/fotos + galeria.jsonl con su vector) y le pregunta a Claude Opus
  * de quién es, imagen contra imagen (claudeVision.mjs). De la galería se suman, por candidato, las
@@ -126,7 +126,9 @@ export function createVisionJudge({ dss, getPlantState, projectRoot, intervalMs 
         // Abiertas (con o sin candidatos) y las ilegibles que quedaron «fuera del sistema». Primero las sin
         // candidatos (nadie más las puede resolver), y dentro de cada grupo las más recientes.
         const queue = ids.items
-          .filter((it) => (OPEN.has(it.level) || (it.level === 'fuera_sistema' && !it.validFormat)) && !it.decision && !it.archived && !verdicts.has(`${site}|${it.fragmentKey}`))
+          // «Fuera del sistema» es justo lo que ninguna capa encontró (IEC333 era EFC338, 29/10): la IA lo mira,
+          // salvo lo que la cámara ya vio liviano o la base de no camiones ya conoce.
+          .filter((it) => (OPEN.has(it.level) || (it.level === 'fuera_sistema' && it.rule !== 'no_camion' && it.attributes?.vehicleClass !== 'liviano')) && !it.decision && !it.archived && !verdicts.has(`${site}|${it.fragmentKey}`))
           .sort((a, b) => Number(Boolean(a.candidates?.length)) - Number(Boolean(b.candidates?.length)) || b.at.localeCompare(a.at))
         for (const item of queue.slice(0, perTick)) {
           if (usedToday >= maxPerDay) break

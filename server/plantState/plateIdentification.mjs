@@ -22,6 +22,7 @@ import { visitRowsAt, assessVisitCandidate } from './visitInventory.mjs'
 import { arrivalWeight, scoreWithNodeModel } from './nodeModelScore.mjs'
 import { outsideTruckSystem } from './balanzaRegistry.mjs'
 import { padronLabel } from './padronCartas.mjs'
+import { layerOf } from './algorithmLayers.mjs'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -129,7 +130,12 @@ export function isValidPlate(plate) {
 }
 
 const CONFUSABLE = new Set(
-  ['0O', '0D', '0Q', '8B', '1I', '1L', '5S', '2Z', '6G', '4A', 'MN', 'UV', 'VY', 'HM', 'EF', 'CG'].flatMap((p) => [p, p[1] + p[0]])
+  [
+    '0O', '0D', '0Q', '8B', '1I', '1L', '5S', '2Z', '6G', '4A', 'MN', 'UV', 'VY', 'HM', 'EF', 'CG',
+    // Medidas en la base histórica (29/10: 95 pares confirmados por operaciones, ≥ 3 veces cada una).
+    // Sin 3↔8, IEC333 no llegaba a EFC338 (63 %, piso 65 %).
+    'OQ', 'DO', 'IT', '38', '08', '14', 'BD', '04', 'NR',
+  ].flatMap((p) => [p, p[1] + p[0]])
 )
 
 /** Levenshtein ponderado: confusión OCR 0,3 · otra sustitución 1 · borrado/inserción 0,6. */
@@ -1029,6 +1035,8 @@ export function recentCaptures(events, identification, nowMs, limit = 60) {
     const logical = sectorToLogical(sectorCode)
     const plate = plateOf(e)
     const it = byKey.get(journeyKeyOf(e, t)) || null
+    // Lectura que solo llegó como alerta: cuenta si el reconocedor la tomó como caso (las ilegibles sueltas se descartan).
+    if (e.fromAlert && !it) continue
     rows.push({
       at: new Date(t).toISOString(),
       t,
@@ -1042,6 +1050,9 @@ export function recentCaptures(events, identification, nowMs, limit = 60) {
       validFormat: isValidPlate(plate),
       level: it ? it.level : isValidPlate(plate) ? 'leida' : 'pendiente',
       identifiedPlate: it?.assignedPlate ?? (isValidPlate(plate) ? plate : null),
+      /** Regla y capa del reconocedor que decidió (algorithmLayers.mjs). */
+      rule: it?.rule ?? null,
+      layer: layerOf(it),
       fragmentKey: it?.fragmentKey ?? null,
       candidates: it ? it.candidates.slice(0, 3) : [],
     })
@@ -1195,6 +1206,34 @@ export function deduceSkippedSteps(seen, catalog, { weights = circuitWeights({},
   return out
 }
 export const DEDUCED_MIN_PROBABILITY = 0.95
+
+/**
+ * Lo que le falta recorrer al camión según el modelo de nodos: de los circuitos que contienen lo leído
+ * en orden (puede saltear cámaras), el de más peso (histórico); a igual peso, el más corto. Los circuitos
+ * del modelo cruzan de planta (R7 sigue en San Lorenzo), a diferencia del catálogo por prefijo.
+ * @param {string[]} seen secuencia lógica del camión (con los deducidos)
+ * @returns {{ code: string, rest: string[] } | null}
+ */
+export function remainingByNodeModel(seen, catalog = nodeModelCatalog(), weights = circuitWeights({}, historicalPrior(), catalog.map((c) => c.code))) {
+  const h = collapse((seen || []).filter((l) => l && l !== 'ESPERA'))
+  if (!h.length) return null
+  let best = null
+  for (const entry of catalog) {
+    for (const s of entry.sequences) {
+      let j = 0
+      let last = -1
+      for (const l of h) {
+        while (j < s.length && s[j] !== l) j++
+        if (j >= s.length) { last = -2; break }
+        last = j++
+      }
+      if (last < 0) continue
+      const w = weights[entry.code] ?? 0.05
+      if (!best || w > best.w || (w === best.w && s.length < best.len)) best = { code: entry.code, rest: s.slice(last + 1), w, len: s.length }
+    }
+  }
+  return best ? { code: best.code, rest: best.rest } : null
+}
 
 /**
  * Secuencia lógica con los pasos deducidos intercalados (para elegir circuito y próximo punto: si Preingreso
