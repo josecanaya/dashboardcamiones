@@ -874,8 +874,14 @@ export function identifyFragments(events, nowMs, ctx) {
     const cartaOpen = level === 'provisorio' || level === 'pendiente' || (rule === 'fuera_sistema' && seenAttrs?.vehicleClass !== 'liviano')
     if (ctx.padron?.platesAt && cartaOpen && !decided(f) && !twin && !readCartaHit && !readInBalanza && !(valid && readKnown)) {
       const min = valid ? Math.max(CARTA_SIMILARITY, CARTA_VALID_SIMILARITY) : CARTA_SIMILARITY
-      const ranked = ctx.padron.platesAt(head.t)
-        .filter((x) => x.plate !== f.plate)
+      // En la carta la primera patente es el chasis y las demás el acoplado. La frontal ve el chasis; la
+      // trasera, el acoplado (o el chasis si va sin acoplado). 29/10: la trasera de Salida 2 leyó «AA990» y
+      // se la dio a AA996WD, cuya trasera es el acoplado DZE065.
+      const universe = ctx.padron.platesAt(head.t)
+      const withTrailer = new Set(universe.filter((x) => x.role === 'acoplado').map((x) => x.chasis))
+      const visible = (x) => (rear ? x.role === 'acoplado' || !withTrailer.has(x.chasis) : x.role === 'chasis')
+      const ranked = universe
+        .filter((x) => x.plate !== f.plate && visible(x))
         .map((x) => ({ ...x, similarity: plateSimilarity(f.plate, x.plate) }))
         .filter((x) => x.similarity >= min)
         .sort((a, b) => b.similarity - a.similarity)
@@ -897,25 +903,27 @@ export function identifyFragments(events, nowMs, ctx) {
     // Lectura ilegible: alcanza con eso. Patente válida (viaje fantasma): además ese camión no tiene
     // ninguna lectura de cámara en su visita (el fantasma es su recorrido) y la leída nunca vino a la balanza.
     if (bz && (level === 'provisorio' || level === 'pendiente') && !twin && !readInBalanza && !(valid && readKnown)) {
-      const ranked = bz.platesAt(head.t)
-        .filter((p) => p !== f.plate)
-        .map((p) => ({ plate: p, similarity: plateSimilarity(f.plate, p) }))
+      // La trasera se compara con lo que se ve de atrás (acoplado o chasis sin acoplado); se asigna al chasis.
+      const pool = rear && bz.rearPlatesAt ? bz.rearPlatesAt(head.t) : bz.platesAt(head.t).map((p) => ({ plate: p, truck: p }))
+      const ranked = pool
+        .filter((p) => p.plate !== f.plate && p.truck !== f.plate)
+        .map((p) => ({ ...p, similarity: plateSimilarity(f.plate, p.plate) }))
         .filter((x) => x.similarity >= GHOST_SIMILARITY)
         .sort((a, b) => b.similarity - a.similarity)
       const top = ranked[0]
       const clear = top && (!ranked[1] || top.similarity - ranked[1].similarity >= RIVAL_MARGIN)
       // Un camión de cámara en el universo que se parece más (interno de silos, sin balanza) manda.
       const betterCamera = top && plateMatches.some((c) => c.inUniverse && c.similarity > top.similarity && !inBalanza(c.plate))
-      const visit = top && bz.truckAt(top.plate, head.t)
-      const unread = visit && !(readsByPlate.get(top.plate) ?? []).some((r) => r.t >= visit.ingresoMs - 30 * 60_000 && r.t <= (visit.salidaMs ?? head.t + 6 * 3600_000) + 60 * 60_000)
+      const visit = top && bz.truckAt(top.truck, head.t)
+      const unread = visit && !(readsByPlate.get(top.truck) ?? []).some((r) => r.t >= visit.ingresoMs - 30 * 60_000 && r.t <= (visit.salidaMs ?? head.t + 6 * 3600_000) + 60 * 60_000)
       // Lectura suelta en un solo nodo: no hace falta que el camión real no tenga lecturas (es una lectura más suya).
       const singleNode = new Set(f.rows.map((r) => r.logical)).size === 1
       if (clear && !betterCamera && (!valid || unread || singleNode)) {
         level = 'casi_seguro'
-        chosen = journeyOfPlate(top.plate)
+        chosen = journeyOfPlate(top.truck)
         rule = 'balanza_unica'
-        reason = `${f.plate} no figura en la balanza y ${top.plate} (parecido ${Math.round(top.similarity * 100)} %) es el único camión parecido en planta según la balanza${valid && !singleNode ? ', sin ninguna lectura de cámara en su visita' : ''}`
-        if (!bzSimilar.includes(top.plate)) bzSimilar.push(top.plate)
+        reason = `${f.plate} no figura en la balanza y ${top.plate} (parecido ${Math.round(top.similarity * 100)} %${top.plate !== top.truck ? `, acoplado de ${top.truck}` : ''}) es el único camión parecido en planta según la balanza${valid && !singleNode ? ', sin ninguna lectura de cámara en su visita' : ''}`
+        if (!bzSimilar.includes(top.truck)) bzSimilar.push(top.truck)
       }
     }
 

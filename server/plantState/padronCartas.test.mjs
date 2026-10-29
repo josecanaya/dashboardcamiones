@@ -270,8 +270,8 @@ describe('la carta también corrige, antes que la balanza', () => {
     expect(conCarta.assignedPlate).toBe('HDC112')
   })
 
-  it('el acoplado parecido lleva la lectura a su chasis', () => {
-    const events = [ev('AE76LY', 'x1', '2-S3', 'RicSalida2', '2026-10-28T11:40:00-03:00')]
+  it('el acoplado parecido (cámara trasera) lleva la lectura a su chasis', () => {
+    const events = [ev('AE76LY', 'x1', '2-S3', 'RicEgrCamTraser', '2026-10-28T11:40:00-03:00')]
     const padron = padronCartas(fullPadron([carta('9', ['MDY035', 'AE762LY'])]))
     const it0 = identifyFragments(events, now, { catalog, padron }).items.find((i) => i.readPlate === 'AE76LY')
     expect(it0.rule).toBe('carta_parecida')
@@ -283,5 +283,25 @@ describe('la carta también corrige, antes que la balanza', () => {
     const padron = padronCartas(fullPadron([carta('4', ['HDC112', 'ZZ999ZZ']), carta('5', ['HDC113', 'YY888YY'])]))
     const it0 = identifyFragments(events, now, { catalog, padron }).items.find((i) => i.readPlate === 'HDC11')
     expect(it0?.rule).not.toBe('carta_parecida')
+  })
+
+  it('la trasera no se compara con un chasis que lleva acoplado, ni la frontal con un acoplado (AA990 → AA996WD, 29/10)', () => {
+    const padron = padronCartas(fullPadron([carta('30035817887', ['AA996WD', 'DZE065'])]))
+    const trasera = identifyFragments([ev('AA990', 'x1', '2-S3', 'RicEgrCamTraser', '2026-10-28T11:40:00-03:00')], now, { catalog, padron }).items.find((i) => i.readPlate === 'AA990')
+    expect(trasera?.rule).not.toBe('carta_parecida')
+    const frontal = identifyFragments([ev('DZE06', 'x1', '2-S3', 'RicEgrCamFrente', '2026-10-28T11:40:00-03:00')], now, { catalog, padron }).items.find((i) => i.readPlate === 'DZE06')
+    expect(frontal?.rule).not.toBe('carta_parecida')
+    // Sin acoplado en la carta, la trasera ve el chasis.
+    const solo = padronCartas(fullPadron([carta('7', ['AA996WD'])]))
+    const tr2 = identifyFragments([ev('AA996W', 'x1', '2-S3', 'RicEgrCamTraser', '2026-10-28T11:40:00-03:00')], now, { catalog, padron: solo }).items.find((i) => i.readPlate === 'AA996W')
+    expect(tr2).toMatchObject({ rule: 'carta_parecida', assignedPlate: 'AA996WD' })
+  })
+
+  it('balanza única en la trasera: se compara con el acoplado y va al chasis', () => {
+    const balanza = buildBalanzaRegistry([{ plate: 'AA996WD', trailer: 'DZE065', ingresoMs: Date.parse('2026-10-28T11:00:00-03:00'), salidaMs: null }])
+    const contraChasis = identifyFragments([ev('AA990', 'x1', '2-S3', 'RicEgrCamTraser', '2026-10-28T11:40:00-03:00')], now, { catalog, balanza }).items.find((i) => i.readPlate === 'AA990')
+    expect(contraChasis?.rule).not.toBe('balanza_unica')
+    const contraAcoplado = identifyFragments([ev('DZE06', 'x1', '2-S3', 'RicEgrCamTraser', '2026-10-28T11:40:00-03:00')], now, { catalog, balanza }).items.find((i) => i.readPlate === 'DZE06')
+    expect(contraAcoplado).toMatchObject({ rule: 'balanza_unica', assignedPlate: 'AA996WD' })
   })
 })

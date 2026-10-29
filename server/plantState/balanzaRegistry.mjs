@@ -73,6 +73,18 @@ export function buildBalanzaRegistry(visits, known = new Set()) {
       for (const [plate, vs] of byPlate) if (vs.some((v) => inside(v, t))) out.push(plate)
       return out
     },
+    /**
+     * Lo que ve una cámara trasera de cada camión en planta a la hora t: su acoplado, o su chasis si va sin
+     * acoplado. `truck` es la patente del chasis (el camión al que se asigna la lectura).
+     */
+    rearPlatesAt(t) {
+      const out = []
+      for (const [plate, vs] of byPlate) {
+        const v = vs.find((x) => inside(x, t))
+        if (v) out.push({ plate: v.trailer && !FAKE.test(v.trailer) && v.trailer !== plate ? v.trailer : plate, truck: plate })
+      }
+      return out
+    },
     /** La patente pasó alguna vez por la balanza (historia) o figura hoy. */
     isKnown(plate) {
       return known.has(plate) || byPlate.has(plate)
