@@ -19,7 +19,6 @@ import { liveBalanzaRegistry, outsideTruckSystem, replayBalanzaRegistry } from '
 import { createIdentificationArchive } from './identificationArchive.mjs'
 import { padronCartas } from './padronCartas.mjs'
 import { assessVehicleRelevance, excludeIrrelevantEvents, splitNonTrucks } from './vehicleRelevance.mjs'
-import { categoryOf, isGrainProduct } from '../live/padron/vehiculosPermitidos.mjs'
 import { alertInstantMs, alertReadEvents, withAlertAttributes } from './alertReads.mjs'
 import { applyVisionVerdict, checkSeenPlate } from '../live/vision/seenPlate.mjs'
 
@@ -505,9 +504,6 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       const split = splitNonTrucks(identifiedEvents, items, {
         noCamiones: aprendizajeIndex?.noCamiones ?? null,
         padron: process.env.IDENTIFICATION_PADRON === '0' ? null : padronIndex,
-        balanza: process.env.IDENTIFICATION_BALANZA === '0' ? null : liveBalanzaRegistry(nowMs),
-        isGrainProduct,
-        categoryOf,
         plateOf: rowPlate,
         timeOf: getEventLiveInstantMs,
       })

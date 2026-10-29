@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { PlantMap, type MapTruck } from '../components/plant/PlantMap'
+import { PlantMap, type MapTruck, type RouteStep } from '../components/plant/PlantMap'
 import { LiveCameraPlayerModal } from '../components/plant/LiveCameraPlayerModal'
 import { LiveActivityFeed } from '../components/plant/LiveActivityFeed'
 import { IdentificationPanel } from '../components/plant/IdentificationPanel'
 import { VerificationPhoto, type PhotoState } from '../components/plant/PlateVerification'
 import { createPortal } from 'react-dom'
+import { PointHistoryModal } from '../components/plant/PointHistoryModal'
 import { placeTrucks } from '../services/live/truckTransit'
 import { crossPlantSources, SOURCE_SGC, SOURCE_TF, type PlantTruck } from '../services/live/plantCrossSource'
+import type { PlantPoint } from '../data/plantZones.types'
 import { useLivePlantState } from '../hooks/useLivePlantState'
 import type { PlantLayout, PlantCameraGroup } from '../data/plantZones.types'
 import type { BalanzaRow, BalanzaSnapshot, CartaPorteLookup, CartaPorteNote, ExpectedStatus, ExpectedTrip, ExpectedTruck, ExpectedTrucks, OtherVehicle, PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow, TruckTimelineRow } from '../services/live/plantStateApi'
@@ -28,6 +30,32 @@ function minutes(min: number | null | undefined) {
 }
 function hhmm(iso: string) {
   return new Date(iso).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Argentina/Buenos_Aires' })
+}
+
+/**
+ * Recorrido del camión seguido para el rótulo del plano: una ficha por punto (lecturas seguidas en el
+ * mismo punto se juntan, con la hora de la primera), el deducido con hora estimada a mitad de camino
+ * entre sus vecinos, y después los puntos del circuito que le faltan.
+ */
+function routeOf(journey: TruckJourney | null, pointLabel: Map<string, string>): RouteStep[] {
+  if (!journey) return []
+  const visits: { logical: string; label: string; kind: 'hecho' | 'deducido'; first: number | null; last: number | null }[] = []
+  for (const r of journey.timeline) {
+    const logical = r.logicalSector ?? r.label
+    if (logical === 'ESPERA') continue
+    const t = r.at ? Date.parse(r.at) : null
+    const v = visits[visits.length - 1]
+    if (v && v.logical === logical && v.kind === 'hecho' && r.step !== 'deducido') { if (t != null) v.last = t; continue }
+    visits.push({ logical, label: pointLabel.get(r.logicalSector ?? '') ?? r.label, kind: r.step === 'deducido' ? 'deducido' : 'hecho', first: t, last: t })
+  }
+  const steps: RouteStep[] = visits.map((v, i) => {
+    if (v.kind === 'hecho') return { label: v.label, kind: 'hecho', time: v.first != null ? hhmm(new Date(v.first).toISOString()) : null }
+    const before = visits.slice(0, i).reverse().find(x => x.last != null)?.last
+    const after = visits.slice(i + 1).find(x => x.first != null)?.first
+    return { label: v.label, kind: 'deducido', time: before != null && after != null ? hhmm(new Date((before + after) / 2).toISOString()) : null }
+  })
+  ;(journey.remainingSteps ?? []).forEach((r, i) => steps.push({ label: pointLabel.get(r.logicalSector) ?? r.label, kind: i === 0 ? 'proximo' : 'pendiente' }))
+  return steps
 }
 
 /**
@@ -52,6 +80,7 @@ export function LiveMonitorPage() {
   const [search, setSearch] = useState('')
   const [zoneFilter, setZoneFilter] = useState<string | null>(null)
   const [camera, setCamera] = useState<{ title: string; devices: string[] } | null>(null)
+  const [pointOpen, setPointOpen] = useState<PlantPoint | null>(null)
   const [pending, setPending] = useState<number | null>(null)
   const [now, setNow] = useState(Date.now())
   const [balanza, setBalanza] = useState<BalanzaSnapshot | null>(null)
@@ -125,6 +154,7 @@ export function LiveMonitorPage() {
   const points = useMemo(() => layout?.points ?? [], [layout])
   const pointOfSector = useMemo(() => new Map(points.map(p => [p.sectorCode, p.id])), [points])
   const pointLabel = useMemo(() => new Map(points.map(p => [p.id, p.label])), [points])
+  const followRoute = useMemo(() => routeOf(journey, pointLabel), [journey, pointLabel])
   // Cada camión en su punto o en tránsito sobre la línea hacia el siguiente (como en el simulador).
   const mapTrucks: MapTruck[] = useMemo(() => {
     const byPlate = new Map(trucks.map(t => [t.plate, t]))
@@ -159,7 +189,7 @@ export function LiveMonitorPage() {
     return pointLabel.get(m?.pointId ?? pointOfSector.get(row.sectorCode) ?? '') ?? row.sectorCode
   }
   const sgcOk = Boolean(balanza?.status.lastOkAt)
-  usePublishAnalysis({ mode: 'live', site, sector: followedRow?.sectorCode, zone: zoneFilter, plate: followed, metricId: view === 'patentes' ? 'identification.pending_cases' : 'plant.trucks_present' })
+  usePublishAnalysis({ mode: 'live', site, sector: followedRow?.sectorCode ?? pointOpen?.sectorCode, zone: zoneFilter, plate: followed, label: pointOpen?.label, metricId: view === 'patentes' ? 'identification.pending_cases' : 'plant.trucks_present' })
   const ageS = live.lastUpdateMs ? Math.round((now - live.lastUpdateMs) / 1000) : null
   const statusText = live.status === 'live' ? 'En vivo' : live.status === 'stale' ? 'Datos demorados' : live.status === 'error' ? 'Sin conexión' : 'Conectando…'
   const lastEvent = snap?.source?.lastEventAt ? Math.round((now - Date.parse(snap.source.lastEventAt)) / 60000) : null
@@ -181,9 +211,10 @@ export function LiveMonitorPage() {
           {(Object.keys(SITE_NAME) as Site[]).map(s => <button key={s} type="button" aria-pressed={site === s} onClick={() => setSite(s)}>{SITE_NAME[s]}</button>)}
         </div>
         <dl className="lm-kpis">
-          <div title={`Cruce ${SOURCE_TF} (cámaras) + ${SOURCE_SGC} (balanza Vicentin) por patente`}>
-            <dt>En planta</dt><dd>{plantTrucks.length || (snap?.plant.trucksInPlant ?? '—')}</dd>
-            <small className="lm-kpis__src">{sgcOk ? `${counts.ambas} en ambas · ${counts.sgc} solo ${SOURCE_SGC} · ${counts.tf} solo cámaras` : `${SOURCE_SGC} sin conexión`}</small>
+          {/* Camiones de granos según las cámaras (carta de porte). La balanza (SGC) es solo control de error. */}
+          <div title={`Camiones de granos vistos por las cámaras (${SOURCE_TF}). ${SOURCE_SGC} (balanza) solo como control.`}>
+            <dt>En planta</dt><dd>{trucks.length || (snap?.plant.trucksInPlant ?? '—')}</dd>
+            <small className="lm-kpis__src">{sgcOk ? `control ${SOURCE_SGC}: ${counts.ambas} coinciden · ${counts.sgc} solo ${SOURCE_SGC} (revisar)` : `${SOURCE_SGC} sin conexión`}</small>
           </div>
           <div><dt>Ingresan / h</dt><dd>{snap?.plant.inflow60 ?? '—'}</dd></div>
           <div><dt>Salen / h</dt><dd>{snap?.plant.outflow60 ?? '—'}</dd></div>
@@ -219,8 +250,10 @@ export function LiveMonitorPage() {
               followPath={journey?.timeline.map(r => r.logicalSector ?? '').filter(Boolean) ?? []}
               followDeduced={journey?.timeline.filter(r => r.step === 'deducido').map(r => r.logicalSector ?? '').filter(Boolean) ?? []}
               followNext={journey?.nextExpectedPoint ?? null}
-              // Clic en un nodo: directo a sus cámaras en vivo.
+              followRoute={followRoute}
+              followCircuit={journey?.circuit ?? null}
               onOpenCameras={openPoint}
+              onSelectPoint={setPointOpen}
               onSelectZone={id => { if (id) { setZoneFilter(id); setPanel('camiones'); setFollowed(null) } }}
             /> : <div className="lm-map__empty">Cargando plano…</div>}
             <div className="lm-legend" aria-hidden>
@@ -248,7 +281,7 @@ export function LiveMonitorPage() {
             ) : (
               <>
                 <div className="lm-tabs" role="tablist">
-                  {([['camiones', `Camiones ${plantTrucks.length}`], ['vehiculos', `Vehículos ${others.length}`], ['esperados', 'Esperados'], ['camaras', 'Cámaras'], ['capturas', 'Capturas']] as const).map(([id, label]) =>
+                  {([['camiones', `Camiones ${trucks.length}`], ['vehiculos', `Vehículos ${others.length}`], ['esperados', 'Esperados'], ['camaras', 'Cámaras'], ['capturas', 'Capturas']] as const).map(([id, label]) =>
                     <button key={id} type="button" role="tab" aria-selected={panel === id} onClick={() => setPanel(id)}>{label}</button>)}
                 </div>
                 {panel === 'camiones' ? <div className="lm-panel">
@@ -308,7 +341,7 @@ export function LiveMonitorPage() {
                 {panel === 'camaras' ? <div className="lm-panel">
                   <ul className="lm-cams">
                     {points.filter(p => p.cameraGroup.devices.length).map(p => <li key={p.id}>
-                      <button type="button" onClick={() => openPoint(p.cameraGroup)}>
+                      <button type="button" onClick={() => setPointOpen(p)}>
                         <span className="lm-cams__icon" aria-hidden>▶</span>
                         <strong>{p.label}</strong>
                         <small>{p.cameraGroup.devices.length} {p.cameraGroup.devices.length === 1 ? 'cámara' : 'cámaras'}</small>
@@ -322,6 +355,7 @@ export function LiveMonitorPage() {
           </aside>
         </div>
       )}
+      {pointOpen ? <PointHistoryModal site={site} point={pointOpen} onClose={() => setPointOpen(null)} onOpenCameras={() => openPoint(pointOpen.cameraGroup)} onOpenTrip={t => { setPointOpen(null); setTrip(t) }} /> : null}
       {trip ? <ExpectedTripDialog key={trip.ctg} truck={trip} site={site} onClose={() => setTrip(null)} onFollow={plate => follow(plate)} /> : null}
       <LiveCameraPlayerModal open={camera != null} devices={camera?.devices ?? null} title={camera?.title} onClose={() => setCamera(null)} />
     </section>

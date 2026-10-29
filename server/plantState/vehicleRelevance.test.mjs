@@ -40,24 +40,23 @@ describe('lo que no es camión no cuenta en la planta', () => {
     const out = excludeNonTrucks([ev('OIY765'), ev('AA208QN'), ev('MOB09'), ev('AF861FZ'), ev('TAO150'), ev('AD001TD')], items, ctx({ noCamiones: { lookup: (p) => (p === 'AD001TD' ? { kind: 'liviano' } : null) } }))
     expect(out.map((e) => e.plate)).toEqual(['AF861FZ', 'TAO150'])
   })
-  it('si la balanza lo tiene en planta es un camión aunque figure como no camión', () => {
-    const out = excludeNonTrucks([ev('OIY765')], [{ readPlate: 'OIY765', rule: 'no_camion' }], ctx({ balanza: { truckAt: (p) => p === 'OIY765' } }))
-    expect(out).toHaveLength(1)
+  it('con carta de porte vigente es un camión aunque figure como no camión; la balanza no decide', () => {
+    const out = excludeNonTrucks([ev('OIY765'), ev('AH456NL')], [{ readPlate: 'OIY765', rule: 'no_camion' }, { readPlate: 'AH456NL', rule: 'no_camion' }], ctx({ padron: { at: () => null, cartaAt: (p) => (p === 'OIY765' ? { ctg: '1' } : null) }, balanza: { truckAt: () => ({ cod: '0301' }) } }))
+    expect(out.map((e) => e.plate)).toEqual(['OIY765'])
   })
 })
 
 describe('el plano es solo de camiones de granos', () => {
   const ev = (plate, t = 1000) => ({ plate, t })
-  const base = { plateOf: (e) => e.plate, timeOf: (e) => e.t, isGrainProduct: (c) => ['0301', '0909', '0081'].includes(c) }
-  it('Vehículos Permitidos (agua) va a la lista; con carta vigente o grano en la balanza queda en el plano', () => {
+  const base = { plateOf: (e) => e.plate, timeOf: (e) => e.t }
+  it('Vehículos Permitidos (agua) va a la lista; con carta vigente queda en el plano; sin nada, queda como caso', () => {
     const padron = {
       at: (p) => (['BTS626', 'AGU111'].includes(p) ? { source: 'permitido', category: 'agua' } : null),
       cartaAt: (p) => (p === 'AGU111' ? { ctg: '1' } : null),
     }
-    const balanza = { truckAt: (p) => (p === 'LEN222' ? { cod: '0817' } : p === 'SOJ333' ? { cod: '0301' } : null) }
-    const r = splitNonTrucks([ev('BTS626'), ev('AGU111'), ev('LEN222'), ev('SOJ333'), ev('XYZ999')], [], { ...base, padron, balanza })
-    expect(r.trucks.map((e) => e.plate)).toEqual(['AGU111', 'SOJ333', 'XYZ999'])
-    expect(r.others.map((e) => e.plate)).toEqual(['BTS626', 'LEN222'])
+    const r = splitNonTrucks([ev('BTS626'), ev('AGU111'), ev('XYZ999')], [], { ...base, padron })
+    expect(r.trucks.map((e) => e.plate)).toEqual(['AGU111', 'XYZ999'])
+    expect(r.others.map((e) => e.plate)).toEqual(['BTS626'])
     expect(r.whyOf('BTS626').label).toBe('Vehículos Permitidos (agua)')
   })
 })

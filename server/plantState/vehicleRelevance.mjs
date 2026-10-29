@@ -31,14 +31,15 @@ const KIND_LABEL = { tractor_maquinaria: 'tractor o maquinaria', liviano: 'auto 
 /**
  * En la planta de En vivo van solo los camiones de granos (29/10). Los demás vehículos —autos y camionetas,
  * máquinas, y los de Vehículos Permitidos (agua, residuos, leña, insumos…)— se registran aparte, en la
- * lista «Vehículos en planta». Manda la balanza: si el SGC lo tiene adentro, decide su producto; si no,
- * una carta de porte vigente lo hace de granos.
+ * lista «Vehículos en planta». Lo decide la carta de porte: con carta vigente (chasis o acoplado) es un
+ * camión de granos. La balanza (SGC) no decide: es solo control de error. Lo que no tiene carta ni figura
+ * como vehículo queda en la planta como camión sin identificar (es un caso de la corrección).
  * @param {object[]} events eventos ya identificados (patente final en normalizedPlate)
  * @param {object[]} items casos del reconocedor
- * @param {{ noCamiones?: { lookup: Function }|null, padron?: { at: Function, cartaAt?: Function }|null, balanza?: { truckAt: Function }|null, isGrainProduct?: (cod: string) => boolean, categoryOf?: (cod: string) => string, plateOf: (e: object) => string, timeOf: (e: object) => number }} ctx
+ * @param {{ noCamiones?: { lookup: Function }|null, padron?: { at: Function, cartaAt?: Function }|null, plateOf: (e: object) => string, timeOf: (e: object) => number }} ctx
  * @returns {{ trucks: object[], others: object[], whyOf: (plate: string) => { kind: string, label: string }|null }}
  */
-export function splitNonTrucks(events, items, { noCamiones = null, padron = null, balanza = null, isGrainProduct = () => true, categoryOf = (c) => `producto ${c}`, plateOf, timeOf }) {
+export function splitNonTrucks(events, items, { noCamiones = null, padron = null, plateOf, timeOf }) {
   const flagged = new Map()
   for (const it of items) {
     if (it.assignedPlate && it.assignedPlate !== it.readPlate) continue
@@ -51,9 +52,7 @@ export function splitNonTrucks(events, items, { noCamiones = null, padron = null
     if (!plate) return null
     if (!why.has(plate)) {
       let w = null
-      const v = balanza?.truckAt(plate, t)
-      if (v) w = v.cod && !isGrainProduct(v.cod) ? { kind: 'permitido', label: `Vehículos Permitidos (${String(categoryOf(v.cod)).replace(/_/g, ' ')})` } : null
-      else if (padron?.cartaAt?.(plate, t)) w = null
+      if (padron?.cartaAt?.(plate, t)) w = null
       else {
         const nc = noCamiones?.lookup(plate)
         const h = padron?.at(plate, t)
