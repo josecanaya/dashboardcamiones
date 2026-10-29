@@ -17,9 +17,20 @@ import { normPlate } from './cartasSource.mjs'
 
 const FAKE = /^(X+|P+|T+)$/
 /** Granos (carta de porte) y derivados granarios (aceites, pellets, harinas, cáscara: carta de derivados). */
-const WITH_CARTA = (cod) => ['0101', '0201', '0301', '0501', '0909'].includes(cod) || /^0[23]\d\d$/.test(cod)
+// 00xx: semillas con carta (0081 camelina).
+const WITH_CARTA = (cod) => ['0101', '0201', '0301', '0501', '0909'].includes(cod) || /^0[023]\d\d$/.test(cod)
 /** 9999 que en realidad son camiones de granos (se equivocaron de planta, trasilado, muestras de calado, vuelta). */
 const GRAIN_VARIOS = /EQUIVOCAN DE PTA|TRASILADO|TRANSILADO|MUESTRAS CALADO|TOLVA CALADO|RECHAZADO DE TEM/i
+
+/**
+ * Camión de granos: producto con carta de porte (granos, semillas, derivados) o un 9999 que en realidad es
+ * de granos. Todo lo demás (agua, residuos, leña, burlanda, alcohol, glicerina, heno, insumos) es un
+ * vehículo de Vehículos Permitidos: se registra pero no se muestra en el plano de En vivo.
+ */
+export function isGrainProduct(cod, obs = '') {
+  const c = String(cod ?? '').padStart(4, '0')
+  return WITH_CARTA(c) || (c === '9999' && GRAIN_VARIOS.test(String(obs ?? '')))
+}
 
 export function categoryOf(cod) {
   const c = String(cod ?? '').padStart(4, '0')

@@ -14,6 +14,7 @@ import oracledb from 'oracledb'
 import { appendFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { buildSgcPriors, normalizeSgcPlant, pairTransiles, sgcRecordToMovimiento, SGC_SOURCE_FILE } from './sgcMovimientos.mjs'
+import { categoryOf, isGrainProduct } from '../live/padron/vehiculosPermitidos.mjs'
 
 const POLL_MS = Number(process.env.SGC_POLL_MS || 120_000)
 const MOVIMIENTOS_FROM = process.env.SGC_MOVIMIENTOS_FROM?.trim() || '2026-10-15'
@@ -189,8 +190,12 @@ export function createSgcSource({ projectRoot }) {
     const enriched = rows.map(enrich)
     // El SGC registra la planta de destino: un R7 que entra por Preingreso de Ricardone figura como
     // TERMINAL DE EMBARQUE. Para cruzar con cámaras hacen falta también los ingresos abiertos de otras plantas.
-    const otherOpen = plants ? all.filter(r => !plants.includes(r.plant) && !r.FECHASALIDA).map(enrich) : []
-    const inPlant = enriched.filter(r => !r.salidaAt).sort((a, b) => b.minutes - a.minutes)
+    // En vivo muestra solo camiones de granos; agua, residuos, leña, insumos… van a «Vehículos en planta».
+    const grain = r => isGrainProduct(r.productCode)
+    const otherOpen = plants ? all.filter(r => !plants.includes(r.plant) && !r.FECHASALIDA).map(enrich).filter(grain) : []
+    const openAll = enriched.filter(r => !r.salidaAt).sort((a, b) => b.minutes - a.minutes)
+    const inPlant = openAll.filter(grain)
+    const vehiculos = openAll.filter(r => !grain(r)).map(r => ({ ...r, category: categoryOf(r.productCode) }))
     const closed = enriched.filter(r => r.salidaAt).sort((a, b) => String(b.salidaAt).localeCompare(String(a.salidaAt)))
     const byProduct = {}
     for (const r of inPlant) byProduct[r.product] = (byProduct[r.product] ?? 0) + 1
@@ -199,6 +204,7 @@ export function createSgcSource({ projectRoot }) {
       status: { enabled, fetchedAt: state.fetchedAt, lastOkAt: state.lastOkAt, error: state.error, pollMs: POLL_MS },
       counts: {
         inPlant: inPlant.length,
+        vehiculos: vehiculos.length,
         ingresos24h: enriched.length,
         salidas24h: closed.length,
         netoKg24h: closed.reduce((s, r) => s + (r.netoKg ?? 0), 0),
@@ -207,6 +213,7 @@ export function createSgcSource({ projectRoot }) {
       },
       byProduct: Object.entries(byProduct).sort((a, b) => b[1] - a[1]).map(([product, n]) => ({ product, n })),
       inPlant,
+      vehiculos,
       closed,
       otherOpen,
     }

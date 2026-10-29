@@ -46,6 +46,12 @@ export function padronCartas(padron, permitidos = null) {
       const n = [...notes].sort((a, b) => Number(b.plates[0] === p) - Number(a.plates[0] === p) || ref(a) - ref(b))[0]
       return { source: 'carta', ctg: n.ctg, role: n.plates[0] === p ? 'chasis' : 'acoplado', chasis: n.plates[0], direction: n.direction, grain: n.grain ?? null }
     },
+    /** Carta de porte vigente de la patente (sin mirar Vehículos Permitidos): ese día viene con granos. */
+    cartaAt(plate, t) {
+      const p = plateOf(plate)
+      if (p.length < 5) return null
+      return (padron?.lookup(p) ?? []).find((n) => vigente(n, t)) ?? null
+    },
   }
 }
 

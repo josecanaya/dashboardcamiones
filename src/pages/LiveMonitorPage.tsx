@@ -6,19 +6,17 @@ import { LiveActivityFeed } from '../components/plant/LiveActivityFeed'
 import { IdentificationPanel } from '../components/plant/IdentificationPanel'
 import { VerificationPhoto, type PhotoState } from '../components/plant/PlateVerification'
 import { createPortal } from 'react-dom'
-import { PointHistoryModal } from '../components/plant/PointHistoryModal'
 import { placeTrucks } from '../services/live/truckTransit'
 import { crossPlantSources, SOURCE_SGC, SOURCE_TF, type PlantTruck } from '../services/live/plantCrossSource'
-import type { PlantPoint } from '../data/plantZones.types'
 import { useLivePlantState } from '../hooks/useLivePlantState'
 import type { PlantLayout, PlantCameraGroup } from '../data/plantZones.types'
-import type { BalanzaRow, BalanzaSnapshot, CartaPorteLookup, CartaPorteNote, ExpectedStatus, ExpectedTrip, ExpectedTruck, ExpectedTrucks, PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow, TruckTimelineRow } from '../services/live/plantStateApi'
-import { cameraCaptureImageUrl, cartaPortePdfUrl, correctTruckLocation, getCartaPorte, getExpectedTrip, getExpectedTrucks, findCameraCapture, formatDrainMinutes, getBalanza, getIdentifications, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
+import type { BalanzaRow, BalanzaSnapshot, CartaPorteLookup, CartaPorteNote, ExpectedStatus, ExpectedTrip, ExpectedTruck, ExpectedTrucks, OtherVehicle, PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow, TruckTimelineRow } from '../services/live/plantStateApi'
+import { cameraCaptureImageUrl, cartaPortePdfUrl, correctTruckLocation, getCartaPorte, getExpectedTrip, getExpectedTrucks, findCameraCapture, formatDrainMinutes, getBalanza, getIdentifications, getOtherVehicles, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
 import './liveMonitor.css'
 import { usePublishAnalysis } from '../context/AnalysisContext'
 
 type Site = 'ricardone' | 'san_lorenzo'
-type Panel = 'camiones' | 'esperados' | 'camaras' | 'capturas'
+type Panel = 'camiones' | 'vehiculos' | 'esperados' | 'camaras' | 'capturas'
 type SourceFilter = 'todas' | 'ambas' | 'sgc' | 'tf'
 const SITE_NAME: Record<Site, string> = { ricardone: 'Ricardone', san_lorenzo: 'San Lorenzo' }
 const STATUS_TEXT: Record<TruckRow['status'], string> = { normal: 'En tiempo', attention: 'Demorado', critical: 'Muy demorado' }
@@ -54,7 +52,6 @@ export function LiveMonitorPage() {
   const [search, setSearch] = useState('')
   const [zoneFilter, setZoneFilter] = useState<string | null>(null)
   const [camera, setCamera] = useState<{ title: string; devices: string[] } | null>(null)
-  const [pointOpen, setPointOpen] = useState<PlantPoint | null>(null)
   const [pending, setPending] = useState<number | null>(null)
   const [now, setNow] = useState(Date.now())
   const [balanza, setBalanza] = useState<BalanzaSnapshot | null>(null)
@@ -87,6 +84,17 @@ export function LiveMonitorPage() {
     let alive = true
     setBalanza(null)
     const load = () => getBalanza(site).then(b => { if (alive) { setBalanza(b); setBalanzaError(null) } }).catch(e => { if (alive) setBalanzaError(e instanceof Error ? e.message : String(e)) })
+    void load()
+    const t = setInterval(load, 30_000)
+    return () => { alive = false; clearInterval(t) }
+  }, [site])
+
+  // Vehículos que no son camiones de granos (autos, máquinas, Vehículos Permitidos): solo en su lista, cada 30 s.
+  const [others, setOthers] = useState<OtherVehicle[]>([])
+  useEffect(() => {
+    let alive = true
+    setOthers([])
+    const load = () => getOtherVehicles(site).then(r => { if (alive) setOthers(r.vehicles) }).catch(() => undefined)
     void load()
     const t = setInterval(load, 30_000)
     return () => { alive = false; clearInterval(t) }
@@ -151,7 +159,7 @@ export function LiveMonitorPage() {
     return pointLabel.get(m?.pointId ?? pointOfSector.get(row.sectorCode) ?? '') ?? row.sectorCode
   }
   const sgcOk = Boolean(balanza?.status.lastOkAt)
-  usePublishAnalysis({ mode: 'live', site, sector: followedRow?.sectorCode ?? pointOpen?.sectorCode, zone: zoneFilter, plate: followed, label: pointOpen?.label, metricId: view === 'patentes' ? 'identification.pending_cases' : 'plant.trucks_present' })
+  usePublishAnalysis({ mode: 'live', site, sector: followedRow?.sectorCode, zone: zoneFilter, plate: followed, metricId: view === 'patentes' ? 'identification.pending_cases' : 'plant.trucks_present' })
   const ageS = live.lastUpdateMs ? Math.round((now - live.lastUpdateMs) / 1000) : null
   const statusText = live.status === 'live' ? 'En vivo' : live.status === 'stale' ? 'Datos demorados' : live.status === 'error' ? 'Sin conexión' : 'Conectando…'
   const lastEvent = snap?.source?.lastEventAt ? Math.round((now - Date.parse(snap.source.lastEventAt)) / 60000) : null
@@ -211,8 +219,8 @@ export function LiveMonitorPage() {
               followPath={journey?.timeline.map(r => r.logicalSector ?? '').filter(Boolean) ?? []}
               followDeduced={journey?.timeline.filter(r => r.step === 'deducido').map(r => r.logicalSector ?? '').filter(Boolean) ?? []}
               followNext={journey?.nextExpectedPoint ?? null}
+              // Clic en un nodo: directo a sus cámaras en vivo.
               onOpenCameras={openPoint}
-              onSelectPoint={setPointOpen}
               onSelectZone={id => { if (id) { setZoneFilter(id); setPanel('camiones'); setFollowed(null) } }}
             /> : <div className="lm-map__empty">Cargando plano…</div>}
             <div className="lm-legend" aria-hidden>
@@ -240,7 +248,7 @@ export function LiveMonitorPage() {
             ) : (
               <>
                 <div className="lm-tabs" role="tablist">
-                  {([['camiones', `Camiones ${plantTrucks.length}`], ['esperados', 'Esperados'], ['camaras', 'Cámaras'], ['capturas', 'Capturas']] as const).map(([id, label]) =>
+                  {([['camiones', `Camiones ${plantTrucks.length}`], ['vehiculos', `Vehículos ${others.length}`], ['esperados', 'Esperados'], ['camaras', 'Cámaras'], ['capturas', 'Capturas']] as const).map(([id, label]) =>
                     <button key={id} type="button" role="tab" aria-selected={panel === id} onClick={() => setPanel(id)}>{label}</button>)}
                 </div>
                 {panel === 'camiones' ? <div className="lm-panel">
@@ -279,11 +287,28 @@ export function LiveMonitorPage() {
                     {!visibleTrucks.length ? <li className="lm-empty">{plantTrucks.length ? 'Ningún camión con ese filtro.' : 'Sin camiones en planta.'}</li> : null}
                   </ol>
                 </div> : null}
+                {panel === 'vehiculos' ? <div className="lm-panel">
+                  <p className="lm-note">Autos, camionetas, máquinas y Vehículos Permitidos (agua, residuos, leña, insumos…). Están registrados pero no van al plano: el plano es solo de camiones de granos.</p>
+                  <ol className="lm-trucks">
+                    {others.map(v => <li key={v.plate}>
+                      <div className="lm-vehicle">
+                        <strong>{v.plate}</strong>
+                        <span>
+                          {v.sectorLabel ? `${v.sectorLabel}${v.minutesSinceLastDetection != null ? ` · última lectura hace ${minutes(v.minutesSinceLastDetection)}` : ''}` : 'Sin cámara'}
+                          {v.motivo ? <small> · {v.motivo}</small> : null}
+                          {v.balanza ? <small> · balanza: {v.balanza.product}</small> : null}
+                        </span>
+                        <em>{minutes(v.dwellPlantMin)}</em>
+                      </div>
+                    </li>)}
+                    {!others.length ? <li className="lm-empty">Sin otros vehículos en planta.</li> : null}
+                  </ol>
+                </div> : null}
                 {panel === 'esperados' ? <div className="lm-panel"><ExpectedPanel site={site} onFollow={plate => follow(plate)} onOpenTrip={setTrip} /></div> : null}
                 {panel === 'camaras' ? <div className="lm-panel">
                   <ul className="lm-cams">
                     {points.filter(p => p.cameraGroup.devices.length).map(p => <li key={p.id}>
-                      <button type="button" onClick={() => setPointOpen(p)}>
+                      <button type="button" onClick={() => openPoint(p.cameraGroup)}>
                         <span className="lm-cams__icon" aria-hidden>▶</span>
                         <strong>{p.label}</strong>
                         <small>{p.cameraGroup.devices.length} {p.cameraGroup.devices.length === 1 ? 'cámara' : 'cámaras'}</small>
@@ -297,7 +322,6 @@ export function LiveMonitorPage() {
           </aside>
         </div>
       )}
-      {pointOpen ? <PointHistoryModal site={site} point={pointOpen} onClose={() => setPointOpen(null)} onOpenCameras={() => openPoint(pointOpen.cameraGroup)} onOpenTrip={t => { setPointOpen(null); setTrip(t) }} /> : null}
       {trip ? <ExpectedTripDialog key={trip.ctg} truck={trip} site={site} onClose={() => setTrip(null)} onFollow={plate => follow(plate)} /> : null}
       <LiveCameraPlayerModal open={camera != null} devices={camera?.devices ?? null} title={camera?.title} onClose={() => setCamera(null)} />
     </section>

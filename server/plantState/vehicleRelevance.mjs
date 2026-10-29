@@ -26,33 +26,52 @@ export function assessVehicleRelevance({site,item,capture,reads=[],historyAvaila
   return result(true,`Vehículo no camión (${capture.vehicleCategory}) en acceso compartido, sin recorrido operativo conocido`)
 }
 
+const KIND_LABEL = { tractor_maquinaria: 'tractor o maquinaria', liviano: 'auto o camioneta', servicio: 'servicio', colectivo: 'colectivo' }
+
 /**
- * Lo que no es camión no cuenta en la planta (En vivo mostraba autos y camionetas como camiones en la playa,
- * 29/10). Es no camión la patente que el reconocedor dejó como `no_camion`, la «fuera del sistema» que la
- * cámara vio liviana, la que la IA vio liviana o máquina, y la de la base de no camiones o particular de
- * Vehículos Permitidos. Si la balanza la tiene en planta, es un camión y queda.
+ * En la planta de En vivo van solo los camiones de granos (29/10). Los demás vehículos —autos y camionetas,
+ * máquinas, y los de Vehículos Permitidos (agua, residuos, leña, insumos…)— se registran aparte, en la
+ * lista «Vehículos en planta». Manda la balanza: si el SGC lo tiene adentro, decide su producto; si no,
+ * una carta de porte vigente lo hace de granos.
  * @param {object[]} events eventos ya identificados (patente final en normalizedPlate)
  * @param {object[]} items casos del reconocedor
- * @param {{ noCamiones?: { lookup: Function }|null, padron?: { at: Function }|null, balanza?: { truckAt: Function }|null, plateOf: (e: object) => string, timeOf: (e: object) => number }} ctx
+ * @param {{ noCamiones?: { lookup: Function }|null, padron?: { at: Function, cartaAt?: Function }|null, balanza?: { truckAt: Function }|null, isGrainProduct?: (cod: string) => boolean, categoryOf?: (cod: string) => string, plateOf: (e: object) => string, timeOf: (e: object) => number }} ctx
+ * @returns {{ trucks: object[], others: object[], whyOf: (plate: string) => { kind: string, label: string }|null }}
  */
-export function excludeNonTrucks(events, items, { noCamiones = null, padron = null, balanza = null, plateOf, timeOf }) {
-  const flagged = new Set()
+export function splitNonTrucks(events, items, { noCamiones = null, padron = null, balanza = null, isGrainProduct = () => true, categoryOf = (c) => `producto ${c}`, plateOf, timeOf }) {
+  const flagged = new Map()
   for (const it of items) {
     if (it.assignedPlate && it.assignedPlate !== it.readPlate) continue
-    const liviano = it.attributes?.vehicleClass === 'liviano' && it.level === 'fuera_sistema'
-    const iaNoCamion = ['liviano', 'maquinaria', 'colectivo'].includes(it.ia?.vehicleType) && !it.ia?.plate
-    const particular = it.rule === 'vehiculo_permitido' && it.padron?.read?.category === 'vehiculo_particular'
-    if (it.rule === 'no_camion' || liviano || iaNoCamion || particular) flagged.add(it.readPlate)
+    if (it.rule === 'no_camion') flagged.set(it.readPlate, { kind: 'no_camion', label: 'base de no camiones' })
+    else if (it.attributes?.vehicleClass === 'liviano' && it.level === 'fuera_sistema') flagged.set(it.readPlate, { kind: 'liviano', label: 'auto o camioneta (cámara)' })
+    else if (['liviano', 'maquinaria', 'colectivo'].includes(it.ia?.vehicleType) && !it.ia?.plate) flagged.set(it.readPlate, { kind: it.ia.vehicleType, label: `${it.ia.vehicleType} (IA)` })
   }
-  const verdict = new Map()
-  const isNonTruck = (plate, t) => {
-    if (!plate) return false
-    const k = plate
-    if (!verdict.has(k)) {
-      const h = padron?.at(plate, t)
-      verdict.set(k, flagged.has(plate) || Boolean(noCamiones?.lookup(plate)) || (h?.source === 'permitido' && h.category === 'vehiculo_particular'))
+  const why = new Map()
+  const whyOf = (plate, t) => {
+    if (!plate) return null
+    if (!why.has(plate)) {
+      let w = null
+      const v = balanza?.truckAt(plate, t)
+      if (v) w = v.cod && !isGrainProduct(v.cod) ? { kind: 'permitido', label: `Vehículos Permitidos (${String(categoryOf(v.cod)).replace(/_/g, ' ')})` } : null
+      else if (padron?.cartaAt?.(plate, t)) w = null
+      else {
+        const nc = noCamiones?.lookup(plate)
+        const h = padron?.at(plate, t)
+        w = flagged.get(plate)
+          ?? (nc ? { kind: nc.kind, label: KIND_LABEL[nc.kind] ?? nc.kind } : null)
+          ?? (h?.source === 'permitido' ? { kind: 'permitido', label: `Vehículos Permitidos (${String(h.category ?? '').replace(/_/g, ' ')})` } : null)
+      }
+      why.set(plate, w)
     }
-    return verdict.get(k) && !balanza?.truckAt(plate, t)
+    return why.get(plate)
   }
-  return events.filter((e) => !isNonTruck(plateOf(e), timeOf(e)))
+  const trucks = []
+  const others = []
+  for (const e of events) (whyOf(plateOf(e), timeOf(e)) ? others : trucks).push(e)
+  return { trucks, others, whyOf: (plate) => why.get(plate) ?? null }
+}
+
+/** Solo los camiones de granos (ver splitNonTrucks). */
+export function excludeNonTrucks(events, items, ctx) {
+  return splitNonTrucks(events, items, ctx).trucks
 }

@@ -56,6 +56,10 @@
 .lm-trucks { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
 .lm-trucks button { width: 100%; display: grid; grid-template-columns: 12px 92px 1fr auto; align-items: center; gap: 8px; padding: 8px 8px; border-radius: 8px; text-align: left; font-size: 13px; }
 .lm-trucks button:hover { background: var(--lm-bg); }
+/* Vehículos que no son camiones de granos: misma fila que un camión, sin punto de estado ni clic. */
+.lm-vehicle { display: grid; grid-template-columns: 92px 1fr auto; align-items: center; gap: 8px; padding: 8px; font-size: 13px; }
+.lm-trucks .lm-vehicle span { white-space: normal; line-height: 1.35; }
+.lm-note { margin: 0 0 8px; color: var(--lm-muted); font-size: 12px; line-height: 1.4; }
 .lm-trucks strong { font: 800 15px ui-monospace, monospace; }.lm-trucks span { color: var(--lm-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lm-trucks em { font-style: normal; font-variant-numeric: tabular-nums; color: var(--lm-muted); font-size: 12px; }
 .lm-dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; background: var(--lm-ok); }

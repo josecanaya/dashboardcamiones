@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest'
-import {assessVehicleRelevance,excludeIrrelevantEvents,excludeNonTrucks} from './vehicleRelevance.mjs'
+import {assessVehicleRelevance,excludeIrrelevantEvents,excludeNonTrucks,splitNonTrucks} from './vehicleRelevance.mjs'
 const base = {site:'san_lorenzo',item:{deviceCode:'SLZTK400',readPlate:'ABC123',level:'provisorio',candidates:[]},capture:{plate:'ABC123',vehicleCategory:'Pickup',diffMs:0},historyAvailable:true,reads:[]}
 describe('descarte por relevancia de acceso compartido',()=> {
   it('excluye solo la visita descartada, no toda esa patente ni una reapertura',()=>{
@@ -43,5 +43,21 @@ describe('lo que no es camión no cuenta en la planta', () => {
   it('si la balanza lo tiene en planta es un camión aunque figure como no camión', () => {
     const out = excludeNonTrucks([ev('OIY765')], [{ readPlate: 'OIY765', rule: 'no_camion' }], ctx({ balanza: { truckAt: (p) => p === 'OIY765' } }))
     expect(out).toHaveLength(1)
+  })
+})
+
+describe('el plano es solo de camiones de granos', () => {
+  const ev = (plate, t = 1000) => ({ plate, t })
+  const base = { plateOf: (e) => e.plate, timeOf: (e) => e.t, isGrainProduct: (c) => ['0301', '0909', '0081'].includes(c) }
+  it('Vehículos Permitidos (agua) va a la lista; con carta vigente o grano en la balanza queda en el plano', () => {
+    const padron = {
+      at: (p) => (['BTS626', 'AGU111'].includes(p) ? { source: 'permitido', category: 'agua' } : null),
+      cartaAt: (p) => (p === 'AGU111' ? { ctg: '1' } : null),
+    }
+    const balanza = { truckAt: (p) => (p === 'LEN222' ? { cod: '0817' } : p === 'SOJ333' ? { cod: '0301' } : null) }
+    const r = splitNonTrucks([ev('BTS626'), ev('AGU111'), ev('LEN222'), ev('SOJ333'), ev('XYZ999')], [], { ...base, padron, balanza })
+    expect(r.trucks.map((e) => e.plate)).toEqual(['AGU111', 'SOJ333', 'XYZ999'])
+    expect(r.others.map((e) => e.plate)).toEqual(['BTS626', 'LEN222'])
+    expect(r.whyOf('BTS626').label).toBe('Vehículos Permitidos (agua)')
   })
 })

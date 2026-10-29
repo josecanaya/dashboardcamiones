@@ -391,6 +391,28 @@ app.get('/api/truckflow/live/sectors/:sectorCode', async (req, res) => {
 })
 
 /** Camiones abiertos (filtro opcional por sector). */
+/**
+ * Vehículos en planta que no son camiones de granos: autos, camionetas, máquinas y Vehículos Permitidos
+ * (agua, residuos, leña, insumos…). No van al plano; se listan acá, de cámaras y de la balanza.
+ */
+app.get('/api/truckflow/live/vehicles', async (req, res) => {
+  const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
+  try {
+    const cams = await plantQueries.listOtherVehicles(site)
+    const bal = sgc.balanza(site).vehiculos ?? []
+    const byPlate = new Map(cams.vehicles.map((v) => [v.plate, { ...v, balanza: null }]))
+    for (const b of bal) {
+      const v = byPlate.get(b.plate)
+      if (v) v.balanza = b
+      else byPlate.set(b.plate, { plate: b.plate, motivo: `Vehículos Permitidos (${String(b.category).replace(/_/g, ' ')})`, kind: 'permitido', sectorCode: null, sectorLabel: null, firstAt: b.ingresoAt, lastAt: null, dwellPlantMin: b.minutes, minutesSinceLastDetection: null, lastDevice: null, balanza: b })
+    }
+    res.json({ site, at: cams.at, vehicles: [...byPlate.values()] })
+  } catch (e) {
+    if (e instanceof PlantStateError) return res.status(e.httpStatus).json({ error: e.code })
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) })
+  }
+})
+
 app.get('/api/truckflow/live/trucks', async (req, res) => {
   const site = String(req.query.site ?? 'ricardone').trim().toLowerCase() || 'ricardone'
   const sector = req.query.sector != null ? String(req.query.sector).trim() : ''

@@ -18,7 +18,8 @@ import { applyIdentifications, applyLinks, autoPredecessorLinks, findPredecessor
 import { liveBalanzaRegistry, outsideTruckSystem, replayBalanzaRegistry } from './balanzaRegistry.mjs'
 import { createIdentificationArchive } from './identificationArchive.mjs'
 import { padronCartas } from './padronCartas.mjs'
-import { assessVehicleRelevance, excludeIrrelevantEvents, excludeNonTrucks } from './vehicleRelevance.mjs'
+import { assessVehicleRelevance, excludeIrrelevantEvents, splitNonTrucks } from './vehicleRelevance.mjs'
+import { categoryOf, isGrainProduct } from '../live/padron/vehiculosPermitidos.mjs'
 import { alertInstantMs, alertReadEvents, withAlertAttributes } from './alertReads.mjs'
 import { applyVisionVerdict, checkSeenPlate } from '../live/vision/seenPlate.mjs'
 
@@ -337,6 +338,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
   let padronIndex = null
   /** Lo aprendido de operaciones: corregidos y no camiones (server/live/padron/aprendizaje.mjs). */
   let aprendizajeIndex = null
+  /** Lecturas de vehículos que no son camiones de granos, por planta (lista «Vehículos en planta»). */
+  const otherVehiclesBySite = new Map()
   /**
    * Veredictos con color/marca/tipo del DSS (los calcula dssPhotoLookup en segundo plano): fragmento →
    * candidato que superó el umbral. Solo en memoria: tras un reinicio se recalculan.
@@ -497,15 +500,19 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       // Vínculos automáticos de la búsqueda hacia atrás que no pasaron por la bandeja (patente válida suelta en la entrada).
       const autoLinks = (identified.autoLinks ?? []).filter((l) => l.auto && !l.item).map((l) => ({ journeyKey: l.journeyKey, plate: l.plate, journeyUid: l.targetJourneyUid, level: 'casi_seguro' }))
       const identifiedEvents = applyIdentifications(applyLinks(operational, [...linksOf(site), ...autoLinks]), items.filter(item => !item.archived))
-      // Autos, camionetas y máquinas no cuentan como camiones en la planta.
+      // En la planta van solo camiones de granos; autos, máquinas y Vehículos Permitidos van a «Vehículos en planta».
       if (process.env.LIVE_SHOW_NON_TRUCKS === '1') return identifiedEvents
-      return excludeNonTrucks(identifiedEvents, items, {
+      const split = splitNonTrucks(identifiedEvents, items, {
         noCamiones: aprendizajeIndex?.noCamiones ?? null,
         padron: process.env.IDENTIFICATION_PADRON === '0' ? null : padronIndex,
         balanza: process.env.IDENTIFICATION_BALANZA === '0' ? null : liveBalanzaRegistry(nowMs),
+        isGrainProduct,
+        categoryOf,
         plateOf: rowPlate,
         timeOf: getEventLiveInstantMs,
       })
+      otherVehiclesBySite.set(site, { events: split.others, whyOf: split.whyOf })
+      return split.trucks
     } catch (e) {
       console.warn('[plant-state] identificación de patentes falló:', e instanceof Error ? e.message : e)
       return rawEvents
@@ -1181,6 +1188,15 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     setPadron(p, permitidos = null) {
       padronIndex = p || permitidos ? padronCartas(p, permitidos) : null
       identificationCache.clear()
+    },
+    /**
+     * Vehículos en planta que no son camiones de granos (autos, máquinas, Vehículos Permitidos): sus lecturas
+     * y el motivo por patente. Se arma junto con los eventos de la planta (getEvents).
+     */
+    async getOtherVehicleEvents(site) {
+      const { key } = ensureSite(site)
+      await getEvents(key)
+      return otherVehiclesBySite.get(key) ?? { events: [], whyOf: () => null }
     },
     /** Veredicto de la IA por imagen para un caso (modo sombra). */
     setVisionVerdict(site, fragmentKey, verdict) {

@@ -704,12 +704,38 @@ export type BalanzaRow = {
 export type BalanzaSnapshot = {
   site: string
   status: { enabled: boolean; fetchedAt: string | null; lastOkAt: string | null; error: string | null; pollMs: number }
-  counts: { inPlant: number; ingresos24h: number; salidas24h: number; netoKg24h: number; carga: number; descarga: number }
+  /** inPlant: solo camiones de granos; vehiculos: los demás ingresos abiertos (agua, residuos, insumos…). */
+  counts: { inPlant: number; vehiculos?: number; ingresos24h: number; salidas24h: number; netoKg24h: number; carga: number; descarga: number }
   byProduct: { product: string; n: number }[]
   inPlant: BalanzaRow[]
   closed: BalanzaRow[]
   /** Ingresos abiertos de otras plantas: el SGC anota la planta de destino (un R7 entra por Ricardone como Terminal). */
   otherOpen?: BalanzaRow[]
+  /** Ingresos abiertos que no son de granos: van a «Vehículos en planta», no al plano. */
+  vehiculos?: (BalanzaRow & { category: string })[]
+}
+
+/** Vehículo en planta que no es camión de granos (auto, camioneta, máquina, Vehículos Permitidos). */
+export type OtherVehicle = {
+  plate: string
+  /** Por qué no es camión de granos: «Vehículos Permitidos (agua)», «auto o camioneta», «balanza: LEÑA…». */
+  motivo: string | null
+  kind: string | null
+  sectorCode: string | null
+  sectorLabel: string | null
+  firstAt: string | null
+  lastAt: string | null
+  dwellPlantMin: number | null
+  minutesSinceLastDetection: number | null
+  lastDevice: string | null
+  balanza: (BalanzaRow & { category: string }) | null
+}
+
+export async function getOtherVehicles(site: string): Promise<{ site: string; at: string; vehicles: OtherVehicle[] }> {
+  const res = await fetchLocalTruckflow(`/live/vehicles?${new URLSearchParams({ site })}`, { headers: { Accept: 'application/json' } })
+  const body = (await res.json()) as { site: string; at: string; vehicles: OtherVehicle[]; error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return body
 }
 
 export interface CartaPorteNote {

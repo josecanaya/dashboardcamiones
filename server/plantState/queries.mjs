@@ -464,5 +464,34 @@ export function createPlantStateQueries(service) {
     }
   }
 
-  return { getSectorDetail, listTrucks, getTruckJourney }
+  /**
+   * Vehículos en planta que no son camiones de granos (autos, camionetas, máquinas, Vehículos Permitidos):
+   * no van al plano, se listan aparte. Misma regla de presencia que los camiones.
+   * @param {string} site
+   */
+  async function listOtherVehicles(site) {
+    const { events, whyOf } = await service.getOtherVehicleEvents(site)
+    const nowMs = Date.now()
+    const open = collectOpenJourneys(events, nowMs, { site, otherSiteSightings: service.getOtherSiteSightings?.(site) ?? [] })
+    // Una fila por patente: la visita leída más recientemente.
+    const byPlate = new Map()
+    for (const v of open) if (!byPlate.has(v.plate) || byPlate.get(v.plate).lastAt < v.lastAt) byPlate.set(v.plate, v)
+    const vehicles = [...byPlate.values()]
+      .map((v) => ({
+        plate: v.plate,
+        motivo: whyOf(v.plate)?.label ?? null,
+        kind: whyOf(v.plate)?.kind ?? null,
+        sectorCode: v.sectorCode,
+        sectorLabel: getSectorProfile(v.sectorCode)?.label || v.sectorCode,
+        firstAt: formatArgentinaIsoFromMs(v.firstAt),
+        lastAt: formatArgentinaIsoFromMs(v.lastAt),
+        dwellPlantMin: round1(v.dwellPlantMin),
+        minutesSinceLastDetection: round1(v.minutesSinceLastDetection),
+        lastDevice: v.lastDevice || null,
+      }))
+      .sort((x, y) => y.lastAt.localeCompare(x.lastAt))
+    return { site, at: formatArgentinaIsoFromMs(nowMs), vehicles }
+  }
+
+  return { getSectorDetail, listTrucks, getTruckJourney, listOtherVehicles }
 }

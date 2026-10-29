@@ -122,6 +122,8 @@ export function visitsFromSgc(rows) {
     trailer: plateOf(r.PATENTEACOPLADO) || null,
     ingresoMs: localMs(r.FECHAINGRESO),
     salidaMs: r.FECHASALIDA ? localMs(r.FECHASALIDA) : null,
+    /** Código de producto: separa camiones de granos de los demás vehículos (isGrainProduct). */
+    cod: r.PRODUCTOCODIGO != null ? String(r.PRODUCTOCODIGO).padStart(4, '0') : null,
     source: 'sgc',
   }))
 }
