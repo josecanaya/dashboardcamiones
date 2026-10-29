@@ -3,10 +3,25 @@ import path from 'node:path'
 
 /** Retains original candidates independently of the rolling camera buffer. */
 export function createIdentificationArchive(file) {
-  let store = {}
-  try { store = JSON.parse(fs.readFileSync(file, 'utf8')) } catch (error) {
-    if (error.code !== 'ENOENT') throw error
+  const backup = `${file}.bak`
+  /** null si no existe; lanza si está vacío o roto. */
+  const read = (f) => {
+    try {
+      return JSON.parse(fs.readFileSync(f, 'utf8'))
+    } catch (error) {
+      if (error.code === 'ENOENT') return null
+      throw error
+    }
   }
+  let store = {}
+  // El 29/10 el archivo apareció vacío y el servidor no arrancaba: si está roto, se usa la copia.
+  try {
+    store = read(file) ?? read(backup) ?? {}
+  } catch (error) {
+    console.warn(`[identificación] ${file} está vacío o roto (${error instanceof Error ? error.message : error}); uso la copia ${backup}`)
+    try { store = read(backup) ?? {} } catch { store = {} }
+  }
+  let lastBackupMs = 0
   function merge(site, current, decisions = {}) {
     store[site] ||= {}
     let changed = false
@@ -23,6 +38,15 @@ export function createIdentificationArchive(file) {
       fs.mkdirSync(path.dirname(file), { recursive: true })
       const temporary = `${file}.tmp`
       fs.writeFileSync(temporary, JSON.stringify(store))
+      // Copia de la versión anterior (cada 10 min, solo si es válida): si el archivo se rompe, se arranca de ahí.
+      if (Date.now() - lastBackupMs > 10 * 60_000) {
+        try {
+          if (fs.statSync(file).size > 2) {
+            fs.copyFileSync(file, backup)
+            lastBackupMs = Date.now()
+          }
+        } catch {}
+      }
       fs.renameSync(temporary, file)
     }
     const live = new Map(current.map(item => [item.fragmentKey, item]))

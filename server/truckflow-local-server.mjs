@@ -41,6 +41,7 @@ import { createCartasSource } from './live/padron/cartasSource.mjs'
 import { createVehiculosPermitidos } from './live/padron/vehiculosPermitidos.mjs'
 import { createAprendizaje } from './live/padron/aprendizaje.mjs'
 import { createVisionJudge } from './live/vision/visionJudge.mjs'
+import { createAlertStore } from './live/alerts/alertStore.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = path.resolve(__dirname, '..')
@@ -481,6 +482,28 @@ if (process.env.AUTO_EVIDENCE !== '0') dssPhotos.startAutoEvidence()
 const visionJudge = createVisionJudge({ dss: dssLive, getPlantState: () => plantState, projectRoot: PROJECT_ROOT, onMachine: scheduleAprendizaje })
 // Apagada salvo pedido explícito: cada consulta consume la cuenta de Claude con la que esté logueado el CLI.
 if (process.env.VISION_IA === '1') visionJudge.start()
+/**
+ * Alertas: capturas que ninguna capa identificó (capa 2 carta/Permitidos, capa 3 corrección + IA), guardadas
+ * por día en data/alertas con su paso por cada capa. Se actualizan cada minuto.
+ */
+const alertStore = createAlertStore({ projectRoot: PROJECT_ROOT })
+const refreshAlerts = async () => {
+  for (const site of ['ricardone', 'san_lorenzo']) {
+    try {
+      alertStore.update(site, (await plantState.getIdentifications(site)).items)
+    } catch (e) {
+      console.warn('[alertas]', site, e instanceof Error ? e.message : e)
+    }
+  }
+}
+setInterval(() => void refreshAlerts(), 60_000).unref?.()
+app.get('/api/truckflow/live/alertas', async (req, res) => {
+  const site = String(req.query.site ?? '').trim().toLowerCase() || null
+  const day = /^\d{4}-\d{2}-\d{2}$/.test(String(req.query.day ?? '')) ? String(req.query.day) : new Date(Date.now() - 3 * 3600_000).toISOString().slice(0, 10)
+  if (req.query.refresh === '1') await refreshAlerts()
+  res.json({ site, ...alertStore.list(site, day) })
+})
+
 app.get('/api/truckflow/live/vision', (req, res) => {
   const site = String(req.query.site ?? '').trim().toLowerCase()
   res.json({ ...visionJudge.status(), veredictos: visionJudge.verdicts(site || null).slice(-200) })

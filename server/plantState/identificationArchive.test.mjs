@@ -44,3 +44,12 @@ test('a reopened automatic assignment stays in human review (EV-23)', () => {
     assert.equal(deferred.level, 'provisorio')
   } finally { fs.rmSync(root, { recursive: true, force: true }) }
 })
+
+test('si el archivo quedó vacío, arranca de la copia .bak', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'archivo-'))
+  const file = path.join(dir, 'archive.json')
+  fs.writeFileSync(file, '')
+  fs.writeFileSync(`${file}.bak`, JSON.stringify({ ricardone: { f1: { fragmentKey: 'f1', at: '2026-10-29T10:00:00Z', level: 'pendiente', originalLevel: 'pendiente', candidates: [] } } }))
+  const archive = createIdentificationArchive(file)
+  assert.deepEqual(archive.merge('ricardone', []).map((i) => i.fragmentKey), ['f1'])
+})

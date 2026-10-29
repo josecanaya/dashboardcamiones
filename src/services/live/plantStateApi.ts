@@ -212,6 +212,8 @@ export type TruckJourney = {
   provisional: boolean
   nextExpectedPoint: string | null
   nextExpectedLabel: string | null
+  /** Pasos del circuito que faltan, en orden (el primero es el próximo esperado). */
+  remainingSteps?: { logicalSector: string; label: string }[]
   dwellSectorMin: number | null
   dwellPlantMin: number | null
   minutesSinceLastDetection: number | null
@@ -579,15 +581,32 @@ export interface LiveCapture {
   /** leida = patente válida propia; el resto, nivel de identificación. */
   level: IdentificationLevel | 'leida'
   identifiedPlate: string | null
+  /** Regla y capa del reconocedor que decidió (null en una lectura buena sin corrección). */
+  rule?: string | null
+  layer?: AlgorithmLayerKey | null
   fragmentKey: string | null
   candidates: IdentificationCandidate[]
 }
 
-export async function getRecentCaptures(site: string, limit = 60): Promise<{ site: string; at: string; captures: LiveCapture[] }> {
+export type AlgorithmLayerKey = 'lote' | 'capa2' | 'balanza' | 'aprendizaje' | 'ia' | 'operador' | 'sin_resolver'
+
+/** Qué decidió una capa del reconocedor en las últimas 24 h. */
+export interface AlgorithmLayer {
+  key: AlgorithmLayerKey
+  label: string
+  decided: number
+  /** Casos que su regla propuso y quedaron por confirmar. */
+  proposed: number
+  /** Decisiones suyas que operaciones rechazó. */
+  rejectedByOps: number
+  lastAt: string | null
+}
+
+export async function getRecentCaptures(site: string, limit = 60): Promise<{ site: string; at: string; captures: LiveCapture[]; layers?: AlgorithmLayer[] }> {
   const res = await fetchLocalTruckflow(`/live/captures?site=${encodeURIComponent(site)}&limit=${limit}`, {
     headers: { Accept: 'application/json' },
   })
-  const body = (await res.json()) as { site: string; at: string; captures: LiveCapture[]; error?: string }
+  const body = (await res.json()) as { site: string; at: string; captures: LiveCapture[]; layers?: AlgorithmLayer[]; error?: string }
   if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
   return body
 }
@@ -854,4 +873,32 @@ export async function getBalanza(site: string): Promise<BalanzaSnapshot> {
   const body = (await res.json()) as Partial<BalanzaSnapshot> & { error?: string }
   if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
   return body as BalanzaSnapshot
+}
+
+/** Captura que ninguna capa identificó (capa 2 carta/Permitidos, capa 3 corrección + IA). Ver alertStore.mjs. */
+export type LiveAlert = {
+  site: 'ricardone' | 'san_lorenzo'
+  fragmentKey: string
+  readPlate: string
+  validFormat: boolean
+  node: string
+  nodeLabel: string
+  deviceCode: string
+  /** Hora operativa de la captura. */
+  at: string
+  level: IdentificationLevel
+  /** Qué dijo cada capa, en palabras. */
+  capas: { capa2: string; algoritmo: string; historica: string; ia: string; motivo: string | null }
+  alertAt: string
+  updatedAt: string
+  /** Una capa u operaciones la identificó después: queda registrada como resuelta. */
+  resolved: { at: string; by: string; plate: string | null; level: string } | null
+}
+
+export async function getAlerts(site: string, day?: string): Promise<{ day: string; open: number; resolved: number; alertas: LiveAlert[] }> {
+  const q = new URLSearchParams({ site, ...(day ? { day } : {}) })
+  const res = await fetchLocalTruckflow(`/live/alertas?${q}`, { headers: { Accept: 'application/json' } })
+  const body = (await res.json()) as { day: string; open: number; resolved: number; alertas: LiveAlert[]; error?: string }
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`)
+  return body
 }

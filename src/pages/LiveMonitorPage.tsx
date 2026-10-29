@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { PlantMap, type MapTruck, type RouteStep } from '../components/plant/PlantMap'
 import { LiveCameraPlayerModal } from '../components/plant/LiveCameraPlayerModal'
 import { LiveActivityFeed } from '../components/plant/LiveActivityFeed'
-import { IdentificationPanel } from '../components/plant/IdentificationPanel'
+import { CaptureRail } from '../components/plant/CaptureRail'
+import { LiveAlertsPanel } from '../components/plant/LiveAlertsPanel'
 import { VerificationPhoto, type PhotoState } from '../components/plant/PlateVerification'
 import { createPortal } from 'react-dom'
 import { PointHistoryModal } from '../components/plant/PointHistoryModal'
@@ -13,7 +14,7 @@ import type { PlantPoint } from '../data/plantZones.types'
 import { useLivePlantState } from '../hooks/useLivePlantState'
 import type { PlantLayout, PlantCameraGroup } from '../data/plantZones.types'
 import type { BalanzaRow, BalanzaSnapshot, CartaPorteLookup, CartaPorteNote, ExpectedStatus, ExpectedTrip, ExpectedTruck, ExpectedTrucks, OtherVehicle, PredecessorCandidate, PredecessorsResponse, TruckJourney, TruckRow, TruckTimelineRow } from '../services/live/plantStateApi'
-import { cameraCaptureImageUrl, cartaPortePdfUrl, correctTruckLocation, getCartaPorte, getExpectedTrip, getExpectedTrucks, findCameraCapture, formatDrainMinutes, getBalanza, getIdentifications, getOtherVehicles, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
+import { cameraCaptureImageUrl, cartaPortePdfUrl, correctTruckLocation, getCartaPorte, getExpectedTrip, getExpectedTrucks, findCameraCapture, formatDrainMinutes, getAlerts, getBalanza, getOtherVehicles, getPlantTrucks, getTruckJourney, getTruckPredecessors, linkTruckJourney } from '../services/live/plantStateApi'
 import './liveMonitor.css'
 import { usePublishAnalysis } from '../context/AnalysisContext'
 
@@ -33,28 +34,31 @@ function hhmm(iso: string) {
 }
 
 /**
- * Recorrido del camión seguido para el rótulo del plano: una ficha por punto (lecturas seguidas en el
- * mismo punto se juntan, con la hora de la primera), el deducido con hora estimada a mitad de camino
- * entre sus vecinos, y después los puntos del circuito que le faltan.
+ * Pasos del camión seguido para el rótulo del plano: una ficha por punto pasado (lecturas seguidas en el
+ * mismo punto se juntan, con la hora de la primera), el deducido con hora estimada a mitad de camino entre
+ * sus vecinos, y al final el próximo: el del modelo de nodos (cruza de planta) o, si no encaja, el provisorio.
  */
 function routeOf(journey: TruckJourney | null, pointLabel: Map<string, string>): RouteStep[] {
   if (!journey) return []
-  const visits: { logical: string; label: string; kind: 'hecho' | 'deducido'; first: number | null; last: number | null }[] = []
+  const siteOf = (logical: string): RouteStep['site'] => (logical.startsWith('SL_') ? 'SL' : 'R')
+  const visits: { logical: string; label: string; kind: 'hecho' | 'deducido'; first: number | null; last: number | null; photo: RouteStep['photo'] }[] = []
   for (const r of journey.timeline) {
     const logical = r.logicalSector ?? r.label
     if (logical === 'ESPERA') continue
     const t = r.at ? Date.parse(r.at) : null
+    const photo = r.deviceCode && r.at ? { device: r.deviceCode, at: r.at } : null
     const v = visits[visits.length - 1]
-    if (v && v.logical === logical && v.kind === 'hecho' && r.step !== 'deducido') { if (t != null) v.last = t; continue }
-    visits.push({ logical, label: pointLabel.get(r.logicalSector ?? '') ?? r.label, kind: r.step === 'deducido' ? 'deducido' : 'hecho', first: t, last: t })
+    if (v && v.logical === logical && v.kind === 'hecho' && r.step !== 'deducido') { if (t != null) v.last = t; v.photo ??= photo; continue }
+    visits.push({ logical, label: pointLabel.get(r.logicalSector ?? '') ?? r.label, kind: r.step === 'deducido' ? 'deducido' : 'hecho', first: t, last: t, photo })
   }
   const steps: RouteStep[] = visits.map((v, i) => {
-    if (v.kind === 'hecho') return { label: v.label, kind: 'hecho', time: v.first != null ? hhmm(new Date(v.first).toISOString()) : null }
+    if (v.kind === 'hecho') return { label: v.label, kind: 'hecho', site: siteOf(v.logical), time: v.first != null ? hhmm(new Date(v.first).toISOString()) : null, photo: v.photo }
     const before = visits.slice(0, i).reverse().find(x => x.last != null)?.last
     const after = visits.slice(i + 1).find(x => x.first != null)?.first
-    return { label: v.label, kind: 'deducido', time: before != null && after != null ? hhmm(new Date((before + after) / 2).toISOString()) : null }
+    return { label: v.label, kind: 'deducido', site: siteOf(v.logical), time: before != null && after != null ? hhmm(new Date((before + after) / 2).toISOString()) : null }
   })
-  ;(journey.remainingSteps ?? []).forEach((r, i) => steps.push({ label: pointLabel.get(r.logicalSector) ?? r.label, kind: i === 0 ? 'proximo' : 'pendiente' }))
+  const next = journey.remainingSteps?.[0] ?? (journey.nextExpectedPoint ? { logicalSector: journey.nextExpectedPoint, label: journey.nextExpectedLabel ?? journey.nextExpectedPoint } : null)
+  if (next) steps.push({ label: pointLabel.get(next.logicalSector) ?? next.label, kind: 'proximo', site: siteOf(next.logicalSector) })
   return steps
 }
 
@@ -67,7 +71,7 @@ export function LiveMonitorPage() {
     try { return (localStorage.getItem('lm-site') as Site) || 'ricardone' } catch { return 'ricardone' }
   })
   useEffect(() => { try { localStorage.setItem('lm-site', site) } catch { /* sin storage */ } }, [site])
-  const [view, setView] = useState<'monitoreo' | 'patentes'>('monitoreo')
+  const [view, setView] = useState<'monitoreo' | 'alertas'>('monitoreo')
   const live = useLivePlantState(site)
   const [layout, setLayout] = useState<PlantLayout | null>(null)
   const [trucks, setTrucks] = useState<TruckRow[]>([])
@@ -142,10 +146,10 @@ export function LiveMonitorPage() {
     return () => { alive = false; clearInterval(t) }
   }, [site, followedTf, journeyTick])
 
-  // Patentes por confirmar (solo el número; la bandeja completa vive en su pestaña).
+  // Alertas abiertas de hoy: capturas que ninguna capa identificó (la lista vive en la vista Alertas).
   useEffect(() => {
     let alive = true
-    const load = () => getIdentifications(site).then(r => { if (alive) setPending(r.items.filter(i => i.level === 'provisorio' || i.level === 'pendiente').length) }).catch(() => undefined)
+    const load = () => getAlerts(site).then(r => { if (alive) setPending(r.open) }).catch(() => undefined)
     void load()
     const t = setInterval(load, 30_000)
     return () => { alive = false; clearInterval(t) }
@@ -155,6 +159,7 @@ export function LiveMonitorPage() {
   const pointOfSector = useMemo(() => new Map(points.map(p => [p.sectorCode, p.id])), [points])
   const pointLabel = useMemo(() => new Map(points.map(p => [p.id, p.label])), [points])
   const followRoute = useMemo(() => routeOf(journey, pointLabel), [journey, pointLabel])
+  const [stepPhoto, setStepPhoto] = useState<RouteStep | null>(null)
   // Cada camión en su punto o en tránsito sobre la línea hacia el siguiente (como en el simulador).
   const mapTrucks: MapTruck[] = useMemo(() => {
     const byPlate = new Map(trucks.map(t => [t.plate, t]))
@@ -189,7 +194,7 @@ export function LiveMonitorPage() {
     return pointLabel.get(m?.pointId ?? pointOfSector.get(row.sectorCode) ?? '') ?? row.sectorCode
   }
   const sgcOk = Boolean(balanza?.status.lastOkAt)
-  usePublishAnalysis({ mode: 'live', site, sector: followedRow?.sectorCode ?? pointOpen?.sectorCode, zone: zoneFilter, plate: followed, label: pointOpen?.label, metricId: view === 'patentes' ? 'identification.pending_cases' : 'plant.trucks_present' })
+  usePublishAnalysis({ mode: 'live', site, sector: followedRow?.sectorCode ?? pointOpen?.sectorCode, zone: zoneFilter, plate: followed, label: pointOpen?.label, metricId: view === 'alertas' ? 'identification.pending_cases' : 'plant.trucks_present' })
   const ageS = live.lastUpdateMs ? Math.round((now - live.lastUpdateMs) / 1000) : null
   const statusText = live.status === 'live' ? 'En vivo' : live.status === 'stale' ? 'Datos demorados' : live.status === 'error' ? 'Sin conexión' : 'Conectando…'
   const lastEvent = snap?.source?.lastEventAt ? Math.round((now - Date.parse(snap.source.lastEventAt)) / 60000) : null
@@ -218,19 +223,19 @@ export function LiveMonitorPage() {
           </div>
           <div><dt>Ingresan / h</dt><dd>{snap?.plant.inflow60 ?? '—'}</dd></div>
           <div><dt>Salen / h</dt><dd>{snap?.plant.outflow60 ?? '—'}</dd></div>
-          <div className={snap?.plant.bottleneck ? 'is-warn' : ''}><dt>Cuello de botella</dt><dd>{snap?.plant.bottleneck ? `${snap.plant.bottleneck.label}` : 'Sin cola'}</dd></div>
         </dl>
         <nav className="lm-views" aria-label="Vista">
           <button type="button" aria-pressed={view === 'monitoreo'} onClick={() => setView('monitoreo')}>Mapa</button>
-          <button type="button" aria-pressed={view === 'patentes'} onClick={() => setView('patentes')}>
-            Patentes {pending ? <b className="lm-badge">{pending}</b> : null}
+          <button type="button" aria-pressed={view === 'alertas'} onClick={() => setView('alertas')}>
+            Alertas {pending ? <b className="lm-badge">{pending}</b> : null}
           </button>
           <Link to="/en-vivo/detalle" className="lm-link">Vista detallada</Link>
         </nav>
       </header>
 
-      {view === 'patentes' ? <div className="lm-desk"><IdentificationPanel sites={[site]} /></div> : (
+      {view === 'alertas' ? <LiveAlertsPanel site={site} /> : (
         <div className="lm-body">
+          <CaptureRail site={site} onSelectTruck={followCamera} />
           <div className="lm-map">
             {alerts.length ? <div className="lm-alerts" role="status">
               {alerts.slice(0, 4).map(z => <button key={z.id} type="button" className={`lm-alert lm-alert--${z.status}`} onClick={() => { setZoneFilter(z.id); setPanel('camiones'); setFollowed(null) }}>
@@ -251,7 +256,7 @@ export function LiveMonitorPage() {
               followDeduced={journey?.timeline.filter(r => r.step === 'deducido').map(r => r.logicalSector ?? '').filter(Boolean) ?? []}
               followNext={journey?.nextExpectedPoint ?? null}
               followRoute={followRoute}
-              followCircuit={journey?.circuit ?? null}
+              onOpenStepPhoto={setStepPhoto}
               onOpenCameras={openPoint}
               onSelectPoint={setPointOpen}
               onSelectZone={id => { if (id) { setZoneFilter(id); setPanel('camiones'); setFollowed(null) } }}
@@ -349,12 +354,13 @@ export function LiveMonitorPage() {
                     </li>)}
                   </ul>
                 </div> : null}
-                {panel === 'capturas' ? <div className="lm-panel lm-panel--feed"><LiveActivityFeed sites={[site]} onOpenCase={() => setView('patentes')} /></div> : null}
+                {panel === 'capturas' ? <div className="lm-panel lm-panel--feed"><LiveActivityFeed sites={[site]} onOpenCase={() => setView('alertas')} /></div> : null}
               </>
             )}
           </aside>
         </div>
       )}
+      {stepPhoto?.photo && journey ? <StepPhotoDialog step={stepPhoto} photo={stepPhoto.photo} plate={journey.plate} onClose={() => setStepPhoto(null)} /> : null}
       {pointOpen ? <PointHistoryModal site={site} point={pointOpen} onClose={() => setPointOpen(null)} onOpenCameras={() => openPoint(pointOpen.cameraGroup)} onOpenTrip={t => { setPointOpen(null); setTrip(t) }} /> : null}
       {trip ? <ExpectedTripDialog key={trip.ctg} truck={trip} site={site} onClose={() => setTrip(null)} onFollow={plate => follow(plate)} /> : null}
       <LiveCameraPlayerModal open={camera != null} devices={camera?.devices ?? null} title={camera?.title} onClose={() => setCamera(null)} />
@@ -557,6 +563,30 @@ function expectedLine(r: ExpectedTruck): string {
   if (r.status === 'descargado') return `descargado según ARCA ${r.stateSince ? dayHhmm(r.stateSince) : ''}`
   if (r.status === 'arribo') return `arribo confirmado ${r.stateSince ? dayHhmm(r.stateSince) : ''} · sin ingreso en balanza`
   return from
+}
+
+/** Foto (DSS) de un paso del rótulo del camión seguido en el plano. */
+function StepPhotoDialog({ step, photo, plate, onClose }: { step: RouteStep; photo: { device: string; at: string }; plate: string; onClose: () => void }) {
+  const dialog = useRef<HTMLDialogElement>(null)
+  useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null
+    const el = dialog.current
+    el?.showModal()
+    return () => { el?.close(); opener?.focus?.() }
+  }, [])
+  return createPortal(
+    <dialog ref={dialog} className="pv-dialog lm-step-photo" aria-labelledby="step-photo-title" onCancel={e => { e.preventDefault(); onClose() }} onClick={e => { if (e.target === e.currentTarget) onClose() }}>
+      <header className="pv-header">
+        <div>
+          <span>Foto del paso · {step.site === 'SL' ? 'San Lorenzo' : 'Ricardone'}</span>
+          <h2 id="step-photo-title">{plate} · {step.label} · {hhmm(photo.at)}</h2>
+        </div>
+        <button type="button" aria-label="Cerrar" onClick={onClose}>×</button>
+      </header>
+      <CaptureShot key={`${photo.device}-${photo.at}`} device={photo.device} at={photo.at} plate={plate} caption={`${step.label} · ${hhmm(photo.at)}`} />
+    </dialog>,
+    document.body,
+  )
 }
 
 function CartaPortePdf({ note, plate, onClose }: { note: Pick<CartaPorteNote, 'ctg' | 'stateText' | 'departure'>; plate: string; onClose: () => void }) {

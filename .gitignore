@@ -83,3 +83,5 @@ docs/demostracion-patentes/dudas1-full/
 reportes/cruce-sistema-truckflow/_*
 # Galería de fotos, vectores, veredictos de la IA y modelo de imágenes (server/live/vision)
 /data/vision/
+# Alertas de En vivo por día (server/live/alerts/alertStore.mjs)
+/data/alertas/

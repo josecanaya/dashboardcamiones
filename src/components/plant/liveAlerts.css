@@ -1,0 +1,26 @@
+/* Vista «Alertas» de En vivo. Usa los tokens de la página (--lm-*). */
+.la { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 14px; background: var(--lm-panel); border: 1px solid var(--lm-line); overflow: hidden; }
+.la-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.la-counts { display: flex; flex-wrap: wrap; gap: 6px; }
+.la-counts button { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--lm-line); background: var(--lm-bg); color: var(--lm-ink); font-size: 13px; }
+.la-counts button b { font-variant-numeric: tabular-nums; }
+.la-counts button[aria-pressed=true] { background: var(--lm-brand); border-color: var(--lm-brand); color: #fff; }
+.la-day { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--lm-muted); }
+.la-day input { padding: 4px 8px; border-radius: 8px; border: 1px solid var(--lm-line); color: var(--lm-ink); }
+.la-note { margin: 0; font-size: 12px; line-height: 1.4; color: var(--lm-muted); }
+.la-error { margin: 0; font-size: 12px; color: var(--lm-bad); }
+.la-desk { flex: 1; min-height: 0; overflow: auto; }
+.la-list { flex: 1; min-height: 0; overflow: auto; list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; align-content: start; }
+.la-list > li { display: grid; gap: 8px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--lm-line); border-left: 4px solid var(--lm-bad); }
+.la-list > li.is-resolved { border-left-color: var(--lm-ok); opacity: .85; }
+.la-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+.la-head strong { font: 800 15px ui-monospace, monospace; }
+.la-head span { color: var(--lm-muted); font-size: 13px; }
+.la-head em { margin-left: auto; font-style: normal; font-size: 12px; font-weight: 700; }
+.la-bad { color: var(--lm-bad); }
+.la-ok { color: var(--lm-ok); }
+.la-layers { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 6px 14px; }
+.la-layers dt { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--lm-muted); }
+.la-layers dd { margin: 2px 0 0; font-size: 13px; line-height: 1.35; }
+.la-photo { justify-self: start; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--lm-line); background: var(--lm-bg); font-size: 12px; color: var(--lm-brand); }
+.la-empty { padding: 12px; color: var(--lm-muted); font-size: 13px; border: 0 !important; }
