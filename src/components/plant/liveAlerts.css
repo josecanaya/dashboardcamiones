@@ -35,3 +35,5 @@
 .la-fix form { display: flex; gap: 4px; }
 .la-fix input { width: 170px; padding: 4px 8px; border-radius: 8px; border: 1px solid var(--lm-line); font-size: 12px; color: var(--lm-ink); background: var(--lm-panel); }
 .la-fix input.la-fix-plate { width: 110px; font-family: ui-monospace, monospace; text-transform: uppercase; }
+.la-group { padding: 6px 2px 0; border: 0 !important; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--lm-muted); }
+.la-why { margin: 0; font-size: 13px; line-height: 1.35; }

@@ -4,7 +4,7 @@ import { PlantMap, type MapTruck, type RouteStep } from '../components/plant/Pla
 import { LiveCameraPlayerModal } from '../components/plant/LiveCameraPlayerModal'
 import { LiveActivityFeed } from '../components/plant/LiveActivityFeed'
 import { CaptureRail } from '../components/plant/CaptureRail'
-import { LiveAlertsPanel } from '../components/plant/LiveAlertsPanel'
+import { alertKind, LiveAlertsPanel } from '../components/plant/LiveAlertsPanel'
 import { VerificationPhoto, type PhotoState } from '../components/plant/PlateVerification'
 import { createPortal } from 'react-dom'
 import { PointHistoryModal } from '../components/plant/PointHistoryModal'
@@ -146,10 +146,10 @@ export function LiveMonitorPage() {
     return () => { alive = false; clearInterval(t) }
   }, [site, followedTf, journeyTick])
 
-  // Alertas abiertas de hoy: capturas que ninguna capa identificó (la lista vive en la vista Alertas).
+  // Lecturas dudosas abiertas de hoy (la lista vive en la vista Alertas; las «sin registro» no cuentan acá).
   useEffect(() => {
     let alive = true
-    const load = () => getAlerts(site).then(r => { if (alive) setPending(r.open) }).catch(() => undefined)
+    const load = () => getAlerts(site).then(r => { if (alive) setPending(r.alertas.filter(a => !a.resolved && alertKind(a) === 'dudosa').length) }).catch(() => undefined)
     void load()
     const t = setInterval(load, 30_000)
     return () => { alive = false; clearInterval(t) }
