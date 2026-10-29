@@ -889,6 +889,8 @@ export type LiveAlert = {
   level: IdentificationLevel
   /** Qué dijo cada capa, en palabras. */
   capas: { capa2: string; algoritmo: string; historica: string; ia: string; motivo: string | null }
+  /** Candidatos más parecidos (alertas guardadas desde el 29/10). */
+  candidatos?: { plate: string; similarity: number | null }[]
   alertAt: string
   updatedAt: string
   /** Una capa u operaciones la identificó después: queda registrada como resuelta. */

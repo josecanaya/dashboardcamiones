@@ -24,3 +24,14 @@
 .la-layers dd { margin: 2px 0 0; font-size: 13px; line-height: 1.35; }
 .la-photo { justify-self: start; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--lm-line); background: var(--lm-bg); font-size: 12px; color: var(--lm-brand); }
 .la-empty { padding: 12px; color: var(--lm-muted); font-size: 13px; border: 0 !important; }
+/* Resolver desde la alerta: patente correcta o «no es camión». */
+.la-fix { display: grid; gap: 6px; padding-top: 8px; border-top: 1px dashed var(--lm-line); }
+.la-fix-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.la-fix-label { min-width: 96px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--lm-muted); }
+.la-fix button { padding: 4px 10px; border-radius: 8px; border: 1px solid var(--lm-line); background: var(--lm-bg); color: var(--lm-ink); font-size: 12px; cursor: pointer; }
+.la-fix button:hover:not(:disabled) { border-color: var(--lm-brand); color: var(--lm-brand); }
+.la-fix button:disabled { opacity: .5; cursor: default; }
+.la-fix button small { color: var(--lm-muted); font-weight: 400; }
+.la-fix form { display: flex; gap: 4px; }
+.la-fix input { width: 170px; padding: 4px 8px; border-radius: 8px; border: 1px solid var(--lm-line); font-size: 12px; color: var(--lm-ink); background: var(--lm-panel); }
+.la-fix input.la-fix-plate { width: 110px; font-family: ui-monospace, monospace; text-transform: uppercase; }

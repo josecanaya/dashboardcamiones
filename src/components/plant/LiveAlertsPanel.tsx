@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getAlerts, type LiveAlert } from '../../services/live/plantStateApi'
+import { decideIdentification, getAlerts, type IdentificationDecision, type LiveAlert } from '../../services/live/plantStateApi'
 import { CapturePhoto } from './CapturePhoto'
 import { IdentificationPanel } from './IdentificationPanel'
 import './liveAlerts.css'
@@ -18,6 +18,60 @@ const BY: Record<string, string> = {
   corregida_antes: 'la base histórica',
   confirmada_antes: 'la base histórica',
   no_camion: 'la base de no camiones',
+}
+
+/** Motivos de «no es un camión»: el texto es el que lee el aprendizaje (kindOf en aprendizaje.mjs). */
+const NO_CAMION = ['Auto particular / camioneta', 'Tractor o maquinaria', 'Vehículo de servicio', 'Colectivo']
+
+/**
+ * Resolver la alerta desde la tarjeta: la patente correcta (un candidato, la leída o escrita a mano) o
+ * qué es si no es un camión. Es la misma decisión de operaciones que la bandeja de revisión, así que
+ * enseña: la corrección va a data/padron/corregidos.json y el «no es camión» a no-camiones.json.
+ */
+function AlertResolve({ alert, onDone }: { alert: LiveAlert; onDone: (plate: string | null) => void }) {
+  const [plate, setPlate] = useState('')
+  const [other, setOther] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const typed = plate.trim().toUpperCase().replace(/[^A-Z0-9]/g, '')
+
+  async function send(decision: IdentificationDecision) {
+    setBusy(true)
+    setError(null)
+    try {
+      await decideIdentification(alert.site, alert.fragmentKey, decision)
+      onDone(decision.action === 'confirm' ? decision.plate : null)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setBusy(false)
+    }
+  }
+  const confirm = (p: string) => send({ action: 'confirm', plate: p, reason: p === alert.readPlate ? 'alerta: la cámara leyó bien' : `alerta: corregida a ${p}` })
+  const reject = (reason: string) => send({ action: 'reject', reason })
+
+  return (
+    <div className="la-fix">
+      <div className="la-fix-row">
+        <span className="la-fix-label">Es</span>
+        {(alert.candidatos ?? []).map(c => <button key={c.plate} type="button" disabled={busy} onClick={() => confirm(c.plate)}>{c.plate}{c.similarity != null ? <small> {Math.round(c.similarity * 100)} %</small> : null}</button>)}
+        {alert.validFormat ? <button type="button" disabled={busy} onClick={() => confirm(alert.readPlate)}>{alert.readPlate} <small>leyó bien</small></button> : null}
+        <form onSubmit={e => { e.preventDefault(); if (typed.length >= 6) void confirm(typed) }}>
+          <input value={plate} onChange={e => setPlate(e.target.value)} placeholder="Otra patente" className="la-fix-plate" aria-label="Patente correcta" maxLength={9} disabled={busy} />
+          <button type="submit" disabled={busy || typed.length < 6}>Confirmar</button>
+        </form>
+      </div>
+      <div className="la-fix-row">
+        <span className="la-fix-label">No es camión</span>
+        {NO_CAMION.map(r => <button key={r} type="button" disabled={busy} onClick={() => reject(r)}>{r}</button>)}
+        <form onSubmit={e => { e.preventDefault(); if (other.trim()) void reject(other.trim()) }}>
+          <input value={other} onChange={e => setOther(e.target.value)} placeholder="Otro motivo (aclaración)" aria-label="Otro motivo" maxLength={300} disabled={busy} />
+          <button type="submit" disabled={busy || !other.trim()}>Descartar</button>
+        </form>
+      </div>
+      {error ? <p className="la-error">No se guardó: {error}</p> : null}
+    </div>
+  )
 }
 
 /**
@@ -39,6 +93,14 @@ export function LiveAlertsPanel({ site }: { site: Site }) {
     const t = setInterval(load, 30_000)
     return () => { alive = false; clearInterval(t) }
   }, [site, day])
+
+  /** Resuelta desde acá: queda como resuelta por operaciones sin esperar la próxima pasada del reconocedor. */
+  const markResolved = (a: LiveAlert, plate: string | null) => setData(d => d && {
+    ...d,
+    open: d.open - 1,
+    resolved: d.resolved + 1,
+    alertas: d.alertas.map(x => (x.fragmentKey === a.fragmentKey ? { ...x, resolved: { at: new Date().toISOString(), by: 'operaciones', plate, level: plate ? 'confirmado' : 'rechazado' } } : x)),
+  })
 
   const rows = (data?.alertas ?? []).filter(a => (show === 'abiertas' ? !a.resolved : Boolean(a.resolved)))
 
@@ -70,6 +132,7 @@ export function LiveAlertsPanel({ site }: { site: Site }) {
               <div><dt>Capa 3 · IA por imagen</dt><dd>{a.capas.ia}</dd></div>
             </dl>
             <CapturePhoto deviceCode={a.deviceCode} at={a.at} readPlate={a.readPlate} buttonClassName="la-photo" />
+            {a.resolved ? null : <AlertResolve alert={a} onDone={plate => markResolved(a, plate)} />}
           </li>)}
           {data && !rows.length ? <li className="la-empty">{show === 'abiertas' ? 'Sin alertas abiertas.' : 'Ninguna alerta se resolvió después.'}</li> : null}
           {!data && !error ? <li className="la-empty">Cargando alertas…</li> : null}

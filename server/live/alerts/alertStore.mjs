@@ -99,12 +99,14 @@ export function createAlertStore({ projectRoot, log = console }) {
           at: it.at,
           level: it.level,
           capas: layerTrail(it),
+          /** Los candidatos más parecidos, para que operaciones la resuelva desde la alerta. */
+          candidatos: (it.candidates ?? []).slice(0, 4).map((c) => ({ plate: c.plate, similarity: c.similarity ?? null })),
           alertAt: prev?.alertAt ?? nowIso,
           updatedAt: nowIso,
           resolved: null,
         }
         if (!prev) opened++
-        if (!prev || prev.resolved || JSON.stringify(prev.capas) !== JSON.stringify(a.capas) || prev.level !== a.level) {
+        if (!prev || prev.resolved || !prev.candidatos || JSON.stringify(prev.capas) !== JSON.stringify(a.capas) || prev.level !== a.level) {
           m.set(key, a)
           dirty.add(day)
         }
