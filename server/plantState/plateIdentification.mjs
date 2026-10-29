@@ -57,6 +57,15 @@ export const VALID_AUTO_SIMILARITY = 1.01
 const ONE_READ_SIMILARITY = 0.85
 /** Doble lectura: el mismo camión leído bien en el mismo nodo (otra cámara o la misma) a pocos minutos. */
 export const TWIN_MS = 3 * 60 * 1000
+/** Cámaras traseras (leen el acoplado, o la chapa trasera del chasis): RicPreIngInTr, RicIngCamTrasera, RicEgrCamTraser, SLZBalIngTras… */
+export const REAR_DEVICE = /(?:Tr|Tras|Trasera|Traser)$/
+/**
+ * Una trasera es del camión cuya frontal se leyó en el mismo nodo hace poco. 29/10: la trasera de Preingreso
+ * leyó «IH06008» (era TLH446, acoplado de UER485) y la cuenta se la dio a DTG181, que tenía el paso pendiente
+ * pero nunca pasó por la frontal. Con fotos: a 18 s el par es el mismo camión (AH426UK + acoplado AE843PU);
+ * a 6 min ya es otro (AE900AT con la trasera de AF394XW).
+ */
+const REAR_PAIR_MS = 3 * 60 * 1000
 /** 0,5 unió JAC7110 con JAU7D16 (otro vehículo, descartado por operaciones el 07/10). */
 const TWIN_MIN_SIMILARITY = 0.6
 /**
@@ -599,6 +608,8 @@ export function identifyFragments(events, nowMs, ctx) {
         photoAt: new Date(lastBefore.t).toISOString(),
         where: p.otherSite ? 'otra_planta' : 'en_planta',
         sameNode,
+        /** Su frontal se leyó en este nodo hace poco: candidato de una lectura trasera. */
+        frontPair: before.some((r) => r.logical === head.logical && !REAR_DEVICE.test(r.device) && head.t - r.t <= REAR_PAIR_MS),
         twin,
         twinSeconds,
         ...timing(sameNode ? null : transitFit(transit, lastBefore.logical, head.logical, head.t - lastBefore.t), head.t - lastBefore.t),
@@ -687,8 +698,12 @@ export function identifyFragments(events, nowMs, ctx) {
     }
     // Patente válida: se corrige solo si la leída nunca pasó por la balanza y el elegido sí está en planta
     // (o tiene dos lecturas), y se parece de verdad. MFY738/MFY788 son dos camiones reales: la balanza los separa.
+    const rear = REAR_DEVICE.test(head.device)
+    // Trasera: el par frontal/trasera decide, no el paso pendiente (la trasera no ve el frente del camión).
+    const rearPairs = rear ? candidates.filter((c) => c.frontPair && !c.seenAfter) : []
+    const rearPair = rear && !plateMatches.length && rearPairs.length === 1 ? rearPairs[0] : null
     const cuentaOk = Boolean(
-      opt.cuenta !== false && cuenta?.candidate &&
+      opt.cuenta !== false && cuenta?.candidate && (!rear || cuenta.candidate.frontPair) &&
       (!valid
         ? cuenta.probability >= CUENTA_INVALID_AUTO_PROBABILITY
         : cuenta.probability >= CUENTA_AUTO_PROBABILITY && bz && !readKnown && cuenta.candidate.similarity >= CUENTA_VALID_SIMILARITY && (inBalanza(cuenta.candidate.plate) || cuenta.candidate.reads >= opt.minReads))
@@ -790,6 +805,11 @@ export function identifyFragments(events, nowMs, ctx) {
       chosen = best && verdict.plate === best.plate ? best : cuenta.candidate
       reason = `patente, recorrido y color/marca/tipo coinciden con ${chosen.plate} (${Math.round(verdict.probability * 100)}%)`
       rule = 'atributos_dss'
+    } else if (rearPair) {
+      level = 'casi_seguro'
+      chosen = rearPair
+      reason = `cámara trasera: ${chosen.plate} es el único camión cuya frontal se leyó en este nodo en los últimos ${REAR_PAIR_MS / 60000} min${valid ? '' : ' (la lectura no se parece a ninguna patente)'}`
+      rule = 'par_trasera'
     } else if (cuentaOk) {
       level = 'casi_seguro'
       chosen = cuenta.candidate

@@ -417,3 +417,28 @@ describe('camión fantasma por el lado del elegido', () => {
     expect(it0.reason).toContain('AAB000')
   })
 })
+
+describe('cámaras traseras: par frontal/trasera (29/10)', () => {
+  const now = Date.parse('2026-10-29T16:10:00-03:00')
+  // UER485 pasa Ingreso y la frontal de Preingreso y espera; su trasera lee el acoplado TLH446 dos veces
+  // (la segunda mal, «IH06008»). DTG181 pasa Ingreso pero nunca la frontal de Preingreso.
+  const events = [
+    ev('UER485', 'u1', '2-S0', 'RicIngCamFrente', '2026-10-29T15:46:20-03:00'),
+    ev('UER485', 'u1', '2-S1', 'RicPreIngInFr', '2026-10-29T15:47:56-03:00'),
+    ev('DTG181', 'd1', '2-S0', 'RicIngCamFrente', '2026-10-29T15:56:53-03:00'),
+    ev('IH06008', 'x1', '2-S1', 'RicPreIngInTr', '2026-10-29T15:57:45-03:00'),
+  ]
+
+  it('la trasera va al camión cuya frontal se leyó en ese nodo, no al que tenía el paso pendiente', () => {
+    const r = identifyFragments(events, now, { catalog })
+    const it0 = r.items.find((i) => i.readPlate === 'IH06008')
+    expect(it0.assignedPlate).not.toBe('DTG181')
+    if (it0.level === 'casi_seguro') expect(it0).toMatchObject({ assignedPlate: 'UER485', rule: 'par_trasera' })
+  })
+
+  it('sin frontal en el nodo, la trasera no se asigna por la cuenta', () => {
+    const r = identifyFragments(events.filter((e) => e.deviceCode !== 'RicPreIngInFr'), now, { catalog })
+    const it0 = r.items.find((i) => i.readPlate === 'IH06008')
+    expect(it0.level).not.toBe('casi_seguro')
+  })
+})
