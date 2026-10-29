@@ -232,3 +232,56 @@ describe('atributos de las alertas', () => {
     expect(b.attributes).toBeUndefined()
   })
 })
+
+describe('la carta también corrige, antes que la balanza', () => {
+  const now = Date.parse('2026-10-28T12:00:00-03:00')
+  /** Padrón con `notes()`: el universo de cartas vigentes donde se busca la patente parecida. */
+  const fullPadron = (notes) => ({ lookup: (p) => notes.filter((n) => n.plates.includes(p)), notes: () => notes })
+
+  it('universo de cartas vigentes: chasis y acoplados, sin anuladas ni turnos lejanos', () => {
+    const pz = padronCartas(fullPadron([carta('1', ['AB123CD', 'AE762LY']), carta('2', ['MFY738', 'XX111YY'], { stateCode: 'AN' }), carta('3', ['OLD100', 'OLD200'], { turnDay: '2026-10-20' })]))
+    expect(pz.platesAt(now)).toEqual([
+      { plate: 'AB123CD', chasis: 'AB123CD', role: 'chasis', ctg: '1' },
+      { plate: 'AE762LY', chasis: 'AB123CD', role: 'acoplado', ctg: '1' },
+    ])
+  })
+
+  it('acoplado con carta y en la balanza: decide la carta', () => {
+    const events = [
+      ev('MDY035', 't1', '2-S1', 'RicPreIngInFr', '2026-10-28T10:00:00-03:00'),
+      ev('MDY035', 't1', '2-S2', 'RicCal03', '2026-10-28T10:30:00-03:00'),
+      ev('AE762LY', 'a1', '2-S2', 'RicCal03Tras', '2026-10-28T10:31:00-03:00'),
+    ]
+    const balanza = buildBalanzaRegistry([{ plate: 'MDY035', trailer: 'AE762LY', ingresoMs: Date.parse('2026-10-28T10:05:00-03:00'), salidaMs: null }])
+    const padron = padronCartas(fullPadron([carta('9', ['MDY035', 'AE762LY'])]))
+    const it0 = identifyFragments(events, now, { catalog, balanza, padron }).items.find((i) => i.readPlate === 'AE762LY')
+    expect(it0.rule).toBe('acoplado_carta')
+    expect(it0.assignedPlate).toBe('MDY035')
+  })
+
+  it('lectura ilegible: la patente parecida de una carta vigente gana a la balanza', () => {
+    const events = [ev('HDC11', 'x1', '2-S3', 'RicSalida2', '2026-10-28T11:40:00-03:00')]
+    const balanza = buildBalanzaRegistry([{ plate: 'HDC112', ingresoMs: Date.parse('2026-10-28T11:00:00-03:00'), salidaMs: null }])
+    const padron = padronCartas(fullPadron([carta('4', ['HDC112', 'ZZ999ZZ'])]))
+    const sinCarta = identifyFragments(events, now, { catalog, balanza }).items.find((i) => i.readPlate === 'HDC11')
+    expect(sinCarta.rule).toBe('balanza_unica')
+    const conCarta = identifyFragments(events, now, { catalog, balanza, padron }).items.find((i) => i.readPlate === 'HDC11')
+    expect(conCarta.rule).toBe('carta_parecida')
+    expect(conCarta.assignedPlate).toBe('HDC112')
+  })
+
+  it('el acoplado parecido lleva la lectura a su chasis', () => {
+    const events = [ev('AE76LY', 'x1', '2-S3', 'RicSalida2', '2026-10-28T11:40:00-03:00')]
+    const padron = padronCartas(fullPadron([carta('9', ['MDY035', 'AE762LY'])]))
+    const it0 = identifyFragments(events, now, { catalog, padron }).items.find((i) => i.readPlate === 'AE76LY')
+    expect(it0.rule).toBe('carta_parecida')
+    expect(it0.assignedPlate).toBe('MDY035')
+  })
+
+  it('dos cartas igual de parecidas: no decide la carta', () => {
+    const events = [ev('HDC11', 'x1', '2-S3', 'RicSalida2', '2026-10-28T11:40:00-03:00')]
+    const padron = padronCartas(fullPadron([carta('4', ['HDC112', 'ZZ999ZZ']), carta('5', ['HDC113', 'YY888YY'])]))
+    const it0 = identifyFragments(events, now, { catalog, padron }).items.find((i) => i.readPlate === 'HDC11')
+    expect(it0?.rule).not.toBe('carta_parecida')
+  })
+})

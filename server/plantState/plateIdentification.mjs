@@ -78,6 +78,9 @@ const BALANZA_NEAR_SIMILARITY = 0.8
 const GHOST_GUARD_RULES = new Set(['universo', 'cuenta', 'atributos_dss'])
 /** Parecido mínimo entre una lectura y un camión de la balanza para el viaje fantasma y la regla «balanza única». */
 export const GHOST_SIMILARITY = 0.75
+/** Carta parecida: parecido mínimo con una patente de las cartas vigentes (lectura ilegible / patente válida). */
+const CARTA_SIMILARITY = Number(process.env.CARTA_SIMILARITY ?? 0.75)
+const CARTA_VALID_SIMILARITY = Number(process.env.CARTA_VALID_SIMILARITY ?? 0.8)
 const BALANZA_NEAR_CUENTA = 0.5
 /** Patente válida corregida por la cuenta: solo si se parece de verdad (una letra) al camión elegido. */
 const CUENTA_VALID_SIMILARITY = 0.8
@@ -399,11 +402,13 @@ export function identifyFragments(events, nowMs, ctx) {
   /** Capa 2 (ver padronCartas.mjs): Vehículos Permitidos y después la carta de porte. Primero se busca acá quién es. */
   const cartaOf = (plate, t) => (ctx.padron && isValidPlate(plate) ? ctx.padron.at(plate, t) : null)
   const trailerOfJourney = (j) => {
+    // Primero la carta de porte vigente; la balanza solo para el acoplado que no está en ninguna carta.
+    const carta = cartaOf(j.plate, j.rows[0].t)
+    if (carta?.role === 'acoplado' && carta.source === 'carta') return { plate: carta.chasis, source: 'carta', hit: carta }
     if (bz && bz.isTrailer(j.plate) && !bz.truckAt(j.plate, j.rows[0].t)) {
       const hit = bz.trailerAt(j.plate, j.rows[0].t)
       if (hit) return { ...hit, source: 'balanza' }
     }
-    const carta = cartaOf(j.plate, j.rows[0].t)
     if (carta?.role !== 'acoplado') return null
     // Par histórico (Vehículos Permitidos): solo si el chasis se leyó en planta a ±2 h de esta lectura.
     if (carta.source === 'permitido' && !(readsByPlateEarly.get(carta.chasis) ?? []).some((t) => Math.abs(t - j.rows[0].t) <= 2 * 3600_000)) return null
@@ -840,6 +845,31 @@ export function identifyFragments(events, nowMs, ctx) {
         reason = `${chosen.plate} no figura en la balanza y ${inPlant.slice(0, 2).join(' / ')} (patente parecida) sí está en planta: elegir la correcta`
         rule = null
         chosen = null
+      }
+    }
+
+    // Carta parecida (capa 2, antes que la balanza): lo que quedó abierto, o fuera del sistema sin verse
+    // liviano, se busca entre las patentes de las cartas vigentes. Se asigna al único chasis parecido;
+    // una patente válida exige más parecido y que no sea un camión conocido de la balanza (dos camiones reales).
+    const cartaOpen = level === 'provisorio' || level === 'pendiente' || (rule === 'fuera_sistema' && seenAttrs?.vehicleClass !== 'liviano')
+    if (ctx.padron?.platesAt && cartaOpen && !decided(f) && !twin && !readCartaHit && !readInBalanza && !(valid && readKnown)) {
+      const min = valid ? Math.max(CARTA_SIMILARITY, CARTA_VALID_SIMILARITY) : CARTA_SIMILARITY
+      const ranked = ctx.padron.platesAt(head.t)
+        .filter((x) => x.plate !== f.plate)
+        .map((x) => ({ ...x, similarity: plateSimilarity(f.plate, x.plate) }))
+        .filter((x) => x.similarity >= min)
+        .sort((a, b) => b.similarity - a.similarity)
+      const top = ranked[0]
+      // El rival es otro camión: el acoplado del mismo chasis no compite.
+      const rivalCarta = top && ranked.find((x) => x.chasis !== top.chasis)
+      const clear = top && (!rivalCarta || top.similarity - rivalCarta.similarity >= RIVAL_MARGIN)
+      // Un camión de cámara en el universo que se parece más y no tiene carta (interno de silos) manda.
+      const betterCamera = top && plateMatches.some((c) => c.inUniverse && c.similarity > top.similarity && !cartaOf(c.plate, head.t))
+      if (clear && !betterCamera) {
+        level = 'casi_seguro'
+        chosen = journeyOfPlate(top.chasis)
+        rule = 'carta_parecida'
+        reason = `${f.plate} no figura en ninguna carta y ${top.plate} (parecido ${Math.round(top.similarity * 100)} %) es la única patente parecida en las cartas vigentes (carta de porte ${top.ctg}${top.role === 'acoplado' ? `, acoplado de ${top.chasis}` : ''})`
       }
     }
 

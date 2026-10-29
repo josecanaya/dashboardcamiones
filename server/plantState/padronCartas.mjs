@@ -2,8 +2,9 @@
  * Capa 2 del reconocedor («¿Quién es?»). Cada lectura se busca primero en Vehículos Permitidos
  * (agua, residuos, proveedores, registro manual: server/live/padron/vehiculosPermitidos.mjs) y después
  * en la carta de porte del padrón del día (server/live/padron). Si la patente es un chasis conocido no
- * es un caso; si es un acoplado, la lectura es del chasis. Las que no están pasan al corrector (capa 3)
- * y la patente corregida vuelve a buscarse acá.
+ * es un caso; si es un acoplado, la lectura es del chasis. Las que no están se buscan por parecido entre
+ * las patentes de las cartas vigentes (`platesAt`) antes que en la balanza; lo que no resuelve la carta pasa
+ * al corrector (capa 3) y la patente corregida vuelve a buscarse acá.
  *
  * Carta vigente = turno STOP a un día de la lectura, o (sin turno) partida entre 2 días antes y 1 después.
  * Las anuladas no cuentan: la patente puede no haber venido nunca. Un vehículo permitido vale siempre.
@@ -26,12 +27,31 @@ function vigente(note, t) {
 /**
  * @typedef {{ source: 'permitido', role: 'chasis'|'acoplado', chasis: string, category: string|null }
  *   | { source: 'carta', ctg: string, role: 'chasis'|'acoplado', chasis: string, direction: string, grain: string|null }} PadronHit
- * @param {{ lookup: (plate: string) => object[] } | null} padron
+ * @param {{ lookup: (plate: string) => object[], notes?: () => Iterable<object> } | null} padron
  * @param {{ lookup: (plate: string) => object|null } | null} [permitidos]
- * @returns {{ at: (plate: string, t: number) => PadronHit | null }}
+ * @returns {{ at: (plate: string, t: number) => PadronHit | null, cartaAt: (plate: string, t: number) => object | null, platesAt: (t: number) => { plate: string, chasis: string, role: 'chasis'|'acoplado', ctg: string }[] }}
  */
 export function padronCartas(padron, permitidos = null) {
+  /** Universo por hora: las cartas vigentes cambian por día de turno, no minuto a minuto. */
+  const universe = new Map()
   return {
+    /**
+     * Patentes (chasis y acoplados) de todas las cartas vigentes a la hora `t`: el universo donde se busca
+     * la patente parecida de una lectura que no está en ninguna carta.
+     */
+    platesAt(t) {
+      const hour = Math.floor(t / 3600_000)
+      if (!universe.has(hour)) {
+        const out = []
+        for (const n of padron?.notes?.() ?? []) {
+          if (!n.plates?.length || !vigente(n, t)) continue
+          n.plates.forEach((p, i) => out.push({ plate: p, chasis: n.plates[0], role: i ? 'acoplado' : 'chasis', ctg: n.ctg }))
+        }
+        if (universe.size > 48) universe.clear()
+        universe.set(hour, out)
+      }
+      return universe.get(hour)
+    },
     at(plate, t) {
       const p = plateOf(plate)
       if (p.length < 5) return null
